@@ -371,13 +371,10 @@ class GapAnalyzer:
         print(f"\n🔧 INTERACTIVE GAP FIXING")
         print("-" * 50)
         
-        files_to_fix = [item for item in gap_summary if item['gap_info']['has_gaps']]
+        # Process all files, not just those with gaps
+        files_to_fix = gap_summary
         
-        if not files_to_fix:
-            print(f"✅ No files with gaps to fix!")
-            return gap_summary
-        
-        print(f"📁 Files with gaps: {len(files_to_fix)}")
+        print(f"📁 Files to process: {len(files_to_fix)}")
         
         # Ask user if they want to fix gaps
         try:
@@ -402,15 +399,21 @@ class GapAnalyzer:
         # Fix gaps for each file
         for i, item in enumerate(files_to_fix, 1):
             file_name = item['file_name']
-            print(f"\n🔧 Fixing gaps in {file_name} [{i}/{len(files_to_fix)}]...")
+            has_gaps = item['gap_info']['has_gaps']
+            
+            if has_gaps:
+                print(f"\n🔧 Fixing gaps in {file_name} [{i}/{len(files_to_fix)}]...")
+            else:
+                print(f"\n🔧 Processing {file_name} [{i}/{len(files_to_fix)}] (no gaps found, but will ensure data quality)...")
             
             try:
                 # Load full file for fixing
                 full_df = self._load_full_file_for_fixing(item['file_path'], item['timestamp_column'])
                 if full_df is None:
+                    print(f"   ❌ Failed to load file for fixing")
                     continue
                 
-                # Fix gaps
+                # Fix gaps (even if none were detected, this ensures data quality)
                 fixed_df = self._fix_gaps_in_dataframe(
                     gap_fixer, full_df, item['timestamp_column'], 
                     item['gap_info']
@@ -421,7 +424,10 @@ class GapAnalyzer:
                     item['dataframe'] = fixed_df
                     item['gap_info']['has_gaps'] = False
                     item['gap_info']['gap_count'] = 0
-                    print(f"   ✅ Gaps fixed successfully!")
+                    if has_gaps:
+                        print(f"   ✅ Gaps fixed successfully!")
+                    else:
+                        print(f"   ✅ Data quality check completed!")
                 else:
                     print(f"   ❌ Gap fixing failed, keeping original data")
                 
@@ -455,31 +461,58 @@ class GapAnalyzer:
             elif file_path.suffix.lower() == '.parquet':
                 df = pd.read_parquet(file_path)
             else:
+                print(f"   ⚠️  Unsupported file format: {file_path.suffix}")
                 return None
             
             if df is None or df.empty:
+                print(f"   ⚠️  File is empty or could not be loaded")
                 return None
+            
+            print(f"   📊 Loaded DataFrame: {df.shape}")
+            print(f"   📅 DataFrame columns: {df.columns.tolist()}")
             
             # Handle DatetimeIndex case
             if timestamp_column == 'INDEX':
+                print(f"   🔍 Processing as DatetimeIndex...")
                 # Check if the first column is a timestamp column
                 first_col = df.columns[0]
+                print(f"   📅 First column: {first_col}")
+                print(f"   📅 First column type: {type(df[first_col].iloc[0])}")
+                
                 try:
                     # Try to convert first column to datetime
                     df[first_col] = pd.to_datetime(df[first_col], errors='coerce')
-                    # Set as index
-                    df = df.set_index(first_col)
-                    # Drop rows with invalid timestamps
-                    df = df.dropna()
-                    print(f"   📅 Set '{first_col}' as DatetimeIndex")
+                    print(f"   📅 Converted to datetime successfully")
+                    
+                    # Check for valid timestamps
+                    valid_count = df[first_col].notna().sum()
+                    total_count = len(df)
+                    print(f"   📅 Valid timestamps: {valid_count}/{total_count} ({valid_count/total_count*100:.1f}%)")
+                    
+                    if valid_count > 0:
+                        # Set as index
+                        df = df.set_index(first_col)
+                        # Drop rows with invalid timestamps
+                        df = df.dropna()
+                        print(f"   📅 Set '{first_col}' as DatetimeIndex successfully")
+                        print(f"   📊 Final DataFrame shape: {df.shape}")
+                        return df
+                    else:
+                        print(f"   ⚠️  No valid timestamps found")
+                        return None
+                        
                 except Exception as e:
                     print(f"   ⚠️  Could not set DatetimeIndex: {e}")
+                    print(f"   📅 First few values: {df[first_col].head().tolist()}")
                     return None
-            
-            return df
+            else:
+                print(f"   📅 Processing as regular column: {timestamp_column}")
+                return df
             
         except Exception as e:
             print(f"   ❌ Error loading full file {file_path.name}: {e}")
+            import traceback
+            traceback.print_exc()
             return None
     
     def _fix_gaps_in_dataframe(self, gap_fixer, df: pd.DataFrame, 
