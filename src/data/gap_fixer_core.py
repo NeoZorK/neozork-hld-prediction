@@ -84,16 +84,18 @@ class GapFixer:
             # Handle DatetimeIndex case
             if isinstance(df.index, pd.DatetimeIndex):
                 print(f"   📅 Converting DatetimeIndex to column for gap analysis...")
-                df = self.utils.convert_datetime_index_to_column(df)
-                timestamp_col = df.columns[0]  # First column after reset_index
+                df_for_analysis = self.utils.convert_datetime_index_to_column(df)
+                timestamp_col = df_for_analysis.columns[0]  # First column after reset_index
+            else:
+                df_for_analysis = df.copy()
             
             # Convert timestamp to datetime if needed
-            if timestamp_col and not pd.api.types.is_datetime64_any_dtype(df[timestamp_col]):
-                df[timestamp_col] = pd.to_datetime(df[timestamp_col], errors='coerce')
+            if timestamp_col and not pd.api.types.is_datetime64_any_dtype(df_for_analysis[timestamp_col]):
+                df_for_analysis[timestamp_col] = pd.to_datetime(df_for_analysis[timestamp_col], errors='coerce')
             
             print(f"   🔍 Detecting gaps...")
-            # Detect gaps
-            gap_info = self.utils.detect_gaps(df, timestamp_col)
+            # Detect gaps using the copy for analysis
+            gap_info = self.utils.detect_gaps(df_for_analysis, timestamp_col)
             
             if not gap_info['has_gaps']:
                 print(f"   ✅ No gaps detected")
@@ -122,7 +124,7 @@ class GapFixer:
             # Fix gaps
             print(f"   🔧 Starting gap fixing with algorithm: {algorithm}")
             fixed_df, fix_results = self.algorithms.fix_gaps_in_dataframe(
-                df, timestamp_col, gap_info, algorithm, show_progress
+                df_for_analysis, timestamp_col, gap_info, algorithm, show_progress
             )
             
             # Save fixed data

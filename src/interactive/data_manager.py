@@ -295,7 +295,29 @@ class DataManager:
         
         # Combine base timeframe data
         print(f"\n🔄 Combining base timeframe data...")
-        system.current_data = pd.concat(base_data, ignore_index=True)
+        
+        # Check if data has DatetimeIndex and preserve it during concatenation
+        has_datetime_index = any(isinstance(df.index, pd.DatetimeIndex) for df in base_data)
+        
+        if has_datetime_index:
+            print(f"   📅 Preserving DatetimeIndex during concatenation...")
+            # Reset index to make datetime a column for concatenation
+            processed_data = []
+            for df in base_data:
+                df_copy = df.copy()
+                if isinstance(df_copy.index, pd.DatetimeIndex):
+                    df_copy = df_copy.reset_index()
+                    # Rename the index column if it's unnamed
+                    if df_copy.columns[0] == 'index':
+                        df_copy = df_copy.rename(columns={'index': 'Timestamp'})
+                processed_data.append(df_copy)
+            
+            # Combine with consistent column structure
+            system.current_data = pd.concat(processed_data, ignore_index=True)
+            print(f"   ✅ DatetimeIndex preserved as 'Timestamp' column")
+        else:
+            # No DatetimeIndex, safe to concatenate normally
+            system.current_data = pd.concat(base_data, ignore_index=True)
         
         # Display completion summary
         print(f"✅ Base dataset created: {system.current_data.shape[0]:,} rows, {system.current_data.shape[1]} columns")
@@ -317,14 +339,19 @@ class DataManager:
             system, base_timeframe, folder_path, mask
         )
         
-        # Ask user if they want to save cleaned data
-        try:
-            save_cleaned = input("\n💾 Save cleaned data to 'data/cleaned_data' folder for future ML use? (y/n, default: y): ").strip().lower()
-        except EOFError:
-            save_cleaned = 'y'
-        
-        if save_cleaned in ['', 'y', 'yes']:
-            self._save_cleaned_data(system, folder_path, mask, base_timeframe)
+        # Ask user if they want to save cleaned data (only if not from cleaned_data)
+        is_cleaned_data = folder_path.name == "cleaned_data"
+        if not is_cleaned_data:
+            try:
+                save_cleaned = input("\n💾 Save cleaned data to 'data/cleaned_data' folder for future ML use? (y/n, default: y): ").strip().lower()
+            except EOFError:
+                save_cleaned = 'y'
+            
+            if save_cleaned in ['', 'y', 'yes']:
+                self._save_cleaned_data(system, folder_path, mask, base_timeframe)
+        else:
+            print(f"\n💾 Data from cleaned_data folder - no need to save again")
+            print("💡 Data is already optimized and ready for ML use")
         
         return True
     
@@ -354,7 +381,14 @@ class DataManager:
             
             # Save data
             print(f"📁 Saving to: {filepath}")
-            system.current_data.to_parquet(filepath, index=False, compression='snappy')
+            
+            # Check if data has Timestamp column and preserve it
+            if 'Timestamp' in system.current_data.columns:
+                print(f"   📅 Preserving 'Timestamp' column during saving...")
+                system.current_data.to_parquet(filepath, index=False, compression='snappy')
+            else:
+                print(f"   📊 No Timestamp column found, saving without index")
+                system.current_data.to_parquet(filepath, index=False, compression='snappy')
             
             # Get file size
             file_size_mb = filepath.stat().st_size / (1024 * 1024)

@@ -70,14 +70,21 @@ class GapFixingUtils:
         return None
     
     def convert_datetime_index_to_column(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Convert DatetimeIndex to a regular column."""
-        df = df.reset_index()
-        timestamp_col = df.index.name or 'index'
+        """Convert DatetimeIndex to a regular column for gap analysis, but preserve original structure."""
+        if not isinstance(df.index, pd.DatetimeIndex):
+            return df
+            
+        # Create a copy to avoid modifying original
+        df_copy = df.copy()
+        
+        # Reset index to make timestamp a regular column for analysis
+        df_copy = df_copy.reset_index()
+        
         # Rename the index column if it's unnamed
-        if timestamp_col == 'index':
-            timestamp_col = 'Timestamp'
-            df = df.rename(columns={'index': 'Timestamp'})
-        return df
+        if df_copy.columns[0] == 'index':
+            df_copy = df_copy.rename(columns={'index': 'Timestamp'})
+            
+        return df_copy
     
     def detect_gaps(self, df: pd.DataFrame, timestamp_col: str) -> Dict:
         """Detect gaps in time series data with progress bar for large files."""

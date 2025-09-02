@@ -43,6 +43,16 @@ class DataLoader:
         if isinstance(df.index, pd.DatetimeIndex):
             return df
             
+        # Check if index was originally DatetimeIndex but got reset
+        # This happens when loading cleaned_data files that were saved with index=True
+        if df.index.name == 'Timestamp' and not isinstance(df.index, pd.DatetimeIndex):
+            print(f"📅 Restoring 'Timestamp' from index (was DatetimeIndex)")
+            # Convert index to column and then set as datetime index
+            df = df.reset_index()
+            df['Timestamp'] = pd.to_datetime(df['Timestamp'], errors='coerce')
+            df.set_index('Timestamp', inplace=True)
+            return df
+            
         # Look for common datetime column names (case-insensitive)
         datetime_columns = ['timestamp', 'time', 'date', 'datetime', 'dt']
         
@@ -76,6 +86,16 @@ class DataLoader:
             has_ohlcv = any(indicator in str(col).lower() for col in df.columns for indicator in ohlcv_indicators)
             
             if has_ohlcv:
+                # Check if there's a 'Timestamp' column that needs to be converted
+                if 'Timestamp' in df.columns:
+                    try:
+                        df['Timestamp'] = pd.to_datetime(df['Timestamp'], errors='coerce')
+                        df.set_index('Timestamp', inplace=True)
+                        print(f"✅ Set 'Timestamp' as datetime index from OHLCV data")
+                        return df
+                    except Exception:
+                        print(f"⚠️  Could not convert 'Timestamp' to datetime in OHLCV data")
+                
                 print(f"⚠️  No timestamp column found in OHLCV data. Data will be loaded without datetime index.")
                 print(f"   Available columns: {list(df.columns)}")
                 return df
