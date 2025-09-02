@@ -43,15 +43,28 @@ class DataLoader:
         if isinstance(df.index, pd.DatetimeIndex):
             return df
             
-        # Look for common datetime column names
+        # Look for common datetime column names (case-insensitive)
         datetime_columns = ['timestamp', 'time', 'date', 'datetime', 'dt']
         
+        # First try exact matches
         for col in datetime_columns:
             if col in df.columns:
                 try:
                     df[col] = pd.to_datetime(df[col], errors='coerce')
                     df.set_index(col, inplace=True)
                     print(f"✅ Set '{col}' as datetime index")
+                    return df
+                except Exception:
+                    continue
+        
+        # Then try case-insensitive matches
+        for col in df.columns:
+            col_lower = col.lower()
+            if col_lower in datetime_columns:
+                try:
+                    df[col] = pd.to_datetime(df[col], errors='coerce')
+                    df.set_index(col, inplace=True)
+                    print(f"✅ Set '{col}' as datetime index (case-insensitive match)")
                     return df
                 except Exception:
                     continue
@@ -333,11 +346,15 @@ class DataLoader:
             parquet_file = pq.ParquetFile(file_path)
             total_rows = parquet_file.metadata.num_rows
             
-            # Check if file has datetime index
+            # Check if file has datetime index or timestamp column
             first_row_group = parquet_file.read_row_group(0)
             sample_df = first_row_group.to_pandas()
             has_datetime_index = isinstance(sample_df.index, pd.DatetimeIndex)
             datetime_index_name = sample_df.index.name if has_datetime_index else None
+            
+            # Also check for timestamp column in the data
+            has_timestamp_column = any(col.lower() in ['timestamp', 'time', 'date', 'datetime', 'dt'] 
+                                     for col in sample_df.columns)
             
             if total_rows <= self.chunk_size:
                 # Small file, load directly
@@ -347,17 +364,20 @@ class DataLoader:
             # Large file, load in chunks
             print(f"📊 Loading {file_path.name} in chunks of {self.chunk_size:,} rows...")
             
-            if has_datetime_index:
-                print(f"📅 Detected DatetimeIndex: {datetime_index_name}, preserving during loading...")
+            if has_datetime_index or has_timestamp_column:
+                if has_datetime_index:
+                    print(f"📅 Detected DatetimeIndex: {datetime_index_name}, preserving during loading...")
+                else:
+                    print(f"📅 Detected timestamp column, preserving during loading...")
                 
-                # For files with DatetimeIndex, load entire file to preserve index
+                # For files with DatetimeIndex or timestamp column, load entire file to preserve structure
                 if total_rows > 5000000:  # 5M rows threshold
-                    print(f"⚠️  Very large file with DatetimeIndex detected ({total_rows:,} rows).")
-                    print(f"   Loading entire file to preserve index structure...")
+                    print(f"⚠️  Very large file with timestamp data detected ({total_rows:,} rows).")
+                    print(f"   Loading entire file to preserve timestamp structure...")
                     df = pd.read_parquet(file_path)
                     return self.handle_datetime_index(df)
                 else:
-                    print(f"   Loading entire file to preserve index structure...")
+                    print(f"   Loading entire file to preserve timestamp structure...")
                     df = pd.read_parquet(file_path)
                     return self.handle_datetime_index(df)
             else:

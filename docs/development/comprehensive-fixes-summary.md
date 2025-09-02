@@ -6,7 +6,12 @@ This document summarizes all the fixes implemented to resolve the issues with da
 
 ## Issues Addressed
 
-### 1. **Premature File Loading Stop**
+### 1. **Timestamp Column Case Sensitivity**
+**Problem**: Timestamp columns were not being recognized due to case sensitivity in column names.
+
+**Root Cause**: System was only looking for lowercase timestamp column names, but data contained 'Timestamp' (uppercase).
+
+### 2. **Premature File Loading Stop**
 **Problem**: System was stopping file loading when memory usage reached 80% of 1GB limit.
 
 **Root Cause**: Overly conservative memory limits in DataManager.
@@ -28,7 +33,38 @@ This document summarizes all the fixes implemented to resolve the issues with da
 
 ## Solutions Implemented
 
-### 1. Enhanced Memory Management
+### 1. Enhanced Timestamp Column Detection
+
+**Files Modified**:
+- `src/interactive/data_loader.py`
+
+**Changes**:
+```python
+# Before: Only exact case matches
+datetime_columns = ['timestamp', 'time', 'date', 'datetime', 'dt']
+for col in datetime_columns:
+    if col in df.columns:
+        # Process timestamp column
+
+# After: Case-insensitive detection
+# First try exact matches
+for col in datetime_columns:
+    if col in df.columns:
+        # Process timestamp column
+
+# Then try case-insensitive matches
+for col in df.columns:
+    col_lower = col.lower()
+    if col_lower in datetime_columns:
+        # Process timestamp column with case-insensitive match
+```
+
+**Benefits**:
+- Timestamp columns are now detected regardless of case ('Timestamp', 'timestamp', 'TimeStamp')
+- Better user experience with no more "No timestamp column found" warnings
+- Enhanced parquet loading logic for timestamp detection
+
+### 3. Enhanced Memory Management
 
 **Files Modified**:
 - `src/interactive/data_manager.py`
@@ -50,7 +86,7 @@ max_file_size_mb = 200 # 200MB threshold (increased 4x)
 memory_warning_threshold = 0.8  # 80% (increased)
 ```
 
-### 2. DateTime Index Handling
+### 4. DateTime Index Handling
 
 **Files Modified**:
 - `src/interactive/data_manager.py`
@@ -73,7 +109,7 @@ def _handle_datetime_index(self, df: pd.DataFrame) -> pd.DataFrame:
 - `_load_csv_direct()`: Now calls `_handle_datetime_index()`
 - `_load_csv_in_chunks()`: Now calls `_handle_datetime_index()`
 
-### 3. Improved Gap Analysis
+### 5. Improved Gap Analysis
 
 **Files Modified**:
 - `src/eda/data_quality.py`
@@ -91,7 +127,7 @@ if memory_mb > max_memory_mb * 1.5:
     # Use sampling approach instead of skipping
 ```
 
-### 4. Pressure Vector Negative Values Protection
+### 6. Pressure Vector Negative Values Protection
 
 **Files Modified**:
 - `src/eda/data_quality.py`
@@ -149,17 +185,18 @@ Skipping pressure_vector column as it can legitimately contain negative values
 ## Testing
 
 ### Test Coverage
+- **Timestamp Case Sensitivity**: `tests/interactive/test_timestamp_case_sensitivity.py` (6 tests)
 - **DataManager Fixes**: `tests/interactive/test_data_manager_fixes.py` (12 tests)
 - **Pressure Vector Handling**: `tests/eda/test_pressure_vector_negative_values.py` (7 tests)
 - **Analysis Runner Fixes**: `tests/interactive/test_analysis_runner_fixes.py` (5 tests)
 
 ### Test Results
 ```
-✅ Passed: 24
+✅ Passed: 30
 ❌ Failed: 0
 ⏭️  Skipped: 0
 💥 Errors: 0
-📈 Total: 24
+📈 Total: 30
 ```
 
 ## Performance Impact
@@ -200,6 +237,7 @@ All changes are backward compatible:
 ## Files Modified
 
 ### Core Data Management
+- `src/interactive/data_loader.py` - Enhanced timestamp column detection (case-insensitive)
 - `src/interactive/data_manager.py` - Enhanced memory management and datetime handling
 - `src/eda/data_quality.py` - Updated memory settings and pressure_vector handling
 - `src/eda/fix_files.py` - Excluded pressure_vector from automatic fixes
@@ -208,11 +246,13 @@ All changes are backward compatible:
 - `src/interactive/analysis_runner.py` - Updated verification logic and memory thresholds
 
 ### Tests
+- `tests/interactive/test_timestamp_case_sensitivity.py` - Timestamp column detection tests
 - `tests/interactive/test_data_manager_fixes.py` - DataManager functionality tests
 - `tests/eda/test_pressure_vector_negative_values.py` - Pressure vector handling tests
 - `tests/interactive/test_analysis_runner_fixes.py` - Analysis runner fixes tests
 
 ### Documentation
+- `docs/development/timestamp-case-sensitivity-fix.md` - Timestamp column detection fixes documentation
 - `docs/development/data-manager-fixes.md` - DataManager fixes documentation
 - `docs/development/pressure-vector-negative-values.md` - Pressure vector fixes documentation
 - `docs/development/comprehensive-fixes-summary.md` - This comprehensive summary
@@ -229,9 +269,10 @@ All changes are backward compatible:
 
 These fixes significantly improve the system's ability to handle large datasets while preserving data integrity. The changes ensure that:
 
-1. **Large files can be loaded** without premature stopping
-2. **DateTime information is preserved** throughout the data processing pipeline
-3. **Gap analysis is performed** even for large datasets using sampling
-4. **Pressure vector negative values are preserved** as they are legitimate trading indicators
+1. **Timestamp columns are properly detected** regardless of case sensitivity
+2. **Large files can be loaded** without premature stopping
+3. **DateTime information is preserved** throughout the data processing pipeline
+4. **Gap analysis is performed** even for large datasets using sampling
+5. **Pressure vector negative values are preserved** as they are legitimate trading indicators
 
 The system now provides a much better user experience for working with large financial datasets while maintaining data quality and accuracy.
