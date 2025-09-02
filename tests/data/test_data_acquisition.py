@@ -10,7 +10,7 @@ from pathlib import Path
 from datetime import datetime
 
 # Import the function and helpers to test/mock
-from src.data.data_acquisition import acquire_data, _generate_instrument_parquet_filename, _get_interval_delta
+from src.data.data_acquisition import acquire_data
 # Import fetchers to mock
 from src.data.fetchers import fetch_binance_data, fetch_yfinance_data, fetch_csv_data, get_demo_data
 

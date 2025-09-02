@@ -144,11 +144,27 @@ class InteractiveSystem:
     
     def fix_data_issues(self):
         """Fix common data quality issues in the current dataset."""
-        return self.analysis_runner.fix_data_issues(self)
+        # Get data quality summaries first
+        if hasattr(self, 'current_data') and self.current_data is not None:
+            from .eda_analyzer import EDAAnalyzer
+            eda_analyzer = EDAAnalyzer()
+            nan_summary, dupe_summary, gap_summary = eda_analyzer.run_comprehensive_data_quality_check(self)
+            return self.analysis_runner.fix_data_issues(self, nan_summary, dupe_summary, gap_summary)
+        else:
+            print("❌ No data loaded. Please load data first.")
+            return False
     
     def fix_all_data_issues(self):
         """Fix all data issues."""
-        return self.analysis_runner.fix_data_issues(self)
+        # Get data quality summaries first
+        if hasattr(self, 'current_data') and self.current_data is not None:
+            from .eda_analyzer import EDAAnalyzer
+            eda_analyzer = EDAAnalyzer()
+            nan_summary, dupe_summary, gap_summary = eda_analyzer.run_comprehensive_data_quality_check(self)
+            return self.analysis_runner.fix_data_issues(self, nan_summary, dupe_summary, gap_summary)
+        else:
+            print("❌ No data loaded. Please load data first.")
+            return False
     
     def generate_html_report(self):
         """Generate comprehensive HTML report for current data and analysis."""

@@ -18,7 +18,7 @@ try:
 except ImportError:
     # Fallback for different import paths
     import sys
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), \'..\', \'..\', \'..\'))
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..'))
     from src.plotting.term_chunked_plot import plot_chunked_terminal, plot_macd_chunks, _add_macd_overlays_to_chunk, _add_macd_chart_to_subplot
 
 
