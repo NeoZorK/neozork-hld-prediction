@@ -308,9 +308,10 @@ class DataManager:
                 if self.enable_memory_optimization:
                     gc.collect()
                 
-                # Progress indicator - update single line
+                # Progress indicator - update single line with percentage
                 if (i + 1) % 5 == 0:
-                    print(f"\r   📈 Loaded {i + 1} chunks ({total_rows:,} rows)", end="", flush=True)
+                    progress = min(100, (total_rows / (total_rows + 1000)) * 100)  # Estimate progress
+                    print(f"\r   📈 Progress: {progress:.1f}% - Loaded {i + 1} chunks ({total_rows:,} rows)", end="", flush=True)
                 
                 # Check memory
                 if not self._check_memory_available():
@@ -385,11 +386,11 @@ class DataManager:
                     if self.enable_memory_optimization:
                         gc.collect()
                     
-                    # Progress indicator - update single line
+                    # Progress indicator - update single line with better percentage
                     if (i + 1) % 10 == 0:
                         rows_loaded = (i + 1) * self.chunk_size
                         progress = min(100, (rows_loaded / total_rows) * 100)
-                        print(f"\r   📈 Progress: {progress:.1f}% ({rows_loaded:,}/{total_rows:,} rows)", end="", flush=True)
+                        print(f"\r   📈 Progress: {progress:.1f}% ({rows_loaded:,}/{total_rows:,} rows) [{i+1} chunks]", end="", flush=True)
                     
                     # Check memory
                     if not self._check_memory_available():
@@ -1530,10 +1531,12 @@ class DataManager:
                                 
                                 print(f"   🔧 Using algorithm: {algorithm}")
                                 
-                                # Fix gaps
+                                # Fix gaps with progress
+                                print(f"   🔧 Gap fixing progress: Starting...", end="", flush=True)
                                 fixed_df, results = gap_fixer._fix_gaps_in_dataframe(
                                     df, timestamp_col, gap_info, algorithm, show_progress=True
                                 )
+                                print(f"\r   ✅ Gap fixing completed")
                                 
                                 if fixed_df is not None:
                                     print(f"   ✅ Gaps fixed successfully!")
@@ -1570,11 +1573,7 @@ class DataManager:
         else:
             print("⏭️  Skipping time series gap fixing...")
         
-        # Combine base timeframe data
-        print(f"\n🔄 Combining base timeframe data...")
-        system.current_data = pd.concat(base_data, ignore_index=True)
-        
-        # Store timeframe information
+        # Create timeframe_info before using it
         system.timeframe_info = {
             'base_timeframe': base_timeframe,
             'available_timeframes': timeframe_data,
@@ -1582,6 +1581,118 @@ class DataManager:
             'mask_used': mask if mask else None,
             'folder_path': str(folder_path)
         }
+        
+        # Multi-timeframe data loading with gap fixing (without feature generation)
+        if system.timeframe_info['cross_timeframes']:
+            print(f"\n🔄 MULTI-TIMEFRAME DATA LOADING")
+            print("-" * 50)
+            print("💡 Loading other timeframes with gap fixing for comprehensive analysis...")
+            print("   Note: No features will be generated - only data loading and gap fixing.")
+            
+            # Ask user if they want to load other timeframes
+            try:
+                load_other_timeframes = input("\nLoad other timeframes with gap fixing? (y/n, default: y): ").strip().lower()
+            except EOFError:
+                print("\n👋 Goodbye!")
+                return False
+            
+            if load_other_timeframes in ['', 'y', 'yes']:
+                print(f"\n🔧 Loading and fixing gaps in other timeframes...")
+                
+                # Initialize GapFixer for other timeframes
+                try:
+                    from ..data import GapFixer
+                    other_gap_fixer = GapFixer(memory_limit_mb=self.max_memory_mb)
+                    print("✅ GapFixer initialized for other timeframes")
+                except Exception as e:
+                    print(f"❌ Error initializing GapFixer: {e}")
+                    print("⚠️  Continuing without gap fixing for other timeframes...")
+                    other_gap_fixer = None
+                
+                # Store other timeframes data
+                other_timeframes_data = {}
+                total_timeframes = len(system.timeframe_info['cross_timeframes'])
+                
+                for tf_idx, (tf, files) in enumerate(system.timeframe_info['cross_timeframes'].items(), 1):
+                    print(f"\n📁 Processing {tf} timeframe ({len(files)} files) [{tf_idx}/{total_timeframes}]")
+                    tf_data = []
+                    
+                    for file_idx, file in enumerate(files, 1):
+                        try:
+                            print(f"   📊 Loading {file.name} [{file_idx}/{len(files)}]...")
+                            print(f"      🔄 Progress: Starting...", end="", flush=True)
+                            df = self.load_data_from_file(str(file))
+                            print(f"\r      ✅ Loaded: {file.name} ({df.shape[0]:,} rows)")
+                            df['source_file'] = file.name
+                            df['timeframe'] = tf
+                            
+                            # Gap fixing for this file
+                            if other_gap_fixer:
+                                try:
+                                    timestamp_col = other_gap_fixer._find_timestamp_column(df)
+                                    if timestamp_col:
+                                        gap_info = other_gap_fixer._detect_gaps(df, timestamp_col)
+                                        if gap_info['has_gaps']:
+                                            print(f"      ⚠️  Found {gap_info['gap_count']:,} gaps, fixing with auto algorithm...")
+                                            print(f"         🔧 Gap fixing progress: Starting...", end="", flush=True)
+                                            fixed_df, results = other_gap_fixer._fix_gaps_in_dataframe(
+                                                df, timestamp_col, gap_info, 'auto', show_progress=False
+                                            )
+                                            print(f"\r         ✅ Gap fixing completed")
+                                            if fixed_df is not None:
+                                                df = fixed_df
+                                                print(f"      ✅ Gaps fixed successfully")
+                                                del fixed_df; gc.collect()
+                                            else:
+                                                print(f"      ❌ Gap fixing failed, keeping original data")
+                                        else:
+                                            print(f"      ✅ No gaps found")
+                                    else:
+                                        print(f"      ⚠️  No timestamp column found, skipping gap fixing")
+                                except Exception as e:
+                                    print(f"      ❌ Error during gap fixing: {e}")
+                                    print(f"      💡 Continuing with original data...")
+                            
+                            tf_data.append(df)
+                            print(f"      ✅ Loaded: {file.name} ({df.shape[0]:,} rows)")
+                            
+                        except Exception as e:
+                            print(f"      ❌ Error loading {file.name}: {e}")
+                            continue
+                        
+                        # Memory management
+                        if self.enable_memory_optimization:
+                            gc.collect()
+                    
+                    if tf_data:
+                        # Combine files for this timeframe
+                        combined_tf_data = pd.concat(tf_data, ignore_index=True)
+                        other_timeframes_data[tf] = combined_tf_data
+                        print(f"   ✅ {tf} timeframe: {combined_tf_data.shape[0]:,} rows, {combined_tf_data.shape[1]} columns")
+                        
+                        # Memory cleanup
+                        for df in tf_data:
+                            del df
+                        del tf_data
+                        if self.enable_memory_optimization:
+                            gc.collect()
+                    else:
+                        print(f"   ❌ No data loaded for {tf} timeframe")
+                
+                # Store other timeframes data in system
+                system.other_timeframes_data = other_timeframes_data
+                print(f"\n✅ Multi-timeframe data loading completed!")
+                print(f"   Loaded {len(other_timeframes_data)} additional timeframes")
+                for tf, df in other_timeframes_data.items():
+                    print(f"      • {tf}: {df.shape[0]:,} rows, {df.shape[1]} columns")
+                print(f"   💡 Data saved in system.other_timeframes_data for analysis")
+                print(f"   📍 Access via: system.other_timeframes_data['{list(other_timeframes_data.keys())[0] if other_timeframes_data else 'TIMEFRAME'}']")
+            else:
+                print("⏭️  Skipping other timeframes loading...")
+        
+        # Combine base timeframe data
+        print(f"\n🔄 Combining base timeframe data...")
+        system.current_data = pd.concat(base_data, ignore_index=True)
         
         print(f"✅ Base dataset created: {system.current_data.shape[0]:,} rows, {system.current_data.shape[1]} columns")
         print(f"   Folder: {folder_path}")
@@ -1604,6 +1715,23 @@ class DataManager:
         print(f"   Folder: {folder_path}")
         if mask:
             print(f"   Filter applied: '{mask}'")
+        
+        # Data location information
+        print(f"\n📊 DATA LOCATION SUMMARY:")
+        print("-" * 30)
+        print(f"   🎯 Base dataset: system.current_data")
+        print(f"      • Shape: {system.current_data.shape[0]:,} rows × {system.current_data.shape[1]} columns")
+        print(f"      • Timeframe: {base_timeframe}")
+        print(f"      • Source: {folder_path}")
+        
+        if hasattr(system, 'other_timeframes_data') and system.other_timeframes_data:
+            print(f"   🔄 Other timeframes: system.other_timeframes_data")
+            for tf, df in system.other_timeframes_data.items():
+                print(f"      • {tf}: {df.shape[0]:,} rows × {df.shape[1]} columns")
+        
+        print(f"   📁 Timeframe info: system.timeframe_info")
+        print(f"      • Available: {list(system.timeframe_info['available_timeframes'].keys())}")
+        print(f"      • Cross-timeframes: {list(system.timeframe_info['cross_timeframes'].keys())}")
         
         return True
     
