@@ -1393,6 +1393,9 @@ class DataManager:
                 # Detect timeframe from filename
                 timeframe = self._detect_timeframe_from_filename(file.name)
                 
+                # Debug: show what timeframe was detected for each file
+                print(f"   🔍 {file.name} -> {timeframe}")
+                
                 if timeframe not in timeframe_data:
                     timeframe_data[timeframe] = []
                 
@@ -1523,22 +1526,44 @@ class DataManager:
         """
         filename_upper = filename.upper()
         
-        # Common timeframe patterns
+        # Common timeframe patterns - order matters! Longer patterns first to avoid conflicts
         patterns = {
-            'M1': ['_M1_', '_M1.', 'PERIOD_M1', '_1M_', '_1M.'],
-            'M5': ['_M5_', '_M5.', 'PERIOD_M5', '_5M_', '_5M.'],
             'M15': ['_M15_', '_M15.', 'PERIOD_M15', '_15M_', '_15M.'],
             'M30': ['_M30_', '_M30.', 'PERIOD_M30', '_30M_', '_30M.'],
-            'H1': ['_H1_', '_H1.', 'PERIOD_H1', '_1H_', '_1H.'],
+            'M5': ['_M5_', '_M5.', 'PERIOD_M5', '_5M_', '_5M.'],
+            'M1': ['_M1_', '_M1.', 'PERIOD_M1', '_1M_', '_1M.'],
             'H4': ['_H4_', '_H4.', 'PERIOD_H4', '_4H_', '_4H.'],
+            'H1': ['_H1_', '_H1.', 'PERIOD_H1', '_1H_', '_1H.'],
             'D1': ['_D1_', '_D1.', 'PERIOD_D1', '_1D_', '_1D.', '_DAILY_'],
             'W1': ['_W1_', '_W1.', 'PERIOD_W1', '_1W_', '_1W.', '_WEEKLY_'],
             'MN1': ['_MN1_', '_MN1.', 'PERIOD_MN1', '_1MN_', '_1MN.', '_MONTHLY_']
         }
         
+        # First, try to find exact matches with longer patterns first
         for timeframe, tf_patterns in patterns.items():
             for pattern in tf_patterns:
                 if pattern in filename_upper:
+                    # Additional check: make sure we're not matching a shorter pattern within a longer one
+                    # For example, 'M1' should not match within 'M15'
+                    if timeframe == 'M1':
+                        # Check if M15, M30, M5 patterns exist in the filename
+                        if any(p in filename_upper for p in ['_M15_', '_M15.', 'PERIOD_M15', '_15M_', '_15M.']):
+                            continue  # Skip M1 if M15 is found
+                        if any(p in filename_upper for p in ['_M30_', '_M30.', 'PERIOD_M30', '_30M_', '_30M.']):
+                            continue  # Skip M1 if M30 is found
+                        if any(p in filename_upper for p in ['_M5_', '_M5.', 'PERIOD_M5', '_5M_', '_5M.']):
+                            continue  # Skip M1 if M5 is found
+                    elif timeframe == 'M5':
+                        # Check if M15, M30 patterns exist in the filename
+                        if any(p in filename_upper for p in ['_M15_', '_M15.', 'PERIOD_M15', '_15M_', '_15M.']):
+                            continue  # Skip M5 if M15 is found
+                        if any(p in filename_upper for p in ['_M30_', '_M30.', 'PERIOD_M30', '_30M_', '_30M.']):
+                            continue  # Skip M5 if M30 is found
+                    elif timeframe == 'H1':
+                        # Check if H4 pattern exists in the filename
+                        if any(p in filename_upper for p in ['_H4_', '_H4.', 'PERIOD_H4', '_4H_', '_4H.']):
+                            continue  # Skip H1 if H4 is found
+                    
                     return timeframe
         
         # Additional checks for common naming conventions
