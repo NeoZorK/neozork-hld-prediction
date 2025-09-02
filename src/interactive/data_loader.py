@@ -405,8 +405,7 @@ class DataLoader:
                             # Calculate speed (rows per second)
                             speed = rows_loaded / elapsed_time
                             
-                            print(f"\r   📈 Progress: {progress:.1f}% ({rows_loaded:,}/{total_rows:,} rows) "
-                                  f"[{i+1} chunks] 🚀 {speed:.0f} rows/s ⏱️ ETA: {eta_str}", end="", flush=True)
+                            print(f"\r📈 {progress:.1f}% ({rows_loaded:,}/{total_rows:,}) [{i+1} chunks] 🚀 {speed:.0f}/s ⏱️ {eta_str}", end="", flush=True)
                     
                     # Check memory
                     if not self.memory_manager.check_memory_available():
@@ -417,8 +416,58 @@ class DataLoader:
                 if chunks:
                     total_time = time.time() - start_time
                     final_speed = total_rows / total_time if total_time > 0 else 0
-                    print(f"\r   📈 Progress: 100.0% ({total_rows:,} rows loaded) ✅ [{len(chunks)} chunks] "
-                          f"⏱️ Total time: {total_time:.1f}s 🚀 Avg speed: {final_speed:.0f} rows/s")
+                    print(f"\r📈 100% ({total_rows:,} rows) ✅ [{len(chunks)} chunks] ⏱️ {total_time:.1f}s 🚀 {final_speed:.0f}/s")
+                    result = pd.concat(chunks, ignore_index=True)
+                    del chunks
+                    gc.collect()
+                    return self.handle_datetime_index(result)
+                else:
+                    raise ValueError("No chunks were loaded")
+            else:
+                # No DatetimeIndex, safe to load in chunks
+                print(f"   No timestamp columns detected, loading in chunks...")
+                chunks = []
+                start_time = time.time()
+                
+                for i, chunk in enumerate(parquet_file.iter_batches(batch_size=self.chunk_size)):
+                    chunk_df = chunk.to_pandas()
+                    chunks.append(chunk_df)
+                    
+                    # Memory management
+                    self.memory_manager.optimize_memory()
+                    
+                    # Progress indicator with percentage, ETA, and speed
+                    if (i + 1) % 10 == 0 or i == 0:
+                        elapsed_time = time.time() - start_time
+                        if elapsed_time > 0:
+                            rows_loaded = (i + 1) * self.chunk_size
+                            progress = min(100, (rows_loaded / total_rows) * 100)
+                            
+                            # Calculate ETA
+                            remaining_chunks = (total_rows / self.chunk_size) - (i + 1)
+                            eta_seconds = (remaining_chunks * elapsed_time) / (i + 1)
+                            
+                            # Format ETA
+                            if eta_seconds < 60:
+                                eta_str = f"{eta_seconds:.0f}s"
+                            else:
+                                eta_str = f"{eta_seconds/60:.0f}m"
+                            
+                            # Calculate speed (rows per second)
+                            speed = rows_loaded / elapsed_time
+                            
+                            print(f"\r📈 {progress:.1f}% ({rows_loaded:,}/{total_rows:,}) [{i+1} chunks] 🚀 {speed:.0f}/s ⏱️ {eta_str}", end="", flush=True)
+                    
+                    # Check memory
+                    if not self.memory_manager.check_memory_available():
+                        print(f"⚠️  Low memory detected, stopping at chunk {i + 1}")
+                        break
+                
+                # Combine chunks
+                if chunks:
+                    total_time = time.time() - start_time
+                    final_speed = total_rows / total_time if total_time > 0 else 0
+                    print(f"\r📈 100% ({total_rows:,} rows) ✅ [{len(chunks)} chunks] ⏱️ {total_time:.1f}s 🚀 {final_speed:.0f}/s")
                     result = pd.concat(chunks, ignore_index=True)
                     del chunks
                     gc.collect()
@@ -458,13 +507,21 @@ class DataLoader:
             datetime_columns = self.detect_datetime_columns(file_path, 0)
             
             if self.memory_manager.should_use_chunked_loading(file_path, self.chunk_size):
-                return self.load_csv_in_chunks(file_path, datetime_columns, self.chunk_size)
+                result = self.load_csv_in_chunks(file_path, datetime_columns, self.chunk_size)
             else:
-                return self.load_csv_direct(file_path, datetime_columns)
+                result = self.load_csv_direct(file_path, datetime_columns)
         elif file_path.suffix.lower() == '.parquet':
-            return self.load_parquet_with_optimization(file_path)
+            result = self.load_parquet_with_optimization(file_path)
         else:
             raise ValueError(f"Unsupported file format: {file_path.suffix}")
+        
+        # Final validation
+        if result is None:
+            raise ValueError("Data loading failed - result is None")
+        if result.empty:
+            raise ValueError("Data loading failed - result is empty")
+        
+        return result
     
     def load_data_from_folder(self, folder_path: str) -> List[str]:
         """
