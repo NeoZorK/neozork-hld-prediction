@@ -577,8 +577,27 @@ class DataManager:
                 return
             
             # Look for files matching the pattern
-            pattern = f"cleaned_{folder_path.name}_{mask}_*_*.parquet" if mask else f"cleaned_{folder_path.name}_*_*.parquet"
-            cross_timeframe_files = list(cross_timeframes_dir.glob(pattern))
+            # Note: We need to look for files that were saved from the original folder
+            # The pattern should be: cleaned_{original_folder}_{mask}_{timeframe}_{timestamp}.parquet
+            
+            # Try different patterns to find cross-timeframes files
+            patterns_to_try = []
+            
+            if mask:
+                # Try with mask
+                patterns_to_try.append(f"cleaned_*_{mask}_*_*.parquet")
+                patterns_to_try.append(f"cleaned_*_{mask}_*.parquet")
+            else:
+                # Try without mask
+                patterns_to_try.append(f"cleaned_*_*_*.parquet")
+                patterns_to_try.append(f"cleaned_*_*.parquet")
+            
+            cross_timeframe_files = []
+            for pattern in patterns_to_try:
+                files = list(cross_timeframes_dir.glob(pattern))
+                if files:
+                    cross_timeframe_files = files
+                    break
             
             if not cross_timeframe_files:
                 print(f"   📊 No cross-timeframes files found")
@@ -596,14 +615,18 @@ class DataManager:
                         continue  # Skip combined files
                     
                     # Parse timeframe from filename
+                    # Pattern: cleaned_csv_converted_eurusd_{timeframe}_{timestamp}.parquet
                     parts = filename.replace('.parquet', '').split('_')
-                    if len(parts) >= 4:
-                        tf = parts[-2]  # Second to last part should be timeframe
+                    if len(parts) >= 6:
+                        # Find the timeframe part (third to last part)
+                        tf = parts[-3]  # Third to last part should be timeframe
                         
-                        # Load the data
-                        df = pd.read_parquet(file_path)
-                        loaded_timeframes[tf] = df
-                        print(f"      ✅ Loaded {tf}: {len(df):,} rows")
+                        # Validate that this looks like a timeframe
+                        if tf in ['M1', 'M5', 'M15', 'M30', 'H1', 'H4', 'D1', 'W1', 'MN1']:
+                            # Load the data
+                            df = pd.read_parquet(file_path)
+                            loaded_timeframes[tf] = df
+                            print(f"      ✅ Loaded {tf}: {len(df):,} rows")
                         
                 except Exception as e:
                     print(f"      ❌ Error loading {file_path.name}: {e}")
