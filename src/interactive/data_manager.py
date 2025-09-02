@@ -302,6 +302,9 @@ class DataManager:
         elif is_cleaned_data:
             print(f"   📊 Skipping cross-timeframes for cleaned_data (not needed)")
             system.other_timeframes_data = {}
+            
+            # Try to load cross-timeframes from cleaned_data if available
+            self._load_cross_timeframes_from_cleaned_data(system, folder_path, mask, base_timeframe)
         
         # Combine base timeframe data
         print(f"\n🔄 Combining base timeframe data...")
@@ -358,7 +361,12 @@ class DataManager:
                 save_cleaned = 'y'
             
             if save_cleaned in ['', 'y', 'yes']:
+                # Save base timeframe data
                 self._save_cleaned_data(system, folder_path, mask, base_timeframe)
+                
+                # Save cross-timeframes data if available
+                if hasattr(system, 'other_timeframes_data') and system.other_timeframes_data:
+                    self._save_cross_timeframes_data(system, folder_path, mask, base_timeframe)
         else:
             print(f"\n💾 Data from cleaned_data folder - no need to save again")
             print("💡 Data is already optimized and ready for ML use")
@@ -443,6 +451,173 @@ class DataManager:
         except Exception as e:
             print(f"❌ Error saving cleaned data: {e}")
             print("💡 Data will not be saved, but you can continue working with it in memory")
+    
+    def _save_cross_timeframes_data(self, system, folder_path, mask, base_timeframe):
+        """
+        Save cross-timeframes data to the cleaned_data folder for future ML use.
+        
+        Args:
+            system: InteractiveSystem instance
+            folder_path: Path to the original data folder
+            mask: Filter mask used
+            base_timeframe: Base timeframe used
+        """
+        try:
+            print(f"\n💾 SAVING CROSS-TIMEFRAMES DATA FOR ML USE")
+            print("-" * 50)
+            
+            # Create cross-timeframes directory
+            cross_timeframes_dir = self.cleaned_data_dir / "cross_timeframes"
+            cross_timeframes_dir.mkdir(exist_ok=True)
+            
+            # Save each cross-timeframe separately
+            saved_files = []
+            total_rows = 0
+            
+            for tf, df in system.other_timeframes_data.items():
+                if df is not None and not df.empty:
+                    # Create filename for this timeframe
+                    folder_name = folder_path.name
+                    mask_suffix = f"_{mask}" if mask else ""
+                    timestamp = time.strftime("%Y%m%d_%H%M%S")
+                    filename = f"cleaned_{folder_name}{mask_suffix}_{tf}_{timestamp}.parquet"
+                    filepath = cross_timeframes_dir / filename
+                    
+                    # Save this timeframe data
+                    print(f"   📁 Saving {tf} timeframe: {filename}")
+                    
+                    # Check if data has Timestamp column and preserve it
+                    if 'Timestamp' in df.columns:
+                        df.to_parquet(filepath, index=False, compression='snappy')
+                    else:
+                        df.to_parquet(filepath, index=False, compression='snappy')
+                    
+                    # Get file size
+                    file_size_mb = filepath.stat().st_size / (1024 * 1024)
+                    total_rows += len(df)
+                    
+                    print(f"      ✅ {tf}: {len(df):,} rows, {file_size_mb:.1f} MB")
+                    
+                    # Create metadata file for this timeframe
+                    metadata_file = filepath.with_suffix('.json')
+                    metadata = {
+                        'original_folder': str(folder_path),
+                        'mask_applied': mask,
+                        'base_timeframe': base_timeframe,
+                        'timeframe': tf,
+                        'creation_timestamp': timestamp,
+                        'data_shape': list(df.shape),
+                        'columns': list(df.columns),
+                        'data_types': df.dtypes.to_dict(),
+                        'memory_usage_mb': df.memory_usage(deep=True).sum() / (1024 * 1024),
+                        'description': f'Cross-timeframe {tf} data ready for ML model training and prediction'
+                    }
+                    
+                    import json
+                    with open(metadata_file, 'w') as f:
+                        json.dump(metadata, f, indent=2, default=str)
+                    
+                    saved_files.append({
+                        'timeframe': tf,
+                        'filename': filename,
+                        'rows': len(df),
+                        'size_mb': file_size_mb
+                    })
+            
+            if saved_files:
+                print(f"\n✅ Cross-timeframes data saved successfully!")
+                print(f"   📊 Total timeframes: {len(saved_files)}")
+                print(f"   📈 Total rows: {total_rows:,}")
+                print(f"   📁 Location: {cross_timeframes_dir}")
+                
+                # Show saved files summary
+                print(f"\n📋 SAVED TIMEFRAMES:")
+                for file_info in saved_files:
+                    print(f"   • {file_info['timeframe']}: {file_info['filename']} ({file_info['rows']:,} rows, {file_info['size_mb']:.1f} MB)")
+                
+                # Create overall cross-timeframes metadata
+                overall_metadata_file = cross_timeframes_dir / f"cross_timeframes_summary_{timestamp}.json"
+                overall_metadata = {
+                    'original_folder': str(folder_path),
+                    'mask_applied': mask,
+                    'base_timeframe': base_timeframe,
+                    'creation_timestamp': timestamp,
+                    'total_timeframes': len(saved_files),
+                    'total_rows': total_rows,
+                    'saved_files': saved_files,
+                    'description': 'Cross-timeframes data summary for ML model training and prediction'
+                }
+                
+                with open(overall_metadata_file, 'w') as f:
+                    json.dump(overall_metadata, f, indent=2, default=str)
+                
+                print(f"📋 Overall metadata saved: {overall_metadata_file.name}")
+            else:
+                print(f"⚠️  No cross-timeframes data to save")
+                
+        except Exception as e:
+            print(f"❌ Error saving cross-timeframes data: {e}")
+            print("💡 Data will not be saved, but you can continue working with it in memory")
+    
+    def _load_cross_timeframes_from_cleaned_data(self, system, folder_path, mask, base_timeframe):
+        """
+        Load cross-timeframes data from cleaned_data folder if available.
+        
+        Args:
+            system: InteractiveSystem instance
+            folder_path: Path to the cleaned_data folder
+            mask: Filter mask used
+            base_timeframe: Base timeframe used
+        """
+        try:
+            # Look for cross-timeframes directory
+            cross_timeframes_dir = self.cleaned_data_dir / "cross_timeframes"
+            if not cross_timeframes_dir.exists():
+                print(f"   📊 No cross-timeframes directory found")
+                return
+            
+            # Look for files matching the pattern
+            pattern = f"cleaned_{folder_path.name}_{mask}_*_*.parquet" if mask else f"cleaned_{folder_path.name}_*_*.parquet"
+            cross_timeframe_files = list(cross_timeframes_dir.glob(pattern))
+            
+            if not cross_timeframe_files:
+                print(f"   📊 No cross-timeframes files found")
+                return
+            
+            print(f"   📊 Found {len(cross_timeframe_files)} cross-timeframes files, loading...")
+            
+            # Load cross-timeframes data
+            loaded_timeframes = {}
+            for file_path in cross_timeframe_files:
+                try:
+                    # Extract timeframe from filename
+                    filename = file_path.name
+                    if '_cross_timeframes_' in filename:
+                        continue  # Skip combined files
+                    
+                    # Parse timeframe from filename
+                    parts = filename.replace('.parquet', '').split('_')
+                    if len(parts) >= 4:
+                        tf = parts[-2]  # Second to last part should be timeframe
+                        
+                        # Load the data
+                        df = pd.read_parquet(file_path)
+                        loaded_timeframes[tf] = df
+                        print(f"      ✅ Loaded {tf}: {len(df):,} rows")
+                        
+                except Exception as e:
+                    print(f"      ❌ Error loading {file_path.name}: {e}")
+                    continue
+            
+            if loaded_timeframes:
+                system.other_timeframes_data = loaded_timeframes
+                print(f"   📊 Successfully loaded {len(loaded_timeframes)} cross-timeframes")
+            else:
+                print(f"   📊 No cross-timeframes could be loaded")
+                
+        except Exception as e:
+            print(f"   ❌ Error loading cross-timeframes: {e}")
+            print("   💡 Continuing without cross-timeframes data")
     
     def analyze_time_series_gaps(self, data_files: List[Path], Fore, Style) -> List[Dict]:
         """
