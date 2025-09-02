@@ -308,9 +308,9 @@ class DataManager:
                 if self.enable_memory_optimization:
                     gc.collect()
                 
-                # Progress indicator
+                # Progress indicator - update single line
                 if (i + 1) % 5 == 0:
-                    print(f"   📈 Loaded {i + 1} chunks ({total_rows:,} rows)")
+                    print(f"\r   📈 Loaded {i + 1} chunks ({total_rows:,} rows)", end="", flush=True)
                 
                 # Check memory
                 if not self._check_memory_available():
@@ -319,6 +319,9 @@ class DataManager:
             
             # Combine chunks
             if chunks:
+                # Print final progress line
+                print(f"\r   📈 Loaded {len(chunks)} chunks ({total_rows:,} rows) ✅")
+                
                 result = pd.concat(chunks, ignore_index=True)
                 del chunks
                 gc.collect()
@@ -382,11 +385,11 @@ class DataManager:
                     if self.enable_memory_optimization:
                         gc.collect()
                     
-                    # Progress indicator
+                    # Progress indicator - update single line
                     if (i + 1) % 10 == 0:
                         rows_loaded = (i + 1) * self.chunk_size
                         progress = min(100, (rows_loaded / total_rows) * 100)
-                        print(f"   📈 Progress: {progress:.1f}% ({rows_loaded:,}/{total_rows:,} rows)")
+                        print(f"\r   📈 Progress: {progress:.1f}% ({rows_loaded:,}/{total_rows:,} rows)", end="", flush=True)
                     
                     # Check memory
                     if not self._check_memory_available():
@@ -395,6 +398,9 @@ class DataManager:
                 
                 # Combine chunks
                 if chunks:
+                    # Print final progress line
+                    print(f"\r   📈 Progress: 100.0% ({total_rows:,} rows loaded) ✅")
+                    
                     result = pd.concat(chunks, ignore_index=True)
                     del chunks
                     gc.collect()
