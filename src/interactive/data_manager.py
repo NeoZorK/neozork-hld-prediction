@@ -170,11 +170,11 @@ class DataManager:
                     
                     try:
                         # Find timestamp column (only once)
-                        timestamp_col = gap_fixer._find_timestamp_column(df)
+                        timestamp_col = gap_fixer.utils.find_timestamp_column(df)
                         
                         if timestamp_col:
                             # Detect gaps (only once)
-                            gap_info = gap_fixer._detect_gaps(df, timestamp_col)
+                            gap_info = gap_fixer.utils.detect_gaps(df, timestamp_col)
                             
                             if gap_info['has_gaps']:
                                 print(f"   ⚠️  Found {gap_info['gap_count']:,} gaps, fixing...")
@@ -201,9 +201,13 @@ class DataManager:
                                 
                                 # Create progress bar for gap fixing
                                 with tqdm(total=gap_info['gap_count'], desc="Fixing gaps", unit="gap") as pbar:
-                                    fixed_df, results = gap_fixer._fix_gaps_in_dataframe(
-                                        df, timestamp_col, gap_info, algorithm, show_progress=True, progress_bar=pbar
-                                    )
+                                    # Use the apply_algorithm method from GapFixingStrategy
+                                    fixed_df = gap_fixer.algorithms.apply_algorithm(df, algorithm, gap_info)
+                                    results = {
+                                        'algorithm_used': algorithm,
+                                        'gaps_fixed': gap_info['gap_count'],
+                                        'memory_used_mb': 0.0  # Placeholder
+                                    }
                                 
                                 end_time = time.time()
                                 processing_time = end_time - start_time

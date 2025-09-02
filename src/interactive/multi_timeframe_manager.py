@@ -296,9 +296,9 @@ class MultiTimeframeManager:
                     # Gap fixing for this file
                     if other_gap_fixer:
                         try:
-                            timestamp_col = other_gap_fixer._find_timestamp_column(df)
+                            timestamp_col = other_gap_fixer.utils.find_timestamp_column(df)
                             if timestamp_col:
-                                gap_info = other_gap_fixer._detect_gaps(df, timestamp_col)
+                                gap_info = other_gap_fixer.utils.detect_gaps(df, timestamp_col)
                                 if gap_info['has_gaps']:
                                     print(f"      ⚠️  Found {gap_info['gap_count']:,} gaps, fixing with auto algorithm...")
                                     print(f"         🔧 Gap fixing progress: Starting...", end="", flush=True)
