@@ -2,6 +2,8 @@
 
 This section provides comprehensive documentation for the NeoZork ML trading platform, including feature engineering, model development, and automated trading strategies.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## 🚀 Overview
 
 The ML module provides comprehensive machine learning capabilities for the NeoZork HLD Prediction trading platform. This module is designed to automatically create profitable and robust trading strategies using your proprietary PHLD and Wave indicators.

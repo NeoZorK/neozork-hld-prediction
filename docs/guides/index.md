@@ -2,6 +2,8 @@
 
 This section provides comprehensive guides and tutorials for using the NeoZork HLD Prediction project, including setup, configuration, analysis, and development.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## 🚀 Quick Start Guides
 
 ### [Getting Started Guide](getting-started.md)
@@ -28,6 +30,8 @@ Comprehensive guide for UV package manager usage.
 
 ### [Docker Setup](docker-setup.md)
 Complete guide for containerized development and deployment.
+
+> **Note**: Docker support is limited to v0.5.2 and earlier versions.
 
 **Features:**
 - Docker installation and configuration
@@ -72,7 +76,7 @@ Comprehensive testing framework and guidelines.
 Specialized guide for UV package manager testing.
 
 **Highlights:**
-- **Docker Testing**: UV tests in containers
+- **Docker Testing**: UV tests in containers (limited to v0.5.2 and earlier versions)
 - **Local Testing**: UV tests in local environment
 - **Adaptive Testing**: Environment-aware tests
 - **Performance Testing**: UV vs pip comparison

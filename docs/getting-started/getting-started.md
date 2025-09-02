@@ -4,6 +4,8 @@
 
 NeoZork HLD Prediction enhances a proprietary trading indicator using Machine Learning techniques. The project focuses on:
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 - **Indicator Replication:** Python implementation of MQL5 HLD indicator
 - **ML Enhancement:** Improved predictions using OHLCV data and ML models
 - **Multiple Data Sources:** Demo data, CSV files, Yahoo Finance, Polygon.io, Binance, Exchange Rate API
@@ -14,12 +16,14 @@ NeoZork HLD Prediction enhances a proprietary trading indicator using Machine Le
 
 - **Python 3.12+**
 - **Git**
-- **Docker** (optional, for containerized usage)
-- **Native Container Application** (macOS 26+, for Apple Silicon optimization)
+- **Docker** (optional, for containerized usage - limited to v0.5.2 and earlier versions)
+- **Native Container Application** (macOS 26+, for Apple Silicon optimization - limited to v0.5.2 and earlier versions)
 
 ## Installation
 
 ### Native Apple Silicon Container (macOS 26+)
+
+> **Note**: Native Container support is limited to v0.5.2 and earlier versions.
 
 **Recommended for Apple Silicon Macs with 30-50% performance improvement:**
 

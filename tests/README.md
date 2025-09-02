@@ -2,9 +2,13 @@
 
 This directory contains all test files for the NeoZork HLD Prediction project.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container testing. Current version: v0.5.3
+
 ## 📁 Directory Structure
 
 ### 🐳 Docker Tests (`docker/`)
+> **Note**: Docker tests are available but Docker support is limited to v0.5.2 and earlier versions.
+
 - **test_docker_complete_workflow.py** - Complete workflow testing for Docker environment
 - **test_docker_fix_verification.py** - Verification of Docker fixes
 - **test_docker_interactive_input.py** - Interactive input testing in Docker

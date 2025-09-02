@@ -4,6 +4,8 @@
 
 The MCP (Model Context Protocol) server status checker has been enhanced to support both Docker and non-Docker environments with intelligent detection methods. The system automatically adapts to different environments and provides reliable status monitoring.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## Features
 
 ### Automatic Environment Detection
@@ -82,6 +84,8 @@ print(f"Environment: {results['environment']}")
 ```
 
 ## Docker Integration Details
+
+> **Note**: Docker integration support is limited to v0.5.2 and earlier versions.
 
 ### Ping-Based Detection
 

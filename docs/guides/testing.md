@@ -2,6 +2,8 @@
 
 Testing framework and validation tools.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## Test Directory Structure
 
 All test files are organized in logical subfolders under `tests/`. General and summary tests (not belonging to a specific module) are now located in `tests/summary/`.
@@ -20,7 +22,7 @@ All test files are organized in logical subfolders under `tests/`. General and s
     - calculation/
     - common/
     - data/
-    - docker/
+    - docker/           # Docker tests (limited to v0.5.2 and earlier versions)
     - eda/
     - export/
     - mcp/
@@ -49,6 +51,9 @@ python -m unittest discover tests
 # Run specific test categories
 pytest tests/cli/ -v
 pytest tests/data/ -v
+
+# Note: Docker tests are limited to v0.5.2 and earlier versions
+pytest tests/docker/ -v  # Limited support
 ```
 
 ### Test Runners

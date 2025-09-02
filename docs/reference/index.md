@@ -2,6 +2,8 @@
 
 This section provides comprehensive technical reference documentation for the NeoZork HLD Prediction project, including UV package management and adaptive testing.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## 🚀 Quick Reference
 
 ### [API Reference](api-reference.md)
@@ -16,7 +18,7 @@ Comprehensive reference for UV package manager usage.
 **Highlights:**
 - **UV Commands**: Complete command reference
 - **Environment Variables**: UV configuration options
-- **Docker Integration**: UV in containerized environments
+- **Docker Integration**: UV in containerized environments (limited to v0.5.2 and earlier versions)
 - **Performance Tuning**: UV optimization techniques
 - **Troubleshooting**: Common UV issues and solutions
 
@@ -90,7 +92,7 @@ Specialized reference for UV package manager testing.
 
 **Includes:**
 - **Test Structure**: UV test organization and patterns
-- **Environment Detection**: Docker vs local environment detection
+- **Environment Detection**: Docker vs local environment detection (limited to v0.5.2 and earlier versions)
 - **Adaptive Testing**: Environment-aware test execution
 - **Performance Testing**: UV vs pip performance comparison
 - **Integration Testing**: End-to-end UV validation

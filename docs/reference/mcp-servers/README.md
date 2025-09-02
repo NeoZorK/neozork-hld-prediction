@@ -4,6 +4,8 @@
 
 The Neozork project includes a unified, modern Model Context Protocol (MCP) server that provides intelligent code completion, financial data integration, and AI-powered suggestions for financial analysis projects.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## Unified MCP Server
 
 ### Features
@@ -13,7 +15,7 @@ The Neozork project includes a unified, modern Model Context Protocol (MCP) serv
 - **Technical Indicators**: Complete library of technical analysis indicators
 - **AI-Powered Suggestions**: Context-aware code suggestions and GitHub Copilot integration
 - **Project Analysis**: Intelligent project structure analysis and recommendations
-- **Docker Integration**: Full Docker support with containerized deployment
+- **Docker Integration**: Full Docker support with containerized deployment (limited to v0.5.2 and earlier versions)
 - **Real-time Monitoring**: Health monitoring and performance optimization
 
 ### Quick Start

@@ -2,6 +2,8 @@
 
 This directory contains various reports, status updates, and summaries related to the NeoZork HLD Prediction project development and maintenance.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## 📊 Project Status Reports
 
 ### System Status

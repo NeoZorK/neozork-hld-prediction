@@ -6,8 +6,10 @@ This section contains comprehensive documentation for all container-related func
 
 The project supports multiple container environments to ensure consistent development and deployment across different platforms:
 
-- **Native Container**: Apple Silicon optimized container for macOS 26+
-- **Docker Container**: Cross-platform container for all operating systems
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
+- **Native Container**: Apple Silicon optimized container for macOS 26+ (limited to v0.5.2 and earlier versions)
+- **Docker Container**: Cross-platform container for all operating systems (limited to v0.5.2 and earlier versions)
 
 ## Quick Navigation
 
@@ -40,20 +42,26 @@ The project supports multiple container environments to ensure consistent develo
 - **Performance**: 30-50% faster than Docker on Apple Silicon
 - **Features**: Full Docker parity with enhanced macOS integration
 - **Package Manager**: UV-only mode for consistent dependency management
+- **Version Support**: Limited to v0.5.2 and earlier versions
 
 ### Docker Container
 - **Platform**: Cross-platform (Linux, macOS, Windows)
 - **Performance**: Standard Docker performance
 - **Features**: Complete development environment
 - **Package Manager**: UV package manager support
+- **Version Support**: Limited to v0.5.2 and earlier versions
 
 ## Getting Started
 
 ### For macOS Users (Apple Silicon)
+> **Note**: Native Container support is limited to v0.5.2 and earlier versions.
+
 1. [Native Container Setup](native-container-setup.md) - Recommended for best performance
 2. [Native Container Features](native-container-features.md) - Understand available features
 
 ### For Other Platforms
+> **Note**: Docker Container support is limited to v0.5.2 and earlier versions.
+
 1. [Docker Setup](docker-setup.md) - Cross-platform solution
 2. [Docker Troubleshooting](docker-troubleshooting.md) - Common setup issues
 

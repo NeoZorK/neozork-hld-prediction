@@ -2,7 +2,11 @@
 
 Containerized development and deployment setup.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## Quick Start
+
+> **Note**: Docker support is limited to v0.5.2 and earlier versions.
 
 ```bash
 # Build and run

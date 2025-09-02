@@ -1,5 +1,7 @@
 # File Reorganization - Quick Reference
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## What Was Moved
 
 ### Main Files

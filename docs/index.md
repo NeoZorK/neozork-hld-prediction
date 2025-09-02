@@ -2,6 +2,8 @@
 
 Welcome to the comprehensive documentation for the NeoZork HLD Prediction project. This project provides advanced financial analysis tools with support for multiple data sources and technical indicators.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## 🚀 Quick Start
 
 ### Native Apple Silicon Container (macOS 26+)
@@ -61,6 +63,8 @@ python run_analysis.py demo --rule PHLD
 - **[Quick Start Native Container](getting-started/QUICK_START_NATIVE_CONTAINER.md)** - Apple Silicon container setup
 
 ### 🐳 Containers & Deployment
+> **Note**: Container support is limited to v0.5.2 and earlier versions.
+
 - **[Container Documentation](containers/index.md)** - Comprehensive container documentation
 - **[Native Container](containers/native-container/index.md)** - Apple Silicon optimized container
 - **[Docker Container](containers/docker-setup.md)** - Cross-platform container solution

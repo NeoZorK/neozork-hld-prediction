@@ -2,7 +2,11 @@
 
 This document provides comprehensive instructions for setting up and running the NeoZork HLD Prediction project using Docker.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## Prerequisites
+
+> **Note**: Docker support is limited to v0.5.2 and earlier versions.
 
 - Docker Desktop installed and running
 - At least 4GB of available RAM

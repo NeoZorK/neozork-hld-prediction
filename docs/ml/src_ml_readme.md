@@ -2,6 +2,8 @@
 
 This module provides comprehensive machine learning capabilities for the NeoZork HLD Prediction trading platform.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## 📚 Documentation
 
 **Full documentation is available in [docs/ml/](../docs/ml/index.md)**

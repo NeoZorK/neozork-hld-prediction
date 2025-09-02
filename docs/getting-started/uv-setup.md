@@ -2,13 +2,15 @@
 
 Fast Python package management with UV - 10-100x faster than pip.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## What is UV?
 
 [UV](https://github.com/astral-sh/uv) is a modern Python package manager that provides:
 - **10-100x faster** package installation than pip
 - **Parallel dependency resolution**
 - **Better dependency management**
-- **Smaller Docker container sizes**
+- **Smaller Docker container sizes** (limited to v0.5.2 and earlier versions)
 - **Improved package caching**
 
 ## Quick Setup

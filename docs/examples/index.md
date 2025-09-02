@@ -2,6 +2,8 @@
 
 This section provides comprehensive examples and usage patterns for the NeoZork HLD Prediction project, covering all major features and use cases.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## 🚀 Quick Start Examples
 
 ### [Quick Examples](quick-examples.md)
@@ -62,6 +64,8 @@ Advanced Wave indicator examples and patterns.
 
 ### [Docker Examples](docker-examples.md)
 Docker container usage examples.
+
+> **Note**: Docker examples are limited to v0.5.2 and earlier versions.
 
 **Covers:**
 - Container setup and management

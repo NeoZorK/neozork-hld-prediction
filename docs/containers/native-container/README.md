@@ -4,6 +4,8 @@
 
 The Native Container provides a complete Apple Silicon-optimized environment for the NeoZork HLD Prediction project with **full feature parity** to the Docker container. This container leverages macOS 26+ (Tahoe) native container technology for improved performance and better integration with Apple Silicon.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## 🚀 Full Docker Parity Features
 
 The Native Container now provides **complete feature parity** with the Docker container, including:

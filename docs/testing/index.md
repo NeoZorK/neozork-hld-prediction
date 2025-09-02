@@ -2,9 +2,13 @@
 
 This section contains comprehensive documentation for testing the NeoZork HLD Prediction project.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## Testing Categories
 
 ### Docker Testing
+> **Note**: Docker testing support is limited to v0.5.2 and earlier versions.
+
 - [UV-Only Mode Tests](docker/uv-only-mode-tests.md) - Comprehensive testing for UV package manager in Docker environments
 
 ### CLI Testing
@@ -28,6 +32,8 @@ tests/
 ## Running Tests
 
 ### Docker Environment
+> **Note**: Docker environment testing is limited to v0.5.2 and earlier versions.
+
 ```bash
 # Run all tests
 pytest tests/ -v
@@ -73,11 +79,11 @@ act -l
 
 ### Test Categories
 - **UV-Specific Tests**: Package manager validation
-- **Environment Tests**: Docker vs local detection
+- **Environment Tests**: Docker vs local detection (limited to v0.5.2 and earlier versions)
 - **Integration Tests**: End-to-end functionality
 - **Performance Tests**: UV vs pip comparison
 - **CLI Tests**: Command-line interface validation
-- **Native Container Tests**: Full functionality validation
+- **Native Container Tests**: Full functionality validation (limited to v0.5.2 and earlier versions)
 - **CI/CD Tests**: GitHub Actions workflow validation
 - **MCP Server Tests**: Model Context Protocol integration testing
 

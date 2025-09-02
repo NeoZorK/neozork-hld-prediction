@@ -2,6 +2,8 @@
 
 API and integration documentation for external services and data sources.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## External APIs
 
 - **[Exchange Rate API](exchange-rate-api-complete.md)** - Complete Exchange Rate API integration

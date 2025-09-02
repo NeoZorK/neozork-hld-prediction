@@ -1,6 +1,10 @@
 # 🍎 Quick Start: Native Apple Silicon Container
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## Prerequisites
+
+> **Note**: Native Container support is limited to v0.5.2 and earlier versions.
 
 - **macOS 26 Tahoe (Developer Beta)** or higher
 - **Native container application** installed from Apple Developer Beta

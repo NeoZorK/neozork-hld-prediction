@@ -2,6 +2,8 @@
 
 Documentation about documentation - history, organization, and maintenance.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## Documentation History
 
 - **[Documentation Updates](DOCUMENTATION_UPDATES.md)** - History of documentation changes

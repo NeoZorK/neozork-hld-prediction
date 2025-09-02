@@ -4,6 +4,8 @@
 
 This guide covers the setup and configuration of Model Context Protocol (MCP) servers for multiple IDEs in the NeoZork HLD Prediction project.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## 🚀 Quick Setup
 
 ### Automated Configuration
@@ -89,6 +91,8 @@ echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_s
 ```
 
 ## 🐳 Docker Environment
+
+> **Note**: Docker environment support is limited to v0.5.2 and earlier versions.
 
 ### Containerized Development
 The MCP server works seamlessly in Docker environments with automatic detection:

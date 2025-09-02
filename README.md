@@ -60,6 +60,8 @@ If you find this project helpful and would like to support the development, cons
 ## 🚀 Quick Start
 
 > ⚠️ **Note**: Docker and Apple Silicon containers are currently on pause due to active ML model development. Please use local setup for now.
+> 
+> **📋 Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
 
 ### Native Apple Silicon Container (FULL DOCKER PARITY)
 ```bash
@@ -141,6 +143,7 @@ This project uses **UV package manager** exclusively for dependency management, 
 - **Local Development**: UV support for local environments
 - **Performance**: Lightning-fast dependency resolution
 - **Future Plans**: Container integration will resume after ML model development
+- **Version Note**: v0.5.2 is the last version that supports Docker and Apple Container
 
 ### UV Commands
 ```bash
@@ -210,6 +213,8 @@ uv run pytest tests -n auto
 ### Adaptive Testing Framework
 Tests are designed to work in local environments (container support temporarily paused):
 
+**📋 Version Information**: v0.5.2 is the last version that supports Docker and Apple Container testing.
+
 ```bash
 # Local environment (currently recommended)
 pytest tests/docker/test_uv_simple.py -v
@@ -260,6 +265,7 @@ act -l
 - **Multithreaded Testing**: `uv run pytest tests -n auto`
 - **Local Development**: Optimized for local development environments
 - **Future Plans**: Container integration will resume after ML model development
+- **Version Note**: v0.5.2 is the last version that supports Docker and Apple Container
 
 ## 📋 Quick Examples
 

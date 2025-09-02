@@ -1,5 +1,7 @@
 # README.md Update Report
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## Overview
 
 This report documents the comprehensive update of the README.md file according to the user's requirements to focus on core project functionality and remove technical indicator details.

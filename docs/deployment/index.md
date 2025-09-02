@@ -2,6 +2,8 @@
 
 This section covers production deployment configurations and best practices for the NeoZork HLD Prediction project.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## 🚀 Quick Start
 
 ### Production Deployment
@@ -34,8 +36,8 @@ python run_analysis.py
 Comprehensive container documentation including native and Docker containers.
 
 **Key Features:**
-- **Native Container**: Apple Silicon optimized with 30-50% performance improvement
-- **Docker Container**: Cross-platform solution for all operating systems
+- **Native Container**: Apple Silicon optimized with 30-50% performance improvement (limited to v0.5.2 and earlier versions)
+- **Docker Container**: Cross-platform solution for all operating systems (limited to v0.5.2 and earlier versions)
 - **Container Comparison**: Performance and feature analysis
 - **Smart Container Logic**: Intelligent container state management
 
@@ -87,6 +89,8 @@ pytest tests/production/ -v
 ```
 
 ### Local Environment
+> **Note**: Docker testing is limited to v0.5.2 and earlier versions.
+
 ```bash
 # Test adaptive functionality
 pytest tests/docker/test_uv_simple.py -v

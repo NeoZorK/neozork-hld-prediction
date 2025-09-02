@@ -1,5 +1,7 @@
 # SMA README Updates Summary
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## Overview
 
 Successfully updated the main README.md and documentation index to prominently feature the SMA indicator tutorials and implementation.

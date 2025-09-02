@@ -2,6 +2,8 @@
 
 This section contains release notes and summaries for all versions of the NeoZork HLD Prediction project.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## Latest Release
 
 ### [v0.6.0 Release Summary](v0.6.0-release-summary.md) ⭐ **NEW**
@@ -38,6 +40,12 @@ Initial release with core functionality and basic documentation.
 
 ## Migration Guides
 
+### v0.5.2 → v0.5.3
+- **Container Support Removed**: Docker and Apple Container support discontinued
+- **UV-Only Mode**: Project now uses UV package manager exclusively
+- **Local Development**: Focus on local development environments
+- **No Breaking Changes**: All existing functionality remains compatible
+
 ### v0.5.0 → v0.6.0
 - **No Breaking Changes**: All existing functionality remains compatible
 - **Documentation Updates**: Review updated documentation for new features
@@ -46,14 +54,14 @@ Initial release with core functionality and basic documentation.
 
 ## Compatibility Matrix
 
-| Feature | v0.5.0 | v0.6.0 |
-|---------|--------|--------|
-| Python | 3.8+ | 3.8+ |
-| UV Package Manager | ✅ | ✅ |
-| Docker | ✅ | ✅ |
-| Native Container | ✅ | ✅ |
-| SMA Indicator | ❌ | ✅ |
-| Enhanced Documentation | ❌ | ✅ |
+| Feature | v0.5.0 | v0.5.2 | v0.5.3 | v0.6.0 |
+|---------|--------|---------|---------|---------|
+| Python | 3.8+ | 3.8+ | 3.8+ | 3.8+ |
+| UV Package Manager | ✅ | ✅ | ✅ | ✅ |
+| Docker | ✅ | ✅ | ❌ | ❌ |
+| Native Container | ✅ | ✅ | ❌ | ❌ |
+| SMA Indicator | ❌ | ❌ | ❌ | ✅ |
+| Enhanced Documentation | ❌ | ❌ | ❌ | ✅ |
 
 ## Support
 

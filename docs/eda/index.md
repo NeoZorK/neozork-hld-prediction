@@ -2,6 +2,8 @@
 
 This section covers Exploratory Data Analysis tools, techniques, and methodologies used in the NeoZork HLD Prediction project.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## 📊 EDA Tools and Features
 
 ### [Time Series Analysis](time-series-analysis.md)

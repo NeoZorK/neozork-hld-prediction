@@ -2,9 +2,13 @@
 
 This document describes the implementation and usage of UV-only mode in the NeoZork HLD Prediction Docker container.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## Overview
 
 The project has been configured to use **UV package manager exclusively** within Docker containers, providing faster dependency resolution, better caching, and improved reliability compared to traditional pip.
+
+> **Note**: Docker container support is limited to v0.5.2 and earlier versions.
 
 ## Key Features
 

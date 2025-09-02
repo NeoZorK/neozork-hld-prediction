@@ -2,6 +2,8 @@
 
 This section covers development setup, testing, and contribution guidelines for the NeoZork HLD Prediction project.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## 🚀 Quick Start
 
 ### Development Environment Setup
@@ -21,6 +23,8 @@ pytest tests/ -v
 ```
 
 ### Docker Development
+> **Note**: Docker development support is limited to v0.5.2 and earlier versions.
+
 ```bash
 # Start development container
 docker-compose up -d
@@ -77,7 +81,7 @@ The project uses UV package manager exclusively for dependency management.
 
 **Key Features:**
 - **Exclusive UV Usage**: No fallback to pip
-- **Docker Integration**: Seamless UV in containers
+- **Docker Integration**: Seamless UV in containers (limited to v0.5.2 and earlier versions)
 - **Local Development**: UV support for local environments
 - **Performance**: 10-100x faster than traditional pip
 

@@ -1,5 +1,7 @@
 # ML Documentation Move Summary
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## Overview
 
 The ML documentation has been successfully moved from `src/ml/README.md` to the `docs/ml/` folder with proper organization and indexing.

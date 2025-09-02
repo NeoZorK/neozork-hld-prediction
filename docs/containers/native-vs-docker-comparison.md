@@ -2,7 +2,11 @@
 
 This document provides a comprehensive comparison between the native Apple Silicon container application and Docker for running the NeoZork HLD Prediction project.
 
+> ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+
 ## Overview
+
+> **Note**: Container support is limited to v0.5.2 and earlier versions.
 
 | Aspect | Native Container | Docker |
 |--------|------------------|--------|
@@ -12,6 +16,7 @@ This document provides a comprehensive comparison between the native Apple Silic
 | **Resource Usage** | Lower | Higher |
 | **Setup Complexity** | Simple | Moderate |
 | **Integration** | Native macOS | Generic |
+| **Version Support** | Limited to v0.5.2 | Limited to v0.5.2 |
 
 ## Detailed Comparison
 
