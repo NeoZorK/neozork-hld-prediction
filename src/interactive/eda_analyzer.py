@@ -455,3 +455,92 @@ class EDAAnalyzer:
                 continue
         
         return True
+
+    def run_feature_importance_analysis(self, system) -> bool:
+        """
+        Run feature importance analysis on the dataset.
+        
+        Args:
+            system: InteractiveSystem instance
+            
+        Returns:
+            bool: True if successful
+        """
+        print(f"\n🎯 FEATURE IMPORTANCE ANALYSIS")
+        print("-" * 50)
+        
+        if not hasattr(system, 'current_data') or system.current_data is None:
+            print("❌ No data loaded. Please load data first.")
+            return False
+        
+        df = system.current_data
+        
+        # Find numeric columns for analysis
+        numeric_cols = df.select_dtypes(include=[np.number]).columns
+        
+        if len(numeric_cols) < 2:
+            print("❌ Need at least 2 numeric columns for feature importance analysis")
+            return False
+        
+        print(f"📊 Analyzing {len(numeric_cols)} numeric features...")
+        
+        try:
+            # Calculate feature importance using correlation with target
+            # For now, we'll use the first numeric column as target (can be enhanced later)
+            target_col = numeric_cols[0]
+            feature_cols = numeric_cols[1:]
+            
+            print(f"🎯 Target column: {target_col}")
+            print(f"🔍 Feature columns: {len(feature_cols)}")
+            
+            # Calculate correlations with target
+            correlations = {}
+            for col in feature_cols:
+                corr = df[target_col].corr(df[col])
+                if not pd.isna(corr):
+                    correlations[col] = abs(corr)
+            
+            # Sort by importance (absolute correlation)
+            sorted_features = sorted(correlations.items(), key=lambda x: x[1], reverse=True)
+            
+            print(f"\n📈 Feature Importance (by correlation with {target_col}):")
+            print(f"   • Total features analyzed: {len(sorted_features)}")
+            
+            if sorted_features:
+                print(f"\n🏆 Top 10 Most Important Features:")
+                for i, (feature, importance) in enumerate(sorted_features[:10], 1):
+                    print(f"   {i:2d}. {feature:<25} | Importance: {importance:.4f}")
+                
+                # Show distribution
+                importance_values = [imp for _, imp in sorted_features]
+                print(f"\n📊 Importance Statistics:")
+                print(f"   • Mean importance: {np.mean(importance_values):.4f}")
+                print(f"   • Median importance: {np.median(importance_values):.4f}")
+                print(f"   • Std importance: {np.std(importance_values):.4f}")
+                print(f"   • Min importance: {np.min(importance_values):.4f}")
+                print(f"   • Max importance: {np.max(importance_values):.4f}")
+                
+                # Categorize features
+                high_importance = [f for f, imp in sorted_features if imp >= 0.7]
+                medium_importance = [f for f, imp in sorted_features if 0.3 <= imp < 0.7]
+                low_importance = [f for f, imp in sorted_features if imp < 0.3]
+                
+                print(f"\n🏷️  Feature Categories:")
+                print(f"   • High importance (≥0.7): {len(high_importance)} features")
+                print(f"   • Medium importance (0.3-0.7): {len(medium_importance)} features")
+                print(f"   • Low importance (<0.3): {len(low_importance)} features")
+                
+                if high_importance:
+                    print(f"\n⭐ High Importance Features:")
+                    for feature in high_importance[:5]:
+                        print(f"   • {feature}")
+                
+            else:
+                print("❌ No valid correlations found")
+                return False
+            
+            return True
+            
+        except Exception as e:
+            print(f"❌ Error in feature importance analysis: {e}")
+            return False

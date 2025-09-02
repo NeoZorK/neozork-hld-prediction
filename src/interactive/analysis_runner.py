@@ -28,7 +28,7 @@ class AnalysisRunner:
     
     def run_eda_analysis(self, system):
         """
-        Run comprehensive EDA analysis.
+        Run comprehensive EDA analysis with interactive menu.
         
         Args:
             system: InteractiveSystem instance
@@ -40,48 +40,87 @@ class AnalysisRunner:
             print("❌ No data loaded. Please load data first.")
             return
         
-        print(f"📊 Starting comprehensive EDA analysis...")
-        print(f"   Dataset: {system.current_data.shape[0]:,} rows × {system.current_data.shape[1]} columns")
+        print(f"📊 Dataset: {system.current_data.shape[0]:,} rows × {system.current_data.shape[1]} columns")
         
-        # Run basic statistics
-        print(f"\n1️⃣  BASIC STATISTICS")
-        success = self.eda_analyzer.run_basic_statistics(system)
-        if not success:
-            print("❌ Basic statistics failed")
-            return
-        
-        # Run comprehensive data quality check
-        print(f"\n2️⃣  DATA QUALITY CHECK")
-        nan_summary, dupe_summary, gap_summary = self.eda_analyzer.run_comprehensive_data_quality_check(system)
-        
-        # Run correlation analysis
-        print(f"\n3️⃣  CORRELATION ANALYSIS")
-        success = self.eda_analyzer.run_correlation_analysis(system)
-        if not success:
-            print("❌ Correlation analysis failed")
-        
-        # Run time series analysis
-        print(f"\n4️⃣  TIME SERIES ANALYSIS")
-        success = self.eda_analyzer.run_time_series_analysis(system)
-        if not success:
-            print("❌ Time series analysis failed")
-        
-        # Show detailed gap info
-        if gap_summary:
-            print(f"\n5️⃣  DETAILED GAP INFORMATION")
-            self.eda_analyzer.show_detailed_gap_info([gap_summary], None, None)
-        
-        print(f"\n✅ EDA analysis completed!")
-        
-        # Ask if user wants to fix issues
-        if nan_summary or dupe_summary.get('total_duplicates', 0) > 0 or gap_summary:
-            print(f"\n🔧 Data quality issues detected!")
+        while True:
+            # Show EDA menu
+            system.menu_manager.print_eda_menu()
+            
             try:
-                fix_issues = input("Fix data quality issues now? (y/n, default: n): ").strip().lower()
-                if fix_issues in ['y', 'yes']:
-                    self.data_fixer.fix_data_issues(system, nan_summary, dupe_summary, gap_summary)
+                choice = input("Select EDA option (0-8): ").strip()
             except EOFError:
-                print("⏭️  Skipping data fixing...")
+                print("\n👋 Goodbye!")
+                break
+            
+            # Handle exit commands
+            if choice.lower() in ['exit', 'quit', 'q']:
+                print("\n👋 Thank you for using EDA Analysis!")
+                break
+            
+            if choice == '00':
+                print("\n🏠 Returning to Main Menu...")
+                break
+            elif choice == '0':
+                print("\n🔙 Returning to Main Menu...")
+                break
+            elif choice == '1':
+                print(f"\n🧹 COMPREHENSIVE DATA QUALITY CHECK")
+                print("-" * 50)
+                nan_summary, dupe_summary, gap_summary = self.eda_analyzer.run_comprehensive_data_quality_check(system)
+                system.menu_manager.mark_menu_as_used('eda', 'comprehensive_data_quality_check')
+            elif choice == '2':
+                print(f"\n📊 BASIC STATISTICS")
+                print("-" * 50)
+                success = self.eda_analyzer.run_basic_statistics(system)
+                if success:
+                    system.menu_manager.mark_menu_as_used('eda', 'basic_statistics')
+            elif choice == '3':
+                print(f"\n🔗 CORRELATION ANALYSIS")
+                print("-" * 50)
+                success = self.eda_analyzer.run_correlation_analysis(system)
+                if success:
+                    system.menu_manager.mark_menu_as_used('eda', 'correlation_analysis')
+            elif choice == '4':
+                print(f"\n📈 TIME SERIES ANALYSIS")
+                print("-" * 50)
+                success = self.eda_analyzer.run_time_series_analysis(system)
+                if success:
+                    system.menu_manager.mark_menu_as_used('eda', 'time_series_analysis')
+            elif choice == '5':
+                print(f"\n🎯 FEATURE IMPORTANCE")
+                print("-" * 50)
+                # Run feature importance analysis
+                success = self.eda_analyzer.run_feature_importance_analysis(system)
+                if success:
+                    system.menu_manager.mark_menu_as_used('eda', 'feature_importance')
+            elif choice == '6':
+                print(f"\n📋 GENERATE HTML REPORT")
+                print("-" * 50)
+                success = self.generate_html_report(system)
+                if success:
+                    system.menu_manager.mark_menu_as_used('eda', 'generate_html_report')
+            elif choice == '7':
+                print(f"\n🔄 RESTORE FROM BACKUP")
+                print("-" * 50)
+                success = system.restore_from_backup()
+                if success:
+                    system.menu_manager.mark_menu_as_used('eda', 'restore_from_backup')
+            elif choice == '8':
+                print(f"\n🗑️  CLEAR DATA BACKUP")
+                print("-" * 50)
+                success = system.clear_data_backup()
+                if success:
+                    system.menu_manager.mark_menu_as_used('eda', 'clear_data_backup')
+            else:
+                print("❌ Invalid choice. Please select 0-8.")
+            
+            if choice not in ['0', '00']:
+                try:
+                    if system.safe_input() is None:
+                        break
+                except EOFError:
+                    print("\n👋 Goodbye!")
+                    break
     
     def run_basic_statistics(self, system) -> bool:
         """
