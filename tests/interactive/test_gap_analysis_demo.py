@@ -85,16 +85,16 @@ class TestGapAnalysisDemo:
         # Analyze gaps
         print(f"\n4️⃣  Analyzing time series gaps...")
         
-        # Determine expected frequency
-        expected_frequency = self.data_manager._determine_expected_frequency(
+        # Determine expected frequency using the gap_analyzer
+        expected_frequency = self.data_manager.gap_analyzer._determine_expected_frequency(
             self.system.current_data, 'Timestamp'
         )
         print(f"   Expected frequency: {expected_frequency}")
         
         # Run gap analysis (without user input for testing)
         try:
-            gap_result = self.data_manager.analyze_time_series_gaps(
-                eurusd_files, 'Timestamp', expected_frequency
+            gap_result = self.data_manager.gap_analyzer.analyze_time_series_gaps(
+                self.system.current_data, 'Timestamp', expected_frequency
             )
             
             # For testing purposes, we consider it successful if no exception was raised
