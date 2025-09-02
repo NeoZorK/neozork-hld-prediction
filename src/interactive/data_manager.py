@@ -163,10 +163,39 @@ class DataManager:
                 gap_fixer = None
             
             if gap_fixer:
-                # Process each file separately with progress bar
+                # Create overall progress bar for gap analysis and fixing
+                total_files = len(base_data)
+                overall_start_time = time.time()
+                
+                print(f"   📊 Overall progress: Starting gap analysis and fixing for {total_files} files...")
+                
+                # Process each file separately with progress bar and ETA
                 for i, df in enumerate(base_data):
                     file_name = df['source_file'].iloc[0] if 'source_file' in df.columns else f"file_{i+1}"
-                    print(f"\n📁 Processing file {i+1}/{len(base_data)}: {file_name}")
+                    
+                    # Calculate overall progress and ETA
+                    elapsed_time = time.time() - overall_start_time
+                    if elapsed_time > 0 and i > 0:
+                        avg_time_per_file = elapsed_time / i
+                        remaining_files = total_files - i
+                        eta_seconds = remaining_files * avg_time_per_file
+                        
+                        # Format ETA
+                        if eta_seconds < 60:
+                            eta_str = f"{eta_seconds:.0f}s"
+                        elif eta_seconds < 3600:
+                            eta_str = f"{eta_seconds/60:.0f}m {eta_seconds%60:.0f}s"
+                        else:
+                            eta_str = f"{eta_seconds/3600:.0f}h {(eta_seconds%3600)/60:.0f}m"
+                        
+                        # Calculate speed (files per second)
+                        speed = i / elapsed_time
+                        
+                        print(f"\n📁 Processing file {i+1}/{total_files}: {file_name}")
+                        print(f"   📈 Overall progress: {(i/total_files)*100:.1f}% ({i+1}/{total_files} files) "
+                              f"🚀 {speed:.2f} files/s ⏱️ ETA: {eta_str}")
+                    else:
+                        print(f"\n📁 Processing file {i+1}/{total_files}: {file_name}")
                     
                     try:
                         # Find timestamp column (only once)
@@ -186,7 +215,7 @@ class DataManager:
                                     if algo_choice == '':
                                         algorithm = 'auto'
                                     elif algo_choice in ['auto', 'linear', 'cubic', 'interpolate', 'forward_fill', 'backward_fill']:
-                                        algorithm = algo_choice
+                                        algorithm = 'auto'
                                     else:
                                         print(f"   ⚠️  Invalid choice, using 'auto'")
                                         algorithm = 'auto'
@@ -196,7 +225,7 @@ class DataManager:
                                 print(f"   🔧 Using algorithm: {algorithm}")
                                 
                                 # Fix gaps with progress bar and ETA
-                                start_time = time.time()
+                                file_start_time = time.time()
                                 print(f"   🔧 Gap fixing progress: ", end="", flush=True)
                                 
                                 # Create progress bar for gap fixing
@@ -209,14 +238,14 @@ class DataManager:
                                         'memory_used_mb': 0.0  # Placeholder
                                     }
                                 
-                                end_time = time.time()
-                                processing_time = end_time - start_time
+                                file_end_time = time.time()
+                                file_processing_time = file_end_time - file_start_time
                                 
                                 if fixed_df is not None:
-                                    print(f"\r   ✅ Gap fixing completed in {processing_time:.2f}s")
+                                    print(f"\r   ✅ Gap fixing completed in {file_processing_time:.2f}s")
                                     print(f"      • Algorithm used: {results['algorithm_used']}")
                                     print(f"      • Gaps fixed: {results['gaps_fixed']:,}")
-                                    print(f"      • Processing time: {processing_time:.2f}s")
+                                    print(f"      • Processing time: {file_processing_time:.2f}s")
                                     print(f"      • Memory used: {results['memory_used_mb']:.1f}MB")
                                     
                                     # Replace original dataframe with fixed one
@@ -241,7 +270,12 @@ class DataManager:
                     if self.enable_memory_optimization:
                         gc.collect()
                 
+                # Final overall progress summary
+                total_time = time.time() - overall_start_time
+                final_speed = total_files / total_time if total_time > 0 else 0
                 print(f"\n✅ Gap analysis and fixing completed for all files!")
+                print(f"   📊 Summary: {total_files} files processed in {total_time:.2f}s")
+                print(f"   🚀 Average speed: {final_speed:.2f} files/s")
             else:
                 print("⚠️  Skipping gap fixing due to initialization error")
         else:
