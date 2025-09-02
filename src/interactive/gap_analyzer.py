@@ -112,10 +112,16 @@ class GapAnalyzer:
             df: DataFrame to search
             
         Returns:
-            Column name or None if not found
+            Column name, 'INDEX' for DatetimeIndex, or None if not found
         """
         if df is None or df.empty:
             return None
+        
+        # First check if DataFrame already has a DatetimeIndex
+        if isinstance(df.index, pd.DatetimeIndex):
+            # If the index is already a DatetimeIndex, we can use it directly
+            # Return a special marker to indicate we should use the index
+            return 'INDEX'
         
         # Common timestamp column names
         timestamp_names = [
@@ -146,18 +152,38 @@ class GapAnalyzer:
         
         Args:
             df: DataFrame with time series data
-            timestamp_column: Name of timestamp column
+            timestamp_column: Name of timestamp column or 'INDEX' for DatetimeIndex
             
         Returns:
             Dictionary with gap information
         """
-        if df is None or df.empty or timestamp_column not in df.columns:
+        if df is None or df.empty:
             return {'has_gaps': False, 'gap_count': 0, 'gaps': []}
         
         try:
-            # Ensure timestamp column is datetime
             df_copy = df.copy()
-            df_copy[timestamp_column] = pd.to_datetime(df_copy[timestamp_column], errors='coerce')
+            
+            # Handle DatetimeIndex case
+            if timestamp_column == 'INDEX':
+                if not isinstance(df_copy.index, pd.DatetimeIndex):
+                    print(f"   ⚠️  Expected DatetimeIndex but found: {type(df_copy.index)}")
+                    return {'has_gaps': False, 'gap_count': 0, 'gaps': []}
+                
+                # Use the index directly
+                timestamp_series = df_copy.index
+                # Reset index to make timestamp a regular column for analysis
+                df_copy = df_copy.reset_index()
+                timestamp_column = df_copy.columns[0]  # The timestamp column is now the first column
+                df_copy[timestamp_column] = timestamp_series
+            else:
+                # Regular column case
+                if timestamp_column not in df_copy.columns:
+                    return {'has_gaps': False, 'gap_count': 0, 'gaps': []}
+                
+                # Ensure timestamp column is datetime
+                df_copy[timestamp_column] = pd.to_datetime(df_copy[timestamp_column], errors='coerce')
+            
+            # Drop rows with invalid timestamps
             df_copy = df_copy.dropna(subset=[timestamp_column])
             
             if len(df_copy) == 0:
@@ -208,21 +234,30 @@ class GapAnalyzer:
         
         Args:
             df: DataFrame with time series data
-            datetime_column: Name of datetime column
+            datetime_column: Name of datetime column or 'INDEX' for DatetimeIndex
             
         Returns:
             Frequency string or None if cannot determine
         """
-        if df is None or df.empty or datetime_column not in df.columns:
+        if df is None or df.empty:
+            return None
+        
+        # Handle DatetimeIndex case
+        if datetime_column == 'INDEX':
+            if not isinstance(df.index, pd.DatetimeIndex):
+                return None
+            # Use the index directly
+            time_diffs = df.index.to_series().diff().dropna()
+        else:
+            if datetime_column not in df.columns:
+                return None
+            # Calculate time differences from column
+            time_diffs = df[datetime_column].diff().dropna()
+        
+        if len(time_diffs) == 0:
             return None
         
         try:
-            # Calculate time differences
-            time_diffs = df[datetime_column].diff().dropna()
-            
-            if len(time_diffs) == 0:
-                return None
-            
             # Get median time difference
             median_diff = time_diffs.median()
             
@@ -397,36 +432,57 @@ class GapAnalyzer:
             return None
     
     def _fix_gaps_in_dataframe(self, gap_fixer, df: pd.DataFrame, 
-                              timestamp_column: str, gap_info: Dict) -> Optional[pd.DataFrame]:
+                               timestamp_column: str, gap_info: Dict) -> Optional[pd.DataFrame]:
         """
         Fix gaps in DataFrame using GapFixer.
         
         Args:
             gap_fixer: GapFixer instance
             df: DataFrame to fix
-            timestamp_column: Name of timestamp column
+            timestamp_column: Name of timestamp column or 'INDEX' for DatetimeIndex
             gap_info: Gap information dictionary
             
         Returns:
-            Fixed DataFrame or None if fixing failed
+            Fixed DataFrame or None if failed
         """
         try:
-            # Use auto algorithm for fixing
             algorithm = 'auto'
             
-            # Fix gaps
-            fixed_df, results = gap_fixer._fix_gaps_in_dataframe(
-                df, timestamp_column, gap_info, algorithm, show_progress=True
-            )
-            
-            if fixed_df is not None:
-                print(f"   ✅ Gaps fixed using {results['algorithm_used']}")
-                print(f"      • Gaps fixed: {results['gaps_fixed']:,}")
-                print(f"      • Processing time: {results['processing_time']:.2f}s")
-                return fixed_df
+            # Handle DatetimeIndex case
+            if timestamp_column == 'INDEX':
+                # For DatetimeIndex, we need to reset index temporarily for GapFixer
+                df_for_fixing = df.reset_index()
+                actual_timestamp_col = df_for_fixing.columns[0]  # First column is the timestamp
+                
+                # Fix gaps
+                fixed_df, results = gap_fixer._fix_gaps_in_dataframe(
+                    df_for_fixing, actual_timestamp_col, gap_info, algorithm, show_progress=True
+                )
+                
+                if fixed_df is not None:
+                    # Set the timestamp column back as index
+                    fixed_df = fixed_df.set_index(actual_timestamp_col)
+                    print(f"   ✅ Gaps fixed using {results['algorithm_used']}")
+                    print(f"      • Gaps fixed: {results['gaps_fixed']:,}")
+                    print(f"      • Processing time: {results['processing_time']:.2f}s")
+                    return fixed_df
+                else:
+                    return None
             else:
-                return None
+                # Regular column case
+                # Fix gaps
+                fixed_df, results = gap_fixer._fix_gaps_in_dataframe(
+                    df, timestamp_column, gap_info, algorithm, show_progress=True
+                )
+                
+                if fixed_df is not None:
+                    print(f"   ✅ Gaps fixed using {results['algorithm_used']}")
+                    print(f"      • Gaps fixed: {results['gaps_fixed']:,}")
+                    print(f"      • Processing time: {results['processing_time']:.2f}s")
+                    return fixed_df
+                else:
+                    return None
                 
         except Exception as e:
-            print(f"   ❌ Error during gap fixing: {e}")
+            print(f"   ❌ Error fixing gaps: {e}")
             return None
