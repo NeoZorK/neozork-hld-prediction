@@ -293,7 +293,7 @@ class GapFixer:
         # First, check if the index is a DatetimeIndex
         if isinstance(df.index, pd.DatetimeIndex):
             print(f"   📅 Found DatetimeIndex: {df.index.name or 'unnamed'}")
-            return None  # We'll handle DatetimeIndex separately
+            return "DATETIME_INDEX"  # Special marker for DatetimeIndex
         
         # Check for exact matches (case-insensitive)
         timestamp_candidates = ['timestamp', 'time', 'date', 'datetime', 'ts']
@@ -323,11 +323,18 @@ class GapFixer:
         """Detect gaps in time series data."""
         print(f"   🔍 Starting gap detection for {len(df):,} rows...")
         
-        # Sort by timestamp
-        df_sorted = df.sort_values(timestamp_col).copy()
+        # Handle DatetimeIndex case
+        if timestamp_col == "DATETIME_INDEX":
+            # Use the index directly
+            df_sorted = df.copy()
+            time_series = df_sorted.index
+        else:
+            # Sort by timestamp column
+            df_sorted = df.sort_values(timestamp_col).copy()
+            time_series = df_sorted[timestamp_col]
         
         # Calculate time differences
-        time_diffs = df_sorted[timestamp_col].diff().dropna()
+        time_diffs = time_series.diff().dropna()
         print(f"   📊 Time differences calculated: {len(time_diffs):,} intervals")
         
         # Show some statistics about time differences
@@ -337,7 +344,14 @@ class GapFixer:
             print(f"      • Max: {time_diffs.max()}")
             print(f"      • Median: {time_diffs.median()}")
             print(f"      • Mean: {time_diffs.mean()}")
-            print(f"      • 95th percentile: {time_diffs.quantile(0.95)}")
+            # Handle TimedeltaIndex which doesn't have quantile method
+            try:
+                print(f"      • 95th percentile: {time_diffs.quantile(0.95)}")
+            except AttributeError:
+                # For TimedeltaIndex, calculate approximate 95th percentile
+                sorted_diffs = sorted(time_diffs)
+                idx_95 = int(len(sorted_diffs) * 0.95)
+                print(f"      • 95th percentile: {sorted_diffs[idx_95]}")
         
         # Determine expected frequency
         expected_freq = self._determine_expected_frequency(time_diffs)
@@ -352,7 +366,13 @@ class GapFixer:
         
         # Show some examples of gaps
         if gaps.any():
-            gap_examples = time_diffs[gaps].head(5)
+            # Handle TimedeltaIndex which doesn't have head method
+            try:
+                gap_examples = time_diffs[gaps].head(5)
+            except AttributeError:
+                # For TimedeltaIndex, convert to list and take first 5
+                gap_examples = list(time_diffs[gaps])[:5]
+            
             print(f"   📋 Example gaps:")
             for i, gap in enumerate(gap_examples):
                 print(f"      • Gap {i+1}: {gap}")
@@ -364,9 +384,10 @@ class GapFixer:
             'gap_threshold': gap_threshold,
             'total_rows': len(df),
             'time_range': {
-                'start': df_sorted[timestamp_col].min(),
-                'end': df_sorted[timestamp_col].max()
-            }
+                'start': time_series.min(),
+                'end': time_series.max()
+            },
+            'is_datetime_index': timestamp_col == "DATETIME_INDEX"
         }
         
         print(f"   ✅ Gap detection completed: {gap_info['gap_count']} gaps found")
@@ -422,8 +443,22 @@ class GapFixer:
         print(f"   📊 Original data shape: {df.shape}")
         print(f"   📊 Gaps detected: {gap_info['gap_count']}")
         
+        # Handle DatetimeIndex case
+        if timestamp_col == "DATETIME_INDEX":
+            # Convert DatetimeIndex to a regular column for processing
+            df_copy = df.reset_index()
+            timestamp_col = df_copy.columns[0]  # First column after reset_index
+            print(f"   🔧 Converted DatetimeIndex to column: {timestamp_col}")
+        else:
+            df_copy = df.copy()
+        
         # Fix gaps
-        fixed_df = self.algorithms[algorithm](df, timestamp_col, gap_info, show_progress)
+        fixed_df = self.algorithms[algorithm](df_copy, timestamp_col, gap_info, show_progress)
+        
+        # If we were working with DatetimeIndex, restore it
+        if gap_info.get('is_datetime_index', False):
+            fixed_df = fixed_df.set_index(timestamp_col)
+            print(f"   🔧 Restored DatetimeIndex")
         
         print(f"   📊 Fixed data shape: {fixed_df.shape}")
         print(f"   🔍 Checking for NaN values in fixed data...")

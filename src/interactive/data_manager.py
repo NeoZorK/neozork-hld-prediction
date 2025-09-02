@@ -167,7 +167,10 @@ class DataManager:
                         timestamp_col = gap_fixer._find_timestamp_column(df)
                         
                         if timestamp_col:
-                            print(f"   📅 Found timestamp column: {timestamp_col}")
+                            if timestamp_col == "DATETIME_INDEX":
+                                print(f"   📅 Found DatetimeIndex: {df.index.name or 'unnamed'}")
+                            else:
+                                print(f"   📅 Found timestamp column: {timestamp_col}")
                             
                             # Detect gaps
                             gap_info = gap_fixer._detect_gaps(df, timestamp_col)
