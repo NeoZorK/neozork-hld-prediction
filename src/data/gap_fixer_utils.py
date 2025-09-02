@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 import shutil
 import psutil
+from tqdm import tqdm
 
 
 class GapFixingUtils:
@@ -79,8 +80,13 @@ class GapFixingUtils:
         return df
     
     def detect_gaps(self, df: pd.DataFrame, timestamp_col: str) -> Dict:
-        """Detect gaps in time series data."""
-        print(f"   🔍 Starting gap detection for {len(df):,} rows...")
+        """Detect gaps in time series data with progress bar for large files."""
+        total_rows = len(df)
+        print(f"   🔍 Starting gap detection for {total_rows:,} rows...")
+        
+        # Show progress bar for large files
+        if total_rows > 100000:  # Show progress for files with more than 100k rows
+            print(f"   📊 Large file detected, showing progress bar...")
         
         # Handle DatetimeIndex case
         if timestamp_col == "DATETIME_INDEX":
@@ -88,28 +94,69 @@ class GapFixingUtils:
             df_sorted = df.copy()
             time_series = df_sorted.index
         else:
-            # Sort by timestamp column
-            df_sorted = df.sort_values(timestamp_col).copy()
+            # Sort by timestamp column with progress bar for large files
+            if total_rows > 100000:
+                print(f"   🔄 Sorting data by timestamp column...")
+                with tqdm(total=1, desc="Sorting data", unit="step") as pbar:
+                    df_sorted = df.sort_values(timestamp_col).copy()
+                    pbar.update(1)
+            else:
+                df_sorted = df.sort_values(timestamp_col).copy()
             time_series = df_sorted[timestamp_col]
         
-        # Calculate time differences
-        time_diffs = time_series.diff().dropna()
+        # Calculate time differences with progress bar for large files
+        if total_rows > 100000:
+            print(f"   🔄 Calculating time differences...")
+            with tqdm(total=1, desc="Calculating time diffs", unit="step") as pbar:
+                time_diffs = time_series.diff().dropna()
+                pbar.update(1)
+        else:
+            time_diffs = time_series.diff().dropna()
         
         # Show some statistics about time differences
         if len(time_diffs) > 0:
             print(f"   📈 Time diff stats:")
-            print(f"      • Min: {time_diffs.min()}")
-            print(f"      • Max: {time_diffs.max()}")
-            print(f"      • Median: {time_diffs.median()}")
-            print(f"      • Mean: {time_diffs.mean()}")
+            
+            # Show progress for large files
+            if total_rows > 100000:
+                print(f"   🔄 Calculating statistics...")
+                with tqdm(total=4, desc="Calculating stats", unit="stat") as pbar:
+                    print(f"      • Min: {time_diffs.min()}")
+                    pbar.update(1)
+                    print(f"      • Max: {time_diffs.max()}")
+                    pbar.update(1)
+                    print(f"      • Median: {time_diffs.median()}")
+                    pbar.update(1)
+                    print(f"      • Mean: {time_diffs.mean()}")
+                    pbar.update(1)
+            else:
+                print(f"      • Min: {time_diffs.min()}")
+                print(f"      • Max: {time_diffs.max()}")
+                print(f"      • Median: {time_diffs.median()}")
+                print(f"      • Mean: {time_diffs.mean()}")
+            
             # Handle TimedeltaIndex which doesn't have quantile method
             try:
-                print(f"      • 95th percentile: {time_diffs.quantile(0.95)}")
+                if total_rows > 100000:
+                    with tqdm(total=1, desc="Calculating 95th percentile", unit="stat") as pbar:
+                        percentile_95 = time_diffs.quantile(0.95)
+                        print(f"      • 95th percentile: {percentile_95}")
+                        pbar.update(1)
+                else:
+                    print(f"      • 95th percentile: {time_diffs.quantile(0.95)}")
             except AttributeError:
                 # For TimedeltaIndex, calculate approximate 95th percentile
-                sorted_diffs = sorted(time_diffs)
-                idx_95 = int(len(sorted_diffs) * 0.95)
-                print(f"      • 95th percentile: {sorted_diffs[idx_95]}")
+                if total_rows > 100000:
+                    print(f"   🔄 Calculating 95th percentile (approximate)...")
+                    with tqdm(total=1, desc="Calculating 95th percentile", unit="stat") as pbar:
+                        sorted_diffs = sorted(time_diffs)
+                        idx_95 = int(len(sorted_diffs) * 0.95)
+                        print(f"      • 95th percentile: {sorted_diffs[idx_95]}")
+                        pbar.update(1)
+                else:
+                    sorted_diffs = sorted(time_diffs)
+                    idx_95 = int(len(sorted_diffs) * 0.95)
+                    print(f"      • 95th percentile: {sorted_diffs[idx_95]}")
         
         # Determine expected frequency
         expected_freq = self._determine_expected_frequency(time_diffs)
@@ -119,7 +166,15 @@ class GapFixingUtils:
         gap_threshold = expected_freq * 1.5  # Allow 50% tolerance
         print(f"   🚨 Gap threshold: {gap_threshold}")
         
-        gaps = time_diffs > gap_threshold
+        # Find gaps with progress bar for large files
+        if total_rows > 100000:
+            print(f"   🔄 Finding gaps...")
+            with tqdm(total=1, desc="Finding gaps", unit="step") as pbar:
+                gaps = time_diffs > gap_threshold
+                pbar.update(1)
+        else:
+            gaps = time_diffs > gap_threshold
+        
         print(f"   🔍 Gaps found: {gaps.sum():,} out of {len(time_diffs):,} intervals")
         
         # Show some examples of gaps
