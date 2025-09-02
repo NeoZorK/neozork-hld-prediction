@@ -93,13 +93,40 @@ class GapAnalyzer:
             DataFrame or None if loading failed
         """
         try:
+            df = None
             if file_path.suffix.lower() == '.csv':
-                return pd.read_csv(file_path, nrows=10000)  # Sample for analysis
+                df = pd.read_csv(file_path, nrows=10000)  # Sample for analysis
             elif file_path.suffix.lower() == '.parquet':
-                return pd.read_parquet(file_path)
+                df = pd.read_parquet(file_path)
             else:
                 print(f"   ⚠️  Unsupported file format: {file_path.suffix}")
                 return None
+            
+            if df is None or df.empty:
+                return None
+            
+            # Check if the first column looks like a timestamp column
+            first_col = df.columns[0]
+            try:
+                # Try to convert first column to datetime
+                df[first_col] = pd.to_datetime(df[first_col], errors='coerce')
+                # Check if we have valid timestamps
+                valid_timestamps = df[first_col].notna().sum()
+                if valid_timestamps > len(df) * 0.8:  # At least 80% valid timestamps
+                    # Set as index for analysis
+                    df = df.set_index(first_col)
+                    # Drop rows with invalid timestamps
+                    df = df.dropna()
+                    print(f"   📅 Found DatetimeIndex: {first_col}")
+                else:
+                    # Reset index if not enough valid timestamps
+                    df = df.reset_index(drop=True)
+            except Exception:
+                # If conversion fails, keep as regular column
+                df = df.reset_index(drop=True)
+            
+            return df
+            
         except Exception as e:
             print(f"   ❌ Error loading {file_path.name}: {e}")
             return None
@@ -379,7 +406,7 @@ class GapAnalyzer:
             
             try:
                 # Load full file for fixing
-                full_df = self._load_full_file_for_fixing(item['file_path'])
+                full_df = self._load_full_file_for_fixing(item['file_path'], item['timestamp_column'])
                 if full_df is None:
                     continue
                 
@@ -410,23 +437,47 @@ class GapAnalyzer:
         
         return gap_summary
     
-    def _load_full_file_for_fixing(self, file_path: Path) -> Optional[pd.DataFrame]:
+    def _load_full_file_for_fixing(self, file_path: Path, timestamp_column: str = None) -> Optional[pd.DataFrame]:
         """
         Load full file for gap fixing.
         
         Args:
             file_path: Path to file
+            timestamp_column: Timestamp column name or 'INDEX' for DatetimeIndex
             
         Returns:
             DataFrame or None if loading failed
         """
         try:
+            df = None
             if file_path.suffix.lower() == '.csv':
-                return pd.read_csv(file_path)
+                df = pd.read_csv(file_path)
             elif file_path.suffix.lower() == '.parquet':
-                return pd.read_parquet(file_path)
+                df = pd.read_parquet(file_path)
             else:
                 return None
+            
+            if df is None or df.empty:
+                return None
+            
+            # Handle DatetimeIndex case
+            if timestamp_column == 'INDEX':
+                # Check if the first column is a timestamp column
+                first_col = df.columns[0]
+                try:
+                    # Try to convert first column to datetime
+                    df[first_col] = pd.to_datetime(df[first_col], errors='coerce')
+                    # Set as index
+                    df = df.set_index(first_col)
+                    # Drop rows with invalid timestamps
+                    df = df.dropna()
+                    print(f"   📅 Set '{first_col}' as DatetimeIndex")
+                except Exception as e:
+                    print(f"   ⚠️  Could not set DatetimeIndex: {e}")
+                    return None
+            
+            return df
+            
         except Exception as e:
             print(f"   ❌ Error loading full file {file_path.name}: {e}")
             return None
