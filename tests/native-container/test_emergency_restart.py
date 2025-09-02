@@ -14,14 +14,14 @@ from unittest.mock import patch, MagicMock
 from pathlib import Path
 
 # Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "src"))
 
 class TestEmergencyRestart:
     """Test emergency restart functionality."""
     
     def test_restart_service_function_exists(self):
         """Test that restart_service function exists in the script."""
-        script_path = Path(__file__).parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
+        script_path = Path(__file__).parent.parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
         
         assert script_path.exists(), f"Script not found: {script_path}"
         
@@ -36,7 +36,7 @@ class TestEmergencyRestart:
     
     def test_menu_has_restart_option(self):
         """Test that the main menu includes the restart service option."""
-        script_path = Path(__file__).parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
+        script_path = Path(__file__).parent.parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
         
         with open(script_path, 'r') as f:
             content = f.read()
@@ -47,7 +47,7 @@ class TestEmergencyRestart:
     
     def test_help_includes_restart_description(self):
         """Test that help function includes description of restart service."""
-        script_path = Path(__file__).parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
+        script_path = Path(__file__).parent.parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
         
         with open(script_path, 'r') as f:
             content = f.read()
@@ -61,7 +61,7 @@ class TestEmergencyRestart:
     
     def test_emergency_restart_handles_deletion_error(self):
         """Test that emergency restart handles container deletion failure."""
-        script_path = Path(__file__).parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
+        script_path = Path(__file__).parent.parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
         
         with open(script_path, 'r') as f:
             content = f.read()
@@ -73,7 +73,7 @@ class TestEmergencyRestart:
     
     def test_restart_sequence_commands(self):
         """Test that restart sequence includes all required commands."""
-        script_path = Path(__file__).parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
+        script_path = Path(__file__).parent.parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
         
         with open(script_path, 'r') as f:
             content = f.read()
@@ -85,7 +85,7 @@ class TestEmergencyRestart:
     
     def test_retry_after_restart(self):
         """Test that script retries container stop after service restart."""
-        script_path = Path(__file__).parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
+        script_path = Path(__file__).parent.parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
         
         with open(script_path, 'r') as f:
             content = f.read()
@@ -100,7 +100,7 @@ class TestEmergencyRestart:
         # Mock successful execution
         mock_run.return_value.returncode = 0
         
-        script_path = Path(__file__).parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
+        script_path = Path(__file__).parent.parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
         
         # This would require more complex testing with actual script execution
         # For now, we just verify the script structure
@@ -111,7 +111,7 @@ class TestEmergencyRestart:
     
     def test_error_handling_structure(self):
         """Test that error handling structure is properly implemented."""
-        script_path = Path(__file__).parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
+        script_path = Path(__file__).parent.parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
         
         with open(script_path, 'r') as f:
             content = f.read()
@@ -125,7 +125,7 @@ class TestEmergencyRestart:
     
     def test_interactive_prompts(self):
         """Test that interactive prompts are properly implemented."""
-        script_path = Path(__file__).parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
+        script_path = Path(__file__).parent.parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
         
         with open(script_path, 'r') as f:
             content = f.read()
@@ -136,7 +136,7 @@ class TestEmergencyRestart:
     
     def test_color_output_functions(self):
         """Test that color output functions are properly defined."""
-        script_path = Path(__file__).parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
+        script_path = Path(__file__).parent.parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
         
         with open(script_path, 'r') as f:
             content = f.read()
@@ -149,7 +149,7 @@ class TestEmergencyRestart:
     
     def test_script_syntax(self):
         """Test that the script has valid bash syntax."""
-        script_path = Path(__file__).parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
+        script_path = Path(__file__).parent.parent.parent.parent / "scripts" / "native-container" / "native-container.sh"
         
         # Check bash syntax
         result = subprocess.run(

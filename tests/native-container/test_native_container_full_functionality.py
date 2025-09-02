@@ -15,7 +15,7 @@ from typing import Dict, Any, Optional
 from unittest.mock import patch, MagicMock
 
 # Add project root to path
-project_root = Path(__file__).parent.parent.parent
+project_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 def is_running_in_docker():
@@ -29,7 +29,7 @@ def get_project_root():
         return Path('/app')
     else:
         # In native environment, use relative path
-        return Path(__file__).parent.parent.parent
+        return Path(__file__).parent.parent.parent.parent
 
 class TestNativeContainerFullFunctionality:
     """Test class for native container full functionality"""

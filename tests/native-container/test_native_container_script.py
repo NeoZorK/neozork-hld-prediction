@@ -17,7 +17,7 @@ from pathlib import Path
 import pytest
 
 # Add the project root to the path
-project_root = Path(__file__).parent.parent.parent
+project_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 from tests.conftest import skip_if_docker

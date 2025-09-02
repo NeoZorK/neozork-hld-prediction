@@ -41,7 +41,7 @@ def get_project_root():
         return Path('/app')
     else:
         # In native environment, use relative path
-        return Path(__file__).parent.parent.parent
+        return Path(__file__).parent.parent.parent.parent
 
 
 class TestNativeContainerFeatures:

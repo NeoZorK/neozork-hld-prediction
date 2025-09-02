@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 # Get project root
-project_root = Path(__file__).parent.parent.parent
+project_root = Path(__file__).parent.parent.parent.parent
 
 
 class TestWaveHelpEnhancement:

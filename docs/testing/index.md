@@ -6,6 +6,9 @@ This section contains comprehensive documentation for testing the NeoZork HLD Pr
 
 ## Testing Categories
 
+### Test Directory Structure
+- [Tests Directory Structure](tests-directory-structure.md) - Comprehensive overview of all test files and categories
+
 ### Docker Testing
 > **Note**: Docker testing support is limited to v0.5.2 and earlier versions.
 

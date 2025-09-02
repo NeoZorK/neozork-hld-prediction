@@ -17,7 +17,7 @@ class TestNZScript:
     @classmethod
     def setup_class(cls):
         """Set up test environment."""
-        cls.project_root = Path(__file__).parent.parent.parent
+        cls.project_root = Path(__file__).parent.parent.parent.parent.parent
         cls.nz_script = cls.project_root / "nz"
         
         # Ensure script is executable
@@ -193,7 +193,7 @@ class TestNZScriptIntegration:
 
     def test_script_with_real_data(self):
         """Test that the script can handle real data files."""
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent.parent.parent.parent
         nz_script = project_root / "nz"
         
         if not nz_script.exists():
@@ -211,7 +211,7 @@ class TestNZScriptIntegration:
 
     def test_script_environment_variables(self):
         """Test that the script respects environment variables."""
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent.parent.parent.parent
         nz_script = project_root / "nz"
         
         if not nz_script.exists():
@@ -231,7 +231,7 @@ class TestNZScriptIntegration:
 
     def test_script_data_operations(self):
         """Test that the script can handle data operations."""
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent.parent.parent.parent
         nz_script = project_root / "nz"
         
         if not nz_script.exists():
@@ -249,7 +249,7 @@ class TestNZScriptIntegration:
 
     def test_script_test_command(self):
         """Test that the script can run test command."""
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent.parent.parent.parent
         nz_script = project_root / "nz"
         
         if not nz_script.exists():
@@ -266,7 +266,7 @@ class TestNZScriptIntegration:
 
     def test_script_analyze_command(self):
         """Test that the script can run analyze command."""
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent.parent.parent.parent
         nz_script = project_root / "nz"
         
         if not nz_script.exists():
@@ -283,7 +283,7 @@ class TestNZScriptIntegration:
 
     def test_script_plot_command(self):
         """Test that the script can run plot command."""
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent.parent.parent.parent
         nz_script = project_root / "nz"
         
         if not nz_script.exists():

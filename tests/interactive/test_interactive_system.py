@@ -17,7 +17,7 @@ import sys
 import psutil
 
 # Add project root to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
 from scripts.ml.interactive_system import InteractiveSystem
 

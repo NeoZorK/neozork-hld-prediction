@@ -30,7 +30,7 @@ from collections import defaultdict
 import tempfile
 
 # Project setup
-PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
+PROJECT_ROOT = Path(__file__).parent.parent.parent.parent.parent
 PYTHON = sys.executable
 SCRIPT = PROJECT_ROOT / 'run_analysis.py'
 LOG_DIR = Path(tempfile.mkdtemp(prefix="cli_auto_tests_"))

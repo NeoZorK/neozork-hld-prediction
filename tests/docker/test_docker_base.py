@@ -19,7 +19,7 @@ class DockerBaseTest(unittest.TestCase):
     def setUpClass(cls):
         """Set up the test environment before any tests run."""
         # Get the project root directory
-        cls.project_root = Path(__file__).parent.parent.parent.absolute()
+        cls.project_root = Path(__file__).parent.parent.parent.parent.absolute()
 
         # Check if Docker is installed and available
         try:

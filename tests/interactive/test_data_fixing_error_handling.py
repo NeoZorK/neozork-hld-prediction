@@ -17,11 +17,11 @@ from unittest.mock import patch, MagicMock
 import time
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent / "src"))
 
 from src.interactive.analysis_runner import AnalysisRunner
 import sys
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 from interactive_system import InteractiveSystem
 
 

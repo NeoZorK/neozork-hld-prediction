@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 # Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent / "src"))
 
 from src.calculation.rules import (
     apply_rule_predict_hld, apply_rule_pv_highlow, apply_rule_support_resistants,

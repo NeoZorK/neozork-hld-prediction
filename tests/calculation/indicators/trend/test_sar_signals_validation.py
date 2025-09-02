@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 # Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent / "src"))
 
 from src.calculation.indicators.trend.sar_ind import calculate_sar, calculate_sar_signals, apply_rule_sar
 from src.common.constants import BUY, SELL, NOTRADE

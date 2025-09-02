@@ -17,7 +17,7 @@ from unittest.mock import patch, MagicMock
 import pandas as pd
 
 # Add the project root to the path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), \'..\', \'..\', \'..\'))
 
 from src.cli.cli import parse_supertrend_parameters, show_indicator_help
 

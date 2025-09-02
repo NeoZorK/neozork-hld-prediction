@@ -17,7 +17,7 @@ class TestScriptsIntegration:
     @classmethod
     def setup_class(cls):
         """Set up test environment."""
-        cls.project_root = Path(__file__).parent.parent.parent
+        cls.project_root = Path(__file__).parent.parent.parent.parent.parent
         cls.eda_script = cls.project_root / "eda"
         cls.nz_script = cls.project_root / "nz"
 
@@ -104,7 +104,7 @@ class TestScriptsWorkflow:
 
     def test_analysis_workflow(self):
         """Test analysis workflow with scripts."""
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent.parent.parent.parent
         eda_script = project_root / "eda"
         
         if not eda_script.exists():
@@ -121,7 +121,7 @@ class TestScriptsWorkflow:
 
     def test_data_processing_workflow(self):
         """Test data processing workflow with scripts."""
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent.parent.parent.parent
         eda_script = project_root / "eda"
         
         if not eda_script.exists():
@@ -138,7 +138,7 @@ class TestScriptsWorkflow:
 
     def test_cleanup_workflow(self):
         """Test cleanup workflow with scripts."""
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent.parent.parent.parent
         eda_script = project_root / "eda"
         
         if not eda_script.exists():
@@ -159,7 +159,7 @@ class TestScriptsEnvironment:
 
     def test_scripts_custom_environment(self):
         """Test that scripts work with custom environment variables."""
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent.parent.parent.parent
         nz_script = project_root / "nz"
         
         if not nz_script.exists():
@@ -180,7 +180,7 @@ class TestScriptsEnvironment:
 
     def test_scripts_working_directory(self):
         """Test that scripts work from different working directories."""
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent.parent.parent.parent
         nz_script = project_root / "nz"
         
         if not nz_script.exists():
@@ -210,7 +210,7 @@ class TestScriptsPerformance:
 
     def test_scripts_startup_time(self):
         """Test that scripts start up quickly."""
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent.parent.parent.parent
         nz_script = project_root / "nz"
         
         if not nz_script.exists():
@@ -227,7 +227,7 @@ class TestScriptsPerformance:
 
     def test_scripts_memory_usage(self):
         """Test that scripts don't use excessive memory."""
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent.parent.parent.parent
         nz_script = project_root / "nz"
         
         if not nz_script.exists():

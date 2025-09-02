@@ -17,7 +17,7 @@ class TestEDAScript:
     @classmethod
     def setup_class(cls):
         """Set up test environment."""
-        cls.project_root = Path(__file__).parent.parent.parent
+        cls.project_root = Path(__file__).parent.parent.parent.parent.parent
         cls.eda_script = cls.project_root / "eda"
         
         # Ensure script is executable
@@ -222,7 +222,7 @@ class TestEDAScriptIntegration:
 
     def test_script_with_sample_data(self):
         """Test that the script can handle sample data files."""
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent.parent.parent.parent
         eda_script = project_root / "eda"
         
         if not eda_script.exists():
@@ -240,7 +240,7 @@ class TestEDAScriptIntegration:
 
     def test_script_environment_variables(self):
         """Test that the script respects environment variables."""
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent.parent.parent.parent
         eda_script = project_root / "eda"
         
         if not eda_script.exists():
@@ -260,7 +260,7 @@ class TestEDAScriptIntegration:
 
     def test_script_data_directory_handling(self):
         """Test that the script can handle data directory operations."""
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent.parent.parent.parent
         eda_script = project_root / "eda"
         
         if not eda_script.exists():
@@ -278,7 +278,7 @@ class TestEDAScriptIntegration:
 
     def test_script_file_analysis(self):
         """Test that the script can analyze specific files."""
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent.parent.parent.parent
         eda_script = project_root / "eda"
         
         if not eda_script.exists():
@@ -300,7 +300,7 @@ class TestEDAScriptDataOperations:
 
     def test_script_cleanup_operations(self):
         """Test that the script can perform cleanup operations."""
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent.parent.parent.parent
         eda_script = project_root / "eda"
         
         if not eda_script.exists():
@@ -317,7 +317,7 @@ class TestEDAScriptDataOperations:
 
     def test_script_statistical_analysis(self):
         """Test that the script can perform statistical analysis."""
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent.parent.parent.parent
         eda_script = project_root / "eda"
         
         if not eda_script.exists():

@@ -1,6 +1,6 @@
-# Tests Directory
+# Tests Directory Structure
 
-This directory contains all test files for the NeoZork HLD Prediction project.
+This document provides a comprehensive overview of the test directory structure for the NeoZork HLD Prediction project.
 
 > ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container testing. Current version: v0.5.3
 

@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 # Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent / "src"))
 
 from src.cli.cli_show_mode import (
     show_help, show_indicator_help

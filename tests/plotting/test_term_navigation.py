@@ -26,7 +26,7 @@ try:
     )
 except ImportError as e:
     # Fallback for test environments
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), \'..\', \'..\', \'..\'))
     from src.plotting.term_navigation import (
         TerminalNavigator, 
         create_navigation_prompt, 

@@ -14,9 +14,9 @@ import sys
 import os
 
 # Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "src"))
 # Add scripts to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts"))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "scripts"))
 
 
 def is_docker_environment():
@@ -34,7 +34,7 @@ class TestIDESetupManager:
     @pytest.fixture
     def project_root(self):
         """Get project root path"""
-        return Path(__file__).parent.parent.parent
+        return Path(__file__).parent.parent.parent.parent
     
     @pytest.fixture
     def setup_manager(self, project_root):
@@ -349,7 +349,7 @@ class TestIDEConfigValidation:
     @pytest.fixture
     def project_root(self):
         """Get project root path"""
-        return Path(__file__).parent.parent.parent
+        return Path(__file__).parent.parent.parent.parent
     
     def test_cursor_config_validation(self, project_root):
         """Test Cursor configuration validation"""

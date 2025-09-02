@@ -13,7 +13,7 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 # Add scripts to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts" / "analysis" / "dead-code"))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent / "scripts" / "analysis" / "dead-code"))
 
 from advanced_dead_code_analyzer import (
     AdvancedDeadCodeAnalyzer, 

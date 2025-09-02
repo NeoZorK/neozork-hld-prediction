@@ -16,7 +16,7 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent / "src"))
 
 from interactive.data_manager import DataManager
 

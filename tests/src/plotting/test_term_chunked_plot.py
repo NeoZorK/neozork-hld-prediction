@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 # Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent / "src"))
 
 from src.plotting.term_chunked_plot import (
     plot_ohlcv_chunks, plot_auto_chunks, plot_pv_chunks, plot_sr_chunks,

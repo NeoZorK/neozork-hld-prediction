@@ -15,7 +15,7 @@ import sys
 import os
 
 # Add scripts directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts"))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent / "scripts"))
 
 from mcp.check_mcp_status import DockerMCPServerChecker, MCPServerChecker, is_running_in_docker
 
@@ -25,7 +25,7 @@ class TestDockerMCPServerChecker:
     
     def setup_method(self):
         """Setup test environment"""
-        self.project_root = Path(__file__).parent.parent.parent
+        self.project_root = Path(__file__).parent.parent.parent.parent.parent
         self.checker = DockerMCPServerChecker(self.project_root)
     
     @patch('subprocess.run')
@@ -162,7 +162,7 @@ class TestMCPServerChecker:
     
     def setup_method(self):
         """Setup test environment"""
-        self.project_root = Path(__file__).parent.parent.parent
+        self.project_root = Path(__file__).parent.parent.parent.parent.parent
         self.checker = MCPServerChecker(self.project_root)
     
     @patch('subprocess.run')
@@ -210,7 +210,7 @@ class TestIntegration:
     
     def test_checker_initialization(self):
         """Test checker initialization"""
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent.parent.parent.parent
         
         # Test Docker checker
         docker_checker = DockerMCPServerChecker(project_root)
