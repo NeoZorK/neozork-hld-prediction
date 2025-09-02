@@ -169,8 +169,13 @@ class GapFixingUtils:
         print(f"   ⏱️  Expected frequency: {expected_freq}")
         
         # Find gaps (intervals larger than expected frequency)
-        gap_threshold = expected_freq * 1.5  # Allow 50% tolerance
-        print(f"   🚨 Gap threshold: {gap_threshold}")
+        # Use more flexible threshold for monthly data
+        if expected_freq >= pd.Timedelta('30D'):  # Monthly or longer intervals
+            gap_threshold = expected_freq * 1.2  # Allow only 20% tolerance for monthly data
+            print(f"   🚨 Gap threshold: {gap_threshold} (monthly data - strict tolerance)")
+        else:
+            gap_threshold = expected_freq * 1.5  # Allow 50% tolerance for other frequencies
+            print(f"   🚨 Gap threshold: {gap_threshold}")
         
         # Find gaps with progress bar for large files
         if total_rows > 100000:
@@ -222,7 +227,7 @@ class GapFixingUtils:
         median_diff = time_diffs.median()
         print(f"      📊 Using median time difference: {median_diff}")
         
-        # Round to common frequencies
+        # Round to common frequencies with better monthly detection
         if median_diff <= pd.Timedelta('1T'):  # 1 minute
             print(f"      ⏱️  Selected frequency: 1 minute (1T)")
             return pd.Timedelta('1T')
@@ -241,9 +246,15 @@ class GapFixingUtils:
         elif median_diff <= pd.Timedelta('1D'):  # 1 day
             print(f"      ⏱️  Selected frequency: 1 day (1D)")
             return pd.Timedelta('1D')
-        else:
+        elif median_diff <= pd.Timedelta('7D'):  # 1 week
             print(f"      ⏱️  Selected frequency: 1 week (1W)")
-            return pd.Timedelta('1W')  # 1 week
+            return pd.Timedelta('1W')
+        elif median_diff <= pd.Timedelta('35D'):  # Monthly data (28-31 days)
+            print(f"      ⏱️  Selected frequency: 1 month (1M)")
+            return pd.Timedelta('30D')  # Use 30 days as monthly frequency
+        else:
+            print(f"      ⏱️  Selected frequency: 1 month (1M)")
+            return pd.Timedelta('30D')  # Default to monthly for very long intervals
     
     def check_memory_available(self, memory_limit_mb: int, required_mb: int = None) -> bool:
         """Check if we have enough memory available."""
