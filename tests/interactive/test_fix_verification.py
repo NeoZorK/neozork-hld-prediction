@@ -27,34 +27,37 @@ class TestFixVerification:
         self.data_manager = DataManager()
         
     def test_mixed_file_concatenation(self):
-        """Test concatenation of files with mixed structures."""
+        """Test concatenation of files with mixed structures using small test data."""
         print("🧪 Testing mixed file concatenation fix...")
         print("=" * 50)
         
-        # Test files with different structures
-        test_files = [
-            "data/cache/csv_converted/CSVExport_EURUSD_PERIOD_H1.parquet",  # No Timestamp column
-            "data/cache/csv_converted/CSVExport_EURUSD_PERIOD_D1.parquet"   # Has Timestamp column
-        ]
+        # Create small test DataFrames instead of loading large files
+        # This avoids memory issues in Docker environments
         
-        # Load files
-        dataframes = []
-        for file_path in test_files:
-            if not os.path.exists(file_path):
-                print(f"❌ File not found: {file_path}")
-                continue
-            
-            print(f"Loading: {os.path.basename(file_path)}")
-            df = self.data_manager.load_data_from_file(file_path)
-            df['source_file'] = os.path.basename(file_path)
-            dataframes.append(df)
-            
-            print(f"  Shape: {df.shape}")
-            print(f"  Has Timestamp column: {'Timestamp' in df.columns}")
-            print(f"  Columns: {df.columns.tolist()}")
+        # Test DataFrame 1: No Timestamp column
+        df1 = pd.DataFrame({
+            'Open': [1.1000, 1.1001, 1.1002],
+            'High': [1.1005, 1.1006, 1.1007],
+            'Low': [1.0995, 1.0996, 1.0997],
+            'Close': [1.1003, 1.1004, 1.1005],
+            'Volume': [1000, 1100, 1200]
+        })
         
-        if len(dataframes) < 2:
-            pytest.skip("Not enough files to test concatenation")
+        # Test DataFrame 2: Has Timestamp column
+        df2 = pd.DataFrame({
+            'Timestamp': pd.date_range('2024-01-01', periods=3, freq='H'),
+            'Open': [1.2000, 1.2001, 1.2002],
+            'High': [1.2005, 1.2006, 1.2007],
+            'Low': [1.1995, 1.1996, 1.1997],
+            'Close': [1.2003, 1.2004, 1.2005],
+            'Volume': [2000, 2100, 2200]
+        })
+        
+        dataframes = [df1, df2]
+        
+        print(f"Created test DataFrames:")
+        print(f"  DataFrame 1: {df1.shape} (no Timestamp)")
+        print(f"  DataFrame 2: {df2.shape} (with Timestamp)")
         
         # Test the fix logic
         print(f"\n🔄 Testing concatenation fix...")
@@ -77,7 +80,7 @@ class TestFixVerification:
                 if 'Timestamp' not in df_copy.columns:
                     # Create a dummy Timestamp column for files without it
                     df_copy['Timestamp'] = pd.NaT
-                    print(f"   Added Timestamp column to file {i+1}")
+                    print(f"   Added Timestamp column to DataFrame {i+1}")
                 
                 processed_data.append(df_copy)
             
@@ -98,26 +101,13 @@ class TestFixVerification:
         if 'Timestamp' in combined_df.columns:
             missing_count = combined_df['Timestamp'].isna().sum()
             missing_percent = 100 * missing_count / len(combined_df)
-            
-            print(f"Missing timestamps: {missing_count} ({missing_percent:.2f}%)")
-            
-            # Show breakdown by source file
-            print(f"\n📋 Breakdown by source file:")
-            for source_file in combined_df['source_file'].unique():
-                file_data = combined_df[combined_df['source_file'] == source_file]
-                file_missing = file_data['Timestamp'].isna().sum()
-                file_total = len(file_data)
-                file_percent = 100 * file_missing / file_total
-                print(f"  {source_file}: {file_missing}/{file_total} missing ({file_percent:.2f}%)")
-            
-            # The fix should result in missing timestamps only for files that didn't have them originally
-            if missing_percent > 50:
-                print(f"⚠️  Still high missing timestamps, but this is expected for mixed structures")
-                print(f"   Files without original Timestamp columns will have missing values")
-            else:
-                print(f"✅ SUCCESS: Low missing timestamps")
-        else:
-            print(f"❌ No Timestamp column found in combined data")
+            print(f"Missing Timestamp values: {missing_count} ({missing_percent:.1f}%)")
+        
+        # Verify the fix worked
+        assert len(combined_df) == len(df1) + len(df2), "Combined DataFrame should have correct number of rows"
+        assert 'Timestamp' in combined_df.columns, "Combined DataFrame should have Timestamp column"
+        
+        print("✅ Mixed file concatenation test passed!")
 
 
 if __name__ == "__main__":
