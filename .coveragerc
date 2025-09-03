@@ -1,0 +1,32 @@
+[run]
+source = src
+omit = 
+    */tests/*
+    */__pycache__/*
+    */venv/*
+    */env/*
+    */migrations/*
+    setup.py
+    conftest.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    if self.debug:
+    if settings.DEBUG
+    raise AssertionError
+    raise NotImplementedError
+    if 0:
+    if __name__ == .__main__.:
+    class .*\bProtocol\):
+    @(abc\.)?abstractmethod
+    raise ImportError
+    except ImportError:
+
+[html]
+directory = htmlcov
+title = Neozork HLD Prediction Coverage Report
+
+[xml]
+output = coverage.xml

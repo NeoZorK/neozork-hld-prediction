@@ -1,93 +1,174 @@
-# Python
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-*.class
+*$py.class
 
-# Pytest cache
-.pytest_cache/
+# C extensions
+*.so
 
-# Coverage files
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
 .coverage
 .coverage.*
-htmlcov/
+.cache
+nosetests.xml
 coverage.xml
 *.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
 
-# Virtual Environment
-venv/
-env/
-.env/
-.env.example
+# Translations
+*.mo
+*.pot
 
-# IDE
-.idea/
-.vscode/
-*.iml
-misc.xml
-
-
-# Project specific
-data/cleaned/
-data/cleaned_data/
-data/backups/
-*.xml
-scripts/start_mcp_server.sh
-scripts/test_mcp_connection.sh
-
-
-# Cache and temp files
-.cache/
-.yf_cache/
-*.db
-
-# Data files
-*.parquet
-*.html
-*.bak
-*.png
-*.svg
-*.webp
-*.txt
-
-# Explicitly ignore indicators folder content
-data/indicators/parquet/*
-data/indicators/csv/*
-data/indicators/json/*
-
-# Ignore all CSV files from mql5_feed except specific ones
-mql5_feed/*.csv
-!mql5_feed/CSVExport_EURUSD_PERIOD_D1.csv
-
-# Container-related files
-*.tar
-*.tar.gz
-*.img
-*.iso
-*.vmdk
-*.qcow2
-*.ova
-*.ovf
-.containerignore
-*.container
-
-# Ignore log files from batch EDA and any other logs
+# Django stuff:
 *.log
-logs/
-!/.gitkeep
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
 
-# Results and analysis outputs
-results/
+# Flask stuff:
+instance/
+.webassets-cache
 
-# Project specific
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# pdm
+.pdm.toml
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
 .env
-qodana.yaml
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# macOS
 .DS_Store
 
-# Exceptions - files that should not be ignored
-!data/cache/csv_converted/CSVExport_GBPUSD_PERIOD_MN1.parquet
-!data/raw_parquet/binance_BTCUSDT_H1.parquet
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 
-# Include test indicator files
-!data/indicators/parquet/*UNKNOWN*.parquet
-!data/indicators/csv/*UNKNOWN*.csv
-!data/indicators/json/*UNKNOWN*.json
+# Project specific
+data/cache/
+data/raw/
+data/processed/
+logs/
+results/
+models/
+*.parquet
+*.joblib
+*.pkl
+*.pickle
+
+# MCP server
+mcp_server_ready.flag
+*.mcp.log
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# UV
+uv.lock
+.uv/

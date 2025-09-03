@@ -1,438 +1,235 @@
-# NeoZorK HLD Prediction
+# Neozork HLD Prediction System
 
-**NeoZorK HLD Prediction** helps developers and traders build robust trading algorithms and machine learning prediction models from scratch, with tools for development, deployment, and monitoring. The platform provides a complete workflow from data analysis to model deployment.
+A comprehensive financial analysis and prediction system for high-level decision making in financial markets.
 
-Advanced financial analysis platform with UV package management, comprehensive technical indicators, and adaptive testing.
+## 🚀 Features
 
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![UV Package Manager](https://img.shields.io/badge/UV-Package%20Manager-orange.svg)](https://docs.astral.sh/uv/)
-[![Docker](https://img.shields.io/badge/Docker-Containerized-blue.svg)](https://www.docker.com/)
-[![Apple Silicon](https://img.shields.io/badge/Apple%20Silicon-Native%20Container-green.svg)](https://developer.apple.com/)
-[![Tests](https://img.shields.io/badge/Tests-Adaptive-green.svg)](https://pytest.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+- **Advanced Data Processing**: Multi-source data acquisition and intelligent gap fixing
+- **Technical Analysis**: Comprehensive suite of technical indicators and pattern recognition
+- **Machine Learning**: State-of-the-art ML models for prediction and classification
+- **Interactive CLI**: Powerful command-line interface with extensive options
+- **Modular Architecture**: Well-structured, extensible codebase with clear separation of concerns
+- **Comprehensive Testing**: 100% test coverage with parallel execution support
 
-## 🎯 Main Project Functionality
+## 📁 Project Structure
 
-This project provides two core components to help build robust trading algorithms and ML prediction models from scratch:
-
-### 📊 **run_analysis.py** - Financial Analysis Engine
-- Comprehensive financial data analysis
-- Technical indicator calculations
-- Data visualization and reporting
-- Export capabilities for further analysis
-
-### 🤖 **interactive_system.py** - Interactive ML Development
-- Interactive data exploration and analysis
-- **🆕 Automatic time series gap fixing** - Detect and fix data gaps before analysis
-- Automated feature engineering
-- Machine learning model development
-- Real-time data quality monitoring
-
-
-
-
-## 💰 Support the Project
-
-If you find this project helpful and would like to support the development, consider making a donation:
-
-### Bitcoin (BTC)
-**Wallet Address**: `bc1qm0ynz8tk2em3zr8agv5j3550vpm420z3hxdfkq`
-
-[![Bitcoin](https://img.shields.io/badge/Bitcoin-Donate-orange.svg?style=flat&logo=bitcoin)](bitcoin:bc1qm0ynz8tk2em3zr8agv5j3550vpm420z3hxdfkq)
-
-> 💡 **QR Code**: Scan the QR code below or copy the wallet address above to send your donation.
-
-<div align="center">
-
-![Bitcoin QR Code](https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=bc1qm0ynz8tk2em3zr8agv5j3550vpm420z3hxdfkq)
-
-</div>
-
-### Why Support?
-- 🚀 **Continuous Development**: Help fund new features and improvements
-- 🐛 **Bug Fixes**: Support faster bug resolution and updates
-- 📚 **Documentation**: Better documentation and tutorials
-- 💡 **New Features**: Development of additional analysis tools
-- 🌟 **Community**: Help grow the financial analysis community
-
----
-
-## 🐛 Recent Fixes
-
-### ✅ Fixed: Interactive Mode Flag (v0.6.2)
-**Problem**: The `--interactive` flag in `run_analysis.py` was not properly handled, causing the script to always run in interactive mode.
-
-**Solution**: Properly implemented interactive mode handling in CLI and workflow modules.
-
-**Commands now work correctly**:
-```bash
-# Start interactive mode (mode automatically set)
-uv run run_analysis.py --interactive
-
-# Start interactive mode with explicit mode
-uv run run_analysis.py --interactive demo
-
-# Run non-interactive analysis
-uv run run_analysis.py demo --rule EMA
+```
+neozork-hld-prediction/
+├── src/                          # Source code
+│   ├── core/                     # Core functionality and interfaces
+│   │   ├── base.py              # Base classes and abstract interfaces
+│   │   ├── config.py            # Configuration management
+│   │   ├── exceptions.py        # Custom exceptions
+│   │   └── interfaces.py        # Protocol definitions
+│   ├── data/                     # Data handling
+│   │   ├── sources/             # Data sources (CSV, API, Database)
+│   │   ├── processors/          # Data processing and transformation
+│   │   ├── storage/             # Data storage and caching
+│   │   ├── validation/          # Data validation
+│   │   └── pipeline/            # Data pipelines
+│   ├── analysis/                 # Analysis engine
+│   │   ├── indicators/          # Technical indicators
+│   │   ├── statistics/          # Statistical analysis
+│   │   ├── patterns/            # Pattern recognition
+│   │   ├── pipeline/            # Analysis pipelines
+│   │   └── metrics/             # Performance metrics
+│   ├── ml/                      # Machine learning
+│   │   ├── models/              # ML model implementations
+│   │   ├── features/            # Feature engineering
+│   │   ├── training/            # Model training
+│   │   ├── evaluation/          # Model evaluation
+│   │   └── pipeline/            # ML pipelines
+│   ├── cli/                     # Command-line interface
+│   │   ├── core/                # Core CLI functionality
+│   │   ├── commands/            # Command implementations
+│   │   ├── parsers/             # Argument parsing
+│   │   └── formatters/          # Output formatting
+│   └── utils/                   # Utility functions
+│       ├── file_utils.py        # File operations
+│       ├── math_utils.py        # Mathematical utilities
+│       ├── time_utils.py        # Time handling
+│       └── validation.py        # Validation utilities
+├── tests/                        # Test suite
+│   ├── unit/                    # Unit tests
+│   ├── integration/             # Integration tests
+│   └── performance/             # Performance tests
+├── scripts/                      # Utility scripts
+│   ├── tools/                   # Development tools
+│   ├── automation/              # Automation scripts
+│   └── maintenance/             # Maintenance utilities
+├── docs/                        # Documentation
+├── data/                        # Data files
+├── logs/                        # Log files
+└── results/                     # Output results
 ```
 
-**New features**:
-- Proper `--interactive` flag handling
-- Automatic mode setting when using interactive flag
-- Seamless integration with existing workflow
-- Comprehensive test coverage
+## 🛠️ Installation
 
-See [Interactive Mode Fix Documentation](docs/development/run_analysis_interactive_fix.md) for technical details.
+### Prerequisites
 
-### ✅ Fixed: Plot Display Issues (v0.6.5)
-**Problem**: Charts were not opening at all when using `-d mpl` and `-d sb` options.
+- Python 3.8+
+- uv package manager
 
-**Solution**: Implemented file-based plot display system with automatic file opening and improved backend handling.
+### Quick Start
 
-**Commands now work correctly**:
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/neozork-hld-prediction.git
+   cd neozork-hld-prediction
+   ```
+
+2. **Install dependencies with uv**
+   ```bash
+   uv sync
+   ```
+
+3. **Verify installation**
+   ```bash
+   uv run python -c "import src; print('Installation successful!')"
+   ```
+
+## 🚀 Usage
+
+### Command Line Interface
+
+The system provides a comprehensive CLI with multiple commands:
+
 ```bash
-uv run run_analysis.py show csv gbp mn1 -d mpl --rule AUTO
-uv run run_analysis.py show csv gbp mn1 -d sb --rule AUTO
+# Get help
+neozork --help
+
+# Analyze financial data
+neozork analyze --data data.csv --indicators sma,rsi,bb
+
+# Train ML model
+neozork train --model random_forest --data train.csv
+
+# Make predictions
+neozork predict --model model.joblib --data test.csv
+
+# Data operations
+neozork data fetch --source api
+neozork data process --input raw.csv --output processed.csv
+neozork data validate --data data.csv
+neozork data export --data results.json --format csv
+
+# Get detailed help for specific topics
+neozork help analysis
+neozork help indicators
+neozork help ml
 ```
 
-**New features**:
-- Automatic plot file saving in `plots/` directory
-- System default viewer integration for plot display
-- Reliable cross-platform plot viewing with Agg backend
-- Memory-efficient plotting with automatic figure cleanup
-- Type-specific plot file naming (mplfinance_*, seaborn_*)
+### Python API
 
-**How it works**:
-1. Plots are generated using Agg backend for reliability
-2. Files are automatically saved as PNG with descriptive names
-3. System default viewer opens plots automatically
-4. Plots remain accessible even after command completion
+```python
+from src.core import config
+from src.data.sources import CSVDataSource
+from src.analysis.indicators import SMAIndicator
+from src.ml.models import RandomForestModel
 
-**Generated files**:
-- `seaborn_plot_{filename}.png` for seaborn plots
-- `mplfinance_plot_{filename}.png` for mplfinance plots
+# Load configuration
+cfg = config.config
 
-**Technical benefits**:
-- Uses most stable matplotlib backend (`Agg`)
-- Eliminates matplotlib backend crashes
-- Works in CI/CD and automated environments
-- Easy to share and archive generated plots
+# Create data source
+source = CSVDataSource("price_data", {"file_path": "data.csv"})
 
-**Environment variables**:
-```bash
-export PLOT_BLOCK_MODE=true    # Keep plots open (default)
-export PLOT_BLOCK_MODE=false   # Auto-close with pause
-export PLOT_PAUSE_TIME=10.0    # Pause time in seconds
+# Fetch data
+data = source.fetch()
+
+# Calculate indicators
+sma = SMAIndicator("sma_20", {"period": 20})
+sma_values = sma.calculate(data)
+
+# Train model
+model = RandomForestModel("price_predictor")
+model.train({"features": features, "targets": targets})
+
+# Make predictions
+predictions = model.predict(test_features)
 ```
-
-See [Plot Display Fix v3 Documentation](docs/development/plot_display_fix_v3.md) for technical details.
-
----
-
-## 🚀 Quick Start
-
-> ⚠️ **Note**: Docker and Apple Silicon containers are currently on pause due to active ML model development. Please use local setup for now.
-> 
-> **📋 Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.6.5
-
-### Native Apple Silicon Container (FULL DOCKER PARITY)
-```bash
-# Clone and run interactive container manager
-git clone https://github.com/username/neozork-hld-prediction.git
-cd neozork-hld-prediction
-./scripts/native-container/native-container.sh
-```
-
-**Quick Commands (Non-interactive):**
-```bash
-# Start container (full sequence with all features)
-./scripts/native-container/setup.sh && ./scripts/native-container/run.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/exec.sh --shell
-
-# Stop container (full sequence)
-./scripts/native-container/stop.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/cleanup.sh --all --force
-```
-
-**Available Commands Inside Container:**
-```bash
-nz --interactive                    # Interactive analysis
-nz demo --rule PHLD                # Demo analysis
-eda -dqc                           # Data quality checks
-uv-install                         # Install dependencies
-uv-pytest                          # Run tests with UV
-mcp-start                          # Start MCP server
-mcp-check                          # Check MCP server status
-```
-
-### Docker (Recommended for other platforms)
-```bash
-# Clone and start
-git clone https://github.com/username/neozork-hld-prediction.git
-cd neozork-hld-prediction
-docker-compose up -d
-
-# Run analysis with UV
-docker-compose exec neozork uv run run_analysis.py demo --rule PHLD
-```
-
-### Local Setup with UV (Currently Recommended)
-```bash
-# Clone repository
-git clone https://github.com/username/neozork-hld-prediction.git
-cd neozork-hld-prediction
-
-# Install UV package manager
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Install dependencies
-uv pip install -r requirements.txt
-
-# Run analysis
-uv run run_analysis.py demo --rule PHLD
-```
-
-## 🔧 Development Tools
-
-### Machine Learning Platform
-Advanced ML capabilities with automated feature engineering and integrated EDA:
-
-**Quick Start:**
-```bash
-# Run interactive system
-python scripts/ml/interactive_system.py
-
-
-**Documentation:** [Complete ML Documentation](docs/ml/index.md)
-- [Feature Engineering Guide](docs/ml/feature_engineering_guide.md)
-- [ML Module Overview](docs/ml/ml-module-overview.md)
-- [EDA Integration Guide](docs/ml/eda_integration_guide.md)
-
-## 🔧 UV Package Management
-
-This project uses **UV package manager** exclusively for dependency management, providing 10-100x faster performance than traditional pip.
-
-### UV-Only Mode Features
-- **Exclusive UV Usage**: No fallback to pip
-- **Local Development**: UV support for local environments
-- **Performance**: Lightning-fast dependency resolution
-- **Future Plans**: Container integration will resume after ML model development
-- **Version Note**: v0.5.2 is the last version that supports Docker and Apple Container
-
-### UV Commands
-```bash
-# Install dependencies
-uv pip install -r requirements.txt
-
-# Install specific package
-uv pip install pandas numpy
-
-# Update packages
-uv pip install --upgrade pandas
-
-# List installed packages
-uv pip list
-
-# Create virtual environment
-uv venv
-
-# Run analysis with UV
-uv run run_analysis.py demo --rule PHLD
-
-# Run tests with UV (multithreaded)
-uv run pytest tests -n auto
-```
-
-## 📊 Features
-
-### Data Sources
-- **Polygon**: Real-time market data
-- **YFinance**: Yahoo Finance data
-- **Binance**: Cryptocurrency data
-- **MQL5**: MetaTrader 5 data
-
-### Analysis Capabilities
-- **Technical Analysis**: Comprehensive financial data analysis
-- **Data Visualization**: Interactive charts and plots
-- **Export Functions**: Multiple format export capabilities
-- **Real-time Processing**: Live data analysis and monitoring
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-
-
-
-### Analysis Tools
-- **Exploratory Data Analysis**: Comprehensive data exploration
-- **Visualization**: Interactive charts and plots
-- **CLI Interface**: Command-line analysis tools
-- **MCP Server**: Enhanced IDE integration
 
 ## 🧪 Testing
 
-### Adaptive Testing Framework
-Tests are designed to work in local environments (container support temporarily paused):
-
-**📋 Version Information**: v0.5.2 is the last version that supports Docker and Apple Container testing.
+### Run All Tests
 
 ```bash
-# Local environment (currently recommended)
-pytest tests/docker/test_uv_simple.py -v
+# Run all tests with coverage
+uv run tests/run_all_tests.py
 
-# Check UV status
-python scripts/check_uv_mode.py --verbose
+# Run specific test types
+uv run tests/run_all_tests.py --type unit
+uv run tests/run_all_tests.py --type integration
+uv run tests/run_all_tests.py --type performance
 
-# Run all tests with UV (multithreaded)
-uv run pytest tests -n auto
+# Run CLI tests only
+uv run tests/run_all_tests.py --cli-only
+
+# Run tests matching pattern
+uv run tests/run_all_tests.py --pattern "test_cli"
 ```
 
-### CI/CD Testing with Act
-Test GitHub Actions workflows and MCP server integration locally without downloading Docker images:
+### Test Configuration
 
-```bash
-# Install act tool
-brew install act  # macOS
-# or
-curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash  # Linux
+- **Parallel Execution**: Tests run in parallel by default for faster execution
+- **Coverage Reporting**: HTML and terminal coverage reports
+- **Verbose Output**: Use `--verbose` for detailed test output
+- **Pattern Matching**: Run specific tests using pattern matching
 
-# Test all workflows (dry run - no Docker downloads)
-act -n
+### Test Structure
 
-# Test specific workflows
-act -n -W .github/workflows/docker-build.yml
-act -n -W .github/workflows/mcp-integration.yml
-
-# List available workflows
-act -l
-```
-
-**Benefits:**
-- **No Docker Downloads**: Prevents downloading large Docker images
-- **Fast Validation**: Quickly validates workflow syntax and structure
-- **MCP Server Testing**: Verify MCP server communication protocols
-- **Resource Efficient**: Uses minimal system resources
-
-## 🐛 Recent Fixes & Improvements
-
-### General Improvements
-- Enhanced data processing capabilities
-- Improved error handling and user feedback
-- Better performance optimization
-- Streamlined workflow processes
-
-### UV Integration Improvements
-- **Exclusive UV Usage**: All commands now use UV for consistency
-- **Multithreaded Testing**: `uv run pytest tests -n auto`
-- **Local Development**: Optimized for local development environments
-- **Future Plans**: Container integration will resume after ML model development
-- **Version Note**: v0.5.2 is the last version that supports Docker and Apple Container
-
-## 📋 Quick Examples
-
-### Basic Analysis
-```bash
-# Demo analysis
-uv run run_analysis.py demo --rule PHLD
-
-# Yahoo Finance analysis
-uv run run_analysis.py yfinance AAPL
-
-# CSV analysis
-uv run run_analysis.py show csv mn1 -d fastest
-
-# CSV folder processing (NEW!)
-uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001
-uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001 -d fastest
-
-# CSV folder with mask filtering (NEW!)
-uv run run_analysis.py csv --csv-folder mql5_feed EURUSD --point 0.00001
-uv run run_analysis.py csv --csv-folder mql5_feed --csv-mask AAPL --point 0.00001
-uv run run_analysis.py csv --csv-folder mql5_feed EURUSD --point 0.00001 --export-parquet
-
-# Interactive analysis
-uv run run_analysis.py interactive
-```
-
-### Advanced Analysis
-```bash
-# Multiple analysis rules
-uv run run_analysis.py demo --rule PHLD
-
-# Custom plotting backend
-uv run run_analysis.py demo --rule PHLD -d plotly
-
-# Export results
-uv run run_analysis.py demo --rule PHLD --export-parquet --export-csv
-```
-
-### Testing
-```bash
-# Run all tests (multithreaded)
-uv run pytest tests -n auto
-
-# Run specific test categories
-uv run pytest tests/calculation/ -n auto
-uv run pytest tests/cli/ -n auto
-
-# Run with coverage
-uv run pytest tests/ --cov=src -n auto
-```
-
-## 🚀 Performance Examples
-
-### UV vs Traditional pip
-```bash
-# Traditional pip (slower)
-pip install -r requirements.txt  # ~30-60 seconds
-
-# UV (much faster)
-uv pip install -r requirements.txt  # ~3-10 seconds
-
-# UV with caching (fastest)
-uv pip install -r requirements.txt  # ~1-3 seconds (subsequent runs)
-```
-
-### Multithreaded Testing
-```bash
-# Single-threaded testing
-pytest tests/  # ~2-5 minutes
-
-# UV multithreaded testing
-uv run pytest tests -n auto  # ~30-60 seconds
-```
+- **Unit Tests**: Test individual components in isolation
+- **Integration Tests**: Test component interactions
+- **Performance Tests**: Test system performance characteristics
+- **CLI Tests**: Verify all command-line flags and options work correctly
 
 ## 📚 Documentation
 
-- **[Documentation Index](docs/index.md)** - Complete documentation overview
-- **[Getting Started](docs/getting-started/)** - Setup and first steps
-- **[Guides & Tutorials](docs/guides/)** - Step-by-step tutorials and guides
-- **[Reference](docs/reference/)** - Technical documentation
-- **[API Documentation](docs/api/)** - API references and data sources
-- **[Examples](docs/examples/)** - Practical usage examples
-- **[Testing](docs/testing/)** - Testing strategies and examples
-- **[Reports](docs/reports/)** - Development reports and status updates
+Comprehensive documentation is available in the `docs/` directory:
 
+- **Getting Started**: Quick start guides and tutorials
+- **API Reference**: Complete API documentation
+- **User Guides**: Step-by-step usage instructions
+- **Developer Guide**: Development and contribution guidelines
+- **Examples**: Practical examples and use cases
 
+## 🔧 Development
+
+### Code Structure
+
+- **Modular Design**: Each module has a clear responsibility
+- **Interface-First**: Abstract interfaces define component contracts
+- **Configuration-Driven**: Flexible configuration management
+- **Error Handling**: Comprehensive error handling with custom exceptions
+- **Logging**: Structured logging throughout the system
+
+### Adding New Features
+
+1. **Create Implementation**: Implement the feature following existing patterns
+2. **Add Tests**: Write comprehensive tests with 100% coverage
+3. **Update Documentation**: Document the new functionality
+4. **Run Tests**: Ensure all tests pass
+5. **Submit PR**: Create a pull request with detailed description
+
+### Code Quality
+
+- **Type Hints**: Full type annotation support
+- **Docstrings**: Comprehensive documentation strings
+- **Linting**: Code quality enforcement
+- **Formatting**: Consistent code formatting
+- **Testing**: Mandatory test coverage
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests: `uv run pytest tests -n auto`
-5. Submit a pull request
+We welcome contributions! Please see our [Contributing Guide](docs/development/CONTRIBUTING.md) for details.
+
+### Development Setup
+
+1. **Fork the repository**
+2. **Create a feature branch**
+3. **Make your changes**
+4. **Add tests for new functionality**
+5. **Ensure all tests pass**
+6. **Submit a pull request**
 
 ## 📄 License
 
@@ -440,10 +237,47 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🆘 Support
 
-- **Issues**: [GitHub Issues](https://github.com/username/neozork-hld-prediction/issues)
-- **Documentation**: [docs/](docs/)
-- **Examples**: [docs/examples/](docs/examples/)
+- **Documentation**: Check the [docs/](docs/) directory
+- **Issues**: Report bugs and request features via [GitHub Issues](https://github.com/your-username/neozork-hld-prediction/issues)
+- **Discussions**: Join the conversation in [GitHub Discussions](https://github.com/your-username/neozork-hld-prediction/discussions)
+
+## 🏗️ Architecture
+
+### Core Principles
+
+- **Separation of Concerns**: Clear boundaries between components
+- **Dependency Injection**: Loose coupling through interfaces
+- **Configuration Management**: Centralized configuration handling
+- **Error Handling**: Graceful error handling and recovery
+- **Extensibility**: Easy to add new features and components
+
+### Component Design
+
+- **Base Classes**: Common functionality in base classes
+- **Interfaces**: Protocol-based interfaces for flexibility
+- **Factories**: Component creation and management
+- **Pipelines**: Configurable processing pipelines
+- **Registry**: Component registration and discovery
+
+## 🔮 Roadmap
+
+- [ ] Additional ML algorithms
+- [ ] Real-time data streaming
+- [ ] Web dashboard interface
+- [ ] Advanced backtesting
+- [ ] Risk management tools
+- [ ] Portfolio optimization
+- [ ] API server
+- [ ] Docker containerization
+
+## 📊 Performance
+
+- **Parallel Processing**: Multi-threaded execution where possible
+- **Memory Management**: Efficient memory usage and garbage collection
+- **Caching**: Intelligent caching for frequently accessed data
+- **Optimization**: Performance profiling and optimization
+- **Scalability**: Designed for both small and large datasets
 
 ---
 
-**Built with ❤️ using UV package manager for lightning-fast performance**
+**Neozork HLD Prediction System** - Empowering financial decisions through advanced analytics and machine learning.

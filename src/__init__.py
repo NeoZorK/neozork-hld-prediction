@@ -1,13 +1,27 @@
-# src/__init__.py
-
 """
-Neozork HLD Prediction Package
+Neozork HLD Prediction - Main Package
 
-This package provides comprehensive tools for high-level data prediction
-using advanced machine learning and time series analysis techniques.
+A comprehensive financial analysis and prediction system for high-level decision making.
 """
 
-__version__ = "0.6.5"
+__version__ = "1.0.0"
+__author__ = "Neozork Team"
+__description__ = "High-Level Decision Prediction System for Financial Markets"
 
-# Make src a proper package
-__all__ = []
+# Core modules
+from .core import *
+from .data import *
+from .analysis import *
+from .ml import *
+from .cli import *
+from .utils import *
+
+__all__ = [
+    # Core functionality
+    "core",
+    "data", 
+    "analysis",
+    "ml",
+    "cli",
+    "utils",
+]

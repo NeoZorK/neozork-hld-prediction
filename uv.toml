@@ -1,13 +1,20 @@
 # uv.toml - configuration file for uv
-# Documentation: https://github.com/astral-sh/uv/blob/main/crates/uv-configuration/src/config.rs
+# Documentation: https://docs.astral.sh/uv/configuration/
 
-[pip]
-# Install packages without writing "*.pyc" files
-compile-bytecode = false
-
-# Dependency optimization
-no-deps = false
-only-binary = ["numpy", "pandas", "tensorflow", "torch"]
+# Cache configuration
+cache-dir = ".uv_cache"
 
 # Index configuration
 index-url = "https://pypi.org/simple"
+
+# Python version preference
+python-preference = "managed"
+
+# Install packages without writing "*.pyc" files
+compile-bytecode = false
+
+# Resolution strategy
+resolution = "highest"
+
+# Prerelease handling - allow prereleases for compatibility
+prerelease = "allow"

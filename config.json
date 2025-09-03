@@ -1,0 +1,181 @@
+{
+  "system": {
+    "name": "Neozork HLD Prediction System",
+    "version": "1.0.0",
+    "environment": "development"
+  },
+  "data": {
+    "cache_dir": "data/cache",
+    "raw_dir": "data/raw",
+    "processed_dir": "data/processed",
+    "max_file_size_mb": 100,
+    "supported_formats": ["csv", "json", "parquet", "xlsx"],
+    "compression": {
+      "enabled": true,
+      "algorithm": "gzip",
+      "level": 6
+    }
+  },
+  "analysis": {
+    "default_timeframe": "1H",
+    "max_lookback_periods": 1000,
+    "confidence_threshold": 0.8,
+    "indicators": {
+      "sma": {
+        "default_period": 20,
+        "min_period": 2,
+        "max_period": 500
+      },
+      "rsi": {
+        "default_period": 14,
+        "min_period": 2,
+        "max_period": 100,
+        "overbought_threshold": 70,
+        "oversold_threshold": 30
+      },
+      "bb": {
+        "default_period": 20,
+        "default_std": 2.0,
+        "min_period": 5,
+        "max_period": 100
+      }
+    }
+  },
+  "ml": {
+    "model_dir": "models",
+    "default_algorithm": "random_forest",
+    "cross_validation_folds": 5,
+    "test_size": 0.2,
+    "random_state": 42,
+    "algorithms": {
+      "random_forest": {
+        "n_estimators": 100,
+        "max_depth": 10,
+        "min_samples_split": 2,
+        "min_samples_leaf": 1
+      },
+      "xgboost": {
+        "n_estimators": 100,
+        "max_depth": 6,
+        "learning_rate": 0.1,
+        "subsample": 0.8
+      },
+      "lightgbm": {
+        "n_estimators": 100,
+        "max_depth": 6,
+        "learning_rate": 0.1,
+        "num_leaves": 31
+      }
+    }
+  },
+  "export": {
+    "default_format": "csv",
+    "output_dir": "results",
+    "supported_formats": ["csv", "json", "parquet", "xlsx", "html"],
+    "compression": {
+      "enabled": true,
+      "algorithm": "gzip"
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "logs/system.log",
+    "max_size_mb": 10,
+    "backup_count": 5,
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    "handlers": {
+      "console": {
+        "enabled": true,
+        "level": "INFO"
+      },
+      "file": {
+        "enabled": true,
+        "level": "DEBUG"
+      }
+    }
+  },
+  "cli": {
+    "default_command": "help",
+    "verbose": false,
+    "colors": true,
+    "progress_bars": true,
+    "commands": {
+      "analyze": {
+        "default_indicators": ["sma", "rsi"],
+        "max_indicators": 10
+      },
+      "train": {
+        "default_model": "random_forest",
+        "validation_split": 0.2
+      },
+      "predict": {
+        "include_confidence": false,
+        "batch_size": 1000
+      }
+    }
+  },
+  "performance": {
+    "parallel_processing": {
+      "enabled": true,
+      "max_workers": "auto",
+      "chunk_size": 1000
+    },
+    "caching": {
+      "enabled": true,
+      "max_size_mb": 100,
+      "ttl_seconds": 3600
+    },
+    "memory": {
+      "max_usage_mb": 1000,
+      "cleanup_threshold": 0.8
+    }
+  },
+  "security": {
+    "input_validation": {
+      "enabled": true,
+      "strict_mode": false
+    },
+    "file_operations": {
+      "allowed_extensions": [".csv", ".json", ".parquet", ".xlsx"],
+      "max_file_size_mb": 100,
+      "scan_for_malware": false
+    },
+    "api": {
+      "rate_limiting": {
+        "enabled": true,
+        "requests_per_minute": 60
+      },
+      "authentication": {
+        "required": false,
+        "method": "api_key"
+      }
+    }
+  },
+  "monitoring": {
+    "health_checks": {
+      "enabled": true,
+      "interval_seconds": 300
+    },
+    "metrics": {
+      "enabled": true,
+      "collection_interval": 60
+    },
+    "alerts": {
+      "enabled": false,
+      "email_notifications": false
+    }
+  },
+  "development": {
+    "debug_mode": true,
+    "hot_reload": false,
+    "test_coverage": {
+      "enabled": true,
+      "min_coverage": 80,
+      "fail_under": true
+    },
+    "linting": {
+      "enabled": true,
+      "strict": false
+    }
+  }
+}

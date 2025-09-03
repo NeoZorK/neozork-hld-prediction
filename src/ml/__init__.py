@@ -2,16 +2,22 @@
 # src/ml/__init__.py
 
 """
-Machine Learning module for NeoZorK HLD Prediction.
+Machine Learning module for Neozork HLD Prediction system.
 
-This module provides comprehensive ML capabilities including:
-- Feature Engineering with proprietary PHLD and Wave indicators
-- ML models for classification and regression
-- Walk Forward Analysis for time series validation
-- Monte Carlo simulations for risk assessment
-- Automated ML pipeline for trading strategies
+This module provides comprehensive ML capabilities including
+model training, prediction, and evaluation.
 """
 
-__version__ = "1.0.0"
-__author__ = "NeoZork Team"
-__description__ = "Advanced ML system for proprietary trading indicators"
+from .models import *
+from .features import *
+from .training import *
+from .evaluation import *
+from .pipeline import *
+
+__all__ = [
+    "models",
+    "features", 
+    "training",
+    "evaluation",
+    "pipeline",
+]
