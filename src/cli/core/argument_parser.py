@@ -30,10 +30,11 @@ def show_cool_version():
     import random
     from datetime import datetime
     
-    def create_aligned_line(text, clean_text_len, total_width=66):
+    def create_aligned_line(text, clean_text_len, total_width=66, move_border_left=0):
         """Create perfectly aligned line with exact width."""
         # Calculate spaces needed for perfect alignment
-        needed_spaces = 60 - clean_text_len  # 60 = content area inside borders
+        content_width = 60 - move_border_left  # Adjust content area based on border position
+        needed_spaces = content_width - clean_text_len
         if needed_spaces < 0:
             needed_spaces = 0
         return f'{Fore.CYAN}║{Style.RESET_ALL}  {text}' + ' ' * needed_spaces + f' {Fore.CYAN}║{Style.RESET_ALL}'
@@ -92,11 +93,11 @@ def show_cool_version():
         '╚═╝  ╚═══╝╚══════╝ ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝'
     ]
     
-    # Top border - ultra fast animation (10x faster)
+    # Top border - ultra fast animation (100x faster)
     border = '╔═══════════════════════════════════════════════════════════════╗'
     for i in range(len(border)):
         print('\r' + border[:i+1], end='', flush=True)
-        time.sleep(0.018)  # 10x faster than before
+        time.sleep(0.00018)  # 100x faster than before
     print()
     
     # Animate ASCII art line by line with color transitions
@@ -122,15 +123,15 @@ def show_cool_version():
             colored_text = f'{colors[i]}{Style.BRIGHT}{revealed_chars}{Style.RESET_ALL}'
             display_line = create_aligned_line(colored_text, len(revealed_chars))
             print('\r' + display_line, end='', flush=True)
-            time.sleep(0.00008)  # 10x faster than before
+            time.sleep(0.0000008)  # 100x faster than before
         print()
-        time.sleep(0.0008)  # 10x faster than before
+        time.sleep(0.000008)  # 100x faster than before
     
-    # Middle border - ultra fast (10x faster)
+    # Middle border - ultra fast (100x faster)
     border = '╠═══════════════════════════════════════════════════════════════╣'
     for i in range(len(border)):
         print('\r' + border[:i+1], end='', flush=True)
-        time.sleep(0.00008)  # 10x faster than before
+        time.sleep(0.0000008)  # 100x faster than before
     print()
     
     # Info section with epic effects
@@ -145,15 +146,15 @@ def show_cool_version():
         # Calculate clean text length without color codes
         clean_text = text.replace(Style.BRIGHT, '').replace(Style.RESET_ALL, '').replace(Fore.YELLOW, '').replace(Fore.GREEN, '').replace(Fore.RED, '').replace(Fore.BLUE, '')
         clean_text_len = len(clean_text)
-        line = create_aligned_line(text, clean_text_len)
-        typewriter_effect(line, 0.00018)  # 10x faster than before
-        time.sleep(0.0018)  # 10x faster than before
+        line = create_aligned_line(text, clean_text_len, move_border_left=2)
+        typewriter_effect(line, 0.0000018)  # 100x faster than before
+        time.sleep(0.000018)  # 100x faster than before
     
-    # Second middle border - ultra fast (10x faster)
+    # Second middle border - ultra fast (100x faster)
     border = '╠═══════════════════════════════════════════════════════════════╣'
     for i in range(len(border)):
         print('\r' + border[:i+1], end='', flush=True)
-        time.sleep(0.00008)  # 10x faster than before
+        time.sleep(0.0000008)  # 100x faster than before
     print()
     
     # Status section with pulsing effects
@@ -170,15 +171,15 @@ def show_cool_version():
         emoji_count = text.count('⚡') + text.count('🔮') + text.count('🚀')
         # Each emoji displays as 2 characters visually
         actual_display_len = len(clean_text) + emoji_count * 2
-        line = create_aligned_line(f'{Style.BRIGHT}{text}{Style.RESET_ALL}', actual_display_len)
+        line = create_aligned_line(f'{Style.BRIGHT}{text}{Style.RESET_ALL}', actual_display_len, move_border_left=2)
         print(line)
-        time.sleep(0.0018)  # 10x faster than before
+        time.sleep(0.000018)  # 100x faster than before
     
-    # Bottom border - ultra fast (10x faster)
+    # Bottom border - ultra fast (100x faster)
     border = '╚═══════════════════════════════════════════════════════════════╝'
     for i in range(len(border)):
         print('\r' + border[:i+1], end='', flush=True)
-        time.sleep(0.00008)  # 10x faster than before
+        time.sleep(0.0000008)  # 100x faster than before
     print()
     
     # Clean ending - no final messages
