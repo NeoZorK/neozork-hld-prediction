@@ -58,10 +58,9 @@ class TestDataProcessor:
     
     def test_init(self):
         """Test DataProcessor initialization."""
-        processor = DataProcessor("test_processor")
-        
-        assert processor.name == "test_processor"
-        assert isinstance(processor, BaseComponent)
+        # DataProcessor is abstract, test that it can't be instantiated
+        with pytest.raises(TypeError):
+            DataProcessor("test_processor")
     
     def test_abstract_methods(self):
         """Test that abstract methods are properly defined."""
@@ -75,10 +74,9 @@ class TestAnalysisEngine:
     
     def test_init(self):
         """Test AnalysisEngine initialization."""
-        engine = AnalysisEngine("test_engine")
-        
-        assert engine.name == "test_engine"
-        assert isinstance(engine, BaseComponent)
+        # AnalysisEngine is abstract, test that it can't be instantiated
+        with pytest.raises(TypeError):
+            AnalysisEngine("test_engine")
     
     def test_abstract_methods(self):
         """Test that abstract methods are properly defined."""

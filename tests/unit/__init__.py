@@ -4,12 +4,8 @@ Unit tests module for Neozork HLD Prediction system.
 This module provides unit tests for individual components.
 """
 
-from .core import *
-from .data import *
-from .analysis import *
-from .ml import *
-from .cli import *
-from .utils import *
+# Unit tests package
+# Import modules are available but not automatically imported
 
 __all__ = [
     "core",

@@ -4,9 +4,8 @@ Tests module for Neozork HLD Prediction system.
 This module provides comprehensive test coverage for all system components.
 """
 
-from .unit import *
-from .integration import *
-from .performance import *
+# Tests package
+# Import modules are available but not automatically imported
 
 __all__ = [
     "unit",
