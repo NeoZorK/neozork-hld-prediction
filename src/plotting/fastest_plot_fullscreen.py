@@ -82,7 +82,7 @@ def plot_indicator_results_fastest_fullscreen(
     df,
     rule,
     title='',
-    output_path="results/plots/fastest_plot_fullscreen.html",
+    output_path="../results/../plots/fastest_plot_fullscreen.html",
     width=1800,
     height=None,
     mode="fastest",

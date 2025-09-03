@@ -21,7 +21,7 @@ def plot_indicator_results_fastest(
     df,
     rule,
     title='',
-    output_path="results/plots/fastest_plot.html",
+    output_path="../results/../plots/fastest_plot.html",
     width=1800,
     height=1100,
     mode="fastest",

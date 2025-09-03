@@ -176,7 +176,7 @@ def create_output_directory():
     Returns:
         Path: Path object for the output directory, or None if creation failed
     """
-    output_dir = Path("results/plots")
+    output_dir = Path("../results/plots")
     try:
         output_dir.mkdir(parents=True, exist_ok=True)
         return output_dir
@@ -518,7 +518,7 @@ def generate_fast_plot(result_df, selected_rule, plot_title, args=None):
             from src.plotting.fast_plot_fullscreen import plot_indicator_results_fast_fullscreen
             
             # Set output path for fullscreen fast plotting
-            output_path = "results/plots/fast_plot_fullscreen.html"
+            output_path = "../results/../plots/fast_plot_fullscreen.html"
             
             plot_indicator_results_fast_fullscreen(
                 result_df,
@@ -531,7 +531,7 @@ def generate_fast_plot(result_df, selected_rule, plot_title, args=None):
         except ImportError as e:
             logger.print_warning(f"Fullscreen fast plotting not available: {e}. Falling back to standard fast plotting.")
             # Fallback to standard fast plotting
-            output_path = "results/plots/fast_plot.html"
+            output_path = "../results/../plots/fast_plot.html"
             from src.plotting.fast_plot import plot_indicator_results_fast
             plot_indicator_results_fast(
                 result_df,
@@ -543,7 +543,7 @@ def generate_fast_plot(result_df, selected_rule, plot_title, args=None):
         except Exception as e:
             logger.print_error(f"Error in fullscreen fast plotting: {e}. Falling back to standard fast plotting.")
             # Fallback to standard fast plotting
-            output_path = "results/plots/fast_plot.html"
+            output_path = "../results/../plots/fast_plot.html"
             from src.plotting.fast_plot import plot_indicator_results_fast
             plot_indicator_results_fast(
                 result_df,
@@ -554,7 +554,7 @@ def generate_fast_plot(result_df, selected_rule, plot_title, args=None):
             )
     else:
         # Use standard fast plotting for non-OHLCV rules
-        output_path = "results/plots/fast_plot.html"
+        output_path = "../results/../plots/fast_plot.html"
         from src.plotting.fast_plot import plot_indicator_results_fast
         plot_indicator_results_fast(
             result_df,
@@ -786,7 +786,7 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                     original_rule_with_params,
                     plot_title,
                     mode=draw_mode,
-                    output_path=f"results/plots/dual_chart_{draw_mode}.html" if draw_mode in ['fastest', 'fast'] else None,
+                    output_path=f"../results/../plots/dual_chart_{draw_mode}.html" if draw_mode in ['fastest', 'fast'] else None,
                     width=1800,
                     height=1100
                 )

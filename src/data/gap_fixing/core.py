@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/data/gap_fixing/core.py
+# src/../data/gap_fixing/core.py
 
 """
 Core gap fixing functionality for time series data.

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/data/acquisition/utils.py
+# src/../data/acquisition/utils.py
 
 """
 Utility functions for data acquisition process.
@@ -19,7 +19,7 @@ class DataAcquisitionUtils:
     def __init__(self):
         """Initialize the utilities module."""
         self.data_directory = Path('data')
-        self.raw_parquet_dir = Path('data/raw_parquet')
+        self.raw_parquet_dir = Path('../data/raw_parquet')
     
     def get_interval_delta(self, interval_str: str) -> Optional[pd.Timedelta]:
         """

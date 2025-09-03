@@ -403,7 +403,7 @@ class HTMLReportGenerator:
                 html_content += """
                     <div class="plot-item">
                         <h4>Correlation Heatmap</h4>
-                        <img src="plots/correlation_heatmap.png" alt="Correlation Heatmap" class="plot-image">
+                        <img src="../plots/correlation_heatmap.png" alt="Correlation Heatmap" class="plot-image">
                     </div>
                 """
             
@@ -411,7 +411,7 @@ class HTMLReportGenerator:
             html_content += """
                 <div class="plot-item">
                     <h4>Missing Values</h4>
-                    <img src="plots/missing_values.png" alt="Missing Values" class="plot-image">
+                    <img src="../plots/missing_values.png" alt="Missing Values" class="plot-image">
                 </div>
             """
             
@@ -419,7 +419,7 @@ class HTMLReportGenerator:
             html_content += """
                 <div class="plot-item">
                     <h4>Data Types Distribution</h4>
-                    <img src="plots/data_types.png" alt="Data Types" class="plot-image">
+                    <img src="../plots/data_types.png" alt="Data Types" class="plot-image">
                 </div>
             """
             
@@ -427,7 +427,7 @@ class HTMLReportGenerator:
             html_content += """
                 <div class="plot-item">
                     <h4>Summary Statistics</h4>
-                    <img src="plots/summary_statistics.png" alt="Summary Statistics" class="plot-image">
+                    <img src="../plots/summary_statistics.png" alt="Summary Statistics" class="plot-image">
                 </div>
             """
             
@@ -435,7 +435,7 @@ class HTMLReportGenerator:
             html_content += """
                 <div class="plot-item">
                     <h4>Outlier Analysis</h4>
-                    <img src="plots/outlier_analysis.png" alt="Outlier Analysis" class="plot-image">
+                    <img src="../plots/outlier_analysis.png" alt="Outlier Analysis" class="plot-image">
                 </div>
             """
             

@@ -277,7 +277,7 @@ class HTMLReport:
 def ensure_report_directory(file_name):
     """
     Create directory structure for reports:
-    results/reports/file_name/
+    ../results/reports/file_name/
 
     Parameters:
     - file_name: Name of the data file being analyzed

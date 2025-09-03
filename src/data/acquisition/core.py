@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/data/acquisition/core.py
+# src/../data/acquisition/core.py
 
 """
 Core data acquisition functionality.

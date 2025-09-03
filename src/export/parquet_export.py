@@ -68,7 +68,7 @@ def export_indicator_to_parquet(result_df, data_info, selected_rule, args):
         filename = original_file.stem
 
     # Create output directory for indicators
-    output_dir = Path("data/indicators/parquet")
+    output_dir = Path("../data/indicators/parquet")
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Create the new filename with the rule postfix

@@ -16,7 +16,7 @@ def export_indicator_to_csv(result_df, data_info, selected_rule, args):
     """
     Exports the calculated indicator data to a CSV file.
 
-    Creates a new CSV file in the data/indicators/csv directory based on the 
+    Creates a new CSV file in the ../data/indicators/csv directory based on the 
     original data source, adding only necessary OHLCV and timestamp fields 
     along with the calculated indicator values.
 
@@ -66,7 +66,7 @@ def export_indicator_to_csv(result_df, data_info, selected_rule, args):
         filename = original_file.stem
 
     # Create output directory
-    output_dir = Path("data/indicators/csv")
+    output_dir = Path("../data/indicators/csv")
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Create the filename with the rule postfix

@@ -1,4 +1,4 @@
-# src/data/fetchers/demo_fetcher.py
+# src/../data/fetchers/demo_fetcher.py
 
 """
 Contains the function to generate demonstration OHLCV data.

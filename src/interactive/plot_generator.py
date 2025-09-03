@@ -72,7 +72,7 @@ class PlotGenerator:
             plt.ylabel('Frequency')
             plt.grid(True, alpha=0.3)
             
-            hist_path = f"plots/{field_name}_histogram.png"
+            hist_path = f"../plots/{field_name}_histogram.png"
             plt.savefig(hist_path, dpi=300, bbox_inches='tight')
             plt.close()
             plots['histogram'] = hist_path
@@ -84,7 +84,7 @@ class PlotGenerator:
             plt.ylabel(field_name)
             plt.grid(True, alpha=0.3)
             
-            box_path = f"plots/{field_name}_boxplot.png"
+            box_path = f"../plots/{field_name}_boxplot.png"
             plt.savefig(box_path, dpi=300, bbox_inches='tight')
             plt.close()
             plots['boxplot'] = box_path
@@ -97,7 +97,7 @@ class PlotGenerator:
             plt.ylabel('Density')
             plt.grid(True, alpha=0.3)
             
-            kde_path = f"plots/{field_name}_kde.png"
+            kde_path = f"../plots/{field_name}_kde.png"
             plt.savefig(kde_path, dpi=300, bbox_inches='tight')
             plt.close()
             plots['kde'] = kde_path
@@ -109,7 +109,7 @@ class PlotGenerator:
             plt.title(f'Q-Q Plot of {field_name} (Normal Distribution)')
             plt.grid(True, alpha=0.3)
             
-            qq_path = f"plots/{field_name}_qqplot.png"
+            qq_path = f"../plots/{field_name}_qqplot.png"
             plt.savefig(qq_path, dpi=300, bbox_inches='tight')
             plt.close()
             plots['qqplot'] = qq_path
@@ -146,7 +146,7 @@ class PlotGenerator:
             plt.xticks(rotation=45)
             plt.grid(True, alpha=0.3)
             
-            ts_path = f"plots/{field_name}_timeseries.png"
+            ts_path = f"../plots/{field_name}_timeseries.png"
             plt.savefig(ts_path, dpi=300, bbox_inches='tight')
             plt.close()
             plots['timeseries'] = ts_path
@@ -161,7 +161,7 @@ class PlotGenerator:
             plt.xticks(rotation=0)
             plt.grid(True, alpha=0.3)
             
-            monthly_path = f"plots/{field_name}_monthly.png"
+            monthly_path = f"../plots/{field_name}_monthly.png"
             plt.savefig(monthly_path, dpi=300, bbox_inches='tight')
             plt.close()
             plots['monthly'] = monthly_path
@@ -177,7 +177,7 @@ class PlotGenerator:
                 plt.xticks(rotation=0)
                 plt.grid(True, alpha=0.3)
                 
-                hourly_path = f"plots/{field_name}_hourly.png"
+                hourly_path = f"../plots/{field_name}_hourly.png"
                 plt.savefig(hourly_path, dpi=300, bbox_inches='tight')
                 plt.close()
                 plots['hourly'] = hourly_path
@@ -213,7 +213,7 @@ class PlotGenerator:
             plt.xticks(rotation=45, ha='right')
             plt.grid(True, alpha=0.3)
             
-            bar_path = f"plots/{field_name}_barplot.png"
+            bar_path = f"../plots/{field_name}_barplot.png"
             plt.savefig(bar_path, dpi=300, bbox_inches='tight')
             plt.close()
             plots['barplot'] = bar_path
@@ -226,7 +226,7 @@ class PlotGenerator:
                 plt.title(f'Top 10 Categories in {field_name}')
                 plt.axis('equal')
                 
-                pie_path = f"plots/{field_name}_piechart.png"
+                pie_path = f"../plots/{field_name}_piechart.png"
                 plt.savefig(pie_path, dpi=300, bbox_inches='tight')
                 plt.close()
                 plots['piechart'] = pie_path
@@ -261,7 +261,7 @@ class PlotGenerator:
             plt.title('Correlation Heatmap')
             plt.tight_layout()
             
-            heatmap_path = "plots/correlation_heatmap.png"
+            heatmap_path = "../plots/correlation_heatmap.png"
             plt.savefig(heatmap_path, dpi=300, bbox_inches='tight')
             plt.close()
             
@@ -301,7 +301,7 @@ class PlotGenerator:
             plt.grid(True, alpha=0.3)
             plt.ylim(0, 100)
             
-            missing_path = "plots/missing_values.png"
+            missing_path = "../plots/missing_values.png"
             plt.savefig(missing_path, dpi=300, bbox_inches='tight')
             plt.close()
             
@@ -331,7 +331,7 @@ class PlotGenerator:
             plt.title('Data Types Distribution')
             plt.axis('equal')
             
-            dtype_path = "plots/data_types.png"
+            dtype_path = "../plots/data_types.png"
             plt.savefig(dtype_path, dpi=300, bbox_inches='tight')
             plt.close()
             
@@ -393,7 +393,7 @@ class PlotGenerator:
             
             plt.tight_layout()
             
-            summary_path = "plots/summary_statistics.png"
+            summary_path = "../plots/summary_statistics.png"
             plt.savefig(summary_path, dpi=300, bbox_inches='tight')
             plt.close()
             
@@ -443,7 +443,7 @@ class PlotGenerator:
             
             plt.tight_layout()
             
-            outlier_path = "plots/outlier_analysis.png"
+            outlier_path = "../plots/outlier_analysis.png"
             plt.savefig(outlier_path, dpi=300, bbox_inches='tight')
             plt.close()
             

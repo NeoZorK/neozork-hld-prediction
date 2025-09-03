@@ -43,7 +43,7 @@ class DuplicateFixing:
         print("-" * 50)
         
         # Create cleaned_data directory
-        cleaned_data_dir = Path("data/cleaned_data")
+        cleaned_data_dir = Path("../data/cleaned_data")
         cleaned_data_dir.mkdir(exist_ok=True)
         
         # Generate timestamp for files
@@ -115,7 +115,7 @@ class DuplicateFixing:
         print(f"\n✅ DUPLICATE FIXING COMPLETED")
         print("-" * 40)
         print(f"   🔧 Total duplicates removed: {fixed_count:,}")
-        print(f"   📁 Files saved to: data/cleaned_data/")
+        print(f"   📁 Files saved to: ../data/cleaned_data/")
         print(f"   🏷️  Timestamp: {timestamp}")
         
         # Note about critical issues (NaT values)
@@ -128,7 +128,7 @@ class DuplicateFixing:
                 print(f"      • ... and {len(critical_issues) - 5} more issues")
         
         print(f"\n🎯 CLEANED DATA IS NOW READY FOR ML USAGE")
-        print(f"   📊 Use the cleaned files from data/cleaned_data/ for machine learning")
+        print(f"   📊 Use the cleaned files from ../data/cleaned_data/ for machine learning")
         print(f"   🚀 Data quality has been improved and duplicates removed")
         
         return True

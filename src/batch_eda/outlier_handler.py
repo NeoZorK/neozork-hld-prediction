@@ -30,7 +30,7 @@ class OutlierHandler:
     safety features including backup creation and validation.
     """
     
-    def __init__(self, data: pd.DataFrame, backup_dir: str = "data/backups"):
+    def __init__(self, data: pd.DataFrame, backup_dir: str = "../data/backups"):
         """
         Initialize the outlier handler.
         

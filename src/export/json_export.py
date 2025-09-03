@@ -17,7 +17,7 @@ def export_indicator_to_json(result_df, data_info, selected_rule, args):
     """
     Exports the calculated indicator data to a JSON file.
 
-    Creates a new JSON file in the data/indicators/json directory based on the 
+    Creates a new JSON file in the ../data/indicators/json directory based on the 
     original data source, adding only necessary OHLCV and timestamp fields 
     along with the calculated indicator values.
 
@@ -67,7 +67,7 @@ def export_indicator_to_json(result_df, data_info, selected_rule, args):
         filename = original_file.stem
 
     # Create output directory
-    output_dir = Path("data/indicators/json")
+    output_dir = Path("../data/indicators/json")
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Create the filename with the rule postfix

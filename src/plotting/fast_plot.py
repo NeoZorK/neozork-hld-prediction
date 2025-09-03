@@ -63,7 +63,7 @@ def plot_indicator_results_fast(
 
         # Set default output path if None
         if output_path is None:
-            output_path = "results/plots/fast_plot.html"
+            output_path = "../results/../plots/fast_plot.html"
             logger.print_info(f"No output path provided, using default: {output_path}")
 
         # Prepare data

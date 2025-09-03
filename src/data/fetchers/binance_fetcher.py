@@ -1,4 +1,4 @@
-# NeoZorK HLD/src/data/fetchers/binance_fetcher.py (Using pbar.write)
+# NeoZorK HLD/src/../data/fetchers/binance_fetcher.py (Using pbar.write)
 
 """
 Contains functions related to fetching data from Binance Spot API.

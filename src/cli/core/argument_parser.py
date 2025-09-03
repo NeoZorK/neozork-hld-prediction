@@ -182,16 +182,16 @@ def create_argument_parser():
     output_group = parser.add_argument_group('Output Options')
     output_group.add_argument('--export-parquet',
                               action='store_true',
-                              help="Export indicators to parquet format (data/indicators/parquet/)")
+                              help="Export indicators to parquet format (../data/indicators/parquet/)")
     output_group.add_argument('--export-csv',
                               action='store_true',
-                              help="Export indicators to CSV format (data/indicators/csv/)")
+                              help="Export indicators to CSV format (../data/indicators/csv/)")
     output_group.add_argument('--export-json',
                               action='store_true',
-                              help="Export indicators to JSON format (data/indicators/json/)")
+                              help="Export indicators to JSON format (../data/indicators/json/)")
     output_group.add_argument('--export-indicators-info',
                               action='store_true',
-                              help="Export indicator metadata to JSON format (data/indicators/metadata/)")
+                              help="Export indicator metadata to JSON format (../data/indicators/metadata/)")
 
     # --- Other Options Group ---
     other_group = parser.add_argument_group('Other Options')

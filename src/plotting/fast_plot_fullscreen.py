@@ -77,7 +77,7 @@ def plot_indicator_results_fast_fullscreen(
     df,
     rule,
     title='',
-    output_path="results/plots/fast_plot_fullscreen.html",
+    output_path="../results/../plots/fast_plot_fullscreen.html",
     width=1000,  # Reduced to fit screen with toolbar buttons
     height=None,
     mode="fast",

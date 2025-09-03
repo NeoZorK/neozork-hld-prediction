@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/data/acquisition/cache.py
+# src/../data/acquisition/cache.py
 
 """
 Data acquisition caching functionality.
@@ -19,7 +19,7 @@ from datetime import datetime, timedelta
 class DataAcquisitionCache:
     """Handles caching of acquired data."""
     
-    def __init__(self, cache_dir: str = 'data/cache'):
+    def __init__(self, cache_dir: str = '../data/cache'):
         """
         Initialize the cache module.
         

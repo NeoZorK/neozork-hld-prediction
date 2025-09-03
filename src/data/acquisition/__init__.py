@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/data/acquisition/__init__.py
+# src/../data/acquisition/__init__.py
 
 """
 Data Acquisition Module

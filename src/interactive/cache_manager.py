@@ -101,12 +101,12 @@ class CacheManager:
             print(f"{i}. 📁 {rel_path}/")
         
         print("\n💡 Note: Cache directories are excluded from this list")
-        print("   data/cache/csv_converted is included for loading converted CSV files")
+        print("   ../data/cache/csv_converted is included for loading converted CSV files")
         print("   mql5_feed is included for loading MQL5 data")
         
         print("-" * 30)
         print("💡 Examples:")
-        print("   • Enter folder number (e.g., 1 for data/)")
+        print("   • Enter folder number (e.g., 1 for ../data/)")
         print("   • Or enter folder path with mask (e.g., data eurusd)")
         print("   • Or enter folder path with file type (e.g., data parquet)")
         print("")
@@ -306,7 +306,7 @@ class CacheManager:
         
         try:
             # Find backup directory
-            backup_dir = Path("data/backups")
+            backup_dir = Path("../data/backups")
             if not backup_dir.exists():
                 print("❌ No backup directory found")
                 return False
@@ -382,7 +382,7 @@ class CacheManager:
         
         try:
             # Find backup directory
-            backup_dir = Path("data/backups")
+            backup_dir = Path("../data/backups")
             if not backup_dir.exists():
                 print("✅ No backup directory found")
                 return True

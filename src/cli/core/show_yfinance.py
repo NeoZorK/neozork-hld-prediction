@@ -29,7 +29,7 @@ def handle_yfinance_show_mode(args):
     """
     Handle Yahoo Finance show mode operations.
     """
-    yf_dir = Path("data/cleaned_data")
+    yf_dir = Path("../data/cleaned_data")
     
     if not yf_dir.exists():
         print(f"{Fore.RED}Yahoo Finance data directory not found: {yf_dir}{Style.RESET_ALL}")
@@ -153,19 +153,19 @@ def process_multiple_yfinance_files(yf_files, args):
             
             # Export if requested
             if export_parquet:
-                export_path = f"data/indicators/parquet/{file_path.stem}_indicators.parquet"
+                export_path = f"../data/indicators/parquet/{file_path.stem}_indicators.parquet"
                 if export_indicator_to_parquet:
                     export_indicator_to_parquet(df, export_path)
                     print(f"  Exported to parquet: {export_path}")
             
             if export_csv:
-                export_path = f"data/indicators/csv/{file_path.stem}_indicators.csv"
+                export_path = f"../data/indicators/csv/{file_path.stem}_indicators.csv"
                 if export_indicator_to_csv:
                     export_indicator_to_csv(df, export_path)
                     print(f"  Exported to CSV: {export_path}")
             
             if export_json:
-                export_path = f"data/indicators/json/{file_path.stem}_indicators.json"
+                export_path = f"../data/indicators/json/{file_path.stem}_indicators.json"
                 if export_indicator_to_json:
                     export_indicator_to_json(df, export_path)
                     print(f"  Exported to JSON: {export_path}")
@@ -178,7 +178,7 @@ def process_multiple_yfinance_files(yf_files, args):
                     'columns': list(df.columns),
                     'data_types': df.dtypes.to_dict()
                 }
-                export_path = f"data/indicators/metadata/{file_path.stem}_metadata.json"
+                export_path = f"../data/indicators/metadata/{file_path.stem}_metadata.json"
                 os.makedirs(os.path.dirname(export_path), exist_ok=True)
                 import json
                 with open(export_path, 'w') as f:

@@ -340,5 +340,5 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
     return fig
 
 # Example usage (for integration with run_analysis.py):
-# plot_auto_fastest_parquet('path/to/file.parquet', 'results/plots/auto_fastest.html')
+# plot_auto_fastest_parquet('path/to/file.parquet', '../results/../plots/auto_fastest.html')
 

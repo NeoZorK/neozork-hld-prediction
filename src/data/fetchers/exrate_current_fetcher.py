@@ -1,4 +1,4 @@
-# src/data/fetchers/exrate_current_fetcher.py
+# src/../data/fetchers/exrate_current_fetcher.py
 
 """
 Contains functions related to fetching current exchange rate data from Exchange Rate API.

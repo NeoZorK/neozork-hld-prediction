@@ -1,4 +1,4 @@
-# src/data/fetchers/polygon_fetcher.py
+# src/../data/fetchers/polygon_fetcher.py
 
 """
 Contains functions related to fetching data from Polygon.io API.

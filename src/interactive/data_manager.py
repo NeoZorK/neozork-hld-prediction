@@ -32,7 +32,7 @@ class DataManager:
         self.max_memory_mb = 6144
         
         # Create cleaned data directory
-        self.cleaned_data_dir = Path("data/cleaned_data")
+        self.cleaned_data_dir = Path("../data/cleaned_data")
         self.cleaned_data_dir.mkdir(exist_ok=True)
     
     def load_data(self, system) -> bool:
@@ -368,7 +368,7 @@ class DataManager:
         is_cleaned_data = folder_path.name == "cleaned_data"
         if not is_cleaned_data:
             try:
-                save_cleaned = input("\n💾 Save cleaned data to 'data/cleaned_data' folder for future ML use? (y/n, default: y): ").strip().lower()
+                save_cleaned = input("\n💾 Save cleaned data to '../data/cleaned_data' folder for future ML use? (y/n, default: y): ").strip().lower()
             except EOFError:
                 save_cleaned = 'y'
             

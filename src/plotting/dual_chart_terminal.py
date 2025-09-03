@@ -43,7 +43,7 @@ def plot_dual_chart_terminal(
     """
     # Set default output path
     if output_path is None:
-        output_path = "results/plots/dual_chart_terminal.txt"
+        output_path = "../results/../plots/dual_chart_terminal.txt"
     
     # Ensure output directory exists
     os.makedirs(os.path.dirname(output_path), exist_ok=True)

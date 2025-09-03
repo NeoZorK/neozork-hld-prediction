@@ -348,7 +348,7 @@ class FeatureSelector:
         """
         try:
             if output_path is None:
-                output_path = f"logs/feature_selection_report_{int(time.time())}.txt"
+                output_path = f"../logs/feature_selection_report_{int(time.time())}.txt"
                 
             # Ensure directory exists
             import os

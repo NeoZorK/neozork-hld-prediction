@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/data/gap_fixing/explanation.py
+# src/../data/gap_fixing/explanation.py
 
 """
 Gap fixing explanation and documentation module.

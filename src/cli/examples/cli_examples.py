@@ -215,8 +215,8 @@ def show_export_help():
     print()
     
     print(f"{Fore.YELLOW}{Style.BRIGHT}Export Locations:{Style.RESET_ALL}")
-    print("• Indicator results: data/indicators/parquet/, data/indicators/csv/, data/indicators/json/")
-    print("• Indicator metadata: data/indicators/metadata/")
+    print("• Indicator results: ../data/indicators/parquet/, ../data/indicators/csv/, ../data/indicators/json/")
+    print("• Indicator metadata: ../data/indicators/metadata/")
     print()
     
     print(f"{Fore.YELLOW}{Style.BRIGHT}Export Restrictions:{Style.RESET_ALL}")
@@ -390,6 +390,6 @@ def show_troubleshooting_help():
     print("• Run: python run_analysis.py --help")
     print("• Run: python run_analysis.py --examples")
     print("• Run: python run_analysis.py --indicators")
-    print("• Check logs in logs/ directory")
+    print("• Check logs in ../logs/ directory")
     print("• Review README.md for detailed documentation")
     print()

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/data/data_acquisition_core.py
+# src/../data/data_acquisition_core.py
 
 """
 Core data acquisition functionality with args-based interface.

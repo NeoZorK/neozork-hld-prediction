@@ -1937,7 +1937,7 @@ def plot_dual_chart_fastest(
     """
     # Set default output path
     if output_path is None:
-        output_path = "results/plots/dual_chart_fastest.html"
+        output_path = "../results/../plots/dual_chart_fastest.html"
     
     # Ensure output directory exists
     os.makedirs(os.path.dirname(output_path), exist_ok=True)

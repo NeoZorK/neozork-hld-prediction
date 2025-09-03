@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/data/gap_fixing/interpolation.py
+# src/../data/gap_fixing/interpolation.py
 
 """
 Gap fixing interpolation algorithms.

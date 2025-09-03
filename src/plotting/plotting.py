@@ -33,7 +33,7 @@ if not IN_DOCKER:
 else:
     # Create placeholder function that emulates the behavior of the real function for testing
     def plot_indicator_results_fastest(df_results, rule, title="Fastest Plot", data_source="demo",
-                                      output_path="results/plots/mock_fastest_plot.html", mode="fastest"):
+                                      output_path="../results/../plots/mock_fastest_plot.html", mode="fastest"):
         """
         Mock version of plot_indicator_results_fastest for Docker environment.
         Creates a placeholder HTML file and returns a mock figure object that can be used in tests.
@@ -114,12 +114,12 @@ def plot_indicator_results(df_results, rule, title="Indicator Results", mode="pl
         if mode == 'fastest':
             logger.print_info(f"Using 'fastest' mode (Plotly + Dask + Datashader) for plotting...")
             return plot_indicator_results_fastest(df_results, rule, title=title, data_source=data_source, 
-                                         output_path=output_path or "results/plots/fastest_plot.html", 
+                                         output_path=output_path or "../results/../plots/fastest_plot.html", 
                                          mode=mode)
         elif mode in ['fast', 'dask']:
             logger.print_info(f"Using 'fast' mode (Dask + Datashader + Bokeh) for plotting...")
             return plot_indicator_results_fast(df_results, rule, title=title, data_source=data_source, 
-                                      output_path=output_path or "results/plots/fast_plot.html", 
+                                      output_path=output_path or "../results/../plots/fast_plot.html", 
                                       mode=mode)
         elif mode in ['plotly', 'plt']:
             logger.print_info(f"Using 'plotly' mode for plotting...")

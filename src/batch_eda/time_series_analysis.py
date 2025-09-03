@@ -69,7 +69,7 @@ class TimeSeriesAnalyzer:
         
     def _ensure_plots_directory(self) -> Path:
         """Ensure plots directory exists."""
-        plots_dir = Path("results/plots/time_series")
+        plots_dir = Path("../results/../plots/time_series")
         plots_dir.mkdir(parents=True, exist_ok=True)
         return plots_dir
         

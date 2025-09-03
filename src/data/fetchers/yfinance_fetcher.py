@@ -1,4 +1,4 @@
-# src/data/fetchers/yfinance_fetcher.py # REWRITTEN WITH CHUNKS AND TQDM
+# src/../data/fetchers/yfinance_fetcher.py # REWRITTEN WITH CHUNKS AND TQDM
 
 """
 Contains functions related to fetching data from Yahoo Finance using yfinance.
