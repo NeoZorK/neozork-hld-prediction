@@ -94,11 +94,11 @@ First, load data using the main menu option:
 Navigate to EDA Analysis:
 ```
 🔍 EDA ANALYSIS MENU:
-7. 🔄 Duplicates Analysis
+2. 🔄 Duplicates Analysis
 ```
 
 ### 3. Run Analysis
-Select option 7 to run the enhanced duplicates analysis:
+Select option 2 to run the enhanced duplicates analysis:
 ```
 🔄 DUPLICATES ANALYSIS
 --------------------------------------------------

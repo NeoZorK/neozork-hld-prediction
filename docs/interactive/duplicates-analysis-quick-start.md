@@ -12,7 +12,7 @@ Select: `1. 📁 Load Data`
 Select: `2. 🔍 EDA Analysis`
 
 ### Step 3: Run Duplicates Analysis
-Select: `7. 🔄 Duplicates Analysis`
+Select: `2. 🔄 Duplicates Analysis`
 
 ## 📊 What You'll See
 

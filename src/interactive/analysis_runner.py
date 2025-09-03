@@ -70,40 +70,40 @@ class AnalysisRunner:
                 if success:
                     system.menu_manager.mark_menu_as_used('eda', 'time_series_gaps_analysis')
             elif choice == '2':
-                print(f"\n🧹 COMPREHENSIVE DATA QUALITY CHECK")
-                print("-" * 50)
-                nan_summary, dupe_summary, gap_summary = self.eda_analyzer.run_comprehensive_data_quality_check(system)
-                system.menu_manager.mark_menu_as_used('eda', 'comprehensive_data_quality_check')
-            elif choice == '3':
-                print(f"\n📊 BASIC STATISTICS")
-                print("-" * 50)
-                success = self.eda_analyzer.run_basic_statistics(system)
-                if success:
-                    system.menu_manager.mark_menu_as_used('eda', 'basic_statistics')
-            elif choice == '4':
-                print(f"\n🔗 CORRELATION ANALYSIS")
-                print("-" * 50)
-                success = self.eda_analyzer.run_correlation_analysis(system)
-                if success:
-                    system.menu_manager.mark_menu_as_used('eda', 'correlation_analysis')
-            elif choice == '5':
-                print(f"\n📈 TIME SERIES ANALYSIS")
-                print("-" * 50)
-                success = self.eda_analyzer.run_time_series_analysis(system)
-                if success:
-                    system.menu_manager.mark_menu_as_used('eda', 'time_series_analysis')
-            elif choice == '6':
-                print(f"\n🎯 FEATURE IMPORTANCE")
-                print("-" * 50)
-                success = self.eda_analyzer.run_feature_importance_analysis(system)
-                if success:
-                    system.menu_manager.mark_menu_as_used('eda', 'feature_importance')
-            elif choice == '7':
                 print(f"\n🔄 DUPLICATES ANALYSIS")
                 print("-" * 50)
                 success = self.eda_analyzer.run_duplicates_analysis(system)
                 if success:
                     system.menu_manager.mark_menu_as_used('eda', 'duplicates_analysis')
+            elif choice == '3':
+                print(f"\n🧹 COMPREHENSIVE DATA QUALITY CHECK")
+                print("-" * 50)
+                nan_summary, dupe_summary, gap_summary = self.eda_analyzer.run_comprehensive_data_quality_check(system)
+                system.menu_manager.mark_menu_as_used('eda', 'comprehensive_data_quality_check')
+            elif choice == '4':
+                print(f"\n📊 BASIC STATISTICS")
+                print("-" * 50)
+                success = self.eda_analyzer.run_basic_statistics(system)
+                if success:
+                    system.menu_manager.mark_menu_as_used('eda', 'basic_statistics')
+            elif choice == '5':
+                print(f"\n🔗 CORRELATION ANALYSIS")
+                print("-" * 50)
+                success = self.eda_analyzer.run_correlation_analysis(system)
+                if success:
+                    system.menu_manager.mark_menu_as_used('eda', 'correlation_analysis')
+            elif choice == '6':
+                print(f"\n📈 TIME SERIES ANALYSIS")
+                print("-" * 50)
+                success = self.eda_analyzer.run_time_series_analysis(system)
+                if success:
+                    system.menu_manager.mark_menu_as_used('eda', 'time_series_analysis')
+            elif choice == '7':
+                print(f"\n🎯 FEATURE IMPORTANCE")
+                print("-" * 50)
+                success = self.eda_analyzer.run_feature_importance_analysis(system)
+                if success:
+                    system.menu_manager.mark_menu_as_used('eda', 'feature_importance')
             elif choice == '8':
                 print(f"\n❓ NAN ANALYSIS")
                 print("-" * 50)
