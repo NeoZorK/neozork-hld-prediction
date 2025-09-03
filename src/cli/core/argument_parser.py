@@ -103,15 +103,16 @@ def show_cool_version():
     colors = ['\033[38;5;46m', '\033[38;5;82m', '\033[38;5;118m', '\033[38;5;154m', '\033[38;5;190m', '\033[38;5;226m']
     
     for i, ascii_line in enumerate(ascii_lines):
-        # Add glitch effect occasionally
-        if random.random() > 0.7:
+        # Add glitch effect occasionally (disabled for perfect alignment)
+        if False and random.random() > 0.7:
             glitched_line = glitch_effect(ascii_line, 2)
             # Properly aligned glitched line
-            full_line = f'{Fore.CYAN}║{Style.RESET_ALL}  {colors[i]}{Style.BRIGHT}{glitched_line}{Style.RESET_ALL} {Fore.CYAN}║{Style.RESET_ALL}'
+            colored_text = f'{colors[i]}{Style.BRIGHT}{glitched_line}{Style.RESET_ALL}'
+            full_line = create_aligned_line(colored_text, len(glitched_line))
             print(full_line)
             time.sleep(0.05)
-            # Show correct line after glitch
-            print('\r' + ' ' * 66 + '\r', end='')
+            # Clear the glitched line properly
+            print('\r' + ' ' * 66 + '\r', end='', flush=True)
         
         # Character by character reveal with perfect alignment
         revealed_chars = ''
