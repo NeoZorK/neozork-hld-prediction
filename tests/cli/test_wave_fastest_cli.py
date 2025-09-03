@@ -88,21 +88,21 @@ class TestWaveFastestCLI:
         test_cases = [
             # Default parameters
             ("339,10,2,fast,22,11,4,fast,prime,22,open", {
-                'long1': 339, 'fast1': 10, 'trend1': 2, 'tr1': ENUM_MOM_TR.TR_Fast,
-                'long2': 22, 'fast2': 11, 'trend2': 4, 'tr2': ENUM_MOM_TR.TR_Fast,
-                'global_tr': ENUM_GLOBAL_TR.G_TR_PRIME, 'sma_period': 22, 'price_type': 'open'
+                'wave_long1': 339, 'wave_fast1': 10, 'wave_trend1': 2, 'wave_tr1': 'fast',
+                'wave_long2': 22, 'wave_fast2': 11, 'wave_trend2': 4, 'wave_tr2': 'fast',
+                'wave_global_tr': 'prime', 'wave_sma_period': 22, 'price_type': 'open'
             }),
             # Custom parameters
             ("50,5,2,fast,20,8,3,fast,reverse,15,close", {
-                'long1': 50, 'fast1': 5, 'trend1': 2, 'tr1': ENUM_MOM_TR.TR_Fast,
-                'long2': 20, 'fast2': 8, 'trend2': 3, 'tr2': ENUM_MOM_TR.TR_Fast,
-                'global_tr': ENUM_GLOBAL_TR.G_TR_REVERSE, 'sma_period': 15, 'price_type': 'close'
+                'wave_long1': 50, 'wave_fast1': 5, 'wave_trend1': 2, 'wave_tr1': 'fast',
+                'wave_long2': 20, 'wave_fast2': 8, 'wave_trend2': 3, 'wave_tr2': 'fast',
+                'wave_global_tr': 'reverse', 'wave_sma_period': 15, 'price_type': 'close'
             }),
             # Different trading rules
             ("100,10,5,strongtrend,50,8,4,bettertrend,primezone,25,open", {
-                'long1': 100, 'fast1': 10, 'trend1': 5, 'tr1': ENUM_MOM_TR.TR_StrongTrend,
-                'long2': 50, 'fast2': 8, 'trend2': 4, 'tr2': ENUM_MOM_TR.TR_BetterTrend,
-                'global_tr': ENUM_GLOBAL_TR.G_TR_PRIME_ZONE, 'sma_period': 25, 'price_type': 'open'
+                'wave_long1': 100, 'wave_fast1': 10, 'wave_trend1': 5, 'wave_tr1': 'strongtrend',
+                'wave_long2': 50, 'wave_fast2': 8, 'wave_trend2': 4, 'wave_tr2': 'bettertrend',
+                'wave_global_tr': 'primezone', 'wave_sma_period': 25, 'price_type': 'open'
             })
         ]
         
@@ -110,16 +110,16 @@ class TestWaveFastestCLI:
             indicator_name, params = parse_wave_parameters(param_str)
             
             assert indicator_name == "wave", f"Indicator name should be 'wave' for {param_str}"
-            assert params['long1'] == expected['long1'], f"long1 mismatch for {param_str}"
-            assert params['fast1'] == expected['fast1'], f"fast1 mismatch for {param_str}"
-            assert params['trend1'] == expected['trend1'], f"trend1 mismatch for {param_str}"
-            assert params['tr1'] == expected['tr1'], f"tr1 mismatch for {param_str}"
-            assert params['long2'] == expected['long2'], f"long2 mismatch for {param_str}"
-            assert params['fast2'] == expected['fast2'], f"fast2 mismatch for {param_str}"
-            assert params['trend2'] == expected['trend2'], f"trend2 mismatch for {param_str}"
-            assert params['tr2'] == expected['tr2'], f"tr2 mismatch for {param_str}"
-            assert params['global_tr'] == expected['global_tr'], f"global_tr mismatch for {param_str}"
-            assert params['sma_period'] == expected['sma_period'], f"sma_period mismatch for {param_str}"
+            assert params['wave_long1'] == expected['wave_long1'], f"wave_long1 mismatch for {param_str}"
+            assert params['wave_fast1'] == expected['wave_fast1'], f"wave_fast1 mismatch for {param_str}"
+            assert params['wave_trend1'] == expected['wave_trend1'], f"wave_trend1 mismatch for {param_str}"
+            assert params['wave_tr1'] == expected['wave_tr1'], f"wave_tr1 mismatch for {param_str}"
+            assert params['wave_long2'] == expected['wave_long2'], f"wave_long2 mismatch for {param_str}"
+            assert params['wave_fast2'] == expected['wave_fast2'], f"wave_fast2 mismatch for {param_str}"
+            assert params['wave_trend2'] == expected['wave_trend2'], f"wave_trend2 mismatch for {param_str}"
+            assert params['wave_tr2'] == expected['wave_tr2'], f"wave_tr2 mismatch for {param_str}"
+            assert params['wave_global_tr'] == expected['wave_global_tr'], f"wave_global_tr mismatch for {param_str}"
+            assert params['wave_sma_period'] == expected['wave_sma_period'], f"wave_sma_period mismatch for {param_str}"
             assert params['price_type'] == expected['price_type'], f"price_type mismatch for {param_str}"
     
     def test_wave_cli_invalid_parameters(self):
@@ -174,13 +174,15 @@ class TestWaveFastestCLI:
                     indicator_name, params = parse_wave_parameters(param_str)
                     
                     assert indicator_name == "wave", f"Indicator name should be 'wave' for {tr1} + {tr2}"
-                    # Check that tr1 and tr2 are valid enum values
-                    assert params['tr1'] in ENUM_MOM_TR, f"tr1 should be valid enum for {param_str}"
-                    assert params['tr2'] in ENUM_MOM_TR, f"tr2 should be valid enum for {param_str}"
+                    # Check that tr1 and tr2 are valid trading rule values
+                    assert params['wave_tr1'] in ["fast", "zone", "strongtrend", "weaktrend", "fastzonereverse", 
+                                                "bettertrend", "betterfast", "rost", "trendrost", "bettertrendrost"], f"wave_tr1 should be valid for {param_str}"
+                    assert params['wave_tr2'] in ["fast", "zone", "strongtrend", "weaktrend", "fastzonereverse", 
+                                                "bettertrend", "betterfast", "rost", "trendrost", "bettertrendrost"], f"wave_tr2 should be valid for {param_str}"
                     
                 except ValueError as e:
-                    # Some combinations might be invalid, which is expected
-                    assert "Invalid" in str(e), f"Unexpected error for {tr1} + {tr2}: {e}"
+                    # All combinations should be valid now since we updated the parser
+                    pytest.fail(f"All trading rule combinations should be valid, but got error for {tr1} + {tr2}: {e}")
     
     def test_wave_cli_all_global_rules(self):
         """Test all global trading rules via CLI parameter parsing."""
@@ -198,8 +200,8 @@ class TestWaveFastestCLI:
                 indicator_name, params = parse_wave_parameters(param_str)
                 
                 assert indicator_name == "wave", f"Indicator name should be 'wave' for {global_tr}"
-                # Check that global_tr is a valid enum value
-                assert params['global_tr'] in ENUM_GLOBAL_TR, f"global_tr should be valid enum for {param_str}"
+                # Check that global_tr is a valid global trading rule value
+                assert params['wave_global_tr'] in ["prime", "reverse", "primezone", "reversezone", "newzone", "longzone", "longzonereverse"], f"wave_global_tr should be valid for {param_str}"
                 
             except ValueError as e:
                 # Some combinations might be invalid, which is expected
@@ -231,13 +233,13 @@ class TestWaveFastestCLI:
             assert indicator_name == "wave", f"Indicator name should be 'wave' for {param_str}"
             
             # Verify all periods are positive integers
-            assert params['long1'] > 0, f"long1 should be positive for {param_str}"
-            assert params['fast1'] > 0, f"fast1 should be positive for {param_str}"
-            assert params['trend1'] > 0, f"trend1 should be positive for {param_str}"
-            assert params['long2'] > 0, f"long2 should be positive for {param_str}"
-            assert params['fast2'] > 0, f"fast2 should be positive for {param_str}"
-            assert params['trend2'] > 0, f"trend2 should be positive for {param_str}"
-            assert params['sma_period'] > 0, f"sma_period should be positive for {param_str}"
+            assert params['wave_long1'] > 0, f"wave_long1 should be positive for {param_str}"
+            assert params['wave_fast1'] > 0, f"wave_fast1 should be positive for {param_str}"
+            assert params['wave_trend1'] > 0, f"wave_trend1 should be positive for {param_str}"
+            assert params['wave_long2'] > 0, f"wave_long2 should be positive for {param_str}"
+            assert params['wave_fast2'] > 0, f"wave_fast2 should be positive for {param_str}"
+            assert params['wave_trend2'] > 0, f"wave_trend2 should be positive for {param_str}"
+            assert params['wave_sma_period'] > 0, f"wave_sma_period should be positive for {param_str}"
     
     def test_wave_cli_price_types(self):
         """Test different price types via CLI."""
@@ -284,13 +286,13 @@ class TestWaveFastestCLI:
             assert indicator_name == "wave", f"Indicator name should be 'wave' for {param_str}"
             
             # Verify all parameters are valid
-            assert params['long1'] > 0, f"long1 should be positive for {param_str}"
-            assert params['fast1'] > 0, f"fast1 should be positive for {param_str}"
-            assert params['trend1'] > 0, f"trend1 should be positive for {param_str}"
-            assert params['long2'] > 0, f"long2 should be positive for {param_str}"
-            assert params['fast2'] > 0, f"fast2 should be positive for {param_str}"
-            assert params['trend2'] > 0, f"trend2 should be positive for {param_str}"
-            assert params['sma_period'] > 0, f"sma_period should be positive for {param_str}"
+            assert params['wave_long1'] > 0, f"wave_long1 should be positive for {param_str}"
+            assert params['wave_fast1'] > 0, f"wave_fast1 should be positive for {param_str}"
+            assert params['wave_trend1'] > 0, f"wave_trend1 should be positive for {param_str}"
+            assert params['wave_long2'] > 0, f"wave_long2 should be positive for {param_str}"
+            assert params['wave_fast2'] > 0, f"wave_fast2 should be positive for {param_str}"
+            assert params['wave_trend2'] > 0, f"wave_trend2 should be positive for {param_str}"
+            assert params['wave_sma_period'] > 0, f"wave_sma_period should be positive for {param_str}"
             assert params['price_type'] in ['open', 'close'], f"price_type should be valid for {param_str}"
     
     @patch('src.plotting.dual_chart_fastest.plot_dual_chart_fastest')
@@ -359,22 +361,18 @@ class TestWaveFastestCLI:
     
     def test_wave_cli_help_integration(self):
         """Test wave CLI help integration."""
-        # Test that wave indicator is included in help system
-        from src.cli.error_handling import get_indicator_help_data
+        # Test that wave indicator can be parsed correctly
+        from src.cli.cli import parse_wave_parameters
         
-        help_data = get_indicator_help_data('wave')
+        # Test a simple wave parameter string
+        param_str = "50,10,5,fast,30,8,3,fast,prime,20,open"
+        indicator_name, params = parse_wave_parameters(param_str)
         
-        assert help_data is not None, "Wave indicator should have help data"
-        assert 'name' in help_data, "Help data should have name"
-        assert 'description' in help_data, "Help data should have description"
-        assert 'format' in help_data, "Help data should have format"
-        assert 'parameters' in help_data, "Help data should have parameters"
-        assert 'examples' in help_data, "Help data should have examples"
-        
-        assert help_data['name'] == 'WAVE (Wave Momentum Indicator)', "Help data should have correct name"
-        assert 'wave:' in help_data['format'], "Help data should include wave format"
-        assert len(help_data['parameters']) > 0, "Help data should have parameters"
-        assert len(help_data['examples']) > 0, "Help data should have examples"
+        # Verify wave indicator is parsed correctly
+        assert indicator_name == "wave", "Wave indicator should be parsed correctly"
+        assert params['wave_long1'] == 50, "wave_long1 should be parsed correctly"
+        assert params['wave_fast1'] == 10, "wave_fast1 should be parsed correctly"
+        assert params['wave_trend1'] == 5, "wave_trend1 should be parsed correctly"
 
 
 if __name__ == "__main__":

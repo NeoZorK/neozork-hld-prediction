@@ -82,16 +82,17 @@ def parse_wave_parameters(params_str: str) -> tuple[str, dict]:
     except (ValueError, IndexError) as e:
         raise ValueError(f"Invalid Wave parameters: {params_str}. Error: {e}")
     
-    # Validate trading rules
-    valid_tr = ['fast', 'slow', 'trend']
+    # Validate trading rules - allow all valid trading rule values
+    valid_tr = ['fast', 'slow', 'trend', 'strongtrend', 'weaktrend', 'fastzonereverse', 
+                'bettertrend', 'betterfast', 'rost', 'trendrost', 'bettertrendrost', 'zone']
     if tr1 not in valid_tr:
         raise ValueError(f"Wave tr1 must be one of {valid_tr}, got: {tr1}")
     
     if tr2 not in valid_tr:
         raise ValueError(f"Wave tr2 must be one of {valid_tr}, got: {tr2}")
     
-    # Validate global trading rules
-    valid_global_tr = ['prime', 'reverse']
+    # Validate global trading rules - allow all valid global trading rule values
+    valid_global_tr = ['prime', 'reverse', 'primezone', 'reversezone', 'newzone', 'longzone', 'longzonereverse']
     if global_tr not in valid_global_tr:
         raise ValueError(f"Wave global_tr must be one of {valid_global_tr}, got: {global_tr}")
     

@@ -15,7 +15,7 @@ from src.data.data_acquisition_core import acquire_data
 from src.utils.point_size_determination import get_point_size
 from src.calculation.indicator_calculation import calculate_indicator
 from src.plotting.plotting_generation import generate_plot
-from src.cli.cli_show_mode import handle_show_mode
+from src.cli.core.cli_show_mode import handle_show_mode
 # Import the export functions
 from src.export.parquet_export import export_indicator_to_parquet
 from src.export.csv_export import export_indicator_to_csv
