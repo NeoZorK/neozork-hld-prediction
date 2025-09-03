@@ -4,7 +4,7 @@ Neozork HLD Prediction - Main Package
 A comprehensive financial analysis and prediction system for high-level decision making.
 """
 
-__version__ = "1.0.0"
+__version__ = "0.5.3"
 __author__ = "Neozork Team"
 __description__ = "High-Level Decision Prediction System for Financial Markets"
 

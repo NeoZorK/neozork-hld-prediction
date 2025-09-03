@@ -75,7 +75,7 @@ Understanding the codebase organization and architecture.
 - File organization principles
 - Module relationships
 
-### [Installation Guide](installation.md)
+### [Installation Guide](INSTALLATION_GUIDE.md)
 Detailed installation instructions for different environments.
 
 **Includes:**

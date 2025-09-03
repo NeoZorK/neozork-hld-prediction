@@ -15,7 +15,7 @@ from src.data.data_acquisition_core import acquire_data
 from src.utils.point_size_determination import get_point_size
 from src.calculation.indicator_calculation import calculate_indicator
 from src.plotting.plotting_generation import generate_plot
-from src.cli.core.cli_show_mode import handle_show_mode
+from src.cli.core.cli_show_mode import main_show_mode
 # Import the export functions
 from src.export.parquet_export import export_indicator_to_parquet
 from src.export.csv_export import export_indicator_to_csv
@@ -87,7 +87,7 @@ def run_indicator_workflow(args):
             t_show_start = time.perf_counter()
             
             # Call the show mode handler with timing tracking
-            show_results = handle_show_mode(args)
+            show_results = main_show_mode(args)
             
             t_show_end = time.perf_counter()
             show_duration = t_show_end - t_show_start

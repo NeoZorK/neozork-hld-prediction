@@ -2,6 +2,8 @@
 
 The Neozork HLD Prediction system is built with a modular, extensible architecture that promotes maintainability, testability, and scalability.
 
+> **📖 Complete Architecture Guide**: For comprehensive architectural details, see [ARCHITECTURE_GUIDE.md](ARCHITECTURE_GUIDE.md)
+
 ## Overview
 
 The system follows a layered architecture pattern with clear separation of concerns:

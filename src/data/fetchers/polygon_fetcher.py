@@ -10,6 +10,7 @@ import os
 import time # Import time
 import traceback
 from datetime import datetime, timedelta
+from typing import Any
 from src.common import logger # Absolute import
 from tqdm import tqdm # Import tqdm
 # Need to import MaxRetryError
@@ -58,7 +59,7 @@ def map_polygon_interval(tf_input: str) -> tuple[str, int] | None:
 
 # Definition of resolve_polygon_ticker function
 # noinspection PyUnresolvedReferences
-def resolve_polygon_ticker(user_ticker: str, client: polygon.RESTClient) -> str | None:
+def resolve_polygon_ticker(user_ticker: str, client: Any) -> str | None:
     """
     Uses Polygon API get_ticker_details to find the canonical ticker by trying common prefixes.
     Includes robust check for 404 / "NOT_FOUND" errors and adds delay for rate limiting.

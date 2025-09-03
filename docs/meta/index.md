@@ -2,6 +2,8 @@
 
 Documentation about documentation - history, organization, and maintenance.
 
+> **📖 Complete Documentation Index**: For comprehensive documentation overview, see [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md)
+
 > ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
 
 ## Documentation History

@@ -2,6 +2,8 @@
 
 The Neozork HLD Prediction system provides a comprehensive command-line interface for all system operations.
 
+> **📖 Complete CLI Guide**: For comprehensive CLI usage, see [CLI_GUIDE.md](CLI_GUIDE.md)
+
 ## Overview
 
 The CLI is designed to be intuitive, powerful, and extensible. It provides access to all major system functionality through a unified interface.

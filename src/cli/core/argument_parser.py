@@ -22,6 +22,40 @@ from src.common.constants import TradingRule
 from src import __version__
 
 
+def show_cool_version():
+    """Display a cool, modern techno-style version banner."""
+    import time
+    
+    # Cool techno-style version banner
+    banner = f"""
+{Fore.CYAN}{Style.BRIGHT}╔══════════════════════════════════════════════════════════════╗{Style.RESET_ALL}
+{Fore.CYAN}║{Style.RESET_ALL}  {Fore.MAGENTA}{Style.BRIGHT}██╗  ██╗███████╗ ██████╗ ██████╗ ██╗  ██╗{Style.RESET_ALL}  {Fore.CYAN}║{Style.RESET_ALL}
+{Fore.CYAN}║{Style.RESET_ALL}  {Fore.MAGENTA}██║  ██║██╔════╝██╔═══██╗██╔══██╗██║ ██╔╝{Style.RESET_ALL}  {Fore.CYAN}║{Style.RESET_ALL}
+{Fore.CYAN}║{Style.RESET_ALL}  {Fore.MAGENTA}███████║█████╗  ██║   ██║██████╔╝█████╔╝{Style.RESET_ALL}   {Fore.CYAN}║{Style.RESET_ALL}
+{Fore.CYAN}║{Style.RESET_ALL}  {Fore.MAGENTA}██╔══██║██╔══╝  ██║   ██║██╔══██╗██╔═██╗{Style.RESET_ALL}   {Fore.CYAN}║{Style.RESET_ALL}
+{Fore.CYAN}║{Style.RESET_ALL}  {Fore.MAGENTA}██║  ██║███████╗╚██████╔╝██║  ██║██║  ██╗{Style.RESET_ALL}  {Fore.CYAN}║{Style.RESET_ALL}
+{Fore.CYAN}║{Style.RESET_ALL}  {Fore.MAGENTA}╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝{Style.RESET_ALL}  {Fore.CYAN}║{Style.RESET_ALL}
+{Fore.CYAN}╠══════════════════════════════════════════════════════════════╣{Style.RESET_ALL}
+{Fore.CYAN}║{Style.RESET_ALL}  {Fore.YELLOW}{Style.BRIGHT}Shcherbyna Pressure Vector Indicator{Style.RESET_ALL}                    {Fore.CYAN}║{Style.RESET_ALL}
+{Fore.CYAN}║{Style.RESET_ALL}  {Fore.GREEN}{Style.BRIGHT}Advanced Financial Analysis System{Style.RESET_ALL}                      {Fore.CYAN}║{Style.RESET_ALL}
+{Fore.CYAN}║{Style.RESET_ALL}  {Fore.RED}{Style.BRIGHT}Version: {__version__}{Style.RESET_ALL}                                    {Fore.CYAN}║{Style.RESET_ALL}
+{Fore.CYAN}║{Style.RESET_ALL}  {Fore.BLUE}{Style.BRIGHT}Powered by Advanced ML & Technical Analysis{Style.RESET_ALL}            {Fore.CYAN}║{Style.RESET_ALL}
+{Fore.CYAN}╚══════════════════════════════════════════════════════════════╝{Style.RESET_ALL}
+
+{Fore.CYAN}{Style.BRIGHT}⚡{Style.RESET_ALL} {Fore.YELLOW}Ready for high-frequency trading analysis{Style.RESET_ALL} {Fore.CYAN}⚡{Style.RESET_ALL}
+{Fore.CYAN}{Style.BRIGHT}🔮{Style.RESET_ALL} {Fore.MAGENTA}Predicting market movements with precision{Style.RESET_ALL} {Fore.CYAN}🔮{Style.RESET_ALL}
+{Fore.CYAN}{Style.BRIGHT}🚀{Style.RESET_ALL} {Fore.GREEN}Optimized for performance and accuracy{Style.RESET_ALL} {Fore.CYAN}🚀{Style.RESET_ALL}
+"""
+    
+    # Print the banner with a cool effect
+    for line in banner.split('\n'):
+        if line.strip():
+            print(line)
+            time.sleep(0.05)  # Small delay for cool effect
+        else:
+            print()
+
+
 def create_argument_parser():
     """Creates and configures the argument parser."""
     
@@ -197,8 +231,7 @@ def create_argument_parser():
     other_group = parser.add_argument_group('Other Options')
     other_group.add_argument('-h', action='help', default=argparse.SUPPRESS,
                              help='Show this help message and exit')
-    other_group.add_argument('--version', action='version',
-                             version=f'{"Shcherbyna Pressure Vector Indicator v"+__version__}',
+    other_group.add_argument('--version', action='store_true',
                              help="Show program version and exit")
 
     return parser
@@ -253,6 +286,11 @@ def parse_arguments():
         # Handle --help flag before parsing to avoid mode requirement
         if '--help' in sys.argv or '-h' in sys.argv:
             parser.print_help()
+            sys.exit(0)
+            
+        # Handle --version flag before parsing to avoid mode requirement
+        if '--version' in sys.argv:
+            show_cool_version()
             sys.exit(0)
 
         # Handle special flags that don't require mode argument BEFORE parsing

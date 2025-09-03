@@ -6,10 +6,10 @@ This section provides comprehensive technical reference documentation for the Ne
 
 ## 🚀 Quick Reference
 
-### [API Reference](api-reference.md)
+### [API Reference](API_REFERENCE.md)
 Complete API documentation for all modules and functions.
 
-### [Configuration Reference](configuration.md)
+### [Configuration Reference](CONFIGURATION.md)
 Configuration options and environment variables.
 
 ### [UV Package Manager Reference](uv-reference.md) ⭐ **NEW**

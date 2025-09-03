@@ -2,6 +2,8 @@
 
 The Neozork HLD Prediction system includes a comprehensive testing framework designed to ensure code quality, reliability, and maintainability.
 
+> **📖 Complete Testing Guide**: For comprehensive testing documentation, see [TESTING_GUIDE.md](TESTING_GUIDE.md)
+
 ## Overview
 
 Our testing strategy follows these principles:

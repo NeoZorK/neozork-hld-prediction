@@ -2,6 +2,8 @@
 
 This section covers development setup, testing, and contribution guidelines for the NeoZork HLD Prediction project.
 
+> **📖 Complete Development Guide**: For comprehensive development documentation, see [DEVELOPMENT_GUIDE.md](DEVELOPMENT_GUIDE.md)
+
 > ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
 
 ## 🚀 Quick Start

@@ -69,11 +69,11 @@ python run_analysis.py demo --rule PHLD
 - **[Native Container](containers/native-container/index.md)** - Apple Silicon optimized container
 - **[Docker Container](containers/docker-setup.md)** - Cross-platform container solution
 - **[Container Comparison](containers/native-vs-docker-comparison.md)** - Performance and feature comparison
-- **[Production Deployment](deployment/index.md)** - Production environment setup
+- **[Production Deployment](deployment/DEPLOYMENT.md)** - Production environment setup
 
 ### 🔧 Development
-- **[Development Guide](development/index.md)** - Development environment setup and guidelines
-- **[Testing Documentation](testing/index.md)** - Comprehensive testing documentation
+- **[Development Guide](development/DEVELOPMENT_GUIDE.md)** - Complete development documentation
+- **[Testing Documentation](testing/TESTING_GUIDE.md)** - Comprehensive testing documentation
 - **[Code Style & Standards](development/code-style.md)** - Coding standards and conventions
 - **[Debugging Guide](development/debugging.md)** - Debugging tools and techniques
 - **[Scripts Structure](development/scripts-structure.md)** - Utility scripts organization
@@ -92,8 +92,8 @@ python run_analysis.py demo --rule PHLD
 - **[Usage Instructions](ml/USAGE_INSTRUCTIONS.md)** - Comprehensive usage guide
 
 ### 📋 Reference
-- **[API Reference](reference/index.md)** - Complete API documentation
-- **[Configuration](reference/configuration.md)** - Configuration options
+- **[API Reference](reference/API_REFERENCE.md)** - Complete API documentation
+- **[Configuration](reference/CONFIGURATION.md)** - Configuration options
 - **[MCP Server](reference/mcp-servers/README.md)** - Model Context Protocol server
 - **[Advanced Metrics](reference/advanced-metrics.md)** - Advanced analysis metrics
 

@@ -5,7 +5,8 @@
 Main CLI entry point that uses the refactored structure.
 """
 
-from .core.cli import main, show_indicator_help
+from .core.cli import main
+from .core.indicator_help import show_indicator_help
 from .core.argument_parser import parse_arguments
 from .core.argument_validator import validate_and_process_arguments
 from .parsers.indicator_parsers import parse_indicator_parameters

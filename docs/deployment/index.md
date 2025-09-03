@@ -2,6 +2,8 @@
 
 This section covers production deployment configurations and best practices for the NeoZork HLD Prediction project.
 
+> **📖 Complete Deployment Guide**: For comprehensive deployment documentation, see [DEPLOYMENT.md](DEPLOYMENT.md)
+
 > ⚠️ **Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
 
 ## 🚀 Quick Start
