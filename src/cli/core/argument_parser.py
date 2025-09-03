@@ -74,7 +74,7 @@ def show_cool_version():
     # Clean direct transition to logo
     os.system('clear' if os.name == 'posix' else 'cls')
     
-    # Epic animated logo reveal
+    # Epic animated logo reveal - all lines must be exactly 60 characters
     ascii_lines = [
         '███╗   ██╗███████╗ ██████╗ ███████╗ ██████╗ ██████╗ ██╗  ██╗',
         '████╗  ██║██╔════╝██╔═══██╗╚══███╔╝██╔═══██╗██╔══██╗██║ ██╔╝',
@@ -98,24 +98,19 @@ def show_cool_version():
         # Add glitch effect occasionally
         if random.random() > 0.7:
             glitched_line = glitch_effect(ascii_line, 2)
-            full_line = f'{Fore.CYAN}║{Style.RESET_ALL}  {colors[i]}{Style.BRIGHT}{glitched_line}{Style.RESET_ALL}{Fore.CYAN}║{Style.RESET_ALL}'
+            # Properly aligned glitched line
+            full_line = f'{Fore.CYAN}║{Style.RESET_ALL}  {colors[i]}{Style.BRIGHT}{glitched_line}{Style.RESET_ALL} {Fore.CYAN}║{Style.RESET_ALL}'
             print(full_line)
             time.sleep(0.05)
             # Show correct line after glitch
             print('\r' + ' ' * 66 + '\r', end='')
         
-        # Real line with epic color
-        full_line = f'{Fore.CYAN}║{Style.RESET_ALL}  {colors[i]}{Style.BRIGHT}{ascii_line}{Style.RESET_ALL}{Fore.CYAN}║{Style.RESET_ALL}'
-        
-        # Display ASCII art line with proper 64-character alignment
-        # Format: '║  ' + ascii_content + ' ' + '║' = 64 chars total
-        full_line = f'{Fore.CYAN}║{Style.RESET_ALL}  {colors[i]}{Style.BRIGHT}{ascii_line}{Style.RESET_ALL} {Fore.CYAN}║{Style.RESET_ALL}'
-        
-        # Character by character reveal
+        # Character by character reveal with proper alignment
         revealed_chars = ''
         for char in ascii_line:
             revealed_chars += char
-            # Build display line maintaining exactly 64 characters
+            # Build display line maintaining exactly 66 characters total
+            # Format: '║  ' + ascii_content + ' ' + '║' = 66 chars total
             display_line = f'{Fore.CYAN}║{Style.RESET_ALL}  {colors[i]}{Style.BRIGHT}{revealed_chars}{Style.RESET_ALL}'
             remaining_spaces = 60 - len(revealed_chars)  # 60 = space for content inside borders
             display_line += ' ' * remaining_spaces + f' {Fore.CYAN}║{Style.RESET_ALL}'
@@ -133,16 +128,17 @@ def show_cool_version():
     
     # Info section with epic effects
     info_lines = [
-        (f'{Fore.YELLOW}{Style.BRIGHT}Shcherbyna Pressure Vector Indicator{Style.RESET_ALL}', 24),
-        (f'{Fore.GREEN}{Style.BRIGHT}Advanced Financial Analysis System{Style.RESET_ALL}', 26),
-        (f'{Fore.RED}{Style.BRIGHT}Version: {__version__}{Style.RESET_ALL}', 46),
-        (f'{Fore.BLUE}{Style.BRIGHT}Powered by Advanced ML & Technical Analysis{Style.RESET_ALL}', 17)
+        f'{Fore.YELLOW}{Style.BRIGHT}Shcherbyna Pressure Vector Indicator{Style.RESET_ALL}',
+        f'{Fore.GREEN}{Style.BRIGHT}Advanced Financial Analysis System{Style.RESET_ALL}',
+        f'{Fore.RED}{Style.BRIGHT}Version: {__version__}{Style.RESET_ALL}',
+        f'{Fore.BLUE}{Style.BRIGHT}Powered by Advanced ML & Technical Analysis{Style.RESET_ALL}'
     ]
     
-    for text, spaces in info_lines:
-        # Fix alignment by calculating proper spaces for 64 total chars
-        clean_text_len = len(text.replace(Style.BRIGHT, '').replace(Style.RESET_ALL, '').replace(Fore.YELLOW, '').replace(Fore.GREEN, '').replace(Fore.RED, '').replace(Fore.BLUE, ''))
-        needed_spaces = 64 - 4 - clean_text_len  # 64 total - '║  ' - text - ' ║'
+    for text in info_lines:
+        # Calculate clean text length without color codes
+        clean_text = text.replace(Style.BRIGHT, '').replace(Style.RESET_ALL, '').replace(Fore.YELLOW, '').replace(Fore.GREEN, '').replace(Fore.RED, '').replace(Fore.BLUE, '')
+        clean_text_len = len(clean_text)
+        needed_spaces = 60 - clean_text_len  # 60 = space for content inside borders
         if needed_spaces < 0:
             needed_spaces = 0
         line = f'{Fore.CYAN}║{Style.RESET_ALL}  {text}' + ' ' * needed_spaces + f' {Fore.CYAN}║{Style.RESET_ALL}'
@@ -158,18 +154,19 @@ def show_cool_version():
     
     # Status section with pulsing effects
     status_lines = [
-        (f'⚡ Ready for high-frequency trading analysis ⚡', 15),
-        (f'🔮 Predicting market movements with precision 🔮', 14), 
-        (f'🚀 Optimized for performance and accuracy 🚀', 18)
+        f'⚡ Ready for high-frequency trading analysis ⚡',
+        f'🔮 Predicting market movements with precision 🔮', 
+        f'🚀 Optimized for performance and accuracy 🚀'
     ]
     
-    for text, spaces in status_lines:
-        # Calculate proper alignment for 64 total chars
-        clean_text_len = len(text.replace('⚡', '').replace('🔮', '').replace('🚀', '').strip())
-        # Account for emojis taking 2 chars each visually but counted as more in len()
+    for text in status_lines:
+        # Calculate proper alignment for 66 total chars
+        # Remove emojis for length calculation and account for their display width
+        clean_text = text.replace('⚡', '').replace('🔮', '').replace('🚀', '').strip()
         emoji_count = text.count('⚡') + text.count('🔮') + text.count('🚀')
-        actual_display_len = clean_text_len + emoji_count * 2  # Each emoji displays as 2 chars
-        needed_spaces = 64 - 4 - actual_display_len  # 64 total - '║  ' - text - ' ║'
+        # Each emoji displays as 2 characters visually
+        actual_display_len = len(clean_text) + emoji_count * 2
+        needed_spaces = 60 - actual_display_len  # 60 = space for content inside borders
         if needed_spaces < 0:
             needed_spaces = 0
         line = f'{Fore.CYAN}║{Style.RESET_ALL}  {Style.BRIGHT}{text}{Style.RESET_ALL}' + ' ' * needed_spaces + f' {Fore.CYAN}║{Style.RESET_ALL}'
