@@ -70,7 +70,7 @@ class TestBaseIndicator:
     
     def test_init(self):
         """Test BaseIndicator initialization."""
-        indicator = MockIndicator("test_indicator")
+        indicator = MockIndicator("test_indicator", {})
         
         assert indicator.name == "test_indicator"
         assert indicator.parameters == {}
@@ -92,7 +92,7 @@ class TestBaseIndicator:
     
     def test_calculate(self):
         """Test indicator calculation."""
-        indicator = MockIndicator("test_indicator")
+        indicator = MockIndicator("test_indicator", {})
         data = pd.DataFrame({"close": [1.0, 2.0, 3.0]})
         
         result = indicator.calculate(data)
@@ -103,7 +103,7 @@ class TestBaseIndicator:
     
     def test_validate_input(self):
         """Test input validation."""
-        indicator = MockIndicator("test_indicator")
+        indicator = MockIndicator("test_indicator", {})
         
         # Valid data
         valid_data = pd.DataFrame({"close": [1.0, 2.0, 3.0]})
@@ -129,7 +129,7 @@ class TestBaseIndicator:
     
     def test_set_parameters(self):
         """Test parameter setting."""
-        indicator = MockIndicator("test_indicator")
+        indicator = MockIndicator("test_indicator", {})
         
         new_params = {
             "param1": "new_value",
@@ -167,7 +167,7 @@ class TestTrendIndicator:
     
     def test_init(self):
         """Test TrendIndicator initialization."""
-        indicator = MockTrendIndicator("test_trend")
+        indicator = MockTrendIndicator("test_trend", {})
         
         assert indicator.name == "test_trend"
         assert indicator.trend_direction is None
@@ -175,7 +175,7 @@ class TestTrendIndicator:
     
     def test_get_trend_info(self):
         """Test trend information retrieval."""
-        indicator = MockTrendIndicator("test_trend")
+        indicator = MockTrendIndicator("test_trend", {})
         
         info = indicator.get_trend_info()
         
@@ -186,7 +186,7 @@ class TestTrendIndicator:
     
     def test_trend_direction_checks(self):
         """Test trend direction checking methods."""
-        indicator = MockTrendIndicator("test_trend")
+        indicator = MockTrendIndicator("test_trend", {})
         
         # Test default state
         assert indicator.is_uptrend() is False
@@ -217,7 +217,7 @@ class TestMomentumIndicator:
     
     def test_init(self):
         """Test MomentumIndicator initialization."""
-        indicator = MockMomentumIndicator("test_momentum")
+        indicator = MockMomentumIndicator("test_momentum", {})
         
         assert indicator.name == "test_momentum"
         assert indicator.overbought_threshold == 70
@@ -236,7 +236,7 @@ class TestMomentumIndicator:
     
     def test_overbought_detection(self):
         """Test overbought condition detection."""
-        indicator = MockMomentumIndicator("test_momentum")
+        indicator = MockMomentumIndicator("test_momentum", {})
         
         # Test overbought values
         assert indicator.is_overbought(75) is True
@@ -250,7 +250,7 @@ class TestMomentumIndicator:
     
     def test_oversold_detection(self):
         """Test oversold condition detection."""
-        indicator = MockMomentumIndicator("test_momentum")
+        indicator = MockMomentumIndicator("test_momentum", {})
         
         # Test oversold values
         assert indicator.is_oversold(25) is True
@@ -264,7 +264,7 @@ class TestMomentumIndicator:
     
     def test_get_momentum_info(self):
         """Test momentum information retrieval."""
-        indicator = MockMomentumIndicator("test_momentum")
+        indicator = MockMomentumIndicator("test_momentum", {})
         
         info = indicator.get_momentum_info()
         
@@ -279,7 +279,7 @@ class TestVolatilityIndicator:
     
     def test_init(self):
         """Test VolatilityIndicator initialization."""
-        indicator = MockVolatilityIndicator("test_volatility")
+        indicator = MockVolatilityIndicator("test_volatility", {})
         
         assert indicator.name == "test_volatility"
         assert indicator.volatility_period == 20
@@ -298,7 +298,7 @@ class TestVolatilityIndicator:
     
     def test_get_volatility_info(self):
         """Test volatility information retrieval."""
-        indicator = MockVolatilityIndicator("test_volatility")
+        indicator = MockVolatilityIndicator("test_volatility", {})
         
         info = indicator.get_volatility_info()
         
@@ -309,7 +309,7 @@ class TestVolatilityIndicator:
     
     def test_calculate_bands(self):
         """Test volatility band calculation."""
-        indicator = MockVolatilityIndicator("test_volatility")
+        indicator = MockVolatilityIndicator("test_volatility", {})
         
         # Create test data
         data = pd.Series([1.0, 2.0, 3.0, 4.0, 5.0])
@@ -336,9 +336,9 @@ class TestIndicatorIntegration:
         assert issubclass(VolatilityIndicator, BaseIndicator)
         
         # Check that they can be instantiated
-        trend_ind = MockTrendIndicator("test")
-        momentum_ind = MockMomentumIndicator("test")
-        volatility_ind = MockVolatilityIndicator("test")
+        trend_ind = MockTrendIndicator("test", {})
+        momentum_ind = MockMomentumIndicator("test", {})
+        volatility_ind = MockVolatilityIndicator("test", {})
         
         assert isinstance(trend_ind, BaseIndicator)
         assert isinstance(momentum_ind, BaseIndicator)
@@ -379,7 +379,7 @@ class TestIndicatorIntegration:
     
     def test_indicator_parameter_management(self):
         """Test indicator parameter management."""
-        indicator = MockIndicator("test")
+        indicator = MockIndicator("test", {})
         
         # Set initial parameters
         initial_params = {"param1": "value1", "param2": 42}
@@ -398,7 +398,7 @@ class TestIndicatorIntegration:
     
     def test_indicator_validation(self):
         """Test indicator input validation."""
-        indicator = MockIndicator("test")
+        indicator = MockIndicator("test", {})
         
         # Valid data
         valid_data = pd.DataFrame({"close": [1.0, 2.0, 3.0]})

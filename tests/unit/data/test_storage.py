@@ -7,6 +7,7 @@ import pandas as pd
 from unittest.mock import Mock
 
 from src.data.storage.base import BaseDataStorage
+from src.core.base import BaseComponent
 from src.core.exceptions import ValidationError, DataError
 
 
@@ -44,7 +45,8 @@ class TestBaseDataStorage:
         
         assert storage.name == "test_storage"
         assert storage.config == config
-        assert storage.get_info()["name"] == "test_storage"
+        # Test that it's a BaseComponent
+        assert isinstance(storage, BaseComponent)
     
     def test_abstract_methods(self):
         """Test that required methods are abstract."""

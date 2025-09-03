@@ -56,18 +56,15 @@ Examples:
             help="Path to configuration file"
         )
         
-        # Subcommands
-        subparsers = parser.add_subparsers(
-            dest="command",
-            help="Available commands"
-        )
-        
         return parser
     
     def _setup_commands(self):
         """Setup all available commands."""
+        # Create subparsers once
+        subparsers = self.parser.add_subparsers(dest='command', help='Available commands')
+        
         # Analysis command
-        analyze_parser = self.parser.add_subparsers().add_parser(
+        analyze_parser = subparsers.add_parser(
             "analyze",
             help="Analyze financial data"
         )
@@ -86,7 +83,7 @@ Examples:
         )
         
         # Training command
-        train_parser = self.parser.add_subparsers().add_parser(
+        train_parser = subparsers.add_parser(
             "train",
             help="Train machine learning model"
         )
@@ -106,7 +103,7 @@ Examples:
         )
         
         # Prediction command
-        predict_parser = self.parser.add_subparsers().add_parser(
+        predict_parser = subparsers.add_parser(
             "predict",
             help="Make predictions using trained model"
         )
@@ -126,7 +123,7 @@ Examples:
         )
         
         # Data command
-        data_parser = self.parser.add_subparsers().add_parser(
+        data_parser = subparsers.add_parser(
             "data",
             help="Data management operations"
         )
@@ -145,7 +142,7 @@ Examples:
         )
         
         # Help command
-        help_parser = self.parser.add_subparsers().add_parser(
+        help_parser = subparsers.add_parser(
             "help",
             help="Show detailed help"
         )

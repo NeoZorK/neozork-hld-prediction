@@ -193,7 +193,7 @@ class TestTimeSeriesDataSource:
     
     def test_init(self):
         """Test TimeSeriesDataSource initialization."""
-        source = MockTimeSeriesDataSource("test_source")
+        source = MockTimeSeriesDataSource("test_source", {})
         
         assert source.name == "test_source"
         assert source.timeframe == "1H"
@@ -242,7 +242,7 @@ class TestTimeSeriesDataSource:
     
     def test_validate_timeframe(self):
         """Test timeframe validation."""
-        source = MockTimeSeriesDataSource("test_source")
+        source = MockTimeSeriesDataSource("test_source", {})
         
         # Valid timeframes
         assert source.validate_timeframe("1m") is True
@@ -267,7 +267,7 @@ class TestFinancialDataSource:
     
     def test_init(self):
         """Test FinancialDataSource initialization."""
-        source = MockFinancialDataSource("test_source")
+        source = MockFinancialDataSource("test_source", {})
         
         assert source.name == "test_source"
         assert source.timeframe == "1H"
@@ -310,7 +310,7 @@ class TestFinancialDataSource:
     
     def test_validate_symbol(self):
         """Test symbol validation."""
-        source = MockFinancialDataSource("test_source")
+        source = MockFinancialDataSource("test_source", {})
         
         # Valid symbols
         assert source.validate_symbol("AAPL") is True
@@ -325,7 +325,7 @@ class TestFinancialDataSource:
     
     def test_get_ohlcv_columns(self):
         """Test OHLCV column names."""
-        source = MockFinancialDataSource("test_source")
+        source = MockFinancialDataSource("test_source", {})
         
         columns = source.get_ohlcv_columns()
         
@@ -334,7 +334,7 @@ class TestFinancialDataSource:
     
     def test_validate_ohlcv_data(self):
         """Test OHLCV data validation."""
-        source = MockFinancialDataSource("test_source")
+        source = MockFinancialDataSource("test_source", {})
         
         # Valid OHLCV data
         valid_data = pd.DataFrame({
@@ -376,8 +376,8 @@ class TestDataSourceIntegration:
         assert issubclass(FinancialDataSource, TimeSeriesDataSource)
         
         # Check that they can be instantiated
-        ts_source = MockTimeSeriesDataSource("test")
-        fin_source = MockFinancialDataSource("test")
+        ts_source = MockTimeSeriesDataSource("test", {})
+        fin_source = MockFinancialDataSource("test", {})
         
         assert isinstance(ts_source, BaseDataSource)
         assert isinstance(fin_source, TimeSeriesDataSource)

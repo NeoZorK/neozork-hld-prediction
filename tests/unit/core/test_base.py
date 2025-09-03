@@ -90,10 +90,9 @@ class TestMLModel:
     
     def test_init(self):
         """Test MLModel initialization."""
-        model = MLModel("test_model")
-        
-        assert model.name == "test_model"
-        assert isinstance(model, BaseComponent)
+        # MLModel is abstract, test that it can't be instantiated
+        with pytest.raises(TypeError):
+            MLModel("test_model")
     
     def test_abstract_methods(self):
         """Test that abstract methods are properly defined."""
@@ -107,10 +106,9 @@ class TestExportable:
     
     def test_init(self):
         """Test Exportable initialization."""
-        exportable = Exportable("test_exportable")
-        
-        assert exportable.name == "test_exportable"
-        assert isinstance(exportable, BaseComponent)
+        # Exportable is abstract, test that it can't be instantiated
+        with pytest.raises(TypeError):
+            Exportable("test_exportable")
     
     def test_abstract_methods(self):
         """Test that abstract methods are properly defined."""
