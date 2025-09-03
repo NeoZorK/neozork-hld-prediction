@@ -93,7 +93,7 @@ def show_cool_version():
     ]
     
     # Top border - ultra fast animation (10x faster)
-    border = '╔══════════════════════════════════════════════════════════════╗'
+    border = '╔═══════════════════════════════════════════════════════════════╗'
     for i in range(len(border)):
         print('\r' + border[:i+1], end='', flush=True)
         time.sleep(0.018)  # 10x faster than before
@@ -127,7 +127,7 @@ def show_cool_version():
         time.sleep(0.0008)  # 10x faster than before
     
     # Middle border - ultra fast (10x faster)
-    border = '╠══════════════════════════════════════════════════════════════╣'
+    border = '╠═══════════════════════════════════════════════════════════════╣'
     for i in range(len(border)):
         print('\r' + border[:i+1], end='', flush=True)
         time.sleep(0.00008)  # 10x faster than before
@@ -150,7 +150,7 @@ def show_cool_version():
         time.sleep(0.0018)  # 10x faster than before
     
     # Second middle border - ultra fast (10x faster)
-    border = '╠══════════════════════════════════════════════════════════════╣'
+    border = '╠═══════════════════════════════════════════════════════════════╣'
     for i in range(len(border)):
         print('\r' + border[:i+1], end='', flush=True)
         time.sleep(0.00008)  # 10x faster than before
@@ -175,7 +175,7 @@ def show_cool_version():
         time.sleep(0.0018)  # 10x faster than before
     
     # Bottom border - ultra fast (10x faster)
-    border = '╚══════════════════════════════════════════════════════════════╝'
+    border = '╚═══════════════════════════════════════════════════════════════╝'
     for i in range(len(border)):
         print('\r' + border[:i+1], end='', flush=True)
         time.sleep(0.00008)  # 10x faster than before
