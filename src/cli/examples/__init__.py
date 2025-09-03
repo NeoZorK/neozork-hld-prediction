@@ -1,12 +1,19 @@
 # -*- coding: utf-8 -*-
-# src/cli/examples/__init__.py
-
 """
-CLI examples and usage demonstrations module.
+CLI Examples Module
+
+This module provides CLI examples organized by indicator groups.
 """
 
-from .cli_examples import show_cli_examples_colored
+from .oscillators import OscillatorExamples
+from .trend import TrendExamples
+from .momentum import MomentumExamples
+from .main_examples import show_all_cli_examples, show_indicator_group_examples
 
 __all__ = [
-    'show_cli_examples_colored'
+    'OscillatorExamples',
+    'TrendExamples',
+    'MomentumExamples',
+    'show_all_cli_examples',
+    'show_indicator_group_examples'
 ]
