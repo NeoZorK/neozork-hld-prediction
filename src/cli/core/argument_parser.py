@@ -96,7 +96,7 @@ def show_cool_version():
     border = '╔══════════════════════════════════════════════════════════════╗'
     for i in range(len(border)):
         print('\r' + border[:i+1], end='', flush=True)
-        time.sleep(0.00018)  # 10x faster than before
+        time.sleep(0.018)  # 10x faster than before
     print()
     
     # Animate ASCII art line by line with color transitions
