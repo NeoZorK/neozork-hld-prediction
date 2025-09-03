@@ -53,7 +53,12 @@ class TestGapAnalysisDemo:
         
         print(f"✅ Found {len(eurusd_files)} EURUSD files:")
         for file in eurusd_files:
-            print(f"   • {file.name}")
+            # Safely get file name - handle both Path objects and strings
+            if hasattr(file, 'name'):
+                file_name = file.name
+            else:
+                file_name = str(file).split('/')[-1]  # Extract filename from path string
+            print(f"   • {file_name}")
         
         # Load files using DataManager
         print(f"\n2️⃣  Loading EURUSD files...")
@@ -61,13 +66,24 @@ class TestGapAnalysisDemo:
         all_data = []
         for i, file in enumerate(eurusd_files, 1):
             try:
-                print(f"Loading file {i}/{len(eurusd_files)}: {file.name}")
+                # Safely get file name - handle both Path objects and strings
+                if hasattr(file, 'name'):
+                    file_name = file.name
+                else:
+                    file_name = str(file).split('/')[-1]  # Extract filename from path string
+                
+                print(f"Loading file {i}/{len(eurusd_files)}: {file_name}")
                 df = self.data_manager.load_data_from_file(str(file))
-                df['source_file'] = file.name
+                df['source_file'] = file_name
                 all_data.append(df)
-                print(f"  ✅ Loaded: {file.name} ({df.shape[0]:,} rows)")
+                print(f"  ✅ Loaded: {file_name} ({df.shape[0]:,} rows)")
             except Exception as e:
-                print(f"  ❌ Error loading {file.name}: {e}")
+                # Safely get file name for error reporting
+                if hasattr(file, 'name'):
+                    file_name = file.name
+                else:
+                    file_name = str(file).split('/')[-1]
+                print(f"  ❌ Error loading {file_name}: {e}")
                 continue
         
         if not all_data:
