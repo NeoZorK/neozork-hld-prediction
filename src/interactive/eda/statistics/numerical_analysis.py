@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/statistics/numerical_analysis.py
 #!/usr/bin/env python3
 """
 Numerical Analysis module.

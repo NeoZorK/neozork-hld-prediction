@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/data/fetchers/binance_fetcher.py
 # NeoZorK HLD/src/../data/fetchers/binance_fetcher.py (Using pbar.write)
 
 """

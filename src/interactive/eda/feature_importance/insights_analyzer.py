@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/feature_importance/insights_analyzer.py
 #!/usr/bin/env python3
 """
 Insights Analyzer module.

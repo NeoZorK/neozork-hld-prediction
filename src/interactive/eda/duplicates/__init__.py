@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/duplicates/__init__.py
 #!/usr/bin/env python3
 """
 Duplicates Analysis package.

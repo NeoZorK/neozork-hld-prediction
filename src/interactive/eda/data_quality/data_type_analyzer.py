@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/data_quality/data_type_analyzer.py
 #!/usr/bin/env python3
 """
 Data Type Analyzer module.

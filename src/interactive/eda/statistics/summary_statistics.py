@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/statistics/summary_statistics.py
 #!/usr/bin/env python3
 """
 Summary Statistics module.

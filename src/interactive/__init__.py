@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# src/interactive/__init__.py
 """
 Interactive Module for NeoZorK HLD Prediction
 

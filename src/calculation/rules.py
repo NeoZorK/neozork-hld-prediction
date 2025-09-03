@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/rules.py
+# src/calculation/rules.py
 
 """
 Functions implementing the specific logic for each TradingRule.

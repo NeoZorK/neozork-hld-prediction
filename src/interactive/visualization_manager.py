@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/visualization_manager.py
 #!/usr/bin/env python3
 """
 Main visualization manager for interactive data visualization.

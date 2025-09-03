@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/feature_importance/__init__.py
 #!/usr/bin/env python3
 """
 Feature Importance Analysis package.

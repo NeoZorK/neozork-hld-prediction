@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/multi_timeframe_manager.py
 #!/usr/bin/env python3
 """
 Multi-timeframe data management utilities.

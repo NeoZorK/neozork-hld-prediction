@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/memory_manager.py
 #!/usr/bin/env python3
 """
 Memory management utilities for interactive data loading.

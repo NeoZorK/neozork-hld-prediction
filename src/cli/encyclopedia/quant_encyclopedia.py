@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/cli/quant_encyclopedia.py
+# src/cli/encyclopedia/quant_encyclopedia.py
 
 """
 Quantitative Trading Encyclopedia Module

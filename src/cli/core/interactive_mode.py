@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/cli/interactive_mode.py
+# src/cli/core/interactive_mode.py
 
 """
 Interactive mode for guided indicator selection and analysis.

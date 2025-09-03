@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/batch_eda/data_quality.py
 # Handles data quality checks with aggressive memory optimization
 import gc
 import os

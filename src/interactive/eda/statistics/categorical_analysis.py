@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/statistics/categorical_analysis.py
 #!/usr/bin/env python3
 """
 Categorical Analysis module.

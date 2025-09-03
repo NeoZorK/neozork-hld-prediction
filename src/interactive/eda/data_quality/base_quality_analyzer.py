@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/data_quality/base_quality_analyzer.py
 #!/usr/bin/env python3
 """
 Base Data Quality Analyzer module.

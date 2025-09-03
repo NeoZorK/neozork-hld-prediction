@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# src/calculation/error_handling/trend.py
+# src/calculation/error_handling/predictive.py
 """
-Trend Indicator Error Handler
+Predictive Indicator Error Handler
 
-This module provides error handling and validation for trend indicators.
+This module provides error handling and validation for predictive indicators.
 """
 
 import logging
@@ -16,25 +16,23 @@ from .base_error_handler import BaseErrorHandler
 logger = logging.getLogger(__name__)
 
 
-class TrendErrorHandler(BaseErrorHandler):
-    """Error handler for trend indicators."""
+class PredictiveErrorHandler(BaseErrorHandler):
+    """Error handler for predictive indicators."""
     
     def __init__(self, indicator_name: str):
-        """Initialize the trend error handler."""
+        """Initialize the predictive error handler."""
         super().__init__(indicator_name)
-        self.trend_specific_validation = {
-            'EMA': self._validate_ema,
-            'SMA': self._validate_sma,
-            'ADX': self._validate_adx,
-            'SAR': self._validate_sar,
-            'SuperTrend': self._validate_supertrend,
-            'Wave': self._validate_wave
+        self.predictive_specific_validation = {
+            'HMA': self._validate_hma,
+            'TSForecast': self._validate_tsforecast,
+            'Linear_Regression': self._validate_linear_regression,
+            'Polynomial_Regression': self._validate_polynomial_regression
         }
     
     def validate_parameters(self, params: Dict[str, Any]) -> bool:
-        """Validate trend indicator parameters."""
+        """Validate predictive indicator parameters."""
         try:
-            # Common trend parameter validation
+            # Common predictive parameter validation
             if 'period' in params:
                 if not self.validate_positive_value(params['period'], 'period'):
                     return False
@@ -42,8 +40,8 @@ class TrendErrorHandler(BaseErrorHandler):
                     self.add_warning(f"Period {params['period']} is unusually large")
             
             # Indicator-specific validation
-            if self.indicator_name in self.trend_specific_validation:
-                return self.trend_specific_validation[self.indicator_name](params)
+            if self.indicator_name in self.predictive_specific_validation:
+                return self.predictive_specific_validation[self.indicator_name](params)
             
             return True
             
@@ -52,26 +50,26 @@ class TrendErrorHandler(BaseErrorHandler):
             return False
     
     def validate_data(self, data: pd.DataFrame) -> bool:
-        """Validate input data for trend calculations."""
+        """Validate input data for predictive calculations."""
         try:
             # Check required columns
-            required_columns = ['Open', 'High', 'Low', 'Close']
+            required_columns = ['Close']
             if not self.validate_dataframe_columns(data, required_columns):
                 return False
             
             # Check data length
-            if not self.validate_dataframe_length(data, min_length=50):
+            if not self.validate_dataframe_length(data, min_length=100):
                 return False
             
             # Check for NaN values
             nan_count = data[required_columns].isna().sum().sum()
             if nan_count > 0:
-                self.add_warning(f"Found {nan_count} NaN values in OHLC data")
+                self.add_warning(f"Found {nan_count} NaN values in Close data")
             
             # Check for infinite values
             inf_count = np.isinf(data[required_columns].select_dtypes(include=[np.number])).sum().sum()
             if inf_count > 0:
-                self.add_error(f"Found {inf_count} infinite values in OHLC data")
+                self.add_error(f"Found {inf_count} infinite values in Close data")
                 return False
             
             return True
@@ -81,7 +79,7 @@ class TrendErrorHandler(BaseErrorHandler):
             return False
     
     def handle_calculation_error(self, error: Exception, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Handle trend calculation errors."""
+        """Handle predictive calculation errors."""
         error_info = {
             'error_type': type(error).__name__,
             'error_message': str(error),
@@ -94,68 +92,58 @@ class TrendErrorHandler(BaseErrorHandler):
         
         return error_info
     
-    def _validate_ema(self, params: Dict[str, Any]) -> bool:
-        """Validate EMA parameters."""
+    def _validate_hma(self, params: Dict[str, Any]) -> bool:
+        """Validate HMA parameters."""
         if 'period' in params:
             if not self.validate_numeric_range(params['period'], 1, 1000, 'period'):
                 return False
-            if params['period'] < 5:
-                self.add_warning("EMA period less than 5 may produce noisy signals")
-        
-        if 'alpha' in params:
-            if not self.validate_numeric_range(params['alpha'], 0.001, 1.0, 'alpha'):
-                return False
+            if params['period'] < 10:
+                self.add_warning("HMA period less than 10 may produce noisy signals")
         
         return True
     
-    def _validate_sma(self, params: Dict[str, Any]) -> bool:
-        """Validate SMA parameters."""
-        if 'period' in params:
-            if not self.validate_numeric_range(params['period'], 1, 1000, 'period'):
-                return False
-            if params['period'] < 5:
-                self.add_warning("SMA period less than 5 may produce noisy signals")
-        
-        return True
-    
-    def _validate_adx(self, params: Dict[str, Any]) -> bool:
-        """Validate ADX parameters."""
-        if 'period' in params:
-            if not self.validate_numeric_range(params['period'], 1, 1000, 'period'):
-                return False
-            if params['period'] < 14:
-                self.add_warning("ADX period less than 14 may produce noisy signals")
-        
-        return True
-    
-    def _validate_sar(self, params: Dict[str, Any]) -> bool:
-        """Validate SAR parameters."""
-        if 'acceleration' in params:
-            if not self.validate_numeric_range(params['acceleration'], 0.01, 0.5, 'acceleration'):
-                return False
-        
-        if 'maximum' in params:
-            if not self.validate_numeric_range(params['maximum'], 0.1, 1.0, 'maximum'):
-                return False
-        
-        return True
-    
-    def _validate_supertrend(self, params: Dict[str, Any]) -> bool:
-        """Validate SuperTrend parameters."""
+    def _validate_tsforecast(self, params: Dict[str, Any]) -> bool:
+        """Validate Time Series Forecast parameters."""
         if 'period' in params:
             if not self.validate_numeric_range(params['period'], 1, 1000, 'period'):
                 return False
         
-        if 'multiplier' in params:
-            if not self.validate_numeric_range(params['multiplier'], 0.1, 10.0, 'multiplier'):
+        if 'forecast_periods' in params:
+            if not self.validate_numeric_range(params['forecast_periods'], 1, 100, 'forecast_periods'):
                 return False
         
         return True
     
-    def _validate_wave(self, params: Dict[str, Any]) -> bool:
-        """Validate Wave parameters."""
+    def _validate_linear_regression(self, params: Dict[str, Any]) -> bool:
+        """Validate Linear Regression parameters."""
         if 'period' in params:
-            if not self.validate_numeric_range(params['period'], 1, 1000, 'period'):
+            if not self.validate_numeric_range(params['period'], 10, 1000, 'period'):
+                return False
+            if params['period'] < 20:
+                self.add_warning("Linear regression period less than 20 may be unreliable")
+        
+        if 'forecast_periods' in params:
+            if not self.validate_numeric_range(params['forecast_periods'], 1, 50, 'forecast_periods'):
+                return False
+        
+        return True
+    
+    def _validate_polynomial_regression(self, params: Dict[str, Any]) -> bool:
+        """Validate Polynomial Regression parameters."""
+        if 'period' in params:
+            if not self.validate_numeric_range(params['period'], 20, 1000, 'period'):
+                return False
+            if params['period'] < 30:
+                self.add_warning("Polynomial regression period less than 30 may be unreliable")
+        
+        if 'degree' in params:
+            if not self.validate_numeric_range(params['degree'], 1, 5, 'degree'):
+                return False
+            if params['degree'] > 3:
+                self.add_warning("Polynomial degree > 3 may lead to overfitting")
+        
+        if 'forecast_periods' in params:
+            if not self.validate_numeric_range(params['forecast_periods'], 1, 30, 'forecast_periods'):
                 return False
         
         return True
@@ -179,5 +167,13 @@ class TrendErrorHandler(BaseErrorHandler):
         if "type" in str(error).lower():
             suggestions.append("Ensure all parameters are numeric")
             suggestions.append("Check data types in input dataframe")
+        
+        if "singular" in str(error).lower() or "matrix" in str(error).lower():
+            suggestions.append("Check for sufficient data variation")
+            suggestions.append("Reduce polynomial degree or increase period")
+        
+        if "convergence" in str(error).lower():
+            suggestions.append("Check data quality and consistency")
+            suggestions.append("Reduce forecast periods or increase data length")
         
         return suggestions

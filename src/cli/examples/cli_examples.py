@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/cli/cli_examples.py
+# src/cli/examples/cli_examples.py
 
 """
 CLI examples and help text for the analysis tool.

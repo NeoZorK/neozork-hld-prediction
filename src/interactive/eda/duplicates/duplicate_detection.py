@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/duplicates/duplicate_detection.py
 #!/usr/bin/env python3
 """
 Duplicate Detection module.

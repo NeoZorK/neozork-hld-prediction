@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/base/base_analyzer.py
 #!/usr/bin/env python3
 """
 Base EDA Analyzer module.

@@ -1,4 +1,4 @@
-# File: src/../data/fetchers/csv_fetcher.py
+# src/data/fetchers/csv_fetcher.py
 # -*- coding: utf-8 -*-
 
 import pandas as pd

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/utils/docker_browser.py
 """
 Override the webbrowser module behavior inside Docker container
 to show a URL message instead of trying to open a browser.

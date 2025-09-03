@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/correlation/heatmap_analyzer.py
 #!/usr/bin/env python3
 """
 Heatmap Analyzer module.

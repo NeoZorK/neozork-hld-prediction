@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/../data/gap_fixing/utils.py
+# src/data/gap_fixing/utils.py
 
 """
 Utility functions for gap fixing operations.

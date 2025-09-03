@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/base/core_methods.py
 #!/usr/bin/env python3
 """
 Core Methods module.

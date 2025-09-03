@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/duplicates/base_duplicates_analyzer.py
 #!/usr/bin/env python3
 """
 Base Duplicates Analyzer module.

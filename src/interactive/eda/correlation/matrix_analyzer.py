@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/correlation/matrix_analyzer.py
 #!/usr/bin/env python3
 """
 Matrix Analyzer module.

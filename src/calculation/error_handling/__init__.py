@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# src/calculation/error_handling/__init__.py
 """
 Error Handling Module for Indicator Calculations
 

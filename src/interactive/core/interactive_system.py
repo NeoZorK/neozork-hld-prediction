@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/core/interactive_system.py
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """

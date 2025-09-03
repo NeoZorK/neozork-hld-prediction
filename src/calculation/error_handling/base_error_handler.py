@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# src/calculation/error_handling/base_error_handler.py
 """
 Base Error Handler for Indicator Calculations
 

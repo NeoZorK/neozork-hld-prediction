@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/../data/processing/csv_processor.py
+# src/data/processing/csv_processor.py
 
 """
 CSV file processing functionality.

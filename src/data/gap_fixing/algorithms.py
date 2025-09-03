@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/../data/gap_fixing/algorithms.py
+# src/data/gap_fixing/algorithms.py
 
 """
 Gap fixing algorithms and strategy selection.

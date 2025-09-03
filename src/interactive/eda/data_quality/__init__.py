@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/data_quality/__init__.py
 #!/usr/bin/env python3
 """
 Data Quality Analysis package.

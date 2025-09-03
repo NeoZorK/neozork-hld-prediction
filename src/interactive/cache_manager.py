@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/cache_manager.py
 #!/usr/bin/env python3
 """
 Cache and backup management utilities.

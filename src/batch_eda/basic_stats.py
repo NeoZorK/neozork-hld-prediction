@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/batch_eda/basic_stats.py
 # Handles basic statistics
 
 import numpy as np

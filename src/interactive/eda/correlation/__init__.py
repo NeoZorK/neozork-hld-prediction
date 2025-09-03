@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/correlation/__init__.py
 #!/usr/bin/env python3
 """
 Correlation Analysis package.

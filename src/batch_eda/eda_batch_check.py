@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/batch_eda/eda_batch_check.py
 """
 Batch EDA Batch Check Script
 

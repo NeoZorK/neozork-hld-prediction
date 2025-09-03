@@ -1,4 +1,4 @@
-# src/utils.py
+# src/utils/utils.py
 
 """
 General utility functions, including point size estimation using yfinance info.

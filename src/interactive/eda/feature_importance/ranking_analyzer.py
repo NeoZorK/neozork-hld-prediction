@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/feature_importance/ranking_analyzer.py
 #!/usr/bin/env python3
 """
 Ranking Analyzer module.

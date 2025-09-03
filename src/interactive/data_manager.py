@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/data_manager.py
 #!/usr/bin/env python3
 """
 Main data manager for interactive data operations.

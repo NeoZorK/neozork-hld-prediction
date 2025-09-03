@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/feature_engineering_manager.py
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """

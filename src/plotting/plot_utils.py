@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/plotting/plot_utils.py
 """
 Plot utilities for automatic display mode detection.
 

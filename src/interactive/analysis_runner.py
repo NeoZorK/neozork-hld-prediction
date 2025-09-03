@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/analysis_runner.py
 #!/usr/bin/env python3
 """
 Main analysis runner for interactive data analysis.

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/batch_eda/file_info.py
 # Handles file information extraction
 
 import os

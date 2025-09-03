@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/data_loader.py
 #!/usr/bin/env python3
 """
 Data loading utilities for various file formats.

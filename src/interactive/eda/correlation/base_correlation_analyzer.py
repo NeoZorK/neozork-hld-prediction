@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/correlation/base_correlation_analyzer.py
 #!/usr/bin/env python3
 """
 Base Correlation Analyzer module.

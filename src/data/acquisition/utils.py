@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/../data/acquisition/utils.py
+# src/data/acquisition/utils.py
 
 """
 Utility functions for data acquisition process.

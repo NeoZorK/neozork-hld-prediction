@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/core_calculations.py
+# src/calculation/core_calculations.py
 
 """
 Core calculation functions for the Shcherbyna Pressure Vector indicator components.

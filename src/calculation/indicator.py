@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/indicator.py
+# src/calculation/indicator.py
 
 """
 Main module for calculating the Shcherbyna Pressure Vector indicator.

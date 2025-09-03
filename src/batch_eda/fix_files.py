@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/batch_eda/fix_files.py
 # Handles fixing files
 import os
 import pandas as pd

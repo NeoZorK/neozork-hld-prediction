@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/statistics/descriptive_statistics.py
 #!/usr/bin/env python3
 """
 Descriptive Statistics module.

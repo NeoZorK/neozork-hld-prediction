@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/../data/acquisition/processing.py
+# src/data/acquisition/processing.py
 
 """
 Data acquisition processing functionality.

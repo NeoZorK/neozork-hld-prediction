@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/../data/gap_fixing/__init__.py
+# src/data/gap_fixing/__init__.py
 
 """
 Gap Fixing Module for Time Series Data

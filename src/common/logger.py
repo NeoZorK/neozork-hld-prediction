@@ -1,4 +1,4 @@
-# src/logger.py
+# src/common/logger.py
 
 """
 Console logging utility with colors using colorama.

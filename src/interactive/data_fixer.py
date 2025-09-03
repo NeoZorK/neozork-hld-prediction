@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/data_fixer.py
 #!/usr/bin/env python3
 """
 Data fixing and issue resolution utilities.

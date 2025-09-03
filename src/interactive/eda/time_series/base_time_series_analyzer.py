@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/time_series/base_time_series_analyzer.py
 #!/usr/bin/env python3
 """
 Base Time Series Analyzer module.

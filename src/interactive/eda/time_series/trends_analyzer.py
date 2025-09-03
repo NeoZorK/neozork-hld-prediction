@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/time_series/trends_analyzer.py
 #!/usr/bin/env python3
 """
 Trends Analyzer module.

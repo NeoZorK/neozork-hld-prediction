@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/data_quality/consistency_analyzer.py
 #!/usr/bin/env python3
 """
 Data Consistency Analyzer module.

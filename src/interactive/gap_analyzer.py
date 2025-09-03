@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/gap_analyzer.py
 #!/usr/bin/env python3
 """
 Gap analysis and fixing utilities for time series data.

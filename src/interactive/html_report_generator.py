@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/html_report_generator.py
 #!/usr/bin/env python3
 """
 HTML report generation utilities for data visualization.

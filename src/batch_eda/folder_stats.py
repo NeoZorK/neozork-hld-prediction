@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/batch_eda/folder_stats.py
 # Handles folder statistics
 
 import os

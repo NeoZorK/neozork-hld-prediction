@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/__init__.py
 #!/usr/bin/env python3
 """
 EDA (Exploratory Data Analysis) package.

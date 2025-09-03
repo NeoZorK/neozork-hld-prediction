@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# src/interactive/core/__init__.py
 """
 Interactive Core Module
 

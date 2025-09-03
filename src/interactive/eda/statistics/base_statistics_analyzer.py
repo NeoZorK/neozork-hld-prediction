@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/statistics/base_statistics_analyzer.py
 #!/usr/bin/env python3
 """
 Base Statistics Analyzer module.

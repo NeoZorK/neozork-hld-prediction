@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/cli/indicators_search.py
+# src/cli/indicators/indicators_search.py
 
 """
 Indicator search and information module.

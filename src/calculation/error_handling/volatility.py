@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# src/calculation/error_handling/trend.py
+# src/calculation/error_handling/volatility.py
 """
-Trend Indicator Error Handler
+Volatility Indicator Error Handler
 
-This module provides error handling and validation for trend indicators.
+This module provides error handling and validation for volatility indicators.
 """
 
 import logging
@@ -16,25 +16,23 @@ from .base_error_handler import BaseErrorHandler
 logger = logging.getLogger(__name__)
 
 
-class TrendErrorHandler(BaseErrorHandler):
-    """Error handler for trend indicators."""
+class VolatilityErrorHandler(BaseErrorHandler):
+    """Error handler for volatility indicators."""
     
     def __init__(self, indicator_name: str):
-        """Initialize the trend error handler."""
+        """Initialize the volatility error handler."""
         super().__init__(indicator_name)
-        self.trend_specific_validation = {
-            'EMA': self._validate_ema,
-            'SMA': self._validate_sma,
-            'ADX': self._validate_adx,
-            'SAR': self._validate_sar,
-            'SuperTrend': self._validate_supertrend,
-            'Wave': self._validate_wave
+        self.volatility_specific_validation = {
+            'ATR': self._validate_atr,
+            'Bollinger_Bands': self._validate_bollinger_bands,
+            'StDev': self._validate_stdev,
+            'Keltner_Channels': self._validate_keltner_channels
         }
     
     def validate_parameters(self, params: Dict[str, Any]) -> bool:
-        """Validate trend indicator parameters."""
+        """Validate volatility indicator parameters."""
         try:
-            # Common trend parameter validation
+            # Common volatility parameter validation
             if 'period' in params:
                 if not self.validate_positive_value(params['period'], 'period'):
                     return False
@@ -42,8 +40,8 @@ class TrendErrorHandler(BaseErrorHandler):
                     self.add_warning(f"Period {params['period']} is unusually large")
             
             # Indicator-specific validation
-            if self.indicator_name in self.trend_specific_validation:
-                return self.trend_specific_validation[self.indicator_name](params)
+            if self.indicator_name in self.volatility_specific_validation:
+                return self.volatility_specific_validation[self.indicator_name](params)
             
             return True
             
@@ -52,10 +50,10 @@ class TrendErrorHandler(BaseErrorHandler):
             return False
     
     def validate_data(self, data: pd.DataFrame) -> bool:
-        """Validate input data for trend calculations."""
+        """Validate input data for volatility calculations."""
         try:
             # Check required columns
-            required_columns = ['Open', 'High', 'Low', 'Close']
+            required_columns = ['High', 'Low', 'Close']
             if not self.validate_dataframe_columns(data, required_columns):
                 return False
             
@@ -74,6 +72,12 @@ class TrendErrorHandler(BaseErrorHandler):
                 self.add_error(f"Found {inf_count} infinite values in OHLC data")
                 return False
             
+            # Check for invalid price relationships
+            invalid_high_low = (data['High'] < data['Low']).sum()
+            if invalid_high_low > 0:
+                self.add_error(f"Found {invalid_high_low} rows where High < Low")
+                return False
+            
             return True
             
         except Exception as e:
@@ -81,7 +85,7 @@ class TrendErrorHandler(BaseErrorHandler):
             return False
     
     def handle_calculation_error(self, error: Exception, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Handle trend calculation errors."""
+        """Handle volatility calculation errors."""
         error_info = {
             'error_type': type(error).__name__,
             'error_message': str(error),
@@ -94,68 +98,42 @@ class TrendErrorHandler(BaseErrorHandler):
         
         return error_info
     
-    def _validate_ema(self, params: Dict[str, Any]) -> bool:
-        """Validate EMA parameters."""
+    def _validate_atr(self, params: Dict[str, Any]) -> bool:
+        """Validate ATR parameters."""
         if 'period' in params:
             if not self.validate_numeric_range(params['period'], 1, 1000, 'period'):
                 return False
-            if params['period'] < 5:
-                self.add_warning("EMA period less than 5 may produce noisy signals")
-        
-        if 'alpha' in params:
-            if not self.validate_numeric_range(params['alpha'], 0.001, 1.0, 'alpha'):
-                return False
         
         return True
     
-    def _validate_sma(self, params: Dict[str, Any]) -> bool:
-        """Validate SMA parameters."""
+    def _validate_bollinger_bands(self, params: Dict[str, Any]) -> bool:
+        """Validate Bollinger Bands parameters."""
         if 'period' in params:
             if not self.validate_numeric_range(params['period'], 1, 1000, 'period'):
                 return False
-            if params['period'] < 5:
-                self.add_warning("SMA period less than 5 may produce noisy signals")
+        
+        if 'std_dev' in params:
+            if not self.validate_numeric_range(params['std_dev'], 0.1, 5.0, 'std_dev'):
+                return False
         
         return True
     
-    def _validate_adx(self, params: Dict[str, Any]) -> bool:
-        """Validate ADX parameters."""
+    def _validate_stdev(self, params: Dict[str, Any]) -> bool:
+        """Validate Standard Deviation parameters."""
         if 'period' in params:
             if not self.validate_numeric_range(params['period'], 1, 1000, 'period'):
                 return False
-            if params['period'] < 14:
-                self.add_warning("ADX period less than 14 may produce noisy signals")
         
         return True
     
-    def _validate_sar(self, params: Dict[str, Any]) -> bool:
-        """Validate SAR parameters."""
-        if 'acceleration' in params:
-            if not self.validate_numeric_range(params['acceleration'], 0.01, 0.5, 'acceleration'):
-                return False
-        
-        if 'maximum' in params:
-            if not self.validate_numeric_range(params['maximum'], 0.1, 1.0, 'maximum'):
-                return False
-        
-        return True
-    
-    def _validate_supertrend(self, params: Dict[str, Any]) -> bool:
-        """Validate SuperTrend parameters."""
+    def _validate_keltner_channels(self, params: Dict[str, Any]) -> bool:
+        """Validate Keltner Channels parameters."""
         if 'period' in params:
             if not self.validate_numeric_range(params['period'], 1, 1000, 'period'):
                 return False
         
         if 'multiplier' in params:
             if not self.validate_numeric_range(params['multiplier'], 0.1, 10.0, 'multiplier'):
-                return False
-        
-        return True
-    
-    def _validate_wave(self, params: Dict[str, Any]) -> bool:
-        """Validate Wave parameters."""
-        if 'period' in params:
-            if not self.validate_numeric_range(params['period'], 1, 1000, 'period'):
                 return False
         
         return True
@@ -179,5 +157,9 @@ class TrendErrorHandler(BaseErrorHandler):
         if "type" in str(error).lower():
             suggestions.append("Ensure all parameters are numeric")
             suggestions.append("Check data types in input dataframe")
+        
+        if "high" in str(error).lower() or "low" in str(error).lower():
+            suggestions.append("Check for invalid High/Low price relationships")
+            suggestions.append("Ensure High >= Low for all data points")
         
         return suggestions

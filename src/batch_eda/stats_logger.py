@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/batch_eda/stats_logger.py
 """
 Module for logging statistics analysis results to files
 """

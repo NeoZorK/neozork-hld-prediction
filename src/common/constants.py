@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/constants.py
+# src/common/constants.py
 
 """
 Constants and enumerations used in the indicator calculations.

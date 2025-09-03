@@ -1,4 +1,4 @@
-# src/utils/point_size_determination.py # Re-verified
+# src/utils/point_size_determination.py
 
 """
 Workflow Step 2: Determines the point size to use.

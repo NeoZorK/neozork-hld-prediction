@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/plot_generator.py
 #!/usr/bin/env python3
 """
 Plot generation utilities for data visualization.

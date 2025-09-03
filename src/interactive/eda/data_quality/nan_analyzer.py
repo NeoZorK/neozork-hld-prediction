@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/interactive/eda/data_quality/nan_analyzer.py
 #!/usr/bin/env python3
 """
 NaN Analyzer module.

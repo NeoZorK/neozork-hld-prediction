@@ -1,4 +1,4 @@
-# src/../data/fetchers/exrate_fetcher.py
+# src/data/fetchers/exrate_fetcher.py
 
 """
 Contains functions related to fetching data from Exchange Rate API (exchangerate-api.com).

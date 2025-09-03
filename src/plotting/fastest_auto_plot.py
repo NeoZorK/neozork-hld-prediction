@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/plotting/fastest_auto_plot.py
 import os
 import pandas as pd
 import plotly.graph_objs as go

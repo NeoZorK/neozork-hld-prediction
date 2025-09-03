@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# src/batch_eda/html_report_generator.py
 # HTML report generator for statistical analysis
 
 import os

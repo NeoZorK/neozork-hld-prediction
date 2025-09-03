@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/../data/acquisition/cache.py
+# src/data/acquisition/cache.py
 
 """
 Data acquisition caching functionality.

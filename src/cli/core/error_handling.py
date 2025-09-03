@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/cli/error_handling.py
+# src/cli/core/error_handling.py
 
 """
 Enhanced error handling for CLI with colorful help and icons.

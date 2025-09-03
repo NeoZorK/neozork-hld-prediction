@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# # src/plotting/plotly_plot.py
+# src/plotting/plotly_plot.py
 
 import pandas as pd
 from plotly import graph_objects as go

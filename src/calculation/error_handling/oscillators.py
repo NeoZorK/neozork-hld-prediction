@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# src/calculation/error_handling/oscillators.py
 """
 Oscillator Error Handler
 

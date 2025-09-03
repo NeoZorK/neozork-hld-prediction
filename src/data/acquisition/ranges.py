@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/../data/acquisition/ranges.py
+# src/data/acquisition/ranges.py
 
 """
 Data acquisition ranges functionality.
