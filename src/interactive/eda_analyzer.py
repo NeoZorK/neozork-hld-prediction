@@ -883,7 +883,7 @@ class EDAAnalyzer:
 
     def run_time_series_gaps_analysis(self, system) -> bool:
         """
-        Run detailed time series gaps analysis.
+        Run detailed time series gaps analysis on multi-timeframe files.
         
         Args:
             system: InteractiveSystem instance
@@ -894,24 +894,133 @@ class EDAAnalyzer:
         print(f"\n⏱️ TIME SERIES GAPS ANALYSIS")
         print("-" * 50)
         
-        if not hasattr(system, 'current_data') or system.current_data is None:
-            print("❌ No data loaded. Please load data first.")
+        # Get data directory path
+        data_dir = Path("data")
+        if not data_dir.exists():
+            print("❌ Data directory not found")
             return False
         
-        df = system.current_data
-        gap_summary = self._analyze_time_series_gaps(df)
+        # Find all data files
+        data_files = []
+        for ext in ['*.csv', '*.parquet']:
+            data_files.extend(data_dir.glob(ext))
+            data_files.extend(data_dir.glob(f"**/{ext}"))
         
-        if gap_summary:
-            print(f"\n📊 Time Series Gaps Summary:")
-            print(f"   • Columns with gaps: {len(gap_summary)}")
+        # Filter out backup and cache directories
+        data_files = [f for f in data_files if 'backup' not in str(f) and 'cache' not in str(f)]
+        
+        if not data_files:
+            print("❌ No data files found")
+            return False
+        
+        print(f"📁 Found {len(data_files)} data files for analysis")
+        print("-" * 50)
+        
+        all_gap_summaries = []
+        
+        for i, file_path in enumerate(data_files, 1):
+            try:
+                print(f"\n📊 File {i}/{len(data_files)}: {file_path.name}")
+                
+                # Load file
+                df = self._load_file_for_gap_analysis(file_path)
+                if df is None:
+                    continue
+                
+                # Analyze gaps
+                gap_summary = self._analyze_time_series_gaps(df)
+                
+                if gap_summary:
+                    # Add file info to gap summary
+                    for gap_info in gap_summary:
+                        gap_info['file_name'] = file_path.name
+                        gap_info['file_path'] = str(file_path)
+                        gap_info['total_rows'] = len(df)
+                    
+                    all_gap_summaries.extend(gap_summary)
+                    print(f"   ✅ Found gaps in {len(gap_summary)} columns")
+                else:
+                    print(f"   ✅ No gaps found")
+                
+                # Memory cleanup
+                del df
+                
+            except Exception as e:
+                print(f"   ❌ Error analyzing {file_path.name}: {e}")
+                continue
+        
+        # Display comprehensive summary
+        if all_gap_summaries:
+            print(f"\n📊 COMPREHENSIVE TIME SERIES GAPS SUMMARY")
+            print("=" * 60)
+            print(f"📁 Total files analyzed: {len(data_files)}")
+            print(f"🔍 Total gap issues found: {len(all_gap_summaries)}")
             
-            for gap_info in gap_summary:
-                print(f"\n   📅 {gap_info['column']}:")
-                print(f"      • Gaps found: {gap_info['gap_count']:,}")
-                print(f"      • Expected frequency: {gap_info['expected_frequency']}")
-                print(f"      • Median interval: {gap_info['median_interval']}")
-                print(f"      • Total intervals: {gap_info['total_intervals']:,}")
+            # Group by file
+            files_with_gaps = {}
+            for gap_info in all_gap_summaries:
+                file_name = gap_info['file_name']
+                if file_name not in files_with_gaps:
+                    files_with_gaps[file_name] = []
+                files_with_gaps[file_name].append(gap_info)
+            
+            print(f"\n📋 Files with gaps: {len(files_with_gaps)}")
+            
+            for file_name, gaps in files_with_gaps.items():
+                print(f"\n📁 {file_name}:")
+                for gap_info in gaps:
+                    print(f"   📅 {gap_info['column']}:")
+                    print(f"      • Gaps: {gap_info['gap_count']:,}")
+                    print(f"      • Frequency: {gap_info['expected_frequency']}")
+                    print(f"      • Rows: {gap_info['total_rows']:,}")
         else:
-            print("✅ No time series gaps detected")
+            print("\n✅ No time series gaps detected in any files")
         
         return True
+
+    def _load_file_for_gap_analysis(self, file_path: Path) -> Optional[pd.DataFrame]:
+        """
+        Load file for gap analysis.
+        
+        Args:
+            file_path: Path to file
+            
+        Returns:
+            DataFrame or None if loading failed
+        """
+        try:
+            df = None
+            if file_path.suffix.lower() == '.csv':
+                # For CSV files, try to read with different encodings
+                for encoding in ['utf-8', 'latin-1', 'cp1252']:
+                    try:
+                        df = pd.read_csv(file_path, nrows=10000, encoding=encoding)  # Sample for analysis
+                        break
+                    except UnicodeDecodeError:
+                        continue
+                    except Exception as e:
+                        print(f"      ⚠️  Error reading CSV: {e}")
+                        continue
+            elif file_path.suffix.lower() == '.parquet':
+                try:
+                    df = pd.read_parquet(file_path)
+                except Exception as e:
+                    print(f"      ⚠️  Error reading parquet: {e}")
+                    return None
+            
+            if df is None or len(df) == 0:
+                print(f"      ⚠️  Could not load file or file is empty")
+                return None
+            
+            # Check if file has any timestamp columns
+            timestamp_cols = [col for col in df.columns if 'time' in col.lower() or 'date' in col.lower()]
+            if not timestamp_cols:
+                print(f"      ⚠️  No timestamp columns found")
+                return None
+            
+            print(f"      📊 Loaded {len(df):,} rows × {len(df.columns)} columns")
+            return df
+            
+        except Exception as e:
+            print(f"      ❌ Error loading file: {e}")
+            return None

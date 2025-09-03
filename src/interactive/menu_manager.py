@@ -186,53 +186,53 @@ class MenuManager:
         print("00. 🏠 Main Menu")
         print("0. 🔙 Back to Main Menu")
         
-        # Comprehensive Data Quality Check (new enhanced version)
+        # Time Series Gaps Analysis (moved to first position)
+        checkmark = " ✅" if self.used_menus['eda']['time_series_gaps_analysis'] else ""
+        print(f"1. ⏱️ Time Series Gaps Analysis{checkmark}")
+        
+        # Comprehensive Data Quality Check
         checkmark = " ✅" if self.used_menus['eda']['comprehensive_data_quality_check'] else ""
-        print(f"1. 🧹 Comprehensive Data Quality Check{checkmark}")
+        print(f"2. 🧹 Comprehensive Data Quality Check{checkmark}")
         
         # Basic Statistics
         checkmark = " ✅" if self.used_menus['eda']['basic_statistics'] else ""
-        print(f"2. 📊 Basic Statistics{checkmark}")
+        print(f"3. 📊 Basic Statistics{checkmark}")
         
         # Correlation Analysis
         checkmark = " ✅" if self.used_menus['eda']['correlation_analysis'] else ""
-        print(f"3. 🔗 Correlation Analysis{checkmark}")
+        print(f"4. 🔗 Correlation Analysis{checkmark}")
         
         # Time Series Analysis
         checkmark = " ✅" if self.used_menus['eda']['time_series_analysis'] else ""
-        print(f"4. 📈 Time Series Analysis{checkmark}")
+        print(f"5. 📈 Time Series Analysis{checkmark}")
         
         # Feature Importance
         checkmark = " ✅" if self.used_menus['eda']['feature_importance'] else ""
-        print(f"5. 🎯 Feature Importance{checkmark}")
+        print(f"6. 🎯 Feature Importance{checkmark}")
         
         # Duplicates Analysis
         checkmark = " ✅" if self.used_menus['eda']['duplicates_analysis'] else ""
-        print(f"6. 🔄 Duplicates Analysis{checkmark}")
+        print(f"7. 🔄 Duplicates Analysis{checkmark}")
         
         # NAN Analysis
         checkmark = " ✅" if self.used_menus['eda']['nan_analysis'] else ""
-        print(f"7. ❓ NAN Analysis{checkmark}")
+        print(f"8. ❓ NAN Analysis{checkmark}")
         
         # Zero Analysis
         checkmark = " ✅" if self.used_menus['eda']['zero_analysis'] else ""
-        print(f"8. 0️⃣ Zero Analysis{checkmark}")
+        print(f"9. 0️⃣ Zero Analysis{checkmark}")
         
         # Negative Analysis
         checkmark = " ✅" if self.used_menus['eda']['negative_analysis'] else ""
-        print(f"9. ➖ Negative Analysis{checkmark}")
+        print(f"10. ➖ Negative Analysis{checkmark}")
         
         # Infinity Analysis
         checkmark = " ✅" if self.used_menus['eda']['infinity_analysis'] else ""
-        print(f"10. ♾️ Infinity Analysis{checkmark}")
+        print(f"11. ♾️ Infinity Analysis{checkmark}")
         
         # Outliers Analysis
         checkmark = " ✅" if self.used_menus['eda']['outliers_analysis'] else ""
-        print(f"11. 📊 Outliers Analysis{checkmark}")
-        
-        # Time Series Gaps Analysis
-        checkmark = " ✅" if self.used_menus['eda']['time_series_gaps_analysis'] else ""
-        print(f"12. ⏱️ Time Series Gaps Analysis{checkmark}")
+        print(f"12. 📊 Outliers Analysis{checkmark}")
         
         # Generate HTML Report
         checkmark = " ✅" if self.used_menus['eda']['generate_html_report'] else ""
