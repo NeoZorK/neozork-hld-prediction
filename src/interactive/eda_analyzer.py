@@ -934,43 +934,35 @@ class EDAAnalyzer:
             if cross_timeframes:
                 print(f"\n📊 Analyzing additional timeframes...")
                 
-                for timeframe, files in cross_timeframes.items():
-                    print(f"\n   ⏰ Timeframe: {timeframe}")
-                    print(f"      📁 Files: {len(files)}")
-                    
-                    for i, file_path in enumerate(files, 1):
-                        try:
-                            print(f"      📊 File {i}/{len(files)}: {Path(file_path).name}")
+                # Check if we have actual data in other_timeframes_data
+                if hasattr(system, 'other_timeframes_data') and system.other_timeframes_data:
+                    for timeframe, df in system.other_timeframes_data.items():
+                        if df is not None and not df.empty:
+                            print(f"\n   ⏰ Timeframe: {timeframe}")
+                            print(f"      📊 Data: {df.shape[0]:,} rows × {df.shape[1]} columns")
                             
-                            # Load file
-                            df = self._load_file_for_gap_analysis(Path(file_path))
-                            if df is None:
-                                continue
-                            
-                            # Analyze gaps
+                            # Analyze gaps directly in the DataFrame
                             gap_summary = self._analyze_time_series_gaps(df)
                             
                             if gap_summary:
-                                # Add file info to gap summary
+                                # Add timeframe info to gap summary
                                 for gap_info in gap_summary:
                                     gap_info['dataset_name'] = f'{timeframe} Timeframe'
                                     gap_info['dataset_type'] = 'cross_timeframe'
-                                    gap_info['file_name'] = Path(file_path).name
-                                    gap_info['file_path'] = str(file_path)
                                     gap_info['timeframe'] = timeframe
                                     gap_info['total_rows'] = len(df)
+                                    gap_info['data_source'] = 'other_timeframes_data'
                                 
                                 all_gap_summaries.extend(gap_summary)
                                 print(f"         ✅ Found gaps in {len(gap_summary)} columns")
                             else:
                                 print(f"         ✅ No gaps found")
-                            
-                            # Memory cleanup
-                            del df
-                            
-                        except Exception as e:
-                            print(f"         ❌ Error analyzing {Path(file_path).name}: {e}")
-                            continue
+                        else:
+                            print(f"\n   ⏰ Timeframe: {timeframe}")
+                            print(f"      ⚠️  No data available")
+                else:
+                    print(f"   ⚠️  Cross-timeframe data not loaded in memory")
+                    print(f"   💡 Use 'Feature Engineering' menu to load cross-timeframe data")
         
         # Display comprehensive summary
         if all_gap_summaries:
@@ -1006,7 +998,10 @@ class EDAAnalyzer:
                     # Show additional info for cross-timeframe data
                     if gap_info.get('timeframe'):
                         print(f"      • Timeframe: {gap_info['timeframe']}")
-                        print(f"      • File: {gap_info['file_name']}")
+                        if gap_info.get('data_source') == 'other_timeframes_data':
+                            print(f"      • Source: In-memory data")
+                        elif gap_info.get('file_name'):
+                            print(f"      • File: {gap_info['file_name']}")
         else:
             print("\n✅ No time series gaps detected in any preloaded data")
         
