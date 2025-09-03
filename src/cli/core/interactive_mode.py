@@ -10,7 +10,7 @@ import sys
 import os
 from typing import List, Dict, Optional, Tuple
 from colorama import Fore, Style, init
-from src.cli.indicators_search import IndicatorSearcher
+from src.cli.indicators.indicators_search import IndicatorSearcher
 
 # Initialize colorama
 init(autoreset=True)
