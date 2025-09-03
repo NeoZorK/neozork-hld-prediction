@@ -12,9 +12,9 @@ from .core.cli_show_mode import *
 from .core.interactive_mode import *
 from .indicators.indicators_search import *
 from .examples.cli_examples import *
-from .encyclopedia.quant_encyclopedia import *
+from .encyclopedia.quant_encyclopedia import QuantEncyclopedia
 from .core.error_handling import *
 
 __all__ = [
-    # Will be populated by the imports above
+    'QuantEncyclopedia'
 ]

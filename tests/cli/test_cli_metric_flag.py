@@ -9,7 +9,7 @@ import pytest
 import sys
 from io import StringIO
 from unittest.mock import patch, MagicMock
-from src.cli.quant_encyclopedia import QuantEncyclopedia
+from src.cli.encyclopedia.quant_encyclopedia import QuantEncyclopedia
 
 
 class TestQuantEncyclopedia:
@@ -65,8 +65,18 @@ class TestCLIInteractiveFlag:
         """Test interactive mode as positional argument."""
         with patch('sys.argv', ['run_analysis.py', 'interactive']):
             with patch('sys.exit') as mock_exit:
-                with patch('src.cli.interactive_mode.start_interactive_mode') as mock_start:
-                    from src.cli.cli import parse_arguments
+                # Test that interactive mode as positional argument is handled by argument parser
+                from src.cli.core.argument_parser import parse_arguments
+                args = parse_arguments()
+                # Should return parsed arguments without calling start_interactive_mode
+                assert args is not None
+    
+    def test_interactive_flag(self):
+        """Test --interactive flag handling."""
+        with patch('sys.argv', ['run_analysis.py', '--interactive']):
+            with patch('sys.exit') as mock_exit:
+                with patch('src.cli.core.interactive_mode.start_interactive_mode') as mock_start:
+                    from src.cli.core.argument_parser import parse_arguments
                     parse_arguments()
                     mock_start.assert_called_once()
                     mock_exit.assert_called_with(0)

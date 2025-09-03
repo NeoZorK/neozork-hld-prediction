@@ -436,7 +436,7 @@ class InteractiveMode:
 
     def _show_trading_metrics_encyclopedia(self):
         """Show trading metrics encyclopedia."""
-        from src.cli.quant_encyclopedia import QuantEncyclopedia
+        from src.cli.encyclopedia.quant_encyclopedia import QuantEncyclopedia
         
         encyclopedia = QuantEncyclopedia()
         

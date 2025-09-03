@@ -8,7 +8,7 @@ All comments are in English.
 
 import pytest
 from unittest.mock import patch, MagicMock
-from src.cli.quant_encyclopedia import QuantEncyclopedia
+from src.cli.encyclopedia.quant_encyclopedia import QuantEncyclopedia
 
 
 class TestQuantEncyclopedia:
@@ -238,7 +238,7 @@ class TestQuantEncyclopediaIntegration:
 
 def test_main_function():
     """Test the main function of the encyclopedia module."""
-    from src.cli.quant_encyclopedia import main
+    from src.cli.encyclopedia.quant_encyclopedia import main
     
     # This should not raise any exceptions
     try:
