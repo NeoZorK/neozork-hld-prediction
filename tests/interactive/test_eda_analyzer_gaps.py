@@ -121,51 +121,85 @@ class TestEDAAnalyzerGaps:
         assert len(gap_summary) == 0
     
     def test_run_time_series_gaps_analysis_mock_files(self):
-        """Test the main gaps analysis method with mocked file system."""
+        """Test the main gaps analysis method with preloaded data."""
         mock_system = MagicMock()
         
-        # Mock Path.glob to return test files
-        with patch('pathlib.Path.glob') as mock_glob, \
-             patch('pathlib.Path.exists', return_value=True):
-            
-            # Mock file paths - only non-backup files
-            mock_files = [
-                Path('data/test1.csv'),
-                Path('data/test2.parquet')
-            ]
-            # Mock both direct glob and recursive glob calls (4 total calls)
-            mock_glob.side_effect = [mock_files, mock_files, mock_files, mock_files]
-            
-            # Mock file loading
-            with patch.object(self.eda_analyzer, '_load_file_for_gap_analysis') as mock_load:
-                mock_load.return_value = self.test_data_with_gaps
-                
-                # Run analysis
-                result = self.eda_analyzer.run_time_series_gaps_analysis(mock_system)
-                
-                assert result is True
-                # Should call load for each file (2 files * 4 glob calls = 8 total calls)
-                assert mock_load.call_count == 8
-    
-    def test_run_time_series_gaps_analysis_no_data_dir(self):
-        """Test gaps analysis when data directory doesn't exist."""
-        mock_system = MagicMock()
+        # Mock current_data
+        mock_system.current_data = self.test_data_with_gaps
         
-        with patch('pathlib.Path.exists', return_value=False):
+        # Mock timeframe_info
+        mock_system.timeframe_info = {
+            'cross_timeframes': {
+                'M5': ['data/M5_file1.parquet', 'data/M5_file2.parquet'],
+                'H1': ['data/H1_file1.parquet']
+            }
+        }
+        
+        # Mock file loading for cross-timeframe files
+        with patch.object(self.eda_analyzer, '_load_file_for_gap_analysis') as mock_load:
+            mock_load.return_value = self.test_data_with_gaps
+            
+            # Run analysis
             result = self.eda_analyzer.run_time_series_gaps_analysis(mock_system)
             
-            assert result is False
+            assert result is True
+            # Should call load for cross-timeframe files (3 files total)
+            assert mock_load.call_count == 3
     
-    def test_run_time_series_gaps_analysis_no_files(self):
-        """Test gaps analysis when no data files are found."""
+    def test_run_time_series_gaps_analysis_no_data_loaded(self):
+        """Test gaps analysis when no data is loaded."""
         mock_system = MagicMock()
+        mock_system.current_data = None
         
-        with patch('pathlib.Path.exists', return_value=True), \
-             patch('pathlib.Path.glob', return_value=[]):
+        result = self.eda_analyzer.run_time_series_gaps_analysis(mock_system)
+        
+        assert result is False
+    
+    def test_run_time_series_gaps_analysis_no_timeframe_info(self):
+        """Test gaps analysis when no timeframe info is available."""
+        mock_system = MagicMock()
+        mock_system.current_data = self.test_data_with_gaps
+        mock_system.timeframe_info = None
+        
+        # Run analysis
+        result = self.eda_analyzer.run_time_series_gaps_analysis(mock_system)
+        
+        assert result is True
+    
+    def test_run_time_series_gaps_analysis_empty_timeframe_info(self):
+        """Test gaps analysis when timeframe info is empty."""
+        mock_system = MagicMock()
+        mock_system.current_data = self.test_data_with_gaps
+        mock_system.timeframe_info = {'cross_timeframes': {}}
+        
+        # Run analysis
+        result = self.eda_analyzer.run_time_series_gaps_analysis(mock_system)
+        
+        assert result is True
+    
+    def test_run_time_series_gaps_analysis_with_cross_timeframes(self):
+        """Test gaps analysis with cross-timeframe data."""
+        mock_system = MagicMock()
+        mock_system.current_data = self.test_data_with_gaps
+        
+        # Mock timeframe_info with cross-timeframes
+        mock_system.timeframe_info = {
+            'cross_timeframes': {
+                'M5': ['data/M5_file1.parquet'],
+                'H1': ['data/H1_file1.parquet']
+            }
+        }
+        
+        # Mock file loading for cross-timeframe files
+        with patch.object(self.eda_analyzer, '_load_file_for_gap_analysis') as mock_load:
+            mock_load.return_value = self.test_data_with_gaps
             
+            # Run analysis
             result = self.eda_analyzer.run_time_series_gaps_analysis(mock_system)
             
-            assert result is False
+            assert result is True
+            # Should call load for cross-timeframe files (2 files total)
+            assert mock_load.call_count == 2
     
     def test_determine_frequency_from_timedelta(self):
         """Test frequency determination from timedelta."""

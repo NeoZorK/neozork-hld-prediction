@@ -883,7 +883,7 @@ class EDAAnalyzer:
 
     def run_time_series_gaps_analysis(self, system) -> bool:
         """
-        Run detailed time series gaps analysis on multi-timeframe files.
+        Run detailed time series gaps analysis on preloaded data files.
         
         Args:
             system: InteractiveSystem instance
@@ -894,87 +894,121 @@ class EDAAnalyzer:
         print(f"\n⏱️ TIME SERIES GAPS ANALYSIS")
         print("-" * 50)
         
-        # Get data directory path
-        data_dir = Path("data")
-        if not data_dir.exists():
-            print("❌ Data directory not found")
+        # Check if data is loaded
+        if not hasattr(system, 'current_data') or system.current_data is None:
+            print("❌ No data loaded. Please load data first.")
             return False
         
-        # Find all data files
-        data_files = []
-        for ext in ['*.csv', '*.parquet']:
-            data_files.extend(data_dir.glob(ext))
-            data_files.extend(data_dir.glob(f"**/{ext}"))
+        print(f"📊 Analyzing preloaded data:")
+        print(f"   • Main dataset: {system.current_data.shape[0]:,} rows × {system.current_data.shape[1]} columns")
         
-        # Filter out backup and cache directories
-        data_files = [f for f in data_files if 'backup' not in str(f) and 'cache' not in str(f)]
+        # Check if timeframe info is available
+        if hasattr(system, 'timeframe_info') and system.timeframe_info:
+            if system.timeframe_info.get('cross_timeframes'):
+                print(f"   • Additional timeframes available: {len(system.timeframe_info['cross_timeframes'])}")
         
-        if not data_files:
-            print("❌ No data files found")
-            return False
-        
-        print(f"📁 Found {len(data_files)} data files for analysis")
         print("-" * 50)
         
         all_gap_summaries = []
         
-        for i, file_path in enumerate(data_files, 1):
-            try:
-                print(f"\n📊 File {i}/{len(data_files)}: {file_path.name}")
+        # Analyze main dataset
+        print(f"\n📊 Analyzing main dataset...")
+        main_gap_summary = self._analyze_time_series_gaps(system.current_data)
+        
+        if main_gap_summary:
+            # Add dataset info to gap summary
+            for gap_info in main_gap_summary:
+                gap_info['dataset_name'] = 'Main Dataset'
+                gap_info['dataset_type'] = 'current_data'
+                gap_info['total_rows'] = len(system.current_data)
+            
+            all_gap_summaries.extend(main_gap_summary)
+            print(f"   ✅ Found gaps in {len(main_gap_summary)} columns")
+        else:
+            print(f"   ✅ No gaps found in main dataset")
+        
+        # Analyze additional timeframes if available
+        if hasattr(system, 'timeframe_info') and system.timeframe_info:
+            cross_timeframes = system.timeframe_info.get('cross_timeframes', {})
+            
+            if cross_timeframes:
+                print(f"\n📊 Analyzing additional timeframes...")
                 
-                # Load file
-                df = self._load_file_for_gap_analysis(file_path)
-                if df is None:
-                    continue
-                
-                # Analyze gaps
-                gap_summary = self._analyze_time_series_gaps(df)
-                
-                if gap_summary:
-                    # Add file info to gap summary
-                    for gap_info in gap_summary:
-                        gap_info['file_name'] = file_path.name
-                        gap_info['file_path'] = str(file_path)
-                        gap_info['total_rows'] = len(df)
+                for timeframe, files in cross_timeframes.items():
+                    print(f"\n   ⏰ Timeframe: {timeframe}")
+                    print(f"      📁 Files: {len(files)}")
                     
-                    all_gap_summaries.extend(gap_summary)
-                    print(f"   ✅ Found gaps in {len(gap_summary)} columns")
-                else:
-                    print(f"   ✅ No gaps found")
-                
-                # Memory cleanup
-                del df
-                
-            except Exception as e:
-                print(f"   ❌ Error analyzing {file_path.name}: {e}")
-                continue
+                    for i, file_path in enumerate(files, 1):
+                        try:
+                            print(f"      📊 File {i}/{len(files)}: {Path(file_path).name}")
+                            
+                            # Load file
+                            df = self._load_file_for_gap_analysis(Path(file_path))
+                            if df is None:
+                                continue
+                            
+                            # Analyze gaps
+                            gap_summary = self._analyze_time_series_gaps(df)
+                            
+                            if gap_summary:
+                                # Add file info to gap summary
+                                for gap_info in gap_summary:
+                                    gap_info['dataset_name'] = f'{timeframe} Timeframe'
+                                    gap_info['dataset_type'] = 'cross_timeframe'
+                                    gap_info['file_name'] = Path(file_path).name
+                                    gap_info['file_path'] = str(file_path)
+                                    gap_info['timeframe'] = timeframe
+                                    gap_info['total_rows'] = len(df)
+                                
+                                all_gap_summaries.extend(gap_summary)
+                                print(f"         ✅ Found gaps in {len(gap_summary)} columns")
+                            else:
+                                print(f"         ✅ No gaps found")
+                            
+                            # Memory cleanup
+                            del df
+                            
+                        except Exception as e:
+                            print(f"         ❌ Error analyzing {Path(file_path).name}: {e}")
+                            continue
         
         # Display comprehensive summary
         if all_gap_summaries:
             print(f"\n📊 COMPREHENSIVE TIME SERIES GAPS SUMMARY")
             print("=" * 60)
-            print(f"📁 Total files analyzed: {len(data_files)}")
+            
+            # Count datasets
+            main_dataset_count = len([g for g in all_gap_summaries if g['dataset_type'] == 'current_data'])
+            cross_timeframe_count = len([g for g in all_gap_summaries if g['dataset_type'] == 'cross_timeframe'])
+            
+            print(f"📁 Main dataset gaps: {main_dataset_count}")
+            print(f"⏰ Cross-timeframe gaps: {cross_timeframe_count}")
             print(f"🔍 Total gap issues found: {len(all_gap_summaries)}")
             
-            # Group by file
-            files_with_gaps = {}
+            # Group by dataset
+            datasets_with_gaps = {}
             for gap_info in all_gap_summaries:
-                file_name = gap_info['file_name']
-                if file_name not in files_with_gaps:
-                    files_with_gaps[file_name] = []
-                files_with_gaps[file_name].append(gap_info)
+                dataset_key = gap_info['dataset_name']
+                if dataset_key not in datasets_with_gaps:
+                    datasets_with_gaps[dataset_key] = []
+                datasets_with_gaps[dataset_key].append(gap_info)
             
-            print(f"\n📋 Files with gaps: {len(files_with_gaps)}")
+            print(f"\n📋 Datasets with gaps: {len(datasets_with_gaps)}")
             
-            for file_name, gaps in files_with_gaps.items():
-                print(f"\n📁 {file_name}:")
+            for dataset_name, gaps in datasets_with_gaps.items():
+                print(f"\n📁 {dataset_name}:")
                 for gap_info in gaps:
                     print(f"   📅 {gap_info['column']}:")
                     print(f"      • Gaps: {gap_info['gap_count']:,}")
                     print(f"      • Frequency: {gap_info['expected_frequency']}")
                     print(f"      • Rows: {gap_info['total_rows']:,}")
+                    
+                    # Show additional info for cross-timeframe data
+                    if gap_info.get('timeframe'):
+                        print(f"      • Timeframe: {gap_info['timeframe']}")
+                        print(f"      • File: {gap_info['file_name']}")
         else:
-            print("\n✅ No time series gaps detected in any files")
+            print("\n✅ No time series gaps detected in any preloaded data")
         
         return True
 
