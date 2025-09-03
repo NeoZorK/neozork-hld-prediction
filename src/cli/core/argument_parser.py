@@ -30,6 +30,14 @@ def show_cool_version():
     import random
     from datetime import datetime
     
+    def create_aligned_line(text, clean_text_len, total_width=66):
+        """Create perfectly aligned line with exact width."""
+        # Calculate spaces needed for perfect alignment
+        needed_spaces = 60 - clean_text_len  # 60 = content area inside borders
+        if needed_spaces < 0:
+            needed_spaces = 0
+        return f'{Fore.CYAN}║{Style.RESET_ALL}  {text}' + ' ' * needed_spaces + f' {Fore.CYAN}║{Style.RESET_ALL}'
+    
     
     
     def glitch_effect(text, intensity=3):
@@ -84,11 +92,11 @@ def show_cool_version():
         '╚═╝  ╚═══╝╚══════╝ ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝'
     ]
     
-    # Top border - ultra fast animation
+    # Top border - ultra fast animation (10x faster)
     border = '╔══════════════════════════════════════════════════════════════╗'
     for i in range(len(border)):
         print('\r' + border[:i+1], end='', flush=True)
-        time.sleep(0.0018)  # 12x faster total (3x * 4x)
+        time.sleep(0.00018)  # 10x faster than before
     print()
     
     # Animate ASCII art line by line with color transitions
@@ -105,25 +113,23 @@ def show_cool_version():
             # Show correct line after glitch
             print('\r' + ' ' * 66 + '\r', end='')
         
-        # Character by character reveal with proper alignment
+        # Character by character reveal with perfect alignment
         revealed_chars = ''
         for char in ascii_line:
             revealed_chars += char
             # Build display line maintaining exactly 66 characters total
-            # Format: '║  ' + ascii_content + ' ' + '║' = 66 chars total
-            display_line = f'{Fore.CYAN}║{Style.RESET_ALL}  {colors[i]}{Style.BRIGHT}{revealed_chars}{Style.RESET_ALL}'
-            remaining_spaces = 60 - len(revealed_chars)  # 60 = space for content inside borders
-            display_line += ' ' * remaining_spaces + f' {Fore.CYAN}║{Style.RESET_ALL}'
+            colored_text = f'{colors[i]}{Style.BRIGHT}{revealed_chars}{Style.RESET_ALL}'
+            display_line = create_aligned_line(colored_text, len(revealed_chars))
             print('\r' + display_line, end='', flush=True)
-            time.sleep(0.0008)  # 12x faster total
+            time.sleep(0.00008)  # 10x faster than before
         print()
-        time.sleep(0.008)  # 12x faster total
+        time.sleep(0.0008)  # 10x faster than before
     
-    # Middle border - fast
+    # Middle border - ultra fast (10x faster)
     border = '╠══════════════════════════════════════════════════════════════╣'
     for i in range(len(border)):
         print('\r' + border[:i+1], end='', flush=True)
-        time.sleep(0.0008)  # 12x faster total
+        time.sleep(0.00008)  # 10x faster than before
     print()
     
     # Info section with epic effects
@@ -138,18 +144,15 @@ def show_cool_version():
         # Calculate clean text length without color codes
         clean_text = text.replace(Style.BRIGHT, '').replace(Style.RESET_ALL, '').replace(Fore.YELLOW, '').replace(Fore.GREEN, '').replace(Fore.RED, '').replace(Fore.BLUE, '')
         clean_text_len = len(clean_text)
-        needed_spaces = 60 - clean_text_len  # 60 = space for content inside borders
-        if needed_spaces < 0:
-            needed_spaces = 0
-        line = f'{Fore.CYAN}║{Style.RESET_ALL}  {text}' + ' ' * needed_spaces + f' {Fore.CYAN}║{Style.RESET_ALL}'
-        typewriter_effect(line, 0.0018)  # 12x faster total
-        time.sleep(0.018)  # 12x faster total
+        line = create_aligned_line(text, clean_text_len)
+        typewriter_effect(line, 0.00018)  # 10x faster than before
+        time.sleep(0.0018)  # 10x faster than before
     
-    # Second middle border - fast
+    # Second middle border - ultra fast (10x faster)
     border = '╠══════════════════════════════════════════════════════════════╣'
     for i in range(len(border)):
         print('\r' + border[:i+1], end='', flush=True)
-        time.sleep(0.0008)  # 12x faster total
+        time.sleep(0.00008)  # 10x faster than before
     print()
     
     # Status section with pulsing effects
@@ -166,18 +169,15 @@ def show_cool_version():
         emoji_count = text.count('⚡') + text.count('🔮') + text.count('🚀')
         # Each emoji displays as 2 characters visually
         actual_display_len = len(clean_text) + emoji_count * 2
-        needed_spaces = 60 - actual_display_len  # 60 = space for content inside borders
-        if needed_spaces < 0:
-            needed_spaces = 0
-        line = f'{Fore.CYAN}║{Style.RESET_ALL}  {Style.BRIGHT}{text}{Style.RESET_ALL}' + ' ' * needed_spaces + f' {Fore.CYAN}║{Style.RESET_ALL}'
+        line = create_aligned_line(f'{Style.BRIGHT}{text}{Style.RESET_ALL}', actual_display_len)
         print(line)
-        time.sleep(0.018)  # 12x faster total
+        time.sleep(0.0018)  # 10x faster than before
     
-    # Bottom border - fast
+    # Bottom border - ultra fast (10x faster)
     border = '╚══════════════════════════════════════════════════════════════╝'
     for i in range(len(border)):
         print('\r' + border[:i+1], end='', flush=True)
-        time.sleep(0.0008)  # 12x faster total
+        time.sleep(0.00008)  # 10x faster than before
     print()
     
     # Clean ending - no final messages
