@@ -178,7 +178,7 @@ Integrated HTML report generation from `html_report_generator.py`:
 
 ### **New Imports:**
 ```python
-from src.eda import fix_files, html_report_generator
+from src.batch_eda import fix_files, html_report_generator
 ```
 
 ### **Integration Points:**

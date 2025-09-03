@@ -123,7 +123,7 @@ All planned improvements have been successfully implemented and tested.
 
 ### Dependencies Added
 ```python
-from src.eda import data_quality, file_info, basic_stats
+from src.batch_eda import data_quality, file_info, basic_stats
 from tqdm import tqdm
 import time
 from datetime import datetime

@@ -104,12 +104,12 @@ def fix_imports_in_file(file_path):
         # Fix relative imports from eda
         content = re.sub(
             r'from \.\.\.eda\.',
-            'from src.eda.',
+            'from src.batch_eda.',
             content
         )
         content = re.sub(
             r'from \.\.eda\.',
-            'from src.eda.',
+            'from src.batch_eda.',
             content
         )
         

@@ -19,8 +19,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 
 from src.interactive import InteractiveSystem
 from src.interactive.analysis_runner import AnalysisRunner
-from src.eda import fix_files
-from src.eda import data_quality
+from src.batch_eda import fix_files
+from src.batch_eda import data_quality
 
 
 class TestGapFixingIssue:
@@ -123,14 +123,14 @@ class TestGapFixingIssue:
         runner = AnalysisRunner(mock_system)
         
         # Mock all necessary dependencies to make the test pass
-        with patch('src.eda.data_quality._estimate_memory_usage', return_value=100), \
-             patch('src.eda.data_quality.nan_check'), \
-             patch('src.eda.data_quality.duplicate_check'), \
-             patch('src.eda.data_quality.gap_check'), \
-             patch('src.eda.data_quality.zero_check'), \
-             patch('src.eda.data_quality.negative_check'), \
-             patch('src.eda.data_quality.inf_check'), \
-             patch('src.eda.file_info.get_file_info_from_dataframe', return_value={}), \
+        with patch('src.batch_eda.data_quality._estimate_memory_usage', return_value=100), \
+             patch('src.batch_eda.data_quality.nan_check'), \
+             patch('src.batch_eda.data_quality.duplicate_check'), \
+             patch('src.batch_eda.data_quality.gap_check'), \
+             patch('src.batch_eda.data_quality.zero_check'), \
+             patch('src.batch_eda.data_quality.negative_check'), \
+             patch('src.batch_eda.data_quality.inf_check'), \
+             patch('src.batch_eda.file_info.get_file_info_from_dataframe', return_value={}), \
              patch('builtins.input', side_effect=['y']):
             
             try:

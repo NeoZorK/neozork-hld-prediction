@@ -16,7 +16,7 @@ import sys
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.eda.time_series_analysis import TimeSeriesAnalyzer, analyze_time_series
+from src.batch_eda.time_series_analysis import TimeSeriesAnalyzer, analyze_time_series
 
 
 def main():

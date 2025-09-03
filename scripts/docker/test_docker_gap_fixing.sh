@@ -109,7 +109,7 @@ import os
 sys.path.insert(0, \"/app\")
 
 try:
-    from src.eda import fix_files
+    from src.batch_eda import fix_files
     
     # Load the sample data
     df = pd.read_csv(\"/app/data/sample_ohlcv_with_issues.csv\")

@@ -10,7 +10,7 @@ from .data_loader import DataLoader
 from .gap_analyzer import GapAnalyzer
 from .multi_timeframe_manager import MultiTimeframeManager
 from .cache_manager import CacheManager
-from .eda_analyzer import EDAAnalyzer
+from .eda import EDAAnalyzer
 from .data_fixer import DataFixer
 from .plot_generator import PlotGenerator
 from .html_report_generator import HTMLReportGenerator

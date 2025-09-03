@@ -60,7 +60,7 @@ def test_data_quality_checks(test_data):
     print("\n🔍 Testing data quality checks...")
     
     try:
-        from src.eda import data_quality
+        from src.batch_eda import data_quality
         
         # Initialize summaries
         nan_summary = []
@@ -105,7 +105,7 @@ def test_fix_functions(test_data, summaries):
     nan_summary, dupe_summary, gap_summary, zero_summary, negative_summary, inf_summary = summaries
     
     try:
-        from src.eda import fix_files
+        from src.batch_eda import fix_files
         
         # Test NaN fixing
         if nan_summary:
@@ -191,7 +191,7 @@ def test_comprehensive_fixing(test_data, summaries):
     nan_summary, dupe_summary, gap_summary, zero_summary, negative_summary, inf_summary = summaries
     
     try:
-        from src.eda import fix_files
+        from src.batch_eda import fix_files
         
         print("🔧 FIXING ALL DETECTED ISSUES...")
         print("-" * 50)

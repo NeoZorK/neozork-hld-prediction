@@ -60,11 +60,11 @@ class TestDataFixingErrorHandling:
         print("\n🧪 Testing error handling in data fixing process...")
         
         # Mock fix functions to raise exceptions
-        with patch('src.eda.fix_files.fix_nan', side_effect=Exception("Test NaN fix error")):
-            with patch('src.eda.fix_files.fix_duplicates', side_effect=Exception("Test duplicate fix error")):
-                with patch('src.eda.fix_files.fix_zeros', side_effect=Exception("Test zero fix error")):
-                    with patch('src.eda.fix_files.fix_negatives', side_effect=Exception("Test negative fix error")):
-                        with patch('src.eda.fix_files.fix_infs', side_effect=Exception("Test infinity fix error")):
+        with patch('src.batch_eda.fix_files.fix_nan', side_effect=Exception("Test NaN fix error")):
+            with patch('src.batch_eda.fix_files.fix_duplicates', side_effect=Exception("Test duplicate fix error")):
+                with patch('src.batch_eda.fix_files.fix_zeros', side_effect=Exception("Test zero fix error")):
+                    with patch('src.batch_eda.fix_files.fix_negatives', side_effect=Exception("Test negative fix error")):
+                        with patch('src.batch_eda.fix_files.fix_infs', side_effect=Exception("Test infinity fix error")):
                             
                             # Create quality check summaries
                             nan_summary = [{'column': 'open', 'count': 1}]
@@ -78,7 +78,7 @@ class TestDataFixingErrorHandling:
                                 # Simulate the fix process
                                 print("   🔧 Testing NaN fix error handling...")
                                 try:
-                                    from src.eda import fix_files
+                                    from src.batch_eda import fix_files
                                     fixed_data = fix_files.fix_nan(self.system.current_data, nan_summary)
                                     print("   ❌ Expected exception not raised")
                                 except Exception as e:
@@ -130,7 +130,7 @@ class TestDataFixingErrorHandling:
         inf_summary = [{'column': 'high', 'count': 1}]
         
         # Test that None returns are handled gracefully
-        from src.eda import fix_files
+        from src.batch_eda import fix_files
 
         print("   🔧 Testing NaN fix None return...")
         # Mock the function directly
@@ -174,13 +174,13 @@ class TestDataFixingErrorHandling:
         original_shape = original_data.shape
         
         # Mock fix function to raise exception
-        with patch('src.eda.fix_files.fix_nan', side_effect=Exception("Test error")):
+        with patch('src.batch_eda.fix_files.fix_nan', side_effect=Exception("Test error")):
             
             nan_summary = [{'column': 'open', 'count': 1}]
             
             # This should not modify the data
             try:
-                from src.eda import fix_files
+                from src.batch_eda import fix_files
                 fixed_data = fix_files.fix_nan(self.system.current_data, nan_summary)
             except Exception as e:
                 print(f"   ✅ Error caught: {e}")

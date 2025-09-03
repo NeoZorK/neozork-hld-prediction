@@ -235,7 +235,7 @@ Select backup to restore (1-3): 1
 
 **New Imports:**
 ```python
-from src.eda import data_quality, file_info, basic_stats
+from src.batch_eda import data_quality, file_info, basic_stats
 from tqdm import tqdm
 import time
 from datetime import datetime

@@ -174,7 +174,7 @@ results/plots/time_series/           # Generated plots and results
 
 ### Basic Usage
 ```python
-from src.eda.time_series_analysis import TimeSeriesAnalyzer
+from src.batch_eda.time_series_analysis import TimeSeriesAnalyzer
 
 # Load data
 data = pd.read_csv('financial_data.csv')

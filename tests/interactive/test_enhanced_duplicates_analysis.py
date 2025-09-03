@@ -9,11 +9,11 @@ with both main timeframe data and multi-timeframe datasets.
 import pytest
 import pandas as pd
 import numpy as np
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock, MagicMock, patch
 from datetime import datetime, timedelta
 
 # Import the module to test
-from src.interactive.eda_analyzer import EDAAnalyzer
+from src.interactive.eda import EDAAnalyzer
 
 
 class TestEnhancedDuplicatesAnalysis:
@@ -75,7 +75,7 @@ class TestEnhancedDuplicatesAnalysis:
     
     def test_analyze_duplicates_enhanced(self):
         """Test enhanced duplicate analysis on a single dataset."""
-        result = self.eda_analyzer._analyze_duplicates(self.main_data)
+        result = self.eda_analyzer.duplicates_analyzer.duplicate_detection._analyze_duplicates(self.main_data)
         
         assert isinstance(result, dict)
         assert 'total_duplicates' in result
@@ -91,7 +91,8 @@ class TestEnhancedDuplicatesAnalysis:
         assert result['exact_duplicates'] == 5
         assert result['duplicate_percent'] > 0
     
-    def test_run_duplicates_analysis_main_dataset(self):
+    @patch('builtins.input', return_value='n')
+    def test_run_duplicates_analysis_main_dataset(self, mock_input):
         """Test duplicates analysis on main dataset only."""
         # Test with system that only has main data
         system_main_only = Mock()
@@ -102,7 +103,8 @@ class TestEnhancedDuplicatesAnalysis:
         
         assert result is True
     
-    def test_run_duplicates_analysis_with_multi_timeframes(self):
+    @patch('builtins.input', return_value='n')
+    def test_run_duplicates_analysis_with_multi_timeframes(self, mock_input):
         """Test duplicates analysis with multi-timeframe datasets."""
         result = self.eda_analyzer.run_duplicates_analysis(self.mock_system)
         
@@ -111,7 +113,7 @@ class TestEnhancedDuplicatesAnalysis:
     def test_duplicate_detection_types(self):
         """Test different types of duplicate detection."""
         # Test exact duplicates
-        result = self.eda_analyzer._analyze_duplicates(self.main_data)
+        result = self.eda_analyzer.duplicates_analyzer.duplicate_detection._analyze_duplicates(self.main_data)
         
         # Should find exact duplicates
         assert result['exact_duplicates'] > 0
@@ -125,7 +127,7 @@ class TestEnhancedDuplicatesAnalysis:
     def test_empty_dataset(self):
         """Test analysis on empty dataset."""
         empty_df = pd.DataFrame()
-        result = self.eda_analyzer._analyze_duplicates(empty_df)
+        result = self.eda_analyzer.duplicates_analyzer.duplicate_detection._analyze_duplicates(empty_df)
         
         assert result['total_duplicates'] == 0
         assert result['duplicate_percent'] == 0
@@ -139,7 +141,7 @@ class TestEnhancedDuplicatesAnalysis:
             'value': range(10)
         })
         
-        result = self.eda_analyzer._analyze_duplicates(clean_data)
+        result = self.eda_analyzer.duplicates_analyzer.duplicate_detection._analyze_duplicates(clean_data)
         
         assert result['total_duplicates'] == 0
         assert result['duplicate_percent'] == 0
@@ -153,7 +155,7 @@ class TestEnhancedDuplicatesAnalysis:
             'value': [100, 200, 300]
         })
         
-        result = self.eda_analyzer._analyze_duplicates(ts_data)
+        result = self.eda_analyzer.duplicates_analyzer.duplicate_detection._analyze_duplicates(ts_data)
         
         # Should find timestamp-based duplicates
         assert result['timestamp_based_duplicates'] > 0
@@ -170,9 +172,9 @@ class TestEnhancedDuplicatesAnalysis:
             'close': [105, 115, 125],
             'volume': [1000, 2000, 3000]
         })
-        
-        result = self.eda_analyzer._analyze_duplicates(ohlcv_data)
-        
+    
+        result = self.eda_analyzer.duplicates_analyzer.duplicate_detection._analyze_duplicates(ohlcv_data)
+    
         # Should find OHLCV-based duplicates
         assert result['ohlcv_based_duplicates'] > 0
         assert len(result['ohlcv_duplicates']) > 0
@@ -188,8 +190,8 @@ class TestEnhancedDuplicatesAnalysis:
             'close': [105, 115, 125],
             'volume': [1000, 2000, 3000]
         })
-        
-        result = self.eda_analyzer._analyze_duplicates(bl_data)
+    
+        result = self.eda_analyzer.duplicates_analyzer.duplicate_detection._analyze_duplicates(bl_data)
         
         # Should find business logic duplicates
         assert len(result['key_columns']) > 0

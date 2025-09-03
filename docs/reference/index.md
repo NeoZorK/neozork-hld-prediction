@@ -27,6 +27,9 @@ Comprehensive reference for UV package manager usage.
 ### [Core Calculations](core-calculation.md)
 Core calculation engine and mathematical foundations.
 
+### [Data Module](data-module.md)
+Comprehensive data handling capabilities including gap fixing, acquisition, and processing.
+
 ### [Advanced Metrics](advanced-metrics.md)
 Advanced financial metrics and calculations.
 

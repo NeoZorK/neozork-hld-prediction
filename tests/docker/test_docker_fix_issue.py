@@ -19,7 +19,7 @@ def test_comprehensive_data_quality_check():
     
     try:
         # Import required modules
-        from src.eda import data_quality, fix_files
+        from src.batch_eda import data_quality, fix_files
         from src.interactive import InteractiveSystem
         
         # Initialize system

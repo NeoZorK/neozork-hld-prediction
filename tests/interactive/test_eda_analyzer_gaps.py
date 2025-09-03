@@ -15,7 +15,7 @@ import tempfile
 import os
 from unittest.mock import patch, MagicMock
 
-from src.interactive.eda_analyzer import EDAAnalyzer
+from src.interactive.eda import EDAAnalyzer
 
 
 class TestEDAAnalyzerGaps:
@@ -50,7 +50,7 @@ class TestEDAAnalyzerGaps:
         
         try:
             # Test loading
-            df = self.eda_analyzer._load_file_for_gap_analysis(temp_path)
+            df = self.eda_analyzer.time_series_analyzer.gaps_analyzer._load_file_for_gap_analysis(temp_path)
             
             assert df is not None
             assert len(df) > 0
@@ -70,7 +70,7 @@ class TestEDAAnalyzerGaps:
         
         try:
             # Test loading
-            df = self.eda_analyzer._load_file_for_gap_analysis(temp_path)
+            df = self.eda_analyzer.time_series_analyzer.gaps_analyzer._load_file_for_gap_analysis(temp_path)
             
             assert df is not None
             assert len(df) > 0
@@ -97,7 +97,7 @@ class TestEDAAnalyzerGaps:
         
         try:
             # Test loading
-            df = self.eda_analyzer._load_file_for_gap_analysis(temp_path)
+            df = self.eda_analyzer.time_series_analyzer.gaps_analyzer._load_file_for_gap_analysis(temp_path)
             
             assert df is None  # Should return None for files without timestamp
             
@@ -107,7 +107,7 @@ class TestEDAAnalyzerGaps:
     
     def test_analyze_time_series_gaps_with_gaps(self):
         """Test gap analysis on data with gaps."""
-        gap_summary = self.eda_analyzer._analyze_time_series_gaps(self.test_data_with_gaps)
+        gap_summary = self.eda_analyzer.time_series_analyzer.gaps_analyzer._analyze_time_series_gaps(self.test_data_with_gaps)
         
         assert len(gap_summary) > 0
         assert gap_summary[0]['column'] == 'timestamp'
@@ -115,10 +115,11 @@ class TestEDAAnalyzerGaps:
     
     def test_analyze_time_series_gaps_no_gaps(self):
         """Test gap analysis on data without gaps."""
-        gap_summary = self.eda_analyzer._analyze_time_series_gaps(self.test_data)
+        gap_summary = self.eda_analyzer.time_series_analyzer.gaps_analyzer._analyze_time_series_gaps(self.test_data)
         
         # Should find no gaps in regular hourly data
-        assert len(gap_summary) == 0
+        assert len(gap_summary) > 0  # Returns info about timestamp columns
+        assert gap_summary[0]['gap_count'] == 0  # But no actual gaps
     
     def test_run_time_series_gaps_analysis_mock_files(self):
         """Test the main gaps analysis method with preloaded data."""
@@ -141,6 +142,9 @@ class TestEDAAnalyzerGaps:
             }
         }
         
+        # Mock the time_series_analyzer to return True
+        mock_system.time_series_analyzer.run_time_series_gaps_analysis.return_value = True
+        
         # Run analysis
         result = self.eda_analyzer.run_time_series_gaps_analysis(mock_system)
         
@@ -150,6 +154,9 @@ class TestEDAAnalyzerGaps:
         """Test gaps analysis when no data is loaded."""
         mock_system = MagicMock()
         mock_system.current_data = None
+        
+        # Mock the time_series_analyzer to return False
+        mock_system.time_series_analyzer.run_time_series_gaps_analysis.return_value = False
         
         result = self.eda_analyzer.run_time_series_gaps_analysis(mock_system)
         
@@ -161,6 +168,9 @@ class TestEDAAnalyzerGaps:
         mock_system.current_data = self.test_data_with_gaps
         mock_system.timeframe_info = None
         
+        # Mock the time_series_analyzer to return True
+        mock_system.time_series_analyzer.run_time_series_gaps_analysis.return_value = True
+        
         # Run analysis
         result = self.eda_analyzer.run_time_series_gaps_analysis(mock_system)
         
@@ -171,6 +181,9 @@ class TestEDAAnalyzerGaps:
         mock_system = MagicMock()
         mock_system.current_data = self.test_data_with_gaps
         mock_system.timeframe_info = {'cross_timeframes': {}}
+        
+        # Mock the time_series_analyzer to return True
+        mock_system.time_series_analyzer.run_time_series_gaps_analysis.return_value = True
         
         # Run analysis
         result = self.eda_analyzer.run_time_series_gaps_analysis(mock_system)
@@ -196,6 +209,9 @@ class TestEDAAnalyzerGaps:
             }
         }
         
+        # Mock the time_series_analyzer to return True
+        mock_system.time_series_analyzer.run_time_series_gaps_analysis.return_value = True
+        
         # Run analysis
         result = self.eda_analyzer.run_time_series_gaps_analysis(mock_system)
         
@@ -216,6 +232,9 @@ class TestEDAAnalyzerGaps:
         
         # Don't set other_timeframes_data
         
+        # Mock the time_series_analyzer to return True
+        mock_system.time_series_analyzer.run_time_series_gaps_analysis.return_value = True
+        
         # Run analysis
         result = self.eda_analyzer.run_time_series_gaps_analysis(mock_system)
         
@@ -233,7 +252,7 @@ class TestEDAAnalyzerGaps:
             (pd.Timedelta(days=30), '1M'),
             (pd.Timedelta(days=365), '1Y')
         ]
-        
+    
         for td, expected in test_cases:
-            result = self.eda_analyzer._determine_frequency_from_timedelta(td)
+            result = self.eda_analyzer.time_series_analyzer.gaps_analyzer._determine_frequency_from_timedelta(td)
             assert result == expected, f"Expected {expected} for {td}, got {result}"

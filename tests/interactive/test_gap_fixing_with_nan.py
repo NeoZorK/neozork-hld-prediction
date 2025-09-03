@@ -17,7 +17,7 @@ import os
 # Add project root to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 
-from src.eda import fix_files
+from src.batch_eda import fix_files
 
 
 class TestGapFixingWithNaN:

@@ -47,7 +47,7 @@ The Time Series Analysis module provides comprehensive analysis capabilities for
 ### Basic Usage
 
 ```python
-from src.eda.time_series_analysis import TimeSeriesAnalyzer, analyze_time_series
+from src.batch_eda.time_series_analysis import TimeSeriesAnalyzer, analyze_time_series
 import pandas as pd
 
 # Load your data

@@ -238,7 +238,7 @@ After treatment, verify:
 If you need to restore data:
 
 ```python
-from src.eda.outlier_handler import OutlierHandler
+from src.batch_eda.outlier_handler import OutlierHandler
 
 # Create handler with current data
 handler = OutlierHandler(current_data)

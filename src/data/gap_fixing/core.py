@@ -1,0 +1,257 @@
+# -*- coding: utf-8 -*-
+# src/data/gap_fixing/core.py
+
+"""
+Core gap fixing functionality for time series data.
+Provides the main GapFixer class with gap detection and fixing algorithms.
+All comments are in English.
+"""
+
+import time
+import warnings
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple, Union
+import gc
+
+import pandas as pd
+import numpy as np
+from tqdm import tqdm
+import psutil
+
+from .algorithms import GapFixingStrategy
+from .utils import GapFixingUtils
+
+# Suppress warnings for cleaner output
+warnings.filterwarnings('ignore', category=FutureWarning)
+warnings.filterwarnings('ignore', category=UserWarning)
+
+
+class GapFixer:
+    """
+    Advanced gap fixer for time series data with multiple algorithms.
+    
+    This class provides sophisticated methods for detecting and fixing
+    time series gaps using various interpolation and forecasting techniques.
+    """
+    
+    def __init__(self, memory_limit_mb: int = 6144):
+        """
+        Initialize the gap fixer.
+        
+        Args:
+            memory_limit_mb: Memory limit in MB for processing
+        """
+        self.memory_limit_mb = memory_limit_mb
+        self.supported_formats = ['.parquet', '.csv', '.json']
+        
+        # Initialize algorithm and utility modules
+        self.algorithms = GapFixingStrategy()
+        self.utils = GapFixingUtils()
+        
+        print(f"🔧 GapFixer initialized with memory limit: {memory_limit_mb}MB")
+    
+    def fix_file_gaps(self, file_path: Path, algorithm: str = 'auto', 
+                      show_progress: bool = True) -> Tuple[bool, Dict]:
+        """
+        Fix gaps in a single file.
+        
+        Args:
+            file_path: Path to the file to fix
+            algorithm: Algorithm to use for gap fixing
+            show_progress: Whether to show progress bar
+            
+        Returns:
+            Tuple of (success, results_dict)
+        """
+        try:
+            return self._process_single_file(file_path, algorithm, show_progress)
+        except Exception as e:
+            print(f"   ❌ Exception during gap fixing: {e}")
+            import traceback
+            traceback.print_exc()
+            return False, {'error': str(e)}
+    
+    def _process_single_file(self, file_path: Path, algorithm: str, 
+                           show_progress: bool) -> Tuple[bool, Dict]:
+        """Process a single file for gap fixing."""
+        print(f"   📁 Loading file: {file_path.name}")
+        print(f"   📊 File size: {file_path.stat().st_size / (1024*1024):.1f} MB")
+        
+        # Load file
+        df = self.utils.load_file(file_path)
+        if df is None:
+            return False, {'error': f'Failed to load file: {file_path}'}
+        
+        print(f"   📊 Loaded data shape: {df.shape}")
+        print(f"   💾 Memory usage after loading: {self.utils.get_memory_usage():.1f} MB")
+        
+        # Process timestamp column
+        timestamp_col = self._prepare_timestamp_column(df)
+        if timestamp_col is None:
+            return False, {'error': 'No timestamp column found'}
+        
+        # Detect gaps
+        gap_info = self._detect_gaps_in_data(df, timestamp_col)
+        if not gap_info['has_gaps']:
+            return self._handle_no_gaps(algorithm)
+        
+        # Fix gaps
+        return self._fix_gaps_and_save(df, file_path, timestamp_col, gap_info, algorithm, show_progress)
+    
+    def _prepare_timestamp_column(self, df: pd.DataFrame) -> Optional[str]:
+        """Prepare timestamp column for gap analysis."""
+        timestamp_col = self.utils.find_timestamp_column(df)
+        
+        if timestamp_col is None and not isinstance(df.index, pd.DatetimeIndex):
+            return None
+        
+        # Handle DatetimeIndex case
+        if isinstance(df.index, pd.DatetimeIndex):
+            print(f"   📅 Converting DatetimeIndex to column for gap analysis...")
+            df_for_analysis = self.utils.convert_datetime_index_to_column(df)
+            timestamp_col = df_for_analysis.columns[0]  # First column after reset_index
+        else:
+            df_for_analysis = df.copy()
+        
+        # Convert timestamp to datetime if needed
+        if timestamp_col and not pd.api.types.is_datetime64_any_dtype(df_for_analysis[timestamp_col]):
+            df_for_analysis[timestamp_col] = pd.to_datetime(df_for_analysis[timestamp_col], errors='coerce')
+        
+        return timestamp_col
+    
+    def _detect_gaps_in_data(self, df: pd.DataFrame, timestamp_col: str) -> Dict:
+        """Detect gaps in the data."""
+        print(f"   🔍 Detecting gaps...")
+        return self.utils.detect_gaps(df, timestamp_col)
+    
+    def _handle_no_gaps(self, algorithm: str) -> Tuple[bool, Dict]:
+        """Handle case when no gaps are detected."""
+        print(f"   ✅ No gaps detected")
+        return True, {
+            'success': True,
+            'message': 'No gaps found', 
+            'gaps_fixed': 0,
+            'algorithm_used': algorithm,
+            'processing_time': 0.0,
+            'original_gaps': 0,
+            'memory_used_mb': self.utils.get_memory_usage()
+        }
+    
+    def _fix_gaps_and_save(self, df: pd.DataFrame, file_path: Path, 
+                          timestamp_col: str, gap_info: Dict, algorithm: str, 
+                          show_progress: bool) -> Tuple[bool, Dict]:
+        """Fix gaps and save the results."""
+        print(f"   📊 Gap detection completed: {gap_info['gap_count']} gaps found")
+        print(f"   ⏱️  Expected frequency: {gap_info['expected_frequency']}")
+        print(f"   🕐 Time range: {gap_info['time_range']['start']} to {gap_info['time_range']['end']}")
+        
+        # Check memory before fixing
+        if not self._check_memory_before_fixing():
+            return False, {'error': 'Insufficient memory for gap fixing'}
+        
+        # Fix gaps
+        print(f"   🔧 Starting gap fixing with algorithm: {algorithm}")
+        fixed_df, fix_results = self.algorithms.fix_gaps_in_dataframe(
+            df, timestamp_col, gap_info, algorithm, show_progress
+        )
+        
+        # Save fixed data
+        return self._save_fixed_data(fixed_df, file_path, fix_results, gap_info)
+    
+    def _check_memory_before_fixing(self) -> bool:
+        """Check memory availability before gap fixing."""
+        if not self.utils.check_memory_available(self.memory_limit_mb):
+            print(f"   ⚠️  Memory usage high before gap fixing: {self.utils.get_memory_usage():.1f} MB")
+            print(f"   🧹 Forcing garbage collection...")
+            gc.collect()
+            if not self.utils.check_memory_available(self.memory_limit_mb):
+                return False
+        return True
+    
+    def _save_fixed_data(self, fixed_df: pd.DataFrame, file_path: Path, 
+                         fix_results: Dict, gap_info: Dict) -> Tuple[bool, Dict]:
+        """Save the fixed data and create backup."""
+        print(f"   🔄 Creating backup...")
+        backup_path = self.utils.create_backup(file_path)
+        print(f"   📦 Backup created: {backup_path}")
+        
+        print(f"   💾 Saving fixed data...")
+        success = self.utils.save_fixed_data(fixed_df, file_path)
+        
+        if success:
+            print(f"   ✅ Data saved successfully")
+            results = {
+                'success': True,
+                'gaps_fixed': fix_results['gaps_fixed'],
+                'algorithm_used': fix_results['algorithm_used'],
+                'processing_time': fix_results['processing_time'],
+                'backup_created': str(backup_path),
+                'original_gaps': gap_info['gap_count'],
+                'memory_used_mb': fix_results['memory_used_mb']
+            }
+            return True, results
+        else:
+            print(f"   ❌ Failed to save fixed data")
+            return False, {'error': 'Failed to save fixed data'}
+    
+    def fix_multiple_files(self, file_paths: List[Path], algorithm: str = 'auto',
+                          show_progress: bool = True) -> Dict[str, Dict]:
+        """
+        Fix gaps in multiple files with progress tracking.
+        
+        Args:
+            file_paths: List of file paths to fix
+            algorithm: Algorithm to use for gap fixing
+            show_progress: Whether to show progress bars
+            
+        Returns:
+            Dictionary with results for each file
+        """
+        results = {}
+        total_files = len(file_paths)
+        
+        print(f"\n🚀 Starting gap fixing for {total_files} files...")
+        print(f"📊 Algorithm: {algorithm}")
+        
+        # Estimate total time
+        estimated_time = self.utils.estimate_total_processing_time(file_paths)
+        print(f"⏱️  Estimated total processing time: {estimated_time}")
+        
+        # Process files
+        start_time = time.time()
+        
+        for i, file_path in enumerate(file_paths, 1):
+            print(f"\n📁 Processing file {i}/{total_files}: {file_path.name}")
+            
+            success, file_results = self.fix_file_gaps(
+                file_path, algorithm, show_progress
+            )
+            
+            results[str(file_path)] = file_results
+            
+            if success:
+                print(f"✅ {file_path.name}: {file_results['gaps_fixed']} gaps fixed")
+            else:
+                print(f"❌ {file_path.name}: {file_results.get('error', 'Unknown error')}")
+            
+            # Memory cleanup
+            gc.collect()
+            
+            # Check memory usage
+            if not self.utils.check_memory_available(self.memory_limit_mb):
+                print("⚠️  Memory usage high, forcing garbage collection...")
+                gc.collect()
+        
+        total_time = time.time() - start_time
+        
+        # Summary
+        successful_fixes = sum(1 for r in results.values() if r.get('success', False))
+        total_gaps_fixed = sum(r.get('gaps_fixed', 0) for r in results.values() if r.get('success', False))
+        
+        print(f"\n🎉 Gap fixing completed!")
+        print(f"📊 Files processed: {total_files}")
+        print(f"✅ Successful fixes: {successful_fixes}")
+        print(f"📈 Total gaps fixed: {total_gaps_fixed:,}")
+        print(f"⏱️  Total time: {total_time:.1f} seconds")
+        
+        return results

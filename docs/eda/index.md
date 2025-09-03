@@ -119,7 +119,7 @@ eda --export-results
 ### Interactive Mode
 ```python
 # Interactive EDA
-from src.eda.interactive_eda import InteractiveEDA
+from src.batch_eda.interactive_eda import InteractiveEDA
 
 eda = InteractiveEDA()
 eda.run()
@@ -128,7 +128,7 @@ eda.run()
 ### Batch Processing
 ```python
 # Process multiple files
-from src.eda.batch_eda import BatchEDA
+from src.batch_eda.batch_eda import BatchEDA
 
 batch_eda = BatchEDA()
 batch_eda.process_folder('data/')

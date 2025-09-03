@@ -187,11 +187,12 @@ class TestMenuManager:
         assert "EDA ANALYSIS MENU:" in captured.out
         assert "0. 🔙 Back to Main Menu" in captured.out
         assert "1. ⏱️ Time Series Gaps Analysis" in captured.out
-        assert "2. 🧹 Comprehensive Data Quality Check" in captured.out
-        assert "3. 📊 Basic Statistics" in captured.out
-        assert "4. 🔗 Correlation Analysis" in captured.out
-        assert "5. 📈 Time Series Analysis" in captured.out
-        assert "6. 🎯 Feature Importance" in captured.out
+        assert "2. 🔄 Duplicates Analysis" in captured.out
+        assert "3. 🧹 Comprehensive Data Quality Check" in captured.out
+        assert "4. 📊 Basic Statistics" in captured.out
+        assert "5. 🔗 Correlation Analysis" in captured.out
+        assert "6. 📈 Time Series Analysis" in captured.out
+        assert "7. 🎯 Feature Importance" in captured.out
         assert "13. 📋 Generate HTML Report" in captured.out
         assert "14. 🔄 Restore from Backup" in captured.out
     
@@ -206,9 +207,10 @@ class TestMenuManager:
         
         captured = capsys.readouterr()
         assert "1. ⏱️ Time Series Gaps Analysis ✅" in captured.out
-        assert "2. 🧹 Comprehensive Data Quality Check ✅" in captured.out
-        assert "3. 📊 Basic Statistics ✅" in captured.out
-        assert "4. 🔗 Correlation Analysis" in captured.out  # Not used
+        assert "2. 🔄 Duplicates Analysis" in captured.out  # Not used
+        assert "3. 🧹 Comprehensive Data Quality Check ✅" in captured.out
+        assert "4. 📊 Basic Statistics ✅" in captured.out
+        assert "5. 🔗 Correlation Analysis" in captured.out  # Not used
     
     def test_print_feature_engineering_menu(self, menu_manager, capsys):
         """Test print_feature_engineering_menu."""

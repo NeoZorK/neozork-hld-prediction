@@ -23,7 +23,7 @@ Comprehensive statistical analysis of financial data.
 #### Usage Example
 
 ```python
-from src.eda.basic_stats import BasicStatsAnalyzer
+from src.batch_eda.basic_stats import BasicStatsAnalyzer
 
 # Initialize analyzer
 analyzer = BasicStatsAnalyzer()
@@ -65,7 +65,7 @@ Comprehensive data quality analysis and validation.
 #### Usage Example
 
 ```python
-from src.eda.data_quality import DataQualityAnalyzer
+from src.batch_eda.data_quality import DataQualityAnalyzer
 
 # Initialize analyzer
 analyzer = DataQualityAnalyzer()
@@ -109,7 +109,7 @@ Advanced correlation and relationship analysis.
 #### Usage Example
 
 ```python
-from src.eda.correlation_analysis import CorrelationAnalyzer
+from src.batch_eda.correlation_analysis import CorrelationAnalyzer
 
 # Initialize analyzer
 analyzer = CorrelationAnalyzer()
@@ -152,7 +152,7 @@ Feature importance and selection analysis.
 #### Usage Example
 
 ```python
-from src.eda.feature_importance import FeatureImportanceAnalyzer
+from src.batch_eda.feature_importance import FeatureImportanceAnalyzer
 
 # Initialize analyzer
 analyzer = FeatureImportanceAnalyzer()
@@ -194,7 +194,7 @@ Automated batch processing for multiple datasets.
 #### Usage Example
 
 ```python
-from src.eda.eda_batch_check import BatchAnalyzer
+from src.batch_eda.eda_batch_check import BatchAnalyzer
 
 # Initialize batch analyzer
 batch_analyzer = BatchAnalyzer()
@@ -228,7 +228,7 @@ Professional HTML report generation.
 #### Usage Example
 
 ```python
-from src.eda.html_report_generator import HTMLReportGenerator
+from src.batch_eda.html_report_generator import HTMLReportGenerator
 
 # Initialize generator
 generator = HTMLReportGenerator()
@@ -259,7 +259,7 @@ Comprehensive statistics logging and tracking.
 #### Usage Example
 
 ```python
-from src.eda.stats_logger import StatsLogger
+from src.batch_eda.stats_logger import StatsLogger
 
 # Initialize logger
 logger = StatsLogger()
@@ -317,10 +317,10 @@ python -m src.eda.feature_importance --features data/indicators.csv --target dat
 ### 1. Complete EDA Workflow
 
 ```python
-from src.eda.basic_stats import BasicStatsAnalyzer
-from src.eda.data_quality import DataQualityAnalyzer
-from src.eda.correlation_analysis import CorrelationAnalyzer
-from src.eda.html_report_generator import HTMLReportGenerator
+from src.batch_eda.basic_stats import BasicStatsAnalyzer
+from src.batch_eda.data_quality import DataQualityAnalyzer
+from src.batch_eda.correlation_analysis import CorrelationAnalyzer
+from src.batch_eda.html_report_generator import HTMLReportGenerator
 
 # Load data
 data = load_data('data/aapl.csv')
@@ -355,7 +355,7 @@ report_generator.generate_report(
 ### 2. Automated Analysis Pipeline
 
 ```python
-from src.eda.eda_batch_check import BatchAnalyzer
+from src.batch_eda.eda_batch_check import BatchAnalyzer
 
 # Automated pipeline
 pipeline = BatchAnalyzer()
@@ -374,7 +374,7 @@ results = pipeline.run_pipeline(
 
 ```python
 import time
-from src.eda.stats_logger import StatsLogger
+from src.batch_eda.stats_logger import StatsLogger
 
 # Real-time monitoring
 logger = StatsLogger()
@@ -461,7 +461,7 @@ analyzer = BasicStatsAnalyzer(config=config)
 ### Analysis Error Recovery
 
 ```python
-from src.eda.basic_stats import BasicStatsAnalyzer
+from src.batch_eda.basic_stats import BasicStatsAnalyzer
 
 try:
     analyzer = BasicStatsAnalyzer()
