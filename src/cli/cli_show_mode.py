@@ -61,6 +61,12 @@ try:
 except ImportError:
     display_universal_trading_metrics = None
 
+# Import plot utilities for interactive backend setup
+try:
+    from src.plotting.plot_utils import setup_interactive_backend
+except ImportError:
+    setup_interactive_backend = None
+
 def _force_terminal_mode_in_docker(args):
     """
     Force terminal mode in Docker environment for show commands.
@@ -537,6 +543,10 @@ def handle_show_mode(args):
     Handles the 'show' mode logic: finds files, displays info, and potentially triggers plot or indicator calculation.
     Returns timing and metrics data for execution summary.
     """
+    # Setup interactive matplotlib backend if available and not in test environment
+    if setup_interactive_backend is not None:
+        setup_interactive_backend()
+    
     # Force terminal mode in Docker for show commands
     _force_terminal_mode_in_docker(args)
     

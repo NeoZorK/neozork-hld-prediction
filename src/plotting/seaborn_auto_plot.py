@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 import numpy as np
+from .plot_utils import smart_plot_display
 
 def auto_plot_from_parquet(parquet_path: str, plot_title: str = "Auto Plot from Parquet"):
     if not os.path.exists(parquet_path):
@@ -72,6 +73,6 @@ def auto_plot_from_parquet(parquet_path: str, plot_title: str = "Auto Plot from 
         ax.set_title(col)
 
     plt.tight_layout()
-    # Use plt.close() instead of plt.show() to avoid non-interactive warning in test environment
-    plt.close()
+    # Smart plot display that automatically determines whether to show or close
+    smart_plot_display()
 

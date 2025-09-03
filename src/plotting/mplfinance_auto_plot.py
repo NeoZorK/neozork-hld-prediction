@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import mplfinance as mpf
+from .plot_utils import smart_plot_display
 
 # Function to plot OHLCV and all other columns from a parquet file in a multi-panel figure
 # Main chart: candlesticks (open, high, low, close), below: volume, below: each other column as a separate subplot
@@ -76,6 +77,6 @@ def auto_plot_from_parquet(parquet_path):
             ax.legend(loc='upper right')
 
     plt.tight_layout()
-    # Use plt.close() instead of plt.show() to avoid non-interactive warning in test environment
-    plt.close()
+    # Smart plot display that automatically determines whether to show or close
+    smart_plot_display()
 
