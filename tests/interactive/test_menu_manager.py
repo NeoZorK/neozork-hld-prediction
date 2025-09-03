@@ -176,7 +176,7 @@ class TestMenuManager:
         captured = capsys.readouterr()
         assert "MAIN MENU:" in captured.out
         assert "1. 📁 Load Data ✅" in captured.out
-        assert "2. 🔍 EDA Analysis (13%)" in captured.out  # 2 out of 15 = 13% (no checkmark since eda_analysis not marked)
+        assert "2. 🔍 EDA Analysis (12%)" in captured.out  # 2 out of 16 = 12% (no checkmark since eda_analysis not marked)
         assert "3. ⚙️  Feature Engineering" in captured.out  # No completion
     
     def test_print_eda_menu(self, menu_manager, capsys):
