@@ -30,91 +30,7 @@ def show_cool_version():
     import random
     from datetime import datetime
     
-    def play_hacker_sound():
-        """Play epic hacker/cyberpunk startup sound effects with real audio!"""
-        try:
-            # Enhanced sound system for macOS
-            if os.system('which afplay > /dev/null 2>&1') == 0:
-                # Create temporary sound files with system audio synthesis
-                sound_commands = [
-                    # Startup beep sequence
-                    'say -v "Zarvox" "System initializing" -r 300 &',
-                    # Cyberpunk beeps using audio synthesis
-                    'for i in {1..5}; do (speaker-test -t sine -f 1000 -l 1 > /dev/null 2>&1 & sleep 0.1; kill $!) 2>/dev/null; sleep 0.1; done &',
-                    # Alternative: use built-in audio
-                    'osascript -e "set volume output volume 50" &',
-                    'afplay /System/Library/Sounds/Ping.aiff &',
-                    'sleep 0.2; afplay /System/Library/Sounds/Pop.aiff &',
-                    'sleep 0.3; afplay /System/Library/Sounds/Tink.aiff &'
-                ]
-                
-                for cmd in sound_commands[:3]:  # Play first 3 for startup
-                    try:
-                        os.system(cmd)
-                    except:
-                        pass
-                        
-            # Python-based sound generation as backup
-            try:
-                import subprocess
-                # Generate sine wave beeps using Python
-                frequencies = [800, 1000, 1200, 1500, 1100, 900]
-                for freq in frequencies:
-                    # Use system beep with different frequencies
-                    subprocess.run(['python3', '-c', f'''
-import math
-import sys
-import time
-try:
-    # Generate beep sound
-    duration = 0.1
-    sample_rate = 8000
-    t = [i/sample_rate for i in range(int(duration * sample_rate))]
-    wave = [int(4095 * math.sin(2 * math.pi * {freq} * time_point)) for time_point in t]
-    # Output as system beep
-    sys.stdout.write("\a")
-    sys.stdout.flush()
-    time.sleep(0.05)
-except:
-    pass
-'''], capture_output=True, timeout=1)
-                    time.sleep(0.08)
-            except:
-                pass
-                
-            # Fallback to enhanced terminal beeps
-            beep_patterns = [
-                ["\a", 0.1], ["\a\a", 0.15], ["\a", 0.08], 
-                ["\a\a\a", 0.2], ["\a", 0.1], ["\a\a", 0.12]
-            ]
-            
-            for pattern, delay in beep_patterns:
-                print(pattern, end='', flush=True)
-                time.sleep(delay)
-                
-        except Exception as e:
-            # Ultimate fallback - at least some sound!
-            for _ in range(8):
-                print('\a', end='', flush=True)
-                time.sleep(0.12)
     
-    def matrix_rain_effect():
-        """Create epic Matrix-style digital rain effect."""
-        rain_chars = ['0', '1', '█', '▓', '▒', '░', '|', '/', '-', '\\']
-        colors = [Fore.GREEN, Fore.CYAN, Fore.WHITE, '\033[38;5;46m', '\033[38;5;82m']
-        
-        lines = []
-        for i in range(3):
-            line = ''
-            for j in range(62):
-                if random.random() > 0.7:
-                    char = random.choice(rain_chars)
-                    color = random.choice(colors)
-                    line += f'{color}{char}{Style.RESET_ALL}'
-                else:
-                    line += ' '
-            lines.append(f'{Fore.CYAN}║{Style.RESET_ALL}{line}{Fore.CYAN}║{Style.RESET_ALL}')
-        return lines
     
     def glitch_effect(text, intensity=3):
         """Add cyberpunk glitch effect to text."""
@@ -127,67 +43,17 @@ except:
                 glitched += char
         return glitched
     
-    def typewriter_effect(text, delay=0.03):
-        """Epic typewriter effect with glitches."""
+    def typewriter_effect(text, delay=0.0025):
+        """Ultra fast typewriter effect."""
         for i in range(len(text) + 1):
             print('\r' + text[:i] + ('█' if i < len(text) else ''), end='', flush=True)
             time.sleep(delay)
         print()  # New line after typing
     
-    def play_background_music():
-        """Play epic background techno music during animation!"""
-        try:
-            # Generate cyberpunk background sounds
-            music_commands = [
-                # Say cool phrases with robotic voice
-                'say -v "Zarvox" "Neo Zork. High Level Dominance." -r 200 &',
-                'sleep 2; say -v "Zarvox" "Quantum algorithms activated" -r 180 &',
-                'sleep 4; say -v "Zarvox" "Market prediction engine online" -r 190 &',
-                
-                # System sounds for atmosphere
-                'sleep 1; afplay /System/Library/Sounds/Ping.aiff &',
-                'sleep 1.5; afplay /System/Library/Sounds/Pop.aiff &', 
-                'sleep 2.2; afplay /System/Library/Sounds/Tink.aiff &',
-                'sleep 3; afplay /System/Library/Sounds/Ping.aiff &',
-                'sleep 4; afplay /System/Library/Sounds/Pop.aiff &',
-                'sleep 5; afplay /System/Library/Sounds/Tink.aiff &',
-                
-                # Final dramatic sounds
-                'sleep 6; say -v "Zarvox" "System ready for market domination" -r 220 &',
-            ]
-            
-            for cmd in music_commands:
-                try:
-                    os.system(cmd)
-                except:
-                    pass
-                    
-        except:
-            # Fallback rhythmic beeps
-            rhythm_pattern = [0.3, 0.1, 0.1, 0.4, 0.2, 0.1, 0.3, 0.2]
-            for delay in rhythm_pattern * 3:  # Repeat 3 times
-                print('\a', end='', flush=True)
-                time.sleep(delay)
     
-    def play_typewriter_sounds():
-        """Play typewriter clicking sounds during text animation"""
-        try:
-            # Simulate typewriter/keyboard sounds
-            for _ in range(20):
-                if random.random() > 0.3:
-                    os.system('afplay /System/Library/Sounds/Tink.aiff > /dev/null 2>&1 &')
-                time.sleep(random.uniform(0.05, 0.15))
-        except:
-            pass
     
-    # Start multiple sound threads for layered audio experience
-    sound_thread = threading.Thread(target=play_hacker_sound, daemon=True)
-    music_thread = threading.Thread(target=play_background_music, daemon=True)
-    typewriter_thread = threading.Thread(target=play_typewriter_sounds, daemon=True)
     
-    sound_thread.start()
-    music_thread.start()
-    typewriter_thread.start()
+    # No sounds - clean and fast
     
     # Clear screen for maximum effect
     os.system('clear' if os.name == 'posix' else 'cls')
@@ -205,27 +71,7 @@ except:
         typewriter_effect(msg, 0.02)
         time.sleep(0.3)
     
-    print('\n' + '='*64)
-    time.sleep(0.5)
-    
-    # Show matrix rain effect with sounds
-    print(f'{Fore.GREEN}{Style.BRIGHT}DIGITAL RAIN INITIALIZING...{Style.RESET_ALL}')
-    # Play matrix sound effect
-    os.system('say -v "Zarvox" "Digital rain initializing" -r 250 > /dev/null 2>&1 &')
-    time.sleep(0.5)
-    rain_lines = matrix_rain_effect()
-    for i, line in enumerate(rain_lines):
-        print(line)
-        # Add sound for each rain line
-        if i == 0:
-            os.system('afplay /System/Library/Sounds/Ping.aiff > /dev/null 2>&1 &')
-        elif i == 1:
-            os.system('afplay /System/Library/Sounds/Pop.aiff > /dev/null 2>&1 &')
-        else:
-            os.system('afplay /System/Library/Sounds/Tink.aiff > /dev/null 2>&1 &')
-        time.sleep(0.1)
-    
-    time.sleep(0.3)
+    # Clean direct transition to logo
     os.system('clear' if os.name == 'posix' else 'cls')
     
     # Epic animated logo reveal
@@ -238,18 +84,12 @@ except:
         '╚═╝  ╚═══╝╚══════╝ ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝'
     ]
     
-    # Top border with epic animation and sound
+    # Top border - ultra fast animation
     border = '╔══════════════════════════════════════════════════════════════╗'
-    os.system('say -v "Zarvox" "Initializing logo" -r 300 > /dev/null 2>&1 &')
     for i in range(len(border)):
         print('\r' + border[:i+1], end='', flush=True)
-        # Add typing sound occasionally
-        if i % 10 == 0:
-            os.system('afplay /System/Library/Sounds/Tink.aiff > /dev/null 2>&1 &')
-        time.sleep(0.02)
+        time.sleep(0.0018)  # 12x faster total (3x * 4x)
     print()
-    # Border complete sound
-    os.system('afplay /System/Library/Sounds/Ping.aiff > /dev/null 2>&1 &')
     
     # Animate ASCII art line by line with color transitions
     colors = ['\033[38;5;46m', '\033[38;5;82m', '\033[38;5;118m', '\033[38;5;154m', '\033[38;5;190m', '\033[38;5;226m']
@@ -267,28 +107,28 @@ except:
         # Real line with epic color
         full_line = f'{Fore.CYAN}║{Style.RESET_ALL}  {colors[i]}{Style.BRIGHT}{ascii_line}{Style.RESET_ALL}{Fore.CYAN}║{Style.RESET_ALL}'
         
-        # Character by character reveal with proper padding
+        # Display ASCII art line with proper 64-character alignment
+        # Format: '║  ' + ascii_content + ' ' + '║' = 64 chars total
+        full_line = f'{Fore.CYAN}║{Style.RESET_ALL}  {colors[i]}{Style.BRIGHT}{ascii_line}{Style.RESET_ALL} {Fore.CYAN}║{Style.RESET_ALL}'
+        
+        # Character by character reveal
         revealed_chars = ''
         for char in ascii_line:
             revealed_chars += char
-            # Calculate proper padding to maintain 64 character width
-            remaining_chars = len(ascii_line) - len(revealed_chars)
-            padding_needed = 64 - 3 - len(revealed_chars)  # 64 total - '║  ' - revealed chars - '║'
-            if padding_needed < 0:
-                padding_needed = 0
-            
+            # Build display line maintaining exactly 64 characters
             display_line = f'{Fore.CYAN}║{Style.RESET_ALL}  {colors[i]}{Style.BRIGHT}{revealed_chars}{Style.RESET_ALL}'
-            display_line += ' ' * padding_needed + f'{Fore.CYAN}║{Style.RESET_ALL}'
+            remaining_spaces = 60 - len(revealed_chars)  # 60 = space for content inside borders
+            display_line += ' ' * remaining_spaces + f' {Fore.CYAN}║{Style.RESET_ALL}'
             print('\r' + display_line, end='', flush=True)
-            time.sleep(0.01)
+            time.sleep(0.0008)  # 12x faster total
         print()
-        time.sleep(0.1)
+        time.sleep(0.008)  # 12x faster total
     
-    # Middle border with animation
+    # Middle border - fast
     border = '╠══════════════════════════════════════════════════════════════╣'
     for i in range(len(border)):
         print('\r' + border[:i+1], end='', flush=True)
-        time.sleep(0.01)
+        time.sleep(0.0008)  # 12x faster total
     print()
     
     # Info section with epic effects
@@ -300,15 +140,20 @@ except:
     ]
     
     for text, spaces in info_lines:
-        line = f'{Fore.CYAN}║{Style.RESET_ALL}  {text}' + ' ' * spaces + f'{Fore.CYAN}║{Style.RESET_ALL}'
-        typewriter_effect(line, 0.02)
-        time.sleep(0.2)
+        # Fix alignment by calculating proper spaces for 64 total chars
+        clean_text_len = len(text.replace(Style.BRIGHT, '').replace(Style.RESET_ALL, '').replace(Fore.YELLOW, '').replace(Fore.GREEN, '').replace(Fore.RED, '').replace(Fore.BLUE, ''))
+        needed_spaces = 64 - 4 - clean_text_len  # 64 total - '║  ' - text - ' ║'
+        if needed_spaces < 0:
+            needed_spaces = 0
+        line = f'{Fore.CYAN}║{Style.RESET_ALL}  {text}' + ' ' * needed_spaces + f' {Fore.CYAN}║{Style.RESET_ALL}'
+        typewriter_effect(line, 0.0018)  # 12x faster total
+        time.sleep(0.018)  # 12x faster total
     
-    # Second middle border
+    # Second middle border - fast
     border = '╠══════════════════════════════════════════════════════════════╣'
     for i in range(len(border)):
         print('\r' + border[:i+1], end='', flush=True)
-        time.sleep(0.01)
+        time.sleep(0.0008)  # 12x faster total
     print()
     
     # Status section with pulsing effects
@@ -319,53 +164,27 @@ except:
     ]
     
     for text, spaces in status_lines:
-        # Pulsing effect
-        for pulse in range(3):
-            if pulse % 2 == 0:
-                line = f'{Fore.CYAN}║{Style.RESET_ALL}  {Style.BRIGHT}{text}{Style.RESET_ALL}' + ' ' * spaces + f'{Fore.CYAN}║{Style.RESET_ALL}'
-            else:
-                line = f'{Fore.CYAN}║{Style.RESET_ALL}  {Style.DIM}{text}{Style.RESET_ALL}' + ' ' * spaces + f'{Fore.CYAN}║{Style.RESET_ALL}'
-            print('\r' + line, end='', flush=True)
-            time.sleep(0.3)
-        print()
-        time.sleep(0.1)
+        # Calculate proper alignment for 64 total chars
+        clean_text_len = len(text.replace('⚡', '').replace('🔮', '').replace('🚀', '').strip())
+        # Account for emojis taking 2 chars each visually but counted as more in len()
+        emoji_count = text.count('⚡') + text.count('🔮') + text.count('🚀')
+        actual_display_len = clean_text_len + emoji_count * 2  # Each emoji displays as 2 chars
+        needed_spaces = 64 - 4 - actual_display_len  # 64 total - '║  ' - text - ' ║'
+        if needed_spaces < 0:
+            needed_spaces = 0
+        line = f'{Fore.CYAN}║{Style.RESET_ALL}  {Style.BRIGHT}{text}{Style.RESET_ALL}' + ' ' * needed_spaces + f' {Fore.CYAN}║{Style.RESET_ALL}'
+        print(line)
+        time.sleep(0.018)  # 12x faster total
     
-    # Bottom border with final animation
+    # Bottom border - fast
     border = '╚══════════════════════════════════════════════════════════════╝'
     for i in range(len(border)):
         print('\r' + border[:i+1], end='', flush=True)
-        time.sleep(0.01)
+        time.sleep(0.0008)  # 12x faster total
     print()
     
-    # Final epic message with dramatic sounds
-    time.sleep(0.5)
-    
-    # Play dramatic completion sound
-    os.system('say -v "Zarvox" "All systems operational. Ready for deployment" -r 200 > /dev/null 2>&1 &')
-    
-    final_messages = [
-        (f'{Fore.GREEN}{Style.BRIGHT}>>> SYSTEM STATUS: FULLY OPERATIONAL <<<{Style.RESET_ALL}', 'afplay /System/Library/Sounds/Ping.aiff'),
-        (f'{Fore.CYAN}{Style.BRIGHT}>>> QUANTUM ALGORITHMS: LOADED <<<{Style.RESET_ALL}', 'afplay /System/Library/Sounds/Pop.aiff'),
-        (f'{Fore.YELLOW}{Style.BRIGHT}>>> READY FOR MARKET DOMINATION <<<{Style.RESET_ALL}', 'say -v "Zarvox" "Ready for market domination" -r 250')
-    ]
-    
-    for msg, sound_cmd in final_messages:
-        # Play sound for each message
-        os.system(f'{sound_cmd} > /dev/null 2>&1 &')
-        typewriter_effect(f'\n{" " * ((64 - len(msg.replace(Style.BRIGHT, "").replace(Style.RESET_ALL, "").replace(Fore.GREEN, "").replace(Fore.CYAN, "").replace(Fore.YELLOW, ""))) // 2)}{msg}', 0.03)
-        time.sleep(0.5)
-    
-    # Final victory fanfare
-    time.sleep(0.5)
-    victory_sounds = [
-        'afplay /System/Library/Sounds/Ping.aiff > /dev/null 2>&1',
-        'sleep 0.2; afplay /System/Library/Sounds/Pop.aiff > /dev/null 2>&1', 
-        'sleep 0.4; afplay /System/Library/Sounds/Tink.aiff > /dev/null 2>&1',
-        'sleep 0.6; say -v "Zarvox" "Neo Zork H L D. Mission accomplished" -r 180 > /dev/null 2>&1'
-    ]
-    
-    for sound in victory_sounds:
-        os.system(f'{sound} &')
+    # Clean ending - no final messages
+    print()
     
     print('\n')
 
