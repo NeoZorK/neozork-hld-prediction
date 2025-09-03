@@ -1743,6 +1743,12 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
         elif indicator_name == 'cot':
             return parse_cot_parameters(params_str)
         elif indicator_name == 'wave':
+            # Special handling for wave indicator - show help if no parameters
+            if not params_str:
+                from .error_handling import show_enhanced_indicator_help
+                show_enhanced_indicator_help("Wave indicator requires parameters", "wave", show_error_header=False)
+                import sys
+                sys.exit(1)
             return parse_wave_parameters(params_str)
         else:
             # Unknown indicator, show help and raise error

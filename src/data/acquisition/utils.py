@@ -10,7 +10,7 @@ All comments are in English.
 import pandas as pd
 from pathlib import Path
 from typing import Dict, List, Optional, Any
-from ..common.logger import print_info, print_warning, print_error, print_success
+from ...common.logger import print_info, print_warning, print_error, print_success
 
 
 class DataAcquisitionUtils:

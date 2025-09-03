@@ -10,7 +10,7 @@ All comments are in English.
 import pandas as pd
 import numpy as np
 from typing import Dict, Any, Optional, Tuple, List
-from ..common.logger import print_info, print_warning, print_error, print_success
+from ...common.logger import print_info, print_warning, print_error, print_success
 from .interpolation import (
     _fix_gaps_linear, _fix_gaps_cubic, _fix_gaps_seasonal,
     _fix_gaps_forward_fill, _fix_gaps_backward_fill,

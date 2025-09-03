@@ -109,7 +109,35 @@ class GapFixingUtils:
         # Calculate expected frequency
         if len(timestamps_sorted) > 1:
             time_diffs = timestamps_sorted.diff().dropna()
-            expected_frequency = time_diffs.mode().iloc[0] if not time_diffs.empty else pd.Timedelta(minutes=1)
+            
+            # Handle empty time_diffs
+            if time_diffs.empty:
+                expected_frequency = pd.Timedelta(minutes=1)
+            else:
+                # Convert TimedeltaIndex to Series to use mode() method
+                if isinstance(time_diffs, pd.TimedeltaIndex):
+                    time_diffs_series = pd.Series(time_diffs)
+                else:
+                    time_diffs_series = time_diffs
+                
+                # Use median as fallback if mode is not available or empty
+                try:
+                    if not time_diffs_series.empty and hasattr(time_diffs_series, 'mode'):
+                        mode_result = time_diffs_series.mode()
+                        expected_frequency = mode_result.iloc[0] if not mode_result.empty else time_diffs_series.median()
+                    else:
+                        expected_frequency = time_diffs_series.median()
+                except (AttributeError, IndexError):
+                    # Fallback to median if mode fails
+                    try:
+                        expected_frequency = time_diffs_series.median()
+                    except (AttributeError, IndexError):
+                        # Final fallback: use the first non-zero time difference or default
+                        non_zero_diffs = time_diffs_series[time_diffs_series > pd.Timedelta(0)]
+                        if not non_zero_diffs.empty:
+                            expected_frequency = non_zero_diffs.iloc[0]
+                        else:
+                            expected_frequency = pd.Timedelta(minutes=1)
         else:
             expected_frequency = pd.Timedelta(minutes=1)
         

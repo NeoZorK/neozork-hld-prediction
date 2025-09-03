@@ -11,7 +11,7 @@ import pandas as pd
 
 # Use relative imports within the src package
 from src.common import logger
-from src.data.data_acquisition import acquire_data
+from src.data.acquisition import acquire_data
 from src.utils.point_size_determination import get_point_size
 from src.calculation.indicator_calculation import calculate_indicator
 from src.plotting.plotting_generation import generate_plot

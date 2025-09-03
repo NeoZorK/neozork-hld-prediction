@@ -14,7 +14,7 @@ from src.common.constants import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
 # Import the main calculation function from indicator module
 from .indicator import calculate_pressure_vector
 from .rules import apply_trading_rule
-from src.cli.cli import parse_indicator_parameters
+from src.common.parsing import parse_indicator_parameters
 
 # Definition of the calculate_indicator function
 def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):

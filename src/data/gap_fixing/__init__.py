@@ -15,8 +15,8 @@ from .explanation import (
     get_gap_fixing_methods, 
     get_gap_detection_metrics
 )
-from .algorithms import GapFixingAlgorithms
-from .interpolation import GapInterpolation
+from .algorithms import GapFixingStrategy
+from .interpolation import apply_interpolation_method
 from .utils import GapFixingUtils
 
 __all__ = [
@@ -25,7 +25,7 @@ __all__ = [
     'get_gap_fixing_benefits', 
     'get_gap_fixing_methods',
     'get_gap_detection_metrics',
-    'GapFixingAlgorithms',
-    'GapInterpolation',
+    'GapFixingStrategy',
+    'apply_interpolation_method',
     'GapFixingUtils'
 ]
