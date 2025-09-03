@@ -19,7 +19,7 @@ import time
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent / "src"))
 
-from src.interactive.analysis_runner import AnalysisRunner
+from src.interactive.analysis.analysis_runner import AnalysisRunner
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 from interactive_system import InteractiveSystem

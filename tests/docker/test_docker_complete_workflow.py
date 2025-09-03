@@ -17,7 +17,7 @@ def test_complete_workflow():
     print("🚀 Testing Complete Workflow...")
     
     try:
-        from src.interactive import InteractiveSystem
+        from src.interactive.core.interactive_system import InteractiveSystem
         
         # Initialize system
         system = InteractiveSystem()
@@ -56,7 +56,7 @@ def test_interactive_system_direct():
     print("🚀 Testing Interactive System Direct Method Calls...")
     
     try:
-        from src.interactive import InteractiveSystem
+        from src.interactive.core.interactive_system import InteractiveSystem
         
         # Initialize system
         system = InteractiveSystem()

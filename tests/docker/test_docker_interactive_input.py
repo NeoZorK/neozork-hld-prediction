@@ -65,7 +65,7 @@ import os
 sys.path.append('/app/src')
 
 try:
-    from src.interactive import InteractiveSystem
+    from src.interactive.core.interactive_system import InteractiveSystem
     
     # Initialize system
     system = InteractiveSystem()

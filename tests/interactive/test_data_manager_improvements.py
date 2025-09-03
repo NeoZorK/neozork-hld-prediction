@@ -17,7 +17,7 @@ import tempfile
 import shutil
 import json
 
-from src.interactive.data_manager import DataManager
+from src.interactive.data.data_manager import DataManager
 
 
 class TestDataManagerImprovements:

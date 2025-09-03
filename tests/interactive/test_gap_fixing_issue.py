@@ -17,8 +17,8 @@ import os
 # Add project root to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 
-from src.interactive import InteractiveSystem
-from src.interactive.analysis_runner import AnalysisRunner
+from src.interactive.core.interactive_system import InteractiveSystem
+from src.interactive.analysis.analysis_runner import AnalysisRunner
 from src.batch_eda import fix_files
 from src.batch_eda import data_quality
 

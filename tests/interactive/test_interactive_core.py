@@ -14,7 +14,7 @@ import tempfile
 import os
 
 # Import the module to test
-from src.interactive.core import InteractiveSystem
+from src.interactive.core.interactive_system import InteractiveSystem
 
 
 class TestInteractiveSystem:

@@ -42,7 +42,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.interactive import InteractiveSystem
+from src.interactive.core.interactive_system import InteractiveSystem
 
 def test_eurusd_loading():
     """Test loading EURUSD data in interactive system."""

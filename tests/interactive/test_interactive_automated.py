@@ -63,7 +63,7 @@ def test_interactive_system_manual():
     print("🚀 Testing Interactive System with Manual Input Simulation...")
     
     try:
-        from src.interactive import InteractiveSystem
+        from src.interactive.core.interactive_system import InteractiveSystem
         
         # Initialize system
         system = InteractiveSystem()

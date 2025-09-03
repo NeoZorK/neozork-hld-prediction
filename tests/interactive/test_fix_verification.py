@@ -16,7 +16,7 @@ import sys
 project_root = Path(__file__).parent.parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.interactive.data_manager import DataManager
+from src.interactive.data.data_manager import DataManager
 
 
 class TestFixVerification:

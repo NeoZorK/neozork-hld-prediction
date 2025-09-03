@@ -21,7 +21,7 @@ project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 
 try:
-    from src.interactive import InteractiveSystem
+    from src.interactive.core.interactive_system import InteractiveSystem
 except ImportError as e:
     print(f"Error importing interactive system: {e}")
     print("Please ensure all dependencies are installed and the project structure is correct.")

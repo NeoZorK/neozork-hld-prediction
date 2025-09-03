@@ -14,7 +14,7 @@ import tempfile
 import os
 
 # Import the module to test
-from src.interactive.feature_engineering_manager import FeatureEngineeringManager
+from src.interactive.analysis.feature_engineering_manager import FeatureEngineeringManager
 
 
 class TestFeatureEngineeringManager:

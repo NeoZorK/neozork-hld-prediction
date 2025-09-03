@@ -14,7 +14,7 @@ import tempfile
 import os
 
 # Import the module to test
-from src.interactive.menu_manager import MenuManager
+from src.interactive.ui.menu_manager import MenuManager
 
 
 class TestMenuManager:

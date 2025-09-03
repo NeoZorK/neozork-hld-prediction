@@ -8,8 +8,8 @@ import pandas as pd
 from pathlib import Path
 import tempfile
 import os
-from src.interactive.data_loader import DataLoader
-from src.interactive.memory_manager import MemoryManager
+from src.interactive.data.data_loader import DataLoader
+from src.interactive.data.memory_manager import MemoryManager
 
 
 class TestTimestampCaseSensitivity:

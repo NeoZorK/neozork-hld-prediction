@@ -21,7 +21,7 @@ from src.export.parquet_export import export_indicator_to_parquet
 from src.export.csv_export import export_indicator_to_csv
 from src.export.json_export import export_indicator_to_json
 # Import interactive mode
-from src.interactive.core import InteractiveSystem
+from src.interactive.core.interactive_system import InteractiveSystem
 # from src.calculation.universal_trading_metrics import display_universal_trading_metrics
 
 try:

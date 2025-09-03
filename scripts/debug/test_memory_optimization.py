@@ -18,7 +18,7 @@ sys.path.insert(0, str(project_root))
 
 try:
     import psutil
-    from src.interactive.data_manager import DataManager
+    from src.interactive.data.data_manager import DataManager
 except ImportError as e:
     print(f"Error importing modules: {e}")
     sys.exit(1)

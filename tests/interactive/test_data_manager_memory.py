@@ -14,7 +14,7 @@ import os
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
-from src.interactive.data_manager import DataManager
+from src.interactive.data.data_manager import DataManager
 
 
 class TestDataManagerMemory:

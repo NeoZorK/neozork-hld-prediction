@@ -10,8 +10,8 @@ import pytest
 import pandas as pd
 import numpy as np
 from unittest.mock import Mock, patch, MagicMock
-from src.interactive.analysis_runner import AnalysisRunner
-from src.interactive.core import InteractiveSystem
+from src.interactive.analysis.analysis_runner import AnalysisRunner
+from src.interactive.core.interactive_system import InteractiveSystem
 
 
 class TestGapVerificationFix:

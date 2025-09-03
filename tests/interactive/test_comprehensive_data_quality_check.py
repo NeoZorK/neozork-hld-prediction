@@ -10,7 +10,7 @@ import numpy as np
 from datetime import datetime, timedelta
 from unittest.mock import patch, MagicMock
 
-from src.interactive import InteractiveSystem
+from src.interactive.core.interactive_system import InteractiveSystem
 
 
 class TestComprehensiveDataQualityCheck:

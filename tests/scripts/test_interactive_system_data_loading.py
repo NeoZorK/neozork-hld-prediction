@@ -50,7 +50,7 @@ def test_data_folder_scanning():
 
 def test_single_file_loading():
     """Test loading a single data file."""
-    from src.interactive import InteractiveSystem
+    from src.interactive.core.interactive_system import InteractiveSystem
     from unittest.mock import patch
     
     system = InteractiveSystem()

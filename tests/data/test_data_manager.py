@@ -14,7 +14,7 @@ import tempfile
 import os
 
 # Import the module to test
-from src.interactive.data_manager import DataManager
+from src.interactive.data.data_manager import DataManager
 
 
 class TestDataManager:

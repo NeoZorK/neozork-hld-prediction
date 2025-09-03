@@ -15,7 +15,7 @@ import tempfile
 import os
 from unittest.mock import patch, MagicMock
 
-from src.interactive.analysis_runner import AnalysisRunner
+from src.interactive.analysis.analysis_runner import AnalysisRunner
 
 
 class TestAnalysisRunnerFixes:

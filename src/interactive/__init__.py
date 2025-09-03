@@ -12,11 +12,11 @@ This module provides interactive analysis capabilities including:
 """
 
 from .core.interactive_system import InteractiveSystem
-from .menu_manager import MenuManager
-from .data_manager import DataManager
-from .analysis_runner import AnalysisRunner
-from .visualization_manager import VisualizationManager
-from .feature_engineering_manager import FeatureEngineeringManager
+from .ui.menu_manager import MenuManager
+from .data.data_manager import DataManager
+from .analysis.analysis_runner import AnalysisRunner
+from .visualization.visualization_manager import VisualizationManager
+from .analysis.feature_engineering_manager import FeatureEngineeringManager
 
 __all__ = [
     'InteractiveSystem',
