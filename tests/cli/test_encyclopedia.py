@@ -313,8 +313,8 @@ class TestVolatilityMetrics:
         assert metrics['name'] == 'Bollinger Bands'
         assert 'formula' in metrics
         assert 'interpretation' in metrics
-        assert 'calculation_method' in metrics
-        assert 'best_timeframes' in metrics
+        assert 'calculation_note' in metrics
+        assert 'strategy_impact' in metrics
     
     def test_get_stdev_metrics(self):
         """Test StDev metrics retrieval."""
