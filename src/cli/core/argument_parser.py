@@ -30,10 +30,10 @@ def show_cool_version():
     import random
     from datetime import datetime
     
-    def create_aligned_line(text, clean_text_len, total_width=66, move_border_left=0):
+    def create_aligned_line(text, clean_text_len, total_width=66, move_border_left=0, move_border_right=0):
         """Create perfectly aligned line with exact width."""
         # Calculate spaces needed for perfect alignment
-        content_width = 60 - move_border_left  # Adjust content area based on border position
+        content_width = 60 - move_border_left + move_border_right  # Adjust content area based on border position
         needed_spaces = content_width - clean_text_len
         if needed_spaces < 0:
             needed_spaces = 0
@@ -52,10 +52,17 @@ def show_cool_version():
                 glitched += char
         return glitched
     
-    def typewriter_effect(text, delay=0.0025):
+    def typewriter_effect(text, delay=0.00025):
         """Ultra fast typewriter effect."""
         for i in range(len(text) + 1):
             print('\r' + text[:i] + ('█' if i < len(text) else ''), end='', flush=True)
+            time.sleep(delay)
+        print()  # New line after typing
+    
+    def typewriter_effect_clean(text, delay=0.0025):
+        """Ultra fast typewriter effect without border symbols."""
+        for i in range(len(text) + 1):
+            print('\r' + text[:i], end='', flush=True)
             time.sleep(delay)
         print()  # New line after typing
     
@@ -78,7 +85,7 @@ def show_cool_version():
     
     for msg in loading_messages:
         typewriter_effect(msg, 0.02)
-        time.sleep(0.3)
+        time.sleep(0.02)
     
     # Clean direct transition to logo
     os.system('clear' if os.name == 'posix' else 'cls')
@@ -115,7 +122,7 @@ def show_cool_version():
             # Clear the glitched line properly
             print('\r' + ' ' * 66 + '\r', end='', flush=True)
         
-        # Character by character reveal with perfect alignment
+        # Character by character reveal with perfect alignment (clean, no border symbols)
         revealed_chars = ''
         for char in ascii_line:
             revealed_chars += char
@@ -146,8 +153,8 @@ def show_cool_version():
         # Calculate clean text length without color codes
         clean_text = text.replace(Style.BRIGHT, '').replace(Style.RESET_ALL, '').replace(Fore.YELLOW, '').replace(Fore.GREEN, '').replace(Fore.RED, '').replace(Fore.BLUE, '')
         clean_text_len = len(clean_text)
-        line = create_aligned_line(text, clean_text_len, move_border_left=2)
-        typewriter_effect(line, 0.0000018)  # 100x faster than before
+        line = create_aligned_line(text, clean_text_len, move_border_right=0)
+        typewriter_effect_clean(line, 0.0000018)  # 100x faster than before
         time.sleep(0.000018)  # 100x faster than before
     
     # Second middle border - ultra fast (100x faster)
