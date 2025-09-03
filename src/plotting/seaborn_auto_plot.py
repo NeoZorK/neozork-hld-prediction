@@ -74,5 +74,5 @@ def auto_plot_from_parquet(parquet_path: str, plot_title: str = "Auto Plot from 
 
     plt.tight_layout()
     # Smart plot display that automatically determines whether to show or close
-    smart_plot_display()
+    smart_plot_display(block=True)  # Keep plot open and block execution
 

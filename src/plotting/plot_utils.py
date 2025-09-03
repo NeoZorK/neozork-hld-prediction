@@ -9,6 +9,7 @@ import os
 import matplotlib
 import matplotlib.pyplot as plt
 import sys
+import time
 
 
 def is_test_environment():
@@ -47,15 +48,33 @@ def should_show_plot():
     return not is_test_environment()
 
 
-def smart_plot_display(show_plot=True):
+def smart_plot_display(show_plot=True, block=None, pause_time=None):
     """
     Smart plot display function that automatically determines whether to show or close plots.
     
     Args:
         show_plot (bool): Whether to show the plot (overrides automatic detection)
+        block (bool): Whether to block execution while showing the plot. If None, uses PLOT_BLOCK_MODE env var
+        pause_time (float): Time to pause before closing (in seconds) if not blocking. If None, uses PLOT_PAUSE_TIME env var
     """
+    # Check environment variable for block mode if not explicitly specified
+    if block is None:
+        block_env = os.environ.get('PLOT_BLOCK_MODE', 'true').lower()
+        block = block_env in ('true', '1', 'yes', 'on')
+    
+    # Check environment variable for pause time if not explicitly specified
+    if pause_time is None:
+        pause_time = float(os.environ.get('PLOT_PAUSE_TIME', '5.0'))
+    
     if show_plot and should_show_plot():
-        plt.show()
+        if block:
+            plt.show(block=True)
+        else:
+            plt.show(block=False)
+            # Give user time to see the plot before it closes
+            print(f"\nPlot displayed. Closing in {pause_time} seconds...")
+            time.sleep(pause_time)
+            plt.close()
     else:
         plt.close()
 

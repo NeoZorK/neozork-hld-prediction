@@ -20,6 +20,8 @@ from src.cli.cli_show_mode import handle_show_mode
 from src.export.parquet_export import export_indicator_to_parquet
 from src.export.csv_export import export_indicator_to_csv
 from src.export.json_export import export_indicator_to_json
+# Import interactive mode
+from src.interactive.core import InteractiveSystem
 # from src.calculation.universal_trading_metrics import display_universal_trading_metrics
 
 try:
@@ -40,6 +42,44 @@ def run_indicator_workflow(args):
     Returns:
         dict: A dictionary containing results and metrics of the workflow.
     """
+    # Special case: handle interactive mode
+    if hasattr(args, 'interactive') and args.interactive:
+        try:
+            logger.print_info("Starting interactive mode...")
+            system = InteractiveSystem()
+            system.run()
+            return {
+                "success": True,
+                "effective_mode": "interactive",
+                "data_source_label": "Interactive mode",
+                "error_message": None,
+                "error_traceback": None,
+                "data_fetch_duration": 0,
+                "calc_duration": 0,
+                "plot_duration": 0,
+                "rows_count": 0,
+                "columns_count": 0,
+                "data_size_mb": 0,
+                "data_size_bytes": 0
+            }
+        except Exception as e:
+            traceback_str = traceback.format_exc()
+            logger.print_error(f"Interactive mode failed: {e}")
+            return {
+                "success": False,
+                "effective_mode": "interactive",
+                "data_source_label": "Interactive mode",
+                "error_message": str(e),
+                "error_traceback": traceback_str,
+                "data_fetch_duration": 0,
+                "calc_duration": 0,
+                "plot_duration": 0,
+                "rows_count": 0,
+                "columns_count": 0,
+                "data_size_mb": 0,
+                "data_size_bytes": 0
+            }
+    
     # Special case: handle 'show' mode differently
     if args.mode == 'show':
         try:

@@ -57,11 +57,65 @@ If you find this project helpful and would like to support the development, cons
 
 ---
 
+## 🐛 Recent Fixes
+
+### ✅ Fixed: Interactive Mode Flag (v0.6.2)
+**Problem**: The `--interactive` flag in `run_analysis.py` was not properly handled, causing the script to always run in interactive mode.
+
+**Solution**: Properly implemented interactive mode handling in CLI and workflow modules.
+
+**Commands now work correctly**:
+```bash
+# Start interactive mode (mode automatically set)
+uv run run_analysis.py --interactive
+
+# Start interactive mode with explicit mode
+uv run run_analysis.py --interactive demo
+
+# Run non-interactive analysis
+uv run run_analysis.py demo --rule EMA
+```
+
+**New features**:
+- Proper `--interactive` flag handling
+- Automatic mode setting when using interactive flag
+- Seamless integration with existing workflow
+- Comprehensive test coverage
+
+See [Interactive Mode Fix Documentation](docs/development/run_analysis_interactive_fix.md) for technical details.
+
+### ✅ Fixed: Plot Display Issues (v0.6.1)
+**Problem**: Graphs were closing instantly after opening when using `-d mpl` and `-d sb` options.
+
+**Solution**: Updated `smart_plot_display()` function to support blocking mode and configurable pause times.
+
+**Commands now work correctly**:
+```bash
+uv run run_analysis.py show csv mn1 gbp -d mpl --rule AUTO
+uv run run_analysis.py show csv mn1 gbp -d sb --rule AUTO
+```
+
+**New features**:
+- Graphs remain open until manually closed (default behavior)
+- Configurable display behavior via environment variables
+- Support for both blocking and non-blocking modes
+
+**Environment variables**:
+```bash
+export PLOT_BLOCK_MODE=true    # Keep plots open (default)
+export PLOT_BLOCK_MODE=false   # Auto-close with pause
+export PLOT_PAUSE_TIME=10.0    # Pause time in seconds
+```
+
+See [Plot Display Fixes Documentation](docs/development/plot-display-fixes.md) for technical details.
+
+---
+
 ## 🚀 Quick Start
 
 > ⚠️ **Note**: Docker and Apple Silicon containers are currently on pause due to active ML model development. Please use local setup for now.
 > 
-> **📋 Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.5.3
+> **📋 Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.6.2
 
 ### Native Apple Silicon Container (FULL DOCKER PARITY)
 ```bash

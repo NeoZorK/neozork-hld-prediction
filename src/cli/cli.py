@@ -162,8 +162,8 @@ def parse_arguments():
 
     # --- Required Arguments Group ---
     required_group = parser.add_argument_group('Required Arguments')
-    required_group.add_argument('mode', choices=['demo', 'yfinance', 'yf', 'csv', 'polygon', 'binance', 'exrate', 'show', 'interactive'],
-                                help="Operating mode: 'demo', 'yfinance'/'yf', 'csv', 'polygon', 'binance', 'exrate', 'show', 'interactive'.")
+    required_group.add_argument('mode', nargs='?', choices=['demo', 'yfinance', 'yf', 'csv', 'polygon', 'binance', 'exrate', 'show', 'interactive'],
+                                help="Operating mode: 'demo', 'yfinance'/'yf', 'csv', 'polygon', 'binance', 'exrate', 'show', 'interactive'. Not required when using --interactive flag.")
 
     # --- Show Mode Positional Arguments ---
     parser.add_argument('show_args', nargs='*', default=[],
@@ -626,6 +626,10 @@ def parse_arguments():
     for action in parser._actions:
         if action.dest in ['export_parquet', 'export_csv', 'export_json', 'export_indicators_info']:
             action.help += ' (Allowed only in demo and show (except show ind); forbidden in show ind, yfinance, csv, polygon, binance, exrate)'
+
+    # Auto-set mode to interactive if --interactive flag is used
+    if hasattr(args, 'interactive') and args.interactive and not args.mode:
+        args.mode = 'interactive'
 
     return args
 
