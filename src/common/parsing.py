@@ -114,6 +114,17 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
 
 def parse_rsi_parameters(params_str: str) -> tuple[str, dict]:
     """Parse RSI parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("RSI indicator requires parameters", "rsi", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("RSI indicator requires parameters. Use format: rsi:period,oversold,overbought,price_type")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -131,6 +142,17 @@ def parse_rsi_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_stoch_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Stochastic parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("Stochastic indicator requires parameters", "stoch", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("Stochastic indicator requires parameters. Use format: stoch:k_period,d_period,slowing")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -146,6 +168,17 @@ def parse_stoch_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_monte_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Monte Carlo parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("Monte Carlo indicator requires parameters", "monte", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("Monte Carlo indicator requires parameters. Use format: monte:iterations,confidence")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -159,6 +192,17 @@ def parse_monte_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_feargreed_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Fear & Greed parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("Fear & Greed indicator requires parameters", "feargreed", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("Fear & Greed indicator requires parameters. Use format: feargreed:lookback")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -170,6 +214,17 @@ def parse_feargreed_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_tsf_parameters(params_str: str) -> tuple[str, dict]:
     """Parse TSF parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("TSF indicator requires parameters", "tsf", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("TSF indicator requires parameters. Use format: tsf:period")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -181,6 +236,17 @@ def parse_tsf_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_rsi_momentum_parameters(params_str: str) -> tuple[str, dict]:
     """Parse RSI Momentum parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("RSI Momentum indicator requires parameters", "rsi_mom", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("RSI Momentum indicator requires parameters. Use format: rsi_mom:period")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -192,6 +258,17 @@ def parse_rsi_momentum_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_rsi_divergence_parameters(params_str: str) -> tuple[str, dict]:
     """Parse RSI Divergence parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("RSI Divergence indicator requires parameters", "rsi_div", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("RSI Divergence indicator requires parameters. Use format: rsi_div:period")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -203,6 +280,17 @@ def parse_rsi_divergence_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_macd_parameters(params_str: str) -> tuple[str, dict]:
     """Parse MACD parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("MACD indicator requires parameters", "macd", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("MACD indicator requires parameters. Use format: macd:fast_period,slow_period,signal_period,price_type")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -218,6 +306,17 @@ def parse_macd_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_ema_parameters(params_str: str) -> tuple[str, dict]:
     """Parse EMA parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("EMA indicator requires parameters", "ema", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("EMA indicator requires parameters. Use format: ema:period,price_type")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -229,6 +328,17 @@ def parse_ema_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_sma_parameters(params_str: str) -> tuple[str, dict]:
     """Parse SMA parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("SMA indicator requires parameters", "sma", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("SMA indicator requires parameters. Use format: sma:period,price_type")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -240,6 +350,17 @@ def parse_sma_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_bb_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Bollinger Bands parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("Bollinger Bands indicator requires parameters", "bb", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("Bollinger Bands indicator requires parameters. Use format: bb:period,std_dev,price_type")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -253,6 +374,17 @@ def parse_bb_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_atr_parameters(params_str: str) -> tuple[str, dict]:
     """Parse ATR parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("ATR indicator requires parameters", "atr", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("ATR indicator requires parameters. Use format: atr:period")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -264,6 +396,17 @@ def parse_atr_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_cci_parameters(params_str: str) -> tuple[str, dict]:
     """Parse CCI parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("CCI indicator requires parameters", "cci", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("CCI indicator requires parameters. Use format: cci:period")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -275,6 +418,17 @@ def parse_cci_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_vwap_parameters(params_str: str) -> tuple[str, dict]:
     """Parse VWAP parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("VWAP indicator requires parameters", "vwap", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("VWAP indicator requires parameters. Use format: vwap:period")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -286,6 +440,17 @@ def parse_vwap_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_pivot_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Pivot Points parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("Pivot Points indicator requires parameters", "pivot", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("Pivot Points indicator requires parameters. Use format: pivot:price_type")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -297,6 +462,17 @@ def parse_pivot_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_hma_parameters(params_str: str) -> tuple[str, dict]:
     """Parse HMA parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("HMA indicator requires parameters", "hma", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("HMA indicator requires parameters. Use format: hma:period,price_type")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -308,6 +484,17 @@ def parse_hma_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_kelly_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Kelly Criterion parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("Kelly Criterion indicator requires parameters", "kelly", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("Kelly Criterion indicator requires parameters. Use format: kelly:period")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -319,6 +506,17 @@ def parse_kelly_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_donchain_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Donchian Channel parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("Donchian Channel indicator requires parameters", "donchain", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("Donchian Channel indicator requires parameters. Use format: donchain:period")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -330,6 +528,17 @@ def parse_donchain_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_fibo_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Fibonacci Retracement parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("Fibonacci indicator requires parameters", "fibo", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("Fibonacci indicator requires parameters. Use format: fibo:method")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -341,6 +550,17 @@ def parse_fibo_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_obv_parameters(params_str: str) -> tuple[str, dict]:
     """Parse OBV parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("OBV indicator requires parameters", "obv", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("OBV indicator requires parameters. Use format: obv:period")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -352,6 +572,17 @@ def parse_obv_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_stdev_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Standard Deviation parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("Standard Deviation indicator requires parameters", "stdev", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("Standard Deviation indicator requires parameters. Use format: stdev:period")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -363,6 +594,17 @@ def parse_stdev_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_adx_parameters(params_str: str) -> tuple[str, dict]:
     """Parse ADX parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("ADX indicator requires parameters", "adx", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("ADX indicator requires parameters. Use format: adx:period")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -374,6 +616,17 @@ def parse_adx_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_sar_parameters(params_str: str) -> tuple[str, dict]:
     """Parse SAR parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("SAR indicator requires parameters", "sar", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("SAR indicator requires parameters. Use format: sar:acceleration,maximum")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -387,6 +640,17 @@ def parse_sar_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_supertrend_parameters(params_str: str) -> tuple[str, dict]:
     """Parse SuperTrend parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("SuperTrend indicator requires parameters", "supertrend", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("SuperTrend indicator requires parameters. Use format: supertrend:period,multiplier")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -400,6 +664,17 @@ def parse_supertrend_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_putcallratio_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Put-Call Ratio parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("Put-Call Ratio indicator requires parameters", "putcallratio", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("Put-Call Ratio indicator requires parameters. Use format: putcallratio:lookback")
+    
     params = {}
     parts = params_str.split(',')
     
@@ -411,6 +686,17 @@ def parse_putcallratio_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_cot_parameters(params_str: str) -> tuple[str, dict]:
     """Parse COT parameters."""
+    # Check if parameters string is empty and show help
+    if not params_str.strip():
+        try:
+            from src.cli.error_handling import show_enhanced_indicator_help
+            show_enhanced_indicator_help("COT indicator requires parameters", "cot", show_error_header=False)
+            import sys
+            sys.exit(1)
+        except ImportError:
+            # Fallback if error_handling module not available
+            raise ValueError("COT indicator requires parameters. Use format: cot:lookback")
+    
     params = {}
     parts = params_str.split(',')
     

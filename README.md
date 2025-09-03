@@ -84,21 +84,39 @@ uv run run_analysis.py demo --rule EMA
 
 See [Interactive Mode Fix Documentation](docs/development/run_analysis_interactive_fix.md) for technical details.
 
-### ✅ Fixed: Plot Display Issues (v0.6.1)
-**Problem**: Graphs were closing instantly after opening when using `-d mpl` and `-d sb` options.
+### ✅ Fixed: Plot Display Issues (v0.6.5)
+**Problem**: Charts were not opening at all when using `-d mpl` and `-d sb` options.
 
-**Solution**: Updated `smart_plot_display()` function to support blocking mode and configurable pause times.
+**Solution**: Implemented file-based plot display system with automatic file opening and improved backend handling.
 
 **Commands now work correctly**:
 ```bash
-uv run run_analysis.py show csv mn1 gbp -d mpl --rule AUTO
-uv run run_analysis.py show csv mn1 gbp -d sb --rule AUTO
+uv run run_analysis.py show csv gbp mn1 -d mpl --rule AUTO
+uv run run_analysis.py show csv gbp mn1 -d sb --rule AUTO
 ```
 
 **New features**:
-- Graphs remain open until manually closed (default behavior)
-- Configurable display behavior via environment variables
-- Support for both blocking and non-blocking modes
+- Automatic plot file saving in `plots/` directory
+- System default viewer integration for plot display
+- Reliable cross-platform plot viewing with Agg backend
+- Memory-efficient plotting with automatic figure cleanup
+- Type-specific plot file naming (mplfinance_*, seaborn_*)
+
+**How it works**:
+1. Plots are generated using Agg backend for reliability
+2. Files are automatically saved as PNG with descriptive names
+3. System default viewer opens plots automatically
+4. Plots remain accessible even after command completion
+
+**Generated files**:
+- `seaborn_plot_{filename}.png` for seaborn plots
+- `mplfinance_plot_{filename}.png` for mplfinance plots
+
+**Technical benefits**:
+- Uses most stable matplotlib backend (`Agg`)
+- Eliminates matplotlib backend crashes
+- Works in CI/CD and automated environments
+- Easy to share and archive generated plots
 
 **Environment variables**:
 ```bash
@@ -107,7 +125,7 @@ export PLOT_BLOCK_MODE=false   # Auto-close with pause
 export PLOT_PAUSE_TIME=10.0    # Pause time in seconds
 ```
 
-See [Plot Display Fixes Documentation](docs/development/plot-display-fixes.md) for technical details.
+See [Plot Display Fix v3 Documentation](docs/development/plot_display_fix_v3.md) for technical details.
 
 ---
 
@@ -115,7 +133,7 @@ See [Plot Display Fixes Documentation](docs/development/plot-display-fixes.md) f
 
 > ⚠️ **Note**: Docker and Apple Silicon containers are currently on pause due to active ML model development. Please use local setup for now.
 > 
-> **📋 Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.6.2
+> **📋 Version Information**: v0.5.2 is the last version that supports Docker and Apple Container. Current version: v0.6.5
 
 ### Native Apple Silicon Container (FULL DOCKER PARITY)
 ```bash

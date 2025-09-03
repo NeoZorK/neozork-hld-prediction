@@ -1745,6 +1745,12 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
         elif indicator_name == 'putcallratio':
             return parse_putcallratio_parameters(params_str)
         elif indicator_name == 'cot':
+            # Check if parameters string is empty and show help
+            if not params_str:
+                from .error_handling import show_enhanced_indicator_help
+                show_enhanced_indicator_help("COT indicator requires parameters", "cot", show_error_header=False)
+                import sys
+                sys.exit(1)
             return parse_cot_parameters(params_str)
         elif indicator_name == 'wave':
             # Special handling for wave indicator - show help if no parameters

@@ -77,6 +77,23 @@ def auto_plot_from_parquet(parquet_path):
             ax.legend(loc='upper right')
 
     plt.tight_layout()
+    
+    # Save plot to file first
+    import os
+    
+    # Create plots directory if it doesn't exist
+    plots_dir = os.path.join(os.getcwd(), 'plots')
+    if not os.path.exists(plots_dir):
+        os.makedirs(plots_dir)
+    
+    # Save plot to file
+    plot_file = os.path.join(plots_dir, f'mplfinance_plot_{os.path.basename(parquet_path).replace(".parquet", "")}.png')
+    plt.savefig(plot_file, dpi=150, bbox_inches='tight', facecolor='white')
+    print(f"Plot saved to: {plot_file}")
+    
+    # Close the matplotlib figure to free memory
+    plt.close()
+    
     # Smart plot display that automatically determines whether to show or close
-    smart_plot_display(block=True)  # Keep plot open and block execution
+    smart_plot_display(block=True, plot_type="mplfinance")  # Keep plot open and block execution
 
