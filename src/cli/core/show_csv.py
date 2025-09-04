@@ -29,7 +29,7 @@ def handle_csv_show_mode(args):
     """
     Handle CSV show mode operations.
     """
-    csv_dir = Path("data/cache/csv_converted")
+    csv_dir = Path("data/csv_converted")
     
     if not csv_dir.exists():
         print(f"{Fore.RED}CSV directory not found: {csv_dir}{Style.RESET_ALL}")

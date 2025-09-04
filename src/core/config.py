@@ -38,9 +38,12 @@ class Config:
         """Get default configuration values."""
         return {
             "data": {
-                "cache_dir": "data/cache",
-                "raw_dir": "data/raw",
-                "processed_dir": "data/processed",
+                "cache_dir": "data/csv_converted",
+                "raw_dir": "data/raw_parquet",
+                "processed_dir": "data/cleaned_data",
+                "mql5_dir": "data/mql5_feed",
+                "samples_dir": "data/samples",
+                "indicators_dir": "data/indicators",
                 "max_file_size_mb": 100
             },
             "analysis": {

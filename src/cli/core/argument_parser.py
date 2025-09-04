@@ -88,6 +88,10 @@ def parse_arguments():
         # Parse arguments for normal operation
         args = parser.parse_args()
         
+        # Validate and process arguments
+        from .argument_validator import validate_and_process_arguments
+        validate_and_process_arguments(args)
+        
     except SystemExit as e:
         if e.code != 0:
             print(f"Argument parsing error (Code: {e.code}). Exiting.", file=sys.stderr)

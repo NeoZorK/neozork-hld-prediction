@@ -45,9 +45,11 @@ def handle_universal_show_mode(args):
         return
     
     # Filter by source if specified
-    if hasattr(args, 'source') and args.source and args.source != 'yfinance':
+    if hasattr(args, 'source') and args.source:
         filtered_data = filter_by_source(all_data, args.source)
-        if not filtered_data:
+        # Check if any data was found after filtering
+        total_filtered = sum(len(files) for symbols in filtered_data.values() for files in symbols.values())
+        if total_filtered == 0:
             print(f"{Fore.YELLOW}No data found for source: {args.source}{Style.RESET_ALL}")
             return
         all_data = filtered_data
@@ -73,10 +75,12 @@ def scan_all_data_folders(data_dir):
     folder_mappings = {
         'raw_parquet': 'raw',
         'cleaned_data': 'yfinance',
-        'cache/csv_converted': 'csv',
+        'csv_converted': 'csv',
         'indicators/parquet': 'indicators',
         'indicators/csv': 'indicators_csv',
-        'indicators/json': 'indicators_json'
+        'indicators/json': 'indicators_json',
+        'mql5_feed': 'mql5',
+        'samples': 'samples'
     }
     
     # Scan each folder
@@ -85,19 +89,25 @@ def scan_all_data_folders(data_dir):
         if folder_path.exists():
             scan_folder(folder_path, source_type, all_data)
     
-    # Also scan root data directory for loose files
-    scan_folder(data_dir, 'root', all_data)
+    # Also scan root data directory for loose files (only files directly in data/ root)
+    for pattern in ['*.parquet', '*.csv', '*.json']:
+        for file_path in data_dir.glob(pattern):
+            if file_path.is_file():
+                file_info = parse_file_info(file_path, 'root')
+                if file_info:
+                    symbol = file_info['symbol']
+                    all_data['root'][symbol].append(file_info)
     
     return all_data
 
 
 def scan_folder(folder_path, source_type, all_data):
     """
-    Scan a specific folder for data files.
+    Scan a specific folder for data files (recursively for subfolders).
     """
-    # Get all parquet, csv, and json files
-    for pattern in ['*.parquet', '*.csv', '*.json']:
-        for file_path in folder_path.glob(pattern):
+    # Get all parquet, csv, and json files recursively
+    for pattern in ['*.parquet', '*.csv', '*.json', '*.mq5']:
+        for file_path in folder_path.rglob(pattern):
             if file_path.is_file():
                 # Parse file information
                 file_info = parse_file_info(file_path, source_type)
@@ -185,8 +195,43 @@ def parse_file_info(file_path, source_type):
                 'file_type': 'parquet',
                 'file_size': file_size,
                 'file_size_mb': file_size_mb,
-                'folder': 'cache/csv_converted'
+                'folder': 'csv_converted'
             }
+        else:
+            # For files in symbol subfolders, extract symbol from parent folder name
+            parent_folder = file_path.parent.name
+            if parent_folder != 'csv_converted' and parent_folder != 'others':
+                # This is a file in a symbol subfolder
+                # Try to extract timeframe from filename
+                timeframe = 'UNKNOWN'
+                if 'M1' in filename:
+                    timeframe = 'M1'
+                elif 'M5' in filename:
+                    timeframe = 'M5'
+                elif 'M15' in filename:
+                    timeframe = 'M15'
+                elif 'H1' in filename:
+                    timeframe = 'H1'
+                elif 'H4' in filename:
+                    timeframe = 'H4'
+                elif 'D1' in filename:
+                    timeframe = 'D1'
+                elif 'W1' in filename:
+                    timeframe = 'W1'
+                elif 'MN1' in filename:
+                    timeframe = 'MN1'
+                
+                return {
+                    'file_path': file_path,
+                    'filename': file_path.name,
+                    'source': 'csv',
+                    'symbol': parent_folder,
+                    'timeframe': timeframe,
+                    'file_type': 'parquet',
+                    'file_size': file_size,
+                    'file_size_mb': file_size_mb,
+                    'folder': f'csv_converted/{parent_folder}'
+                }
     
     elif source_type == 'yfinance':
         # Pattern: cleaned_*_dataset_*.parquet
@@ -243,6 +288,51 @@ def parse_file_info(file_path, source_type):
                 'file_size_mb': file_size_mb,
                 'folder': 'indicators/parquet'
             }
+    
+    elif source_type == 'mql5':
+        # Handle MQL5 files
+        if file_ext == '.mq5':
+            return {
+                'file_path': file_path,
+                'filename': file_path.name,
+                'source': 'mql5',
+                'symbol': 'INDICATOR',
+                'timeframe': 'UNKNOWN',
+                'file_type': 'mq5',
+                'file_size': file_size,
+                'file_size_mb': file_size_mb,
+                'folder': 'mql5_feed'
+            }
+        elif file_ext == '.csv':
+            # Pattern: CSVExport_SYMBOL_PERIOD_TIMEFRAME.csv
+            match = re.match(r'^CSVExport_([A-Z0-9.]+)_PERIOD_([A-Z0-9]+)\.csv$', filename)
+            if match:
+                symbol, timeframe = match.groups()
+                return {
+                    'file_path': file_path,
+                    'filename': file_path.name,
+                    'source': 'mql5',
+                    'symbol': symbol,
+                    'timeframe': timeframe,
+                    'file_type': 'csv',
+                    'file_size': file_size,
+                    'file_size_mb': file_size_mb,
+                    'folder': 'mql5_feed'
+                }
+    
+    elif source_type == 'samples':
+        # Handle sample files
+        return {
+            'file_path': file_path,
+            'filename': file_path.name,
+            'source': 'samples',
+            'symbol': 'SAMPLE',
+            'timeframe': 'UNKNOWN',
+            'file_type': file_ext[1:],
+            'file_size': file_size,
+            'file_size_mb': file_size_mb,
+            'folder': 'samples'
+        }
     
     elif source_type == 'root':
         # Handle loose files in root data directory
@@ -316,6 +406,7 @@ def display_organized_data(all_data, args):
     print(f"Total files found: {total_files}")
     print(f"Sources: {len(all_data)}")
     
+    
     for source_type, symbols in all_data.items():
         source_files = sum(len(files) for files in symbols.values())
         print(f"\n{Fore.YELLOW}{Style.BRIGHT}📁 {source_type.upper()} ({source_files} files){Style.RESET_ALL}")
@@ -336,7 +427,8 @@ def display_organized_data(all_data, args):
                 for file_info in timeframe_files:
                     size_str = f"{file_info['file_size_mb']:.2f} MB" if file_info['file_size_mb'] > 0 else "0 MB"
                     indicator_str = f" [{file_info.get('indicator', '')}]" if file_info.get('indicator') else ""
-                    print(f"      • {file_info['filename']}{indicator_str} ({size_str})")
+                    file_type_str = f" ({file_info.get('file_type', 'unknown')})"
+                    print(f"      • {file_info['filename']}{indicator_str}{file_type_str} ({size_str})")
     
     # Show summary statistics
     print(f"\n{Fore.CYAN}{Style.BRIGHT}=== SUMMARY ==={Style.RESET_ALL}")
