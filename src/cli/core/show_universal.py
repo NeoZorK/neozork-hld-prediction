@@ -26,6 +26,12 @@ from .cli_show_mode import (
     export_indicator_to_json
 )
 
+# Import fast plotting functions
+try:
+    from src.plotting.fast_plot import plot_indicator_results_fast
+except ImportError:
+    plot_indicator_results_fast = None
+
 
 def handle_universal_show_mode(args):
     """
@@ -500,6 +506,28 @@ def plot_single_file(file_info, args):
                 plot_auto_fastest_parquet(str(file_path), str(output_path), trading_rule_name=rule_name)
             else:
                 print(f"{Fore.RED}Fastest plotting not available for this file type{Style.RESET_ALL}")
+        elif draw_method == 'fast':
+            if plot_indicator_results_fast and file_info['file_type'] == 'parquet':
+                # Get rule name for plotting
+                rule_name = getattr(args, 'rule', 'OHLCV')
+                # Create plots directory if it doesn't exist
+                plots_dir = Path("plots")
+                plots_dir.mkdir(exist_ok=True)
+                # Generate output path for the plot
+                output_path = plots_dir / f"{file_info['filename']}_{rule_name}_fast_plot.html"
+                # Read the parquet file
+                df = pq.read_table(file_path).to_pandas()
+                # Call fast plotting function
+                plot_indicator_results_fast(
+                    df=df,
+                    rule=rule_name,
+                    title=f"Fast Plot - {file_info['filename']}",
+                    output_path=str(output_path),
+                    mode="fast",
+                    data_source="show_mode"
+                )
+            else:
+                print(f"{Fore.RED}Fast plotting not available for this file type{Style.RESET_ALL}")
         elif draw_method in ['plotly', 'plt']:
             if auto_plot_from_parquet and file_info['file_type'] == 'parquet':
                 auto_plot_from_parquet(str(file_path))
