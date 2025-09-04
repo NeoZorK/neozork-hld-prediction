@@ -304,18 +304,41 @@ def plot_dual_chart_mpl(
     
     elif indicator_name == 'macd':
         y_axis_label = 'MACD Value'
-        if 'macd' in display_df.columns:
-            ax2.plot(display_df.index, display_df['macd'], 
+        # Check for both lowercase and uppercase column names
+        macd_col = None
+        signal_col = None
+        histogram_col = None
+        
+        # Find MACD line column
+        for col in ['MACD_Line', 'macd', 'MACD']:
+            if col in display_df.columns:
+                macd_col = col
+                break
+        
+        # Find Signal line column
+        for col in ['MACD_Signal', 'macd_signal', 'MACD_Signal_Line']:
+            if col in display_df.columns:
+                signal_col = col
+                break
+        
+        # Find Histogram column
+        for col in ['MACD_Histogram', 'macd_histogram', 'MACD_Hist']:
+            if col in display_df.columns:
+                histogram_col = col
+                break
+        
+        if macd_col:
+            ax2.plot(display_df.index, display_df[macd_col], 
                     color='blue', linewidth=3, label='MACD')
         
-        if 'macd_signal' in display_df.columns:
-            ax2.plot(display_df.index, display_df['macd_signal'], 
+        if signal_col:
+            ax2.plot(display_df.index, display_df[signal_col], 
                     color='red', linewidth=2, label='Signal')
         
-        if 'macd_histogram' in display_df.columns:
+        if histogram_col:
             # Color histogram bars
-            colors = ['green' if val >= 0 else 'red' for val in display_df['macd_histogram']]
-            ax2.bar(display_df.index, display_df['macd_histogram'], 
+            colors = ['green' if val >= 0 else 'red' for val in display_df[histogram_col]]
+            ax2.bar(display_df.index, display_df[histogram_col], 
                    color=colors, alpha=0.7, label='Histogram', width=0.8)
         
         # Add zero line for MACD

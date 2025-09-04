@@ -269,9 +269,9 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             
             # Calculate MACD (returns tuple: macd_line, signal_line, histogram)
             macd_line, signal_line, histogram = calculate_macd(price_series, fast_period, slow_period, signal_period)
-            result_df['macd'] = macd_line
-            result_df['macd_signal'] = signal_line
-            result_df['macd_histogram'] = histogram
+            result_df['MACD_Line'] = macd_line
+            result_df['MACD_Signal'] = signal_line
+            result_df['MACD_Histogram'] = histogram
             
         elif indicator_name == 'ema':
             period = int(params[0]) if len(params) > 0 else 20
@@ -840,7 +840,7 @@ def plot_dual_chart_results(
     elif indicator_name == 'rsi':
         has_indicators = 'rsi' in df.columns or 'RSI' in df.columns
     elif indicator_name == 'macd':
-        has_indicators = any(col in df.columns for col in ['macd', 'MACD', 'macd_signal', 'MACD_Signal'])
+        has_indicators = any(col in df.columns for col in ['macd', 'MACD', 'macd_signal', 'MACD_Signal', 'MACD_Line', 'MACD_Histogram'])
     # Add more indicator checks as needed...
     
     logger.print_info(f"[dual_chart_plot] Has indicators: {has_indicators}")

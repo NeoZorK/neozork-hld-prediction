@@ -158,45 +158,68 @@ def add_macd_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
         fig (go.Figure): Plotly figure object
         display_df (pd.DataFrame): DataFrame with MACD data
     """
-    if 'macd' in display_df.columns:
+    # Check for both lowercase and uppercase column names
+    macd_col = None
+    signal_col = None
+    histogram_col = None
+    
+    # Find MACD line column
+    for col in ['MACD_Line', 'macd', 'MACD']:
+        if col in display_df.columns:
+            macd_col = col
+            break
+    
+    # Find Signal line column
+    for col in ['MACD_Signal', 'macd_signal', 'MACD_Signal_Line']:
+        if col in display_df.columns:
+            signal_col = col
+            break
+    
+    # Find Histogram column
+    for col in ['MACD_Histogram', 'macd_histogram', 'MACD_Hist']:
+        if col in display_df.columns:
+            histogram_col = col
+            break
+    
+    if macd_col:
         # Add MACD line
         fig.add_trace(
             go.Scatter(
                 x=display_df.index,
-                y=display_df['macd'],
+                y=display_df[macd_col],
                 mode='lines',
                 name='MACD',
                 line=dict(color='blue', width=3),
-                showlegend=False
+                showlegend=True
             ),
             row=2, col=1
         )
     
-    if 'macd_signal' in display_df.columns:
+    if signal_col:
         # Add Signal line
         fig.add_trace(
             go.Scatter(
                 x=display_df.index,
-                y=display_df['macd_signal'],
+                y=display_df[signal_col],
                 mode='lines',
                 name='Signal',
                 line=dict(color='red', width=2),
-                showlegend=False
+                showlegend=True
             ),
             row=2, col=1
         )
     
-    if 'macd_histogram' in display_df.columns:
+    if histogram_col:
         # Add Histogram
-        colors = ['green' if val >= 0 else 'red' for val in display_df['macd_histogram']]
+        colors = ['green' if val >= 0 else 'red' for val in display_df[histogram_col]]
         fig.add_trace(
             go.Bar(
                 x=display_df.index,
-                y=display_df['macd_histogram'],
+                y=display_df[histogram_col],
                 name='Histogram',
                 marker_color=colors,
                 opacity=0.7,
-                showlegend=False
+                showlegend=True
             ),
             row=2, col=1
         )
