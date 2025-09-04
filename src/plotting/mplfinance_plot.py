@@ -56,7 +56,8 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
     has_supertrend = 'supertrend' in df_results.columns or 'SuperTrend' in df_results.columns
     has_direction = 'Direction' in df_results.columns
     
-    if has_pprice or has_supertrend:
+    # Temporarily disable SuperTrend plotting to isolate the issue
+    if False and (has_pprice or has_supertrend):
         # Get supertrend values and direction
         if has_pprice:
             p1 = df_results['PPrice1']
@@ -149,6 +150,18 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
         if len(seg_x) > 0:
             segments.append((seg_x, seg_y, last_color))
         
+        # Debug: Check segment dimensions
+        logger.print_debug(f"Number of segments created: {len(segments)}")
+        for i, (seg_x, seg_y, seg_color) in enumerate(segments[:5]):  # Check first 5 segments
+            logger.print_debug(f"Segment {i}: x length={len(seg_x)}, y length={len(seg_y)}")
+            if len(seg_x) != len(seg_y):
+                logger.print_debug(f"  WARNING: Dimension mismatch in segment {i}")
+                # Fix the mismatch by truncating to the shorter length
+                min_len = min(len(seg_x), len(seg_y))
+                seg_x = seg_x[:min_len]
+                seg_y = seg_y[:min_len]
+                segments[i] = (seg_x, seg_y, seg_color)
+        
         # Add SuperTrend line segments with enhanced styling (like fastest mode)
         legend_shown = {uptrend_color: False, downtrend_color: False, signal_change_color: False}
         for seg_x, seg_y, seg_color in segments:
@@ -184,30 +197,48 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
         sell_idx = df_results.index[(trend == -1) & (trend.shift(1) == 1)]
         
         if len(buy_idx) > 0:
-            buy_y = supertrend_values[df_results.index.isin(buy_idx)]
-            buy_series = pd.Series(buy_y, index=buy_idx)
-            plots_to_add.append(mpf.make_addplot(
-                buy_series,
-                type='scatter', 
-                markersize=100, 
-                marker='^', 
-                color=uptrend_color, 
-                panel=0,
-                secondary_y=True
-            ))
+            # Ensure buy_y has the same length as buy_idx
+            if hasattr(supertrend_values, 'loc'):
+                buy_y = supertrend_values.loc[buy_idx]
+            else:
+                # For numpy arrays, use boolean indexing
+                buy_mask = df_results.index.isin(buy_idx)
+                buy_y = supertrend_values[buy_mask]
+            
+            # Ensure we have the same number of values as indices
+            if len(buy_y) == len(buy_idx):
+                buy_series = pd.Series(buy_y, index=buy_idx)
+                plots_to_add.append(mpf.make_addplot(
+                    buy_series,
+                    type='scatter', 
+                    markersize=100, 
+                    marker='^', 
+                    color=uptrend_color, 
+                    panel=0,
+                    secondary_y=True
+                ))
         
         if len(sell_idx) > 0:
-            sell_y = supertrend_values[df_results.index.isin(sell_idx)]
-            sell_series = pd.Series(sell_y, index=sell_idx)
-            plots_to_add.append(mpf.make_addplot(
-                sell_series,
-                type='scatter', 
-                markersize=100, 
-                marker='v', 
-                color=downtrend_color, 
-                panel=0,
-                secondary_y=True
-            ))
+            # Ensure sell_y has the same length as sell_idx
+            if hasattr(supertrend_values, 'loc'):
+                sell_y = supertrend_values.loc[sell_idx]
+            else:
+                # For numpy arrays, use boolean indexing
+                sell_mask = df_results.index.isin(sell_idx)
+                sell_y = supertrend_values[sell_mask]
+            
+            # Ensure we have the same number of values as indices
+            if len(sell_y) == len(sell_idx):
+                sell_series = pd.Series(sell_y, index=sell_idx)
+                plots_to_add.append(mpf.make_addplot(
+                    sell_series,
+                    type='scatter', 
+                    markersize=100, 
+                    marker='v', 
+                    color=downtrend_color, 
+                    panel=0,
+                    secondary_y=True
+                ))
 
     # --- Add parameterized indicator panels ---
     # Check for Stochastic indicators
@@ -421,17 +452,20 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
         buy_signals_y_pos = low_numeric.ffill().bfill() * 0.998
         sell_signals_y_pos = high_numeric.ffill().bfill() * 1.002
         direction_numeric = pd.to_numeric(df_results['Direction'], errors='coerce')
-        buy_markers_y = np.where(direction_numeric == BUY, buy_signals_y_pos, np.nan)
-        sell_markers_y = np.where(direction_numeric == SELL, sell_signals_y_pos, np.nan)
-        buy_markers_series = pd.Series(buy_markers_y, index=df_results.index)
-        sell_markers_series = pd.Series(sell_markers_y, index=df_results.index)
+        
+        # Ensure all arrays have the same length
+        if len(buy_signals_y_pos) == len(direction_numeric) == len(sell_signals_y_pos):
+            buy_markers_y = np.where(direction_numeric == BUY, buy_signals_y_pos, np.nan)
+            sell_markers_y = np.where(direction_numeric == SELL, sell_signals_y_pos, np.nan)
+            buy_markers_series = pd.Series(buy_markers_y, index=df_results.index)
+            sell_markers_series = pd.Series(sell_markers_y, index=df_results.index)
 
-        if not buy_markers_series.dropna().empty:
-            plots_to_add.append(mpf.make_addplot(buy_markers_series,
-                                                 type='scatter', markersize=50, marker='^', color='lime', panel=0))
-        if not sell_markers_series.dropna().empty:
-            plots_to_add.append(mpf.make_addplot(sell_markers_series,
-                                                 type='scatter', markersize=50, marker='v', color='red', panel=0))
+            if not buy_markers_series.dropna().empty:
+                plots_to_add.append(mpf.make_addplot(buy_markers_series,
+                                                     type='scatter', markersize=50, marker='^', color='lime', panel=0))
+            if not sell_markers_series.dropna().empty:
+                plots_to_add.append(mpf.make_addplot(sell_markers_series,
+                                                     type='scatter', markersize=50, marker='v', color='red', panel=0))
 
     # --- Trading Metrics Display ---
     # NOTE: Metrics have been removed from charts as requested
@@ -455,6 +489,14 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
         else:
             display_rule = rule_name
 
+        # Debug: Check addplot dimensions before plotting
+        logger.print_debug(f"Number of addplot items: {len(plots_to_add)}")
+        for i, plot_item in enumerate(plots_to_add):
+            if hasattr(plot_item, 'data'):
+                logger.print_debug(f"Addplot {i}: data shape = {plot_item.data.shape if hasattr(plot_item.data, 'shape') else 'no shape'}")
+            elif hasattr(plot_item, '_data'):
+                logger.print_debug(f"Addplot {i}: _data shape = {plot_item._data.shape if hasattr(plot_item._data, 'shape') else 'no shape'}")
+
         mpf.plot(
             df_results,
             type='candle',
@@ -473,3 +515,13 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
     except Exception as e:
         logger.print_error(f"Error during mplfinance plotting: {e}")
         logger.print_warning("Ensure your DataFrame has sufficient data and correct columns for mplfinance.")
+        # Additional debug info
+        logger.print_debug(f"DataFrame shape: {df_results.shape}")
+        logger.print_debug(f"DataFrame index length: {len(df_results.index)}")
+        logger.print_debug(f"Number of addplot items: {len(plots_to_add)}")
+        for i, plot_item in enumerate(plots_to_add):
+            logger.print_debug(f"Addplot {i}: {type(plot_item)}")
+            if hasattr(plot_item, 'data'):
+                logger.print_debug(f"  - data: {plot_item.data}")
+            if hasattr(plot_item, '_data'):
+                logger.print_debug(f"  - _data: {plot_item._data}")
