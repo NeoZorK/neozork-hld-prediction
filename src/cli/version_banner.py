@@ -44,8 +44,8 @@ class VersionBannerDisplay:
     
     # Information lines for the banner
     INFO_LINES = [
-        f'{Fore.YELLOW}{Style.BRIGHT}Shcherbyna Pressure Vector Indicator{Style.RESET_ALL}',
-        f'{Fore.GREEN}{Style.BRIGHT}Advanced Financial Analysis System{Style.RESET_ALL}',
+        f'{Fore.YELLOW}{Style.BRIGHT}Shcherbyna High-Low-Direction Prediction System{Style.RESET_ALL}',
+        f'{Fore.GREEN}{Style.BRIGHT}Build, Research, Deploy, Trade, Monitor, ReTrain {Style.RESET_ALL}',
         f'{Fore.RED}{Style.BRIGHT}Version: {__version__}{Style.RESET_ALL}',
         f'{Fore.BLUE}{Style.BRIGHT}Powered by Advanced ML & Technical Analysis{Style.RESET_ALL}'
     ]
