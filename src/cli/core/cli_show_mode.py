@@ -148,30 +148,9 @@ def main_show_mode(args):
     # Force terminal mode in Docker if needed
     _force_terminal_mode_in_docker(args)
     
-    # Show help if no source specified
-    if not args.source:
-        show_help()
-        return
-    
-    # Handle different sources
-    if args.source == 'csv':
-        from .show_csv import handle_csv_show_mode
-        handle_csv_show_mode(args)
-    elif args.source in ['yfinance', 'yf']:
-        from .show_yfinance import handle_yfinance_show_mode
-        handle_yfinance_show_mode(args)
-    elif args.source == 'polygon':
-        from .show_polygon import handle_polygon_show_mode
-        handle_polygon_show_mode(args)
-    elif args.source == 'binance':
-        from .show_binance import handle_binance_show_mode
-        handle_binance_show_mode(args)
-    elif args.source == 'ind':
-        from .show_indicators import handle_indicators_show_mode
-        handle_indicators_show_mode(args)
-    else:
-        print(f"{Fore.RED}Unknown source: {args.source}{Style.RESET_ALL}")
-        show_help()
+    # Use universal show mode that scans all data folders
+    from .show_universal import handle_universal_show_mode
+    handle_universal_show_mode(args)
 
 
 if __name__ == "__main__":

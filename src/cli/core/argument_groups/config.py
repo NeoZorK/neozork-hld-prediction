@@ -26,7 +26,7 @@ class ArgumentParserConfig:
     AVAILABLE_MODES = ['demo', 'yfinance', 'yf', 'csv', 'polygon', 'binance', 'show']
     
     # Data source choices
-    DATA_SOURCE_CHOICES = ['yfinance', 'yf', 'csv', 'polygon', 'binance', 'ind']
+    DATA_SOURCE_CHOICES = ['yfinance', 'yf', 'csv', 'polygon', 'binance', 'ind', 'raw', 'indicators', 'root']
     
     # Drawing method choices
     DRAW_CHOICES = ['fastest', 'fast', 'plotly', 'plt', 'mplfinance', 'mpl', 'seaborn', 'sb', 'term']
