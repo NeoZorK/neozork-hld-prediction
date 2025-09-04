@@ -101,6 +101,35 @@ class TrendExamples:
         print()
     
     @staticmethod
+    def show_wave_examples():
+        """Show Wave CLI examples."""
+        print(f"{Fore.CYAN}{Style.BRIGHT}Wave Examples:{Style.RESET_ALL}\n")
+        
+        print(f"{Fore.YELLOW}Basic Wave Analysis:{Style.RESET_ALL}")
+        print(f"  {Fore.GREEN}Wave with default settings:{Style.RESET_ALL}        python run_analysis.py csv --csv-file data.csv --rule wave:339,10,2,fast,22,11,4,fast,prime,22,close")
+        print(f"  {Fore.GREEN}Wave with custom parameters:{Style.RESET_ALL}       python run_analysis.py csv --csv-file data.csv --rule wave:200,10,20,fast,50,5,10,fast,prime,30,close")
+        print(f"  {Fore.GREEN}Wave for short-term analysis:{Style.RESET_ALL}      python run_analysis.py csv --csv-file data.csv --rule wave:100,5,10,fast,25,3,5,fast,prime,15,close")
+        print()
+        
+        print(f"{Fore.YELLOW}Wave with Different Data Sources:{Style.RESET_ALL}")
+        print(f"  {Fore.GREEN}YFinance data:{Style.RESET_ALL}                    python run_analysis.py yf -t EURUSD=X --period 6mo --rule wave:200,10,20,fast,50,5,10,fast,prime,30,close")
+        print(f"  {Fore.GREEN}Binance data:{Style.RESET_ALL}                    python run_analysis.py binance --ticker BTCUSDT --interval H1 --rule wave:300,15,30,fast,75,8,15,fast,prime,25,close")
+        print(f"  {Fore.GREEN}Polygon data:{Style.RESET_ALL}                    python run_analysis.py polygon --ticker AAPL --interval D1 --rule wave:250,12,25,fast,60,6,12,fast,prime,25,close")
+        print()
+        
+        print(f"{Fore.YELLOW}Wave Visualization:{Style.RESET_ALL}")
+        print(f"  {Fore.GREEN}Plotly backend:{Style.RESET_ALL}                  python run_analysis.py csv --csv-file data.csv --rule wave:200,10,20,fast,50,5,10,fast,prime,30,close -d plotly")
+        print(f"  {Fore.GREEN}Seaborn backend:{Style.RESET_ALL}                 python run_analysis.py csv --csv-file data.csv --rule wave:200,10,20,fast,50,5,10,fast,prime,30,close -d seaborn")
+        print(f"  {Fore.GREEN}Terminal backend:{Style.RESET_ALL}                python run_analysis.py csv --csv-file data.csv --rule wave:200,10,20,fast,50,5,10,fast,prime,30,close -d term")
+        print()
+        
+        print(f"{Fore.YELLOW}Wave Trading Strategies:{Style.RESET_ALL}")
+        print(f"  {Fore.GREEN}Conservative strategy:{Style.RESET_ALL}            python run_analysis.py csv --csv-file data.csv --rule wave:400,25,50,slow,100,15,30,slow,tertiary,40,close")
+        print(f"  {Fore.GREEN}Aggressive strategy:{Style.RESET_ALL}              python run_analysis.py csv --csv-file data.csv --rule wave:100,5,10,fast,25,3,5,fast,prime,15,close")
+        print(f"  {Fore.GREEN}Balanced strategy:{Style.RESET_ALL}                python run_analysis.py csv --csv-file data.csv --rule wave:250,12,25,fast,60,6,12,fast,prime,25,close")
+        print()
+    
+    @staticmethod
     def show_all_trend_examples():
         """Show all trend CLI examples."""
         print(f"{Fore.CYAN}{Style.BRIGHT}TREND INDICATORS - CLI EXAMPLES{Style.RESET_ALL}")
@@ -119,6 +148,9 @@ class TrendExamples:
         print("-" * 40)
         
         TrendExamples.show_supertrend_examples()
+        print("-" * 40)
+        
+        TrendExamples.show_wave_examples()
         print("-" * 40)
         
         print(f"{Fore.YELLOW}General Trend Tips:{Style.RESET_ALL}")

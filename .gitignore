@@ -156,6 +156,9 @@ data/processed/
 logs/
 results/
 models/
+output/
+plots/
+.yf_cache/
 *.parquet
 *.joblib
 *.pkl

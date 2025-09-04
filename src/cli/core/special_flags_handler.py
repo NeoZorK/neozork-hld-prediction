@@ -34,17 +34,66 @@ def handle_special_flags():
 
 def handle_examples_flag():
     """Handle --examples flag."""
+    # Check if there's a specific parameter after --examples
+    examples_idx = sys.argv.index('--examples')
+    if examples_idx + 1 < len(sys.argv):
+        search_term = sys.argv[examples_idx + 1].lower()
+        handle_filtered_examples(search_term)
+        return
+    
     print(f"\n{Fore.YELLOW}{Style.BRIGHT}Indicator Usage Examples:{Style.RESET_ALL}")
     print("  Show all indicators:   --indicators")
     print("  Show oscillators:      --indicators oscillators")
     print("  Show RSI info:         --indicators oscillators rsi")
     print("  Show trend indicators: --indicators trend")
     print("  Show MACD info:        --indicators momentum macd")
+    print("  Search examples:       --examples <search_term>")
     print("  Interactive mode:      python run_analysis.py interactive")
     
     try:
-        from src.cli.examples.cli_examples import show_cli_examples_colored
-        show_cli_examples_colored()
+        from src.cli.examples.main_examples import show_all_cli_examples
+        show_all_cli_examples()
+    except ImportError:
+        print(f"{Fore.RED}Examples module not available{Style.RESET_ALL}")
+    
+    sys.exit(0)
+
+
+def handle_filtered_examples(search_term: str):
+    """Handle filtered examples based on search term."""
+    import io
+    from contextlib import redirect_stdout
+    
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}Searching examples for: '{search_term}'{Style.RESET_ALL}")
+    print("=" * 60)
+    
+    try:
+        from src.cli.examples.main_examples import show_all_cli_examples
+        
+        # Capture the output
+        output_buffer = io.StringIO()
+        with redirect_stdout(output_buffer):
+            show_all_cli_examples()
+        
+        # Get the captured output
+        full_output = output_buffer.getvalue()
+        
+        # Filter lines containing the search term
+        lines = full_output.split('\n')
+        filtered_lines = []
+        found_matches = False
+        
+        for line in lines:
+            if search_term.lower() in line.lower():
+                filtered_lines.append(line)
+                found_matches = True
+        
+        if found_matches:
+            print('\n'.join(filtered_lines))
+        else:
+            print(f"{Fore.RED}No examples found containing '{search_term}'{Style.RESET_ALL}")
+            print(f"{Fore.YELLOW}Try searching for: wave, rsi, macd, ema, sma, stoch, cci, adx, sar{Style.RESET_ALL}")
+            
     except ImportError:
         print(f"{Fore.RED}Examples module not available{Style.RESET_ALL}")
     

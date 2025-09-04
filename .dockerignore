@@ -46,6 +46,9 @@ ENV/
 
 # Results and analysis outputs
 /results/
+/output/
+/plots/
+/.yf_cache/
 
 # Explicitly ignore indicators folder content
 /data/indicators/parquet/*
