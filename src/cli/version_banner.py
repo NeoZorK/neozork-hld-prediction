@@ -124,7 +124,7 @@ class VersionBannerDisplay:
             
             # Create aligned line
             needed_spaces = max(0, 60 - actual_display_len)
-            line = f'{Fore.CYAN}║{Style.RESET_ALL}  {Style.BRIGHT}{text}{Style.RESET_ALL}' + ' ' * needed_spaces + f'  {Fore.CYAN}║{Style.RESET_ALL}'
+            line = f'{Fore.CYAN}║{Style.RESET_ALL}  {Style.BRIGHT}{text}{Style.RESET_ALL}' + ' ' * needed_spaces + f'{Fore.CYAN}║{Style.RESET_ALL}'
             print(line)
     
     @classmethod
