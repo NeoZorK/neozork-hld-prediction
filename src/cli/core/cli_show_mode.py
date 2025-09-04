@@ -106,7 +106,6 @@ def show_help():
     print(f"  - {Fore.GREEN}yfinance/yf{Style.RESET_ALL}: Yahoo Finance data files")
     print(f"  - {Fore.GREEN}polygon{Style.RESET_ALL}: Polygon.io data files")
     print(f"  - {Fore.GREEN}binance{Style.RESET_ALL}: Binance data files")
-    print(f"  - {Fore.GREEN}exrate{Style.RESET_ALL}: Exchange Rate API data files")
     print(f"  - {Fore.GREEN}ind{Style.RESET_ALL}: Indicator files")
 
     print(f"\n{Fore.YELLOW}{Style.BRIGHT}Examples:{Style.RESET_ALL}")
@@ -116,7 +115,6 @@ def show_help():
     print(f"  python run_analysis.py show yfinance eurusd        # List Yahoo Finance files with 'eurusd'")
     print(f"  python run_analysis.py show polygon                # List all Polygon.io files")
     print(f"  python run_analysis.py show binance                # List all Binance files")
-    print(f"  python run_analysis.py show exrate                 # List all Exchange Rate API files")
     print(f"  python run_analysis.py show ind                    # List all indicator files")
 
     print(f"\n{Fore.YELLOW}{Style.BRIGHT}Additional options:{Style.RESET_ALL}")
@@ -168,9 +166,6 @@ def main_show_mode(args):
     elif args.source == 'binance':
         from .show_binance import handle_binance_show_mode
         handle_binance_show_mode(args)
-    elif args.source == 'exrate':
-        from .show_exrate import handle_exrate_show_mode
-        handle_exrate_show_mode(args)
     elif args.source == 'ind':
         from .show_indicators import handle_indicators_show_mode
         handle_indicators_show_mode(args)

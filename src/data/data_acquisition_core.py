@@ -18,7 +18,6 @@ from src.data.fetchers.yfinance_fetcher import fetch_yfinance_data
 from src.data.fetchers.csv_fetcher import fetch_csv_data
 from src.data.fetchers.polygon_fetcher import fetch_polygon_data
 from src.data.fetchers.binance_fetcher import fetch_binance_data
-from src.data.fetchers.exrate_fetcher import fetch_exrate_data
 
 
 def acquire_data(args) -> Dict[str, Any]:
@@ -109,17 +108,6 @@ def acquire_data(args) -> Dict[str, Any]:
             )
             data_info["data_source_label"] = f"Binance ({args.ticker})"
             data_info["effective_mode"] = "binance"
-            
-        elif args.mode == 'exrate':
-            logger.print_info(f"Fetching Exchange Rate data for {args.ticker}")
-            ohlcv_df = fetch_exrate_data(
-                base_currency=args.ticker.split('/')[0] if '/' in args.ticker else 'USD',
-                target_currency=args.ticker.split('/')[1] if '/' in args.ticker else args.ticker,
-                start_date=args.start,
-                end_date=args.end
-            )
-            data_info["data_source_label"] = f"ExchangeRate ({args.ticker})"
-            data_info["effective_mode"] = "exrate"
             
         else:
             raise ValueError(f"Unsupported mode: {args.mode}")

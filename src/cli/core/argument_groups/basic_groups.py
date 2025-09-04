@@ -50,7 +50,7 @@ class BasicArgumentGroups:
             'mode', 
             nargs='?', 
             choices=ArgumentParserConfig.AVAILABLE_MODES,
-            help="Operating mode: 'demo', 'yfinance'/'yf', 'csv', 'polygon', 'binance', 'exrate', 'show', 'interactive'."
+            help="Operating mode: 'demo', 'yfinance'/'yf', 'csv', 'polygon', 'binance', 'show'."
         )
         
         # Show mode positional arguments

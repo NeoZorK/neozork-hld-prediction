@@ -29,14 +29,14 @@ def handle_yfinance_show_mode(args):
     """
     Handle Yahoo Finance show mode operations.
     """
-    yf_dir = Path("../data/cleaned_data")
+    yf_dir = Path("data/cleaned_data")
     
     if not yf_dir.exists():
         print(f"{Fore.RED}Yahoo Finance data directory not found: {yf_dir}{Style.RESET_ALL}")
         return
     
-    # Get yfinance files
-    yf_files = list(yf_dir.glob("*yfinance*.parquet"))
+    # Get yfinance files (all parquet files in cleaned_data)
+    yf_files = list(yf_dir.glob("*.parquet"))
     
     if not yf_files:
         print(f"{Fore.YELLOW}No Yahoo Finance files found in {yf_dir}{Style.RESET_ALL}")

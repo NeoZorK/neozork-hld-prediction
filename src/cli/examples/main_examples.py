@@ -42,7 +42,6 @@ def show_general_usage_tips():
     print(f"  {Fore.GREEN}YFinance:{Style.RESET_ALL}                         python run_analysis.py yf -t EURUSD=X --period 6mo --rule RSI")
     print(f"  {Fore.GREEN}Binance:{Style.RESET_ALL}                          python run_analysis.py binance --ticker BTCUSDT --interval H1 --rule RSI")
     print(f"  {Fore.GREEN}Polygon:{Style.RESET_ALL}                          python run_analysis.py polygon --ticker AAPL --interval D1 --rule RSI")
-    print(f"  {Fore.GREEN}Exchange Rate API:{Style.RESET_ALL}                 python run_analysis.py exrate --ticker EURUSD --interval D1 --rule RSI")
     print()
     
     print(f"{Fore.YELLOW}Visualization Backends:{Style.RESET_ALL}")

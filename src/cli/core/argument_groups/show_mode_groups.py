@@ -24,7 +24,7 @@ class ShowModeArgumentGroups:
             metavar='SRC', 
             default='yfinance',
             choices=ArgumentParserConfig.DATA_SOURCE_CHOICES,
-            help="Data source filter: yfinance, csv, polygon, binance, exrate, ind (indicators)"
+            help="Data source filter: yfinance, csv, polygon, binance, ind (indicators)"
         )
         show_group.add_argument(
             '--keywords', 
