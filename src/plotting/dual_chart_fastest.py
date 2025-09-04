@@ -27,12 +27,19 @@ def add_rsi_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
         fig (go.Figure): Plotly figure object
         display_df (pd.DataFrame): DataFrame with RSI data
     """
+    # Check for RSI column in both cases (lowercase and uppercase)
+    rsi_column = None
     if 'rsi' in display_df.columns:
+        rsi_column = 'rsi'
+    elif 'RSI' in display_df.columns:
+        rsi_column = 'RSI'
+    
+    if rsi_column:
         # Add RSI line
         fig.add_trace(
             go.Scatter(
                 x=display_df.index,
-                y=display_df['rsi'],
+                y=display_df[rsi_column],
                 mode='lines',
                 name='RSI',
                 line=dict(color='purple', width=3),
@@ -55,9 +62,35 @@ def add_rsi_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                 ),
                 row=2, col=1
             )
+        elif 'RSI_Overbought' in display_df.columns:
+            overbought = display_df['RSI_Overbought'].iloc[0]
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=[overbought] * len(display_df),
+                    mode='lines',
+                    name=f'Overbought ({overbought})',
+                    line=dict(color='red', width=2, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
         
         if 'rsi_oversold' in display_df.columns:
             oversold = display_df['rsi_oversold'].iloc[0]
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=[oversold] * len(display_df),
+                    mode='lines',
+                    name=f'Oversold ({oversold})',
+                    line=dict(color='green', width=2, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        elif 'RSI_Oversold' in display_df.columns:
+            oversold = display_df['RSI_Oversold'].iloc[0]
             fig.add_trace(
                 go.Scatter(
                     x=display_df.index,

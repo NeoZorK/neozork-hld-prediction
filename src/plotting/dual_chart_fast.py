@@ -126,9 +126,16 @@ def calculate_dynamic_height(screen_height=None, rule_str=None):
 
 def _plot_rsi_indicator(indicator_fig, source, display_df):
     """Plot RSI indicator on the given figure."""
+    # Check for RSI column in both cases (lowercase and uppercase)
+    rsi_column = None
     if 'rsi' in display_df.columns:
+        rsi_column = 'rsi'
+    elif 'RSI' in display_df.columns:
+        rsi_column = 'RSI'
+    
+    if rsi_column:
         indicator_fig.line(
-            'index', 'rsi',
+            'index', rsi_column,
             source=source,
             line_color='purple',
             line_width=3,
@@ -145,9 +152,27 @@ def _plot_rsi_indicator(indicator_fig, source, display_df):
                 line_dash='dashed',
                 legend_label=f'Overbought ({overbought})'
             )
+        elif 'RSI_Overbought' in display_df.columns:
+            overbought = display_df['RSI_Overbought'].iloc[0]
+            indicator_fig.line(
+                'index', [overbought] * len(display_df),
+                line_color='red',
+                line_width=2,
+                line_dash='dashed',
+                legend_label=f'Overbought ({overbought})'
+            )
         
         if 'rsi_oversold' in display_df.columns:
             oversold = display_df['rsi_oversold'].iloc[0]
+            indicator_fig.line(
+                'index', [oversold] * len(display_df),
+                line_color='green',
+                line_width=2,
+                line_dash='dashed',
+                legend_label=f'Oversold ({oversold})'
+            )
+        elif 'RSI_Oversold' in display_df.columns:
+            oversold = display_df['RSI_Oversold'].iloc[0]
             indicator_fig.line(
                 'index', [oversold] * len(display_df),
                 line_color='green',

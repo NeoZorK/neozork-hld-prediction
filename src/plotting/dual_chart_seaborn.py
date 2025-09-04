@@ -252,8 +252,15 @@ def plot_dual_chart_seaborn(
     
     # Add indicator based on type with modern styling
     if indicator_name == 'rsi':
+        # Check for RSI column in both cases (lowercase and uppercase)
+        rsi_column = None
         if 'rsi' in display_df.columns:
-            sns.lineplot(data=display_df, x=display_df.index, y='rsi', 
+            rsi_column = 'rsi'
+        elif 'RSI' in display_df.columns:
+            rsi_column = 'RSI'
+        
+        if rsi_column:
+            sns.lineplot(data=display_df, x=display_df.index, y=rsi_column, 
                         ax=ax2, color='#9C27B0', linewidth=3, alpha=0.9, label='RSI')
             
             # Add overbought/oversold lines with modern styling
@@ -261,9 +268,17 @@ def plot_dual_chart_seaborn(
                 overbought = display_df['rsi_overbought'].iloc[0]
                 ax2.axhline(y=overbought, color='#FF4444', linestyle='--', 
                            linewidth=2.5, alpha=0.8, label=f'Overbought ({overbought})')
+            elif 'RSI_Overbought' in display_df.columns:
+                overbought = display_df['RSI_Overbought'].iloc[0]
+                ax2.axhline(y=overbought, color='#FF4444', linestyle='--', 
+                           linewidth=2.5, alpha=0.8, label=f'Overbought ({overbought})')
             
             if 'rsi_oversold' in display_df.columns:
                 oversold = display_df['rsi_oversold'].iloc[0]
+                ax2.axhline(y=oversold, color='#00C851', linestyle='--', 
+                           linewidth=2.5, alpha=0.8, label=f'Oversold ({oversold})')
+            elif 'RSI_Oversold' in display_df.columns:
+                oversold = display_df['RSI_Oversold'].iloc[0]
                 ax2.axhline(y=oversold, color='#00C851', linestyle='--', 
                            linewidth=2.5, alpha=0.8, label=f'Oversold ({oversold})')
     

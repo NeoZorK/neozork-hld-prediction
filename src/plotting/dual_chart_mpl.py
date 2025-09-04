@@ -193,8 +193,15 @@ def plot_dual_chart_mpl(
     if indicator_name == 'rsi':
         y_axis_label = 'RSI Value'
         
+        # Check for RSI column in both cases (lowercase and uppercase)
+        rsi_column = None
         if 'rsi' in display_df.columns:
-            ax2.plot(display_df.index, display_df['rsi'], 
+            rsi_column = 'rsi'
+        elif 'RSI' in display_df.columns:
+            rsi_column = 'RSI'
+        
+        if rsi_column:
+            ax2.plot(display_df.index, display_df[rsi_column], 
                     color='purple', linewidth=3, label='RSI')
         
         # Add overbought/oversold lines
@@ -202,9 +209,17 @@ def plot_dual_chart_mpl(
             overbought = display_df['rsi_overbought'].iloc[0]
             ax2.axhline(y=overbought, color='red', linestyle='--', 
                        linewidth=2, label=f'Overbought ({overbought})')
+        elif 'RSI_Overbought' in display_df.columns:
+            overbought = display_df['RSI_Overbought'].iloc[0]
+            ax2.axhline(y=overbought, color='red', linestyle='--', 
+                       linewidth=2, label=f'Overbought ({overbought})')
         
         if 'rsi_oversold' in display_df.columns:
             oversold = display_df['rsi_oversold'].iloc[0]
+            ax2.axhline(y=oversold, color='green', linestyle='--', 
+                       linewidth=2, label=f'Oversold ({oversold})')
+        elif 'RSI_Oversold' in display_df.columns:
+            oversold = display_df['RSI_Oversold'].iloc[0]
             ax2.axhline(y=oversold, color='green', linestyle='--', 
                        linewidth=2, label=f'Oversold ({oversold})')
     
