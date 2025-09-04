@@ -451,8 +451,18 @@ def display_organized_data(all_data, args):
     print(f"Total data size: {total_size:.2f} MB")
     print(f"Average file size: {total_size/total_files:.2f} MB" if total_files > 0 else "No files")
     
-    # If only one file and plotting is requested, plot it
-    if total_files == 1 and hasattr(args, 'draw') and args.draw != 'fastest':
+    # If only one file remains after filtering, automatically apply default parameters
+    if total_files == 1:
+        # Auto-apply default parameters for single file
+        if not hasattr(args, 'draw') or args.draw == 'fastest':
+            args.draw = 'fastest'
+            print(f"\n{Fore.GREEN}Single file detected: automatically using -d fastest{Style.RESET_ALL}")
+        
+        if not hasattr(args, 'rule') or not args.rule:
+            args.rule = 'OHLCV'
+            print(f"{Fore.GREEN}Single file detected: automatically using --rule OHLCV{Style.RESET_ALL}")
+        
+        # Plot the single file
         for symbols in all_data.values():
             for files in symbols.values():
                 if files:
@@ -480,7 +490,14 @@ def plot_single_file(file_info, args):
         
         if draw_method == 'fastest':
             if plot_auto_fastest_parquet and file_info['file_type'] == 'parquet':
-                plot_auto_fastest_parquet(str(file_path))
+                # Get rule name for plotting
+                rule_name = getattr(args, 'rule', 'OHLCV')
+                # Create plots directory if it doesn't exist
+                plots_dir = Path("plots")
+                plots_dir.mkdir(exist_ok=True)
+                # Generate output path for the plot
+                output_path = plots_dir / f"{file_info['filename']}_{rule_name}_fastest_plot.html"
+                plot_auto_fastest_parquet(str(file_path), str(output_path), trading_rule_name=rule_name)
             else:
                 print(f"{Fore.RED}Fastest plotting not available for this file type{Style.RESET_ALL}")
         elif draw_method in ['plotly', 'plt']:
