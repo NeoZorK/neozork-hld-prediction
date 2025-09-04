@@ -74,7 +74,7 @@ def scan_all_data_folders(data_dir):
     # Define folder mappings
     folder_mappings = {
         'raw_parquet': 'raw',
-        'cleaned_data': 'yfinance',
+        'cleaned_data': 'Unknown Multi Time Frame Cleard Data',
         'csv_converted': 'csv',
         'indicators/parquet': 'indicators',
         'indicators/csv': 'indicators_csv',
@@ -233,23 +233,33 @@ def parse_file_info(file_path, source_type):
                     'folder': f'csv_converted/{parent_folder}'
                 }
     
-    elif source_type == 'yfinance':
-        # Pattern: cleaned_*_dataset_*.parquet
+    elif source_type == 'Unknown Multi Time Frame Cleard Data':
+        # Pattern: cleaned_*_dataset_*.parquet or cleaned_SYMBOL_TIMEFRAME_dataset_*.parquet
         if 'cleaned' in filename and 'dataset' in filename:
-            # Try to extract timeframe from filename
+            # Try to extract symbol and timeframe from filename
+            symbol = 'MIXED'  # Default fallback
             timeframe = 'UNKNOWN'
-            if 'h1' in filename:
-                timeframe = 'H1'
-            elif 'm5' in filename:
-                timeframe = 'M5'
-            elif 'main' in filename:
-                timeframe = 'D1'
+            
+            # Check for new format with symbol: cleaned_SYMBOL_TIMEFRAME_dataset_*.parquet
+            # Example: cleaned_AAPL_H1_dataset_20250903_153905.parquet
+            new_format_match = re.match(r'^cleaned_([A-Z0-9.]+)_([A-Z0-9]+)_dataset_.*$', filename)
+            if new_format_match:
+                symbol, timeframe = new_format_match.groups()
+            else:
+                # Old format: cleaned_TIMEFRAME_dataset_*.parquet
+                # Extract timeframe from filename
+                if 'h1' in filename:
+                    timeframe = 'H1'
+                elif 'm5' in filename:
+                    timeframe = 'M5'
+                elif 'main' in filename:
+                    timeframe = 'D1'
             
             return {
                 'file_path': file_path,
                 'filename': file_path.name,
-                'source': 'yfinance',
-                'symbol': 'MIXED',
+                'source': 'Unknown Multi Time Frame Cleard Data',
+                'symbol': symbol,
                 'timeframe': timeframe,
                 'file_type': 'parquet',
                 'file_size': file_size,

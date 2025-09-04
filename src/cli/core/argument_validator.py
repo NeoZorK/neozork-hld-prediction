@@ -184,7 +184,7 @@ def validate_and_process_arguments(args):
         # If user provided positional arguments after 'show', use them as source/keywords
         if hasattr(args, 'show_args') and args.show_args:
             # If the first positional arg is a valid source, treat as source
-            valid_sources = ['yfinance', 'yf', 'csv', 'polygon', 'binance', 'exrate', 'ind', 'mql5', 'samples']
+            valid_sources = ['yfinance', 'yf', 'csv', 'polygon', 'binance', 'exrate', 'ind', 'mql5', 'samples', 'Unknown Multi Time Frame Cleard Data']
             # Remove any flags from show_args (e.g. --raw, --cleaned, --draw, etc.)
             filtered_args = [a for a in args.show_args if not a.startswith('--')]
             if filtered_args:

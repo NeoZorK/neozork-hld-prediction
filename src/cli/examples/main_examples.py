@@ -62,7 +62,6 @@ def show_general_usage_tips():
     print(f"  {Fore.GREEN}Multiple indicators:{Style.RESET_ALL}                python run_analysis.py csv --csv-file data.csv --rule RSI,EMA,MACD")
     print(f"  {Fore.GREEN}Custom parameters:{Style.RESET_ALL}                  python run_analysis.py csv --csv-file data.csv --rule RSI:14,70,30")
     print(f"  {Fore.GREEN}Point size specification:{Style.RESET_ALL}           python run_analysis.py csv --csv-file data.csv --point 0.00001 --rule RSI")
-    print(f"  {Fore.GREEN}Interactive mode:{Style.RESET_ALL}                  python run_analysis.py interactive")
     print()
     
     print(f"{Fore.YELLOW}Help and Information:{Style.RESET_ALL}")
