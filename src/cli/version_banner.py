@@ -54,9 +54,9 @@ class VersionBannerDisplay:
     ]
     
     # Border characters
-    TOP_BORDER = '╔═══════════════════════════════════════════════════════════════╗'
-    MIDDLE_BORDER = '╠═══════════════════════════════════════════════════════════════╣'
-    BOTTOM_BORDER = '╚═══════════════════════════════════════════════════════════════╝'
+    TOP_BORDER = '╔════════════════════════════════════════════════════════════════╗'
+    MIDDLE_BORDER = '╠════════════════════════════════════════════════════════════════╣'
+    BOTTOM_BORDER = '╚════════════════════════════════════════════════════════════════╝'
     
     @classmethod
     def display_banner(cls) -> None:
@@ -105,7 +105,7 @@ class VersionBannerDisplay:
             
             # Create aligned line
             needed_spaces = max(0, 60 - clean_text_len)
-            line = f'{Fore.CYAN}║{Style.RESET_ALL}  {text}' + ' ' * needed_spaces + f' {Fore.CYAN}║{Style.RESET_ALL}'
+            line = f'{Fore.CYAN}║{Style.RESET_ALL}  {text}' + ' ' * needed_spaces + f'  {Fore.CYAN}║{Style.RESET_ALL}'
             print(line)
     
     @classmethod
@@ -124,7 +124,7 @@ class VersionBannerDisplay:
             
             # Create aligned line
             needed_spaces = max(0, 60 - actual_display_len)
-            line = f'{Fore.CYAN}║{Style.RESET_ALL}  {Style.BRIGHT}{text}{Style.RESET_ALL}' + ' ' * needed_spaces + f' {Fore.CYAN}║{Style.RESET_ALL}'
+            line = f'{Fore.CYAN}║{Style.RESET_ALL}  {Style.BRIGHT}{text}{Style.RESET_ALL}' + ' ' * needed_spaces + f'  {Fore.CYAN}║{Style.RESET_ALL}'
             print(line)
     
     @classmethod
