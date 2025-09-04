@@ -314,18 +314,41 @@ def plot_dual_chart_seaborn(
                        linewidth=2, label=f'Oversold ({oversold})')
     
     elif indicator_name == 'macd':
-        if 'macd' in display_df.columns:
-            sns.lineplot(data=display_df, x=display_df.index, y='macd', 
+        # Check for both lowercase and uppercase column names
+        macd_col = None
+        signal_col = None
+        histogram_col = None
+        
+        # Find MACD line column
+        for col in ['MACD_Line', 'macd', 'MACD']:
+            if col in display_df.columns:
+                macd_col = col
+                break
+        
+        # Find Signal line column
+        for col in ['MACD_Signal', 'macd_signal', 'MACD_Signal_Line']:
+            if col in display_df.columns:
+                signal_col = col
+                break
+        
+        # Find Histogram column
+        for col in ['MACD_Histogram', 'macd_histogram', 'MACD_Hist']:
+            if col in display_df.columns:
+                histogram_col = col
+                break
+        
+        if macd_col:
+            sns.lineplot(data=display_df, x=display_df.index, y=macd_col, 
                         ax=ax2, color='#2196F3', linewidth=3, alpha=0.9, label='MACD')
         
-        if 'macd_signal' in display_df.columns:
-            sns.lineplot(data=display_df, x=display_df.index, y='macd_signal', 
+        if signal_col:
+            sns.lineplot(data=display_df, x=display_df.index, y=signal_col, 
                         ax=ax2, color='#FF4444', linewidth=2.5, alpha=0.9, label='Signal')
         
-        if 'macd_histogram' in display_df.columns:
+        if histogram_col:
             # Color histogram bars with modern colors
-            colors = ['#00C851' if val >= 0 else '#FF4444' for val in display_df['macd_histogram']]
-            ax2.bar(display_df.index, display_df['macd_histogram'], 
+            colors = ['#00C851' if val >= 0 else '#FF4444' for val in display_df[histogram_col]]
+            ax2.bar(display_df.index, display_df[histogram_col], 
                    color=colors, alpha=0.8, label='Histogram', width=0.8)
     
     elif indicator_name == 'ema':

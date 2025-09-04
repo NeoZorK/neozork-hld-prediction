@@ -159,33 +159,56 @@ def _plot_rsi_indicator(indicator_fig, source, display_df):
 
 def _plot_macd_indicator(indicator_fig, source, display_df):
     """Plot MACD indicator on the given figure."""
-    if 'macd' in display_df.columns:
+    # Check for both lowercase and uppercase column names
+    macd_col = None
+    signal_col = None
+    histogram_col = None
+    
+    # Find MACD line column
+    for col in ['MACD_Line', 'macd', 'MACD']:
+        if col in display_df.columns:
+            macd_col = col
+            break
+    
+    # Find Signal line column
+    for col in ['MACD_Signal', 'macd_signal', 'MACD_Signal_Line']:
+        if col in display_df.columns:
+            signal_col = col
+            break
+    
+    # Find Histogram column
+    for col in ['MACD_Histogram', 'macd_histogram', 'MACD_Hist']:
+        if col in display_df.columns:
+            histogram_col = col
+            break
+    
+    if macd_col:
         indicator_fig.line(
-            'index', 'macd',
+            'index', macd_col,
             source=source,
             line_color='blue',
             line_width=3,
             legend_label='MACD'
         )
     
-    if 'macd_signal' in display_df.columns:
+    if signal_col:
         indicator_fig.line(
-            'index', 'macd_signal',
+            'index', signal_col,
             source=source,
             line_color='red',
             line_width=2,
             legend_label='Signal'
         )
     
-    if 'macd_histogram' in display_df.columns:
+    if histogram_col:
         # Color histogram bars - same as fastest mode
-        colors = ['green' if val >= 0 else 'red' for val in display_df['macd_histogram']]
+        colors = ['green' if val >= 0 else 'red' for val in display_df[histogram_col]]
         display_df_copy = display_df.copy()
         display_df_copy['histogram_color'] = colors
         hist_source = ColumnDataSource(display_df_copy)
         
         indicator_fig.vbar(
-            'index', 0.8, 0, 'macd_histogram',
+            'index', 0.8, 0, histogram_col,
             source=hist_source,
             fill_color='histogram_color',
             line_color='histogram_color',
@@ -1164,13 +1187,39 @@ def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
     """Get appropriate hover tool for the given indicator."""
     if indicator_name == 'macd':
         # Special hover for MACD with all three components
+        # Check for both lowercase and uppercase column names
+        macd_col = None
+        signal_col = None
+        histogram_col = None
+        
+        # Find MACD line column
+        for col in ['MACD_Line', 'macd', 'MACD']:
+            if col in display_df.columns:
+                macd_col = col
+                break
+        
+        # Find Signal line column
+        for col in ['MACD_Signal', 'macd_signal', 'MACD_Signal_Line']:
+            if col in display_df.columns:
+                signal_col = col
+                break
+        
+        # Find Histogram column
+        for col in ['MACD_Histogram', 'macd_histogram', 'MACD_Hist']:
+            if col in display_df.columns:
+                histogram_col = col
+                break
+        
+        tooltips = [("Date", "@index{%F %H:%M}")]
+        if macd_col:
+            tooltips.append(("MACD", f"@{macd_col}{{0.5f}}"))
+        if signal_col:
+            tooltips.append(("Signal", f"@{signal_col}{{0.5f}}"))
+        if histogram_col:
+            tooltips.append(("Histogram", f"@{histogram_col}{{0.5f}}"))
+        
         return HoverTool(
-            tooltips=[
-                ("Date", "@index{%F %H:%M}"),
-                ("MACD", "@macd{0.5f}"),
-                ("Signal", "@macd_signal{0.5f}"),
-                ("Histogram", "@macd_histogram{0.5f}")
-            ],
+            tooltips=tooltips,
             formatters={'@index': 'datetime'},
             mode='vline'
         )
