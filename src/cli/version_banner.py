@@ -32,10 +32,14 @@ class VersionBannerDisplay:
         '╚═╝  ╚═══╝╚══════╝ ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝'
     ]
     
-    # Color palette for ASCII art animation
+    # Color palette for ASCII art animation (green gradient)
     ASCII_COLORS = [
-        '\033[38;5;46m', '\033[38;5;82m', '\033[38;5;118m',
-        '\033[38;5;154m', '\033[38;5;190m', '\033[38;5;226m'
+        '\033[38;5;46m',  # Bright green
+        '\033[38;5;40m',  # Green
+        '\033[38;5;34m',  # Medium green
+        '\033[38;5;28m',  # Dark green
+        '\033[38;5;22m',  # Darker green
+        '\033[38;5;16m'   # Very dark green
     ]
     
     # Information lines for the banner
