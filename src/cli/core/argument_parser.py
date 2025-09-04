@@ -37,7 +37,6 @@ def create_argument_parser() -> argparse.ArgumentParser:
     BasicArgumentGroups.add_examples_option(parser)
     BasicArgumentGroups.add_indicators_option(parser)
     BasicArgumentGroups.add_metrics_option(parser)
-    BasicArgumentGroups.add_interactive_option(parser)
     BasicArgumentGroups.add_required_arguments(parser)
     BasicArgumentGroups.add_other_options(parser)
     

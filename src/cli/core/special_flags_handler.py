@@ -24,11 +24,6 @@ def handle_special_flags():
         handle_metric_flag()
         return True
     
-    # Handle --interactive flag
-    if '--interactive' in sys.argv:
-        handle_interactive_flag()
-        return True
-    
     return False
 
 
@@ -48,7 +43,6 @@ def handle_examples_flag():
     print("  Show trend indicators: --indicators trend")
     print("  Show MACD info:        --indicators momentum macd")
     print("  Search examples:       --examples <search_term>")
-    print("  Interactive mode:      python run_analysis.py interactive")
     
     try:
         from src.cli.examples.main_examples import show_all_cli_examples
@@ -143,16 +137,5 @@ def handle_metric_flag():
         
     except ImportError:
         print(f"{Fore.RED}Encyclopedia module not available{Style.RESET_ALL}")
-    
-    sys.exit(0)
-
-
-def handle_interactive_flag():
-    """Handle --interactive flag."""
-    try:
-        from src.cli.core.interactive_mode import start_interactive_mode
-        start_interactive_mode()
-    except ImportError:
-        print(f"{Fore.RED}Interactive mode not available{Style.RESET_ALL}")
     
     sys.exit(0)

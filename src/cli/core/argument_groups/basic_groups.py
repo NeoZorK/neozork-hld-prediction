@@ -43,15 +43,6 @@ class BasicArgumentGroups:
         )
     
     @staticmethod
-    def add_interactive_option(parser: argparse.ArgumentParser) -> None:
-        """Add interactive mode option to parser."""
-        parser.add_argument(
-            '--interactive',
-            action='store_true',
-            help='Start interactive mode for guided indicator selection and analysis.'
-        )
-    
-    @staticmethod
     def add_required_arguments(parser: argparse.ArgumentParser) -> None:
         """Add required arguments group."""
         required_group = parser.add_argument_group('Required Arguments')
@@ -59,7 +50,7 @@ class BasicArgumentGroups:
             'mode', 
             nargs='?', 
             choices=ArgumentParserConfig.AVAILABLE_MODES,
-            help="Operating mode: 'demo', 'yfinance'/'yf', 'csv', 'polygon', 'binance', 'exrate', 'show', 'interactive'. Not required when using --interactive flag."
+            help="Operating mode: 'demo', 'yfinance'/'yf', 'csv', 'polygon', 'binance', 'exrate', 'show', 'interactive'."
         )
         
         # Show mode positional arguments

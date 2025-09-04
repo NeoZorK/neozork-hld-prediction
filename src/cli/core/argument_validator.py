@@ -248,8 +248,4 @@ def validate_and_process_arguments(args):
         if getattr(args, 'export_parquet', False) or getattr(args, 'export_csv', False) or getattr(args, 'export_json', False) or getattr(args, 'export_indicators_info', False):
             raise ValueError("Export flags (--export-parquet, --export-csv, --export-json, --export-indicators-info) are not allowed in 'show ind' mode. Use 'demo' or other show modes to export indicators.")
 
-    # Auto-set mode to interactive if --interactive flag is used
-    if hasattr(args, 'interactive') and args.interactive and not args.mode:
-        args.mode = 'interactive'
-
     return args
