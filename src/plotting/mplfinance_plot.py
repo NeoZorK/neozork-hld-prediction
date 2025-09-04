@@ -375,6 +375,13 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
     if 'sar' in df_results.columns and not df_results['sar'].isnull().all():
         plots_to_add.append(mpf.make_addplot(df_results['sar'].fillna(0), panel=0, color='red', width=0.8, type='scatter', markersize=20, secondary_y=True))
 
+    # Check for SR (Support/Resistance) indicators - PPrice1 and PPrice2
+    if 'PPrice1' in df_results.columns and not df_results['PPrice1'].isnull().all():
+        plots_to_add.append(mpf.make_addplot(df_results['PPrice1'].fillna(0), panel=0, color='green', width=1.5, linestyle='--', secondary_y=True, title='Support'))
+    
+    if 'PPrice2' in df_results.columns and not df_results['PPrice2'].isnull().all():
+        plots_to_add.append(mpf.make_addplot(df_results['PPrice2'].fillna(0), panel=0, color='red', width=1.5, linestyle='--', secondary_y=True, title='Resistance'))
+
     # Check for Put/Call Ratio indicators
     if 'putcallratio' in df_results.columns and not df_results['putcallratio'].isnull().all():
         panel_count += 1
