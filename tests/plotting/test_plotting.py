@@ -77,8 +77,8 @@ class TestPlottingFunction(unittest.TestCase):
         plot_indicator_results(self.df_results, self.rule, self.title, mode="mplfinance")
 
         # Check that make_addplot was called the expected number of times
-        # Updated to account for SuperTrend segments and signal markers
-        self.assertEqual(mock_mpf.make_addplot.call_count, 15)
+        # Updated to account for current plotting logic (PV+zero, HL, Pressure+zero, PPrice1, PPrice2, BUY markers, SELL markers)
+        self.assertEqual(mock_mpf.make_addplot.call_count, 11)
         
 
 
@@ -104,28 +104,27 @@ class TestPlottingFunction(unittest.TestCase):
         ]
 
         # Check the number of calls matches expected plots
-        # Updated to account for SuperTrend segments and signal markers
-        self.assertEqual(mock_mpf.make_addplot.call_count, 15)
+        # Updated to account for current plotting logic
+        self.assertEqual(mock_mpf.make_addplot.call_count, 11)
 
         # More detailed check of kwargs for specific plots (e.g., PV, signals)
         actual_calls = mock_mpf.make_addplot.call_args_list
         
-        # Check that we have SuperTrend segments instead of old PPrice1/PPrice2
-        supertrend_calls = [c for c in actual_calls if 'SuperTrend' in str(c[1].get('title', ''))]
-        self.assertGreater(len(supertrend_calls), 0, "Should have SuperTrend segment calls")
+        # Check that we have PPrice1 and PPrice2 overlays
+        pprice1_calls = [c for c in actual_calls if 'PPrice1' in str(c[1].get('title', ''))]
+        self.assertGreater(len(pprice1_calls), 0, "Should have PPrice1 overlay calls")
         
-        # Check that we have SuperTrend signal markers
-        supertrend_signals = [c for c in actual_calls if c[1].get('type') == 'scatter' and 'markersize' in c[1] and c[1]['markersize'] == 100]
-        self.assertGreater(len(supertrend_signals), 0, "Should have SuperTrend signal markers")
+        pprice2_calls = [c for c in actual_calls if 'PPrice2' in str(c[1].get('title', ''))]
+        self.assertGreater(len(pprice2_calls), 0, "Should have PPrice2 overlay calls")
 
-        # Example: Check PV call details (panel may have changed due to SuperTrend)
+        # Example: Check PV call details
         pv_call = next(c for c in actual_calls if c[1].get('ylabel') == 'PV')
         self.assertIn(pv_call[1]['panel'], [1, 2, 3, 4], "PV panel should be one of the available panels")
         self.assertEqual(pv_call[1]['color'], 'orange')
         pd.testing.assert_series_equal(pv_call[0][0], self.df_results['PV'].fillna(0), check_names=False)
 
         # Example: Check BUY signal call details (checking kwargs as data is complex)
-        # Note: There are now two types of signals - SuperTrend signals (markersize=100) and Direction signals (markersize=50)
+        # Note: We have Direction signals (markersize=50)
         buy_signal_calls = [c for c in actual_calls if c[1].get('marker') == '^' and c[1].get('markersize') == 50]
         self.assertGreater(len(buy_signal_calls), 0, "Should have Direction BUY signals")
         
@@ -156,7 +155,7 @@ class TestPlottingFunction(unittest.TestCase):
         self.assertEqual(call_kwargs['ylabel'], 'Price')
         self.assertTrue(call_kwargs['volume']) # Volume column exists
         self.assertEqual(len(call_kwargs['addplot']), mock_mpf.make_addplot.call_count) # Check all generated plots passed
-        # Panel ratios may have changed due to SuperTrend, so check it's a tuple
+        # Panel ratios should be a tuple
         self.assertIsInstance(call_kwargs['panel_ratios'], tuple)
         # Check figratio calculation roughly matches expected shape
         self.assertIsInstance(call_kwargs['figratio'], tuple)
