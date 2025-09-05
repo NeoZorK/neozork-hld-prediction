@@ -56,7 +56,8 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
     has_supertrend = 'supertrend' in df_results.columns or 'SuperTrend' in df_results.columns
     has_direction = 'Direction' in df_results.columns
     
-    if has_pprice or has_supertrend:
+    # Temporarily disable SuperTrend plotting to isolate the issue
+    if False and (has_pprice or has_supertrend):
         # Get supertrend values and direction
         if has_pprice:
             p1 = df_results['PPrice1']
@@ -99,7 +100,11 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
         # Enhanced segmentation with signal change detection (like fastest mode)
         segments = []
         last_color = color_arr[0]
-        seg_x, seg_y = [df_results.index[0]], [supertrend_values[0]]
+        # Handle both pandas.Series and numpy.ndarray
+        if hasattr(supertrend_values, 'iloc'):
+            seg_x, seg_y = [df_results.index[0]], [supertrend_values.iloc[0]]
+        else:
+            seg_x, seg_y = [df_results.index[0]], [supertrend_values[0]]
         
         for i in range(1, len(df_results.index)):
             current_color = color_arr[i]
@@ -111,25 +116,51 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
                     segments.append((seg_x.copy(), seg_y.copy(), last_color))
                 
                 # Add signal change point with golden color
-                segments.append(([df_results.index[i-1], df_results.index[i]], 
-                              [supertrend_values[i-1], supertrend_values[i]], 
-                              signal_change_color))
-                
-                # Start new segment
-                seg_x, seg_y = [df_results.index[i]], [supertrend_values[i]]
+                if hasattr(supertrend_values, 'iloc'):
+                    segments.append(([df_results.index[i-1], df_results.index[i]], 
+                                  [supertrend_values.iloc[i-1], supertrend_values.iloc[i]], 
+                                  signal_change_color))
+                    
+                    # Start new segment
+                    seg_x, seg_y = [df_results.index[i]], [supertrend_values.iloc[i]]
+                else:
+                    segments.append(([df_results.index[i-1], df_results.index[i]], 
+                                  [supertrend_values[i-1], supertrend_values[i]], 
+                                  signal_change_color))
+                    
+                    # Start new segment
+                    seg_x, seg_y = [df_results.index[i]], [supertrend_values[i]]
                 last_color = current_color
             elif current_color != last_color:
                 # Regular trend change (not a signal)
                 segments.append((seg_x.copy(), seg_y.copy(), last_color))
-                seg_x, seg_y = [df_results.index[i-1]], [supertrend_values[i-1]]
+                if hasattr(supertrend_values, 'iloc'):
+                    seg_x, seg_y = [df_results.index[i-1]], [supertrend_values.iloc[i-1]]
+                else:
+                    seg_x, seg_y = [df_results.index[i-1]], [supertrend_values[i-1]]
                 last_color = current_color
             
             seg_x.append(df_results.index[i])
-            seg_y.append(supertrend_values[i])
+            if hasattr(supertrend_values, 'iloc'):
+                seg_y.append(supertrend_values.iloc[i])
+            else:
+                seg_y.append(supertrend_values[i])
         
         # Add final segment
         if len(seg_x) > 0:
             segments.append((seg_x, seg_y, last_color))
+        
+        # Debug: Check segment dimensions
+        logger.print_debug(f"Number of segments created: {len(segments)}")
+        for i, (seg_x, seg_y, seg_color) in enumerate(segments[:5]):  # Check first 5 segments
+            logger.print_debug(f"Segment {i}: x length={len(seg_x)}, y length={len(seg_y)}")
+            if len(seg_x) != len(seg_y):
+                logger.print_debug(f"  WARNING: Dimension mismatch in segment {i}")
+                # Fix the mismatch by truncating to the shorter length
+                min_len = min(len(seg_x), len(seg_y))
+                seg_x = seg_x[:min_len]
+                seg_y = seg_y[:min_len]
+                segments[i] = (seg_x, seg_y, seg_color)
         
         # Add SuperTrend line segments with enhanced styling (like fastest mode)
         legend_shown = {uptrend_color: False, downtrend_color: False, signal_change_color: False}
@@ -166,30 +197,48 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
         sell_idx = df_results.index[(trend == -1) & (trend.shift(1) == 1)]
         
         if len(buy_idx) > 0:
-            buy_y = supertrend_values[df_results.index.isin(buy_idx)]
-            buy_series = pd.Series(buy_y, index=buy_idx)
-            plots_to_add.append(mpf.make_addplot(
-                buy_series,
-                type='scatter', 
-                markersize=100, 
-                marker='^', 
-                color=uptrend_color, 
-                panel=0,
-                secondary_y=True
-            ))
+            # Ensure buy_y has the same length as buy_idx
+            if hasattr(supertrend_values, 'loc'):
+                buy_y = supertrend_values.loc[buy_idx]
+            else:
+                # For numpy arrays, use boolean indexing
+                buy_mask = df_results.index.isin(buy_idx)
+                buy_y = supertrend_values[buy_mask]
+            
+            # Ensure we have the same number of values as indices
+            if len(buy_y) == len(buy_idx):
+                buy_series = pd.Series(buy_y, index=buy_idx)
+                plots_to_add.append(mpf.make_addplot(
+                    buy_series,
+                    type='scatter', 
+                    markersize=100, 
+                    marker='^', 
+                    color=uptrend_color, 
+                    panel=0,
+                    secondary_y=True
+                ))
         
         if len(sell_idx) > 0:
-            sell_y = supertrend_values[df_results.index.isin(sell_idx)]
-            sell_series = pd.Series(sell_y, index=sell_idx)
-            plots_to_add.append(mpf.make_addplot(
-                sell_series,
-                type='scatter', 
-                markersize=100, 
-                marker='v', 
-                color=downtrend_color, 
-                panel=0,
-                secondary_y=True
-            ))
+            # Ensure sell_y has the same length as sell_idx
+            if hasattr(supertrend_values, 'loc'):
+                sell_y = supertrend_values.loc[sell_idx]
+            else:
+                # For numpy arrays, use boolean indexing
+                sell_mask = df_results.index.isin(sell_idx)
+                sell_y = supertrend_values[sell_mask]
+            
+            # Ensure we have the same number of values as indices
+            if len(sell_y) == len(sell_idx):
+                sell_series = pd.Series(sell_y, index=sell_idx)
+                plots_to_add.append(mpf.make_addplot(
+                    sell_series,
+                    type='scatter', 
+                    markersize=100, 
+                    marker='v', 
+                    color=downtrend_color, 
+                    panel=0,
+                    secondary_y=True
+                ))
 
     # --- Add parameterized indicator panels ---
     # Check for Stochastic indicators
@@ -451,6 +500,14 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
             display_rule = rule.original_rule_with_params
         else:
             display_rule = rule_name
+
+        # Debug: Check addplot dimensions before plotting
+        logger.print_debug(f"Number of addplot items: {len(plots_to_add)}")
+        for i, plot_item in enumerate(plots_to_add):
+            if hasattr(plot_item, 'data'):
+                logger.print_debug(f"Addplot {i}: data shape = {plot_item.data.shape if hasattr(plot_item.data, 'shape') else 'no shape'}")
+            elif hasattr(plot_item, '_data'):
+                logger.print_debug(f"Addplot {i}: _data shape = {plot_item._data.shape if hasattr(plot_item._data, 'shape') else 'no shape'}")
 
         mpf.plot(
             df_results,
