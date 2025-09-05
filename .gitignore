@@ -73,6 +73,9 @@ mql5_feed/*.csv
 logs/
 !/.gitkeep
 
+# Results folder
+results/
+
 # Project specific
 .env
 qodana.yaml
