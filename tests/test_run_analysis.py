@@ -26,6 +26,7 @@ def test_run_analysis_file_exists():
     analysis_file = os.path.join(project_root, "run_analysis.py")
     assert os.path.exists(analysis_file), f"run_analysis file not found: {analysis_file}"
 
+@pytest.mark.no_parallel
 def test_run_analysis_basic_functionality():
     """Test basic run_analysis functionality"""
     try:
