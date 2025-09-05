@@ -278,7 +278,24 @@ def parse_arguments():
     other_group.add_argument('-h', action='help', default=argparse.SUPPRESS,
                              help='Show this help message and exit')
     other_group.add_argument('--version', action='version',
-                             version=f'{"Shcherbyna Pressure Vector Indicator v"+__version__}',
+                             version=f'''{Fore.CYAN}
+    ╔══════════════════════════════════════════════════════════════╗
+    ║                                                              ║
+    ║    ███╗   ██╗███████╗ ██████╗ ███████╗ ██████╗ ██████╗ ██╗  ██╗║
+    ║    ████╗  ██║██╔════╝██╔═══██╗╚══███╔╝██╔═══██╗██╔══██╗██║ ██╔╝║
+    ║    ██╔██╗ ██║█████╗  ██║   ██║  ███╔╝ ██║   ██║██████╔╝█████╔╝ ║
+    ║    ██║╚██╗██║██╔══╝  ██║   ██║ ███╔╝  ██║   ██║██╔══██╗██╔═██╗ ║
+    ║    ██║ ╚████║███████╗╚██████╔╝███████╗╚██████╔╝██║  ██║██║  ██╗║
+    ║    ╚═╝  ╚═══╝╚══════╝ ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝║
+    ║                                                              ║
+    ║              {Fore.YELLOW}Shcherbyna Pressure Vector Indicator{Fore.CYAN}              ║
+    ║                        {Fore.GREEN}Version {__version__}{Fore.CYAN}                        ║
+    ║                                                              ║
+    ║    {Fore.MAGENTA}Advanced High-Low Direction Prediction System{Fore.CYAN}           ║
+    ║    {Fore.WHITE}Powered by Machine Learning & Technical Analysis{Fore.CYAN}        ║
+    ║                                                              ║
+    ╚══════════════════════════════════════════════════════════════╝
+    {Style.RESET_ALL}''',
                              help="Show program version and exit")
 
     # --- Parse Arguments ---
