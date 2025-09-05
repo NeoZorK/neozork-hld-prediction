@@ -277,25 +277,7 @@ def parse_arguments():
     other_group = parser.add_argument_group('Other Options')
     other_group.add_argument('-h', action='help', default=argparse.SUPPRESS,
                              help='Show this help message and exit')
-    other_group.add_argument('--version', action='version',
-                             version=f'''{Fore.CYAN}
-    ╔══════════════════════════════════════════════════════════════╗
-    ║                                                              ║
-    ║    ███╗   ██╗███████╗ ██████╗ ███████╗ ██████╗ ██████╗ ██╗  ██╗║
-    ║    ████╗  ██║██╔════╝██╔═══██╗╚══███╔╝██╔═══██╗██╔══██╗██║ ██╔╝║
-    ║    ██╔██╗ ██║█████╗  ██║   ██║  ███╔╝ ██║   ██║██████╔╝█████╔╝ ║
-    ║    ██║╚██╗██║██╔══╝  ██║   ██║ ███╔╝  ██║   ██║██╔══██╗██╔═██╗ ║
-    ║    ██║ ╚████║███████╗╚██████╔╝███████╗╚██████╔╝██║  ██║██║  ██╗║
-    ║    ╚═╝  ╚═══╝╚══════╝ ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝║
-    ║                                                              ║
-    ║              {Fore.YELLOW}Shcherbyna Pressure Vector Indicator{Fore.CYAN}              ║
-    ║                        {Fore.GREEN}Version {__version__}{Fore.CYAN}                        ║
-    ║                                                              ║
-    ║    {Fore.MAGENTA}Advanced High-Low Direction Prediction System{Fore.CYAN}           ║
-    ║    {Fore.WHITE}Powered by Machine Learning & Technical Analysis{Fore.CYAN}        ║
-    ║                                                              ║
-    ╚══════════════════════════════════════════════════════════════╝
-    {Style.RESET_ALL}''',
+    other_group.add_argument('--version', action='store_true',
                              help="Show program version and exit")
 
     # --- Parse Arguments ---
@@ -339,6 +321,12 @@ def parse_arguments():
             parser.print_help()
             sys.exit(0)
 
+        # Handle --version flag before parsing to avoid mode requirement
+        if '--version' in sys.argv:
+            from .version_banner import show_version_banner
+            show_version_banner()
+            sys.exit(0)
+        
         # Handle --help flag before parsing to avoid mode requirement
         if '--help' in sys.argv or '-h' in sys.argv:
             parser.print_help()
