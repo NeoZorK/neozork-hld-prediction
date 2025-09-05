@@ -53,6 +53,9 @@ Examples:
     # Analyze CSV data
     ./nz csv --csv-file data.csv --rule PHLD
     ./nz csv --csv-file data.csv --rule PHLD --plot-type detailed
+    
+    # Batch convert CSV folder
+    ./nz csv --csv-folder mql5_feed --point 0.00001
 
     # Analyze Binance data
     ./nz binance BTCUSDT --interval 1h --rule PHLD

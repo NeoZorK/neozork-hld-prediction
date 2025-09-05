@@ -118,27 +118,50 @@ def acquire_data(args) -> dict:
             return data_info
 
         elif effective_mode == 'csv':
-            data_info["data_source_label"] = args.csv_file
-            csv_column_mapping = {
-                'Open': 'Open,', 'High': 'High,', 'Low': 'Low,',
-                'Close': 'Close,', 'Volume': 'TickVolume,'
-            }
-            csv_datetime_column = 'DateTime,'
-            df = fetch_csv_data(
-                file_path=args.csv_file, ohlc_columns=csv_column_mapping,
-                datetime_column=csv_datetime_column, skiprows=1, separator=','
-            )
-            if df is None or df.empty:
-                error_msg = f"Failed to read or process CSV file: {args.csv_file}. Check logs for details."
-                raise ValueError(error_msg)
-            if args.csv_file and Path(args.csv_file).exists():
-                try:
-                    combined_metrics["file_size_bytes"] = Path(args.csv_file).stat().st_size
-                except Exception:
-                    pass
-            combined_metrics["api_latency_sec"] = 0.0;
-            combined_metrics["api_calls"] = 0
-            data_info["ohlcv_df"] = df
+            # Handle single CSV file
+            if args.csv_file:
+                data_info["data_source_label"] = args.csv_file
+                csv_column_mapping = {
+                    'Open': 'Open,', 'High': 'High,', 'Low': 'Low,',
+                    'Close': 'Close,', 'Volume': 'TickVolume,'
+                }
+                csv_datetime_column = 'DateTime,'
+                df = fetch_csv_data(
+                    file_path=args.csv_file, ohlc_columns=csv_column_mapping,
+                    datetime_column=csv_datetime_column, skiprows=1, separator=','
+                )
+                if df is None or df.empty:
+                    error_msg = f"Failed to read or process CSV file: {args.csv_file}. Check logs for details."
+                    raise ValueError(error_msg)
+                if args.csv_file and Path(args.csv_file).exists():
+                    try:
+                        combined_metrics["file_size_bytes"] = Path(args.csv_file).stat().st_size
+                    except Exception:
+                        pass
+                combined_metrics["api_latency_sec"] = 0.0;
+                combined_metrics["api_calls"] = 0
+                data_info["ohlcv_df"] = df
+            
+            # Handle CSV folder batch processing
+            elif args.csv_folder:
+                from .batch_csv_processor import process_csv_folder
+                data_info["data_source_label"] = f"Batch CSV folder: {args.csv_folder}"
+                
+                # Process the entire folder
+                batch_results = process_csv_folder(args)
+                
+                # Update data_info with batch processing results
+                data_info.update(batch_results)
+                
+                # For batch processing, we don't return a single DataFrame
+                # Instead, we indicate that this was a batch operation
+                data_info["batch_processing"] = True
+                data_info["ohlcv_df"] = None  # No single DataFrame for batch processing
+                
+                # Set success based on batch results
+                if not batch_results["success"]:
+                    error_msg = f"Batch CSV processing failed. {len(batch_results['error_messages'])} errors occurred."
+                    raise ValueError(error_msg)
 
         elif effective_mode in ['yfinance', 'polygon', 'binance', 'exrate']:
             is_period_request = effective_mode == 'yfinance' and args.period

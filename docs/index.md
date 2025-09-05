@@ -91,6 +91,7 @@ python run_analysis.py demo --rule PHLD
 - [Technical Indicators](guides/indicators.md) - Available technical indicators (including new [COT](reference/indicators/sentiment/cot-indicator.md), [Put/Call Ratio](reference/indicators/sentiment/putcallratio-indicator.md), [SuperTrend](reference/indicators/trend/supertrend-indicator.md), [SMA](reference/indicators/trend/sma-indicator.md), [Wave](reference/indicators/trend/wave-indicator.md) with full seaborn mode support)
 - [Analysis Tools](guides/analysis-tools.md) - Analysis and visualization tools
 - [CLI Interface](guides/cli-interface.md) - Command-line interface usage
+- [Batch CSV Processing](guides/batch-csv-processing.md) - **NEW**: Batch processing of CSV folders
 
 ### 🎯 SMA Indicator Tutorials (New!)
 - [Complete SMA Tutorial](guides/adding-sma-indicator-tutorial.md) - Full implementation guide across all display modes
@@ -290,6 +291,9 @@ nz mql5 EURUSD --interval H4 --rule PHLD
 
 # Wave indicator with seaborn mode
 nz csv --csv-file data/mn1.csv --point 50 --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d sb
+
+# Batch convert CSV folder
+nz csv --csv-folder mql5_feed --point 0.00001
 ```
 
 ### UV Package Management
