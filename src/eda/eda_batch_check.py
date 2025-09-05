@@ -128,6 +128,8 @@ from colorama import Fore, Style
 import json
 import datetime
 from tqdm import tqdm  # Import tqdm for progress bars
+import gc  # For garbage collection
+import psutil  # For memory monitoring
 
 # Initialize colorama for colored output
 colorama.init(autoreset=True)
@@ -137,6 +139,56 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')
 
 # Import necessary modules
 from src.eda import file_info, folder_stats, data_quality, fix_files, basic_stats, correlation_analysis, feature_importance, stats_logger
+
+
+def check_memory_usage():
+    """Check current memory usage and return memory info."""
+    try:
+        process = psutil.Process(os.getpid())
+        memory_info = process.memory_info()
+        memory_mb = memory_info.rss / 1024 / 1024
+        return memory_mb
+    except Exception:
+        return 0
+
+
+def optimize_memory():
+    """Force garbage collection to free up memory."""
+    gc.collect()
+
+
+def safe_read_parquet(file_path, max_memory_mb=300):
+    """Safely read parquet file with memory monitoring."""
+    try:
+        # Check available memory before reading
+        memory_before = check_memory_usage()
+        
+        if memory_before > max_memory_mb:
+            print(f"  {Fore.YELLOW}Warning: High memory usage ({memory_before:.1f}MB), forcing garbage collection{Style.RESET_ALL}")
+            optimize_memory()
+            memory_after = check_memory_usage()
+            print(f"  {Fore.YELLOW}Memory after cleanup: {memory_after:.1f}MB{Style.RESET_ALL}")
+            
+            # If still high memory, skip this file
+            if memory_after > max_memory_mb * 1.5:
+                print(f"  {Fore.RED}Skipping file due to high memory usage{Style.RESET_ALL}")
+                return None
+        
+        import pandas as pd
+        df = pd.read_parquet(file_path)
+        
+        # Check memory after reading
+        memory_after = check_memory_usage()
+        if memory_after > max_memory_mb * 2:
+            print(f"  {Fore.RED}Warning: Very high memory usage after reading file ({memory_after:.1f}MB), skipping analysis{Style.RESET_ALL}")
+            del df
+            optimize_memory()
+            return None
+        
+        return df
+    except Exception as e:
+        print(f"  {Fore.RED}Error reading file: {e}{Style.RESET_ALL}")
+        return None
 
 
 def print_nan_check(df, nan_summary):
@@ -491,7 +543,17 @@ def main():
 
     # Process each file
     total_files = len(parquet_files)
+    initial_memory = check_memory_usage()
+    
+    # Limit number of files processed in Docker to prevent memory issues
+    max_files = 10 if os.environ.get('DOCKER_CONTAINER') else total_files
+    if total_files > max_files:
+        print(f"{Fore.YELLOW}Warning: Limiting processing to {max_files} files to prevent memory issues in Docker{Style.RESET_ALL}")
+        parquet_files = parquet_files[:max_files]
+        total_files = len(parquet_files)
+    
     print(f"{Fore.CYAN}Processing {total_files} files...{Style.RESET_ALL}")
+    print(f"{Fore.YELLOW}Initial memory usage: {initial_memory:.1f}MB{Style.RESET_ALL}")
 
     for idx, file in enumerate(tqdm(parquet_files, desc="Processing files"), 1):  # Add progress bar
         info = file_info.get_file_info(file)
@@ -508,14 +570,11 @@ def main():
                 print(f"  {Fore.RED}Error reading file:{Style.RESET_ALL} {info['error']}")
                 continue
 
-            # Read the DataFrame
-            df = None
-            try:
-                import pandas as pd
-                df = pd.read_parquet(file)
-            except Exception as e:
+            # Read the DataFrame safely with memory monitoring
+            df = safe_read_parquet(file)
+            if df is None:
                 print(f"\n\n{Fore.CYAN}[{idx}/{total_files}] File: {info.get('file_path')}{Style.RESET_ALL}")
-                print(f"  {Fore.RED}Error reading file:{Style.RESET_ALL} {e}")
+                print(f"  {Fore.RED}Error reading file or memory limit exceeded{Style.RESET_ALL}")
                 continue
 
             if df is not None:
@@ -667,6 +726,11 @@ def main():
                     except Exception as e:
                         print(f"    - Error generating file summary: {e}")
 
+            # Clean up memory after processing each file
+            if df is not None:
+                del df
+            optimize_memory()
+            
             # Add extra space after each file
             print("\n")
             continue
@@ -692,10 +756,15 @@ def main():
 
         # Print sample rows
         try:
-            import pandas as pd
-            df = pd.read_parquet(file)
-            print(f"  {Fore.GREEN}First 5 rows:{Style.RESET_ALL}\n", df.head(5).to_string())
-            print(f"  {Fore.GREEN}Last 5 rows:{Style.RESET_ALL}\n", df.tail(5).to_string())
+            df = safe_read_parquet(file)
+            if df is not None:
+                print(f"  {Fore.GREEN}First 5 rows:{Style.RESET_ALL}\n", df.head(5).to_string())
+                print(f"  {Fore.GREEN}Last 5 rows:{Style.RESET_ALL}\n", df.tail(5).to_string())
+                # Clean up memory after displaying sample rows
+                del df
+                optimize_memory()
+            else:
+                print(f"  {Fore.RED}Error reading rows: Memory limit exceeded or file read error{Style.RESET_ALL}")
         except Exception as e:
             print(f"  {Fore.RED}Error reading rows:{Style.RESET_ALL} {e}")
 
