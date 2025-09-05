@@ -172,8 +172,11 @@ def parse_arguments():
     # --- Data Source Specific Options Group ---
     data_source_group = parser.add_argument_group('Data Source Options')
     # CSV options
-    data_source_group.add_argument('--csv-file', metavar='PATH',
-                                   help="Path to input CSV file (required for 'csv' mode)")
+    csv_group = data_source_group.add_mutually_exclusive_group()
+    csv_group.add_argument('--csv-file', metavar='PATH',
+                          help="Path to input CSV file (required for 'csv' mode)")
+    csv_group.add_argument('--csv-folder', metavar='PATH',
+                          help="Path to folder containing CSV files for batch processing (required for 'csv' mode)")
     # API options (Yahoo Finance / Polygon.io / Binance)
     data_source_group.add_argument('--ticker', metavar='SYMBOL',
                                    help="Ticker symbol. Examples: 'EURUSD=X' (yfinance), 'AAPL' (polygon), 'BTCUSDT' (binance)")
@@ -493,8 +496,10 @@ def parse_arguments():
 
     # Check requirements for CSV mode
     if effective_mode == 'csv':
-        if not args.csv_file:
-            parser.error("argument --csv-file is required when mode is 'csv'")
+        if not args.csv_file and not args.csv_folder:
+            parser.error("argument --csv-file or --csv-folder is required when mode is 'csv'")
+        if args.csv_file and args.csv_folder:
+            parser.error("cannot specify both --csv-file and --csv-folder")
         if args.point is None:
             parser.error("argument --point is required when mode is 'csv'")
 

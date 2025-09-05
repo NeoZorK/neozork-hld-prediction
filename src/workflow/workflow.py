@@ -126,6 +126,15 @@ def run_indicator_workflow(args):
 
         ohlcv_df = data_info.get("ohlcv_df") # Get DataFrame
 
+        # --- Check for Batch Processing Mode ---
+        if data_info.get("batch_processing", False):
+            # For batch processing, we don't need to validate a single DataFrame
+            # The batch processing results are already in data_info
+            logger.print_info("Batch CSV processing completed successfully.")
+            workflow_results.update(data_info)
+            workflow_results["success"] = True
+            return workflow_results
+
         # --- Critical Check ---
         if ohlcv_df is None or ohlcv_df.empty:
             error_msg_from_data = data_info.get("error_message") or "Data acquisition returned None or empty DataFrame."
