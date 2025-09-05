@@ -10,6 +10,7 @@ import glob
 from pathlib import Path
 from typing import List, Dict, Any
 import pandas as pd
+from tqdm import tqdm
 
 from src.common.logger import print_info, print_warning, print_error, print_success
 from .fetchers.csv_fetcher import fetch_csv_data
@@ -55,7 +56,7 @@ def find_csv_files_in_folder(folder_path: str) -> List[str]:
 def process_csv_folder(args) -> Dict[str, Any]:
     """
     Process all CSV files in a folder and convert them to Parquet format.
-    This function handles batch conversion of multiple CSV files.
+    This function handles batch conversion of multiple CSV files with progress bar.
     
     Args:
         args: Parsed command-line arguments containing csv_folder and point
@@ -83,54 +84,64 @@ def process_csv_folder(args) -> Dict[str, Any]:
         return results
     
     results["total_files"] = len(csv_files)
-    print_info(f"Starting batch conversion of {len(csv_files)} CSV files...")
     
-    # Process each CSV file
-    for csv_file in csv_files:
-        results["processed_files"] += 1
-        file_name = Path(csv_file).name
+    # Create progress bar
+    with tqdm(total=len(csv_files), 
+              desc="🔄 Converting CSV files", 
+              unit="file",
+              bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}] {postfix}",
+              colour="green") as pbar:
         
-        try:
-            print_info(f"Processing file {results['processed_files']}/{results['total_files']}: {file_name}")
+        # Process each CSV file
+        for csv_file in csv_files:
+            results["processed_files"] += 1
+            file_name = Path(csv_file).name
             
-            # Create a temporary args object for this file
-            file_args = type('Args', (), {})()
-            file_args.csv_file = csv_file
-            file_args.point = args.point
+            # Update progress bar with current file name
+            pbar.set_postfix_str(f"Processing: {file_name}")
             
-            # Use the existing CSV fetcher to process the file
-            # This will automatically handle Parquet caching
-            csv_column_mapping = {
-                'Open': 'Open,', 'High': 'High,', 'Low': 'Low,',
-                'Close': 'Close,', 'Volume': 'TickVolume,'
-            }
-            csv_datetime_column = 'DateTime,'
-            
-            df = fetch_csv_data(
-                file_path=csv_file,
-                ohlc_columns=csv_column_mapping,
-                datetime_column=csv_datetime_column,
-                skiprows=1,
-                separator=','
-            )
-            
-            if df is not None and not df.empty:
-                results["successful_conversions"] += 1
-                results["converted_files"].append(file_name)
-                print_success(f"Successfully converted: {file_name} ({len(df)} rows)")
-            else:
+            try:
+                # Create a temporary args object for this file
+                file_args = type('Args', (), {})()
+                file_args.csv_file = csv_file
+                file_args.point = args.point
+                
+                # Use the existing CSV fetcher to process the file
+                # This will automatically handle Parquet caching
+                csv_column_mapping = {
+                    'Open': 'Open,', 'High': 'High,', 'Low': 'Low,',
+                    'Close': 'Close,', 'Volume': 'TickVolume,'
+                }
+                csv_datetime_column = 'DateTime,'
+                
+                df = fetch_csv_data(
+                    file_path=csv_file,
+                    ohlc_columns=csv_column_mapping,
+                    datetime_column=csv_datetime_column,
+                    skiprows=1,
+                    separator=','
+                )
+                
+                if df is not None and not df.empty:
+                    results["successful_conversions"] += 1
+                    results["converted_files"].append(file_name)
+                    pbar.set_postfix_str(f"✅ {file_name} ({len(df):,} rows)")
+                else:
+                    results["failed_conversions"] += 1
+                    results["failed_files"].append(file_name)
+                    error_msg = f"Failed to process CSV file: {file_name}"
+                    results["error_messages"].append(error_msg)
+                    pbar.set_postfix_str(f"❌ {file_name} (failed)")
+                    
+            except Exception as e:
                 results["failed_conversions"] += 1
                 results["failed_files"].append(file_name)
-                error_msg = f"Failed to process CSV file: {file_name}"
+                error_msg = f"Error processing {file_name}: {str(e)}"
                 results["error_messages"].append(error_msg)
-                print_error(error_msg)
-                
-        except Exception as e:
-            results["failed_conversions"] += 1
-            results["failed_files"].append(file_name)
-            error_msg = f"Error processing {file_name}: {str(e)}"
-            results["error_messages"].append(error_msg)
-            print_error(error_msg)
+                pbar.set_postfix_str(f"❌ {file_name} (error)")
+            
+            # Update progress bar
+            pbar.update(1)
     
     # Print summary
     print_info(f"\n--- Batch Conversion Summary ---")
