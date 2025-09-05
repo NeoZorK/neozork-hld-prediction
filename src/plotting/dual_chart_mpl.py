@@ -192,8 +192,15 @@ def plot_dual_chart_mpl(
     # Add indicator based on type
     if indicator_name == 'rsi':
         y_axis_label = 'RSI Value'
+        # Check for both lowercase and uppercase RSI columns
+        rsi_col = None
         if 'rsi' in display_df.columns:
-            ax2.plot(display_df.index, display_df['rsi'], 
+            rsi_col = 'rsi'
+        elif 'RSI' in display_df.columns:
+            rsi_col = 'RSI'
+        
+        if rsi_col:
+            ax2.plot(display_df.index, display_df[rsi_col], 
                     color='purple', linewidth=3, label='RSI')
             
             # Add overbought/oversold lines
@@ -209,8 +216,15 @@ def plot_dual_chart_mpl(
     
     elif indicator_name == 'rsi_mom':
         y_axis_label = 'RSI Momentum'
+        # Check for both lowercase and uppercase RSI columns
+        rsi_col = None
         if 'rsi' in display_df.columns:
-            ax2.plot(display_df.index, display_df['rsi'], 
+            rsi_col = 'rsi'
+        elif 'RSI' in display_df.columns:
+            rsi_col = 'RSI'
+        
+        if rsi_col:
+            ax2.plot(display_df.index, display_df[rsi_col], 
                     color='purple', linewidth=2, label='RSI')
         
         if 'rsi_momentum' in display_df.columns:
@@ -233,8 +247,15 @@ def plot_dual_chart_mpl(
     
     elif indicator_name == 'rsi_div':
         y_axis_label = 'RSI Divergence'
+        # Check for both lowercase and uppercase RSI columns
+        rsi_col = None
         if 'rsi' in display_df.columns:
-            ax2.plot(display_df.index, display_df['rsi'], 
+            rsi_col = 'rsi'
+        elif 'RSI' in display_df.columns:
+            rsi_col = 'RSI'
+        
+        if rsi_col:
+            ax2.plot(display_df.index, display_df[rsi_col], 
                     color='purple', linewidth=2, label='RSI')
         
         if 'rsi_divergence' in display_df.columns:
