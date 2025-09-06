@@ -18,6 +18,11 @@ from pathlib import Path
 from typing import Dict, Any, Optional, List, Tuple
 import glob
 import json
+import colorama
+from colorama import Fore, Back, Style, init
+
+# Initialize colorama for cross-platform colored output
+init(autoreset=True)
 
 # Add project root to path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -67,6 +72,21 @@ class DataLoader:
         for directory in directories:
             directory.mkdir(parents=True, exist_ok=True)
     
+    def _show_progress(self, message: str, progress: float = 0.0, eta: str = ""):
+        """Show progress with ETA and percentage."""
+        bar_length = 30
+        filled_length = int(bar_length * progress)
+        bar = "█" * filled_length + "░" * (bar_length - filled_length)
+        percentage = int(progress * 100)
+        
+        if eta:
+            print(f"\r{Fore.CYAN}{message} [{bar}] {percentage}% ETA: {eta}", end="", flush=True)
+        else:
+            print(f"\r{Fore.CYAN}{message} [{bar}] {percentage}%", end="", flush=True)
+        
+        if progress >= 1.0:
+            print()  # New line when complete
+    
     def load_csv_converted_data(self, symbol_filter: Optional[str] = None) -> Dict[str, Any]:
         """
         Load CSV converted data from parquet files.
@@ -78,8 +98,88 @@ class DataLoader:
             Dictionary containing loaded data and metadata
         """
         print_info("📁 Loading CSV converted data...")
-        print_warning("This feature will be implemented in the next phase...")
-        return {"status": "not_implemented", "message": "Feature coming soon"}
+        
+        try:
+            csv_dir = self.cache_root / "csv_converted"
+            if not csv_dir.exists():
+                print_warning(f"Directory {csv_dir} does not exist")
+                return {"status": "error", "message": "CSV converted directory not found"}
+            
+            # Find parquet files
+            pattern = "*.parquet"
+            if symbol_filter:
+                pattern = f"*{symbol_filter.lower()}*.parquet"
+            
+            parquet_files = list(csv_dir.glob(pattern))
+            
+            if not parquet_files:
+                print_warning(f"No parquet files found matching pattern: {pattern}")
+                return {"status": "error", "message": f"No files found matching {pattern}"}
+            
+            loaded_data = {}
+            total_size = 0
+            total_rows = 0
+            
+            for i, file_path in enumerate(parquet_files):
+                # Show progress
+                progress = (i + 1) / len(parquet_files)
+                self._show_progress(f"Loading {file_path.name}", progress)
+                
+                try:
+                    # Load parquet file
+                    df = pd.read_parquet(file_path)
+                    
+                    # Extract symbol from filename
+                    symbol = file_path.stem.replace("_", "").upper()
+                    
+                    # Calculate metadata
+                    file_size = file_path.stat().st_size / (1024 * 1024)  # MB
+                    total_size += file_size
+                    total_rows += len(df)
+                    
+                    # Get time range
+                    if 'Timestamp' in df.columns:
+                        start_time = df['Timestamp'].min()
+                        end_time = df['Timestamp'].max()
+                        timeframes = df['Timestamp'].dt.floor('H').value_counts().index.tolist()[:5]  # First 5 timeframes
+                    else:
+                        start_time = "Unknown"
+                        end_time = "Unknown"
+                        timeframes = ["Unknown"]
+                    
+                    loaded_data[symbol] = {
+                        "data": df,
+                        "file_path": str(file_path),
+                        "size_mb": round(file_size, 2),
+                        "rows": len(df),
+                        "start_time": start_time,
+                        "end_time": end_time,
+                        "timeframes": timeframes,
+                        "columns": list(df.columns)
+                    }
+                    
+                except Exception as e:
+                    print_error(f"Error loading {file_path.name}: {e}")
+                    continue
+            
+            print_success(f"✅ Loaded {len(loaded_data)} datasets")
+            print_info(f"📊 Total size: {total_size:.2f} MB")
+            print_info(f"📈 Total rows: {total_rows:,}")
+            
+            return {
+                "status": "success",
+                "data": loaded_data,
+                "metadata": {
+                    "total_files": len(loaded_data),
+                    "total_size_mb": round(total_size, 2),
+                    "total_rows": total_rows,
+                    "symbols": list(loaded_data.keys())
+                }
+            }
+            
+        except Exception as e:
+            print_error(f"Error loading CSV converted data: {e}")
+            return {"status": "error", "message": str(e)}
     
     def load_raw_parquet_data(self, symbol_filter: Optional[str] = None) -> Dict[str, Any]:
         """
@@ -92,8 +192,91 @@ class DataLoader:
             Dictionary containing loaded data and metadata
         """
         print_info("📊 Loading raw parquet data...")
-        print_warning("This feature will be implemented in the next phase...")
-        return {"status": "not_implemented", "message": "Feature coming soon"}
+        
+        try:
+            if not self.raw_root.exists():
+                print_warning(f"Directory {self.raw_root} does not exist")
+                return {"status": "error", "message": "Raw parquet directory not found"}
+            
+            # Find parquet files
+            pattern = "*.parquet"
+            if symbol_filter:
+                pattern = f"*{symbol_filter.lower()}*.parquet"
+            
+            parquet_files = list(self.raw_root.glob(pattern))
+            
+            if not parquet_files:
+                print_warning(f"No parquet files found matching pattern: {pattern}")
+                return {"status": "error", "message": f"No files found matching {pattern}"}
+            
+            loaded_data = {}
+            total_size = 0
+            total_rows = 0
+            
+            for i, file_path in enumerate(parquet_files):
+                # Show progress
+                progress = (i + 1) / len(parquet_files)
+                self._show_progress(f"Loading {file_path.name}", progress)
+                
+                try:
+                    # Load parquet file
+                    df = pd.read_parquet(file_path)
+                    
+                    # Extract symbol from filename
+                    symbol = file_path.stem.replace("_", "").upper()
+                    
+                    # Calculate metadata
+                    file_size = file_path.stat().st_size / (1024 * 1024)  # MB
+                    total_size += file_size
+                    total_rows += len(df)
+                    
+                    # Get time range
+                    if 'timestamp' in df.columns:
+                        start_time = df['timestamp'].min()
+                        end_time = df['timestamp'].max()
+                        timeframes = df['timestamp'].dt.floor('H').value_counts().index.tolist()[:5]
+                    elif 'Timestamp' in df.columns:
+                        start_time = df['Timestamp'].min()
+                        end_time = df['Timestamp'].max()
+                        timeframes = df['Timestamp'].dt.floor('H').value_counts().index.tolist()[:5]
+                    else:
+                        start_time = "Unknown"
+                        end_time = "Unknown"
+                        timeframes = ["Unknown"]
+                    
+                    loaded_data[symbol] = {
+                        "data": df,
+                        "file_path": str(file_path),
+                        "size_mb": round(file_size, 2),
+                        "rows": len(df),
+                        "start_time": start_time,
+                        "end_time": end_time,
+                        "timeframes": timeframes,
+                        "columns": list(df.columns)
+                    }
+                    
+                except Exception as e:
+                    print_error(f"Error loading {file_path.name}: {e}")
+                    continue
+            
+            print_success(f"✅ Loaded {len(loaded_data)} datasets")
+            print_info(f"📊 Total size: {total_size:.2f} MB")
+            print_info(f"📈 Total rows: {total_rows:,}")
+            
+            return {
+                "status": "success",
+                "data": loaded_data,
+                "metadata": {
+                    "total_files": len(loaded_data),
+                    "total_size_mb": round(total_size, 2),
+                    "total_rows": total_rows,
+                    "symbols": list(loaded_data.keys())
+                }
+            }
+            
+        except Exception as e:
+            print_error(f"Error loading raw parquet data: {e}")
+            return {"status": "error", "message": str(e)}
     
     def load_indicators_data(self, symbol_filter: Optional[str] = None) -> Dict[str, Any]:
         """
@@ -106,8 +289,116 @@ class DataLoader:
             Dictionary containing loaded data and metadata
         """
         print_info("📈 Loading indicators data...")
-        print_warning("This feature will be implemented in the next phase...")
-        return {"status": "not_implemented", "message": "Feature coming soon"}
+        
+        try:
+            if not self.indicators_root.exists():
+                print_warning(f"Directory {self.indicators_root} does not exist")
+                return {"status": "error", "message": "Indicators directory not found"}
+            
+            loaded_data = {}
+            total_size = 0
+            total_rows = 0
+            file_count = 0
+            
+            # Load from different subdirectories
+            subdirs = ["parquet", "csv", "json"]
+            
+            for subdir in subdirs:
+                subdir_path = self.indicators_root / subdir
+                if not subdir_path.exists():
+                    continue
+                
+                # Find files based on subdirectory
+                if subdir == "parquet":
+                    pattern = "*.parquet"
+                elif subdir == "csv":
+                    pattern = "*.csv"
+                else:  # json
+                    pattern = "*.json"
+                
+                if symbol_filter:
+                    pattern = f"*{symbol_filter.lower()}*{pattern[1:]}"
+                
+                files = list(subdir_path.glob(pattern))
+                
+                for i, file_path in enumerate(files):
+                    file_count += 1
+                    progress = file_count / (len(files) + 1)  # Approximate progress
+                    self._show_progress(f"Loading {file_path.name}", progress)
+                    
+                    try:
+                        # Load file based on extension
+                        if file_path.suffix == '.parquet':
+                            df = pd.read_parquet(file_path)
+                        elif file_path.suffix == '.csv':
+                            df = pd.read_csv(file_path)
+                        elif file_path.suffix == '.json':
+                            df = pd.read_json(file_path)
+                        else:
+                            continue
+                        
+                        # Extract symbol from filename
+                        symbol = file_path.stem.replace("_", "").upper()
+                        
+                        # Calculate metadata
+                        file_size = file_path.stat().st_size / (1024 * 1024)  # MB
+                        total_size += file_size
+                        total_rows += len(df)
+                        
+                        # Get time range
+                        time_col = None
+                        for col in ['timestamp', 'Timestamp', 'time', 'Time']:
+                            if col in df.columns:
+                                time_col = col
+                                break
+                        
+                        if time_col:
+                            start_time = df[time_col].min()
+                            end_time = df[time_col].max()
+                            timeframes = df[time_col].dt.floor('h').value_counts().index.tolist()[:5]
+                        else:
+                            start_time = "Unknown"
+                            end_time = "Unknown"
+                            timeframes = ["Unknown"]
+                        
+                        loaded_data[symbol] = {
+                            "data": df,
+                            "file_path": str(file_path),
+                            "size_mb": round(file_size, 2),
+                            "rows": len(df),
+                            "start_time": start_time,
+                            "end_time": end_time,
+                            "timeframes": timeframes,
+                            "columns": list(df.columns),
+                            "file_type": subdir
+                        }
+                        
+                    except Exception as e:
+                        print_error(f"Error loading {file_path.name}: {e}")
+                        continue
+            
+            if not loaded_data:
+                print_warning("No indicator files found")
+                return {"status": "error", "message": "No indicator files found"}
+            
+            print_success(f"✅ Loaded {len(loaded_data)} indicator datasets")
+            print_info(f"📊 Total size: {total_size:.2f} MB")
+            print_info(f"📈 Total rows: {total_rows:,}")
+            
+            return {
+                "status": "success",
+                "data": loaded_data,
+                "metadata": {
+                    "total_files": len(loaded_data),
+                    "total_size_mb": round(total_size, 2),
+                    "total_rows": total_rows,
+                    "symbols": list(loaded_data.keys())
+                }
+            }
+            
+        except Exception as e:
+            print_error(f"Error loading indicators data: {e}")
+            return {"status": "error", "message": str(e)}
     
     def load_cleaned_data(self, symbol_filter: Optional[str] = None) -> Dict[str, Any]:
         """
@@ -120,8 +411,93 @@ class DataLoader:
             Dictionary containing loaded data and metadata
         """
         print_info("✨ Loading cleaned data...")
-        print_warning("This feature will be implemented in the next phase...")
-        return {"status": "not_implemented", "message": "Feature coming soon"}
+        
+        try:
+            if not self.cleaned_root.exists():
+                print_warning(f"Directory {self.cleaned_root} does not exist")
+                return {"status": "error", "message": "Cleaned data directory not found"}
+            
+            # Find parquet files
+            pattern = "*.parquet"
+            if symbol_filter:
+                pattern = f"*{symbol_filter.lower()}*.parquet"
+            
+            parquet_files = list(self.cleaned_root.glob(pattern))
+            
+            if not parquet_files:
+                print_warning(f"No cleaned parquet files found matching pattern: {pattern}")
+                return {"status": "error", "message": f"No files found matching {pattern}"}
+            
+            loaded_data = {}
+            total_size = 0
+            total_rows = 0
+            
+            for i, file_path in enumerate(parquet_files):
+                # Show progress
+                progress = (i + 1) / len(parquet_files)
+                self._show_progress(f"Loading {file_path.name}", progress)
+                
+                try:
+                    # Load parquet file
+                    df = pd.read_parquet(file_path)
+                    
+                    # Extract symbol from filename
+                    symbol = file_path.stem.replace("_", "").upper()
+                    
+                    # Calculate metadata
+                    file_size = file_path.stat().st_size / (1024 * 1024)  # MB
+                    total_size += file_size
+                    total_rows += len(df)
+                    
+                    # Get time range
+                    time_col = None
+                    for col in ['timestamp', 'Timestamp', 'time', 'Time']:
+                        if col in df.columns:
+                            time_col = col
+                            break
+                    
+                    if time_col:
+                        start_time = df[time_col].min()
+                        end_time = df[time_col].max()
+                        timeframes = df[time_col].dt.floor('h').value_counts().index.tolist()[:5]
+                    else:
+                        start_time = "Unknown"
+                        end_time = "Unknown"
+                        timeframes = ["Unknown"]
+                    
+                    loaded_data[symbol] = {
+                        "data": df,
+                        "file_path": str(file_path),
+                        "size_mb": round(file_size, 2),
+                        "rows": len(df),
+                        "start_time": start_time,
+                        "end_time": end_time,
+                        "timeframes": timeframes,
+                        "columns": list(df.columns)
+                    }
+                    
+                except Exception as e:
+                    print_error(f"Error loading {file_path.name}: {e}")
+                    continue
+            
+            print_success(f"✅ Loaded {len(loaded_data)} cleaned datasets")
+            print_info(f"📊 Total size: {total_size:.2f} MB")
+            print_info(f"📈 Total rows: {total_rows:,}")
+            
+            return {
+                "status": "success",
+                "data": loaded_data,
+                "metadata": {
+                    "total_files": len(loaded_data),
+                    "total_size_mb": round(total_size, 2),
+                    "total_rows": total_rows,
+                    "symbols": list(loaded_data.keys())
+                }
+            }
+            
+        except Exception as e:
+            print_error(f"Error loading cleaned data: {e}")
+            return {"status": "error", "message": str(e)}
     
     def get_available_data_sources(self) -> Dict[str, List[str]]:
         """
