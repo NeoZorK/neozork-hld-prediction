@@ -6,6 +6,7 @@ This module provides the data loading submenu with support for multiple data sou
 """
 
 from typing import Dict, Any, Optional
+import time
 from .base_menu import BaseMenu
 
 class DataLoadingMenu(BaseMenu):
@@ -50,23 +51,105 @@ class DataLoadingMenu(BaseMenu):
     def _load_csv_converted(self):
         """Load CSV converted data."""
         print(f"\n{Fore.YELLOW}📁 Loading CSV Converted Data...")
-        print(f"{Fore.CYAN}This feature will be implemented in the next phase...")
-        time.sleep(2)
+        
+        # Get symbol filter from user
+        symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'eurusd'): {Style.RESET_ALL}").strip()
+        if not symbol_filter:
+            symbol_filter = None
+        
+        # Load data
+        from interactive.data_management import DataLoader
+        loader = DataLoader()
+        result = loader.load_csv_converted_data(symbol_filter)
+        
+        if result["status"] == "success":
+            self._display_loaded_data(result)
+        else:
+            print(f"{Fore.RED}❌ Error: {result['message']}")
+        
+        input(f"\n{Fore.CYAN}Press Enter to continue...")
+    
+    def _display_loaded_data(self, result: Dict[str, Any]):
+        """Display loaded data information."""
+        metadata = result["metadata"]
+        data = result["data"]
+        
+        print(f"\n{Fore.GREEN}📊 Data Loaded Successfully!")
+        print(f"{Fore.CYAN}{'─'*50}")
+        print(f"{Fore.YELLOW}📈 Summary:")
+        print(f"  • Total files: {metadata['total_files']}")
+        print(f"  • Total size: {metadata['total_size_mb']} MB")
+        print(f"  • Total rows: {metadata['total_rows']:,}")
+        print(f"  • Symbols: {', '.join(metadata['symbols'])}")
+        
+        print(f"\n{Fore.YELLOW}📋 Detailed Information:")
+        for symbol, info in data.items():
+            print(f"\n{Fore.WHITE}🔸 {symbol}:")
+            print(f"  • File: {info['file_path'].split('/')[-1]}")
+            print(f"  • Size: {info['size_mb']} MB")
+            print(f"  • Rows: {info['rows']:,}")
+            print(f"  • Time range: {info['start_time']} to {info['end_time']}")
+            print(f"  • Columns: {len(info['columns'])} ({', '.join(info['columns'][:5])}{'...' if len(info['columns']) > 5 else ''})")
     
     def _load_raw_parquet(self):
         """Load raw parquet data."""
         print(f"\n{Fore.YELLOW}📊 Loading Raw Parquet Data...")
-        print(f"{Fore.CYAN}This feature will be implemented in the next phase...")
-        time.sleep(2)
+        
+        # Get symbol filter from user
+        symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'btcusdt'): {Style.RESET_ALL}").strip()
+        if not symbol_filter:
+            symbol_filter = None
+        
+        # Load data
+        from interactive.data_management import DataLoader
+        loader = DataLoader()
+        result = loader.load_raw_parquet_data(symbol_filter)
+        
+        if result["status"] == "success":
+            self._display_loaded_data(result)
+        else:
+            print(f"{Fore.RED}❌ Error: {result['message']}")
+        
+        input(f"\n{Fore.CYAN}Press Enter to continue...")
     
     def _load_indicators(self):
         """Load indicators data."""
         print(f"\n{Fore.YELLOW}📈 Loading Indicators Data...")
-        print(f"{Fore.CYAN}This feature will be implemented in the next phase...")
-        time.sleep(2)
+        
+        # Get symbol filter from user
+        symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'aapl'): {Style.RESET_ALL}").strip()
+        if not symbol_filter:
+            symbol_filter = None
+        
+        # Load data
+        from interactive.data_management import DataLoader
+        loader = DataLoader()
+        result = loader.load_indicators_data(symbol_filter)
+        
+        if result["status"] == "success":
+            self._display_loaded_data(result)
+        else:
+            print(f"{Fore.RED}❌ Error: {result['message']}")
+        
+        input(f"\n{Fore.CYAN}Press Enter to continue...")
     
     def _load_cleaned_data(self):
         """Load cleaned data."""
         print(f"\n{Fore.YELLOW}✨ Loading Cleaned Data...")
-        print(f"{Fore.CYAN}This feature will be implemented in the next phase...")
-        time.sleep(2)
+        
+        # Get symbol filter from user
+        symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'eurusd'): {Style.RESET_ALL}").strip()
+        if not symbol_filter:
+            symbol_filter = None
+        
+        # Load data
+        from interactive.data_management import DataLoader
+        loader = DataLoader()
+        result = loader.load_cleaned_data(symbol_filter)
+        
+        if result["status"] == "success":
+            self._display_loaded_data(result)
+        else:
+            print(f"{Fore.RED}❌ Error: {result['message']}")
+        
+        input(f"\n{Fore.CYAN}Press Enter to continue...")

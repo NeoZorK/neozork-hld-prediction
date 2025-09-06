@@ -7,6 +7,7 @@ This module provides the base functionality for all menu classes.
 
 import os
 import sys
+import time
 from typing import Dict, Any, Optional, Callable
 from pathlib import Path
 import colorama
