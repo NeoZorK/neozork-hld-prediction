@@ -41,7 +41,7 @@ from interactive.data_management import DataLoader
 from interactive.eda_analysis import EDAAnalyzer
 from interactive.feature_engineering import FeatureEngineer
 from interactive.ml_development import MLDeveloper
-from interactive.monitoring_system import MonitoringSystem
+from interactive.monitoring import MonitoringSystem
 
 class NeoZorkInteractiveSystem:
     """

@@ -132,9 +132,9 @@ class InteractiveMenuSystem:
     # Menu handlers (stubs for now)
     def _load_data_menu(self):
         """Handle data loading menu."""
-        print(f"\n{Fore.YELLOW}📊 Load Data Menu")
-        print(f"{Fore.CYAN}This feature will be implemented in the next phase...")
-        time.sleep(2)
+        from .data_loading_menu import DataLoadingMenu
+        menu = DataLoadingMenu()
+        menu.run()
     
     def _eda_analysis_menu(self):
         """Handle EDA analysis menu."""
