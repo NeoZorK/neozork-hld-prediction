@@ -42,6 +42,10 @@ from interactive.eda_analysis import EDAAnalyzer
 from interactive.feature_engineering import FeatureEngineer
 from interactive.ml_development import MLDeveloper
 from interactive.monitoring import MonitoringSystem
+from interactive.probability_methods import BayesianInference, MonteCarloRisk
+from interactive.apple_mlx import MLXTrainer
+from interactive.advanced_ml import DeepReinforcementLearning, EnsembleLearning
+from interactive.containerization import AppleContainerManager
 
 class NeoZorkInteractiveSystem:
     """
