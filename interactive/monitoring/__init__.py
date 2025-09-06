@@ -9,6 +9,10 @@ from .system_monitor import SystemMonitor
 from .performance_monitor import PerformanceMonitor
 from .alert_manager import AlertManager
 from .dashboard_generator import DashboardGenerator
+from .prometheus_integration import PrometheusIntegration
+from .grafana_dashboards import GrafanaDashboards
+from .alerting_system import AlertingSystem
+from .performance_monitoring import PerformanceMonitoring
 
 class MonitoringSystem:
     """Main monitoring system class."""
@@ -17,11 +21,19 @@ class MonitoringSystem:
         self.performance_monitor = PerformanceMonitor()
         self.alert_manager = AlertManager()
         self.dashboard_generator = DashboardGenerator()
+        self.prometheus_integration = PrometheusIntegration()
+        self.grafana_dashboards = GrafanaDashboards()
+        self.alerting_system = AlertingSystem()
+        self.performance_monitoring = PerformanceMonitoring()
 
 __all__ = [
     'MonitoringSystem',
     'SystemMonitor',
     'PerformanceMonitor',
     'AlertManager',
-    'DashboardGenerator'
+    'DashboardGenerator',
+    'PrometheusIntegration',
+    'GrafanaDashboards',
+    'AlertingSystem',
+    'PerformanceMonitoring'
 ]
