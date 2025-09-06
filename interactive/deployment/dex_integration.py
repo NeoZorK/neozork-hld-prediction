@@ -74,6 +74,12 @@ class DEXIntegration:
                 "network": "ethereum",
                 "testnet": testnet,
                 "connection_id": "eth_conn_1",
+                "connection_info": {
+                    "network": "ethereum",
+                    "chain_id": 3 if testnet else 1,
+                    "block_number": np.random.randint(18000000, 19000000),
+                    "gas_price": np.random.uniform(20, 50)
+                },
                 "message": "Ethereum connection established successfully"
             }
             
