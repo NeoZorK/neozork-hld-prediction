@@ -129,6 +129,7 @@ python run_analysis.py demo --rule PHLD
 - [Interactive ML Trading System](interactive/index.md) - **NEW**: Comprehensive interactive system for ML trading strategy development
 - [Strategic Plan (English)](interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_EN.md) - **NEW**: Complete strategic plan for robust profitable ML trading strategies
 - [Стратегический План (Русский)](interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_RU.md) - **NEW**: Полный стратегический план для робастных прибыльных ML торговых стратегий
+- [Next Steps Plan](interactive/next-steps-plan.md) - **NEW**: Production development roadmap and implementation plan
 
 ### Release Notes
 - [Release Notes](release-notes/index.md) - **NEW**: Complete release history and migration guides
