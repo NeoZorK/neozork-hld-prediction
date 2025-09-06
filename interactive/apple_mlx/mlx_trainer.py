@@ -9,6 +9,10 @@ import pandas as pd
 import numpy as np
 from typing import Dict, Any, Optional, List, Tuple
 
+def print_warning(message):
+    """Print warning message."""
+    print(f"Warning: {message}")
+
 class MLXTrainer:
     """
     Apple MLX trainer for deep learning models.
