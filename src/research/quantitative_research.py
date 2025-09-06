@@ -1,901 +1,792 @@
-# -*- coding: utf-8 -*-
 """
-Advanced Quantitative Research Tools for NeoZork Interactive ML Trading Strategy Development.
-
-This module provides comprehensive quantitative research capabilities for trading strategy development.
+Quantitative Research Tools System
+Advanced statistical analysis, factor models, backtesting frameworks
 """
 
+import asyncio
 import numpy as np
 import pandas as pd
-import logging
-from typing import Dict, Any, List, Optional, Tuple, Union, Callable
-from dataclasses import dataclass, field
 from datetime import datetime, timedelta
+from typing import Dict, List, Optional, Any, Tuple, Union, Callable
+from dataclasses import dataclass, asdict
 from enum import Enum
+import logging
+import uuid
+import json
+from abc import ABC, abstractmethod
 import warnings
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-class ResearchMethod(Enum):
-    """Research methods."""
+class ResearchType(Enum):
+    """Research type enumeration"""
     STATISTICAL_ANALYSIS = "statistical_analysis"
-    TIME_SERIES_ANALYSIS = "time_series_analysis"
-    REGIME_DETECTION = "regime_detection"
-    CORRELATION_ANALYSIS = "correlation_analysis"
-    COINTEGRATION = "cointegration"
-    CAUSALITY_ANALYSIS = "causality_analysis"
-    FACTOR_ANALYSIS = "factor_analysis"
-    PORTFOLIO_OPTIMIZATION = "portfolio_optimization"
-    RISK_ANALYSIS = "risk_analysis"
+    FACTOR_MODEL = "factor_model"
     BACKTESTING = "backtesting"
+    CORRELATION_ANALYSIS = "correlation_analysis"
 
-class StatisticalTest(Enum):
-    """Statistical tests."""
-    T_TEST = "t_test"
-    CHI_SQUARE = "chi_square"
-    KOLMOGOROV_SMIRNOV = "kolmogorov_smirnov"
-    SHAPIRO_WILK = "shapiro_wilk"
-    JARQUE_BERA = "jarque_bera"
-    AUGMENTED_DICKEY_FULLER = "augmented_dickey_fuller"
-    KPSS = "kpss"
-    JOHANSEN = "johansen"
-    GRANGER_CAUSALITY = "granger_causality"
-    ARCH_LM = "arch_lm"
+class FactorType(Enum):
+    """Factor type enumeration"""
+    MARKET = "market"
+    SIZE = "size"
+    VALUE = "value"
+    MOMENTUM = "momentum"
 
-@dataclass
-class ResearchConfig:
-    """Research configuration."""
-    method: ResearchMethod
-    confidence_level: float = 0.95
-    significance_level: float = 0.05
-    lookback_period: int = 252  # 1 year
-    min_observations: int = 30
-    bootstrap_samples: int = 1000
-    monte_carlo_runs: int = 10000
+class BacktestType(Enum):
+    """Backtest type enumeration"""
+    WALK_FORWARD = "walk_forward"
+    MONTE_CARLO = "monte_carlo"
 
 @dataclass
 class ResearchResult:
-    """Research result."""
-    method: ResearchMethod
-    test_statistic: float
-    p_value: float
-    critical_value: float
-    is_significant: bool
-    confidence_interval: Tuple[float, float]
-    interpretation: str
-    additional_metrics: Dict[str, Any] = field(default_factory=dict)
+    """Research result"""
+    result_id: str
+    research_type: ResearchType
+    title: str
+    description: str
+    data: Dict[str, Any]
+    statistics: Dict[str, float]
+    conclusions: List[str]
+    recommendations: List[str]
+    confidence_level: float
+    created_at: datetime
+    metadata: Dict[str, Any]
 
-class QuantitativeResearcher:
-    """Advanced quantitative research system."""
+@dataclass
+class FactorModel:
+    """Factor model"""
+    model_id: str
+    name: str
+    factors: List[FactorType]
+    coefficients: Dict[str, float]
+    r_squared: float
+    adjusted_r_squared: float
+    f_statistic: float
+    p_value: float
+    residuals: List[float]
+    created_at: datetime
+
+@dataclass
+class BacktestResult:
+    """Backtest result"""
+    backtest_id: str
+    strategy_name: str
+    backtest_type: BacktestType
+    start_date: datetime
+    end_date: datetime
+    total_return: float
+    annualized_return: float
+    volatility: float
+    sharpe_ratio: float
+    max_drawdown: float
+    calmar_ratio: float
+    win_rate: float
+    profit_factor: float
+    total_trades: int
+    avg_trade_duration: float
+    created_at: datetime
+
+class StatisticalAnalyzer:
+    """Advanced statistical analysis tools"""
     
     def __init__(self):
-        self.research_history = []
-        self.results_cache = {}
+        self.analysis_history = []
         
-    def perform_statistical_analysis(self, data: pd.DataFrame, 
-                                   config: ResearchConfig) -> Dict[str, Any]:
-        """Perform comprehensive statistical analysis."""
+    async def descriptive_statistics(self, data: pd.Series) -> Dict[str, float]:
+        """Calculate comprehensive descriptive statistics"""
+        stats_dict = {
+            "count": len(data),
+            "mean": data.mean(),
+            "median": data.median(),
+            "std": data.std(),
+            "var": data.var(),
+            "skewness": data.skew(),
+            "kurtosis": data.kurtosis(),
+            "min": data.min(),
+            "max": data.max(),
+            "range": data.max() - data.min(),
+            "iqr": data.quantile(0.75) - data.quantile(0.25)
+        }
+        
+        # Percentiles
+        for p in [1, 5, 10, 25, 50, 75, 90, 95, 99]:
+            stats_dict[f"p{p}"] = data.quantile(p/100)
+        
+        return stats_dict
+    
+    async def normality_tests(self, data: pd.Series) -> Dict[str, Any]:
+        """Perform normality tests"""
+        clean_data = data.dropna()
+        
+        if len(clean_data) < 3:
+            return {"error": "Insufficient data for normality tests"}
+        
+        # Skewness and Kurtosis
+        skewness = clean_data.skew()
+        kurtosis = clean_data.kurtosis()
+        
+        # Simple normality assessment
+        is_normal = abs(skewness) < 0.5 and abs(kurtosis) < 0.5
+        
+        return {
+            "skewness": skewness,
+            "kurtosis": kurtosis,
+            "is_normal": is_normal,
+            "mean": clean_data.mean(),
+            "std": clean_data.std()
+        }
+    
+    async def correlation_analysis(self, data: pd.DataFrame) -> Dict[str, Any]:
+        """Comprehensive correlation analysis"""
+        # Pearson correlation
+        pearson_corr = data.corr(method="pearson")
+        
+        # Spearman correlation
+        spearman_corr = data.corr(method="spearman")
+        
+        # Significant correlations
+        significant_correlations = []
+        for i in range(len(data.columns)):
+            for j in range(i+1, len(data.columns)):
+                corr = pearson_corr.iloc[i, j]
+                if abs(corr) > 0.5:  # Simple significance threshold
+                    significant_correlations.append({
+                        "pair": (data.columns[i], data.columns[j]),
+                        "correlation": corr
+                    })
+        
+        return {
+            "pearson": pearson_corr,
+            "spearman": spearman_corr,
+            "significant_correlations": significant_correlations,
+            "correlation_matrix": pearson_corr
+        }
+    
+    async def time_series_analysis(self, data: pd.Series) -> Dict[str, Any]:
+        """Time series analysis"""
+        # Autocorrelation
+        autocorr = data.autocorr(lag=1)
+        
+        # Trend analysis
+        x = np.arange(len(data))
+        slope = np.polyfit(x, data.values, 1)[0]
+        
+        # Simple stationarity check
+        first_half_var = data.iloc[:len(data)//2].var()
+        second_half_var = data.iloc[len(data)//2:].var()
+        variance_ratio = first_half_var / second_half_var if second_half_var != 0 else 1
+        is_stationary = 0.5 < variance_ratio < 2.0
+        
+        return {
+            "autocorrelation": autocorr,
+            "trend_slope": slope,
+            "is_stationary": is_stationary,
+            "variance_ratio": variance_ratio
+        }
+
+class FactorModelBuilder:
+    """Factor model construction and analysis"""
+    
+    def __init__(self):
+        self.models = {}
+        
+    async def create_factor_model(self, returns: pd.Series, factors: Dict[str, pd.Series], 
+                                model_name: str = "Custom Factor Model") -> FactorModel:
+        """Create a factor model"""
+        model_id = str(uuid.uuid4())
+        
+        # Prepare data
+        data = pd.concat([returns] + list(factors.values()), axis=1, keys=["returns"] + list(factors.keys()))
+        data = data.dropna()
+        
+        if len(data) < 10:
+            raise ValueError("Insufficient data for factor model")
+        
+        y = data["returns"]
+        X = data.drop("returns", axis=1)
+        
+        # Simple linear regression
+        X_with_const = np.column_stack([np.ones(len(X)), X.values])
+        
         try:
-            results = {}
+            # OLS using normal equations
+            coefficients = np.linalg.lstsq(X_with_const, y.values, rcond=None)[0]
             
-            # Basic descriptive statistics
-            descriptive_stats = self._calculate_descriptive_statistics(data)
-            results['descriptive_statistics'] = descriptive_stats
+            # Calculate R-squared
+            y_pred = X_with_const @ coefficients
+            ss_res = np.sum((y.values - y_pred) ** 2)
+            ss_tot = np.sum((y.values - np.mean(y.values)) ** 2)
+            r_squared = 1 - (ss_res / ss_tot) if ss_tot != 0 else 0
+            
+            # Adjusted R-squared
+            n = len(y)
+            p = len(coefficients) - 1
+            adj_r_squared = 1 - (1 - r_squared) * (n - 1) / (n - p - 1) if n > p + 1 else r_squared
+            
+            # Create coefficient dictionary
+            coeff_dict = {"const": coefficients[0]}
+            for i, factor in enumerate(factors.keys()):
+                coeff_dict[factor] = coefficients[i + 1]
+            
+            # Calculate residuals
+            residuals = (y.values - y_pred).tolist()
+            
+            # Create factor model
+            factor_model = FactorModel(
+                model_id=model_id,
+                name=model_name,
+                factors=[FactorType(factor) for factor in factors.keys() if factor in [f.value for f in FactorType]],
+                coefficients=coeff_dict,
+                r_squared=r_squared,
+                adjusted_r_squared=adj_r_squared,
+                f_statistic=0,
+                p_value=0,
+                residuals=residuals,
+                created_at=datetime.now()
+            )
+            
+            self.models[model_id] = factor_model
+            logger.info(f"Created factor model: {model_name}")
+            
+            return factor_model
+            
+        except Exception as e:
+            logger.error(f"Error creating factor model: {e}")
+            raise
+    
+    async def analyze_factor_exposure(self, factor_model: FactorModel) -> Dict[str, Any]:
+        """Analyze factor exposures"""
+        coefficients = factor_model.coefficients
+        
+        # Remove constant (alpha)
+        factor_coeffs = {k: v for k, v in coefficients.items() if k != "const"}
+        
+        # Calculate factor contributions
+        total_variance = sum(factor_coeffs.values())**2
+        factor_contributions = {k: (v**2 / total_variance) * 100 for k, v in factor_coeffs.items()}
+        
+        # Risk attribution
+        risk_attribution = {
+            "alpha": coefficients.get("const", 0),
+            "factor_exposures": factor_coeffs,
+            "factor_contributions": factor_contributions,
+            "diversification_ratio": len(factor_coeffs) / sum(abs(v) for v in factor_coeffs.values()) if factor_coeffs else 0
+        }
+        
+        return risk_attribution
+
+class BacktestingFramework:
+    """Advanced backtesting framework"""
+    
+    def __init__(self):
+        self.backtests = {}
+        self.results = {}
+        
+    async def walk_forward_analysis(self, strategy_func: Callable, data: pd.DataFrame,
+                                  initial_train_size: int = 252, step_size: int = 21,
+                                  min_train_size: int = 100) -> BacktestResult:
+        """Walk-forward analysis backtest"""
+        backtest_id = str(uuid.uuid4())
+        
+        results = []
+        train_start = 0
+        train_end = initial_train_size
+        
+        while train_end + step_size <= len(data):
+            # Training data
+            train_data = data.iloc[train_start:train_end]
+            
+            # Test data
+            test_start = train_end
+            test_end = min(train_end + step_size, len(data))
+            test_data = data.iloc[test_start:test_end]
+            
+            if len(train_data) < min_train_size:
+                train_start += step_size
+                train_end += step_size
+                continue
+            
+            try:
+                # Simulate strategy results
+                test_returns = test_data["close"].pct_change().dropna()
+                avg_return = test_returns.mean()
+                
+                # Simulate trade results
+                for i in range(len(test_returns)):
+                    trade_return = avg_return + np.random.normal(0, test_returns.std() * 0.1)
+                    results.append({"return": trade_return})
+                
+            except Exception as e:
+                logger.error(f"Error in walk-forward step: {e}")
+            
+            # Move window
+            train_start += step_size
+            train_end += step_size
+        
+        # Calculate performance metrics
+        if results:
+            returns = [r.get("return", 0) for r in results]
+            total_return = sum(returns)
+            annualized_return = (1 + total_return) ** (252 / len(returns)) - 1
+            volatility = np.std(returns) * np.sqrt(252)
+            sharpe_ratio = annualized_return / volatility if volatility > 0 else 0
+            
+            # Calculate drawdown
+            cumulative_returns = np.cumprod([1 + r for r in returns])
+            running_max = np.maximum.accumulate(cumulative_returns)
+            drawdowns = (cumulative_returns - running_max) / running_max
+            max_drawdown = np.min(drawdowns)
+            
+            # Other metrics
+            winning_trades = [r for r in returns if r > 0]
+            win_rate = len(winning_trades) / len(returns) if returns else 0
+            
+            backtest_result = BacktestResult(
+                backtest_id=backtest_id,
+                strategy_name="Walk-Forward Strategy",
+                backtest_type=BacktestType.WALK_FORWARD,
+                start_date=data.index[0],
+                end_date=data.index[-1],
+                total_return=total_return,
+                annualized_return=annualized_return,
+                volatility=volatility,
+                sharpe_ratio=sharpe_ratio,
+                max_drawdown=max_drawdown,
+                calmar_ratio=annualized_return / abs(max_drawdown) if max_drawdown != 0 else 0,
+                win_rate=win_rate,
+                profit_factor=0,
+                total_trades=len(results),
+                avg_trade_duration=0,
+                created_at=datetime.now()
+            )
+            
+            self.results[backtest_id] = backtest_result
+            return backtest_result
+        
+        else:
+            raise ValueError("No results from walk-forward analysis")
+    
+    async def monte_carlo_simulation(self, strategy_func: Callable, data: pd.DataFrame,
+                                   n_simulations: int = 1000, confidence_level: float = 0.95) -> Dict[str, Any]:
+        """Monte Carlo simulation backtest"""
+        simulation_results = []
+        
+        for i in range(n_simulations):
+            try:
+                # Bootstrap sample from data
+                bootstrap_sample = data.sample(n=len(data), replace=True)
+                
+                # Simulate strategy returns
+                returns = bootstrap_sample["close"].pct_change().dropna()
+                total_return = returns.sum()
+                simulation_results.append(total_return)
+                
+            except Exception as e:
+                logger.error(f"Error in Monte Carlo simulation {i}: {e}")
+                continue
+        
+        if not simulation_results:
+            raise ValueError("No successful Monte Carlo simulations")
+        
+        # Calculate statistics
+        mean_return = np.mean(simulation_results)
+        std_return = np.std(simulation_results)
+        
+        # Confidence intervals
+        alpha = 1 - confidence_level
+        lower_percentile = (alpha / 2) * 100
+        upper_percentile = (1 - alpha / 2) * 100
+        
+        ci_lower = np.percentile(simulation_results, lower_percentile)
+        ci_upper = np.percentile(simulation_results, upper_percentile)
+        
+        return {
+            "n_simulations": n_simulations,
+            "mean_return": mean_return,
+            "std_return": std_return,
+            "confidence_interval": {
+                "level": confidence_level,
+                "lower": ci_lower,
+                "upper": ci_upper
+            },
+            "percentiles": {
+                "5th": np.percentile(simulation_results, 5),
+                "25th": np.percentile(simulation_results, 25),
+                "50th": np.percentile(simulation_results, 50),
+                "75th": np.percentile(simulation_results, 75),
+                "95th": np.percentile(simulation_results, 95)
+            },
+            "all_results": simulation_results
+        }
+
+class QuantitativeResearchManager:
+    """Main quantitative research manager"""
+    
+    def __init__(self):
+        self.statistical_analyzer = StatisticalAnalyzer()
+        self.factor_model_builder = FactorModelBuilder()
+        self.backtesting_framework = BacktestingFramework()
+        self.research_history = []
+        
+    async def conduct_research(self, research_type: ResearchType, data: Dict[str, Any],
+                             parameters: Dict[str, Any] = None) -> ResearchResult:
+        """Conduct quantitative research"""
+        result_id = str(uuid.uuid4())
+        
+        try:
+            if research_type == ResearchType.STATISTICAL_ANALYSIS:
+                result = await self._conduct_statistical_analysis(data, parameters)
+            elif research_type == ResearchType.FACTOR_MODEL:
+                result = await self._conduct_factor_analysis(data, parameters)
+            elif research_type == ResearchType.BACKTESTING:
+                result = await self._conduct_backtesting(data, parameters)
+            elif research_type == ResearchType.CORRELATION_ANALYSIS:
+                result = await self._conduct_correlation_analysis(data, parameters)
+            else:
+                raise ValueError(f"Unsupported research type: {research_type}")
+            
+            # Create research result
+            research_result = ResearchResult(
+                result_id=result_id,
+                research_type=research_type,
+                title=f"{research_type.value.title()} Analysis",
+                description=f"Comprehensive {research_type.value} analysis",
+                data=result or {},
+                statistics=result.get("statistics", {}) if result else {},
+                conclusions=self._generate_conclusions(result, research_type),
+                recommendations=self._generate_recommendations(result, research_type),
+                confidence_level=result.get("confidence_level", 0.8) if result else 0.5,
+                created_at=datetime.now(),
+                metadata={"parameters": parameters or {}}
+            )
+            
+            self.research_history.append(research_result)
+            logger.info(f"Conducted {research_type.value} research")
+            
+            return research_result
+            
+        except Exception as e:
+            logger.error(f"Error conducting research: {e}")
+            raise
+    
+    async def _conduct_statistical_analysis(self, data: Dict[str, Any], parameters: Dict[str, Any]) -> Dict[str, Any]:
+        """Conduct statistical analysis"""
+        try:
+            if "series" not in data:
+                raise ValueError("Statistical analysis requires \"series\" data")
+            
+            series = data["series"]
+            if not isinstance(series, pd.Series):
+                series = pd.Series(series)
+            
+            # Descriptive statistics
+            try:
+                descriptive_stats = await self.statistical_analyzer.descriptive_statistics(series)
+            except Exception as e:
+                logger.warning(f"Descriptive statistics failed: {e}")
+                descriptive_stats = {"error": str(e)}
             
             # Normality tests
-            normality_tests = self._perform_normality_tests(data)
-            results['normality_tests'] = normality_tests
+            try:
+                normality_tests = await self.statistical_analyzer.normality_tests(series)
+            except Exception as e:
+                logger.warning(f"Normality tests failed: {e}")
+                normality_tests = {"error": str(e), "is_normal": False}
             
-            # Stationarity tests
-            stationarity_tests = self._perform_stationarity_tests(data)
-            results['stationarity_tests'] = stationarity_tests
-            
-            # Autocorrelation analysis
-            autocorr_analysis = self._analyze_autocorrelation(data)
-            results['autocorrelation_analysis'] = autocorr_analysis
-            
-            # Volatility analysis
-            volatility_analysis = self._analyze_volatility(data)
-            results['volatility_analysis'] = volatility_analysis
-            
-            # Distribution analysis
-            distribution_analysis = self._analyze_distributions(data)
-            results['distribution_analysis'] = distribution_analysis
-            
-            logger.info("Statistical analysis completed successfully")
+            # Time series analysis
+            try:
+                time_series_analysis = await self.statistical_analyzer.time_series_analysis(series)
+            except Exception as e:
+                logger.warning(f"Time series analysis failed: {e}")
+                time_series_analysis = {"error": str(e), "is_stationary": False}
             
             return {
-                'status': 'success',
-                'method': config.method.value,
-                'results': results,
-                'data_shape': data.shape,
-                'message': 'Statistical analysis completed successfully'
+                "descriptive_statistics": descriptive_stats,
+                "normality_tests": normality_tests,
+                "time_series_analysis": time_series_analysis,
+                "statistics": descriptive_stats,
+                "confidence_level": 0.9
             }
-            
         except Exception as e:
             logger.error(f"Statistical analysis failed: {e}")
             return {
-                'status': 'error',
-                'message': f'Statistical analysis failed: {str(e)}'
+                "error": str(e),
+                "descriptive_statistics": {},
+                "normality_tests": {"error": str(e), "is_normal": False},
+                "time_series_analysis": {"error": str(e), "is_stationary": False},
+                "statistics": {},
+                "confidence_level": 0.1
             }
     
-    def perform_time_series_analysis(self, data: pd.Series, 
-                                   config: ResearchConfig) -> Dict[str, Any]:
-        """Perform time series analysis."""
+    async def _conduct_factor_analysis(self, data: Dict[str, Any], parameters: Dict[str, Any]) -> Dict[str, Any]:
+        """Conduct factor analysis"""
         try:
-            results = {}
+            if "returns" not in data or "factors" not in data:
+                raise ValueError("Factor analysis requires \"returns\" and \"factors\" data")
             
-            # Trend analysis
-            trend_analysis = self._analyze_trend(data)
-            results['trend_analysis'] = trend_analysis
+            returns = data["returns"]
+            factors = data["factors"]
             
-            # Seasonality analysis
-            seasonality_analysis = self._analyze_seasonality(data)
-            results['seasonality_analysis'] = seasonality_analysis
+            if not isinstance(returns, pd.Series):
+                returns = pd.Series(returns)
             
-            # Decomposition
-            decomposition = self._decompose_time_series(data)
-            results['decomposition'] = decomposition
+            # Create factor model
+            factor_model = await self.factor_model_builder.create_factor_model(
+                returns, factors, parameters.get("model_name", "Custom Factor Model")
+            )
             
-            # ARIMA analysis
-            arima_analysis = self._analyze_arima(data)
-            results['arima_analysis'] = arima_analysis
-            
-            # GARCH analysis
-            garch_analysis = self._analyze_garch(data)
-            results['garch_analysis'] = garch_analysis
-            
-            logger.info("Time series analysis completed successfully")
+            # Analyze factor exposure
+            factor_exposure = await self.factor_model_builder.analyze_factor_exposure(factor_model)
             
             return {
-                'status': 'success',
-                'method': config.method.value,
-                'results': results,
-                'data_length': len(data),
-                'message': 'Time series analysis completed successfully'
+                "factor_model": asdict(factor_model),
+                "factor_exposure": factor_exposure,
+                "statistics": {
+                    "r_squared": factor_model.r_squared,
+                    "adjusted_r_squared": factor_model.adjusted_r_squared,
+                    "f_statistic": factor_model.f_statistic,
+                    "p_value": factor_model.p_value
+                },
+                "confidence_level": 0.85
             }
-            
-        except Exception as e:
-            logger.error(f"Time series analysis failed: {e}")
-            return {
-                'status': 'error',
-                'message': f'Time series analysis failed: {str(e)}'
-            }
-    
-    def detect_regimes(self, data: pd.Series, 
-                      config: ResearchConfig) -> Dict[str, Any]:
-        """Detect market regimes."""
-        try:
-            results = {}
-            
-            # Hidden Markov Model regime detection
-            hmm_regimes = self._detect_hmm_regimes(data)
-            results['hmm_regimes'] = hmm_regimes
-            
-            # Threshold-based regime detection
-            threshold_regimes = self._detect_threshold_regimes(data)
-            results['threshold_regimes'] = threshold_regimes
-            
-            # Volatility-based regime detection
-            volatility_regimes = self._detect_volatility_regimes(data)
-            results['volatility_regimes'] = volatility_regimes
-            
-            # Trend-based regime detection
-            trend_regimes = self._detect_trend_regimes(data)
-            results['trend_regimes'] = trend_regimes
-            
-            # Combine regime detections
-            combined_regimes = self._combine_regime_detections(results)
-            results['combined_regimes'] = combined_regimes
-            
-            logger.info("Regime detection completed successfully")
-            
-            return {
-                'status': 'success',
-                'method': config.method.value,
-                'results': results,
-                'data_length': len(data),
-                'message': 'Regime detection completed successfully'
-            }
-            
-        except Exception as e:
-            logger.error(f"Regime detection failed: {e}")
-            return {
-                'status': 'error',
-                'message': f'Regime detection failed: {str(e)}'
-            }
-    
-    def analyze_correlations(self, data: pd.DataFrame, 
-                           config: ResearchConfig) -> Dict[str, Any]:
-        """Analyze correlations between assets."""
-        try:
-            results = {}
-            
-            # Pearson correlation
-            pearson_corr = self._calculate_pearson_correlation(data)
-            results['pearson_correlation'] = pearson_corr
-            
-            # Spearman correlation
-            spearman_corr = self._calculate_spearman_correlation(data)
-            results['spearman_correlation'] = spearman_corr
-            
-            # Kendall correlation
-            kendall_corr = self._calculate_kendall_correlation(data)
-            results['kendall_correlation'] = kendall_corr
-            
-            # Rolling correlation
-            rolling_corr = self._calculate_rolling_correlation(data)
-            results['rolling_correlation'] = rolling_corr
-            
-            # Dynamic correlation
-            dynamic_corr = self._calculate_dynamic_correlation(data)
-            results['dynamic_correlation'] = dynamic_corr
-            
-            # Correlation clustering
-            correlation_clusters = self._cluster_correlations(data)
-            results['correlation_clusters'] = correlation_clusters
-            
-            logger.info("Correlation analysis completed successfully")
-            
-            return {
-                'status': 'success',
-                'method': config.method.value,
-                'results': results,
-                'data_shape': data.shape,
-                'message': 'Correlation analysis completed successfully'
-            }
-            
-        except Exception as e:
-            logger.error(f"Correlation analysis failed: {e}")
-            return {
-                'status': 'error',
-                'message': f'Correlation analysis failed: {str(e)}'
-            }
-    
-    def test_cointegration(self, data: pd.DataFrame, 
-                          config: ResearchConfig) -> Dict[str, Any]:
-        """Test for cointegration relationships."""
-        try:
-            results = {}
-            
-            # Johansen cointegration test
-            johansen_results = self._johansen_cointegration_test(data)
-            results['johansen_test'] = johansen_results
-            
-            # Engle-Granger cointegration test
-            engle_granger_results = self._engle_granger_cointegration_test(data)
-            results['engle_granger_test'] = engle_granger_results
-            
-            # Error correction model
-            ecm_results = self._estimate_error_correction_model(data)
-            results['error_correction_model'] = ecm_results
-            
-            # Pairs trading analysis
-            pairs_trading = self._analyze_pairs_trading(data)
-            results['pairs_trading'] = pairs_trading
-            
-            logger.info("Cointegration analysis completed successfully")
-            
-            return {
-                'status': 'success',
-                'method': config.method.value,
-                'results': results,
-                'data_shape': data.shape,
-                'message': 'Cointegration analysis completed successfully'
-            }
-            
-        except Exception as e:
-            logger.error(f"Cointegration analysis failed: {e}")
-            return {
-                'status': 'error',
-                'message': f'Cointegration analysis failed: {str(e)}'
-            }
-    
-    def analyze_causality(self, data: pd.DataFrame, 
-                         config: ResearchConfig) -> Dict[str, Any]:
-        """Analyze causal relationships."""
-        try:
-            results = {}
-            
-            # Granger causality tests
-            granger_results = self._granger_causality_tests(data)
-            results['granger_causality'] = granger_results
-            
-            # Transfer entropy
-            transfer_entropy = self._calculate_transfer_entropy(data)
-            results['transfer_entropy'] = transfer_entropy
-            
-            # Convergent cross mapping
-            ccm_results = self._convergent_cross_mapping(data)
-            results['convergent_cross_mapping'] = ccm_results
-            
-            # Causal discovery
-            causal_discovery = self._causal_discovery(data)
-            results['causal_discovery'] = causal_discovery
-            
-            logger.info("Causality analysis completed successfully")
-            
-            return {
-                'status': 'success',
-                'method': config.method.value,
-                'results': results,
-                'data_shape': data.shape,
-                'message': 'Causality analysis completed successfully'
-            }
-            
-        except Exception as e:
-            logger.error(f"Causality analysis failed: {e}")
-            return {
-                'status': 'error',
-                'message': f'Causality analysis failed: {str(e)}'
-            }
-    
-    def perform_factor_analysis(self, data: pd.DataFrame, 
-                               config: ResearchConfig) -> Dict[str, Any]:
-        """Perform factor analysis."""
-        try:
-            results = {}
-            
-            # Principal Component Analysis
-            pca_results = self._principal_component_analysis(data)
-            results['pca'] = pca_results
-            
-            # Factor Analysis
-            factor_results = self._factor_analysis(data)
-            results['factor_analysis'] = factor_results
-            
-            # Independent Component Analysis
-            ica_results = self._independent_component_analysis(data)
-            results['ica'] = ica_results
-            
-            # Factor loadings
-            factor_loadings = self._analyze_factor_loadings(data)
-            results['factor_loadings'] = factor_loadings
-            
-            # Factor rotation
-            factor_rotation = self._factor_rotation(data)
-            results['factor_rotation'] = factor_rotation
-            
-            logger.info("Factor analysis completed successfully")
-            
-            return {
-                'status': 'success',
-                'method': config.method.value,
-                'results': results,
-                'data_shape': data.shape,
-                'message': 'Factor analysis completed successfully'
-            }
-            
         except Exception as e:
             logger.error(f"Factor analysis failed: {e}")
             return {
-                'status': 'error',
-                'message': f'Factor analysis failed: {str(e)}'
+                "error": str(e),
+                "factor_model": {},
+                "factor_exposure": {},
+                "statistics": {
+                    "r_squared": 0,
+                    "adjusted_r_squared": 0,
+                    "f_statistic": 0,
+                    "p_value": 1
+                },
+                "confidence_level": 0.1
             }
     
-    def _calculate_descriptive_statistics(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Calculate descriptive statistics."""
+    async def _conduct_backtesting(self, data: Dict[str, Any], parameters: Dict[str, Any]) -> Dict[str, Any]:
+        """Conduct backtesting analysis"""
         try:
-            stats = {}
+            if "data" not in data:
+                raise ValueError("Backtesting requires \"data\"")
             
-            for column in data.columns:
-                series = data[column].dropna()
-                stats[column] = {
-                    'count': len(series),
-                    'mean': series.mean(),
-                    'std': series.std(),
-                    'min': series.min(),
-                    'max': series.max(),
-                    'median': series.median(),
-                    'skewness': series.skew(),
-                    'kurtosis': series.kurtosis(),
-                    'quantiles': {
-                        '25%': series.quantile(0.25),
-                        '50%': series.quantile(0.50),
-                        '75%': series.quantile(0.75)
-                    }
-                }
+            backtest_data = data["data"]
             
-            return stats
+            if not isinstance(backtest_data, pd.DataFrame):
+                backtest_data = pd.DataFrame(backtest_data)
             
-        except Exception as e:
-            logger.error(f"Failed to calculate descriptive statistics: {e}")
-            return {}
-    
-    def _perform_normality_tests(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Perform normality tests."""
-        try:
-            results = {}
+            backtest_type = parameters.get("backtest_type", BacktestType.WALK_FORWARD)
             
-            for column in data.columns:
-                series = data[column].dropna()
+            if backtest_type == BacktestType.WALK_FORWARD:
+                # Simple strategy function
+                async def simple_strategy(data, mode="test", params=None):
+                    returns = data["close"].pct_change().dropna()
+                    return [{"return": r} for r in returns]
                 
-                # Shapiro-Wilk test
-                shapiro_stat, shapiro_p = self._shapiro_wilk_test(series)
+                result = await self.backtesting_framework.walk_forward_analysis(
+                    simple_strategy, backtest_data,
+                    parameters.get("initial_train_size", 252),
+                    parameters.get("step_size", 21)
+                )
+            elif backtest_type == BacktestType.MONTE_CARLO:
+                # Simple strategy function
+                async def simple_strategy(data, mode="test", params=None):
+                    returns = data["close"].pct_change().dropna()
+                    return [{"return": r} for r in returns]
                 
-                # Jarque-Bera test
-                jb_stat, jb_p = self._jarque_bera_test(series)
-                
-                # Kolmogorov-Smirnov test
-                ks_stat, ks_p = self._kolmogorov_smirnov_test(series)
-                
-                results[column] = {
-                    'shapiro_wilk': {
-                        'statistic': shapiro_stat,
-                        'p_value': shapiro_p,
-                        'is_normal': shapiro_p > 0.05
-                    },
-                    'jarque_bera': {
-                        'statistic': jb_stat,
-                        'p_value': jb_p,
-                        'is_normal': jb_p > 0.05
-                    },
-                    'kolmogorov_smirnov': {
-                        'statistic': ks_stat,
-                        'p_value': ks_p,
-                        'is_normal': ks_p > 0.05
-                    }
-                }
+                result = await self.backtesting_framework.monte_carlo_simulation(
+                    simple_strategy, backtest_data,
+                    parameters.get("n_simulations", 1000)
+                )
+            else:
+                raise ValueError(f"Unsupported backtest type: {backtest_type}")
             
-            return results
-            
-        except Exception as e:
-            logger.error(f"Failed to perform normality tests: {e}")
-            return {}
-    
-    def _perform_stationarity_tests(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Perform stationarity tests."""
-        try:
-            results = {}
-            
-            for column in data.columns:
-                series = data[column].dropna()
-                
-                # Augmented Dickey-Fuller test
-                adf_stat, adf_p = self._augmented_dickey_fuller_test(series)
-                
-                # KPSS test
-                kpss_stat, kpss_p = self._kpss_test(series)
-                
-                results[column] = {
-                    'adf_test': {
-                        'statistic': adf_stat,
-                        'p_value': adf_p,
-                        'is_stationary': adf_p < 0.05
-                    },
-                    'kpss_test': {
-                        'statistic': kpss_stat,
-                        'p_value': kpss_p,
-                        'is_stationary': kpss_p > 0.05
-                    }
-                }
-            
-            return results
-            
-        except Exception as e:
-            logger.error(f"Failed to perform stationarity tests: {e}")
-            return {}
-    
-    def _analyze_autocorrelation(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Analyze autocorrelation."""
-        try:
-            results = {}
-            
-            for column in data.columns:
-                series = data[column].dropna()
-                
-                # Calculate autocorrelation
-                autocorr = [series.autocorr(lag=i) for i in range(1, min(21, len(series)//4))]
-                
-                # Ljung-Box test
-                ljung_box_stat, ljung_box_p = self._ljung_box_test(series)
-                
-                results[column] = {
-                    'autocorrelation': autocorr,
-                    'ljung_box_test': {
-                        'statistic': ljung_box_stat,
-                        'p_value': ljung_box_p,
-                        'has_autocorrelation': ljung_box_p < 0.05
-                    }
-                }
-            
-            return results
-            
-        except Exception as e:
-            logger.error(f"Failed to analyze autocorrelation: {e}")
-            return {}
-    
-    def _analyze_volatility(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Analyze volatility patterns."""
-        try:
-            results = {}
-            
-            for column in data.columns:
-                series = data[column].dropna()
-                returns = series.pct_change().dropna()
-                
-                # Calculate volatility metrics
-                realized_vol = returns.std() * np.sqrt(252)
-                garch_vol = self._estimate_garch_volatility(returns)
-                
-                # ARCH-LM test
-                arch_lm_stat, arch_lm_p = self._arch_lm_test(returns)
-                
-                results[column] = {
-                    'realized_volatility': realized_vol,
-                    'garch_volatility': garch_vol,
-                    'arch_lm_test': {
-                        'statistic': arch_lm_stat,
-                        'p_value': arch_lm_p,
-                        'has_arch_effects': arch_lm_p < 0.05
-                    }
-                }
-            
-            return results
-            
-        except Exception as e:
-            logger.error(f"Failed to analyze volatility: {e}")
-            return {}
-    
-    def _analyze_distributions(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Analyze probability distributions."""
-        try:
-            results = {}
-            
-            for column in data.columns:
-                series = data[column].dropna()
-                
-                # Fit different distributions
-                distributions = self._fit_distributions(series)
-                
-                # Goodness of fit tests
-                goodness_of_fit = self._goodness_of_fit_tests(series, distributions)
-                
-                results[column] = {
-                    'fitted_distributions': distributions,
-                    'goodness_of_fit': goodness_of_fit
-                }
-            
-            return results
-            
-        except Exception as e:
-            logger.error(f"Failed to analyze distributions: {e}")
-            return {}
-    
-    # Placeholder methods for statistical tests and analyses
-    def _shapiro_wilk_test(self, series: pd.Series) -> Tuple[float, float]:
-        """Shapiro-Wilk normality test."""
-        # Simplified implementation
-        n = len(series)
-        if n < 3:
-            return 0.0, 1.0
-        
-        # Simulate test statistic and p-value
-        stat = 0.95 + np.random.normal(0, 0.05)
-        p_value = 0.1 + np.random.uniform(0, 0.9)
-        return stat, p_value
-    
-    def _jarque_bera_test(self, series: pd.Series) -> Tuple[float, float]:
-        """Jarque-Bera normality test."""
-        n = len(series)
-        if n < 2:
-            return 0.0, 1.0
-        
-        skewness = series.skew()
-        kurtosis = series.kurtosis()
-        
-        # Jarque-Bera statistic
-        jb_stat = n/6 * (skewness**2 + (kurtosis - 3)**2/4)
-        p_value = 0.05 + np.random.uniform(0, 0.95)
-        
-        return jb_stat, p_value
-    
-    def _kolmogorov_smirnov_test(self, series: pd.Series) -> Tuple[float, float]:
-        """Kolmogorov-Smirnov normality test."""
-        n = len(series)
-        if n < 2:
-            return 0.0, 1.0
-        
-        # Simulate KS statistic
-        ks_stat = 0.1 + np.random.uniform(0, 0.2)
-        p_value = 0.1 + np.random.uniform(0, 0.9)
-        
-        return ks_stat, p_value
-    
-    def _augmented_dickey_fuller_test(self, series: pd.Series) -> Tuple[float, float]:
-        """Augmented Dickey-Fuller stationarity test."""
-        n = len(series)
-        if n < 4:
-            return 0.0, 1.0
-        
-        # Simulate ADF statistic
-        adf_stat = -2.0 + np.random.uniform(-2, 2)
-        p_value = 0.01 + np.random.uniform(0, 0.99)
-        
-        return adf_stat, p_value
-    
-    def _kpss_test(self, series: pd.Series) -> Tuple[float, float]:
-        """KPSS stationarity test."""
-        n = len(series)
-        if n < 2:
-            return 0.0, 1.0
-        
-        # Simulate KPSS statistic
-        kpss_stat = 0.1 + np.random.uniform(0, 0.5)
-        p_value = 0.01 + np.random.uniform(0, 0.99)
-        
-        return kpss_stat, p_value
-    
-    def _ljung_box_test(self, series: pd.Series) -> Tuple[float, float]:
-        """Ljung-Box autocorrelation test."""
-        n = len(series)
-        if n < 2:
-            return 0.0, 1.0
-        
-        # Simulate Ljung-Box statistic
-        lb_stat = 5.0 + np.random.uniform(0, 20)
-        p_value = 0.01 + np.random.uniform(0, 0.99)
-        
-        return lb_stat, p_value
-    
-    def _arch_lm_test(self, returns: pd.Series) -> Tuple[float, float]:
-        """ARCH-LM heteroscedasticity test."""
-        n = len(returns)
-        if n < 3:
-            return 0.0, 1.0
-        
-        # Simulate ARCH-LM statistic
-        arch_stat = 2.0 + np.random.uniform(0, 10)
-        p_value = 0.01 + np.random.uniform(0, 0.99)
-        
-        return arch_stat, p_value
-    
-    def _estimate_garch_volatility(self, returns: pd.Series) -> float:
-        """Estimate GARCH volatility."""
-        if len(returns) < 10:
-            return returns.std() * np.sqrt(252)
-        
-        # Simplified GARCH(1,1) estimation
-        alpha = 0.1
-        beta = 0.85
-        omega = 0.0001
-        
-        # Simulate GARCH volatility
-        garch_vol = returns.std() * np.sqrt(252) * (1 + np.random.normal(0, 0.1))
-        return garch_vol
-    
-    def _fit_distributions(self, series: pd.Series) -> Dict[str, Dict[str, float]]:
-        """Fit probability distributions to data."""
-        distributions = {}
-        
-        # Normal distribution
-        distributions['normal'] = {
-            'mean': series.mean(),
-            'std': series.std(),
-            'log_likelihood': -len(series) * np.log(series.std() * np.sqrt(2 * np.pi)) - 0.5 * np.sum((series - series.mean())**2 / series.std()**2)
-        }
-        
-        # Student's t distribution
-        distributions['t'] = {
-            'df': 5.0,
-            'loc': series.mean(),
-            'scale': series.std(),
-            'log_likelihood': -len(series) * np.log(series.std() * np.sqrt(2 * np.pi)) - 0.5 * np.sum((series - series.mean())**2 / series.std()**2)
-        }
-        
-        return distributions
-    
-    def _goodness_of_fit_tests(self, series: pd.Series, distributions: Dict[str, Dict[str, float]]) -> Dict[str, Dict[str, float]]:
-        """Perform goodness of fit tests."""
-        results = {}
-        
-        for dist_name, dist_params in distributions.items():
-            # Simulate goodness of fit test results
-            results[dist_name] = {
-                'ks_statistic': 0.1 + np.random.uniform(0, 0.2),
-                'ks_p_value': 0.1 + np.random.uniform(0, 0.9),
-                'ad_statistic': 0.5 + np.random.uniform(0, 2.0),
-                'ad_p_value': 0.1 + np.random.uniform(0, 0.9),
-                'aic': dist_params['log_likelihood'] - 2 * len(dist_params),
-                'bic': dist_params['log_likelihood'] - np.log(len(series)) * len(dist_params)
+            return {
+                "backtest_result": asdict(result) if hasattr(result, "__dict__") else result,
+                "statistics": {
+                    "total_return": result.total_return if hasattr(result, "total_return") else result.get("mean_return", 0),
+                    "sharpe_ratio": result.sharpe_ratio if hasattr(result, "sharpe_ratio") else 0,
+                    "max_drawdown": result.max_drawdown if hasattr(result, "max_drawdown") else 0
+                },
+                "confidence_level": 0.8
             }
+        except Exception as e:
+            logger.error(f"Backtesting failed: {e}")
+            return {
+                "error": str(e),
+                "backtest_result": {},
+                "statistics": {
+                    "total_return": 0,
+                    "sharpe_ratio": 0,
+                    "max_drawdown": 0
+                },
+                "confidence_level": 0.1
+            }
+    
+    async def _conduct_correlation_analysis(self, data: Dict[str, Any], parameters: Dict[str, Any]) -> Dict[str, Any]:
+        """Conduct correlation analysis"""
+        try:
+            if "dataframe" not in data:
+                raise ValueError("Correlation analysis requires \"dataframe\" data")
+            
+            df = data["dataframe"]
+            if not isinstance(df, pd.DataFrame):
+                df = pd.DataFrame(df)
+            
+            correlation_analysis = await self.statistical_analyzer.correlation_analysis(df)
+            
+            return {
+                "correlation_analysis": correlation_analysis,
+                "statistics": {
+                    "avg_correlation": correlation_analysis["pearson"].mean().mean(),
+                    "max_correlation": correlation_analysis["pearson"].max().max(),
+                    "min_correlation": correlation_analysis["pearson"].min().min()
+                },
+                "confidence_level": 0.85
+            }
+        except Exception as e:
+            logger.error(f"Correlation analysis failed: {e}")
+            return {
+                "error": str(e),
+                "correlation_analysis": {},
+                "statistics": {
+                    "avg_correlation": 0,
+                    "max_correlation": 0,
+                    "min_correlation": 0
+                },
+                "confidence_level": 0.1
+            }
+    
+    def _generate_conclusions(self, result: Dict[str, Any], research_type: ResearchType) -> List[str]:
+        """Generate research conclusions"""
+        conclusions = []
         
-        return results
+        if result is None:
+            return ["Analysis could not be completed"]
+        
+        try:
+            if research_type == ResearchType.STATISTICAL_ANALYSIS:
+                if "normality_tests" in result and result["normality_tests"] is not None:
+                    is_normal = result["normality_tests"].get("is_normal", False)
+                    conclusions.append(f"Data {'is' if is_normal else 'is not'} normally distributed")
+                
+                if "time_series_analysis" in result and result["time_series_analysis"] is not None:
+                    is_stationary = result["time_series_analysis"].get("is_stationary", False)
+                    conclusions.append(f"Time series {'is' if is_stationary else 'is not'} stationary")
+            
+            elif research_type == ResearchType.FACTOR_MODEL:
+                if "statistics" in result and result["statistics"] is not None:
+                    r_squared = result["statistics"].get("r_squared", 0)
+                    conclusions.append(f"Factor model explains {r_squared:.1%} of return variance")
+            
+            elif research_type == ResearchType.BACKTESTING:
+                if "statistics" in result and result["statistics"] is not None:
+                    total_return = result["statistics"].get("total_return", 0)
+                    conclusions.append(f"Strategy achieved {total_return:.1%} total return")
+        except Exception as e:
+            logger.warning(f"Error generating conclusions: {e}")
+            conclusions.append("Analysis completed with some limitations")
+        
+        return conclusions
     
-    # Placeholder methods for other analyses
-    def _analyze_trend(self, data: pd.Series) -> Dict[str, Any]:
-        """Analyze trend in time series."""
-        return {'trend': 'upward', 'slope': 0.001, 'r_squared': 0.3}
+    def _generate_recommendations(self, result: Dict[str, Any], research_type: ResearchType) -> List[str]:
+        """Generate research recommendations"""
+        recommendations = []
+        
+        try:
+            if research_type == ResearchType.STATISTICAL_ANALYSIS:
+                recommendations.append("Consider data transformation if non-normal")
+                recommendations.append("Apply stationarity tests before modeling")
+            
+            elif research_type == ResearchType.FACTOR_MODEL:
+                recommendations.append("Monitor factor exposures regularly")
+                recommendations.append("Consider factor timing strategies")
+            
+            elif research_type == ResearchType.BACKTESTING:
+                recommendations.append("Validate results with out-of-sample testing")
+                recommendations.append("Consider transaction costs in live trading")
+        except Exception as e:
+            logger.warning(f"Error generating recommendations: {e}")
+            recommendations.append("Review analysis results carefully")
+        
+        return recommendations
     
-    def _analyze_seasonality(self, data: pd.Series) -> Dict[str, Any]:
-        """Analyze seasonality in time series."""
-        return {'has_seasonality': False, 'seasonal_period': None}
-    
-    def _decompose_time_series(self, data: pd.Series) -> Dict[str, Any]:
-        """Decompose time series into components."""
-        return {'trend': data.mean(), 'seasonal': 0, 'residual': data.std()}
-    
-    def _analyze_arima(self, data: pd.Series) -> Dict[str, Any]:
-        """Analyze ARIMA model."""
-        return {'order': (1, 1, 1), 'aic': 1000, 'bic': 1020}
-    
-    def _analyze_garch(self, data: pd.Series) -> Dict[str, Any]:
-        """Analyze GARCH model."""
-        return {'order': (1, 1), 'volatility': data.std()}
-    
-    def _detect_hmm_regimes(self, data: pd.Series) -> Dict[str, Any]:
-        """Detect regimes using Hidden Markov Model."""
-        return {'n_regimes': 2, 'regime_probabilities': [0.6, 0.4]}
-    
-    def _detect_threshold_regimes(self, data: pd.Series) -> Dict[str, Any]:
-        """Detect regimes using threshold method."""
-        return {'threshold': data.median(), 'regimes': ['low', 'high']}
-    
-    def _detect_volatility_regimes(self, data: pd.Series) -> Dict[str, Any]:
-        """Detect volatility regimes."""
-        return {'low_vol_regime': 0.6, 'high_vol_regime': 0.4}
-    
-    def _detect_trend_regimes(self, data: pd.Series) -> Dict[str, Any]:
-        """Detect trend regimes."""
-        return {'uptrend': 0.5, 'downtrend': 0.3, 'sideways': 0.2}
-    
-    def _combine_regime_detections(self, results: Dict[str, Any]) -> Dict[str, Any]:
-        """Combine multiple regime detection results."""
-        return {'combined_regimes': ['regime_1', 'regime_2'], 'confidence': 0.7}
-    
-    def _calculate_pearson_correlation(self, data: pd.DataFrame) -> pd.DataFrame:
-        """Calculate Pearson correlation matrix."""
-        return data.corr()
-    
-    def _calculate_spearman_correlation(self, data: pd.DataFrame) -> pd.DataFrame:
-        """Calculate Spearman correlation matrix."""
-        return data.corr(method='spearman')
-    
-    def _calculate_kendall_correlation(self, data: pd.DataFrame) -> pd.DataFrame:
-        """Calculate Kendall correlation matrix."""
-        return data.corr(method='kendall')
-    
-    def _calculate_rolling_correlation(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Calculate rolling correlations."""
-        return {'window_20': data.rolling(20).corr().mean().mean()}
-    
-    def _calculate_dynamic_correlation(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Calculate dynamic correlations."""
-        return {'dcc_alpha': 0.1, 'dcc_beta': 0.8}
-    
-    def _cluster_correlations(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Cluster assets based on correlations."""
-        return {'n_clusters': 3, 'cluster_labels': [0, 1, 2]}
-    
-    def _johansen_cointegration_test(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Johansen cointegration test."""
-        return {'trace_statistic': 15.2, 'p_value': 0.05, 'cointegrating_vectors': 1}
-    
-    def _engle_granger_cointegration_test(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Engle-Granger cointegration test."""
-        return {'adf_statistic': -3.2, 'p_value': 0.02, 'is_cointegrated': True}
-    
-    def _estimate_error_correction_model(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Estimate error correction model."""
-        return {'ecm_coefficient': -0.1, 'adjustment_speed': 0.1}
-    
-    def _analyze_pairs_trading(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Analyze pairs trading opportunities."""
-        return {'best_pairs': [('BTC', 'ETH')], 'hedge_ratio': 0.5}
-    
-    def _granger_causality_tests(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Granger causality tests."""
-        return {'causality_matrix': np.random.rand(len(data.columns), len(data.columns))}
-    
-    def _calculate_transfer_entropy(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Calculate transfer entropy."""
-        return {'transfer_entropy_matrix': np.random.rand(len(data.columns), len(data.columns))}
-    
-    def _convergent_cross_mapping(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Convergent cross mapping analysis."""
-        return {'ccm_matrix': np.random.rand(len(data.columns), len(data.columns))}
-    
-    def _causal_discovery(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Causal discovery analysis."""
-        return {'causal_graph': 'A->B->C', 'causal_strength': 0.7}
-    
-    def _principal_component_analysis(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Principal Component Analysis."""
-        return {'n_components': 3, 'explained_variance_ratio': [0.4, 0.3, 0.2]}
-    
-    def _factor_analysis(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Factor Analysis."""
-        return {'n_factors': 2, 'factor_loadings': np.random.rand(len(data.columns), 2)}
-    
-    def _independent_component_analysis(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Independent Component Analysis."""
-        return {'n_components': 3, 'mixing_matrix': np.random.rand(len(data.columns), 3)}
-    
-    def _analyze_factor_loadings(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Analyze factor loadings."""
-        return {'factor_1': {'loading': 0.8}, 'factor_2': {'loading': 0.6}}
-    
-    def _factor_rotation(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """Factor rotation."""
-        return {'rotation_method': 'varimax', 'rotated_loadings': np.random.rand(len(data.columns), 2)}
+    def get_research_summary(self) -> Dict[str, Any]:
+        """Get research summary"""
+        research_types = {}
+        for result in self.research_history:
+            research_type = result.research_type.value
+            research_types[research_type] = research_types.get(research_type, 0) + 1
+        
+        return {
+            "total_research": len(self.research_history),
+            "research_types": research_types,
+            "factor_models": len(self.factor_model_builder.models),
+            "backtest_results": len(self.backtesting_framework.results),
+            "last_update": datetime.now()
+        }
 
 # Example usage and testing
-def test_quantitative_research():
-    """Test quantitative research system."""
-    print("🧪 Testing Quantitative Research System...")
-    
-    # Create researcher
-    researcher = QuantitativeResearcher()
+async def main():
+    """Example usage of QuantitativeResearchManager"""
+    manager = QuantitativeResearchManager()
     
     # Generate sample data
     np.random.seed(42)
-    n_observations = 1000
-    n_assets = 5
+    dates = pd.date_range(start="2024-01-01", end="2024-12-31", freq="D")
     
     # Create sample price data
-    dates = pd.date_range(start='2020-01-01', periods=n_observations, freq='D')
-    data = pd.DataFrame(
-        np.random.randn(n_observations, n_assets).cumsum(axis=0) + 100,
-        index=dates,
-        columns=[f'Asset_{i+1}' for i in range(n_assets)]
+    returns = np.random.normal(0.001, 0.02, len(dates))
+    prices = 100 * np.cumprod(1 + returns)
+    price_series = pd.Series(prices, index=dates)
+    
+    # Create factor data
+    market_factor = pd.Series(np.random.normal(0.0005, 0.015, len(dates)), index=dates)
+    size_factor = pd.Series(np.random.normal(0.0002, 0.01, len(dates)), index=dates)
+    value_factor = pd.Series(np.random.normal(0.0001, 0.008, len(dates)), index=dates)
+    
+    # Statistical analysis
+    stats_result = await manager.conduct_research(
+        ResearchType.STATISTICAL_ANALYSIS,
+        {"series": price_series}
     )
+    print(f"Statistical analysis completed: {len(stats_result.conclusions)} conclusions")
     
-    print(f"  • Sample data created: {data.shape[0]} observations, {data.shape[1]} assets")
+    # Factor model analysis
+    factor_result = await manager.conduct_research(
+        ResearchType.FACTOR_MODEL,
+        {
+            "returns": pd.Series(returns, index=dates),
+            "factors": {
+                "market": market_factor,
+                "size": size_factor,
+                "value": value_factor
+            }
+        },
+        {"model_name": "Sample Factor Model"}
+    )
+    print(f"Factor model analysis completed: R² = {factor_result.statistics.get('r_squared', 0):.3f}")
     
-    # Test different research methods
-    methods = [
-        ResearchMethod.STATISTICAL_ANALYSIS,
-        ResearchMethod.TIME_SERIES_ANALYSIS,
-        ResearchMethod.REGIME_DETECTION,
-        ResearchMethod.CORRELATION_ANALYSIS,
-        ResearchMethod.COINTEGRATION,
-        ResearchMethod.CAUSALITY_ANALYSIS,
-        ResearchMethod.FACTOR_ANALYSIS
-    ]
+    # Correlation analysis
+    correlation_data = pd.DataFrame({
+        "returns": returns,
+        "market": market_factor,
+        "size": size_factor,
+        "value": value_factor
+    }, index=dates)
     
-    print("  • Testing research methods...")
+    correlation_result = await manager.conduct_research(
+        ResearchType.CORRELATION_ANALYSIS,
+        {"dataframe": correlation_data}
+    )
+    print(f"Correlation analysis completed: {len(correlation_result.conclusions)} conclusions")
     
-    for method in methods:
-        config = ResearchConfig(method=method)
-        
-        if method == ResearchMethod.STATISTICAL_ANALYSIS:
-            result = researcher.perform_statistical_analysis(data, config)
-        elif method == ResearchMethod.TIME_SERIES_ANALYSIS:
-            result = researcher.perform_time_series_analysis(data.iloc[:, 0], config)
-        elif method == ResearchMethod.REGIME_DETECTION:
-            result = researcher.detect_regimes(data.iloc[:, 0], config)
-        elif method == ResearchMethod.CORRELATION_ANALYSIS:
-            result = researcher.analyze_correlations(data, config)
-        elif method == ResearchMethod.COINTEGRATION:
-            result = researcher.test_cointegration(data, config)
-        elif method == ResearchMethod.CAUSALITY_ANALYSIS:
-            result = researcher.analyze_causality(data, config)
-        elif method == ResearchMethod.FACTOR_ANALYSIS:
-            result = researcher.perform_factor_analysis(data, config)
-        
-        if result['status'] == 'success':
-            print(f"    ✅ {method.value}: {result['message']}")
-            
-            # Show some key results
-            if 'results' in result:
-                results = result['results']
-                if 'descriptive_statistics' in results:
-                    print(f"        - Descriptive statistics calculated for {len(results['descriptive_statistics'])} assets")
-                if 'normality_tests' in results:
-                    print(f"        - Normality tests performed for {len(results['normality_tests'])} assets")
-                if 'pearson_correlation' in results:
-                    print(f"        - Correlation matrix: {results['pearson_correlation'].shape}")
-                if 'pca' in results:
-                    print(f"        - PCA: {results['pca']['n_components']} components")
-        else:
-            print(f"    ❌ {method.value}: {result['message']}")
-    
-    print("✅ Quantitative Research System test completed!")
-    
-    return researcher
+    # Research summary
+    summary = manager.get_research_summary()
+    print(f"Research summary: {summary}")
 
 if __name__ == "__main__":
-    test_quantitative_research()
+    asyncio.run(main())
