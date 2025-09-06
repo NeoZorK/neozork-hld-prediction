@@ -278,6 +278,15 @@ uv run pytest tests -n auto
 - **CLI Interface**: Command-line analysis tools
 - **MCP Server**: Enhanced IDE integration
 
+### 🚀 Interactive ML Trading System (NEW!)
+- **Interactive Menu System**: Modern, colorful user interface with progress indicators
+- **Advanced ML/DL**: Apple MLX integration, Deep Reinforcement Learning, Ensemble methods
+- **Risk Management**: Monte Carlo simulations, VaR/CVaR, Dynamic position sizing
+- **Multi-Exchange Trading**: CEX and DEX integration with Web3 support
+- **Real-time Monitoring**: Prometheus/Grafana metrics and intelligent alerting
+- **Pattern Recognition**: Hidden pattern detection and cross-market analysis
+- **Automated Retraining**: Continuous learning and adaptation pipelines
+
 ## 🧪 Testing
 
 ### Adaptive Testing Framework
@@ -441,6 +450,11 @@ uv run pytest tests -n auto  # ~30-60 seconds
 - **[Guides](docs/guides/)** - Step-by-step tutorials
 - **[Reference](docs/reference/)** - Technical documentation
 - **[Testing](docs/testing/)** - Testing strategies and examples
+
+### 🚀 Interactive ML Trading System (NEW!)
+- **[Interactive ML Trading System](docs/interactive/)** - **NEW**: Comprehensive interactive system for ML trading strategy development
+- **[Strategic Plan (English)](docs/interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_EN.md)** - **NEW**: Complete strategic plan for robust profitable ML trading strategies
+- **[Стратегический План (Русский)](docs/interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_RU.md)** - **NEW**: Полный стратегический план для робастных прибыльных ML торговых стратегий
 
 ### 🎯 SMA Indicator Tutorials (New!)
 - **[Complete SMA Tutorial](docs/guides/adding-sma-indicator-tutorial.md)** - Full implementation guide

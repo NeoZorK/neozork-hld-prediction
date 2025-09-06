@@ -125,6 +125,11 @@ python run_analysis.py demo --rule PHLD
 - [SuperTrend Indicator](reference/indicators/trend/supertrend-indicator.md) - **NEW**: Trend indicator documentation
 - [SMA Indicator](reference/indicators/trend/sma-indicator.md) - **NEW**: Simple Moving Average documentation
 
+### Interactive ML Trading System
+- [Interactive ML Trading System](interactive/index.md) - **NEW**: Comprehensive interactive system for ML trading strategy development
+- [Strategic Plan (English)](interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_EN.md) - **NEW**: Complete strategic plan for robust profitable ML trading strategies
+- [Стратегический План (Русский)](interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_RU.md) - **NEW**: Полный стратегический план для робастных прибыльных ML торговых стратегий
+
 ### Release Notes
 - [Release Notes](release-notes/index.md) - **NEW**: Complete release history and migration guides
 - [v0.6.0 Release](release-notes/v0.6.0-release-summary.md) - **NEW**: Latest release with documentation updates
@@ -146,6 +151,13 @@ python run_analysis.py demo --rule PHLD
 - **Technical Indicators**: 50+ indicators including RSI, MACD, Bollinger Bands
 - **Real-time Analysis**: Live data processing and analysis
 - **Visualization**: Interactive charts and plots
+
+### Interactive ML Trading System
+- **Interactive Menu System**: Modern, colorful user interface with progress indicators
+- **Advanced ML/DL**: Apple MLX integration, Deep Reinforcement Learning, Ensemble methods
+- **Risk Management**: Monte Carlo simulations, VaR/CVaR, Dynamic position sizing
+- **Multi-Exchange Trading**: CEX and DEX integration with Web3 support
+- **Real-time Monitoring**: Prometheus/Grafana metrics and intelligent alerting
 
 ### Development Tools
 - **MCP Server**: Enhanced IDE integration with intelligent autocompletion
