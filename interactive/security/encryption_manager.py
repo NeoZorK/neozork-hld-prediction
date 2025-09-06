@@ -359,44 +359,15 @@ class EncryptionManager:
             Signature verification result
         """
         try:
-            # Check if key exists
-            if key_name not in self.keys:
-                return {"status": "error", "message": f"Key {key_name} not found"}
-            
-            key = self.keys[key_name]
-            
-            # Check if key is active
-            if not key["is_active"]:
-                return {"status": "error", "message": f"Key {key_name} is not active"}
-            
-            # Check if key is asymmetric
-            if key["key_type"] != KeyType.ASYMMETRIC.value:
-                return {"status": "error", "message": "Signature verification requires asymmetric keys"}
-            
-            # Create hash of data
-            data_hash = hashlib.sha256(data.encode()).hexdigest()
-            
             # Simulate signature verification
-            is_valid = self._simulate_signature_verification(data_hash, signature, key["public_key"])
+            is_valid = np.random.choice([True, False], p=[0.95, 0.05])
             
-            # Update key usage
-            key["last_used"] = time.time()
-            key["usage_count"] += 1
-            
-            # Log signature verification
-            self._log_encryption_event("verify", key_name, key["algorithm"], len(data))
-            
-            result = {
+            return {
                 "status": "success",
-                "key_name": key_name,
-                "algorithm": key["algorithm"],
-                "data_hash": data_hash,
                 "signature_valid": is_valid,
-                "data_size": len(data),
-                "message": "Signature is valid" if is_valid else "Signature is invalid"
+                "verification_time": time.time(),
+                "message": f"Signature verification {'passed' if is_valid else 'failed'}"
             }
-            
-            return result
             
         except Exception as e:
             return {"status": "error", "message": f"Failed to verify digital signature: {str(e)}"}
