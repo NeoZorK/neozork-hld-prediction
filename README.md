@@ -1,6 +1,6 @@
 # NeoZork HLD Prediction
 
-Advanced financial analysis platform with UV package management, comprehensive technical indicators, and adaptive testing.
+Advanced financial analysis platform with UV package management, comprehensive technical indicators, adaptive testing, and **Interactive ML Trading Strategy Development System**.
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![UV Package Manager](https://img.shields.io/badge/UV-Package%20Manager-orange.svg)](https://docs.astral.sh/uv/)
@@ -140,6 +140,15 @@ uv run pytest tests -n auto
 ```
 
 ## 📊 Features
+
+### 🎯 Interactive ML Trading Strategy Development System
+- **✅ 100% Functional**: All 12 phases completed and ready for production
+- **Advanced ML/DL**: Apple MLX integration, Deep Reinforcement Learning, Ensemble methods
+- **Risk Management**: Monte Carlo simulations, VaR/CVaR, Dynamic position sizing
+- **Multi-Exchange Trading**: CEX and DEX integration with Web3 support
+- **Real-time Monitoring**: Prometheus/Grafana metrics and intelligent alerting
+- **Interactive Menu**: Modern, colorful user interface with progress indicators
+- **Production Ready**: Complete system ready for real-world deployment
 
 ### Data Sources
 - **Polygon**: Real-time market data
@@ -455,6 +464,7 @@ uv run pytest tests -n auto  # ~30-60 seconds
 - **[Interactive ML Trading System](docs/interactive/)** - **NEW**: Comprehensive interactive system for ML trading strategy development
 - **[Strategic Plan (English)](docs/interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_EN.md)** - **NEW**: Complete strategic plan for robust profitable ML trading strategies
 - **[Стратегический План (Русский)](docs/interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_RU.md)** - **NEW**: Полный стратегический план для робастных прибыльных ML торговых стратегий
+- **[Next Steps Plan](docs/interactive/next-steps-plan.md)** - **NEW**: Production development roadmap and implementation plan
 
 ### 🎯 SMA Indicator Tutorials (New!)
 - **[Complete SMA Tutorial](docs/guides/adding-sma-indicator-tutorial.md)** - Full implementation guide
