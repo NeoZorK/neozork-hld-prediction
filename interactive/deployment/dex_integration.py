@@ -69,6 +69,10 @@ class DEXIntegration:
                 }
                 self.wallets["ethereum"] = wallet_config
             
+            # Generate random values safely
+            block_number = int(np.random.randint(18000000, 19000000))
+            gas_price = float(np.random.uniform(20, 50))
+            
             result = {
                 "status": "success",
                 "network": "ethereum",
@@ -77,8 +81,8 @@ class DEXIntegration:
                 "connection_info": {
                     "network": "ethereum",
                     "chain_id": 3 if testnet else 1,
-                    "block_number": np.random.randint(18000000, 19000000),
-                    "gas_price": np.random.uniform(20, 50)
+                    "block_number": block_number,
+                    "gas_price": gas_price
                 },
                 "message": "Ethereum connection established successfully"
             }
@@ -614,7 +618,12 @@ class DEXIntegration:
     def _generate_address_from_key(self, private_key: str) -> str:
         """Generate address from private key (simplified)."""
         # In real implementation, this would use web3.py or similar
-        return f"0x{hash(private_key)[:40]}"
+        try:
+            # Convert hash to string and take first 40 characters
+            hash_str = str(abs(hash(private_key)))
+            return f"0x{hash_str[:40].zfill(40)}"
+        except Exception:
+            return "0x0000000000000000000000000000000000000000"
     
     def _generate_contract_address(self) -> str:
         """Generate contract address (simplified)."""
