@@ -559,13 +559,13 @@ class AutomatedRetraining:
         except Exception as e:
             return {"status": "error", "message": f"Failed to get model versions: {str(e)}"}
     
-    def rollback_model(self, model_id: str, target_version: int) -> Dict[str, Any]:
+    def rollback_model(self, model_id: str, target_version: str) -> Dict[str, Any]:
         """
         Rollback model to a previous version.
         
         Args:
             model_id: Model identifier
-            target_version: Target version number
+            target_version: Target version string
             
         Returns:
             Rollback result

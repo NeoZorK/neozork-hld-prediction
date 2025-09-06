@@ -346,14 +346,14 @@ class EncryptionManager:
         except Exception as e:
             return {"status": "error", "message": f"Failed to create digital signature: {str(e)}"}
     
-    def verify_digital_signature(self, data: str, signature: str, key_name: str) -> Dict[str, Any]:
+    def verify_digital_signature(self, data: bytes, signature: bytes, public_key: bytes) -> Dict[str, Any]:
         """
         Verify a digital signature.
         
         Args:
-            data: Original data
+            data: Data to verify
             signature: Digital signature
-            key_name: Name of the verification key
+            public_key: Public key for verification
             
         Returns:
             Signature verification result

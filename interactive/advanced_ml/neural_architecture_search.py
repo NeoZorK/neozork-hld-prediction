@@ -271,19 +271,14 @@ class NeuralArchitectureSearch:
         except Exception as e:
             return {"status": "error", "message": f"Gradient-based NAS failed: {str(e)}"}
     
-    def multi_objective_nas(self, architecture_space: Dict[str, Any],
-                           X_train: pd.DataFrame, y_train: pd.Series,
-                           X_val: pd.DataFrame, y_val: pd.Series,
-                           objectives: List[str] = ["accuracy", "efficiency"]) -> Dict[str, Any]:
+    def multi_objective_nas(self, data: pd.DataFrame, target: str, 
+                          objectives: List[str] = ["accuracy", "efficiency"]) -> Dict[str, Any]:
         """
         Perform multi-objective architecture search.
         
         Args:
-            architecture_space: Architecture search space
-            X_train: Training features
-            y_train: Training targets
-            X_val: Validation features
-            y_val: Validation targets
+            data: Training data
+            target: Target variable
             objectives: List of objectives to optimize
             
         Returns:
