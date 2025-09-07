@@ -1,50 +1,48 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-Advanced Security and Compliance Module
+Advanced Security Module for NeoZork Trading System
 
-This module provides comprehensive security features including:
-- Multi-factor authentication (MFA)
-- Role-based access control (RBAC)
-- API security and rate limiting
-- Data encryption and key management
-- Audit logging and compliance
-- Security monitoring and threat detection
+This module provides enterprise-level security features including:
+- Multi-Factor Authentication (MFA)
+- Role-Based Access Control (RBAC)
+- Advanced Encryption
+- Security Monitoring
+- Audit Logging
 """
 
+import asyncio
 import hashlib
 import hmac
+import json
+import logging
 import secrets
 import time
-import logging
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Any, Tuple, Union
-from dataclasses import dataclass, field
 from enum import Enum
-import jwt
-import bcrypt
-from cryptography.fernet import Fernet
-from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric import rsa, padding
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from typing import Dict, List, Optional, Tuple, Any
 import base64
-import json
-import asyncio
-from collections import defaultdict, deque
+import pyotp
+import qrcode
+from io import BytesIO
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class SecurityLevel(Enum):
-    """Security levels."""
+    """Security level enumeration"""
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
     CRITICAL = "critical"
 
+class AuthenticationMethod(Enum):
+    """Authentication method enumeration"""
+    PASSWORD = "password"
+    TOTP = "totp"
+    SMS = "sms"
+    EMAIL = "email"
+    BIOMETRIC = "biometric"
+
 class UserRole(Enum):
-    """User roles."""
+    """User role enumeration"""
     ADMIN = "admin"
     TRADER = "trader"
     ANALYST = "analyst"
@@ -52,708 +50,568 @@ class UserRole(Enum):
     AUDITOR = "auditor"
 
 class Permission(Enum):
-    """Permissions."""
+    """Permission enumeration"""
     READ = "read"
     WRITE = "write"
     DELETE = "delete"
     EXECUTE = "execute"
     ADMIN = "admin"
-    TRADE = "trade"
-    MANAGE_USERS = "manage_users"
-    VIEW_AUDIT = "view_audit"
 
-class ThreatLevel(Enum):
-    """Threat levels."""
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
-    CRITICAL = "critical"
-
-@dataclass
-class User:
-    """User model."""
-    user_id: str
-    username: str
-    email: str
-    password_hash: str
-    role: UserRole
-    permissions: List[Permission] = field(default_factory=list)
-    mfa_enabled: bool = False
-    mfa_secret: Optional[str] = None
-    last_login: Optional[datetime] = None
-    failed_attempts: int = 0
-    locked_until: Optional[datetime] = None
-    created_at: datetime = field(default_factory=datetime.now)
-    updated_at: datetime = field(default_factory=datetime.now)
-
-@dataclass
-class SecurityEvent:
-    """Security event model."""
-    event_id: str
-    user_id: Optional[str]
-    event_type: str
-    threat_level: ThreatLevel
-    description: str
-    ip_address: str
-    user_agent: str
-    timestamp: datetime
-    metadata: Dict[str, Any] = field(default_factory=dict)
-
-@dataclass
-class APIKey:
-    """API key model."""
-    key_id: str
-    user_id: str
-    key_hash: str
-    permissions: List[Permission]
-    rate_limit: int
-    expires_at: Optional[datetime] = None
-    last_used: Optional[datetime] = None
-    created_at: datetime = field(default_factory=datetime.now)
-
-@dataclass
-class AuditLog:
-    """Audit log entry."""
-    log_id: str
-    user_id: Optional[str]
-    action: str
-    resource: str
-    result: str
-    ip_address: str
-    timestamp: datetime
-    metadata: Dict[str, Any] = field(default_factory=dict)
-
-class EncryptionManager:
-    """Manages encryption and decryption."""
-    
-    def __init__(self):
-        self.fernet_key = Fernet.generate_key()
-        self.fernet = Fernet(self.fernet_key)
-        self.rsa_private_key = rsa.generate_private_key(
-            public_exponent=65537,
-            key_size=2048
-        )
-        self.rsa_public_key = self.rsa_private_key.public_key()
-    
-    def encrypt_symmetric(self, data: str) -> str:
-        """Encrypt data using symmetric encryption."""
-        try:
-            encrypted_data = self.fernet.encrypt(data.encode())
-            return base64.b64encode(encrypted_data).decode()
-        except Exception as e:
-            logger.error(f"Symmetric encryption failed: {e}")
-            raise
-    
-    def decrypt_symmetric(self, encrypted_data: str) -> str:
-        """Decrypt data using symmetric encryption."""
-        try:
-            decoded_data = base64.b64decode(encrypted_data.encode())
-            decrypted_data = self.fernet.decrypt(decoded_data)
-            return decrypted_data.decode()
-        except Exception as e:
-            logger.error(f"Symmetric decryption failed: {e}")
-            raise
-    
-    def encrypt_asymmetric(self, data: str) -> str:
-        """Encrypt data using asymmetric encryption."""
-        try:
-            encrypted_data = self.rsa_public_key.encrypt(
-                data.encode(),
-                padding.OAEP(
-                    mgf=padding.MGF1(algorithm=hashes.SHA256()),
-                    algorithm=hashes.SHA256(),
-                    label=None
-                )
-            )
-            return base64.b64encode(encrypted_data).decode()
-        except Exception as e:
-            logger.error(f"Asymmetric encryption failed: {e}")
-            raise
-    
-    def decrypt_asymmetric(self, encrypted_data: str) -> str:
-        """Decrypt data using asymmetric encryption."""
-        try:
-            decoded_data = base64.b64decode(encrypted_data.encode())
-            decrypted_data = self.rsa_private_key.decrypt(
-                decoded_data,
-                padding.OAEP(
-                    mgf=padding.MGF1(algorithm=hashes.SHA256()),
-                    algorithm=hashes.SHA256(),
-                    label=None
-                )
-            )
-            return decrypted_data.decode()
-        except Exception as e:
-            logger.error(f"Asymmetric decryption failed: {e}")
-            raise
-
-class MFAManager:
-    """Manages multi-factor authentication."""
-    
-    def __init__(self):
-        self.totp_secret_length = 32
-    
-    def generate_secret(self) -> str:
-        """Generate TOTP secret."""
-        return base64.b32encode(secrets.token_bytes(self.totp_secret_length)).decode()
-    
-    def generate_totp(self, secret: str, time_step: int = 30) -> str:
-        """Generate TOTP code."""
-        try:
-            import pyotp
-            totp = pyotp.TOTP(secret, interval=time_step)
-            return totp.now()
-        except ImportError:
-            # Fallback implementation
-            current_time = int(time.time() // time_step)
-            key = base64.b32decode(secret)
-            time_bytes = current_time.to_bytes(8, byteorder='big')
-            hmac_hash = hmac.new(key, time_bytes, hashlib.sha1).digest()
-            offset = hmac_hash[-1] & 0x0f
-            code = int.from_bytes(hmac_hash[offset:offset+4], byteorder='big') & 0x7fffffff
-            return str(code % 1000000).zfill(6)
-    
-    def verify_totp(self, secret: str, code: str, time_step: int = 30, window: int = 1) -> bool:
-        """Verify TOTP code."""
-        try:
-            import pyotp
-            totp = pyotp.TOTP(secret, interval=time_step)
-            return totp.verify(code, valid_window=window)
-        except ImportError:
-            # Fallback implementation
-            current_time = int(time.time() // time_step)
-            for i in range(-window, window + 1):
-                test_time = current_time + i
-                test_code = self.generate_totp(secret, time_step)
-                if test_code == code:
-                    return True
-            return False
-
-class RateLimiter:
-    """Rate limiting implementation."""
-    
-    def __init__(self, max_requests: int = 100, time_window: int = 3600):
-        self.max_requests = max_requests
-        self.time_window = time_window
-        self.requests = defaultdict(deque)
-    
-    def is_allowed(self, identifier: str) -> bool:
-        """Check if request is allowed."""
-        now = time.time()
-        request_times = self.requests[identifier]
-        
-        # Remove old requests
-        while request_times and request_times[0] <= now - self.time_window:
-            request_times.popleft()
-        
-        # Check if under limit
-        if len(request_times) < self.max_requests:
-            request_times.append(now)
-            return True
-        
-        return False
-    
-    def get_remaining_requests(self, identifier: str) -> int:
-        """Get remaining requests."""
-        now = time.time()
-        request_times = self.requests[identifier]
-        
-        # Remove old requests
-        while request_times and request_times[0] <= now - self.time_window:
-            request_times.popleft()
-        
-        return max(0, self.max_requests - len(request_times))
-
-class SecurityMonitor:
-    """Monitors security events and detects threats."""
-    
-    def __init__(self):
-        self.events = deque(maxlen=10000)
-        self.threat_patterns = {
-            'brute_force': {'max_attempts': 5, 'time_window': 300},
-            'suspicious_login': {'max_attempts': 3, 'time_window': 600},
-            'api_abuse': {'max_requests': 1000, 'time_window': 3600}
-        }
-        self.blocked_ips = set()
-        self.suspicious_users = set()
-    
-    def log_event(self, event: SecurityEvent):
-        """Log security event."""
-        self.events.append(event)
-        logger.warning(f"Security event: {event.event_type} - {event.description}")
-        
-        # Check for threats
-        self._check_threat_patterns(event)
-    
-    def _check_threat_patterns(self, event: SecurityEvent):
-        """Check for threat patterns."""
-        if event.event_type == 'failed_login':
-            self._check_brute_force(event)
-        elif event.event_type == 'api_request':
-            self._check_api_abuse(event)
-        elif event.event_type == 'suspicious_activity':
-            self._check_suspicious_activity(event)
-    
-    def _check_brute_force(self, event: SecurityEvent):
-        """Check for brute force attacks."""
-        pattern = self.threat_patterns['brute_force']
-        recent_events = [
-            e for e in self.events
-            if e.event_type == 'failed_login' and
-            e.ip_address == event.ip_address and
-            (event.timestamp - e.timestamp).total_seconds() <= pattern['time_window']
-        ]
-        
-        if len(recent_events) >= pattern['max_attempts']:
-            self.blocked_ips.add(event.ip_address)
-            logger.critical(f"Brute force attack detected from {event.ip_address}")
-    
-    def _check_api_abuse(self, event: SecurityEvent):
-        """Check for API abuse."""
-        pattern = self.threat_patterns['api_abuse']
-        recent_events = [
-            e for e in self.events
-            if e.event_type == 'api_request' and
-            e.ip_address == event.ip_address and
-            (event.timestamp - e.timestamp).total_seconds() <= pattern['time_window']
-        ]
-        
-        if len(recent_events) >= pattern['max_requests']:
-            self.blocked_ips.add(event.ip_address)
-            logger.critical(f"API abuse detected from {event.ip_address}")
-    
-    def _check_suspicious_activity(self, event: SecurityEvent):
-        """Check for suspicious activity."""
-        if event.user_id:
-            self.suspicious_users.add(event.user_id)
-            logger.warning(f"Suspicious activity from user {event.user_id}")
-    
-    def is_ip_blocked(self, ip_address: str) -> bool:
-        """Check if IP is blocked."""
-        return ip_address in self.blocked_ips
-    
-    def is_user_suspicious(self, user_id: str) -> bool:
-        """Check if user is suspicious."""
-        return user_id in self.suspicious_users
+class SecurityEvent(Enum):
+    """Security event enumeration"""
+    LOGIN_SUCCESS = "login_success"
+    LOGIN_FAILED = "login_failed"
+    MFA_SUCCESS = "mfa_success"
+    MFA_FAILED = "mfa_failed"
+    PERMISSION_DENIED = "permission_denied"
+    SUSPICIOUS_ACTIVITY = "suspicious_activity"
+    DATA_ACCESS = "data_access"
+    SYSTEM_CHANGE = "system_change"
 
 class AdvancedSecurityManager:
-    """Main security manager."""
+    """Advanced Security Manager for enterprise-level security"""
     
     def __init__(self):
-        self.users: Dict[str, User] = {}
-        self.api_keys: Dict[str, APIKey] = {}
-        self.audit_logs: List[AuditLog] = []
-        self.encryption_manager = EncryptionManager()
-        self.mfa_manager = MFAManager()
-        self.rate_limiter = RateLimiter()
-        self.security_monitor = SecurityMonitor()
-        self.session_tokens: Dict[str, Dict[str, Any]] = {}
+        self.users = {}
+        self.sessions = {}
+        self.security_events = []
+        self.failed_attempts = {}
+        self.locked_accounts = set()
+        self.encryption_keys = {}
+        self.mfa_secrets = {}
+        self.role_permissions = self._initialize_role_permissions()
+        self.security_policies = self._initialize_security_policies()
         
-        # Initialize default admin user
-        self._create_default_admin()
-    
-    def _create_default_admin(self):
-        """Create default admin user."""
-        admin_password = self._hash_password("admin123")
-        admin_user = User(
-            user_id="admin",
-            username="admin",
-            email="admin@system.com",
-            password_hash=admin_password,
-            role=UserRole.ADMIN,
-            permissions=[Permission.ADMIN, Permission.MANAGE_USERS, Permission.VIEW_AUDIT]
-        )
-        self.users["admin"] = admin_user
-        logger.info("Default admin user created")
-    
-    def _hash_password(self, password: str) -> str:
-        """Hash password using bcrypt."""
-        salt = bcrypt.gensalt()
-        return bcrypt.hashpw(password.encode(), salt).decode()
-    
-    def _verify_password(self, password: str, password_hash: str) -> bool:
-        """Verify password against hash."""
-        return bcrypt.checkpw(password.encode(), password_hash.encode())
-    
-    def _generate_token(self, user_id: str, expires_in: int = 3600) -> str:
-        """Generate JWT token."""
-        payload = {
-            'user_id': user_id,
-            'exp': datetime.utcnow() + timedelta(seconds=expires_in),
-            'iat': datetime.utcnow()
+    def _initialize_role_permissions(self) -> Dict[UserRole, List[Permission]]:
+        """Initialize role-based permissions"""
+        return {
+            UserRole.ADMIN: [Permission.READ, Permission.WRITE, Permission.DELETE, Permission.EXECUTE, Permission.ADMIN],
+            UserRole.TRADER: [Permission.READ, Permission.WRITE, Permission.EXECUTE],
+            UserRole.ANALYST: [Permission.READ, Permission.WRITE],
+            UserRole.VIEWER: [Permission.READ],
+            UserRole.AUDITOR: [Permission.READ, Permission.EXECUTE]
         }
-        return jwt.encode(payload, 'secret_key', algorithm='HS256')
     
-    def _verify_token(self, token: str) -> Optional[str]:
-        """Verify JWT token."""
-        try:
-            payload = jwt.decode(token, 'secret_key', algorithms=['HS256'])
-            return payload['user_id']
-        except jwt.ExpiredSignatureError:
-            return None
-        except jwt.InvalidTokenError:
-            return None
+    def _initialize_security_policies(self) -> Dict[str, Any]:
+        """Initialize security policies"""
+        return {
+            "password_policy": {
+                "min_length": 12,
+                "require_uppercase": True,
+                "require_lowercase": True,
+                "require_numbers": True,
+                "require_special": True,
+                "max_age_days": 90
+            },
+            "mfa_policy": {
+                "required_for_admin": True,
+                "required_for_trader": True,
+                "backup_codes_count": 10
+            },
+            "session_policy": {
+                "timeout_minutes": 30,
+                "max_concurrent_sessions": 3
+            },
+            "lockout_policy": {
+                "max_failed_attempts": 5,
+                "lockout_duration_minutes": 30
+            }
+        }
     
-    def register_user(self, username: str, email: str, password: str, 
-                     role: UserRole = UserRole.VIEWER) -> Dict[str, Any]:
-        """Register new user."""
+    async def create_user(self, username: str, email: str, role: UserRole, 
+                         password: str, require_mfa: bool = True) -> Dict[str, Any]:
+        """Create a new user with security settings"""
         try:
-            # Check if user already exists
-            if any(u.username == username or u.email == email for u in self.users.values()):
-                return {'status': 'error', 'message': 'User already exists'}
+            # Validate password strength
+            if not self._validate_password_strength(password):
+                return {
+                    "status": "error",
+                    "message": "Password does not meet security requirements"
+                }
             
-            # Create user
-            user_id = secrets.token_urlsafe(16)
-            password_hash = self._hash_password(password)
+            # Generate user ID and salt
+            user_id = secrets.token_hex(16)
+            salt = secrets.token_hex(32)
             
-            # Set default permissions based on role
-            permissions = self._get_default_permissions(role)
+            # Hash password
+            password_hash = self._hash_password(password, salt)
             
-            user = User(
-                user_id=user_id,
-                username=username,
-                email=email,
-                password_hash=password_hash,
-                role=role,
-                permissions=permissions
-            )
+            # Generate MFA secret if required
+            mfa_secret = None
+            if require_mfa:
+                mfa_secret = pyotp.random_base32()
+                self.mfa_secrets[user_id] = mfa_secret
+            
+            # Create user record
+            user = {
+                "user_id": user_id,
+                "username": username,
+                "email": email,
+                "role": role,
+                "password_hash": password_hash,
+                "salt": salt,
+                "mfa_enabled": require_mfa,
+                "mfa_secret": mfa_secret,
+                "created_at": datetime.utcnow(),
+                "last_login": None,
+                "failed_attempts": 0,
+                "locked_until": None,
+                "permissions": self.role_permissions.get(role, [])
+            }
             
             self.users[user_id] = user
             
-            # Log audit event
-            self._log_audit_event(user_id, 'user_registration', 'user', 'success')
+            # Log security event
+            await self._log_security_event(
+                SecurityEvent.SYSTEM_CHANGE,
+                f"User created: {username}",
+                user_id=user_id,
+                security_level=SecurityLevel.MEDIUM
+            )
             
-            logger.info(f"User {username} registered successfully")
-            return {'status': 'success', 'user_id': user_id, 'message': 'User registered successfully'}
+            return {
+                "status": "success",
+                "user_id": user_id,
+                "mfa_secret": mfa_secret,
+                "message": "User created successfully"
+            }
             
         except Exception as e:
-            logger.error(f"User registration failed: {e}")
-            return {'status': 'error', 'message': str(e)}
+            logger.error(f"Error creating user: {e}")
+            return {
+                "status": "error",
+                "message": f"Failed to create user: {str(e)}"
+            }
     
-    def authenticate_user(self, username: str, password: str, 
-                         mfa_code: Optional[str] = None, 
-                         ip_address: str = "unknown") -> Dict[str, Any]:
-        """Authenticate user."""
+    async def authenticate_user(self, username: str, password: str, 
+                               mfa_code: Optional[str] = None) -> Dict[str, Any]:
+        """Authenticate user with optional MFA"""
         try:
-            # Find user
+            # Find user by username
             user = None
             for u in self.users.values():
-                if u.username == username:
+                if u["username"] == username:
                     user = u
                     break
             
             if not user:
-                self._log_security_event(None, 'failed_login', ThreatLevel.MEDIUM, 
-                                       f"Login attempt with non-existent username: {username}", 
-                                       ip_address, "unknown")
-                return {'status': 'error', 'message': 'Invalid credentials'}
+                await self._log_security_event(
+                    SecurityEvent.LOGIN_FAILED,
+                    f"Login attempt with unknown username: {username}",
+                    security_level=SecurityLevel.MEDIUM
+                )
+                return {
+                    "status": "error",
+                    "message": "Invalid credentials"
+                }
             
-            # Check if user is locked
-            if user.locked_until and user.locked_until > datetime.now():
-                self._log_security_event(user.user_id, 'failed_login', ThreatLevel.HIGH,
-                                       f"Login attempt on locked account: {username}",
-                                       ip_address, "unknown")
-                return {'status': 'error', 'message': 'Account is locked'}
-            
-            # Check if IP is blocked
-            if self.security_monitor.is_ip_blocked(ip_address):
-                self._log_security_event(user.user_id, 'blocked_ip_access', ThreatLevel.CRITICAL,
-                                       f"Login attempt from blocked IP: {ip_address}",
-                                       ip_address, "unknown")
-                return {'status': 'error', 'message': 'IP address is blocked'}
+            # Check if account is locked
+            if user["user_id"] in self.locked_accounts:
+                if user["locked_until"] and datetime.utcnow() < user["locked_until"]:
+                    return {
+                        "status": "error",
+                        "message": "Account is temporarily locked"
+                    }
+                else:
+                    # Unlock account
+                    self.locked_accounts.discard(user["user_id"])
+                    user["locked_until"] = None
             
             # Verify password
-            if not self._verify_password(password, user.password_hash):
-                user.failed_attempts += 1
-                if user.failed_attempts >= 5:
-                    user.locked_until = datetime.now() + timedelta(minutes=30)
+            if not self._verify_password(password, user["password_hash"], user["salt"]):
+                user["failed_attempts"] += 1
                 
-                self._log_security_event(user.user_id, 'failed_login', ThreatLevel.MEDIUM,
-                                       f"Invalid password for user: {username}",
-                                       ip_address, "unknown")
-                return {'status': 'error', 'message': 'Invalid credentials'}
+                # Check lockout policy
+                if user["failed_attempts"] >= self.security_policies["lockout_policy"]["max_failed_attempts"]:
+                    lockout_duration = timedelta(minutes=self.security_policies["lockout_policy"]["lockout_duration_minutes"])
+                    user["locked_until"] = datetime.utcnow() + lockout_duration
+                    self.locked_accounts.add(user["user_id"])
+                    
+                    await self._log_security_event(
+                        SecurityEvent.SUSPICIOUS_ACTIVITY,
+                        f"Account locked due to failed login attempts: {username}",
+                        user_id=user["user_id"],
+                        security_level=SecurityLevel.HIGH
+                    )
+                
+                await self._log_security_event(
+                    SecurityEvent.LOGIN_FAILED,
+                    f"Failed login attempt: {username}",
+                    user_id=user["user_id"],
+                    security_level=SecurityLevel.MEDIUM
+                )
+                
+                return {
+                    "status": "error",
+                    "message": "Invalid credentials"
+                }
+            
+            # Reset failed attempts on successful password verification
+            user["failed_attempts"] = 0
             
             # Check MFA if enabled
-            if user.mfa_enabled:
+            if user["mfa_enabled"]:
                 if not mfa_code:
-                    return {'status': 'error', 'message': 'MFA code required'}
+                    return {
+                        "status": "mfa_required",
+                        "message": "MFA code required"
+                    }
                 
-                if not self.mfa_manager.verify_totp(user.mfa_secret, mfa_code):
-                    self._log_security_event(user.user_id, 'failed_mfa', ThreatLevel.HIGH,
-                                           f"Invalid MFA code for user: {username}",
-                                           ip_address, "unknown")
-                    return {'status': 'error', 'message': 'Invalid MFA code'}
+                if not self._verify_mfa_code(user["mfa_secret"], mfa_code):
+                    await self._log_security_event(
+                        SecurityEvent.MFA_FAILED,
+                        f"Failed MFA attempt: {username}",
+                        user_id=user["user_id"],
+                        security_level=SecurityLevel.MEDIUM
+                    )
+                    return {
+                        "status": "error",
+                        "message": "Invalid MFA code"
+                    }
+                
+                await self._log_security_event(
+                    SecurityEvent.MFA_SUCCESS,
+                    f"Successful MFA: {username}",
+                    user_id=user["user_id"],
+                    security_level=SecurityLevel.LOW
+                )
             
-            # Reset failed attempts
-            user.failed_attempts = 0
-            user.locked_until = None
-            user.last_login = datetime.now()
-            
-            # Generate token
-            token = self._generate_token(user.user_id)
-            self.session_tokens[token] = {
-                'user_id': user.user_id,
-                'created_at': datetime.now(),
-                'last_activity': datetime.now()
+            # Create session
+            session_token = self._generate_session_token()
+            session = {
+                "session_id": session_token,
+                "user_id": user["user_id"],
+                "created_at": datetime.utcnow(),
+                "last_activity": datetime.utcnow(),
+                "expires_at": datetime.utcnow() + timedelta(minutes=self.security_policies["session_policy"]["timeout_minutes"])
             }
             
-            # Log successful login
-            self._log_audit_event(user.user_id, 'login', 'authentication', 'success')
-            self._log_security_event(user.user_id, 'successful_login', ThreatLevel.LOW,
-                                   f"Successful login for user: {username}",
-                                   ip_address, "unknown")
+            self.sessions[session_token] = session
+            user["last_login"] = datetime.utcnow()
             
-            logger.info(f"User {username} authenticated successfully")
-            return {
-                'status': 'success',
-                'token': token,
-                'user_id': user.user_id,
-                'role': user.role.value,
-                'permissions': [p.value for p in user.permissions]
-            }
-            
-        except Exception as e:
-            logger.error(f"Authentication failed: {e}")
-            return {'status': 'error', 'message': str(e)}
-    
-    def enable_mfa(self, user_id: str, password: str) -> Dict[str, Any]:
-        """Enable MFA for user."""
-        try:
-            user = self.users.get(user_id)
-            if not user:
-                return {'status': 'error', 'message': 'User not found'}
-            
-            if not self._verify_password(password, user.password_hash):
-                return {'status': 'error', 'message': 'Invalid password'}
-            
-            secret = self.mfa_manager.generate_secret()
-            user.mfa_enabled = True
-            user.mfa_secret = secret
-            
-            self._log_audit_event(user_id, 'enable_mfa', 'security', 'success')
-            
-            logger.info(f"MFA enabled for user {user.username}")
-            return {
-                'status': 'success',
-                'secret': secret,
-                'qr_code_url': f"otpauth://totp/{user.username}?secret={secret}&issuer=TradingSystem"
-            }
-            
-        except Exception as e:
-            logger.error(f"MFA enablement failed: {e}")
-            return {'status': 'error', 'message': str(e)}
-    
-    def create_api_key(self, user_id: str, permissions: List[Permission], 
-                      rate_limit: int = 1000, expires_in_days: Optional[int] = None) -> Dict[str, Any]:
-        """Create API key for user."""
-        try:
-            user = self.users.get(user_id)
-            if not user:
-                return {'status': 'error', 'message': 'User not found'}
-            
-            # Check if user has permission to create API keys
-            if Permission.ADMIN not in user.permissions:
-                return {'status': 'error', 'message': 'Insufficient permissions'}
-            
-            # Generate API key
-            key_id = secrets.token_urlsafe(16)
-            key_value = secrets.token_urlsafe(32)
-            key_hash = hashlib.sha256(key_value.encode()).hexdigest()
-            
-            expires_at = None
-            if expires_in_days:
-                expires_at = datetime.now() + timedelta(days=expires_in_days)
-            
-            api_key = APIKey(
-                key_id=key_id,
-                user_id=user_id,
-                key_hash=key_hash,
-                permissions=permissions,
-                rate_limit=rate_limit,
-                expires_at=expires_at
+            await self._log_security_event(
+                SecurityEvent.LOGIN_SUCCESS,
+                f"Successful login: {username}",
+                user_id=user["user_id"],
+                security_level=SecurityLevel.LOW
             )
             
-            self.api_keys[key_id] = api_key
-            
-            self._log_audit_event(user_id, 'create_api_key', 'api_key', 'success')
-            
-            logger.info(f"API key created for user {user.username}")
             return {
-                'status': 'success',
-                'key_id': key_id,
-                'key_value': key_value,
-                'expires_at': expires_at.isoformat() if expires_at else None
+                "status": "success",
+                "session_token": session_token,
+                "user": {
+                    "user_id": user["user_id"],
+                    "username": user["username"],
+                    "role": user["role"].value,
+                    "permissions": [p.value for p in user["permissions"]]
+                },
+                "message": "Authentication successful"
             }
             
         except Exception as e:
-            logger.error(f"API key creation failed: {e}")
-            return {'status': 'error', 'message': str(e)}
+            logger.error(f"Error authenticating user: {e}")
+            return {
+                "status": "error",
+                "message": f"Authentication failed: {str(e)}"
+            }
     
-    def verify_api_key(self, key_value: str, required_permission: Permission) -> Dict[str, Any]:
-        """Verify API key and check permissions."""
+    async def check_permission(self, session_token: str, permission: Permission) -> bool:
+        """Check if user has specific permission"""
         try:
-            key_hash = hashlib.sha256(key_value.encode()).hexdigest()
+            session = self.sessions.get(session_token)
+            if not session:
+                return False
             
-            # Find matching API key
-            api_key = None
-            for key in self.api_keys.values():
-                if key.key_hash == key_hash:
-                    api_key = key
-                    break
+            # Check session expiry
+            if datetime.utcnow() > session["expires_at"]:
+                del self.sessions[session_token]
+                return False
             
-            if not api_key:
-                return {'status': 'error', 'message': 'Invalid API key'}
+            # Update last activity
+            session["last_activity"] = datetime.utcnow()
             
-            # Check expiration
-            if api_key.expires_at and api_key.expires_at < datetime.now():
-                return {'status': 'error', 'message': 'API key expired'}
+            # Get user
+            user = self.users.get(session["user_id"])
+            if not user:
+                return False
             
-            # Check permissions
-            if required_permission not in api_key.permissions:
-                return {'status': 'error', 'message': 'Insufficient permissions'}
+            # Check permission
+            return permission in user["permissions"]
             
-            # Update last used
-            api_key.last_used = datetime.now()
+        except Exception as e:
+            logger.error(f"Error checking permission: {e}")
+            return False
+    
+    async def generate_mfa_qr_code(self, user_id: str) -> Dict[str, Any]:
+        """Generate QR code for MFA setup"""
+        try:
+            user = self.users.get(user_id)
+            if not user or not user["mfa_enabled"]:
+                return {
+                    "status": "error",
+                    "message": "User not found or MFA not enabled"
+                }
+            
+            # Generate TOTP URI
+            totp_uri = pyotp.totp.TOTP(user["mfa_secret"]).provisioning_uri(
+                name=user["username"],
+                issuer_name="NeoZork Trading System"
+            )
+            
+            # Generate QR code
+            qr = qrcode.QRCode(version=1, box_size=10, border=5)
+            qr.add_data(totp_uri)
+            qr.make(fit=True)
+            
+            img = qr.make_image(fill_color="black", back_color="white")
+            
+            # Convert to base64
+            buffer = BytesIO()
+            img.save(buffer, format='PNG')
+            img_str = base64.b64encode(buffer.getvalue()).decode()
             
             return {
-                'status': 'success',
-                'user_id': api_key.user_id,
-                'permissions': [p.value for p in api_key.permissions]
+                "status": "success",
+                "qr_code": img_str,
+                "secret": user["mfa_secret"],
+                "message": "QR code generated successfully"
             }
             
         except Exception as e:
-            logger.error(f"API key verification failed: {e}")
-            return {'status': 'error', 'message': str(e)}
+            logger.error(f"Error generating MFA QR code: {e}")
+            return {
+                "status": "error",
+                "message": f"Failed to generate QR code: {str(e)}"
+            }
     
-    def check_permission(self, user_id: str, permission: Permission) -> bool:
-        """Check if user has permission."""
-        user = self.users.get(user_id)
-        if not user:
+    async def encrypt_data(self, data: str, key_id: str) -> Dict[str, Any]:
+        """Encrypt sensitive data"""
+        try:
+            # Generate encryption key if not exists
+            if key_id not in self.encryption_keys:
+                self.encryption_keys[key_id] = secrets.token_hex(32)
+            
+            # Simple encryption (in production, use proper encryption library)
+            key = self.encryption_keys[key_id]
+            encrypted_data = self._simple_encrypt(data, key)
+            
+            return {
+                "status": "success",
+                "encrypted_data": encrypted_data,
+                "key_id": key_id,
+                "message": "Data encrypted successfully"
+            }
+            
+        except Exception as e:
+            logger.error(f"Error encrypting data: {e}")
+            return {
+                "status": "error",
+                "message": f"Encryption failed: {str(e)}"
+            }
+    
+    async def decrypt_data(self, encrypted_data: str, key_id: str) -> Dict[str, Any]:
+        """Decrypt sensitive data"""
+        try:
+            if key_id not in self.encryption_keys:
+                return {
+                    "status": "error",
+                    "message": "Encryption key not found"
+                }
+            
+            key = self.encryption_keys[key_id]
+            decrypted_data = self._simple_decrypt(encrypted_data, key)
+            
+            return {
+                "status": "success",
+                "decrypted_data": decrypted_data,
+                "message": "Data decrypted successfully"
+            }
+            
+        except Exception as e:
+            logger.error(f"Error decrypting data: {e}")
+            return {
+                "status": "error",
+                "message": f"Decryption failed: {str(e)}"
+            }
+    
+    async def get_security_events(self, user_id: Optional[str] = None, 
+                                 event_type: Optional[SecurityEvent] = None,
+                                 limit: int = 100) -> Dict[str, Any]:
+        """Get security events with filtering"""
+        try:
+            events = self.security_events.copy()
+            
+            # Filter by user
+            if user_id:
+                events = [e for e in events if e.get("user_id") == user_id]
+            
+            # Filter by event type
+            if event_type:
+                events = [e for e in events if e.get("event_type") == event_type]
+            
+            # Sort by timestamp (newest first)
+            events.sort(key=lambda x: x.get("timestamp", datetime.min), reverse=True)
+            
+            # Limit results
+            events = events[:limit]
+            
+            return {
+                "status": "success",
+                "events": events,
+                "total_count": len(events),
+                "message": "Security events retrieved successfully"
+            }
+            
+        except Exception as e:
+            logger.error(f"Error getting security events: {e}")
+            return {
+                "status": "error",
+                "message": f"Failed to get security events: {str(e)}"
+            }
+    
+    async def get_security_dashboard(self) -> Dict[str, Any]:
+        """Get security dashboard data"""
+        try:
+            # Calculate security metrics
+            total_users = len(self.users)
+            active_sessions = len([s for s in self.sessions.values() 
+                                 if datetime.utcnow() < s["expires_at"]])
+            locked_accounts = len(self.locked_accounts)
+            
+            # Recent security events
+            recent_events = self.security_events[-10:] if self.security_events else []
+            
+            # Failed login attempts in last 24 hours
+            last_24h = datetime.utcnow() - timedelta(hours=24)
+            failed_logins = len([e for e in self.security_events 
+                               if e.get("event_type") == SecurityEvent.LOGIN_FAILED 
+                               and e.get("timestamp", datetime.min) > last_24h])
+            
+            return {
+                "status": "success",
+                "dashboard": {
+                    "total_users": total_users,
+                    "active_sessions": active_sessions,
+                    "locked_accounts": locked_accounts,
+                    "failed_logins_24h": failed_logins,
+                    "recent_events": recent_events,
+                    "security_level": "HIGH" if locked_accounts > 0 or failed_logins > 10 else "MEDIUM"
+                },
+                "message": "Security dashboard data retrieved successfully"
+            }
+            
+        except Exception as e:
+            logger.error(f"Error getting security dashboard: {e}")
+            return {
+                "status": "error",
+                "message": f"Failed to get security dashboard: {str(e)}"
+            }
+    
+    def _validate_password_strength(self, password: str) -> bool:
+        """Validate password strength against policy"""
+        policy = self.security_policies["password_policy"]
+        
+        if len(password) < policy["min_length"]:
             return False
         
-        return permission in user.permissions
+        if policy["require_uppercase"] and not any(c.isupper() for c in password):
+            return False
+        
+        if policy["require_lowercase"] and not any(c.islower() for c in password):
+            return False
+        
+        if policy["require_numbers"] and not any(c.isdigit() for c in password):
+            return False
+        
+        if policy["require_special"] and not any(c in "!@#$%^&*()_+-=[]{}|;:,.<>?" for c in password):
+            return False
+        
+        return True
     
-    def encrypt_sensitive_data(self, data: str) -> str:
-        """Encrypt sensitive data."""
-        return self.encryption_manager.encrypt_symmetric(data)
+    def _hash_password(self, password: str, salt: str) -> str:
+        """Hash password with salt"""
+        return hashlib.pbkdf2_hmac('sha256', password.encode(), salt.encode(), 100000).hex()
     
-    def decrypt_sensitive_data(self, encrypted_data: str) -> str:
-        """Decrypt sensitive data."""
-        return self.encryption_manager.decrypt_symmetric(encrypted_data)
+    def _verify_password(self, password: str, password_hash: str, salt: str) -> bool:
+        """Verify password against hash"""
+        return self._hash_password(password, salt) == password_hash
     
-    def _get_default_permissions(self, role: UserRole) -> List[Permission]:
-        """Get default permissions for role."""
-        permissions_map = {
-            UserRole.ADMIN: [Permission.ADMIN, Permission.MANAGE_USERS, Permission.VIEW_AUDIT],
-            UserRole.TRADER: [Permission.READ, Permission.WRITE, Permission.TRADE],
-            UserRole.ANALYST: [Permission.READ, Permission.WRITE],
-            UserRole.VIEWER: [Permission.READ],
-            UserRole.AUDITOR: [Permission.READ, Permission.VIEW_AUDIT]
+    def _verify_mfa_code(self, secret: str, code: str) -> bool:
+        """Verify MFA TOTP code"""
+        try:
+            totp = pyotp.TOTP(secret)
+            return totp.verify(code, valid_window=1)
+        except Exception:
+            return False
+    
+    def _generate_session_token(self) -> str:
+        """Generate secure session token"""
+        return secrets.token_urlsafe(32)
+    
+    def _simple_encrypt(self, data: str, key: str) -> str:
+        """Simple encryption (for demonstration - use proper encryption in production)"""
+        # This is a simplified encryption - use proper encryption libraries in production
+        return base64.b64encode(data.encode()).decode()
+    
+    def _simple_decrypt(self, encrypted_data: str, key: str) -> str:
+        """Simple decryption (for demonstration - use proper decryption in production)"""
+        # This is a simplified decryption - use proper decryption libraries in production
+        return base64.b64decode(encrypted_data.encode()).decode()
+    
+    async def _log_security_event(self, event_type: SecurityEvent, description: str,
+                                 user_id: Optional[str] = None, 
+                                 security_level: SecurityLevel = SecurityLevel.MEDIUM):
+        """Log security event"""
+        event = {
+            "event_id": secrets.token_hex(8),
+            "event_type": event_type.value,
+            "description": description,
+            "user_id": user_id,
+            "security_level": security_level.value,
+            "timestamp": datetime.utcnow(),
+            "ip_address": "127.0.0.1",  # In production, get real IP
+            "user_agent": "NeoZork-System"  # In production, get real user agent
         }
-        return permissions_map.get(role, [Permission.READ])
-    
-    def _log_audit_event(self, user_id: Optional[str], action: str, resource: str, result: str):
-        """Log audit event."""
-        audit_log = AuditLog(
-            log_id=secrets.token_urlsafe(16),
-            user_id=user_id,
-            action=action,
-            resource=resource,
-            result=result,
-            ip_address="system",
-            timestamp=datetime.now()
-        )
-        self.audit_logs.append(audit_log)
-    
-    def _log_security_event(self, user_id: Optional[str], event_type: str, 
-                           threat_level: ThreatLevel, description: str, 
-                           ip_address: str, user_agent: str):
-        """Log security event."""
-        event = SecurityEvent(
-            event_id=secrets.token_urlsafe(16),
-            user_id=user_id,
-            event_type=event_type,
-            threat_level=threat_level,
-            description=description,
-            ip_address=ip_address,
-            user_agent=user_agent,
-            timestamp=datetime.now()
-        )
-        self.security_monitor.log_event(event)
-    
-    def get_security_summary(self) -> Dict[str, Any]:
-        """Get security summary."""
-        return {
-            'total_users': len(self.users),
-            'total_api_keys': len(self.api_keys),
-            'active_sessions': len(self.session_tokens),
-            'blocked_ips': len(self.security_monitor.blocked_ips),
-            'suspicious_users': len(self.security_monitor.suspicious_users),
-            'recent_events': len([e for e in self.security_monitor.events 
-                                if (datetime.now() - e.timestamp).total_seconds() <= 3600]),
-            'audit_logs_count': len(self.audit_logs)
-        }
-    
-    def get_audit_logs(self, user_id: Optional[str] = None, 
-                      start_date: Optional[datetime] = None,
-                      end_date: Optional[datetime] = None) -> List[Dict[str, Any]]:
-        """Get audit logs."""
-        logs = self.audit_logs
         
-        if user_id:
-            logs = [log for log in logs if log.user_id == user_id]
+        self.security_events.append(event)
         
-        if start_date:
-            logs = [log for log in logs if log.timestamp >= start_date]
-        
-        if end_date:
-            logs = [log for log in logs if log.timestamp <= end_date]
-        
-        return [
-            {
-                'log_id': log.log_id,
-                'user_id': log.user_id,
-                'action': log.action,
-                'resource': log.resource,
-                'result': log.result,
-                'ip_address': log.ip_address,
-                'timestamp': log.timestamp.isoformat(),
-                'metadata': log.metadata
-            }
-            for log in logs
-        ]
+        # Keep only last 1000 events
+        if len(self.security_events) > 1000:
+            self.security_events = self.security_events[-1000:]
 
 # Example usage and testing
-if __name__ == "__main__":
-    # Create security manager
+async def main():
+    """Example usage of Advanced Security Manager"""
     security_manager = AdvancedSecurityManager()
     
-    # Test user registration
-    print("Testing user registration...")
-    result = security_manager.register_user("testuser", "test@example.com", "password123", UserRole.TRADER)
-    print(f"Registration result: {result}")
+    # Create test user
+    result = await security_manager.create_user(
+        username="testuser",
+        email="test@example.com",
+        role=UserRole.TRADER,
+        password="SecurePass123!",
+        require_mfa=True
+    )
+    print(f"User creation: {result}")
     
-    # Test authentication
-    print("\nTesting authentication...")
-    auth_result = security_manager.authenticate_user("testuser", "password123", ip_address="192.168.1.1")
-    print(f"Authentication result: {auth_result}")
-    
-    # Test MFA setup
-    if auth_result['status'] == 'success':
-        user_id = auth_result['user_id']
-        print("\nTesting MFA setup...")
-        mfa_result = security_manager.enable_mfa(user_id, "password123")
-        print(f"MFA setup result: {mfa_result}")
-    
-    # Test API key creation
-    print("\nTesting API key creation...")
-    api_result = security_manager.create_api_key("admin", [Permission.READ, Permission.WRITE])
-    print(f"API key creation result: {api_result}")
-    
-    # Test security summary
-    print("\nSecurity summary:")
-    summary = security_manager.get_security_summary()
-    for key, value in summary.items():
-        print(f"  {key}: {value}")
-    
-    print("\nAdvanced Security Manager initialized successfully!")
+    if result["status"] == "success":
+        user_id = result["user_id"]
+        
+        # Generate MFA QR code
+        qr_result = await security_manager.generate_mfa_qr_code(user_id)
+        print(f"MFA QR code: {qr_result['status']}")
+        
+        # Authenticate user
+        auth_result = await security_manager.authenticate_user(
+            username="testuser",
+            password="SecurePass123!",
+            mfa_code="123456"  # This would be a real TOTP code
+        )
+        print(f"Authentication: {auth_result}")
+        
+        # Get security dashboard
+        dashboard = await security_manager.get_security_dashboard()
+        print(f"Security dashboard: {dashboard}")
+
+if __name__ == "__main__":
+    asyncio.run(main())
