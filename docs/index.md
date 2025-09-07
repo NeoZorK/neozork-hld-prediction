@@ -126,6 +126,10 @@ python run_analysis.py demo --rule PHLD
 - [SMA Indicator](reference/indicators/trend/sma-indicator.md) - **NEW**: Simple Moving Average documentation
 
 ### Interactive ML Trading System
+
+### Business Plans
+- [Commercialization Plan (English)](business/commercialization-plan-en.md) - **NEW**: Comprehensive commercialization strategy for SaaS platform
+- [План Коммерциализации (Русский)](business/commercialization-plan-ru.md) - **NEW**: Комплексная стратегия коммерциализации для SaaS платформы
 - [Interactive ML Trading System](interactive/index.md) - **NEW**: Comprehensive interactive system for ML trading strategy development
 - [Strategic Plan (English)](interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_EN.md) - **NEW**: Complete strategic plan for robust profitable ML trading strategies
 - [Стратегический План (Русский)](interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_RU.md) - **NEW**: Полный стратегический план для робастных прибыльных ML торговых стратегий
@@ -154,6 +158,10 @@ python run_analysis.py demo --rule PHLD
 - **Visualization**: Interactive charts and plots
 
 ### Interactive ML Trading System
+
+### Business Plans
+- [Commercialization Plan (English)](business/commercialization-plan-en.md) - **NEW**: Comprehensive commercialization strategy for SaaS platform
+- [План Коммерциализации (Русский)](business/commercialization-plan-ru.md) - **NEW**: Комплексная стратегия коммерциализации для SaaS платформы
 - **Interactive Menu System**: Modern, colorful user interface with progress indicators
 - **Advanced ML/DL**: Apple MLX integration, Deep Reinforcement Learning, Ensemble methods
 - **Risk Management**: Monte Carlo simulations, VaR/CVaR, Dynamic position sizing
