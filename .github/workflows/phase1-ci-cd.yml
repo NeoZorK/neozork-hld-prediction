@@ -32,7 +32,7 @@ jobs:
 
       - name: Install basic dependencies
         run: |
-          uv pip install pandas numpy requests
+          uv pip install --system pandas numpy requests
 
       - name: Test Python environment
         run: |
