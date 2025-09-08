@@ -164,7 +164,7 @@ Real Exchange APIs → Data Processing → ML Models → Trading System → Sign
 1. `src/data/real_exchange_apis.py` - Exchange API integration
 2. `src/ml/real_ml_models.py` - ML models implementation
 3. `src/integration/real_trading_system.py` - Trading system integration
-4. `test_phase1_implementation.py` - Comprehensive testing
+4. `tests/src/ml/test_phase4_implementation.py` - Comprehensive testing
 
 ### **Dependencies Added**
 - `requests` - HTTP API calls

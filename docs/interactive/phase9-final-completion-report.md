@@ -89,7 +89,7 @@ Phase 9 focused on implementing advanced trading strategies and quantitative res
 
 ## 🧪 Testing Results
 
-**Test File:** `test_phase9_completion.py`
+**Test File:** `tests/src/trading/test_phase9_implementation.py`
 **Results:** ✅ All 5 tests passed
 
 ### Test Coverage:

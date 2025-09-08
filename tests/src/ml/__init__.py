@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
-Tests for src/ml module.
+Tests for ML and AI components.
 """
