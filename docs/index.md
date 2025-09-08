@@ -72,6 +72,7 @@ python run_analysis.py demo --rule PHLD
 - [Debugging](development/debugging.md) - Debugging tools and techniques
 - [Scripts Structure](development/scripts-structure.md) - **NEW**: Utility scripts organization and structure
 - [Refactoring Guide](development/REFACTORING_SUMMARY.md) - **NEW**: Code refactoring guidelines and recent improvements
+- [Test Reorganization Report](development/TEST_REORGANIZATION_REPORT.md) - **NEW**: Comprehensive report on test files reorganization
 
 ### Testing
 - [Testing Documentation](testing/index.md) - Comprehensive testing documentation
@@ -130,10 +131,13 @@ python run_analysis.py demo --rule PHLD
 ### Business Plans
 - [Commercialization Plan (English)](business/commercialization-plan-en.md) - **NEW**: Comprehensive commercialization strategy for SaaS platform
 - [План Коммерциализации (Русский)](business/commercialization-plan-ru.md) - **NEW**: Комплексная стратегия коммерциализации для SaaS платформы
+- [Pocket Hedge Fund Launch Guide](business/POCKET_HEDGE_FUND_LAUNCH.md) - **NEW**: Complete launch instructions and implementation guide
+- [SaaS Platform Launch Guide](business/SAAS_PLATFORM_LAUNCH.md) - **NEW**: Comprehensive SaaS platform launch guide
 - [Interactive ML Trading System](interactive/index.md) - **NEW**: Comprehensive interactive system for ML trading strategy development
 - [Strategic Plan (English)](interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_EN.md) - **NEW**: Complete strategic plan for robust profitable ML trading strategies
 - [Стратегический План (Русский)](interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_RU.md) - **NEW**: Полный стратегический план для робастных прибыльных ML торговых стратегий
 - [Next Steps Plan](interactive/next-steps-plan.md) - **NEW**: Production development roadmap and implementation plan
+- [Phase 4 Completion Summary](interactive/PHASE4_COMPLETION_SUMMARY.md) - **NEW**: Final completion summary for Phase 4 Advanced Features
 
 ### Release Notes
 - [Release Notes](release-notes/index.md) - **NEW**: Complete release history and migration guides
