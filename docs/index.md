@@ -133,6 +133,8 @@ python run_analysis.py demo --rule PHLD
 - [План Коммерциализации (Русский)](business/commercialization-plan-ru.md) - **NEW**: Комплексная стратегия коммерциализации для SaaS платформы
 - [Pocket Hedge Fund Launch Guide](business/POCKET_HEDGE_FUND_LAUNCH.md) - **NEW**: Complete launch instructions and implementation guide
 - [SaaS Platform Launch Guide](business/SAAS_PLATFORM_LAUNCH.md) - **NEW**: Comprehensive SaaS platform launch guide
+- [Pocket Hedge Fund README](business/pocket-hedge-fund-readme.md) - **NEW**: Technical documentation for Pocket Hedge Fund
+- [SaaS Platform README](business/saas-platform-readme.md) - **NEW**: Technical documentation for SaaS platform
 - [Interactive ML Trading System](interactive/index.md) - **NEW**: Comprehensive interactive system for ML trading strategy development
 - [Strategic Plan (English)](interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_EN.md) - **NEW**: Complete strategic plan for robust profitable ML trading strategies
 - [Стратегический План (Русский)](interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_RU.md) - **NEW**: Полный стратегический план для робастных прибыльных ML торговых стратегий
