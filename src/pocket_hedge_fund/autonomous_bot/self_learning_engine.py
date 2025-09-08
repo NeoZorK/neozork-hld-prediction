@@ -1215,52 +1215,111 @@ class SelfLearningEngine:
             logger.info("Starting self-learning from market data...")
             start_time = datetime.now()
             
+            learning_results = {}
+            best_model = None
+            best_performance = -float('inf')
+            learning_method = "combined"
+            
             # Meta-learning
-            if self.config.meta_learning_enabled:
+            if self.config.meta_learning_enabled and market_data.get('tasks'):
                 meta_result = await self.meta_learner.learn_from_tasks(market_data.get('tasks', []))
+                learning_results['meta_learning'] = meta_result
                 logger.info(f"Meta-learning result: {meta_result}")
             
             # Transfer learning
-            if self.config.transfer_learning_enabled:
+            if self.config.transfer_learning_enabled and market_data.get('source_model'):
                 transfer_result = await self.transfer_learner.transfer_knowledge(
                     market_data.get('source_domain', 'default'),
                     market_data.get('target_domain', 'current'),
                     market_data.get('source_model'),
-                    market_data.get('target_data', {})
+                    market_data.get('target_data', market_data)
                 )
+                learning_results['transfer_learning'] = transfer_result
                 logger.info(f"Transfer learning result: {transfer_result}")
+                
+                if transfer_result.get('status') == 'success':
+                    performance = transfer_result.get('performance', {}).get('r2', 0)
+                    if performance > best_performance:
+                        best_performance = performance
+                        best_model = transfer_result.get('transferred_model')
+                        learning_method = "transfer_learning"
             
             # AutoML
             if self.config.auto_ml_enabled:
                 automl_result = await self.auto_ml.search_models(
-                    market_data.get('data', {}),
-                    market_data.get('target', 'price')
+                    market_data,
+                    market_data.get('target', 'close')
                 )
+                learning_results['automl'] = automl_result
                 logger.info(f"AutoML result: {automl_result}")
+                
+                if automl_result.get('status') == 'success':
+                    performance = 1.0 - automl_result.get('performance', 1.0)  # Convert MSE to R² approximation
+                    if performance > best_performance:
+                        best_performance = performance
+                        best_model = automl_result.get('best_model')
+                        learning_method = "automl"
             
             # Neural Architecture Search
             if self.config.nas_enabled:
                 nas_result = await self.nas.search_architecture(
-                    market_data.get('data', {}),
+                    market_data,
                     market_data.get('constraints', {})
                 )
+                learning_results['nas'] = nas_result
                 logger.info(f"NAS result: {nas_result}")
+                
+                if nas_result.get('status') == 'success':
+                    performance = 1.0 - nas_result.get('performance', 1.0)  # Convert MSE to R² approximation
+                    if performance > best_performance:
+                        best_performance = performance
+                        best_model = nas_result.get('best_architecture')
+                        learning_method = "nas"
             
             learning_time = (datetime.now() - start_time).total_seconds()
             
+            # Store the best model
+            if best_model:
+                model_id = f"model_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+                self.current_models[model_id] = {
+                    'model': best_model,
+                    'performance': best_performance,
+                    'learning_method': learning_method,
+                    'timestamp': datetime.now()
+                }
+                
+                # Save model to disk
+                model_path = self._save_model(best_model, model_id, learning_method)
+            else:
+                model_path = None
+            
             # Store learning history
-            self.learning_history.append({
+            learning_record = {
                 'timestamp': datetime.now(),
                 'market_data_keys': list(market_data.keys()),
                 'learning_time': learning_time,
-                'success': True
-            })
+                'success': True,
+                'learning_results': learning_results,
+                'best_performance': best_performance,
+                'learning_method': learning_method
+            }
+            
+            self.learning_history.append(learning_record)
+            
+            # Calculate final performance metrics
+            model_performance = {
+                'r2_score': best_performance,
+                'mse': 1.0 - best_performance if best_performance > 0 else 1.0,
+                'learning_method': learning_method
+            }
             
             return LearningResult(
                 success=True,
-                model_performance={'accuracy': 0.95, 'precision': 0.93, 'recall': 0.91},
+                model_performance=model_performance,
                 learning_time=learning_time,
-                model_path="/path/to/learned/model"
+                model_path=model_path,
+                model_type=type(best_model).__name__ if best_model else None,
+                learning_method=learning_method
             )
             
         except Exception as e:
@@ -1271,6 +1330,33 @@ class SelfLearningEngine:
                 learning_time=0.0,
                 error_message=str(e)
             )
+    
+    def _save_model(self, model: Any, model_id: str, learning_method: str) -> str:
+        """Save model to disk."""
+        try:
+            model_filename = f"{model_id}_{learning_method}.joblib"
+            model_path = self.model_storage_path / model_filename
+            
+            # Save model
+            joblib.dump(model, model_path)
+            
+            logger.info(f"Model saved to: {model_path}")
+            return str(model_path)
+            
+        except Exception as e:
+            logger.error(f"Failed to save model: {e}")
+            return None
+    
+    def _load_model(self, model_path: str) -> Any:
+        """Load model from disk."""
+        try:
+            model = joblib.load(model_path)
+            logger.info(f"Model loaded from: {model_path}")
+            return model
+            
+        except Exception as e:
+            logger.error(f"Failed to load model: {e}")
+            return None
     
     async def optimize_strategy(self, performance_metrics: Dict[str, float]) -> Dict[str, Any]:
         """
@@ -1286,21 +1372,60 @@ class SelfLearningEngine:
             logger.info("Optimizing strategy based on performance metrics...")
             
             # Analyze performance metrics
-            if performance_metrics.get('sharpe_ratio', 0) < 1.5:
+            sharpe_ratio = performance_metrics.get('sharpe_ratio', 0)
+            max_drawdown = performance_metrics.get('max_drawdown', 0)
+            win_rate = performance_metrics.get('win_rate', 0)
+            profit_factor = performance_metrics.get('profit_factor', 0)
+            
+            optimized_parameters = {}
+            expected_improvement = 0.0
+            
+            # Risk management optimization
+            if sharpe_ratio < 1.5:
                 logger.info("Low Sharpe ratio detected, optimizing for risk-adjusted returns...")
+                optimized_parameters['risk_level'] = max(0.01, performance_metrics.get('risk_level', 0.02) * 0.8)
+                optimized_parameters['position_size'] = max(0.05, performance_metrics.get('position_size', 0.1) * 0.9)
+                expected_improvement += 0.1
             
-            if performance_metrics.get('max_drawdown', 0) > 0.1:
+            if max_drawdown > 0.1:
                 logger.info("High drawdown detected, optimizing for risk management...")
+                optimized_parameters['stop_loss'] = min(0.03, performance_metrics.get('stop_loss', 0.05) * 0.8)
+                optimized_parameters['max_position_size'] = max(0.05, performance_metrics.get('position_size', 0.1) * 0.7)
+                expected_improvement += 0.08
             
-            # TODO: Implement strategy optimization
+            # Profit optimization
+            if win_rate < 0.5:
+                logger.info("Low win rate detected, optimizing entry/exit strategy...")
+                optimized_parameters['take_profit'] = max(0.08, performance_metrics.get('take_profit', 0.1) * 1.2)
+                optimized_parameters['entry_threshold'] = performance_metrics.get('entry_threshold', 0.5) * 1.1
+                expected_improvement += 0.05
+            
+            if profit_factor < 1.2:
+                logger.info("Low profit factor detected, optimizing risk-reward ratio...")
+                optimized_parameters['risk_reward_ratio'] = max(1.5, performance_metrics.get('risk_reward_ratio', 1.0) * 1.3)
+                expected_improvement += 0.06
+            
+            # Set default values if not optimized
+            default_params = {
+                'risk_level': 0.02,
+                'position_size': 0.1,
+                'stop_loss': 0.05,
+                'take_profit': 0.1,
+                'max_position_size': 0.15,
+                'entry_threshold': 0.5,
+                'risk_reward_ratio': 2.0
+            }
+            
+            for key, default_value in default_params.items():
+                if key not in optimized_parameters:
+                    optimized_parameters[key] = performance_metrics.get(key, default_value)
+            
             optimization_result = {
                 'status': 'success',
-                'optimized_parameters': {
-                    'risk_level': 0.02,
-                    'position_size': 0.1,
-                    'stop_loss': 0.05
-                },
-                'expected_improvement': 0.15
+                'optimized_parameters': optimized_parameters,
+                'expected_improvement': expected_improvement,
+                'optimization_reasons': self._get_optimization_reasons(performance_metrics),
+                'timestamp': datetime.now()
             }
             
             logger.info(f"Strategy optimization completed: {optimization_result}")
@@ -1309,6 +1434,24 @@ class SelfLearningEngine:
         except Exception as e:
             logger.error(f"Strategy optimization failed: {e}")
             return {'status': 'error', 'message': str(e)}
+    
+    def _get_optimization_reasons(self, performance_metrics: Dict[str, float]) -> List[str]:
+        """Get reasons for optimization based on performance metrics."""
+        reasons = []
+        
+        if performance_metrics.get('sharpe_ratio', 0) < 1.5:
+            reasons.append("Low Sharpe ratio - reducing risk and position size")
+        
+        if performance_metrics.get('max_drawdown', 0) > 0.1:
+            reasons.append("High drawdown - tightening stop losses")
+        
+        if performance_metrics.get('win_rate', 0) < 0.5:
+            reasons.append("Low win rate - improving entry/exit strategy")
+        
+        if performance_metrics.get('profit_factor', 0) < 1.2:
+            reasons.append("Low profit factor - optimizing risk-reward ratio")
+        
+        return reasons
     
     async def adapt_to_new_market(self, market_conditions: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -1323,11 +1466,45 @@ class SelfLearningEngine:
         try:
             logger.info("Adapting to new market conditions...")
             
+            # Find the best current model for adaptation
+            best_model = None
+            best_model_id = None
+            
+            for model_id, model_info in self.current_models.items():
+                if best_model is None or model_info['performance'] > best_model['performance']:
+                    best_model = model_info
+                    best_model_id = model_id
+            
+            if best_model is None:
+                logger.warning("No models available for adaptation")
+                return {'status': 'error', 'message': 'No models available for adaptation'}
+            
             # Use transfer learning to adapt
             adaptation_result = await self.transfer_learner.fine_tune_model(
-                self.current_models.get('base_model'),
+                best_model['model'],
                 market_conditions
             )
+            
+            if adaptation_result.get('status') == 'success':
+                # Store adapted model
+                adapted_model_id = f"adapted_{best_model_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+                self.current_models[adapted_model_id] = {
+                    'model': adaptation_result['fine_tuned_model'],
+                    'performance': adaptation_result['performance'].get('r2', 0),
+                    'learning_method': 'transfer_learning',
+                    'timestamp': datetime.now(),
+                    'parent_model': best_model_id
+                }
+                
+                # Save adapted model
+                model_path = self._save_model(
+                    adaptation_result['fine_tuned_model'], 
+                    adapted_model_id, 
+                    'transfer_learning'
+                )
+                
+                adaptation_result['adapted_model_id'] = adapted_model_id
+                adaptation_result['model_path'] = model_path
             
             logger.info(f"Market adaptation completed: {adaptation_result}")
             return adaptation_result
@@ -1343,16 +1520,105 @@ class SelfLearningEngine:
         Returns:
             Learning status information
         """
+        successful_sessions = [h for h in self.learning_history if h.get('success', False)]
+        
+        # Calculate performance statistics
+        model_performances = []
+        for model_info in self.current_models.values():
+            model_performances.append(model_info['performance'])
+        
+        avg_performance = sum(model_performances) / len(model_performances) if model_performances else 0
+        
+        # Get learning method distribution
+        learning_methods = {}
+        for session in self.learning_history:
+            method = session.get('learning_method', 'unknown')
+            learning_methods[method] = learning_methods.get(method, 0) + 1
+        
         return {
             'total_learning_sessions': len(self.learning_history),
-            'successful_sessions': len([h for h in self.learning_history if h['success']]),
-            'average_learning_time': sum(h['learning_time'] for h in self.learning_history) / max(len(self.learning_history), 1),
-            'current_models': list(self.current_models.keys()),
+            'successful_sessions': len(successful_sessions),
+            'success_rate': len(successful_sessions) / max(len(self.learning_history), 1),
+            'average_learning_time': sum(h.get('learning_time', 0) for h in self.learning_history) / max(len(self.learning_history), 1),
+            'current_models_count': len(self.current_models),
+            'average_model_performance': avg_performance,
+            'learning_methods_distribution': learning_methods,
             'config': {
                 'meta_learning_enabled': self.config.meta_learning_enabled,
                 'transfer_learning_enabled': self.config.transfer_learning_enabled,
                 'auto_ml_enabled': self.config.auto_ml_enabled,
                 'nas_enabled': self.config.nas_enabled,
                 'few_shot_enabled': self.config.few_shot_enabled
-            }
+            },
+            'model_storage_path': str(self.model_storage_path)
+        }
+    
+    def get_best_model(self) -> Optional[Dict[str, Any]]:
+        """Get the best performing model."""
+        if not self.current_models:
+            return None
+        
+        best_model_id = max(self.current_models.keys(), 
+                          key=lambda k: self.current_models[k]['performance'])
+        
+        return {
+            'model_id': best_model_id,
+            'model_info': self.current_models[best_model_id]
+        }
+    
+    def cleanup_old_models(self, keep_count: int = None) -> int:
+        """Clean up old models, keeping only the best ones."""
+        if keep_count is None:
+            keep_count = self.config.max_models_in_memory
+        
+        if len(self.current_models) <= keep_count:
+            return 0
+        
+        # Sort models by performance and timestamp
+        sorted_models = sorted(
+            self.current_models.items(),
+            key=lambda x: (x[1]['performance'], x[1]['timestamp']),
+            reverse=True
+        )
+        
+        # Keep only the best models
+        models_to_keep = dict(sorted_models[:keep_count])
+        models_to_remove = set(self.current_models.keys()) - set(models_to_keep.keys())
+        
+        # Remove old models
+        for model_id in models_to_remove:
+            del self.current_models[model_id]
+        
+        logger.info(f"Cleaned up {len(models_to_remove)} old models, kept {len(models_to_keep)}")
+        return len(models_to_remove)
+    
+    def export_learning_summary(self) -> Dict[str, Any]:
+        """Export a summary of learning activities."""
+        return {
+            'learning_history': self.learning_history,
+            'current_models': {
+                model_id: {
+                    'performance': info['performance'],
+                    'learning_method': info['learning_method'],
+                    'timestamp': info['timestamp'].isoformat()
+                }
+                for model_id, info in self.current_models.items()
+            },
+            'meta_learner_status': {
+                'has_meta_knowledge': bool(self.meta_learner.meta_knowledge),
+                'tasks_processed': len(self.meta_learner.task_embeddings)
+            },
+            'transfer_learner_status': {
+                'transfer_history_count': len(self.transfer_learner.transfer_history),
+                'source_models_count': len(self.transfer_learner.source_models)
+            },
+            'automl_status': {
+                'optimization_history_count': len(self.auto_ml.optimization_history),
+                'best_models_count': len(self.auto_ml.best_models)
+            },
+            'nas_status': {
+                'search_history_count': len(self.nas.search_history),
+                'best_architectures_count': len(self.nas.best_architectures)
+            },
+            'export_timestamp': datetime.now().isoformat()
         }
