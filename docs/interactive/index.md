@@ -93,6 +93,11 @@ The Interactive ML Trading Strategy Development System is a comprehensive platfo
 
 ## 📚 Documentation
 
+### System Documentation
+
+- **[README](README.md)** - **NEW**: Complete system overview and quick start guide
+- **[README Complete](README_COMPLETE.md)** - **NEW**: Comprehensive implementation plan and architecture details
+
 ### Strategic Planning Documents
 
 - **[Interactive ML Trading Strategy Plan (English)](INTERACTIVE_ML_TRADING_STRATEGY_PLAN_EN.md)** - Complete strategic plan in English
