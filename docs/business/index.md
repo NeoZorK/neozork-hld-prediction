@@ -48,6 +48,22 @@ This section contains comprehensive business and commercialization plans for the
   - Дорожная карта реализации с 3 фазами
   - Конкурентные преимущества и уникальные ценностные предложения
 
+- **[Pocket Hedge Fund Launch Guide](POCKET_HEDGE_FUND_LAUNCH.md)** - **NEW**: Complete launch instructions and implementation guide
+  - Mission accomplished summary
+  - Complete project structure overview
+  - All modules and classes implementation
+  - Business plans in Russian and English
+  - Technical implementation details
+  - Launch readiness checklist
+
+- **[SaaS Platform Launch Guide](SAAS_PLATFORM_LAUNCH.md)** - **NEW**: Comprehensive SaaS platform launch guide
+  - Complete SaaS architecture implementation
+  - Business model with 4 subscription tiers
+  - Multi-tenant architecture with data isolation
+  - Revenue projections: $1.2M → $50M ARR (3 years)
+  - Technical foundation and API endpoints
+  - Quick start guide and deployment instructions
+
 ## 🎯 Key Highlights
 
 ### Market Opportunity
