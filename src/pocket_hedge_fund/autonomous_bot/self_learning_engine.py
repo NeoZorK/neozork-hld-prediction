@@ -406,7 +406,7 @@ class TransferLearner:
             Transfer learning results
         """
         try:
-        logger.info(f"Transferring knowledge from {source_domain} to {target_domain}...")
+            logger.info(f"Transferring knowledge from {source_domain} to {target_domain}...")
             
             # Calculate domain similarity
             domain_similarity = self._calculate_domain_similarity(
@@ -564,7 +564,7 @@ class TransferLearner:
             Fine-tuning results
         """
         try:
-        logger.info("Fine-tuning model...")
+            logger.info("Fine-tuning model...")
             
             # Prepare target data
             X_target, y_target = self._prepare_transfer_data(base_model, target_data)
@@ -705,7 +705,7 @@ class AutoML:
             Model search results
         """
         try:
-        logger.info("Searching for optimal models...")
+            logger.info("Searching for optimal models...")
             
             # Prepare data
             X, y, feature_names = self._prepare_data(data, target)
@@ -802,7 +802,7 @@ class AutoML:
             Hyperparameter optimization results
         """
         try:
-        logger.info("Optimizing hyperparameters...")
+            logger.info("Optimizing hyperparameters...")
             
             # Prepare data
             X, y, feature_names = self._prepare_data(data, 'close')  # Default target
@@ -998,7 +998,7 @@ class NeuralArchitectureSearch:
             Architecture search results
         """
         try:
-        logger.info("Searching for optimal architecture...")
+            logger.info("Searching for optimal architecture...")
             
             # Prepare data
             if 'market_data' not in data:
@@ -1100,7 +1100,7 @@ class NeuralArchitectureSearch:
             Architecture evolution results
         """
         try:
-        logger.info("Evolving architecture...")
+            logger.info("Evolving architecture...")
             
             if not isinstance(current_architecture, dict):
                 logger.warning("Current architecture is not in expected format")
