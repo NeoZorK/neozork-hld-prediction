@@ -1,470 +1,633 @@
-"""
-DAO Governance System
-
-This module provides decentralized governance capabilities including:
-- Investor voting on fund decisions
-- Strategy approval and management
-- Parameter changes and updates
-- Emergency controls and safeguards
-"""
+"""DAO Governance - Decentralized governance and voting system"""
 
 import logging
-from typing import Dict, Any, List, Optional
-from dataclasses import dataclass, field
-from datetime import datetime, timedelta
-from enum import Enum
 import asyncio
+from typing import Dict, Any, List, Optional, Tuple
+from datetime import datetime, timedelta
+from dataclasses import dataclass
+from enum import Enum
+import uuid
+import json
 
 logger = logging.getLogger(__name__)
 
 
 class ProposalType(Enum):
-    """Proposal types."""
-    STRATEGY_CHANGE = "strategy_change"
-    PARAMETER_UPDATE = "parameter_update"
+    """Proposal type enumeration."""
+    FUND_MANAGEMENT = "fund_management"
     FEE_CHANGE = "fee_change"
+    STRATEGY_APPROVAL = "strategy_approval"
     EMERGENCY_ACTION = "emergency_action"
-    FUND_MANAGER_CHANGE = "fund_manager_change"
-    WITHDRAWAL = "withdrawal"
+    GOVERNANCE_CHANGE = "governance_change"
+    TREASURY_MANAGEMENT = "treasury_management"
 
 
 class ProposalStatus(Enum):
-    """Proposal status types."""
+    """Proposal status enumeration."""
     DRAFT = "draft"
     ACTIVE = "active"
-    PASSED = "passed"
-    REJECTED = "rejected"
+    SUCCEEDED = "succeeded"
+    DEFEATED = "defeated"
     EXECUTED = "executed"
     EXPIRED = "expired"
+    CANCELLED = "cancelled"
 
 
 class VoteType(Enum):
-    """Vote types."""
-    YES = "yes"
-    NO = "no"
+    """Vote type enumeration."""
+    FOR = "for"
+    AGAINST = "against"
     ABSTAIN = "abstain"
 
 
+class GovernanceRole(Enum):
+    """Governance role enumeration."""
+    MEMBER = "member"
+    DELEGATE = "delegate"
+    MODERATOR = "moderator"
+    ADMIN = "admin"
+
+
 @dataclass
-class Proposal:
-    """Governance proposal data."""
+class GovernanceProposal:
+    """Governance proposal data class."""
     proposal_id: str
     title: str
     description: str
     proposal_type: ProposalType
-    proposer: str
+    proposer_address: str
+    status: ProposalStatus
+    voting_power_required: float
+    voting_duration: int  # hours
     created_at: datetime
     voting_start: datetime
     voting_end: datetime
-    status: ProposalStatus
-    votes_for: int = 0
-    votes_against: int = 0
-    votes_abstain: int = 0
-    total_votes: int = 0
-    quorum_threshold: float = 0.1  # 10% of total shares
-    majority_threshold: float = 0.5  # 50% of votes
-    execution_data: Dict[str, Any] = field(default_factory=dict)
+    execution_delay: int  # hours
+    execution_data: Dict[str, Any]
+    metadata: Dict[str, Any]
 
 
 @dataclass
 class Vote:
-    """Vote data."""
+    """Vote data class."""
     vote_id: str
     proposal_id: str
-    voter: str
+    voter_address: str
     vote_type: VoteType
     voting_power: float
-    timestamp: datetime
-    transaction_hash: Optional[str] = None
+    cast_at: datetime
+    transaction_hash: str
+    metadata: Dict[str, Any]
+
+
+@dataclass
+class GovernanceMember:
+    """Governance member data class."""
+    member_id: str
+    wallet_address: str
+    role: GovernanceRole
+    voting_power: float
+    delegated_voting_power: float
+    joined_at: datetime
+    last_activity: datetime
+    is_active: bool
 
 
 class DAOGovernance:
-    """
-    DAO Governance System for decentralized fund management.
-    
-    This system provides governance capabilities allowing investors to vote
-    on fund decisions, strategy changes, and parameter updates.
-    """
+    """Decentralized governance and voting system."""
     
     def __init__(self):
-        self.proposals = {}
-        self.votes = {}
-        self.voting_power = {}  # Address -> voting power
-        self.governance_parameters = {
-            'proposal_duration': 7,  # days
-            'quorum_threshold': 0.1,  # 10% of total shares
-            'majority_threshold': 0.5,  # 50% of votes
-            'min_proposal_amount': 1000,  # minimum shares to create proposal
-            'execution_delay': 1  # days delay before execution
-        }
-    
-    async def create_proposal(self, proposer: str, title: str, description: str,
-                            proposal_type: ProposalType, execution_data: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Create a new governance proposal.
+        self.proposals: Dict[str, GovernanceProposal] = {}
+        self.votes: Dict[str, List[Vote]] = {}
+        self.members: Dict[str, GovernanceMember] = {}
+        self.delegations: Dict[str, Dict[str, float]] = {}  # delegator -> delegate -> amount
+        self.execution_queue: List[Dict[str, Any]] = []
+        self.governance_config: Dict[str, Any] = {}
         
-        Args:
-            proposer: Address of the proposer
-            title: Proposal title
-            description: Proposal description
-            proposal_type: Type of proposal
-            execution_data: Data needed for proposal execution
-            
-        Returns:
-            Proposal creation results
-        """
+        # Initialize governance components
+        self._initialize_governance_components()
+        
+    def _initialize_governance_components(self):
+        """Initialize governance system components."""
+        # Set default governance configuration
+        self.governance_config = {
+            'min_proposal_deposit': 1000.0,  # Minimum tokens required to create proposal
+            'voting_duration_hours': 72,  # Default voting duration
+            'execution_delay_hours': 24,  # Delay before execution after voting ends
+            'quorum_percentage': 0.05,  # 5% of total voting power required
+            'majority_threshold': 0.5,  # 50% majority required
+            'emergency_threshold': 0.75,  # 75% required for emergency actions
+            'max_proposal_description_length': 10000,
+            'max_active_proposals': 10
+        }
+        
+    async def create_proposal(self, proposer_address: str, title: str, description: str,
+                            proposal_type: ProposalType, execution_data: Dict[str, Any],
+                            voting_duration_hours: int = None) -> Dict[str, Any]:
+        """Create a new governance proposal."""
         try:
-            logger.info(f"Creating proposal: {title}")
+            # Validate proposer
+            if proposer_address not in self.members:
+                return {'error': 'Proposer is not a governance member'}
             
-            # Check if proposer has enough voting power
-            proposer_power = self.voting_power.get(proposer, 0)
-            if proposer_power < self.governance_parameters['min_proposal_amount']:
-                return {
-                    'status': 'error',
-                    'message': f'Insufficient voting power. Required: {self.governance_parameters["min_proposal_amount"]}, Available: {proposer_power}'
-                }
+            proposer = self.members[proposer_address]
+            if not proposer.is_active:
+                return {'error': 'Proposer is not active'}
+            
+            # Check proposal deposit requirement
+            deposit_required = self.governance_config['min_proposal_deposit']
+            if proposer.voting_power < deposit_required:
+                return {'error': f'Insufficient voting power. Required: {deposit_required}'}
+            
+            # Check active proposal limit
+            active_proposals = len([p for p in self.proposals.values() 
+                                  if p.status == ProposalStatus.ACTIVE])
+            if active_proposals >= self.governance_config['max_active_proposals']:
+                return {'error': 'Maximum number of active proposals reached'}
+            
+            # Validate proposal data
+            validation_result = await self._validate_proposal_data(title, description, execution_data)
+            if not validation_result['valid']:
+                return {'error': f'Invalid proposal data: {validation_result["error"]}'}
             
             # Create proposal
-            proposal_id = f"proposal_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-            voting_start = datetime.now()
-            voting_end = voting_start + timedelta(days=self.governance_parameters['proposal_duration'])
+            proposal_id = str(uuid.uuid4())
+            voting_duration = voting_duration_hours or self.governance_config['voting_duration_hours']
             
-            proposal = Proposal(
+            proposal = GovernanceProposal(
                 proposal_id=proposal_id,
                 title=title,
                 description=description,
                 proposal_type=proposal_type,
-                proposer=proposer,
+                proposer_address=proposer_address,
+                status=ProposalStatus.DRAFT,
+                voting_power_required=self._calculate_voting_power_required(proposal_type),
+                voting_duration=voting_duration,
                 created_at=datetime.now(),
-                voting_start=voting_start,
-                voting_end=voting_end,
-                status=ProposalStatus.ACTIVE,
-                execution_data=execution_data
+                voting_start=datetime.now() + timedelta(hours=1),  # 1 hour delay before voting starts
+                voting_end=datetime.now() + timedelta(hours=voting_duration + 1),
+                execution_delay=self.governance_config['execution_delay_hours'],
+                execution_data=execution_data,
+                metadata={}
             )
             
+            # Store proposal
             self.proposals[proposal_id] = proposal
+            self.votes[proposal_id] = []
             
-            result = {
+            logger.info(f"Created proposal {proposal_id}: {title}")
+            return {
                 'status': 'success',
                 'proposal_id': proposal_id,
-                'voting_start': voting_start,
-                'voting_end': voting_end,
-                'quorum_threshold': proposal.quorum_threshold,
-                'majority_threshold': proposal.majority_threshold
+                'proposal': proposal.__dict__,
+                'voting_starts_at': proposal.voting_start,
+                'voting_ends_at': proposal.voting_end
             }
             
-            logger.info(f"Proposal created: {result}")
-            return result
-            
         except Exception as e:
-            logger.error(f"Proposal creation failed: {e}")
-            return {'status': 'error', 'message': str(e)}
+            logger.error(f"Failed to create proposal: {e}")
+            return {'error': str(e)}
     
-    async def cast_vote(self, proposal_id: str, voter: str, vote_type: VoteType) -> Dict[str, Any]:
-        """
-        Cast a vote on a proposal.
-        
-        Args:
-            proposal_id: ID of the proposal
-            voter: Address of the voter
-            vote_type: Type of vote (YES, NO, ABSTAIN)
-            
-        Returns:
-            Voting results
-        """
+    async def cast_vote(self, proposal_id: str, voter_address: str, 
+                       vote_type: VoteType, voting_power: float = None) -> Dict[str, Any]:
+        """Cast a vote on a proposal."""
         try:
-            logger.info(f"Voting {vote_type.value} on proposal {proposal_id} by {voter}")
-            
-            # Check if proposal exists and is active
+            # Validate proposal exists
             if proposal_id not in self.proposals:
-                return {'status': 'error', 'message': 'Proposal not found'}
+                return {'error': 'Proposal not found'}
             
             proposal = self.proposals[proposal_id]
-            if proposal.status != ProposalStatus.ACTIVE:
-                return {'status': 'error', 'message': 'Proposal is not active'}
             
-            # Check if voting period is still open
-            if datetime.now() > proposal.voting_end:
-                proposal.status = ProposalStatus.EXPIRED
-                return {'status': 'error', 'message': 'Voting period has ended'}
+            # Check if proposal is in voting period
+            now = datetime.now()
+            if now < proposal.voting_start:
+                return {'error': 'Voting has not started yet'}
+            if now > proposal.voting_end:
+                return {'error': 'Voting period has ended'}
+            if proposal.status != ProposalStatus.ACTIVE:
+                return {'error': 'Proposal is not active for voting'}
+            
+            # Validate voter
+            if voter_address not in self.members:
+                return {'error': 'Voter is not a governance member'}
+            
+            voter = self.members[voter_address]
+            if not voter.is_active:
+                return {'error': 'Voter is not active'}
             
             # Check if voter has already voted
-            existing_vote = self._get_vote(proposal_id, voter)
-            if existing_vote:
-                return {'status': 'error', 'message': 'Voter has already voted'}
+            existing_votes = self.votes.get(proposal_id, [])
+            for vote in existing_votes:
+                if vote.voter_address == voter_address:
+                    return {'error': 'Voter has already cast a vote on this proposal'}
             
-            # Get voter's voting power
-            voting_power = self.voting_power.get(voter, 0)
-            if voting_power == 0:
-                return {'status': 'error', 'message': 'No voting power available'}
+            # Calculate voting power
+            if voting_power is None:
+                voting_power = await self._calculate_voter_power(voter_address, proposal_id)
+            
+            if voting_power <= 0:
+                return {'error': 'Voter has no voting power'}
             
             # Create vote
-            vote_id = f"vote_{proposal_id}_{voter}_{datetime.now().timestamp()}"
+            vote_id = str(uuid.uuid4())
             vote = Vote(
                 vote_id=vote_id,
                 proposal_id=proposal_id,
-                voter=voter,
+                voter_address=voter_address,
                 vote_type=vote_type,
                 voting_power=voting_power,
-                timestamp=datetime.now()
+                cast_at=datetime.now(),
+                transaction_hash=f'0x{str(uuid.uuid4()).replace("-", "")}',
+                metadata={}
             )
             
-            self.votes[vote_id] = vote
+            # Store vote
+            self.votes[proposal_id].append(vote)
             
-            # Update proposal vote counts
-            if vote_type == VoteType.YES:
-                proposal.votes_for += voting_power
-            elif vote_type == VoteType.NO:
-                proposal.votes_against += voting_power
-            elif vote_type == VoteType.ABSTAIN:
-                proposal.votes_abstain += voting_power
-            
-            proposal.total_votes += voting_power
-            
-            result = {
+            logger.info(f"Vote cast on proposal {proposal_id}: {vote_type.value} with {voting_power} power")
+            return {
                 'status': 'success',
                 'vote_id': vote_id,
-                'voting_power': voting_power,
+                'proposal_id': proposal_id,
+                'voter_address': voter_address,
                 'vote_type': vote_type.value,
-                'proposal_votes': {
-                    'for': proposal.votes_for,
-                    'against': proposal.votes_against,
-                    'abstain': proposal.votes_abstain,
-                    'total': proposal.total_votes
-                }
+                'voting_power': voting_power,
+                'vote': vote.__dict__
             }
             
-            logger.info(f"Vote cast: {result}")
-            return result
-            
         except Exception as e:
-            logger.error(f"Vote casting failed: {e}")
-            return {'status': 'error', 'message': str(e)}
+            logger.error(f"Failed to cast vote: {e}")
+            return {'error': str(e)}
     
-    async def execute_proposal(self, proposal_id: str, executor: str) -> Dict[str, Any]:
-        """
-        Execute a passed proposal.
-        
-        Args:
-            proposal_id: ID of the proposal to execute
-            executor: Address of the executor
-            
-        Returns:
-            Execution results
-        """
+    async def execute_proposal(self, proposal_id: str, executor_address: str) -> Dict[str, Any]:
+        """Execute a successful proposal."""
         try:
-            logger.info(f"Executing proposal {proposal_id} by {executor}")
-            
-            # Check if proposal exists
+            # Validate proposal exists
             if proposal_id not in self.proposals:
-                return {'status': 'error', 'message': 'Proposal not found'}
+                return {'error': 'Proposal not found'}
             
             proposal = self.proposals[proposal_id]
             
-            # Check if proposal has passed
-            if proposal.status != ProposalStatus.PASSED:
-                return {'status': 'error', 'message': 'Proposal has not passed'}
+            # Check if proposal can be executed
+            if proposal.status != ProposalStatus.SUCCEEDED:
+                return {'error': 'Proposal has not succeeded and cannot be executed'}
             
             # Check execution delay
-            execution_time = proposal.voting_end + timedelta(days=self.governance_parameters['execution_delay'])
+            execution_time = proposal.voting_end + timedelta(hours=proposal.execution_delay)
             if datetime.now() < execution_time:
-                return {'status': 'error', 'message': 'Execution delay not yet passed'}
+                return {'error': f'Execution delay not met. Can execute after {execution_time}'}
+            
+            # Validate executor
+            if executor_address not in self.members:
+                return {'error': 'Executor is not a governance member'}
+            
+            executor = self.members[executor_address]
+            if not executor.is_active:
+                return {'error': 'Executor is not active'}
             
             # Execute proposal based on type
             execution_result = await self._execute_proposal_action(proposal)
+            if 'error' in execution_result:
+                return execution_result
             
-            if execution_result['status'] == 'success':
-                proposal.status = ProposalStatus.EXECUTED
-                
-                result = {
-                    'status': 'success',
-                    'proposal_id': proposal_id,
-                    'execution_result': execution_result,
-                    'executed_at': datetime.now()
-                }
-                
-                logger.info(f"Proposal executed: {result}")
-                return result
-            else:
-                return {
-                    'status': 'error',
-                    'message': 'Proposal execution failed',
-                    'execution_result': execution_result
-                }
+            # Update proposal status
+            proposal.status = ProposalStatus.EXECUTED
+            proposal.metadata['executed_at'] = datetime.now()
+            proposal.metadata['executor'] = executor_address
+            
+            logger.info(f"Executed proposal {proposal_id}: {proposal.title}")
+            return {
+                'status': 'success',
+                'proposal_id': proposal_id,
+                'execution_result': execution_result,
+                'executed_at': datetime.now(),
+                'executor': executor_address
+            }
             
         except Exception as e:
-            logger.error(f"Proposal execution failed: {e}")
-            return {'status': 'error', 'message': str(e)}
+            logger.error(f"Failed to execute proposal: {e}")
+            return {'error': str(e)}
     
-    async def _execute_proposal_action(self, proposal: Proposal) -> Dict[str, Any]:
-        """Execute the action specified in the proposal."""
+    async def delegate_voting_power(self, delegator_address: str, delegate_address: str, 
+                                  amount: float) -> Dict[str, Any]:
+        """Delegate voting power to another member."""
         try:
-            if proposal.proposal_type == ProposalType.STRATEGY_CHANGE:
-                return await self._execute_strategy_change(proposal.execution_data)
-            elif proposal.proposal_type == ProposalType.PARAMETER_UPDATE:
-                return await self._execute_parameter_update(proposal.execution_data)
-            elif proposal.proposal_type == ProposalType.FEE_CHANGE:
-                return await self._execute_fee_change(proposal.execution_data)
-            elif proposal.proposal_type == ProposalType.EMERGENCY_ACTION:
-                return await self._execute_emergency_action(proposal.execution_data)
-            else:
-                return {'status': 'error', 'message': 'Unknown proposal type'}
-                
-        except Exception as e:
-            logger.error(f"Proposal action execution failed: {e}")
-            return {'status': 'error', 'message': str(e)}
-    
-    async def _execute_strategy_change(self, execution_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute strategy change."""
-        # TODO: Implement actual strategy change execution
-        return {'status': 'success', 'action': 'strategy_change', 'data': execution_data}
-    
-    async def _execute_parameter_update(self, execution_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute parameter update."""
-        # TODO: Implement actual parameter update execution
-        return {'status': 'success', 'action': 'parameter_update', 'data': execution_data}
-    
-    async def _execute_fee_change(self, execution_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute fee change."""
-        # TODO: Implement actual fee change execution
-        return {'status': 'success', 'action': 'fee_change', 'data': execution_data}
-    
-    async def _execute_emergency_action(self, execution_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute emergency action."""
-        # TODO: Implement actual emergency action execution
-        return {'status': 'success', 'action': 'emergency_action', 'data': execution_data}
-    
-    async def check_proposal_status(self, proposal_id: str) -> Dict[str, Any]:
-        """
-        Check the current status of a proposal.
-        
-        Args:
-            proposal_id: ID of the proposal
+            # Validate delegator
+            if delegator_address not in self.members:
+                return {'error': 'Delegator is not a governance member'}
             
-        Returns:
-            Proposal status information
-        """
+            delegator = self.members[delegator_address]
+            if not delegator.is_active:
+                return {'error': 'Delegator is not active'}
+            
+            # Validate delegate
+            if delegate_address not in self.members:
+                return {'error': 'Delegate is not a governance member'}
+            
+            delegate = self.members[delegate_address]
+            if not delegate.is_active:
+                return {'error': 'Delegate is not active'}
+            
+            # Check delegation amount
+            if amount <= 0:
+                return {'error': 'Delegation amount must be positive'}
+            
+            if amount > delegator.voting_power:
+                return {'error': 'Insufficient voting power to delegate'}
+            
+            # Update delegation
+            if delegator_address not in self.delegations:
+                self.delegations[delegator_address] = {}
+            
+            self.delegations[delegator_address][delegate_address] = amount
+            
+            # Update member voting powers
+            delegator.voting_power -= amount
+            delegate.delegated_voting_power += amount
+            
+            logger.info(f"Delegated {amount} voting power from {delegator_address} to {delegate_address}")
+            return {
+                'status': 'success',
+                'delegator_address': delegator_address,
+                'delegate_address': delegate_address,
+                'amount': amount,
+                'delegated_at': datetime.now()
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to delegate voting power: {e}")
+            return {'error': str(e)}
+    
+    async def get_proposal_status(self, proposal_id: str) -> Dict[str, Any]:
+        """Get detailed proposal status and voting results."""
         try:
+            # Validate proposal exists
             if proposal_id not in self.proposals:
-                return {'status': 'error', 'message': 'Proposal not found'}
+                return {'error': 'Proposal not found'}
             
             proposal = self.proposals[proposal_id]
+            votes = self.votes.get(proposal_id, [])
             
-            # Check if voting period has ended
+            # Calculate voting results
+            total_votes = len(votes)
+            for_votes = sum(v.voting_power for v in votes if v.vote_type == VoteType.FOR)
+            against_votes = sum(v.voting_power for v in votes if v.vote_type == VoteType.AGAINST)
+            abstain_votes = sum(v.voting_power for v in votes if v.vote_type == VoteType.ABSTAIN)
+            total_voting_power = for_votes + against_votes + abstain_votes
+            
+            # Calculate percentages
+            total_members = len([m for m in self.members.values() if m.is_active])
+            quorum_percentage = (total_voting_power / max(total_members, 1)) * 100
+            
+            # Determine if proposal succeeded
+            quorum_met = quorum_percentage >= (self.governance_config['quorum_percentage'] * 100)
+            majority_met = for_votes > against_votes if total_voting_power > 0 else False
+            
+            # Update proposal status if voting has ended
             if datetime.now() > proposal.voting_end and proposal.status == ProposalStatus.ACTIVE:
-                # Calculate if proposal passed
-                total_voting_power = sum(self.voting_power.values())
-                quorum_met = proposal.total_votes >= (total_voting_power * proposal.quorum_threshold)
-                
-                if quorum_met:
-                    majority_met = proposal.votes_for > proposal.votes_against
-                    if majority_met:
-                        proposal.status = ProposalStatus.PASSED
-                    else:
-                        proposal.status = ProposalStatus.REJECTED
+                if quorum_met and majority_met:
+                    proposal.status = ProposalStatus.SUCCEEDED
                 else:
-                    proposal.status = ProposalStatus.REJECTED
+                    proposal.status = ProposalStatus.DEFEATED
             
             return {
                 'status': 'success',
-                'proposal': {
-                    'proposal_id': proposal.proposal_id,
-                    'title': proposal.title,
-                    'description': proposal.description,
-                    'proposal_type': proposal.proposal_type.value,
-                    'proposer': proposal.proposer,
-                    'status': proposal.status.value,
-                    'voting_start': proposal.voting_start,
-                    'voting_end': proposal.voting_end,
-                    'votes': {
-                        'for': proposal.votes_for,
-                        'against': proposal.votes_against,
-                        'abstain': proposal.votes_abstain,
-                        'total': proposal.total_votes
-                    },
-                    'thresholds': {
-                        'quorum': proposal.quorum_threshold,
-                        'majority': proposal.majority_threshold
-                    }
-                }
+                'proposal': proposal.__dict__,
+                'voting_results': {
+                    'total_votes': total_votes,
+                    'for_votes': for_votes,
+                    'against_votes': against_votes,
+                    'abstain_votes': abstain_votes,
+                    'total_voting_power': total_voting_power,
+                    'quorum_percentage': quorum_percentage,
+                    'quorum_met': quorum_met,
+                    'majority_met': majority_met,
+                    'proposal_succeeded': quorum_met and majority_met
+                },
+                'votes': [vote.__dict__ for vote in votes]
             }
             
         except Exception as e:
-            logger.error(f"Proposal status check failed: {e}")
-            return {'status': 'error', 'message': str(e)}
+            logger.error(f"Failed to get proposal status: {e}")
+            return {'error': str(e)}
     
-    def _get_vote(self, proposal_id: str, voter: str) -> Optional[Vote]:
-        """Get existing vote for a proposal by a voter."""
-        for vote in self.votes.values():
-            if vote.proposal_id == proposal_id and vote.voter == voter:
-                return vote
-        return None
-    
-    async def update_voting_power(self, address: str, new_power: float) -> Dict[str, Any]:
-        """
-        Update voting power for an address.
-        
-        Args:
-            address: Address to update
-            new_power: New voting power
-            
-        Returns:
-            Update results
-        """
+    async def get_governance_members(self, limit: int = 100) -> Dict[str, Any]:
+        """Get list of governance members."""
         try:
-            logger.info(f"Updating voting power for {address} to {new_power}")
+            members = list(self.members.values())
             
-            old_power = self.voting_power.get(address, 0)
-            self.voting_power[address] = new_power
+            # Sort by voting power (descending)
+            members.sort(key=lambda x: x.voting_power + x.delegated_voting_power, reverse=True)
             
-            result = {
+            # Apply limit
+            members = members[:limit]
+            
+            return {
                 'status': 'success',
-                'address': address,
-                'old_power': old_power,
-                'new_power': new_power,
-                'change': new_power - old_power
+                'members': [member.__dict__ for member in members],
+                'total_members': len(self.members),
+                'active_members': len([m for m in self.members.values() if m.is_active]),
+                'returned_count': len(members)
             }
             
-            logger.info(f"Voting power updated: {result}")
-            return result
+        except Exception as e:
+            logger.error(f"Failed to get governance members: {e}")
+            return {'error': str(e)}
+    
+    async def _validate_proposal_data(self, title: str, description: str, 
+                                    execution_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Validate proposal data."""
+        try:
+            # Check title length
+            if len(title) < 10 or len(title) > 200:
+                return {'valid': False, 'error': 'Title must be between 10 and 200 characters'}
+            
+            # Check description length
+            max_desc_length = self.governance_config['max_proposal_description_length']
+            if len(description) < 50 or len(description) > max_desc_length:
+                return {'valid': False, 'error': f'Description must be between 50 and {max_desc_length} characters'}
+            
+            # Validate execution data
+            if not execution_data:
+                return {'valid': False, 'error': 'Execution data is required'}
+            
+            return {'valid': True, 'error': None}
             
         except Exception as e:
-            logger.error(f"Voting power update failed: {e}")
-            return {'status': 'error', 'message': str(e)}
+            return {'valid': False, 'error': str(e)}
     
-    def get_governance_analytics(self) -> Dict[str, Any]:
-        """
-        Get governance analytics and statistics.
-        
-        Returns:
-            Governance analytics data
-        """
+    def _calculate_voting_power_required(self, proposal_type: ProposalType) -> float:
+        """Calculate voting power required for proposal type."""
+        try:
+            # Different proposal types may require different thresholds
+            thresholds = {
+                ProposalType.FUND_MANAGEMENT: 0.1,  # 10% of total voting power
+                ProposalType.FEE_CHANGE: 0.15,  # 15% of total voting power
+                ProposalType.STRATEGY_APPROVAL: 0.05,  # 5% of total voting power
+                ProposalType.EMERGENCY_ACTION: 0.25,  # 25% of total voting power
+                ProposalType.GOVERNANCE_CHANGE: 0.2,  # 20% of total voting power
+                ProposalType.TREASURY_MANAGEMENT: 0.15  # 15% of total voting power
+            }
+            
+            return thresholds.get(proposal_type, 0.1)
+            
+        except Exception as e:
+            logger.error(f"Failed to calculate voting power required: {e}")
+            return 0.1
+    
+    async def _calculate_voter_power(self, voter_address: str, proposal_id: str) -> float:
+        """Calculate voting power for a voter."""
+        try:
+            if voter_address not in self.members:
+                return 0.0
+            
+            member = self.members[voter_address]
+            
+            # Base voting power from member's tokens
+            base_power = member.voting_power
+            
+            # Add delegated voting power
+            delegated_power = 0.0
+            for delegator, delegations in self.delegations.items():
+                if voter_address in delegations:
+                    delegated_power += delegations[voter_address]
+            
+            return base_power + delegated_power
+            
+        except Exception as e:
+            logger.error(f"Failed to calculate voter power: {e}")
+            return 0.0
+    
+    async def _execute_proposal_action(self, proposal: GovernanceProposal) -> Dict[str, Any]:
+        """Execute the action specified in the proposal."""
+        try:
+            execution_data = proposal.execution_data
+            proposal_type = proposal.proposal_type
+            
+            if proposal_type == ProposalType.FUND_MANAGEMENT:
+                return await self._execute_fund_management_action(execution_data)
+            elif proposal_type == ProposalType.FEE_CHANGE:
+                return await self._execute_fee_change_action(execution_data)
+            elif proposal_type == ProposalType.STRATEGY_APPROVAL:
+                return await self._execute_strategy_approval_action(execution_data)
+            elif proposal_type == ProposalType.EMERGENCY_ACTION:
+                return await self._execute_emergency_action(execution_data)
+            elif proposal_type == ProposalType.GOVERNANCE_CHANGE:
+                return await self._execute_governance_change_action(execution_data)
+            elif proposal_type == ProposalType.TREASURY_MANAGEMENT:
+                return await self._execute_treasury_management_action(execution_data)
+            else:
+                return {'error': f'Unknown proposal type: {proposal_type.value}'}
+                
+        except Exception as e:
+            logger.error(f"Failed to execute proposal action: {e}")
+            return {'error': str(e)}
+    
+    async def _execute_fund_management_action(self, execution_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute fund management action."""
+        try:
+            # TODO: Implement fund management actions
+            # This would execute actions like changing fund parameters, etc.
+            
+            return {
+                'status': 'success',
+                'action_type': 'fund_management',
+                'executed_at': datetime.now()
+            }
+            
+        except Exception as e:
+            return {'error': str(e)}
+    
+    async def _execute_fee_change_action(self, execution_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute fee change action."""
+        try:
+            # TODO: Implement fee change actions
+            # This would change fund fees, management fees, etc.
+            
+            return {
+                'status': 'success',
+                'action_type': 'fee_change',
+                'executed_at': datetime.now()
+            }
+            
+        except Exception as e:
+            return {'error': str(e)}
+    
+    async def _execute_strategy_approval_action(self, execution_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute strategy approval action."""
+        try:
+            # TODO: Implement strategy approval actions
+            # This would approve or reject trading strategies
+            
+            return {
+                'status': 'success',
+                'action_type': 'strategy_approval',
+                'executed_at': datetime.now()
+            }
+            
+        except Exception as e:
+            return {'error': str(e)}
+    
+    async def _execute_emergency_action(self, execution_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute emergency action."""
+        try:
+            # TODO: Implement emergency actions
+            # This would execute emergency measures like pausing trading, etc.
+            
+            return {
+                'status': 'success',
+                'action_type': 'emergency_action',
+                'executed_at': datetime.now()
+            }
+            
+        except Exception as e:
+            return {'error': str(e)}
+    
+    async def _execute_governance_change_action(self, execution_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute governance change action."""
+        try:
+            # TODO: Implement governance change actions
+            # This would change governance parameters, voting rules, etc.
+            
+            return {
+                'status': 'success',
+                'action_type': 'governance_change',
+                'executed_at': datetime.now()
+            }
+            
+        except Exception as e:
+            return {'error': str(e)}
+    
+    async def _execute_treasury_management_action(self, execution_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute treasury management action."""
+        try:
+            # TODO: Implement treasury management actions
+            # This would manage fund treasury, distributions, etc.
+            
+            return {
+                'status': 'success',
+                'action_type': 'treasury_management',
+                'executed_at': datetime.now()
+            }
+            
+        except Exception as e:
+            return {'error': str(e)}
+    
+    def get_governance_summary(self) -> Dict[str, Any]:
+        """Get governance system summary."""
         total_proposals = len(self.proposals)
         active_proposals = len([p for p in self.proposals.values() if p.status == ProposalStatus.ACTIVE])
-        passed_proposals = len([p for p in self.proposals.values() if p.status == ProposalStatus.PASSED])
-        executed_proposals = len([p for p in self.proposals.values() if p.status == ProposalStatus.EXECUTED])
-        
-        total_votes = len(self.votes)
-        total_voting_power = sum(self.voting_power.values())
-        total_voters = len(self.voting_power)
+        succeeded_proposals = len([p for p in self.proposals.values() if p.status == ProposalStatus.SUCCEEDED])
+        total_members = len(self.members)
+        active_members = len([m for m in self.members.values() if m.is_active])
+        total_votes = sum(len(votes) for votes in self.votes.values())
         
         return {
-            'proposal_stats': {
-                'total_proposals': total_proposals,
-                'active_proposals': active_proposals,
-                'passed_proposals': passed_proposals,
-                'executed_proposals': executed_proposals
-            },
-            'voting_stats': {
-                'total_votes': total_votes,
-                'total_voting_power': total_voting_power,
-                'total_voters': total_voters
-            },
-            'governance_parameters': self.governance_parameters,
-            'recent_proposals': list(self.proposals.values())[-5:] if self.proposals else [],
-            'top_voters': sorted(
-                [(addr, power) for addr, power in self.voting_power.items()],
-                key=lambda x: x[1],
-                reverse=True
-            )[:10]
+            'total_proposals': total_proposals,
+            'active_proposals': active_proposals,
+            'succeeded_proposals': succeeded_proposals,
+            'total_members': total_members,
+            'active_members': active_members,
+            'total_votes': total_votes,
+            'governance_config': self.governance_config
         }
