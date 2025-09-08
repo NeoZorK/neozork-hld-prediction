@@ -197,7 +197,7 @@ docs/pocket_hedge_fund/
 ├── self_learning_engine.md          # Complete documentation
 └── implementation_report.md         # This report
 
-demo_self_learning_engine.py         # Demo script
+interactive/advanced_ml/demo_self_learning_engine.py  # Demo script
 ```
 
 ## 🎉 Conclusion
