@@ -1,495 +1,437 @@
-"""
-Adaptive Strategy Manager for Autonomous Trading Bot
-
-This module provides adaptive strategy management capabilities including:
-- Market regime detection and classification
-- Dynamic strategy selection based on market conditions
-- Parameter optimization for different market regimes
-- Risk management integration
-- Position sizing algorithms
-"""
+"""Adaptive Strategy Manager - Dynamic strategy selection and market regime detection"""
 
 import logging
-from typing import Dict, Any, List, Optional, Tuple
-from dataclasses import dataclass, field
-from datetime import datetime
-from enum import Enum
 import asyncio
+from typing import Dict, Any, List, Optional, Tuple
+from datetime import datetime, timedelta
+from dataclasses import dataclass
+from enum import Enum
+import uuid
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
 
 class MarketRegime(Enum):
-    """Market regime types."""
+    """Market regime enumeration."""
     TRENDING_UP = "trending_up"
     TRENDING_DOWN = "trending_down"
-    RANGING = "ranging"
-    VOLATILE = "volatile"
-    LOW_VOLATILITY = "low_volatility"
-    HIGH_VOLATILITY = "high_volatility"
-    BULL_MARKET = "bull_market"
-    BEAR_MARKET = "bear_market"
     SIDEWAYS = "sideways"
+    HIGH_VOLATILITY = "high_volatility"
+    LOW_VOLATILITY = "low_volatility"
 
 
 class StrategyType(Enum):
-    """Strategy types."""
+    """Strategy type enumeration."""
     MOMENTUM = "momentum"
     MEAN_REVERSION = "mean_reversion"
     ARBITRAGE = "arbitrage"
     MARKET_MAKING = "market_making"
-    BREAKOUT = "breakout"
-    SCALPING = "scalping"
-    SWING = "swing"
-    POSITION = "position"
+    TREND_FOLLOWING = "trend_following"
+
+
+class SignalStrength(Enum):
+    """Signal strength enumeration."""
+    WEAK = "weak"
+    MODERATE = "moderate"
+    STRONG = "strong"
+    VERY_STRONG = "very_strong"
 
 
 @dataclass
-class StrategyConfig:
-    """Configuration for trading strategy."""
-    strategy_type: StrategyType
-    parameters: Dict[str, Any]
-    risk_level: float
-    position_size: float
-    stop_loss: float
-    take_profit: float
-    max_positions: int
-    enabled: bool = True
-
-
-@dataclass
-class MarketConditions:
-    """Market conditions data."""
-    volatility: float
-    trend_strength: float
-    volume: float
-    momentum: float
+class MarketRegimeData:
+    """Market regime data class."""
     regime: MarketRegime
     confidence: float
-    timestamp: datetime = field(default_factory=datetime.now)
+    duration: int
+    volatility: float
+    trend_strength: float
+    detected_at: datetime
 
 
-class MarketRegimeDetector:
-    """Market regime detection component."""
-    
-    def __init__(self):
-        self.regime_history = []
-        self.detection_models = {}
-    
-    async def detect_regime(self, market_data: Dict[str, Any]) -> MarketConditions:
-        """
-        Detect current market regime from market data.
-        
-        Args:
-            market_data: Market data including price, volume, indicators
-            
-        Returns:
-            Detected market conditions
-        """
-        try:
-            logger.info("Detecting market regime...")
-            
-            # Extract features
-            volatility = market_data.get('volatility', 0.02)
-            trend_strength = market_data.get('trend_strength', 0.5)
-            volume = market_data.get('volume', 1000000)
-            momentum = market_data.get('momentum', 0.0)
-            
-            # Determine regime based on features
-            if trend_strength > 0.7 and momentum > 0.1:
-                regime = MarketRegime.TRENDING_UP
-                confidence = 0.85
-            elif trend_strength > 0.7 and momentum < -0.1:
-                regime = MarketRegime.TRENDING_DOWN
-                confidence = 0.85
-            elif volatility > 0.05:
-                regime = MarketRegime.VOLATILE
-                confidence = 0.80
-            elif volatility < 0.01:
-                regime = MarketRegime.LOW_VOLATILITY
-                confidence = 0.75
-            else:
-                regime = MarketRegime.RANGING
-                confidence = 0.70
-            
-            conditions = MarketConditions(
-                volatility=volatility,
-                trend_strength=trend_strength,
-                volume=volume,
-                momentum=momentum,
-                regime=regime,
-                confidence=confidence
-            )
-            
-            # Store in history
-            self.regime_history.append(conditions)
-            if len(self.regime_history) > 1000:
-                self.regime_history.pop(0)
-            
-            logger.info(f"Detected regime: {regime.value} (confidence: {confidence:.2f})")
-            return conditions
-            
-        except Exception as e:
-            logger.error(f"Market regime detection failed: {e}")
-            return MarketConditions(
-                volatility=0.02,
-                trend_strength=0.5,
-                volume=1000000,
-                momentum=0.0,
-                regime=MarketRegime.RANGING,
-                confidence=0.5
-            )
-    
-    def get_regime_transition_probability(self, from_regime: MarketRegime, to_regime: MarketRegime) -> float:
-        """
-        Get probability of transition from one regime to another.
-        
-        Args:
-            from_regime: Source regime
-            to_regime: Target regime
-            
-        Returns:
-            Transition probability
-        """
-        # TODO: Implement regime transition analysis
-        transition_matrix = {
-            MarketRegime.TRENDING_UP: {
-                MarketRegime.TRENDING_UP: 0.7,
-                MarketRegime.TRENDING_DOWN: 0.1,
-                MarketRegime.RANGING: 0.15,
-                MarketRegime.VOLATILE: 0.05
-            },
-            MarketRegime.TRENDING_DOWN: {
-                MarketRegime.TRENDING_DOWN: 0.7,
-                MarketRegime.TRENDING_UP: 0.1,
-                MarketRegime.RANGING: 0.15,
-                MarketRegime.VOLATILE: 0.05
-            },
-            MarketRegime.RANGING: {
-                MarketRegime.RANGING: 0.6,
-                MarketRegime.TRENDING_UP: 0.2,
-                MarketRegime.TRENDING_DOWN: 0.2
-            },
-            MarketRegime.VOLATILE: {
-                MarketRegime.VOLATILE: 0.4,
-                MarketRegime.RANGING: 0.3,
-                MarketRegime.TRENDING_UP: 0.15,
-                MarketRegime.TRENDING_DOWN: 0.15
-            }
-        }
-        
-        return transition_matrix.get(from_regime, {}).get(to_regime, 0.1)
-
-
-class StrategySelector:
-    """Strategy selection component."""
-    
-    def __init__(self):
-        self.available_strategies = {}
-        self.strategy_performance = {}
-        self.regime_strategy_mapping = {
-            MarketRegime.TRENDING_UP: [StrategyType.MOMENTUM, StrategyType.BREAKOUT],
-            MarketRegime.TRENDING_DOWN: [StrategyType.MOMENTUM, StrategyType.BREAKOUT],
-            MarketRegime.RANGING: [StrategyType.MEAN_REVERSION, StrategyType.MARKET_MAKING],
-            MarketRegime.VOLATILE: [StrategyType.SCALPING, StrategyType.ARBITRAGE],
-            MarketRegime.LOW_VOLATILITY: [StrategyType.MARKET_MAKING, StrategyType.SWING],
-            MarketRegime.HIGH_VOLATILITY: [StrategyType.BREAKOUT, StrategyType.MOMENTUM]
-        }
-    
-    async def select_strategies(self, market_conditions: MarketConditions) -> List[StrategyConfig]:
-        """
-        Select optimal strategies for current market conditions.
-        
-        Args:
-            market_conditions: Current market conditions
-            
-        Returns:
-            List of selected strategy configurations
-        """
-        try:
-            logger.info(f"Selecting strategies for regime: {market_conditions.regime.value}")
-            
-            # Get recommended strategies for current regime
-            recommended_strategies = self.regime_strategy_mapping.get(
-                market_conditions.regime, 
-                [StrategyType.MEAN_REVERSION]
-            )
-            
-            selected_strategies = []
-            
-            for strategy_type in recommended_strategies:
-                # Create strategy configuration based on market conditions
-                config = self._create_strategy_config(strategy_type, market_conditions)
-                selected_strategies.append(config)
-            
-            logger.info(f"Selected {len(selected_strategies)} strategies")
-            return selected_strategies
-            
-        except Exception as e:
-            logger.error(f"Strategy selection failed: {e}")
-            return []
-    
-    def _create_strategy_config(self, strategy_type: StrategyType, 
-                              market_conditions: MarketConditions) -> StrategyConfig:
-        """Create strategy configuration based on market conditions."""
-        
-        base_configs = {
-            StrategyType.MOMENTUM: {
-                'parameters': {'lookback_period': 20, 'threshold': 0.02},
-                'risk_level': 0.03,
-                'position_size': 0.1,
-                'stop_loss': 0.05,
-                'take_profit': 0.15,
-                'max_positions': 3
-            },
-            StrategyType.MEAN_REVERSION: {
-                'parameters': {'lookback_period': 14, 'threshold': 2.0},
-                'risk_level': 0.02,
-                'position_size': 0.08,
-                'stop_loss': 0.03,
-                'take_profit': 0.08,
-                'max_positions': 5
-            },
-            StrategyType.ARBITRAGE: {
-                'parameters': {'min_spread': 0.001, 'max_hold_time': 300},
-                'risk_level': 0.01,
-                'position_size': 0.2,
-                'stop_loss': 0.002,
-                'take_profit': 0.005,
-                'max_positions': 10
-            },
-            StrategyType.MARKET_MAKING: {
-                'parameters': {'spread': 0.001, 'inventory_limit': 0.1},
-                'risk_level': 0.015,
-                'position_size': 0.05,
-                'stop_loss': 0.01,
-                'take_profit': 0.002,
-                'max_positions': 20
-            }
-        }
-        
-        base_config = base_configs.get(strategy_type, base_configs[StrategyType.MEAN_REVERSION])
-        
-        # Adjust parameters based on market conditions
-        if market_conditions.volatility > 0.05:
-            base_config['risk_level'] *= 0.7  # Reduce risk in high volatility
-            base_config['position_size'] *= 0.8
-        elif market_conditions.volatility < 0.01:
-            base_config['risk_level'] *= 1.2  # Increase risk in low volatility
-            base_config['position_size'] *= 1.1
-        
-        return StrategyConfig(
-            strategy_type=strategy_type,
-            **base_config
-        )
-
-
-class ParameterOptimizer:
-    """Parameter optimization component."""
-    
-    def __init__(self):
-        self.optimization_history = []
-        self.parameter_ranges = {}
-    
-    async def optimize_parameters(self, strategy_config: StrategyConfig, 
-                                performance_data: Dict[str, Any]) -> StrategyConfig:
-        """
-        Optimize strategy parameters based on performance data.
-        
-        Args:
-            strategy_config: Current strategy configuration
-            performance_data: Historical performance data
-            
-        Returns:
-            Optimized strategy configuration
-        """
-        try:
-            logger.info(f"Optimizing parameters for {strategy_config.strategy_type.value}")
-            
-            # TODO: Implement parameter optimization algorithm
-            # This could use grid search, random search, or Bayesian optimization
-            
-            optimized_config = StrategyConfig(
-                strategy_type=strategy_config.strategy_type,
-                parameters=strategy_config.parameters.copy(),
-                risk_level=strategy_config.risk_level,
-                position_size=strategy_config.position_size,
-                stop_loss=strategy_config.stop_loss,
-                take_profit=strategy_config.take_profit,
-                max_positions=strategy_config.max_positions,
-                enabled=strategy_config.enabled
-            )
-            
-            # Example optimization (placeholder)
-            if performance_data.get('sharpe_ratio', 0) < 1.0:
-                optimized_config.risk_level *= 0.9
-                optimized_config.position_size *= 0.95
-            
-            logger.info("Parameter optimization completed")
-            return optimized_config
-            
-        except Exception as e:
-            logger.error(f"Parameter optimization failed: {e}")
-            return strategy_config
+@dataclass
+class StrategySignal:
+    """Strategy signal data class."""
+    strategy_id: str
+    strategy_type: StrategyType
+    signal_type: str
+    strength: SignalStrength
+    confidence: float
+    expected_return: float
+    risk_score: float
+    market_regime: MarketRegime
+    generated_at: datetime
+    metadata: Dict[str, Any]
 
 
 class AdaptiveStrategyManager:
-    """
-    Adaptive Strategy Manager for autonomous trading bot.
-    
-    This manager provides dynamic strategy selection and parameter optimization
-    based on current market conditions and performance feedback.
-    """
+    """Dynamic strategy selection and market regime detection system."""
     
     def __init__(self):
-        self.regime_detector = MarketRegimeDetector()
-        self.strategy_selector = StrategySelector()
-        self.parameter_optimizer = ParameterOptimizer()
-        self.active_strategies = {}
-        self.performance_history = []
-        self.current_market_conditions = None
-    
-    async def adapt_to_market(self, market_data: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Adapt strategies to current market conditions.
+        self.market_regimes: List[MarketRegimeData] = []
+        self.strategy_signals: List[StrategySignal] = []
+        self.strategy_performance: Dict[str, Dict[str, Any]] = {}
         
-        Args:
-            market_data: Current market data
-            
-        Returns:
-            Adaptation results
-        """
+    async def detect_market_regime(self, market_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Detect current market regime."""
         try:
-            logger.info("Adapting strategies to market conditions...")
+            # Extract features for regime detection
+            features = await self._extract_regime_features(market_data)
             
-            # Detect current market regime
-            market_conditions = await self.regime_detector.detect_regime(market_data)
-            self.current_market_conditions = market_conditions
+            if 'error' in features:
+                return features
             
-            # Select appropriate strategies
-            selected_strategies = await self.strategy_selector.select_strategies(market_conditions)
+            # Detect regime using simple rules
+            regime_result = await self._detect_regime_simple(features)
             
-            # Update active strategies
-            self.active_strategies = {
-                strategy.strategy_type.value: strategy 
-                for strategy in selected_strategies
-            }
+            # Create regime data
+            regime_data = MarketRegimeData(
+                regime=regime_result['regime'],
+                confidence=regime_result['confidence'],
+                duration=regime_result['duration'],
+                volatility=features['volatility'],
+                trend_strength=features['trend_strength'],
+                detected_at=datetime.now()
+            )
             
-            adaptation_result = {
+            # Store regime data
+            self.market_regimes.append(regime_data)
+            
+            # Keep only recent regimes (last 100)
+            if len(self.market_regimes) > 100:
+                self.market_regimes = self.market_regimes[-100:]
+            
+            logger.info(f"Detected market regime: {regime_data.regime.value} (confidence: {regime_data.confidence:.2f})")
+            return {
                 'status': 'success',
-                'market_regime': market_conditions.regime.value,
-                'regime_confidence': market_conditions.confidence,
-                'selected_strategies': [s.strategy_type.value for s in selected_strategies],
-                'strategy_count': len(selected_strategies)
+                'regime_data': regime_data.__dict__,
+                'regime': regime_data.regime.value,
+                'confidence': regime_data.confidence
             }
             
-            logger.info(f"Market adaptation completed: {adaptation_result}")
-            return adaptation_result
-            
         except Exception as e:
-            logger.error(f"Market adaptation failed: {e}")
-            return {'status': 'error', 'message': str(e)}
+            logger.error(f"Failed to detect market regime: {e}")
+            return {'error': str(e)}
     
-    async def optimize_strategies(self, performance_data: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Optimize strategy parameters based on performance feedback.
-        
-        Args:
-            performance_data: Performance metrics and data
-            
-        Returns:
-            Optimization results
-        """
+    async def select_optimal_strategy(self, market_regime: MarketRegime, 
+                                    available_strategies: List[str]) -> Dict[str, Any]:
+        """Select optimal strategy for current market regime."""
         try:
-            logger.info("Optimizing strategy parameters...")
+            # Get strategy performance history
+            performance_data = await self._get_strategy_performance_data(available_strategies)
             
-            optimized_strategies = {}
+            # Select best strategy for regime
+            selection_result = await self._select_strategy_simple(market_regime, performance_data)
             
-            for strategy_name, strategy_config in self.active_strategies.items():
-                # Optimize parameters for each strategy
-                optimized_config = await self.parameter_optimizer.optimize_parameters(
-                    strategy_config, performance_data
-                )
-                optimized_strategies[strategy_name] = optimized_config
+            if 'error' in selection_result:
+                return selection_result
             
-            # Update active strategies
-            self.active_strategies = optimized_strategies
+            selected_strategy = selection_result['selected_strategy']
+            confidence = selection_result['confidence']
             
-            optimization_result = {
+            logger.info(f"Selected strategy: {selected_strategy} for regime {market_regime.value}")
+            return {
                 'status': 'success',
-                'optimized_strategies': list(optimized_strategies.keys()),
-                'optimization_count': len(optimized_strategies)
+                'selected_strategy': selected_strategy,
+                'confidence': confidence,
+                'market_regime': market_regime.value,
+                'selection_reason': selection_result.get('reason', 'Performance-based selection')
             }
             
-            logger.info(f"Strategy optimization completed: {optimization_result}")
-            return optimization_result
-            
         except Exception as e:
-            logger.error(f"Strategy optimization failed: {e}")
-            return {'status': 'error', 'message': str(e)}
+            logger.error(f"Failed to select optimal strategy: {e}")
+            return {'error': str(e)}
     
-    async def get_trading_signals(self, market_data: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """
-        Get trading signals from active strategies.
-        
-        Args:
-            market_data: Current market data
-            
-        Returns:
-            List of trading signals
-        """
+    async def generate_trading_signals(self, strategy_id: str, market_data: Dict[str, Any],
+                                     market_regime: MarketRegime) -> Dict[str, Any]:
+        """Generate trading signals for selected strategy."""
         try:
-            logger.info("Generating trading signals...")
+            # Generate signals using strategy
+            signal_result = await self._generate_signals_simple(strategy_id, market_data, market_regime)
             
-            signals = []
+            if 'error' in signal_result:
+                return signal_result
             
-            for strategy_name, strategy_config in self.active_strategies.items():
-                if not strategy_config.enabled:
-                    continue
-                
-                # Generate signal based on strategy type
-                signal = await self._generate_strategy_signal(strategy_config, market_data)
-                if signal:
-                    signals.append(signal)
+            # Create strategy signal
+            strategy_signal = StrategySignal(
+                strategy_id=strategy_id,
+                strategy_type=signal_result['strategy_type'],
+                signal_type=signal_result['signal_type'],
+                strength=signal_result['strength'],
+                confidence=signal_result['confidence'],
+                expected_return=signal_result['expected_return'],
+                risk_score=signal_result['risk_score'],
+                market_regime=market_regime,
+                generated_at=datetime.now(),
+                metadata=signal_result.get('metadata', {})
+            )
             
-            logger.info(f"Generated {len(signals)} trading signals")
-            return signals
+            # Store signal
+            self.strategy_signals.append(strategy_signal)
+            
+            # Keep only recent signals (last 1000)
+            if len(self.strategy_signals) > 1000:
+                self.strategy_signals = self.strategy_signals[-1000:]
+            
+            logger.info(f"Generated signal: {signal_result['signal_type']} for strategy {strategy_id}")
+            return {
+                'status': 'success',
+                'signal': strategy_signal.__dict__,
+                'signal_type': signal_result['signal_type'],
+                'strength': signal_result['strength'].value,
+                'confidence': signal_result['confidence']
+            }
             
         except Exception as e:
-            logger.error(f"Signal generation failed: {e}")
-            return []
+            logger.error(f"Failed to generate trading signals: {e}")
+            return {'error': str(e)}
     
-    async def _generate_strategy_signal(self, strategy_config: StrategyConfig, 
-                                      market_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """Generate trading signal for a specific strategy."""
-        
-        # TODO: Implement actual signal generation logic
-        # This is a placeholder implementation
-        
-        signal = {
-            'strategy_type': strategy_config.strategy_type.value,
-            'action': 'BUY',  # or 'SELL' or 'HOLD'
-            'confidence': 0.75,
-            'price': market_data.get('current_price', 0),
-            'quantity': strategy_config.position_size,
-            'stop_loss': strategy_config.stop_loss,
-            'take_profit': strategy_config.take_profit,
-            'timestamp': datetime.now()
-        }
-        
-        return signal
+    async def adapt_strategy_parameters(self, strategy_id: str, 
+                                      performance_feedback: Dict[str, Any]) -> Dict[str, Any]:
+        """Adapt strategy parameters based on performance feedback."""
+        try:
+            # Analyze performance feedback
+            adaptation_result = await self._analyze_performance_feedback(strategy_id, performance_feedback)
+            
+            if 'error' in adaptation_result:
+                return adaptation_result
+            
+            # Update strategy parameters
+            updated_parameters = adaptation_result['updated_parameters']
+            
+            # Store updated parameters
+            if strategy_id not in self.strategy_performance:
+                self.strategy_performance[strategy_id] = {}
+            
+            self.strategy_performance[strategy_id]['parameters'] = updated_parameters
+            self.strategy_performance[strategy_id]['last_updated'] = datetime.now()
+            
+            logger.info(f"Adapted parameters for strategy {strategy_id}")
+            return {
+                'status': 'success',
+                'strategy_id': strategy_id,
+                'updated_parameters': updated_parameters,
+                'adaptation_reason': adaptation_result.get('reason', 'Performance optimization')
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to adapt strategy parameters: {e}")
+            return {'error': str(e)}
     
-    def get_strategy_status(self) -> Dict[str, Any]:
-        """
-        Get current strategy status and performance.
-        
-        Returns:
-            Strategy status information
-        """
+    async def _extract_regime_features(self, market_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Extract features for market regime detection."""
+        try:
+            # Calculate technical indicators
+            prices = market_data.get('prices', [])
+            volumes = market_data.get('volumes', [])
+            
+            if len(prices) < 20:
+                return {'error': 'Insufficient data for regime detection'}
+            
+            # Calculate volatility
+            returns = np.diff(prices) / prices[:-1]
+            volatility = np.std(returns) * np.sqrt(252)  # Annualized
+            
+            # Calculate trend strength
+            sma_20 = np.mean(prices[-20:])
+            sma_50 = np.mean(prices[-50:]) if len(prices) >= 50 else sma_20
+            trend_strength = (sma_20 - sma_50) / sma_50
+            
+            # Calculate volume profile
+            avg_volume = np.mean(volumes[-20:]) if volumes else 1.0
+            volume_profile = {
+                'current_volume': volumes[-1] if volumes else 1.0,
+                'avg_volume': avg_volume,
+                'volume_ratio': (volumes[-1] / avg_volume) if volumes else 1.0
+            }
+            
+            return {
+                'volatility': volatility,
+                'trend_strength': trend_strength,
+                'volume_profile': volume_profile,
+                'price_momentum': (prices[-1] - prices[-5]) / prices[-5] if len(prices) >= 5 else 0,
+                'rsi': self._calculate_rsi(prices),
+                'bollinger_position': self._calculate_bollinger_position(prices)
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to extract regime features: {e}")
+            return {'error': str(e)}
+    
+    async def _detect_regime_simple(self, features: Dict[str, Any]) -> Dict[str, Any]:
+        """Simple rule-based regime detection."""
+        try:
+            volatility = features.get('volatility', 0.2)
+            trend_strength = features.get('trend_strength', 0.0)
+            
+            if volatility > 0.3:
+                regime = MarketRegime.HIGH_VOLATILITY
+                confidence = 0.8
+            elif trend_strength > 0.1:
+                regime = MarketRegime.TRENDING_UP
+                confidence = 0.7
+            elif trend_strength < -0.1:
+                regime = MarketRegime.TRENDING_DOWN
+                confidence = 0.7
+            else:
+                regime = MarketRegime.SIDEWAYS
+                confidence = 0.6
+            
+            return {
+                'regime': regime,
+                'confidence': confidence,
+                'duration': 1
+            }
+            
+        except Exception as e:
+            return {'error': str(e)}
+    
+    async def _get_strategy_performance_data(self, available_strategies: List[str]) -> Dict[str, Any]:
+        """Get performance data for available strategies."""
+        try:
+            performance_data = {}
+            
+            for strategy_id in available_strategies:
+                if strategy_id in self.strategy_performance:
+                    performance_data[strategy_id] = self.strategy_performance[strategy_id]
+                else:
+                    # Initialize with default performance
+                    performance_data[strategy_id] = {
+                        'total_return': 0.0,
+                        'sharpe_ratio': 0.0,
+                        'max_drawdown': 0.0,
+                        'win_rate': 0.5,
+                        'regime_performance': {}
+                    }
+            
+            return performance_data
+            
+        except Exception as e:
+            logger.error(f"Failed to get strategy performance data: {e}")
+            return {'error': str(e)}
+    
+    async def _select_strategy_simple(self, market_regime: MarketRegime, 
+                                    performance_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Simple strategy selection logic."""
+        try:
+            regime_strategies = {
+                MarketRegime.TRENDING_UP: 'momentum_strategy',
+                MarketRegime.TRENDING_DOWN: 'short_momentum',
+                MarketRegime.SIDEWAYS: 'mean_reversion',
+                MarketRegime.HIGH_VOLATILITY: 'volatility_strategy'
+            }
+            
+            selected_strategy = regime_strategies.get(market_regime, 'mean_reversion')
+            
+            return {
+                'selected_strategy': selected_strategy,
+                'confidence': 0.7,
+                'reason': f'Selected for {market_regime.value} regime'
+            }
+            
+        except Exception as e:
+            return {'error': str(e)}
+    
+    async def _generate_signals_simple(self, strategy_id: str, market_data: Dict[str, Any],
+                                     market_regime: MarketRegime) -> Dict[str, Any]:
+        """Simple signal generation logic."""
+        try:
+            # TODO: Implement actual signal generation
+            return {
+                'strategy_type': StrategyType.MOMENTUM,
+                'signal_type': 'buy',
+                'strength': SignalStrength.MODERATE,
+                'confidence': 0.6,
+                'expected_return': 0.02,
+                'risk_score': 0.3,
+                'metadata': {'strategy_id': strategy_id}
+            }
+            
+        except Exception as e:
+            return {'error': str(e)}
+    
+    async def _analyze_performance_feedback(self, strategy_id: str, 
+                                          performance_feedback: Dict[str, Any]) -> Dict[str, Any]:
+        """Analyze performance feedback and determine parameter adjustments."""
+        try:
+            current_params = self.strategy_performance.get(strategy_id, {}).get('parameters', {})
+            
+            # Simple parameter adjustment based on performance
+            if performance_feedback.get('total_return', 0) < 0:
+                # Reduce risk parameters if performance is poor
+                updated_params = {
+                    'risk_multiplier': current_params.get('risk_multiplier', 1.0) * 0.9,
+                    'position_size': current_params.get('position_size', 1.0) * 0.8
+                }
+            else:
+                # Increase risk parameters if performance is good
+                updated_params = {
+                    'risk_multiplier': current_params.get('risk_multiplier', 1.0) * 1.1,
+                    'position_size': current_params.get('position_size', 1.0) * 1.05
+                }
+            
+            return {
+                'updated_parameters': updated_params,
+                'reason': 'Performance-based parameter adjustment'
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to analyze performance feedback: {e}")
+            return {'error': str(e)}
+    
+    def _calculate_rsi(self, prices: List[float], period: int = 14) -> float:
+        """Calculate RSI indicator."""
+        try:
+            if len(prices) < period + 1:
+                return 50.0  # Neutral RSI
+            
+            deltas = np.diff(prices)
+            gains = np.where(deltas > 0, deltas, 0)
+            losses = np.where(deltas < 0, -deltas, 0)
+            
+            avg_gain = np.mean(gains[-period:])
+            avg_loss = np.mean(losses[-period:])
+            
+            if avg_loss == 0:
+                return 100.0
+            
+            rs = avg_gain / avg_loss
+            rsi = 100 - (100 / (1 + rs))
+            
+            return rsi
+            
+        except Exception:
+            return 50.0
+    
+    def _calculate_bollinger_position(self, prices: List[float], period: int = 20) -> float:
+        """Calculate Bollinger Bands position."""
+        try:
+            if len(prices) < period:
+                return 0.5  # Middle position
+            
+            sma = np.mean(prices[-period:])
+            std = np.std(prices[-period:])
+            
+            upper_band = sma + (2 * std)
+            lower_band = sma - (2 * std)
+            
+            current_price = prices[-1]
+            
+            if upper_band == lower_band:
+                return 0.5
+            
+            position = (current_price - lower_band) / (upper_band - lower_band)
+            return max(0, min(1, position))
+            
+        except Exception:
+            return 0.5
+    
+    def get_adaptive_strategy_summary(self) -> Dict[str, Any]:
+        """Get adaptive strategy manager summary."""
         return {
-            'active_strategies': list(self.active_strategies.keys()),
-            'strategy_count': len(self.active_strategies),
-            'current_regime': self.current_market_conditions.regime.value if self.current_market_conditions else None,
-            'regime_confidence': self.current_market_conditions.confidence if self.current_market_conditions else 0.0,
-            'performance_history_length': len(self.performance_history)
+            'total_regimes_detected': len(self.market_regimes),
+            'total_signals_generated': len(self.strategy_signals),
+            'strategies_tracked': len(self.strategy_performance),
+            'current_regime': self.market_regimes[-1].regime.value if self.market_regimes else None,
+            'last_signal_time': self.strategy_signals[-1].generated_at if self.strategy_signals else None
         }
