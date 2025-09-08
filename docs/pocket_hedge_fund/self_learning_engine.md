@@ -300,4 +300,4 @@ The Self-Learning Engine integrates seamlessly with:
 
 The Self-Learning Engine represents a significant advancement in autonomous trading technology. By combining multiple AI techniques, it provides robust, adaptive, and continuously improving trading capabilities that can adapt to changing market conditions and learn from experience.
 
-For more information, see the demo script `demo_self_learning_engine.py` and the comprehensive test suite in `tests/pocket_hedge_fund/test_self_learning_engine.py`.
+For more information, see the demo script `interactive/advanced_ml/demo_self_learning_engine.py` and the comprehensive test suite in `tests/pocket_hedge_fund/test_self_learning_engine.py`.

@@ -282,8 +282,9 @@ The `scripts/` directory has been reorganized for better maintainability:
 - **check_uv_mode.py** - UV mode verification
 - **test_uv_docker.py** - UV Docker integration testing
 
-#### **Demo Scripts** (`scripts/demos/`)
-- **demo_universal_metrics.py** - Universal metrics demonstration
+#### **Demo Scripts**
+- **scripts/demos/demo_universal_metrics.py** - Universal metrics demonstration
+- **interactive/advanced_ml/demo_self_learning_engine.py** - Self-Learning Engine demonstration
 
 #### **Debug Scripts** (`scripts/debug/`)
 - **debug_binance.py** - Binance API debugging

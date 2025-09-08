@@ -112,6 +112,8 @@ scripts/
 - **`check_<component>.py`** - Component checking scripts
 - **`run_<action>.sh`** - Shell scripts for running specific actions
 - **`demo_<feature>.py`** - Demonstration scripts
+  - **`scripts/demos/demo_universal_metrics.py`** - Universal metrics demonstration
+  - **`interactive/advanced_ml/demo_self_learning_engine.py`** - Self-Learning Engine demonstration
 
 ## Script Dependencies
 

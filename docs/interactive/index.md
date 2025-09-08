@@ -149,6 +149,7 @@ The Interactive ML Trading Strategy Development System is a comprehensive platfo
 - Deep Reinforcement Learning (DRL) with PPO and SAC
 - Ensemble learning and meta-learning
 - Walk Forward Analysis and Monte Carlo simulations
+- **Demo**: `interactive/advanced_ml/demo_self_learning_engine.py` - Self-Learning Engine demonstration
 
 ### **Risk Management**
 - Advanced probabilistic risk assessment
