@@ -64,6 +64,14 @@ This section contains comprehensive business and commercialization plans for the
   - Technical foundation and API endpoints
   - Quick start guide and deployment instructions
 
+- **[Launch Strategy](launch-strategy.md)** - **NEW**: Detailed go-to-market and launch strategy
+  - 3-phase launch plan (Beta → Public → Scale)
+  - Marketing channels and budget allocation
+  - Pricing strategy with 4 tiers
+  - Customer acquisition and retention strategies
+  - Success metrics and KPIs
+  - Launch timeline and key milestones
+
 ### Technical Documentation
 - **[Pocket Hedge Fund README](pocket-hedge-fund-readme.md)** - **NEW**: Technical documentation for Pocket Hedge Fund implementation
   - Revolutionary AI-powered autonomous trading fund
