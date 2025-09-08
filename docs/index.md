@@ -127,6 +127,13 @@ python run_analysis.py demo --rule PHLD
 - [SMA Indicator](reference/indicators/trend/sma-indicator.md) - **NEW**: Simple Moving Average documentation
 
 ### Interactive ML Trading System
+- [Interactive ML Trading System](interactive/index.md) - **NEW**: Comprehensive interactive system for ML trading strategy development
+- [Interactive System README](interactive/README.md) - **NEW**: Complete system overview and quick start guide
+- [Interactive System README Complete](interactive/README_COMPLETE.md) - **NEW**: Comprehensive implementation plan and architecture details
+- [Strategic Plan (English)](interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_EN.md) - **NEW**: Complete strategic plan for robust profitable ML trading strategies
+- [Стратегический План (Русский)](interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_RU.md) - **NEW**: Полный стратегический план для робастных прибыльных ML торговых стратегий
+- [Next Steps Plan](interactive/next-steps-plan.md) - **NEW**: Production development roadmap and implementation plan
+- [Phase 4 Completion Summary](interactive/PHASE4_COMPLETION_SUMMARY.md) - **NEW**: Final completion summary for Phase 4 Advanced Features
 
 ### Business Plans
 - [Commercialization Plan (English)](business/commercialization-plan-en.md) - **NEW**: Comprehensive commercialization strategy for SaaS platform
@@ -135,11 +142,6 @@ python run_analysis.py demo --rule PHLD
 - [SaaS Platform Launch Guide](business/SAAS_PLATFORM_LAUNCH.md) - **NEW**: Comprehensive SaaS platform launch guide
 - [Pocket Hedge Fund README](business/pocket-hedge-fund-readme.md) - **NEW**: Technical documentation for Pocket Hedge Fund
 - [SaaS Platform README](business/saas-platform-readme.md) - **NEW**: Technical documentation for SaaS platform
-- [Interactive ML Trading System](interactive/index.md) - **NEW**: Comprehensive interactive system for ML trading strategy development
-- [Strategic Plan (English)](interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_EN.md) - **NEW**: Complete strategic plan for robust profitable ML trading strategies
-- [Стратегический План (Русский)](interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_RU.md) - **NEW**: Полный стратегический план для робастных прибыльных ML торговых стратегий
-- [Next Steps Plan](interactive/next-steps-plan.md) - **NEW**: Production development roadmap and implementation plan
-- [Phase 4 Completion Summary](interactive/PHASE4_COMPLETION_SUMMARY.md) - **NEW**: Final completion summary for Phase 4 Advanced Features
 
 ### Release Notes
 - [Release Notes](release-notes/index.md) - **NEW**: Complete release history and migration guides
@@ -164,10 +166,6 @@ python run_analysis.py demo --rule PHLD
 - **Visualization**: Interactive charts and plots
 
 ### Interactive ML Trading System
-
-### Business Plans
-- [Commercialization Plan (English)](business/commercialization-plan-en.md) - **NEW**: Comprehensive commercialization strategy for SaaS platform
-- [План Коммерциализации (Русский)](business/commercialization-plan-ru.md) - **NEW**: Комплексная стратегия коммерциализации для SaaS платформы
 - **Interactive Menu System**: Modern, colorful user interface with progress indicators
 - **Advanced ML/DL**: Apple MLX integration, Deep Reinforcement Learning, Ensemble methods
 - **Risk Management**: Monte Carlo simulations, VaR/CVaR, Dynamic position sizing
