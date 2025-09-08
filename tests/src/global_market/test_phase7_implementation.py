@@ -10,7 +10,7 @@ import os
 from datetime import datetime, timedelta
 
 # Add src to path
-sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
 
 from global_market.multi_market_integration import MultiMarketManager, BinanceConnector, CoinbaseConnector, KrakenConnector
 from global_market.regulatory_compliance import RegulatoryComplianceManager, Jurisdiction

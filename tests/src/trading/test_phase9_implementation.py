@@ -12,7 +12,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 
 # Add src to path
-sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
 
 async def test_advanced_strategies():
     """Test Advanced Trading Strategies System"""
