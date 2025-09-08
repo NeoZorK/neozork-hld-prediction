@@ -64,6 +64,21 @@ This section contains comprehensive business and commercialization plans for the
   - Technical foundation and API endpoints
   - Quick start guide and deployment instructions
 
+### Technical Documentation
+- **[Pocket Hedge Fund README](pocket-hedge-fund-readme.md)** - **NEW**: Technical documentation for Pocket Hedge Fund implementation
+  - Revolutionary AI-powered autonomous trading fund
+  - Autonomous trading bot with self-learning capabilities
+  - Blockchain integration with multi-chain support
+  - Fund management and investor portal features
+  - Complete technical architecture and implementation details
+
+- **[SaaS Platform README](saas-platform-readme.md)** - **NEW**: Technical documentation for SaaS platform implementation
+  - Multi-tenant SaaS architecture
+  - Core components and directory structure
+  - Subscription management and billing system
+  - User management with role-based access control
+  - API gateway and security features
+
 ## 🎯 Key Highlights
 
 ### Market Opportunity
