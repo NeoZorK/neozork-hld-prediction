@@ -27,6 +27,27 @@ This section contains comprehensive business and commercialization plans for the
   - Метрики успеха и KPI
   - Дорожная карта реализации
 
+### Pocket Hedge Fund Strategy
+- **[Pocket Hedge Fund Strategy (English)](pocket-hedge-fund-strategy-en.md)** - Revolutionary AI-powered hedge fund strategy
+  - Pocket Hedge Fund concept for retail investors
+  - AI Strategy Marketplace for strategy trading
+  - Blockchain-Native Fund with DeFi optimization
+  - Crowdsourced Alpha for community-driven strategies
+  - Financial projections: $13M → $2B revenue (2025-2030)
+  - AUM growth: $50M → $10B under management
+  - Implementation roadmap with 3 phases
+  - Competitive advantages and unique value propositions
+
+- **[Стратегия Pocket Hedge Fund (Русский)](pocket-hedge-fund-strategy-ru.md)** - Революционная стратегия AI-хедж-фонда
+  - Концепция Pocket Hedge Fund для розничных инвесторов
+  - AI Strategy Marketplace для торговли стратегиями
+  - Blockchain-Native Fund с оптимизацией для DeFi
+  - Crowdsourced Alpha для стратегий от сообщества
+  - Финансовые прогнозы: $13M → $2B доходов (2025-2030)
+  - Рост AUM: $50M → $10B под управлением
+  - Дорожная карта реализации с 3 фазами
+  - Конкурентные преимущества и уникальные ценностные предложения
+
 ## 🎯 Key Highlights
 
 ### Market Opportunity
