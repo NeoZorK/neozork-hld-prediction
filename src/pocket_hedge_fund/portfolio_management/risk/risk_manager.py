@@ -14,7 +14,7 @@ import pandas as pd
 
 from ..models.portfolio_models import Portfolio, Position, AssetType
 from ..models.performance_models import RiskMetrics, RiskLimit
-from ..models.transaction_models import StressTestResult
+from ..models.performance_models import StressTestResult
 
 logger = logging.getLogger(__name__)
 
