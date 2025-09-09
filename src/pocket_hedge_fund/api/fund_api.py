@@ -1,256 +1,622 @@
-"""Fund API - RESTful API endpoints for fund management"""
+"""
+Fund API for Pocket Hedge Fund.
+
+This module provides REST API endpoints for fund management operations
+including fund creation, updates, and retrieval.
+"""
 
 import logging
-import asyncio
-from typing import Dict, Any, List, Optional
-from datetime import datetime, timedelta
-from dataclasses import dataclass
-from enum import Enum
-from fastapi import APIRouter, HTTPException, Depends, Query, Path
+from typing import Dict, Any, Optional, List
+from datetime import datetime
+from decimal import Decimal
+
+from fastapi import APIRouter, HTTPException, status, Depends, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from pydantic import BaseModel, Field
-import uuid
+from pydantic import BaseModel, validator
+
+from ..database import DatabaseManager, DatabaseUtils
+from ..auth.middleware import get_current_user, require_fund_manager
 
 logger = logging.getLogger(__name__)
 
-# Initialize FastAPI router
-router = APIRouter(prefix="/api/v1/funds", tags=["funds"])
+# Security scheme
 security = HTTPBearer()
 
+# Create router
+router = APIRouter(prefix="/funds", tags=["Fund Management"])
 
-class FundType(str, Enum):
-    """Fund type enumeration."""
-    MINI = "mini"
-    STANDARD = "standard"
-    PREMIUM = "premium"
-    INSTITUTIONAL = "institutional"
+class FundAPI:
+    """Fund API class for dependency injection."""
+    
+    def __init__(self, db_manager: DatabaseManager):
+        self.db_manager = db_manager
+        self.router = router
 
 
-class CreateFundRequest(BaseModel):
-    """Request model for creating a fund."""
-    name: str = Field(..., description="Fund name", min_length=1, max_length=100)
-    fund_type: FundType = Field(..., description="Fund type")
-    initial_capital: float = Field(..., description="Initial capital amount", gt=0)
-    risk_level: float = Field(default=0.02, description="Risk level", ge=0, le=1)
-    target_return: float = Field(default=0.15, description="Target return", ge=0)
+# Pydantic models
+
+class FundCreate(BaseModel):
+    """Fund creation request model."""
+    name: str
+    description: Optional[str] = None
+    initial_capital: Decimal = Decimal('0.00')
+    management_fee_rate: Decimal = Decimal('0.0200')  # 2%
+    performance_fee_rate: Decimal = Decimal('0.2000')  # 20%
+    max_drawdown_limit: Decimal = Decimal('0.1000')  # 10%
+    max_position_size: Decimal = Decimal('0.1000')  # 10%
+    max_leverage: Decimal = Decimal('1.0000')  # 1x
+    
+    @validator('name')
+    def validate_name(cls, v):
+        if len(v) < 3:
+            raise ValueError('Fund name must be at least 3 characters long')
+        return v
+    
+    @validator('management_fee_rate', 'performance_fee_rate', 'max_drawdown_limit', 'max_position_size', 'max_leverage')
+    def validate_percentages(cls, v):
+        if not (0 <= v <= 1):
+            raise ValueError('Rate must be between 0 and 1')
+        return v
+
+
+class FundUpdate(BaseModel):
+    """Fund update request model."""
+    name: Optional[str] = None
+    description: Optional[str] = None
+    management_fee_rate: Optional[Decimal] = None
+    performance_fee_rate: Optional[Decimal] = None
+    max_drawdown_limit: Optional[Decimal] = None
+    max_position_size: Optional[Decimal] = None
+    max_leverage: Optional[Decimal] = None
+    
+    @validator('name')
+    def validate_name(cls, v):
+        if v is not None and len(v) < 3:
+            raise ValueError('Fund name must be at least 3 characters long')
+        return v
+    
+    @validator('management_fee_rate', 'performance_fee_rate', 'max_drawdown_limit', 'max_position_size', 'max_leverage')
+    def validate_percentages(cls, v):
+        if v is not None and not (0 <= v <= 1):
+            raise ValueError('Rate must be between 0 and 1')
+        return v
 
 
 class FundResponse(BaseModel):
-    """Response model for fund data."""
-    fund_id: str
+    """Fund response model."""
+    id: str
     name: str
-    fund_type: FundType
-    initial_capital: float
-    current_value: float
-    total_return: float
-    risk_level: float
-    target_return: float
-    investor_count: int
+    description: Optional[str]
+    manager_id: str
+    status: str
+    initial_capital: Decimal
+    current_capital: Decimal
+    management_fee_rate: Decimal
+    performance_fee_rate: Decimal
+    max_drawdown_limit: Decimal
+    max_position_size: Decimal
+    max_leverage: Decimal
     created_at: datetime
     updated_at: datetime
+    launched_at: Optional[datetime]
+    closed_at: Optional[datetime]
 
 
-class FundAPI:
-    """Fund management API endpoints."""
+class FundSummary(BaseModel):
+    """Fund summary model."""
+    fund: FundResponse
+    portfolio: Dict[str, Any]
+    performance: Optional[Dict[str, Any]]
+
+
+# API endpoints
+
+@router.post("/", response_model=FundResponse, status_code=status.HTTP_201_CREATED)
+async def create_fund(
+    fund_data: FundCreate,
+    request: Request,
+    current_user: Dict[str, Any] = Depends(require_fund_manager)
+) -> FundResponse:
+    """
+    Create a new fund.
     
-    def __init__(self):
-        self.fund_manager = None  # Will be injected
-        self.portfolio_manager = None  # Will be injected
-        self.performance_tracker = None  # Will be injected
+    Args:
+        fund_data: Fund creation data
+        request: HTTP request
+        current_user: Current authenticated user
         
-    async def get_current_user(self, credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
-        """Get current authenticated user."""
-        # TODO: Implement JWT token validation
-        return "user_123"  # Placeholder
-    
-    @router.post("/", response_model=FundResponse, status_code=201)
-    async def create_fund(
-        self,
-        request: CreateFundRequest,
-        current_user: str = Depends(get_current_user)
-    ) -> FundResponse:
-        """Create a new fund."""
-        try:
-            # Create fund using fund manager
-            result = await self.fund_manager.create_fund(
-                name=request.name,
-                fund_type=request.fund_type,
-                initial_capital=request.initial_capital,
-                risk_level=request.risk_level,
-                target_return=request.target_return
+    Returns:
+        Created fund information
+        
+    Raises:
+        HTTPException: If fund creation fails
+    """
+    try:
+        # Get database manager from app state
+        db_manager: DatabaseManager = request.app.state.db_manager
+        
+        # Check if fund name already exists
+        async with db_manager.get_async_session() as session:
+            from sqlalchemy import text
+            result = await session.execute(
+                text("SELECT 1 FROM funds WHERE name = :name"),
+                {"name": fund_data.name}
             )
-            
-            if result.get('status') != 'success':
-                raise HTTPException(status_code=400, detail=result.get('message', 'Failed to create fund'))
-            
-            fund_data = result['fund_config']
-            fund_metrics = result['fund_metrics']
-            
-            return FundResponse(
-                fund_id=fund_data['fund_id'],
+            if result.fetchone():
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Fund with this name already exists"
+                )
+        
+        # Create fund
+        import uuid
+        fund_id = str(uuid.uuid4())
+        
+        async with db_manager.get_async_session() as session:
+            await session.execute(
+                text("""
+                    INSERT INTO funds (
+                        id, name, description, manager_id, status, initial_capital, current_capital,
+                        management_fee_rate, performance_fee_rate, max_drawdown_limit,
+                        max_position_size, max_leverage, created_at, updated_at
+                    ) VALUES (
+                        :id, :name, :description, :manager_id, :status, :initial_capital, :current_capital,
+                        :management_fee_rate, :performance_fee_rate, :max_drawdown_limit,
+                        :max_position_size, :max_leverage, :created_at, :updated_at
+                    )
+                """),
+                {
+                    'id': fund_id,
+                    'name': fund_data.name,
+                    'description': fund_data.description,
+                    'manager_id': current_user['id'],
+                    'status': 'active',
+                    'initial_capital': fund_data.initial_capital,
+                    'current_capital': fund_data.initial_capital,
+                    'management_fee_rate': fund_data.management_fee_rate,
+                    'performance_fee_rate': fund_data.performance_fee_rate,
+                    'max_drawdown_limit': fund_data.max_drawdown_limit,
+                    'max_position_size': fund_data.max_position_size,
+                    'max_leverage': fund_data.max_leverage,
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                }
+            )
+            await session.commit()
+        
+        logger.info(f"Fund created successfully: {fund_data.name} by user {current_user['id']}")
+        
+        # Return created fund
+        return FundResponse(
+            id=fund_id,
+            name=fund_data.name,
+            description=fund_data.description,
+            manager_id=current_user['id'],
+            status='active',
+            initial_capital=fund_data.initial_capital,
+            current_capital=fund_data.initial_capital,
+            management_fee_rate=fund_data.management_fee_rate,
+            performance_fee_rate=fund_data.performance_fee_rate,
+            max_drawdown_limit=fund_data.max_drawdown_limit,
+            max_position_size=fund_data.max_position_size,
+            max_leverage=fund_data.max_leverage,
+            created_at=datetime.utcnow(),
+            updated_at=datetime.utcnow(),
+            launched_at=None,
+            closed_at=None
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating fund: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Fund creation failed"
+        )
+
+
+@router.get("/", response_model=List[FundResponse])
+async def list_funds(
+    request: Request,
+    current_user: Dict[str, Any] = Depends(get_current_user),
+    skip: int = 0,
+    limit: int = 100
+) -> List[FundResponse]:
+    """
+    List funds accessible to the current user.
+    
+    Args:
+        request: HTTP request
+        current_user: Current authenticated user
+        skip: Number of records to skip
+        limit: Maximum number of records to return
+        
+    Returns:
+        List of funds
+        
+    Raises:
+        HTTPException: If fund listing fails
+    """
+    try:
+        # Get database manager from app state
+        db_manager: DatabaseManager = request.app.state.db_manager
+        db_utils = DatabaseUtils(db_manager)
+        
+        # Get user funds
+        funds_data = await db_utils.get_user_funds(current_user['id'])
+        
+        # Convert to response models
+        funds = []
+        for fund_data in funds_data[skip:skip+limit]:
+            funds.append(FundResponse(
+                id=fund_data['id'],
                 name=fund_data['name'],
-                fund_type=fund_data['fund_type'],
+                description=fund_data.get('description'),
+                manager_id=fund_data['manager_id'],
+                status=fund_data['status'],
                 initial_capital=fund_data['initial_capital'],
-                current_value=fund_metrics['total_value'],
-                total_return=fund_metrics['total_return'],
-                risk_level=fund_data['risk_level'],
-                target_return=fund_data['target_return'],
-                investor_count=fund_metrics['investor_count'],
+                current_capital=fund_data['current_capital'],
+                management_fee_rate=fund_data['management_fee_rate'],
+                performance_fee_rate=fund_data['performance_fee_rate'],
+                max_drawdown_limit=fund_data['max_drawdown_limit'],
+                max_position_size=fund_data['max_position_size'],
+                max_leverage=fund_data['max_leverage'],
                 created_at=fund_data['created_at'],
-                updated_at=fund_data['updated_at']
+                updated_at=fund_data['updated_at'],
+                launched_at=fund_data.get('launched_at'),
+                closed_at=fund_data.get('closed_at')
+            ))
+        
+        return funds
+        
+    except Exception as e:
+        logger.error(f"Error listing funds: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to list funds"
+        )
+
+
+@router.get("/{fund_id}", response_model=FundResponse)
+async def get_fund(
+    fund_id: str,
+    request: Request,
+    current_user: Dict[str, Any] = Depends(get_current_user)
+) -> FundResponse:
+    """
+    Get fund by ID.
+    
+    Args:
+        fund_id: Fund ID
+        request: HTTP request
+        current_user: Current authenticated user
+        
+    Returns:
+        Fund information
+        
+    Raises:
+        HTTPException: If fund not found or access denied
+    """
+    try:
+        # Get database manager from app state
+        db_manager: DatabaseManager = request.app.state.db_manager
+        
+        async with db_manager.get_async_session() as session:
+            from sqlalchemy import text
+            result = await session.execute(
+                text("SELECT * FROM funds WHERE id = :fund_id"),
+                {"fund_id": fund_id}
             )
+            fund_data = result.fetchone()
             
-        except Exception as e:
-            logger.error(f"Failed to create fund: {e}")
-            raise HTTPException(status_code=500, detail="Internal server error")
-    
-    @router.get("/", response_model=List[FundResponse])
-    async def get_funds(
-        self,
-        fund_type: Optional[FundType] = Query(None, description="Filter by fund type"),
-        page: int = Query(1, description="Page number", ge=1),
-        page_size: int = Query(20, description="Page size", ge=1, le=100),
-        current_user: str = Depends(get_current_user)
-    ) -> List[FundResponse]:
-        """Get list of funds."""
-        try:
-            # Get funds from fund manager
-            result = await self.fund_manager.get_fund_list(fund_type=fund_type)
+            if not fund_data:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Fund not found"
+                )
             
-            if 'error' in result:
-                raise HTTPException(status_code=400, detail=result['error'])
-            
-            funds_data = result['funds']
-            
-            # Convert to response models
-            funds = []
-            for fund_data in funds_data:
-                funds.append(FundResponse(
-                    fund_id=fund_data['fund_id'],
-                    name=fund_data['name'],
-                    fund_type=fund_data['fund_type'],
-                    initial_capital=0,  # TODO: Get from fund data
-                    current_value=fund_data['aum'],
-                    total_return=fund_data['total_return'],
-                    risk_level=0.02,  # TODO: Get from fund data
-                    target_return=0.15,  # TODO: Get from fund data
-                    investor_count=fund_data['investor_count'],
-                    created_at=fund_data['created_at'],
-                    updated_at=fund_data['updated_at']
-                ))
-            
-            return funds
-            
-        except HTTPException:
-            raise
-        except Exception as e:
-            logger.error(f"Failed to get funds: {e}")
-            raise HTTPException(status_code=500, detail="Internal server error")
-    
-    @router.get("/{fund_id}", response_model=FundResponse)
-    async def get_fund(
-        self,
-        fund_id: str = Path(..., description="Fund ID"),
-        current_user: str = Depends(get_current_user)
-    ) -> FundResponse:
-        """Get fund details."""
-        try:
-            # Get fund info from fund manager
-            result = await self.fund_manager.get_fund_info(fund_id)
-            
-            if 'error' in result:
-                raise HTTPException(status_code=404, detail=result['error'])
-            
-            fund_config = result['fund_config']
-            fund_metrics = result['fund_metrics']
+            # Check access permissions
+            if (current_user['role'] not in ['admin', 'fund_manager'] and 
+                fund_data.manager_id != current_user['id']):
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Access denied"
+                )
             
             return FundResponse(
-                fund_id=fund_config['fund_id'],
-                name=fund_config['name'],
-                fund_type=fund_config['fund_type'],
-                initial_capital=fund_config['initial_capital'],
-                current_value=fund_metrics['total_value'],
-                total_return=fund_metrics['total_return'],
-                risk_level=fund_config['risk_level'],
-                target_return=fund_config['target_return'],
-                investor_count=result['investor_count'],
-                created_at=fund_config['created_at'],
-                updated_at=fund_config['updated_at']
+                id=fund_data.id,
+                name=fund_data.name,
+                description=fund_data.description,
+                manager_id=fund_data.manager_id,
+                status=fund_data.status,
+                initial_capital=fund_data.initial_capital,
+                current_capital=fund_data.current_capital,
+                management_fee_rate=fund_data.management_fee_rate,
+                performance_fee_rate=fund_data.performance_fee_rate,
+                max_drawdown_limit=fund_data.max_drawdown_limit,
+                max_position_size=fund_data.max_position_size,
+                max_leverage=fund_data.max_leverage,
+                created_at=fund_data.created_at,
+                updated_at=fund_data.updated_at,
+                launched_at=fund_data.launched_at,
+                closed_at=fund_data.closed_at
             )
-            
-        except HTTPException:
-            raise
-        except Exception as e:
-            logger.error(f"Failed to get fund: {e}")
-            raise HTTPException(status_code=500, detail="Internal server error")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting fund: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to get fund"
+        )
+
+
+@router.put("/{fund_id}", response_model=FundResponse)
+async def update_fund(
+    fund_id: str,
+    fund_data: FundUpdate,
+    request: Request,
+    current_user: Dict[str, Any] = Depends(require_fund_manager)
+) -> FundResponse:
+    """
+    Update fund information.
     
-    @router.get("/{fund_id}/metrics")
-    async def get_fund_metrics(
-        self,
-        fund_id: str = Path(..., description="Fund ID"),
-        period_days: int = Query(30, description="Period in days", ge=1, le=365),
-        current_user: str = Depends(get_current_user)
-    ) -> Dict[str, Any]:
-        """Get fund performance metrics."""
-        try:
-            # Get fund info
-            fund_result = await self.fund_manager.get_fund_info(fund_id)
-            if 'error' in fund_result:
-                raise HTTPException(status_code=404, detail=fund_result['error'])
+    Args:
+        fund_id: Fund ID
+        fund_data: Fund update data
+        request: HTTP request
+        current_user: Current authenticated user
+        
+    Returns:
+        Updated fund information
+        
+    Raises:
+        HTTPException: If fund update fails
+    """
+    try:
+        # Get database manager from app state
+        db_manager: DatabaseManager = request.app.state.db_manager
+        
+        # Check if fund exists and user has access
+        async with db_manager.get_async_session() as session:
+            from sqlalchemy import text
+            result = await session.execute(
+                text("SELECT * FROM funds WHERE id = :fund_id"),
+                {"fund_id": fund_id}
+            )
+            fund = result.fetchone()
             
-            # Get performance metrics
-            result = await self.performance_tracker.get_performance_metrics(period_days)
+            if not fund:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Fund not found"
+                )
             
-            if 'error' in result:
-                raise HTTPException(status_code=400, detail=result['error'])
+            # Check if user is fund manager or admin
+            if (current_user['role'] != 'admin' and 
+                fund.manager_id != current_user['id']):
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Access denied"
+                )
+            
+            # Build update query
+            update_fields = []
+            update_values = {'fund_id': fund_id, 'updated_at': datetime.utcnow()}
+            
+            for field, value in fund_data.dict(exclude_unset=True).items():
+                if value is not None:
+                    update_fields.append(f"{field} = :{field}")
+                    update_values[field] = value
+            
+            if not update_fields:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="No fields to update"
+                )
+            
+            # Execute update
+            update_query = f"""
+                UPDATE funds 
+                SET {', '.join(update_fields)}, updated_at = :updated_at
+                WHERE id = :fund_id
+            """
+            
+            await session.execute(text(update_query), update_values)
+            await session.commit()
+            
+            # Get updated fund
+            result = await session.execute(
+                text("SELECT * FROM funds WHERE id = :fund_id"),
+                {"fund_id": fund_id}
+            )
+            updated_fund = result.fetchone()
+            
+            logger.info(f"Fund updated successfully: {fund_id}")
+            
+            return FundResponse(
+                id=updated_fund.id,
+                name=updated_fund.name,
+                description=updated_fund.description,
+                manager_id=updated_fund.manager_id,
+                status=updated_fund.status,
+                initial_capital=updated_fund.initial_capital,
+                current_capital=updated_fund.current_capital,
+                management_fee_rate=updated_fund.management_fee_rate,
+                performance_fee_rate=updated_fund.performance_fee_rate,
+                max_drawdown_limit=updated_fund.max_drawdown_limit,
+                max_position_size=updated_fund.max_position_size,
+                max_leverage=updated_fund.max_leverage,
+                created_at=updated_fund.created_at,
+                updated_at=updated_fund.updated_at,
+                launched_at=updated_fund.launched_at,
+                closed_at=updated_fund.closed_at
+            )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating fund: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Fund update failed"
+        )
+
+
+@router.get("/{fund_id}/summary", response_model=FundSummary)
+async def get_fund_summary(
+    fund_id: str,
+    request: Request,
+    current_user: Dict[str, Any] = Depends(get_current_user)
+) -> FundSummary:
+    """
+    Get comprehensive fund summary.
+    
+    Args:
+        fund_id: Fund ID
+        request: HTTP request
+        current_user: Current authenticated user
+        
+    Returns:
+        Fund summary with portfolio and performance data
+        
+    Raises:
+        HTTPException: If fund summary retrieval fails
+    """
+    try:
+        # Get database manager from app state
+        db_manager: DatabaseManager = request.app.state.db_manager
+        db_utils = DatabaseUtils(db_manager)
+        
+        # Get fund summary
+        summary_data = await db_utils.get_fund_summary(fund_id)
+        
+        if not summary_data or not summary_data['fund']:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Fund not found"
+            )
+        
+        # Check access permissions
+        fund_data = summary_data['fund']
+        if (current_user['role'] not in ['admin', 'fund_manager'] and 
+            fund_data['manager_id'] != current_user['id']):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Access denied"
+            )
+        
+        # Build response
+        fund_response = FundResponse(
+            id=fund_data['id'],
+            name=fund_data['name'],
+            description=fund_data.get('description'),
+            manager_id=fund_data['manager_id'],
+            status=fund_data['status'],
+            initial_capital=fund_data['initial_capital'],
+            current_capital=fund_data['current_capital'],
+            management_fee_rate=fund_data['management_fee_rate'],
+            performance_fee_rate=fund_data['performance_fee_rate'],
+            max_drawdown_limit=fund_data['max_drawdown_limit'],
+            max_position_size=fund_data['max_position_size'],
+            max_leverage=fund_data['max_leverage'],
+            created_at=fund_data['created_at'],
+            updated_at=fund_data['updated_at'],
+            launched_at=fund_data.get('launched_at'),
+            closed_at=fund_data.get('closed_at')
+        )
+        
+        return FundSummary(
+            fund=fund_response,
+            portfolio=summary_data.get('portfolio', {}),
+            performance=summary_data.get('performance')
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting fund summary: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to get fund summary"
+        )
+
+
+@router.delete("/{fund_id}", response_model=Dict[str, str])
+async def delete_fund(
+    fund_id: str,
+    request: Request,
+    current_user: Dict[str, Any] = Depends(require_fund_manager)
+) -> Dict[str, str]:
+    """
+    Delete fund (soft delete by setting status to closed).
+    
+    Args:
+        fund_id: Fund ID
+        request: HTTP request
+        current_user: Current authenticated user
+        
+    Returns:
+        Deletion confirmation
+        
+    Raises:
+        HTTPException: If fund deletion fails
+    """
+    try:
+        # Get database manager from app state
+        db_manager: DatabaseManager = request.app.state.db_manager
+        
+        # Check if fund exists and user has access
+        async with db_manager.get_async_session() as session:
+            from sqlalchemy import text
+            result = await session.execute(
+                text("SELECT * FROM funds WHERE id = :fund_id"),
+                {"fund_id": fund_id}
+            )
+            fund = result.fetchone()
+            
+            if not fund:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Fund not found"
+                )
+            
+            # Check if user is fund manager or admin
+            if (current_user['role'] != 'admin' and 
+                fund.manager_id != current_user['id']):
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Access denied"
+                )
+            
+            # Soft delete by setting status to closed
+            await session.execute(
+                text("""
+                    UPDATE funds 
+                    SET status = 'closed', closed_at = :closed_at, updated_at = :updated_at
+                    WHERE id = :fund_id
+                """),
+                {
+                    'fund_id': fund_id,
+                    'closed_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                }
+            )
+            await session.commit()
+            
+            logger.info(f"Fund closed successfully: {fund_id}")
             
             return {
-                'status': 'success',
-                'fund_id': fund_id,
-                'metrics': result['metrics'],
-                'period_days': period_days
+                'message': 'Fund closed successfully'
             }
-            
-        except HTTPException:
-            raise
-        except Exception as e:
-            logger.error(f"Failed to get fund metrics: {e}")
-            raise HTTPException(status_code=500, detail="Internal server error")
-    
-    @router.post("/{fund_id}/investors")
-    async def add_investor(
-        self,
-        fund_id: str = Path(..., description="Fund ID"),
-        investor_id: str = Query(..., description="Investor ID"),
-        investment_amount: float = Query(..., description="Investment amount", gt=0),
-        current_user: str = Depends(get_current_user)
-    ) -> Dict[str, Any]:
-        """Add an investor to the fund."""
-        try:
-            result = await self.fund_manager.add_investor(fund_id, investor_id, investment_amount)
-            
-            if 'error' in result:
-                raise HTTPException(status_code=400, detail=result['error'])
-            
-            return {
-                'status': 'success',
-                'message': 'Investor added successfully',
-                'data': result
-            }
-            
-        except HTTPException:
-            raise
-        except Exception as e:
-            logger.error(f"Failed to add investor: {e}")
-            raise HTTPException(status_code=500, detail="Internal server error")
-
-
-# Create API instance
-fund_api = FundAPI()
-
-# Add routes to router
-router.add_api_route("/", fund_api.create_fund, methods=["POST"])
-router.add_api_route("/", fund_api.get_funds, methods=["GET"])
-router.add_api_route("/{fund_id}", fund_api.get_fund, methods=["GET"])
-router.add_api_route("/{fund_id}/metrics", fund_api.get_fund_metrics, methods=["GET"])
-router.add_api_route("/{fund_id}/investors", fund_api.add_investor, methods=["POST"])
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting fund: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Fund deletion failed"
+        )

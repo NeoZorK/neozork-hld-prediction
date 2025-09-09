@@ -1,21 +1,22 @@
 """
-API Module
+API module for Pocket Hedge Fund.
 
-This module provides API endpoints including:
-- Fund API
-- Investor API
-- Strategy API
-- Community API
+This module provides REST API endpoints for the Pocket Hedge Fund system,
+including fund management, portfolio operations, and user interactions.
 """
 
+__version__ = "1.0.0"
+__author__ = "NeoZork Team"
+
+# Import API components
 from .fund_api import FundAPI
-from .investor_api import InvestorAPI
-from .strategy_api import StrategyAPI
-from .community_api import CommunityAPI
+from .portfolio_api import PortfolioAPI
+from .auth_api_simple import AuthAPI
+from .performance_api import PerformanceAPI
 
 __all__ = [
     "FundAPI",
-    "InvestorAPI",
-    "StrategyAPI",
-    "CommunityAPI"
+    "PortfolioAPI", 
+    "AuthAPI",
+    "PerformanceAPI"
 ]

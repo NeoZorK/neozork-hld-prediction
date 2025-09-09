@@ -1,629 +1,535 @@
-"""Authentication API - RESTful API endpoints for user authentication and authorization"""
+"""
+Authentication API for Pocket Hedge Fund.
+
+This module provides authentication endpoints for user registration,
+login, logout, and token management.
+"""
 
 import logging
-import asyncio
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, Optional
 from datetime import datetime, timedelta
-from dataclasses import dataclass
-from enum import Enum
-from fastapi import APIRouter, HTTPException, Depends, Query, Path, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from pydantic import BaseModel, Field, EmailStr
-import uuid
-import re
 
-# Import our JWT manager
-from ..auth.jwt_manager import JWTManager, UserRole, TokenType, AuthResult
+from fastapi import APIRouter, HTTPException, status, Depends, Request
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from pydantic import BaseModel, validator
+from email_validator import validate_email, EmailNotValidError
+
+from ..auth import AuthManager
+from ..database import DatabaseManager
 
 logger = logging.getLogger(__name__)
 
-# Initialize FastAPI router
-router = APIRouter(prefix="/api/v1/auth", tags=["authentication"])
+# Security scheme
 security = HTTPBearer()
 
+# Create router
+router = APIRouter(prefix="/auth", tags=["Authentication"])
 
-class UserRegistrationRequest(BaseModel):
-    """Request model for user registration."""
-    username: str = Field(..., description="Username", min_length=3, max_length=50)
-    email: EmailStr = Field(..., description="Email address")
-    password: str = Field(..., description="Password", min_length=8, max_length=100)
-    first_name: str = Field(..., description="First name", min_length=1, max_length=100)
-    last_name: str = Field(..., description="Last name", min_length=1, max_length=100)
-    phone: Optional[str] = Field(None, description="Phone number", max_length=20)
-    country: Optional[str] = Field(None, description="Country", max_length=100)
-
-
-class UserLoginRequest(BaseModel):
-    """Request model for user login."""
-    username: str = Field(..., description="Username or email")
-    password: str = Field(..., description="Password")
+class AuthAPI:
+    """Auth API class for dependency injection."""
+    
+    def __init__(self, db_manager: DatabaseManager):
+        self.db_manager = db_manager
+        self.router = router
 
 
-class PasswordResetRequest(BaseModel):
-    """Request model for password reset."""
-    email: EmailStr = Field(..., description="Email address")
+# Pydantic models for request/response
 
-
-class PasswordResetConfirmRequest(BaseModel):
-    """Request model for password reset confirmation."""
-    token: str = Field(..., description="Reset token")
-    new_password: str = Field(..., description="New password", min_length=8, max_length=100)
-
-
-class ChangePasswordRequest(BaseModel):
-    """Request model for changing password."""
-    current_password: str = Field(..., description="Current password")
-    new_password: str = Field(..., description="New password", min_length=8, max_length=100)
-
-
-class UserResponse(BaseModel):
-    """Response model for user data."""
-    user_id: str
-    username: str
+class UserRegistration(BaseModel):
+    """User registration request model."""
     email: str
+    username: str
+    password: str
     first_name: str
     last_name: str
-    phone: Optional[str]
-    country: Optional[str]
-    role: str
-    is_active: bool
-    kyc_status: str
-    created_at: datetime
-    updated_at: datetime
+    role: Optional[str] = "investor"
+    
+    @validator('password')
+    def validate_password(cls, v):
+        if len(v) < 8:
+            raise ValueError('Password must be at least 8 characters long')
+        return v
+    
+    @validator('username')
+    def validate_username(cls, v):
+        if len(v) < 3:
+            raise ValueError('Username must be at least 3 characters long')
+        return v
+    
+    @validator('email')
+    def validate_email(cls, v):
+        try:
+            validate_email(v)
+            return v
+        except EmailNotValidError:
+            raise ValueError('Invalid email address')
 
 
-class AuthResponse(BaseModel):
-    """Response model for authentication."""
+class UserLogin(BaseModel):
+    """User login request model."""
+    email: str
+    password: str
+    
+    @validator('email')
+    def validate_email(cls, v):
+        try:
+            validate_email(v)
+            return v
+        except EmailNotValidError:
+            raise ValueError('Invalid email address')
+
+
+class TokenResponse(BaseModel):
+    """Token response model."""
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
     expires_in: int
-    user: UserResponse
+    user: Dict[str, Any]
 
 
-class TokenRefreshRequest(BaseModel):
-    """Request model for token refresh."""
-    refresh_token: str = Field(..., description="Refresh token")
+class UserResponse(BaseModel):
+    """User response model."""
+    id: str
+    email: str
+    username: str
+    first_name: str
+    last_name: str
+    role: str
+    is_active: bool
+    is_verified: bool
+    created_at: datetime
+    last_login: Optional[datetime]
 
 
-class AuthAPI:
-    """Authentication API endpoints."""
+class PasswordChange(BaseModel):
+    """Password change request model."""
+    old_password: str
+    new_password: str
     
-    def __init__(self, database_manager, jwt_manager: JWTManager):
-        self.database_manager = database_manager
-        self.jwt_manager = jwt_manager
-        
-    def _validate_password(self, password: str) -> List[str]:
-        """Validate password strength."""
-        errors = []
-        
-        if len(password) < 8:
-            errors.append("Password must be at least 8 characters long")
-        
-        if not re.search(r"[A-Z]", password):
-            errors.append("Password must contain at least one uppercase letter")
-        
-        if not re.search(r"[a-z]", password):
-            errors.append("Password must contain at least one lowercase letter")
-        
-        if not re.search(r"\d", password):
-            errors.append("Password must contain at least one digit")
-        
-        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
-            errors.append("Password must contain at least one special character")
-        
-        return errors
+    @validator('new_password')
+    def validate_new_password(cls, v):
+        if len(v) < 8:
+            raise ValueError('New password must be at least 8 characters long')
+        return v
+
+
+class RefreshTokenRequest(BaseModel):
+    """Refresh token request model."""
+    refresh_token: str
+
+
+# API endpoints
+
+@router.post("/register", response_model=Dict[str, Any], status_code=status.HTTP_201_CREATED)
+async def register_user(
+    user_data: UserRegistration,
+    request: Request
+) -> Dict[str, Any]:
+    """
+    Register a new user.
     
-    def _validate_username(self, username: str) -> List[str]:
-        """Validate username format."""
-        errors = []
+    Args:
+        user_data: User registration data
+        request: HTTP request
         
-        if len(username) < 3:
-            errors.append("Username must be at least 3 characters long")
+    Returns:
+        Registration result
         
-        if len(username) > 50:
-            errors.append("Username must be less than 50 characters")
+    Raises:
+        HTTPException: If registration fails
+    """
+    try:
+        # Get auth manager from app state
+        auth_manager: AuthManager = request.app.state.auth_manager
         
-        if not re.match(r"^[a-zA-Z0-9_-]+$", username):
-            errors.append("Username can only contain letters, numbers, underscores, and hyphens")
+        # Register user
+        result = await auth_manager.register_user(user_data.dict())
         
-        return errors
-    
-    async def get_current_user(self, credentials: HTTPAuthorizationCredentials = Depends(security)) -> Dict[str, Any]:
-        """Get current authenticated user from token."""
-        try:
-            token = credentials.credentials
-            payload = self.jwt_manager.verify_token(token, TokenType.ACCESS)
-            
-            if not payload:
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid or expired token",
-                    headers={"WWW-Authenticate": "Bearer"},
-                )
-            
-            # Get user details from database
-            user_query = """
-            SELECT * FROM users WHERE id = :user_id
-            """
-            
-            user_result = await self.database_manager.execute_query(
-                user_query, 
-                {"user_id": payload.user_id}
+        if result['status'] == 'error':
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=result['message']
             )
-            
-            if 'error' in user_result or not user_result['query_result']['data']:
+        
+        logger.info(f"User registered successfully: {user_data.email}")
+        
+        return {
+            'status': 'success',
+            'message': 'User registered successfully',
+            'user_id': result['user_id'],
+            'email': result['email']
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error in user registration: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Registration failed"
+        )
+
+
+@router.post("/login", response_model=TokenResponse)
+async def login_user(
+    login_data: UserLogin,
+    request: Request
+) -> TokenResponse:
+    """
+    Authenticate user and return tokens.
+    
+    Args:
+        login_data: User login data
+        request: HTTP request
+        
+    Returns:
+        Authentication tokens and user info
+        
+    Raises:
+        HTTPException: If authentication fails
+    """
+    try:
+        # Get auth manager from app state
+        auth_manager: AuthManager = request.app.state.auth_manager
+        
+        # Authenticate user
+        result = await auth_manager.authenticate_user(
+            login_data.email,
+            login_data.password
+        )
+        
+        if result['status'] == 'error':
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="User not found",
-                    headers={"WWW-Authenticate": "Bearer"},
-                )
-            
-            user_data = user_result['query_result']['data'][0]
-            
-            return {
-                "user_id": user_data['id'],
-                "username": user_data['username'],
-                "email": user_data['email'],
-                "role": payload.role,
-                "permissions": payload.permissions,
-                "is_active": user_data['is_active']
-            }
-            
-        except HTTPException:
-            raise
-        except Exception as e:
-            logger.error(f"Failed to get current user: {e}")
+                detail=result['message']
+            )
+        
+        logger.info(f"User logged in successfully: {login_data.email}")
+        
+        return TokenResponse(
+            access_token=result['token'],
+            refresh_token=result.get('refresh_token', ''),
+            token_type="bearer",
+            expires_in=86400,  # 24 hours
+            user=result['user']
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error in user login: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Login failed"
+        )
+
+
+@router.post("/refresh", response_model=Dict[str, str])
+async def refresh_token(
+    refresh_data: RefreshTokenRequest,
+    request: Request
+) -> Dict[str, str]:
+    """
+    Refresh access token.
+    
+    Args:
+        refresh_data: Refresh token data
+        request: HTTP request
+        
+    Returns:
+        New access token
+        
+    Raises:
+        HTTPException: If token refresh fails
+    """
+    try:
+        # Get auth manager from app state
+        auth_manager: AuthManager = request.app.state.auth_manager
+        
+        # Refresh token
+        result = await auth_manager.refresh_token(refresh_data.refresh_token)
+        
+        if result['status'] == 'error':
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Authentication failed",
-                headers={"WWW-Authenticate": "Bearer"},
+                detail=result['message']
             )
+        
+        return {
+            'access_token': result['token'],
+            'token_type': 'bearer',
+            'expires_in': '86400'
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error refreshing token: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Token refresh failed"
+        )
+
+
+@router.post("/logout", response_model=Dict[str, str])
+async def logout_user(
+    request: Request,
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+) -> Dict[str, str]:
+    """
+    Logout user and invalidate session.
     
-    @router.post("/register", response_model=AuthResponse, status_code=201)
-    async def register_user(self, request: UserRegistrationRequest) -> AuthResponse:
-        """Register a new user."""
-        try:
-            # Validate username
-            username_errors = self._validate_username(request.username)
-            if username_errors:
+    Args:
+        request: HTTP request
+        credentials: HTTP authorization credentials
+        
+    Returns:
+        Logout confirmation
+        
+    Raises:
+        HTTPException: If logout fails
+    """
+    try:
+        # Get auth manager from app state
+        auth_manager: AuthManager = request.app.state.auth_manager
+        
+        # Extract session ID from token (simplified)
+        session_id = credentials.credentials  # In real implementation, extract from token
+        
+        # Logout user
+        result = await auth_manager.logout_user(session_id)
+        
+        if result['status'] == 'error':
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"Username validation failed: {', '.join(username_errors)}"
-                )
-            
-            # Validate password
-            password_errors = self._validate_password(request.password)
-            if password_errors:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"Password validation failed: {', '.join(password_errors)}"
-                )
-            
-            # Check if username already exists
-            username_check_query = "SELECT id FROM users WHERE username = :username"
-            username_result = await self.database_manager.execute_query(
-                username_check_query, 
-                {"username": request.username}
+                detail=result['message']
             )
-            
-            if 'error' in username_result:
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail="Database error during username check"
-                )
-            
-            if username_result['query_result']['data']:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Username already exists"
-                )
-            
-            # Check if email already exists
-            email_check_query = "SELECT id FROM users WHERE email = :email"
-            email_result = await self.database_manager.execute_query(
-                email_check_query, 
-                {"email": request.email}
-            )
-            
-            if 'error' in email_result:
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail="Database error during email check"
-                )
-            
-            if email_result['query_result']['data']:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Email already exists"
-                )
-            
-            # Hash password
-            hashed_password = self.jwt_manager.hash_password(request.password)
-            
-            # Create user
-            user_id = str(uuid.uuid4())
-            insert_query = """
-            INSERT INTO users (
-                id, username, email, password_hash, first_name, last_name,
-                phone, country, kyc_status, is_active, is_admin
-            ) VALUES (
-                :user_id, :username, :email, :password_hash, :first_name, :last_name,
-                :phone, :country, :kyc_status, :is_active, :is_admin
-            )
-            """
-            
-            insert_params = {
-                "user_id": user_id,
-                "username": request.username,
-                "email": request.email,
-                "password_hash": hashed_password,
-                "first_name": request.first_name,
-                "last_name": request.last_name,
-                "phone": request.phone,
-                "country": request.country,
-                "kyc_status": "pending",
-                "is_active": True,
-                "is_admin": False
-            }
-            
-            insert_result = await self.database_manager.execute_query(insert_query, insert_params)
-            
-            if 'error' in insert_result:
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail=f"Failed to create user: {insert_result['error']}"
-                )
-            
-            # Get created user
-            user_query = "SELECT * FROM users WHERE id = :user_id"
-            user_result = await self.database_manager.execute_query(
-                user_query, 
-                {"user_id": user_id}
-            )
-            
-            if 'error' in user_result or not user_result['query_result']['data']:
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail="Failed to retrieve created user"
-                )
-            
-            user_data = user_result['query_result']['data'][0]
-            
-            # Create tokens
-            user_role = UserRole.INVESTOR  # Default role for new users
-            permissions = self.jwt_manager.get_user_permissions(user_role)
-            
-            access_token = self.jwt_manager.create_access_token(
-                user_id=user_id,
-                username=request.username,
-                email=request.email,
-                role=user_role,
-                permissions=permissions
-            )
-            
-            refresh_token = self.jwt_manager.create_refresh_token(
-                user_id=user_id,
-                username=request.username,
-                email=request.email,
-                role=user_role,
-                permissions=permissions
-            )
-            
-            logger.info(f"User registered successfully: {request.username}")
-            
-            return AuthResponse(
-                access_token=access_token,
-                refresh_token=refresh_token,
-                expires_in=self.jwt_manager.access_token_expire_minutes * 60,
-                user=UserResponse(
-                    user_id=user_data['id'],
-                    username=user_data['username'],
-                    email=user_data['email'],
-                    first_name=user_data['first_name'],
-                    last_name=user_data['last_name'],
-                    phone=user_data['phone'],
-                    country=user_data['country'],
-                    role=user_role.value,
-                    is_active=user_data['is_active'],
-                    kyc_status=user_data['kyc_status'],
-                    created_at=user_data['created_at'],
-                    updated_at=user_data['updated_at']
-                )
-            )
-            
-        except HTTPException:
-            raise
-        except Exception as e:
-            logger.error(f"Failed to register user: {e}")
+        
+        return {
+            'message': 'Logout successful'
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error in user logout: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Logout failed"
+        )
+
+
+@router.get("/me", response_model=UserResponse)
+async def get_current_user_info(
+    request: Request,
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+) -> UserResponse:
+    """
+    Get current user information.
+    
+    Args:
+        request: HTTP request
+        credentials: HTTP authorization credentials
+        
+    Returns:
+        Current user information
+        
+    Raises:
+        HTTPException: If user not found
+    """
+    try:
+        # Get auth manager from app state
+        auth_manager: AuthManager = request.app.state.auth_manager
+        
+        # Verify token
+        result = await auth_manager.verify_token(credentials.credentials)
+        
+        if result['status'] == 'error':
             raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Internal server error"
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail=result['message']
             )
+        
+        user_info = result['user']
+        
+        return UserResponse(
+            id=user_info['id'],
+            email=user_info['email'],
+            username=user_info['username'],
+            first_name=user_info.get('first_name', ''),
+            last_name=user_info.get('last_name', ''),
+            role=user_info['role'],
+            is_active=True,  # If token is valid, user is active
+            is_verified=True,  # Simplified
+            created_at=datetime.utcnow(),  # Simplified
+            last_login=datetime.utcnow()
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting user info: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to get user information"
+        )
+
+
+@router.post("/change-password", response_model=Dict[str, str])
+async def change_password(
+    password_data: PasswordChange,
+    request: Request,
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+) -> Dict[str, str]:
+    """
+    Change user password.
     
-    @router.post("/login", response_model=AuthResponse)
-    async def login_user(self, request: UserLoginRequest) -> AuthResponse:
-        """Login user with username/email and password."""
-        try:
-            # Find user by username or email
-            user_query = """
-            SELECT * FROM users 
-            WHERE (username = :identifier OR email = :identifier) 
-            AND is_active = true
-            """
-            
-            user_result = await self.database_manager.execute_query(
-                user_query, 
-                {"identifier": request.username}
-            )
-            
-            if 'error' in user_result:
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail="Database error during login"
-                )
-            
-            if not user_result['query_result']['data']:
+    Args:
+        password_data: Password change data
+        request: HTTP request
+        credentials: HTTP authorization credentials
+        
+    Returns:
+        Password change confirmation
+        
+    Raises:
+        HTTPException: If password change fails
+    """
+    try:
+        # Get auth manager from app state
+        auth_manager: AuthManager = request.app.state.auth_manager
+        
+        # Verify token and get user ID
+        result = await auth_manager.verify_token(credentials.credentials)
+        
+        if result['status'] == 'error':
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid credentials"
-                )
-            
-            user_data = user_result['query_result']['data'][0]
-            
-            # Verify password
-            if not self.jwt_manager.verify_password(request.password, user_data['password_hash']):
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid credentials"
-                )
-            
-            # Determine user role
-            user_role = UserRole.ADMIN if user_data['is_admin'] else UserRole.INVESTOR
-            permissions = self.jwt_manager.get_user_permissions(user_role)
-            
-            # Create tokens
-            access_token = self.jwt_manager.create_access_token(
-                user_id=user_data['id'],
-                username=user_data['username'],
-                email=user_data['email'],
-                role=user_role,
-                permissions=permissions
+                detail=result['message']
             )
-            
-            refresh_token = self.jwt_manager.create_refresh_token(
-                user_id=user_data['id'],
-                username=user_data['username'],
-                email=user_data['email'],
-                role=user_role,
-                permissions=permissions
-            )
-            
-            logger.info(f"User logged in successfully: {user_data['username']}")
-            
-            return AuthResponse(
-                access_token=access_token,
-                refresh_token=refresh_token,
-                expires_in=self.jwt_manager.access_token_expire_minutes * 60,
-                user=UserResponse(
-                    user_id=user_data['id'],
-                    username=user_data['username'],
-                    email=user_data['email'],
-                    first_name=user_data['first_name'],
-                    last_name=user_data['last_name'],
-                    phone=user_data['phone'],
-                    country=user_data['country'],
-                    role=user_role.value,
-                    is_active=user_data['is_active'],
-                    kyc_status=user_data['kyc_status'],
-                    created_at=user_data['created_at'],
-                    updated_at=user_data['updated_at']
-                )
-            )
-            
-        except HTTPException:
-            raise
-        except Exception as e:
-            logger.error(f"Failed to login user: {e}")
+        
+        user_id = result['user']['id']
+        
+        # Change password
+        change_result = await auth_manager.change_password(
+            user_id,
+            password_data.old_password,
+            password_data.new_password
+        )
+        
+        if change_result['status'] == 'error':
             raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Internal server error"
-            )
-    
-    @router.post("/refresh", response_model=Dict[str, Any])
-    async def refresh_token(self, request: TokenRefreshRequest) -> Dict[str, Any]:
-        """Refresh access token using refresh token."""
-        try:
-            new_access_token = self.jwt_manager.refresh_access_token(request.refresh_token)
-            
-            if not new_access_token:
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid or expired refresh token"
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=change_result['message']
                 )
             
             return {
-                "access_token": new_access_token,
-                "token_type": "bearer",
-                "expires_in": self.jwt_manager.access_token_expire_minutes * 60
+                'message': 'Password changed successfully'
             }
             
-        except HTTPException:
-            raise
-        except Exception as e:
-            logger.error(f"Failed to refresh token: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Internal server error"
-            )
-    
-    @router.post("/logout")
-    async def logout_user(
-        self, 
-        current_user: Dict[str, Any] = Depends(get_current_user),
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error changing password: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Password change failed"
+        )
+
+
+@router.get("/permissions", response_model=Dict[str, Any])
+async def get_user_permissions(
+    request: Request,
         credentials: HTTPAuthorizationCredentials = Depends(security)
     ) -> Dict[str, Any]:
-        """Logout user by blacklisting the token."""
-        try:
-            token = credentials.credentials
-            success = self.jwt_manager.blacklist_token(token)
-            
-            if not success:
+    """
+    Get user permissions.
+    
+    Args:
+        request: HTTP request
+        credentials: HTTP authorization credentials
+        
+    Returns:
+        User permissions
+        
+    Raises:
+        HTTPException: If permissions retrieval fails
+    """
+    try:
+        # Get auth manager from app state
+        auth_manager: AuthManager = request.app.state.auth_manager
+        
+        # Verify token and get user ID
+        result = await auth_manager.verify_token(credentials.credentials)
+        
+        if result['status'] == 'error':
                 raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail="Failed to logout"
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail=result['message']
                 )
             
-            logger.info(f"User logged out successfully: {current_user['username']}")
+        user_id = result['user']['id']
+        
+        # Get user permissions
+        permissions = await auth_manager.get_user_permissions(user_id)
             
             return {
-                "message": "Successfully logged out"
+            'permissions': permissions,
+            'role': result['user']['role']
             }
             
         except HTTPException:
             raise
         except Exception as e:
-            logger.error(f"Failed to logout user: {e}")
+        logger.error(f"Error getting user permissions: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Internal server error"
-            )
+            detail="Failed to get user permissions"
+        )
+
+
+@router.post("/verify-token", response_model=Dict[str, Any])
+async def verify_token(
+    request: Request,
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+) -> Dict[str, Any]:
+    """
+    Verify token validity.
     
-    @router.get("/me", response_model=UserResponse)
-    async def get_current_user_info(
-        self, 
-        current_user: Dict[str, Any] = Depends(get_current_user)
-    ) -> UserResponse:
-        """Get current user information."""
-        try:
-            # Get full user details from database
-            user_query = "SELECT * FROM users WHERE id = :user_id"
-            user_result = await self.database_manager.execute_query(
-                user_query, 
-                {"user_id": current_user['user_id']}
-            )
-            
-            if 'error' in user_result or not user_result['query_result']['data']:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="User not found"
-                )
-            
-            user_data = user_result['query_result']['data'][0]
-            
-            return UserResponse(
-                user_id=user_data['id'],
-                username=user_data['username'],
-                email=user_data['email'],
-                first_name=user_data['first_name'],
-                last_name=user_data['last_name'],
-                phone=user_data['phone'],
-                country=user_data['country'],
-                role=current_user['role'].value,
-                is_active=user_data['is_active'],
-                kyc_status=user_data['kyc_status'],
-                created_at=user_data['created_at'],
-                updated_at=user_data['updated_at']
-            )
-            
-        except HTTPException:
-            raise
-        except Exception as e:
-            logger.error(f"Failed to get user info: {e}")
+    Args:
+        request: HTTP request
+        credentials: HTTP authorization credentials
+        
+    Returns:
+        Token verification result
+        
+    Raises:
+        HTTPException: If token verification fails
+    """
+    try:
+        # Get auth manager from app state
+        auth_manager: AuthManager = request.app.state.auth_manager
+        
+        # Verify token
+        result = await auth_manager.verify_token(credentials.credentials)
+        
+        if result['status'] == 'error':
             raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Internal server error"
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail=result['message']
             )
-    
-    @router.post("/change-password")
-    async def change_password(
-        self,
-        request: ChangePasswordRequest,
-        current_user: Dict[str, Any] = Depends(get_current_user)
-    ) -> Dict[str, Any]:
-        """Change user password."""
-        try:
-            # Validate new password
-            password_errors = self._validate_password(request.new_password)
-            if password_errors:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"Password validation failed: {', '.join(password_errors)}"
-                )
-            
-            # Get current user data
-            user_query = "SELECT password_hash FROM users WHERE id = :user_id"
-            user_result = await self.database_manager.execute_query(
-                user_query, 
-                {"user_id": current_user['user_id']}
-            )
-            
-            if 'error' in user_result or not user_result['query_result']['data']:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="User not found"
-                )
-            
-            current_password_hash = user_result['query_result']['data'][0]['password_hash']
-            
-            # Verify current password
-            if not self.jwt_manager.verify_password(request.current_password, current_password_hash):
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Current password is incorrect"
-                )
-            
-            # Hash new password
-            new_password_hash = self.jwt_manager.hash_password(request.new_password)
-            
-            # Update password
-            update_query = """
-            UPDATE users 
-            SET password_hash = :new_password_hash, updated_at = CURRENT_TIMESTAMP
-            WHERE id = :user_id
-            """
-            
-            update_result = await self.database_manager.execute_query(
-                update_query, 
-                {
-                    "new_password_hash": new_password_hash,
-                    "user_id": current_user['user_id']
-                }
-            )
-            
-            if 'error' in update_result:
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail=f"Failed to update password: {update_result['error']}"
-                )
-            
-            logger.info(f"Password changed successfully for user: {current_user['username']}")
             
             return {
-                "message": "Password changed successfully"
+            'valid': True,
+            'user': result['user']
             }
             
         except HTTPException:
             raise
         except Exception as e:
-            logger.error(f"Failed to change password: {e}")
+        logger.error(f"Error verifying token: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Internal server error"
-            )
-
-
-# Create router instance
-def create_auth_api_router(database_manager, jwt_manager: JWTManager) -> APIRouter:
-    """Create and configure the authentication API router."""
-    api = AuthAPI(database_manager, jwt_manager)
-    
-    # Add the router methods to the router
-    router.add_api_route("/register", api.register_user, methods=["POST"])
-    router.add_api_route("/login", api.login_user, methods=["POST"])
-    router.add_api_route("/refresh", api.refresh_token, methods=["POST"])
-    router.add_api_route("/logout", api.logout_user, methods=["POST"])
-    router.add_api_route("/me", api.get_current_user_info, methods=["GET"])
-    router.add_api_route("/change-password", api.change_password, methods=["POST"])
-    
-    return router
+            detail="Token verification failed"
+        )
