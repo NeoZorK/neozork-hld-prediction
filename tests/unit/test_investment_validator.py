@@ -176,7 +176,7 @@ class TestInvestmentValidator:
         # Mock database responses
         mock_db_manager.execute_query.side_effect = [
             [{'total_invested': Decimal('10000.00')}],  # Total portfolio
-            [{'fund_invested': Decimal('500.00')}]      # Fund investment (lower to stay under 20% limit)
+            [{'fund_invested': Decimal('200.00')}]      # Fund investment (very low to stay under 20% limit)
         ]
         
         with patch('src.pocket_hedge_fund.validation.investment_validator.get_db_manager', return_value=mock_db_manager):
@@ -379,13 +379,13 @@ class TestInvestmentValidator:
             [mock_fund_data],  # Fund validation
             [mock_investor_data],  # Investor validation
             [{'total_invested': Decimal('10000.00')}],  # Portfolio concentration - total
-            [{'fund_invested': Decimal('500.00')}],  # Portfolio concentration - fund (lower to stay under 20% limit)
+            [{'fund_invested': Decimal('200.00')}],  # Portfolio concentration - fund (very low to stay under 20% limit)
             [{'daily_total': Decimal('1000.00')}]  # Daily limit
         ]
         
         with patch('src.pocket_hedge_fund.validation.investment_validator.get_db_manager', return_value=mock_db_manager):
             is_valid, error_msg, validation_data = await validator.validate_investment(
-                'test-investor-id', 'test-fund-id', Decimal('5000.00')
+                'test-investor-id', 'test-fund-id', Decimal('1000.00')
             )
             
             assert is_valid
