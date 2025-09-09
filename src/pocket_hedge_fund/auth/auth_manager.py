@@ -333,7 +333,7 @@ class AuthenticationManager:
                 return False, "Invalid email or password", None
             
             user = users[0]
-            user_id = user['id']
+            user_id = str(user['id'])
             
             # Check if user is active
             if not user['is_active']:
@@ -386,7 +386,7 @@ class AuthenticationManager:
                 'access_token': access_token,
                 'refresh_token': refresh_token,
                 'user': {
-                    'id': user_id,
+                    'id': str(user_id),
                     'email': user['email'],
                     'username': user['username'],
                     'first_name': user['first_name'],
