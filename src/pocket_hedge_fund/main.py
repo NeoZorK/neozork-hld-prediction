@@ -228,11 +228,15 @@ from .api.auth_api_simple import router as auth_router
 from .api.fund_api import router as fund_router
 from .api.portfolio_api import router as portfolio_router
 from .api.performance_api import router as performance_router
+from .api.data_api import router as data_router
+from .api.portfolio_api_enhanced import router as enhanced_portfolio_router
 
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(fund_router, prefix="/api/v1")
 app.include_router(portfolio_router, prefix="/api/v1")
 app.include_router(performance_router, prefix="/api/v1")
+app.include_router(data_router, prefix="/api/v1")
+app.include_router(enhanced_portfolio_router, prefix="/api/v1")
 
 
 # Custom OpenAPI schema
