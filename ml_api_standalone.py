@@ -10,6 +10,8 @@ import asyncio
 import logging
 import sys
 import os
+import json
+import numpy as np
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 from datetime import datetime
@@ -21,6 +23,19 @@ from fastapi import FastAPI, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
+
+# Custom JSON encoder to handle NaN values
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            if np.isnan(obj):
+                return None
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super(NumpyEncoder, self).default(obj)
 
 # Import our ML modules
 from pocket_hedge_fund.ml.price_predictor import PricePredictor
