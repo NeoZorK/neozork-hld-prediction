@@ -20,6 +20,7 @@ from sqlalchemy import text
 
 from ..database.connection import get_db_manager
 from ..auth.auth_manager import get_auth_manager, get_current_user
+from ..validation import get_investment_validator
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -100,45 +101,27 @@ async def create_investment(
                 detail="Requires investor role"
             )
         
+        # Comprehensive validation using InvestmentValidator
+        validator = await get_investment_validator()
+        is_valid, error_msg, validation_data = await validator.validate_investment(
+            investor_id=current_user['id'],
+            fund_id=investment_data.fund_id,
+            amount=Decimal(str(investment_data.amount))
+        )
+        
+        if not is_valid:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Investment validation failed: {error_msg}"
+            )
+        
+        # Log validation data for audit
+        logger.info(f"Investment validation passed for user {current_user['id']}: {validation_data}")
+        
         db_manager = await get_db_manager()
-        
-        # Validate fund exists and is open for investment
-        fund_query = """
-            SELECT * FROM funds WHERE id = $1
-        """
-        funds = await db_manager.execute_query(fund_query, {'1': investment_data.fund_id})
-        
-        if not funds:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Fund not found"
-            )
-        
-        fund = funds[0]
-        
-        # Check if fund is open for investment
-        if fund['status'] != 'active':
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Fund is not open for investment"
-            )
-        
-        # Check minimum investment amount
-        if investment_data.amount < fund['min_investment']:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Investment amount must be at least ${fund['min_investment']}"
-            )
-        
-        # Check maximum investment amount if specified
-        if fund['max_investment'] and investment_data.amount > fund['max_investment']:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Investment amount cannot exceed ${fund['max_investment']}"
-            )
+        fund = validation_data['fund']
         
         # Calculate share price and shares acquired
-        from decimal import Decimal
         share_price = float(fund['current_value']) / float(fund['initial_capital']) if fund['initial_capital'] > 0 else 1.0
         shares_acquired = float(investment_data.amount) / share_price
         
