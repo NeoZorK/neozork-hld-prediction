@@ -294,11 +294,30 @@ class InvestmentValidator:
             investor = validation_data.get('investor', {})
             created_at = investor.get('created_at')
             if created_at:
-                days_since_creation = (datetime.now() - datetime.fromisoformat(created_at.replace('Z', '+00:00'))).days
-                if days_since_creation < 30:
+                try:
+                    # Handle different datetime formats
+                    if isinstance(created_at, str):
+                        if 'T' in created_at:
+                            # ISO format
+                            if created_at.endswith('Z'):
+                                created_at = created_at.replace('Z', '+00:00')
+                            dt = datetime.fromisoformat(created_at)
+                        else:
+                            # Simple date format
+                            dt = datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S')
+                    else:
+                        # Already a datetime object
+                        dt = created_at
+                    
+                    days_since_creation = (datetime.now() - dt).days
+                    if days_since_creation < 30:
+                        risk_score += 15
+                    elif days_since_creation < 90:
+                        risk_score += 10
+                except Exception as e:
+                    logger.warning(f"Could not parse created_at: {created_at}, error: {e}")
+                    # Default to new investor risk
                     risk_score += 15
-                elif days_since_creation < 90:
-                    risk_score += 10
             
             return min(risk_score, 100.0)
             
