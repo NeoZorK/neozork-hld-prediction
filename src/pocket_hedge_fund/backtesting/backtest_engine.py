@@ -209,6 +209,9 @@ class BacktestEngine:
         for symbol, data in symbol_data.items():
             try:
                 # Filter data for training period
+                # Ensure index is datetime
+                if not isinstance(data.index, pd.DatetimeIndex):
+                    data.index = pd.to_datetime(data.index)
                 train_data = data[(data.index >= start_date) & (data.index < end_date)]
                 
                 if len(train_data) < 50:  # Need minimum data for training
@@ -238,6 +241,9 @@ class BacktestEngine:
             
             try:
                 # Filter data for test period
+                # Ensure index is datetime
+                if not isinstance(data.index, pd.DatetimeIndex):
+                    data.index = pd.to_datetime(data.index)
                 test_data = data[(data.index >= start_date) & (data.index < end_date)]
                 
                 if test_data.empty:
