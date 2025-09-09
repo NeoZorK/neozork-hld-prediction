@@ -22,6 +22,7 @@ from sqlalchemy import text
 from ..database.connection import get_db_manager
 from ..database.models import Fund, FundType, FundStatus, RiskLevel
 from ..auth.auth_manager import get_auth_manager, AuthenticationManager
+from ..validation import get_fund_validator
 
 logger = logging.getLogger(__name__)
 

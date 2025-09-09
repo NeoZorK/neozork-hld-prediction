@@ -27,6 +27,7 @@ from jwt.exceptions import InvalidTokenError, ExpiredSignatureError
 
 from ..database.connection import get_db_manager
 from ..database.models import User, UserRole, APIKey, AuditLog
+from ..validation import get_user_validator
 
 from fastapi import HTTPException, Depends, status
 from fastapi.security import HTTPBearer
