@@ -51,6 +51,20 @@ CREATE TABLE IF NOT EXISTS funds (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Investments table
+CREATE TABLE IF NOT EXISTS investments (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    investor_id UUID REFERENCES users(id) NOT NULL,
+    fund_id UUID REFERENCES funds(id) NOT NULL,
+    amount DECIMAL(20, 8) NOT NULL,
+    investment_type VARCHAR(50) DEFAULT 'lump_sum',
+    status VARCHAR(50) DEFAULT 'active',
+    shares_acquired DECIMAL(20, 8) NOT NULL,
+    share_price DECIMAL(20, 8) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Investors table
 CREATE TABLE IF NOT EXISTS investors (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
