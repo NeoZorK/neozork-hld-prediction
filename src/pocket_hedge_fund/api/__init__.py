@@ -9,14 +9,8 @@ __version__ = "1.0.0"
 __author__ = "NeoZork Team"
 
 # Import API components
-from .fund_api import FundAPI
-from .portfolio_api import PortfolioAPI
-from .auth_api_simple import AuthAPI
-from .performance_api import PerformanceAPI
+from .fund_api import router as fund_router
 
 __all__ = [
-    "FundAPI",
-    "PortfolioAPI", 
-    "AuthAPI",
-    "PerformanceAPI"
+    "fund_router"
 ]

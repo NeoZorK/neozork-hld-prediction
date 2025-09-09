@@ -212,6 +212,12 @@ END;
 $$ language 'plpgsql';
 
 -- Create triggers for updated_at
+DROP TRIGGER IF EXISTS update_users_updated_at ON users;
+DROP TRIGGER IF EXISTS update_funds_updated_at ON funds;
+DROP TRIGGER IF EXISTS update_investors_updated_at ON investors;
+DROP TRIGGER IF EXISTS update_portfolio_positions_updated_at ON portfolio_positions;
+DROP TRIGGER IF EXISTS update_trading_strategies_updated_at ON trading_strategies;
+
 CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_funds_updated_at BEFORE UPDATE ON funds FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_investors_updated_at BEFORE UPDATE ON investors FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
