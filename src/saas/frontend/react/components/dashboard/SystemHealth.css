@@ -1,0 +1,226 @@
+/**
+ * System Health Component Styles
+ * 
+ * CSS styles for the system health component.
+ */
+
+/* ============================================================================
+   SYSTEM HEALTH
+   ============================================================================ */
+
+.system-health {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.system-health__header {
+  margin-bottom: 1rem;
+}
+
+.system-health__status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.system-health__icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.system-health__label {
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.system-health__metrics {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.system-health__metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.system-health__metric:last-child {
+  border-bottom: none;
+}
+
+.metric__label {
+  font-size: 0.875rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.metric__value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.system-health__footer {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.system-health__refresh {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.25rem 0;
+  transition: color 0.2s ease-in-out;
+}
+
+.system-health__refresh:hover {
+  color: #2563eb;
+}
+
+.system-health-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  text-align: center;
+}
+
+.system-health-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  text-align: center;
+  color: #ef4444;
+}
+
+/* ============================================================================
+   SYSTEM HEALTH VARIANTS
+   ============================================================================ */
+
+.system-health--healthy {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+}
+
+.system-health--healthy .system-health__label {
+  color: #10b981;
+}
+
+.system-health--warning {
+  border-color: #f59e0b;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+}
+
+.system-health--warning .system-health__label {
+  color: #f59e0b;
+}
+
+.system-health--critical {
+  border-color: #ef4444;
+  background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+}
+
+.system-health--critical .system-health__label {
+  color: #ef4444;
+}
+
+.system-health--unknown {
+  border-color: #6b7280;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+}
+
+.system-health--unknown .system-health__label {
+  color: #6b7280;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .system-health {
+    padding: 0.75rem;
+  }
+  
+  .system-health__metrics {
+    gap: 0.5rem;
+  }
+  
+  .system-health__metric {
+    padding: 0.375rem 0;
+  }
+  
+  .metric__label,
+  .metric__value {
+    font-size: 0.75rem;
+  }
+}
+
+/* ============================================================================
+   DARK MODE SUPPORT
+   ============================================================================ */
+
+@media (prefers-color-scheme: dark) {
+  .system-health {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+  }
+  
+  .system-health__metric {
+    border-bottom-color: #475569;
+  }
+  
+  .system-health__footer {
+    border-top-color: #475569;
+  }
+  
+  .metric__label {
+    color: #94a3b8;
+  }
+  
+  .metric__value {
+    color: #f1f5f9;
+  }
+  
+  .system-health__refresh {
+    color: #60a5fa;
+  }
+  
+  .system-health__refresh:hover {
+    color: #93c5fd;
+  }
+  
+  .system-health--healthy {
+    background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+  }
+  
+  .system-health--warning {
+    background: linear-gradient(135deg, #78350f 0%, #92400e 100%);
+  }
+  
+  .system-health--critical {
+    background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
+  }
+  
+  .system-health--unknown {
+    background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+  }
+}
