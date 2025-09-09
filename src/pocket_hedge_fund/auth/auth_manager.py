@@ -671,6 +671,8 @@ class AuthenticationManager:
                 ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
             """
             
+            import json
+            
             await db_manager.execute_command(
                 log_query,
                 {
@@ -679,8 +681,8 @@ class AuthenticationManager:
                     'action': action,
                     'resource_type': resource_type,
                     'resource_id': resource_id,
-                    'old_values': old_values,
-                    'new_values': new_values,
+                    'old_values': json.dumps(old_values) if old_values else None,
+                    'new_values': json.dumps(new_values) if new_values else None,
                     'ip_address': ip_address,
                     'user_agent': user_agent,
                     'created_at': datetime.utcnow()
