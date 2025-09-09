@@ -29,6 +29,7 @@ from src.pocket_hedge_fund.api.fund_api import router as fund_router
 from src.pocket_hedge_fund.api.investment_api import router as investment_router
 from src.pocket_hedge_fund.api.portfolio_api import router as portfolio_router
 from src.pocket_hedge_fund.api.returns_api import router as returns_router
+from src.pocket_hedge_fund.api.web_api import router as web_router
 
 # Configure logging
 logging.basicConfig(
@@ -123,6 +124,7 @@ class PocketHedgeFundApp:
         self.app.include_router(investment_router)
         self.app.include_router(portfolio_router)
         self.app.include_router(returns_router)
+        self.app.include_router(web_router)
         
         # Authentication endpoints
         @self.app.post("/api/v1/auth/register")
