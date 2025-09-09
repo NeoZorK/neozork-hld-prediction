@@ -14,6 +14,7 @@ from fastapi import FastAPI
 
 from src.pocket_hedge_fund.api.investment_api import router
 from src.pocket_hedge_fund.validation.investment_validator import InvestmentValidator
+from src.pocket_hedge_fund.api.investment_api import get_current_user
 
 
 class TestInvestmentAPI:
@@ -64,6 +65,13 @@ class TestInvestmentAPI:
                     'current_value': Decimal('100000.00'),
                     'initial_capital': Decimal('100000.00')
                 },
+                'investor': {
+                    'id': 'test-user-id',
+                    'username': 'testuser',
+                    'email': 'test@example.com',
+                    'role': 'investor',
+                    'is_active': True
+                },
                 'risk_score': 25.0
             }
         )
@@ -72,9 +80,11 @@ class TestInvestmentAPI:
         mock_db_manager.execute_command.return_value = None
         mock_db_manager.execute_query.return_value = [{'id': 'new-investment-id'}]
         
+        # Override dependencies
+        client.app.dependency_overrides[get_current_user] = lambda: mock_current_user
+        
         with patch('src.pocket_hedge_fund.api.investment_api.get_investment_validator', return_value=mock_validator), \
-             patch('src.pocket_hedge_fund.api.investment_api.get_db_manager', return_value=mock_db_manager), \
-             patch('src.pocket_hedge_fund.api.investment_api.get_current_user', return_value=mock_current_user):
+             patch('src.pocket_hedge_fund.api.investment_api.get_db_manager', return_value=mock_db_manager):
             
             response = client.post("/api/v1/investments/", json=sample_investment_request)
             
@@ -84,6 +94,9 @@ class TestInvestmentAPI:
             assert 'investment' in data
             assert data['investment']['fund_id'] == 'test-fund-id'
             assert data['investment']['amount'] == 5000.00
+        
+        # Clean up
+        client.app.dependency_overrides.clear()
     
     @pytest.mark.asyncio
     async def test_create_investment_validation_failed(self, client, mock_current_user, sample_investment_request):
@@ -96,8 +109,10 @@ class TestInvestmentAPI:
             {}
         )
         
-        with patch('src.pocket_hedge_fund.api.investment_api.get_investment_validator', return_value=mock_validator), \
-             patch('src.pocket_hedge_fund.api.investment_api.get_current_user', return_value=mock_current_user):
+        # Override dependencies
+        client.app.dependency_overrides[get_current_user] = lambda: mock_current_user
+        
+        with patch('src.pocket_hedge_fund.api.investment_api.get_investment_validator', return_value=mock_validator):
             
             response = client.post("/api/v1/investments/", json=sample_investment_request)
             
@@ -105,6 +120,9 @@ class TestInvestmentAPI:
             data = response.json()
             assert 'detail' in data
             assert "Investment validation failed" in data['detail']
+        
+        # Clean up
+        client.app.dependency_overrides.clear()
     
     @pytest.mark.asyncio
     async def test_create_investment_unauthorized_role(self, client, sample_investment_request):
@@ -116,13 +134,18 @@ class TestInvestmentAPI:
             'role': 'guest'  # Unauthorized role
         }
         
-        with patch('src.pocket_hedge_fund.api.investment_api.get_current_user', return_value=mock_current_user):
-            response = client.post("/api/v1/investments/", json=sample_investment_request)
-            
-            assert response.status_code == 403
-            data = response.json()
-            assert 'detail' in data
-            assert "Requires investor role" in data['detail']
+        # Override dependencies
+        client.app.dependency_overrides[get_current_user] = lambda: mock_current_user
+        
+        response = client.post("/api/v1/investments/", json=sample_investment_request)
+        
+        assert response.status_code == 403
+        data = response.json()
+        assert 'detail' in data
+        assert "Requires investor role" in data['detail']
+        
+        # Clean up
+        client.app.dependency_overrides.clear()
     
     @pytest.mark.asyncio
     async def test_get_investments_success(self, client, mock_current_user):
@@ -130,27 +153,37 @@ class TestInvestmentAPI:
         mock_investments = [
             {
                 'id': 'investment-1',
+                'investor_id': 'test-user-id',
                 'fund_id': 'fund-1',
                 'amount': Decimal('5000.00'),
+                'investment_type': 'buy',
                 'shares_acquired': Decimal('50.00'),
+                'share_price': Decimal('100.00'),
                 'status': 'active',
-                'created_at': '2025-01-01T00:00:00Z'
+                'created_at': '2025-01-01T00:00:00Z',
+                'updated_at': '2025-01-01T00:00:00Z'
             },
             {
                 'id': 'investment-2',
+                'investor_id': 'test-user-id',
                 'fund_id': 'fund-2',
                 'amount': Decimal('3000.00'),
+                'investment_type': 'buy',
                 'shares_acquired': Decimal('30.00'),
+                'share_price': Decimal('100.00'),
                 'status': 'active',
-                'created_at': '2025-01-02T00:00:00Z'
+                'created_at': '2025-01-02T00:00:00Z',
+                'updated_at': '2025-01-02T00:00:00Z'
             }
         ]
         
         mock_db_manager = AsyncMock()
         mock_db_manager.execute_query.return_value = mock_investments
         
-        with patch('src.pocket_hedge_fund.api.investment_api.get_db_manager', return_value=mock_db_manager), \
-             patch('src.pocket_hedge_fund.api.investment_api.get_current_user', return_value=mock_current_user):
+        # Override dependencies
+        client.app.dependency_overrides[get_current_user] = lambda: mock_current_user
+        
+        with patch('src.pocket_hedge_fund.api.investment_api.get_db_manager', return_value=mock_db_manager):
             
             response = client.get("/api/v1/investments/")
             
@@ -160,24 +193,33 @@ class TestInvestmentAPI:
             assert len(data['investments']) == 2
             assert data['investments'][0]['id'] == 'investment-1'
             assert data['investments'][1]['id'] == 'investment-2'
+        
+        # Clean up
+        client.app.dependency_overrides.clear()
     
     @pytest.mark.asyncio
     async def test_get_investment_by_id_success(self, client, mock_current_user):
         """Test successful retrieval of specific investment."""
         mock_investment = {
             'id': 'investment-1',
+            'investor_id': 'test-user-id',
             'fund_id': 'fund-1',
             'amount': Decimal('5000.00'),
+            'investment_type': 'buy',
             'shares_acquired': Decimal('50.00'),
+            'share_price': Decimal('100.00'),
             'status': 'active',
-            'created_at': '2025-01-01T00:00:00Z'
+            'created_at': '2025-01-01T00:00:00Z',
+            'updated_at': '2025-01-01T00:00:00Z'
         }
         
         mock_db_manager = AsyncMock()
         mock_db_manager.execute_query.return_value = [mock_investment]
         
-        with patch('src.pocket_hedge_fund.api.investment_api.get_db_manager', return_value=mock_db_manager), \
-             patch('src.pocket_hedge_fund.api.investment_api.get_current_user', return_value=mock_current_user):
+        # Override dependencies
+        client.app.dependency_overrides[get_current_user] = lambda: mock_current_user
+        
+        with patch('src.pocket_hedge_fund.api.investment_api.get_db_manager', return_value=mock_db_manager):
             
             response = client.get("/api/v1/investments/investment-1")
             
@@ -186,6 +228,9 @@ class TestInvestmentAPI:
             assert data['id'] == 'investment-1'
             assert data['amount'] == 5000.00
             assert data['shares_acquired'] == 50.00
+        
+        # Clean up
+        client.app.dependency_overrides.clear()
     
     @pytest.mark.asyncio
     async def test_get_investment_by_id_not_found(self, client, mock_current_user):
@@ -193,8 +238,10 @@ class TestInvestmentAPI:
         mock_db_manager = AsyncMock()
         mock_db_manager.execute_query.return_value = []
         
-        with patch('src.pocket_hedge_fund.api.investment_api.get_db_manager', return_value=mock_db_manager), \
-             patch('src.pocket_hedge_fund.api.investment_api.get_current_user', return_value=mock_current_user):
+        # Override dependencies
+        client.app.dependency_overrides[get_current_user] = lambda: mock_current_user
+        
+        with patch('src.pocket_hedge_fund.api.investment_api.get_db_manager', return_value=mock_db_manager):
             
             response = client.get("/api/v1/investments/non-existent-id")
             
@@ -202,6 +249,9 @@ class TestInvestmentAPI:
             data = response.json()
             assert 'detail' in data
             assert "Investment not found" in data['detail']
+        
+        # Clean up
+        client.app.dependency_overrides.clear()
     
     @pytest.mark.asyncio
     async def test_get_investment_by_id_unauthorized(self, client):
@@ -218,16 +268,21 @@ class TestInvestmentAPI:
             'investor_id': 'different-user-id',  # Different investor
             'fund_id': 'fund-1',
             'amount': Decimal('5000.00'),
+            'investment_type': 'buy',
             'shares_acquired': Decimal('50.00'),
+            'share_price': Decimal('100.00'),
             'status': 'active',
-            'created_at': '2025-01-01T00:00:00Z'
+            'created_at': '2025-01-01T00:00:00Z',
+            'updated_at': '2025-01-01T00:00:00Z'
         }
         
         mock_db_manager = AsyncMock()
         mock_db_manager.execute_query.return_value = [mock_investment]
         
-        with patch('src.pocket_hedge_fund.api.investment_api.get_db_manager', return_value=mock_db_manager), \
-             patch('src.pocket_hedge_fund.api.investment_api.get_current_user', return_value=mock_current_user):
+        # Override dependencies
+        client.app.dependency_overrides[get_current_user] = lambda: mock_current_user
+        
+        with patch('src.pocket_hedge_fund.api.investment_api.get_db_manager', return_value=mock_db_manager):
             
             response = client.get("/api/v1/investments/investment-1")
             
@@ -235,6 +290,9 @@ class TestInvestmentAPI:
             data = response.json()
             assert 'detail' in data
             assert "Access denied" in data['detail']
+        
+        # Clean up
+        client.app.dependency_overrides.clear()
     
     @pytest.mark.asyncio
     async def test_create_investment_invalid_amount(self, client, mock_current_user):
@@ -244,11 +302,17 @@ class TestInvestmentAPI:
             'amount': -1000.00  # Negative amount
         }
         
+        # Override dependencies
+        client.app.dependency_overrides[get_current_user] = lambda: mock_current_user
+        
         response = client.post("/api/v1/investments/", json=invalid_request)
         
         assert response.status_code == 422  # Validation error
         data = response.json()
         assert 'detail' in data
+        
+        # Clean up
+        client.app.dependency_overrides.clear()
     
     @pytest.mark.asyncio
     async def test_create_investment_missing_fields(self, client, mock_current_user):
@@ -258,11 +322,17 @@ class TestInvestmentAPI:
             # Missing amount field
         }
         
+        # Override dependencies
+        client.app.dependency_overrides[get_current_user] = lambda: mock_current_user
+        
         response = client.post("/api/v1/investments/", json=incomplete_request)
         
         assert response.status_code == 422  # Validation error
         data = response.json()
         assert 'detail' in data
+        
+        # Clean up
+        client.app.dependency_overrides.clear()
     
     @pytest.mark.asyncio
     async def test_create_investment_database_error(self, client, mock_current_user, sample_investment_request):
@@ -287,9 +357,11 @@ class TestInvestmentAPI:
         mock_db_manager = AsyncMock()
         mock_db_manager.execute_command.side_effect = Exception("Database connection failed")
         
+        # Override dependencies
+        client.app.dependency_overrides[get_current_user] = lambda: mock_current_user
+        
         with patch('src.pocket_hedge_fund.api.investment_api.get_investment_validator', return_value=mock_validator), \
-             patch('src.pocket_hedge_fund.api.investment_api.get_db_manager', return_value=mock_db_manager), \
-             patch('src.pocket_hedge_fund.api.investment_api.get_current_user', return_value=mock_current_user):
+             patch('src.pocket_hedge_fund.api.investment_api.get_db_manager', return_value=mock_db_manager):
             
             response = client.post("/api/v1/investments/", json=sample_investment_request)
             
@@ -297,3 +369,6 @@ class TestInvestmentAPI:
             data = response.json()
             assert 'detail' in data
             assert "Investment creation failed" in data['detail']
+        
+        # Clean up
+        client.app.dependency_overrides.clear()
