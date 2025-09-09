@@ -16,7 +16,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.pocket_hedge_fund.main import main
+from src.pocket_hedge_fund.main import app
 
 # Configure logging
 logging.basicConfig(
@@ -100,7 +100,14 @@ if __name__ == "__main__":
         print_startup_info()
         
         # Run the application
-        asyncio.run(main())
+        import uvicorn
+        uvicorn.run(
+            "src.pocket_hedge_fund.main:app",
+            host=os.getenv('HOST', '0.0.0.0'),
+            port=int(os.getenv('PORT', '8080')),
+            reload=False,
+            log_level="info"
+        )
         
     except KeyboardInterrupt:
         logger.info("Application interrupted by user")

@@ -135,6 +135,8 @@ async def get_portfolio_return(
                 detail=result["error"]
             )
         
+        # Convert UUID to string
+        result['investor_id'] = str(result['investor_id'])
         return PortfolioReturnResponse(**result)
         
     except HTTPException:
@@ -188,6 +190,8 @@ async def get_risk_metrics(
                 detail=result["error"]
             )
         
+        # Convert UUID to string
+        result['investor_id'] = str(result['investor_id'])
         return RiskMetricsResponse(**result)
         
     except HTTPException:
