@@ -11,7 +11,8 @@ from datetime import datetime, timedelta
 
 from fastapi import APIRouter, HTTPException, status, Depends, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import BaseModel, validator
+from email_validator import validate_email, EmailNotValidError
 
 from ..auth import AuthManager
 from ..database import DatabaseManager
@@ -29,7 +30,7 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 class UserRegistration(BaseModel):
     """User registration request model."""
-    email: EmailStr
+    email: str
     username: str
     password: str
     first_name: str
@@ -47,12 +48,28 @@ class UserRegistration(BaseModel):
         if len(v) < 3:
             raise ValueError('Username must be at least 3 characters long')
         return v
+    
+    @validator('email')
+    def validate_email(cls, v):
+        try:
+            validate_email(v)
+            return v
+        except EmailNotValidError:
+            raise ValueError('Invalid email address')
 
 
 class UserLogin(BaseModel):
     """User login request model."""
-    email: EmailStr
+    email: str
     password: str
+    
+    @validator('email')
+    def validate_email(cls, v):
+        try:
+            validate_email(v)
+            return v
+        except EmailNotValidError:
+            raise ValueError('Invalid email address')
 
 
 class TokenResponse(BaseModel):
@@ -176,8 +193,8 @@ async def login_user(
         )
         
         if result['status'] == 'error':
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
                 detail=result['message']
             )
         
@@ -191,9 +208,9 @@ async def login_user(
             user=result['user']
         )
         
-    except HTTPException:
-        raise
-    except Exception as e:
+        except HTTPException:
+            raise
+        except Exception as e:
         logger.error(f"Error in user login: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -242,8 +259,8 @@ async def refresh_token(
         raise
     except Exception as e:
         logger.error(f"Error refreshing token: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Token refresh failed"
         )
 
@@ -277,8 +294,8 @@ async def logout_user(
         result = await auth_manager.logout_user(session_id)
         
         if result['status'] == 'error':
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
                 detail=result['message']
             )
         
@@ -290,8 +307,8 @@ async def logout_user(
         raise
     except Exception as e:
         logger.error(f"Error in user logout: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Logout failed"
         )
 
@@ -340,14 +357,14 @@ async def get_current_user_info(
             is_verified=True,  # Simplified
             created_at=datetime.utcnow(),  # Simplified
             last_login=datetime.utcnow()
-        )
-        
-    except HTTPException:
-        raise
-    except Exception as e:
+            )
+            
+        except HTTPException:
+            raise
+        except Exception as e:
         logger.error(f"Error getting user info: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to get user information"
         )
 
@@ -380,8 +397,8 @@ async def change_password(
         result = await auth_manager.verify_token(credentials.credentials)
         
         if result['status'] == 'error':
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
                 detail=result['message']
             )
         
@@ -398,18 +415,18 @@ async def change_password(
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=change_result['message']
-            )
-        
-        return {
+                )
+            
+            return {
             'message': 'Password changed successfully'
-        }
-        
-    except HTTPException:
-        raise
-    except Exception as e:
+            }
+            
+        except HTTPException:
+            raise
+        except Exception as e:
         logger.error(f"Error changing password: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Password change failed"
         )
 
@@ -417,8 +434,8 @@ async def change_password(
 @router.get("/permissions", response_model=Dict[str, Any])
 async def get_user_permissions(
     request: Request,
-    credentials: HTTPAuthorizationCredentials = Depends(security)
-) -> Dict[str, Any]:
+        credentials: HTTPAuthorizationCredentials = Depends(security)
+    ) -> Dict[str, Any]:
     """
     Get user permissions.
     
@@ -440,27 +457,27 @@ async def get_user_permissions(
         result = await auth_manager.verify_token(credentials.credentials)
         
         if result['status'] == 'error':
-            raise HTTPException(
+                raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail=result['message']
-            )
-        
+                )
+            
         user_id = result['user']['id']
         
         # Get user permissions
         permissions = await auth_manager.get_user_permissions(user_id)
-        
-        return {
+            
+            return {
             'permissions': permissions,
             'role': result['user']['role']
-        }
-        
-    except HTTPException:
-        raise
-    except Exception as e:
+            }
+            
+        except HTTPException:
+            raise
+        except Exception as e:
         logger.error(f"Error getting user permissions: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to get user permissions"
         )
 
@@ -495,17 +512,17 @@ async def verify_token(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail=result['message']
             )
-        
-        return {
+            
+            return {
             'valid': True,
             'user': result['user']
-        }
-        
-    except HTTPException:
-        raise
-    except Exception as e:
+            }
+            
+        except HTTPException:
+            raise
+        except Exception as e:
         logger.error(f"Error verifying token: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Token verification failed"
         )

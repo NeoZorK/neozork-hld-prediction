@@ -8,9 +8,9 @@ for the authentication system.
 import logging
 from typing import Dict, Any, Optional
 from datetime import datetime, timedelta
-import jwt
+from jose import jwt
 import os
-from jwt.exceptions import InvalidTokenError, ExpiredSignatureError
+from jose.exceptions import JWTError, ExpiredSignatureError
 
 logger = logging.getLogger(__name__)
 
@@ -103,7 +103,7 @@ class JWTHandler:
         except ExpiredSignatureError:
             logger.warning("JWT token has expired")
             return None
-        except InvalidTokenError as e:
+        except JWTError as e:
             logger.warning(f"Invalid JWT token: {e}")
             return None
         except Exception as e:
@@ -165,7 +165,7 @@ class JWTHandler:
         except ExpiredSignatureError:
             logger.warning("Refresh token has expired")
             return None
-        except InvalidTokenError as e:
+        except JWTError as e:
             logger.warning(f"Invalid refresh token: {e}")
             return None
         except Exception as e:
