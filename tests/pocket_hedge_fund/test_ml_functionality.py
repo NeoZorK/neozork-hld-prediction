@@ -8,7 +8,7 @@ This script tests the machine learning and automated trading functionality.
 import asyncio
 import sys
 import os
-sys.path.append('src')
+sys.path.append('../../src')
 
 from pocket_hedge_fund.ml.price_predictor import PricePredictor
 from pocket_hedge_fund.trading.automated_trader import AutomatedTrader, TradingStrategy
@@ -25,7 +25,7 @@ async def test_ml_functionality():
         data_manager = DataManager()
         
         # Load local data
-        data = await data_manager.get_local_data("data/mn1.csv")
+        data = await data_manager.get_local_data("../../data/mn1.csv")
         print(f"   ✅ Loaded {len(data)} records from local data")
         
         # Test 2: Price Predictor
@@ -59,11 +59,11 @@ async def test_ml_functionality():
         print(f"   ✅ Trader initialized: {init_result['status']}")
         
         # Train models for trader
-        training_result = await trader.train_models(["data/mn1.csv"], 30)
+        training_result = await trader.train_models(["../../data/mn1.csv"], 30)
         print(f"   ✅ Trader training completed: {training_result['status']}")
         
         # Generate trading signals
-        signal_result = await trader.generate_trading_signals("data/mn1.csv", 110.0)
+        signal_result = await trader.generate_trading_signals("../../data/mn1.csv", 110.0)
         print(f"   ✅ Trading signals generated: {signal_result['status']}")
         
         if signal_result['status'] == 'success':
