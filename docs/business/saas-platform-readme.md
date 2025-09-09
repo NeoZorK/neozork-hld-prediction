@@ -51,6 +51,25 @@ src/saas/
     ├── billing_api.py        # Billing endpoints
     ├── customer_api.py       # Customer endpoints
     └── usage_api.py          # Usage endpoints
+├── frontend/                  # Frontend components
+    ├── react/                # React dashboard components
+    │   ├── components/       # UI components
+    │   ├── services/         # API services
+    │   ├── hooks/            # Custom React hooks
+    │   └── types/            # TypeScript types
+    ├── admin/                # Vue.js admin panel
+    └── mobile/               # React Native mobile app
+├── usage_tracking/           # Usage tracking system
+    ├── models/               # Usage data models
+    ├── services/             # Analytics services
+    └── api/                  # Usage API endpoints
+├── billing/                  # Billing integration
+    ├── models/               # Payment and invoice models
+    ├── services/             # Payment processing
+    ├── integrations/         # Payment gateways
+    ├── api/                  # Billing API endpoints
+    ├── webhooks/             # Webhook handlers
+    └── reports/              # Billing reports and analytics
 ```
 
 ## 🎯 Key Features
@@ -78,6 +97,22 @@ src/saas/
 - **Billing Integration**: Automatic usage-based billing
 - **Resource Limits**: Configurable limits per subscription tier
 - **Usage Analytics**: Detailed usage reports and insights
+- **Advanced Analytics**: ML-powered usage pattern analysis
+- **Usage Limits Enforcement**: Automatic limit enforcement and notifications
+
+### Frontend Dashboard
+- **React Components**: Modern, responsive dashboard interface
+- **Admin Panel**: Vue.js-based administrative interface
+- **Mobile App**: React Native mobile application
+- **Real-Time Updates**: WebSocket integration for live data
+- **Customizable UI**: Tenant-specific branding and themes
+
+### Billing Integration
+- **Payment Processing**: Stripe integration for secure payments
+- **Invoice Generation**: Automated invoice creation and management
+- **Refund Handling**: Streamlined refund processing
+- **Revenue Analytics**: Comprehensive revenue reporting and forecasting
+- **Webhook Processing**: Real-time payment event handling
 
 ## 🚀 Quick Start
 
