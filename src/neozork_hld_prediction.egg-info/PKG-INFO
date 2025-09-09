@@ -120,6 +120,8 @@ Requires-Dist: rich==13.6.0
 Requires-Dist: tqdm==4.67.1
 Requires-Dist: pytest
 Requires-Dist: pytest-xdist>=3.7.0
+Requires-Dist: pytest-asyncio>=0.24.0
+Requires-Dist: pytest-mock>=3.14.0
 Requires-Dist: polygon-api-client
 Requires-Dist: python-binance==1.0.17
 Requires-Dist: pyarrow
@@ -141,3 +143,7 @@ Requires-Dist: passlib[bcrypt]>=1.7.4
 Requires-Dist: python-multipart>=0.0.6
 Requires-Dist: asyncpg>=0.29.0
 Requires-Dist: pytest-asyncio>=0.21.0
+Requires-Dist: pyotp>=2.9.0
+Requires-Dist: bcrypt>=4.3.0
+Requires-Dist: qrcode>=8.2
+Requires-Dist: pyjwt>=2.10.1
