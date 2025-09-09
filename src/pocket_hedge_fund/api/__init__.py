@@ -11,7 +11,7 @@ __author__ = "NeoZork Team"
 # Import API components
 from .fund_api import FundAPI
 from .portfolio_api import PortfolioAPI
-from .auth_api import AuthAPI
+from .auth_api_simple import AuthAPI
 from .performance_api import PerformanceAPI
 
 __all__ = [

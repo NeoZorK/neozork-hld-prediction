@@ -25,6 +25,13 @@ security = HTTPBearer()
 # Create router
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
+class AuthAPI:
+    """Auth API class for dependency injection."""
+    
+    def __init__(self, db_manager: DatabaseManager):
+        self.db_manager = db_manager
+        self.router = router
+
 
 # Pydantic models for request/response
 
@@ -208,9 +215,9 @@ async def login_user(
             user=result['user']
         )
         
-        except HTTPException:
-            raise
-        except Exception as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         logger.error(f"Error in user login: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -259,8 +266,8 @@ async def refresh_token(
         raise
     except Exception as e:
         logger.error(f"Error refreshing token: {e}")
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Token refresh failed"
         )
 
@@ -307,8 +314,8 @@ async def logout_user(
         raise
     except Exception as e:
         logger.error(f"Error in user logout: {e}")
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Logout failed"
         )
 
@@ -357,14 +364,14 @@ async def get_current_user_info(
             is_verified=True,  # Simplified
             created_at=datetime.utcnow(),  # Simplified
             last_login=datetime.utcnow()
-            )
-            
-        except HTTPException:
-            raise
-        except Exception as e:
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
         logger.error(f"Error getting user info: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to get user information"
         )
 
@@ -418,15 +425,15 @@ async def change_password(
                 )
             
             return {
-            'message': 'Password changed successfully'
+                'message': 'Password changed successfully'
             }
             
-        except HTTPException:
-            raise
-        except Exception as e:
+    except HTTPException:
+        raise
+    except Exception as e:
         logger.error(f"Error changing password: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Password change failed"
         )
 
