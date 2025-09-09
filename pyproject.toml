@@ -141,6 +141,7 @@ dependencies = [
     "passlib[bcrypt]>=1.7.4",
     "python-multipart>=0.0.6",
     "asyncpg>=0.29.0",
+    "pytest-asyncio>=0.21.0",
 ]
 
 [build-system]
@@ -174,3 +175,5 @@ markers = [
     "integration: marks tests as integration tests",
     "slow: marks tests as slow running tests",
 ]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
