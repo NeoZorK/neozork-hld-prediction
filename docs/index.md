@@ -142,6 +142,7 @@ python run_analysis.py demo --rule PHLD
 - [Database Documentation](pocket_hedge_fund/database/index.md) - **NEW**: Full database schema and operations
 - [Authentication Guide](pocket_hedge_fund/auth/index.md) - **NEW**: JWT, MFA, and RBAC implementation
 - [React Frontend](pocket_hedge_fund/frontend/index.md) - **NEW**: Complete React TypeScript frontend documentation
+- [Mobile App](mobile_app/index.md) - **NEW**: React Native mobile application with biometric authentication
 - [Fund Management](pocket_hedge_fund/fund_management/) - Complete fund management system with database integration
 - [API Documentation](pocket_hedge_fund/api/) - RESTful API endpoints for fund operations
 - [Database Schema](pocket_hedge_fund/database/) - PostgreSQL database schema and models
