@@ -10,6 +10,7 @@ from typing import Dict, List, Optional, Any, Tuple
 from datetime import datetime, timedelta
 from decimal import Decimal
 import asyncio
+import uuid
 
 from ..models.portfolio_models import Portfolio, Position, AssetType, PositionType
 from ..models.transaction_models import Trade, TradeType, TransactionStatus, OrderBook, MarketData

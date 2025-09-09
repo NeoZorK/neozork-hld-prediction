@@ -13,7 +13,7 @@ import asyncio
 
 from ..models.portfolio_models import Portfolio, Position
 from ..models.performance_models import RiskLimit
-from ..models.transaction_models import StressTestResult
+from ..models.performance_models import StressTestResult
 
 logger = logging.getLogger(__name__)
 
