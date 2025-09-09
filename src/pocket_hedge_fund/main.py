@@ -1,317 +1,318 @@
 """
-Main FastAPI application for Pocket Hedge Fund.
+Pocket Hedge Fund - Main Application
 
-This module provides the main FastAPI application with all routes,
-middleware, and configuration for the Pocket Hedge Fund system.
+This is the main entry point for the Pocket Hedge Fund application.
+It initializes all components, sets up the database, and starts the API server.
 """
 
+import asyncio
 import logging
 import os
-from contextlib import asynccontextmanager
+import signal
+import sys
+from pathlib import Path
 from typing import Dict, Any
-
-from fastapi import FastAPI, HTTPException, status
+import uvicorn
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
-from fastapi.openapi.docs import get_swagger_ui_html
-from fastapi.openapi.utils import get_openapi
+import asyncpg
 
-from .database import DatabaseManager
-from .auth import AuthManager
-from .auth.middleware import AuthMiddleware
-from .api import AuthAPI, FundAPI, PortfolioAPI, PerformanceAPI
+# Add project root to path
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+from src.pocket_hedge_fund.database.connection import init_database, close_database, get_db_manager
+from src.pocket_hedge_fund.database.models import Base
+from src.pocket_hedge_fund.auth.auth_manager import get_auth_manager
+from src.pocket_hedge_fund.api.fund_api import router as fund_router
 
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler('logs/pocket_hedge_fund.log')
+    ]
 )
 logger = logging.getLogger(__name__)
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
+class PocketHedgeFundApp:
     """
-    Application lifespan manager.
+    Main Pocket Hedge Fund application class.
     
-    Handles startup and shutdown events for the FastAPI application.
+    This class orchestrates the entire application including:
+    - Database initialization
+    - Authentication setup
+    - API server configuration
+    - Component initialization
+    - Graceful shutdown handling
     """
-    # Startup
-    logger.info("Starting Pocket Hedge Fund API...")
     
-    try:
-        # Initialize database manager (mock for demonstration)
+    def __init__(self):
+        self.app = None
+        self.running = False
+        self.db_manager = None
+        self.auth_manager = None
+        
+        # Setup signal handlers
+        signal.signal(signal.SIGINT, self._signal_handler)
+        signal.signal(signal.SIGTERM, self._signal_handler)
+    
+    def _signal_handler(self, signum, frame):
+        """Handle shutdown signals."""
+        logger.info(f"Received signal {signum}. Shutting down gracefully...")
+        asyncio.create_task(self.shutdown())
+    
+    async def initialize(self):
+        """Initialize all application components."""
         try:
-            db_manager = DatabaseManager()
-            await db_manager.initialize()
-            app.state.db_manager = db_manager
-            logger.info("Database manager initialized")
+            logger.info("Initializing Pocket Hedge Fund application...")
+            
+            # Create logs directory
+            os.makedirs('logs', exist_ok=True)
+            
+            # Initialize database
+            logger.info("Initializing database...")
+            await init_database()
+            self.db_manager = await get_db_manager()
+            
+            # Initialize authentication
+            logger.info("Initializing authentication...")
+            self.auth_manager = await get_auth_manager()
+            
+            # Create FastAPI app
+            logger.info("Creating FastAPI application...")
+            self.app = FastAPI(
+                title="NeoZork Pocket Hedge Fund API",
+                description="AI-powered hedge fund management platform",
+                version="1.0.0",
+                docs_url="/docs",
+                redoc_url="/redoc"
+            )
+            
+            # Setup middleware
+            self._setup_middleware()
+            
+            # Setup routes
+            self._setup_routes()
+            
+            # Setup error handlers
+            self._setup_error_handlers()
+            
+            logger.info("Pocket Hedge Fund application initialized successfully")
+            
         except Exception as e:
-            logger.warning(f"Database connection failed, using mock mode: {e}")
-            # Create a mock database manager for demonstration
-            from unittest.mock import Mock
-            db_manager = Mock()
-            db_manager.initialize = Mock(return_value=None)
-            db_manager.create_tables = Mock(return_value=None)
-            app.state.db_manager = db_manager
-            logger.info("Mock database manager initialized")
-        
-        # Initialize auth manager
-        auth_manager = AuthManager(db_manager)
-        # Note: AuthManager doesn't have initialize method, it's ready to use
-        app.state.auth_manager = auth_manager
-        logger.info("Auth manager initialized")
-        
-        # Create database tables if they don't exist (skip for mock mode)
-        try:
-            await db_manager.create_tables()
-            logger.info("Database tables created/verified")
-        except AttributeError:
-            logger.info("Skipping table creation in mock mode")
-        
-        logger.info("Pocket Hedge Fund API started successfully")
-        
-    except Exception as e:
-        logger.error(f"Failed to start Pocket Hedge Fund API: {e}")
-        raise
+            logger.error(f"Failed to initialize application: {e}")
+            raise
     
-    yield
-    
-    # Shutdown
-    logger.info("Shutting down Pocket Hedge Fund API...")
-    
-    try:
-        # Close database connections
-        if hasattr(app.state, 'db_manager'):
-            await app.state.db_manager.close()
-            logger.info("Database connections closed")
-        
-        logger.info("Pocket Hedge Fund API shut down successfully")
-        
-    except Exception as e:
-        logger.error(f"Error during shutdown: {e}")
-
-
-# Create FastAPI application
-app = FastAPI(
-    title="Pocket Hedge Fund API",
-    description="REST API for Pocket Hedge Fund - Advanced Trading and Portfolio Management System",
-    version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
-    openapi_url="/openapi.json",
-    lifespan=lifespan
-)
-
-# Add CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Configure appropriately for production
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Add trusted host middleware
-app.add_middleware(
-    TrustedHostMiddleware,
-    allowed_hosts=["*"]  # Configure appropriately for production
-)
-
-# Add authentication middleware
-@app.middleware("http")
-async def auth_middleware(request, call_next):
-    """Authentication middleware wrapper."""
-    if hasattr(app.state, 'auth_manager'):
-        auth_middleware_instance = AuthMiddleware(app, app.state.auth_manager)
-        return await auth_middleware_instance.dispatch(request, call_next)
-    else:
-        # If auth manager not initialized, skip authentication
-        return await call_next(request)
-
-
-# Global exception handlers
-@app.exception_handler(HTTPException)
-async def http_exception_handler(request, exc: HTTPException):
-    """Handle HTTP exceptions."""
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={
-            "error": True,
-            "message": exc.detail,
-            "status_code": exc.status_code
-        }
-    )
-
-
-@app.exception_handler(Exception)
-async def general_exception_handler(request, exc: Exception):
-    """Handle general exceptions."""
-    logger.error(f"Unhandled exception: {exc}")
-    return JSONResponse(
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content={
-            "error": True,
-            "message": "Internal server error",
-            "status_code": 500
-        }
-    )
-
-
-# Health check endpoint
-@app.get("/health", tags=["Health"])
-async def health_check():
-    """
-    Health check endpoint.
-    
-    Returns:
-        Health status of the API
-    """
-    try:
-        # Check database connection
-        db_status = "healthy"
-        if hasattr(app.state, 'db_manager'):
-            try:
-                await app.state.db_manager.health_check()
-            except Exception:
-                db_status = "unhealthy"
-        
-        # Check auth manager
-        auth_status = "healthy"
-        if not hasattr(app.state, 'auth_manager'):
-            auth_status = "unhealthy"
-        
-        overall_status = "healthy" if db_status == "healthy" and auth_status == "healthy" else "unhealthy"
-        
-        return {
-            "status": overall_status,
-            "timestamp": "2024-01-01T00:00:00Z",  # Will be replaced with actual timestamp
-            "version": "1.0.0",
-            "services": {
-                "database": db_status,
-                "authentication": auth_status
-            }
-        }
-        
-    except Exception as e:
-        logger.error(f"Health check failed: {e}")
-        return JSONResponse(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            content={
-                "status": "unhealthy",
-                "error": str(e)
-            }
+    def _setup_middleware(self):
+        """Setup FastAPI middleware."""
+        # CORS middleware
+        self.app.add_middleware(
+            CORSMiddleware,
+            allow_origins=["*"],  # Configure appropriately for production
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
         )
-
-
-# Root endpoint
-@app.get("/", tags=["Root"])
-async def root():
-    """
-    Root endpoint.
+        
+        # Trusted host middleware
+        self.app.add_middleware(
+            TrustedHostMiddleware,
+            allowed_hosts=["*"]  # Configure appropriately for production
+        )
     
-    Returns:
-        API information
-    """
-    return {
-        "message": "Pocket Hedge Fund API",
-        "version": "1.0.0",
-        "description": "Advanced Trading and Portfolio Management System",
-        "docs_url": "/docs",
-        "health_url": "/health"
-    }
-
-
-# Include API routers
-from .api.auth_api_simple import router as auth_router
-from .api.fund_api import router as fund_router
-from .api.portfolio_api import router as portfolio_router
-from .api.performance_api import router as performance_router
-from .api.data_api import router as data_router
-from .api.portfolio_api_enhanced import router as enhanced_portfolio_router
-
-app.include_router(auth_router, prefix="/api/v1")
-app.include_router(fund_router, prefix="/api/v1")
-app.include_router(portfolio_router, prefix="/api/v1")
-app.include_router(performance_router, prefix="/api/v1")
-app.include_router(data_router, prefix="/api/v1")
-app.include_router(enhanced_portfolio_router, prefix="/api/v1")
-
-
-# Custom OpenAPI schema
-def custom_openapi():
-    """Generate custom OpenAPI schema."""
-    if app.openapi_schema:
-        return app.openapi_schema
+    def _setup_routes(self):
+        """Setup API routes."""
+        # Health check endpoint
+        @self.app.get("/health")
+        async def health_check():
+            """Health check endpoint."""
+            try:
+                # Check database connection
+                db_manager = await get_db_manager()
+                await db_manager.execute_query("SELECT 1")
+                
+                return {
+                    "status": "healthy",
+                    "timestamp": "2025-01-05T00:00:00Z",
+                    "version": "1.0.0",
+                    "database": "connected",
+                    "authentication": "ready"
+                }
+            except Exception as e:
+                logger.error(f"Health check failed: {e}")
+                raise HTTPException(status_code=503, detail="Service unhealthy")
+        
+        # Root endpoint
+        @self.app.get("/")
+        async def root():
+            """Root endpoint."""
+            return {
+                "message": "NeoZork Pocket Hedge Fund API",
+                "version": "1.0.0",
+                "docs": "/docs",
+                "health": "/health"
+            }
+        
+        # Include API routers
+        self.app.include_router(fund_router)
+        
+        # Authentication endpoints
+        @self.app.post("/api/v1/auth/register")
+        async def register_user(user_data: dict):
+            """Register a new user."""
+            try:
+                auth_manager = await get_auth_manager()
+                
+                success, message, user_info = await auth_manager.register_user(
+                    email=user_data.get('email'),
+                    username=user_data.get('username'),
+                    password=user_data.get('password'),
+                    first_name=user_data.get('first_name', ''),
+                    last_name=user_data.get('last_name', ''),
+                    phone=user_data.get('phone', ''),
+                    country=user_data.get('country', '')
+                )
+                
+                if success:
+                    return {"success": True, "message": message, "user": user_info}
+                else:
+                    raise HTTPException(status_code=400, detail=message)
+                    
+            except HTTPException:
+                raise
+            except Exception as e:
+                logger.error(f"User registration failed: {e}")
+                raise HTTPException(status_code=500, detail=f"Registration failed: {str(e)}")
+        
+        @self.app.post("/api/v1/auth/login")
+        async def login_user(credentials: dict):
+            """Login user."""
+            try:
+                auth_manager = await get_auth_manager()
+                
+                success, message, auth_data = await auth_manager.login_user(
+                    email=credentials.get('email'),
+                    password=credentials.get('password'),
+                    mfa_token=credentials.get('mfa_token'),
+                    ip_address=credentials.get('ip_address'),
+                    user_agent=credentials.get('user_agent')
+                )
+                
+                if success:
+                    return {"success": True, "message": message, "data": auth_data}
+                else:
+                    raise HTTPException(status_code=401, detail=message)
+                    
+            except HTTPException:
+                raise
+            except Exception as e:
+                logger.error(f"User login failed: {e}")
+                raise HTTPException(status_code=500, detail=f"Login failed: {str(e)}")
+        
+        @self.app.post("/api/v1/auth/verify")
+        async def verify_token(token_data: dict):
+            """Verify JWT token."""
+            try:
+                auth_manager = await get_auth_manager()
+                
+                success, message, user_data = await auth_manager.verify_token(
+                    token_data.get('token')
+                )
+                
+                if success:
+                    return {"success": True, "message": message, "user": user_data}
+                else:
+                    raise HTTPException(status_code=401, detail=message)
+                    
+            except HTTPException:
+                raise
+            except Exception as e:
+                logger.error(f"Token verification failed: {e}")
+                raise HTTPException(status_code=500, detail=f"Token verification failed: {str(e)}")
     
-    openapi_schema = get_openapi(
-        title="Pocket Hedge Fund API",
-        version="1.0.0",
-        description="""
-        ## Pocket Hedge Fund API
-        
-        Advanced Trading and Portfolio Management System with:
-        
-        * **Authentication & Authorization** - JWT-based auth with RBAC
-        * **Fund Management** - Create and manage investment funds
-        * **Portfolio Management** - Track positions and performance
-        * **Performance Analytics** - Comprehensive performance metrics
-        * **Risk Management** - Advanced risk monitoring and controls
-        
-        ### Features
-        
-        * 🔐 **Secure Authentication** - JWT tokens with refresh mechanism
-        * 📊 **Real-time Analytics** - Live performance tracking
-        * 🛡️ **Risk Controls** - Automated risk management
-        * 📈 **Advanced Metrics** - Sharpe ratio, VaR, drawdown analysis
-        * 🔄 **API Integration** - RESTful API with OpenAPI documentation
-        
-        ### Getting Started
-        
-        1. Register a new account via `/auth/register`
-        2. Login to get access token via `/auth/login`
-        3. Create a fund via `/funds/`
-        4. Manage positions via `/portfolios/{fund_id}/positions`
-        5. Track performance via `/performance/{fund_id}/metrics`
-        """,
-        routes=app.routes,
-    )
+    def _setup_error_handlers(self):
+        """Setup global error handlers."""
+        @self.app.exception_handler(Exception)
+        async def global_exception_handler(request, exc):
+            """Global exception handler."""
+            logger.error(f"Unhandled exception: {exc}")
+            return JSONResponse(
+                status_code=500,
+                content={
+                    "error": "Internal server error",
+                    "message": "An unexpected error occurred",
+                    "detail": str(exc) if os.getenv('DEBUG') == 'true' else None
+                }
+            )
     
-    # Add security schemes
-    openapi_schema["components"]["securitySchemes"] = {
-        "BearerAuth": {
-            "type": "http",
-            "scheme": "bearer",
-            "bearerFormat": "JWT",
-        }
-    }
+    async def run(self, host: str = "0.0.0.0", port: int = 8080):
+        """Run the application."""
+        try:
+            if not self.app:
+                await self.initialize()
+            
+            logger.info(f"Starting Pocket Hedge Fund API server on {host}:{port}")
+            self.running = True
+            
+            # Run with uvicorn
+            config = uvicorn.Config(
+                app=self.app,
+                host=host,
+                port=port,
+                log_level="info",
+                access_log=True
+            )
+            server = uvicorn.Server(config)
+            await server.serve()
+            
+        except Exception as e:
+            logger.error(f"Failed to run application: {e}")
+            raise
+        finally:
+            await self.shutdown()
     
-    # Add security requirements
-    openapi_schema["security"] = [{"BearerAuth": []}]
+    async def shutdown(self):
+        """Shutdown the application gracefully."""
+        if not self.running:
+            return
+        
+        logger.info("Shutting down Pocket Hedge Fund application...")
+        self.running = False
+        
+        try:
+            # Close database connections
+            if self.db_manager:
+                await close_database()
+            
+            logger.info("Pocket Hedge Fund application shutdown completed")
+            
+        except Exception as e:
+            logger.error(f"Error during shutdown: {e}")
+
+
+async def main():
+    """Main entry point."""
+    app = PocketHedgeFundApp()
     
-    app.openapi_schema = openapi_schema
-    return app.openapi_schema
+    # Get configuration from environment
+    host = os.getenv('HOST', '0.0.0.0')
+    port = int(os.getenv('PORT', '8080'))
+    
+    try:
+        await app.run(host=host, port=port)
+    except KeyboardInterrupt:
+        logger.info("Application interrupted by user")
+    except Exception as e:
+        logger.error(f"Application failed: {e}")
+        sys.exit(1)
 
 
-app.openapi = custom_openapi
-
-
-# Development server configuration
 if __name__ == "__main__":
-    import uvicorn
-    
-    # Get configuration from environment variables
-    host = os.getenv("HOST", "0.0.0.0")
-    port = int(os.getenv("PORT", "8000"))
-    debug = os.getenv("DEBUG", "false").lower() == "true"
-    
-    logger.info(f"Starting Pocket Hedge Fund API on {host}:{port}")
-    
-    uvicorn.run(
-        "src.pocket_hedge_fund.main:app",
-        host=host,
-        port=port,
-        reload=debug,
-        log_level="info" if not debug else "debug"
-    )
+    # Run the application
+    asyncio.run(main())

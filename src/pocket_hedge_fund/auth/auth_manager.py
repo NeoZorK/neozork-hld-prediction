@@ -1,534 +1,695 @@
 """
-Authentication manager for Pocket Hedge Fund.
+Authentication Manager for Pocket Hedge Fund
 
 This module provides comprehensive authentication and authorization
-functionality including user management, session handling, and security.
+functionality including JWT tokens, MFA, password management, and
+role-based access control.
 """
 
 import asyncio
 import logging
-from typing import Dict, Any, Optional, List
+import secrets
+import hashlib
+import hmac
+import time
 from datetime import datetime, timedelta
+from typing import Optional, Dict, Any, List, Tuple
+from dataclasses import dataclass
 import uuid
 
-from sqlalchemy import text
-from sqlalchemy.exc import SQLAlchemyError
 import bcrypt
-from jose import jwt
-from passlib.context import CryptContext
+import pyotp
+import qrcode
+from io import BytesIO
+import base64
+import jwt
+from jwt.exceptions import InvalidTokenError, ExpiredSignatureError
 
-from ..database.connection import DatabaseManager
-from ..database.models import UserModel, UserRole
-from .jwt_handler import JWTHandler
-from .password_manager import PasswordManager
-from .permissions import PermissionManager
+from ..database.connection import get_db_manager
+from ..database.models import User, UserRole, APIKey, AuditLog
 
 logger = logging.getLogger(__name__)
 
 
-class AuthManager:
-    """
-    Authentication manager for Pocket Hedge Fund.
+@dataclass
+class AuthConfig:
+    """Authentication configuration."""
+    jwt_secret: str
+    jwt_algorithm: str = "HS256"
+    jwt_expiration_hours: int = 24
+    refresh_token_expiration_days: int = 30
+    password_min_length: int = 8
+    max_login_attempts: int = 5
+    lockout_duration_minutes: int = 30
+    mfa_issuer: str = "NeoZork Pocket Hedge Fund"
+
+
+@dataclass
+class LoginAttempt:
+    """Login attempt tracking."""
+    user_id: str
+    attempts: int
+    last_attempt: datetime
+    locked_until: Optional[datetime] = None
+
+
+class PasswordManager:
+    """Password management utilities."""
     
-    Provides user authentication, authorization, session management,
-    and security features.
-    """
+    @staticmethod
+    def hash_password(password: str) -> str:
+        """Hash password using bcrypt."""
+        salt = bcrypt.gensalt()
+        return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
     
-    def __init__(self, db_manager: DatabaseManager):
-        """
-        Initialize authentication manager.
+    @staticmethod
+    def verify_password(password: str, hashed: str) -> bool:
+        """Verify password against hash."""
+        return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
+    
+    @staticmethod
+    def validate_password_strength(password: str) -> Tuple[bool, List[str]]:
+        """Validate password strength."""
+        errors = []
         
-        Args:
-            db_manager: Database manager instance
-        """
-        self.db_manager = db_manager
-        self.jwt_handler = JWTHandler()
+        if len(password) < 8:
+            errors.append("Password must be at least 8 characters long")
+        
+        if not any(c.isupper() for c in password):
+            errors.append("Password must contain at least one uppercase letter")
+        
+        if not any(c.islower() for c in password):
+            errors.append("Password must contain at least one lowercase letter")
+        
+        if not any(c.isdigit() for c in password):
+            errors.append("Password must contain at least one digit")
+        
+        if not any(c in "!@#$%^&*()_+-=[]{}|;:,.<>?" for c in password):
+            errors.append("Password must contain at least one special character")
+        
+        return len(errors) == 0, errors
+
+
+class MFAManager:
+    """Multi-Factor Authentication manager."""
+    
+    def __init__(self, config: AuthConfig):
+        self.config = config
+    
+    def generate_secret(self) -> str:
+        """Generate MFA secret."""
+        return pyotp.random_base32()
+    
+    def generate_qr_code(self, user_email: str, secret: str) -> str:
+        """Generate QR code for MFA setup."""
+        totp_uri = pyotp.totp.TOTP(secret).provisioning_uri(
+            name=user_email,
+            issuer_name=self.config.mfa_issuer
+        )
+        
+        qr = qrcode.QRCode(version=1, box_size=10, border=5)
+        qr.add_data(totp_uri)
+        qr.make(fit=True)
+        
+        img = qr.make_image(fill_color="black", back_color="white")
+        
+        buffer = BytesIO()
+        img.save(buffer, format='PNG')
+        buffer.seek(0)
+        
+        img_base64 = base64.b64encode(buffer.getvalue()).decode()
+        return f"data:image/png;base64,{img_base64}"
+    
+    def verify_totp(self, secret: str, token: str) -> bool:
+        """Verify TOTP token."""
+        totp = pyotp.TOTP(secret)
+        return totp.verify(token, valid_window=1)
+    
+    def generate_backup_codes(self, count: int = 10) -> List[str]:
+        """Generate backup codes for MFA."""
+        return [secrets.token_hex(4).upper() for _ in range(count)]
+
+
+class JWTManager:
+    """JWT token management."""
+    
+    def __init__(self, config: AuthConfig):
+        self.config = config
+    
+    def generate_access_token(self, user_id: str, email: str, role: str, mfa_verified: bool = False) -> str:
+        """Generate JWT access token."""
+        payload = {
+            'user_id': user_id,
+            'email': email,
+            'role': role,
+            'mfa_verified': mfa_verified,
+            'type': 'access',
+            'iat': datetime.utcnow(),
+            'exp': datetime.utcnow() + timedelta(hours=self.config.jwt_expiration_hours)
+        }
+        
+        return jwt.encode(payload, self.config.jwt_secret, algorithm=self.config.jwt_algorithm)
+    
+    def generate_refresh_token(self, user_id: str) -> str:
+        """Generate JWT refresh token."""
+        payload = {
+            'user_id': user_id,
+            'type': 'refresh',
+            'iat': datetime.utcnow(),
+            'exp': datetime.utcnow() + timedelta(days=self.config.refresh_token_expiration_days)
+        }
+        
+        return jwt.encode(payload, self.config.jwt_secret, algorithm=self.config.jwt_algorithm)
+    
+    def verify_token(self, token: str) -> Dict[str, Any]:
+        """Verify and decode JWT token."""
+        try:
+            payload = jwt.decode(token, self.config.jwt_secret, algorithms=[self.config.jwt_algorithm])
+            return payload
+        except ExpiredSignatureError:
+            raise ValueError("Token has expired")
+        except InvalidTokenError:
+            raise ValueError("Invalid token")
+    
+    def refresh_access_token(self, refresh_token: str) -> str:
+        """Generate new access token from refresh token."""
+        payload = self.verify_token(refresh_token)
+        
+        if payload.get('type') != 'refresh':
+            raise ValueError("Invalid refresh token")
+        
+        # Get user details from database
+        # This would need to be implemented with database access
+        user_id = payload['user_id']
+        
+        # For now, return a new token with basic info
+        # In real implementation, fetch user details from database
+        return self.generate_access_token(user_id, "", "", False)
+
+
+class AuthenticationManager:
+    """
+    Main authentication manager for Pocket Hedge Fund.
+    
+    This class provides:
+    - User registration and login
+    - Password management
+    - JWT token generation and validation
+    - Multi-factor authentication
+    - Role-based access control
+    - Login attempt tracking and lockout
+    - API key management
+    """
+    
+    def __init__(self, config: Optional[AuthConfig] = None):
+        self.config = config or AuthConfig(
+            jwt_secret=secrets.token_urlsafe(32)
+        )
         self.password_manager = PasswordManager()
-        self.permission_manager = PermissionManager()
-        
-        # Session management
-        self.active_sessions: Dict[str, Dict[str, Any]] = {}
-        self.session_timeout = timedelta(hours=24)
+        self.mfa_manager = MFAManager(self.config)
+        self.jwt_manager = JWTManager(self.config)
+        self.login_attempts: Dict[str, LoginAttempt] = {}
     
-    async def register_user(self, user_data: Dict[str, Any]) -> Dict[str, Any]:
+    async def register_user(
+        self,
+        email: str,
+        username: str,
+        password: str,
+        first_name: str = "",
+        last_name: str = "",
+        phone: str = "",
+        country: str = ""
+    ) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
         """
         Register a new user.
-        
-        Args:
-            user_data: User registration data
             
         Returns:
-            Dict containing registration results
+            Tuple of (success, message, user_data)
         """
         try:
-            # Validate required fields
-            required_fields = ['email', 'username', 'password', 'first_name', 'last_name']
-            for field in required_fields:
-                if field not in user_data or not user_data[field]:
-                    return {
-                        'status': 'error',
-                        'message': f'Missing required field: {field}'
-                    }
+            db_manager = await get_db_manager()
             
-            # Validate email format
-            if not self._validate_email(user_data['email']):
-                return {
-                    'status': 'error',
-                    'message': 'Invalid email format'
-                }
+            # Validate password strength
+            is_valid, errors = self.password_manager.validate_password_strength(password)
+            if not is_valid:
+                return False, f"Password validation failed: {', '.join(errors)}", None
             
             # Check if user already exists
-            if await self._user_exists(user_data['email'], user_data['username']):
-                return {
-                    'status': 'error',
-                    'message': 'User with this email or username already exists'
-                }
+            existing_user_query = """
+                SELECT id FROM users WHERE email = $1 OR username = $2
+            """
+            existing_users = await db_manager.execute_query(
+                existing_user_query, 
+                {'email': email, 'username': username}
+            )
+            
+            if existing_users:
+                return False, "User with this email or username already exists", None
             
             # Hash password
-            password_hash = self.password_manager.hash_password(user_data['password'])
+            password_hash = self.password_manager.hash_password(password)
             
             # Create user
             user_id = str(uuid.uuid4())
-            role = user_data.get('role', UserRole.INVESTOR.value)
-            
-            async with self.db_manager.get_async_session() as session:
-                await session.execute(
-                    text("""
-                        INSERT INTO users (id, email, username, password_hash, first_name, last_name, role, is_active, is_verified, created_at, updated_at)
-                        VALUES (:id, :email, :username, :password_hash, :first_name, :last_name, :role, :is_active, :is_verified, :created_at, :updated_at)
-                    """),
-                    {
-                        'id': user_id,
-                        'email': user_data['email'].lower(),
-                        'username': user_data['username'],
-                        'password_hash': password_hash,
-                        'first_name': user_data['first_name'],
-                        'last_name': user_data['last_name'],
-                        'role': role,
-                        'is_active': True,
-                        'is_verified': False,
-                        'created_at': datetime.utcnow(),
-                        'updated_at': datetime.utcnow()
-                    }
+            create_user_query = """
+                INSERT INTO users (
+                    id, email, username, password_hash, first_name, last_name,
+                    phone, country, kyc_status, is_active, role, created_at, updated_at
+                ) VALUES (
+                    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13
                 )
-                await session.commit()
+            """
             
-            logger.info(f"User registered successfully: {user_data['email']}")
+            now = datetime.utcnow()
+            await db_manager.execute_command(
+                create_user_query,
+                {
+                    'user_id': user_id,
+                    'email': email,
+                    'username': username,
+                        'password_hash': password_hash,
+                    'first_name': first_name,
+                    'last_name': last_name,
+                    'phone': phone,
+                    'country': country,
+                    'kyc_status': 'pending',
+                        'is_active': True,
+                    'role': 'investor',
+                    'created_at': now,
+                    'updated_at': now
+                }
+            )
             
-            return {
-                'status': 'success',
-                'message': 'User registered successfully',
-                'user_id': user_id,
-                'email': user_data['email']
+            # Log registration
+            await self._log_audit_event(
+                user_id=user_id,
+                action="user_registered",
+                resource_type="user",
+                resource_id=user_id,
+                new_values={'email': email, 'username': username}
+            )
+            
+            user_data = {
+                'id': user_id,
+                'email': email,
+                'username': username,
+                'first_name': first_name,
+                'last_name': last_name,
+                'role': 'investor'
             }
+            
+            return True, "User registered successfully", user_data
             
         except Exception as e:
-            logger.error(f"Error registering user: {e}")
-            return {
-                'status': 'error',
-                'message': f'Registration failed: {str(e)}'
-            }
+            logger.error(f"User registration failed: {e}")
+            return False, f"Registration failed: {str(e)}", None
     
-    async def authenticate_user(self, email: str, password: str) -> Dict[str, Any]:
+    async def login_user(
+        self,
+        email: str,
+        password: str,
+        mfa_token: Optional[str] = None,
+        ip_address: Optional[str] = None,
+        user_agent: Optional[str] = None
+    ) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
         """
-        Authenticate user with email and password.
-        
-        Args:
-            email: User email
-            password: User password
+        Authenticate user login.
             
         Returns:
-            Dict containing authentication results
+            Tuple of (success, message, auth_data)
         """
         try:
-            # Get user from database
-            user = await self._get_user_by_email(email)
-            if not user:
-                return {
-                    'status': 'error',
-                    'message': 'Invalid email or password'
-                }
+            db_manager = await get_db_manager()
+            
+            # Get user by email
+            user_query = """
+                SELECT id, email, username, password_hash, first_name, last_name,
+                       role, is_active, mfa_enabled, mfa_secret, last_login
+                FROM users WHERE email = $1
+            """
+            users = await db_manager.execute_query(user_query, {'email': email})
+            
+            if not users:
+                return False, "Invalid email or password", None
+            
+            user = users[0]
+            user_id = user['id']
             
             # Check if user is active
             if not user['is_active']:
-                return {
-                    'status': 'error',
-                    'message': 'Account is deactivated'
-                }
+                return False, "Account is deactivated", None
+            
+            # Check login attempts and lockout
+            if self._is_user_locked(user_id):
+                return False, "Account is temporarily locked due to too many failed attempts", None
             
             # Verify password
             if not self.password_manager.verify_password(password, user['password_hash']):
-                return {
-                    'status': 'error',
-                    'message': 'Invalid email or password'
-                }
+                await self._record_failed_login(user_id)
+                return False, "Invalid email or password", None
+            
+            # Check MFA if enabled
+            mfa_verified = False
+            if user['mfa_enabled']:
+                if not mfa_token:
+                    return False, "MFA token required", {'mfa_required': True}
+                
+                if not self.mfa_manager.verify_totp(user['mfa_secret'], mfa_token):
+                    await self._record_failed_login(user_id)
+                    return False, "Invalid MFA token", None
+                
+                mfa_verified = True
+            
+            # Clear failed login attempts
+            self._clear_failed_logins(user_id)
             
             # Update last login
-            await self._update_last_login(user['id'])
+            await self._update_last_login(user_id)
             
-            # Generate JWT token
-            token_data = {
-                'user_id': user['id'],
-                'email': user['email'],
-                'role': user['role'],
-                'exp': datetime.utcnow() + timedelta(hours=24)
-            }
-            token = self.jwt_handler.create_token(token_data)
+            # Generate tokens
+            access_token = self.jwt_manager.generate_access_token(
+                user_id, user['email'], user['role'], mfa_verified
+            )
+            refresh_token = self.jwt_manager.generate_refresh_token(user_id)
             
-            # Create session
-            session_id = str(uuid.uuid4())
-            self.active_sessions[session_id] = {
-                'user_id': user['id'],
-                'email': user['email'],
-                'role': user['role'],
-                'created_at': datetime.utcnow(),
-                'last_activity': datetime.utcnow()
-            }
+            # Log successful login
+            await self._log_audit_event(
+                user_id=user_id,
+                action="user_login",
+                resource_type="user",
+                resource_id=user_id,
+                ip_address=ip_address,
+                user_agent=user_agent
+            )
             
-            logger.info(f"User authenticated successfully: {email}")
-            
-            return {
-                'status': 'success',
-                'message': 'Authentication successful',
-                'token': token,
-                'session_id': session_id,
+            auth_data = {
+                'access_token': access_token,
+                'refresh_token': refresh_token,
                 'user': {
-                    'id': user['id'],
+                    'id': user_id,
                     'email': user['email'],
                     'username': user['username'],
                     'first_name': user['first_name'],
                     'last_name': user['last_name'],
-                    'role': user['role']
-                }
+                    'role': user['role'],
+                    'mfa_enabled': user['mfa_enabled']
+                },
+                'expires_in': self.config.jwt_expiration_hours * 3600
             }
+            
+            return True, "Login successful", auth_data
             
         except Exception as e:
-            logger.error(f"Error authenticating user: {e}")
-            return {
-                'status': 'error',
-                'message': f'Authentication failed: {str(e)}'
-            }
+            logger.error(f"User login failed: {e}")
+            return False, f"Login failed: {str(e)}", None
     
-    async def verify_token(self, token: str) -> Dict[str, Any]:
-        """
-        Verify JWT token.
-        
-        Args:
-            token: JWT token to verify
-            
-        Returns:
-            Dict containing verification results
-        """
+    async def setup_mfa(self, user_id: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
+        """Setup MFA for user."""
         try:
+            db_manager = await get_db_manager()
+            
+            # Generate MFA secret
+            secret = self.mfa_manager.generate_secret()
+            
+            # Get user email for QR code
+            user_query = "SELECT email FROM users WHERE id = $1"
+            users = await db_manager.execute_query(user_query, {'user_id': user_id})
+            
+            if not users:
+                return False, "User not found", None
+            
+            user_email = users[0]['email']
+            
+            # Generate QR code
+            qr_code = self.mfa_manager.generate_qr_code(user_email, secret)
+            
+            # Generate backup codes
+            backup_codes = self.mfa_manager.generate_backup_codes()
+            
+            # Update user with MFA secret (but don't enable yet)
+            update_query = """
+                UPDATE users SET mfa_secret = $1, updated_at = $2
+                WHERE id = $3
+            """
+            await db_manager.execute_command(
+                update_query,
+                {'secret': secret, 'updated_at': datetime.utcnow(), 'user_id': user_id}
+            )
+            
+            mfa_data = {
+                'secret': secret,
+                'qr_code': qr_code,
+                'backup_codes': backup_codes
+            }
+            
+            return True, "MFA setup data generated", mfa_data
+            
+        except Exception as e:
+            logger.error(f"MFA setup failed: {e}")
+            return False, f"MFA setup failed: {str(e)}", None
+    
+    async def enable_mfa(self, user_id: str, verification_token: str) -> Tuple[bool, str]:
+        """Enable MFA for user after verification."""
+        try:
+            db_manager = await get_db_manager()
+            
+            # Get user's MFA secret
+            user_query = "SELECT mfa_secret FROM users WHERE id = $1"
+            users = await db_manager.execute_query(user_query, {'user_id': user_id})
+            
+            if not users:
+                return False, "User not found"
+            
+            secret = users[0]['mfa_secret']
+            if not secret:
+                return False, "MFA not set up"
+            
             # Verify token
-            payload = self.jwt_handler.verify_token(token)
-            if not payload:
-                return {
-                    'status': 'error',
-                    'message': 'Invalid token'
-                }
+            if not self.mfa_manager.verify_totp(secret, verification_token):
+                return False, "Invalid verification token"
             
-            # Check if user still exists and is active
-            user = await self._get_user_by_id(payload['user_id'])
-            if not user or not user['is_active']:
-                return {
-                    'status': 'error',
-                    'message': 'User not found or inactive'
-                }
+            # Enable MFA
+            update_query = """
+                UPDATE users SET mfa_enabled = true, updated_at = $1
+                WHERE id = $2
+            """
+            await db_manager.execute_command(
+                update_query,
+                {'updated_at': datetime.utcnow(), 'user_id': user_id}
+            )
             
-            return {
-                'status': 'success',
-                'message': 'Token verified',
-                'user': {
-                    'id': user['id'],
-                    'email': user['email'],
-                    'username': user['username'],
-                    'role': user['role']
-                }
-            }
+            # Log MFA enablement
+            await self._log_audit_event(
+                user_id=user_id,
+                action="mfa_enabled",
+                resource_type="user",
+                resource_id=user_id
+            )
+            
+            return True, "MFA enabled successfully"
             
         except Exception as e:
-            logger.error(f"Error verifying token: {e}")
-            return {
-                'status': 'error',
-                'message': f'Token verification failed: {str(e)}'
-            }
+            logger.error(f"MFA enablement failed: {e}")
+            return False, f"MFA enablement failed: {str(e)}"
     
-    async def refresh_token(self, token: str) -> Dict[str, Any]:
-        """
-        Refresh JWT token.
-        
-        Args:
-            token: Current JWT token
-            
-        Returns:
-            Dict containing new token
-        """
+    async def verify_token(self, token: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
+        """Verify JWT token and return user info."""
         try:
-            # Verify current token
-            payload = self.jwt_handler.verify_token(token)
-            if not payload:
-                return {
-                    'status': 'error',
-                    'message': 'Invalid token'
-                }
+            payload = self.jwt_manager.verify_token(token)
             
-            # Check if user still exists and is active
-            user = await self._get_user_by_id(payload['user_id'])
-            if not user or not user['is_active']:
-                return {
-                    'status': 'error',
-                    'message': 'User not found or inactive'
-                }
+            if payload.get('type') != 'access':
+                return False, "Invalid token type", None
             
-            # Generate new token
-            new_token_data = {
-                'user_id': user['id'],
+            # Get user details from database
+            db_manager = await get_db_manager()
+            user_query = """
+                SELECT id, email, username, first_name, last_name, role, is_active, mfa_enabled
+                FROM users WHERE id = $1
+            """
+            users = await db_manager.execute_query(user_query, {'user_id': payload['user_id']})
+            
+            if not users:
+                return False, "User not found", None
+            
+            user = users[0]
+            if not user['is_active']:
+                return False, "User account is deactivated", None
+            
+            user_data = {
+                'id': user['id'],
                 'email': user['email'],
+                'username': user['username'],
+                'first_name': user['first_name'],
+                'last_name': user['last_name'],
                 'role': user['role'],
-                'exp': datetime.utcnow() + timedelta(hours=24)
-            }
-            new_token = self.jwt_handler.create_token(new_token_data)
-            
-            return {
-                'status': 'success',
-                'message': 'Token refreshed',
-                'token': new_token
+                'mfa_enabled': user['mfa_enabled'],
+                'mfa_verified': payload.get('mfa_verified', False)
             }
             
+            return True, "Token valid", user_data
+            
+        except ValueError as e:
+            return False, str(e), None
         except Exception as e:
-            logger.error(f"Error refreshing token: {e}")
-            return {
-                'status': 'error',
-                'message': f'Token refresh failed: {str(e)}'
-            }
+            logger.error(f"Token verification failed: {e}")
+            return False, f"Token verification failed: {str(e)}", None
     
-    async def logout_user(self, session_id: str) -> Dict[str, Any]:
-        """
-        Logout user and invalidate session.
-        
-        Args:
-            session_id: Session ID to invalidate
-            
-        Returns:
-            Dict containing logout results
-        """
+    async def create_api_key(
+        self,
+        user_id: str,
+        key_name: str,
+        permissions: List[str],
+        expires_days: Optional[int] = None
+    ) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
+        """Create API key for user."""
         try:
-            if session_id in self.active_sessions:
-                del self.active_sessions[session_id]
+            db_manager = await get_db_manager()
             
-            return {
-                'status': 'success',
-                'message': 'Logout successful'
-            }
+            # Generate API key
+            api_key = f"nz_{secrets.token_urlsafe(32)}"
             
-        except Exception as e:
-            logger.error(f"Error during logout: {e}")
-            return {
-                'status': 'error',
-                'message': f'Logout failed: {str(e)}'
-            }
-    
-    async def change_password(self, user_id: str, old_password: str, new_password: str) -> Dict[str, Any]:
-        """
-        Change user password.
-        
-        Args:
-            user_id: User ID
-            old_password: Current password
-            new_password: New password
+            # Calculate expiration
+            expires_at = None
+            if expires_days:
+                expires_at = datetime.utcnow() + timedelta(days=expires_days)
             
-        Returns:
-            Dict containing password change results
-        """
-        try:
-            # Get user
-            user = await self._get_user_by_id(user_id)
-            if not user:
-                return {
-                    'status': 'error',
-                    'message': 'User not found'
+            # Create API key record
+            key_id = str(uuid.uuid4())
+            create_key_query = """
+                INSERT INTO api_keys (
+                    id, user_id, key_name, api_key, permissions, is_active,
+                    expires_at, created_at
+                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            """
+            
+            await db_manager.execute_command(
+                create_key_query,
+                {
+                    'key_id': key_id,
+                    'user_id': user_id,
+                    'key_name': key_name,
+                    'api_key': api_key,
+                    'permissions': permissions,
+                    'is_active': True,
+                    'expires_at': expires_at,
+                    'created_at': datetime.utcnow()
                 }
+            )
             
-            # Verify old password
-            if not self.password_manager.verify_password(old_password, user['password_hash']):
-                return {
-                    'status': 'error',
-                    'message': 'Current password is incorrect'
-                }
+            # Log API key creation
+            await self._log_audit_event(
+                user_id=user_id,
+                action="api_key_created",
+                resource_type="api_key",
+                resource_id=key_id,
+                new_values={'key_name': key_name, 'permissions': permissions}
+            )
             
-            # Validate new password
-            if not self.password_manager.validate_password(new_password):
-                return {
-                    'status': 'error',
-                    'message': 'New password does not meet requirements'
-                }
-            
-            # Hash new password
-            new_password_hash = self.password_manager.hash_password(new_password)
-            
-            # Update password
-            async with self.db_manager.get_async_session() as session:
-                await session.execute(
-                    text("""
-                        UPDATE users 
-                        SET password_hash = :password_hash, updated_at = :updated_at
-                        WHERE id = :user_id
-                    """),
-                    {
-                        'password_hash': new_password_hash,
-                        'updated_at': datetime.utcnow(),
-                        'user_id': user_id
-                    }
-                )
-                await session.commit()
-            
-            logger.info(f"Password changed for user: {user['email']}")
-            
-            return {
-                'status': 'success',
-                'message': 'Password changed successfully'
+            api_key_data = {
+                'id': key_id,
+                'key_name': key_name,
+                'api_key': api_key,
+                'permissions': permissions,
+                'expires_at': expires_at.isoformat() if expires_at else None,
+                'created_at': datetime.utcnow().isoformat()
             }
             
-        except Exception as e:
-            logger.error(f"Error changing password: {e}")
-            return {
-                'status': 'error',
-                'message': f'Password change failed: {str(e)}'
-            }
-    
-    async def check_permission(self, user_id: str, resource: str, action: str) -> bool:
-        """
-        Check if user has permission for resource and action.
-        
-        Args:
-            user_id: User ID
-            resource: Resource name
-            action: Action name
-            
-        Returns:
-            True if user has permission, False otherwise
-        """
-        try:
-            # Get user role
-            user = await self._get_user_by_id(user_id)
-            if not user:
-                return False
-            
-            # Check permission
-            return self.permission_manager.has_permission(user['role'], resource, action)
-            
-        except Exception as e:
-            logger.error(f"Error checking permission: {e}")
-            return False
-    
-    async def get_user_permissions(self, user_id: str) -> List[str]:
-        """
-        Get all permissions for a user.
-        
-        Args:
-            user_id: User ID
-            
-        Returns:
-            List of permission strings
-        """
-        try:
-            # Get user role
-            user = await self._get_user_by_id(user_id)
-            if not user:
-                return []
-            
-            # Get permissions for role
-            return self.permission_manager.get_role_permissions(user['role'])
-            
-        except Exception as e:
-            logger.error(f"Error getting user permissions: {e}")
-            return []
-    
-    async def cleanup_expired_sessions(self):
-        """Cleanup expired sessions."""
-        try:
-            current_time = datetime.utcnow()
-            expired_sessions = []
-            
-            for session_id, session_data in self.active_sessions.items():
-                if current_time - session_data['last_activity'] > self.session_timeout:
-                    expired_sessions.append(session_id)
-            
-            for session_id in expired_sessions:
-                del self.active_sessions[session_id]
-            
-            if expired_sessions:
-                logger.info(f"Cleaned up {len(expired_sessions)} expired sessions")
+            return True, "API key created successfully", api_key_data
                 
         except Exception as e:
-            logger.error(f"Error cleaning up sessions: {e}")
+            logger.error(f"API key creation failed: {e}")
+            return False, f"API key creation failed: {str(e)}", None
     
-    # Private helper methods
-    
-    def _validate_email(self, email: str) -> bool:
-        """Validate email format."""
-        import re
-        pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-        return re.match(pattern, email) is not None
-    
-    async def _user_exists(self, email: str, username: str) -> bool:
-        """Check if user exists by email or username."""
-        try:
-            async with self.db_manager.get_async_session() as session:
-                result = await session.execute(
-                    text("""
-                        SELECT 1 FROM users 
-                        WHERE email = :email OR username = :username
-                    """),
-                    {'email': email.lower(), 'username': username}
-                )
-                return result.fetchone() is not None
-        except Exception:
+    def _is_user_locked(self, user_id: str) -> bool:
+        """Check if user is locked due to failed login attempts."""
+        if user_id not in self.login_attempts:
+            return False
+        
+        attempt = self.login_attempts[user_id]
+        if attempt.locked_until and datetime.utcnow() < attempt.locked_until:
+            return True
+        
             return False
     
-    async def _get_user_by_email(self, email: str) -> Optional[Dict[str, Any]]:
-        """Get user by email."""
-        try:
-            async with self.db_manager.get_async_session() as session:
-                result = await session.execute(
-                    text("SELECT * FROM users WHERE email = :email"),
-                    {'email': email.lower()}
-                )
-                row = result.fetchone()
-                return dict(row._mapping) if row else None
-        except Exception:
-            return None
+    async def _record_failed_login(self, user_id: str):
+        """Record failed login attempt."""
+        if user_id not in self.login_attempts:
+            self.login_attempts[user_id] = LoginAttempt(
+                user_id=user_id,
+                attempts=0,
+                last_attempt=datetime.utcnow()
+            )
+        
+        attempt = self.login_attempts[user_id]
+        attempt.attempts += 1
+        attempt.last_attempt = datetime.utcnow()
+        
+        if attempt.attempts >= self.config.max_login_attempts:
+            attempt.locked_until = datetime.utcnow() + timedelta(
+                minutes=self.config.lockout_duration_minutes
+            )
     
-    async def _get_user_by_id(self, user_id: str) -> Optional[Dict[str, Any]]:
-        """Get user by ID."""
-        try:
-            async with self.db_manager.get_async_session() as session:
-                result = await session.execute(
-                    text("SELECT * FROM users WHERE id = :user_id"),
-                    {'user_id': user_id}
-                )
-                row = result.fetchone()
-                return dict(row._mapping) if row else None
-        except Exception:
-            return None
+    def _clear_failed_logins(self, user_id: str):
+        """Clear failed login attempts for user."""
+        if user_id in self.login_attempts:
+            del self.login_attempts[user_id]
     
     async def _update_last_login(self, user_id: str):
-        """Update user's last login time."""
+        """Update user's last login timestamp."""
+        db_manager = await get_db_manager()
+        update_query = """
+            UPDATE users SET last_login = $1, updated_at = $2
+            WHERE id = $3
+        """
+        await db_manager.execute_command(
+            update_query,
+            {'last_login': datetime.utcnow(), 'updated_at': datetime.utcnow(), 'user_id': user_id}
+        )
+    
+    async def _log_audit_event(
+        self,
+        user_id: str,
+        action: str,
+        resource_type: str,
+        resource_id: Optional[str] = None,
+        old_values: Optional[Dict[str, Any]] = None,
+        new_values: Optional[Dict[str, Any]] = None,
+        ip_address: Optional[str] = None,
+        user_agent: Optional[str] = None
+    ):
+        """Log audit event."""
         try:
-            async with self.db_manager.get_async_session() as session:
-                await session.execute(
-                    text("""
-                        UPDATE users 
-                        SET last_login = :last_login, updated_at = :updated_at
-                        WHERE id = :user_id
-                    """),
-                    {
-                        'last_login': datetime.utcnow(),
-                        'updated_at': datetime.utcnow(),
-                        'user_id': user_id
-                    }
-                )
-                await session.commit()
+            db_manager = await get_db_manager()
+            log_query = """
+                INSERT INTO audit_log (
+                    id, user_id, action, resource_type, resource_id,
+                    old_values, new_values, ip_address, user_agent, created_at
+                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            """
+            
+            await db_manager.execute_command(
+                log_query,
+                {
+                    'log_id': str(uuid.uuid4()),
+                    'user_id': user_id,
+                    'action': action,
+                    'resource_type': resource_type,
+                    'resource_id': resource_id,
+                    'old_values': old_values,
+                    'new_values': new_values,
+                    'ip_address': ip_address,
+                    'user_agent': user_agent,
+                    'created_at': datetime.utcnow()
+                }
+            )
         except Exception as e:
-            logger.error(f"Error updating last login: {e}")
+            logger.error(f"Failed to log audit event: {e}")
+
+
+# Global authentication manager instance
+auth_manager = AuthenticationManager()
+
+
+async def get_auth_manager() -> AuthenticationManager:
+    """Get global authentication manager instance."""
+    return auth_manager

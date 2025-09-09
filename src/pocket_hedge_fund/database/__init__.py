@@ -9,29 +9,28 @@ __version__ = "1.0.0"
 __author__ = "NeoZork Team"
 
 # Import database components
-from .connection import DatabaseManager, get_db_connection
+from .connection import DatabaseManager, get_db_manager, init_database, close_database
 from .models import (
-    FundModel,
-    PortfolioModel,
-    PerformanceModel,
-    RiskModel,
-    UserModel,
-    TransactionModel,
-    StrategyModel
+    User, Fund, Investor, PortfolioPosition, TradingStrategy,
+    FundStrategy, Transaction, PerformanceSnapshot, RiskMetric,
+    APIKey, AuditLog, Base
 )
-from .migrations import MigrationManager
-from .utils import DatabaseUtils
 
 __all__ = [
     "DatabaseManager",
-    "get_db_connection",
-    "FundModel",
-    "PortfolioModel", 
-    "PerformanceModel",
-    "RiskModel",
-    "UserModel",
-    "TransactionModel",
-    "StrategyModel",
-    "MigrationManager",
-    "DatabaseUtils"
+    "get_db_manager",
+    "init_database",
+    "close_database",
+    "User",
+    "Fund", 
+    "Investor",
+    "PortfolioPosition",
+    "TradingStrategy",
+    "FundStrategy",
+    "Transaction",
+    "PerformanceSnapshot",
+    "RiskMetric",
+    "APIKey",
+    "AuditLog",
+    "Base"
 ]
