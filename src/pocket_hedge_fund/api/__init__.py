@@ -13,10 +13,12 @@ from .fund_api import router as fund_router
 from .investment_api import router as investment_router
 from .portfolio_api import router as portfolio_router
 from .returns_api import router as returns_router
+from .web_api import router as web_router
 
 __all__ = [
     "fund_router",
     "investment_router",
     "portfolio_router",
-    "returns_router"
+    "returns_router",
+    "web_router"
 ]
