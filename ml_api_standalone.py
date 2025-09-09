@@ -12,6 +12,7 @@ import sys
 import os
 import json
 import numpy as np
+import pandas as pd
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 from datetime import datetime
@@ -21,6 +22,7 @@ sys.path.append('src')
 
 from fastapi import FastAPI, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 import uvicorn
 
@@ -36,6 +38,45 @@ class NumpyEncoder(json.JSONEncoder):
         elif isinstance(obj, np.ndarray):
             return obj.tolist()
         return super(NumpyEncoder, self).default(obj)
+
+def safe_json_response(data: Any, status_code: int = 200) -> JSONResponse:
+    """Create a JSON response with safe serialization."""
+    try:
+        # Recursively clean data
+        def clean_data(obj):
+            if isinstance(obj, dict):
+                return {k: clean_data(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [clean_data(item) for item in obj]
+            elif isinstance(obj, np.ndarray):
+                return obj.tolist()
+            elif isinstance(obj, pd.Series):
+                return obj.tolist()
+            elif isinstance(obj, (np.integer, np.floating)):
+                if np.isnan(obj):
+                    return None
+                return float(obj) if isinstance(obj, np.floating) else int(obj)
+            elif isinstance(obj, (np.bool_, bool)):
+                return bool(obj)
+            elif hasattr(obj, 'isoformat'):  # datetime objects
+                return obj.isoformat()
+            else:
+                return obj
+        
+        # Clean the data
+        cleaned_data = clean_data(data)
+        
+        # Convert to JSON string with custom encoder
+        json_str = json.dumps(cleaned_data, cls=NumpyEncoder, default=str)
+        # Parse back to dict to ensure it's valid
+        safe_data = json.loads(json_str)
+        return JSONResponse(content=safe_data, status_code=status_code)
+    except Exception as e:
+        logger.error(f"Error serializing JSON response: {e}")
+        return JSONResponse(
+            content={"error": "Failed to serialize response", "detail": str(e)},
+            status_code=500
+        )
 
 # Import our ML modules
 from pocket_hedge_fund.ml.price_predictor import PricePredictor
@@ -467,10 +508,22 @@ async def calculate_indicators(request: Dict[str, str]):
         indicator_integration = IndicatorIntegration()
         indicators = await indicator_integration.calculate_indicators(data, symbol)
         
+        # Convert indicators to safe format
+        safe_indicators = {}
+        for key, value in indicators.items():
+            if isinstance(value, (np.ndarray, pd.Series)):
+                safe_indicators[key] = value.tolist() if hasattr(value, 'tolist') else list(value)
+            elif isinstance(value, (np.integer, np.floating)):
+                safe_indicators[key] = float(value) if not np.isnan(value) else None
+            else:
+                safe_indicators[key] = value
+        
+        # Simple response without complex data
         return {
             'status': 'success',
             'symbol': symbol,
-            'indicators': indicators,
+            'indicators_count': len(safe_indicators),
+            'indicators_keys': list(safe_indicators.keys()),
             'timestamp': datetime.now().isoformat()
         }
         
