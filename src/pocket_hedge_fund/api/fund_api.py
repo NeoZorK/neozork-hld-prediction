@@ -306,7 +306,7 @@ async def create_fund(
 @router.get("/", response_model=List[FundResponse])
 async def list_funds(
     fund_type: Optional[str] = Query(None, description="Filter by fund type"),
-    status: Optional[str] = Query(None, description="Filter by status"),
+    fund_status: Optional[str] = Query(None, description="Filter by status"),
     risk_level: Optional[str] = Query(None, description="Filter by risk level"),
     limit: int = Query(50, ge=1, le=100, description="Number of funds to return"),
     offset: int = Query(0, ge=0, description="Number of funds to skip"),
@@ -324,9 +324,9 @@ async def list_funds(
             where_conditions.append("fund_type = $1")
             params.append(fund_type)
         
-        if status:
+        if fund_status:
             where_conditions.append("status = $2")
-            params.append(status)
+            params.append(fund_status)
         
         if risk_level:
             where_conditions.append("risk_level = $3")
@@ -347,7 +347,7 @@ async def list_funds(
             LIMIT ${limit_param} OFFSET ${offset_param}
         """
         
-        funds = await db_manager.execute_query(query, params)
+        funds = await db_manager.execute_query(query, dict(enumerate(params, 1)))
         
         # Convert to Fund models and then to response
         from ..database.models import Fund
