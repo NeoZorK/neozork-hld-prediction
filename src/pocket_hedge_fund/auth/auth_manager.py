@@ -14,7 +14,7 @@ import uuid
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 import bcrypt
-import jwt
+from jose import jwt
 from passlib.context import CryptContext
 
 from ..database.connection import DatabaseManager

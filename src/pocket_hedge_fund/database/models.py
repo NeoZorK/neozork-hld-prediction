@@ -11,7 +11,7 @@ from enum import Enum
 import uuid
 
 from sqlalchemy import (
-    Column, Integer, String, Float, Decimal as SQLDecimal, 
+    Column, Integer, String, Float, Numeric as SQLDecimal, 
     DateTime, Date, Boolean, Text, ForeignKey, Index,
     UniqueConstraint, CheckConstraint
 )
