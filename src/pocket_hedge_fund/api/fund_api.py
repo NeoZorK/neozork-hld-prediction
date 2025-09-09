@@ -13,7 +13,8 @@ from typing import Optional, Dict, Any, List
 from decimal import Decimal
 import uuid
 
-from fastapi import APIRouter, HTTPException, Depends, status, Query, Path
+from fastapi import APIRouter, HTTPException, Depends, Query, Path
+from fastapi import status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, Field, validator
 from sqlalchemy import text
@@ -287,7 +288,7 @@ async def create_fund(
             action="fund_created",
             resource_type="fund",
             resource_id=fund_id,
-            new_values=fund_data
+            new_values=str(fund_data)
         )
         
         return FundResponse(**fund.to_dict())
@@ -317,28 +318,33 @@ async def list_funds(
         
         # Build query with filters
         where_conditions = []
-        params = {'limit': limit, 'offset': offset}
+        params = []
         
         if fund_type:
-            where_conditions.append("fund_type = $fund_type")
-            params['fund_type'] = fund_type
+            where_conditions.append("fund_type = $1")
+            params.append(fund_type)
         
         if status:
-            where_conditions.append("status = $status")
-            params['status'] = status
+            where_conditions.append("status = $2")
+            params.append(status)
         
         if risk_level:
-            where_conditions.append("risk_level = $risk_level")
-            params['risk_level'] = risk_level
+            where_conditions.append("risk_level = $3")
+            params.append(risk_level)
         
         where_clause = ""
         if where_conditions:
             where_clause = "WHERE " + " AND ".join(where_conditions)
         
+        # Add limit and offset parameters
+        limit_param = len(params) + 1
+        offset_param = len(params) + 2
+        params.extend([limit, offset])
+        
         query = f"""
             SELECT * FROM funds {where_clause}
             ORDER BY created_at DESC
-            LIMIT $limit OFFSET $offset
+            LIMIT ${limit_param} OFFSET ${offset_param}
         """
         
         funds = await db_manager.execute_query(query, params)
