@@ -1,683 +1,255 @@
 """
-Portfolio API for Pocket Hedge Fund.
+Portfolio Management API for Pocket Hedge Fund
 
-This module provides REST API endpoints for portfolio management operations
-including position management, portfolio analysis, and risk monitoring.
+This module provides RESTful API endpoints for portfolio operations
+including portfolio overview, performance tracking, and analytics.
 """
 
+import asyncio
 import logging
-from typing import Dict, Any, Optional, List
-from datetime import datetime
+from datetime import datetime, date
+from typing import Optional, Dict, Any, List
 from decimal import Decimal
 
-from fastapi import APIRouter, HTTPException, status, Depends, Request
+from fastapi import APIRouter, HTTPException, Depends, Query, Path
+from fastapi import status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, Field
 
-from ..database import DatabaseManager, DatabaseUtils
-from ..auth.middleware import get_current_user, require_fund_manager
+from ..database.connection import get_db_manager
+from ..auth.auth_manager import get_auth_manager, get_current_user
 
+# Configure logging
 logger = logging.getLogger(__name__)
 
-# Security scheme
+# Create router
+router = APIRouter(prefix="/api/v1/portfolio", tags=["portfolio"])
+
+# Security
 security = HTTPBearer()
 
-# Create router
-router = APIRouter(prefix="/portfolios", tags=["Portfolio Management"])
+# Pydantic models for request/response
+class PortfolioSummaryResponse(BaseModel):
+    """Response model for portfolio summary."""
+    investor_id: str
+    total_invested: float
+    total_current_value: float
+    total_return: float
+    total_return_percentage: float
+    active_investments: int
+    total_investments: int
+    created_at: str
+    updated_at: str
 
-class PortfolioAPI:
-    """Portfolio API class for dependency injection."""
-    
-    def __init__(self, db_manager: DatabaseManager):
-        self.db_manager = db_manager
-        self.router = router
+class PortfolioPerformanceResponse(BaseModel):
+    """Response model for portfolio performance."""
+    period: str
+    start_date: str
+    end_date: str
+    total_return: float
+    total_return_percentage: float
+    best_performing_fund: Optional[str]
+    worst_performing_fund: Optional[str]
+    volatility: float
+    sharpe_ratio: float
 
-
-# Pydantic models
-
-class PositionCreate(BaseModel):
-    """Position creation request model."""
+class FundAllocationResponse(BaseModel):
+    """Response model for fund allocation."""
     fund_id: str
-    symbol: str
-    position_type: str  # 'long', 'short', 'cash'
-    quantity: Decimal
-    entry_price: Decimal
-    stop_loss: Optional[Decimal] = None
-    take_profit: Optional[Decimal] = None
-    notes: Optional[str] = None
-    
-    @validator('position_type')
-    def validate_position_type(cls, v):
-        if v not in ['long', 'short', 'cash']:
-            raise ValueError('Position type must be long, short, or cash')
-        return v
-    
-    @validator('quantity')
-    def validate_quantity(cls, v):
-        if v <= 0:
-            raise ValueError('Quantity must be positive')
-        return v
-    
-    @validator('entry_price')
-    def validate_entry_price(cls, v):
-        if v <= 0:
-            raise ValueError('Entry price must be positive')
-        return v
+    fund_name: str
+    fund_type: str
+    invested_amount: float
+    current_value: float
+    allocation_percentage: float
+    return_amount: float
+    return_percentage: float
+    shares_owned: float
+    share_price: float
 
-
-class PositionUpdate(BaseModel):
-    """Position update request model."""
-    quantity: Optional[Decimal] = None
-    stop_loss: Optional[Decimal] = None
-    take_profit: Optional[Decimal] = None
-    notes: Optional[str] = None
-    
-    @validator('quantity')
-    def validate_quantity(cls, v):
-        if v is not None and v <= 0:
-            raise ValueError('Quantity must be positive')
-        return v
-
-
-class PositionResponse(BaseModel):
-    """Position response model."""
-    id: str
-    fund_id: str
-    symbol: str
-    position_type: str
-    quantity: Decimal
-    entry_price: Decimal
-    current_price: Optional[Decimal]
-    stop_loss: Optional[Decimal]
-    take_profit: Optional[Decimal]
-    unrealized_pnl: Optional[Decimal]
-    realized_pnl: Optional[Decimal]
-    notes: Optional[str]
-    created_at: datetime
-    updated_at: datetime
-    closed_at: Optional[datetime]
-
-
-class PortfolioResponse(BaseModel):
-    """Portfolio response model."""
-    fund_id: str
-    total_value: Decimal
-    cash_balance: Decimal
-    invested_value: Decimal
-    unrealized_pnl: Decimal
-    realized_pnl: Decimal
-    total_return: Decimal
-    positions: List[PositionResponse]
-    last_updated: datetime
-
-
-class PortfolioSummary(BaseModel):
-    """Portfolio summary model."""
-    portfolio: PortfolioResponse
+class PortfolioAnalyticsResponse(BaseModel):
+    """Response model for portfolio analytics."""
+    summary: PortfolioSummaryResponse
+    performance: PortfolioPerformanceResponse
+    fund_allocations: List[FundAllocationResponse]
     risk_metrics: Dict[str, Any]
-    performance_metrics: Dict[str, Any]
 
+# Portfolio API endpoints
 
-# API endpoints
-
-@router.post("/{fund_id}/positions", response_model=PositionResponse, status_code=status.HTTP_201_CREATED)
-async def create_position(
-    fund_id: str,
-    position_data: PositionCreate,
-    request: Request,
-    current_user: Dict[str, Any] = Depends(require_fund_manager)
-) -> PositionResponse:
-    """
-    Create a new position in the fund portfolio.
-    
-    Args:
-        fund_id: Fund ID
-        position_data: Position creation data
-        request: HTTP request
-        current_user: Current authenticated user
-        
-    Returns:
-        Created position information
-        
-    Raises:
-        HTTPException: If position creation fails
-    """
+@router.get("/summary", response_model=PortfolioSummaryResponse)
+async def get_portfolio_summary(
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Get portfolio summary for the current user."""
     try:
-        # Get database manager from app state
-        db_manager: DatabaseManager = request.app.state.db_manager
+        db_manager = await get_db_manager()
         
-        # Verify fund access
-        async with db_manager.get_async_session() as session:
-            from sqlalchemy import text
-            result = await session.execute(
-                text("SELECT * FROM funds WHERE id = :fund_id"),
-                {"fund_id": fund_id}
-            )
-            fund = result.fetchone()
-            
-            if not fund:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Fund not found"
-                )
-            
-            # Check if user is fund manager or admin
-            if (current_user['role'] != 'admin' and 
-                fund.manager_id != current_user['id']):
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Access denied"
-                )
+        # Get all investments for the user
+        investments_query = """
+            SELECT i.*, f.name as fund_name, f.fund_type, f.current_value as fund_current_value, f.initial_capital
+            FROM investments i
+            JOIN funds f ON i.fund_id = f.id
+            WHERE i.investor_id = $1 AND i.status = 'active'
+        """
+        investments = await db_manager.execute_query(investments_query, {'1': current_user['id']})
         
-        # Create position
-        import uuid
-        position_id = str(uuid.uuid4())
+        # Calculate portfolio metrics
+        total_invested = sum(float(inv['amount']) for inv in investments)
+        total_current_value = 0.0
+        active_investments = len(investments)
         
-        async with db_manager.get_async_session() as session:
-            await session.execute(
-                text("""
-                    INSERT INTO positions (
-                        id, fund_id, symbol, position_type, quantity, entry_price,
-                        stop_loss, take_profit, notes, created_at, updated_at
-                    ) VALUES (
-                        :id, :fund_id, :symbol, :position_type, :quantity, :entry_price,
-                        :stop_loss, :take_profit, :notes, :created_at, :updated_at
-                    )
-                """),
-                {
-                    'id': position_id,
-                    'fund_id': fund_id,
-                    'symbol': position_data.symbol,
-                    'position_type': position_data.position_type,
-                    'quantity': position_data.quantity,
-                    'entry_price': position_data.entry_price,
-                    'stop_loss': position_data.stop_loss,
-                    'take_profit': position_data.take_profit,
-                    'notes': position_data.notes,
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                }
-            )
-            await session.commit()
+        for inv in investments:
+            # Calculate current value based on fund performance
+            fund_share_price = float(inv['fund_current_value']) / float(inv['initial_capital']) if inv['initial_capital'] > 0 else 1.0
+            current_value = float(inv['shares_acquired']) * fund_share_price
+            total_current_value += current_value
         
-        logger.info(f"Position created successfully: {position_data.symbol} in fund {fund_id}")
+        total_return = total_current_value - total_invested
+        total_return_percentage = (total_return / total_invested * 100) if total_invested > 0 else 0.0
         
-        # Return created position
-        return PositionResponse(
-            id=position_id,
-            fund_id=fund_id,
-            symbol=position_data.symbol,
-            position_type=position_data.position_type,
-            quantity=position_data.quantity,
-            entry_price=position_data.entry_price,
-            current_price=None,
-            stop_loss=position_data.stop_loss,
-            take_profit=position_data.take_profit,
-            unrealized_pnl=None,
-            realized_pnl=None,
-            notes=position_data.notes,
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
-            closed_at=None
+        # Get total investments count (including inactive)
+        total_investments_query = """
+            SELECT COUNT(*) as total_count FROM investments WHERE investor_id = $1
+        """
+        total_result = await db_manager.execute_query(total_investments_query, {'1': current_user['id']})
+        total_investments = total_result[0]['total_count'] if total_result else 0
+        
+        return PortfolioSummaryResponse(
+            investor_id=str(current_user['id']),
+            total_invested=total_invested,
+            total_current_value=total_current_value,
+            total_return=total_return,
+            total_return_percentage=total_return_percentage,
+            active_investments=active_investments,
+            total_investments=total_investments,
+            created_at=datetime.utcnow().isoformat(),
+            updated_at=datetime.utcnow().isoformat()
         )
         
-    except HTTPException:
-        raise
     except Exception as e:
-        logger.error(f"Error creating position: {e}")
+        logger.error(f"Failed to get portfolio summary: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Position creation failed"
+            detail=f"Failed to get portfolio summary: {str(e)}"
         )
 
-
-@router.get("/{fund_id}/positions", response_model=List[PositionResponse])
-async def list_positions(
-    fund_id: str,
-    request: Request,
-    current_user: Dict[str, Any] = Depends(get_current_user),
-    skip: int = 0,
-    limit: int = 100
-) -> List[PositionResponse]:
-    """
-    List positions in the fund portfolio.
-    
-    Args:
-        fund_id: Fund ID
-        request: HTTP request
-        current_user: Current authenticated user
-        skip: Number of records to skip
-        limit: Maximum number of records to return
-        
-    Returns:
-        List of positions
-        
-    Raises:
-        HTTPException: If position listing fails
-    """
+@router.get("/allocations", response_model=List[FundAllocationResponse])
+async def get_fund_allocations(
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Get fund allocations for the current user's portfolio."""
     try:
-        # Get database manager from app state
-        db_manager: DatabaseManager = request.app.state.db_manager
+        db_manager = await get_db_manager()
         
-        # Verify fund access
-        async with db_manager.get_async_session() as session:
-            from sqlalchemy import text
-            result = await session.execute(
-                text("SELECT * FROM funds WHERE id = :fund_id"),
-                {"fund_id": fund_id}
-            )
-            fund = result.fetchone()
-            
-            if not fund:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Fund not found"
-                )
-            
-            # Check access permissions
-            if (current_user['role'] not in ['admin', 'fund_manager'] and 
-                fund.manager_id != current_user['id']):
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Access denied"
-                )
-            
-            # Get positions
-            result = await session.execute(
-                text("""
-                    SELECT * FROM positions 
-                    WHERE fund_id = :fund_id AND closed_at IS NULL
-                    ORDER BY created_at DESC
-                    LIMIT :limit OFFSET :skip
-                """),
-                {"fund_id": fund_id, "limit": limit, "skip": skip}
-            )
-            positions_data = result.fetchall()
+        # Get all active investments with fund details
+        investments_query = """
+            SELECT i.*, f.name as fund_name, f.fund_type, f.current_value as fund_current_value, f.initial_capital
+            FROM investments i
+            JOIN funds f ON i.fund_id = f.id
+            WHERE i.investor_id = $1 AND i.status = 'active'
+        """
+        investments = await db_manager.execute_query(investments_query, {'1': current_user['id']})
         
-        # Convert to response models
-        positions = []
-        for position_data in positions_data:
-            positions.append(PositionResponse(
-                id=position_data.id,
-                fund_id=position_data.fund_id,
-                symbol=position_data.symbol,
-                position_type=position_data.position_type,
-                quantity=position_data.quantity,
-                entry_price=position_data.entry_price,
-                current_price=position_data.current_price,
-                stop_loss=position_data.stop_loss,
-                take_profit=position_data.take_profit,
-                unrealized_pnl=position_data.unrealized_pnl,
-                realized_pnl=position_data.realized_pnl,
-                notes=position_data.notes,
-                created_at=position_data.created_at,
-                updated_at=position_data.updated_at,
-                closed_at=position_data.closed_at
+        # Group by fund and calculate allocations
+        fund_allocations = {}
+        total_portfolio_value = 0.0
+        
+        for inv in investments:
+            fund_id = inv['fund_id']
+            fund_share_price = float(inv['fund_current_value']) / float(inv['initial_capital']) if inv['initial_capital'] > 0 else 1.0
+            current_value = float(inv['shares_acquired']) * fund_share_price
+            
+            if fund_id not in fund_allocations:
+                fund_allocations[fund_id] = {
+                    'fund_id': fund_id,
+                    'fund_name': inv['fund_name'],
+                    'fund_type': inv['fund_type'],
+                    'invested_amount': 0.0,
+                    'current_value': 0.0,
+                    'shares_owned': 0.0,
+                    'share_price': fund_share_price
+                }
+            
+            fund_allocations[fund_id]['invested_amount'] += float(inv['amount'])
+            fund_allocations[fund_id]['current_value'] += current_value
+            fund_allocations[fund_id]['shares_owned'] += float(inv['shares_acquired'])
+            total_portfolio_value += current_value
+        
+        # Calculate allocation percentages and returns
+        allocations = []
+        for fund_id, allocation in fund_allocations.items():
+            allocation_percentage = (allocation['current_value'] / total_portfolio_value * 100) if total_portfolio_value > 0 else 0.0
+            return_amount = allocation['current_value'] - allocation['invested_amount']
+            return_percentage = (return_amount / allocation['invested_amount'] * 100) if allocation['invested_amount'] > 0 else 0.0
+            
+            allocations.append(FundAllocationResponse(
+                fund_id=str(fund_id),
+                fund_name=allocation['fund_name'],
+                fund_type=allocation['fund_type'],
+                invested_amount=allocation['invested_amount'],
+                current_value=allocation['current_value'],
+                allocation_percentage=allocation_percentage,
+                return_amount=return_amount,
+                return_percentage=return_percentage,
+                shares_owned=allocation['shares_owned'],
+                share_price=allocation['share_price']
             ))
         
-        return positions
+        # Sort by allocation percentage (descending)
+        allocations.sort(key=lambda x: x.allocation_percentage, reverse=True)
         
-    except HTTPException:
-        raise
+        return allocations
+        
     except Exception as e:
-        logger.error(f"Error listing positions: {e}")
+        logger.error(f"Failed to get fund allocations: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to list positions"
+            detail=f"Failed to get fund allocations: {str(e)}"
         )
 
-
-@router.get("/{fund_id}/positions/{position_id}", response_model=PositionResponse)
-async def get_position(
-    fund_id: str,
-    position_id: str,
-    request: Request,
+@router.get("/analytics", response_model=PortfolioAnalyticsResponse)
+async def get_portfolio_analytics(
     current_user: Dict[str, Any] = Depends(get_current_user)
-) -> PositionResponse:
-    """
-    Get position by ID.
-    
-    Args:
-        fund_id: Fund ID
-        position_id: Position ID
-        request: HTTP request
-        current_user: Current authenticated user
-        
-    Returns:
-        Position information
-        
-    Raises:
-        HTTPException: If position not found or access denied
-    """
+):
+    """Get comprehensive portfolio analytics."""
     try:
-        # Get database manager from app state
-        db_manager: DatabaseManager = request.app.state.db_manager
-        
-        async with db_manager.get_async_session() as session:
-            from sqlalchemy import text
-            result = await session.execute(
-                text("""
-                    SELECT p.*, f.manager_id 
-                    FROM positions p
-                    JOIN funds f ON p.fund_id = f.id
-                    WHERE p.id = :position_id AND p.fund_id = :fund_id
-                """),
-                {"position_id": position_id, "fund_id": fund_id}
-            )
-            position_data = result.fetchone()
-            
-            if not position_data:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Position not found"
-                )
-            
-            # Check access permissions
-            if (current_user['role'] not in ['admin', 'fund_manager'] and 
-                position_data.manager_id != current_user['id']):
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Access denied"
-                )
-            
-            return PositionResponse(
-                id=position_data.id,
-                fund_id=position_data.fund_id,
-                symbol=position_data.symbol,
-                position_type=position_data.position_type,
-                quantity=position_data.quantity,
-                entry_price=position_data.entry_price,
-                current_price=position_data.current_price,
-                stop_loss=position_data.stop_loss,
-                take_profit=position_data.take_profit,
-                unrealized_pnl=position_data.unrealized_pnl,
-                realized_pnl=position_data.realized_pnl,
-                notes=position_data.notes,
-                created_at=position_data.created_at,
-                updated_at=position_data.updated_at,
-                closed_at=position_data.closed_at
-            )
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error getting position: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to get position"
-        )
-
-
-@router.put("/{fund_id}/positions/{position_id}", response_model=PositionResponse)
-async def update_position(
-    fund_id: str,
-    position_id: str,
-    position_data: PositionUpdate,
-    request: Request,
-    current_user: Dict[str, Any] = Depends(require_fund_manager)
-) -> PositionResponse:
-    """
-    Update position information.
-    
-    Args:
-        fund_id: Fund ID
-        position_id: Position ID
-        position_data: Position update data
-        request: HTTP request
-        current_user: Current authenticated user
-        
-    Returns:
-        Updated position information
-        
-    Raises:
-        HTTPException: If position update fails
-    """
-    try:
-        # Get database manager from app state
-        db_manager: DatabaseManager = request.app.state.db_manager
-        
-        # Check if position exists and user has access
-        async with db_manager.get_async_session() as session:
-            from sqlalchemy import text
-            result = await session.execute(
-                text("""
-                    SELECT p.*, f.manager_id 
-                    FROM positions p
-                    JOIN funds f ON p.fund_id = f.id
-                    WHERE p.id = :position_id AND p.fund_id = :fund_id
-                """),
-                {"position_id": position_id, "fund_id": fund_id}
-            )
-            position = result.fetchone()
-            
-            if not position:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Position not found"
-                )
-            
-            # Check if user is fund manager or admin
-            if (current_user['role'] != 'admin' and 
-                position.manager_id != current_user['id']):
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Access denied"
-                )
-            
-            # Build update query
-            update_fields = []
-            update_values = {'position_id': position_id, 'updated_at': datetime.utcnow()}
-            
-            for field, value in position_data.dict(exclude_unset=True).items():
-                if value is not None:
-                    update_fields.append(f"{field} = :{field}")
-                    update_values[field] = value
-            
-            if not update_fields:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="No fields to update"
-                )
-            
-            # Execute update
-            update_query = f"""
-                UPDATE positions 
-                SET {', '.join(update_fields)}, updated_at = :updated_at
-                WHERE id = :position_id
-            """
-            
-            await session.execute(text(update_query), update_values)
-            await session.commit()
-            
-            # Get updated position
-            result = await session.execute(
-                text("SELECT * FROM positions WHERE id = :position_id"),
-                {"position_id": position_id}
-            )
-            updated_position = result.fetchone()
-            
-            logger.info(f"Position updated successfully: {position_id}")
-            
-            return PositionResponse(
-                id=updated_position.id,
-                fund_id=updated_position.fund_id,
-                symbol=updated_position.symbol,
-                position_type=updated_position.position_type,
-                quantity=updated_position.quantity,
-                entry_price=updated_position.entry_price,
-                current_price=updated_position.current_price,
-                stop_loss=updated_position.stop_loss,
-                take_profit=updated_position.take_profit,
-                unrealized_pnl=updated_position.unrealized_pnl,
-                realized_pnl=updated_position.realized_pnl,
-                notes=updated_position.notes,
-                created_at=updated_position.created_at,
-                updated_at=updated_position.updated_at,
-                closed_at=updated_position.closed_at
-            )
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error updating position: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Position update failed"
-        )
-
-
-@router.delete("/{fund_id}/positions/{position_id}", response_model=Dict[str, str])
-async def close_position(
-    fund_id: str,
-    position_id: str,
-    request: Request,
-    current_user: Dict[str, Any] = Depends(require_fund_manager)
-) -> Dict[str, str]:
-    """
-    Close position (soft delete by setting closed_at).
-    
-    Args:
-        fund_id: Fund ID
-        position_id: Position ID
-        request: HTTP request
-        current_user: Current authenticated user
-        
-    Returns:
-        Position closure confirmation
-        
-    Raises:
-        HTTPException: If position closure fails
-    """
-    try:
-        # Get database manager from app state
-        db_manager: DatabaseManager = request.app.state.db_manager
-        
-        # Check if position exists and user has access
-        async with db_manager.get_async_session() as session:
-            from sqlalchemy import text
-            result = await session.execute(
-                text("""
-                    SELECT p.*, f.manager_id 
-                    FROM positions p
-                    JOIN funds f ON p.fund_id = f.id
-                    WHERE p.id = :position_id AND p.fund_id = :fund_id
-                """),
-                {"position_id": position_id, "fund_id": fund_id}
-            )
-            position = result.fetchone()
-            
-            if not position:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Position not found"
-                )
-            
-            # Check if user is fund manager or admin
-            if (current_user['role'] != 'admin' and 
-                position.manager_id != current_user['id']):
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Access denied"
-                )
-            
-            # Close position
-            await session.execute(
-                text("""
-                    UPDATE positions 
-                    SET closed_at = :closed_at, updated_at = :updated_at
-                    WHERE id = :position_id
-                """),
-                {
-                    'position_id': position_id,
-                    'closed_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                }
-            )
-            await session.commit()
-            
-            logger.info(f"Position closed successfully: {position_id}")
-            
-            return {
-                'message': 'Position closed successfully'
-            }
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error closing position: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Position closure failed"
-        )
-
-
-@router.get("/{fund_id}/summary", response_model=PortfolioSummary)
-async def get_portfolio_summary(
-    fund_id: str,
-    request: Request,
-    current_user: Dict[str, Any] = Depends(get_current_user)
-) -> PortfolioSummary:
-    """
-    Get comprehensive portfolio summary.
-    
-    Args:
-        fund_id: Fund ID
-        request: HTTP request
-        current_user: Current authenticated user
-        
-    Returns:
-        Portfolio summary with risk and performance metrics
-        
-    Raises:
-        HTTPException: If portfolio summary retrieval fails
-    """
-    try:
-        # Get database manager from app state
-        db_manager: DatabaseManager = request.app.state.db_manager
-        db_utils = DatabaseUtils(db_manager)
-        
         # Get portfolio summary
-        summary_data = await db_utils.get_portfolio_summary(fund_id)
+        summary = await get_portfolio_summary(current_user)
         
-        if not summary_data or not summary_data['portfolio']:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Portfolio not found"
-            )
+        # Get fund allocations
+        allocations = await get_fund_allocations(current_user)
         
-        # Check access permissions
-        portfolio_data = summary_data['portfolio']
-        if (current_user['role'] not in ['admin', 'fund_manager'] and 
-            portfolio_data['manager_id'] != current_user['id']):
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Access denied"
-            )
+        # Calculate additional risk metrics
+        risk_metrics = {
+            "diversification_score": min(len(allocations) * 20, 100),  # Simple diversification score
+            "concentration_risk": max([alloc.allocation_percentage for alloc in allocations], default=0),
+            "portfolio_beta": 1.0,  # Placeholder - would need market data
+            "max_drawdown": 0.0,  # Placeholder - would need historical data
+            "var_95": 0.0  # Placeholder - would need historical data
+        }
         
-        # Build response
-        portfolio_response = PortfolioResponse(
-            fund_id=portfolio_data['fund_id'],
-            total_value=portfolio_data['total_value'],
-            cash_balance=portfolio_data['cash_balance'],
-            invested_value=portfolio_data['invested_value'],
-            unrealized_pnl=portfolio_data['unrealized_pnl'],
-            realized_pnl=portfolio_data['realized_pnl'],
-            total_return=portfolio_data['total_return'],
-            positions=[],  # Will be populated from positions data
-            last_updated=portfolio_data['last_updated']
+        # Create mock performance data
+        performance = PortfolioPerformanceResponse(
+            period="1M",
+            start_date=datetime.utcnow().replace(day=1).isoformat(),
+            end_date=datetime.utcnow().isoformat(),
+            total_return=summary.total_return,
+            total_return_percentage=summary.total_return_percentage,
+            best_performing_fund=allocations[0].fund_name if allocations else None,
+            worst_performing_fund=allocations[-1].fund_name if allocations else None,
+            volatility=0.15,
+            sharpe_ratio=1.2
         )
         
-        return PortfolioSummary(
-            portfolio=portfolio_response,
-            risk_metrics=summary_data.get('risk_metrics', {}),
-            performance_metrics=summary_data.get('performance_metrics', {})
+        return PortfolioAnalyticsResponse(
+            summary=summary,
+            performance=performance,
+            fund_allocations=allocations,
+            risk_metrics=risk_metrics
         )
         
-    except HTTPException:
-        raise
     except Exception as e:
-        logger.error(f"Error getting portfolio summary: {e}")
+        logger.error(f"Failed to get portfolio analytics: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to get portfolio summary"
+            detail=f"Failed to get portfolio analytics: {str(e)}"
         )
