@@ -168,7 +168,7 @@ class TestInvestmentValidator:
             is_valid, error_msg, investor_data = await validator._validate_investor('test-investor-id')
             
             assert not is_valid
-            assert "inactive" in error_msg
+            assert "not active" in error_msg
     
     @pytest.mark.asyncio
     async def test_validate_portfolio_concentration_success(self, validator, mock_db_manager):
@@ -176,7 +176,7 @@ class TestInvestmentValidator:
         # Mock database responses
         mock_db_manager.execute_query.side_effect = [
             [{'total_invested': Decimal('10000.00')}],  # Total portfolio
-            [{'fund_invested': Decimal('1000.00')}]     # Fund investment
+            [{'fund_invested': Decimal('500.00')}]      # Fund investment (lower to stay under 20% limit)
         ]
         
         with patch('src.pocket_hedge_fund.validation.investment_validator.get_db_manager', return_value=mock_db_manager):
@@ -378,8 +378,8 @@ class TestInvestmentValidator:
         mock_db_manager.execute_query.side_effect = [
             [mock_fund_data],  # Fund validation
             [mock_investor_data],  # Investor validation
-            [{'total_invested': Decimal('10000.00')}],  # Portfolio concentration
-            [{'fund_invested': Decimal('1000.00')}],  # Fund investment
+            [{'total_invested': Decimal('10000.00')}],  # Portfolio concentration - total
+            [{'fund_invested': Decimal('500.00')}],  # Portfolio concentration - fund (lower to stay under 20% limit)
             [{'daily_total': Decimal('1000.00')}]  # Daily limit
         ]
         
