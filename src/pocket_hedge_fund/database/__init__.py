@@ -11,7 +11,7 @@ __author__ = "NeoZork Team"
 # Import database components
 from .connection import DatabaseManager, get_db_manager, init_database, close_database
 from .models import (
-    User, Fund, Investor, PortfolioPosition, TradingStrategy,
+    User, Fund, Investment, PortfolioPosition, TradingStrategy,
     FundStrategy, Transaction, PerformanceSnapshot, RiskMetric,
     APIKey, AuditLog, Base
 )
@@ -23,7 +23,7 @@ __all__ = [
     "close_database",
     "User",
     "Fund", 
-    "Investor",
+    "Investment",
     "PortfolioPosition",
     "TradingStrategy",
     "FundStrategy",
