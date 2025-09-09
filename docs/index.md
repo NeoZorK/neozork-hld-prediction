@@ -137,6 +137,18 @@ python run_analysis.py demo --rule PHLD
 - [Project Structure](getting-started/project-structure.md) - Understanding the codebase
 - [Installation Guide](getting-started/installation.md) - Step-by-step installation
 
+### 🚀 Run and Test Guides / Руководства по запуску и тестированию
+- [Complete Manual (English)](run-and-test-guides/english/complete-manual-en.md) - **NEW**: Complete run and test manual
+- [Complete Manual (Русский)](run-and-test-guides/russian/complete-manual-ru.md) - **NEW**: Полное руководство по запуску и тестированию
+- [Quick Start (English)](run-and-test-guides/english/quick-start-en.md) - **NEW**: Quick start guide
+- [Quick Start (Русский)](run-and-test-guides/russian/quick-start-ru.md) - **NEW**: Быстрый старт
+- [Testing Guide (English)](run-and-test-guides/english/testing-guide-en.md) - **NEW**: Comprehensive testing guide
+- [Testing Guide (Русский)](run-and-test-guides/russian/testing-guide-ru.md) - **NEW**: Руководство по тестированию
+- [Deployment Guide (English)](run-and-test-guides/english/deployment-guide-en.md) - **NEW**: Deployment guide
+- [Deployment Guide (Русский)](run-and-test-guides/russian/deployment-guide-ru.md) - **NEW**: Руководство по развертыванию
+- [Troubleshooting](run-and-test-guides/troubleshooting.md) - **NEW**: Common issues and solutions
+- [FAQ](run-and-test-guides/faq.md) - **NEW**: Frequently asked questions
+
 ### Containers
 - [Container Documentation](containers/index.md) - **NEW**: Comprehensive container documentation
 - [Native Container](containers/native-container/index.md) - Apple Silicon optimized container
