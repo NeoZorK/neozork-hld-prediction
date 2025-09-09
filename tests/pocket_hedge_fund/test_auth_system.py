@@ -103,12 +103,12 @@ class TestJWTHandler:
         # Token should be valid initially
         assert not self.jwt_handler.is_token_expired(token)
         
-        # Wait for token to expire
-        import time
-        time.sleep(2)
+        # Create an already expired token
+        expired_payload = {'user_id': 'test-user-123'}
+        expired_token = self.jwt_handler.create_token(expired_payload, expires_delta=timedelta(seconds=-1))
         
-        # Token should be expired now
-        assert self.jwt_handler.is_token_expired(token)
+        # Expired token should be detected as expired
+        assert self.jwt_handler.is_token_expired(expired_token)
     
     def test_extract_user_info(self):
         """Test extracting user info from token."""
