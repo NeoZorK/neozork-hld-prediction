@@ -327,7 +327,7 @@ class AuthenticationManager:
                        role, is_active, mfa_enabled, mfa_secret, last_login
                 FROM users WHERE email = $1
             """
-            users = await db_manager.execute_query(user_query, {'email': email})
+            users = await db_manager.execute_query(user_query, {'1': email})
             
             if not users:
                 return False, "Invalid email or password", None
