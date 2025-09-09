@@ -22,6 +22,10 @@ CREATE TABLE IF NOT EXISTS users (
     kyc_verified_at TIMESTAMP,
     is_active BOOLEAN DEFAULT true,
     is_admin BOOLEAN DEFAULT false,
+    role VARCHAR(50) DEFAULT 'investor',
+    mfa_enabled BOOLEAN DEFAULT false,
+    mfa_secret VARCHAR(32),
+    last_login TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

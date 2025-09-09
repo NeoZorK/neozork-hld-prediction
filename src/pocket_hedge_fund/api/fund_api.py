@@ -174,10 +174,17 @@ async def require_role(required_role: str, current_user: Dict[str, Any] = Depend
 @router.post("/", response_model=FundResponse, status_code=status.HTTP_201_CREATED)
 async def create_fund(
     fund_data: FundCreateRequest,
-    current_user: Dict[str, Any] = Depends(lambda: require_role("fund_manager"))
+    current_user: Dict[str, Any] = Depends(get_current_user)
 ):
     """Create a new fund."""
     try:
+        # Check if user has fund_manager role
+        if current_user['role'] != 'fund_manager' and current_user['role'] != 'admin':
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Requires fund_manager role"
+            )
+        
         db_manager = await get_db_manager()
         
         # Validate fund type constraints
@@ -218,8 +225,8 @@ async def create_fund(
             create_fund_query,
             {
                 'fund_id': fund_id,
-                'name': fund_data.name,
-                'description': fund_data.description,
+                    'name': fund_data.name,
+                    'description': fund_data.description,
                 'fund_type': fund_data.fund_type,
                 'initial_capital': fund_data.initial_capital,
                 'current_value': fund_data.initial_capital,  # Start with initial capital
@@ -229,7 +236,7 @@ async def create_fund(
                 'max_investment': fund_data.max_investment,
                 'max_investors': fund_data.max_investors,
                 'current_investors': 0,
-                'status': 'active',
+                    'status': 'active',
                 'risk_level': fund_data.risk_level,
                 'created_by': current_user['id'],
                 'created_at': now,
@@ -249,7 +256,29 @@ async def create_fund(
                 detail="Failed to retrieve created fund"
             )
         
-        fund = funds[0]
+        fund_data = funds[0]
+        
+        # Create Fund model instance to get computed properties
+        from ..database.models import Fund
+        fund = Fund(
+            id=fund_data['id'],
+            name=fund_data['name'],
+            description=fund_data['description'],
+            fund_type=fund_data['fund_type'],
+            initial_capital=fund_data['initial_capital'],
+            current_value=fund_data['current_value'],
+            management_fee=fund_data['management_fee'],
+            performance_fee=fund_data['performance_fee'],
+            min_investment=fund_data['min_investment'],
+            max_investment=fund_data['max_investment'],
+            max_investors=fund_data['max_investors'],
+            current_investors=fund_data['current_investors'],
+            status=fund_data['status'],
+            risk_level=fund_data['risk_level'],
+            created_by=fund_data['created_by'],
+            created_at=fund_data['created_at'],
+            updated_at=fund_data['updated_at']
+        )
         
         # Log fund creation
         auth_manager = await get_auth_manager()
@@ -258,10 +287,10 @@ async def create_fund(
             action="fund_created",
             resource_type="fund",
             resource_id=fund_id,
-            new_values=fund_data.dict()
+            new_values=fund_data
         )
         
-        return FundResponse(**fund)
+        return FundResponse(**fund.to_dict())
         
     except HTTPException:
         raise
@@ -314,7 +343,32 @@ async def list_funds(
         
         funds = await db_manager.execute_query(query, params)
         
-        return [FundResponse(**fund) for fund in funds]
+        # Convert to Fund models and then to response
+        from ..database.models import Fund
+        fund_models = []
+        for fund_data in funds:
+            fund = Fund(
+                id=fund_data['id'],
+                name=fund_data['name'],
+                description=fund_data['description'],
+                fund_type=fund_data['fund_type'],
+                initial_capital=fund_data['initial_capital'],
+                current_value=fund_data['current_value'],
+                management_fee=fund_data['management_fee'],
+                performance_fee=fund_data['performance_fee'],
+                min_investment=fund_data['min_investment'],
+                max_investment=fund_data['max_investment'],
+                max_investors=fund_data['max_investors'],
+                current_investors=fund_data['current_investors'],
+                status=fund_data['status'],
+                risk_level=fund_data['risk_level'],
+                created_by=fund_data['created_by'],
+                created_at=fund_data['created_at'],
+                updated_at=fund_data['updated_at']
+            )
+            fund_models.append(fund)
+        
+        return [FundResponse(**fund.to_dict()) for fund in fund_models]
         
     except Exception as e:
         logger.error(f"Failed to list funds: {e}")
@@ -337,11 +391,11 @@ async def get_fund(
         funds = await db_manager.execute_query(fund_query, {'fund_id': fund_id})
         
         if not funds:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Fund not found"
-            )
-        
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Fund not found"
+                )
+            
         return FundResponse(**funds[0])
         
     except HTTPException:
@@ -358,7 +412,7 @@ async def get_fund(
 async def update_fund(
     fund_id: str = Path(..., description="Fund ID"),
     fund_data: FundUpdateRequest = None,
-    current_user: Dict[str, Any] = Depends(lambda: require_role("fund_manager"))
+    current_user: Dict[str, Any] = Depends(get_current_user)
 ):
     """Update fund."""
     try:
@@ -369,11 +423,11 @@ async def update_fund(
         funds = await db_manager.execute_query(fund_query, {'fund_id': fund_id})
         
         if not funds:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Fund not found"
-            )
-        
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Fund not found"
+                )
+            
         # Check if user has permission to update this fund
         fund = funds[0]
         if fund['created_by'] != current_user['id'] and current_user['role'] != 'admin':
@@ -395,16 +449,16 @@ async def update_fund(
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="No fields to update"
-            )
-        
-        update_query = f"""
+                )
+            
+            update_query = f"""
             UPDATE funds SET {', '.join(update_fields)}, updated_at = $updated_at
             WHERE id = $fund_id
-        """
-        
+            """
+            
         await db_manager.execute_command(update_query, params)
-        
-        # Get updated fund
+            
+            # Get updated fund
         updated_funds = await db_manager.execute_query(fund_query, {'fund_id': fund_id})
         
         # Log fund update
@@ -620,7 +674,7 @@ async def get_fund_performance(
 @router.get("/{fund_id}/investors", response_model=List[InvestmentResponse])
 async def get_fund_investors(
     fund_id: str = Path(..., description="Fund ID"),
-    current_user: Dict[str, Any] = Depends(lambda: require_role("fund_manager"))
+    current_user: Dict[str, Any] = Depends(get_current_user)
 ):
     """Get fund investors (fund managers only)."""
     try:
@@ -631,15 +685,15 @@ async def get_fund_investors(
         funds = await db_manager.execute_query(fund_query, {'fund_id': fund_id})
         
         if not funds:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Fund not found"
-            )
-        
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Fund not found"
+                )
+            
         fund = funds[0]
         if fund['created_by'] != current_user['id'] and current_user['role'] != 'admin':
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
                 detail="You don't have permission to view this fund's investors"
             )
         
