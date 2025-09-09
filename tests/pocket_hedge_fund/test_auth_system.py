@@ -6,6 +6,7 @@ password manager, permissions, and middleware.
 """
 
 import pytest
+import pytest_asyncio
 import asyncio
 from datetime import datetime, timedelta
 from decimal import Decimal
@@ -284,18 +285,17 @@ class TestPermissionManager:
 class TestAuthManager:
     """Test authentication manager functionality."""
     
-    @pytest.fixture
+    @pytest_asyncio.fixture
     async def mock_db_manager(self):
         """Create mock database manager."""
         mock_db = AsyncMock(spec=DatabaseManager)
         mock_db.get_async_session.return_value.__aenter__.return_value = AsyncMock()
         return mock_db
     
-    @pytest.fixture
+    @pytest_asyncio.fixture
     async def auth_manager(self, mock_db_manager):
         """Create auth manager with mock database."""
         auth_manager = AuthManager(mock_db_manager)
-        await auth_manager.initialize()
         return auth_manager
     
     @pytest.mark.asyncio
@@ -312,10 +312,20 @@ class TestAuthManager:
         
         # Mock database operations
         with patch.object(auth_manager.db_manager, 'get_async_session') as mock_session:
-            mock_session.return_value.__aenter__.return_value.execute.return_value.fetchone.return_value = None
-            mock_session.return_value.__aenter__.return_value.commit = AsyncMock()
+            # Mock the async context manager
+            mock_session_context = AsyncMock()
+            mock_session.return_value = mock_session_context
+            
+            # Mock the session execute method for both _user_exists and register_user
+            mock_execute_result = AsyncMock()
+            mock_execute_result.fetchone.return_value = None  # User doesn't exist
+            mock_session_context.__aenter__.return_value.execute = AsyncMock(return_value=mock_execute_result)
+            mock_session_context.__aenter__.return_value.commit = AsyncMock()
             
             result = await auth_manager.register_user(user_data)
+            
+            # Debug: print the actual result
+            print(f"Actual result: {result}")
             
             assert result['status'] == 'success'
             assert 'user_id' in result
@@ -418,7 +428,6 @@ class TestAuthIntegration:
         # Setup
         mock_db_manager = AsyncMock(spec=DatabaseManager)
         auth_manager = AuthManager(mock_db_manager)
-        await auth_manager.initialize()
         
         # Mock database operations
         with patch.object(auth_manager.db_manager, 'get_async_session') as mock_session:
