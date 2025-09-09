@@ -1,0 +1,151 @@
+/**
+ * Activity Item Component Styles
+ * 
+ * CSS styles for individual activity items.
+ */
+
+/* ============================================================================
+   ACTIVITY ITEM
+   ============================================================================ */
+
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease-in-out;
+  border-left: 3px solid transparent;
+}
+
+.activity-item:hover {
+  background-color: #f8fafc;
+}
+
+.activity-item__icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.activity-item__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.activity-item__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.25rem;
+}
+
+.activity-item__title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.25;
+}
+
+.activity-item__timestamp {
+  font-size: 0.75rem;
+  color: #64748b;
+  white-space: nowrap;
+  margin-left: 0.5rem;
+}
+
+.activity-item__description {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.activity-item__user {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* ============================================================================
+   ACTIVITY ITEM VARIANTS
+   ============================================================================ */
+
+.activity-item--success {
+  border-left-color: #10b981;
+}
+
+.activity-item--success .activity-item__icon {
+  color: #10b981;
+}
+
+.activity-item--warning {
+  border-left-color: #f59e0b;
+}
+
+.activity-item--warning .activity-item__icon {
+  color: #f59e0b;
+}
+
+.activity-item--error {
+  border-left-color: #ef4444;
+}
+
+.activity-item--error .activity-item__icon {
+  color: #ef4444;
+}
+
+.activity-item--info {
+  border-left-color: #3b82f6;
+}
+
+.activity-item--info .activity-item__icon {
+  color: #3b82f6;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .activity-item {
+    padding: 0.5rem;
+  }
+  
+  .activity-item__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .activity-item__timestamp {
+    margin-left: 0;
+  }
+}
+
+/* ============================================================================
+   DARK MODE SUPPORT
+   ============================================================================ */
+
+@media (prefers-color-scheme: dark) {
+  .activity-item:hover {
+    background-color: #1e293b;
+  }
+  
+  .activity-item__title {
+    color: #f1f5f9;
+  }
+  
+  .activity-item__description {
+    color: #94a3b8;
+  }
+  
+  .activity-item__timestamp {
+    color: #94a3b8;
+  }
+  
+  .activity-item__user {
+    color: #64748b;
+  }
+}
