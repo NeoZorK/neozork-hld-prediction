@@ -7,7 +7,7 @@ for the authentication system.
 
 import logging
 from typing import Dict, Any, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from jose import jwt
 import os
 from jose.exceptions import JWTError, ExpiredSignatureError
@@ -48,14 +48,14 @@ class JWTHandler:
         try:
             # Set expiration time
             if expires_delta:
-                expire = datetime.utcnow() + expires_delta
+                expire = datetime.now(timezone.utc) + expires_delta
             else:
-                expire = datetime.utcnow() + self.default_expiry
+                expire = datetime.now(timezone.utc) + self.default_expiry
             
             # Add standard claims
             payload.update({
                 'exp': expire,
-                'iat': datetime.utcnow(),
+                'iat': datetime.now(timezone.utc),
                 'iss': 'pocket-hedge-fund',
                 'aud': 'pocket-hedge-fund-users'
             })
@@ -93,7 +93,7 @@ class JWTHandler:
             # Check if token is expired
             if 'exp' in payload:
                 exp_timestamp = payload['exp']
-                if datetime.utcnow().timestamp() > exp_timestamp:
+                if datetime.now(timezone.utc).timestamp() > exp_timestamp:
                     logger.warning("JWT token has expired")
                     return None
             
@@ -124,7 +124,7 @@ class JWTHandler:
             payload = {
                 'user_id': user_id,
                 'type': 'refresh',
-                'exp': datetime.utcnow() + self.refresh_expiry
+                'exp': datetime.now(timezone.utc) + self.refresh_expiry
             }
             
             token = jwt.encode(payload, self.secret_key, algorithm=self.algorithm)
@@ -183,7 +183,7 @@ class JWTHandler:
             Token payload or None
         """
         try:
-            payload = jwt.decode(token, options={"verify_signature": False})
+            payload = jwt.decode(token, key="", options={"verify_signature": False, "verify_aud": False, "verify_iss": False})
             return payload
         except Exception as e:
             logger.error(f"Error decoding token: {e}")
@@ -221,7 +221,10 @@ class JWTHandler:
         try:
             expiry = self.get_token_expiry(token)
             if expiry:
-                return datetime.utcnow() > expiry
+                # Ensure both datetimes are timezone-aware
+                if expiry.tzinfo is None:
+                    expiry = expiry.replace(tzinfo=timezone.utc)
+                return datetime.now(timezone.utc) > expiry
             return True
         except Exception as e:
             logger.error(f"Error checking token expiry: {e}")
@@ -362,7 +365,7 @@ class JWTHandler:
                 'type': payload.get('type'),
                 'issued_at': datetime.fromtimestamp(payload.get('iat', 0)) if payload.get('iat') else None,
                 'expires_at': expiry,
-                'time_until_expiry': (expiry - datetime.utcnow()).total_seconds() if expiry and not is_expired else 0
+                'time_until_expiry': (expiry - datetime.now(timezone.utc)).total_seconds() if expiry and not is_expired else 0
             }
             
         except Exception as e:
