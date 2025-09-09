@@ -1,0 +1,69 @@
+{
+  "expo": {
+    "name": "NeoZork Pocket Hedge Fund",
+    "slug": "pocket-hedge-fund",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#667eea"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.neozork.pockethedgefund",
+      "buildNumber": "1.0.0",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app needs access to camera to scan QR codes and take photos for document verification.",
+        "NSPhotoLibraryUsageDescription": "This app needs access to photo library to select images for document verification.",
+        "NSMicrophoneUsageDescription": "This app needs access to microphone for voice authentication.",
+        "NSFaceIDUsageDescription": "This app uses Face ID for secure authentication.",
+        "NSTouchIDUsageDescription": "This app uses Touch ID for secure authentication."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#667eea"
+      },
+      "package": "com.neozork.pockethedgefund",
+      "versionCode": 1,
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "RECORD_AUDIO",
+        "USE_BIOMETRIC",
+        "USE_FINGERPRINT",
+        "VIBRATE",
+        "INTERNET",
+        "ACCESS_NETWORK_STATE",
+        "ACCESS_WIFI_STATE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-secure-store",
+      "expo-crypto",
+      "expo-font",
+      "expo-splash-screen",
+      "expo-constants",
+      "expo-device",
+      "expo-blur",
+      "expo-linear-gradient"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "pocket-hedge-fund-mobile"
+      }
+    }
+  }
+}

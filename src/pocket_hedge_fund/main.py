@@ -30,6 +30,7 @@ from src.pocket_hedge_fund.api.investment_api import router as investment_router
 from src.pocket_hedge_fund.api.portfolio_api import router as portfolio_router
 from src.pocket_hedge_fund.api.returns_api import router as returns_router
 from src.pocket_hedge_fund.api.web_api import router as web_router
+from src.pocket_hedge_fund.api.mobile_api import router as mobile_router
 
 # Configure logging
 logging.basicConfig(
@@ -62,8 +63,8 @@ class PocketHedgeFundApp:
         self.app = FastAPI(
             title="NeoZork Pocket Hedge Fund API",
             description="AI-powered hedge fund management platform",
-            version="1.0.0",
-            docs_url="/docs",
+    version="1.0.0",
+    docs_url="/docs",
             redoc_url="/redoc"
         )
         self._setup_middleware()
@@ -73,19 +74,19 @@ class PocketHedgeFundApp:
         """Setup middleware for the application."""
         # CORS middleware
         self.app.add_middleware(
-            CORSMiddleware,
-            allow_origins=["*"],  # Configure appropriately for production
-            allow_credentials=True,
-            allow_methods=["*"],
-            allow_headers=["*"],
-        )
-        
+    CORSMiddleware,
+    allow_origins=["*"],  # Configure appropriately for production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
         # Trusted host middleware
         self.app.add_middleware(
-            TrustedHostMiddleware,
-            allowed_hosts=["*"]  # Configure appropriately for production
-        )
-    
+    TrustedHostMiddleware,
+    allowed_hosts=["*"]  # Configure appropriately for production
+)
+
     def _setup_routes(self):
         """Setup API routes."""
         # Health check endpoint
@@ -125,6 +126,7 @@ class PocketHedgeFundApp:
         self.app.include_router(portfolio_router)
         self.app.include_router(returns_router)
         self.app.include_router(web_router)
+        self.app.include_router(mobile_router)
         
         # Authentication endpoints
         @self.app.post("/api/v1/auth/register")
