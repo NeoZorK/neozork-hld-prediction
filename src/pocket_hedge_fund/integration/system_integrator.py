@@ -487,6 +487,15 @@ class SystemIntegrator:
             self.app.include_router(self.strategy_engine_api.router)
             self.app.include_router(self.dashboard_analytics_api.router)
             
+            # Include new API routers
+            from ..api.data_api import router as data_router
+            from ..api.portfolio_api_enhanced import router as enhanced_portfolio_router
+            from ..api.ml_api import router as ml_router
+            
+            self.app.include_router(data_router, prefix="/api/v1")
+            self.app.include_router(enhanced_portfolio_router, prefix="/api/v1")
+            self.app.include_router(ml_router, prefix="/api/v1")
+            
             # Add system endpoints
             self.app.get("/health")(self.get_system_health)
             self.app.get("/metrics")(self.get_system_metrics)
