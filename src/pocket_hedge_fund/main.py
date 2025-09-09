@@ -28,6 +28,7 @@ from src.pocket_hedge_fund.database.models import Base
 from src.pocket_hedge_fund.auth.auth_manager import get_auth_manager
 from src.pocket_hedge_fund.api.fund_api import router as fund_router
 from src.pocket_hedge_fund.api.investment_api import router as investment_router
+from src.pocket_hedge_fund.api.portfolio_api import router as portfolio_router
 
 # Configure logging
 logging.basicConfig(
@@ -90,8 +91,8 @@ class PocketHedgeFundApp:
             self.app = FastAPI(
                 title="NeoZork Pocket Hedge Fund API",
                 description="AI-powered hedge fund management platform",
-                version="1.0.0",
-                docs_url="/docs",
+    version="1.0.0",
+    docs_url="/docs",
                 redoc_url="/redoc"
             )
             
@@ -114,19 +115,19 @@ class PocketHedgeFundApp:
         """Setup FastAPI middleware."""
         # CORS middleware
         self.app.add_middleware(
-            CORSMiddleware,
-            allow_origins=["*"],  # Configure appropriately for production
-            allow_credentials=True,
-            allow_methods=["*"],
-            allow_headers=["*"],
-        )
-        
+    CORSMiddleware,
+    allow_origins=["*"],  # Configure appropriately for production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
         # Trusted host middleware
         self.app.add_middleware(
-            TrustedHostMiddleware,
-            allowed_hosts=["*"]  # Configure appropriately for production
-        )
-    
+    TrustedHostMiddleware,
+    allowed_hosts=["*"]  # Configure appropriately for production
+)
+
     def _setup_routes(self):
         """Setup API routes."""
         # Health check endpoint
@@ -148,7 +149,7 @@ class PocketHedgeFundApp:
             except Exception as e:
                 logger.error(f"Health check failed: {e}")
                 raise HTTPException(status_code=503, detail="Service unhealthy")
-        
+
         # Root endpoint
         @self.app.get("/")
         async def root():
@@ -159,10 +160,11 @@ class PocketHedgeFundApp:
                 "docs": "/docs",
                 "health": "/health"
             }
-        
-        # Include API routers
+
+# Include API routers
         self.app.include_router(fund_router)
         self.app.include_router(investment_router)
+        self.app.include_router(portfolio_router)
         
         # Authentication endpoints
         @self.app.post("/api/v1/auth/register")
