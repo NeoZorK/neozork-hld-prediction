@@ -27,6 +27,7 @@ from src.pocket_hedge_fund.database.connection import init_database, close_datab
 from src.pocket_hedge_fund.database.models import Base
 from src.pocket_hedge_fund.auth.auth_manager import get_auth_manager
 from src.pocket_hedge_fund.api.fund_api import router as fund_router
+from src.pocket_hedge_fund.api.investment_api import router as investment_router
 
 # Configure logging
 logging.basicConfig(
@@ -161,6 +162,7 @@ class PocketHedgeFundApp:
         
         # Include API routers
         self.app.include_router(fund_router)
+        self.app.include_router(investment_router)
         
         # Authentication endpoints
         @self.app.post("/api/v1/auth/register")

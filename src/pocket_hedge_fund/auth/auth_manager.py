@@ -28,6 +28,9 @@ from jwt.exceptions import InvalidTokenError, ExpiredSignatureError
 from ..database.connection import get_db_manager
 from ..database.models import User, UserRole, APIKey, AuditLog
 
+from fastapi import HTTPException, Depends, status
+from fastapi.security import HTTPBearer
+
 logger = logging.getLogger(__name__)
 
 
@@ -693,3 +696,23 @@ auth_manager = AuthenticationManager()
 async def get_auth_manager() -> AuthenticationManager:
     """Get global authentication manager instance."""
     return auth_manager
+
+async def get_current_user(token: str = Depends(HTTPBearer())) -> Dict[str, Any]:
+    """Get current user from JWT token."""
+    try:
+        auth_manager = await get_auth_manager()
+        is_valid, message, user_data = await auth_manager.verify_token(token.credentials)
+        
+        if not is_valid:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail=message
+            )
+        
+        return user_data
+    except Exception as e:
+        logger.error(f"Failed to get current user: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication failed"
+        )

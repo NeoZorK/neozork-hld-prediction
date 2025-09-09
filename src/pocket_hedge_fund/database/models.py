@@ -113,7 +113,7 @@ class User(Base):
     
     # Relationships
     funds_created = relationship("Fund", back_populates="creator")
-    investments = relationship("Investor", back_populates="user")
+    user_investments = relationship("Investment", back_populates="investor")
     api_keys = relationship("APIKey", back_populates="user")
     audit_logs = relationship("AuditLog", back_populates="user")
     
@@ -168,7 +168,7 @@ class Fund(Base):
     
     # Relationships
     creator = relationship("User", back_populates="funds_created")
-    investors = relationship("Investor", back_populates="fund")
+    fund_investments = relationship("Investment", back_populates="fund")
     positions = relationship("PortfolioPosition", back_populates="fund")
     transactions = relationship("Transaction", back_populates="fund")
     performance_snapshots = relationship("PerformanceSnapshot", back_populates="fund")
@@ -221,67 +221,60 @@ class Fund(Base):
         }
 
 
-class Investor(Base):
-    """Investor model for fund investments."""
+class Investment(Base):
+    """Investment model for individual investments."""
     
-    __tablename__ = 'investors'
+    __tablename__ = 'investments'
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
+    investor_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
     fund_id = Column(UUID(as_uuid=True), ForeignKey('funds.id'), nullable=False)
-    investment_amount = Column(Numeric(20, 8), nullable=False)
-    shares_owned = Column(Numeric(20, 8), nullable=False)
-    investment_date = Column(DateTime, default=datetime.utcnow)
-    last_valuation_date = Column(DateTime)
-    current_value = Column(Numeric(20, 8))
-    total_return = Column(Numeric(20, 8))
-    total_return_percentage = Column(Numeric(10, 4))
+    amount = Column(Numeric(20, 8), nullable=False)
+    investment_type = Column(String(50), default='lump_sum')
     status = Column(String(50), default='active')
+    shares_acquired = Column(Numeric(20, 8), nullable=False)
+    share_price = Column(Numeric(20, 8), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Relationships
-    user = relationship("User", back_populates="investments")
-    fund = relationship("Fund", back_populates="investors")
-    
-    # Constraints
-    __table_args__ = (
-        UniqueConstraint('user_id', 'fund_id', name='unique_user_fund_investment'),
-        Index('idx_investors_user_id', 'user_id'),
-        Index('idx_investors_fund_id', 'fund_id'),
-    )
+    investor = relationship("User", back_populates="user_investments")
+    fund = relationship("Fund", back_populates="fund_investments")
     
     @hybrid_property
-    def unrealized_pnl(self):
-        """Calculate unrealized P&L."""
-        if self.current_value and self.investment_amount:
-            return self.current_value - self.investment_amount
-        return Decimal('0')
+    def current_value(self):
+        """Calculate current value based on current fund value."""
+        if self.fund and self.shares_acquired:
+            return float(self.shares_acquired * self.fund.current_value / self.fund.initial_capital)
+        return 0.0
     
     @hybrid_property
-    def unrealized_pnl_percentage(self):
-        """Calculate unrealized P&L percentage."""
-        if self.investment_amount > 0 and self.current_value:
-            return ((self.current_value - self.investment_amount) / self.investment_amount) * 100
-        return Decimal('0')
+    def total_return(self):
+        """Calculate total return."""
+        return float(self.current_value) - float(self.amount)
     
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert investor to dictionary."""
+    @hybrid_property
+    def total_return_percentage(self):
+        """Calculate total return percentage."""
+        if float(self.amount) > 0:
+            return float((self.total_return / float(self.amount)) * 100)
+        return 0.0
+    
+    def to_dict(self):
+        """Convert to dictionary for API responses."""
         return {
             'id': str(self.id),
-            'user_id': str(self.user_id),
+            'investor_id': str(self.investor_id),
             'fund_id': str(self.fund_id),
-            'investment_amount': float(self.investment_amount),
-            'shares_owned': float(self.shares_owned),
-            'investment_date': self.investment_date.isoformat() if self.investment_date else None,
-            'last_valuation_date': self.last_valuation_date.isoformat() if self.last_valuation_date else None,
-            'current_value': float(self.current_value) if self.current_value else None,
-            'total_return': float(self.total_return) if self.total_return else None,
-            'total_return_percentage': float(self.total_return_percentage) if self.total_return_percentage else None,
-            'unrealized_pnl': float(self.unrealized_pnl),
-            'unrealized_pnl_percentage': float(self.unrealized_pnl_percentage),
+            'amount': float(self.amount),
+            'investment_type': self.investment_type,
             'status': self.status,
-            'created_at': self.created_at.isoformat() if self.created_at else None if self.created_at else None,
+            'shares_acquired': float(self.shares_acquired),
+            'share_price': float(self.share_price),
+            'current_value': self.current_value,
+            'total_return': self.total_return,
+            'total_return_percentage': self.total_return_percentage,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }
 
