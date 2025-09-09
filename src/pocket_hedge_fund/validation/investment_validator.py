@@ -202,12 +202,13 @@ class InvestmentValidator:
             new_total = total_invested + amount
             new_fund_total = fund_invested + amount
             
+            concentration = 0.0
             if new_total > 0:
                 concentration = new_fund_total / new_total
                 if concentration > self.max_portfolio_concentration:
                     return False, f"Investment would exceed maximum concentration limit of {self.max_portfolio_concentration * 100}%"
             
-            validation_data['portfolio_concentration'] = float(concentration) if new_total > 0 else 0.0
+            validation_data['portfolio_concentration'] = float(concentration)
             return True, "Portfolio concentration validation passed"
             
         except Exception as e:
