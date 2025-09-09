@@ -18,7 +18,7 @@ from typing import Dict, List, Optional, Any
 from datetime import datetime
 
 # Add src to path
-sys.path.append('src')
+sys.path.append('..')
 
 from fastapi import FastAPI, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -202,7 +202,7 @@ async def train_ml_models(request: TrainModelRequest):
                 
                 # Get data for training
                 if symbol.startswith('data/'):
-                    data = await data_manager.get_local_data(symbol)
+                    data = await data_manager.get_local_data(f"../../{symbol}")
                 else:
                     data = await data_manager.get_yahoo_data(symbol, period=f"{request.lookback_days}d")
                 
@@ -257,7 +257,7 @@ async def make_prediction(request: PredictRequest):
         
         # Get latest data
         if request.symbol.startswith('data/'):
-            data = await data_manager.get_local_data(request.symbol)
+            data = await data_manager.get_local_data(f"../../{request.symbol}")
         else:
             data = await data_manager.get_yahoo_data(request.symbol, period="30d")
         
