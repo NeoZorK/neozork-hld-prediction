@@ -208,6 +208,20 @@ class DatabaseManager:
                 logger.error(f"Query execution failed: {e}")
                 raise
     
+    async def execute_query_named(self, query: str, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        """Execute async query with named parameters and return results."""
+        async with self.get_connection() as conn:
+            try:
+                if params:
+                    rows = await conn.fetch(query, **params)
+                else:
+                    rows = await conn.fetch(query)
+                
+                return [dict(row) for row in rows]
+            except Exception as e:
+                logger.error(f"Query execution failed: {e}")
+                raise
+    
     async def execute_command(self, command: str, params: Optional[Dict[str, Any]] = None) -> str:
         """Execute async command and return result."""
         async with self.get_connection() as conn:
