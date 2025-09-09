@@ -29,6 +29,7 @@ from src.pocket_hedge_fund.auth.auth_manager import get_auth_manager
 from src.pocket_hedge_fund.api.fund_api import router as fund_router
 from src.pocket_hedge_fund.api.investment_api import router as investment_router
 from src.pocket_hedge_fund.api.portfolio_api import router as portfolio_router
+from src.pocket_hedge_fund.api.returns_api import router as returns_router
 
 # Configure logging
 logging.basicConfig(
@@ -130,41 +131,42 @@ class PocketHedgeFundApp:
 
     def _setup_routes(self):
         """Setup API routes."""
-        # Health check endpoint
+# Health check endpoint
         @self.app.get("/health")
-        async def health_check():
+async def health_check():
             """Health check endpoint."""
             try:
                 # Check database connection
                 db_manager = await get_db_manager()
                 await db_manager.execute_query("SELECT 1")
-                
-                return {
+        
+        return {
                     "status": "healthy",
                     "timestamp": "2025-01-05T00:00:00Z",
-                    "version": "1.0.0",
+            "version": "1.0.0",
                     "database": "connected",
                     "authentication": "ready"
                 }
-            except Exception as e:
-                logger.error(f"Health check failed: {e}")
+    except Exception as e:
+        logger.error(f"Health check failed: {e}")
                 raise HTTPException(status_code=503, detail="Service unhealthy")
 
-        # Root endpoint
+# Root endpoint
         @self.app.get("/")
-        async def root():
+async def root():
             """Root endpoint."""
-            return {
+    return {
                 "message": "NeoZork Pocket Hedge Fund API",
-                "version": "1.0.0",
+        "version": "1.0.0",
                 "docs": "/docs",
                 "health": "/health"
-            }
+    }
 
 # Include API routers
         self.app.include_router(fund_router)
         self.app.include_router(investment_router)
         self.app.include_router(portfolio_router)
+        self.app.include_router(returns_router)
         
         # Authentication endpoints
         @self.app.post("/api/v1/auth/register")
