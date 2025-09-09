@@ -25,6 +25,13 @@ security = HTTPBearer()
 # Create router
 router = APIRouter(prefix="/funds", tags=["Fund Management"])
 
+class FundAPI:
+    """Fund API class for dependency injection."""
+    
+    def __init__(self, db_manager: DatabaseManager):
+        self.db_manager = db_manager
+        self.router = router
+
 
 # Pydantic models
 
