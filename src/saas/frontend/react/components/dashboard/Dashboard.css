@@ -1,0 +1,237 @@
+/**
+ * Dashboard Component Styles
+ * 
+ * CSS styles for the main dashboard component and its sub-components.
+ */
+
+/* ============================================================================
+   DASHBOARD MAIN
+   ============================================================================ */
+
+.dashboard {
+  padding: 1.5rem;
+  background-color: #f8fafc;
+  min-height: 100vh;
+}
+
+.dashboard-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid #e2e8f0;
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.dashboard-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+.error-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+/* ============================================================================
+   DASHBOARD HEADER
+   ============================================================================ */
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.dashboard-title h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.tenant-name {
+  display: block;
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-top: 0.25rem;
+}
+
+.dashboard-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.status-indicator {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: #ef4444;
+}
+
+.status-indicator.connected {
+  background-color: #10b981;
+}
+
+.last-updated {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* ============================================================================
+   DASHBOARD CONTENT
+   ============================================================================ */
+
+.dashboard-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+}
+
+.dashboard-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.dashboard-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 1024px) {
+  .dashboard-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-sidebar {
+    order: -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 1rem;
+  }
+  
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .dashboard-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* ============================================================================
+   CARD SPECIFIC STYLES
+   ============================================================================ */
+
+.usage-chart-card {
+  min-height: 400px;
+}
+
+.recent-activity-card {
+  min-height: 300px;
+}
+
+.system-health-card {
+  min-height: 200px;
+}
+
+.quick-actions-card {
+  min-height: 200px;
+}
+
+/* ============================================================================
+   ANIMATIONS
+   ============================================================================ */
+
+.dashboard {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================================
+   DARK MODE SUPPORT
+   ============================================================================ */
+
+@media (prefers-color-scheme: dark) {
+  .dashboard {
+    background-color: #0f172a;
+    color: #f1f5f9;
+  }
+  
+  .dashboard-title h1 {
+    color: #f1f5f9;
+  }
+  
+  .tenant-name {
+    color: #94a3b8;
+  }
+  
+  .dashboard-header {
+    border-bottom-color: #334155;
+  }
+  
+  .connection-status {
+    color: #94a3b8;
+  }
+  
+  .last-updated {
+    color: #64748b;
+  }
+}
