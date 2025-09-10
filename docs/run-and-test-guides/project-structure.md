@@ -13,9 +13,9 @@ neozork-hld-prediction/
 │   ├── data/                     # Работа с данными / Data handling
 │   ├── plotting/                 # Построение графиков / Plotting
 │   └── ...
-├── interactive/                   # Интерактивная система / Interactive system
-├── mobile_app/                   # Мобильное приложение / Mobile application
-├── admin_panel/                  # Админ панель / Admin panel
+├── src/interactive/              # Интерактивная система / Interactive system
+├── src/mobile_app/               # Мобильное приложение / Mobile application
+├── src/admin_panel/              # Админ панель / Admin panel
 ├── tests/                        # Тесты / Tests
 ├── scripts/                      # Скрипты запуска / Launch scripts
 ├── docs/                         # Документация / Documentation
@@ -60,11 +60,11 @@ tests/
 - **SaaS Platform** (`src/saas/`) - Облачная платформа / Cloud platform
 - **Pocket Hedge Fund** (`src/pocket_hedge_fund/`) - Хедж-фонд / Hedge fund
 - **Monitoring** (`src/monitoring/`) - Система мониторинга / Monitoring system
-- **Interactive System** (`interactive/`) - Интерактивная система / Interactive system
+- **Interactive System** (`src/interactive/`) - Интерактивная система / Interactive system
 
 ### Frontend компоненты / Frontend Components
-- **Mobile App** (`mobile_app/`) - React Native приложение / React Native app
-- **Admin Panel** (`admin_panel/`) - Vue.js админка / Vue.js admin panel
+- **Mobile App** (`src/mobile_app/`) - React Native приложение / React Native app
+- **Admin Panel** (`src/admin_panel/`) - Vue.js админка / Vue.js admin panel
 
 ### Инфраструктура / Infrastructure
 - **Docker** (`docker-compose.yml`) - Контейнеризация / Containerization
@@ -79,8 +79,8 @@ tests/
 - `pytest.ini` - Конфигурация тестов / Test configuration
 
 ### Node.js конфигурация / Node.js Configuration
-- `mobile_app/package.json` - Мобильное приложение / Mobile app
-- `admin_panel/package.json` - Админ панель / Admin panel
+- `src/mobile_app/package.json` - Мобильное приложение / Mobile app
+- `src/admin_panel/package.json` - Админ панель / Admin panel
 
 ### Docker конфигурация / Docker Configuration
 - `docker-compose.yml` - Основные сервисы / Main services

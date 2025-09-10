@@ -21,8 +21,8 @@ uv run pytest tests -n auto
 - **Интерактивная система** (`interactive/`) - ML торговые стратегии / ML trading strategies
 - **SaaS платформа** (`src/saas/`) - Облачная платформа / Cloud platform
 - **Pocket Hedge Fund** (`src/pocket_hedge_fund/`) - Хедж-фонд / Hedge fund
-- **Мобильное приложение** (`mobile_app/`) - React Native приложение / React Native app
-- **Админ панель** (`admin_panel/`) - Vue.js админка / Vue.js admin panel
+- **Мобильное приложение** (`src/mobile_app/`) - React Native приложение / React Native app
+- **Админ панель** (`src/admin_panel/`) - Vue.js админка / Vue.js admin panel
 - **Мониторинг** (`src/monitoring/`) - Система мониторинга / Monitoring system
 
 ### Q: Какие требования к системе? / What are the system requirements?

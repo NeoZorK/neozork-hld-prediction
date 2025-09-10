@@ -233,8 +233,8 @@ docker system prune -a
 
 # Переустановка зависимостей / Reinstall dependencies
 uv pip install -r requirements.txt --force-reinstall
-cd mobile_app && npm install && cd ..
-cd admin_panel && npm install && cd ..
+cd src/mobile_app && npm install && cd ../..
+cd src/admin_panel && npm install && cd ../..
 
 # Запуск сервисов / Start services
 docker-compose up -d

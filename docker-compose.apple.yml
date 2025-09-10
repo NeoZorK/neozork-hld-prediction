@@ -20,7 +20,7 @@ services:
       - MLX_ENABLED=true
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "python", "-c", "import interactive; print('OK')"]
+      test: ["CMD", "python", "-c", "import src.interactive; print('OK')"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -41,7 +41,7 @@ services:
       - APPLE_SILICON=true
       - MLX_ENABLED=true
       - TRAINING_MODE=true
-    command: ["python", "-m", "interactive.ml_development.model_trainer"]
+    command: ["python", "-m", "src.interactive.ml_development.model_trainer"]
     restart: unless-stopped
     depends_on:
       - neozork-interactive
@@ -61,7 +61,7 @@ services:
       - PYTHONPATH=/app
       - APPLE_SILICON=true
       - MONITORING_MODE=true
-    command: ["python", "-m", "interactive.monitoring.system_monitor"]
+    command: ["python", "-m", "src.interactive.monitoring.system_monitor"]
     restart: unless-stopped
     depends_on:
       - neozork-interactive

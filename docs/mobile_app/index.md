@@ -15,7 +15,7 @@ The Pocket Hedge Fund Mobile App is a **React Native application** that provides
 
 ### **Project Structure**
 ```
-mobile_app/
+src/mobile_app/
 ├── src/
 │   ├── components/          # Reusable UI components
 │   │   └── LoadingScreen.tsx
@@ -332,7 +332,7 @@ interface DeviceInfo {
 ### **Installation**
 ```bash
 # Navigate to mobile app directory
-cd mobile_app
+cd src/mobile_app
 
 # Install dependencies
 npm install

@@ -82,7 +82,7 @@ Vue.js 3 + TypeScript
 
 ### **Project Structure**
 ```
-admin_panel/
+src/admin_panel/
 ├── src/
 │   ├── components/          # UI Components
 │   ├── views/              # Page Components

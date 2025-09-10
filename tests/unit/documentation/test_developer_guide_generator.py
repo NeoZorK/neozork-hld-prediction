@@ -15,7 +15,7 @@ from src.pocket_hedge_fund.documentation.generators.developer_guide_generator im
 def developer_guide_generator():
     """Create developer guide generator instance for testing."""
     config = {
-        'output_dir': './test-docs/developer_guide',
+        'output_dir': './docs/developer_guide',
         'include_code_examples': True,
         'include_architecture_diagrams': True,
         'language': 'en'
@@ -28,7 +28,7 @@ def developer_guide_generator():
 async def test_developer_guide_generator_initialization(developer_guide_generator):
     """Test developer guide generator initialization."""
     assert developer_guide_generator is not None
-    assert developer_guide_generator.output_dir == './test-docs/developer_guide'
+    assert developer_guide_generator.output_dir == './docs/developer_guide'
     assert developer_guide_generator.include_code_examples is True
     assert developer_guide_generator.include_architecture_diagrams is True
     assert developer_guide_generator.language == 'en'
@@ -497,7 +497,7 @@ async def test_save_guides_markdown(developer_guide_generator):
     output_path = await developer_guide_generator.save_guides('markdown')
     
     assert output_path is not None
-    assert output_path == 'test-docs/developer_guide'
+    assert output_path == 'docs/developer_guide'
 
 
 @pytest.mark.asyncio
@@ -649,7 +649,7 @@ async def test_generate_getting_started_with_code_examples(developer_guide_gener
 async def test_generate_getting_started_without_code_examples():
     """Test getting started guide generation with code examples disabled."""
     config = {
-        'output_dir': './test-docs/developer_guide',
+        'output_dir': './docs/developer_guide',
         'include_code_examples': False,
         'include_architecture_diagrams': True,
         'language': 'en'
@@ -685,7 +685,7 @@ async def test_generate_architecture_overview_with_diagrams(developer_guide_gene
 async def test_generate_architecture_overview_without_diagrams():
     """Test architecture overview guide generation with diagrams disabled."""
     config = {
-        'output_dir': './test-docs/developer_guide',
+        'output_dir': './docs/developer_guide',
         'include_code_examples': True,
         'include_architecture_diagrams': False,
         'language': 'en'

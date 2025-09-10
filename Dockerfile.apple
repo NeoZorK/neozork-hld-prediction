@@ -43,14 +43,14 @@ RUN mkdir -p data/cache/csv_converted \
     results
 
 # Set permissions
-RUN chmod +x interactive/neozork.py
+RUN chmod +x src/interactive/neozork.py
 
 # Expose port for web interface
 EXPOSE 8080
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import interactive; print('OK')" || exit 1
+    CMD python -c "import src.interactive; print('OK')" || exit 1
 
 # Default command
-CMD ["python", "interactive/neozork.py"]
+CMD ["python", "src/interactive/neozork.py"]

@@ -15,7 +15,7 @@ from src.pocket_hedge_fund.documentation.generators.user_guide_generator import 
 def user_guide_generator():
     """Create user guide generator instance for testing."""
     config = {
-        'output_dir': './test-docs/user_guide',
+        'output_dir': './docs/user_guide',
         'include_screenshots': True,
         'include_videos': False,
         'language': 'en'
@@ -28,7 +28,7 @@ def user_guide_generator():
 async def test_user_guide_generator_initialization(user_guide_generator):
     """Test user guide generator initialization."""
     assert user_guide_generator is not None
-    assert user_guide_generator.output_dir == './test-docs/user_guide'
+    assert user_guide_generator.output_dir == './docs/user_guide'
     assert user_guide_generator.include_screenshots is True
     assert user_guide_generator.include_videos is False
     assert user_guide_generator.language == 'en'
@@ -357,7 +357,7 @@ async def test_save_guides_markdown(user_guide_generator):
     output_path = await user_guide_generator.save_guides('markdown')
     
     assert output_path is not None
-    assert output_path == 'test-docs/user_guide'
+    assert output_path == 'docs/user_guide'
 
 
 @pytest.mark.asyncio
@@ -507,7 +507,7 @@ async def test_generate_getting_started_with_screenshots(user_guide_generator):
 async def test_generate_getting_started_without_screenshots():
     """Test getting started guide generation with screenshots disabled."""
     config = {
-        'output_dir': './test-docs/user_guide',
+        'output_dir': './docs/user_guide',
         'include_screenshots': False,
         'include_videos': False,
         'language': 'en'
@@ -527,7 +527,7 @@ async def test_generate_getting_started_without_screenshots():
 async def test_generate_mobile_app_with_videos():
     """Test mobile app guide generation with videos enabled."""
     config = {
-        'output_dir': './test-docs/user_guide',
+        'output_dir': './docs/user_guide',
         'include_screenshots': True,
         'include_videos': True,
         'language': 'en'
