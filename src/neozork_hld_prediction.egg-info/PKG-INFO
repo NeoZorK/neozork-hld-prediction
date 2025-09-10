@@ -122,6 +122,7 @@ Requires-Dist: pytest
 Requires-Dist: pytest-xdist>=3.7.0
 Requires-Dist: pytest-asyncio>=0.24.0
 Requires-Dist: pytest-mock>=3.14.0
+Requires-Dist: pytest-timeout>=2.1.0
 Requires-Dist: polygon-api-client
 Requires-Dist: python-binance==1.0.17
 Requires-Dist: pyarrow

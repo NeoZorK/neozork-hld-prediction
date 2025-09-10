@@ -36,7 +36,10 @@ def user_manager():
         email="admin@pockethedgefund.com",
         full_name="System Administrator",
         role=AdminRoleType.SUPER_ADMIN,
-        permissions=[]
+        permissions=[],
+        is_active=True,
+        is_verified=True,
+        password_hash="hashed_password"
     )
     manager.users[default_admin.id] = default_admin
     
@@ -306,14 +309,10 @@ async def test_delete_user_not_found(user_manager):
 @pytest.mark.asyncio
 async def test_delete_last_super_admin(user_manager):
     """Test preventing deletion of last super admin."""
-    # Create super admin user
-    super_admin = AdminUser(
-        username="super_admin",
-        email="super@example.com",
-        full_name="Super Admin",
-        role=AdminRoleType.SUPER_ADMIN
-    )
-    user_manager.users[super_admin.id] = super_admin
+    # Find the default super admin from fixture
+    super_admins = [u for u in user_manager.users.values() if u.role == AdminRoleType.SUPER_ADMIN]
+    assert len(super_admins) == 1
+    super_admin = super_admins[0]
     
     with pytest.raises(ValueError, match="Cannot delete the last super admin"):
         await user_manager.delete_user(super_admin.id)
@@ -388,11 +387,11 @@ async def test_list_users(user_manager):
     
     # Test filtering by role
     admin_users = await user_manager.list_users(role=AdminRoleType.ADMIN)
-    assert len(admin_users) == 2  # user1 + default admin
+    assert len(admin_users) == 1  # user1 (default admin is SUPER_ADMIN, not ADMIN)
     
     # Test filtering by active status
     active_users = await user_manager.list_users(is_active=True)
-    assert len(active_users) == 2  # user1 + default admin
+    assert len(active_users) == 2  # user1 + default admin (both are active)
     
     inactive_users = await user_manager.list_users(is_active=False)
     assert len(inactive_users) == 1  # user2
@@ -416,11 +415,14 @@ async def test_has_permission_super_admin(user_manager):
 @pytest.mark.asyncio
 async def test_has_permission_user_permissions(user_manager, sample_user):
     """Test permission check for user with direct permissions."""
+    # Add user to manager first
+    user_manager.users[sample_user.id] = sample_user
+    
     has_permission = await user_manager.has_permission(sample_user, "user_management")
     assert has_permission is True
     
     has_permission = await user_manager.has_permission(sample_user, "system_monitoring")
-    assert has_permission is True
+    assert has_permission is False  # Not in user's permissions
     
     has_permission = await user_manager.has_permission(sample_user, "analytics_view")
     assert has_permission is False  # Not in user's permissions
