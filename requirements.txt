@@ -34,5 +34,23 @@ pytest==7.4.3
 pytest-asyncio==0.21.1
 httpx==0.25.2
 
+# Data fetching libraries
+yfinance==0.2.25
+polygon-api-client
+python-binance==1.0.17
+
+# Additional data processing
+pyarrow
+mplfinance
+statsmodels
+bokeh
+dask
+datashader
+
+# Development & Testing
+pytest-xdist>=3.7.0
+pytest-mock>=3.14.0
+pytest-timeout>=2.1.0
+
 # Optional: For production deployment
 gunicorn==21.2.0

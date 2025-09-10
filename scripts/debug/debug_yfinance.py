@@ -366,7 +366,11 @@ class YFinanceDownloader:
 
 def prompt_for_tickers() -> List[str]:
     """Ask user which tickers to run tests for."""
-    # Use a simpler approach with fewer input prompts to avoid hangs
+    # Check if we're in a non-interactive environment
+    if not sys.stdin.isatty() or os.environ.get('DOCKER_CONTAINER') == 'true':
+        print("Non-interactive environment detected, using default tickers")
+        return DEFAULT_TICKERS[:2]  # Use first 2 tickers for testing
+    
     selected_tickers = []
 
     print("\n=== Ticker Selection for YFinance API Test ===")
@@ -402,7 +406,7 @@ def prompt_for_tickers() -> List[str]:
                     selected_tickers.append(choice.upper())
                     print(f"Added custom ticker: {choice.upper()}")
 
-    except Exception as e:
+    except (EOFError, KeyboardInterrupt, Exception) as e:
         print(f"Error reading selection: {str(e)}")
         print("Using first ticker as fallback")
         return DEFAULT_TICKERS[:1]  # Return first ticker as fallback
