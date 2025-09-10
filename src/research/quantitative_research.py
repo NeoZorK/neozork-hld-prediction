@@ -40,6 +40,11 @@ class QuantitativeResearcher:
     def __init__(self):
         self.research_cache = {}
         self.results_history = []
+        self.config = {
+            'default_confidence_level': 0.95,
+            'default_significance_level': 0.05,
+            'max_cache_size': 1000
+        }
     
     def perform_statistical_analysis(self, data: pd.DataFrame, config: ResearchConfig) -> Dict[str, Any]:
         """Perform comprehensive statistical analysis"""
