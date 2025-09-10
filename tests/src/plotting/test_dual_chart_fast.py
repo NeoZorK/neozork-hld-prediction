@@ -59,11 +59,26 @@ class TestDualChartFast:
     
     def test_import_with_mock_dependencies(self):
         """Test import with mocked dependencies."""
+        # Create proper mock for pandas with DatetimeIndex type
+        mock_pandas = MagicMock()
+        mock_pandas.DatetimeIndex = type('DatetimeIndex', (), {})
+        mock_pandas.DataFrame = type('DataFrame', (), {})
+        mock_pandas.Series = type('Series', (), {})
+        mock_pandas.to_datetime = MagicMock()
+        
         with patch.dict('sys.modules', {
             'plotly': MagicMock(),
-            'pandas': MagicMock(),
+            'pandas': mock_pandas,
             'numpy': MagicMock(),
-            'matplotlib': MagicMock()
+            'matplotlib': MagicMock(),
+            'bokeh': MagicMock(),
+            'bokeh.plotting': MagicMock(),
+            'bokeh.layouts': MagicMock(),
+            'bokeh.models': MagicMock(),
+            'webbrowser': MagicMock(),
+            'tkinter': MagicMock(),
+            'subprocess': MagicMock(),
+            'src.common': MagicMock()
         }):
             try:
                 from src.plotting import dual_chart_fast
