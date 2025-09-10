@@ -1,1 +1,3 @@
-"""Trading module for NeoZork HLD Prediction system"""
+"""
+Trading Package
+"""

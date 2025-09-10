@@ -14,7 +14,7 @@ from src.admin_panel.models.admin_models import (
 
 
 @pytest.fixture
-async def admin_manager():
+def admin_manager():
     """Create admin manager instance for testing."""
     manager = AdminManager()
     
@@ -23,8 +23,16 @@ async def admin_manager():
     manager.user_manager = AsyncMock()
     manager.system_monitor = AsyncMock()
     manager.audit_logger = AsyncMock()
+    manager._user_cache = {}
+    manager._config_cache = {}
+    manager._permission_cache = {}
     
-    await manager.initialize()
+    # Mock initialize method
+    manager.initialize = AsyncMock(return_value=None)
+    manager.is_initialized = True
+    manager.startup_time = datetime.now()
+    manager.system_health = "healthy"
+    
     return manager
 
 

@@ -1,1 +1,3 @@
-"""End-to-end tests for NeoZork HLD Prediction system"""
+"""
+E2E Tests Package
+"""

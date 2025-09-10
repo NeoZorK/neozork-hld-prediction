@@ -335,11 +335,12 @@ def test_quantitative_research():
                 print(f"    ❌ {method.value}: {result['message']}")
         
         print_success("✅ Quantitative Research System test completed!")
-        return researcher
+        assert researcher is not None
+        assert hasattr(researcher, 'config')
         
     except Exception as e:
         print_error(f"❌ Quantitative Research System test failed: {str(e)}")
-        return None
+        assert False, f"Quantitative Research System test failed: {str(e)}"
 
 @pytest.mark.asyncio
 async def test_integration():

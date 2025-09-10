@@ -481,20 +481,22 @@ async def _train_model_background(
 
 # Error Handlers
 
-@router.exception_handler(ValueError)
-async def value_error_handler(request, exc):
-    """Handle ValueError exceptions."""
-    return HTTPException(
-        status_code=status.HTTP_400_BAD_REQUEST,
-        detail=str(exc)
-    )
+# Error handlers should be registered with the FastAPI app, not the router
+# @router.exception_handler(ValueError)
+# async def value_error_handler(request, exc):
+#     """Handle ValueError exceptions."""
+#     return HTTPException(
+#         status_code=status.HTTP_400_BAD_REQUEST,
+#         detail=str(exc)
+#     )
 
 
-@router.exception_handler(Exception)
-async def general_exception_handler(request, exc):
-    """Handle general exceptions."""
-    logger.error(f"Unhandled exception in analytics API: {exc}")
-    return HTTPException(
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        detail="Internal server error in analytics service"
-    )
+# Error handlers should be registered with the FastAPI app, not the router
+# @router.exception_handler(Exception)
+# async def general_exception_handler(request, exc):
+#     """Handle general exceptions."""
+#     logger.error(f"Unhandled exception in analytics API: {exc}")
+#     return HTTPException(
+#         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#         detail="Internal server error in analytics service"
+#     )
