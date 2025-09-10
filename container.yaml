@@ -51,6 +51,8 @@ spec:
     - NATIVE_CONTAINER=true
     - LOG_LEVEL=INFO
     - MCP_SERVER_TYPE=pycharm_copilot
+    - MPLBACKEND=Agg
+    - NEOZORK_TEST=1
   ports:
     - containerPort: 8000
       hostPort: 8000

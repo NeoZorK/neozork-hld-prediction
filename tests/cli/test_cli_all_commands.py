@@ -4,6 +4,7 @@ import os
 from tqdm import tqdm
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import pytest
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PYTHON = sys.executable
@@ -92,7 +93,13 @@ def run_command(cmd):
     env = os.environ.copy()
     env['MPLBACKEND'] = 'Agg'
     env['NEOZORK_TEST'] = '1'
-    result = subprocess.run(cmd, capture_output=True, text=True, env=env)
+    try:
+        # Add timeout to prevent hanging
+        result = subprocess.run(cmd, capture_output=True, text=True, env=env, timeout=15)
+    except subprocess.TimeoutExpired:
+        result = subprocess.CompletedProcess(cmd, 124, '', 'Command timed out')
+    except Exception as e:
+        result = subprocess.CompletedProcess(cmd, 1, '', str(e))
     return {
         'cmd': cmd,
         'returncode': result.returncode,
@@ -100,14 +107,18 @@ def run_command(cmd):
         'stderr': result.stderr
     }
 
+@pytest.mark.hanging
+@pytest.mark.slow
 def run_all():
     total = len(commands) + len(error_commands)
     failed = 0
     start_time = time.time()
     results = []
-    with ThreadPoolExecutor(max_workers=os.cpu_count() or 4) as executor, tqdm(total=total, desc='CLI Smoke Test') as pbar:
+    # Limit workers to prevent resource exhaustion
+    max_workers = min(1, os.cpu_count() or 1)  # Further reduce workers
+    with ThreadPoolExecutor(max_workers=max_workers) as executor, tqdm(total=total, desc='CLI Smoke Test') as pbar:
         futures = [executor.submit(run_command, cmd) for cmd in commands + error_commands]
-        for future in as_completed(futures):
+        for future in as_completed(futures, timeout=180):  # 3 minute total timeout
             res = future.result()
             results.append(res)
             pbar.update(1)

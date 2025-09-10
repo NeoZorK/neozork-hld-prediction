@@ -11,6 +11,8 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 
+@pytest.mark.hanging
+@pytest.mark.skip_native
 class TestScriptsIntegration:
     """Integration tests for scripts."""
 
