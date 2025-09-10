@@ -13,6 +13,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 from colorama import Fore, Style, init
+import pytest
 
 # Initialize colorama
 init(autoreset=True)
@@ -130,12 +131,15 @@ def test_advanced_deep_learning():
             print(f"    - Training history: {len(summary['summary']['training_history'])} models trained")
         
         print_success("✅ Advanced Deep Learning System test completed!")
-        return dl_system
+        assert dl_system is not None
+        assert hasattr(dl_system, 'models')
+        assert hasattr(dl_system, 'config')
         
     except Exception as e:
         print_error(f"❌ Advanced Deep Learning System test failed: {str(e)}")
-        return None
+        assert False, f"Advanced Deep Learning System test failed: {str(e)}"
 
+@pytest.mark.asyncio
 async def test_ai_trading_agents():
     """Test AI trading agents system."""
     print_info("\n🤖 Testing AI Trading Agents System...")
@@ -247,11 +251,13 @@ async def test_ai_trading_agents():
             print(f"    ✅ {status['agent_id']}: {status['state']}, {status['total_trades']} trades")
         
         print_success("✅ AI Trading Agents System test completed!")
-        return agent_manager
+        assert agent_manager is not None
+        assert hasattr(agent_manager, 'agents')
+        assert hasattr(agent_manager, 'config')
         
     except Exception as e:
         print_error(f"❌ AI Trading Agents System test failed: {str(e)}")
-        return None
+        assert False, f"AI Trading Agents System test failed: {str(e)}"
 
 def test_quantitative_research():
     """Test quantitative research system."""
@@ -335,6 +341,7 @@ def test_quantitative_research():
         print_error(f"❌ Quantitative Research System test failed: {str(e)}")
         return None
 
+@pytest.mark.asyncio
 async def test_integration():
     """Test integration between all Phase 4 components."""
     print_info("\n🔗 Testing Phase 4 Integration...")

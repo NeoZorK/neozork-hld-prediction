@@ -234,7 +234,8 @@ class TestAuthenticationManager:
         assert auth_manager.mfa_manager is not None
         assert auth_manager.jwt_manager is not None
     
-    def test_user_locked_check(self, auth_manager):
+    @pytest.mark.asyncio
+    async def test_user_locked_check(self, auth_manager):
         """Test user lockout functionality."""
         user_id = "test_user_id"
         
@@ -243,7 +244,7 @@ class TestAuthenticationManager:
         
         # Record failed login attempts
         for _ in range(5):  # Max attempts
-            auth_manager._record_failed_login(user_id)
+            await auth_manager._record_failed_login(user_id)
         
         # User should now be locked
         assert auth_manager._is_user_locked(user_id) is True
@@ -252,13 +253,14 @@ class TestAuthenticationManager:
         auth_manager._clear_failed_logins(user_id)
         assert auth_manager._is_user_locked(user_id) is False
     
-    def test_login_attempts_tracking(self, auth_manager):
+    @pytest.mark.asyncio
+    async def test_login_attempts_tracking(self, auth_manager):
         """Test login attempts tracking."""
         user_id = "test_user_id"
         
         # Record failed attempts
-        auth_manager._record_failed_login(user_id)
-        auth_manager._record_failed_login(user_id)
+        await auth_manager._record_failed_login(user_id)
+        await auth_manager._record_failed_login(user_id)
         
         # Check attempts count
         assert user_id in auth_manager.login_attempts

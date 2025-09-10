@@ -5,6 +5,7 @@ Test ML functionality for Pocket Hedge Fund.
 This script tests the machine learning and automated trading functionality.
 """
 
+import pytest
 import asyncio
 import sys
 import os
@@ -14,6 +15,7 @@ from pocket_hedge_fund.ml.price_predictor import PricePredictor
 from pocket_hedge_fund.trading.automated_trader import AutomatedTrader, TradingStrategy
 from pocket_hedge_fund.data.data_manager import DataManager
 
+@pytest.mark.asyncio
 async def test_ml_functionality():
     """Test ML functionality."""
     print("🚀 Testing ML Functionality for Pocket Hedge Fund")

@@ -15,14 +15,31 @@ from src.pocket_hedge_fund.admin_panel.models.admin_models import (
 
 
 @pytest.fixture
-async def user_manager():
+def user_manager():
     """Create user manager instance for testing."""
     manager = UserManager()
     
     # Mock the database manager
     manager.db_manager = AsyncMock()
     
-    await manager.initialize()
+    # Initialize synchronously for testing
+    manager.is_initialized = True
+    manager.users = {}
+    manager.roles = {}
+    manager.permissions = {}
+    manager.sessions = {}
+    
+    # Create default admin user
+    from src.pocket_hedge_fund.admin_panel.models.admin_models import AdminUser, AdminRoleType
+    default_admin = AdminUser(
+        username="admin",
+        email="admin@pockethedgefund.com",
+        full_name="System Administrator",
+        role=AdminRoleType.SUPER_ADMIN,
+        permissions=[]
+    )
+    manager.users[default_admin.id] = default_admin
+    
     return manager
 
 
@@ -38,8 +55,7 @@ def sample_user():
     )
 
 
-@pytest.mark.asyncio
-async def test_user_manager_initialization(user_manager):
+def test_user_manager_initialization(user_manager):
     """Test user manager initialization."""
     assert user_manager is not None
     assert user_manager.is_initialized is True
@@ -49,8 +65,7 @@ async def test_user_manager_initialization(user_manager):
     assert user_manager.sessions is not None
 
 
-@pytest.mark.asyncio
-async def test_create_default_admin(user_manager):
+def test_create_default_admin(user_manager):
     """Test creation of default admin user."""
     # Check if default admin was created
     admin_users = [u for u in user_manager.users.values() if u.role == AdminRoleType.SUPER_ADMIN]

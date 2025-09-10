@@ -7,6 +7,7 @@ This module provides common fixtures and configuration for all test modules.
 import asyncio
 import pytest
 import pytest_asyncio
+import os
 from typing import AsyncGenerator, Dict, Any
 from decimal import Decimal
 import uuid
@@ -179,3 +180,12 @@ def sample_user_data() -> Dict[str, Any]:
         'first_name': 'Test',
         'last_name': 'User'
     }
+
+
+def skip_if_docker(func):
+    """Decorator to skip tests when running in Docker environment."""
+    def wrapper(*args, **kwargs):
+        if os.path.exists('/.dockerenv') or os.environ.get('DOCKER_CONTAINER') == 'true':
+            pytest.skip("Skipping test in Docker environment")
+        return func(*args, **kwargs)
+    return wrapper

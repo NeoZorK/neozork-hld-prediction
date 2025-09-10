@@ -276,7 +276,7 @@ async def main():
     
     # Run the application
     uvicorn.run(
-        "src.pocket_hedge_fund.main_fixed:app",
+        "src.pocket_hedge_fund.main:app",
         host="0.0.0.0",
         port=8080,
         reload=False,
