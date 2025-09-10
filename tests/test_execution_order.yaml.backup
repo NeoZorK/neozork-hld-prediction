@@ -1,0 +1,187 @@
+# Test Execution Order Configuration for Docker
+# This file defines the order in which test folders should be executed
+# to ensure proper dependency management and resource allocation
+
+# Execution order: from basic to complex, ensuring dependencies are met
+test_folders:
+  # Phase 1: Basic utilities and common functions
+  - name: "common"
+    description: "Basic utilities and common functions"
+    timeout: 30
+    required: true
+    
+  - name: "unit"
+    description: "Unit tests for individual components"
+    timeout: 60
+    required: true
+    
+  - name: "utils"
+    description: "Utility function tests"
+    timeout: 45
+    required: true
+    
+  # Phase 2: Data processing and calculations
+  - name: "data"
+    description: "Data processing and acquisition tests"
+    timeout: 90
+    required: true
+    
+  - name: "calculation"
+    description: "Mathematical calculations and indicators"
+    timeout: 120
+    required: true
+    
+  - name: "eda"
+    description: "Exploratory data analysis tests"
+    timeout: 60
+    required: true
+    
+  # Phase 3: User interfaces and interactions
+  - name: "cli"
+    description: "Command line interface tests"
+    timeout: 90
+    required: true
+    
+  - name: "interactive"
+    description: "Interactive mode tests"
+    timeout: 60
+    required: true
+    
+  - name: "plotting"
+    description: "Plotting and visualization tests"
+    timeout: 90
+    required: true
+    
+  # Phase 4: Export and integration
+  - name: "export"
+    description: "Data export functionality tests"
+    timeout: 45
+    required: true
+    
+  - name: "integration"
+    description: "Integration tests"
+    timeout: 120
+    required: true
+    
+  # Phase 5: Advanced features
+  - name: "ml"
+    description: "Machine learning tests"
+    timeout: 180
+    required: true
+    
+  - name: "mcp"
+    description: "MCP server tests"
+    timeout: 90
+    required: true
+    
+  # Phase 6: Container and deployment
+  - name: "docker"
+    description: "Docker-specific tests"
+    timeout: 120
+    required: true
+    
+  - name: "native-container"
+    description: "Native container tests"
+    timeout: 150
+    required: true
+    
+  # Phase 7: Application modules
+  - name: "pocket_hedge_fund"
+    description: "Pocket hedge fund application tests"
+    timeout: 180
+    required: true
+    
+  - name: "saas"
+    description: "SaaS application tests"
+    timeout: 120
+    required: true
+    
+  # Phase 8: Scripts and workflows
+  - name: "scripts"
+    description: "Script execution tests"
+    timeout: 90
+    required: true
+    
+  - name: "workflow"
+    description: "Workflow tests"
+    timeout: 60
+    required: true
+    
+  # Phase 9: End-to-end tests
+  - name: "e2e"
+    description: "End-to-end tests"
+    timeout: 300
+    required: false  # Optional, can be skipped if not available
+
+# Global settings
+global_settings:
+  # Maximum total execution time (in seconds)
+  max_total_time: 3600  # 1 hour
+  
+  # Stop on first failure
+  stop_on_failure: true
+  
+  # Skip empty folders
+  skip_empty_folders: true
+  
+  # Retry failed folders (not recommended for Docker)
+  retry_failed: false
+  
+  # Cleanup between folders
+  cleanup_between_folders: true
+  
+  # Environment variables to set
+  environment:
+    PYTHONPATH: "/app"
+    PYTHONUNBUFFERED: "1"
+    DOCKER_CONTAINER: "true"
+    MPLBACKEND: "Agg"
+    DISPLAY: ""
+    UV_SYSTEM_PYTHON: "1"
+
+# Folder-specific overrides
+folder_overrides:
+  # Override settings for specific folders
+  calculation:
+    timeout: 180  # Longer timeout for complex calculations
+    maxfail: 3    # Allow more failures in calculation tests
+    
+  pocket_hedge_fund:
+    timeout: 300  # Very long timeout for full application tests
+    maxfail: 2    # Allow some failures in complex application tests
+    
+  docker:
+    timeout: 150  # Docker tests can be slow
+    maxfail: 1    # Strict failure handling for Docker tests
+
+# Dependencies between folders
+dependencies:
+  # Each folder can specify which folders must complete successfully first
+  calculation:
+    - "common"
+    - "utils"
+    - "data"
+    
+  cli:
+    - "common"
+    - "utils"
+    
+  integration:
+    - "common"
+    - "utils"
+    - "data"
+    - "calculation"
+    
+  pocket_hedge_fund:
+    - "common"
+    - "utils"
+    - "data"
+    - "calculation"
+    - "integration"
+    
+  saas:
+    - "common"
+    - "utils"
+    - "data"
+    - "calculation"
+    - "integration"
