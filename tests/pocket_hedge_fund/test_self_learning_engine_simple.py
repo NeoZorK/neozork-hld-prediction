@@ -86,14 +86,12 @@ class TestMetaLearner:
     
     def test_initialization(self):
         """Test MetaLearner initialization."""
-        config = LearningConfig()
-        meta_learner = MetaLearner(config)
+        meta_learner = MetaLearner()
         assert meta_learner is not None
     
     def test_extract_task_features(self):
         """Test task feature extraction."""
-        config = LearningConfig()
-        meta_learner = MetaLearner(config)
+        meta_learner = MetaLearner()
         task = {
             'market_data': pd.DataFrame({'close': [100, 101, 102]}),
             'performance': {'sharpe_ratio': 1.2, 'max_drawdown': 0.05},
@@ -109,8 +107,7 @@ class TestMetaLearner:
     
     def test_calculate_task_similarity(self):
         """Test task similarity calculation."""
-        config = LearningConfig()
-        meta_learner = MetaLearner(config)
+        meta_learner = MetaLearner()
         task1_features = {'market_features': [1, 2, 3], 'performance_features': [0.5, 0.6]}
         task2_features = {'market_features': [1.1, 2.1, 3.1], 'performance_features': [0.52, 0.62]}
         
@@ -125,14 +122,12 @@ class TestTransferLearner:
     
     def test_initialization(self):
         """Test TransferLearner initialization."""
-        config = LearningConfig()
-        transfer_learner = TransferLearner(config)
+        transfer_learner = TransferLearner()
         assert transfer_learner is not None
     
     def test_extract_domain_features(self):
         """Test domain feature extraction."""
-        config = LearningConfig()
-        transfer_learner = TransferLearner(config)
+        transfer_learner = TransferLearner()
         market_data = pd.DataFrame({
             'close': [100, 101, 102, 103, 104],
             'volume': [1000, 1100, 1200, 1300, 1400]
@@ -150,23 +145,20 @@ class TestAutoML:
     
     def test_initialization(self):
         """Test AutoML initialization."""
-        config = LearningConfig()
-        auto_ml = AutoML(config)
+        auto_ml = AutoML()
         assert auto_ml is not None
     
     def test_get_model_candidates(self):
         """Test model candidate generation."""
-        config = LearningConfig()
-        auto_ml = AutoML(config)
+        auto_ml = AutoML()
         candidates = auto_ml.get_model_candidates()
         
         assert isinstance(candidates, list)
         assert len(candidates) > 0
-        
+    
     def test_calculate_rsi(self):
         """Test RSI calculation."""
-        config = LearningConfig()
-        auto_ml = AutoML(config)
+        auto_ml = AutoML()
         prices = [100, 101, 102, 101, 100, 99, 98, 99, 100, 101]
         rsi = auto_ml.calculate_rsi(prices, period=5)
         
@@ -179,14 +171,12 @@ class TestNeuralArchitectureSearch:
     
     def test_initialization(self):
         """Test NeuralArchitectureSearch initialization."""
-        config = LearningConfig()
-        nas = NeuralArchitectureSearch(config)
+        nas = NeuralArchitectureSearch()
         assert nas is not None
     
     def test_generate_architecture_candidates(self):
         """Test architecture candidate generation."""
-        config = LearningConfig()
-        nas = NeuralArchitectureSearch(config)
+        nas = NeuralArchitectureSearch()
         candidates = nas.generate_architecture_candidates(num_candidates=3)
         
         assert isinstance(candidates, list)
@@ -234,22 +224,22 @@ class TestSelfLearningEngine:
         config = LearningConfig()
         engine = SelfLearningEngine(config)
         
-        # Add mock models with comparable performance metrics
+        # Add mock models
         engine.current_models['model1'] = {
             'model': Mock(),
-            'performance': 0.8,  # Use single numeric value for comparison
+            'performance': {'r2': 0.8},
             'created_at': '2023-01-01'
         }
         engine.current_models['model2'] = {
             'model': Mock(),
-            'performance': 0.9,  # Use single numeric value for comparison
+            'performance': {'r2': 0.9},
             'created_at': '2023-01-02'
         }
         
         best_model = engine.get_best_model()
         
         assert best_model is not None
-        assert best_model['performance'] == 0.9
+        assert best_model['performance']['r2'] == 0.9
     
     def test_export_learning_summary(self):
         """Test learning summary export."""
@@ -259,9 +249,9 @@ class TestSelfLearningEngine:
         summary = engine.export_learning_summary()
         
         assert isinstance(summary, dict)
-        assert 'learning_history' in summary
-        assert 'current_models' in summary
-        assert 'export_timestamp' in summary
+        assert 'total_sessions' in summary
+        assert 'success_rate' in summary
+        assert 'model_count' in summary
     
     @pytest.mark.asyncio
     async def test_learn_from_market_mocked(self):
@@ -277,16 +267,16 @@ class TestSelfLearningEngine:
                 'performance': {'r2': 0.95, 'mse': 0.05}
             }
             
-        market_data = {
-            'market_data': pd.DataFrame({'close': [100, 101, 102], 'volume': [1000, 1100, 1200]}),
-            'target': 'close'
-        }
-        
-        result = await engine.learn_from_market(market_data)
-        
-        assert result.success is True
-        assert result.learning_time > 0
-        assert result.model_type == 'RandomForestRegressor'
+            market_data = {
+                'market_data': pd.DataFrame({'close': [100, 101, 102], 'volume': [1000, 1100, 1200]}),
+                'target': 'close'
+            }
+            
+            result = await engine.learn_from_market(market_data)
+            
+            assert result.success is True
+            assert result.learning_time > 0
+            assert result.model_type == 'RandomForestRegressor'
     
     @pytest.mark.asyncio
     async def test_optimize_strategy(self):
@@ -319,7 +309,7 @@ class TestSelfLearningEngine:
         result = await engine.adapt_to_new_market(new_market_data)
         
         assert result['status'] == 'error'
-        assert 'error' in result or 'message' in result
+        assert 'no models' in result['error'].lower()
     
     @pytest.mark.asyncio
     async def test_adapt_to_new_market_with_models(self):
@@ -330,7 +320,7 @@ class TestSelfLearningEngine:
         # Add a mock model
         engine.current_models['test_model'] = {
             'model': Mock(),
-            'performance': 0.9,
+            'performance': {'r2': 0.9},
             'created_at': '2023-01-01'
         }
         
@@ -340,10 +330,8 @@ class TestSelfLearningEngine:
         
         result = await engine.adapt_to_new_market(new_market_data)
         
-        # The result might be error due to insufficient data, which is expected
-        assert result['status'] in ['success', 'error']
-        if result['status'] == 'success':
-            assert 'adaptation_score' in result
+        assert result['status'] == 'success'
+        assert 'adaptation_score' in result
 
 
 if __name__ == "__main__":

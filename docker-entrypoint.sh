@@ -229,10 +229,10 @@ uv pip install <package>
 
 # Testing Commands
 pytest
-uv run pytest tests -n auto
-uv run pytest tests -n auto -v --tb=short
-uv run pytest tests -n auto -v --tb=short -x
-uv run pytest tests -n auto --tb=no -q
+python scripts/run_tests_docker.py
+uv run pytest tests/pocket_hedge_fund/ -v --tb=short
+uv run pytest tests/pocket_hedge_fund/ -v --tb=short -x
+uv run pytest tests/pocket_hedge_fund/ --tb=no -q
 
 # Analysis Commands
 nz
@@ -306,9 +306,9 @@ init_bash_history() {
     
     # Define useful commands for the container
     local useful_commands=(
-        "uv run pytest tests -n auto"
-        "uv run pytest tests -n auto -v --tb=short"
-        "uv run pytest tests -n auto -v --tb=short -x"
+        "python scripts/run_tests_docker.py"
+        "uv run pytest tests/pocket_hedge_fund/ -v --tb=short"
+        "uv run pytest tests/pocket_hedge_fund/ -v --tb=short -x"
         "nz --interactive"
         "eda -dqc"
         "nz --indicators"
