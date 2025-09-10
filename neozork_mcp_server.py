@@ -244,12 +244,17 @@ class NeozorkMCPServer:
         """Scan and index project files"""
         self.logger.info("Scanning project files...")
         
-        # Scan Python files - only essential directories
+        # Scan Python files - only essential directories with limits
         essential_dirs = ['src', 'scripts', 'tests']
         scanned_files = 0
         indexed_files = 0
+        max_files = 1000  # Limit total files to prevent hanging
         
         for py_file in self.project_root.rglob("*.py"):
+            if indexed_files >= max_files:
+                self.logger.info(f"Reached limit of {max_files} files, stopping scan")
+                break
+                
             scanned_files += 1
             if scanned_files % 50 == 0:
                 self.logger.info(f"Scanned {scanned_files} Python files so far...")
@@ -260,6 +265,10 @@ class NeozorkMCPServer:
             # Only scan files in essential directories or root level Python files
             relative_path = py_file.relative_to(self.project_root)
             if not any(essential_dir in str(relative_path) for essential_dir in essential_dirs) and len(relative_path.parts) > 1:
+                continue
+                
+            # Skip very large files that might cause hanging
+            if py_file.stat().st_size > 1024 * 1024:  # Skip files larger than 1MB
                 continue
                 
             try:
@@ -355,18 +364,19 @@ class NeozorkMCPServer:
         def timeout_handler(signum, frame):
             raise TimeoutError("Indexing timed out")
         
-        # Set timeout for indexing (30 seconds)
+        # Set timeout for indexing (15 seconds - reduced from 30)
         signal.signal(signal.SIGALRM, timeout_handler)
-        signal.alarm(30)
+        signal.alarm(15)
         
         try:
             file_count = 0
             total_files = len(self.project_files)
-            self.logger.info(f"Starting to index {total_files} files...")
+            max_files_to_index = min(500, total_files)  # Limit files to index
+            self.logger.info(f"Starting to index {max_files_to_index} files (out of {total_files})...")
             
-            for file_path, file_info in self.project_files.items():
+            for file_path, file_info in list(self.project_files.items())[:max_files_to_index]:
                 if file_count % 10 == 0:  # Log progress every 10 files
-                    self.logger.info(f"Indexing progress: {file_count}/{total_files} files")
+                    self.logger.info(f"Indexing progress: {file_count}/{max_files_to_index} files")
                 
                 if file_info.content:
                     try:
@@ -377,9 +387,9 @@ class NeozorkMCPServer:
                         self.logger.warning(f"Failed to parse AST for {file_path}: {e}")
                         file_count += 1
                         
-                # Check for timeout every 100 files
-                if file_count % 100 == 0:
-                    signal.alarm(30)  # Reset alarm
+                # Check for timeout every 50 files (reduced from 100)
+                if file_count % 50 == 0:
+                    signal.alarm(15)  # Reset alarm
                     
         except TimeoutError:
             self.logger.warning("Indexing timed out, continuing with partial index")
