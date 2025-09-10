@@ -1,8 +1,3 @@
 """
-Tests for command-line scripts.
-
-This package contains tests for the nz and eda scripts,
-including environment detection, command execution, and integration tests.
+Scripts Tests Package
 """
-
-# Tests for scripts module 

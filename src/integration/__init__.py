@@ -1,1 +1,3 @@
-"""Integration module for NeoZork HLD Prediction system"""
+"""
+Integration Package
+"""

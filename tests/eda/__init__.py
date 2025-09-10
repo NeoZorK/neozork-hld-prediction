@@ -1,2 +1,3 @@
-# -*- coding: utf-8 -*-
-# tests/eda/__init__.py
+"""
+EDA Tests Package
+"""
