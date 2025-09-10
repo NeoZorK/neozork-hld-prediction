@@ -7,7 +7,7 @@ including creating investments, managing portfolios, and tracking returns.
 
 import asyncio
 import logging
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from typing import Optional, Dict, Any, List
 from decimal import Decimal
 import uuid
@@ -15,7 +15,7 @@ import uuid
 from fastapi import APIRouter, HTTPException, Depends, Query, Path
 from fastapi import status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import text
 
 from ..database.connection import get_db_manager
@@ -38,7 +38,8 @@ class InvestmentCreateRequest(BaseModel):
     amount: float = Field(..., gt=0, description="Investment amount")
     investment_type: str = Field(default="lump_sum", description="Type of investment")
     
-    @validator('investment_type')
+    @field_validator('investment_type')
+    @classmethod
     def validate_investment_type(cls, v):
         allowed_types = ['lump_sum', 'dca', 'recurring']
         if v not in allowed_types:
@@ -77,7 +78,8 @@ class InvestmentUpdateRequest(BaseModel):
     amount: Optional[float] = Field(None, gt=0, description="New investment amount")
     status: Optional[str] = Field(None, description="Investment status")
     
-    @validator('status')
+    @field_validator('status')
+    @classmethod
     def validate_status(cls, v):
         if v is not None:
             allowed_statuses = ['active', 'paused', 'cancelled', 'completed']
@@ -127,7 +129,7 @@ async def create_investment(
         
         # Create investment
         investment_id = str(uuid.uuid4())
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         
         investment_query = """
             INSERT INTO investments (
@@ -357,7 +359,7 @@ async def update_investment(
         
         # Build update query
         update_fields = []
-        params = {'investment_id': investment_id, 'updated_at': datetime.utcnow()}
+        params = {'investment_id': investment_id, 'updated_at': datetime.now(timezone.utc)}
         
         for field, value in investment_data.dict(exclude_unset=True).items():
             if value is not None:
@@ -444,7 +446,7 @@ async def delete_investment(
             WHERE id = $2
         """
         
-        await db_manager.execute_command(update_query, {'1': datetime.utcnow(), '2': investment_id})
+        await db_manager.execute_command(update_query, {'1': datetime.now(timezone.utc), '2': investment_id})
         
         # Log investment cancellation
         auth_manager = await get_auth_manager()

@@ -8,7 +8,7 @@ and performance tracking.
 
 import asyncio
 import logging
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from typing import Optional, Dict, Any, List
 from decimal import Decimal
 import uuid
@@ -16,7 +16,7 @@ import uuid
 from fastapi import APIRouter, HTTPException, Depends, Query, Path
 from fastapi import status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import text
 
 from ..database.connection import get_db_manager
@@ -47,13 +47,15 @@ class FundCreateRequest(BaseModel):
     max_investors: Optional[int] = Field(None, gt=0, description="Maximum number of investors")
     risk_level: str = Field(default="medium", description="Risk level: low, medium, high, very_high")
     
-    @validator('fund_type')
+    @field_validator('fund_type')
+    @classmethod
     def validate_fund_type(cls, v):
         if v not in ['mini', 'standard', 'premium']:
             raise ValueError('Fund type must be mini, standard, or premium')
         return v
     
-    @validator('risk_level')
+    @field_validator('risk_level')
+    @classmethod
     def validate_risk_level(cls, v):
         if v not in ['low', 'medium', 'high', 'very_high']:
             raise ValueError('Risk level must be low, medium, high, or very_high')
@@ -72,13 +74,15 @@ class FundUpdateRequest(BaseModel):
     risk_level: Optional[str] = None
     status: Optional[str] = None
     
-    @validator('risk_level')
+    @field_validator('risk_level')
+    @classmethod
     def validate_risk_level(cls, v):
         if v is not None and v not in ['low', 'medium', 'high', 'very_high']:
             raise ValueError('Risk level must be low, medium, high, or very_high')
         return v
     
-    @validator('status')
+    @field_validator('status')
+    @classmethod
     def validate_status(cls, v):
         if v is not None and v not in ['active', 'paused', 'closed', 'liquidating']:
             raise ValueError('Status must be active, paused, closed, or liquidating')
@@ -222,7 +226,7 @@ async def create_fund(
             )
         """
         
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         await db_manager.execute_command(
             create_fund_query,
             {
@@ -445,7 +449,7 @@ async def update_fund(
         
         # Build update query
         update_fields = []
-        params = {'fund_id': fund_id, 'updated_at': datetime.utcnow()}
+        params = {'fund_id': fund_id, 'updated_at': datetime.now(timezone.utc)}
         
         for field, value in fund_data.dict(exclude_unset=True).items():
             if value is not None:
@@ -571,7 +575,7 @@ async def invest_in_fund(
             )
         """
         
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         await db_manager.execute_command(
             create_investment_query,
             {
