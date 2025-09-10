@@ -6,6 +6,8 @@ This module provides the EDA analysis submenu with comprehensive data quality ch
 """
 
 from typing import Dict, Any, Optional
+import colorama
+from colorama import Fore, Back, Style
 from .base_menu import BaseMenu
 
 class EDAMenu(BaseMenu):

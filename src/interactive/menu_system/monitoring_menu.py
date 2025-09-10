@@ -6,6 +6,8 @@ This module provides the monitoring submenu with comprehensive system monitoring
 """
 
 from typing import Dict, Any, Optional
+import colorama
+from colorama import Fore, Back, Style
 from .base_menu import BaseMenu
 
 class MonitoringMenu(BaseMenu):

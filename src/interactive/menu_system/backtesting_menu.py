@@ -6,6 +6,8 @@ This module provides the backtesting submenu with comprehensive strategy validat
 """
 
 from typing import Dict, Any, Optional
+import colorama
+from colorama import Fore, Back, Style
 from .base_menu import BaseMenu
 
 class BacktestingMenu(BaseMenu):
