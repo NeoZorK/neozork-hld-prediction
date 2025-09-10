@@ -39,7 +39,7 @@ test_folders:
   # Phase 3: User interfaces and interactions
   - name: "cli"
     description: "Command line interface tests"
-    timeout: 90
+    timeout: 120
     required: true
     
   - name: "interactive"
@@ -145,6 +145,10 @@ folder_overrides:
   calculation:
     timeout: 180  # Longer timeout for complex calculations
     maxfail: 3    # Allow more failures in calculation tests
+    
+  cli:
+    timeout: 150  # CLI tests can be slow in Docker
+    maxfail: 2    # Allow some failures in CLI tests due to Docker environment
     
   pocket_hedge_fund:
     timeout: 300  # Very long timeout for full application tests

@@ -41,6 +41,13 @@ class FlagDefinition:
     mutually_exclusive: List[str] = None
     depends_on: List[str] = None
     category: str = "general"
+    
+    def __post_init__(self):
+        """Post-initialization to ensure proper data types"""
+        if self.mutually_exclusive is None:
+            self.mutually_exclusive = []
+        if self.depends_on is None:
+            self.depends_on = []
 
 @dataclass
 class TestCase:
@@ -51,6 +58,10 @@ class TestCase:
     category: str
     priority: int
     description: str
+    
+    def __post_init__(self):
+        """Post-initialization to ensure proper data types"""
+        pass
 
 class FlagTestGenerator:
     """Generator for CLI flag test cases"""
