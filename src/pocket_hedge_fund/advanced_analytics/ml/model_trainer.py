@@ -134,7 +134,7 @@ class ModelTrainer:
                 },
                 metrics={
                     **training_metrics,
-                    'test_' + k: v for k, v in test_metrics.items()
+                    **{f'test_{k}': v for k, v in test_metrics.items()}
                 },
                 created_at=datetime.now(),
                 updated_at=datetime.now(),

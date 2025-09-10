@@ -194,12 +194,12 @@ class DatabaseManager:
         finally:
             session.close()
     
-    async def execute_query(self, query: str, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    async def execute_query(self, query: str, params: Optional[List[Any]] = None) -> List[Dict[str, Any]]:
         """Execute async query and return results."""
         async with self.get_connection() as conn:
             try:
                 if params:
-                    rows = await conn.fetch(query, *params.values())
+                    rows = await conn.fetch(query, *params)
                 else:
                     rows = await conn.fetch(query)
                 
@@ -222,12 +222,12 @@ class DatabaseManager:
                 logger.error(f"Query execution failed: {e}")
                 raise
     
-    async def execute_command(self, command: str, params: Optional[Dict[str, Any]] = None) -> str:
+    async def execute_command(self, command: str, params: Optional[List[Any]] = None) -> str:
         """Execute async command and return result."""
         async with self.get_connection() as conn:
             try:
                 if params:
-                    result = await conn.execute(command, *params.values())
+                    result = await conn.execute(command, *params)
                 else:
                     result = await conn.execute(command)
                 

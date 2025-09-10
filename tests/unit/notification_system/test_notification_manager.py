@@ -14,7 +14,7 @@ from src.pocket_hedge_fund.notification_system.models.notification_models import
 
 
 @pytest.fixture
-async def notification_manager():
+def notification_manager():
     """Create notification manager instance for testing."""
     manager = NotificationManager()
     
@@ -33,7 +33,6 @@ async def notification_manager():
         ChannelType.WEBHOOK: AsyncMock()
     }
     
-    await manager.initialize()
     return manager
 
 
@@ -68,14 +67,18 @@ async def test_send_notification_success(notification_manager, sample_notificati
     mock_preference = MagicMock()
     mock_preference.is_enabled = True
     mock_preference.channels = [ChannelType.EMAIL, ChannelType.PUSH]
-    
+    mock_preference.quiet_hours_start = None
+    mock_preference.quiet_hours_end = None
+
     notification_manager.preference_manager.get_user_preferences.return_value = mock_preference
     
     # Mock channel delivery
     mock_result = MagicMock()
     mock_result.success = True
     mock_result.delivered_at = datetime.now()
+    mock_result.error_message = None
     mock_result.metadata = {"test": "data"}
+    mock_result.error_message = None
     
     for channel in notification_manager.channels.values():
         channel.send_notification.return_value = mock_result
@@ -98,13 +101,16 @@ async def test_send_notification_with_preferences_filtering(notification_manager
     mock_preference = MagicMock()
     mock_preference.is_enabled = True
     mock_preference.channels = [ChannelType.EMAIL]  # Only email allowed
-    
+    mock_preference.quiet_hours_start = None
+    mock_preference.quiet_hours_end = None
+
     notification_manager.preference_manager.get_user_preferences.return_value = mock_preference
     
     # Mock channel delivery
     mock_result = MagicMock()
     mock_result.success = True
     mock_result.delivered_at = datetime.now()
+    mock_result.error_message = None
     
     notification_manager.channels[ChannelType.EMAIL].send_notification.return_value = mock_result
     
@@ -158,13 +164,16 @@ async def test_send_bulk_notifications(notification_manager):
     mock_preference = MagicMock()
     mock_preference.is_enabled = True
     mock_preference.channels = [ChannelType.EMAIL]
-    
+    mock_preference.quiet_hours_start = None
+    mock_preference.quiet_hours_end = None
+
     notification_manager.preference_manager.get_user_preferences.return_value = mock_preference
     
     # Mock channel delivery
     mock_result = MagicMock()
     mock_result.success = True
     mock_result.delivered_at = datetime.now()
+    mock_result.error_message = None
     
     notification_manager.channels[ChannelType.EMAIL].send_notification.return_value = mock_result
     
@@ -287,12 +296,15 @@ async def test_retry_failed_notifications(notification_manager):
     mock_preference = MagicMock()
     mock_preference.is_enabled = True
     mock_preference.channels = [ChannelType.EMAIL]
+    mock_preference.quiet_hours_start = None
+    mock_preference.quiet_hours_end = None
     notification_manager.preference_manager.get_user_preferences.return_value = mock_preference
     
     # Mock channel delivery
     mock_result = MagicMock()
     mock_result.success = True
     mock_result.delivered_at = datetime.now()
+    mock_result.error_message = None
     notification_manager.channels[ChannelType.EMAIL].send_notification.return_value = mock_result
     
     # Retry failed notifications
@@ -326,12 +338,15 @@ async def test_send_notification_with_template_processing(notification_manager, 
     mock_preference = MagicMock()
     mock_preference.is_enabled = True
     mock_preference.channels = [ChannelType.EMAIL]
+    mock_preference.quiet_hours_start = None
+    mock_preference.quiet_hours_end = None
     notification_manager.preference_manager.get_user_preferences.return_value = mock_preference
     
     # Mock channel delivery
     mock_result = MagicMock()
     mock_result.success = True
     mock_result.delivered_at = datetime.now()
+    mock_result.error_message = None
     notification_manager.channels[ChannelType.EMAIL].send_notification.return_value = mock_result
     
     # Mock template retrieval
@@ -351,20 +366,25 @@ async def test_send_notification_channel_failure(notification_manager, sample_no
     # Mock preference manager
     mock_preference = MagicMock()
     mock_preference.is_enabled = True
-    mock_preference.channels = [ChannelType.EMAIL, ChannelType.SMS]
+    mock_preference.channels = [ChannelType.EMAIL, ChannelType.PUSH]
+    mock_preference.quiet_hours_start = None
+    mock_preference.quiet_hours_end = None
     notification_manager.preference_manager.get_user_preferences.return_value = mock_preference
-    
-    # Mock channel delivery - email succeeds, SMS fails
+
+    # Mock channel delivery - email succeeds, PUSH fails
     mock_success_result = MagicMock()
     mock_success_result.success = True
     mock_success_result.delivered_at = datetime.now()
-    
+    mock_success_result.error_message = None
+    mock_success_result.metadata = {"test": "data"}
+
     mock_failure_result = MagicMock()
     mock_failure_result.success = False
-    mock_failure_result.error_message = "SMS delivery failed"
-    
+    mock_failure_result.error_message = "PUSH delivery failed"
+    mock_failure_result.metadata = {"test": "data"}
+
     notification_manager.channels[ChannelType.EMAIL].send_notification.return_value = mock_success_result
-    notification_manager.channels[ChannelType.SMS].send_notification.return_value = mock_failure_result
+    notification_manager.channels[ChannelType.PUSH].send_notification.return_value = mock_failure_result
     
     # Send notification
     results = await notification_manager.send_notification(sample_notification)
@@ -375,11 +395,11 @@ async def test_send_notification_channel_failure(notification_manager, sample_no
     # Check email result
     email_result = next(r for r in results if r.channel == ChannelType.EMAIL)
     assert email_result.status.value == "delivered"
-    
-    # Check SMS result
-    sms_result = next(r for r in results if r.channel == ChannelType.SMS)
-    assert sms_result.status.value == "failed"
-    assert sms_result.error_message == "SMS delivery failed"
+
+    # Check PUSH result
+    push_result = next(r for r in results if r.channel == ChannelType.PUSH)
+    assert push_result.status.value == "failed"
+    assert push_result.error_message == "PUSH delivery failed"
 
 
 @pytest.mark.asyncio

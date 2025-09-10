@@ -141,7 +141,7 @@ class TestAnalyticsEngine:
             
             # Assert
             assert result == mock_features
-            mock_generate.assert_called_once_with(sample_market_data, None)
+            mock_generate.assert_called_once_with(sample_market_data, ['technical', 'statistical', 'momentum'])
     
     @pytest.mark.asyncio
     async def test_generate_features_with_types(self, analytics_engine, sample_market_data):

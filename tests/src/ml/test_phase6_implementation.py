@@ -66,19 +66,19 @@ def test_advanced_ml_models():
             print(f"    ❌ Ensemble stacking model creation failed: {result['message']}")
             return None
         
-        # Test ensemble blending model
-        print("  • Testing ensemble blending model...")
+        # Test transfer learning model
+        print("  • Testing transfer learning model...")
         config = ModelConfig(
-            model_type=ModelType.ENSEMBLE_BLENDING,
+            model_type=ModelType.TRANSFER_LEARNING,
             learning_task=LearningTask.CLASSIFICATION,
             input_features=50,
             output_dimensions=3
         )
         result = ml_manager.create_advanced_model(config)
         if result['status'] == 'success':
-            print(f"    ✅ Ensemble blending model created: {result['model_id']}")
+            print(f"    ✅ Transfer learning model created: {result['model_id']}")
         else:
-            print(f"    ❌ Ensemble blending model creation failed: {result['message']}")
+            print(f"    ❌ Transfer learning model creation failed: {result['message']}")
         
         # Test meta-learning model
         print("  • Testing meta-learning model...")
@@ -314,7 +314,21 @@ def test_ai_trading_strategies():
         print("  • Testing strategy execution...")
         
         # Create sample trading state
-        trading_state = TradingState(
+        from dataclasses import dataclass
+        
+        @dataclass
+        class TradingStateData:
+            timestamp: datetime
+            price: float
+            volume: float
+            volatility: float
+            trend: float
+            momentum: float
+            sentiment: float
+            market_regime: str
+            technical_indicators: dict
+        
+        trading_state = TradingStateData(
             timestamp=datetime.now(),
             price=100.0,
             volume=1000.0,
@@ -322,7 +336,7 @@ def test_ai_trading_strategies():
             trend=0.01,
             momentum=0.005,
             sentiment=0.3,
-            market_regime=MarketRegime.BULL_MARKET,
+            market_regime="bull_market",
             technical_indicators={
                 'rsi': 65.0,
                 'macd': 0.5,
@@ -435,7 +449,20 @@ async def test_integration():
         
         # Test AI strategy execution with ML model
         print("  • Testing AI strategy execution with ML model...")
-        trading_state = TradingState(
+        from dataclasses import dataclass
+        
+        @dataclass
+        class TradingStateData:
+            timestamp: datetime
+            price: float
+            volume: float
+            volatility: float
+            trend: float
+            momentum: float
+            sentiment: float
+            market_regime: str
+        
+        trading_state = TradingStateData(
             timestamp=datetime.now(),
             price=100.0,
             volume=1000.0,
@@ -443,7 +470,7 @@ async def test_integration():
             trend=0.01,
             momentum=0.005,
             sentiment=0.3,
-            market_regime=MarketRegime.BULL_MARKET
+            market_regime="bull_market"
         )
         
         execution_result = ai_manager.execute_strategy(ai_strategy_id, trading_state)

@@ -8,6 +8,7 @@ Advanced Risk Management, Scalable Infrastructure, International Partnerships
 import asyncio
 import sys
 import os
+import pytest
 from datetime import datetime, timedelta
 
 # Add src to path
@@ -19,6 +20,7 @@ from global_market.advanced_risk_management import AdvancedRiskManager
 from global_market.scalable_infrastructure import DistributedSystemManager, ServiceDefinition, ScalingPolicy
 from global_market.international_partnerships import InternationalPartnershipsManager
 
+@pytest.mark.asyncio
 async def test_scalable_infrastructure():
     """Test Scalable Infrastructure System"""
     print("🔍 Testing Scalable Infrastructure System...")
@@ -100,6 +102,7 @@ async def test_scalable_infrastructure():
         print(f"  ❌ Scalable Infrastructure System test failed: {e}")
         return False
 
+@pytest.mark.asyncio
 async def test_international_partnerships():
     """Test International Partnerships System"""
     print("🔍 Testing International Partnerships System...")
@@ -164,6 +167,7 @@ async def test_international_partnerships():
         print(f"  ❌ International Partnerships System test failed: {e}")
         return False
 
+@pytest.mark.asyncio
 async def test_phase7_integration():
     """Test integration between all Phase 7 components"""
     print("🔍 Testing Phase 7 Full Integration...")

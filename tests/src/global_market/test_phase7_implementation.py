@@ -7,6 +7,7 @@ Multi-Market Integration, Global Regulatory Compliance, Advanced Risk Management
 import asyncio
 import sys
 import os
+import pytest
 from datetime import datetime, timedelta
 
 # Add src to path
@@ -16,6 +17,7 @@ from global_market.multi_market_integration import MultiMarketManager, BinanceCo
 from global_market.regulatory_compliance import RegulatoryComplianceManager, Jurisdiction
 from global_market.advanced_risk_management import AdvancedRiskManager
 
+@pytest.mark.asyncio
 async def test_multi_market_integration():
     """Test Multi-Market Integration System"""
     print("🔍 Testing Multi-Market Integration System...")
@@ -63,6 +65,7 @@ async def test_multi_market_integration():
         print(f"  ❌ Multi-Market Integration System test failed: {e}")
         return False
 
+@pytest.mark.asyncio
 async def test_regulatory_compliance():
     """Test Global Regulatory Compliance System"""
     print("🔍 Testing Global Regulatory Compliance System...")
@@ -133,6 +136,7 @@ async def test_regulatory_compliance():
         print(f"  ❌ Global Regulatory Compliance System test failed: {e}")
         return False
 
+@pytest.mark.asyncio
 async def test_advanced_risk_management():
     """Test Advanced Risk Management System"""
     print("🔍 Testing Advanced Risk Management System...")
@@ -223,6 +227,7 @@ async def test_advanced_risk_management():
         print(f"  ❌ Advanced Risk Management System test failed: {e}")
         return False
 
+@pytest.mark.asyncio
 async def test_integration():
     """Test integration between all Phase 7 components"""
     print("🔍 Testing Phase 7 Integration...")

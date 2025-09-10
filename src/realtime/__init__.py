@@ -1,1 +1,3 @@
-"""Realtime module for NeoZork HLD Prediction system"""
+"""
+Realtime Package
+"""

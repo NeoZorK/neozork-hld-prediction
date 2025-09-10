@@ -1,3 +1,3 @@
 """
-Tests for Pocket Hedge Fund components
+Pocket Hedge Fund Tests Package
 """

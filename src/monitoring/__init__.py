@@ -1,1 +1,3 @@
-"""Monitoring module for NeoZork HLD Prediction system"""
+"""
+Monitoring Package
+"""

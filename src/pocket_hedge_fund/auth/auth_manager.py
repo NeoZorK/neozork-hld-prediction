@@ -244,7 +244,7 @@ class AuthenticationManager:
             """
             existing_users = await db_manager.execute_query(
                 existing_user_query, 
-                {'email': email, 'username': username}
+                [email, username]
             )
             
             if existing_users:
@@ -267,21 +267,10 @@ class AuthenticationManager:
             now = datetime.utcnow()
             await db_manager.execute_command(
                 create_user_query,
-                {
-                    'user_id': user_id,
-                    'email': email,
-                    'username': username,
-                        'password_hash': password_hash,
-                    'first_name': first_name,
-                    'last_name': last_name,
-                    'phone': phone,
-                    'country': country,
-                    'kyc_status': 'pending',
-                        'is_active': True,
-                    'role': 'investor',
-                    'created_at': now,
-                    'updated_at': now
-                }
+                [
+                    user_id, email, username, password_hash, first_name, last_name,
+                    phone, country, 'pending', True, 'investor', now, now
+                ]
             )
             
             # Log registration
@@ -331,7 +320,7 @@ class AuthenticationManager:
                        role, is_active, mfa_enabled, mfa_secret, last_login
                 FROM users WHERE email = $1
             """
-            users = await db_manager.execute_query(user_query, {'1': email})
+            users = await db_manager.execute_query(user_query, [email])
             
             if not users:
                 return False, "Invalid email or password", None
@@ -417,7 +406,7 @@ class AuthenticationManager:
             
             # Get user email for QR code
             user_query = "SELECT email FROM users WHERE id = $1"
-            users = await db_manager.execute_query(user_query, {'user_id': user_id})
+            users = await db_manager.execute_query(user_query, [user_id])
             
             if not users:
                 return False, "User not found", None
@@ -437,7 +426,7 @@ class AuthenticationManager:
             """
             await db_manager.execute_command(
                 update_query,
-                {'secret': secret, 'updated_at': datetime.utcnow(), 'user_id': user_id}
+                [secret, datetime.utcnow(), user_id]
             )
             
             mfa_data = {
@@ -459,7 +448,7 @@ class AuthenticationManager:
             
             # Get user's MFA secret
             user_query = "SELECT mfa_secret FROM users WHERE id = $1"
-            users = await db_manager.execute_query(user_query, {'user_id': user_id})
+            users = await db_manager.execute_query(user_query, [user_id])
             
             if not users:
                 return False, "User not found"
@@ -479,7 +468,7 @@ class AuthenticationManager:
             """
             await db_manager.execute_command(
                 update_query,
-                {'updated_at': datetime.utcnow(), 'user_id': user_id}
+                [datetime.utcnow(), user_id]
             )
             
             # Log MFA enablement
@@ -510,7 +499,7 @@ class AuthenticationManager:
                 SELECT id, email, username, first_name, last_name, role, is_active, mfa_enabled
                 FROM users WHERE id = $1
             """
-            users = await db_manager.execute_query(user_query, {'user_id': payload['user_id']})
+            users = await db_manager.execute_query(user_query, [payload['user_id']])
             
             if not users:
                 return False, "User not found", None
@@ -568,16 +557,9 @@ class AuthenticationManager:
             
             await db_manager.execute_command(
                 create_key_query,
-                {
-                    'key_id': key_id,
-                    'user_id': user_id,
-                    'key_name': key_name,
-                    'api_key': api_key,
-                    'permissions': permissions,
-                    'is_active': True,
-                    'expires_at': expires_at,
-                    'created_at': datetime.utcnow()
-                }
+                [
+                    key_id, user_id, key_name, api_key, permissions, True, expires_at, datetime.utcnow()
+                ]
             )
             
             # Log API key creation
@@ -647,7 +629,7 @@ class AuthenticationManager:
         """
         await db_manager.execute_command(
             update_query,
-            {'last_login': datetime.utcnow(), 'updated_at': datetime.utcnow(), 'user_id': user_id}
+            [datetime.utcnow(), datetime.utcnow(), user_id]
         )
     
     async def _log_audit_event(
@@ -675,18 +657,12 @@ class AuthenticationManager:
             
             await db_manager.execute_command(
                 log_query,
-                {
-                    'log_id': str(uuid.uuid4()),
-                    'user_id': user_id,
-                    'action': action,
-                    'resource_type': resource_type,
-                    'resource_id': resource_id,
-                    'old_values': json.dumps(old_values) if old_values else None,
-                    'new_values': json.dumps(new_values) if new_values else None,
-                    'ip_address': ip_address,
-                    'user_agent': user_agent,
-                    'created_at': datetime.utcnow()
-                }
+                [
+                    str(uuid.uuid4()), user_id, action, resource_type, resource_id,
+                    json.dumps(old_values) if old_values else None,
+                    json.dumps(new_values) if new_values else None,
+                    ip_address, user_agent, datetime.utcnow()
+                ]
             )
         except Exception as e:
             logger.error(f"Failed to log audit event: {e}")
