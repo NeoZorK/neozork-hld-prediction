@@ -7,7 +7,7 @@ fund management, portfolio operations, and performance tracking.
 
 import pytest
 import asyncio
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal
 from unittest.mock import Mock, AsyncMock, patch
 from fastapi.testclient import TestClient
@@ -301,8 +301,8 @@ class TestFundAPI:
             mock_fund.max_drawdown_limit = Decimal('0.10')
             mock_fund.max_position_size = Decimal('0.10')
             mock_fund.max_leverage = Decimal('1.0')
-            mock_fund.created_at = datetime.utcnow()
-            mock_fund.updated_at = datetime.utcnow()
+            mock_fund.created_at = datetime.now(timezone.utc)
+            mock_fund.updated_at = datetime.now(timezone.utc)
             mock_fund.launched_at = None
             mock_fund.closed_at = None
             mock_fund.description = 'Test fund description'
@@ -468,8 +468,8 @@ class TestPortfolioAPI:
             mock_position.unrealized_pnl = Decimal('500.0')
             mock_position.realized_pnl = Decimal('0.0')
             mock_position.notes = 'Test position'
-            mock_position.created_at = datetime.utcnow()
-            mock_position.updated_at = datetime.utcnow()
+            mock_position.created_at = datetime.now(timezone.utc)
+            mock_position.updated_at = datetime.now(timezone.utc)
             mock_position.closed_at = None
             mock_position.manager_id = 'test-manager-123'
             

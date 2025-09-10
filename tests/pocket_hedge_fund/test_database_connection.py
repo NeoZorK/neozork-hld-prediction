@@ -9,7 +9,7 @@ import pytest
 import asyncio
 import os
 import tempfile
-from datetime import datetime, date
+from datetime import datetime, timezone, date
 from decimal import Decimal
 
 # Add project root to path
@@ -256,7 +256,7 @@ class TestDatabaseModels:
             key_name="Test API Key",
             api_key="test_api_key_123",
             permissions=["read", "write"],
-            expires_at=datetime.utcnow()
+            expires_at=datetime.now(timezone.utc)
         )
         
         assert api_key.user_id == "user_id"

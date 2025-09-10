@@ -13,6 +13,7 @@ import sys
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Depends
+from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
@@ -63,8 +64,8 @@ class PocketHedgeFundApp:
         self.app = FastAPI(
             title="NeoZork Pocket Hedge Fund API",
             description="AI-powered hedge fund management platform",
-    version="1.0.0",
-    docs_url="/docs",
+            version="1.0.0",
+            docs_url="/docs",
             redoc_url="/redoc"
         )
         self._setup_middleware()
@@ -246,26 +247,55 @@ class PocketHedgeFundApp:
 
 # Global application instance
 app_instance = PocketHedgeFundApp()
-app = app_instance.app
 
-# Event handlers
-@app.on_event("startup")
-async def startup_event():
-    """FastAPI startup event."""
+# Lifespan event handler
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """FastAPI lifespan event handler."""
+    # Startup
     try:
         await app_instance.startup()
         logger.info("Starting Pocket Hedge Fund API server on 0.0.0.0:8080")
     except Exception as e:
         logger.error(f"Failed to start application: {e}")
         raise
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """FastAPI shutdown event."""
+    
+    yield
+    
+    # Shutdown
     try:
         await app_instance.shutdown()
     except Exception as e:
         logger.error(f"Error during shutdown: {e}")
+
+# Create new FastAPI app with lifespan
+app = FastAPI(
+    title="NeoZork Pocket Hedge Fund API",
+    description="AI-powered hedge fund management platform",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    lifespan=lifespan
+)
+
+# Copy routes and middleware from app_instance
+app.include_router(app_instance.app.router)
+
+# Copy middleware from app_instance (handle different middleware formats)
+for middleware in app_instance.app.user_middleware:
+    try:
+        # Try to get kwargs from middleware object
+        if hasattr(middleware, 'kwargs'):
+            app.add_middleware(middleware.cls, **middleware.kwargs)
+        elif hasattr(middleware, 'options'):
+            app.add_middleware(middleware.cls, **middleware.options)
+        else:
+            # If no kwargs available, add middleware without arguments
+            app.add_middleware(middleware.cls)
+    except Exception as e:
+        # Log error but continue with other middleware
+        print(f"Warning: Could not copy middleware {middleware.cls}: {e}")
+        continue
 
 async def main():
     """Main application entry point."""
