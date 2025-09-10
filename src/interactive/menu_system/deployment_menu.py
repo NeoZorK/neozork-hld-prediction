@@ -6,6 +6,8 @@ This module provides the deployment submenu with comprehensive deployment and mo
 """
 
 from typing import Dict, Any, Optional
+import colorama
+from colorama import Fore, Back, Style
 from .base_menu import BaseMenu
 
 class DeploymentMenu(BaseMenu):
