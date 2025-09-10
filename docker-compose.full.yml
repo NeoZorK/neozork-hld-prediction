@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: neozork_postgres
+    environment:
+      POSTGRES_DB: neozork_fund
+      POSTGRES_USER: neozork_user
+      POSTGRES_PASSWORD: neozork_password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./src/pocket_hedge_fund/database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    networks:
+      - neozork_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U neozork_user -d neozork_fund"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: neozork_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@neozork.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - neozork_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  neozork-hld:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USE_UV: ${USE_UV:-true}
+        UV_ONLY: ${UV_ONLY:-true}
+    volumes:
+      # Mount local directories to the container
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./mql5_feed:/app/mql5_feed
+      # Mount the results directory to access plots on the host
+      - ./results:/app/results
+      # Mount tests directory for pytest
+      - ./tests:/app/tests
+      # Mount UV cache for better performance
+      - uv_cache:/app/.uv_cache
+    env_file:
+      - docker.env
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+      - DOCKER_CONTAINER=true
+      - USE_UV=true
+      - UV_ONLY=true
+      - UV_CACHE_DIR=/app/.uv_cache
+      - UV_VENV_DIR=/app/.venv
+      - DATABASE_URL=postgresql://neozork_user:neozork_password@postgres:5432/neozork_fund
+    # Interactive script execution with user prompts
+    stdin_open: true
+    tty: true
+    # Use the entrypoint script instead of direct commands
+    entrypoint: ["/app/docker-entrypoint.sh"]
+    networks:
+      - neozork_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+  uv_cache:
+    driver: local
+
+networks:
+  neozork_network:
+    driver: bridge

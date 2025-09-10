@@ -27,12 +27,21 @@ services:
       - UV_ONLY=true
       - UV_CACHE_DIR=/app/.uv_cache
       - UV_VENV_DIR=/app/.venv
+      - DATABASE_URL=postgresql://neozork_user:neozork_password@neozork_postgres:5432/neozork_fund
     # Interactive script execution with user prompts
     stdin_open: true
     tty: true
     # Use the entrypoint script instead of direct commands
     entrypoint: ["/app/docker-entrypoint.sh"]
+    networks:
+      - neozork_network
+    external_links:
+      - neozork_postgres:neozork_postgres
 
 volumes:
   uv_cache:
     driver: local
+
+networks:
+  neozork_network:
+    external: true

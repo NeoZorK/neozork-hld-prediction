@@ -15,10 +15,10 @@ import numpy as np
 import dask.dataframe as dd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import datashader as ds
-import datashader.transfer_functions as tf
-from datashader.colors import Greys9
-import colorcet as cc
+# import datashader as ds
+# import datashader.transfer_functions as tf
+# from datashader.colors import Greys9
+# import colorcet as cc
 import plotly.io as pio
 import webbrowser
 from functools import partial
