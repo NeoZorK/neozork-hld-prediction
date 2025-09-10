@@ -36,6 +36,7 @@ email-validator>=2.0.0
 pytest==7.4.3
 pytest-asyncio==0.21.1
 httpx==0.25.2
+hypothesis>=6.0.0
 
 # Data fetching libraries
 yfinance==0.2.25
