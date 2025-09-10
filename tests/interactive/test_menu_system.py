@@ -13,7 +13,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from interactive.menu_system import InteractiveMenuSystem, DataLoadingMenu, EDAMenu
+from src.interactive.menu_system import InteractiveMenuSystem, DataLoadingMenu, EDAMenu
 
 class TestInteractiveMenuSystem:
     """Test cases for InteractiveMenuSystem."""

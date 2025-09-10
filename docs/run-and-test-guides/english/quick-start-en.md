@@ -11,8 +11,8 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 uv pip install -r requirements.txt
 
 # Install Node.js dependencies
-cd mobile_app && npm install && cd ..
-cd admin_panel && npm install && cd ..
+cd src/mobile_app && npm install && cd ..
+cd src/admin_panel && npm install && cd ../..
 ```
 
 ### 2. Launch Main Components
@@ -29,7 +29,7 @@ uv run run_analysis.py yfinance AAPL --rule RSI
 #### Interactive System
 ```bash
 # Launch interactive system
-uv run python interactive/neozork.py
+uv run python src/interactive/neozork.py
 ```
 
 #### SaaS Platform
@@ -48,13 +48,13 @@ uv run python run_pocket_hedge_fund.py
 
 #### Mobile Application
 ```bash
-cd mobile_app
+cd src/mobile_app
 npm start
 ```
 
 #### Admin Panel
 ```bash
-cd admin_panel
+cd src/admin_panel
 npm run dev
 # Access: http://localhost:3000
 ```

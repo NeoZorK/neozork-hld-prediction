@@ -1,0 +1,285 @@
+{
+  "metadata": {
+    "title": "Test API",
+    "description": "Test API for documentation generation",
+    "version": "1.0.0",
+    "openapi_version": "3.1.0",
+    "docs_url": "/docs",
+    "redoc_url": "/redoc",
+    "generated_at": "2025-09-10T09:19:41.867501",
+    "total_endpoints": 6,
+    "tags": []
+  },
+  "sections": {
+    "overview": {
+      "title": "API Overview",
+      "content": {
+        "introduction": "Test API for documentation generation",
+        "base_url": "https://api.pockethedgefund.com",
+        "api_version": "1.0.0",
+        "supported_formats": [
+          "JSON"
+        ],
+        "character_encoding": "UTF-8",
+        "rate_limits": {
+          "requests_per_minute": 1000,
+          "requests_per_hour": 10000,
+          "burst_limit": 100
+        },
+        "features": [
+          "Portfolio Management",
+          "Advanced Analytics",
+          "Risk Assessment",
+          "Real-time Monitoring",
+          "User Management",
+          "Notification System",
+          "Admin Panel",
+          "Deployment Management"
+        ]
+      }
+    },
+    "authentication": {
+      "title": "Authentication",
+      "content": {
+        "methods": {
+          "jwt": {
+            "description": "JSON Web Token authentication",
+            "header": "Authorization: Bearer <token>",
+            "token_type": "JWT",
+            "expiration": "24 hours",
+            "refresh_token": true
+          },
+          "api_key": {
+            "description": "API Key authentication",
+            "header": "X-API-Key: <api_key>",
+            "usage": "For server-to-server communication"
+          }
+        },
+        "security_schemes": {
+          "bearer_auth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearer_format": "JWT"
+          },
+          "api_key_auth": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "X-API-Key"
+          }
+        },
+        "getting_started": {
+          "step1": "Register for an account",
+          "step2": "Generate API credentials",
+          "step3": "Include credentials in requests",
+          "step4": "Handle authentication errors"
+        }
+      }
+    },
+    "endpoints": {
+      "title": "API Endpoints",
+      "content": {
+        "groups": {
+          "default": {
+            "description": "Default endpoints",
+            "endpoints": [
+              {
+                "path": "/health",
+                "methods": [
+                  "GET"
+                ],
+                "summary": "health_check",
+                "description": "Health check endpoint.",
+                "operation_id": "health_check",
+                "tags": [],
+                "parameters": [],
+                "request_body": null,
+                "responses": {
+                  "200": {
+                    "description": "Successful response",
+                    "content": {
+                      "application/json": {
+                        "example": {
+                          "success": true,
+                          "data": {},
+                          "message": "Operation completed successfully"
+                        }
+                      }
+                    }
+                  },
+                  "400": {
+                    "description": "Bad request",
+                    "content": {
+                      "application/json": {
+                        "example": {
+                          "error": "Bad request",
+                          "detail": "Invalid input data"
+                        }
+                      }
+                    }
+                  },
+                  "401": {
+                    "description": "Unauthorized",
+                    "content": {
+                      "application/json": {
+                        "example": {
+                          "error": "Unauthorized",
+                          "detail": "Invalid or missing authentication"
+                        }
+                      }
+                    }
+                  },
+                  "500": {
+                    "description": "Internal server error",
+                    "content": {
+                      "application/json": {
+                        "example": {
+                          "error": "Internal server error",
+                          "detail": "An unexpected error occurred"
+                        }
+                      }
+                    }
+                  }
+                },
+                "security": [],
+                "examples": []
+              },
+              {}
+            ]
+          }
+        }
+      }
+    },
+    "schemas": {
+      "title": "Data Schemas",
+      "content": {
+        "models": {}
+      }
+    },
+    "examples": {
+      "title": "Code Examples",
+      "content": {
+        "languages": {
+          "python": {
+            "description": "Python examples using requests library",
+            "examples": [
+              {
+                "title": "Create Portfolio",
+                "code": "\nimport requests\n\nresponse = requests.post(\n    'https://api.pockethedgefund.com/api/v1/portfolios',\n    headers={'Authorization': 'Bearer your_token'},\n    json={'name': 'My Portfolio', 'description': 'Investment portfolio'}\n)\nprint(response.json())\n"
+              }
+            ]
+          },
+          "javascript": {
+            "description": "JavaScript examples using fetch API",
+            "examples": [
+              {
+                "title": "Create Portfolio",
+                "code": "\nfetch('https://api.pockethedgefund.com/api/v1/portfolios', {\n    method: 'POST',\n    headers: {\n        'Authorization': 'Bearer your_token',\n        'Content-Type': 'application/json'\n    },\n    body: JSON.stringify({\n        name: 'My Portfolio',\n        description: 'Investment portfolio'\n    })\n})\n.then(response => response.json())\n.then(data => console.log(data));\n"
+              }
+            ]
+          },
+          "curl": {
+            "description": "cURL command examples",
+            "examples": [
+              {
+                "title": "Create Portfolio",
+                "code": "\ncurl -X POST \"https://api.pockethedgefund.com/api/v1/portfolios\" \\\n  -H \"Authorization: Bearer your_token\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"name\": \"My Portfolio\", \"description\": \"Investment portfolio\"}'\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "errors": {
+      "title": "Error Handling",
+      "content": {
+        "error_format": {
+          "description": "All errors follow a consistent format",
+          "example": {
+            "error": "Error type",
+            "detail": "Detailed error message",
+            "code": "ERROR_CODE",
+            "timestamp": "2024-01-01T00:00:00Z",
+            "request_id": "req_123456"
+          }
+        },
+        "error_codes": {
+          "400": "Bad Request - Invalid input data",
+          "401": "Unauthorized - Authentication required",
+          "403": "Forbidden - Insufficient permissions",
+          "404": "Not Found - Resource not found",
+          "409": "Conflict - Resource already exists",
+          "422": "Unprocessable Entity - Validation error",
+          "429": "Too Many Requests - Rate limit exceeded",
+          "500": "Internal Server Error - Server error",
+          "503": "Service Unavailable - Service temporarily unavailable"
+        },
+        "validation_errors": {
+          "description": "Validation errors include field-specific details",
+          "example": {
+            "error": "Validation Error",
+            "detail": [
+              {
+                "field": "email",
+                "message": "Invalid email format",
+                "value": "invalid-email"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "rate_limiting": {
+      "title": "Rate Limiting",
+      "content": {
+        "limits": {
+          "authenticated_users": {
+            "requests_per_minute": 1000,
+            "requests_per_hour": 10000,
+            "burst_limit": 100
+          },
+          "unauthenticated_users": {
+            "requests_per_minute": 100,
+            "requests_per_hour": 1000,
+            "burst_limit": 10
+          }
+        },
+        "headers": {
+          "X-RateLimit-Limit": "Request limit per time window",
+          "X-RateLimit-Remaining": "Remaining requests in current window",
+          "X-RateLimit-Reset": "Time when the rate limit resets (Unix timestamp)",
+          "X-RateLimit-Retry-After": "Seconds to wait before retrying (when rate limited)"
+        },
+        "best_practices": [
+          "Implement exponential backoff for retries",
+          "Cache responses when possible",
+          "Use webhooks for real-time updates instead of polling",
+          "Monitor rate limit headers in responses"
+        ]
+      }
+    },
+    "changelog": {
+      "title": "API Changelog",
+      "content": {
+        "versions": [
+          {
+            "version": "1.0.0",
+            "date": "2024-01-01",
+            "changes": {
+              "added": [
+                "Initial API release",
+                "Portfolio management endpoints",
+                "User authentication",
+                "Basic analytics"
+              ],
+              "changed": [],
+              "deprecated": [],
+              "removed": [],
+              "fixed": [],
+              "security": []
+            }
+          }
+        ]
+      }
+    }
+  }
+}

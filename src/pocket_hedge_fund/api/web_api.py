@@ -40,7 +40,7 @@ class WebStatsResponse(BaseModel):
 async def serve_web_interface():
     """Serve the main web interface."""
     try:
-        web_path = Path(__file__).parent.parent.parent.parent / "web" / "templates" / "index.html"
+        web_path = Path(__file__).parent.parent.parent.parent / "src" / "web" / "templates" / "index.html"
         
         if not web_path.exists():
             raise HTTPException(
@@ -64,7 +64,7 @@ async def serve_web_interface():
 async def serve_static_files(file_path: str):
     """Serve static files (CSS, JS, images)."""
     try:
-        static_path = Path(__file__).parent.parent.parent.parent / "web" / "static" / file_path
+        static_path = Path(__file__).parent.parent.parent.parent / "src" / "web" / "static" / file_path
         
         if not static_path.exists():
             raise HTTPException(

@@ -38,7 +38,7 @@ def sample_fastapi_app():
 def api_doc_generator():
     """Create API documentation generator instance for testing."""
     config = {
-        'output_dir': './test-docs/api',
+        'output_dir': './docs/api',
         'include_examples': True,
         'include_schemas': True,
         'include_auth': True,
@@ -52,7 +52,7 @@ def api_doc_generator():
 async def test_api_doc_generator_initialization(api_doc_generator):
     """Test API documentation generator initialization."""
     assert api_doc_generator is not None
-    assert api_doc_generator.output_dir == './test-docs/api'
+    assert api_doc_generator.output_dir == './docs/api'
     assert api_doc_generator.include_examples is True
     assert api_doc_generator.include_schemas is True
     assert api_doc_generator.include_auth is True
@@ -324,7 +324,7 @@ async def test_save_documentation_markdown(api_doc_generator, sample_fastapi_app
     output_path = await api_doc_generator.save_documentation('markdown')
     
     assert output_path is not None
-    assert output_path == './test-docs/api'
+    assert output_path == 'docs/api'
 
 
 @pytest.mark.asyncio

@@ -30,7 +30,7 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 admin_manager = None
 
 # Templates
-templates = Jinja2Templates(directory="src/pocket_hedge_fund/admin_panel/templates")
+templates = Jinja2Templates(directory="src/admin_panel/templates")
 
 
 async def get_admin_manager() -> AdminManager:

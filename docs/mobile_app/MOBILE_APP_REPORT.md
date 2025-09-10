@@ -49,7 +49,7 @@
 
 ### Структура файлов
 ```
-mobile_app/
+src/mobile_app/
 ├── App.js                    # Главный файл приложения
 ├── app.json                  # Конфигурация Expo
 ├── package.json              # Зависимости
@@ -76,7 +76,7 @@ mobile_app/
 
 ### 1. Установка зависимостей
 ```bash
-cd mobile_app
+cd src/mobile_app
 npm install
 ```
 

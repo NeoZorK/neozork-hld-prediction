@@ -5,11 +5,11 @@
 Ваша система NeoZork HLD Prediction включает в себя множество компонентов:
 
 1. **Основной анализ** (`run_analysis.py`) - Ручное построение графиков и индикаторов
-2. **Интерактивная система** (`interactive/`) - ML торговые стратегии
+2. **Интерактивная система** (`src/interactive/`) - ML торговые стратегии
 3. **SaaS платформа** (`src/saas/`) - Облачная платформа
 4. **Pocket Hedge Fund** (`src/pocket_hedge_fund/`) - Хедж-фонд
-5. **Мобильное приложение** (`mobile_app/`) - React Native приложение
-6. **Админ панель** (`admin_panel/`) - Vue.js админка
+5. **Мобильное приложение** (`src/mobile_app/`) - React Native приложение
+6. **Админ панель** (`src/admin_panel/`) - Vue.js админка
 7. **Мониторинг** (`src/monitoring/`) - Система мониторинга
 8. **Развертывание** (`deployment/`) - Docker и K8s конфигурации
 
@@ -66,16 +66,16 @@ uv pip list
 
 #### Мобильное приложение
 ```bash
-cd mobile_app
+cd src/mobile_app
 npm install
 cd ..
 ```
 
 #### Админ панель
 ```bash
-cd admin_panel
+cd src/admin_panel
 npm install
-cd ..
+cd ../..
 ```
 
 ### 5. Настройка окружения
@@ -135,10 +135,10 @@ uv run run_analysis.py interactive --input-file data/mn1.csv
 #### Запуск через Python
 ```bash
 # Прямой запуск
-uv run python interactive/neozork.py
+uv run python src/interactive/neozork.py
 
 # Запуск с отладкой
-uv run python -u interactive/neozork.py
+uv run python -u src/interactive/neozork.py
 ```
 
 #### Запуск через скрипт nz
@@ -197,7 +197,7 @@ nohup uv run python run_pocket_hedge_fund.py > logs/pocket_hedge_fund.log 2>&1 &
 
 #### Запуск React Native приложения
 ```bash
-cd mobile_app
+cd src/mobile_app
 
 # Установка зависимостей
 npm install
@@ -225,7 +225,7 @@ npm run web
 
 #### Запуск Vue.js админки
 ```bash
-cd admin_panel
+cd src/admin_panel
 
 # Установка зависимостей
 npm install
@@ -619,8 +619,8 @@ uv cache clean
 pip cache purge
 
 # Очистка кэша npm
-cd mobile_app && npm cache clean --force
-cd admin_panel && npm cache clean --force
+cd src/mobile_app && npm cache clean --force
+cd src/admin_panel && npm cache clean --force
 ```
 
 #### Очистка Docker
@@ -708,13 +708,13 @@ uv pip install --upgrade -e ".[dev]"
 #### Node.js зависимости
 ```bash
 # Обновление мобильного приложения
-cd mobile_app
+cd src/mobile_app
 npm update
 npm audit fix
 cd ..
 
 # Обновление админ панели
-cd admin_panel
+cd src/admin_panel
 npm update
 npm audit fix
 cd ..

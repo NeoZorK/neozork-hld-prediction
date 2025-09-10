@@ -151,7 +151,7 @@ class Plan:
         """Check if plan is active"""
         return self.status == PlanStatus.ACTIVE
     
-    def is_public(self) -> bool:
+    def is_publicly_available(self) -> bool:
         """Check if plan is publicly available"""
         return self.is_public and self.is_active()
     

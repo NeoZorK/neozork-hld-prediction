@@ -15,7 +15,7 @@ The Pocket Hedge Fund Admin Panel is a **Vue.js 3 application** that provides co
 
 ### **Project Structure**
 ```
-admin_panel/
+src/admin_panel/
 ├── src/
 │   ├── components/          # Reusable UI components
 │   ├── views/              # Page components
@@ -443,7 +443,7 @@ systemAPI.getSystemLogs(params)
 ### **Installation**
 ```bash
 # Navigate to admin panel directory
-cd admin_panel
+cd src/admin_panel
 
 # Install dependencies
 npm install
