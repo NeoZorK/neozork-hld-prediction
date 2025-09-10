@@ -5,11 +5,11 @@
 Your NeoZork HLD Prediction system includes multiple components:
 
 1. **Main Analysis** (`run_analysis.py`) - Manual charting and indicator visualization
-2. **Interactive System** (`interactive/`) - ML trading strategies
+2. **Interactive System** (`src/interactive/`) - ML trading strategies
 3. **SaaS Platform** (`src/saas/`) - Cloud platform
 4. **Pocket Hedge Fund** (`src/pocket_hedge_fund/`) - Hedge fund
-5. **Mobile Application** (`mobile_app/`) - React Native app
-6. **Admin Panel** (`admin_panel/`) - Vue.js admin interface
+5. **Mobile Application** (`src/mobile_app/`) - React Native app
+6. **Admin Panel** (`src/admin_panel/`) - Vue.js admin interface
 7. **Monitoring** (`src/monitoring/`) - Monitoring system
 8. **Deployment** (`deployment/`) - Docker and K8s configurations
 
@@ -66,16 +66,16 @@ uv pip list
 
 #### Mobile Application
 ```bash
-cd mobile_app
+cd src/mobile_app
 npm install
 cd ..
 ```
 
 #### Admin Panel
 ```bash
-cd admin_panel
+cd src/admin_panel
 npm install
-cd ..
+cd ../..
 ```
 
 ### 5. Environment Setup
@@ -135,10 +135,10 @@ uv run run_analysis.py interactive --input-file data/mn1.csv
 #### Run via Python
 ```bash
 # Direct run
-uv run python interactive/neozork.py
+uv run python src/interactive/neozork.py
 
 # Run with debugging
-uv run python -u interactive/neozork.py
+uv run python -u src/interactive/neozork.py
 ```
 
 #### Run via nz Script
@@ -197,7 +197,7 @@ nohup uv run python run_pocket_hedge_fund.py > logs/pocket_hedge_fund.log 2>&1 &
 
 #### Launch React Native Application
 ```bash
-cd mobile_app
+cd src/mobile_app
 
 # Install dependencies
 npm install
@@ -225,7 +225,7 @@ npm run web
 
 #### Launch Vue.js Admin Panel
 ```bash
-cd admin_panel
+cd src/admin_panel
 
 # Install dependencies
 npm install
@@ -619,8 +619,8 @@ uv cache clean
 pip cache purge
 
 # Clean npm cache
-cd mobile_app && npm cache clean --force
-cd admin_panel && npm cache clean --force
+cd src/mobile_app && npm cache clean --force
+cd src/admin_panel && npm cache clean --force
 ```
 
 #### Docker Cleanup
@@ -708,13 +708,13 @@ uv pip install --upgrade -e ".[dev]"
 #### Node.js Dependencies
 ```bash
 # Update mobile app
-cd mobile_app
+cd src/mobile_app
 npm update
 npm audit fix
 cd ..
 
 # Update admin panel
-cd admin_panel
+cd src/admin_panel
 npm update
 npm audit fix
 cd ..

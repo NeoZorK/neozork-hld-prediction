@@ -41,8 +41,8 @@ docs/run-and-test-guides/
 2. **Интерактивная система** (`interactive/`) - ML торговые стратегии / ML trading strategies
 3. **SaaS платформа** (`src/saas/`) - Облачная платформа / Cloud platform
 4. **Pocket Hedge Fund** (`src/pocket_hedge_fund/`) - Хедж-фонд / Hedge fund
-5. **Мобильное приложение** (`mobile_app/`) - React Native приложение / React Native app
-6. **Админ панель** (`admin_panel/`) - Vue.js админка / Vue.js admin panel
+5. **Мобильное приложение** (`src/mobile_app/`) - React Native приложение / React Native app
+6. **Админ панель** (`src/admin_panel/`) - Vue.js админка / Vue.js admin panel
 7. **Мониторинг** (`src/monitoring/`) - Система мониторинга / Monitoring system
 
 ### Тестирование / Testing

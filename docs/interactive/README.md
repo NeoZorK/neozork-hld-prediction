@@ -61,7 +61,7 @@ The NeoZork Interactive ML Trading Strategy Development System is a comprehensiv
 ## 🏗️ Architecture
 
 ```
-interactive/
+src/interactive/
 ├── neozork.py                 # Main entry point
 ├── menu_system/              # Interactive menu system
 │   ├── main_menu.py          # Main menu controller
@@ -141,19 +141,19 @@ cd neozork-hld-prediction
 uv sync
 
 # Make the script executable
-chmod +x interactive/neozork.py
+chmod +x src/interactive/neozork.py
 ```
 
 ### Running the System
 ```bash
 # Run the interactive system
-python interactive/neozork.py
+python src/interactive/neozork.py
 
 # Or using uv
-uv run interactive/neozork.py
+uv run src/interactive/neozork.py
 
 # Or directly execute
-./interactive/neozork.py
+./src/interactive/neozork.py
 ```
 
 ## 📖 Usage
@@ -302,4 +302,4 @@ For support and questions:
 
 ---
 
-**🚀 Ready to develop profitable trading strategies? Start with `python interactive/neozork.py`!**
+**🚀 Ready to develop profitable trading strategies? Start with `python src/interactive/neozork.py`!**

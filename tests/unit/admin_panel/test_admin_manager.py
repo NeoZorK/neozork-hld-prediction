@@ -7,8 +7,8 @@ import asyncio
 from datetime import datetime, timedelta
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from src.pocket_hedge_fund.admin_panel.core.admin_manager import AdminManager
-from src.pocket_hedge_fund.admin_panel.models.admin_models import (
+from src.admin_panel.core.admin_manager import AdminManager
+from src.admin_panel.models.admin_models import (
     AdminUser, AdminRoleType, AdminPermissionType, AdminAlertLevel
 )
 

@@ -83,7 +83,7 @@ React Native + Expo
 
 ### **Project Structure**
 ```
-mobile_app/
+src/mobile_app/
 ├── src/
 │   ├── components/          # UI Components
 │   ├── screens/            # Screen Components

@@ -426,6 +426,7 @@ def test_computer_vision():
             def __init__(self):
                 self.models = {}
                 self.analysis_results = {}
+                self.config = {'max_models': 10, 'default_confidence': 0.8}
             
             def create_model(self, model_type: str, name: str):
                 model_id = f"cv_model_{len(self.models)}"

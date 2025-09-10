@@ -119,7 +119,7 @@ class Customer:
     def is_locked(self) -> bool:
         """Check if customer account is locked"""
         return (self.status == CustomerStatus.LOCKED or 
-                (self.locked_until and datetime.utcnow() < self.locked_until))
+                (self.locked_until is not None and datetime.utcnow() < self.locked_until))
     
     def is_tenant_admin(self) -> bool:
         """Check if customer is tenant administrator"""

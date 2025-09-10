@@ -425,7 +425,7 @@ class TestPlanModel:
         )
         
         assert plan.is_active() is True
-        assert plan.is_public() is True
+        assert plan.is_publicly_available() is True
         
         plan.status = PlanStatus.INACTIVE
         assert plan.is_active() is False
