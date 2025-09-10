@@ -45,6 +45,8 @@ mplfinance
 statsmodels
 bokeh
 dask
+seaborn
+plotext
 # datashader  # Temporarily disabled due to llvmlite compatibility issues with Python 3.11
 
 # Development & Testing
