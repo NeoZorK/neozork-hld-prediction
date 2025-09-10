@@ -7,6 +7,8 @@ This module provides the data loading submenu with support for multiple data sou
 
 from typing import Dict, Any, Optional
 import time
+import colorama
+from colorama import Fore, Back, Style
 from .base_menu import BaseMenu
 
 class DataLoadingMenu(BaseMenu):
