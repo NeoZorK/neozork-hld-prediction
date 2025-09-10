@@ -33,13 +33,13 @@ run_python() {
     
     case $env_type in
         0)  # Docker
-            python "$@"
+            PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH}" python "$@"
             ;;
         1)  # UV
-            uv run python "$@"
+            PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH}" uv run python "$@"
             ;;
         2)  # Native
-            python "$@"
+            PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH}" python "$@"
             ;;
     esac
 }
@@ -83,9 +83,11 @@ fi
 if [ "$1" = "--version" ]; then
     echo "Neozork Interactive Tool Version 1.0.0"
     echo "Project: Neozork HLD Prediction"
-    echo "Python: $(python --version 2>&1)"
     if [ "$env_type" -eq 1 ]; then
+        echo "Python: $(uv run python --version 2>&1)"
         echo "UV: $(uv --version 2>&1)"
+    else
+        echo "Python: $(python3 --version 2>&1 || python --version 2>&1)"
     fi
     exit 0
 fi
