@@ -230,7 +230,7 @@ def test_version_flag():
     # In Docker environment, version flag might timeout, so we accept both success and timeout
     assert return_code in [0, -1], f"Version flag failed with return code {return_code}"
     if return_code == 0:
-        assert "Shcherbyna Pressure Vector Indicator" in stdout, "Version output should contain tool name"
+        assert "Shcherbyna High-Low-Direction Prediction System" in stdout, "Version output should contain tool name"
         assert "v" in stdout, "Version output should contain version number"
     # If return_code is -1 (timeout), that's acceptable in Docker environment
 
@@ -245,7 +245,7 @@ def test_help_flag():
     assert return_code in [0, -1], f"Help flag failed with return code {return_code}"
     if return_code == 0:
         assert "usage:" in stdout, "Help output should contain usage information"
-        assert "Shcherbyna Pressure Vector Indicator" in stdout, "Help output should contain tool name"
+        assert "Shcherbyna Pressure Vector Indicator Analysis Tool" in stdout, "Help output should contain tool name"
 
 # Examples test
 @pytest.mark.basic

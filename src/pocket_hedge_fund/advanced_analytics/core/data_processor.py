@@ -305,7 +305,7 @@ class DataProcessor:
             df.set_index('timestamp', inplace=True)
             
             # Resample based on target frequency
-            if target_frequency == DataFrequency.HOURLY:
+            if target_frequency == DataFrequency.HOUR:
                 freq = 'H'
             elif target_frequency == DataFrequency.DAILY:
                 freq = 'D'

@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 from colorama import Fore, Style, init
+import pytest
 
 # Initialize colorama
 init(autoreset=True)
@@ -201,11 +202,13 @@ def test_advanced_ml_models():
         print(f"        - Performance history: {summary['performance_history']}")
         
         print_success("✅ Advanced Machine Learning Models System test completed!")
-        return ml_manager
+        assert ml_manager is not None
+        assert hasattr(ml_manager, 'models')
+        assert hasattr(ml_manager, 'config')
         
     except Exception as e:
         print_error(f"❌ Advanced Machine Learning Models System test failed: {str(e)}")
-        return None
+        assert False, f"Advanced Machine Learning Models System test failed: {str(e)}"
 
 def test_ai_trading_strategies():
     """Test AI trading strategies system."""
@@ -365,12 +368,15 @@ def test_ai_trading_strategies():
         print(f"        - Strategy types: {summary['strategy_types']}")
         
         print_success("✅ AI-Powered Trading Strategies System test completed!")
-        return ai_manager
+        assert ai_manager is not None
+        assert hasattr(ai_manager, 'strategies')
+        assert hasattr(ai_manager, 'config')
         
     except Exception as e:
         print_error(f"❌ AI-Powered Trading Strategies System test failed: {str(e)}")
-        return None
+        assert False, f"AI-Powered Trading Strategies System test failed: {str(e)}"
 
+@pytest.mark.asyncio
 async def test_integration():
     """Test integration between Phase 6 components."""
     print_info("\n🔗 Testing Phase 6 Integration...")

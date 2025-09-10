@@ -10,10 +10,12 @@ import os
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
+import pytest
 
 # Add src to path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
 
+@pytest.mark.asyncio
 async def test_advanced_strategies():
     """Test Advanced Trading Strategies System"""
     print("Testing Advanced Trading Strategies System...")
@@ -122,6 +124,7 @@ async def test_advanced_strategies():
         print(f"❌ Advanced Trading Strategies System test failed: {e}")
         return False
 
+@pytest.mark.asyncio
 async def test_quantitative_research():
     """Test Quantitative Research Tools System"""
     print("Testing Quantitative Research Tools System...")
@@ -213,6 +216,7 @@ async def test_quantitative_research():
         print(f"❌ Quantitative Research Tools System test failed: {e}")
         return False
 
+@pytest.mark.asyncio
 async def test_integration():
     """Test integration between Advanced Strategies and Quantitative Research"""
     print("Testing Phase 9 Integration...")

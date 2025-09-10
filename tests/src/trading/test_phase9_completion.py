@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 import logging
+import pytest
 
 # Add src to path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
@@ -18,6 +19,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src')
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+@pytest.mark.asyncio
 async def test_advanced_trading_strategies():
     """Test Advanced Trading Strategies"""
     try:
@@ -55,6 +57,7 @@ async def test_advanced_trading_strategies():
         print(f"❌ Advanced Trading Strategies System test failed: {e}")
         return False
 
+@pytest.mark.asyncio
 async def test_quantitative_research_tools():
     """Test Quantitative Research Tools"""
     try:
@@ -114,6 +117,7 @@ async def test_quantitative_research_tools():
         print(f"❌ Quantitative Research Tools System test failed: {e}")
         return False
 
+@pytest.mark.asyncio
 async def test_advanced_risk_management():
     """Test Advanced Risk Management"""
     try:
@@ -166,6 +170,7 @@ async def test_advanced_risk_management():
         print(f"❌ Advanced Risk Management System test failed: {e}")
         return False
 
+@pytest.mark.asyncio
 async def test_performance_analytics():
     """Test Performance Analytics"""
     try:
@@ -225,6 +230,7 @@ async def test_performance_analytics():
         print(f"❌ Performance Analytics System test failed: {e}")
         return False
 
+@pytest.mark.asyncio
 async def test_phase9_integration():
     """Test Phase 9 integration"""
     try:
