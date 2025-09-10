@@ -31,6 +31,7 @@ def test_binance_connection():
     if not api_key or not api_secret:
         print("❌ BINANCE_API_KEY and/or BINANCE_API_SECRET not found in environment variables")
         print("Please set these environment variables to test Binance API")
+        print("⚠️  Skipping Binance test due to missing credentials")
         return False
     
     try:
@@ -46,6 +47,10 @@ def test_binance_connection():
             print("❌ Failed to fetch data from Binance")
             return False
             
+    except ImportError as e:
+        print(f"❌ Import error - missing dependencies: {e}")
+        print("Make sure python-binance is installed")
+        return False
     except Exception as e:
         print(f"❌ Error testing Binance connection: {e}")
         return False

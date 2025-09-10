@@ -30,6 +30,7 @@ def test_polygon_connection():
     if not api_key:
         print("❌ POLYGON_API_KEY not found in environment variables")
         print("Please set this environment variable to test Polygon API")
+        print("⚠️  Skipping Polygon test due to missing credentials")
         return False
     
     try:
@@ -45,6 +46,10 @@ def test_polygon_connection():
             print("❌ Failed to fetch data from Polygon")
             return False
             
+    except ImportError as e:
+        print(f"❌ Import error - missing dependencies: {e}")
+        print("Make sure polygon-api-client is installed")
+        return False
     except Exception as e:
         print(f"❌ Error testing Polygon connection: {e}")
         return False
