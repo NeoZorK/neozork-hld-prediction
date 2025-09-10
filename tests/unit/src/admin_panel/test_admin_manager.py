@@ -31,7 +31,66 @@ def admin_manager():
     manager._user_cache = {}
     manager._role_cache = {}
     manager._permission_cache = {}
-    manager._config_cache = {}
+    
+    # Initialize config cache with default values
+    from src.admin_panel.models.admin_models import AdminConfiguration, AdminPermission, AdminRole
+    manager._config_cache = {
+        'system_name': AdminConfiguration(key='system_name', value='Pocket Hedge Fund Admin'),
+        'system_version': AdminConfiguration(key='system_version', value='1.0.0'),
+        'session_timeout': AdminConfiguration(key='session_timeout', value=28800),
+        'max_login_attempts': AdminConfiguration(key='max_login_attempts', value=5)
+    }
+    
+    # Initialize permission cache with default permissions
+    manager._permission_cache = {
+        AdminPermissionType.USER_MANAGEMENT: AdminPermission(
+            name=AdminPermissionType.USER_MANAGEMENT,
+            description="Manage users and roles",
+            resource="users",
+            action="manage"
+        ),
+        AdminPermissionType.SYSTEM_MONITORING: AdminPermission(
+            name=AdminPermissionType.SYSTEM_MONITORING,
+            description="Monitor system health",
+            resource="system",
+            action="monitor"
+        ),
+        AdminPermissionType.ANALYTICS_VIEW: AdminPermission(
+            name=AdminPermissionType.ANALYTICS_VIEW,
+            description="View analytics and reports",
+            resource="analytics",
+            action="read"
+        )
+    }
+    
+    # Initialize role cache with default roles
+    manager._role_cache = {
+        'super_admin': AdminRole(
+            name="Super Admin",
+            description="Full system access",
+            permissions=list(AdminPermissionType)
+        ),
+        'admin': AdminRole(
+            name="Admin",
+            description="Administrative access",
+            permissions=[AdminPermissionType.USER_MANAGEMENT, AdminPermissionType.SYSTEM_MONITORING]
+        ),
+        'moderator': AdminRole(
+            name="Moderator",
+            description="Moderation access",
+            permissions=[AdminPermissionType.USER_MANAGEMENT]
+        ),
+        'viewer': AdminRole(
+            name="Viewer",
+            description="Read-only access",
+            permissions=[AdminPermissionType.ANALYTICS_VIEW]
+        ),
+        'auditor': AdminRole(
+            name="Auditor",
+            description="Audit access",
+            permissions=[AdminPermissionType.ANALYTICS_VIEW]
+        )
+    }
     
     return manager
 
