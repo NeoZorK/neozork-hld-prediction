@@ -64,6 +64,7 @@ COPY tests/ ./tests/
 COPY uv_setup/ ./uv_setup/
 COPY mql5_feed/ ./mql5_feed/
 COPY docker-entrypoint.sh ./
+COPY pytest-docker.ini ./
 COPY eda ./
 COPY nz ./
 
