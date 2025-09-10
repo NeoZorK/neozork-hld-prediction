@@ -248,7 +248,7 @@ class NeozorkMCPServer:
         essential_dirs = ['src', 'scripts', 'tests']
         scanned_files = 0
         indexed_files = 0
-        max_files = 1000  # Limit total files to prevent hanging
+        max_files = 500  # Reduced limit to prevent hanging
         
         for py_file in self.project_root.rglob("*.py"):
             if indexed_files >= max_files:
@@ -364,14 +364,14 @@ class NeozorkMCPServer:
         def timeout_handler(signum, frame):
             raise TimeoutError("Indexing timed out")
         
-        # Set timeout for indexing (15 seconds - reduced from 30)
+        # Set timeout for indexing (10 seconds - further reduced)
         signal.signal(signal.SIGALRM, timeout_handler)
-        signal.alarm(15)
+        signal.alarm(10)
         
         try:
             file_count = 0
             total_files = len(self.project_files)
-            max_files_to_index = min(500, total_files)  # Limit files to index
+            max_files_to_index = min(200, total_files)  # Further reduced limit
             self.logger.info(f"Starting to index {max_files_to_index} files (out of {total_files})...")
             
             for file_path, file_info in list(self.project_files.items())[:max_files_to_index]:
@@ -387,9 +387,9 @@ class NeozorkMCPServer:
                         self.logger.warning(f"Failed to parse AST for {file_path}: {e}")
                         file_count += 1
                         
-                # Check for timeout every 50 files (reduced from 100)
-                if file_count % 50 == 0:
-                    signal.alarm(15)  # Reset alarm
+                # Check for timeout every 25 files (further reduced)
+                if file_count % 25 == 0:
+                    signal.alarm(10)  # Reset alarm
                     
         except TimeoutError:
             self.logger.warning("Indexing timed out, continuing with partial index")
