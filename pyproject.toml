@@ -123,6 +123,7 @@ dependencies = [
     "pytest-xdist>=3.7.0",
     "pytest-asyncio>=0.24.0",
     "pytest-mock>=3.14.0",
+    "pytest-timeout>=2.1.0",
     "polygon-api-client",
     "python-binance==1.0.17",
     "pyarrow",
