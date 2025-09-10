@@ -12,7 +12,7 @@ import secrets
 import hashlib
 import hmac
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, Any, List, Tuple
 from dataclasses import dataclass
 import uuid
@@ -148,8 +148,8 @@ class JWTManager:
             'role': role,
             'mfa_verified': mfa_verified,
             'type': 'access',
-            'iat': datetime.utcnow(),
-            'exp': datetime.utcnow() + timedelta(hours=self.config.jwt_expiration_hours)
+            'iat': datetime.now(timezone.utc),
+            'exp': datetime.now(timezone.utc) + timedelta(hours=self.config.jwt_expiration_hours)
         }
         
         return jwt.encode(payload, self.config.jwt_secret, algorithm=self.config.jwt_algorithm)
@@ -159,8 +159,8 @@ class JWTManager:
         payload = {
             'user_id': user_id,
             'type': 'refresh',
-            'iat': datetime.utcnow(),
-            'exp': datetime.utcnow() + timedelta(days=self.config.refresh_token_expiration_days)
+            'iat': datetime.now(timezone.utc),
+            'exp': datetime.now(timezone.utc) + timedelta(days=self.config.refresh_token_expiration_days)
         }
         
         return jwt.encode(payload, self.config.jwt_secret, algorithm=self.config.jwt_algorithm)
@@ -592,7 +592,7 @@ class AuthenticationManager:
             return False
         
         attempt = self.login_attempts[user_id]
-        if attempt.locked_until and datetime.utcnow() < attempt.locked_until:
+        if attempt.locked_until and datetime.now(timezone.utc) < attempt.locked_until:
             return True
         
         return False
@@ -603,15 +603,15 @@ class AuthenticationManager:
             self.login_attempts[user_id] = LoginAttempt(
                 user_id=user_id,
                 attempts=0,
-                last_attempt=datetime.utcnow()
+                last_attempt=datetime.now(timezone.utc)
             )
         
         attempt = self.login_attempts[user_id]
         attempt.attempts += 1
-        attempt.last_attempt = datetime.utcnow()
+        attempt.last_attempt = datetime.now(timezone.utc)
         
         if attempt.attempts >= self.config.max_login_attempts:
-            attempt.locked_until = datetime.utcnow() + timedelta(
+            attempt.locked_until = datetime.now(timezone.utc) + timedelta(
                 minutes=self.config.lockout_duration_minutes
             )
     
