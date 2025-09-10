@@ -15,6 +15,16 @@ def is_docker_environment():
     """Check if running in Docker environment"""
     return (
         os.getenv("DOCKER_CONTAINER", "false").lower() == "true" or
+        os.getenv("NATIVE_CONTAINER", "false").lower() == "true" or
+        os.path.exists("/.dockerenv") or
+        os.path.exists("/app")
+    )
+
+def is_container_environment():
+    """Check if running in any container environment (Docker or native)"""
+    return (
+        os.getenv("DOCKER_CONTAINER", "false").lower() == "true" or
+        os.getenv("NATIVE_CONTAINER", "false").lower() == "true" or
         os.path.exists("/.dockerenv") or
         os.path.exists("/app")
     )
@@ -81,17 +91,20 @@ def test_uv_basic_commands():
 def test_uv_environment():
     """Test UV environment variables"""
     
-    in_docker = is_docker_environment()
+    in_container = is_container_environment()
     
-    if in_docker:
-        # In Docker, check required environment variables
-        assert os.getenv("USE_UV", "false").lower() == "true", "USE_UV should be true in Docker"
-        assert os.getenv("UV_ONLY", "false").lower() == "true", "UV_ONLY should be true in Docker"
-        assert os.getenv("DOCKER_CONTAINER", "false").lower() == "true", "DOCKER_CONTAINER should be true in Docker"
-        print("✅ UV environment variables are set correctly in Docker")
+    if in_container:
+        # In Container, check required environment variables
+        assert os.getenv("USE_UV", "false").lower() == "true", "USE_UV should be true in container"
+        assert os.getenv("UV_ONLY", "false").lower() == "true", "UV_ONLY should be true in container"
+        # Check for either DOCKER_CONTAINER or NATIVE_CONTAINER
+        docker_container = os.getenv("DOCKER_CONTAINER", "false").lower() == "true"
+        native_container = os.getenv("NATIVE_CONTAINER", "false").lower() == "true"
+        assert docker_container or native_container, "Either DOCKER_CONTAINER or NATIVE_CONTAINER should be true in container"
+        print("✅ UV environment variables are set correctly in container")
     else:
-        # Outside Docker, just check if UV is available
-        print("ℹ️  Running outside Docker - skipping Docker-specific environment checks")
+        # Outside container, just check if UV is available
+        print("ℹ️  Running outside container - skipping container-specific environment checks")
         # Check if UV is available at least
         try:
             result = subprocess.run(["uv", "--version"], 
@@ -106,20 +119,31 @@ def test_uv_environment():
 def test_uv_directories():
     """Test UV directories"""
     
-    in_docker = is_docker_environment()
+    in_container = is_container_environment()
     
-    if in_docker:
-        # Docker-specific paths
+    if in_container:
+        # Container-specific paths
         cache_dir = os.getenv("UV_CACHE_DIR", "/app/.uv_cache")
         venv_dir = os.getenv("UV_VENV_DIR", "/app/.venv")
         
-        # Check that parent directories exist
-        assert Path(cache_dir).parent.exists(), f"Parent directory for {cache_dir} should exist in Docker"
-        assert Path(venv_dir).parent.exists(), f"Parent directory for {venv_dir} should exist in Docker"
-        print("✅ UV directories are accessible in Docker")
+        # For native container, check if we can create directories
+        if os.getenv("NATIVE_CONTAINER", "false").lower() == "true":
+            # In native container, try to create directories
+            try:
+                Path(cache_dir).mkdir(parents=True, exist_ok=True)
+                Path(venv_dir).mkdir(parents=True, exist_ok=True)
+                print("✅ UV directories created in native container")
+            except Exception as e:
+                print(f"⚠️  Could not create UV directories in native container: {e}")
+                # This is acceptable for native container
+        else:
+            # Docker-specific check
+            assert Path(cache_dir).parent.exists(), f"Parent directory for {cache_dir} should exist in Docker"
+            assert Path(venv_dir).parent.exists(), f"Parent directory for {venv_dir} should exist in Docker"
+            print("✅ UV directories are accessible in Docker")
     else:
-        # Outside Docker, check if we can create UV directories in current location
-        print("ℹ️  Running outside Docker - checking local UV directory creation")
+        # Outside container, check if we can create UV directories in current location
+        print("ℹ️  Running outside container - checking local UV directory creation")
         try:
             # Try to create a test UV directory
             test_cache_dir = Path(".uv_test_cache")

@@ -6,6 +6,7 @@ from unittest.mock import patch, MagicMock, call, ANY # Import ANY
 import logging
 import time
 from datetime import datetime
+import pytest
 
 # Import components to test
 try:
@@ -40,6 +41,8 @@ class MockBinanceAPIException(BinanceAPIException):
          # Make str representation match the format logged by the code
          return f"APIError(code={self.code}): {self.message}" # Match actual exception str
 
+@pytest.mark.external_api
+@pytest.mark.skip_native
 class TestBinanceFetcher(unittest.TestCase):
 
     def setUp(self):

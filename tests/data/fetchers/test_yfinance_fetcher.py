@@ -10,6 +10,7 @@ import pandas as pd
 import numpy as np
 from unittest.mock import patch, MagicMock, call, ANY
 from datetime import datetime, timedelta
+import pytest
 
 # Adjust the import path based on the project structure
 from src.data.fetchers.yfinance_fetcher import (
@@ -49,6 +50,8 @@ def _create_mock_df(start_date_str, end_date_str, ticker: str, freq='D', values_
 
 
 # Definition of the TestYfinanceFetcher class
+@pytest.mark.external_api
+@pytest.mark.skip_native
 class TestYfinanceFetcherChunking(unittest.TestCase):
     """
     Test suite for yfinance fetcher (chunking implementation).
