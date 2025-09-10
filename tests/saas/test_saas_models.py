@@ -266,8 +266,8 @@ class TestBillingModel:
         
         assert len(billing.line_items) == 1
         assert billing.subtotal == 199.0
-        assert billing.tax_amount == 19.9
-        assert billing.total_amount == 218.9
+        assert abs(billing.tax_amount - 19.9) < 0.01
+        assert abs(billing.total_amount - 218.9) < 0.01
 
 
 class TestCustomerModel:
@@ -298,7 +298,8 @@ class TestCustomerModel:
             first_name="John",
             last_name="Doe",
             email="john@example.com",
-            status=CustomerStatus.ACTIVE
+            status=CustomerStatus.ACTIVE,
+            locked_until=None
         )
         
         assert customer.is_active() is True

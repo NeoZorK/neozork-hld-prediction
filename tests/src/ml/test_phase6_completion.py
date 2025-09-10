@@ -18,6 +18,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 from colorama import Fore, Style, init
+import pytest
 
 # Initialize colorama
 init(autoreset=True)
@@ -106,11 +107,13 @@ def test_advanced_ml_models():
         print(f"        - AutoML pipelines: {summary['automl_pipelines']}")
         
         print_success("✅ Advanced Machine Learning Models System test completed!")
-        return ml_manager
+        assert ml_manager is not None
+        assert hasattr(ml_manager, 'models')
+        assert hasattr(ml_manager, 'config')
         
     except Exception as e:
         print_error(f"❌ Advanced Machine Learning Models System test failed: {str(e)}")
-        return None
+        assert False, f"Advanced Machine Learning Models System test failed: {str(e)}"
 
 def test_ai_trading_strategies():
     """Test AI trading strategies system."""
@@ -173,11 +176,13 @@ def test_ai_trading_strategies():
         print(f"        - Performance records: {summary['performance_records']}")
         
         print_success("✅ AI-Powered Trading Strategies System test completed!")
-        return ai_manager
+        assert ai_manager is not None
+        assert hasattr(ai_manager, 'strategies')
+        assert hasattr(ai_manager, 'config')
         
     except Exception as e:
         print_error(f"❌ AI-Powered Trading Strategies System test failed: {str(e)}")
-        return None
+        assert False, f"AI-Powered Trading Strategies System test failed: {str(e)}"
 
 def test_predictive_analytics():
     """Test predictive analytics system."""
@@ -311,11 +316,13 @@ def test_predictive_analytics():
         print(f"        - Model types: {summary['model_types']}")
         
         print_success("✅ Predictive Analytics and Forecasting System test completed!")
-        return analytics_manager
+        assert analytics_manager is not None
+        assert hasattr(analytics_manager, 'models')
+        assert hasattr(analytics_manager, 'config')
         
     except Exception as e:
         print_error(f"❌ Predictive Analytics and Forecasting System test failed: {str(e)}")
-        return None
+        assert False, f"Predictive Analytics and Forecasting System test failed: {str(e)}"
 
 def test_natural_language_processing():
     """Test natural language processing system."""
@@ -401,11 +408,13 @@ def test_natural_language_processing():
         print(f"        - Languages: {summary['languages']}")
         
         print_success("✅ Natural Language Processing System test completed!")
-        return nlp_manager
+        assert nlp_manager is not None
+        assert hasattr(nlp_manager, 'models')
+        assert hasattr(nlp_manager, 'config')
         
     except Exception as e:
         print_error(f"❌ Natural Language Processing System test failed: {str(e)}")
-        return None
+        assert False, f"Natural Language Processing System test failed: {str(e)}"
 
 def test_computer_vision():
     """Test computer vision system (simplified implementation)."""
@@ -492,12 +501,15 @@ def test_computer_vision():
         print(f"        - Model types: {summary['model_types']}")
         
         print_success("✅ Computer Vision and Image Analysis System test completed!")
-        return cv_manager
+        assert cv_manager is not None
+        assert hasattr(cv_manager, 'models')
+        assert hasattr(cv_manager, 'config')
         
     except Exception as e:
         print_error(f"❌ Computer Vision and Image Analysis System test failed: {str(e)}")
-        return None
+        assert False, f"Computer Vision and Image Analysis System test failed: {str(e)}"
 
+@pytest.mark.asyncio
 async def test_integration():
     """Test integration between all Phase 6 components."""
     print_info("\n🔗 Testing Phase 6 Integration...")

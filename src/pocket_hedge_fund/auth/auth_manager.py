@@ -613,7 +613,7 @@ class AuthenticationManager:
         if attempt.locked_until and datetime.utcnow() < attempt.locked_until:
             return True
         
-            return False
+        return False
     
     async def _record_failed_login(self, user_id: str):
         """Record failed login attempt."""

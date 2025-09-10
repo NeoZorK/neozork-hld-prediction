@@ -80,30 +80,34 @@ class TestPortfolioManagementAPI:
             }]
             return mock_db
         
-        # Override dependencies
-        client.app.dependency_overrides[get_current_user] = mock_get_current_user
-        client.app.dependency_overrides[get_db_manager] = mock_get_db_manager
-        
-        try:
-            # Act
-            response = client.get(
-                "/api/v1/portfolio-management/12345678-1234-5678-9012-123456789012/overview",
-                headers={"Authorization": "Bearer test_token"}
-            )
+        # Mock the _get_fund_investors function
+        with patch('src.pocket_hedge_fund.api.portfolio_management_api._get_fund_investors') as mock_get_fund_investors:
+            mock_get_fund_investors.return_value = ['user_123']
             
-            # Assert
-            assert response.status_code == 200
-            data = response.json()
-            assert data['portfolio_id'] == 'portfolio_123'
-            assert data['fund_id'] == '12345678-1234-5678-9012-123456789012'
-        finally:
-            # Clean up
-            client.app.dependency_overrides.clear()
+            # Override dependencies
+            client.app.dependency_overrides[get_current_user] = mock_get_current_user
+            client.app.dependency_overrides[get_db_manager] = mock_get_db_manager
+            
+            try:
+                # Act
+                response = client.get(
+                    "/api/v1/portfolio-management/12345678-1234-5678-9012-123456789012/overview",
+                    headers={"Authorization": "Bearer test_token"}
+                )
+                
+                # Assert
+                assert response.status_code == 200
+                data = response.json()
+                assert data['portfolio_id'] == 'portfolio_123'
+                assert data['fund_id'] == '12345678-1234-5678-9012-123456789012'
+            finally:
+                # Clean up
+                client.app.dependency_overrides.clear()
     
     def test_create_portfolio_unauthorized(self, client, sample_portfolio_data):
         """Test portfolio creation without authentication."""
         # Mock authentication failure
-        with patch('src.pocket_hedge_fund.api.portfolio_management_api.AuthManager.get_current_user') as mock_auth:
+        with patch('src.pocket_hedge_fund.api.portfolio_management_api.get_current_user') as mock_auth:
             mock_auth.side_effect = Exception("Not authenticated")
             
             # Act
@@ -119,7 +123,8 @@ class TestPortfolioManagementAPI:
         """Test successful portfolio retrieval via API."""
         # Mock dependencies
         with patch('src.pocket_hedge_fund.api.portfolio_management_api.get_current_user') as mock_auth, \
-             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager:
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager, \
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.PortfolioManager') as mock_portfolio_manager:
             
             # Setup mocks
             mock_auth.return_value = {'id': 'user_123', 'role': 'investor'}
@@ -156,7 +161,8 @@ class TestPortfolioManagementAPI:
         """Test successful portfolio retrieval by ID via API."""
         # Mock dependencies
         with patch('src.pocket_hedge_fund.api.portfolio_management_api.get_current_user') as mock_auth, \
-             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager:
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager, \
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.PortfolioManager') as mock_portfolio_manager:
             
             # Setup mocks
             mock_auth.return_value = {'id': 'user_123', 'role': 'investor'}
@@ -198,7 +204,8 @@ class TestPortfolioManagementAPI:
         """Test portfolio retrieval when portfolio doesn't exist."""
         # Mock dependencies
         with patch('src.pocket_hedge_fund.api.portfolio_management_api.get_current_user') as mock_auth, \
-             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager:
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager, \
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.PortfolioManager') as mock_portfolio_manager:
             
             # Setup mocks
             mock_auth.return_value = {'id': 'user_123', 'role': 'investor'}
@@ -221,7 +228,8 @@ class TestPortfolioManagementAPI:
         """Test successful position addition via API."""
         # Mock dependencies
         with patch('src.pocket_hedge_fund.api.portfolio_management_api.get_current_user') as mock_auth, \
-             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager:
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager, \
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.PortfolioManager') as mock_portfolio_manager:
             
             # Setup mocks
             mock_auth.return_value = {'id': 'user_123', 'role': 'investor'}
@@ -287,7 +295,8 @@ class TestPortfolioManagementAPI:
         """Test successful positions retrieval via API."""
         # Mock dependencies
         with patch('src.pocket_hedge_fund.api.portfolio_management_api.get_current_user') as mock_auth, \
-             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager:
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager, \
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.PortfolioManager') as mock_portfolio_manager:
             
             # Setup mocks
             mock_auth.return_value = {'id': 'user_123', 'role': 'investor'}
@@ -357,7 +366,8 @@ class TestPortfolioManagementAPI:
         """Test successful performance metrics retrieval via API."""
         # Mock dependencies
         with patch('src.pocket_hedge_fund.api.portfolio_management_api.get_current_user') as mock_auth, \
-             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager:
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager, \
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.PerformanceTracker') as mock_performance_analyzer:
             
             # Setup mocks
             mock_auth.return_value = {'id': 'user_123', 'role': 'investor'}
@@ -395,7 +405,8 @@ class TestPortfolioManagementAPI:
         """Test successful risk metrics retrieval via API."""
         # Mock dependencies
         with patch('src.pocket_hedge_fund.api.portfolio_management_api.get_current_user') as mock_auth, \
-             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager:
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager, \
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.RiskAnalytics') as mock_risk_manager:
             
             # Setup mocks
             mock_auth.return_value = {'id': 'user_123', 'role': 'investor'}
@@ -431,7 +442,8 @@ class TestPortfolioManagementAPI:
         """Test successful rebalance plan creation via API."""
         # Mock dependencies
         with patch('src.pocket_hedge_fund.api.portfolio_management_api.get_current_user') as mock_auth, \
-             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager:
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager, \
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.PortfolioManager') as mock_rebalancer:
             
             # Setup mocks
             mock_auth.return_value = {'id': 'user_123', 'role': 'investor'}
@@ -475,7 +487,8 @@ class TestPortfolioManagementAPI:
         """Test successful report generation via API."""
         # Mock dependencies
         with patch('src.pocket_hedge_fund.api.portfolio_management_api.get_current_user') as mock_auth, \
-             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager:
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager, \
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.PortfolioManager') as mock_report_generator:
             
             # Setup mocks
             mock_auth.return_value = {'id': 'user_123', 'role': 'investor'}
@@ -515,7 +528,8 @@ class TestPortfolioManagementAPI:
         """Test successful portfolio metrics retrieval via API."""
         # Mock dependencies
         with patch('src.pocket_hedge_fund.api.portfolio_management_api.get_current_user') as mock_auth, \
-             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager:
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager, \
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.PortfolioManager') as mock_portfolio_manager:
             
             # Setup mocks
             mock_auth.return_value = {'id': 'user_123', 'role': 'investor'}
@@ -561,7 +575,8 @@ class TestPortfolioManagementAPI:
         """Test successful portfolio allocation retrieval via API."""
         # Mock dependencies
         with patch('src.pocket_hedge_fund.api.portfolio_management_api.get_current_user') as mock_auth, \
-             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager:
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.get_db_manager') as mock_db_manager, \
+             patch('src.pocket_hedge_fund.api.portfolio_management_api.PortfolioManager') as mock_portfolio_manager:
             
             # Setup mocks
             mock_auth.return_value = {'id': 'user_123', 'role': 'investor'}
