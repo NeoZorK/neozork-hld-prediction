@@ -44,6 +44,10 @@ class TestResult:
     expected_failure: bool
     test_category: str
     test_name: str
+    
+    def __post_init__(self):
+        """Post-initialization to ensure proper data types"""
+        pass
 
 class ComprehensiveCLITester:
     """Comprehensive CLI testing class for run_analysis.py"""
