@@ -117,12 +117,9 @@ class DataLoadingMenu(BaseMenu):
         print(f"\n{Fore.GREEN}📊 Data Loading Configuration")
         print(f"{Fore.CYAN}{'─'*50}")
         
-        # Get symbol from user
-        symbol = input(f"{Fore.GREEN}Choose Symbol to load data into memory (e.g., 'eurusd'): {Style.RESET_ALL}").strip().upper()
-        if not symbol:
-            print(f"{Fore.RED}❌ No symbol provided. Exiting...")
-            input(f"\n{Fore.CYAN}Press Enter to continue...")
-            return
+        # Get symbol from user (default: eurusd)
+        symbol_input = input(f"{Fore.GREEN}Choose Symbol to load data into memory (e.g., 'eurusd') [default: eurusd]: {Style.RESET_ALL}").strip().upper()
+        symbol = symbol_input if symbol_input else "EURUSD"
         
         # Check if symbol exists
         if symbol not in analysis["symbols"]:
@@ -152,10 +149,15 @@ class DataLoadingMenu(BaseMenu):
             print(f"{Fore.WHITE}{i}. {tf}")
         print(f"{Fore.CYAN}{'─'*40}")
         
-        # Get timeframe choice
+        # Get timeframe choice (default: M1)
         try:
-            choice = input(f"{Fore.GREEN}Enter choice (1-{len(timeframes)}): {Style.RESET_ALL}").strip()
-            choice_idx = int(choice) - 1
+            choice_input = input(f"{Fore.GREEN}Enter choice (1-{len(timeframes)}) [default: 1 (M1)]: {Style.RESET_ALL}").strip()
+            if not choice_input:
+                # Default to M1 (first choice)
+                choice_idx = 0
+            else:
+                choice_idx = int(choice_input) - 1
+                
             if choice_idx < 0 or choice_idx >= len(timeframes):
                 raise ValueError("Invalid choice")
             main_timeframe = timeframes[choice_idx]
@@ -502,20 +504,20 @@ if __name__ == "__main__":
         load_data = input(f"\n{Fore.GREEN}Load data into memory? (y/n): {Style.RESET_ALL}").strip().lower()
         
         if load_data == 'y':
-            # Get symbol filter from user
-            symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'btcusdt'): {Style.RESET_ALL}").strip()
-            if not symbol_filter:
-                symbol_filter = None
-            
-            # Load data
-            from src.interactive.data_management import DataLoader
-            loader = DataLoader()
-            result = loader.load_raw_parquet_data(symbol_filter)
-            
-            if result["status"] == "success":
-                self._display_loaded_data(result)
-            else:
-                print(f"{Fore.RED}❌ Error: {result['message']}")
+        # Get symbol filter from user
+        symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'btcusdt'): {Style.RESET_ALL}").strip()
+        if not symbol_filter:
+            symbol_filter = None
+        
+        # Load data
+        from src.interactive.data_management import DataLoader
+        loader = DataLoader()
+        result = loader.load_raw_parquet_data(symbol_filter)
+        
+        if result["status"] == "success":
+            self._display_loaded_data(result)
+        else:
+            print(f"{Fore.RED}❌ Error: {result['message']}")
         
         input(f"\n{Fore.CYAN}Press Enter to continue...")
     
@@ -559,20 +561,20 @@ if __name__ == "__main__":
         load_data = input(f"\n{Fore.GREEN}Load data into memory? (y/n): {Style.RESET_ALL}").strip().lower()
         
         if load_data == 'y':
-            # Get symbol filter from user
-            symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'aapl'): {Style.RESET_ALL}").strip()
-            if not symbol_filter:
-                symbol_filter = None
-            
-            # Load data
-            from src.interactive.data_management import DataLoader
-            loader = DataLoader()
-            result = loader.load_indicators_data(symbol_filter)
-            
-            if result["status"] == "success":
-                self._display_loaded_data(result)
-            else:
-                print(f"{Fore.RED}❌ Error: {result['message']}")
+        # Get symbol filter from user
+        symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'aapl'): {Style.RESET_ALL}").strip()
+        if not symbol_filter:
+            symbol_filter = None
+        
+        # Load data
+        from src.interactive.data_management import DataLoader
+        loader = DataLoader()
+        result = loader.load_indicators_data(symbol_filter)
+        
+        if result["status"] == "success":
+            self._display_loaded_data(result)
+        else:
+            print(f"{Fore.RED}❌ Error: {result['message']}")
         
         input(f"\n{Fore.CYAN}Press Enter to continue...")
     
@@ -617,20 +619,20 @@ if __name__ == "__main__":
         load_data = input(f"\n{Fore.GREEN}Load data into memory? (y/n): {Style.RESET_ALL}").strip().lower()
         
         if load_data == 'y':
-            # Get symbol filter from user
-            symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'eurusd'): {Style.RESET_ALL}").strip()
-            if not symbol_filter:
-                symbol_filter = None
-            
-            # Load data
-            from src.interactive.data_management import DataLoader
-            loader = DataLoader()
-            result = loader.load_cleaned_data(symbol_filter)
-            
-            if result["status"] == "success":
-                self._display_loaded_data(result)
-            else:
-                print(f"{Fore.RED}❌ Error: {result['message']}")
+        # Get symbol filter from user
+        symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'eurusd'): {Style.RESET_ALL}").strip()
+        if not symbol_filter:
+            symbol_filter = None
+        
+        # Load data
+        from src.interactive.data_management import DataLoader
+        loader = DataLoader()
+        result = loader.load_cleaned_data(symbol_filter)
+        
+        if result["status"] == "success":
+            self._display_loaded_data(result)
+        else:
+            print(f"{Fore.RED}❌ Error: {result['message']}")
         
         input(f"\n{Fore.CYAN}Press Enter to continue...")
     
