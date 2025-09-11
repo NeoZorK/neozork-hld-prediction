@@ -241,7 +241,7 @@ class DataLoader:
             if not main_data.empty:
                 main_file = symbol_mtf_dir / f"{symbol.lower()}_main_{main_tf.lower()}.parquet"
                 main_data.to_parquet(main_file, compression='snappy', index=True)
-                print(f"{Fore.GREEN}💾 Main data saved: {main_file}")
+                print(f"{Fore.GREEN}💾 Main data saved: \n{main_file}")
             
             # Save cross-timeframe features as separate parquet files
             cross_features = mtf_data.get('cross_timeframe_features', {})
