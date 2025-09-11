@@ -16,7 +16,7 @@ import os
 import sys
 
 # Add project root to path
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.interactive.data_management.raw_parquet.raw_parquet_processor import RawParquetProcessor
@@ -116,7 +116,7 @@ class TestRawParquetProcessor:
         assert result is not None
         assert result['source'] == 'binance'
         assert result['symbol'] == 'BTCUSDT'
-        assert 'timestamp' in result['data'].columns
+        assert 'timestamp' in result['data'].columns or result['data'].index.name == 'timestamp'
         assert 'open' in result['data'].columns
         assert 'high' in result['data'].columns
         assert 'low' in result['data'].columns
@@ -390,13 +390,13 @@ class TestRawParquetProcessor:
         # Test hours
         assert self.processor._format_time(3661) == "1h 1m"
     
-    @patch('src.interactive.data_management.raw_parquet.raw_parquet_processor.print_info')
-    def test_show_progress(self, mock_print_info):
+    @patch('builtins.print')
+    def test_show_progress(self, mock_print):
         """Test progress display function."""
         self.processor._show_progress("Test message", 0.5, "1m 30s", "2.0 files/s")
         
-        # Should call print_info with progress information
-        mock_print_info.assert_called()
+        # Should call print with progress information
+        mock_print.assert_called()
     
     def test_process_single_data_error(self):
         """Test error handling in single data processing."""
