@@ -58,7 +58,14 @@ class RawParquetProcessor:
                 'quote_asset_volume': 'quote_volume',
                 'number_of_trades': 'trades_count',
                 'taker_buy_base_asset_volume': 'taker_buy_volume',
-                'taker_buy_quote_asset_volume': 'taker_buy_quote_volume'
+                'taker_buy_quote_asset_volume': 'taker_buy_quote_volume',
+                # Handle common raw parquet formats
+                'Open': 'open',
+                'High': 'high',
+                'Low': 'low',
+                'Close': 'close',
+                'Volume': 'volume',
+                'DateTime': 'timestamp'
             },
             'bybit': {
                 'start_time': 'timestamp',
@@ -361,6 +368,7 @@ class RawParquetProcessor:
     def _set_timestamp_index(self, df: pd.DataFrame) -> pd.DataFrame:
         """Set timestamp as index."""
         try:
+            # Check if timestamp column exists
             if 'timestamp' in df.columns:
                 # Convert to datetime if needed
                 if not pd.api.types.is_datetime64_any_dtype(df['timestamp']):
@@ -368,6 +376,13 @@ class RawParquetProcessor:
                 
                 # Set as index
                 df = df.set_index('timestamp')
+            # Check if index is already a datetime index (like DateTime)
+            elif df.index.name in ['DateTime', 'datetime', 'time', 'timestamp']:
+                # Rename the index to timestamp
+                df.index.name = 'timestamp'
+                # Ensure it's datetime
+                if not pd.api.types.is_datetime64_any_dtype(df.index):
+                    df.index = pd.to_datetime(df.index, errors='coerce')
             
             return df
             
