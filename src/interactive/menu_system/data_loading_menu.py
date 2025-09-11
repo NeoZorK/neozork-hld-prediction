@@ -10,6 +10,7 @@ import time
 import colorama
 from colorama import Fore, Back, Style
 from .base_menu import BaseMenu
+from src.interactive.data_management.file_analyzer import FileAnalyzer
 
 class DataLoadingMenu(BaseMenu):
     """
@@ -26,6 +27,7 @@ class DataLoadingMenu(BaseMenu):
     def __init__(self):
         """Initialize the data loading menu."""
         super().__init__()
+        self.file_analyzer = FileAnalyzer()
         self.menu_items = {
             "1": {"title": "📁 CSV Converted (.parquet)", "handler": self._load_csv_converted},
             "2": {"title": "📊 Raw Parquet", "handler": self._load_raw_parquet},
@@ -51,23 +53,54 @@ class DataLoadingMenu(BaseMenu):
         print(f"{Fore.CYAN}{'─'*50}\n")
     
     def _load_csv_converted(self):
-        """Load CSV converted data."""
-        print(f"\n{Fore.YELLOW}📁 Loading CSV Converted Data...")
+        """Load CSV converted data with detailed folder analysis."""
+        print(f"\n{Fore.YELLOW}📁 CSV Converted Data Analysis...")
         
-        # Get symbol filter from user
-        symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'eurusd'): {Style.RESET_ALL}").strip()
-        if not symbol_filter:
-            symbol_filter = None
+        # Analyze folder first
+        analysis = self.file_analyzer.analyze_csv_converted_folder()
         
-        # Load data
-        from src.interactive.data_management import DataLoader
-        loader = DataLoader()
-        result = loader.load_csv_converted_data(symbol_filter)
+        if analysis["status"] == "error":
+            print(f"{Fore.RED}❌ Error: {analysis['message']}")
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            return
         
-        if result["status"] == "success":
-            self._display_loaded_data(result)
-        else:
-            print(f"{Fore.RED}❌ Error: {result['message']}")
+        # Display folder information
+        self._display_folder_info(analysis["folder_info"], "CSV Converted")
+        
+        # Display symbols found
+        if analysis["symbols"]:
+            print(f"\n{Fore.GREEN}📈 Available Symbols:")
+            symbols_text = ", ".join(analysis["symbols"])
+            print(f"{Fore.WHITE}  {symbols_text}")
+        
+        # Display files information
+        if analysis["files_info"]:
+            print(f"\n{Fore.YELLOW}📋 Files Information:")
+            for filename, file_info in analysis["files_info"].items():
+                print(f"\n{Fore.WHITE}🔸 {filename}:")
+                print(f"  • Size: {file_info['size_mb']} MB")
+                print(f"  • Rows: {file_info['rows']:,}")
+                print(f"  • Date range: {file_info['start_date']} to {file_info['end_date']}")
+                print(f"  • Timeframes: {', '.join(file_info['timeframes'][:3])}{'...' if len(file_info['timeframes']) > 3 else ''}")
+        
+        # Ask if user wants to load data
+        load_data = input(f"\n{Fore.GREEN}Load data into memory? (y/n): {Style.RESET_ALL}").strip().lower()
+        
+        if load_data == 'y':
+            # Get symbol filter from user
+            symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'eurusd'): {Style.RESET_ALL}").strip()
+            if not symbol_filter:
+                symbol_filter = None
+            
+            # Load data
+            from src.interactive.data_management import DataLoader
+            loader = DataLoader()
+            result = loader.load_csv_converted_data(symbol_filter)
+            
+            if result["status"] == "success":
+                self._display_loaded_data(result)
+            else:
+                print(f"{Fore.RED}❌ Error: {result['message']}")
         
         input(f"\n{Fore.CYAN}Press Enter to continue...")
     
@@ -94,64 +127,186 @@ class DataLoadingMenu(BaseMenu):
             print(f"  • Columns: {len(info['columns'])} ({', '.join(info['columns'][:5])}{'...' if len(info['columns']) > 5 else ''})")
     
     def _load_raw_parquet(self):
-        """Load raw parquet data."""
-        print(f"\n{Fore.YELLOW}📊 Loading Raw Parquet Data...")
+        """Load raw parquet data with detailed folder analysis."""
+        print(f"\n{Fore.YELLOW}📊 Raw Parquet Data Analysis...")
         
-        # Get symbol filter from user
-        symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'btcusdt'): {Style.RESET_ALL}").strip()
-        if not symbol_filter:
-            symbol_filter = None
+        # Analyze folder first
+        analysis = self.file_analyzer.analyze_raw_parquet_folder()
         
-        # Load data
-        from src.interactive.data_management import DataLoader
-        loader = DataLoader()
-        result = loader.load_raw_parquet_data(symbol_filter)
+        if analysis["status"] == "error":
+            print(f"{Fore.RED}❌ Error: {analysis['message']}")
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            return
         
-        if result["status"] == "success":
-            self._display_loaded_data(result)
-        else:
-            print(f"{Fore.RED}❌ Error: {result['message']}")
+        # Display folder information
+        self._display_folder_info(analysis["folder_info"], "Raw Parquet")
+        
+        # Display sources found
+        if analysis["sources"]:
+            print(f"\n{Fore.GREEN}🏢 Available Sources:")
+            sources_text = ", ".join(analysis["sources"])
+            print(f"{Fore.WHITE}  {sources_text}")
+        
+        # Display symbols by source
+        if analysis["symbols_by_source"]:
+            print(f"\n{Fore.YELLOW}📈 Symbols by Source:")
+            for source, symbols in analysis["symbols_by_source"].items():
+                symbols_text = ", ".join(symbols)
+                print(f"\n{Fore.WHITE}🔸 {source.upper()}:")
+                print(f"  {symbols_text}")
+        
+        # Display files information
+        if analysis["files_info"]:
+            print(f"\n{Fore.YELLOW}📋 Files Information:")
+            for filename, file_info in analysis["files_info"].items():
+                print(f"\n{Fore.WHITE}🔸 {filename}:")
+                print(f"  • Size: {file_info['size_mb']} MB")
+                print(f"  • Rows: {file_info['rows']:,}")
+                print(f"  • Date range: {file_info['start_date']} to {file_info['end_date']}")
+                print(f"  • Timeframes: {', '.join(file_info['timeframes'][:3])}{'...' if len(file_info['timeframes']) > 3 else ''}")
+        
+        # Ask if user wants to load data
+        load_data = input(f"\n{Fore.GREEN}Load data into memory? (y/n): {Style.RESET_ALL}").strip().lower()
+        
+        if load_data == 'y':
+            # Get symbol filter from user
+            symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'btcusdt'): {Style.RESET_ALL}").strip()
+            if not symbol_filter:
+                symbol_filter = None
+            
+            # Load data
+            from src.interactive.data_management import DataLoader
+            loader = DataLoader()
+            result = loader.load_raw_parquet_data(symbol_filter)
+            
+            if result["status"] == "success":
+                self._display_loaded_data(result)
+            else:
+                print(f"{Fore.RED}❌ Error: {result['message']}")
         
         input(f"\n{Fore.CYAN}Press Enter to continue...")
     
     def _load_indicators(self):
-        """Load indicators data."""
-        print(f"\n{Fore.YELLOW}📈 Loading Indicators Data...")
+        """Load indicators data with detailed folder analysis."""
+        print(f"\n{Fore.YELLOW}📈 Indicators Data Analysis...")
         
-        # Get symbol filter from user
-        symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'aapl'): {Style.RESET_ALL}").strip()
-        if not symbol_filter:
-            symbol_filter = None
+        # Analyze folder first
+        analysis = self.file_analyzer.analyze_indicators_folder()
         
-        # Load data
-        from src.interactive.data_management import DataLoader
-        loader = DataLoader()
-        result = loader.load_indicators_data(symbol_filter)
+        if analysis["status"] == "error":
+            print(f"{Fore.RED}❌ Error: {analysis['message']}")
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            return
         
-        if result["status"] == "success":
-            self._display_loaded_data(result)
-        else:
-            print(f"{Fore.RED}❌ Error: {result['message']}")
+        # Display folder information
+        self._display_folder_info(analysis["folder_info"], "Indicators")
+        
+        # Display indicators found
+        if analysis["indicators"]:
+            print(f"\n{Fore.GREEN}📊 Available Indicators:")
+            indicators_text = ", ".join(analysis["indicators"])
+            print(f"{Fore.WHITE}  {indicators_text}")
+        
+        # Display subfolders information
+        if analysis["subfolders_info"]:
+            print(f"\n{Fore.YELLOW}📁 Subfolders Information:")
+            for subdir, subfolder_info in analysis["subfolders_info"].items():
+                print(f"\n{Fore.WHITE}🔸 {subdir.upper()}:")
+                print(f"  • Files: {subfolder_info['file_count']}")
+                print(f"  • Size: {subfolder_info['size_mb']} MB")
+                print(f"  • Modified: {subfolder_info['modified']}")
+                
+                # Show files in this subfolder
+                if subfolder_info.get("files_info"):
+                    print(f"  • Files:")
+                    for filename, file_info in subfolder_info["files_info"].items():
+                        print(f"    - {filename}: {file_info['size_mb']} MB, {file_info['rows']:,} rows")
+        
+        # Ask if user wants to load data
+        load_data = input(f"\n{Fore.GREEN}Load data into memory? (y/n): {Style.RESET_ALL}").strip().lower()
+        
+        if load_data == 'y':
+            # Get symbol filter from user
+            symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'aapl'): {Style.RESET_ALL}").strip()
+            if not symbol_filter:
+                symbol_filter = None
+            
+            # Load data
+            from src.interactive.data_management import DataLoader
+            loader = DataLoader()
+            result = loader.load_indicators_data(symbol_filter)
+            
+            if result["status"] == "success":
+                self._display_loaded_data(result)
+            else:
+                print(f"{Fore.RED}❌ Error: {result['message']}")
         
         input(f"\n{Fore.CYAN}Press Enter to continue...")
     
     def _load_cleaned_data(self):
-        """Load cleaned data."""
-        print(f"\n{Fore.YELLOW}✨ Loading Cleaned Data...")
+        """Load cleaned data with detailed folder analysis."""
+        print(f"\n{Fore.YELLOW}✨ Cleaned Data Analysis...")
         
-        # Get symbol filter from user
-        symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'eurusd'): {Style.RESET_ALL}").strip()
-        if not symbol_filter:
-            symbol_filter = None
+        # Analyze folder first
+        analysis = self.file_analyzer.analyze_cleaned_data_folder()
         
-        # Load data
-        from src.interactive.data_management import DataLoader
-        loader = DataLoader()
-        result = loader.load_cleaned_data(symbol_filter)
+        if analysis["status"] == "error":
+            print(f"{Fore.RED}❌ Error: {analysis['message']}")
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            return
         
-        if result["status"] == "success":
-            self._display_loaded_data(result)
-        else:
-            print(f"{Fore.RED}❌ Error: {result['message']}")
+        # Display folder information
+        self._display_folder_info(analysis["folder_info"], "Cleaned Data")
+        
+        # Display symbols found
+        if analysis["symbols"]:
+            print(f"\n{Fore.GREEN}📈 Available Symbols:")
+            symbols_text = ", ".join(analysis["symbols"])
+            print(f"{Fore.WHITE}  {symbols_text}")
+        
+        # Display save dates
+        if analysis["save_dates"]:
+            print(f"\n{Fore.GREEN}📅 Save Dates:")
+            dates_text = ", ".join(analysis["save_dates"])
+            print(f"{Fore.WHITE}  {dates_text}")
+        
+        # Display files information
+        if analysis["files_info"]:
+            print(f"\n{Fore.YELLOW}📋 Files Information:")
+            for filename, file_info in analysis["files_info"].items():
+                print(f"\n{Fore.WHITE}🔸 {filename}:")
+                print(f"  • Size: {file_info['size_mb']} MB")
+                print(f"  • Rows: {file_info['rows']:,}")
+                print(f"  • Date range: {file_info['start_date']} to {file_info['end_date']}")
+                print(f"  • Timeframes: {', '.join(file_info['timeframes'][:3])}{'...' if len(file_info['timeframes']) > 3 else ''}")
+        
+        # Ask if user wants to load data
+        load_data = input(f"\n{Fore.GREEN}Load data into memory? (y/n): {Style.RESET_ALL}").strip().lower()
+        
+        if load_data == 'y':
+            # Get symbol filter from user
+            symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'eurusd'): {Style.RESET_ALL}").strip()
+            if not symbol_filter:
+                symbol_filter = None
+            
+            # Load data
+            from src.interactive.data_management import DataLoader
+            loader = DataLoader()
+            result = loader.load_cleaned_data(symbol_filter)
+            
+            if result["status"] == "success":
+                self._display_loaded_data(result)
+            else:
+                print(f"{Fore.RED}❌ Error: {result['message']}")
         
         input(f"\n{Fore.CYAN}Press Enter to continue...")
+    
+    def _display_folder_info(self, folder_info: Dict[str, Any], folder_name: str):
+        """Display detailed folder information."""
+        print(f"\n{Fore.CYAN}📁 {folder_name} Folder Information:")
+        print(f"{Fore.CYAN}{'─'*50}")
+        print(f"{Fore.WHITE}  • Path: {folder_info['path']}")
+        print(f"{Fore.WHITE}  • Files: {folder_info['file_count']}")
+        print(f"{Fore.WHITE}  • Size: {folder_info['size_mb']} MB")
+        print(f"{Fore.WHITE}  • Modified: {folder_info['modified']}")
+        print(f"{Fore.CYAN}{'─'*50}")
