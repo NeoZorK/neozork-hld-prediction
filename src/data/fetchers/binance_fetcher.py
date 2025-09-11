@@ -111,24 +111,37 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
     max_attempts_per_chunk = 5
     request_delay_sec = 0.5 # Increased delay to show progress
 
-    # --- Calculate estimated data size ---
-    # Estimate data size based on historical data (roughly 100 bytes per OHLCV row)
+    # --- Calculate estimated chunks and data size ---
+    # Estimate number of chunks needed
     estimated_rows = (end_ms - start_ms) // (1000 * 60 * 60)  # Rough estimate for hourly data
+    estimated_chunks = max(1, estimated_rows // 1000)  # ~1000 rows per chunk
     estimated_data_size_kb = max(100, estimated_rows * 0.1)  # ~100 bytes per row = 0.1 KB per row
     
-    # --- Initialize tqdm with data size ---
+    # --- Initialize tqdm with data size progress ---
     pbar = tqdm(total=estimated_data_size_kb, unit='KB', desc=f"Fetching {binance_ticker}", leave=True, ascii=True, unit_scale=True, 
                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}KB [{elapsed}<{remaining}, {rate_fmt}]')
     last_processed_ms = initial_start_ms
-    total_chunks_estimated = max(1, (end_ms - start_ms) // (limit_per_request * 1000 * 60 * 60))  # Rough estimate based on hourly data
+    total_chunks_estimated = estimated_chunks
     chunks_processed = 0
     total_data_loaded_kb = 0.0
+    total_rows_downloaded = 0
 
     try:
         while current_start_ms <= end_ms:
             # Show detailed progress information
             next_chunk_start_dt = datetime.fromtimestamp(current_start_ms / 1000)
-            pbar.set_postfix_str(f"Chunk {chunks_processed + 1} | {next_chunk_start_dt.strftime('%Y-%m-%d %H:%M')} | {total_data_loaded_kb:.1f}KB", refresh=True)
+            progress_percent = (total_data_loaded_kb / estimated_data_size_kb) * 100 if estimated_data_size_kb > 0 else 0
+            
+            # Estimate remaining time based on data size
+            if total_data_loaded_kb > 0:
+                avg_speed_kb_per_sec = total_data_loaded_kb / pbar.format_dict['elapsed'] if pbar.format_dict['elapsed'] > 0 else 0
+                remaining_kb = estimated_data_size_kb - total_data_loaded_kb
+                eta_seconds = remaining_kb / avg_speed_kb_per_sec if avg_speed_kb_per_sec > 0 else 0
+                eta_str = f"ETA: {eta_seconds:.1f}s" if eta_seconds < 60 else f"ETA: {eta_seconds/60:.1f}m"
+            else:
+                eta_str = "ETA: calculating..."
+            
+            pbar.set_postfix_str(f"Chunk {chunks_processed + 1}/{estimated_chunks} | {next_chunk_start_dt.strftime('%Y-%m-%d %H:%M')} | {total_data_loaded_kb:.1f}KB | {total_rows_downloaded} rows | {progress_percent:.1f}% | {eta_str}", refresh=True)
             
             # Force display update
             import sys
@@ -140,7 +153,7 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
                 
                 # Show API request progress
                 if attempt == 1:
-                    pbar.set_postfix_str(f"Requesting chunk {chunks_processed + 1}... | {total_data_loaded_kb:.1f}KB", refresh=True)
+                    pbar.set_postfix_str(f"Requesting chunk {chunks_processed + 1}... | {total_data_loaded_kb:.1f}KB | {total_rows_downloaded} rows", refresh=True)
                     sys.stdout.flush()
                 
                 try:
@@ -148,7 +161,7 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
                     metrics["api_calls"] += 1
                     
                     # Show downloading progress with intermediate updates
-                    pbar.set_postfix_str(f"Downloading chunk {chunks_processed + 1}... | {total_data_loaded_kb:.1f}KB", refresh=True)
+                    pbar.set_postfix_str(f"Downloading chunk {chunks_processed + 1}... | {total_data_loaded_kb:.1f}KB | {total_rows_downloaded} rows", refresh=True)
                     sys.stdout.flush()
                     
                     # Make API call
@@ -165,7 +178,7 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
                     metrics["successful_chunks"] += 1
                     
                     # Show processing progress
-                    pbar.set_postfix_str(f"Processing chunk {chunks_processed + 1}... | {total_data_loaded_kb:.1f}KB", refresh=True)
+                    pbar.set_postfix_str(f"Processing chunk {chunks_processed + 1}... | {total_data_loaded_kb:.1f}KB | {total_rows_downloaded} rows", refresh=True)
                     
                     # Add delay to make progress visible and force refresh
                     time.sleep(0.2)
@@ -180,12 +193,12 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
                         wait_time = 60
                         if attempt < max_attempts_per_chunk: 
                             pbar.write("Warning: Rate limit likely hit. Waiting...")
-                            pbar.set_postfix_str(f"Rate limited, waiting... | {total_data_loaded_kb:.1f}KB", refresh=True)
+                            pbar.set_postfix_str(f"Rate limited, waiting... | {total_data_loaded_kb:.1f}KB | {total_rows_downloaded} rows", refresh=True)
                     elif status_code == 418: 
                         wait_time = 120
                         if attempt < max_attempts_per_chunk:
                             pbar.write("Warning: IP ban likely. Waiting...")
-                            pbar.set_postfix_str(f"IP banned, waiting... | {total_data_loaded_kb:.1f}KB", refresh=True)
+                            pbar.set_postfix_str(f"IP banned, waiting... | {total_data_loaded_kb:.1f}KB | {total_rows_downloaded} rows", refresh=True)
                     elif error_code == -1121:
                         # Use pbar.write for the specific error
                         error_msg_text = f"Invalid symbol '{binance_ticker}'. Stopping."
@@ -201,7 +214,7 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
                     time.sleep(wait_time); 
                     continue
                 if not success and wait_time == 0 and attempt < max_attempts_per_chunk: 
-                    pbar.set_postfix_str(f"Retrying chunk {chunks_processed + 1} (attempt {attempt + 1})... | {total_data_loaded_kb:.1f}KB", refresh=True)
+                    pbar.set_postfix_str(f"Retrying chunk {chunks_processed + 1} (attempt {attempt + 1})... | {total_data_loaded_kb:.1f}KB | {total_rows_downloaded} rows", refresh=True)
                     time.sleep(3 * attempt); 
                     continue
 
@@ -222,19 +235,21 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
             # Estimate data size: each kline row is ~100 bytes (12 fields * ~8 bytes each)
             chunk_data_size_kb = len(klines_chunk) * 0.1  # ~100 bytes per row = 0.1 KB per row
             total_data_loaded_kb += chunk_data_size_kb
+            total_rows_downloaded += len(klines_chunk)
             
             # Update progress bar with actual data size
             pbar.n = total_data_loaded_kb
             pbar.refresh()
             
-            # Show completion status with data size
-            pbar.set_postfix_str(f"Completed chunk {chunks_processed} | {total_data_loaded_kb:.1f}KB | {len(klines_chunk)} rows", refresh=True)
+            # Show completion status with data size and row count
+            progress_percent = (total_data_loaded_kb / estimated_data_size_kb) * 100 if estimated_data_size_kb > 0 else 0
+            pbar.set_postfix_str(f"Chunk {chunks_processed}/{estimated_chunks} | {total_data_loaded_kb:.1f}KB | {total_rows_downloaded} rows | {progress_percent:.1f}%", refresh=True)
             pbar.refresh()
 
             current_start_ms = last_kline_time_ms + 1
             if len(klines_chunk) < limit_per_request: break
             if current_start_ms <= end_ms: 
-                pbar.set_postfix_str(f"Preparing next chunk... | {total_data_loaded_kb:.1f}KB", refresh=True)
+                pbar.set_postfix_str(f"Preparing next chunk... | {total_data_loaded_kb:.1f}KB | {total_rows_downloaded} rows", refresh=True)
                 time.sleep(request_delay_sec)
 
     finally:
@@ -249,6 +264,9 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
     if not all_klines_raw:
         logger.print_warning(f"No Binance data returned for '{binance_ticker}'.")
         return None, {**metrics, "error_message": "No data found for the specified criteria."}
+    
+    # Log final download statistics
+    logger.print_info(f"Successfully downloaded {total_rows_downloaded} rows ({total_data_loaded_kb:.1f}KB) from Binance.")
 
     # logger.print_info(f"Converting {len(all_klines_raw)} raw klines to DataFrame...")
 
