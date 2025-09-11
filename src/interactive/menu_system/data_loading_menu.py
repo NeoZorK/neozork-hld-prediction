@@ -689,11 +689,22 @@ class DataLoadingMenu(BaseMenu):
             print(f"  • Columns: {len(info['columns'])} ({', '.join(info['columns'][:5])}{'...' if len(info['columns']) > 5 else ''})")
     
     def _load_raw_parquet(self):
-        """Load raw parquet data with detailed folder analysis."""
+        """Load raw parquet data with detailed folder analysis and MTF structure creation."""
         print(f"\n{Fore.YELLOW}📊 Raw Parquet Data Analysis...")
         
+        # Import raw parquet modules
+        from src.interactive.data_management.raw_parquet import (
+            RawParquetAnalyzer, RawParquetLoader, RawParquetProcessor, RawParquetMTFCreator
+        )
+        
+        # Initialize components
+        analyzer = RawParquetAnalyzer()
+        loader = RawParquetLoader()
+        processor = RawParquetProcessor()
+        mtf_creator = RawParquetMTFCreator()
+        
         # Analyze folder first
-        analysis = self.file_analyzer.analyze_raw_parquet_folder()
+        analysis = analyzer.analyze_raw_parquet_folder()
         
         if analysis["status"] == "error":
             print(f"{Fore.RED}❌ Error: {analysis['message']}")
@@ -717,36 +728,187 @@ class DataLoadingMenu(BaseMenu):
                 print(f"\n{Fore.WHITE}🔸 {source.upper()}:")
                 print(f"  {symbols_text}")
         
-        # Display files information
+        # Group files by symbol and source
         if analysis["files_info"]:
-            print(f"\n{Fore.YELLOW}📋 Files Information:")
+            files_by_symbol = {}
             for filename, file_info in analysis["files_info"].items():
-                print(f"\n{Fore.WHITE}🔸 {filename}:")
-                print(f"  • Size: {file_info['size_mb']} MB")
-                print(f"  • Rows: {file_info['rows']:,}")
-                print(f"  • Date range: {file_info['start_date']} to {file_info['end_date']}")
-                print(f"  • Timeframes: {', '.join(file_info['timeframes'][:3])}{'...' if len(file_info['timeframes']) > 3 else ''}")
-        
-        # Ask if user wants to load data
-        load_data = input(f"\n{Fore.GREEN}Load data into memory? (y/n): {Style.RESET_ALL}").strip().lower()
-        
-        if load_data == 'y':
-            # Get symbol filter from user
-            symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'btcusdt'): {Style.RESET_ALL}").strip()
-            if not symbol_filter:
-                symbol_filter = None
+                # Extract source and symbol from filename
+                source, symbol = self._extract_source_and_symbol_from_filename(filename)
+                if source and symbol:
+                    key = f"{source}_{symbol}"
+                    if key not in files_by_symbol:
+                        files_by_symbol[key] = []
+                    files_by_symbol[key].append((filename, file_info))
             
-            # Load data
-            from src.interactive.data_management import DataLoader
-            loader = DataLoader()
-            result = loader.load_raw_parquet_data(symbol_filter)
+            # Sort symbols alphabetically
+            sorted_symbols = sorted(files_by_symbol.keys())
             
-            if result["status"] == "success":
-                self._display_loaded_data(result)
-            else:
-                print(f"{Fore.RED}❌ Error: {result['message']}")
+            print(f"\n{Fore.YELLOW}📋 Files by Symbol ({len(sorted_symbols)} symbols):")
+            print(f"{Fore.CYAN}{'─'*80}")
+            
+            for symbol_key in sorted_symbols:
+                files = files_by_symbol[symbol_key]
+                source, symbol = symbol_key.split('_', 1)
+                
+                # Sort files by timeframe
+                timeframe_order = {'M1': 1, 'M5': 2, 'M15': 3, 'M30': 4, 'H1': 5, 'H4': 6, 'D1': 7, 'W1': 8, 'MN1': 9}
+                files.sort(key=lambda x: timeframe_order.get(x[1]['timeframes'][0] if x[1]['timeframes'] else 'Unknown', 999))
+                
+                print(f"\n{Fore.GREEN}🔸 {symbol} ({source.upper()}) - {len(files)} files:")
+                
+                # Display files in compact format
+                for filename, file_info in files:
+                    timeframe = file_info['timeframes'][0] if file_info['timeframes'] else 'Unknown'
+                    size_mb = file_info['size_mb']
+                    rows = file_info['rows']
+                    start_date = file_info['start_date'][:10] if file_info['start_date'] != "No time data" else "No data"
+                    end_date = file_info['end_date'][:10] if file_info['end_date'] != "No time data" else "No data"
+                    
+                    print(f"  {Fore.WHITE}{timeframe:>4} │ {size_mb:>6.1f}MB │ {rows:>8,} rows │ {start_date} to {end_date}")
+        
+        # Ask user to choose symbol and source
+        print(f"\n{Fore.GREEN}📊 Data Loading Configuration")
+        print(f"{Fore.CYAN}{'─'*50}")
+        
+        # Get symbol from user
+        symbol_input = input(f"{Fore.GREEN}Choose Symbol to load data into memory (e.g., 'btcusdt'): {Style.RESET_ALL}").strip().upper()
+        if not symbol_input:
+            print(f"{Fore.RED}❌ Symbol is required.")
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            return
+        
+        # Check if symbol exists
+        available_symbols = []
+        for symbol_key in sorted_symbols:
+            source, symbol = symbol_key.split('_', 1)
+            if symbol == symbol_input:
+                available_symbols.append((source, symbol))
+        
+        if not available_symbols:
+            print(f"{Fore.RED}❌ Symbol '{symbol_input}' not found in available symbols.")
+            print(f"{Fore.YELLOW}Available symbols: {', '.join(set(s.split('_', 1)[1] for s in sorted_symbols))}")
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            return
+        
+        # If multiple sources found, let user choose
+        if len(available_symbols) > 1:
+            print(f"\n{Fore.YELLOW}⚠️  Multiple sources found for {symbol_input}:")
+            for i, (source, symbol) in enumerate(available_symbols, 1):
+                print(f"  {i}. {source.upper()}")
+            
+            try:
+                source_choice = input(f"\n{Fore.GREEN}Choose source (1-{len(available_symbols)}) [default: 1]: {Style.RESET_ALL}").strip()
+                if not source_choice:
+                    source_choice = "1"
+                source_idx = int(source_choice) - 1
+                if source_idx < 0 or source_idx >= len(available_symbols):
+                    raise ValueError("Invalid choice")
+                selected_source, selected_symbol = available_symbols[source_idx]
+            except (ValueError, IndexError):
+                print(f"{Fore.RED}❌ Invalid choice. Using first source.")
+                selected_source, selected_symbol = available_symbols[0]
+        else:
+            selected_source, selected_symbol = available_symbols[0]
+        
+        print(f"\n{Fore.GREEN}✅ Selected: {selected_symbol} from {selected_source.upper()}")
+        
+        # Load and process data with MTF structure creation
+        self._load_and_process_raw_parquet_data(selected_symbol, selected_source, analyzer, loader, processor, mtf_creator)
         
         input(f"\n{Fore.CYAN}Press Enter to continue...")
+    
+    def _load_and_process_raw_parquet_data(self, symbol: str, source: str, analyzer: 'RawParquetAnalyzer', loader: 'RawParquetLoader', processor: 'RawParquetProcessor', mtf_creator: 'RawParquetMTFCreator'):
+        """Load and process raw parquet data with MTF structure creation."""
+        print(f"\n{Fore.YELLOW}🔄 Loading and processing {symbol} data from {source}...")
+        
+        try:
+            # Load data for the symbol from specific source
+            print(f"{Fore.CYAN}📊 Loading data from {source}...")
+            result = loader.load_symbol_data(symbol, source)
+            
+            if result["status"] != "success":
+                print(f"{Fore.RED}❌ Error loading data: {result['message']}")
+                return
+            
+            # Process the loaded data
+            print(f"{Fore.CYAN}🔄 Processing data...")
+            processed_result = processor.process_symbol_data(result)
+            
+            if processed_result["status"] != "success":
+                print(f"{Fore.RED}❌ Error processing data: {processed_result['message']}")
+                return
+            
+            # Show available timeframes
+            available_timeframes = list(processed_result['data'].keys())
+            print(f"{Fore.GREEN}📊 Available timeframes: {', '.join(available_timeframes)}")
+            
+            # Get main timeframe from user
+            print(f"\n{Fore.YELLOW}Choose Main Time Frame for {symbol}:")
+            print(f"{Fore.CYAN}{'─'*40}")
+            for i, tf in enumerate(available_timeframes, 1):
+                print(f"{Fore.WHITE}{i}. {tf}")
+            print(f"{Fore.CYAN}{'─'*40}")
+            
+            try:
+                choice_input = input(f"{Fore.GREEN}Enter choice (1-{len(available_timeframes)}) [default: 1]: {Style.RESET_ALL}").strip()
+                if not choice_input:
+                    choice_idx = 0
+                else:
+                    choice_idx = int(choice_input) - 1
+                    
+                if choice_idx < 0 or choice_idx >= len(available_timeframes):
+                    raise ValueError("Invalid choice")
+                main_timeframe = available_timeframes[choice_idx]
+            except (ValueError, IndexError):
+                print(f"{Fore.RED}❌ Invalid choice. Using first timeframe.")
+                main_timeframe = available_timeframes[0]
+            
+            print(f"\n{Fore.GREEN}✅ Selected main timeframe: {main_timeframe}")
+            
+            # Create MTF structure
+            print(f"\n{Fore.YELLOW}🔧 Creating MTF structure...")
+            mtf_result = mtf_creator.create_mtf_from_processed_data(
+                processed_result['data'], symbol, main_timeframe, source)
+            
+            if mtf_result["status"] == "success":
+                print(f"\n{Fore.GREEN}✅ Successfully created MTF structure for {symbol}!")
+                print(f"  • Source: {source}")
+                print(f"  • Main timeframe: {main_timeframe}")
+                print(f"  • Available timeframes: {', '.join(available_timeframes)}")
+                print(f"  • Total rows: {processed_result['metadata']['total_rows']:,}")
+                print(f"  • Size: {processed_result['metadata']['total_size_mb']:.1f} MB")
+                print(f"\n{Fore.GREEN}🎯 Ready for EDA, feature engineering, ML, backtesting, and monitoring!")
+            else:
+                print(f"\n{Fore.RED}❌ Error creating MTF structure: {mtf_result['message']}")
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Error processing data: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    def _extract_source_and_symbol_from_filename(self, filename: str) -> Tuple[Optional[str], Optional[str]]:
+        """Extract source and symbol from filename."""
+        try:
+            # Remove extension
+            name = filename.split('.')[0]
+            
+            # Look for patterns like source_SYMBOL_TIMEFRAME
+            parts = name.split("_")
+            if len(parts) >= 2:
+                source = parts[0].lower()
+                symbol = parts[1].upper()
+                return source, symbol
+            
+            # Look for patterns like SYMBOL_source_TIMEFRAME
+            if len(parts) >= 3:
+                symbol = parts[0].upper()
+                source = parts[1].lower()
+                return source, symbol
+            
+            return None, None
+        except Exception as e:
+            print_error(f"Error extracting source and symbol from {filename}: {e}")
+            return None, None
     
     def _load_indicators(self):
         """Load indicators data with detailed folder analysis."""
