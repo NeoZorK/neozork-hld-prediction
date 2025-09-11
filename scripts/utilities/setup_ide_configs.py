@@ -119,10 +119,10 @@ class IDESetupManager:
             
             # Update with latest settings
             config = self._get_cursor_config()
-            config.update(existing_config)
+            existing_config.update(config)
             
             with open(config_path, 'w', encoding='utf-8') as f:
-                json.dump(config, f, indent=2, ensure_ascii=False)
+                json.dump(existing_config, f, indent=2, ensure_ascii=False)
             
             # Create mcp.json for Cursor IDE compatibility
             mcp_config = self._get_mcp_json_config()
@@ -467,10 +467,10 @@ class IDESetupManager:
             
             # Update with latest settings
             config = self._get_vscode_config()
-            config.update(existing_config)
+            existing_config.update(config)
             
             with open(config_path, 'w', encoding='utf-8') as f:
-                json.dump(config, f, indent=2, ensure_ascii=False)
+                json.dump(existing_config, f, indent=2, ensure_ascii=False)
             
             self.logger.info(f"VS Code config created/updated: {config_path}")
             return True
@@ -495,10 +495,10 @@ class IDESetupManager:
             
             # Update with latest settings
             config = self._get_pycharm_config()
-            config.update(existing_config)
+            existing_config.update(config)
             
             with open(config_path, 'w', encoding='utf-8') as f:
-                json.dump(config, f, indent=2, ensure_ascii=False)
+                json.dump(existing_config, f, indent=2, ensure_ascii=False)
             
             self.logger.info(f"PyCharm config created/updated: {config_path}")
             return True

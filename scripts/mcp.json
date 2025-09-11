@@ -1,0 +1,42 @@
+{
+  "mcpServers": {
+    "neozork": {
+      "command": "python3",
+      "args": [
+        "neozork_mcp_server.py"
+      ],
+      "env": {
+        "PYTHONPATH": "${PROJECT_ROOT}",
+        "LOG_LEVEL": "INFO",
+        "DOCKER_CONTAINER": "false",
+        "USE_UV": "true",
+        "UV_PYTHON": "python3"
+      },
+      "cwd": "${PROJECT_ROOT}"
+    },
+    "neozork-docker": {
+      "command": "docker",
+      "args": [
+        "compose",
+        "run",
+        "--rm",
+        "-T",
+        "-e",
+        "PYTHONPATH=/app",
+        "-e",
+        "LOG_LEVEL=INFO",
+        "-e",
+        "DOCKER_CONTAINER=true",
+        "-e",
+        "USE_UV=true",
+        "neozork-hld",
+        "python3",
+        "neozork_mcp_server.py"
+      ],
+      "env": {
+        "DOCKER_HOST": "unix:///var/run/docker.sock"
+      },
+      "cwd": "${PROJECT_ROOT}"
+    }
+  }
+}
