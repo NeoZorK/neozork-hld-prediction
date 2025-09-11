@@ -174,9 +174,9 @@ class InteractiveMenuSystem:
     
     def _configuration_menu(self):
         """Handle configuration menu."""
-        print(f"\n{Fore.YELLOW}⚙️ System Configuration Menu")
-        print(f"{Fore.CYAN}This feature will be implemented in the next phase...")
-        time.sleep(2)
+        from .configuration_menu import ConfigurationMenu
+        menu = ConfigurationMenu()
+        menu.run()
     
     def _help_menu(self):
         """Handle help menu."""
