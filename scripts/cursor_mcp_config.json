@@ -1,0 +1,125 @@
+{
+  "mcpServers": {
+    "neozork": {
+      "command": "python3",
+      "args": [
+        "neozork_mcp_server.py"
+      ],
+      "env": {
+        "PYTHONPATH": "${PROJECT_ROOT}",
+        "LOG_LEVEL": "INFO",
+        "DOCKER_CONTAINER": "false",
+        "USE_UV": "true",
+        "UV_PYTHON": "python3"
+      },
+      "cwd": "${PROJECT_ROOT}"
+    },
+    "neozork-docker": {
+      "command": "docker",
+      "args": [
+        "compose",
+        "run",
+        "--rm",
+        "-T",
+        "-e",
+        "PYTHONPATH=/app",
+        "-e",
+        "LOG_LEVEL=INFO",
+        "-e",
+        "DOCKER_CONTAINER=true",
+        "-e",
+        "USE_UV=true",
+        "neozork-hld",
+        "python3",
+        "neozork_mcp_server.py"
+      ],
+      "env": {
+        "DOCKER_HOST": "unix:///var/run/docker.sock"
+      },
+      "cwd": "${PROJECT_ROOT}"
+    }
+  },
+  "serverSettings": {
+    "neozork": {
+      "enabled": true,
+      "autoStart": true,
+      "debug": false,
+      "logLevel": "info",
+      "features": {
+        "financial_data": true,
+        "technical_indicators": true,
+        "github_copilot": true,
+        "code_completion": true,
+        "project_analysis": true,
+        "ai_suggestions": true,
+        "docker_integration": true,
+        "real_time_monitoring": true,
+        "uv_integration": true
+      },
+      "performance": {
+        "max_files": 15000,
+        "max_file_size": "10MB",
+        "cache_enabled": true,
+        "cache_size": "200MB",
+        "indexing_timeout": 60,
+        "completion_timeout": 5,
+        "memory_limit_mb": 512
+      },
+      "monitoring": {
+        "enable_monitoring": true,
+        "health_check_interval": 60,
+        "max_memory_mb": 512,
+        "max_cpu_percent": 80
+      },
+      "docker": {
+        "enabled": true,
+        "container_name": "neozork-mcp-server",
+        "port": 8080,
+        "volumes": [
+          "${PROJECT_ROOT}:/workspace",
+          "${PROJECT_ROOT}/logs:/workspace/logs"
+        ],
+        "environment": {
+          "PYTHONPATH": "/workspace/src:/workspace",
+          "LOG_LEVEL": "INFO",
+          "USE_UV": "true"
+        }
+      },
+      "development": {
+        "auto_reload": false,
+        "hot_reload": false,
+        "debug_mode": false,
+        "profiling": false,
+        "coverage": false
+      }
+    }
+  },
+  "cursor": {
+    "mcp": {
+      "autoStart": true,
+      "logLevel": "info",
+      "features": {
+        "completion": true,
+        "hover": true,
+        "definition": true,
+        "references": true,
+        "workspaceSymbols": true,
+        "diagnostics": true,
+        "codeActions": true,
+        "formatting": true
+      },
+      "preferences": {
+        "defaultServer": "neozork",
+        "fallbackToDocker": true,
+        "useUV": true,
+        "dockerEnabled": true
+      }
+    },
+    "python": {
+      "interpreter": "python3",
+      "packageManager": "uv",
+      "uvPath": "uv",
+      "autoInstallDependencies": true
+    }
+  }
+}

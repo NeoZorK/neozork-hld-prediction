@@ -7,6 +7,7 @@ All comments are in English.
 """
 import time
 import traceback # Keep traceback
+import os
 import pandas as pd
 
 # Use relative imports within the src package
@@ -179,12 +180,15 @@ def run_indicator_workflow(args):
         logger.print_info("--- Step 3b: Displaying Universal Trading Metrics ---")
         
         try:
+            # Use shorter timeout for tests and faster execution
+            timeout_seconds = 10 if os.getenv('PYTEST_CURRENT_TEST') else 30
             display_universal_trading_metrics(
                 result_df,
                 selected_rule,
                 lot_size=lot_size,
                 risk_reward_ratio=risk_reward_ratio,
-                fee_per_trade=fee_per_trade
+                fee_per_trade=fee_per_trade,
+                timeout_seconds=timeout_seconds
             )
             logger.print_success("Universal trading metrics displayed successfully")
         except Exception as e:
