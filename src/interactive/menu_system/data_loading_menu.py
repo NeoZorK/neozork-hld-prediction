@@ -975,6 +975,25 @@ class DataLoadingMenu(BaseMenu):
             result = self._load_mtf_structure(selected_mtf_info['symbol'], selected_mtf_info)
             
             if result['status'] == 'success':
+                # Save loaded data to global state
+                from src.interactive.data_state_manager import data_state_manager
+                
+                # Prepare metadata for state manager
+                loaded_metadata = {
+                    'symbol': selected_mtf_info['symbol'],
+                    'source': selected_mtf_info['source'],
+                    'main_timeframe': selected_mtf_info['main_timeframe'],
+                    'timeframes': selected_mtf_info['timeframes'],
+                    'total_rows': selected_mtf_info['total_rows'],
+                    'main_data_shape': selected_mtf_info['main_data_shape'],
+                    'cross_timeframes': selected_mtf_info['cross_timeframes'],
+                    'created_at': selected_mtf_info['created_at'],
+                    'size_mb': selected_mtf_info['size_mb']
+                }
+                
+                # Set loaded data in global state
+                data_state_manager.set_loaded_data(result, loaded_metadata, result['memory_used'])
+                
                 print(f"\n{Fore.GREEN}✅ MTF structure loaded successfully!")
                 print(f"  • Symbol: {selected_mtf_info['symbol']}")
                 print(f"  • Source: {selected_mtf_info['source']}")
