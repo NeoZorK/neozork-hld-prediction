@@ -109,10 +109,11 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
     initial_start_ms = start_ms
     total_duration_ms = max(0, end_ms - initial_start_ms)
     max_attempts_per_chunk = 5
-    request_delay_sec = 0.1 # Reduced delay slightly
+    request_delay_sec = 0.5 # Increased delay to show progress
 
     # --- Initialize tqdm ---
-    pbar = tqdm(total=total_duration_ms, unit='ms', desc=f"Fetching {binance_ticker}", leave=True, ascii=True, unit_scale=False)
+    pbar = tqdm(total=100, unit='%', desc=f"Fetching {binance_ticker}", leave=True, ascii=True, unit_scale=False, 
+                bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}% [{elapsed}<{remaining}, {rate_fmt}]')
     last_processed_ms = initial_start_ms
     total_chunks_estimated = max(1, (end_ms - start_ms) // (limit_per_request * 1000 * 60 * 60))  # Rough estimate based on hourly data
     chunks_processed = 0
@@ -121,19 +122,36 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
         while current_start_ms <= end_ms:
             # Update progress based on current position vs total range
             current_progress = (current_start_ms - initial_start_ms) / total_duration_ms
-            pbar.n = int(current_progress * total_duration_ms)
+            progress_percent = int(current_progress * 100)
+            pbar.n = progress_percent
             pbar.refresh()
             
-            # Minimal logging before attempt
+            # Show detailed progress information
             next_chunk_start_dt = datetime.fromtimestamp(current_start_ms / 1000)
-            pbar.set_postfix_str(f"Chunk {chunks_processed + 1}: {next_chunk_start_dt.strftime('%Y-%m-%d %H:%M')}", refresh=True)
+            pbar.set_postfix_str(f"Chunk {chunks_processed + 1} | {next_chunk_start_dt.strftime('%Y-%m-%d %H:%M')}", refresh=True)
+            
+            # Force display update
+            import sys
+            sys.stdout.flush()
 
             attempt = 0; klines_chunk = None; success = False
             while attempt < max_attempts_per_chunk:
                 attempt += 1; wait_time = 0
+                
+                # Show API request progress
+                if attempt == 1:
+                    pbar.set_postfix_str(f"Requesting chunk {chunks_processed + 1}... | {progress_percent}%", refresh=True)
+                    sys.stdout.flush()
+                
                 try:
                     start_chunk_time = time.perf_counter()
                     metrics["api_calls"] += 1
+                    
+                    # Show downloading progress with intermediate updates
+                    pbar.set_postfix_str(f"Downloading chunk {chunks_processed + 1}... | {progress_percent}%", refresh=True)
+                    sys.stdout.flush()
+                    
+                    # Make API call
                     klines_chunk = client.get_historical_klines(
                         symbol=binance_ticker,
                         interval=binance_interval_str,
@@ -141,9 +159,17 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
                         end_str=str(end_ms),
                         limit=limit_per_request
                     )
+                    
                     end_chunk_time = time.perf_counter(); chunk_latency = end_chunk_time - start_chunk_time
                     success = True; metrics["total_latency_sec"] += chunk_latency
                     metrics["successful_chunks"] += 1
+                    
+                    # Show processing progress
+                    pbar.set_postfix_str(f"Processing chunk {chunks_processed + 1}... | {progress_percent}%", refresh=True)
+                    
+                    # Add delay to make progress visible and force refresh
+                    time.sleep(0.2)
+                    pbar.refresh()
                     break # Exit retry loop
 
                 except (BinanceAPIException, BinanceRequestException) as e:
@@ -154,10 +180,12 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
                         wait_time = 60
                         if attempt < max_attempts_per_chunk: 
                             pbar.write("Warning: Rate limit likely hit. Waiting...")
+                            pbar.set_postfix_str(f"Rate limited, waiting... | {progress_percent}%", refresh=True)
                     elif status_code == 418: 
                         wait_time = 120
                         if attempt < max_attempts_per_chunk:
                             pbar.write("Warning: IP ban likely. Waiting...")
+                            pbar.set_postfix_str(f"IP banned, waiting... | {progress_percent}%", refresh=True)
                     elif error_code == -1121:
                         # Use pbar.write for the specific error
                         error_msg_text = f"Invalid symbol '{binance_ticker}'. Stopping."
@@ -169,8 +197,13 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
                     pbar.write(f"Error: Unexpected error attempt {attempt}/{max_attempts_per_chunk}: {type(e).__name__}: {e}")
                     pbar.write(f"Traceback:\n{traceback.format_exc()}"); break
 
-                if wait_time > 0 and attempt < max_attempts_per_chunk: time.sleep(wait_time); continue
-                if not success and wait_time == 0 and attempt < max_attempts_per_chunk: time.sleep(3 * attempt); continue
+                if wait_time > 0 and attempt < max_attempts_per_chunk: 
+                    time.sleep(wait_time); 
+                    continue
+                if not success and wait_time == 0 and attempt < max_attempts_per_chunk: 
+                    pbar.set_postfix_str(f"Retrying chunk {chunks_processed + 1} (attempt {attempt + 1})... | {progress_percent}%", refresh=True)
+                    time.sleep(3 * attempt); 
+                    continue
 
             # --- After attempting a chunk ---
             if not success:
@@ -188,18 +221,24 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
             # --- Update tqdm based on actual progress ---
             processed_up_to_ms = last_kline_time_ms
             actual_progress = (processed_up_to_ms - initial_start_ms) / total_duration_ms
-            pbar.n = int(actual_progress * total_duration_ms)
+            actual_percent = int(actual_progress * 100)
+            pbar.n = actual_percent
+            
+            # Show completion status
+            pbar.set_postfix_str(f"Completed chunk {chunks_processed} | {actual_percent}% | {len(klines_chunk)} rows", refresh=True)
             pbar.refresh()
 
             current_start_ms = last_kline_time_ms + 1
             if len(klines_chunk) < limit_per_request: break
-            if current_start_ms <= end_ms: time.sleep(request_delay_sec)
+            if current_start_ms <= end_ms: 
+                pbar.set_postfix_str(f"Preparing next chunk... | {actual_percent}%", refresh=True)
+                time.sleep(request_delay_sec)
 
     finally:
         # Clear the postfix message and close the bar
         pbar.set_postfix_str("")
         # Ensure progress bar shows 100% when complete
-        pbar.n = total_duration_ms
+        pbar.n = 100
         pbar.refresh()
         pbar.close()
 
