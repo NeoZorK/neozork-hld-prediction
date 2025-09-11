@@ -124,22 +124,42 @@ class ConfigurationMenu(BaseMenu):
                 input(f"\n{Fore.CYAN}Press Enter to continue...")
                 return
             
-            # Get all symbol MTF folders
-            mtf_symbol_folders = [f for f in mtf_dir.iterdir() if f.is_dir()]
+            # Get all source directories
+            source_dirs = [f for f in mtf_dir.iterdir() if f.is_dir()]
+            
+            if not source_dirs:
+                print(f"{Fore.RED}❌ No MTF source directories found")
+                print(f"{Fore.YELLOW}💡 Please create MTF data using 'Load Data -> CSV Converted' first")
+                input(f"\n{Fore.CYAN}Press Enter to continue...")
+                return
+            
+            # Get all symbol MTF folders from all source directories
+            mtf_symbol_folders = []
+            for source_dir in source_dirs:
+                symbol_folders = [f for f in source_dir.iterdir() if f.is_dir()]
+                for symbol_folder in symbol_folders:
+                    # Store source information
+                    folder_info = {
+                        'path': symbol_folder,
+                        'source': source_dir.name
+                    }
+                    mtf_symbol_folders.append(folder_info)
             
             if not mtf_symbol_folders:
-                print(f"{Fore.RED}❌ No MTF structures found")
+                print(f"{Fore.RED}❌ No MTF symbol folders found")
                 print(f"{Fore.YELLOW}💡 Please create MTF data using 'Load Data -> CSV Converted' first")
                 input(f"\n{Fore.CYAN}Press Enter to continue...")
                 return
             
             print(f"{Fore.GREEN}📈 Available MTF Structures ({len(mtf_symbol_folders)}):")
             print(f"{Fore.CYAN}{'─'*80}")
-            print(f"{Fore.WHITE}{'Symbol':<12} {'Status':<12} {'Size (MB)':<10} {'Timeframes':<15} {'Created':<15}")
+            print(f"{Fore.WHITE}{'Symbol':<12} {'Source':<10} {'Status':<12} {'Size (MB)':<10} {'Timeframes':<15} {'Created':<15}")
             print(f"{Fore.CYAN}{'─'*80}")
             
             total_size = 0
-            for symbol_folder in sorted(mtf_symbol_folders):
+            for folder_info in sorted(mtf_symbol_folders, key=lambda x: (x['source'], x['path'].name)):
+                symbol_folder = folder_info['path']
+                source_name = folder_info['source']
                 symbol_name = symbol_folder.name.upper()
                 mtf_metadata_file = symbol_folder / "mtf_metadata.json"
                 
@@ -170,13 +190,13 @@ class ConfigurationMenu(BaseMenu):
                         else:
                             created_date = 'Unknown'
                         
-                        print(f"{Fore.WHITE}{symbol_name:<12} {'✅ Available':<12} {folder_size_mb:<10.1f} {timeframes_str:<15} {created_date:<15}")
+                        print(f"{Fore.WHITE}{symbol_name:<12} {source_name:<10} {'✅ Available':<12} {folder_size_mb:<10.1f} {timeframes_str:<15} {created_date:<15}")
                         
                     except Exception as e:
                         print_error(f"Error reading metadata for {symbol_name}: {e}")
-                        print(f"{Fore.WHITE}{symbol_name:<12} {'❌ Error':<12} {'0.0':<10} {'Unknown':<15} {'Unknown':<15}")
+                        print(f"{Fore.WHITE}{symbol_name:<12} {source_name:<10} {'❌ Error':<12} {'0.0':<10} {'Unknown':<15} {'Unknown':<15}")
                 else:
-                    print(f"{Fore.WHITE}{symbol_name:<12} {'⚠️  No Meta':<12} {'0.0':<10} {'Unknown':<15} {'Unknown':<15}")
+                    print(f"{Fore.WHITE}{symbol_name:<12} {source_name:<10} {'⚠️  No Meta':<12} {'0.0':<10} {'Unknown':<15} {'Unknown':<15}")
             
             print(f"{Fore.CYAN}{'─'*80}")
             print(f"{Fore.YELLOW}Total: {len(mtf_symbol_folders)} MTF structures, {total_size:.1f} MB")
