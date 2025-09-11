@@ -108,8 +108,10 @@ class ConfigurationMenu(BaseMenu):
         input(f"\n{Fore.CYAN}Press Enter to continue...")
     
     def _loaded_data_status(self):
-        """Display loaded data status and information."""
-        print(f"\n{Fore.YELLOW}💾 Loaded Data Status")
+        """Display available MTF data status (NOT loaded in memory)."""
+        print(f"\n{Fore.YELLOW}💾 Available MTF Data Status")
+        print(f"{Fore.CYAN}{'─'*60}")
+        print(f"{Fore.YELLOW}💡 This shows available MTF structures, NOT loaded data in memory")
         print(f"{Fore.CYAN}{'─'*60}")
         
         try:
@@ -118,7 +120,7 @@ class ConfigurationMenu(BaseMenu):
             
             if not mtf_dir.exists():
                 print(f"{Fore.RED}❌ No MTF structures found")
-                print(f"{Fore.YELLOW}💡 Please load data using 'Load Data -> CSV Converted' first")
+                print(f"{Fore.YELLOW}💡 Please create MTF data using 'Load Data -> CSV Converted' first")
                 input(f"\n{Fore.CYAN}Press Enter to continue...")
                 return
             
@@ -126,14 +128,14 @@ class ConfigurationMenu(BaseMenu):
             mtf_symbol_folders = [f for f in mtf_dir.iterdir() if f.is_dir()]
             
             if not mtf_symbol_folders:
-                print(f"{Fore.RED}❌ No loaded symbols found")
-                print(f"{Fore.YELLOW}💡 Please load data using 'Load Data -> CSV Converted' first")
+                print(f"{Fore.RED}❌ No MTF structures found")
+                print(f"{Fore.YELLOW}💡 Please create MTF data using 'Load Data -> CSV Converted' first")
                 input(f"\n{Fore.CYAN}Press Enter to continue...")
                 return
             
-            print(f"{Fore.GREEN}📈 Loaded Symbols ({len(mtf_symbol_folders)}):")
+            print(f"{Fore.GREEN}📈 Available MTF Structures ({len(mtf_symbol_folders)}):")
             print(f"{Fore.CYAN}{'─'*80}")
-            print(f"{Fore.WHITE}{'Symbol':<12} {'Status':<10} {'Size (MB)':<10} {'Timeframes':<15} {'Last Updated':<15}")
+            print(f"{Fore.WHITE}{'Symbol':<12} {'Status':<12} {'Size (MB)':<10} {'Timeframes':<15} {'Created':<15}")
             print(f"{Fore.CYAN}{'─'*80}")
             
             total_size = 0
@@ -157,30 +159,31 @@ class ConfigurationMenu(BaseMenu):
                         if len(timeframes) > 3:
                             timeframes_str += f" +{len(timeframes)-3} more"
                         
-                        # Get last updated
+                        # Get creation date
                         created_at = metadata.get('created_at', 'Unknown')
                         if created_at != 'Unknown':
                             try:
                                 created_dt = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
-                                last_updated = created_dt.strftime('%Y-%m-%d %H:%M')
+                                created_date = created_dt.strftime('%Y-%m-%d %H:%M')
                             except:
-                                last_updated = created_at[:16]
+                                created_date = created_at[:16]
                         else:
-                            last_updated = 'Unknown'
+                            created_date = 'Unknown'
                         
-                        print(f"{Fore.WHITE}{symbol_name:<12} {'✅ Loaded':<10} {folder_size_mb:<10.1f} {timeframes_str:<15} {last_updated:<15}")
+                        print(f"{Fore.WHITE}{symbol_name:<12} {'✅ Available':<12} {folder_size_mb:<10.1f} {timeframes_str:<15} {created_date:<15}")
                         
                     except Exception as e:
                         print_error(f"Error reading metadata for {symbol_name}: {e}")
-                        print(f"{Fore.WHITE}{symbol_name:<12} {'❌ Error':<10} {'0.0':<10} {'Unknown':<15} {'Unknown':<15}")
+                        print(f"{Fore.WHITE}{symbol_name:<12} {'❌ Error':<12} {'0.0':<10} {'Unknown':<15} {'Unknown':<15}")
                 else:
-                    print(f"{Fore.WHITE}{symbol_name:<12} {'⚠️  No Meta':<10} {'0.0':<10} {'Unknown':<15} {'Unknown':<15}")
+                    print(f"{Fore.WHITE}{symbol_name:<12} {'⚠️  No Meta':<12} {'0.0':<10} {'Unknown':<15} {'Unknown':<15}")
             
             print(f"{Fore.CYAN}{'─'*80}")
-            print(f"{Fore.YELLOW}Total: {len(mtf_symbol_folders)} symbols, {total_size:.1f} MB")
+            print(f"{Fore.YELLOW}Total: {len(mtf_symbol_folders)} MTF structures, {total_size:.1f} MB")
+            print(f"{Fore.CYAN}💡 Use 'Load Data -> 4.Cleaned Data' to load data into memory")
             
         except Exception as e:
-            print_error(f"Error getting loaded data status: {e}")
+            print_error(f"Error getting MTF data status: {e}")
         
         input(f"\n{Fore.CYAN}Press Enter to continue...")
     
@@ -208,50 +211,21 @@ class ConfigurationMenu(BaseMenu):
             print(f"  • Free: {system_memory.free / (1024 * 1024 * 1024):.1f} GB")
             print(f"  • Usage: {system_memory.percent:.1f}%")
             
-            # Memory by loaded data
-            self._show_loaded_data_memory()
+            # Note about loaded data
+            print(f"\n{Fore.YELLOW}💡 Note: This shows system memory usage, not loaded data in memory")
+            print(f"{Fore.CYAN}💡 Use 'Load Data -> 4.Cleaned Data' to load data into memory")
             
         except Exception as e:
             print_error(f"Error getting memory usage: {e}")
         
         input(f"\n{Fore.CYAN}Press Enter to continue...")
     
-    def _show_loaded_data_memory(self):
-        """Show memory usage by loaded data."""
-        try:
-            mtf_dir = Path("data/cleaned_data/mtf_structures")
-            
-            if not mtf_dir.exists():
-                return
-            
-            print(f"\n{Fore.GREEN}📊 Loaded Data Memory:")
-            
-            total_data_size = 0
-            symbol_count = 0
-            
-            for symbol_folder in mtf_dir.iterdir():
-                if symbol_folder.is_dir():
-                    symbol_count += 1
-                    folder_size = sum(f.stat().st_size for f in symbol_folder.rglob('*') if f.is_file())
-                    folder_size_mb = folder_size / (1024 * 1024)
-                    total_data_size += folder_size_mb
-                    
-                    print(f"  • {symbol_folder.name.upper()}: {folder_size_mb:.1f} MB")
-            
-            if symbol_count > 0:
-                print(f"\n{Fore.YELLOW}📈 Summary:")
-                print(f"  • Symbols loaded: {symbol_count}")
-                print(f"  • Total data size: {total_data_size:.1f} MB")
-                print(f"  • Average per symbol: {total_data_size / symbol_count:.1f} MB")
-            else:
-                print(f"  • No data loaded")
-                
-        except Exception as e:
-            print_error(f"Error calculating loaded data memory: {e}")
     
     def _data_range_info(self):
-        """Display data range information for loaded symbols."""
-        print(f"\n{Fore.YELLOW}📅 Data Range Information")
+        """Display data range information for available MTF structures."""
+        print(f"\n{Fore.YELLOW}📅 MTF Data Range Information")
+        print(f"{Fore.CYAN}{'─'*60}")
+        print(f"{Fore.YELLOW}💡 This shows available MTF structures, NOT loaded data in memory")
         print(f"{Fore.CYAN}{'─'*60}")
         
         try:
@@ -259,7 +233,7 @@ class ConfigurationMenu(BaseMenu):
             
             if not mtf_dir.exists():
                 print(f"{Fore.RED}❌ No MTF structures found")
-                print(f"{Fore.YELLOW}💡 Please load data using 'Load Data -> CSV Converted' first")
+                print(f"{Fore.YELLOW}💡 Please create MTF data using 'Load Data -> CSV Converted' first")
                 input(f"\n{Fore.CYAN}Press Enter to continue...")
                 return
             
@@ -267,7 +241,8 @@ class ConfigurationMenu(BaseMenu):
             mtf_symbol_folders = [f for f in mtf_dir.iterdir() if f.is_dir()]
             
             if not mtf_symbol_folders:
-                print(f"{Fore.RED}❌ No loaded symbols found")
+                print(f"{Fore.RED}❌ No MTF structures found")
+                print(f"{Fore.YELLOW}💡 Please create MTF data using 'Load Data -> CSV Converted' first")
                 input(f"\n{Fore.CYAN}Press Enter to continue...")
                 return
             
@@ -280,7 +255,7 @@ class ConfigurationMenu(BaseMenu):
                         with open(mtf_metadata_file, 'r') as f:
                             metadata = json.load(f)
                         
-                        print(f"\n{Fore.GREEN}📈 {symbol_name}:")
+                        print(f"\n{Fore.GREEN}📈 {symbol_name} (Available MTF Structure):")
                         print(f"  • Main Timeframe: {metadata.get('main_timeframe', 'Unknown')}")
                         print(f"  • Available Timeframes: {', '.join(metadata.get('timeframes', []))}")
                         print(f"  • Total Rows: {metadata.get('total_rows', 0):,}")
@@ -306,12 +281,16 @@ class ConfigurationMenu(BaseMenu):
                         else:
                             print(f"  • Date Range: Main data file not found")
                         
+                        print(f"  • Status: {Fore.YELLOW}Available (not loaded in memory)")
+                        
                     except Exception as e:
                         print_error(f"Error reading metadata for {symbol_name}: {e}")
                         print(f"{Fore.WHITE}  • Status: Error reading metadata")
                 else:
                     print(f"\n{Fore.GREEN}📈 {symbol_name}:")
                     print(f"  • Status: No metadata found")
+            
+            print(f"\n{Fore.CYAN}💡 Use 'Load Data -> 4.Cleaned Data' to load data into memory")
             
         except Exception as e:
             print_error(f"Error getting data range information: {e}")
