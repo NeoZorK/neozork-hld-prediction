@@ -504,20 +504,20 @@ if __name__ == "__main__":
         load_data = input(f"\n{Fore.GREEN}Load data into memory? (y/n): {Style.RESET_ALL}").strip().lower()
         
         if load_data == 'y':
-        # Get symbol filter from user
-        symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'btcusdt'): {Style.RESET_ALL}").strip()
-        if not symbol_filter:
-            symbol_filter = None
-        
-        # Load data
-        from src.interactive.data_management import DataLoader
-        loader = DataLoader()
-        result = loader.load_raw_parquet_data(symbol_filter)
-        
-        if result["status"] == "success":
-            self._display_loaded_data(result)
-        else:
-            print(f"{Fore.RED}❌ Error: {result['message']}")
+            # Get symbol filter from user
+            symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'btcusdt'): {Style.RESET_ALL}").strip()
+            if not symbol_filter:
+                symbol_filter = None
+            
+            # Load data
+            from src.interactive.data_management import DataLoader
+            loader = DataLoader()
+            result = loader.load_raw_parquet_data(symbol_filter)
+            
+            if result["status"] == "success":
+                self._display_loaded_data(result)
+            else:
+                print(f"{Fore.RED}❌ Error: {result['message']}")
         
         input(f"\n{Fore.CYAN}Press Enter to continue...")
     
@@ -561,20 +561,20 @@ if __name__ == "__main__":
         load_data = input(f"\n{Fore.GREEN}Load data into memory? (y/n): {Style.RESET_ALL}").strip().lower()
         
         if load_data == 'y':
-        # Get symbol filter from user
-        symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'aapl'): {Style.RESET_ALL}").strip()
-        if not symbol_filter:
-            symbol_filter = None
-        
-        # Load data
-        from src.interactive.data_management import DataLoader
-        loader = DataLoader()
-        result = loader.load_indicators_data(symbol_filter)
-        
-        if result["status"] == "success":
-            self._display_loaded_data(result)
-        else:
-            print(f"{Fore.RED}❌ Error: {result['message']}")
+            # Get symbol filter from user
+            symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'aapl'): {Style.RESET_ALL}").strip()
+            if not symbol_filter:
+                symbol_filter = None
+            
+            # Load data
+            from src.interactive.data_management import DataLoader
+            loader = DataLoader()
+            result = loader.load_indicators_data(symbol_filter)
+            
+            if result["status"] == "success":
+                self._display_loaded_data(result)
+            else:
+                print(f"{Fore.RED}❌ Error: {result['message']}")
         
         input(f"\n{Fore.CYAN}Press Enter to continue...")
     
@@ -619,20 +619,20 @@ if __name__ == "__main__":
         load_data = input(f"\n{Fore.GREEN}Load data into memory? (y/n): {Style.RESET_ALL}").strip().lower()
         
         if load_data == 'y':
-        # Get symbol filter from user
-        symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'eurusd'): {Style.RESET_ALL}").strip()
-        if not symbol_filter:
-            symbol_filter = None
-        
-        # Load data
-        from src.interactive.data_management import DataLoader
-        loader = DataLoader()
-        result = loader.load_cleaned_data(symbol_filter)
-        
-        if result["status"] == "success":
-            self._display_loaded_data(result)
-        else:
-            print(f"{Fore.RED}❌ Error: {result['message']}")
+            # Get symbol filter from user
+            symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'eurusd'): {Style.RESET_ALL}").strip()
+            if not symbol_filter:
+                symbol_filter = None
+            
+            # Load data
+            from src.interactive.data_management import DataLoader
+            loader = DataLoader()
+            result = loader.load_cleaned_data(symbol_filter)
+            
+            if result["status"] == "success":
+                self._display_loaded_data(result)
+            else:
+                print(f"{Fore.RED}❌ Error: {result['message']}")
         
         input(f"\n{Fore.CYAN}Press Enter to continue...")
     
