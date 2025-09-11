@@ -770,12 +770,18 @@ class DataLoadingMenu(BaseMenu):
         print(f"\n{Fore.GREEN}📊 Data Loading Configuration")
         print(f"{Fore.CYAN}{'─'*50}")
         
-        # Get symbol from user
-        symbol_input = input(f"{Fore.GREEN}Choose Symbol to load data into memory (e.g., 'btcusdt'): {Style.RESET_ALL}").strip().upper()
+        # Get symbol from user with default
+        # Extract first available symbol from sorted_symbols
+        default_symbol = 'btcusdt'  # fallback default
+        if sorted_symbols:
+            # Get the first symbol from the first available source_symbol pair
+            first_symbol_key = sorted_symbols[0]
+            default_symbol = first_symbol_key.split('_', 1)[1]  # Extract symbol part
+        
+        symbol_input = input(f"{Fore.GREEN}Choose Symbol to load data into memory (e.g., 'btcusdt') [default: {default_symbol}]: {Style.RESET_ALL}").strip().upper()
         if not symbol_input:
-            print(f"{Fore.RED}❌ Symbol is required.")
-            input(f"\n{Fore.CYAN}Press Enter to continue...")
-            return
+            symbol_input = default_symbol
+            print(f"{Fore.YELLOW}Using default symbol: {symbol_input}")
         
         # Check if symbol exists
         available_symbols = []
