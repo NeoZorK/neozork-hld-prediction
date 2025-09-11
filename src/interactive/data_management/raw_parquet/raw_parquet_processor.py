@@ -114,6 +114,20 @@ class RawParquetProcessor:
             processed_data = {}
             total_files = len(loaded_data)
             
+            # Handle empty data case
+            if total_files == 0:
+                return {
+                    "status": "success",
+                    "data": {},
+                    "metadata": {
+                        "total_files": 0,
+                        "total_processed": 0,
+                        "total_rows": 0,
+                        "total_size_mb": 0.0,
+                        "processing_time": 0.0
+                    }
+                }
+            
             # Progress tracking variables
             start_time = time.time()
             
@@ -193,6 +207,9 @@ class RawParquetProcessor:
             # Set timestamp as index
             df = self._set_timestamp_index(df)
             
+            # Validate final structure
+            self._validate_standard_columns(df, source)
+            
             # Sort by timestamp
             df = df.sort_index()
             
@@ -230,17 +247,7 @@ class RawParquetProcessor:
             # Apply column mapping
             df = df.rename(columns=mapping)
             
-            # Ensure standard columns exist
-            standard_columns = ['timestamp', 'open', 'high', 'low', 'close', 'volume']
-            
-            # Check if we have the required columns
-            missing_columns = []
-            for col in standard_columns:
-                if col not in df.columns:
-                    missing_columns.append(col)
-            
-            if missing_columns:
-                print_warning(f"Missing standard columns for {source}: {missing_columns}")
+            # Note: Column validation moved to _validate_standard_columns
             
             return df
             
@@ -389,6 +396,29 @@ class RawParquetProcessor:
         except Exception as e:
             print_error(f"Error setting timestamp index: {e}")
             return df
+    
+    def _validate_standard_columns(self, df: pd.DataFrame, source: str):
+        """Validate that all standard columns are present after processing."""
+        try:
+            # Ensure standard columns exist
+            standard_columns = ['open', 'high', 'low', 'close', 'volume']
+            
+            # Check if we have the required columns
+            missing_columns = []
+            for col in standard_columns:
+                if col not in df.columns:
+                    missing_columns.append(col)
+            
+            # Check for timestamp - it can be either in columns or index
+            has_timestamp = 'timestamp' in df.columns or df.index.name == 'timestamp'
+            if not has_timestamp:
+                missing_columns.append('timestamp')
+            
+            if missing_columns:
+                print_warning(f"Missing standard columns for {source}: {missing_columns}")
+            
+        except Exception as e:
+            print_error(f"Error validating standard columns: {e}")
     
     def process_symbol_data(self, symbol_data: Dict[str, Any]) -> Dict[str, Any]:
         """
