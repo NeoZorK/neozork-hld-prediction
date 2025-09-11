@@ -886,7 +886,7 @@ class DataLoadingMenu(BaseMenu):
                 
                 # Save MTF structure to cleaned_data folder like in csv converted
                 print(f"\n{Fore.YELLOW}💾 Saving MTF structure to cleaned_data folder...")
-                self._save_raw_parquet_mtf_structure(symbol, mtf_result['data'], source)
+                self._save_raw_parquet_mtf_structure(symbol, mtf_result['mtf_data'], source)
                 
                 print(f"\n{Fore.GREEN}🎯 Ready for EDA, feature engineering, ML, backtesting, and monitoring!")
             else:
