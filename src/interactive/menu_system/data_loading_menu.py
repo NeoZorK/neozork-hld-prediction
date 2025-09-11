@@ -580,100 +580,83 @@ if __name__ == "__main__":
         input(f"\n{Fore.CYAN}Press Enter to continue...")
     
     def _load_cleaned_data(self):
-        """Load cleaned data with detailed folder analysis and modern progress tracking."""
+        """Load cleaned data with all timeframes for comprehensive analysis."""
         print(f"\n{Fore.YELLOW}✨ Cleaned Data Analysis...")
         
-        # Analyze cleaned data folder structure
-        cleaned_dir = Path("data/cleaned_data")
-        
-        if not cleaned_dir.exists():
-            print(f"{Fore.RED}❌ Cleaned data directory not found")
-            input(f"\n{Fore.CYAN}Press Enter to continue...")
-            return
-        
-        # Get all symbol folders
-        symbol_folders = [f for f in cleaned_dir.iterdir() if f.is_dir()]
-        
-        if not symbol_folders:
-            print(f"{Fore.RED}❌ No symbol folders found in cleaned data")
-            input(f"\n{Fore.CYAN}Press Enter to continue...")
-            return
-        
-        print(f"\n{Fore.GREEN}📈 Available Symbols ({len(symbol_folders)}):")
-        print(f"{Fore.CYAN}{'─'*80}")
-        
-        # Analyze each symbol folder
-        symbol_info = {}
-        total_size = 0
-        
-        for symbol_folder in sorted(symbol_folders):
-            symbol_name = symbol_folder.name.upper()
-            symbol_info[symbol_name] = self._analyze_symbol_folder(symbol_folder)
-            total_size += symbol_info[symbol_name]['total_size_mb']
-        
-        # Display symbol information in a modern table format
-        print(f"{Fore.WHITE}{'Symbol':<12} {'Size (MB)':<10} {'Files':<6} {'Timeframes':<20} {'Start Date':<12} {'End Date':<12}")
-        print(f"{Fore.CYAN}{'─'*80}")
-        
-        for symbol_name, info in symbol_info.items():
-            timeframes_str = ', '.join(info['timeframes'][:3])
-            if len(info['timeframes']) > 3:
-                timeframes_str += f" +{len(info['timeframes'])-3} more"
-            
-            start_date = info['start_date'][:10] if info['start_date'] != "No data" else "No data"
-            end_date = info['end_date'][:10] if info['end_date'] != "No data" else "No data"
-            
-            print(f"{Fore.WHITE}{symbol_name:<12} {info['total_size_mb']:<10.1f} {info['file_count']:<6} {timeframes_str:<20} {start_date:<12} {end_date:<12}")
-        
-        print(f"{Fore.CYAN}{'─'*80}")
-        print(f"{Fore.YELLOW}Total: {len(symbol_folders)} symbols, {total_size:.1f} MB")
-        
-        # Ask user to choose symbol
-        print(f"\n{Fore.GREEN}📊 Choose Symbol to Load into Memory")
-        print(f"{Fore.CYAN}{'─'*50}")
-        
-        symbol_choice = input(f"{Fore.GREEN}Enter symbol name (e.g., 'eurusd') [default: eurusd]: {Style.RESET_ALL}").strip().lower()
-        if not symbol_choice:
-            symbol_choice = "eurusd"
-        
-        symbol_choice_upper = symbol_choice.upper()
-        
-        if symbol_choice_upper not in symbol_info:
-            print(f"{Fore.RED}❌ Symbol '{symbol_choice_upper}' not found")
-            print(f"{Fore.YELLOW}Available symbols: {', '.join(symbol_info.keys())}")
-            input(f"\n{Fore.CYAN}Press Enter to continue...")
-            return
-        
-        # Show available timeframes for selected symbol
-        selected_info = symbol_info[symbol_choice_upper]
-        print(f"\n{Fore.GREEN}📈 {symbol_choice_upper} - Available Timeframes:")
-        print(f"{Fore.CYAN}{'─'*40}")
-        
-        for i, tf in enumerate(selected_info['timeframes'], 1):
-            tf_info = selected_info['timeframe_details'][tf]
-            print(f"{Fore.WHITE}{i:2d}. {tf:<4} │ {tf_info['size_mb']:>6.1f}MB │ {tf_info['rows']:>8,} rows │ {tf_info['start_date'][:10]} to {tf_info['end_date'][:10]}")
-        
-        print(f"{Fore.CYAN}{'─'*40}")
-        
-        # Ask for timeframe choice
         try:
-            tf_choice = input(f"{Fore.GREEN}Choose main timeframe (1-{len(selected_info['timeframes'])}) [default: 1 (M1)]: {Style.RESET_ALL}").strip()
-            if not tf_choice:
-                tf_choice = "1"
+            from .data_loading import SymbolAnalyzer, DataLoader, SymbolDisplay
             
-            tf_idx = int(tf_choice) - 1
-            if tf_idx < 0 or tf_idx >= len(selected_info['timeframes']):
-                raise ValueError("Invalid choice")
+            # Initialize components
+            symbol_analyzer = SymbolAnalyzer()
+            data_loader = DataLoader()
+            symbol_display = SymbolDisplay()
             
-            main_timeframe = selected_info['timeframes'][tf_idx]
-        except (ValueError, IndexError):
-            print(f"{Fore.RED}❌ Invalid choice. Using M1 as default.")
-            main_timeframe = "M1"
-        
-        print(f"\n{Fore.GREEN}✅ Selected: {symbol_choice_upper} with main timeframe {main_timeframe}")
-        
-        # Load data with modern progress tracking
-        self._load_symbol_data_with_progress(symbol_choice, main_timeframe, selected_info)
+            # Analyze all symbols
+            analysis_result = symbol_analyzer.analyze_all_symbols()
+            
+            if analysis_result["status"] == "error":
+                symbol_display.display_error(analysis_result["message"])
+                input(f"\n{Fore.CYAN}Press Enter to continue...")
+                return
+            
+            symbol_info = analysis_result["symbols"]
+            total_size = analysis_result["total_size_mb"]
+            
+            # Display symbols table
+            symbol_display.display_symbols_table(symbol_info, total_size)
+            
+            # Get symbol choice from user
+            available_symbols = list(symbol_info.keys())
+            symbol_choice = symbol_display.get_symbol_choice(available_symbols)
+            
+            if not symbol_choice:
+                input(f"\n{Fore.CYAN}Press Enter to continue...")
+                return
+            
+            symbol_choice_upper = symbol_choice.upper()
+            selected_info = symbol_info[symbol_choice_upper]
+            
+            # Display timeframes info
+            symbol_display.display_timeframes_info(
+                symbol_choice_upper, 
+                selected_info['timeframes'], 
+                selected_info['timeframe_details']
+            )
+            
+            # Display loading start message
+            symbol_display.display_loading_start(symbol_choice_upper, selected_info['timeframes'])
+            
+            # Load all timeframes for the selected symbol
+            result = data_loader.load_symbol_data_with_progress(symbol_choice, selected_info)
+            
+            # Display loading results
+            symbol_display.display_loading_complete(symbol_choice_upper, result)
+            
+            if result['status'] == 'success':
+                # Display detailed summary
+                symbol_display.display_loading_summary(
+                    symbol_choice_upper, 
+                    result['loaded_data'], 
+                    result['memory_used'], 
+                    result['loading_time']
+                )
+                
+                # Display timeframe summary
+                symbol_display.display_timeframe_summary(
+                    result['loaded_data'], 
+                    selected_info['timeframe_details']
+                )
+                
+                # Display MTF info
+                symbol_display.display_mtf_info(result['mtf_data'])
+                
+                # Display save info
+                symbol_display.display_save_info(symbol_choice_upper, f"data/cleaned_data/mtf_structures/{symbol_choice.lower()}/")
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Error in cleaned data loading: {e}")
+            import traceback
+            traceback.print_exc()
         
         input(f"\n{Fore.CYAN}Press Enter to continue...")
     
@@ -687,326 +670,6 @@ if __name__ == "__main__":
         print(f"{Fore.WHITE}  • Modified: {folder_info['modified']}")
         print(f"{Fore.CYAN}{'─'*50}")
     
-    def _analyze_symbol_folder(self, symbol_folder: Path) -> Dict[str, Any]:
-        """Analyze a symbol folder for detailed information."""
-        try:
-            # Get all timeframe folders
-            timeframe_folders = [f for f in symbol_folder.iterdir() if f.is_dir() and f.name != '__pycache__']
-            
-            timeframes = []
-            timeframe_details = {}
-            total_size_mb = 0
-            total_files = 0
-            start_date = "No data"
-            end_date = "No data"
-            
-            for tf_folder in sorted(timeframe_folders):
-                tf_name = tf_folder.name.upper()
-                timeframes.append(tf_name)
-                
-                # Get parquet file
-                parquet_file = tf_folder / f"{symbol_folder.name}_{tf_name.lower()}.parquet"
-                if parquet_file.exists():
-                    # Get file size
-                    file_size_mb = parquet_file.stat().st_size / (1024 * 1024)
-                    total_size_mb += file_size_mb
-                    total_files += 1
-                    
-                    # Load metadata if available
-                    metadata_file = tf_folder / "metadata.json"
-                    if metadata_file.exists():
-                        try:
-                            import json
-                            with open(metadata_file, 'r') as f:
-                                metadata = json.load(f)
-                            
-                            tf_info = {
-                                'size_mb': file_size_mb,
-                                'rows': metadata.get('rows', 0),
-                                'start_date': metadata.get('start_date', 'No data'),
-                                'end_date': metadata.get('end_date', 'No data'),
-                                'columns': metadata.get('columns', [])
-                            }
-                            
-                            # Update overall start/end dates
-                            if tf_info['start_date'] != 'No data' and start_date == "No data":
-                                start_date = tf_info['start_date']
-                            elif tf_info['start_date'] != 'No data' and tf_info['start_date'] < start_date:
-                                start_date = tf_info['start_date']
-                            
-                            if tf_info['end_date'] != 'No data' and end_date == "No data":
-                                end_date = tf_info['end_date']
-                            elif tf_info['end_date'] != 'No data' and tf_info['end_date'] > end_date:
-                                end_date = tf_info['end_date']
-                                
-                        except Exception as e:
-                            print_error(f"Error reading metadata for {tf_name}: {e}")
-                            tf_info = {
-                                'size_mb': file_size_mb,
-                                'rows': 0,
-                                'start_date': 'No data',
-                                'end_date': 'No data',
-                                'columns': []
-                            }
-                    else:
-                        tf_info = {
-                            'size_mb': file_size_mb,
-                            'rows': 0,
-                            'start_date': 'No data',
-                            'end_date': 'No data',
-                            'columns': []
-                        }
-                    
-                    timeframe_details[tf_name] = tf_info
-            
-            return {
-                'timeframes': timeframes,
-                'timeframe_details': timeframe_details,
-                'total_size_mb': total_size_mb,
-                'file_count': total_files,
-                'start_date': start_date,
-                'end_date': end_date
-            }
-            
-        except Exception as e:
-            print_error(f"Error analyzing symbol folder {symbol_folder}: {e}")
-            return {
-                'timeframes': [],
-                'timeframe_details': {},
-                'total_size_mb': 0,
-                'file_count': 0,
-                'start_date': 'No data',
-                'end_date': 'No data'
-            }
-    
-    def _load_symbol_data_with_progress(self, symbol: str, main_timeframe: str, symbol_info: Dict[str, Any]):
-        """Load symbol data with modern progress tracking and memory usage display."""
-        print(f"\n{Fore.YELLOW}🔄 Loading {symbol.upper()} data into memory...")
-        
-        try:
-            import psutil
-            import time
-            from pathlib import Path
-            import pandas as pd
-            import numpy as np
-            
-            # Get initial memory usage
-            process = psutil.Process()
-            initial_memory = process.memory_info().rss / (1024 * 1024)  # MB
-            
-            # Load all timeframes
-            loaded_data = {}
-            total_timeframes = len(symbol_info['timeframes'])
-            
-            print(f"{Fore.CYAN}📊 Loading {total_timeframes} timeframes...")
-            
-            start_time = time.time()
-            
-            for i, timeframe in enumerate(symbol_info['timeframes']):
-                # Calculate progress
-                progress = (i + 1) / total_timeframes
-                
-                # Calculate ETA
-                current_time = time.time()
-                elapsed_time = current_time - start_time
-                if i > 0:
-                    avg_time_per_tf = elapsed_time / i
-                    remaining_tfs = total_timeframes - i
-                    eta_seconds = remaining_tfs * avg_time_per_tf
-                    eta_str = self._format_time(eta_seconds)
-                else:
-                    eta_str = "Calculating..."
-                
-                # Calculate speed
-                if elapsed_time > 0:
-                    speed = f"{i / elapsed_time:.1f} tf/s"
-                else:
-                    speed = "Starting..."
-                
-                # Show progress
-                self._show_loading_progress(f"Loading {timeframe}", progress, eta_str, speed)
-                
-                # Load timeframe data
-                tf_folder = Path(f"data/cleaned_data/{symbol.lower()}/{timeframe.lower()}")
-                parquet_file = tf_folder / f"{symbol.lower()}_{timeframe.lower()}.parquet"
-                
-                if parquet_file.exists():
-                    try:
-                        df = pd.read_parquet(parquet_file)
-                        loaded_data[timeframe] = df
-                    except Exception as e:
-                        print_error(f"Error loading {timeframe}: {e}")
-                        continue
-                else:
-                    print_error(f"File not found: {parquet_file}")
-                    continue
-            
-            # Final progress display
-            total_time = time.time() - start_time
-            self._show_loading_progress(f"Completed loading {total_timeframes} timeframes", 1.0, "", f"{total_timeframes / total_time:.1f} tf/s")
-            
-            # Get final memory usage
-            final_memory = process.memory_info().rss / (1024 * 1024)  # MB
-            memory_used = final_memory - initial_memory
-            
-            # Display loading results
-            print(f"\n{Fore.GREEN}✅ Data loaded successfully!")
-            print(f"{Fore.CYAN}{'─'*60}")
-            print(f"{Fore.YELLOW}📊 Loading Summary:")
-            print(f"  • Symbol: {symbol.upper()}")
-            print(f"  • Main Timeframe: {main_timeframe}")
-            print(f"  • Timeframes loaded: {len(loaded_data)}")
-            print(f"  • Total rows: {sum(len(df) for df in loaded_data.values()):,}")
-            print(f"  • Loading time: {total_time:.2f} seconds")
-            print(f"  • Memory used: {memory_used:.1f} MB")
-            print(f"  • Total memory: {final_memory:.1f} MB")
-            
-            # Display timeframe details
-            print(f"\n{Fore.YELLOW}📋 Timeframe Details:")
-            for tf, df in loaded_data.items():
-                tf_info = symbol_info['timeframe_details'][tf]
-                print(f"  • {tf:<4}: {len(df):>8,} rows, {tf_info['size_mb']:>6.1f} MB, {tf_info['start_date'][:10]} to {tf_info['end_date'][:10]}")
-            
-            # Create MTF (Multi-Timeframe) data structure for ML
-            print(f"\n{Fore.YELLOW}🔧 Creating MTF data structure for ML...")
-            mtf_data = self._create_mtf_structure(loaded_data, main_timeframe)
-            
-            # Save loaded data for future use
-            self._save_loaded_data(symbol, main_timeframe, loaded_data, mtf_data)
-            
-            print(f"\n{Fore.GREEN}🎯 MTF data structure created and saved!")
-            print(f"  • Main timeframe: {main_timeframe}")
-            print(f"  • Available timeframes: {', '.join(loaded_data.keys())}")
-            print(f"  • Data shape: {mtf_data['main_data'].shape if 'main_data' in mtf_data else 'N/A'}")
-            
-        except Exception as e:
-            print(f"\n{Fore.RED}❌ Error loading data: {e}")
-            import traceback
-            traceback.print_exc()
-    
-    def _create_mtf_structure(self, loaded_data: Dict[str, pd.DataFrame], main_timeframe: str) -> Dict[str, Any]:
-        """Create Multi-Timeframe data structure optimized for ML."""
-        try:
-            mtf_data = {
-                'main_timeframe': main_timeframe,
-                'timeframes': list(loaded_data.keys()),
-                'main_data': loaded_data.get(main_timeframe, pd.DataFrame()),
-                'timeframe_data': loaded_data,
-                'metadata': {
-                    'created_at': pd.Timestamp.now().isoformat(),
-                    'total_rows': sum(len(df) for df in loaded_data.values()),
-                    'timeframe_counts': {tf: len(df) for tf, df in loaded_data.items()}
-                }
-            }
-            
-            # Add cross-timeframe features if multiple timeframes available
-            if len(loaded_data) > 1:
-                mtf_data['cross_timeframe_features'] = self._create_cross_timeframe_features(loaded_data, main_timeframe)
-            
-            return mtf_data
-            
-        except Exception as e:
-            print_error(f"Error creating MTF structure: {e}")
-            return {'error': str(e)}
-    
-    def _create_cross_timeframe_features(self, loaded_data: Dict[str, pd.DataFrame], main_timeframe: str) -> Dict[str, Any]:
-        """Create cross-timeframe features for ML."""
-        try:
-            main_df = loaded_data[main_timeframe]
-            cross_features = {}
-            
-            # Add features from higher timeframes
-            for tf, df in loaded_data.items():
-                if tf != main_timeframe:
-                    # Resample to main timeframe frequency
-                    resampled = df.resample('1min').ffill()  # Forward fill to 1-minute frequency
-                    cross_features[tf] = resampled
-            
-            return cross_features
-            
-        except Exception as e:
-            print_error(f"Error creating cross-timeframe features: {e}")
-            return {}
-    
-    def _save_loaded_data(self, symbol: str, main_timeframe: str, loaded_data: Dict[str, pd.DataFrame], mtf_data: Dict[str, Any]):
-        """Save loaded data for future use."""
-        try:
-            import pickle
-            from pathlib import Path
-            import json
-            
-            # Create cache directory
-            cache_dir = Path("data/cache/loaded_data")
-            cache_dir.mkdir(parents=True, exist_ok=True)
-            
-            # Save MTF data structure
-            mtf_file = cache_dir / f"{symbol.lower()}_mtf_{main_timeframe.lower()}.pkl"
-            with open(mtf_file, 'wb') as f:
-                pickle.dump(mtf_data, f)
-            
-            # Save metadata
-            metadata = {
-                'symbol': symbol.upper(),
-                'main_timeframe': main_timeframe,
-                'timeframes': list(loaded_data.keys()),
-                'total_rows': sum(len(df) for df in loaded_data.values()),
-                'created_at': pd.Timestamp.now().isoformat(),
-                'file_path': str(mtf_file)
-            }
-            
-            metadata_file = cache_dir / f"{symbol.lower()}_metadata.json"
-            with open(metadata_file, 'w') as f:
-                json.dump(metadata, f, indent=2)
-            
-            print(f"{Fore.GREEN}💾 Data saved to: {mtf_file}")
-            
-        except Exception as e:
-            print_error(f"Error saving loaded data: {e}")
-    
-    def _show_loading_progress(self, message: str, progress: float = 0.0, eta: str = "", speed: str = ""):
-        """Show modern loading progress with ETA and speed."""
-        bar_length = 40
-        filled_length = int(bar_length * progress)
-        bar = "█" * filled_length + "░" * (bar_length - filled_length)
-        percentage = int(progress * 100)
-        
-        # Create progress display
-        progress_display = f"{Fore.CYAN}🔄 {message}"
-        bar_display = f"{Fore.GREEN}[{bar}]{Fore.CYAN}"
-        percentage_display = f"{Fore.YELLOW}{percentage:3d}%"
-        
-        # Add ETA and speed if available
-        extra_info = ""
-        if eta:
-            extra_info += f" {Fore.MAGENTA}ETA: {eta}"
-        if speed:
-            extra_info += f" {Fore.BLUE}Speed: {speed}"
-        
-        # Combine all parts
-        full_display = f"\r{progress_display} {bar_display} {percentage_display}{extra_info}{Style.RESET_ALL}"
-        
-        # Ensure the line is long enough to clear previous content
-        terminal_width = 120
-        if len(full_display) < terminal_width:
-            full_display += " " * (terminal_width - len(full_display))
-        
-        print(full_display, end="", flush=True)
-        
-        if progress >= 1.0:
-            print()  # New line when complete
-    
-    def _format_time(self, seconds: float) -> str:
-        """Format time in seconds to human readable format."""
-        if seconds < 60:
-            return f"{seconds:.1f}s"
-        elif seconds < 3600:
-            minutes = int(seconds // 60)
-            secs = int(seconds % 60)
-            return f"{minutes}m {secs}s"
-        else:
-            hours = int(seconds // 3600)
-            minutes = int((seconds % 3600) // 60)
-            return f"{hours}h {minutes}m"
     
     def _extract_symbol_from_filename(self, filename: str) -> Optional[str]:
         """Extract symbol from filename."""
