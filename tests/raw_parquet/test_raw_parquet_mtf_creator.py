@@ -17,7 +17,7 @@ import sys
 import json
 
 # Add project root to path
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.interactive.data_management.raw_parquet.raw_parquet_mtf_creator import RawParquetMTFCreator
@@ -429,13 +429,13 @@ class TestRawParquetMTFCreator:
         # Test hours
         assert self.mtf_creator._format_time(3661) == "1h 1m"
     
-    @patch('src.interactive.data_management.raw_parquet.raw_parquet_mtf_creator.print_info')
-    def test_show_mtf_progress(self, mock_print_info):
+    @patch('builtins.print')
+    def test_show_mtf_progress(self, mock_print):
         """Test MTF progress display function."""
         self.mtf_creator._show_mtf_progress("Test message", 0.5, 0.0)
         
-        # Should call print_info with progress information
-        mock_print_info.assert_called()
+        # Should call print with progress information
+        mock_print.assert_called()
     
     def test_save_mtf_structure_error(self):
         """Test error handling in MTF structure saving."""
