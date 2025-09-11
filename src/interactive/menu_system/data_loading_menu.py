@@ -883,12 +883,61 @@ class DataLoadingMenu(BaseMenu):
                 print(f"  • Available timeframes: {', '.join(available_timeframes)}")
                 print(f"  • Total rows: {processed_result['metadata']['total_rows']:,}")
                 print(f"  • Size: {processed_result['metadata']['total_size_mb']:.1f} MB")
+                
+                # Save MTF structure to cleaned_data folder like in csv converted
+                print(f"\n{Fore.YELLOW}💾 Saving MTF structure to cleaned_data folder...")
+                self._save_raw_parquet_mtf_structure(symbol, mtf_result['data'], source)
+                
                 print(f"\n{Fore.GREEN}🎯 Ready for EDA, feature engineering, ML, backtesting, and monitoring!")
             else:
                 print(f"\n{Fore.RED}❌ Error creating MTF structure: {mtf_result['message']}")
             
         except Exception as e:
             print(f"\n{Fore.RED}❌ Error processing data: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    def _save_raw_parquet_mtf_structure(self, symbol: str, mtf_data: Dict[str, Any], source: str):
+        """Save raw parquet MTF structure to cleaned_data folder like csv converted."""
+        try:
+            from .data_loading import DataLoader
+            import json
+            
+            # Create symbol directory
+            symbol_dir = Path("data/cleaned_data") / symbol.lower()
+            symbol_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Use DataLoader to save MTF structure (same as csv converted)
+            loader = DataLoader()
+            
+            # Create symbol info for DataLoader
+            symbol_info = {
+                'timeframes': mtf_data['timeframes'],
+                'timeframe_details': {}
+            }
+            
+            # Fill timeframe details
+            for tf in mtf_data['timeframes']:
+                df = mtf_data['timeframe_data'][tf]
+                symbol_info['timeframe_details'][tf] = {
+                    'size_mb': 0,  # Will be calculated by DataLoader
+                    'rows': len(df),
+                    'start_date': str(df.index.min()) if not df.empty else 'No data',
+                    'end_date': str(df.index.max()) if not df.empty else 'No data',
+                    'columns': list(df.columns)
+                }
+            
+            # Save using DataLoader's method with data source
+            loader._save_loaded_data(symbol, mtf_data['timeframe_data'], mtf_data, source)
+            
+            print(f"{Fore.GREEN}✅ MTF structure saved to: {symbol_dir}")
+            print(f"  • Symbol: {symbol.upper()}")
+            print(f"  • Source: {source}")
+            print(f"  • Timeframes: {', '.join(mtf_data['timeframes'])}")
+            print(f"  • Main timeframe: {mtf_data['main_timeframe']}")
+            
+        except Exception as e:
+            print(f"{Fore.RED}❌ Error saving MTF structure: {e}")
             import traceback
             traceback.print_exc()
     
