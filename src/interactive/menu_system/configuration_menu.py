@@ -108,10 +108,28 @@ class ConfigurationMenu(BaseMenu):
         input(f"\n{Fore.CYAN}Press Enter to continue...")
     
     def _loaded_data_status(self):
-        """Display available MTF data status (NOT loaded in memory)."""
-        print(f"\n{Fore.YELLOW}💾 Available MTF Data Status")
+        """Display loaded data status in memory and available MTF structures."""
+        print(f"\n{Fore.YELLOW}💾 Loaded Data Status")
         print(f"{Fore.CYAN}{'─'*60}")
-        print(f"{Fore.YELLOW}💡 This shows available MTF structures, NOT loaded data in memory")
+        
+        # Check for loaded data in memory
+        from src.interactive.data_state_manager import data_state_manager
+        
+        if data_state_manager.is_data_loaded():
+            data_summary = data_state_manager.get_data_summary()
+            print(f"{Fore.GREEN}📊 Data Loaded in Memory:")
+            print(f"  • Symbol: {data_summary['symbol']}")
+            print(f"  • Source: {data_summary['source']}")
+            print(f"  • Main Timeframe: {data_summary['main_timeframe']}")
+            print(f"  • Available Timeframes: {', '.join(data_summary['timeframes'])}")
+            print(f"  • Total Rows: {data_summary['total_rows']:,}")
+            print(f"  • Main Data Shape: {data_summary['main_data_shape']}")
+            print(f"  • Cross-timeframes: {len(data_summary['cross_timeframes'])}")
+            print(f"  • Memory Used: {data_summary['memory_used']:.1f} MB")
+            print(f"  • Loaded At: {data_summary['loaded_at']}")
+            print(f"{Fore.CYAN}{'─'*60}")
+        
+        print(f"{Fore.YELLOW}💡 Available MTF Structures on Disk:")
         print(f"{Fore.CYAN}{'─'*60}")
         
         try:
@@ -190,7 +208,15 @@ class ConfigurationMenu(BaseMenu):
                         else:
                             created_date = 'Unknown'
                         
-                        print(f"{Fore.WHITE}{symbol_name:<12} {source_name:<10} {'✅ Available':<12} {folder_size_mb:<10.1f} {timeframes_str:<15} {created_date:<15}")
+                        # Check if this data is loaded in memory
+                        from src.interactive.data_state_manager import data_state_manager
+                        is_loaded = (data_state_manager.is_data_loaded() and 
+                                   data_state_manager.get_loaded_data_info() and
+                                   data_state_manager.get_loaded_data_info().get('symbol') == symbol_name and
+                                   data_state_manager.get_loaded_data_info().get('source') == source_name)
+                        
+                        status = "✅ Loaded" if is_loaded else "✅ Available"
+                        print(f"{Fore.WHITE}{symbol_name:<12} {source_name:<10} {status:<12} {folder_size_mb:<10.1f} {timeframes_str:<15} {created_date:<15}")
                         
                     except Exception as e:
                         print_error(f"Error reading metadata for {symbol_name}: {e}")
@@ -211,6 +237,20 @@ class ConfigurationMenu(BaseMenu):
         """Display detailed memory usage information."""
         print(f"\n{Fore.YELLOW}🧠 Memory Usage")
         print(f"{Fore.CYAN}{'─'*60}")
+        
+        # Check for loaded data in memory
+        from src.interactive.data_state_manager import data_state_manager
+        
+        if data_state_manager.is_data_loaded():
+            data_summary = data_state_manager.get_data_summary()
+            print(f"{Fore.GREEN}📊 Loaded Data Memory:")
+            print(f"  • Symbol: {data_summary['symbol']}")
+            print(f"  • Source: {data_summary['source']}")
+            print(f"  • Data Memory Used: {data_summary['memory_used']:.1f} MB")
+            print(f"  • Main Data Shape: {data_summary['main_data_shape']}")
+            print(f"  • Total Rows: {data_summary['total_rows']:,}")
+            print(f"  • Loaded At: {data_summary['loaded_at']}")
+            print(f"{Fore.CYAN}{'─'*60}")
         
         try:
             process = psutil.Process()
@@ -242,10 +282,28 @@ class ConfigurationMenu(BaseMenu):
     
     
     def _data_range_info(self):
-        """Display data range information for available MTF structures."""
-        print(f"\n{Fore.YELLOW}📅 MTF Data Range Information")
+        """Display data range information for loaded data and available MTF structures."""
+        print(f"\n{Fore.YELLOW}📅 Data Range Information")
         print(f"{Fore.CYAN}{'─'*60}")
-        print(f"{Fore.YELLOW}💡 This shows available MTF structures, NOT loaded data in memory")
+        
+        # Check for loaded data in memory
+        from src.interactive.data_state_manager import data_state_manager
+        
+        if data_state_manager.is_data_loaded():
+            data_summary = data_state_manager.get_data_summary()
+            print(f"{Fore.GREEN}📊 Data Loaded in Memory:")
+            print(f"  • Symbol: {data_summary['symbol']}")
+            print(f"  • Source: {data_summary['source']}")
+            print(f"  • Main Timeframe: {data_summary['main_timeframe']}")
+            print(f"  • Available Timeframes: {', '.join(data_summary['timeframes'])}")
+            print(f"  • Total Rows: {data_summary['total_rows']:,}")
+            print(f"  • Main Data Shape: {data_summary['main_data_shape']}")
+            print(f"  • Cross-timeframes: {len(data_summary['cross_timeframes'])}")
+            print(f"  • Memory Used: {data_summary['memory_used']:.1f} MB")
+            print(f"  • Loaded At: {data_summary['loaded_at']}")
+            print(f"{Fore.CYAN}{'─'*60}")
+        
+        print(f"{Fore.YELLOW}💡 Available MTF Structures on Disk:")
         print(f"{Fore.CYAN}{'─'*60}")
         
         try:
@@ -322,7 +380,17 @@ class ConfigurationMenu(BaseMenu):
                         else:
                             print(f"  • Date Range: Main data file not found")
                         
-                        print(f"  • Status: {Fore.YELLOW}Available (not loaded in memory)")
+                        # Check if this data is loaded in memory
+                        from src.interactive.data_state_manager import data_state_manager
+                        is_loaded = (data_state_manager.is_data_loaded() and 
+                                   data_state_manager.get_loaded_data_info() and
+                                   data_state_manager.get_loaded_data_info().get('symbol') == symbol_name and
+                                   data_state_manager.get_loaded_data_info().get('source') == source_name)
+                        
+                        if is_loaded:
+                            print(f"  • Status: {Fore.GREEN}✅ Loaded in memory")
+                        else:
+                            print(f"  • Status: {Fore.YELLOW}Available (not loaded in memory)")
                         
                     except Exception as e:
                         print_error(f"Error reading metadata for {symbol_name}: {e}")
