@@ -236,10 +236,26 @@ class DataLoadingMenu(BaseMenu):
                 df['timeframe'] = timeframe
                 df['symbol'] = symbol.upper()
                 
+                # Store source path for data source determination
+                df.attrs['source_path'] = str(file_path)
+                
                 # Store processed data
                 processed_data[timeframe] = df
             
             print()  # New line after progress
+            
+            # Determine data source from the first loaded file
+            data_source = 'csv'  # Default for CSV converted data
+            if processed_data:
+                first_tf = list(processed_data.keys())[0]
+                first_df = processed_data[first_tf]
+                if hasattr(first_df, 'attrs') and 'source_path' in first_df.attrs:
+                    # Import DataLoader to use its method
+                    from .data_loading import DataLoader
+                    loader = DataLoader()
+                    data_source = loader._determine_data_source(first_df.attrs['source_path'])
+            
+            print(f"{Fore.GREEN}📊 Data source detected: {data_source}")
             
             # Skip saving individual timeframe data - only save MTF structure
             print(f"{Fore.YELLOW}💡 Skipping individual timeframe saving - only MTF structure will be saved")
@@ -248,8 +264,8 @@ class DataLoadingMenu(BaseMenu):
             print(f"\n{Fore.YELLOW}🔧 Creating MTF data structure for ML...")
             mtf_data = self._create_mtf_structure_with_progress(processed_data, main_timeframe, symbol)
             
-            # Save MTF structure with progress tracking
-            self._save_mtf_structure_with_progress(symbol, mtf_data)
+            # Save MTF structure with progress tracking and data source
+            self._save_mtf_structure_with_progress(symbol, mtf_data, data_source)
             
             print(f"\n{Fore.GREEN}✅ Successfully saved {symbol} data to {symbol_dir}")
             print(f"{Fore.GREEN}🎯 MTF structure created and saved for ML!")
@@ -447,7 +463,7 @@ class DataLoadingMenu(BaseMenu):
             minutes = int((seconds % 3600) // 60)
             return f"{hours}h {minutes}m"
     
-    def _save_mtf_structure_with_progress(self, symbol: str, mtf_data: Dict[str, Any]):
+    def _save_mtf_structure_with_progress(self, symbol: str, mtf_data: Dict[str, Any], data_source: str = 'unknown'):
         """Save MTF structure in ML-optimized format with progress tracking."""
         try:
             import time
@@ -488,8 +504,8 @@ class DataLoadingMenu(BaseMenu):
             # Step 4: Save metadata and create loader
             self._show_mtf_progress("Saving metadata and creating ML loader", 0.8, start_time)
             
-            # Save using DataLoader's method
-            loader._save_loaded_data(symbol, mtf_data['timeframe_data'], mtf_data)
+            # Save using DataLoader's method with data source
+            loader._save_loaded_data(symbol, mtf_data['timeframe_data'], mtf_data, data_source)
             
             # Final step
             self._show_mtf_progress("MTF structure saved successfully", 1.0, start_time)
@@ -523,8 +539,8 @@ class DataLoadingMenu(BaseMenu):
                     'columns': list(df.columns)
                 }
             
-            # Save using DataLoader's method
-            loader._save_loaded_data(symbol, mtf_data['timeframe_data'], mtf_data)
+            # Save using DataLoader's method with data source
+            loader._save_loaded_data(symbol, mtf_data['timeframe_data'], mtf_data, 'unknown')
             
         except Exception as e:
             print_error(f"Error saving MTF structure: {e}")
@@ -803,7 +819,7 @@ class DataLoadingMenu(BaseMenu):
             data_loader = DataLoader()
             symbol_display = SymbolDisplay()
             
-            # Check for existing MTF structures
+            # Check for existing MTF structures in new source-based structure
             mtf_dir = Path("data/cleaned_data/mtf_structures")
             
             if not mtf_dir.exists():
@@ -812,8 +828,26 @@ class DataLoadingMenu(BaseMenu):
                 input(f"\n{Fore.CYAN}Press Enter to continue...")
                 return
             
-            # Get all symbol MTF folders
-            mtf_symbol_folders = [f for f in mtf_dir.iterdir() if f.is_dir()]
+            # Get all source directories
+            source_dirs = [f for f in mtf_dir.iterdir() if f.is_dir()]
+            
+            if not source_dirs:
+                print(f"{Fore.RED}❌ No MTF source directories found")
+                print(f"{Fore.YELLOW}💡 Please first create MTF structures using 'Load Data -> CSV Converted'")
+                input(f"\n{Fore.CYAN}Press Enter to continue...")
+                return
+            
+            # Get all symbol MTF folders from all source directories
+            mtf_symbol_folders = []
+            for source_dir in source_dirs:
+                symbol_folders = [f for f in source_dir.iterdir() if f.is_dir()]
+                for symbol_folder in symbol_folders:
+                    # Store source information in a dictionary
+                    folder_info = {
+                        'path': symbol_folder,
+                        'source': source_dir.name
+                    }
+                    mtf_symbol_folders.append(folder_info)
             
             if not mtf_symbol_folders:
                 print(f"{Fore.RED}❌ No MTF symbol folders found")
@@ -825,8 +859,10 @@ class DataLoadingMenu(BaseMenu):
             mtf_info = {}
             total_size = 0
             
-            for symbol_folder in sorted(mtf_symbol_folders):
+            for folder_info in sorted(mtf_symbol_folders, key=lambda x: (x['source'], x['path'].name)):
+                symbol_folder = folder_info['path']
                 symbol_name = symbol_folder.name.upper()
+                source_name = folder_info['source']
                 mtf_metadata_file = symbol_folder / "mtf_metadata.json"
                 
                 if mtf_metadata_file.exists():
@@ -839,8 +875,12 @@ class DataLoadingMenu(BaseMenu):
                         folder_size_mb = folder_size / (1024 * 1024)
                         total_size += folder_size_mb
                         
-                        mtf_info[symbol_name] = {
+                        # Create unique key that includes source
+                        symbol_key = f"{symbol_name}_{source_name}"
+                        
+                        mtf_info[symbol_key] = {
                             'symbol': metadata.get('symbol', symbol_name),
+                            'source': source_name,
                             'main_timeframe': metadata.get('main_timeframe', 'M1'),
                             'timeframes': metadata.get('timeframes', []),
                             'total_rows': metadata.get('total_rows', 0),
@@ -848,7 +888,8 @@ class DataLoadingMenu(BaseMenu):
                             'cross_timeframes': metadata.get('cross_timeframes', []),
                             'created_at': metadata.get('created_at', 'Unknown'),
                             'size_mb': folder_size_mb,
-                            'file_count': len(list(symbol_folder.glob('*.parquet')))
+                            'file_count': len(list(symbol_folder.glob('*.parquet'))),
+                            'folder_path': str(symbol_folder)
                         }
                     except Exception as e:
                         print_error(f"Error reading MTF metadata for {symbol_name}: {e}")
@@ -861,20 +902,20 @@ class DataLoadingMenu(BaseMenu):
             
             # Display MTF structures table
             print(f"\n{Fore.GREEN}🎯 Available MTF Structures ({len(mtf_info)}):")
-            print(f"{Fore.CYAN}{'─'*90}")
-            print(f"{Fore.WHITE}{'Symbol':<12} {'Size (MB)':<10} {'Files':<6} {'Main TF':<8} {'Timeframes':<20} {'Rows':<12} {'Created':<12}")
-            print(f"{Fore.CYAN}{'─'*90}")
+            print(f"{Fore.CYAN}{'─'*110}")
+            print(f"{Fore.WHITE}{'Symbol':<12} {'Source':<10} {'Size (MB)':<10} {'Files':<6} {'Main TF':<8} {'Timeframes':<20} {'Rows':<12} {'Created':<12}")
+            print(f"{Fore.CYAN}{'─'*110}")
             
-            for symbol_name, info in mtf_info.items():
+            for symbol_key, info in mtf_info.items():
                 timeframes_str = ', '.join(info['timeframes'][:3])
                 if len(info['timeframes']) > 3:
                     timeframes_str += f" +{len(info['timeframes'])-3} more"
                 
                 created_date = info['created_at'][:10] if info['created_at'] != 'Unknown' else 'Unknown'
                 
-                print(f"{Fore.WHITE}{symbol_name:<12} {info['size_mb']:<10.1f} {info['file_count']:<6} {info['main_timeframe']:<8} {timeframes_str:<20} {info['total_rows']:<12,} {created_date:<12}")
+                print(f"{Fore.WHITE}{info['symbol']:<12} {info['source']:<10} {info['size_mb']:<10.1f} {info['file_count']:<6} {info['main_timeframe']:<8} {timeframes_str:<20} {info['total_rows']:<12,} {created_date:<12}")
             
-            print(f"{Fore.CYAN}{'─'*90}")
+            print(f"{Fore.CYAN}{'─'*110}")
             print(f"{Fore.YELLOW}Total: {len(mtf_info)} MTF structures, {total_size:.1f} MB")
             
             # Get symbol choice from user
@@ -885,12 +926,12 @@ class DataLoadingMenu(BaseMenu):
                 input(f"\n{Fore.CYAN}Press Enter to continue...")
                 return
             
-            symbol_choice_upper = symbol_choice.upper()
-            selected_mtf_info = mtf_info[symbol_choice_upper]
+            selected_mtf_info = mtf_info[symbol_choice]
             
             # Display MTF structure info
-            print(f"\n{Fore.GREEN}🎯 {symbol_choice_upper} - MTF Structure Info:")
+            print(f"\n{Fore.GREEN}🎯 {selected_mtf_info['symbol']} ({selected_mtf_info['source']}) - MTF Structure Info:")
             print(f"{Fore.CYAN}{'─'*60}")
+            print(f"  • Source: {selected_mtf_info['source']}")
             print(f"  • Main Timeframe: {selected_mtf_info['main_timeframe']}")
             print(f"  • Available Timeframes: {', '.join(selected_mtf_info['timeframes'])}")
             print(f"  • Total Rows: {selected_mtf_info['total_rows']:,}")
@@ -902,11 +943,12 @@ class DataLoadingMenu(BaseMenu):
             
             # Load MTF structure
             print(f"\n{Fore.YELLOW}🔄 Loading MTF structure into memory...")
-            result = self._load_mtf_structure(symbol_choice, selected_mtf_info)
+            result = self._load_mtf_structure(selected_mtf_info['symbol'], selected_mtf_info)
             
             if result['status'] == 'success':
                 print(f"\n{Fore.GREEN}✅ MTF structure loaded successfully!")
-                print(f"  • Symbol: {symbol_choice_upper}")
+                print(f"  • Symbol: {selected_mtf_info['symbol']}")
+                print(f"  • Source: {selected_mtf_info['source']}")
                 print(f"  • Main data shape: {result['main_data'].shape}")
                 print(f"  • Cross-timeframes: {len(result['cross_timeframes'])}")
                 print(f"  • Memory used: {result['memory_used']:.1f} MB")
@@ -936,8 +978,9 @@ class DataLoadingMenu(BaseMenu):
             
             start_time = time.time()
             
-            # Load main data
-            mtf_dir = Path("data/cleaned_data/mtf_structures") / symbol.lower()
+            # Load main data using the correct path with source
+            source = mtf_info.get('source', 'unknown')
+            mtf_dir = Path("data/cleaned_data/mtf_structures") / source / symbol.lower()
             main_file = mtf_dir / f"{symbol.lower()}_main_{mtf_info['main_timeframe'].lower()}.parquet"
             
             if not main_file.exists():

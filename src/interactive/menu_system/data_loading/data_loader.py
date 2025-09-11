@@ -36,6 +36,55 @@ class DataLoader:
         self.mtf_dir = self.data_root / "mtf_structures"
         self.mtf_dir.mkdir(parents=True, exist_ok=True)
     
+    def _determine_data_source(self, file_path: str) -> str:
+        """
+        Determine data source based on file path.
+        
+        Args:
+            file_path: Path to the source file
+            
+        Returns:
+            Source identifier: 'csv', 'binance', 'ind_csv', 'ind_parquet', 'ind_json', or 'unknown'
+        """
+        try:
+            path_str = str(file_path).lower()
+            
+            # Check for CSV converted data
+            if 'csv_converted' in path_str:
+                return 'csv'
+            
+            # Check for Binance data
+            if 'binance' in path_str:
+                return 'binance'
+            
+            # Check for indicators data
+            if 'indicators' in path_str:
+                if 'csv' in path_str:
+                    return 'ind_csv'
+                elif 'parquet' in path_str:
+                    return 'ind_parquet'
+                elif 'json' in path_str:
+                    return 'ind_json'
+                else:
+                    return 'ind_unknown'
+            
+            # Check for other known sources
+            if 'kraken' in path_str:
+                return 'kraken'
+            elif 'bybit' in path_str:
+                return 'bybit'
+            elif 'polygon' in path_str:
+                return 'polygon'
+            elif 'web3' in path_str:
+                return 'web3'
+            
+            # Default to unknown if no pattern matches
+            return 'unknown'
+            
+        except Exception as e:
+            print_error(f"Error determining data source for {file_path}: {e}")
+            return 'unknown'
+    
     def load_symbol_data_with_progress(self, symbol: str, symbol_info: Dict[str, Any]) -> Dict[str, Any]:
         """
         Load symbol data with modern progress tracking and memory usage display.
@@ -119,7 +168,15 @@ class DataLoader:
             mtf_data = self._create_mtf_structure(loaded_data, symbol)
             
             # Save loaded data for future use
-            self._save_loaded_data(symbol, loaded_data, mtf_data)
+            # Determine data source from the first loaded file
+            data_source = 'unknown'
+            if loaded_data:
+                first_tf = list(loaded_data.keys())[0]
+                first_df = loaded_data[first_tf]
+                if hasattr(first_df, 'attrs') and 'source_path' in first_df.attrs:
+                    data_source = self._determine_data_source(first_df.attrs['source_path'])
+            
+            self._save_loaded_data(symbol, loaded_data, mtf_data, data_source)
             
             print(f"\n{Fore.GREEN}🎯 MTF data structure created and saved!")
             print(f"  • Symbol: {symbol.upper()}")
@@ -228,10 +285,12 @@ class DataLoader:
             return {}
     
     def _save_loaded_data(self, symbol: str, loaded_data: Dict[str, pd.DataFrame], 
-                         mtf_data: Dict[str, Any]):
-        """Save loaded data in ML-optimized format."""
+                         mtf_data: Dict[str, Any], data_source: str = 'unknown'):
+        """Save loaded data in ML-optimized format with source subfolder."""
         try:
-            symbol_mtf_dir = self.mtf_dir / symbol.lower()
+            # Create source-specific directory structure
+            source_dir = self.mtf_dir / data_source
+            symbol_mtf_dir = source_dir / symbol.lower()
             symbol_mtf_dir.mkdir(parents=True, exist_ok=True)
             
             # Save main timeframe data as parquet (most efficient for ML)
@@ -241,7 +300,7 @@ class DataLoader:
             if not main_data.empty:
                 main_file = symbol_mtf_dir / f"{symbol.lower()}_main_{main_tf.lower()}.parquet"
                 main_data.to_parquet(main_file, compression='snappy', index=True)
-                print(f"{Fore.GREEN}💾 Main data saved: \n{main_file}")
+                print(f"{Fore.GREEN}\n 💾 Main data saved: \n{main_file}")
             
             # Save cross-timeframe features as separate parquet files
             cross_features = mtf_data.get('cross_timeframe_features', {})
