@@ -169,10 +169,175 @@ class DataLoadingMenu(BaseMenu):
         
         print(f"\n{Fore.GREEN}✅ Selected: {symbol} with main timeframe {main_timeframe}")
         
-        # Load and save data
-        self._load_and_save_symbol_data(symbol, main_timeframe, analysis)
+        # Load and save data with MTF structure
+        self._load_and_save_symbol_data_with_mtf(symbol, main_timeframe, analysis)
         
         input(f"\n{Fore.CYAN}Press Enter to continue...")
+    
+    def _load_and_save_symbol_data_with_mtf(self, symbol: str, main_timeframe: str, analysis: Dict[str, Any]):
+        """Load and save symbol data with immediate MTF structure creation."""
+        print(f"\n{Fore.YELLOW}🔄 Loading and processing {symbol} data...")
+        
+        try:
+            from .data_loading import DataLoader, SymbolDisplay
+            import pandas as pd
+            import numpy as np
+            from pathlib import Path
+            from datetime import datetime
+            import time
+            
+            # Load data for the symbol from CSV converted files
+            print(f"{Fore.CYAN}📊 Loading data from CSV converted files...")
+            
+            # Get all timeframes for this symbol
+            symbol_files = [f for f in analysis["files_info"].items() if self._extract_symbol_from_filename(f[0]) == symbol]
+            available_timeframes = []
+            for filename, file_info in symbol_files:
+                if file_info['timeframes'] and file_info['timeframes'][0] != 'No time data':
+                    available_timeframes.append(file_info['timeframes'][0])
+            
+            available_timeframes = sorted(list(set(available_timeframes)), 
+                                       key=lambda x: {'M1': 1, 'M5': 2, 'M15': 3, 'H1': 4, 'H4': 5, 'D1': 6, 'W1': 7, 'MN1': 8}.get(x, 999))
+            
+            print(f"{Fore.GREEN}📊 Available timeframes: {', '.join(available_timeframes)}")
+            print(f"{Fore.GREEN}🎯 Main timeframe: {main_timeframe}")
+            
+            # Create symbol directory
+            symbol_dir = Path("data/cleaned_data") / symbol.lower()
+            symbol_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Process each timeframe
+            processed_data = {}
+            total_files = len(available_timeframes)
+            
+            print(f"\n{Fore.YELLOW}🔄 Processing timeframes...")
+            for i, timeframe in enumerate(available_timeframes):
+                progress = (i + 1) / total_files
+                print(f"\r{Fore.CYAN}📊 Processing {timeframe}... [{int(progress*100):3d}%]", end="", flush=True)
+                
+                # Find the file for this timeframe
+                timeframe_file = None
+                for filename, file_info in symbol_files:
+                    if file_info['timeframes'] and file_info['timeframes'][0] == timeframe:
+                        timeframe_file = filename
+                        break
+                
+                if not timeframe_file:
+                    continue
+                
+                # Load the specific timeframe data
+                file_path = Path("data/cache/csv_converted") / timeframe_file
+                df = pd.read_parquet(file_path)
+                
+                # Standardize column names
+                df = self._standardize_dataframe(df)
+                
+                # Add timeframe information
+                df['timeframe'] = timeframe
+                df['symbol'] = symbol.upper()
+                
+                # Store processed data
+                processed_data[timeframe] = df
+            
+            print()  # New line after progress
+            
+            # Save data in ML-optimized format
+            self._save_ml_optimized_data(symbol, main_timeframe, processed_data, symbol_dir)
+            
+            # Create MTF structure immediately
+            print(f"\n{Fore.YELLOW}🔧 Creating MTF data structure for ML...")
+            mtf_data = self._create_mtf_structure_from_processed_data(processed_data, main_timeframe, symbol)
+            
+            # Save MTF structure
+            self._save_mtf_structure(symbol, mtf_data)
+            
+            print(f"\n{Fore.GREEN}✅ Successfully saved {symbol} data to {symbol_dir}")
+            print(f"{Fore.GREEN}🎯 MTF structure created and saved for ML!")
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Error processing data: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    def _create_mtf_structure_from_processed_data(self, processed_data: Dict[str, pd.DataFrame], main_timeframe: str, symbol: str) -> Dict[str, Any]:
+        """Create MTF structure from processed data."""
+        try:
+            from .data_loading import DataLoader
+            
+            # Create MTF data structure
+            mtf_data = {
+                'symbol': symbol.upper(),
+                'main_timeframe': main_timeframe,
+                'timeframes': list(processed_data.keys()),
+                'main_data': processed_data.get(main_timeframe, pd.DataFrame()),
+                'timeframe_data': processed_data,
+                'metadata': {
+                    'created_at': pd.Timestamp.now().isoformat(),
+                    'total_rows': sum(len(df) for df in processed_data.values()),
+                    'timeframe_counts': {tf: len(df) for tf, df in processed_data.items()}
+                }
+            }
+            
+            # Add cross-timeframe features if multiple timeframes available
+            if len(processed_data) > 1:
+                mtf_data['cross_timeframe_features'] = self._create_cross_timeframe_features(processed_data, main_timeframe)
+            
+            return mtf_data
+            
+        except Exception as e:
+            print_error(f"Error creating MTF structure: {e}")
+            return {'error': str(e)}
+    
+    def _create_cross_timeframe_features(self, processed_data: Dict[str, pd.DataFrame], main_timeframe: str) -> Dict[str, Any]:
+        """Create cross-timeframe features for ML."""
+        try:
+            main_df = processed_data[main_timeframe]
+            cross_features = {}
+            
+            # Add features from higher timeframes
+            for tf, df in processed_data.items():
+                if tf != main_timeframe:
+                    # Resample to main timeframe frequency
+                    resampled = df.resample('1min').ffill()  # Forward fill to 1-minute frequency
+                    cross_features[tf] = resampled
+            
+            return cross_features
+            
+        except Exception as e:
+            print_error(f"Error creating cross-timeframe features: {e}")
+            return {}
+    
+    def _save_mtf_structure(self, symbol: str, mtf_data: Dict[str, Any]):
+        """Save MTF structure in ML-optimized format."""
+        try:
+            from .data_loading import DataLoader
+            import json
+            
+            # Use DataLoader to save MTF structure
+            loader = DataLoader()
+            
+            # Create symbol info for DataLoader
+            symbol_info = {
+                'timeframes': mtf_data['timeframes'],
+                'timeframe_details': {}
+            }
+            
+            # Fill timeframe details
+            for tf in mtf_data['timeframes']:
+                df = mtf_data['timeframe_data'][tf]
+                symbol_info['timeframe_details'][tf] = {
+                    'size_mb': 0,  # Will be calculated by DataLoader
+                    'rows': len(df),
+                    'start_date': str(df.index.min()) if not df.empty else 'No data',
+                    'end_date': str(df.index.max()) if not df.empty else 'No data',
+                    'columns': list(df.columns)
+                }
+            
+            # Save using DataLoader's method
+            loader._save_loaded_data(symbol, mtf_data['timeframe_data'], mtf_data)
+            
+        except Exception as e:
+            print_error(f"Error saving MTF structure: {e}")
     
     def _load_and_save_symbol_data(self, symbol: str, main_timeframe: str, analysis: Dict[str, Any]):
         """Load and save symbol data in ML-optimized format."""
@@ -580,33 +745,95 @@ if __name__ == "__main__":
         input(f"\n{Fore.CYAN}Press Enter to continue...")
     
     def _load_cleaned_data(self):
-        """Load cleaned data with all timeframes for comprehensive analysis."""
-        print(f"\n{Fore.YELLOW}✨ Cleaned Data Analysis...")
+        """Load pre-created MTF structures for fast ML analysis."""
+        print(f"\n{Fore.YELLOW}✨ MTF Data Structures Analysis...")
         
         try:
             from .data_loading import SymbolAnalyzer, DataLoader, SymbolDisplay
+            from pathlib import Path
+            import json
             
             # Initialize components
             symbol_analyzer = SymbolAnalyzer()
             data_loader = DataLoader()
             symbol_display = SymbolDisplay()
             
-            # Analyze all symbols
-            analysis_result = symbol_analyzer.analyze_all_symbols()
+            # Check for existing MTF structures
+            mtf_dir = Path("data/cleaned_data/mtf_structures")
             
-            if analysis_result["status"] == "error":
-                symbol_display.display_error(analysis_result["message"])
+            if not mtf_dir.exists():
+                print(f"{Fore.RED}❌ No MTF structures found")
+                print(f"{Fore.YELLOW}💡 Please first create MTF structures using 'Load Data -> CSV Converted'")
                 input(f"\n{Fore.CYAN}Press Enter to continue...")
                 return
             
-            symbol_info = analysis_result["symbols"]
-            total_size = analysis_result["total_size_mb"]
+            # Get all symbol MTF folders
+            mtf_symbol_folders = [f for f in mtf_dir.iterdir() if f.is_dir()]
             
-            # Display symbols table
-            symbol_display.display_symbols_table(symbol_info, total_size)
+            if not mtf_symbol_folders:
+                print(f"{Fore.RED}❌ No MTF symbol folders found")
+                print(f"{Fore.YELLOW}💡 Please first create MTF structures using 'Load Data -> CSV Converted'")
+                input(f"\n{Fore.CYAN}Press Enter to continue...")
+                return
+            
+            # Analyze MTF structures
+            mtf_info = {}
+            total_size = 0
+            
+            for symbol_folder in sorted(mtf_symbol_folders):
+                symbol_name = symbol_folder.name.upper()
+                mtf_metadata_file = symbol_folder / "mtf_metadata.json"
+                
+                if mtf_metadata_file.exists():
+                    try:
+                        with open(mtf_metadata_file, 'r') as f:
+                            metadata = json.load(f)
+                        
+                        # Calculate folder size
+                        folder_size = sum(f.stat().st_size for f in symbol_folder.rglob('*') if f.is_file())
+                        folder_size_mb = folder_size / (1024 * 1024)
+                        total_size += folder_size_mb
+                        
+                        mtf_info[symbol_name] = {
+                            'symbol': metadata.get('symbol', symbol_name),
+                            'main_timeframe': metadata.get('main_timeframe', 'M1'),
+                            'timeframes': metadata.get('timeframes', []),
+                            'total_rows': metadata.get('total_rows', 0),
+                            'main_data_shape': metadata.get('main_data_shape', [0, 0]),
+                            'cross_timeframes': metadata.get('cross_timeframes', []),
+                            'created_at': metadata.get('created_at', 'Unknown'),
+                            'size_mb': folder_size_mb,
+                            'file_count': len(list(symbol_folder.glob('*.parquet')))
+                        }
+                    except Exception as e:
+                        print_error(f"Error reading MTF metadata for {symbol_name}: {e}")
+                        continue
+            
+            if not mtf_info:
+                print(f"{Fore.RED}❌ No valid MTF structures found")
+                input(f"\n{Fore.CYAN}Press Enter to continue...")
+                return
+            
+            # Display MTF structures table
+            print(f"\n{Fore.GREEN}🎯 Available MTF Structures ({len(mtf_info)}):")
+            print(f"{Fore.CYAN}{'─'*90}")
+            print(f"{Fore.WHITE}{'Symbol':<12} {'Size (MB)':<10} {'Files':<6} {'Main TF':<8} {'Timeframes':<20} {'Rows':<12} {'Created':<12}")
+            print(f"{Fore.CYAN}{'─'*90}")
+            
+            for symbol_name, info in mtf_info.items():
+                timeframes_str = ', '.join(info['timeframes'][:3])
+                if len(info['timeframes']) > 3:
+                    timeframes_str += f" +{len(info['timeframes'])-3} more"
+                
+                created_date = info['created_at'][:10] if info['created_at'] != 'Unknown' else 'Unknown'
+                
+                print(f"{Fore.WHITE}{symbol_name:<12} {info['size_mb']:<10.1f} {info['file_count']:<6} {info['main_timeframe']:<8} {timeframes_str:<20} {info['total_rows']:<12,} {created_date:<12}")
+            
+            print(f"{Fore.CYAN}{'─'*90}")
+            print(f"{Fore.YELLOW}Total: {len(mtf_info)} MTF structures, {total_size:.1f} MB")
             
             # Get symbol choice from user
-            available_symbols = list(symbol_info.keys())
+            available_symbols = list(mtf_info.keys())
             symbol_choice = symbol_display.get_symbol_choice(available_symbols)
             
             if not symbol_choice:
@@ -614,51 +841,91 @@ if __name__ == "__main__":
                 return
             
             symbol_choice_upper = symbol_choice.upper()
-            selected_info = symbol_info[symbol_choice_upper]
+            selected_mtf_info = mtf_info[symbol_choice_upper]
             
-            # Display timeframes info
-            symbol_display.display_timeframes_info(
-                symbol_choice_upper, 
-                selected_info['timeframes'], 
-                selected_info['timeframe_details']
-            )
+            # Display MTF structure info
+            print(f"\n{Fore.GREEN}🎯 {symbol_choice_upper} - MTF Structure Info:")
+            print(f"{Fore.CYAN}{'─'*60}")
+            print(f"  • Main Timeframe: {selected_mtf_info['main_timeframe']}")
+            print(f"  • Available Timeframes: {', '.join(selected_mtf_info['timeframes'])}")
+            print(f"  • Total Rows: {selected_mtf_info['total_rows']:,}")
+            print(f"  • Main Data Shape: {selected_mtf_info['main_data_shape']}")
+            print(f"  • Cross-timeframes: {len(selected_mtf_info['cross_timeframes'])}")
+            print(f"  • Created: {selected_mtf_info['created_at']}")
+            print(f"  • Size: {selected_mtf_info['size_mb']:.1f} MB")
+            print(f"{Fore.CYAN}{'─'*60}")
             
-            # Display loading start message
-            symbol_display.display_loading_start(symbol_choice_upper, selected_info['timeframes'])
-            
-            # Load all timeframes for the selected symbol
-            result = data_loader.load_symbol_data_with_progress(symbol_choice, selected_info)
-            
-            # Display loading results
-            symbol_display.display_loading_complete(symbol_choice_upper, result)
+            # Load MTF structure
+            print(f"\n{Fore.YELLOW}🔄 Loading MTF structure into memory...")
+            result = self._load_mtf_structure(symbol_choice, selected_mtf_info)
             
             if result['status'] == 'success':
-                # Display detailed summary
-                symbol_display.display_loading_summary(
-                    symbol_choice_upper, 
-                    result['loaded_data'], 
-                    result['memory_used'], 
-                    result['loading_time']
-                )
-                
-                # Display timeframe summary
-                symbol_display.display_timeframe_summary(
-                    result['loaded_data'], 
-                    selected_info['timeframe_details']
-                )
-                
-                # Display MTF info
-                symbol_display.display_mtf_info(result['mtf_data'])
-                
-                # Display save info
-                symbol_display.display_save_info(symbol_choice_upper, f"data/cleaned_data/mtf_structures/{symbol_choice.lower()}/")
+                print(f"\n{Fore.GREEN}✅ MTF structure loaded successfully!")
+                print(f"  • Symbol: {symbol_choice_upper}")
+                print(f"  • Main data shape: {result['main_data'].shape}")
+                print(f"  • Cross-timeframes: {len(result['cross_timeframes'])}")
+                print(f"  • Memory used: {result['memory_used']:.1f} MB")
+                print(f"  • Loading time: {result['loading_time']:.2f} seconds")
+                print(f"\n{Fore.GREEN}🎯 Ready for EDA, feature engineering, ML, backtesting, and monitoring!")
+            else:
+                print(f"\n{Fore.RED}❌ Error loading MTF structure: {result['message']}")
             
         except Exception as e:
-            print(f"\n{Fore.RED}❌ Error in cleaned data loading: {e}")
+            print(f"\n{Fore.RED}❌ Error in MTF data loading: {e}")
             import traceback
             traceback.print_exc()
         
         input(f"\n{Fore.CYAN}Press Enter to continue...")
+    
+    def _load_mtf_structure(self, symbol: str, mtf_info: Dict[str, Any]) -> Dict[str, Any]:
+        """Load MTF structure from saved files."""
+        try:
+            import psutil
+            import time
+            import pandas as pd
+            from pathlib import Path
+            
+            # Get initial memory usage
+            process = psutil.Process()
+            initial_memory = process.memory_info().rss / (1024 * 1024)  # MB
+            
+            start_time = time.time()
+            
+            # Load main data
+            mtf_dir = Path("data/cleaned_data/mtf_structures") / symbol.lower()
+            main_file = mtf_dir / f"{symbol.lower()}_main_{mtf_info['main_timeframe'].lower()}.parquet"
+            
+            if not main_file.exists():
+                return {'status': 'error', 'message': f'Main data file not found: {main_file}'}
+            
+            main_data = pd.read_parquet(main_file)
+            
+            # Load cross-timeframe features
+            cross_timeframes = {}
+            cross_dir = mtf_dir / "cross_timeframes"
+            
+            if cross_dir.exists():
+                for tf in mtf_info['cross_timeframes']:
+                    cross_file = cross_dir / f"{symbol.lower()}_{tf.lower()}_cross.parquet"
+                    if cross_file.exists():
+                        cross_timeframes[tf] = pd.read_parquet(cross_file)
+            
+            # Get final memory usage
+            final_memory = process.memory_info().rss / (1024 * 1024)  # MB
+            memory_used = final_memory - initial_memory
+            loading_time = time.time() - start_time
+            
+            return {
+                'status': 'success',
+                'main_data': main_data,
+                'cross_timeframes': cross_timeframes,
+                'memory_used': memory_used,
+                'loading_time': loading_time,
+                'metadata': mtf_info
+            }
+            
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
     
     def _display_folder_info(self, folder_info: Dict[str, Any], folder_name: str):
         """Display detailed folder information."""
