@@ -69,6 +69,7 @@ class TestUniversalTradingMetrics:
         assert calculator.lot_size == 1.0
         assert calculator.risk_reward_ratio == 2.0
         assert calculator.fee_per_trade == 0.07
+        assert calculator.timeout_seconds == 30
     
     def test_initialization_with_custom_params(self):
         """Test initialization with custom parameters."""
@@ -80,6 +81,20 @@ class TestUniversalTradingMetrics:
         assert calc.lot_size == 2.5
         assert calc.risk_reward_ratio == 3.0
         assert calc.fee_per_trade == 0.1
+        assert calc.timeout_seconds == 30  # Default timeout
+    
+    def test_initialization_with_custom_timeout(self):
+        """Test initialization with custom timeout parameter."""
+        calc = UniversalTradingMetrics(
+            lot_size=1.0,
+            risk_reward_ratio=2.0,
+            fee_per_trade=0.07,
+            timeout_seconds=60
+        )
+        assert calc.lot_size == 1.0
+        assert calc.risk_reward_ratio == 2.0
+        assert calc.fee_per_trade == 0.07
+        assert calc.timeout_seconds == 60
     
     def test_get_rule_name_string(self, calculator):
         """Test getting rule name from string."""
@@ -433,8 +448,8 @@ class TestDisplayUniversalTradingMetrics:
             
             metrics = display_universal_trading_metrics(sample_data, "Test_Rule")
             
-            # Check that class was instantiated with default parameters
-            mock_class.assert_called_once_with(1.0, 2.0, 0.07)
+            # Check that class was instantiated with default parameters (including timeout_seconds)
+            mock_class.assert_called_once_with(1.0, 2.0, 0.07, 30)
             
             # Check that method was called with correct parameters
             mock_instance.calculate_and_display_metrics.assert_called_once_with(
@@ -459,8 +474,35 @@ class TestDisplayUniversalTradingMetrics:
                 fee_per_trade=0.1
             )
             
-            # Check that class was instantiated with custom parameters
-            mock_class.assert_called_once_with(2.5, 3.0, 0.1)
+            # Check that class was instantiated with custom parameters (including default timeout_seconds)
+            mock_class.assert_called_once_with(2.5, 3.0, 0.1, 30)
+            
+            # Check that method was called with correct parameters
+            mock_instance.calculate_and_display_metrics.assert_called_once_with(
+                sample_data, "Test_Rule", signal_col='Direction'
+            )
+            
+            # Check return value
+            assert metrics == {'test': 1.0}
+    
+    def test_display_universal_trading_metrics_with_timeout(self, sample_data):
+        """Test convenience function with custom timeout parameter."""
+        with patch('src.calculation.universal_trading_metrics.UniversalTradingMetrics') as mock_class:
+            mock_instance = MagicMock()
+            mock_class.return_value = mock_instance
+            mock_instance.calculate_and_display_metrics.return_value = {'test': 1.0}
+            
+            metrics = display_universal_trading_metrics(
+                sample_data, 
+                "Test_Rule",
+                lot_size=1.0,
+                risk_reward_ratio=2.0,
+                fee_per_trade=0.07,
+                timeout_seconds=60
+            )
+            
+            # Check that class was instantiated with custom timeout
+            mock_class.assert_called_once_with(1.0, 2.0, 0.07, 60)
             
             # Check that method was called with correct parameters
             mock_instance.calculate_and_display_metrics.assert_called_once_with(
