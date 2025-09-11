@@ -7,6 +7,11 @@ This module provides the data loading submenu with support for multiple data sou
 
 from typing import Dict, Any, Optional
 import time
+import pandas as pd
+import numpy as np
+from pathlib import Path
+from datetime import datetime
+import json
 import colorama
 from colorama import Fore, Back, Style
 from .base_menu import BaseMenu
@@ -108,26 +113,329 @@ class DataLoadingMenu(BaseMenu):
                     
                     print(f"  {Fore.WHITE}{timeframe:>4} │ {size_mb:>6.1f}MB │ {rows:>8,} rows │ {start_date} to {end_date}")
         
-        # Ask if user wants to load data
-        load_data = input(f"\n{Fore.GREEN}Load data into memory? (y/n): {Style.RESET_ALL}").strip().lower()
+        # Ask user to choose symbol and timeframe
+        print(f"\n{Fore.GREEN}📊 Data Loading Configuration")
+        print(f"{Fore.CYAN}{'─'*50}")
         
-        if load_data == 'y':
-            # Get symbol filter from user
-            symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'eurusd'): {Style.RESET_ALL}").strip()
-            if not symbol_filter:
-                symbol_filter = None
-            
-            # Load data
-            from src.interactive.data_management import DataLoader
-            loader = DataLoader()
-            result = loader.load_csv_converted_data(symbol_filter)
-            
-            if result["status"] == "success":
-                self._display_loaded_data(result)
-            else:
-                print(f"{Fore.RED}❌ Error: {result['message']}")
+        # Get symbol from user
+        symbol = input(f"{Fore.GREEN}Choose Symbol to load data into memory (e.g., 'eurusd'): {Style.RESET_ALL}").strip().upper()
+        if not symbol:
+            print(f"{Fore.RED}❌ No symbol provided. Exiting...")
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            return
+        
+        # Check if symbol exists
+        if symbol not in analysis["symbols"]:
+            print(f"{Fore.RED}❌ Symbol '{symbol}' not found in available symbols.")
+            print(f"{Fore.YELLOW}Available symbols: {', '.join(analysis['symbols'])}")
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            return
+        
+        # Show available timeframes for this symbol
+        symbol_files = [f for f in analysis["files_info"].items() if self._extract_symbol_from_filename(f[0]) == symbol]
+        timeframes = []
+        for filename, file_info in symbol_files:
+            if file_info['timeframes'] and file_info['timeframes'][0] != 'No time data':
+                timeframes.append(file_info['timeframes'][0])
+        
+        timeframes = sorted(list(set(timeframes)), key=lambda x: {'M1': 1, 'M5': 2, 'M15': 3, 'H1': 4, 'H4': 5, 'D1': 6, 'W1': 7, 'MN1': 8}.get(x, 999))
+        
+        if not timeframes:
+            print(f"{Fore.RED}❌ No valid timeframes found for symbol '{symbol}'")
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            return
+        
+        # Show timeframe selection menu
+        print(f"\n{Fore.YELLOW}Choose Main Time Frame for {symbol}:")
+        print(f"{Fore.CYAN}{'─'*40}")
+        for i, tf in enumerate(timeframes, 1):
+            print(f"{Fore.WHITE}{i}. {tf}")
+        print(f"{Fore.CYAN}{'─'*40}")
+        
+        # Get timeframe choice
+        try:
+            choice = input(f"{Fore.GREEN}Enter choice (1-{len(timeframes)}): {Style.RESET_ALL}").strip()
+            choice_idx = int(choice) - 1
+            if choice_idx < 0 or choice_idx >= len(timeframes):
+                raise ValueError("Invalid choice")
+            main_timeframe = timeframes[choice_idx]
+        except (ValueError, IndexError):
+            print(f"{Fore.RED}❌ Invalid choice. Exiting...")
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            return
+        
+        print(f"\n{Fore.GREEN}✅ Selected: {symbol} with main timeframe {main_timeframe}")
+        
+        # Load and save data
+        self._load_and_save_symbol_data(symbol, main_timeframe, analysis)
         
         input(f"\n{Fore.CYAN}Press Enter to continue...")
+    
+    def _load_and_save_symbol_data(self, symbol: str, main_timeframe: str, analysis: Dict[str, Any]):
+        """Load and save symbol data in ML-optimized format."""
+        print(f"\n{Fore.YELLOW}🔄 Loading and processing {symbol} data...")
+        
+        try:
+            from src.interactive.data_management import DataLoader
+            import pandas as pd
+            import numpy as np
+            from pathlib import Path
+            from datetime import datetime
+            import time
+            
+            # Load data for the symbol
+            loader = DataLoader()
+            result = loader.load_csv_converted_data(symbol)
+            
+            if result["status"] != "success":
+                print(f"{Fore.RED}❌ Error loading data: {result['message']}")
+                return
+            
+            # Get all timeframes for this symbol
+            symbol_files = [f for f in analysis["files_info"].items() if self._extract_symbol_from_filename(f[0]) == symbol]
+            available_timeframes = []
+            for filename, file_info in symbol_files:
+                if file_info['timeframes'] and file_info['timeframes'][0] != 'No time data':
+                    available_timeframes.append(file_info['timeframes'][0])
+            
+            available_timeframes = sorted(list(set(available_timeframes)), 
+                                       key=lambda x: {'M1': 1, 'M5': 2, 'M15': 3, 'H1': 4, 'H4': 5, 'D1': 6, 'W1': 7, 'MN1': 8}.get(x, 999))
+            
+            print(f"{Fore.GREEN}📊 Available timeframes: {', '.join(available_timeframes)}")
+            print(f"{Fore.GREEN}🎯 Main timeframe: {main_timeframe}")
+            
+            # Create symbol directory
+            symbol_dir = Path("data/cleaned_data") / symbol.lower()
+            symbol_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Process each timeframe
+            processed_data = {}
+            total_files = len(available_timeframes)
+            
+            for i, timeframe in enumerate(available_timeframes):
+                progress = (i + 1) / total_files
+                print(f"\r{Fore.CYAN}📊 Processing {timeframe}... [{int(progress*100):3d}%]", end="", flush=True)
+                
+                # Find the file for this timeframe
+                timeframe_file = None
+                for filename, file_info in symbol_files:
+                    if file_info['timeframes'] and file_info['timeframes'][0] == timeframe:
+                        timeframe_file = filename
+                        break
+                
+                if not timeframe_file:
+                    continue
+                
+                # Load the specific timeframe data
+                file_path = Path("data/cache/csv_converted") / timeframe_file
+                df = pd.read_parquet(file_path)
+                
+                # Standardize column names
+                df = self._standardize_dataframe(df)
+                
+                # Add timeframe information
+                df['timeframe'] = timeframe
+                df['symbol'] = symbol.upper()
+                
+                # Store processed data
+                processed_data[timeframe] = df
+            
+            print()  # New line after progress
+            
+            # Save data in ML-optimized format
+            self._save_ml_optimized_data(symbol, main_timeframe, processed_data, symbol_dir)
+            
+            print(f"\n{Fore.GREEN}✅ Successfully saved {symbol} data to {symbol_dir}")
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Error processing data: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    def _standardize_dataframe(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Standardize dataframe column names and structure."""
+        # Create a copy to avoid modifying original
+        df = df.copy()
+        
+        # Standardize column names
+        column_mapping = {
+            'Open': 'open',
+            'High': 'high', 
+            'Low': 'low',
+            'Close': 'close',
+            'Volume': 'volume',
+            'Timestamp': 'timestamp',
+            'Time': 'timestamp',
+            'time': 'timestamp',
+            'datetime': 'timestamp',
+            'DateTime': 'timestamp'
+        }
+        
+        df = df.rename(columns=column_mapping)
+        
+        # Ensure timestamp is datetime
+        if 'timestamp' in df.columns:
+            if not pd.api.types.is_datetime64_any_dtype(df['timestamp']):
+                df['timestamp'] = pd.to_datetime(df['timestamp'], errors='coerce')
+            df = df.set_index('timestamp')
+        
+        # Ensure numeric columns are float
+        numeric_columns = ['open', 'high', 'low', 'close', 'volume']
+        for col in numeric_columns:
+            if col in df.columns:
+                df[col] = pd.to_numeric(df[col], errors='coerce')
+        
+        # Sort by timestamp
+        df = df.sort_index()
+        
+        return df
+    
+    def _save_ml_optimized_data(self, symbol: str, main_timeframe: str, processed_data: Dict[str, pd.DataFrame], symbol_dir: Path):
+        """Save data in ML-optimized format."""
+        from datetime import datetime
+        import json
+        
+        # Create metadata
+        metadata = {
+            "symbol": symbol.upper(),
+            "main_timeframe": main_timeframe,
+            "available_timeframes": list(processed_data.keys()),
+            "created_at": datetime.now().isoformat(),
+            "total_timeframes": len(processed_data),
+            "data_info": {}
+        }
+        
+        # Save each timeframe
+        for timeframe, df in processed_data.items():
+            # Create timeframe directory
+            tf_dir = symbol_dir / timeframe.lower()
+            tf_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Save as parquet (best for ML)
+            parquet_file = tf_dir / f"{symbol.lower()}_{timeframe.lower()}.parquet"
+            df.to_parquet(parquet_file, compression='snappy', index=True)
+            
+            # Save as feather for fast loading
+            feather_file = tf_dir / f"{symbol.lower()}_{timeframe.lower()}.feather"
+            df.reset_index().to_feather(feather_file)
+            
+            # Save metadata for this timeframe
+            tf_metadata = {
+                "timeframe": timeframe,
+                "symbol": symbol.upper(),
+                "rows": len(df),
+                "columns": list(df.columns),
+                "start_date": str(df.index.min()) if not df.empty else None,
+                "end_date": str(df.index.max()) if not df.empty else None,
+                "file_size_mb": parquet_file.stat().st_size / (1024 * 1024),
+                "created_at": datetime.now().isoformat()
+            }
+            
+            # Save timeframe metadata
+            with open(tf_dir / "metadata.json", "w") as f:
+                json.dump(tf_metadata, f, indent=2)
+            
+            # Update main metadata
+            metadata["data_info"][timeframe] = tf_metadata
+        
+        # Save main metadata
+        with open(symbol_dir / "metadata.json", "w") as f:
+            json.dump(metadata, f, indent=2)
+        
+        # Create a summary file for quick access
+        summary_data = {
+            "symbol": symbol.upper(),
+            "main_timeframe": main_timeframe,
+            "timeframes": list(processed_data.keys()),
+            "total_rows": sum(len(df) for df in processed_data.values()),
+            "total_size_mb": sum(tf_dir.stat().st_size for tf_dir in symbol_dir.glob("*/") if tf_dir.is_dir()) / (1024 * 1024),
+            "created_at": datetime.now().isoformat()
+        }
+        
+        with open(symbol_dir / "summary.json", "w") as f:
+            json.dump(summary_data, f, indent=2)
+        
+        # Create a Python loader script
+        self._create_python_loader(symbol, main_timeframe, list(processed_data.keys()), symbol_dir)
+    
+    def _create_python_loader(self, symbol: str, main_timeframe: str, timeframes: list, symbol_dir: Path):
+        """Create a Python loader script for easy data access."""
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        loader_script = f'''# -*- coding: utf-8 -*-
+"""
+Auto-generated data loader for {symbol.upper()}
+Generated on: {current_time}
+
+This script provides easy access to {symbol.upper()} data for ML/DL analysis.
+"""
+
+import pandas as pd
+import numpy as np
+from pathlib import Path
+import json
+
+class {symbol.upper()}DataLoader:
+    """Data loader for {symbol.upper()} with multiple timeframes."""
+    
+    def __init__(self, data_dir: str = "data/cleaned_data/{symbol.lower()}"):
+        self.data_dir = Path(data_dir)
+        self.symbol = "{symbol.upper()}"
+        self.main_timeframe = "{main_timeframe}"
+        self.available_timeframes = {timeframes}
+        
+        # Load metadata
+        with open(self.data_dir / "metadata.json", "r") as f:
+            self.metadata = json.load(f)
+    
+    def load_timeframe(self, timeframe: str) -> pd.DataFrame:
+        """Load data for specific timeframe."""
+        if timeframe not in self.available_timeframes:
+            raise ValueError(f"Timeframe {{timeframe}} not available. Available: {{self.available_timeframes}}")
+        
+        tf_dir = self.data_dir / timeframe.lower()
+        parquet_file = tf_dir / f"{symbol.lower()}_{timeframe.lower()}.parquet"
+        
+        return pd.read_parquet(parquet_file)
+    
+    def load_all_timeframes(self) -> dict:
+        """Load all available timeframes."""
+        data = {{}}
+        for tf in self.available_timeframes:
+            data[tf] = self.load_timeframe(tf)
+        return data
+    
+    def get_main_timeframe_data(self) -> pd.DataFrame:
+        """Get data for main timeframe."""
+        return self.load_timeframe(self.main_timeframe)
+    
+    def get_data_info(self) -> dict:
+        """Get information about available data."""
+        return self.metadata["data_info"]
+    
+    def get_summary(self) -> dict:
+        """Get data summary."""
+        with open(self.data_dir / "summary.json", "r") as f:
+            return json.load(f)
+
+# Example usage:
+if __name__ == "__main__":
+    loader = {symbol.upper()}DataLoader()
+    
+    # Load main timeframe
+    main_data = loader.get_main_timeframe_data()
+    print(f"Main timeframe data shape: {{main_data.shape}}")
+    
+    # Load all timeframes
+    all_data = loader.load_all_timeframes()
+    print(f"Available timeframes: {{list(all_data.keys())}}")
+    
+    # Get summary
+    summary = loader.get_summary()
+    print(f"Total rows: {{summary['total_rows']:,}}")
+'''
+        
+        with open(symbol_dir / f"{symbol.lower()}_loader.py", "w") as f:
+            f.write(loader_script)
     
     def _display_loaded_data(self, result: Dict[str, Any]):
         """Display loaded data information."""
