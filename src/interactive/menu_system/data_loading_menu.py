@@ -244,12 +244,12 @@ class DataLoadingMenu(BaseMenu):
             # Save data in ML-optimized format
             self._save_ml_optimized_data(symbol, main_timeframe, processed_data, symbol_dir)
             
-            # Create MTF structure immediately
+            # Create MTF structure immediately with progress tracking
             print(f"\n{Fore.YELLOW}🔧 Creating MTF data structure for ML...")
-            mtf_data = self._create_mtf_structure_from_processed_data(processed_data, main_timeframe, symbol)
+            mtf_data = self._create_mtf_structure_with_progress(processed_data, main_timeframe, symbol)
             
-            # Save MTF structure
-            self._save_mtf_structure(symbol, mtf_data)
+            # Save MTF structure with progress tracking
+            self._save_mtf_structure_with_progress(symbol, mtf_data)
             
             print(f"\n{Fore.GREEN}✅ Successfully saved {symbol} data to {symbol_dir}")
             print(f"{Fore.GREEN}🎯 MTF structure created and saved for ML!")
@@ -259,8 +259,64 @@ class DataLoadingMenu(BaseMenu):
             import traceback
             traceback.print_exc()
     
+    def _create_mtf_structure_with_progress(self, processed_data: Dict[str, pd.DataFrame], main_timeframe: str, symbol: str) -> Dict[str, Any]:
+        """Create MTF structure from processed data with modern progress tracking."""
+        try:
+            import time
+            from .data_loading import DataLoader
+            
+            # Calculate total steps for progress tracking
+            total_steps = 3  # Main data + cross features + metadata
+            if len(processed_data) > 1:
+                total_steps += len(processed_data) - 1  # Additional cross-timeframe features
+            
+            current_step = 0
+            start_time = time.time()
+            
+            # Step 1: Create main MTF data structure
+            current_step += 1
+            progress = current_step / total_steps
+            self._show_mtf_progress("Creating main data structure", progress, start_time)
+            
+            mtf_data = {
+                'symbol': symbol.upper(),
+                'main_timeframe': main_timeframe,
+                'timeframes': list(processed_data.keys()),
+                'main_data': processed_data.get(main_timeframe, pd.DataFrame()),
+                'timeframe_data': processed_data,
+                'metadata': {
+                    'created_at': pd.Timestamp.now().isoformat(),
+                    'total_rows': sum(len(df) for df in processed_data.values()),
+                    'timeframe_counts': {tf: len(df) for tf, df in processed_data.items()}
+                }
+            }
+            
+            # Step 2: Add cross-timeframe features if multiple timeframes available
+            if len(processed_data) > 1:
+                current_step += 1
+                progress = current_step / total_steps
+                self._show_mtf_progress("Creating cross-timeframe features", progress, start_time)
+                
+                mtf_data['cross_timeframe_features'] = self._create_cross_timeframe_features_with_progress(
+                    processed_data, main_timeframe, start_time, current_step, total_steps)
+            
+            # Step 3: Finalize metadata
+            current_step += 1
+            progress = current_step / total_steps
+            self._show_mtf_progress("Finalizing MTF structure", progress, start_time)
+            
+            # Final progress display
+            total_time = time.time() - start_time
+            self._show_mtf_progress("MTF structure created successfully", 1.0, start_time)
+            
+            return mtf_data
+            
+        except Exception as e:
+            print_error(f"Error creating MTF structure: {e}")
+            return {'error': str(e)}
+    
     def _create_mtf_structure_from_processed_data(self, processed_data: Dict[str, pd.DataFrame], main_timeframe: str, symbol: str) -> Dict[str, Any]:
-        """Create MTF structure from processed data."""
+        """Create MTF structure from processed data (legacy method)."""
         try:
             from .data_loading import DataLoader
             
@@ -288,8 +344,34 @@ class DataLoadingMenu(BaseMenu):
             print_error(f"Error creating MTF structure: {e}")
             return {'error': str(e)}
     
+    def _create_cross_timeframe_features_with_progress(self, processed_data: Dict[str, pd.DataFrame], main_timeframe: str, start_time: float, current_step: int, total_steps: int) -> Dict[str, Any]:
+        """Create cross-timeframe features for ML with progress tracking."""
+        try:
+            main_df = processed_data[main_timeframe]
+            cross_features = {}
+            
+            # Get timeframes to process
+            timeframes_to_process = [tf for tf in processed_data.keys() if tf != main_timeframe]
+            
+            # Add features from higher timeframes
+            for i, tf in enumerate(timeframes_to_process):
+                # Update progress
+                step_progress = (current_step + i) / total_steps
+                self._show_mtf_progress(f"Processing {tf} cross-features", step_progress, start_time)
+                
+                df = processed_data[tf]
+                # Resample to main timeframe frequency
+                resampled = df.resample('1min').ffill()  # Forward fill to 1-minute frequency
+                cross_features[tf] = resampled
+            
+            return cross_features
+            
+        except Exception as e:
+            print_error(f"Error creating cross-timeframe features: {e}")
+            return {}
+    
     def _create_cross_timeframe_features(self, processed_data: Dict[str, pd.DataFrame], main_timeframe: str) -> Dict[str, Any]:
-        """Create cross-timeframe features for ML."""
+        """Create cross-timeframe features for ML (legacy method)."""
         try:
             main_df = processed_data[main_timeframe]
             cross_features = {}
@@ -307,8 +389,116 @@ class DataLoadingMenu(BaseMenu):
             print_error(f"Error creating cross-timeframe features: {e}")
             return {}
     
+    def _show_mtf_progress(self, message: str, progress: float, start_time: float):
+        """Show modern MTF progress with ETA and percentage."""
+        import time
+        
+        bar_length = 40
+        filled_length = int(bar_length * progress)
+        bar = "█" * filled_length + "░" * (bar_length - filled_length)
+        percentage = int(progress * 100)
+        
+        # Calculate ETA
+        current_time = time.time()
+        elapsed_time = current_time - start_time
+        if progress > 0:
+            eta_seconds = (elapsed_time / progress) - elapsed_time
+            eta_str = self._format_time(eta_seconds)
+        else:
+            eta_str = "Calculating..."
+        
+        # Calculate speed
+        if elapsed_time > 0:
+            speed = f"{progress / elapsed_time:.1f} steps/s"
+        else:
+            speed = "Starting..."
+        
+        # Create progress display
+        progress_display = f"{Fore.CYAN}🔧 {message}"
+        bar_display = f"{Fore.GREEN}[{bar}]{Fore.CYAN}"
+        percentage_display = f"{Fore.YELLOW}{percentage:3d}%"
+        
+        # Add ETA and speed
+        extra_info = f" {Fore.MAGENTA}ETA: {eta_str} {Fore.BLUE}Speed: {speed}"
+        
+        # Combine all parts
+        full_display = f"\r{progress_display} {bar_display} {percentage_display}{extra_info}{Style.RESET_ALL}"
+        
+        # Ensure the line is long enough to clear previous content
+        terminal_width = 120
+        if len(full_display) < terminal_width:
+            full_display += " " * (terminal_width - len(full_display))
+        
+        print(full_display, end="", flush=True)
+        
+        if progress >= 1.0:
+            print()  # New line when complete
+    
+    def _format_time(self, seconds: float) -> str:
+        """Format time in seconds to human readable format."""
+        if seconds < 60:
+            return f"{seconds:.1f}s"
+        elif seconds < 3600:
+            minutes = int(seconds // 60)
+            secs = int(seconds % 60)
+            return f"{minutes}m {secs}s"
+        else:
+            hours = int(seconds // 3600)
+            minutes = int((seconds % 3600) // 60)
+            return f"{hours}h {minutes}m"
+    
+    def _save_mtf_structure_with_progress(self, symbol: str, mtf_data: Dict[str, Any]):
+        """Save MTF structure in ML-optimized format with progress tracking."""
+        try:
+            import time
+            from .data_loading import DataLoader
+            import json
+            
+            start_time = time.time()
+            
+            # Step 1: Prepare data
+            self._show_mtf_progress("Preparing MTF data for saving", 0.1, start_time)
+            
+            # Use DataLoader to save MTF structure
+            loader = DataLoader()
+            
+            # Create symbol info for DataLoader
+            symbol_info = {
+                'timeframes': mtf_data['timeframes'],
+                'timeframe_details': {}
+            }
+            
+            # Fill timeframe details
+            for tf in mtf_data['timeframes']:
+                df = mtf_data['timeframe_data'][tf]
+                symbol_info['timeframe_details'][tf] = {
+                    'size_mb': 0,  # Will be calculated by DataLoader
+                    'rows': len(df),
+                    'start_date': str(df.index.min()) if not df.empty else 'No data',
+                    'end_date': str(df.index.max()) if not df.empty else 'No data',
+                    'columns': list(df.columns)
+                }
+            
+            # Step 2: Save main data
+            self._show_mtf_progress("Saving main timeframe data", 0.3, start_time)
+            
+            # Step 3: Save cross-timeframe features
+            self._show_mtf_progress("Saving cross-timeframe features", 0.6, start_time)
+            
+            # Step 4: Save metadata and create loader
+            self._show_mtf_progress("Saving metadata and creating ML loader", 0.8, start_time)
+            
+            # Save using DataLoader's method
+            loader._save_loaded_data(symbol, mtf_data['timeframe_data'], mtf_data)
+            
+            # Final step
+            self._show_mtf_progress("MTF structure saved successfully", 1.0, start_time)
+            
+        except Exception as e:
+            print_error(f"Error saving MTF structure: {e}")
+    
     def _save_mtf_structure(self, symbol: str, mtf_data: Dict[str, Any]):
-        """Save MTF structure in ML-optimized format."""
+        """Save MTF structure in ML-optimized format (legacy method)."""
         try:
             from .data_loading import DataLoader
             import json
