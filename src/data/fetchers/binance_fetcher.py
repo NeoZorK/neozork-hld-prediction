@@ -114,12 +114,19 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
     # --- Initialize tqdm ---
     pbar = tqdm(total=total_duration_ms, unit='ms', desc=f"Fetching {binance_ticker}", leave=True, ascii=True, unit_scale=False)
     last_processed_ms = initial_start_ms
+    total_chunks_estimated = max(1, (end_ms - start_ms) // (limit_per_request * 1000 * 60 * 60))  # Rough estimate based on hourly data
+    chunks_processed = 0
 
     try:
         while current_start_ms <= end_ms:
+            # Update progress based on current position vs total range
+            current_progress = (current_start_ms - initial_start_ms) / total_duration_ms
+            pbar.n = int(current_progress * total_duration_ms)
+            pbar.refresh()
+            
             # Minimal logging before attempt
             next_chunk_start_dt = datetime.fromtimestamp(current_start_ms / 1000)
-            pbar.set_postfix_str(f"Next chunk: {next_chunk_start_dt.strftime('%Y-%m-%d %H:%M')}", refresh=True) # Update postfix instead of writing
+            pbar.set_postfix_str(f"Chunk {chunks_processed + 1}: {next_chunk_start_dt.strftime('%Y-%m-%d %H:%M')}", refresh=True)
 
             attempt = 0; klines_chunk = None; success = False
             while attempt < max_attempts_per_chunk:
@@ -176,11 +183,13 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
             metrics["rows_fetched"] += len(klines_chunk)
             all_klines_raw.extend(klines_chunk)
             last_kline_time_ms = klines_chunk[-1][0]
+            chunks_processed += 1
 
-            # --- Update tqdm ---
+            # --- Update tqdm based on actual progress ---
             processed_up_to_ms = last_kline_time_ms
-            update_amount = max(0, processed_up_to_ms - last_processed_ms)
-            if update_amount > 0: pbar.update(update_amount); last_processed_ms = processed_up_to_ms
+            actual_progress = (processed_up_to_ms - initial_start_ms) / total_duration_ms
+            pbar.n = int(actual_progress * total_duration_ms)
+            pbar.refresh()
 
             current_start_ms = last_kline_time_ms + 1
             if len(klines_chunk) < limit_per_request: break
@@ -189,9 +198,9 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
     finally:
         # Clear the postfix message and close the bar
         pbar.set_postfix_str("")
-        # Update pbar to 100% if loop finished early/normally
-        final_update = total_duration_ms - pbar.n
-        if final_update > 0: pbar.update(final_update)
+        # Ensure progress bar shows 100% when complete
+        pbar.n = total_duration_ms
+        pbar.refresh()
         pbar.close()
 
     # --- Combine and Process All Fetched Data ---
