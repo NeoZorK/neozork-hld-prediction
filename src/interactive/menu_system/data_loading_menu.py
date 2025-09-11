@@ -241,8 +241,8 @@ class DataLoadingMenu(BaseMenu):
             
             print()  # New line after progress
             
-            # Save data in ML-optimized format
-            self._save_ml_optimized_data(symbol, main_timeframe, processed_data, symbol_dir)
+            # Skip saving individual timeframe data - only save MTF structure
+            print(f"{Fore.YELLOW}💡 Skipping individual timeframe saving - only MTF structure will be saved")
             
             # Create MTF structure immediately with progress tracking
             print(f"\n{Fore.YELLOW}🔧 Creating MTF data structure for ML...")
@@ -600,10 +600,10 @@ class DataLoadingMenu(BaseMenu):
             
             print()  # New line after progress
             
-            # Save data in ML-optimized format
-            self._save_ml_optimized_data(symbol, main_timeframe, processed_data, symbol_dir)
+            # Skip saving individual timeframe data - only save MTF structure
+            print(f"{Fore.YELLOW}💡 Skipping individual timeframe saving - only MTF structure will be saved")
             
-            print(f"\n{Fore.GREEN}✅ Successfully saved {symbol} data to {symbol_dir}")
+            print(f"\n{Fore.GREEN}✅ Successfully processed {symbol} data (MTF structure only)")
             
         except Exception as e:
             print(f"\n{Fore.RED}❌ Error processing data: {e}")
@@ -648,152 +648,7 @@ class DataLoadingMenu(BaseMenu):
         
         return df
     
-    def _save_ml_optimized_data(self, symbol: str, main_timeframe: str, processed_data: Dict[str, pd.DataFrame], symbol_dir: Path):
-        """Save data in ML-optimized format."""
-        from datetime import datetime
-        import json
-        
-        # Create metadata
-        metadata = {
-            "symbol": symbol.upper(),
-            "main_timeframe": main_timeframe,
-            "available_timeframes": list(processed_data.keys()),
-            "created_at": datetime.now().isoformat(),
-            "total_timeframes": len(processed_data),
-            "data_info": {}
-        }
-        
-        # Save each timeframe
-        for timeframe, df in processed_data.items():
-            # Create timeframe directory
-            tf_dir = symbol_dir / timeframe.lower()
-            tf_dir.mkdir(parents=True, exist_ok=True)
-            
-            # Save as parquet (best for ML)
-            parquet_file = tf_dir / f"{symbol.lower()}_{timeframe.lower()}.parquet"
-            df.to_parquet(parquet_file, compression='snappy', index=True)
-            
-            # Save as feather for fast loading
-            feather_file = tf_dir / f"{symbol.lower()}_{timeframe.lower()}.feather"
-            df.reset_index().to_feather(feather_file)
-            
-            # Save metadata for this timeframe
-            tf_metadata = {
-                "timeframe": timeframe,
-                "symbol": symbol.upper(),
-                "rows": len(df),
-                "columns": list(df.columns),
-                "start_date": str(df.index.min()) if not df.empty else None,
-                "end_date": str(df.index.max()) if not df.empty else None,
-                "file_size_mb": parquet_file.stat().st_size / (1024 * 1024),
-                "created_at": datetime.now().isoformat()
-            }
-            
-            # Save timeframe metadata
-            with open(tf_dir / "metadata.json", "w") as f:
-                json.dump(tf_metadata, f, indent=2)
-            
-            # Update main metadata
-            metadata["data_info"][timeframe] = tf_metadata
-        
-        # Save main metadata
-        with open(symbol_dir / "metadata.json", "w") as f:
-            json.dump(metadata, f, indent=2)
-        
-        # Create a summary file for quick access
-        summary_data = {
-            "symbol": symbol.upper(),
-            "main_timeframe": main_timeframe,
-            "timeframes": list(processed_data.keys()),
-            "total_rows": sum(len(df) for df in processed_data.values()),
-            "total_size_mb": sum(tf_dir.stat().st_size for tf_dir in symbol_dir.glob("*/") if tf_dir.is_dir()) / (1024 * 1024),
-            "created_at": datetime.now().isoformat()
-        }
-        
-        with open(symbol_dir / "summary.json", "w") as f:
-            json.dump(summary_data, f, indent=2)
-        
-        # Create a Python loader script
-        self._create_python_loader(symbol, main_timeframe, list(processed_data.keys()), symbol_dir)
     
-    def _create_python_loader(self, symbol: str, main_timeframe: str, timeframes: list, symbol_dir: Path):
-        """Create a Python loader script for easy data access."""
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        loader_script = f'''# -*- coding: utf-8 -*-
-"""
-Auto-generated data loader for {symbol.upper()}
-Generated on: {current_time}
-
-This script provides easy access to {symbol.upper()} data for ML/DL analysis.
-"""
-
-import pandas as pd
-import numpy as np
-from pathlib import Path
-import json
-
-class {symbol.upper()}DataLoader:
-    """Data loader for {symbol.upper()} with multiple timeframes."""
-    
-    def __init__(self, data_dir: str = "data/cleaned_data/{symbol.lower()}"):
-        self.data_dir = Path(data_dir)
-        self.symbol = "{symbol.upper()}"
-        self.main_timeframe = "{main_timeframe}"
-        self.available_timeframes = {timeframes}
-        
-        # Load metadata
-        with open(self.data_dir / "metadata.json", "r") as f:
-            self.metadata = json.load(f)
-    
-    def load_timeframe(self, timeframe: str) -> pd.DataFrame:
-        """Load data for specific timeframe."""
-        if timeframe not in self.available_timeframes:
-            raise ValueError(f"Timeframe {{timeframe}} not available. Available: {{self.available_timeframes}}")
-        
-        tf_dir = self.data_dir / timeframe.lower()
-        parquet_file = tf_dir / f"{{self.symbol.lower()}}_{{timeframe.lower()}}.parquet"
-        
-        return pd.read_parquet(parquet_file)
-    
-    def load_all_timeframes(self) -> dict:
-        """Load all available timeframes."""
-        data = {{}}
-        for tf in self.available_timeframes:
-            data[tf] = self.load_timeframe(tf)
-        return data
-    
-    def get_main_timeframe_data(self) -> pd.DataFrame:
-        """Get data for main timeframe."""
-        return self.load_timeframe(self.main_timeframe)
-    
-    def get_data_info(self) -> dict:
-        """Get information about available data."""
-        return self.metadata["data_info"]
-    
-    def get_summary(self) -> dict:
-        """Get data summary."""
-        with open(self.data_dir / "summary.json", "r") as f:
-            return json.load(f)
-
-# Example usage:
-if __name__ == "__main__":
-    loader = {symbol.upper()}DataLoader()
-    
-    # Load main timeframe
-    main_data = loader.get_main_timeframe_data()
-    print(f"Main timeframe data shape: {{main_data.shape}}")
-    
-    # Load all timeframes
-    all_data = loader.load_all_timeframes()
-    print(f"Available timeframes: {{list(all_data.keys())}}")
-    
-    # Get summary
-    summary = loader.get_summary()
-    print(f"Total rows: {{summary['total_rows']:,}}")
-'''
-        
-        with open(symbol_dir / f"{symbol.lower()}_loader.py", "w") as f:
-            f.write(loader_script)
     
     def _display_loaded_data(self, result: Dict[str, Any]):
         """Display loaded data information."""
