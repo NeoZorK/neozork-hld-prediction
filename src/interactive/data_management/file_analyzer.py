@@ -47,7 +47,7 @@ class FileAnalyzer:
     
     def analyze_csv_converted_folder(self) -> Dict[str, Any]:
         """
-        Analyze CSV converted folder for detailed information.
+        Analyze CSV converted folder for detailed information with progress tracking.
         
         Returns:
             Dictionary with detailed folder and file information
@@ -66,13 +66,51 @@ class FileAnalyzer:
         # Get folder information
         folder_info = self._get_folder_info(csv_dir)
         
-        # Get files information
+        # Get files information with progress tracking
         files_info = {}
         symbols = set()
         
         parquet_files = list(csv_dir.glob("*.parquet"))
+        total_files = len(parquet_files)
         
-        for file_path in parquet_files:
+        if total_files == 0:
+            return {
+                "status": "success",
+                "folder_info": folder_info,
+                "files_info": files_info,
+                "symbols": []
+            }
+        
+        # Progress tracking variables
+        import time
+        start_time = time.time()
+        
+        print_info("📊 Analyzing CSV converted files...")
+        
+        for i, file_path in enumerate(parquet_files):
+            # Calculate progress
+            progress = (i + 1) / total_files
+            
+            # Calculate ETA
+            current_time = time.time()
+            elapsed_time = current_time - start_time
+            if i > 0:  # Avoid division by zero
+                avg_time_per_file = elapsed_time / i
+                remaining_files = total_files - i
+                eta_seconds = remaining_files * avg_time_per_file
+                eta_str = self._format_time(eta_seconds)
+            else:
+                eta_str = "Calculating..."
+            
+            # Calculate speed (files per second)
+            if elapsed_time > 0:
+                speed = f"{i / elapsed_time:.1f} files/s"
+            else:
+                speed = "Starting..."
+            
+            # Show progress
+            self._show_progress(f"Analyzing {file_path.name}", progress, eta_str, speed)
+            
             file_info = self._analyze_parquet_file(file_path)
             if file_info:
                 files_info[file_path.name] = file_info
@@ -80,6 +118,10 @@ class FileAnalyzer:
                 symbol = self._extract_symbol_from_filename(file_path.name)
                 if symbol:
                     symbols.add(symbol)
+        
+        # Final progress display
+        total_time = time.time() - start_time
+        self._show_progress(f"Completed analysis of {total_files} files", 1.0, "", f"{total_files / total_time:.1f} files/s")
         
         return {
             "status": "success",
@@ -512,3 +554,48 @@ class FileAnalyzer:
         except Exception as e:
             print_error(f"Error extracting save date from {filename}: {e}")
             return None
+    
+    def _show_progress(self, message: str, progress: float = 0.0, eta: str = "", speed: str = ""):
+        """Show progress with ETA, percentage, and speed in a single line."""
+        bar_length = 40
+        filled_length = int(bar_length * progress)
+        bar = "█" * filled_length + "░" * (bar_length - filled_length)
+        percentage = int(progress * 100)
+        
+        # Create progress display
+        progress_display = f"{Fore.CYAN}📊 {message}"
+        bar_display = f"{Fore.GREEN}[{bar}]{Fore.CYAN}"
+        percentage_display = f"{Fore.YELLOW}{percentage:3d}%"
+        
+        # Add ETA and speed if available
+        extra_info = ""
+        if eta:
+            extra_info += f" {Fore.MAGENTA}ETA: {eta}"
+        if speed:
+            extra_info += f" {Fore.BLUE}Speed: {speed}"
+        
+        # Combine all parts
+        full_display = f"\r{progress_display} {bar_display} {percentage_display}{extra_info}{Style.RESET_ALL}"
+        
+        # Ensure the line is long enough to clear previous content
+        terminal_width = 120  # Assume minimum terminal width
+        if len(full_display) < terminal_width:
+            full_display += " " * (terminal_width - len(full_display))
+        
+        print(full_display, end="", flush=True)
+        
+        if progress >= 1.0:
+            print()  # New line when complete
+    
+    def _format_time(self, seconds: float) -> str:
+        """Format time in seconds to human readable format."""
+        if seconds < 60:
+            return f"{seconds:.1f}s"
+        elif seconds < 3600:
+            minutes = int(seconds // 60)
+            secs = int(seconds % 60)
+            return f"{minutes}m {secs}s"
+        else:
+            hours = int(seconds // 3600)
+            minutes = int((seconds % 3600) // 60)
+            return f"{hours}h {minutes}m"

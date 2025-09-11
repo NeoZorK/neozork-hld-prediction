@@ -69,19 +69,44 @@ class DataLoadingMenu(BaseMenu):
         
         # Display symbols found
         if analysis["symbols"]:
-            print(f"\n{Fore.GREEN}📈 Available Symbols:")
+            print(f"\n{Fore.GREEN}📈 Available Symbols ({len(analysis['symbols'])}):")
             symbols_text = ", ".join(analysis["symbols"])
             print(f"{Fore.WHITE}  {symbols_text}")
         
-        # Display files information
+        # Group files by symbol and sort
         if analysis["files_info"]:
-            print(f"\n{Fore.YELLOW}📋 Files Information:")
+            files_by_symbol = {}
             for filename, file_info in analysis["files_info"].items():
-                print(f"\n{Fore.WHITE}🔸 {filename}:")
-                print(f"  • Size: {file_info['size_mb']} MB")
-                print(f"  • Rows: {file_info['rows']:,}")
-                print(f"  • Date range: {file_info['start_date']} to {file_info['end_date']}")
-                print(f"  • Timeframes: {', '.join(file_info['timeframes'][:3])}{'...' if len(file_info['timeframes']) > 3 else ''}")
+                # Extract symbol from filename
+                symbol = self._extract_symbol_from_filename(filename)
+                if symbol:
+                    if symbol not in files_by_symbol:
+                        files_by_symbol[symbol] = []
+                    files_by_symbol[symbol].append((filename, file_info))
+            
+            # Sort symbols alphabetically
+            sorted_symbols = sorted(files_by_symbol.keys())
+            
+            print(f"\n{Fore.YELLOW}📋 Files by Symbol ({len(sorted_symbols)} symbols):")
+            print(f"{Fore.CYAN}{'─'*80}")
+            
+            for symbol in sorted_symbols:
+                files = files_by_symbol[symbol]
+                # Sort files by timeframe (M1, M5, M15, H1, H4, D1, W1, MN1)
+                timeframe_order = {'M1': 1, 'M5': 2, 'M15': 3, 'H1': 4, 'H4': 5, 'D1': 6, 'W1': 7, 'MN1': 8}
+                files.sort(key=lambda x: timeframe_order.get(x[1]['timeframes'][0] if x[1]['timeframes'] else 'Unknown', 999))
+                
+                print(f"\n{Fore.GREEN}🔸 {symbol} ({len(files)} files):")
+                
+                # Display files in compact format
+                for filename, file_info in files:
+                    timeframe = file_info['timeframes'][0] if file_info['timeframes'] else 'Unknown'
+                    size_mb = file_info['size_mb']
+                    rows = file_info['rows']
+                    start_date = file_info['start_date'][:10] if file_info['start_date'] != "No time data" else "No data"
+                    end_date = file_info['end_date'][:10] if file_info['end_date'] != "No time data" else "No data"
+                    
+                    print(f"  {Fore.WHITE}{timeframe:>4} │ {size_mb:>6.1f}MB │ {rows:>8,} rows │ {start_date} to {end_date}")
         
         # Ask if user wants to load data
         load_data = input(f"\n{Fore.GREEN}Load data into memory? (y/n): {Style.RESET_ALL}").strip().lower()
@@ -310,3 +335,32 @@ class DataLoadingMenu(BaseMenu):
         print(f"{Fore.WHITE}  • Size: {folder_info['size_mb']} MB")
         print(f"{Fore.WHITE}  • Modified: {folder_info['modified']}")
         print(f"{Fore.CYAN}{'─'*50}")
+    
+    def _extract_symbol_from_filename(self, filename: str) -> Optional[str]:
+        """Extract symbol from filename."""
+        try:
+            # Remove extension
+            name = filename.split('.')[0]
+            
+            # Look for patterns like CSVExport_SYMBOL_PERIOD_...
+            if "CSVExport_" in name:
+                parts = name.split("_")
+                if len(parts) >= 2:
+                    return parts[1].upper()
+            
+            # Look for patterns like cleaned_csv_converted_SYMBOL_...
+            if "cleaned_csv_converted_" in name:
+                parts = name.split("_")
+                if len(parts) >= 4:
+                    return parts[3].upper()
+            
+            # Look for patterns like SYMBOL_PERIOD_...
+            if "_PERIOD_" in name:
+                parts = name.split("_")
+                if len(parts) >= 2:
+                    return parts[0].upper()
+            
+            return None
+        except Exception as e:
+            print_error(f"Error extracting symbol from {filename}: {e}")
+            return None
