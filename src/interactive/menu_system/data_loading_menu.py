@@ -393,7 +393,7 @@ class {symbol.upper()}DataLoader:
             raise ValueError(f"Timeframe {{timeframe}} not available. Available: {{self.available_timeframes}}")
         
         tf_dir = self.data_dir / timeframe.lower()
-        parquet_file = tf_dir / f"{symbol.lower()}_{timeframe.lower()}.parquet"
+        parquet_file = tf_dir / f"{{self.symbol.lower()}}_{{timeframe.lower()}}.parquet"
         
         return pd.read_parquet(parquet_file)
     
