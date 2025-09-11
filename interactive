@@ -1,0 +1,48 @@
+#!/bin/bash
+# NeoZork Interactive ML Trading Strategy Development System
+# Shell script to run the interactive neozork.py module
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Change to the project root directory
+cd "$SCRIPT_DIR"
+
+# Check if uv is available
+if command -v uv &> /dev/null; then
+    echo "🚀 Starting NeoZork Interactive System with uv..."
+    
+    # Check if local .venv exists, if not create it
+    if [ ! -d ".venv" ]; then
+        echo "📦 Creating local virtual environment..."
+        uv venv .venv
+    fi
+    
+    # Try different uv run approaches
+    echo "🔄 Attempting to run with uv..."
+    
+    # First try: regular uv run
+    if uv run python src/interactive/neozork.py; then
+        exit 0
+    fi
+    
+    # Second try: with --active flag
+    echo "⚠️  Retrying with --active flag..."
+    if uv run --active python src/interactive/neozork.py; then
+        exit 0
+    fi
+    
+    # Third try: with --python flag
+    echo "⚠️  Retrying with --python flag..."
+    if uv run --python python src/interactive/neozork.py; then
+        exit 0
+    fi
+    
+    # If all uv attempts fail, fall back to python
+    echo "❌ All uv attempts failed, falling back to python..."
+    python3 src/interactive/neozork.py
+else
+    echo "⚠️  uv not found, falling back to python..."
+    echo "🚀 Starting NeoZork Interactive System with python..."
+    python3 src/interactive/neozork.py
+fi
