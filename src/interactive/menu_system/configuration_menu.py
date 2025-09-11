@@ -257,16 +257,36 @@ class ConfigurationMenu(BaseMenu):
                 input(f"\n{Fore.CYAN}Press Enter to continue...")
                 return
             
-            # Get all symbol MTF folders
-            mtf_symbol_folders = [f for f in mtf_dir.iterdir() if f.is_dir()]
+            # Get all source directories
+            source_dirs = [f for f in mtf_dir.iterdir() if f.is_dir()]
             
-            if not mtf_symbol_folders:
-                print(f"{Fore.RED}❌ No MTF structures found")
+            if not source_dirs:
+                print(f"{Fore.RED}❌ No MTF source directories found")
                 print(f"{Fore.YELLOW}💡 Please create MTF data using 'Load Data -> CSV Converted' first")
                 input(f"\n{Fore.CYAN}Press Enter to continue...")
                 return
             
-            for symbol_folder in sorted(mtf_symbol_folders):
+            # Get all symbol MTF folders from all source directories
+            mtf_symbol_folders = []
+            for source_dir in source_dirs:
+                symbol_folders = [f for f in source_dir.iterdir() if f.is_dir()]
+                for symbol_folder in symbol_folders:
+                    # Store source information
+                    folder_info = {
+                        'path': symbol_folder,
+                        'source': source_dir.name
+                    }
+                    mtf_symbol_folders.append(folder_info)
+            
+            if not mtf_symbol_folders:
+                print(f"{Fore.RED}❌ No MTF symbol folders found")
+                print(f"{Fore.YELLOW}💡 Please create MTF data using 'Load Data -> CSV Converted' first")
+                input(f"\n{Fore.CYAN}Press Enter to continue...")
+                return
+            
+            for folder_info in sorted(mtf_symbol_folders, key=lambda x: (x['source'], x['path'].name)):
+                symbol_folder = folder_info['path']
+                source_name = folder_info['source']
                 symbol_name = symbol_folder.name.upper()
                 mtf_metadata_file = symbol_folder / "mtf_metadata.json"
                 
@@ -275,7 +295,8 @@ class ConfigurationMenu(BaseMenu):
                         with open(mtf_metadata_file, 'r') as f:
                             metadata = json.load(f)
                         
-                        print(f"\n{Fore.GREEN}📈 {symbol_name} (Available MTF Structure):")
+                        print(f"\n{Fore.GREEN}📈 {symbol_name} ({source_name}) - Available MTF Structure:")
+                        print(f"  • Source: {source_name}")
                         print(f"  • Main Timeframe: {metadata.get('main_timeframe', 'Unknown')}")
                         print(f"  • Available Timeframes: {', '.join(metadata.get('timeframes', []))}")
                         print(f"  • Total Rows: {metadata.get('total_rows', 0):,}")
@@ -307,7 +328,8 @@ class ConfigurationMenu(BaseMenu):
                         print_error(f"Error reading metadata for {symbol_name}: {e}")
                         print(f"{Fore.WHITE}  • Status: Error reading metadata")
                 else:
-                    print(f"\n{Fore.GREEN}📈 {symbol_name}:")
+                    print(f"\n{Fore.GREEN}📈 {symbol_name} ({source_name}):")
+                    print(f"  • Source: {source_name}")
                     print(f"  • Status: No metadata found")
             
             print(f"\n{Fore.CYAN}💡 Use 'Load Data -> 4.Cleaned Data' to load data into memory")
