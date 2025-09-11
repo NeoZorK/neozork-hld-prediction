@@ -918,15 +918,44 @@ class DataLoadingMenu(BaseMenu):
             print(f"{Fore.CYAN}{'─'*110}")
             print(f"{Fore.YELLOW}Total: {len(mtf_info)} MTF structures, {total_size:.1f} MB")
             
-            # Get symbol choice from user
-            available_symbols = list(mtf_info.keys())
+            # Get symbol choice from user - show only symbol names without source
+            available_symbols = [info['symbol'] for info in mtf_info.values()]
             symbol_choice = symbol_display.get_symbol_choice(available_symbols)
             
             if not symbol_choice:
                 input(f"\n{Fore.CYAN}Press Enter to continue...")
                 return
             
-            selected_mtf_info = mtf_info[symbol_choice]
+            # Find the selected symbol info (handle multiple sources for same symbol)
+            matching_symbols = []
+            for symbol_key, info in mtf_info.items():
+                if info['symbol'] == symbol_choice.upper():
+                    matching_symbols.append(info)
+            
+            if not matching_symbols:
+                print(f"{Fore.RED}❌ Symbol '{symbol_choice.upper()}' not found")
+                input(f"\n{Fore.CYAN}Press Enter to continue...")
+                return
+            
+            # If multiple sources found, let user choose
+            if len(matching_symbols) > 1:
+                print(f"\n{Fore.YELLOW}⚠️  Multiple sources found for {symbol_choice.upper()}:")
+                for i, info in enumerate(matching_symbols, 1):
+                    print(f"  {i}. {info['source']} - {info['size_mb']:.1f} MB, {info['total_rows']:,} rows")
+                
+                try:
+                    source_choice = input(f"\n{Fore.GREEN}Choose source (1-{len(matching_symbols)}) [default: 1]: {Style.RESET_ALL}").strip()
+                    if not source_choice:
+                        source_choice = "1"
+                    source_idx = int(source_choice) - 1
+                    if source_idx < 0 or source_idx >= len(matching_symbols):
+                        raise ValueError("Invalid choice")
+                    selected_mtf_info = matching_symbols[source_idx]
+                except (ValueError, IndexError):
+                    print(f"{Fore.RED}❌ Invalid choice. Using first source.")
+                    selected_mtf_info = matching_symbols[0]
+            else:
+                selected_mtf_info = matching_symbols[0]
             
             # Display MTF structure info
             print(f"\n{Fore.GREEN}🎯 {selected_mtf_info['symbol']} ({selected_mtf_info['source']}) - MTF Structure Info:")
