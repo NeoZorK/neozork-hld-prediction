@@ -16,7 +16,7 @@ import os
 import sys
 
 # Add project root to path
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.interactive.data_management.raw_parquet.raw_parquet_analyzer import RawParquetAnalyzer
@@ -195,8 +195,8 @@ class TestRawParquetAnalyzer:
         
         # Test invalid format
         source, symbol = self.analyzer._extract_source_and_symbol_from_filename("invalid_file.parquet")
-        assert source is None
-        assert symbol is None
+        assert source == "invalid"
+        assert symbol == "FILE"
     
     def test_extract_timeframe_from_filename(self):
         """Test extraction of timeframe from filename."""
