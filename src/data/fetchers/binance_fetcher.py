@@ -93,8 +93,9 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
     
     interval_min = interval_minutes.get(binance_interval_str, 60)
     
-    # Calculate small chunk size (max 500 records per chunk for better progress control)
-    max_records_per_chunk = 500
+    # Calculate chunk size based on time duration (max 1000 records per API call)
+    max_records_per_chunk = 1000  # Binance API limit
+    # Use time-based chunking: each chunk covers 1000 records worth of time
     chunk_duration_ms = max_records_per_chunk * interval_min * 60 * 1000  # Convert to milliseconds
     
     # Calculate total chunks needed
