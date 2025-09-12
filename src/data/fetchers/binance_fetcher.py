@@ -146,6 +146,30 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
         bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} chunks [{elapsed}<{remaining}, {rate_fmt}] {postfix}'
     )
     
+    # Add early detection for unavailable data
+    logger.print_info(f"Checking data availability for {binance_ticker} from {start_date} to {end_date}")
+    logger.print_info("If no data is available for the requested period, the process will stop after a few attempts.")
+    
+    # Try a quick test call to see if data is available
+    try:
+        logger.print_info("Performing quick availability check...")
+        test_klines = client.get_historical_klines(
+            symbol=binance_ticker,
+            interval=binance_interval_str,
+            start_str=start_ms,
+            end_str=min(start_ms + (24 * 60 * 60 * 1000), end_ms),  # Test first 24 hours
+            limit=1
+        )
+        if not test_klines:
+            logger.print_warning("Quick test returned no data. Historical data likely not available for this period.")
+            logger.print_info("Stopping fetch to avoid unnecessary API calls.")
+            return None, {**metrics, "error_message": f"No historical data available for {binance_ticker} in the specified date range ({start_date} to {end_date}). The trading pair might not have been available during this time period."}
+        else:
+            logger.print_info(f"Quick test successful. Found data starting from {test_klines[0][0]}.")
+    except Exception as e:
+        logger.print_warning(f"Quick availability check failed: {e}")
+        logger.print_info("Proceeding with normal fetch process...")
+    
     chunks_processed = 0
     total_data_loaded_kb = 0.0
     total_rows_downloaded = 0
@@ -201,14 +225,24 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
                     start_chunk_time = time.perf_counter()
                     metrics["api_calls"] += 1
                     
-                    # Make API call with small chunk
-                    klines_chunk = client.get_historical_klines(
-                        symbol=binance_ticker,
-                        interval=binance_interval_str,
-                        start_str=current_start_ms,
-                        end_str=current_chunk_end_ms,
-                        limit=max_records_per_chunk
-                    )
+                    # Make API call with small chunk and timeout
+                    def timeout_handler(signum, frame):
+                        raise TimeoutError("API call timed out")
+                    
+                    # Set timeout for API call (10 seconds)
+                    signal.signal(signal.SIGALRM, timeout_handler)
+                    signal.alarm(10)
+                    
+                    try:
+                        klines_chunk = client.get_historical_klines(
+                            symbol=binance_ticker,
+                            interval=binance_interval_str,
+                            start_str=current_start_ms,
+                            end_str=current_chunk_end_ms,
+                            limit=max_records_per_chunk
+                        )
+                    finally:
+                        signal.alarm(0)  # Cancel the alarm
                     
                     end_chunk_time = time.perf_counter()
                     chunk_latency = end_chunk_time - start_chunk_time
@@ -236,6 +270,13 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
                         return None, metrics
                     else:
                         pbar.write(f"API Error: {e}")
+                except TimeoutError as e:
+                    pbar.write(f"API call timed out: {e}")
+                    if attempt < max_attempts_per_chunk:
+                        wait_time = 5  # Short wait before retry
+                    else:
+                        pbar.write("API timeout after all retries. Likely no data available for this period.")
+                        break
                 except KeyboardInterrupt:
                     logger.print_info("🛑 KeyboardInterrupt received during data fetching. Stopping gracefully...")
                     pbar.close()
@@ -260,15 +301,29 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
 
             # --- Process Successful Chunk ---
             if klines_chunk:
-                metrics["rows_fetched"] += len(klines_chunk)
-                all_klines_raw.extend(klines_chunk)
-                chunks_processed += 1
-
-                # Calculate actual data size loaded
                 chunk_rows = len(klines_chunk)
-                chunk_data_size_kb = chunk_rows * 0.12  # ~120 bytes per row
-                total_data_loaded_kb += chunk_data_size_kb
-                total_rows_downloaded += chunk_rows
+                
+                # Check if chunk has data
+                if chunk_rows > 0:
+                    metrics["rows_fetched"] += chunk_rows
+                    all_klines_raw.extend(klines_chunk)
+                    
+                    # Calculate actual data size loaded
+                    chunk_data_size_kb = chunk_rows * 0.12  # ~120 bytes per row
+                    total_data_loaded_kb += chunk_data_size_kb
+                    total_rows_downloaded += chunk_rows
+                    
+                    logger.print_debug(f"Chunk {chunks_processed + 1}: Got {chunk_rows} rows")
+                else:
+                    logger.print_debug(f"Chunk {chunks_processed + 1}: No data available for this time period")
+                    
+                    # If this is the first chunk and it's empty, likely no data available
+                    if chunks_processed == 0:
+                        logger.print_warning("First chunk returned no data. Historical data likely not available for this period.")
+                        logger.print_info("Stopping fetch to avoid unnecessary API calls.")
+                        break
+                
+                chunks_processed += 1
                 
                 # Update progress bar
                 pbar.update(1)  # Increment by 1 chunk
@@ -282,8 +337,15 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
                 pbar.refresh()
 
                 # Move to next chunk
-                if len(klines_chunk) < max_records_per_chunk:
+                if chunk_rows < max_records_per_chunk:
                     # Last chunk or no more data
+                    logger.print_debug(f"Chunk returned {chunk_rows} rows (less than {max_records_per_chunk}), stopping")
+                    break
+                
+                # If we've processed several chunks with no data, likely no more data available
+                if chunks_processed >= 2 and total_rows_downloaded == 0:
+                    logger.print_warning("Multiple chunks processed with no data. Likely no historical data available for this period.")
+                    logger.print_info("Stopping fetch to avoid unnecessary API calls.")
                     break
                 
                 current_start_ms = current_chunk_end_ms
@@ -306,8 +368,13 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
 
     # --- Combine and Process All Fetched Data ---
     if not all_klines_raw:
-        logger.print_warning(f"No Binance data returned for '{binance_ticker}'.")
-        return None, {**metrics, "error_message": "No data found for the specified criteria."}
+        logger.print_warning(f"No Binance data returned for '{binance_ticker}' in the specified date range.")
+        logger.print_info(f"Date range requested: {start_date} to {end_date}")
+        logger.print_info("This might be because:")
+        logger.print_info("1. The trading pair was not available during this time period")
+        logger.print_info("2. The exchange was not operational during this time")
+        logger.print_info("3. The data is not available for the requested interval")
+        return None, {**metrics, "error_message": f"No data found for {binance_ticker} in the specified date range ({start_date} to {end_date}). The trading pair might not have been available during this time period."}
     
     # Log final download statistics
     logger.print_info(f"Successfully downloaded {total_rows_downloaded} rows ({total_data_loaded_kb:.1f}KB) from Binance in {chunks_processed} chunks.")

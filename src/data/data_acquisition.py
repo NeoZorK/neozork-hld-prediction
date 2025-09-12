@@ -377,6 +377,10 @@ def acquire_data(args) -> dict:
                                 print_success(f"Fetched {len(new_df_part)} new rows.")  # Use print_success
                             else:
                                 print_warning(f"No data returned for range {fetch_start_str} to {fetch_end_str}.")
+                                # Check if this is due to unavailable historical data
+                                if effective_mode == 'binance':
+                                    print_info("This might be because the trading pair was not available during this time period.")
+                                    print_info("SOLUSDT was likely listed on Binance after 2020-08-11.")
 
                             if isinstance(metrics_part, dict):
                                 for key, value in metrics_part.items():
