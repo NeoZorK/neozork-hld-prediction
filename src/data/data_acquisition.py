@@ -399,6 +399,14 @@ def acquire_data(args) -> dict:
                         # No cache available, will fetch full range
                         print_info("No cache available, will fetch full requested range.")
                     
+                    # Special handling for future dates: if requested end date is in the future,
+                    # we need to check if we have data up to current time and mark the remaining
+                    # period as a gap that will be filled when data becomes available
+                    if req_end_dt_inclusive > current_time:
+                        print_info(f"Requested end date {req_end_dt_inclusive} is in the future.")
+                        print_info("Will fetch available data up to current time and note the remaining gap.")
+                        # The gap detection above should have already identified this gap
+                    
                     # Note: Gap detection and range fetching is now handled by _detect_full_range_gaps above
                     if not fetch_ranges:
                         print_info("Requested range is fully covered by cache.")
@@ -609,6 +617,15 @@ def acquire_data(args) -> dict:
                     if rows_before_dedup > rows_after_dedup: print_debug(
                         f"Removed {rows_before_dedup - rows_after_dedup} duplicate rows after combining.")
                     print_info(f"Combined data has {rows_after_dedup} unique rows.")
+                    
+                    # After combining data, check if we still have gaps for future dates
+                    if req_end_dt_inclusive > current_time and combined_df is not None and not combined_df.empty:
+                        current_data_end = combined_df.index.max()
+                        if current_data_end < req_end_dt_inclusive:
+                            remaining_gap_days = (req_end_dt_inclusive - current_data_end).days
+                            print_info(f"Data loaded up to {current_data_end}. Remaining gap: {remaining_gap_days} days until {req_end_dt_inclusive}")
+                            print_info("This gap will be filled when future data becomes available.")
+                            
                 except Exception as e:
                     print_error(f"Error combining data: {e}");
                     data_info["error_message"] = f"Error combining data: {e}"
