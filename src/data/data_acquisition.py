@@ -247,6 +247,17 @@ def acquire_data(args) -> dict:
                     raise ValueError("Start date is required for cacheable API modes.")
 
                 if cache_load_success and interval_delta and cache_start_dt and cache_end_dt:
+                    # Check for future dates that cannot have data
+                    current_time = pd.Timestamp.now(tz='UTC').tz_localize(None)
+                    if req_start_dt > current_time:
+                        print_warning(f"Requested start date {req_start_dt} is in the future. No data available.")
+                        fetch_ranges = []  # No need to fetch future data
+                    elif req_end_dt_inclusive > current_time:
+                        print_warning(f"Requested end date {req_end_dt_inclusive} is in the future. Will fetch only up to current time.")
+                        # Adjust end date to current time
+                        req_end_dt_inclusive = min(req_end_dt_inclusive, current_time)
+                        req_end_dt_input = min(req_end_dt_input, current_time)
+                    
                     if req_start_dt < cache_start_dt:
                         # Inclusive end timestamp for this fetch range
                         fetch_before_end = cache_start_dt - interval_delta
@@ -256,8 +267,14 @@ def acquire_data(args) -> dict:
                         # Inclusive start timestamp for this fetch range
                         fetch_after_start = cache_end_dt + interval_delta
                         if fetch_after_start <= req_end_dt_inclusive:
-                            # End timestamp is the overall required inclusive end
-                            fetch_ranges.append((fetch_after_start, req_end_dt_inclusive, None))
+                            # Check if the fetch range is in the future
+                            if fetch_after_start > current_time:
+                                print_warning(f"Missing data range {fetch_after_start} to {req_end_dt_inclusive} is in the future. Skipping.")
+                            else:
+                                # End timestamp is the overall required inclusive end, but not beyond current time
+                                fetch_end = min(req_end_dt_inclusive, current_time)
+                                if fetch_end > fetch_after_start:  # Only add if there's actually data to fetch
+                                    fetch_ranges.append((fetch_after_start, fetch_end, None))
                     if not fetch_ranges:
                         print_info("Requested range is fully covered by cache.")
                     else:
@@ -320,6 +337,9 @@ def acquire_data(args) -> dict:
                         # API end date needs to cover the *entire* last day included in fetch_end.
                         # Add 1 day to the last included timestamp's date for the API call end date string.
                         fetch_end_api_call_dt = fetch_end.normalize() + timedelta(days=1)
+                        # Don't go beyond current time
+                        current_time = pd.Timestamp.now(tz='UTC').tz_localize(None)
+                        fetch_end_api_call_dt = min(fetch_end_api_call_dt, current_time + timedelta(days=1))
                         fetch_end_str = fetch_end_api_call_dt.strftime('%Y-%m-%d')
                         # --- END CORRECTION ---
 
@@ -379,8 +399,11 @@ def acquire_data(args) -> dict:
                                 print_warning(f"No data returned for range {fetch_start_str} to {fetch_end_str}.")
                                 # Check if this is due to unavailable historical data
                                 if effective_mode == 'binance':
-                                    print_info("This might be because the trading pair was not available during this time period.")
-                                    print_info("SOLUSDT was likely listed on Binance after 2020-08-11.")
+                                    print_info("This might be because:")
+                                    print_info("1. The trading pair was not available during this time period")
+                                    print_info("2. The requested date range is in the future")
+                                    print_info("3. The exchange was not operational during this time")
+                                    # Don't treat this as a fatal error, continue with available data
 
                             if isinstance(metrics_part, dict):
                                 for key, value in metrics_part.items():
@@ -391,11 +414,13 @@ def acquire_data(args) -> dict:
                         except Exception as e:
                             error_msg = f"Failed fetch range {fetch_start_str}-{fetch_end_str}: {e}"
                             print_error(error_msg);
-                            fetch_failed = True
+                            # Don't break the entire process for individual range failures
+                            # Just log the error and continue with other ranges
                             temp_metrics["error_message"] = error_msg
                             print_error("Traceback:")
                             traceback.print_exc()
-                            break
+                            # Continue with next range instead of breaking
+                            continue
                     else:
                         print_error(f"Internal error: No fetch function defined for mode {effective_mode}")
                         fetch_failed = True;
@@ -431,6 +456,17 @@ def acquire_data(args) -> dict:
                 print_error(final_error_msg)
                 data_info["error_message"] = final_error_msg;
                 new_data_list = []
+            elif combined_metrics.get("error_message") and not new_data_list:
+                # If we have error messages but no new data, it's not necessarily a failure
+                # if we have cached data available
+                if cached_df is not None and not cached_df.empty:
+                    print_warning("Some data ranges failed to fetch, but using available cached data.")
+                    data_info["error_message"] = combined_metrics.get("error_message")
+                else:
+                    # No cached data and no new data - this is a real failure
+                    print_error("No data available from any source.")
+                    data_info["error_message"] = combined_metrics.get("error_message")
+                    new_data_list = []
 
             # --- Combine Data ---
             all_dfs = ([cached_df] if cached_df is not None else []) + new_data_list

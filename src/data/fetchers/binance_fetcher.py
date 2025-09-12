@@ -150,25 +150,18 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
     logger.print_info(f"Checking data availability for {binance_ticker} from {start_date} to {end_date}")
     logger.print_info("If no data is available for the requested period, the process will stop after a few attempts.")
     
-    # Try a quick test call to see if data is available
-    try:
-        logger.print_info("Performing quick availability check...")
-        test_klines = client.get_historical_klines(
-            symbol=binance_ticker,
-            interval=binance_interval_str,
-            start_str=start_ms,
-            end_str=min(start_ms + (24 * 60 * 60 * 1000), end_ms),  # Test first 24 hours
-            limit=1
-        )
-        if not test_klines:
-            logger.print_warning("Quick test returned no data. Historical data likely not available for this period.")
-            logger.print_info("Stopping fetch to avoid unnecessary API calls.")
-            return None, {**metrics, "error_message": f"No historical data available for {binance_ticker} in the specified date range ({start_date} to {end_date}). The trading pair might not have been available during this time period."}
-        else:
-            logger.print_info(f"Quick test successful. Found data starting from {test_klines[0][0]}.")
-    except Exception as e:
-        logger.print_warning(f"Quick availability check failed: {e}")
-        logger.print_info("Proceeding with normal fetch process...")
+    # Check for future dates without API call
+    current_time_ms = int(pd.Timestamp.now(tz='UTC').timestamp() * 1000)
+    if start_ms > current_time_ms:
+        logger.print_warning("Requested start time is in the future. No data available.")
+        return None, {**metrics, "error_message": f"Requested start date {start_date} is in the future. No historical data available for future dates."}
+    
+    # Adjust end time if it's in the future
+    if end_ms > current_time_ms:
+        logger.print_info(f"Requested end time is in the future. Adjusting to current time.")
+        end_ms = current_time_ms
+        # Also update the end_date string for logging
+        end_date = pd.Timestamp(end_ms, unit='ms').strftime('%Y-%m-%d')
     
     chunks_processed = 0
     total_data_loaded_kb = 0.0
