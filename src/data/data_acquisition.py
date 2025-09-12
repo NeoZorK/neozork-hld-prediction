@@ -23,6 +23,46 @@ from .fetchers import (
 from ..common.logger import print_info, print_warning, print_error, print_debug, print_success  # Added print_success
 
 
+# Helper function to detect gaps in full requested range (including missing data outside cache)
+def _detect_full_range_gaps(cached_df: pd.DataFrame, req_start_dt: pd.Timestamp, req_end_dt: pd.Timestamp, 
+                           cache_start_dt: pd.Timestamp, cache_end_dt: pd.Timestamp, 
+                           interval_delta: pd.Timedelta) -> List[Tuple[pd.Timestamp, pd.Timestamp]]:
+    """
+    Detect gaps in the full requested range, including missing data outside the cache.
+    Returns a list of (gap_start, gap_end) tuples.
+    """
+    gaps = []
+    
+    # Check for gaps before cache starts
+    if req_start_dt < cache_start_dt:
+        gap_start = req_start_dt
+        gap_end = cache_start_dt - interval_delta
+        if gap_end > gap_start:
+            gaps.append((gap_start, gap_end))
+            print_debug(f"Gap before cache: {gap_start} to {gap_end} (duration: {gap_end - gap_start})")
+    
+    # Check for gaps after cache ends
+    if req_end_dt > cache_end_dt:
+        gap_start = cache_end_dt + interval_delta
+        gap_end = req_end_dt
+        if gap_end > gap_start:
+            gaps.append((gap_start, gap_end))
+            print_debug(f"Gap after cache: {gap_start} to {gap_end} (duration: {gap_end - gap_start})")
+    
+    # Check for gaps within cache (if cache exists)
+    if cached_df is not None and not cached_df.empty:
+        cache_gaps = _detect_data_gaps(cached_df, cache_start_dt, cache_end_dt, interval_delta)
+        for gap_start, gap_end in cache_gaps:
+            # Only include gaps that overlap with requested range
+            if gap_start <= req_end_dt and gap_end >= req_start_dt:
+                # Adjust gap boundaries to fit within requested range
+                adjusted_start = max(gap_start, req_start_dt)
+                adjusted_end = min(gap_end, req_end_dt)
+                if adjusted_end > adjusted_start:
+                    gaps.append((adjusted_start, adjusted_end))
+    
+    return gaps
+
 # Helper function to detect gaps in cached data
 def _detect_data_gaps(df: pd.DataFrame, start_dt: pd.Timestamp, end_dt: pd.Timestamp, interval_delta: pd.Timedelta) -> List[Tuple[pd.Timestamp, pd.Timestamp]]:
     """
@@ -330,58 +370,36 @@ def acquire_data(args) -> dict:
                     raise ValueError("Start date is required for cacheable API modes.")
 
                 if cache_load_success and interval_delta and cache_start_dt and cache_end_dt:
-                    # Check for future dates that cannot have data
+                    # Check for future dates - allow fetching up to requested date
                     current_time = pd.Timestamp.now(tz='UTC').tz_localize(None)
                     if req_start_dt > current_time:
                         print_warning(f"Requested start date {req_start_dt} is in the future. No data available.")
                         fetch_ranges = []  # No need to fetch future data
                     elif req_end_dt_inclusive > current_time:
-                        print_warning(f"Requested end date {req_end_dt_inclusive} is in the future. Will fetch only up to current time.")
-                        # Adjust end date to current time
-                        req_end_dt_inclusive = min(req_end_dt_inclusive, current_time)
-                        req_end_dt_input = min(req_end_dt_input, current_time)
+                        print_info(f"Requested end date {req_end_dt_inclusive} is in the future. Will attempt to fetch up to requested date.")
+                        # Keep the requested end date for gap detection, but limit actual API calls to current time
+                        # This allows gap detection to work properly for the full requested range
+                        # The actual API calls will be limited by the fetcher functions
                     
-                    # Check for gaps in cached data - analyze the entire cache, not just requested range
+                    # Check for gaps in the full requested range (including missing data outside cache)
                     if cached_df is not None and not cached_df.empty:
-                        print_info("Checking for gaps in entire cached data...")
-                        # Analyze gaps in the entire cache, but only fetch those within requested range
-                        all_gaps = _detect_data_gaps(cached_df, cache_start_dt, cache_end_dt, interval_delta)
-                        gaps_in_range = []
+                        print_info("Checking for gaps in full requested range...")
+                        # Use the new function to detect gaps in the full range
+                        all_gaps = _detect_full_range_gaps(cached_df, req_start_dt, req_end_dt_inclusive, 
+                                                         cache_start_dt, cache_end_dt, interval_delta)
                         
-                        for gap_start, gap_end in all_gaps:
-                            # Only include gaps that overlap with our requested range
-                            if gap_start <= req_end_dt_inclusive and gap_end >= req_start_dt:
-                                # Adjust gap boundaries to fit within requested range
-                                adjusted_start = max(gap_start, req_start_dt)
-                                adjusted_end = min(gap_end, req_end_dt_inclusive)
-                                if adjusted_end > adjusted_start:
-                                    gaps_in_range.append((adjusted_start, adjusted_end))
-                        
-                        if gaps_in_range:
-                            print_info(f"Found {len(gaps_in_range)} gaps in cached data within requested range. Will fetch missing data.")
+                        if all_gaps:
+                            print_info(f"Found {len(all_gaps)} gaps in full requested range. Will fetch missing data.")
                             # Add gap ranges to fetch_ranges
-                            for gap_start, gap_end in gaps_in_range:
+                            for gap_start, gap_end in all_gaps:
                                 fetch_ranges.append((gap_start, gap_end, None))
                         else:
-                            print_info("No significant gaps found in cached data within requested range.")
+                            print_info("No significant gaps found in full requested range.")
+                    else:
+                        # No cache available, will fetch full range
+                        print_info("No cache available, will fetch full requested range.")
                     
-                    if req_start_dt < cache_start_dt:
-                        # Inclusive end timestamp for this fetch range
-                        fetch_before_end = cache_start_dt - interval_delta
-                        if fetch_before_end >= req_start_dt:
-                            fetch_ranges.append((req_start_dt, fetch_before_end, cache_start_dt))
-                    if req_end_dt_inclusive > cache_end_dt:
-                        # Inclusive start timestamp for this fetch range
-                        fetch_after_start = cache_end_dt + interval_delta
-                        if fetch_after_start <= req_end_dt_inclusive:
-                            # Check if the fetch range is in the future
-                            if fetch_after_start > current_time:
-                                print_warning(f"Missing data range {fetch_after_start} to {req_end_dt_inclusive} is in the future. Skipping.")
-                            else:
-                                # End timestamp is the overall required inclusive end, but not beyond current time
-                                fetch_end = min(req_end_dt_inclusive, current_time)
-                                if fetch_end > fetch_after_start:  # Only add if there's actually data to fetch
-                                    fetch_ranges.append((fetch_after_start, fetch_end, None))
+                    # Note: Gap detection and range fetching is now handled by _detect_full_range_gaps above
                     if not fetch_ranges:
                         print_info("Requested range is fully covered by cache.")
                     else:
@@ -444,9 +462,8 @@ def acquire_data(args) -> dict:
                         # API end date needs to cover the *entire* last day included in fetch_end.
                         # Add 1 day to the last included timestamp's date for the API call end date string.
                         fetch_end_api_call_dt = fetch_end.normalize() + timedelta(days=1)
-                        # Don't go beyond current time
-                        current_time = pd.Timestamp.now(tz='UTC').tz_localize(None)
-                        fetch_end_api_call_dt = min(fetch_end_api_call_dt, current_time + timedelta(days=1))
+                        # Allow fetching up to requested date, even if it's in the future
+                        # The actual API fetcher will handle the limitation to current time if needed
                         fetch_end_str = fetch_end_api_call_dt.strftime('%Y-%m-%d')
                         # --- END CORRECTION ---
 
