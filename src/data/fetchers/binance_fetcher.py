@@ -221,12 +221,11 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
                 logger.print_warning(f"Requested end date {end_date} is also before {binance_ticker} was listed. No data available for this period.")
                 return None, {**metrics, "error_message": f"No data available for {binance_ticker} before listing date {known_listing_dates[binance_ticker]}"}
     
-    # Adjust end time if it's in the future
+    # Check if end time is in the future - allow fetching up to requested date
     if end_ms > current_time_ms:
-        logger.print_info(f"Requested end time is in the future. Adjusting to current time.")
-        end_ms = current_time_ms
-        # Also update the end_date string for logging
-        end_date = pd.Timestamp(end_ms, unit='ms').strftime('%Y-%m-%d')
+        logger.print_info(f"Requested end time is in the future. Will attempt to fetch up to requested date.")
+        # Keep the requested end date - don't limit to current time
+        # This allows gap detection to work properly for the full requested range
     
     chunks_processed = 0
     total_data_loaded_kb = 0.0
