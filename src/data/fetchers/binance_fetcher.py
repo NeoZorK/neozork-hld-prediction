@@ -159,7 +159,7 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
     # Check for known listing dates of popular cryptocurrencies
     known_listing_dates = {
         'SOLUSDT': '2020-08-11',
-        'ADAUSDT': '2018-01-01',
+        'ADAUSDT': '2017-10-18',  # ADAUSDT started trading on Binance in October 2017
         'DOTUSDT': '2020-08-19',
         'LINKUSDT': '2019-01-31',
         'UNIUSDT': '2020-09-17',
@@ -167,7 +167,44 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
         'MATICUSDT': '2019-04-26',
         'ATOMUSDT': '2019-04-26',
         'NEARUSDT': '2022-01-20',
-        'FTMUSDT': '2019-05-21'
+        'FTMUSDT': '2019-05-21',
+        'ETHUSDT': '2017-08-17',  # ETHUSDT started trading on Binance in August 2017
+        'BTCUSDT': '2017-08-17',  # BTCUSDT started trading on Binance in August 2017
+        'LTCUSDT': '2017-08-17',  # LTCUSDT started trading on Binance in August 2017
+        'BNBUSDT': '2017-08-17',  # BNBUSDT started trading on Binance in August 2017
+        'XRPUSDT': '2017-08-17',  # XRPUSDT started trading on Binance in August 2017
+        'BCHUSDT': '2017-08-01',  # BCHUSDT started trading on Binance in August 2017
+        'EOSUSDT': '2017-08-17',  # EOSUSDT started trading on Binance in August 2017
+        'XLMUSDT': '2017-08-17',  # XLMUSDT started trading on Binance in August 2017
+        'TRXUSDT': '2017-08-17',  # TRXUSDT started trading on Binance in August 2017
+        'NEOUSDT': '2017-08-17',  # NEOUSDT started trading on Binance in August 2017
+        'IOTAUSDT': '2017-08-17',  # IOTAUSDT started trading on Binance in August 2017
+        'DASHUSDT': '2017-08-17',  # DASHUSDT started trading on Binance in August 2017
+        'XMRUSDT': '2017-08-17',  # XMRUSDT started trading on Binance in August 2017
+        'ZECUSDT': '2017-08-17',  # ZECUSDT started trading on Binance in August 2017
+        'ETCUSDT': '2017-08-17',  # ETCUSDT started trading on Binance in August 2017
+        'QTUMUSDT': '2017-08-17',  # QTUMUSDT started trading on Binance in August 2017
+        'OMGUSDT': '2017-08-17',  # OMGUSDT started trading on Binance in August 2017
+        'WAVESUSDT': '2017-08-17',  # WAVESUSDT started trading on Binance in August 2017
+        'ZRXUSDT': '2017-08-17',  # ZRXUSDT started trading on Binance in August 2017
+        'BATUSDT': '2017-08-17',  # BATUSDT started trading on Binance in August 2017
+        'REPUSDT': '2017-08-17',  # REPUSDT started trading on Binance in August 2017
+        'KNCUSDT': '2017-08-17',  # KNCUSDT started trading on Binance in August 2017
+        'LRCUSDT': '2017-08-17',  # LRCUSDT started trading on Binance in August 2017
+        'CVCUSDT': '2017-08-17',  # CVCUSDT started trading on Binance in August 2017
+        'GNTUSDT': '2017-08-17',  # GNTUSDT started trading on Binance in August 2017
+        'STORJUSDT': '2017-08-17',  # STORJUSDT started trading on Binance in August 2017
+        'FUNUSDT': '2017-08-17',  # FUNUSDT started trading on Binance in August 2017
+        'SNTUSDT': '2017-08-17',  # SNTUSDT started trading on Binance in August 2017
+        'MCOUSDT': '2017-08-17',  # MCOUSDT started trading on Binance in August 2017
+        'ICNUSDT': '2017-08-17',  # ICNUSDT started trading on Binance in August 2017
+        'WTCUSDT': '2017-08-17',  # WTCUSDT started trading on Binance in August 2017
+        'BNTUSDT': '2017-08-17',  # BNTUSDT started trading on Binance in August 2017
+        'DLTUSDT': '2017-08-17',  # DLTUSDT started trading on Binance in August 2017
+        'AMBUSDT': '2017-08-17',  # AMBUSDT started trading on Binance in August 2017
+        'BCCUSDT': '2017-08-01',  # BCCUSDT started trading on Binance in August 2017
+        'BCHABCUSDT': '2017-08-01',  # BCHABCUSDT started trading on Binance in August 2017
+        'BCHSVUSDT': '2017-08-01'   # BCHSVUSDT started trading on Binance in August 2017
     }
     
     if binance_ticker in known_listing_dates:
@@ -178,6 +215,11 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
             logger.print_info("Adjusting start date to listing date.")
             start_ms = listing_date_ms
             start_date = listing_date.strftime('%Y-%m-%d')
+            
+            # If the entire requested range is before listing date, return empty data
+            if end_ms <= listing_date_ms:
+                logger.print_warning(f"Requested end date {end_date} is also before {binance_ticker} was listed. No data available for this period.")
+                return None, {**metrics, "error_message": f"No data available for {binance_ticker} before listing date {known_listing_dates[binance_ticker]}"}
     
     # Adjust end time if it's in the future
     if end_ms > current_time_ms:
@@ -262,6 +304,18 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
                     
                     end_chunk_time = time.perf_counter()
                     chunk_latency = end_chunk_time - start_chunk_time
+                    
+                    # Check if we got any data
+                    if not klines_chunk or len(klines_chunk) == 0:
+                        pbar.write(f"No data returned for chunk {chunks_processed + 1}. This period may not have data available.")
+                        if attempt < max_attempts_per_chunk:
+                            wait_time = 2  # Short wait before retry
+                            continue
+                        else:
+                            # If no data after all retries, skip this chunk
+                            success = False
+                            break
+                    
                     success = True
                     metrics["total_latency_sec"] += chunk_latency
                     metrics["successful_chunks"] += 1
@@ -393,9 +447,19 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
         logger.print_info(f"Date range requested: {start_date} to {end_date}")
         logger.print_info("This might be because:")
         logger.print_info("1. The trading pair was not available during this time period")
-        logger.print_info("2. The exchange was not operational during this time")
-        logger.print_info("3. The data is not available for the requested interval")
-        return None, {**metrics, "error_message": f"No data found for {binance_ticker} in the specified date range ({start_date} to {end_date}). The trading pair might not have been available during this time period."}
+        logger.print_info("2. The requested start date is before the trading pair was listed")
+        logger.print_info("3. The requested end date is in the future")
+        logger.print_info("4. The trading pair is not supported by Binance")
+        logger.print_info("5. Network issues or API rate limits")
+        
+        # Check if this is a known listing date issue
+        if binance_ticker in known_listing_dates:
+            listing_date = known_listing_dates[binance_ticker]
+            logger.print_info(f"Note: {binance_ticker} was listed on Binance on {listing_date}")
+            if start_date < listing_date:
+                logger.print_info(f"Try using a start date on or after {listing_date}")
+        
+        return None, {**metrics, "error_message": f"No data available for {binance_ticker} in the specified date range"}
     
     # Log final download statistics
     logger.print_info(f"Successfully downloaded {total_rows_downloaded} rows ({total_data_loaded_kb:.1f}KB) from Binance in {chunks_processed} chunks.")
