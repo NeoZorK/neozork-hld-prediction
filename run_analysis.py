@@ -100,6 +100,7 @@ Notes:
 import sys
 import time
 import os
+import signal
 
 # Check if running in Docker environment and patch webbrowser if needed
 IN_DOCKER = os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
@@ -127,6 +128,20 @@ from rich.console import Console
 # Initialize rich console
 console = Console()
 
+# Global flag for graceful shutdown
+shutdown_requested = False
+
+def signal_handler(signum, frame):
+    """Handle CTRL+C gracefully without traceback."""
+    global shutdown_requested
+    if not shutdown_requested:
+        shutdown_requested = True
+        print("\n🛑 Graceful shutdown requested... Please wait for current operation to complete.")
+        print("   Press CTRL+C again to force exit.")
+    else:
+        print("\n⚠️  Force exit requested. Exiting immediately...")
+        sys.exit(1)
+
 
 # --- Main Execution Function ---
 def main():
@@ -145,6 +160,9 @@ def main():
     Returns:
         None
     """
+    # Register signal handler for graceful shutdown
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
 
     # Start overall timer for the entire script execution
     start_time_total = time.perf_counter()
@@ -161,12 +179,21 @@ def main():
     # This function now contains the logic for data acquisition, point size,
     # indicator calculation, and plotting generation.
     # It returns a dictionary containing results and metrics.
+    if shutdown_requested:
+        print("🛑 Shutdown requested before workflow execution.")
+        sys.exit(0)
+    
     workflow_results = run_indicator_workflow(args)
 
     # --- Print Summary Report ---
     # Stop the overall timer
     end_time_total = time.perf_counter()
     total_duration = end_time_total - start_time_total
+
+    # Check if shutdown was requested during workflow execution
+    if shutdown_requested:
+        print("🛑 Shutdown completed gracefully.")
+        sys.exit(0)
 
     # Check if the workflow returned a result dictionary
     if workflow_results:

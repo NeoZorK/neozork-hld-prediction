@@ -4,6 +4,7 @@ import pandas as pd
 import os
 import time
 import traceback
+import signal
 from datetime import datetime, timedelta
 from tqdm import tqdm
 from src.common import logger
@@ -21,6 +22,23 @@ except ImportError:
         KLINE_INTERVAL_1DAY = '1d'; KLINE_INTERVAL_1WEEK = '1w'; KLINE_INTERVAL_1MONTH = '1M'
     class BinanceAPIException(Exception): pass
     class BinanceRequestException(Exception): pass
+
+# Global flag for graceful shutdown during data fetching
+shutdown_requested = False
+
+def check_shutdown_requested():
+    """Check if a shutdown signal has been received during data fetching."""
+    return shutdown_requested
+
+def signal_handler(signum, frame):
+    """Handle CTRL+C gracefully during data fetching."""
+    global shutdown_requested
+    if not shutdown_requested:
+        shutdown_requested = True
+        logger.print_info("🛑 Shutdown requested during data fetching... Please wait for current chunk to complete.")
+    else:
+        logger.print_info("⚠️  Force exit requested during data fetching.")
+        raise KeyboardInterrupt("Force exit requested")
 
 def map_binance_interval(tf_input: str) -> str | None:
     """Maps timeframe input to Binance interval string."""
@@ -46,6 +64,13 @@ def map_binance_ticker(ticker_input: str) -> str:
 
 def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: str) -> tuple[pd.DataFrame | None, dict]:
     """ Downloads OHLCV data from Binance Spot API with small chunks and detailed progress control. """
+    global shutdown_requested
+    shutdown_requested = False  # Reset shutdown flag for new fetch
+    
+    # Register signal handler for graceful shutdown during data fetching
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+    
     if not BINANCE_AVAILABLE:
         logger.print_error("Binance Connector library ('python-binance') is not installed.")
         return None, {"error_message": "python-binance not installed"}
@@ -130,6 +155,12 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
 
     try:
         while current_start_ms < end_ms:
+            # Check for shutdown request before processing each chunk
+            if check_shutdown_requested():
+                logger.print_info("🛑 Shutdown requested during data fetching. Stopping gracefully...")
+                pbar.close()
+                return None, {**metrics, "error_message": "Shutdown requested by user"}
+            
             # Calculate current chunk end time
             current_chunk_end_ms = min(current_start_ms + chunk_duration_ms, end_ms)
             
@@ -157,6 +188,12 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
             success = False
             
             while attempt < max_attempts_per_chunk:
+                # Check for shutdown request before each retry attempt
+                if check_shutdown_requested():
+                    logger.print_info("🛑 Shutdown requested during chunk retry. Stopping gracefully...")
+                    pbar.close()
+                    return None, {**metrics, "error_message": "Shutdown requested by user"}
+                
                 attempt += 1
                 wait_time = 0
                 
@@ -199,6 +236,10 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
                         return None, metrics
                     else:
                         pbar.write(f"API Error: {e}")
+                except KeyboardInterrupt:
+                    logger.print_info("🛑 KeyboardInterrupt received during data fetching. Stopping gracefully...")
+                    pbar.close()
+                    return None, {**metrics, "error_message": "Interrupted by user"}
                 except Exception as e:
                     pbar.write(f"Unexpected error: {e}")
                     pbar.write(f"Traceback:\n{traceback.format_exc()}")
@@ -251,6 +292,10 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
                 if current_start_ms < end_ms:
                     time.sleep(request_delay_sec)
 
+    except KeyboardInterrupt:
+        logger.print_info("🛑 KeyboardInterrupt received during main data fetching loop. Stopping gracefully...")
+        pbar.close()
+        return None, {**metrics, "error_message": "Interrupted by user"}
     finally:
         # --- Ensure progress bar shows 100% before closing ---
         pbar.n = total_chunks
