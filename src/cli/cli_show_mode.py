@@ -396,9 +396,11 @@ def _filter_dataframe_by_date(df, start, end):
         df.set_index(found_col, inplace=True)
         date_index = df.index
     if date_index is not None:
-        start_dt = pd.to_datetime(start) if start else date_index.min()
-        end_dt = pd.to_datetime(end) if end else date_index.max()
-        df = df[(date_index >= start_dt) & (date_index <= end_dt)]
+        # Only apply filtering if start or end dates are provided
+        if start or end:
+            start_dt = pd.to_datetime(start) if start else date_index.min()
+            end_dt = pd.to_datetime(end) if end else date_index.max()
+            df = df[(date_index >= start_dt) & (date_index <= end_dt)]
     return df
 
 def _should_draw_plot(args):
@@ -1049,6 +1051,14 @@ def _handle_single_file_mode(args, found_files, metrics):
         df = pd.read_parquet(found_files[0]['path'])
         t_load_end = time.perf_counter()
         metrics["data_fetch_duration"] = t_load_end - t_load_start
+        
+        # Apply date filtering if requested
+        start, end = _extract_datetime_filter_args(args)
+        if start or end:
+            print(f"Applying date filtering to data...")
+            original_len = len(df)
+            df = _filter_dataframe_by_date(df, start, end)
+            print(f"After date filtering: {len(df)} rows remaining (from {original_len})")
         
         # Update metrics
         metrics["rows_count"] = len(df)
