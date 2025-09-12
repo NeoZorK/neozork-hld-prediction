@@ -1059,6 +1059,14 @@ def _handle_single_file_mode(args, found_files, metrics):
             original_len = len(df)
             df = _filter_dataframe_by_date(df, start, end)
             print(f"After date filtering: {len(df)} rows remaining (from {original_len})")
+            
+            # Check if filtering resulted in no data and provide helpful message
+            if len(df) == 0 and original_len > 0:
+                print(f"⚠️  Warning: No data available for the requested date range.")
+                print(f"   Available data range: {found_files[0]['first_date']} to {found_files[0]['last_date']}")
+                print(f"   Requested range: {start or 'start'} to {end or 'end'}")
+                if 'SOLUSDT' in str(found_files[0]['name']):
+                    print(f"   Note: SOLUSDT data is only available from 2020-08-11 onwards.")
         
         # Update metrics
         metrics["rows_count"] = len(df)
