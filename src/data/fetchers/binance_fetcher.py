@@ -329,9 +329,9 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
                     total_data_loaded_kb += chunk_data_size_kb
                     total_rows_downloaded += chunk_rows
                     
-                    logger.print_debug(f"Chunk {chunks_processed + 1}: Got {chunk_rows} rows")
+                    # Removed debug message for chunk rows
                 else:
-                    logger.print_debug(f"Chunk {chunks_processed + 1}: No data available for this time period")
+                    # Removed debug message for empty chunks
                     
                     # More aggressive early stopping for empty chunks
                     if chunks_processed == 0:
@@ -360,7 +360,7 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
                 # Move to next chunk
                 if chunk_rows < max_records_per_chunk:
                     # Last chunk or no more data
-                    logger.print_debug(f"Chunk returned {chunk_rows} rows (less than {max_records_per_chunk}), stopping")
+                    # Removed debug message for chunk completion
                     break
                 
                 # If we've processed several chunks with no data, likely no more data available
