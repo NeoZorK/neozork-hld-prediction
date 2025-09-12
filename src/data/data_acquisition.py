@@ -41,18 +41,18 @@ def _detect_full_range_gaps(cached_df: pd.DataFrame, req_start_dt: pd.Timestamp,
             gaps.append((gap_start, gap_end))
             print_debug(f"Gap before cache: {gap_start} to {gap_end} (duration: {gap_end - gap_start})")
     
-    # Check for gaps after cache ends (but not for future dates - handled by progressive loading)
+    # Check for gaps after cache ends (but not for future dates - handled by continuous loading)
     if req_end_dt > cache_end_dt:
         gap_start = cache_end_dt + interval_delta
         gap_end = req_end_dt
         
-        # Only add this gap if it's not in the future (future dates handled by progressive loading)
+        # Only add this gap if it's not in the future (future dates handled by continuous loading)
         current_time = pd.Timestamp.now(tz='UTC').tz_localize(None)
         if gap_end <= current_time and gap_end > gap_start:
             gaps.append((gap_start, gap_end))
             print_debug(f"Gap after cache: {gap_start} to {gap_end} (duration: {gap_end - gap_start})")
         elif gap_end > current_time:
-            print_debug(f"Gap after cache extends to future: {gap_start} to {gap_end} - will be handled by progressive loading")
+            print_debug(f"Gap after cache extends to future: {gap_start} to {gap_end} - will be handled by continuous loading")
     
     # Check for gaps within cache (if cache exists)
     if cached_df is not None and not cached_df.empty:
@@ -68,39 +68,43 @@ def _detect_full_range_gaps(cached_df: pd.DataFrame, req_start_dt: pd.Timestamp,
     
     return gaps
 
-# Helper function to generate progressive loading ranges for future dates
-def _generate_progressive_loading_ranges(cache_end_dt: pd.Timestamp, req_end_dt: pd.Timestamp, 
+# Helper function to generate continuous loading ranges for future dates
+def _generate_continuous_loading_ranges(cache_end_dt: pd.Timestamp, req_end_dt: pd.Timestamp, 
                                        current_time: pd.Timestamp, interval_delta: pd.Timedelta) -> List[Tuple[pd.Timestamp, pd.Timestamp]]:
     """
-    Generate progressive loading ranges for future dates.
-    Adds data year by year until current time to ensure we get all available data.
+    Generate continuous loading ranges for future dates.
+    Adds data in smaller chunks (monthly) to ensure we get all available data.
     """
     ranges = []
     
     # Start from cache end + interval
     start_dt = cache_end_dt + interval_delta
     
-    # If start is already at or after current time, no need for progressive loading
+    # If start is already at or after current time, no need for continuous loading
     if start_dt >= current_time:
         return ranges
     
-    # Generate yearly ranges from start to current time
-    current_year = start_dt.year
-    end_year = min(req_end_dt.year, current_time.year)
+    # Generate monthly ranges from start to current time
+    current_date = start_dt
+    end_date = min(req_end_dt, current_time)
     
-    for year in range(current_year, end_year + 1):
-        # Start of year
-        year_start = pd.Timestamp(f"{year}-01-01")
-        # End of year (or current time if this is the current year)
-        if year == current_time.year:
-            year_end = current_time
+    while current_date < end_date:
+        # Calculate end of current month
+        if current_date.month == 12:
+            next_month = current_date.replace(year=current_date.year + 1, month=1, day=1)
         else:
-            year_end = pd.Timestamp(f"{year}-12-31 23:59:59")
+            next_month = current_date.replace(month=current_date.month + 1, day=1)
         
-        # Only add if the range is after our cache end and before requested end
-        if year_start > start_dt and year_end <= req_end_dt:
-            ranges.append((year_start, year_end))
-            print_debug(f"Progressive loading range: {year_start} to {year_end}")
+        # End of current range (end of month or current time, whichever is earlier)
+        range_end = min(next_month - interval_delta, end_date)
+        
+        # Only add if the range is valid
+        if range_end > current_date:
+            ranges.append((current_date, range_end))
+            print_debug(f"Continuous loading range: {current_date} to {range_end}")
+        
+        # Move to next month
+        current_date = next_month
     
     return ranges
 
@@ -444,19 +448,19 @@ def acquire_data(args) -> dict:
                         print_info("No cache available, will fetch full requested range.")
                     
                     # Special handling for future dates: if requested end date is in the future,
-                    # we need to implement progressive loading - add data year by year until current time
+                    # we need to implement continuous loading - add data in smaller chunks until current time
                     if req_end_dt_inclusive > current_time:
                         print_info(f"Requested end date {req_end_dt_inclusive} is in the future.")
-                        print_info("Implementing progressive loading: will fetch data year by year until current time.")
+                        print_info("Implementing continuous loading: will fetch data in monthly chunks until current time.")
                         
-                        # Add progressive loading ranges for future dates
-                        progressive_ranges = _generate_progressive_loading_ranges(
+                        # Add continuous loading ranges for future dates
+                        continuous_ranges = _generate_continuous_loading_ranges(
                             cache_end_dt, req_end_dt_inclusive, current_time, interval_delta
                         )
                         
-                        if progressive_ranges:
-                            print_info(f"Added {len(progressive_ranges)} progressive loading ranges.")
-                            fetch_ranges.extend(progressive_ranges)
+                        if continuous_ranges:
+                            print_info(f"Added {len(continuous_ranges)} continuous loading ranges.")
+                            fetch_ranges.extend(continuous_ranges)
                     
                     # Note: Gap detection and range fetching is now handled by _detect_full_range_gaps above
                     if not fetch_ranges:
