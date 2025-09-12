@@ -156,6 +156,29 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
         logger.print_warning("Requested start time is in the future. No data available.")
         return None, {**metrics, "error_message": f"Requested start date {start_date} is in the future. No historical data available for future dates."}
     
+    # Check for known listing dates of popular cryptocurrencies
+    known_listing_dates = {
+        'SOLUSDT': '2020-08-11',
+        'ADAUSDT': '2018-01-01',
+        'DOTUSDT': '2020-08-19',
+        'LINKUSDT': '2019-01-31',
+        'UNIUSDT': '2020-09-17',
+        'AVAXUSDT': '2021-09-22',
+        'MATICUSDT': '2019-04-26',
+        'ATOMUSDT': '2019-04-26',
+        'NEARUSDT': '2022-01-20',
+        'FTMUSDT': '2019-05-21'
+    }
+    
+    if binance_ticker in known_listing_dates:
+        listing_date = pd.Timestamp(known_listing_dates[binance_ticker])
+        listing_date_ms = int(listing_date.timestamp() * 1000)
+        if start_ms < listing_date_ms:
+            logger.print_warning(f"Requested start date {start_date} is before {binance_ticker} was listed on Binance ({known_listing_dates[binance_ticker]}).")
+            logger.print_info("Adjusting start date to listing date.")
+            start_ms = listing_date_ms
+            start_date = listing_date.strftime('%Y-%m-%d')
+    
     # Adjust end time if it's in the future
     if end_ms > current_time_ms:
         logger.print_info(f"Requested end time is in the future. Adjusting to current time.")
@@ -222,9 +245,9 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
                     def timeout_handler(signum, frame):
                         raise TimeoutError("API call timed out")
                     
-                    # Set timeout for API call (10 seconds)
+                    # Set timeout for API call (3 seconds)
                     signal.signal(signal.SIGALRM, timeout_handler)
-                    signal.alarm(10)
+                    signal.alarm(3)
                     
                     try:
                         klines_chunk = client.get_historical_klines(
@@ -310,10 +333,15 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
                 else:
                     logger.print_debug(f"Chunk {chunks_processed + 1}: No data available for this time period")
                     
-                    # If this is the first chunk and it's empty, likely no data available
+                    # More aggressive early stopping for empty chunks
                     if chunks_processed == 0:
                         logger.print_warning("First chunk returned no data. Historical data likely not available for this period.")
                         logger.print_info("Stopping fetch to avoid unnecessary API calls.")
+                        break
+                    
+                    # Stop after 2 consecutive empty chunks
+                    if chunks_processed >= 2 and total_rows_downloaded == 0:
+                        logger.print_warning("Multiple consecutive chunks returned no data. Stopping fetch.")
                         break
                 
                 chunks_processed += 1
