@@ -41,13 +41,18 @@ def _detect_full_range_gaps(cached_df: pd.DataFrame, req_start_dt: pd.Timestamp,
             gaps.append((gap_start, gap_end))
             print_debug(f"Gap before cache: {gap_start} to {gap_end} (duration: {gap_end - gap_start})")
     
-    # Check for gaps after cache ends
+    # Check for gaps after cache ends (but not for future dates - handled by progressive loading)
     if req_end_dt > cache_end_dt:
         gap_start = cache_end_dt + interval_delta
         gap_end = req_end_dt
-        if gap_end > gap_start:
+        
+        # Only add this gap if it's not in the future (future dates handled by progressive loading)
+        current_time = pd.Timestamp.now(tz='UTC').tz_localize(None)
+        if gap_end <= current_time and gap_end > gap_start:
             gaps.append((gap_start, gap_end))
             print_debug(f"Gap after cache: {gap_start} to {gap_end} (duration: {gap_end - gap_start})")
+        elif gap_end > current_time:
+            print_debug(f"Gap after cache extends to future: {gap_start} to {gap_end} - will be handled by progressive loading")
     
     # Check for gaps within cache (if cache exists)
     if cached_df is not None and not cached_df.empty:
@@ -62,6 +67,42 @@ def _detect_full_range_gaps(cached_df: pd.DataFrame, req_start_dt: pd.Timestamp,
                     gaps.append((adjusted_start, adjusted_end))
     
     return gaps
+
+# Helper function to generate progressive loading ranges for future dates
+def _generate_progressive_loading_ranges(cache_end_dt: pd.Timestamp, req_end_dt: pd.Timestamp, 
+                                       current_time: pd.Timestamp, interval_delta: pd.Timedelta) -> List[Tuple[pd.Timestamp, pd.Timestamp]]:
+    """
+    Generate progressive loading ranges for future dates.
+    Adds data year by year until current time to ensure we get all available data.
+    """
+    ranges = []
+    
+    # Start from cache end + interval
+    start_dt = cache_end_dt + interval_delta
+    
+    # If start is already at or after current time, no need for progressive loading
+    if start_dt >= current_time:
+        return ranges
+    
+    # Generate yearly ranges from start to current time
+    current_year = start_dt.year
+    end_year = min(req_end_dt.year, current_time.year)
+    
+    for year in range(current_year, end_year + 1):
+        # Start of year
+        year_start = pd.Timestamp(f"{year}-01-01")
+        # End of year (or current time if this is the current year)
+        if year == current_time.year:
+            year_end = current_time
+        else:
+            year_end = pd.Timestamp(f"{year}-12-31 23:59:59")
+        
+        # Only add if the range is after our cache end and before requested end
+        if year_start > start_dt and year_end <= req_end_dt:
+            ranges.append((year_start, year_end))
+            print_debug(f"Progressive loading range: {year_start} to {year_end}")
+    
+    return ranges
 
 # Helper function to detect gaps in cached data
 def _detect_data_gaps(df: pd.DataFrame, start_dt: pd.Timestamp, end_dt: pd.Timestamp, interval_delta: pd.Timedelta) -> List[Tuple[pd.Timestamp, pd.Timestamp]]:
@@ -400,12 +441,19 @@ def acquire_data(args) -> dict:
                         print_info("No cache available, will fetch full requested range.")
                     
                     # Special handling for future dates: if requested end date is in the future,
-                    # we need to check if we have data up to current time and mark the remaining
-                    # period as a gap that will be filled when data becomes available
+                    # we need to implement progressive loading - add data year by year until current time
                     if req_end_dt_inclusive > current_time:
                         print_info(f"Requested end date {req_end_dt_inclusive} is in the future.")
-                        print_info("Will fetch available data up to current time and note the remaining gap.")
-                        # The gap detection above should have already identified this gap
+                        print_info("Implementing progressive loading: will fetch data year by year until current time.")
+                        
+                        # Add progressive loading ranges for future dates
+                        progressive_ranges = _generate_progressive_loading_ranges(
+                            cache_end_dt, req_end_dt_inclusive, current_time, interval_delta
+                        )
+                        
+                        if progressive_ranges:
+                            print_info(f"Added {len(progressive_ranges)} progressive loading ranges.")
+                            fetch_ranges.extend(progressive_ranges)
                     
                     # Note: Gap detection and range fetching is now handled by _detect_full_range_gaps above
                     if not fetch_ranges:
@@ -456,7 +504,12 @@ def acquire_data(args) -> dict:
             elif fetch_ranges:
                 data_info["data_source_label"] = args.ticker
                 for fetch_range_data in fetch_ranges:
-                    fetch_start, fetch_end, signal_cache_start = fetch_range_data  # fetch_end is the last timestamp to INCLUDE
+                    # Handle both old format (3 values) and new format (2 values)
+                    if len(fetch_range_data) == 3:
+                        fetch_start, fetch_end, signal_cache_start = fetch_range_data
+                    else:
+                        fetch_start, fetch_end = fetch_range_data
+                        signal_cache_start = None
                     fetch_start_str = fetch_start.strftime('%Y-%m-%d')
                     fetch_end_str = ""  # Initialize
 
