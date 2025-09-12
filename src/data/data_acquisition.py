@@ -251,6 +251,9 @@ def acquire_data(args) -> dict:
     dotenv_path = '.env';
     load_dotenv(dotenv_path=dotenv_path)
     effective_mode = 'yfinance' if args.mode == 'yf' else args.mode
+    
+    # Initialize current_time for future date checks
+    current_time = pd.Timestamp.now(tz='UTC').tz_localize(None)
 
     data_info = {
         "ohlcv_df": None, "ticker": args.ticker, "interval": args.interval,
@@ -403,6 +406,7 @@ def acquire_data(args) -> dict:
 
             if not is_period_request:
                 interval_delta = _get_interval_delta(args.interval)
+                
                 # Special handling for exrate without dates (free plan)
                 if effective_mode == 'exrate' and req_start_dt is None:
                     # For free plan exrate, we don't need date validation or cache checking
@@ -412,7 +416,6 @@ def acquire_data(args) -> dict:
 
                 if cache_load_success and interval_delta and cache_start_dt and cache_end_dt:
                     # Check for future dates - allow fetching up to requested date
-                    current_time = pd.Timestamp.now(tz='UTC').tz_localize(None)
                     if req_start_dt > current_time:
                         print_warning(f"Requested start date {req_start_dt} is in the future. No data available.")
                         fetch_ranges = []  # No need to fetch future data
