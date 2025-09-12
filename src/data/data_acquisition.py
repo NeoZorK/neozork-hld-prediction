@@ -73,9 +73,9 @@ def _detect_data_gaps(df: pd.DataFrame, start_dt: pd.Timestamp, end_dt: pd.Times
             
             # If we have very little data for a month (less than 10% of expected), consider it a gap
             expected_rows_per_month = (month_end - month_start).total_seconds() / (interval_delta.total_seconds())
-            if len(month_data) < expected_rows_per_month * 0.1 and len(month_data) > 0:
-                # Find the actual data range in this month
+            if len(month_data) < expected_rows_per_month * 0.1:
                 if len(month_data) > 0:
+                    # Find the actual data range in this month
                     actual_start = month_data.index.min()
                     actual_end = month_data.index.max()
                     
@@ -93,6 +93,13 @@ def _detect_data_gaps(df: pd.DataFrame, start_dt: pd.Timestamp, end_dt: pd.Times
                         if gap_end > gap_start:
                             gaps.append((gap_start, gap_end))
                             print_debug(f"Large gap detected: {gap_start} to {gap_end} (month: {current_date.strftime('%Y-%m')})")
+                else:
+                    # No data at all for this month - add the entire month as a gap
+                    gap_start = month_start
+                    gap_end = month_end
+                    if gap_end > gap_start:
+                        gaps.append((gap_start, gap_end))
+                        print_debug(f"Complete month gap detected: {gap_start} to {gap_end} (month: {current_date.strftime('%Y-%m')})")
             
             current_date += pd.DateOffset(months=1)
     
@@ -334,17 +341,29 @@ def acquire_data(args) -> dict:
                         req_end_dt_inclusive = min(req_end_dt_inclusive, current_time)
                         req_end_dt_input = min(req_end_dt_input, current_time)
                     
-                    # Check for gaps in cached data within the requested range
+                    # Check for gaps in cached data - analyze the entire cache, not just requested range
                     if cached_df is not None and not cached_df.empty:
-                        print_info("Checking for gaps in cached data...")
-                        gaps_found = _detect_data_gaps(cached_df, req_start_dt, req_end_dt_inclusive, interval_delta)
-                        if gaps_found:
-                            print_info(f"Found {len(gaps_found)} gaps in cached data. Will fetch missing data.")
+                        print_info("Checking for gaps in entire cached data...")
+                        # Analyze gaps in the entire cache, but only fetch those within requested range
+                        all_gaps = _detect_data_gaps(cached_df, cache_start_dt, cache_end_dt, interval_delta)
+                        gaps_in_range = []
+                        
+                        for gap_start, gap_end in all_gaps:
+                            # Only include gaps that overlap with our requested range
+                            if gap_start <= req_end_dt_inclusive and gap_end >= req_start_dt:
+                                # Adjust gap boundaries to fit within requested range
+                                adjusted_start = max(gap_start, req_start_dt)
+                                adjusted_end = min(gap_end, req_end_dt_inclusive)
+                                if adjusted_end > adjusted_start:
+                                    gaps_in_range.append((adjusted_start, adjusted_end))
+                        
+                        if gaps_in_range:
+                            print_info(f"Found {len(gaps_in_range)} gaps in cached data within requested range. Will fetch missing data.")
                             # Add gap ranges to fetch_ranges
-                            for gap_start, gap_end in gaps_found:
+                            for gap_start, gap_end in gaps_in_range:
                                 fetch_ranges.append((gap_start, gap_end, None))
                         else:
-                            print_info("No significant gaps found in cached data.")
+                            print_info("No significant gaps found in cached data within requested range.")
                     
                     if req_start_dt < cache_start_dt:
                         # Inclusive end timestamp for this fetch range
