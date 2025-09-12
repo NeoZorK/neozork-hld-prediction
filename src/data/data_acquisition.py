@@ -40,8 +40,9 @@ def _detect_data_gaps(df: pd.DataFrame, start_dt: pd.Timestamp, end_dt: pd.Times
     # Calculate expected time differences
     time_diffs = filtered_df.index.to_series().diff()
     
-    # Define what constitutes a gap (more than 2x the expected interval)
-    gap_threshold = interval_delta * 2
+    # Define what constitutes a gap (more than 1.5x the expected interval for M15)
+    # This will catch gaps of 30+ minutes for M15 data
+    gap_threshold = interval_delta * 1.5
     
     # Find gaps
     gap_indices = time_diffs[time_diffs > gap_threshold]
@@ -55,6 +56,45 @@ def _detect_data_gaps(df: pd.DataFrame, start_dt: pd.Timestamp, end_dt: pd.Times
         if gap_start >= start_dt and gap_end <= end_dt and gap_end > gap_start:
             gaps.append((gap_start, gap_end))
             print_debug(f"Gap detected: {gap_start} to {gap_end} (duration: {diff})")
+    
+    # Also check for large gaps that might span multiple days
+    # This is a more aggressive check for major data gaps
+    if len(filtered_df) > 0:
+        # Check if we have data for each month in the range
+        current_date = start_dt.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        end_date = end_dt.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        
+        while current_date <= end_date:
+            month_start = current_date
+            month_end = (current_date + pd.DateOffset(months=1)) - pd.Timedelta(minutes=15)
+            
+            # Check if we have data for this month
+            month_data = filtered_df[(filtered_df.index >= month_start) & (filtered_df.index <= month_end)]
+            
+            # If we have very little data for a month (less than 10% of expected), consider it a gap
+            expected_rows_per_month = (month_end - month_start).total_seconds() / (interval_delta.total_seconds())
+            if len(month_data) < expected_rows_per_month * 0.1 and len(month_data) > 0:
+                # Find the actual data range in this month
+                if len(month_data) > 0:
+                    actual_start = month_data.index.min()
+                    actual_end = month_data.index.max()
+                    
+                    # Check for gaps before and after the actual data
+                    if actual_start > month_start + interval_delta:
+                        gap_start = month_start
+                        gap_end = actual_start - interval_delta
+                        if gap_end > gap_start:
+                            gaps.append((gap_start, gap_end))
+                            print_debug(f"Large gap detected: {gap_start} to {gap_end} (month: {current_date.strftime('%Y-%m')})")
+                    
+                    if actual_end < month_end - interval_delta:
+                        gap_start = actual_end + interval_delta
+                        gap_end = month_end
+                        if gap_end > gap_start:
+                            gaps.append((gap_start, gap_end))
+                            print_debug(f"Large gap detected: {gap_start} to {gap_end} (month: {current_date.strftime('%Y-%m')})")
+            
+            current_date += pd.DateOffset(months=1)
     
     return gaps
 
@@ -303,6 +343,8 @@ def acquire_data(args) -> dict:
                             # Add gap ranges to fetch_ranges
                             for gap_start, gap_end in gaps_found:
                                 fetch_ranges.append((gap_start, gap_end, None))
+                        else:
+                            print_info("No significant gaps found in cached data.")
                     
                     if req_start_dt < cache_start_dt:
                         # Inclusive end timestamp for this fetch range
