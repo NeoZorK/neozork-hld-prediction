@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 import pandas as pd
 from pathlib import Path
 from datetime import datetime, timedelta, timezone
+from typing import List, Tuple
 
 # Use relative imports for fetchers within the same package
 from .fetchers import (
@@ -21,6 +22,41 @@ from .fetchers import (
 # Use relative import for logger functions
 from ..common.logger import print_info, print_warning, print_error, print_debug, print_success  # Added print_success
 
+
+# Helper function to detect gaps in cached data
+def _detect_data_gaps(df: pd.DataFrame, start_dt: pd.Timestamp, end_dt: pd.Timestamp, interval_delta: pd.Timedelta) -> List[Tuple[pd.Timestamp, pd.Timestamp]]:
+    """
+    Detect gaps in cached data within the requested range.
+    Returns a list of (gap_start, gap_end) tuples.
+    """
+    gaps = []
+    
+    # Filter data to the requested range
+    filtered_df = df[(df.index >= start_dt) & (df.index <= end_dt)]
+    
+    if len(filtered_df) < 2:
+        return gaps
+    
+    # Calculate expected time differences
+    time_diffs = filtered_df.index.to_series().diff()
+    
+    # Define what constitutes a gap (more than 2x the expected interval)
+    gap_threshold = interval_delta * 2
+    
+    # Find gaps
+    gap_indices = time_diffs[time_diffs > gap_threshold]
+    
+    for timestamp, diff in gap_indices.items():
+        # Calculate gap start and end
+        gap_start = timestamp - diff + interval_delta
+        gap_end = timestamp - interval_delta
+        
+        # Only include gaps that are within our requested range
+        if gap_start >= start_dt and gap_end <= end_dt and gap_end > gap_start:
+            gaps.append((gap_start, gap_end))
+            print_debug(f"Gap detected: {gap_start} to {gap_end} (duration: {diff})")
+    
+    return gaps
 
 # Helper function to get interval delta
 def _get_interval_delta(interval_str: str) -> pd.Timedelta | None:
@@ -257,6 +293,16 @@ def acquire_data(args) -> dict:
                         # Adjust end date to current time
                         req_end_dt_inclusive = min(req_end_dt_inclusive, current_time)
                         req_end_dt_input = min(req_end_dt_input, current_time)
+                    
+                    # Check for gaps in cached data within the requested range
+                    if cached_df is not None and not cached_df.empty:
+                        print_info("Checking for gaps in cached data...")
+                        gaps_found = _detect_data_gaps(cached_df, req_start_dt, req_end_dt_inclusive, interval_delta)
+                        if gaps_found:
+                            print_info(f"Found {len(gaps_found)} gaps in cached data. Will fetch missing data.")
+                            # Add gap ranges to fetch_ranges
+                            for gap_start, gap_end in gaps_found:
+                                fetch_ranges.append((gap_start, gap_end, None))
                     
                     if req_start_dt < cache_start_dt:
                         # Inclusive end timestamp for this fetch range
