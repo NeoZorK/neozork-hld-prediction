@@ -1310,7 +1310,7 @@ class DataLoadingMenu(BaseMenu):
             
             # Step 2: Process the loaded data
             self._show_indicators_progress("Processing indicator data", 0.25, start_time, "2", total_steps)
-            processed_result = processor.process_single_indicator(result)
+            processed_result = processor.process_single_indicator(result['data'])
             
             if processed_result["status"] != "success":
                 print(f"\n{Fore.RED}❌ Error processing data: {processed_result['message']}")
@@ -1752,8 +1752,8 @@ class DataLoadingMenu(BaseMenu):
                 )
                 
                 if result["status"] == "success":
-                    # Process the data
-                    processed_result = processor.process_single_indicator(result)
+                    # Process the data - pass the data field from the result
+                    processed_result = processor.process_single_indicator(result['data'])
                     if processed_result["status"] == "success":
                         all_indicators_data[file_info['filename']] = processed_result['data']
                     else:
