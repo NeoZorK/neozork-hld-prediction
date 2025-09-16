@@ -133,14 +133,15 @@ class TestIndicatorsAnalyzer:
         """Test finding indicators files."""
         files = self.analyzer._find_indicators_files()
         
-        assert len(files) == 3  # One file in each subdirectory
-        assert any("rsi_btcusdt_h1.parquet" in str(f) for f in files)
-        assert any("macd_ethusdt_m1.json" in str(f) for f in files)
-        assert any("sma_eurusd_d1.csv" in str(f) for f in files)
+        assert len(files) == 4  # Two parquet files, one json, one csv
+        assert any("binance_rsi_btcusdt_h1.parquet" in str(f) for f in files)
+        assert any("binance_macd_ethusdt_h1.parquet" in str(f) for f in files)
+        assert any("binance_macd_ethusdt_m1.json" in str(f) for f in files)
+        assert any("csvexport_sma_eurusd_d1.csv" in str(f) for f in files)
     
     def test_analyze_single_file_parquet(self):
         """Test analyzing single parquet file."""
-        parquet_file = Path(self.temp_dir) / "parquet" / "rsi_btcusdt_h1.parquet"
+        parquet_file = Path(self.temp_dir) / "parquet" / "binance_rsi_btcusdt_h1.parquet"
         file_info = self.analyzer._analyze_single_file(parquet_file)
         
         assert file_info is not None
@@ -152,7 +153,7 @@ class TestIndicatorsAnalyzer:
     
     def test_analyze_single_file_json(self):
         """Test analyzing single JSON file."""
-        json_file = Path(self.temp_dir) / "json" / "macd_ethusdt_m1.json"
+        json_file = Path(self.temp_dir) / "json" / "binance_macd_ethusdt_m1.json"
         file_info = self.analyzer._analyze_single_file(json_file)
         
         assert file_info is not None
@@ -163,7 +164,7 @@ class TestIndicatorsAnalyzer:
     
     def test_analyze_single_file_csv(self):
         """Test analyzing single CSV file."""
-        csv_file = Path(self.temp_dir) / "csv" / "sma_eurusd_d1.csv"
+        csv_file = Path(self.temp_dir) / "csv" / "csvexport_sma_eurusd_d1.csv"
         file_info = self.analyzer._analyze_single_file(csv_file)
         
         assert file_info is not None
@@ -184,7 +185,7 @@ class TestIndicatorsAnalyzer:
     
     def test_get_parquet_data_info(self):
         """Test getting data info from parquet file."""
-        parquet_file = Path(self.temp_dir) / "parquet" / "rsi_btcusdt_h1.parquet"
+        parquet_file = Path(self.temp_dir) / "parquet" / "binance_rsi_btcusdt_h1.parquet"
         data_info = self.analyzer._get_parquet_data_info(parquet_file)
         
         assert data_info["rows"] == 100
@@ -196,7 +197,7 @@ class TestIndicatorsAnalyzer:
     
     def test_get_json_data_info(self):
         """Test getting data info from JSON file."""
-        json_file = Path(self.temp_dir) / "json" / "macd_ethusdt_m1.json"
+        json_file = Path(self.temp_dir) / "json" / "binance_macd_ethusdt_m1.json"
         data_info = self.analyzer._get_json_data_info(json_file)
         
         assert data_info["rows"] == 2
@@ -208,7 +209,7 @@ class TestIndicatorsAnalyzer:
     
     def test_get_csv_data_info(self):
         """Test getting data info from CSV file."""
-        csv_file = Path(self.temp_dir) / "csv" / "sma_eurusd_d1.csv"
+        csv_file = Path(self.temp_dir) / "csv" / "csvexport_sma_eurusd_d1.csv"
         data_info = self.analyzer._get_csv_data_info(csv_file)
         
         assert data_info["rows"] == 50
@@ -237,10 +238,11 @@ class TestIndicatorsAnalyzer:
         files = self.analyzer._find_indicators_files()
         metadata = self.analyzer._extract_indicators_metadata(files)
         
-        assert len(metadata) == 3
-        assert any("rsi_btcusdt_h1.parquet" in filename for filename in metadata.keys())
-        assert any("macd_ethusdt_m1.json" in filename for filename in metadata.keys())
-        assert any("sma_eurusd_d1.csv" in filename for filename in metadata.keys())
+        assert len(metadata) == 4
+        assert any("binance_rsi_btcusdt_h1.parquet" in filename for filename in metadata.keys())
+        assert any("binance_macd_ethusdt_h1.parquet" in filename for filename in metadata.keys())
+        assert any("binance_macd_ethusdt_m1.json" in filename for filename in metadata.keys())
+        assert any("csvexport_sma_eurusd_d1.csv" in filename for filename in metadata.keys())
         
         # Check each file has required metadata
         for file_info in metadata.values():
