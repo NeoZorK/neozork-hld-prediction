@@ -107,15 +107,7 @@ class IndicatorsProcessor:
             Dict containing processed indicator data
         """
         try:
-            print_info(f"🔄 Processing indicator: {file_data.get('indicator', 'Unknown')}")
-            
             result = self._process_single_file(file_data)
-            
-            if result['status'] == 'success':
-                print_success(f"✅ Successfully processed {file_data.get('indicator', 'Unknown')}")
-            else:
-                print_error(f"❌ Failed to process: {result['message']}")
-            
             return result
             
         except Exception as e:
@@ -299,11 +291,23 @@ class IndicatorsProcessor:
             
             # Add symbol if not present
             if 'symbol' not in df.columns:
-                df['symbol'] = 'unknown'
+                # Try to extract symbol from file path
+                file_path = file_data.get('file_path', '')
+                if file_path:
+                    symbol = self._extract_symbol_from_path(file_path)
+                    df['symbol'] = symbol if symbol != 'unknown' else 'unknown'
+                else:
+                    df['symbol'] = 'unknown'
             
             # Add timeframe if not present
             if 'timeframe' not in df.columns:
-                df['timeframe'] = 'unknown'
+                # Try to extract timeframe from file path
+                file_path = file_data.get('file_path', '')
+                if file_path:
+                    timeframe = self._extract_timeframe_from_path(file_path)
+                    df['timeframe'] = timeframe if timeframe != 'unknown' else 'unknown'
+                else:
+                    df['timeframe'] = 'unknown'
             
             # Add processing timestamp
             df['processed_at'] = datetime.now().isoformat()
@@ -313,6 +317,75 @@ class IndicatorsProcessor:
         except Exception as e:
             print_error(f"Error adding metadata columns: {e}")
             return df
+    
+    def _extract_timeframe_from_path(self, file_path: str) -> str:
+        """Extract timeframe from file path."""
+        try:
+            import re
+            from pathlib import Path
+            
+            filename = Path(file_path).name
+            
+            # Pattern for binance_BTCUSDT_D1_Wave.parquet
+            binance_match = re.search(r'binance_[A-Z0-9]+_([A-Z0-9]+)_', filename)
+            if binance_match:
+                return binance_match.group(1)
+            
+            # Pattern for CSVExport_GOOG.NAS_PERIOD_MN1_Wave.parquet
+            csv_match = re.search(r'CSVExport_[A-Z0-9.]+_PERIOD_([A-Z0-9]+)_', filename)
+            if csv_match:
+                return csv_match.group(1)
+            
+            # Look for common timeframe patterns
+            timeframe_patterns = ['M1', 'M5', 'M15', 'M30', 'H1', 'H4', 'D1', 'W1', 'MN1']
+            for pattern in timeframe_patterns:
+                if pattern in filename.upper():
+                    return pattern
+            
+            return 'unknown'
+            
+        except Exception as e:
+            print_error(f"Error extracting timeframe from {file_path}: {e}")
+            return 'unknown'
+    
+    def _extract_symbol_from_path(self, file_path: str) -> str:
+        """Extract symbol from file path."""
+        try:
+            import re
+            from pathlib import Path
+            
+            filename = Path(file_path).name
+            
+            # Pattern for binance_BTCUSDT_D1_Wave.parquet
+            binance_match = re.search(r'binance_([A-Z0-9]+)_', filename)
+            if binance_match:
+                return binance_match.group(1)
+            
+            # Pattern for CSVExport_GOOG.NAS_PERIOD_MN1_Wave.parquet
+            csv_match = re.search(r'CSVExport_([A-Z0-9.]+)_', filename)
+            if csv_match:
+                return csv_match.group(1)
+            
+            # Look for common symbol patterns in all parts
+            if '_' in filename:
+                parts = filename.split('_')
+                for part in parts:
+                    part_upper = part.upper()
+                    # Check if part looks like a trading pair (contains letters and numbers)
+                    if len(part_upper) >= 3 and any(c.isalpha() for c in part_upper) and any(c.isdigit() for c in part_upper):
+                        return part_upper
+                    # Check for known symbols
+                    if part_upper in ['BTCUSDT', 'ETHUSDT', 'EURUSD', 'GBPUSD', 'GOOG', 'TSLA', 'US500', 'XAUUSD', 'BTCUSD', 'ETHUSD']:
+                        return part_upper
+                    # Check for patterns like GOOG.NAS
+                    if '.' in part_upper and len(part_upper.split('.')) == 2:
+                        return part_upper
+            
+            return 'unknown'
+            
+        except Exception as e:
+            print_error(f"Error extracting symbol from {file_path}: {e}")
+            return 'unknown'
     
     def _sort_by_timestamp(self, df: pd.DataFrame) -> pd.DataFrame:
         """Sort dataframe by timestamp if available."""

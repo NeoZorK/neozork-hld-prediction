@@ -116,8 +116,6 @@ class IndicatorsLoader:
             Dict containing loaded indicator data
         """
         try:
-            print_info(f"🔄 Loading indicator: {indicator_name}")
-            
             # Find files for this indicator
             files = self._find_indicator_files(indicator_name)
             
