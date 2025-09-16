@@ -516,8 +516,7 @@ class DataLoadingMenu(BaseMenu):
         if progress >= 1.0:
             print()  # New line when complete
     
-    def _show_unified_progress(self, message: str, progress: float, start_time: float, 
-                              current_step: str = "", total_steps: int = 0):
+    def _show_unified_progress(self, message: str, progress: float, start_time: float):
         """Show unified progress bar that updates in single line."""
         import time
         
@@ -548,16 +547,11 @@ class DataLoadingMenu(BaseMenu):
         bar_display = f"{Fore.GREEN}[{bar}]{Fore.CYAN}"
         percentage_display = f"{Fore.YELLOW}{percentage:3d}%"
         
-        # Add step information if available
-        step_info = ""
-        if current_step and total_steps > 0:
-            step_info = f" {Fore.WHITE}({current_step}/{total_steps})"
-        
         # Add ETA and speed
         extra_info = f" {Fore.MAGENTA}ETA: {eta_str} {Fore.BLUE}Speed: {speed}"
         
         # Combine all parts
-        full_display = f"\r{progress_display} {bar_display} {percentage_display}{step_info}{extra_info}{Style.RESET_ALL}"
+        full_display = f"\r{progress_display} {bar_display} {percentage_display}{extra_info}{Style.RESET_ALL}"
         
         # Ensure the line is long enough to clear previous content
         terminal_width = 120
@@ -1339,29 +1333,17 @@ class DataLoadingMenu(BaseMenu):
         """Load and process only filtered indicators data with MTF structure creation."""
         print(f"\n{Fore.YELLOW}🔄 Loading and processing filtered indicators data from {format_name}...")
         
-        # Define processing steps
-        steps = [
-            "Loading filtered indicators data",
-            "Processing filtered indicators data", 
-            "Creating MTF structure",
-            "Saving MTF structure"
-        ]
-        total_steps = len(steps)
         start_time = time.time()
         
         try:
-            # Step 1: Load only filtered data
-            self._show_unified_progress("Loading filtered indicators data", 0.0, start_time, "1", total_steps)
-            
             # Load only the filtered files
             loaded_data = {}
             total_files = len(filtered_files)
             
             for i, file_info in enumerate(filtered_files):
-                # Calculate progress within loading step (0-25%)
-                step_progress = (i + 1) / total_files
-                overall_progress = 0.25 * step_progress
-                self._show_unified_progress(f"Loading {file_info['filename']}", overall_progress, start_time, "1", total_steps)
+                # Calculate progress for loading files (0-40%)
+                progress = (i + 1) / total_files * 0.4
+                self._show_unified_progress(f"Loading {file_info['filename']}", progress, start_time)
                 
                 # Load specific file by filename
                 result = loader.load_specific_file(file_info['filename'])
@@ -1375,16 +1357,15 @@ class DataLoadingMenu(BaseMenu):
                 print(f"\n{Fore.RED}❌ No filtered indicators data loaded successfully")
                 return
             
-            # Step 2: Process the loaded data
-            self._show_unified_progress("Processing filtered indicators data", 0.25, start_time, "2", total_steps)
+            # Process the loaded data (40-60%)
+            self._show_unified_progress("Processing indicators data", 0.4, start_time)
             processed_result = processor.process_indicators_data(loaded_data, show_detailed_progress=False)
             
             if processed_result["status"] != "success":
                 print(f"\n{Fore.RED}❌ Error processing data: {processed_result['message']}")
                 return
             
-            # Update progress
-            self._show_unified_progress("Processing filtered indicators data", 0.5, start_time, "2", total_steps)
+            self._show_unified_progress("Processing indicators data", 0.6, start_time)
             
             # Get symbol from filtered files (should be the same for all)
             symbol_input = filtered_files[0]['symbol'].upper()
@@ -1396,8 +1377,8 @@ class DataLoadingMenu(BaseMenu):
                 timeframe_input = "M1"
                 print(f"{Fore.YELLOW}Using default timeframe: {timeframe_input}")
             
-            # Step 3: Create MTF structure
-            self._show_unified_progress("Creating MTF structure", 0.5, start_time, "3", total_steps)
+            # Create MTF structure (60-90%)
+            self._show_unified_progress("Creating MTF structure", 0.6, start_time)
             mtf_result = mtf_creator.create_mtf_from_processed_data(
                 processed_result['data'], symbol_input, timeframe_input, 'indicators')
             
@@ -1405,15 +1386,14 @@ class DataLoadingMenu(BaseMenu):
                 print(f"\n{Fore.RED}❌ Error creating MTF structure: {mtf_result['message']}")
                 return
             
-            # Update progress
-            self._show_unified_progress("Creating MTF structure", 0.75, start_time, "3", total_steps)
+            self._show_unified_progress("Creating MTF structure", 0.9, start_time)
             
-            # Step 4: Save MTF structure to cleaned_data folder
-            self._show_unified_progress("Saving MTF structure", 0.75, start_time, "4", total_steps)
+            # Save MTF structure to cleaned_data folder (90-100%)
+            self._show_unified_progress("Saving MTF structure", 0.9, start_time)
             self._save_indicators_mtf_structure(symbol_input, "filtered_indicators", mtf_result['mtf_data'], format_name)
             
             # Complete progress
-            self._show_unified_progress("Saving MTF structure", 1.0, start_time, "4", total_steps)
+            self._show_unified_progress("Saving MTF structure", 1.0, start_time)
             
             # Show success message
             print(f"\n{Fore.GREEN}✅ Successfully created MTF structure for filtered indicators!")
