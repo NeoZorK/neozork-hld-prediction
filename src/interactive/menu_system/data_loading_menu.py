@@ -1739,10 +1739,11 @@ class DataLoadingMenu(BaseMenu):
             print(f"\n{Fore.GREEN}📊 Loading all indicators data...")
             all_indicators_data = {}
             total_files = len(filtered_files)
+            start_time = time.time()
             
             for i, file_info in enumerate(filtered_files):
                 progress = (i + 1) / total_files
-                self._show_indicators_progress(f"Loading {file_info['filename']}", progress, time.time())
+                self._show_indicators_progress(f"Loading {file_info['filename']}", progress, start_time)
                 
                 # Load individual file
                 result = loader.load_indicator_by_name(
@@ -1762,9 +1763,36 @@ class DataLoadingMenu(BaseMenu):
             
             print(f"\n{Fore.GREEN}✅ Loaded {len(all_indicators_data)} indicators files")
             
+            # Get available timeframes and let user choose main timeframe
+            available_timeframes = mtf_creator.get_available_timeframes(all_indicators_data)
+            if not available_timeframes:
+                print(f"\n{Fore.RED}❌ No valid timeframes found in indicators data")
+                return
+            
+            print(f"\n{Fore.CYAN}📊 Available timeframes:")
+            for i, tf in enumerate(available_timeframes, 1):
+                print(f"{Fore.WHITE}{i}. {tf}")
+            print(f"{Fore.CYAN}{'─'*40}")
+            
+            try:
+                choice_input = input(f"{Fore.GREEN}Enter choice (1-{len(available_timeframes)}) [default: 1]: {Style.RESET_ALL}").strip()
+                if not choice_input:
+                    choice_idx = 0
+                else:
+                    choice_idx = int(choice_input) - 1
+                    
+                if choice_idx < 0 or choice_idx >= len(available_timeframes):
+                    raise ValueError("Invalid choice")
+                main_timeframe = available_timeframes[choice_idx]
+            except (ValueError, IndexError):
+                print(f"{Fore.RED}❌ Invalid choice. Using first timeframe.")
+                main_timeframe = available_timeframes[0]
+            
+            print(f"\n{Fore.GREEN}✅ Selected main timeframe: {main_timeframe}")
+            
             # Create MTF structures for all symbols
             print(f"\n{Fore.YELLOW}🔧 Creating MTF structures for all symbols...")
-            mtf_result = mtf_creator.create_mtf_from_all_indicators(all_indicators_data)
+            mtf_result = mtf_creator.create_mtf_from_all_indicators(all_indicators_data, main_timeframe)
             
             if mtf_result["status"] != "success":
                 print(f"\n{Fore.RED}❌ Error creating MTF structures: {mtf_result['message']}")
