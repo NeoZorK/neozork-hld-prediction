@@ -38,10 +38,9 @@ class IndicatorsMTFCreator:
         self.data_root = self.project_root / "data"
         self.cleaned_root = self.data_root / "cleaned_data"
         self.mtf_root = self.cleaned_root / "mtf_structures"
-        self.indicators_mtf_root = self.mtf_root / "indicators"
         
         # Ensure directories exist
-        self.indicators_mtf_root.mkdir(parents=True, exist_ok=True)
+        self.mtf_root.mkdir(parents=True, exist_ok=True)
         
     def create_mtf_from_processed_data(self, processed_data: Dict[str, Any], 
                                      symbol: str, main_timeframe: str, 
@@ -503,7 +502,7 @@ class IndicatorsMTFCreator:
             mtf_data = mtf_result['mtf_data']
             
             # Save MTF structure to disk
-            symbol_dir = self.indicators_mtf_root / symbol.lower()
+            symbol_dir = self.mtf_root / symbol.lower()
             save_result = self.save_mtf_structure(mtf_data, symbol_dir)
             
             if save_result['status'] != 'success':
