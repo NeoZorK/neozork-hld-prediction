@@ -48,26 +48,26 @@ class TestIndicatorsMTFCreatorSimple:
         creator = IndicatorsMTFCreator()
         assert creator.mtf_structures == {}
         assert creator.cross_timeframe_features == {}
-        assert hasattr(creator, 'indicators_mtf_root')
+        assert hasattr(creator, 'mtf_root')
     
     def test_extract_symbol_from_data(self):
         """Test symbol extraction from data."""
         # Test filename extraction
         symbol = self.mtf_creator._extract_symbol_from_data(
-            'btcusdt_rsi_m1.parquet', {}
+            'binance_BTCUSDT_M1_RSI.parquet', {}
         )
         assert symbol == 'BTCUSDT'
         
         # Test data extraction
         symbol = self.mtf_creator._extract_symbol_from_data(
-            'unknown_file.parquet',
+            'test.parquet',
             {'symbol': 'ETHUSDT'}
         )
         assert symbol == 'ETHUSDT'
         
         # Test nested data extraction
         symbol = self.mtf_creator._extract_symbol_from_data(
-            'unknown_file.parquet',
+            'test.parquet',
             {'data': {'symbol': 'EURUSD'}}
         )
         assert symbol == 'EURUSD'

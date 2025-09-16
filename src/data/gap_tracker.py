@@ -27,8 +27,8 @@ class GapTracker:
         if cache_dir is None:
             cache_dir = Path("data/cache")
         
-        self.cache_dir = cache_dir
-        self.gap_tracker_file = cache_dir / "gap_tracker.json"
+        self.cache_dir = Path(cache_dir)
+        self.gap_tracker_file = self.cache_dir / "gap_tracker.json"
         self.checked_gaps: Dict[str, Set[Tuple[str, str]]] = {}
         
         # Ensure cache directory exists
@@ -208,5 +208,7 @@ def get_gap_tracker(cache_dir: Path = None) -> GapTracker:
     """Get the global gap tracker instance."""
     global _gap_tracker
     if _gap_tracker is None:
+        if cache_dir is None:
+            cache_dir = Path("data/cache")
         _gap_tracker = GapTracker(cache_dir)
     return _gap_tracker
