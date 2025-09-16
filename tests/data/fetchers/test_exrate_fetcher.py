@@ -21,27 +21,31 @@ from src.data.fetchers.exrate_fetcher import (
 class TestMapExrateInterval:
     """Test cases for map_exrate_interval function."""
     
-    def test_valid_daily_intervals(self):
+    @patch('src.data.fetchers.exrate_fetcher.logger')
+    def test_valid_daily_intervals(self, mock_logger):
         """Test that valid daily intervals are mapped correctly."""
         valid_intervals = ["D1", "D", "W1", "W", "WK", "MN1", "MN", "MO"]
         for interval in valid_intervals:
             result = map_exrate_interval(interval)
             assert result == "D1", f"Expected D1 for {interval}, got {result}"
     
-    def test_intraday_intervals_warning(self):
+    @patch('src.data.fetchers.exrate_fetcher.logger')
+    def test_intraday_intervals_warning(self, mock_logger):
         """Test that intraday intervals are mapped to D1 with warning."""
         intraday_intervals = ["M1", "M5", "M15", "M30", "H1", "H4"]
         for interval in intraday_intervals:
             result = map_exrate_interval(interval)
             assert result == "D1", f"Expected D1 for {interval}, got {result}"
     
-    def test_case_insensitive(self):
+    @patch('src.data.fetchers.exrate_fetcher.logger')
+    def test_case_insensitive(self, mock_logger):
         """Test that interval mapping is case insensitive."""
         assert map_exrate_interval("d1") == "D1"
         assert map_exrate_interval("D") == "D1"
         assert map_exrate_interval("1d") == "D1"
     
-    def test_invalid_interval(self):
+    @patch('src.data.fetchers.exrate_fetcher.logger')
+    def test_invalid_interval(self, mock_logger):
         """Test that invalid intervals return None."""
         invalid_intervals = ["X1", "INVALID", ""]
         for interval in invalid_intervals:
@@ -52,7 +56,8 @@ class TestMapExrateInterval:
 class TestMapExrateTicker:
     """Test cases for map_exrate_ticker function."""
     
-    def test_valid_six_char_ticker(self):
+    @patch('src.data.fetchers.exrate_fetcher.logger')
+    def test_valid_six_char_ticker(self, mock_logger):
         """Test that 6-character currency pair tickers are mapped correctly."""
         test_cases = [
             ("EURUSD", ("EUR", "USD")),
