@@ -32,18 +32,20 @@ class IndicatorsProcessor:
         self.numeric_columns = []  # Will be determined dynamically
         self.required_columns = []  # Will be determined dynamically
         
-    def process_indicators_data(self, loaded_data: Dict[str, Any]) -> Dict[str, Any]:
+    def process_indicators_data(self, loaded_data: Dict[str, Any], show_detailed_progress: bool = True) -> Dict[str, Any]:
         """
         Process loaded indicators data with standardization and validation.
         
         Args:
             loaded_data: Dictionary containing loaded indicators data
+            show_detailed_progress: Whether to show detailed progress messages
             
         Returns:
             Dict containing processed data with status and metadata
         """
         try:
-            print_info("🔄 Processing indicators data...")
+            if show_detailed_progress:
+                print_info("🔄 Processing indicators data...")
             
             start_time = time.time()
             processed_data = {}
@@ -57,7 +59,8 @@ class IndicatorsProcessor:
             }
             
             for filename, file_data in loaded_data.items():
-                print_info(f"  Processing {filename}...")
+                if show_detailed_progress:
+                    print_info(f"  Processing {filename}...")
                 
                 # Process individual file
                 result = self._process_single_file(file_data)
@@ -73,11 +76,13 @@ class IndicatorsProcessor:
                         'file': filename,
                         'error': result['message']
                     })
-                    print_warning(f"    Failed to process {filename}: {result['message']}")
+                    if show_detailed_progress:
+                        print_warning(f"    Failed to process {filename}: {result['message']}")
             
             processing_time = time.time() - start_time
             
-            print_success(f"✅ Processed {processing_stats['successful_files']}/{processing_stats['total_files']} files")
+            if show_detailed_progress:
+                print_success(f"✅ Processed {processing_stats['successful_files']}/{processing_stats['total_files']} files")
             
             return {
                 'status': 'success',
