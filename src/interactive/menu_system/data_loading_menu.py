@@ -1756,6 +1756,10 @@ class DataLoadingMenu(BaseMenu):
                     processed_result = processor.process_single_indicator(result)
                     if processed_result["status"] == "success":
                         all_indicators_data[file_info['filename']] = processed_result['data']
+                    else:
+                        print(f"\n{Fore.RED}❌ Failed to process {file_info['filename']}: {processed_result.get('message', 'Unknown error')}")
+                else:
+                    print(f"\n{Fore.RED}❌ Failed to load {file_info['filename']}: {result.get('message', 'Unknown error')}")
             
             if not all_indicators_data:
                 print(f"\n{Fore.RED}❌ No indicators data loaded successfully")
