@@ -476,15 +476,17 @@ class DataLoadingMenu(BaseMenu):
         # Calculate ETA
         current_time = time.time()
         elapsed_time = current_time - start_time
-        if progress > 0:
+        if progress > 0 and progress < 1.0:
             eta_seconds = (elapsed_time / progress) - elapsed_time
             eta_str = self._format_time(eta_seconds)
+        elif progress >= 1.0:
+            eta_str = "Complete"
         else:
             eta_str = "Calculating..."
         
         # Calculate speed
-        if elapsed_time > 0:
-            speed = f"{progress / elapsed_time:.1f} steps/s"
+        if elapsed_time > 0 and progress > 0:
+            speed = f"{progress / elapsed_time:.1f} ops/s"
         else:
             speed = "Starting..."
         
@@ -1022,7 +1024,13 @@ class DataLoadingMenu(BaseMenu):
         
         # Show analysis progress
         analysis_start_time = time.time()
-        self._show_indicators_progress("Initializing indicators modules", 0.0, analysis_start_time)
+        
+        # Create progress callback function
+        def progress_callback(message: str, progress: float):
+            self._show_indicators_progress(message, progress, analysis_start_time)
+            # Small delay to make progress visible
+            if progress < 1.0:
+                time.sleep(0.05)
         
         # Import indicators modules
         from src.interactive.data_management.indicators import (
@@ -1030,32 +1038,14 @@ class DataLoadingMenu(BaseMenu):
         )
         
         # Initialize components
-        self._show_indicators_progress("Initializing indicators modules", 0.15, analysis_start_time)
+        progress_callback("Initializing indicators modules", 0.0)
         analyzer = IndicatorsAnalyzer()
         loader = IndicatorsLoader()
         processor = IndicatorsProcessor()
         mtf_creator = IndicatorsMTFCreator()
         
-        # Analyze folder first
-        self._show_indicators_progress("Analyzing indicators folder", 0.3, analysis_start_time)
-        time.sleep(0.1)  # Small delay to show progress
-        
-        analysis = analyzer.analyze_indicators_folder()
-        
-        # Update progress during analysis
-        self._show_indicators_progress("Processing analysis results", 0.5, analysis_start_time)
-        time.sleep(0.1)  # Small delay to make progress visible
-        
-        # Update progress for folder structure analysis
-        self._show_indicators_progress("Processing analysis results", 0.7, analysis_start_time)
-        time.sleep(0.1)
-        
-        # Update progress for file analysis
-        self._show_indicators_progress("Processing analysis results", 0.9, analysis_start_time)
-        time.sleep(0.1)
-        
-        # Complete analysis
-        self._show_indicators_progress("Analysis complete", 1.0, analysis_start_time)
+        # Analyze folder with real-time progress updates
+        analysis = analyzer.analyze_indicators_folder(progress_callback)
         
         if analysis["status"] == "error":
             print(f"{Fore.RED}❌ Error: {analysis['message']}")
