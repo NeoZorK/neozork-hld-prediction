@@ -560,6 +560,7 @@ class DataLoadingMenu(BaseMenu):
         
         print(full_display, end="", flush=True)
         
+        # Only print new line when complete
         if progress >= 1.0:
             print()  # New line when complete
     
@@ -1369,6 +1370,7 @@ class DataLoadingMenu(BaseMenu):
             
             # Get symbol from filtered files (should be the same for all)
             symbol_input = filtered_files[0]['symbol'].upper()
+            # Move to new line for user input
             print(f"\n{Fore.GREEN}Using symbol from filtered data: {symbol_input}")
             
             # Get main timeframe from user
