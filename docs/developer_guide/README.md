@@ -41,4 +41,4 @@ Welcome to the Pocket Hedge Fund Developer Guide! This comprehensive guide will 
 
 - **Guide Version**: 1.0.0
 - **Language**: en
-- **Last Updated**: 2025-09-11T12:00:07.432822
+- **Last Updated**: 2025-09-16T22:19:06.111034
