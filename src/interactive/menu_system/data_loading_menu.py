@@ -1076,58 +1076,52 @@ class DataLoadingMenu(BaseMenu):
         if analysis["files_info"]:
             self._display_indicators_by_source_and_indicator(analysis["files_info"])
         
-        # Ask user to choose source, format, and indicator
-        print(f"\n{Fore.GREEN}📊 Data Loading Configuration")
-        print(f"{Fore.CYAN}{'─'*50}")
+        # Use interactive filtering system
+        from src.interactive.data_management.data_filter import DataFilter
         
-        # Get available combinations
-        available_combinations = self._get_available_combinations(analysis["files_info"])
+        data_filter = DataFilter()
+        data_filter.set_available_data(analysis["files_info"])
         
-        if not available_combinations:
-            print(f"{Fore.RED}❌ No valid combinations found")
+        # Interactive filter selection
+        format_filter, source_filter, symbol_filter, indicator_filter = data_filter.interactive_filter_selection(analysis["files_info"])
+        
+        # Apply filters
+        filtered_files = data_filter.filter_files(
+            analysis["files_info"],
+            format_filter=format_filter,
+            source_filter=source_filter,
+            symbol_filter=symbol_filter,
+            indicator_filter=indicator_filter
+        )
+        
+        if not filtered_files:
+            print(f"\n{Fore.RED}❌ No files match the selected filters")
             input(f"\n{Fore.CYAN}Press Enter to continue...")
             return
         
-        # Show selection menu
-        print(f"\n{Fore.YELLOW}Choose Source, Format, and Indicator:")
-        print(f"{Fore.CYAN}{'─'*60}")
-        for i, combo in enumerate(available_combinations, 1):
-            source = combo['source'].upper()
-            format_type = combo['format'].upper()
-            indicator = combo['indicator']
-            file_count = combo['file_count']
-            total_size = combo['total_size']
-            total_rows = combo['total_rows']
-            
-            print(f"{Fore.WHITE}{i:2d}. {indicator} ({source}) - {format_type} - {file_count} files, {total_size:.1f}MB, {total_rows:,} rows")
-        print(f"{Fore.CYAN}{'─'*60}")
+        # Display filtered results
+        data_filter.display_filtered_results(filtered_files)
         
-        # Get user choice
-        try:
-            choice_input = input(f"{Fore.GREEN}Enter choice (1-{len(available_combinations)}) [default: 1]: {Style.RESET_ALL}").strip()
-            if not choice_input:
-                choice_idx = 0
-            else:
-                choice_idx = int(choice_input) - 1
-                
-            if choice_idx < 0 or choice_idx >= len(available_combinations):
-                raise ValueError("Invalid choice")
-            
-            selected_combo = available_combinations[choice_idx]
-            selected_indicator = selected_combo['indicator']
-            selected_format = selected_combo['format']
-            selected_source = selected_combo['source']
-            
-        except (ValueError, IndexError):
-            print(f"{Fore.RED}❌ Invalid choice. Using first option.")
-            selected_combo = available_combinations[0]
-            selected_indicator = selected_combo['indicator']
-            selected_format = selected_combo['format']
-            selected_source = selected_combo['source']
+        # Show loading summary
+        loading_summary = data_filter.get_loading_summary(filtered_files)
+        print(f"\n{Fore.GREEN}📊 {loading_summary}")
         
-        print(f"\n{Fore.GREEN}✅ Selected: {selected_indicator} ({selected_source.upper()}) - {selected_format.upper()}")
+        # Confirm loading
+        confirm = input(f"\n{Fore.YELLOW}Proceed with loading? (y/N): {Style.RESET_ALL}").strip().lower()
+        if confirm not in ['y', 'yes']:
+            print(f"{Fore.YELLOW}Loading cancelled.")
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            return
         
         # Load and process data with MTF structure creation
+        # For now, load the first filtered file (can be enhanced to load all)
+        first_file = filtered_files[0]
+        selected_indicator = first_file['indicator']
+        selected_format = first_file['format']
+        selected_source = first_file['source']
+        
+        print(f"\n{Fore.GREEN}✅ Loading: {selected_indicator} ({selected_source.upper()}) - {selected_format.upper()}")
+        
         self._load_and_process_indicators_data(selected_indicator, selected_format, analyzer, loader, processor, mtf_creator)
         
         input(f"\n{Fore.CYAN}Press Enter to continue...")
