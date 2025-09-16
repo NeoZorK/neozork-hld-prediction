@@ -49,7 +49,16 @@ class TestIndicatorsAnalyzer:
             'symbol': ['BTCUSDT'] * 100,
             'timeframe': ['H1'] * 100
         })
-        parquet_data.to_parquet(parquet_dir / "rsi_btcusdt_h1.parquet")
+        parquet_data.to_parquet(parquet_dir / "binance_rsi_btcusdt_h1.parquet")
+        
+        # Create additional parquet files for more indicators
+        macd_data = pd.DataFrame({
+            'timestamp': pd.date_range('2023-01-01', periods=50, freq='1H'),
+            'value': np.random.randn(50),
+            'symbol': ['ETHUSDT'] * 50,
+            'timeframe': ['H1'] * 50
+        })
+        macd_data.to_parquet(parquet_dir / "binance_macd_ethusdt_h1.parquet")
         
         # Create sample JSON file
         json_data = [
@@ -66,7 +75,7 @@ class TestIndicatorsAnalyzer:
                 'timeframe': 'M1'
             }
         ]
-        with open(json_dir / "macd_ethusdt_m1.json", 'w') as f:
+        with open(json_dir / "binance_macd_ethusdt_m1.json", 'w') as f:
             json.dump(json_data, f)
         
         # Create sample CSV file
@@ -76,7 +85,7 @@ class TestIndicatorsAnalyzer:
             'pair': ['EURUSD'] * 50,
             'period': ['D1'] * 50
         })
-        csv_data.to_csv(csv_dir / "sma_eurusd_d1.csv", index=False)
+        csv_data.to_csv(csv_dir / "csvexport_sma_eurusd_d1.csv", index=False)
     
     def test_analyze_indicators_folder_success(self):
         """Test successful folder analysis."""
