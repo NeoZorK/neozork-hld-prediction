@@ -1108,7 +1108,7 @@ class DataLoadingMenu(BaseMenu):
         
         # Ask user what to do with the data
         print(f"\n{Fore.YELLOW}What would you like to do with the indicators data?")
-        print(f"{Fore.WHITE}1. Save all indicators to MTF structure")
+        print(f"{Fore.WHITE}1. Save filtered indicators to MTF structure")
         print(f"{Fore.WHITE}0. Cancel")
         
         choice = input(f"\n{Fore.GREEN}Enter your choice (1/0): {Style.RESET_ALL}").strip()
@@ -1118,7 +1118,7 @@ class DataLoadingMenu(BaseMenu):
             input(f"\n{Fore.CYAN}Press Enter to continue...")
             return
         elif choice == "1":
-            # Save all indicators to MTF structure
+            # Save filtered indicators to MTF structure
             self._save_all_indicators_to_mtf(filtered_files, analyzer, loader, processor, mtf_creator)
             input(f"\n{Fore.CYAN}Press Enter to continue...")
             return
@@ -1279,6 +1279,107 @@ class DataLoadingMenu(BaseMenu):
         except Exception as e:
             print_error(f"Error getting available combinations: {e}")
             return []
+    
+    def _load_and_process_filtered_indicators_data(self, filtered_files: List[Dict[str, Any]], format_name: str, 
+                                                 analyzer: 'IndicatorsAnalyzer', loader: 'IndicatorsLoader', 
+                                                 processor: 'IndicatorsProcessor', mtf_creator: 'IndicatorsMTFCreator'):
+        """Load and process only filtered indicators data with MTF structure creation."""
+        print(f"\n{Fore.YELLOW}🔄 Loading and processing filtered indicators data from {format_name}...")
+        
+        # Define processing steps
+        steps = [
+            "Loading filtered indicators data",
+            "Processing filtered indicators data", 
+            "Creating MTF structure",
+            "Saving MTF structure"
+        ]
+        total_steps = len(steps)
+        start_time = time.time()
+        
+        try:
+            # Step 1: Load only filtered data
+            self._show_indicators_progress("Loading filtered indicators data", 0.0, start_time, "1", total_steps)
+            
+            # Load only the filtered files
+            loaded_data = {}
+            total_files = len(filtered_files)
+            
+            for i, file_info in enumerate(filtered_files):
+                progress = (i + 1) / total_files
+                self._show_indicators_progress(f"Loading {file_info['filename']}", progress, start_time)
+                
+                # Load individual file
+                result = loader.load_indicator_by_name(
+                    file_info['indicator'], 
+                    file_info['format']
+                )
+                
+                if result["status"] == "success":
+                    loaded_data[file_info['filename']] = result['data']
+                else:
+                    print(f"\n{Fore.RED}❌ Failed to load {file_info['filename']}: {result.get('message', 'Unknown error')}")
+            
+            if not loaded_data:
+                print(f"\n{Fore.RED}❌ No filtered indicators data loaded successfully")
+                return
+            
+            # Update progress
+            self._show_indicators_progress("Loading filtered indicators data", 0.25, start_time, "1", total_steps)
+            
+            # Step 2: Process the loaded data
+            self._show_indicators_progress("Processing filtered indicators data", 0.25, start_time, "2", total_steps)
+            processed_result = processor.process_indicators_data(loaded_data)
+            
+            if processed_result["status"] != "success":
+                print(f"\n{Fore.RED}❌ Error processing data: {processed_result['message']}")
+                return
+            
+            # Update progress
+            self._show_indicators_progress("Processing filtered indicators data", 0.5, start_time, "2", total_steps)
+            
+            # Get symbol from filtered files (should be the same for all)
+            symbol_input = filtered_files[0]['symbol'].upper()
+            print(f"\n{Fore.GREEN}Using symbol from filtered data: {symbol_input}")
+            
+            # Get main timeframe from user
+            timeframe_input = input(f"{Fore.GREEN}Enter main timeframe (e.g., 'M1', 'H1', 'D1') [default: M1]: {Style.RESET_ALL}").strip().upper()
+            if not timeframe_input:
+                timeframe_input = "M1"
+                print(f"{Fore.YELLOW}Using default timeframe: {timeframe_input}")
+            
+            # Step 3: Create MTF structure
+            self._show_indicators_progress("Creating MTF structure", 0.5, start_time, "3", total_steps)
+            mtf_result = mtf_creator.create_mtf_from_processed_data(
+                processed_result['data'], symbol_input, timeframe_input, 'indicators')
+            
+            if mtf_result["status"] != "success":
+                print(f"\n{Fore.RED}❌ Error creating MTF structure: {mtf_result['message']}")
+                return
+            
+            # Update progress
+            self._show_indicators_progress("Creating MTF structure", 0.75, start_time, "3", total_steps)
+            
+            # Step 4: Save MTF structure to cleaned_data folder
+            self._show_indicators_progress("Saving MTF structure", 0.75, start_time, "4", total_steps)
+            self._save_indicators_mtf_structure(symbol_input, "filtered_indicators", mtf_result['mtf_data'], format_name)
+            
+            # Complete progress
+            self._show_indicators_progress("Saving MTF structure", 1.0, start_time, "4", total_steps)
+            
+            # Show success message
+            print(f"\n{Fore.GREEN}✅ Successfully created MTF structure for filtered indicators!")
+            print(f"  • Symbol: {symbol_input}")
+            print(f"  • Format: {format_name}")
+            print(f"  • Main Timeframe: {timeframe_input}")
+            print(f"  • Total rows: {processed_result['metadata']['total_rows']:,}")
+            print(f"  • Files processed: {len(loaded_data)}")
+            print(f"  • Creation time: {mtf_result['creation_time']:.2f} seconds")
+            print(f"\n{Fore.GREEN}🎯 Ready for EDA, feature engineering, ML, backtesting, and monitoring!")
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Error processing filtered indicators data: {e}")
+            import traceback
+            traceback.print_exc()
     
     def _load_and_process_all_indicators_data(self, format_name: str, analyzer: 'IndicatorsAnalyzer', 
                                             loader: 'IndicatorsLoader', processor: 'IndicatorsProcessor', 
@@ -1815,8 +1916,8 @@ class DataLoadingMenu(BaseMenu):
     def _save_all_indicators_to_mtf(self, filtered_files: List[Dict[str, Any]], 
                                    analyzer: 'IndicatorsAnalyzer', loader: 'IndicatorsLoader', 
                                    processor: 'IndicatorsProcessor', mtf_creator: 'IndicatorsMTFCreator'):
-        """Save all indicators to MTF structure like Raw Parquet functionality."""
-        print(f"\n{Fore.YELLOW}🔧 Saving all indicators to MTF structure...")
+        """Save filtered indicators to MTF structure like Raw Parquet functionality."""
+        print(f"\n{Fore.YELLOW}🔧 Saving filtered indicators to MTF structure...")
         
         try:
             # Get format from first file
@@ -1826,10 +1927,10 @@ class DataLoadingMenu(BaseMenu):
             
             format_name = filtered_files[0]['format']
             
-            # Use the new method that loads all indicators at once
-            self._load_and_process_all_indicators_data(format_name, analyzer, loader, processor, mtf_creator)
+            # Use the new method that loads only filtered indicators
+            self._load_and_process_filtered_indicators_data(filtered_files, format_name, analyzer, loader, processor, mtf_creator)
             
         except Exception as e:
-            print(f"\n{Fore.RED}❌ Error saving all indicators to MTF: {e}")
+            print(f"\n{Fore.RED}❌ Error saving filtered indicators to MTF: {e}")
             import traceback
             traceback.print_exc()
