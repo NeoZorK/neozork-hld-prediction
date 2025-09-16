@@ -991,13 +991,15 @@ class DataLoadingMenu(BaseMenu):
         # Display folder information
         self._display_folder_info(analysis["folder_info"], "Indicators")
         
-        # Display indicators found
+        # Display indicators found (only unique indicator names)
         if analysis["indicators"]:
+            unique_indicators = list(set(analysis["indicators"]))
+            unique_indicators.sort()
             print(f"\n{Fore.GREEN}📊 Available Indicators:")
-            indicators_text = ", ".join(analysis["indicators"])
+            indicators_text = ", ".join(unique_indicators)
             print(f"{Fore.WHITE}  {indicators_text}")
         
-        # Display subfolders information
+        # Display subfolders information with detailed breakdown
         if analysis["subfolders_info"]:
             print(f"\n{Fore.YELLOW}📁 Subfolders Information:")
             for subdir, subfolder_info in analysis["subfolders_info"].items():
@@ -1005,73 +1007,161 @@ class DataLoadingMenu(BaseMenu):
                 print(f"  • Files: {subfolder_info['file_count']}")
                 print(f"  • Size: {subfolder_info['size_mb']} MB")
                 print(f"  • Modified: {subfolder_info['modified']}")
-                
-                # Show files in this subfolder
-                if subfolder_info.get("files_info"):
-                    print(f"  • Files:")
-                    for filename, file_info in subfolder_info["files_info"].items():
-                        print(f"    - {filename}: {file_info['size_mb']} MB, {file_info['rows']:,} rows")
         
-        # Ask user to choose indicator and format
+        # Display files by source and indicator (like Raw Parquet)
+        if analysis["files_info"]:
+            self._display_indicators_by_source_and_indicator(analysis["files_info"])
+        
+        # Ask user to choose source, format, and indicator
         print(f"\n{Fore.GREEN}📊 Data Loading Configuration")
         print(f"{Fore.CYAN}{'─'*50}")
         
-        # Get indicator choice from user
-        indicator_input = input(f"{Fore.GREEN}Choose Indicator to load (e.g., 'RSI', 'MACD') [default: RSI]: {Style.RESET_ALL}").strip().upper()
-        if not indicator_input:
-            indicator_input = "RSI"
-            print(f"{Fore.YELLOW}Using default indicator: {indicator_input}")
+        # Get available combinations
+        available_combinations = self._get_available_combinations(analysis["files_info"])
         
-        # Check if indicator exists
-        if indicator_input not in analysis["indicators"]:
-            print(f"{Fore.RED}❌ Indicator '{indicator_input}' not found in available indicators.")
-            print(f"{Fore.YELLOW}Available indicators: {', '.join(analysis['indicators'])}")
+        if not available_combinations:
+            print(f"{Fore.RED}❌ No valid combinations found")
             input(f"\n{Fore.CYAN}Press Enter to continue...")
             return
         
-        # Show available formats for this indicator
-        available_formats = []
-        for subdir, subfolder_info in analysis["subfolders_info"].items():
-            if subfolder_info.get("files_info"):
-                for filename, file_info in subfolder_info["files_info"].items():
-                    if file_info.get('indicator', '').upper() == indicator_input:
-                        available_formats.append(subdir)
+        # Show selection menu
+        print(f"\n{Fore.YELLOW}Choose Source, Format, and Indicator:")
+        print(f"{Fore.CYAN}{'─'*60}")
+        for i, combo in enumerate(available_combinations, 1):
+            source = combo['source'].upper()
+            format_type = combo['format'].upper()
+            indicator = combo['indicator']
+            file_count = combo['file_count']
+            total_size = combo['total_size']
+            total_rows = combo['total_rows']
+            
+            print(f"{Fore.WHITE}{i:2d}. {indicator} ({source}) - {format_type} - {file_count} files, {total_size:.1f}MB, {total_rows:,} rows")
+        print(f"{Fore.CYAN}{'─'*60}")
         
-        available_formats = sorted(list(set(available_formats)))
-        
-        if not available_formats:
-            print(f"{Fore.RED}❌ No files found for indicator '{indicator_input}'")
-            input(f"\n{Fore.CYAN}Press Enter to continue...")
-            return
-        
-        # Show format selection menu
-        print(f"\n{Fore.YELLOW}Choose Format for {indicator_input}:")
-        print(f"{Fore.CYAN}{'─'*40}")
-        for i, fmt in enumerate(available_formats, 1):
-            print(f"{Fore.WHITE}{i}. {fmt.upper()}")
-        print(f"{Fore.CYAN}{'─'*40}")
-        
-        # Get format choice (default: parquet)
+        # Get user choice
         try:
-            choice_input = input(f"{Fore.GREEN}Enter choice (1-{len(available_formats)}) [default: 1 (parquet)]: {Style.RESET_ALL}").strip()
+            choice_input = input(f"{Fore.GREEN}Enter choice (1-{len(available_combinations)}) [default: 1]: {Style.RESET_ALL}").strip()
             if not choice_input:
                 choice_idx = 0
             else:
                 choice_idx = int(choice_input) - 1
                 
-            if choice_idx < 0 or choice_idx >= len(available_formats):
+            if choice_idx < 0 or choice_idx >= len(available_combinations):
                 raise ValueError("Invalid choice")
-            selected_format = available_formats[choice_idx]
+            
+            selected_combo = available_combinations[choice_idx]
+            selected_indicator = selected_combo['indicator']
+            selected_format = selected_combo['format']
+            selected_source = selected_combo['source']
+            
         except (ValueError, IndexError):
-            print(f"{Fore.RED}❌ Invalid choice. Using parquet format.")
-            selected_format = 'parquet'
+            print(f"{Fore.RED}❌ Invalid choice. Using first option.")
+            selected_combo = available_combinations[0]
+            selected_indicator = selected_combo['indicator']
+            selected_format = selected_combo['format']
+            selected_source = selected_combo['source']
         
-        print(f"\n{Fore.GREEN}✅ Selected: {indicator_input} in {selected_format.upper()} format")
+        print(f"\n{Fore.GREEN}✅ Selected: {selected_indicator} ({selected_source.upper()}) - {selected_format.upper()}")
         
         # Load and process data with MTF structure creation
-        self._load_and_process_indicators_data(indicator_input, selected_format, analyzer, loader, processor, mtf_creator)
+        self._load_and_process_indicators_data(selected_indicator, selected_format, analyzer, loader, processor, mtf_creator)
         
         input(f"\n{Fore.CYAN}Press Enter to continue...")
+    
+    def _display_indicators_by_source_and_indicator(self, files_info: Dict[str, Any]):
+        """Display indicators grouped by source and indicator like Raw Parquet."""
+        try:
+            # Group files by source and indicator
+            files_by_source_indicator = {}
+            for filename, file_info in files_info.items():
+                source = file_info.get('source', 'unknown')
+                indicator = file_info.get('indicator', 'unknown')
+                format_type = file_info.get('format', '').replace('.', '').upper()
+                
+                key = f"{source}_{indicator}_{format_type}"
+                if key not in files_by_source_indicator:
+                    files_by_source_indicator[key] = {
+                        'source': source,
+                        'indicator': indicator,
+                        'format': format_type,
+                        'files': []
+                    }
+                files_by_source_indicator[key]['files'].append((filename, file_info))
+            
+            # Sort by source, then indicator, then format
+            sorted_keys = sorted(files_by_source_indicator.keys(), 
+                               key=lambda x: (files_by_source_indicator[x]['source'], 
+                                            files_by_source_indicator[x]['indicator'],
+                                            files_by_source_indicator[x]['format']))
+            
+            print(f"\n{Fore.YELLOW}📋 Files by Source and Indicator ({len(sorted_keys)} groups):")
+            print(f"{Fore.CYAN}{'─'*80}")
+            
+            for key in sorted_keys:
+                group_info = files_by_source_indicator[key]
+                source = group_info['source'].upper()
+                indicator = group_info['indicator']
+                format_type = group_info['format']
+                files = group_info['files']
+                
+                # Calculate total size and rows
+                total_size = sum(f[1]['size_mb'] for f in files)
+                total_rows = sum(f[1]['rows'] for f in files)
+                
+                print(f"\n{Fore.GREEN}🔸 {indicator} ({source}) - {format_type} - {len(files)} files:")
+                print(f"  {Fore.WHITE}Total: {total_size:.1f}MB, {total_rows:,} rows")
+                
+                # Show individual files
+                for filename, file_info in files:
+                    size_mb = file_info['size_mb']
+                    rows = file_info['rows']
+                    start_date = file_info['start_date'][:10] if file_info['start_date'] != "No time data" else "No data"
+                    end_date = file_info['end_date'][:10] if file_info['end_date'] != "No time data" else "No data"
+                    
+                    print(f"    {Fore.WHITE}{filename}: {size_mb:.1f}MB, {rows:,} rows, {start_date} to {end_date}")
+            
+            print(f"{Fore.CYAN}{'─'*80}")
+            
+        except Exception as e:
+            print_error(f"Error displaying indicators by source: {e}")
+    
+    def _get_available_combinations(self, files_info: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Get available combinations of source, format, and indicator."""
+        try:
+            combinations = {}
+            
+            for filename, file_info in files_info.items():
+                source = file_info.get('source', 'unknown')
+                indicator = file_info.get('indicator', 'unknown')
+                format_type = file_info.get('format', '').replace('.', '').lower()
+                
+                key = f"{source}_{indicator}_{format_type}"
+                
+                if key not in combinations:
+                    combinations[key] = {
+                        'source': source,
+                        'indicator': indicator,
+                        'format': format_type,
+                        'file_count': 0,
+                        'total_size': 0,
+                        'total_rows': 0,
+                        'files': []
+                    }
+                
+                combinations[key]['file_count'] += 1
+                combinations[key]['total_size'] += file_info.get('size_mb', 0)
+                combinations[key]['total_rows'] += file_info.get('rows', 0)
+                combinations[key]['files'].append((filename, file_info))
+            
+            # Convert to list and sort
+            result = list(combinations.values())
+            result.sort(key=lambda x: (x['source'], x['indicator'], x['format']))
+            
+            return result
+            
+        except Exception as e:
+            print_error(f"Error getting available combinations: {e}")
+            return []
     
     def _load_and_process_indicators_data(self, indicator: str, format_name: str, analyzer: 'IndicatorsAnalyzer', 
                                         loader: 'IndicatorsLoader', processor: 'IndicatorsProcessor', 

@@ -182,8 +182,9 @@ class IndicatorsAnalyzer:
             # Get file format
             file_format = file_path.suffix.lower()
             
-            # Extract indicator name from filename
+            # Extract indicator name and source from filename
             indicator_name = self._extract_indicator_name(file_path.name)
+            source = self._extract_source_from_filename(file_path.name)
             
             # Try to get data info based on format
             data_info = self._get_data_info(file_path, file_format)
@@ -193,6 +194,7 @@ class IndicatorsAnalyzer:
                 'size_mb': round(file_size_mb, 2),
                 'format': file_format,
                 'indicator': indicator_name,
+                'source': source,
                 'rows': data_info.get('rows', 0),
                 'columns': data_info.get('columns', []),
                 'start_date': data_info.get('start_date', 'No time data'),
@@ -217,7 +219,7 @@ class IndicatorsAnalyzer:
                 parts = name.split('_')
                 if len(parts) >= 2:
                     # Check if first part looks like an indicator
-                    indicator_candidates = ['rsi', 'macd', 'sma', 'ema', 'bb', 'stoch', 'adx', 'cci', 'williams']
+                    indicator_candidates = ['rsi', 'macd', 'sma', 'ema', 'bb', 'stoch', 'adx', 'cci', 'williams', 'wave', 'rsi_mom', 'rsi_div']
                     if parts[0].lower() in indicator_candidates:
                         return parts[0].upper()
             
@@ -227,6 +229,28 @@ class IndicatorsAnalyzer:
         except Exception as e:
             print_error(f"Error extracting indicator name from {filename}: {e}")
             return filename.upper()
+    
+    def _extract_source_from_filename(self, filename: str) -> str:
+        """Extract source from filename."""
+        try:
+            # Remove extension
+            name = filename.split('.')[0]
+            
+            # Common source patterns
+            if 'csvexport' in name.lower():
+                return 'csvexport'
+            elif 'binance' in name.lower():
+                return 'binance'
+            elif 'polygon' in name.lower():
+                return 'polygon'
+            elif 'yfinance' in name.lower():
+                return 'yfinance'
+            else:
+                return 'unknown'
+                
+        except Exception as e:
+            print_error(f"Error extracting source from {filename}: {e}")
+            return 'unknown'
     
     def _get_data_info(self, file_path: Path, file_format: str) -> Dict[str, Any]:
         """Get data information based on file format."""
