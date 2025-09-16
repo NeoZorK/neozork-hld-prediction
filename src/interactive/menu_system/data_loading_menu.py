@@ -5,7 +5,7 @@ Data Loading Menu for NeoZork Interactive ML Trading Strategy Development.
 This module provides the data loading submenu with support for multiple data sources.
 """
 
-from typing import Dict, Any, Optional, Tuple
+from typing import Dict, Any, Optional, Tuple, List
 import time
 import pandas as pd
 import numpy as np
