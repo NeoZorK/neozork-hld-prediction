@@ -76,15 +76,26 @@ class IndicatorsAnalyzer:
                 progress_callback("📈 Extracting indicators metadata...", 0.7)
             indicators_metadata = self._extract_indicators_metadata(indicators_files, progress_callback)
             
-            # Get unique indicators list
+            # Get unique indicators list with source combinations
             if progress_callback:
                 progress_callback("📋 Processing indicators list...", 0.9)
-            indicators_list = list(set(indicators_metadata.keys()))
+            
+            # Create source+indicator combinations
+            source_indicator_combinations = set()
+            for file_info in indicators_metadata.values():
+                source = file_info.get('source', 'unknown')
+                indicator = file_info.get('indicator', 'unknown')
+                if source != 'unknown' and indicator != 'unknown':
+                    # Format: "source indicator" (e.g., "binance wave", "csvexport wave")
+                    combination = f"{source} {indicator.lower()}"
+                    source_indicator_combinations.add(combination)
+            
+            indicators_list = sorted(list(source_indicator_combinations))
             
             if progress_callback:
                 progress_callback("✅ Analysis complete", 1.0)
             else:
-                print_success(f"✅ Found {len(indicators_list)} indicators in {len(subfolders_info)} subfolders")
+                print_success(f"✅ Found {len(indicators_list)} indicator types in {len(subfolders_info)} subfolders")
             
             return {
                 "status": "success",
@@ -241,18 +252,53 @@ class IndicatorsAnalyzer:
     def _extract_indicator_name(self, filename: str) -> str:
         """Extract indicator name from filename."""
         try:
-            # Remove extension
-            name = filename.split('.')[0]
+            # Remove extension (only the last part after the last dot)
+            if '.' in filename:
+                name = filename.rsplit('.', 1)[0]
+            else:
+                name = filename
             
             # Common patterns for indicator names
             if '_' in name:
-                # Try to extract from patterns like "rsi_btcusd" or "macd_eurusd"
                 parts = name.split('_')
-                if len(parts) >= 2:
-                    # Check if first part looks like an indicator
-                    indicator_candidates = ['rsi', 'macd', 'sma', 'ema', 'bb', 'stoch', 'adx', 'cci', 'williams', 'wave', 'rsi_mom', 'rsi_div']
-                    if parts[0].lower() in indicator_candidates:
-                        return parts[0].upper()
+                
+                # Look for indicator names in different positions
+                indicator_candidates = ['rsi', 'macd', 'sma', 'ema', 'bb', 'stoch', 'adx', 'cci', 'williams', 'wave', 'rsi_mom', 'rsi_div', 'pressurevector', 'supportresistants']
+                
+                # Check each part for indicator names
+                for part in parts:
+                    part_lower = part.lower()
+                    if part_lower in indicator_candidates:
+                        return part.upper()
+                
+                # Special handling for known patterns
+                if len(parts) >= 3:
+                    # Pattern: source_symbol_timeframe_indicator
+                    # e.g., "binance_BTCUSDT_H4_Wave" -> "Wave"
+                    last_part = parts[-1]
+                    if last_part.lower() in ['wave', 'pressurevector', 'supportresistants']:
+                        return last_part.upper()
+                
+                # Pattern: source_indicator_symbol_timeframe
+                # e.g., "CSVExport_GOOG.NAS_PERIOD_MN1_Wave" -> "Wave"
+                if len(parts) >= 4:
+                    # Look for indicator in the last part
+                    last_part = parts[-1]
+                    if last_part.lower() in ['wave', 'pressurevector', 'supportresistants']:
+                        return last_part.upper()
+                
+                # Special case for CSVExport files
+                if 'csvexport' in name.lower():
+                    # CSVExport_GOOG.NAS_PERIOD_MN1_Wave -> Wave
+                    # For CSVExport files, look for indicator in the name
+                    if 'wave' in name.lower():
+                        return 'WAVE'
+                    elif 'pressurevector' in name.lower():
+                        return 'PRESSUREVECTOR'
+                    elif 'supportresistants' in name.lower():
+                        return 'SUPPORTRESISTANTS'
+                    # If no indicator found, return the last part
+                    return parts[-1].upper()
             
             # If no clear pattern, return the name as is
             return name.upper()
@@ -269,13 +315,15 @@ class IndicatorsAnalyzer:
             
             # Common source patterns
             if 'csvexport' in name.lower():
-                return 'csvexport'
+                return 'csv exported'
             elif 'binance' in name.lower():
                 return 'binance'
             elif 'polygon' in name.lower():
                 return 'polygon'
             elif 'yfinance' in name.lower():
                 return 'yfinance'
+            elif 'demo' in name.lower():
+                return 'demo'
             else:
                 return 'unknown'
                 
