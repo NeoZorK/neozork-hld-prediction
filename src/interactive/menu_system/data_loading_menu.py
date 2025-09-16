@@ -516,6 +516,59 @@ class DataLoadingMenu(BaseMenu):
         if progress >= 1.0:
             print()  # New line when complete
     
+    def _show_unified_progress(self, message: str, progress: float, start_time: float, 
+                              current_step: str = "", total_steps: int = 0):
+        """Show unified progress bar that updates in single line."""
+        import time
+        
+        bar_length = 40
+        filled_length = int(bar_length * progress)
+        bar = "█" * filled_length + "░" * (bar_length - filled_length)
+        percentage = int(progress * 100)
+        
+        # Calculate ETA
+        current_time = time.time()
+        elapsed_time = current_time - start_time
+        if progress > 0 and progress < 1.0:
+            eta_seconds = (elapsed_time / progress) - elapsed_time
+            eta_str = self._format_time(eta_seconds)
+        elif progress >= 1.0:
+            eta_str = "Complete"
+        else:
+            eta_str = "Calculating..."
+        
+        # Calculate speed
+        if elapsed_time > 0 and progress > 0:
+            speed = f"{progress / elapsed_time:.1f} ops/s"
+        else:
+            speed = "Starting..."
+        
+        # Create progress display
+        progress_display = f"{Fore.CYAN}📈 {message}"
+        bar_display = f"{Fore.GREEN}[{bar}]{Fore.CYAN}"
+        percentage_display = f"{Fore.YELLOW}{percentage:3d}%"
+        
+        # Add step information if available
+        step_info = ""
+        if current_step and total_steps > 0:
+            step_info = f" {Fore.WHITE}({current_step}/{total_steps})"
+        
+        # Add ETA and speed
+        extra_info = f" {Fore.MAGENTA}ETA: {eta_str} {Fore.BLUE}Speed: {speed}"
+        
+        # Combine all parts
+        full_display = f"\r{progress_display} {bar_display} {percentage_display}{step_info}{extra_info}{Style.RESET_ALL}"
+        
+        # Ensure the line is long enough to clear previous content
+        terminal_width = 120
+        if len(full_display) < terminal_width:
+            full_display += " " * (terminal_width - len(full_display))
+        
+        print(full_display, end="", flush=True)
+        
+        if progress >= 1.0:
+            print()  # New line when complete
+    
     def _save_mtf_structure_with_progress(self, symbol: str, mtf_data: Dict[str, Any], data_source: str = 'unknown'):
         """Save MTF structure in ML-optimized format with progress tracking."""
         try:
@@ -1298,15 +1351,17 @@ class DataLoadingMenu(BaseMenu):
         
         try:
             # Step 1: Load only filtered data
-            self._show_indicators_progress("Loading filtered indicators data", 0.0, start_time, "1", total_steps)
+            self._show_unified_progress("Loading filtered indicators data", 0.0, start_time, "1", total_steps)
             
             # Load only the filtered files
             loaded_data = {}
             total_files = len(filtered_files)
             
             for i, file_info in enumerate(filtered_files):
-                progress = (i + 1) / total_files
-                self._show_indicators_progress(f"Loading {file_info['filename']}", progress, start_time)
+                # Calculate progress within loading step (0-25%)
+                step_progress = (i + 1) / total_files
+                overall_progress = 0.25 * step_progress
+                self._show_unified_progress(f"Loading {file_info['filename']}", overall_progress, start_time, "1", total_steps)
                 
                 # Load specific file by filename
                 result = loader.load_specific_file(file_info['filename'])
@@ -1320,11 +1375,8 @@ class DataLoadingMenu(BaseMenu):
                 print(f"\n{Fore.RED}❌ No filtered indicators data loaded successfully")
                 return
             
-            # Update progress
-            self._show_indicators_progress("Loading filtered indicators data", 0.25, start_time, "1", total_steps)
-            
             # Step 2: Process the loaded data
-            self._show_indicators_progress("Processing filtered indicators data", 0.25, start_time, "2", total_steps)
+            self._show_unified_progress("Processing filtered indicators data", 0.25, start_time, "2", total_steps)
             processed_result = processor.process_indicators_data(loaded_data, show_detailed_progress=False)
             
             if processed_result["status"] != "success":
@@ -1332,7 +1384,7 @@ class DataLoadingMenu(BaseMenu):
                 return
             
             # Update progress
-            self._show_indicators_progress("Processing filtered indicators data", 0.5, start_time, "2", total_steps)
+            self._show_unified_progress("Processing filtered indicators data", 0.5, start_time, "2", total_steps)
             
             # Get symbol from filtered files (should be the same for all)
             symbol_input = filtered_files[0]['symbol'].upper()
@@ -1345,7 +1397,7 @@ class DataLoadingMenu(BaseMenu):
                 print(f"{Fore.YELLOW}Using default timeframe: {timeframe_input}")
             
             # Step 3: Create MTF structure
-            self._show_indicators_progress("Creating MTF structure", 0.5, start_time, "3", total_steps)
+            self._show_unified_progress("Creating MTF structure", 0.5, start_time, "3", total_steps)
             mtf_result = mtf_creator.create_mtf_from_processed_data(
                 processed_result['data'], symbol_input, timeframe_input, 'indicators')
             
@@ -1354,14 +1406,14 @@ class DataLoadingMenu(BaseMenu):
                 return
             
             # Update progress
-            self._show_indicators_progress("Creating MTF structure", 0.75, start_time, "3", total_steps)
+            self._show_unified_progress("Creating MTF structure", 0.75, start_time, "3", total_steps)
             
             # Step 4: Save MTF structure to cleaned_data folder
-            self._show_indicators_progress("Saving MTF structure", 0.75, start_time, "4", total_steps)
+            self._show_unified_progress("Saving MTF structure", 0.75, start_time, "4", total_steps)
             self._save_indicators_mtf_structure(symbol_input, "filtered_indicators", mtf_result['mtf_data'], format_name)
             
             # Complete progress
-            self._show_indicators_progress("Saving MTF structure", 1.0, start_time, "4", total_steps)
+            self._show_unified_progress("Saving MTF structure", 1.0, start_time, "4", total_steps)
             
             # Show success message
             print(f"\n{Fore.GREEN}✅ Successfully created MTF structure for filtered indicators!")
