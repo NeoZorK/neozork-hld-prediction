@@ -32,6 +32,17 @@ class IndicatorsMTFCreator:
         self.mtf_structures = {}
         self.cross_timeframe_features = {}
         
+        # Set up paths
+        from pathlib import Path
+        self.project_root = Path(__file__).resolve().parent.parent.parent.parent.parent
+        self.data_root = self.project_root / "data"
+        self.cleaned_root = self.data_root / "cleaned_data"
+        self.mtf_root = self.cleaned_root / "mtf_structures"
+        self.indicators_mtf_root = self.mtf_root / "indicators"
+        
+        # Ensure directories exist
+        self.indicators_mtf_root.mkdir(parents=True, exist_ok=True)
+        
     def create_mtf_from_processed_data(self, processed_data: Dict[str, Any], 
                                      symbol: str, main_timeframe: str, 
                                      source: str = 'indicators') -> Dict[str, Any]:
@@ -148,6 +159,7 @@ class IndicatorsMTFCreator:
                 if indicator not in organized_data:
                     organized_data[indicator] = {}
                 
+                # Store the data directly, not nested
                 organized_data[indicator][timeframe] = data
             
             return organized_data
@@ -200,9 +212,15 @@ class IndicatorsMTFCreator:
                 
                 # Pivot to have indicators as columns
                 if 'value' in main_df.columns and 'indicator' in main_df.columns:
+                    # Reset index to get timestamp as column if it's in the index
+                    if main_df.index.name == 'timestamp' or isinstance(main_df.index, pd.DatetimeIndex):
+                        main_df = main_df.reset_index()
+                        if 'timestamp' not in main_df.columns:
+                            main_df['timestamp'] = main_df.index
+                    
                     # Create pivot table with indicators as columns
                     pivot_df = main_df.pivot_table(
-                        index=main_df.index if main_df.index.name == 'timestamp' else 'timestamp',
+                        index='timestamp',
                         columns='indicator',
                         values='value',
                         aggfunc='first'
@@ -445,3 +463,175 @@ class IndicatorsMTFCreator:
                 'status': 'error',
                 'message': str(e)
             }
+    
+    def create_and_save_mtf_structure(self, processed_data: Dict[str, Any], 
+                                     symbol: str, main_timeframe: str, 
+                                     source: str = 'indicators') -> Dict[str, Any]:
+        """
+        Create and save MTF structure from processed indicators data.
+        
+        Args:
+            processed_data: Dictionary containing processed indicators data
+            symbol: Symbol name for the MTF structure
+            main_timeframe: Main timeframe for the MTF structure
+            source: Data source identifier
+            
+        Returns:
+            Dict containing MTF structure with status and metadata
+        """
+        try:
+            print_info(f"🔧 Creating and saving MTF structure for {symbol} indicators...")
+            
+            # Create MTF structure
+            mtf_result = self.create_mtf_from_processed_data(processed_data, symbol, main_timeframe, source)
+            
+            if mtf_result['status'] != 'success':
+                return mtf_result
+            
+            mtf_data = mtf_result['mtf_data']
+            
+            # Save MTF structure to disk
+            symbol_dir = self.indicators_mtf_root / symbol.lower()
+            save_result = self.save_mtf_structure(mtf_data, symbol_dir)
+            
+            if save_result['status'] != 'success':
+                return {
+                    'status': 'error',
+                    'message': f"Failed to save MTF structure: {save_result['message']}"
+                }
+            
+            print_success(f"✅ MTF structure created and saved for {symbol}")
+            
+            return {
+                'status': 'success',
+                'mtf_data': mtf_data,
+                'save_path': str(symbol_dir),
+                'creation_time': mtf_result.get('creation_time', 0),
+                'metadata': mtf_data['metadata']
+            }
+            
+        except Exception as e:
+            print_error(f"Error creating and saving MTF structure: {e}")
+            return {
+                'status': 'error',
+                'message': str(e)
+            }
+    
+    def create_mtf_from_all_indicators(self, indicators_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Create MTF structures from all available indicators data.
+        
+        Args:
+            indicators_data: Dictionary containing all indicators data
+            
+        Returns:
+            Dict containing results for all symbols
+        """
+        try:
+            print_info("🔧 Creating MTF structures for all indicators...")
+            
+            # Group data by symbol
+            symbols_data = self._group_data_by_symbol(indicators_data)
+            
+            if not symbols_data:
+                return {
+                    'status': 'error',
+                    'message': 'No symbol data found for MTF creation'
+                }
+            
+            results = {}
+            total_symbols = len(symbols_data)
+            
+            for i, (symbol, symbol_data) in enumerate(symbols_data.items()):
+                print_info(f"📊 Processing symbol {symbol} ({i+1}/{total_symbols})...")
+                
+                # Determine main timeframe (prefer M1, then M5, etc.)
+                timeframes = list(symbol_data.keys())
+                timeframe_priority = {'M1': 1, 'M5': 2, 'M15': 3, 'M30': 4, 'H1': 5, 'H4': 6, 'D1': 7, 'W1': 8, 'MN1': 9}
+                main_timeframe = min(timeframes, key=lambda x: timeframe_priority.get(x, 999))
+                
+                # Create MTF structure for this symbol
+                mtf_result = self.create_and_save_mtf_structure(
+                    symbol_data, symbol, main_timeframe, 'indicators'
+                )
+                
+                results[symbol] = mtf_result
+            
+            # Calculate overall statistics
+            successful = sum(1 for r in results.values() if r['status'] == 'success')
+            failed = total_symbols - successful
+            
+            print_success(f"✅ MTF creation completed: {successful} successful, {failed} failed")
+            
+            return {
+                'status': 'success',
+                'results': results,
+                'summary': {
+                    'total_symbols': total_symbols,
+                    'successful': successful,
+                    'failed': failed,
+                    'success_rate': (successful / total_symbols) * 100 if total_symbols > 0 else 0
+                }
+            }
+            
+        except Exception as e:
+            print_error(f"Error creating MTF from all indicators: {e}")
+            return {
+                'status': 'error',
+                'message': str(e)
+            }
+    
+    def _group_data_by_symbol(self, indicators_data: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
+        """Group indicators data by symbol."""
+        try:
+            symbols_data = {}
+            
+            for filename, data in indicators_data.items():
+                # Extract symbol from filename or data
+                symbol = self._extract_symbol_from_data(filename, data)
+                
+                if symbol not in symbols_data:
+                    symbols_data[symbol] = {}
+                
+                # Extract timeframe
+                timeframe = data.get('timeframe', 'unknown')
+                if timeframe == 'unknown' and 'data' in data:
+                    timeframe = data['data'].get('timeframe', 'unknown')
+                
+                # Store data by symbol and timeframe
+                if timeframe not in symbols_data[symbol]:
+                    symbols_data[symbol][timeframe] = {}
+                
+                symbols_data[symbol][timeframe][filename] = data
+            
+            return symbols_data
+            
+        except Exception as e:
+            print_error(f"Error grouping data by symbol: {e}")
+            return {}
+    
+    def _extract_symbol_from_data(self, filename: str, data: Dict[str, Any]) -> str:
+        """Extract symbol from filename or data."""
+        try:
+            # Try to extract from filename first
+            if '_' in filename:
+                parts = filename.split('_')
+                if len(parts) >= 2:
+                    # Look for common symbol patterns
+                    for part in parts:
+                        if part.upper() in ['BTCUSDT', 'ETHUSDT', 'EURUSD', 'GBPUSD', 'GOOG', 'TSLA', 'US500', 'XAUUSD']:
+                            return part.upper()
+            
+            # Try to extract from data
+            if 'symbol' in data:
+                return data['symbol'].upper()
+            
+            if 'data' in data and 'symbol' in data['data']:
+                return data['data']['symbol'].upper()
+            
+            # Default fallback
+            return 'UNKNOWN'
+            
+        except Exception as e:
+            print_error(f"Error extracting symbol: {e}")
+            return 'UNKNOWN'
