@@ -1607,6 +1607,30 @@ class DataLoadingMenu(BaseMenu):
                     main_tf = mtf_data.get('main_timeframe', 'M1')
                     timeframe_data[main_tf] = main_data
             
+            # Convert cross_timeframe_features to the format expected by DataLoader
+            # DataLoader expects {timeframe: DataFrame} but we have {timeframe: {indicator: DataFrame}}
+            cross_timeframe_features = {}
+            if 'cross_timeframe_features' in mtf_data:
+                for timeframe, indicators_data in mtf_data['cross_timeframe_features'].items():
+                    # Combine all indicators for this timeframe into one DataFrame
+                    combined_dfs = []
+                    for indicator, df in indicators_data.items():
+                        if not df.empty:
+                            # Add indicator prefix to column names to avoid conflicts
+                            df_copy = df.copy()
+                            df_copy.columns = [f"{indicator}_{col}" for col in df_copy.columns]
+                            combined_dfs.append(df_copy)
+                    
+                    if combined_dfs:
+                        # Combine all DataFrames for this timeframe
+                        import pandas as pd
+                        combined_df = pd.concat(combined_dfs, axis=1, sort=True)
+                        cross_timeframe_features[timeframe] = combined_df
+            
+            # Update mtf_data with converted cross_timeframe_features
+            if cross_timeframe_features:
+                mtf_data['cross_timeframe_features'] = cross_timeframe_features
+            
             # Only save if we have data
             if timeframe_data:
                 # Save using DataLoader's method with data source
