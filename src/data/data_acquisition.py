@@ -21,12 +21,14 @@ from .fetchers import (
 )
 # Use relative import for logger functions
 from ..common.logger import print_info, print_warning, print_error, print_debug, print_success  # Added print_success
+from .gap_tracker import get_gap_tracker
 
 
 # Helper function to detect gaps in full requested range (including missing data outside cache)
 def _detect_full_range_gaps(cached_df: pd.DataFrame, req_start_dt: pd.Timestamp, req_end_dt: pd.Timestamp, 
                            cache_start_dt: pd.Timestamp, cache_end_dt: pd.Timestamp, 
-                           interval_delta: pd.Timedelta) -> List[Tuple[pd.Timestamp, pd.Timestamp]]:
+                           interval_delta: pd.Timedelta, ticker: str = None, interval: str = None, 
+                           source: str = None) -> List[Tuple[pd.Timestamp, pd.Timestamp]]:
     """
     Detect gaps in the full requested range, including missing data outside the cache.
     Returns a list of (gap_start, gap_end) tuples.
@@ -65,6 +67,11 @@ def _detect_full_range_gaps(cached_df: pd.DataFrame, req_start_dt: pd.Timestamp,
                 adjusted_end = min(gap_end, req_end_dt)
                 if adjusted_end > adjusted_start:
                     gaps.append((adjusted_start, adjusted_end))
+    
+    # Filter out gaps that have already been checked and found to be empty
+    if ticker and interval and source and gaps:
+        gap_tracker = get_gap_tracker()
+        gaps = gap_tracker.filter_checked_gaps(ticker, interval, source, gaps)
     
     return gaps
 
@@ -434,7 +441,8 @@ def acquire_data(args) -> dict:
                         print_info("Checking for gaps in full requested range...")
                         # Use the new function to detect gaps in the full range
                         all_gaps = _detect_full_range_gaps(cached_df, req_start_dt, req_end_dt_inclusive, 
-                                                         cache_start_dt, cache_end_dt, interval_delta)
+                                                         cache_start_dt, cache_end_dt, interval_delta,
+                                                         args.ticker, args.interval, effective_mode)
                         
                         if all_gaps:
                             print_info(f"Found {len(all_gaps)} gaps in full requested range. Will fetch missing data.")
@@ -510,6 +518,10 @@ def acquire_data(args) -> dict:
                     temp_metrics["error_message"] = str(e)
             elif fetch_ranges:
                 data_info["data_source_label"] = args.ticker
+                # Track fetch results for gap marking
+                fetch_results = []
+                gap_tracker = get_gap_tracker()
+                
                 for fetch_range_data in fetch_ranges:
                     # Handle both old format (3 values) and new format (2 values)
                     if len(fetch_range_data) == 3:
@@ -581,7 +593,12 @@ def acquire_data(args) -> dict:
                             new_df_part, metrics_part = fetch_func(**call_kwargs)
                             # --- End Refactored Fetch Call ---
 
-                            if new_df_part is not None and not new_df_part.empty:
+                            # Track fetch result for gap marking
+                            # Consider fetch unsuccessful if no new data was actually added
+                            fetch_success = new_df_part is not None and not new_df_part.empty
+                            fetch_results.append(fetch_success)
+
+                            if fetch_success:
                                 if isinstance(new_df_part.index, pd.DatetimeIndex):
                                     if new_df_part.index.tz is not None:
                                         new_df_part.index = new_df_part.index.tz_localize(None)
@@ -606,6 +623,8 @@ def acquire_data(args) -> dict:
                         except Exception as e:
                             error_msg = f"Failed fetch range {fetch_start_str}-{fetch_end_str}: {e}"
                             print_error(error_msg);
+                            # Track failed fetch for gap marking
+                            fetch_results.append(False)
                             # Don't break the entire process for individual range failures
                             # Just log the error and continue with other ranges
                             temp_metrics["error_message"] = error_msg
@@ -619,6 +638,24 @@ def acquire_data(args) -> dict:
                         break
 
                 combined_metrics.update(temp_metrics)
+                
+                # Mark all gaps as checked to prevent future attempts
+                # This prevents repeated downloads of the same gaps
+                if fetch_ranges:
+                    # Extract gap ranges properly
+                    gap_ranges = []
+                    for fetch_range_data in fetch_ranges:
+                        if len(fetch_range_data) == 3:
+                            fetch_start, fetch_end, _ = fetch_range_data
+                        else:
+                            fetch_start, fetch_end = fetch_range_data
+                        gap_ranges.append((fetch_start, fetch_end))
+                    
+                    print_debug(f"Marking {len(gap_ranges)} gaps as checked for {args.ticker} {args.interval}")
+                    # Mark all gaps as checked regardless of fetch result
+                    # This prevents repeated attempts to fetch the same gaps
+                    for gap_start, gap_end in gap_ranges:
+                        gap_tracker.mark_gap_checked(args.ticker, args.interval, effective_mode, gap_start, gap_end)
 
             elif is_period_request:
                 data_info["data_source_label"] = args.ticker
