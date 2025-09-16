@@ -202,9 +202,7 @@ class DataLoadingMenu(BaseMenu):
             print(f"{Fore.GREEN}📊 Available timeframes: {', '.join(available_timeframes)}")
             print(f"{Fore.GREEN}🎯 Main timeframe: {main_timeframe}")
             
-            # Create symbol directory
-            symbol_dir = Path("data/cleaned_data") / symbol.lower()
-            symbol_dir.mkdir(parents=True, exist_ok=True)
+            # DataLoader will create the necessary directories
             
             # Process each timeframe
             processed_data = {}
@@ -679,9 +677,7 @@ class DataLoadingMenu(BaseMenu):
             print(f"{Fore.GREEN}📊 Available timeframes: {', '.join(available_timeframes)}")
             print(f"{Fore.GREEN}🎯 Main timeframe: {main_timeframe}")
             
-            # Create symbol directory
-            symbol_dir = Path("data/cleaned_data") / symbol.lower()
-            symbol_dir.mkdir(parents=True, exist_ok=True)
+            # DataLoader will create the necessary directories
             
             # Process each timeframe
             processed_data = {}
@@ -1004,9 +1000,7 @@ class DataLoadingMenu(BaseMenu):
             from .data_loading import DataLoader
             import json
             
-            # Create symbol directory
-            symbol_dir = Path("data/cleaned_data") / symbol.lower()
-            symbol_dir.mkdir(parents=True, exist_ok=True)
+            # DataLoader will create the necessary directories
             
             # Use DataLoader to save MTF structure (same as csv converted)
             loader = DataLoader()
@@ -1588,40 +1582,37 @@ class DataLoadingMenu(BaseMenu):
             from .data_loading import DataLoader
             import json
             
-            # Create symbol directory
-            symbol_dir = Path("data/cleaned_data") / symbol.lower()
-            symbol_dir.mkdir(parents=True, exist_ok=True)
-            
             # Use DataLoader to save MTF structure (same as other data sources)
             loader = DataLoader()
             
-            # Create symbol info for DataLoader
-            symbol_info = {
-                'timeframes': mtf_data['timeframes'],
-                'timeframe_details': {}
-            }
+            # Convert indicator_data to the format expected by DataLoader
+            # DataLoader expects {timeframe: DataFrame} format
+            timeframe_data = {}
             
-            # Fill timeframe details
-            for tf in mtf_data['timeframes']:
-                if tf in mtf_data.get('indicator_data', {}):
-                    df = mtf_data['indicator_data'][tf]['data']
-                    symbol_info['timeframe_details'][tf] = {
-                        'size_mb': 0,  # Will be calculated by DataLoader
-                        'rows': len(df),
-                        'start_date': str(df.index.min()) if not df.empty and df.index.name == 'timestamp' else 'No data',
-                        'end_date': str(df.index.max()) if not df.empty and df.index.name == 'timestamp' else 'No data',
-                        'columns': list(df.columns)
-                    }
+            # Extract data from indicator_data structure
+            if 'indicator_data' in mtf_data:
+                for indicator_name, timeframes_data in mtf_data['indicator_data'].items():
+                    for timeframe, file_data in timeframes_data.items():
+                        if isinstance(file_data, dict) and 'data' in file_data:
+                            df = file_data['data']
+                            if not df.empty:
+                                # Use timeframe as key for DataLoader
+                                timeframe_data[timeframe] = df
             
-            # Save using DataLoader's method with data source
-            loader._save_loaded_data(symbol, mtf_data.get('indicator_data', {}), mtf_data, f"{source}_{indicator}")
+            # If no timeframe_data found, try to use main_data
+            if not timeframe_data and 'main_data' in mtf_data:
+                main_data = mtf_data['main_data']
+                if not main_data.empty:
+                    # Use main_timeframe as key
+                    main_tf = mtf_data.get('main_timeframe', 'M1')
+                    timeframe_data[main_tf] = main_data
             
-            # print(f"{Fore.GREEN}✅ MTF structure saved to: {symbol_dir}")
-            # print(f"  • Symbol: {symbol.upper()}")
-            # print(f"  • Indicator: {indicator}")
-            # print(f"  • Source: {source}")
-            # print(f"  • Timeframes: {', '.join(mtf_data['timeframes'])}")
-            # print(f"  • Main timeframe: {mtf_data['main_timeframe']}")
+            # Only save if we have data
+            if timeframe_data:
+                # Save using DataLoader's method with data source
+                loader._save_loaded_data(symbol, timeframe_data, mtf_data, f"{source}_{indicator}")
+            else:
+                print(f"{Fore.YELLOW}⚠️ No valid data found to save for {symbol} {indicator}")
             
         except Exception as e:
             print(f"{Fore.RED}❌ Error saving MTF structure: {e}")
