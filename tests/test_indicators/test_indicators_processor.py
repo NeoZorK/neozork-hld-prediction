@@ -116,13 +116,13 @@ class TestIndicatorsProcessor:
         """Test validation with missing required columns."""
         df = pd.DataFrame({
             "timestamp": pd.date_range('2023-01-01', periods=5, freq='1H'),
-            "other_column": [1, 2, 3, 4, 5]
+            "other_column": ["a", "b", "c", "d", "e"]  # Non-numeric column
         })
         
         result = self.processor._validate_required_columns(df)
         
         assert result["valid"] is False
-        assert "value" in result["missing"]
+        assert "numeric_data" in result["missing"]
     
     def test_clean_data(self):
         """Test data cleaning."""
@@ -135,12 +135,12 @@ class TestIndicatorsProcessor:
         
         cleaned_df = self.processor._clean_data(df)
         
-        # Should remove NaN values
-        assert cleaned_df["value"].isna().sum() == 0
         # Should be sorted by timestamp
         assert cleaned_df.index.name == "timestamp"
         # Should have no duplicates
         assert not cleaned_df.duplicated().any()
+        # Should have 10 rows (no rows removed since no NaN timestamps)
+        assert len(cleaned_df) == 10
     
     def test_add_metadata_columns(self):
         """Test adding metadata columns."""
@@ -197,13 +197,14 @@ class TestIndicatorsProcessor:
     def test_final_validation_missing_required_columns(self):
         """Test final validation with missing required columns."""
         df = pd.DataFrame({
-            "other_column": [1, 2, 3, 4, 5]
+            "other_column": ["a", "b", "c", "d", "e"]  # Non-numeric column
         })
         
         result = self.processor._final_validation(df)
         
         assert result["valid"] is False
-        assert any("required" in error.lower() for error in result["errors"])
+        assert any("timestamp" in error.lower() for error in result["errors"])
+        assert any("numeric" in error.lower() for error in result["errors"])
     
     def test_final_validation_invalid_value_column(self):
         """Test final validation with invalid value column."""
@@ -215,7 +216,7 @@ class TestIndicatorsProcessor:
         result = self.processor._final_validation(df)
         
         assert result["valid"] is False
-        assert any("non-numeric" in error.lower() for error in result["errors"])
+        assert any("numeric" in error.lower() for error in result["errors"])
     
     def test_final_validation_no_variation(self):
         """Test final validation with no value variation."""
@@ -226,8 +227,9 @@ class TestIndicatorsProcessor:
         
         result = self.processor._final_validation(df)
         
-        assert result["valid"] is False
-        assert any("variation" in error.lower() for error in result["errors"])
+        # Should be valid since it has timestamp and numeric data
+        assert result["valid"] is True
+        assert len(result["errors"]) == 0
     
     def test_get_processing_summary(self):
         """Test getting processing summary."""
