@@ -1200,16 +1200,41 @@ class DataLoadingMenu(BaseMenu):
                 print(f"\n{Fore.GREEN}🔸 {indicator} ({source}) - {format_type} - {len(files)} files:")
                 print(f"  {Fore.WHITE}Total: {total_size:.1f}MB, {total_rows:,} rows")
                 
-                # Show individual files
-                for filename, file_info in files:
+                # Sort files by symbol, then by timeframe
+                def sort_key(file_tuple):
+                    filename, file_info = file_tuple
+                    symbol = self._extract_symbol_from_filename(filename)
                     timeframe = self._extract_timeframe_from_filename(filename)
-                    size_mb = file_info['size_mb']
-                    rows = file_info['rows']
-                    start_date = file_info['start_date'][:10] if file_info['start_date'] != "No time data" else "No data"
-                    end_date = file_info['end_date'][:10] if file_info['end_date'] != "No time data" else "No data"
+                    # Sort by symbol first, then by timeframe
+                    return (symbol or 'Unknown', timeframe)
+                
+                sorted_files = sorted(files, key=sort_key)
+                
+                # Group files by symbol for better display
+                files_by_symbol = {}
+                for filename, file_info in sorted_files:
+                    symbol = self._extract_symbol_from_filename(filename)
+                    if symbol not in files_by_symbol:
+                        files_by_symbol[symbol] = []
+                    files_by_symbol[symbol].append((filename, file_info))
+                
+                # Display files grouped by symbol
+                for symbol, symbol_files in files_by_symbol.items():
+                    if symbol:
+                        print(f"    {Fore.CYAN}📊 {symbol}:")
                     
-                    # Format: " M1 │  121.8MB │ 3,704,799 rows │ 2017-08-31 to 2025-09-16"
-                    print(f"    {Fore.WHITE} {timeframe:<3} │ {size_mb:>7.1f}MB │ {rows:>8,} rows │ {start_date} to {end_date}")
+                    # Sort symbol files by timeframe
+                    symbol_files.sort(key=lambda x: self._extract_timeframe_from_filename(x[0]))
+                    
+                    for filename, file_info in symbol_files:
+                        timeframe = self._extract_timeframe_from_filename(filename)
+                        size_mb = file_info['size_mb']
+                        rows = file_info['rows']
+                        start_date = file_info['start_date'][:10] if file_info['start_date'] != "No time data" else "No data"
+                        end_date = file_info['end_date'][:10] if file_info['end_date'] != "No time data" else "No data"
+                        
+                        # Format: " M1 │  121.8MB │ 3,704,799 rows │ 2017-08-31 to 2025-09-16"
+                        print(f"      {Fore.WHITE} {timeframe:<3} │ {size_mb:>7.1f}MB │ {rows:>8,} rows │ {start_date} to {end_date}")
             
             print(f"{Fore.CYAN}{'─'*80}")
             
@@ -1657,7 +1682,26 @@ class DataLoadingMenu(BaseMenu):
     def _extract_symbol_from_filename(self, filename: str) -> Optional[str]:
         """Extract symbol from filename."""
         try:
-            # Remove extension
+            import re
+            
+            # Common patterns for symbol extraction - more specific patterns
+            patterns = [
+                r'^([A-Z]{3,6}USD[A-Z]?)',  # BTCUSDT, EURUSD, etc. at start
+                r'^([A-Z]{3,6}_[A-Z]{3,6})',  # BTC_USDT, EUR_USD, etc. at start
+                r'([A-Z]{3,6}USD[A-Z]?)_',  # BTCUSDT_, EURUSD_ in middle
+                r'([A-Z]{3,6}_[A-Z]{3,6})_',  # BTC_USDT_, EUR_USD_ in middle
+                r'^([A-Z]{3,6})_',  # AAPL_, BTC_, etc. at start
+            ]
+            
+            for pattern in patterns:
+                match = re.search(pattern, filename.upper())
+                if match:
+                    symbol = match.group(1).replace('_', '')
+                    # Validate that the symbol looks like a trading pair
+                    if len(symbol) >= 3 and symbol.isalpha():
+                        return symbol
+            
+            # Fallback to original logic for other patterns
             name = filename.split('.')[0]
             
             # Look for patterns like CSVExport_SYMBOL_PERIOD_...
