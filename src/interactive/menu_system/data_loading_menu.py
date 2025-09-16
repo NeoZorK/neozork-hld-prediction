@@ -966,11 +966,22 @@ class DataLoadingMenu(BaseMenu):
             return None, None
     
     def _load_indicators(self):
-        """Load indicators data with detailed folder analysis."""
+        """Load indicators data with detailed folder analysis and MTF structure creation."""
         print(f"\n{Fore.YELLOW}📈 Indicators Data Analysis...")
         
+        # Import indicators modules
+        from src.interactive.data_management.indicators import (
+            IndicatorsAnalyzer, IndicatorsLoader, IndicatorsProcessor, IndicatorsMTFCreator
+        )
+        
+        # Initialize components
+        analyzer = IndicatorsAnalyzer()
+        loader = IndicatorsLoader()
+        processor = IndicatorsProcessor()
+        mtf_creator = IndicatorsMTFCreator()
+        
         # Analyze folder first
-        analysis = self.file_analyzer.analyze_indicators_folder()
+        analysis = analyzer.analyze_indicators_folder()
         
         if analysis["status"] == "error":
             print(f"{Fore.RED}❌ Error: {analysis['message']}")
@@ -1001,26 +1012,174 @@ class DataLoadingMenu(BaseMenu):
                     for filename, file_info in subfolder_info["files_info"].items():
                         print(f"    - {filename}: {file_info['size_mb']} MB, {file_info['rows']:,} rows")
         
-        # Ask if user wants to load data
-        load_data = input(f"\n{Fore.GREEN}Load data into memory? (y/n): {Style.RESET_ALL}").strip().lower()
+        # Ask user to choose indicator and format
+        print(f"\n{Fore.GREEN}📊 Data Loading Configuration")
+        print(f"{Fore.CYAN}{'─'*50}")
         
-        if load_data == 'y':
-            # Get symbol filter from user
-            symbol_filter = input(f"{Fore.GREEN}Enter symbol filter (optional, e.g., 'aapl'): {Style.RESET_ALL}").strip()
-            if not symbol_filter:
-                symbol_filter = None
-            
-            # Load data
-            from src.interactive.data_management import DataLoader
-            loader = DataLoader()
-            result = loader.load_indicators_data(symbol_filter)
-            
-            if result["status"] == "success":
-                self._display_loaded_data(result)
+        # Get indicator choice from user
+        indicator_input = input(f"{Fore.GREEN}Choose Indicator to load (e.g., 'RSI', 'MACD') [default: RSI]: {Style.RESET_ALL}").strip().upper()
+        if not indicator_input:
+            indicator_input = "RSI"
+            print(f"{Fore.YELLOW}Using default indicator: {indicator_input}")
+        
+        # Check if indicator exists
+        if indicator_input not in analysis["indicators"]:
+            print(f"{Fore.RED}❌ Indicator '{indicator_input}' not found in available indicators.")
+            print(f"{Fore.YELLOW}Available indicators: {', '.join(analysis['indicators'])}")
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            return
+        
+        # Show available formats for this indicator
+        available_formats = []
+        for subdir, subfolder_info in analysis["subfolders_info"].items():
+            if subfolder_info.get("files_info"):
+                for filename, file_info in subfolder_info["files_info"].items():
+                    if file_info.get('indicator', '').upper() == indicator_input:
+                        available_formats.append(subdir)
+        
+        available_formats = sorted(list(set(available_formats)))
+        
+        if not available_formats:
+            print(f"{Fore.RED}❌ No files found for indicator '{indicator_input}'")
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            return
+        
+        # Show format selection menu
+        print(f"\n{Fore.YELLOW}Choose Format for {indicator_input}:")
+        print(f"{Fore.CYAN}{'─'*40}")
+        for i, fmt in enumerate(available_formats, 1):
+            print(f"{Fore.WHITE}{i}. {fmt.upper()}")
+        print(f"{Fore.CYAN}{'─'*40}")
+        
+        # Get format choice (default: parquet)
+        try:
+            choice_input = input(f"{Fore.GREEN}Enter choice (1-{len(available_formats)}) [default: 1 (parquet)]: {Style.RESET_ALL}").strip()
+            if not choice_input:
+                choice_idx = 0
             else:
-                print(f"{Fore.RED}❌ Error: {result['message']}")
+                choice_idx = int(choice_input) - 1
+                
+            if choice_idx < 0 or choice_idx >= len(available_formats):
+                raise ValueError("Invalid choice")
+            selected_format = available_formats[choice_idx]
+        except (ValueError, IndexError):
+            print(f"{Fore.RED}❌ Invalid choice. Using parquet format.")
+            selected_format = 'parquet'
+        
+        print(f"\n{Fore.GREEN}✅ Selected: {indicator_input} in {selected_format.upper()} format")
+        
+        # Load and process data with MTF structure creation
+        self._load_and_process_indicators_data(indicator_input, selected_format, analyzer, loader, processor, mtf_creator)
         
         input(f"\n{Fore.CYAN}Press Enter to continue...")
+    
+    def _load_and_process_indicators_data(self, indicator: str, format_name: str, analyzer: 'IndicatorsAnalyzer', 
+                                        loader: 'IndicatorsLoader', processor: 'IndicatorsProcessor', 
+                                        mtf_creator: 'IndicatorsMTFCreator'):
+        """Load and process indicators data with MTF structure creation."""
+        print(f"\n{Fore.YELLOW}🔄 Loading and processing {indicator} data from {format_name}...")
+        
+        try:
+            # Load data for the specific indicator and format
+            print(f"{Fore.CYAN}📊 Loading {indicator} data from {format_name}...")
+            result = loader.load_indicator_by_name(indicator, format_name)
+            
+            if result["status"] != "success":
+                print(f"{Fore.RED}❌ Error loading data: {result['message']}")
+                return
+            
+            # Process the loaded data
+            print(f"{Fore.CYAN}🔄 Processing {indicator} data...")
+            processed_result = processor.process_single_indicator(result)
+            
+            if processed_result["status"] != "success":
+                print(f"{Fore.RED}❌ Error processing data: {processed_result['message']}")
+                return
+            
+            # Get symbol from user
+            symbol_input = input(f"{Fore.GREEN}Enter symbol for MTF structure (e.g., 'BTCUSDT') [default: BTCUSDT]: {Style.RESET_ALL}").strip().upper()
+            if not symbol_input:
+                symbol_input = "BTCUSDT"
+                print(f"{Fore.YELLOW}Using default symbol: {symbol_input}")
+            
+            # Get timeframe from user
+            timeframe_input = input(f"{Fore.GREEN}Enter timeframe (e.g., 'M1', 'H1', 'D1') [default: M1]: {Style.RESET_ALL}").strip().upper()
+            if not timeframe_input:
+                timeframe_input = "M1"
+                print(f"{Fore.YELLOW}Using default timeframe: {timeframe_input}")
+            
+            # Create MTF structure
+            print(f"\n{Fore.YELLOW}🔧 Creating MTF structure for {indicator}...")
+            mtf_result = mtf_creator.create_mtf_from_single_indicator(
+                processed_result['data'], symbol_input, timeframe_input)
+            
+            if mtf_result["status"] == "success":
+                print(f"\n{Fore.GREEN}✅ Successfully created MTF structure for {indicator}!")
+                print(f"  • Symbol: {symbol_input}")
+                print(f"  • Indicator: {indicator}")
+                print(f"  • Format: {format_name}")
+                print(f"  • Timeframe: {timeframe_input}")
+                print(f"  • Total rows: {processed_result['data']['rows']:,}")
+                print(f"  • Creation time: {mtf_result['creation_time']:.2f} seconds")
+                
+                # Save MTF structure to cleaned_data folder
+                print(f"\n{Fore.YELLOW}💾 Saving MTF structure to cleaned_data folder...")
+                self._save_indicators_mtf_structure(symbol_input, indicator, mtf_result['mtf_data'], format_name)
+                
+                print(f"\n{Fore.GREEN}🎯 Ready for EDA, feature engineering, ML, backtesting, and monitoring!")
+            else:
+                print(f"\n{Fore.RED}❌ Error creating MTF structure: {mtf_result['message']}")
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Error processing indicators data: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    def _save_indicators_mtf_structure(self, symbol: str, indicator: str, mtf_data: Dict[str, Any], source: str):
+        """Save indicators MTF structure to cleaned_data folder."""
+        try:
+            from .data_loading import DataLoader
+            import json
+            
+            # Create symbol directory
+            symbol_dir = Path("data/cleaned_data") / symbol.lower()
+            symbol_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Use DataLoader to save MTF structure (same as other data sources)
+            loader = DataLoader()
+            
+            # Create symbol info for DataLoader
+            symbol_info = {
+                'timeframes': mtf_data['timeframes'],
+                'timeframe_details': {}
+            }
+            
+            # Fill timeframe details
+            for tf in mtf_data['timeframes']:
+                if tf in mtf_data.get('indicator_data', {}):
+                    df = mtf_data['indicator_data'][tf]['data']
+                    symbol_info['timeframe_details'][tf] = {
+                        'size_mb': 0,  # Will be calculated by DataLoader
+                        'rows': len(df),
+                        'start_date': str(df.index.min()) if not df.empty and df.index.name == 'timestamp' else 'No data',
+                        'end_date': str(df.index.max()) if not df.empty and df.index.name == 'timestamp' else 'No data',
+                        'columns': list(df.columns)
+                    }
+            
+            # Save using DataLoader's method with data source
+            loader._save_loaded_data(symbol, mtf_data.get('indicator_data', {}), mtf_data, f"{source}_{indicator}")
+            
+            print(f"{Fore.GREEN}✅ MTF structure saved to: {symbol_dir}")
+            print(f"  • Symbol: {symbol.upper()}")
+            print(f"  • Indicator: {indicator}")
+            print(f"  • Source: {source}")
+            print(f"  • Timeframes: {', '.join(mtf_data['timeframes'])}")
+            print(f"  • Main timeframe: {mtf_data['main_timeframe']}")
+            
+        except Exception as e:
+            print(f"{Fore.RED}❌ Error saving MTF structure: {e}")
+            import traceback
+            traceback.print_exc()
     
     def _load_cleaned_data(self):
         """Load pre-created MTF structures for fast ML analysis."""
