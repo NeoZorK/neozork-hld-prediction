@@ -45,18 +45,20 @@ class TestDataLoadingMenuIndicatorsMTF:
                 'filename': 'btcusdt_rsi_m1.parquet',
                 'indicator': 'RSI',
                 'format': 'parquet',
-                'source': 'binance'
+                'source': 'binance',
+                'symbol': 'BTCUSDT'
             },
             {
                 'filename': 'btcusdt_macd_m1.parquet',
                 'indicator': 'MACD',
                 'format': 'parquet',
-                'source': 'binance'
+                'source': 'binance',
+                'symbol': 'BTCUSDT'
             }
         ]
         
         # Mock loader responses
-        mock_loader.load_indicator_by_name.side_effect = [
+        mock_loader.load_specific_file.side_effect = [
             {
                 'status': 'success',
                 'data': {'indicator': 'RSI', 'values': [50, 60, 70]}
@@ -68,20 +70,17 @@ class TestDataLoadingMenuIndicatorsMTF:
         ]
         
         # Mock processor responses
-        mock_processor.process_single_indicator.side_effect = [
-            {
-                'status': 'success',
-                'data': {
+        mock_processor.process_indicators_data.return_value = {
+            'status': 'success',
+            'data': {
+                'btcusdt_rsi_m1.parquet': {
                     'indicator': 'RSI',
                     'timeframe': 'M1',
                     'symbol': 'BTCUSDT',
                     'data': 'mock_dataframe',
                     'rows': 100
-                }
-            },
-            {
-                'status': 'success',
-                'data': {
+                },
+                'btcusdt_macd_m1.parquet': {
                     'indicator': 'MACD',
                     'timeframe': 'M1',
                     'symbol': 'BTCUSDT',
@@ -89,10 +88,10 @@ class TestDataLoadingMenuIndicatorsMTF:
                     'rows': 100
                 }
             }
-        ]
+        }
         
         # Mock MTF creator response
-        mock_mtf_creator.create_mtf_from_all_indicators.return_value = {
+        mock_mtf_creator.create_mtf_from_processed_data.return_value = {
             'status': 'success',
             'results': {
                 'BTCUSDT': {
@@ -118,13 +117,13 @@ class TestDataLoadingMenuIndicatorsMTF:
             )
         
         # Verify that loader was called for each file
-        assert mock_loader.load_indicator_by_name.call_count == 2
+        assert mock_loader.load_specific_file.call_count == 2
         
-        # Verify that processor was called for each file
-        assert mock_processor.process_single_indicator.call_count == 2
+        # Verify that processor was called
+        mock_processor.process_indicators_data.assert_called_once()
         
         # Verify that MTF creator was called
-        mock_mtf_creator.create_mtf_from_all_indicators.assert_called_once()
+        mock_mtf_creator.create_mtf_from_processed_data.assert_called_once()
     
     def test_save_all_indicators_to_mtf_no_data(self):
         """Test saving all indicators to MTF when no data is loaded."""
@@ -135,7 +134,7 @@ class TestDataLoadingMenuIndicatorsMTF:
         mock_mtf_creator = Mock()
         
         # Mock loader to return error
-        mock_loader.load_indicator_by_name.return_value = {
+        mock_loader.load_specific_file.return_value = {
             'status': 'error',
             'message': 'No data found'
         }
@@ -145,7 +144,8 @@ class TestDataLoadingMenuIndicatorsMTF:
                 'filename': 'btcusdt_rsi_m1.parquet',
                 'indicator': 'RSI',
                 'format': 'parquet',
-                'source': 'binance'
+                'source': 'binance',
+                'symbol': 'BTCUSDT'
             }
         ]
         
@@ -169,13 +169,13 @@ class TestDataLoadingMenuIndicatorsMTF:
         mock_mtf_creator = Mock()
         
         # Mock loader to return success
-        mock_loader.load_indicator_by_name.return_value = {
+        mock_loader.load_specific_file.return_value = {
             'status': 'success',
             'data': {'indicator': 'RSI', 'values': [50, 60, 70]}
         }
         
         # Mock processor to return error
-        mock_processor.process_single_indicator.return_value = {
+        mock_processor.process_indicators_data.return_value = {
             'status': 'error',
             'message': 'Processing failed'
         }
@@ -185,7 +185,8 @@ class TestDataLoadingMenuIndicatorsMTF:
                 'filename': 'btcusdt_rsi_m1.parquet',
                 'indicator': 'RSI',
                 'format': 'parquet',
-                'source': 'binance'
+                'source': 'binance',
+                'symbol': 'BTCUSDT'
             }
         ]
         
@@ -209,24 +210,26 @@ class TestDataLoadingMenuIndicatorsMTF:
         mock_mtf_creator = Mock()
         
         # Mock successful loading and processing
-        mock_loader.load_indicator_by_name.return_value = {
+        mock_loader.load_specific_file.return_value = {
             'status': 'success',
             'data': {'indicator': 'RSI', 'values': [50, 60, 70]}
         }
         
-        mock_processor.process_single_indicator.return_value = {
+        mock_processor.process_indicators_data.return_value = {
             'status': 'success',
             'data': {
-                'indicator': 'RSI',
-                'timeframe': 'M1',
-                'symbol': 'BTCUSDT',
-                'data': 'mock_dataframe',
-                'rows': 100
+                'btcusdt_rsi_m1.parquet': {
+                    'indicator': 'RSI',
+                    'timeframe': 'M1',
+                    'symbol': 'BTCUSDT',
+                    'data': 'mock_dataframe',
+                    'rows': 100
+                }
             }
         }
         
         # Mock MTF creator to return error
-        mock_mtf_creator.create_mtf_from_all_indicators.return_value = {
+        mock_mtf_creator.create_mtf_from_processed_data.return_value = {
             'status': 'error',
             'message': 'MTF creation failed'
         }
@@ -236,7 +239,8 @@ class TestDataLoadingMenuIndicatorsMTF:
                 'filename': 'btcusdt_rsi_m1.parquet',
                 'indicator': 'RSI',
                 'format': 'parquet',
-                'source': 'binance'
+                'source': 'binance',
+                'symbol': 'BTCUSDT'
             }
         ]
         
@@ -249,7 +253,7 @@ class TestDataLoadingMenuIndicatorsMTF:
             )
         
         # Verify that MTF creator was called
-        mock_mtf_creator.create_mtf_from_all_indicators.assert_called_once()
+        mock_mtf_creator.create_mtf_from_processed_data.assert_called_once()
     
     @patch('builtins.input')
     def test_load_indicators_menu_choice_2(self, mock_input):
