@@ -28,9 +28,9 @@ class IndicatorsProcessor:
     
     def __init__(self):
         """Initialize the indicators processor."""
-        self.standard_columns = ['timestamp', 'value', 'symbol', 'timeframe', 'indicator']
-        self.numeric_columns = ['value']
-        self.required_columns = ['value']
+        self.standard_columns = ['timestamp', 'symbol', 'timeframe', 'indicator']
+        self.numeric_columns = []  # Will be determined dynamically
+        self.required_columns = []  # Will be determined dynamically
         
     def process_indicators_data(self, loaded_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -159,6 +159,8 @@ class IndicatorsProcessor:
                 'rows': len(df),
                 'format': file_data.get('format', 'unknown'),
                 'indicator': file_data.get('indicator', 'unknown'),
+                'symbol': file_data.get('symbol', 'unknown'),
+                'timeframe': file_data.get('timeframe', 'unknown'),
                 'file_path': file_data.get('file_path', ''),
                 'processing_timestamp': datetime.now().isoformat()
             }
@@ -209,12 +211,12 @@ class IndicatorsProcessor:
             # Rename columns
             df = df.rename(columns=column_mapping)
             
-            # If no value column found, try to identify numeric columns
-            if 'value' not in df.columns:
-                numeric_cols = df.select_dtypes(include=[np.number]).columns
-                if len(numeric_cols) > 0:
-                    # Use the first numeric column as value
-                    df = df.rename(columns={numeric_cols[0]: 'value'})
+            # For Wave indicators, preserve all indicator columns instead of just one 'value'
+            if 'DateTime' in df.columns:
+                df = df.rename(columns={'DateTime': 'timestamp'})
+            
+            # Keep all numeric columns as they are - don't rename to 'value'
+            # This preserves all Wave indicator data (Wave1, Wave2, Pressure, PV, etc.)
             
             return df
             
@@ -225,11 +227,17 @@ class IndicatorsProcessor:
     def _validate_required_columns(self, df: pd.DataFrame) -> Dict[str, Any]:
         """Validate that required columns are present."""
         try:
+            # For indicators data, we need at least timestamp and some numeric data
             missing_columns = []
             
-            for col in self.required_columns:
-                if col not in df.columns:
-                    missing_columns.append(col)
+            # Check for timestamp
+            if 'timestamp' not in df.columns and df.index.name != 'timestamp':
+                missing_columns.append('timestamp')
+            
+            # Check for at least one numeric column (indicators data)
+            numeric_cols = df.select_dtypes(include=[np.number]).columns
+            if len(numeric_cols) == 0:
+                missing_columns.append('numeric_data')
             
             return {
                 'valid': len(missing_columns) == 0,
@@ -249,14 +257,11 @@ class IndicatorsProcessor:
             # Remove completely empty rows
             df = df.dropna(how='all')
             
-            # Handle numeric columns
-            for col in self.numeric_columns:
-                if col in df.columns:
-                    # Convert to numeric, coercing errors to NaN
-                    df[col] = pd.to_numeric(df[col], errors='coerce')
-                    
-                    # Remove rows with NaN values in required numeric columns
-                    df = df.dropna(subset=[col])
+            # Handle all numeric columns dynamically
+            numeric_cols = df.select_dtypes(include=[np.number]).columns
+            for col in numeric_cols:
+                # Convert to numeric, coercing errors to NaN
+                df[col] = pd.to_numeric(df[col], errors='coerce')
             
             # Handle timestamp column
             if 'timestamp' in df.columns:
@@ -291,23 +296,23 @@ class IndicatorsProcessor:
             
             # Add symbol if not present
             if 'symbol' not in df.columns:
-                # Try to extract symbol from file path
-                file_path = file_data.get('file_path', '')
-                if file_path:
-                    symbol = self._extract_symbol_from_path(file_path)
-                    df['symbol'] = symbol if symbol != 'unknown' else 'unknown'
-                else:
-                    df['symbol'] = 'unknown'
+                # Use symbol from file_data if available, otherwise extract from path
+                symbol = file_data.get('symbol', 'unknown')
+                if symbol == 'unknown':
+                    file_path = file_data.get('file_path', '')
+                    if file_path:
+                        symbol = self._extract_symbol_from_path(file_path)
+                df['symbol'] = symbol
             
             # Add timeframe if not present
             if 'timeframe' not in df.columns:
-                # Try to extract timeframe from file path
-                file_path = file_data.get('file_path', '')
-                if file_path:
-                    timeframe = self._extract_timeframe_from_path(file_path)
-                    df['timeframe'] = timeframe if timeframe != 'unknown' else 'unknown'
-                else:
-                    df['timeframe'] = 'unknown'
+                # Use timeframe from file_data if available, otherwise extract from path
+                timeframe = file_data.get('timeframe', 'unknown')
+                if timeframe == 'unknown':
+                    file_path = file_data.get('file_path', '')
+                    if file_path:
+                        timeframe = self._extract_timeframe_from_path(file_path)
+                df['timeframe'] = timeframe
             
             # Add processing timestamp
             df['processed_at'] = datetime.now().isoformat()
@@ -410,27 +415,25 @@ class IndicatorsProcessor:
             if df.empty:
                 errors.append("DataFrame is empty after processing")
             
-            # Check required columns
-            for col in self.required_columns:
-                if col not in df.columns:
-                    errors.append(f"Required column '{col}' is missing")
+            # Check for timestamp
+            if 'timestamp' not in df.columns and df.index.name != 'timestamp':
+                errors.append("Timestamp column is missing")
             
-            # Check for valid numeric data in value column
-            if 'value' in df.columns:
-                if not pd.api.types.is_numeric_dtype(df['value']):
-                    errors.append("Value column is not numeric")
-                elif df['value'].isna().all():
-                    errors.append("Value column contains only NaN values")
+            # Check for at least one numeric column
+            numeric_cols = df.select_dtypes(include=[np.number]).columns
+            if len(numeric_cols) == 0:
+                errors.append("No numeric data columns found")
             
-            # Check for reasonable data range
-            if 'value' in df.columns and not df['value'].isna().all():
-                try:
-                    value_range = df['value'].max() - df['value'].min()
-                    if value_range == 0:
-                        errors.append("Value column has no variation (all values are the same)")
-                except TypeError:
-                    # Handle case where values are not numeric
-                    errors.append("Value column contains non-numeric data")
+            # Check for valid numeric data in at least one column
+            if len(numeric_cols) > 0:
+                has_valid_data = False
+                for col in numeric_cols:
+                    if not df[col].isna().all():
+                        has_valid_data = True
+                        break
+                
+                if not has_valid_data:
+                    errors.append("All numeric columns contain only NaN values")
             
             return {
                 'valid': len(errors) == 0,
