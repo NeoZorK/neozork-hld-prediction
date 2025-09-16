@@ -147,20 +147,20 @@ class IndicatorsMTFCreator:
         try:
             organized_data = {}
             
-            # processed_data is actually symbols_data[symbol] which is {timeframe: {filename: data}}
-            for timeframe, files_data in processed_data.items():
-                for filename, data in files_data.items():
-                    indicator = data.get('indicator', 'unknown')
-                    
-                    # If indicator is unknown, try to extract from filename
-                    if indicator == 'unknown':
-                        indicator = self._extract_indicator_name(filename)
-                    
-                    if indicator not in organized_data:
-                        organized_data[indicator] = {}
-                    
-                    # Store the data directly, not nested
-                    organized_data[indicator][timeframe] = data
+            # processed_data is {filename: data} where data contains indicator, symbol, timeframe
+            for filename, data in processed_data.items():
+                indicator = data.get('indicator', 'unknown')
+                timeframe = data.get('timeframe', 'unknown')
+                
+                # If indicator is unknown, try to extract from filename
+                if indicator == 'unknown':
+                    indicator = self._extract_indicator_name(filename)
+                
+                if indicator not in organized_data:
+                    organized_data[indicator] = {}
+                
+                # Store the data directly
+                organized_data[indicator][timeframe] = data
             
             return organized_data
             
@@ -198,95 +198,52 @@ class IndicatorsMTFCreator:
                 }
             }
             
-            # Create main data DataFrame by combining all indicators for main timeframe
+            # For indicators data, we need to handle it differently
+            # Each file contains data for a specific timeframe and indicator
             main_dataframes = []
             
             for indicator, timeframes_data in organized_data.items():
-                if main_timeframe in timeframes_data:
-                    # Get the data - it could be directly in timeframes_data or nested
-                    timeframe_data = timeframes_data[main_timeframe]
-                    
-                    if isinstance(timeframe_data, dict) and 'data' in timeframe_data:
-                        df = timeframe_data['data'].copy()
+                for timeframe, file_data in timeframes_data.items():
+                    if isinstance(file_data, dict) and 'data' in file_data:
+                        df = file_data['data'].copy()
+                        
+                        if hasattr(df, 'empty') and not df.empty:
+                            # Add metadata columns
+                            df['indicator'] = file_data.get('indicator', indicator)
+                            df['symbol'] = file_data.get('symbol', symbol.upper())
+                            df['timeframe'] = file_data.get('timeframe', timeframe)
+                            
+                            main_dataframes.append(df)
+                        else:
+                            print_warning(f"Empty DataFrame for {indicator} {timeframe}")
                     else:
-                        # If it's already a DataFrame or the data structure is different
-                        df = timeframe_data.copy() if hasattr(timeframe_data, 'copy') else pd.DataFrame()
-                    
-                    if hasattr(df, 'empty') and not df.empty:
-                        df['indicator'] = indicator
-                        main_dataframes.append(df)
-                    elif hasattr(df, 'shape') and df.shape[0] > 0:
-                        df['indicator'] = indicator
-                        main_dataframes.append(df)
-                    else:
-                        print_warning(f"Empty or invalid DataFrame for {indicator}")
-                else:
-                    print_warning(f"Main timeframe {main_timeframe} not found for indicator {indicator}")
+                        print_warning(f"Invalid data structure for {indicator} {timeframe}")
             
             if main_dataframes:
-                # Combine all indicator data for main timeframe
+                # Combine all data
                 main_df = pd.concat(main_dataframes, ignore_index=True)
                 
-                # Ensure we have the required columns for pivoting
+                # Sort by timestamp if available
+                if 'timestamp' in main_df.columns:
+                    main_df = main_df.sort_values('timestamp')
+                elif main_df.index.name == 'timestamp':
+                    main_df = main_df.sort_index()
+                
+                # Set timestamp as index if it's a column
+                if 'timestamp' in main_df.columns:
+                    main_df = main_df.set_index('timestamp')
+                
+                # Store the combined data
+                mtf_data['main_data'] = main_df
+                mtf_data['metadata']['total_rows'] = len(main_df)
+                
+                # Extract indicators list
                 if 'indicator' in main_df.columns:
-                    # Find timestamp column
-                    timestamp_col = None
-                    for col in ['timestamp', 'DateTime', 'datetime', 'time']:
-                        if col in main_df.columns:
-                            timestamp_col = col
-                            break
-                    
-                    # If no timestamp column found, create one from index
-                    if timestamp_col is None:
-                        if main_df.index.name == 'timestamp' or isinstance(main_df.index, pd.DatetimeIndex):
-                            main_df = main_df.reset_index()
-                            timestamp_col = 'timestamp'
-                        else:
-                            # Create a simple timestamp column
-                            main_df['timestamp'] = range(len(main_df))
-                            timestamp_col = 'timestamp'
-                    
-                    # Find value column
-                    value_col = None
-                    for col in ['value', 'Value', 'close', 'Close', 'price', 'Price']:
-                        if col in main_df.columns:
-                            value_col = col
-                            break
-                    
-                    if value_col and timestamp_col:
-                        # Create pivot table with indicators as columns
-                        try:
-                            pivot_df = main_df.pivot_table(
-                                index=timestamp_col,
-                                columns='indicator',
-                                values=value_col,
-                                aggfunc='first'
-                            )
-                            
-                            # Fill NaN values with forward fill
-                            pivot_df = pivot_df.ffill()
-                            
-                            # Add symbol and timeframe columns
-                            pivot_df['symbol'] = symbol.upper()
-                            pivot_df['timeframe'] = main_timeframe
-                            
-                            mtf_data['main_data'] = pivot_df
-                            mtf_data['metadata']['total_rows'] = len(pivot_df)
-                        except Exception as e:
-                            print_warning(f"Could not create pivot table: {e}. Using original data structure.")
-                            # Fallback: use the original combined data
-                            mtf_data['main_data'] = main_df
-                            mtf_data['metadata']['total_rows'] = len(main_df)
-                    else:
-                        print_warning(f"Could not find value or timestamp columns. Using original data structure.")
-                        # Fallback: use the original combined data
-                        mtf_data['main_data'] = main_df
-                        mtf_data['metadata']['total_rows'] = len(main_df)
-                else:
-                    print_warning("No indicator column found. Using original data structure.")
-                    # Fallback: use the original combined data
-                    mtf_data['main_data'] = main_df
-                    mtf_data['metadata']['total_rows'] = len(main_df)
+                    mtf_data['indicators'] = main_df['indicator'].unique().tolist()
+                    mtf_data['metadata']['total_indicators'] = len(mtf_data['indicators'])
+                
+                # Store timeframe data
+                mtf_data['timeframe_data'] = {main_timeframe: main_df}
             
             return mtf_data
             

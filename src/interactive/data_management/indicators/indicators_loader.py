@@ -288,7 +288,9 @@ class IndicatorsLoader:
                 'rows': len(df),
                 'columns': list(df.columns),
                 'file_path': str(file_path),
-                'indicator': self._extract_indicator_name(file_path.name)
+                'indicator': self._extract_indicator_name(file_path.name),
+                'symbol': self._extract_symbol_from_path(str(file_path)),
+                'timeframe': self._extract_timeframe_from_path(str(file_path))
             }
             
         except Exception as e:
@@ -315,6 +317,8 @@ class IndicatorsLoader:
                 'columns': list(df.columns),
                 'file_path': str(file_path),
                 'indicator': self._extract_indicator_name(file_path.name),
+                'symbol': self._extract_symbol_from_path(str(file_path)),
+                'timeframe': self._extract_timeframe_from_path(str(file_path)),
                 'raw_data': data  # Keep original JSON data
             }
             
@@ -333,7 +337,9 @@ class IndicatorsLoader:
                 'rows': len(df),
                 'columns': list(df.columns),
                 'file_path': str(file_path),
-                'indicator': self._extract_indicator_name(file_path.name)
+                'indicator': self._extract_indicator_name(file_path.name),
+                'symbol': self._extract_symbol_from_path(str(file_path)),
+                'timeframe': self._extract_timeframe_from_path(str(file_path))
             }
             
         except Exception as e:
@@ -453,3 +459,72 @@ class IndicatorsLoader:
             hours = int(seconds // 3600)
             minutes = int((seconds % 3600) // 60)
             return f"{hours}h {minutes}m"
+    
+    def _extract_symbol_from_path(self, file_path: str) -> str:
+        """Extract symbol from file path."""
+        try:
+            import re
+            from pathlib import Path
+            
+            filename = Path(file_path).name
+            
+            # Pattern for binance_BTCUSDT_M1_Wave.parquet
+            binance_match = re.search(r'binance_([A-Z0-9]+)_', filename)
+            if binance_match:
+                return binance_match.group(1)
+            
+            # Pattern for CSVExport_GOOG.NAS_PERIOD_MN1_Wave.parquet
+            csv_match = re.search(r'CSVExport_([A-Z0-9.]+)_', filename)
+            if csv_match:
+                return csv_match.group(1)
+            
+            # Look for common symbol patterns in all parts
+            if '_' in filename:
+                parts = filename.split('_')
+                for part in parts:
+                    part_upper = part.upper()
+                    # Check if part looks like a trading pair (contains letters and numbers)
+                    if len(part_upper) >= 3 and any(c.isalpha() for c in part_upper) and any(c.isdigit() for c in part_upper):
+                        return part_upper
+                    # Check for known symbols
+                    if part_upper in ['BTCUSDT', 'ETHUSDT', 'EURUSD', 'GBPUSD', 'GOOG', 'TSLA', 'US500', 'XAUUSD', 'BTCUSD', 'ETHUSD']:
+                        return part_upper
+                    # Check for patterns like GOOG.NAS
+                    if '.' in part_upper and len(part_upper.split('.')) == 2:
+                        return part_upper
+            
+            return 'unknown'
+            
+        except Exception as e:
+            print_error(f"Error extracting symbol from {file_path}: {e}")
+            return 'unknown'
+    
+    def _extract_timeframe_from_path(self, file_path: str) -> str:
+        """Extract timeframe from file path."""
+        try:
+            import re
+            from pathlib import Path
+            
+            filename = Path(file_path).name
+            
+            # Pattern for binance_BTCUSDT_M1_Wave.parquet
+            binance_match = re.search(r'binance_[A-Z0-9]+_([A-Z0-9]+)_', filename)
+            if binance_match:
+                return binance_match.group(1)
+            
+            # Pattern for CSVExport_GOOG.NAS_PERIOD_MN1_Wave.parquet
+            csv_match = re.search(r'CSVExport_[A-Z0-9.]+_PERIOD_([A-Z0-9]+)_', filename)
+            if csv_match:
+                return csv_match.group(1)
+            
+            # Look for common timeframe patterns
+            timeframe_patterns = ['M1', 'M5', 'M15', 'M30', 'H1', 'H4', 'D1', 'W1', 'MN1']
+            for pattern in timeframe_patterns:
+                if pattern in filename.upper():
+                    return pattern
+            
+            return 'unknown'
+            
+        except Exception as e:
+            print_error(f"Error extracting timeframe from {file_path}: {e}")
+            return 'unknown'
