@@ -249,6 +249,33 @@ class IndicatorsAnalyzer:
             print_error(f"Error analyzing file {file_path}: {e}")
             return None
     
+    def _extract_timeframe_from_filename(self, filename: str) -> str:
+        """Extract timeframe from filename."""
+        try:
+            import re
+            
+            # Pattern for binance_BTCUSDT_M1_Wave.parquet
+            binance_match = re.search(r'binance_[A-Z0-9]+_([A-Z0-9]+)_', filename)
+            if binance_match:
+                return binance_match.group(1)
+            
+            # Pattern for CSVExport_GOOG.NAS_PERIOD_MN1_Wave.parquet
+            csv_match = re.search(r'CSVExport_[A-Z0-9.]+_PERIOD_([A-Z0-9]+)_', filename)
+            if csv_match:
+                return csv_match.group(1)
+            
+            # Look for common timeframe patterns
+            timeframe_patterns = ['M1', 'M5', 'M15', 'M30', 'H1', 'H4', 'D1', 'W1', 'MN1']
+            for pattern in timeframe_patterns:
+                if pattern in filename.upper():
+                    return pattern
+            
+            return 'unknown'
+            
+        except Exception as e:
+            print_error(f"Error extracting timeframe from {filename}: {e}")
+            return 'unknown'
+    
     def _extract_indicator_name(self, filename: str) -> str:
         """Extract indicator name from filename."""
         try:
@@ -378,13 +405,16 @@ class IndicatorsAnalyzer:
                 symbol_col = symbol_columns[0]
                 symbols = df[symbol_col].unique().tolist() if not df.empty else []
             
+            # Extract timeframe from filename
+            timeframe = self._extract_timeframe_from_filename(file_path.name)
+            
             return {
                 'rows': rows,
                 'columns': columns,
                 'start_date': start_date,
                 'end_date': end_date,
                 'symbols': symbols,
-                'timeframes': ['Unknown']  # Parquet files usually don't have timeframe info
+                'timeframes': [timeframe] if timeframe != 'unknown' else ['Unknown']
             }
             
         except Exception as e:
