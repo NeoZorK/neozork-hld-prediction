@@ -31,16 +31,23 @@ class IndicatorsAnalyzer:
         self.indicators_path = Path("data/indicators")
         self.supported_formats = ['.parquet', '.json', '.csv']
         
-    def analyze_indicators_folder(self) -> Dict[str, Any]:
+    def analyze_indicators_folder(self, progress_callback=None) -> Dict[str, Any]:
         """
         Analyze the indicators folder structure and extract metadata.
+        
+        Args:
+            progress_callback: Optional callback function for progress updates
+                              Should accept (message: str, progress: float) parameters
         
         Returns:
             Dict containing analysis results with status, folder info, 
             indicators found, and subfolder information.
         """
         try:
-            print_info("🔍 Analyzing indicators folder structure...")
+            if progress_callback:
+                progress_callback("🔍 Analyzing indicators folder structure...", 0.0)
+            else:
+                print_info("🔍 Analyzing indicators folder structure...")
             
             # Check if indicators folder exists
             if not self.indicators_path.exists():
@@ -50,21 +57,34 @@ class IndicatorsAnalyzer:
                 }
             
             # Analyze main folder
+            if progress_callback:
+                progress_callback("📁 Analyzing folder structure...", 0.1)
             folder_info = self._analyze_folder_structure(self.indicators_path)
             
             # Find all indicators files
+            if progress_callback:
+                progress_callback("🔍 Finding indicators files...", 0.3)
             indicators_files = self._find_indicators_files()
             
             # Analyze subfolders (parquet, json, csv)
+            if progress_callback:
+                progress_callback("📊 Analyzing subfolders...", 0.5)
             subfolders_info = self._analyze_subfolders()
             
             # Extract indicators metadata
-            indicators_metadata = self._extract_indicators_metadata(indicators_files)
+            if progress_callback:
+                progress_callback("📈 Extracting indicators metadata...", 0.7)
+            indicators_metadata = self._extract_indicators_metadata(indicators_files, progress_callback)
             
             # Get unique indicators list
+            if progress_callback:
+                progress_callback("📋 Processing indicators list...", 0.9)
             indicators_list = list(set(indicators_metadata.keys()))
             
-            print_success(f"✅ Found {len(indicators_list)} indicators in {len(subfolders_info)} subfolders")
+            if progress_callback:
+                progress_callback("✅ Analysis complete", 1.0)
+            else:
+                print_success(f"✅ Found {len(indicators_list)} indicators in {len(subfolders_info)} subfolders")
             
             return {
                 "status": "success",
@@ -77,7 +97,10 @@ class IndicatorsAnalyzer:
             }
             
         except Exception as e:
-            print_error(f"Error analyzing indicators folder: {e}")
+            if progress_callback:
+                progress_callback(f"❌ Error: {str(e)}", 1.0)
+            else:
+                print_error(f"Error analyzing indicators folder: {e}")
             return {
                 "status": "error",
                 "message": str(e)
@@ -157,18 +180,26 @@ class IndicatorsAnalyzer:
         
         return subfolders_info
     
-    def _extract_indicators_metadata(self, files: List[Path]) -> Dict[str, Dict[str, Any]]:
+    def _extract_indicators_metadata(self, files: List[Path], progress_callback=None) -> Dict[str, Dict[str, Any]]:
         """Extract metadata from indicators files."""
         metadata = {}
         
         try:
-            for file_path in files:
+            total_files = len(files)
+            for i, file_path in enumerate(files):
+                if progress_callback:
+                    progress = 0.7 + (0.2 * (i + 1) / total_files)  # 70-90% range
+                    progress_callback(f"📈 Extracting metadata from {file_path.name}...", progress)
+                
                 file_info = self._analyze_single_file(file_path)
                 if file_info:
                     metadata[file_path.name] = file_info
                     
         except Exception as e:
-            print_error(f"Error extracting indicators metadata: {e}")
+            if progress_callback:
+                progress_callback(f"❌ Error extracting metadata: {str(e)}", 0.9)
+            else:
+                print_error(f"Error extracting indicators metadata: {e}")
         
         return metadata
     
