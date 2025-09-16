@@ -16,7 +16,7 @@ from datetime import datetime
 import colorama
 from colorama import Fore, Style
 
-from src.common.logger import print_error, print_info, print_success, print_warning
+from src.common.logger import print_error, print_info, print_success, print_warning, print_debug
 
 
 class IndicatorsMTFCreator:
@@ -147,20 +147,20 @@ class IndicatorsMTFCreator:
         try:
             organized_data = {}
             
-            for filename, data in processed_data.items():
-                indicator = data.get('indicator', 'unknown')
-                # Extract timeframe from the data structure
-                timeframe = 'unknown'
-                if 'timeframe' in data:
-                    timeframe = data['timeframe']
-                elif 'data' in data and hasattr(data['data'], 'get'):
-                    timeframe = data['data'].get('timeframe', 'unknown')
-                
-                if indicator not in organized_data:
-                    organized_data[indicator] = {}
-                
-                # Store the data directly, not nested
-                organized_data[indicator][timeframe] = data
+            # processed_data is actually symbols_data[symbol] which is {timeframe: {filename: data}}
+            for timeframe, files_data in processed_data.items():
+                for filename, data in files_data.items():
+                    indicator = data.get('indicator', 'unknown')
+                    
+                    # If indicator is unknown, try to extract from filename
+                    if indicator == 'unknown':
+                        indicator = self._extract_indicator_name(filename)
+                    
+                    if indicator not in organized_data:
+                        organized_data[indicator] = {}
+                    
+                    # Store the data directly, not nested
+                    organized_data[indicator][timeframe] = data
             
             return organized_data
             
@@ -200,41 +200,93 @@ class IndicatorsMTFCreator:
             
             # Create main data DataFrame by combining all indicators for main timeframe
             main_dataframes = []
+            
             for indicator, timeframes_data in organized_data.items():
                 if main_timeframe in timeframes_data:
-                    df = timeframes_data[main_timeframe]['data'].copy()
-                    df['indicator'] = indicator
-                    main_dataframes.append(df)
+                    # Get the data - it could be directly in timeframes_data or nested
+                    timeframe_data = timeframes_data[main_timeframe]
+                    
+                    if isinstance(timeframe_data, dict) and 'data' in timeframe_data:
+                        df = timeframe_data['data'].copy()
+                    else:
+                        # If it's already a DataFrame or the data structure is different
+                        df = timeframe_data.copy() if hasattr(timeframe_data, 'copy') else pd.DataFrame()
+                    
+                    if hasattr(df, 'empty') and not df.empty:
+                        df['indicator'] = indicator
+                        main_dataframes.append(df)
+                    elif hasattr(df, 'shape') and df.shape[0] > 0:
+                        df['indicator'] = indicator
+                        main_dataframes.append(df)
+                    else:
+                        print_warning(f"Empty or invalid DataFrame for {indicator}")
+                else:
+                    print_warning(f"Main timeframe {main_timeframe} not found for indicator {indicator}")
             
             if main_dataframes:
                 # Combine all indicator data for main timeframe
                 main_df = pd.concat(main_dataframes, ignore_index=True)
                 
-                # Pivot to have indicators as columns
-                if 'value' in main_df.columns and 'indicator' in main_df.columns:
-                    # Reset index to get timestamp as column if it's in the index
-                    if main_df.index.name == 'timestamp' or isinstance(main_df.index, pd.DatetimeIndex):
-                        main_df = main_df.reset_index()
-                        if 'timestamp' not in main_df.columns:
-                            main_df['timestamp'] = main_df.index
+                # Ensure we have the required columns for pivoting
+                if 'indicator' in main_df.columns:
+                    # Find timestamp column
+                    timestamp_col = None
+                    for col in ['timestamp', 'DateTime', 'datetime', 'time']:
+                        if col in main_df.columns:
+                            timestamp_col = col
+                            break
                     
-                    # Create pivot table with indicators as columns
-                    pivot_df = main_df.pivot_table(
-                        index='timestamp',
-                        columns='indicator',
-                        values='value',
-                        aggfunc='first'
-                    )
+                    # If no timestamp column found, create one from index
+                    if timestamp_col is None:
+                        if main_df.index.name == 'timestamp' or isinstance(main_df.index, pd.DatetimeIndex):
+                            main_df = main_df.reset_index()
+                            timestamp_col = 'timestamp'
+                        else:
+                            # Create a simple timestamp column
+                            main_df['timestamp'] = range(len(main_df))
+                            timestamp_col = 'timestamp'
                     
-                    # Fill NaN values with forward fill
-                    pivot_df = pivot_df.ffill()
+                    # Find value column
+                    value_col = None
+                    for col in ['value', 'Value', 'close', 'Close', 'price', 'Price']:
+                        if col in main_df.columns:
+                            value_col = col
+                            break
                     
-                    # Add symbol and timeframe columns
-                    pivot_df['symbol'] = symbol.upper()
-                    pivot_df['timeframe'] = main_timeframe
-                    
-                    mtf_data['main_data'] = pivot_df
-                    mtf_data['metadata']['total_rows'] = len(pivot_df)
+                    if value_col and timestamp_col:
+                        # Create pivot table with indicators as columns
+                        try:
+                            pivot_df = main_df.pivot_table(
+                                index=timestamp_col,
+                                columns='indicator',
+                                values=value_col,
+                                aggfunc='first'
+                            )
+                            
+                            # Fill NaN values with forward fill
+                            pivot_df = pivot_df.ffill()
+                            
+                            # Add symbol and timeframe columns
+                            pivot_df['symbol'] = symbol.upper()
+                            pivot_df['timeframe'] = main_timeframe
+                            
+                            mtf_data['main_data'] = pivot_df
+                            mtf_data['metadata']['total_rows'] = len(pivot_df)
+                        except Exception as e:
+                            print_warning(f"Could not create pivot table: {e}. Using original data structure.")
+                            # Fallback: use the original combined data
+                            mtf_data['main_data'] = main_df
+                            mtf_data['metadata']['total_rows'] = len(main_df)
+                    else:
+                        print_warning(f"Could not find value or timestamp columns. Using original data structure.")
+                        # Fallback: use the original combined data
+                        mtf_data['main_data'] = main_df
+                        mtf_data['metadata']['total_rows'] = len(main_df)
+                else:
+                    print_warning("No indicator column found. Using original data structure.")
+                    # Fallback: use the original combined data
+                    mtf_data['main_data'] = main_df
+                    mtf_data['metadata']['total_rows'] = len(main_df)
             
             return mtf_data
             
@@ -388,9 +440,12 @@ class IndicatorsMTFCreator:
             
             # Check main data
             if 'main_data' in mtf_data:
-                if mtf_data['main_data'].empty:
+                main_data = mtf_data['main_data']
+                if hasattr(main_data, 'empty') and main_data.empty:
                     errors.append("Main data is empty")
-                elif len(mtf_data['main_data'].columns) == 0:
+                elif hasattr(main_data, 'shape') and main_data.shape[0] == 0:
+                    errors.append("Main data is empty")
+                elif hasattr(main_data, 'columns') and len(main_data.columns) == 0:
                     errors.append("Main data has no columns")
             
             # Check indicators and timeframes consistency
@@ -658,6 +713,33 @@ class IndicatorsMTFCreator:
             
         except Exception as e:
             print_error(f"Error extracting timeframe from {filename}: {e}")
+            return 'unknown'
+    
+    def _extract_indicator_name(self, filename: str) -> str:
+        """Extract indicator name from filename."""
+        try:
+            import re
+            
+            # Pattern for binance_BTCUSDT_D1_Wave.parquet
+            binance_match = re.search(r'binance_[A-Z0-9]+_[A-Z0-9]+_([A-Za-z]+)\.', filename)
+            if binance_match:
+                return binance_match.group(1).upper()
+            
+            # Pattern for CSVExport_GOOG.NAS_PERIOD_MN1_Wave.parquet
+            csv_match = re.search(r'CSVExport_[A-Z0-9.]+_PERIOD_[A-Z0-9]+_([A-Za-z]+)\.', filename)
+            if csv_match:
+                return csv_match.group(1).upper()
+            
+            # Look for common indicator patterns
+            indicator_patterns = ['WAVE', 'RSI', 'MACD', 'SMA', 'EMA', 'BB', 'STOCH', 'ADX', 'CCI', 'WILLIAMS']
+            for pattern in indicator_patterns:
+                if pattern in filename.upper():
+                    return pattern
+            
+            return 'unknown'
+            
+        except Exception as e:
+            print_error(f"Error extracting indicator name from {filename}: {e}")
             return 'unknown'
     
     def get_available_timeframes(self, indicators_data: Dict[str, Any]) -> List[str]:
