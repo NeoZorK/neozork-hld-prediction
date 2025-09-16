@@ -1370,17 +1370,11 @@ class DataLoadingMenu(BaseMenu):
             
             # Get symbol from filtered files (should be the same for all)
             symbol_input = filtered_files[0]['symbol'].upper()
-            # Move to new line for user input
-            print(f"\n{Fore.GREEN}Using symbol from filtered data: {symbol_input}")
-            
-            # Get main timeframe from user
-            timeframe_input = input(f"{Fore.GREEN}Enter main timeframe (e.g., 'M1', 'H1', 'D1') [default: M1]: {Style.RESET_ALL}").strip().upper()
-            if not timeframe_input:
-                timeframe_input = "M1"
-                print(f"{Fore.YELLOW}Using default timeframe: {timeframe_input}")
             
             # Create MTF structure (60-90%)
             self._show_unified_progress("Creating MTF structure", 0.6, start_time)
+            # Use default timeframe for now, will be updated later
+            timeframe_input = "M1"
             mtf_result = mtf_creator.create_mtf_from_processed_data(
                 processed_result['data'], symbol_input, timeframe_input, 'indicators')
             
@@ -1396,6 +1390,13 @@ class DataLoadingMenu(BaseMenu):
             
             # Complete progress
             self._show_unified_progress("Saving MTF structure", 1.0, start_time)
+            
+            # Get main timeframe from user after progress is complete
+            print(f"\n{Fore.GREEN}Using symbol from filtered data: {symbol_input}")
+            timeframe_input = input(f"{Fore.GREEN}Enter main timeframe (e.g., 'M1', 'H1', 'D1') [default: M1]: {Style.RESET_ALL}").strip().upper()
+            if not timeframe_input:
+                timeframe_input = "M1"
+                print(f"{Fore.YELLOW}Using default timeframe: {timeframe_input}")
             
             # Show success message
             print(f"\n{Fore.GREEN}✅ Successfully created MTF structure for filtered indicators!")
