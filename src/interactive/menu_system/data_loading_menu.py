@@ -1613,12 +1613,12 @@ class DataLoadingMenu(BaseMenu):
             # Save using DataLoader's method with data source
             loader._save_loaded_data(symbol, mtf_data.get('indicator_data', {}), mtf_data, f"{source}_{indicator}")
             
-            print(f"{Fore.GREEN}✅ MTF structure saved to: {symbol_dir}")
-            print(f"  • Symbol: {symbol.upper()}")
-            print(f"  • Indicator: {indicator}")
-            print(f"  • Source: {source}")
-            print(f"  • Timeframes: {', '.join(mtf_data['timeframes'])}")
-            print(f"  • Main timeframe: {mtf_data['main_timeframe']}")
+            # print(f"{Fore.GREEN}✅ MTF structure saved to: {symbol_dir}")
+            # print(f"  • Symbol: {symbol.upper()}")
+            # print(f"  • Indicator: {indicator}")
+            # print(f"  • Source: {source}")
+            # print(f"  • Timeframes: {', '.join(mtf_data['timeframes'])}")
+            # print(f"  • Main timeframe: {mtf_data['main_timeframe']}")
             
         except Exception as e:
             print(f"{Fore.RED}❌ Error saving MTF structure: {e}")

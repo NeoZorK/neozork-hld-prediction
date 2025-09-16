@@ -300,7 +300,7 @@ class DataLoader:
             if not main_data.empty:
                 main_file = symbol_mtf_dir / f"{symbol.lower()}_main_{main_tf.lower()}.parquet"
                 main_data.to_parquet(main_file, compression='snappy', index=True)
-                print(f"{Fore.GREEN}\n 💾 Main data saved: \n{main_file}")
+                # print(f"{Fore.GREEN}\n 💾 Main data saved: \n{main_file}")
             
             # Save cross-timeframe features as separate parquet files
             cross_features = mtf_data.get('cross_timeframe_features', {})
@@ -313,7 +313,7 @@ class DataLoader:
                         cross_file = cross_dir / f"{symbol.lower()}_{tf.lower()}_cross.parquet"
                         df.to_parquet(cross_file, compression='snappy', index=True)
                 
-                print(f"{Fore.GREEN}💾 Cross-timeframe features saved: {len(cross_features)} files")
+                # print(f"{Fore.GREEN}💾 Cross-timeframe features saved: {len(cross_features)} files")
             
             # Save lightweight metadata (no heavy data)
             metadata = {
@@ -335,7 +335,7 @@ class DataLoader:
             # Create a lightweight loader script
             self._create_ml_loader_script(symbol, metadata, symbol_mtf_dir)
             
-            print(f"{Fore.GREEN}💾 MTF structure saved to: {symbol_mtf_dir}")
+            # print(f"{Fore.GREEN}💾 MTF structure saved to: {symbol_mtf_dir}")
             
         except Exception as e:
             print_error(f"Error saving loaded data: {e}")
