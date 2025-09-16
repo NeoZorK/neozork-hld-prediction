@@ -59,7 +59,7 @@ class IndicatorsMTFCreator:
             Dict containing MTF structure with status and metadata
         """
         try:
-            print_info(f"🔧 Creating MTF structure for {symbol} indicators...")
+            # print_info(f"🔧 Creating MTF structure for {symbol} indicators...")
             
             start_time = time.time()
             
@@ -77,7 +77,7 @@ class IndicatorsMTFCreator:
             
             # Step 3: Create cross-timeframe features
             if len(organized_data) > 1:
-                print_info("🔄 Creating cross-timeframe features...")
+                # print_info("🔄 Creating cross-timeframe features...")
                 cross_features = self._create_cross_timeframe_features(organized_data, main_timeframe)
                 mtf_data['cross_timeframe_features'] = cross_features
             
@@ -93,7 +93,7 @@ class IndicatorsMTFCreator:
                 }
             
             creation_time = time.time() - start_time
-            print_success(f"✅ MTF structure created in {creation_time:.2f}s")
+            # print_success(f"✅ MTF structure created in {creation_time:.2f}s")
             
             return {
                 'status': 'success',
@@ -436,7 +436,7 @@ class IndicatorsMTFCreator:
     def save_mtf_structure(self, mtf_data: Dict[str, Any], output_path: Path) -> Dict[str, Any]:
         """Save MTF structure to disk."""
         try:
-            print_info(f"💾 Saving MTF structure to {output_path}")
+            # print_info(f"💾 Saving MTF structure to {output_path}")
             
             # Create output directory
             output_path.mkdir(parents=True, exist_ok=True)
@@ -461,7 +461,7 @@ class IndicatorsMTFCreator:
             with open(metadata_file, 'w') as f:
                 json.dump(mtf_data['metadata'], f, indent=2, default=str)
             
-            print_success(f"✅ MTF structure saved successfully")
+            # print_success(f"✅ MTF structure saved successfully")
             
             return {
                 'status': 'success',
