@@ -38,6 +38,7 @@ scripts/test_mcp_connection.sh
 .cache/
 .yf_cache/
 *.db
+data/cache/gap_tracker.json
 
 # Data files
 *.parquet
