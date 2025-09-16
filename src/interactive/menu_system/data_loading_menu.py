@@ -463,6 +463,57 @@ class DataLoadingMenu(BaseMenu):
             minutes = int((seconds % 3600) // 60)
             return f"{hours}h {minutes}m"
     
+    def _show_indicators_progress(self, message: str, progress: float, start_time: float, 
+                                 current_step: str = "", total_steps: int = 0):
+        """Show modern indicators progress with ETA and percentage."""
+        import time
+        
+        bar_length = 40
+        filled_length = int(bar_length * progress)
+        bar = "█" * filled_length + "░" * (bar_length - filled_length)
+        percentage = int(progress * 100)
+        
+        # Calculate ETA
+        current_time = time.time()
+        elapsed_time = current_time - start_time
+        if progress > 0:
+            eta_seconds = (elapsed_time / progress) - elapsed_time
+            eta_str = self._format_time(eta_seconds)
+        else:
+            eta_str = "Calculating..."
+        
+        # Calculate speed
+        if elapsed_time > 0:
+            speed = f"{progress / elapsed_time:.1f} steps/s"
+        else:
+            speed = "Starting..."
+        
+        # Create progress display
+        progress_display = f"{Fore.CYAN}📈 {message}"
+        bar_display = f"{Fore.GREEN}[{bar}]{Fore.CYAN}"
+        percentage_display = f"{Fore.YELLOW}{percentage:3d}%"
+        
+        # Add step information if available
+        step_info = ""
+        if current_step and total_steps > 0:
+            step_info = f" {Fore.WHITE}({current_step}/{total_steps})"
+        
+        # Add ETA and speed
+        extra_info = f" {Fore.MAGENTA}ETA: {eta_str} {Fore.BLUE}Speed: {speed}"
+        
+        # Combine all parts
+        full_display = f"\r{progress_display} {bar_display} {percentage_display}{step_info}{extra_info}{Style.RESET_ALL}"
+        
+        # Ensure the line is long enough to clear previous content
+        terminal_width = 120
+        if len(full_display) < terminal_width:
+            full_display += " " * (terminal_width - len(full_display))
+        
+        print(full_display, end="", flush=True)
+        
+        if progress >= 1.0:
+            print()  # New line when complete
+    
     def _save_mtf_structure_with_progress(self, symbol: str, mtf_data: Dict[str, Any], data_source: str = 'unknown'):
         """Save MTF structure in ML-optimized format with progress tracking."""
         try:
@@ -969,19 +1020,42 @@ class DataLoadingMenu(BaseMenu):
         """Load indicators data with detailed folder analysis and MTF structure creation."""
         print(f"\n{Fore.YELLOW}📈 Indicators Data Analysis...")
         
+        # Show analysis progress
+        analysis_start_time = time.time()
+        self._show_indicators_progress("Initializing indicators modules", 0.0, analysis_start_time)
+        
         # Import indicators modules
         from src.interactive.data_management.indicators import (
             IndicatorsAnalyzer, IndicatorsLoader, IndicatorsProcessor, IndicatorsMTFCreator
         )
         
         # Initialize components
+        self._show_indicators_progress("Initializing indicators modules", 0.15, analysis_start_time)
         analyzer = IndicatorsAnalyzer()
         loader = IndicatorsLoader()
         processor = IndicatorsProcessor()
         mtf_creator = IndicatorsMTFCreator()
         
         # Analyze folder first
+        self._show_indicators_progress("Analyzing indicators folder", 0.3, analysis_start_time)
+        time.sleep(0.1)  # Small delay to show progress
+        
         analysis = analyzer.analyze_indicators_folder()
+        
+        # Update progress during analysis
+        self._show_indicators_progress("Processing analysis results", 0.5, analysis_start_time)
+        time.sleep(0.1)  # Small delay to make progress visible
+        
+        # Update progress for folder structure analysis
+        self._show_indicators_progress("Processing analysis results", 0.7, analysis_start_time)
+        time.sleep(0.1)
+        
+        # Update progress for file analysis
+        self._show_indicators_progress("Processing analysis results", 0.9, analysis_start_time)
+        time.sleep(0.1)
+        
+        # Complete analysis
+        self._show_indicators_progress("Analysis complete", 1.0, analysis_start_time)
         
         if analysis["status"] == "error":
             print(f"{Fore.RED}❌ Error: {analysis['message']}")
@@ -1169,25 +1243,41 @@ class DataLoadingMenu(BaseMenu):
         """Load and process indicators data with MTF structure creation."""
         print(f"\n{Fore.YELLOW}🔄 Loading and processing {indicator} data from {format_name}...")
         
+        # Define processing steps
+        steps = [
+            "Loading data",
+            "Processing data", 
+            "Creating MTF structure",
+            "Saving MTF structure"
+        ]
+        total_steps = len(steps)
+        start_time = time.time()
+        
         try:
-            # Load data for the specific indicator and format
-            print(f"{Fore.CYAN}📊 Loading {indicator} data from {format_name}...")
+            # Step 1: Load data for the specific indicator and format
+            self._show_indicators_progress("Loading indicator data", 0.0, start_time, "1", total_steps)
             result = loader.load_indicator_by_name(indicator, format_name)
             
             if result["status"] != "success":
-                print(f"{Fore.RED}❌ Error loading data: {result['message']}")
+                print(f"\n{Fore.RED}❌ Error loading data: {result['message']}")
                 return
             
-            # Process the loaded data
-            print(f"{Fore.CYAN}🔄 Processing {indicator} data...")
+            # Update progress
+            self._show_indicators_progress("Loading indicator data", 0.25, start_time, "1", total_steps)
+            
+            # Step 2: Process the loaded data
+            self._show_indicators_progress("Processing indicator data", 0.25, start_time, "2", total_steps)
             processed_result = processor.process_single_indicator(result)
             
             if processed_result["status"] != "success":
-                print(f"{Fore.RED}❌ Error processing data: {processed_result['message']}")
+                print(f"\n{Fore.RED}❌ Error processing data: {processed_result['message']}")
                 return
             
+            # Update progress
+            self._show_indicators_progress("Processing indicator data", 0.5, start_time, "2", total_steps)
+            
             # Get symbol from user
-            symbol_input = input(f"{Fore.GREEN}Enter symbol for MTF structure (e.g., 'BTCUSDT') [default: BTCUSDT]: {Style.RESET_ALL}").strip().upper()
+            symbol_input = input(f"\n{Fore.GREEN}Enter symbol for MTF structure (e.g., 'BTCUSDT') [default: BTCUSDT]: {Style.RESET_ALL}").strip().upper()
             if not symbol_input:
                 symbol_input = "BTCUSDT"
                 print(f"{Fore.YELLOW}Using default symbol: {symbol_input}")
@@ -1198,27 +1288,34 @@ class DataLoadingMenu(BaseMenu):
                 timeframe_input = "M1"
                 print(f"{Fore.YELLOW}Using default timeframe: {timeframe_input}")
             
-            # Create MTF structure
-            print(f"\n{Fore.YELLOW}🔧 Creating MTF structure for {indicator}...")
+            # Step 3: Create MTF structure
+            self._show_indicators_progress("Creating MTF structure", 0.5, start_time, "3", total_steps)
             mtf_result = mtf_creator.create_mtf_from_single_indicator(
                 processed_result['data'], symbol_input, timeframe_input)
             
-            if mtf_result["status"] == "success":
-                print(f"\n{Fore.GREEN}✅ Successfully created MTF structure for {indicator}!")
-                print(f"  • Symbol: {symbol_input}")
-                print(f"  • Indicator: {indicator}")
-                print(f"  • Format: {format_name}")
-                print(f"  • Timeframe: {timeframe_input}")
-                print(f"  • Total rows: {processed_result['data']['rows']:,}")
-                print(f"  • Creation time: {mtf_result['creation_time']:.2f} seconds")
-                
-                # Save MTF structure to cleaned_data folder
-                print(f"\n{Fore.YELLOW}💾 Saving MTF structure to cleaned_data folder...")
-                self._save_indicators_mtf_structure(symbol_input, indicator, mtf_result['mtf_data'], format_name)
-                
-                print(f"\n{Fore.GREEN}🎯 Ready for EDA, feature engineering, ML, backtesting, and monitoring!")
-            else:
+            if mtf_result["status"] != "success":
                 print(f"\n{Fore.RED}❌ Error creating MTF structure: {mtf_result['message']}")
+                return
+            
+            # Update progress
+            self._show_indicators_progress("Creating MTF structure", 0.75, start_time, "3", total_steps)
+            
+            # Step 4: Save MTF structure to cleaned_data folder
+            self._show_indicators_progress("Saving MTF structure", 0.75, start_time, "4", total_steps)
+            self._save_indicators_mtf_structure(symbol_input, indicator, mtf_result['mtf_data'], format_name)
+            
+            # Complete progress
+            self._show_indicators_progress("Saving MTF structure", 1.0, start_time, "4", total_steps)
+            
+            # Show success message
+            print(f"\n{Fore.GREEN}✅ Successfully created MTF structure for {indicator}!")
+            print(f"  • Symbol: {symbol_input}")
+            print(f"  • Indicator: {indicator}")
+            print(f"  • Format: {format_name}")
+            print(f"  • Timeframe: {timeframe_input}")
+            print(f"  • Total rows: {processed_result['data']['rows']:,}")
+            print(f"  • Creation time: {mtf_result['creation_time']:.2f} seconds")
+            print(f"\n{Fore.GREEN}🎯 Ready for EDA, feature engineering, ML, backtesting, and monitoring!")
             
         except Exception as e:
             print(f"\n{Fore.RED}❌ Error processing indicators data: {e}")
