@@ -1132,6 +1132,37 @@ class DataLoadingMenu(BaseMenu):
         
         input(f"\n{Fore.CYAN}Press Enter to continue...")
     
+    def _extract_timeframe_from_filename(self, filename: str) -> str:
+        """Extract timeframe from filename."""
+        try:
+            # Remove extension
+            name = filename.split('.')[0]
+            
+            # Common timeframe patterns
+            timeframes = ['M1', 'M5', 'M15', 'M30', 'H1', 'H4', 'D1', 'W1', 'MN1']
+            
+            for tf in timeframes:
+                if f'_{tf}_' in name or f'_{tf}.' in name or name.endswith(f'_{tf}'):
+                    return tf
+            
+            # Special case for CSVExport files
+            if 'CSVExport' in filename:
+                # CSVExport_GOOG.NAS_PERIOD_MN1_Wave -> MN1
+                # Look for PERIOD_ pattern in the full filename
+                if 'PERIOD_' in filename:
+                    period_part = filename.split('PERIOD_')[-1].split('.')[0]
+                    if period_part in timeframes:
+                        return period_part
+                # Also check if any timeframe is in the filename
+                for tf in timeframes:
+                    if f'_{tf}_' in filename or f'_{tf}.' in filename or filename.endswith(f'_{tf}'):
+                        return tf
+            
+            return 'Unknown'
+            
+        except Exception as e:
+            return 'Unknown'
+    
     def _display_indicators_by_source_and_indicator(self, files_info: Dict[str, Any]):
         """Display indicators grouped by source and indicator like Raw Parquet."""
         try:
@@ -1177,12 +1208,14 @@ class DataLoadingMenu(BaseMenu):
                 
                 # Show individual files
                 for filename, file_info in files:
+                    timeframe = self._extract_timeframe_from_filename(filename)
                     size_mb = file_info['size_mb']
                     rows = file_info['rows']
                     start_date = file_info['start_date'][:10] if file_info['start_date'] != "No time data" else "No data"
                     end_date = file_info['end_date'][:10] if file_info['end_date'] != "No time data" else "No data"
                     
-                    print(f"    {Fore.WHITE}{filename}: {size_mb:.1f}MB, {rows:,} rows, {start_date} to {end_date}")
+                    # Format: " M1 │  121.8MB │ 3,704,799 rows │ 2017-08-31 to 2025-09-16"
+                    print(f"    {Fore.WHITE} {timeframe:<3} │ {size_mb:>7.1f}MB │ {rows:>8,} rows │ {start_date} to {end_date}")
             
             print(f"{Fore.CYAN}{'─'*80}")
             
