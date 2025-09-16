@@ -1108,43 +1108,24 @@ class DataLoadingMenu(BaseMenu):
         
         # Ask user what to do with the data
         print(f"\n{Fore.YELLOW}What would you like to do with the indicators data?")
-        print(f"{Fore.WHITE}1. Load single indicator (current behavior)")
-        print(f"{Fore.WHITE}2. Save all indicators to MTF structure")
+        print(f"{Fore.WHITE}1. Save all indicators to MTF structure")
         print(f"{Fore.WHITE}0. Cancel")
         
-        choice = input(f"\n{Fore.GREEN}Enter your choice (1/2/0): {Style.RESET_ALL}").strip()
+        choice = input(f"\n{Fore.GREEN}Enter your choice (1/0): {Style.RESET_ALL}").strip()
         
         if choice == "0":
             print(f"{Fore.YELLOW}Operation cancelled.")
             input(f"\n{Fore.CYAN}Press Enter to continue...")
             return
-        elif choice == "2":
+        elif choice == "1":
             # Save all indicators to MTF structure
             self._save_all_indicators_to_mtf(filtered_files, analyzer, loader, processor, mtf_creator)
             input(f"\n{Fore.CYAN}Press Enter to continue...")
             return
-        elif choice != "1":
-            print(f"{Fore.RED}Invalid choice. Loading single indicator...")
-        
-        # Confirm loading single indicator
-        confirm = input(f"\n{Fore.YELLOW}Proceed with loading single indicator? (y/N): {Style.RESET_ALL}").strip().lower()
-        if confirm not in ['y', 'yes']:
-            print(f"{Fore.YELLOW}Loading cancelled.")
+        else:
+            print(f"{Fore.RED}Invalid choice. Operation cancelled.")
             input(f"\n{Fore.CYAN}Press Enter to continue...")
             return
-        
-        # Load and process data with MTF structure creation
-        # For now, load the first filtered file (can be enhanced to load all)
-        first_file = filtered_files[0]
-        selected_indicator = first_file['indicator']
-        selected_format = first_file['format']
-        selected_source = first_file['source']
-        
-        print(f"\n{Fore.GREEN}✅ Loading: {selected_indicator} ({selected_source.upper()}) - {selected_format.upper()}")
-        
-        self._load_and_process_indicators_data(selected_indicator, selected_format, analyzer, loader, processor, mtf_creator)
-        
-        input(f"\n{Fore.CYAN}Press Enter to continue...")
     
     def _extract_timeframe_from_filename(self, filename: str) -> str:
         """Extract timeframe from filename."""
