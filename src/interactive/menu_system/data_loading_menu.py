@@ -1308,11 +1308,8 @@ class DataLoadingMenu(BaseMenu):
                 progress = (i + 1) / total_files
                 self._show_indicators_progress(f"Loading {file_info['filename']}", progress, start_time)
                 
-                # Load individual file
-                result = loader.load_indicator_by_name(
-                    file_info['indicator'], 
-                    file_info['format']
-                )
+                # Load specific file by filename
+                result = loader.load_specific_file(file_info['filename'])
                 
                 if result["status"] == "success":
                     loaded_data[file_info['filename']] = result['data']

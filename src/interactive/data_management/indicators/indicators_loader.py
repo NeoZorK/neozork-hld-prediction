@@ -154,6 +154,54 @@ class IndicatorsLoader:
                 "message": str(e)
             }
     
+    def load_specific_file(self, filename: str) -> Dict[str, Any]:
+        """
+        Load a specific file by filename.
+        
+        Args:
+            filename: Name of the file to load
+            
+        Returns:
+            Dict containing loaded file data
+        """
+        try:
+            # Find the specific file
+            file_path = None
+            for format_ext in self.supported_formats:
+                potential_path = self.indicators_path / format_ext[1:] / filename
+                if potential_path.exists():
+                    file_path = potential_path
+                    break
+            
+            if not file_path:
+                return {
+                    "status": "error",
+                    "message": f"File not found: {filename}"
+                }
+            
+            file_data = self._load_single_file(file_path)
+            
+            if not file_data:
+                return {
+                    "status": "error",
+                    "message": f"Failed to load file: {file_path}"
+                }
+            
+            return {
+                "status": "success",
+                "filename": filename,
+                "file_path": str(file_path),
+                "data": file_data,
+                "format": file_path.suffix[1:]
+            }
+            
+        except Exception as e:
+            print_error(f"Error loading file {filename}: {e}")
+            return {
+                "status": "error",
+                "message": str(e)
+            }
+    
     def load_indicators_by_format(self, format_name: str) -> Dict[str, Any]:
         """
         Load all indicators from specific format.
