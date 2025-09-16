@@ -254,11 +254,12 @@ class DataFilter:
         print(f"  • json csvexport EURUSD rsi")
         print(f"  • csv polygon AAPL macd")
         
-        filter_string = input(f"\n{Fore.GREEN}Filter: {Style.RESET_ALL}").strip()
+        default_filter = "parquet binance BTCUSDT wave"
+        filter_string = input(f"\n{Fore.GREEN}Filter [{default_filter}]: {Style.RESET_ALL}").strip()
         
         if not filter_string:
-            print(f"{Fore.YELLOW}No filter entered, showing all data...")
-            return None, None, None, None
+            print(f"{Fore.YELLOW}Using default filter: {default_filter}")
+            filter_string = default_filter
         
         # Parse the filter string
         parts = filter_string.lower().split()
