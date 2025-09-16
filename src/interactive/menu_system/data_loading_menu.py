@@ -1106,8 +1106,28 @@ class DataLoadingMenu(BaseMenu):
         loading_summary = data_filter.get_loading_summary(filtered_files)
         print(f"\n{Fore.GREEN}📊 {loading_summary}")
         
-        # Confirm loading
-        confirm = input(f"\n{Fore.YELLOW}Proceed with loading? (y/N): {Style.RESET_ALL}").strip().lower()
+        # Ask user what to do with the data
+        print(f"\n{Fore.YELLOW}What would you like to do with the indicators data?")
+        print(f"{Fore.WHITE}1. Load single indicator (current behavior)")
+        print(f"{Fore.WHITE}2. Save all indicators to MTF structure")
+        print(f"{Fore.WHITE}0. Cancel")
+        
+        choice = input(f"\n{Fore.GREEN}Enter your choice (1/2/0): {Style.RESET_ALL}").strip()
+        
+        if choice == "0":
+            print(f"{Fore.YELLOW}Operation cancelled.")
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            return
+        elif choice == "2":
+            # Save all indicators to MTF structure
+            self._save_all_indicators_to_mtf(filtered_files, analyzer, loader, processor, mtf_creator)
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            return
+        elif choice != "1":
+            print(f"{Fore.RED}Invalid choice. Loading single indicator...")
+        
+        # Confirm loading single indicator
+        confirm = input(f"\n{Fore.YELLOW}Proceed with loading single indicator? (y/N): {Style.RESET_ALL}").strip().lower()
         if confirm not in ['y', 'yes']:
             print(f"{Fore.YELLOW}Loading cancelled.")
             input(f"\n{Fore.CYAN}Press Enter to continue...")
@@ -1726,3 +1746,74 @@ class DataLoadingMenu(BaseMenu):
         except Exception as e:
             print_error(f"Error extracting symbol from {filename}: {e}")
             return None
+    
+    def _save_all_indicators_to_mtf(self, filtered_files: List[Dict[str, Any]], 
+                                   analyzer: 'IndicatorsAnalyzer', loader: 'IndicatorsLoader', 
+                                   processor: 'IndicatorsProcessor', mtf_creator: 'IndicatorsMTFCreator'):
+        """Save all indicators to MTF structure like Raw Parquet functionality."""
+        print(f"\n{Fore.YELLOW}🔧 Saving all indicators to MTF structure...")
+        
+        try:
+            # Load all indicators data
+            print(f"\n{Fore.GREEN}📊 Loading all indicators data...")
+            all_indicators_data = {}
+            total_files = len(filtered_files)
+            
+            for i, file_info in enumerate(filtered_files):
+                progress = (i + 1) / total_files
+                self._show_indicators_progress(f"Loading {file_info['filename']}", progress, time.time())
+                
+                # Load individual file
+                result = loader.load_indicator_by_name(
+                    file_info['indicator'], 
+                    file_info['format']
+                )
+                
+                if result["status"] == "success":
+                    # Process the data
+                    processed_result = processor.process_single_indicator(result)
+                    if processed_result["status"] == "success":
+                        all_indicators_data[file_info['filename']] = processed_result['data']
+            
+            if not all_indicators_data:
+                print(f"\n{Fore.RED}❌ No indicators data loaded successfully")
+                return
+            
+            print(f"\n{Fore.GREEN}✅ Loaded {len(all_indicators_data)} indicators files")
+            
+            # Create MTF structures for all symbols
+            print(f"\n{Fore.YELLOW}🔧 Creating MTF structures for all symbols...")
+            mtf_result = mtf_creator.create_mtf_from_all_indicators(all_indicators_data)
+            
+            if mtf_result["status"] != "success":
+                print(f"\n{Fore.RED}❌ Error creating MTF structures: {mtf_result['message']}")
+                return
+            
+            # Display results
+            summary = mtf_result['summary']
+            print(f"\n{Fore.GREEN}✅ MTF structures created successfully!")
+            print(f"  • Total symbols: {summary['total_symbols']}")
+            print(f"  • Successful: {summary['successful']}")
+            print(f"  • Failed: {summary['failed']}")
+            print(f"  • Success rate: {summary['success_rate']:.1f}%")
+            
+            # Show detailed results
+            if summary['successful'] > 0:
+                print(f"\n{Fore.GREEN}📊 Successfully created MTF structures for:")
+                for symbol, result in mtf_result['results'].items():
+                    if result['status'] == 'success':
+                        print(f"  • {symbol}: {result['save_path']}")
+            
+            if summary['failed'] > 0:
+                print(f"\n{Fore.RED}❌ Failed to create MTF structures for:")
+                for symbol, result in mtf_result['results'].items():
+                    if result['status'] != 'success':
+                        print(f"  • {symbol}: {result['message']}")
+            
+            print(f"\n{Fore.GREEN}🎯 MTF structures saved to: data/cleaned_data/mtf_structures/indicators/")
+            print(f"{Fore.GREEN}📈 Ready for EDA, feature engineering, ML, backtesting, and monitoring!")
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Error saving all indicators to MTF: {e}")
+            import traceback
+            traceback.print_exc()
