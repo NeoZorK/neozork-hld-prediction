@@ -1280,6 +1280,90 @@ class DataLoadingMenu(BaseMenu):
             print_error(f"Error getting available combinations: {e}")
             return []
     
+    def _load_and_process_all_indicators_data(self, format_name: str, analyzer: 'IndicatorsAnalyzer', 
+                                            loader: 'IndicatorsLoader', processor: 'IndicatorsProcessor', 
+                                            mtf_creator: 'IndicatorsMTFCreator'):
+        """Load and process all indicators data with MTF structure creation."""
+        print(f"\n{Fore.YELLOW}🔄 Loading and processing all indicators data from {format_name}...")
+        
+        # Define processing steps
+        steps = [
+            "Loading all indicators data",
+            "Processing all indicators data", 
+            "Creating MTF structure",
+            "Saving MTF structure"
+        ]
+        total_steps = len(steps)
+        start_time = time.time()
+        
+        try:
+            # Step 1: Load all data for the specific format
+            self._show_indicators_progress("Loading all indicators data", 0.0, start_time, "1", total_steps)
+            result = loader.load_indicators_by_format(format_name)
+            
+            if result["status"] != "success":
+                print(f"\n{Fore.RED}❌ Error loading data: {result['message']}")
+                return
+            
+            # Update progress
+            self._show_indicators_progress("Loading all indicators data", 0.25, start_time, "1", total_steps)
+            
+            # Step 2: Process all the loaded data
+            self._show_indicators_progress("Processing all indicators data", 0.25, start_time, "2", total_steps)
+            processed_result = processor.process_indicators_data(result['data'])
+            
+            if processed_result["status"] != "success":
+                print(f"\n{Fore.RED}❌ Error processing data: {processed_result['message']}")
+                return
+            
+            # Update progress
+            self._show_indicators_progress("Processing all indicators data", 0.5, start_time, "2", total_steps)
+            
+            # Get symbol from user
+            symbol_input = input(f"\n{Fore.GREEN}Enter symbol for MTF structure (e.g., 'BTCUSDT') [default: BTCUSDT]: {Style.RESET_ALL}").strip().upper()
+            if not symbol_input:
+                symbol_input = "BTCUSDT"
+                print(f"{Fore.YELLOW}Using default symbol: {symbol_input}")
+            
+            # Get main timeframe from user
+            timeframe_input = input(f"{Fore.GREEN}Enter main timeframe (e.g., 'M1', 'H1', 'D1') [default: M1]: {Style.RESET_ALL}").strip().upper()
+            if not timeframe_input:
+                timeframe_input = "M1"
+                print(f"{Fore.YELLOW}Using default timeframe: {timeframe_input}")
+            
+            # Step 3: Create MTF structure
+            self._show_indicators_progress("Creating MTF structure", 0.5, start_time, "3", total_steps)
+            mtf_result = mtf_creator.create_mtf_from_processed_data(
+                processed_result['data'], symbol_input, timeframe_input, 'indicators')
+            
+            if mtf_result["status"] != "success":
+                print(f"\n{Fore.RED}❌ Error creating MTF structure: {mtf_result['message']}")
+                return
+            
+            # Update progress
+            self._show_indicators_progress("Creating MTF structure", 0.75, start_time, "3", total_steps)
+            
+            # Step 4: Save MTF structure to cleaned_data folder
+            self._show_indicators_progress("Saving MTF structure", 0.75, start_time, "4", total_steps)
+            self._save_indicators_mtf_structure(symbol_input, "all_indicators", mtf_result['mtf_data'], format_name)
+            
+            # Complete progress
+            self._show_indicators_progress("Saving MTF structure", 1.0, start_time, "4", total_steps)
+            
+            # Show success message
+            print(f"\n{Fore.GREEN}✅ Successfully created MTF structure for all indicators!")
+            print(f"  • Symbol: {symbol_input}")
+            print(f"  • Format: {format_name}")
+            print(f"  • Main Timeframe: {timeframe_input}")
+            print(f"  • Total rows: {processed_result['metadata']['total_rows']:,}")
+            print(f"  • Creation time: {mtf_result['creation_time']:.2f} seconds")
+            print(f"\n{Fore.GREEN}🎯 Ready for EDA, feature engineering, ML, backtesting, and monitoring!")
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Error processing all indicators data: {e}")
+            import traceback
+            traceback.print_exc()
+    
     def _load_and_process_indicators_data(self, indicator: str, format_name: str, analyzer: 'IndicatorsAnalyzer', 
                                         loader: 'IndicatorsLoader', processor: 'IndicatorsProcessor', 
                                         mtf_creator: 'IndicatorsMTFCreator'):
@@ -1735,96 +1819,15 @@ class DataLoadingMenu(BaseMenu):
         print(f"\n{Fore.YELLOW}🔧 Saving all indicators to MTF structure...")
         
         try:
-            # Load all indicators data
-            print(f"\n{Fore.GREEN}📊 Loading all indicators data...")
-            all_indicators_data = {}
-            total_files = len(filtered_files)
-            start_time = time.time()
-            
-            for i, file_info in enumerate(filtered_files):
-                progress = (i + 1) / total_files
-                self._show_indicators_progress(f"Loading {file_info['filename']}", progress, start_time)
-                
-                # Load individual file
-                result = loader.load_indicator_by_name(
-                    file_info['indicator'], 
-                    file_info['format']
-                )
-                
-                if result["status"] == "success":
-                    # Process the data - pass the data field from the result
-                    processed_result = processor.process_single_indicator(result['data'])
-                    if processed_result["status"] == "success":
-                        all_indicators_data[file_info['filename']] = processed_result['data']
-                    else:
-                        print(f"\n{Fore.RED}❌ Failed to process {file_info['filename']}: {processed_result.get('message', 'Unknown error')}")
-                else:
-                    print(f"\n{Fore.RED}❌ Failed to load {file_info['filename']}: {result.get('message', 'Unknown error')}")
-            
-            if not all_indicators_data:
-                print(f"\n{Fore.RED}❌ No indicators data loaded successfully")
+            # Get format from first file
+            if not filtered_files:
+                print(f"\n{Fore.RED}❌ No files to process")
                 return
             
-            print(f"\n{Fore.GREEN}✅ Loaded {len(all_indicators_data)} indicators files")
+            format_name = filtered_files[0]['format']
             
-            # Get available timeframes and let user choose main timeframe
-            available_timeframes = mtf_creator.get_available_timeframes(all_indicators_data)
-            if not available_timeframes:
-                print(f"\n{Fore.RED}❌ No valid timeframes found in indicators data")
-                return
-            
-            print(f"\n{Fore.CYAN}📊 Available timeframes:")
-            for i, tf in enumerate(available_timeframes, 1):
-                print(f"{Fore.WHITE}{i}. {tf}")
-            print(f"{Fore.CYAN}{'─'*40}")
-            
-            try:
-                choice_input = input(f"{Fore.GREEN}Enter choice (1-{len(available_timeframes)}) [default: 1]: {Style.RESET_ALL}").strip()
-                if not choice_input:
-                    choice_idx = 0
-                else:
-                    choice_idx = int(choice_input) - 1
-                    
-                if choice_idx < 0 or choice_idx >= len(available_timeframes):
-                    raise ValueError("Invalid choice")
-                main_timeframe = available_timeframes[choice_idx]
-            except (ValueError, IndexError):
-                print(f"{Fore.RED}❌ Invalid choice. Using first timeframe.")
-                main_timeframe = available_timeframes[0]
-            
-            print(f"\n{Fore.GREEN}✅ Selected main timeframe: {main_timeframe}")
-            
-            # Create MTF structures for all symbols
-            print(f"\n{Fore.YELLOW}🔧 Creating MTF structures for all symbols...")
-            mtf_result = mtf_creator.create_mtf_from_all_indicators(all_indicators_data, main_timeframe)
-            
-            if mtf_result["status"] != "success":
-                print(f"\n{Fore.RED}❌ Error creating MTF structures: {mtf_result['message']}")
-                return
-            
-            # Display results
-            summary = mtf_result['summary']
-            print(f"\n{Fore.GREEN}✅ MTF structures created successfully!")
-            print(f"  • Total symbols: {summary['total_symbols']}")
-            print(f"  • Successful: {summary['successful']}")
-            print(f"  • Failed: {summary['failed']}")
-            print(f"  • Success rate: {summary['success_rate']:.1f}%")
-            
-            # Show detailed results
-            if summary['successful'] > 0:
-                print(f"\n{Fore.GREEN}📊 Successfully created MTF structures for:")
-                for symbol, result in mtf_result['results'].items():
-                    if result['status'] == 'success':
-                        print(f"  • {symbol}: {result['save_path']}")
-            
-            if summary['failed'] > 0:
-                print(f"\n{Fore.RED}❌ Failed to create MTF structures for:")
-                for symbol, result in mtf_result['results'].items():
-                    if result['status'] != 'success':
-                        print(f"  • {symbol}: {result['message']}")
-            
-            print(f"\n{Fore.GREEN}🎯 MTF structures saved to: data/cleaned_data/mtf_structures/indicators/")
-            print(f"{Fore.GREEN}📈 Ready for EDA, feature engineering, ML, backtesting, and monitoring!")
+            # Use the new method that loads all indicators at once
+            self._load_and_process_all_indicators_data(format_name, analyzer, loader, processor, mtf_creator)
             
         except Exception as e:
             print(f"\n{Fore.RED}❌ Error saving all indicators to MTF: {e}")
