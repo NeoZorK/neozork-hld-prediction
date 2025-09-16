@@ -75,7 +75,12 @@ class IndicatorsMTFCreator:
             mtf_data = self._create_main_mtf_structure(organized_data, symbol, main_timeframe, source)
             
             # Step 3: Create cross-timeframe features
-            if len(organized_data) > 1:
+            # Check if we have multiple timeframes (not just multiple indicators)
+            all_timeframes = set()
+            for indicator_data in organized_data.values():
+                all_timeframes.update(indicator_data.keys())
+            
+            if len(all_timeframes) > 1:
                 # print_info("🔄 Creating cross-timeframe features...")
                 cross_features = self._create_cross_timeframe_features(organized_data, main_timeframe)
                 mtf_data['cross_timeframe_features'] = cross_features
@@ -268,29 +273,22 @@ class IndicatorsMTFCreator:
                 
                 for indicator, timeframes_data in organized_data.items():
                     if timeframe in timeframes_data:
-                        df = timeframes_data[timeframe]['data'].copy()
+                        file_data = timeframes_data[timeframe]
                         
-                        # Resample to main timeframe frequency if needed
-                        if 'timestamp' in df.columns:
-                            df = df.set_index('timestamp')
-                        
-                        # Create cross-timeframe features
-                        if 'value' in df.columns:
-                            # Add lagged values
-                            for lag in [1, 2, 3, 5, 10]:
-                                df[f'{indicator}_{timeframe}_lag_{lag}'] = df['value'].shift(lag)
+                        # Check if we have valid data
+                        if isinstance(file_data, dict) and 'data' in file_data:
+                            df = file_data['data'].copy()
                             
-                            # Add moving averages
-                            for window in [5, 10, 20, 50]:
-                                df[f'{indicator}_{timeframe}_ma_{window}'] = df['value'].rolling(window=window).mean()
-                            
-                            # Add volatility measures
-                            df[f'{indicator}_{timeframe}_volatility'] = df['value'].rolling(window=20).std()
-                            
-                            # Add momentum indicators
-                            df[f'{indicator}_{timeframe}_momentum'] = df['value'].pct_change()
-                            
-                            timeframe_data[indicator] = df
+                            if not df.empty:
+                                # Ensure timestamp is index
+                                if 'timestamp' in df.columns:
+                                    df = df.set_index('timestamp')
+                                elif df.index.name != 'timestamp':
+                                    # If no timestamp column, create a simple index
+                                    df.index.name = 'timestamp'
+                                
+                                # Store the dataframe as is for cross-timeframe analysis
+                                timeframe_data[indicator] = df
                 
                 if timeframe_data:
                     cross_features[timeframe] = timeframe_data
