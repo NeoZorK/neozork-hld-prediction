@@ -550,7 +550,10 @@ class DataFilter:
                 size_mb = file_info.get('size_mb', 0)
                 rows = file_info.get('rows', 0)
                 
-                print(f"    {Fore.CYAN}• {symbol} - {format_type} - {size_mb:.1f}MB - {rows:,} rows")
+                # Extract timeframe from filename
+                timeframe = self._extract_timeframe_from_filename(filename)
+                
+                print(f"    {Fore.CYAN}• {timeframe} - {symbol} - {format_type} - {size_mb:.1f}MB - {rows:,} rows")
     
     def get_loading_summary(self, filtered_files: List[Dict[str, Any]]) -> str:
         """
