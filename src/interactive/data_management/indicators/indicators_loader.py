@@ -139,8 +139,6 @@ class IndicatorsLoader:
                     "message": f"Failed to load file: {file_path}"
                 }
             
-            print_success(f"✅ Loaded {indicator_name} from {file_path.name}")
-            
             return {
                 "status": "success",
                 "indicator_name": indicator_name,
@@ -353,9 +351,12 @@ class IndicatorsLoader:
                 parts = name.split('_')
                 if len(parts) >= 2:
                     # Check if first part looks like an indicator
-                    indicator_candidates = ['rsi', 'macd', 'sma', 'ema', 'bb', 'stoch', 'adx', 'cci', 'williams']
+                    indicator_candidates = ['rsi', 'macd', 'sma', 'ema', 'bb', 'stoch', 'adx', 'cci', 'williams', 'wave']
                     if parts[0].lower() in indicator_candidates:
                         return parts[0].upper()
+                    # Check if last part looks like an indicator
+                    if parts[-1].lower() in indicator_candidates:
+                        return parts[-1].upper()
             
             return name.upper()
             
