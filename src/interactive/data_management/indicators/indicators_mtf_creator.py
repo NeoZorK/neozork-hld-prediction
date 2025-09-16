@@ -517,12 +517,13 @@ class IndicatorsMTFCreator:
                 'message': str(e)
             }
     
-    def create_mtf_from_all_indicators(self, indicators_data: Dict[str, Any]) -> Dict[str, Any]:
+    def create_mtf_from_all_indicators(self, indicators_data: Dict[str, Any], main_timeframe: str = None) -> Dict[str, Any]:
         """
         Create MTF structures from all available indicators data.
         
         Args:
             indicators_data: Dictionary containing all indicators data
+            main_timeframe: Main timeframe to use for all symbols (optional)
             
         Returns:
             Dict containing results for all symbols
@@ -545,14 +546,26 @@ class IndicatorsMTFCreator:
             for i, (symbol, symbol_data) in enumerate(symbols_data.items()):
                 print_info(f"📊 Processing symbol {symbol} ({i+1}/{total_symbols})...")
                 
-                # Determine main timeframe (prefer M1, then M5, etc.)
-                timeframes = list(symbol_data.keys())
-                timeframe_priority = {'M1': 1, 'M5': 2, 'M15': 3, 'M30': 4, 'H1': 5, 'H4': 6, 'D1': 7, 'W1': 8, 'MN1': 9}
-                main_timeframe = min(timeframes, key=lambda x: timeframe_priority.get(x, 999))
+                # Determine main timeframe
+                if main_timeframe:
+                    # Use provided main timeframe if available in symbol data
+                    if main_timeframe in symbol_data:
+                        selected_timeframe = main_timeframe
+                    else:
+                        # Fallback to first available timeframe
+                        timeframes = list(symbol_data.keys())
+                        timeframe_priority = {'M1': 1, 'M5': 2, 'M15': 3, 'M30': 4, 'H1': 5, 'H4': 6, 'D1': 7, 'W1': 8, 'MN1': 9}
+                        selected_timeframe = min(timeframes, key=lambda x: timeframe_priority.get(x, 999))
+                        print_warning(f"Main timeframe {main_timeframe} not available for {symbol}, using {selected_timeframe}")
+                else:
+                    # Auto-determine main timeframe (prefer M1, then M5, etc.)
+                    timeframes = list(symbol_data.keys())
+                    timeframe_priority = {'M1': 1, 'M5': 2, 'M15': 3, 'M30': 4, 'H1': 5, 'H4': 6, 'D1': 7, 'W1': 8, 'MN1': 9}
+                    selected_timeframe = min(timeframes, key=lambda x: timeframe_priority.get(x, 999))
                 
                 # Create MTF structure for this symbol
                 mtf_result = self.create_and_save_mtf_structure(
-                    symbol_data, symbol, main_timeframe, 'indicators'
+                    symbol_data, symbol, selected_timeframe, 'indicators'
                 )
                 
                 results[symbol] = mtf_result
@@ -590,13 +603,23 @@ class IndicatorsMTFCreator:
                 # Extract symbol from filename or data
                 symbol = self._extract_symbol_from_data(filename, data)
                 
+                if symbol == 'UNKNOWN':
+                    print_warning(f"Could not extract symbol from {filename}, skipping...")
+                    continue
+                
                 if symbol not in symbols_data:
                     symbols_data[symbol] = {}
                 
-                # Extract timeframe
-                timeframe = data.get('timeframe', 'unknown')
-                if timeframe == 'unknown' and 'data' in data:
-                    timeframe = data['data'].get('timeframe', 'unknown')
+                # Extract timeframe from filename or data
+                timeframe = self._extract_timeframe_from_filename(filename)
+                if timeframe == 'unknown':
+                    timeframe = data.get('timeframe', 'unknown')
+                    if timeframe == 'unknown' and 'data' in data:
+                        timeframe = data['data'].get('timeframe', 'unknown')
+                
+                if timeframe == 'unknown':
+                    print_warning(f"Could not extract timeframe from {filename}, skipping...")
+                    continue
                 
                 # Store data by symbol and timeframe
                 if timeframe not in symbols_data[symbol]:
@@ -610,6 +633,59 @@ class IndicatorsMTFCreator:
             print_error(f"Error grouping data by symbol: {e}")
             return {}
     
+    def _extract_timeframe_from_filename(self, filename: str) -> str:
+        """Extract timeframe from filename."""
+        try:
+            import re
+            
+            # Pattern for binance_BTCUSDT_D1_Wave.parquet
+            binance_match = re.search(r'binance_[A-Z0-9]+_([A-Z0-9]+)_', filename)
+            if binance_match:
+                return binance_match.group(1)
+            
+            # Pattern for CSVExport_GOOG.NAS_PERIOD_MN1_Wave.parquet
+            csv_match = re.search(r'CSVExport_[A-Z0-9.]+_PERIOD_([A-Z0-9]+)_', filename)
+            if csv_match:
+                return csv_match.group(1)
+            
+            # Look for common timeframe patterns
+            timeframe_patterns = ['M1', 'M5', 'M15', 'M30', 'H1', 'H4', 'D1', 'W1', 'MN1']
+            for pattern in timeframe_patterns:
+                if pattern in filename.upper():
+                    return pattern
+            
+            return 'unknown'
+            
+        except Exception as e:
+            print_error(f"Error extracting timeframe from {filename}: {e}")
+            return 'unknown'
+    
+    def get_available_timeframes(self, indicators_data: Dict[str, Any]) -> List[str]:
+        """Get list of available timeframes from indicators data."""
+        try:
+            timeframes = set()
+            
+            for filename, data in indicators_data.items():
+                timeframe = self._extract_timeframe_from_filename(filename)
+                if timeframe != 'unknown':
+                    timeframes.add(timeframe)
+                else:
+                    # Try to get from data
+                    if 'timeframe' in data:
+                        timeframes.add(data['timeframe'])
+                    elif 'data' in data and 'timeframe' in data['data']:
+                        timeframes.add(data['data']['timeframe'])
+            
+            # Sort timeframes by priority
+            timeframe_priority = {'M1': 1, 'M5': 2, 'M15': 3, 'M30': 4, 'H1': 5, 'H4': 6, 'D1': 7, 'W1': 8, 'MN1': 9}
+            sorted_timeframes = sorted(timeframes, key=lambda x: timeframe_priority.get(x, 999))
+            
+            return sorted_timeframes
+            
+        except Exception as e:
+            print_error(f"Error getting available timeframes: {e}")
+            return []
+    
     def _extract_symbol_from_data(self, filename: str, data: Dict[str, Any]) -> str:
         """Extract symbol from filename or data."""
         try:
@@ -617,10 +693,18 @@ class IndicatorsMTFCreator:
             if '_' in filename:
                 parts = filename.split('_')
                 if len(parts) >= 2:
-                    # Look for common symbol patterns
+                    # Look for common symbol patterns in all parts
                     for part in parts:
-                        if part.upper() in ['BTCUSDT', 'ETHUSDT', 'EURUSD', 'GBPUSD', 'GOOG', 'TSLA', 'US500', 'XAUUSD']:
-                            return part.upper()
+                        part_upper = part.upper()
+                        # Check if part looks like a trading pair (contains letters and numbers)
+                        if len(part_upper) >= 3 and any(c.isalpha() for c in part_upper) and any(c.isdigit() for c in part_upper):
+                            return part_upper
+                        # Check for known symbols
+                        if part_upper in ['BTCUSDT', 'ETHUSDT', 'EURUSD', 'GBPUSD', 'GOOG', 'TSLA', 'US500', 'XAUUSD', 'BTCUSD', 'ETHUSD']:
+                            return part_upper
+                        # Check for patterns like GOOG.NAS
+                        if '.' in part_upper and len(part_upper.split('.')) == 2:
+                            return part_upper
             
             # Try to extract from data
             if 'symbol' in data:
@@ -628,6 +712,19 @@ class IndicatorsMTFCreator:
             
             if 'data' in data and 'symbol' in data['data']:
                 return data['data']['symbol'].upper()
+            
+            # Try to extract from filename using regex patterns
+            import re
+            
+            # Pattern for binance_BTCUSDT_D1_Wave.parquet
+            binance_match = re.search(r'binance_([A-Z0-9]+)_', filename)
+            if binance_match:
+                return binance_match.group(1)
+            
+            # Pattern for CSVExport_GOOG.NAS_PERIOD_MN1_Wave.parquet
+            csv_match = re.search(r'CSVExport_([A-Z0-9.]+)_', filename)
+            if csv_match:
+                return csv_match.group(1)
             
             # Default fallback
             return 'UNKNOWN'
