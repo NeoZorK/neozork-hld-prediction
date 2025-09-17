@@ -11,7 +11,7 @@ import os
 from typing import AsyncGenerator, Dict, Any
 from decimal import Decimal
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from src.pocket_hedge_fund.database.connection import get_db_manager, init_database, close_database
 from src.pocket_hedge_fund.auth.auth_manager import get_auth_manager
@@ -177,8 +177,8 @@ async def test_fund(db_manager) -> Dict[str, Any]:
         'min_investment': Decimal('1000.00'),
         'max_investment': Decimal('10000.00'),
         'status': 'active',
-        'created_at': datetime.now(datetime.UTC),
-        'updated_at': datetime.now(datetime.UTC)
+        'created_at': datetime.now(timezone.utc),
+        'updated_at': datetime.now(timezone.utc)
     }
     
     try:
@@ -220,8 +220,8 @@ async def test_investment(db_manager, test_user, test_fund) -> Dict[str, Any]:
         'shares_acquired': Decimal('50.00'),
         'share_price': Decimal('100.00'),
         'status': 'active',
-        'created_at': datetime.now(datetime.UTC),
-        'updated_at': datetime.now(datetime.UTC)
+        'created_at': datetime.now(timezone.utc),
+        'updated_at': datetime.now(timezone.utc)
     }
     
     try:

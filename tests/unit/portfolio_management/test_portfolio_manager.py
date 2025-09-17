@@ -4,7 +4,7 @@ Unit tests for PortfolioManager
 
 import pytest
 from unittest.mock import AsyncMock, MagicMock
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal
 
 from src.pocket_hedge_fund.portfolio_management.core.portfolio_manager import PortfolioManager
@@ -281,7 +281,7 @@ class TestPortfolioManager:
             market_value=Decimal('55000.00'),
             unrealized_pnl=Decimal('5000.00'),
             realized_pnl=Decimal('0.00'),
-            entry_date=datetime.now(datetime.UTC),
+            entry_date=datetime.now(timezone.utc),
             status=PositionStatus.ACTIVE
         )
         
@@ -297,7 +297,7 @@ class TestPortfolioManager:
             market_value=Decimal('32000.00'),
             unrealized_pnl=Decimal('2000.00'),
             realized_pnl=Decimal('0.00'),
-            entry_date=datetime.now(datetime.UTC),
+            entry_date=datetime.now(timezone.utc),
             status=PositionStatus.ACTIVE
         )
         

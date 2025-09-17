@@ -8,7 +8,7 @@ authentication, and response formatting.
 import pytest
 import pytest_asyncio
 from decimal import Decimal
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import AsyncMock, patch, MagicMock
 from fastapi.testclient import TestClient
 from fastapi import FastAPI
@@ -89,8 +89,8 @@ class TestInvestmentAPI:
             'shares_acquired': Decimal('50.00'),
             'share_price': Decimal('100.00'),
             'status': 'active',
-            'created_at': datetime.now(datetime.UTC),
-            'updated_at': datetime.now(datetime.UTC)
+            'created_at': datetime.now(timezone.utc),
+            'updated_at': datetime.now(timezone.utc)
         }]
         
         # Override dependencies
