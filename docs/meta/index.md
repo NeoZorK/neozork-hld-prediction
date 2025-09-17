@@ -5,8 +5,10 @@ Documentation about documentation - history, organization, and maintenance.
 ## Documentation History
 
 - **[Documentation Updates](DOCUMENTATION_UPDATES.md)** - History of documentation changes
-- **[File Reorganization Summary](FILE_REORGANIZATION_SUMMARY.md)** - Summary of file reorganization
+- **[Documentation Reorganization](DOCUMENTATION_REORGANIZATION.md)** - Documentation reorganization summary
 - **[README Original Backup](README-original-backup.md)** - Original README backup
+- **[Documentation Sync Analysis 2025](../development/DOCUMENTATION_SYNC_ANALYSIS_2025.md)** - **NEW**: Comprehensive sync analysis
+- **[Documentation Sync Completion Report](../development/DOCUMENTATION_SYNC_COMPLETION_REPORT.md)** - **NEW**: Phase 1 completion report
 
 ## Documentation Organization
 

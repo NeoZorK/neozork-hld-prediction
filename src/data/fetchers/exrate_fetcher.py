@@ -24,6 +24,9 @@ def map_exrate_interval(tf_input: str) -> str | None:
     Maps user-friendly timeframe input to Exchange Rate API supported intervals.
     Note: Exchange Rate API only provides daily data, so all intervals will be mapped to daily.
     """
+    if not tf_input:
+        return None
+        
     tf_input_upper = tf_input.upper()
     
     # Exchange Rate API only supports daily data
@@ -35,10 +38,9 @@ def map_exrate_interval(tf_input: str) -> str | None:
         logger.print_warning(f"Exchange Rate API does not support intraday intervals. '{tf_input}' will be mapped to daily (D1).")
         return "D1"
     
-    if tf_input_upper in supported_intervals:
+    # Check both upper and lower case variations
+    if tf_input_upper in supported_intervals or tf_input.lower() in ["d1", "d", "1d"]:
         return "D1"  # Always return D1 as Exchange Rate API provides daily data
-    elif tf_input.lower() in ["d1", "d", "1d"]:
-        return "D1"
     else:
         logger.print_error(f"Invalid or unsupported Exchange Rate API timeframe input: '{tf_input}'. Supported: D1, W1, MN1")
         return None

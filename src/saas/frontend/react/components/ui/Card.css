@@ -1,0 +1,170 @@
+/**
+ * Card UI Component Styles
+ * 
+ * CSS styles for the reusable card component.
+ */
+
+/* ============================================================================
+   CARD BASE
+   ============================================================================ */
+
+.card {
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+}
+
+.card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* ============================================================================
+   CARD VARIANTS
+   ============================================================================ */
+
+.card--elevated {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.card--outlined {
+  box-shadow: none;
+  border: 1px solid #e2e8f0;
+}
+
+.card--outlined:hover {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* ============================================================================
+   CARD PADDING
+   ============================================================================ */
+
+.card--padding-none {
+  padding: 0;
+}
+
+.card--padding-small {
+  padding: 0.75rem;
+}
+
+.card--padding-medium {
+  padding: 1rem;
+}
+
+.card--padding-large {
+  padding: 1.5rem;
+}
+
+/* ============================================================================
+   CARD SECTIONS
+   ============================================================================ */
+
+.card__header {
+  padding: 1rem 1rem 0 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 1rem;
+}
+
+.card__content {
+  padding: 0 1rem 1rem 1rem;
+}
+
+.card__footer {
+  padding: 0 1rem 1rem 1rem;
+  border-top: 1px solid #f1f5f9;
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+/* ============================================================================
+   CARD TITLE
+   ============================================================================ */
+
+.card__title {
+  margin: 0;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.card__title--h1 {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.card__title--h2 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.card__title--h3 {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.card__title--h4 {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.card__title--h5 {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.card__title--h6 {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .card {
+    border-radius: 0.375rem;
+  }
+  
+  .card__header,
+  .card__content,
+  .card__footer {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  .card__title--h1 {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+  
+  .card__title--h2 {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+}
+
+/* ============================================================================
+   DARK MODE SUPPORT
+   ============================================================================ */
+
+@media (prefers-color-scheme: dark) {
+  .card {
+    background: #1e293b;
+    border-color: #334155;
+  }
+  
+  .card__header,
+  .card__footer {
+    border-color: #334155;
+  }
+  
+  .card__title {
+    color: #f1f5f9;
+  }
+  
+  .card--outlined {
+    border-color: #334155;
+  }
+}

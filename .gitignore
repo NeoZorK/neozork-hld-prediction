@@ -28,6 +28,7 @@ misc.xml
 
 # Project specific
 data/cleaned/
+data/cleaned_data/
 *.xml
 scripts/start_mcp_server.sh
 scripts/test_mcp_connection.sh
@@ -37,6 +38,7 @@ scripts/test_mcp_connection.sh
 .cache/
 .yf_cache/
 *.db
+data/cache/gap_tracker.json
 
 # Data files
 *.parquet
@@ -73,10 +75,28 @@ mql5_feed/*.csv
 logs/
 !/.gitkeep
 
+# Results folder
+results/
+
 # Project specific
 .env
 qodana.yaml
 .DS_Store
+
+# Node.js / React Native
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.expo/
+.expo-shared/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
 
 # Exceptions - files that should not be ignored
 !data/cache/csv_converted/CSVExport_GBPUSD_PERIOD_MN1.parquet

@@ -64,6 +64,9 @@ Runtime testing of dependencies by disabling them and running tests.
 ### [Dead Code Quick Start](DEAD_CODE_QUICK_START.md)
 Quick start guide for dead code analysis.
 
+### [Test Reorganization Report](TEST_REORGANIZATION_REPORT.md)
+**NEW**: Comprehensive report on test files reorganization from root directory to organized structure.
+
 ## 🔧 UV Package Management
 
 ### UV-Only Mode

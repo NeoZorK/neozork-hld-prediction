@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+# -*- coding: utf-8 -*-
+# Neozork Interactive Script
+# 
+# This script provides interactive functionality for the Neozork HLD Prediction project.
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Fix: PROJECT_ROOT should be the same as SCRIPT_DIR since the script is in project root
+PROJECT_ROOT="$SCRIPT_DIR"
+
+# Add project root to Python path
+export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH}"
+
+# Function to detect environment
+detect_environment() {
+    if [ -f "/.dockerenv" ] || [ -f "/app/.dockerenv" ]; then
+        echo "Docker environment detected"
+        return 0
+    elif command -v uv >/dev/null 2>&1; then
+        echo "UV environment detected"
+        return 1
+    else
+        echo "Native Python environment detected"
+        return 2
+    fi
+}
+
+# Function to run Python command
+run_python() {
+    local env_type=$1
+    shift
+    
+    case $env_type in
+        0)  # Docker
+            PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH}" python "$@"
+            ;;
+        1)  # UV
+            PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH}" uv run python "$@"
+            ;;
+        2)  # Native
+            PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH}" python "$@"
+            ;;
+    esac
+}
+
+# Main script logic
+echo "Neozork Interactive Tool"
+echo "======================="
+
+# Detect environment
+detect_environment
+env_type=$?
+
+# Change to project root
+cd "$PROJECT_ROOT"
+
+# Add script directory to PATH
+echo "Adding $SCRIPT_DIR to PATH"
+export PATH="$SCRIPT_DIR:$PATH"
+
+# Parse arguments
+if [ $# -eq 0 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+    echo "Usage: $0 [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  --help, -h              Show this help message"
+    echo "  --version               Show version information"
+    echo "  --verbose, -v           Verbose output"
+    echo ""
+    echo "This script runs the Neozork interactive application."
+    echo "All arguments are passed to the interactive neozork.py script."
+    echo ""
+    echo "Examples:"
+    echo "  $0                      Run interactive neozork"
+    echo "  $0 --help               Show this help"
+    echo "  $0 --version            Show version"
+    echo ""
+    exit 0
+fi
+
+# Handle --version flag
+if [ "$1" = "--version" ]; then
+    echo "Neozork Interactive Tool Version 1.0.0"
+    echo "Project: Neozork HLD Prediction"
+    if [ "$env_type" -eq 1 ]; then
+        echo "Python: $(uv run python --version 2>&1)"
+        echo "UV: $(uv --version 2>&1)"
+    else
+        echo "Python: $(python3 --version 2>&1 || python --version 2>&1)"
+    fi
+    exit 0
+fi
+
+# Run the interactive neozork.py script with all arguments
+echo "Starting Neozork Interactive Application..."
+echo "Running: src/interactive/neozork.py $@"
+run_python $env_type src/interactive/neozork.py "$@"
+
+exit 0

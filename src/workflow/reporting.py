@@ -43,7 +43,16 @@ def print_summary(results: dict, total_duration: float, args):
 
     # --- Print Basic Info ---
     logger.print_info(logger.format_summary_line("Data Source:", data_source_label if effective_mode != 'demo' else 'Demo'))
-    logger.print_info(logger.format_summary_line("Rule Applied:", args.rule))
+    
+    # Handle batch processing mode
+    if results.get("batch_processing", False):
+        logger.print_info(logger.format_summary_line("Processing Mode:", "Batch CSV Conversion"))
+        logger.print_info(logger.format_summary_line("Total Files:", str(results.get("total_files", 0))))
+        logger.print_info(logger.format_summary_line("Successful:", str(results.get("successful_conversions", 0))))
+        logger.print_info(logger.format_summary_line("Failed:", str(results.get("failed_conversions", 0))))
+        logger.print_info(logger.format_summary_line("Point Size:", f"{args.point:.8f}" if args.point else "N/A"))
+    else:
+        logger.print_info(logger.format_summary_line("Rule Applied:", args.rule))
 
     # --- YFinance Specific Output ---
     if effective_mode == 'yfinance':

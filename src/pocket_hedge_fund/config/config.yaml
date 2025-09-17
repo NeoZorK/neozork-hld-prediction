@@ -1,0 +1,117 @@
+# NeoZork Pocket Hedge Fund Configuration
+# Configuration file for the Pocket Hedge Fund system
+
+# Database configuration
+database:
+  type: "sqlite"  # sqlite, postgresql, mysql
+  host: "localhost"
+  port: 5432
+  name: "neozork_fund.db"
+  username: "neozork"
+  password: ""
+  pool_size: 10
+  max_overflow: 20
+  pool_timeout: 30
+  pool_recycle: 3600
+  echo: false
+  ssl_mode: "prefer"
+
+# API configuration
+api:
+  host: "0.0.0.0"
+  port: 8000
+  debug: true
+  cors_origins:
+    - "*"
+  rate_limit:
+    requests_per_minute: 100
+    burst_size: 200
+
+# Trading configuration
+trading:
+  max_position_size: 0.1  # 10% of portfolio
+  risk_limit: 0.02  # 2% risk per trade
+  stop_loss_percentage: 0.05  # 5% stop loss
+  take_profit_percentage: 0.15  # 15% take profit
+  max_daily_trades: 50
+  min_trade_amount: 100.0
+
+# Blockchain configuration
+blockchain:
+  ethereum_rpc: "https://mainnet.infura.io/v3/your-key"
+  bsc_rpc: "https://bsc-dataseed.binance.org"
+  polygon_rpc: "https://polygon-rpc.com"
+  arbitrum_rpc: "https://arb1.arbitrum.io/rpc"
+  private_key: ""  # Set via environment variable
+  gas_limit: 300000
+  gas_price_gwei: 20
+
+# Logging configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file_path: "logs/neozork_fund.log"
+  max_file_size: 10485760  # 10MB
+  backup_count: 5
+
+# Security configuration
+security:
+  jwt_secret: "your-jwt-secret-key"  # Set via environment variable
+  jwt_expiration_hours: 24
+  password_min_length: 8
+  password_require_special: true
+  session_timeout_minutes: 60
+  max_login_attempts: 5
+  lockout_duration_minutes: 30
+
+# Fund configuration
+fund:
+  default_management_fee: 0.02  # 2%
+  default_performance_fee: 0.20  # 20%
+  min_investment_amounts:
+    mini: 1000.0
+    standard: 10000.0
+    premium: 100000.0
+    institutional: 1000000.0
+  max_investment_amounts:
+    mini: 10000.0
+    standard: 100000.0
+    premium: 1000000.0
+    institutional: 10000000.0
+
+# Performance tracking
+performance:
+  snapshot_interval_hours: 24
+  retention_days: 365
+  benchmark_symbol: "SPY"
+  risk_free_rate: 0.02  # 2% annual
+
+# Monitoring configuration
+monitoring:
+  health_check_interval: 60  # seconds
+  performance_alert_threshold: -0.05  # -5% daily return
+  risk_alert_threshold: 0.03  # 3% VaR
+  email_alerts: true
+  slack_webhook: ""  # Set via environment variable
+
+# External services
+external_services:
+  data_providers:
+    yahoo_finance: true
+    binance: true
+    polygon: false
+    alpha_vantage: false
+  notification_services:
+    email: true
+    slack: false
+    telegram: false
+  analytics_services:
+    google_analytics: false
+    mixpanel: false
+
+# Development configuration
+development:
+  mock_data: true
+  debug_mode: true
+  test_mode: false
+  sample_data_size: 1000

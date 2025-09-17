@@ -6,6 +6,7 @@ import pandas as pd
 import time
 import os
 from datetime import datetime
+import pytest
 
 # Attempt to import polygon and set a flag
 try:
@@ -60,6 +61,8 @@ class MockTimer:
 
 # Decorator to skip tests if polygon library is not available
 @unittest.skipIf(not POLYGON_AVAILABLE, "Polygon library not installed, skipping tests")
+@pytest.mark.external_api
+@pytest.mark.skip_native
 class TestPolygonFetcher(unittest.TestCase):
 
     # Test case for successful ticker resolution (e.g., AAPL)

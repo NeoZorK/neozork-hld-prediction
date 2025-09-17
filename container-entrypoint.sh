@@ -299,6 +299,15 @@ uv run pytest tests -n auto
 EOF
     chmod +x /tmp/bin/uv-pytest
 
+    # Create safe test runner for native container
+    cat > /tmp/bin/uv-test-safe << 'EOF'
+#!/bin/bash
+echo "Running safe tests for native container..."
+source /app/.venv/bin/activate
+/app/scripts/run_tests_native_container.sh
+EOF
+    chmod +x /tmp/bin/uv-test-safe
+
     # Create MCP server wrapper with venv activation
     cat > /tmp/bin/mcp-start << 'EOF'
 #!/bin/bash
@@ -510,6 +519,7 @@ show_usage_guide() {
     echo -e "\033[1;36m- uv-update: Update dependencies using UV\033[0m"
     echo -e "\033[1;36m- uv-test: Run UV environment test\033[0m"
     echo -e "\033[1;36m- uv-pytest: Run pytest with UV\033[0m"
+    echo -e "\033[1;36m- uv-test-safe: Run safe tests for native container\033[0m"
     echo -e "\033[1;36m- uv pip install <package>: Install specific package\033[0m"
     echo -e "\033[1;36m- uv pip list: List installed packages\033[0m"
 
@@ -546,6 +556,7 @@ uv run pytest tests -n auto
 uv run pytest tests -n auto -v --tb=short
 uv run pytest tests -n auto -v --tb=short -x
 uv run pytest tests -n auto --tb=no -q
+uv-test-safe
 
 # Analysis Commands
 nz

@@ -142,8 +142,10 @@ else
     echo -e "\033[1;33m⚠️  UV cache directory not found, will be created on first use\033[0m"
 fi
 
-# First question - Run data feed tests
-echo -e "\033[1;33mWould you like to run tests for external data feeds? (Polygon, YFinance, Binance) [y/N]:\033[0m"
+# First question - Run tests
+echo -e "\033[1;33mWould you like to run tests? [y/N]:\033[0m"
+echo -e "\033[1;36m  - 'y' or 'Y': Run all tests sequentially by folder (recommended for Docker)\033[0m"
+echo -e "\033[1;36m  - 'n' or 'N': Skip tests\033[0m"
 read -r run_tests
 
 # Debug output to check what was read
@@ -151,11 +153,14 @@ echo -e "\033[1;34mInput received: '$run_tests'\033[0m"
 
 # Simplified condition checking
 if [ "$run_tests" = "y" ] || [ "$run_tests" = "Y" ]; then
-  echo -e "\n\033[1;32m=== Running external data feed tests in Docker (UV Mode) ===\033[0m\n"
-  # Run the tests using the Docker-specific test runner
-  run_python_safely python /app/tests/run_tests_docker.py
+  echo -e "\n\033[1;32m=== Running tests sequentially by folder in Docker (UV Mode) ===\033[0m\n"
+  echo -e "\033[1;36mThis will run tests folder by folder to avoid worker crashes and resource issues.\033[0m"
+  echo -e "\033[1;36mTest execution order: common -> unit -> utils -> data -> calculation -> cli -> ...\033[0m\n"
+  
+  # Run the tests using the new sequential test runner
+  run_python_safely python /app/scripts/run_sequential_tests_docker.py
 else
-  echo -e "\033[1;33mSkipping external data feed tests\033[0m\n"
+  echo -e "\033[1;33mSkipping tests\033[0m\n"
 fi
 
 # Second question - Run MCP server
@@ -229,10 +234,12 @@ uv pip install <package>
 
 # Testing Commands
 pytest
+python scripts/run_sequential_tests_docker.py
+python scripts/run_tests_docker.py
+uv run pytest tests/pocket_hedge_fund/ -v --tb=short
+uv run pytest tests/pocket_hedge_fund/ -v --tb=short -x
+uv run pytest tests/pocket_hedge_fund/ --tb=no -q
 uv run pytest tests -n auto
-uv run pytest tests -n auto -v --tb=short
-uv run pytest tests -n auto -v --tb=short -x
-uv run pytest tests -n auto --tb=no -q
 
 # Analysis Commands
 nz
@@ -306,9 +313,10 @@ init_bash_history() {
     
     # Define useful commands for the container
     local useful_commands=(
-        "uv run pytest tests -n auto"
-        "uv run pytest tests -n auto -v --tb=short"
-        "uv run pytest tests -n auto -v --tb=short -x"
+        "python scripts/run_sequential_tests_docker.py"
+        "python scripts/run_tests_docker.py"
+        "uv run pytest tests/pocket_hedge_fund/ -v --tb=short"
+        "uv run pytest tests/pocket_hedge_fund/ -v --tb=short -x"
         "nz --interactive"
         "eda -dqc"
         "nz --indicators"

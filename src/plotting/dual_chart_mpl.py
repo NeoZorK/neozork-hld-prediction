@@ -192,8 +192,15 @@ def plot_dual_chart_mpl(
     # Add indicator based on type
     if indicator_name == 'rsi':
         y_axis_label = 'RSI Value'
+        # Check for both lowercase and uppercase RSI columns
+        rsi_col = None
         if 'rsi' in display_df.columns:
-            ax2.plot(display_df.index, display_df['rsi'], 
+            rsi_col = 'rsi'
+        elif 'RSI' in display_df.columns:
+            rsi_col = 'RSI'
+        
+        if rsi_col:
+            ax2.plot(display_df.index, display_df[rsi_col], 
                     color='purple', linewidth=3, label='RSI')
             
             # Add overbought/oversold lines
@@ -209,8 +216,15 @@ def plot_dual_chart_mpl(
     
     elif indicator_name == 'rsi_mom':
         y_axis_label = 'RSI Momentum'
+        # Check for both lowercase and uppercase RSI columns
+        rsi_col = None
         if 'rsi' in display_df.columns:
-            ax2.plot(display_df.index, display_df['rsi'], 
+            rsi_col = 'rsi'
+        elif 'RSI' in display_df.columns:
+            rsi_col = 'RSI'
+        
+        if rsi_col:
+            ax2.plot(display_df.index, display_df[rsi_col], 
                     color='purple', linewidth=2, label='RSI')
         
         if 'rsi_momentum' in display_df.columns:
@@ -233,8 +247,15 @@ def plot_dual_chart_mpl(
     
     elif indicator_name == 'rsi_div':
         y_axis_label = 'RSI Divergence'
+        # Check for both lowercase and uppercase RSI columns
+        rsi_col = None
         if 'rsi' in display_df.columns:
-            ax2.plot(display_df.index, display_df['rsi'], 
+            rsi_col = 'rsi'
+        elif 'RSI' in display_df.columns:
+            rsi_col = 'RSI'
+        
+        if rsi_col:
+            ax2.plot(display_df.index, display_df[rsi_col], 
                     color='purple', linewidth=2, label='RSI')
         
         if 'rsi_divergence' in display_df.columns:
@@ -303,18 +324,39 @@ def plot_dual_chart_mpl(
     
     elif indicator_name == 'macd':
         y_axis_label = 'MACD Value'
+        # Check for both lowercase and uppercase MACD columns
+        macd_col = None
         if 'macd' in display_df.columns:
-            ax2.plot(display_df.index, display_df['macd'], 
+            macd_col = 'macd'
+        elif 'MACD_Line' in display_df.columns:
+            macd_col = 'MACD_Line'
+        
+        if macd_col:
+            ax2.plot(display_df.index, display_df[macd_col], 
                     color='blue', linewidth=3, label='MACD')
         
+        # Check for signal line
+        signal_col = None
         if 'macd_signal' in display_df.columns:
-            ax2.plot(display_df.index, display_df['macd_signal'], 
+            signal_col = 'macd_signal'
+        elif 'MACD_Signal' in display_df.columns:
+            signal_col = 'MACD_Signal'
+        
+        if signal_col:
+            ax2.plot(display_df.index, display_df[signal_col], 
                     color='red', linewidth=2, label='Signal')
         
+        # Check for histogram
+        histogram_col = None
         if 'macd_histogram' in display_df.columns:
+            histogram_col = 'macd_histogram'
+        elif 'MACD_Histogram' in display_df.columns:
+            histogram_col = 'MACD_Histogram'
+        
+        if histogram_col:
             # Color histogram bars
-            colors = ['green' if val >= 0 else 'red' for val in display_df['macd_histogram']]
-            ax2.bar(display_df.index, display_df['macd_histogram'], 
+            colors = ['green' if val >= 0 else 'red' for val in display_df[histogram_col]]
+            ax2.bar(display_df.index, display_df[histogram_col], 
                    color=colors, alpha=0.7, label='Histogram', width=0.8)
         
         # Add zero line for MACD
