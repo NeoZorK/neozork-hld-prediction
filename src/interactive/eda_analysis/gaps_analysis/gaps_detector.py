@@ -153,7 +153,7 @@ class GapsDetector:
                 df_sorted.index = pd.to_datetime(df_sorted.index)
             
             # Find gaps using vectorized operations
-            gaps = self._find_gaps_vectorized(df_sorted.index, expected_interval)
+            gaps = self._find_gaps_vectorized(df_sorted.index, expected_interval, timeframe)
             
             # Calculate gap statistics
             gap_stats = self._calculate_gap_statistics(gaps, expected_interval)
@@ -181,8 +181,8 @@ class GapsDetector:
                 'gap_count': 0
             }
     
-    def _find_gaps_vectorized(self, index: pd.DatetimeIndex, 
-                            expected_interval: timedelta) -> List[Dict[str, Any]]:
+    def _find_gaps_vectorized(self, index: pd.DatetimeIndex,
+                             expected_interval: timedelta, timeframe: str = 'M1') -> List[Dict[str, Any]]:
         """
         Find gaps using vectorized operations for speed.
         
@@ -205,11 +205,20 @@ class GapsDetector:
             print_debug(f"Time differences - min: {diffs.min()}, max: {diffs.max()}, mean: {diffs.mean()}")
             
             # Find gaps (differences significantly larger than expected)
-            # Use 1.5x expected interval as threshold to account for minor variations
-            gap_threshold = expected_interval * 1.5
+            # Use 2x expected interval as threshold to account for minor variations
+            gap_threshold = expected_interval * 2.0
             print_debug(f"Gap threshold: {gap_threshold}")
             
+            # Find gaps that are significantly larger than expected
             gap_indices = diffs[diffs > gap_threshold].index
+            print_debug(f"Found {len(gap_indices)} potential gaps")
+            
+            # Filter out very large gaps that might be market closures (weekends, holidays)
+            # For M1 data, gaps larger than 24 hours are likely market closures
+            if timeframe == 'M1':
+                max_gap_threshold = timedelta(hours=24)
+                gap_indices = gap_indices[diffs[gap_indices] <= max_gap_threshold]
+                print_debug(f"Filtered gaps (removed >24h): {len(gap_indices)} remaining")
             
             gaps = []
             for gap_start_idx in gap_indices:

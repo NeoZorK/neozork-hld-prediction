@@ -554,6 +554,7 @@ class EDAMenu(BaseMenu):
             
             # Try different possible paths for cross timeframe data
             possible_paths = [
+                Path(f"data/cleaned_data/mtf_structures/csv/{symbol.lower()}/cross_timeframes/{symbol.lower()}_{timeframe.lower()}_cross.parquet"),
                 Path(f"data/cleaned_data/{symbol.lower()}/cross_timeframes/{symbol.lower()}_{timeframe.lower()}_cross.parquet"),
                 Path(f"data/cleaned_data/{symbol.lower()}/{symbol.lower()}_{timeframe.lower()}.parquet"),
                 Path(f"data/cleaned_data/{symbol.lower()}/{timeframe.lower()}.parquet"),
