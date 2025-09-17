@@ -40,6 +40,7 @@ ENV/
 /data/
 /data/cleaned_data/
 /data/cache/gap_tracker.json
+/data/backups/
 /logs/
 /results/
 *.svg
