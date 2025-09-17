@@ -62,6 +62,7 @@ class GapsAnalyzer:
             
             if timeframe_keys:
                 loaded_data = {k: mtf_data[k] for k in timeframe_keys}
+                print_debug(f"Extracted timeframes: {timeframe_keys}")
         
         if not loaded_data:
             raise ValueError('No valid timeframe data found in MTF structure')
@@ -99,6 +100,15 @@ class GapsAnalyzer:
                         print_debug(f"  {key}: dict with keys {list(value.keys())}")
                     else:
                         print_debug(f"  {key}: {type(value)}")
+            
+            # Extract symbol from metadata if available
+            if isinstance(mtf_data, dict) and '_symbol' in mtf_data:
+                actual_symbol = mtf_data['_symbol']
+                print_debug(f"Using symbol from metadata: {actual_symbol}")
+                # Update symbol parameter if it's different
+                if actual_symbol != symbol:
+                    print_debug(f"Symbol mismatch: parameter='{symbol}', metadata='{actual_symbol}'")
+                    symbol = actual_symbol
             
             # Validate inputs
             if not mtf_data:
