@@ -507,18 +507,61 @@ class GapsFixer:
                 elif expected_interval.endswith('D'):
                     days = int(expected_interval[:-1])
                     expected_interval = timedelta(days=days)
+                elif expected_interval.endswith('M'):
+                    minutes = int(expected_interval[:-1])
+                    expected_interval = timedelta(minutes=minutes)
+                elif ':' in expected_interval:
+                    # Handle format like "0:01:00" (hours:minutes:seconds)
+                    parts = expected_interval.split(':')
+                    if len(parts) == 3:
+                        hours = int(parts[0])
+                        minutes = int(parts[1])
+                        seconds = int(parts[2])
+                        expected_interval = timedelta(hours=hours, minutes=minutes, seconds=seconds)
+                    else:
+                        expected_interval = timedelta(hours=1)
                 else:
                     expected_interval = timedelta(hours=1)
+            elif isinstance(expected_interval, timedelta):
+                # Already a timedelta, use as is
+                pass
+            else:
+                # Fallback to 1 hour
+                expected_interval = timedelta(hours=1)
             
             # Create complete range
             start_time = df.index.min()
             end_time = df.index.max()
             
+            # Convert timedelta to pandas frequency string
+            if expected_interval == timedelta(minutes=1):
+                freq_str = '1min'  # 1 minute
+            elif expected_interval == timedelta(minutes=5):
+                freq_str = '5min'  # 5 minutes
+            elif expected_interval == timedelta(minutes=15):
+                freq_str = '15min'  # 15 minutes
+            elif expected_interval == timedelta(minutes=30):
+                freq_str = '30min'  # 30 minutes
+            elif expected_interval == timedelta(hours=1):
+                freq_str = '1h'  # 1 hour
+            elif expected_interval == timedelta(hours=4):
+                freq_str = '4h'  # 4 hours
+            elif expected_interval == timedelta(days=1):
+                freq_str = '1D'  # 1 day
+            elif expected_interval == timedelta(weeks=1):
+                freq_str = '1W'  # 1 week
+            elif expected_interval == timedelta(days=30):
+                freq_str = '30D'  # 30 days
+            else:
+                # Fallback to minutes
+                minutes = int(expected_interval.total_seconds() / 60)
+                freq_str = f'{minutes}min'
+            
             # Generate complete time range
             complete_times = pd.date_range(
                 start=start_time,
                 end=end_time,
-                freq=expected_interval
+                freq=freq_str
             )
             
             return complete_times
