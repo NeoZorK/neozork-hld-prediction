@@ -51,8 +51,8 @@ class MarketDataRequest(BaseModel):
     frequency: DataFrequency = Field(DataFrequency.DAILY, description="Data frequency")
     
     @field_validator('end_date')
-    def validate_end_date(cls, v, values):
-        if 'start_date' in values and v <= values['start_date']:
+    def validate_end_date(cls, v, info):
+        if hasattr(info, 'data') and 'start_date' in info.data and v <= info.data['start_date']:
             raise ValueError('End date must be after start date')
         return v
 

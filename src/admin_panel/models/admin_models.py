@@ -113,9 +113,9 @@ class AdminUser(BaseModel):
         return v.lower()
 
     @field_validator('permissions')
-    def validate_permissions(cls, v, values):
-        if 'role' in values:
-            role = values['role']
+    def validate_permissions(cls, v, info):
+        if hasattr(info, 'data') and 'role' in info.data:
+            role = info.data['role']
             if role == AdminRoleType.SUPER_ADMIN:
                 # Super admin has all permissions
                 return list(AdminPermissionType)
@@ -215,8 +215,8 @@ class AdminSession(BaseModel):
     termination_reason: Optional[str] = None
 
     @field_validator('expires_at')
-    def validate_expires_at(cls, v, values):
-        if 'created_at' in values and v <= values['created_at']:
+    def validate_expires_at(cls, v, info):
+        if hasattr(info, 'data') and 'created_at' in info.data and v <= info.data['created_at']:
             raise ValueError('Expires at must be after created at')
         return v
 

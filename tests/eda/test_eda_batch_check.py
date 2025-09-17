@@ -56,7 +56,7 @@ class TestEdaBatchCheck(unittest.TestCase):
             mock_walk.return_value = [('/fake/path', [], ['file1.parquet'])]
             mock_glob.return_value = ['/fake/path/file1.parquet']
             # Mocking pandas read_parquet to simulate reading a parquet file
-            with patch('pandas.read_parquet') as mock_read_parquet:
+            with patch('src.eda.eda_batch_check.safe_read_parquet') as mock_read_parquet:
                 import pandas as pd
                 mock_df = pd.DataFrame({'a': [1,2,3,4,5], 'b': [1.1,2.2,3.3,4.4,5.5]})
                 mock_read_parquet.return_value = mock_df
@@ -139,7 +139,7 @@ class TestEdaBatchCheck(unittest.TestCase):
         with patch('os.walk') as mock_walk, patch('glob.glob') as mock_glob:
             mock_walk.return_value = [('/fake/path', [], ['test_file.parquet'])]
             mock_glob.return_value = ['/fake/path/test_file.parquet']
-            with patch('pandas.read_parquet') as mock_read_parquet:
+            with patch('src.eda.eda_batch_check.safe_read_parquet') as mock_read_parquet:
                 mock_df = pd.DataFrame({'a': [1,2,3], 'b': [1.1,2.2,3.3]})
                 mock_read_parquet.return_value = mock_df
                 with patch('builtins.print') as mock_print, \
@@ -178,7 +178,8 @@ class TestEdaBatchCheck(unittest.TestCase):
 
     @patch('src.eda.eda_batch_check.file_info')
     @patch('src.eda.eda_batch_check.folder_stats')
-    def test_multiple_file_matches(self, mock_folder_stats, mock_file_info):
+    @patch('src.eda.basic_stats.compute_basic_stats')
+    def test_multiple_file_matches(self, mock_compute_basic_stats, mock_folder_stats, mock_file_info):
         """Test handling of multiple file matches"""
         # Set up file paths that will match the search pattern exactly
         file1_path = '/fake/path/test_file.parquet'  # Changed to match search pattern exactly
@@ -200,11 +201,16 @@ class TestEdaBatchCheck(unittest.TestCase):
             'total_size_mb': 1.23,
             'file_count': 2
         }
+        
+        mock_compute_basic_stats.return_value = {
+            'a': {'mean': 2, 'std': 1, 'min': 1, 'max': 3, 'missing': 0},
+            'b': {'mean': 2.2, 'std': 1.1, 'min': 1.1, 'max': 3.3, 'missing': 0}
+        }
 
         with patch('os.walk') as mock_walk, \
              patch('glob.glob') as mock_glob, \
              patch('tqdm.tqdm', new=lambda *args, **kwargs: args[0]), \
-             patch('pandas.read_parquet') as mock_read_parquet:
+             patch('src.eda.eda_batch_check.safe_read_parquet') as mock_read_parquet:
             
             # Setup directory contents to match exactly what we're searching for
             mock_walk.return_value = [
@@ -275,7 +281,7 @@ class TestEdaBatchCheck(unittest.TestCase):
         with patch('os.walk') as mock_walk, patch('glob.glob') as mock_glob:
             mock_walk.return_value = [('/fake/path', [], ['test_file.parquet'])]
             mock_glob.return_value = ['/fake/path/test_file.parquet']
-            with patch('pandas.read_parquet') as mock_read_parquet:
+            with patch('src.eda.eda_batch_check.safe_read_parquet') as mock_read_parquet:
                 mock_df = pd.DataFrame({'a': [1,2,3], 'b': [1.1,2.2,3.3]})
                 mock_read_parquet.return_value = mock_df
                 with patch('builtins.print') as mock_print, \
@@ -310,7 +316,7 @@ class TestEdaBatchCheck(unittest.TestCase):
         with patch('os.walk') as mock_walk, patch('glob.glob') as mock_glob:
             mock_walk.return_value = [('/fake/path', [], ['test_file.parquet'])]
             mock_glob.return_value = ['/fake/path/test_file.parquet']
-            with patch('pandas.read_parquet') as mock_read_parquet:
+            with patch('src.eda.eda_batch_check.safe_read_parquet') as mock_read_parquet:
                 mock_df = pd.DataFrame({'a': [1,2,3], 'b': [1.1,2.2,3.3]})
                 mock_read_parquet.return_value = mock_df
                 with patch('builtins.print') as mock_print, \
@@ -357,7 +363,7 @@ class TestEdaBatchCheck(unittest.TestCase):
         with patch('os.walk') as mock_walk, patch('glob.glob') as mock_glob:
             mock_walk.return_value = [('/fake/path', [], ['test_file.parquet'])]
             mock_glob.return_value = ['/fake/path/test_file.parquet']
-            with patch('pandas.read_parquet') as mock_read_parquet:
+            with patch('src.eda.eda_batch_check.safe_read_parquet') as mock_read_parquet:
                 mock_df = pd.DataFrame({'a': [1,2,3], 'b': [1.1,2.2,3.3]})
                 mock_read_parquet.return_value = mock_df
                 with patch('builtins.print') as mock_print, \
@@ -367,6 +373,8 @@ class TestEdaBatchCheck(unittest.TestCase):
                     # Verify that statistical analysis was called only once (single file)
                     self.assertEqual(mock_desc_stats.call_count, 1)
                     self.assertEqual(mock_print_stats.call_count, 1)
+                    # Verify that safe_read_parquet was called once
+                    mock_read_parquet.assert_called_once()
 
     # Removed test_file_name_without_extension due to mocking conflicts in parallel execution
 
@@ -374,7 +382,8 @@ class TestEdaBatchCheck(unittest.TestCase):
 
     @patch('src.eda.eda_batch_check.file_info')
     @patch('src.eda.eda_batch_check.folder_stats')
-    def test_subdirectory_path_handling(self, mock_folder_stats, mock_file_info):
+    @patch('src.eda.basic_stats.compute_basic_stats')
+    def test_subdirectory_path_handling(self, mock_compute_basic_stats, mock_folder_stats, mock_file_info):
         """Test handling of files in subdirectories with the --file flag"""
         # Setup mock paths - simplified to avoid path joining issues
         data_dir = '/fake/path'
@@ -397,12 +406,17 @@ class TestEdaBatchCheck(unittest.TestCase):
             'total_size_mb': 1.23,
             'file_count': 1
         }
+        
+        mock_compute_basic_stats.return_value = {
+            'a': {'mean': 2, 'std': 1, 'min': 1, 'max': 3, 'missing': 0},
+            'b': {'mean': 2.2, 'std': 1.1, 'min': 1.1, 'max': 3.3, 'missing': 0}
+        }
 
         # Patch all the necessary dependencies
         with patch('os.walk') as mock_walk, \
              patch('glob.glob') as mock_glob, \
              patch('tqdm.tqdm', new=lambda *args, **kwargs: args[0]), \
-             patch('pandas.read_parquet') as mock_read_parquet:
+             patch('src.eda.eda_batch_check.safe_read_parquet') as mock_read_parquet:
             
             # Mock directory structure with subdirectory
             mock_walk.return_value = [
@@ -482,7 +496,7 @@ class TestEdaBatchCheck(unittest.TestCase):
             # All files available in the directory
             mock_glob.return_value = [file_path_lower, file_path_upper, file_path_mixed]
             
-            with patch('pandas.read_parquet') as mock_read_parquet:
+            with patch('src.eda.eda_batch_check.safe_read_parquet') as mock_read_parquet:
                 mock_df = pd.DataFrame({'a': [1,2,3], 'b': [1.1,2.2,3.3]})
                 mock_read_parquet.return_value = mock_df
                 

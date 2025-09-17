@@ -259,7 +259,7 @@ class TestDataLoadingMenuIndicatorsMTF:
     def test_load_indicators_menu_choice_1(self, mock_input):
         """Test the indicators menu when user chooses option 1 (save to MTF structure)."""
         # Mock user input to choose option 1 (save to MTF structure)
-        mock_input.side_effect = ['1']
+        mock_input.side_effect = ['1', '']  # choice + press enter to continue
         
         # Mock the required components
         mock_analyzer = Mock()
@@ -309,7 +309,7 @@ class TestDataLoadingMenuIndicatorsMTF:
     def test_load_indicators_menu_choice_0(self, mock_input):
         """Test the indicators menu when user chooses option 0 (cancel)."""
         # Mock user input to choose option 0 (cancel)
-        mock_input.side_effect = ['0']
+        mock_input.side_effect = ['0', '']  # choice + press enter to continue
         
         # Mock the required components
         mock_analyzer = Mock()

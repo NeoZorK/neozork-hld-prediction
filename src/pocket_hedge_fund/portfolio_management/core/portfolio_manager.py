@@ -7,7 +7,7 @@ portfolio creation, updates, and basic operations.
 
 import logging
 from typing import Dict, List, Optional, Any, Tuple
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 
 from ..models.portfolio_models import Portfolio, Position, Asset, AssetType, PositionType, PositionStatus
@@ -34,7 +34,7 @@ class PortfolioManager:
     ) -> Portfolio:
         """Create a new portfolio."""
         try:
-            portfolio_id = f"portfolio_{investor_id}_{fund_id}_{datetime.now(datetime.UTC).strftime('%Y%m%d_%H%M%S')}"
+            portfolio_id = f"portfolio_{investor_id}_{fund_id}_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
             
             portfolio = Portfolio(
                 id=portfolio_id,
@@ -90,7 +90,7 @@ class PortfolioManager:
     async def update_portfolio(self, portfolio: Portfolio) -> bool:
         """Update portfolio."""
         try:
-            portfolio.updated_at = datetime.now(datetime.UTC)
+            portfolio.updated_at = datetime.now(timezone.utc)
             
             # Update metrics
             portfolio.update_metrics()
