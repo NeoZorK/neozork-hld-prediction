@@ -121,6 +121,24 @@ class TestGapsDetector:
         dates_h1 = pd.date_range('2023-01-01', periods=10, freq='1H')
         actual_interval = self.detector._detect_actual_interval(dates_h1)
         assert actual_interval == timedelta(hours=1)
+    
+    def test_interval_mismatch_detection(self):
+        """Test interval mismatch detection in gap analysis."""
+        # Create M1 data but analyze as M5
+        dates = pd.date_range('2023-01-01', periods=10, freq='1min')
+        df = pd.DataFrame({'Close': range(10)}, index=dates)
+        
+        result = self.detector._detect_gaps_in_dataframe(df, 'M5')
+        
+        assert result['status'] == 'success'
+        assert result['timeframe'] == 'M5'
+        assert result['actual_interval'] == '0 days 00:01:00'
+        assert result['expected_interval'] == '0:05:00'
+        assert result['is_interval_mismatch'] == True
+        
+        # Test correct interval (M1 data analyzed as M1)
+        result_correct = self.detector._detect_gaps_in_dataframe(df, 'M1')
+        assert result_correct['is_interval_mismatch'] == False
 
 
 class TestGapsFixer:

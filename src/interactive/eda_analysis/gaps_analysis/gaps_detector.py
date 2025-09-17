@@ -156,6 +156,9 @@ class GapsDetector:
             actual_interval = self._detect_actual_interval(df_sorted.index)
             print_debug(f"Actual interval detected: {actual_interval}")
             
+            # Store original expected interval for display
+            original_expected_interval = expected_interval
+            
             # If actual interval doesn't match expected timeframe, treat as M1 data
             if actual_interval != expected_interval:
                 print_debug(f"Data interval ({actual_interval}) doesn't match expected timeframe ({expected_interval})")
@@ -163,8 +166,10 @@ class GapsDetector:
                 # Use M1 logic for gap detection
                 expected_interval = timedelta(minutes=1)
                 timeframe_for_analysis = 'M1'
+                is_interval_mismatch = True
             else:
                 timeframe_for_analysis = timeframe
+                is_interval_mismatch = False
             
             # Find gaps using vectorized operations
             gaps = self._find_gaps_vectorized(df_sorted.index, expected_interval, timeframe_for_analysis)
@@ -176,7 +181,8 @@ class GapsDetector:
                 'status': 'success',
                 'timeframe': timeframe,
                 'actual_interval': str(actual_interval),
-                'expected_interval': str(expected_interval),
+                'expected_interval': str(original_expected_interval),
+                'is_interval_mismatch': is_interval_mismatch,
                 'gaps': gaps,
                 'gap_count': len(gaps),
                 'statistics': gap_stats,

@@ -402,7 +402,15 @@ class EDAMenu(BaseMenu):
     def _display_gaps_results(self, gaps_result: Dict[str, Any], symbol: str):
         """Display gaps detection results."""
         try:
-            print(f"\n{Fore.GREEN}✅ Gaps Detection Results for {symbol}")
+            # Try to get actual symbol from metadata
+            actual_symbol = symbol
+            if isinstance(gaps_result, dict) and 'timeframe_gaps' in gaps_result:
+                for tf_data in gaps_result['timeframe_gaps'].values():
+                    if isinstance(tf_data, dict) and '_symbol' in tf_data:
+                        actual_symbol = tf_data['_symbol']
+                        break
+            
+            print(f"\n{Fore.GREEN}✅ Gaps Detection Results for {actual_symbol}")
             print(f"{Fore.CYAN}{'─'*50}")
             
             overall_stats = gaps_result.get('overall_stats', {})
@@ -424,8 +432,9 @@ class EDAMenu(BaseMenu):
                         actual_interval = result.get('actual_interval', 'Unknown')
                         expected_interval = result.get('expected_interval', 'Unknown')
                         
-                        # Show interval mismatch warning
-                        if actual_interval != expected_interval:
+                        # Show interval mismatch warning only if there's a mismatch
+                        is_mismatch = result.get('is_interval_mismatch', False)
+                        if is_mismatch:
                             print(f"  • {timeframe}: {stats.get('total_gaps', 0)} gaps, "
                                   f"{stats.get('total_missing_points', 0)} missing points "
                                   f"(⚠️  Data is {actual_interval} intervals, expected {expected_interval})")
