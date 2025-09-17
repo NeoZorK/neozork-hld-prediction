@@ -451,16 +451,43 @@ class GapsAnalyzer:
             
             print_debug(f"Original source: {original_source}")
             print_debug(f"Original path: {original_path}")
+            print_debug(f"Full original info: {original_info}")
+            
+            # Also try to get source info from the loaded data itself
+            loaded_data = data_state_manager.get_loaded_data()
+            if loaded_data and isinstance(loaded_data, dict):
+                # Look for source_path in DataFrame attributes
+                for key, value in loaded_data.items():
+                    if hasattr(value, 'attrs') and 'source_path' in value.attrs:
+                        source_path = value.attrs['source_path']
+                        print_debug(f"Found source_path in {key}: {source_path}")
+                        # Update original_path if it was empty
+                        if not original_path and source_path:
+                            original_path = source_path
+                            print_debug(f"Updated original_path from DataFrame: {original_path}")
+                        break
             
             # Determine save strategy based on original source
             if original_source == 'csv':
-                return self._save_to_csv_original_files(mtf_data, symbol, original_path)
+                result = self._save_to_csv_original_files(mtf_data, symbol, original_path)
+                if result['status'] == 'error':
+                    print_warning(f"Failed to save to original CSV files: {result['message']}")
+                    print_info(f"Falling back to creating new MTF structure...")
+                    return self.save_fixed_data_to_mtf(mtf_data, symbol, 'gaps_fixed')
+                return result
             elif original_source == 'raw_parquet':
-                return self._save_to_raw_parquet_original_files(mtf_data, symbol, original_path)
+                result = self._save_to_raw_parquet_original_files(mtf_data, symbol, original_path)
+                if result['status'] == 'error':
+                    print_warning(f"Failed to save to original raw parquet files: {result['message']}")
+                    print_info(f"Falling back to creating new MTF structure...")
+                    return self.save_fixed_data_to_mtf(mtf_data, symbol, 'gaps_fixed')
+                return result
             elif original_source == 'gaps_fixed':
                 return self._save_to_mtf_original_files(mtf_data, symbol, original_path)
             else:
-                return {'status': 'error', 'message': f'Unknown original source: {original_source}'}
+                print_warning(f"Unknown original source: {original_source}")
+                print_info(f"Falling back to creating new MTF structure...")
+                return self.save_fixed_data_to_mtf(mtf_data, symbol, 'gaps_fixed')
             
         except Exception as e:
             print_error(f"Error saving to original files: {e}")
@@ -472,15 +499,45 @@ class GapsAnalyzer:
             from pathlib import Path
             import json
             
-            # Find original CSV files
-            csv_dir = Path("data/cleaned_data/csv_converted")
-            if not csv_dir.exists():
-                return {'status': 'error', 'message': 'Original CSV directory not found'}
+            # Try multiple possible locations for CSV converted files
+            possible_dirs = [
+                Path("data/cleaned_data/csv_converted"),
+                Path("data/cache/csv_converted"),
+                Path("data/cleaned_data"),
+                Path("data/cache")
+            ]
             
-            # Look for symbol files
-            symbol_files = list(csv_dir.glob(f"*{symbol.lower()}*"))
+            csv_dir = None
+            for dir_path in possible_dirs:
+                if dir_path.exists():
+                    # Check if this directory has files for our symbol
+                    symbol_files = list(dir_path.glob(f"*{symbol.lower()}*"))
+                    if symbol_files:
+                        csv_dir = dir_path
+                        print_debug(f"Found CSV files in: {csv_dir}")
+                        break
+            
+            if not csv_dir:
+                return {'status': 'error', 'message': f'No original CSV files found for {symbol} in any expected location'}
+            
+            # Look for symbol files with more specific patterns
+            symbol_patterns = [
+                f"*{symbol.lower()}*",
+                f"*{symbol.upper()}*",
+                f"{symbol.lower()}*",
+                f"{symbol.upper()}*"
+            ]
+            
+            symbol_files = []
+            for pattern in symbol_patterns:
+                files = list(csv_dir.glob(pattern))
+                symbol_files.extend(files)
+            
+            # Remove duplicates and filter for parquet files
+            symbol_files = list(set([f for f in symbol_files if f.suffix == '.parquet']))
+            
             if not symbol_files:
-                return {'status': 'error', 'message': f'No original CSV files found for {symbol}'}
+                return {'status': 'error', 'message': f'No original CSV parquet files found for {symbol} in {csv_dir}'}
             
             saved_files = []
             for file_path in symbol_files:
@@ -492,13 +549,16 @@ class GapsAnalyzer:
                     fixed_df.to_parquet(file_path)
                     saved_files.append(str(file_path))
                     print_debug(f"Saved {timeframe} to {file_path}")
+                else:
+                    print_debug(f"Skipped {file_path.name} - timeframe {timeframe} not in mtf_data")
             
             return {
                 'status': 'success',
                 'symbol': symbol.upper(),
                 'source': 'csv',
                 'saved_files': saved_files,
-                'files_count': len(saved_files)
+                'files_count': len(saved_files),
+                'csv_dir': str(csv_dir)
             }
             
         except Exception as e:
@@ -510,15 +570,45 @@ class GapsAnalyzer:
         try:
             from pathlib import Path
             
-            # Find original raw parquet files
-            raw_dir = Path("data/raw_parquet")
-            if not raw_dir.exists():
-                return {'status': 'error', 'message': 'Original raw parquet directory not found'}
+            # Try multiple possible locations for raw parquet files
+            possible_dirs = [
+                Path("data/raw_parquet"),
+                Path("data/cleaned_data/raw_parquet"),
+                Path("data"),
+                Path("data/cleaned_data")
+            ]
             
-            # Look for symbol files
-            symbol_files = list(raw_dir.rglob(f"*{symbol.lower()}*"))
+            raw_dir = None
+            for dir_path in possible_dirs:
+                if dir_path.exists():
+                    # Check if this directory has files for our symbol
+                    symbol_files = list(dir_path.rglob(f"*{symbol.lower()}*"))
+                    if symbol_files:
+                        raw_dir = dir_path
+                        print_debug(f"Found raw parquet files in: {raw_dir}")
+                        break
+            
+            if not raw_dir:
+                return {'status': 'error', 'message': f'No original raw parquet files found for {symbol} in any expected location'}
+            
+            # Look for symbol files with more specific patterns
+            symbol_patterns = [
+                f"*{symbol.lower()}*",
+                f"*{symbol.upper()}*",
+                f"{symbol.lower()}*",
+                f"{symbol.upper()}*"
+            ]
+            
+            symbol_files = []
+            for pattern in symbol_patterns:
+                files = list(raw_dir.rglob(pattern))
+                symbol_files.extend(files)
+            
+            # Remove duplicates and filter for parquet files
+            symbol_files = list(set([f for f in symbol_files if f.suffix == '.parquet']))
+            
             if not symbol_files:
-                return {'status': 'error', 'message': f'No original raw parquet files found for {symbol}'}
+                return {'status': 'error', 'message': f'No original raw parquet files found for {symbol} in {raw_dir}'}
             
             saved_files = []
             for file_path in symbol_files:
@@ -530,13 +620,16 @@ class GapsAnalyzer:
                     fixed_df.to_parquet(file_path)
                     saved_files.append(str(file_path))
                     print_debug(f"Saved {timeframe} to {file_path}")
+                else:
+                    print_debug(f"Skipped {file_path.name} - timeframe {timeframe} not in mtf_data")
             
             return {
                 'status': 'success',
                 'symbol': symbol.upper(),
                 'source': 'raw_parquet',
                 'saved_files': saved_files,
-                'files_count': len(saved_files)
+                'files_count': len(saved_files),
+                'raw_dir': str(raw_dir)
             }
             
         except Exception as e:
