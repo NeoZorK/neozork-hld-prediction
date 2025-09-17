@@ -64,6 +64,9 @@ COPY tests/ ./tests/
 COPY uv_setup/ ./uv_setup/
 COPY mql5_feed/ ./mql5_feed/
 COPY docker-entrypoint.sh ./
+COPY pytest-docker.ini ./
+COPY eda ./
+COPY nz ./
 
 # Make entrypoint script executable
 RUN chmod +x /app/docker-entrypoint.sh /app/uv_setup/setup_uv.sh /app/uv_setup/update_deps.sh

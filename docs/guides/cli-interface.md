@@ -87,11 +87,14 @@ uv run run_analysis.py binance --symbol ETHUSDT --interval 4h --point 0.01 --rul
 
 ### 4. CSV Mode
 
-Analyze local CSV files.
+Analyze local CSV files or batch convert entire folders.
 
 ```bash
 # Basic CSV analysis
 uv run run_analysis.py csv --csv-file data/my_data.csv --point 0.01 --rule RSI
+
+# Batch convert CSV folder
+uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001
 
 # Custom column mapping
 uv run run_analysis.py csv --csv-file data/custom.csv --point 0.01 --rule MACD \
@@ -99,12 +102,32 @@ uv run run_analysis.py csv --csv-file data/custom.csv --point 0.01 --rule MACD \
 ```
 
 #### CSV Options
-- **`--csv-file`** - Path to CSV file (required)
+- **`--csv-file`** - Path to CSV file (required for single file mode)
+- **`--csv-folder`** - Path to folder containing CSV files (required for batch mode)
 - **`--point`** - Price precision (required)
-- **`--rule`** - Trading rule(s) to apply
+- **`--rule`** - Trading rule(s) to apply (not used in batch mode)
 - **`--date-col`** - Column name for timestamps
 - **`--price-cols`** - Comma-separated OHLC column names
 - **`--volume-col`** - Column name for volume data
+
+#### Batch CSV Processing
+
+The `--csv-folder` option allows you to process multiple CSV files in a folder simultaneously. This is particularly useful for:
+
+- Converting MQL5 export folders
+- Processing multiple timeframes at once
+- Batch data preparation
+
+**Example**: Convert all CSV files in the `mql5_feed` folder:
+```bash
+uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001
+```
+
+This will:
+- Find all CSV files in the specified folder
+- Convert each file to Parquet format for caching
+- Process files in alphabetical order
+- Provide detailed progress and summary information
 
 ### 5. Exchange Rate Mode
 

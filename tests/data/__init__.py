@@ -1,2 +1,3 @@
-# -*- coding: utf-8 -*-
-# tests/data/__init__.py
+"""
+Data Tests Package
+"""

@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 import pandas as pd
 from pathlib import Path
 from datetime import datetime, timedelta, timezone
+from typing import List, Tuple
 
 # Use relative imports for fetchers within the same package
 from .fetchers import (
@@ -20,7 +21,181 @@ from .fetchers import (
 )
 # Use relative import for logger functions
 from ..common.logger import print_info, print_warning, print_error, print_debug, print_success  # Added print_success
+from .gap_tracker import get_gap_tracker
 
+
+# Helper function to detect gaps in full requested range (including missing data outside cache)
+def _detect_full_range_gaps(cached_df: pd.DataFrame, req_start_dt: pd.Timestamp, req_end_dt: pd.Timestamp, 
+                           cache_start_dt: pd.Timestamp, cache_end_dt: pd.Timestamp, 
+                           interval_delta: pd.Timedelta, ticker: str = None, interval: str = None, 
+                           source: str = None) -> List[Tuple[pd.Timestamp, pd.Timestamp]]:
+    """
+    Detect gaps in the full requested range, including missing data outside the cache.
+    Returns a list of (gap_start, gap_end) tuples.
+    """
+    gaps = []
+    
+    # Check for gaps before cache starts
+    if req_start_dt < cache_start_dt:
+        gap_start = req_start_dt
+        gap_end = cache_start_dt - interval_delta
+        if gap_end > gap_start:
+            gaps.append((gap_start, gap_end))
+            print_debug(f"Gap before cache: {gap_start} to {gap_end} (duration: {gap_end - gap_start})")
+    
+    # Check for gaps after cache ends (but not for future dates - handled by continuous loading)
+    if req_end_dt > cache_end_dt:
+        gap_start = cache_end_dt + interval_delta
+        gap_end = req_end_dt
+        
+        # Only add this gap if it's not in the future (future dates handled by continuous loading)
+        current_time = pd.Timestamp.now(tz='UTC').tz_localize(None)
+        if gap_end <= current_time and gap_end > gap_start:
+            gaps.append((gap_start, gap_end))
+            print_debug(f"Gap after cache: {gap_start} to {gap_end} (duration: {gap_end - gap_start})")
+        elif gap_end > current_time:
+            print_debug(f"Gap after cache extends to future: {gap_start} to {gap_end} - will be handled by continuous loading")
+    
+    # Check for gaps within cache (if cache exists)
+    if cached_df is not None and not cached_df.empty:
+        cache_gaps = _detect_data_gaps(cached_df, cache_start_dt, cache_end_dt, interval_delta)
+        for gap_start, gap_end in cache_gaps:
+            # Only include gaps that overlap with requested range
+            if gap_start <= req_end_dt and gap_end >= req_start_dt:
+                # Adjust gap boundaries to fit within requested range
+                adjusted_start = max(gap_start, req_start_dt)
+                adjusted_end = min(gap_end, req_end_dt)
+                if adjusted_end > adjusted_start:
+                    gaps.append((adjusted_start, adjusted_end))
+    
+    # Filter out gaps that have already been checked and found to be empty
+    if ticker and interval and source and gaps:
+        gap_tracker = get_gap_tracker()
+        gaps = gap_tracker.filter_checked_gaps(ticker, interval, source, gaps)
+    
+    return gaps
+
+# Helper function to generate continuous loading ranges for future dates
+def _generate_continuous_loading_ranges(cache_end_dt: pd.Timestamp, req_end_dt: pd.Timestamp, 
+                                       current_time: pd.Timestamp, interval_delta: pd.Timedelta) -> List[Tuple[pd.Timestamp, pd.Timestamp]]:
+    """
+    Generate continuous loading ranges for future dates.
+    Adds data in smaller chunks (monthly) to ensure we get all available data.
+    """
+    ranges = []
+    
+    # Start from cache end + interval
+    start_dt = cache_end_dt + interval_delta
+    
+    # If start is already at or after current time, no need for continuous loading
+    if start_dt >= current_time:
+        return ranges
+    
+    # Generate monthly ranges from start to current time
+    current_date = start_dt
+    end_date = min(req_end_dt, current_time)
+    
+    while current_date < end_date:
+        # Calculate end of current month
+        if current_date.month == 12:
+            next_month = current_date.replace(year=current_date.year + 1, month=1, day=1)
+        else:
+            next_month = current_date.replace(month=current_date.month + 1, day=1)
+        
+        # End of current range (end of month or current time, whichever is earlier)
+        range_end = min(next_month - interval_delta, end_date)
+        
+        # Only add if the range is valid
+        if range_end > current_date:
+            ranges.append((current_date, range_end))
+            print_debug(f"Continuous loading range: {current_date} to {range_end}")
+        
+        # Move to next month
+        current_date = next_month
+    
+    return ranges
+
+# Helper function to detect gaps in cached data
+def _detect_data_gaps(df: pd.DataFrame, start_dt: pd.Timestamp, end_dt: pd.Timestamp, interval_delta: pd.Timedelta) -> List[Tuple[pd.Timestamp, pd.Timestamp]]:
+    """
+    Detect gaps in cached data within the requested range.
+    Returns a list of (gap_start, gap_end) tuples.
+    """
+    gaps = []
+    
+    # Filter data to the requested range
+    filtered_df = df[(df.index >= start_dt) & (df.index <= end_dt)]
+    
+    if len(filtered_df) < 2:
+        return gaps
+    
+    # Calculate expected time differences
+    time_diffs = filtered_df.index.to_series().diff()
+    
+    # Define what constitutes a gap (more than 1.5x the expected interval for M15)
+    # This will catch gaps of 30+ minutes for M15 data
+    gap_threshold = interval_delta * 1.5
+    
+    # Find gaps
+    gap_indices = time_diffs[time_diffs > gap_threshold]
+    
+    for timestamp, diff in gap_indices.items():
+        # Calculate gap start and end
+        gap_start = timestamp - diff + interval_delta
+        gap_end = timestamp - interval_delta
+        
+        # Only include gaps that are within our requested range
+        if gap_start >= start_dt and gap_end <= end_dt and gap_end > gap_start:
+            gaps.append((gap_start, gap_end))
+            print_debug(f"Gap detected: {gap_start} to {gap_end} (duration: {diff})")
+    
+    # Also check for large gaps that might span multiple days
+    # This is a more aggressive check for major data gaps
+    if len(filtered_df) > 0:
+        # Check if we have data for each month in the range
+        current_date = start_dt.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        end_date = end_dt.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        
+        while current_date <= end_date:
+            month_start = current_date
+            month_end = (current_date + pd.DateOffset(months=1)) - pd.Timedelta(minutes=15)
+            
+            # Check if we have data for this month
+            month_data = filtered_df[(filtered_df.index >= month_start) & (filtered_df.index <= month_end)]
+            
+            # If we have very little data for a month (less than 10% of expected), consider it a gap
+            expected_rows_per_month = (month_end - month_start).total_seconds() / (interval_delta.total_seconds())
+            if len(month_data) < expected_rows_per_month * 0.1:
+                if len(month_data) > 0:
+                    # Find the actual data range in this month
+                    actual_start = month_data.index.min()
+                    actual_end = month_data.index.max()
+                    
+                    # Check for gaps before and after the actual data
+                    if actual_start > month_start + interval_delta:
+                        gap_start = month_start
+                        gap_end = actual_start - interval_delta
+                        if gap_end > gap_start:
+                            gaps.append((gap_start, gap_end))
+                            print_debug(f"Large gap detected: {gap_start} to {gap_end} (month: {current_date.strftime('%Y-%m')})")
+                    
+                    if actual_end < month_end - interval_delta:
+                        gap_start = actual_end + interval_delta
+                        gap_end = month_end
+                        if gap_end > gap_start:
+                            gaps.append((gap_start, gap_end))
+                            print_debug(f"Large gap detected: {gap_start} to {gap_end} (month: {current_date.strftime('%Y-%m')})")
+                else:
+                    # No data at all for this month - add the entire month as a gap
+                    gap_start = month_start
+                    gap_end = month_end
+                    if gap_end > gap_start:
+                        gaps.append((gap_start, gap_end))
+                        print_debug(f"Complete month gap detected: {gap_start} to {gap_end} (month: {current_date.strftime('%Y-%m')})")
+            
+            current_date += pd.DateOffset(months=1)
+    
+    return gaps
 
 # Helper function to get interval delta
 def _get_interval_delta(interval_str: str) -> pd.Timedelta | None:
@@ -87,6 +262,9 @@ def acquire_data(args) -> dict:
     dotenv_path = '.env';
     load_dotenv(dotenv_path=dotenv_path)
     effective_mode = 'yfinance' if args.mode == 'yf' else args.mode
+    
+    # Initialize current_time for future date checks
+    current_time = pd.Timestamp.now(tz='UTC').tz_localize(None)
 
     data_info = {
         "ohlcv_df": None, "ticker": args.ticker, "interval": args.interval,
@@ -118,27 +296,50 @@ def acquire_data(args) -> dict:
             return data_info
 
         elif effective_mode == 'csv':
-            data_info["data_source_label"] = args.csv_file
-            csv_column_mapping = {
-                'Open': 'Open,', 'High': 'High,', 'Low': 'Low,',
-                'Close': 'Close,', 'Volume': 'TickVolume,'
-            }
-            csv_datetime_column = 'DateTime,'
-            df = fetch_csv_data(
-                file_path=args.csv_file, ohlc_columns=csv_column_mapping,
-                datetime_column=csv_datetime_column, skiprows=1, separator=','
-            )
-            if df is None or df.empty:
-                error_msg = f"Failed to read or process CSV file: {args.csv_file}. Check logs for details."
-                raise ValueError(error_msg)
-            if args.csv_file and Path(args.csv_file).exists():
-                try:
-                    combined_metrics["file_size_bytes"] = Path(args.csv_file).stat().st_size
-                except Exception:
-                    pass
-            combined_metrics["api_latency_sec"] = 0.0;
-            combined_metrics["api_calls"] = 0
-            data_info["ohlcv_df"] = df
+            # Handle single CSV file
+            if args.csv_file:
+                data_info["data_source_label"] = args.csv_file
+                csv_column_mapping = {
+                    'Open': 'Open,', 'High': 'High,', 'Low': 'Low,',
+                    'Close': 'Close,', 'Volume': 'TickVolume,'
+                }
+                csv_datetime_column = 'DateTime,'
+                df = fetch_csv_data(
+                    file_path=args.csv_file, ohlc_columns=csv_column_mapping,
+                    datetime_column=csv_datetime_column, skiprows=1, separator=','
+                )
+                if df is None or df.empty:
+                    error_msg = f"Failed to read or process CSV file: {args.csv_file}. Check logs for details."
+                    raise ValueError(error_msg)
+                if args.csv_file and Path(args.csv_file).exists():
+                    try:
+                        combined_metrics["file_size_bytes"] = Path(args.csv_file).stat().st_size
+                    except Exception:
+                        pass
+                combined_metrics["api_latency_sec"] = 0.0;
+                combined_metrics["api_calls"] = 0
+                data_info["ohlcv_df"] = df
+            
+            # Handle CSV folder batch processing
+            elif args.csv_folder:
+                from .batch_csv_processor import process_csv_folder
+                data_info["data_source_label"] = f"Batch CSV folder: {args.csv_folder}"
+                
+                # Process the entire folder
+                batch_results = process_csv_folder(args)
+                
+                # Update data_info with batch processing results
+                data_info.update(batch_results)
+                
+                # For batch processing, we don't return a single DataFrame
+                # Instead, we indicate that this was a batch operation
+                data_info["batch_processing"] = True
+                data_info["ohlcv_df"] = None  # No single DataFrame for batch processing
+                
+                # Set success based on batch results
+                if not batch_results["success"]:
+                    error_msg = f"Batch CSV processing failed. {len(batch_results['error_messages'])} errors occurred."
+                    raise ValueError(error_msg)
 
         elif effective_mode in ['yfinance', 'polygon', 'binance', 'exrate']:
             is_period_request = effective_mode == 'yfinance' and args.period
@@ -216,6 +417,7 @@ def acquire_data(args) -> dict:
 
             if not is_period_request:
                 interval_delta = _get_interval_delta(args.interval)
+                
                 # Special handling for exrate without dates (free plan)
                 if effective_mode == 'exrate' and req_start_dt is None:
                     # For free plan exrate, we don't need date validation or cache checking
@@ -224,17 +426,51 @@ def acquire_data(args) -> dict:
                     raise ValueError("Start date is required for cacheable API modes.")
 
                 if cache_load_success and interval_delta and cache_start_dt and cache_end_dt:
-                    if req_start_dt < cache_start_dt:
-                        # Inclusive end timestamp for this fetch range
-                        fetch_before_end = cache_start_dt - interval_delta
-                        if fetch_before_end >= req_start_dt:
-                            fetch_ranges.append((req_start_dt, fetch_before_end, cache_start_dt))
-                    if req_end_dt_inclusive > cache_end_dt:
-                        # Inclusive start timestamp for this fetch range
-                        fetch_after_start = cache_end_dt + interval_delta
-                        if fetch_after_start <= req_end_dt_inclusive:
-                            # End timestamp is the overall required inclusive end
-                            fetch_ranges.append((fetch_after_start, req_end_dt_inclusive, None))
+                    # Check for future dates - allow fetching up to requested date
+                    if req_start_dt > current_time:
+                        print_warning(f"Requested start date {req_start_dt} is in the future. No data available.")
+                        fetch_ranges = []  # No need to fetch future data
+                    elif req_end_dt_inclusive > current_time:
+                        print_info(f"Requested end date {req_end_dt_inclusive} is in the future. Will attempt to fetch up to requested date.")
+                        # Keep the requested end date for gap detection, but limit actual API calls to current time
+                        # This allows gap detection to work properly for the full requested range
+                        # The actual API calls will be limited by the fetcher functions
+                    
+                    # Check for gaps in the full requested range (including missing data outside cache)
+                    if cached_df is not None and not cached_df.empty:
+                        print_info("Checking for gaps in full requested range...")
+                        # Use the new function to detect gaps in the full range
+                        all_gaps = _detect_full_range_gaps(cached_df, req_start_dt, req_end_dt_inclusive, 
+                                                         cache_start_dt, cache_end_dt, interval_delta,
+                                                         args.ticker, args.interval, effective_mode)
+                        
+                        if all_gaps:
+                            print_info(f"Found {len(all_gaps)} gaps in full requested range. Will fetch missing data.")
+                            # Add gap ranges to fetch_ranges
+                            for gap_start, gap_end in all_gaps:
+                                fetch_ranges.append((gap_start, gap_end, None))
+                        else:
+                            print_info("No significant gaps found in full requested range.")
+                    else:
+                        # No cache available, will fetch full range
+                        print_info("No cache available, will fetch full requested range.")
+                    
+                    # Special handling for future dates: if requested end date is in the future,
+                    # we need to implement continuous loading - add data in smaller chunks until current time
+                    if req_end_dt_inclusive > current_time:
+                        print_info(f"Requested end date {req_end_dt_inclusive} is in the future.")
+                        print_info("Implementing continuous loading: will fetch data in monthly chunks until current time.")
+                        
+                        # Add continuous loading ranges for future dates
+                        continuous_ranges = _generate_continuous_loading_ranges(
+                            cache_end_dt, req_end_dt_inclusive, current_time, interval_delta
+                        )
+                        
+                        if continuous_ranges:
+                            print_info(f"Added {len(continuous_ranges)} continuous loading ranges.")
+                            fetch_ranges.extend(continuous_ranges)
+                    
+                    # Note: Gap detection and range fetching is now handled by _detect_full_range_gaps above
                     if not fetch_ranges:
                         print_info("Requested range is fully covered by cache.")
                     else:
@@ -282,8 +518,17 @@ def acquire_data(args) -> dict:
                     temp_metrics["error_message"] = str(e)
             elif fetch_ranges:
                 data_info["data_source_label"] = args.ticker
+                # Track fetch results for gap marking
+                fetch_results = []
+                gap_tracker = get_gap_tracker()
+                
                 for fetch_range_data in fetch_ranges:
-                    fetch_start, fetch_end, signal_cache_start = fetch_range_data  # fetch_end is the last timestamp to INCLUDE
+                    # Handle both old format (3 values) and new format (2 values)
+                    if len(fetch_range_data) == 3:
+                        fetch_start, fetch_end, signal_cache_start = fetch_range_data
+                    else:
+                        fetch_start, fetch_end = fetch_range_data
+                        signal_cache_start = None
                     fetch_start_str = fetch_start.strftime('%Y-%m-%d')
                     fetch_end_str = ""  # Initialize
 
@@ -297,6 +542,8 @@ def acquire_data(args) -> dict:
                         # API end date needs to cover the *entire* last day included in fetch_end.
                         # Add 1 day to the last included timestamp's date for the API call end date string.
                         fetch_end_api_call_dt = fetch_end.normalize() + timedelta(days=1)
+                        # Allow fetching up to requested date, even if it's in the future
+                        # The actual API fetcher will handle the limitation to current time if needed
                         fetch_end_str = fetch_end_api_call_dt.strftime('%Y-%m-%d')
                         # --- END CORRECTION ---
 
@@ -346,7 +593,12 @@ def acquire_data(args) -> dict:
                             new_df_part, metrics_part = fetch_func(**call_kwargs)
                             # --- End Refactored Fetch Call ---
 
-                            if new_df_part is not None and not new_df_part.empty:
+                            # Track fetch result for gap marking
+                            # Consider fetch unsuccessful if no new data was actually added
+                            fetch_success = new_df_part is not None and not new_df_part.empty
+                            fetch_results.append(fetch_success)
+
+                            if fetch_success:
                                 if isinstance(new_df_part.index, pd.DatetimeIndex):
                                     if new_df_part.index.tz is not None:
                                         new_df_part.index = new_df_part.index.tz_localize(None)
@@ -354,6 +606,13 @@ def acquire_data(args) -> dict:
                                 print_success(f"Fetched {len(new_df_part)} new rows.")  # Use print_success
                             else:
                                 print_warning(f"No data returned for range {fetch_start_str} to {fetch_end_str}.")
+                                # Check if this is due to unavailable historical data
+                                if effective_mode == 'binance':
+                                    print_info("This might be because:")
+                                    print_info("1. The trading pair was not available during this time period")
+                                    print_info("2. The requested date range is in the future")
+                                    print_info("3. The exchange was not operational during this time")
+                                    # Don't treat this as a fatal error, continue with available data
 
                             if isinstance(metrics_part, dict):
                                 for key, value in metrics_part.items():
@@ -364,17 +623,39 @@ def acquire_data(args) -> dict:
                         except Exception as e:
                             error_msg = f"Failed fetch range {fetch_start_str}-{fetch_end_str}: {e}"
                             print_error(error_msg);
-                            fetch_failed = True
+                            # Track failed fetch for gap marking
+                            fetch_results.append(False)
+                            # Don't break the entire process for individual range failures
+                            # Just log the error and continue with other ranges
                             temp_metrics["error_message"] = error_msg
                             print_error("Traceback:")
                             traceback.print_exc()
-                            break
+                            # Continue with next range instead of breaking
+                            continue
                     else:
                         print_error(f"Internal error: No fetch function defined for mode {effective_mode}")
                         fetch_failed = True;
                         break
 
                 combined_metrics.update(temp_metrics)
+                
+                # Mark all gaps as checked to prevent future attempts
+                # This prevents repeated downloads of the same gaps
+                if fetch_ranges:
+                    # Extract gap ranges properly
+                    gap_ranges = []
+                    for fetch_range_data in fetch_ranges:
+                        if len(fetch_range_data) == 3:
+                            fetch_start, fetch_end, _ = fetch_range_data
+                        else:
+                            fetch_start, fetch_end = fetch_range_data
+                        gap_ranges.append((fetch_start, fetch_end))
+                    
+                    print_debug(f"Marking {len(gap_ranges)} gaps as checked for {args.ticker} {args.interval}")
+                    # Mark all gaps as checked regardless of fetch result
+                    # This prevents repeated attempts to fetch the same gaps
+                    for gap_start, gap_end in gap_ranges:
+                        gap_tracker.mark_gap_checked(args.ticker, args.interval, effective_mode, gap_start, gap_end)
 
             elif is_period_request:
                 data_info["data_source_label"] = args.ticker
@@ -404,6 +685,17 @@ def acquire_data(args) -> dict:
                 print_error(final_error_msg)
                 data_info["error_message"] = final_error_msg;
                 new_data_list = []
+            elif combined_metrics.get("error_message") and not new_data_list:
+                # If we have error messages but no new data, it's not necessarily a failure
+                # if we have cached data available
+                if cached_df is not None and not cached_df.empty:
+                    print_warning("Some data ranges failed to fetch, but using available cached data.")
+                    data_info["error_message"] = combined_metrics.get("error_message")
+                else:
+                    # No cached data and no new data - this is a real failure
+                    print_error("No data available from any source.")
+                    data_info["error_message"] = combined_metrics.get("error_message")
+                    new_data_list = []
 
             # --- Combine Data ---
             all_dfs = ([cached_df] if cached_df is not None else []) + new_data_list
@@ -422,6 +714,15 @@ def acquire_data(args) -> dict:
                     if rows_before_dedup > rows_after_dedup: print_debug(
                         f"Removed {rows_before_dedup - rows_after_dedup} duplicate rows after combining.")
                     print_info(f"Combined data has {rows_after_dedup} unique rows.")
+                    
+                    # After combining data, check if we still have gaps for future dates
+                    if req_end_dt_inclusive > current_time and combined_df is not None and not combined_df.empty:
+                        current_data_end = combined_df.index.max()
+                        if current_data_end < req_end_dt_inclusive:
+                            remaining_gap_days = (req_end_dt_inclusive - current_data_end).days
+                            print_info(f"Data loaded up to {current_data_end}. Remaining gap: {remaining_gap_days} days until {req_end_dt_inclusive}")
+                            print_info("This gap will be filled when future data becomes available.")
+                            
                 except Exception as e:
                     print_error(f"Error combining data: {e}");
                     data_info["error_message"] = f"Error combining data: {e}"

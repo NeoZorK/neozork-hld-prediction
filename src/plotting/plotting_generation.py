@@ -787,7 +787,23 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
             logger.print_error(f"Error in dual chart plotting: {e}. Falling back to standard plotting.")
 
     try:
-        if draw_mode in ['mplfinance', 'mpl']:
+        # Check if we need to use dual chart plotting for RSI and MACD commands with parameters
+        use_dual_chart = False
+        rule_str = str(selected_rule) if selected_rule else ""
+        
+        # Check if this is a RSI or MACD command with parameters
+        if ':' in rule_str and any(indicator in rule_str.lower() for indicator in ['rsi', 'macd']):
+            indicator_name = rule_str.split(':', 1)[0].lower().strip()
+            if indicator_name in ['rsi', 'macd'] and draw_mode in ['mpl', 'mplfinance', 'sb', 'seaborn']:
+                use_dual_chart = True
+                logger.print_info(f"Detected {indicator_name} command with parameters, using dual chart plotting for {draw_mode} mode")
+        
+        if use_dual_chart:
+            # Use dual chart plotting for RSI and MACD commands with parameters
+            from src.plotting.dual_chart_plot import plot_dual_chart_results
+            mode = 'mpl' if draw_mode in ['mpl', 'mplfinance'] else 'sb'
+            plot_dual_chart_results(result_df, rule_str, plot_title, mode=mode)
+        elif draw_mode in ['mplfinance', 'mpl']:
             generate_mplfinance_plot(result_df, selected_rule, plot_title)
         elif draw_mode in ['seaborn', 'sb']:
             generate_seaborn_plot(result_df, selected_rule, plot_title)

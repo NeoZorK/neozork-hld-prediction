@@ -251,8 +251,15 @@ def plot_dual_chart_seaborn(
     
     # Add indicator based on type with modern styling
     if indicator_name == 'rsi':
+        # Check for both lowercase and uppercase RSI columns
+        rsi_col = None
         if 'rsi' in display_df.columns:
-            sns.lineplot(data=display_df, x=display_df.index, y='rsi', 
+            rsi_col = 'rsi'
+        elif 'RSI' in display_df.columns:
+            rsi_col = 'RSI'
+        
+        if rsi_col:
+            sns.lineplot(data=display_df, x=display_df.index, y=rsi_col, 
                         ax=ax2, color='#9C27B0', linewidth=3, alpha=0.9, label='RSI')
             
             # Add overbought/oversold lines with modern styling
@@ -313,18 +320,39 @@ def plot_dual_chart_seaborn(
                        linewidth=2, label=f'Oversold ({oversold})')
     
     elif indicator_name == 'macd':
+        # Check for both lowercase and uppercase MACD columns
+        macd_col = None
         if 'macd' in display_df.columns:
-            sns.lineplot(data=display_df, x=display_df.index, y='macd', 
+            macd_col = 'macd'
+        elif 'MACD_Line' in display_df.columns:
+            macd_col = 'MACD_Line'
+        
+        if macd_col:
+            sns.lineplot(data=display_df, x=display_df.index, y=macd_col, 
                         ax=ax2, color='#2196F3', linewidth=3, alpha=0.9, label='MACD')
         
+        # Check for signal line
+        signal_col = None
         if 'macd_signal' in display_df.columns:
-            sns.lineplot(data=display_df, x=display_df.index, y='macd_signal', 
+            signal_col = 'macd_signal'
+        elif 'MACD_Signal' in display_df.columns:
+            signal_col = 'MACD_Signal'
+        
+        if signal_col:
+            sns.lineplot(data=display_df, x=display_df.index, y=signal_col, 
                         ax=ax2, color='#FF4444', linewidth=2.5, alpha=0.9, label='Signal')
         
+        # Check for histogram
+        histogram_col = None
         if 'macd_histogram' in display_df.columns:
+            histogram_col = 'macd_histogram'
+        elif 'MACD_Histogram' in display_df.columns:
+            histogram_col = 'MACD_Histogram'
+        
+        if histogram_col:
             # Color histogram bars with modern colors
-            colors = ['#00C851' if val >= 0 else '#FF4444' for val in display_df['macd_histogram']]
-            ax2.bar(display_df.index, display_df['macd_histogram'], 
+            colors = ['#00C851' if val >= 0 else '#FF4444' for val in display_df[histogram_col]]
+            ax2.bar(display_df.index, display_df[histogram_col], 
                    color=colors, alpha=0.8, label='Histogram', width=0.8)
     
     elif indicator_name == 'ema':

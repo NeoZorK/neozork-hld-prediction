@@ -1,29 +1,21 @@
-# NeoZorK HLD/src/data/fetchers/binance_fetcher.py (Using pbar.write)
-
-"""
-Contains functions related to fetching data from Binance Spot API.
-Includes interval/ticker mapping and the main data download function with pagination.
-All comments are in English.
-"""
+# Enhanced Binance Fetcher with Small Chunks and Detailed Progress Control
 
 import pandas as pd
 import os
 import time
 import traceback
+import signal
 from datetime import datetime, timedelta
-from tqdm import tqdm # Import tqdm
-from src.common import logger # Absolute import
+from tqdm import tqdm
+from src.common import logger
 
 # Binance specific imports and checks
 try:
-    # noinspection PyPackageRequirements
     from binance.client import Client as BinanceClient
-    # noinspection PyPackageRequirements
     from binance.exceptions import BinanceAPIException, BinanceRequestException
     BINANCE_AVAILABLE = True
 except ImportError:
     BINANCE_AVAILABLE = False
-    # Define dummy classes if binance is not installed
     class BinanceClient:
         KLINE_INTERVAL_1MINUTE = '1m'; KLINE_INTERVAL_5MINUTE = '5m'; KLINE_INTERVAL_15MINUTE = '15m';
         KLINE_INTERVAL_30MINUTE = '30m'; KLINE_INTERVAL_1HOUR = '1h'; KLINE_INTERVAL_4HOUR = '4h';
@@ -31,40 +23,54 @@ except ImportError:
     class BinanceAPIException(Exception): pass
     class BinanceRequestException(Exception): pass
 
+# Global flag for graceful shutdown during data fetching
+shutdown_requested = False
 
-# Definition of map_binance_interval function
+def check_shutdown_requested():
+    """Check if a shutdown signal has been received during data fetching."""
+    return shutdown_requested
+
+def signal_handler(signum, frame):
+    """Handle CTRL+C gracefully during data fetching."""
+    global shutdown_requested
+    if not shutdown_requested:
+        shutdown_requested = True
+        logger.print_info("🛑 Shutdown requested during data fetching... Please wait for current chunk to complete.")
+    else:
+        logger.print_info("⚠️  Force exit requested during data fetching.")
+        raise KeyboardInterrupt("Force exit requested")
+
 def map_binance_interval(tf_input: str) -> str | None:
-    """Maps user-friendly timeframe to Binance KLINE_INTERVAL_* constant string."""
-    tf_input_upper = tf_input.upper()
+    """Maps timeframe input to Binance interval string."""
     mapping = {
-        "M1": BinanceClient.KLINE_INTERVAL_1MINUTE, "M5": BinanceClient.KLINE_INTERVAL_5MINUTE,
-        "M15": BinanceClient.KLINE_INTERVAL_15MINUTE, "M30": BinanceClient.KLINE_INTERVAL_30MINUTE,
-        "H1": BinanceClient.KLINE_INTERVAL_1HOUR, "H4": BinanceClient.KLINE_INTERVAL_4HOUR,
-        "D1": BinanceClient.KLINE_INTERVAL_1DAY, "D": BinanceClient.KLINE_INTERVAL_1DAY,
-        "W1": BinanceClient.KLINE_INTERVAL_1WEEK, "W": BinanceClient.KLINE_INTERVAL_1WEEK, "WK": BinanceClient.KLINE_INTERVAL_1WEEK,
-        "MN1": BinanceClient.KLINE_INTERVAL_1MONTH, "MN": BinanceClient.KLINE_INTERVAL_1MONTH, "MO": BinanceClient.KLINE_INTERVAL_1MONTH,
+        'M1': BinanceClient.KLINE_INTERVAL_1MINUTE, 'M5': BinanceClient.KLINE_INTERVAL_5MINUTE,
+        'M15': BinanceClient.KLINE_INTERVAL_15MINUTE, 'M30': BinanceClient.KLINE_INTERVAL_30MINUTE,
+        'H1': BinanceClient.KLINE_INTERVAL_1HOUR, 'H4': BinanceClient.KLINE_INTERVAL_4HOUR,
+        'D1': BinanceClient.KLINE_INTERVAL_1DAY, 'W1': BinanceClient.KLINE_INTERVAL_1WEEK, 'MN1': BinanceClient.KLINE_INTERVAL_1MONTH
     }
-    valid_binance_intervals = [
-        '1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M'
-    ]
+    valid_binance_intervals = ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']
+    tf_input_upper = tf_input.upper()
     if tf_input_upper in mapping: return mapping[tf_input_upper]
     elif tf_input in valid_binance_intervals: return tf_input
     else:
         logger.print_error(f"Invalid Binance timeframe input: '{tf_input}'. Use M1, H1, D1 etc. or Binance intervals like '1m', '1h', '1d'.")
         return None
 
-
-# Definition of map_binance_ticker function
 def map_binance_ticker(ticker_input: str) -> str:
     """Formats ticker for Binance (uppercase, no separators)."""
     ticker = ticker_input.upper().replace('/', '').replace('-', '')
     logger.print_debug(f"Mapped ticker '{ticker_input}' to Binance format '{ticker}'")
     return ticker
 
-
-# Definition of fetch_binance_data function
 def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: str) -> tuple[pd.DataFrame | None, dict]:
-    """ Downloads OHLCV data from Binance Spot API with pagination and tqdm progress. """
+    """ Downloads OHLCV data from Binance Spot API with small chunks and detailed progress control. """
+    global shutdown_requested
+    shutdown_requested = False  # Reset shutdown flag for new fetch
+    
+    # Register signal handler for graceful shutdown during data fetching
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+    
     if not BINANCE_AVAILABLE:
         logger.print_error("Binance Connector library ('python-binance') is not installed.")
         return None, {"error_message": "python-binance not installed"}
@@ -93,143 +99,409 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
     try:
         start_dt_obj = datetime.strptime(start_date, '%Y-%m-%d')
         end_dt_obj = datetime.strptime(end_date, '%Y-%m-%d')
-        end_dt_inclusive = end_dt_obj + timedelta(days=1) - timedelta(milliseconds=1)
         start_ms = int(start_dt_obj.timestamp() * 1000)
-        end_ms = int(end_dt_inclusive.timestamp() * 1000)
-        logger.print_debug(f"Binance date range (ms): {start_ms} ({start_dt_obj}) to {end_ms} ({end_dt_inclusive})")
+        end_ms = int(end_dt_obj.timestamp() * 1000)
     except ValueError:
         error_msg = f"Invalid date format for start_date ('{start_date}') or end_date ('{end_date}'). Use YYYY-MM-DD."
         logger.print_error(error_msg)
         return None, {"error_message": error_msg}
 
-    # --- Pagination Logic ---
+    # --- Enhanced Chunking Logic ---
     all_klines_raw = []
-    limit_per_request = 1000
-    current_start_ms = start_ms
-    initial_start_ms = start_ms
-    total_duration_ms = max(0, end_ms - initial_start_ms)
-    max_attempts_per_chunk = 5
-    request_delay_sec = 0.1 # Reduced delay slightly
+    
+    # Determine optimal chunk size based on interval
+    interval_minutes = {
+        '1m': 1, '3m': 3, '5m': 5, '15m': 15, '30m': 30,
+        '1h': 60, '2h': 120, '4h': 240, '6h': 360, '8h': 480, '12h': 720,
+        '1d': 1440, '3d': 4320, '1w': 10080, '1M': 43200
+    }
+    
+    interval_min = interval_minutes.get(binance_interval_str, 60)
+    
+    # Calculate chunk size based on time duration (max 1000 records per API call)
+    max_records_per_chunk = 1000  # Binance API limit
+    # Use time-based chunking: each chunk covers 1000 records worth of time
+    chunk_duration_ms = max_records_per_chunk * interval_min * 60 * 1000  # Convert to milliseconds
+    
+    # Calculate total chunks needed
+    total_duration_ms = end_ms - start_ms
+    total_chunks = max(1, (total_duration_ms + chunk_duration_ms - 1) // chunk_duration_ms)  # Ceiling division
+    
+    # Estimate total data size
+    estimated_rows = total_duration_ms // (interval_min * 60 * 1000)
+    estimated_data_size_kb = max(100, estimated_rows * 0.12)  # ~120 bytes per row
+    
+    logger.print_debug(f"Total chunks needed: {total_chunks}")
+    logger.print_debug(f"Estimated rows: {estimated_rows}")
+    logger.print_debug(f"Estimated data size: {estimated_data_size_kb:.1f}KB")
 
-    # --- Initialize tqdm ---
-    pbar = tqdm(total=total_duration_ms, unit='ms', desc=f"Fetching {binance_ticker}", leave=True, ascii=True, unit_scale=False)
-    last_processed_ms = initial_start_ms
+    # --- Initialize Progress Bar (only one, no stuck progress bar) ---
+    pbar = tqdm(
+        total=total_chunks, 
+        unit='chunks', 
+        desc=f"Fetching {binance_ticker}", 
+        leave=True, 
+        ascii=True, 
+        unit_scale=False,
+        bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} chunks [{elapsed}<{remaining}, {rate_fmt}] {postfix}'
+    )
+    
+    # Add early detection for unavailable data
+    logger.print_info(f"Checking data availability for {binance_ticker} from {start_date} to {end_date}")
+    logger.print_info("If no data is available for the requested period, the process will stop after a few attempts.")
+    
+    # Check for future dates without API call
+    current_time_ms = int(pd.Timestamp.now(tz='UTC').timestamp() * 1000)
+    if start_ms > current_time_ms:
+        logger.print_warning("Requested start time is in the future. No data available.")
+        return None, {**metrics, "error_message": f"Requested start date {start_date} is in the future. No historical data available for future dates."}
+    
+    # Check for known listing dates of popular cryptocurrencies
+    known_listing_dates = {
+        'SOLUSDT': '2020-08-11',
+        'ADAUSDT': '2017-10-18',  # ADAUSDT started trading on Binance in October 2017
+        'DOTUSDT': '2020-08-19',
+        'LINKUSDT': '2019-01-31',
+        'UNIUSDT': '2020-09-17',
+        'AVAXUSDT': '2021-09-22',
+        'MATICUSDT': '2019-04-26',
+        'ATOMUSDT': '2019-04-26',
+        'NEARUSDT': '2022-01-20',
+        'FTMUSDT': '2019-05-21',
+        'ETHUSDT': '2017-08-17',  # ETHUSDT started trading on Binance in August 2017
+        'BTCUSDT': '2017-08-17',  # BTCUSDT started trading on Binance in August 2017
+        'LTCUSDT': '2017-08-17',  # LTCUSDT started trading on Binance in August 2017
+        'BNBUSDT': '2017-08-17',  # BNBUSDT started trading on Binance in August 2017
+        'XRPUSDT': '2017-08-17',  # XRPUSDT started trading on Binance in August 2017
+        'BCHUSDT': '2017-08-01',  # BCHUSDT started trading on Binance in August 2017
+        'EOSUSDT': '2017-08-17',  # EOSUSDT started trading on Binance in August 2017
+        'XLMUSDT': '2017-08-17',  # XLMUSDT started trading on Binance in August 2017
+        'TRXUSDT': '2017-08-17',  # TRXUSDT started trading on Binance in August 2017
+        'NEOUSDT': '2017-08-17',  # NEOUSDT started trading on Binance in August 2017
+        'IOTAUSDT': '2017-08-17',  # IOTAUSDT started trading on Binance in August 2017
+        'DASHUSDT': '2017-08-17',  # DASHUSDT started trading on Binance in August 2017
+        'XMRUSDT': '2017-08-17',  # XMRUSDT started trading on Binance in August 2017
+        'ZECUSDT': '2017-08-17',  # ZECUSDT started trading on Binance in August 2017
+        'ETCUSDT': '2017-08-17',  # ETCUSDT started trading on Binance in August 2017
+        'QTUMUSDT': '2017-08-17',  # QTUMUSDT started trading on Binance in August 2017
+        'OMGUSDT': '2017-08-17',  # OMGUSDT started trading on Binance in August 2017
+        'WAVESUSDT': '2017-08-17',  # WAVESUSDT started trading on Binance in August 2017
+        'ZRXUSDT': '2017-08-17',  # ZRXUSDT started trading on Binance in August 2017
+        'BATUSDT': '2017-08-17',  # BATUSDT started trading on Binance in August 2017
+        'REPUSDT': '2017-08-17',  # REPUSDT started trading on Binance in August 2017
+        'KNCUSDT': '2017-08-17',  # KNCUSDT started trading on Binance in August 2017
+        'LRCUSDT': '2017-08-17',  # LRCUSDT started trading on Binance in August 2017
+        'CVCUSDT': '2017-08-17',  # CVCUSDT started trading on Binance in August 2017
+        'GNTUSDT': '2017-08-17',  # GNTUSDT started trading on Binance in August 2017
+        'STORJUSDT': '2017-08-17',  # STORJUSDT started trading on Binance in August 2017
+        'FUNUSDT': '2017-08-17',  # FUNUSDT started trading on Binance in August 2017
+        'SNTUSDT': '2017-08-17',  # SNTUSDT started trading on Binance in August 2017
+        'MCOUSDT': '2017-08-17',  # MCOUSDT started trading on Binance in August 2017
+        'ICNUSDT': '2017-08-17',  # ICNUSDT started trading on Binance in August 2017
+        'WTCUSDT': '2017-08-17',  # WTCUSDT started trading on Binance in August 2017
+        'BNTUSDT': '2017-08-17',  # BNTUSDT started trading on Binance in August 2017
+        'DLTUSDT': '2017-08-17',  # DLTUSDT started trading on Binance in August 2017
+        'AMBUSDT': '2017-08-17',  # AMBUSDT started trading on Binance in August 2017
+        'BCCUSDT': '2017-08-01',  # BCCUSDT started trading on Binance in August 2017
+        'BCHABCUSDT': '2017-08-01',  # BCHABCUSDT started trading on Binance in August 2017
+        'BCHSVUSDT': '2017-08-01'   # BCHSVUSDT started trading on Binance in August 2017
+    }
+    
+    if binance_ticker in known_listing_dates:
+        listing_date = pd.Timestamp(known_listing_dates[binance_ticker])
+        listing_date_ms = int(listing_date.timestamp() * 1000)
+        if start_ms < listing_date_ms:
+            logger.print_warning(f"Requested start date {start_date} is before {binance_ticker} was listed on Binance ({known_listing_dates[binance_ticker]}).")
+            logger.print_info("Adjusting start date to listing date.")
+            start_ms = listing_date_ms
+            start_date = listing_date.strftime('%Y-%m-%d')
+            
+            # If the entire requested range is before listing date, return empty data
+            if end_ms <= listing_date_ms:
+                logger.print_warning(f"Requested end date {end_date} is also before {binance_ticker} was listed. No data available for this period.")
+                return None, {**metrics, "error_message": f"No data available for {binance_ticker} before listing date {known_listing_dates[binance_ticker]}"}
+    
+    # Check if end time is in the future - allow fetching up to requested date
+    if end_ms > current_time_ms:
+        logger.print_info(f"Requested end time is in the future. Will attempt to fetch up to requested date.")
+        # Keep the requested end date - don't limit to current time
+        # This allows gap detection to work properly for the full requested range
+    
+    chunks_processed = 0
+    total_data_loaded_kb = 0.0
+    total_rows_downloaded = 0
+    current_start_ms = start_ms
+    max_attempts_per_chunk = 3
+    request_delay_sec = 0.3
 
     try:
-        while current_start_ms <= end_ms:
-            # Minimal logging before attempt
-            next_chunk_start_dt = datetime.fromtimestamp(current_start_ms / 1000)
-            pbar.set_postfix_str(f"Next chunk: {next_chunk_start_dt.strftime('%Y-%m-%d %H:%M')}", refresh=True) # Update postfix instead of writing
+        while current_start_ms < end_ms:
+            # Check for shutdown request before processing each chunk
+            if check_shutdown_requested():
+                logger.print_info("🛑 Shutdown requested during data fetching. Stopping gracefully...")
+                pbar.close()
+                return None, {**metrics, "error_message": "Shutdown requested by user"}
+            
+            # Calculate current chunk end time
+            current_chunk_end_ms = min(current_start_ms + chunk_duration_ms, end_ms)
+            
+            # Show detailed progress information
+            chunk_start_dt = datetime.fromtimestamp(current_start_ms / 1000)
+            chunk_end_dt = datetime.fromtimestamp(current_chunk_end_ms / 1000)
+            
+            # Calculate progress percentage
+            progress_percent = (chunks_processed / total_chunks) * 100 if total_chunks > 0 else 0
+            
+            # Update progress bar with detailed information
+            pbar.set_postfix_str(
+                f"Chunk {chunks_processed + 1}/{total_chunks} | "
+                f"{chunk_start_dt.strftime('%Y-%m-%d %H:%M')} to {chunk_end_dt.strftime('%Y-%m-%d %H:%M')} | "
+                f"{total_data_loaded_kb:.1f}KB | {total_rows_downloaded} rows | {progress_percent:.1f}%"
+            )
+            
+            # Force display update
+            import sys
+            sys.stdout.flush()
 
-            attempt = 0; klines_chunk = None; success = False
+            # --- API Call with Retry Logic ---
+            attempt = 0
+            klines_chunk = None
+            success = False
+            
             while attempt < max_attempts_per_chunk:
-                attempt += 1; wait_time = 0
+                # Check for shutdown request before each retry attempt
+                if check_shutdown_requested():
+                    logger.print_info("🛑 Shutdown requested during chunk retry. Stopping gracefully...")
+                    pbar.close()
+                    return None, {**metrics, "error_message": "Shutdown requested by user"}
+                
+                attempt += 1
+                wait_time = 0
+                
                 try:
                     start_chunk_time = time.perf_counter()
                     metrics["api_calls"] += 1
-                    klines_chunk = client.get_historical_klines(
-                        symbol=binance_ticker,
-                        interval=binance_interval_str,
-                        start_str=str(current_start_ms),
-                        end_str=str(end_ms),
-                        limit=limit_per_request
-                    )
-                    end_chunk_time = time.perf_counter(); chunk_latency = end_chunk_time - start_chunk_time
-                    success = True; metrics["total_latency_sec"] += chunk_latency
+                    
+                    # Make API call with small chunk and timeout
+                    def timeout_handler(signum, frame):
+                        raise TimeoutError("API call timed out")
+                    
+                    # Set timeout for API call (3 seconds)
+                    signal.signal(signal.SIGALRM, timeout_handler)
+                    signal.alarm(3)
+                    
+                    try:
+                        klines_chunk = client.get_historical_klines(
+                            symbol=binance_ticker,
+                            interval=binance_interval_str,
+                            start_str=current_start_ms,
+                            end_str=current_chunk_end_ms,
+                            limit=max_records_per_chunk
+                        )
+                    finally:
+                        signal.alarm(0)  # Cancel the alarm
+                    
+                    end_chunk_time = time.perf_counter()
+                    chunk_latency = end_chunk_time - start_chunk_time
+                    
+                    # Check if we got any data
+                    if not klines_chunk or len(klines_chunk) == 0:
+                        pbar.write(f"No data returned for chunk {chunks_processed + 1}. This period may not have data available.")
+                        if attempt < max_attempts_per_chunk:
+                            wait_time = 2  # Short wait before retry
+                            continue
+                        else:
+                            # If no data after all retries, skip this chunk
+                            success = False
+                            break
+                    
+                    success = True
+                    metrics["total_latency_sec"] += chunk_latency
                     metrics["successful_chunks"] += 1
-                    break # Exit retry loop
+                    break
 
                 except (BinanceAPIException, BinanceRequestException) as e:
-                    # Use pbar.write for errors to print above the bar
-                    pbar.write(f"Error: API Error attempt {attempt}/{max_attempts_per_chunk}: Status={getattr(e, 'status_code', 'N/A')}, Code={getattr(e, 'code', 'N/A')}, Msg={e}")
-                    status_code = getattr(e, 'status_code', None); error_code = getattr(e, 'code', None)
-                    if status_code == 429: 
+                    status_code = getattr(e, 'status_code', None)
+                    error_code = getattr(e, 'code', None)
+                    
+                    if status_code == 429:  # Rate limit
                         wait_time = 60
-                        if attempt < max_attempts_per_chunk: 
-                            pbar.write("Warning: Rate limit likely hit. Waiting...")
-                    elif status_code == 418: 
+                        if attempt < max_attempts_per_chunk:
+                            pbar.write("Warning: Rate limit hit. Waiting...")
+                    elif status_code == 418:  # IP ban
                         wait_time = 120
                         if attempt < max_attempts_per_chunk:
-                            pbar.write("Warning: IP ban likely. Waiting...")
-                    elif error_code == -1121:
-                        # Use pbar.write for the specific error
+                            pbar.write("Warning: IP ban detected. Waiting...")
+                    elif error_code == -1121:  # Invalid symbol
                         error_msg_text = f"Invalid symbol '{binance_ticker}'. Stopping."
                         pbar.write(f"Error: {error_msg_text}")
-                        metrics["error_message"] = error_msg_text  # Store specific error message
-                        return None, metrics  # Return immediately for invalid symbol
-                    else: pbar.write("Error: Non-retriable/unknown API error."); break
+                        metrics["error_message"] = error_msg_text
+                        return None, metrics
+                    else:
+                        pbar.write(f"API Error: {e}")
+                except TimeoutError as e:
+                    pbar.write(f"API call timed out: {e}")
+                    if attempt < max_attempts_per_chunk:
+                        wait_time = 5  # Short wait before retry
+                    else:
+                        pbar.write("API timeout after all retries. Likely no data available for this period.")
+                        break
+                except KeyboardInterrupt:
+                    logger.print_info("🛑 KeyboardInterrupt received during data fetching. Stopping gracefully...")
+                    pbar.close()
+                    return None, {**metrics, "error_message": "Interrupted by user"}
                 except Exception as e:
-                    pbar.write(f"Error: Unexpected error attempt {attempt}/{max_attempts_per_chunk}: {type(e).__name__}: {e}")
-                    pbar.write(f"Traceback:\n{traceback.format_exc()}"); break
+                    pbar.write(f"Unexpected error: {e}")
+                    pbar.write(f"Traceback:\n{traceback.format_exc()}")
+                    break
 
-                if wait_time > 0 and attempt < max_attempts_per_chunk: time.sleep(wait_time); continue
-                if not success and wait_time == 0 and attempt < max_attempts_per_chunk: time.sleep(3 * attempt); continue
+                if wait_time > 0 and attempt < max_attempts_per_chunk:
+                    time.sleep(wait_time)
+                    continue
+                if not success and wait_time == 0 and attempt < max_attempts_per_chunk:
+                    time.sleep(2 * attempt)  # Exponential backoff
+                    continue
 
-            # --- After attempting a chunk ---
+            # --- Handle Failed Chunk ---
             if not success:
-                 error_msg = f"Failed to fetch Binance chunk after {max_attempts_per_chunk} attempts."
-                 pbar.write(f"Error: {error_msg} Stopping.")
-                 return None, {**metrics, "error_message": error_msg}
+                error_msg = f"Failed to fetch Binance chunk {chunks_processed + 1} after {max_attempts_per_chunk} attempts."
+                pbar.write(f"Error: {error_msg} Stopping.")
+                return None, {"error_message": error_msg}
 
-            if not klines_chunk: break # Exit outer loop if empty chunk received
+            # --- Process Successful Chunk ---
+            if klines_chunk:
+                chunk_rows = len(klines_chunk)
+                
+                # Check if chunk has data
+                if chunk_rows > 0:
+                    metrics["rows_fetched"] += chunk_rows
+                    all_klines_raw.extend(klines_chunk)
+                    
+                    # Calculate actual data size loaded
+                    chunk_data_size_kb = chunk_rows * 0.12  # ~120 bytes per row
+                    total_data_loaded_kb += chunk_data_size_kb
+                    total_rows_downloaded += chunk_rows
+                    
+                    # Removed debug message for chunk rows
+                else:
+                    # Removed debug message for empty chunks
+                    
+                    # More aggressive early stopping for empty chunks
+                    if chunks_processed == 0:
+                        logger.print_warning("First chunk returned no data. Historical data likely not available for this period.")
+                        logger.print_info("Stopping fetch to avoid unnecessary API calls.")
+                        break
+                    
+                    # Stop after 2 consecutive empty chunks
+                    if chunks_processed >= 2 and total_rows_downloaded == 0:
+                        logger.print_warning("Multiple consecutive chunks returned no data. Stopping fetch.")
+                        break
+                
+                chunks_processed += 1
+                
+                # Update progress bar
+                pbar.update(1)  # Increment by 1 chunk
+                
+                # Show completion status
+                progress_percent = (chunks_processed / total_chunks) * 100 if total_chunks > 0 else 0
+                pbar.set_postfix_str(
+                    f"Completed chunk {chunks_processed}/{total_chunks} | "
+                    f"{total_data_loaded_kb:.1f}KB | {total_rows_downloaded} rows | {progress_percent:.1f}%"
+                )
+                pbar.refresh()
 
-            metrics["rows_fetched"] += len(klines_chunk)
-            all_klines_raw.extend(klines_chunk)
-            last_kline_time_ms = klines_chunk[-1][0]
+                # Move to next chunk
+                if chunk_rows < max_records_per_chunk:
+                    # Last chunk or no more data
+                    # Removed debug message for chunk completion
+                    break
+                
+                # If we've processed several chunks with no data, likely no more data available
+                if chunks_processed >= 2 and total_rows_downloaded == 0:
+                    logger.print_warning("Multiple chunks processed with no data. Likely no historical data available for this period.")
+                    logger.print_info("Stopping fetch to avoid unnecessary API calls.")
+                    break
+                
+                current_start_ms = current_chunk_end_ms
+                
+                # Small delay between chunks
+                if current_start_ms < end_ms:
+                    time.sleep(request_delay_sec)
 
-            # --- Update tqdm ---
-            processed_up_to_ms = last_kline_time_ms
-            update_amount = max(0, processed_up_to_ms - last_processed_ms)
-            if update_amount > 0: pbar.update(update_amount); last_processed_ms = processed_up_to_ms
-
-            current_start_ms = last_kline_time_ms + 1
-            if len(klines_chunk) < limit_per_request: break
-            if current_start_ms <= end_ms: time.sleep(request_delay_sec)
-
+    except KeyboardInterrupt:
+        logger.print_info("🛑 KeyboardInterrupt received during main data fetching loop. Stopping gracefully...")
+        pbar.close()
+        return None, {**metrics, "error_message": "Interrupted by user"}
     finally:
-        # Clear the postfix message and close the bar
-        pbar.set_postfix_str("")
-        # Update pbar to 100% if loop finished early/normally
-        final_update = total_duration_ms - pbar.n
-        if final_update > 0: pbar.update(final_update)
+        # --- Ensure progress bar shows 100% before closing ---
+        pbar.n = total_chunks
+        pbar.set_postfix_str(f"Completed: {total_chunks}/{total_chunks} chunks | {total_data_loaded_kb:.1f}KB | {total_rows_downloaded} rows | 100.0%")
+        pbar.refresh()
+        time.sleep(0.5)
         pbar.close()
 
     # --- Combine and Process All Fetched Data ---
     if not all_klines_raw:
-        logger.print_warning(f"No Binance data returned for '{binance_ticker}'.")
-        return None, {**metrics, "error_message": "No data found for the specified criteria."}
+        logger.print_warning(f"No Binance data returned for '{binance_ticker}' in the specified date range.")
+        logger.print_info(f"Date range requested: {start_date} to {end_date}")
+        logger.print_info("This might be because:")
+        logger.print_info("1. The trading pair was not available during this time period")
+        logger.print_info("2. The requested start date is before the trading pair was listed")
+        logger.print_info("3. The requested end date is in the future")
+        logger.print_info("4. The trading pair is not supported by Binance")
+        logger.print_info("5. Network issues or API rate limits")
+        
+        # Check if this is a known listing date issue
+        if binance_ticker in known_listing_dates:
+            listing_date = known_listing_dates[binance_ticker]
+            logger.print_info(f"Note: {binance_ticker} was listed on Binance on {listing_date}")
+            if start_date < listing_date:
+                logger.print_info(f"Try using a start date on or after {listing_date}")
+        
+        return None, {**metrics, "error_message": f"No data available for {binance_ticker} in the specified date range"}
+    
+    # Log final download statistics
+    logger.print_info(f"Successfully downloaded {total_rows_downloaded} rows ({total_data_loaded_kb:.1f}KB) from Binance in {chunks_processed} chunks.")
 
-    # logger.print_info(f"Converting {len(all_klines_raw)} raw klines to DataFrame...")
-
+    # Convert to DataFrame
     columns = [
         'OpenTime', 'Open', 'High', 'Low', 'Close', 'Volume',
         'CloseTime', 'QuoteAssetVolume', 'NumberTrades',
         'TakerBuyBaseVol', 'TakerBuyQuoteVol', 'Ignore'
     ]
-    try: df = pd.DataFrame(all_klines_raw, columns=columns)
+    
+    try:
+        df = pd.DataFrame(all_klines_raw, columns=columns)
     except ValueError as e:
-         logger.print_error(f"Error creating DataFrame from Binance data: {e}"); return None, metrics
-
-    # --- Data Type Conversion and Selection ---
+        logger.print_error(f"Error creating DataFrame from Binance data: {e}")
+        return None, {"error_message": str(e)}
+    
+    # Process DataFrame
     df['DateTime'] = pd.to_datetime(df['OpenTime'], unit='ms', errors='coerce')
     df.dropna(subset=['DateTime'], inplace=True)
-    if df.empty: logger.print_warning("Binance data empty after DateTime conversion."); return None, metrics
+    if df.empty:
+        logger.print_warning("Binance data empty after DateTime conversion.")
+        return None, {"error_message": "No valid data after processing"}
+    
     df.set_index('DateTime', inplace=True)
-
+    
     ohlcv_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
-    for col in ohlcv_cols: df[col] = pd.to_numeric(df[col], errors='coerce')
+    for col in ohlcv_cols:
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+    
     df.dropna(subset=['Open', 'High', 'Low', 'Close'], inplace=True)
     df = df[ohlcv_cols]
-
-    # ... (duplicate removal, sorting) ...
+    
+    # Remove duplicates and sort
     initial_rows = len(df)
     df = df[~df.index.duplicated(keep='first')]
     rows_dropped = initial_rows - len(df)
-    if rows_dropped > 0: logger.print_debug(f"Removed {rows_dropped} duplicate rows.")
+    if rows_dropped > 0:
+        logger.print_debug(f"Removed {rows_dropped} duplicate rows.")
+    
     df.sort_index(inplace=True)
-    if df.empty: logger.print_warning("Binance data empty after processing."); return None, metrics
+    if df.empty:
+        logger.print_warning("Binance data empty after processing.")
+        return None, {"error_message": "No valid data after processing"}
 
-
-    logger.print_success(f"Successfully fetched and processed {len(df)} rows from Binance.")
-    # logger.print_debug(f"Total Binance API call latency (sum of successful chunks): {metrics['total_latency_sec']:.3f} seconds")
     return df, metrics

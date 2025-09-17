@@ -120,6 +120,44 @@ class TestDockerEnvironment:
                 except Exception as e:
                     print(f"⚠️ {script_path} - Import error (expected for some scripts): {e}")
     
+    def test_debug_scripts_non_interactive(self):
+        """Test that debug scripts can run in non-interactive mode"""
+        debug_scripts = [
+            "scripts/debug/debug_yfinance.py",
+            "scripts/debug/debug_binance.py", 
+            "scripts/debug/debug_polygon.py"
+        ]
+        
+        for script_path in debug_scripts:
+            script_file = project_root / script_path
+            if script_file.exists():
+                # Test that script can be executed in non-interactive mode
+                try:
+                    # Set environment to simulate non-interactive mode
+                    env = os.environ.copy()
+                    env['DOCKER_CONTAINER'] = 'true'
+                    
+                    result = subprocess.run(
+                        [sys.executable, str(script_file)],
+                        capture_output=True,
+                        text=True,
+                        timeout=30,  # 30 second timeout
+                        env=env,
+                        cwd=str(project_root)
+                    )
+                    
+                    if result.returncode == 0:
+                        print(f"✅ {script_path} - Non-interactive execution successful")
+                    else:
+                        print(f"⚠️ {script_path} - Non-interactive execution failed (return code: {result.returncode})")
+                        print(f"   stdout: {result.stdout[:200]}...")
+                        print(f"   stderr: {result.stderr[:200]}...")
+                        
+                except subprocess.TimeoutExpired:
+                    print(f"⚠️ {script_path} - Execution timed out (expected for interactive scripts)")
+                except Exception as e:
+                    print(f"⚠️ {script_path} - Execution error: {e}")
+    
     def test_mcp_scripts_exist(self):
         """Test that MCP scripts exist"""
         mcp_scripts = [

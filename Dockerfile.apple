@@ -1,0 +1,56 @@
+# Apple Silicon optimized Dockerfile for NeoZork Interactive ML Trading System
+FROM --platform=linux/arm64 python:3.12-slim
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    git \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements first for better caching
+COPY requirements.txt .
+COPY pyproject.toml .
+COPY uv.lock .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install Apple MLX (if available)
+RUN pip install --no-cache-dir mlx || echo "MLX not available on this platform"
+
+# Copy application code
+COPY . .
+
+# Create necessary directories
+RUN mkdir -p data/cache/csv_converted \
+    data/raw_parquet \
+    data/indicators/parquet \
+    data/indicators/csv \
+    data/indicators/json \
+    data/cleaned_data \
+    logs \
+    plots \
+    results
+
+# Set permissions
+RUN chmod +x src/interactive/neozork.py
+
+# Expose port for web interface
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import src.interactive; print('OK')" || exit 1
+
+# Default command
+CMD ["python", "src/interactive/neozork.py"]

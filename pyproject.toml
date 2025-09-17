@@ -121,6 +121,9 @@ dependencies = [
     "tqdm==4.67.1",
     "pytest",
     "pytest-xdist>=3.7.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-mock>=3.14.0",
+    "pytest-timeout>=2.1.0",
     "polygon-api-client",
     "python-binance==1.0.17",
     "pyarrow",
@@ -131,6 +134,21 @@ dependencies = [
     "datashader",
     "pandas-stubs==2.2.3.250527",
     "watchdog==4.0.0",
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "sqlalchemy>=2.0.0",
+    "alembic>=1.12.0",
+    "psycopg2-binary>=2.9.0",
+    "pydantic[email]>=2.0.0",
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "python-multipart>=0.0.6",
+    "asyncpg>=0.29.0",
+    "pytest-asyncio>=0.21.0",
+    "pyotp>=2.9.0",
+    "bcrypt>=4.3.0",
+    "qrcode>=8.2",
+    "pyjwt>=2.10.1",
 ]
 
 [build-system]
@@ -150,17 +168,4 @@ dev = [
     "pytest-xdist>=3.7.0",
 ]
 
-[tool.pytest.ini_options]
-minversion = "6.0"
-addopts = "-ra -q --strict-markers"
-testpaths = [
-    "tests",
-]
-markers = [
-    "basic: marks tests as basic functionality tests",
-    "flag_combinations: marks tests as flag combination tests",
-    "error: marks tests as error case tests",
-    "performance: marks tests as performance tests",
-    "integration: marks tests as integration tests",
-    "slow: marks tests as slow running tests",
-]
+# pytest configuration moved to pytest.ini to avoid conflicts
