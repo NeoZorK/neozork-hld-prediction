@@ -487,14 +487,14 @@ class GapsFixer:
     
     def _create_complete_time_index(self, df: pd.DataFrame, gaps_info: Dict[str, Any]) -> pd.DatetimeIndex:
         """
-        Create complete time index by filling gaps.
+        Create time index by filling only the actual gaps, not the entire time range.
         
         Args:
             df: Original DataFrame
             gaps_info: Gap information
             
         Returns:
-            Complete DatetimeIndex
+            DatetimeIndex with gaps filled
         """
         try:
             if df.empty:
@@ -532,40 +532,37 @@ class GapsFixer:
                 # Fallback to 1 hour
                 expected_interval = timedelta(hours=1)
             
-            # Create complete range
-            start_time = df.index.min()
-            end_time = df.index.max()
+            # Get gaps information
+            gaps = gaps_info.get('gaps', [])
+            if not gaps:
+                # No gaps to fill, return original index
+                return df.index
             
-            # Convert timedelta to pandas frequency string
-            if expected_interval == timedelta(minutes=1):
-                freq_str = '1min'  # 1 minute
-            elif expected_interval == timedelta(minutes=5):
-                freq_str = '5min'  # 5 minutes
-            elif expected_interval == timedelta(minutes=15):
-                freq_str = '15min'  # 15 minutes
-            elif expected_interval == timedelta(minutes=30):
-                freq_str = '30min'  # 30 minutes
-            elif expected_interval == timedelta(hours=1):
-                freq_str = '1h'  # 1 hour
-            elif expected_interval == timedelta(hours=4):
-                freq_str = '4h'  # 4 hours
-            elif expected_interval == timedelta(days=1):
-                freq_str = '1D'  # 1 day
-            elif expected_interval == timedelta(weeks=1):
-                freq_str = '1W'  # 1 week
-            elif expected_interval == timedelta(days=30):
-                freq_str = '30D'  # 30 days
-            else:
-                # Fallback to minutes
-                minutes = int(expected_interval.total_seconds() / 60)
-                freq_str = f'{minutes}min'
+            # Start with original index
+            complete_times = df.index.tolist()
             
-            # Generate complete time range
-            complete_times = pd.date_range(
-                start=start_time,
-                end=end_time,
-                freq=freq_str
-            )
+            # Fill only the actual gaps
+            for gap in gaps:
+                gap_start = pd.to_datetime(gap['start'])
+                gap_end = pd.to_datetime(gap['end'])
+                
+                # Generate missing timestamps for this specific gap
+                gap_times = pd.date_range(
+                    start=gap_start + expected_interval,
+                    end=gap_end - expected_interval,
+                    freq=expected_interval
+                )
+                
+                # Add gap timestamps to the complete list
+                complete_times.extend(gap_times.tolist())
+            
+            # Sort and remove duplicates
+            complete_times = pd.DatetimeIndex(complete_times).sort_values().drop_duplicates()
+            
+            print_debug(f"Original data points: {len(df)}")
+            print_debug(f"Gaps filled: {len(gaps)}")
+            print_debug(f"Points added: {len(complete_times) - len(df)}")
+            print_debug(f"Final data points: {len(complete_times)}")
             
             return complete_times
             
