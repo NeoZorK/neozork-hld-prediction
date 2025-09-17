@@ -421,8 +421,17 @@ class EDAMenu(BaseMenu):
                 for timeframe, result in timeframe_gaps.items():
                     if result.get('status') == 'success':
                         stats = result.get('statistics', {})
-                        print(f"  • {timeframe}: {stats.get('total_gaps', 0)} gaps, "
-                              f"{stats.get('total_missing_points', 0)} missing points")
+                        actual_interval = result.get('actual_interval', 'Unknown')
+                        expected_interval = result.get('expected_interval', 'Unknown')
+                        
+                        # Show interval mismatch warning
+                        if actual_interval != expected_interval:
+                            print(f"  • {timeframe}: {stats.get('total_gaps', 0)} gaps, "
+                                  f"{stats.get('total_missing_points', 0)} missing points "
+                                  f"(⚠️  Data is {actual_interval} intervals, expected {expected_interval})")
+                        else:
+                            print(f"  • {timeframe}: {stats.get('total_gaps', 0)} gaps, "
+                                  f"{stats.get('total_missing_points', 0)} missing points")
             
         except Exception as e:
             print(f"{Fore.RED}❌ Error displaying results: {e}")

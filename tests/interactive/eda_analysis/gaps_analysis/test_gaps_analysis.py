@@ -104,6 +104,23 @@ class TestGapsDetector:
         assert stats['average_gap_size'] == 2.5
         assert stats['largest_gap_size'] == 3.0
         assert stats['smallest_gap_size'] == 2.0
+    
+    def test_detect_actual_interval(self):
+        """Test actual interval detection."""
+        # Test M1 data (1 minute intervals)
+        dates_m1 = pd.date_range('2023-01-01', periods=10, freq='1min')
+        actual_interval = self.detector._detect_actual_interval(dates_m1)
+        assert actual_interval == timedelta(minutes=1)
+        
+        # Test M5 data (5 minute intervals)
+        dates_m5 = pd.date_range('2023-01-01', periods=10, freq='5min')
+        actual_interval = self.detector._detect_actual_interval(dates_m5)
+        assert actual_interval == timedelta(minutes=5)
+        
+        # Test H1 data (1 hour intervals)
+        dates_h1 = pd.date_range('2023-01-01', periods=10, freq='1H')
+        actual_interval = self.detector._detect_actual_interval(dates_h1)
+        assert actual_interval == timedelta(hours=1)
 
 
 class TestGapsFixer:

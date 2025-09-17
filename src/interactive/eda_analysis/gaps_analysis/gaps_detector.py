@@ -152,8 +152,22 @@ class GapsDetector:
                 print_debug("Converting index to datetime")
                 df_sorted.index = pd.to_datetime(df_sorted.index)
             
+            # Check if data actually matches the expected timeframe
+            actual_interval = self._detect_actual_interval(df_sorted.index)
+            print_debug(f"Actual interval detected: {actual_interval}")
+            
+            # If actual interval doesn't match expected timeframe, treat as M1 data
+            if actual_interval != expected_interval:
+                print_debug(f"Data interval ({actual_interval}) doesn't match expected timeframe ({expected_interval})")
+                print_debug(f"Treating {timeframe} data as M1 data for gap analysis")
+                # Use M1 logic for gap detection
+                expected_interval = timedelta(minutes=1)
+                timeframe_for_analysis = 'M1'
+            else:
+                timeframe_for_analysis = timeframe
+            
             # Find gaps using vectorized operations
-            gaps = self._find_gaps_vectorized(df_sorted.index, expected_interval, timeframe)
+            gaps = self._find_gaps_vectorized(df_sorted.index, expected_interval, timeframe_for_analysis)
             
             # Calculate gap statistics
             gap_stats = self._calculate_gap_statistics(gaps, expected_interval)
@@ -161,6 +175,7 @@ class GapsDetector:
             return {
                 'status': 'success',
                 'timeframe': timeframe,
+                'actual_interval': str(actual_interval),
                 'expected_interval': str(expected_interval),
                 'gaps': gaps,
                 'gap_count': len(gaps),
@@ -180,6 +195,35 @@ class GapsDetector:
                 'gaps': [],
                 'gap_count': 0
             }
+    
+    def _detect_actual_interval(self, index: pd.DatetimeIndex) -> timedelta:
+        """
+        Detect the actual time interval in the data.
+        
+        Args:
+            index: DatetimeIndex to analyze
+            
+        Returns:
+            Most common time interval in the data
+        """
+        try:
+            if len(index) < 2:
+                return timedelta(minutes=1)
+            
+            # Calculate differences between consecutive timestamps
+            diffs = index.to_series().diff().dropna()
+            
+            # Get the most common interval (mode)
+            mode_interval = diffs.mode()
+            if len(mode_interval) > 0:
+                return mode_interval.iloc[0]
+            else:
+                # Fallback to median
+                return diffs.median()
+                
+        except Exception as e:
+            print_debug(f"Error detecting actual interval: {e}")
+            return timedelta(minutes=1)
     
     def _find_gaps_vectorized(self, index: pd.DatetimeIndex,
                              expected_interval: timedelta, timeframe: str = 'M1') -> List[Dict[str, Any]]:
