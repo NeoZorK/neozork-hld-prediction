@@ -200,18 +200,18 @@ class Plan:
         """Add a feature to the plan"""
         if feature_name not in self.features:
             self.features.append(feature_name)
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(datetime.UTC)
     
     def remove_feature(self, feature_name: str) -> None:
         """Remove a feature from the plan"""
         if feature_name in self.features:
             self.features.remove(feature_name)
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(datetime.UTC)
     
     def set_limit(self, limit_type: str, value: int) -> None:
         """Set a limit for the plan"""
         self.limits[limit_type] = value
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def get_limit(self, limit_type: str, default: int = 0) -> int:
         """Get a limit for the plan"""
@@ -240,15 +240,15 @@ class Plan:
             "name": addon_name,
             "price": price,
             "description": description,
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": datetime.now(datetime.UTC).isoformat()
         }
         self.available_addons.append(addon)
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def remove_addon(self, addon_id: str) -> None:
         """Remove an add-on from the plan"""
         self.available_addons = [addon for addon in self.available_addons if addon["id"] != addon_id]
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def get_addon(self, addon_id: str) -> Optional[Dict[str, Any]]:
         """Get an add-on by ID"""

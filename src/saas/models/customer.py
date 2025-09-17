@@ -119,7 +119,7 @@ class Customer:
     def is_locked(self) -> bool:
         """Check if customer account is locked"""
         return (self.status == CustomerStatus.LOCKED or 
-                (self.locked_until is not None and datetime.utcnow() < self.locked_until))
+                (self.locked_until is not None and datetime.now(datetime.UTC) < self.locked_until))
     
     def is_tenant_admin(self) -> bool:
         """Check if customer is tenant administrator"""
@@ -133,18 +133,18 @@ class Customer:
         """Add a permission to customer"""
         if permission not in self.permissions:
             self.permissions.append(permission)
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(datetime.UTC)
     
     def remove_permission(self, permission: str) -> None:
         """Remove a permission from customer"""
         if permission in self.permissions:
             self.permissions.remove(permission)
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(datetime.UTC)
     
     def update_preference(self, key: str, value: Any) -> None:
         """Update a customer preference"""
         self.preferences[key] = value
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def get_preference(self, key: str, default: Any = None) -> Any:
         """Get a customer preference"""
@@ -153,7 +153,7 @@ class Customer:
     def update_setting(self, key: str, value: Any) -> None:
         """Update a customer setting"""
         self.settings[key] = value
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def get_setting(self, key: str, default: Any = None) -> Any:
         """Get a customer setting"""
@@ -162,7 +162,7 @@ class Customer:
     def update_notification_preference(self, notification_type: str, enabled: bool) -> None:
         """Update notification preference"""
         self.notification_preferences[notification_type] = enabled
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def is_notification_enabled(self, notification_type: str) -> bool:
         """Check if notification type is enabled"""
@@ -170,21 +170,21 @@ class Customer:
     
     def record_login(self, ip_address: str = None) -> None:
         """Record customer login"""
-        self.last_login = datetime.utcnow()
+        self.last_login = datetime.now(datetime.UTC)
         self.login_count += 1
-        self.last_activity = datetime.utcnow()
+        self.last_activity = datetime.now(datetime.UTC)
         self.failed_login_attempts = 0
         self.locked_until = None
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def record_failed_login(self) -> None:
         """Record failed login attempt"""
         self.failed_login_attempts += 1
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
         
         # Lock account after 5 failed attempts
         if self.failed_login_attempts >= 5:
-            self.locked_until = datetime.utcnow() + timedelta(minutes=30)
+            self.locked_until = datetime.now(datetime.UTC) + timedelta(minutes=30)
             self.status = CustomerStatus.LOCKED
     
     def unlock_account(self) -> None:
@@ -193,7 +193,7 @@ class Customer:
         self.locked_until = None
         if self.status == CustomerStatus.LOCKED:
             self.status = CustomerStatus.ACTIVE
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def update_usage(self, usage_type: str, amount: int) -> None:
         """Update usage statistics"""
@@ -202,18 +202,18 @@ class Customer:
         elif usage_type == "storage":
             self.storage_used_mb += amount
         
-        self.last_activity = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+        self.last_activity = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(datetime.UTC)
     
     def reset_monthly_usage(self) -> None:
         """Reset monthly usage counters"""
         self.api_calls_this_month = 0
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def update_profile(self, profile_data: Dict[str, Any]) -> None:
         """Update customer profile data"""
         self.profile_data.update(profile_data)
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def get_profile_summary(self) -> Dict[str, Any]:
         """Get customer profile summary"""

@@ -177,8 +177,8 @@ async def test_fund(db_manager) -> Dict[str, Any]:
         'min_investment': Decimal('1000.00'),
         'max_investment': Decimal('10000.00'),
         'status': 'active',
-        'created_at': datetime.utcnow(),
-        'updated_at': datetime.utcnow()
+        'created_at': datetime.now(datetime.UTC),
+        'updated_at': datetime.now(datetime.UTC)
     }
     
     try:
@@ -220,8 +220,8 @@ async def test_investment(db_manager, test_user, test_fund) -> Dict[str, Any]:
         'shares_acquired': Decimal('50.00'),
         'share_price': Decimal('100.00'),
         'status': 'active',
-        'created_at': datetime.utcnow(),
-        'updated_at': datetime.utcnow()
+        'created_at': datetime.now(datetime.UTC),
+        'updated_at': datetime.now(datetime.UTC)
     }
     
     try:

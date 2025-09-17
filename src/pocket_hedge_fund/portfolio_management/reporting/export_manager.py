@@ -63,7 +63,7 @@ class ExportManager:
             # Prepare performance report data
             report_data = {
                 'report_type': 'performance',
-                'generated_at': datetime.utcnow().isoformat(),
+                'generated_at': datetime.now(datetime.UTC).isoformat(),
                 'data': performance_data
             }
             
@@ -87,7 +87,7 @@ class ExportManager:
             # Prepare risk report data
             report_data = {
                 'report_type': 'risk',
-                'generated_at': datetime.utcnow().isoformat(),
+                'generated_at': datetime.now(datetime.UTC).isoformat(),
                 'data': risk_data
             }
             
@@ -111,7 +111,7 @@ class ExportManager:
             # Prepare comprehensive report data
             report_data = {
                 'report_type': 'comprehensive',
-                'generated_at': datetime.utcnow().isoformat(),
+                'generated_at': datetime.now(datetime.UTC).isoformat(),
                 'data': comprehensive_data
             }
             
@@ -135,7 +135,7 @@ class ExportManager:
             # Prepare positions data
             export_data = {
                 'data_type': 'positions',
-                'generated_at': datetime.utcnow().isoformat(),
+                'generated_at': datetime.now(datetime.UTC).isoformat(),
                 'positions': positions_data
             }
             
@@ -159,7 +159,7 @@ class ExportManager:
             # Prepare transactions data
             export_data = {
                 'data_type': 'transactions',
-                'generated_at': datetime.utcnow().isoformat(),
+                'generated_at': datetime.now(datetime.UTC).isoformat(),
                 'transactions': transactions_data
             }
             
@@ -246,7 +246,7 @@ class ExportManager:
         try:
             export_data = {
                 'export_metadata': {
-                    'generated_at': datetime.utcnow().isoformat(),
+                    'generated_at': datetime.now(datetime.UTC).isoformat(),
                     'export_version': '1.0',
                     'include_charts': include_charts
                 },
@@ -350,7 +350,7 @@ class ExportManager:
                 'frequency': export_config.get('frequency', 'weekly'),
                 'include_charts': export_config.get('include_charts', True),
                 'email_recipients': export_config.get('email_recipients', []),
-                'created_at': datetime.utcnow().isoformat(),
+                'created_at': datetime.now(datetime.UTC).isoformat(),
                 'next_export': self._calculate_next_export_time(export_config.get('frequency', 'weekly'))
             }
             
@@ -367,7 +367,7 @@ class ExportManager:
     def _calculate_next_export_time(self, frequency: str) -> str:
         """Calculate next export time based on frequency."""
         try:
-            now = datetime.utcnow()
+            now = datetime.now(datetime.UTC)
             
             if frequency == 'daily':
                 next_time = now.replace(hour=9, minute=0, second=0, microsecond=0) + timedelta(days=1)
@@ -390,7 +390,7 @@ class ExportManager:
             
         except Exception as e:
             logger.error(f"Failed to calculate next export time: {e}")
-            return datetime.utcnow().isoformat()
+            return datetime.now(datetime.UTC).isoformat()
     
     async def _save_export_schedule(self, schedule: Dict[str, Any]):
         """Save export schedule to database."""
@@ -409,5 +409,5 @@ class ExportManager:
         return {
             'export_formats': self.get_supported_formats(),
             'data_size': len(str(data)),
-            'export_timestamp': datetime.utcnow().isoformat()
+            'export_timestamp': datetime.now(datetime.UTC).isoformat()
         }

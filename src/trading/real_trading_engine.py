@@ -758,7 +758,7 @@ async def test_real_trading_system():
     print("  • Strategy added: ✅")
     
     # Generate sample data for backtest
-    dates = pd.date_range('2023-01-01', periods=100, freq='1H')
+    dates = pd.date_range('2023-01-01', periods=100, freq='1h')
     prices = 100 + np.cumsum(np.random.normal(0, 1, 100))
     
     data = pd.DataFrame({

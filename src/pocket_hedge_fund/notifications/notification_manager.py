@@ -194,8 +194,8 @@ class NotificationManager:
                 scheduled_at=scheduled_at,
                 sent_at=None,
                 read_at=None,
-                created_at=datetime.utcnow(),
-                updated_at=datetime.utcnow()
+                created_at=datetime.now(datetime.UTC),
+                updated_at=datetime.now(datetime.UTC)
             )
             
             # Store in database
@@ -206,7 +206,7 @@ class NotificationManager:
             await self._store_notification_redis(notification)
             
             # Process notification if not scheduled
-            if not scheduled_at or scheduled_at <= datetime.utcnow():
+            if not scheduled_at or scheduled_at <= datetime.now(datetime.UTC):
                 await self._process_notification(notification)
             
             logger.info(f"Notification created: {notification_id}")
@@ -312,9 +312,9 @@ class NotificationManager:
                         Notification.user_id == user_id
                     )
                 ).values(
-                    read_at=datetime.utcnow(),
+                    read_at=datetime.now(datetime.UTC),
                     status=NotificationStatus.READ,
-                    updated_at=datetime.utcnow()
+                    updated_at=datetime.now(datetime.UTC)
                 )
                 
                 result = await session.execute(query)
@@ -323,7 +323,7 @@ class NotificationManager:
                 if result.rowcount > 0:
                     # Update Redis cache
                     await self._update_notification_redis(notification_id, {
-                        "read_at": datetime.utcnow().isoformat(),
+                        "read_at": datetime.now(datetime.UTC).isoformat(),
                         "status": NotificationStatus.READ.value
                     })
                     
@@ -381,7 +381,7 @@ class NotificationManager:
                     quiet_hours_start=preferences.quiet_hours_start,
                     quiet_hours_end=preferences.quiet_hours_end,
                     timezone=preferences.timezone,
-                    updated_at=datetime.utcnow()
+                    updated_at=datetime.now(datetime.UTC)
                 )
                 
                 result = await session.execute(query)
@@ -418,8 +418,8 @@ class NotificationManager:
                 channel=channel,
                 notification_type=notification_type,
                 variables=variables,
-                created_at=datetime.utcnow(),
-                updated_at=datetime.utcnow()
+                created_at=datetime.now(datetime.UTC),
+                updated_at=datetime.now(datetime.UTC)
             )
             
             async with self.db_manager.get_session() as session:
@@ -561,7 +561,7 @@ class NotificationManager:
     async def _process_notification(self, notification: Notification):
         """Process notification for sending"""
         # Check if notification should be sent immediately
-        if notification.scheduled_at and notification.scheduled_at > datetime.utcnow():
+        if notification.scheduled_at and notification.scheduled_at > datetime.now(datetime.UTC):
             return
         
         # Send notification
@@ -587,8 +587,8 @@ class NotificationManager:
                 Notification.notification_id == notification_id
             ).values(
                 status=status,
-                sent_at=datetime.utcnow() if status == NotificationStatus.SENT else None,
-                updated_at=datetime.utcnow()
+                sent_at=datetime.now(datetime.UTC) if status == NotificationStatus.SENT else None,
+                updated_at=datetime.now(datetime.UTC)
             )
             
             await session.execute(query)
@@ -753,7 +753,7 @@ class NotificationManager:
                     "title": title,
                     "message": message,
                     "data": data or {},
-                    "timestamp": datetime.utcnow().isoformat()
+                    "timestamp": datetime.now(datetime.UTC).isoformat()
                 }
                 
                 async with session.post(webhook_url, json=payload) as response:
@@ -779,7 +779,7 @@ class NotificationManager:
                     "title": title,
                     "message": message,
                     "data": data or {},
-                    "timestamp": datetime.utcnow().isoformat()
+                    "timestamp": datetime.now(datetime.UTC).isoformat()
                 }
                 
                 key = f"in_app_notifications:{user_id}"
@@ -824,8 +824,8 @@ class NotificationManager:
             quiet_hours_start=None,
             quiet_hours_end=None,
             timezone="UTC",
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            created_at=datetime.now(datetime.UTC),
+            updated_at=datetime.now(datetime.UTC)
         )
         
         # Store in database
@@ -867,7 +867,7 @@ class NotificationManager:
     async def cleanup_expired_notifications(self, days: int = 30):
         """Clean up expired notifications"""
         try:
-            cutoff_date = datetime.utcnow() - timedelta(days=days)
+            cutoff_date = datetime.now(datetime.UTC) - timedelta(days=days)
             
             async with self.db_manager.get_session() as session:
                 query = delete(Notification).where(

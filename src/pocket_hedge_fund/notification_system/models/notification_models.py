@@ -10,7 +10,7 @@ from decimal import Decimal
 from enum import Enum
 import uuid
 
-from pydantic import BaseModel, Field, validator, EmailStr
+from pydantic import BaseModel, field_validator, Field, validator, EmailStr
 
 
 class DeliveryStatus(str, Enum):
@@ -91,13 +91,13 @@ class Notification(BaseModel):
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
 
-    @validator('expires_at')
+    @field_validator('expires_at')
     def validate_expires_at(cls, v, values):
         if v and 'scheduled_at' in values and values['scheduled_at'] and v <= values['scheduled_at']:
             raise ValueError('Expires at must be after scheduled at')
         return v
 
-    @validator('channels')
+    @field_validator('channels')
     def validate_channels(cls, v):
         if not v:
             raise ValueError('At least one channel must be specified')
@@ -121,7 +121,7 @@ class NotificationTemplate(BaseModel):
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
 
-    @validator('body_template')
+    @field_validator('body_template')
     def validate_body_template(cls, v):
         if not v or not v.strip():
             raise ValueError('Body template cannot be empty')
@@ -142,7 +142,7 @@ class NotificationChannel(BaseModel):
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
 
-    @validator('configuration')
+    @field_validator('configuration')
     def validate_configuration(cls, v, values):
         if 'channel_type' in values:
             channel_type = values['channel_type']
@@ -175,7 +175,7 @@ class NotificationPreference(BaseModel):
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
 
-    @validator('quiet_hours_start', 'quiet_hours_end')
+    @field_validator('quiet_hours_start', 'quiet_hours_end')
     def validate_quiet_hours(cls, v):
         if v:
             try:
@@ -201,7 +201,7 @@ class NotificationHistory(BaseModel):
     metadata: Optional[Dict[str, Any]] = None
     created_at: datetime = Field(default_factory=datetime.now)
 
-    @validator('delivered_at')
+    @field_validator('delivered_at')
     def validate_delivered_at(cls, v, values):
         if v and 'sent_at' in values and values['sent_at'] and v < values['sent_at']:
             raise ValueError('Delivered at cannot be before sent at')
@@ -237,7 +237,7 @@ class NotificationMetrics(BaseModel):
     period_end: datetime
     generated_at: datetime = Field(default_factory=datetime.now)
 
-    @validator('delivery_rate')
+    @field_validator('delivery_rate')
     def validate_delivery_rate(cls, v, values):
         if 'total_sent' in values and values['total_sent'] > 0:
             expected_rate = values.get('total_delivered', 0) / values['total_sent']

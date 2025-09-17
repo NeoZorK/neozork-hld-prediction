@@ -44,7 +44,7 @@ class TestIndicatorsLoader:
         
         # Create sample parquet file
         parquet_data = pd.DataFrame({
-            'timestamp': pd.date_range('2023-01-01', periods=100, freq='1H'),
+            'timestamp': pd.date_range('2023-01-01', periods=100, freq='1h'),
             'value': np.random.randn(100),
             'symbol': ['BTCUSDT'] * 100,
             'timeframe': ['H1'] * 100

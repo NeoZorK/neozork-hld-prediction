@@ -56,7 +56,7 @@ class TestMomentumStrategy:
             "BTC": {
                 "prices": [45000, 45100, 45200, 45300, 45400, 45500, 45600, 45700, 45800, 45900, 46000, 46100, 46200, 46300, 46400, 46500, 46600, 46700, 46800, 46900, 47000],
                 "volume": 1000000,
-                "timestamp": datetime.utcnow()
+                "timestamp": datetime.now(datetime.UTC)
             }
         }
         
@@ -75,7 +75,7 @@ class TestMomentumStrategy:
             "BTC": {
                 "prices": [47000, 46900, 46800, 46700, 46600, 46500, 46400, 46300, 46200, 46100, 46000, 45900, 45800, 45700, 45600, 45500, 45400, 45300, 45200, 45100, 45000],
                 "volume": 1000000,
-                "timestamp": datetime.utcnow()
+                "timestamp": datetime.now(datetime.UTC)
             }
         }
         
@@ -102,7 +102,7 @@ class TestMomentumStrategy:
             take_profit=49500.0,  # 10% take profit
             confidence=0.7,
             metadata={},
-            created_at=datetime.utcnow()
+            created_at=datetime.now(datetime.UTC)
         )
         
         portfolio_value = 100000.0
@@ -146,7 +146,7 @@ class TestMomentumStrategy:
             take_profit=49500.0,
             confidence=0.7,
             metadata={},
-            created_at=datetime.utcnow()
+            created_at=datetime.now(datetime.UTC)
         )
         
         assert await momentum_strategy.validate_signal(valid_signal) is True
@@ -164,7 +164,7 @@ class TestMomentumStrategy:
             take_profit=49500.0,
             confidence=0.7,
             metadata={},
-            created_at=datetime.utcnow()
+            created_at=datetime.now(datetime.UTC)
         )
         
         assert await momentum_strategy.validate_signal(invalid_signal) is False
@@ -198,7 +198,7 @@ class TestMeanReversionStrategy:
             "ETH": {
                 "prices": prices,
                 "volume": 500000,
-                "timestamp": datetime.utcnow()
+                "timestamp": datetime.now(datetime.UTC)
             }
         }
         
@@ -219,7 +219,7 @@ class TestMeanReversionStrategy:
             "ETH": {
                 "prices": prices,
                 "volume": 500000,
-                "timestamp": datetime.utcnow()
+                "timestamp": datetime.now(datetime.UTC)
             }
         }
         
@@ -245,7 +245,7 @@ class TestMeanReversionStrategy:
             take_profit=3180.0,  # 6% take profit
             confidence=0.8,
             metadata={},
-            created_at=datetime.utcnow()
+            created_at=datetime.now(datetime.UTC)
         )
         
         portfolio_value = 100000.0
@@ -394,7 +394,7 @@ class TestStrategyExecutor:
             take_profit=49500.0,
             confidence=0.7,
             metadata={},
-            created_at=datetime.utcnow()
+            created_at=datetime.now(datetime.UTC)
         )
         
         # Execute signal
@@ -442,8 +442,8 @@ class TestStrategyExecutor:
         )
         
         # Run backtest
-        start_date = datetime.utcnow() - timedelta(days=30)
-        end_date = datetime.utcnow()
+        start_date = datetime.now(datetime.UTC) - timedelta(days=30)
+        end_date = datetime.now(datetime.UTC)
         initial_capital = 100000.0
         
         backtest_results = await strategy_executor.backtest_strategy(
@@ -479,7 +479,7 @@ class TestStrategyExecutor:
             take_profit=49500.0,
             confidence=0.7,
             metadata={},
-            created_at=datetime.utcnow()
+            created_at=datetime.now(datetime.UTC)
         )
         
         assert await strategy_executor._validate_signal(valid_signal) is True
@@ -497,7 +497,7 @@ class TestStrategyExecutor:
             take_profit=49500.0,
             confidence=0.7,
             metadata={},
-            created_at=datetime.utcnow()
+            created_at=datetime.now(datetime.UTC)
         )
         
         assert await strategy_executor._validate_signal(invalid_signal) is False
@@ -526,7 +526,7 @@ class TestStrategyExecutor:
             take_profit=49500.0,
             confidence=0.7,
             metadata={},
-            created_at=datetime.utcnow()
+            created_at=datetime.now(datetime.UTC)
         )
         
         assert await strategy_executor._check_risk_limits(signal, "test_fund_001") is True
@@ -544,7 +544,7 @@ class TestStrategyExecutor:
             take_profit=49500.0,
             confidence=0.7,
             metadata={},
-            created_at=datetime.utcnow()
+            created_at=datetime.now(datetime.UTC)
         )
         
         assert await strategy_executor._check_risk_limits(large_signal, "test_fund_001") is False
@@ -576,7 +576,7 @@ class TestStrategyExecutor:
             take_profit=49500.0,
             confidence=0.7,
             metadata={},
-            created_at=datetime.utcnow()
+            created_at=datetime.now(datetime.UTC)
         )
         
         # Create order
@@ -609,8 +609,8 @@ class TestStrategyExecutor:
             average_fill_price=None,
             commission=0.0,
             metadata={},
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            created_at=datetime.now(datetime.UTC),
+            updated_at=datetime.now(datetime.UTC)
         )
         
         # Submit order
@@ -638,8 +638,8 @@ class TestStrategyExecutor:
     @pytest.mark.asyncio
     async def test_historical_data_retrieval(self, strategy_executor):
         """Test historical data retrieval"""
-        start_date = datetime.utcnow() - timedelta(days=30)
-        end_date = datetime.utcnow()
+        start_date = datetime.now(datetime.UTC) - timedelta(days=30)
+        end_date = datetime.now(datetime.UTC)
         
         historical_data = await strategy_executor._get_historical_data(start_date, end_date)
         
@@ -790,8 +790,8 @@ class TestStrategyEngineAPI:
                 
                 mock_execution = Mock()
                 mock_execution.fund_id = "test_fund_001"
-                mock_execution.created_at = datetime.utcnow()
-                mock_execution.updated_at = datetime.utcnow()
+                mock_execution.created_at = datetime.now(datetime.UTC)
+                mock_execution.updated_at = datetime.now(datetime.UTC)
                 
                 mock_exec.strategies = {"test_strategy_001": mock_strategy}
                 mock_exec.executions = {"test_strategy_001": mock_execution}

@@ -216,10 +216,10 @@ class TestNotificationManager:
         mock_notification.data = {}
         mock_notification.template_id = None
         mock_notification.scheduled_at = None
-        mock_notification.sent_at = datetime.utcnow()
+        mock_notification.sent_at = datetime.now(datetime.UTC)
         mock_notification.read_at = None
-        mock_notification.created_at = datetime.utcnow()
-        mock_notification.updated_at = datetime.utcnow()
+        mock_notification.created_at = datetime.now(datetime.UTC)
+        mock_notification.updated_at = datetime.now(datetime.UTC)
         
         # Mock database session
         mock_session = AsyncMock()
@@ -284,8 +284,8 @@ class TestNotificationManager:
         mock_preferences.quiet_hours_start = None
         mock_preferences.quiet_hours_end = None
         mock_preferences.timezone = "UTC"
-        mock_preferences.created_at = datetime.utcnow()
-        mock_preferences.updated_at = datetime.utcnow()
+        mock_preferences.created_at = datetime.now(datetime.UTC)
+        mock_preferences.updated_at = datetime.now(datetime.UTC)
         
         # Mock database session
         mock_session = AsyncMock()
@@ -329,8 +329,8 @@ class TestNotificationManager:
             quiet_hours_start=None,
             quiet_hours_end=None,
             timezone="UTC",
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            created_at=datetime.now(datetime.UTC),
+            updated_at=datetime.now(datetime.UTC)
         )
         
         success = await notification_manager.update_user_preferences("test_user_123", preferences)
@@ -399,7 +399,7 @@ class TestNotificationManager:
             mock_notification.notification_type = NotificationType.INFO
             mock_notification.channel = NotificationChannel.EMAIL
             mock_notification.priority = NotificationPriority.MEDIUM
-            mock_notification.read_at = datetime.utcnow() if i < 3 else None
+            mock_notification.read_at = datetime.now(datetime.UTC) if i < 3 else None
             mock_notifications.append(mock_notification)
         
         # Mock database session
@@ -452,8 +452,8 @@ class TestNotificationManager:
             quiet_hours_start=None,
             quiet_hours_end=None,
             timezone="UTC",
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            created_at=datetime.now(datetime.UTC),
+            updated_at=datetime.now(datetime.UTC)
         )
         
         assert notification_manager._is_channel_enabled(preferences, NotificationChannel.EMAIL) is True
@@ -481,8 +481,8 @@ class TestNotificationManager:
             quiet_hours_start="22:00",
             quiet_hours_end="08:00",
             timezone="UTC",
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            created_at=datetime.now(datetime.UTC),
+            updated_at=datetime.now(datetime.UTC)
         )
         
         # Mock current time to be within quiet hours
@@ -527,8 +527,8 @@ class TestNotificationManager:
             quiet_hours_start=None,
             quiet_hours_end=None,
             timezone="UTC",
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            created_at=datetime.now(datetime.UTC),
+            updated_at=datetime.now(datetime.UTC)
         )
         
         notification_manager.get_user_preferences = AsyncMock(return_value=preferences)
@@ -608,10 +608,10 @@ class TestNotificationAPI:
                 mock_notification.data = {}
                 mock_notification.template_id = None
                 mock_notification.scheduled_at = None
-                mock_notification.sent_at = datetime.utcnow()
+                mock_notification.sent_at = datetime.now(datetime.UTC)
                 mock_notification.read_at = None
-                mock_notification.created_at = datetime.utcnow()
-                mock_notification.updated_at = datetime.utcnow()
+                mock_notification.created_at = datetime.now(datetime.UTC)
+                mock_notification.updated_at = datetime.now(datetime.UTC)
                 
                 mock_manager.get_user_notifications.return_value = [mock_notification]
                 mock_mgr.return_value = mock_manager
@@ -671,8 +671,8 @@ class TestNotificationAPI:
                 mock_preferences.quiet_hours_start = None
                 mock_preferences.quiet_hours_end = None
                 mock_preferences.timezone = "UTC"
-                mock_preferences.created_at = datetime.utcnow()
-                mock_preferences.updated_at = datetime.utcnow()
+                mock_preferences.created_at = datetime.now(datetime.UTC)
+                mock_preferences.updated_at = datetime.now(datetime.UTC)
                 
                 mock_manager.get_user_preferences.return_value = mock_preferences
                 mock_mgr.return_value = mock_manager

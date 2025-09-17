@@ -69,7 +69,7 @@ class PortfolioOptimizer:
                 'optimization_metadata': {
                     'target_return': target_return,
                     'risk_tolerance': risk_tolerance,
-                    'optimization_date': datetime.utcnow().isoformat()
+                    'optimization_date': datetime.now(datetime.UTC).isoformat()
                 }
             }
             
@@ -319,7 +319,7 @@ class PortfolioOptimizer:
             'optimization_metadata': {
                 'target_return': None,
                 'risk_tolerance': 0.5,
-                'optimization_date': datetime.utcnow().isoformat()
+                'optimization_date': datetime.now(datetime.UTC).isoformat()
             }
         }
     

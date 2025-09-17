@@ -124,13 +124,13 @@ class Tenant:
         """Check if trial period has expired"""
         if not self.is_trial() or not self.trial_ends_at:
             return False
-        return datetime.utcnow() > self.trial_ends_at
+        return datetime.now(datetime.UTC) > self.trial_ends_at
     
     def get_trial_days_remaining(self) -> int:
         """Get number of trial days remaining"""
         if not self.is_trial() or not self.trial_ends_at:
             return 0
-        delta = self.trial_ends_at - datetime.utcnow()
+        delta = self.trial_ends_at - datetime.now(datetime.UTC)
         return max(0, delta.days)
     
     def can_add_user(self) -> bool:
@@ -157,18 +157,18 @@ class Tenant:
         """Add a feature to tenant"""
         if feature_name not in self.features:
             self.features.append(feature_name)
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(datetime.UTC)
     
     def remove_feature(self, feature_name: str) -> None:
         """Remove a feature from tenant"""
         if feature_name in self.features:
             self.features.remove(feature_name)
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(datetime.UTC)
     
     def update_setting(self, key: str, value: Any) -> None:
         """Update a tenant setting"""
         self.settings[key] = value
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def get_setting(self, key: str, default: Any = None) -> Any:
         """Get a tenant setting"""
@@ -181,14 +181,14 @@ class Tenant:
         elif usage_type == "storage":
             self.storage_used_mb += amount
         
-        self.last_activity = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+        self.last_activity = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(datetime.UTC)
     
     def reset_monthly_usage(self) -> None:
         """Reset monthly usage counters"""
         self.api_calls_this_month = 0
-        self.last_billing_date = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+        self.last_billing_date = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(datetime.UTC)
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert tenant to dictionary"""

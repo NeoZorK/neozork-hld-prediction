@@ -285,7 +285,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
             # Get client IP
             client_ip = request.client.host if request.client else "unknown"
             
-            current_time = datetime.utcnow()
+            current_time = datetime.now(datetime.UTC)
             
             # Clean old entries
             self._cleanup_rate_limits(current_time)

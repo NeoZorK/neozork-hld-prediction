@@ -61,7 +61,7 @@ class AnalyticsService:
         # Check cache
         if cache_key in self._cache:
             cached_data, timestamp = self._cache[cache_key]
-            if (datetime.utcnow() - timestamp).seconds < self._cache_ttl:
+            if (datetime.now(datetime.UTC) - timestamp).seconds < self._cache_ttl:
                 return cached_data
         
         # Get metrics
@@ -73,7 +73,7 @@ class AnalyticsService:
         analytics = await self._calculate_analytics(metrics, period_start, period_end)
         
         # Cache result
-        self._cache[cache_key] = (analytics, datetime.utcnow())
+        self._cache[cache_key] = (analytics, datetime.now(datetime.UTC))
         
         return analytics
     
@@ -143,7 +143,7 @@ class AnalyticsService:
             Forecast data dictionary
         """
         # Get historical data
-        end_date = datetime.utcnow()
+        end_date = datetime.now(datetime.UTC)
         start_date = end_date - timedelta(days=90)  # Use 90 days of history
         
         metrics = await self.usage_tracker.get_usage_metrics(

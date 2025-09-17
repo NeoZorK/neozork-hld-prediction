@@ -104,7 +104,7 @@ class PortfolioRebalancer:
             else:
                 plan.status = 'executed'
             
-            plan.executed_at = datetime.utcnow()
+            plan.executed_at = datetime.now(datetime.UTC)
             
             # Update database
             if self.db_manager:
@@ -259,7 +259,7 @@ class PortfolioRebalancer:
         try:
             # Check if enough time has passed since last rebalance
             if portfolio.last_rebalance:
-                days_since_rebalance = (datetime.utcnow() - portfolio.last_rebalance).days
+                days_since_rebalance = (datetime.now(datetime.UTC) - portfolio.last_rebalance).days
                 if days_since_rebalance < rebalance_frequency:
                     return []
             
@@ -467,7 +467,7 @@ class PortfolioRebalancer:
                 fees=action.estimated_fees,
                 net_amount=action.required_trade_amount - action.estimated_fees,
                 status=TransactionStatus.EXECUTED,
-                execution_date=datetime.utcnow()
+                execution_date=datetime.now(datetime.UTC)
             )
             
             # Save transaction to database

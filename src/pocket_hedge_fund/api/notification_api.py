@@ -437,8 +437,8 @@ async def update_notification_preferences(
             quiet_hours_start=request.quiet_hours_start,
             quiet_hours_end=request.quiet_hours_end,
             timezone=request.timezone,
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            created_at=datetime.now(datetime.UTC),
+            updated_at=datetime.now(datetime.UTC)
         )
         
         notification_mgr = await get_notification_manager()

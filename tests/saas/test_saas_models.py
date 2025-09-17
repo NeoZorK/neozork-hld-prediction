@@ -12,7 +12,7 @@ This module contains tests for all SaaS data models including:
 """
 
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from src.saas.models.tenant import Tenant, TenantStatus, TenantType
 from src.saas.models.subscription import Subscription, SubscriptionStatus, SubscriptionTier
 from src.saas.models.billing import Billing, BillingStatus, PaymentMethod
@@ -59,14 +59,14 @@ class TestTenantModel:
             name="Test Company",
             email="test@example.com",
             status=TenantStatus.TRIAL,
-            trial_ends_at=datetime.utcnow() + timedelta(days=14)
+            trial_ends_at=datetime.now(timezone.utc) + timedelta(days=14)
         )
         
         assert tenant.is_trial() is True
         assert tenant.get_trial_days_remaining() > 0
         
         # Test expired trial
-        tenant.trial_ends_at = datetime.utcnow() - timedelta(days=1)
+        tenant.trial_ends_at = datetime.now(timezone.utc) - timedelta(days=1)
         assert tenant.is_trial_expired() is True
     
     def test_tenant_usage_tracking(self):
@@ -147,15 +147,15 @@ class TestSubscriptionModel:
             tenant_id="tenant-123",
             plan_id="professional",
             status=SubscriptionStatus.TRIALING,
-            trial_start=datetime.utcnow(),
-            trial_end=datetime.utcnow() + timedelta(days=14)
+            trial_start=datetime.now(timezone.utc),
+            trial_end=datetime.now(timezone.utc) + timedelta(days=14)
         )
         
         assert subscription.is_trial() is True
         assert subscription.get_trial_days_remaining() > 0
         
         # Test expired trial
-        subscription.trial_end = datetime.utcnow() - timedelta(days=1)
+        subscription.trial_end = datetime.now(timezone.utc) - timedelta(days=1)
         assert subscription.is_trial_expired() is True
     
     def test_subscription_pricing(self):

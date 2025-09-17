@@ -358,12 +358,12 @@ class UsageAPI:
             if start_date:
                 start_date = datetime.fromisoformat(start_date)
             else:
-                start_date = datetime.utcnow() - timedelta(days=7)
+                start_date = datetime.now(datetime.UTC) - timedelta(days=7)
             
             if end_date:
                 end_date = datetime.fromisoformat(end_date)
             else:
-                end_date = datetime.utcnow()
+                end_date = datetime.now(datetime.UTC)
             
             # Get metrics
             metrics = await self.usage_tracker.get_usage_metrics(
@@ -469,5 +469,5 @@ class UsageAPI:
         return web.json_response({
             "status": "healthy",
             "service": "Usage Tracking API",
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(datetime.UTC).isoformat()
         })

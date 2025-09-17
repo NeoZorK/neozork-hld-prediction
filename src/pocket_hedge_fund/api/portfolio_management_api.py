@@ -19,7 +19,7 @@ import uuid
 from fastapi import APIRouter, HTTPException, Depends, Query, Path, BackgroundTasks
 from fastapi import status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, field_validator, Field, validator
 
 from ..database.connection import get_db_manager
 from ..auth.auth_manager import get_auth_manager, get_current_user
@@ -87,13 +87,13 @@ class AddPositionRequest(BaseModel):
     take_profit: Optional[float] = Field(None, description="Take profit price")
     risk_level: float = Field(0.02, ge=0, le=1, description="Risk level (0-1)")
     
-    @validator('position_type')
+    @field_validator('position_type')
     def validate_position_type(cls, v):
         if v.lower() not in ['long', 'short']:
             raise ValueError('Position type must be "long" or "short"')
         return v.lower()
     
-    @validator('asset_type')
+    @field_validator('asset_type')
     def validate_asset_type(cls, v):
         valid_types = ['crypto', 'stock', 'bond', 'commodity', 'forex', 'derivative']
         if v.lower() not in valid_types:
@@ -113,7 +113,7 @@ class RebalanceRequest(BaseModel):
     rebalance_threshold: float = Field(0.05, ge=0, le=1, description="Rebalance threshold")
     max_trades: Optional[int] = Field(None, description="Maximum number of trades")
     
-    @validator('target_allocations')
+    @field_validator('target_allocations')
     def validate_allocations(cls, v):
         total = sum(v.values())
         if abs(total - 1.0) > 0.01:
@@ -418,7 +418,7 @@ async def add_position(
             '10': market_value,
             '11': 0,  # Initial unrealized P&L
             '12': 0,  # Initial realized P&L
-            '13': datetime.utcnow(),
+            '13': datetime.now(datetime.UTC),
             '14': position_request.stop_loss,
             '15': position_request.take_profit,
             '16': position_request.risk_level,
@@ -529,7 +529,7 @@ async def update_position(
         
         # Add updated_at
         update_fields.append(f"updated_at = ${param_count}")
-        params.append(datetime.utcnow())
+        params.append(datetime.now(datetime.UTC))
         param_count += 1
         
         # Add position_id and fund_id for WHERE clause
@@ -612,8 +612,8 @@ async def close_position(
         """
         
         await db_manager.execute_command(close_query, {
-            '1': datetime.utcnow(),
-            '2': datetime.utcnow(),
+            '1': datetime.now(datetime.UTC),
+            '2': datetime.now(datetime.UTC),
             '3': position_id
         })
         
@@ -625,7 +625,7 @@ async def close_position(
             resource_type="portfolio_position",
             resource_id=position_id,
             old_values={'status': 'active'},
-            new_values={'status': 'closed', 'closed_at': datetime.utcnow()}
+            new_values={'status': 'closed', 'closed_at': datetime.now(datetime.UTC)}
         )
         
         return {

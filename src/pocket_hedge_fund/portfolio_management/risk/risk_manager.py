@@ -215,7 +215,7 @@ class RiskManager:
                 'risk_budget_optimization': risk_budget_optimization,
                 'risk_summary': risk_summary,
                 'recommendations': self._generate_risk_recommendations(risk_metrics, risk_limits),
-                'generated_at': datetime.utcnow()
+                'generated_at': datetime.now(datetime.UTC)
             }
             
         except Exception as e:

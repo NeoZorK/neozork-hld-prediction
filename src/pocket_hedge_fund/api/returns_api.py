@@ -226,7 +226,7 @@ async def get_returns_summary(
         return {
             "portfolio": portfolio_result,
             "risk_metrics": risk_result,
-            "summary_generated_at": datetime.utcnow().isoformat()
+            "summary_generated_at": datetime.now(datetime.UTC).isoformat()
         }
         
     except HTTPException:

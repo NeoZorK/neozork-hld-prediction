@@ -67,7 +67,7 @@ async def test_advanced_strategies():
         mean_reversion_id = await manager.add_strategy(mean_reversion_strategy)
         
         # Generate sample market data
-        dates = pd.date_range(start='2024-01-01', end='2024-01-31', freq='H')
+        dates = pd.date_range(start='2024-01-01', end='2024-01-31', freq='h')
         np.random.seed(42)
         
         data = pd.DataFrame({
@@ -248,7 +248,7 @@ async def test_integration():
         strategy_id = await strategy_manager.add_strategy(momentum_strategy)
         
         # Generate sample data
-        dates = pd.date_range(start='2024-01-01', end='2024-01-31', freq='H')
+        dates = pd.date_range(start='2024-01-01', end='2024-01-31', freq='h')
         np.random.seed(42)
         
         data = pd.DataFrame({

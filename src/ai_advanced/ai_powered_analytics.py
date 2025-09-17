@@ -716,7 +716,7 @@ async def main():
     manager = AIPoweredAnalyticsManager()
     
     # Generate sample market data
-    dates = pd.date_range(start='2024-01-01', end='2024-01-31', freq='H')
+    dates = pd.date_range(start='2024-01-01', end='2024-01-31', freq='h')
     np.random.seed(42)
     
     data = pd.DataFrame({

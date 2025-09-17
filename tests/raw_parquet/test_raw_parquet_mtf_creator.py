@@ -57,7 +57,7 @@ class TestRawParquetMTFCreator:
         }).set_index('timestamp')
         
         test_data_h1 = pd.DataFrame({
-            'timestamp': pd.date_range('2023-01-01', periods=10, freq='1H'),
+            'timestamp': pd.date_range('2023-01-01', periods=10, freq='1h'),
             'open': np.random.rand(10),
             'high': np.random.rand(10),
             'low': np.random.rand(10),
@@ -150,7 +150,7 @@ class TestRawParquetMTFCreator:
             'low': np.random.rand(10),
             'close': np.random.rand(10),
             'volume': np.random.rand(10)
-        }, index=pd.date_range('2023-01-01', periods=10, freq='1H'))
+        }, index=pd.date_range('2023-01-01', periods=10, freq='1h'))
         
         timeframe_data = {
             'M1': main_data,
@@ -404,7 +404,7 @@ class TestRawParquetMTFCreator:
             'low': np.random.rand(10),
             'close': np.random.rand(10),
             'volume': np.random.rand(10)
-        }, index=pd.date_range('2023-01-01', periods=10, freq='1H'))
+        }, index=pd.date_range('2023-01-01', periods=10, freq='1h'))
         
         timeframe_data = {
             'M1': main_data,

@@ -10,7 +10,7 @@ from decimal import Decimal
 from enum import Enum
 import uuid
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, field_validator, Field, validator
 
 
 class DataFrequency(str, Enum):
@@ -78,13 +78,13 @@ class MarketData(BaseModel):
     source: str = "market_data"
     metadata: Optional[Dict[str, Any]] = None
 
-    @validator('high_price')
+    @field_validator('high_price')
     def validate_high_price(cls, v, values):
         if 'low_price' in values and v < values['low_price']:
             raise ValueError('High price must be >= low price')
         return v
 
-    @validator('close_price')
+    @field_validator('close_price')
     def validate_close_price(cls, v, values):
         if 'low_price' in values and v < values['low_price']:
             raise ValueError('Close price must be >= low price')
@@ -107,7 +107,7 @@ class PredictionResult(BaseModel):
     model_version: str
     metadata: Optional[Dict[str, Any]] = None
 
-    @validator('confidence')
+    @field_validator('confidence')
     def validate_confidence(cls, v):
         if not 0 <= v <= 1:
             raise ValueError('Confidence must be between 0 and 1')

@@ -625,8 +625,8 @@ class TestDashboardAnalyticsAPI:
                 mock_dashboard.widgets = []
                 mock_dashboard.layout = {"columns": 12, "rows": 8}
                 mock_dashboard.theme = "default"
-                mock_dashboard.created_at = datetime.utcnow()
-                mock_dashboard.updated_at = datetime.utcnow()
+                mock_dashboard.created_at = datetime.now(datetime.UTC)
+                mock_dashboard.updated_at = datetime.now(datetime.UTC)
                 
                 mock_analytics_instance.dashboards = {"test_dashboard_001": mock_dashboard}
                 mock_analytics.return_value = mock_analytics_instance
@@ -658,8 +658,8 @@ class TestDashboardAnalyticsAPI:
                 mock_dashboard.widgets = []
                 mock_dashboard.layout = {"columns": 12, "rows": 8}
                 mock_dashboard.theme = "default"
-                mock_dashboard.created_at = datetime.utcnow()
-                mock_dashboard.updated_at = datetime.utcnow()
+                mock_dashboard.created_at = datetime.now(datetime.UTC)
+                mock_dashboard.updated_at = datetime.now(datetime.UTC)
                 
                 mock_analytics_instance.get_dashboard.return_value = mock_dashboard
                 mock_analytics.return_value = mock_analytics_instance
@@ -775,7 +775,7 @@ class TestDashboardAnalyticsAPI:
                 mock_report.parameters = {}
                 mock_report.data = {}
                 mock_report.format = "json"
-                mock_report.generated_at = datetime.utcnow()
+                mock_report.generated_at = datetime.now(datetime.UTC)
                 mock_report.expires_at = None
                 mock_report.user_id = "test_user"
                 
@@ -866,7 +866,7 @@ class TestDashboardAnalyticsAPI:
                 mock_metric.metric_type = MetricType.VALUE
                 mock_metric.unit = "$"
                 mock_metric.trend = "up"
-                mock_metric.timestamp = datetime.utcnow()
+                mock_metric.timestamp = datetime.now(datetime.UTC)
                 mock_metric.metadata = {}
                 
                 mock_engine.calculate_metrics.return_value = [mock_metric]
