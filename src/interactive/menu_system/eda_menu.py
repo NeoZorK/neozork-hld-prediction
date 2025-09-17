@@ -8,6 +8,7 @@ This module provides the EDA analysis submenu with comprehensive data quality ch
 from typing import Dict, Any, Optional
 import colorama
 import time
+import pandas as pd
 from colorama import Fore, Back, Style
 from .base_menu import BaseMenu
 from src.common.logger import print_debug
