@@ -42,6 +42,16 @@ class BacktestingMenu(BaseMenu):
         print(f"\n{Fore.YELLOW}📈 BACKTESTING & VALIDATION")
         print(f"{Fore.CYAN}{'─'*50}")
         
+        # Check if data is loaded
+        if not self._is_data_loaded():
+            print(f"{Fore.RED}⚠️  No data loaded in memory!")
+            print(f"{Fore.YELLOW}💡 Please first load data using 'Load Data -> 4.Cleaned Data'")
+            print(f"{Fore.CYAN}{'─'*50}")
+            print(f"{Fore.RED}0. 🔙 Back")
+            print(f"{Fore.RED}00. 🚪 Exit")
+            print(f"{Fore.CYAN}{'─'*50}\n")
+            return
+        
         for key, item in self.menu_items.items():
             if key in ["0", "00"]:
                 print(f"{Fore.RED}{key}. {item['title']}")
@@ -51,6 +61,17 @@ class BacktestingMenu(BaseMenu):
         print(f"{Fore.CYAN}{'─'*50}")
         print(f"{Fore.YELLOW}💡 Validate and test trading strategies")
         print(f"{Fore.CYAN}{'─'*50}\n")
+    
+    def _is_data_loaded(self) -> bool:
+        """Check if data is loaded in memory."""
+        try:
+            from src.interactive.data_state_manager import data_state_manager
+            return data_state_manager.has_loaded_data()
+        except ImportError:
+            # Fallback if data_state_manager is not available
+            return False
+        except Exception:
+            return False
     
     def _strategy_backtesting(self):
         """Strategy backtesting."""
