@@ -49,6 +49,9 @@ data/cache/gap_tracker.json
 *.webp
 *.txt
 
+# Backup files
+data/backups/
+
 # Explicitly ignore indicators folder content
 data/indicators/parquet/*
 data/indicators/csv/*
