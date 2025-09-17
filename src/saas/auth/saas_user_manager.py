@@ -6,7 +6,7 @@ integrating with the existing security system while adding multi-tenant capabili
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Any
 import secrets
 import uuid
@@ -243,7 +243,7 @@ class SaaSUserManager:
                     else:
                         user_data[field] = value
             
-            user_data["updated_at"] = datetime.now(datetime.UTC)
+            user_data["updated_at"] = datetime.now(timezone.utc)
             
             logger.info(f"Updated tenant user: {user_id}")
             

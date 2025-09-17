@@ -5,7 +5,7 @@ This model represents payments in the billing system,
 including payment methods, status, and transaction details.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field
@@ -142,7 +142,7 @@ class Payment:
     
     def _generate_payment_number(self) -> str:
         """Generate payment number."""
-        timestamp = datetime.now(datetime.UTC).strftime("%Y%m%d%H%M%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
         return f"PAY-{timestamp}-{self.id[:8].upper()}"
     
     def _calculate_net_amount(self):
@@ -222,15 +222,15 @@ class Payment:
     def mark_as_processing(self) -> None:
         """Mark payment as processing."""
         self.status = PaymentStatus.PROCESSING
-        self.updated_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(timezone.utc)
     
     def mark_as_completed(self, transaction_id: Optional[str] = None, 
                          gateway_transaction_id: Optional[str] = None,
                          gateway_response: Optional[Dict[str, Any]] = None) -> None:
         """Mark payment as completed."""
         self.status = PaymentStatus.COMPLETED
-        self.payment_date = datetime.now(datetime.UTC)
-        self.processed_date = datetime.now(datetime.UTC)
+        self.payment_date = datetime.now(timezone.utc)
+        self.processed_date = datetime.now(timezone.utc)
         
         if transaction_id:
             self.transaction_id = transaction_id
@@ -239,47 +239,47 @@ class Payment:
         if gateway_response:
             self.gateway_response = gateway_response
         
-        self.updated_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(timezone.utc)
     
     def mark_as_failed(self, error_code: str, error_message: str, 
                       error_details: Optional[Dict[str, Any]] = None) -> None:
         """Mark payment as failed."""
         self.status = PaymentStatus.FAILED
-        self.failed_date = datetime.now(datetime.UTC)
+        self.failed_date = datetime.now(timezone.utc)
         self.error_code = error_code
         self.error_message = error_message
         self.error_details = error_details
-        self.updated_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(timezone.utc)
     
     def mark_as_cancelled(self) -> None:
         """Mark payment as cancelled."""
         self.status = PaymentStatus.CANCELLED
-        self.updated_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(timezone.utc)
     
     def mark_as_refunded(self, refund_id: Optional[str] = None) -> None:
         """Mark payment as refunded."""
         self.status = PaymentStatus.REFUNDED
-        self.refunded_date = datetime.now(datetime.UTC)
+        self.refunded_date = datetime.now(timezone.utc)
         if refund_id:
             self.refund_id = refund_id
-        self.updated_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(timezone.utc)
     
     def mark_as_partially_refunded(self, refund_id: Optional[str] = None) -> None:
         """Mark payment as partially refunded."""
         self.status = PaymentStatus.PARTIALLY_REFUNDED
         if refund_id:
             self.refund_id = refund_id
-        self.updated_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(timezone.utc)
     
     def mark_as_disputed(self) -> None:
         """Mark payment as disputed."""
         self.status = PaymentStatus.DISPUTED
-        self.updated_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(timezone.utc)
     
     def mark_as_expired(self) -> None:
         """Mark payment as expired."""
         self.status = PaymentStatus.EXPIRED
-        self.updated_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(timezone.utc)
     
     def is_completed(self) -> bool:
         """Check if payment is completed."""
@@ -315,19 +315,19 @@ class Payment:
         self.card_brand = brand
         self.card_exp_month = exp_month
         self.card_exp_year = exp_year
-        self.updated_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(timezone.utc)
     
     def set_bank_details(self, bank_name: str, account_last_four: str) -> None:
         """Set bank details for bank transfers."""
         self.bank_name = bank_name
         self.bank_account_last_four = account_last_four
-        self.updated_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(timezone.utc)
     
     def set_processing_fee(self, fee: Decimal) -> None:
         """Set processing fee."""
         self.processing_fee = fee
         self._calculate_net_amount()
-        self.updated_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(timezone.utc)
     
     def add_note(self, note: str) -> None:
         """Add a note to the payment."""
@@ -335,19 +335,19 @@ class Payment:
             self.notes += f"\n{note}"
         else:
             self.notes = note
-        self.updated_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(timezone.utc)
     
     def add_tag(self, tag: str) -> None:
         """Add a tag to the payment."""
         if tag not in self.tags:
             self.tags.append(tag)
-            self.updated_at = datetime.now(datetime.UTC)
+            self.updated_at = datetime.now(timezone.utc)
     
     def remove_tag(self, tag: str) -> None:
         """Remove a tag from the payment."""
         if tag in self.tags:
             self.tags.remove(tag)
-            self.updated_at = datetime.now(datetime.UTC)
+            self.updated_at = datetime.now(timezone.utc)
     
     def get_payment_method_display(self) -> str:
         """Get display name for payment method."""
@@ -394,4 +394,4 @@ class Payment:
         self.webhook_processed = processed
         if received:
             self.webhook_attempts += 1
-        self.updated_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(timezone.utc)

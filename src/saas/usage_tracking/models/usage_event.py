@@ -5,7 +5,7 @@ This model represents individual usage events in the system,
 tracking when and how resources are consumed.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Dict, Any, Optional
 from dataclasses import dataclass, field
@@ -162,7 +162,7 @@ class UsageEvent:
         """Mark event as completed."""
         self.status = EventStatus.COMPLETED
         if self.start_time and not self.end_time:
-            self.end_time = datetime.now(datetime.UTC)
+            self.end_time = datetime.now(timezone.utc)
             if self.duration_ms is None:
                 self.duration_ms = int((self.end_time - self.start_time).total_seconds() * 1000)
     
@@ -172,7 +172,7 @@ class UsageEvent:
         self.error_code = error_code
         self.error_message = error_message
         if self.start_time and not self.end_time:
-            self.end_time = datetime.now(datetime.UTC)
+            self.end_time = datetime.now(timezone.utc)
     
     def add_metadata(self, key: str, value: Any) -> None:
         """Add metadata to the event."""

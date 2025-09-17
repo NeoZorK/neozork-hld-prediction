@@ -5,7 +5,7 @@ This model represents invoices in the billing system,
 including line items, taxes, discounts, and payment status.
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field
@@ -59,7 +59,7 @@ class Invoice:
     
     # Dates
     issue_date: datetime = field(default_factory=datetime.utcnow)
-    due_date: datetime = field(default_factory=lambda: datetime.now(datetime.UTC) + timedelta(days=30))
+    due_date: datetime = field(default_factory=lambda: datetime.now(timezone.utc) + timedelta(days=30))
     paid_date: Optional[datetime] = None
     
     # Financial information
@@ -118,7 +118,7 @@ class Invoice:
     
     def _generate_invoice_number(self) -> str:
         """Generate invoice number."""
-        timestamp = datetime.now(datetime.UTC).strftime("%Y%m%d%H%M%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
         return f"INV-{timestamp}-{self.id[:8].upper()}"
     
     def _calculate_totals(self):
@@ -231,7 +231,7 @@ class Invoice:
         
         self.line_items.append(line_item)
         self._calculate_totals()
-        self.updated_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(timezone.utc)
     
     def add_tax(self, name: str, rate: Decimal, amount: Optional[Decimal] = None) -> None:
         """Add tax to the invoice."""
@@ -247,7 +247,7 @@ class Invoice:
         
         self.taxes.append(tax)
         self._calculate_totals()
-        self.updated_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(timezone.utc)
     
     def add_discount(self, name: str, amount: Decimal, percentage: Optional[Decimal] = None) -> None:
         """Add discount to the invoice."""
@@ -263,12 +263,12 @@ class Invoice:
         
         self.discounts.append(discount)
         self._calculate_totals()
-        self.updated_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(timezone.utc)
     
     def mark_as_sent(self) -> None:
         """Mark invoice as sent."""
         self.status = InvoiceStatus.SENT
-        self.updated_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(timezone.utc)
     
     def mark_as_paid(self, payment_amount: Decimal, payment_method: str, 
                     payment_reference: Optional[str] = None) -> None:
@@ -279,12 +279,12 @@ class Invoice:
         
         if self.paid_amount >= self.total_amount:
             self.status = InvoiceStatus.PAID
-            self.paid_date = datetime.now(datetime.UTC)
+            self.paid_date = datetime.now(timezone.utc)
         else:
             self.status = InvoiceStatus.PARTIALLY_PAID
         
         self._calculate_totals()
-        self.updated_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(timezone.utc)
     
     def mark_as_refunded(self, refund_amount: Decimal) -> None:
         """Mark invoice as refunded."""
@@ -296,24 +296,24 @@ class Invoice:
             self.status = InvoiceStatus.PARTIALLY_REFUNDED
         
         self._calculate_totals()
-        self.updated_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(timezone.utc)
     
     def mark_as_overdue(self) -> None:
         """Mark invoice as overdue."""
         if self.status in [InvoiceStatus.SENT, InvoiceStatus.PARTIALLY_PAID]:
             self.status = InvoiceStatus.OVERDUE
-            self.updated_at = datetime.now(datetime.UTC)
+            self.updated_at = datetime.now(timezone.utc)
     
     def cancel(self) -> None:
         """Cancel the invoice."""
         self.status = InvoiceStatus.CANCELLED
-        self.updated_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(timezone.utc)
     
     def is_overdue(self) -> bool:
         """Check if invoice is overdue."""
         return (self.status == InvoiceStatus.OVERDUE or 
                 (self.status in [InvoiceStatus.SENT, InvoiceStatus.PARTIALLY_PAID] and 
-                 datetime.now(datetime.UTC) > self.due_date))
+                 datetime.now(timezone.utc) > self.due_date))
     
     def is_paid(self) -> bool:
         """Check if invoice is fully paid."""
@@ -328,7 +328,7 @@ class Invoice:
         if not self.is_overdue():
             return 0
         
-        overdue_date = self.due_date if self.status == InvoiceStatus.OVERDUE else datetime.now(datetime.UTC)
+        overdue_date = self.due_date if self.status == InvoiceStatus.OVERDUE else datetime.now(timezone.utc)
         return (overdue_date - self.due_date).days
     
     def get_payment_status(self) -> str:
@@ -348,19 +348,19 @@ class Invoice:
             self.notes += f"\n{note}"
         else:
             self.notes = note
-        self.updated_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(timezone.utc)
     
     def add_tag(self, tag: str) -> None:
         """Add a tag to the invoice."""
         if tag not in self.tags:
             self.tags.append(tag)
-            self.updated_at = datetime.now(datetime.UTC)
+            self.updated_at = datetime.now(timezone.utc)
     
     def remove_tag(self, tag: str) -> None:
         """Remove a tag from the invoice."""
         if tag in self.tags:
             self.tags.remove(tag)
-            self.updated_at = datetime.now(datetime.UTC)
+            self.updated_at = datetime.now(timezone.utc)
     
     def get_remaining_balance(self) -> Decimal:
         """Get remaining balance to be paid."""

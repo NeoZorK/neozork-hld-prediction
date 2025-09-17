@@ -5,7 +5,7 @@ This module provides API endpoints for payment processing.
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from typing import Dict, List, Optional, Any
 from aiohttp import web
 from aiohttp.web import Request, Response
@@ -410,5 +410,5 @@ class PaymentAPI:
         return web.json_response({
             "status": "healthy",
             "service": "Payment API",
-            "timestamp": datetime.now(datetime.UTC).isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         })

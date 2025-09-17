@@ -5,7 +5,7 @@ This module provides API endpoints for usage tracking functionality.
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Any
 from aiohttp import web
 from aiohttp.web import Request, Response
@@ -358,12 +358,12 @@ class UsageAPI:
             if start_date:
                 start_date = datetime.fromisoformat(start_date)
             else:
-                start_date = datetime.now(datetime.UTC) - timedelta(days=7)
+                start_date = datetime.now(timezone.utc) - timedelta(days=7)
             
             if end_date:
                 end_date = datetime.fromisoformat(end_date)
             else:
-                end_date = datetime.now(datetime.UTC)
+                end_date = datetime.now(timezone.utc)
             
             # Get metrics
             metrics = await self.usage_tracker.get_usage_metrics(
@@ -469,5 +469,5 @@ class UsageAPI:
         return web.json_response({
             "status": "healthy",
             "service": "Usage Tracking API",
-            "timestamp": datetime.now(datetime.UTC).isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         })
