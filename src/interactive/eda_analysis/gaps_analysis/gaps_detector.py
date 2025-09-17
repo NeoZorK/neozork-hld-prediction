@@ -53,10 +53,36 @@ class GapsDetector:
         try:
             print_info("🔍 Starting gaps detection in MTF data...")
             
-            if not mtf_data or 'loaded_data' not in mtf_data:
+            if not mtf_data:
                 return {'status': 'error', 'message': 'No MTF data provided'}
             
-            loaded_data = mtf_data['loaded_data']
+            # Debug: Print data structure info
+            print_debug(f"MTF data keys: {list(mtf_data.keys()) if isinstance(mtf_data, dict) else 'Not a dict'}")
+            
+            # Try different possible data structures
+            loaded_data = None
+            if 'loaded_data' in mtf_data:
+                loaded_data = mtf_data['loaded_data']
+                print_debug("Using 'loaded_data' key from MTF structure")
+            elif isinstance(mtf_data, dict):
+                # Check if mtf_data itself contains timeframe data (DataFrames)
+                timeframe_keys = []
+                for k, v in mtf_data.items():
+                    if (isinstance(v, pd.DataFrame) and 
+                        hasattr(v, 'index') and 
+                        hasattr(v, 'columns') and
+                        not k.startswith('_')):
+                        timeframe_keys.append(k)
+                
+                if timeframe_keys:
+                    loaded_data = {k: mtf_data[k] for k in timeframe_keys}
+                    print_debug(f"Using direct timeframe keys: {timeframe_keys}")
+            
+            if not loaded_data:
+                print_debug("No valid timeframe data found")
+                return {'status': 'error', 'message': 'No valid timeframe data found in MTF structure'}
+            
+            print_debug(f"Found {len(loaded_data)} timeframes: {list(loaded_data.keys())}")
             gaps_results = {}
             total_timeframes = len(loaded_data)
             processed = 0

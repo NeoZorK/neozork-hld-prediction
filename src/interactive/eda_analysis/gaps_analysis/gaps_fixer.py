@@ -57,13 +57,31 @@ class GapsFixer:
         try:
             print_info(f"🔧 Starting gaps fixing with strategy: {strategy}")
             
-            if not mtf_data or 'loaded_data' not in mtf_data:
+            if not mtf_data:
                 return {'status': 'error', 'message': 'No MTF data provided'}
             
             if strategy not in self.filling_strategies:
                 return {'status': 'error', 'message': f'Unknown strategy: {strategy}'}
             
-            loaded_data = mtf_data['loaded_data']
+            # Try different possible data structures
+            loaded_data = None
+            if 'loaded_data' in mtf_data:
+                loaded_data = mtf_data['loaded_data']
+            elif isinstance(mtf_data, dict):
+                # Check if mtf_data itself contains timeframe data (DataFrames)
+                timeframe_keys = []
+                for k, v in mtf_data.items():
+                    if (isinstance(v, pd.DataFrame) and 
+                        hasattr(v, 'index') and 
+                        hasattr(v, 'columns') and
+                        not k.startswith('_')):
+                        timeframe_keys.append(k)
+                
+                if timeframe_keys:
+                    loaded_data = {k: mtf_data[k] for k in timeframe_keys}
+            
+            if not loaded_data:
+                return {'status': 'error', 'message': 'No valid timeframe data found in MTF structure'}
             fixed_data = {}
             fixing_stats = {}
             total_timeframes = len(loaded_data)

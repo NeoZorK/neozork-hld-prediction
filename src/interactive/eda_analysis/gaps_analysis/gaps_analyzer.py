@@ -36,6 +36,38 @@ class GapsAnalyzer:
         self.backup_manager = BackupManager()
         self.available_strategies = list(self.fixer.filling_strategies.keys())
     
+    def _extract_loaded_data(self, mtf_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Extract loaded data from MTF structure, handling different formats.
+        
+        Args:
+            mtf_data: MTF data structure
+            
+        Returns:
+            Dictionary containing timeframe data
+        """
+        # Try different possible data structures
+        loaded_data = None
+        if 'loaded_data' in mtf_data:
+            loaded_data = mtf_data['loaded_data']
+        elif isinstance(mtf_data, dict):
+            # Check if mtf_data itself contains timeframe data (DataFrames)
+            timeframe_keys = []
+            for k, v in mtf_data.items():
+                if (isinstance(v, pd.DataFrame) and 
+                    hasattr(v, 'index') and 
+                    hasattr(v, 'columns') and
+                    not k.startswith('_')):
+                    timeframe_keys.append(k)
+            
+            if timeframe_keys:
+                loaded_data = {k: mtf_data[k] for k in timeframe_keys}
+        
+        if not loaded_data:
+            raise ValueError('No valid timeframe data found in MTF structure')
+        
+        return loaded_data
+    
     def analyze_and_fix_gaps(self, mtf_data: Dict[str, Any], 
                            symbol: str,
                            strategy: str = 'auto',
@@ -57,8 +89,19 @@ class GapsAnalyzer:
         try:
             print_info(f"🔍 Starting complete gaps analysis for {symbol}...")
             
+            # Debug: Print data structure info
+            print_debug(f"MTF data keys: {list(mtf_data.keys()) if isinstance(mtf_data, dict) else 'Not a dict'}")
+            if isinstance(mtf_data, dict):
+                for key, value in mtf_data.items():
+                    if isinstance(value, pd.DataFrame):
+                        print_debug(f"  {key}: DataFrame {value.shape}")
+                    elif isinstance(value, dict):
+                        print_debug(f"  {key}: dict with keys {list(value.keys())}")
+                    else:
+                        print_debug(f"  {key}: {type(value)}")
+            
             # Validate inputs
-            if not mtf_data or 'loaded_data' not in mtf_data:
+            if not mtf_data:
                 return {'status': 'error', 'message': 'No MTF data provided'}
             
             if strategy not in self.available_strategies:
@@ -127,7 +170,7 @@ class GapsAnalyzer:
             Dictionary containing gaps detection results
         """
         try:
-            loaded_data = mtf_data['loaded_data']
+            loaded_data = self._extract_loaded_data(mtf_data)
             total_timeframes = len(loaded_data)
             
             # Create progress callback
@@ -162,7 +205,7 @@ class GapsAnalyzer:
             Dictionary containing fixing results
         """
         try:
-            loaded_data = mtf_data['loaded_data']
+            loaded_data = self._extract_loaded_data(mtf_data)
             total_timeframes = len(loaded_data)
             
             # Create progress callback
@@ -303,10 +346,11 @@ class GapsAnalyzer:
             if not mtf_data:
                 return {'status': 'error', 'message': 'No data provided'}
             
-            if 'loaded_data' not in mtf_data:
-                return {'status': 'error', 'message': 'No loaded_data in MTF structure'}
-            
-            loaded_data = mtf_data['loaded_data']
+            # Try to extract loaded data using the same logic as other methods
+            try:
+                loaded_data = self._extract_loaded_data(mtf_data)
+            except ValueError as e:
+                return {'status': 'error', 'message': str(e)}
             if not loaded_data:
                 return {'status': 'error', 'message': 'No timeframes in loaded_data'}
             

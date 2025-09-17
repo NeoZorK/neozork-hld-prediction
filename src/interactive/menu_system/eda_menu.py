@@ -10,6 +10,7 @@ import colorama
 import time
 from colorama import Fore, Back, Style
 from .base_menu import BaseMenu
+from src.common.logger import print_debug
 
 class EDAMenu(BaseMenu):
     """
@@ -453,8 +454,24 @@ class EDAMenu(BaseMenu):
         """Get loaded data from data state manager."""
         try:
             from src.interactive.data_state_manager import data_state_manager
-            return data_state_manager.get_loaded_data()
+            data = data_state_manager.get_loaded_data()
+            
+            # Debug: Print data structure info
+            if data:
+                print_debug(f"Loaded data keys: {list(data.keys()) if isinstance(data, dict) else 'Not a dict'}")
+                if isinstance(data, dict):
+                    for key, value in data.items():
+                        if isinstance(value, dict):
+                            print_debug(f"  {key}: {list(value.keys())}")
+                        else:
+                            print_debug(f"  {key}: {type(value)}")
+            else:
+                print_debug("No data loaded in data_state_manager")
+            
+            return data
         except ImportError:
+            print_debug("data_state_manager not available")
             return None
-        except Exception:
+        except Exception as e:
+            print_debug(f"Error getting loaded data: {e}")
             return None
