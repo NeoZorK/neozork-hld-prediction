@@ -40,8 +40,7 @@ class GapsFixer:
     
     def fix_gaps_in_mtf_data(self, mtf_data: Dict[str, Any], 
                            gaps_info: Dict[str, Any],
-                           strategy: str = 'linear_interpolation',
-                           progress_callback: Optional[callable] = None) -> Dict[str, Any]:
+                           strategy: str = 'linear_interpolation') -> Dict[str, Any]:
         """
         Fix gaps in MTF data structure.
         
@@ -84,13 +83,8 @@ class GapsFixer:
                 return {'status': 'error', 'message': 'No valid timeframe data found in MTF structure'}
             fixed_data = {}
             fixing_stats = {}
-            total_timeframes = len(loaded_data)
-            processed = 0
             
             for timeframe, df in loaded_data.items():
-                if progress_callback:
-                    progress_callback(processed, total_timeframes, f"Fixing gaps in {timeframe}")
-                
                 print_debug(f"Fixing gaps in timeframe: {timeframe}")
                 
                 # Get gaps for this timeframe
@@ -114,8 +108,6 @@ class GapsFixer:
                         'status': fix_result['status'],
                         **fix_result['stats']
                     }
-                
-                processed += 1
             
             # Calculate overall fixing statistics
             overall_stats = self._calculate_overall_fixing_stats(fixing_stats)
@@ -126,11 +118,11 @@ class GapsFixer:
                 'fixed_data': fixed_data,
                 'fixing_stats': fixing_stats,
                 'overall_stats': overall_stats,
-                'total_timeframes': total_timeframes,
-                'processed_timeframes': processed
+                'total_timeframes': len(loaded_data),
+                'processed_timeframes': len(loaded_data)
             }
             
-            print_info(f"✅ Gaps fixing completed for {processed} timeframes")
+            print_info(f"✅ Gaps fixing completed for {len(loaded_data)} timeframes")
             return result
             
         except Exception as e:
@@ -542,19 +534,34 @@ class GapsFixer:
             complete_times = df.index.tolist()
             
             # Fill only the actual gaps
-            for gap in gaps:
+            for i, gap in enumerate(gaps):
                 gap_start = pd.to_datetime(gap['start'])
                 gap_end = pd.to_datetime(gap['end'])
                 
-                # Generate missing timestamps for this specific gap
-                gap_times = pd.date_range(
-                    start=gap_start + expected_interval,
-                    end=gap_end - expected_interval,
-                    freq=expected_interval
-                )
+                print_debug(f"Gap {i+1}: {gap_start} to {gap_end}")
+                print_debug(f"  Duration: {gap_end - gap_start}")
+                print_debug(f"  Expected interval: {expected_interval}")
                 
-                # Add gap timestamps to the complete list
-                complete_times.extend(gap_times.tolist())
+                # Calculate how many points should be in this gap
+                gap_duration = gap_end - gap_start
+                expected_points_in_gap = int(gap_duration / expected_interval) - 1
+                
+                print_debug(f"  Expected points in gap: {expected_points_in_gap}")
+                
+                if expected_points_in_gap > 0:
+                    # Generate missing timestamps for this specific gap
+                    gap_times = pd.date_range(
+                        start=gap_start + expected_interval,
+                        end=gap_end - expected_interval,
+                        freq=expected_interval
+                    )
+                    
+                    print_debug(f"  Generated {len(gap_times)} timestamps for gap")
+                    
+                    # Add gap timestamps to the complete list
+                    complete_times.extend(gap_times.tolist())
+                else:
+                    print_debug(f"  Skipping gap - no points expected")
             
             # Sort and remove duplicates
             complete_times = pd.DatetimeIndex(complete_times).sort_values().drop_duplicates()

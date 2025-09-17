@@ -74,7 +74,7 @@ class GapsAnalyzer:
                            symbol: str,
                            strategy: str = 'auto',
                            create_backup: bool = True,
-                           show_progress: bool = True) -> Dict[str, Any]:
+                           show_progress: bool = False) -> Dict[str, Any]:
         """
         Complete gaps analysis and fixing workflow.
         
@@ -130,37 +130,29 @@ class GapsAnalyzer:
             if strategy not in self.available_strategies:
                 return {'status': 'error', 'message': f'Unknown strategy: {strategy}'}
             
-            # Create multi-progress tracker
-            multi_tracker = MultiProgressTracker(3, f"Gaps Analysis for {symbol}")
-            multi_tracker.start()
-            
             # Phase 1: Create backup
             backup_result = None
             if create_backup:
-                backup_tracker = multi_tracker.start_phase("Backup Creation", 1)
+                print_info(f"💾 Creating backup...")
                 backup_result = self.backup_manager.create_backup(
                     mtf_data, symbol, "Pre-gap-fixing backup"
                 )
-                backup_tracker.update(1, "Backup created")
-                multi_tracker.finish_phase("Backup Creation", "Backup created successfully")
+                print_info(f"✅ Backup created successfully")
             
             # Phase 2: Detect gaps
-            gaps_tracker = multi_tracker.start_phase("Gaps Detection", 1)
-            gaps_result = self._detect_gaps_with_progress(mtf_data, gaps_tracker)
-            multi_tracker.finish_phase("Gaps Detection", "Gaps detection completed")
+            print_info(f"🔍 Detecting gaps...")
+            gaps_result = self.detector.detect_gaps_in_mtf_data(mtf_data)
+            print_info(f"✅ Gaps detection completed")
             
             if gaps_result['status'] != 'success':
                 return gaps_result
             
             # Phase 3: Fix gaps
-            fix_tracker = multi_tracker.start_phase("Gaps Fixing", 1)
-            fix_result = self._fix_gaps_with_progress(
-                mtf_data, gaps_result, strategy, fix_tracker
+            print_info(f"🔧 Fixing gaps using strategy: {strategy}...")
+            fix_result = self.fixer.fix_gaps_in_mtf_data(
+                mtf_data, gaps_result, strategy
             )
-            multi_tracker.finish_phase("Gaps Fixing", "Gaps fixing completed")
-            
-            # Finish all phases
-            multi_tracker.finish_all(f"Gaps analysis completed for {symbol}")
+            print_info(f"✅ Gaps fixing completed")
             
             # Combine results
             result = {
