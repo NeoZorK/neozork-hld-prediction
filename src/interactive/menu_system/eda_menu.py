@@ -513,6 +513,17 @@ class EDAMenu(BaseMenu):
                 if tf in data:
                     converted_data[tf] = data[tf]
                     print_debug(f"Added cross timeframe {tf}: {data[tf].shape}")
+                else:
+                    # Try to load cross timeframe data from disk
+                    try:
+                        cross_data = self._load_cross_timeframe_data(metadata.get('symbol', 'UNKNOWN'), tf)
+                        if cross_data is not None:
+                            converted_data[tf] = cross_data
+                            print_debug(f"Loaded cross timeframe {tf} from disk: {cross_data.shape}")
+                        else:
+                            print_debug(f"Could not load cross timeframe {tf} from disk")
+                    except Exception as e:
+                        print_debug(f"Error loading cross timeframe {tf}: {e}")
             
             # Add metadata
             converted_data['_metadata'] = metadata
@@ -524,3 +535,38 @@ class EDAMenu(BaseMenu):
         except Exception as e:
             print_debug(f"Error converting data for gaps analysis: {e}")
             return data
+    
+    def _load_cross_timeframe_data(self, symbol: str, timeframe: str) -> Optional[pd.DataFrame]:
+        """
+        Load cross timeframe data from disk.
+        
+        Args:
+            symbol: Symbol name
+            timeframe: Timeframe to load
+            
+        Returns:
+            DataFrame with cross timeframe data or None if not found
+        """
+        try:
+            from pathlib import Path
+            import pandas as pd
+            
+            # Try different possible paths for cross timeframe data
+            possible_paths = [
+                Path(f"data/cleaned_data/{symbol.lower()}/cross_timeframes/{symbol.lower()}_{timeframe.lower()}_cross.parquet"),
+                Path(f"data/cleaned_data/{symbol.lower()}/{symbol.lower()}_{timeframe.lower()}.parquet"),
+                Path(f"data/cleaned_data/{symbol.lower()}/{timeframe.lower()}.parquet"),
+            ]
+            
+            for path in possible_paths:
+                if path.exists():
+                    print_debug(f"Loading cross timeframe data from: {path}")
+                    df = pd.read_parquet(path)
+                    return df
+            
+            print_debug(f"Cross timeframe data not found for {symbol} {timeframe}")
+            return None
+            
+        except Exception as e:
+            print_debug(f"Error loading cross timeframe data: {e}")
+            return None
