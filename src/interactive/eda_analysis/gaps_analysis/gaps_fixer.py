@@ -110,7 +110,10 @@ class GapsFixer:
                         df, timeframe_gaps, strategy
                     )
                     fixed_data[timeframe] = fix_result['fixed_data']
-                    fixing_stats[timeframe] = fix_result['stats']
+                    fixing_stats[timeframe] = {
+                        'status': fix_result['status'],
+                        **fix_result['stats']
+                    }
                 
                 processed += 1
             
