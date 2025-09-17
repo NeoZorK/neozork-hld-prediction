@@ -38,7 +38,7 @@ class GapsAnalyzer:
     
     def analyze_and_fix_gaps(self, mtf_data: Dict[str, Any], 
                            symbol: str,
-                           strategy: str = 'linear_interpolation',
+                           strategy: str = 'auto',
                            create_backup: bool = True,
                            show_progress: bool = True) -> Dict[str, Any]:
         """

@@ -29,6 +29,7 @@ class GapsFixer:
     def __init__(self):
         """Initialize the gaps fixer."""
         self.filling_strategies = {
+            'auto': self._auto_fill_gaps,
             'forward_fill': self._forward_fill_gaps,
             'backward_fill': self._backward_fill_gaps,
             'linear_interpolation': self._linear_interpolation_gaps,
@@ -275,6 +276,193 @@ class GapsFixer:
         except Exception as e:
             print_error(f"Error in median fill: {e}")
             return df
+    
+    def _auto_fill_gaps(self, df: pd.DataFrame, gaps_info: Dict[str, Any]) -> pd.DataFrame:
+        """
+        Automatically choose the best gap filling strategy based on data characteristics.
+        
+        Args:
+            df: DataFrame to fix
+            gaps_info: Gap information for this timeframe
+            
+        Returns:
+            Fixed DataFrame
+        """
+        try:
+            # Analyze data characteristics to choose best strategy
+            strategy = self._choose_best_strategy(df, gaps_info)
+            
+            print_debug(f"Auto-selected strategy: {strategy}")
+            
+            # Apply the chosen strategy
+            filling_func = self.filling_strategies[strategy]
+            return filling_func(df, gaps_info)
+            
+        except Exception as e:
+            print_error(f"Error in auto gap filling: {e}")
+            # Fallback to linear interpolation
+            return self._linear_interpolation_gaps(df, gaps_info)
+    
+    def _choose_best_strategy(self, df: pd.DataFrame, gaps_info: Dict[str, Any]) -> str:
+        """
+        Choose the best gap filling strategy based on data characteristics.
+        
+        Args:
+            df: DataFrame to analyze
+            gaps_info: Gap information
+            
+        Returns:
+            Best strategy name
+        """
+        try:
+            # Get gap information
+            gaps = gaps_info.get('gaps', [])
+            if not gaps:
+                return 'forward_fill'  # No gaps to fill
+            
+            # Analyze data characteristics
+            data_characteristics = self._analyze_data_characteristics(df)
+            gap_characteristics = self._analyze_gap_characteristics(gaps)
+            
+            # Decision tree for strategy selection
+            if data_characteristics['is_trending'] and gap_characteristics['avg_gap_size'] < 5:
+                # For trending data with small gaps, use linear interpolation
+                return 'linear_interpolation'
+            elif data_characteristics['is_volatile'] and gap_characteristics['avg_gap_size'] < 3:
+                # For volatile data with very small gaps, use spline interpolation
+                return 'spline_interpolation'
+            elif data_characteristics['has_strong_trend'] and gap_characteristics['avg_gap_size'] < 10:
+                # For strong trending data, use forward fill
+                return 'forward_fill'
+            elif data_characteristics['is_stationary'] and gap_characteristics['avg_gap_size'] < 7:
+                # For stationary data, use mean fill
+                return 'mean_fill'
+            elif gap_characteristics['avg_gap_size'] > 20:
+                # For very large gaps, use median fill (more robust)
+                return 'median_fill'
+            else:
+                # Default to linear interpolation
+                return 'linear_interpolation'
+                
+        except Exception as e:
+            print_debug(f"Error choosing best strategy: {e}")
+            return 'linear_interpolation'  # Safe fallback
+    
+    def _analyze_data_characteristics(self, df: pd.DataFrame) -> Dict[str, Any]:
+        """
+        Analyze data characteristics to help choose filling strategy.
+        
+        Args:
+            df: DataFrame to analyze
+            
+        Returns:
+            Dictionary with data characteristics
+        """
+        try:
+            if df.empty or len(df) < 3:
+                return {
+                    'is_trending': False,
+                    'is_volatile': False,
+                    'has_strong_trend': False,
+                    'is_stationary': True
+                }
+            
+            # Calculate price changes
+            price_cols = ['Open', 'High', 'Low', 'Close']
+            available_cols = [col for col in price_cols if col in df.columns]
+            
+            if not available_cols:
+                return {
+                    'is_trending': False,
+                    'is_volatile': False,
+                    'has_strong_trend': False,
+                    'is_stationary': True
+                }
+            
+            # Use Close price if available, otherwise first available
+            price_col = 'Close' if 'Close' in df.columns else available_cols[0]
+            prices = df[price_col].dropna()
+            
+            if len(prices) < 3:
+                return {
+                    'is_trending': False,
+                    'is_volatile': False,
+                    'has_strong_trend': False,
+                    'is_stationary': True
+                }
+            
+            # Calculate price changes
+            price_changes = prices.pct_change().dropna()
+            
+            # Analyze trends
+            positive_changes = (price_changes > 0).sum()
+            negative_changes = (price_changes < 0).sum()
+            total_changes = len(price_changes)
+            
+            # Calculate volatility (standard deviation of returns)
+            volatility = price_changes.std()
+            
+            # Calculate trend strength
+            trend_strength = abs(positive_changes - negative_changes) / total_changes if total_changes > 0 else 0
+            
+            # Determine characteristics
+            is_trending = trend_strength > 0.3  # More than 30% bias in one direction
+            is_volatile = volatility > 0.02  # More than 2% standard deviation
+            has_strong_trend = trend_strength > 0.6  # More than 60% bias
+            is_stationary = trend_strength < 0.2 and volatility < 0.01  # Low trend and volatility
+            
+            return {
+                'is_trending': is_trending,
+                'is_volatile': is_volatile,
+                'has_strong_trend': has_strong_trend,
+                'is_stationary': is_stationary,
+                'volatility': volatility,
+                'trend_strength': trend_strength
+            }
+            
+        except Exception as e:
+            print_debug(f"Error analyzing data characteristics: {e}")
+            return {
+                'is_trending': False,
+                'is_volatile': False,
+                'has_strong_trend': False,
+                'is_stationary': True
+            }
+    
+    def _analyze_gap_characteristics(self, gaps: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        Analyze gap characteristics to help choose filling strategy.
+        
+        Args:
+            gaps: List of gap dictionaries
+            
+        Returns:
+            Dictionary with gap characteristics
+        """
+        try:
+            if not gaps:
+                return {
+                    'avg_gap_size': 0,
+                    'max_gap_size': 0,
+                    'total_gaps': 0
+                }
+            
+            gap_sizes = [gap.get('gap_size', 0) for gap in gaps]
+            
+            return {
+                'avg_gap_size': sum(gap_sizes) / len(gap_sizes) if gap_sizes else 0,
+                'max_gap_size': max(gap_sizes) if gap_sizes else 0,
+                'total_gaps': len(gaps),
+                'min_gap_size': min(gap_sizes) if gap_sizes else 0
+            }
+            
+        except Exception as e:
+            print_debug(f"Error analyzing gap characteristics: {e}")
+            return {
+                'avg_gap_size': 0,
+                'max_gap_size': 0,
+                'total_gaps': 0
+            }
     
     def _create_complete_time_index(self, df: pd.DataFrame, gaps_info: Dict[str, Any]) -> pd.DatetimeIndex:
         """

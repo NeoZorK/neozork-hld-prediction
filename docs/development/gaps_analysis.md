@@ -48,19 +48,20 @@ analyzer = GapsAnalyzer()
 result = analyzer.analyze_and_fix_gaps(
     mtf_data=mtf_data,
     symbol='BTCUSD',
-    strategy='linear_interpolation',
+    strategy='auto',
     create_backup=True
 )
 ```
 
 ### Available Strategies
 
-1. **forward_fill**: Fill gaps with last known value
-2. **backward_fill**: Fill gaps with next known value
-3. **linear_interpolation**: Linear interpolation between values
-4. **spline_interpolation**: Spline interpolation (smooth curves)
-5. **mean_fill**: Fill gaps with mean value
-6. **median_fill**: Fill gaps with median value
+1. **auto** 🤖: **Auto-select best strategy** based on data characteristics (default)
+2. **forward_fill**: Fill gaps with last known value
+3. **backward_fill**: Fill gaps with next known value
+4. **linear_interpolation**: Linear interpolation between values
+5. **spline_interpolation**: Spline interpolation (smooth curves)
+6. **mean_fill**: Fill gaps with mean value
+7. **median_fill**: Fill gaps with median value
 
 ### Progress Tracking
 
@@ -124,9 +125,31 @@ The gap detection algorithm uses vectorized operations for efficiency:
 
 Multiple strategies are available for filling gaps:
 
+- **Auto Selection** 🤖: **Intelligent strategy selection** based on data analysis
 - **Interpolation Methods**: Linear and spline interpolation for smooth data
 - **Forward/Backward Fill**: Simple filling with adjacent values
 - **Statistical Methods**: Mean and median filling for robust estimates
+
+#### Auto Selection Algorithm
+
+The auto selection feature analyzes both data and gap characteristics to choose the optimal strategy:
+
+**Data Analysis:**
+- **Trend Detection**: Identifies trending vs stationary data
+- **Volatility Assessment**: Measures price volatility
+- **Trend Strength**: Calculates directional bias strength
+
+**Gap Analysis:**
+- **Gap Size**: Average and maximum gap sizes
+- **Gap Distribution**: Number and pattern of gaps
+
+**Decision Tree:**
+- **Trending + Small Gaps (<5)**: Linear interpolation
+- **Volatile + Very Small Gaps (<3)**: Spline interpolation  
+- **Strong Trend + Medium Gaps (<10)**: Forward fill
+- **Stationary + Medium Gaps (<7)**: Mean fill
+- **Very Large Gaps (>20)**: Median fill (robust)
+- **Default**: Linear interpolation
 
 ### Performance Optimizations
 
