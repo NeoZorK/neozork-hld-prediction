@@ -197,7 +197,7 @@ class GapsAnalyzer:
             
             # Create progress callback
             def progress_callback(current, total, message):
-                progress_tracker.update(current, message)
+                progress_tracker.update(current + 1, message)
             
             # Detect gaps
             gaps_result = self.detector.detect_gaps_in_mtf_data(
@@ -232,7 +232,7 @@ class GapsAnalyzer:
             
             # Create progress callback
             def progress_callback(current, total, message):
-                progress_tracker.update(current, message)
+                progress_tracker.update(current + 1, message)
             
             # Fix gaps
             fix_result = self.fixer.fix_gaps_in_mtf_data(
