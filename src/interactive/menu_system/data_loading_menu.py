@@ -1031,7 +1031,11 @@ class DataLoadingMenu(BaseMenu):
             # Save using DataLoader's method with data source
             loader._save_loaded_data(symbol, mtf_data['timeframe_data'], mtf_data, source)
             
-            print(f"{Fore.GREEN}✅ MTF structure saved to: {symbol_dir}")
+            # Get the actual save directory from DataLoader
+            source_dir = loader.mtf_dir / source
+            symbol_mtf_dir = source_dir / symbol.lower()
+            
+            print(f"{Fore.GREEN}✅ MTF structure saved to: {symbol_mtf_dir}")
             print(f"  • Symbol: {symbol.upper()}")
             print(f"  • Source: {source}")
             print(f"  • Timeframes: {', '.join(mtf_data['timeframes'])}")
