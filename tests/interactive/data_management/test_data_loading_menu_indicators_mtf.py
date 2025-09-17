@@ -277,9 +277,14 @@ class TestDataLoadingMenuIndicatorsMTF:
         # Mock analysis result
         analysis_result = {
             'status': 'success',
-            'folder_info': {'file_count': 2, 'size_mb': 1.5},
+            'folder_info': {
+                'path': '/test/indicators',
+                'file_count': 2, 
+                'size_mb': 1.5,
+                'modified': '2023-01-01T00:00:00Z'
+            },
             'indicators': ['RSI', 'MACD'],
-            'subfolders_info': {'parquet': {'file_count': 2, 'size_mb': 1.5}},
+            'subfolders_info': {'parquet': {'file_count': 2, 'size_mb': 1.5, 'modified': '2023-01-01T00:00:00Z'}},
             'files_info': {
                 'btcusdt_rsi_m1.parquet': {
                     'indicator': 'RSI',
@@ -305,9 +310,13 @@ class TestDataLoadingMenuIndicatorsMTF:
         # Mock the save_all_indicators_to_mtf method
         with patch.object(self.menu, '_save_all_indicators_to_mtf') as mock_save:
             with patch('src.interactive.data_management.data_filter.DataFilter', return_value=mock_data_filter):
-                with patch.object(mock_analyzer, 'analyze_indicators_folder', return_value=analysis_result):
-                    # Call the method
-                    self.menu._load_indicators()
+                with patch('src.interactive.data_management.indicators.IndicatorsAnalyzer', return_value=mock_analyzer):
+                    with patch('src.interactive.data_management.indicators.IndicatorsLoader', return_value=mock_loader):
+                        with patch('src.interactive.data_management.indicators.IndicatorsProcessor', return_value=mock_processor):
+                            with patch('src.interactive.data_management.indicators.IndicatorsMTFCreator', return_value=mock_mtf_creator):
+                                with patch.object(mock_analyzer, 'analyze_indicators_folder', return_value=analysis_result):
+                                    # Call the method
+                                    self.menu._load_indicators()
         
         # Verify that save_all_indicators_to_mtf was called
         mock_save.assert_called_once()
@@ -327,9 +336,14 @@ class TestDataLoadingMenuIndicatorsMTF:
         # Mock analysis result
         analysis_result = {
             'status': 'success',
-            'folder_info': {'file_count': 2, 'size_mb': 1.5},
+            'folder_info': {
+                'path': '/test/indicators',
+                'file_count': 2, 
+                'size_mb': 1.5,
+                'modified': '2023-01-01T00:00:00Z'
+            },
             'indicators': ['RSI', 'MACD'],
-            'subfolders_info': {'parquet': {'file_count': 2, 'size_mb': 1.5}},
+            'subfolders_info': {'parquet': {'file_count': 2, 'size_mb': 1.5, 'modified': '2023-01-01T00:00:00Z'}},
             'files_info': {
                 'btcusdt_rsi_m1.parquet': {
                     'indicator': 'RSI',
@@ -355,9 +369,13 @@ class TestDataLoadingMenuIndicatorsMTF:
         # Mock the save method to ensure it's not called
         with patch.object(self.menu, '_save_all_indicators_to_mtf') as mock_save:
             with patch('src.interactive.data_management.data_filter.DataFilter', return_value=mock_data_filter):
-                with patch.object(mock_analyzer, 'analyze_indicators_folder', return_value=analysis_result):
-                    # Call the method
-                    self.menu._load_indicators()
+                with patch('src.interactive.data_management.indicators.IndicatorsAnalyzer', return_value=mock_analyzer):
+                    with patch('src.interactive.data_management.indicators.IndicatorsLoader', return_value=mock_loader):
+                        with patch('src.interactive.data_management.indicators.IndicatorsProcessor', return_value=mock_processor):
+                            with patch('src.interactive.data_management.indicators.IndicatorsMTFCreator', return_value=mock_mtf_creator):
+                                with patch.object(mock_analyzer, 'analyze_indicators_folder', return_value=analysis_result):
+                                    # Call the method
+                                    self.menu._load_indicators()
         
         # Verify that save method was not called
         mock_save.assert_not_called()
