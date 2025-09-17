@@ -121,8 +121,8 @@ async def get_portfolio_summary(
             total_return_percentage=total_return_percentage,
             active_investments=active_investments,
             total_investments=total_investments,
-            created_at=datetime.utcnow().isoformat(),
-            updated_at=datetime.utcnow().isoformat()
+            created_at=datetime.now(datetime.UTC).isoformat(),
+            updated_at=datetime.now(datetime.UTC).isoformat()
         )
         
     except Exception as e:
@@ -230,8 +230,8 @@ async def get_portfolio_analytics(
         # Create mock performance data
         performance = PortfolioPerformanceResponse(
             period="1M",
-            start_date=datetime.utcnow().replace(day=1).isoformat(),
-            end_date=datetime.utcnow().isoformat(),
+            start_date=datetime.now(datetime.UTC).replace(day=1).isoformat(),
+            end_date=datetime.now(datetime.UTC).isoformat(),
             total_return=summary.total_return,
             total_return_percentage=summary.total_return_percentage,
             best_performing_fund=allocations[0].fund_name if allocations else None,

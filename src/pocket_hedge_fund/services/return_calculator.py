@@ -55,7 +55,7 @@ class ReturnCalculator:
             
             # Calculate time-based returns
             investment_date = investment['created_at']
-            days_held = (datetime.utcnow() - investment_date).days
+            days_held = (datetime.now(datetime.UTC) - investment_date).days
             annualized_return = self._calculate_annualized_return(
                 float(investment['amount']), current_value, days_held
             )
@@ -72,7 +72,7 @@ class ReturnCalculator:
                 "shares_owned": float(investment['shares_acquired']),
                 "current_share_price": fund_share_price,
                 "original_share_price": float(investment['share_price']),
-                "last_updated": datetime.utcnow().isoformat()
+                "last_updated": datetime.now(datetime.UTC).isoformat()
             }
             
         except Exception as e:
@@ -100,7 +100,7 @@ class ReturnCalculator:
                     "total_return": 0.0,
                     "total_return_percentage": 0.0,
                     "investments": [],
-                    "last_updated": datetime.utcnow().isoformat()
+                    "last_updated": datetime.now(datetime.UTC).isoformat()
                 }
             
             # Calculate portfolio metrics
@@ -138,7 +138,7 @@ class ReturnCalculator:
                 "total_return": total_return,
                 "total_return_percentage": total_return_percentage,
                 "investments": investment_returns,
-                "last_updated": datetime.utcnow().isoformat()
+                "last_updated": datetime.now(datetime.UTC).isoformat()
             }
             
         except Exception as e:
@@ -165,7 +165,7 @@ class ReturnCalculator:
             
             # Calculate time-based metrics
             fund_created = fund['created_at']
-            days_active = (datetime.utcnow() - fund_created).days
+            days_active = (datetime.now(datetime.UTC) - fund_created).days
             annualized_return = self._calculate_annualized_return(
                 float(fund['initial_capital']), float(fund['current_value']), days_active
             )
@@ -193,7 +193,7 @@ class ReturnCalculator:
                 "total_investments": total_investments,
                 "management_fee": float(fund['management_fee']),
                 "performance_fee": float(fund['performance_fee']),
-                "last_updated": datetime.utcnow().isoformat()
+                "last_updated": datetime.now(datetime.UTC).isoformat()
             }
             
         except Exception as e:
@@ -224,7 +224,7 @@ class ReturnCalculator:
                         "beta": 1.0,
                         "diversification_ratio": 0.0
                     },
-                    "last_updated": datetime.utcnow().isoformat()
+                    "last_updated": datetime.now(datetime.UTC).isoformat()
                 }
             
             # Calculate volatility (simplified - would need historical data in real implementation)
@@ -252,7 +252,7 @@ class ReturnCalculator:
                     "diversification_ratio": diversification_ratio,
                     "concentration_risk": concentration_risk
                 },
-                "last_updated": datetime.utcnow().isoformat()
+                "last_updated": datetime.now(datetime.UTC).isoformat()
             }
             
         except Exception as e:

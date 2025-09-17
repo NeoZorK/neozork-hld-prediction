@@ -286,8 +286,8 @@ async def get_strategies(
                 parameters=strategy.parameters,
                 risk_parameters=strategy.risk_parameters,
                 execution_parameters=strategy.execution_parameters,
-                created_at=execution.created_at if execution else datetime.utcnow(),
-                updated_at=execution.updated_at if execution else datetime.utcnow()
+                created_at=execution.created_at if execution else datetime.now(datetime.UTC),
+                updated_at=execution.updated_at if execution else datetime.now(datetime.UTC)
             ))
         
         # Apply pagination
@@ -337,8 +337,8 @@ async def get_strategy(
             parameters=strategy.parameters,
             risk_parameters=strategy.risk_parameters,
             execution_parameters=strategy.execution_parameters,
-            created_at=execution.created_at if execution else datetime.utcnow(),
-            updated_at=execution.updated_at if execution else datetime.utcnow()
+            created_at=execution.created_at if execution else datetime.now(datetime.UTC),
+            updated_at=execution.updated_at if execution else datetime.now(datetime.UTC)
         )
         
     except HTTPException:
@@ -743,7 +743,7 @@ async def websocket_strategy_updates(websocket: WebSocket, strategy_id: str):
                         "total_orders": current_execution.total_orders,
                         "filled_orders": current_execution.filled_orders,
                         "total_pnl": current_execution.total_pnl,
-                        "timestamp": datetime.utcnow().isoformat()
+                        "timestamp": datetime.now(datetime.UTC).isoformat()
                     }
                 })
                 

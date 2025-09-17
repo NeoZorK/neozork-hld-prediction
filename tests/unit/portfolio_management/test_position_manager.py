@@ -111,7 +111,7 @@ class TestPositionManager:
             market_value=Decimal('50000.00'),
             unrealized_pnl=Decimal('0'),
             realized_pnl=Decimal('0'),
-            entry_date=datetime.utcnow(),
+            entry_date=datetime.now(datetime.UTC),
             status=PositionStatus.ACTIVE
         )
         sample_portfolio.positions.append(existing_position)
@@ -142,7 +142,7 @@ class TestPositionManager:
             market_value=Decimal('50000.00'),
             unrealized_pnl=Decimal('0'),
             realized_pnl=Decimal('0'),
-            entry_date=datetime.utcnow(),
+            entry_date=datetime.now(datetime.UTC),
             status=PositionStatus.ACTIVE
         )
         
@@ -182,7 +182,7 @@ class TestPositionManager:
             market_value=Decimal('50000.00'),
             unrealized_pnl=Decimal('0'),
             realized_pnl=Decimal('0'),
-            entry_date=datetime.utcnow(),
+            entry_date=datetime.now(datetime.UTC),
             status=PositionStatus.ACTIVE
         )
         
@@ -208,7 +208,7 @@ class TestPositionManager:
             market_value=Decimal('55000.00'),
             unrealized_pnl=Decimal('5000.00'),
             realized_pnl=Decimal('0'),
-            entry_date=datetime.utcnow(),
+            entry_date=datetime.now(datetime.UTC),
             status=PositionStatus.ACTIVE
         )
         close_price = Decimal('55000.00')
@@ -253,7 +253,7 @@ class TestPositionManager:
             market_value=Decimal('110000.00'),
             unrealized_pnl=Decimal('10000.00'),
             realized_pnl=Decimal('0'),
-            entry_date=datetime.utcnow(),
+            entry_date=datetime.now(datetime.UTC),
             status=PositionStatus.ACTIVE
         )
         close_quantity = Decimal('1.0')
@@ -291,7 +291,7 @@ class TestPositionManager:
             market_value=Decimal('55000.00'),
             unrealized_pnl=Decimal('5000.00'),
             realized_pnl=Decimal('0'),
-            entry_date=datetime.utcnow(),
+            entry_date=datetime.now(datetime.UTC),
             status=PositionStatus.CLOSED  # Already closed
         )
         
@@ -318,7 +318,7 @@ class TestPositionManager:
             market_value=Decimal('50000.00'),
             unrealized_pnl=Decimal('0'),
             realized_pnl=Decimal('0'),
-            entry_date=datetime.utcnow(),
+            entry_date=datetime.now(datetime.UTC),
             status=PositionStatus.ACTIVE
         )
         
@@ -334,7 +334,7 @@ class TestPositionManager:
             market_value=Decimal('6000.00'),
             unrealized_pnl=Decimal('0'),
             realized_pnl=Decimal('0'),
-            entry_date=datetime.utcnow(),
+            entry_date=datetime.now(datetime.UTC),
             status=PositionStatus.ACTIVE
         )
         
@@ -377,7 +377,7 @@ class TestPositionManager:
             market_value=Decimal('50000.00'),
             unrealized_pnl=Decimal('0'),
             realized_pnl=Decimal('0'),
-            entry_date=datetime.utcnow(),
+            entry_date=datetime.now(datetime.UTC),
             stop_loss=Decimal('45000.00'),
             take_profit=Decimal('60000.00'),
             status=PositionStatus.ACTIVE
@@ -395,7 +395,7 @@ class TestPositionManager:
             market_value=Decimal('50000.00'),
             unrealized_pnl=Decimal('0'),
             realized_pnl=Decimal('0'),
-            entry_date=datetime.utcnow(),
+            entry_date=datetime.now(datetime.UTC),
             stop_loss=Decimal('55000.00'),
             take_profit=Decimal('40000.00'),
             status=PositionStatus.ACTIVE
@@ -453,7 +453,7 @@ class TestPositionManager:
             market_value=Decimal('55000.00'),
             unrealized_pnl=Decimal('5000.00'),
             realized_pnl=Decimal('1000.00'),
-            entry_date=datetime.utcnow(),
+            entry_date=datetime.now(datetime.UTC),
             status=PositionStatus.ACTIVE
         )
         

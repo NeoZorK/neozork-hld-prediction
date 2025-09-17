@@ -34,7 +34,7 @@ class PortfolioManager:
     ) -> Portfolio:
         """Create a new portfolio."""
         try:
-            portfolio_id = f"portfolio_{investor_id}_{fund_id}_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}"
+            portfolio_id = f"portfolio_{investor_id}_{fund_id}_{datetime.now(datetime.UTC).strftime('%Y%m%d_%H%M%S')}"
             
             portfolio = Portfolio(
                 id=portfolio_id,
@@ -90,7 +90,7 @@ class PortfolioManager:
     async def update_portfolio(self, portfolio: Portfolio) -> bool:
         """Update portfolio."""
         try:
-            portfolio.updated_at = datetime.utcnow()
+            portfolio.updated_at = datetime.now(datetime.UTC)
             
             # Update metrics
             portfolio.update_metrics()

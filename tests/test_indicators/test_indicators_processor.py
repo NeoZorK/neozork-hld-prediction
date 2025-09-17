@@ -27,7 +27,7 @@ class TestIndicatorsProcessor:
         loaded_data = {
             "file1.parquet": {
                 "data": pd.DataFrame({
-                    "timestamp": pd.date_range('2023-01-01', periods=10, freq='1H'),
+                    "timestamp": pd.date_range('2023-01-01', periods=10, freq='1h'),
                     "value": np.random.randn(10),
                     "symbol": ['BTCUSDT'] * 10,
                     "timeframe": ['H1'] * 10
@@ -66,7 +66,7 @@ class TestIndicatorsProcessor:
         """Test successful processing of single indicator."""
         file_data = {
             "data": pd.DataFrame({
-                "timestamp": pd.date_range('2023-01-01', periods=10, freq='1H'),
+                "timestamp": pd.date_range('2023-01-01', periods=10, freq='1h'),
                 "value": np.random.randn(10),
                 "symbol": ['BTCUSDT'] * 10,
                 "timeframe": ['H1'] * 10
@@ -87,7 +87,7 @@ class TestIndicatorsProcessor:
     def test_standardize_columns(self):
         """Test column standardization."""
         df = pd.DataFrame({
-            "time": pd.date_range('2023-01-01', periods=5, freq='1H'),
+            "time": pd.date_range('2023-01-01', periods=5, freq='1h'),
             "val": [1, 2, 3, 4, 5],
             "pair": ['BTCUSDT'] * 5,
             "tf": ['H1'] * 5
@@ -104,7 +104,7 @@ class TestIndicatorsProcessor:
         """Test successful validation of required columns."""
         df = pd.DataFrame({
             "value": [1, 2, 3, 4, 5],
-            "timestamp": pd.date_range('2023-01-01', periods=5, freq='1H')
+            "timestamp": pd.date_range('2023-01-01', periods=5, freq='1h')
         })
         
         result = self.processor._validate_required_columns(df)
@@ -115,7 +115,7 @@ class TestIndicatorsProcessor:
     def test_validate_required_columns_missing(self):
         """Test validation with missing required columns."""
         df = pd.DataFrame({
-            "timestamp": pd.date_range('2023-01-01', periods=5, freq='1H'),
+            "timestamp": pd.date_range('2023-01-01', periods=5, freq='1h'),
             "other_column": ["a", "b", "c", "d", "e"]  # Non-numeric column
         })
         
@@ -127,7 +127,7 @@ class TestIndicatorsProcessor:
     def test_clean_data(self):
         """Test data cleaning."""
         df = pd.DataFrame({
-            "timestamp": pd.date_range('2023-01-01', periods=10, freq='1H'),
+            "timestamp": pd.date_range('2023-01-01', periods=10, freq='1h'),
             "value": [1, 2, np.nan, 4, 5, 6, 7, 8, 9, 10],
             "symbol": ['BTCUSDT'] * 10,
             "timeframe": ['H1'] * 10
@@ -146,7 +146,7 @@ class TestIndicatorsProcessor:
         """Test adding metadata columns."""
         df = pd.DataFrame({
             "value": [1, 2, 3, 4, 5],
-            "timestamp": pd.date_range('2023-01-01', periods=5, freq='1H')
+            "timestamp": pd.date_range('2023-01-01', periods=5, freq='1h')
         })
         
         file_data = {
@@ -177,7 +177,7 @@ class TestIndicatorsProcessor:
         """Test successful final validation."""
         df = pd.DataFrame({
             "value": [1, 2, 3, 4, 5],
-            "timestamp": pd.date_range('2023-01-01', periods=5, freq='1H')
+            "timestamp": pd.date_range('2023-01-01', periods=5, freq='1h')
         })
         
         result = self.processor._final_validation(df)
@@ -210,7 +210,7 @@ class TestIndicatorsProcessor:
         """Test final validation with invalid value column."""
         df = pd.DataFrame({
             "value": ["a", "b", "c", "d", "e"],  # Non-numeric
-            "timestamp": pd.date_range('2023-01-01', periods=5, freq='1H')
+            "timestamp": pd.date_range('2023-01-01', periods=5, freq='1h')
         })
         
         result = self.processor._final_validation(df)
@@ -222,7 +222,7 @@ class TestIndicatorsProcessor:
         """Test final validation with no value variation."""
         df = pd.DataFrame({
             "value": [1, 1, 1, 1, 1],  # All same values
-            "timestamp": pd.date_range('2023-01-01', periods=5, freq='1H')
+            "timestamp": pd.date_range('2023-01-01', periods=5, freq='1h')
         })
         
         result = self.processor._final_validation(df)
@@ -239,7 +239,7 @@ class TestIndicatorsProcessor:
                     "value": [1, 2, 3],
                     "symbol": ['BTCUSDT'] * 3,
                     "timeframe": ['H1'] * 3,
-                    "timestamp": pd.date_range('2023-01-01', periods=3, freq='1H')
+                    "timestamp": pd.date_range('2023-01-01', periods=3, freq='1h')
                 }),
                 "indicator": "RSI",
                 "format": "parquet"
@@ -275,7 +275,7 @@ class TestIndicatorsProcessor:
         loaded_data = {
             "file1.parquet": {
                 "data": pd.DataFrame({
-                    "timestamp": pd.date_range('2023-01-01', periods=10, freq='1H'),
+                    "timestamp": pd.date_range('2023-01-01', periods=10, freq='1h'),
                     "value": np.random.randn(10),
                     "symbol": ['BTCUSDT'] * 10,
                     "timeframe": ['H1'] * 10

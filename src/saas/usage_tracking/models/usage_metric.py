@@ -52,7 +52,7 @@ class UsageMetric:
     
     # Time period
     period_start: datetime = field(default_factory=datetime.utcnow)
-    period_end: datetime = field(default_factory=lambda: datetime.utcnow() + timedelta(hours=1))
+    period_end: datetime = field(default_factory=lambda: datetime.now(datetime.UTC) + timedelta(hours=1))
     granularity: str = "hour"  # minute, hour, day, week, month
     
     # Metric values
@@ -136,7 +136,7 @@ class UsageMetric:
     def set_value(self, value_type: MetricValue, value: float) -> None:
         """Set metric value for specific type."""
         self.values[value_type.value] = value
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def increment_value(self, value_type: MetricValue, increment: float = 1.0) -> None:
         """Increment metric value."""
@@ -161,7 +161,7 @@ class UsageMetric:
             self.metadata["session_ids"].append(session_id)
             self.unique_sessions = len(self.metadata["session_ids"])
         
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def calculate_rate(self, time_window: timedelta) -> float:
         """Calculate rate of events per time window."""
@@ -228,7 +228,7 @@ class UsageMetric:
         self.unique_users = len(self.metadata["user_ids"])
         self.unique_sessions = len(self.metadata["session_ids"])
         
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def is_within_period(self, timestamp: datetime) -> bool:
         """Check if timestamp is within metric period."""

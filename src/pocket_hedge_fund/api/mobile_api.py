@@ -149,7 +149,7 @@ async def get_mobile_dashboard(current_user: Dict[str, Any] = Depends(get_curren
             daily_change_percentage=daily_change_percentage,
             fund_count=portfolio_data.get('fund_count', 0),
             investment_count=portfolio_data.get('investment_count', 0),
-            last_updated=datetime.utcnow(),
+            last_updated=datetime.now(datetime.UTC),
             performance_trend=performance_trend,
             quick_stats=quick_stats
         )
@@ -268,7 +268,7 @@ async def get_mobile_portfolio(current_user: Dict[str, Any] = Depends(get_curren
             recent_investments=recent_investments,
             performance_metrics=performance_metrics,
             risk_score=risk_score,
-            last_updated=datetime.utcnow()
+            last_updated=datetime.now(datetime.UTC)
         )
         
     except Exception as e:
@@ -440,7 +440,7 @@ async def send_push_notification(
         return {
             "success": True,
             "message": "Push notification sent successfully",
-            "notification_id": f"notif_{datetime.utcnow().timestamp()}"
+            "notification_id": f"notif_{datetime.now(datetime.UTC).timestamp()}"
         }
         
     except Exception as e:
@@ -460,7 +460,7 @@ async def sync_offline_data(
         # This would handle offline data synchronization
         # For now, we'll return a mock response
         
-        sync_timestamp = datetime.utcnow()
+        sync_timestamp = datetime.now(datetime.UTC)
         has_updates = True  # Mock: always has updates
         
         updates = [
@@ -493,7 +493,7 @@ async def mobile_health_check():
     return {
         "status": "healthy",
         "mobile_api": "active",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(datetime.UTC).isoformat(),
         "version": "1.0.0",
         "features": {
             "push_notifications": True,

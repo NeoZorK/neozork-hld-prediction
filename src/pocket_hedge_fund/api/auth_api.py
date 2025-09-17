@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 
 from fastapi import APIRouter, HTTPException, status, Depends, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator, validator
 from email_validator import validate_email, EmailNotValidError
 
 from ..auth import AuthManager
@@ -44,19 +44,19 @@ class UserRegistration(BaseModel):
     last_name: str
     role: Optional[str] = "investor"
     
-    @validator('password')
+    @field_validator('password')
     def validate_password(cls, v):
         if len(v) < 8:
             raise ValueError('Password must be at least 8 characters long')
         return v
     
-    @validator('username')
+    @field_validator('username')
     def validate_username(cls, v):
         if len(v) < 3:
             raise ValueError('Username must be at least 3 characters long')
         return v
     
-    @validator('email')
+    @field_validator('email')
     def validate_email(cls, v):
         try:
             validate_email(v)
@@ -70,7 +70,7 @@ class UserLogin(BaseModel):
     email: str
     password: str
     
-    @validator('email')
+    @field_validator('email')
     def validate_email(cls, v):
         try:
             validate_email(v)
@@ -107,7 +107,7 @@ class PasswordChange(BaseModel):
     old_password: str
     new_password: str
     
-    @validator('new_password')
+    @field_validator('new_password')
     def validate_new_password(cls, v):
         if len(v) < 8:
             raise ValueError('New password must be at least 8 characters long')
@@ -362,8 +362,8 @@ async def get_current_user_info(
             role=user_info['role'],
             is_active=True,  # If token is valid, user is active
             is_verified=True,  # Simplified
-            created_at=datetime.utcnow(),  # Simplified
-            last_login=datetime.utcnow()
+            created_at=datetime.now(datetime.UTC),  # Simplified
+            last_login=datetime.now(datetime.UTC)
         )
         
     except HTTPException:

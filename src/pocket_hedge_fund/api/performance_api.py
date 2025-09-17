@@ -252,7 +252,7 @@ async def get_performance_snapshots(
         
         # Set default dates if not provided
         if not end_date:
-            end_date = datetime.utcnow()
+            end_date = datetime.now(datetime.UTC)
         if not start_date:
             start_date = end_date - timedelta(days=365)
         
@@ -358,7 +358,7 @@ async def get_performance_report(
         
         # Set default dates if not provided
         if not end_date:
-            end_date = datetime.utcnow()
+            end_date = datetime.now(datetime.UTC)
         if not start_date:
             start_date = end_date - timedelta(days=365)
         
@@ -503,7 +503,7 @@ async def get_benchmark_comparison(
         
         # Set default dates if not provided
         if not end_date:
-            end_date = datetime.utcnow()
+            end_date = datetime.now(datetime.UTC)
         if not start_date:
             start_date = end_date - timedelta(days=365)
         

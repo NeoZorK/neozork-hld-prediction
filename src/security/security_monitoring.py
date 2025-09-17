@@ -164,7 +164,7 @@ class SecurityMonitoringManager:
             # Add event to monitoring system
             event_id = secrets.token_hex(16)
             event["event_id"] = event_id
-            event["timestamp"] = datetime.utcnow()
+            event["timestamp"] = datetime.now(datetime.UTC)
             event["processed"] = False
             
             self.security_events.append(event)
@@ -221,8 +221,8 @@ class SecurityMonitoringManager:
                 "status": IncidentStatus.DETECTED.value,
                 "affected_systems": affected_systems,
                 "evidence": initial_evidence,
-                "created_at": datetime.utcnow(),
-                "updated_at": datetime.utcnow(),
+                "created_at": datetime.now(datetime.UTC),
+                "updated_at": datetime.now(datetime.UTC),
                 "assigned_to": None,
                 "timeline": [],
                 "actions_taken": [],
@@ -232,7 +232,7 @@ class SecurityMonitoringManager:
             
             # Add to timeline
             incident["timeline"].append({
-                "timestamp": datetime.utcnow(),
+                "timestamp": datetime.now(datetime.UTC),
                 "action": "Incident created",
                 "actor": "system",
                 "details": f"Incident {incident_id} created for {incident_type.value}"
@@ -279,11 +279,11 @@ class SecurityMonitoringManager:
             # Update incident
             old_status = incident["status"]
             incident["status"] = new_status.value
-            incident["updated_at"] = datetime.utcnow()
+            incident["updated_at"] = datetime.now(datetime.UTC)
             
             # Add action to timeline
             timeline_entry = {
-                "timestamp": datetime.utcnow(),
+                "timestamp": datetime.now(datetime.UTC),
                 "action": action_taken,
                 "actor": actor,
                 "details": f"Status changed from {old_status} to {new_status.value}"
@@ -348,7 +348,7 @@ class SecurityMonitoringManager:
             scan_result = {
                 "scan_id": scan_id,
                 "target_systems": target_systems,
-                "scan_date": datetime.utcnow(),
+                "scan_date": datetime.now(datetime.UTC),
                 "vulnerabilities": vulnerabilities_found,
                 "vulnerabilities_by_severity": vuln_by_severity,
                 "total_vulnerabilities": len(vulnerabilities_found),
@@ -402,7 +402,7 @@ class SecurityMonitoringManager:
                                       if v.get("status") != "patched"])
             
             # Security trends (last 24 hours)
-            last_24h = datetime.utcnow() - timedelta(hours=24)
+            last_24h = datetime.now(datetime.UTC) - timedelta(hours=24)
             recent_events = [e for e in self.security_events 
                            if e.get("timestamp", datetime.min) > last_24h]
             
@@ -495,21 +495,21 @@ class SecurityMonitoringManager:
             recent_failures = len([e for e in self.security_events[-100:] 
                                  if e.get("type") == "login_failed" 
                                  and e.get("timestamp", datetime.min) > 
-                                 datetime.utcnow() - timedelta(minutes=15)])
+                                 datetime.now(datetime.UTC) - timedelta(minutes=15)])
             
             if recent_failures >= self.alert_rules["failed_login_threshold"]["count"]:
                 alerts.append({
                     "alert_type": "failed_login_threshold",
                     "severity": self.alert_rules["failed_login_threshold"]["severity"].value,
                     "message": f"Multiple failed login attempts detected: {recent_failures}",
-                    "timestamp": datetime.utcnow()
+                    "timestamp": datetime.now(datetime.UTC)
                 })
         
         return alerts
     
     async def _update_security_metrics(self, event: Dict[str, Any]):
         """Update security metrics based on event"""
-        current_time = datetime.utcnow()
+        current_time = datetime.now(datetime.UTC)
         hour_key = current_time.strftime("%Y-%m-%d-%H")
         
         if hour_key not in self.security_metrics:
@@ -591,7 +591,7 @@ class SecurityMonitoringManager:
     async def _close_incident(self, incident: Dict[str, Any]):
         """Close incident and generate report"""
         incident["resolution"] = {
-            "resolved_at": datetime.utcnow(),
+            "resolved_at": datetime.now(datetime.UTC),
             "resolution_summary": "Incident resolved successfully",
             "lessons_learned": "Security monitoring and response procedures worked effectively"
         }
@@ -613,7 +613,7 @@ class SecurityMonitoringManager:
                 "severity": VulnerabilitySeverity.MEDIUM.value,
                 "cvss_score": 6.5,
                 "cve_id": "CVE-2024-0001",
-                "discovered_at": datetime.utcnow(),
+                "discovered_at": datetime.now(datetime.UTC),
                 "status": "open",
                 "remediation": "Update to latest SSL/TLS version"
             },
@@ -625,7 +625,7 @@ class SecurityMonitoringManager:
                 "severity": VulnerabilitySeverity.HIGH.value,
                 "cvss_score": 7.2,
                 "cve_id": "CVE-2024-0002",
-                "discovered_at": datetime.utcnow(),
+                "discovered_at": datetime.now(datetime.UTC),
                 "status": "open",
                 "remediation": "Implement strong password policy"
             }
@@ -682,7 +682,7 @@ class SecurityMonitoringManager:
             "description": description,
             "incident_id": incident_id,
             "threat_level": threat_level.value,
-            "timestamp": datetime.utcnow()
+            "timestamp": datetime.now(datetime.UTC)
         }
         
         self.security_events.append(event)

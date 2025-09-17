@@ -99,7 +99,7 @@ class JWTManager:
                            role: UserRole, permissions: List[str], 
                            token_type: TokenType, expires_in_minutes: int) -> TokenPayload:
         """Create token payload."""
-        now = datetime.utcnow()
+        now = datetime.now(datetime.UTC)
         expires_at = now + timedelta(minutes=expires_in_minutes)
         
         return TokenPayload(
@@ -204,7 +204,7 @@ class JWTManager:
             
             # Check expiration
             exp_timestamp = payload.get("exp")
-            if exp_timestamp and datetime.utcnow().timestamp() > exp_timestamp:
+            if exp_timestamp and datetime.now(datetime.UTC).timestamp() > exp_timestamp:
                 logger.warning("Token has expired")
                 return None
             

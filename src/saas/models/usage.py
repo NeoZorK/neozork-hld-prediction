@@ -75,7 +75,7 @@ class Usage:
     # Timestamp information
     timestamp: datetime = field(default_factory=datetime.utcnow)
     billing_period_start: datetime = field(default_factory=datetime.utcnow)
-    billing_period_end: datetime = field(default_factory=lambda: datetime.utcnow() + timedelta(days=30))
+    billing_period_end: datetime = field(default_factory=lambda: datetime.now(datetime.UTC) + timedelta(days=30))
     
     # Metadata
     metadata: Dict[str, Any] = field(default_factory=dict)
@@ -126,7 +126,7 @@ class Usage:
     def is_in_billing_period(self, date: Optional[datetime] = None) -> bool:
         """Check if usage is within billing period"""
         if date is None:
-            date = datetime.utcnow()
+            date = datetime.now(datetime.UTC)
         return self.billing_period_start <= date <= self.billing_period_end
     
     def get_cost_breakdown(self) -> Dict[str, float]:
@@ -163,7 +163,7 @@ class Usage:
     def mark_as_processed(self) -> None:
         """Mark usage as processed"""
         self.processed = True
-        self.processed_at = datetime.utcnow()
+        self.processed_at = datetime.now(datetime.UTC)
     
     def update_cost(self, cost_per_unit: float) -> None:
         """Update cost information"""
@@ -242,7 +242,7 @@ class UsageAggregate:
     usage_type: UsageType = UsageType.API_CALL
     metric: UsageMetric = UsageMetric.COUNT
     period_start: datetime = field(default_factory=datetime.utcnow)
-    period_end: datetime = field(default_factory=lambda: datetime.utcnow() + timedelta(days=1))
+    period_end: datetime = field(default_factory=lambda: datetime.now(datetime.UTC) + timedelta(days=1))
     
     # Aggregated values
     total_amount: float = 0.0
@@ -270,7 +270,7 @@ class UsageAggregate:
             self.max_amount = max(self.max_amount, usage.amount)
         
         self.average_amount = self.total_amount / self.count
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def get_summary(self) -> Dict[str, Any]:
         """Get usage aggregate summary"""

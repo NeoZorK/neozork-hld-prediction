@@ -261,7 +261,7 @@ class TestRawParquetProcessor:
         
         # Test H1 timeframe
         test_data = pd.DataFrame({
-            'timestamp': pd.date_range('2023-01-01', periods=10, freq='1H'),
+            'timestamp': pd.date_range('2023-01-01', periods=10, freq='1h'),
             'open': np.random.rand(10),
             'high': np.random.rand(10),
             'low': np.random.rand(10),

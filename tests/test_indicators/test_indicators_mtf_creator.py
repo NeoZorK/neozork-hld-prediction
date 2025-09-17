@@ -33,7 +33,7 @@ class TestIndicatorsMTFCreator:
         processed_data = {
             "file1.parquet": {
                 "data": pd.DataFrame({
-                    "timestamp": pd.date_range('2023-01-01', periods=10, freq='1H'),
+                    "timestamp": pd.date_range('2023-01-01', periods=10, freq='1h'),
                     "value": np.random.randn(10),
                     "symbol": ['BTCUSDT'] * 10,
                     "timeframe": ['H1'] * 10
@@ -45,7 +45,7 @@ class TestIndicatorsMTFCreator:
             },
             "file2.parquet": {
                 "data": pd.DataFrame({
-                    "timestamp": pd.date_range('2023-01-01', periods=10, freq='1H'),
+                    "timestamp": pd.date_range('2023-01-01', periods=10, freq='1h'),
                     "value": np.random.randn(10),
                     "symbol": ['BTCUSDT'] * 10,
                     "timeframe": ['H1'] * 10
@@ -79,7 +79,7 @@ class TestIndicatorsMTFCreator:
         """Test successful MTF creation from single indicator."""
         indicator_data = {
             "data": pd.DataFrame({
-                "timestamp": pd.date_range('2023-01-01', periods=10, freq='1H'),
+                "timestamp": pd.date_range('2023-01-01', periods=10, freq='1h'),
                 "value": np.random.randn(10),
                 "symbol": ['BTCUSDT'] * 10,
                 "timeframe": ['H1'] * 10
@@ -130,7 +130,7 @@ class TestIndicatorsMTFCreator:
             "RSI": {
                 "H1": {
                     "data": pd.DataFrame({
-                        "timestamp": pd.date_range('2023-01-01', periods=5, freq='1H'),
+                        "timestamp": pd.date_range('2023-01-01', periods=5, freq='1h'),
                         "value": [1, 2, 3, 4, 5],
                         "symbol": ['BTCUSDT'] * 5,
                         "timeframe": ['H1'] * 5
@@ -158,7 +158,7 @@ class TestIndicatorsMTFCreator:
             "RSI": {
                 "H1": {
                     "data": pd.DataFrame({
-                        "timestamp": pd.date_range('2023-01-01', periods=5, freq='1H'),
+                        "timestamp": pd.date_range('2023-01-01', periods=5, freq='1h'),
                         "value": [1, 2, 3, 4, 5],
                         "symbol": ['BTCUSDT'] * 5,
                         "timeframe": ['H1'] * 5
@@ -296,7 +296,7 @@ class TestIndicatorsMTFCreator:
             "timeframes": ["H1"],
             "main_data": pd.DataFrame({
                 "RSI": [1, 2, 3],
-                "timestamp": pd.date_range('2023-01-01', periods=3, freq='1H')
+                "timestamp": pd.date_range('2023-01-01', periods=3, freq='1h')
             }),
             "cross_timeframe_features": {
                 "D1": {

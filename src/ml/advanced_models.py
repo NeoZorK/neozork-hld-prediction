@@ -544,7 +544,7 @@ def test_advanced_ml_models():
     
     # Create sample data
     np.random.seed(42)
-    dates = pd.date_range('2023-01-01', periods=2000, freq='1H')
+    dates = pd.date_range('2023-01-01', periods=2000, freq='1h')
     returns = np.random.normal(0, 0.02, 2000)
     prices = 100 * np.exp(np.cumsum(returns))
     

@@ -137,13 +137,13 @@ class Feature:
         """Add a dependency to the feature"""
         if dependency_name not in self.dependencies:
             self.dependencies.append(dependency_name)
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(datetime.UTC)
     
     def remove_dependency(self, dependency_name: str) -> None:
         """Remove a dependency from the feature"""
         if dependency_name in self.dependencies:
             self.dependencies.remove(dependency_name)
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(datetime.UTC)
     
     def has_tag(self, tag: str) -> bool:
         """Check if feature has a specific tag"""
@@ -153,18 +153,18 @@ class Feature:
         """Add a tag to the feature"""
         if tag not in self.tags:
             self.tags.append(tag)
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(datetime.UTC)
     
     def remove_tag(self, tag: str) -> None:
         """Remove a tag from the feature"""
         if tag in self.tags:
             self.tags.remove(tag)
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(datetime.UTC)
     
     def set_setting(self, key: str, value: Any) -> None:
         """Set a feature setting"""
         self.settings[key] = value
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def get_setting(self, key: str, default: Any = None) -> Any:
         """Get a feature setting"""
@@ -173,7 +173,7 @@ class Feature:
     def set_usage_limit(self, metric: str, limit: int) -> None:
         """Set usage limit for a metric"""
         self.usage_limits[metric] = limit
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def get_usage_limit(self, metric: str, default: int = 0) -> int:
         """Get usage limit for a metric"""
@@ -198,8 +198,8 @@ class Feature:
     def record_usage(self) -> None:
         """Record feature usage"""
         self.usage_count += 1
-        self.last_used = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+        self.last_used = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(datetime.UTC)
     
     def get_usage_stats(self) -> Dict[str, Any]:
         """Get feature usage statistics"""

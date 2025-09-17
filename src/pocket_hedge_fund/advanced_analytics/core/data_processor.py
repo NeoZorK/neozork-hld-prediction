@@ -260,10 +260,10 @@ class DataProcessor:
         """Handle missing values in data."""
         # Forward fill for price data
         price_columns = ['open_price', 'high_price', 'low_price', 'close_price']
-        df[price_columns] = df[price_columns].fillna(method='ffill')
+        df[price_columns] = df[price_columns].ffill()
         
         # Backward fill for any remaining missing values
-        df[price_columns] = df[price_columns].fillna(method='bfill')
+        df[price_columns] = df[price_columns].bfill()
         
         # Fill volume with median
         df['volume'] = df['volume'].fillna(df['volume'].median())

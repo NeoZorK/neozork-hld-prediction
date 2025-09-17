@@ -279,7 +279,7 @@ class AutoTrader:
             
             # Execute the trade (simplified)
             trade.status = TransactionStatus.EXECUTED
-            trade.execution_time = datetime.utcnow()
+            trade.execution_time = datetime.now(datetime.UTC)
             
             # Save to database
             if self.db_manager:
@@ -317,7 +317,7 @@ class AutoTrader:
             
             # Execute the trade (simplified)
             trade.status = TransactionStatus.EXECUTED
-            trade.execution_time = datetime.utcnow()
+            trade.execution_time = datetime.now(datetime.UTC)
             
             # Save to database
             if self.db_manager:

@@ -281,7 +281,7 @@ class TestPortfolioManager:
             market_value=Decimal('55000.00'),
             unrealized_pnl=Decimal('5000.00'),
             realized_pnl=Decimal('0.00'),
-            entry_date=datetime.utcnow(),
+            entry_date=datetime.now(datetime.UTC),
             status=PositionStatus.ACTIVE
         )
         
@@ -297,7 +297,7 @@ class TestPortfolioManager:
             market_value=Decimal('32000.00'),
             unrealized_pnl=Decimal('2000.00'),
             realized_pnl=Decimal('0.00'),
-            entry_date=datetime.utcnow(),
+            entry_date=datetime.now(datetime.UTC),
             status=PositionStatus.ACTIVE
         )
         

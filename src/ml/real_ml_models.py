@@ -499,7 +499,7 @@ def test_real_ml_models():
     
     # Create sample data
     np.random.seed(42)
-    dates = pd.date_range('2023-01-01', periods=1000, freq='1H')
+    dates = pd.date_range('2023-01-01', periods=1000, freq='1h')
     
     # Generate realistic price data
     returns = np.random.normal(0, 0.02, 1000)
