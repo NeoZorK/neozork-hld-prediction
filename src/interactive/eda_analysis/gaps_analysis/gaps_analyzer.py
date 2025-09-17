@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 from typing import Dict, Any, Optional, List
 from datetime import datetime
+from pathlib import Path
 from src.common.logger import print_info, print_warning, print_error, print_debug
 
 from .gaps_detector import GapsDetector
@@ -422,3 +423,189 @@ class GapsAnalyzer:
         except Exception as e:
             print_error(f"Error validating MTF data: {e}")
             return {'status': 'error', 'message': str(e)}
+    
+    def save_fixed_data_to_mtf(self, mtf_data: Dict[str, Any], symbol: str, 
+                              source: str = 'gaps_fixed') -> Dict[str, Any]:
+        """
+        Save fixed data to MTF structure in cleaned_data folder.
+        
+        Args:
+            mtf_data: MTF data structure with fixed data
+            symbol: Symbol name
+            source: Data source identifier
+            
+        Returns:
+            Dictionary containing save result
+        """
+        try:
+            from pathlib import Path
+            import json
+            
+            print_info(f"💾 Saving fixed data to MTF structure...")
+            
+            # Create MTF directory structure
+            mtf_root = Path("data/cleaned_data/mtf_structures")
+            source_dir = mtf_root / source
+            source_dir.mkdir(parents=True, exist_ok=True)
+            
+            symbol_dir = source_dir / symbol.lower()
+            symbol_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Get main timeframe and data
+            main_timeframe = mtf_data.get('_metadata', {}).get('main_timeframe', 'M1')
+            main_data = mtf_data.get(main_timeframe, pd.DataFrame())
+            
+            # Save main data
+            if not main_data.empty:
+                main_file = symbol_dir / f"{symbol.lower()}_main_{main_timeframe.lower()}.parquet"
+                main_data.to_parquet(main_file)
+                print_debug(f"Saved main data: {main_file}")
+            
+            # Save cross-timeframe data
+            cross_dir = symbol_dir / "cross_timeframes"
+            cross_dir.mkdir(exist_ok=True)
+            
+            cross_timeframes = []
+            for timeframe, df in mtf_data.items():
+                if (isinstance(df, pd.DataFrame) and 
+                    not df.empty and 
+                    timeframe != main_timeframe and 
+                    not timeframe.startswith('_')):
+                    
+                    cross_file = cross_dir / f"{symbol.lower()}_{timeframe.lower()}_cross.parquet"
+                    df.to_parquet(cross_file)
+                    cross_timeframes.append(timeframe)
+                    print_debug(f"Saved cross timeframe {timeframe}: {cross_file}")
+            
+            # Create metadata
+            metadata = {
+                'symbol': symbol.upper(),
+                'main_timeframe': main_timeframe,
+                'timeframes': [main_timeframe] + cross_timeframes,
+                'total_rows': sum(len(df) for df in mtf_data.values() 
+                                if isinstance(df, pd.DataFrame)),
+                'main_data_shape': list(main_data.shape) if not main_data.empty else [0, 0],
+                'cross_timeframes': cross_timeframes,
+                'created_at': pd.Timestamp.now().isoformat(),
+                'data_path': str(symbol_dir),
+                'main_file': str(main_file) if not main_data.empty else None,
+                'gaps_fixed': True,
+                'last_gap_fix': mtf_data.get('_metadata', {}).get('last_gap_fix', pd.Timestamp.now().isoformat()),
+                'fixing_strategy': mtf_data.get('_metadata', {}).get('fixing_strategy', 'unknown')
+            }
+            
+            # Save metadata
+            metadata_file = symbol_dir / "mtf_metadata.json"
+            with open(metadata_file, 'w') as f:
+                json.dump(metadata, f, indent=2, default=str)
+            
+            # Create ML loader script
+            self._create_ml_loader_script(symbol, metadata, symbol_dir)
+            
+            print_info(f"✅ Fixed data saved to MTF structure: {symbol_dir}")
+            print_info(f"  • Symbol: {symbol.upper()}")
+            print_info(f"  • Source: {source}")
+            print_info(f"  • Timeframes: {', '.join(metadata['timeframes'])}")
+            print_info(f"  • Total rows: {metadata['total_rows']:,}")
+            print_info(f"  • Gaps fixed: {metadata['gaps_fixed']}")
+            
+            return {
+                'status': 'success',
+                'symbol': symbol.upper(),
+                'source': source,
+                'mtf_path': str(symbol_dir),
+                'metadata': metadata,
+                'files_created': len(list(symbol_dir.rglob('*.parquet'))) + 1  # +1 for metadata
+            }
+            
+        except Exception as e:
+            print_error(f"Error saving fixed data to MTF: {e}")
+            return {'status': 'error', 'message': str(e)}
+    
+    def _create_ml_loader_script(self, symbol: str, metadata: Dict[str, Any], symbol_dir: Path):
+        """Create ML loader script for the MTF structure."""
+        try:
+            script_content = f'''#!/usr/bin/env python3
+"""
+ML Data Loader for {symbol.upper()} MTF Structure.
+Auto-generated script for loading fixed data with gaps filled.
+"""
+
+import pandas as pd
+import numpy as np
+from pathlib import Path
+from typing import Dict, Any, Optional
+
+class {symbol.upper()}MTFLoader:
+    """ML Data Loader for {symbol.upper()} MTF Structure."""
+    
+    def __init__(self, data_path: str = None):
+        """Initialize the loader."""
+        if data_path is None:
+            data_path = "{symbol_dir}"
+        self.data_path = Path(data_path)
+        self.metadata = {metadata}
+    
+    def load_main_data(self) -> pd.DataFrame:
+        """Load main timeframe data."""
+        main_file = self.data_path / "{symbol.lower()}_main_{metadata['main_timeframe'].lower()}.parquet"
+        if main_file.exists():
+            return pd.read_parquet(main_file)
+        return pd.DataFrame()
+    
+    def load_cross_timeframe(self, timeframe: str) -> pd.DataFrame:
+        """Load cross-timeframe data."""
+        cross_file = self.data_path / "cross_timeframes" / "{symbol.lower()}_{{timeframe.lower()}}_cross.parquet"
+        if cross_file.exists():
+            return pd.read_parquet(cross_file)
+        return pd.DataFrame()
+    
+    def load_all_data(self) -> Dict[str, pd.DataFrame]:
+        """Load all available data."""
+        data = {{}}
+        
+        # Load main data
+        main_data = self.load_main_data()
+        if not main_data.empty:
+            data['{metadata['main_timeframe']}'] = main_data
+        
+        # Load cross timeframes
+        for tf in {metadata['cross_timeframes']}:
+            cross_data = self.load_cross_timeframe(tf)
+            if not cross_data.empty:
+                data[tf] = cross_data
+        
+        return data
+    
+    def get_metadata(self) -> Dict[str, Any]:
+        """Get MTF metadata."""
+        return self.metadata.copy()
+
+# Example usage
+if __name__ == "__main__":
+    loader = {symbol.upper()}MTFLoader()
+    
+    # Load all data
+    all_data = loader.load_all_data()
+    print(f"Loaded {{len(all_data)}} timeframes")
+    
+    for tf, df in all_data.items():
+        print(f"{{tf}}: {{df.shape}}")
+    
+    # Get metadata
+    metadata = loader.get_metadata()
+    print(f"\\nMetadata:")
+    print(f"  Symbol: {{metadata['symbol']}}")
+    print(f"  Main timeframe: {{metadata['main_timeframe']}}")
+    print(f"  Total rows: {{metadata['total_rows']:,}}")
+    print(f"  Gaps fixed: {{metadata.get('gaps_fixed', False)}}")
+'''
+            
+            script_file = symbol_dir / f"{symbol.lower()}_ml_loader.py"
+            with open(script_file, 'w') as f:
+                f.write(script_content)
+            
+            print_debug(f"Created ML loader script: {script_file}")
+            
+        except Exception as e:
+            print_error(f"Error creating ML loader script: {e}")
