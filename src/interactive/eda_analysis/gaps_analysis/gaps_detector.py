@@ -139,9 +139,18 @@ class GapsDetector:
             
             # Get expected interval for this timeframe
             expected_interval = self.gap_thresholds.get(timeframe, timedelta(hours=1))
+            print_debug(f"Expected interval for {timeframe}: {expected_interval}")
             
             # Sort by index to ensure proper order
             df_sorted = df.sort_index()
+            print_debug(f"DataFrame shape: {df_sorted.shape}")
+            print_debug(f"Index type: {type(df_sorted.index)}")
+            print_debug(f"Index range: {df_sorted.index.min()} to {df_sorted.index.max()}")
+            
+            # Check if index is actually datetime
+            if not isinstance(df_sorted.index, pd.DatetimeIndex):
+                print_debug("Converting index to datetime")
+                df_sorted.index = pd.to_datetime(df_sorted.index)
             
             # Find gaps using vectorized operations
             gaps = self._find_gaps_vectorized(df_sorted.index, expected_interval)
@@ -188,12 +197,17 @@ class GapsDetector:
             if len(index) < 2:
                 return []
             
+            print_debug(f"Analyzing {len(index)} data points")
+            print_debug(f"Expected interval: {expected_interval}")
+            
             # Calculate differences between consecutive timestamps
             diffs = index.to_series().diff().dropna()
+            print_debug(f"Time differences - min: {diffs.min()}, max: {diffs.max()}, mean: {diffs.mean()}")
             
             # Find gaps (differences significantly larger than expected)
             # Use 1.5x expected interval as threshold to account for minor variations
             gap_threshold = expected_interval * 1.5
+            print_debug(f"Gap threshold: {gap_threshold}")
             
             gap_indices = diffs[diffs > gap_threshold].index
             

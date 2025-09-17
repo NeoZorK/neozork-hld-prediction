@@ -109,6 +109,14 @@ class GapsAnalyzer:
                 if actual_symbol != symbol:
                     print_debug(f"Symbol mismatch: parameter='{symbol}', metadata='{actual_symbol}'")
                     symbol = actual_symbol
+            elif isinstance(mtf_data, dict) and '_metadata' in mtf_data:
+                metadata = mtf_data['_metadata']
+                if 'symbol' in metadata:
+                    actual_symbol = metadata['symbol']
+                    print_debug(f"Using symbol from _metadata: {actual_symbol}")
+                    if actual_symbol != symbol:
+                        print_debug(f"Symbol mismatch: parameter='{symbol}', metadata='{actual_symbol}'")
+                        symbol = actual_symbol
             
             # Validate inputs
             if not mtf_data:
