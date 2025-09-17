@@ -90,7 +90,17 @@ class GapsFixer:
                 # Get gaps for this timeframe
                 timeframe_gaps = gaps_info.get('timeframe_gaps', {}).get(timeframe, {})
                 
-                if timeframe_gaps.get('gap_count', 0) == 0:
+                # Only fix gaps in M1 timeframe - cross timeframes are synthetic
+                if timeframe != 'M1':
+                    print_debug(f"Skipping gap fixing for {timeframe} - cross timeframe data is synthetic")
+                    fixed_data[timeframe] = df.copy()
+                    fixing_stats[timeframe] = {
+                        'status': 'skipped',
+                        'gaps_fixed': 0,
+                        'points_added': 0,
+                        'reason': 'Cross timeframe data is synthetic'
+                    }
+                elif timeframe_gaps.get('gap_count', 0) == 0:
                     # No gaps to fix
                     fixed_data[timeframe] = df.copy()
                     fixing_stats[timeframe] = {
@@ -99,7 +109,7 @@ class GapsFixer:
                         'points_added': 0
                     }
                 else:
-                    # Fix gaps
+                    # Fix gaps only in M1 timeframe
                     fix_result = self._fix_gaps_in_dataframe(
                         df, timeframe_gaps, strategy
                     )
@@ -615,17 +625,21 @@ class GapsFixer:
             total_gaps_fixed = 0
             total_points_added = 0
             timeframes_fixed = 0
+            timeframes_skipped = 0
             
             for timeframe, stats in fixing_stats.items():
                 if stats.get('status') == 'success':
                     total_gaps_fixed += stats.get('gaps_fixed', 0)
                     total_points_added += stats.get('points_added', 0)
                     timeframes_fixed += 1
+                elif stats.get('status') == 'skipped':
+                    timeframes_skipped += 1
             
             return {
                 'total_gaps_fixed': total_gaps_fixed,
                 'total_points_added': total_points_added,
                 'timeframes_fixed': timeframes_fixed,
+                'timeframes_skipped': timeframes_skipped,
                 'total_timeframes': len(fixing_stats),
                 'fixing_success_rate': (timeframes_fixed / len(fixing_stats) * 100) if fixing_stats else 0
             }
