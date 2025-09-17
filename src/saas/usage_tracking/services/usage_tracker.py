@@ -7,7 +7,7 @@ aggregating metrics, and enforcing limits.
 
 import asyncio
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import asdict
 
@@ -348,7 +348,7 @@ class UsageTracker:
         granularity = "hour"  # Default granularity
         
         # Get current period
-        now = datetime.now(datetime.UTC)
+        now = datetime.now(timezone.utc)
         period_start = self._get_period_start(now, granularity)
         period_end = self._get_period_end(period_start, granularity)
         

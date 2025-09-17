@@ -6,7 +6,7 @@ billing cycles, and feature access control.
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Any
 import uuid
 
@@ -74,8 +74,8 @@ class SubscriptionService:
             
             # Set trial period
             if trial_days > 0:
-                subscription.trial_start = datetime.now(datetime.UTC)
-                subscription.trial_end = datetime.now(datetime.UTC) + timedelta(days=trial_days)
+                subscription.trial_start = datetime.now(timezone.utc)
+                subscription.trial_end = datetime.now(timezone.utc) + timedelta(days=trial_days)
             
             # Set billing period
             self._set_billing_period(subscription)
@@ -140,7 +140,7 @@ class SubscriptionService:
                 if field in allowed_fields and hasattr(subscription, field):
                     setattr(subscription, field, value)
             
-            subscription.updated_at = datetime.now(datetime.UTC)
+            subscription.updated_at = datetime.now(timezone.utc)
             
             logger.info(f"Updated subscription: {subscription_id}")
             
@@ -174,7 +174,7 @@ class SubscriptionService:
             subscription.annual_price = new_plan.annual_price
             subscription.features = new_plan.features.copy()
             subscription.limits = new_plan.limits.copy()
-            subscription.updated_at = datetime.now(datetime.UTC)
+            subscription.updated_at = datetime.now(timezone.utc)
             
             logger.info(f"Upgraded subscription: {subscription_id} to plan: {new_plan.plan_id}")
             
@@ -254,7 +254,7 @@ class SubscriptionService:
                 }
             
             # Check if billing cycle needs to be processed
-            if datetime.now(datetime.UTC) < subscription.current_period_end:
+            if datetime.now(timezone.utc) < subscription.current_period_end:
                 return {
                     "status": "success",
                     "message": "Billing cycle not yet due"
@@ -469,7 +469,7 @@ class SubscriptionService:
     
     def _set_billing_period(self, subscription: Subscription) -> None:
         """Set billing period based on billing cycle."""
-        now = datetime.now(datetime.UTC)
+        now = datetime.now(timezone.utc)
         subscription.current_period_start = now
         
         if subscription.billing_cycle == "annual":
