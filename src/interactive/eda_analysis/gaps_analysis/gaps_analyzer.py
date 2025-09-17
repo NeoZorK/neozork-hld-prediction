@@ -467,6 +467,12 @@ class GapsAnalyzer:
                             print_debug(f"Updated original_path from DataFrame: {original_path}")
                         break
             
+            # Check if this is an MTF structure (regardless of source name)
+            data_type = original_info.get('data_type', '')
+            if data_type == 'mtf_structure' or 'mtf_structures' in original_path:
+                print_debug(f"Detected MTF structure: {original_path}")
+                return self._save_to_mtf_original_files(mtf_data, symbol, original_path)
+            
             # Determine save strategy based on original source
             if original_source == 'csv':
                 result = self._save_to_csv_original_files(mtf_data, symbol, original_path)
@@ -640,6 +646,7 @@ class GapsAnalyzer:
         """Save fixed data to original MTF files."""
         try:
             from pathlib import Path
+            import json
             
             # Use original path if available
             if original_path and Path(original_path).exists():
