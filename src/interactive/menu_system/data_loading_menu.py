@@ -265,7 +265,13 @@ class DataLoadingMenu(BaseMenu):
             # Save MTF structure with progress tracking and data source
             self._save_mtf_structure_with_progress(symbol, mtf_data, data_source)
             
-            print(f"\n{Fore.GREEN}✅ Successfully saved {symbol} data to {symbol_dir}")
+            # Get the actual save directory from DataLoader
+            from .data_loading import DataLoader
+            loader = DataLoader()
+            source_dir = loader.mtf_dir / data_source
+            symbol_mtf_dir = source_dir / symbol.lower()
+            
+            print(f"\n{Fore.GREEN}✅ Successfully saved {symbol} data to {symbol_mtf_dir}")
             print(f"{Fore.GREEN}🎯 MTF structure created and saved for ML!")
             
         except Exception as e:
