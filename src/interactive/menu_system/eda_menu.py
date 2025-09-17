@@ -7,6 +7,7 @@ This module provides the EDA analysis submenu with comprehensive data quality ch
 
 from typing import Dict, Any, Optional
 import colorama
+import time
 from colorama import Fore, Back, Style
 from .base_menu import BaseMenu
 
@@ -30,6 +31,7 @@ class EDAMenu(BaseMenu):
     def __init__(self):
         """Initialize the EDA analysis menu."""
         super().__init__()
+        self.gaps_analyzer = None
         self.menu_items = {
             "1": {"title": "⏰ Time Series Gaps Analysis", "handler": self._analyze_gaps},
             "2": {"title": "🔄 Duplicates", "handler": self._analyze_duplicates},
@@ -83,9 +85,31 @@ class EDAMenu(BaseMenu):
     
     def _analyze_gaps(self):
         """Analyze time series gaps."""
-        print(f"\n{Fore.YELLOW}⏰ Analyzing Time Series Gaps...")
-        print(f"{Fore.CYAN}This feature will be implemented in the next phase...")
-        time.sleep(2)
+        try:
+            print(f"\n{Fore.YELLOW}⏰ Time Series Gaps Analysis")
+            print(f"{Fore.CYAN}{'─'*50}")
+            
+            # Get loaded data
+            mtf_data = self._get_loaded_data()
+            if not mtf_data:
+                print(f"{Fore.RED}❌ No data loaded in memory!")
+                print(f"{Fore.YELLOW}💡 Please first load data using 'Load Data -> 4.Cleaned Data'")
+                input(f"\n{Fore.CYAN}Press Enter to continue...")
+                return
+            
+            # Initialize gaps analyzer
+            if not self.gaps_analyzer:
+                from src.interactive.eda_analysis.gaps_analysis import GapsAnalyzer
+                self.gaps_analyzer = GapsAnalyzer()
+            
+            # Show gaps analysis menu
+            self._show_gaps_analysis_menu(mtf_data)
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Error in gaps analysis: {e}")
+            import traceback
+            traceback.print_exc()
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
     
     def _analyze_duplicates(self):
         """Analyze duplicates."""
@@ -140,3 +164,296 @@ class EDAMenu(BaseMenu):
         print(f"\n{Fore.YELLOW}📊 Generating EDA Report...")
         print(f"{Fore.CYAN}This feature will be implemented in the next phase...")
         time.sleep(2)
+    
+    def _show_gaps_analysis_menu(self, mtf_data: Dict[str, Any]):
+        """Show gaps analysis submenu."""
+        while True:
+            print(f"\n{Fore.YELLOW}🔍 GAPS ANALYSIS MENU")
+            print(f"{Fore.CYAN}{'─'*40}")
+            print(f"{Fore.WHITE}1. 🔍 Detect Gaps Only")
+            print(f"{Fore.WHITE}2. 🔧 Detect & Fix Gaps")
+            print(f"{Fore.WHITE}3. 📊 Show Available Strategies")
+            print(f"{Fore.WHITE}4. 💾 List Backups")
+            print(f"{Fore.WHITE}5. 🔄 Restore from Backup")
+            print(f"{Fore.WHITE}6. 🧹 Cleanup Backups")
+            print(f"{Fore.RED}0. 🔙 Back")
+            print(f"{Fore.CYAN}{'─'*40}")
+            
+            choice = input(f"{Fore.YELLOW}Enter your choice: ").strip()
+            
+            if choice == "1":
+                self._detect_gaps_only(mtf_data)
+            elif choice == "2":
+                self._detect_and_fix_gaps(mtf_data)
+            elif choice == "3":
+                self._show_strategies()
+            elif choice == "4":
+                self._list_backups()
+            elif choice == "5":
+                self._restore_from_backup()
+            elif choice == "6":
+                self._cleanup_backups()
+            elif choice == "0":
+                break
+            else:
+                print(f"{Fore.RED}❌ Invalid choice. Please try again.")
+    
+    def _detect_gaps_only(self, mtf_data: Dict[str, Any]):
+        """Detect gaps only without fixing."""
+        try:
+            print(f"\n{Fore.YELLOW}🔍 Detecting gaps...")
+            
+            # Get symbol from data
+            symbol = mtf_data.get('symbol', 'UNKNOWN')
+            
+            # Detect gaps
+            gaps_result = self.gaps_analyzer.detector.detect_gaps_in_mtf_data(mtf_data)
+            
+            if gaps_result['status'] == 'success':
+                self._display_gaps_results(gaps_result, symbol)
+            else:
+                print(f"{Fore.RED}❌ Error detecting gaps: {gaps_result['message']}")
+            
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Error in gaps detection: {e}")
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+    
+    def _detect_and_fix_gaps(self, mtf_data: Dict[str, Any]):
+        """Detect and fix gaps."""
+        try:
+            print(f"\n{Fore.YELLOW}🔧 Detect & Fix Gaps")
+            print(f"{Fore.CYAN}{'─'*30}")
+            
+            # Get symbol from data
+            symbol = mtf_data.get('symbol', 'UNKNOWN')
+            
+            # Show available strategies
+            strategies = self.gaps_analyzer.get_available_strategies()
+            print(f"{Fore.WHITE}Available strategies:")
+            for i, strategy in enumerate(strategies, 1):
+                print(f"  {i}. {strategy}")
+            
+            # Get strategy choice
+            while True:
+                try:
+                    choice = input(f"\n{Fore.YELLOW}Select strategy (1-{len(strategies)}): ").strip()
+                    choice_idx = int(choice) - 1
+                    if 0 <= choice_idx < len(strategies):
+                        selected_strategy = strategies[choice_idx]
+                        break
+                    else:
+                        print(f"{Fore.RED}❌ Invalid choice. Please try again.")
+                except ValueError:
+                    print(f"{Fore.RED}❌ Invalid input. Please enter a number.")
+            
+            # Ask about backup
+            create_backup = input(f"\n{Fore.YELLOW}Create backup before fixing? (y/n): ").strip().lower() == 'y'
+            
+            # Run analysis and fixing
+            result = self.gaps_analyzer.analyze_and_fix_gaps(
+                mtf_data, symbol, selected_strategy, create_backup
+            )
+            
+            if result['status'] == 'success':
+                self._display_fixing_results(result)
+            else:
+                print(f"{Fore.RED}❌ Error in gaps analysis: {result['message']}")
+            
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Error in gaps fixing: {e}")
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+    
+    def _show_strategies(self):
+        """Show available gap filling strategies."""
+        try:
+            strategies = self.gaps_analyzer.get_available_strategies()
+            
+            print(f"\n{Fore.YELLOW}📊 Available Gap Filling Strategies")
+            print(f"{Fore.CYAN}{'─'*40}")
+            
+            strategy_descriptions = {
+                'forward_fill': 'Fill gaps with last known value',
+                'backward_fill': 'Fill gaps with next known value',
+                'linear_interpolation': 'Linear interpolation between values',
+                'spline_interpolation': 'Spline interpolation (smooth curves)',
+                'mean_fill': 'Fill gaps with mean value',
+                'median_fill': 'Fill gaps with median value'
+            }
+            
+            for i, strategy in enumerate(strategies, 1):
+                description = strategy_descriptions.get(strategy, 'No description available')
+                print(f"{Fore.WHITE}{i:2d}. {strategy:<20} - {description}")
+            
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Error showing strategies: {e}")
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+    
+    def _list_backups(self):
+        """List available backups."""
+        try:
+            print(f"\n{Fore.YELLOW}💾 Available Backups")
+            print(f"{Fore.CYAN}{'─'*30}")
+            
+            result = self.gaps_analyzer.list_backups()
+            
+            if result['status'] == 'success' and result['backups']:
+                for backup in result['backups']:
+                    metadata = backup['metadata']
+                    size_mb = backup['backup_size'] / 1024 / 1024
+                    print(f"{Fore.WHITE}• {backup['backup_name']}")
+                    print(f"  Symbol: {metadata.get('symbol', 'Unknown')}")
+                    print(f"  Created: {metadata.get('created_at', 'Unknown')}")
+                    print(f"  Size: {size_mb:.2f} MB")
+                    print()
+            else:
+                print(f"{Fore.YELLOW}No backups found.")
+            
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Error listing backups: {e}")
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+    
+    def _restore_from_backup(self):
+        """Restore data from backup."""
+        try:
+            print(f"\n{Fore.YELLOW}🔄 Restore from Backup")
+            print(f"{Fore.CYAN}{'─'*25}")
+            
+            # List backups
+            result = self.gaps_analyzer.list_backups()
+            
+            if result['status'] != 'success' or not result['backups']:
+                print(f"{Fore.YELLOW}No backups available.")
+                input(f"\n{Fore.CYAN}Press Enter to continue...")
+                return
+            
+            # Show backups
+            print(f"{Fore.WHITE}Available backups:")
+            for i, backup in enumerate(result['backups'], 1):
+                metadata = backup['metadata']
+                print(f"  {i}. {backup['backup_name']} ({metadata.get('symbol', 'Unknown')})")
+            
+            # Get backup choice
+            while True:
+                try:
+                    choice = input(f"\n{Fore.YELLOW}Select backup (1-{len(result['backups'])}): ").strip()
+                    choice_idx = int(choice) - 1
+                    if 0 <= choice_idx < len(result['backups']):
+                        selected_backup = result['backups'][choice_idx]['backup_name']
+                        break
+                    else:
+                        print(f"{Fore.RED}❌ Invalid choice. Please try again.")
+                except ValueError:
+                    print(f"{Fore.RED}❌ Invalid input. Please enter a number.")
+            
+            # Restore backup
+            restore_result = self.gaps_analyzer.restore_from_backup(selected_backup)
+            
+            if restore_result['status'] == 'success':
+                print(f"{Fore.GREEN}✅ Backup restored successfully!")
+                print(f"Symbol: {restore_result['metadata'].get('symbol', 'Unknown')}")
+                print(f"Created: {restore_result['metadata'].get('created_at', 'Unknown')}")
+            else:
+                print(f"{Fore.RED}❌ Error restoring backup: {restore_result['message']}")
+            
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Error restoring backup: {e}")
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+    
+    def _cleanup_backups(self):
+        """Cleanup old backups."""
+        try:
+            print(f"\n{Fore.YELLOW}🧹 Cleanup Backups")
+            print(f"{Fore.CYAN}{'─'*20}")
+            
+            keep_count = input(f"{Fore.YELLOW}How many backups to keep? (default: 5): ").strip()
+            if not keep_count:
+                keep_count = 5
+            else:
+                keep_count = int(keep_count)
+            
+            result = self.gaps_analyzer.cleanup_backups(keep_count)
+            
+            if result['status'] == 'success':
+                print(f"{Fore.GREEN}✅ Cleanup completed!")
+                print(f"Deleted: {result.get('deleted_count', 0)} backups")
+                print(f"Remaining: {result.get('remaining_count', 0)} backups")
+            else:
+                print(f"{Fore.RED}❌ Error during cleanup: {result['message']}")
+            
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Error during cleanup: {e}")
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+    
+    def _display_gaps_results(self, gaps_result: Dict[str, Any], symbol: str):
+        """Display gaps detection results."""
+        try:
+            print(f"\n{Fore.GREEN}✅ Gaps Detection Results for {symbol}")
+            print(f"{Fore.CYAN}{'─'*50}")
+            
+            overall_stats = gaps_result.get('overall_stats', {})
+            
+            print(f"{Fore.WHITE}Overall Statistics:")
+            print(f"  • Total gaps: {overall_stats.get('total_gaps_across_timeframes', 0)}")
+            print(f"  • Missing points: {overall_stats.get('total_missing_points_across_timeframes', 0)}")
+            print(f"  • Timeframes with gaps: {overall_stats.get('timeframes_with_gaps', 0)}")
+            print(f"  • Total gap duration: {overall_stats.get('total_gap_duration_seconds', 0) / 3600:.2f} hours")
+            print(f"  • Gaps percentage: {overall_stats.get('gaps_percentage', 0):.1f}%")
+            
+            # Show per-timeframe results
+            timeframe_gaps = gaps_result.get('timeframe_gaps', {})
+            if timeframe_gaps:
+                print(f"\n{Fore.WHITE}Per-Timeframe Results:")
+                for timeframe, result in timeframe_gaps.items():
+                    if result.get('status') == 'success':
+                        stats = result.get('statistics', {})
+                        print(f"  • {timeframe}: {stats.get('total_gaps', 0)} gaps, "
+                              f"{stats.get('total_missing_points', 0)} missing points")
+            
+        except Exception as e:
+            print(f"{Fore.RED}❌ Error displaying results: {e}")
+    
+    def _display_fixing_results(self, result: Dict[str, Any]):
+        """Display gaps fixing results."""
+        try:
+            print(f"\n{Fore.GREEN}✅ Gaps Fixing Results")
+            print(f"{Fore.CYAN}{'─'*30}")
+            
+            summary = result.get('summary', {})
+            
+            print(f"{Fore.WHITE}Summary:")
+            print(f"  • Gaps detected: {summary.get('gaps_detected', 0)}")
+            print(f"  • Gaps fixed: {summary.get('gaps_fixed', 0)}")
+            print(f"  • Points added: {summary.get('points_added', 0)}")
+            print(f"  • Timeframes fixed: {summary.get('timeframes_fixed', 0)}")
+            print(f"  • Success rate: {summary.get('fixing_success_rate', 0):.1f}%")
+            print(f"  • Strategy used: {result.get('strategy_used', 'Unknown')}")
+            
+            if result.get('backup_created'):
+                print(f"  • Backup created: Yes")
+            else:
+                print(f"  • Backup created: No")
+            
+        except Exception as e:
+            print(f"{Fore.RED}❌ Error displaying fixing results: {e}")
+    
+    def _get_loaded_data(self) -> Optional[Dict[str, Any]]:
+        """Get loaded data from data state manager."""
+        try:
+            from src.interactive.data_state_manager import data_state_manager
+            return data_state_manager.get_loaded_data()
+        except ImportError:
+            return None
+        except Exception:
+            return None
