@@ -206,7 +206,7 @@ class EDAMenu(BaseMenu):
             print(f"\n{Fore.YELLOW}🔍 Detecting gaps...")
             
             # Get symbol from data
-            symbol = mtf_data.get('symbol', 'UNKNOWN')
+            symbol = mtf_data.get('_symbol', 'UNKNOWN')
             
             # Detect gaps
             gaps_result = self.gaps_analyzer.detector.detect_gaps_in_mtf_data(mtf_data)
@@ -229,7 +229,7 @@ class EDAMenu(BaseMenu):
             print(f"{Fore.CYAN}{'─'*30}")
             
             # Get symbol from data
-            symbol = mtf_data.get('symbol', 'UNKNOWN')
+            symbol = mtf_data.get('_symbol', 'UNKNOWN')
             
             # Show available strategies
             strategies = self.gaps_analyzer.get_available_strategies()
