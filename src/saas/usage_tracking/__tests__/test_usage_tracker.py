@@ -6,7 +6,7 @@ Unit tests for the usage tracker service.
 
 import pytest
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest.mock import Mock, AsyncMock
 
 from ..models import UsageEvent, EventType, EventStatus, UsageMetric, MetricType, MetricValue
@@ -136,8 +136,8 @@ class TestUsageTracker:
         ]
         mock_storage_backend.get_metrics.return_value = mock_metrics
         
-        start_date = datetime.now(datetime.UTC) - timedelta(days=7)
-        end_date = datetime.now(datetime.UTC)
+        start_date = datetime.now(timezone.utc) - timedelta(days=7)
+        end_date = datetime.now(timezone.utc)
         
         metrics = await usage_tracker.get_usage_metrics(
             tenant_id="tenant-1",
