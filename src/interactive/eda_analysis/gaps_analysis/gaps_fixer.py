@@ -193,13 +193,17 @@ class GapsFixer:
     def _forward_fill_gaps(self, df: pd.DataFrame, gaps_info: Dict[str, Any]) -> pd.DataFrame:
         """Forward fill gaps in DataFrame."""
         try:
-            # Create complete time index
+            # Create complete time index (only for gaps)
             complete_index = self._create_complete_time_index(df, gaps_info)
             
-            # Reindex and forward fill
-            fixed_df = df.reindex(complete_index, method='ffill')
-            
-            return fixed_df
+            # Only reindex if we have gaps to fill
+            if len(complete_index) > len(df):
+                # Reindex and forward fill
+                fixed_df = df.reindex(complete_index, method='ffill')
+                return fixed_df
+            else:
+                # No gaps to fill, return original
+                return df.copy()
             
         except Exception as e:
             print_error(f"Error in forward fill: {e}")
@@ -208,13 +212,17 @@ class GapsFixer:
     def _backward_fill_gaps(self, df: pd.DataFrame, gaps_info: Dict[str, Any]) -> pd.DataFrame:
         """Backward fill gaps in DataFrame."""
         try:
-            # Create complete time index
+            # Create complete time index (only for gaps)
             complete_index = self._create_complete_time_index(df, gaps_info)
             
-            # Reindex and backward fill
-            fixed_df = df.reindex(complete_index, method='bfill')
-            
-            return fixed_df
+            # Only reindex if we have gaps to fill
+            if len(complete_index) > len(df):
+                # Reindex and backward fill
+                fixed_df = df.reindex(complete_index, method='bfill')
+                return fixed_df
+            else:
+                # No gaps to fill, return original
+                return df.copy()
             
         except Exception as e:
             print_error(f"Error in backward fill: {e}")
@@ -223,14 +231,18 @@ class GapsFixer:
     def _linear_interpolation_gaps(self, df: pd.DataFrame, gaps_info: Dict[str, Any]) -> pd.DataFrame:
         """Linear interpolation for gaps in DataFrame."""
         try:
-            # Create complete time index
+            # Create complete time index (only for gaps)
             complete_index = self._create_complete_time_index(df, gaps_info)
             
-            # Reindex and interpolate
-            fixed_df = df.reindex(complete_index)
-            fixed_df = fixed_df.interpolate(method='linear')
-            
-            return fixed_df
+            # Only reindex if we have gaps to fill
+            if len(complete_index) > len(df):
+                # Reindex and interpolate
+                fixed_df = df.reindex(complete_index)
+                fixed_df = fixed_df.interpolate(method='linear')
+                return fixed_df
+            else:
+                # No gaps to fill, return original
+                return df.copy()
             
         except Exception as e:
             print_error(f"Error in linear interpolation: {e}")
@@ -239,14 +251,18 @@ class GapsFixer:
     def _spline_interpolation_gaps(self, df: pd.DataFrame, gaps_info: Dict[str, Any]) -> pd.DataFrame:
         """Spline interpolation for gaps in DataFrame."""
         try:
-            # Create complete time index
+            # Create complete time index (only for gaps)
             complete_index = self._create_complete_time_index(df, gaps_info)
             
-            # Reindex and interpolate
-            fixed_df = df.reindex(complete_index)
-            fixed_df = fixed_df.interpolate(method='spline', order=3)
-            
-            return fixed_df
+            # Only reindex if we have gaps to fill
+            if len(complete_index) > len(df):
+                # Reindex and interpolate
+                fixed_df = df.reindex(complete_index)
+                fixed_df = fixed_df.interpolate(method='spline', order=3)
+                return fixed_df
+            else:
+                # No gaps to fill, return original
+                return df.copy()
             
         except Exception as e:
             print_error(f"Error in spline interpolation: {e}")
@@ -255,17 +271,21 @@ class GapsFixer:
     def _mean_fill_gaps(self, df: pd.DataFrame, gaps_info: Dict[str, Any]) -> pd.DataFrame:
         """Fill gaps with mean values."""
         try:
-            # Create complete time index
+            # Create complete time index (only for gaps)
             complete_index = self._create_complete_time_index(df, gaps_info)
             
-            # Reindex and fill with mean
-            fixed_df = df.reindex(complete_index)
-            for column in fixed_df.columns:
-                if fixed_df[column].dtype in ['float64', 'int64']:
-                    mean_value = df[column].mean()
-                    fixed_df[column] = fixed_df[column].fillna(mean_value)
-            
-            return fixed_df
+            # Only reindex if we have gaps to fill
+            if len(complete_index) > len(df):
+                # Reindex and fill with mean
+                fixed_df = df.reindex(complete_index)
+                for column in fixed_df.columns:
+                    if fixed_df[column].dtype in ['float64', 'int64']:
+                        mean_value = df[column].mean()
+                        fixed_df[column] = fixed_df[column].fillna(mean_value)
+                return fixed_df
+            else:
+                # No gaps to fill, return original
+                return df.copy()
             
         except Exception as e:
             print_error(f"Error in mean fill: {e}")
@@ -274,17 +294,21 @@ class GapsFixer:
     def _median_fill_gaps(self, df: pd.DataFrame, gaps_info: Dict[str, Any]) -> pd.DataFrame:
         """Fill gaps with median values."""
         try:
-            # Create complete time index
+            # Create complete time index (only for gaps)
             complete_index = self._create_complete_time_index(df, gaps_info)
             
-            # Reindex and fill with median
-            fixed_df = df.reindex(complete_index)
-            for column in fixed_df.columns:
-                if fixed_df[column].dtype in ['float64', 'int64']:
-                    median_value = df[column].median()
-                    fixed_df[column] = fixed_df[column].fillna(median_value)
-            
-            return fixed_df
+            # Only reindex if we have gaps to fill
+            if len(complete_index) > len(df):
+                # Reindex and fill with median
+                fixed_df = df.reindex(complete_index)
+                for column in fixed_df.columns:
+                    if fixed_df[column].dtype in ['float64', 'int64']:
+                        median_value = df[column].median()
+                        fixed_df[column] = fixed_df[column].fillna(median_value)
+                return fixed_df
+            else:
+                # No gaps to fill, return original
+                return df.copy()
             
         except Exception as e:
             print_error(f"Error in median fill: {e}")
