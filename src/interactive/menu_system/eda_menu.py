@@ -274,6 +274,22 @@ class EDAMenu(BaseMenu):
                         mtf_data['_metadata']['last_gap_fix'] = pd.Timestamp.now().isoformat()
                         mtf_data['_metadata']['fixing_strategy'] = selected_strategy
                 
+                # Ask if user wants to save fixed data to MTF structure
+                save_to_mtf = input(f"\n{Fore.YELLOW}💾 Save fixed data to MTF structure for future loading? (y/n): ").strip().lower() == 'y'
+                
+                if save_to_mtf:
+                    print(f"\n{Fore.GREEN}💾 Saving fixed data to MTF structure...")
+                    save_result = self.gaps_analyzer.save_fixed_data_to_mtf(mtf_data, symbol, 'gaps_fixed')
+                    
+                    if save_result['status'] == 'success':
+                        print(f"{Fore.GREEN}✅ Fixed data saved successfully!")
+                        print(f"  • Path: {save_result['mtf_path']}")
+                        print(f"  • Files created: {save_result['files_created']}")
+                        print(f"  • Source: {save_result['source']}")
+                        print(f"\n{Fore.CYAN}💡 You can now load this data using 'Load Data -> 4. Cleaned Data'")
+                    else:
+                        print(f"{Fore.RED}❌ Failed to save fixed data: {save_result['message']}")
+                
                 self._display_fixing_results(result)
             else:
                 print(f"{Fore.RED}❌ Error in gaps analysis: {result['message']}")
