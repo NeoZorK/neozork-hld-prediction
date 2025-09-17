@@ -424,6 +424,218 @@ class GapsAnalyzer:
             print_error(f"Error validating MTF data: {e}")
             return {'status': 'error', 'message': str(e)}
     
+    def save_fixed_data_to_original_files(self, mtf_data: Dict[str, Any], symbol: str) -> Dict[str, Any]:
+        """
+        Save fixed data back to original files.
+        
+        Args:
+            mtf_data: MTF data structure with fixed data
+            symbol: Symbol name
+            
+        Returns:
+            Dictionary containing save result
+        """
+        try:
+            from src.interactive.data_state_manager import data_state_manager
+            import json
+            
+            print_info(f"💾 Saving fixed data to original files...")
+            
+            # Get original data info from state manager
+            original_info = data_state_manager.get_loaded_data_info()
+            if not original_info:
+                return {'status': 'error', 'message': 'No original data information available'}
+            
+            original_source = original_info.get('source', 'unknown')
+            original_path = original_info.get('data_path', '')
+            
+            print_debug(f"Original source: {original_source}")
+            print_debug(f"Original path: {original_path}")
+            
+            # Determine save strategy based on original source
+            if original_source == 'csv':
+                return self._save_to_csv_original_files(mtf_data, symbol, original_path)
+            elif original_source == 'raw_parquet':
+                return self._save_to_raw_parquet_original_files(mtf_data, symbol, original_path)
+            elif original_source == 'gaps_fixed':
+                return self._save_to_mtf_original_files(mtf_data, symbol, original_path)
+            else:
+                return {'status': 'error', 'message': f'Unknown original source: {original_source}'}
+            
+        except Exception as e:
+            print_error(f"Error saving to original files: {e}")
+            return {'status': 'error', 'message': str(e)}
+    
+    def _save_to_csv_original_files(self, mtf_data: Dict[str, Any], symbol: str, original_path: str) -> Dict[str, Any]:
+        """Save fixed data to original CSV converted files."""
+        try:
+            from pathlib import Path
+            import json
+            
+            # Find original CSV files
+            csv_dir = Path("data/cleaned_data/csv_converted")
+            if not csv_dir.exists():
+                return {'status': 'error', 'message': 'Original CSV directory not found'}
+            
+            # Look for symbol files
+            symbol_files = list(csv_dir.glob(f"*{symbol.lower()}*"))
+            if not symbol_files:
+                return {'status': 'error', 'message': f'No original CSV files found for {symbol}'}
+            
+            saved_files = []
+            for file_path in symbol_files:
+                # Extract timeframe from filename
+                timeframe = self._extract_timeframe_from_filename(file_path.name)
+                if timeframe and timeframe in mtf_data:
+                    # Save fixed data
+                    fixed_df = mtf_data[timeframe]
+                    fixed_df.to_parquet(file_path)
+                    saved_files.append(str(file_path))
+                    print_debug(f"Saved {timeframe} to {file_path}")
+            
+            return {
+                'status': 'success',
+                'symbol': symbol.upper(),
+                'source': 'csv',
+                'saved_files': saved_files,
+                'files_count': len(saved_files)
+            }
+            
+        except Exception as e:
+            print_error(f"Error saving to CSV files: {e}")
+            return {'status': 'error', 'message': str(e)}
+    
+    def _save_to_raw_parquet_original_files(self, mtf_data: Dict[str, Any], symbol: str, original_path: str) -> Dict[str, Any]:
+        """Save fixed data to original raw parquet files."""
+        try:
+            from pathlib import Path
+            
+            # Find original raw parquet files
+            raw_dir = Path("data/raw_parquet")
+            if not raw_dir.exists():
+                return {'status': 'error', 'message': 'Original raw parquet directory not found'}
+            
+            # Look for symbol files
+            symbol_files = list(raw_dir.rglob(f"*{symbol.lower()}*"))
+            if not symbol_files:
+                return {'status': 'error', 'message': f'No original raw parquet files found for {symbol}'}
+            
+            saved_files = []
+            for file_path in symbol_files:
+                # Extract timeframe from filename
+                timeframe = self._extract_timeframe_from_filename(file_path.name)
+                if timeframe and timeframe in mtf_data:
+                    # Save fixed data
+                    fixed_df = mtf_data[timeframe]
+                    fixed_df.to_parquet(file_path)
+                    saved_files.append(str(file_path))
+                    print_debug(f"Saved {timeframe} to {file_path}")
+            
+            return {
+                'status': 'success',
+                'symbol': symbol.upper(),
+                'source': 'raw_parquet',
+                'saved_files': saved_files,
+                'files_count': len(saved_files)
+            }
+            
+        except Exception as e:
+            print_error(f"Error saving to raw parquet files: {e}")
+            return {'status': 'error', 'message': str(e)}
+    
+    def _save_to_mtf_original_files(self, mtf_data: Dict[str, Any], symbol: str, original_path: str) -> Dict[str, Any]:
+        """Save fixed data to original MTF files."""
+        try:
+            from pathlib import Path
+            
+            # Use original path if available
+            if original_path and Path(original_path).exists():
+                mtf_dir = Path(original_path)
+            else:
+                # Fallback to gaps_fixed source
+                return self.save_fixed_data_to_mtf(mtf_data, symbol, 'gaps_fixed')
+            
+            # Update existing MTF files
+            main_timeframe = mtf_data.get('_metadata', {}).get('main_timeframe', 'M1')
+            
+            # Save main data
+            main_file = mtf_dir / f"{symbol.lower()}_main_{main_timeframe.lower()}.parquet"
+            if main_file.exists() and main_timeframe in mtf_data:
+                mtf_data[main_timeframe].to_parquet(main_file)
+                print_debug(f"Updated main data: {main_file}")
+            
+            # Save cross-timeframe data
+            cross_dir = mtf_dir / "cross_timeframes"
+            if cross_dir.exists():
+                for timeframe, df in mtf_data.items():
+                    if (isinstance(df, pd.DataFrame) and 
+                        not df.empty and 
+                        timeframe != main_timeframe and 
+                        not timeframe.startswith('_')):
+                        
+                        cross_file = cross_dir / f"{symbol.lower()}_{timeframe.lower()}_cross.parquet"
+                        if cross_file.exists():
+                            df.to_parquet(cross_file)
+                            print_debug(f"Updated cross timeframe {timeframe}: {cross_file}")
+            
+            # Update metadata
+            metadata_file = mtf_dir / "mtf_metadata.json"
+            if metadata_file.exists():
+                with open(metadata_file, 'r') as f:
+                    metadata = json.load(f)
+                
+                # Update metadata with gap fixing info
+                metadata.update({
+                    'gaps_fixed': True,
+                    'last_gap_fix': pd.Timestamp.now().isoformat(),
+                    'fixing_strategy': mtf_data.get('_metadata', {}).get('fixing_strategy', 'unknown'),
+                    'total_rows': sum(len(df) for df in mtf_data.values() 
+                                    if isinstance(df, pd.DataFrame))
+                })
+                
+                with open(metadata_file, 'w') as f:
+                    json.dump(metadata, f, indent=2, default=str)
+                
+                print_debug(f"Updated metadata: {metadata_file}")
+            
+            return {
+                'status': 'success',
+                'symbol': symbol.upper(),
+                'source': 'mtf_original',
+                'mtf_path': str(mtf_dir),
+                'files_updated': len(list(mtf_dir.rglob('*.parquet')))
+            }
+            
+        except Exception as e:
+            print_error(f"Error saving to MTF original files: {e}")
+            return {'status': 'error', 'message': str(e)}
+    
+    def _extract_timeframe_from_filename(self, filename: str) -> Optional[str]:
+        """Extract timeframe from filename."""
+        try:
+            filename_lower = filename.lower()
+            if 'm1' in filename_lower:
+                return 'M1'
+            elif 'm5' in filename_lower:
+                return 'M5'
+            elif 'm15' in filename_lower:
+                return 'M15'
+            elif 'm30' in filename_lower:
+                return 'M30'
+            elif 'h1' in filename_lower:
+                return 'H1'
+            elif 'h4' in filename_lower:
+                return 'H4'
+            elif 'd1' in filename_lower:
+                return 'D1'
+            elif 'w1' in filename_lower:
+                return 'W1'
+            elif 'mn1' in filename_lower:
+                return 'MN1'
+            return None
+        except Exception:
+            return None
+    
     def save_fixed_data_to_mtf(self, mtf_data: Dict[str, Any], symbol: str, 
                               source: str = 'gaps_fixed') -> Dict[str, Any]:
         """
