@@ -435,9 +435,13 @@ class EDAMenu(BaseMenu):
                         # Show interval mismatch warning only if there's a mismatch
                         is_mismatch = result.get('is_interval_mismatch', False)
                         if is_mismatch:
-                            print(f"  • {timeframe}: {stats.get('total_gaps', 0)} gaps, "
-                                  f"{stats.get('total_missing_points', 0)} missing points "
-                                  f"(⚠️  Data is {actual_interval} intervals, expected {expected_interval})")
+                            if timeframe == 'M1':
+                                print(f"  • {timeframe}: {stats.get('total_gaps', 0)} gaps, "
+                                      f"{stats.get('total_missing_points', 0)} missing points")
+                            else:
+                                print(f"  • {timeframe}: {stats.get('total_gaps', 0)} gaps, "
+                                      f"{stats.get('total_missing_points', 0)} missing points "
+                                      f"(⚠️  Synthetic data - {actual_interval} intervals, expected {expected_interval})")
                         else:
                             print(f"  • {timeframe}: {stats.get('total_gaps', 0)} gaps, "
                                   f"{stats.get('total_missing_points', 0)} missing points")
