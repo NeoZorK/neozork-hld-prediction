@@ -167,6 +167,11 @@ class GapsDetector:
                 expected_interval = timedelta(minutes=1)
                 timeframe_for_analysis = 'M1'
                 is_interval_mismatch = True
+                
+                # For cross timeframes with M1 data, we expect no gaps (synthetic data)
+                # So we should use a more lenient gap threshold
+                if timeframe != 'M1':
+                    print_debug(f"Cross timeframe {timeframe} contains M1 data - likely synthetic, expecting no gaps")
             else:
                 timeframe_for_analysis = timeframe
                 is_interval_mismatch = False
