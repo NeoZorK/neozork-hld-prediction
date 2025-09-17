@@ -467,11 +467,60 @@ class EDAMenu(BaseMenu):
                             print_debug(f"  {key}: {type(value)}")
             else:
                 print_debug("No data loaded in data_state_manager")
+                return None
             
-            return data
+            # Convert data structure for gaps analysis
+            converted_data = self._convert_data_for_gaps_analysis(data)
+            return converted_data
+            
         except ImportError:
             print_debug("data_state_manager not available")
             return None
         except Exception as e:
             print_debug(f"Error getting loaded data: {e}")
             return None
+    
+    def _convert_data_for_gaps_analysis(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert loaded data structure to format expected by gaps analysis.
+        
+        Args:
+            data: Raw data from data_state_manager
+            
+        Returns:
+            Converted data structure for gaps analysis
+        """
+        try:
+            if not data or 'main_data' not in data:
+                return data
+            
+            # Get main data and cross timeframes
+            main_data = data['main_data']
+            cross_timeframes = data.get('cross_timeframes', [])
+            metadata = data.get('metadata', {})
+            
+            # Create gaps analysis structure
+            converted_data = {}
+            
+            # Add main timeframe data
+            if 'main_timeframe' in metadata:
+                main_tf = metadata['main_timeframe']
+                converted_data[main_tf] = main_data
+                print_debug(f"Added main timeframe {main_tf}: {main_data.shape}")
+            
+            # Add cross timeframes data
+            for tf in cross_timeframes:
+                if tf in data:
+                    converted_data[tf] = data[tf]
+                    print_debug(f"Added cross timeframe {tf}: {data[tf].shape}")
+            
+            # Add metadata
+            converted_data['_metadata'] = metadata
+            converted_data['_symbol'] = metadata.get('symbol', 'UNKNOWN')
+            
+            print_debug(f"Converted data structure: {list(converted_data.keys())}")
+            return converted_data
+            
+        except Exception as e:
+            print_debug(f"Error converting data for gaps analysis: {e}")
+            return data
