@@ -335,7 +335,10 @@ class TestIndicatorsMTFCreator:
         
         # Use invalid path to trigger error
         invalid_path = Path("/invalid/path/that/does/not/exist")
-        result = self.mtf_creator.save_mtf_structure(mtf_data, invalid_path)
+        
+        # Mock the mkdir method to raise an exception
+        with patch.object(Path, 'mkdir', side_effect=OSError("Permission denied")):
+            result = self.mtf_creator.save_mtf_structure(mtf_data, invalid_path)
         
         assert result["status"] == "error"
         assert "message" in result
