@@ -274,21 +274,48 @@ class EDAMenu(BaseMenu):
                         mtf_data['_metadata']['last_gap_fix'] = pd.Timestamp.now().isoformat()
                         mtf_data['_metadata']['fixing_strategy'] = selected_strategy
                 
-                # Ask if user wants to save fixed data to MTF structure
-                save_to_mtf = input(f"\n{Fore.YELLOW}💾 Save fixed data to MTF structure for future loading? (y/n): ").strip().lower() == 'y'
+                # Ask where to save fixed data
+                print(f"\n{Fore.YELLOW}💾 Where would you like to save the fixed data?")
+                print(f"  1. 📁 Original files (overwrite source files)")
+                print(f"  2. 🆕 New MTF structure (create new files)")
+                print(f"  3. ❌ Don't save")
                 
-                if save_to_mtf:
-                    print(f"\n{Fore.GREEN}💾 Saving fixed data to MTF structure...")
+                save_choice = input(f"\n{Fore.CYAN}Enter your choice (1-3): ").strip()
+                
+                if save_choice == '1':
+                    print(f"\n{Fore.GREEN}💾 Saving fixed data to original files...")
+                    save_result = self.gaps_analyzer.save_fixed_data_to_original_files(mtf_data, symbol)
+                    
+                    if save_result['status'] == 'success':
+                        print(f"{Fore.GREEN}✅ Fixed data saved to original files!")
+                        print(f"  • Symbol: {save_result['symbol']}")
+                        print(f"  • Source: {save_result['source']}")
+                        if 'saved_files' in save_result:
+                            print(f"  • Files updated: {save_result['files_count']}")
+                        elif 'mtf_path' in save_result:
+                            print(f"  • Path: {save_result['mtf_path']}")
+                        print(f"\n{Fore.CYAN}💡 Original files have been updated with fixed data")
+                    else:
+                        print(f"{Fore.RED}❌ Failed to save to original files: {save_result['message']}")
+                
+                elif save_choice == '2':
+                    print(f"\n{Fore.GREEN}💾 Saving fixed data to new MTF structure...")
                     save_result = self.gaps_analyzer.save_fixed_data_to_mtf(mtf_data, symbol, 'gaps_fixed')
                     
                     if save_result['status'] == 'success':
-                        print(f"{Fore.GREEN}✅ Fixed data saved successfully!")
+                        print(f"{Fore.GREEN}✅ Fixed data saved to new MTF structure!")
                         print(f"  • Path: {save_result['mtf_path']}")
                         print(f"  • Files created: {save_result['files_created']}")
                         print(f"  • Source: {save_result['source']}")
                         print(f"\n{Fore.CYAN}💡 You can now load this data using 'Load Data -> 4. Cleaned Data'")
                     else:
-                        print(f"{Fore.RED}❌ Failed to save fixed data: {save_result['message']}")
+                        print(f"{Fore.RED}❌ Failed to save to MTF structure: {save_result['message']}")
+                
+                elif save_choice == '3':
+                    print(f"{Fore.YELLOW}⏭️  Skipping save - data remains in memory only")
+                
+                else:
+                    print(f"{Fore.RED}❌ Invalid choice - skipping save")
                 
                 self._display_fixing_results(result)
             else:
