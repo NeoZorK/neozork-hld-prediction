@@ -50,7 +50,7 @@ class FlagDefinition:
             self.depends_on = []
 
 @dataclass
-class TestCase:
+class FlagTestCase:
     """Generated test case"""
     name: str
     command: List[str]
@@ -69,7 +69,7 @@ class FlagTestGenerator:
     def __init__(self):
         self.flags = self._define_flags()
         self.modes = self._define_modes()
-        self.test_cases: List[TestCase] = []
+        self.test_cases: List[FlagTestCase] = []
         
     def _define_flags(self) -> Dict[str, FlagDefinition]:
         """Define all available flags and their properties"""
@@ -174,14 +174,14 @@ class FlagTestGenerator:
             }
         }
     
-    def generate_basic_flag_tests(self) -> List[TestCase]:
+    def generate_basic_flag_tests(self) -> List[FlagTestCase]:
         """Generate tests for basic flags"""
         test_cases = []
         
         basic_flags = ['--version', '--help', '--examples', '--indicators', '--interactive', '-i']
         
         for flag in basic_flags:
-            test_cases.append(TestCase(
+            test_cases.append(FlagTestCase(
                 name=f"test_basic_{flag.replace('-', '').replace('--', '')}",
                 command=[flag],
                 expected_success=True,
@@ -192,13 +192,13 @@ class FlagTestGenerator:
         
         return test_cases
     
-    def generate_mode_tests(self) -> List[TestCase]:
+    def generate_mode_tests(self) -> List[FlagTestCase]:
         """Generate tests for different modes"""
         test_cases = []
         
         for mode, config in self.modes.items():
             # Basic mode test
-            test_cases.append(TestCase(
+            test_cases.append(FlagTestCase(
                 name=f"test_mode_{mode}_basic",
                 command=[mode],
                 expected_success=config['expected_success'],
@@ -214,7 +214,7 @@ class FlagTestGenerator:
                     if req_flag in self.flags and self.flags[req_flag].values:
                         required_cmd.extend([req_flag, self.flags[req_flag].values[0]])
                 
-                test_cases.append(TestCase(
+                test_cases.append(FlagTestCase(
                     name=f"test_mode_{mode}_required",
                     command=required_cmd,
                     expected_success=config['expected_success'],
@@ -240,7 +240,7 @@ class FlagTestGenerator:
                         else:
                             cmd.append(opt_flag)
                         
-                        test_cases.append(TestCase(
+                        test_cases.append(FlagTestCase(
                             name=f"test_mode_{mode}_{opt_flag.replace('-', '').replace('--', '')}",
                             command=cmd,
                             expected_success=config['expected_success'],
@@ -251,7 +251,7 @@ class FlagTestGenerator:
         
         return test_cases
     
-    def generate_flag_combination_tests(self) -> List[TestCase]:
+    def generate_flag_combination_tests(self) -> List[FlagTestCase]:
         """Generate tests for flag combinations"""
         test_cases = []
         
@@ -263,7 +263,7 @@ class FlagTestGenerator:
         # Rule + draw combinations
         for rule in rules:
             for draw in draw_modes:
-                test_cases.append(TestCase(
+                test_cases.append(FlagTestCase(
                     name=f"test_demo_rule_{rule}_draw_{draw}",
                     command=['demo', '--rule', rule, '-d', draw],
                     expected_success=True,
@@ -274,7 +274,7 @@ class FlagTestGenerator:
         
         # Export combinations
         for export_flag in export_flags:
-            test_cases.append(TestCase(
+            test_cases.append(FlagTestCase(
                 name=f"test_demo_export_{export_flag.replace('-', '').replace('--', '')}",
                 command=['demo', '--rule', 'RSI', export_flag],
                 expected_success=True,
@@ -284,7 +284,7 @@ class FlagTestGenerator:
             ))
         
         # Multiple export flags
-        test_cases.append(TestCase(
+        test_cases.append(FlagTestCase(
             name="test_demo_multiple_exports",
             command=['demo', '--rule', 'RSI', '--export-parquet', '--export-csv', '--export-json'],
             expected_success=True,
@@ -295,14 +295,14 @@ class FlagTestGenerator:
         
         return test_cases
     
-    def generate_error_tests(self) -> List[TestCase]:
+    def generate_error_tests(self) -> List[FlagTestCase]:
         """Generate error case tests"""
         test_cases = []
         
         # Invalid modes
         invalid_modes = ['invalid_mode', 'nonexistent', 'wrong_mode']
         for mode in invalid_modes:
-            test_cases.append(TestCase(
+            test_cases.append(FlagTestCase(
                 name=f"test_error_invalid_mode_{mode}",
                 command=[mode],
                 expected_success=False,
@@ -323,7 +323,7 @@ class FlagTestGenerator:
         ]
         
         for cmd, description in missing_required_cases:
-            test_cases.append(TestCase(
+            test_cases.append(FlagTestCase(
                 name=f"test_error_missing_required_{'_'.join(cmd)}",
                 command=cmd,
                 expected_success=False,
@@ -342,7 +342,7 @@ class FlagTestGenerator:
         ]
         
         for cmd, description in invalid_value_cases:
-            test_cases.append(TestCase(
+            test_cases.append(FlagTestCase(
                 name=f"test_error_invalid_value_{'_'.join(cmd)}",
                 command=cmd,
                 expected_success=False,
@@ -360,7 +360,7 @@ class FlagTestGenerator:
         ]
         
         for cmd, description in conflicting_cases:
-            test_cases.append(TestCase(
+            test_cases.append(FlagTestCase(
                 name=f"test_error_conflicting_{'_'.join(cmd[:3])}",
                 command=cmd,
                 expected_success=False,
@@ -371,7 +371,7 @@ class FlagTestGenerator:
         
         return test_cases
     
-    def generate_performance_tests(self) -> List[TestCase]:
+    def generate_performance_tests(self) -> List[FlagTestCase]:
         """Generate performance test cases"""
         test_cases = []
         
@@ -381,7 +381,7 @@ class FlagTestGenerator:
         
         for rule in rules:
             for draw in draw_modes:
-                test_cases.append(TestCase(
+                test_cases.append(FlagTestCase(
                     name=f"test_performance_{rule}_{draw}",
                     command=['demo', '--rule', rule, '-d', draw],
                     expected_success=True,
@@ -391,7 +391,7 @@ class FlagTestGenerator:
                 ))
         
         # Multiple export combinations
-        test_cases.append(TestCase(
+        test_cases.append(FlagTestCase(
             name="test_performance_multiple_exports",
             command=['demo', '--rule', 'RSI', '--export-parquet', '--export-csv', '--export-json', '--export-indicators-info'],
             expected_success=True,
@@ -402,7 +402,7 @@ class FlagTestGenerator:
         
         return test_cases
     
-    def generate_all_tests(self) -> List[TestCase]:
+    def generate_all_tests(self) -> List[FlagTestCase]:
         """Generate all test cases"""
         print("Generating CLI flag test cases...")
         
@@ -431,7 +431,7 @@ class FlagTestGenerator:
         print(f"Total test cases generated: {len(all_tests)}")
         return all_tests
     
-    def run_test_case(self, test_case: TestCase) -> Dict[str, Any]:
+    def run_test_case(self, test_case: FlagTestCase) -> Dict[str, Any]:
         """Run a single test case"""
         start_time = time.perf_counter()
         

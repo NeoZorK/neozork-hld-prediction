@@ -61,7 +61,7 @@ class Subscription:
     
     # Billing dates
     current_period_start: datetime = field(default_factory=datetime.utcnow)
-    current_period_end: datetime = field(default_factory=lambda: datetime.utcnow() + timedelta(days=30))
+    current_period_end: datetime = field(default_factory=lambda: datetime.now(datetime.UTC) + timedelta(days=30))
     trial_start: Optional[datetime] = None
     trial_end: Optional[datetime] = None
     cancelled_at: Optional[datetime] = None
@@ -93,8 +93,8 @@ class Subscription:
         """Post-initialization setup"""
         # Set trial period if not specified
         if self.status == SubscriptionStatus.TRIALING and not self.trial_start:
-            self.trial_start = datetime.utcnow()
-            self.trial_end = datetime.utcnow() + timedelta(days=14)
+            self.trial_start = datetime.now(datetime.UTC)
+            self.trial_end = datetime.now(datetime.UTC) + timedelta(days=14)
     
     def is_active(self) -> bool:
         """Check if subscription is active"""
@@ -108,13 +108,13 @@ class Subscription:
         """Check if trial period has expired"""
         if not self.is_trial() or not self.trial_end:
             return False
-        return datetime.utcnow() > self.trial_end
+        return datetime.now(datetime.UTC) > self.trial_end
     
     def get_trial_days_remaining(self) -> int:
         """Get number of trial days remaining"""
         if not self.is_trial() or not self.trial_end:
             return 0
-        delta = self.trial_end - datetime.utcnow()
+        delta = self.trial_end - datetime.now(datetime.UTC)
         return max(0, delta.days)
     
     def is_cancelled(self) -> bool:
@@ -146,7 +146,7 @@ class Subscription:
     
     def get_days_until_renewal(self) -> int:
         """Get days until next renewal"""
-        delta = self.current_period_end - datetime.utcnow()
+        delta = self.current_period_end - datetime.now(datetime.UTC)
         return max(0, delta.days)
     
     def has_feature(self, feature_name: str) -> bool:
@@ -170,29 +170,29 @@ class Subscription:
         if usage_type not in self.usage_this_period:
             self.usage_this_period[usage_type] = 0
         self.usage_this_period[usage_type] += amount
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def reset_period_usage(self) -> None:
         """Reset usage counters for new billing period"""
         self.usage_this_period.clear()
-        self.current_period_start = datetime.utcnow()
+        self.current_period_start = datetime.now(datetime.UTC)
         
         # Set next period end based on billing cycle
         if self.billing_cycle == "annual":
-            self.current_period_end = datetime.utcnow() + timedelta(days=365)
+            self.current_period_end = datetime.now(datetime.UTC) + timedelta(days=365)
         elif self.billing_cycle == "quarterly":
-            self.current_period_end = datetime.utcnow() + timedelta(days=90)
+            self.current_period_end = datetime.now(datetime.UTC) + timedelta(days=90)
         else:  # monthly
-            self.current_period_end = datetime.utcnow() + timedelta(days=30)
+            self.current_period_end = datetime.now(datetime.UTC) + timedelta(days=30)
         
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def cancel(self, effective_date: Optional[datetime] = None) -> None:
         """Cancel the subscription"""
         self.status = SubscriptionStatus.CANCELLED
-        self.cancelled_at = effective_date or datetime.utcnow()
+        self.cancelled_at = effective_date or datetime.now(datetime.UTC)
         self.auto_renew = False
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def reactivate(self) -> None:
         """Reactivate a cancelled subscription"""
@@ -200,25 +200,25 @@ class Subscription:
             self.status = SubscriptionStatus.ACTIVE
             self.cancelled_at = None
             self.auto_renew = True
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(datetime.UTC)
     
     def upgrade_tier(self, new_tier: SubscriptionTier, new_plan_id: str) -> None:
         """Upgrade subscription to a new tier"""
         self.tier = new_tier
         self.plan_id = new_plan_id
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def add_feature(self, feature_name: str) -> None:
         """Add a feature to the subscription"""
         if feature_name not in self.features:
             self.features.append(feature_name)
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(datetime.UTC)
     
     def remove_feature(self, feature_name: str) -> None:
         """Remove a feature from the subscription"""
         if feature_name in self.features:
             self.features.remove(feature_name)
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(datetime.UTC)
     
     def add_addon(self, addon_name: str, price: float, description: str = "") -> None:
         """Add an add-on to the subscription"""
@@ -226,15 +226,15 @@ class Subscription:
             "name": addon_name,
             "price": price,
             "description": description,
-            "added_at": datetime.utcnow().isoformat()
+            "added_at": datetime.now(datetime.UTC).isoformat()
         }
         self.add_ons.append(addon)
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def remove_addon(self, addon_name: str) -> None:
         """Remove an add-on from the subscription"""
         self.add_ons = [addon for addon in self.add_ons if addon["name"] != addon_name]
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def get_total_addon_price(self) -> float:
         """Get total price of all add-ons"""

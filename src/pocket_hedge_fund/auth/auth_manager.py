@@ -264,7 +264,7 @@ class AuthenticationManager:
                 )
             """
             
-            now = datetime.utcnow()
+            now = datetime.now(datetime.UTC)
             await db_manager.execute_command(
                 create_user_query,
                 [
@@ -426,7 +426,7 @@ class AuthenticationManager:
             """
             await db_manager.execute_command(
                 update_query,
-                [secret, datetime.utcnow(), user_id]
+                [secret, datetime.now(datetime.UTC), user_id]
             )
             
             mfa_data = {
@@ -468,7 +468,7 @@ class AuthenticationManager:
             """
             await db_manager.execute_command(
                 update_query,
-                [datetime.utcnow(), user_id]
+                [datetime.now(datetime.UTC), user_id]
             )
             
             # Log MFA enablement
@@ -544,7 +544,7 @@ class AuthenticationManager:
             # Calculate expiration
             expires_at = None
             if expires_days:
-                expires_at = datetime.utcnow() + timedelta(days=expires_days)
+                expires_at = datetime.now(datetime.UTC) + timedelta(days=expires_days)
             
             # Create API key record
             key_id = str(uuid.uuid4())
@@ -558,7 +558,7 @@ class AuthenticationManager:
             await db_manager.execute_command(
                 create_key_query,
                 [
-                    key_id, user_id, key_name, api_key, permissions, True, expires_at, datetime.utcnow()
+                    key_id, user_id, key_name, api_key, permissions, True, expires_at, datetime.now(datetime.UTC)
                 ]
             )
             
@@ -577,7 +577,7 @@ class AuthenticationManager:
                 'api_key': api_key,
                 'permissions': permissions,
                 'expires_at': expires_at.isoformat() if expires_at else None,
-                'created_at': datetime.utcnow().isoformat()
+                'created_at': datetime.now(datetime.UTC).isoformat()
             }
             
             return True, "API key created successfully", api_key_data
@@ -629,7 +629,7 @@ class AuthenticationManager:
         """
         await db_manager.execute_command(
             update_query,
-            [datetime.utcnow(), datetime.utcnow(), user_id]
+            [datetime.now(datetime.UTC), datetime.now(datetime.UTC), user_id]
         )
     
     async def _log_audit_event(
@@ -661,7 +661,7 @@ class AuthenticationManager:
                     str(uuid.uuid4()), user_id, action, resource_type, resource_id,
                     json.dumps(old_values) if old_values else None,
                     json.dumps(new_values) if new_values else None,
-                    ip_address, user_agent, datetime.utcnow()
+                    ip_address, user_agent, datetime.now(datetime.UTC)
                 ]
             )
         except Exception as e:

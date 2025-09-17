@@ -57,7 +57,7 @@ class PositionManager:
                 market_value=market_value,
                 unrealized_pnl=Decimal('0'),
                 realized_pnl=Decimal('0'),
-                entry_date=datetime.utcnow(),
+                entry_date=datetime.now(datetime.UTC),
                 stop_loss=stop_loss,
                 take_profit=take_profit,
                 risk_level=risk_level
@@ -111,7 +111,7 @@ class PositionManager:
                 updated = True
             
             if updated:
-                position.updated_at = datetime.utcnow()
+                position.updated_at = datetime.now(datetime.UTC)
                 
                 # Save to database if available
                 if self.db_manager:
@@ -155,14 +155,14 @@ class PositionManager:
             
             if position.quantity <= 0:
                 position.status = PositionStatus.CLOSED
-                position.closed_at = datetime.utcnow()
+                position.closed_at = datetime.now(datetime.UTC)
             else:
                 # Partial close - update entry price using weighted average
                 remaining_value = position.quantity * position.entry_price
                 closed_value = close_quantity * close_price
                 position.entry_price = (remaining_value + closed_value) / position.quantity
             
-            position.updated_at = datetime.utcnow()
+            position.updated_at = datetime.now(datetime.UTC)
             
             # Create transaction record
             transaction = Transaction(
@@ -176,7 +176,7 @@ class PositionManager:
                 fees=Decimal('0'),  # Would be calculated based on broker
                 net_amount=close_quantity * close_price,
                 status=TransactionStatus.EXECUTED,
-                execution_date=datetime.utcnow()
+                execution_date=datetime.now(datetime.UTC)
             )
             
             # Save to database if available
@@ -215,7 +215,7 @@ class PositionManager:
                     else:  # SHORT
                         position.unrealized_pnl = (position.entry_price - new_price) * position.quantity
                     
-                    position.updated_at = datetime.utcnow()
+                    position.updated_at = datetime.now(datetime.UTC)
                     updated_positions.append(position)
             
             # Update portfolio metrics
@@ -293,7 +293,7 @@ class PositionManager:
                 else:  # SHORT
                     return_percentage = float((position.entry_price - position.current_price) / position.entry_price * 100)
             
-            days_held = (datetime.utcnow() - position.entry_date).days
+            days_held = (datetime.now(datetime.UTC) - position.entry_date).days
             
             return {
                 'position_id': position.id,

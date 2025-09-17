@@ -12,7 +12,7 @@ from decimal import Decimal
 
 from fastapi import APIRouter, HTTPException, Depends, Query, Path, BackgroundTasks
 from fastapi import status
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, field_validator, Field, validator
 
 from ..core.analytics_engine import AnalyticsEngine
 from ..models.analytics_models import (
@@ -50,7 +50,7 @@ class MarketDataRequest(BaseModel):
     end_date: datetime = Field(..., description="End date for analysis")
     frequency: DataFrequency = Field(DataFrequency.DAILY, description="Data frequency")
     
-    @validator('end_date')
+    @field_validator('end_date')
     def validate_end_date(cls, v, values):
         if 'start_date' in values and v <= values['start_date']:
             raise ValueError('End date must be after start date')

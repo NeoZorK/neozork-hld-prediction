@@ -173,7 +173,7 @@ class BaseAnalytics(ABC):
         """Set cached data with TTL"""
         self.data_cache[key] = {
             "data": data,
-            "expires_at": datetime.utcnow() + timedelta(seconds=ttl)
+            "expires_at": datetime.now(datetime.UTC) + timedelta(seconds=ttl)
         }
 
 class PerformanceAnalytics(BaseAnalytics):
@@ -199,7 +199,7 @@ class PerformanceAnalytics(BaseAnalytics):
                 metric_type=MetricType.PERCENTAGE,
                 unit="%",
                 trend="up" if total_return > 0 else "down",
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(datetime.UTC),
                 metadata={"time_range": time_range.value}
             ))
             
@@ -215,7 +215,7 @@ class PerformanceAnalytics(BaseAnalytics):
                 metric_type=MetricType.RATIO,
                 unit="",
                 trend="up" if sharpe_ratio > 1.0 else "down",
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(datetime.UTC),
                 metadata={"time_range": time_range.value}
             ))
             
@@ -231,7 +231,7 @@ class PerformanceAnalytics(BaseAnalytics):
                 metric_type=MetricType.PERCENTAGE,
                 unit="%",
                 trend="down" if max_drawdown < 0.1 else "up",
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(datetime.UTC),
                 metadata={"time_range": time_range.value}
             ))
             
@@ -247,7 +247,7 @@ class PerformanceAnalytics(BaseAnalytics):
                 metric_type=MetricType.PERCENTAGE,
                 unit="%",
                 trend="up" if win_rate > 0.5 else "down",
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(datetime.UTC),
                 metadata={"time_range": time_range.value}
             ))
             
@@ -365,7 +365,7 @@ class RiskAnalytics(BaseAnalytics):
                 metric_type=MetricType.CURRENCY,
                 unit="$",
                 trend="down" if var_95 < 1000 else "up",
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(datetime.UTC),
                 metadata={"confidence_level": 95, "time_range": time_range.value}
             ))
             
@@ -381,7 +381,7 @@ class RiskAnalytics(BaseAnalytics):
                 metric_type=MetricType.CURRENCY,
                 unit="$",
                 trend="down" if cvar_95 < 1500 else "up",
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(datetime.UTC),
                 metadata={"confidence_level": 95, "time_range": time_range.value}
             ))
             
@@ -397,7 +397,7 @@ class RiskAnalytics(BaseAnalytics):
                 metric_type=MetricType.PERCENTAGE,
                 unit="%",
                 trend="down" if volatility < 0.2 else "up",
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(datetime.UTC),
                 metadata={"time_range": time_range.value}
             ))
             
@@ -413,7 +413,7 @@ class RiskAnalytics(BaseAnalytics):
                 metric_type=MetricType.RATIO,
                 unit="",
                 trend="stable" if 0.8 <= beta <= 1.2 else "up" if beta > 1.2 else "down",
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(datetime.UTC),
                 metadata={"time_range": time_range.value}
             ))
             
@@ -529,7 +529,7 @@ class PortfolioAnalytics(BaseAnalytics):
                 metric_type=MetricType.CURRENCY,
                 unit="$",
                 trend="up" if total_value > (await self._get_previous_value("total_value", time_range) or 0) else "down",
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(datetime.UTC),
                 metadata={"time_range": time_range.value}
             ))
             
@@ -545,7 +545,7 @@ class PortfolioAnalytics(BaseAnalytics):
                 metric_type=MetricType.COUNT,
                 unit="",
                 trend="stable",
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(datetime.UTC),
                 metadata={"time_range": time_range.value}
             ))
             
@@ -561,7 +561,7 @@ class PortfolioAnalytics(BaseAnalytics):
                 metric_type=MetricType.RATIO,
                 unit="",
                 trend="up" if diversification_ratio > 1.5 else "down",
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(datetime.UTC),
                 metadata={"time_range": time_range.value}
             ))
             
@@ -703,7 +703,7 @@ class DashboardAnalytics:
                 "dashboard_id": dashboard_id,
                 "user_id": user_id,
                 "time_range": time_range.value,
-                "generated_at": datetime.utcnow().isoformat(),
+                "generated_at": datetime.now(datetime.UTC).isoformat(),
                 "metrics": {},
                 "charts": {},
                 "widgets": []
@@ -773,8 +773,8 @@ class DashboardAnalytics:
                 widgets=dashboard_widgets,
                 layout=layout or {"columns": 12, "rows": 8},
                 theme=theme,
-                created_at=datetime.utcnow(),
-                updated_at=datetime.utcnow()
+                created_at=datetime.now(datetime.UTC),
+                updated_at=datetime.now(datetime.UTC)
             )
             
             # Store dashboard
@@ -833,7 +833,7 @@ class DashboardAnalytics:
             if "theme" in updates:
                 dashboard.theme = updates["theme"]
             
-            dashboard.updated_at = datetime.utcnow()
+            dashboard.updated_at = datetime.now(datetime.UTC)
             
             # Update in database
             await self._update_dashboard(dashboard)
@@ -888,8 +888,8 @@ class DashboardAnalytics:
                 parameters=parameters,
                 data=report_data,
                 format=format,
-                generated_at=datetime.utcnow(),
-                expires_at=datetime.utcnow() + timedelta(days=7),  # 7 days expiry
+                generated_at=datetime.now(datetime.UTC),
+                expires_at=datetime.now(datetime.UTC) + timedelta(days=7),  # 7 days expiry
                 user_id=user_id
             )
             
@@ -955,7 +955,7 @@ class DashboardAnalytics:
             summary = {
                 "user_id": user_id,
                 "time_range": time_range.value,
-                "generated_at": datetime.utcnow().isoformat(),
+                "generated_at": datetime.now(datetime.UTC).isoformat(),
                 "summary": {}
             }
             
@@ -1038,7 +1038,7 @@ class DashboardAnalytics:
                 "metrics": [asdict(metric) for metric in metrics],
                 "charts": [asdict(chart) for chart in charts],
                 "parameters": parameters,
-                "generated_at": datetime.utcnow().isoformat()
+                "generated_at": datetime.now(datetime.UTC).isoformat()
             }
             
         except Exception as e:

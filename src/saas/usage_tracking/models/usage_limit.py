@@ -154,9 +154,9 @@ class UsageLimit:
     def update_usage(self, usage: float) -> None:
         """Update current usage and recalculate percentage."""
         self.current_usage = usage
-        self.last_updated = datetime.utcnow()
+        self.last_updated = datetime.now(datetime.UTC)
         self._calculate_usage_percentage()
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def is_exceeded(self) -> bool:
         """Check if limit is exceeded."""
@@ -181,7 +181,7 @@ class UsageLimit:
     
     def get_period_start(self) -> datetime:
         """Get start of current period."""
-        now = datetime.utcnow()
+        now = datetime.now(datetime.UTC)
         
         if self.period_type == "minute":
             return now.replace(second=0, microsecond=0)
@@ -226,7 +226,7 @@ class UsageLimit:
         """Check if limit has expired."""
         if self.expires_at is None:
             return False
-        return datetime.utcnow() > self.expires_at
+        return datetime.now(datetime.UTC) > self.expires_at
     
     def is_active(self) -> bool:
         """Check if limit is active."""
@@ -257,37 +257,37 @@ class UsageLimit:
         """Add notification email."""
         if email not in self.notification_emails:
             self.notification_emails.append(email)
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(datetime.UTC)
     
     def remove_notification_email(self, email: str) -> None:
         """Remove notification email."""
         if email in self.notification_emails:
             self.notification_emails.remove(email)
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(datetime.UTC)
     
     def add_tag(self, tag: str) -> None:
         """Add a tag to the limit."""
         if tag not in self.tags:
             self.tags.append(tag)
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(datetime.UTC)
     
     def remove_tag(self, tag: str) -> None:
         """Remove a tag from the limit."""
         if tag in self.tags:
             self.tags.remove(tag)
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(datetime.UTC)
     
     def suspend(self) -> None:
         """Suspend the limit."""
         self.status = LimitStatus.SUSPENDED
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def activate(self) -> None:
         """Activate the limit."""
         self.status = LimitStatus.ACTIVE
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def deactivate(self) -> None:
         """Deactivate the limit."""
         self.status = LimitStatus.INACTIVE
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)

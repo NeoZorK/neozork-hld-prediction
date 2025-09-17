@@ -243,7 +243,7 @@ class SaaSUserManager:
                     else:
                         user_data[field] = value
             
-            user_data["updated_at"] = datetime.utcnow()
+            user_data["updated_at"] = datetime.now(datetime.UTC)
             
             logger.info(f"Updated tenant user: {user_id}")
             

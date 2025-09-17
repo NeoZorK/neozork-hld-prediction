@@ -55,7 +55,7 @@ class Billing:
     # Invoice details
     invoice_number: str = ""
     invoice_date: datetime = field(default_factory=datetime.utcnow)
-    due_date: datetime = field(default_factory=lambda: datetime.utcnow() + timedelta(days=30))
+    due_date: datetime = field(default_factory=lambda: datetime.now(datetime.UTC) + timedelta(days=30))
     
     # Billing status
     status: BillingStatus = BillingStatus.PENDING
@@ -90,7 +90,7 @@ class Billing:
     
     # Billing period
     billing_period_start: datetime = field(default_factory=datetime.utcnow)
-    billing_period_end: datetime = field(default_factory=lambda: datetime.utcnow() + timedelta(days=30))
+    billing_period_end: datetime = field(default_factory=lambda: datetime.now(datetime.UTC) + timedelta(days=30))
     
     # Customer information
     billing_email: Optional[str] = None
@@ -116,7 +116,7 @@ class Billing:
     
     def _generate_invoice_number(self) -> str:
         """Generate a unique invoice number"""
-        timestamp = datetime.utcnow().strftime("%Y%m%d")
+        timestamp = datetime.now(datetime.UTC).strftime("%Y%m%d")
         random_suffix = str(uuid.uuid4())[:8].upper()
         return f"INV-{timestamp}-{random_suffix}"
     
@@ -142,13 +142,13 @@ class Billing:
     
     def is_overdue(self) -> bool:
         """Check if billing is overdue"""
-        return self.status == BillingStatus.PENDING and datetime.utcnow() > self.due_date
+        return self.status == BillingStatus.PENDING and datetime.now(datetime.UTC) > self.due_date
     
     def get_days_overdue(self) -> int:
         """Get number of days overdue"""
         if not self.is_overdue():
             return 0
-        delta = datetime.utcnow() - self.due_date
+        delta = datetime.now(datetime.UTC) - self.due_date
         return delta.days
     
     def get_outstanding_amount(self) -> float:
@@ -171,13 +171,13 @@ class Billing:
         
         self.line_items.append(line_item)
         self._recalculate_amounts()
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def remove_line_item(self, line_item_id: str) -> None:
         """Remove a line item from the billing"""
         self.line_items = [item for item in self.line_items if item["id"] != line_item_id]
         self._recalculate_amounts()
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def _recalculate_amounts(self) -> None:
         """Recalculate all amounts based on line items"""
@@ -189,7 +189,7 @@ class Billing:
         """Apply a discount to the billing"""
         self.discount_amount += amount
         self._calculate_total()
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
         
         if reason:
             self.notes = f"{self.notes or ''}\nDiscount applied: {reason}".strip()
@@ -201,8 +201,8 @@ class Billing:
         self.payment_method = payment_method
         self.payment_method_id = payment_method_id
         self.payment_processor_transaction_id = processor_transaction_id
-        self.paid_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+        self.paid_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(datetime.UTC)
         
         # Update status based on payment amount
         if self.paid_amount >= self.total_amount:
@@ -214,8 +214,8 @@ class Billing:
         """Process a refund for the billing"""
         self.refunded_amount += amount
         self.refund_reason = reason
-        self.refunded_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+        self.refunded_at = datetime.now(datetime.UTC)
+        self.updated_at = datetime.now(datetime.UTC)
         
         # Update status based on refund amount
         if self.refunded_amount >= self.paid_amount:
@@ -226,7 +226,7 @@ class Billing:
     def mark_as_failed(self, reason: str = "") -> None:
         """Mark billing as failed"""
         self.status = BillingStatus.FAILED
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
         
         if reason:
             self.notes = f"{self.notes or ''}\nPayment failed: {reason}".strip()
@@ -235,12 +235,12 @@ class Billing:
         """Mark billing as disputed"""
         self.status = BillingStatus.DISPUTED
         self.dispute_reason = reason
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
     
     def cancel(self, reason: str = "") -> None:
         """Cancel the billing"""
         self.status = BillingStatus.CANCELLED
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(datetime.UTC)
         
         if reason:
             self.notes = f"{self.notes or ''}\nCancelled: {reason}".strip()

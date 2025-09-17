@@ -194,7 +194,7 @@ class SystemIntegrator:
             await self._start_performance_monitoring()
             
             self.status = SystemStatus.RUNNING
-            self.start_time = datetime.utcnow()
+            self.start_time = datetime.now(datetime.UTC)
             
             logger.info("System started successfully")
             
@@ -235,7 +235,7 @@ class SystemIntegrator:
             health_status = {
                 "system_id": self.system_id,
                 "status": self.status.value,
-                "uptime": (datetime.utcnow() - self.start_time).total_seconds() if self.start_time else 0,
+                "uptime": (datetime.now(datetime.UTC) - self.start_time).total_seconds() if self.start_time else 0,
                 "version": self.config.version if self.config else "unknown",
                 "environment": self.config.environment if self.config else "unknown",
                 "components": {},
@@ -276,10 +276,10 @@ class SystemIntegrator:
         """Get system performance metrics"""
         try:
             metrics = {
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(datetime.UTC).isoformat(),
                 "system_id": self.system_id,
                 "status": self.status.value,
-                "uptime": (datetime.utcnow() - self.start_time).total_seconds() if self.start_time else 0,
+                "uptime": (datetime.now(datetime.UTC) - self.start_time).total_seconds() if self.start_time else 0,
                 "components": {},
                 "performance": {}
             }
@@ -298,7 +298,7 @@ class SystemIntegrator:
         except Exception as e:
             logger.error(f"Error getting system metrics: {e}")
             return {
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(datetime.UTC).isoformat(),
                 "system_id": self.system_id,
                 "status": self.status.value,
                 "error": str(e)
@@ -700,7 +700,7 @@ class SystemIntegrator:
     async def _check_component_health(self, component_id: str, component: Any) -> ComponentHealth:
         """Check health of a specific component"""
         try:
-            start_time = datetime.utcnow()
+            start_time = datetime.now(datetime.UTC)
             
             # Check if component has health check method
             if hasattr(component, 'health_check') and callable(getattr(component, 'health_check')):
@@ -710,13 +710,13 @@ class SystemIntegrator:
                 # Basic health check
                 status = ComponentStatus.HEALTHY
             
-            response_time = (datetime.utcnow() - start_time).total_seconds()
+            response_time = (datetime.now(datetime.UTC) - start_time).total_seconds()
             
             return ComponentHealth(
                 component_id=component_id,
                 name=component.__class__.__name__,
                 status=status,
-                last_check=datetime.utcnow(),
+                last_check=datetime.now(datetime.UTC),
                 response_time=response_time,
                 error_count=0,
                 metadata={}
@@ -728,7 +728,7 @@ class SystemIntegrator:
                 component_id=component_id,
                 name=component.__class__.__name__,
                 status=ComponentStatus.UNHEALTHY,
-                last_check=datetime.utcnow(),
+                last_check=datetime.now(datetime.UTC),
                 response_time=0.0,
                 error_count=1,
                 metadata={"error": str(e)}
@@ -745,7 +745,7 @@ class SystemIntegrator:
                     "component_id": component_id,
                     "name": component.__class__.__name__,
                     "status": "running",
-                    "uptime": (datetime.utcnow() - self.start_time).total_seconds() if self.start_time else 0
+                    "uptime": (datetime.now(datetime.UTC) - self.start_time).total_seconds() if self.start_time else 0
                 }
                 
         except Exception as e:
@@ -762,7 +762,7 @@ class SystemIntegrator:
         try:
             # Mock system metrics - in real implementation, use psutil or similar
             return SystemMetrics(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(datetime.UTC),
                 cpu_usage=25.5,
                 memory_usage=60.2,
                 disk_usage=45.8,
@@ -776,7 +776,7 @@ class SystemIntegrator:
         except Exception as e:
             logger.error(f"Failed to get system performance metrics: {e}")
             return SystemMetrics(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(datetime.UTC),
                 cpu_usage=0.0,
                 memory_usage=0.0,
                 disk_usage=0.0,

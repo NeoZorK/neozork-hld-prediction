@@ -89,8 +89,8 @@ class TestInvestmentAPI:
             'shares_acquired': Decimal('50.00'),
             'share_price': Decimal('100.00'),
             'status': 'active',
-            'created_at': datetime.utcnow(),
-            'updated_at': datetime.utcnow()
+            'created_at': datetime.now(datetime.UTC),
+            'updated_at': datetime.now(datetime.UTC)
         }]
         
         # Override dependencies

@@ -40,7 +40,7 @@ class TestAnalyticsService:
     @pytest.fixture
     def sample_metrics(self):
         """Sample usage metrics for testing."""
-        base_time = datetime.utcnow() - timedelta(days=7)
+        base_time = datetime.now(datetime.UTC) - timedelta(days=7)
         metrics = []
         
         for i in range(7):
@@ -60,8 +60,8 @@ class TestAnalyticsService:
     @pytest.mark.asyncio
     async def test_get_usage_analytics_empty_metrics(self, analytics_service):
         """Test analytics with empty metrics."""
-        start_date = datetime.utcnow() - timedelta(days=7)
-        end_date = datetime.utcnow()
+        start_date = datetime.now(datetime.UTC) - timedelta(days=7)
+        end_date = datetime.now(datetime.UTC)
         
         analytics = await analytics_service.get_usage_analytics(
             tenant_id="tenant-1",
@@ -80,8 +80,8 @@ class TestAnalyticsService:
         """Test analytics with sample metrics."""
         analytics_service.usage_tracker.get_usage_metrics.return_value = sample_metrics
         
-        start_date = datetime.utcnow() - timedelta(days=7)
-        end_date = datetime.utcnow()
+        start_date = datetime.now(datetime.UTC) - timedelta(days=7)
+        end_date = datetime.now(datetime.UTC)
         
         analytics = await analytics_service.get_usage_analytics(
             tenant_id="tenant-1",
@@ -101,7 +101,7 @@ class TestAnalyticsService:
     async def test_get_usage_trends_increasing(self, analytics_service):
         """Test trend detection for increasing usage."""
         # Create metrics with increasing trend
-        base_time = datetime.utcnow() - timedelta(days=6)
+        base_time = datetime.now(datetime.UTC) - timedelta(days=6)
         metrics = []
         
         for i in range(7):
@@ -117,8 +117,8 @@ class TestAnalyticsService:
         
         analytics_service.usage_tracker.get_usage_metrics.return_value = metrics
         
-        start_date = datetime.utcnow() - timedelta(days=7)
-        end_date = datetime.utcnow()
+        start_date = datetime.now(datetime.UTC) - timedelta(days=7)
+        end_date = datetime.now(datetime.UTC)
         
         trends = await analytics_service.get_usage_trends(
             tenant_id="tenant-1",
@@ -137,7 +137,7 @@ class TestAnalyticsService:
     async def test_get_usage_trends_decreasing(self, analytics_service):
         """Test trend detection for decreasing usage."""
         # Create metrics with decreasing trend
-        base_time = datetime.utcnow() - timedelta(days=6)
+        base_time = datetime.now(datetime.UTC) - timedelta(days=6)
         metrics = []
         
         for i in range(7):
@@ -153,8 +153,8 @@ class TestAnalyticsService:
         
         analytics_service.usage_tracker.get_usage_metrics.return_value = metrics
         
-        start_date = datetime.utcnow() - timedelta(days=7)
-        end_date = datetime.utcnow()
+        start_date = datetime.now(datetime.UTC) - timedelta(days=7)
+        end_date = datetime.now(datetime.UTC)
         
         trends = await analytics_service.get_usage_trends(
             tenant_id="tenant-1",
@@ -170,7 +170,7 @@ class TestAnalyticsService:
     async def test_get_usage_trends_stable(self, analytics_service):
         """Test trend detection for stable usage."""
         # Create metrics with stable trend
-        base_time = datetime.utcnow() - timedelta(days=6)
+        base_time = datetime.now(datetime.UTC) - timedelta(days=6)
         metrics = []
         
         for i in range(7):
@@ -186,8 +186,8 @@ class TestAnalyticsService:
         
         analytics_service.usage_tracker.get_usage_metrics.return_value = metrics
         
-        start_date = datetime.utcnow() - timedelta(days=7)
-        end_date = datetime.utcnow()
+        start_date = datetime.now(datetime.UTC) - timedelta(days=7)
+        end_date = datetime.now(datetime.UTC)
         
         trends = await analytics_service.get_usage_trends(
             tenant_id="tenant-1",
@@ -218,7 +218,7 @@ class TestAnalyticsService:
     async def test_get_usage_forecast_sufficient_data(self, analytics_service):
         """Test forecast with sufficient data."""
         # Create 30 days of historical data
-        base_time = datetime.utcnow() - timedelta(days=30)
+        base_time = datetime.now(datetime.UTC) - timedelta(days=30)
         metrics = []
         
         for i in range(30):
@@ -249,8 +249,8 @@ class TestAnalyticsService:
         """Test getting usage insights."""
         analytics_service.usage_tracker.get_usage_metrics.return_value = sample_metrics
         
-        start_date = datetime.utcnow() - timedelta(days=7)
-        end_date = datetime.utcnow()
+        start_date = datetime.now(datetime.UTC) - timedelta(days=7)
+        end_date = datetime.now(datetime.UTC)
         
         insights = await analytics_service.get_usage_insights(
             tenant_id="tenant-1",
@@ -292,8 +292,8 @@ class TestAnalyticsService:
             previous_metrics  # Second call for previous period
         ]
         
-        current_start = datetime.utcnow() - timedelta(days=7)
-        current_end = datetime.utcnow()
+        current_start = datetime.now(datetime.UTC) - timedelta(days=7)
+        current_end = datetime.now(datetime.UTC)
         previous_start = current_start - timedelta(days=7)
         previous_end = current_start
         

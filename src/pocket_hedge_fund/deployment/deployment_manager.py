@@ -136,7 +136,7 @@ class DeploymentManager:
                 environment=self.environment.value,
                 version=version,
                 status=DeploymentStatus.PENDING,
-                start_time=datetime.utcnow(),
+                start_time=datetime.now(datetime.UTC),
                 end_time=None,
                 services={},
                 health_checks={},
@@ -161,7 +161,7 @@ class DeploymentManager:
             
             # Update status
             deployment_status.status = DeploymentStatus.COMPLETED
-            deployment_status.end_time = datetime.utcnow()
+            deployment_status.end_time = datetime.now(datetime.UTC)
             deployment_status.rollback_available = True
             
             logger.info(f"Deployment completed successfully: {self.deployment_id}")
@@ -171,7 +171,7 @@ class DeploymentManager:
             logger.error(f"Deployment failed: {e}")
             if self.deployment_id in self.deployments:
                 self.deployments[self.deployment_id].status = DeploymentStatus.FAILED
-                self.deployments[self.deployment_id].end_time = datetime.utcnow()
+                self.deployments[self.deployment_id].end_time = datetime.now(datetime.UTC)
             raise
     
     async def rollback(self, deployment_id: str) -> bool:
@@ -198,7 +198,7 @@ class DeploymentManager:
             
             # Update status
             deployment.status = DeploymentStatus.ROLLED_BACK
-            deployment.end_time = datetime.utcnow()
+            deployment.end_time = datetime.now(datetime.UTC)
             
             logger.info(f"Rollback completed successfully: {deployment_id}")
             return True

@@ -154,8 +154,8 @@ async def get_current_user_info(
             role="investor",
             is_active=True,
             is_verified=True,
-            created_at=datetime.utcnow(),
-            last_login=datetime.utcnow()
+            created_at=datetime.now(datetime.UTC),
+            last_login=datetime.now(datetime.UTC)
         )
         
     except Exception as e:

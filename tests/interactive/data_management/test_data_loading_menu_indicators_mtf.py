@@ -256,10 +256,10 @@ class TestDataLoadingMenuIndicatorsMTF:
         mock_mtf_creator.create_mtf_from_processed_data.assert_called_once()
     
     @patch('builtins.input')
-    def test_load_indicators_menu_choice_2(self, mock_input):
-        """Test the indicators menu when user chooses option 2 (save all to MTF)."""
-        # Mock user input to choose option 2
-        mock_input.side_effect = ['2']
+    def test_load_indicators_menu_choice_1(self, mock_input):
+        """Test the indicators menu when user chooses option 1 (save to MTF structure)."""
+        # Mock user input to choose option 1 (save to MTF structure)
+        mock_input.side_effect = ['1']
         
         # Mock the required components
         mock_analyzer = Mock()
@@ -306,59 +306,9 @@ class TestDataLoadingMenuIndicatorsMTF:
         mock_save.assert_called_once()
     
     @patch('builtins.input')
-    def test_load_indicators_menu_choice_1(self, mock_input):
-        """Test the indicators menu when user chooses option 1 (load single indicator)."""
-        # Mock user input to choose option 1 and confirm loading
-        mock_input.side_effect = ['1', 'y']
-        
-        # Mock the required components
-        mock_analyzer = Mock()
-        mock_loader = Mock()
-        mock_processor = Mock()
-        mock_mtf_creator = Mock()
-        
-        # Mock analysis result
-        analysis_result = {
-            'status': 'success',
-            'folder_info': {'file_count': 2, 'size_mb': 1.5},
-            'indicators': ['RSI', 'MACD'],
-            'subfolders_info': {'parquet': {'file_count': 2, 'size_mb': 1.5}},
-            'files_info': {
-                'btcusdt_rsi_m1.parquet': {
-                    'indicator': 'RSI',
-                    'format': 'parquet',
-                    'source': 'binance'
-                }
-            }
-        }
-        
-        # Mock data filter
-        mock_data_filter = Mock()
-        mock_data_filter.interactive_filter_selection.return_value = (None, None, None, None)
-        mock_data_filter.filter_files.return_value = [
-            {
-                'filename': 'btcusdt_rsi_m1.parquet',
-                'indicator': 'RSI',
-                'format': 'parquet',
-                'source': 'binance'
-            }
-        ]
-        mock_data_filter.get_loading_summary.return_value = "2 files ready for loading"
-        
-        # Mock the load_and_process_indicators_data method
-        with patch.object(self.menu, '_load_and_process_indicators_data') as mock_load:
-            with patch('src.interactive.data_management.data_filter.DataFilter', return_value=mock_data_filter):
-                with patch.object(mock_analyzer, 'analyze_indicators_folder', return_value=analysis_result):
-                    # Call the method
-                    self.menu._load_indicators()
-        
-        # Verify that load_and_process_indicators_data was called
-        mock_load.assert_called_once()
-    
-    @patch('builtins.input')
     def test_load_indicators_menu_choice_0(self, mock_input):
         """Test the indicators menu when user chooses option 0 (cancel)."""
-        # Mock user input to choose option 0
+        # Mock user input to choose option 0 (cancel)
         mock_input.side_effect = ['0']
         
         # Mock the required components
@@ -395,17 +345,15 @@ class TestDataLoadingMenuIndicatorsMTF:
         ]
         mock_data_filter.get_loading_summary.return_value = "2 files ready for loading"
         
-        # Mock the save and load methods to ensure they're not called
+        # Mock the save method to ensure it's not called
         with patch.object(self.menu, '_save_all_indicators_to_mtf') as mock_save:
-            with patch.object(self.menu, '_load_and_process_indicators_data') as mock_load:
-                with patch('src.interactive.data_management.data_filter.DataFilter', return_value=mock_data_filter):
-                    with patch.object(mock_analyzer, 'analyze_indicators_folder', return_value=analysis_result):
-                        # Call the method
-                        self.menu._load_indicators()
+            with patch('src.interactive.data_management.data_filter.DataFilter', return_value=mock_data_filter):
+                with patch.object(mock_analyzer, 'analyze_indicators_folder', return_value=analysis_result):
+                    # Call the method
+                    self.menu._load_indicators()
         
-        # Verify that neither save nor load methods were called
+        # Verify that save method was not called
         mock_save.assert_not_called()
-        mock_load.assert_not_called()
 
 
 if __name__ == '__main__':

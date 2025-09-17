@@ -485,7 +485,7 @@ async def get_report(
             raise HTTPException(status_code=403, detail="Access denied")
         
         # Check if report has expired
-        if report.expires_at and report.expires_at < datetime.utcnow():
+        if report.expires_at and report.expires_at < datetime.now(datetime.UTC):
             raise HTTPException(status_code=410, detail="Report has expired")
         
         return ReportResponse(
@@ -730,7 +730,7 @@ async def websocket_analytics_updates(websocket: WebSocket, dashboard_id: str):
                 await websocket.send_json({
                     "type": "dashboard_update",
                     "data": updated_data,
-                    "timestamp": datetime.utcnow().isoformat()
+                    "timestamp": datetime.now(datetime.UTC).isoformat()
                 })
                 
                 # Wait before next update

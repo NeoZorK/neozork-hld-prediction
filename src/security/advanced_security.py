@@ -152,7 +152,7 @@ class AdvancedSecurityManager:
                 "salt": salt,
                 "mfa_enabled": require_mfa,
                 "mfa_secret": mfa_secret,
-                "created_at": datetime.utcnow(),
+                "created_at": datetime.now(datetime.UTC),
                 "last_login": None,
                 "failed_attempts": 0,
                 "locked_until": None,
@@ -207,7 +207,7 @@ class AdvancedSecurityManager:
             
             # Check if account is locked
             if user["user_id"] in self.locked_accounts:
-                if user["locked_until"] and datetime.utcnow() < user["locked_until"]:
+                if user["locked_until"] and datetime.now(datetime.UTC) < user["locked_until"]:
                     return {
                         "status": "error",
                         "message": "Account is temporarily locked"
@@ -224,7 +224,7 @@ class AdvancedSecurityManager:
                 # Check lockout policy
                 if user["failed_attempts"] >= self.security_policies["lockout_policy"]["max_failed_attempts"]:
                     lockout_duration = timedelta(minutes=self.security_policies["lockout_policy"]["lockout_duration_minutes"])
-                    user["locked_until"] = datetime.utcnow() + lockout_duration
+                    user["locked_until"] = datetime.now(datetime.UTC) + lockout_duration
                     self.locked_accounts.add(user["user_id"])
                     
                     await self._log_security_event(
@@ -281,13 +281,13 @@ class AdvancedSecurityManager:
             session = {
                 "session_id": session_token,
                 "user_id": user["user_id"],
-                "created_at": datetime.utcnow(),
-                "last_activity": datetime.utcnow(),
-                "expires_at": datetime.utcnow() + timedelta(minutes=self.security_policies["session_policy"]["timeout_minutes"])
+                "created_at": datetime.now(datetime.UTC),
+                "last_activity": datetime.now(datetime.UTC),
+                "expires_at": datetime.now(datetime.UTC) + timedelta(minutes=self.security_policies["session_policy"]["timeout_minutes"])
             }
             
             self.sessions[session_token] = session
-            user["last_login"] = datetime.utcnow()
+            user["last_login"] = datetime.now(datetime.UTC)
             
             await self._log_security_event(
                 SecurityEvent.LOGIN_SUCCESS,
@@ -323,12 +323,12 @@ class AdvancedSecurityManager:
                 return False
             
             # Check session expiry
-            if datetime.utcnow() > session["expires_at"]:
+            if datetime.now(datetime.UTC) > session["expires_at"]:
                 del self.sessions[session_token]
                 return False
             
             # Update last activity
-            session["last_activity"] = datetime.utcnow()
+            session["last_activity"] = datetime.now(datetime.UTC)
             
             # Get user
             user = self.users.get(session["user_id"])
@@ -475,14 +475,14 @@ class AdvancedSecurityManager:
             # Calculate security metrics
             total_users = len(self.users)
             active_sessions = len([s for s in self.sessions.values() 
-                                 if datetime.utcnow() < s["expires_at"]])
+                                 if datetime.now(datetime.UTC) < s["expires_at"]])
             locked_accounts = len(self.locked_accounts)
             
             # Recent security events
             recent_events = self.security_events[-10:] if self.security_events else []
             
             # Failed login attempts in last 24 hours
-            last_24h = datetime.utcnow() - timedelta(hours=24)
+            last_24h = datetime.now(datetime.UTC) - timedelta(hours=24)
             failed_logins = len([e for e in self.security_events 
                                if e.get("event_type") == SecurityEvent.LOGIN_FAILED 
                                and e.get("timestamp", datetime.min) > last_24h])
@@ -568,7 +568,7 @@ class AdvancedSecurityManager:
             "description": description,
             "user_id": user_id,
             "security_level": security_level.value,
-            "timestamp": datetime.utcnow(),
+            "timestamp": datetime.now(datetime.UTC),
             "ip_address": "127.0.0.1",  # In production, get real IP
             "user_agent": "NeoZork-System"  # In production, get real user agent
         }

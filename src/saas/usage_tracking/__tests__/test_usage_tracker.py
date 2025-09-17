@@ -136,8 +136,8 @@ class TestUsageTracker:
         ]
         mock_storage_backend.get_metrics.return_value = mock_metrics
         
-        start_date = datetime.utcnow() - timedelta(days=7)
-        end_date = datetime.utcnow()
+        start_date = datetime.now(datetime.UTC) - timedelta(days=7)
+        end_date = datetime.now(datetime.UTC)
         
         metrics = await usage_tracker.get_usage_metrics(
             tenant_id="tenant-1",

@@ -348,7 +348,7 @@ class UsageTracker:
         granularity = "hour"  # Default granularity
         
         # Get current period
-        now = datetime.utcnow()
+        now = datetime.now(datetime.UTC)
         period_start = self._get_period_start(now, granularity)
         period_end = self._get_period_end(period_start, granularity)
         

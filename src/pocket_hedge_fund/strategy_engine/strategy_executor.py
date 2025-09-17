@@ -273,7 +273,7 @@ class MomentumStrategy(BaseStrategy):
                         take_profit=prices[-1] * (1 + self.parameters["take_profit"]),
                         confidence=min(abs(momentum) / self.parameters["threshold"], 1.0),
                         metadata={"momentum": momentum, "lookback_period": self.parameters["lookback_period"]},
-                        created_at=datetime.utcnow()
+                        created_at=datetime.now(datetime.UTC)
                     )
                     signals.append(signal)
                 
@@ -290,7 +290,7 @@ class MomentumStrategy(BaseStrategy):
                         take_profit=prices[-1] * (1 - self.parameters["take_profit"]),
                         confidence=min(abs(momentum) / self.parameters["threshold"], 1.0),
                         metadata={"momentum": momentum, "lookback_period": self.parameters["lookback_period"]},
-                        created_at=datetime.utcnow()
+                        created_at=datetime.now(datetime.UTC)
                     )
                     signals.append(signal)
             
@@ -386,7 +386,7 @@ class MeanReversionStrategy(BaseStrategy):
                         take_profit=current_price * (1 - self.parameters["take_profit"]),
                         confidence=min(abs(z_score) / self.parameters["deviation_threshold"], 1.0),
                         metadata={"z_score": z_score, "ma": ma, "std": std},
-                        created_at=datetime.utcnow()
+                        created_at=datetime.now(datetime.UTC)
                     )
                     signals.append(signal)
                 
@@ -403,7 +403,7 @@ class MeanReversionStrategy(BaseStrategy):
                         take_profit=current_price * (1 + self.parameters["take_profit"]),
                         confidence=min(abs(z_score) / self.parameters["deviation_threshold"], 1.0),
                         metadata={"z_score": z_score, "ma": ma, "std": std},
-                        created_at=datetime.utcnow()
+                        created_at=datetime.now(datetime.UTC)
                     )
                     signals.append(signal)
             
@@ -510,7 +510,7 @@ class StrategyExecutor:
                 strategy_id=strategy_id,
                 fund_id=fund_id,
                 status=StrategyStatus.STOPPED,
-                start_time=datetime.utcnow(),
+                start_time=datetime.now(datetime.UTC),
                 end_time=None,
                 total_signals=0,
                 successful_signals=0,
@@ -524,8 +524,8 @@ class StrategyExecutor:
                 sharpe_ratio=0.0,
                 win_rate=0.0,
                 metadata={},
-                created_at=datetime.utcnow(),
-                updated_at=datetime.utcnow()
+                created_at=datetime.now(datetime.UTC),
+                updated_at=datetime.now(datetime.UTC)
             )
             
             self.executions[strategy_id] = execution
@@ -552,7 +552,7 @@ class StrategyExecutor:
             # Update status
             strategy.status = StrategyStatus.ACTIVE
             execution.status = StrategyStatus.ACTIVE
-            execution.start_time = datetime.utcnow()
+            execution.start_time = datetime.now(datetime.UTC)
             execution.end_time = None
             
             # Update database
@@ -590,7 +590,7 @@ class StrategyExecutor:
             # Update status
             strategy.status = StrategyStatus.STOPPED
             execution.status = StrategyStatus.STOPPED
-            execution.end_time = datetime.utcnow()
+            execution.end_time = datetime.now(datetime.UTC)
             
             # Update database
             await self._update_strategy_execution(execution)
@@ -844,8 +844,8 @@ class StrategyExecutor:
                 average_fill_price=None,
                 commission=0.0,
                 metadata=signal.metadata,
-                created_at=datetime.utcnow(),
-                updated_at=datetime.utcnow()
+                created_at=datetime.now(datetime.UTC),
+                updated_at=datetime.now(datetime.UTC)
             )
             
             return order
@@ -862,7 +862,7 @@ class StrategyExecutor:
             
             # Update order status
             order.status = OrderStatus.SUBMITTED
-            order.updated_at = datetime.utcnow()
+            order.updated_at = datetime.now(datetime.UTC)
             
             # Simulate order fill
             await asyncio.sleep(0.1)  # Simulate network delay
@@ -871,7 +871,7 @@ class StrategyExecutor:
             order.filled_quantity = order.quantity
             order.average_fill_price = order.price
             order.commission = order.quantity * order.price * 0.001  # 0.1% commission
-            order.updated_at = datetime.utcnow()
+            order.updated_at = datetime.now(datetime.UTC)
             
             logger.info(f"Order submitted and filled: {order.order_id}")
             return True
@@ -890,12 +890,12 @@ class StrategyExecutor:
                 "BTC": {
                     "prices": [45000, 45100, 45200, 45300, 45400, 45500, 45600, 45700, 45800, 45900, 46000, 46100, 46200, 46300, 46400, 46500, 46600, 46700, 46800, 46900, 47000],
                     "volume": 1000000,
-                    "timestamp": datetime.utcnow()
+                    "timestamp": datetime.now(datetime.UTC)
                 },
                 "ETH": {
                     "prices": [3000, 3010, 3020, 3030, 3040, 3050, 3060, 3070, 3080, 3090, 3100, 3110, 3120, 3130, 3140, 3150, 3160, 3170, 3180, 3190, 3200],
                     "volume": 500000,
-                    "timestamp": datetime.utcnow()
+                    "timestamp": datetime.now(datetime.UTC)
                 }
             }
             
@@ -945,7 +945,7 @@ class StrategyExecutor:
                     current_data[symbol] = {
                         "prices": data["prices"][:i+1],
                         "volume": data.get("volume", 1000000),
-                        "timestamp": data["dates"][i] if "dates" in data else datetime.utcnow()
+                        "timestamp": data["dates"][i] if "dates" in data else datetime.now(datetime.UTC)
                     }
                 
                 # Generate signals

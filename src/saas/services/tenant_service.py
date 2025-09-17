@@ -74,7 +74,7 @@ class TenantService:
             
             # Set trial period
             if trial_days > 0:
-                tenant.trial_ends_at = datetime.utcnow() + timedelta(days=trial_days)
+                tenant.trial_ends_at = datetime.now(datetime.UTC) + timedelta(days=trial_days)
             
             # Set default limits based on tenant type
             self._set_default_limits(tenant)
@@ -147,7 +147,7 @@ class TenantService:
                 if field in allowed_fields and hasattr(tenant, field):
                     setattr(tenant, field, value)
             
-            tenant.updated_at = datetime.utcnow()
+            tenant.updated_at = datetime.now(datetime.UTC)
             
             # Update email mapping if email changed
             if "email" in updates and updates["email"] != tenant.email:
@@ -184,7 +184,7 @@ class TenantService:
                 }
             
             tenant.status = TenantStatus.ACTIVE
-            tenant.updated_at = datetime.utcnow()
+            tenant.updated_at = datetime.now(datetime.UTC)
             
             logger.info(f"Activated tenant: {tenant.tenant_slug}")
             
@@ -211,7 +211,7 @@ class TenantService:
                 }
             
             tenant.status = TenantStatus.SUSPENDED
-            tenant.updated_at = datetime.utcnow()
+            tenant.updated_at = datetime.now(datetime.UTC)
             
             if reason:
                 tenant.settings["suspension_reason"] = reason
@@ -242,7 +242,7 @@ class TenantService:
             
             # Soft delete - mark as inactive
             tenant.status = TenantStatus.INACTIVE
-            tenant.updated_at = datetime.utcnow()
+            tenant.updated_at = datetime.now(datetime.UTC)
             
             # Remove from mappings
             if tenant.email in self.tenant_emails:

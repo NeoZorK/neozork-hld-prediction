@@ -139,7 +139,7 @@ class RiskMonitor:
                     'severity': breach.get('severity', 'medium'),
                     'message': breach.get('message', 'Risk limit breached'),
                     'portfolio_id': portfolio.id,
-                    'timestamp': datetime.utcnow(),
+                    'timestamp': datetime.now(datetime.UTC),
                     'details': breach
                 }
                 alerts.append(alert)
@@ -151,7 +151,7 @@ class RiskMonitor:
                     'severity': event.get('severity', 'low'),
                     'message': event.get('message', 'Risk event detected'),
                     'portfolio_id': portfolio.id,
-                    'timestamp': datetime.utcnow(),
+                    'timestamp': datetime.now(datetime.UTC),
                     'details': event
                 }
                 alerts.append(alert)

@@ -397,7 +397,7 @@ class DatabaseUtils:
         """
         try:
             async with self.db_manager.get_async_session() as session:
-                cleanup_date = datetime.utcnow().date() - timedelta(days=days_to_keep)
+                cleanup_date = datetime.now(datetime.UTC).date() - timedelta(days=days_to_keep)
                 
                 # Cleanup old performance data
                 perf_result = await session.execute(

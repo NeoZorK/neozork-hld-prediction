@@ -207,7 +207,7 @@ class SecurityIntegrationManager:
                 "type": "transaction_execution",
                 "user_id": user_id,
                 "transaction_data": transaction,
-                "timestamp": datetime.utcnow()
+                "timestamp": datetime.now(datetime.UTC)
             }
             
             monitoring_result = await self.monitoring_manager.monitor_security_event(security_event)
@@ -366,7 +366,7 @@ class SecurityIntegrationManager:
                     "start_date": start_date.isoformat(),
                     "end_date": end_date.isoformat()
                 },
-                "generated_at": datetime.utcnow(),
+                "generated_at": datetime.now(datetime.UTC),
                 "summary": {
                     "total_security_events": len(security_events),
                     "total_monitoring_events": len(monitoring_events),
@@ -586,7 +586,7 @@ class SecurityIntegrationManager:
             "user_id": user_id,
             "incident_id": incident_id,
             "security_level": security_level.value,
-            "timestamp": datetime.utcnow()
+            "timestamp": datetime.now(datetime.UTC)
         }
         
         self.integration_events.append(event)

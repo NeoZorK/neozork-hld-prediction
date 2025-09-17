@@ -162,7 +162,7 @@ class UsageEvent:
         """Mark event as completed."""
         self.status = EventStatus.COMPLETED
         if self.start_time and not self.end_time:
-            self.end_time = datetime.utcnow()
+            self.end_time = datetime.now(datetime.UTC)
             if self.duration_ms is None:
                 self.duration_ms = int((self.end_time - self.start_time).total_seconds() * 1000)
     
@@ -172,7 +172,7 @@ class UsageEvent:
         self.error_code = error_code
         self.error_message = error_message
         if self.start_time and not self.end_time:
-            self.end_time = datetime.utcnow()
+            self.end_time = datetime.now(datetime.UTC)
     
     def add_metadata(self, key: str, value: Any) -> None:
         """Add metadata to the event."""

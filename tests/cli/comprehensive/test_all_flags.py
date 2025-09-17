@@ -34,7 +34,7 @@ LOG_DIR = Path(tempfile.mkdtemp(prefix="cli_tests_"))
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 @dataclass
-class TestResult:
+class CliTestResult:
     """Test result data structure"""
     command: List[str]
     return_code: int
@@ -53,7 +53,7 @@ class ComprehensiveCLITester:
     """Comprehensive CLI testing class for run_analysis.py"""
     
     def __init__(self):
-        self.results: List[TestResult] = []
+        self.results: List[CliTestResult] = []
         self.test_data = {
             'csv_file': 'data/test_data.csv',
             'ticker': 'AAPL',
@@ -190,7 +190,7 @@ class ComprehensiveCLITester:
         ]
 
     def run_command(self, cmd: List[str], expected_failure: bool = False, 
-                   test_category: str = "general", test_name: str = "") -> TestResult:
+                   test_category: str = "general", test_name: str = "") -> CliTestResult:
         """Run a single command and return test result"""
         start_time = time.perf_counter()
         
@@ -208,7 +208,7 @@ class ComprehensiveCLITester:
                 timeout=30  # 30 second timeout
             )
         except subprocess.TimeoutExpired:
-            return TestResult(
+            return CliTestResult(
                 command=cmd,
                 return_code=-1,
                 stdout="",
@@ -221,7 +221,7 @@ class ComprehensiveCLITester:
         
         execution_time = time.perf_counter() - start_time
         
-        return TestResult(
+        return CliTestResult(
             command=cmd,
             return_code=result.returncode,
             stdout=result.stdout,
@@ -232,7 +232,7 @@ class ComprehensiveCLITester:
             test_name=test_name
         )
 
-    def test_basic_flags(self) -> List[TestResult]:
+    def test_basic_flags(self) -> List[CliTestResult]:
         """Test basic flags that don't require additional parameters"""
         print("Testing basic flags...")
         results = []
@@ -246,7 +246,7 @@ class ComprehensiveCLITester:
             
         return results
 
-    def test_mode_combinations(self) -> List[TestResult]:
+    def test_mode_combinations(self) -> List[CliTestResult]:
         """Test all modes with their required and optional parameters"""
         print("Testing mode combinations...")
         results = []
@@ -280,7 +280,7 @@ class ComprehensiveCLITester:
         
         return results
 
-    def test_flag_combinations(self) -> List[TestResult]:
+    def test_flag_combinations(self) -> List[CliTestResult]:
         """Test various flag combinations"""
         print("Testing flag combinations...")
         results = []
@@ -309,7 +309,7 @@ class ComprehensiveCLITester:
         
         return results
 
-    def test_error_cases(self) -> List[TestResult]:
+    def test_error_cases(self) -> List[CliTestResult]:
         """Test error cases that should fail"""
         print("Testing error cases...")
         results = []
@@ -321,7 +321,7 @@ class ComprehensiveCLITester:
         
         return results
 
-    def test_indicators_search(self) -> List[TestResult]:
+    def test_indicators_search(self) -> List[CliTestResult]:
         """Test indicators search functionality"""
         print("Testing indicators search...")
         results = []
@@ -418,7 +418,7 @@ class ComprehensiveCLITester:
             'results': all_results
         }
 
-    def save_results(self, results: List[TestResult], category_stats: Dict, total_time: float):
+    def save_results(self, results: List[CliTestResult], category_stats: Dict, total_time: float):
         """Save test results to files"""
         timestamp = time.strftime("%Y%m%d_%H%M%S")
         

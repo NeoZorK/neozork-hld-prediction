@@ -171,8 +171,8 @@ class ComplianceManager:
                     "overall": overall_score
                 },
                 "status": "approved" if overall_score >= 0.6 else "pending",
-                "verified_at": datetime.utcnow(),
-                "expires_at": datetime.utcnow() + timedelta(days=self.compliance_policies["kyc_policy"]["reverification_period_days"]),
+                "verified_at": datetime.now(datetime.UTC),
+                "expires_at": datetime.now(datetime.UTC) + timedelta(days=self.compliance_policies["kyc_policy"]["reverification_period_days"]),
                 "user_data": self._anonymize_user_data(user_data)
             }
             
@@ -225,7 +225,7 @@ class ComplianceManager:
                 "currency": currency,
                 "usd_amount": usd_amount,
                 "transaction_type": transaction_type.value,
-                "timestamp": datetime.utcnow(),
+                "timestamp": datetime.now(datetime.UTC),
                 "risk_score": 0.0,
                 "flags": [],
                 "status": "monitored"
@@ -327,7 +327,7 @@ class ComplianceManager:
                 "tax_report_id": secrets.token_hex(16),
                 "user_id": user_id,
                 "tax_year": tax_year,
-                "generated_at": datetime.utcnow(),
+                "generated_at": datetime.now(datetime.UTC),
                 "summary": {
                     "total_proceeds": total_proceeds,
                     "total_cost_basis": total_cost_basis,
@@ -413,12 +413,12 @@ class ComplianceManager:
             risk_assessment = {
                 "assessment_id": secrets.token_hex(16),
                 "user_id": user_id,
-                "assessed_at": datetime.utcnow(),
+                "assessed_at": datetime.now(datetime.UTC),
                 "risk_score": risk_score,
                 "risk_level": risk_level.value,
                 "risk_factors": risk_factors,
                 "recommendations": self._generate_risk_recommendations(risk_factors),
-                "next_assessment": datetime.utcnow() + timedelta(days=30)
+                "next_assessment": datetime.now(datetime.UTC) + timedelta(days=30)
             }
             
             self.risk_assessments[risk_assessment["assessment_id"]] = risk_assessment
@@ -605,7 +605,7 @@ class ComplianceManager:
             "description": description,
             "user_id": user_id,
             "compliance_level": compliance_level.value,
-            "timestamp": datetime.utcnow(),
+            "timestamp": datetime.now(datetime.UTC),
             "framework": "general"
         }
         

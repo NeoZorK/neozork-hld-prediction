@@ -10,7 +10,7 @@ from decimal import Decimal
 from enum import Enum
 import uuid
 
-from pydantic import BaseModel, Field, validator, EmailStr
+from pydantic import BaseModel, field_validator, Field, validator, EmailStr
 
 
 class AdminRoleType(str, Enum):
@@ -106,13 +106,13 @@ class AdminUser(BaseModel):
     updated_at: datetime = Field(default_factory=datetime.now)
     created_by: Optional[str] = None
 
-    @validator('username')
+    @field_validator('username')
     def validate_username(cls, v):
         if not v.replace('_', '').replace('-', '').isalnum():
             raise ValueError('Username must contain only alphanumeric characters, underscores, and hyphens')
         return v.lower()
 
-    @validator('permissions')
+    @field_validator('permissions')
     def validate_permissions(cls, v, values):
         if 'role' in values:
             role = values['role']
@@ -139,7 +139,7 @@ class AdminRole(BaseModel):
     updated_at: datetime = Field(default_factory=datetime.now)
     created_by: Optional[str] = None
 
-    @validator('name')
+    @field_validator('name')
     def validate_name(cls, v):
         return v.lower().replace(' ', '_')
 
@@ -191,7 +191,7 @@ class AuditLog(BaseModel):
     error_message: Optional[str] = None
     severity: AdminAlertLevel = AdminAlertLevel.INFO
 
-    @validator('ip_address')
+    @field_validator('ip_address')
     def validate_ip_address(cls, v):
         if v and not (v.count('.') == 3 or v.count(':') >= 2):
             raise ValueError('Invalid IP address format')
@@ -214,7 +214,7 @@ class AdminSession(BaseModel):
     terminated_by: Optional[str] = None
     termination_reason: Optional[str] = None
 
-    @validator('expires_at')
+    @field_validator('expires_at')
     def validate_expires_at(cls, v, values):
         if 'created_at' in values and v <= values['created_at']:
             raise ValueError('Expires at must be after created at')
@@ -236,7 +236,7 @@ class AdminConfiguration(BaseModel):
     updated_at: datetime = Field(default_factory=datetime.now)
     updated_by: Optional[str] = None
 
-    @validator('key')
+    @field_validator('key')
     def validate_key(cls, v):
         return v.lower().replace(' ', '_')
 

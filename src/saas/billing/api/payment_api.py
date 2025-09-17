@@ -410,5 +410,5 @@ class PaymentAPI:
         return web.json_response({
             "status": "healthy",
             "service": "Payment API",
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(datetime.UTC).isoformat()
         })

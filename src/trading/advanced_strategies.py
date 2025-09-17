@@ -782,7 +782,7 @@ async def main():
     mean_reversion_id = await manager.add_strategy(mean_reversion_strategy)
     
     # Generate sample data
-    dates = pd.date_range(start='2024-01-01', end='2024-01-31', freq='H')
+    dates = pd.date_range(start='2024-01-01', end='2024-01-31', freq='h')
     np.random.seed(42)
     
     data = pd.DataFrame({

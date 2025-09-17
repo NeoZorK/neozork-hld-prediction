@@ -53,7 +53,7 @@ class PortfolioReportGenerator:
                 'portfolio_name': portfolio.name,
                 'report_type': report_type,
                 'period': period,
-                'generated_at': datetime.utcnow().isoformat(),
+                'generated_at': datetime.now(datetime.UTC).isoformat(),
                 'generated_by': 'system'
             }
             

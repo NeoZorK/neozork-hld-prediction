@@ -44,7 +44,7 @@ class TestIndicatorsAnalyzer:
         
         # Create sample parquet file
         parquet_data = pd.DataFrame({
-            'timestamp': pd.date_range('2023-01-01', periods=100, freq='1H'),
+            'timestamp': pd.date_range('2023-01-01', periods=100, freq='1h'),
             'value': np.random.randn(100),
             'symbol': ['BTCUSDT'] * 100,
             'timeframe': ['H1'] * 100
@@ -53,7 +53,7 @@ class TestIndicatorsAnalyzer:
         
         # Create additional parquet files for more indicators
         macd_data = pd.DataFrame({
-            'timestamp': pd.date_range('2023-01-01', periods=50, freq='1H'),
+            'timestamp': pd.date_range('2023-01-01', periods=50, freq='1h'),
             'value': np.random.randn(50),
             'symbol': ['ETHUSDT'] * 50,
             'timeframe': ['H1'] * 50
