@@ -1,8 +1,0 @@
-{
-  "symbol": "BTCUSD",
-  "description": "Pre-gap-fixing backup",
-  "created_at": "2025-09-17T16:24:47.712853",
-  "backup_type": "mtf_data",
-  "version": "1.0",
-  "backup_size_bytes": 1971
-}
