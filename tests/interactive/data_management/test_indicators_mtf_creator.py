@@ -6,6 +6,7 @@ This module tests the MTF structure creation for indicators data.
 """
 
 import pytest
+import os
 import pandas as pd
 import numpy as np
 from pathlib import Path
@@ -18,6 +19,12 @@ import json
 import sys
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
+
+# Skip these tests in Docker due to memory constraints
+pytestmark = pytest.mark.skipif(
+    os.getenv('DOCKER_CONTAINER') == 'true',
+    reason="Skipping data_management tests in Docker due to memory constraints"
+)
 
 from src.interactive.data_management.indicators.indicators_mtf_creator import IndicatorsMTFCreator
 
