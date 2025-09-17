@@ -276,6 +276,7 @@ class EDAMenu(BaseMenu):
             print(f"{Fore.CYAN}{'─'*40}")
             
             strategy_descriptions = {
+                'auto': '🤖 Auto-select best strategy based on data characteristics',
                 'forward_fill': 'Fill gaps with last known value',
                 'backward_fill': 'Fill gaps with next known value',
                 'linear_interpolation': 'Linear interpolation between values',
