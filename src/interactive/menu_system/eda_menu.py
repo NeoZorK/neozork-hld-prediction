@@ -259,6 +259,21 @@ class EDAMenu(BaseMenu):
             )
             
             if result['status'] == 'success':
+                # Update mtf_data with fixed data
+                fixed_data = result['fixing_result'].get('fixed_data', {})
+                if fixed_data:
+                    print(f"\n{Fore.GREEN}🔄 Updating data with fixed gaps...")
+                    for timeframe, fixed_df in fixed_data.items():
+                        if timeframe in mtf_data:
+                            mtf_data[timeframe] = fixed_df
+                            print(f"  ✅ Updated {timeframe}: {fixed_df.shape}")
+                    
+                    # Update metadata
+                    if '_metadata' in mtf_data:
+                        mtf_data['_metadata']['gaps_fixed'] = True
+                        mtf_data['_metadata']['last_gap_fix'] = pd.Timestamp.now().isoformat()
+                        mtf_data['_metadata']['fixing_strategy'] = selected_strategy
+                
                 self._display_fixing_results(result)
             else:
                 print(f"{Fore.RED}❌ Error in gaps analysis: {result['message']}")
