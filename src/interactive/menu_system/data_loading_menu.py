@@ -1826,7 +1826,9 @@ class DataLoadingMenu(BaseMenu):
                     'main_data_shape': selected_mtf_info['main_data_shape'],
                     'cross_timeframes': selected_mtf_info['cross_timeframes'],
                     'created_at': selected_mtf_info['created_at'],
-                    'size_mb': selected_mtf_info['size_mb']
+                    'size_mb': selected_mtf_info['size_mb'],
+                    'data_path': selected_mtf_info['folder_path'],  # Add the actual path
+                    'data_type': 'mtf_structure'  # Mark as MTF structure
                 }
                 
                 # Set loaded data in global state
