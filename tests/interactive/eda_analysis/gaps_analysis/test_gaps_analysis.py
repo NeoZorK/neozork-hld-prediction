@@ -357,7 +357,7 @@ class TestGapsAnalyzer:
     def test_analyze_and_fix_gaps(self):
         """Test complete gaps analysis and fixing workflow."""
         result = self.analyzer.analyze_and_fix_gaps(
-            self.sample_mtf_data, 'BTCUSD', 'linear_interpolation', True
+            self.sample_mtf_data, 'BTCUSD', 'auto', True
         )
         
         assert result['status'] == 'success'
@@ -365,7 +365,7 @@ class TestGapsAnalyzer:
         assert 'fixing_result' in result
         assert 'summary' in result
         assert result['symbol'] == 'BTCUSD'
-        assert result['strategy_used'] == 'linear_interpolation'
+        assert result['strategy_used'] == 'auto'
     
     def test_get_available_strategies(self):
         """Test getting available strategies."""
@@ -373,6 +373,7 @@ class TestGapsAnalyzer:
         
         assert isinstance(strategies, list)
         assert len(strategies) > 0
+        assert 'auto' in strategies
         assert 'linear_interpolation' in strategies
         assert 'forward_fill' in strategies
     
@@ -394,6 +395,79 @@ class TestGapsAnalyzer:
         
         assert result['status'] == 'error'
         assert 'message' in result
+    
+    def test_auto_fill_gaps(self):
+        """Test automatic gap filling strategy selection."""
+        # Create sample data with gaps
+        dates = pd.date_range('2023-01-01', periods=10, freq='1h')
+        indices_to_keep = [i for i in range(10) if i not in [3, 4, 7]]
+        dates = dates[indices_to_keep]
+        
+        sample_data = pd.DataFrame({
+            'Open': [100 + i for i in range(len(dates))],
+            'High': [101 + i for i in range(len(dates))],
+            'Low': [99 + i for i in range(len(dates))],
+            'Close': [100.5 + i for i in range(len(dates))],
+            'Volume': [1000 + i * 100 for i in range(len(dates))]
+        }, index=dates)
+        
+        gaps_info = {
+            'gaps': [{'start': '2023-01-01T03:00:00', 'end': '2023-01-01T05:00:00', 'gap_size': 2.0}],
+            'expected_interval': '1h'
+        }
+        
+        result = self.analyzer.fixer._auto_fill_gaps(sample_data, gaps_info)
+        
+        assert len(result) > len(sample_data)  # Should have more data points
+        assert isinstance(result.index, pd.DatetimeIndex)
+    
+    def test_choose_best_strategy(self):
+        """Test automatic strategy selection logic."""
+        # Test with trending data
+        trending_data = pd.DataFrame({
+            'Close': [100, 102, 104, 106, 108, 110, 112, 114, 116, 118]
+        })
+        
+        gaps_info = {
+            'gaps': [{'gap_size': 2.0}],
+            'expected_interval': '1h'
+        }
+        
+        strategy = self.analyzer.fixer._choose_best_strategy(trending_data, gaps_info)
+        assert strategy in ['linear_interpolation', 'forward_fill', 'spline_interpolation']
+    
+    def test_analyze_data_characteristics(self):
+        """Test data characteristics analysis."""
+        # Test with trending data
+        trending_data = pd.DataFrame({
+            'Close': [100, 102, 104, 106, 108, 110, 112, 114, 116, 118]
+        })
+        
+        characteristics = self.analyzer.fixer._analyze_data_characteristics(trending_data)
+        
+        assert 'is_trending' in characteristics
+        assert 'is_volatile' in characteristics
+        assert 'has_strong_trend' in characteristics
+        assert 'is_stationary' in characteristics
+        assert 'volatility' in characteristics
+        assert 'trend_strength' in characteristics
+    
+    def test_analyze_gap_characteristics(self):
+        """Test gap characteristics analysis."""
+        gaps = [
+            {'gap_size': 2.0},
+            {'gap_size': 3.0},
+            {'gap_size': 1.5}
+        ]
+        
+        characteristics = self.analyzer.fixer._analyze_gap_characteristics(gaps)
+        
+        assert 'avg_gap_size' in characteristics
+        assert 'max_gap_size' in characteristics
+        assert 'total_gaps' in characteristics
+        assert 'min_gap_size' in characteristics
+        assert characteristics['total_gaps'] == 3
+        assert characteristics['avg_gap_size'] == 2.1666666666666665
 
 
 if __name__ == '__main__':
