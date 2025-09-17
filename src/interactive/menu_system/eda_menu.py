@@ -514,12 +514,14 @@ class EDAMenu(BaseMenu):
             print(f"{Fore.CYAN}{'─'*30}")
             
             summary = result.get('summary', {})
+            overall_stats = result.get('overall_stats', {})
             
             print(f"{Fore.WHITE}Summary:")
             print(f"  • Gaps detected: {summary.get('gaps_detected', 0)}")
             print(f"  • Gaps fixed: {summary.get('gaps_fixed', 0)}")
             print(f"  • Points added: {summary.get('points_added', 0)}")
             print(f"  • Timeframes fixed: {summary.get('timeframes_fixed', 0)}")
+            print(f"  • Timeframes skipped: {overall_stats.get('timeframes_skipped', 0)}")
             print(f"  • Success rate: {summary.get('fixing_success_rate', 0):.1f}%")
             print(f"  • Strategy used: {result.get('strategy_used', 'Unknown')}")
             
