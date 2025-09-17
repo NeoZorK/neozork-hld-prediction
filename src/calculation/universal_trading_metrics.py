@@ -10,10 +10,20 @@ import pandas as pd
 import numpy as np
 from typing import Dict, Union, Optional
 from datetime import datetime
+import signal
+import time
 from src.common import logger
 from src.common.constants import BUY, SELL, NOTRADE
 from src.calculation.trading_metrics import calculate_trading_metrics
 
+
+class TimeoutError(Exception):
+    """Custom timeout exception."""
+    pass
+
+def timeout_handler(signum, frame):
+    """Signal handler for timeout."""
+    raise TimeoutError("Operation timed out")
 
 class UniversalTradingMetrics:
     """
@@ -22,7 +32,7 @@ class UniversalTradingMetrics:
     """
     
     def __init__(self, lot_size: float = 1.0, risk_reward_ratio: float = 2.0, 
-                 fee_per_trade: float = 0.07):
+                 fee_per_trade: float = 0.07, timeout_seconds: int = 30):
         """
         Initialize the universal trading metrics calculator.
         
@@ -30,10 +40,12 @@ class UniversalTradingMetrics:
             lot_size (float): Position size (default: 1.0)
             risk_reward_ratio (float): Risk to reward ratio (default: 2.0)
             fee_per_trade (float): Fee per trade in percentage (default: 0.07)
+            timeout_seconds (int): Timeout in seconds for calculations (default: 30)
         """
         self.lot_size = lot_size
         self.risk_reward_ratio = risk_reward_ratio
         self.fee_per_trade = fee_per_trade
+        self.timeout_seconds = timeout_seconds
     
     def calculate_and_display_metrics(self, df: pd.DataFrame, rule: Union[str, object], 
                                     price_col: str = 'Close', signal_col: str = 'Direction',
@@ -72,22 +84,36 @@ class UniversalTradingMetrics:
             # Get rule name
             rule_name = self._get_rule_name(rule)
             
-            # Calculate metrics
-            metrics = calculate_trading_metrics(
-                df, 
-                price_col=price_col, 
-                signal_col=signal_col, 
-                volume_col=volume_col,
-                lot_size=self.lot_size,
-                risk_reward_ratio=self.risk_reward_ratio,
-                fee_per_trade=self.fee_per_trade
-            )
+            # Set up timeout protection
+            old_handler = signal.signal(signal.SIGALRM, timeout_handler)
+            signal.alarm(self.timeout_seconds)
             
-            # Display metrics in console
-            self._display_metrics(metrics, rule_name, df)
+            try:
+                # Calculate metrics with timeout protection
+                metrics = calculate_trading_metrics(
+                    df, 
+                    price_col=price_col, 
+                    signal_col=signal_col, 
+                    volume_col=volume_col,
+                    lot_size=self.lot_size,
+                    risk_reward_ratio=self.risk_reward_ratio,
+                    fee_per_trade=self.fee_per_trade
+                )
+                
+                # Display metrics in console
+                self._display_metrics(metrics, rule_name, df)
+                
+                return metrics
+                
+            finally:
+                # Cancel the alarm and restore the old handler
+                signal.alarm(0)
+                signal.signal(signal.SIGALRM, old_handler)
             
-            return metrics
-            
+        except TimeoutError:
+            logger.print_error(f"Metrics calculation timed out after {self.timeout_seconds} seconds")
+            self._display_error(f"Metrics calculation timed out after {self.timeout_seconds} seconds")
+            return {}
         except Exception as e:
             logger.print_error(f"Error calculating universal trading metrics: {e}")
             self._display_error(f"Metrics calculation failed: {e}")
@@ -596,9 +622,22 @@ class UniversalTradingMetrics:
 
 def display_universal_trading_metrics(df: pd.DataFrame, rule: Union[str, object], 
                                     lot_size: float = 1.0, risk_reward_ratio: float = 2.0, 
-                                    fee_per_trade: float = 0.07, signal_col: str = 'Direction') -> Dict[str, float]:
+                                    fee_per_trade: float = 0.07, signal_col: str = 'Direction',
+                                    timeout_seconds: int = 30) -> Dict[str, float]:
     """
     Universal function to calculate and display trading metrics for any rule type.
+    
+    Args:
+        df (pd.DataFrame): DataFrame with OHLCV data and trading signals
+        rule (Union[str, object]): Trading rule name or object
+        lot_size (float): Position size (default: 1.0)
+        risk_reward_ratio (float): Risk to reward ratio (default: 2.0)
+        fee_per_trade (float): Fee per trade in percentage (default: 0.07)
+        signal_col (str): Column name for trading signals (default: 'Direction')
+        timeout_seconds (int): Timeout in seconds for calculations (default: 30)
+    
+    Returns:
+        Dict[str, float]: Dictionary containing all calculated metrics
     """
-    calculator = UniversalTradingMetrics(lot_size, risk_reward_ratio, fee_per_trade)
+    calculator = UniversalTradingMetrics(lot_size, risk_reward_ratio, fee_per_trade, timeout_seconds)
     return calculator.calculate_and_display_metrics(df, rule, signal_col=signal_col) 

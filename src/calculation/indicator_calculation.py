@@ -39,9 +39,18 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
     original_rule_with_params = rule_input_str  # Store original rule with parameters
     
     if ':' in rule_input_str:
-        indicator_name, indicator_params = parse_indicator_parameters(rule_input_str)
-        # Update the rule name to the parsed indicator name (always in uppercase)
-        rule_input_str = indicator_name.upper()
+        try:
+            indicator_name, indicator_params = parse_indicator_parameters(rule_input_str)
+            # Update the rule name to the parsed indicator name (always in uppercase)
+            rule_input_str = indicator_name.upper()
+        except Exception as e:
+            # Show cool help for parameterized indicators on any parsing error
+            from src.cli.error_handling import show_enhanced_indicator_help
+            indicator_name = rule_input_str.split(':', 1)[0].lower().strip()
+            show_enhanced_indicator_help(f"Invalid parameters for indicator: {indicator_name}", indicator_name, show_error_header=False)
+            # After showing help, exit with error
+            import sys
+            sys.exit(1)
     
     # Store original rule with parameters for display purposes
     setattr(args, 'original_rule_with_params', original_rule_with_params)

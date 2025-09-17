@@ -1,0 +1,407 @@
+# NeoZork Pocket Hedge Fund - Notification Configuration
+
+# Redis Configuration for Real-time Notifications
+redis:
+  host: "localhost"
+  port: 6379
+  db: 0
+  password: null
+  max_connections: 10
+  socket_timeout: 5
+  socket_connect_timeout: 5
+  retry_on_timeout: true
+
+# Email Configuration
+email:
+  enabled: true
+  from_email: "notifications@neozork.com"
+  from_name: "NeoZork Notifications"
+  smtp:
+    host: "smtp.gmail.com"
+    port: 587
+    username: "notifications@neozork.com"
+    password: "${EMAIL_PASSWORD}"
+    use_tls: true
+    use_ssl: false
+  templates:
+    path: "templates/email/"
+    default_language: "en"
+  rate_limits:
+    per_user_per_hour: 50
+    per_user_per_day: 200
+    global_per_hour: 1000
+    global_per_day: 10000
+
+# SMS Configuration
+sms:
+  enabled: true
+  provider: "twilio"  # twilio, aws_sns, sendgrid
+  twilio:
+    account_sid: "${TWILIO_ACCOUNT_SID}"
+    auth_token: "${TWILIO_AUTH_TOKEN}"
+    from_number: "${TWILIO_FROM_NUMBER}"
+    api_url: "https://api.twilio.com/2010-04-01/Accounts"
+  aws_sns:
+    region: "us-east-1"
+    access_key_id: "${AWS_ACCESS_KEY_ID}"
+    secret_access_key: "${AWS_SECRET_ACCESS_KEY}"
+    api_url: "https://sns.us-east-1.amazonaws.com"
+  sendgrid:
+    api_key: "${SENDGRID_API_KEY}"
+    api_url: "https://api.sendgrid.com/v3"
+  rate_limits:
+    per_user_per_hour: 10
+    per_user_per_day: 50
+    global_per_hour: 100
+    global_per_day: 1000
+
+# Push Notification Configuration
+push:
+  enabled: true
+  providers:
+    firebase:
+      enabled: true
+      server_key: "${FIREBASE_SERVER_KEY}"
+      api_url: "https://fcm.googleapis.com/fcm/send"
+    apns:
+      enabled: true
+      key_id: "${APNS_KEY_ID}"
+      team_id: "${APNS_TEAM_ID}"
+      bundle_id: "${APNS_BUNDLE_ID}"
+      key_file: "${APNS_KEY_FILE}"
+      production: true
+    web_push:
+      enabled: true
+      vapid_public_key: "${VAPID_PUBLIC_KEY}"
+      vapid_private_key: "${VAPID_PRIVATE_KEY}"
+      vapid_subject: "mailto:notifications@neozork.com"
+  rate_limits:
+    per_user_per_hour: 100
+    per_user_per_day: 500
+    global_per_hour: 5000
+    global_per_day: 50000
+
+# Webhook Configuration
+webhook:
+  enabled: true
+  timeout: 30
+  retry_attempts: 3
+  retry_delay: 5
+  max_payload_size: 1048576  # 1MB
+  allowed_ips: []  # Empty means all IPs allowed
+  rate_limits:
+    per_webhook_per_hour: 1000
+    per_webhook_per_day: 10000
+    global_per_hour: 10000
+    global_per_day: 100000
+
+# In-App Notification Configuration
+in_app:
+  enabled: true
+  max_notifications_per_user: 100
+  retention_days: 30
+  real_time_enabled: true
+  websocket:
+    enabled: true
+    port: 8080
+    max_connections: 1000
+    heartbeat_interval: 30
+    connection_timeout: 300
+
+# Notification Templates
+templates:
+  email:
+    path: "templates/email/"
+    default_language: "en"
+    supported_languages: ["en", "es", "fr", "de", "zh", "ja"]
+    variables:
+      user_name: "User's display name"
+      user_email: "User's email address"
+      fund_name: "Fund name"
+      fund_id: "Fund ID"
+      amount: "Transaction amount"
+      date: "Transaction date"
+      portfolio_value: "Current portfolio value"
+      return_percentage: "Return percentage"
+      company_name: "NeoZork"
+      support_email: "support@neozork.com"
+      unsubscribe_url: "Unsubscribe URL"
+  sms:
+    path: "templates/sms/"
+    max_length: 160
+    variables:
+      user_name: "User's display name"
+      amount: "Transaction amount"
+      fund_name: "Fund name"
+      date: "Transaction date"
+  push:
+    path: "templates/push/"
+    max_title_length: 50
+    max_body_length: 200
+    variables:
+      user_name: "User's display name"
+      amount: "Transaction amount"
+      fund_name: "Fund name"
+      date: "Transaction date"
+
+# Notification Types Configuration
+notification_types:
+  info:
+    enabled: true
+    default_channels: ["in_app", "email"]
+    priority: "low"
+    retention_days: 7
+  warning:
+    enabled: true
+    default_channels: ["in_app", "email", "push"]
+    priority: "medium"
+    retention_days: 14
+  error:
+    enabled: true
+    default_channels: ["in_app", "email", "push", "sms"]
+    priority: "high"
+    retention_days: 30
+  success:
+    enabled: true
+    default_channels: ["in_app", "email"]
+    priority: "low"
+    retention_days: 7
+  trade_alert:
+    enabled: true
+    default_channels: ["in_app", "push"]
+    priority: "medium"
+    retention_days: 14
+  portfolio_update:
+    enabled: true
+    default_channels: ["in_app", "email"]
+    priority: "low"
+    retention_days: 7
+  performance_alert:
+    enabled: true
+    default_channels: ["in_app", "email", "push"]
+    priority: "medium"
+    retention_days: 14
+  risk_alert:
+    enabled: true
+    default_channels: ["in_app", "email", "push", "sms"]
+    priority: "high"
+    retention_days: 30
+  fund_update:
+    enabled: true
+    default_channels: ["in_app", "email"]
+    priority: "low"
+    retention_days: 7
+  investment_alert:
+    enabled: true
+    default_channels: ["in_app", "email", "push"]
+    priority: "medium"
+    retention_days: 14
+  withdrawal_alert:
+    enabled: true
+    default_channels: ["in_app", "email", "push"]
+    priority: "medium"
+    retention_days: 14
+  system_maintenance:
+    enabled: true
+    default_channels: ["in_app", "email", "push"]
+    priority: "high"
+    retention_days: 30
+  security_alert:
+    enabled: true
+    default_channels: ["in_app", "email", "push", "sms"]
+    priority: "urgent"
+    retention_days: 90
+  market_alert:
+    enabled: true
+    default_channels: ["in_app", "email", "push"]
+    priority: "medium"
+    retention_days: 14
+
+# User Preferences Defaults
+default_preferences:
+  email_enabled: true
+  sms_enabled: false
+  push_enabled: true
+  in_app_enabled: true
+  webhook_enabled: false
+  email_frequency: "immediate"  # immediate, daily, weekly
+  sms_frequency: "immediate"
+  push_frequency: "immediate"
+  quiet_hours_start: null  # "22:00"
+  quiet_hours_end: null    # "08:00"
+  timezone: "UTC"
+  notification_types:
+    info: true
+    warning: true
+    error: true
+    success: true
+    trade_alert: true
+    portfolio_update: true
+    performance_alert: true
+    risk_alert: true
+    fund_update: true
+    investment_alert: true
+    withdrawal_alert: true
+    system_maintenance: true
+    security_alert: true
+    market_alert: true
+
+# Batch Processing Configuration
+batch_processing:
+  enabled: true
+  max_batch_size: 1000
+  processing_interval: 60  # seconds
+  retry_failed: true
+  max_retries: 3
+  retry_delay: 300  # seconds
+  parallel_workers: 5
+
+# Scheduled Notifications
+scheduled_notifications:
+  enabled: true
+  check_interval: 60  # seconds
+  max_scheduled_notifications: 10000
+  cleanup_interval: 3600  # seconds
+  cleanup_retention_days: 7
+
+# Notification Statistics
+statistics:
+  enabled: true
+  collection_interval: 300  # seconds
+  retention_days: 90
+  metrics:
+    - "total_notifications"
+    - "notifications_by_type"
+    - "notifications_by_channel"
+    - "notifications_by_status"
+    - "notifications_by_priority"
+    - "delivery_rates"
+    - "read_rates"
+    - "error_rates"
+
+# Security Configuration
+security:
+  rate_limiting:
+    enabled: true
+    window_size: 3600  # seconds
+    max_requests_per_window: 1000
+    block_duration: 3600  # seconds
+  content_filtering:
+    enabled: true
+    max_message_length: 10000
+    allowed_html_tags: ["b", "i", "u", "a", "p", "br"]
+    blocked_words: []
+  encryption:
+    enabled: true
+    algorithm: "AES-256-GCM"
+    key_rotation_interval: 86400  # seconds
+
+# Monitoring and Alerting
+monitoring:
+  enabled: true
+  health_check_interval: 60  # seconds
+  alert_thresholds:
+    error_rate: 5.0  # percentage
+    delivery_failure_rate: 10.0  # percentage
+    queue_size: 10000
+    processing_time: 30  # seconds
+  alert_channels:
+    - "email"
+    - "webhook"
+  alert_recipients:
+    - "admin@neozork.com"
+    - "devops@neozork.com"
+
+# Database Configuration
+database:
+  connection_pool_size: 10
+  max_overflow: 20
+  pool_timeout: 30
+  pool_recycle: 3600
+  echo: false
+  isolation_level: "READ_COMMITTED"
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file:
+    enabled: true
+    path: "logs/notifications.log"
+    max_size: 10485760  # 10MB
+    backup_count: 5
+  console:
+    enabled: true
+  external:
+    enabled: false
+    service: "datadog"  # datadog, newrelic, splunk
+    api_key: "${LOGGING_API_KEY}"
+
+# Feature Flags
+features:
+  real_time_notifications: true
+  websocket_notifications: true
+  batch_processing: true
+  scheduled_notifications: true
+  notification_templates: true
+  user_preferences: true
+  statistics_collection: true
+  content_filtering: true
+  rate_limiting: true
+  encryption: true
+  monitoring: true
+  cleanup_automation: true
+
+# Environment-specific overrides
+environments:
+  development:
+    email:
+      enabled: false
+    sms:
+      enabled: false
+    push:
+      enabled: false
+    webhook:
+      enabled: false
+    logging:
+      level: "DEBUG"
+      console:
+        enabled: true
+  
+  staging:
+    email:
+      enabled: true
+      smtp:
+        host: "smtp.mailtrap.io"
+        port: 2525
+    sms:
+      enabled: false
+    push:
+      enabled: false
+    webhook:
+      enabled: true
+    logging:
+      level: "INFO"
+  
+  production:
+    email:
+      enabled: true
+    sms:
+      enabled: true
+    push:
+      enabled: true
+    webhook:
+      enabled: true
+    logging:
+      level: "WARNING"
+      console:
+        enabled: false
+    monitoring:
+      enabled: true
+    security:
+      rate_limiting:
+        enabled: true
+      content_filtering:
+        enabled: true
+      encryption:
+        enabled: true

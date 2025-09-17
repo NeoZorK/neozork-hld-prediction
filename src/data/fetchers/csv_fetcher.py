@@ -78,42 +78,33 @@ def fetch_csv_data(
 
         if parquet_path.is_file():
             try:
-                print_info(f"Attempting to load cached CSV data from Parquet: {parquet_path}")
                 df = pd.read_parquet(parquet_path)
                 if not required_std_cols.issubset(df.columns):
                     raise ValueError("Cached Parquet missing required OHLC columns.")
                 if not isinstance(df.index, pd.DatetimeIndex) or df.index.name != 'Timestamp':
                      raise ValueError("Cached Parquet needs DatetimeIndex named 'Timestamp'.")
-                print_info(f"Successfully loaded {len(df)} rows from Parquet cache: {parquet_path}")
                 return df
             except Exception as e:
-                print_warning(f"Failed to load/validate Parquet cache {parquet_path}: {e}. Reading CSV.")
                 try: os.remove(parquet_path)
                 except OSError: pass
         # --- End Parquet Cache Check ---
 
         # --- CSV Reading Logic ---
-        print_info(f"Reading CSV data from: {file_path}")
         df = pd.read_csv(
             file_path,
             header=1,
             sep=separator,
             low_memory=False
         )
-        print_debug(f"Read {len(df)} rows and {len(df.columns)} columns from CSV.")
-        print_debug(f"Initial columns read: {list(df.columns)}")
 
         # --- Clean Actual Column Names ---
         original_columns = df.columns.tolist()
         cleaned_columns = [str(col).strip().rstrip(',') for col in original_columns]
         df.columns = cleaned_columns
-        print_debug(f"Cleaned columns: {list(df.columns)}")
 
         unnamed_cols_to_drop = [col for col in df.columns if col.startswith('Unnamed:') or col == '']
         if unnamed_cols_to_drop:
-            print_warning(f"Dropping unnamed/empty columns: {unnamed_cols_to_drop}")
             df = df.drop(columns=unnamed_cols_to_drop)
-            print_debug(f"Columns after dropping unnamed: {list(df.columns)}")
 
         # --- Renaming Logic ---
         rename_map = {}
@@ -135,9 +126,7 @@ def fetch_csv_data(
                  else:
                      print_warning(f"Optional volume source column '{csv_col_cleaned}' (mapped to '{std_col}') not found.")
 
-        print_debug(f"Applying rename map: {rename_map}")
         df = df.rename(columns=rename_map)
-        print_debug(f"Columns after renaming (before timestamp processing): {list(df.columns)}")
 
         # --- Timestamp Processing ---
         if 'Timestamp' not in df.columns:
@@ -149,12 +138,6 @@ def fetch_csv_data(
             parse_format = date_format or '%Y.%m.%d %H:%M'
             parsed_timestamps = pd.to_datetime(timestamp_col_data, format=parse_format, errors='coerce')
 
-            if parsed_timestamps.isnull().sum() > 0.5 * len(df):
-                 print_error(f"High number of timestamp parsing errors...")
-                 print_error(str(timestamp_col_data[parsed_timestamps.isnull()].head()))
-            elif parsed_timestamps.isnull().sum() > 0:
-                 print_warning(f"{parsed_timestamps.isnull().sum()} rows had timestamp parsing errors and were set to NaT.")
-
             df.index = parsed_timestamps
 
             if 'Timestamp' in df.columns:
@@ -162,19 +145,9 @@ def fetch_csv_data(
 
             df.index.name = 'Timestamp'
 
-            initial_rows_ts = len(df)
             df = df[df.index.notna()]
-            dropped_ts_rows = initial_rows_ts - len(df)
-            if dropped_ts_rows > 0:
-                 print_warning(f"Dropped {dropped_ts_rows} rows due to NaT in Timestamp index.")
-
-            print_debug("Timestamp index created successfully.")
 
         except Exception as e:
-            print_error(f"Error processing timestamp data: {e}")
-            print_error("Sample values being parsed:")
-            try: print_error(str(timestamp_col_data.head()))
-            except AttributeError: print_error("Could not display sample timestamp data.")
             raise ValueError(f"Timestamp processing failed: {e}") from e
 
         # --- Final Column Selection & Type Conversion ---
@@ -191,8 +164,6 @@ def fetch_csv_data(
 
         all_final_columns = final_columns + [col for col in df.columns if col not in final_columns]
         df = df[all_final_columns]
-
-        print_debug(f"Selected final columns (+ others present): {list(df.columns)}")
 
         # Convert types
         for col in required_std_cols:
@@ -217,32 +188,18 @@ def fetch_csv_data(
                       df[col] = df[col].replace(['inf', '-inf'], [np.nan, np.nan]) # Use np.nan for float
                  df[col] = pd.to_numeric(df[col], errors='coerce').astype(float) # Ensure float
 
-        initial_rows = len(df)
         # Drop rows if OHLC values are NaN (Volume NaN is often acceptable)
         df = df.dropna(subset=list(required_std_cols))
-        dropped_rows = initial_rows - len(df)
-        if dropped_rows > 0:
-            print_warning(f"Dropped {dropped_rows} rows due to NaN values in required OHLC columns after numeric conversion.")
 
         df = df.sort_index()
-        if not df.index.is_monotonic_increasing:
-             print_warning("Timestamp index is not monotonically increasing after sorting.")
-
-        print_info(f"Successfully processed {len(df)} rows from CSV: {file_path}")
-        # --- End CSV Processing ---
 
         # --- Save Processed DataFrame to Parquet Cache ---
         if len(df) > 0:
              try:
-                 print_info(f"Saving processed data to Parquet cache: {parquet_path}")
                  df.to_parquet(parquet_path, index=True)
-                 print_debug(f"Data successfully saved to {parquet_path}")
              except Exception as e:
                  print_error(f"CRITICAL: Failed to save data to Parquet cache {parquet_path}: {e}")
-                 print_error("Traceback for Parquet save error:")
                  traceback.print_exc()
-        else:
-             print_warning("Processed DataFrame is empty. Skipping Parquet cache saving.")
 
         return df
 

@@ -51,6 +51,7 @@ class TestWorkflow(unittest.TestCase):
              'steps_duration': {} # Ensure this exists
         }
 
+    @patch('src.workflow.workflow.display_universal_trading_metrics')
     @patch('src.workflow.workflow.acquire_data')
     @patch('src.workflow.workflow.get_point_size')
     @patch('src.workflow.workflow.calculate_indicator')
@@ -59,7 +60,7 @@ class TestWorkflow(unittest.TestCase):
     @patch('src.workflow.workflow.logger')
     def test_run_workflow_success_yfinance(self, mock_logger, mock_makedirs,
                                             mock_generate_plot, mock_calculate_indicator,
-                                            mock_get_point_size, mock_acquire_data):
+                                            mock_get_point_size, mock_acquire_data, mock_display_metrics):
         """Test a successful workflow run using yfinance mode."""
         # Mock acquire_data to return the dictionary
         mock_data_info_returned = {**self.sample_data_info}
@@ -67,6 +68,7 @@ class TestWorkflow(unittest.TestCase):
         mock_get_point_size.return_value = (0.01, False) # point_size, estimated_flag
         mock_calculate_indicator.return_value = (self.sample_df.copy(), TradingRule.Pressure_Vector)
         mock_generate_plot.return_value = None # generate_plot returns None
+        mock_display_metrics.return_value = {} # Mock display_universal_trading_metrics
 
         with patch('time.perf_counter') as mock_perf_counter:
             mock_perf_counter.side_effect = [x * 0.1 for x in range(15)] # Provide more than enough
@@ -82,9 +84,12 @@ class TestWorkflow(unittest.TestCase):
         pd.testing.assert_frame_equal(mock_generate_plot.call_args[0][2], self.sample_df)
         # *** FIX: Assert generate_plot called with data_info (mock return value) ***
         mock_generate_plot.assert_called_once_with(self.mock_args, mock_data_info_returned, ANY, TradingRule.Pressure_Vector, 0.01, False)
+        # Check that display_universal_trading_metrics was called
+        mock_display_metrics.assert_called_once()
         self.assertTrue(results['success'])
         self.assertIsNone(results['error_message'])
 
+    @patch('src.workflow.workflow.display_universal_trading_metrics')
     @patch('src.workflow.workflow.acquire_data')
     @patch('src.workflow.workflow.get_point_size')
     @patch('src.workflow.workflow.calculate_indicator')
@@ -93,7 +98,7 @@ class TestWorkflow(unittest.TestCase):
     @patch('src.workflow.workflow.logger')
     def test_run_workflow_success_csv_no_parquet(self, mock_logger, mock_makedirs,
                                                 mock_generate_plot, mock_calculate_indicator,
-                                                mock_get_point_size, mock_acquire_data):
+                                                mock_get_point_size, mock_acquire_data, mock_display_metrics):
         """Test a successful workflow run using csv mode."""
         csv_args = argparse.Namespace( mode='csv', csv_file='input.csv', ticker=None, interval='H1', point=0.001, period=None, start=None, end=None, rule='PHLD', version=False )
         csv_data_info = { 'ohlcv_df': self.sample_df.copy(), 'ticker': None, 'interval': 'H1', 'data_source_label': 'input.csv', 'effective_mode': 'csv', 'current_start': None, 'current_end': None, 'file_size_bytes': 1234, 'data_metrics': {}, 'parquet_cache_used': False, 'error_message': None, 'rows_count': len(self.sample_df), 'columns_count': len(self.sample_df.columns), 'data_size_mb': 0.01, 'steps_duration': {} }
@@ -101,6 +106,7 @@ class TestWorkflow(unittest.TestCase):
         mock_get_point_size.return_value = (0.001, False)
         mock_calculate_indicator.return_value = (self.sample_df.copy(), TradingRule.Predict_High_Low_Direction)
         mock_generate_plot.return_value = None
+        mock_display_metrics.return_value = {} # Mock display_universal_trading_metrics
 
         with patch('time.perf_counter') as mock_perf_counter:
             mock_perf_counter.side_effect = [x * 0.1 for x in range(15)]
@@ -115,6 +121,8 @@ class TestWorkflow(unittest.TestCase):
         pd.testing.assert_frame_equal(mock_generate_plot.call_args[0][2], self.sample_df)
          # *** FIX: Assert generate_plot called with csv_data_info (mock return value) ***
         mock_generate_plot.assert_called_once_with(csv_args, csv_data_info, ANY, TradingRule.Predict_High_Low_Direction, 0.001, False)
+        # Check that display_universal_trading_metrics was called
+        mock_display_metrics.assert_called_once()
         self.assertTrue(results['success'])
         self.assertIsNone(results['parquet_cache_file'])
         self.assertIsNone(results['error_message'])

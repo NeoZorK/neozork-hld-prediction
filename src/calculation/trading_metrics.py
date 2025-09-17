@@ -635,8 +635,8 @@ class TradingMetricsCalculator:
             if not trades:
                 return metrics
             
-            # Monte Carlo simulation parameters
-            n_simulations = 1000
+            # Monte Carlo simulation parameters (reduced for performance)
+            n_simulations = 100  # Reduced from 1000 to 100 for faster execution
             n_trades = len(trades)
             
             # Run Monte Carlo simulations

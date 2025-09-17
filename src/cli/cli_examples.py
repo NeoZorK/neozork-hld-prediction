@@ -53,6 +53,7 @@ def show_cli_examples_colored():
     print(f"  {Fore.GREEN}CSV with PV rule, fastest backend:{Style.RESET_ALL}     python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV -d fastest")
     print(f"  {Fore.GREEN}CSV with PV rule, seaborn backend:{Style.RESET_ALL}     python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV -d seaborn")
     print(f"  {Fore.GREEN}CSV with PV rule, terminal backend:{Style.RESET_ALL}    python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV -d term")
+    print(f"  {Fore.GREEN}Batch CSV folder conversion:{Style.RESET_ALL}           python run_analysis.py csv --csv-folder mql5_feed --point 0.00001")
     print()
 
     print(f"{Fore.YELLOW}{Style.BRIGHT}5. YAHOO FINANCE (YF) MODES{Style.RESET_ALL}")

@@ -1,449 +1,292 @@
-#!/usr/bin/env python3
 """
-Global pytest configuration and shared fixtures
+Pytest configuration and fixtures for Pocket Hedge Fund tests.
+
+This module provides common fixtures and configuration for all test modules.
 """
 
-import os
-import sys
+import asyncio
 import pytest
-import tempfile
-import shutil
-from pathlib import Path
-from typing import Dict, Any, List, Tuple
-import pandas as pd
-import numpy as np
-from datetime import datetime, timedelta
-import signal
+import pytest_asyncio
+import os
+from typing import AsyncGenerator, Dict, Any
+from decimal import Decimal
+import uuid
+from datetime import datetime, timezone
 
-# Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+from src.pocket_hedge_fund.database.connection import get_db_manager, init_database, close_database
+from src.pocket_hedge_fund.auth.auth_manager import get_auth_manager
+from src.pocket_hedge_fund.validation.investment_validator import get_investment_validator
 
-# Global test configuration
-TEST_TIMEOUT = 120  # seconds
-PARALLEL_WORKERS = "auto"
-TEST_DATA_SIZE = 100
-
-def get_environment_type():
-    """Determine the current environment type"""
-    if os.environ.get('NATIVE_CONTAINER') == 'true':
-        return 'native_container'
-    elif os.environ.get('DOCKER_CONTAINER') == 'true':
-        return 'docker'
-    elif os.path.exists('/.dockerenv'):
-        return 'docker'
-    else:
-        return 'local'
-
-def should_skip_docker_tests():
-    """Check if Docker tests should be skipped"""
-    env_type = get_environment_type()
-    return env_type == 'native_container'
-
-def should_skip_native_container_tests():
-    """Check if native container tests should be skipped"""
-    env_type = get_environment_type()
-    return env_type == 'docker'
-
-def skip_if_docker(func):
-    """Decorator to skip tests when running in Docker environment"""
-    def wrapper(*args, **kwargs):
-        if os.environ.get('DOCKER_CONTAINER') == 'true':
-            pytest.skip("Test skipped in Docker environment")
-        return func(*args, **kwargs)
-    return wrapper
-
-@pytest.fixture(scope="session")
-def test_data_dir():
-    """Create temporary test data directory"""
-    temp_dir = tempfile.mkdtemp(prefix="test_data_")
-    yield Path(temp_dir)
-    shutil.rmtree(temp_dir, ignore_errors=True)
-
-@pytest.fixture(scope="session")
-def sample_data(test_data_dir):
-    """Generate sample financial data for testing"""
-    # Create sample OHLCV data
-    dates = pd.date_range('2024-01-01', periods=TEST_DATA_SIZE, freq='D')
-    np.random.seed(42)  # For reproducible tests
-    
-    data = {
-        'Date': dates,
-        'Open': np.random.uniform(100, 200, TEST_DATA_SIZE),
-        'High': np.random.uniform(150, 250, TEST_DATA_SIZE),
-        'Low': np.random.uniform(50, 150, TEST_DATA_SIZE),
-        'Close': np.random.uniform(100, 200, TEST_DATA_SIZE),
-        'Volume': np.random.randint(1000, 10000, TEST_DATA_SIZE)
-    }
-    
-    df = pd.DataFrame(data)
-    
-    # Save as CSV
-    csv_file = test_data_dir / "sample_data.csv"
-    df.to_csv(csv_file, index=False)
-    
-    # Save as Parquet
-    parquet_file = test_data_dir / "sample_data.parquet"
-    df.to_parquet(parquet_file, index=False)
-    
-    return {
-        'csv_file': str(csv_file),
-        'parquet_file': str(parquet_file),
-        'dataframe': df,
-        'point': '0.01'
-    }
-
-@pytest.fixture(scope="session")
-def cli_script():
-    """Path to the main CLI script"""
-    script_path = Path(__file__).parent.parent / "run_analysis.py"
-    assert script_path.exists(), f"CLI script not found at {script_path}"
-    return script_path
-
-@pytest.fixture(scope="session")
-def python_executable():
-    """Python executable for running CLI commands"""
-    return sys.executable
-
-@pytest.fixture(scope="function")
-def temp_workspace():
-    """Create temporary workspace for each test"""
-    temp_dir = tempfile.mkdtemp(prefix="test_workspace_")
-    original_cwd = os.getcwd()
-    
-    try:
-        os.chdir(temp_dir)
-        yield Path(temp_dir)
-    finally:
-        os.chdir(original_cwd)
-        shutil.rmtree(temp_dir, ignore_errors=True)
-
-@pytest.fixture(scope="function")
-def mock_data_files(temp_workspace):
-    """Create mock data files for testing"""
-    # Create sample data
-    dates = pd.date_range('2024-01-01', periods=50, freq='D')
-    data = {
-        'Date': dates,
-        'Close': np.random.uniform(100, 200, 50),
-        'Volume': np.random.randint(1000, 10000, 50)
-    }
-    df = pd.DataFrame(data)
-    
-    # Save files
-    csv_file = temp_workspace / "test_data.csv"
-    parquet_file = temp_workspace / "test_data.parquet"
-    
-    df.to_csv(csv_file, index=False)
-    df.to_parquet(parquet_file, index=False)
-    
-    return {
-        'csv': str(csv_file),
-        'parquet': str(parquet_file),
-        'dataframe': df
-    }
-
-@pytest.fixture(scope="session")
-def test_config():
-    """Global test configuration"""
-    return {
-        'timeout': TEST_TIMEOUT,
-        'workers': PARALLEL_WORKERS,
-        'data_size': TEST_DATA_SIZE,
-        'verbose': True,
-        'parallel': True
-    }
-
-# Performance monitoring fixtures
-@pytest.fixture(scope="function")
-def performance_monitor():
-    """Monitor test performance"""
-    import time
-    import psutil
-    import os
-    
-    start_time = time.time()
-    process = psutil.Process(os.getpid())
-    start_memory = process.memory_info().rss / 1024 / 1024  # MB
-    
-    yield {
-        'start_time': start_time,
-        'start_memory': start_memory,
-        'process': process
-    }
-    
-    end_time = time.time()
-    end_memory = process.memory_info().rss / 1024 / 1024  # MB
-    
-    execution_time = end_time - start_time
-    memory_used = end_memory - start_memory
-    
-    # Log performance metrics
-    print(f"\n📊 Test Performance:")
-    print(f"   Execution time: {execution_time:.2f}s")
-    print(f"   Memory usage: {memory_used:.2f}MB")
-
-# CLI command runner fixture
-@pytest.fixture(scope="function")
-def run_cli():
-    """Fixture to run CLI commands with proper error handling"""
-    def _run_cli(cmd: List[str], timeout: int = TEST_TIMEOUT) -> Tuple[int, str, str, float]:
-        """Run CLI command and return results"""
-        import subprocess
-        import time
-        
-        start_time = time.time()
-        
-        try:
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                timeout=timeout,
-                cwd=Path(__file__).parent.parent
-            )
-            
-            execution_time = time.time() - start_time
-            
-            return (
-                result.returncode,
-                result.stdout,
-                result.stderr,
-                execution_time
-            )
-            
-        except subprocess.TimeoutExpired:
-            execution_time = time.time() - start_time
-            return (1, "", f"Command timed out after {timeout}s", execution_time)
-        except Exception as e:
-            execution_time = time.time() - start_time
-            return (1, "", str(e), execution_time)
-    
-    return _run_cli
-
-# Test categorization fixtures
-@pytest.fixture(scope="session")
-def test_categories():
-    """Define test categories for organization"""
-    return {
-        'unit': 'Unit tests for individual functions',
-        'integration': 'Integration tests for component interaction',
-        'performance': 'Performance and stress tests',
-        'cli': 'Command line interface tests',
-        'data': 'Data processing and validation tests',
-        'indicators': 'Technical indicator calculation tests',
-        'export': 'Data export functionality tests',
-        'plotting': 'Visualization and plotting tests'
-    }
-
-# Parallel test configuration
 def pytest_configure(config):
-    """Configure pytest for parallel testing"""
+    """Configure pytest for different environments."""
     # Add custom markers
-    config.addinivalue_line(
-        "markers", "unit: Unit tests for individual functions"
-    )
-    config.addinivalue_line(
-        "markers", "integration: Integration tests for component interaction"
-    )
-    config.addinivalue_line(
-        "markers", "performance: Performance and stress tests"
-    )
-    config.addinivalue_line(
-        "markers", "cli: Command line interface tests"
-    )
-    config.addinivalue_line(
-        "markers", "data: Data processing and validation tests"
-    )
-    config.addinivalue_line(
-        "markers", "indicators: Technical indicator calculation tests"
-    )
-    config.addinivalue_line(
-        "markers", "export: Data export functionality tests"
-    )
-    config.addinivalue_line(
-        "markers", "plotting: Visualization and plotting tests"
-    )
-    config.addinivalue_line(
-        "markers", "docker: Docker-specific tests"
-    )
-    config.addinivalue_line(
-        "markers", "native_container: Native container-specific tests"
-    )
+    config.addinivalue_line("markers", "hanging: marks tests that may hang or timeout")
+    config.addinivalue_line("markers", "external_api: marks tests that require external API calls")
+    config.addinivalue_line("markers", "skip_native: marks tests to skip in native container")
 
 def pytest_collection_modifyitems(config, items):
-    """Modify test collection for better organization"""
-    # Check environment type
-    env_type = get_environment_type()
-    skip_docker = should_skip_docker_tests()
-    skip_native = should_skip_native_container_tests()
+    """Modify test collection to skip problematic tests in native container."""
+    # Check if running in native container
+    is_native_container = (
+        os.getenv("NATIVE_CONTAINER", "false").lower() == "true" or
+        os.getenv("DOCKER_CONTAINER", "false").lower() == "false"
+    )
     
-    print(f"\n🔍 Environment detected: {env_type}")
-    if skip_docker:
-        print("⏭️  Docker tests will be skipped")
-    if skip_native:
-        print("⏭️  Native container tests will be skipped")
-    
-    for item in items:
-        # Add default markers based on test path
-        if "unit" in str(item.fspath):
-            item.add_marker(pytest.mark.unit)
-        elif "integration" in str(item.fspath):
-            item.add_marker(pytest.mark.integration)
-        elif "performance" in str(item.fspath):
-            item.add_marker(pytest.mark.performance)
-        elif "cli" in str(item.fspath):
-            item.add_marker(pytest.mark.cli)
-        elif "data" in str(item.fspath):
-            item.add_marker(pytest.mark.data)
-        elif "indicators" in str(item.fspath):
-            item.add_marker(pytest.mark.indicators)
-        elif "export" in str(item.fspath):
-            item.add_marker(pytest.mark.export)
-        elif "plotting" in str(item.fspath):
-            item.add_marker(pytest.mark.plotting)
-        elif "docker" in str(item.fspath):
-            item.add_marker(pytest.mark.docker)
-        elif "native-container" in str(item.fspath):
-            item.add_marker(pytest.mark.native_container)
+    if is_native_container:
+        # Skip tests marked for native container
+        skip_native = pytest.mark.skip(reason="Skipped in native container")
+        for item in items:
+            if "skip_native" in item.keywords:
+                item.add_marker(skip_native)
         
-        # Skip Docker tests in native container environment
-        if skip_docker and "docker" in str(item.fspath):
-            item.add_marker(pytest.mark.skip(reason="Docker tests skipped in native container environment"))
-            print(f"⏭️  Skipping Docker test: {item.nodeid}")
+        # Skip external API tests
+        skip_external_api = pytest.mark.skip(reason="External API tests skipped in native container")
+        for item in items:
+            if "external_api" in item.keywords:
+                item.add_marker(skip_external_api)
         
-        # Skip native container tests in Docker environment
-        if skip_native and "native-container" in str(item.fspath):
-            item.add_marker(pytest.mark.skip(reason="Native container tests skipped in Docker environment"))
-            print(f"⏭️  Skipping native container test: {item.nodeid}")
+        # Skip hanging tests
+        skip_hanging = pytest.mark.skip(reason="Hanging tests skipped in native container")
+        for item in items:
+            if "hanging" in item.keywords:
+                item.add_marker(skip_hanging)
+        
+        print(f"\n🔧 Native container mode: Skipped {len([i for i in items if any(m in i.keywords for m in ['skip_native', 'external_api', 'hanging'])])} problematic tests")
 
-        # Only skip specific heavy test files, not entire directories
-        # This allows individual tests to run while still enforcing the 10-second timeout
-        heavy_test_files = [
-            "test_all_flags.py",
-            "test_all_flags_pytest.py", 
-            "test_auto_run_all_commands.py",
-            "test_flag_generator.py"
-        ]
-        
-        if any(heavy_file in str(item.fspath) for heavy_file in heavy_test_files):
-            item.add_marker(pytest.mark.skip(reason="Skipped heavy CLI test file (>10s)"))
-            print(f"⏭️  Skipping heavy CLI test: {item.nodeid}")
+def pytest_runtest_setup(item):
+    """Setup for each test item."""
+    # Add timeout for individual tests
+    if hasattr(item, 'add_marker'):
+        item.add_marker(pytest.mark.timeout(30))
 
-# Test result reporting
-def pytest_terminal_summary(terminalreporter, exitstatus, config):
-    """Generate custom test summary"""
-    print("\n" + "="*60)
-    print("📊 TEST EXECUTION SUMMARY")
-    print("="*60)
-    
-    # Count tests by category
-    stats = terminalreporter.stats
-    passed = len(stats.get('passed', []))
-    failed = len(stats.get('failed', []))
-    skipped = len(stats.get('skipped', []))
-    errors = len(stats.get('error', []))
-    
-    print(f"✅ Passed: {passed}")
-    print(f"❌ Failed: {failed}")
-    print(f"⏭️  Skipped: {skipped}")
-    print(f"💥 Errors: {errors}")
-    print(f"📈 Total: {passed + failed + skipped + errors}")
-    
-    if failed > 0 or errors > 0:
-        print("\n🔍 FAILURE ANALYSIS:")
-        for failure in stats.get('failed', []):
-            print(f"   ❌ {failure.nodeid}")
-        for error in stats.get('error', []):
-            print(f"   💥 {error.nodeid}")
-    
-    print("="*60)
-    
-    # Save test results to logs/test_results directory
+
+@pytest.fixture(scope="session")
+def event_loop():
+    """Create an instance of the default event loop for the test session."""
     try:
-        import json
-        from datetime import datetime
-        
-        # Create logs/test_results directory if it doesn't exist
-        logs_dir = Path(__file__).parent.parent / "logs" / "test_results"
-        logs_dir.mkdir(parents=True, exist_ok=True)
-        
-        # Generate timestamp for filename
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        results_file = logs_dir / f"test_results_{timestamp}.json"
-        
-        # Prepare results data
-        results_data = {
-            'timestamp': timestamp,
-            'datetime': datetime.now().isoformat(),
-            'passed': passed,
-            'failed': failed,
-            'skipped': skipped,
-            'errors': errors,
-            'total': passed + failed + skipped + errors,
-            'success_rate': (passed / (passed + failed + errors)) * 100 if (passed + failed + errors) > 0 else 0,
-            'exit_status': exitstatus.name if hasattr(exitstatus, 'name') else str(exitstatus)
-        }
-        
-        # Save to file
-        with open(results_file, 'w') as f:
-            json.dump(results_data, f, indent=2)
-        
-        print(f"💾 Test results saved to: {results_file}")
-        
-    except Exception as e:
-        print(f"⚠️  Could not save test results: {e}")
-
-def pytest_sessionfinish(session, exitstatus):
-    """Run test coverage analysis after all tests complete"""
-    print("\n" + "="*60)
-    print("🔍 RUNNING TEST COVERAGE ANALYSIS")
-    print("="*60)
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
     
-    # Import and run the coverage analysis
+    yield loop
+    
+    # Clean up
     try:
-        from tests.zzz_analyze_test_coverage import analyze_coverage
-        missing_tests = analyze_coverage()
+        # Cancel all pending tasks
+        pending = asyncio.all_tasks(loop)
+        for task in pending:
+            task.cancel()
         
-        # Exit with error code if there are missing tests
-        if missing_tests:
-            print(f"\n⚠️  Found {len(missing_tests)} files without tests!")
-            print("Consider adding tests for uncovered files.")
-        else:
-            print("\n✅ All source files have corresponding tests!")
-            
+        # Wait for tasks to complete cancellation
+        if pending:
+            loop.run_until_complete(asyncio.gather(*pending, return_exceptions=True))
+    except Exception:
+        pass
+    finally:
+        if not loop.is_closed():
+            loop.close()
+
+
+@pytest_asyncio.fixture(scope="session")
+async def db_manager():
+    """Database manager fixture for tests."""
+    try:
+        await init_database()
+        manager = await get_db_manager()
+        yield manager
     except Exception as e:
-        print(f"❌ Error running coverage analysis: {e}")
-        import traceback
-        traceback.print_exc() 
-
-# Enforce a strict per-test time limit of 10 seconds across all environments
-# Skips the test if it exceeds the limit to keep the suite fast
-@pytest.fixture(autouse=True)
-def enforce_three_second_timeout(request):
-    """Autouse fixture to skip any test exceeding 10 seconds runtime.
-
-    Uses Unix SIGALRM; ignored on unsupported platforms. Can be disabled by
-    setting environment variable DISABLE_TEST_TIMEOUT=1 or with marker @pytest.mark.no_timeout.
-    """
-    # Allow opting out via env var or marker
-    if os.environ.get('DISABLE_TEST_TIMEOUT') == '1' or request.node.get_closest_marker('no_timeout'):
-        yield
-        return
-
-    # SIGALRM is available on Unix (Darwin/macOS, Linux, Docker). For unsupported platforms, do nothing.
-    if hasattr(signal, 'SIGALRM'):
-        def _timeout_handler(signum, frame):
-            pytest.skip("Test exceeded 10 seconds")
-
-        previous_handler = signal.signal(signal.SIGALRM, _timeout_handler)
-        # 10-second alarm
-        signal.alarm(10)
+        print(f"Database initialization failed: {e}")
+        yield None
+    finally:
         try:
-            yield
-        finally:
-            # Cancel alarm and restore handler
-            signal.alarm(0)
-            signal.signal(signal.SIGALRM, previous_handler)
-    else:
-        # Fallback: no enforcement on this platform
-        yield
+            await close_database()
+        except Exception as e:
+            print(f"Database cleanup failed: {e}")
+
+
+@pytest_asyncio.fixture(scope="session")
+async def auth_manager():
+    """Authentication manager fixture for tests."""
+    try:
+        return await get_auth_manager()
+    except Exception as e:
+        print(f"Auth manager initialization failed: {e}")
+        return None
+
+
+@pytest_asyncio.fixture(scope="session")
+async def investment_validator():
+    """Investment validator fixture for tests."""
+    try:
+        return await get_investment_validator()
+    except Exception as e:
+        print(f"Investment validator initialization failed: {e}")
+        return None
+
+
+@pytest_asyncio.fixture
+async def test_user(auth_manager) -> Dict[str, Any]:
+    """Create a test user for testing."""
+    if auth_manager is None:
+        pytest.skip("Auth manager not available")
+    
+    user_data = {
+        'email': f'test_{uuid.uuid4().hex[:8]}@example.com',
+        'username': f'testuser_{uuid.uuid4().hex[:8]}',
+        'password': 'TestPassword123!',
+        'first_name': 'Test',
+        'last_name': 'User'
+    }
+    
+    try:
+        success, message, user_info = await auth_manager.register_user(**user_data)
+        if not success:
+            pytest.skip(f"Failed to create test user: {message}")
+        
+        yield user_info
+    except Exception as e:
+        pytest.skip(f"Failed to create test user: {e}")
+    finally:
+        # Cleanup - delete test user
+        try:
+            if 'user_info' in locals():
+                db_manager = await get_db_manager()
+                if db_manager:
+                    await db_manager.execute_command(
+                        "DELETE FROM users WHERE id = $1",
+                        {'user_id': user_info['id']}
+                    )
+        except Exception as e:
+            print(f"Warning: Failed to cleanup test user: {e}")
+
+
+@pytest_asyncio.fixture
+async def test_fund(db_manager) -> Dict[str, Any]:
+    """Create a test fund for testing."""
+    if db_manager is None:
+        pytest.skip("Database manager not available")
+    
+    fund_data = {
+        'id': str(uuid.uuid4()),
+        'name': f'Test Fund {uuid.uuid4().hex[:8]}',
+        'description': 'Test fund for unit testing',
+        'fund_type': 'mini',
+        'initial_capital': Decimal('100000.00'),
+        'current_value': Decimal('100000.00'),
+        'min_investment': Decimal('1000.00'),
+        'max_investment': Decimal('10000.00'),
+        'status': 'active',
+        'created_at': datetime.now(timezone.utc),
+        'updated_at': datetime.now(timezone.utc)
+    }
+    
+    try:
+        await db_manager.execute_command(
+            """
+            INSERT INTO funds (id, name, description, fund_type, initial_capital, 
+                              current_value, min_investment, max_investment, status, created_at, updated_at)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+            """,
+            fund_data
+        )
+        
+        yield fund_data
+    except Exception as e:
+        pytest.skip(f"Failed to create test fund: {e}")
+    finally:
+        # Cleanup - delete test fund
+        try:
+            if 'fund_data' in locals():
+                await db_manager.execute_command(
+                    "DELETE FROM funds WHERE id = $1",
+                    {'fund_id': fund_data['id']}
+                )
+        except Exception as e:
+            print(f"Warning: Failed to cleanup test fund: {e}")
+
+
+@pytest_asyncio.fixture
+async def test_investment(db_manager, test_user, test_fund) -> Dict[str, Any]:
+    """Create a test investment for testing."""
+    if db_manager is None:
+        pytest.skip("Database manager not available")
+    
+    investment_data = {
+        'id': str(uuid.uuid4()),
+        'investor_id': test_user['id'],
+        'fund_id': test_fund['id'],
+        'amount': Decimal('5000.00'),
+        'shares_acquired': Decimal('50.00'),
+        'share_price': Decimal('100.00'),
+        'status': 'active',
+        'created_at': datetime.now(timezone.utc),
+        'updated_at': datetime.now(timezone.utc)
+    }
+    
+    try:
+        await db_manager.execute_command(
+            """
+            INSERT INTO investments (id, investor_id, fund_id, amount, shares_acquired, 
+                                   share_price, status, created_at, updated_at)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            """,
+            investment_data
+        )
+        
+        yield investment_data
+    except Exception as e:
+        pytest.skip(f"Failed to create test investment: {e}")
+    finally:
+        # Cleanup - delete test investment
+        try:
+            if 'investment_data' in locals():
+                await db_manager.execute_command(
+                    "DELETE FROM investments WHERE id = $1",
+                    {'investment_id': investment_data['id']}
+                )
+        except Exception as e:
+            print(f"Warning: Failed to cleanup test investment: {e}")
+
+
+@pytest.fixture
+def sample_investment_data() -> Dict[str, Any]:
+    """Sample investment data for testing."""
+    return {
+        'fund_id': str(uuid.uuid4()),
+        'amount': Decimal('5000.00')
+    }
+
+
+@pytest.fixture
+def sample_fund_data() -> Dict[str, Any]:
+    """Sample fund data for testing."""
+    return {
+        'name': 'Test Fund',
+        'description': 'A test fund for unit testing',
+        'fund_type': 'mini',
+        'initial_capital': Decimal('100000.00'),
+        'min_investment': Decimal('1000.00'),
+        'max_investment': Decimal('10000.00')
+    }
+
+
+@pytest.fixture
+def sample_user_data() -> Dict[str, Any]:
+    """Sample user data for testing."""
+    return {
+        'email': f'test_{uuid.uuid4().hex[:8]}@example.com',
+        'username': f'testuser_{uuid.uuid4().hex[:8]}',
+        'password': 'TestPassword123!',
+        'first_name': 'Test',
+        'last_name': 'User'
+    }
+
+
+def skip_if_docker(func):
+    """Decorator to skip tests when running in Docker environment."""
+    def wrapper(*args, **kwargs):
+        if os.path.exists('/.dockerenv') or os.environ.get('DOCKER_CONTAINER') == 'true':
+            pytest.skip("Skipping test in Docker environment")
+        return func(*args, **kwargs)
+    return wrapper

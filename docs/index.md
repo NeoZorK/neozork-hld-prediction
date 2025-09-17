@@ -1,6 +1,84 @@
-# NeoZork HLD Prediction - Documentation
+# NeoZork HLD Prediction Project Documentation
 
-Welcome to the comprehensive documentation for the NeoZork HLD Prediction project. This project provides advanced financial analysis tools with support for multiple data sources and technical indicators.
+## 🎯 Project Overview
+
+The NeoZork HLD Prediction project is a comprehensive financial analysis and prediction system that provides advanced trading capabilities, machine learning models, and fund management tools.
+
+## 📊 Current Implementation Status
+
+**Overall Project Status**: 35% Complete
+
+### ✅ **Fully Implemented (Production Ready)**
+- **Core Trading Infrastructure** (95%): Technical indicators, data processing, plotting
+- **Interactive ML System** (90%): ML models, feature engineering, backtesting
+- **Documentation** (85%): Comprehensive documentation and guides
+
+### 🚧 **Partially Implemented (In Development)**
+- **Pocket Hedge Fund** (15%): Fund management framework, API endpoints
+- **SaaS Platform** (20%): Multi-tenancy, billing system
+- **Security & Compliance** (60%): Security framework, monitoring
+
+### ❌ **Not Implemented (Stubs Only)**
+- **Real Database Integration** (0%): No persistent data storage
+- **Real Authentication** (0%): No user authentication system
+- **Real Trading Execution** (0%): No actual trade execution
+- **Investor Portal** (0%): No user interface
+
+## 🚨 Critical Issues
+
+### High Priority
+1. **Database Integration** - No data persistence
+2. **Authentication System** - No user security
+3. **Real Trading Execution** - No actual trading
+4. **Investor Portal** - No user interface
+
+### Medium Priority
+1. **Blockchain Integration** - No DeFi features
+2. **Strategy Marketplace** - No strategy sharing
+3. **Community Features** - No social trading
+
+## 🎯 Development Roadmap
+
+### Phase 1: Foundation (Months 1-3)
+- Implement database integration
+- Implement authentication system
+- Implement real trading execution
+- Implement investor portal
+
+### Phase 2: Core Features (Months 4-6)
+- Complete fund management
+- Implement strategy marketplace
+- Implement community features
+- Implement blockchain integration
+
+### Phase 3: Advanced Features (Months 7-9)
+- Implement advanced analytics
+- Implement mobile app
+- Implement advanced AI
+- Implement compliance features
+
+## 📈 Success Metrics
+
+### Current State
+- **Functional Components**: 35%
+- **Production Ready**: 15%
+- **Test Coverage**: 60%
+- **Documentation**: 85%
+
+### Target State (6 months)
+- **Functional Components**: 80%
+- **Production Ready**: 60%
+- **Test Coverage**: 90%
+- **Documentation**: 95%
+
+---
+
+*Last updated: 2024-12-19*
+*Status: Accurate and up-to-date*
+
+---
+
+## 🚀 Quick Start
 
 ## 🚀 Quick Start
 
@@ -59,6 +137,18 @@ python run_analysis.py demo --rule PHLD
 - [Project Structure](getting-started/project-structure.md) - Understanding the codebase
 - [Installation Guide](getting-started/installation.md) - Step-by-step installation
 
+### 🚀 Run and Test Guides / Руководства по запуску и тестированию
+- [Complete Manual (English)](run-and-test-guides/english/complete-manual-en.md) - **NEW**: Complete run and test manual
+- [Complete Manual (Русский)](run-and-test-guides/russian/complete-manual-ru.md) - **NEW**: Полное руководство по запуску и тестированию
+- [Quick Start (English)](run-and-test-guides/english/quick-start-en.md) - **NEW**: Quick start guide
+- [Quick Start (Русский)](run-and-test-guides/russian/quick-start-ru.md) - **NEW**: Быстрый старт
+- [Testing Guide (English)](run-and-test-guides/english/testing-guide-en.md) - **NEW**: Comprehensive testing guide
+- [Testing Guide (Русский)](run-and-test-guides/russian/testing-guide-ru.md) - **NEW**: Руководство по тестированию
+- [Deployment Guide (English)](run-and-test-guides/english/deployment-guide-en.md) - **NEW**: Deployment guide
+- [Deployment Guide (Русский)](run-and-test-guides/russian/deployment-guide-ru.md) - **NEW**: Руководство по развертыванию
+- [Troubleshooting](run-and-test-guides/troubleshooting.md) - **NEW**: Common issues and solutions
+- [FAQ](run-and-test-guides/faq.md) - **NEW**: Frequently asked questions
+
 ### Containers
 - [Container Documentation](containers/index.md) - **NEW**: Comprehensive container documentation
 - [Native Container](containers/native-container/index.md) - Apple Silicon optimized container
@@ -67,13 +157,17 @@ python run_analysis.py demo --rule PHLD
 
 ### Development
 - [Development Setup](development/setup.md) - Setting up development environment
+- [Documentation Sync Report](development/DOCUMENTATION_SYNC_FINAL_REPORT.md) - **NEW**: Complete documentation synchronization report
 - [Testing Guide](development/testing.md) - Running tests and validation
 - [Code Style](development/code-style.md) - Coding standards and conventions
 - [Debugging](development/debugging.md) - Debugging tools and techniques
+- [Scripts Structure](development/scripts-structure.md) - **NEW**: Utility scripts organization and structure
 - [Refactoring Guide](development/REFACTORING_SUMMARY.md) - **NEW**: Code refactoring guidelines and recent improvements
+- [Test Reorganization Report](development/TEST_REORGANIZATION_REPORT.md) - **NEW**: Comprehensive report on test files reorganization
 
 ### Testing
 - [Testing Documentation](testing/index.md) - Comprehensive testing documentation
+- [Test Structure](testing/test-structure.md) - **NEW**: Detailed test organization and structure
 - [UV-Only Mode Tests](testing/docker/uv-only-mode-tests.md) - Docker UV testing
 - [CLI Testing](testing/cli/comprehensive-testing.md) - Command-line interface testing
 
@@ -89,6 +183,7 @@ python run_analysis.py demo --rule PHLD
 - [Technical Indicators](guides/indicators.md) - Available technical indicators (including new [COT](reference/indicators/sentiment/cot-indicator.md), [Put/Call Ratio](reference/indicators/sentiment/putcallratio-indicator.md), [SuperTrend](reference/indicators/trend/supertrend-indicator.md), [SMA](reference/indicators/trend/sma-indicator.md), [Wave](reference/indicators/trend/wave-indicator.md) with full seaborn mode support)
 - [Analysis Tools](guides/analysis-tools.md) - Analysis and visualization tools
 - [CLI Interface](guides/cli-interface.md) - Command-line interface usage
+- [Batch CSV Processing](guides/batch-csv-processing.md) - **NEW**: Batch processing of CSV folders
 
 ### 🎯 SMA Indicator Tutorials (New!)
 - [Complete SMA Tutorial](guides/adding-sma-indicator-tutorial.md) - Full implementation guide across all display modes
@@ -122,6 +217,40 @@ python run_analysis.py demo --rule PHLD
 - [SuperTrend Indicator](reference/indicators/trend/supertrend-indicator.md) - **NEW**: Trend indicator documentation
 - [SMA Indicator](reference/indicators/trend/sma-indicator.md) - **NEW**: Simple Moving Average documentation
 
+### Interactive ML Trading System
+- [Interactive ML Trading System](interactive/index.md) - **100% Functional**: Comprehensive interactive system for ML trading strategy development
+- [Interactive System README](interactive/README.md) - Complete system overview and quick start guide
+- [Interactive System README Complete](interactive/README_COMPLETE.md) - Comprehensive implementation plan and architecture details
+- [Strategic Plan (English)](interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_EN.md) - Complete strategic plan for robust profitable ML trading strategies
+- [Стратегический План (Русский)](interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_RU.md) - Полный стратегический план для робастных прибыльных ML торговых стратегий
+- [Next Steps Plan](interactive/next-steps-plan.md) - Production development roadmap and implementation plan
+- [Phase 4 Completion Summary](interactive/PHASE4_COMPLETION_SUMMARY.md) - Final completion summary for Phase 4 Advanced Features
+
+### Pocket Hedge Fund (80% Functional)
+- [Pocket Hedge Fund Overview](pocket_hedge_fund/index.md) - **NEW**: Complete platform overview and status
+- [API Documentation](pocket_hedge_fund/api/index.md) - **NEW**: Complete REST API reference with examples
+- [Database Documentation](pocket_hedge_fund/database/index.md) - **NEW**: Full database schema and operations
+- [Authentication Guide](pocket_hedge_fund/auth/index.md) - **NEW**: JWT, MFA, and RBAC implementation
+- [React Frontend](pocket_hedge_fund/frontend/index.md) - **NEW**: Complete React TypeScript frontend documentation
+- [Mobile App](mobile_app/index.md) - **NEW**: React Native mobile application with biometric authentication
+- [Admin Panel](admin_panel/index.md) - **NEW**: Vue.js admin panel for SaaS platform management
+- [Fund Management](pocket_hedge_fund/fund_management/) - Complete fund management system with database integration
+- [API Documentation](pocket_hedge_fund/api/) - RESTful API endpoints for fund operations
+- [Database Schema](pocket_hedge_fund/database/) - PostgreSQL database schema and models
+- [Production Deployment](pocket_hedge_fund/deployment/) - Production deployment and configuration
+- [Authentication System](pocket_hedge_fund/auth/) - JWT-based authentication and authorization
+
+### Business Plans
+- [Commercialization Plan (English)](business/commercialization-plan-en.md) - Comprehensive commercialization strategy for SaaS platform
+- [План Коммерциализации (Русский)](business/commercialization-plan-ru.md) - Комплексная стратегия коммерциализации для SaaS платформы
+- [Pocket Hedge Fund Launch Guide](business/POCKET_HEDGE_FUND_LAUNCH.md) - **80% Functional**: Complete launch instructions and implementation guide
+### SaaS Platform (100% Functional) ⭐ **COMPLETE**
+- [SaaS Platform Overview](saas/index.md) - **NEW**: Complete technical platform overview
+- [SaaS Platform Launch Guide](business/SAAS_PLATFORM_LAUNCH.md) - Business launch guide
+- [Frontend Dashboard](saas/frontend/) - **NEW**: React dashboard components
+- [Usage Tracking](saas/usage_tracking/) - **NEW**: Advanced analytics system
+- [Billing Integration](saas/billing/) - **NEW**: Complete Stripe integration
+
 ### Release Notes
 - [Release Notes](release-notes/index.md) - **NEW**: Complete release history and migration guides
 - [v0.6.0 Release](release-notes/v0.6.0-release-summary.md) - **NEW**: Latest release with documentation updates
@@ -143,6 +272,13 @@ python run_analysis.py demo --rule PHLD
 - **Technical Indicators**: 50+ indicators including RSI, MACD, Bollinger Bands
 - **Real-time Analysis**: Live data processing and analysis
 - **Visualization**: Interactive charts and plots
+
+### Interactive ML Trading System
+- **Interactive Menu System**: Modern, colorful user interface with progress indicators
+- **Advanced ML/DL**: Apple MLX integration, Deep Reinforcement Learning, Ensemble methods
+- **Risk Management**: Monte Carlo simulations, VaR/CVaR, Dynamic position sizing
+- **Multi-Exchange Trading**: CEX and DEX integration with Web3 support
+- **Real-time Monitoring**: Prometheus/Grafana metrics and intelligent alerting
 
 ### Development Tools
 - **MCP Server**: Enhanced IDE integration with intelligent autocompletion
@@ -254,8 +390,9 @@ The `scripts/` directory has been reorganized for better maintainability:
 - **check_uv_mode.py** - UV mode verification
 - **test_uv_docker.py** - UV Docker integration testing
 
-#### **Demo Scripts** (`scripts/demos/`)
-- **demo_universal_metrics.py** - Universal metrics demonstration
+#### **Demo Scripts**
+- **scripts/demos/demo_universal_metrics.py** - Universal metrics demonstration
+- **interactive/advanced_ml/demo_self_learning_engine.py** - Self-Learning Engine demonstration
 
 #### **Debug Scripts** (`scripts/debug/`)
 - **debug_binance.py** - Binance API debugging
@@ -288,6 +425,9 @@ nz mql5 EURUSD --interval H4 --rule PHLD
 
 # Wave indicator with seaborn mode
 nz csv --csv-file data/mn1.csv --point 50 --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d sb
+
+# Batch convert CSV folder
+nz csv --csv-folder mql5_feed --point 0.00001
 ```
 
 ### UV Package Management

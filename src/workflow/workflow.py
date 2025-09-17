@@ -7,7 +7,9 @@ All comments are in English.
 """
 import time
 import traceback # Keep traceback
+import os
 import pandas as pd
+import signal
 
 # Use relative imports within the src package
 from src.common import logger
@@ -28,6 +30,12 @@ except ImportError as e:
     print(f'universal_trading_metrics import failed: {e}')
     print(f'traceback: {traceback.format_exc()}')
     display_universal_trading_metrics = None
+
+def check_shutdown_requested():
+    """Check if a shutdown signal has been received."""
+    # This is a simple implementation - in a more complex system,
+    # you might want to use a shared state variable or threading.Event
+    return False  # For now, we'll rely on the main signal handler
 
 def run_indicator_workflow(args):
     """
@@ -123,8 +131,24 @@ def run_indicator_workflow(args):
         workflow_results.update(data_info) # Merge all info from acquire_data
         workflow_results["data_fetch_duration"] = t_acq_end - t_acq_start
         workflow_results["steps_duration"]["acquire"] = workflow_results["data_fetch_duration"]
+        
+        # Check for shutdown request after data acquisition
+        if check_shutdown_requested():
+            logger.print_info("🛑 Shutdown requested during data acquisition.")
+            workflow_results["success"] = False
+            workflow_results["error_message"] = "Shutdown requested by user"
+            return workflow_results
 
         ohlcv_df = data_info.get("ohlcv_df") # Get DataFrame
+
+        # --- Check for Batch Processing Mode ---
+        if data_info.get("batch_processing", False):
+            # For batch processing, we don't need to validate a single DataFrame
+            # The batch processing results are already in data_info
+            logger.print_info("Batch CSV processing completed successfully.")
+            workflow_results.update(data_info)
+            workflow_results["success"] = True
+            return workflow_results
 
         # --- Critical Check ---
         if ohlcv_df is None or ohlcv_df.empty:
@@ -147,6 +171,13 @@ def run_indicator_workflow(args):
         workflow_results["point_size"] = point_size
         workflow_results["estimated_point"] = estimated_point
         workflow_results["steps_duration"]["point_size"] = t_point_end - t_point_start
+        
+        # Check for shutdown request after point size determination
+        if check_shutdown_requested():
+            logger.print_info("🛑 Shutdown requested during point size determination.")
+            workflow_results["success"] = False
+            workflow_results["error_message"] = "Shutdown requested by user"
+            return workflow_results
 
         # --- Step 3: Calculate Indicator ---
         logger.print_info(f"--- Step 3: Calculating Indicator (Rule: {args.rule}) ---")
@@ -157,6 +188,13 @@ def run_indicator_workflow(args):
         workflow_results["selected_rule"] = selected_rule
         workflow_results["calc_duration"] = t_calc_end - t_calc_start
         workflow_results["steps_duration"]["calculate"] = workflow_results["calc_duration"]
+        
+        # Check for shutdown request after indicator calculation
+        if check_shutdown_requested():
+            logger.print_info("🛑 Shutdown requested during indicator calculation.")
+            workflow_results["success"] = False
+            workflow_results["error_message"] = "Shutdown requested by user"
+            return workflow_results
 
         if result_df is None or result_df.empty:
             logger.print_warning("Indicator calculation returned empty results.")
@@ -170,12 +208,15 @@ def run_indicator_workflow(args):
         logger.print_info("--- Step 3b: Displaying Universal Trading Metrics ---")
         
         try:
+            # Use shorter timeout for tests and faster execution
+            timeout_seconds = 10 if os.getenv('PYTEST_CURRENT_TEST') else 30
             display_universal_trading_metrics(
                 result_df,
                 selected_rule,
                 lot_size=lot_size,
                 risk_reward_ratio=risk_reward_ratio,
-                fee_per_trade=fee_per_trade
+                fee_per_trade=fee_per_trade,
+                timeout_seconds=timeout_seconds
             )
             logger.print_success("Universal trading metrics displayed successfully")
         except Exception as e:
@@ -190,6 +231,13 @@ def run_indicator_workflow(args):
         t_plot_end = time.perf_counter()
         workflow_results["plot_duration"] = t_plot_end - t_plot_start
         workflow_results["steps_duration"]["plot"] = workflow_results["plot_duration"]
+        
+        # Check for shutdown request after plot generation
+        if check_shutdown_requested():
+            logger.print_info("🛑 Shutdown requested during plot generation.")
+            workflow_results["success"] = False
+            workflow_results["error_message"] = "Shutdown requested by user"
+            return workflow_results
 
         # --- Step 5: Export Indicator Data (if requested) ---
         export_results = {}

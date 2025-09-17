@@ -159,13 +159,15 @@ data = fetcher.fetch_data(
 
 ### 5. CSV Files (`csv_fetcher.py`)
 
-Local CSV file data import.
+Local CSV file data import with batch processing support.
 
 #### Features
 - **Local data** - Import your own CSV files
+- **Batch processing** - Process entire folders of CSV files
 - **Flexible format** - Support for various CSV formats
 - **Data validation** - Automatic data quality checks
 - **Format conversion** - Convert to standard OHLCV format
+- **Parquet caching** - Automatic conversion to Parquet for performance
 
 #### CSV Format Requirements
 
@@ -175,30 +177,50 @@ timestamp,open,high,low,close,volume
 2024-01-01 09:31:00,150.25,150.80,150.10,150.60,950000
 ```
 
-#### Usage Example
+#### Usage Examples
 
+**Single CSV File:**
 ```python
-from src.data.fetchers.csv_fetcher import CSVFetcher
+from src.data.fetchers.csv_fetcher import fetch_csv_data
 
-# Initialize fetcher
-fetcher = CSVFetcher()
-
-# Load CSV file
-data = fetcher.fetch_data(
+# Load single CSV file
+data = fetch_csv_data(
     file_path='data/my_data.csv',
-    point_size=0.01,
-    date_column='timestamp',
-    price_columns=['open', 'high', 'low', 'close'],
-    volume_column='volume'
+    ohlc_columns={'Open': 'Open,', 'High': 'High,', 'Low': 'Low,', 'Close': 'Close,', 'Volume': 'TickVolume,'},
+    datetime_column='DateTime,',
+    skiprows=1,
+    separator=','
 )
 ```
 
+**Batch CSV Processing:**
+```python
+from src.data.batch_csv_processor import process_csv_folder
+
+# Process entire folder
+results = process_csv_folder(args)  # args contains csv_folder and point
+```
+
+#### CLI Usage
+
+**Single File:**
+```bash
+uv run run_analysis.py csv --csv-file data/my_data.csv --point 0.01 --rule RSI
+```
+
+**Batch Processing:**
+```bash
+uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001
+```
+
 #### Parameters
-- **`file_path`** - Path to CSV file
+- **`file_path`** - Path to CSV file (single file mode)
+- **`csv_folder`** - Path to folder containing CSV files (batch mode)
 - **`point_size`** - Price precision
-- **`date_column`** - Column name for timestamps
-- **`price_columns`** - List of OHLC column names
-- **`volume_column`** - Column name for volume data
+- **`ohlc_columns`** - Mapping of standard to actual column names
+- **`datetime_column`** - Column name for timestamps
+- **`skiprows`** - Number of rows to skip (default: 1 for MQL5 format)
+- **`separator`** - CSV delimiter (default: ',')
 
 ### 6. Demo Data (`demo_fetcher.py`)
 

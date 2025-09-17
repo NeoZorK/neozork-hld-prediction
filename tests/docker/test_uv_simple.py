@@ -14,6 +14,16 @@ def is_docker_environment():
     """Check if running in Docker environment"""
     return (
         os.getenv("DOCKER_CONTAINER", "false").lower() == "true" or
+        os.getenv("NATIVE_CONTAINER", "false").lower() == "true" or
+        os.path.exists("/.dockerenv") or
+        os.path.exists("/app")
+    )
+
+def is_container_environment():
+    """Check if running in any container environment (Docker or native)"""
+    return (
+        os.getenv("DOCKER_CONTAINER", "false").lower() == "true" or
+        os.getenv("NATIVE_CONTAINER", "false").lower() == "true" or
         os.path.exists("/.dockerenv") or
         os.path.exists("/app")
     )
@@ -54,17 +64,20 @@ def test_uv_help():
 
 def test_environment_variables():
     """Test that UV environment variables are set appropriately"""
-    in_docker = is_docker_environment()
+    in_container = is_container_environment()
     
-    if in_docker:
-        # In Docker, check required environment variables
-        assert os.getenv("USE_UV", "false").lower() == "true", "USE_UV should be true in Docker"
-        assert os.getenv("UV_ONLY", "false").lower() == "true", "UV_ONLY should be true in Docker"
-        assert os.getenv("DOCKER_CONTAINER", "false").lower() == "true", "DOCKER_CONTAINER should be true in Docker"
-        print("✅ UV environment variables are set correctly in Docker")
+    if in_container:
+        # In Container, check required environment variables
+        assert os.getenv("USE_UV", "false").lower() == "true", "USE_UV should be true in container"
+        assert os.getenv("UV_ONLY", "false").lower() == "true", "UV_ONLY should be true in container"
+        # Check for either DOCKER_CONTAINER or NATIVE_CONTAINER
+        docker_container = os.getenv("DOCKER_CONTAINER", "false").lower() == "true"
+        native_container = os.getenv("NATIVE_CONTAINER", "false").lower() == "true"
+        assert docker_container or native_container, "Either DOCKER_CONTAINER or NATIVE_CONTAINER should be true in container"
+        print("✅ UV environment variables are set correctly in container")
     else:
-        # Outside Docker, just check if UV is available
-        print("ℹ️  Running outside Docker - UV environment variables not required")
+        # Outside container, just check if UV is available
+        print("ℹ️  Running outside container - UV environment variables not required")
         # Check if UV is available at least
         try:
             result = subprocess.run(["uv", "--version"], 

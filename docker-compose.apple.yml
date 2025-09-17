@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  neozork-interactive:
+    build:
+      context: .
+      dockerfile: Dockerfile.apple
+    platform: linux/arm64
+    container_name: neozork-interactive-apple
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./plots:/app/plots
+      - ./results:/app/results
+    environment:
+      - PYTHONPATH=/app
+      - APPLE_SILICON=true
+      - MLX_ENABLED=true
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import src.interactive; print('OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  neozork-ml-training:
+    build:
+      context: .
+      dockerfile: Dockerfile.apple
+    platform: linux/arm64
+    container_name: neozork-ml-training-apple
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./models:/app/models
+    environment:
+      - PYTHONPATH=/app
+      - APPLE_SILICON=true
+      - MLX_ENABLED=true
+      - TRAINING_MODE=true
+    command: ["python", "-m", "src.interactive.ml_development.model_trainer"]
+    restart: unless-stopped
+    depends_on:
+      - neozork-interactive
+
+  neozork-monitoring:
+    build:
+      context: .
+      dockerfile: Dockerfile.apple
+    platform: linux/arm64
+    container_name: neozork-monitoring-apple
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./logs:/app/logs
+      - ./monitoring:/app/monitoring
+    environment:
+      - PYTHONPATH=/app
+      - APPLE_SILICON=true
+      - MONITORING_MODE=true
+    command: ["python", "-m", "src.interactive.monitoring.system_monitor"]
+    restart: unless-stopped
+    depends_on:
+      - neozork-interactive
+
+networks:
+  default:
+    name: neozork-apple-network

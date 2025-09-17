@@ -172,8 +172,11 @@ def parse_arguments():
     # --- Data Source Specific Options Group ---
     data_source_group = parser.add_argument_group('Data Source Options')
     # CSV options
-    data_source_group.add_argument('--csv-file', metavar='PATH',
-                                   help="Path to input CSV file (required for 'csv' mode)")
+    csv_group = data_source_group.add_mutually_exclusive_group()
+    csv_group.add_argument('--csv-file', metavar='PATH',
+                          help="Path to input CSV file (required for 'csv' mode)")
+    csv_group.add_argument('--csv-folder', metavar='PATH',
+                          help="Path to folder containing CSV files for batch processing (required for 'csv' mode)")
     # API options (Yahoo Finance / Polygon.io / Binance)
     data_source_group.add_argument('--ticker', metavar='SYMBOL',
                                    help="Ticker symbol. Examples: 'EURUSD=X' (yfinance), 'AAPL' (polygon), 'BTCUSDT' (binance)")
@@ -277,8 +280,7 @@ def parse_arguments():
     other_group = parser.add_argument_group('Other Options')
     other_group.add_argument('-h', action='help', default=argparse.SUPPRESS,
                              help='Show this help message and exit')
-    other_group.add_argument('--version', action='version',
-                             version=f'{"Shcherbyna Pressure Vector Indicator v"+__version__}',
+    other_group.add_argument('--version', action='store_true',
                              help="Show program version and exit")
 
     # --- Parse Arguments ---
@@ -322,6 +324,12 @@ def parse_arguments():
             parser.print_help()
             sys.exit(0)
 
+        # Handle --version flag before parsing to avoid mode requirement
+        if '--version' in sys.argv:
+            from .version_banner import show_version_banner
+            show_version_banner()
+            sys.exit(0)
+        
         # Handle --help flag before parsing to avoid mode requirement
         if '--help' in sys.argv or '-h' in sys.argv:
             parser.print_help()
@@ -488,8 +496,10 @@ def parse_arguments():
 
     # Check requirements for CSV mode
     if effective_mode == 'csv':
-        if not args.csv_file:
-            parser.error("argument --csv-file is required when mode is 'csv'")
+        if not args.csv_file and not args.csv_folder:
+            parser.error("argument --csv-file or --csv-folder is required when mode is 'csv'")
+        if args.csv_file and args.csv_folder:
+            parser.error("cannot specify both --csv-file and --csv-folder")
         if args.point is None:
             parser.error("argument --point is required when mode is 'csv'")
 

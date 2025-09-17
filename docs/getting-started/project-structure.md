@@ -18,11 +18,17 @@ neozork-hld-prediction/
 │   └── workflow/          # Workflow management
 ├── tests/                 # Test suite
 │   ├── calculation/       # Tests for calculations
+│   │   └── indicators/    # Tests for technical indicators
+│   │       ├── trend/     # Tests for trend indicators (MA, EMA, ADX, etc.)
+│   │       ├── momentum/  # Tests for momentum indicators
+│   │       ├── oscillators/ # Tests for oscillator indicators
+│   │       └── volatility/ # Tests for volatility indicators
 │   ├── cli/              # Tests for CLI
 │   ├── data/             # Tests for data processing
 │   ├── eda/              # Tests for EDA
 │   ├── export/           # Tests for export
 │   ├── plotting/         # Tests for plotting
+│   ├── scripts/          # Tests for utility scripts
 │   └── workflow/         # Tests for workflow
 ├── data/                  # Data files
 │   ├── cache/            # Cached data
@@ -33,6 +39,12 @@ neozork-hld-prediction/
 ├── logs/                  # Log files
 ├── results/               # Analysis results
 └── scripts/               # Utility scripts
+    ├── debug/             # Debug and analysis scripts
+    ├── analysis/          # Analysis utilities
+    ├── docker/            # Docker-related scripts
+    ├── mcp/               # MCP server scripts
+    ├── native-container/  # Native container scripts
+    └── utilities/         # General utility scripts
 ```
 
 ## Python package initialization
@@ -73,3 +85,21 @@ The test suite automatically:
 - `Dockerfile` - Container configuration
 - `docker-compose.yml` - Multi-container setup
 - `README.md` - Project overview and quick start
+
+## Recent File Reorganization
+
+The project has been reorganized to improve structure and maintainability:
+
+### Moved Files
+
+- **`test_ma_line.py`** → `tests/calculation/indicators/trend/` - Test for MA line indicator
+- **`debug_wave_indicator.py`** → `scripts/debug/` - Debug script for wave indicator analysis
+- **`debug_signals_analysis.py`** → `scripts/debug/` - Debug script for signals analysis
+
+### Test File Updates
+
+- **`test_test_ma_line.py`** → `tests/calculation/indicators/trend/` - Tests for MA line functionality
+- **`test_debug_wave_indicator.py`** → `tests/scripts/` - Tests for wave indicator debug script
+- **`test_debug_signals_analysis.py`** → `tests/scripts/` - Tests for signals analysis debug script
+
+All import paths and file references have been updated to reflect the new structure.

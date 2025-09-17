@@ -1,0 +1,99 @@
+/**
+ * Recent Activity Component Styles
+ * 
+ * CSS styles for the recent activity component.
+ */
+
+/* ============================================================================
+   RECENT ACTIVITY
+   ============================================================================ */
+
+.recent-activity {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.recent-activity__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.recent-activity__header h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.recent-activity__list {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 300px;
+}
+
+.recent-activity__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+  color: #64748b;
+  font-style: italic;
+}
+
+.recent-activity-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  text-align: center;
+}
+
+.recent-activity-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  text-align: center;
+  color: #ef4444;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .recent-activity__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .recent-activity__list {
+    max-height: 250px;
+  }
+}
+
+/* ============================================================================
+   DARK MODE SUPPORT
+   ============================================================================ */
+
+@media (prefers-color-scheme: dark) {
+  .recent-activity__header {
+    border-bottom-color: #334155;
+  }
+  
+  .recent-activity__header h3 {
+    color: #f1f5f9;
+  }
+  
+  .recent-activity__empty {
+    color: #94a3b8;
+  }
+}

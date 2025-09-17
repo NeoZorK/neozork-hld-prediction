@@ -73,13 +73,21 @@ if [ $# -eq 0 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     echo ""
     echo "Options:"
     echo "  --help, -h              Show this help message"
+    echo "  --version               Show version with cool logo"
     echo "  --verbose, -v           Verbose output"
     echo ""
     echo "Examples:"
     echo "  $0 demo                 Run demo"
     echo "  $0 test                 Run all tests"
     echo "  $0 analyze --csv-file data/test.csv"
+    echo "  $0 --version            Show version with logo"
     echo ""
+    exit 0
+fi
+
+# Handle --version flag
+if [ "$1" = "--version" ]; then
+    run_python $env_type run_analysis.py --version
     exit 0
 fi
 
