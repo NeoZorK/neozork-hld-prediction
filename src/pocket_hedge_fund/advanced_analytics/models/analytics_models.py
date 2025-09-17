@@ -79,16 +79,16 @@ class MarketData(BaseModel):
     metadata: Optional[Dict[str, Any]] = None
 
     @field_validator('high_price')
-    def validate_high_price(cls, v, values):
-        if 'low_price' in values and v < values['low_price']:
+    def validate_high_price(cls, v, info):
+        if hasattr(info, 'data') and 'low_price' in info.data and v < info.data['low_price']:
             raise ValueError('High price must be >= low price')
         return v
 
     @field_validator('close_price')
-    def validate_close_price(cls, v, values):
-        if 'low_price' in values and v < values['low_price']:
+    def validate_close_price(cls, v, info):
+        if hasattr(info, 'data') and 'low_price' in info.data and v < info.data['low_price']:
             raise ValueError('Close price must be >= low price')
-        if 'high_price' in values and v > values['high_price']:
+        if hasattr(info, 'data') and 'high_price' in info.data and v > info.data['high_price']:
             raise ValueError('Close price must be <= high price')
         return v
 

@@ -88,7 +88,7 @@ async def test_send_notification_success(notification_manager, sample_notificati
     
     # Verify results
     assert len(results) == 2  # EMAIL and PUSH channels
-    assert all(result.status.value == "delivered" for result in results)
+    assert all(result.status == "delivered" for result in results)
     
     # Verify analytics tracking was called
     notification_manager.analytics_tracker.track_notification_sent.assert_called_once()
@@ -394,11 +394,11 @@ async def test_send_notification_channel_failure(notification_manager, sample_no
     
     # Check email result
     email_result = next(r for r in results if r.channel == ChannelType.EMAIL)
-    assert email_result.status.value == "delivered"
+    assert email_result.status == "delivered"
 
     # Check PUSH result
     push_result = next(r for r in results if r.channel == ChannelType.PUSH)
-    assert push_result.status.value == "failed"
+    assert push_result.status == "failed"
     assert push_result.error_message == "PUSH delivery failed"
 
 

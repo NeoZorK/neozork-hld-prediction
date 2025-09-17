@@ -92,8 +92,8 @@ class Notification(BaseModel):
     updated_at: datetime = Field(default_factory=datetime.now)
 
     @field_validator('expires_at')
-    def validate_expires_at(cls, v, values):
-        if v and 'scheduled_at' in values and values['scheduled_at'] and v <= values['scheduled_at']:
+    def validate_expires_at(cls, v, info):
+        if v and hasattr(info, 'data') and 'scheduled_at' in info.data and info.data['scheduled_at'] and v <= info.data['scheduled_at']:
             raise ValueError('Expires at must be after scheduled at')
         return v
 
@@ -143,9 +143,9 @@ class NotificationChannel(BaseModel):
     updated_at: datetime = Field(default_factory=datetime.now)
 
     @field_validator('configuration')
-    def validate_configuration(cls, v, values):
-        if 'channel_type' in values:
-            channel_type = values['channel_type']
+    def validate_configuration(cls, v, info):
+        if hasattr(info, 'data') and 'channel_type' in info.data:
+            channel_type = info.data['channel_type']
             if channel_type == ChannelType.EMAIL:
                 required_fields = ['smtp_host', 'smtp_port', 'username', 'password']
                 for field in required_fields:
@@ -202,8 +202,8 @@ class NotificationHistory(BaseModel):
     created_at: datetime = Field(default_factory=datetime.now)
 
     @field_validator('delivered_at')
-    def validate_delivered_at(cls, v, values):
-        if v and 'sent_at' in values and values['sent_at'] and v < values['sent_at']:
+    def validate_delivered_at(cls, v, info):
+        if v and hasattr(info, 'data') and 'sent_at' in info.data and info.data['sent_at'] and v < info.data['sent_at']:
             raise ValueError('Delivered at cannot be before sent at')
         return v
 
@@ -238,9 +238,9 @@ class NotificationMetrics(BaseModel):
     generated_at: datetime = Field(default_factory=datetime.now)
 
     @field_validator('delivery_rate')
-    def validate_delivery_rate(cls, v, values):
-        if 'total_sent' in values and values['total_sent'] > 0:
-            expected_rate = values.get('total_delivered', 0) / values['total_sent']
+    def validate_delivery_rate(cls, v, info):
+        if hasattr(info, 'data') and 'total_sent' in info.data and info.data['total_sent'] > 0:
+            expected_rate = info.data.get('total_delivered', 0) / info.data['total_sent']
             if abs(v - expected_rate) > 0.01:  # Allow small floating point differences
                 raise ValueError('Delivery rate must match delivered/sent ratio')
         return v

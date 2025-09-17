@@ -8,7 +8,7 @@ risk assessment, and compliance checks.
 import pytest
 import pytest_asyncio
 from decimal import Decimal
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest.mock import AsyncMock, patch
 
 from src.pocket_hedge_fund.validation.investment_validator import InvestmentValidator
@@ -138,7 +138,7 @@ class TestInvestmentValidator:
             'email': 'test@example.com',
             'role': 'investor',
             'is_active': True,
-            'created_at': datetime.now(datetime.UTC)
+            'created_at': datetime.now(timezone.utc)
         }
         mock_db_manager.execute_query.return_value = [mock_investor_data]
         
@@ -160,7 +160,7 @@ class TestInvestmentValidator:
             'email': 'test@example.com',
             'role': 'investor',
             'is_active': False,
-            'created_at': datetime.now(datetime.UTC)
+            'created_at': datetime.now(timezone.utc)
         }
         mock_db_manager.execute_query.return_value = [mock_investor_data]
         
@@ -283,7 +283,7 @@ class TestInvestmentValidator:
         validation_data = {
             'portfolio_concentration': 0.05,  # 5%
             'fund': {'fund_type': 'standard'},
-            'investor': {'created_at': datetime.now(datetime.UTC) - timedelta(days=365)}  # 1 year old
+            'investor': {'created_at': datetime.now(timezone.utc) - timedelta(days=365)}  # 1 year old
         }
         
         risk_score = await validator._assess_investment_risk(
@@ -299,7 +299,7 @@ class TestInvestmentValidator:
         validation_data = {
             'portfolio_concentration': 0.25,  # 25%
             'fund': {'fund_type': 'premium'},
-            'investor': {'created_at': datetime.now(datetime.UTC) - timedelta(days=1)}  # 1 day old
+            'investor': {'created_at': datetime.now(timezone.utc) - timedelta(days=1)}  # 1 day old
         }
         
         risk_score = await validator._assess_investment_risk(
@@ -372,7 +372,7 @@ class TestInvestmentValidator:
             'email': 'test@example.com',
             'role': 'investor',
             'is_active': True,
-            'created_at': datetime.now(datetime.UTC) - timedelta(days=30)
+            'created_at': datetime.now(timezone.utc) - timedelta(days=30)
         }
         
         mock_db_manager.execute_query.side_effect = [
