@@ -1745,9 +1745,15 @@ class DataLoadingMenu(BaseMenu):
                         else:
                             symbol_key = f"{symbol_name}_{source_name}"
                         
+                        # Determine folder name for display
+                        folder_name = 'original'
+                        if 'gaps_fixed' in str(symbol_folder):
+                            folder_name = 'gaps_fixed'
+                        
                         mtf_info[symbol_key] = {
                             'symbol': metadata.get('symbol', symbol_name),
                             'source': source_name,
+                            'folder_name': folder_name,
                             'main_timeframe': metadata.get('main_timeframe', 'M1'),
                             'timeframes': metadata.get('timeframes', []),
                             'total_rows': metadata.get('total_rows', 0),
@@ -1769,9 +1775,9 @@ class DataLoadingMenu(BaseMenu):
             
             # Display MTF structures table
             print(f"\n{Fore.GREEN}🎯 Available MTF Structures ({len(mtf_info)}):")
-            print(f"{Fore.CYAN}{'─'*110}")
-            print(f"{Fore.WHITE}{'Symbol':<12} {'Source':<10} {'Size (MB)':<10} {'Files':<6} {'Main TF':<8} {'Timeframes':<20} {'Rows':<12} {'Created':<12}")
-            print(f"{Fore.CYAN}{'─'*110}")
+            print(f"{Fore.CYAN}{'─'*120}")
+            print(f"{Fore.WHITE}{'Symbol':<12} {'Folder':<12} {'Source':<10} {'Size (MB)':<10} {'Files':<6} {'Main TF':<8} {'Timeframes':<20} {'Rows':<12} {'Created':<12}")
+            print(f"{Fore.CYAN}{'─'*120}")
             
             for symbol_key, info in mtf_info.items():
                 timeframes_str = ', '.join(info['timeframes'][:3])
@@ -1780,9 +1786,9 @@ class DataLoadingMenu(BaseMenu):
                 
                 created_date = info['created_at'][:10] if info['created_at'] != 'Unknown' else 'Unknown'
                 
-                print(f"{Fore.WHITE}{info['symbol']:<12} {info['source']:<10} {info['size_mb']:<10.1f} {info['file_count']:<6} {info['main_timeframe']:<8} {timeframes_str:<20} {info['total_rows']:<12,} {created_date:<12}")
+                print(f"{Fore.WHITE}{info['symbol']:<12} {info['folder_name']:<12} {info['source']:<10} {info['size_mb']:<10.1f} {info['file_count']:<6} {info['main_timeframe']:<8} {timeframes_str:<20} {info['total_rows']:<12,} {created_date:<12}")
             
-            print(f"{Fore.CYAN}{'─'*110}")
+            print(f"{Fore.CYAN}{'─'*120}")
             print(f"{Fore.YELLOW}Total: {len(mtf_info)} MTF structures, {total_size:.1f} MB")
             
             # Get symbol choice from user - show only symbol names without source
