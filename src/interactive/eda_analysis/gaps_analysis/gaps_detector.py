@@ -140,20 +140,11 @@ class GapsDetector:
             # Check if index is datetime
             if not isinstance(df.index, pd.DatetimeIndex):
                 # Try to find a time column and set it as index
-                time_columns = [col for col in df.columns if any(keyword in col.lower() for keyword in ['time', 'date', 'timestamp', 'datetime'])]
+                # Exclude 'timeframe' column as it contains timeframe names, not timestamps
+                time_columns = [col for col in df.columns if any(keyword in col.lower() for keyword in ['time', 'date', 'timestamp', 'datetime']) and col.lower() != 'timeframe']
                 if time_columns:
                     time_col = time_columns[0]
                     try:
-                        # Skip timeframe column as it contains timeframe names, not timestamps
-                        if time_col.lower() == 'timeframe':
-                            print_debug(f"Skipping timeframe column as it contains timeframe names, not timestamps")
-                            return {
-                                'status': 'error',
-                                'message': 'No valid datetime index or time column found - timeframe column contains names, not timestamps',
-                                'gaps': [],
-                                'gap_count': 0
-                            }
-                        
                         df[time_col] = pd.to_datetime(df[time_col])
                         df = df.set_index(time_col)
                         print_debug(f"Set {time_col} as datetime index")
