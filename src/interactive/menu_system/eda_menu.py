@@ -522,6 +522,10 @@ class EDAMenu(BaseMenu):
                             if timeframe == 'M1':
                                 print(f"  • {timeframe}: {stats.get('total_gaps', 0)} gaps, "
                                       f"{stats.get('total_missing_points', 0)} missing points")
+                            elif timeframe == 'MN1':
+                                # MN1 can have 28-31 day intervals, which is normal for monthly data
+                                print(f"  • {timeframe}: {stats.get('total_gaps', 0)} gaps, "
+                                      f"{stats.get('total_missing_points', 0)} missing points")
                             else:
                                 print(f"  • {timeframe}: {stats.get('total_gaps', 0)} gaps, "
                                       f"{stats.get('total_missing_points', 0)} missing points "
