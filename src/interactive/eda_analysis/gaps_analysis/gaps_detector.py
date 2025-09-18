@@ -129,13 +129,39 @@ class GapsDetector:
             Dictionary containing gap information
         """
         try:
-            if df.empty or not isinstance(df.index, pd.DatetimeIndex):
+            if df.empty:
                 return {
                     'status': 'error',
-                    'message': 'Invalid DataFrame or non-datetime index',
+                    'message': 'Empty DataFrame',
                     'gaps': [],
                     'gap_count': 0
                 }
+            
+            # Check if index is datetime
+            if not isinstance(df.index, pd.DatetimeIndex):
+                # Try to find a time column and set it as index
+                time_columns = [col for col in df.columns if any(keyword in col.lower() for keyword in ['time', 'date', 'timestamp', 'datetime'])]
+                if time_columns:
+                    time_col = time_columns[0]
+                    try:
+                        df[time_col] = pd.to_datetime(df[time_col])
+                        df = df.set_index(time_col)
+                        print_debug(f"Set {time_col} as datetime index")
+                    except Exception as e:
+                        print_debug(f"Could not convert {time_col} to datetime: {e}")
+                        return {
+                            'status': 'error',
+                            'message': f'No valid datetime index or time column found: {e}',
+                            'gaps': [],
+                            'gap_count': 0
+                        }
+                else:
+                    return {
+                        'status': 'error',
+                        'message': 'No datetime index or time column found - data may not be suitable for gap analysis',
+                        'gaps': [],
+                        'gap_count': 0
+                    }
             
             # Get expected interval for this timeframe
             expected_interval = self.gap_thresholds.get(timeframe, timedelta(hours=1))
