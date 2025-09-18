@@ -789,6 +789,7 @@ class GapsAnalyzer:
             # Create metadata
             metadata = {
                 'symbol': symbol.upper(),
+                'source': source,  # Add source field
                 'main_timeframe': main_timeframe,
                 'timeframes': [main_timeframe] + cross_timeframes,
                 'total_rows': sum(len(df) for df in mtf_data.values() 
