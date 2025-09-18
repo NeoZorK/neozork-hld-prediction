@@ -159,34 +159,34 @@ class GapsDetector:
             # Store original expected interval for display
             original_expected_interval = expected_interval
             
-            # If actual interval doesn't match expected timeframe, treat as M1 data
+            # Check if actual interval matches expected timeframe
             if actual_interval != expected_interval:
                 print_debug(f"Data interval ({actual_interval}) doesn't match expected timeframe ({expected_interval})")
-                print_debug(f"Treating {timeframe} data as M1 data for gap analysis")
-                # Use M1 logic for gap detection
-                expected_interval = timedelta(minutes=1)
-                timeframe_for_analysis = 'M1'
+                print_debug(f"Using actual detected interval for gap analysis")
+                # Use actual detected interval for gap detection
+                timeframe_for_analysis = timeframe
                 is_interval_mismatch = True
                 
-                # For cross timeframes with M1 data, we expect no gaps (synthetic data)
-                # So we should use a more lenient gap threshold
-                if timeframe != 'M1':
-                    print_debug(f"Cross timeframe {timeframe} contains M1 data - likely synthetic, expecting no gaps")
+                # For mismatched intervals, we still analyze gaps but with the actual interval
+                print_debug(f"Analyzing {timeframe} with actual interval {actual_interval}")
             else:
                 timeframe_for_analysis = timeframe
                 is_interval_mismatch = False
             
             # Find gaps using vectorized operations
-            gaps = self._find_gaps_vectorized(df_sorted.index, expected_interval, timeframe_for_analysis)
+            # Use actual interval if there's a mismatch, otherwise use expected interval
+            interval_for_gap_detection = actual_interval if is_interval_mismatch else expected_interval
+            gaps = self._find_gaps_vectorized(df_sorted.index, interval_for_gap_detection, timeframe_for_analysis)
             
             # Calculate gap statistics
-            gap_stats = self._calculate_gap_statistics(gaps, expected_interval)
+            gap_stats = self._calculate_gap_statistics(gaps, interval_for_gap_detection)
             
             return {
                 'status': 'success',
                 'timeframe': timeframe,
                 'actual_interval': str(actual_interval),
                 'expected_interval': str(original_expected_interval),
+                'interval_used_for_analysis': str(interval_for_gap_detection),
                 'is_interval_mismatch': is_interval_mismatch,
                 'gaps': gaps,
                 'gap_count': len(gaps),
