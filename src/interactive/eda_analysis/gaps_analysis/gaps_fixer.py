@@ -90,17 +90,8 @@ class GapsFixer:
                 # Get gaps for this timeframe
                 timeframe_gaps = gaps_info.get('timeframe_gaps', {}).get(timeframe, {})
                 
-                # Only fix gaps in M1 timeframe - cross timeframes are synthetic
-                if timeframe != 'M1':
-                    print_debug(f"Skipping gap fixing for {timeframe} - cross timeframe data is synthetic")
-                    fixed_data[timeframe] = df.copy()
-                    fixing_stats[timeframe] = {
-                        'status': 'skipped',
-                        'gaps_fixed': 0,
-                        'points_added': 0,
-                        'reason': 'Cross timeframe data is synthetic'
-                    }
-                elif timeframe_gaps.get('gap_count', 0) == 0:
+                # Check if there are gaps to fix in this timeframe
+                if timeframe_gaps.get('gap_count', 0) == 0:
                     # No gaps to fix
                     fixed_data[timeframe] = df.copy()
                     fixing_stats[timeframe] = {
@@ -109,7 +100,7 @@ class GapsFixer:
                         'points_added': 0
                     }
                 else:
-                    # Fix gaps only in M1 timeframe
+                    # Fix gaps in this timeframe
                     fix_result = self._fix_gaps_in_dataframe(
                         df, timeframe_gaps, strategy
                     )
@@ -526,8 +517,8 @@ class GapsFixer:
             if df.empty:
                 return pd.DatetimeIndex([])
             
-            # Get expected interval
-            expected_interval = gaps_info.get('expected_interval', '1H')
+            # Get expected interval - use the interval that was actually used for analysis
+            expected_interval = gaps_info.get('interval_used_for_analysis', gaps_info.get('expected_interval', '1H'))
             if isinstance(expected_interval, str):
                 # Convert string to timedelta
                 if expected_interval.endswith('H'):
@@ -540,15 +531,37 @@ class GapsFixer:
                     minutes = int(expected_interval[:-1])
                     expected_interval = timedelta(minutes=minutes)
                 elif ':' in expected_interval:
-                    # Handle format like "0:01:00" (hours:minutes:seconds)
-                    parts = expected_interval.split(':')
-                    if len(parts) == 3:
-                        hours = int(parts[0])
-                        minutes = int(parts[1])
-                        seconds = int(parts[2])
-                        expected_interval = timedelta(hours=hours, minutes=minutes, seconds=seconds)
+                    # Handle format like "0:01:00" (hours:minutes:seconds) or "0 days 00:01:00"
+                    if 'days' in expected_interval:
+                        # Handle format like "0 days 00:01:00"
+                        try:
+                            # Parse "0 days 00:01:00" format
+                            parts = expected_interval.split()
+                            if len(parts) >= 3:
+                                days = int(parts[0])
+                                time_part = parts[2]  # "00:01:00"
+                                time_parts = time_part.split(':')
+                                if len(time_parts) == 3:
+                                    hours = int(time_parts[0])
+                                    minutes = int(time_parts[1])
+                                    seconds = int(time_parts[2])
+                                    expected_interval = timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
+                                else:
+                                    expected_interval = timedelta(hours=1)
+                            else:
+                                expected_interval = timedelta(hours=1)
+                        except (ValueError, IndexError):
+                            expected_interval = timedelta(hours=1)
                     else:
-                        expected_interval = timedelta(hours=1)
+                        # Handle format like "0:01:00" (hours:minutes:seconds)
+                        parts = expected_interval.split(':')
+                        if len(parts) == 3:
+                            hours = int(parts[0])
+                            minutes = int(parts[1])
+                            seconds = int(parts[2])
+                            expected_interval = timedelta(hours=hours, minutes=minutes, seconds=seconds)
+                        else:
+                            expected_interval = timedelta(hours=1)
                 else:
                     expected_interval = timedelta(hours=1)
             elif isinstance(expected_interval, timedelta):
