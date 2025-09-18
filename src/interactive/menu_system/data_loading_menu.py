@@ -1903,7 +1903,14 @@ class DataLoadingMenu(BaseMenu):
             
             # Load main data using the correct path with source
             source = mtf_info.get('source', 'unknown')
-            mtf_dir = Path("data/cleaned_data/mtf_structures") / source / symbol.lower()
+            folder_name = mtf_info.get('folder_name', 'original')
+            
+            # Build correct path based on folder type
+            if folder_name == 'gaps_fixed':
+                mtf_dir = Path("data/cleaned_data/mtf_structures") / "gaps_fixed" / source / symbol.lower()
+            else:
+                mtf_dir = Path("data/cleaned_data/mtf_structures") / source / symbol.lower()
+            
             main_file = mtf_dir / f"{symbol.lower()}_main_{mtf_info['main_timeframe'].lower()}.parquet"
             
             if not main_file.exists():
