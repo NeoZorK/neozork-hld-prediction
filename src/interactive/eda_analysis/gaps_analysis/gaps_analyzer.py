@@ -781,6 +781,11 @@ class GapsAnalyzer:
                     cross_timeframes.append(timeframe)
                     print_debug(f"Saved cross timeframe {timeframe}: {cross_file}")
             
+            # Debug: Print information about saved cross timeframes
+            print_debug(f"Cross timeframes saved: {cross_timeframes}")
+            print_debug(f"Cross timeframes directory: {cross_dir}")
+            print_debug(f"Files in cross_timeframes: {list(cross_dir.glob('*.parquet')) if cross_dir.exists() else 'Directory not found'}")
+            
             # Create metadata
             metadata = {
                 'symbol': symbol.upper(),

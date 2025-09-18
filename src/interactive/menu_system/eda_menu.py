@@ -274,6 +274,16 @@ class EDAMenu(BaseMenu):
                         mtf_data['_metadata']['last_gap_fix'] = pd.Timestamp.now().isoformat()
                         mtf_data['_metadata']['fixing_strategy'] = selected_strategy
                 
+                # Ensure all timeframes are preserved in mtf_data for saving
+                # The fixed_data might not contain all timeframes (e.g., if no gaps were found)
+                # So we need to make sure the original mtf_data structure is preserved
+                print(f"\n{Fore.CYAN}📊 Preserving all timeframes for saving...")
+                for timeframe in mtf_data.keys():
+                    if (isinstance(mtf_data[timeframe], pd.DataFrame) and 
+                        not timeframe.startswith('_') and 
+                        timeframe not in fixed_data):
+                        print(f"  ✅ Preserved {timeframe}: {mtf_data[timeframe].shape}")
+                
                 # Ask where to save fixed data
                 print(f"\n{Fore.YELLOW}💾 Where would you like to save the fixed data?")
                 print(f"  1. 📁 Original files (overwrite source files)")
@@ -300,7 +310,23 @@ class EDAMenu(BaseMenu):
                 
                 elif save_choice == '2':
                     print(f"\n{Fore.GREEN}💾 Saving fixed data to new MTF structure...")
-                    save_result = self.gaps_analyzer.save_fixed_data_to_mtf(mtf_data, symbol, 'gaps_fixed')
+                    
+                    # Determine original source from metadata
+                    original_source = 'gaps_fixed'  # Default fallback
+                    if '_metadata' in mtf_data and 'source' in mtf_data['_metadata']:
+                        original_source = mtf_data['_metadata']['source']
+                    elif '_metadata' in mtf_data and 'data_path' in mtf_data['_metadata']:
+                        # Extract source from data_path like "data/cleaned_data/mtf_structures/binance/btcusdt"
+                        data_path = mtf_data['_metadata']['data_path']
+                        if 'binance' in data_path:
+                            original_source = 'binance'
+                        elif 'csv' in data_path:
+                            original_source = 'csv'
+                        # Add more sources as needed
+                    
+                    # Create source path: gaps_fixed/{original_source}
+                    source_path = f"gaps_fixed/{original_source}"
+                    save_result = self.gaps_analyzer.save_fixed_data_to_mtf(mtf_data, symbol, source_path)
                     
                     if save_result['status'] == 'success':
                         print(f"{Fore.GREEN}✅ Fixed data saved to new MTF structure!")
