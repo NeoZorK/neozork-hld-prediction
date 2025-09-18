@@ -154,14 +154,29 @@ class ConfigurationMenu(BaseMenu):
             # Get all symbol MTF folders from all source directories
             mtf_symbol_folders = []
             for source_dir in source_dirs:
-                symbol_folders = [f for f in source_dir.iterdir() if f.is_dir()]
-                for symbol_folder in symbol_folders:
-                    # Store source information
-                    folder_info = {
-                        'path': symbol_folder,
-                        'source': source_dir.name
-                    }
-                    mtf_symbol_folders.append(folder_info)
+                # Handle special case for gaps_fixed which has nested structure: gaps_fixed/source/symbol/
+                if source_dir.name == 'gaps_fixed':
+                    # For gaps_fixed, we need to go one level deeper
+                    for nested_source_dir in source_dir.iterdir():
+                        if nested_source_dir.is_dir():
+                            symbol_folders = [f for f in nested_source_dir.iterdir() if f.is_dir()]
+                            for symbol_folder in symbol_folders:
+                                # Store source information with original source name
+                                folder_info = {
+                                    'path': symbol_folder,
+                                    'source': nested_source_dir.name  # Use the actual source (e.g., 'binance')
+                                }
+                                mtf_symbol_folders.append(folder_info)
+                else:
+                    # Normal two-level structure: source/symbol/
+                    symbol_folders = [f for f in source_dir.iterdir() if f.is_dir()]
+                    for symbol_folder in symbol_folders:
+                        # Store source information
+                        folder_info = {
+                            'path': symbol_folder,
+                            'source': source_dir.name
+                        }
+                        mtf_symbol_folders.append(folder_info)
             
             if not mtf_symbol_folders:
                 print(f"{Fore.RED}❌ No MTF symbol folders found")
@@ -327,14 +342,29 @@ class ConfigurationMenu(BaseMenu):
             # Get all symbol MTF folders from all source directories
             mtf_symbol_folders = []
             for source_dir in source_dirs:
-                symbol_folders = [f for f in source_dir.iterdir() if f.is_dir()]
-                for symbol_folder in symbol_folders:
-                    # Store source information
-                    folder_info = {
-                        'path': symbol_folder,
-                        'source': source_dir.name
-                    }
-                    mtf_symbol_folders.append(folder_info)
+                # Handle special case for gaps_fixed which has nested structure: gaps_fixed/source/symbol/
+                if source_dir.name == 'gaps_fixed':
+                    # For gaps_fixed, we need to go one level deeper
+                    for nested_source_dir in source_dir.iterdir():
+                        if nested_source_dir.is_dir():
+                            symbol_folders = [f for f in nested_source_dir.iterdir() if f.is_dir()]
+                            for symbol_folder in symbol_folders:
+                                # Store source information with original source name
+                                folder_info = {
+                                    'path': symbol_folder,
+                                    'source': nested_source_dir.name  # Use the actual source (e.g., 'binance')
+                                }
+                                mtf_symbol_folders.append(folder_info)
+                else:
+                    # Normal two-level structure: source/symbol/
+                    symbol_folders = [f for f in source_dir.iterdir() if f.is_dir()]
+                    for symbol_folder in symbol_folders:
+                        # Store source information
+                        folder_info = {
+                            'path': symbol_folder,
+                            'source': source_dir.name
+                        }
+                        mtf_symbol_folders.append(folder_info)
             
             if not mtf_symbol_folders:
                 print(f"{Fore.RED}❌ No MTF symbol folders found")
