@@ -248,8 +248,13 @@ class GapsFixer:
             if len(complete_index) > len(df):
                 # Reindex and interpolate
                 fixed_df = df.reindex(complete_index)
-                # Fix FutureWarning by inferring object types first
-                fixed_df = fixed_df.infer_objects(copy=False)
+                # Fix FutureWarning by converting object dtypes to numeric first
+                for col in fixed_df.columns:
+                    if fixed_df[col].dtype == 'object':
+                        try:
+                            fixed_df[col] = pd.to_numeric(fixed_df[col], errors='coerce')
+                        except:
+                            pass  # Keep as object if conversion fails
                 fixed_df = fixed_df.interpolate(method='linear')
                 return fixed_df
             else:
@@ -270,8 +275,13 @@ class GapsFixer:
             if len(complete_index) > len(df):
                 # Reindex and interpolate
                 fixed_df = df.reindex(complete_index)
-                # Fix FutureWarning by inferring object types first
-                fixed_df = fixed_df.infer_objects(copy=False)
+                # Fix FutureWarning by converting object dtypes to numeric first
+                for col in fixed_df.columns:
+                    if fixed_df[col].dtype == 'object':
+                        try:
+                            fixed_df[col] = pd.to_numeric(fixed_df[col], errors='coerce')
+                        except:
+                            pass  # Keep as object if conversion fails
                 fixed_df = fixed_df.interpolate(method='spline', order=3)
                 return fixed_df
             else:
