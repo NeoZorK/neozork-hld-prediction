@@ -225,10 +225,12 @@ class ConfigurationMenu(BaseMenu):
                         
                         # Check if this data is loaded in memory
                         from src.interactive.data_state_manager import data_state_manager
+                        loaded_info = data_state_manager.get_loaded_data_info()
                         is_loaded = (data_state_manager.is_data_loaded() and 
-                                   data_state_manager.get_loaded_data_info() and
-                                   data_state_manager.get_loaded_data_info().get('symbol') == symbol_name and
-                                   data_state_manager.get_loaded_data_info().get('source') == source_name)
+                                   loaded_info and
+                                   loaded_info.get('symbol') == symbol_name and
+                                   loaded_info.get('source') == source_name and
+                                   loaded_info.get('data_path') == str(symbol_folder))
                         
                         status = "✅ Loaded" if is_loaded else "✅ Available"
                         print(f"{Fore.WHITE}{symbol_name:<12} {source_name:<10} {status:<12} {folder_size_mb:<10.1f} {timeframes_str:<15} {created_date:<15}")
@@ -412,10 +414,12 @@ class ConfigurationMenu(BaseMenu):
                         
                         # Check if this data is loaded in memory
                         from src.interactive.data_state_manager import data_state_manager
+                        loaded_info = data_state_manager.get_loaded_data_info()
                         is_loaded = (data_state_manager.is_data_loaded() and 
-                                   data_state_manager.get_loaded_data_info() and
-                                   data_state_manager.get_loaded_data_info().get('symbol') == symbol_name and
-                                   data_state_manager.get_loaded_data_info().get('source') == source_name)
+                                   loaded_info and
+                                   loaded_info.get('symbol') == symbol_name and
+                                   loaded_info.get('source') == source_name and
+                                   loaded_info.get('data_path') == str(symbol_folder))
                         
                         if is_loaded:
                             print(f"  • Status: {Fore.GREEN}✅ Loaded in memory")
