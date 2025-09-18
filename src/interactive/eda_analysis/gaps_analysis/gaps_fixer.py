@@ -270,6 +270,8 @@ class GapsFixer:
             if len(complete_index) > len(df):
                 # Reindex and interpolate
                 fixed_df = df.reindex(complete_index)
+                # Fix FutureWarning by inferring object types first
+                fixed_df = fixed_df.infer_objects(copy=False)
                 fixed_df = fixed_df.interpolate(method='spline', order=3)
                 return fixed_df
             else:

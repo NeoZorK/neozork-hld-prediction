@@ -144,6 +144,16 @@ class GapsDetector:
                 if time_columns:
                     time_col = time_columns[0]
                     try:
+                        # Skip timeframe column as it contains timeframe names, not timestamps
+                        if time_col.lower() == 'timeframe':
+                            print_debug(f"Skipping timeframe column as it contains timeframe names, not timestamps")
+                            return {
+                                'status': 'error',
+                                'message': 'No valid datetime index or time column found - timeframe column contains names, not timestamps',
+                                'gaps': [],
+                                'gap_count': 0
+                            }
+                        
                         df[time_col] = pd.to_datetime(df[time_col])
                         df = df.set_index(time_col)
                         print_debug(f"Set {time_col} as datetime index")
