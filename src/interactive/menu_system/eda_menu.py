@@ -605,8 +605,9 @@ class EDAMenu(BaseMenu):
             
             # Get main data and cross timeframes
             main_data = data['main_data']
-            cross_timeframes = data.get('cross_timeframes', [])
             metadata = data.get('metadata', {})
+            cross_timeframes_data = data.get('cross_timeframes', {})  # This should be a dict with data
+            cross_timeframes_list = metadata.get('cross_timeframes', [])  # This is a list of names
             
             # Create gaps analysis structure
             converted_data = {}
@@ -618,14 +619,15 @@ class EDAMenu(BaseMenu):
                 print_debug(f"Added main timeframe {main_tf}: {main_data.shape}")
             
             # Add cross timeframes data
-            for tf in cross_timeframes:
-                if tf in data:
-                    converted_data[tf] = data[tf]
-                    print_debug(f"Added cross timeframe {tf}: {data[tf].shape}")
+            for tf in cross_timeframes_list:
+                if tf in cross_timeframes_data:
+                    # Data is already loaded in memory
+                    converted_data[tf] = cross_timeframes_data[tf]
+                    print_debug(f"Added cross timeframe {tf}: {cross_timeframes_data[tf].shape}")
                 else:
                     # Try to load cross timeframe data from disk
                     try:
-                        cross_data = self._load_cross_timeframe_data(metadata.get('symbol', 'UNKNOWN'), tf)
+                        cross_data = self._load_cross_timeframe_data(metadata.get('symbol', 'UNKNOWN'), tf, metadata.get('source', 'unknown'))
                         if cross_data is not None:
                             converted_data[tf] = cross_data
                             print_debug(f"Loaded cross timeframe {tf} from disk: {cross_data.shape}")
@@ -645,13 +647,14 @@ class EDAMenu(BaseMenu):
             print_debug(f"Error converting data for gaps analysis: {e}")
             return data
     
-    def _load_cross_timeframe_data(self, symbol: str, timeframe: str) -> Optional[pd.DataFrame]:
+    def _load_cross_timeframe_data(self, symbol: str, timeframe: str, source: str = 'unknown') -> Optional[pd.DataFrame]:
         """
         Load cross timeframe data from disk.
         
         Args:
             symbol: Symbol name
             timeframe: Timeframe to load
+            source: Data source (e.g., 'binance', 'csv')
             
         Returns:
             DataFrame with cross timeframe data or None if not found
@@ -662,6 +665,9 @@ class EDAMenu(BaseMenu):
             
             # Try different possible paths for cross timeframe data
             possible_paths = [
+                # MTF structure path with source
+                Path(f"data/cleaned_data/mtf_structures/{source}/{symbol.lower()}/cross_timeframes/{symbol.lower()}_{timeframe.lower()}_cross.parquet"),
+                # Fallback paths
                 Path(f"data/cleaned_data/mtf_structures/csv/{symbol.lower()}/cross_timeframes/{symbol.lower()}_{timeframe.lower()}_cross.parquet"),
                 Path(f"data/cleaned_data/{symbol.lower()}/cross_timeframes/{symbol.lower()}_{timeframe.lower()}_cross.parquet"),
                 Path(f"data/cleaned_data/{symbol.lower()}/{symbol.lower()}_{timeframe.lower()}.parquet"),
@@ -674,7 +680,7 @@ class EDAMenu(BaseMenu):
                     df = pd.read_parquet(path)
                     return df
             
-            print_debug(f"Cross timeframe data not found for {symbol} {timeframe}")
+            print_debug(f"Cross timeframe data not found for {symbol} {timeframe} in source {source}")
             return None
             
         except Exception as e:
