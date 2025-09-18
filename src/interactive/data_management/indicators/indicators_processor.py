@@ -441,7 +441,12 @@ class IndicatorsProcessor:
     def _sort_by_timestamp(self, df: pd.DataFrame) -> pd.DataFrame:
         """Sort dataframe by timestamp if available."""
         try:
-            if 'timestamp' in df.columns:
+            # Check if timestamp is both a column and index (ambiguous case)
+            if 'timestamp' in df.columns and df.index.name == 'timestamp':
+                # Remove timestamp from columns to avoid ambiguity
+                df = df.drop('timestamp', axis=1)
+                df = df.sort_index()
+            elif 'timestamp' in df.columns:
                 df = df.sort_values('timestamp')
             elif df.index.name == 'timestamp':
                 df = df.sort_index()
@@ -461,9 +466,9 @@ class IndicatorsProcessor:
             if df.empty:
                 errors.append("DataFrame is empty after processing")
             
-            # Check for timestamp
+            # Check for timestamp (either as column or index)
             if 'timestamp' not in df.columns and df.index.name != 'timestamp':
-                errors.append("Timestamp column is missing")
+                errors.append("Timestamp column or index is missing")
             
             # Check for at least one numeric column
             numeric_cols = df.select_dtypes(include=[np.number]).columns
