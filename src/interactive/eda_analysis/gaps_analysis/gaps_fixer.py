@@ -91,7 +91,16 @@ class GapsFixer:
                 timeframe_gaps = gaps_info.get('timeframe_gaps', {}).get(timeframe, {})
                 
                 # Check if there are gaps to fix in this timeframe
-                if timeframe_gaps.get('gap_count', 0) == 0:
+                if timeframe_gaps.get('status') == 'error':
+                    # Data not suitable for gap analysis
+                    fixed_data[timeframe] = df.copy()
+                    fixing_stats[timeframe] = {
+                        'status': 'not_suitable',
+                        'gaps_fixed': 0,
+                        'points_added': 0,
+                        'message': timeframe_gaps.get('message', 'Data not suitable for gap analysis')
+                    }
+                elif timeframe_gaps.get('gap_count', 0) == 0:
                     # No gaps to fix
                     fixed_data[timeframe] = df.copy()
                     fixing_stats[timeframe] = {
@@ -239,6 +248,8 @@ class GapsFixer:
             if len(complete_index) > len(df):
                 # Reindex and interpolate
                 fixed_df = df.reindex(complete_index)
+                # Fix FutureWarning by inferring object types first
+                fixed_df = fixed_df.infer_objects(copy=False)
                 fixed_df = fixed_df.interpolate(method='linear')
                 return fixed_df
             else:
@@ -281,8 +292,14 @@ class GapsFixer:
                 fixed_df = df.reindex(complete_index)
                 for column in fixed_df.columns:
                     if fixed_df[column].dtype in ['float64', 'int64']:
-                        mean_value = df[column].mean()
-                        fixed_df[column] = fixed_df[column].fillna(mean_value)
+                        # Check if column has non-null values before calculating mean
+                        non_null_values = df[column].dropna()
+                        if len(non_null_values) > 0:
+                            mean_value = non_null_values.mean()
+                            fixed_df[column] = fixed_df[column].fillna(mean_value)
+                        else:
+                            # If no non-null values, fill with 0
+                            fixed_df[column] = fixed_df[column].fillna(0)
                 return fixed_df
             else:
                 # No gaps to fill, return original
@@ -304,8 +321,14 @@ class GapsFixer:
                 fixed_df = df.reindex(complete_index)
                 for column in fixed_df.columns:
                     if fixed_df[column].dtype in ['float64', 'int64']:
-                        median_value = df[column].median()
-                        fixed_df[column] = fixed_df[column].fillna(median_value)
+                        # Check if column has non-null values before calculating median
+                        non_null_values = df[column].dropna()
+                        if len(non_null_values) > 0:
+                            median_value = non_null_values.median()
+                            fixed_df[column] = fixed_df[column].fillna(median_value)
+                        else:
+                            # If no non-null values, fill with 0
+                            fixed_df[column] = fixed_df[column].fillna(0)
                 return fixed_df
             else:
                 # No gaps to fill, return original
