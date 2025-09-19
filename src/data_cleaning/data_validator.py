@@ -24,9 +24,9 @@ class DataValidator:
         
         # Regex patterns for different file naming conventions
         self.patterns = {
-            'csv_converted': r'^CSVExport_([A-Z]+)_PERIOD_([A-Za-z0-9]+)\.parquet$',
-            'raw_parquet': r'^([a-z]+)_([A-Z]+)_([A-Za-z0-9]+)\.parquet$',
-            'indicators': r'^([a-z]+)_([A-Z]+)_([A-Za-z0-9]+)_([a-z_]+)\.(parquet|json|csv)$'
+            'csv_converted': r'^CSVExport_([A-Z0-9.]+)_PERIOD_([A-Za-z0-9]+)\.parquet$',
+            'raw_parquet': r'^([a-z]+)_([A-Z0-9.]+)_([A-Za-z0-9]+)\.parquet$',
+            'indicators': r'^([a-z]+)_([A-Z0-9.]+)_([A-Za-z0-9]+)_([a-z_]+)\.(parquet|json|csv)$'
         }
     
     def validate_file_path(self, filename: str, supported_dirs: List[str]) -> Optional[Dict[str, Any]]:
@@ -135,6 +135,17 @@ class DataValidator:
     
     def _parse_indicators_filename(self, filename: str, metadata: Dict[str, Any]) -> None:
         """Parse indicators filename format: source_SYMBOL_TIMEFRAME_indicator.format"""
+        # Special handling for CSVExport files in indicators folder
+        if filename.startswith('CSVExport_'):
+            csv_match = re.match(r'^CSVExport_([A-Z0-9.]+)_PERIOD_([A-Za-z0-9]+)_([a-zA-Z_]+)\.(parquet|json|csv)$', filename)
+            if csv_match:
+                metadata['source'] = 'CSVExport'
+                metadata['symbol'] = csv_match.group(1)
+                metadata['timeframe'] = csv_match.group(2)
+                metadata['indicator'] = csv_match.group(3)
+                return
+        
+        # Regular indicators parsing
         match = re.match(self.patterns['indicators'], filename)
         if match:
             metadata['source'] = match.group(1)
