@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Data Cleaning Tool for Financial Data
+🧹 Data Cleaning Tool for Financial Data 🚀
 
 This script provides automated data cleaning for financial time series data
 from multiple sources and formats. It supports parquet, JSON, and CSV formats
@@ -27,11 +27,15 @@ The filename must be from one of the supported data directories:
 
 Options:
     --auto    Automatically answer 'y' to all questions (non-interactive mode)
+    --version Show version information
 """
+
+__version__ = "1.0.0"
 
 import argparse
 import sys
 import os
+import time
 from pathlib import Path
 from typing import Optional, Dict, Any, List
 
@@ -430,12 +434,12 @@ class DataCleaningTool:
         """
         try:
             # Validate file
-            print(f"Validating file: {filename}")
+            print(f"🔍 Validating file: {filename}")
             file_info = self.validate_file_path(filename)
             
             if file_info is None:
-                print(f"\nError: Invalid file '{filename}'")
-                print("Please choose a file from one of the supported directories:")
+                print(f"\n❌ Error: Invalid file '{filename}'")
+                print("📁 Please choose a file from one of the supported directories:")
                 for directory in self.supported_dirs:
                     print(f"  - {directory}")
                 return
@@ -448,17 +452,17 @@ class DataCleaningTool:
             
             # Ask for confirmation
             while True:
-                proceed = self._get_user_input("\nProceed with cleaning? (y/n): ")
+                proceed = self._get_user_input("\n🚀 Proceed with cleaning? (y/n): ")
                 if proceed in ['y', 'n']:
                     break
-                print("Please enter 'y' or 'n'")
+                print("⚠️  Please enter 'y' or 'n'")
             
             if proceed != 'y':
-                print("Cleaning cancelled.")
+                print("❌ Cleaning cancelled.")
                 return
             
             # Run cleaning procedures
-            print("\nStarting data cleaning procedures...")
+            print("\n🧹 Starting data cleaning procedures...")
             cleaning_results = self.run_cleaning_procedures(file_info)
             
             # Display final report
@@ -466,18 +470,18 @@ class DataCleaningTool:
             
             # Ask to save
             while True:
-                save = self._get_user_input("\nSave cleaned data? (y/n): ")
+                save = self._get_user_input("\n💾 Save cleaned data? (y/n): ")
                 if save in ['y', 'n']:
                     break
-                print("Please enter 'y' or 'n'")
+                print("⚠️  Please enter 'y' or 'n'")
             
             if save == 'y':
                 save_path = self.save_cleaned_data(file_info, cleaning_results)
-                print(f"\nCleaned data saved to: {save_path}")
+                print(f"\n✅ Cleaned data saved to: {save_path}")
             else:
-                print("Data not saved.")
+                print("💾 Data not saved.")
             
-            print("\nData cleaning completed successfully!")
+            print("\n🎉 Data cleaning completed successfully!")
             
         except Exception as e:
             print(f"\nError during data cleaning: {str(e)}")
@@ -487,7 +491,7 @@ class DataCleaningTool:
 def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description="Data Cleaning Tool for Financial Data",
+        description="🧹 Data Cleaning Tool for Financial Data 🚀",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -509,53 +513,62 @@ Examples:
     file_group = parser.add_mutually_exclusive_group(required=True)
     file_group.add_argument(
         "-f", "--file",
-        help="Name of the file to clean (must be from supported directories)"
+        help="📁 Name of the file to clean (must be from supported directories)"
     )
     
     # Batch processing flags
     file_group.add_argument(
         "--batch-csv-converted",
         action="store_true",
-        help="Process all files in data/cache/csv_converted/ directory"
+        help="📊 Process all files in data/cache/csv_converted/ directory"
     )
     
     file_group.add_argument(
         "--batch-raw-parquet",
         action="store_true",
-        help="Process all files in data/raw_parquet/ directory"
+        help="📦 Process all files in data/raw_parquet/ directory"
     )
     
     file_group.add_argument(
         "--batch-indicators-parquet",
         action="store_true",
-        help="Process all files in data/indicators/parquet/ directory"
+        help="📈 Process all files in data/indicators/parquet/ directory"
     )
     
     file_group.add_argument(
         "--batch-indicators-json",
         action="store_true",
-        help="Process all files in data/indicators/json/ directory"
+        help="📋 Process all files in data/indicators/json/ directory"
     )
     
     file_group.add_argument(
         "--batch-indicators-csv",
         action="store_true",
-        help="Process all files in data/indicators/csv/ directory"
+        help="📄 Process all files in data/indicators/csv/ directory"
     )
     
     file_group.add_argument(
         "--batch-all",
         action="store_true",
-        help="Process all files in all supported directories"
+        help="🌟 Process all files in all supported directories"
     )
     
     parser.add_argument(
         "--auto",
         action="store_true",
-        help="Automatically answer 'y' to all questions (non-interactive mode)"
+        help="🤖 Automatically answer 'y' to all questions (non-interactive mode)"
+    )
+    
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"🧹 Data Cleaning Tool v{__version__} 🚀"
     )
     
     args = parser.parse_args()
+    
+    # Start timing
+    start_time = time.time()
     
     # Create the cleaning tool
     tool = DataCleaningTool(auto_mode=args.auto)
@@ -617,15 +630,22 @@ Examples:
         
         # Overall summary
         print(f"\n{'='*100}")
-        print(f"BATCH PROCESSING ALL DIRECTORIES COMPLETE")
+        print(f"🌟 BATCH PROCESSING ALL DIRECTORIES COMPLETE 🌟")
         print(f"{'='*100}")
-        print(f"Total files processed: {total_files}")
-        print(f"Successful: {total_successful}")
-        print(f"Failed: {total_failed}")
+        print(f"📊 Total files processed: {total_files}")
+        print(f"✅ Successful: {total_successful}")
+        print(f"❌ Failed: {total_failed}")
         if total_files > 0:
-            print(f"Overall success rate: {(total_successful/total_files*100):.1f}%")
+            print(f"📈 Overall success rate: {(total_successful/total_files*100):.1f}%")
         else:
-            print("No files found to process.")
+            print("⚠️  No files found to process.")
+    
+    # Calculate and display processing time
+    end_time = time.time()
+    processing_time = end_time - start_time
+    
+    print(f"\n⏱️  Processing completed in {processing_time:.2f} seconds")
+    print(f"🎉 Data cleaning finished successfully!")
 
 
 if __name__ == "__main__":
