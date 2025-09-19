@@ -409,16 +409,6 @@ class CleaningReporter:
                     
                     print(f"  {status_icon} {proc_name}: {issues_found:,} found → {issues_fixed:,} fixed")
         
-        # Data quality improvement
-        original_nulls = original_data.isnull().sum().sum()
-        cleaned_nulls = cleaned_data.isnull().sum().sum()
-        null_reduction = ((original_nulls - cleaned_nulls) / original_nulls) * 100 if original_nulls > 0 else 0
-        
-        print(f"\n📈 DATA QUALITY IMPROVEMENT:")
-        print(f"  Original null values: {original_nulls:,}")
-        print(f"  Cleaned null values: {cleaned_nulls:,}")
-        print(f"  Null reduction: {null_reduction:.1f}%")
-        
         # Additional statistics
         print(f"\n📋 ADDITIONAL STATISTICS:")
         print(f"  Rows processed: {len(original_data):,}")
