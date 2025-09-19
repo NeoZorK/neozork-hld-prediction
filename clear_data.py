@@ -525,6 +525,11 @@ Examples:
   python clear_data.py --batch-csv-converted --auto --skip-zero "Volume"
   python clear_data.py --batch-indicators-json --auto --skip-negative "Returns,Changes"
   python clear_data.py --batch-all --auto --skip-zero "Volume,Price" --skip-negative "Returns"
+  
+  # Custom directory path:
+  python clear_data.py --path data/custom_folder/ --auto
+  python clear_data.py --path /path/to/data/ --auto --skip-zero "Volume"
+  python clear_data.py --path data/backup/ --auto --skip-negative "Returns,Changes"
         """
     )
     
@@ -570,6 +575,12 @@ Examples:
         "--batch-all",
         action="store_true",
         help="🌟 Process all files in all supported directories"
+    )
+    
+    file_group.add_argument(
+        "--path",
+        type=str,
+        help="📂 Process all files in specified directory path (e.g., --path data/custom_folder/)"
     )
     
     parser.add_argument(
@@ -684,6 +695,19 @@ Examples:
             print(f"📈 Overall success rate: {(total_successful/total_files*100):.1f}%")
         else:
             print("⚠️  No files found to process.")
+    elif args.path:
+        # Custom directory path processing
+        custom_path = args.path
+        if not os.path.exists(custom_path):
+            print(f"❌ Error: Directory '{custom_path}' does not exist")
+            sys.exit(1)
+        
+        if not os.path.isdir(custom_path):
+            print(f"❌ Error: '{custom_path}' is not a directory")
+            sys.exit(1)
+        
+        print(f"\n📂 Starting batch processing for custom directory: {custom_path}")
+        tool.run_batch_processing(custom_path, f"Custom Directory: {custom_path}")
     
     # Calculate and display processing time
     end_time = time.time()
