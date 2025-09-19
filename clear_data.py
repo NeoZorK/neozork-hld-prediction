@@ -7,7 +7,16 @@ from multiple sources and formats. It supports parquet, JSON, and CSV formats
 from various data sources including Binance, Polygon, and yfinance.
 
 Usage:
+    # Single file processing:
     python clear_data.py -f <filename> [--auto]
+    
+    # Batch processing by directory:
+    python clear_data.py --batch-raw-parquet [--auto]
+    python clear_data.py --batch-csv-converted [--auto]
+    python clear_data.py --batch-indicators-parquet [--auto]
+    python clear_data.py --batch-indicators-json [--auto]
+    python clear_data.py --batch-indicators-csv [--auto]
+    python clear_data.py --batch-all [--auto]
 
 The filename must be from one of the supported data directories:
 - data/cache/csv_converted/
@@ -24,7 +33,7 @@ import argparse
 import sys
 import os
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 
 # Add src to path for imports
 sys.path.append(str(Path(__file__).parent / "src"))
@@ -76,6 +85,89 @@ class DataCleaningTool:
             return "y"
         else:
             return input(prompt).lower().strip()
+    
+    def get_files_in_directory(self, directory: str) -> List[str]:
+        """
+        Get all supported files in a directory.
+        
+        Args:
+            directory: Directory path to scan
+            
+        Returns:
+            List of filenames in the directory
+        """
+        if not os.path.exists(directory):
+            return []
+        
+        files = []
+        for file in os.listdir(directory):
+            file_path = os.path.join(directory, file)
+            if os.path.isfile(file_path):
+                # Check if file has supported format
+                if any(file.lower().endswith(ext) for ext in ['.parquet', '.json', '.csv']):
+                    files.append(file)
+        
+        return sorted(files)
+    
+    def run_batch_processing(self, directory: str, directory_name: str) -> None:
+        """
+        Run batch processing for all files in a directory.
+        
+        Args:
+            directory: Directory path to process
+            directory_name: Human-readable directory name for display
+        """
+        print(f"\n{'='*80}")
+        print(f"BATCH PROCESSING: {directory_name}")
+        print(f"Directory: {directory}")
+        print(f"{'='*80}")
+        
+        files = self.get_files_in_directory(directory)
+        
+        if not files:
+            print(f"No supported files found in {directory}")
+            return
+        
+        print(f"Found {len(files)} files to process:")
+        for i, file in enumerate(files, 1):
+            print(f"  {i}. {file}")
+        
+        if not self.auto_mode:
+            while True:
+                proceed = self._get_user_input(f"\nProcess all {len(files)} files? (y/n): ")
+                if proceed in ['y', 'n']:
+                    break
+                print("Please enter 'y' or 'n'")
+            
+            if proceed != 'y':
+                print("Batch processing cancelled.")
+                return
+        
+        # Process each file
+        successful = 0
+        failed = 0
+        
+        for i, filename in enumerate(files, 1):
+            print(f"\n{'='*60}")
+            print(f"PROCESSING FILE {i}/{len(files)}: {filename}")
+            print(f"{'='*60}")
+            
+            try:
+                self.run(filename)
+                successful += 1
+                print(f"✅ Successfully processed: {filename}")
+            except Exception as e:
+                failed += 1
+                print(f"❌ Failed to process {filename}: {str(e)}")
+        
+        # Summary
+        print(f"\n{'='*80}")
+        print(f"BATCH PROCESSING COMPLETE")
+        print(f"{'='*80}")
+        print(f"Total files: {len(files)}")
+        print(f"Successful: {successful}")
+        print(f"Failed: {failed}")
+        print(f"Success rate: {(successful/len(files)*100):.1f}%")
     
     def validate_file_path(self, filename: str) -> Optional[Dict[str, Any]]:
         """
@@ -348,17 +440,62 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
+  # Single file processing:
   python clear_data.py -f GBPUSD_PERIOD_MN1.parquet
   python clear_data.py -f binance_BTCUSD_1h.parquet
   python clear_data.py -f polygon_ETHUSD_daily_rsi.json
   python clear_data.py -f binance_BTCUSDT_MN1.parquet --auto
+  
+  # Batch processing:
+  python clear_data.py --batch-raw-parquet --auto
+  python clear_data.py --batch-csv-converted --auto
+  python clear_data.py --batch-indicators-json --auto
+  python clear_data.py --batch-all --auto
         """
     )
     
-    parser.add_argument(
+    # File processing group
+    file_group = parser.add_mutually_exclusive_group(required=True)
+    file_group.add_argument(
         "-f", "--file",
-        required=True,
         help="Name of the file to clean (must be from supported directories)"
+    )
+    
+    # Batch processing flags
+    file_group.add_argument(
+        "--batch-csv-converted",
+        action="store_true",
+        help="Process all files in data/cache/csv_converted/ directory"
+    )
+    
+    file_group.add_argument(
+        "--batch-raw-parquet",
+        action="store_true",
+        help="Process all files in data/raw_parquet/ directory"
+    )
+    
+    file_group.add_argument(
+        "--batch-indicators-parquet",
+        action="store_true",
+        help="Process all files in data/indicators/parquet/ directory"
+    )
+    
+    file_group.add_argument(
+        "--batch-indicators-json",
+        action="store_true",
+        help="Process all files in data/indicators/json/ directory"
+    )
+    
+    file_group.add_argument(
+        "--batch-indicators-csv",
+        action="store_true",
+        help="Process all files in data/indicators/csv/ directory"
+    )
+    
+    file_group.add_argument(
+        "--batch-all",
+        action="store_true",
+        help="Process all files in all supported directories"
     )
     
     parser.add_argument(
@@ -369,9 +506,75 @@ Examples:
     
     args = parser.parse_args()
     
-    # Create and run the cleaning tool
+    # Create the cleaning tool
     tool = DataCleaningTool(auto_mode=args.auto)
-    tool.run(args.file)
+    
+    # Determine processing mode
+    if args.file:
+        # Single file processing
+        tool.run(args.file)
+    elif args.batch_csv_converted:
+        # Batch process CSV converted files
+        tool.run_batch_processing("data/cache/csv_converted/", "CSV Converted Files")
+    elif args.batch_raw_parquet:
+        # Batch process raw parquet files
+        tool.run_batch_processing("data/raw_parquet/", "Raw Parquet Files")
+    elif args.batch_indicators_parquet:
+        # Batch process indicators parquet files
+        tool.run_batch_processing("data/indicators/parquet/", "Indicators Parquet Files")
+    elif args.batch_indicators_json:
+        # Batch process indicators JSON files
+        tool.run_batch_processing("data/indicators/json/", "Indicators JSON Files")
+    elif args.batch_indicators_csv:
+        # Batch process indicators CSV files
+        tool.run_batch_processing("data/indicators/csv/", "Indicators CSV Files")
+    elif args.batch_all:
+        # Batch process all directories
+        directories = [
+            ("data/cache/csv_converted/", "CSV Converted Files"),
+            ("data/raw_parquet/", "Raw Parquet Files"),
+            ("data/indicators/parquet/", "Indicators Parquet Files"),
+            ("data/indicators/json/", "Indicators JSON Files"),
+            ("data/indicators/csv/", "Indicators CSV Files")
+        ]
+        
+        total_successful = 0
+        total_failed = 0
+        total_files = 0
+        
+        for directory, name in directories:
+            if os.path.exists(directory):
+                files = tool.get_files_in_directory(directory)
+                if files:
+                    print(f"\n{'='*100}")
+                    print(f"PROCESSING DIRECTORY: {name}")
+                    print(f"{'='*100}")
+                    
+                    for filename in files:
+                        total_files += 1
+                        print(f"\n{'='*60}")
+                        print(f"PROCESSING FILE: {filename}")
+                        print(f"{'='*60}")
+                        
+                        try:
+                            tool.run(filename)
+                            total_successful += 1
+                            print(f"✅ Successfully processed: {filename}")
+                        except Exception as e:
+                            total_failed += 1
+                            print(f"❌ Failed to process {filename}: {str(e)}")
+        
+        # Overall summary
+        print(f"\n{'='*100}")
+        print(f"BATCH PROCESSING ALL DIRECTORIES COMPLETE")
+        print(f"{'='*100}")
+        print(f"Total files processed: {total_files}")
+        print(f"Successful: {total_successful}")
+        print(f"Failed: {total_failed}")
+        if total_files > 0:
+            print(f"Overall success rate: {(total_successful/total_files*100):.1f}%")
+        else:
+            print("No files found to process.")
 
 
 if __name__ == "__main__":
