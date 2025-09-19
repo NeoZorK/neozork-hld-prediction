@@ -358,40 +358,52 @@ class CleaningProcedures:
         return fixed_data
     
     def _fix_zeros(self, data: pd.DataFrame, zero_issues: List[Dict[str, Any]]) -> pd.DataFrame:
-        """Replace zeros with NaN for further processing."""
+        """Replace zeros with NaN and fill with interpolation."""
         fixed_data = data.copy()
         
         for issue in zero_issues:
             col = issue['column']
             # Replace zeros with NaN
             fixed_data[col] = fixed_data[col].replace(0, np.nan)
+            # Fill NaN values with interpolation
+            fixed_data[col] = fixed_data[col].interpolate(method='linear')
+            # If still NaN at edges, use forward/backward fill
+            fixed_data[col] = fixed_data[col].ffill().bfill()
         
         return fixed_data
     
     def _fix_negative(self, data: pd.DataFrame, negative_issues: List[Dict[str, Any]]) -> pd.DataFrame:
-        """Replace negative values with NaN for further processing."""
+        """Replace negative values with NaN and fill with interpolation."""
         fixed_data = data.copy()
         
         for issue in negative_issues:
             col = issue['column']
             # Replace negative values with NaN
             fixed_data[col] = fixed_data[col].where(fixed_data[col] >= 0, np.nan)
+            # Fill NaN values with interpolation
+            fixed_data[col] = fixed_data[col].interpolate(method='linear')
+            # If still NaN at edges, use forward/backward fill
+            fixed_data[col] = fixed_data[col].ffill().bfill()
         
         return fixed_data
     
     def _fix_infinity(self, data: pd.DataFrame, infinity_issues: List[Dict[str, Any]]) -> pd.DataFrame:
-        """Replace infinite values with NaN."""
+        """Replace infinite values with NaN and fill with interpolation."""
         fixed_data = data.copy()
         
         for issue in infinity_issues:
             col = issue['column']
             # Replace infinite values with NaN
             fixed_data[col] = fixed_data[col].replace([np.inf, -np.inf], np.nan)
+            # Fill NaN values with interpolation
+            fixed_data[col] = fixed_data[col].interpolate(method='linear')
+            # If still NaN at edges, use forward/backward fill
+            fixed_data[col] = fixed_data[col].ffill().bfill()
         
         return fixed_data
     
     def _fix_outliers(self, data: pd.DataFrame, outliers: List[Dict[str, Any]]) -> pd.DataFrame:
-        """Replace outliers with NaN."""
+        """Replace outliers with NaN and fill with interpolation."""
         fixed_data = data.copy()
         
         for outlier_info in outliers:
@@ -411,6 +423,11 @@ class CleaningProcedures:
                     (fixed_data[col] >= lower_bound) & (fixed_data[col] <= upper_bound),
                     np.nan
                 )
+                
+                # Fill NaN values with interpolation
+                fixed_data[col] = fixed_data[col].interpolate(method='linear')
+                # If still NaN at edges, use forward/backward fill
+                fixed_data[col] = fixed_data[col].ffill().bfill()
         
         return fixed_data
     
