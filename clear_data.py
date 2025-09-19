@@ -158,9 +158,11 @@ class DataCleaningTool:
             print(f"\n--- {proc_name} Detection ---")
             
             # Run detection with progress bar
+            def detect_wrapper(*args, **kwargs):
+                return proc_func(data)
+            
             issues = self.progress.run_with_progress(
-                proc_func, 
-                data, 
+                detect_wrapper, 
                 f"Detecting {proc_name.lower()}"
             )
             
@@ -179,12 +181,12 @@ class DataCleaningTool:
                 
                 if action == 'y':
                     # Fix issues
+                    def fix_wrapper(*args, **kwargs):
+                        return self.cleaner.fix_issues(data, proc_id, issues)
+                    
                     fixed_data = self.progress.run_with_progress(
-                        self.cleaner.fix_issues,
-                        data,
-                        f"Fixing {proc_name.lower()}",
-                        proc_id,
-                        issues
+                        fix_wrapper,
+                        f"Fixing {proc_name.lower()}"
                     )
                     
                     if fixed_data is not None:
