@@ -52,11 +52,13 @@ from data_cleaning.reporting import CleaningReporter
 class DataCleaningTool:
     """Main class for data cleaning operations."""
     
-    def __init__(self, auto_mode: bool = False):
+    def __init__(self, auto_mode: bool = False, skip_zero_columns: List[str] = None, skip_negative_columns: List[str] = None):
         """Initialize the data cleaning tool.
         
         Args:
             auto_mode: If True, automatically answer 'y' to all questions
+            skip_zero_columns: List of column names to skip for zero value cleaning
+            skip_negative_columns: List of column names to skip for negative value cleaning
         """
         self.validator = DataValidator()
         self.file_ops = FileOperations()
@@ -64,6 +66,8 @@ class DataCleaningTool:
         self.progress = ProgressTracker()
         self.reporter = CleaningReporter()
         self.auto_mode = auto_mode
+        self.skip_zero_columns = skip_zero_columns or []
+        self.skip_negative_columns = skip_negative_columns or []
         
         # Supported data directories
         self.supported_dirs = [
@@ -320,13 +324,24 @@ class DataCleaningTool:
             )
             
             if issues is not None and len(issues) > 0:
+                # Filter out skipped columns for zeros and negative values
+                if proc_id == 'zeros' and self.skip_zero_columns:
+                    issues = [issue for issue in issues if issue['column'] not in self.skip_zero_columns]
+                    if self.skip_zero_columns:
+                        print(f"\n🚫 Skipping zero value cleaning for columns: {', '.join(self.skip_zero_columns)}")
+                
+                if proc_id == 'negative' and self.skip_negative_columns:
+                    issues = [issue for issue in issues if issue['column'] not in self.skip_negative_columns]
+                    if self.skip_negative_columns:
+                        print(f"\n🚫 Skipping negative value cleaning for columns: {', '.join(self.skip_negative_columns)}")
+                
                 # Show detailed results (this will also show the count)
                 self.reporter.show_detailed_results(proc_name, issues, data)
                 
                 # Special handling for zero and negative values - column by column choice
                 if proc_id in ['zeros', 'negative']:
                     if self.auto_mode:
-                        # In auto mode, fix all issues
+                        # In auto mode, fix all issues (already filtered)
                         issues_to_fix = issues
                         print(f"\nAuto mode: Fixing all {proc_name.lower()} in all columns")
                     else:
@@ -501,11 +516,15 @@ Examples:
   python clear_data.py -f polygon_ETHUSD_daily_rsi.json
   python clear_data.py -f binance_BTCUSDT_MN1.parquet --auto
   
+  # Skip specific columns:
+  python clear_data.py -f data.parquet --skip-zero "Volume,Price" --skip-negative "Returns,Changes"
+  python clear_data.py -f data.parquet --auto --skip-zero "Volume" --skip-negative "Returns"
+  
   # Batch processing:
   python clear_data.py --batch-raw-parquet --auto
-  python clear_data.py --batch-csv-converted --auto
-  python clear_data.py --batch-indicators-json --auto
-  python clear_data.py --batch-all --auto
+  python clear_data.py --batch-csv-converted --auto --skip-zero "Volume"
+  python clear_data.py --batch-indicators-json --auto --skip-negative "Returns,Changes"
+  python clear_data.py --batch-all --auto --skip-zero "Volume,Price" --skip-negative "Returns"
         """
     )
     
@@ -560,6 +579,18 @@ Examples:
     )
     
     parser.add_argument(
+        "--skip-zero",
+        type=str,
+        help="🚫 Skip zero value cleaning for specified columns (comma-separated list, e.g., 'Volume,Price')"
+    )
+    
+    parser.add_argument(
+        "--skip-negative",
+        type=str,
+        help="🚫 Skip negative value cleaning for specified columns (comma-separated list, e.g., 'Returns,Changes')"
+    )
+    
+    parser.add_argument(
         "--version",
         action="version",
         version=f"🧹 Data Cleaning Tool v{__version__} 🚀"
@@ -570,8 +601,22 @@ Examples:
     # Start timing
     start_time = time.time()
     
+    # Parse skip columns
+    skip_zero_columns = []
+    skip_negative_columns = []
+    
+    if args.skip_zero:
+        skip_zero_columns = [col.strip() for col in args.skip_zero.split(',') if col.strip()]
+    
+    if args.skip_negative:
+        skip_negative_columns = [col.strip() for col in args.skip_negative.split(',') if col.strip()]
+    
     # Create the cleaning tool
-    tool = DataCleaningTool(auto_mode=args.auto)
+    tool = DataCleaningTool(
+        auto_mode=args.auto,
+        skip_zero_columns=skip_zero_columns,
+        skip_negative_columns=skip_negative_columns
+    )
     
     # Determine processing mode
     if args.file:
