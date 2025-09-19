@@ -24,7 +24,7 @@ class DataValidator:
         
         # Regex patterns for different file naming conventions
         self.patterns = {
-            'csv_converted': r'^([A-Z]+)_PERIOD_([A-Z0-9]+)\.parquet$',
+            'csv_converted': r'^CSVExport_([A-Z]+)_PERIOD_([A-Z0-9]+)\.parquet$',
             'raw_parquet': r'^([a-z]+)_([A-Z]+)_([A-Z0-9]+)\.parquet$',
             'indicators': r'^([a-z]+)_([A-Z]+)_([A-Z0-9]+)_([a-z_]+)\.(parquet|json|csv)$'
         }
@@ -111,12 +111,12 @@ class DataValidator:
         return extension if extension in self.supported_formats else 'unknown'
     
     def _parse_csv_converted_filename(self, filename: str, metadata: Dict[str, Any]) -> None:
-        """Parse CSV converted filename format: SYMBOL_PERIOD_TIMEFRAME.parquet"""
+        """Parse CSV converted filename format: CSVExport_SYMBOL_PERIOD_TIMEFRAME.parquet"""
         match = re.match(self.patterns['csv_converted'], filename)
         if match:
             metadata['symbol'] = match.group(1)
             metadata['timeframe'] = match.group(2)
-            metadata['source'] = 'csv_converted'
+            metadata['source'] = 'CSVExport'
     
     def _parse_raw_parquet_filename(self, filename: str, metadata: Dict[str, Any]) -> None:
         """Parse raw parquet filename format: source_SYMBOL_TIMEFRAME.parquet"""
