@@ -530,6 +530,11 @@ Examples:
   python clear_data.py --path data/custom_folder/ --auto
   python clear_data.py --path /path/to/data/ --auto --skip-zero "Volume"
   python clear_data.py --path data/backup/ --auto --skip-negative "Returns,Changes"
+  
+  # Single file with full path:
+  python clear_data.py --path data/cache/csv_converted/CSVExport_AAPL.NAS_PERIOD_D1.parquet --auto
+  python clear_data.py --path data/raw_parquet/binance_BTCUSDT_MN1.parquet --auto --skip-zero "Volume"
+  python clear_data.py --path /absolute/path/to/file.parquet --auto --skip-negative "Returns"
         """
     )
     
@@ -580,7 +585,7 @@ Examples:
     file_group.add_argument(
         "--path",
         type=str,
-        help="📂 Process all files in specified directory path (e.g., --path data/custom_folder/)"
+        help="📂 Process all files in specified directory path or single file (e.g., --path data/custom_folder/ or --path data/file.parquet)"
     )
     
     parser.add_argument(
@@ -696,18 +701,78 @@ Examples:
         else:
             print("⚠️  No files found to process.")
     elif args.path:
-        # Custom directory path processing
+        # Custom path processing (file or directory)
         custom_path = args.path
         if not os.path.exists(custom_path):
-            print(f"❌ Error: Directory '{custom_path}' does not exist")
+            print(f"❌ Error: Path '{custom_path}' does not exist")
             sys.exit(1)
         
-        if not os.path.isdir(custom_path):
-            print(f"❌ Error: '{custom_path}' is not a directory")
+        if os.path.isfile(custom_path):
+            # Single file processing
+            print(f"\n📁 Processing single file: {custom_path}")
+            # Extract filename from path
+            filename = os.path.basename(custom_path)
+            # Check if file is in supported directories
+            file_info = tool.validator.validate_file_path(filename, tool.supported_dirs)
+            if file_info is None:
+                # If not in supported directories, try to process directly
+                print(f"⚠️  File '{filename}' not found in supported directories, attempting direct processing...")
+                # Create a mock file_info for direct processing
+                file_info = {
+                    "file_path": custom_path,
+                    "format": custom_path.split('.')[-1].lower(),
+                    "symbol": "Unknown",
+                    "timeframe": "Unknown", 
+                    "source": "Custom",
+                    "indicator": None,
+                    "folder_source": os.path.dirname(custom_path)
+                }
+                # Display file information
+                tool.display_file_info(file_info)
+                # Display cleaning procedures
+                tool.display_cleaning_procedures()
+                # Ask for confirmation
+                while True:
+                    proceed = tool._get_user_input("\n🚀 Proceed with cleaning? (y/n): ")
+                    if proceed in ['y', 'n']:
+                        break
+                    print("⚠️  Please enter 'y' or 'n'")
+                
+                if proceed != 'y':
+                    print("❌ Cleaning cancelled.")
+                    return
+                
+                # Run cleaning procedures
+                print("\n🧹 Starting data cleaning procedures...")
+                cleaning_results = tool.run_cleaning_procedures(file_info)
+                
+                # Display final report
+                tool.reporter.show_final_report(file_info, cleaning_results)
+                
+                # Ask to save
+                while True:
+                    save = tool._get_user_input("\n💾 Save cleaned data? (y/n): ")
+                    if save in ['y', 'n']:
+                        break
+                    print("⚠️  Please enter 'y' or 'n'")
+                
+                if save == 'y':
+                    save_path = tool.save_cleaned_data(file_info, cleaning_results)
+                    print(f"\n✅ Cleaned data saved to: {save_path}")
+                else:
+                    print("💾 Data not saved.")
+                
+                print("\n🎉 Data cleaning completed successfully!")
+            else:
+                # Process using normal flow
+                tool.run(filename)
+        elif os.path.isdir(custom_path):
+            # Directory processing
+            print(f"\n📂 Starting batch processing for custom directory: {custom_path}")
+            tool.run_batch_processing(custom_path, f"Custom Directory: {custom_path}")
+        else:
+            print(f"❌ Error: '{custom_path}' is neither a file nor a directory")
             sys.exit(1)
-        
-        print(f"\n📂 Starting batch processing for custom directory: {custom_path}")
-        tool.run_batch_processing(custom_path, f"Custom Directory: {custom_path}")
     
     # Calculate and display processing time
     end_time = time.time()
