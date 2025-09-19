@@ -246,6 +246,59 @@ class CleaningReporter:
                 print(f"  {issue['warning']}")
         print()
     
+    def show_column_choice_prompt(self, issues: List[Dict[str, Any]], issue_type: str) -> List[Dict[str, Any]]:
+        """
+        Show column-by-column choice prompt for zero and negative values.
+        
+        Args:
+            issues: List of issues found
+            issue_type: Type of issues (zeros, negative)
+            
+        Returns:
+            List of issues to fix
+        """
+        if not issues:
+            return []
+        
+        print(f"\n🔍 COLUMN-BY-COLUMN CHOICE FOR {issue_type.upper()} VALUES:")
+        print("="*60)
+        print("Some columns may legitimately contain these values.")
+        print("Please review each column and decide whether to fix it:")
+        print()
+        
+        issues_to_fix = []
+        
+        for issue in issues:
+            col_name = issue['column']
+            count = issue['count']
+            percentage = issue['percentage']
+            
+            print(f"Column: '{col_name}'")
+            print(f"  Found: {count:,} {issue_type} values ({percentage:.1f}%)")
+            
+            # Show sample indices
+            if count <= 10:
+                print(f"  Sample indices: {issue['indices']}")
+            else:
+                print(f"  Sample indices: {issue['indices'][:5]} ... {issue['indices'][-5:]}")
+            
+            # Ask for choice
+            while True:
+                choice = input(f"  Fix {issue_type} values in '{col_name}'? (y/n): ").lower().strip()
+                if choice in ['y', 'n']:
+                    break
+                print("  Please enter 'y' or 'n'")
+            
+            if choice == 'y':
+                issues_to_fix.append(issue)
+                print(f"  ✅ Will fix {issue_type} values in '{col_name}'")
+            else:
+                print(f"  ⏭️  Skipping {issue_type} values in '{col_name}'")
+            
+            print()
+        
+        return issues_to_fix
+    
     def show_final_report(self, file_info: Dict[str, Any], cleaning_results: Dict[str, Any]) -> None:
         """
         Show comprehensive final report of the cleaning process.

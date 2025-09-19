@@ -319,17 +319,29 @@ class DataCleaningTool:
                 # Show detailed results (this will also show the count)
                 self.reporter.show_detailed_results(proc_name, issues, data)
                 
-                # Ask user for action
-                while True:
-                    action = self._get_user_input(f"\nFix {proc_name.lower()} automatically? (y/n): ")
-                    if action in ['y', 'n']:
-                        break
-                    print("Please enter 'y' or 'n'")
+                # Special handling for zero and negative values - column by column choice
+                if proc_id in ['zeros', 'negative']:
+                    if self.auto_mode:
+                        # In auto mode, fix all issues
+                        issues_to_fix = issues
+                        print(f"\nAuto mode: Fixing all {proc_name.lower()} in all columns")
+                    else:
+                        # Interactive mode: ask for each column
+                        issues_to_fix = self.reporter.show_column_choice_prompt(issues, proc_id)
+                else:
+                    # For other procedures, ask once for all
+                    while True:
+                        action = self._get_user_input(f"\nFix {proc_name.lower()} automatically? (y/n): ")
+                        if action in ['y', 'n']:
+                            break
+                        print("Please enter 'y' or 'n'")
+                    
+                    issues_to_fix = issues if action == 'y' else []
                 
-                if action == 'y':
+                if issues_to_fix:
                     # Fix issues
                     def fix_wrapper(*args, **kwargs):
-                        return self.cleaner.fix_issues(data, proc_id, issues)
+                        return self.cleaner.fix_issues(data, proc_id, issues_to_fix)
                     
                     fixed_data = self.progress.run_detailed_progress(
                         fix_wrapper,
@@ -340,17 +352,18 @@ class DataCleaningTool:
                     if fixed_data is not None:
                         data = fixed_data
                         # Calculate actual count of issues
-                        actual_count = self._calculate_issue_count(issues, proc_id)
+                        total_issues_found = self._calculate_issue_count(issues, proc_id)
+                        issues_fixed = self._calculate_issue_count(issues_to_fix, proc_id)
                         cleaning_results["procedures"][proc_id] = {
-                            "issues_found": actual_count,
-                            "issues_fixed": actual_count,
-                            "status": "fixed"
+                            "issues_found": total_issues_found,
+                            "issues_fixed": issues_fixed,
+                            "status": "fixed" if issues_fixed > 0 else "skipped"
                         }
-                        cleaning_results["total_issues_fixed"] += actual_count
+                        cleaning_results["total_issues_fixed"] += issues_fixed
                     else:
-                        actual_count = self._calculate_issue_count(issues, proc_id)
+                        total_issues_found = self._calculate_issue_count(issues, proc_id)
                         cleaning_results["procedures"][proc_id] = {
-                            "issues_found": actual_count,
+                            "issues_found": total_issues_found,
                             "issues_fixed": 0,
                             "status": "failed"
                         }
@@ -362,7 +375,9 @@ class DataCleaningTool:
                         "status": "skipped"
                     }
                 
-                cleaning_results["total_issues_found"] += actual_count
+                # Calculate total issues found for this procedure
+                total_issues_found = self._calculate_issue_count(issues, proc_id)
+                cleaning_results["total_issues_found"] += total_issues_found
             else:
                 print(f"No {proc_name.lower()} found")
                 cleaning_results["procedures"][proc_id] = {
