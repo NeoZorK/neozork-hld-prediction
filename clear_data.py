@@ -283,9 +283,7 @@ class DataCleaningTool:
             )
             
             if issues is not None and len(issues) > 0:
-                print(f"\nFound {len(issues):,} {proc_name.lower()}")
-                
-                # Show detailed results
+                # Show detailed results (this will also show the count)
                 self.reporter.show_detailed_results(proc_name, issues, data)
                 
                 # Ask user for action
