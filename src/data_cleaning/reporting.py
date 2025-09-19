@@ -91,7 +91,7 @@ class CleaningReporter:
             print(f"... and {len(duplicates) - 3} more duplicate groups")
     
     def _show_nan_details(self, nan_issues: List[Dict[str, Any]]) -> None:
-        """Show detailed NaN information."""
+        """Show detailed NaN information with smart display logic."""
         total_nans = sum(issue['count'] for issue in nan_issues)
         print(f"Found NaN values in {len(nan_issues)} columns ({total_nans} total NaN values):")
         print()
@@ -99,11 +99,40 @@ class CleaningReporter:
         for issue in nan_issues:
             print(f"Column '{issue['column']}':")
             print(f"  Count: {issue['count']:,} ({issue['percentage']:.1f}%)")
-            print(f"  Indices: {issue['indices'][:5]}{'...' if len(issue['indices']) > 5 else ''}")
+            
+            # Smart display logic based on count
+            if issue['count'] <= 20:
+                # Show all indices if 20 or fewer
+                print(f"  Indices: {issue['indices']}")
+            elif issue['count'] <= 100:
+                # Show first 10 and last 10 if between 21-100
+                first_10 = issue['indices'][:10]
+                last_10 = issue['indices'][-10:]
+                print(f"  Indices: {first_10} ... {last_10}")
+            else:
+                # Show first 10, last 10, and statistics if more than 100
+                first_10 = issue['indices'][:10]
+                last_10 = issue['indices'][-10:]
+                print(f"  Indices: {first_10} ... {last_10}")
+                print(f"  Total indices: {issue['count']:,}")
+                
+                # Show some statistics
+                if hasattr(issue['indices'][0], '__len__') and len(issue['indices'][0]) > 1:
+                    # If indices are complex (like timestamps), show range
+                    print(f"  Range: {issue['indices'][0]} to {issue['indices'][-1]}")
+                else:
+                    # If indices are simple numbers, show min/max
+                    try:
+                        numeric_indices = [int(idx) for idx in issue['indices'] if str(idx).isdigit()]
+                        if numeric_indices:
+                            print(f"  Range: {min(numeric_indices)} to {max(numeric_indices)}")
+                    except:
+                        pass
+            
             print()
     
     def _show_zeros_details(self, zero_issues: List[Dict[str, Any]]) -> None:
-        """Show detailed zero values information."""
+        """Show detailed zero values information with smart display logic."""
         total_zeros = sum(issue['count'] for issue in zero_issues)
         print(f"Found zero values in {len(zero_issues)} columns ({total_zeros} total zero values):")
         print()
@@ -111,11 +140,40 @@ class CleaningReporter:
         for issue in zero_issues:
             print(f"Column '{issue['column']}':")
             print(f"  Count: {issue['count']:,} ({issue['percentage']:.1f}%)")
-            print(f"  Indices: {issue['indices'][:5]}{'...' if len(issue['indices']) > 5 else ''}")
+            
+            # Smart display logic based on count
+            if issue['count'] <= 20:
+                # Show all indices if 20 or fewer
+                print(f"  Indices: {issue['indices']}")
+            elif issue['count'] <= 100:
+                # Show first 10 and last 10 if between 21-100
+                first_10 = issue['indices'][:10]
+                last_10 = issue['indices'][-10:]
+                print(f"  Indices: {first_10} ... {last_10}")
+            else:
+                # Show first 10, last 10, and statistics if more than 100
+                first_10 = issue['indices'][:10]
+                last_10 = issue['indices'][-10:]
+                print(f"  Indices: {first_10} ... {last_10}")
+                print(f"  Total indices: {issue['count']:,}")
+                
+                # Show some statistics
+                if hasattr(issue['indices'][0], '__len__') and len(issue['indices'][0]) > 1:
+                    # If indices are complex (like timestamps), show range
+                    print(f"  Range: {issue['indices'][0]} to {issue['indices'][-1]}")
+                else:
+                    # If indices are simple numbers, show min/max
+                    try:
+                        numeric_indices = [int(idx) for idx in issue['indices'] if str(idx).isdigit()]
+                        if numeric_indices:
+                            print(f"  Range: {min(numeric_indices)} to {max(numeric_indices)}")
+                    except:
+                        pass
+            
             print()
     
     def _show_negative_details(self, negative_issues: List[Dict[str, Any]]) -> None:
-        """Show detailed negative values information."""
+        """Show detailed negative values information with smart display logic."""
         total_negative = sum(issue['count'] for issue in negative_issues)
         print(f"Found negative values in {len(negative_issues)} columns ({total_negative} total negative values):")
         print()
@@ -123,7 +181,36 @@ class CleaningReporter:
         for issue in negative_issues:
             print(f"Column '{issue['column']}':")
             print(f"  Count: {issue['count']:,} ({issue['percentage']:.1f}%)")
-            print(f"  Indices: {issue['indices'][:5]}{'...' if len(issue['indices']) > 5 else ''}")
+            
+            # Smart display logic based on count
+            if issue['count'] <= 20:
+                # Show all indices if 20 or fewer
+                print(f"  Indices: {issue['indices']}")
+            elif issue['count'] <= 100:
+                # Show first 10 and last 10 if between 21-100
+                first_10 = issue['indices'][:10]
+                last_10 = issue['indices'][-10:]
+                print(f"  Indices: {first_10} ... {last_10}")
+            else:
+                # Show first 10, last 10, and statistics if more than 100
+                first_10 = issue['indices'][:10]
+                last_10 = issue['indices'][-10:]
+                print(f"  Indices: {first_10} ... {last_10}")
+                print(f"  Total indices: {issue['count']:,}")
+                
+                # Show some statistics
+                if hasattr(issue['indices'][0], '__len__') and len(issue['indices'][0]) > 1:
+                    # If indices are complex (like timestamps), show range
+                    print(f"  Range: {issue['indices'][0]} to {issue['indices'][-1]}")
+                else:
+                    # If indices are simple numbers, show min/max
+                    try:
+                        numeric_indices = [int(idx) for idx in issue['indices'] if str(idx).isdigit()]
+                        if numeric_indices:
+                            print(f"  Range: {min(numeric_indices)} to {max(numeric_indices)}")
+                    except:
+                        pass
+            
             print()
     
     def _show_infinity_details(self, infinity_issues: List[Dict[str, Any]]) -> None:
