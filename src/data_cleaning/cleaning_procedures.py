@@ -64,6 +64,10 @@ class CleaningProcedures:
                 # Use median as expected frequency
                 expected_freq = time_diffs.median()
                 
+                # Check if expected_freq is valid (not zero or NaN)
+                if pd.isna(expected_freq) or expected_freq.total_seconds() == 0:
+                    continue
+                
                 # Find gaps
                 for i in range(1, len(valid_dates)):
                     actual_diff = valid_dates.iloc[i] - valid_dates.iloc[i-1]
@@ -416,6 +420,12 @@ class CleaningProcedures:
         
         for col in data.columns:
             col_lower = col.lower()
+            
+            # Skip obvious numeric columns
+            if col_lower in ['open', 'high', 'low', 'close', 'volume', 'hl', 'pressure', 'pv', 'pprice1', 'pprice2']:
+                continue
+            
+            # Check for datetime keywords in column name
             if any(keyword in col_lower for keyword in ['time', 'date', 'timestamp', 'datetime']):
                 datetime_cols.append(col)
             elif data[col].dtype in ['datetime64[ns]', 'datetime64[ns, UTC]']:
@@ -425,6 +435,10 @@ class CleaningProcedures:
                 try:
                     sample = data[col].dropna().head(5)
                     if len(sample) > 0:
+                        # Check if it's already a datetime index
+                        if isinstance(data.index, pd.DatetimeIndex):
+                            continue
+                        # Try to parse as datetime
                         pd.to_datetime(sample.iloc[0])
                         datetime_cols.append(col)
                 except Exception:
