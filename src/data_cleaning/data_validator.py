@@ -24,9 +24,9 @@ class DataValidator:
         
         # Regex patterns for different file naming conventions
         self.patterns = {
-            'csv_converted': r'^CSVExport_([A-Z]+)_PERIOD_([A-Z0-9]+)\.parquet$',
-            'raw_parquet': r'^([a-z]+)_([A-Z]+)_([A-Z0-9]+)\.parquet$',
-            'indicators': r'^([a-z]+)_([A-Z]+)_([A-Z0-9]+)_([a-z_]+)\.(parquet|json|csv)$'
+            'csv_converted': r'^CSVExport_([A-Z]+)_PERIOD_([A-Za-z0-9]+)\.parquet$',
+            'raw_parquet': r'^([a-z]+)_([A-Z]+)_([A-Za-z0-9]+)\.parquet$',
+            'indicators': r'^([a-z]+)_([A-Z]+)_([A-Za-z0-9]+)_([a-z_]+)\.(parquet|json|csv)$'
         }
     
     def validate_file_path(self, filename: str, supported_dirs: List[str]) -> Optional[Dict[str, Any]]:
