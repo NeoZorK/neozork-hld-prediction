@@ -102,14 +102,24 @@ class CleaningProcedures:
         duplicate_indices = data[duplicate_mask].index.tolist()
         
         if len(duplicate_indices) > 0:
-            # Group duplicates
+            # Group duplicates with progress tracking
             duplicate_groups = {}
-            for idx in duplicate_indices:
+            total_indices = len(duplicate_indices)
+            
+            for i, idx in enumerate(duplicate_indices):
                 row_hash = hash(tuple(data.loc[idx].values))
                 if row_hash not in duplicate_groups:
                     duplicate_groups[row_hash] = []
                 duplicate_groups[row_hash].append(idx)
+                
+                # Update progress every 1000 items
+                if i % 1000 == 0:
+                    progress_percent = (i / total_indices) * 100
+                    print(f"\rProcessing duplicates: {progress_percent:5.1f}% ({i:,}/{total_indices:,})", end="", flush=True)
             
+            print(f"\rProcessing duplicates: 100.0% ({total_indices:,}/{total_indices:,})", end="", flush=True)
+            
+            # Process groups
             for group in duplicate_groups.values():
                 if len(group) > 1:
                     duplicates.append({
@@ -245,8 +255,12 @@ class CleaningProcedures:
         outliers = []
         
         numeric_cols = data.select_dtypes(include=[np.number]).columns
+        total_cols = len(numeric_cols)
         
-        for col in numeric_cols:
+        for col_idx, col in enumerate(numeric_cols):
+            # Update progress
+            progress_percent = (col_idx / total_cols) * 100
+            print(f"\rProcessing outliers: {progress_percent:5.1f}% ({col_idx+1}/{total_cols}) - {col}", end="", flush=True)
             col_data = data[col].dropna()
             if len(col_data) < 10:  # Need sufficient data for outlier detection
                 continue
@@ -302,6 +316,9 @@ class CleaningProcedures:
             # Only add if any method found outliers
             if any(method['count'] > 0 for method in outlier_info['methods'].values()):
                 outliers.append(outlier_info)
+        
+        # Final progress update
+        print(f"\rProcessing outliers: 100.0% ({total_cols}/{total_cols}) - Complete", end="", flush=True)
         
         return outliers
     

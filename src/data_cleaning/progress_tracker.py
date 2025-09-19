@@ -29,6 +29,8 @@ class ProgressTracker:
         self.total_steps = 0
         self.step_name = ""
         self._stop_event = threading.Event()
+        self.progress_data = None
+        self.current_progress = 0
     
     def run_with_progress(self, func: Callable, *args, **kwargs) -> Any:
         """
@@ -48,6 +50,7 @@ class ProgressTracker:
         
         self.start_time = time.time()
         self.step_name = step_name
+        self.current_progress = 0
         
         # Start progress display in a separate thread
         progress_thread = threading.Thread(target=self._display_progress)
@@ -64,6 +67,55 @@ class ProgressTracker:
             progress_thread.join(timeout=1)
             self._clear_progress_line()
     
+    def run_detailed_progress(self, func: Callable, data: pd.DataFrame, procedure_name: str, *args, **kwargs) -> Any:
+        """
+        Run a function with detailed progress tracking for data cleaning procedures.
+        
+        Args:
+            func: Function to run
+            data: DataFrame being processed
+            procedure_name: Name of the procedure
+            *args: Arguments for the function
+            **kwargs: Keyword arguments for the function
+            
+        Returns:
+            Result of the function execution
+        """
+        self.start_time = time.time()
+        self.step_name = f"Processing {procedure_name}"
+        self.progress_data = data
+        self.current_progress = 0
+        
+        # Start detailed progress display
+        progress_thread = threading.Thread(target=self._display_detailed_progress)
+        progress_thread.daemon = True
+        progress_thread.start()
+        
+        try:
+            # Run the function
+            result = func(*args, **kwargs)
+            return result
+        finally:
+            # Stop progress display
+            self._stop_event.set()
+            progress_thread.join(timeout=1)
+            self._clear_progress_line()
+    
+    def update_progress(self, current: int, total: int, step_name: str = None):
+        """
+        Update progress for detailed tracking.
+        
+        Args:
+            current: Current progress
+            total: Total steps
+            step_name: Optional step name
+        """
+        self.current_step = current
+        self.total_steps = total
+        self.current_progress = (current / total) * 100 if total > 0 else 0
+        if step_name:
+            self.step_name = step_name
+    
     def _display_progress(self):
         """Display progress bar in a separate thread."""
         while not self._stop_event.is_set():
@@ -72,6 +124,19 @@ class ProgressTracker:
             
             # Clear line and print progress
             sys.stdout.write('\r' + ' ' * 100 + '\r')  # Clear line
+            sys.stdout.write(progress_text)
+            sys.stdout.flush()
+            
+            time.sleep(0.1)  # Update every 100ms
+    
+    def _display_detailed_progress(self):
+        """Display detailed progress bar with percentage and ETA."""
+        while not self._stop_event.is_set():
+            elapsed = time.time() - self.start_time
+            progress_text = self._create_detailed_progress_text(elapsed)
+            
+            # Clear line and print progress
+            sys.stdout.write('\r' + ' ' * 120 + '\r')  # Clear line
             sys.stdout.write(progress_text)
             sys.stdout.flush()
             
@@ -94,6 +159,49 @@ class ProgressTracker:
         eta_str = f"ETA: {elapsed_str}"
         
         return f"{spinner} {self.step_name} [{bar}] {elapsed_str} {eta_str}"
+    
+    def _create_detailed_progress_text(self, elapsed: float) -> str:
+        """Create detailed progress text with percentage and ETA."""
+        # Create animated spinner
+        bar_chars = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
+        spinner = bar_chars[int(elapsed * 10) % len(bar_chars)]
+        
+        # Calculate progress percentage
+        if self.total_steps > 0:
+            progress_percent = (self.current_step / self.total_steps) * 100
+            filled_width = int(self.bar_width * (self.current_step / self.total_steps))
+        else:
+            # Fallback to animated progress for unknown total
+            progress_percent = self.current_progress
+            filled_width = int(self.bar_width * (elapsed % 2))
+        
+        # Create progress bar
+        bar = '█' * filled_width + '░' * (self.bar_width - filled_width)
+        
+        # Format elapsed time
+        elapsed_str = self._format_time(elapsed)
+        
+        # Calculate ETA
+        if self.current_step > 0 and self.total_steps > 0:
+            # Calculate ETA based on current progress
+            remaining_steps = self.total_steps - self.current_step
+            if remaining_steps > 0:
+                avg_time_per_step = elapsed / self.current_step
+                eta_seconds = remaining_steps * avg_time_per_step
+                eta_str = f"ETA: {self._format_time(eta_seconds)}"
+            else:
+                eta_str = "ETA: 00:00"
+        else:
+            # Fallback ETA
+            eta_str = f"ETA: {elapsed_str}"
+        
+        # Add data info if available
+        data_info = ""
+        if self.progress_data is not None:
+            rows = len(self.progress_data)
+            data_info = f" | Rows: {rows:,}"
+        
+        return f"{spinner} {self.step_name} [{bar}] {progress_percent:5.1f}% {elapsed_str} {eta_str}{data_info}"
     
     def _format_time(self, seconds: float) -> str:
         """Format time in HH:MM:SS format."""
