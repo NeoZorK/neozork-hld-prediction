@@ -86,6 +86,38 @@ class DataCleaningTool:
         else:
             return input(prompt).lower().strip()
     
+    def _calculate_issue_count(self, issues: List[Dict[str, Any]], proc_id: str) -> int:
+        """
+        Calculate the actual count of issues based on the procedure type.
+        
+        Args:
+            issues: List of issues found
+            proc_id: Procedure identifier
+            
+        Returns:
+            Actual count of issues
+        """
+        if not issues:
+            return 0
+        
+        if proc_id == "outliers":
+            # For outliers, sum up all outliers across all methods and columns
+            total_count = 0
+            for col_outliers in issues:
+                if 'methods' in col_outliers:
+                    for method, data in col_outliers['methods'].items():
+                        total_count += data['count']
+            return total_count
+        elif proc_id in ["zeros", "negative", "infinity", "nan"]:
+            # For these, sum up the count from each column
+            return sum(issue['count'] for issue in issues)
+        elif proc_id == "duplicates":
+            # For duplicates, sum up the total duplicate rows
+            return sum(dup['count'] for dup in issues)
+        else:
+            # For gaps and others, use the length
+            return len(issues)
+    
     def get_files_in_directory(self, directory: str) -> List[str]:
         """
         Get all supported files in a directory.
@@ -305,26 +337,30 @@ class DataCleaningTool:
                     
                     if fixed_data is not None:
                         data = fixed_data
+                        # Calculate actual count of issues
+                        actual_count = self._calculate_issue_count(issues, proc_id)
                         cleaning_results["procedures"][proc_id] = {
-                            "issues_found": len(issues),
-                            "issues_fixed": len(issues),
+                            "issues_found": actual_count,
+                            "issues_fixed": actual_count,
                             "status": "fixed"
                         }
-                        cleaning_results["total_issues_fixed"] += len(issues)
+                        cleaning_results["total_issues_fixed"] += actual_count
                     else:
+                        actual_count = self._calculate_issue_count(issues, proc_id)
                         cleaning_results["procedures"][proc_id] = {
-                            "issues_found": len(issues),
+                            "issues_found": actual_count,
                             "issues_fixed": 0,
                             "status": "failed"
                         }
                 else:
+                    actual_count = self._calculate_issue_count(issues, proc_id)
                     cleaning_results["procedures"][proc_id] = {
-                        "issues_found": len(issues),
+                        "issues_found": actual_count,
                         "issues_fixed": 0,
                         "status": "skipped"
                     }
                 
-                cleaning_results["total_issues_found"] += len(issues)
+                cleaning_results["total_issues_found"] += actual_count
             else:
                 print(f"No {proc_name.lower()} found")
                 cleaning_results["procedures"][proc_id] = {
