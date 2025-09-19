@@ -250,14 +250,41 @@ class CleaningReporter:
         print(f"Total issues fixed: {total_issues_fixed:,}")
         print(f"Fix rate: {(total_issues_fixed/total_issues_found*100):.1f}%" if total_issues_found > 0 else "Fix rate: N/A")
         
+        # Detailed breakdown by procedure
+        print("\n📊 DETAILED BREAKDOWN:")
+        for proc_name, proc_id in procedures:
+            if proc_id in cleaning_results['procedures']:
+                proc_data = cleaning_results['procedures'][proc_id]
+                issues_found = proc_data['issues_found']
+                issues_fixed = proc_data['issues_fixed']
+                status = proc_data['status']
+                
+                if issues_found > 0:
+                    status_icon = {
+                        'clean': '✅',
+                        'fixed': '🔧',
+                        'skipped': '⏭️',
+                        'failed': '❌'
+                    }.get(status, '❓')
+                    
+                    print(f"  {status_icon} {proc_name}: {issues_found:,} found → {issues_fixed:,} fixed")
+        
         # Data quality improvement
         original_nulls = original_data.isnull().sum().sum()
         cleaned_nulls = cleaned_data.isnull().sum().sum()
         null_reduction = ((original_nulls - cleaned_nulls) / original_nulls) * 100 if original_nulls > 0 else 0
         
-        print(f"Original null values: {original_nulls:,}")
-        print(f"Cleaned null values: {cleaned_nulls:,}")
-        print(f"Null reduction: {null_reduction:.1f}%")
+        print(f"\n📈 DATA QUALITY IMPROVEMENT:")
+        print(f"  Original null values: {original_nulls:,}")
+        print(f"  Cleaned null values: {cleaned_nulls:,}")
+        print(f"  Null reduction: {null_reduction:.1f}%")
+        
+        # Additional statistics
+        print(f"\n📋 ADDITIONAL STATISTICS:")
+        print(f"  Rows processed: {len(original_data):,}")
+        print(f"  Columns processed: {len(original_data.columns)}")
+        print(f"  Memory usage: {original_size:,} → {cleaned_size:,} bytes")
+        print(f"  Memory reduction: {size_reduction:.1f}%")
         
         print("="*80)
     
