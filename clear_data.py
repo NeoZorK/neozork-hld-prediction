@@ -7,7 +7,7 @@ from multiple sources and formats. It supports parquet, JSON, and CSV formats
 from various data sources including Binance, Polygon, and yfinance.
 
 Usage:
-    python clear_data.py -f <filename>
+    python clear_data.py -f <filename> [--auto]
 
 The filename must be from one of the supported data directories:
 - data/cache/csv_converted/
@@ -15,6 +15,9 @@ The filename must be from one of the supported data directories:
 - data/indicators/parquet/
 - data/indicators/json/
 - data/indicators/csv/
+
+Options:
+    --auto    Automatically answer 'y' to all questions (non-interactive mode)
 """
 
 import argparse
@@ -36,13 +39,18 @@ from data_cleaning.reporting import CleaningReporter
 class DataCleaningTool:
     """Main class for data cleaning operations."""
     
-    def __init__(self):
-        """Initialize the data cleaning tool."""
+    def __init__(self, auto_mode: bool = False):
+        """Initialize the data cleaning tool.
+        
+        Args:
+            auto_mode: If True, automatically answer 'y' to all questions
+        """
         self.validator = DataValidator()
         self.file_ops = FileOperations()
         self.cleaner = CleaningProcedures()
         self.progress = ProgressTracker()
         self.reporter = CleaningReporter()
+        self.auto_mode = auto_mode
         
         # Supported data directories
         self.supported_dirs = [
@@ -52,6 +60,22 @@ class DataCleaningTool:
             "data/indicators/json/",
             "data/indicators/csv/"
         ]
+    
+    def _get_user_input(self, prompt: str) -> str:
+        """
+        Get user input with automatic mode support.
+        
+        Args:
+            prompt: Input prompt to display
+            
+        Returns:
+            User input or 'y' if in auto mode
+        """
+        if self.auto_mode:
+            print(f"{prompt} y")
+            return "y"
+        else:
+            return input(prompt).lower().strip()
     
     def validate_file_path(self, filename: str) -> Optional[Dict[str, Any]]:
         """
@@ -174,7 +198,7 @@ class DataCleaningTool:
                 
                 # Ask user for action
                 while True:
-                    action = input(f"\nFix {proc_name.lower()} automatically? (y/n): ").lower().strip()
+                    action = self._get_user_input(f"\nFix {proc_name.lower()} automatically? (y/n): ")
                     if action in ['y', 'n']:
                         break
                     print("Please enter 'y' or 'n'")
@@ -281,7 +305,7 @@ class DataCleaningTool:
             
             # Ask for confirmation
             while True:
-                proceed = input("\nProceed with cleaning? (y/n): ").lower().strip()
+                proceed = self._get_user_input("\nProceed with cleaning? (y/n): ")
                 if proceed in ['y', 'n']:
                     break
                 print("Please enter 'y' or 'n'")
@@ -299,7 +323,7 @@ class DataCleaningTool:
             
             # Ask to save
             while True:
-                save = input("\nSave cleaned data? (y/n): ").lower().strip()
+                save = self._get_user_input("\nSave cleaned data? (y/n): ")
                 if save in ['y', 'n']:
                     break
                 print("Please enter 'y' or 'n'")
@@ -327,6 +351,7 @@ Examples:
   python clear_data.py -f GBPUSD_PERIOD_MN1.parquet
   python clear_data.py -f binance_BTCUSD_1h.parquet
   python clear_data.py -f polygon_ETHUSD_daily_rsi.json
+  python clear_data.py -f binance_BTCUSDT_MN1.parquet --auto
         """
     )
     
@@ -336,10 +361,16 @@ Examples:
         help="Name of the file to clean (must be from supported directories)"
     )
     
+    parser.add_argument(
+        "--auto",
+        action="store_true",
+        help="Automatically answer 'y' to all questions (non-interactive mode)"
+    )
+    
     args = parser.parse_args()
     
     # Create and run the cleaning tool
-    tool = DataCleaningTool()
+    tool = DataCleaningTool(auto_mode=args.auto)
     tool.run(args.file)
 
 
