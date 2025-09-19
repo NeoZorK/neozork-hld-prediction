@@ -305,12 +305,13 @@ class DataCleaningTool:
         for proc_id, proc_name, proc_func in procedures:
             print(f"\n--- {proc_name} Detection ---")
             
-            # Run detection with progress bar
+            # Run detection with detailed progress bar
             def detect_wrapper(*args, **kwargs):
                 return proc_func(data)
             
-            issues = self.progress.run_with_progress(
+            issues = self.progress.run_detailed_progress(
                 detect_wrapper, 
+                data,
                 f"Detecting {proc_name.lower()}"
             )
             
@@ -330,8 +331,9 @@ class DataCleaningTool:
                     def fix_wrapper(*args, **kwargs):
                         return self.cleaner.fix_issues(data, proc_id, issues)
                     
-                    fixed_data = self.progress.run_with_progress(
+                    fixed_data = self.progress.run_detailed_progress(
                         fix_wrapper,
+                        data,
                         f"Fixing {proc_name.lower()}"
                     )
                     
