@@ -43,17 +43,17 @@ class CleaningReporter:
             self._show_duplicates_details(issues)
         elif procedure_name.lower() == 'nan':
             self._show_nan_details(issues)
-        elif procedure_name.lower() == 'zeros':
+        elif procedure_name.lower() in ['zeros', 'zero values']:
             self._show_zeros_details(issues)
-        elif procedure_name.lower() == 'negative':
+        elif procedure_name.lower() in ['negative', 'negative values']:
             self._show_negative_details(issues)
-        elif procedure_name.lower() == 'infinity':
+        elif procedure_name.lower() in ['infinity', 'infinity values']:
             self._show_infinity_details(issues)
         elif procedure_name.lower() == 'outliers':
             self._show_outliers_details(issues)
         
         # Show warnings if applicable
-        if procedure_name.lower() in ['zeros', 'negative']:
+        if procedure_name.lower() in ['zeros', 'zero values', 'negative', 'negative values']:
             self._show_warnings(issues)
     
     def _show_gaps_details(self, gaps: List[Dict[str, Any]]) -> None:
