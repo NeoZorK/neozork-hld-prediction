@@ -186,24 +186,35 @@ class DataValidator:
         metadata['rows_count'] = len(data)
         metadata['columns_count'] = len(data.columns)
         
-        # Find datetime columns
-        datetime_cols = self._find_datetime_columns(data)
-        
-        if datetime_cols:
-            # Use the first datetime column for date range
-            datetime_col = datetime_cols[0]
-            metadata['datetime_format'] = str(data[datetime_col].dtype)
-            
-            # Get date range
+        # Check if index is datetime first
+        if isinstance(data.index, pd.DatetimeIndex):
             try:
-                dates = pd.to_datetime(data[datetime_col], errors='coerce')
-                valid_dates = dates.dropna()
-                
+                valid_dates = data.index.dropna()
                 if len(valid_dates) > 0:
                     metadata['start_date'] = valid_dates.min().strftime('%Y-%m-%d %H:%M:%S')
                     metadata['end_date'] = valid_dates.max().strftime('%Y-%m-%d %H:%M:%S')
+                    metadata['datetime_format'] = str(data.index.dtype)
             except Exception:
                 pass
+        else:
+            # Find datetime columns
+            datetime_cols = self._find_datetime_columns(data)
+            
+            if datetime_cols:
+                # Use the first datetime column for date range
+                datetime_col = datetime_cols[0]
+                metadata['datetime_format'] = str(data[datetime_col].dtype)
+                
+                # Get date range
+                try:
+                    dates = pd.to_datetime(data[datetime_col], errors='coerce')
+                    valid_dates = dates.dropna()
+                    
+                    if len(valid_dates) > 0:
+                        metadata['start_date'] = valid_dates.min().strftime('%Y-%m-%d %H:%M:%S')
+                        metadata['end_date'] = valid_dates.max().strftime('%Y-%m-%d %H:%M:%S')
+                except Exception:
+                    pass
     
     def _find_datetime_columns(self, data: pd.DataFrame) -> List[str]:
         """
