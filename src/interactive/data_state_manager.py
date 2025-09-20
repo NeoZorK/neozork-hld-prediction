@@ -57,6 +57,10 @@ class DataStateManager:
         """Check if data is currently loaded in memory."""
         return self.current_data is not None
     
+    def has_loaded_data(self) -> bool:
+        """Check if data is currently loaded in memory (alias for is_data_loaded)."""
+        return self.is_data_loaded()
+    
     def get_memory_usage(self) -> float:
         """Get memory usage of loaded data in MB."""
         return self.memory_used

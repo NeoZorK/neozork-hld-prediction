@@ -39,7 +39,9 @@ ENV/
 # Data files (will be mounted as volumes)
 /data/
 /data/cleaned_data/
+/data/fixed/
 /data/cache/gap_tracker.json
+/data/backups/
 /logs/
 /results/
 *.svg

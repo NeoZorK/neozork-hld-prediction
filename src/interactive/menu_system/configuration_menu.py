@@ -154,14 +154,29 @@ class ConfigurationMenu(BaseMenu):
             # Get all symbol MTF folders from all source directories
             mtf_symbol_folders = []
             for source_dir in source_dirs:
-                symbol_folders = [f for f in source_dir.iterdir() if f.is_dir()]
-                for symbol_folder in symbol_folders:
-                    # Store source information
-                    folder_info = {
-                        'path': symbol_folder,
-                        'source': source_dir.name
-                    }
-                    mtf_symbol_folders.append(folder_info)
+                # Handle special case for gaps_fixed which has nested structure: gaps_fixed/source/symbol/
+                if source_dir.name == 'gaps_fixed':
+                    # For gaps_fixed, we need to go one level deeper
+                    for nested_source_dir in source_dir.iterdir():
+                        if nested_source_dir.is_dir():
+                            symbol_folders = [f for f in nested_source_dir.iterdir() if f.is_dir()]
+                            for symbol_folder in symbol_folders:
+                                # Store source information with original source name
+                                folder_info = {
+                                    'path': symbol_folder,
+                                    'source': nested_source_dir.name  # Use the actual source (e.g., 'binance')
+                                }
+                                mtf_symbol_folders.append(folder_info)
+                else:
+                    # Normal two-level structure: source/symbol/
+                    symbol_folders = [f for f in source_dir.iterdir() if f.is_dir()]
+                    for symbol_folder in symbol_folders:
+                        # Store source information
+                        folder_info = {
+                            'path': symbol_folder,
+                            'source': source_dir.name
+                        }
+                        mtf_symbol_folders.append(folder_info)
             
             if not mtf_symbol_folders:
                 print(f"{Fore.RED}❌ No MTF symbol folders found")
@@ -170,9 +185,9 @@ class ConfigurationMenu(BaseMenu):
                 return
             
             print(f"{Fore.GREEN}📈 Available MTF Structures ({len(mtf_symbol_folders)}):")
-            print(f"{Fore.CYAN}{'─'*80}")
-            print(f"{Fore.WHITE}{'Symbol':<12} {'Source':<10} {'Status':<12} {'Size (MB)':<10} {'Timeframes':<15} {'Created':<15}")
-            print(f"{Fore.CYAN}{'─'*80}")
+            print(f"{Fore.CYAN}{'─'*90}")
+            print(f"{Fore.WHITE}{'Symbol':<12} {'Folder':<12} {'Source':<10} {'Status':<12} {'Size (MB)':<10} {'Timeframes':<15} {'Created':<15}")
+            print(f"{Fore.CYAN}{'─'*90}")
             
             total_size = 0
             for folder_info in sorted(mtf_symbol_folders, key=lambda x: (x['source'], x['path'].name)):
@@ -190,6 +205,11 @@ class ConfigurationMenu(BaseMenu):
                         folder_size = sum(f.stat().st_size for f in symbol_folder.rglob('*') if f.is_file())
                         folder_size_mb = folder_size / (1024 * 1024)
                         total_size += folder_size_mb
+                        
+                        # Determine folder name for display
+                        folder_name = 'original'
+                        if 'gaps_fixed' in str(symbol_folder):
+                            folder_name = 'gaps_fixed'
                         
                         # Get timeframes
                         timeframes = metadata.get('timeframes', [])
@@ -210,21 +230,31 @@ class ConfigurationMenu(BaseMenu):
                         
                         # Check if this data is loaded in memory
                         from src.interactive.data_state_manager import data_state_manager
+                        loaded_info = data_state_manager.get_loaded_data_info()
                         is_loaded = (data_state_manager.is_data_loaded() and 
-                                   data_state_manager.get_loaded_data_info() and
-                                   data_state_manager.get_loaded_data_info().get('symbol') == symbol_name and
-                                   data_state_manager.get_loaded_data_info().get('source') == source_name)
+                                   loaded_info and
+                                   loaded_info.get('symbol') == symbol_name and
+                                   loaded_info.get('source') == source_name and
+                                   loaded_info.get('data_path') == str(symbol_folder))
                         
                         status = "✅ Loaded" if is_loaded else "✅ Available"
-                        print(f"{Fore.WHITE}{symbol_name:<12} {source_name:<10} {status:<12} {folder_size_mb:<10.1f} {timeframes_str:<15} {created_date:<15}")
+                        print(f"{Fore.WHITE}{symbol_name:<12} {folder_name:<12} {source_name:<10} {status:<12} {folder_size_mb:<10.1f} {timeframes_str:<15} {created_date:<15}")
                         
                     except Exception as e:
                         print_error(f"Error reading metadata for {symbol_name}: {e}")
-                        print(f"{Fore.WHITE}{symbol_name:<12} {source_name:<10} {'❌ Error':<12} {'0.0':<10} {'Unknown':<15} {'Unknown':<15}")
+                        # Determine folder name for error cases
+                        folder_name = 'original'
+                        if 'gaps_fixed' in str(symbol_folder):
+                            folder_name = 'gaps_fixed'
+                        print(f"{Fore.WHITE}{symbol_name:<12} {folder_name:<12} {source_name:<10} {'❌ Error':<12} {'0.0':<10} {'Unknown':<15} {'Unknown':<15}")
                 else:
-                    print(f"{Fore.WHITE}{symbol_name:<12} {source_name:<10} {'⚠️  No Meta':<12} {'0.0':<10} {'Unknown':<15} {'Unknown':<15}")
+                    # Determine folder name for no metadata cases
+                    folder_name = 'original'
+                    if 'gaps_fixed' in str(symbol_folder):
+                        folder_name = 'gaps_fixed'
+                    print(f"{Fore.WHITE}{symbol_name:<12} {folder_name:<12} {source_name:<10} {'⚠️  No Meta':<12} {'0.0':<10} {'Unknown':<15} {'Unknown':<15}")
             
-            print(f"{Fore.CYAN}{'─'*80}")
+            print(f"{Fore.CYAN}{'─'*90}")
             print(f"{Fore.YELLOW}Total: {len(mtf_symbol_folders)} MTF structures, {total_size:.1f} MB")
             print(f"{Fore.CYAN}💡 Use 'Load Data -> 4.Cleaned Data' to load data into memory")
             
@@ -327,14 +357,29 @@ class ConfigurationMenu(BaseMenu):
             # Get all symbol MTF folders from all source directories
             mtf_symbol_folders = []
             for source_dir in source_dirs:
-                symbol_folders = [f for f in source_dir.iterdir() if f.is_dir()]
-                for symbol_folder in symbol_folders:
-                    # Store source information
-                    folder_info = {
-                        'path': symbol_folder,
-                        'source': source_dir.name
-                    }
-                    mtf_symbol_folders.append(folder_info)
+                # Handle special case for gaps_fixed which has nested structure: gaps_fixed/source/symbol/
+                if source_dir.name == 'gaps_fixed':
+                    # For gaps_fixed, we need to go one level deeper
+                    for nested_source_dir in source_dir.iterdir():
+                        if nested_source_dir.is_dir():
+                            symbol_folders = [f for f in nested_source_dir.iterdir() if f.is_dir()]
+                            for symbol_folder in symbol_folders:
+                                # Store source information with original source name
+                                folder_info = {
+                                    'path': symbol_folder,
+                                    'source': nested_source_dir.name  # Use the actual source (e.g., 'binance')
+                                }
+                                mtf_symbol_folders.append(folder_info)
+                else:
+                    # Normal two-level structure: source/symbol/
+                    symbol_folders = [f for f in source_dir.iterdir() if f.is_dir()]
+                    for symbol_folder in symbol_folders:
+                        # Store source information
+                        folder_info = {
+                            'path': symbol_folder,
+                            'source': source_dir.name
+                        }
+                        mtf_symbol_folders.append(folder_info)
             
             if not mtf_symbol_folders:
                 print(f"{Fore.RED}❌ No MTF symbol folders found")
@@ -382,10 +427,12 @@ class ConfigurationMenu(BaseMenu):
                         
                         # Check if this data is loaded in memory
                         from src.interactive.data_state_manager import data_state_manager
+                        loaded_info = data_state_manager.get_loaded_data_info()
                         is_loaded = (data_state_manager.is_data_loaded() and 
-                                   data_state_manager.get_loaded_data_info() and
-                                   data_state_manager.get_loaded_data_info().get('symbol') == symbol_name and
-                                   data_state_manager.get_loaded_data_info().get('source') == source_name)
+                                   loaded_info and
+                                   loaded_info.get('symbol') == symbol_name and
+                                   loaded_info.get('source') == source_name and
+                                   loaded_info.get('data_path') == str(symbol_folder))
                         
                         if is_loaded:
                             print(f"  • Status: {Fore.GREEN}✅ Loaded in memory")
