@@ -62,6 +62,7 @@ from src.statistics.distribution_analysis import DistributionAnalysis
 from src.statistics.data_transformation import DataTransformation
 from src.statistics.cli_interface import StatisticsCLI
 from src.statistics.reporting import StatisticsReporter
+from src.statistics.color_utils import ColorUtils
 
 
 class StatisticalAnalyzer:
@@ -263,7 +264,7 @@ class StatisticalAnalyzer:
                     self._handle_data_transformation(results)
                 
                 successful += 1
-                print(f"✅ Successfully processed: {filename}")
+                print(f"{ColorUtils.green('✅ Successfully processed:')} {filename}")
                 
             except Exception as e:
                 failed += 1
@@ -441,7 +442,7 @@ class StatisticalAnalyzer:
                                         self._handle_data_transformation(results)
                                     
                                     total_successful += 1
-                                    print(f"✅ Successfully processed: {filename}")
+                                    print(f"{ColorUtils.green('✅ Successfully processed:')} {filename}")
                                     
                                 except Exception as e:
                                     total_failed += 1
@@ -533,7 +534,7 @@ def main():
     
     # Confirm analysis configuration
     if not cli.confirm_analysis(config, config['processing_options']['auto']):
-        print("❌ Analysis cancelled.")
+        print(ColorUtils.red("❌ Analysis cancelled."))
         return
     
     # Start timing
@@ -553,7 +554,7 @@ def main():
     processing_time = end_time - start_time
     
     print(f"\n⏱️  Processing completed in {processing_time:.2f} seconds")
-    print(f"🎉 Statistical analysis finished successfully!")
+    print(f"{ColorUtils.green('🎉 Statistical analysis finished successfully!')}")
 
 
 if __name__ == "__main__":

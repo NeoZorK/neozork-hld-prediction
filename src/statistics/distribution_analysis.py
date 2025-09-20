@@ -17,6 +17,7 @@ from typing import Dict, Any, List, Optional, Tuple
 from scipy import stats
 from scipy.stats import shapiro, normaltest, anderson, kstest
 import logging
+from .color_utils import ColorUtils
 
 
 class DistributionAnalysis:
