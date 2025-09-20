@@ -138,33 +138,33 @@ class InteractiveMenuSystem:
     
     def _eda_analysis_menu(self):
         """Handle EDA analysis menu."""
-        print(f"\n{Fore.YELLOW}🔍 EDA Analysis Menu")
-        print(f"{Fore.CYAN}This feature will be implemented in the next phase...")
-        time.sleep(2)
+        from .eda_menu import EDAMenu
+        menu = EDAMenu()
+        menu.run()
     
     def _feature_engineering_menu(self):
         """Handle feature engineering menu."""
-        print(f"\n{Fore.YELLOW}⚙️ Feature Engineering Menu")
-        print(f"{Fore.CYAN}This feature will be implemented in the next phase...")
-        time.sleep(2)
+        from .feature_engineering_menu import FeatureEngineeringMenu
+        menu = FeatureEngineeringMenu()
+        menu.run()
     
     def _ml_development_menu(self):
         """Handle ML development menu."""
-        print(f"\n{Fore.YELLOW}🤖 ML Model Development Menu")
-        print(f"{Fore.CYAN}This feature will be implemented in the next phase...")
-        time.sleep(2)
+        from .ml_development_menu import MLDevelopmentMenu
+        menu = MLDevelopmentMenu()
+        menu.run()
     
     def _backtesting_menu(self):
         """Handle backtesting menu."""
-        print(f"\n{Fore.YELLOW}📈 Backtesting & Validation Menu")
-        print(f"{Fore.CYAN}This feature will be implemented in the next phase...")
-        time.sleep(2)
+        from .backtesting_menu import BacktestingMenu
+        menu = BacktestingMenu()
+        menu.run()
     
     def _deployment_menu(self):
         """Handle deployment menu."""
-        print(f"\n{Fore.YELLOW}🚀 Deployment & Monitoring Menu")
-        print(f"{Fore.CYAN}This feature will be implemented in the next phase...")
-        time.sleep(2)
+        from .deployment_menu import DeploymentMenu
+        menu = DeploymentMenu()
+        menu.run()
     
     def _visualization_menu(self):
         """Handle visualization menu."""

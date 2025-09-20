@@ -322,6 +322,12 @@ class IndicatorsProcessor:
             # Add processing timestamp
             df['processed_at'] = datetime.now().isoformat()
             
+            # Add timestamp column if not present (create synthetic timestamps for indicators data)
+            if 'timestamp' not in df.columns:
+                # Create synthetic timestamps based on the timeframe
+                timeframe = df.get('timeframe', 'M1').iloc[0] if not df.empty else 'M1'
+                df = self._create_synthetic_timestamps(df, timeframe)
+            
             return df
             
         except Exception as e:
@@ -397,10 +403,50 @@ class IndicatorsProcessor:
             print_error(f"Error extracting symbol from {file_path}: {e}")
             return 'unknown'
     
+    def _create_synthetic_timestamps(self, df: pd.DataFrame, timeframe: str) -> pd.DataFrame:
+        """Create synthetic timestamps for indicators data based on timeframe."""
+        try:
+            if df.empty:
+                return df
+            
+            # Define timeframe intervals
+            timeframe_intervals = {
+                'M1': pd.Timedelta(minutes=1),
+                'M5': pd.Timedelta(minutes=5),
+                'M15': pd.Timedelta(minutes=15),
+                'M30': pd.Timedelta(minutes=30),
+                'H1': pd.Timedelta(hours=1),
+                'H4': pd.Timedelta(hours=4),
+                'D1': pd.Timedelta(days=1),
+                'W1': pd.Timedelta(weeks=1),
+                'MN1': pd.Timedelta(days=30)
+            }
+            
+            # Get interval for the timeframe
+            interval = timeframe_intervals.get(timeframe, pd.Timedelta(minutes=1))
+            
+            # Create synthetic timestamps starting from a base date
+            base_date = pd.Timestamp('2020-01-01 00:00:00')
+            timestamps = [base_date + i * interval for i in range(len(df))]
+            
+            # Add timestamp column
+            df['timestamp'] = timestamps
+            
+            return df
+            
+        except Exception as e:
+            print_error(f"Error creating synthetic timestamps: {e}")
+            return df
+    
     def _sort_by_timestamp(self, df: pd.DataFrame) -> pd.DataFrame:
         """Sort dataframe by timestamp if available."""
         try:
-            if 'timestamp' in df.columns:
+            # Check if timestamp is both a column and index (ambiguous case)
+            if 'timestamp' in df.columns and df.index.name == 'timestamp':
+                # Remove timestamp from columns to avoid ambiguity
+                df = df.drop('timestamp', axis=1)
+                df = df.sort_index()
+            elif 'timestamp' in df.columns:
                 df = df.sort_values('timestamp')
             elif df.index.name == 'timestamp':
                 df = df.sort_index()
@@ -420,9 +466,9 @@ class IndicatorsProcessor:
             if df.empty:
                 errors.append("DataFrame is empty after processing")
             
-            # Check for timestamp
+            # Check for timestamp (either as column or index)
             if 'timestamp' not in df.columns and df.index.name != 'timestamp':
-                errors.append("Timestamp column is missing")
+                errors.append("Timestamp column or index is missing")
             
             # Check for at least one numeric column
             numeric_cols = df.select_dtypes(include=[np.number]).columns

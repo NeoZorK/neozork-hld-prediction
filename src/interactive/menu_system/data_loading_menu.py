@@ -265,7 +265,13 @@ class DataLoadingMenu(BaseMenu):
             # Save MTF structure with progress tracking and data source
             self._save_mtf_structure_with_progress(symbol, mtf_data, data_source)
             
-            print(f"\n{Fore.GREEN}✅ Successfully saved {symbol} data to {symbol_dir}")
+            # Get the actual save directory from DataLoader
+            from .data_loading import DataLoader
+            loader = DataLoader()
+            source_dir = loader.mtf_dir / data_source
+            symbol_mtf_dir = source_dir / symbol.lower()
+            
+            print(f"\n{Fore.GREEN}✅ Successfully saved {symbol} data to {symbol_mtf_dir}")
             print(f"{Fore.GREEN}🎯 MTF structure created and saved for ML!")
             
         except Exception as e:
@@ -1025,7 +1031,11 @@ class DataLoadingMenu(BaseMenu):
             # Save using DataLoader's method with data source
             loader._save_loaded_data(symbol, mtf_data['timeframe_data'], mtf_data, source)
             
-            print(f"{Fore.GREEN}✅ MTF structure saved to: {symbol_dir}")
+            # Get the actual save directory from DataLoader
+            source_dir = loader.mtf_dir / source
+            symbol_mtf_dir = source_dir / symbol.lower()
+            
+            print(f"{Fore.GREEN}✅ MTF structure saved to: {symbol_mtf_dir}")
             print(f"  • Symbol: {symbol.upper()}")
             print(f"  • Source: {source}")
             print(f"  • Timeframes: {', '.join(mtf_data['timeframes'])}")
@@ -1678,14 +1688,29 @@ class DataLoadingMenu(BaseMenu):
             # Get all symbol MTF folders from all source directories
             mtf_symbol_folders = []
             for source_dir in source_dirs:
-                symbol_folders = [f for f in source_dir.iterdir() if f.is_dir()]
-                for symbol_folder in symbol_folders:
-                    # Store source information in a dictionary
-                    folder_info = {
-                        'path': symbol_folder,
-                        'source': source_dir.name
-                    }
-                    mtf_symbol_folders.append(folder_info)
+                # Handle special case for gaps_fixed which has nested structure: gaps_fixed/source/symbol/
+                if source_dir.name == 'gaps_fixed':
+                    # For gaps_fixed, we need to go one level deeper
+                    for nested_source_dir in source_dir.iterdir():
+                        if nested_source_dir.is_dir():
+                            symbol_folders = [f for f in nested_source_dir.iterdir() if f.is_dir()]
+                            for symbol_folder in symbol_folders:
+                                # Store source information with original source name
+                                folder_info = {
+                                    'path': symbol_folder,
+                                    'source': nested_source_dir.name  # Use the actual source (e.g., 'binance')
+                                }
+                                mtf_symbol_folders.append(folder_info)
+                else:
+                    # Normal two-level structure: source/symbol/
+                    symbol_folders = [f for f in source_dir.iterdir() if f.is_dir()]
+                    for symbol_folder in symbol_folders:
+                        # Store source information in a dictionary
+                        folder_info = {
+                            'path': symbol_folder,
+                            'source': source_dir.name
+                        }
+                        mtf_symbol_folders.append(folder_info)
             
             if not mtf_symbol_folders:
                 print(f"{Fore.RED}❌ No MTF symbol folders found")
@@ -1713,12 +1738,22 @@ class DataLoadingMenu(BaseMenu):
                         folder_size_mb = folder_size / (1024 * 1024)
                         total_size += folder_size_mb
                         
-                        # Create unique key that includes source
-                        symbol_key = f"{symbol_name}_{source_name}"
+                        # Create unique key that includes source and path to avoid conflicts
+                        # For gaps_fixed data, include the full path to make it unique
+                        if 'gaps_fixed' in str(symbol_folder):
+                            symbol_key = f"{symbol_name}_{source_name}_gaps_fixed"
+                        else:
+                            symbol_key = f"{symbol_name}_{source_name}"
+                        
+                        # Determine folder name for display
+                        folder_name = 'original'
+                        if 'gaps_fixed' in str(symbol_folder):
+                            folder_name = 'gaps_fixed'
                         
                         mtf_info[symbol_key] = {
                             'symbol': metadata.get('symbol', symbol_name),
                             'source': source_name,
+                            'folder_name': folder_name,
                             'main_timeframe': metadata.get('main_timeframe', 'M1'),
                             'timeframes': metadata.get('timeframes', []),
                             'total_rows': metadata.get('total_rows', 0),
@@ -1740,9 +1775,9 @@ class DataLoadingMenu(BaseMenu):
             
             # Display MTF structures table
             print(f"\n{Fore.GREEN}🎯 Available MTF Structures ({len(mtf_info)}):")
-            print(f"{Fore.CYAN}{'─'*110}")
-            print(f"{Fore.WHITE}{'Symbol':<12} {'Source':<10} {'Size (MB)':<10} {'Files':<6} {'Main TF':<8} {'Timeframes':<20} {'Rows':<12} {'Created':<12}")
-            print(f"{Fore.CYAN}{'─'*110}")
+            print(f"{Fore.CYAN}{'─'*120}")
+            print(f"{Fore.WHITE}{'Symbol':<12} {'Folder':<12} {'Source':<10} {'Size (MB)':<10} {'Files':<6} {'Main TF':<8} {'Timeframes':<20} {'Rows':<12} {'Created':<12}")
+            print(f"{Fore.CYAN}{'─'*120}")
             
             for symbol_key, info in mtf_info.items():
                 timeframes_str = ', '.join(info['timeframes'][:3])
@@ -1751,9 +1786,9 @@ class DataLoadingMenu(BaseMenu):
                 
                 created_date = info['created_at'][:10] if info['created_at'] != 'Unknown' else 'Unknown'
                 
-                print(f"{Fore.WHITE}{info['symbol']:<12} {info['source']:<10} {info['size_mb']:<10.1f} {info['file_count']:<6} {info['main_timeframe']:<8} {timeframes_str:<20} {info['total_rows']:<12,} {created_date:<12}")
+                print(f"{Fore.WHITE}{info['symbol']:<12} {info['folder_name']:<12} {info['source']:<10} {info['size_mb']:<10.1f} {info['file_count']:<6} {info['main_timeframe']:<8} {timeframes_str:<20} {info['total_rows']:<12,} {created_date:<12}")
             
-            print(f"{Fore.CYAN}{'─'*110}")
+            print(f"{Fore.CYAN}{'─'*120}")
             print(f"{Fore.YELLOW}Total: {len(mtf_info)} MTF structures, {total_size:.1f} MB")
             
             # Get symbol choice from user - show only symbol names without source
@@ -1826,7 +1861,9 @@ class DataLoadingMenu(BaseMenu):
                     'main_data_shape': selected_mtf_info['main_data_shape'],
                     'cross_timeframes': selected_mtf_info['cross_timeframes'],
                     'created_at': selected_mtf_info['created_at'],
-                    'size_mb': selected_mtf_info['size_mb']
+                    'size_mb': selected_mtf_info['size_mb'],
+                    'data_path': selected_mtf_info['folder_path'],  # Add the actual path
+                    'data_type': 'mtf_structure'  # Mark as MTF structure
                 }
                 
                 # Set loaded data in global state
@@ -1866,7 +1903,14 @@ class DataLoadingMenu(BaseMenu):
             
             # Load main data using the correct path with source
             source = mtf_info.get('source', 'unknown')
-            mtf_dir = Path("data/cleaned_data/mtf_structures") / source / symbol.lower()
+            folder_name = mtf_info.get('folder_name', 'original')
+            
+            # Build correct path based on folder type
+            if folder_name == 'gaps_fixed':
+                mtf_dir = Path("data/cleaned_data/mtf_structures") / "gaps_fixed" / source / symbol.lower()
+            else:
+                mtf_dir = Path("data/cleaned_data/mtf_structures") / source / symbol.lower()
+            
             main_file = mtf_dir / f"{symbol.lower()}_main_{mtf_info['main_timeframe'].lower()}.parquet"
             
             if not main_file.exists():
