@@ -217,9 +217,12 @@ class TestCleaningProcedures:
         zero_issues = self.cleaner.detect_zeros(data)
         fixed_data = self.cleaner.fix_issues(data, 'zeros', zero_issues)
         
-        # Zeros should be replaced with NaN
-        assert fixed_data['value1'].isnull().sum() == 1
-        assert fixed_data['value2'].isnull().sum() == 1
+        # Zeros should be replaced and interpolated, so no NaN should remain
+        assert fixed_data['value1'].isnull().sum() == 0
+        assert fixed_data['value2'].isnull().sum() == 0
+        # Original zeros should be replaced with interpolated values
+        assert fixed_data['value1'].iloc[2] != 0  # Original zero at index 2
+        assert fixed_data['value2'].iloc[1] != 0.0  # Original zero at index 1
     
     def test_fix_negative(self):
         """Test fixing negative values."""
@@ -231,9 +234,12 @@ class TestCleaningProcedures:
         negative_issues = self.cleaner.detect_negative(data)
         fixed_data = self.cleaner.fix_issues(data, 'negative', negative_issues)
         
-        # Negative values should be replaced with NaN
-        assert fixed_data['value1'].isnull().sum() == 1
-        assert fixed_data['value2'].isnull().sum() == 1
+        # Negative values should be replaced and interpolated, so no NaN should remain
+        assert fixed_data['value1'].isnull().sum() == 0
+        assert fixed_data['value2'].isnull().sum() == 0
+        # Original negative values should be replaced with interpolated values
+        assert fixed_data['value1'].iloc[2] >= 0  # Original -1 at index 2
+        assert fixed_data['value2'].iloc[1] >= 0  # Original -2.2 at index 1
     
     def test_fix_infinity(self):
         """Test fixing infinity values."""
@@ -245,9 +251,12 @@ class TestCleaningProcedures:
         infinity_issues = self.cleaner.detect_infinity(data)
         fixed_data = self.cleaner.fix_issues(data, 'infinity', infinity_issues)
         
-        # Infinity values should be replaced with NaN
-        assert fixed_data['value1'].isnull().sum() == 1
-        assert fixed_data['value2'].isnull().sum() == 1
+        # Infinity values should be replaced and interpolated, so no NaN should remain
+        assert fixed_data['value1'].isnull().sum() == 0
+        assert fixed_data['value2'].isnull().sum() == 0
+        # Original infinity values should be replaced with interpolated values
+        assert not np.isinf(fixed_data['value1'].iloc[2])  # Original inf at index 2
+        assert not np.isinf(fixed_data['value2'].iloc[1])  # Original -inf at index 1
     
     def test_fix_outliers(self):
         """Test fixing outliers."""
@@ -263,8 +272,10 @@ class TestCleaningProcedures:
         outliers = self.cleaner.detect_outliers(data)
         fixed_data = self.cleaner.fix_issues(data, 'outliers', outliers)
         
-        # Some outliers should be replaced with NaN
-        assert fixed_data['value'].isnull().sum() > 0
+        # Outliers should be replaced and interpolated, so no NaN should remain
+        assert fixed_data['value'].isnull().sum() == 0
+        # The data should be different from original (outliers replaced)
+        assert not np.array_equal(fixed_data['value'].values, data['value'].values)
     
     def test_find_datetime_columns(self):
         """Test finding datetime columns."""

@@ -54,11 +54,11 @@ class TestDataValidator:
     def test_parse_csv_converted_filename(self):
         """Test CSV converted filename parsing."""
         metadata = {}
-        self.validator._parse_csv_converted_filename("GBPUSD_PERIOD_MN1.parquet", metadata)
+        self.validator._parse_csv_converted_filename("CSVExport_GBPUSD_PERIOD_MN1.parquet", metadata)
         
         assert metadata['symbol'] == "GBPUSD"
         assert metadata['timeframe'] == "MN1"
-        assert metadata['source'] == "csv_converted"
+        assert metadata['source'] == "CSVExport"
     
     def test_parse_raw_parquet_filename(self):
         """Test raw parquet filename parsing."""
