@@ -123,11 +123,15 @@ class TestDataConversion:
     
     def test_convert_data_empty_cross_timeframes(self):
         """Test data conversion with empty cross timeframes."""
+        # Create metadata with empty cross_timeframes
+        empty_metadata = self.metadata.copy()
+        empty_metadata['cross_timeframes'] = []
+        
         raw_data = {
             'status': 'success',
             'main_data': self.sample_data,
             'cross_timeframes': [],
-            'metadata': self.metadata
+            'metadata': empty_metadata
         }
         
         converted_data = self.eda_menu._convert_data_for_gaps_analysis(raw_data)
