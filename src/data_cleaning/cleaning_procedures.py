@@ -107,7 +107,15 @@ class CleaningProcedures:
             total_indices = len(duplicate_indices)
             
             for i, idx in enumerate(duplicate_indices):
-                row_hash = hash(tuple(data.loc[idx].values))
+                # Convert row to hashable format
+                row_values = data.loc[idx].values
+                if isinstance(row_values, np.ndarray):
+                    row_values = row_values.tolist()
+                
+                # Convert all values to strings for hashing to avoid unhashable types
+                row_str = str(tuple(str(v) for v in row_values))
+                row_hash = hash(row_str)
+                
                 if row_hash not in duplicate_groups:
                     duplicate_groups[row_hash] = []
                 duplicate_groups[row_hash].append(idx)
