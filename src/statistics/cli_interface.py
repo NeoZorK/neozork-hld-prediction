@@ -17,6 +17,7 @@ import os
 from pathlib import Path
 from typing import Optional, Dict, Any, List
 import logging
+from .color_utils import ColorUtils
 
 
 class StatisticsCLI:
@@ -460,7 +461,7 @@ Examples:
             True if user confirms, False otherwise
         """
         print("\n" + "=" * 80)
-        print("ANALYSIS CONFIGURATION")
+        print(ColorUtils.blue("ANALYSIS CONFIGURATION"))
         print("=" * 80)
         
         # File processing mode
@@ -478,21 +479,21 @@ Examples:
         analysis_options = config['analysis_options']
         print("\n📊 Analysis Options:")
         if analysis_options['descriptive']:
-            print("  ✅ Descriptive Statistics")
+            print(f"  {ColorUtils.green('✅ Descriptive Statistics')}")
         if analysis_options['distribution']:
-            print("  ✅ Distribution Analysis")
+            print(f"  {ColorUtils.green('✅ Distribution Analysis')}")
         if analysis_options['transform']:
-            print("  ✅ Data Transformation")
+            print(f"  {ColorUtils.green('✅ Data Transformation')}")
         
         # Processing options
         processing_options = config['processing_options']
         print("\n⚙️  Processing Options:")
         if processing_options['auto']:
-            print("  ✅ Auto mode (non-interactive)")
+            print(f"  {ColorUtils.green('✅ Auto mode (non-interactive)')}")
         if processing_options['recursive']:
-            print("  ✅ Recursive directory search")
+            print(f"  {ColorUtils.green('✅ Recursive directory search')}")
         if processing_options['verbose']:
-            print("  ✅ Verbose logging")
+            print(f"  {ColorUtils.green('✅ Verbose logging')}")
         
         # Output directory
         if config['output_directory']:

@@ -16,6 +16,7 @@ import numpy as np
 from typing import Dict, Any, List, Optional, Union
 from scipy import stats
 import logging
+from .color_utils import ColorUtils
 
 
 class DescriptiveStatistics:
@@ -232,7 +233,7 @@ class DescriptiveStatistics:
             # Range
             range_val = float(np.max(col_data) - np.min(col_data))
             
-            # Interpret coefficient of variation
+            # Interpret coefficient of variation with color
             if np.isnan(cv):
                 cv_interpretation = "Cannot calculate (mean is zero)"
             elif cv < 15:

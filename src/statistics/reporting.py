@@ -19,6 +19,7 @@ from datetime import datetime
 import os
 import json
 import logging
+from .color_utils import ColorUtils
 
 
 class StatisticsReporter:
@@ -152,8 +153,10 @@ class StatisticsReporter:
             section.append("-" * 30)
             for col, stats in dist_stats.items():
                 section.append(f"Column: {col}")
-                section.append(f"  Skewness: {stats.get('skewness', 0):.4f} - {stats.get('skewness_interpretation', 'N/A')}")
-                section.append(f"  Kurtosis: {stats.get('kurtosis', 0):.4f} - {stats.get('kurtosis_interpretation', 'N/A')}")
+                skewness = stats.get('skewness', 0)
+                kurtosis = stats.get('kurtosis', 0)
+                section.append(f"  Skewness: {ColorUtils.format_skewness(skewness)}")
+                section.append(f"  Kurtosis: {ColorUtils.format_kurtosis(kurtosis)}")
                 section.append("")
         
         # Variability statistics
@@ -164,7 +167,9 @@ class StatisticsReporter:
             for col, stats in var_stats.items():
                 section.append(f"Column: {col}")
                 section.append(f"  Variance: {stats.get('variance', 0):.4f}")
-                section.append(f"  Coefficient of Variation: {stats.get('coefficient_of_variation', 0):.2f}% - {stats.get('cv_interpretation', 'N/A')}")
+                cv = stats.get('coefficient_of_variation', 0)
+                cv_interpretation = stats.get('cv_interpretation', 'N/A')
+                section.append(f"  Coefficient of Variation: {ColorUtils.format_coefficient_variation(cv)} - {cv_interpretation}")
                 section.append(f"  IQR: {stats.get('iqr', 0):.4f}")
                 section.append(f"  Range: {stats.get('range', 0):.4f}")
                 section.append("")
@@ -178,7 +183,8 @@ class StatisticsReporter:
                 section.append(f"Column: {col}")
                 section.append(f"  Valid Data Points: {stats.get('valid_data_points', 0):,}")
                 section.append(f"  Missing Data Points: {stats.get('missing_data_points', 0):,}")
-                section.append(f"  Missing Percentage: {stats.get('missing_percentage', 0):.2f}%")
+                missing_pct = stats.get('missing_percentage', 0)
+                section.append(f"  Missing Percentage: {ColorUtils.format_missing_data(missing_pct)}")
                 section.append("")
         
         return "\n".join(section)
@@ -201,12 +207,16 @@ class StatisticsReporter:
                 # Shapiro-Wilk
                 sw = tests.get('shapiro_wilk', {})
                 if not np.isnan(sw.get('p_value', np.nan)):
-                    section.append(f"  Shapiro-Wilk: p={sw.get('p_value', 0):.4f} - {sw.get('interpretation', 'N/A')}")
+                    p_value = sw.get('p_value', 0)
+                    interpretation = sw.get('interpretation', 'N/A')
+                    section.append(f"  Shapiro-Wilk: p={ColorUtils.format_normality_p_value(p_value)} - {interpretation}")
                 
                 # D'Agostino-Pearson
                 dp = tests.get('dagostino_pearson', {})
                 if not np.isnan(dp.get('p_value', np.nan)):
-                    section.append(f"  D'Agostino-Pearson: p={dp.get('p_value', 0):.4f} - {dp.get('interpretation', 'N/A')}")
+                    p_value = dp.get('p_value', 0)
+                    interpretation = dp.get('interpretation', 'N/A')
+                    section.append(f"  D'Agostino-Pearson: p={ColorUtils.format_normality_p_value(p_value)} - {interpretation}")
                 
                 section.append("")
         
@@ -328,11 +338,11 @@ class StatisticsReporter:
             avg_missing = total_missing / len(missing_data) if missing_data else 0
             
             if avg_missing < 5:
-                section.append("✅ Missing Data: Excellent (< 5%)")
+                section.append(f"✅ Missing Data: {ColorUtils.green('Excellent (< 5%)')}")
             elif avg_missing < 15:
-                section.append("⚠️  Missing Data: Good (5-15%)")
+                section.append(f"⚠️  Missing Data: {ColorUtils.yellow('Good (5-15%)')}")
             else:
-                section.append("❌ Missing Data: Poor (> 15%)")
+                section.append(f"❌ Missing Data: {ColorUtils.red('Poor (> 15%)')}")
         
         # Check for normality
         if 'distribution' in analysis_results:
@@ -347,11 +357,11 @@ class StatisticsReporter:
             if total_columns > 0:
                 normal_ratio = normal_count / total_columns
                 if normal_ratio >= 0.75:
-                    section.append("✅ Normality: Most columns are approximately normal")
+                    section.append(f"✅ Normality: {ColorUtils.green('Most columns are approximately normal')}")
                 elif normal_ratio >= 0.5:
-                    section.append("⚠️  Normality: Mixed results - some columns need transformation")
+                    section.append(f"⚠️  Normality: {ColorUtils.yellow('Mixed results - some columns need transformation')}")
                 else:
-                    section.append("❌ Normality: Most columns are not normal - transformation recommended")
+                    section.append(f"❌ Normality: {ColorUtils.red('Most columns are not normal - transformation recommended')}")
         
         # Transformation recommendations
         if 'distribution' in analysis_results:
@@ -427,7 +437,7 @@ class StatisticsReporter:
             analysis_options: Analysis options selected
         """
         print("\n" + "=" * 80)
-        print("🚀 STARTING STATISTICAL ANALYSIS")
+        print(ColorUtils.blue("🚀 STARTING STATISTICAL ANALYSIS"))
         print("=" * 80)
         print(f"📁 File: {file_info.get('filename', 'Unknown')}")
         print(f"📂 Source: {file_info.get('source', 'Unknown')}")
@@ -438,11 +448,11 @@ class StatisticsReporter:
         
         print("\n📊 Analysis Options:")
         if analysis_options.get('descriptive', False):
-            print("  ✅ Descriptive Statistics")
+            print(f"  {ColorUtils.green('✅ Descriptive Statistics')}")
         if analysis_options.get('distribution', False):
-            print("  ✅ Distribution Analysis")
+            print(f"  {ColorUtils.green('✅ Distribution Analysis')}")
         if analysis_options.get('transform', False):
-            print("  ✅ Data Transformation")
+            print(f"  {ColorUtils.green('✅ Data Transformation')}")
         
         print("=" * 80)
     
@@ -455,7 +465,7 @@ class StatisticsReporter:
             processing_time: Time taken for analysis
         """
         print("\n" + "=" * 80)
-        print("✅ ANALYSIS COMPLETED SUCCESSFULLY")
+        print(ColorUtils.green("✅ ANALYSIS COMPLETED SUCCESSFULLY"))
         print("=" * 80)
         print(f"📁 File: {file_info.get('filename', 'Unknown')}")
         print(f"⏱️  Processing Time: {processing_time:.2f} seconds")
@@ -470,11 +480,11 @@ class StatisticsReporter:
             file_info: Optional file metadata information
         """
         print("\n" + "=" * 80)
-        print("❌ ANALYSIS ERROR")
+        print(ColorUtils.red("❌ ANALYSIS ERROR"))
         print("=" * 80)
         if file_info:
             print(f"📁 File: {file_info.get('filename', 'Unknown')}")
-        print(f"💥 Error: {error_message}")
+        print(f"💥 Error: {ColorUtils.red(error_message)}")
         print("=" * 80)
     
     def display_warning(self, warning_message: str):
@@ -484,7 +494,7 @@ class StatisticsReporter:
         Args:
             warning_message: Warning message to display
         """
-        print(f"\n⚠️  WARNING: {warning_message}")
+        print(f"\n⚠️  WARNING: {ColorUtils.yellow(warning_message)}")
     
     def display_info(self, info_message: str):
         """
@@ -493,4 +503,4 @@ class StatisticsReporter:
         Args:
             info_message: Information message to display
         """
-        print(f"\nℹ️  INFO: {info_message}")
+        print(f"\nℹ️  INFO: {ColorUtils.blue(info_message)}")
