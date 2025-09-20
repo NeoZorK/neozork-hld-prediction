@@ -610,7 +610,6 @@ class EDAMenu(BaseMenu):
             # Get main data and cross timeframes
             main_data = data['main_data']
             metadata = data.get('metadata', {})
-            cross_timeframes_data = data.get('cross_timeframes', {})  # This should be a dict with data
             cross_timeframes_list = metadata.get('cross_timeframes', [])  # This is a list of names
             
             # Create gaps analysis structure
@@ -622,23 +621,25 @@ class EDAMenu(BaseMenu):
                 converted_data[main_tf] = main_data
                 print_debug(f"Added main timeframe {main_tf}: {main_data.shape}")
             
-            # Add cross timeframes data
-            for tf in cross_timeframes_list:
-                if tf in cross_timeframes_data:
-                    # Data is already loaded in memory
-                    converted_data[tf] = cross_timeframes_data[tf]
-                    print_debug(f"Added cross timeframe {tf}: {cross_timeframes_data[tf].shape}")
-                else:
-                    # Try to load cross timeframe data from disk
-                    try:
-                        cross_data = self._load_cross_timeframe_data(metadata.get('symbol', 'UNKNOWN'), tf, metadata.get('source', 'unknown'))
-                        if cross_data is not None:
-                            converted_data[tf] = cross_data
-                            print_debug(f"Loaded cross timeframe {tf} from disk: {cross_data.shape}")
-                        else:
-                            print_debug(f"Could not load cross timeframe {tf} from disk")
-                    except Exception as e:
-                        print_debug(f"Error loading cross timeframe {tf}: {e}")
+            # Add cross timeframes data only if list is not empty
+            if cross_timeframes_list:
+                for tf in cross_timeframes_list:
+                    # Check if timeframe data is directly in the data dict
+                    if tf in data and isinstance(data[tf], pd.DataFrame):
+                        # Data is already loaded in memory
+                        converted_data[tf] = data[tf]
+                        print_debug(f"Added cross timeframe {tf}: {data[tf].shape}")
+                    else:
+                        # Try to load cross timeframe data from disk
+                        try:
+                            cross_data = self._load_cross_timeframe_data(metadata.get('symbol', 'UNKNOWN'), tf, metadata.get('source', 'unknown'))
+                            if cross_data is not None:
+                                converted_data[tf] = cross_data
+                                print_debug(f"Loaded cross timeframe {tf} from disk: {cross_data.shape}")
+                            else:
+                                print_debug(f"Could not load cross timeframe {tf} from disk")
+                        except Exception as e:
+                            print_debug(f"Error loading cross timeframe {tf}: {e}")
             
             # Add metadata
             converted_data['_metadata'] = metadata
