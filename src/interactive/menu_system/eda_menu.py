@@ -115,39 +115,320 @@ class EDAMenu(BaseMenu):
     
     def _analyze_duplicates(self):
         """Analyze duplicates."""
-        print(f"\n{Fore.YELLOW}🔄 Analyzing Duplicates...")
-        print(f"{Fore.CYAN}This feature will be implemented in the next phase...")
-        time.sleep(2)
+        try:
+            print(f"\n{Fore.YELLOW}🔄 Analyzing Duplicates...")
+            print(f"{Fore.CYAN}{'─'*50}")
+            
+            # Get loaded data
+            mtf_data = self._get_loaded_data()
+            if not mtf_data:
+                print(f"{Fore.RED}❌ No data loaded in memory!")
+                print(f"{Fore.YELLOW}💡 Please first load data using 'Load Data -> 4.Cleaned Data'")
+                input(f"\n{Fore.CYAN}Press Enter to continue...")
+                return
+            
+            # Initialize cleaning procedures
+            from src.data_cleaning.cleaning_procedures import CleaningProcedures
+            cleaner = CleaningProcedures()
+            
+            # Analyze duplicates across all timeframes
+            total_duplicates = 0
+            timeframe_results = {}
+            
+            print(f"{Fore.WHITE}Analyzing duplicates across all timeframes...")
+            
+            for timeframe, data in mtf_data.items():
+                if isinstance(data, pd.DataFrame) and not timeframe.startswith('_'):
+                    print(f"  🔍 Analyzing {timeframe}...")
+                    duplicates = cleaner.detect_duplicates(data)
+                    
+                    if duplicates:
+                        total_count = sum(dup['count'] for dup in duplicates)
+                        timeframe_results[timeframe] = {
+                            'duplicates': duplicates,
+                            'total_count': total_count,
+                            'rows': len(data)
+                        }
+                        total_duplicates += total_count
+                        print(f"    Found {total_count} duplicate rows")
+                    else:
+                        print(f"    No duplicates found")
+            
+            # Display results
+            self._display_duplicates_results(timeframe_results, total_duplicates)
+            
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Error in duplicates analysis: {e}")
+            import traceback
+            traceback.print_exc()
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
     
     def _analyze_nan(self):
         """Analyze NaN values."""
-        print(f"\n{Fore.YELLOW}❓ Analyzing NaN Values...")
-        print(f"{Fore.CYAN}This feature will be implemented in the next phase...")
-        time.sleep(2)
+        try:
+            print(f"\n{Fore.YELLOW}❓ Analyzing NaN Values...")
+            print(f"{Fore.CYAN}{'─'*50}")
+            
+            # Get loaded data
+            mtf_data = self._get_loaded_data()
+            if not mtf_data:
+                print(f"{Fore.RED}❌ No data loaded in memory!")
+                print(f"{Fore.YELLOW}💡 Please first load data using 'Load Data -> 4.Cleaned Data'")
+                input(f"\n{Fore.CYAN}Press Enter to continue...")
+                return
+            
+            # Initialize cleaning procedures
+            from src.data_cleaning.cleaning_procedures import CleaningProcedures
+            cleaner = CleaningProcedures()
+            
+            # Analyze NaN values across all timeframes
+            total_nan_issues = 0
+            timeframe_results = {}
+            
+            print(f"{Fore.WHITE}Analyzing NaN values across all timeframes...")
+            
+            for timeframe, data in mtf_data.items():
+                if isinstance(data, pd.DataFrame) and not timeframe.startswith('_'):
+                    print(f"  🔍 Analyzing {timeframe}...")
+                    nan_issues = cleaner.detect_nan(data)
+                    
+                    if nan_issues:
+                        total_count = sum(issue['count'] for issue in nan_issues)
+                        timeframe_results[timeframe] = {
+                            'nan_issues': nan_issues,
+                            'total_count': total_count,
+                            'rows': len(data)
+                        }
+                        total_nan_issues += total_count
+                        print(f"    Found {total_count} NaN values")
+                    else:
+                        print(f"    No NaN values found")
+            
+            # Display results
+            self._display_nan_results(timeframe_results, total_nan_issues)
+            
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Error in NaN analysis: {e}")
+            import traceback
+            traceback.print_exc()
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
     
     def _analyze_zeros(self):
         """Analyze zero values."""
-        print(f"\n{Fore.YELLOW}0️⃣ Analyzing Zero Values...")
-        print(f"{Fore.CYAN}This feature will be implemented in the next phase...")
-        time.sleep(2)
+        try:
+            print(f"\n{Fore.YELLOW}0️⃣ Analyzing Zero Values...")
+            print(f"{Fore.CYAN}{'─'*50}")
+            
+            # Get loaded data
+            mtf_data = self._get_loaded_data()
+            if not mtf_data:
+                print(f"{Fore.RED}❌ No data loaded in memory!")
+                print(f"{Fore.YELLOW}💡 Please first load data using 'Load Data -> 4.Cleaned Data'")
+                input(f"\n{Fore.CYAN}Press Enter to continue...")
+                return
+            
+            # Initialize cleaning procedures
+            from src.data_cleaning.cleaning_procedures import CleaningProcedures
+            cleaner = CleaningProcedures()
+            
+            # Analyze zero values across all timeframes
+            total_zero_issues = 0
+            timeframe_results = {}
+            
+            print(f"{Fore.WHITE}Analyzing zero values across all timeframes...")
+            
+            for timeframe, data in mtf_data.items():
+                if isinstance(data, pd.DataFrame) and not timeframe.startswith('_'):
+                    print(f"  🔍 Analyzing {timeframe}...")
+                    zero_issues = cleaner.detect_zeros(data)
+                    
+                    if zero_issues:
+                        total_count = sum(issue['count'] for issue in zero_issues)
+                        timeframe_results[timeframe] = {
+                            'zero_issues': zero_issues,
+                            'total_count': total_count,
+                            'rows': len(data)
+                        }
+                        total_zero_issues += total_count
+                        print(f"    Found {total_count} zero values")
+                    else:
+                        print(f"    No zero values found")
+            
+            # Display results
+            self._display_zeros_results(timeframe_results, total_zero_issues)
+            
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Error in zero values analysis: {e}")
+            import traceback
+            traceback.print_exc()
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
     
     def _analyze_negatives(self):
         """Analyze negative values."""
-        print(f"\n{Fore.YELLOW}➖ Analyzing Negative Values...")
-        print(f"{Fore.CYAN}This feature will be implemented in the next phase...")
-        time.sleep(2)
+        try:
+            print(f"\n{Fore.YELLOW}➖ Analyzing Negative Values...")
+            print(f"{Fore.CYAN}{'─'*50}")
+            
+            # Get loaded data
+            mtf_data = self._get_loaded_data()
+            if not mtf_data:
+                print(f"{Fore.RED}❌ No data loaded in memory!")
+                print(f"{Fore.YELLOW}💡 Please first load data using 'Load Data -> 4.Cleaned Data'")
+                input(f"\n{Fore.CYAN}Press Enter to continue...")
+                return
+            
+            # Initialize cleaning procedures
+            from src.data_cleaning.cleaning_procedures import CleaningProcedures
+            cleaner = CleaningProcedures()
+            
+            # Analyze negative values across all timeframes
+            total_negative_issues = 0
+            timeframe_results = {}
+            
+            print(f"{Fore.WHITE}Analyzing negative values across all timeframes...")
+            
+            for timeframe, data in mtf_data.items():
+                if isinstance(data, pd.DataFrame) and not timeframe.startswith('_'):
+                    print(f"  🔍 Analyzing {timeframe}...")
+                    negative_issues = cleaner.detect_negative(data)
+                    
+                    if negative_issues:
+                        total_count = sum(issue['count'] for issue in negative_issues)
+                        timeframe_results[timeframe] = {
+                            'negative_issues': negative_issues,
+                            'total_count': total_count,
+                            'rows': len(data)
+                        }
+                        total_negative_issues += total_count
+                        print(f"    Found {total_count} negative values")
+                    else:
+                        print(f"    No negative values found")
+            
+            # Display results
+            self._display_negatives_results(timeframe_results, total_negative_issues)
+            
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Error in negative values analysis: {e}")
+            import traceback
+            traceback.print_exc()
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
     
     def _analyze_infinity(self):
         """Analyze infinity values."""
-        print(f"\n{Fore.YELLOW}♾️ Analyzing Infinity Values...")
-        print(f"{Fore.CYAN}This feature will be implemented in the next phase...")
-        time.sleep(2)
+        try:
+            print(f"\n{Fore.YELLOW}♾️ Analyzing Infinity Values...")
+            print(f"{Fore.CYAN}{'─'*50}")
+            
+            # Get loaded data
+            mtf_data = self._get_loaded_data()
+            if not mtf_data:
+                print(f"{Fore.RED}❌ No data loaded in memory!")
+                print(f"{Fore.YELLOW}💡 Please first load data using 'Load Data -> 4.Cleaned Data'")
+                input(f"\n{Fore.CYAN}Press Enter to continue...")
+                return
+            
+            # Initialize cleaning procedures
+            from src.data_cleaning.cleaning_procedures import CleaningProcedures
+            cleaner = CleaningProcedures()
+            
+            # Analyze infinity values across all timeframes
+            total_infinity_issues = 0
+            timeframe_results = {}
+            
+            print(f"{Fore.WHITE}Analyzing infinity values across all timeframes...")
+            
+            for timeframe, data in mtf_data.items():
+                if isinstance(data, pd.DataFrame) and not timeframe.startswith('_'):
+                    print(f"  🔍 Analyzing {timeframe}...")
+                    infinity_issues = cleaner.detect_infinity(data)
+                    
+                    if infinity_issues:
+                        total_count = sum(issue['count'] for issue in infinity_issues)
+                        timeframe_results[timeframe] = {
+                            'infinity_issues': infinity_issues,
+                            'total_count': total_count,
+                            'rows': len(data)
+                        }
+                        total_infinity_issues += total_count
+                        print(f"    Found {total_count} infinity values")
+                    else:
+                        print(f"    No infinity values found")
+            
+            # Display results
+            self._display_infinity_results(timeframe_results, total_infinity_issues)
+            
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Error in infinity values analysis: {e}")
+            import traceback
+            traceback.print_exc()
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
     
     def _analyze_outliers(self):
         """Analyze outliers."""
-        print(f"\n{Fore.YELLOW}📊 Analyzing Outliers...")
-        print(f"{Fore.CYAN}This feature will be implemented in the next phase...")
-        time.sleep(2)
+        try:
+            print(f"\n{Fore.YELLOW}📊 Analyzing Outliers...")
+            print(f"{Fore.CYAN}{'─'*50}")
+            
+            # Get loaded data
+            mtf_data = self._get_loaded_data()
+            if not mtf_data:
+                print(f"{Fore.RED}❌ No data loaded in memory!")
+                print(f"{Fore.YELLOW}💡 Please first load data using 'Load Data -> 4.Cleaned Data'")
+                input(f"\n{Fore.CYAN}Press Enter to continue...")
+                return
+            
+            # Initialize cleaning procedures
+            from src.data_cleaning.cleaning_procedures import CleaningProcedures
+            cleaner = CleaningProcedures()
+            
+            # Analyze outliers across all timeframes
+            total_outlier_issues = 0
+            timeframe_results = {}
+            
+            print(f"{Fore.WHITE}Analyzing outliers across all timeframes...")
+            
+            for timeframe, data in mtf_data.items():
+                if isinstance(data, pd.DataFrame) and not timeframe.startswith('_'):
+                    print(f"  🔍 Analyzing {timeframe}...")
+                    outlier_issues = cleaner.detect_outliers(data)
+                    
+                    if outlier_issues:
+                        # Calculate total outliers across all methods
+                        total_count = 0
+                        for outlier_info in outlier_issues:
+                            for method, data_info in outlier_info['methods'].items():
+                                total_count += data_info['count']
+                        
+                        timeframe_results[timeframe] = {
+                            'outlier_issues': outlier_issues,
+                            'total_count': total_count,
+                            'rows': len(data)
+                        }
+                        total_outlier_issues += total_count
+                        print(f"    Found {total_count} outliers")
+                    else:
+                        print(f"    No outliers found")
+            
+            # Display results
+            self._display_outliers_results(timeframe_results, total_outlier_issues)
+            
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Error in outliers analysis: {e}")
+            import traceback
+            traceback.print_exc()
+            input(f"\n{Fore.CYAN}Press Enter to continue...")
     
     def _analyze_basic_stats(self):
         """Analyze basic statistics."""
@@ -691,3 +972,209 @@ class EDAMenu(BaseMenu):
         except Exception as e:
             print_debug(f"Error loading cross timeframe data: {e}")
             return None
+    
+    def _display_duplicates_results(self, timeframe_results: Dict[str, Any], total_duplicates: int):
+        """Display duplicates analysis results."""
+        try:
+            print(f"\n{Fore.GREEN}✅ Duplicates Analysis Results")
+            print(f"{Fore.CYAN}{'─'*50}")
+            
+            if total_duplicates == 0:
+                print(f"{Fore.GREEN}🎉 No duplicates found across all timeframes!")
+                return
+            
+            print(f"{Fore.WHITE}Overall Statistics:")
+            print(f"  • Total duplicate rows: {total_duplicates:,}")
+            print(f"  • Timeframes with duplicates: {len(timeframe_results)}")
+            
+            # Show per-timeframe results
+            if timeframe_results:
+                print(f"\n{Fore.WHITE}Per-Timeframe Results:")
+                for timeframe, result in timeframe_results.items():
+                    duplicates = result['duplicates']
+                    total_count = result['total_count']
+                    rows = result['rows']
+                    percentage = (total_count / rows) * 100
+                    
+                    print(f"  • {timeframe}: {total_count:,} duplicates ({percentage:.2f}% of {rows:,} rows)")
+                    
+                    # Show sample duplicate groups
+                    for i, dup in enumerate(duplicates[:3]):  # Show first 3 groups
+                        print(f"    Group {i+1}: {dup['count']} identical rows")
+                        if i == 2 and len(duplicates) > 3:
+                            print(f"    ... and {len(duplicates) - 3} more groups")
+                            break
+            
+        except Exception as e:
+            print(f"{Fore.RED}❌ Error displaying duplicates results: {e}")
+    
+    def _display_nan_results(self, timeframe_results: Dict[str, Any], total_nan_issues: int):
+        """Display NaN analysis results."""
+        try:
+            print(f"\n{Fore.GREEN}✅ NaN Values Analysis Results")
+            print(f"{Fore.CYAN}{'─'*50}")
+            
+            if total_nan_issues == 0:
+                print(f"{Fore.GREEN}🎉 No NaN values found across all timeframes!")
+                return
+            
+            print(f"{Fore.WHITE}Overall Statistics:")
+            print(f"  • Total NaN values: {total_nan_issues:,}")
+            print(f"  • Timeframes with NaN: {len(timeframe_results)}")
+            
+            # Show per-timeframe results
+            if timeframe_results:
+                print(f"\n{Fore.WHITE}Per-Timeframe Results:")
+                for timeframe, result in timeframe_results.items():
+                    nan_issues = result['nan_issues']
+                    total_count = result['total_count']
+                    rows = result['rows']
+                    percentage = (total_count / rows) * 100
+                    
+                    print(f"  • {timeframe}: {total_count:,} NaN values ({percentage:.2f}% of {rows:,} rows)")
+                    
+                    # Show per-column breakdown
+                    for issue in nan_issues:
+                        col_percentage = issue['percentage']
+                        print(f"    - {issue['column']}: {issue['count']:,} NaN ({col_percentage:.2f}%)")
+            
+        except Exception as e:
+            print(f"{Fore.RED}❌ Error displaying NaN results: {e}")
+    
+    def _display_zeros_results(self, timeframe_results: Dict[str, Any], total_zero_issues: int):
+        """Display zero values analysis results."""
+        try:
+            print(f"\n{Fore.GREEN}✅ Zero Values Analysis Results")
+            print(f"{Fore.CYAN}{'─'*50}")
+            
+            if total_zero_issues == 0:
+                print(f"{Fore.GREEN}🎉 No zero values found across all timeframes!")
+                return
+            
+            print(f"{Fore.WHITE}Overall Statistics:")
+            print(f"  • Total zero values: {total_zero_issues:,}")
+            print(f"  • Timeframes with zeros: {len(timeframe_results)}")
+            print(f"{Fore.YELLOW}⚠️  Note: Some financial data may legitimately contain zero values")
+            
+            # Show per-timeframe results
+            if timeframe_results:
+                print(f"\n{Fore.WHITE}Per-Timeframe Results:")
+                for timeframe, result in timeframe_results.items():
+                    zero_issues = result['zero_issues']
+                    total_count = result['total_count']
+                    rows = result['rows']
+                    percentage = (total_count / rows) * 100
+                    
+                    print(f"  • {timeframe}: {total_count:,} zero values ({percentage:.2f}% of {rows:,} rows)")
+                    
+                    # Show per-column breakdown
+                    for issue in zero_issues:
+                        col_percentage = issue['percentage']
+                        print(f"    - {issue['column']}: {issue['count']:,} zeros ({col_percentage:.2f}%)")
+            
+        except Exception as e:
+            print(f"{Fore.RED}❌ Error displaying zeros results: {e}")
+    
+    def _display_negatives_results(self, timeframe_results: Dict[str, Any], total_negative_issues: int):
+        """Display negative values analysis results."""
+        try:
+            print(f"\n{Fore.GREEN}✅ Negative Values Analysis Results")
+            print(f"{Fore.CYAN}{'─'*50}")
+            
+            if total_negative_issues == 0:
+                print(f"{Fore.GREEN}🎉 No negative values found across all timeframes!")
+                return
+            
+            print(f"{Fore.WHITE}Overall Statistics:")
+            print(f"  • Total negative values: {total_negative_issues:,}")
+            print(f"  • Timeframes with negatives: {len(timeframe_results)}")
+            print(f"{Fore.YELLOW}⚠️  Note: Some financial data may legitimately contain negative values (e.g., returns, changes)")
+            
+            # Show per-timeframe results
+            if timeframe_results:
+                print(f"\n{Fore.WHITE}Per-Timeframe Results:")
+                for timeframe, result in timeframe_results.items():
+                    negative_issues = result['negative_issues']
+                    total_count = result['total_count']
+                    rows = result['rows']
+                    percentage = (total_count / rows) * 100
+                    
+                    print(f"  • {timeframe}: {total_count:,} negative values ({percentage:.2f}% of {rows:,} rows)")
+                    
+                    # Show per-column breakdown
+                    for issue in negative_issues:
+                        col_percentage = issue['percentage']
+                        print(f"    - {issue['column']}: {issue['count']:,} negatives ({col_percentage:.2f}%)")
+            
+        except Exception as e:
+            print(f"{Fore.RED}❌ Error displaying negatives results: {e}")
+    
+    def _display_infinity_results(self, timeframe_results: Dict[str, Any], total_infinity_issues: int):
+        """Display infinity values analysis results."""
+        try:
+            print(f"\n{Fore.GREEN}✅ Infinity Values Analysis Results")
+            print(f"{Fore.CYAN}{'─'*50}")
+            
+            if total_infinity_issues == 0:
+                print(f"{Fore.GREEN}🎉 No infinity values found across all timeframes!")
+                return
+            
+            print(f"{Fore.WHITE}Overall Statistics:")
+            print(f"  • Total infinity values: {total_infinity_issues:,}")
+            print(f"  • Timeframes with infinity: {len(timeframe_results)}")
+            
+            # Show per-timeframe results
+            if timeframe_results:
+                print(f"\n{Fore.WHITE}Per-Timeframe Results:")
+                for timeframe, result in timeframe_results.items():
+                    infinity_issues = result['infinity_issues']
+                    total_count = result['total_count']
+                    rows = result['rows']
+                    percentage = (total_count / rows) * 100
+                    
+                    print(f"  • {timeframe}: {total_count:,} infinity values ({percentage:.2f}% of {rows:,} rows)")
+                    
+                    # Show per-column breakdown
+                    for issue in infinity_issues:
+                        col_percentage = issue['percentage']
+                        print(f"    - {issue['column']}: {issue['count']:,} infinity ({col_percentage:.2f}%)")
+            
+        except Exception as e:
+            print(f"{Fore.RED}❌ Error displaying infinity results: {e}")
+    
+    def _display_outliers_results(self, timeframe_results: Dict[str, Any], total_outlier_issues: int):
+        """Display outliers analysis results."""
+        try:
+            print(f"\n{Fore.GREEN}✅ Outliers Analysis Results")
+            print(f"{Fore.CYAN}{'─'*50}")
+            
+            if total_outlier_issues == 0:
+                print(f"{Fore.GREEN}🎉 No outliers found across all timeframes!")
+                return
+            
+            print(f"{Fore.WHITE}Overall Statistics:")
+            print(f"  • Total outliers: {total_outlier_issues:,}")
+            print(f"  • Timeframes with outliers: {len(timeframe_results)}")
+            
+            # Show per-timeframe results
+            if timeframe_results:
+                print(f"\n{Fore.WHITE}Per-Timeframe Results:")
+                for timeframe, result in timeframe_results.items():
+                    outlier_issues = result['outlier_issues']
+                    total_count = result['total_count']
+                    rows = result['rows']
+                    percentage = (total_count / rows) * 100
+                    
+                    print(f"  • {timeframe}: {total_count:,} outliers ({percentage:.2f}% of {rows:,} rows)")
+                    
+                    # Show per-column breakdown with methods
+                    for outlier_info in outlier_issues:
+                        col = outlier_info['column']
+                        print(f"    - {col}:")
+                        for method, data_info in outlier_info['methods'].items():
+                            method_count = data_info['count']
+                            if method_count > 0:
+                                print(f"      • {method}: {method_count:,} outliers")
+            
+        except Exception as e:
+            print(f"{Fore.RED}❌ Error displaying outliers results: {e}")

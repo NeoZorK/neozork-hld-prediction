@@ -2,5 +2,7 @@
 """
 Data Cleaning Tests Module.
 
-This module contains tests for data cleaning functionality.
+This module contains comprehensive unit tests for the data cleaning functionality.
 """
+
+__version__ = "1.0.0"
