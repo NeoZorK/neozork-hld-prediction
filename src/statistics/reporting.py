@@ -32,7 +32,8 @@ class StatisticsReporter:
     def generate_comprehensive_report(self, file_info: Dict[str, Any], 
                                     analysis_results: Dict[str, Any],
                                     output_directory: Optional[str] = None,
-                                    auto_mode: bool = False) -> str:
+                                    auto_mode: bool = False,
+                                    analysis_options: Dict[str, Any] = None) -> str:
         """
         Generate a comprehensive analysis report.
         
@@ -55,17 +56,17 @@ class StatisticsReporter:
         # Descriptive statistics
         if 'descriptive' in analysis_results:
             report_sections.append(self._generate_analysis_description("descriptive"))
-            report_sections.append(self._generate_descriptive_section(analysis_results['descriptive'], auto_mode))
+            report_sections.append(self._generate_descriptive_section(analysis_results['descriptive'], auto_mode, analysis_options))
         
         # Distribution analysis
         if 'distribution' in analysis_results:
             report_sections.append(self._generate_analysis_description("distribution"))
-            report_sections.append(self._generate_distribution_section(analysis_results['distribution'], auto_mode))
+            report_sections.append(self._generate_distribution_section(analysis_results['distribution'], auto_mode, analysis_options))
         
         # Data transformation
         if 'transformation' in analysis_results:
             report_sections.append(self._generate_analysis_description("transformation"))
-            report_sections.append(self._generate_transformation_section(analysis_results['transformation'], auto_mode))
+            report_sections.append(self._generate_transformation_section(analysis_results['transformation'], auto_mode, analysis_options))
         
         # Summary and recommendations
         report_sections.append(self._generate_summary_section(analysis_results))
@@ -407,8 +408,29 @@ class StatisticsReporter:
         
         return terms.get(term, {})
     
-    def _ask_subtype_question(self, subtype_name: str, auto_mode: bool = False) -> bool:
+    def _ask_subtype_question(self, subtype_name: str, auto_mode: bool = False, analysis_options: Dict[str, Any] = None) -> bool:
         """Ask user if they want to run specific analysis subtype."""
+        # Check if specific flag is set
+        if analysis_options:
+            subtype_flags = {
+                'BASIC STATISTICS': 'basic',
+                'DISTRIBUTION CHARACTERISTICS': 'distribution_chars',
+                'VARIABILITY ANALYSIS': 'variability',
+                'MISSING DATA ANALYSIS': 'missing',
+                'NORMALITY TESTS': 'norm',
+                'SKEWNESS ANALYSIS': 'skewness',
+                'KURTOSIS ANALYSIS': 'kurtosis',
+                'TRANSFORMATION RECOMMENDATIONS': None,  # Always run
+                'TRANSFORMATION RESULTS': 'transformation_results',
+                'TRANSFORMATION COMPARISON': 'transformation_comparison'
+            }
+            
+            flag_name = subtype_flags.get(subtype_name)
+            if flag_name and analysis_options.get(flag_name, False):
+                return True
+            elif flag_name is None:  # TRANSFORMATION RECOMMENDATIONS - always run
+                return True
+        
         if auto_mode:
             print(f"\n{ColorUtils.blue(f'Run {subtype_name}? (y/n):')} y")
             return True
@@ -663,7 +685,7 @@ class StatisticsReporter:
         
         return "\n".join(section)
     
-    def _generate_descriptive_section(self, descriptive_results: Dict[str, Any], auto_mode: bool = False) -> str:
+    def _generate_descriptive_section(self, descriptive_results: Dict[str, Any], auto_mode: bool = False, analysis_options: Dict[str, Any] = None) -> str:
         """Generate descriptive statistics section."""
         section = []
         section.append("📊 DESCRIPTIVE STATISTICS")
@@ -679,7 +701,7 @@ class StatisticsReporter:
         
         # Basic statistics
         basic_stats = descriptive_results.get('basic_stats', {})
-        if basic_stats and self._ask_subtype_question("BASIC STATISTICS", auto_mode):
+        if basic_stats and self._ask_subtype_question("BASIC STATISTICS", auto_mode, analysis_options):
             section.append("BASIC STATISTICS")
             section.append("-" * 30)
             for col, stats in basic_stats.items():
@@ -697,7 +719,7 @@ class StatisticsReporter:
         
         # Distribution statistics
         dist_stats = descriptive_results.get('distribution_stats', {})
-        if dist_stats and self._ask_subtype_question("DISTRIBUTION CHARACTERISTICS", auto_mode):
+        if dist_stats and self._ask_subtype_question("DISTRIBUTION CHARACTERISTICS", auto_mode, analysis_options):
             section.append("DISTRIBUTION CHARACTERISTICS")
             section.append("-" * 30)
             for col, stats in dist_stats.items():
@@ -713,7 +735,7 @@ class StatisticsReporter:
         
         # Variability statistics
         var_stats = descriptive_results.get('variability_stats', {})
-        if var_stats and self._ask_subtype_question("VARIABILITY ANALYSIS", auto_mode):
+        if var_stats and self._ask_subtype_question("VARIABILITY ANALYSIS", auto_mode, analysis_options):
             section.append("VARIABILITY ANALYSIS")
             section.append("-" * 30)
             for col, stats in var_stats.items():
@@ -731,7 +753,7 @@ class StatisticsReporter:
         
         # Missing data analysis
         missing_data = descriptive_results.get('missing_data', {})
-        if missing_data and self._ask_subtype_question("MISSING DATA ANALYSIS", auto_mode):
+        if missing_data and self._ask_subtype_question("MISSING DATA ANALYSIS", auto_mode, analysis_options):
             section.append("MISSING DATA ANALYSIS")
             section.append("-" * 30)
             for col, stats in missing_data.items():
@@ -747,7 +769,7 @@ class StatisticsReporter:
         
         return "\n".join(section)
     
-    def _generate_distribution_section(self, distribution_results: Dict[str, Any], auto_mode: bool = False) -> str:
+    def _generate_distribution_section(self, distribution_results: Dict[str, Any], auto_mode: bool = False, analysis_options: Dict[str, Any] = None) -> str:
         """Generate distribution analysis section."""
         section = []
         section.append("📈 DISTRIBUTION ANALYSIS")
@@ -755,7 +777,7 @@ class StatisticsReporter:
         
         # Normality tests
         normality_tests = distribution_results.get('normality_tests', {})
-        if normality_tests and self._ask_subtype_question("NORMALITY TESTS", auto_mode):
+        if normality_tests and self._ask_subtype_question("NORMALITY TESTS", auto_mode, analysis_options):
             section.append("NORMALITY TESTS")
             section.append("-" * 30)
             for col, tests in normality_tests.items():
@@ -784,7 +806,7 @@ class StatisticsReporter:
         
         # Skewness analysis
         skewness_analysis = distribution_results.get('skewness_analysis', {})
-        if skewness_analysis and self._ask_subtype_question("SKEWNESS ANALYSIS", auto_mode):
+        if skewness_analysis and self._ask_subtype_question("SKEWNESS ANALYSIS", auto_mode, analysis_options):
             section.append("SKEWNESS ANALYSIS")
             section.append("-" * 30)
             for col, analysis in skewness_analysis.items():
@@ -804,7 +826,7 @@ class StatisticsReporter:
         
         # Kurtosis analysis
         kurtosis_analysis = distribution_results.get('kurtosis_analysis', {})
-        if kurtosis_analysis and self._ask_subtype_question("KURTOSIS ANALYSIS", auto_mode):
+        if kurtosis_analysis and self._ask_subtype_question("KURTOSIS ANALYSIS", auto_mode, analysis_options):
             section.append("KURTOSIS ANALYSIS")
             section.append("-" * 30)
             for col, analysis in kurtosis_analysis.items():
@@ -824,7 +846,7 @@ class StatisticsReporter:
         
         # Transformation recommendations
         recommendations = distribution_results.get('distribution_recommendations', {})
-        if recommendations and self._ask_subtype_question("TRANSFORMATION RECOMMENDATIONS", auto_mode):
+        if recommendations and self._ask_subtype_question("TRANSFORMATION RECOMMENDATIONS", auto_mode, analysis_options):
             section.append("TRANSFORMATION RECOMMENDATIONS")
             section.append("-" * 30)
             for col, rec in recommendations.items():
@@ -842,7 +864,7 @@ class StatisticsReporter:
         
         return "\n".join(section)
     
-    def _generate_transformation_section(self, transformation_results: Dict[str, Any], auto_mode: bool = False) -> str:
+    def _generate_transformation_section(self, transformation_results: Dict[str, Any], auto_mode: bool = False, analysis_options: Dict[str, Any] = None) -> str:
         """Generate data transformation section."""
         section = []
         section.append("🔄 DATA TRANSFORMATION ANALYSIS")
@@ -850,7 +872,7 @@ class StatisticsReporter:
         
         # Transformation details
         transformation_details = transformation_results.get('transformation_details', {})
-        if transformation_details and self._ask_subtype_question("TRANSFORMATION RESULTS", auto_mode):
+        if transformation_details and self._ask_subtype_question("TRANSFORMATION RESULTS", auto_mode, analysis_options):
             section.append("TRANSFORMATION RESULTS")
             section.append("-" * 30)
             for col, details in transformation_details.items():
@@ -882,7 +904,7 @@ class StatisticsReporter:
         
         # Comparison results
         comparison = transformation_results.get('comparison', {})
-        if comparison and self._ask_subtype_question("TRANSFORMATION COMPARISON", auto_mode):
+        if comparison and self._ask_subtype_question("TRANSFORMATION COMPARISON", auto_mode, analysis_options):
             section.append("TRANSFORMATION COMPARISON")
             section.append("-" * 30)
             for col, col_comparison in comparison.items():

@@ -149,6 +149,62 @@ Examples:
             help="🔄 Perform data transformation analysis and recommendations"
         )
         
+        # Detailed analysis options
+        detailed_group = parser.add_argument_group('Detailed Analysis Options')
+        detailed_group.add_argument(
+            "--basic",
+            action="store_true",
+            help="📊 Basic statistics (mean, median, std, min, max)"
+        )
+        
+        detailed_group.add_argument(
+            "--distribution-chars",
+            action="store_true",
+            help="📈 Distribution characteristics (skewness, kurtosis)"
+        )
+        
+        detailed_group.add_argument(
+            "--variability",
+            action="store_true",
+            help="📊 Variability analysis (variance, coefficient of variation, IQR, range)"
+        )
+        
+        detailed_group.add_argument(
+            "--missing",
+            action="store_true",
+            help="❓ Missing data analysis"
+        )
+        
+        detailed_group.add_argument(
+            "--norm",
+            action="store_true",
+            help="📊 Normality tests (Shapiro-Wilk, D'Agostino-Pearson)"
+        )
+        
+        detailed_group.add_argument(
+            "--skewness",
+            action="store_true",
+            help="📈 Skewness analysis"
+        )
+        
+        detailed_group.add_argument(
+            "--kurtosis",
+            action="store_true",
+            help="📊 Kurtosis analysis"
+        )
+        
+        detailed_group.add_argument(
+            "--transformation-results",
+            action="store_true",
+            help="🔄 Transformation results"
+        )
+        
+        detailed_group.add_argument(
+            "--transformation-comparison",
+            action="store_true",
+            help="📊 Transformation comparison"
+        )
+        
         # Processing options
         processing_group = parser.add_argument_group('Processing Options')
         processing_group.add_argument(
@@ -217,8 +273,17 @@ Examples:
         }
         
         # Validate that at least one analysis option is selected
-        if not any(config['analysis_options'].values()):
-            print("❌ Error: At least one analysis option must be selected (--descriptive, --distribution, --transform)")
+        analysis_options = config['analysis_options']
+        main_options = ['descriptive', 'distribution', 'transform']
+        detailed_options = ['basic', 'distribution_chars', 'variability', 'missing', 'norm', 'skewness', 'kurtosis', 'transformation_results', 'transformation_comparison']
+        
+        has_main_option = any(analysis_options[option] for option in main_options)
+        has_detailed_option = any(analysis_options[option] for option in detailed_options)
+        
+        if not has_main_option and not has_detailed_option:
+            print("❌ Error: At least one analysis option must be selected")
+            print("   Main options: --descriptive, --distribution, --transform")
+            print("   Detailed options: --basic, --distribution-chars, --variability, --missing, --norm, --skewness, --kurtosis, --transformation-results, --transformation-comparison")
             sys.exit(1)
         
         # Validate file processing mode
@@ -312,7 +377,17 @@ Examples:
         return {
             'descriptive': getattr(args, 'descriptive', False),
             'distribution': getattr(args, 'distribution', False),
-            'transform': getattr(args, 'transform', False)
+            'transform': getattr(args, 'transform', False),
+            # Detailed analysis options
+            'basic': getattr(args, 'basic', False),
+            'distribution_chars': getattr(args, 'distribution_chars', False),
+            'variability': getattr(args, 'variability', False),
+            'missing': getattr(args, 'missing', False),
+            'norm': getattr(args, 'norm', False),
+            'skewness': getattr(args, 'skewness', False),
+            'kurtosis': getattr(args, 'kurtosis', False),
+            'transformation_results': getattr(args, 'transformation_results', False),
+            'transformation_comparison': getattr(args, 'transformation_comparison', False)
         }
     
     def _get_processing_options(self, args: argparse.Namespace) -> Dict[str, bool]:
@@ -484,6 +559,32 @@ Examples:
             print(f"  {ColorUtils.green('✅ Distribution Analysis')}")
         if analysis_options['transform']:
             print(f"  {ColorUtils.green('✅ Data Transformation')}")
+        
+        # Detailed analysis options
+        detailed_options = []
+        if analysis_options['basic']:
+            detailed_options.append("Basic Statistics")
+        if analysis_options['distribution_chars']:
+            detailed_options.append("Distribution Characteristics")
+        if analysis_options['variability']:
+            detailed_options.append("Variability Analysis")
+        if analysis_options['missing']:
+            detailed_options.append("Missing Data Analysis")
+        if analysis_options['norm']:
+            detailed_options.append("Normality Tests")
+        if analysis_options['skewness']:
+            detailed_options.append("Skewness Analysis")
+        if analysis_options['kurtosis']:
+            detailed_options.append("Kurtosis Analysis")
+        if analysis_options['transformation_results']:
+            detailed_options.append("Transformation Results")
+        if analysis_options['transformation_comparison']:
+            detailed_options.append("Transformation Comparison")
+        
+        if detailed_options:
+            print("\n🔍 Detailed Analysis Options:")
+            for option in detailed_options:
+                print(f"  {ColorUtils.green('✅ ' + option)}")
         
         # Processing options
         processing_options = config['processing_options']
