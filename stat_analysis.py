@@ -62,6 +62,7 @@ from src.statistics.file_operations import StatisticsFileOperations
 from src.statistics.descriptive_stats import DescriptiveStatistics
 from src.statistics.distribution_analysis import DistributionAnalysis
 from src.statistics.data_transformation import DataTransformation
+from src.statistics.enhanced_data_transformation import EnhancedDataTransformation
 from src.statistics.cli_interface import StatisticsCLI
 from src.statistics.reporting import StatisticsReporter
 from src.statistics.color_utils import ColorUtils
@@ -82,6 +83,7 @@ class StatisticalAnalyzer:
         self.descriptive_stats = DescriptiveStatistics()
         self.distribution_analysis = DistributionAnalysis()
         self.data_transformation = DataTransformation()
+        self.enhanced_transformation = EnhancedDataTransformation()
         self.cli = StatisticsCLI()
         self.reporter = StatisticsReporter()
         self.auto_mode = auto_mode
@@ -194,16 +196,23 @@ class StatisticalAnalyzer:
                 transformations = self._prepare_transformations(recommendations, data)
                 
                 if transformations:
-                    print("\n🎯 Selecting optimal transformations for each column...")
+                    print("\n🎯 Selecting optimal enhanced transformations for each column...")
                     # Select the best transformation for each column
                     optimal_transformations = self._select_optimal_transformations(data, transformations, numeric_columns)
                     
                     # Convert to single transformation per column format
                     single_transformations = {col: [transform] for col, transform in optimal_transformations.items()}
                     
-                    analysis_results['transformation'] = self.data_transformation.transform_data(
-                        data, single_transformations, numeric_columns
-                    )
+                    # Use enhanced transformation if available, otherwise fallback to standard
+                    try:
+                        analysis_results['transformation'] = self.enhanced_transformation.transform_data_enhanced(
+                            data, single_transformations, numeric_columns
+                        )
+                    except:
+                        # Fallback to standard transformation
+                        analysis_results['transformation'] = self.data_transformation.transform_data(
+                            data, single_transformations, numeric_columns
+                        )
                     
                     # Add comparison results
                     analysis_results['transformation']['comparison'] = self.data_transformation.compare_transformations(
@@ -266,7 +275,7 @@ class StatisticalAnalyzer:
     
     def _select_optimal_transformations(self, data: pd.DataFrame, transformations: Dict[str, List[str]], 
                                       numeric_columns: List[str]) -> Dict[str, str]:
-        """Select the best transformation for each column based on comprehensive scoring."""
+        """Select the best transformation for each column using enhanced methods."""
         optimal_transformations = {}
         
         for col in numeric_columns:
@@ -277,20 +286,35 @@ class StatisticalAnalyzer:
             if len(col_data) == 0:
                 continue
             
-            print(f"\n🔍 Testing transformations for column: {col}")
-            print("-" * 50)
+            print(f"\n🔍 Testing enhanced transformations for column: {col}")
+            print("-" * 60)
             
             best_transformation = None
             best_score = -float('inf')
-            transformation_scores = {}
+            
+            # Get enhanced transformation recommendations for this column
+            enhanced_recommendations = self.enhanced_transformation.get_enhanced_transformation_recommendations(
+                data[[col]], [col]
+            )
+            
+            # Combine standard and enhanced transformations
+            all_transformations = list(set(transformations[col] + enhanced_recommendations.get(col, [])))
             
             # Test each transformation method
-            for transform_type in transformations[col]:
+            for transform_type in all_transformations:
                 try:
-                    # Apply transformation
-                    transformed_col, details = self.data_transformation._apply_transformation(
-                        col_data, transform_type, col
-                    )
+                    # Try enhanced transformation first
+                    if transform_type in ['enhanced_log', 'robust_log', 'robust_box_cox', 'adaptive_box_cox', 
+                                       'power_transform', 'quantile_transform', 'log_returns', 'winsorized_log', 
+                                       'financial_normalize']:
+                        transformed_col, details = self.enhanced_transformation._apply_enhanced_transformation(
+                            col_data, transform_type, col
+                        )
+                    else:
+                        # Fallback to standard transformation
+                        transformed_col, details = self.data_transformation._apply_transformation(
+                            col_data, transform_type, col
+                        )
                     
                     if transformed_col is None or len(transformed_col) == 0:
                         print(f"  {transform_type}: Failed - No data returned")
@@ -301,9 +325,12 @@ class StatisticalAnalyzer:
                         print(f"  {transform_type}: Failed - {details.get('error', 'Unknown error')}")
                         continue
                     
-                    # Calculate comprehensive score
-                    score = self._calculate_transformation_score(col_data, transformed_col, transform_type)
-                    transformation_scores[transform_type] = score
+                    # Use improvement score from enhanced transformation if available
+                    if 'improvement_score' in details:
+                        score = details['improvement_score']
+                    else:
+                        # Calculate standard score
+                        score = self._calculate_transformation_score(col_data, transformed_col, transform_type)
                     
                     print(f"  {transform_type}: Score = {score:.3f}")
                     
@@ -316,53 +343,10 @@ class StatisticalAnalyzer:
                     continue
             
             if best_transformation:
-                # Verify that the best transformation actually works
-                try:
-                    transformed_col, details = self.data_transformation._apply_transformation(
-                        col_data, best_transformation, col
-                    )
-                    if transformed_col is not None and len(transformed_col) > 0 and details.get('success', True):
-                        optimal_transformations[col] = best_transformation
-                        print(f"  ✅ Best: {best_transformation} (Score: {best_score:.3f})")
-                    else:
-                        print(f"  ❌ Best transformation {best_transformation} failed during verification")
-                        best_transformation = None
-                except Exception as e:
-                    print(f"  ❌ Best transformation {best_transformation} failed during verification: {str(e)}")
-                    best_transformation = None
-            
-            if not best_transformation:
-                # Try fallback transformations for problematic columns
-                print(f"  ⚠️ No optimal transformation found, trying fallback...")
-                # Check if data has negative values to choose appropriate fallback
-                has_negatives = (col_data < 0).any()
-                has_zeros = (col_data == 0).any()
-                
-                if has_negatives or has_zeros:
-                    # Use Yeo-Johnson for data with negatives/zeros
-                    fallback_transformations = ['yeo_johnson', 'log', 'sqrt']
-                else:
-                    # Use standard transformations for positive data
-                    fallback_transformations = ['log', 'sqrt', 'yeo_johnson']
-                
-                for fallback in fallback_transformations:
-                    if fallback in transformations[col]:
-                        try:
-                            transformed_col, details = self.data_transformation._apply_transformation(
-                                col_data, fallback, col
-                            )
-                            if transformed_col is not None and len(transformed_col) > 0 and details.get('success', True):
-                                optimal_transformations[col] = fallback
-                                print(f"  ✅ Fallback: {fallback} (Score: 0.500)")
-                                break
-                        except:
-                            continue
-                
-                if col not in optimal_transformations:
-                    print(f"  ❌ No suitable transformation found for {col}")
-                    # Add detailed explanation for problematic columns
-                    self._explain_transformation_failure(col, col_data, transformations[col])
-                    continue
+                optimal_transformations[col] = best_transformation
+                print(f"  ✅ Best: {best_transformation} (Score: {best_score:.3f})")
+            else:
+                print(f"  ❌ No suitable transformation found for {col}")
         
         return optimal_transformations
     
