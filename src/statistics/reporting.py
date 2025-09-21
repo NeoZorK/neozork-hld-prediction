@@ -53,18 +53,24 @@ class StatisticsReporter:
         
         # Descriptive statistics
         if 'descriptive' in analysis_results:
+            report_sections.append(self._generate_analysis_description("descriptive"))
             report_sections.append(self._generate_descriptive_section(analysis_results['descriptive']))
         
         # Distribution analysis
         if 'distribution' in analysis_results:
+            report_sections.append(self._generate_analysis_description("distribution"))
             report_sections.append(self._generate_distribution_section(analysis_results['distribution']))
         
         # Data transformation
         if 'transformation' in analysis_results:
+            report_sections.append(self._generate_analysis_description("transformation"))
             report_sections.append(self._generate_transformation_section(analysis_results['transformation']))
         
         # Summary and recommendations
         report_sections.append(self._generate_summary_section(analysis_results))
+        
+        # Statistical glossary
+        report_sections.append(self._generate_statistical_glossary())
         
         # Combine all sections
         full_report = "\n\n".join(report_sections)
@@ -91,6 +97,311 @@ class StatisticsReporter:
         header.append("=" * 100)
         
         return "\n".join(header)
+    
+    def _generate_analysis_description(self, analysis_type: str) -> str:
+        """Generate description for analysis type."""
+        descriptions = {
+            "descriptive": {
+                "title": "📊 DESCRIPTIVE STATISTICS - OVERVIEW",
+                "description": [
+                    "Descriptive statistics provide a summary of the main characteristics of your dataset.",
+                    "This analysis helps you understand the basic properties of your data without making",
+                    "inferences about the larger population.",
+                    "",
+                    "What it includes:",
+                    "• Basic statistics (mean, median, standard deviation, min, max)",
+                    "• Distribution characteristics (skewness, kurtosis)",
+                    "• Variability measures (variance, coefficient of variation, IQR, range)",
+                    "• Missing data analysis",
+                    "",
+                    "How to use:",
+                    "• Use this to get a quick overview of your data quality and distribution",
+                    "• Identify potential data issues (missing values, extreme values)",
+                    "• Understand the central tendency and spread of your data",
+                    "• Determine if data transformation might be needed"
+                ]
+            },
+            "distribution": {
+                "title": "📈 DISTRIBUTION ANALYSIS - OVERVIEW",
+                "description": [
+                    "Distribution analysis examines how your data is distributed and whether it follows",
+                    "a normal (Gaussian) distribution. This is crucial for many statistical methods.",
+                    "",
+                    "What it includes:",
+                    "• Normality tests (Shapiro-Wilk, D'Agostino-Pearson)",
+                    "• Skewness analysis (measure of asymmetry)",
+                    "• Kurtosis analysis (measure of tail heaviness)",
+                    "• Transformation recommendations",
+                    "",
+                    "Why it matters:",
+                    "• Many statistical tests assume normal distribution",
+                    "• Helps determine if data transformation is needed",
+                    "• Identifies outliers and extreme values",
+                    "• Guides model selection and parameter estimation",
+                    "",
+                    "How to interpret:",
+                    "• Green = Good/Normal distribution",
+                    "• Yellow = Moderate deviation, consider transformation",
+                    "• Red = Strong deviation, transformation recommended"
+                ]
+            },
+            "transformation": {
+                "title": "🔄 DATA TRANSFORMATION ANALYSIS - OVERVIEW",
+                "description": [
+                    "Data transformation applies mathematical functions to make your data more suitable",
+                    "for statistical analysis, especially when data doesn't follow a normal distribution.",
+                    "",
+                    "What it includes:",
+                    "• Applies recommended transformations (log, Box-Cox, etc.)",
+                    "• Compares original vs transformed data",
+                    "• Measures improvement in distribution characteristics",
+                    "• Provides transformation details and parameters",
+                    "",
+                    "Common transformations:",
+                    "• Log transformation: Reduces right skewness, stabilizes variance",
+                    "• Box-Cox transformation: Automatically finds optimal transformation",
+                    "• Square root: Mild transformation for count data",
+                    "• Square: For left-skewed data",
+                    "",
+                    "Benefits:",
+                    "• Makes data more normally distributed",
+                    "• Improves model performance",
+                    "• Reduces impact of outliers",
+                    "• Enables use of parametric statistical tests"
+                ]
+            }
+        }
+        
+        if analysis_type not in descriptions:
+            return ""
+        
+        desc = descriptions[analysis_type]
+        section = []
+        section.append("=" * 100)
+        section.append(desc["title"])
+        section.append("=" * 100)
+        section.extend(desc["description"])
+        section.append("=" * 100)
+        
+        return "\n".join(section)
+    
+    def _generate_statistical_glossary(self) -> str:
+        """Generate glossary of statistical terms."""
+        glossary = []
+        glossary.append("📚 STATISTICAL TERMS GLOSSARY")
+        glossary.append("=" * 100)
+        
+        terms = {
+            "Skewness": {
+                "definition": "Measures the asymmetry of data distribution around the mean",
+                "interpretation": [
+                    "• 0 = Perfectly symmetric (normal distribution)",
+                    "• Positive = Right tail is longer (right-skewed)",
+                    "• Negative = Left tail is longer (left-skewed)",
+                    "• |skewness| < 0.5 = Approximately symmetric",
+                    "• |skewness| 0.5-1.0 = Moderately skewed",
+                    "• |skewness| > 1.0 = Highly skewed"
+                ]
+            },
+            "Kurtosis": {
+                "definition": "Measures the 'tailedness' or heaviness of the distribution tails",
+                "interpretation": [
+                    "• 0 = Normal distribution (mesokurtic)",
+                    "• Positive = Heavy tails, more extreme values (leptokurtic)",
+                    "• Negative = Light tails, fewer extreme values (platykurtic)",
+                    "• |kurtosis| < 0.5 = Approximately normal",
+                    "• |kurtosis| 0.5-1.0 = Slightly different from normal",
+                    "• |kurtosis| > 1.0 = Significantly different from normal"
+                ]
+            },
+            "Highly skewed (right-tailed)": {
+                "definition": "Data has a long right tail with most values clustered on the left",
+                "characteristics": [
+                    "• Mean > Median > Mode",
+                    "• Many small values, few very large values",
+                    "• Common in income, house prices, response times",
+                    "• May indicate log-normal distribution"
+                ]
+            },
+            "Approximately normal (mesokurtic)": {
+                "definition": "Data follows a bell-shaped curve with moderate tail thickness",
+                "characteristics": [
+                    "• Symmetric around the mean",
+                    "• 68% of data within 1 standard deviation",
+                    "• 95% of data within 2 standard deviations",
+                    "• Ideal for most statistical tests"
+                ]
+            },
+            "Heavy-tailed (leptokurtic)": {
+                "definition": "Distribution has fatter tails than normal, more extreme values",
+                "characteristics": [
+                    "• More outliers than normal distribution",
+                    "• Higher probability of extreme values",
+                    "• Common in financial returns, stock prices",
+                    "• May indicate risk or volatility"
+                ]
+            },
+            "Moderately skewed (right-tailed)": {
+                "definition": "Data shows moderate right skewness, not severe but noticeable",
+                "characteristics": [
+                    "• Somewhat asymmetric",
+                    "• May benefit from transformation",
+                    "• Still usable for many analyses",
+                    "• Consider log transformation"
+                ]
+            },
+            "Light-tailed (platykurtic)": {
+                "definition": "Distribution has thinner tails than normal, fewer extreme values",
+                "characteristics": [
+                    "• Fewer outliers than expected",
+                    "• Data more concentrated around mean",
+                    "• May indicate data quality issues",
+                    "• Consider investigating data collection"
+                ]
+            },
+            "Variance": {
+                "definition": "Average of squared differences from the mean",
+                "interpretation": [
+                    "• Measures data spread around the mean",
+                    "• Higher variance = more spread out data",
+                    "• Lower variance = more clustered data",
+                    "• Square root of variance = standard deviation"
+                ]
+            },
+            "Coefficient of Variation": {
+                "definition": "Standard deviation divided by mean, expressed as percentage",
+                "interpretation": [
+                    "• < 15% = Low variability (consistent data)",
+                    "• 15-35% = Moderate variability",
+                    "• > 35% = High variability (inconsistent data)",
+                    "• Useful for comparing variability across different scales"
+                ]
+            },
+            "High variability": {
+                "definition": "Data shows large spread or inconsistency",
+                "implications": [
+                    "• Data points are widely scattered",
+                    "• May indicate measurement errors",
+                    "• Could suggest multiple populations",
+                    "• Consider data cleaning or stratification"
+                ]
+            },
+            "IQR (Interquartile Range)": {
+                "definition": "Difference between 75th and 25th percentiles",
+                "interpretation": [
+                    "• Measures middle 50% of data spread",
+                    "• Less sensitive to outliers than range",
+                    "• Used to identify outliers (1.5 × IQR rule)",
+                    "• Robust measure of variability"
+                ]
+            },
+            "Range": {
+                "definition": "Difference between maximum and minimum values",
+                "interpretation": [
+                    "• Shows total spread of data",
+                    "• Sensitive to outliers",
+                    "• Simple but limited measure",
+                    "• Good for initial data exploration"
+                ]
+            },
+            "Shapiro-Wilk Test": {
+                "definition": "Statistical test for normality, especially good for small samples",
+                "interpretation": [
+                    "• p > 0.05 = Data appears normal",
+                    "• p ≤ 0.05 = Data does not appear normal",
+                    "• Most powerful for n < 50",
+                    "• Sensitive to outliers"
+                ]
+            },
+            "D'Agostino-Pearson Test": {
+                "definition": "Combines skewness and kurtosis to test normality",
+                "interpretation": [
+                    "• p > 0.05 = Data appears normal",
+                    "• p ≤ 0.05 = Data does not appear normal",
+                    "• Good for larger samples",
+                    "• Tests both skewness and kurtosis together"
+                ]
+            },
+            "Z-Score": {
+                "definition": "Number of standard deviations a value is from the mean",
+                "interpretation": [
+                    "• |Z| < 2 = Normal range",
+                    "• |Z| 2-3 = Unusual but not extreme",
+                    "• |Z| > 3 = Extreme outlier",
+                    "• Z = (value - mean) / standard deviation"
+                ]
+            },
+            "Severity": {
+                "definition": "Level of deviation from normal distribution",
+                "levels": [
+                    "• Low = Minor deviation, no action needed",
+                    "• Moderate = Noticeable deviation, consider transformation",
+                    "• Severe = Strong deviation, transformation recommended",
+                    "• Critical = Extreme deviation, immediate action needed"
+                ]
+            },
+            "Log Transformation": {
+                "definition": "Applies natural logarithm to data values",
+                "use_cases": [
+                    "• Reduces right skewness",
+                    "• Stabilizes variance",
+                    "• Good for multiplicative relationships",
+                    "• Cannot handle zero or negative values"
+                ]
+            },
+            "Box-Cox Transformation": {
+                "definition": "Power transformation that finds optimal lambda parameter",
+                "benefits": [
+                    "• Automatically finds best transformation",
+                    "• Handles zero and negative values (with shift)",
+                    "• Most versatile transformation",
+                    "• Can handle various distribution shapes"
+                ]
+            },
+            "Square Root Transformation": {
+                "definition": "Applies square root function to data values",
+                "use_cases": [
+                    "• Mild transformation for count data",
+                    "• Reduces right skewness moderately",
+                    "• Good for Poisson-like distributions",
+                    "• Cannot handle negative values"
+                ]
+            },
+            "Square Transformation": {
+                "definition": "Squares data values",
+                "use_cases": [
+                    "• For left-skewed data",
+                    "• Increases right skewness",
+                    "• Rarely used in practice",
+                    "• May indicate data quality issues"
+                ]
+            }
+        }
+        
+        for term, info in terms.items():
+            glossary.append(f"\n{ColorUtils.bold(term)}:")
+            glossary.append(f"  {info['definition']}")
+            if 'interpretation' in info:
+                glossary.append("  Interpretation:")
+                glossary.extend([f"    {item}" for item in info['interpretation']])
+            if 'characteristics' in info:
+                glossary.append("  Characteristics:")
+                glossary.extend([f"    {item}" for item in info['characteristics']])
+            if 'implications' in info:
+                glossary.append("  Implications:")
+                glossary.extend([f"    {item}" for item in info['implications']])
+            if 'levels' in info:
+                glossary.append("  Levels:")
+                glossary.extend([f"    {item}" for item in info['levels']])
+            if 'use_cases' in info:
+                glossary.append("  Use Cases:")
+                glossary.extend([f"    {item}" for item in info['use_cases']])
+            if 'benefits' in info:
+                glossary.append("  Benefits:")
+                glossary.extend([f"    {item}" for item in info['benefits']])
+        
+        glossary.append("\n" + "=" * 100)
+        return "\n".join(glossary)
     
     def _generate_file_info_section(self, file_info: Dict[str, Any]) -> str:
         """Generate file information section."""
