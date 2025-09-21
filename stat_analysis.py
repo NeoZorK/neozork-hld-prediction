@@ -762,31 +762,41 @@ class StatisticalAnalyzer:
             
             # Compare each transformed column with its original
             for col in original_numeric_columns:
+                print(f"\n🔍 Column: {col}")
+                print("-" * 30)
+                
                 if col not in transformation_details:
+                    print("  ❌ No transformation details found")
                     problematic_columns.append(col)
                     continue
                 
                 # Check if transformation actually failed
                 col_transformations = transformation_details[col]
                 if not col_transformations:
+                    print("  ❌ No transformations available")
                     problematic_columns.append(col)
                     continue
-                
-                col_transformations = transformation_details[col]
-                if not col_transformations:
-                    continue
-                
-                print(f"\n🔍 Column: {col}")
-                print("-" * 30)
                 
                 # Get original statistics
                 orig_skew = original_distribution['skewness_analysis'][col]['skewness']
                 orig_kurt = original_distribution['kurtosis_analysis'][col]['kurtosis']
                 orig_normality = original_distribution['normality_tests'][col]['overall_interpretation']
                 
+                # Check if any transformation was successful
+                successful_transformations = []
                 for transform_type, details in col_transformations.items():
-                    if not details.get('success', False):
-                        continue
+                    if details.get('success', False):
+                        successful_transformations.append((transform_type, details))
+                
+                if not successful_transformations:
+                    print("  ❌ All transformations failed")
+                    for transform_type, details in col_transformations.items():
+                        error_msg = details.get('error', 'Unknown error')
+                        print(f"    • {transform_type}: FAILED - {error_msg}")
+                    problematic_columns.append(col)
+                    continue
+                
+                for transform_type, details in successful_transformations:
                     
                     # Find the transformed column name
                     transformed_col_name = f"{col}_{transform_type}"
