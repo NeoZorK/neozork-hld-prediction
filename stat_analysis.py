@@ -766,8 +766,10 @@ class StatisticalAnalyzer:
                 print("-" * 30)
                 
                 if col not in transformation_details:
-                    print("  ❌ No transformation details found")
-                    problematic_columns.append(col)
+                    print("  ℹ️  No transformation needed")
+                    print("     • This field was identified as approximately normal")
+                    print("     • No transformation was recommended by distribution analysis")
+                    print("     • Data quality is acceptable for statistical analysis")
                     continue
                 
                 # Check if transformation actually failed
@@ -875,6 +877,21 @@ class StatisticalAnalyzer:
                 print(f"\nThe following columns could not be transformed:")
                 for col in problematic_columns:
                     print(f"  • {col}")
+                
+                # Separate columns that failed vs those that didn't need transformation
+                failed_columns = []
+                no_transform_needed = []
+                
+                for col in original_numeric_columns:
+                    if col not in transformation_details:
+                        no_transform_needed.append(col)
+                    elif col in problematic_columns:
+                        failed_columns.append(col)
+                
+                if no_transform_needed:
+                    print(f"\n📋 Note: The following columns did not need transformation:")
+                    for col in no_transform_needed:
+                        print(f"  • {col} - Data is approximately normal")
                 
                 print(f"\n🔍 COMMON CAUSES OF TRANSFORMATION FAILURES:")
                 print(f"  1. Missing Values:")
