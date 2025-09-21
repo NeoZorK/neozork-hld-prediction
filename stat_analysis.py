@@ -173,7 +173,7 @@ class StatisticalAnalyzer:
             # Get transformation recommendations
             if 'distribution' in analysis_results:
                 recommendations = analysis_results['distribution'].get('distribution_recommendations', {})
-                transformations = self._prepare_transformations(recommendations)
+                transformations = self._prepare_transformations(recommendations, data)
                 
                 if transformations:
                     print("\n🎯 Selecting optimal transformations for each column...")
@@ -219,7 +219,7 @@ class StatisticalAnalyzer:
         
         return valid_numeric_cols
     
-    def _prepare_transformations(self, recommendations: Dict[str, Any]) -> Dict[str, List[str]]:
+    def _prepare_transformations(self, recommendations: Dict[str, Any], data: pd.DataFrame = None) -> Dict[str, List[str]]:
         """Prepare transformation dictionary from recommendations."""
         transformations = {}
         
@@ -230,6 +230,19 @@ class StatisticalAnalyzer:
                 if recommended_transformations:
                     # Test all recommended transformations to find the best one
                     transformations[col] = recommended_transformations
+            else:
+                # For columns that don't need transformation, still try some basic ones
+                # if they have data quality issues - include yeo_johnson for mixed data
+                transformations[col] = ['log', 'sqrt', 'box_cox', 'yeo_johnson']
+        
+        # Add Yeo-Johnson for columns with negative values
+        if data is not None:
+            for col in transformations:
+                if col in data.columns:
+                    col_data = data[col].dropna()
+                    if len(col_data) > 0 and (col_data < 0).any():
+                        if 'yeo_johnson' not in transformations[col]:
+                            transformations[col].append('yeo_johnson')
         
         return transformations
     
@@ -303,7 +316,17 @@ class StatisticalAnalyzer:
             if not best_transformation:
                 # Try fallback transformations for problematic columns
                 print(f"  ⚠️ No optimal transformation found, trying fallback...")
-                fallback_transformations = ['log', 'sqrt']
+                # Check if data has negative values to choose appropriate fallback
+                has_negatives = (col_data < 0).any()
+                has_zeros = (col_data == 0).any()
+                
+                if has_negatives or has_zeros:
+                    # Use Yeo-Johnson for data with negatives/zeros
+                    fallback_transformations = ['yeo_johnson', 'log', 'sqrt']
+                else:
+                    # Use standard transformations for positive data
+                    fallback_transformations = ['log', 'sqrt', 'yeo_johnson']
+                
                 for fallback in fallback_transformations:
                     if fallback in transformations[col]:
                         try:
@@ -352,9 +375,10 @@ class StatisticalAnalyzer:
             print(f"       • Use forward/backward fill for time series")
             print(f"       • Use interpolation methods")
             print(f"    2. Alternative Transformations:")
-            print(f"       • Try log transformation on non-missing data")
+            print(f"       • Try Yeo-Johnson transformation (handles negatives/zeros)")
+            print(f"       • Use log transformation on non-missing data")
             print(f"       • Use sqrt transformation if data is non-negative")
-            print(f"       • Consider Yeo-Johnson transformation")
+            print(f"       • Consider Box-Cox with data shifting")
             print(f"    3. Data Cleaning:")
             print(f"       • Remove rows with missing values")
             print(f"       • Investigate why values are missing")
@@ -388,6 +412,7 @@ class StatisticalAnalyzer:
                 print(f"       • Use Yeo-Johnson transformation (handles zeros/negatives)")
                 print(f"       • Use Box-Cox with shift parameter")
                 print(f"       • Apply log(1 + x) transformation")
+                print(f"       • Try sqrt transformation for non-negative data")
         
         # Check for extreme values
         if len(valid_data) > 0:
@@ -867,6 +892,7 @@ class StatisticalAnalyzer:
                 print(f"     • Use Yeo-Johnson for mixed positive/negative data")
                 print(f"     • Try log(1 + x) for data with zeros")
                 print(f"     • Apply sqrt transformation for count-like data")
+                print(f"     • Use Box-Cox with data shifting for positive data")
                 
                 print(f"\n  3. Data Quality Investigation:")
                 print(f"     • Check data collection process")
