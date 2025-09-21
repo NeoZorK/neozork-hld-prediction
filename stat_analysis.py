@@ -976,8 +976,8 @@ class StatisticalAnalyzer:
                 
                 for transform_type, details in successful_transformations:
                     
-                    # Find the transformed column name
-                    transformed_col_name = f"{col}_{transform_type}"
+                    # Use the same column name as the original (transformed data replaces original)
+                    transformed_col_name = col
                     if transformed_col_name not in transformed_data.columns:
                         continue
                     
