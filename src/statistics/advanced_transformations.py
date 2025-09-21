@@ -254,17 +254,18 @@ class AdvancedTransformations:
             skew_penalty = 0
             kurt_penalty = 0
             
-            # Penalty if skewness gets worse
-            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
-                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            # Penalty if skewness gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_skew) > abs(original_skew):
+                skew_penalty = min(500, (abs(transformed_skew) - abs(original_skew)) * 100)  # Extreme penalty
+                
+            # Penalty if kurtosis gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_kurt) > abs(original_kurt):
+                kurt_penalty = min(1000, (abs(transformed_kurt) - abs(original_kurt)) * 200)  # Extreme penalty
             
-            # Penalty if kurtosis gets significantly worse
-            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
-                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
-            
-            # Calculate balanced score with penalties
-            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
-            balanced_score = max(-100, balanced_score)  # Cap at -100
+            # Calculate balanced score with penalties and bonuses
+            both_improved_bonus = 50 if skew_improvement > 0 and kurt_improvement > 0 else 0
+            balanced_score = (skew_improvement + kurt_improvement) / 2 + both_improved_bonus - skew_penalty - kurt_penalty
+            balanced_score = max(-200, balanced_score)  # Cap at -200 to allow for heavy penalties
             
             return transformed, {
                 'success': True,
@@ -334,17 +335,18 @@ class AdvancedTransformations:
             skew_penalty = 0
             kurt_penalty = 0
             
-            # Penalty if skewness gets worse
-            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
-                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            # Penalty if skewness gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_skew) > abs(original_skew):
+                skew_penalty = min(500, (abs(transformed_skew) - abs(original_skew)) * 100)  # Extreme penalty
+                
+            # Penalty if kurtosis gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_kurt) > abs(original_kurt):
+                kurt_penalty = min(1000, (abs(transformed_kurt) - abs(original_kurt)) * 200)  # Extreme penalty
             
-            # Penalty if kurtosis gets significantly worse
-            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
-                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
-            
-            # Calculate balanced score with penalties
-            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
-            balanced_score = max(-100, balanced_score)  # Cap at -100
+            # Calculate balanced score with penalties and bonuses
+            both_improved_bonus = 50 if skew_improvement > 0 and kurt_improvement > 0 else 0
+            balanced_score = (skew_improvement + kurt_improvement) / 2 + both_improved_bonus - skew_penalty - kurt_penalty
+            balanced_score = max(-200, balanced_score)  # Cap at -200 to allow for heavy penalties
             
             return transformed, {
                 'success': True,
@@ -393,17 +395,18 @@ class AdvancedTransformations:
             skew_penalty = 0
             kurt_penalty = 0
             
-            # Penalty if skewness gets worse
-            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
-                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            # Penalty if skewness gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_skew) > abs(original_skew):
+                skew_penalty = min(500, (abs(transformed_skew) - abs(original_skew)) * 100)  # Extreme penalty
+                
+            # Penalty if kurtosis gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_kurt) > abs(original_kurt):
+                kurt_penalty = min(1000, (abs(transformed_kurt) - abs(original_kurt)) * 200)  # Extreme penalty
             
-            # Penalty if kurtosis gets significantly worse
-            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
-                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
-            
-            # Calculate balanced score with penalties
-            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
-            balanced_score = max(-100, balanced_score)  # Cap at -100
+            # Calculate balanced score with penalties and bonuses
+            both_improved_bonus = 50 if skew_improvement > 0 and kurt_improvement > 0 else 0
+            balanced_score = (skew_improvement + kurt_improvement) / 2 + both_improved_bonus - skew_penalty - kurt_penalty
+            balanced_score = max(-200, balanced_score)  # Cap at -200 to allow for heavy penalties
             
             return transformed, {
                 'success': True,
@@ -468,17 +471,18 @@ class AdvancedTransformations:
             skew_penalty = 0
             kurt_penalty = 0
             
-            # Penalty if skewness gets worse
-            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
-                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            # Penalty if skewness gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_skew) > abs(original_skew):
+                skew_penalty = min(500, (abs(transformed_skew) - abs(original_skew)) * 100)  # Extreme penalty
+                
+            # Penalty if kurtosis gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_kurt) > abs(original_kurt):
+                kurt_penalty = min(1000, (abs(transformed_kurt) - abs(original_kurt)) * 200)  # Extreme penalty
             
-            # Penalty if kurtosis gets significantly worse
-            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
-                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
-            
-            # Calculate balanced score with penalties
-            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
-            balanced_score = max(-100, balanced_score)  # Cap at -100
+            # Calculate balanced score with penalties and bonuses
+            both_improved_bonus = 50 if skew_improvement > 0 and kurt_improvement > 0 else 0
+            balanced_score = (skew_improvement + kurt_improvement) / 2 + both_improved_bonus - skew_penalty - kurt_penalty
+            balanced_score = max(-200, balanced_score)  # Cap at -200 to allow for heavy penalties
             
             return transformed, {
                 'success': True,
@@ -539,17 +543,18 @@ class AdvancedTransformations:
             skew_penalty = 0
             kurt_penalty = 0
             
-            # Penalty if skewness gets worse
-            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
-                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            # Penalty if skewness gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_skew) > abs(original_skew):
+                skew_penalty = min(500, (abs(transformed_skew) - abs(original_skew)) * 100)  # Extreme penalty
+                
+            # Penalty if kurtosis gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_kurt) > abs(original_kurt):
+                kurt_penalty = min(1000, (abs(transformed_kurt) - abs(original_kurt)) * 200)  # Extreme penalty
             
-            # Penalty if kurtosis gets significantly worse
-            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
-                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
-            
-            # Calculate balanced score with penalties
-            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
-            balanced_score = max(-100, balanced_score)  # Cap at -100
+            # Calculate balanced score with penalties and bonuses
+            both_improved_bonus = 50 if skew_improvement > 0 and kurt_improvement > 0 else 0
+            balanced_score = (skew_improvement + kurt_improvement) / 2 + both_improved_bonus - skew_penalty - kurt_penalty
+            balanced_score = max(-200, balanced_score)  # Cap at -200 to allow for heavy penalties
             
             return transformed, {
                 'success': True,
@@ -596,17 +601,18 @@ class AdvancedTransformations:
             skew_penalty = 0
             kurt_penalty = 0
             
-            # Penalty if skewness gets worse
-            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
-                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            # Penalty if skewness gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_skew) > abs(original_skew):
+                skew_penalty = min(500, (abs(transformed_skew) - abs(original_skew)) * 100)  # Extreme penalty
+                
+            # Penalty if kurtosis gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_kurt) > abs(original_kurt):
+                kurt_penalty = min(1000, (abs(transformed_kurt) - abs(original_kurt)) * 200)  # Extreme penalty
             
-            # Penalty if kurtosis gets significantly worse
-            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
-                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
-            
-            # Calculate balanced score with penalties
-            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
-            balanced_score = max(-100, balanced_score)  # Cap at -100
+            # Calculate balanced score with penalties and bonuses
+            both_improved_bonus = 50 if skew_improvement > 0 and kurt_improvement > 0 else 0
+            balanced_score = (skew_improvement + kurt_improvement) / 2 + both_improved_bonus - skew_penalty - kurt_penalty
+            balanced_score = max(-200, balanced_score)  # Cap at -200 to allow for heavy penalties
             
             return log_returns, {
                 'success': True,
@@ -658,17 +664,18 @@ class AdvancedTransformations:
             skew_penalty = 0
             kurt_penalty = 0
             
-            # Penalty if skewness gets worse
-            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
-                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            # Penalty if skewness gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_skew) > abs(original_skew):
+                skew_penalty = min(500, (abs(transformed_skew) - abs(original_skew)) * 100)  # Extreme penalty
+                
+            # Penalty if kurtosis gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_kurt) > abs(original_kurt):
+                kurt_penalty = min(1000, (abs(transformed_kurt) - abs(original_kurt)) * 200)  # Extreme penalty
             
-            # Penalty if kurtosis gets significantly worse
-            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
-                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
-            
-            # Calculate balanced score with penalties
-            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
-            balanced_score = max(-100, balanced_score)  # Cap at -100
+            # Calculate balanced score with penalties and bonuses
+            both_improved_bonus = 50 if skew_improvement > 0 and kurt_improvement > 0 else 0
+            balanced_score = (skew_improvement + kurt_improvement) / 2 + both_improved_bonus - skew_penalty - kurt_penalty
+            balanced_score = max(-200, balanced_score)  # Cap at -200 to allow for heavy penalties
             
             return transformed, {
                 'success': True,
@@ -717,17 +724,18 @@ class AdvancedTransformations:
             skew_penalty = 0
             kurt_penalty = 0
             
-            # Penalty if skewness gets worse
-            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
-                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            # Penalty if skewness gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_skew) > abs(original_skew):
+                skew_penalty = min(500, (abs(transformed_skew) - abs(original_skew)) * 100)  # Extreme penalty
+                
+            # Penalty if kurtosis gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_kurt) > abs(original_kurt):
+                kurt_penalty = min(1000, (abs(transformed_kurt) - abs(original_kurt)) * 200)  # Extreme penalty
             
-            # Penalty if kurtosis gets significantly worse
-            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
-                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
-            
-            # Calculate balanced score with penalties
-            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
-            balanced_score = max(-100, balanced_score)  # Cap at -100
+            # Calculate balanced score with penalties and bonuses
+            both_improved_bonus = 50 if skew_improvement > 0 and kurt_improvement > 0 else 0
+            balanced_score = (skew_improvement + kurt_improvement) / 2 + both_improved_bonus - skew_penalty - kurt_penalty
+            balanced_score = max(-200, balanced_score)  # Cap at -200 to allow for heavy penalties
             
             return transformed, {
                 'success': True,
@@ -773,17 +781,18 @@ class AdvancedTransformations:
             skew_penalty = 0
             kurt_penalty = 0
             
-            # Penalty if skewness gets worse
-            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
-                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            # Penalty if skewness gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_skew) > abs(original_skew):
+                skew_penalty = min(500, (abs(transformed_skew) - abs(original_skew)) * 100)  # Extreme penalty
+                
+            # Penalty if kurtosis gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_kurt) > abs(original_kurt):
+                kurt_penalty = min(1000, (abs(transformed_kurt) - abs(original_kurt)) * 200)  # Extreme penalty
             
-            # Penalty if kurtosis gets significantly worse
-            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
-                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
-            
-            # Calculate balanced score with penalties
-            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
-            balanced_score = max(-100, balanced_score)  # Cap at -100
+            # Calculate balanced score with penalties and bonuses
+            both_improved_bonus = 50 if skew_improvement > 0 and kurt_improvement > 0 else 0
+            balanced_score = (skew_improvement + kurt_improvement) / 2 + both_improved_bonus - skew_penalty - kurt_penalty
+            balanced_score = max(-200, balanced_score)  # Cap at -200 to allow for heavy penalties
             
             return transformed, {
                 'success': True,
@@ -830,17 +839,18 @@ class AdvancedTransformations:
             skew_penalty = 0
             kurt_penalty = 0
             
-            # Penalty if skewness gets worse
-            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
-                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            # Penalty if skewness gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_skew) > abs(original_skew):
+                skew_penalty = min(500, (abs(transformed_skew) - abs(original_skew)) * 100)  # Extreme penalty
+                
+            # Penalty if kurtosis gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_kurt) > abs(original_kurt):
+                kurt_penalty = min(1000, (abs(transformed_kurt) - abs(original_kurt)) * 200)  # Extreme penalty
             
-            # Penalty if kurtosis gets significantly worse
-            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
-                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
-            
-            # Calculate balanced score with penalties
-            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
-            balanced_score = max(-100, balanced_score)  # Cap at -100
+            # Calculate balanced score with penalties and bonuses
+            both_improved_bonus = 50 if skew_improvement > 0 and kurt_improvement > 0 else 0
+            balanced_score = (skew_improvement + kurt_improvement) / 2 + both_improved_bonus - skew_penalty - kurt_penalty
+            balanced_score = max(-200, balanced_score)  # Cap at -200 to allow for heavy penalties
             
             return transformed, {
                 'success': True,
@@ -897,17 +907,18 @@ class AdvancedTransformations:
             skew_penalty = 0
             kurt_penalty = 0
             
-            # Penalty if skewness gets worse
-            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
-                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            # Penalty if skewness gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_skew) > abs(original_skew):
+                skew_penalty = min(500, (abs(transformed_skew) - abs(original_skew)) * 100)  # Extreme penalty
+                
+            # Penalty if kurtosis gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_kurt) > abs(original_kurt):
+                kurt_penalty = min(1000, (abs(transformed_kurt) - abs(original_kurt)) * 200)  # Extreme penalty
             
-            # Penalty if kurtosis gets significantly worse
-            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
-                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
-            
-            # Calculate balanced score with penalties
-            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
-            balanced_score = max(-100, balanced_score)  # Cap at -100
+            # Calculate balanced score with penalties and bonuses
+            both_improved_bonus = 50 if skew_improvement > 0 and kurt_improvement > 0 else 0
+            balanced_score = (skew_improvement + kurt_improvement) / 2 + both_improved_bonus - skew_penalty - kurt_penalty
+            balanced_score = max(-200, balanced_score)  # Cap at -200 to allow for heavy penalties
             
             return transformed, {
                 'success': True,
@@ -967,17 +978,18 @@ class AdvancedTransformations:
             skew_penalty = 0
             kurt_penalty = 0
             
-            # Penalty if skewness gets worse
-            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
-                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            # Penalty if skewness gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_skew) > abs(original_skew):
+                skew_penalty = min(500, (abs(transformed_skew) - abs(original_skew)) * 100)  # Extreme penalty
+                
+            # Penalty if kurtosis gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_kurt) > abs(original_kurt):
+                kurt_penalty = min(1000, (abs(transformed_kurt) - abs(original_kurt)) * 200)  # Extreme penalty
             
-            # Penalty if kurtosis gets significantly worse
-            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
-                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
-            
-            # Calculate balanced score with penalties
-            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
-            balanced_score = max(-100, balanced_score)  # Cap at -100
+            # Calculate balanced score with penalties and bonuses
+            both_improved_bonus = 50 if skew_improvement > 0 and kurt_improvement > 0 else 0
+            balanced_score = (skew_improvement + kurt_improvement) / 2 + both_improved_bonus - skew_penalty - kurt_penalty
+            balanced_score = max(-200, balanced_score)  # Cap at -200 to allow for heavy penalties
             
             return transformed, {
                 'success': True,
@@ -1025,17 +1037,18 @@ class AdvancedTransformations:
             skew_penalty = 0
             kurt_penalty = 0
             
-            # Penalty if skewness gets worse
-            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
-                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            # Penalty if skewness gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_skew) > abs(original_skew):
+                skew_penalty = min(500, (abs(transformed_skew) - abs(original_skew)) * 100)  # Extreme penalty
+                
+            # Penalty if kurtosis gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_kurt) > abs(original_kurt):
+                kurt_penalty = min(1000, (abs(transformed_kurt) - abs(original_kurt)) * 200)  # Extreme penalty
             
-            # Penalty if kurtosis gets significantly worse
-            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
-                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
-            
-            # Calculate balanced score with penalties
-            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
-            balanced_score = max(-100, balanced_score)  # Cap at -100
+            # Calculate balanced score with penalties and bonuses
+            both_improved_bonus = 50 if skew_improvement > 0 and kurt_improvement > 0 else 0
+            balanced_score = (skew_improvement + kurt_improvement) / 2 + both_improved_bonus - skew_penalty - kurt_penalty
+            balanced_score = max(-200, balanced_score)  # Cap at -200 to allow for heavy penalties
             
             return transformed, {
                 'success': True,
@@ -1081,17 +1094,18 @@ class AdvancedTransformations:
             skew_penalty = 0
             kurt_penalty = 0
             
-            # Penalty if skewness gets worse
-            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
-                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            # Penalty if skewness gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_skew) > abs(original_skew):
+                skew_penalty = min(500, (abs(transformed_skew) - abs(original_skew)) * 100)  # Extreme penalty
+                
+            # Penalty if kurtosis gets worse - NO TOLERANCE, EXTREME PENALTY
+            if abs(transformed_kurt) > abs(original_kurt):
+                kurt_penalty = min(1000, (abs(transformed_kurt) - abs(original_kurt)) * 200)  # Extreme penalty
             
-            # Penalty if kurtosis gets significantly worse
-            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
-                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
-            
-            # Calculate balanced score with penalties
-            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
-            balanced_score = max(-100, balanced_score)  # Cap at -100
+            # Calculate balanced score with penalties and bonuses
+            both_improved_bonus = 50 if skew_improvement > 0 and kurt_improvement > 0 else 0
+            balanced_score = (skew_improvement + kurt_improvement) / 2 + both_improved_bonus - skew_penalty - kurt_penalty
+            balanced_score = max(-200, balanced_score)  # Cap at -200 to allow for heavy penalties
             
             return transformed, {
                 'success': True,

@@ -62,10 +62,24 @@ class BalancedTransformation:
             trans_skew = stats.skew(transformed)
             trans_kurt = stats.kurtosis(transformed)
             
-            # Balanced score (equal weight to skewness and kurtosis)
+            # Balanced score with penalties for worsening
             skew_improvement = abs(orig_skew) - abs(trans_skew)
             kurt_improvement = abs(orig_kurt) - abs(trans_kurt)
-            balanced_score = (skew_improvement + kurt_improvement) / 2
+            
+            # Apply heavy penalties for worsening
+            skew_penalty = 0
+            kurt_penalty = 0
+            
+            if abs(trans_skew) > abs(orig_skew):
+                skew_penalty = (abs(trans_skew) - abs(orig_skew)) * 100  # Extreme penalty
+            
+            if abs(trans_kurt) > abs(orig_kurt):
+                kurt_penalty = (abs(trans_kurt) - abs(orig_kurt)) * 200  # Extreme penalty
+            
+            # Bonus for improving both
+            both_improved_bonus = 0.5 if skew_improvement > 0 and kurt_improvement > 0 else 0
+            
+            balanced_score = (skew_improvement + kurt_improvement) / 2 + both_improved_bonus - skew_penalty - kurt_penalty
             
             return transformed, {
                 'success': True,

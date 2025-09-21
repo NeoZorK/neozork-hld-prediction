@@ -376,7 +376,15 @@ class StatisticalAnalyzer:
                         score = self._calculate_transformation_score(col_data, transformed_col, transform_type)
                         print(f"  {transform_type}: Standard Score = {score:.3f}")
                     
-                    if score > best_score:
+                    # Calculate original and transformed statistics for comparison
+                    from scipy import stats
+                    orig_skew = abs(stats.skew(col_data))
+                    orig_kurt = abs(stats.kurtosis(col_data))
+                    trans_skew = abs(stats.skew(transformed_col))
+                    trans_kurt = abs(stats.kurtosis(transformed_col))
+                    
+                    # Only consider transformations that don't worsen any metric
+                    if (trans_skew <= orig_skew and trans_kurt <= orig_kurt) and score > best_score:
                         best_score = score
                         best_transformation = transform_type
                         
@@ -659,17 +667,17 @@ class StatisticalAnalyzer:
             else:
                 kurt_improvement = 0
             
-            # Apply penalties for worsening
+            # Apply penalties for worsening - MUCH STRICTER
             skew_penalty = 0
             kurt_penalty = 0
             
-            # Penalty if skewness gets worse
-            if trans_skew > orig_skew * 1.1:  # 10% tolerance
-                skew_penalty = min(0.5, (trans_skew - orig_skew) * 0.1)
+            # Penalty if skewness gets worse - NO TOLERANCE, VERY HEAVY PENALTY
+            if trans_skew > orig_skew:
+                skew_penalty = min(10.0, (trans_skew - orig_skew) * 10.0)  # Very heavy penalty
             
-            # Penalty if kurtosis gets significantly worse
-            if trans_kurt > orig_kurt * 1.5:  # 50% tolerance
-                kurt_penalty = min(1.0, (trans_kurt - orig_kurt) * 0.05)
+            # Penalty if kurtosis gets worse - NO TOLERANCE, EXTREME PENALTY
+            if trans_kurt > orig_kurt:
+                kurt_penalty = min(20.0, (trans_kurt - orig_kurt) * 20.0)  # Extreme penalty
             
             # Normalize skewness and kurtosis to 0-1 scale (closer to 0 is better)
             skew_score = max(0, 1 - min(trans_skew / 2.0, 1))  # 2.0 is considered highly skewed
@@ -679,14 +687,18 @@ class StatisticalAnalyzer:
             normality_bonus = 0.3 if is_normal else 0
             
             # Calculate final score (weighted combination) with penalties
+            # Prioritize transformations that improve BOTH skewness and kurtosis
+            both_improved_bonus = 0.5 if skew_improvement > 0 and kurt_improvement > 0 else 0
+            
             score = (
-                0.3 * skew_improvement +      # 30% weight on skewness improvement
-                0.2 * kurt_improvement +      # 20% weight on kurtosis improvement
-                0.3 * skew_score +            # 30% weight on final skewness level
+                0.25 * skew_improvement +     # 25% weight on skewness improvement
+                0.25 * kurt_improvement +     # 25% weight on kurtosis improvement
+                0.2 * skew_score +            # 20% weight on final skewness level
                 0.2 * kurt_score +            # 20% weight on final kurtosis level
-                normality_bonus -             # 30% bonus for achieving normality
-                skew_penalty -                # Penalty for worsening skewness
-                kurt_penalty                  # Penalty for worsening kurtosis
+                normality_bonus +             # 30% bonus for achieving normality
+                both_improved_bonus -         # 50% bonus for improving both
+                skew_penalty -                # Heavy penalty for worsening skewness
+                kurt_penalty                  # Very heavy penalty for worsening kurtosis
             )
             
             return max(-1.0, min(score, 1.0))  # Cap between -1.0 and 1.0
