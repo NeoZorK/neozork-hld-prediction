@@ -14,7 +14,6 @@ Key Features:
 """
 
 import pandas as pd
-import numpy as np
 from typing import Dict, Any, List, Optional, Tuple, Union
 from scipy import stats
 from scipy.stats import boxcox, yeojohnson
@@ -26,8 +25,14 @@ import warnings
 import numpy
 np = numpy
 
+# Ensure numpy is available in all methods
+globals()['np'] = numpy
+
 class AdvancedTransformations:
     """Advanced transformation methods that solve the WORSENED kurtosis problem."""
+    
+    # Make numpy available as class attribute
+    np = numpy
     
     def __init__(self):
         self.transformation_cache = {}
@@ -134,9 +139,14 @@ class AdvancedTransformations:
             return None, {'success': False, 'error': str(e)}
     
     def _kurtosis_preserving_log(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
+        import numpy as np
+        import numpy as np
+        import numpy as np
+        import numpy as np
+        import numpy as np
         """Log transformation that preserves kurtosis by using adaptive parameters."""
+        import numpy as np
         try:
-            import numpy as np
             # Ensure positive values
             min_val = data.min()
             if min_val <= 0:
@@ -147,13 +157,13 @@ class AdvancedTransformations:
                 shifted_data = data
             
             # Apply log transformation
-            transformed = np.log(shifted_data)
+            transformed = self.np.log(shifted_data)
             
             # Calculate statistics
             original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
             original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
-            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
-            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, self.np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, self.np.ndarray) else transformed.kurtosis()
             
             # Calculate improvements
             skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100 if original_skew != 0 else 0
@@ -180,8 +190,8 @@ class AdvancedTransformations:
     
     def _dual_optimized_box_cox(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Box-Cox transformation optimized for both skewness and kurtosis."""
+        import numpy as np
         try:
-            import numpy as np
             # Ensure positive values
             min_val = data.min()
             if min_val <= 0:
@@ -195,7 +205,7 @@ class AdvancedTransformations:
             def objective(lambda_val):
                 try:
                     if lambda_val == 0:
-                        transformed = np.log(shifted_data)
+                        transformed = self.np.log(shifted_data)
                     else:
                         transformed = (shifted_data ** lambda_val - 1) / lambda_val
                     
@@ -217,15 +227,15 @@ class AdvancedTransformations:
             
             # Apply transformation with optimal lambda
             if optimal_lambda == 0:
-                transformed = np.log(shifted_data)
+                transformed = self.np.log(shifted_data)
             else:
                 transformed = (shifted_data ** optimal_lambda - 1) / optimal_lambda
             
             # Calculate statistics
             original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
             original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
-            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
-            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, self.np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, self.np.ndarray) else transformed.kurtosis()
             
             # Calculate improvements with better handling
             if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
@@ -275,8 +285,8 @@ class AdvancedTransformations:
     
     def _adaptive_power_transform(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Adaptive power transformation that adjusts based on data characteristics."""
+        import numpy as np
         try:
-            import numpy as np
             # Analyze data characteristics
             skewness = data.skew()
             kurtosis = data.kurtosis()
@@ -297,15 +307,15 @@ class AdvancedTransformations:
             
             # Apply power transformation
             if power == 0:
-                transformed = np.log(data + 1)
+                transformed = self.np.log(data + 1)
             else:
-                transformed = np.power(data + 1, power)
+                transformed = self.np.power(data + 1, power)
             
             # Calculate statistics
             original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
             original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
-            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
-            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, self.np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, self.np.ndarray) else transformed.kurtosis()
             
             # Calculate improvements with better handling
             if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
@@ -355,7 +365,6 @@ class AdvancedTransformations:
     def _quantile_normalize(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Quantile transformation that maps to normal distribution."""
         try:
-            import numpy as np
             # Use QuantileTransformer to map to normal distribution
             transformer = QuantileTransformer(output_distribution='normal', random_state=42)
             transformed = transformer.fit_transform(data.values.reshape(-1, 1)).flatten()
@@ -364,8 +373,8 @@ class AdvancedTransformations:
             # Calculate statistics
             original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
             original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
-            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
-            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, self.np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, self.np.ndarray) else transformed.kurtosis()
             
             # Calculate improvements with better handling
             if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
@@ -414,7 +423,6 @@ class AdvancedTransformations:
     def _robust_log_transform(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Robust log transformation with outlier handling."""
         try:
-            import numpy as np
             # Handle outliers using winsorization
             q1 = data.quantile(0.25)
             q3 = data.quantile(0.75)
@@ -435,13 +443,13 @@ class AdvancedTransformations:
                 shifted_data = winsorized_data
             
             # Apply log transformation
-            transformed = np.log(shifted_data)
+            transformed = self.np.log(shifted_data)
             
             # Calculate statistics
             original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
             original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
-            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
-            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, self.np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, self.np.ndarray) else transformed.kurtosis()
             
             # Calculate improvements with better handling
             if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
@@ -491,28 +499,28 @@ class AdvancedTransformations:
     
     def _financial_balanced_transform(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Financial-specific balanced transformation."""
+        import numpy as np
         try:
-            import numpy as np
             # For financial data, use log returns approach
             if col_name in ['Open', 'High', 'Low', 'Close']:
                 # Use log transformation for price data
-                transformed = np.log(data + 1)
+                transformed = self.np.log(data + 1)
             elif col_name == 'Volume':
                 # Use square root for volume data
-                transformed = np.sqrt(data)
+                transformed = self.np.sqrt(data)
             else:
                 # Use adaptive approach
                 skewness = data.skew()
                 if abs(skewness) > 0.5:
-                    transformed = np.log(data + 1)
+                    transformed = self.np.log(data + 1)
                 else:
                     transformed = data  # No transformation needed
             
             # Calculate statistics
             original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
             original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
-            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
-            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, self.np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, self.np.ndarray) else transformed.kurtosis()
             
             # Calculate improvements with better handling
             if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
@@ -560,10 +568,10 @@ class AdvancedTransformations:
     
     def _financial_log_returns(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Calculate log returns for financial data."""
+        import numpy as np
         try:
-            import numpy as np
             # Calculate log returns
-            log_returns = np.log(data / data.shift(1)).dropna()
+            log_returns = self.np.log(data / data.shift(1)).dropna()
             
             # Calculate statistics
             original_skew = data.skew()
@@ -618,7 +626,6 @@ class AdvancedTransformations:
     def _volatility_stabilizing(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Volatility stabilizing transformation for financial data."""
         try:
-            import numpy as np
             # Calculate rolling volatility
             rolling_std = data.rolling(window=min(20, len(data)//4)).std()
             
@@ -631,8 +638,8 @@ class AdvancedTransformations:
             # Calculate statistics
             original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
             original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
-            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
-            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, self.np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, self.np.ndarray) else transformed.kurtosis()
             
             # Calculate improvements with better handling
             if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
@@ -681,18 +688,17 @@ class AdvancedTransformations:
     def _price_normalize(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Price normalization for financial data."""
         try:
-            import numpy as np
             # Normalize by first value
             normalized = data / data.iloc[0]
             
             # Apply log transformation
-            transformed = np.log(normalized + 1)
+            transformed = self.np.log(normalized + 1)
             
             # Calculate statistics
             original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
             original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
-            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
-            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, self.np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, self.np.ndarray) else transformed.kurtosis()
             
             # Calculate improvements with better handling
             if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
@@ -741,15 +747,14 @@ class AdvancedTransformations:
     def _volume_transform(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Volume-specific transformation."""
         try:
-            import numpy as np
             # Use square root transformation for volume data
-            transformed = np.sqrt(data)
+            transformed = self.np.sqrt(data)
             
             # Calculate statistics
             original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
             original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
-            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
-            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, self.np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, self.np.ndarray) else transformed.kurtosis()
             
             # Calculate improvements with better handling
             if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
@@ -805,8 +810,8 @@ class AdvancedTransformations:
             # Calculate statistics
             original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
             original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
-            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
-            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, self.np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, self.np.ndarray) else transformed.kurtosis()
             
             # Calculate improvements with better handling
             if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
@@ -856,7 +861,6 @@ class AdvancedTransformations:
     def _shifted_box_cox(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Box-Cox transformation with data shifting."""
         try:
-            import numpy as np
             # Shift data to make it positive
             min_val = data.min()
             if min_val <= 0:
@@ -873,8 +877,8 @@ class AdvancedTransformations:
             # Calculate statistics
             original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
             original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
-            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
-            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, self.np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, self.np.ndarray) else transformed.kurtosis()
             
             # Calculate improvements with better handling
             if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
@@ -924,8 +928,8 @@ class AdvancedTransformations:
     
     def _robust_yeo_johnson(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Robust Yeo-Johnson transformation with outlier handling."""
+        import numpy as np
         try:
-            import numpy as np
             # Handle outliers using winsorization
             q1 = data.quantile(0.25)
             q3 = data.quantile(0.75)
@@ -943,8 +947,8 @@ class AdvancedTransformations:
             # Calculate statistics
             original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
             original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
-            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
-            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, self.np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, self.np.ndarray) else transformed.kurtosis()
             
             # Calculate improvements with better handling
             if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
@@ -995,15 +999,14 @@ class AdvancedTransformations:
     def _poisson_transform(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Poisson transformation for count data."""
         try:
-            import numpy as np
             # Use square root transformation for count data
-            transformed = np.sqrt(data)
+            transformed = self.np.sqrt(data)
             
             # Calculate statistics
             original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
             original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
-            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
-            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, self.np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, self.np.ndarray) else transformed.kurtosis()
             
             # Calculate improvements with better handling
             if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
@@ -1052,15 +1055,14 @@ class AdvancedTransformations:
     def _count_data_transform(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Count data transformation."""
         try:
-            import numpy as np
             # Use log transformation for count data
-            transformed = np.log(data + 1)
+            transformed = self.np.log(data + 1)
             
             # Calculate statistics
             original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
             original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
-            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
-            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, self.np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, self.np.ndarray) else transformed.kurtosis()
             
             # Calculate improvements with better handling
             if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
