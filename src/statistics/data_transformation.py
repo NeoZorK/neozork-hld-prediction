@@ -184,6 +184,7 @@ class DataTransformation:
         details['transformed_std'] = float(np.std(transformed))
         details['original_skewness'] = float(stats.skew(data))
         details['transformed_skewness'] = float(stats.skew(transformed))
+        details['success'] = True
         
         return transformed, details
     
@@ -211,6 +212,7 @@ class DataTransformation:
         details['transformed_std'] = float(np.std(transformed))
         details['original_skewness'] = float(stats.skew(data))
         details['transformed_skewness'] = float(stats.skew(transformed))
+        details['success'] = True
         
         return transformed, details
     
@@ -226,6 +228,7 @@ class DataTransformation:
         details['transformed_std'] = float(np.std(transformed))
         details['original_skewness'] = float(stats.skew(data))
         details['transformed_skewness'] = float(stats.skew(transformed))
+        details['success'] = True
         
         return transformed, details
     
@@ -247,6 +250,7 @@ class DataTransformation:
             # Apply Box-Cox transformation
             transformed, lambda_value = boxcox(data_shifted)
             details['lambda'] = float(lambda_value)
+            details['success'] = True
             
             # Calculate statistics
             details['original_mean'] = float(np.mean(data))
@@ -306,6 +310,7 @@ class DataTransformation:
         details['transformed_std'] = float(np.std(transformed))
         details['original_skewness'] = float(stats.skew(data))
         details['transformed_skewness'] = float(stats.skew(transformed))
+        details['success'] = True
         
         return transformed, details
     
@@ -330,6 +335,7 @@ class DataTransformation:
         details['transformed_max'] = float(np.max(transformed))
         details['original_skewness'] = float(stats.skew(data))
         details['transformed_skewness'] = float(stats.skew(transformed))
+        details['success'] = True
         
         return transformed, details
     

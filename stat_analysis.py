@@ -262,6 +262,12 @@ class StatisticalAnalyzer:
                     )
                     
                     if transformed_col is None or len(transformed_col) == 0:
+                        print(f"  {transform_type}: Failed - No data returned")
+                        continue
+                    
+                    # Check if transformation was successful
+                    if not details.get('success', True):
+                        print(f"  {transform_type}: Failed - {details.get('error', 'Unknown error')}")
                         continue
                     
                     # Calculate comprehensive score
@@ -282,7 +288,25 @@ class StatisticalAnalyzer:
                 optimal_transformations[col] = best_transformation
                 print(f"  ✅ Best: {best_transformation} (Score: {best_score:.3f})")
             else:
-                print(f"  ❌ No successful transformations found")
+                # Try fallback transformations for problematic columns
+                print(f"  ⚠️ No optimal transformation found, trying fallback...")
+                fallback_transformations = ['log', 'sqrt']
+                for fallback in fallback_transformations:
+                    if fallback in transformations[col]:
+                        try:
+                            transformed_col, details = self.data_transformation._apply_transformation(
+                                col_data, fallback, col
+                            )
+                            if transformed_col is not None and details.get('success', True):
+                                optimal_transformations[col] = fallback
+                                print(f"  ✅ Fallback: {fallback} (Score: 0.500)")
+                                break
+                        except:
+                            continue
+                
+                if col not in optimal_transformations:
+                    print(f"  ❌ No suitable transformation found for {col}")
+                    continue
         
         return optimal_transformations
     
