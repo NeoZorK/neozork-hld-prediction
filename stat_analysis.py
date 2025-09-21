@@ -224,10 +224,8 @@ class StatisticalAnalyzer:
                                 data, single_transformations, numeric_columns
                             )
                     
-                    # Add comparison results
-                    analysis_results['transformation']['comparison'] = self.data_transformation.compare_transformations(
-                        data, analysis_results['transformation']
-                    )
+                    # Comparison results are already included in _apply_balanced_transformations
+                    # No need to overwrite them
                 else:
                     analysis_results['transformation'] = {
                         'transformed_data': data,
@@ -467,9 +465,36 @@ class StatisticalAnalyzer:
                 print(f"  ❌ Error applying {transform_type} to {col}: {str(e)}")
                 continue
         
+        # Create comparison data for reporting
+        comparison = {}
+        for col in numeric_columns:
+            if col in transformation_details:
+                col_comparison = {}
+                for transform_type, details in transformation_details[col].items():
+                    if details.get('success', True):
+                        col_comparison[transform_type] = {
+                            'original_stats': {
+                                'mean': data[col].mean(),
+                                'skewness': details.get('original_skewness', 0),
+                                'kurtosis': details.get('original_kurtosis', 0)
+                            },
+                            'transformed_stats': {
+                                'mean': transformed_data[col].mean(),
+                                'skewness': details.get('transformed_skewness', 0),
+                                'kurtosis': details.get('transformed_kurtosis', 0)
+                            },
+                            'improvement': {
+                                'skewness_improvement': details.get('skewness_improvement', 0),
+                                'kurtosis_improvement': details.get('kurtosis_improvement', 0)
+                            }
+                        }
+                if col_comparison:
+                    comparison[col] = col_comparison
+        
         return {
             'transformed_data': transformed_data,
-            'transformation_details': transformation_details
+            'transformation_details': transformation_details,
+            'comparison': comparison
         }
     
     def _explain_transformation_failure(self, col_name: str, col_data: pd.Series, available_transformations: List[str]) -> None:
