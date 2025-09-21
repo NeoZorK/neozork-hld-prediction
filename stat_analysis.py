@@ -360,14 +360,14 @@ class StatisticalAnalyzer:
                 print("No transformed data to save.")
                 return
             
-            # Create save path structure: data/fixed/transformed/<source>/<format>/<symbol>/<indicator>/<timeframe>/
+            # Create save path structure: data/fixed/transformed_by_stat/<source>/<format>/<symbol>/<indicator>/<timeframe>/
             source = file_info.get("source", "unknown")
             format_type = file_info["format"]
             symbol = file_info.get("symbol", "unknown")
             indicator = file_info.get("indicator", "unknown")
             timeframe = file_info.get("timeframe", "unknown")
             
-            save_path = f"data/fixed/transformed/{source}/{format_type}/{symbol}/{indicator}/{timeframe}/"
+            save_path = f"data/fixed/transformed_by_stat/{source}/{format_type}/{symbol}/{indicator}/{timeframe}/"
             
             # Create directory if it doesn't exist
             os.makedirs(save_path, exist_ok=True)
@@ -541,14 +541,14 @@ class StatisticalAnalyzer:
                 print("No transformed data to save.")
                 return
             
-            # Create save path structure: data/fixed/transformed/<source>/<format>/<symbol>/<indicator>/<timeframe>/
+            # Create save path structure: data/fixed/transformed_by_stat/<source>/<format>/<symbol>/<indicator>/<timeframe>/
             source = file_info.get("source", "unknown")
             format_type = file_info["format"]
             symbol = file_info.get("symbol", "unknown")
             indicator = file_info.get("indicator", "unknown")
             timeframe = file_info.get("timeframe", "unknown")
             
-            save_path = f"data/fixed/transformed/{source}/{format_type}/{symbol}/{indicator}/{timeframe}/"
+            save_path = f"data/fixed/transformed_by_stat/{source}/{format_type}/{symbol}/{indicator}/{timeframe}/"
             
             # Create directory if it doesn't exist
             os.makedirs(save_path, exist_ok=True)
