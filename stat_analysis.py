@@ -137,14 +137,19 @@ class StatisticalAnalyzer:
         Returns:
             Dictionary with analysis results
         """
-        # Display analysis start
-        self.reporter.display_analysis_start(file_info, analysis_options)
-        
-        # Load data
+        # Load data first to get accurate metadata
         data = self.file_ops.load_data(file_info["file_path"], file_info["format"])
         
         if data is None or data.empty:
             raise ValueError("Could not load data or data is empty")
+        
+        # Update file_info with actual data dimensions
+        file_info['rows_count'] = len(data)
+        file_info['columns_count'] = len(data.columns)
+        file_info['filename'] = os.path.basename(file_info['file_path'])
+        
+        # Display analysis start with accurate metadata
+        self.reporter.display_analysis_start(file_info, analysis_options)
         
         # Get numeric columns
         numeric_columns = self._get_numeric_columns(data)
@@ -1117,14 +1122,43 @@ class StatisticalAnalyzer:
                     if file_info is None:
                         # If not in supported directories, try to process directly
                         print(f"⚠️  File '{filename}' not found in supported directories, attempting direct processing...")
-                        # Create a mock file_info for direct processing
+                        # Extract metadata from file path
+                        path_parts = custom_path.split('/')
+                        symbol = "Unknown"
+                        timeframe = "Unknown"
+                        source = "Custom"
+                        indicator = None
+                        
+                        # Try to extract symbol and timeframe from path
+                        if len(path_parts) >= 4:
+                            # Look for symbol in path (e.g., EURUSD, BTCUSDT)
+                            for part in path_parts:
+                                if part.upper() in ['EURUSD', 'GBPUSD', 'BTCUSDT', 'ETHUSD', 'US500', 'XAUUSD', 'GOOG', 'TSLA']:
+                                    symbol = part.upper()
+                                    break
+                            
+                            # Look for timeframe in path (e.g., D1, MN1, H1)
+                            for part in path_parts:
+                                if part.upper() in ['D1', 'MN1', 'H1', 'H4', 'M15', 'M5', 'M1']:
+                                    timeframe = part.upper()
+                                    break
+                            
+                            # Determine source from path
+                            if 'CSVExport' in custom_path:
+                                source = "CSVExport"
+                            elif 'binance' in custom_path.lower():
+                                source = "Binance"
+                            elif 'polygon' in custom_path.lower():
+                                source = "Polygon"
+                        
+                        # Create file_info for direct processing
                         file_info = {
                             "file_path": custom_path,
                             "format": custom_path.split('.')[-1].lower(),
-                            "symbol": "Unknown",
-                            "timeframe": "Unknown", 
-                            "source": "Custom",
-                            "indicator": None,
+                            "symbol": symbol,
+                            "timeframe": timeframe, 
+                            "source": source,
+                            "indicator": indicator,
                             "folder_source": os.path.dirname(custom_path)
                         }
                     
