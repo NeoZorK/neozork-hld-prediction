@@ -255,10 +255,12 @@ class StatisticsReporter:
             section.append("-" * 30)
             for col, rec in recommendations.items():
                 section.append(f"Column: {col}")
-                section.append(f"  Primary Recommendation: {rec.get('primary_recommendation', 'N/A')}")
+                primary_rec = rec.get('primary_recommendation', 'N/A')
+                section.append(f"  Primary Recommendation: {ColorUtils.format_transformation_recommendation(primary_rec)}")
                 section.append(f"  Reasoning: {rec.get('reasoning', 'N/A')}")
                 if rec.get('recommended_transformations'):
-                    section.append(f"  All Recommendations: {', '.join(rec.get('recommended_transformations', []))}")
+                    all_recs = ', '.join(rec.get('recommended_transformations', []))
+                    section.append(f"  All Recommendations: {ColorUtils.format_transformation_recommendation(all_recs)}")
                 section.append("")
         
         return "\n".join(section)
@@ -371,7 +373,8 @@ class StatisticsReporter:
                 section.append("-" * 30)
                 for col, rec in recommendations.items():
                     if rec.get('primary_recommendation') != "No transformation needed":
-                        section.append(f"• {col}: {rec.get('primary_recommendation', 'N/A')}")
+                        primary_rec = rec.get('primary_recommendation', 'N/A')
+                        section.append(f"• {col}: {ColorUtils.format_transformation_recommendation(primary_rec)}")
         
         # General recommendations
         section.append("\nGENERAL RECOMMENDATIONS")
