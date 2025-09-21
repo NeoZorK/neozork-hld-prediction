@@ -397,6 +397,8 @@ class StatisticalAnalyzer:
     def _apply_balanced_transformations(self, data: pd.DataFrame, transformations: Dict[str, List[str]], 
                                       numeric_columns: List[str]) -> Dict[str, Any]:
         """Apply balanced transformations to the data."""
+        import numpy as np
+        from scipy import stats
         transformed_data = data.copy()
         transformation_details = {}
         
