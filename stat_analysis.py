@@ -50,6 +50,7 @@ import argparse
 import sys
 import os
 import time
+import json
 from pathlib import Path
 from typing import Optional, Dict, Any, List
 
@@ -318,26 +319,216 @@ class StatisticalAnalyzer:
         if not has_successful_transformations:
             return
         
-        # Ask if user wants to transform data
-        while True:
-            transform = self._get_user_input("\n🔄 Do you want to transform your data? (y/n): ")
-            if transform in ['y', 'n']:
-                break
-            print("Please enter 'y' or 'n'")
-        
-        if transform == 'y':
-            # Display transformation summary
+        # In auto mode, automatically transform and save
+        if self.auto_mode:
+            print("\n🔄 Auto mode: Applying transformations...")
             print("\n" + self.data_transformation.get_transformation_summary(transformation_results))
-            
-            # Ask if user wants to save transformed data
+            print("\n💾 Auto mode: Saving transformed data...")
+            self._save_transformed_data_with_metadata(results)
+            self._validate_transformations(results)
+        else:
+            # Ask if user wants to transform data
             while True:
-                save = self._get_user_input("\n💾 Do you want to save transformed data? (y/n): ")
-                if save in ['y', 'n']:
+                transform = self._get_user_input("\n🔄 Do you want to transform your data? (y/n): ")
+                if transform in ['y', 'n']:
                     break
                 print("Please enter 'y' or 'n'")
             
-            if save == 'y':
-                self._save_transformed_data(results)
+            if transform == 'y':
+                # Display transformation summary
+                print("\n" + self.data_transformation.get_transformation_summary(transformation_results))
+                
+                # Ask if user wants to save transformed data
+                while True:
+                    save = self._get_user_input("\n💾 Do you want to save transformed data? (y/n): ")
+                    if save in ['y', 'n']:
+                        break
+                    print("Please enter 'y' or 'n'")
+                
+                if save == 'y':
+                    self._save_transformed_data_with_metadata(results)
+                    self._validate_transformations(results)
+    
+    def _save_transformed_data_with_metadata(self, results: Dict[str, Any]):
+        """Save transformed data with metadata to appropriate directory."""
+        try:
+            file_info = results['file_info']
+            transformation_results = results['analysis_results'].get('transformation', {})
+            transformed_data = transformation_results.get('transformed_data')
+            
+            if transformed_data is None:
+                print("No transformed data to save.")
+                return
+            
+            # Create save path structure: data/fixed/transformed/<source>/<format>/<symbol>/<indicator>/<timeframe>/
+            source = file_info.get("source", "unknown")
+            format_type = file_info["format"]
+            symbol = file_info.get("symbol", "unknown")
+            indicator = file_info.get("indicator", "unknown")
+            timeframe = file_info.get("timeframe", "unknown")
+            
+            save_path = f"data/fixed/transformed/{source}/{format_type}/{symbol}/{indicator}/{timeframe}/"
+            
+            # Create directory if it doesn't exist
+            os.makedirs(save_path, exist_ok=True)
+            
+            # Generate filename
+            filename = f"{symbol}_{timeframe}_{indicator}_transformed.{format_type}"
+            full_path = os.path.join(save_path, filename)
+            
+            # Save data
+            self.file_ops.save_data(transformed_data, full_path, format_type)
+            
+            # Create and save transformation metadata
+            metadata = self._create_transformation_metadata(results, full_path)
+            metadata_path = os.path.join(save_path, f"{symbol}_{timeframe}_{indicator}_transformation_metadata.json")
+            
+            with open(metadata_path, 'w') as f:
+                json.dump(metadata, f, indent=2, default=str)
+            
+            print(f"\n✅ Transformed data saved to: {full_path}")
+            print(f"✅ Transformation metadata saved to: {metadata_path}")
+            
+        except Exception as e:
+            print(f"\n❌ Error saving transformed data: {str(e)}")
+    
+    def _create_transformation_metadata(self, results: Dict[str, Any], transformed_file_path: str) -> Dict[str, Any]:
+        """Create transformation metadata dictionary."""
+        file_info = results['file_info']
+        transformation_results = results['analysis_results'].get('transformation', {})
+        transformation_details = transformation_results.get('transformation_details', {})
+        
+        metadata = {
+            "transformation_info": {
+                "original_file": file_info.get("file_path", "unknown"),
+                "transformed_file": transformed_file_path,
+                "timestamp": results.get("timestamp", "unknown"),
+                "source": file_info.get("source", "unknown"),
+                "symbol": file_info.get("symbol", "unknown"),
+                "indicator": file_info.get("indicator", "unknown"),
+                "timeframe": file_info.get("timeframe", "unknown"),
+                "format": file_info.get("format", "unknown")
+            },
+            "transformations_applied": {},
+            "original_statistics": {},
+            "transformed_statistics": {}
+        }
+        
+        # Add transformation details for each column
+        for col, col_transformations in transformation_details.items():
+            metadata["transformations_applied"][col] = {}
+            for transform_type, details in col_transformations.items():
+                if details.get('success', False):
+                    metadata["transformations_applied"][col][transform_type] = {
+                        "lambda": details.get('lambda'),
+                        "parameters": details.get('parameters', {}),
+                        "success": details.get('success', False),
+                        "reason": details.get('reason', '')
+                    }
+        
+        # Add original statistics
+        if 'descriptive' in results['analysis_results']:
+            desc_results = results['analysis_results']['descriptive']
+            if 'basic_stats' in desc_results:
+                metadata["original_statistics"]["basic"] = desc_results['basic_stats']
+            if 'distribution_stats' in desc_results:
+                metadata["original_statistics"]["distribution"] = desc_results['distribution_stats']
+        
+        return metadata
+    
+    def _validate_transformations(self, results: Dict[str, Any]):
+        """Validate if transformations helped solve the problems."""
+        print("\n" + "="*80)
+        print("🔍 POST-TRANSFORMATION VALIDATION")
+        print("="*80)
+        
+        try:
+            transformation_results = results['analysis_results'].get('transformation', {})
+            transformed_data = transformation_results.get('transformed_data')
+            
+            if transformed_data is None:
+                print("No transformed data available for validation.")
+                return
+            
+            # Get numeric columns
+            numeric_columns = self._get_numeric_columns(transformed_data)
+            
+            # Run distribution analysis on transformed data
+            print("\n📊 Running distribution analysis on transformed data...")
+            transformed_distribution = self.distribution_analysis.analyze_distributions(transformed_data, numeric_columns)
+            
+            # Compare with original distribution analysis
+            original_distribution = results['analysis_results'].get('distribution', {})
+            
+            print("\n📈 TRANSFORMATION EFFECTIVENESS ANALYSIS")
+            print("-" * 50)
+            
+            # Compare normality tests
+            if 'normality_tests' in original_distribution and 'normality_tests' in transformed_distribution:
+                print("\n🔬 NORMALITY TESTS COMPARISON:")
+                for col in numeric_columns:
+                    if col in original_distribution['normality_tests'] and col in transformed_distribution['normality_tests']:
+                        orig_tests = original_distribution['normality_tests'][col]
+                        trans_tests = transformed_distribution['normality_tests'][col]
+                        
+                        orig_normality = orig_tests.get('overall_interpretation', '')
+                        trans_normality = trans_tests.get('overall_interpretation', '')
+                        
+                        # Check if normality improved
+                        orig_normal = 'normally distributed' in orig_normality.lower()
+                        trans_normal = 'normally distributed' in trans_normality.lower()
+                        
+                        if not orig_normal and trans_normal:
+                            print(f"  {col}: {ColorUtils.green('✅ IMPROVED - Now normally distributed')}")
+                        elif orig_normal and trans_normal:
+                            print(f"  {col}: {ColorUtils.green('✅ MAINTAINED - Still normally distributed')}")
+                        elif not orig_normal and not trans_normal:
+                            print(f"  {col}: {ColorUtils.yellow('⚠️  PARTIAL - Still not normally distributed')}")
+                        else:
+                            print(f"  {col}: {ColorUtils.red('❌ WORSENED - No longer normally distributed')}")
+            
+            # Compare skewness
+            if 'skewness_analysis' in original_distribution and 'skewness_analysis' in transformed_distribution:
+                print("\n📊 SKEWNESS COMPARISON:")
+                for col in numeric_columns:
+                    if col in original_distribution['skewness_analysis'] and col in transformed_distribution['skewness_analysis']:
+                        orig_skew = original_distribution['skewness_analysis'][col]
+                        trans_skew = transformed_distribution['skewness_analysis'][col]
+                        
+                        orig_skewness = abs(orig_skew.get('skewness', 0))
+                        trans_skewness = abs(trans_skew.get('skewness', 0))
+                        
+                        if trans_skewness < orig_skewness:
+                            improvement = ((orig_skewness - trans_skewness) / orig_skewness) * 100
+                            print(f"  {col}: {ColorUtils.green(f'✅ IMPROVED - Skewness reduced by {improvement:.1f}%')}")
+                        elif trans_skewness == orig_skewness:
+                            print(f"  {col}: {ColorUtils.yellow('⚠️  NO CHANGE - Skewness unchanged')}")
+                        else:
+                            print(f"  {col}: {ColorUtils.red('❌ WORSENED - Skewness increased')}")
+            
+            # Compare kurtosis
+            if 'kurtosis_analysis' in original_distribution and 'kurtosis_analysis' in transformed_distribution:
+                print("\n📈 KURTOSIS COMPARISON:")
+                for col in numeric_columns:
+                    if col in original_distribution['kurtosis_analysis'] and col in transformed_distribution['kurtosis_analysis']:
+                        orig_kurt = original_distribution['kurtosis_analysis'][col]
+                        trans_kurt = transformed_distribution['kurtosis_analysis'][col]
+                        
+                        orig_kurtosis = abs(orig_kurt.get('kurtosis', 0))
+                        trans_kurtosis = abs(trans_kurt.get('kurtosis', 0))
+                        
+                        if trans_kurtosis < orig_kurtosis:
+                            improvement = ((orig_kurtosis - trans_kurtosis) / orig_kurtosis) * 100
+                            print(f"  {col}: {ColorUtils.green(f'✅ IMPROVED - Kurtosis reduced by {improvement:.1f}%')}")
+                        elif trans_kurtosis == orig_kurtosis:
+                            print(f"  {col}: {ColorUtils.yellow('⚠️  NO CHANGE - Kurtosis unchanged')}")
+                        else:
+                            print(f"  {col}: {ColorUtils.red('❌ WORSENED - Kurtosis increased')}")
+            
+            print("\n" + "="*80)
+            
+        except Exception as e:
+            print(f"\n❌ Error during transformation validation: {str(e)}")
     
     def _save_transformed_data(self, results: Dict[str, Any]):
         """Save transformed data to appropriate directory."""
