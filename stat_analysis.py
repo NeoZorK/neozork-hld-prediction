@@ -254,7 +254,8 @@ class StatisticalAnalyzer:
                 report = self.reporter.generate_comprehensive_report(
                     results['file_info'], 
                     results['analysis_results'],
-                    self.output_directory
+                    self.output_directory,
+                    self.auto_mode
                 )
                 
                 print("\n" + report)
@@ -381,7 +382,8 @@ class StatisticalAnalyzer:
                 report = self.reporter.generate_comprehensive_report(
                     results['file_info'], 
                     results['analysis_results'],
-                    self.output_directory
+                    self.output_directory,
+                    self.auto_mode
                 )
                 
                 print("\n" + report)
