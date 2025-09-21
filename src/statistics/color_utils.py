@@ -211,3 +211,42 @@ class ColorUtils:
             return cls.red(assessment)
         else:
             return assessment
+    
+    @classmethod
+    def get_transformation_recommendation_color(cls, recommendation: str) -> str:
+        """Get color based on transformation recommendation type."""
+        recommendation_lower = recommendation.lower()
+        
+        # Green - where no transformation is needed
+        if any(keyword in recommendation_lower for keyword in [
+            'no transformation needed', 'no transformation required', 'good as is',
+            'excellent', 'normal distribution', 'no change needed', 'satisfactory',
+            'appears approximately normal'
+        ]):
+            return 'green'
+        
+        # Red - where transformation is needed
+        elif any(keyword in recommendation_lower for keyword in [
+            'strongly recommended', 'transformation needed', 'highly recommended',
+            'critical', 'essential', 'required', 'necessary', 'box-cox transformation',
+            'log transformation', 'sqrt transformation', 'yeo-johnson transformation',
+            'square transformation'
+        ]):
+            return 'red'
+        
+        # Yellow - moderate recommendations or warnings
+        elif any(keyword in recommendation_lower for keyword in [
+            'recommended', 'suggested', 'consider', 'may benefit', 'optional',
+            'moderate', 'attention', 'warning', 'caution'
+        ]):
+            return 'yellow'
+        
+        # Default to blue for other cases
+        else:
+            return 'blue'
+    
+    @classmethod
+    def format_transformation_recommendation(cls, recommendation: str) -> str:
+        """Format transformation recommendation with appropriate color."""
+        color = cls.get_transformation_recommendation_color(recommendation)
+        return cls.colorize(recommendation, color)
