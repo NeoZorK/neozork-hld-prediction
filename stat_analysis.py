@@ -505,9 +505,15 @@ class StatisticalAnalyzer:
             
             # Test normality of transformed data
             if len(transformed_data) > 3:
-                shapiro_stat, shapiro_p = stats.shapiro(transformed_data)
-                dagostino_stat, dagostino_p = stats.normaltest(transformed_data)
-                is_normal = shapiro_p > 0.05 and dagostino_p > 0.05
+                # Use appropriate tests based on sample size
+                if len(transformed_data) <= 5000:
+                    shapiro_stat, shapiro_p = stats.shapiro(transformed_data)
+                    dagostino_stat, dagostino_p = stats.normaltest(transformed_data)
+                    is_normal = shapiro_p > 0.05 and dagostino_p > 0.05
+                else:
+                    # For large samples, use only D'Agostino-Pearson test
+                    dagostino_stat, dagostino_p = stats.normaltest(transformed_data)
+                    is_normal = dagostino_p > 0.05
             else:
                 is_normal = False
             
@@ -837,14 +843,25 @@ class StatisticalAnalyzer:
                     
                     # Test normality of transformed data
                     if len(transformed_col) > 3:
-                        shapiro_stat, shapiro_p = stats.shapiro(transformed_col)
-                        dagostino_stat, dagostino_p = stats.normaltest(transformed_col)
-                        
-                        # Determine normality interpretation
-                        if shapiro_p > 0.05 and dagostino_p > 0.05:
-                            trans_normality = "Data appears to be normally distributed"
+                        # Use appropriate tests based on sample size
+                        if len(transformed_col) <= 5000:
+                            shapiro_stat, shapiro_p = stats.shapiro(transformed_col)
+                            dagostino_stat, dagostino_p = stats.normaltest(transformed_col)
+                            
+                            # Determine normality interpretation
+                            if shapiro_p > 0.05 and dagostino_p > 0.05:
+                                trans_normality = "Data appears to be normally distributed"
+                            else:
+                                trans_normality = "Data does not appear to be normally distributed"
                         else:
-                            trans_normality = "Data does not appear to be normally distributed"
+                            # For large samples, use only D'Agostino-Pearson test
+                            dagostino_stat, dagostino_p = stats.normaltest(transformed_col)
+                            
+                            # Determine normality interpretation
+                            if dagostino_p > 0.05:
+                                trans_normality = "Data appears to be normally distributed"
+                            else:
+                                trans_normality = "Data does not appear to be normally distributed"
                     else:
                         trans_normality = "Insufficient data for normality test"
                     
