@@ -31,7 +31,8 @@ class StatisticsReporter:
     
     def generate_comprehensive_report(self, file_info: Dict[str, Any], 
                                     analysis_results: Dict[str, Any],
-                                    output_directory: Optional[str] = None) -> str:
+                                    output_directory: Optional[str] = None,
+                                    auto_mode: bool = False) -> str:
         """
         Generate a comprehensive analysis report.
         
@@ -53,24 +54,30 @@ class StatisticsReporter:
         
         # Descriptive statistics
         if 'descriptive' in analysis_results:
-            report_sections.append(self._generate_analysis_description("descriptive"))
-            report_sections.append(self._generate_descriptive_section(analysis_results['descriptive']))
+            if self._ask_analysis_question("descriptive", auto_mode):
+                report_sections.append(self._generate_analysis_description("descriptive"))
+                report_sections.append(self._generate_descriptive_section(analysis_results['descriptive']))
+            else:
+                report_sections.append(self._generate_skipped_message("descriptive"))
         
         # Distribution analysis
         if 'distribution' in analysis_results:
-            report_sections.append(self._generate_analysis_description("distribution"))
-            report_sections.append(self._generate_distribution_section(analysis_results['distribution']))
+            if self._ask_analysis_question("distribution", auto_mode):
+                report_sections.append(self._generate_analysis_description("distribution"))
+                report_sections.append(self._generate_distribution_section(analysis_results['distribution']))
+            else:
+                report_sections.append(self._generate_skipped_message("distribution"))
         
         # Data transformation
         if 'transformation' in analysis_results:
-            report_sections.append(self._generate_analysis_description("transformation"))
-            report_sections.append(self._generate_transformation_section(analysis_results['transformation']))
+            if self._ask_analysis_question("transformation", auto_mode):
+                report_sections.append(self._generate_analysis_description("transformation"))
+                report_sections.append(self._generate_transformation_section(analysis_results['transformation']))
+            else:
+                report_sections.append(self._generate_skipped_message("transformation"))
         
         # Summary and recommendations
         report_sections.append(self._generate_summary_section(analysis_results))
-        
-        # Statistical glossary
-        report_sections.append(self._generate_statistical_glossary())
         
         # Combine all sections
         full_report = "\n\n".join(report_sections)
@@ -99,7 +106,7 @@ class StatisticsReporter:
         return "\n".join(header)
     
     def _generate_analysis_description(self, analysis_type: str) -> str:
-        """Generate description for analysis type."""
+        """Generate description for analysis type with relevant glossary."""
         descriptions = {
             "descriptive": {
                 "title": "📊 DESCRIPTIVE STATISTICS - OVERVIEW",
@@ -119,7 +126,8 @@ class StatisticsReporter:
                     "• Identify potential data issues (missing values, extreme values)",
                     "• Understand the central tendency and spread of your data",
                     "• Determine if data transformation might be needed"
-                ]
+                ],
+                "glossary_terms": ["Variance", "Coefficient of Variation", "High variability", "IQR (Interquartile Range)", "Range"]
             },
             "distribution": {
                 "title": "📈 DISTRIBUTION ANALYSIS - OVERVIEW",
@@ -143,7 +151,10 @@ class StatisticsReporter:
                     "• Green = Good/Normal distribution",
                     "• Yellow = Moderate deviation, consider transformation",
                     "• Red = Strong deviation, transformation recommended"
-                ]
+                ],
+                "glossary_terms": ["Skewness", "Kurtosis", "Highly skewed (right-tailed)", "Approximately normal (mesokurtic)", 
+                                 "Heavy-tailed (leptokurtic)", "Moderately skewed (right-tailed)", "Light-tailed (platykurtic)",
+                                 "Shapiro-Wilk Test", "D'Agostino-Pearson Test", "Z-Score", "Severity"]
             },
             "transformation": {
                 "title": "🔄 DATA TRANSFORMATION ANALYSIS - OVERVIEW",
@@ -168,7 +179,8 @@ class StatisticsReporter:
                     "• Improves model performance",
                     "• Reduces impact of outliers",
                     "• Enables use of parametric statistical tests"
-                ]
+                ],
+                "glossary_terms": ["Log Transformation", "Box-Cox Transformation", "Square Root Transformation", "Square Transformation"]
             }
         }
         
@@ -183,7 +195,257 @@ class StatisticsReporter:
         section.extend(desc["description"])
         section.append("=" * 100)
         
+        # Add relevant glossary terms
+        if "glossary_terms" in desc:
+            section.append("\n📚 RELEVANT STATISTICAL TERMS:")
+            section.append("-" * 50)
+            for term in desc["glossary_terms"]:
+                term_info = self._get_glossary_term_info(term)
+                if term_info:
+                    section.append(f"\n{ColorUtils.bold(term)}:")
+                    section.append(f"  {term_info['definition']}")
+                    if 'interpretation' in term_info:
+                        section.append("  Interpretation:")
+                        section.extend([f"    {item}" for item in term_info['interpretation']])
+                    if 'characteristics' in term_info:
+                        section.append("  Characteristics:")
+                        section.extend([f"    {item}" for item in term_info['characteristics']])
+                    if 'implications' in term_info:
+                        section.append("  Implications:")
+                        section.extend([f"    {item}" for item in term_info['implications']])
+                    if 'levels' in term_info:
+                        section.append("  Levels:")
+                        section.extend([f"    {item}" for item in term_info['levels']])
+                    if 'use_cases' in term_info:
+                        section.append("  Use Cases:")
+                        section.extend([f"    {item}" for item in term_info['use_cases']])
+                    if 'benefits' in term_info:
+                        section.append("  Benefits:")
+                        section.extend([f"    {item}" for item in term_info['benefits']])
+        
         return "\n".join(section)
+    
+    def _get_glossary_term_info(self, term: str) -> dict:
+        """Get glossary term information."""
+        terms = {
+            "Skewness": {
+                "definition": "Measures the asymmetry of data distribution around the mean",
+                "interpretation": [
+                    "• 0 = Perfectly symmetric (normal distribution)",
+                    "• Positive = Right tail is longer (right-skewed)",
+                    "• Negative = Left tail is longer (left-skewed)",
+                    "• |skewness| < 0.5 = Approximately symmetric",
+                    "• |skewness| 0.5-1.0 = Moderately skewed",
+                    "• |skewness| > 1.0 = Highly skewed"
+                ]
+            },
+            "Kurtosis": {
+                "definition": "Measures the 'tailedness' or heaviness of the distribution tails",
+                "interpretation": [
+                    "• 0 = Normal distribution (mesokurtic)",
+                    "• Positive = Heavy tails, more extreme values (leptokurtic)",
+                    "• Negative = Light tails, fewer extreme values (platykurtic)",
+                    "• |kurtosis| < 0.5 = Approximately normal",
+                    "• |kurtosis| 0.5-1.0 = Slightly different from normal",
+                    "• |kurtosis| > 1.0 = Significantly different from normal"
+                ]
+            },
+            "Highly skewed (right-tailed)": {
+                "definition": "Data has a long right tail with most values clustered on the left",
+                "characteristics": [
+                    "• Mean > Median > Mode",
+                    "• Many small values, few very large values",
+                    "• Common in income, house prices, response times",
+                    "• May indicate log-normal distribution"
+                ]
+            },
+            "Approximately normal (mesokurtic)": {
+                "definition": "Data follows a bell-shaped curve with moderate tail thickness",
+                "characteristics": [
+                    "• Symmetric around the mean",
+                    "• 68% of data within 1 standard deviation",
+                    "• 95% of data within 2 standard deviations",
+                    "• Ideal for most statistical tests"
+                ]
+            },
+            "Heavy-tailed (leptokurtic)": {
+                "definition": "Distribution has fatter tails than normal, more extreme values",
+                "characteristics": [
+                    "• More outliers than normal distribution",
+                    "• Higher probability of extreme values",
+                    "• Common in financial returns, stock prices",
+                    "• May indicate risk or volatility"
+                ]
+            },
+            "Moderately skewed (right-tailed)": {
+                "definition": "Data shows moderate right skewness, not severe but noticeable",
+                "characteristics": [
+                    "• Somewhat asymmetric",
+                    "• May benefit from transformation",
+                    "• Still usable for many analyses",
+                    "• Consider log transformation"
+                ]
+            },
+            "Light-tailed (platykurtic)": {
+                "definition": "Distribution has thinner tails than normal, fewer extreme values",
+                "characteristics": [
+                    "• Fewer outliers than expected",
+                    "• Data more concentrated around mean",
+                    "• May indicate data quality issues",
+                    "• Consider investigating data collection"
+                ]
+            },
+            "Variance": {
+                "definition": "Average of squared differences from the mean",
+                "interpretation": [
+                    "• Measures data spread around the mean",
+                    "• Higher variance = more spread out data",
+                    "• Lower variance = more clustered data",
+                    "• Square root of variance = standard deviation"
+                ]
+            },
+            "Coefficient of Variation": {
+                "definition": "Standard deviation divided by mean, expressed as percentage",
+                "interpretation": [
+                    "• < 15% = Low variability (consistent data)",
+                    "• 15-35% = Moderate variability",
+                    "• > 35% = High variability (inconsistent data)",
+                    "• Useful for comparing variability across different scales"
+                ]
+            },
+            "High variability": {
+                "definition": "Data shows large spread or inconsistency",
+                "implications": [
+                    "• Data points are widely scattered",
+                    "• May indicate measurement errors",
+                    "• Could suggest multiple populations",
+                    "• Consider data cleaning or stratification"
+                ]
+            },
+            "IQR (Interquartile Range)": {
+                "definition": "Difference between 75th and 25th percentiles",
+                "interpretation": [
+                    "• Measures middle 50% of data spread",
+                    "• Less sensitive to outliers than range",
+                    "• Used to identify outliers (1.5 × IQR rule)",
+                    "• Robust measure of variability"
+                ]
+            },
+            "Range": {
+                "definition": "Difference between maximum and minimum values",
+                "interpretation": [
+                    "• Shows total spread of data",
+                    "• Sensitive to outliers",
+                    "• Simple but limited measure",
+                    "• Good for initial data exploration"
+                ]
+            },
+            "Shapiro-Wilk Test": {
+                "definition": "Statistical test for normality, especially good for small samples",
+                "interpretation": [
+                    "• p > 0.05 = Data appears normal",
+                    "• p ≤ 0.05 = Data does not appear normal",
+                    "• Most powerful for n < 50",
+                    "• Sensitive to outliers"
+                ]
+            },
+            "D'Agostino-Pearson Test": {
+                "definition": "Combines skewness and kurtosis to test normality",
+                "interpretation": [
+                    "• p > 0.05 = Data appears normal",
+                    "• p ≤ 0.05 = Data does not appear normal",
+                    "• Good for larger samples",
+                    "• Tests both skewness and kurtosis together"
+                ]
+            },
+            "Z-Score": {
+                "definition": "Number of standard deviations a value is from the mean",
+                "interpretation": [
+                    "• |Z| < 2 = Normal range",
+                    "• |Z| 2-3 = Unusual but not extreme",
+                    "• |Z| > 3 = Extreme outlier",
+                    "• Z = (value - mean) / standard deviation"
+                ]
+            },
+            "Severity": {
+                "definition": "Level of deviation from normal distribution",
+                "levels": [
+                    "• Low = Minor deviation, no action needed",
+                    "• Moderate = Noticeable deviation, consider transformation",
+                    "• Severe = Strong deviation, transformation recommended",
+                    "• Critical = Extreme deviation, immediate action needed"
+                ]
+            },
+            "Log Transformation": {
+                "definition": "Applies natural logarithm to data values",
+                "use_cases": [
+                    "• Reduces right skewness",
+                    "• Stabilizes variance",
+                    "• Good for multiplicative relationships",
+                    "• Cannot handle zero or negative values"
+                ]
+            },
+            "Box-Cox Transformation": {
+                "definition": "Power transformation that finds optimal lambda parameter",
+                "benefits": [
+                    "• Automatically finds best transformation",
+                    "• Handles zero and negative values (with shift)",
+                    "• Most versatile transformation",
+                    "• Can handle various distribution shapes"
+                ]
+            },
+            "Square Root Transformation": {
+                "definition": "Applies square root function to data values",
+                "use_cases": [
+                    "• Mild transformation for count data",
+                    "• Reduces right skewness moderately",
+                    "• Good for Poisson-like distributions",
+                    "• Cannot handle negative values"
+                ]
+            },
+            "Square Transformation": {
+                "definition": "Squares data values",
+                "use_cases": [
+                    "• For left-skewed data",
+                    "• Increases right skewness",
+                    "• Rarely used in practice",
+                    "• May indicate data quality issues"
+                ]
+            }
+        }
+        
+        return terms.get(term, {})
+    
+    def _ask_analysis_question(self, analysis_type: str, auto_mode: bool = False) -> bool:
+        """Ask user if they want to run specific analysis type."""
+        analysis_names = {
+            "descriptive": "📊 Descriptive Statistics",
+            "distribution": "📈 Distribution Analysis", 
+            "transformation": "🔄 Data Transformation Analysis"
+        }
+        
+        analysis_name = analysis_names.get(analysis_type, analysis_type)
+        
+        if auto_mode:
+            print(f"\n{ColorUtils.blue(f'Run {analysis_name}? (y/n):')} y")
+            return True
+        
+        while True:
+            response = input(f"\n{ColorUtils.blue(f'Run {analysis_name}? (y/n):')} ").lower().strip()
+            if response in ['y', 'n']:
+                return response == 'y'
+            print("Please enter 'y' or 'n'")
+    
+    def _generate_skipped_message(self, analysis_type: str) -> str:
+        """Generate message for skipped analysis."""
+        analysis_names = {
+            "descriptive": "📊 Descriptive Statistics",
+            "distribution": "📈 Distribution Analysis",
+            "transformation": "🔄 Data Transformation Analysis"
+        }
+        
+        analysis_name = analysis_names.get(analysis_type, analysis_type)
+        return f"\n{ColorUtils.blue(f'⏭️  {analysis_name} - SKIPPED')}\n"
     
     def _generate_statistical_glossary(self) -> str:
         """Generate glossary of statistical terms."""
