@@ -64,6 +64,7 @@ from src.statistics.distribution_analysis import DistributionAnalysis
 from src.statistics.data_transformation import DataTransformation
 from src.statistics.enhanced_data_transformation import EnhancedDataTransformation
 from src.statistics.balanced_transformations import BalancedTransformation
+from src.statistics.advanced_transformations import AdvancedTransformations
 from src.statistics.cli_interface import StatisticsCLI
 from src.statistics.reporting import StatisticsReporter
 from src.statistics.color_utils import ColorUtils
@@ -86,6 +87,7 @@ class StatisticalAnalyzer:
         self.data_transformation = DataTransformation()
         self.enhanced_transformation = EnhancedDataTransformation()
         self.balanced_transformation = BalancedTransformation()
+        self.advanced_transformation = AdvancedTransformations()
         self.cli = StatisticsCLI()
         self.reporter = StatisticsReporter()
         self.auto_mode = auto_mode
@@ -310,18 +312,33 @@ class StatisticalAnalyzer:
                 data[[col]], [col]
             )
             
+            # Get advanced transformation recommendations
+            advanced_recommendations = self.advanced_transformation.get_advanced_transformation_recommendations(
+                data[[col]], [col]
+            )
+            
             # Combine all transformation types
             all_transformations = list(set(
                 transformations[col] + 
                 enhanced_recommendations.get(col, []) + 
-                balanced_recommendations.get(col, [])
+                balanced_recommendations.get(col, []) +
+                advanced_recommendations.get(col, [])
             ))
             
             # Test each transformation method
             for transform_type in all_transformations:
                 try:
-                    # Try balanced transformation first
-                    if transform_type in ['balanced_log', 'balanced_box_cox', 'adaptive_power', 'quantile_normalize',
+                    # Try advanced transformation first (highest priority)
+                    if transform_type in ['kurtosis_preserving_log', 'dual_optimized_box_cox', 'adaptive_power_transform',
+                                        'quantile_normalize', 'robust_log_transform', 'financial_balanced_transform',
+                                        'financial_log_returns', 'volatility_stabilizing', 'price_normalize',
+                                        'volume_transform', 'yeo_johnson_optimized', 'shifted_box_cox',
+                                        'robust_yeo_johnson', 'poisson_transform', 'count_data_transform']:
+                        transformed_col, details = self.advanced_transformation.apply_advanced_transformation(
+                            col_data, transform_type, col
+                        )
+                    # Try balanced transformation
+                    elif transform_type in ['balanced_log', 'balanced_box_cox', 'adaptive_power', 'quantile_normalize',
                                         'robust_normalize', 'financial_balanced', 'combined_transform', 
                                         'outlier_resistant', 'variance_stabilizing', 'rank_based']:
                         transformed_col, details = self.balanced_transformation.apply_balanced_transformation(
@@ -394,8 +411,17 @@ class StatisticalAnalyzer:
             transform_type = transformations[col][0]  # Get the first (and only) transformation
             
             try:
+                # Apply advanced transformation first (highest priority)
+                if transform_type in ['kurtosis_preserving_log', 'dual_optimized_box_cox', 'adaptive_power_transform',
+                                    'quantile_normalize', 'robust_log_transform', 'financial_balanced_transform',
+                                    'financial_log_returns', 'volatility_stabilizing', 'price_normalize',
+                                    'volume_transform', 'yeo_johnson_optimized', 'shifted_box_cox',
+                                    'robust_yeo_johnson', 'poisson_transform', 'count_data_transform']:
+                    transformed_col, details = self.advanced_transformation.apply_advanced_transformation(
+                        col_data, transform_type, col
+                    )
                 # Apply balanced transformation
-                if transform_type in ['balanced_log', 'balanced_box_cox', 'adaptive_power', 'quantile_normalize',
+                elif transform_type in ['balanced_log', 'balanced_box_cox', 'adaptive_power', 'quantile_normalize',
                                     'robust_normalize', 'financial_balanced', 'combined_transform', 
                                     'outlier_resistant', 'variance_stabilizing', 'rank_based']:
                     transformed_col, details = self.balanced_transformation.apply_balanced_transformation(
@@ -410,8 +436,27 @@ class StatisticalAnalyzer:
                 if transformed_col is not None and len(transformed_col) > 0 and details.get('success', True):
                     # Update the transformed data
                     transformed_data.loc[col_data.index, col] = transformed_col
+                    
+                    # Calculate comprehensive statistics for display
+                    original_skew = col_data.skew()
+                    original_kurt = col_data.kurtosis()
+                    transformed_skew = transformed_col.skew()
+                    transformed_kurt = transformed_col.kurtosis()
+                    
+                    # Calculate improvement percentages
+                    skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100 if original_skew != 0 else 0
+                    kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100 if original_kurt != 0 else 0
+                    
                     transformation_details[col] = {
-                        transform_type: details
+                        transform_type: {
+                            **details,
+                            'original_skewness': original_skew,
+                            'transformed_skewness': transformed_skew,
+                            'original_kurtosis': original_kurt,
+                            'transformed_kurtosis': transformed_kurt,
+                            'skewness_improvement': skew_improvement,
+                            'kurtosis_improvement': kurt_improvement
+                        }
                     }
                 else:
                     print(f"  ⚠️ Transformation {transform_type} failed for {col}: {details.get('error', 'Unknown error')}")
