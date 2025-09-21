@@ -68,12 +68,13 @@ from src.statistics.color_utils import ColorUtils
 class StatisticalAnalyzer:
     """Main class for statistical analysis operations."""
     
-    def __init__(self, auto_mode: bool = False, output_directory: Optional[str] = None):
+    def __init__(self, auto_mode: bool = False, output_directory: Optional[str] = None, analysis_options: Dict[str, Any] = None):
         """Initialize the statistical analyzer.
         
         Args:
             auto_mode: If True, automatically answer 'y' to all questions
             output_directory: Directory to save results and transformed data
+            analysis_options: Dictionary with analysis options
         """
         self.file_ops = StatisticsFileOperations()
         self.descriptive_stats = DescriptiveStatistics()
@@ -83,6 +84,7 @@ class StatisticalAnalyzer:
         self.reporter = StatisticsReporter()
         self.auto_mode = auto_mode
         self.output_directory = output_directory
+        self.analysis_options = analysis_options or {}
         
         # Supported data directories
         self.supported_dirs = self.file_ops.get_supported_directories()
@@ -138,15 +140,33 @@ class StatisticalAnalyzer:
         # Perform analysis
         analysis_results = {}
         
-        if analysis_options.get('descriptive', False):
+        # Check if we need to run descriptive analysis (main flag or any descriptive detail flags)
+        need_descriptive = (analysis_options.get('descriptive', False) or 
+                           analysis_options.get('basic', False) or 
+                           analysis_options.get('distribution_chars', False) or 
+                           analysis_options.get('variability', False) or 
+                           analysis_options.get('missing', False))
+        
+        if need_descriptive:
             print("\n📊 Performing descriptive statistics analysis...")
             analysis_results['descriptive'] = self.descriptive_stats.analyze_data(data, numeric_columns)
         
-        if analysis_options.get('distribution', False):
+        # Check if we need to run distribution analysis (main flag or any distribution detail flags)
+        need_distribution = (analysis_options.get('distribution', False) or 
+                           analysis_options.get('norm', False) or 
+                           analysis_options.get('skewness', False) or 
+                           analysis_options.get('kurtosis', False))
+        
+        if need_distribution:
             print("\n📈 Performing distribution analysis...")
             analysis_results['distribution'] = self.distribution_analysis.analyze_distributions(data, numeric_columns)
         
-        if analysis_options.get('transform', False):
+        # Check if we need to run transformation analysis (main flag or any transformation detail flags)
+        need_transform = (analysis_options.get('transform', False) or 
+                         analysis_options.get('transformation_results', False) or 
+                         analysis_options.get('transformation_comparison', False))
+        
+        if need_transform:
             print("\n🔄 Performing data transformation analysis...")
             # Get transformation recommendations
             if 'distribution' in analysis_results:
@@ -255,7 +275,8 @@ class StatisticalAnalyzer:
                     results['file_info'], 
                     results['analysis_results'],
                     self.output_directory,
-                    self.auto_mode
+                    self.auto_mode,
+                    self.analysis_options
                 )
                 
                 print("\n" + report)
@@ -383,7 +404,8 @@ class StatisticalAnalyzer:
                     results['file_info'], 
                     results['analysis_results'],
                     self.output_directory,
-                    self.auto_mode
+                    self.auto_mode,
+                    self.analysis_options
                 )
                 
                 print("\n" + report)
@@ -545,7 +567,8 @@ def main():
     # Create the analyzer
     analyzer = StatisticalAnalyzer(
         auto_mode=config['processing_options']['auto'],
-        output_directory=config['output_directory']
+        output_directory=config['output_directory'],
+        analysis_options=config['analysis_options']
     )
     
     # Run analysis
