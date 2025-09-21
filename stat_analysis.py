@@ -63,6 +63,7 @@ from src.statistics.descriptive_stats import DescriptiveStatistics
 from src.statistics.distribution_analysis import DistributionAnalysis
 from src.statistics.data_transformation import DataTransformation
 from src.statistics.enhanced_data_transformation import EnhancedDataTransformation
+from src.statistics.balanced_transformations import BalancedTransformation
 from src.statistics.cli_interface import StatisticsCLI
 from src.statistics.reporting import StatisticsReporter
 from src.statistics.color_utils import ColorUtils
@@ -84,6 +85,7 @@ class StatisticalAnalyzer:
         self.distribution_analysis = DistributionAnalysis()
         self.data_transformation = DataTransformation()
         self.enhanced_transformation = EnhancedDataTransformation()
+        self.balanced_transformation = BalancedTransformation()
         self.cli = StatisticsCLI()
         self.reporter = StatisticsReporter()
         self.auto_mode = auto_mode
@@ -203,16 +205,22 @@ class StatisticalAnalyzer:
                     # Convert to single transformation per column format
                     single_transformations = {col: [transform] for col, transform in optimal_transformations.items()}
                     
-                    # Use enhanced transformation if available, otherwise fallback to standard
+                    # Use balanced transformation if available, otherwise fallback to enhanced/standard
                     try:
-                        analysis_results['transformation'] = self.enhanced_transformation.transform_data_enhanced(
+                        analysis_results['transformation'] = self._apply_balanced_transformations(
                             data, single_transformations, numeric_columns
                         )
                     except:
-                        # Fallback to standard transformation
-                        analysis_results['transformation'] = self.data_transformation.transform_data(
-                            data, single_transformations, numeric_columns
-                        )
+                        try:
+                            # Fallback to enhanced transformation
+                            analysis_results['transformation'] = self.enhanced_transformation.transform_data_enhanced(
+                                data, single_transformations, numeric_columns
+                            )
+                        except:
+                            # Final fallback to standard transformation
+                            analysis_results['transformation'] = self.data_transformation.transform_data(
+                                data, single_transformations, numeric_columns
+                            )
                     
                     # Add comparison results
                     analysis_results['transformation']['comparison'] = self.data_transformation.compare_transformations(
@@ -275,7 +283,7 @@ class StatisticalAnalyzer:
     
     def _select_optimal_transformations(self, data: pd.DataFrame, transformations: Dict[str, List[str]], 
                                       numeric_columns: List[str]) -> Dict[str, str]:
-        """Select the best transformation for each column using enhanced methods."""
+        """Select the best transformation for each column using balanced methods."""
         optimal_transformations = {}
         
         for col in numeric_columns:
@@ -286,25 +294,41 @@ class StatisticalAnalyzer:
             if len(col_data) == 0:
                 continue
             
-            print(f"\n🔍 Testing enhanced transformations for column: {col}")
+            print(f"\n🔍 Testing balanced transformations for column: {col}")
             print("-" * 60)
             
             best_transformation = None
             best_score = -float('inf')
             
-            # Get enhanced transformation recommendations for this column
+            # Get balanced transformation recommendations for this column
+            balanced_recommendations = self.balanced_transformation.get_balanced_transformation_recommendations(
+                data[[col]], [col]
+            )
+            
+            # Get enhanced transformation recommendations
             enhanced_recommendations = self.enhanced_transformation.get_enhanced_transformation_recommendations(
                 data[[col]], [col]
             )
             
-            # Combine standard and enhanced transformations
-            all_transformations = list(set(transformations[col] + enhanced_recommendations.get(col, [])))
+            # Combine all transformation types
+            all_transformations = list(set(
+                transformations[col] + 
+                enhanced_recommendations.get(col, []) + 
+                balanced_recommendations.get(col, [])
+            ))
             
             # Test each transformation method
             for transform_type in all_transformations:
                 try:
-                    # Try enhanced transformation first
-                    if transform_type in ['enhanced_log', 'robust_log', 'robust_box_cox', 'adaptive_box_cox', 
+                    # Try balanced transformation first
+                    if transform_type in ['balanced_log', 'balanced_box_cox', 'adaptive_power', 'quantile_normalize',
+                                        'robust_normalize', 'financial_balanced', 'combined_transform', 
+                                        'outlier_resistant', 'variance_stabilizing', 'rank_based']:
+                        transformed_col, details = self.balanced_transformation.apply_balanced_transformation(
+                            col_data, transform_type
+                        )
+                    # Try enhanced transformation
+                    elif transform_type in ['enhanced_log', 'robust_log', 'robust_box_cox', 'adaptive_box_cox', 
                                        'power_transform', 'quantile_transform', 'log_returns', 'winsorized_log', 
                                        'financial_normalize']:
                         transformed_col, details = self.enhanced_transformation._apply_enhanced_transformation(
@@ -325,14 +349,17 @@ class StatisticalAnalyzer:
                         print(f"  {transform_type}: Failed - {details.get('error', 'Unknown error')}")
                         continue
                     
-                    # Use improvement score from enhanced transformation if available
-                    if 'improvement_score' in details:
+                    # Use balanced score if available (prioritizes balanced transformations)
+                    if 'balanced_score' in details:
+                        score = details['balanced_score']
+                        print(f"  {transform_type}: Balanced Score = {score:.3f} (Skew: {details.get('skewness_improvement', 0):.3f}, Kurt: {details.get('kurtosis_improvement', 0):.3f})")
+                    elif 'improvement_score' in details:
                         score = details['improvement_score']
+                        print(f"  {transform_type}: Enhanced Score = {score:.3f}")
                     else:
                         # Calculate standard score
                         score = self._calculate_transformation_score(col_data, transformed_col, transform_type)
-                    
-                    print(f"  {transform_type}: Score = {score:.3f}")
+                        print(f"  {transform_type}: Standard Score = {score:.3f}")
                     
                     if score > best_score:
                         best_score = score
@@ -349,6 +376,54 @@ class StatisticalAnalyzer:
                 print(f"  ❌ No suitable transformation found for {col}")
         
         return optimal_transformations
+    
+    def _apply_balanced_transformations(self, data: pd.DataFrame, transformations: Dict[str, List[str]], 
+                                      numeric_columns: List[str]) -> Dict[str, Any]:
+        """Apply balanced transformations to the data."""
+        transformed_data = data.copy()
+        transformation_details = {}
+        
+        for col in numeric_columns:
+            if col not in transformations or not transformations[col]:
+                continue
+            
+            col_data = data[col].dropna()
+            if len(col_data) == 0:
+                continue
+            
+            transform_type = transformations[col][0]  # Get the first (and only) transformation
+            
+            try:
+                # Apply balanced transformation
+                if transform_type in ['balanced_log', 'balanced_box_cox', 'adaptive_power', 'quantile_normalize',
+                                    'robust_normalize', 'financial_balanced', 'combined_transform', 
+                                    'outlier_resistant', 'variance_stabilizing', 'rank_based']:
+                    transformed_col, details = self.balanced_transformation.apply_balanced_transformation(
+                        col_data, transform_type
+                    )
+                else:
+                    # Fallback to standard transformation
+                    transformed_col, details = self.data_transformation._apply_transformation(
+                        col_data, transform_type, col
+                    )
+                
+                if transformed_col is not None and len(transformed_col) > 0 and details.get('success', True):
+                    # Update the transformed data
+                    transformed_data.loc[col_data.index, col] = transformed_col
+                    transformation_details[col] = {
+                        transform_type: details
+                    }
+                else:
+                    print(f"  ⚠️ Transformation {transform_type} failed for {col}: {details.get('error', 'Unknown error')}")
+                    
+            except Exception as e:
+                print(f"  ❌ Error applying {transform_type} to {col}: {str(e)}")
+                continue
+        
+        return {
+            'transformed_data': transformed_data,
+            'transformation_details': transformation_details
+        }
     
     def _explain_transformation_failure(self, col_name: str, col_data: pd.Series, available_transformations: List[str]) -> None:
         """Explain why transformations failed for a specific column."""
