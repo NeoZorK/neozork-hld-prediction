@@ -438,10 +438,10 @@ class StatisticalAnalyzer:
                     transformed_data.loc[col_data.index, col] = transformed_col
                     
                     # Calculate comprehensive statistics for display
-                    original_skew = col_data.skew()
-                    original_kurt = col_data.kurtosis()
-                    transformed_skew = transformed_col.skew()
-                    transformed_kurt = transformed_col.kurtosis()
+                    original_skew = col_data.skew() if hasattr(col_data, 'skew') else stats.skew(col_data)
+                    original_kurt = col_data.kurtosis() if hasattr(col_data, 'kurtosis') else stats.kurtosis(col_data)
+                    transformed_skew = stats.skew(transformed_col) if isinstance(transformed_col, np.ndarray) else transformed_col.skew()
+                    transformed_kurt = stats.kurtosis(transformed_col) if isinstance(transformed_col, np.ndarray) else transformed_col.kurtosis()
                     
                     # Calculate improvement percentages
                     skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100 if original_skew != 0 else 0
@@ -621,9 +621,28 @@ class StatisticalAnalyzer:
             else:
                 is_normal = False
             
-            # Calculate improvement scores (0-1 scale)
-            skew_improvement = max(0, (orig_skew - trans_skew) / max(orig_skew, 0.001))
-            kurt_improvement = max(0, (orig_kurt - trans_kurt) / max(orig_kurt, 0.001))
+            # Calculate improvement scores (0-1 scale) with better handling
+            if orig_skew > 0.01:  # Only calculate if original skewness is significant
+                skew_improvement = max(0, (orig_skew - trans_skew) / orig_skew)
+            else:
+                skew_improvement = 0
+                
+            if orig_kurt > 0.01:  # Only calculate if original kurtosis is significant
+                kurt_improvement = max(0, (orig_kurt - trans_kurt) / orig_kurt)
+            else:
+                kurt_improvement = 0
+            
+            # Apply penalties for worsening
+            skew_penalty = 0
+            kurt_penalty = 0
+            
+            # Penalty if skewness gets worse
+            if trans_skew > orig_skew * 1.1:  # 10% tolerance
+                skew_penalty = min(0.5, (trans_skew - orig_skew) * 0.1)
+            
+            # Penalty if kurtosis gets significantly worse
+            if trans_kurt > orig_kurt * 1.5:  # 50% tolerance
+                kurt_penalty = min(1.0, (trans_kurt - orig_kurt) * 0.05)
             
             # Normalize skewness and kurtosis to 0-1 scale (closer to 0 is better)
             skew_score = max(0, 1 - min(trans_skew / 2.0, 1))  # 2.0 is considered highly skewed
@@ -632,16 +651,18 @@ class StatisticalAnalyzer:
             # Normality bonus
             normality_bonus = 0.3 if is_normal else 0
             
-            # Calculate final score (weighted combination)
+            # Calculate final score (weighted combination) with penalties
             score = (
                 0.3 * skew_improvement +      # 30% weight on skewness improvement
                 0.2 * kurt_improvement +      # 20% weight on kurtosis improvement
                 0.3 * skew_score +            # 30% weight on final skewness level
                 0.2 * kurt_score +            # 20% weight on final kurtosis level
-                normality_bonus               # 30% bonus for achieving normality
+                normality_bonus -             # 30% bonus for achieving normality
+                skew_penalty -                # Penalty for worsening skewness
+                kurt_penalty                  # Penalty for worsening kurtosis
             )
             
-            return min(score, 1.0)  # Cap at 1.0
+            return max(-1.0, min(score, 1.0))  # Cap between -1.0 and 1.0
             
         except Exception as e:
             return 0.0

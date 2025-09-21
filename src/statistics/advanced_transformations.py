@@ -145,10 +145,10 @@ class AdvancedTransformations:
             transformed = np.log(shifted_data)
             
             # Calculate statistics
-            original_skew = data.skew()
-            original_kurt = data.kurtosis()
-            transformed_skew = transformed.skew()
-            transformed_kurt = transformed.kurtosis()
+            original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
+            original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
             
             # Calculate improvements
             skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100 if original_skew != 0 else 0
@@ -176,6 +176,7 @@ class AdvancedTransformations:
     def _dual_optimized_box_cox(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Box-Cox transformation optimized for both skewness and kurtosis."""
         try:
+            import numpy as np
             # Ensure positive values
             min_val = data.min()
             if min_val <= 0:
@@ -216,17 +217,39 @@ class AdvancedTransformations:
                 transformed = (shifted_data ** optimal_lambda - 1) / optimal_lambda
             
             # Calculate statistics
-            original_skew = data.skew()
-            original_kurt = data.kurtosis()
-            transformed_skew = transformed.skew()
-            transformed_kurt = transformed.kurtosis()
+            original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
+            original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
             
-            # Calculate improvements
-            skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100 if original_skew != 0 else 0
-            kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100 if original_kurt != 0 else 0
+            # Calculate improvements with better handling
+            if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
+                skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100
+                skew_improvement = max(0, skew_improvement)  # Don't allow negative improvements
+            else:
+                skew_improvement = 0
             
-            # Calculate balanced score
-            balanced_score = (skew_improvement + kurt_improvement) / 2
+            if abs(original_kurt) > 0.01:  # Only calculate if original kurtosis is significant
+                kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100
+                kurt_improvement = max(0, kurt_improvement)  # Don't allow negative improvements
+            else:
+                kurt_improvement = 0
+            
+            # Calculate balanced score with penalty for worsening
+            skew_penalty = 0
+            kurt_penalty = 0
+            
+            # Penalty if skewness gets worse
+            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
+                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            
+            # Penalty if kurtosis gets significantly worse
+            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
+                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
+            
+            # Calculate balanced score with penalties
+            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
+            balanced_score = max(-100, balanced_score)  # Cap at -100
             
             return transformed, {
                 'success': True,
@@ -248,6 +271,7 @@ class AdvancedTransformations:
     def _adaptive_power_transform(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Adaptive power transformation that adjusts based on data characteristics."""
         try:
+            import numpy as np
             # Analyze data characteristics
             skewness = data.skew()
             kurtosis = data.kurtosis()
@@ -273,17 +297,39 @@ class AdvancedTransformations:
                 transformed = np.power(data + 1, power)
             
             # Calculate statistics
-            original_skew = data.skew()
-            original_kurt = data.kurtosis()
-            transformed_skew = transformed.skew()
-            transformed_kurt = transformed.kurtosis()
+            original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
+            original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
             
-            # Calculate improvements
-            skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100 if original_skew != 0 else 0
-            kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100 if original_kurt != 0 else 0
+            # Calculate improvements with better handling
+            if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
+                skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100
+                skew_improvement = max(0, skew_improvement)  # Don't allow negative improvements
+            else:
+                skew_improvement = 0
             
-            # Calculate balanced score
-            balanced_score = (skew_improvement + kurt_improvement) / 2
+            if abs(original_kurt) > 0.01:  # Only calculate if original kurtosis is significant
+                kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100
+                kurt_improvement = max(0, kurt_improvement)  # Don't allow negative improvements
+            else:
+                kurt_improvement = 0
+            
+            # Calculate balanced score with penalty for worsening
+            skew_penalty = 0
+            kurt_penalty = 0
+            
+            # Penalty if skewness gets worse
+            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
+                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            
+            # Penalty if kurtosis gets significantly worse
+            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
+                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
+            
+            # Calculate balanced score with penalties
+            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
+            balanced_score = max(-100, balanced_score)  # Cap at -100
             
             return transformed, {
                 'success': True,
@@ -310,17 +356,39 @@ class AdvancedTransformations:
             transformed = pd.Series(transformed, index=data.index)
             
             # Calculate statistics
-            original_skew = data.skew()
-            original_kurt = data.kurtosis()
-            transformed_skew = transformed.skew()
-            transformed_kurt = transformed.kurtosis()
+            original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
+            original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
             
-            # Calculate improvements
-            skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100 if original_skew != 0 else 0
-            kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100 if original_kurt != 0 else 0
+            # Calculate improvements with better handling
+            if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
+                skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100
+                skew_improvement = max(0, skew_improvement)  # Don't allow negative improvements
+            else:
+                skew_improvement = 0
             
-            # Calculate balanced score
-            balanced_score = (skew_improvement + kurt_improvement) / 2
+            if abs(original_kurt) > 0.01:  # Only calculate if original kurtosis is significant
+                kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100
+                kurt_improvement = max(0, kurt_improvement)  # Don't allow negative improvements
+            else:
+                kurt_improvement = 0
+            
+            # Calculate balanced score with penalty for worsening
+            skew_penalty = 0
+            kurt_penalty = 0
+            
+            # Penalty if skewness gets worse
+            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
+                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            
+            # Penalty if kurtosis gets significantly worse
+            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
+                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
+            
+            # Calculate balanced score with penalties
+            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
+            balanced_score = max(-100, balanced_score)  # Cap at -100
             
             return transformed, {
                 'success': True,
@@ -340,6 +408,7 @@ class AdvancedTransformations:
     def _robust_log_transform(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Robust log transformation with outlier handling."""
         try:
+            import numpy as np
             # Handle outliers using winsorization
             q1 = data.quantile(0.25)
             q3 = data.quantile(0.75)
@@ -363,17 +432,39 @@ class AdvancedTransformations:
             transformed = np.log(shifted_data)
             
             # Calculate statistics
-            original_skew = data.skew()
-            original_kurt = data.kurtosis()
-            transformed_skew = transformed.skew()
-            transformed_kurt = transformed.kurtosis()
+            original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
+            original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
             
-            # Calculate improvements
-            skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100 if original_skew != 0 else 0
-            kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100 if original_kurt != 0 else 0
+            # Calculate improvements with better handling
+            if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
+                skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100
+                skew_improvement = max(0, skew_improvement)  # Don't allow negative improvements
+            else:
+                skew_improvement = 0
             
-            # Calculate balanced score
-            balanced_score = (skew_improvement + kurt_improvement) / 2
+            if abs(original_kurt) > 0.01:  # Only calculate if original kurtosis is significant
+                kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100
+                kurt_improvement = max(0, kurt_improvement)  # Don't allow negative improvements
+            else:
+                kurt_improvement = 0
+            
+            # Calculate balanced score with penalty for worsening
+            skew_penalty = 0
+            kurt_penalty = 0
+            
+            # Penalty if skewness gets worse
+            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
+                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            
+            # Penalty if kurtosis gets significantly worse
+            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
+                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
+            
+            # Calculate balanced score with penalties
+            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
+            balanced_score = max(-100, balanced_score)  # Cap at -100
             
             return transformed, {
                 'success': True,
@@ -395,6 +486,7 @@ class AdvancedTransformations:
     def _financial_balanced_transform(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Financial-specific balanced transformation."""
         try:
+            import numpy as np
             # For financial data, use log returns approach
             if col_name in ['Open', 'High', 'Low', 'Close']:
                 # Use log transformation for price data
@@ -411,17 +503,39 @@ class AdvancedTransformations:
                     transformed = data  # No transformation needed
             
             # Calculate statistics
-            original_skew = data.skew()
-            original_kurt = data.kurtosis()
-            transformed_skew = transformed.skew()
-            transformed_kurt = transformed.kurtosis()
+            original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
+            original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
             
-            # Calculate improvements
-            skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100 if original_skew != 0 else 0
-            kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100 if original_kurt != 0 else 0
+            # Calculate improvements with better handling
+            if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
+                skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100
+                skew_improvement = max(0, skew_improvement)  # Don't allow negative improvements
+            else:
+                skew_improvement = 0
             
-            # Calculate balanced score
-            balanced_score = (skew_improvement + kurt_improvement) / 2
+            if abs(original_kurt) > 0.01:  # Only calculate if original kurtosis is significant
+                kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100
+                kurt_improvement = max(0, kurt_improvement)  # Don't allow negative improvements
+            else:
+                kurt_improvement = 0
+            
+            # Calculate balanced score with penalty for worsening
+            skew_penalty = 0
+            kurt_penalty = 0
+            
+            # Penalty if skewness gets worse
+            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
+                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            
+            # Penalty if kurtosis gets significantly worse
+            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
+                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
+            
+            # Calculate balanced score with penalties
+            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
+            balanced_score = max(-100, balanced_score)  # Cap at -100
             
             return transformed, {
                 'success': True,
@@ -441,6 +555,7 @@ class AdvancedTransformations:
     def _financial_log_returns(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Calculate log returns for financial data."""
         try:
+            import numpy as np
             # Calculate log returns
             log_returns = np.log(data / data.shift(1)).dropna()
             
@@ -450,12 +565,34 @@ class AdvancedTransformations:
             transformed_skew = log_returns.skew()
             transformed_kurt = log_returns.kurtosis()
             
-            # Calculate improvements
-            skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100 if original_skew != 0 else 0
-            kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100 if original_kurt != 0 else 0
+            # Calculate improvements with better handling
+            if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
+                skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100
+                skew_improvement = max(0, skew_improvement)  # Don't allow negative improvements
+            else:
+                skew_improvement = 0
             
-            # Calculate balanced score
-            balanced_score = (skew_improvement + kurt_improvement) / 2
+            if abs(original_kurt) > 0.01:  # Only calculate if original kurtosis is significant
+                kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100
+                kurt_improvement = max(0, kurt_improvement)  # Don't allow negative improvements
+            else:
+                kurt_improvement = 0
+            
+            # Calculate balanced score with penalty for worsening
+            skew_penalty = 0
+            kurt_penalty = 0
+            
+            # Penalty if skewness gets worse
+            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
+                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            
+            # Penalty if kurtosis gets significantly worse
+            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
+                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
+            
+            # Calculate balanced score with penalties
+            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
+            balanced_score = max(-100, balanced_score)  # Cap at -100
             
             return log_returns, {
                 'success': True,
@@ -485,17 +622,39 @@ class AdvancedTransformations:
             transformed = transformed.fillna(data)
             
             # Calculate statistics
-            original_skew = data.skew()
-            original_kurt = data.kurtosis()
-            transformed_skew = transformed.skew()
-            transformed_kurt = transformed.kurtosis()
+            original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
+            original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
             
-            # Calculate improvements
-            skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100 if original_skew != 0 else 0
-            kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100 if original_kurt != 0 else 0
+            # Calculate improvements with better handling
+            if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
+                skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100
+                skew_improvement = max(0, skew_improvement)  # Don't allow negative improvements
+            else:
+                skew_improvement = 0
             
-            # Calculate balanced score
-            balanced_score = (skew_improvement + kurt_improvement) / 2
+            if abs(original_kurt) > 0.01:  # Only calculate if original kurtosis is significant
+                kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100
+                kurt_improvement = max(0, kurt_improvement)  # Don't allow negative improvements
+            else:
+                kurt_improvement = 0
+            
+            # Calculate balanced score with penalty for worsening
+            skew_penalty = 0
+            kurt_penalty = 0
+            
+            # Penalty if skewness gets worse
+            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
+                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            
+            # Penalty if kurtosis gets significantly worse
+            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
+                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
+            
+            # Calculate balanced score with penalties
+            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
+            balanced_score = max(-100, balanced_score)  # Cap at -100
             
             return transformed, {
                 'success': True,
@@ -522,17 +681,39 @@ class AdvancedTransformations:
             transformed = np.log(normalized + 1)
             
             # Calculate statistics
-            original_skew = data.skew()
-            original_kurt = data.kurtosis()
-            transformed_skew = transformed.skew()
-            transformed_kurt = transformed.kurtosis()
+            original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
+            original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
             
-            # Calculate improvements
-            skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100 if original_skew != 0 else 0
-            kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100 if original_kurt != 0 else 0
+            # Calculate improvements with better handling
+            if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
+                skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100
+                skew_improvement = max(0, skew_improvement)  # Don't allow negative improvements
+            else:
+                skew_improvement = 0
             
-            # Calculate balanced score
-            balanced_score = (skew_improvement + kurt_improvement) / 2
+            if abs(original_kurt) > 0.01:  # Only calculate if original kurtosis is significant
+                kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100
+                kurt_improvement = max(0, kurt_improvement)  # Don't allow negative improvements
+            else:
+                kurt_improvement = 0
+            
+            # Calculate balanced score with penalty for worsening
+            skew_penalty = 0
+            kurt_penalty = 0
+            
+            # Penalty if skewness gets worse
+            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
+                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            
+            # Penalty if kurtosis gets significantly worse
+            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
+                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
+            
+            # Calculate balanced score with penalties
+            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
+            balanced_score = max(-100, balanced_score)  # Cap at -100
             
             return transformed, {
                 'success': True,
@@ -556,17 +737,39 @@ class AdvancedTransformations:
             transformed = np.sqrt(data)
             
             # Calculate statistics
-            original_skew = data.skew()
-            original_kurt = data.kurtosis()
-            transformed_skew = transformed.skew()
-            transformed_kurt = transformed.kurtosis()
+            original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
+            original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
             
-            # Calculate improvements
-            skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100 if original_skew != 0 else 0
-            kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100 if original_kurt != 0 else 0
+            # Calculate improvements with better handling
+            if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
+                skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100
+                skew_improvement = max(0, skew_improvement)  # Don't allow negative improvements
+            else:
+                skew_improvement = 0
             
-            # Calculate balanced score
-            balanced_score = (skew_improvement + kurt_improvement) / 2
+            if abs(original_kurt) > 0.01:  # Only calculate if original kurtosis is significant
+                kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100
+                kurt_improvement = max(0, kurt_improvement)  # Don't allow negative improvements
+            else:
+                kurt_improvement = 0
+            
+            # Calculate balanced score with penalty for worsening
+            skew_penalty = 0
+            kurt_penalty = 0
+            
+            # Penalty if skewness gets worse
+            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
+                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            
+            # Penalty if kurtosis gets significantly worse
+            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
+                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
+            
+            # Calculate balanced score with penalties
+            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
+            balanced_score = max(-100, balanced_score)  # Cap at -100
             
             return transformed, {
                 'success': True,
@@ -591,17 +794,39 @@ class AdvancedTransformations:
             transformed = pd.Series(transformed, index=data.index)
             
             # Calculate statistics
-            original_skew = data.skew()
-            original_kurt = data.kurtosis()
-            transformed_skew = transformed.skew()
-            transformed_kurt = transformed.kurtosis()
+            original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
+            original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
             
-            # Calculate improvements
-            skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100 if original_skew != 0 else 0
-            kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100 if original_kurt != 0 else 0
+            # Calculate improvements with better handling
+            if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
+                skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100
+                skew_improvement = max(0, skew_improvement)  # Don't allow negative improvements
+            else:
+                skew_improvement = 0
             
-            # Calculate balanced score
-            balanced_score = (skew_improvement + kurt_improvement) / 2
+            if abs(original_kurt) > 0.01:  # Only calculate if original kurtosis is significant
+                kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100
+                kurt_improvement = max(0, kurt_improvement)  # Don't allow negative improvements
+            else:
+                kurt_improvement = 0
+            
+            # Calculate balanced score with penalty for worsening
+            skew_penalty = 0
+            kurt_penalty = 0
+            
+            # Penalty if skewness gets worse
+            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
+                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            
+            # Penalty if kurtosis gets significantly worse
+            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
+                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
+            
+            # Calculate balanced score with penalties
+            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
+            balanced_score = max(-100, balanced_score)  # Cap at -100
             
             return transformed, {
                 'success': True,
@@ -636,17 +861,39 @@ class AdvancedTransformations:
             transformed = pd.Series(transformed, index=data.index)
             
             # Calculate statistics
-            original_skew = data.skew()
-            original_kurt = data.kurtosis()
-            transformed_skew = transformed.skew()
-            transformed_kurt = transformed.kurtosis()
+            original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
+            original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
             
-            # Calculate improvements
-            skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100 if original_skew != 0 else 0
-            kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100 if original_kurt != 0 else 0
+            # Calculate improvements with better handling
+            if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
+                skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100
+                skew_improvement = max(0, skew_improvement)  # Don't allow negative improvements
+            else:
+                skew_improvement = 0
             
-            # Calculate balanced score
-            balanced_score = (skew_improvement + kurt_improvement) / 2
+            if abs(original_kurt) > 0.01:  # Only calculate if original kurtosis is significant
+                kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100
+                kurt_improvement = max(0, kurt_improvement)  # Don't allow negative improvements
+            else:
+                kurt_improvement = 0
+            
+            # Calculate balanced score with penalty for worsening
+            skew_penalty = 0
+            kurt_penalty = 0
+            
+            # Penalty if skewness gets worse
+            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
+                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            
+            # Penalty if kurtosis gets significantly worse
+            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
+                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
+            
+            # Calculate balanced score with penalties
+            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
+            balanced_score = max(-100, balanced_score)  # Cap at -100
             
             return transformed, {
                 'success': True,
@@ -683,17 +930,39 @@ class AdvancedTransformations:
             transformed = pd.Series(transformed, index=data.index)
             
             # Calculate statistics
-            original_skew = data.skew()
-            original_kurt = data.kurtosis()
-            transformed_skew = transformed.skew()
-            transformed_kurt = transformed.kurtosis()
+            original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
+            original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
             
-            # Calculate improvements
-            skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100 if original_skew != 0 else 0
-            kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100 if original_kurt != 0 else 0
+            # Calculate improvements with better handling
+            if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
+                skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100
+                skew_improvement = max(0, skew_improvement)  # Don't allow negative improvements
+            else:
+                skew_improvement = 0
             
-            # Calculate balanced score
-            balanced_score = (skew_improvement + kurt_improvement) / 2
+            if abs(original_kurt) > 0.01:  # Only calculate if original kurtosis is significant
+                kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100
+                kurt_improvement = max(0, kurt_improvement)  # Don't allow negative improvements
+            else:
+                kurt_improvement = 0
+            
+            # Calculate balanced score with penalty for worsening
+            skew_penalty = 0
+            kurt_penalty = 0
+            
+            # Penalty if skewness gets worse
+            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
+                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            
+            # Penalty if kurtosis gets significantly worse
+            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
+                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
+            
+            # Calculate balanced score with penalties
+            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
+            balanced_score = max(-100, balanced_score)  # Cap at -100
             
             return transformed, {
                 'success': True,
@@ -719,17 +988,39 @@ class AdvancedTransformations:
             transformed = np.sqrt(data)
             
             # Calculate statistics
-            original_skew = data.skew()
-            original_kurt = data.kurtosis()
-            transformed_skew = transformed.skew()
-            transformed_kurt = transformed.kurtosis()
+            original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
+            original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
             
-            # Calculate improvements
-            skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100 if original_skew != 0 else 0
-            kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100 if original_kurt != 0 else 0
+            # Calculate improvements with better handling
+            if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
+                skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100
+                skew_improvement = max(0, skew_improvement)  # Don't allow negative improvements
+            else:
+                skew_improvement = 0
             
-            # Calculate balanced score
-            balanced_score = (skew_improvement + kurt_improvement) / 2
+            if abs(original_kurt) > 0.01:  # Only calculate if original kurtosis is significant
+                kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100
+                kurt_improvement = max(0, kurt_improvement)  # Don't allow negative improvements
+            else:
+                kurt_improvement = 0
+            
+            # Calculate balanced score with penalty for worsening
+            skew_penalty = 0
+            kurt_penalty = 0
+            
+            # Penalty if skewness gets worse
+            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
+                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            
+            # Penalty if kurtosis gets significantly worse
+            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
+                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
+            
+            # Calculate balanced score with penalties
+            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
+            balanced_score = max(-100, balanced_score)  # Cap at -100
             
             return transformed, {
                 'success': True,
@@ -753,17 +1044,39 @@ class AdvancedTransformations:
             transformed = np.log(data + 1)
             
             # Calculate statistics
-            original_skew = data.skew()
-            original_kurt = data.kurtosis()
-            transformed_skew = transformed.skew()
-            transformed_kurt = transformed.kurtosis()
+            original_skew = data.skew() if hasattr(data, 'skew') else stats.skew(data)
+            original_kurt = data.kurtosis() if hasattr(data, 'kurtosis') else stats.kurtosis(data)
+            transformed_skew = stats.skew(transformed) if isinstance(transformed, np.ndarray) else transformed.skew()
+            transformed_kurt = stats.kurtosis(transformed) if isinstance(transformed, np.ndarray) else transformed.kurtosis()
             
-            # Calculate improvements
-            skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100 if original_skew != 0 else 0
-            kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100 if original_kurt != 0 else 0
+            # Calculate improvements with better handling
+            if abs(original_skew) > 0.01:  # Only calculate if original skewness is significant
+                skew_improvement = ((abs(original_skew) - abs(transformed_skew)) / abs(original_skew)) * 100
+                skew_improvement = max(0, skew_improvement)  # Don't allow negative improvements
+            else:
+                skew_improvement = 0
             
-            # Calculate balanced score
-            balanced_score = (skew_improvement + kurt_improvement) / 2
+            if abs(original_kurt) > 0.01:  # Only calculate if original kurtosis is significant
+                kurt_improvement = ((abs(original_kurt) - abs(transformed_kurt)) / abs(original_kurt)) * 100
+                kurt_improvement = max(0, kurt_improvement)  # Don't allow negative improvements
+            else:
+                kurt_improvement = 0
+            
+            # Calculate balanced score with penalty for worsening
+            skew_penalty = 0
+            kurt_penalty = 0
+            
+            # Penalty if skewness gets worse
+            if abs(transformed_skew) > abs(original_skew) * 1.1:  # 10% tolerance
+                skew_penalty = min(50, (abs(transformed_skew) - abs(original_skew)) * 10)
+            
+            # Penalty if kurtosis gets significantly worse
+            if abs(transformed_kurt) > abs(original_kurt) * 1.5:  # 50% tolerance
+                kurt_penalty = min(100, (abs(transformed_kurt) - abs(original_kurt)) * 5)
+            
+            # Calculate balanced score with penalties
+            balanced_score = (skew_improvement + kurt_improvement) / 2 - skew_penalty - kurt_penalty
+            balanced_score = max(-100, balanced_score)  # Cap at -100
             
             return transformed, {
                 'success': True,
