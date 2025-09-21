@@ -54,27 +54,18 @@ class StatisticsReporter:
         
         # Descriptive statistics
         if 'descriptive' in analysis_results:
-            if self._ask_analysis_question("descriptive", auto_mode):
-                report_sections.append(self._generate_analysis_description("descriptive"))
-                report_sections.append(self._generate_descriptive_section(analysis_results['descriptive']))
-            else:
-                report_sections.append(self._generate_skipped_message("descriptive"))
+            report_sections.append(self._generate_analysis_description("descriptive"))
+            report_sections.append(self._generate_descriptive_section(analysis_results['descriptive'], auto_mode))
         
         # Distribution analysis
         if 'distribution' in analysis_results:
-            if self._ask_analysis_question("distribution", auto_mode):
-                report_sections.append(self._generate_analysis_description("distribution"))
-                report_sections.append(self._generate_distribution_section(analysis_results['distribution']))
-            else:
-                report_sections.append(self._generate_skipped_message("distribution"))
+            report_sections.append(self._generate_analysis_description("distribution"))
+            report_sections.append(self._generate_distribution_section(analysis_results['distribution'], auto_mode))
         
         # Data transformation
         if 'transformation' in analysis_results:
-            if self._ask_analysis_question("transformation", auto_mode):
-                report_sections.append(self._generate_analysis_description("transformation"))
-                report_sections.append(self._generate_transformation_section(analysis_results['transformation']))
-            else:
-                report_sections.append(self._generate_skipped_message("transformation"))
+            report_sections.append(self._generate_analysis_description("transformation"))
+            report_sections.append(self._generate_transformation_section(analysis_results['transformation'], auto_mode))
         
         # Summary and recommendations
         report_sections.append(self._generate_summary_section(analysis_results))
@@ -416,36 +407,18 @@ class StatisticsReporter:
         
         return terms.get(term, {})
     
-    def _ask_analysis_question(self, analysis_type: str, auto_mode: bool = False) -> bool:
-        """Ask user if they want to run specific analysis type."""
-        analysis_names = {
-            "descriptive": "📊 Descriptive Statistics",
-            "distribution": "📈 Distribution Analysis", 
-            "transformation": "🔄 Data Transformation Analysis"
-        }
-        
-        analysis_name = analysis_names.get(analysis_type, analysis_type)
-        
+    def _ask_subtype_question(self, subtype_name: str, auto_mode: bool = False) -> bool:
+        """Ask user if they want to run specific analysis subtype."""
         if auto_mode:
-            print(f"\n{ColorUtils.blue(f'Run {analysis_name}? (y/n):')} y")
+            print(f"\n{ColorUtils.blue(f'Run {subtype_name}? (y/n):')} y")
             return True
         
         while True:
-            response = input(f"\n{ColorUtils.blue(f'Run {analysis_name}? (y/n):')} ").lower().strip()
+            response = input(f"\n{ColorUtils.blue(f'Run {subtype_name}? (y/n):')} ").lower().strip()
             if response in ['y', 'n']:
                 return response == 'y'
             print("Please enter 'y' or 'n'")
     
-    def _generate_skipped_message(self, analysis_type: str) -> str:
-        """Generate message for skipped analysis."""
-        analysis_names = {
-            "descriptive": "📊 Descriptive Statistics",
-            "distribution": "📈 Distribution Analysis",
-            "transformation": "🔄 Data Transformation Analysis"
-        }
-        
-        analysis_name = analysis_names.get(analysis_type, analysis_type)
-        return f"\n{ColorUtils.blue(f'⏭️  {analysis_name} - SKIPPED')}\n"
     
     def _generate_statistical_glossary(self) -> str:
         """Generate glossary of statistical terms."""
@@ -690,7 +663,7 @@ class StatisticsReporter:
         
         return "\n".join(section)
     
-    def _generate_descriptive_section(self, descriptive_results: Dict[str, Any]) -> str:
+    def _generate_descriptive_section(self, descriptive_results: Dict[str, Any], auto_mode: bool = False) -> str:
         """Generate descriptive statistics section."""
         section = []
         section.append("📊 DESCRIPTIVE STATISTICS")
@@ -706,7 +679,7 @@ class StatisticsReporter:
         
         # Basic statistics
         basic_stats = descriptive_results.get('basic_stats', {})
-        if basic_stats:
+        if basic_stats and self._ask_subtype_question("BASIC STATISTICS", auto_mode):
             section.append("BASIC STATISTICS")
             section.append("-" * 30)
             for col, stats in basic_stats.items():
@@ -718,10 +691,13 @@ class StatisticsReporter:
                 section.append(f"  Min: {stats.get('min', 0):.4f}")
                 section.append(f"  Max: {stats.get('max', 0):.4f}")
                 section.append("")
+        elif basic_stats:
+            section.append(f"{ColorUtils.blue('⏭️  BASIC STATISTICS - SKIPPED')}")
+            section.append("")
         
         # Distribution statistics
         dist_stats = descriptive_results.get('distribution_stats', {})
-        if dist_stats:
+        if dist_stats and self._ask_subtype_question("DISTRIBUTION CHARACTERISTICS", auto_mode):
             section.append("DISTRIBUTION CHARACTERISTICS")
             section.append("-" * 30)
             for col, stats in dist_stats.items():
@@ -731,10 +707,13 @@ class StatisticsReporter:
                 section.append(f"  Skewness: {ColorUtils.format_skewness(skewness)}")
                 section.append(f"  Kurtosis: {ColorUtils.format_kurtosis(kurtosis)}")
                 section.append("")
+        elif dist_stats:
+            section.append(f"{ColorUtils.blue('⏭️  DISTRIBUTION CHARACTERISTICS - SKIPPED')}")
+            section.append("")
         
         # Variability statistics
         var_stats = descriptive_results.get('variability_stats', {})
-        if var_stats:
+        if var_stats and self._ask_subtype_question("VARIABILITY ANALYSIS", auto_mode):
             section.append("VARIABILITY ANALYSIS")
             section.append("-" * 30)
             for col, stats in var_stats.items():
@@ -746,10 +725,13 @@ class StatisticsReporter:
                 section.append(f"  IQR: {ColorUtils.format_iqr(stats.get('iqr', 0))}")
                 section.append(f"  Range: {ColorUtils.format_range(stats.get('range', 0))}")
                 section.append("")
+        elif var_stats:
+            section.append(f"{ColorUtils.blue('⏭️  VARIABILITY ANALYSIS - SKIPPED')}")
+            section.append("")
         
         # Missing data analysis
         missing_data = descriptive_results.get('missing_data', {})
-        if missing_data:
+        if missing_data and self._ask_subtype_question("MISSING DATA ANALYSIS", auto_mode):
             section.append("MISSING DATA ANALYSIS")
             section.append("-" * 30)
             for col, stats in missing_data.items():
@@ -759,10 +741,13 @@ class StatisticsReporter:
                 missing_pct = stats.get('missing_percentage', 0)
                 section.append(f"  Missing Percentage: {ColorUtils.format_missing_data(missing_pct)}")
                 section.append("")
+        elif missing_data:
+            section.append(f"{ColorUtils.blue('⏭️  MISSING DATA ANALYSIS - SKIPPED')}")
+            section.append("")
         
         return "\n".join(section)
     
-    def _generate_distribution_section(self, distribution_results: Dict[str, Any]) -> str:
+    def _generate_distribution_section(self, distribution_results: Dict[str, Any], auto_mode: bool = False) -> str:
         """Generate distribution analysis section."""
         section = []
         section.append("📈 DISTRIBUTION ANALYSIS")
@@ -770,7 +755,7 @@ class StatisticsReporter:
         
         # Normality tests
         normality_tests = distribution_results.get('normality_tests', {})
-        if normality_tests:
+        if normality_tests and self._ask_subtype_question("NORMALITY TESTS", auto_mode):
             section.append("NORMALITY TESTS")
             section.append("-" * 30)
             for col, tests in normality_tests.items():
@@ -793,10 +778,13 @@ class StatisticsReporter:
                     section.append(f"  D'Agostino-Pearson: p={ColorUtils.format_normality_p_value(p_value)} - {ColorUtils.format_interpretation(interpretation)}")
                 
                 section.append("")
+        elif normality_tests:
+            section.append(f"{ColorUtils.blue('⏭️  NORMALITY TESTS - SKIPPED')}")
+            section.append("")
         
         # Skewness analysis
         skewness_analysis = distribution_results.get('skewness_analysis', {})
-        if skewness_analysis:
+        if skewness_analysis and self._ask_subtype_question("SKEWNESS ANALYSIS", auto_mode):
             section.append("SKEWNESS ANALYSIS")
             section.append("-" * 30)
             for col, analysis in skewness_analysis.items():
@@ -810,10 +798,13 @@ class StatisticsReporter:
                 recommendation = analysis.get('recommendation', 'N/A')
                 section.append(f"  Recommendation: {ColorUtils.format_transformation_recommendation(recommendation)}")
                 section.append("")
+        elif skewness_analysis:
+            section.append(f"{ColorUtils.blue('⏭️  SKEWNESS ANALYSIS - SKIPPED')}")
+            section.append("")
         
         # Kurtosis analysis
         kurtosis_analysis = distribution_results.get('kurtosis_analysis', {})
-        if kurtosis_analysis:
+        if kurtosis_analysis and self._ask_subtype_question("KURTOSIS ANALYSIS", auto_mode):
             section.append("KURTOSIS ANALYSIS")
             section.append("-" * 30)
             for col, analysis in kurtosis_analysis.items():
@@ -827,10 +818,13 @@ class StatisticsReporter:
                 recommendation = analysis.get('recommendation', 'N/A')
                 section.append(f"  Recommendation: {ColorUtils.format_transformation_recommendation(recommendation)}")
                 section.append("")
+        elif kurtosis_analysis:
+            section.append(f"{ColorUtils.blue('⏭️  KURTOSIS ANALYSIS - SKIPPED')}")
+            section.append("")
         
         # Transformation recommendations
         recommendations = distribution_results.get('distribution_recommendations', {})
-        if recommendations:
+        if recommendations and self._ask_subtype_question("TRANSFORMATION RECOMMENDATIONS", auto_mode):
             section.append("TRANSFORMATION RECOMMENDATIONS")
             section.append("-" * 30)
             for col, rec in recommendations.items():
@@ -842,10 +836,13 @@ class StatisticsReporter:
                     all_recs = ', '.join(rec.get('recommended_transformations', []))
                     section.append(f"  All Recommendations: {ColorUtils.format_transformation_recommendation(all_recs)}")
                 section.append("")
+        elif recommendations:
+            section.append(f"{ColorUtils.blue('⏭️  TRANSFORMATION RECOMMENDATIONS - SKIPPED')}")
+            section.append("")
         
         return "\n".join(section)
     
-    def _generate_transformation_section(self, transformation_results: Dict[str, Any]) -> str:
+    def _generate_transformation_section(self, transformation_results: Dict[str, Any], auto_mode: bool = False) -> str:
         """Generate data transformation section."""
         section = []
         section.append("🔄 DATA TRANSFORMATION ANALYSIS")
@@ -853,7 +850,7 @@ class StatisticsReporter:
         
         # Transformation details
         transformation_details = transformation_results.get('transformation_details', {})
-        if transformation_details:
+        if transformation_details and self._ask_subtype_question("TRANSFORMATION RESULTS", auto_mode):
             section.append("TRANSFORMATION RESULTS")
             section.append("-" * 30)
             for col, details in transformation_details.items():
@@ -879,10 +876,13 @@ class StatisticsReporter:
                         section.append(f"    Note: {trans_details['note']}")
                 
                 section.append("")
+        elif transformation_details:
+            section.append(f"{ColorUtils.blue('⏭️  TRANSFORMATION RESULTS - SKIPPED')}")
+            section.append("")
         
         # Comparison results
         comparison = transformation_results.get('comparison', {})
-        if comparison:
+        if comparison and self._ask_subtype_question("TRANSFORMATION COMPARISON", auto_mode):
             section.append("TRANSFORMATION COMPARISON")
             section.append("-" * 30)
             for col, col_comparison in comparison.items():
@@ -900,6 +900,9 @@ class StatisticsReporter:
                     section.append(f"    Kurtosis Improvement: {improvement.get('kurtosis_improvement', 0):.4f}")
                 
                 section.append("")
+        elif comparison:
+            section.append(f"{ColorUtils.blue('⏭️  TRANSFORMATION COMPARISON - SKIPPED')}")
+            section.append("")
         
         return "\n".join(section)
     
