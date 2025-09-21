@@ -917,10 +917,10 @@ class StatisticsReporter:
                     trans_stats = comp_stats.get('transformed_stats', {})
                     improvement = comp_stats.get('improvement', {})
                     
-                    section.append(f"    Original - Mean: {orig_stats.get('mean', 0):.4f}, Skewness: {orig_stats.get('skewness', 0):.4f}")
-                    section.append(f"    Transformed - Mean: {trans_stats.get('mean', 0):.4f}, Skewness: {trans_stats.get('skewness', 0):.4f}")
-                    section.append(f"    Skewness Improvement: {improvement.get('skewness_improvement', 0):.4f}")
-                    section.append(f"    Kurtosis Improvement: {improvement.get('kurtosis_improvement', 0):.4f}")
+                    section.append(f"    Original - Mean: {float(orig_stats.get('mean', 0)):.4f}, Skewness: {float(orig_stats.get('skewness', 0)):.4f}")
+                    section.append(f"    Transformed - Mean: {float(trans_stats.get('mean', 0)):.4f}, Skewness: {float(trans_stats.get('skewness', 0)):.4f}")
+                    section.append(f"    Skewness Improvement: {float(improvement.get('skewness_improvement', 0)):.2f}%")
+                    section.append(f"    Kurtosis Improvement: {float(improvement.get('kurtosis_improvement', 0)):.2f}%")
                 
                 section.append("")
         elif comparison:
