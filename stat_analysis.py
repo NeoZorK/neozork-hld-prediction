@@ -1115,52 +1115,51 @@ class StatisticalAnalyzer:
                 if path_validation['is_file']:
                     # Single file processing
                     print(f"\n📁 Processing single file: {custom_path}")
-                    # Extract filename from path
-                    filename = os.path.basename(custom_path)
-                    # Check if file is in supported directories
-                    file_info = self.file_ops.validate_file_path(filename)
-                    if file_info is None:
-                        # If not in supported directories, try to process directly
-                        print(f"⚠️  File '{filename}' not found in supported directories, attempting direct processing...")
-                        # Extract metadata from file path
-                        path_parts = custom_path.split('/')
-                        symbol = "Unknown"
-                        timeframe = "Unknown"
-                        source = "Custom"
-                        indicator = None
+                    
+                    # For custom paths, extract metadata directly without checking supported directories
+                    print(f"📂 Processing custom file path...")
+                    
+                    # Extract metadata from file path
+                    path_parts = custom_path.split('/')
+                    symbol = "Unknown"
+                    timeframe = "Unknown"
+                    source = "Custom"
+                    indicator = None
+                    
+                    # Try to extract symbol and timeframe from path
+                    if len(path_parts) >= 4:
+                        # Look for symbol in path (e.g., EURUSD, BTCUSDT)
+                        for part in path_parts:
+                            if part.upper() in ['EURUSD', 'GBPUSD', 'BTCUSDT', 'ETHUSD', 'US500', 'XAUUSD', 'GOOG', 'TSLA']:
+                                symbol = part.upper()
+                                break
                         
-                        # Try to extract symbol and timeframe from path
-                        if len(path_parts) >= 4:
-                            # Look for symbol in path (e.g., EURUSD, BTCUSDT)
-                            for part in path_parts:
-                                if part.upper() in ['EURUSD', 'GBPUSD', 'BTCUSDT', 'ETHUSD', 'US500', 'XAUUSD', 'GOOG', 'TSLA']:
-                                    symbol = part.upper()
-                                    break
-                            
-                            # Look for timeframe in path (e.g., D1, MN1, H1)
-                            for part in path_parts:
-                                if part.upper() in ['D1', 'MN1', 'H1', 'H4', 'M15', 'M5', 'M1']:
-                                    timeframe = part.upper()
-                                    break
-                            
-                            # Determine source from path
-                            if 'CSVExport' in custom_path:
-                                source = "CSVExport"
-                            elif 'binance' in custom_path.lower():
-                                source = "Binance"
-                            elif 'polygon' in custom_path.lower():
-                                source = "Polygon"
+                        # Look for timeframe in path (e.g., D1, MN1, H1)
+                        for part in path_parts:
+                            if part.upper() in ['D1', 'MN1', 'H1', 'H4', 'M15', 'M5', 'M1']:
+                                timeframe = part.upper()
+                                break
                         
-                        # Create file_info for direct processing
-                        file_info = {
-                            "file_path": custom_path,
-                            "format": custom_path.split('.')[-1].lower(),
-                            "symbol": symbol,
-                            "timeframe": timeframe, 
-                            "source": source,
-                            "indicator": indicator,
-                            "folder_source": os.path.dirname(custom_path)
-                        }
+                        # Determine source from path
+                        if 'CSVExport' in custom_path:
+                            source = "CSVExport"
+                        elif 'binance' in custom_path.lower():
+                            source = "Binance"
+                        elif 'polygon' in custom_path.lower():
+                            source = "Polygon"
+                        elif 'fixed' in custom_path.lower():
+                            source = "Fixed"
+                    
+                    # Create file_info for direct processing
+                    file_info = {
+                        "file_path": custom_path,
+                        "format": custom_path.split('.')[-1].lower(),
+                        "symbol": symbol,
+                        "timeframe": timeframe, 
+                        "source": source,
+                        "indicator": indicator,
+                        "folder_source": os.path.dirname(custom_path)
+                    }
                     
                     # Use the custom file_info instead of calling analyze_file with filename
                     results = self._analyze_file_with_info(file_info, analysis_options)
