@@ -305,10 +305,10 @@ class ColorUtils:
         """Get color based on overall interpretation."""
         interpretation_lower = interpretation.lower()
         
-        if 'normally distributed' in interpretation_lower or 'normal' in interpretation_lower:
-            return 'green'
-        elif 'not normally distributed' in interpretation_lower or 'non-normal' in interpretation_lower:
+        if 'not normally distributed' in interpretation_lower or 'non-normal' in interpretation_lower:
             return 'red'
+        elif 'normally distributed' in interpretation_lower or 'normal' in interpretation_lower:
+            return 'green'
         else:
             return 'yellow'
     
