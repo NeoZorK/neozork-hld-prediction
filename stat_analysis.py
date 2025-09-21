@@ -124,6 +124,19 @@ class StatisticalAnalyzer:
         if file_info is None:
             raise ValueError(f"Invalid file '{filename}'. Please choose a file from supported directories.")
         
+        return self._analyze_file_with_info(file_info, analysis_options)
+    
+    def _analyze_file_with_info(self, file_info: Dict[str, Any], analysis_options: Dict[str, bool]) -> Dict[str, Any]:
+        """
+        Analyze a file using provided file_info.
+        
+        Args:
+            file_info: Dictionary with file metadata
+            analysis_options: Dictionary of analysis options
+            
+        Returns:
+            Dictionary with analysis results
+        """
         # Display analysis start
         self.reporter.display_analysis_start(file_info, analysis_options)
         
@@ -1115,7 +1128,8 @@ class StatisticalAnalyzer:
                             "folder_source": os.path.dirname(custom_path)
                         }
                     
-                    results = self.analyze_file(filename, analysis_options)
+                    # Use the custom file_info instead of calling analyze_file with filename
+                    results = self._analyze_file_with_info(file_info, analysis_options)
                     
                     # Generate and display report
                     report = self.reporter.generate_comprehensive_report(
