@@ -22,6 +22,10 @@ from scipy.optimize import minimize_scalar, minimize
 from sklearn.preprocessing import PowerTransformer, QuantileTransformer
 import warnings
 
+# Make numpy available globally
+import numpy
+np = numpy
+
 class AdvancedTransformations:
     """Advanced transformation methods that solve the WORSENED kurtosis problem."""
     
@@ -132,6 +136,7 @@ class AdvancedTransformations:
     def _kurtosis_preserving_log(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Log transformation that preserves kurtosis by using adaptive parameters."""
         try:
+            import numpy as np
             # Ensure positive values
             min_val = data.min()
             if min_val <= 0:
@@ -350,6 +355,7 @@ class AdvancedTransformations:
     def _quantile_normalize(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Quantile transformation that maps to normal distribution."""
         try:
+            import numpy as np
             # Use QuantileTransformer to map to normal distribution
             transformer = QuantileTransformer(output_distribution='normal', random_state=42)
             transformed = transformer.fit_transform(data.values.reshape(-1, 1)).flatten()
@@ -612,6 +618,7 @@ class AdvancedTransformations:
     def _volatility_stabilizing(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Volatility stabilizing transformation for financial data."""
         try:
+            import numpy as np
             # Calculate rolling volatility
             rolling_std = data.rolling(window=min(20, len(data)//4)).std()
             
@@ -674,6 +681,7 @@ class AdvancedTransformations:
     def _price_normalize(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Price normalization for financial data."""
         try:
+            import numpy as np
             # Normalize by first value
             normalized = data / data.iloc[0]
             
@@ -733,6 +741,7 @@ class AdvancedTransformations:
     def _volume_transform(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Volume-specific transformation."""
         try:
+            import numpy as np
             # Use square root transformation for volume data
             transformed = np.sqrt(data)
             
@@ -847,6 +856,7 @@ class AdvancedTransformations:
     def _shifted_box_cox(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Box-Cox transformation with data shifting."""
         try:
+            import numpy as np
             # Shift data to make it positive
             min_val = data.min()
             if min_val <= 0:
@@ -915,6 +925,7 @@ class AdvancedTransformations:
     def _robust_yeo_johnson(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Robust Yeo-Johnson transformation with outlier handling."""
         try:
+            import numpy as np
             # Handle outliers using winsorization
             q1 = data.quantile(0.25)
             q3 = data.quantile(0.75)
@@ -984,6 +995,7 @@ class AdvancedTransformations:
     def _poisson_transform(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Poisson transformation for count data."""
         try:
+            import numpy as np
             # Use square root transformation for count data
             transformed = np.sqrt(data)
             
@@ -1040,6 +1052,7 @@ class AdvancedTransformations:
     def _count_data_transform(self, data: pd.Series, col_name: str = None) -> Tuple[pd.Series, Dict[str, Any]]:
         """Count data transformation."""
         try:
+            import numpy as np
             # Use log transformation for count data
             transformed = np.log(data + 1)
             
