@@ -285,9 +285,22 @@ class StatisticalAnalyzer:
                     continue
             
             if best_transformation:
-                optimal_transformations[col] = best_transformation
-                print(f"  ✅ Best: {best_transformation} (Score: {best_score:.3f})")
-            else:
+                # Verify that the best transformation actually works
+                try:
+                    transformed_col, details = self.data_transformation._apply_transformation(
+                        col_data, best_transformation, col
+                    )
+                    if transformed_col is not None and len(transformed_col) > 0 and details.get('success', True):
+                        optimal_transformations[col] = best_transformation
+                        print(f"  ✅ Best: {best_transformation} (Score: {best_score:.3f})")
+                    else:
+                        print(f"  ❌ Best transformation {best_transformation} failed during verification")
+                        best_transformation = None
+                except Exception as e:
+                    print(f"  ❌ Best transformation {best_transformation} failed during verification: {str(e)}")
+                    best_transformation = None
+            
+            if not best_transformation:
                 # Try fallback transformations for problematic columns
                 print(f"  ⚠️ No optimal transformation found, trying fallback...")
                 fallback_transformations = ['log', 'sqrt']
@@ -297,7 +310,7 @@ class StatisticalAnalyzer:
                             transformed_col, details = self.data_transformation._apply_transformation(
                                 col_data, fallback, col
                             )
-                            if transformed_col is not None and details.get('success', True):
+                            if transformed_col is not None and len(transformed_col) > 0 and details.get('success', True):
                                 optimal_transformations[col] = fallback
                                 print(f"  ✅ Fallback: {fallback} (Score: 0.500)")
                                 break
@@ -306,9 +319,131 @@ class StatisticalAnalyzer:
                 
                 if col not in optimal_transformations:
                     print(f"  ❌ No suitable transformation found for {col}")
+                    # Add detailed explanation for problematic columns
+                    self._explain_transformation_failure(col, col_data, transformations[col])
                     continue
         
         return optimal_transformations
+    
+    def _explain_transformation_failure(self, col_name: str, col_data: pd.Series, available_transformations: List[str]) -> None:
+        """Explain why transformations failed for a specific column."""
+        print(f"\n  🔍 DETAILED ANALYSIS FOR {col_name}:")
+        print(f"  {'='*50}")
+        
+        # Check for missing values
+        missing_count = col_data.isna().sum()
+        total_count = len(col_data)
+        missing_percentage = (missing_count / total_count) * 100
+        
+        print(f"  📊 Data Quality Issues:")
+        print(f"    • Total data points: {total_count}")
+        print(f"    • Missing values: {missing_count} ({missing_percentage:.1f}%)")
+        print(f"    • Valid data points: {total_count - missing_count}")
+        
+        if missing_count > 0:
+            print(f"\n  ⚠️  PRIMARY ISSUE: Missing Values")
+            print(f"    • Box-Cox transformation requires complete data")
+            print(f"    • Missing values cause length mismatch errors")
+            print(f"    • {missing_percentage:.1f}% of data is missing")
+            
+            print(f"\n  💡 SOLUTIONS:")
+            print(f"    1. Data Imputation:")
+            print(f"       • Use mean/median imputation for missing values")
+            print(f"       • Use forward/backward fill for time series")
+            print(f"       • Use interpolation methods")
+            print(f"    2. Alternative Transformations:")
+            print(f"       • Try log transformation on non-missing data")
+            print(f"       • Use sqrt transformation if data is non-negative")
+            print(f"       • Consider Yeo-Johnson transformation")
+            print(f"    3. Data Cleaning:")
+            print(f"       • Remove rows with missing values")
+            print(f"       • Investigate why values are missing")
+            print(f"       • Check data collection process")
+        
+        # Check for data range issues
+        valid_data = col_data.dropna()
+        if len(valid_data) > 0:
+            min_val = valid_data.min()
+            max_val = valid_data.max()
+            has_zeros = (valid_data == 0).any()
+            has_negatives = (valid_data < 0).any()
+            
+            print(f"\n  📈 Data Range Analysis:")
+            print(f"    • Min value: {min_val:.6f}")
+            print(f"    • Max value: {max_val:.6f}")
+            print(f"    • Contains zeros: {'Yes' if has_zeros else 'No'}")
+            print(f"    • Contains negatives: {'Yes' if has_negatives else 'No'}")
+            
+            if has_zeros or has_negatives:
+                print(f"\n  ⚠️  SECONDARY ISSUE: Data Range Problems")
+                print(f"    • Log transformation requires positive values")
+                print(f"    • Sqrt transformation requires non-negative values")
+                print(f"    • Box-Cox transformation requires positive values")
+                
+                print(f"\n  💡 SOLUTIONS:")
+                print(f"    1. Data Shifting:")
+                print(f"       • Add constant to make all values positive")
+                print(f"       • Use min-max scaling before transformation")
+                print(f"    2. Alternative Methods:")
+                print(f"       • Use Yeo-Johnson transformation (handles zeros/negatives)")
+                print(f"       • Use Box-Cox with shift parameter")
+                print(f"       • Apply log(1 + x) transformation")
+        
+        # Check for extreme values
+        if len(valid_data) > 0:
+            q75, q25 = valid_data.quantile([0.75, 0.25])
+            iqr = q75 - q25
+            lower_bound = q25 - 1.5 * iqr
+            upper_bound = q75 + 1.5 * iqr
+            outliers = ((valid_data < lower_bound) | (valid_data > upper_bound)).sum()
+            outlier_percentage = (outliers / len(valid_data)) * 100
+            
+            print(f"\n  📊 Outlier Analysis:")
+            print(f"    • Outliers detected: {outliers} ({outlier_percentage:.1f}%)")
+            print(f"    • IQR range: [{lower_bound:.6f}, {upper_bound:.6f}]")
+            
+            if outlier_percentage > 10:
+                print(f"\n  ⚠️  TERTIARY ISSUE: High Outlier Percentage")
+                print(f"    • {outlier_percentage:.1f}% of data are outliers")
+                print(f"    • Outliers can cause transformation failures")
+                print(f"    • Extreme values may indicate data quality issues")
+                
+                print(f"\n  💡 SOLUTIONS:")
+                print(f"    1. Outlier Treatment:")
+                print(f"       • Cap outliers at 95th/5th percentiles")
+                print(f"       • Use robust transformations")
+                print(f"       • Apply winsorization")
+                print(f"    2. Data Investigation:")
+                print(f"       • Check if outliers are legitimate")
+                print(f"       • Verify data collection accuracy")
+                print(f"       • Consider domain-specific limits")
+        
+        # Available transformations analysis
+        print(f"\n  🔧 Available Transformations:")
+        for transform in available_transformations:
+            print(f"    • {transform}: {'❌ Failed' if transform in ['box_cox'] else '⚠️ Not tested'}")
+        
+        print(f"\n  🎯 RECOMMENDED ACTION PLAN:")
+        print(f"    1. IMMEDIATE: Clean missing data")
+        print(f"       • Fill missing values using appropriate method")
+        print(f"       • Consider removing rows with missing values")
+        print(f"    2. PREPROCESSING: Handle data range issues")
+        print(f"       • Add constant if needed for log/sqrt")
+        print(f"       • Use Yeo-Johnson for mixed positive/negative data")
+        print(f"    3. TRANSFORMATION: Retry with cleaned data")
+        print(f"       • Start with log transformation")
+        print(f"       • Try sqrt if log fails")
+        print(f"       • Use Box-Cox as last resort")
+        print(f"    4. VALIDATION: Check results")
+        print(f"       • Verify transformation improved distribution")
+        print(f"       • Ensure no data loss occurred")
+        print(f"       • Test statistical assumptions")
+        
+        print(f"\n  📚 Additional Resources:")
+        print(f"    • See data cleaning documentation")
+        print(f"    • Consult statistical transformation guides")
+        print(f"    • Consider domain-specific preprocessing")
+        print(f"  {'='*50}\n")
     
     def _calculate_transformation_score(self, original_data: pd.Series, transformed_data: pd.Series, 
                                       transform_type: str) -> float:
@@ -597,9 +732,19 @@ class StatisticalAnalyzer:
             print("\n📈 TRANSFORMATION EFFECTIVENESS ANALYSIS")
             print("-" * 50)
             
+            # Track problematic columns
+            problematic_columns = []
+            
             # Compare each transformed column with its original
             for col in original_numeric_columns:
                 if col not in transformation_details:
+                    problematic_columns.append(col)
+                    continue
+                
+                # Check if transformation actually failed
+                col_transformations = transformation_details[col]
+                if not col_transformations:
+                    problematic_columns.append(col)
                     continue
                 
                 col_transformations = transformation_details[col]
@@ -686,6 +831,51 @@ class StatisticalAnalyzer:
                         print(f"    Kurtosis: {ColorUtils.yellow('⚠️  NO CHANGE - Kurtosis unchanged')} (orig: {orig_kurt:.3f} → trans: {trans_kurt:.3f})")
                     else:
                         print(f"    Kurtosis: {ColorUtils.red('❌ WORSENED - Kurtosis increased')} (orig: {orig_kurt:.3f} → trans: {trans_kurt:.3f})")
+            
+            # Report on problematic columns
+            if problematic_columns:
+                print("\n" + "="*80)
+                print("⚠️  TRANSFORMATION FAILURES - DETAILED ANALYSIS")
+                print("="*80)
+                print(f"\nThe following columns could not be transformed:")
+                for col in problematic_columns:
+                    print(f"  • {col}")
+                
+                print(f"\n🔍 COMMON CAUSES OF TRANSFORMATION FAILURES:")
+                print(f"  1. Missing Values:")
+                print(f"     • Box-Cox requires complete data")
+                print(f"     • Missing values cause length mismatch errors")
+                print(f"     • Solution: Fill missing values before transformation")
+                
+                print(f"\n  2. Data Range Issues:")
+                print(f"     • Log transformation requires positive values")
+                print(f"     • Sqrt transformation requires non-negative values")
+                print(f"     • Solution: Add constant or use alternative methods")
+                
+                print(f"\n  3. Extreme Outliers:")
+                print(f"     • High outlier percentage can cause failures")
+                print(f"     • Extreme values may indicate data quality issues")
+                print(f"     • Solution: Cap outliers or use robust methods")
+                
+                print(f"\n💡 RECOMMENDED SOLUTIONS:")
+                print(f"  1. Data Preprocessing:")
+                print(f"     • Fill missing values using mean/median imputation")
+                print(f"     • Handle zeros and negatives with data shifting")
+                print(f"     • Cap extreme outliers at reasonable percentiles")
+                
+                print(f"\n  2. Alternative Transformations:")
+                print(f"     • Use Yeo-Johnson for mixed positive/negative data")
+                print(f"     • Try log(1 + x) for data with zeros")
+                print(f"     • Apply sqrt transformation for count-like data")
+                
+                print(f"\n  3. Data Quality Investigation:")
+                print(f"     • Check data collection process")
+                print(f"     • Verify missing values are legitimate")
+                print(f"     • Consider domain-specific preprocessing")
+                
+                print(f"\n📚 For detailed analysis of each problematic column,")
+                print(f"   see the transformation selection output above.")
+                print("="*80)
             
             print("\n" + "="*80)
             
