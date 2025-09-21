@@ -445,90 +445,120 @@ class StatisticalAnalyzer:
         try:
             transformation_results = results['analysis_results'].get('transformation', {})
             transformed_data = transformation_results.get('transformed_data')
+            transformation_details = transformation_results.get('transformation_details', {})
             
             if transformed_data is None:
                 print("No transformed data available for validation.")
                 return
             
-            # Get numeric columns
-            numeric_columns = self._get_numeric_columns(transformed_data)
+            # Get original data for comparison
+            file_info = results['file_info']
+            original_data = self.file_ops.load_data(file_info["file_path"], file_info["format"])
+            original_numeric_columns = self._get_numeric_columns(original_data)
             
-            # Run distribution analysis on transformed data
-            print("\n📊 Running distribution analysis on transformed data...")
-            transformed_distribution = self.distribution_analysis.analyze_distributions(transformed_data, numeric_columns)
-            
-            # Compare with original distribution analysis
-            original_distribution = results['analysis_results'].get('distribution', {})
+            # Run distribution analysis on original data
+            print("\n📊 Running distribution analysis on original data...")
+            original_distribution = self.distribution_analysis.analyze_distributions(original_data, original_numeric_columns)
             
             print("\n📈 TRANSFORMATION EFFECTIVENESS ANALYSIS")
             print("-" * 50)
             
-            # Compare normality tests
-            if 'normality_tests' in original_distribution and 'normality_tests' in transformed_distribution:
-                print("\n🔬 NORMALITY TESTS COMPARISON:")
-                for col in numeric_columns:
-                    if col in original_distribution['normality_tests'] and col in transformed_distribution['normality_tests']:
-                        orig_tests = original_distribution['normality_tests'][col]
-                        trans_tests = transformed_distribution['normality_tests'][col]
+            # Compare each transformed column with its original
+            for col in original_numeric_columns:
+                if col not in transformation_details:
+                    continue
+                
+                col_transformations = transformation_details[col]
+                if not col_transformations:
+                    continue
+                
+                print(f"\n🔍 Column: {col}")
+                print("-" * 30)
+                
+                # Get original statistics
+                orig_skew = original_distribution['skewness_analysis'][col]['skewness']
+                orig_kurt = original_distribution['kurtosis_analysis'][col]['kurtosis']
+                orig_normality = original_distribution['normality_tests'][col]['overall_interpretation']
+                
+                for transform_type, details in col_transformations.items():
+                    if not details.get('success', False):
+                        continue
+                    
+                    # Find the transformed column name
+                    transformed_col_name = f"{col}_{transform_type}"
+                    if transformed_col_name not in transformed_data.columns:
+                        continue
+                    
+                    # Calculate statistics for transformed column
+                    transformed_col = transformed_data[transformed_col_name].dropna()
+                    
+                    if len(transformed_col) == 0:
+                        continue
+                    
+                    from scipy import stats
+                    import numpy as np
+                    
+                    trans_skew = stats.skew(transformed_col)
+                    trans_kurt = stats.kurtosis(transformed_col)
+                    
+                    # Test normality of transformed data
+                    if len(transformed_col) > 3:
+                        shapiro_stat, shapiro_p = stats.shapiro(transformed_col)
+                        dagostino_stat, dagostino_p = stats.normaltest(transformed_col)
                         
-                        orig_normality = orig_tests.get('overall_interpretation', '')
-                        trans_normality = trans_tests.get('overall_interpretation', '')
-                        
-                        # Check if normality improved
-                        orig_normal = 'normally distributed' in orig_normality.lower()
-                        trans_normal = 'normally distributed' in trans_normality.lower()
-                        
-                        if not orig_normal and trans_normal:
-                            print(f"  {col}: {ColorUtils.green('✅ IMPROVED - Now normally distributed')}")
-                        elif orig_normal and trans_normal:
-                            print(f"  {col}: {ColorUtils.green('✅ MAINTAINED - Still normally distributed')}")
-                        elif not orig_normal and not trans_normal:
-                            print(f"  {col}: {ColorUtils.yellow('⚠️  PARTIAL - Still not normally distributed')}")
+                        # Determine normality interpretation
+                        if shapiro_p > 0.05 and dagostino_p > 0.05:
+                            trans_normality = "Data appears to be normally distributed"
                         else:
-                            print(f"  {col}: {ColorUtils.red('❌ WORSENED - No longer normally distributed')}")
-            
-            # Compare skewness
-            if 'skewness_analysis' in original_distribution and 'skewness_analysis' in transformed_distribution:
-                print("\n📊 SKEWNESS COMPARISON:")
-                for col in numeric_columns:
-                    if col in original_distribution['skewness_analysis'] and col in transformed_distribution['skewness_analysis']:
-                        orig_skew = original_distribution['skewness_analysis'][col]
-                        trans_skew = transformed_distribution['skewness_analysis'][col]
-                        
-                        orig_skewness = abs(orig_skew.get('skewness', 0))
-                        trans_skewness = abs(trans_skew.get('skewness', 0))
-                        
-                        if trans_skewness < orig_skewness:
-                            improvement = ((orig_skewness - trans_skewness) / orig_skewness) * 100
-                            print(f"  {col}: {ColorUtils.green(f'✅ IMPROVED - Skewness reduced by {improvement:.1f}%')}")
-                        elif trans_skewness == orig_skewness:
-                            print(f"  {col}: {ColorUtils.yellow('⚠️  NO CHANGE - Skewness unchanged')}")
-                        else:
-                            print(f"  {col}: {ColorUtils.red('❌ WORSENED - Skewness increased')}")
-            
-            # Compare kurtosis
-            if 'kurtosis_analysis' in original_distribution and 'kurtosis_analysis' in transformed_distribution:
-                print("\n📈 KURTOSIS COMPARISON:")
-                for col in numeric_columns:
-                    if col in original_distribution['kurtosis_analysis'] and col in transformed_distribution['kurtosis_analysis']:
-                        orig_kurt = original_distribution['kurtosis_analysis'][col]
-                        trans_kurt = transformed_distribution['kurtosis_analysis'][col]
-                        
-                        orig_kurtosis = abs(orig_kurt.get('kurtosis', 0))
-                        trans_kurtosis = abs(trans_kurt.get('kurtosis', 0))
-                        
-                        if trans_kurtosis < orig_kurtosis:
-                            improvement = ((orig_kurtosis - trans_kurtosis) / orig_kurtosis) * 100
-                            print(f"  {col}: {ColorUtils.green(f'✅ IMPROVED - Kurtosis reduced by {improvement:.1f}%')}")
-                        elif trans_kurtosis == orig_kurtosis:
-                            print(f"  {col}: {ColorUtils.yellow('⚠️  NO CHANGE - Kurtosis unchanged')}")
-                        else:
-                            print(f"  {col}: {ColorUtils.red('❌ WORSENED - Kurtosis increased')}")
+                            trans_normality = "Data does not appear to be normally distributed"
+                    else:
+                        trans_normality = "Insufficient data for normality test"
+                    
+                    print(f"  {transform_type}:")
+                    
+                    # Compare normality
+                    orig_normal = 'normally distributed' in orig_normality.lower()
+                    trans_normal = 'normally distributed' in trans_normality.lower()
+                    
+                    if not orig_normal and trans_normal:
+                        print(f"    Normality: {ColorUtils.green('✅ IMPROVED - Now normally distributed')}")
+                    elif orig_normal and trans_normal:
+                        print(f"    Normality: {ColorUtils.green('✅ MAINTAINED - Still normally distributed')}")
+                    elif not orig_normal and not trans_normal:
+                        print(f"    Normality: {ColorUtils.yellow('⚠️  PARTIAL - Still not normally distributed')}")
+                    else:
+                        print(f"    Normality: {ColorUtils.red('❌ WORSENED - No longer normally distributed')}")
+                    
+                    # Compare skewness
+                    orig_skewness_abs = abs(orig_skew)
+                    trans_skewness_abs = abs(trans_skew)
+                    
+                    if trans_skewness_abs < orig_skewness_abs:
+                        improvement = ((orig_skewness_abs - trans_skewness_abs) / orig_skewness_abs) * 100
+                        print(f"    Skewness: {ColorUtils.green(f'✅ IMPROVED - Reduced by {improvement:.1f}%')} (orig: {orig_skew:.3f} → trans: {trans_skew:.3f})")
+                    elif abs(trans_skewness_abs - orig_skewness_abs) < 0.001:
+                        print(f"    Skewness: {ColorUtils.yellow('⚠️  NO CHANGE - Skewness unchanged')} (orig: {orig_skew:.3f} → trans: {trans_skew:.3f})")
+                    else:
+                        print(f"    Skewness: {ColorUtils.red('❌ WORSENED - Skewness increased')} (orig: {orig_skew:.3f} → trans: {trans_skew:.3f})")
+                    
+                    # Compare kurtosis
+                    orig_kurtosis_abs = abs(orig_kurt)
+                    trans_kurtosis_abs = abs(trans_kurt)
+                    
+                    if trans_kurtosis_abs < orig_kurtosis_abs:
+                        improvement = ((orig_kurtosis_abs - trans_kurtosis_abs) / orig_kurtosis_abs) * 100
+                        print(f"    Kurtosis: {ColorUtils.green(f'✅ IMPROVED - Reduced by {improvement:.1f}%')} (orig: {orig_kurt:.3f} → trans: {trans_kurt:.3f})")
+                    elif abs(trans_kurtosis_abs - orig_kurtosis_abs) < 0.001:
+                        print(f"    Kurtosis: {ColorUtils.yellow('⚠️  NO CHANGE - Kurtosis unchanged')} (orig: {orig_kurt:.3f} → trans: {trans_kurt:.3f})")
+                    else:
+                        print(f"    Kurtosis: {ColorUtils.red('❌ WORSENED - Kurtosis increased')} (orig: {orig_kurt:.3f} → trans: {trans_kurt:.3f})")
             
             print("\n" + "="*80)
             
         except Exception as e:
             print(f"\n❌ Error during transformation validation: {str(e)}")
+            import traceback
+            traceback.print_exc()
     
     def _save_transformed_data(self, results: Dict[str, Any]):
         """Save transformed data to appropriate directory."""
