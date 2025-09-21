@@ -53,6 +53,7 @@ import time
 import json
 from pathlib import Path
 from typing import Optional, Dict, Any, List
+import pandas as pd
 
 # Add src to path for imports
 sys.path.append(str(Path(__file__).parent / "src"))
@@ -175,8 +176,15 @@ class StatisticalAnalyzer:
                 transformations = self._prepare_transformations(recommendations)
                 
                 if transformations:
+                    print("\n🎯 Selecting optimal transformations for each column...")
+                    # Select the best transformation for each column
+                    optimal_transformations = self._select_optimal_transformations(data, transformations, numeric_columns)
+                    
+                    # Convert to single transformation per column format
+                    single_transformations = {col: [transform] for col, transform in optimal_transformations.items()}
+                    
                     analysis_results['transformation'] = self.data_transformation.transform_data(
-                        data, transformations, numeric_columns
+                        data, single_transformations, numeric_columns
                     )
                     
                     # Add comparison results
@@ -217,12 +225,114 @@ class StatisticalAnalyzer:
         
         for col, rec in recommendations.items():
             if rec.get('primary_recommendation') != "No transformation needed":
-                # Get the first recommended transformation
+                # Get all recommended transformations to test multiple options
                 recommended_transformations = rec.get('recommended_transformations', [])
                 if recommended_transformations:
-                    transformations[col] = [recommended_transformations[0]]
+                    # Test all recommended transformations to find the best one
+                    transformations[col] = recommended_transformations
         
         return transformations
+    
+    def _select_optimal_transformations(self, data: pd.DataFrame, transformations: Dict[str, List[str]], 
+                                      numeric_columns: List[str]) -> Dict[str, str]:
+        """Select the best transformation for each column based on comprehensive scoring."""
+        optimal_transformations = {}
+        
+        for col in numeric_columns:
+            if col not in transformations or not transformations[col]:
+                continue
+            
+            col_data = data[col].dropna()
+            if len(col_data) == 0:
+                continue
+            
+            print(f"\n🔍 Testing transformations for column: {col}")
+            print("-" * 50)
+            
+            best_transformation = None
+            best_score = -float('inf')
+            transformation_scores = {}
+            
+            # Test each transformation method
+            for transform_type in transformations[col]:
+                try:
+                    # Apply transformation
+                    transformed_col, details = self.data_transformation._apply_transformation(
+                        col_data, transform_type, col
+                    )
+                    
+                    if transformed_col is None or len(transformed_col) == 0:
+                        continue
+                    
+                    # Calculate comprehensive score
+                    score = self._calculate_transformation_score(col_data, transformed_col, transform_type)
+                    transformation_scores[transform_type] = score
+                    
+                    print(f"  {transform_type}: Score = {score:.3f}")
+                    
+                    if score > best_score:
+                        best_score = score
+                        best_transformation = transform_type
+                        
+                except Exception as e:
+                    print(f"  {transform_type}: Failed - {str(e)}")
+                    continue
+            
+            if best_transformation:
+                optimal_transformations[col] = best_transformation
+                print(f"  ✅ Best: {best_transformation} (Score: {best_score:.3f})")
+            else:
+                print(f"  ❌ No successful transformations found")
+        
+        return optimal_transformations
+    
+    def _calculate_transformation_score(self, original_data: pd.Series, transformed_data: pd.Series, 
+                                      transform_type: str) -> float:
+        """Calculate comprehensive score for transformation quality."""
+        from scipy import stats
+        import numpy as np
+        
+        try:
+            # Calculate original statistics
+            orig_skew = abs(stats.skew(original_data))
+            orig_kurt = abs(stats.kurtosis(original_data))
+            
+            # Calculate transformed statistics
+            trans_skew = abs(stats.skew(transformed_data))
+            trans_kurt = abs(stats.kurtosis(transformed_data))
+            
+            # Test normality of transformed data
+            if len(transformed_data) > 3:
+                shapiro_stat, shapiro_p = stats.shapiro(transformed_data)
+                dagostino_stat, dagostino_p = stats.normaltest(transformed_data)
+                is_normal = shapiro_p > 0.05 and dagostino_p > 0.05
+            else:
+                is_normal = False
+            
+            # Calculate improvement scores (0-1 scale)
+            skew_improvement = max(0, (orig_skew - trans_skew) / max(orig_skew, 0.001))
+            kurt_improvement = max(0, (orig_kurt - trans_kurt) / max(orig_kurt, 0.001))
+            
+            # Normalize skewness and kurtosis to 0-1 scale (closer to 0 is better)
+            skew_score = max(0, 1 - min(trans_skew / 2.0, 1))  # 2.0 is considered highly skewed
+            kurt_score = max(0, 1 - min(trans_kurt / 3.0, 1))  # 3.0 is considered highly kurtotic
+            
+            # Normality bonus
+            normality_bonus = 0.3 if is_normal else 0
+            
+            # Calculate final score (weighted combination)
+            score = (
+                0.3 * skew_improvement +      # 30% weight on skewness improvement
+                0.2 * kurt_improvement +      # 20% weight on kurtosis improvement
+                0.3 * skew_score +            # 30% weight on final skewness level
+                0.2 * kurt_score +            # 20% weight on final kurtosis level
+                normality_bonus               # 30% bonus for achieving normality
+            )
+            
+            return min(score, 1.0)  # Cap at 1.0
+            
+        except Exception as e:
+            return 0.0
     
     def run_batch_processing(self, directory: str, directory_name: str, analysis_options: Dict[str, bool], auto_mode: bool = False) -> None:
         """
