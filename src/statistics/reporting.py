@@ -431,6 +431,7 @@ class StatisticsReporter:
             elif flag_name is None:  # TRANSFORMATION RECOMMENDATIONS - always run
                 return True
         
+        # If auto_mode is True, automatically answer 'y' to all questions
         if auto_mode:
             print(f"\n{ColorUtils.blue(f'Run {subtype_name}? (y/n):')} y")
             return True

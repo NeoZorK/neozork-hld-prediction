@@ -223,7 +223,7 @@ class StatisticalAnalyzer:
         
         return transformations
     
-    def run_batch_processing(self, directory: str, directory_name: str, analysis_options: Dict[str, bool]) -> None:
+    def run_batch_processing(self, directory: str, directory_name: str, analysis_options: Dict[str, bool], auto_mode: bool = False) -> None:
         """
         Run batch processing for all files in a directory.
         
@@ -275,7 +275,7 @@ class StatisticalAnalyzer:
                     results['file_info'], 
                     results['analysis_results'],
                     self.output_directory,
-                    self.auto_mode,
+                    auto_mode,
                     self.analysis_options
                 )
                 
@@ -418,7 +418,8 @@ class StatisticalAnalyzer:
                 # Batch processing
                 self.run_batch_processing(file_processing['directory'], 
                                        f"Directory: {file_processing['directory']}", 
-                                       analysis_options)
+                                       analysis_options,
+                                       self.auto_mode)
                 
             elif file_processing['mode'] == 'batch_all':
                 # Process all directories
@@ -456,7 +457,9 @@ class StatisticalAnalyzer:
                                     report = self.reporter.generate_comprehensive_report(
                                         results['file_info'], 
                                         results['analysis_results'],
-                                        self.output_directory
+                                        self.output_directory,
+                                        self.auto_mode,
+                                        self.analysis_options
                                     )
                                     
                                     print("\n" + report)
@@ -520,7 +523,9 @@ class StatisticalAnalyzer:
                     report = self.reporter.generate_comprehensive_report(
                         results['file_info'], 
                         results['analysis_results'],
-                        self.output_directory
+                        self.output_directory,
+                        self.auto_mode,
+                        self.analysis_options
                     )
                     
                     print("\n" + report)
@@ -532,7 +537,7 @@ class StatisticalAnalyzer:
                 elif path_validation['is_directory']:
                     # Directory processing
                     print(f"\n📂 Starting batch processing for custom directory: {custom_path}")
-                    self.run_batch_processing(custom_path, f"Custom Directory: {custom_path}", analysis_options)
+                    self.run_batch_processing(custom_path, f"Custom Directory: {custom_path}", analysis_options, self.auto_mode)
             
             print("\n🎉 Statistical analysis completed successfully!")
             
