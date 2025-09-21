@@ -15,7 +15,7 @@ import pandas as pd
 import numpy as np
 from typing import Dict, Any, List, Optional, Tuple
 from scipy import stats
-from scipy.stats import shapiro, normaltest, anderson, kstest
+from scipy.stats import shapiro, normaltest, anderson, kstest, jarque_bera
 import logging
 from .color_utils import ColorUtils
 
@@ -77,6 +77,7 @@ class DistributionAnalysis:
     def _perform_normality_tests(self, data: pd.DataFrame, numeric_columns: List[str]) -> Dict[str, Dict[str, Any]]:
         """
         Perform various normality tests for each numeric column.
+        Optimized for large datasets with appropriate test selection.
         
         Args:
             data: DataFrame to analyze
@@ -89,8 +90,9 @@ class DistributionAnalysis:
         
         for col in numeric_columns:
             col_data = data[col].dropna()
+            sample_size = len(col_data)
             
-            if len(col_data) < 3:
+            if sample_size < 3:
                 normality_results[col] = {
                     'shapiro_wilk': {'statistic': np.nan, 'p_value': np.nan, 'interpretation': 'Insufficient data'},
                     'dagostino_pearson': {'statistic': np.nan, 'p_value': np.nan, 'interpretation': 'Insufficient data'},
@@ -100,29 +102,76 @@ class DistributionAnalysis:
                 }
                 continue
             
-            # Shapiro-Wilk test (best for small samples, n < 5000)
-            shapiro_result = self._shapiro_wilk_test(col_data)
+            # Log sample size for large datasets
+            if sample_size > 10000:
+                self.logger.info(f"Large dataset detected for column '{col}': {sample_size:,} samples. Using optimized tests.")
             
-            # D'Agostino-Pearson test
+            # Select appropriate tests based on sample size
+            test_results = []
+            
+            # Shapiro-Wilk test (best for small to medium samples, n < 5000)
+            if sample_size <= 5000:
+                shapiro_result = self._shapiro_wilk_test(col_data)
+                test_results.append(shapiro_result)
+            else:
+                # For very large samples, skip Shapiro-Wilk to avoid warnings
+                shapiro_result = {
+                    'statistic': np.nan, 
+                    'p_value': np.nan, 
+                    'interpretation': f'Shapiro-Wilk skipped for large sample (N={sample_size:,} > 5000)',
+                    'sample_size': sample_size
+                }
+            
+            # D'Agostino-Pearson test (good for all sample sizes)
             dagostino_result = self._dagostino_pearson_test(col_data)
+            test_results.append(dagostino_result)
             
-            # Anderson-Darling test
-            anderson_result = self._anderson_darling_test(col_data)
+            # Anderson-Darling test (good for medium to large samples)
+            if sample_size >= 8:  # Minimum requirement for Anderson-Darling
+                anderson_result = self._anderson_darling_test(col_data)
+                test_results.append(anderson_result)
+            else:
+                anderson_result = {
+                    'statistic': np.nan, 
+                    'critical_values': {}, 
+                    'interpretation': 'Insufficient data for Anderson-Darling test (N < 8)'
+                }
             
-            # Kolmogorov-Smirnov test
-            ks_result = self._kolmogorov_smirnov_test(col_data)
+            # Kolmogorov-Smirnov test (good for large samples)
+            if sample_size >= 4:  # Minimum requirement for KS test
+                ks_result = self._kolmogorov_smirnov_test(col_data)
+                test_results.append(ks_result)
+            else:
+                ks_result = {
+                    'statistic': np.nan, 
+                    'p_value': np.nan, 
+                    'interpretation': 'Insufficient data for Kolmogorov-Smirnov test (N < 4)'
+                }
+            
+            # For very large samples, add additional robust tests
+            if sample_size > 10000:
+                # Add Jarque-Bera test for very large samples
+                jb_result = self._jarque_bera_test(col_data)
+                test_results.append(jb_result)
+            else:
+                jb_result = {
+                    'statistic': np.nan, 
+                    'p_value': np.nan, 
+                    'interpretation': 'Jarque-Bera test not needed for small samples'
+                }
             
             # Overall interpretation
-            overall_interpretation = self._interpret_overall_normality([
-                shapiro_result, dagostino_result, anderson_result, ks_result
-            ])
+            overall_interpretation = self._interpret_overall_normality(test_results)
             
             normality_results[col] = {
                 'shapiro_wilk': shapiro_result,
                 'dagostino_pearson': dagostino_result,
                 'anderson_darling': anderson_result,
                 'kolmogorov_smirnov': ks_result,
-                'overall_interpretation': overall_interpretation
+                'jarque_bera': jb_result,
+                'overall_interpretation': overall_interpretation,
+                'sample_size': sample_size,
+                'test_notes': self._get_test_notes(sample_size)
             }
         
         return normality_results
@@ -130,6 +179,7 @@ class DistributionAnalysis:
     def _shapiro_wilk_test(self, data: np.ndarray) -> Dict[str, Any]:
         """
         Perform Shapiro-Wilk normality test.
+        Optimized for large datasets with sampling strategy.
         
         Args:
             data: Array of data to test
@@ -138,31 +188,44 @@ class DistributionAnalysis:
             Dictionary with test results and interpretation
         """
         try:
-            if len(data) > 5000:
-                # For large samples, use a subset
-                data_sample = np.random.choice(data, 5000, replace=False)
+            sample_size = len(data)
+            
+            if sample_size > 5000:
+                # For large samples, use stratified sampling to maintain distribution
+                # Sort data and take every nth element to get representative sample
+                sorted_data = np.sort(data)
+                step = sample_size // 5000
+                data_sample = sorted_data[::step][:5000]
+                
+                # Add note about sampling
+                interpretation_note = f" (sampled from {sample_size:,} observations)"
             else:
                 data_sample = data
+                interpretation_note = ""
             
             statistic, p_value = shapiro(data_sample)
             
             if p_value > 0.05:
-                interpretation = "Data appears to be normally distributed (p > 0.05)"
+                interpretation = f"Data appears to be normally distributed (p > 0.05){interpretation_note}"
             else:
-                interpretation = "Data does not appear to be normally distributed (p ≤ 0.05)"
+                interpretation = f"Data does not appear to be normally distributed (p ≤ 0.05){interpretation_note}"
             
             return {
                 'statistic': float(statistic),
                 'p_value': float(p_value),
                 'interpretation': interpretation,
-                'sample_size': len(data_sample)
+                'sample_size': len(data_sample),
+                'original_size': sample_size,
+                'sampled': sample_size > 5000
             }
         except Exception as e:
             return {
                 'statistic': np.nan,
                 'p_value': np.nan,
                 'interpretation': f"Test failed: {str(e)}",
-                'sample_size': len(data)
+                'sample_size': len(data),
+                'original_size': len(data),
+                'sampled': False
             }
     
     def _dagostino_pearson_test(self, data: np.ndarray) -> Dict[str, Any]:
@@ -268,9 +331,60 @@ class DistributionAnalysis:
                 'interpretation': f"Test failed: {str(e)}"
             }
     
+    def _jarque_bera_test(self, data: np.ndarray) -> Dict[str, Any]:
+        """
+        Perform Jarque-Bera normality test.
+        Good for large samples and robust to outliers.
+        
+        Args:
+            data: Array of data to test
+            
+        Returns:
+            Dictionary with test results and interpretation
+        """
+        try:
+            statistic, p_value = jarque_bera(data)
+            
+            if p_value > 0.05:
+                interpretation = "Data appears to be normally distributed (p > 0.05)"
+            else:
+                interpretation = "Data does not appear to be normally distributed (p ≤ 0.05)"
+            
+            return {
+                'statistic': float(statistic),
+                'p_value': float(p_value),
+                'interpretation': interpretation
+            }
+        except Exception as e:
+            return {
+                'statistic': np.nan,
+                'p_value': np.nan,
+                'interpretation': f"Test failed: {str(e)}"
+            }
+    
+    def _get_test_notes(self, sample_size: int) -> str:
+        """
+        Get notes about test selection based on sample size.
+        
+        Args:
+            sample_size: Size of the sample
+            
+        Returns:
+            String with test selection notes
+        """
+        if sample_size <= 50:
+            return "Small sample: All tests appropriate"
+        elif sample_size <= 5000:
+            return "Medium sample: All tests appropriate, Shapiro-Wilk most reliable"
+        elif sample_size <= 10000:
+            return "Large sample: D'Agostino-Pearson and Anderson-Darling most reliable"
+        else:
+            return "Very large sample: D'Agostino-Pearson, Anderson-Darling, and Jarque-Bera most reliable"
+    
     def _interpret_overall_normality(self, test_results: List[Dict[str, Any]]) -> str:
         """
         Provide overall interpretation based on multiple normality tests.
+        Optimized for large datasets with weighted scoring.
         
         Args:
             test_results: List of test result dictionaries
@@ -281,21 +395,53 @@ class DistributionAnalysis:
         # Count how many tests suggest normality
         normal_count = 0
         total_tests = 0
+        weighted_score = 0.0
+        total_weight = 0.0
+        
+        # Test weights based on reliability for different sample sizes
+        test_weights = {
+            'shapiro_wilk': 1.0,      # Best for small samples
+            'dagostino_pearson': 1.2,  # Good for all sizes
+            'anderson_darling': 1.1,   # Good for medium-large samples
+            'kolmogorov_smirnov': 0.9, # Good for large samples
+            'jarque_bera': 1.0         # Good for large samples
+        }
         
         for result in test_results:
             if 'p_value' in result and not np.isnan(result['p_value']):
                 total_tests += 1
+                
+                # Determine test type for weighting
+                test_type = 'dagostino_pearson'  # Default
+                if 'sampled' in result and result.get('sampled', False):
+                    test_type = 'shapiro_wilk'
+                elif 'critical_values' in result:
+                    test_type = 'anderson_darling'
+                elif 'jarque' in str(result).lower():
+                    test_type = 'jarque_bera'
+                
+                weight = test_weights.get(test_type, 1.0)
+                total_weight += weight
+                
                 if result['p_value'] > 0.05:
                     normal_count += 1
+                    weighted_score += weight
+                else:
+                    # For very low p-values, reduce weight (overly sensitive tests)
+                    if result['p_value'] < 0.001:
+                        weight *= 0.8
+                    weighted_score += (1 - weight)  # Inverse weight for non-normal
         
         if total_tests == 0:
             return "No valid normality tests could be performed"
         
         normal_ratio = normal_count / total_tests
+        weighted_ratio = weighted_score / total_weight if total_weight > 0 else 0
         
-        if normal_ratio >= 0.75:
+        # Use weighted ratio for more accurate assessment
+        if weighted_ratio >= 0.7:
             return f"Data appears to be normally distributed ({normal_count}/{total_tests} tests suggest normality)"
-        elif normal_ratio >= 0.5:
+        elif weighted_ratio >= 0.4:
             return f"Data shows mixed normality results ({normal_count}/{total_tests} tests suggest normality)"
         else:
             return f"Data does not appear to be normally distributed ({normal_count}/{total_tests} tests suggest normality)"
