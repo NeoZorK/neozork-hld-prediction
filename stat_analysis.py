@@ -1126,7 +1126,7 @@ class StatisticalAnalyzer:
                     source = "Custom"
                     indicator = None
                     
-                    # Try to extract symbol and timeframe from path
+                    # Try to extract symbol, timeframe, and indicator from path
                     if len(path_parts) >= 4:
                         # Look for symbol in path (e.g., EURUSD, BTCUSDT)
                         for part in path_parts:
@@ -1138,6 +1138,14 @@ class StatisticalAnalyzer:
                         for part in path_parts:
                             if part.upper() in ['D1', 'MN1', 'H1', 'H4', 'M15', 'M5', 'M1']:
                                 timeframe = part.upper()
+                                break
+                        
+                        # Look for indicator in path (e.g., Wave, RSI, MACD, etc.)
+                        # Common indicators that might be in the path
+                        common_indicators = ['Wave', 'RSI', 'MACD', 'BB', 'SMA', 'EMA', 'Stochastic', 'ADX', 'CCI', 'Williams', 'ATR', 'OBV', 'Volume', 'Price', 'Trend', 'Signal', 'Indicator']
+                        for part in path_parts:
+                            if part in common_indicators:
+                                indicator = part
                                 break
                         
                         # Determine source from path
