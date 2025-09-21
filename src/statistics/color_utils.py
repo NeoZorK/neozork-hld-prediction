@@ -250,3 +250,118 @@ class ColorUtils:
         """Format transformation recommendation with appropriate color."""
         color = cls.get_transformation_recommendation_color(recommendation)
         return cls.colorize(recommendation, color)
+    
+    @classmethod
+    def get_severity_color(cls, severity: str) -> str:
+        """Get color based on severity level."""
+        severity_lower = severity.lower()
+        
+        if 'severe' in severity_lower or 'critical' in severity_lower:
+            return 'red'
+        elif 'moderate' in severity_lower or 'warning' in severity_lower:
+            return 'yellow'
+        elif 'low' in severity_lower or 'minor' in severity_lower:
+            return 'green'
+        else:
+            return 'blue'
+    
+    @classmethod
+    def format_severity(cls, severity: str) -> str:
+        """Format severity with appropriate color."""
+        color = cls.get_severity_color(severity)
+        return cls.colorize(severity, color)
+    
+    @classmethod
+    def get_interpretation_color(cls, interpretation: str) -> str:
+        """Get color based on interpretation type."""
+        interpretation_lower = interpretation.lower()
+        
+        if any(keyword in interpretation_lower for keyword in [
+            'highly skewed', 'heavily skewed', 'extremely skewed', 'severe',
+            'heavy-tailed', 'light-tailed', 'extreme', 'critical'
+        ]):
+            return 'red'
+        elif any(keyword in interpretation_lower for keyword in [
+            'moderately skewed', 'moderate', 'attention', 'warning',
+            'slightly different', 'somewhat'
+        ]):
+            return 'yellow'
+        elif any(keyword in interpretation_lower for keyword in [
+            'approximately normal', 'approximately symmetric', 'normal',
+            'good', 'excellent', 'satisfactory'
+        ]):
+            return 'green'
+        else:
+            return 'blue'
+    
+    @classmethod
+    def format_interpretation(cls, interpretation: str) -> str:
+        """Format interpretation with appropriate color."""
+        color = cls.get_interpretation_color(interpretation)
+        return cls.colorize(interpretation, color)
+    
+    @classmethod
+    def get_overall_interpretation_color(cls, interpretation: str) -> str:
+        """Get color based on overall interpretation."""
+        interpretation_lower = interpretation.lower()
+        
+        if 'normally distributed' in interpretation_lower or 'normal' in interpretation_lower:
+            return 'green'
+        elif 'not normally distributed' in interpretation_lower or 'non-normal' in interpretation_lower:
+            return 'red'
+        else:
+            return 'yellow'
+    
+    @classmethod
+    def format_overall_interpretation(cls, interpretation: str) -> str:
+        """Format overall interpretation with appropriate color."""
+        color = cls.get_overall_interpretation_color(interpretation)
+        return cls.colorize(interpretation, color)
+    
+    @classmethod
+    def format_basic_stat_value(cls, value: float, stat_type: str) -> str:
+        """Format basic statistical values with color based on type."""
+        if stat_type == 'mean':
+            return f"{value:.4f}"
+        elif stat_type == 'std':
+            # Higher std dev might indicate more variability
+            if value > 1.0:
+                return cls.colorize(f"{value:.4f}", 'yellow')
+            else:
+                return cls.colorize(f"{value:.4f}", 'green')
+        elif stat_type == 'min':
+            return f"{value:.4f}"
+        elif stat_type == 'max':
+            return f"{value:.4f}"
+        else:
+            return f"{value:.4f}"
+    
+    @classmethod
+    def format_variance(cls, variance: float) -> str:
+        """Format variance with color based on magnitude."""
+        if variance < 0.01:
+            return cls.colorize(f"{variance:.4f}", 'green')  # Low variance - good
+        elif variance < 1.0:
+            return cls.colorize(f"{variance:.4f}", 'yellow')  # Medium variance
+        else:
+            return cls.colorize(f"{variance:.4f}", 'red')  # High variance
+    
+    @classmethod
+    def format_iqr(cls, iqr: float) -> str:
+        """Format IQR with color based on magnitude."""
+        if iqr < 0.1:
+            return cls.colorize(f"{iqr:.4f}", 'green')  # Low IQR - good
+        elif iqr < 1.0:
+            return cls.colorize(f"{iqr:.4f}", 'yellow')  # Medium IQR
+        else:
+            return cls.colorize(f"{iqr:.4f}", 'red')  # High IQR
+    
+    @classmethod
+    def format_range(cls, range_val: float) -> str:
+        """Format range with color based on magnitude."""
+        if range_val < 0.1:
+            return cls.colorize(f"{range_val:.4f}", 'green')  # Low range - good
+        elif range_val < 1.0:
+            return cls.colorize(f"{range_val:.4f}", 'yellow')  # Medium range
+        else:
+            return cls.colorize(f"{range_val:.4f}", 'red')  # High range

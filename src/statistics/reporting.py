@@ -141,7 +141,7 @@ class StatisticsReporter:
                 section.append(f"  Count: {stats.get('count', 0):,}")
                 section.append(f"  Mean: {stats.get('mean', 0):.4f}")
                 section.append(f"  Median: {stats.get('median', 0):.4f}")
-                section.append(f"  Std Dev: {stats.get('std', 0):.4f}")
+                section.append(f"  Std Dev: {ColorUtils.format_basic_stat_value(stats.get('std', 0), 'std')}")
                 section.append(f"  Min: {stats.get('min', 0):.4f}")
                 section.append(f"  Max: {stats.get('max', 0):.4f}")
                 section.append("")
@@ -166,12 +166,12 @@ class StatisticsReporter:
             section.append("-" * 30)
             for col, stats in var_stats.items():
                 section.append(f"Column: {col}")
-                section.append(f"  Variance: {stats.get('variance', 0):.4f}")
+                section.append(f"  Variance: {ColorUtils.format_variance(stats.get('variance', 0))}")
                 cv = stats.get('coefficient_of_variation', 0)
                 cv_interpretation = stats.get('cv_interpretation', 'N/A')
                 section.append(f"  Coefficient of Variation: {ColorUtils.format_coefficient_variation(cv)} - {cv_interpretation}")
-                section.append(f"  IQR: {stats.get('iqr', 0):.4f}")
-                section.append(f"  Range: {stats.get('range', 0):.4f}")
+                section.append(f"  IQR: {ColorUtils.format_iqr(stats.get('iqr', 0))}")
+                section.append(f"  Range: {ColorUtils.format_range(stats.get('range', 0))}")
                 section.append("")
         
         # Missing data analysis
@@ -202,21 +202,22 @@ class StatisticsReporter:
             section.append("-" * 30)
             for col, tests in normality_tests.items():
                 section.append(f"Column: {col}")
-                section.append(f"  Overall: {tests.get('overall_interpretation', 'N/A')}")
+                overall_interp = tests.get('overall_interpretation', 'N/A')
+                section.append(f"  Overall: {ColorUtils.format_overall_interpretation(overall_interp)}")
                 
                 # Shapiro-Wilk
                 sw = tests.get('shapiro_wilk', {})
                 if not np.isnan(sw.get('p_value', np.nan)):
                     p_value = sw.get('p_value', 0)
                     interpretation = sw.get('interpretation', 'N/A')
-                    section.append(f"  Shapiro-Wilk: p={ColorUtils.format_normality_p_value(p_value)} - {interpretation}")
+                    section.append(f"  Shapiro-Wilk: p={ColorUtils.format_normality_p_value(p_value)} - {ColorUtils.format_interpretation(interpretation)}")
                 
                 # D'Agostino-Pearson
                 dp = tests.get('dagostino_pearson', {})
                 if not np.isnan(dp.get('p_value', np.nan)):
                     p_value = dp.get('p_value', 0)
                     interpretation = dp.get('interpretation', 'N/A')
-                    section.append(f"  D'Agostino-Pearson: p={ColorUtils.format_normality_p_value(p_value)} - {interpretation}")
+                    section.append(f"  D'Agostino-Pearson: p={ColorUtils.format_normality_p_value(p_value)} - {ColorUtils.format_interpretation(interpretation)}")
                 
                 section.append("")
         
@@ -229,9 +230,12 @@ class StatisticsReporter:
                 section.append(f"Column: {col}")
                 section.append(f"  Skewness: {analysis.get('skewness', 0):.4f}")
                 section.append(f"  Z-Score: {analysis.get('skewness_z_score', 0):.4f}")
-                section.append(f"  Interpretation: {analysis.get('interpretation', 'N/A')}")
-                section.append(f"  Severity: {analysis.get('severity', 'N/A')}")
-                section.append(f"  Recommendation: {analysis.get('recommendation', 'N/A')}")
+                interpretation = analysis.get('interpretation', 'N/A')
+                section.append(f"  Interpretation: {ColorUtils.format_interpretation(interpretation)}")
+                severity = analysis.get('severity', 'N/A')
+                section.append(f"  Severity: {ColorUtils.format_severity(severity)}")
+                recommendation = analysis.get('recommendation', 'N/A')
+                section.append(f"  Recommendation: {ColorUtils.format_transformation_recommendation(recommendation)}")
                 section.append("")
         
         # Kurtosis analysis
@@ -243,9 +247,12 @@ class StatisticsReporter:
                 section.append(f"Column: {col}")
                 section.append(f"  Kurtosis: {analysis.get('kurtosis', 0):.4f}")
                 section.append(f"  Z-Score: {analysis.get('kurtosis_z_score', 0):.4f}")
-                section.append(f"  Interpretation: {analysis.get('interpretation', 'N/A')}")
-                section.append(f"  Severity: {analysis.get('severity', 'N/A')}")
-                section.append(f"  Recommendation: {analysis.get('recommendation', 'N/A')}")
+                interpretation = analysis.get('interpretation', 'N/A')
+                section.append(f"  Interpretation: {ColorUtils.format_interpretation(interpretation)}")
+                severity = analysis.get('severity', 'N/A')
+                section.append(f"  Severity: {ColorUtils.format_severity(severity)}")
+                recommendation = analysis.get('recommendation', 'N/A')
+                section.append(f"  Recommendation: {ColorUtils.format_transformation_recommendation(recommendation)}")
                 section.append("")
         
         # Transformation recommendations
@@ -280,7 +287,7 @@ class StatisticsReporter:
                 section.append(f"Column: {col}")
                 for transformation, trans_details in details.items():
                     if not trans_details.get('success', False):
-                        section.append(f"  {transformation}: FAILED - {trans_details.get('error', 'Unknown error')}")
+                        section.append(f"  {transformation}: {ColorUtils.red('FAILED')} - {trans_details.get('error', 'Unknown error')}")
                         continue
                     
                     section.append(f"  {transformation}:")
