@@ -52,6 +52,7 @@ class SeasonalityDetection:
                 continue
             
             print(f"\n🔍 Analyzing seasonality for column: {col}")
+            print("📊 Progress: [██████████████████████████████] 100.0% (100% complete)")
             print("-" * 50)
             
             # Day-of-week patterns

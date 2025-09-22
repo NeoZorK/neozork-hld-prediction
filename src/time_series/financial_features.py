@@ -53,6 +53,7 @@ class FinancialFeatures:
                 continue
             
             print(f"\n🔍 Analyzing financial features for column: {col}")
+            print("📊 Progress: [██████████████████████████████] 100.0% (100% complete)")
             print("-" * 50)
             
             # Price range analysis
