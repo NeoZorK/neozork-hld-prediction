@@ -495,3 +495,29 @@ class TimeSeriesFileOperations:
                 valid_numeric_cols.append(col)
         
         return valid_numeric_cols
+    
+    def validate_custom_path(self, path: str) -> Optional[Dict[str, Any]]:
+        """
+        Validate a custom file path and extract metadata if valid.
+        
+        Args:
+            path: Custom file path to validate
+            
+        Returns:
+            Dictionary with file metadata if valid, None otherwise
+        """
+        if not os.path.exists(path):
+            return None
+        
+        if not os.path.isfile(path):
+            return None
+        
+        # Check if file has supported format
+        filename = os.path.basename(path)
+        if not any(filename.lower().endswith(ext) for ext in ['.parquet', '.json', '.csv']):
+            return None
+        
+        # Extract metadata using the same logic as validate_file_path
+        folder_source = os.path.dirname(path)
+        metadata = self._extract_metadata(path, filename, folder_source)
+        return metadata

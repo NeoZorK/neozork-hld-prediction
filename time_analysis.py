@@ -505,11 +505,12 @@ class TimeSeriesAnalyzer:
                 custom_path = file_processing['directory']
                 path_validation = self.file_ops.validate_custom_path(custom_path)
                 
-                if not path_validation['valid']:
-                    print(f"❌ Error: {path_validation['error']}")
+                if path_validation is None:
+                    print(f"❌ Error: Invalid path '{custom_path}' - file not found or unsupported format")
                     return
                 
-                if path_validation['is_file']:
+                # Check if it's a file or directory
+                if os.path.isfile(custom_path):
                     # Single file processing
                     print(f"\n📁 Processing single file: {custom_path}")
                     
@@ -542,7 +543,7 @@ class TimeSeriesAnalyzer:
                     if analysis_options.get('transform', False) and 'transformation' in results['analysis_results']:
                         self._handle_data_transformation(results)
                         
-                elif path_validation['is_directory']:
+                elif os.path.isdir(custom_path):
                     # Directory processing
                     print(f"\n📂 Starting batch processing for custom directory: {custom_path}")
                     self.run_batch_processing(custom_path, f"Custom Directory: {custom_path}", analysis_options, self.auto_mode)
