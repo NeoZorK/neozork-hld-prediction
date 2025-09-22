@@ -191,12 +191,14 @@ class TimeSeriesAnalyzer:
                     data, transformations, numeric_columns
                 )
             else:
-                analysis_results['transformation'] = {
-                    'transformed_data': data,
-                    'transformation_details': {},
-                    'comparison': {},
-                    'recommendations': {}
-                }
+                # If no specific transformations, try basic ones
+                basic_transformations = {}
+                for col in numeric_columns:
+                    basic_transformations[col] = ['differencing', 'detrending', 'normalization']
+                
+                analysis_results['transformation'] = self.data_transformation.transform_data(
+                    data, basic_transformations, numeric_columns
+                )
         
         return {
             'file_info': file_info,
