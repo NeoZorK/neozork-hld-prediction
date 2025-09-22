@@ -189,6 +189,11 @@ class TimeSeriesAnalyzer:
             print("   • Critical values help interpret the strength of stationarity")
             print("="*80)
             print("📊 Performing stationarity analysis...")
+            
+            # Show progress for each column
+            for i, column in enumerate(numeric_columns, 1):
+                self._display_analysis_progress("stationarity", column, i, len(numeric_columns))
+            
             analysis_results['stationarity'] = self.stationarity_analysis.analyze_stationarity(data, numeric_columns)
         
         # Seasonality detection
@@ -213,6 +218,11 @@ class TimeSeriesAnalyzer:
             print("   • High seasonality: Use seasonal differencing or seasonal models")
             print("="*80)
             print("📈 Performing seasonality detection...")
+            
+            # Show progress for each column
+            for i, column in enumerate(numeric_columns, 1):
+                self._display_analysis_progress("seasonality", column, i, len(numeric_columns))
+            
             analysis_results['seasonality'] = self.seasonality_detection.analyze_seasonality(data, numeric_columns)
         
         # Financial features analysis
@@ -238,6 +248,11 @@ class TimeSeriesAnalyzer:
             print("   • High volatility: Consider hedging strategies or smaller positions")
             print("="*80)
             print("💰 Performing financial features analysis...")
+            
+            # Show progress for each column
+            for i, column in enumerate(numeric_columns, 1):
+                self._display_analysis_progress("financial features", column, i, len(numeric_columns))
+            
             analysis_results['financial'] = self.financial_features.analyze_financial_features(data, numeric_columns)
         
         # Data transformation analysis
@@ -264,6 +279,11 @@ class TimeSeriesAnalyzer:
             print("   • Use improvement scores to select the best transformation")
             print("="*80)
             print("🔄 Performing data transformation analysis...")
+            
+            # Show progress for each column
+            for i, column in enumerate(numeric_columns, 1):
+                self._display_analysis_progress("data transformation", column, i, len(numeric_columns))
+            
             # Generate transformation recommendations
             transformations = self._generate_transformation_recommendations(data, numeric_columns, analysis_results)
             
@@ -623,6 +643,21 @@ class TimeSeriesAnalyzer:
         if hasattr(self, 'stationarity_analysis'):
             # Clear any cached results
             pass
+    
+    def _display_analysis_progress(self, analysis_type: str, column: str, current: int, total: int) -> None:
+        """Display progress for analysis of individual columns."""
+        percentage = (current / total) * 100 if total > 0 else 0
+        progress_bar = self._create_analysis_progress_bar(percentage)
+        
+        print(f"🔍 Analyzing {analysis_type} for column: {column}")
+        print(f"📊 Progress: {progress_bar} ({current}/{total})")
+        print("-" * 50)
+    
+    def _create_analysis_progress_bar(self, percentage: float, width: int = 30) -> str:
+        """Create a visual progress bar for analysis."""
+        filled_width = int((percentage / 100) * width)
+        bar = '█' * filled_width + '░' * (width - filled_width)
+        return f"[{bar}] {percentage:.1f}%"
     
     def _handle_data_transformation(self, results: Dict[str, Any]):
         """Handle data transformation user interaction."""
