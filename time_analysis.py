@@ -474,6 +474,8 @@ class TimeSeriesAnalyzer:
                     trans_idx = volatility_levels.index(trans_volatility) if trans_volatility in volatility_levels else 2
                     
                     # More sophisticated improvement detection
+                    print(f"    {col}: {orig_volatility} ({orig_vol_value:.4f}) → {trans_volatility} ({trans_vol_value:.4f})")
+                    
                     if trans_idx < orig_idx:
                         improvement = "Reduced"
                     elif trans_idx == orig_idx and orig_vol_value > 0 and trans_vol_value < orig_vol_value * 0.9:
