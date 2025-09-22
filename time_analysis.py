@@ -308,12 +308,12 @@ class TimeSeriesAnalyzer:
                     rec_data = recommendations[col]
                     if not rec_data.get('is_stationary', False):
                         # Non-stationary data needs focused transformation
-                        transformations[col] = ['differencing', 'detrending', 'log_transform']
-                        print(f"  • {col}: Non-stationary → differencing, detrending, log_transform")
+                        transformations[col] = ['differencing', 'detrending', 'log_transform', 'seasonal_differencing', 'power_transform']
+                        print(f"  • {col}: Non-stationary → differencing, detrending, log_transform, seasonal_differencing, power_transform")
                     else:
                         # Stationary data might still benefit from normalization
-                        transformations[col] = ['normalization', 'standardization']
-                        print(f"  • {col}: Stationary → normalization, standardization")
+                        transformations[col] = ['normalization', 'standardization', 'power_transform']
+                        print(f"  • {col}: Stationary → normalization, standardization, power_transform")
                 else:
                     # Default for columns not in stationarity analysis
                     transformations[col] = ['differencing', 'detrending', 'log_transform', 'normalization']
@@ -418,10 +418,24 @@ class TimeSeriesAnalyzer:
                     orig_has_seasonality = original_seasonality[col].get('has_seasonality', False)
                     trans_has_seasonality = transformed_seasonality.get(col, {}).get('has_seasonality', False)
                     
-                    improvement = "Reduced" if orig_has_seasonality and not trans_has_seasonality else "No change" if orig_has_seasonality == trans_has_seasonality else "Increased"
+                    # More nuanced comparison - check if seasonality strength decreased
+                    orig_strength = original_seasonality[col].get('overall_seasonality_strength', 0)
+                    trans_strength = transformed_seasonality.get(col, {}).get('overall_seasonality_strength', 0)
+                    
+                    if orig_has_seasonality and not trans_has_seasonality:
+                        improvement = "Reduced"
+                    elif orig_has_seasonality and trans_has_seasonality and trans_strength < orig_strength * 0.8:
+                        improvement = "Reduced"  # Significant reduction in strength
+                    elif orig_has_seasonality == trans_has_seasonality:
+                        improvement = "No change"
+                    else:
+                        improvement = "Increased"
+                    
                     comparison['seasonality_improvements'][col] = {
                         'original': orig_has_seasonality,
                         'transformed': trans_has_seasonality,
+                        'original_strength': orig_strength,
+                        'transformed_strength': trans_strength,
                         'improvement': improvement
                     }
         
@@ -433,21 +447,36 @@ class TimeSeriesAnalyzer:
             # Re-analyze financial features on transformed data
             transformed_financial = self.financial_features.analyze_financial_features(transformed_data, numeric_columns)
             
-            # Compare volatility levels
+            # Compare volatility levels and other financial metrics
             for col in numeric_columns:
                 if col in original_financial:
                     orig_volatility = original_financial[col].get('volatility_level', 'unknown')
                     trans_volatility = transformed_financial.get(col, {}).get('volatility_level', 'unknown')
                     
-                    # Simple volatility comparison
+                    # Get actual volatility values for more precise comparison
+                    orig_vol_value = original_financial[col].get('overall_volatility', 0)
+                    trans_vol_value = transformed_financial.get(col, {}).get('overall_volatility', 0)
+                    
+                    # Volatility level comparison
                     volatility_levels = ['very_low', 'low', 'moderate', 'high', 'very_high']
                     orig_idx = volatility_levels.index(orig_volatility) if orig_volatility in volatility_levels else 2
                     trans_idx = volatility_levels.index(trans_volatility) if trans_volatility in volatility_levels else 2
                     
-                    improvement = "Reduced" if trans_idx < orig_idx else "No change" if trans_idx == orig_idx else "Increased"
+                    # More sophisticated improvement detection
+                    if trans_idx < orig_idx:
+                        improvement = "Reduced"
+                    elif trans_idx == orig_idx and orig_vol_value > 0 and trans_vol_value < orig_vol_value * 0.9:
+                        improvement = "Reduced"  # Significant reduction in actual volatility
+                    elif trans_idx == orig_idx:
+                        improvement = "No change"
+                    else:
+                        improvement = "Increased"
+                    
                     comparison['financial_improvements'][col] = {
                         'original_volatility': orig_volatility,
                         'transformed_volatility': trans_volatility,
+                        'original_vol_value': orig_vol_value,
+                        'transformed_vol_value': trans_vol_value,
                         'improvement': improvement
                     }
         
