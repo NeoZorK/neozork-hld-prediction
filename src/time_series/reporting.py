@@ -307,7 +307,7 @@ class TimeSeriesReporter:
                 
                 report.append(f"\n📈 Column: {col}")
                 cyclical_strength = cycle_data.get('cyclical_strength', 0)
-                has_pattern = cycle_data.get('has_cyclical_pattern', False)
+                has_pattern = cycle_data.get('has_cyclical_patterns', False)
                 strongest_cycle = cycle_data.get('strongest_cycle')
                 
                 report.append(f"  Cyclical Strength: {self.color_utils.format_seasonality_strength(cyclical_strength)}")
