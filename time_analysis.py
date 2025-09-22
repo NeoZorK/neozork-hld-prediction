@@ -199,6 +199,12 @@ class TimeSeriesAnalyzer:
                 analysis_results['transformation'] = self.data_transformation.transform_data(
                     data, basic_transformations, numeric_columns
                 )
+            
+            # Add comparison analysis
+            if 'transformation' in analysis_results:
+                analysis_results['transformation']['comparison_analysis'] = self._compare_before_after_transformation(
+                    data, analysis_results['transformation'], analysis_results
+                )
         
         return {
             'file_info': file_info,
@@ -211,27 +217,181 @@ class TimeSeriesAnalyzer:
         """Generate transformation recommendations based on analysis results."""
         transformations = {}
         
+        print("\n🔍 Generating transformation recommendations based on analysis results...")
+        
         # Check stationarity results for recommendations
         if 'stationarity' in analysis_results:
             stationarity_results = analysis_results['stationarity']
             recommendations = stationarity_results.get('stationarity_recommendations', {})
             
+            print("📊 Using stationarity analysis results...")
             for col in numeric_columns:
                 if col in recommendations:
                     rec_data = recommendations[col]
                     if not rec_data.get('is_stationary', False):
                         # Non-stationary data needs transformation
                         transformations[col] = ['differencing', 'detrending', 'log_transform']
+                        print(f"  • {col}: Non-stationary → differencing, detrending, log_transform")
                     else:
                         # Stationary data might still benefit from normalization
                         transformations[col] = ['normalization', 'standardization']
+                        print(f"  • {col}: Stationary → normalization, standardization")
+                else:
+                    # Default for columns not in stationarity analysis
+                    transformations[col] = ['differencing', 'detrending', 'log_transform', 'normalization']
+                    print(f"  • {col}: No stationarity data → basic transformations")
         
-        # If no stationarity analysis, use basic transformations
+        # Check seasonality results for additional recommendations
+        if 'seasonality' in analysis_results:
+            seasonality_results = analysis_results['seasonality']
+            print("📈 Using seasonality analysis results...")
+            
+            for col in numeric_columns:
+                if col in seasonality_results:
+                    col_seasonality = seasonality_results[col]
+                    has_seasonality = col_seasonality.get('has_seasonality', False)
+                    
+                    if has_seasonality:
+                        # Add seasonal adjustment to existing transformations
+                        if col in transformations:
+                            if 'seasonal_adjustment' not in transformations[col]:
+                                transformations[col].append('seasonal_adjustment')
+                        else:
+                            transformations[col] = ['seasonal_adjustment', 'differencing', 'detrending']
+                        print(f"  • {col}: Has seasonality → added seasonal_adjustment")
+        
+        # Check financial features for volatility-based recommendations
+        if 'financial' in analysis_results:
+            financial_results = analysis_results['financial']
+            print("💰 Using financial features analysis results...")
+            
+            for col in numeric_columns:
+                if col in financial_results:
+                    col_financial = financial_results[col]
+                    volatility_level = col_financial.get('volatility_level', 'unknown')
+                    
+                    if volatility_level in ['high', 'very_high']:
+                        # High volatility data might benefit from log transformation
+                        if col in transformations:
+                            if 'log_transform' not in transformations[col]:
+                                transformations[col].append('log_transform')
+                        else:
+                            transformations[col] = ['log_transform', 'differencing', 'detrending']
+                        print(f"  • {col}: High volatility → added log_transform")
+        
+        # If no analysis results, use basic transformations
         if not transformations:
+            print("⚠️  No analysis results available, using basic transformations...")
             for col in numeric_columns:
                 transformations[col] = ['differencing', 'detrending', 'log_transform', 'normalization']
         
         return transformations
+    
+    def _compare_before_after_transformation(self, original_data: pd.DataFrame, 
+                                           transformation_results: Dict[str, Any], 
+                                           analysis_results: Dict[str, Any]) -> Dict[str, Any]:
+        """Compare data before and after transformation."""
+        comparison = {
+            'improvement_summary': {},
+            'stationarity_improvements': {},
+            'seasonality_improvements': {},
+            'financial_improvements': {},
+            'overall_assessment': {}
+        }
+        
+        print("\n📊 Comparing before and after transformation...")
+        
+        # Get transformed data
+        transformed_data = transformation_results.get('transformed_data', original_data)
+        
+        # Compare stationarity improvements
+        if 'stationarity' in analysis_results:
+            print("🔍 Analyzing stationarity improvements...")
+            original_stationarity = analysis_results['stationarity']
+            
+            # Re-analyze stationarity on transformed data
+            numeric_columns = [col for col in original_data.columns if original_data[col].dtype in ['float64', 'int64']]
+            transformed_stationarity = self.stationarity_analysis.analyze_stationarity(transformed_data, numeric_columns)
+            
+            # Compare results
+            for col in numeric_columns:
+                if col in original_stationarity.get('stationarity_recommendations', {}):
+                    orig_stationary = original_stationarity['stationarity_recommendations'][col].get('is_stationary', False)
+                    trans_stationary = transformed_stationarity['stationarity_recommendations'].get(col, {}).get('is_stationary', False)
+                    
+                    improvement = "Improved" if not orig_stationary and trans_stationary else "No change" if orig_stationary == trans_stationary else "Worsened"
+                    comparison['stationarity_improvements'][col] = {
+                        'original': orig_stationary,
+                        'transformed': trans_stationary,
+                        'improvement': improvement
+                    }
+        
+        # Compare seasonality improvements
+        if 'seasonality' in analysis_results:
+            print("🔍 Analyzing seasonality improvements...")
+            original_seasonality = analysis_results['seasonality']
+            
+            # Re-analyze seasonality on transformed data
+            numeric_columns = [col for col in original_data.columns if original_data[col].dtype in ['float64', 'int64']]
+            transformed_seasonality = self.seasonality_detection.analyze_seasonality(transformed_data, numeric_columns)
+            
+            # Compare results
+            for col in numeric_columns:
+                if col in original_seasonality:
+                    orig_has_seasonality = original_seasonality[col].get('has_seasonality', False)
+                    trans_has_seasonality = transformed_seasonality.get(col, {}).get('has_seasonality', False)
+                    
+                    improvement = "Reduced" if orig_has_seasonality and not trans_has_seasonality else "No change" if orig_has_seasonality == trans_has_seasonality else "Increased"
+                    comparison['seasonality_improvements'][col] = {
+                        'original': orig_has_seasonality,
+                        'transformed': trans_has_seasonality,
+                        'improvement': improvement
+                    }
+        
+        # Compare financial improvements
+        if 'financial' in analysis_results:
+            print("🔍 Analyzing financial improvements...")
+            original_financial = analysis_results['financial']
+            
+            # Re-analyze financial features on transformed data
+            numeric_columns = [col for col in original_data.columns if original_data[col].dtype in ['float64', 'int64']]
+            transformed_financial = self.financial_features.analyze_financial_features(transformed_data, numeric_columns)
+            
+            # Compare volatility levels
+            for col in numeric_columns:
+                if col in original_financial:
+                    orig_volatility = original_financial[col].get('volatility_level', 'unknown')
+                    trans_volatility = transformed_financial.get(col, {}).get('volatility_level', 'unknown')
+                    
+                    # Simple volatility comparison
+                    volatility_levels = ['very_low', 'low', 'moderate', 'high', 'very_high']
+                    orig_idx = volatility_levels.index(orig_volatility) if orig_volatility in volatility_levels else 2
+                    trans_idx = volatility_levels.index(trans_volatility) if trans_volatility in volatility_levels else 2
+                    
+                    improvement = "Reduced" if trans_idx < orig_idx else "No change" if trans_idx == orig_idx else "Increased"
+                    comparison['financial_improvements'][col] = {
+                        'original_volatility': orig_volatility,
+                        'transformed_volatility': trans_volatility,
+                        'improvement': improvement
+                    }
+        
+        # Overall assessment
+        total_columns = len(comparison['stationarity_improvements'])
+        improved_stationarity = sum(1 for v in comparison['stationarity_improvements'].values() if v['improvement'] == 'Improved')
+        reduced_seasonality = sum(1 for v in comparison['seasonality_improvements'].values() if v['improvement'] == 'Reduced')
+        reduced_volatility = sum(1 for v in comparison['financial_improvements'].values() if v['improvement'] == 'Reduced')
+        
+        comparison['overall_assessment'] = {
+            'total_columns': total_columns,
+            'stationarity_improved': improved_stationarity,
+            'seasonality_reduced': reduced_seasonality,
+            'volatility_reduced': reduced_volatility,
+            'overall_improvement_rate': (improved_stationarity + reduced_seasonality + reduced_volatility) / (total_columns * 3) if total_columns > 0 else 0
+        }
+        
+        print(f"✅ Comparison complete: {improved_stationarity}/{total_columns} stationarity improved, {reduced_seasonality}/{total_columns} seasonality reduced, {reduced_volatility}/{total_columns} volatility reduced")
+        
+        return comparison
     
     def run_batch_processing(self, directory: str, directory_name: str, analysis_options: Dict[str, bool], 
                            auto_mode: bool = False) -> None:
