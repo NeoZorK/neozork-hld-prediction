@@ -74,8 +74,8 @@ def calculate_feargreed(price_series: pd.Series, period: int = 14) -> pd.Series:
     feargreed_index = (greed_factor - fear_factor + 1) * 50
     feargreed_index = np.clip(feargreed_index, 0, 100)
     
-    # Only set values where we have enough data (after period-1)
-    feargreed_values.iloc[period-1:] = feargreed_index.iloc[period-1:]
+    # Only set values where we have enough data (after period)
+    feargreed_values.iloc[period:] = feargreed_index.iloc[period:]
     
     return feargreed_values
 
