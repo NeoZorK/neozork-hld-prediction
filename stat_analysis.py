@@ -1316,9 +1316,9 @@ class StatisticalAnalyzer:
                                 symbol = part.upper()
                                 break
                         
-                        # Look for timeframe in path (e.g., D1, MN1, H1)
+                        # Look for timeframe in path (e.g., D1, MN1, H1, W1)
                         for part in path_parts:
-                            if part.upper() in ['D1', 'MN1', 'H1', 'H4', 'M15', 'M5', 'M1']:
+                            if part.upper() in ['D1', 'MN1', 'H1', 'H4', 'M15', 'M5', 'M1', 'W1']:
                                 timeframe = part.upper()
                                 break
                         
