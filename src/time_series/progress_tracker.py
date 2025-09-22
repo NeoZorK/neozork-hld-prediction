@@ -293,7 +293,8 @@ class ColumnProgressTracker:
         
         # Calculate ETA
         eta_text = ""
-        if current > 0 and current < self.total_steps:
+        if current >= 2 and current < self.total_steps:
+            # Need at least 2 steps to calculate meaningful ETA
             elapsed_time = time.time() - self.start_time
             avg_time_per_step = elapsed_time / current
             remaining_steps = self.total_steps - current
