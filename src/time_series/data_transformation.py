@@ -85,23 +85,27 @@ class TimeSeriesDataTransformation:
                 except Exception as e:
                     col_results[transform_type] = {
                         'transformed_data': None,
-                        'details': {'error': str(e)},
+                        'details': {'error': f"Transformation failed: {str(e)}"},
                         'success': False
                     }
             
             # Select best transformation
             best_transformation = self._select_best_transformation(col_data, col_results)
             
+            # Store all transformation details (including failed ones)
+            results['transformation_details'][col] = {}
+            for transform_type, result in col_results.items():
+                results['transformation_details'][col][transform_type] = {
+                    'success': result['success'],
+                    'error': result['details'].get('error', 'Unknown error') if not result['success'] else None,
+                    'improvement_score': result['details'].get('improvement_score', 0) if result['success'] else 0
+                }
+            
             if best_transformation and best_transformation in col_results:
                 best_result = col_results[best_transformation]
                 if best_result['success']:
                     # Update the transformed data
                     results['transformed_data'].loc[col_data.index, col] = best_result['transformed_data']
-                    
-                    # Store transformation details
-                    results['transformation_details'][col] = {
-                        best_transformation: best_result['details']
-                    }
                     
                     # Create comparison
                     results['comparison'][col] = self._create_transformation_comparison(
@@ -212,7 +216,7 @@ class TimeSeriesDataTransformation:
                 'first_diff_trend': self._has_trend(diff1)
             }
         except Exception as e:
-            return None, {'error': str(e)}
+            return None, {'error': f"Transformation failed: {str(e)}"}
     
     def _apply_detrending(self, data: pd.Series) -> Tuple[pd.Series, Dict[str, Any]]:
         """Apply detrending transformation."""
@@ -240,7 +244,7 @@ class TimeSeriesDataTransformation:
                 'polynomial_order': 1
             }
         except Exception as e:
-            return None, {'error': str(e)}
+            return None, {'error': f"Transformation failed: {str(e)}"}
     
     def _apply_seasonal_adjustment(self, data: pd.Series) -> Tuple[pd.Series, Dict[str, Any]]:
         """Apply seasonal adjustment transformation."""
@@ -264,7 +268,7 @@ class TimeSeriesDataTransformation:
                 'residual_strength': np.std(decomposition.resid) / np.std(data)
             }
         except Exception as e:
-            return None, {'error': str(e)}
+            return None, {'error': f"Transformation failed: {str(e)}"}
     
     def _apply_log_transform(self, data: pd.Series) -> Tuple[pd.Series, Dict[str, Any]]:
         """Apply log transformation."""
@@ -287,7 +291,7 @@ class TimeSeriesDataTransformation:
                     'transformation': 'log'
                 }
         except Exception as e:
-            return None, {'error': str(e)}
+            return None, {'error': f"Transformation failed: {str(e)}"}
     
     def _apply_log_returns(self, data: pd.Series) -> Tuple[pd.Series, Dict[str, Any]]:
         """Apply log returns transformation."""
@@ -301,7 +305,7 @@ class TimeSeriesDataTransformation:
                 'return_count': len(log_returns)
             }
         except Exception as e:
-            return None, {'error': str(e)}
+            return None, {'error': f"Transformation failed: {str(e)}"}
     
     def _apply_box_cox(self, data: pd.Series) -> Tuple[pd.Series, Dict[str, Any]]:
         """Apply Box-Cox transformation."""
@@ -317,7 +321,7 @@ class TimeSeriesDataTransformation:
                 'transformation': 'box_cox'
             }
         except Exception as e:
-            return None, {'error': str(e)}
+            return None, {'error': f"Transformation failed: {str(e)}"}
     
     def _apply_yeo_johnson(self, data: pd.Series) -> Tuple[pd.Series, Dict[str, Any]]:
         """Apply Yeo-Johnson transformation."""
@@ -330,7 +334,7 @@ class TimeSeriesDataTransformation:
                 'transformation': 'yeo_johnson'
             }
         except Exception as e:
-            return None, {'error': str(e)}
+            return None, {'error': f"Transformation failed: {str(e)}"}
     
     def _apply_normalization(self, data: pd.Series) -> Tuple[pd.Series, Dict[str, Any]]:
         """Apply min-max normalization."""
@@ -353,7 +357,7 @@ class TimeSeriesDataTransformation:
                 'max_val': max_val
             }
         except Exception as e:
-            return None, {'error': str(e)}
+            return None, {'error': f"Transformation failed: {str(e)}"}
     
     def _apply_standardization(self, data: pd.Series) -> Tuple[pd.Series, Dict[str, Any]]:
         """Apply z-score standardization."""
@@ -376,7 +380,7 @@ class TimeSeriesDataTransformation:
                 'std_val': std_val
             }
         except Exception as e:
-            return None, {'error': str(e)}
+            return None, {'error': f"Transformation failed: {str(e)}"}
     
     def _has_trend(self, data: pd.Series) -> bool:
         """Check if data has a significant trend."""
