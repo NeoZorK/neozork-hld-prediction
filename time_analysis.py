@@ -76,7 +76,7 @@ class TimeSeriesAnalyzer:
     """Main class for time series analysis operations."""
     
     def __init__(self, auto_mode: bool = False, output_directory: Optional[str] = None, 
-                 analysis_options: Dict[str, Any] = None, fast_mode: bool = False, 
+                 analysis_options: Dict[str, Any] = None, fast_mode: bool = True, 
                  max_sample_size: int = 10000):
         """Initialize the time series analyzer.
         
@@ -830,14 +830,6 @@ class TimeSeriesAnalyzer:
                     # Use fast mode if enabled
                     if self.fast_mode:
                         results = self._analyze_file_fast(file_processing['filename'], analysis_options)
-                        # Create a minimal file_info for compatibility
-                        file_info = {
-                            'filename': os.path.basename(file_processing['filename']),
-                            'file_path': file_processing['filename'],
-                            'rows_count': 0,  # Will be updated during analysis
-                            'columns_count': 0
-                        }
-                        results = {'file_info': file_info, 'analysis_results': results}
                     else:
                         results = self.analyze_file(file_processing['filename'], analysis_options)
                     
@@ -914,14 +906,6 @@ class TimeSeriesAnalyzer:
                         # Use fast mode if enabled
                         if self.fast_mode:
                             results = self._analyze_file_fast(custom_path, analysis_options)
-                            # Create a minimal file_info for compatibility
-                            file_info = {
-                                'filename': os.path.basename(custom_path),
-                                'file_path': custom_path,
-                                'rows_count': 0,  # Will be updated during analysis
-                                'columns_count': 0
-                            }
-                            results = {'file_info': file_info, 'analysis_results': results}
                         else:
                             # Use the parsed metadata from path_validation
                             file_info = path_validation
@@ -995,6 +979,26 @@ class TimeSeriesAnalyzer:
         load_time = time.time() - start_time
         
         print(f"📊 Data loaded: {data.shape[0]:,} rows × {data.shape[1]} columns in {load_time:.2f}s")
+        
+        # Extract file metadata
+        filename = os.path.basename(file_path)
+        file_info = {
+            'filename': filename,
+            'file_path': file_path,
+            'rows_count': data.shape[0],
+            'columns_count': data.shape[1],
+            'format': format_type.upper()
+        }
+        
+        # Try to extract metadata from filename
+        if 'BTCUSDT' in filename:
+            file_info['symbol'] = 'BTCUSDT'
+        if 'M15' in filename:
+            file_info['timeframe'] = 'M15'
+        if 'Wave' in filename:
+            file_info['indicator'] = 'Wave'
+        if 'transformed' in filename:
+            file_info['source'] = 'Transformed Data'
         
         # Check if we need optimization
         needs_optimization = len(data) > self.max_sample_size
@@ -1075,7 +1079,10 @@ class TimeSeriesAnalyzer:
             analysis_time = time.time() - start_time
             print(f"✅ Data transformation analysis completed in {analysis_time:.2f}s")
         
-        return results
+        return {
+            'file_info': file_info,
+            'analysis_results': results
+        }
     
     def _analyze_stationarity_fast(self, data: pd.DataFrame, numeric_columns: List[str]) -> Dict[str, Any]:
         """Fast stationarity analysis with sampling."""
@@ -1092,6 +1099,11 @@ class TimeSeriesAnalyzer:
                 
             col_data = data[col].dropna()
             if len(col_data) < 10:
+                continue
+            
+            # Skip constant columns
+            if col_data.nunique() <= 1:
+                print(f"⚠️  Skipping constant column: {col}")
                 continue
             
             # Create progress tracker
@@ -1139,6 +1151,11 @@ class TimeSeriesAnalyzer:
                 
             col_data = data[col].dropna()
             if len(col_data) < 30:
+                continue
+            
+            # Skip constant columns
+            if col_data.nunique() <= 1:
+                print(f"⚠️  Skipping constant column: {col}")
                 continue
             
             # Create progress tracker
@@ -1207,6 +1224,11 @@ class TimeSeriesAnalyzer:
             if len(col_data) < 10:
                 continue
             
+            # Skip constant columns
+            if col_data.nunique() <= 1:
+                print(f"⚠️  Skipping constant column: {col}")
+                continue
+            
             # Create progress tracker
             progress_tracker = ColumnProgressTracker(col, "financial features", 3)
             progress_tracker.start_analysis()
@@ -1255,6 +1277,11 @@ class TimeSeriesAnalyzer:
                 
             col_data = data[col].dropna()
             if len(col_data) < 10:
+                continue
+            
+            # Skip constant columns
+            if col_data.nunique() <= 1:
+                print(f"⚠️  Skipping constant column: {col}")
                 continue
             
             # Create progress tracker

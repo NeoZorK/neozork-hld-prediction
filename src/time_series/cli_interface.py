@@ -44,9 +44,12 @@ Examples:
   python time_analysis.py -f binance_BTCUSD_1h.parquet --stationarity --financial --auto
   python time_analysis.py -f polygon_ETHUSD_daily_rsi.json --stationarity --seasonality --financial
   
-  # Fast mode for large datasets:
-  python time_analysis.py -f large_dataset.parquet --stationarity --seasonality --fast --auto
-  python time_analysis.py -f M15_data.parquet --stationarity --seasonality --financial --transform --fast --max-sample-size 5000
+  # Fast mode (default) for large datasets:
+  python time_analysis.py -f large_dataset.parquet --stationarity --seasonality --auto
+  python time_analysis.py -f M15_data.parquet --stationarity --seasonality --financial --transform --max-sample-size 5000 --auto
+  
+  # Slow mode for detailed analysis (not recommended for large files):
+  python time_analysis.py -f small_dataset.parquet --stationarity --seasonality --slow --auto
   
   # Batch processing:
   python time_analysis.py --batch-csv-converted --stationarity --auto
@@ -239,7 +242,14 @@ from data/fixed/ folder. You can run clear_data.py --help for more information.
         processing_group.add_argument(
             "--fast",
             action="store_true",
-            help="⚡ Enable fast mode with optimizations for large datasets (sampling, simplified algorithms)"
+            default=True,
+            help="⚡ Enable fast mode with optimizations for large datasets (sampling, simplified algorithms) [DEFAULT]"
+        )
+        
+        processing_group.add_argument(
+            "--slow",
+            action="store_true",
+            help="🐌 Disable fast mode and use full analysis (slower but more detailed)"
         )
         
         processing_group.add_argument(
@@ -449,9 +459,12 @@ from data/fixed/ folder. You can run clear_data.py --help for more information.
         Returns:
             Dictionary with processing options
         """
+        # Fast mode is default, but can be disabled with --slow
+        fast_mode = getattr(args, 'fast', True) and not getattr(args, 'slow', False)
+        
         return {
             'auto': getattr(args, 'auto', False),
-            'fast': getattr(args, 'fast', False),
+            'fast': fast_mode,
             'max_sample_size': getattr(args, 'max_sample_size', 10000),
             'recursive': getattr(args, 'recursive', False),
             'verbose': getattr(args, 'verbose', False)
