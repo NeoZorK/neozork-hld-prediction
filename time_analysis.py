@@ -1121,13 +1121,37 @@ class TimeSeriesAnalyzer:
             # Fast ADF test
             progress_tracker.update_step("ADF Test")
             adf_results = self.optimizer.fast_adf_test(sample_data, col)
-            results['adf_tests'][col] = adf_results
+            
+            # Format ADF results for reporting
+            if 'error' not in adf_results:
+                formatted_adf = {
+                    'standard': {
+                        'adf_statistic': adf_results.get('adf_statistic', 0),
+                        'p_value': adf_results.get('p_value', 1.0),
+                        'is_stationary': adf_results.get('p_value', 1.0) < 0.05
+                    }
+                }
+                results['adf_tests'][col] = formatted_adf
+            else:
+                results['adf_tests'][col] = adf_results
             time.sleep(0.1)  # Simulate processing
             
             # Fast critical values
             progress_tracker.update_step("Critical Values")
             critical_vals = self._get_critical_values_fast(sample_data, col)
-            results['critical_values'][col] = critical_vals
+            
+            # Format critical values for reporting
+            if 'error' not in critical_vals:
+                formatted_critical = {
+                    'critical_values': {
+                        '1%': critical_vals.get('1%', 0),
+                        '5%': critical_vals.get('5%', 0),
+                        '10%': critical_vals.get('10%', 0)
+                    }
+                }
+                results['critical_values'][col] = formatted_critical
+            else:
+                results['critical_values'][col] = critical_vals
             time.sleep(0.1)  # Simulate processing
             
             # Fast recommendations
