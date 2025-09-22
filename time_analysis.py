@@ -1409,13 +1409,13 @@ class TimeSeriesAnalyzer:
         if p_value < 0.05:
             return {
                 'is_stationary': True,
-                'confidence': 'High' if p_value < 0.01 else 'Medium',
+                'confidence_level': 'High' if p_value < 0.01 else 'Medium',
                 'recommendation': 'Data is stationary, ready for modeling'
             }
         else:
             return {
                 'is_stationary': False,
-                'confidence': 'High',
+                'confidence_level': 'High',
                 'recommendation': 'Apply differencing or detrending'
             }
     
@@ -1520,12 +1520,29 @@ class TimeSeriesAnalyzer:
                     'overall_volatility': 0.0
                 }
             
+            # Calculate metrics with NaN checks
+            mean_change = float(changes.mean())
+            if np.isnan(mean_change):
+                mean_change = 0.0
+                
+            std_change = float(changes.std())
+            if np.isnan(std_change):
+                std_change = 0.0
+                
+            max_increase = float(changes.max())
+            if np.isnan(max_increase):
+                max_increase = 0.0
+                
+            max_decrease = float(changes.min())
+            if np.isnan(max_decrease):
+                max_decrease = 0.0
+            
             return {
-                'mean_change': float(changes.mean()),
-                'std_change': float(changes.std()),
-                'max_increase': float(changes.max()),
-                'max_decrease': float(changes.min()),
-                'overall_volatility': float(changes.std())
+                'mean_change': mean_change,
+                'std_change': std_change,
+                'max_increase': max_increase,
+                'max_decrease': max_decrease,
+                'overall_volatility': std_change
             }
         except Exception as e:
             print(f"⚠️  Error calculating price changes for {col}: {e}")
@@ -1540,11 +1557,11 @@ class TimeSeriesAnalyzer:
     def _analyze_volatility_fast(self, sample_data: pd.Series, col: str) -> Dict[str, Any]:
         """Fast volatility analysis."""
         try:
-            # Calculate returns
+            # Calculate returns and handle NaN values
             returns = sample_data.pct_change().dropna()
             
-            # Check if we have valid returns
-            if len(returns) == 0 or returns.std() == 0:
+            # Check if we have valid returns and no NaN values
+            if len(returns) == 0 or returns.std() == 0 or np.isnan(returns.std()) or np.isnan(returns.mean()):
                 return {
                     'overall_volatility': 0.0,
                     'annualized_volatility': 0.0,
@@ -1554,15 +1571,31 @@ class TimeSeriesAnalyzer:
                     'sharpe_ratio': 0.0
                 }
             
-            # Calculate volatility metrics
+            # Calculate volatility metrics with NaN checks
             overall_volatility = float(returns.std())
+            if np.isnan(overall_volatility):
+                overall_volatility = 0.0
+                
             annualized_volatility = float(overall_volatility * (252 ** 0.5))
+            if np.isnan(annualized_volatility):
+                annualized_volatility = 0.0
+                
             mean_return = float(returns.mean())
+            if np.isnan(mean_return):
+                mean_return = 0.0
+                
             sharpe_ratio = float(mean_return / overall_volatility) if overall_volatility > 0 else 0.0
+            if np.isnan(sharpe_ratio):
+                sharpe_ratio = 0.0
             
-            # Calculate coefficient of variation
+            # Calculate coefficient of variation with NaN checks
             mean_value = float(sample_data.mean())
-            coefficient_of_variation = (overall_volatility / abs(mean_value) * 100) if mean_value != 0 else 0.0
+            if np.isnan(mean_value) or mean_value == 0:
+                coefficient_of_variation = 0.0
+            else:
+                coefficient_of_variation = (overall_volatility / abs(mean_value) * 100)
+                if np.isnan(coefficient_of_variation):
+                    coefficient_of_variation = 0.0
             
             # Determine volatility level
             if annualized_volatility < 0.1:
