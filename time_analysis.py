@@ -1531,6 +1531,7 @@ class TimeSeriesAnalyzer:
                 
                 return {
                     'has_monthly_patterns': pattern_strength > 0.05,  # Lowered threshold for small datasets
+                    'has_significant_pattern': pattern_strength > 0.05,  # For reporting
                     'pattern_strength': pattern_strength,
                     'month_statistics': month_stats,
                     'strongest_month': max(month_stats.keys(), key=lambda x: month_stats[x]['mean']) if month_stats else None,
@@ -1571,6 +1572,7 @@ class TimeSeriesAnalyzer:
             
             return {
                 'has_cyclical_patterns': has_cyclical,
+                'has_significant_pattern': has_cyclical,  # For reporting
                 'cyclical_strength': avg_autocorr,
                 'lag_1_autocorr': autocorr_1,
                 'lag_2_autocorr': autocorr_2,
