@@ -389,9 +389,26 @@ class TimeSeriesReporter:
                     continue
                 
                 report.append(f"\n📈 Column: {col}")
+                
+                # Overall volatility
                 overall_volatility = changes_data.get('overall_volatility', 0)
                 report.append(f"  Overall Volatility: {self.color_utils.format_volatility(overall_volatility)}")
                 
+                # Mean change
+                mean_change = changes_data.get('mean_change', 0)
+                report.append(f"  Mean Change: {mean_change:.6f}")
+                
+                # Standard deviation of changes
+                std_change = changes_data.get('std_change', 0)
+                report.append(f"  Std Change: {std_change:.6f}")
+                
+                # Max increase and decrease
+                max_increase = changes_data.get('max_increase', 0)
+                max_decrease = changes_data.get('max_decrease', 0)
+                report.append(f"  Max Increase: {max_increase:.6f}")
+                report.append(f"  Max Decrease: {max_decrease:.6f}")
+                
+                # Return consistency
                 return_consistency = changes_data.get('return_consistency')
                 if return_consistency:
                     pos_pct = return_consistency.get('positive_percentage', 0)
