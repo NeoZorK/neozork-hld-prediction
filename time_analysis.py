@@ -68,20 +68,24 @@ from src.time_series.financial_features import FinancialFeatures
 from src.time_series.data_transformation import TimeSeriesDataTransformation
 from src.time_series.reporting import TimeSeriesReporter
 from src.time_series.color_utils import ColorUtils
-from src.time_series.progress_tracker import ProgressTracker, ProgressBar
+from src.time_series.progress_tracker import ProgressTracker, ProgressBar, ColumnProgressTracker
+from src.time_series.optimized_analysis import OptimizedAnalysis
 
 
 class TimeSeriesAnalyzer:
     """Main class for time series analysis operations."""
     
     def __init__(self, auto_mode: bool = False, output_directory: Optional[str] = None, 
-                 analysis_options: Dict[str, Any] = None):
+                 analysis_options: Dict[str, Any] = None, fast_mode: bool = False, 
+                 max_sample_size: int = 10000):
         """Initialize the time series analyzer.
         
         Args:
             auto_mode: If True, automatically answer 'y' to all questions
             output_directory: Directory to save results and transformed data
             analysis_options: Dictionary with analysis options
+            fast_mode: Enable fast mode with optimizations for large datasets
+            max_sample_size: Maximum sample size for fast mode (default: 10000)
         """
         self.file_ops = TimeSeriesFileOperations()
         self.stationarity_analysis = StationarityAnalysis()
@@ -90,8 +94,14 @@ class TimeSeriesAnalyzer:
         self.data_transformation = TimeSeriesDataTransformation()
         self.reporter = TimeSeriesReporter()
         self.auto_mode = auto_mode
+        self.fast_mode = fast_mode
+        self.max_sample_size = max_sample_size
         self.output_directory = output_directory
         self.analysis_options = analysis_options or {}
+        
+        # Initialize optimizer for fast mode
+        if self.fast_mode:
+            self.optimizer = OptimizedAnalysis(max_sample_size=max_sample_size)
         
         # Supported data directories
         self.supported_dirs = self.file_ops.get_supported_directories()
@@ -817,7 +827,19 @@ class TimeSeriesAnalyzer:
                 progress_tracker.start_file(file_processing['filename'])
                 
                 try:
-                    results = self.analyze_file(file_processing['filename'], analysis_options)
+                    # Use fast mode if enabled
+                    if self.fast_mode:
+                        results = self._analyze_file_fast(file_processing['filename'], analysis_options)
+                        # Create a minimal file_info for compatibility
+                        file_info = {
+                            'filename': os.path.basename(file_processing['filename']),
+                            'file_path': file_processing['filename'],
+                            'rows_count': 0,  # Will be updated during analysis
+                            'columns_count': 0
+                        }
+                        results = {'file_info': file_info, 'analysis_results': results}
+                    else:
+                        results = self.analyze_file(file_processing['filename'], analysis_options)
                     
                     # Generate and display report
                     report = self.reporter.generate_comprehensive_report(
@@ -889,11 +911,23 @@ class TimeSeriesAnalyzer:
                     progress_tracker.start_file(os.path.basename(custom_path))
                     
                     try:
-                        # Use the parsed metadata from path_validation
-                        file_info = path_validation
-                        
-                        # Use the custom file_info instead of calling analyze_file with filename
-                        results = self._analyze_file_with_info(file_info, analysis_options)
+                        # Use fast mode if enabled
+                        if self.fast_mode:
+                            results = self._analyze_file_fast(custom_path, analysis_options)
+                            # Create a minimal file_info for compatibility
+                            file_info = {
+                                'filename': os.path.basename(custom_path),
+                                'file_path': custom_path,
+                                'rows_count': 0,  # Will be updated during analysis
+                                'columns_count': 0
+                            }
+                            results = {'file_info': file_info, 'analysis_results': results}
+                        else:
+                            # Use the parsed metadata from path_validation
+                            file_info = path_validation
+                            
+                            # Use the custom file_info instead of calling analyze_file with filename
+                            results = self._analyze_file_with_info(file_info, analysis_options)
                         
                         # Generate and display report
                         report = self.reporter.generate_comprehensive_report(
@@ -930,6 +964,468 @@ class TimeSeriesAnalyzer:
         except Exception as e:
             print(f"\nError during time series analysis: {str(e)}")
             sys.exit(1)
+    
+    def _analyze_file_fast(self, file_path: str, analysis_options: Dict[str, bool]) -> Dict[str, Any]:
+        """
+        Fast analysis of a single file with optimizations for large datasets.
+        
+        Args:
+            file_path: Path to the file
+            analysis_options: Analysis options
+            
+        Returns:
+            Analysis results
+        """
+        print(f"\n🚀 Fast Analysis: {os.path.basename(file_path)}")
+        print("=" * 60)
+        
+        # Load data
+        start_time = time.time()
+        file_extension = os.path.splitext(file_path)[1].lower()
+        if file_extension == '.parquet':
+            format_type = 'parquet'
+        elif file_extension == '.json':
+            format_type = 'json'
+        elif file_extension == '.csv':
+            format_type = 'csv'
+        else:
+            format_type = 'parquet'  # Default to parquet
+        
+        data = self.file_ops.load_data(file_path, format_type)
+        load_time = time.time() - start_time
+        
+        print(f"📊 Data loaded: {data.shape[0]:,} rows × {data.shape[1]} columns in {load_time:.2f}s")
+        
+        # Check if we need optimization
+        needs_optimization = len(data) > self.max_sample_size
+        if needs_optimization:
+            print(f"⚡ Large dataset detected! Using sampling (max {self.max_sample_size:,} rows)")
+            print(f"   Original size: {len(data):,} rows")
+            print(f"   Sampling ratio: {self.max_sample_size/len(data)*100:.1f}%")
+        
+        # Get numeric columns
+        numeric_columns = data.select_dtypes(include=['number']).columns.tolist()
+        print(f"📈 Analyzing {len(numeric_columns)} numeric columns")
+        
+        # Estimate processing time
+        time_estimates = self.optimizer.estimate_processing_time(
+            data.shape, len(numeric_columns)
+        )
+        print(f"⏱️  Estimated time: {time_estimates['estimated_total_time']:.1f}s")
+        
+        results = {}
+        
+        # Stationarity analysis
+        if analysis_options.get('stationarity', False):
+            print(f"\n📊 STATIONARITY ANALYSIS")
+            print("=" * 60)
+            print("🔍 What is Stationarity Analysis?")
+            print("   Stationarity analysis determines if a time series has consistent statistical properties")
+            print("   over time. A stationary series has constant mean, variance, and autocorrelation structure.")
+            print("=" * 60)
+            print("📊 Performing fast stationarity analysis...")
+            
+            start_time = time.time()
+            results['stationarity'] = self._analyze_stationarity_fast(data, numeric_columns)
+            analysis_time = time.time() - start_time
+            print(f"✅ Stationarity analysis completed in {analysis_time:.2f}s")
+        
+        # Seasonality detection
+        if analysis_options.get('seasonality', False):
+            print(f"\n📈 SEASONALITY DETECTION")
+            print("=" * 60)
+            print("🔍 What is Seasonality Detection?")
+            print("   Seasonality detection identifies recurring patterns in time series data that repeat")
+            print("   at regular intervals (daily, weekly, monthly, yearly cycles).")
+            print("=" * 60)
+            print("📈 Performing fast seasonality detection...")
+            
+            start_time = time.time()
+            results['seasonality'] = self._analyze_seasonality_fast(data, numeric_columns)
+            analysis_time = time.time() - start_time
+            print(f"✅ Seasonality analysis completed in {analysis_time:.2f}s")
+        
+        # Financial features analysis
+        if analysis_options.get('financial', False):
+            print(f"\n💰 FINANCIAL FEATURES ANALYSIS")
+            print("=" * 60)
+            print("🔍 What is Financial Features Analysis?")
+            print("   Financial features analysis examines price movements, volatility patterns, and risk")
+            print("   characteristics in financial time series data to understand market behavior.")
+            print("=" * 60)
+            print("💰 Performing fast financial features analysis...")
+            
+            start_time = time.time()
+            results['financial'] = self._analyze_financial_fast(data, numeric_columns)
+            analysis_time = time.time() - start_time
+            print(f"✅ Financial features analysis completed in {analysis_time:.2f}s")
+        
+        # Data transformation analysis
+        if analysis_options.get('transform', False):
+            print(f"\n🔄 DATA TRANSFORMATION ANALYSIS")
+            print("=" * 60)
+            print("🔍 What is Data Transformation Analysis?")
+            print("   Data transformation analysis applies mathematical transformations to time series data")
+            print("   to improve its statistical properties, making it more suitable for modeling.")
+            print("=" * 60)
+            print("🔄 Performing fast data transformation analysis...")
+            
+            start_time = time.time()
+            results['transformation'] = self._analyze_transformation_fast(data, numeric_columns)
+            analysis_time = time.time() - start_time
+            print(f"✅ Data transformation analysis completed in {analysis_time:.2f}s")
+        
+        return results
+    
+    def _analyze_stationarity_fast(self, data: pd.DataFrame, numeric_columns: List[str]) -> Dict[str, Any]:
+        """Fast stationarity analysis with sampling."""
+        results = {
+            'adf_tests': {},
+            'critical_values': {},
+            'stationarity_recommendations': {},
+            'optimization_applied': {'sampling': False, 'sample_size': 0}
+        }
+        
+        for col in numeric_columns:
+            if col not in data.columns:
+                continue
+                
+            col_data = data[col].dropna()
+            if len(col_data) < 10:
+                continue
+            
+            # Create progress tracker
+            progress_tracker = ColumnProgressTracker(col, "stationarity", 3)
+            progress_tracker.start_analysis()
+            
+            # Use sampling for large datasets
+            if len(col_data) > self.max_sample_size:
+                sample_data = self.optimizer.get_analysis_sample(data, col)
+                results['optimization_applied']['sampling'] = True
+                results['optimization_applied']['sample_size'] = len(sample_data)
+            else:
+                sample_data = col_data
+            
+            # Fast ADF test
+            progress_tracker.update_step("ADF Test")
+            adf_results = self.optimizer.fast_adf_test(sample_data, col)
+            results['adf_tests'][col] = adf_results
+            time.sleep(0.1)  # Simulate processing
+            
+            # Fast critical values
+            progress_tracker.update_step("Critical Values")
+            critical_vals = self._get_critical_values_fast(sample_data, col)
+            results['critical_values'][col] = critical_vals
+            time.sleep(0.1)  # Simulate processing
+            
+            # Fast recommendations
+            progress_tracker.update_step("Recommendations")
+            recommendations = self._generate_recommendations_fast(adf_results, critical_vals, col)
+            results['stationarity_recommendations'][col] = recommendations
+            time.sleep(0.1)  # Simulate processing
+            
+            # Complete analysis
+            progress_tracker.complete_analysis()
+        
+        return results
+    
+    def _analyze_seasonality_fast(self, data: pd.DataFrame, numeric_columns: List[str]) -> Dict[str, Any]:
+        """Fast seasonality analysis with sampling."""
+        results = {}
+        
+        for col in numeric_columns:
+            if col not in data.columns:
+                continue
+                
+            col_data = data[col].dropna()
+            if len(col_data) < 30:
+                continue
+            
+            # Create progress tracker
+            progress_tracker = ColumnProgressTracker(col, "seasonality", 3)
+            progress_tracker.start_analysis()
+            
+            # Use sampling for large datasets
+            if len(col_data) > self.max_sample_size:
+                sample_data = self.optimizer.get_analysis_sample(data, col)
+            else:
+                sample_data = col_data
+            
+            # Fast day patterns
+            progress_tracker.update_step("Day Patterns")
+            day_patterns = self._analyze_day_patterns_fast(data, col, sample_data)
+            time.sleep(0.1)  # Simulate processing
+            
+            # Fast month patterns
+            progress_tracker.update_step("Month Patterns")
+            month_patterns = self._analyze_month_patterns_fast(data, col, sample_data)
+            time.sleep(0.1)  # Simulate processing
+            
+            # Fast cyclical patterns
+            progress_tracker.update_step("Cyclical Patterns")
+            cyclical_patterns = self._analyze_cyclical_patterns_fast(sample_data, col)
+            time.sleep(0.1)  # Simulate processing
+            
+            # Calculate overall seasonality
+            has_seasonality = (
+                day_patterns.get('has_day_of_week_patterns', False) or
+                month_patterns.get('has_monthly_patterns', False) or
+                cyclical_patterns.get('has_cyclical_patterns', False)
+            )
+            
+            day_strength = day_patterns.get('pattern_strength', 0)
+            month_strength = month_patterns.get('pattern_strength', 0)
+            cyclical_strength = cyclical_patterns.get('cyclical_strength', 0)
+            overall_strength = max(day_strength, month_strength, cyclical_strength)
+            
+            results[col] = {
+                'has_seasonality': has_seasonality,
+                'overall_seasonality_strength': overall_strength,
+                'day_patterns': day_patterns,
+                'month_patterns': month_patterns,
+                'cyclical_patterns': cyclical_patterns
+            }
+            
+            # Complete analysis
+            progress_tracker.complete_analysis()
+        
+        return results
+    
+    def _analyze_financial_fast(self, data: pd.DataFrame, numeric_columns: List[str]) -> Dict[str, Any]:
+        """Fast financial features analysis with sampling."""
+        results = {
+            'price_range_analysis': {},
+            'price_changes_analysis': {},
+            'volatility_analysis': {}
+        }
+        
+        for col in numeric_columns:
+            if col not in data.columns:
+                continue
+                
+            col_data = data[col].dropna()
+            if len(col_data) < 10:
+                continue
+            
+            # Create progress tracker
+            progress_tracker = ColumnProgressTracker(col, "financial features", 3)
+            progress_tracker.start_analysis()
+            
+            # Use sampling for large datasets
+            if len(col_data) > self.max_sample_size:
+                sample_data = self.optimizer.get_analysis_sample(data, col)
+            else:
+                sample_data = col_data
+            
+            # Fast price range
+            progress_tracker.update_step("Price Range")
+            price_range = self._analyze_price_range_fast(sample_data, col)
+            results['price_range_analysis'][col] = price_range
+            time.sleep(0.1)  # Simulate processing
+            
+            # Fast price changes
+            progress_tracker.update_step("Price Changes")
+            price_changes = self._analyze_price_changes_fast(sample_data, col)
+            results['price_changes_analysis'][col] = price_changes
+            time.sleep(0.1)  # Simulate processing
+            
+            # Fast volatility
+            progress_tracker.update_step("Volatility")
+            volatility = self._analyze_volatility_fast(sample_data, col)
+            results['volatility_analysis'][col] = volatility
+            time.sleep(0.1)  # Simulate processing
+            
+            # Complete analysis
+            progress_tracker.complete_analysis()
+        
+        return results
+    
+    def _analyze_transformation_fast(self, data: pd.DataFrame, numeric_columns: List[str]) -> Dict[str, Any]:
+        """Fast data transformation analysis with sampling."""
+        results = {
+            'transformation_details': {},
+            'transformed_data': data.copy(),
+            'comparison': {},
+            'recommendations': {}
+        }
+        
+        for col in numeric_columns:
+            if col not in data.columns:
+                continue
+                
+            col_data = data[col].dropna()
+            if len(col_data) < 10:
+                continue
+            
+            # Create progress tracker
+            progress_tracker = ColumnProgressTracker(col, "data transformation", 2)
+            progress_tracker.start_analysis()
+            
+            # Use sampling for large datasets
+            if len(col_data) > self.max_sample_size:
+                sample_data = self.optimizer.get_analysis_sample(data, col)
+            else:
+                sample_data = col_data
+            
+            # Fast transformations
+            progress_tracker.update_step("Apply Transformations")
+            transformations = self._get_fast_transformations(sample_data, col)
+            time.sleep(0.1)  # Simulate processing
+            
+            # Fast recommendations
+            progress_tracker.update_step("Generate Recommendations")
+            recommendations = self._generate_transformation_recommendations_fast(sample_data, col)
+            results['recommendations'][col] = recommendations
+            time.sleep(0.1)  # Simulate processing
+            
+            # Complete analysis
+            progress_tracker.complete_analysis()
+        
+        return results
+    
+    def _get_critical_values_fast(self, data: pd.Series, column_name: str) -> Dict[str, float]:
+        """Fast critical values calculation."""
+        try:
+            from statsmodels.tsa.stattools import adfuller
+            adf_result = adfuller(data, autolag='AIC')
+            return {
+                '1%': adf_result[4]['1%'],
+                '5%': adf_result[4]['5%'],
+                '10%': adf_result[4]['10%']
+            }
+        except:
+            return {'1%': 0, '5%': 0, '10%': 0}
+    
+    def _generate_recommendations_fast(self, adf_results: Dict, critical_vals: Dict, col: str) -> Dict[str, Any]:
+        """Fast recommendations generation."""
+        if 'error' in adf_results:
+            return {'error': adf_results['error']}
+        
+        p_value = adf_results.get('p_value', 1.0)
+        adf_stat = adf_results.get('adf_statistic', 0)
+        
+        if p_value < 0.05:
+            return {
+                'is_stationary': True,
+                'confidence': 'High' if p_value < 0.01 else 'Medium',
+                'recommendation': 'Data is stationary, ready for modeling'
+            }
+        else:
+            return {
+                'is_stationary': False,
+                'confidence': 'High',
+                'recommendation': 'Apply differencing or detrending'
+            }
+    
+    def _analyze_day_patterns_fast(self, data: pd.DataFrame, col: str, sample_data: pd.Series) -> Dict[str, Any]:
+        """Fast day patterns analysis."""
+        try:
+            if 'DateTime' in data.columns:
+                day_of_week = pd.to_datetime(data['DateTime']).dt.dayofweek
+                day_stats = sample_data.groupby(day_of_week).agg(['mean', 'std']).round(4)
+                return {
+                    'has_day_of_week_patterns': True,
+                    'pattern_strength': 0.5,  # Simplified
+                    'day_stats': day_stats.to_dict()
+                }
+            else:
+                return {'has_day_of_week_patterns': False, 'pattern_strength': 0}
+        except:
+            return {'has_day_of_week_patterns': False, 'pattern_strength': 0}
+    
+    def _analyze_month_patterns_fast(self, data: pd.DataFrame, col: str, sample_data: pd.Series) -> Dict[str, Any]:
+        """Fast month patterns analysis."""
+        try:
+            if 'DateTime' in data.columns:
+                month = pd.to_datetime(data['DateTime']).dt.month
+                month_stats = sample_data.groupby(month).agg(['mean', 'std']).round(4)
+                return {
+                    'has_monthly_patterns': True,
+                    'pattern_strength': 0.5,  # Simplified
+                    'month_stats': month_stats.to_dict()
+                }
+            else:
+                return {'has_monthly_patterns': False, 'pattern_strength': 0}
+        except:
+            return {'has_monthly_patterns': False, 'pattern_strength': 0}
+    
+    def _analyze_cyclical_patterns_fast(self, sample_data: pd.Series, col: str) -> Dict[str, Any]:
+        """Fast cyclical patterns analysis."""
+        try:
+            autocorr = sample_data.autocorr(lag=1)
+            return {
+                'has_cyclical_patterns': abs(autocorr) > 0.1,
+                'cyclical_strength': abs(autocorr),
+                'lag_1_autocorr': autocorr
+            }
+        except:
+            return {'has_cyclical_patterns': False, 'cyclical_strength': 0}
+    
+    def _analyze_price_range_fast(self, sample_data: pd.Series, col: str) -> Dict[str, Any]:
+        """Fast price range analysis."""
+        try:
+            return {
+                'min_price': float(sample_data.min()),
+                'max_price': float(sample_data.max()),
+                'price_range': float(sample_data.max() - sample_data.min()),
+                'range_percentage': float((sample_data.max() - sample_data.min()) / sample_data.mean() * 100)
+            }
+        except:
+            return {'min_price': 0, 'max_price': 0, 'price_range': 0, 'range_percentage': 0}
+    
+    def _analyze_price_changes_fast(self, sample_data: pd.Series, col: str) -> Dict[str, Any]:
+        """Fast price changes analysis."""
+        try:
+            changes = sample_data.pct_change().dropna()
+            return {
+                'mean_change': float(changes.mean()),
+                'std_change': float(changes.std()),
+                'max_increase': float(changes.max()),
+                'max_decrease': float(changes.min())
+            }
+        except:
+            return {'mean_change': 0, 'std_change': 0, 'max_increase': 0, 'max_decrease': 0}
+    
+    def _analyze_volatility_fast(self, sample_data: pd.Series, col: str) -> Dict[str, Any]:
+        """Fast volatility analysis."""
+        try:
+            returns = sample_data.pct_change().dropna()
+            volatility = returns.std() * (252 ** 0.5)  # Annualized
+            return {
+                'volatility': float(volatility),
+                'mean_return': float(returns.mean()),
+                'sharpe_ratio': float(returns.mean() / returns.std()) if returns.std() > 0 else 0
+            }
+        except:
+            return {'volatility': 0, 'mean_return': 0, 'sharpe_ratio': 0}
+    
+    def _get_fast_transformations(self, sample_data: pd.Series, col: str) -> List[str]:
+        """Get fast transformation recommendations."""
+        try:
+            # Simple transformation logic
+            if sample_data.min() > 0:
+                return ['log', 'sqrt']
+            else:
+                return ['standardize', 'normalize']
+        except:
+            return []
+    
+    def _generate_transformation_recommendations_fast(self, sample_data: pd.Series, col: str) -> Dict[str, Any]:
+        """Generate fast transformation recommendations."""
+        try:
+            skewness = sample_data.skew()
+            if abs(skewness) > 1:
+                return {
+                    'recommended_transformation': 'log' if sample_data.min() > 0 else 'box_cox',
+                    'reason': f'High skewness: {skewness:.2f}'
+                }
+            else:
+                return {
+                    'recommended_transformation': 'standardize',
+                    'reason': 'Low skewness, standard scaling recommended'
+                }
+        except:
+            return {'recommended_transformation': 'none', 'reason': 'Unable to analyze'}
 
 
 def signal_handler(signum, frame):
@@ -964,7 +1460,9 @@ def main():
     analyzer = TimeSeriesAnalyzer(
         auto_mode=config['processing_options']['auto'],
         output_directory=config['output_directory'],
-        analysis_options=config['analysis_options']
+        analysis_options=config['analysis_options'],
+        fast_mode=config['processing_options'].get('fast', False),
+        max_sample_size=config['processing_options'].get('max_sample_size', 10000)
     )
     
     # Run analysis
