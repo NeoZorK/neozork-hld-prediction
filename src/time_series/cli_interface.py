@@ -48,9 +48,6 @@ Examples:
   python time_analysis.py -f large_dataset.parquet --stationarity --seasonality --auto
   python time_analysis.py -f M15_data.parquet --stationarity --seasonality --financial --transform --max-sample-size 5000 --auto
   
-  # Slow mode for detailed analysis (not recommended for large files):
-  python time_analysis.py -f small_dataset.parquet --stationarity --seasonality --slow --auto
-  
   # Batch processing:
   python time_analysis.py --batch-csv-converted --stationarity --auto
   python time_analysis.py --batch-raw-parquet --stationarity --seasonality --auto
@@ -244,12 +241,6 @@ from data/fixed/ folder. You can run clear_data.py --help for more information.
             action="store_true",
             default=True,
             help="⚡ Enable fast mode with optimizations for large datasets (sampling, simplified algorithms) [DEFAULT]"
-        )
-        
-        processing_group.add_argument(
-            "--slow",
-            action="store_true",
-            help="🐌 Disable fast mode and use full analysis (slower but more detailed)"
         )
         
         processing_group.add_argument(
@@ -459,8 +450,8 @@ from data/fixed/ folder. You can run clear_data.py --help for more information.
         Returns:
             Dictionary with processing options
         """
-        # Fast mode is default, but can be disabled with --slow
-        fast_mode = getattr(args, 'fast', True) and not getattr(args, 'slow', False)
+        # Fast mode is default
+        fast_mode = getattr(args, 'fast', True)
         
         return {
             'auto': getattr(args, 'auto', False),
