@@ -44,6 +44,10 @@ Examples:
   python time_analysis.py -f binance_BTCUSD_1h.parquet --stationarity --financial --auto
   python time_analysis.py -f polygon_ETHUSD_daily_rsi.json --stationarity --seasonality --financial
   
+  # Fast mode for large datasets:
+  python time_analysis.py -f large_dataset.parquet --stationarity --seasonality --fast --auto
+  python time_analysis.py -f M15_data.parquet --stationarity --seasonality --financial --transform --fast --max-sample-size 5000
+  
   # Batch processing:
   python time_analysis.py --batch-csv-converted --stationarity --auto
   python time_analysis.py --batch-raw-parquet --stationarity --seasonality --auto
@@ -230,6 +234,19 @@ from data/fixed/ folder. You can run clear_data.py --help for more information.
             "--auto",
             action="store_true",
             help="🤖 Automatically answer 'y' to all questions (non-interactive mode)"
+        )
+        
+        processing_group.add_argument(
+            "--fast",
+            action="store_true",
+            help="⚡ Enable fast mode with optimizations for large datasets (sampling, simplified algorithms)"
+        )
+        
+        processing_group.add_argument(
+            "--max-sample-size",
+            type=int,
+            default=10000,
+            help="📊 Maximum sample size for fast mode (default: 10000 rows)"
         )
         
         processing_group.add_argument(
@@ -434,6 +451,8 @@ from data/fixed/ folder. You can run clear_data.py --help for more information.
         """
         return {
             'auto': getattr(args, 'auto', False),
+            'fast': getattr(args, 'fast', False),
+            'max_sample_size': getattr(args, 'max_sample_size', 10000),
             'recursive': getattr(args, 'recursive', False),
             'verbose': getattr(args, 'verbose', False)
         }
