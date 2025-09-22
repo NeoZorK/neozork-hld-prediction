@@ -514,16 +514,8 @@ class TimeSeriesAnalyzer:
                     # Single file processing
                     print(f"\n📁 Processing single file: {custom_path}")
                     
-                    # Create file_info for direct processing
-                    file_info = {
-                        "file_path": custom_path,
-                        "format": custom_path.split('.')[-1].lower(),
-                        "symbol": "Unknown",
-                        "timeframe": "Unknown",
-                        "source": "Custom",
-                        "indicator": None,
-                        "folder_source": os.path.dirname(custom_path)
-                    }
+                    # Use the parsed metadata from path_validation
+                    file_info = path_validation
                     
                     # Use the custom file_info instead of calling analyze_file with filename
                     results = self._analyze_file_with_info(file_info, analysis_options)
