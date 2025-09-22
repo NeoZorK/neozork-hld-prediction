@@ -307,17 +307,17 @@ class TimeSeriesAnalyzer:
                 if col in recommendations:
                     rec_data = recommendations[col]
                     if not rec_data.get('is_stationary', False):
-                        # Non-stationary data needs transformation
-                        transformations[col] = ['differencing', 'detrending', 'log_transform']
-                        print(f"  • {col}: Non-stationary → differencing, detrending, log_transform")
+                        # Non-stationary data needs aggressive transformation
+                        transformations[col] = ['differencing', 'detrending', 'log_transform', 'box_cox', 'normalization']
+                        print(f"  • {col}: Non-stationary → differencing, detrending, log_transform, box_cox, normalization")
                     else:
                         # Stationary data might still benefit from normalization
-                        transformations[col] = ['normalization', 'standardization']
-                        print(f"  • {col}: Stationary → normalization, standardization")
+                        transformations[col] = ['normalization', 'standardization', 'box_cox']
+                        print(f"  • {col}: Stationary → normalization, standardization, box_cox")
                 else:
                     # Default for columns not in stationarity analysis
-                    transformations[col] = ['differencing', 'detrending', 'log_transform', 'normalization']
-                    print(f"  • {col}: No stationarity data → basic transformations")
+                    transformations[col] = ['differencing', 'detrending', 'log_transform', 'box_cox', 'normalization']
+                    print(f"  • {col}: No stationarity data → comprehensive transformations")
         
         # Check seasonality results for additional recommendations
         if 'seasonality' in analysis_results:
@@ -381,6 +381,7 @@ class TimeSeriesAnalyzer:
         
         # Get transformed data
         transformed_data = transformation_results.get('transformed_data', original_data)
+        numeric_columns = [col for col in original_data.columns if original_data[col].dtype in ['float64', 'int64']]
         
         # Compare stationarity improvements
         if 'stationarity' in analysis_results:
@@ -388,7 +389,6 @@ class TimeSeriesAnalyzer:
             original_stationarity = analysis_results['stationarity']
             
             # Re-analyze stationarity on transformed data
-            numeric_columns = [col for col in original_data.columns if original_data[col].dtype in ['float64', 'int64']]
             transformed_stationarity = self.stationarity_analysis.analyze_stationarity(transformed_data, numeric_columns)
             
             # Compare results
@@ -410,7 +410,6 @@ class TimeSeriesAnalyzer:
             original_seasonality = analysis_results['seasonality']
             
             # Re-analyze seasonality on transformed data
-            numeric_columns = [col for col in original_data.columns if original_data[col].dtype in ['float64', 'int64']]
             transformed_seasonality = self.seasonality_detection.analyze_seasonality(transformed_data, numeric_columns)
             
             # Compare results
@@ -432,7 +431,6 @@ class TimeSeriesAnalyzer:
             original_financial = analysis_results['financial']
             
             # Re-analyze financial features on transformed data
-            numeric_columns = [col for col in original_data.columns if original_data[col].dtype in ['float64', 'int64']]
             transformed_financial = self.financial_features.analyze_financial_features(transformed_data, numeric_columns)
             
             # Compare volatility levels

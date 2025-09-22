@@ -205,10 +205,21 @@ class TimeSeriesDataTransformation:
                 if diff1_trend:
                     diff2 = diff1.diff().dropna()
                     if len(diff2) > 5:
+                        # Check if third-order is needed
+                        diff2_trend = self._has_trend(diff2)
+                        if diff2_trend and len(diff2) > 10:
+                            diff3 = diff2.diff().dropna()
+                            if len(diff3) > 3:
+                                return diff3, {
+                                    'differencing_order': 3,
+                                    'first_diff_trend': diff1_trend,
+                                    'second_diff_trend': diff2_trend,
+                                    'third_diff_trend': self._has_trend(diff3)
+                                }
                         return diff2, {
                             'differencing_order': 2,
                             'first_diff_trend': diff1_trend,
-                            'second_diff_trend': self._has_trend(diff2)
+                            'second_diff_trend': diff2_trend
                         }
             
             return diff1, {
@@ -421,18 +432,47 @@ class TimeSeriesDataTransformation:
             skew_improvement = 0
             kurt_improvement = 0
             
-            if orig_skew > 0.1:  # Only if original data has significant skewness
+            # More sensitive to improvements
+            if orig_skew > 0.05:  # Lower threshold for significance
                 skew_improvement = max(0, (orig_skew - trans_skew) / orig_skew)
             
-            if orig_kurt > 0.1:  # Only if original data has significant kurtosis
+            if orig_kurt > 0.05:  # Lower threshold for significance
                 kurt_improvement = max(0, (orig_kurt - trans_kurt) / orig_kurt)
             
-            # Penalize if things get worse
-            skew_penalty = max(0, (trans_skew - orig_skew) * 2) if trans_skew > orig_skew else 0
-            kurt_penalty = max(0, (trans_kurt - orig_kurt) * 2) if trans_kurt > orig_kurt else 0
+            # Calculate stationarity improvement (ADF test simulation)
+            stationarity_improvement = 0
+            if len(transformed) > 10:
+                # Simple stationarity check based on variance stability
+                orig_rolling_var = original.rolling(window=min(10, len(original)//3)).var().dropna()
+                trans_rolling_var = transformed.rolling(window=min(10, len(transformed)//3)).var().dropna()
+                
+                if len(orig_rolling_var) > 0 and len(trans_rolling_var) > 0:
+                    orig_var_stability = 1 - (orig_rolling_var.std() / orig_rolling_var.mean()) if orig_rolling_var.mean() > 0 else 0
+                    trans_var_stability = 1 - (trans_rolling_var.std() / trans_rolling_var.mean()) if trans_rolling_var.mean() > 0 else 0
+                    stationarity_improvement = max(0, trans_var_stability - orig_var_stability)
             
-            # Calculate final score with multiple metrics
-            score = (skew_improvement + kurt_improvement + var_reduction + range_reduction) - (skew_penalty + kurt_penalty)
+            # Calculate normality improvement
+            normality_improvement = 0
+            if len(transformed) > 10:
+                # Simple normality check based on skewness and kurtosis
+                orig_normality = 1 - (orig_skew + orig_kurt) / 2
+                trans_normality = 1 - (trans_skew + trans_kurt) / 2
+                normality_improvement = max(0, trans_normality - orig_normality)
+            
+            # Penalize if things get worse
+            skew_penalty = max(0, (trans_skew - orig_skew) * 1.5) if trans_skew > orig_skew else 0
+            kurt_penalty = max(0, (trans_kurt - orig_kurt) * 1.5) if trans_kurt > orig_kurt else 0
+            
+            # Calculate final score with multiple metrics (weighted)
+            score = (
+                skew_improvement * 0.2 +
+                kurt_improvement * 0.2 +
+                var_reduction * 0.3 +
+                range_reduction * 0.1 +
+                stationarity_improvement * 0.15 +
+                normality_improvement * 0.05
+            ) - (skew_penalty + kurt_penalty) * 0.1
+            
             return max(0, min(score, 1))  # Clamp between 0 and 1
         except:
             return 0
