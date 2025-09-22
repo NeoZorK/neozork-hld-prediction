@@ -24,7 +24,7 @@ from ..base_indicator import BaseIndicator, PriceType
 
 def calculate_feargreed(price_series: pd.Series, period: int = 14) -> pd.Series:
     """
-    Calculates Fear & Greed Index values.
+    Calculates Fear & Greed Index values using vectorized operations for better performance.
     
     Args:
         price_series (pd.Series): Series of prices (Open or Close)
@@ -41,50 +41,41 @@ def calculate_feargreed(price_series: pd.Series, period: int = 14) -> pd.Series:
         return pd.Series([np.nan]*len(price_series), index=price_series.index, dtype=float)
     
     # Calculate price changes
-    price_changes = price_series.pct_change()
+    price_changes = price_series.pct_change(fill_method=None)
     
+    # Initialize result series
     feargreed_values = pd.Series([np.nan]*len(price_series), index=price_series.index, dtype=float)
     
-    for i in range(period, len(price_series)):
-        window = price_changes.iloc[i-period+1:i+1].dropna()
-        if len(window) < period-1:
-            continue
-        # Calculate volatility (standard deviation)
-        volatility = window.std()
-        
-        # Calculate momentum (average return)
-        momentum = window.mean()
-        
-        # Calculate market strength (ratio of positive to negative days)
-        positive_days = len(window[window > 0])
-        negative_days = len(window[window < 0])
-        total_days = len(window)
-        
-        if total_days > 0:
-            strength = positive_days / total_days
-        else:
-            strength = 0.5
-        
-        # Combine factors into Fear & Greed Index
-        # Higher volatility = more fear
-        # Higher momentum = more greed
-        # Higher strength = more greed
-        
-        # Normalize volatility (0-1 scale)
-        vol_factor = min(1.0, volatility * 10)  # Scale volatility
-        
-        # Normalize momentum (-1 to 1 scale)
-        mom_factor = np.tanh(momentum * 10)  # Use tanh to bound momentum
-        
-        # Combine factors
-        fear_factor = (vol_factor + (1 - strength)) / 2
-        greed_factor = (mom_factor + strength) / 2
-        
-        # Calculate final index (0-100)
-        feargreed_index = (greed_factor - fear_factor + 1) * 50
-        feargreed_index = max(0, min(100, feargreed_index))
-        
-        feargreed_values.iloc[i] = feargreed_index
+    # Use rolling window operations for vectorized calculation
+    # Calculate rolling volatility (standard deviation)
+    volatility = price_changes.rolling(window=period, min_periods=period-1).std()
+    
+    # Calculate rolling momentum (average return)
+    momentum = price_changes.rolling(window=period, min_periods=period-1).mean()
+    
+    # Calculate rolling market strength (ratio of positive to negative days)
+    positive_mask = price_changes > 0
+    strength = positive_mask.rolling(window=period, min_periods=period-1).mean()
+    
+    # Fill NaN values in strength with 0.5 (neutral)
+    strength = strength.fillna(0.5)
+    
+    # Normalize volatility (0-1 scale)
+    vol_factor = np.minimum(1.0, volatility * 10)
+    
+    # Normalize momentum (-1 to 1 scale)
+    mom_factor = np.tanh(momentum * 10)
+    
+    # Combine factors
+    fear_factor = (vol_factor + (1 - strength)) / 2
+    greed_factor = (mom_factor + strength) / 2
+    
+    # Calculate final index (0-100)
+    feargreed_index = (greed_factor - fear_factor + 1) * 50
+    feargreed_index = np.clip(feargreed_index, 0, 100)
+    
+    # Only set values where we have enough data (after period)
+    feargreed_values.iloc[period:] = feargreed_index.iloc[period:]
     
     return feargreed_values
 
