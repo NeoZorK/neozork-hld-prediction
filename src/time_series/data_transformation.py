@@ -169,6 +169,14 @@ class TimeSeriesDataTransformation:
             transformed_data, yj_details = self._apply_yeo_johnson(data)
             details.update(yj_details)
             
+        elif transform_type == 'seasonal_differencing':
+            transformed_data, seasonal_diff_details = self._apply_seasonal_differencing(data)
+            details.update(seasonal_diff_details)
+            
+        elif transform_type == 'power_transform':
+            transformed_data, power_details = self._apply_power_transform(data)
+            details.update(power_details)
+            
         elif transform_type == 'normalization':
             transformed_data, norm_details = self._apply_normalization(data)
             details.update(norm_details)
@@ -474,17 +482,114 @@ class TimeSeriesDataTransformation:
         except:
             return 0
     
+    def _apply_seasonal_differencing(self, data: pd.Series) -> Tuple[pd.Series, Dict[str, Any]]:
+        """Apply seasonal differencing transformation."""
+        try:
+            if len(data) < 24:  # Need at least 24 points for seasonal differencing
+                return None, {'error': 'Insufficient data for seasonal differencing'}
+            
+            # Try different seasonal periods
+            periods = [12, 6, 4, 3]  # Monthly, bi-monthly, quarterly, etc.
+            best_period = None
+            best_score = float('inf')
+            
+            for period in periods:
+                if len(data) > period:
+                    seasonal_diff = data.diff(period).dropna()
+                    if len(seasonal_diff) > 5:
+                        # Score based on variance reduction
+                        score = seasonal_diff.var() / data.var() if data.var() > 0 else float('inf')
+                        if score < best_score:
+                            best_score = score
+                            best_period = period
+            
+            if best_period is None:
+                return None, {'error': 'No suitable seasonal period found'}
+            
+            seasonal_diff = data.diff(best_period).dropna()
+            return seasonal_diff, {
+                'seasonal_period': best_period,
+                'variance_reduction': 1 - best_score if best_score < 1 else 0
+            }
+        except Exception as e:
+            return None, {'error': f"Transformation failed: {str(e)}"}
+    
+    def _apply_power_transform(self, data: pd.Series) -> Tuple[pd.Series, Dict[str, Any]]:
+        """Apply power transformation (Yeo-Johnson style)."""
+        try:
+            # Avoid zero and negative values
+            if (data <= 0).any():
+                data_shifted = data - data.min() + 1e-8
+            else:
+                data_shifted = data
+            
+            # Try different power values
+            powers = [0.1, 0.25, 0.5, 0.75, 1.0, 1.5, 2.0]
+            best_power = 1.0
+            best_score = float('inf')
+            
+            for power in powers:
+                if power == 1.0:
+                    transformed = data_shifted
+                else:
+                    transformed = np.power(data_shifted, power)
+                
+                # Score based on normality (lower is better)
+                if len(transformed) > 10:
+                    score = abs(transformed.skew()) + abs(transformed.kurtosis())
+                    if score < best_score:
+                        best_score = score
+                        best_power = power
+            
+            if best_power == 1.0:
+                transformed = data_shifted
+            else:
+                transformed = np.power(data_shifted, best_power)
+            
+            return pd.Series(transformed, index=data.index), {
+                'power': best_power,
+                'normality_score': best_score
+            }
+        except Exception as e:
+            return None, {'error': f"Transformation failed: {str(e)}"}
+    
     def _select_best_transformation(self, original_data: pd.Series, 
                                   transformation_results: Dict[str, Any]) -> Optional[str]:
-        """Select the best transformation based on improvement scores."""
+        """Select the best transformation based on improvement scores and additional criteria."""
         best_transformation = None
         best_score = -1
         
+        # Weight different types of transformations based on their typical effectiveness
+        transform_weights = {
+            'differencing': 1.2,  # Often very effective for non-stationary data
+            'seasonal_differencing': 1.3,  # Very effective for seasonal data
+            'log_transform': 1.1,  # Good for exponential growth
+            'power_transform': 1.15,  # Good for various distributions
+            'detrending': 1.0,  # Standard effectiveness
+            'box_cox': 1.05,  # Slightly better than basic transforms
+            'yeo_johnson': 1.1,  # Good for various distributions
+            'normalization': 0.8,  # Basic but useful
+            'standardization': 0.8,  # Basic but useful
+            'seasonal_adjustment': 1.1,  # Good for seasonal data
+            'log_returns': 1.0  # Standard for financial data
+        }
+        
         for transform_type, result in transformation_results.items():
             if result['success'] and 'improvement_score' in result['details']:
-                score = result['details']['improvement_score']
-                if score > best_score:
-                    best_score = score
+                base_score = result['details']['improvement_score']
+                weight = transform_weights.get(transform_type, 1.0)
+                weighted_score = base_score * weight
+                
+                # Bonus for transformations that significantly improve stationarity
+                if 'stationarity_improvement' in result['details']:
+                    weighted_score += result['details']['stationarity_improvement'] * 0.3
+                
+                # Bonus for transformations that reduce variance significantly
+                if 'variance_reduction' in result['details']:
+                    weighted_score += result['details']['variance_reduction'] * 0.2
+                
+                if weighted_score > best_score:
+                    best_score = weighted_score
                     best_transformation = transform_type
         
         return best_transformation
