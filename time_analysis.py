@@ -195,6 +195,9 @@ class TimeSeriesAnalyzer:
                 self._display_analysis_progress("stationarity", column, i, len(numeric_columns))
             
             analysis_results['stationarity'] = self.stationarity_analysis.analyze_stationarity(data, numeric_columns)
+            
+            # Show completion message
+            self._display_analysis_completion("stationarity", len(numeric_columns))
         
         # Seasonality detection
         if analysis_options.get('seasonality', False):
@@ -224,6 +227,9 @@ class TimeSeriesAnalyzer:
                 self._display_analysis_progress("seasonality", column, i, len(numeric_columns))
             
             analysis_results['seasonality'] = self.seasonality_detection.analyze_seasonality(data, numeric_columns)
+            
+            # Show completion message
+            self._display_analysis_completion("seasonality", len(numeric_columns))
         
         # Financial features analysis
         if analysis_options.get('financial', False):
@@ -254,6 +260,9 @@ class TimeSeriesAnalyzer:
                 self._display_analysis_progress("financial features", column, i, len(numeric_columns))
             
             analysis_results['financial'] = self.financial_features.analyze_financial_features(data, numeric_columns)
+            
+            # Show completion message
+            self._display_analysis_completion("financial features", len(numeric_columns))
         
         # Data transformation analysis
         if analysis_options.get('transform', False):
@@ -306,6 +315,9 @@ class TimeSeriesAnalyzer:
                 analysis_results['transformation']['comparison_analysis'] = self._compare_before_after_transformation(
                     data, analysis_results['transformation'], analysis_results
                 )
+            
+            # Show completion message
+            self._display_analysis_completion("data transformation", len(numeric_columns))
         
         return {
             'file_info': file_info,
@@ -646,12 +658,17 @@ class TimeSeriesAnalyzer:
     
     def _display_analysis_progress(self, analysis_type: str, column: str, current: int, total: int) -> None:
         """Display progress for analysis of individual columns."""
-        percentage = (current / total) * 100 if total > 0 else 0
-        progress_bar = self._create_analysis_progress_bar(percentage)
+        # Show 100% progress for each individual column
+        progress_bar = self._create_analysis_progress_bar(100.0)
         
         print(f"🔍 Analyzing {analysis_type} for column: {column}")
-        print(f"📊 Progress: {progress_bar} ({current}/{total})")
+        print(f"📊 Progress: {progress_bar} (100% complete)")
         print("-" * 50)
+    
+    def _display_analysis_completion(self, analysis_type: str, total_columns: int) -> None:
+        """Display completion message for each analysis type."""
+        print(f"✅ {analysis_type.title()} analysis completed for {total_columns} columns")
+        print("=" * 50)
     
     def _create_analysis_progress_bar(self, percentage: float, width: int = 30) -> str:
         """Create a visual progress bar for analysis."""
