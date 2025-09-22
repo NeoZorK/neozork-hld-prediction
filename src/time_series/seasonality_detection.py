@@ -108,7 +108,8 @@ class SeasonalityDetection:
             for i, day_name in enumerate(self.day_names):
                 day_mask = day_of_week == i
                 if day_mask.sum() > 0:
-                    day_values = col_data[day_mask]
+                    # Ensure we use the same index as col_data
+                    day_values = data[column_name].dropna()[day_mask[data[column_name].notna()]]
                     day_stats[day_name] = {
                         'count': len(day_values),
                         'mean': day_values.mean(),
@@ -198,7 +199,8 @@ class SeasonalityDetection:
             for i, month_name in enumerate(self.month_names):
                 month_mask = month == (i + 1)
                 if month_mask.sum() > 0:
-                    month_values = col_data[month_mask]
+                    # Ensure we use the same index as col_data
+                    month_values = data[column_name].dropna()[month_mask[data[column_name].notna()]]
                     month_stats[month_name] = {
                         'count': len(month_values),
                         'mean': month_values.mean(),
