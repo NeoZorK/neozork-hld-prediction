@@ -330,11 +330,11 @@ class TimeSeriesReporter:
             overall = seasonality_results['overall_seasonality']
             report.append(f"\n{self.color_utils.blue('📊 Overall Seasonality Assessment')}")
             report.append("-" * 40)
-            report.append(f"Total Columns: {overall.get('total_columns', 0)}")
-            report.append(f"Significant Day Patterns: {overall.get('significant_day_patterns', 0)}")
-            report.append(f"Significant Month Patterns: {overall.get('significant_month_patterns', 0)}")
-            report.append(f"Significant Cyclical Patterns: {overall.get('significant_cyclical_patterns', 0)}")
-            report.append(f"Overall Seasonality Level: {overall.get('overall_seasonality_level', 'unknown')}")
+            report.append(f"Total Columns: {overall.get('total_columns_analyzed', 0)}")
+            report.append(f"Significant Day Patterns: {overall.get('day_patterns_detected', 0)}")
+            report.append(f"Significant Month Patterns: {overall.get('month_patterns_detected', 0)}")
+            report.append(f"Significant Cyclical Patterns: {overall.get('cyclical_patterns_detected', 0)}")
+            report.append(f"Overall Seasonality Level: {overall.get('seasonality_level', 'unknown')}")
             
             recommendations = overall.get('recommendations', [])
             if recommendations:
