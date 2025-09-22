@@ -51,6 +51,7 @@ import sys
 import os
 import time
 import signal
+import json
 from pathlib import Path
 from typing import Optional, Dict, Any, List
 import pandas as pd
@@ -673,10 +674,64 @@ class TimeSeriesAnalyzer:
             # Save data
             self.file_ops.save_data(transformed_data, full_path, format_type)
             
+            # Create and save transformation metadata
+            metadata = self._create_transformation_metadata(results, full_path)
+            metadata_path = os.path.join(save_path, f"{symbol}_{timeframe}_{indicator}_time_transformation_metadata.json")
+            
+            with open(metadata_path, 'w') as f:
+                json.dump(metadata, f, indent=2, default=str)
+            
             print(f"\n✅ Transformed data saved to: {full_path}")
+            print(f"✅ Transformation metadata saved to: {metadata_path}")
             
         except Exception as e:
             print(f"\n❌ Error saving transformed data: {str(e)}")
+    
+    def _create_transformation_metadata(self, results: Dict[str, Any], transformed_file_path: str) -> Dict[str, Any]:
+        """Create transformation metadata dictionary."""
+        file_info = results['file_info']
+        transformation_results = results['analysis_results'].get('transformation', {})
+        transformation_details = transformation_results.get('transformation_details', {})
+        
+        metadata = {
+            "transformation_info": {
+                "original_file": file_info.get("file_path", "unknown"),
+                "transformed_file": transformed_file_path,
+                "timestamp": results.get("timestamp", "unknown"),
+                "source": file_info.get("source", "unknown"),
+                "symbol": file_info.get("symbol", "unknown"),
+                "indicator": file_info.get("indicator", "unknown"),
+                "timeframe": file_info.get("timeframe", "unknown"),
+                "format": file_info.get("format", "unknown")
+            },
+            "transformations_applied": {},
+            "original_statistics": {},
+            "transformed_statistics": {}
+        }
+        
+        # Add transformation details for each column
+        for col, col_transformations in transformation_details.items():
+            metadata["transformations_applied"][col] = {}
+            for transform_type, details in col_transformations.items():
+                if details.get('success', False):
+                    metadata["transformations_applied"][col][transform_type] = {
+                        "lambda": details.get('lambda'),
+                        "parameters": details.get('parameters', {}),
+                        "improvement_score": details.get('improvement_score', 0),
+                        "original_skewness": details.get('original_skewness'),
+                        "transformed_skewness": details.get('transformed_skewness'),
+                        "original_kurtosis": details.get('original_kurtosis'),
+                        "transformed_kurtosis": details.get('transformed_kurtosis')
+                    }
+        
+        # Add original and transformed statistics
+        if 'original_statistics' in transformation_results:
+            metadata["original_statistics"] = transformation_results['original_statistics']
+        
+        if 'transformed_statistics' in transformation_results:
+            metadata["transformed_statistics"] = transformation_results['transformed_statistics']
+        
+        return metadata
     
     def run(self, config: Dict[str, Any]) -> None:
         """
