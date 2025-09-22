@@ -307,17 +307,17 @@ class TimeSeriesAnalyzer:
                 if col in recommendations:
                     rec_data = recommendations[col]
                     if not rec_data.get('is_stationary', False):
-                        # Non-stationary data needs aggressive transformation
-                        transformations[col] = ['differencing', 'detrending', 'log_transform', 'box_cox', 'normalization']
-                        print(f"  • {col}: Non-stationary → differencing, detrending, log_transform, box_cox, normalization")
+                        # Non-stationary data needs focused transformation
+                        transformations[col] = ['differencing', 'detrending', 'log_transform']
+                        print(f"  • {col}: Non-stationary → differencing, detrending, log_transform")
                     else:
                         # Stationary data might still benefit from normalization
-                        transformations[col] = ['normalization', 'standardization', 'box_cox']
-                        print(f"  • {col}: Stationary → normalization, standardization, box_cox")
+                        transformations[col] = ['normalization', 'standardization']
+                        print(f"  • {col}: Stationary → normalization, standardization")
                 else:
                     # Default for columns not in stationarity analysis
-                    transformations[col] = ['differencing', 'detrending', 'log_transform', 'box_cox', 'normalization']
-                    print(f"  • {col}: No stationarity data → comprehensive transformations")
+                    transformations[col] = ['differencing', 'detrending', 'log_transform', 'normalization']
+                    print(f"  • {col}: No stationarity data → basic transformations")
         
         # Check seasonality results for additional recommendations
         if 'seasonality' in analysis_results:

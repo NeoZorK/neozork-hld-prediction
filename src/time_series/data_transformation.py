@@ -432,11 +432,11 @@ class TimeSeriesDataTransformation:
             skew_improvement = 0
             kurt_improvement = 0
             
-            # More sensitive to improvements
-            if orig_skew > 0.05:  # Lower threshold for significance
+            # Balanced sensitivity to improvements
+            if orig_skew > 0.1:  # Original threshold for significance
                 skew_improvement = max(0, (orig_skew - trans_skew) / orig_skew)
             
-            if orig_kurt > 0.05:  # Lower threshold for significance
+            if orig_kurt > 0.1:  # Original threshold for significance
                 kurt_improvement = max(0, (orig_kurt - trans_kurt) / orig_kurt)
             
             # Calculate stationarity improvement (ADF test simulation)
@@ -463,15 +463,12 @@ class TimeSeriesDataTransformation:
             skew_penalty = max(0, (trans_skew - orig_skew) * 1.5) if trans_skew > orig_skew else 0
             kurt_penalty = max(0, (trans_kurt - orig_kurt) * 1.5) if trans_kurt > orig_kurt else 0
             
-            # Calculate final score with multiple metrics (weighted)
+            # Calculate final score with focused metrics
             score = (
-                skew_improvement * 0.2 +
-                kurt_improvement * 0.2 +
-                var_reduction * 0.3 +
-                range_reduction * 0.1 +
-                stationarity_improvement * 0.15 +
-                normality_improvement * 0.05
-            ) - (skew_penalty + kurt_penalty) * 0.1
+                skew_improvement * 0.3 +
+                kurt_improvement * 0.3 +
+                var_reduction * 0.4
+            ) - (skew_penalty + kurt_penalty) * 0.2
             
             return max(0, min(score, 1))  # Clamp between 0 and 1
         except:
