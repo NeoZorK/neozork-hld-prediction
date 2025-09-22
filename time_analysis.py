@@ -1003,6 +1003,14 @@ class TimeSeriesAnalyzer:
             file_info['symbol'] = 'BTCUSDT'
         if 'M15' in filename:
             file_info['timeframe'] = 'M15'
+        elif 'MN1' in filename:
+            file_info['timeframe'] = 'MN1'
+        elif 'D1' in filename:
+            file_info['timeframe'] = 'D1'
+        elif 'H1' in filename:
+            file_info['timeframe'] = 'H1'
+        elif 'H4' in filename:
+            file_info['timeframe'] = 'H4'
         if 'Wave' in filename:
             file_info['indicator'] = 'Wave'
         if 'transformed' in filename:
