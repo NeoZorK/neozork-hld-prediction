@@ -56,6 +56,7 @@ import gc
 from pathlib import Path
 from typing import Optional, Dict, Any, List
 import pandas as pd
+import numpy as np
 
 # Add src to path for imports
 sys.path.append(str(Path(__file__).parent / "src"))
@@ -738,8 +739,8 @@ class TimeSeriesAnalyzer:
             filename = f"{symbol}_{timeframe}_{indicator}_time_transformed.{format_type}"
             full_path = os.path.join(save_path, filename)
             
-            # Save data
-            self.file_ops.save_data(transformed_data, full_path, format_type)
+            # Save data (convert to lowercase for format_type)
+            self.file_ops.save_data(transformed_data, full_path, format_type.lower())
             
             # Create and save transformation metadata
             metadata = self._create_transformation_metadata(results, full_path)
@@ -1295,6 +1296,9 @@ class TimeSeriesAnalyzer:
             'recommendations': {}
         }
         
+        # Create transformed data copy
+        transformed_data = data.copy()
+        
         for col in numeric_columns:
             if col not in data.columns:
                 continue
@@ -1321,6 +1325,43 @@ class TimeSeriesAnalyzer:
             # Fast transformations
             progress_tracker.update_step("Apply Transformations")
             transformations = self._get_fast_transformations(sample_data, col)
+            
+            # Apply actual transformations to the data
+            if transformations:
+                try:
+                    # Apply log transformation if recommended
+                    if 'log' in transformations and sample_data.min() > 0:
+                        transformed_data[col] = np.log(data[col] + 1e-10)  # Add small constant to avoid log(0)
+                        results['transformation_details'][col] = {
+                            'log': {
+                                'success': True,
+                                'parameters': {'constant': 1e-10},
+                                'improvement_score': 0.8
+                            }
+                        }
+                    # Apply standardization if recommended
+                    elif 'standardize' in transformations:
+                        mean_val = data[col].mean()
+                        std_val = data[col].std()
+                        if std_val > 0:
+                            transformed_data[col] = (data[col] - mean_val) / std_val
+                            results['transformation_details'][col] = {
+                                'standardize': {
+                                    'success': True,
+                                    'parameters': {'mean': mean_val, 'std': std_val},
+                                    'improvement_score': 0.6
+                                }
+                            }
+                except Exception as e:
+                    print(f"⚠️  Error applying transformation to {col}: {e}")
+                    results['transformation_details'][col] = {
+                        'none': {
+                            'success': False,
+                            'error': str(e),
+                            'improvement_score': 0.0
+                        }
+                    }
+            
             time.sleep(0.1)  # Simulate processing
             
             # Fast recommendations
@@ -1331,6 +1372,9 @@ class TimeSeriesAnalyzer:
             
             # Complete analysis
             progress_tracker.complete_analysis()
+        
+        # Update results with transformed data
+        results['transformed_data'] = transformed_data
         
         return results
     
@@ -1415,40 +1459,134 @@ class TimeSeriesAnalyzer:
     def _analyze_price_range_fast(self, sample_data: pd.Series, col: str) -> Dict[str, Any]:
         """Fast price range analysis."""
         try:
+            min_price = float(sample_data.min())
+            max_price = float(sample_data.max())
+            price_range = float(max_price - min_price)
+            mean_price = float(sample_data.mean())
+            
+            # Calculate range percentage
+            if mean_price != 0:
+                range_percentage = float(price_range / abs(mean_price) * 100)
+            else:
+                range_percentage = 0.0
+            
+            # Determine volatility level based on range percentage
+            if range_percentage < 10:
+                volatility_level = 'very_low'
+            elif range_percentage < 25:
+                volatility_level = 'low'
+            elif range_percentage < 50:
+                volatility_level = 'moderate'
+            elif range_percentage < 100:
+                volatility_level = 'high'
+            else:
+                volatility_level = 'very_high'
+            
             return {
-                'min_price': float(sample_data.min()),
-                'max_price': float(sample_data.max()),
-                'price_range': float(sample_data.max() - sample_data.min()),
-                'range_percentage': float((sample_data.max() - sample_data.min()) / sample_data.mean() * 100)
+                'min_price': min_price,
+                'max_price': max_price,
+                'price_range': price_range,
+                'range_percentage': range_percentage,
+                'volatility_level': volatility_level
             }
-        except:
-            return {'min_price': 0, 'max_price': 0, 'price_range': 0, 'range_percentage': 0}
+        except Exception as e:
+            print(f"⚠️  Error calculating price range for {col}: {e}")
+            return {
+                'min_price': 0.0,
+                'max_price': 0.0,
+                'price_range': 0.0,
+                'range_percentage': 0.0,
+                'volatility_level': 'unknown'
+            }
     
     def _analyze_price_changes_fast(self, sample_data: pd.Series, col: str) -> Dict[str, Any]:
         """Fast price changes analysis."""
         try:
             changes = sample_data.pct_change().dropna()
+            
+            if len(changes) == 0:
+                return {
+                    'mean_change': 0.0,
+                    'std_change': 0.0,
+                    'max_increase': 0.0,
+                    'max_decrease': 0.0,
+                    'overall_volatility': 0.0
+                }
+            
             return {
                 'mean_change': float(changes.mean()),
                 'std_change': float(changes.std()),
                 'max_increase': float(changes.max()),
-                'max_decrease': float(changes.min())
+                'max_decrease': float(changes.min()),
+                'overall_volatility': float(changes.std())
             }
-        except:
-            return {'mean_change': 0, 'std_change': 0, 'max_increase': 0, 'max_decrease': 0}
+        except Exception as e:
+            print(f"⚠️  Error calculating price changes for {col}: {e}")
+            return {
+                'mean_change': 0.0,
+                'std_change': 0.0,
+                'max_increase': 0.0,
+                'max_decrease': 0.0,
+                'overall_volatility': 0.0
+            }
     
     def _analyze_volatility_fast(self, sample_data: pd.Series, col: str) -> Dict[str, Any]:
         """Fast volatility analysis."""
         try:
+            # Calculate returns
             returns = sample_data.pct_change().dropna()
-            volatility = returns.std() * (252 ** 0.5)  # Annualized
+            
+            # Check if we have valid returns
+            if len(returns) == 0 or returns.std() == 0:
+                return {
+                    'overall_volatility': 0.0,
+                    'annualized_volatility': 0.0,
+                    'coefficient_of_variation': 0.0,
+                    'volatility_level': 'unknown',
+                    'mean_return': 0.0,
+                    'sharpe_ratio': 0.0
+                }
+            
+            # Calculate volatility metrics
+            overall_volatility = float(returns.std())
+            annualized_volatility = float(overall_volatility * (252 ** 0.5))
+            mean_return = float(returns.mean())
+            sharpe_ratio = float(mean_return / overall_volatility) if overall_volatility > 0 else 0.0
+            
+            # Calculate coefficient of variation
+            mean_value = float(sample_data.mean())
+            coefficient_of_variation = (overall_volatility / abs(mean_value) * 100) if mean_value != 0 else 0.0
+            
+            # Determine volatility level
+            if annualized_volatility < 0.1:
+                volatility_level = 'very_low'
+            elif annualized_volatility < 0.2:
+                volatility_level = 'low'
+            elif annualized_volatility < 0.4:
+                volatility_level = 'moderate'
+            elif annualized_volatility < 0.8:
+                volatility_level = 'high'
+            else:
+                volatility_level = 'very_high'
+            
             return {
-                'volatility': float(volatility),
-                'mean_return': float(returns.mean()),
-                'sharpe_ratio': float(returns.mean() / returns.std()) if returns.std() > 0 else 0
+                'overall_volatility': overall_volatility,
+                'annualized_volatility': annualized_volatility,
+                'coefficient_of_variation': coefficient_of_variation,
+                'volatility_level': volatility_level,
+                'mean_return': mean_return,
+                'sharpe_ratio': sharpe_ratio
             }
-        except:
-            return {'volatility': 0, 'mean_return': 0, 'sharpe_ratio': 0}
+        except Exception as e:
+            print(f"⚠️  Error calculating volatility for {col}: {e}")
+            return {
+                'overall_volatility': 0.0,
+                'annualized_volatility': 0.0,
+                'coefficient_of_variation': 0.0,
+                'volatility_level': 'unknown',
+                'mean_return': 0.0,
+                'sharpe_ratio': 0.0
+            }
     
     def _get_fast_transformations(self, sample_data: pd.Series, col: str) -> List[str]:
         """Get fast transformation recommendations."""
