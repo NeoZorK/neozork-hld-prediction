@@ -988,6 +988,13 @@ class TimeSeriesAnalyzer:
         
         print(f"📊 Data loaded: {data.shape[0]:,} rows × {data.shape[1]} columns in {load_time:.2f}s")
         
+        # Check for datetime information
+        datetime_info = self._check_datetime_availability(data)
+        if datetime_info['has_datetime']:
+            print(f"📅 DateTime information found: {datetime_info['datetime_columns']}")
+        else:
+            print("⚠️  No DateTime information found - using sequential analysis")
+        
         # Extract file metadata
         filename = os.path.basename(file_path)
         file_info = {
@@ -1189,14 +1196,20 @@ class TimeSeriesAnalyzer:
     
     def _analyze_seasonality_fast(self, data: pd.DataFrame, numeric_columns: List[str]) -> Dict[str, Any]:
         """Fast seasonality analysis with sampling."""
-        results = {}
+        results = {
+            'day_patterns': {},
+            'month_patterns': {},
+            'cyclical_patterns': {},
+            'overall_seasonality': {}
+        }
         
         for col in numeric_columns:
             if col not in data.columns:
                 continue
                 
             col_data = data[col].dropna()
-            if len(col_data) < 30:
+            if len(col_data) < 5:  # Further reduced minimum for very small datasets
+                print(f"⚠️  Skipping column {col}: insufficient data ({len(col_data)} points)")
                 continue
             
             # Skip constant columns
@@ -1229,28 +1242,16 @@ class TimeSeriesAnalyzer:
             cyclical_patterns = self._analyze_cyclical_patterns_fast(sample_data, col)
             time.sleep(0.1)  # Simulate processing
             
-            # Calculate overall seasonality
-            has_seasonality = (
-                day_patterns.get('has_day_of_week_patterns', False) or
-                month_patterns.get('has_monthly_patterns', False) or
-                cyclical_patterns.get('has_cyclical_patterns', False)
-            )
-            
-            day_strength = day_patterns.get('pattern_strength', 0)
-            month_strength = month_patterns.get('pattern_strength', 0)
-            cyclical_strength = cyclical_patterns.get('cyclical_strength', 0)
-            overall_strength = max(day_strength, month_strength, cyclical_strength)
-            
-            results[col] = {
-                'has_seasonality': has_seasonality,
-                'overall_seasonality_strength': overall_strength,
-                'day_patterns': day_patterns,
-                'month_patterns': month_patterns,
-                'cyclical_patterns': cyclical_patterns
-            }
+            # Store results in the correct format for reporting
+            results['day_patterns'][col] = day_patterns
+            results['month_patterns'][col] = month_patterns
+            results['cyclical_patterns'][col] = cyclical_patterns
             
             # Complete analysis
             progress_tracker.complete_analysis()
+        
+        # Generate overall seasonality assessment
+        results['overall_seasonality'] = self._generate_overall_seasonality_assessment_fast(results)
         
         return results
     
@@ -1436,46 +1437,342 @@ class TimeSeriesAnalyzer:
     def _analyze_day_patterns_fast(self, data: pd.DataFrame, col: str, sample_data: pd.Series) -> Dict[str, Any]:
         """Fast day patterns analysis."""
         try:
-            if 'DateTime' in data.columns:
-                day_of_week = pd.to_datetime(data['DateTime']).dt.dayofweek
-                day_stats = sample_data.groupby(day_of_week).agg(['mean', 'std']).round(4)
+            # Check for datetime columns
+            datetime_cols = [col for col in data.columns if 'time' in col.lower() or 'date' in col.lower()]
+            
+            if datetime_cols:
+                # Use the first datetime column found
+                datetime_col = datetime_cols[0]
+                day_of_week = pd.to_datetime(data[datetime_col]).dt.dayofweek
+                day_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+                
+                # Group by day of week
+                day_stats = {}
+                for i, day_name in enumerate(day_names):
+                    day_mask = day_of_week == i
+                    if day_mask.sum() > 0:
+                        day_values = sample_data[day_mask]
+                        day_stats[day_name] = {
+                            'count': len(day_values),
+                            'mean': float(day_values.mean()),
+                            'std': float(day_values.std()) if len(day_values) > 1 else 0.0,
+                            'median': float(day_values.median())
+                        }
+                
+                # Calculate pattern strength
+                if day_stats:
+                    means = [day_stats[day]['mean'] for day in day_stats.keys()]
+                    if means:
+                        max_mean = max(means)
+                        min_mean = min(means)
+                        pattern_strength = (max_mean - min_mean) / max_mean if max_mean != 0 else 0
+                    else:
+                        pattern_strength = 0
+                else:
+                    pattern_strength = 0
+                
                 return {
-                    'has_day_of_week_patterns': True,
-                    'pattern_strength': 0.5,  # Simplified
-                    'day_stats': day_stats.to_dict()
+                    'has_day_of_week_patterns': pattern_strength > 0.1,
+                    'has_significant_pattern': pattern_strength > 0.1,
+                    'pattern_strength': pattern_strength,
+                    'day_statistics': day_stats,
+                    'strongest_day': max(day_stats.keys(), key=lambda x: day_stats[x]['mean']) if day_stats else None,
+                    'weakest_day': min(day_stats.keys(), key=lambda x: day_stats[x]['mean']) if day_stats else None,
+                    'interpretation': f"Day-of-week patterns detected with {pattern_strength:.1%} variation" if pattern_strength > 0.1 else "No significant day-of-week patterns detected"
                 }
             else:
-                return {'has_day_of_week_patterns': False, 'pattern_strength': 0}
-        except:
-            return {'has_day_of_week_patterns': False, 'pattern_strength': 0}
+                # No datetime column - analyze sequential patterns instead
+                return self._analyze_sequential_patterns_fast(sample_data, col, "day")
+        except Exception as e:
+            return {
+                'has_day_of_week_patterns': False, 
+                'has_significant_pattern': False,
+                'pattern_strength': 0,
+                'error': str(e)
+            }
     
     def _analyze_month_patterns_fast(self, data: pd.DataFrame, col: str, sample_data: pd.Series) -> Dict[str, Any]:
         """Fast month patterns analysis."""
         try:
-            if 'DateTime' in data.columns:
-                month = pd.to_datetime(data['DateTime']).dt.month
-                month_stats = sample_data.groupby(month).agg(['mean', 'std']).round(4)
+            # Check for datetime columns
+            datetime_cols = [col for col in data.columns if 'time' in col.lower() or 'date' in col.lower()]
+            
+            if datetime_cols:
+                # Use the first datetime column found
+                datetime_col = datetime_cols[0]
+                month = pd.to_datetime(data[datetime_col]).dt.month
+                month_names = ['January', 'February', 'March', 'April', 'May', 'June',
+                              'July', 'August', 'September', 'October', 'November', 'December']
+                
+                # Group by month
+                month_stats = {}
+                for i, month_name in enumerate(month_names, 1):
+                    month_mask = month == i
+                    if month_mask.sum() > 0:
+                        month_values = sample_data[month_mask]
+                        month_stats[month_name] = {
+                            'count': len(month_values),
+                            'mean': float(month_values.mean()),
+                            'std': float(month_values.std()) if len(month_values) > 1 else 0.0,
+                            'median': float(month_values.median())
+                        }
+                
+                # Calculate pattern strength
+                if month_stats:
+                    means = [month_stats[month]['mean'] for month in month_stats.keys()]
+                    if means:
+                        max_mean = max(means)
+                        min_mean = min(means)
+                        pattern_strength = (max_mean - min_mean) / max_mean if max_mean != 0 else 0
+                    else:
+                        pattern_strength = 0
+                else:
+                    pattern_strength = 0
+                
                 return {
-                    'has_monthly_patterns': True,
-                    'pattern_strength': 0.5,  # Simplified
-                    'month_stats': month_stats.to_dict()
+                    'has_monthly_patterns': pattern_strength > 0.1,
+                    'pattern_strength': pattern_strength,
+                    'month_statistics': month_stats,
+                    'strongest_month': max(month_stats.keys(), key=lambda x: month_stats[x]['mean']) if month_stats else None,
+                    'weakest_month': min(month_stats.keys(), key=lambda x: month_stats[x]['mean']) if month_stats else None,
+                    'interpretation': f"Monthly patterns detected with {pattern_strength:.1%} variation" if pattern_strength > 0.1 else "No significant monthly patterns detected"
                 }
             else:
-                return {'has_monthly_patterns': False, 'pattern_strength': 0}
-        except:
-            return {'has_monthly_patterns': False, 'pattern_strength': 0}
+                # No datetime column - analyze sequential patterns instead
+                return self._analyze_sequential_patterns_fast(sample_data, col, "month")
+        except Exception as e:
+            return {
+                'has_monthly_patterns': False,
+                'pattern_strength': 0,
+                'error': str(e)
+            }
     
     def _analyze_cyclical_patterns_fast(self, sample_data: pd.Series, col: str) -> Dict[str, Any]:
         """Fast cyclical patterns analysis."""
         try:
-            autocorr = sample_data.autocorr(lag=1)
+            if len(sample_data) < 3:
+                return {
+                    'has_cyclical_patterns': False,
+                    'cyclical_strength': 0,
+                    'interpretation': "Insufficient data for cyclical analysis"
+                }
+            
+            # Calculate autocorrelation at different lags
+            autocorr_1 = sample_data.autocorr(lag=1) if len(sample_data) > 1 else 0
+            autocorr_2 = sample_data.autocorr(lag=2) if len(sample_data) > 2 else 0
+            autocorr_3 = sample_data.autocorr(lag=3) if len(sample_data) > 3 else 0
+            
+            # Calculate average autocorrelation strength
+            autocorrs = [abs(ac) for ac in [autocorr_1, autocorr_2, autocorr_3] if not pd.isna(ac)]
+            avg_autocorr = sum(autocorrs) / len(autocorrs) if autocorrs else 0
+            
+            # Determine if there are cyclical patterns
+            has_cyclical = avg_autocorr > 0.1
+            
             return {
-                'has_cyclical_patterns': abs(autocorr) > 0.1,
-                'cyclical_strength': abs(autocorr),
-                'lag_1_autocorr': autocorr
+                'has_cyclical_patterns': has_cyclical,
+                'cyclical_strength': avg_autocorr,
+                'lag_1_autocorr': autocorr_1,
+                'lag_2_autocorr': autocorr_2,
+                'lag_3_autocorr': autocorr_3,
+                'interpretation': f"Cyclical patterns detected with {avg_autocorr:.1%} average autocorrelation" if has_cyclical else "No significant cyclical patterns detected"
             }
-        except:
-            return {'has_cyclical_patterns': False, 'cyclical_strength': 0}
+        except Exception as e:
+            return {
+                'has_cyclical_patterns': False,
+                'cyclical_strength': 0,
+                'error': str(e)
+            }
+    
+    def _analyze_sequential_patterns_fast(self, sample_data: pd.Series, col: str, pattern_type: str) -> Dict[str, Any]:
+        """Analyze sequential patterns when no datetime information is available."""
+        try:
+            data_length = len(sample_data)
+            
+            # For very small datasets, use simplified analysis
+            if data_length < 5:
+                return {
+                    f'has_{pattern_type}_patterns': False,
+                    'has_significant_pattern': False,
+                    'pattern_strength': 0,
+                    'interpretation': f"Insufficient data for {pattern_type} pattern analysis (only {data_length} points)"
+                }
+            
+            # For small datasets (5-10 points), use 2-3 periods
+            if data_length < 10:
+                if pattern_type == "day":
+                    period_length = min(3, data_length // 2)
+                    period_names = ['Early', 'Middle', 'Late'][:period_length]
+                else:  # month
+                    period_length = min(3, data_length // 2)
+                    period_names = ['Q1', 'Q2', 'Q3'][:period_length]
+            else:
+                # For larger datasets, use more periods
+                if pattern_type == "day":
+                    period_length = min(7, data_length // 2)
+                    period_names = ['Period_1', 'Period_2', 'Period_3', 'Period_4', 'Period_5', 'Period_6', 'Period_7'][:period_length]
+                else:  # month
+                    period_length = min(12, data_length // 2)
+                    period_names = [f'Period_{i+1}' for i in range(period_length)]
+            
+            # Group data into periods
+            period_stats = {}
+            for i, period_name in enumerate(period_names):
+                start_idx = i * (data_length // period_length)
+                end_idx = (i + 1) * (data_length // period_length)
+                if i == period_length - 1:  # Last period gets remaining data
+                    end_idx = data_length
+                
+                period_data = sample_data.iloc[start_idx:end_idx]
+                if len(period_data) > 0:
+                    period_stats[period_name] = {
+                        'count': len(period_data),
+                        'mean': float(period_data.mean()),
+                        'std': float(period_data.std()) if len(period_data) > 1 else 0.0,
+                        'median': float(period_data.median()),
+                        'min': float(period_data.min()),
+                        'max': float(period_data.max())
+                    }
+            
+            # Calculate pattern strength
+            if period_stats and len(period_stats) > 1:
+                means = [period_stats[period]['mean'] for period in period_stats.keys()]
+                if means:
+                    max_mean = max(means)
+                    min_mean = min(means)
+                    # Use coefficient of variation for better sensitivity to small datasets
+                    mean_of_means = sum(means) / len(means)
+                    pattern_strength = (max_mean - min_mean) / mean_of_means if mean_of_means != 0 else 0
+                else:
+                    pattern_strength = 0
+            else:
+                pattern_strength = 0
+            
+            # Adjust threshold for small datasets
+            threshold = 0.05 if data_length < 10 else 0.1
+            
+            return {
+                f'has_{pattern_type}_patterns': pattern_strength > threshold,
+                'has_significant_pattern': pattern_strength > threshold,
+                'pattern_strength': pattern_strength,
+                f'{pattern_type}_statistics': period_stats,
+                'strongest_period': max(period_stats.keys(), key=lambda x: period_stats[x]['mean']) if period_stats else None,
+                'weakest_period': min(period_stats.keys(), key=lambda x: period_stats[x]['mean']) if period_stats else None,
+                'interpretation': f"Sequential {pattern_type} patterns detected with {pattern_strength:.1%} variation" if pattern_strength > threshold else f"No significant {pattern_type} patterns detected (variation: {pattern_strength:.1%})"
+            }
+        except Exception as e:
+            return {
+                f'has_{pattern_type}_patterns': False,
+                'has_significant_pattern': False,
+                'pattern_strength': 0,
+                'error': str(e)
+            }
+    
+    def _generate_overall_seasonality_assessment_fast(self, results: Dict[str, Any]) -> Dict[str, Any]:
+        """Generate overall seasonality assessment for fast analysis."""
+        try:
+            total_columns = 0
+            seasonal_columns = 0
+            day_patterns_count = 0
+            month_patterns_count = 0
+            cyclical_patterns_count = 0
+            
+            # Count patterns across all columns
+            for col in results.get('day_patterns', {}):
+                total_columns += 1
+                if results['day_patterns'][col].get('has_day_of_week_patterns', False):
+                    day_patterns_count += 1
+                    seasonal_columns += 1
+            
+            for col in results.get('month_patterns', {}):
+                if results['month_patterns'][col].get('has_monthly_patterns', False):
+                    month_patterns_count += 1
+                    if col not in results.get('day_patterns', {}) or not results['day_patterns'][col].get('has_day_of_week_patterns', False):
+                        seasonal_columns += 1
+            
+            for col in results.get('cyclical_patterns', {}):
+                if results['cyclical_patterns'][col].get('has_cyclical_patterns', False):
+                    cyclical_patterns_count += 1
+                    if (col not in results.get('day_patterns', {}) or not results['day_patterns'][col].get('has_day_of_week_patterns', False)) and \
+                       (col not in results.get('month_patterns', {}) or not results['month_patterns'][col].get('has_monthly_patterns', False)):
+                        seasonal_columns += 1
+            
+            # Calculate overall seasonality strength
+            if total_columns > 0:
+                seasonality_percentage = (seasonal_columns / total_columns) * 100
+            else:
+                seasonality_percentage = 0
+            
+            # Determine seasonality level
+            if seasonality_percentage >= 70:
+                seasonality_level = "High"
+            elif seasonality_percentage >= 40:
+                seasonality_level = "Medium"
+            elif seasonality_percentage >= 10:
+                seasonality_level = "Low"
+            else:
+                seasonality_level = "None"
+            
+            return {
+                'total_columns_analyzed': total_columns,
+                'columns_with_seasonality': seasonal_columns,
+                'seasonality_percentage': seasonality_percentage,
+                'seasonality_level': seasonality_level,
+                'day_patterns_detected': day_patterns_count,
+                'month_patterns_detected': month_patterns_count,
+                'cyclical_patterns_detected': cyclical_patterns_count,
+                'interpretation': f"Overall seasonality level: {seasonality_level} ({seasonality_percentage:.1f}% of columns show seasonal patterns)"
+            }
+        except Exception as e:
+            return {
+                'error': str(e),
+                'interpretation': "Error in seasonality assessment"
+            }
+    
+    def _check_datetime_availability(self, data: pd.DataFrame) -> Dict[str, Any]:
+        """Check if data contains datetime information."""
+        try:
+            datetime_columns = []
+            
+            # Check for common datetime column names
+            datetime_keywords = ['time', 'date', 'datetime', 'timestamp', 'dt']
+            
+            for col in data.columns:
+                col_lower = col.lower()
+                if any(keyword in col_lower for keyword in datetime_keywords):
+                    datetime_columns.append(col)
+            
+            # Check if index is datetime
+            has_datetime_index = isinstance(data.index, pd.DatetimeIndex)
+            
+            # Check if any column contains datetime data
+            has_datetime_data = False
+            for col in data.columns:
+                try:
+                    # Try to convert to datetime
+                    pd.to_datetime(data[col].dropna().iloc[:5])  # Test first 5 non-null values
+                    has_datetime_data = True
+                    if col not in datetime_columns:
+                        datetime_columns.append(col)
+                    break
+                except:
+                    continue
+            
+            return {
+                'has_datetime': has_datetime_index or has_datetime_data or len(datetime_columns) > 0,
+                'has_datetime_index': has_datetime_index,
+                'has_datetime_data': has_datetime_data,
+                'datetime_columns': datetime_columns,
+                'total_datetime_sources': len(datetime_columns) + (1 if has_datetime_index else 0)
+            }
+        except Exception as e:
+            return {
+                'has_datetime': False,
+                'has_datetime_index': False,
+                'has_datetime_data': False,
+                'datetime_columns': [],
+                'error': str(e)
+            }
     
     def _analyze_price_range_fast(self, sample_data: pd.Series, col: str) -> Dict[str, Any]:
         """Fast price range analysis."""
