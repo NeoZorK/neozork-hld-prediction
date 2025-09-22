@@ -218,6 +218,9 @@ class TimeSeriesFileOperations:
             self._parse_indicators_filename(filename, metadata)
         elif 'fixed' in folder_source:
             self._parse_fixed_filename(filename, metadata)
+        elif folder_source == 'custom':
+            # For custom paths, try to parse using common patterns
+            self._parse_custom_filename(filename, metadata)
         
         # Load data to extract additional metadata
         try:
@@ -294,26 +297,98 @@ class TimeSeriesFileOperations:
                     metadata['indicator'] = name_parts[3]
     
     def _parse_fixed_filename(self, filename: str, metadata: Dict[str, Any]) -> None:
-        """Parse fixed filename format: SYMBOL_TIMEFRAME_INDICATOR_cleaned.format"""
+        """Parse fixed filename format: SYMBOL_TIMEFRAME_INDICATOR_cleaned/transformed.format"""
         import re
+        
         # Try to parse cleaned data filename
-        pattern = r'^([A-Z0-9.]+)_([A-Za-z0-9]+)_([a-zA-Z_]+)_cleaned\.(parquet|json|csv)$'
-        match = re.match(pattern, filename)
-        if match:
-            metadata['symbol'] = match.group(1)
-            metadata['timeframe'] = match.group(2)
-            metadata['indicator'] = match.group(3)
+        cleaned_pattern = r'^([A-Z0-9.]+)_([A-Za-z0-9]+)_([a-zA-Z_]+)_cleaned\.(parquet|json|csv)$'
+        cleaned_match = re.match(cleaned_pattern, filename)
+        if cleaned_match:
+            metadata['symbol'] = cleaned_match.group(1)
+            metadata['timeframe'] = cleaned_match.group(2)
+            metadata['indicator'] = cleaned_match.group(3)
             metadata['source'] = 'Fixed'
-        else:
-            # Fallback parsing
-            parts = filename.split('.')
-            if len(parts) >= 2:
-                name_parts = parts[0].split('_')
-                if len(name_parts) >= 3:
-                    metadata['symbol'] = name_parts[0]
-                    metadata['timeframe'] = name_parts[1]
-                    metadata['indicator'] = name_parts[2] if len(name_parts) > 2 else 'Unknown'
+            return
+        
+        # Try to parse transformed data filename
+        transformed_pattern = r'^([A-Z0-9.]+)_([A-Za-z0-9]+)_([a-zA-Z_]+)_transformed\.(parquet|json|csv)$'
+        transformed_match = re.match(transformed_pattern, filename)
+        if transformed_match:
+            metadata['symbol'] = transformed_match.group(1)
+            metadata['timeframe'] = transformed_match.group(2)
+            metadata['indicator'] = transformed_match.group(3)
+            metadata['source'] = 'transformed_by_stat'
+            return
+        
+        # Fallback parsing for other patterns
+        parts = filename.split('.')
+        if len(parts) >= 2:
+            name_parts = parts[0].split('_')
+            if len(name_parts) >= 3:
+                metadata['symbol'] = name_parts[0]
+                metadata['timeframe'] = name_parts[1]
+                metadata['indicator'] = name_parts[2] if len(name_parts) > 2 else 'Unknown'
+                metadata['source'] = 'Fixed'
+    
+    def _parse_custom_filename(self, filename: str, metadata: Dict[str, Any]) -> None:
+        """Parse custom filename using common patterns."""
+        import re
+        
+        # Try various common patterns
+        patterns = [
+            # Pattern: SYMBOL_TIMEFRAME_INDICATOR_transformed.format
+            (r'^([A-Z0-9.]+)_([A-Za-z0-9]+)_([a-zA-Z_]+)_transformed\.(parquet|json|csv)$', 'transformed_by_stat'),
+            # Pattern: SYMBOL_TIMEFRAME_INDICATOR_cleaned.format
+            (r'^([A-Z0-9.]+)_([A-Za-z0-9]+)_([a-zA-Z_]+)_cleaned\.(parquet|json|csv)$', 'Fixed'),
+            # Pattern: source_SYMBOL_TIMEFRAME.format
+            (r'^([a-z]+)_([A-Z0-9.]+)_([A-Za-z0-9]+)\.(parquet|json|csv)$', None),
+            # Pattern: CSVExport_SYMBOL_PERIOD_TIMEFRAME.format
+            (r'^CSVExport_([A-Z0-9.]+)_PERIOD_([A-Za-z0-9]+)\.(parquet|json|csv)$', 'CSVExport'),
+            # Pattern: SYMBOL_TIMEFRAME_INDICATOR.format
+            (r'^([A-Z0-9.]+)_([A-Za-z0-9]+)_([a-zA-Z_]+)\.(parquet|json|csv)$', 'Custom'),
+        ]
+        
+        for pattern, source in patterns:
+            match = re.match(pattern, filename)
+            if match:
+                if source == 'Fixed':
+                    metadata['symbol'] = match.group(1)
+                    metadata['timeframe'] = match.group(2)
+                    metadata['indicator'] = match.group(3)
                     metadata['source'] = 'Fixed'
+                elif source == 'transformed_by_stat':
+                    metadata['symbol'] = match.group(1)
+                    metadata['timeframe'] = match.group(2)
+                    metadata['indicator'] = match.group(3)
+                    metadata['source'] = 'transformed_by_stat'
+                elif source == 'CSVExport':
+                    metadata['symbol'] = match.group(1)
+                    metadata['timeframe'] = match.group(2)
+                    metadata['source'] = 'CSVExport'
+                elif source == 'Custom':
+                    metadata['symbol'] = match.group(1)
+                    metadata['timeframe'] = match.group(2)
+                    metadata['indicator'] = match.group(3)
+                    metadata['source'] = 'Custom'
+                else:  # source is None, use first group as source
+                    metadata['source'] = match.group(1)
+                    metadata['symbol'] = match.group(2)
+                    metadata['timeframe'] = match.group(3)
+                return
+        
+        # Fallback parsing - try to extract from underscore-separated parts
+        parts = filename.split('.')
+        if len(parts) >= 2:
+            name_parts = parts[0].split('_')
+            if len(name_parts) >= 3:
+                metadata['symbol'] = name_parts[0]
+                metadata['timeframe'] = name_parts[1]
+                metadata['indicator'] = name_parts[2] if len(name_parts) > 2 else 'Unknown'
+                metadata['source'] = 'Custom'
+            elif len(name_parts) >= 2:
+                metadata['symbol'] = name_parts[0]
+                metadata['timeframe'] = name_parts[1]
+                metadata['source'] = 'Custom'
     
     def _load_data_sample(self, file_path: str, format_type: str) -> Optional[pd.DataFrame]:
         """
@@ -517,7 +592,57 @@ class TimeSeriesFileOperations:
         if not any(filename.lower().endswith(ext) for ext in ['.parquet', '.json', '.csv']):
             return None
         
+        # Determine folder source based on path
+        folder_source = self._determine_folder_source(path)
+        
         # Extract metadata using the same logic as validate_file_path
-        folder_source = os.path.dirname(path)
         metadata = self._extract_metadata(path, filename, folder_source)
         return metadata
+    
+    def _determine_folder_source(self, path: str) -> str:
+        """
+        Determine folder source based on the file path.
+        
+        Args:
+            path: Full file path
+            
+        Returns:
+            Folder source identifier
+        """
+        path_lower = path.lower()
+        
+        # Check for exact matches first
+        if 'data/fixed/' in path_lower or 'data\\fixed\\' in path_lower:
+            return 'data/fixed/'
+        elif 'data/cache/csv_converted/' in path_lower or 'data\\cache\\csv_converted\\' in path_lower:
+            return 'data/cache/csv_converted/'
+        elif 'data/raw_parquet/' in path_lower or 'data\\raw_parquet\\' in path_lower:
+            return 'data/raw_parquet/'
+        elif 'data/indicators/parquet/' in path_lower or 'data\\indicators\\parquet\\' in path_lower:
+            return 'data/indicators/parquet/'
+        elif 'data/indicators/json/' in path_lower or 'data\\indicators\\json\\' in path_lower:
+            return 'data/indicators/json/'
+        elif 'data/indicators/csv/' in path_lower or 'data\\indicators\\csv\\' in path_lower:
+            return 'data/indicators/csv/'
+        else:
+            # For custom paths, try to determine from directory structure
+            dirname = os.path.dirname(path)
+            dirname_lower = dirname.lower()
+            
+            if 'fixed' in dirname_lower:
+                return 'data/fixed/'
+            elif 'csv_converted' in dirname_lower:
+                return 'data/cache/csv_converted/'
+            elif 'raw_parquet' in dirname_lower:
+                return 'data/raw_parquet/'
+            elif 'indicators' in dirname_lower:
+                if 'parquet' in dirname_lower:
+                    return 'data/indicators/parquet/'
+                elif 'json' in dirname_lower:
+                    return 'data/indicators/json/'
+                elif 'csv' in dirname_lower:
+                    return 'data/indicators/csv/'
+                else:
+                    return 'data/indicators/parquet/'  # Default to parquet
+            else:
+                return 'custom'
