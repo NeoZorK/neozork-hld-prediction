@@ -15,6 +15,7 @@ import numpy as np
 from typing import Dict, Any, List, Optional, Tuple
 from scipy import stats
 import warnings
+import time
 warnings.filterwarnings('ignore')
 
 
@@ -52,21 +53,31 @@ class FinancialFeatures:
             if len(col_data) < 10:  # Need minimum data points
                 continue
             
-            print(f"\n🔍 Analyzing financial features for column: {col}")
-            print("📊 Progress: [██████████████████████████████] 100.0% (100% complete)")
-            print("-" * 50)
+            # Create progress tracker for this column
+            from .progress_tracker import ColumnProgressTracker
+            progress_tracker = ColumnProgressTracker(col, "financial features", 3)
+            progress_tracker.start_analysis()
             
             # Price range analysis
+            progress_tracker.update_step("Price Range")
             price_range = self._analyze_price_range(col_data, col)
             results['price_range_analysis'][col] = price_range
+            time.sleep(0.1)  # Simulate processing time
             
             # Price changes analysis
+            progress_tracker.update_step("Price Changes")
             price_changes = self._analyze_price_changes(col_data, col)
             results['price_changes_analysis'][col] = price_changes
+            time.sleep(0.1)  # Simulate processing time
             
             # Volatility analysis
+            progress_tracker.update_step("Volatility")
             volatility = self._analyze_volatility(col_data, col)
             results['volatility_analysis'][col] = volatility
+            time.sleep(0.1)  # Simulate processing time
+            
+            # Complete analysis
+            progress_tracker.complete_analysis()
         
         # Overall financial assessment
         results['overall_financial_assessment'] = self._generate_overall_financial_assessment(results)

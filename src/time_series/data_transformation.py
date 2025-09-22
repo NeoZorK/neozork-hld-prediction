@@ -20,6 +20,7 @@ from scipy.special import boxcox1p
 from statsmodels.tsa.seasonal import seasonal_decompose
 from scipy.signal import detrend
 import warnings
+import time
 warnings.filterwarnings('ignore')
 
 
@@ -62,16 +63,19 @@ class TimeSeriesDataTransformation:
             if len(col_data) < 10:  # Need minimum data points
                 continue
             
-            print(f"\n🔍 Analyzing data transformation for column: {col}")
-            print("📊 Progress: [██████████████████████████████] 100.0% (100% complete)")
-            print("-" * 50)
+            # Create progress tracker for this column
+            from .progress_tracker import ColumnProgressTracker
+            progress_tracker = ColumnProgressTracker(col, "data transformation", 2)
+            progress_tracker.start_analysis()
             
             # Get transformations for this column
             col_transformations = transformations.get(col, [])
             if not col_transformations:
+                progress_tracker.complete_analysis()
                 continue
             
             # Apply transformations
+            progress_tracker.update_step("Apply Transformations")
             col_results = {}
             for transform_type in col_transformations:
                 try:
@@ -114,9 +118,14 @@ class TimeSeriesDataTransformation:
                     )
             
             # Generate recommendations
+            progress_tracker.update_step("Generate Recommendations")
             results['recommendations'][col] = self._generate_transformation_recommendations(
                 col_data, col_results, best_transformation
             )
+            time.sleep(0.1)  # Simulate processing time
+            
+            # Complete analysis
+            progress_tracker.complete_analysis()
         
         return results
     
