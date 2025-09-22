@@ -1005,6 +1005,8 @@ class TimeSeriesAnalyzer:
             file_info['timeframe'] = 'M15'
         elif 'MN1' in filename:
             file_info['timeframe'] = 'MN1'
+        elif 'W1' in filename:
+            file_info['timeframe'] = 'W1'
         elif 'D1' in filename:
             file_info['timeframe'] = 'D1'
         elif 'H1' in filename:
