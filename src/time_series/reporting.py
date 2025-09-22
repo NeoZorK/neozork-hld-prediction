@@ -435,10 +435,14 @@ class TimeSeriesReporter:
                 annualized_vol = vol_data.get('annualized_volatility', 0)
                 coeff_var = vol_data.get('coefficient_of_variation', 0)
                 volatility_level = vol_data.get('volatility_level', 'unknown')
+                mean_return = vol_data.get('mean_return', 0)
+                sharpe_ratio = vol_data.get('sharpe_ratio', 0)
                 
                 report.append(f"  Overall Volatility: {self.color_utils.format_volatility(overall_vol)}")
                 report.append(f"  Annualized Volatility: {self.color_utils.format_volatility(annualized_vol)}")
                 report.append(f"  Coefficient of Variation: {coeff_var:.2f}%")
+                report.append(f"  Mean Return: {mean_return:.6f}")
+                report.append(f"  Sharpe Ratio: {sharpe_ratio:.4f}")
                 report.append(f"  Volatility Level: {volatility_level}")
                 
                 # Risk metrics
