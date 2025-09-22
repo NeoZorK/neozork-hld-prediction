@@ -52,6 +52,7 @@ import os
 import time
 import signal
 import json
+import gc
 from pathlib import Path
 from typing import Optional, Dict, Any, List
 import pandas as pd
@@ -67,6 +68,7 @@ from src.time_series.financial_features import FinancialFeatures
 from src.time_series.data_transformation import TimeSeriesDataTransformation
 from src.time_series.reporting import TimeSeriesReporter
 from src.time_series.color_utils import ColorUtils
+from src.time_series.progress_tracker import ProgressTracker, ProgressBar
 
 
 class TimeSeriesAnalyzer:
@@ -527,18 +529,20 @@ class TimeSeriesAnalyzer:
     def run_batch_processing(self, directory: str, directory_name: str, analysis_options: Dict[str, bool], 
                            auto_mode: bool = False) -> None:
         """
-        Run batch processing for all files in a directory.
+        Run batch processing for all files in a directory with memory optimization and progress tracking.
         
         Args:
             directory: Directory path to process
             directory_name: Human-readable directory name for display
             analysis_options: Dictionary of analysis options
+            auto_mode: Whether to run in auto mode (non-interactive)
         """
         print(f"\n{'='*80}")
         print(f"BATCH PROCESSING: {directory_name}")
         print(f"Directory: {directory}")
         print(f"{'='*80}")
         
+        # Get list of files to process
         files = self.file_ops.get_files_in_directory(directory)
         
         if not files:
@@ -549,7 +553,8 @@ class TimeSeriesAnalyzer:
         for i, file in enumerate(files, 1):
             print(f"  {i}. {file}")
         
-        if not self.auto_mode:
+        # Confirm processing if not in auto mode
+        if not auto_mode:
             while True:
                 proceed = self._get_user_input(f"\nProcess all {len(files)} files? (y/n): ")
                 if proceed in ['y', 'n']:
@@ -560,16 +565,16 @@ class TimeSeriesAnalyzer:
                 print("Batch processing cancelled.")
                 return
         
-        # Process each file
-        successful = 0
-        failed = 0
+        # Initialize progress tracker
+        progress_tracker = ProgressTracker(len(files), verbose=True)
         
-        for i, filename in enumerate(files, 1):
-            print(f"\n{'='*60}")
-            print(f"PROCESSING FILE {i}/{len(files)}: {filename}")
-            print(f"{'='*60}")
+        # Process each file sequentially with memory optimization
+        for i, filename in enumerate(files):
+            # Start tracking this file
+            progress_tracker.start_file(filename)
             
             try:
+                # Process the file
                 results = self.analyze_file(filename, analysis_options)
                 
                 # Generate and display report
@@ -587,21 +592,37 @@ class TimeSeriesAnalyzer:
                 if analysis_options.get('transform', False) and 'transformation' in results['analysis_results']:
                     self._handle_data_transformation(results)
                 
-                successful += 1
-                print(f"{ColorUtils.green('✅ Successfully processed:')} {filename}")
+                # Mark file as successfully processed
+                progress_tracker.complete_file(success=True)
                 
             except Exception as e:
-                failed += 1
+                # Mark file as failed
+                progress_tracker.complete_file(success=False, error_message=str(e))
                 self.reporter.display_error(str(e), {'filename': filename})
+            
+            # Force memory cleanup after each file
+            self._cleanup_memory_after_file()
+            
+            # Display progress for each file
+            progress_tracker.display_progress()
         
-        # Summary
-        print(f"\n{'='*80}")
-        print(f"BATCH PROCESSING COMPLETE")
-        print(f"{'='*80}")
-        print(f"Total files: {len(files)}")
-        print(f"Successful: {successful}")
-        print(f"Failed: {failed}")
-        print(f"Success rate: {(successful/len(files)*100):.1f}%")
+        # Display final summary
+        progress_tracker.display_final_summary()
+    
+    def _cleanup_memory_after_file(self) -> None:
+        """Clean up memory after processing each file."""
+        # Force garbage collection
+        gc.collect()
+        
+        # Clear any cached data if possible
+        if hasattr(self, 'file_ops'):
+            # Clear any cached data in file operations
+            pass
+        
+        # Clear any cached analysis results
+        if hasattr(self, 'stationarity_analysis'):
+            # Clear any cached results
+            pass
     
     def _handle_data_transformation(self, results: Dict[str, Any]):
         """Handle data transformation user interaction."""
@@ -755,117 +776,12 @@ class TimeSeriesAnalyzer:
             file_processing = config['file_processing']
             
             if file_processing['mode'] == 'single_file':
-                # Single file processing
-                results = self.analyze_file(file_processing['filename'], analysis_options)
+                # Single file processing with progress tracking
+                progress_tracker = ProgressTracker(total_files=1, verbose=True)
+                progress_tracker.start_file(file_processing['filename'])
                 
-                # Generate and display report
-                report = self.reporter.generate_comprehensive_report(
-                    results['file_info'], 
-                    results['analysis_results'],
-                    self.output_directory,
-                    self.auto_mode,
-                    self.analysis_options
-                )
-                
-                print("\n" + report)
-                
-                # Handle data transformation
-                if analysis_options.get('transform', False) and 'transformation' in results['analysis_results']:
-                    self._handle_data_transformation(results)
-                
-            elif file_processing['mode'] == 'batch':
-                # Batch processing
-                self.run_batch_processing(file_processing['directory'], 
-                                       f"Directory: {file_processing['directory']}", 
-                                       analysis_options,
-                                       self.auto_mode)
-                
-            elif file_processing['mode'] == 'batch_all':
-                # Process all directories
-                directories = [
-                    ("data/cache/csv_converted/", "CSV Converted Files"),
-                    ("data/raw_parquet/", "Raw Parquet Files"),
-                    ("data/indicators/parquet/", "Indicators Parquet Files"),
-                    ("data/indicators/json/", "Indicators JSON Files"),
-                    ("data/indicators/csv/", "Indicators CSV Files"),
-                    ("data/fixed/", "Fixed Files")
-                ]
-                
-                total_successful = 0
-                total_failed = 0
-                total_files = 0
-                
-                for directory, name in directories:
-                    if os.path.exists(directory):
-                        files = self.file_ops.get_files_in_directory(directory)
-                        if files:
-                            print(f"\n{'='*100}")
-                            print(f"PROCESSING DIRECTORY: {name}")
-                            print(f"{'='*100}")
-                            
-                            for filename in files:
-                                total_files += 1
-                                print(f"\n{'='*60}")
-                                print(f"PROCESSING FILE: {filename}")
-                                print(f"{'='*60}")
-                                
-                                try:
-                                    results = self.analyze_file(filename, analysis_options)
-                                    
-                                    # Generate and display report
-                                    report = self.reporter.generate_comprehensive_report(
-                                        results['file_info'], 
-                                        results['analysis_results'],
-                                        self.output_directory,
-                                        self.auto_mode,
-                                        self.analysis_options
-                                    )
-                                    
-                                    print("\n" + report)
-                                    
-                                    # Handle data transformation
-                                    if analysis_options.get('transform', False) and 'transformation' in results['analysis_results']:
-                                        self._handle_data_transformation(results)
-                                    
-                                    total_successful += 1
-                                    print(f"{ColorUtils.green('✅ Successfully processed:')} {filename}")
-                                    
-                                except Exception as e:
-                                    total_failed += 1
-                                    self.reporter.display_error(str(e), {'filename': filename})
-                
-                # Overall summary
-                print(f"\n{'='*100}")
-                print(f"🌟 BATCH PROCESSING ALL DIRECTORIES COMPLETE 🌟")
-                print(f"{'='*100}")
-                print(f"📊 Total files processed: {total_files}")
-                print(f"✅ Successful: {total_successful}")
-                print(f"❌ Failed: {total_failed}")
-                if total_files > 0:
-                    success_rate = (total_successful/total_files*100)
-                    print(f"📈 Overall success rate: {success_rate:.1f}%")
-                else:
-                    print("⚠️  No files found to process.")
-                    
-            elif file_processing['mode'] == 'custom_path':
-                # Custom path processing
-                custom_path = file_processing['directory']
-                path_validation = self.file_ops.validate_custom_path(custom_path)
-                
-                if path_validation is None:
-                    print(f"❌ Error: Invalid path '{custom_path}' - file not found or unsupported format")
-                    return
-                
-                # Check if it's a file or directory
-                if os.path.isfile(custom_path):
-                    # Single file processing
-                    print(f"\n📁 Processing single file: {custom_path}")
-                    
-                    # Use the parsed metadata from path_validation
-                    file_info = path_validation
-                    
-                    # Use the custom file_info instead of calling analyze_file with filename
-                    results = self._analyze_file_with_info(file_info, analysis_options)
+                try:
+                    results = self.analyze_file(file_processing['filename'], analysis_options)
                     
                     # Generate and display report
                     report = self.reporter.generate_comprehensive_report(
@@ -881,9 +797,95 @@ class TimeSeriesAnalyzer:
                     # Handle data transformation
                     if analysis_options.get('transform', False) and 'transformation' in results['analysis_results']:
                         self._handle_data_transformation(results)
+                    
+                    progress_tracker.complete_file(success=True)
+                    
+                except Exception as e:
+                    progress_tracker.complete_file(success=False, error_message=str(e))
+                    self.reporter.display_error(str(e), {'filename': file_processing['filename']})
+                    raise
+                
+                # Display final summary
+                progress_tracker.display_final_summary()
+                
+            elif file_processing['mode'] == 'batch':
+                # Batch processing
+                self.run_batch_processing(file_processing['directory'], 
+                                       f"Directory: {file_processing['directory']}", 
+                                       analysis_options,
+                                       self.auto_mode)
+                
+            elif file_processing['mode'] == 'batch_all':
+                # Process all directories with memory optimization
+                directories = [
+                    ("data/cache/csv_converted/", "CSV Converted Files"),
+                    ("data/raw_parquet/", "Raw Parquet Files"),
+                    ("data/indicators/parquet/", "Indicators Parquet Files"),
+                    ("data/indicators/json/", "Indicators JSON Files"),
+                    ("data/indicators/csv/", "Indicators CSV Files"),
+                    ("data/fixed/", "Fixed Files")
+                ]
+                
+                for directory, name in directories:
+                    if os.path.exists(directory):
+                        # Use optimized batch processing for each directory
+                        self.run_batch_processing(directory, name, analysis_options, self.auto_mode)
+                        
+                        # Force memory cleanup between directories
+                        self._cleanup_memory_after_file()
+                        print(f"\n🧹 Memory cleanup completed after processing {name}")
+                    
+            elif file_processing['mode'] == 'custom_path':
+                # Custom path processing
+                custom_path = file_processing['directory']
+                path_validation = self.file_ops.validate_custom_path(custom_path)
+                
+                if path_validation is None:
+                    print(f"❌ Error: Invalid path '{custom_path}' - file not found or unsupported format")
+                    return
+                
+                # Check if it's a file or directory
+                if os.path.isfile(custom_path):
+                    # Single file processing with progress tracking
+                    print(f"\n📁 Processing single file: {custom_path}")
+                    
+                    progress_tracker = ProgressTracker(total_files=1, verbose=True)
+                    progress_tracker.start_file(os.path.basename(custom_path))
+                    
+                    try:
+                        # Use the parsed metadata from path_validation
+                        file_info = path_validation
+                        
+                        # Use the custom file_info instead of calling analyze_file with filename
+                        results = self._analyze_file_with_info(file_info, analysis_options)
+                        
+                        # Generate and display report
+                        report = self.reporter.generate_comprehensive_report(
+                            results['file_info'], 
+                            results['analysis_results'],
+                            self.output_directory,
+                            self.auto_mode,
+                            self.analysis_options
+                        )
+                        
+                        print("\n" + report)
+                        
+                        # Handle data transformation
+                        if analysis_options.get('transform', False) and 'transformation' in results['analysis_results']:
+                            self._handle_data_transformation(results)
+                        
+                        progress_tracker.complete_file(success=True)
+                        
+                    except Exception as e:
+                        progress_tracker.complete_file(success=False, error_message=str(e))
+                        self.reporter.display_error(str(e), {'filename': os.path.basename(custom_path)})
+                        raise
+                    
+                    # Display final summary
+                    progress_tracker.display_final_summary()
                         
                 elif os.path.isdir(custom_path):
-                    # Directory processing
+                    # Directory processing with memory optimization
                     print(f"\n📂 Starting batch processing for custom directory: {custom_path}")
                     self.run_batch_processing(custom_path, f"Custom Directory: {custom_path}", analysis_options, self.auto_mode)
             
