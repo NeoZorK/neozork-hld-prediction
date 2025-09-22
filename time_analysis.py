@@ -448,14 +448,25 @@ class TimeSeriesAnalyzer:
             transformed_financial = self.financial_features.analyze_financial_features(transformed_data, numeric_columns)
             
             # Compare volatility levels and other financial metrics
+            print(f"🔍 Original financial columns: {list(original_financial.keys())}")
+            print(f"🔍 Transformed financial columns: {list(transformed_financial.keys())}")
+            print(f"🔍 Numeric columns: {numeric_columns}")
+            
+            # Get volatility analysis from both original and transformed
+            original_volatility = original_financial.get('volatility_analysis', {})
+            transformed_volatility = transformed_financial.get('volatility_analysis', {})
+            
+            print(f"🔍 Original volatility columns: {list(original_volatility.keys())}")
+            print(f"🔍 Transformed volatility columns: {list(transformed_volatility.keys())}")
+            
             for col in numeric_columns:
-                if col in original_financial:
-                    orig_volatility = original_financial[col].get('volatility_level', 'unknown')
-                    trans_volatility = transformed_financial.get(col, {}).get('volatility_level', 'unknown')
+                if col in original_volatility and col in transformed_volatility:
+                    orig_volatility = original_volatility[col].get('volatility_level', 'unknown')
+                    trans_volatility = transformed_volatility[col].get('volatility_level', 'unknown')
                     
                     # Get actual volatility values for more precise comparison
-                    orig_vol_value = original_financial[col].get('overall_volatility', 0)
-                    trans_vol_value = transformed_financial.get(col, {}).get('overall_volatility', 0)
+                    orig_vol_value = original_volatility[col].get('overall_volatility', 0)
+                    trans_vol_value = transformed_volatility[col].get('overall_volatility', 0)
                     
                     # Volatility level comparison
                     volatility_levels = ['very_low', 'low', 'moderate', 'high', 'very_high']
