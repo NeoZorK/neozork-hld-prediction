@@ -486,6 +486,11 @@ class TimeSeriesAnalyzer:
         reduced_seasonality = sum(1 for v in comparison['seasonality_improvements'].values() if v['improvement'] == 'Reduced')
         reduced_volatility = sum(1 for v in comparison['financial_improvements'].values() if v['improvement'] == 'Reduced')
         
+        # Ensure we have the correct counts for display
+        total_financial_columns = len(comparison['financial_improvements'])
+        if total_financial_columns == 0:
+            print("⚠️  No financial improvements data available - financial analysis may not have been performed")
+        
         comparison['overall_assessment'] = {
             'total_columns': total_columns,
             'stationarity_improved': improved_stationarity,
@@ -494,7 +499,7 @@ class TimeSeriesAnalyzer:
             'overall_improvement_rate': (improved_stationarity + reduced_seasonality + reduced_volatility) / (total_columns * 3) if total_columns > 0 else 0
         }
         
-        print(f"✅ Comparison complete: {improved_stationarity}/{total_columns} stationarity improved, {reduced_seasonality}/{total_columns} seasonality reduced, {reduced_volatility}/{total_columns} volatility reduced")
+        print(f"✅ Comparison complete: {improved_stationarity}/{total_columns} stationarity improved, {reduced_seasonality}/{total_columns} seasonality reduced, {reduced_volatility}/{total_financial_columns} volatility reduced")
         
         return comparison
     
