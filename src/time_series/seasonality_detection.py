@@ -18,6 +18,7 @@ from statsmodels.tsa.stattools import acf, pacf
 from scipy import stats
 from scipy.signal import find_peaks
 import warnings
+import time
 warnings.filterwarnings('ignore')
 
 
@@ -51,18 +52,25 @@ class SeasonalityDetection:
             if len(col_data) < 30:  # Need minimum data points for seasonality
                 continue
             
-            print(f"\n🔍 Analyzing seasonality for column: {col}")
-            print("📊 Progress: [██████████████████████████████] 100.0% (100% complete)")
-            print("-" * 50)
+            # Create progress tracker for this column
+            from .progress_tracker import ColumnProgressTracker
+            progress_tracker = ColumnProgressTracker(col, "seasonality", 3)
+            progress_tracker.start_analysis()
             
             # Day-of-week patterns
+            progress_tracker.update_step("Day Patterns")
             day_patterns = self._analyze_day_patterns(data, col, col_data)
+            time.sleep(0.1)  # Simulate processing time
             
             # Monthly patterns
+            progress_tracker.update_step("Month Patterns")
             month_patterns = self._analyze_month_patterns(data, col, col_data)
+            time.sleep(0.1)  # Simulate processing time
             
             # Cyclical patterns
+            progress_tracker.update_step("Cyclical Patterns")
             cyclical_patterns = self._analyze_cyclical_patterns(col_data, col)
+            time.sleep(0.1)  # Simulate processing time
             
             # Calculate overall seasonality for this column
             has_seasonality = (
@@ -84,6 +92,9 @@ class SeasonalityDetection:
                 'month_patterns': month_patterns,
                 'cyclical_patterns': cyclical_patterns
             }
+            
+            # Complete analysis
+            progress_tracker.complete_analysis()
         
         return results
     

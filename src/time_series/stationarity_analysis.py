@@ -18,6 +18,7 @@ from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.seasonal import seasonal_decompose
 from scipy import stats
 import warnings
+import time
 warnings.filterwarnings('ignore')
 
 
@@ -59,23 +60,33 @@ class StationarityAnalysis:
             if len(col_data) < 10:  # Need minimum data points
                 continue
             
-            print(f"\n🔍 Analyzing stationarity for column: {col}")
-            print("📊 Progress: [██████████████████████████████] 100.0% (100% complete)")
-            print("-" * 50)
+            # Create progress tracker for this column
+            from .progress_tracker import ColumnProgressTracker
+            progress_tracker = ColumnProgressTracker(col, "stationarity", 3)
+            progress_tracker.start_analysis()
             
             # Perform ADF test
+            progress_tracker.update_step("ADF Test")
             adf_results = self._perform_adf_test(col_data, col)
             results['adf_tests'][col] = adf_results
+            time.sleep(0.1)  # Simulate processing time
             
             # Get critical values
+            progress_tracker.update_step("Critical Values")
             critical_vals = self._get_critical_values(col_data, col)
             results['critical_values'][col] = critical_vals
+            time.sleep(0.1)  # Simulate processing time
             
             # Generate recommendations
+            progress_tracker.update_step("Recommendations")
             recommendations = self._generate_stationarity_recommendations(
                 adf_results, critical_vals, col_data, col
             )
             results['stationarity_recommendations'][col] = recommendations
+            time.sleep(0.1)  # Simulate processing time
+            
+            # Complete analysis
+            progress_tracker.complete_analysis()
         
         # Overall assessment
         results['overall_assessment'] = self._generate_overall_assessment(results)

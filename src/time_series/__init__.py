@@ -29,7 +29,7 @@ from .financial_features import FinancialFeatures
 from .data_transformation import TimeSeriesDataTransformation
 from .reporting import TimeSeriesReporter
 from .color_utils import ColorUtils
-from .progress_tracker import ProgressTracker, ProgressBar
+from .progress_tracker import ProgressTracker, ProgressBar, ColumnProgressTracker
 
 __all__ = [
     'TimeSeriesFileOperations',
@@ -41,5 +41,6 @@ __all__ = [
     'TimeSeriesReporter',
     'ColorUtils',
     'ProgressTracker',
-    'ProgressBar'
+    'ProgressBar',
+    'ColumnProgressTracker'
 ]

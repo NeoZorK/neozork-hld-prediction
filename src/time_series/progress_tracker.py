@@ -245,3 +245,69 @@ class ProgressBar:
         """Mark progress bar as complete."""
         self.update(self.total)
         print()  # New line after completion
+
+
+class ColumnProgressTracker:
+    """Progress tracker for individual column analysis."""
+    
+    def __init__(self, column_name: str, analysis_type: str, total_steps: int = 5):
+        """
+        Initialize column progress tracker.
+        
+        Args:
+            column_name: Name of the column being analyzed
+            analysis_type: Type of analysis (stationarity, seasonality, etc.)
+            total_steps: Total number of steps in the analysis
+        """
+        self.column_name = column_name
+        self.analysis_type = analysis_type
+        self.total_steps = total_steps
+        self.current_step = 0
+        self.start_time = time.time()
+        self.step_times = []
+        self.width = 30
+    
+    def start_analysis(self) -> None:
+        """Start the analysis for this column."""
+        print(f"\n🔍 Analyzing {self.analysis_type} for column: {self.column_name}")
+        self._update_progress(0)
+    
+    def update_step(self, step_name: str) -> None:
+        """
+        Update progress to next step.
+        
+        Args:
+            step_name: Name of the current step
+        """
+        self.current_step += 1
+        step_time = time.time()
+        self.step_times.append(step_time)
+        
+        self._update_progress(self.current_step, step_name)
+    
+    def _update_progress(self, current: int, step_name: str = None) -> None:
+        """Update and display progress."""
+        percentage = (current / self.total_steps) * 100 if self.total_steps > 0 else 0
+        filled_width = int((percentage / 100) * self.width)
+        bar = '█' * filled_width + '░' * (self.width - filled_width)
+        
+        # Calculate ETA
+        eta_text = ""
+        if current > 0:
+            elapsed_time = time.time() - self.start_time
+            avg_time_per_step = elapsed_time / current
+            remaining_steps = self.total_steps - current
+            eta_seconds = remaining_steps * avg_time_per_step
+            eta = datetime.now() + timedelta(seconds=eta_seconds)
+            eta_text = f" | ETA: {eta.strftime('%H:%M:%S')}"
+        
+        # Display progress (update same line)
+        step_info = f" ({step_name})" if step_name else ""
+        print(f"\r📊 Progress: [{bar}] {percentage:.1f}% ({current}/{self.total_steps}){step_info}{eta_text}", end='', flush=True)
+    
+    def complete_analysis(self) -> None:
+        """Mark analysis as complete."""
+        self._update_progress(self.total_steps, "Complete")
+        elapsed_time = time.time() - self.start_time
+        print()  # New line after progress bar
+        print(f"✅ {self.analysis_type.title()} analysis completed for {self.column_name} in {elapsed_time:.2f}s")
