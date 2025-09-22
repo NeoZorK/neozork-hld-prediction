@@ -685,8 +685,10 @@ class TimeSeriesReporter:
                 avg_improvement = sum(improvements) / len(improvements)
                 max_improvement = max(improvements)
                 min_improvement = min(improvements)
+                total_improvement = sum(improvements)
                 
                 assessment.append(f"\n📈 Transformation Improvement Summary:")
+                assessment.append(f"• Total improvement: {self.color_utils.green(f'{total_improvement:.1f}%')} across all columns")
                 assessment.append(f"• Average improvement: {self.color_utils.green(f'{avg_improvement:.1f}%')} better stationarity")
                 assessment.append(f"• Best improvement: {self.color_utils.green(f'{max_improvement:.1f}%')} (highest potential)")
                 assessment.append(f"• Minimum improvement: {self.color_utils.yellow(f'{min_improvement:.1f}%')} (baseline)")
