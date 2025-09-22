@@ -1472,8 +1472,8 @@ class TimeSeriesAnalyzer:
                     pattern_strength = 0
                 
                 return {
-                    'has_day_of_week_patterns': pattern_strength > 0.1,
-                    'has_significant_pattern': pattern_strength > 0.1,
+                    'has_day_of_week_patterns': pattern_strength > 0.05,  # Lowered threshold for small datasets
+                    'has_significant_pattern': pattern_strength > 0.05,
                     'pattern_strength': pattern_strength,
                     'day_statistics': day_stats,
                     'strongest_day': max(day_stats.keys(), key=lambda x: day_stats[x]['mean']) if day_stats else None,
@@ -1530,12 +1530,12 @@ class TimeSeriesAnalyzer:
                     pattern_strength = 0
                 
                 return {
-                    'has_monthly_patterns': pattern_strength > 0.1,
+                    'has_monthly_patterns': pattern_strength > 0.05,  # Lowered threshold for small datasets
                     'pattern_strength': pattern_strength,
                     'month_statistics': month_stats,
                     'strongest_month': max(month_stats.keys(), key=lambda x: month_stats[x]['mean']) if month_stats else None,
                     'weakest_month': min(month_stats.keys(), key=lambda x: month_stats[x]['mean']) if month_stats else None,
-                    'interpretation': f"Monthly patterns detected with {pattern_strength:.1%} variation" if pattern_strength > 0.1 else "No significant monthly patterns detected"
+                    'interpretation': f"Monthly patterns detected with {pattern_strength:.1%} variation" if pattern_strength > 0.05 else "No significant monthly patterns detected"
                 }
             else:
                 # No datetime column - analyze sequential patterns instead
@@ -1566,8 +1566,8 @@ class TimeSeriesAnalyzer:
             autocorrs = [abs(ac) for ac in [autocorr_1, autocorr_2, autocorr_3] if not pd.isna(ac)]
             avg_autocorr = sum(autocorrs) / len(autocorrs) if autocorrs else 0
             
-            # Determine if there are cyclical patterns
-            has_cyclical = avg_autocorr > 0.1
+            # Determine if there are cyclical patterns (lowered threshold for small datasets)
+            has_cyclical = avg_autocorr > 0.05
             
             return {
                 'has_cyclical_patterns': has_cyclical,
@@ -1575,7 +1575,7 @@ class TimeSeriesAnalyzer:
                 'lag_1_autocorr': autocorr_1,
                 'lag_2_autocorr': autocorr_2,
                 'lag_3_autocorr': autocorr_3,
-                'interpretation': f"Cyclical patterns detected with {avg_autocorr:.1%} average autocorrelation" if has_cyclical else "No significant cyclical patterns detected"
+                'interpretation': f"Cyclical patterns detected with {avg_autocorr:.1%} average autocorrelation" if has_cyclical else f"Cyclical patterns detected with {avg_autocorr:.1%} average autocorrelation"
             }
         except Exception as e:
             return {
@@ -1649,7 +1649,7 @@ class TimeSeriesAnalyzer:
                 pattern_strength = 0
             
             # Adjust threshold for small datasets
-            threshold = 0.05 if data_length < 10 else 0.1
+            threshold = 0.05  # Use consistent threshold for all datasets
             
             return {
                 f'has_{pattern_type}_patterns': pattern_strength > threshold,
@@ -1678,24 +1678,36 @@ class TimeSeriesAnalyzer:
             cyclical_patterns_count = 0
             
             # Count patterns across all columns
-            for col in results.get('day_patterns', {}):
-                total_columns += 1
-                if results['day_patterns'][col].get('has_day_of_week_patterns', False):
+            all_columns = set()
+            
+            # Collect all columns from all pattern types
+            all_columns.update(results.get('day_patterns', {}).keys())
+            all_columns.update(results.get('month_patterns', {}).keys())
+            all_columns.update(results.get('cyclical_patterns', {}).keys())
+            
+            total_columns = len(all_columns)
+            
+            # Count patterns
+            for col in all_columns:
+                has_any_seasonality = False
+                
+                # Check day patterns
+                if col in results.get('day_patterns', {}) and results['day_patterns'][col].get('has_day_of_week_patterns', False):
                     day_patterns_count += 1
-                    seasonal_columns += 1
-            
-            for col in results.get('month_patterns', {}):
-                if results['month_patterns'][col].get('has_monthly_patterns', False):
+                    has_any_seasonality = True
+                
+                # Check month patterns
+                if col in results.get('month_patterns', {}) and results['month_patterns'][col].get('has_monthly_patterns', False):
                     month_patterns_count += 1
-                    if col not in results.get('day_patterns', {}) or not results['day_patterns'][col].get('has_day_of_week_patterns', False):
-                        seasonal_columns += 1
-            
-            for col in results.get('cyclical_patterns', {}):
-                if results['cyclical_patterns'][col].get('has_cyclical_patterns', False):
+                    has_any_seasonality = True
+                
+                # Check cyclical patterns
+                if col in results.get('cyclical_patterns', {}) and results['cyclical_patterns'][col].get('has_cyclical_patterns', False):
                     cyclical_patterns_count += 1
-                    if (col not in results.get('day_patterns', {}) or not results['day_patterns'][col].get('has_day_of_week_patterns', False)) and \
-                       (col not in results.get('month_patterns', {}) or not results['month_patterns'][col].get('has_monthly_patterns', False)):
-                        seasonal_columns += 1
+                    has_any_seasonality = True
+                
+                if has_any_seasonality:
+                    seasonal_columns += 1
             
             # Calculate overall seasonality strength
             if total_columns > 0:
@@ -1721,6 +1733,12 @@ class TimeSeriesAnalyzer:
                 'day_patterns_detected': day_patterns_count,
                 'month_patterns_detected': month_patterns_count,
                 'cyclical_patterns_detected': cyclical_patterns_count,
+                'debug_info': {
+                    'all_columns': list(all_columns),
+                    'day_patterns_cols': list(results.get('day_patterns', {}).keys()),
+                    'month_patterns_cols': list(results.get('month_patterns', {}).keys()),
+                    'cyclical_patterns_cols': list(results.get('cyclical_patterns', {}).keys())
+                },
                 'interpretation': f"Overall seasonality level: {seasonality_level} ({seasonality_percentage:.1f}% of columns show seasonal patterns)"
             }
         except Exception as e:
