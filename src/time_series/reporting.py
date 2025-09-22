@@ -97,6 +97,7 @@ class TimeSeriesReporter:
         header.append(f"Source: {file_info.get('source', 'Unknown')}")
         header.append(f"Symbol: {file_info.get('symbol', 'Unknown')}")
         header.append(f"Timeframe: {file_info.get('timeframe', 'Unknown')}")
+        header.append(f"Indicator: {file_info.get('indicator', 'Unknown')}")
         header.append(f"Format: {file_info.get('format', 'Unknown').upper()}")
         header.append(f"Rows: {file_info.get('rows_count', 0):,}")
         header.append(f"Columns: {file_info.get('columns_count', 0)}")
