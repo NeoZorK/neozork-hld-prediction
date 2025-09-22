@@ -576,7 +576,7 @@ class TimeSeriesReporter:
             report.append(f"\n  📉 Seasonality Reduction Rate: {reduction_rate:.1f}% ({reduced_count}/{total_count})")
         
         # Financial improvements
-        if 'financial_improvements' in comparison_results:
+        if 'financial_improvements' in comparison_results and comparison_results['financial_improvements']:
             report.append(f"\n{self.color_utils.blue('💰 Volatility Improvements')}")
             report.append("-" * 35)
             
@@ -600,6 +600,11 @@ class TimeSeriesReporter:
             
             reduction_rate = (reduced_count / total_count * 100) if total_count > 0 else 0
             report.append(f"\n  📉 Volatility Reduction Rate: {reduction_rate:.1f}% ({reduced_count}/{total_count})")
+        else:
+            report.append(f"\n{self.color_utils.blue('💰 Volatility Improvements')}")
+            report.append("-" * 35)
+            report.append("  ⚠️  No financial improvements data available")
+            report.append(f"\n  📉 Volatility Reduction Rate: 0.0% (0/0)")
         
         # Overall assessment
         if 'overall_assessment' in comparison_results:
