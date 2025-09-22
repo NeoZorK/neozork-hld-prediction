@@ -51,6 +51,7 @@ import sys
 import os
 import time
 import json
+import signal
 from pathlib import Path
 from typing import Optional, Dict, Any, List
 import pandas as pd
@@ -1380,8 +1381,18 @@ class StatisticalAnalyzer:
             sys.exit(1)
 
 
+def signal_handler(signum, frame):
+    """Handle CTRL+C gracefully without showing traceback."""
+    print("\n\n🛑 Analysis interrupted by user (CTRL+C)")
+    print("👋 Goodbye!")
+    sys.exit(0)
+
+
 def main():
     """Main entry point."""
+    # Set up signal handler for CTRL+C
+    signal.signal(signal.SIGINT, signal_handler)
+    
     cli = StatisticsCLI()
     
     # Parse arguments
