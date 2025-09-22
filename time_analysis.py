@@ -1001,7 +1001,9 @@ class TimeSeriesAnalyzer:
         # Try to extract metadata from filename
         if 'BTCUSDT' in filename:
             file_info['symbol'] = 'BTCUSDT'
-        if 'M5' in filename:
+        if 'M1' in filename:
+            file_info['timeframe'] = 'M1'
+        elif 'M5' in filename:
             file_info['timeframe'] = 'M5'
         elif 'M15' in filename:
             file_info['timeframe'] = 'M15'
