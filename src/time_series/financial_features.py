@@ -276,10 +276,14 @@ class FinancialFeatures:
             
             # Overall volatility metrics
             overall_volatility = returns.std()
+            if pd.isna(overall_volatility):
+                overall_volatility = 0
             annualized_volatility = overall_volatility * np.sqrt(252)  # Assuming daily data
             
             # Coefficient of variation
             coefficient_of_variation = (overall_volatility / col_data.mean()) * 100 if col_data.mean() != 0 else 0
+            if pd.isna(coefficient_of_variation):
+                coefficient_of_variation = 0
             
             # Volatility clustering analysis
             volatility_clustering = self._analyze_volatility_clustering(returns)
