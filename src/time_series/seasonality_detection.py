@@ -41,12 +41,7 @@ class SeasonalityDetection:
         Returns:
             Dictionary containing seasonality analysis results
         """
-        results = {
-            'day_patterns': {},
-            'month_patterns': {},
-            'cyclical_patterns': {},
-            'overall_seasonality': {}
-        }
+        results = {}
         
         for col in numeric_columns:
             if col not in data.columns:
@@ -61,18 +56,33 @@ class SeasonalityDetection:
             
             # Day-of-week patterns
             day_patterns = self._analyze_day_patterns(data, col, col_data)
-            results['day_patterns'][col] = day_patterns
             
             # Monthly patterns
             month_patterns = self._analyze_month_patterns(data, col, col_data)
-            results['month_patterns'][col] = month_patterns
             
             # Cyclical patterns
             cyclical_patterns = self._analyze_cyclical_patterns(col_data, col)
-            results['cyclical_patterns'][col] = cyclical_patterns
-        
-        # Overall seasonality assessment
-        results['overall_seasonality'] = self._generate_overall_seasonality_assessment(results)
+            
+            # Calculate overall seasonality for this column
+            has_seasonality = (
+                day_patterns.get('has_day_of_week_patterns', False) or
+                month_patterns.get('has_monthly_patterns', False) or
+                cyclical_patterns.get('has_cyclical_patterns', False)
+            )
+            
+            # Calculate overall seasonality strength
+            day_strength = day_patterns.get('pattern_strength', 0)
+            month_strength = month_patterns.get('pattern_strength', 0)
+            cyclical_strength = cyclical_patterns.get('cyclical_strength', 0)
+            overall_strength = max(day_strength, month_strength, cyclical_strength)
+            
+            results[col] = {
+                'has_seasonality': has_seasonality,
+                'overall_seasonality_strength': overall_strength,
+                'day_patterns': day_patterns,
+                'month_patterns': month_patterns,
+                'cyclical_patterns': cyclical_patterns
+            }
         
         return results
     
@@ -160,6 +170,7 @@ class SeasonalityDetection:
                 'pattern_strength': pattern_strength,
                 'strongest_day': strongest_day,
                 'weakest_day': weakest_day,
+                'has_day_of_week_patterns': pattern_strength > 0.1,  # 10% variation threshold
                 'has_significant_pattern': pattern_strength > 0.1,  # 10% variation threshold
                 'interpretation': self._interpret_day_patterns(day_stats, pattern_strength)
             }
@@ -251,6 +262,7 @@ class SeasonalityDetection:
                 'pattern_strength': pattern_strength,
                 'strongest_month': strongest_month,
                 'weakest_month': weakest_month,
+                'has_monthly_patterns': pattern_strength > 0.1,  # 10% variation threshold
                 'has_significant_pattern': pattern_strength > 0.1,  # 10% variation threshold
                 'interpretation': self._interpret_month_patterns(month_stats, pattern_strength)
             }
@@ -330,6 +342,7 @@ class SeasonalityDetection:
                 'cyclical_strength': cyclical_strength,
                 'strongest_cycle': strongest_cycle,
                 'dominant_frequencies': dominant_frequencies,
+                'has_cyclical_patterns': cyclical_strength > 0.3,
                 'has_cyclical_pattern': cyclical_strength > 0.3,
                 'interpretation': self._interpret_cyclical_patterns(cyclical_periods, cyclical_strength)
             }
