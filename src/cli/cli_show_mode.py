@@ -613,7 +613,7 @@ def _search_files(args, search_dirs):
                     is_match = (filename_lower.startswith('csv_') or 'csv_converted' in str(search_dir).lower())
                 else:
                     is_match = filename_lower.startswith(search_prefix.lower() + '_')
-                if is_match and all(keyword in filename_lower for keyword in search_keywords):
+                if is_match and (not search_keywords or all(keyword in filename_lower for keyword in search_keywords)):
                     try:
                         file_size_bytes = item.stat().st_size
                         file_size_mb = file_size_bytes / (1024 * 1024)
