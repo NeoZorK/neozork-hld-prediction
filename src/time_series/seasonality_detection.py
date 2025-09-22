@@ -42,7 +42,13 @@ class SeasonalityDetection:
         Returns:
             Dictionary containing seasonality analysis results
         """
-        results = {}
+        # Initialize result structure
+        results = {
+            'day_patterns': {},
+            'month_patterns': {},
+            'cyclical_patterns': {},
+            'overall_seasonality': {}
+        }
         
         for col in numeric_columns:
             if col not in data.columns:
@@ -72,29 +78,16 @@ class SeasonalityDetection:
             cyclical_patterns = self._analyze_cyclical_patterns(col_data, col)
             time.sleep(0.1)  # Simulate processing time
             
-            # Calculate overall seasonality for this column
-            has_seasonality = (
-                day_patterns.get('has_day_of_week_patterns', False) or
-                month_patterns.get('has_monthly_patterns', False) or
-                cyclical_patterns.get('has_cyclical_patterns', False)
-            )
-            
-            # Calculate overall seasonality strength
-            day_strength = day_patterns.get('pattern_strength', 0)
-            month_strength = month_patterns.get('pattern_strength', 0)
-            cyclical_strength = cyclical_patterns.get('cyclical_strength', 0)
-            overall_strength = max(day_strength, month_strength, cyclical_strength)
-            
-            results[col] = {
-                'has_seasonality': has_seasonality,
-                'overall_seasonality_strength': overall_strength,
-                'day_patterns': day_patterns,
-                'month_patterns': month_patterns,
-                'cyclical_patterns': cyclical_patterns
-            }
+            # Store results by column
+            results['day_patterns'][col] = day_patterns
+            results['month_patterns'][col] = month_patterns
+            results['cyclical_patterns'][col] = cyclical_patterns
             
             # Complete analysis
             progress_tracker.complete_analysis()
+        
+        # Generate overall seasonality assessment
+        results['overall_seasonality'] = self._generate_overall_seasonality_assessment(results)
         
         return results
     
@@ -436,7 +429,7 @@ class SeasonalityDetection:
                 significant_month_patterns += 1
         
         for col in cyclical_patterns:
-            if cyclical_patterns[col].get('has_cyclical_pattern', False):
+            if cyclical_patterns[col].get('has_cyclical_patterns', False):
                 significant_cyclical_patterns += 1
         
         total_patterns = significant_day_patterns + significant_month_patterns + significant_cyclical_patterns

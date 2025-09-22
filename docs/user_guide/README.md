@@ -32,4 +32,4 @@ Welcome to the Pocket Hedge Fund User Guide! This comprehensive guide will help 
 
 - **Guide Version**: 1.0.0
 - **Language**: en
-- **Last Updated**: 2025-09-22T12:57:28.619491
+- **Last Updated**: 2025-09-23T00:32:49.272279
