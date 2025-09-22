@@ -730,13 +730,20 @@ class TimeSeriesAnalyzer:
             indicator = file_info.get("indicator", "unknown")
             timeframe = file_info.get("timeframe", "unknown")
             
-            save_path = f"data/fixed/transformed_by_time/{source}/{format_type}/{symbol}/{indicator}/{timeframe}/"
+            # Map source to proper folder name
+            if source == "Transformed Data":
+                source = "from_transformed_by_stat"
+            
+            # Convert format to lowercase
+            format_type_lower = format_type.lower()
+            
+            save_path = f"data/fixed/transformed_by_time/{source}/{format_type_lower}/{symbol}/{indicator}/{timeframe}/"
             
             # Create directory if it doesn't exist
             os.makedirs(save_path, exist_ok=True)
             
             # Generate filename
-            filename = f"{symbol}_{timeframe}_{indicator}_time_transformed.{format_type}"
+            filename = f"{symbol}_{timeframe}_{indicator}_time_transformed.{format_type_lower}"
             full_path = os.path.join(save_path, filename)
             
             # Save data (convert to lowercase for format_type)
