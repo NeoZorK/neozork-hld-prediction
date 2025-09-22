@@ -190,10 +190,6 @@ class TimeSeriesAnalyzer:
             print("="*80)
             print("📊 Performing stationarity analysis...")
             
-            # Show progress for each column
-            for i, column in enumerate(numeric_columns, 1):
-                self._display_analysis_progress("stationarity", column, i, len(numeric_columns))
-            
             analysis_results['stationarity'] = self.stationarity_analysis.analyze_stationarity(data, numeric_columns)
             
             # Show completion message
@@ -221,10 +217,6 @@ class TimeSeriesAnalyzer:
             print("   • High seasonality: Use seasonal differencing or seasonal models")
             print("="*80)
             print("📈 Performing seasonality detection...")
-            
-            # Show progress for each column
-            for i, column in enumerate(numeric_columns, 1):
-                self._display_analysis_progress("seasonality", column, i, len(numeric_columns))
             
             analysis_results['seasonality'] = self.seasonality_detection.analyze_seasonality(data, numeric_columns)
             
@@ -255,10 +247,6 @@ class TimeSeriesAnalyzer:
             print("="*80)
             print("💰 Performing financial features analysis...")
             
-            # Show progress for each column
-            for i, column in enumerate(numeric_columns, 1):
-                self._display_analysis_progress("financial features", column, i, len(numeric_columns))
-            
             analysis_results['financial'] = self.financial_features.analyze_financial_features(data, numeric_columns)
             
             # Show completion message
@@ -288,10 +276,6 @@ class TimeSeriesAnalyzer:
             print("   • Use improvement scores to select the best transformation")
             print("="*80)
             print("🔄 Performing data transformation analysis...")
-            
-            # Show progress for each column
-            for i, column in enumerate(numeric_columns, 1):
-                self._display_analysis_progress("data transformation", column, i, len(numeric_columns))
             
             # Generate transformation recommendations
             transformations = self._generate_transformation_recommendations(data, numeric_columns, analysis_results)

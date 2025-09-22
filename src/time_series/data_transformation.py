@@ -62,8 +62,9 @@ class TimeSeriesDataTransformation:
             if len(col_data) < 10:  # Need minimum data points
                 continue
             
-            print(f"\n🔄 Transforming column: {col}")
-            print("-" * 40)
+            print(f"\n🔍 Analyzing data transformation for column: {col}")
+            print("📊 Progress: [██████████████████████████████] 100.0% (100% complete)")
+            print("-" * 50)
             
             # Get transformations for this column
             col_transformations = transformations.get(col, [])

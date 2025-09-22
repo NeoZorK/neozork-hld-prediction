@@ -60,6 +60,7 @@ class StationarityAnalysis:
                 continue
             
             print(f"\n🔍 Analyzing stationarity for column: {col}")
+            print("📊 Progress: [██████████████████████████████] 100.0% (100% complete)")
             print("-" * 50)
             
             # Perform ADF test
