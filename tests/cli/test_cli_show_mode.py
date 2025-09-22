@@ -98,7 +98,7 @@ class TestCLIShowMode(unittest.TestCase):
         # Check for help content or data files message
         output_lower = result.stdout.lower()
         self.assertTrue(
-            ("show mode help" in output_lower or 
+            ("=== show mode help ===" in output_lower or 
              "available data files" in output_lower or
              "no data files found" in output_lower or
              "usage:" in output_lower),
