@@ -502,6 +502,16 @@ class TimeSeriesReporter:
                 if best_transform:
                     report.append(f"  Best Transformation: {best_transform}")
                 
+                # Add improvement percentage if available
+                improvement = rec_data.get('improvement_percentage')
+                if improvement is not None:
+                    if improvement > 0:
+                        report.append(f"  📈 Improvement: {self.color_utils.green(f'+{improvement:.1f}%')} better stationarity")
+                    elif improvement < 0:
+                        report.append(f"  📉 Change: {self.color_utils.red(f'{improvement:.1f}%')} (worse stationarity)")
+                    else:
+                        report.append(f"  📊 Change: {self.color_utils.yellow('0.0%')} (no change)")
+                
                 actions = rec_data.get('recommended_actions', [])
                 if actions:
                     report.append("  Recommendations:")
