@@ -66,6 +66,10 @@ class TimeSeriesReporter:
         # Data transformation analysis
         if 'transformation' in analysis_results:
             report_parts.append(self._generate_transformation_report(analysis_results['transformation']))
+            
+            # Add comparison analysis if available
+            if 'comparison_analysis' in analysis_results['transformation']:
+                report_parts.append(self._generate_comparison_report(analysis_results['transformation']['comparison_analysis']))
         
         # Overall assessment
         report_parts.append(self._generate_overall_assessment(analysis_results))
@@ -509,6 +513,127 @@ class TimeSeriesReporter:
                     report.append("  Warnings:")
                     for warning in warnings:
                         report.append(f"    ⚠️ {warning}")
+        
+        report.append("")
+        return "\n".join(report)
+    
+    def _generate_comparison_report(self, comparison_results: Dict[str, Any]) -> str:
+        """Generate comparison report for before/after transformation."""
+        report = []
+        report.append(self.color_utils.bold("📊 TRANSFORMATION COMPARISON ANALYSIS"))
+        report.append("=" * 50)
+        
+        # Stationarity improvements
+        if 'stationarity_improvements' in comparison_results:
+            report.append(self.color_utils.blue("🔍 Stationarity Improvements"))
+            report.append("-" * 35)
+            
+            improved_count = 0
+            total_count = len(comparison_results['stationarity_improvements'])
+            
+            for col, data in comparison_results['stationarity_improvements'].items():
+                original = data.get('original', False)
+                transformed = data.get('transformed', False)
+                improvement = data.get('improvement', 'No change')
+                
+                if improvement == 'Improved':
+                    improved_count += 1
+                    status_icon = "✅"
+                elif improvement == 'Worsened':
+                    status_icon = "❌"
+                else:
+                    status_icon = "➖"
+                
+                report.append(f"  {status_icon} {col}: {original} → {transformed} ({improvement})")
+            
+            improvement_rate = (improved_count / total_count * 100) if total_count > 0 else 0
+            report.append(f"\n  📈 Stationarity Improvement Rate: {improvement_rate:.1f}% ({improved_count}/{total_count})")
+        
+        # Seasonality improvements
+        if 'seasonality_improvements' in comparison_results:
+            report.append(f"\n{self.color_utils.blue('📈 Seasonality Improvements')}")
+            report.append("-" * 35)
+            
+            reduced_count = 0
+            total_count = len(comparison_results['seasonality_improvements'])
+            
+            for col, data in comparison_results['seasonality_improvements'].items():
+                original = data.get('original', False)
+                transformed = data.get('transformed', False)
+                improvement = data.get('improvement', 'No change')
+                
+                if improvement == 'Reduced':
+                    reduced_count += 1
+                    status_icon = "✅"
+                elif improvement == 'Increased':
+                    status_icon = "❌"
+                else:
+                    status_icon = "➖"
+                
+                report.append(f"  {status_icon} {col}: {original} → {transformed} ({improvement})")
+            
+            reduction_rate = (reduced_count / total_count * 100) if total_count > 0 else 0
+            report.append(f"\n  📉 Seasonality Reduction Rate: {reduction_rate:.1f}% ({reduced_count}/{total_count})")
+        
+        # Financial improvements
+        if 'financial_improvements' in comparison_results:
+            report.append(f"\n{self.color_utils.blue('💰 Volatility Improvements')}")
+            report.append("-" * 35)
+            
+            reduced_count = 0
+            total_count = len(comparison_results['financial_improvements'])
+            
+            for col, data in comparison_results['financial_improvements'].items():
+                original_vol = data.get('original_volatility', 'unknown')
+                transformed_vol = data.get('transformed_volatility', 'unknown')
+                improvement = data.get('improvement', 'No change')
+                
+                if improvement == 'Reduced':
+                    reduced_count += 1
+                    status_icon = "✅"
+                elif improvement == 'Increased':
+                    status_icon = "❌"
+                else:
+                    status_icon = "➖"
+                
+                report.append(f"  {status_icon} {col}: {original_vol} → {transformed_vol} ({improvement})")
+            
+            reduction_rate = (reduced_count / total_count * 100) if total_count > 0 else 0
+            report.append(f"\n  📉 Volatility Reduction Rate: {reduction_rate:.1f}% ({reduced_count}/{total_count})")
+        
+        # Overall assessment
+        if 'overall_assessment' in comparison_results:
+            overall = comparison_results['overall_assessment']
+            report.append(f"\n{self.color_utils.blue('📊 Overall Transformation Assessment')}")
+            report.append("-" * 45)
+            
+            total_columns = overall.get('total_columns', 0)
+            stationarity_improved = overall.get('stationarity_improved', 0)
+            seasonality_reduced = overall.get('seasonality_reduced', 0)
+            volatility_reduced = overall.get('volatility_reduced', 0)
+            overall_improvement_rate = overall.get('overall_improvement_rate', 0)
+            
+            report.append(f"Total Columns Analyzed: {total_columns}")
+            report.append(f"Stationarity Improved: {stationarity_improved}")
+            report.append(f"Seasonality Reduced: {seasonality_reduced}")
+            report.append(f"Volatility Reduced: {volatility_reduced}")
+            report.append(f"Overall Improvement Rate: {overall_improvement_rate:.1%}")
+            
+            # Interpretation
+            if overall_improvement_rate > 0.5:
+                interpretation = "Excellent transformation results - significant improvements achieved"
+                color = self.color_utils.green
+            elif overall_improvement_rate > 0.3:
+                interpretation = "Good transformation results - moderate improvements achieved"
+                color = self.color_utils.yellow
+            elif overall_improvement_rate > 0.1:
+                interpretation = "Fair transformation results - some improvements achieved"
+                color = self.color_utils.yellow
+            else:
+                interpretation = "Limited transformation results - minimal improvements achieved"
+                color = self.color_utils.red
+            
+            report.append(f"\nInterpretation: {color(interpretation)}")
         
         report.append("")
         return "\n".join(report)
