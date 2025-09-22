@@ -293,13 +293,17 @@ class ColumnProgressTracker:
         
         # Calculate ETA
         eta_text = ""
-        if current > 0:
+        if current > 0 and current < self.total_steps:
             elapsed_time = time.time() - self.start_time
             avg_time_per_step = elapsed_time / current
             remaining_steps = self.total_steps - current
             eta_seconds = remaining_steps * avg_time_per_step
             eta = datetime.now() + timedelta(seconds=eta_seconds)
             eta_text = f" | ETA: {eta.strftime('%H:%M:%S')}"
+        elif current >= self.total_steps:
+            # Show completion time instead of ETA when done
+            elapsed_time = time.time() - self.start_time
+            eta_text = f" | Completed in {elapsed_time:.2f}s"
         
         # Display progress (update same line)
         step_info = f" ({step_name})" if step_name else ""

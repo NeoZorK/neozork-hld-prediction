@@ -673,6 +673,25 @@ class TimeSeriesReporter:
         assessment.append(f"• Memory usage optimized with garbage collection")
         assessment.append(f"• Large datasets automatically sampled for efficiency")
         
+        # Transformation improvement summary
+        if 'transformation' in analysis_results and 'recommendations' in analysis_results['transformation']:
+            improvements = []
+            for col, rec_data in analysis_results['transformation']['recommendations'].items():
+                improvement = rec_data.get('improvement_percentage', 0)
+                if improvement is not None:
+                    improvements.append(improvement)
+            
+            if improvements:
+                avg_improvement = sum(improvements) / len(improvements)
+                max_improvement = max(improvements)
+                min_improvement = min(improvements)
+                
+                assessment.append(f"\n📈 Transformation Improvement Summary:")
+                assessment.append(f"• Average improvement: {self.color_utils.green(f'{avg_improvement:.1f}%')} better stationarity")
+                assessment.append(f"• Best improvement: {self.color_utils.green(f'{max_improvement:.1f}%')} (highest potential)")
+                assessment.append(f"• Minimum improvement: {self.color_utils.yellow(f'{min_improvement:.1f}%')} (baseline)")
+                assessment.append(f"• Columns analyzed: {len(improvements)} columns")
+        
         # Recommendations
         assessment.append("\nKey Recommendations:")
         assessment.append("• Use cleaned data from data/fixed/ folder for best results")
