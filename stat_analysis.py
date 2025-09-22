@@ -59,16 +59,16 @@ import pandas as pd
 # Add src to path for imports
 sys.path.append(str(Path(__file__).parent / "src"))
 
-from src.statistics.file_operations import StatisticsFileOperations
-from src.statistics.descriptive_stats import DescriptiveStatistics
-from src.statistics.distribution_analysis import DistributionAnalysis
-from src.statistics.data_transformation import DataTransformation
-from src.statistics.enhanced_data_transformation import EnhancedDataTransformation
-from src.statistics.balanced_transformations import BalancedTransformation
-from src.statistics.advanced_transformations import AdvancedTransformations
-from src.statistics.cli_interface import StatisticsCLI
-from src.statistics.reporting import StatisticsReporter
-from src.statistics.color_utils import ColorUtils
+from src.stats.file_operations import StatisticsFileOperations
+from src.stats.descriptive_stats import DescriptiveStatistics
+from src.stats.distribution_analysis import DistributionAnalysis
+from src.stats.data_transformation import DataTransformation
+from src.stats.enhanced_data_transformation import EnhancedDataTransformation
+from src.stats.balanced_transformations import BalancedTransformation
+from src.stats.advanced_transformations import AdvancedTransformations
+from src.stats.cli_interface import StatisticsCLI
+from src.stats.reporting import StatisticsReporter
+from src.stats.color_utils import ColorUtils
 
 
 class StatisticalAnalyzer:
