@@ -403,16 +403,36 @@ class TimeSeriesDataTransformation:
             trans_skew = abs(transformed.skew())
             trans_kurt = abs(transformed.kurtosis())
             
-            # Calculate improvements
-            skew_improvement = max(0, (orig_skew - trans_skew) / orig_skew) if orig_skew > 0 else 0
-            kurt_improvement = max(0, (orig_kurt - trans_kurt) / orig_kurt) if orig_kurt > 0 else 0
+            # Calculate variance reduction (good for stationarity)
+            orig_var = original.var()
+            trans_var = transformed.var()
+            var_reduction = 0
+            if orig_var > 0:
+                var_reduction = max(0, (orig_var - trans_var) / orig_var)
+            
+            # Calculate range reduction (good for normalization)
+            orig_range = original.max() - original.min()
+            trans_range = transformed.max() - transformed.min()
+            range_reduction = 0
+            if orig_range > 0:
+                range_reduction = max(0, (orig_range - trans_range) / orig_range)
+            
+            # Calculate improvements based on skewness and kurtosis
+            skew_improvement = 0
+            kurt_improvement = 0
+            
+            if orig_skew > 0.1:  # Only if original data has significant skewness
+                skew_improvement = max(0, (orig_skew - trans_skew) / orig_skew)
+            
+            if orig_kurt > 0.1:  # Only if original data has significant kurtosis
+                kurt_improvement = max(0, (orig_kurt - trans_kurt) / orig_kurt)
             
             # Penalize if things get worse
             skew_penalty = max(0, (trans_skew - orig_skew) * 2) if trans_skew > orig_skew else 0
             kurt_penalty = max(0, (trans_kurt - orig_kurt) * 2) if trans_kurt > orig_kurt else 0
             
-            # Calculate final score
-            score = (skew_improvement + kurt_improvement) - (skew_penalty + kurt_penalty)
+            # Calculate final score with multiple metrics
+            score = (skew_improvement + kurt_improvement + var_reduction + range_reduction) - (skew_penalty + kurt_penalty)
             return max(0, min(score, 1))  # Clamp between 0 and 1
         except:
             return 0
