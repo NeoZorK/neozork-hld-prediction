@@ -952,4 +952,4 @@ class ReturnsAnalysis:
         except Exception as e:
             summary_parts.append(f"Error generating summary: {str(e)}")
         
-        return " | ".join(summary_parts) if summary_parts else "No returns analysis results available"
+        return "\n".join(summary_parts) if summary_parts else "No returns analysis results available"
