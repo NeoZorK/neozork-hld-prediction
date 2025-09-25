@@ -365,7 +365,7 @@ def perform_financial_analysis(data, file_metadata: Dict[str, Any],
             
             # Display OHLCV summary
             ohlcv_summary = ohlcv_analyzer.get_analysis_summary(ohlcv_results)
-            print(ColorUtils.info(f"OHLCV Analysis Summary: {ohlcv_summary}"))
+            print(ColorUtils.info(f"OHLCV Analysis Summary: {ohlcv_summary.replace(chr(10), ' | ')}"))
         
         # Volatility Analysis
         if analysis_options.get('volatility', False):
@@ -376,7 +376,7 @@ def perform_financial_analysis(data, file_metadata: Dict[str, Any],
             
             # Display volatility summary
             volatility_summary = volatility_analyzer.get_analysis_summary(volatility_results)
-            print(ColorUtils.info(f"Volatility Analysis Summary: {volatility_summary}"))
+            print(ColorUtils.info(f"Volatility Analysis Summary: {volatility_summary.replace(chr(10), ' | ')}"))
         
         # Returns Analysis
         if analysis_options.get('returns', False):
@@ -387,7 +387,7 @@ def perform_financial_analysis(data, file_metadata: Dict[str, Any],
             
             # Display returns summary
             returns_summary = returns_analyzer.get_analysis_summary(returns_results)
-            print(ColorUtils.info(f"Returns Analysis Summary: {returns_summary}"))
+            print(ColorUtils.info(f"Returns Analysis Summary: {returns_summary.replace(chr(10), ' | ')}"))
         
         # Drawdown Analysis
         if analysis_options.get('drawdown', False):
@@ -398,7 +398,7 @@ def perform_financial_analysis(data, file_metadata: Dict[str, Any],
             
             # Display drawdown summary
             drawdown_summary = drawdown_analyzer.get_analysis_summary(drawdown_results)
-            print(ColorUtils.info(f"Drawdown Analysis Summary: {drawdown_summary}"))
+            print(ColorUtils.info(f"Drawdown Analysis Summary: {drawdown_summary.replace(chr(10), ' | ')}"))
         
         # Generate comprehensive report
         print(ColorUtils.analysis("Generating Comprehensive Report..."))
