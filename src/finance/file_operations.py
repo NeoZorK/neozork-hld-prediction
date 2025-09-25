@@ -139,6 +139,9 @@ class FinanceFileOperations:
             # Determine source from directory
             source = self._determine_source(directory)
             
+            # Determine folder source from file path
+            folder_source = self._determine_folder_source(file_path)
+            
             # Load data to get dimensions
             data = self.load_data(file_path, format_type)
             if data is not None:
@@ -161,7 +164,8 @@ class FinanceFileOperations:
                 "timeframe": timeframe,
                 "source": source,
                 "indicator": indicator,
-                "folder_source": directory,
+                "folder_source": folder_source,
+                "folder_path": directory,
                 "rows_count": rows_count,
                 "columns_count": columns_count,
                 "start_date": start_date,
@@ -236,8 +240,6 @@ class FinanceFileOperations:
             return 'YFinance'
         elif 'csexport' in directory_lower:
             return 'CSVExport'
-        elif 'fixed' in directory_lower:
-            return 'Fixed'
         elif 'indicators' in directory_lower:
             return 'Indicators'
         elif 'cache' in directory_lower:
@@ -246,8 +248,40 @@ class FinanceFileOperations:
             return 'Raw Parquet'
         elif 'cleaned_data' in directory_lower:
             return 'Cleaned Data'
+        elif 'fixed' in directory_lower:
+            return 'Fixed'
         else:
             return 'Custom'
+    
+    def _determine_folder_source(self, file_path: str) -> str:
+        """
+        Determine folder source from file path to track data transformation hierarchy.
+        
+        Args:
+            file_path: Full path to the file
+            
+        Returns:
+            Folder source name indicating transformation stage
+        """
+        path_lower = file_path.lower()
+        
+        # Check for transformation hierarchy (in order of processing)
+        if 'transformed_by_time' in path_lower:
+            return 'transformed_by_time'
+        elif 'from_transformed_by_stat' in path_lower:
+            return 'from_transformed_by_stat'
+        elif 'transformed_by_stat' in path_lower:
+            return 'transformed_by_stat'
+        elif 'raw_parquet' in path_lower:
+            return 'raw_parquet'
+        elif 'fixed' in path_lower:
+            return 'fixed'
+        elif 'indicators' in path_lower:
+            return 'indicators'
+        elif 'cache' in path_lower:
+            return 'cache'
+        else:
+            return 'custom'
     
     def _get_date_range(self, data: pd.DataFrame) -> tuple:
         """
