@@ -259,7 +259,15 @@ class StatisticalAnalyzer:
         """Prepare transformation dictionary from recommendations."""
         transformations = {}
         
+        # Define OHLC columns that should be protected from financial transformations
+        ohlc_columns = {'Open', 'High', 'Low', 'Close'}
+        
         for col, rec in recommendations.items():
+            # Skip OHLC columns - they should not be transformed to preserve price relationships
+            if col in ohlc_columns:
+                print(f"  🛡️  Protecting OHLC column '{col}' from transformations to preserve price relationships")
+                continue
+                
             if rec.get('primary_recommendation') != "No transformation needed":
                 # Get all recommended transformations to test multiple options
                 recommended_transformations = rec.get('recommended_transformations', [])
@@ -271,10 +279,10 @@ class StatisticalAnalyzer:
                 # if they have data quality issues - include yeo_johnson for mixed data
                 transformations[col] = ['log', 'sqrt', 'box_cox', 'yeo_johnson']
         
-        # Add Yeo-Johnson for columns with negative values
+        # Add Yeo-Johnson for columns with negative values (but not OHLC)
         if data is not None:
             for col in transformations:
-                if col in data.columns:
+                if col in data.columns and col not in ohlc_columns:
                     col_data = data[col].dropna()
                     if len(col_data) > 0 and (col_data < 0).any():
                         if 'yeo_johnson' not in transformations[col]:
@@ -287,7 +295,14 @@ class StatisticalAnalyzer:
         """Select the best transformation for each column using balanced methods."""
         optimal_transformations = {}
         
+        # Define OHLC columns that should be protected from financial transformations
+        ohlc_columns = {'Open', 'High', 'Low', 'Close'}
+        
         for col in numeric_columns:
+            # Skip OHLC columns - they should not be transformed to preserve price relationships
+            if col in ohlc_columns:
+                print(f"  🛡️  Protecting OHLC column '{col}' from transformations to preserve price relationships")
+                continue
             if col not in transformations or not transformations[col]:
                 continue
             
@@ -409,7 +424,14 @@ class StatisticalAnalyzer:
         transformed_data = data.copy()
         transformation_details = {}
         
+        # Define OHLC columns that should be protected from financial transformations
+        ohlc_columns = {'Open', 'High', 'Low', 'Close'}
+        
         for col in numeric_columns:
+            # Skip OHLC columns - they should not be transformed to preserve price relationships
+            if col in ohlc_columns:
+                print(f"  🛡️  Protecting OHLC column '{col}' from transformations to preserve price relationships")
+                continue
             if col not in transformations or not transformations[col]:
                 continue
             
@@ -500,11 +522,84 @@ class StatisticalAnalyzer:
                 if col_comparison:
                     comparison[col] = col_comparison
         
+        # Validate OHLC relationships after transformation
+        self._validate_ohlc_relationships(transformed_data)
+        
         return {
             'transformed_data': transformed_data,
             'transformation_details': transformation_details,
             'comparison': comparison
         }
+    
+    def _validate_ohlc_relationships(self, data: pd.DataFrame) -> None:
+        """Validate OHLC relationships after transformation."""
+        ohlc_columns = ['Open', 'High', 'Low', 'Close']
+        
+        # Check if all OHLC columns exist
+        missing_ohlc = [col for col in ohlc_columns if col not in data.columns]
+        if missing_ohlc:
+            print(f"  ⚠️  Missing OHLC columns: {missing_ohlc}")
+            return
+        
+        # Check for valid OHLC relationships
+        valid_rows = 0
+        total_rows = len(data)
+        violations = {
+            'High < Close': 0,
+            'Low > Open': 0,
+            'High < Low': 0,
+            'Negative prices': 0,
+            'Zero prices': 0,
+            'Missing values': 0
+        }
+        
+        for idx, row in data.iterrows():
+            open_val = row['Open']
+            high_val = row['High']
+            low_val = row['Low']
+            close_val = row['Close']
+            
+            # Check for missing values
+            if pd.isna(open_val) or pd.isna(high_val) or pd.isna(low_val) or pd.isna(close_val):
+                violations['Missing values'] += 1
+                continue
+            
+            # Check for negative or zero prices
+            if open_val <= 0 or high_val <= 0 or low_val <= 0 or close_val <= 0:
+                if open_val < 0 or high_val < 0 or low_val < 0 or close_val < 0:
+                    violations['Negative prices'] += 1
+                if open_val == 0 or high_val == 0 or low_val == 0 or close_val == 0:
+                    violations['Zero prices'] += 1
+                continue
+            
+            # Check OHLC relationships
+            if high_val < close_val:
+                violations['High < Close'] += 1
+            if low_val > open_val:
+                violations['Low > Open'] += 1
+            if high_val < low_val:
+                violations['High < Low'] += 1
+            
+            # If all relationships are valid, count as valid row
+            if (high_val >= close_val and low_val <= open_val and high_val >= low_val and 
+                open_val > 0 and high_val > 0 and low_val > 0 and close_val > 0):
+                valid_rows += 1
+        
+        # Report validation results
+        valid_percentage = (valid_rows / total_rows) * 100 if total_rows > 0 else 0
+        
+        print(f"\n  🔍 OHLC VALIDATION RESULTS:")
+        print(f"    • Valid OHLC relationships: {valid_percentage:.1f}% ({valid_rows}/{total_rows})")
+        
+        if valid_percentage < 100:
+            print(f"    • Violations detected:")
+            for violation, count in violations.items():
+                if count > 0:
+                    print(f"      - {violation}: {count} occurrences")
+            
+            if valid_percentage < 50:
+                print(f"    ⚠️  WARNING: OHLC relationships severely compromised!")
+                print(f"    💡 Recommendation: Review transformation logic for OHLC columns")
     
     def _explain_transformation_failure(self, col_name: str, col_data: pd.Series, available_transformations: List[str]) -> None:
         """Explain why transformations failed for a specific column."""
