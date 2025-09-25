@@ -439,45 +439,97 @@ class OHLCVAnalysis:
     
     def get_analysis_summary(self, results: Dict[str, Any]) -> str:
         """
-        Get a summary of OHLCV analysis results.
+        Get a detailed summary of OHLCV analysis results with interpretations.
         
         Args:
             results: OHLCV analysis results
             
         Returns:
-            Summary string
+            Detailed summary string with interpretations
         """
         summary_parts = []
         
         try:
-            # Price validation summary
+            # Price validation summary with interpretation
             if 'price_validation' in results:
                 pv = results['price_validation']
                 if 'ohlc_validation' in pv:
                     ohlc = pv['ohlc_validation']
                     valid_pct = (ohlc.get('valid_rows', 0) / ohlc.get('total_rows', 1)) * 100
-                    summary_parts.append(f"Price Validation: {valid_pct:.1f}% valid rows")
+                    
+                    # Interpret price validation results
+                    if valid_pct >= 95:
+                        price_status = "✅ Excellent"
+                    elif valid_pct >= 80:
+                        price_status = "⚠️ Good"
+                    elif valid_pct >= 50:
+                        price_status = "🔶 Fair"
+                    else:
+                        price_status = "❌ Poor"
+                    
+                    summary_parts.append(f"Price Validation: {valid_pct:.1f}% valid rows {price_status}")
             
-            # Volume analysis summary
+            # Volume analysis summary with interpretation
             if 'volume_analysis' in results:
                 va = results['volume_analysis']
                 if 'volume_patterns' in va:
                     vp = va['volume_patterns']
                     zero_vol_pct = vp.get('zero_volume_percentage', 0)
-                    summary_parts.append(f"Volume Analysis: {zero_vol_pct:.1f}% zero volumes")
+                    
+                    # Interpret volume analysis results
+                    if zero_vol_pct == 0:
+                        volume_status = "✅ Perfect"
+                    elif zero_vol_pct <= 5:
+                        volume_status = "✅ Good"
+                    elif zero_vol_pct <= 15:
+                        volume_status = "⚠️ Acceptable"
+                    else:
+                        volume_status = "❌ Problematic"
+                    
+                    summary_parts.append(f"Volume Analysis: {zero_vol_pct:.1f}% zero volumes {volume_status}")
             
-            # Data quality summary
+            # Data quality summary with interpretation
             if 'data_quality_assessment' in results:
                 dq = results['data_quality_assessment']
                 completeness = dq.get('completeness_score', 0)
-                summary_parts.append(f"Data Quality: {completeness:.1f}% completeness")
+                
+                # Interpret data quality results
+                if completeness >= 99:
+                    quality_status = "✅ Excellent"
+                elif completeness >= 95:
+                    quality_status = "✅ Very Good"
+                elif completeness >= 90:
+                    quality_status = "⚠️ Good"
+                elif completeness >= 80:
+                    quality_status = "🔶 Fair"
+                else:
+                    quality_status = "❌ Poor"
+                
+                summary_parts.append(f"Data Quality: {completeness:.1f}% completeness {quality_status}")
             
-            # Price-volume relationships summary
+            # Price-volume relationships summary with interpretation
             if 'price_volume_relationships' in results:
                 pvr = results['price_volume_relationships']
                 if 'correlation_analysis' in pvr:
                     corr = pvr['correlation_analysis'].get('price_volume_correlation', 0)
-                    summary_parts.append(f"Price-Volume Correlation: {corr:.3f}")
+                    
+                    # Interpret correlation results
+                    abs_corr = abs(corr)
+                    if abs_corr >= 0.7:
+                        corr_strength = "Strong"
+                        corr_status = "✅" if corr > 0 else "⚠️"
+                    elif abs_corr >= 0.3:
+                        corr_strength = "Moderate"
+                        corr_status = "✅" if corr > 0 else "⚠️"
+                    elif abs_corr >= 0.1:
+                        corr_strength = "Weak"
+                        corr_status = "🔶"
+                    else:
+                        corr_strength = "Negligible"
+                        corr_status = "🔶"
+                    
+                    direction = "positive" if corr > 0 else "negative" if corr < 0 else "neutral"
+                    summary_parts.append(f"Price-Volume Correlation: {corr:.3f} ({corr_strength} {direction}) {corr_status}")
             
         except Exception as e:
             summary_parts.append(f"Error generating summary: {str(e)}")
