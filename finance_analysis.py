@@ -189,13 +189,18 @@ def process_batch_directory(file_ops: FinanceFileOperations, directory: str,
                     failed_files += 1
                     continue
                 
-                # Create file metadata
+                # Create file metadata with proper parsing
+                file_ops_temp = FinanceFileOperations()
+                symbol, timeframe, indicator = file_ops_temp._parse_filename(filename)
+                source = file_ops_temp._determine_source(directory)
+                
                 file_metadata = {
                     'file_path': file_path,
                     'format': format_type,
-                    'symbol': 'Unknown',
-                    'timeframe': 'Unknown',
-                    'source': 'Batch'
+                    'symbol': symbol,
+                    'timeframe': timeframe,
+                    'source': source,
+                    'indicator': indicator
                 }
                 
                 # Perform analysis
@@ -292,12 +297,18 @@ def process_custom_path(file_ops: FinanceFileOperations, path: str,
                 print(ColorUtils.error(f"Failed to load data from {path}"))
                 return False
             
+            # Parse metadata from filename and path
+            file_ops_temp = FinanceFileOperations()
+            symbol, timeframe, indicator = file_ops_temp._parse_filename(filename)
+            source = file_ops_temp._determine_source(os.path.dirname(path))
+            
             file_metadata = {
                 'file_path': path,
                 'format': format_type,
-                'symbol': 'Unknown',
-                'timeframe': 'Unknown',
-                'source': 'Custom'
+                'symbol': symbol,
+                'timeframe': timeframe,
+                'source': source,
+                'indicator': indicator
             }
             
             return perform_financial_analysis(
