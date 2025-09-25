@@ -240,7 +240,8 @@ def process_all_directories(file_ops: FinanceFileOperations,
         print(ColorUtils.info(f"Processing all supported directories: {supported_dirs}"))
         
         # Initialize batch progress tracker
-        progress_tracker = FinanceProgressTracker(len(supported_dirs), verbose=True)
+        from src.finance.progress_tracker import BatchProgressTracker
+        progress_tracker = BatchProgressTracker(len(supported_dirs), verbose=True)
         progress_tracker.start_batch()
         
         successful_dirs = 0
@@ -365,7 +366,10 @@ def perform_financial_analysis(data, file_metadata: Dict[str, Any],
             
             # Display OHLCV summary
             ohlcv_summary = ohlcv_analyzer.get_analysis_summary(ohlcv_results)
-            print(ColorUtils.info(f"OHLCV Analysis Summary: {ohlcv_summary.replace(chr(10), ' | ')}"))
+            print(ColorUtils.info("OHLCV Analysis Summary:"))
+            for line in ohlcv_summary.split('\n'):
+                if line.strip():
+                    print(ColorUtils.info(f"  {line}"))
         
         # Volatility Analysis
         if analysis_options.get('volatility', False):
@@ -376,7 +380,10 @@ def perform_financial_analysis(data, file_metadata: Dict[str, Any],
             
             # Display volatility summary
             volatility_summary = volatility_analyzer.get_analysis_summary(volatility_results)
-            print(ColorUtils.info(f"Volatility Analysis Summary: {volatility_summary.replace(chr(10), ' | ')}"))
+            print(ColorUtils.info("Volatility Analysis Summary:"))
+            for line in volatility_summary.split('\n'):
+                if line.strip():
+                    print(ColorUtils.info(f"  {line}"))
         
         # Returns Analysis
         if analysis_options.get('returns', False):
@@ -387,7 +394,10 @@ def perform_financial_analysis(data, file_metadata: Dict[str, Any],
             
             # Display returns summary
             returns_summary = returns_analyzer.get_analysis_summary(returns_results)
-            print(ColorUtils.info(f"Returns Analysis Summary: {returns_summary.replace(chr(10), ' | ')}"))
+            print(ColorUtils.info("Returns Analysis Summary:"))
+            for line in returns_summary.split('\n'):
+                if line.strip():
+                    print(ColorUtils.info(f"  {line}"))
         
         # Drawdown Analysis
         if analysis_options.get('drawdown', False):
@@ -398,7 +408,10 @@ def perform_financial_analysis(data, file_metadata: Dict[str, Any],
             
             # Display drawdown summary
             drawdown_summary = drawdown_analyzer.get_analysis_summary(drawdown_results)
-            print(ColorUtils.info(f"Drawdown Analysis Summary: {drawdown_summary.replace(chr(10), ' | ')}"))
+            print(ColorUtils.info("Drawdown Analysis Summary:"))
+            for line in drawdown_summary.split('\n'):
+                if line.strip():
+                    print(ColorUtils.info(f"  {line}"))
         
         # Generate comprehensive report
         print(ColorUtils.analysis("Generating Comprehensive Report..."))
