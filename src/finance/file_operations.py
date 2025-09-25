@@ -186,24 +186,28 @@ class FinanceFileOperations:
         # Remove file extension
         name = filename.split('.')[0]
         
-        # Common symbols
-        symbols = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'EURUSD', 'GBPUSD', 'XAUUSD', 'US500', 'AAPL', 'GOOG', 'TSLA']
+        # Common symbols (expanded list)
+        symbols = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'EURUSD', 'GBPUSD', 'XAUUSD', 'US500', 'AAPL', 'GOOG', 'TSLA', 'BTCUSD', 'ETHUSD']
         symbol = "Unknown"
         for s in symbols:
             if s in name.upper():
                 symbol = s
                 break
         
-        # Common timeframes
-        timeframes = ['M1', 'M5', 'M15', 'H1', 'H4', 'D1', 'W1', 'MN1']
+        # Common timeframes (expanded list)
+        timeframes = ['M1', 'M5', 'M15', 'H1', 'H4', 'D1', 'W1', 'MN1', 'PERIOD_MN1', 'PERIOD_D1', 'PERIOD_H1', 'PERIOD_H4', 'PERIOD_M15', 'PERIOD_M5', 'PERIOD_M1', 'PERIOD_W1']
         timeframe = "Unknown"
         for t in timeframes:
             if t in name.upper():
-                timeframe = t
+                # Clean up timeframe format
+                if t.startswith('PERIOD_'):
+                    timeframe = t.replace('PERIOD_', '')
+                else:
+                    timeframe = t
                 break
         
-        # Common indicators
-        indicators = ['Wave', 'RSI', 'MACD', 'BB', 'SMA', 'EMA', 'Stochastic', 'ADX', 'CCI', 'Williams', 'ATR', 'OBV']
+        # Common indicators (expanded list)
+        indicators = ['Wave', 'RSI', 'MACD', 'BB', 'SMA', 'EMA', 'Stochastic', 'ADX', 'CCI', 'Williams', 'ATR', 'OBV', 'PressureVector', 'SupportResistants']
         indicator = "Unknown"
         for i in indicators:
             if i in name:
@@ -222,18 +226,28 @@ class FinanceFileOperations:
         Returns:
             Source name
         """
-        if 'binance' in directory.lower():
+        directory_lower = directory.lower()
+        
+        if 'binance' in directory_lower:
             return 'Binance'
-        elif 'polygon' in directory.lower():
+        elif 'polygon' in directory_lower:
             return 'Polygon'
-        elif 'yfinance' in directory.lower():
+        elif 'yfinance' in directory_lower:
             return 'YFinance'
-        elif 'csexport' in directory.lower():
+        elif 'csexport' in directory_lower:
             return 'CSVExport'
-        elif 'fixed' in directory.lower():
+        elif 'fixed' in directory_lower:
             return 'Fixed'
+        elif 'indicators' in directory_lower:
+            return 'Indicators'
+        elif 'cache' in directory_lower:
+            return 'Cache'
+        elif 'raw_parquet' in directory_lower:
+            return 'Raw Parquet'
+        elif 'cleaned_data' in directory_lower:
+            return 'Cleaned Data'
         else:
-            return 'Unknown'
+            return 'Custom'
     
     def _get_date_range(self, data: pd.DataFrame) -> tuple:
         """

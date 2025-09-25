@@ -88,6 +88,12 @@ class FinanceReporter:
         header_parts.append(f"📊 Symbol: {file_metadata.get('symbol', 'Unknown')}")
         header_parts.append(f"⏰ Timeframe: {file_metadata.get('timeframe', 'Unknown')}")
         header_parts.append(f"📈 Source: {file_metadata.get('source', 'Unknown')}")
+        
+        # Add indicator if available
+        indicator = file_metadata.get('indicator', 'Unknown')
+        if indicator != 'Unknown':
+            header_parts.append(f"📊 Indicator: {indicator}")
+        
         header_parts.append(f"📊 Analysis Types: {', '.join(analysis_types)}")
         header_parts.append("=" * 80)
         
