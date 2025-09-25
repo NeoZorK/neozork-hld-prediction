@@ -184,8 +184,10 @@ class VolumeAnalyzer:
             down_days = price_changes < 0
             
             if up_days.sum() > 0 and down_days.sum() > 0:
-                up_day_volume = volume_data[up_days].mean()
-                down_day_volume = volume_data[down_days].mean()
+                # Align volume data with price changes by using the same index
+                aligned_volume = volume_data.loc[price_changes.index]
+                up_day_volume = aligned_volume[up_days].mean()
+                down_day_volume = aligned_volume[down_days].mean()
                 
                 results['volume_price_trends'] = {
                     'up_day_volume': float(up_day_volume),
