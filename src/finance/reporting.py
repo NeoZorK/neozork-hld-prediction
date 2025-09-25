@@ -89,6 +89,23 @@ class FinanceReporter:
         header_parts.append(f"⏰ Timeframe: {file_metadata.get('timeframe', 'Unknown')}")
         header_parts.append(f"📈 Source: {file_metadata.get('source', 'Unknown')}")
         
+        # Add folder source to show data transformation hierarchy
+        folder_source = file_metadata.get('folder_source', 'Unknown')
+        if folder_source != 'Unknown':
+            # Map folder source to human-readable names
+            folder_source_names = {
+                'raw_parquet': 'Raw Data (1st stage)',
+                'transformed_by_stat': 'Statistical Transform (2nd stage)', 
+                'from_transformed_by_stat': 'From Statistical Transform (2nd stage)',
+                'transformed_by_time': 'Time Transform (3rd stage)',
+                'fixed': 'Fixed Data',
+                'indicators': 'Indicators',
+                'cache': 'Cache',
+                'custom': 'Custom'
+            }
+            readable_folder_source = folder_source_names.get(folder_source, folder_source)
+            header_parts.append(f"📂 Folder Source: {readable_folder_source}")
+        
         # Add indicator if available
         indicator = file_metadata.get('indicator', 'Unknown')
         if indicator != 'Unknown':

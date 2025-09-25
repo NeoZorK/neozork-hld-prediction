@@ -193,6 +193,7 @@ def process_batch_directory(file_ops: FinanceFileOperations, directory: str,
                 file_ops_temp = FinanceFileOperations()
                 symbol, timeframe, indicator = file_ops_temp._parse_filename(filename)
                 source = file_ops_temp._determine_source(directory)
+                folder_source = file_ops_temp._determine_folder_source(file_path)
                 
                 file_metadata = {
                     'file_path': file_path,
@@ -200,7 +201,9 @@ def process_batch_directory(file_ops: FinanceFileOperations, directory: str,
                     'symbol': symbol,
                     'timeframe': timeframe,
                     'source': source,
-                    'indicator': indicator
+                    'indicator': indicator,
+                    'folder_source': folder_source,
+                    'folder_path': directory
                 }
                 
                 # Perform analysis
@@ -301,6 +304,7 @@ def process_custom_path(file_ops: FinanceFileOperations, path: str,
             file_ops_temp = FinanceFileOperations()
             symbol, timeframe, indicator = file_ops_temp._parse_filename(filename)
             source = file_ops_temp._determine_source(os.path.dirname(path))
+            folder_source = file_ops_temp._determine_folder_source(path)
             
             file_metadata = {
                 'file_path': path,
@@ -308,7 +312,9 @@ def process_custom_path(file_ops: FinanceFileOperations, path: str,
                 'symbol': symbol,
                 'timeframe': timeframe,
                 'source': source,
-                'indicator': indicator
+                'indicator': indicator,
+                'folder_source': folder_source,
+                'folder_path': os.path.dirname(path)
             }
             
             return perform_financial_analysis(
