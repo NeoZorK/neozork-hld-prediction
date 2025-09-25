@@ -129,6 +129,7 @@ dependencies = [
     "pyarrow",
     "mplfinance",
     "statsmodels",
+    "arch",
     "bokeh",
     "dask",
     "datashader",
@@ -149,6 +150,7 @@ dependencies = [
     "bcrypt>=4.3.0",
     "qrcode>=8.2",
     "pyjwt>=2.10.1",
+    "arch>=7.2.0",
 ]
 
 [build-system]

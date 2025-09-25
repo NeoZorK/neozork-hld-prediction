@@ -47,6 +47,7 @@ python-binance==1.0.17
 pyarrow
 mplfinance
 statsmodels
+arch
 bokeh
 dask
 seaborn
