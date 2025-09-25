@@ -142,8 +142,19 @@ class FinanceReporter:
             ohlcv = analysis_results['ohlcv_analysis']
             if 'price_validation' in ohlcv and 'ohlc_validation' in ohlcv['price_validation']:
                 ohlc = ohlcv['price_validation']['ohlc_validation']
-                valid_pct = (ohlc.get('valid_rows', 0) / ohlc.get('total_rows', 1)) * 100
-                summary_parts.append(f"  • Price Validation: {valid_pct:.1f}% valid OHLC relationships")
+                valid_rows = ohlc.get('valid_rows', 0)
+                total_rows = ohlc.get('total_rows', 1)
+                valid_pct = (valid_rows / total_rows) * 100 if total_rows > 0 else 0
+                
+                # Add explanation for low validation rates
+                if valid_pct < 50:
+                    explanation = " (Data contains significant OHLC relationship violations - see detailed errors below)"
+                elif valid_pct < 80:
+                    explanation = " (Some OHLC relationship issues detected)"
+                else:
+                    explanation = ""
+                
+                summary_parts.append(f"  • Price Validation: {valid_pct:.1f}% valid OHLC relationships{explanation}")
         
         # Volatility findings
         if 'volatility_analysis' in analysis_results:
