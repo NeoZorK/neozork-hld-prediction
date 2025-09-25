@@ -158,6 +158,20 @@ class StatisticalAnalyzer:
         # Display analysis start with accurate metadata
         self.reporter.display_analysis_start(file_info, analysis_options)
         
+        # Display all columns at the start
+        print(f"\n📋 ALL COLUMNS IN DATASET:")
+        print(f"{'='*60}")
+        for i, col in enumerate(data.columns, 1):
+            col_type = str(data[col].dtype)
+            non_null_count = data[col].count()
+            total_count = len(data)
+            null_percentage = ((total_count - non_null_count) / total_count) * 100
+            print(f"  {i:2d}. {col:<25} | Type: {col_type:<10} | Non-null: {non_null_count}/{total_count} ({100-null_percentage:.1f}%)")
+        print(f"{'='*60}")
+        print(f"Total columns: {len(data.columns)}")
+        print(f"Total rows: {len(data)}")
+        print()
+        
         # Get numeric columns
         numeric_columns = self._get_numeric_columns(data)
         
@@ -245,11 +259,20 @@ class StatisticalAnalyzer:
         import pandas as pd
         import numpy as np
         
+        # Define OHLC columns that should be protected from all analysis
+        ohlc_columns = {'Open', 'High', 'Low', 'Close'}
+        
         numeric_cols = data.select_dtypes(include=[np.number]).columns.tolist()
         
         # Filter out columns that are all NaN or have no variance
+        # Also exclude OHLC columns to protect price relationships
         valid_numeric_cols = []
         for col in numeric_cols:
+            # Skip OHLC columns - they should not be analyzed to preserve price relationships
+            if col in ohlc_columns:
+                print(f"  🛡️  Protecting OHLC column '{col}' from statistical analysis to preserve price relationships")
+                continue
+                
             if not data[col].isna().all() and data[col].nunique() > 1:
                 valid_numeric_cols.append(col)
         
