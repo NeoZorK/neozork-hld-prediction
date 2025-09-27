@@ -9,6 +9,7 @@ from typing import Dict, Any, List, Optional, Tuple
 from pathlib import Path
 import logging
 from .universal_loader import UniversalDataLoader
+from .auto_data_scanner import AutoDataScanner, InteractiveDataSelector
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +29,8 @@ class MultiIndicatorLoader:
         """
         self.base_path = Path(base_path)
         self.data_loader = UniversalDataLoader()
+        self.scanner = AutoDataScanner(base_path)
+        self.selector = InteractiveDataSelector(self.scanner)
         
     def load_symbol_data(self, symbol: str, timeframe: str) -> Dict[str, pd.DataFrame]:
         """
@@ -315,3 +318,220 @@ class MultiIndicatorLoader:
             summary['target_variable'] = target_info
         
         return summary
+    
+    def auto_scan_and_select(self, interactive: bool = True) -> Dict[str, Any]:
+        """
+        Automatically scan directory and select data interactively.
+        Автоматически сканировать директорию и интерактивно выбрать данные.
+        
+        Args:
+            interactive: Whether to use interactive selection
+            
+        Returns:
+            Dictionary with selection results
+        """
+        logger.info("🔍 Auto-scanning data directory...")
+        
+        # Scan directory
+        scan_results = self.scanner.scan_directory()
+        
+        if not scan_results.get('scan_successful', False):
+            logger.error(f"❌ Scan failed: {scan_results.get('error')}")
+            return {'success': False, 'error': scan_results.get('error')}
+        
+        if interactive:
+            # Interactive selection
+            logger.info("🎯 Starting interactive selection...")
+            selection = self.selector.interactive_selection()
+            
+            if not selection.get('success', False):
+                logger.error(f"❌ Selection failed: {selection.get('error')}")
+                return selection
+            
+            return selection
+        else:
+            # Auto-select first available combination
+            logger.info("🤖 Auto-selecting first available combination...")
+            
+            if not self.scanner.available_data:
+                return {'success': False, 'error': 'No data available'}
+            
+            # Get first indicator
+            first_indicator = list(self.scanner.available_data.keys())[0]
+            
+            # Get first symbol for this indicator
+            first_symbol = list(self.scanner.available_data[first_indicator].keys())[0]
+            
+            # Get all timeframes for this symbol
+            timeframes = self.scanner.get_symbol_timeframes(first_indicator, first_symbol)
+            
+            selection = {
+                'success': True,
+                'indicator': first_indicator,
+                'symbol': first_symbol,
+                'timeframes': timeframes,
+                'file_paths': {}
+            }
+            
+            # Get file paths
+            for timeframe in timeframes:
+                file_path = self.scanner.get_file_path(first_indicator, first_symbol, timeframe)
+                if file_path:
+                    selection['file_paths'][timeframe] = file_path
+            
+            logger.info(f"✅ Auto-selected: {first_indicator} {first_symbol} {timeframes}")
+            return selection
+    
+    def load_selected_data(self, selection: Dict[str, Any]) -> pd.DataFrame:
+        """
+        Load data based on selection results.
+        Загрузить данные на основе результатов выбора.
+        
+        Args:
+            selection: Selection results from auto_scan_and_select
+            
+        Returns:
+            Combined dataframe with all selected data
+        """
+        if not selection.get('success', False):
+            logger.error(f"❌ Cannot load data: {selection.get('error')}")
+            return pd.DataFrame()
+        
+        indicator = selection['indicator']
+        symbol = selection['symbol']
+        timeframes = selection['timeframes']
+        file_paths = selection.get('file_paths', {})
+        
+        logger.info(f"📊 Loading data for {indicator} {symbol} across {len(timeframes)} timeframes...")
+        
+        all_data = []
+        
+        for timeframe in timeframes:
+            if timeframe in file_paths:
+                file_path = file_paths[timeframe]
+                
+                try:
+                    logger.info(f"📁 Loading {timeframe} from {file_path}")
+                    data = self.data_loader.load_file(file_path)
+                    
+                    # Add metadata
+                    data['indicator'] = indicator
+                    data['symbol'] = symbol
+                    data['timeframe'] = timeframe
+                    
+                    # Add timeframe weight
+                    timeframe_weights = {'M1': 1, 'M5': 2, 'M15': 3, 'H1': 4, 'H4': 8, 'D1': 16, 'W1': 32, 'MN1': 64}
+                    data['timeframe_weight'] = timeframe_weights.get(timeframe, 1)
+                    
+                    all_data.append(data)
+                    logger.info(f"✅ {timeframe}: {len(data)} rows, {len(data.columns)} columns")
+                    
+                except Exception as e:
+                    logger.error(f"❌ Failed to load {timeframe}: {e}")
+                    continue
+            else:
+                logger.warning(f"⚠️ No file path for {timeframe}")
+        
+        if not all_data:
+            logger.error("❌ No data loaded successfully")
+            return pd.DataFrame()
+        
+        # Combine all data
+        logger.info("🔄 Combining all data...")
+        combined_data = pd.concat(all_data, ignore_index=True)
+        
+        # Add technical indicators
+        combined_data = self.add_technical_indicators(combined_data)
+        
+        logger.info(f"📊 Final combined data: {len(combined_data)} rows, {len(combined_data.columns)} columns")
+        
+        return combined_data
+    
+    def load_multi_indicator_data(self, symbol: str, timeframes: List[str]) -> pd.DataFrame:
+        """
+        Load data from multiple indicators (CSVExport/SCHR, WAVE2, SHORT3) for a symbol.
+        Загрузить данные из множественных индикаторов для символа.
+        
+        Args:
+            symbol: Trading symbol
+            timeframes: List of timeframes
+            
+        Returns:
+            Combined dataframe with all indicators
+        """
+        logger.info(f"📊 Loading multi-indicator data for {symbol} across {len(timeframes)} timeframes...")
+        
+        all_combined_data = []
+        
+        for timeframe in timeframes:
+            try:
+                logger.info(f"📊 Loading {symbol} {timeframe}...")
+                
+                # Load all indicators for this symbol/timeframe
+                symbol_data = self.load_symbol_data(symbol, timeframe)
+                
+                # Combine indicators
+                combined_symbol_data = self.combine_indicators(symbol_data)
+                
+                if not combined_symbol_data.empty:
+                    # Add metadata
+                    combined_symbol_data['symbol'] = symbol
+                    combined_symbol_data['timeframe'] = timeframe
+                    
+                    # Add timeframe weight
+                    timeframe_weights = {'M1': 1, 'M5': 2, 'M15': 3, 'H1': 4, 'H4': 8, 'D1': 16, 'W1': 32, 'MN1': 64}
+                    combined_symbol_data['timeframe_weight'] = timeframe_weights.get(timeframe, 1)
+                    
+                    all_combined_data.append(combined_symbol_data)
+                    logger.info(f"✅ {symbol} {timeframe}: {len(combined_symbol_data)} rows")
+                else:
+                    logger.warning(f"⚠️ No data for {symbol} {timeframe}")
+                    
+            except Exception as e:
+                logger.error(f"❌ Failed to load {symbol} {timeframe}: {e}")
+                continue
+        
+        if not all_combined_data:
+            logger.error("❌ No data loaded successfully")
+            return pd.DataFrame()
+        
+        # Combine all data
+        logger.info("🔄 Combining all multi-indicator data...")
+        final_data = pd.concat(all_combined_data, ignore_index=True)
+        
+        # Add technical indicators
+        final_data = self.add_technical_indicators(final_data)
+        
+        logger.info(f"📊 Final multi-indicator data: {len(final_data)} rows, {len(final_data.columns)} columns")
+        
+        return final_data
+    
+    def auto_load_data(self, interactive: bool = True) -> pd.DataFrame:
+        """
+        Complete auto-loading process: scan, select, and load data.
+        Полный процесс автоматической загрузки: сканирование, выбор и загрузка данных.
+        
+        Args:
+            interactive: Whether to use interactive selection
+            
+        Returns:
+            Combined dataframe with all selected data
+        """
+        logger.info("🚀 Starting auto-loading process...")
+        
+        # Step 1: Auto-scan and select
+        selection = self.auto_scan_and_select(interactive=interactive)
+        
+        if not selection.get('success', False):
+            logger.error(f"❌ Auto-selection failed: {selection.get('error')}")
+            return pd.DataFrame()
+        
+        # Step 2: Load selected data
+        combined_data = self.load_selected_data(selection)
+        
+        if combined_data.empty:
+            logger.error("❌ No data loaded")
+            return pd.DataFrame()
+        
+        logger.info("✅ Auto-loading completed successfully!")
+        return combined_data

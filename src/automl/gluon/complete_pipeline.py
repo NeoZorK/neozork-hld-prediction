@@ -49,25 +49,33 @@ class CompleteTradingPipeline:
         
         self.gluon = GluonAutoML()
         
-    def run_complete_pipeline(self, symbols: List[str], timeframes: List[str], 
-                            target_symbol: str = "BTCUSD", target_timeframe: str = "D1") -> Dict[str, Any]:
+    def run_complete_pipeline(self, symbols: List[str] = None, timeframes: List[str] = None, 
+                            target_symbol: str = None, target_timeframe: str = None,
+                            use_auto_scan: bool = True, interactive: bool = True) -> Dict[str, Any]:
         """
         Run complete trading strategy pipeline.
         Запустить полный пайплайн торговой стратегии.
         
         Args:
-            symbols: List of trading symbols
-            timeframes: List of timeframes
-            target_symbol: Target symbol for final model
-            target_timeframe: Target timeframe for final model
+            symbols: List of trading symbols (ignored if use_auto_scan=True)
+            timeframes: List of timeframes (ignored if use_auto_scan=True)
+            target_symbol: Target symbol for final model (auto-detected if use_auto_scan=True)
+            target_timeframe: Target timeframe for final model (auto-detected if use_auto_scan=True)
+            use_auto_scan: Whether to use automatic scanning and selection
+            interactive: Whether to use interactive selection
             
         Returns:
             Dictionary with complete pipeline results
         """
         logger.info("🚀 Starting Complete Trading Strategy Pipeline")
-        logger.info(f"Symbols: {symbols}")
-        logger.info(f"Timeframes: {timeframes}")
-        logger.info(f"Target: {target_symbol} {target_timeframe}")
+        
+        if use_auto_scan:
+            logger.info("🔍 Using automatic data scanning and selection")
+            logger.info(f"Interactive mode: {interactive}")
+        else:
+            logger.info(f"Symbols: {symbols}")
+            logger.info(f"Timeframes: {timeframes}")
+            logger.info(f"Target: {target_symbol} {target_timeframe}")
         
         pipeline_start_time = time.time()
         results = {}
@@ -75,12 +83,29 @@ class CompleteTradingPipeline:
         try:
             # Step 1: Load and combine data
             logger.info("📊 Step 1: Loading and combining data...")
-            combined_data = self._load_and_combine_data(symbols, timeframes)
+            combined_data = self._load_and_combine_data(
+                symbols=symbols, 
+                timeframes=timeframes,
+                use_auto_scan=use_auto_scan,
+                interactive=interactive
+            )
+            # Get actual loaded symbols and timeframes from data
+            if use_auto_scan:
+                actual_symbols = combined_data['symbol'].unique().tolist() if 'symbol' in combined_data.columns else []
+                actual_timeframes = combined_data['timeframe'].unique().tolist() if 'timeframe' in combined_data.columns else []
+                actual_indicators = combined_data['indicator'].unique().tolist() if 'indicator' in combined_data.columns else []
+            else:
+                actual_symbols = symbols
+                actual_timeframes = timeframes
+                actual_indicators = []
+            
             results['data_loading'] = {
                 'total_rows': len(combined_data),
                 'total_columns': len(combined_data.columns),
-                'symbols_loaded': symbols,
-                'timeframes_loaded': timeframes
+                'symbols_loaded': actual_symbols,
+                'timeframes_loaded': actual_timeframes,
+                'indicators_loaded': actual_indicators,
+                'auto_scan_used': use_auto_scan
             }
             
             # Step 2: Feature engineering
@@ -113,11 +138,16 @@ class CompleteTradingPipeline:
             import os
             
             # Nuclear cleanup of all AutoGluon related directories
+            logger.info("🧹 Cleaning existing AutoGluon models...")
             cleanup_patterns = [
                 "models/autogluon*",
                 "models/autogluon",
                 "models/autogluon/ds_sub_fit*",
-                "models/autogluon/ds_sub_fit"
+                "models/autogluon/ds_sub_fit",
+                "models/autogluon/ds_sub_fit/sub_fit_ho*",
+                "models/autogluon/ds_sub_fit/sub_fit_ho",
+                "models/autogluon/ds_sub_fit/sub_fit_ho/learner.pkl",
+                "models/autogluon/ds_sub_fit/sub_fit_ho/trainer.pkl"
             ]
             
             for pattern in cleanup_patterns:
@@ -126,9 +156,45 @@ class CompleteTradingPipeline:
                     try:
                         if os.path.exists(model_dir):
                             shutil.rmtree(model_dir)
-                            logger.info(f"Cleaned existing model: {model_dir}")
+                            logger.info(f"✅ Cleaned: {model_dir}")
                     except Exception as e:
-                        logger.warning(f"Could not clean {model_dir}: {e}")
+                        logger.warning(f"⚠️ Could not clean {model_dir}: {e}")
+            
+            # Additional cleanup for any remaining .pkl files
+            pkl_files = glob.glob("models/**/*.pkl", recursive=True)
+            for pkl_file in pkl_files:
+                try:
+                    if os.path.exists(pkl_file):
+                        os.remove(pkl_file)
+                        logger.info(f"✅ Removed: {pkl_file}")
+                except Exception as e:
+                    logger.warning(f"⚠️ Could not remove {pkl_file}: {e}")
+            
+            # Force cleanup of any remaining AutoGluon directories
+            import subprocess
+            try:
+                # Use find command to locate and remove any remaining AutoGluon directories
+                result = subprocess.run(['find', 'models', '-name', '*autogluon*', '-type', 'd'], 
+                                     capture_output=True, text=True)
+                if result.stdout:
+                    for dir_path in result.stdout.strip().split('\n'):
+                        if dir_path and os.path.exists(dir_path):
+                            shutil.rmtree(dir_path)
+                            logger.info(f"✅ Force cleaned: {dir_path}")
+            except Exception as e:
+                logger.warning(f"⚠️ Force cleanup failed: {e}")
+            
+            logger.info("🧹 Model cleanup completed")
+            
+            # Force cleanup right before training
+            logger.info("🧹 Final cleanup before training...")
+            try:
+                # Remove any remaining AutoGluon directories
+                subprocess.run(['rm', '-rf', 'models/autogluon*'], check=False)
+                subprocess.run(['rm', '-rf', 'models/autogluon'], check=False)
+                logger.info("✅ Force cleanup completed")
+            except Exception as e:
+                logger.warning(f"⚠️ Force cleanup failed: {e}")
             
             # Also clean any temporary directories
             temp_patterns = [
@@ -199,53 +265,84 @@ class CompleteTradingPipeline:
         
         return results
     
-    def _load_and_combine_data(self, symbols: List[str], timeframes: List[str]) -> pd.DataFrame:
-        """Load and combine data from multiple sources."""
+    def _load_and_combine_data(self, symbols: List[str] = None, timeframes: List[str] = None, 
+                              use_auto_scan: bool = True, interactive: bool = True) -> pd.DataFrame:
+        """
+        Load and combine data from multiple sources.
+        Загрузить и объединить данные из множественных источников.
         
-        all_combined_data = []
+        Args:
+            symbols: List of symbols (ignored if use_auto_scan=True)
+            timeframes: List of timeframes (ignored if use_auto_scan=True)
+            use_auto_scan: Whether to use automatic scanning and selection
+            interactive: Whether to use interactive selection
+            
+        Returns:
+            Combined dataframe
+        """
+        if use_auto_scan:
+            logger.info("🔍 Using automatic data scanning and selection...")
+            
+            # Use auto-loading
+            final_data = self.multi_loader.auto_load_data(interactive=interactive)
+            
+            if final_data.empty:
+                raise ValueError("No data loaded successfully with auto-scan")
+            
+            logger.info(f"📊 Auto-loaded data: {len(final_data)} rows, {len(final_data.columns)} columns")
+            return final_data
         
-        for symbol in symbols:
-            for timeframe in timeframes:
-                try:
-                    logger.info(f"📊 Loading {symbol} {timeframe}...")
-                    
-                    # Load all indicators for this symbol/timeframe
-                    symbol_data = self.multi_loader.load_symbol_data(symbol, timeframe)
-                    
-                    # Combine indicators
-                    combined_symbol_data = self.multi_loader.combine_indicators(symbol_data)
-                    
-                    if not combined_symbol_data.empty:
-                        # Add metadata
-                        combined_symbol_data['symbol'] = symbol
-                        combined_symbol_data['timeframe'] = timeframe
+        else:
+            # Original manual loading
+            logger.info("📊 Using manual data loading...")
+            
+            if not symbols or not timeframes:
+                raise ValueError("Symbols and timeframes must be provided when use_auto_scan=False")
+            
+            all_combined_data = []
+            
+            for symbol in symbols:
+                for timeframe in timeframes:
+                    try:
+                        logger.info(f"📊 Loading {symbol} {timeframe}...")
                         
-                        # Add timeframe weight
-                        timeframe_weights = {'M1': 1, 'M5': 2, 'M15': 3, 'H1': 4, 'H4': 8, 'D1': 16, 'W1': 32, 'MN1': 64}
-                        combined_symbol_data['timeframe_weight'] = timeframe_weights.get(timeframe, 1)
+                        # Load all indicators for this symbol/timeframe
+                        symbol_data = self.multi_loader.load_symbol_data(symbol, timeframe)
                         
-                        all_combined_data.append(combined_symbol_data)
-                        logger.info(f"✅ {symbol} {timeframe}: {len(combined_symbol_data)} rows")
-                    else:
-                        logger.warning(f"⚠️ No data for {symbol} {timeframe}")
+                        # Combine indicators
+                        combined_symbol_data = self.multi_loader.combine_indicators(symbol_data)
                         
-                except Exception as e:
-                    logger.error(f"❌ Failed to load {symbol} {timeframe}: {e}")
-                    continue
-        
-        if not all_combined_data:
-            raise ValueError("No data loaded successfully")
-        
-        # Combine all data
-        logger.info("🔄 Combining all data...")
-        final_data = pd.concat(all_combined_data, ignore_index=True)
-        
-        # Add technical indicators
-        final_data = self.multi_loader.add_technical_indicators(final_data)
-        
-        logger.info(f"📊 Final combined data: {len(final_data)} rows, {len(final_data.columns)} columns")
-        
-        return final_data
+                        if not combined_symbol_data.empty:
+                            # Add metadata
+                            combined_symbol_data['symbol'] = symbol
+                            combined_symbol_data['timeframe'] = timeframe
+                            
+                            # Add timeframe weight
+                            timeframe_weights = {'M1': 1, 'M5': 2, 'M15': 3, 'H1': 4, 'H4': 8, 'D1': 16, 'W1': 32, 'MN1': 64}
+                            combined_symbol_data['timeframe_weight'] = timeframe_weights.get(timeframe, 1)
+                            
+                            all_combined_data.append(combined_symbol_data)
+                            logger.info(f"✅ {symbol} {timeframe}: {len(combined_symbol_data)} rows")
+                        else:
+                            logger.warning(f"⚠️ No data for {symbol} {timeframe}")
+                            
+                    except Exception as e:
+                        logger.error(f"❌ Failed to load {symbol} {timeframe}: {e}")
+                        continue
+            
+            if not all_combined_data:
+                raise ValueError("No data loaded successfully")
+            
+            # Combine all data
+            logger.info("🔄 Combining all data...")
+            final_data = pd.concat(all_combined_data, ignore_index=True)
+            
+            # Add technical indicators
+            final_data = self.multi_loader.add_technical_indicators(final_data)
+            
+            logger.info(f"📊 Final combined data: {len(final_data)} rows, {len(final_data.columns)} columns")
+            
+            return final_data
     
     def _create_all_features(self, data: pd.DataFrame, target_symbol: str, target_timeframe: str) -> pd.DataFrame:
         """Create all custom features."""
