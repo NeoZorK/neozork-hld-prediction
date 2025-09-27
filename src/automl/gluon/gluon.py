@@ -12,6 +12,11 @@ from typing import Dict, Any, Optional, List, Tuple, Union
 import logging
 from pathlib import Path
 import warnings
+import os
+
+# Disable CUDA for MacBook M1
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+os.environ["AUTOGLUON_USE_GPU"] = "false"
 
 # AutoGluon imports
 try:
@@ -28,6 +33,7 @@ from .models import GluonTrainer, GluonPredictor, GluonEvaluator
 from .deployment import GluonExporter, AutoRetrainer, DriftMonitor
 from .utils import GluonLogger
 from .analysis import ValueScoreAnalyzer
+from .features.custom_feature_engineer import CustomFeatureEngineer
 
 warnings.filterwarnings('ignore')
 
@@ -137,6 +143,63 @@ class GluonAutoML:
         
         self.logger.info("Model training completed successfully")
         return self
+    
+    def create_custom_features(self, data: pd.DataFrame, 
+                              use_13_features: bool = True) -> pd.DataFrame:
+        """
+        Create custom features for trading strategy.
+        
+        Args:
+            data: Input data
+            use_13_features: Whether to create the 13 custom features
+            
+        Returns:
+            Data with custom features added
+        """
+        if not use_13_features:
+            return data
+        
+        self.logger.info("Creating custom trading features...")
+        
+        # Initialize custom feature engineer
+        feature_engineer = CustomFeatureEngineer()
+        
+        # Create all custom features
+        data_with_features = feature_engineer.create_all_features(data)
+        
+        # Log feature creation results
+        original_features = len(data.columns)
+        new_features = len(data_with_features.columns)
+        custom_features = new_features - original_features
+        
+        self.logger.info(f"Created {custom_features} custom features")
+        self.logger.info(f"Total features: {original_features} -> {new_features}")
+        
+        return data_with_features
+    
+    def _get_memory_usage(self) -> float:
+        """Get current memory usage in MB."""
+        try:
+            import psutil
+            process = psutil.Process(os.getpid())
+            return process.memory_info().rss / 1024 / 1024
+        except ImportError:
+            return 0.0
+    
+    def _get_model_info(self) -> Dict[str, Any]:
+        """Get detailed model information."""
+        if not self.predictor:
+            return {}
+        
+        try:
+            leaderboard = self.predictor.leaderboard(silent=True)
+            return {
+                "model_count": len(leaderboard),
+                "best_model": leaderboard.iloc[0]['model'] if len(leaderboard) > 0 else "Unknown",
+                "best_score": leaderboard.iloc[0]['score_val'] if len(leaderboard) > 0 else 0.0
+            }
+        except Exception:
+            return {"model_count": 0, "best_model": "Unknown", "best_score": 0.0}
     
     def evaluate_models(self, test_data: pd.DataFrame, target_column: str) -> Dict[str, Any]:
         """
