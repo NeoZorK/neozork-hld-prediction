@@ -1,0 +1,481 @@
+"""
+Complete Trading Strategy Pipeline
+Полный пайплайн торговой стратегии
+"""
+
+import pandas as pd
+import numpy as np
+from typing import Dict, Any, List, Optional, Tuple
+import logging
+from pathlib import Path
+import time
+from datetime import datetime
+
+# Local imports
+from .gluon import GluonAutoML
+from .data.multi_indicator_loader import MultiIndicatorLoader
+from .features.updated_feature_engineer import UpdatedCustomFeatureEngineer
+from .analysis.advanced_analysis import AdvancedTradingAnalyzer
+from .config import GluonConfig, ExperimentConfig
+
+logger = logging.getLogger(__name__)
+
+
+class CompleteTradingPipeline:
+    """
+    Complete pipeline for creating robust and profitable trading models.
+    Полный пайплайн для создания робастных и прибыльных торговых моделей.
+    """
+    
+    def __init__(self, base_data_path: str = "data/cache/csv_converted/"):
+        """
+        Initialize Complete Trading Pipeline.
+        
+        Args:
+            base_data_path: Base path to data directory
+        """
+        self.base_data_path = base_data_path
+        self.multi_loader = MultiIndicatorLoader(base_data_path)
+        self.feature_engineer = UpdatedCustomFeatureEngineer()
+        self.analyzer = AdvancedTradingAnalyzer()
+        
+        # Initialize AutoGluon with optimal configuration
+        self.gluon_config = GluonConfig(
+            time_limit=7200,  # 2 hours
+            presets=['best_quality'],
+            excluded_model_types=["NN_TORCH", "NN_FASTAI"],
+            num_bag_folds=5
+        )
+        
+        self.gluon = GluonAutoML()
+        
+    def run_complete_pipeline(self, symbols: List[str], timeframes: List[str], 
+                            target_symbol: str = "BTCUSD", target_timeframe: str = "D1") -> Dict[str, Any]:
+        """
+        Run complete trading strategy pipeline.
+        Запустить полный пайплайн торговой стратегии.
+        
+        Args:
+            symbols: List of trading symbols
+            timeframes: List of timeframes
+            target_symbol: Target symbol for final model
+            target_timeframe: Target timeframe for final model
+            
+        Returns:
+            Dictionary with complete pipeline results
+        """
+        logger.info("🚀 Starting Complete Trading Strategy Pipeline")
+        logger.info(f"Symbols: {symbols}")
+        logger.info(f"Timeframes: {timeframes}")
+        logger.info(f"Target: {target_symbol} {target_timeframe}")
+        
+        pipeline_start_time = time.time()
+        results = {}
+        
+        try:
+            # Step 1: Load and combine data
+            logger.info("📊 Step 1: Loading and combining data...")
+            combined_data = self._load_and_combine_data(symbols, timeframes)
+            results['data_loading'] = {
+                'total_rows': len(combined_data),
+                'total_columns': len(combined_data.columns),
+                'symbols_loaded': symbols,
+                'timeframes_loaded': timeframes
+            }
+            
+            # Step 2: Feature engineering
+            logger.info("🔧 Step 2: Feature engineering...")
+            data_with_features = self._create_all_features(combined_data, target_symbol, target_timeframe)
+            results['feature_engineering'] = {
+                'features_created': len([col for col in data_with_features.columns if 'probability' in col]),
+                'total_features': len(data_with_features.columns),
+                'data_shape': data_with_features.shape
+            }
+            
+            # Step 3: Data preparation
+            logger.info("📋 Step 3: Data preparation...")
+            train_data, val_data, test_data = self._prepare_data(data_with_features)
+            results['data_preparation'] = {
+                'train_size': len(train_data),
+                'val_size': len(val_data),
+                'test_size': len(test_data),
+                'train_ratio': len(train_data) / len(data_with_features),
+                'val_ratio': len(val_data) / len(data_with_features),
+                'test_ratio': len(test_data) / len(data_with_features)
+            }
+            
+            # Step 4: Model training
+            logger.info("🤖 Step 4: Model training...")
+            
+            # Clean existing models to avoid "Learner is already fit" error
+            import shutil
+            import glob
+            import os
+            
+            # Nuclear cleanup of all AutoGluon related directories
+            cleanup_patterns = [
+                "models/autogluon*",
+                "models/autogluon",
+                "models/autogluon/ds_sub_fit*",
+                "models/autogluon/ds_sub_fit"
+            ]
+            
+            for pattern in cleanup_patterns:
+                model_dirs = glob.glob(pattern)
+                for model_dir in model_dirs:
+                    try:
+                        if os.path.exists(model_dir):
+                            shutil.rmtree(model_dir)
+                            logger.info(f"Cleaned existing model: {model_dir}")
+                    except Exception as e:
+                        logger.warning(f"Could not clean {model_dir}: {e}")
+            
+            # Also clean any temporary directories
+            temp_patterns = [
+                "models/autogluon/ds_sub_fit",
+                "models/autogluon/ds_sub_fit/sub_fit_ho"
+            ]
+            
+            for temp_dir in temp_patterns:
+                try:
+                    if os.path.exists(temp_dir):
+                        shutil.rmtree(temp_dir)
+                        logger.info(f"Cleaned temp directory: {temp_dir}")
+                except Exception as e:
+                    logger.warning(f"Could not clean temp {temp_dir}: {e}")
+            
+            training_start = time.time()
+            self.gluon.train_models(train_data, "target", val_data)
+            training_time = time.time() - training_start
+            results['model_training'] = {
+                'training_time_seconds': training_time,
+                'training_time_minutes': training_time / 60,
+                'model_ready': True
+            }
+            
+            # Step 5: Model evaluation
+            logger.info("📈 Step 5: Model evaluation...")
+            evaluation = self.gluon.evaluate_models(test_data, "target")
+            results['model_evaluation'] = evaluation
+            
+            # Step 6: Advanced analysis
+            logger.info("🔍 Step 6: Advanced analysis...")
+            analysis_results = self._run_advanced_analysis(test_data)
+            results['advanced_analysis'] = analysis_results
+            
+            # Step 7: Model export
+            logger.info("💾 Step 7: Model export...")
+            export_path = self.gluon.export_models(f"models/complete_pipeline_{target_symbol}_{target_timeframe}")
+            results['model_export'] = {
+                'export_path': export_path,
+                'export_successful': True
+            }
+            
+            # Step 8: Performance report
+            logger.info("📊 Step 8: Generating performance report...")
+            performance_report = self._generate_performance_report(results)
+            results['performance_report'] = performance_report
+            
+            # Final summary
+            pipeline_time = time.time() - pipeline_start_time
+            results['pipeline_summary'] = {
+                'total_time_seconds': pipeline_time,
+                'total_time_minutes': pipeline_time / 60,
+                'pipeline_successful': True,
+                'target_symbol': target_symbol,
+                'target_timeframe': target_timeframe,
+                'completion_time': datetime.now().isoformat()
+            }
+            
+            logger.info(f"✅ Complete pipeline finished successfully in {pipeline_time/60:.1f} minutes")
+            
+        except Exception as e:
+            logger.error(f"❌ Pipeline failed: {e}")
+            results['pipeline_summary'] = {
+                'pipeline_successful': False,
+                'error': str(e),
+                'completion_time': datetime.now().isoformat()
+            }
+        
+        return results
+    
+    def _load_and_combine_data(self, symbols: List[str], timeframes: List[str]) -> pd.DataFrame:
+        """Load and combine data from multiple sources."""
+        
+        all_combined_data = []
+        
+        for symbol in symbols:
+            for timeframe in timeframes:
+                try:
+                    logger.info(f"📊 Loading {symbol} {timeframe}...")
+                    
+                    # Load all indicators for this symbol/timeframe
+                    symbol_data = self.multi_loader.load_symbol_data(symbol, timeframe)
+                    
+                    # Combine indicators
+                    combined_symbol_data = self.multi_loader.combine_indicators(symbol_data)
+                    
+                    if not combined_symbol_data.empty:
+                        # Add metadata
+                        combined_symbol_data['symbol'] = symbol
+                        combined_symbol_data['timeframe'] = timeframe
+                        
+                        # Add timeframe weight
+                        timeframe_weights = {'M1': 1, 'M5': 2, 'M15': 3, 'H1': 4, 'H4': 8, 'D1': 16, 'W1': 32, 'MN1': 64}
+                        combined_symbol_data['timeframe_weight'] = timeframe_weights.get(timeframe, 1)
+                        
+                        all_combined_data.append(combined_symbol_data)
+                        logger.info(f"✅ {symbol} {timeframe}: {len(combined_symbol_data)} rows")
+                    else:
+                        logger.warning(f"⚠️ No data for {symbol} {timeframe}")
+                        
+                except Exception as e:
+                    logger.error(f"❌ Failed to load {symbol} {timeframe}: {e}")
+                    continue
+        
+        if not all_combined_data:
+            raise ValueError("No data loaded successfully")
+        
+        # Combine all data
+        logger.info("🔄 Combining all data...")
+        final_data = pd.concat(all_combined_data, ignore_index=True)
+        
+        # Add technical indicators
+        final_data = self.multi_loader.add_technical_indicators(final_data)
+        
+        logger.info(f"📊 Final combined data: {len(final_data)} rows, {len(final_data.columns)} columns")
+        
+        return final_data
+    
+    def _create_all_features(self, data: pd.DataFrame, target_symbol: str, target_timeframe: str) -> pd.DataFrame:
+        """Create all custom features."""
+        
+        logger.info("🔧 Creating custom features...")
+        
+        # Filter for target symbol and timeframe if specified
+        if target_symbol and target_timeframe:
+            target_data = data[(data['symbol'] == target_symbol) & (data['timeframe'] == target_timeframe)]
+            if not target_data.empty:
+                logger.info(f"Using target data: {target_symbol} {target_timeframe} ({len(target_data)} rows)")
+                data = target_data
+            else:
+                logger.warning(f"Target data not found, using all data")
+        
+        # Create target variable
+        data = self.multi_loader.create_target_variable(data, method='price_direction')
+        
+        # Create custom features using the updated feature engineer
+        # For now, we'll create features based on available columns
+        data_with_features = data.copy()
+        
+        # Add SCHR features if CSVExport columns are available
+        csv_export_columns = ['pressure', 'pressure_vector', 'predicted_low', 'predicted_high']
+        if any(col in data.columns for col in csv_export_columns):
+            logger.info("Creating SCHR features...")
+            data_with_features = self.feature_engineer.create_schr_features(data_with_features)
+        
+        # Add WAVE2 features if WAVE2 columns are available
+        wave2_columns = ['wave', 'fast_line', 'ma_line', 'direction', 'signal']
+        if any(col in data.columns for col in wave2_columns):
+            logger.info("Creating WAVE2 features...")
+            data_with_features = self.feature_engineer.create_wave2_features(data_with_features)
+        
+        # Add SHORT3 features if SHORT3 columns are available
+        short3_columns = ['short_trend', 'r_trend', 'global', 'direction', 'r_direction', 'signal', 'r_signal', 'g_direction', 'g_signal']
+        if any(col in data.columns for col in short3_columns):
+            logger.info("Creating SHORT3 features...")
+            data_with_features = self.feature_engineer.create_short3_features(data_with_features)
+        
+        # Remove rows with NaN target
+        initial_rows = len(data_with_features)
+        data_with_features = data_with_features.dropna(subset=['target'])
+        removed_rows = initial_rows - len(data_with_features)
+        
+        if removed_rows > 0:
+            logger.info(f"Removed {removed_rows} rows with NaN target")
+        
+        logger.info(f"✅ Feature engineering completed: {len(data_with_features)} rows, {len(data_with_features.columns)} columns")
+        
+        return data_with_features
+    
+    def _prepare_data(self, data: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+        """Prepare data for training with time series split."""
+        
+        logger.info("📋 Preparing data with time series split...")
+        
+        # Sort by time if possible
+        if data.index.dtype == 'datetime64[ns]':
+            data = data.sort_index()
+        elif 'timestamp' in data.columns:
+            data = data.sort_values('timestamp')
+        
+        # Time series split
+        total_len = len(data)
+        train_end = int(total_len * 0.6)
+        val_end = int(total_len * 0.8)
+        
+        train_data = data.iloc[:train_end]
+        val_data = data.iloc[train_end:val_end]
+        test_data = data.iloc[val_end:]
+        
+        logger.info(f"Data split: Train={len(train_data)}, Val={len(val_data)}, Test={len(test_data)}")
+        
+        return train_data, val_data, test_data
+    
+    def _run_advanced_analysis(self, test_data: pd.DataFrame) -> Dict[str, Any]:
+        """Run advanced analysis including backtesting, walk forward, and Monte Carlo."""
+        
+        logger.info("🔍 Running advanced analysis...")
+        
+        analysis_results = {}
+        
+        try:
+            # Backtesting
+            logger.info("📈 Running backtesting...")
+            backtest_results = self.analyzer.comprehensive_backtesting(self.gluon, test_data)
+            analysis_results['backtesting'] = backtest_results
+            
+            # Walk Forward Analysis
+            logger.info("🚶 Running Walk Forward analysis...")
+            wf_results = self.analyzer.walk_forward_analysis(self.gluon, test_data, 
+                                                           window_size=500, step_size=50)
+            analysis_results['walk_forward'] = wf_results
+            
+            # Monte Carlo Simulation
+            logger.info("🎲 Running Monte Carlo simulation...")
+            mc_results = self.analyzer.monte_carlo_simulation(self.gluon, test_data, 
+                                                            n_simulations=500, sample_size=300)
+            analysis_results['monte_carlo'] = mc_results
+            
+            # Performance Report
+            performance_report = self.analyzer.create_performance_report(
+                backtest_results, wf_results, mc_results
+            )
+            analysis_results['performance_report'] = performance_report
+            
+            logger.info("✅ Advanced analysis completed")
+            
+        except Exception as e:
+            logger.error(f"❌ Advanced analysis failed: {e}")
+            analysis_results['error'] = str(e)
+        
+        return analysis_results
+    
+    def _generate_performance_report(self, results: Dict[str, Any]) -> str:
+        """Generate comprehensive performance report."""
+        
+        report = f"""
+# 🚀 COMPLETE TRADING STRATEGY PIPELINE REPORT
+# Отчет полного пайплайна торговой стратегии
+
+## 📊 Pipeline Summary / Сводка пайплайна
+
+**Execution Time:** {results.get('pipeline_summary', {}).get('total_time_minutes', 0):.1f} minutes
+**Status:** {'✅ SUCCESS' if results.get('pipeline_summary', {}).get('pipeline_successful', False) else '❌ FAILED'}
+**Target:** {results.get('pipeline_summary', {}).get('target_symbol', 'N/A')} {results.get('pipeline_summary', {}).get('target_timeframe', 'N/A')}
+
+## 📈 Data Processing / Обработка данных
+
+**Data Loading:**
+- Total Rows: {results.get('data_loading', {}).get('total_rows', 0):,}
+- Total Columns: {results.get('data_loading', {}).get('total_columns', 0)}
+- Symbols: {', '.join(results.get('data_loading', {}).get('symbols_loaded', []))}
+- Timeframes: {', '.join(results.get('data_loading', {}).get('timeframes_loaded', []))}
+
+**Feature Engineering:**
+- Custom Features Created: {results.get('feature_engineering', {}).get('features_created', 0)}
+- Total Features: {results.get('feature_engineering', {}).get('total_features', 0)}
+- Final Data Shape: {results.get('feature_engineering', {}).get('data_shape', 'N/A')}
+
+**Data Preparation:**
+- Train Size: {results.get('data_preparation', {}).get('train_size', 0):,}
+- Validation Size: {results.get('data_preparation', {}).get('val_size', 0):,}
+- Test Size: {results.get('data_preparation', {}).get('test_size', 0):,}
+
+## 🤖 Model Performance / Производительность модели
+
+**Training:**
+- Training Time: {results.get('model_training', {}).get('training_time_minutes', 0):.1f} minutes
+- Model Status: {'✅ Ready' if results.get('model_training', {}).get('model_ready', False) else '❌ Failed'}
+
+**Evaluation:**
+{self._format_evaluation_results(results.get('model_evaluation', {}))}
+
+## 🔍 Advanced Analysis / Продвинутый анализ
+
+{self._format_advanced_analysis_results(results.get('advanced_analysis', {}))}
+
+## 💾 Model Export / Экспорт модели
+
+**Export Path:** {results.get('model_export', {}).get('export_path', 'N/A')}
+**Export Status:** {'✅ Success' if results.get('model_export', {}).get('export_successful', False) else '❌ Failed'}
+
+## 🎯 Recommendations / Рекомендации
+
+1. **Model Quality:** {'✅ High' if self._is_high_quality_model(results) else '⚠️ Needs Improvement'}
+2. **Production Ready:** {'✅ Yes' if self._is_production_ready(results) else '❌ No'}
+3. **Next Steps:** {self._get_next_steps(results)}
+
+---
+Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+"""
+        
+        return report
+    
+    def _format_evaluation_results(self, evaluation: Dict[str, Any]) -> str:
+        """Format evaluation results for report."""
+        if not evaluation:
+            return "No evaluation results available"
+        
+        formatted = "**Model Metrics:**\n"
+        for metric, value in evaluation.items():
+            if isinstance(value, (int, float)):
+                formatted += f"- {metric}: {value:.4f}\n"
+        
+        return formatted
+    
+    def _format_advanced_analysis_results(self, analysis: Dict[str, Any]) -> str:
+        """Format advanced analysis results for report."""
+        if not analysis:
+            return "No advanced analysis results available"
+        
+        formatted = ""
+        
+        if 'backtesting' in analysis:
+            bt = analysis['backtesting']
+            formatted += f"**Backtesting:**\n"
+            formatted += f"- Total Return: {bt.get('total_return', 0):.2%}\n"
+            formatted += f"- Sharpe Ratio: {bt.get('sharpe_ratio', 0):.3f}\n"
+            formatted += f"- Max Drawdown: {bt.get('max_drawdown', 0):.2%}\n"
+        
+        if 'walk_forward' in analysis:
+            wf = analysis['walk_forward']
+            formatted += f"**Walk Forward:**\n"
+            formatted += f"- Stability Score: {wf.get('stability_score', 0):.3f}\n"
+            formatted += f"- Mean Accuracy: {wf.get('mean_accuracy', 0):.3f}\n"
+        
+        if 'monte_carlo' in analysis:
+            mc = analysis['monte_carlo']
+            formatted += f"**Monte Carlo:**\n"
+            formatted += f"- Robustness Score: {mc.get('robustness_score', 0):.3f}\n"
+            formatted += f"- Mean Accuracy: {mc.get('mean_accuracy', 0):.3f}\n"
+        
+        return formatted
+    
+    def _is_high_quality_model(self, results: Dict[str, Any]) -> bool:
+        """Check if model is high quality."""
+        evaluation = results.get('model_evaluation', {})
+        accuracy = evaluation.get('accuracy', 0)
+        return accuracy > 0.6
+    
+    def _is_production_ready(self, results: Dict[str, Any]) -> bool:
+        """Check if model is production ready."""
+        return (results.get('pipeline_summary', {}).get('pipeline_successful', False) and
+                results.get('model_export', {}).get('export_successful', False))
+    
+    def _get_next_steps(self, results: Dict[str, Any]) -> str:
+        """Get next steps recommendations."""
+        if results.get('pipeline_summary', {}).get('pipeline_successful', False):
+            return "Deploy model to production, set up monitoring, and schedule retraining"
+        else:
+            return "Fix pipeline issues, check data quality, and retry"
