@@ -150,3 +150,5 @@ Requires-Dist: bcrypt>=4.3.0
 Requires-Dist: qrcode>=8.2
 Requires-Dist: pyjwt>=2.10.1
 Requires-Dist: arch>=7.2.0
+Requires-Dist: autogluon-tabular>=1.4.0
+Requires-Dist: openpyxl>=3.1.5

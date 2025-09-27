@@ -80,7 +80,9 @@ class AutoRetrainer:
                 logger.info(f"Retraining too frequent: {days_since_retrain} days < {self.max_retrain_frequency}")
                 return False
         
-        return True
+        # If no performance degradation, don't retrain
+        logger.info("No performance degradation detected, no retraining needed")
+        return False
     
     def retrain(self, predictor: TabularPredictor, 
                 new_data: pd.DataFrame, 

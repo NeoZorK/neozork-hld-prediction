@@ -71,7 +71,6 @@ class TestGluonIntegration:
             
             yield temp_dir
     
-    @pytest.mark.skip(reason="AutoGluon not available")
     def test_gluon_initialization(self, gluon_config, experiment_config):
         """Test GluonAutoML initialization."""
         with patch('autogluon.tabular.TabularPredictor'):
@@ -139,7 +138,6 @@ class TestGluonIntegration:
             assert 'quality_issues' in summary
             assert 'is_ready_for_gluon' in summary
     
-    @pytest.mark.skip(reason="AutoGluon not available")
     def test_model_training(self, sample_data):
         """Test model training."""
         with patch('autogluon.tabular.TabularPredictor') as mock_predictor:
@@ -161,7 +159,6 @@ class TestGluonIntegration:
             # Check that fit was called
             mock_predictor_instance.fit.assert_called_once()
     
-    @pytest.mark.skip(reason="AutoGluon not available")
     def test_model_evaluation(self, sample_data):
         """Test model evaluation."""
         with patch('autogluon.tabular.TabularPredictor') as mock_predictor:
