@@ -9,6 +9,8 @@ from typing import Dict, Any, List, Optional
 import yaml
 from pathlib import Path
 import logging
+import time
+from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 
@@ -58,31 +60,43 @@ class UpdatedCustomFeatureEngineer:
         logger.info("Creating SCHR features from CSVExport data...")
         df = data.copy()
         
-        # Feature 1: Trend Direction Probability
-        # Вероятность направления тренда на основе pressure и pressure_vector
-        if 'pressure' in df.columns and 'pressure_vector' in df.columns:
-            df['trend_direction_probability'] = self._calculate_trend_direction_probability(
-                df['pressure'], df['pressure_vector']
-            )
-        
-        # Feature 2: Yellow Line Breakout Probability  
-        # Вероятность пробития желтой линии (predicted_high) вверх
-        if 'predicted_high' in df.columns and 'Close' in df.columns:
-            df['yellow_line_breakout_probability'] = self._calculate_yellow_breakout_probability(
-                df['Close'], df['predicted_high']
-            )
-        
-        # Feature 3: Blue Line Breakdown Probability
-        # Вероятность пробития синей линии (predicted_low) вниз
-        if 'predicted_low' in df.columns and 'Close' in df.columns:
-            df['blue_line_breakdown_probability'] = self._calculate_blue_breakdown_probability(
-                df['Close'], df['predicted_low']
-            )
-        
-        # Feature 4: Pressure Vector Sign Probability
-        # Вероятность знака Pressure Vector
-        if 'pressure_vector' in df.columns:
-            df['pv_sign_probability'] = self._calculate_pv_sign_probability(df['pressure_vector'])
+        # Progress bar for SCHR features
+        with tqdm(total=4, desc="🔧 SCHR Features", unit="feature", 
+                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]') as pbar:
+            
+            # Feature 1: Trend Direction Probability
+            # Вероятность направления тренда на основе pressure и pressure_vector
+            if 'pressure' in df.columns and 'pressure_vector' in df.columns:
+                pbar.set_description("🔧 SCHR: Trend direction")
+                df['trend_direction_probability'] = self._calculate_trend_direction_probability(
+                    df['pressure'], df['pressure_vector']
+                )
+            pbar.update(1)
+            
+            # Feature 2: Yellow Line Breakout Probability  
+            # Вероятность пробития желтой линии (predicted_high) вверх
+            if 'predicted_high' in df.columns and 'Close' in df.columns:
+                pbar.set_description("🔧 SCHR: Yellow line breakout")
+                df['yellow_line_breakout_probability'] = self._calculate_yellow_breakout_probability(
+                    df['Close'], df['predicted_high']
+                )
+            pbar.update(1)
+            
+            # Feature 3: Blue Line Breakdown Probability
+            # Вероятность пробития синей линии (predicted_low) вниз
+            if 'predicted_low' in df.columns and 'Close' in df.columns:
+                pbar.set_description("🔧 SCHR: Blue line breakdown")
+                df['blue_line_breakdown_probability'] = self._calculate_blue_breakdown_probability(
+                    df['Close'], df['predicted_low']
+                )
+            pbar.update(1)
+            
+            # Feature 4: Pressure Vector Sign Probability
+            # Вероятность знака Pressure Vector
+            if 'pressure_vector' in df.columns:
+                pbar.set_description("🔧 SCHR: Pressure vector")
+                df['pv_sign_probability'] = self._calculate_pv_sign_probability(df['pressure_vector'])
+            pbar.update(1)
         
         logger.info(f"Created {len([col for col in df.columns if 'probability' in col])} SCHR features")
         return df
@@ -97,49 +111,65 @@ class UpdatedCustomFeatureEngineer:
         logger.info("Creating WAVE2 features from WAVE2 data...")
         df = data.copy()
         
-        # Feature 5: Wave Signal Up 5 Candles Probability
-        # Если signal=1, вероятность движения вверх 5 свечей
-        if 'signal' in df.columns and 'Close' in df.columns:
-            df['wave_signal_up_5_candles_probability'] = self._calculate_wave_signal_up_5_candles(
-                df['signal'], df['Close']
-            )
-        
-        # Feature 6: Wave Signal Continue 5% Probability
-        # Вероятность продолжения движения на 5%
-        if 'signal' in df.columns and 'Close' in df.columns:
-            df['wave_signal_continue_5_percent_probability'] = self._calculate_wave_continue_5_percent(
-                df['signal'], df['Close']
-            )
-        
-        # Feature 7: Wave Signal MA Below Open Up 5 Candles Probability
-        # При MA < Open, вероятность движения вверх 5 свечей
-        if all(col in df.columns for col in ['signal', 'ma_line', 'Open', 'Close']):
-            condition = (df['signal'] == 1) & (df['ma_line'] < df['Open'])
-            df['wave_signal_ma_below_open_up_5_candles_probability'] = self._calculate_wave_ma_condition_up_5_candles(
-                condition, df['Close']
-            )
-        
-        # Feature 8: Wave Signal MA Below Open Continue 5% Probability
-        # При MA < Open, вероятность продолжения на 5%
-        if all(col in df.columns for col in ['signal', 'ma_line', 'Open', 'Close']):
-            condition = (df['signal'] == 1) & (df['ma_line'] < df['Open'])
-            df['wave_signal_ma_below_open_continue_5_percent_probability'] = self._calculate_wave_ma_condition_continue_5_percent(
-                condition, df['Close']
-            )
-        
-        # Feature 9: Wave Reverse Peak Sign Probability
-        # Вероятность знака следующего пика разворота
-        if 'direction' in df.columns and 'Close' in df.columns:
-            df['wave_reverse_peak_sign_probability'] = self._calculate_wave_reverse_peak_sign(
-                df['direction'], df['Close']
-            )
-        
-        # Feature 10: Wave Reverse Peak 10 Candles Probability
-        # Вероятность пика разворота в течение 10 свечей
-        if 'direction' in df.columns and 'Close' in df.columns:
-            df['wave_reverse_peak_10_candles_probability'] = self._calculate_wave_reverse_peak_10_candles(
-                df['direction'], df['Close']
-            )
+        # Progress bar for WAVE2 features
+        with tqdm(total=6, desc="🌊 WAVE2 Features", unit="feature", 
+                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]') as pbar:
+            
+            # Feature 5: Wave Signal Up 5 Candles Probability
+            # Если signal=1, вероятность движения вверх 5 свечей
+            if 'signal' in df.columns and 'Close' in df.columns:
+                pbar.set_description("🌊 WAVE2: Signal up 5 candles")
+                df['wave_signal_up_5_candles_probability'] = self._calculate_wave_signal_up_5_candles(
+                    df['signal'], df['Close']
+                )
+            pbar.update(1)
+            
+            # Feature 6: Wave Signal Continue 5% Probability
+            # Вероятность продолжения движения на 5%
+            if 'signal' in df.columns and 'Close' in df.columns:
+                pbar.set_description("🌊 WAVE2: Signal continue 5%")
+                df['wave_signal_continue_5_percent_probability'] = self._calculate_wave_continue_5_percent(
+                    df['signal'], df['Close']
+                )
+            pbar.update(1)
+            
+            # Feature 7: Wave Signal MA Below Open Up 5 Candles Probability
+            # При MA < Open, вероятность движения вверх 5 свечей
+            if all(col in df.columns for col in ['signal', 'ma_line', 'Open', 'Close']):
+                pbar.set_description("🌊 WAVE2: MA below open up 5 candles")
+                condition = (df['signal'] == 1) & (df['ma_line'] < df['Open'])
+                df['wave_signal_ma_below_open_up_5_candles_probability'] = self._calculate_wave_ma_condition_up_5_candles(
+                    condition, df['Close']
+                )
+            pbar.update(1)
+            
+            # Feature 8: Wave Signal MA Below Open Continue 5% Probability
+            # При MA < Open, вероятность продолжения на 5%
+            if all(col in df.columns for col in ['signal', 'ma_line', 'Open', 'Close']):
+                pbar.set_description("🌊 WAVE2: MA below open continue 5%")
+                condition = (df['signal'] == 1) & (df['ma_line'] < df['Open'])
+                df['wave_signal_ma_below_open_continue_5_percent_probability'] = self._calculate_wave_ma_condition_continue_5_percent(
+                    condition, df['Close']
+                )
+            pbar.update(1)
+            
+            # Feature 9: Wave Reverse Peak Sign Probability
+            # Вероятность знака следующего пика разворота
+            if 'direction' in df.columns and 'Close' in df.columns:
+                pbar.set_description("🌊 WAVE2: Reverse peak sign")
+                df['wave_reverse_peak_sign_probability'] = self._calculate_wave_reverse_peak_sign(
+                    df['direction'], df['Close']
+                )
+            pbar.update(1)
+            
+            # Feature 10: Wave Reverse Peak 10 Candles Probability
+            # Вероятность пика разворота в течение 10 свечей
+            if 'direction' in df.columns and 'Close' in df.columns:
+                pbar.set_description("🌊 WAVE2: Reverse peak 10 candles")
+                df['wave_reverse_peak_10_candles_probability'] = self._calculate_wave_reverse_peak_10_candles(
+                    df['direction'], df['Close']
+                )
+            pbar.update(1)
         
         logger.info(f"Created {len([col for col in df.columns if 'wave' in col and 'probability' in col])} WAVE2 features")
         return df
@@ -154,26 +184,36 @@ class UpdatedCustomFeatureEngineer:
         logger.info("Creating SHORT3 features from SHORT3 data...")
         df = data.copy()
         
-        # Feature 11: Short3 Signal 1 Up 5% Probability
-        # Если signal=1, вероятность роста на 5%
-        if 'signal' in df.columns and 'Close' in df.columns:
-            df['short3_signal_1_up_5_percent_probability'] = self._calculate_short3_signal_1_up_5_percent(
-                df['signal'], df['Close']
-            )
-        
-        # Feature 12: Short3 Signal 4 Down 10% Probability
-        # Если signal=4, вероятность падения на 10%
-        if 'signal' in df.columns and 'Close' in df.columns:
-            df['short3_signal_4_down_10_percent_probability'] = self._calculate_short3_signal_4_down_10_percent(
-                df['signal'], df['Close']
-            )
-        
-        # Feature 13: Short3 Direction Change 10 Candles Probability
-        # Вероятность смены направления в течение 10 свечей
-        if 'direction' in df.columns and 'Close' in df.columns:
-            df['short3_direction_change_10_candles_probability'] = self._calculate_short3_direction_change_10_candles(
-                df['direction'], df['Close']
-            )
+        # Progress bar for SHORT3 features
+        with tqdm(total=3, desc="⚡ SHORT3 Features", unit="feature", 
+                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]') as pbar:
+            
+            # Feature 11: Short3 Signal 1 Up 5% Probability
+            # Если signal=1, вероятность роста на 5%
+            if 'signal' in df.columns and 'Close' in df.columns:
+                pbar.set_description("⚡ SHORT3: Signal 1 up 5%")
+                df['short3_signal_1_up_5_percent_probability'] = self._calculate_short3_signal_1_up_5_percent(
+                    df['signal'], df['Close']
+                )
+            pbar.update(1)
+            
+            # Feature 12: Short3 Signal 4 Down 10% Probability
+            # Если signal=4, вероятность падения на 10%
+            if 'signal' in df.columns and 'Close' in df.columns:
+                pbar.set_description("⚡ SHORT3: Signal 4 down 10%")
+                df['short3_signal_4_down_10_percent_probability'] = self._calculate_short3_signal_4_down_10_percent(
+                    df['signal'], df['Close']
+                )
+            pbar.update(1)
+            
+            # Feature 13: Short3 Direction Change 10 Candles Probability
+            # Вероятность смены направления в течение 10 свечей
+            if 'direction' in df.columns and 'Close' in df.columns:
+                pbar.set_description("⚡ SHORT3: Direction change 10 candles")
+                df['short3_direction_change_10_candles_probability'] = self._calculate_short3_direction_change_10_candles(
+                    df['direction'], df['Close']
+                )
+            pbar.update(1)
         
         logger.info(f"Created {len([col for col in df.columns if 'short3' in col and 'probability' in col])} SHORT3 features")
         return df
@@ -185,22 +225,32 @@ class UpdatedCustomFeatureEngineer:
         """
         logger.info("Creating all 13 custom features from combined data sources...")
         
-        # Start with CSVExport data as base
-        result_df = csv_export_data.copy()
-        
-        # Add SCHR features
-        result_df = self.create_schr_features(result_df)
-        
-        # Merge WAVE2 data and add features
-        if not wave2_data.empty:
-            # Merge on timestamp/index
-            wave2_features = self.create_wave2_features(wave2_data)
-            result_df = self._merge_dataframes(result_df, wave2_features)
-        
-        # Merge SHORT3 data and add features  
-        if not short3_data.empty:
-            short3_features = self.create_short3_features(short3_data)
-            result_df = self._merge_dataframes(result_df, short3_features)
+        # Overall progress bar for all features
+        with tqdm(total=3, desc="🎯 All Features", unit="indicator", 
+                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]') as main_pbar:
+            
+            # Start with CSVExport data as base
+            result_df = csv_export_data.copy()
+            
+            # Add SCHR features
+            main_pbar.set_description("🎯 All Features: SCHR")
+            result_df = self.create_schr_features(result_df)
+            main_pbar.update(1)
+            
+            # Merge WAVE2 data and add features
+            if not wave2_data.empty:
+                main_pbar.set_description("🎯 All Features: WAVE2")
+                # Merge on timestamp/index
+                wave2_features = self.create_wave2_features(wave2_data)
+                result_df = self._merge_dataframes(result_df, wave2_features)
+            main_pbar.update(1)
+            
+            # Merge SHORT3 data and add features  
+            if not short3_data.empty:
+                main_pbar.set_description("🎯 All Features: SHORT3")
+                short3_features = self.create_short3_features(short3_data)
+                result_df = self._merge_dataframes(result_df, short3_features)
+            main_pbar.update(1)
         
         logger.info(f"Created total of {len([col for col in result_df.columns if 'probability' in col])} custom features")
         return result_df
