@@ -74,19 +74,19 @@ class GluonTrainer:
         fit_args = {
             'time_limit': self.config.time_limit,
             'presets': self.config.presets,
-            'auto_clean': self.config.auto_clean,
-            'feature_generation': self.config.feature_generation,
+            # 'auto_clean': self.config.auto_clean,  # Not supported in AutoGluon
+            # 'feature_generation': self.config.feature_generation,  # Not supported in AutoGluon
             'holdout_frac': self.config.holdout_frac,
             'num_bag_folds': self.config.num_bag_folds,
             'num_bag_sets': self.config.num_bag_sets,
             'excluded_model_types': self.config.excluded_model_types,
-            'hyperparameter_tune_kwargs': self.config.hyperparameter_tune_kwargs
+            # 'hyperparameter_tune_kwargs': self.config.hyperparameter_tune_kwargs  # Disabled for simplicity
         }
         
         # Add validation data if provided
         if validation_data is not None:
             fit_args['holdout_frac'] = None
-            fit_args['val_data'] = validation_data
+            fit_args['tuning_data'] = validation_data  # Use 'tuning_data' instead of 'val_data'
         
         # Train models
         logger.info(f"Training with {len(train_data)} samples...")

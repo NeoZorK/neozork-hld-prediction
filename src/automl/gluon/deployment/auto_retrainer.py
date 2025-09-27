@@ -114,8 +114,8 @@ class AutoRetrainer:
         fit_args = {
             'time_limit': config.time_limit,
             'presets': config.presets,
-            'auto_clean': config.auto_clean,
-            'feature_generation': config.feature_generation,
+            # 'auto_clean': config.auto_clean,  # Not supported in AutoGluon
+            # 'feature_generation': config.feature_generation,  # Not supported in AutoGluon
             'holdout_frac': config.holdout_frac,
             'num_bag_folds': config.num_bag_folds,
             'num_bag_sets': config.num_bag_sets,
