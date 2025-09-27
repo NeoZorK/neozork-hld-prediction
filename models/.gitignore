@@ -1,0 +1,27 @@
+# AutoGluon Models
+autogluon/
+btc_simple_demo/
+
+# Archive directories
+archived_models/
+
+# Model files
+*.pkl
+*.pth
+*.h5
+*.hdf5
+*.joblib
+*.pickle
+
+# Cache files
+utils/
+cache/
+temp/
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp

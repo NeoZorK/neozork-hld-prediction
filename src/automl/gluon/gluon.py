@@ -26,7 +26,8 @@ from .config import GluonConfig, load_gluon_config, ExperimentConfig
 from .data import UniversalDataLoader, GluonPreprocessor
 from .models import GluonTrainer, GluonPredictor, GluonEvaluator
 from .deployment import GluonExporter, AutoRetrainer, DriftMonitor
-from .utils import GluonLogger, ValueScoreAnalyzer
+from .utils import GluonLogger
+from .analysis import ValueScoreAnalyzer
 
 warnings.filterwarnings('ignore')
 
@@ -148,21 +149,47 @@ class GluonAutoML:
         Returns:
             Evaluation results
         """
-        if not self.evaluator:
+        if not self.predictor:
             raise ValueError("Models must be trained before evaluation")
         
         self.logger.info("Evaluating models...")
         
-        # Evaluate models
-        results = self.evaluator.evaluate(test_data, target_column)
+        # Make predictions
+        predictions = self.predictor.predict(test_data)
+        
+        # Calculate basic metrics
+        actual = test_data[target_column]
+        
+        # For regression, calculate RMSE instead of accuracy
+        if self.predictor.problem_type == 'regression':
+            from sklearn.metrics import mean_squared_error
+            mse = mean_squared_error(actual, predictions)
+            rmse = mse ** 0.5
+            results = {
+                'rmse': rmse,
+                'predictions': predictions,
+                'actual': actual
+            }
+        else:
+            # For classification, calculate accuracy and probabilities
+            accuracy = (predictions == actual).mean()
+            probabilities = self.predictor.predict_proba(test_data) if self.predictor.can_predict_proba else None
+            
+            results = {
+                'accuracy': accuracy,
+                'predictions': predictions,
+                'probabilities': probabilities,
+                'actual': actual
+            }
         
         # Add value scores analysis
-        value_analyzer = ValueScoreAnalyzer()
-        value_scores = value_analyzer.analyze_predictions(
-            test_data[target_column], 
-            results.get('predictions', [])
-        )
-        results['value_scores'] = value_scores
+        try:
+            value_analyzer = ValueScoreAnalyzer()
+            value_scores = value_analyzer.analyze(predictions, actual)
+            results['value_scores'] = value_scores
+        except Exception as e:
+            self.logger.warning(f"Value scores analysis failed: {e}")
+            results['value_scores'] = {}
         
         self.logger.info("Model evaluation completed")
         return results
@@ -187,6 +214,30 @@ class GluonAutoML:
         
         self.logger.info(f"Predictions completed: {len(predictions)} predictions")
         return predictions
+    
+    def predict_proba(self, data: pd.DataFrame) -> pd.DataFrame:
+        """
+        Make probability predictions on new data.
+        
+        Args:
+            data: Input data for prediction
+            
+        Returns:
+            Probability predictions DataFrame
+        """
+        if not self.predictor:
+            raise ValueError("Models must be trained before prediction")
+        
+        if not self.predictor.can_predict_proba:
+            raise ValueError(f"Probability predictions not supported for problem type: {self.predictor.problem_type}")
+        
+        self.logger.info("Making probability predictions...")
+        
+        # Make probability predictions
+        probabilities = self.predictor.predict_proba(data)
+        
+        self.logger.info(f"Probability predictions completed: {len(probabilities)} predictions")
+        return probabilities
     
     def export_models(self, export_path: Optional[str] = None) -> Dict[str, str]:
         """
