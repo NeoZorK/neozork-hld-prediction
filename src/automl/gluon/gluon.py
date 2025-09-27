@@ -118,7 +118,10 @@ class GluonAutoML:
         return df
     
     def train_models(self, train_data: pd.DataFrame, target_column: str, 
-                    validation_data: Optional[pd.DataFrame] = None) -> 'GluonAutoML':
+                    validation_data: Optional[pd.DataFrame] = None, 
+                    model_path: Optional[str] = None,
+                    dynamic_stacking: bool = False,
+                    num_stack_levels: int = 1) -> 'GluonAutoML':
         """
         Train AutoGluon models.
         
@@ -126,17 +129,20 @@ class GluonAutoML:
             train_data: Training data
             target_column: Target column name
             validation_data: Optional validation data
+            model_path: Optional custom model path
             
         Returns:
             Self for method chaining
         """
         self.logger.info("Starting model training...")
         
-        # Create trainer
-        self.trainer = GluonTrainer(self.config, self.experiment_config)
+        # Create trainer with custom model path if provided
+        self.trainer = GluonTrainer(self.config, self.experiment_config, model_path=model_path)
         
-        # Train models
-        self.predictor = self.trainer.train(train_data, target_column, validation_data)
+        # Train models with dynamic stacking parameters
+        self.predictor = self.trainer.train(train_data, target_column, validation_data, 
+                                          dynamic_stacking=dynamic_stacking, 
+                                          num_stack_levels=num_stack_levels)
         
         # Create evaluator
         self.evaluator = GluonEvaluator(self.predictor)
