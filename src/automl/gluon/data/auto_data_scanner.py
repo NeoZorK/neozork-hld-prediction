@@ -56,38 +56,51 @@ class AutoDataScanner:
         # Pattern to match filenames like "INDICATOR_SYMBOL_PERIOD_TIMEFRAME.parquet"
         # Supports CSVExport (SCHR Levels), WAVE2, SHORT3, and other indicators
         # Updated pattern to include CSVExport files with dots in symbols (e.g., AAPL.NAS)
-        pattern = r'^([A-Z0-9_]+)_([A-Z0-9.]+)_PERIOD_([A-Z0-9]+)\.parquet$'
+        # CSVExport files have format: CSVExport_SYMBOL_PERIOD_TIMEFRAME.parquet
+        # Other indicators have format: INDICATOR_SYMBOL_PERIOD_TIMEFRAME.parquet
+        # We need to handle both formats
+        csv_export_pattern = r'^CSVExport_([A-Z0-9.]+)_PERIOD_([A-Z0-9]+)\.parquet$'
+        other_pattern = r'^([A-Z0-9_]+)_([A-Z0-9.]+)_PERIOD_([A-Z0-9]+)\.parquet$'
         
         available_files = []
         
         # Scan for parquet files
         for file_path in self.data_path.glob("*.parquet"):
             filename = file_path.name
-            match = re.match(pattern, filename)
             
-            if match:
-                indicator, symbol, timeframe = match.groups()
-                
-                # Get file info
-                file_info = {
-                    'file_path': str(file_path),
-                    'filename': filename,
-                    'indicator': indicator,
-                    'symbol': symbol,
-                    'timeframe': timeframe,
-                    'size_mb': file_path.stat().st_size / (1024 * 1024),
-                    'exists': True
-                }
-                
-                available_files.append(file_info)
-                
-                # Update sets
-                self.indicators.add(indicator)
-                self.symbols.add(symbol)
-                self.timeframes.add(timeframe)
-                
-                logger.info(f"✅ Found: {indicator} {symbol} {timeframe} ({file_info['size_mb']:.1f} MB)")
+            # Try CSVExport pattern first
+            csv_match = re.match(csv_export_pattern, filename)
+            if csv_match:
+                symbol, timeframe = csv_match.groups()
+                indicator = "CSVExport"  # CSVExport is the indicator name
             else:
+                # Try other pattern
+                other_match = re.match(other_pattern, filename)
+                if other_match:
+                    indicator, symbol, timeframe = other_match.groups()
+                else:
+                    continue  # Skip files that don't match either pattern
+            
+            # Get file info
+            file_info = {
+                'file_path': str(file_path),
+                'filename': filename,
+                'indicator': indicator,
+                'symbol': symbol,
+                'timeframe': timeframe,
+                'size_mb': file_path.stat().st_size / (1024 * 1024),
+                'exists': True
+            }
+            
+            available_files.append(file_info)
+            
+            # Update sets
+            self.indicators.add(indicator)
+            self.symbols.add(symbol)
+            self.timeframes.add(timeframe)
+            
+            logger.info(f"✅ Found: {indicator} {symbol} {timeframe} ({file_info['size_mb']:.1f} MB)")
+        else:
                 logger.warning(f"⚠️ Skipped file (doesn't match pattern): {filename}")
         
         # Organize data by indicator and symbol

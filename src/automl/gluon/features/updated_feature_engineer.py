@@ -62,7 +62,8 @@ class UpdatedCustomFeatureEngineer:
         
         # Progress bar for SCHR features
         with tqdm(total=4, desc="🔧 SCHR Features", unit="feature", 
-                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]') as pbar:
+                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]',
+                 position=0, leave=True) as pbar:
             
             # Feature 1: Trend Direction Probability
             # Вероятность направления тренда на основе pressure и pressure_vector
@@ -113,7 +114,8 @@ class UpdatedCustomFeatureEngineer:
         
         # Progress bar for WAVE2 features
         with tqdm(total=6, desc="🌊 WAVE2 Features", unit="feature", 
-                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]') as pbar:
+                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]',
+                 position=1, leave=True) as pbar:
             
             # Feature 5: Wave Signal Up 5 Candles Probability
             # Если signal=1, вероятность движения вверх 5 свечей
@@ -186,7 +188,8 @@ class UpdatedCustomFeatureEngineer:
         
         # Progress bar for SHORT3 features
         with tqdm(total=3, desc="⚡ SHORT3 Features", unit="feature", 
-                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]') as pbar:
+                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]',
+                 position=2, leave=True) as pbar:
             
             # Feature 11: Short3 Signal 1 Up 5% Probability
             # Если signal=1, вероятность роста на 5%
@@ -227,7 +230,8 @@ class UpdatedCustomFeatureEngineer:
         
         # Overall progress bar for all features
         with tqdm(total=3, desc="🎯 All Features", unit="indicator", 
-                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]') as main_pbar:
+                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]',
+                 position=3, leave=True) as main_pbar:
             
             # Start with CSVExport data as base
             result_df = csv_export_data.copy()
