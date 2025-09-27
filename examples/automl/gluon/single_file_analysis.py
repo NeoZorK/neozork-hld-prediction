@@ -8,6 +8,8 @@ import pandas as pd
 import numpy as np
 import os
 import sys
+import shutil
+import glob
 from pathlib import Path
 import logging
 from datetime import datetime
@@ -57,9 +59,63 @@ def analyze_single_file(file_path: str,
     logger.info("Creating time series split...")
     train_data, val_data, test_data = gluon.create_time_series_split(data)
     
-    # Train model
+    # Train model with error handling
     logger.info("Training model...")
-    gluon.train_models(train_data, target_column, val_data)
+    try:
+        gluon.train_models(train_data, target_column, val_data)
+    except Exception as e:
+        error_msg = str(e)
+        if "Learner is already fit" in error_msg or "already fit" in error_msg.lower():
+            logger.warning("Model conflict detected. Cleaning existing models...")
+            
+            # Find and show model files
+            model_paths = []
+            
+            # Check for main model directory
+            if os.path.exists("models/autogluon"):
+                model_paths.append("models/autogluon")
+            
+            # Check for sub-fit directories
+            sub_fit_dirs = glob.glob("models/autogluon_ds_sub_fit*")
+            model_paths.extend(sub_fit_dirs)
+            
+            # Check for single file analysis directories
+            single_analysis_dirs = glob.glob("models/single_file_analysis_*")
+            model_paths.extend(single_analysis_dirs)
+            
+            if model_paths:
+                print(f"\n⚠️  Found {len(model_paths)} model directories that may be causing conflicts:")
+                for path in model_paths:
+                    if os.path.exists(path):
+                        print(f"   📂 {path}")
+                
+                print(f"\n❓ Do you want to delete these model files and retry? (y/n): ", end="")
+                try:
+                    response = input().strip().lower()
+                except KeyboardInterrupt:
+                    logger.error("Analysis cancelled by user")
+                    return {"status": "error", "message": "Analysis cancelled by user"}
+                
+                if response in ['y', 'yes', 'да', 'д']:
+                    print("🧹 Cleaning model files...")
+                    for path in model_paths:
+                        try:
+                            if os.path.exists(path):
+                                shutil.rmtree(path)
+                                print(f"   ✅ Cleaned: {path}")
+                        except Exception as clean_error:
+                            print(f"   ❌ Failed to clean {path}: {clean_error}")
+                    
+                    print("🔄 Retrying model training...")
+                    gluon.train_models(train_data, target_column, val_data)
+                else:
+                    logger.error("Analysis cancelled - model files not cleaned")
+                    return {"status": "error", "message": "Analysis cancelled - model files not cleaned"}
+            else:
+                logger.error("No model files found, but conflict detected")
+                return {"status": "error", "message": "Model conflict detected but no files found to clean"}
+        else:
+            raise e
     
     # Evaluate model
     logger.info("Evaluating model...")
