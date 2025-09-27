@@ -15,8 +15,8 @@ holdout_frac: 0.1
 num_bag_folds: 0
 num_bag_sets: 1
 
-# Model selection (empty list means use all models)
-excluded_model_types: []
+# Model selection (exclude GPU-dependent models for MacBook M1)
+excluded_model_types: ["NN_TORCH", "NN_FASTAI"]
 
 # Hyperparameter optimization (disabled for simplicity)
 # hyperparameter_tune_kwargs:
@@ -31,3 +31,10 @@ save_space: false
 
 # Performance settings
 verbosity: 2
+
+# GPU settings (disabled for MacBook M1)
+use_gpu: false
+num_gpus: 0
+
+# Environment settings
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
