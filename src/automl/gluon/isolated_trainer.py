@@ -15,6 +15,7 @@ import logging
 from pathlib import Path
 import pickle
 import argparse
+from tqdm import tqdm
 
 # Add src to path
 sys.path.insert(0, os.path.abspath('src'))
@@ -61,9 +62,22 @@ def train_model_isolated(train_data_path: str, val_data_path: str,
         logger.info("🔄 Creating fresh GluonAutoML instance...")
         gluon = GluonAutoML()
         
-        # Train model
+        # Train model with progress bar
         logger.info("🤖 Training model...")
-        gluon.train_models(train_data, target_column, val_data, model_path=model_path)
+        
+        # Create a progress bar for training
+        with tqdm(total=100, desc="🤖 Training", unit="%", 
+                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]') as pbar:
+            
+            # Start training
+            pbar.set_description("🤖 Training: Starting...")
+            pbar.update(10)
+            
+            # Train model
+            gluon.train_models(train_data, target_column, val_data, model_path=model_path)
+            
+            pbar.set_description("🤖 Training: Completed!")
+            pbar.update(90)
         
         logger.info("✅ Model training completed successfully!")
         return True
