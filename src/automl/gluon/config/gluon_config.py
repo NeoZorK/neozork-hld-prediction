@@ -38,6 +38,10 @@ class GluonConfig:
     # Hyperparameter optimization
     hyperparameter_tune_kwargs: dict = None
     
+    # Dynamic stacking settings (to avoid "Learner is already fit" error)
+    dynamic_stacking: bool = True
+    num_stack_levels: int = 1
+    
     def __post_init__(self):
         """Initialize default values."""
         if self.presets is None:

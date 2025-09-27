@@ -28,23 +28,27 @@ logger = logging.getLogger(__name__)
 class GluonTrainer:
     """AutoGluon trainer wrapper."""
     
-    def __init__(self, config: Any, experiment_config: Any):
+    def __init__(self, config: Any, experiment_config: Any, model_path: Optional[str] = None):
         """
         Initialize Gluon trainer.
         
         Args:
             config: AutoGluon configuration
             experiment_config: Experiment configuration
+            model_path: Optional custom model path
         """
         if not AUTOGLUON_AVAILABLE:
             raise ImportError("AutoGluon is not available")
         
         self.config = config
         self.experiment_config = experiment_config
+        self.model_path = model_path
         self.predictor = None
         
     def train(self, train_data: pd.DataFrame, target_column: str, 
-              validation_data: Optional[pd.DataFrame] = None) -> TabularPredictor:
+              validation_data: Optional[pd.DataFrame] = None,
+              dynamic_stacking: bool = False,
+              num_stack_levels: int = 1) -> TabularPredictor:
         """
         Train AutoGluon models.
         
@@ -59,7 +63,13 @@ class GluonTrainer:
         logger.info("Starting AutoGluon training...")
         
         # Create output directory
-        output_dir = Path("models/autogluon")
+        if self.model_path:
+            output_dir = Path(self.model_path)
+            logger.info(f"Using custom model path: {output_dir}")
+        else:
+            output_dir = Path("models/autogluon")
+            logger.info(f"Using default model path: {output_dir}")
+        
         output_dir.mkdir(parents=True, exist_ok=True)
         
         # Initialize TabularPredictor
@@ -83,10 +93,15 @@ class GluonTrainer:
             # 'hyperparameter_tune_kwargs': self.config.hyperparameter_tune_kwargs  # Disabled for simplicity
         }
         
+        # Add dynamic stacking settings to avoid "Learner is already fit" error
+        fit_args['dynamic_stacking'] = dynamic_stacking
+        fit_args['num_stack_levels'] = num_stack_levels
+        
         # Add validation data if provided
         if validation_data is not None:
             fit_args['holdout_frac'] = None
             fit_args['tuning_data'] = validation_data  # Use 'tuning_data' instead of 'val_data'
+            fit_args['use_bag_holdout'] = True  # Enable bag holdout for validation data
         
         # Train models
         logger.info(f"Training with {len(train_data)} samples...")
