@@ -2,6 +2,10 @@
 """
 Simplified AutoGluon Integration Workflow Demo
 Using real data from data/cache/csv_converted/
+
+DEMO IDENTIFIER: simple_workflow_demo_v1.0
+Created: 2024-09-27
+Purpose: Demonstrate complete AutoGluon integration workflow
 """
 
 import pandas as pd
