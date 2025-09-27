@@ -162,8 +162,9 @@ class TestDeployment:
         """Test retrain decision logic."""
         retrainer = AutoRetrainer()
         
-        # Test with good performance
+        # Test with good performance (no degradation)
         should_retrain = retrainer.should_retrain(0.8, 0.8, 150)
+        # With good performance and no degradation, should not retrain
         assert not should_retrain
         
         # Test with performance degradation
@@ -338,7 +339,7 @@ class TestDeployment:
         exporter = GluonExporter()
         
         # Test with invalid predictor
-        with pytest.raises(Exception):
+        with pytest.raises((TypeError, ValueError, AttributeError)):
             exporter.export(None, "invalid_path", ['pickle'])
         
         # Test with invalid export path
