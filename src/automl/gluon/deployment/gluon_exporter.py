@@ -136,6 +136,7 @@ class GluonExporter:
         model_paths = self.export(predictor, str(export_path), ['pickle', 'json'])
         
         # Create walk forward specific files
+        import pandas as pd
         wf_config = {
             'model_type': 'autogluon',
             'export_timestamp': str(pd.Timestamp.now()),
@@ -172,6 +173,7 @@ class GluonExporter:
         model_paths = self.export(predictor, str(export_path), ['pickle', 'json'])
         
         # Create Monte Carlo specific files
+        import pandas as pd
         mc_config = {
             'model_type': 'autogluon',
             'export_timestamp': str(pd.Timestamp.now()),
@@ -209,6 +211,7 @@ class GluonExporter:
         model_paths = self.export(predictor, str(export_path), ['pickle', 'json'])
         
         # Create deployment configuration
+        import pandas as pd
         deployment_config = {
             'model_type': 'autogluon',
             'version': '1.0.0',
