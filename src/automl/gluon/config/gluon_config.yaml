@@ -1,0 +1,47 @@
+# AutoGluon Configuration
+# This file contains the default configuration for AutoGluon integration
+
+# AutoGluon presets for maximum quality
+presets:
+  - "best_quality"
+  - "high_quality"
+
+# Time limit for training (seconds)
+time_limit: 3600
+
+# Automatic data cleaning
+auto_clean: true
+
+# Feature generation settings
+feature_generation: true
+max_features: 1000
+
+# Validation settings
+holdout_frac: 0.1
+num_bag_folds: 5
+num_bag_sets: 1
+
+# Model selection (empty list means use all models)
+excluded_model_types: []
+
+# Hyperparameter optimization
+hyperparameter_tune_kwargs:
+  num_trials: 10
+  search_strategy: "auto"
+
+# Additional AutoGluon settings
+infer_limit: 120  # seconds for data type inference
+infer_limit_batch_size: 10000  # batch size for inference
+
+# Feature engineering settings
+feature_metadata: "auto"  # automatic feature metadata
+feature_prune: true  # prune redundant features
+
+# Model ensemble settings
+num_stack_levels: 1  # stacking levels
+num_bag_sets: 1  # bagging sets
+num_bag_folds: 5  # cross-validation folds
+
+# Performance settings
+num_cpus: "auto"  # use all available CPUs
+num_gpus: "auto"  # use all available GPUs
