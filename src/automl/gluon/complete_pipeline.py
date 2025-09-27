@@ -13,6 +13,7 @@ from datetime import datetime
 
 # Local imports
 from .gluon import GluonAutoML
+from .models.gluon_evaluator import GluonEvaluator
 from .data.multi_indicator_loader import MultiIndicatorLoader
 from .features.updated_feature_engineer import UpdatedCustomFeatureEngineer
 from .analysis.advanced_analysis import AdvancedTradingAnalyzer
@@ -44,10 +45,156 @@ class CompleteTradingPipeline:
             time_limit=7200,  # 2 hours
             presets=['best_quality'],
             excluded_model_types=["NN_TORCH", "NN_FASTAI"],
-            num_bag_folds=5
+            num_bag_folds=5,
+            # Disable dynamic stacking to avoid "Learner is already fit" error
+            dynamic_stacking=False,
+            num_stack_levels=1
         )
         
+        # Initialize gluon as None - will be created fresh each time
+        self.gluon = None
+        
+    def _create_fresh_gluon(self):
+        """
+        Create a fresh GluonAutoML instance.
+        Создать новый экземпляр GluonAutoML.
+        """
+        logger.info("🔄 Creating fresh GluonAutoML instance...")
+        
+        # Clean up old instance if exists
+        if self.gluon is not None:
+            try:
+                # Try to clean up any existing state
+                if hasattr(self.gluon, 'trainer') and hasattr(self.gluon.trainer, 'predictor'):
+                    del self.gluon.trainer.predictor
+                if hasattr(self.gluon, 'trainer'):
+                    del self.gluon.trainer
+                del self.gluon
+            except Exception as e:
+                logger.warning(f"⚠️ Error cleaning up old gluon instance: {e}")
+        
+        # Create new instance
         self.gluon = GluonAutoML()
+        logger.info("✅ Fresh GluonAutoML instance created")
+        
+    def _get_unique_model_path(self):
+        """
+        Get unique model path for this session.
+        Получить уникальный путь модели для этой сессии.
+        """
+        import uuid
+        session_id = str(uuid.uuid4())[:8]
+        return f"models/autogluon_{session_id}"
+        
+    def _cleanup_old_models(self):
+        """
+        Clean up old model directories.
+        Очистить старые директории моделей.
+        """
+        logger.info("🧹 Cleaning up old model directories...")
+        
+        import shutil
+        import glob
+        import os
+        
+        # Clean up all autogluon directories
+        cleanup_patterns = [
+            "models/autogluon*",
+            "models/autogluon",
+            "models/autogluon/ds_sub_fit*",
+            "models/autogluon/ds_sub_fit",
+            "models/autogluon/ds_sub_fit/sub_fit_ho*",
+            "models/autogluon/ds_sub_fit/sub_fit_ho"
+        ]
+        
+        for pattern in cleanup_patterns:
+            model_dirs = glob.glob(pattern)
+            for model_dir in model_dirs:
+                try:
+                    if os.path.exists(model_dir):
+                        shutil.rmtree(model_dir)
+                        logger.info(f"✅ Cleaned: {model_dir}")
+                except Exception as e:
+                    logger.warning(f"⚠️ Could not clean {model_dir}: {e}")
+        
+        # Additional cleanup for any remaining .pkl files
+        pkl_files = glob.glob("models/**/*.pkl", recursive=True)
+        for pkl_file in pkl_files:
+            try:
+                if os.path.exists(pkl_file):
+                    os.remove(pkl_file)
+                    logger.info(f"✅ Removed: {pkl_file}")
+            except Exception as e:
+                logger.warning(f"⚠️ Could not remove {pkl_file}: {e}")
+        
+        # Force cleanup using subprocess
+        import subprocess
+        try:
+            # Use find command to locate and remove any remaining AutoGluon directories
+            result = subprocess.run(['find', 'models', '-name', '*autogluon*', '-type', 'd'], 
+                                 capture_output=True, text=True)
+            if result.stdout:
+                for dir_path in result.stdout.strip().split('\n'):
+                    if dir_path and os.path.exists(dir_path):
+                        shutil.rmtree(dir_path)
+                        logger.info(f"✅ Force cleaned: {dir_path}")
+        except Exception as e:
+            logger.warning(f"⚠️ Force cleanup failed: {e}")
+        
+        logger.info("🧹 Model cleanup completed")
+        
+    def _train_with_isolated_process(self, train_data: pd.DataFrame, val_data: pd.DataFrame, 
+                                   model_path: str) -> bool:
+        """
+        Train model using isolated subprocess to avoid "Learner is already fit" error.
+        Обучить модель используя изолированный подпроцесс для избежания ошибки "Learner is already fit".
+        """
+        import subprocess
+        import tempfile
+        import pickle
+        
+        logger.info("🔄 Training with isolated subprocess...")
+        
+        try:
+            # Create temporary files for data
+            with tempfile.NamedTemporaryFile(suffix='.pkl', delete=False) as train_file:
+                train_path = train_file.name
+                pickle.dump(train_data, train_file)
+            
+            with tempfile.NamedTemporaryFile(suffix='.pkl', delete=False) as val_file:
+                val_path = val_file.name
+                pickle.dump(val_data, val_file)
+            
+            # Run isolated training
+            cmd = [
+                'python', 'src/automl/gluon/isolated_trainer.py',
+                '--train-data', train_path,
+                '--val-data', val_path,
+                '--target-column', 'target',
+                '--model-path', model_path
+            ]
+            
+            logger.info(f"🚀 Running isolated training: {' '.join(cmd)}")
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=7200)  # 2 hour timeout
+            
+            # Clean up temporary files
+            import os
+            os.unlink(train_path)
+            os.unlink(val_path)
+            
+            if result.returncode == 0:
+                logger.info("✅ Isolated training completed successfully")
+                return True
+            else:
+                logger.error(f"❌ Isolated training failed: {result.stderr}")
+                return False
+                
+        except subprocess.TimeoutExpired:
+            logger.error("❌ Isolated training timed out")
+            return False
+        except Exception as e:
+            logger.error(f"❌ Isolated training error: {e}")
+            return False
         
     def run_complete_pipeline(self, symbols: List[str] = None, timeframes: List[str] = None, 
                             target_symbol: str = None, target_timeframe: str = None,
@@ -132,87 +279,31 @@ class CompleteTradingPipeline:
             # Step 4: Model training
             logger.info("🤖 Step 4: Model training...")
             
-            # Clean existing models to avoid "Learner is already fit" error
-            import shutil
-            import glob
-            import os
+            # Create fresh GluonAutoML instance
+            self._create_fresh_gluon()
             
-            # Nuclear cleanup of all AutoGluon related directories
-            logger.info("🧹 Cleaning existing AutoGluon models...")
-            cleanup_patterns = [
-                "models/autogluon*",
-                "models/autogluon",
-                "models/autogluon/ds_sub_fit*",
-                "models/autogluon/ds_sub_fit",
-                "models/autogluon/ds_sub_fit/sub_fit_ho*",
-                "models/autogluon/ds_sub_fit/sub_fit_ho",
-                "models/autogluon/ds_sub_fit/sub_fit_ho/learner.pkl",
-                "models/autogluon/ds_sub_fit/sub_fit_ho/trainer.pkl"
-            ]
+            # Get unique model path
+            unique_model_path = self._get_unique_model_path()
+            logger.info(f"📁 Using unique model path: {unique_model_path}")
             
-            for pattern in cleanup_patterns:
-                model_dirs = glob.glob(pattern)
-                for model_dir in model_dirs:
-                    try:
-                        if os.path.exists(model_dir):
-                            shutil.rmtree(model_dir)
-                            logger.info(f"✅ Cleaned: {model_dir}")
-                    except Exception as e:
-                        logger.warning(f"⚠️ Could not clean {model_dir}: {e}")
+            # Clean up old models
+            self._cleanup_old_models()
             
-            # Additional cleanup for any remaining .pkl files
-            pkl_files = glob.glob("models/**/*.pkl", recursive=True)
-            for pkl_file in pkl_files:
-                try:
-                    if os.path.exists(pkl_file):
-                        os.remove(pkl_file)
-                        logger.info(f"✅ Removed: {pkl_file}")
-                except Exception as e:
-                    logger.warning(f"⚠️ Could not remove {pkl_file}: {e}")
-            
-            # Force cleanup of any remaining AutoGluon directories
-            import subprocess
-            try:
-                # Use find command to locate and remove any remaining AutoGluon directories
-                result = subprocess.run(['find', 'models', '-name', '*autogluon*', '-type', 'd'], 
-                                     capture_output=True, text=True)
-                if result.stdout:
-                    for dir_path in result.stdout.strip().split('\n'):
-                        if dir_path and os.path.exists(dir_path):
-                            shutil.rmtree(dir_path)
-                            logger.info(f"✅ Force cleaned: {dir_path}")
-            except Exception as e:
-                logger.warning(f"⚠️ Force cleanup failed: {e}")
-            
-            logger.info("🧹 Model cleanup completed")
-            
-            # Force cleanup right before training
-            logger.info("🧹 Final cleanup before training...")
-            try:
-                # Remove any remaining AutoGluon directories
-                subprocess.run(['rm', '-rf', 'models/autogluon*'], check=False)
-                subprocess.run(['rm', '-rf', 'models/autogluon'], check=False)
-                logger.info("✅ Force cleanup completed")
-            except Exception as e:
-                logger.warning(f"⚠️ Force cleanup failed: {e}")
-            
-            # Also clean any temporary directories
-            temp_patterns = [
-                "models/autogluon/ds_sub_fit",
-                "models/autogluon/ds_sub_fit/sub_fit_ho"
-            ]
-            
-            for temp_dir in temp_patterns:
-                try:
-                    if os.path.exists(temp_dir):
-                        shutil.rmtree(temp_dir)
-                        logger.info(f"Cleaned temp directory: {temp_dir}")
-                except Exception as e:
-                    logger.warning(f"Could not clean temp {temp_dir}: {e}")
-            
+            # Train with isolated process to avoid "Learner is already fit" error
             training_start = time.time()
-            self.gluon.train_models(train_data, "target", val_data)
-            training_time = time.time() - training_start
+            try:
+                # Use isolated training process
+                success = self._train_with_isolated_process(train_data, val_data, unique_model_path)
+                training_time = time.time() - training_start
+                
+                if success:
+                    logger.info(f"✅ Model training completed in {training_time:.2f} seconds")
+                else:
+                    raise Exception("Isolated training failed")
+                    
+            except Exception as e:
+                logger.error(f"❌ Model training failed: {e}")
+                training_time = time.time() - training_start
             results['model_training'] = {
                 'training_time_seconds': training_time,
                 'training_time_minutes': training_time / 60,
@@ -221,8 +312,22 @@ class CompleteTradingPipeline:
             
             # Step 5: Model evaluation
             logger.info("📈 Step 5: Model evaluation...")
-            evaluation = self.gluon.evaluate_models(test_data, "target")
-            results['model_evaluation'] = evaluation
+            try:
+                # Load the trained model from the isolated process
+                from autogluon.tabular import TabularPredictor
+                predictor = TabularPredictor.load(unique_model_path)
+                
+                # Create a temporary GluonAutoML instance for evaluation
+                temp_gluon = GluonAutoML()
+                temp_gluon.predictor = predictor
+                temp_gluon.evaluator = GluonEvaluator(predictor)
+                
+                evaluation = temp_gluon.evaluate_models(test_data, "target")
+                results['model_evaluation'] = evaluation
+                logger.info("✅ Model evaluation completed successfully")
+            except Exception as e:
+                logger.error(f"❌ Model evaluation failed: {e}")
+                results['model_evaluation'] = {'error': str(e)}
             
             # Step 6: Advanced analysis
             logger.info("🔍 Step 6: Advanced analysis...")
