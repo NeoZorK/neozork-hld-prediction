@@ -15,6 +15,7 @@ from datetime import datetime
 from .gluon import GluonAutoML
 from .models.gluon_evaluator import GluonEvaluator
 from .data.multi_indicator_loader import MultiIndicatorLoader
+from .data.data_cleaner import DataCleaner
 from .features.updated_feature_engineer import UpdatedCustomFeatureEngineer
 from .analysis.advanced_analysis import AdvancedTradingAnalyzer
 from .config import GluonConfig, ExperimentConfig
@@ -37,6 +38,7 @@ class CompleteTradingPipeline:
         """
         self.base_data_path = base_data_path
         self.multi_loader = MultiIndicatorLoader(base_data_path)
+        self.data_cleaner = DataCleaner()
         self.feature_engineer = UpdatedCustomFeatureEngineer()
         self.analyzer = AdvancedTradingAnalyzer()
         
@@ -264,9 +266,18 @@ class CompleteTradingPipeline:
                 'data_shape': data_with_features.shape
             }
             
+            # Step 2.5: Data cleaning
+            logger.info("🧹 Step 2.5: Data cleaning...")
+            cleaned_data, cleaning_report = self.data_cleaner.clean_data(data_with_features, "target")
+            validation_report = self.data_cleaner.validate_data(cleaned_data, "target")
+            results['data_cleaning'] = {
+                'cleaning_report': cleaning_report,
+                'validation_report': validation_report
+            }
+            
             # Step 3: Data preparation
             logger.info("📋 Step 3: Data preparation...")
-            train_data, val_data, test_data = self._prepare_data(data_with_features)
+            train_data, val_data, test_data = self._prepare_data(cleaned_data)
             results['data_preparation'] = {
                 'train_size': len(train_data),
                 'val_size': len(val_data),
@@ -321,6 +332,9 @@ class CompleteTradingPipeline:
                 temp_gluon = GluonAutoML()
                 temp_gluon.predictor = predictor
                 temp_gluon.evaluator = GluonEvaluator(predictor)
+                
+                # Store the predictor in the main gluon instance for later use
+                self.gluon = temp_gluon
                 
                 evaluation = temp_gluon.evaluate_models(test_data, "target")
                 results['model_evaluation'] = evaluation
