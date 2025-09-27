@@ -49,7 +49,9 @@ def analyze_single_file(file_path: str,
     
     # Prepare data for ML
     logger.info("Preparing data for ML...")
-    data = gluon.prepare_data_for_ml(data, target_column)
+    # Create target variable (simplified for demo)
+    data['target'] = np.where(data['Close'].diff() > 0, 1, 0)
+    data = data.dropna(subset=['target'])
     
     # Create time series split
     logger.info("Creating time series split...")
