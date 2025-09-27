@@ -1,0 +1,111 @@
+# Custom Features Configuration
+# This file defines the 13 custom feature types for trading strategy
+
+custom_features:
+  # 1. Trend Probability
+  trend_probability:
+    description: "Probability of trend up/down/hold"
+    source_columns: ["SCHR_columns", "WAVE2_columns"]
+    calculation: "custom_trend_logic"
+    target_type: "classification"
+    
+  # 2. Level Breakout Yellow
+  level_breakout_yellow:
+    description: "Yellow line breakout up/retreat"
+    source_columns: ["Levels_columns"]
+    calculation: "custom_level_logic"
+    target_type: "classification"
+    
+  # 3. Level Breakout Blue
+  level_breakout_blue:
+    description: "Blue line breakout down/retreat"
+    source_columns: ["Levels_columns"]
+    calculation: "custom_level_logic"
+    target_type: "classification"
+    
+  # 4. PV Sign
+  pv_sign:
+    description: "PV sign positive/negative"
+    source_columns: ["PV_column"]
+    calculation: "custom_pv_logic"
+    target_type: "classification"
+    
+  # 5. Wave Signal 1 - 5 Candles
+  wave_signal_1_candles:
+    description: "Signal=1, 5 candles up/reversal"
+    source_columns: ["Wave_columns"]
+    calculation: "custom_wave_logic"
+    target_type: "classification"
+    
+  # 6. Wave Signal 1 - Distance
+  wave_signal_1_distance:
+    description: "Signal=1, price further 5%"
+    source_columns: ["Wave_columns", "Price_columns"]
+    calculation: "custom_wave_distance_logic"
+    target_type: "classification"
+    
+  # 7. Wave Signal 1 MA - 5 Candles
+  wave_signal_1_ma_candles:
+    description: "Signal=1 & ma<open, 5 candles up/reversal"
+    source_columns: ["Wave_columns", "MA_columns"]
+    calculation: "custom_wave_ma_logic"
+    target_type: "classification"
+    
+  # 8. Wave Signal 1 MA - Distance
+  wave_signal_1_ma_distance:
+    description: "Signal=1 & ma<open, price further 5%"
+    source_columns: ["Wave_columns", "MA_columns", "Price_columns"]
+    calculation: "custom_wave_ma_distance_logic"
+    target_type: "classification"
+    
+  # 9. Short3 Signal 1
+  short3_signal_1:
+    description: "Signal=1, price up 5%"
+    source_columns: ["Short3_columns", "Price_columns"]
+    calculation: "custom_short3_logic"
+    target_type: "classification"
+    
+  # 10. Short3 Signal 4
+  short3_signal_4:
+    description: "Signal=4, price down 10% (global reversal)"
+    source_columns: ["Short3_columns", "Price_columns"]
+    calculation: "custom_short3_reversal_logic"
+    target_type: "classification"
+    
+  # 11. Short3 Direction Change
+  short3_direction_change:
+    description: "Direction 1,4 to 2,3 change (global reversal)"
+    source_columns: ["Short3_columns"]
+    calculation: "custom_short3_direction_logic"
+    target_type: "classification"
+    
+  # 12. Wave Reverse Peak Sign
+  wave_reverse_peak_sign:
+    description: "Next peak sign positive/negative"
+    source_columns: ["Wave_Reverse_columns"]
+    calculation: "custom_wave_reverse_peak_logic"
+    target_type: "classification"
+    
+  # 13. Wave Reverse Peak Time
+  wave_reverse_peak_time:
+    description: "Next peak within 10 candles"
+    source_columns: ["Wave_Reverse_columns"]
+    calculation: "custom_wave_reverse_time_logic"
+    target_type: "classification"
+
+# AutoGluon additional features
+autogluon_features:
+  enable: true
+  max_additional_features: 500
+  
+# Feature selection settings
+feature_selection:
+  enable: true
+  method: "auto"  # AutoGluon automatic selection
+  max_features: 1000
+  
+# Feature interaction settings
+feature_interactions:
+  enable: true
+  max_interaction_depth: 2
+  interaction_threshold: 0.01
