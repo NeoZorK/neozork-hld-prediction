@@ -1,111 +1,173 @@
-# Custom Features Configuration
-# This file defines the 13 custom feature types for trading strategy
+# Custom Features Configuration for Trading Strategy
+# This file defines the 13 custom features for trading prediction
 
-custom_features:
-  # 1. Trend Probability
-  trend_probability:
-    description: "Probability of trend up/down/hold"
-    source_columns: ["SCHR_columns", "WAVE2_columns"]
-    calculation: "custom_trend_logic"
-    target_type: "classification"
-    
-  # 2. Level Breakout Yellow
-  level_breakout_yellow:
-    description: "Yellow line breakout up/retreat"
-    source_columns: ["Levels_columns"]
-    calculation: "custom_level_logic"
-    target_type: "classification"
-    
-  # 3. Level Breakout Blue
-  level_breakout_blue:
-    description: "Blue line breakout down/retreat"
-    source_columns: ["Levels_columns"]
-    calculation: "custom_level_logic"
-    target_type: "classification"
-    
-  # 4. PV Sign
-  pv_sign:
-    description: "PV sign positive/negative"
-    source_columns: ["PV_column"]
-    calculation: "custom_pv_logic"
-    target_type: "classification"
-    
-  # 5. Wave Signal 1 - 5 Candles
-  wave_signal_1_candles:
-    description: "Signal=1, 5 candles up/reversal"
-    source_columns: ["Wave_columns"]
-    calculation: "custom_wave_logic"
-    target_type: "classification"
-    
-  # 6. Wave Signal 1 - Distance
-  wave_signal_1_distance:
-    description: "Signal=1, price further 5%"
-    source_columns: ["Wave_columns", "Price_columns"]
-    calculation: "custom_wave_distance_logic"
-    target_type: "classification"
-    
-  # 7. Wave Signal 1 MA - 5 Candles
-  wave_signal_1_ma_candles:
-    description: "Signal=1 & ma<open, 5 candles up/reversal"
-    source_columns: ["Wave_columns", "MA_columns"]
-    calculation: "custom_wave_ma_logic"
-    target_type: "classification"
-    
-  # 8. Wave Signal 1 MA - Distance
-  wave_signal_1_ma_distance:
-    description: "Signal=1 & ma<open, price further 5%"
-    source_columns: ["Wave_columns", "MA_columns", "Price_columns"]
-    calculation: "custom_wave_ma_distance_logic"
-    target_type: "classification"
-    
-  # 9. Short3 Signal 1
-  short3_signal_1:
-    description: "Signal=1, price up 5%"
-    source_columns: ["Short3_columns", "Price_columns"]
-    calculation: "custom_short3_logic"
-    target_type: "classification"
-    
-  # 10. Short3 Signal 4
-  short3_signal_4:
-    description: "Signal=4, price down 10% (global reversal)"
-    source_columns: ["Short3_columns", "Price_columns"]
-    calculation: "custom_short3_reversal_logic"
-    target_type: "classification"
-    
-  # 11. Short3 Direction Change
-  short3_direction_change:
-    description: "Direction 1,4 to 2,3 change (global reversal)"
-    source_columns: ["Short3_columns"]
-    calculation: "custom_short3_direction_logic"
-    target_type: "classification"
-    
-  # 12. Wave Reverse Peak Sign
-  wave_reverse_peak_sign:
-    description: "Next peak sign positive/negative"
-    source_columns: ["Wave_Reverse_columns"]
-    calculation: "custom_wave_reverse_peak_logic"
-    target_type: "classification"
-    
-  # 13. Wave Reverse Peak Time
-  wave_reverse_peak_time:
-    description: "Next peak within 10 candles"
-    source_columns: ["Wave_Reverse_columns"]
-    calculation: "custom_wave_reverse_time_logic"
-    target_type: "classification"
+# Feature Engineering Configuration
+feature_engineering:
+  # SCHR Levels Features
+  schr_features:
+    - name: "trend_direction_probability"
+      description: "Probability of trend direction (up/down/hold)"
+      type: "classification"
+      target_values: ["up", "down", "hold"]
+      
+    - name: "yellow_line_breakout_probability"
+      description: "Probability of yellow line breakout (up or pullback)"
+      type: "classification"
+      target_values: ["breakout_up", "pullback"]
+      
+    - name: "blue_line_breakdown_probability"
+      description: "Probability of blue line breakdown (down or pullback)"
+      type: "classification"
+      target_values: ["breakdown_down", "pullback"]
+      
+    - name: "pv_sign_probability"
+      description: "Probability of PV sign (+ or -)"
+      type: "classification"
+      target_values: ["positive", "negative"]
 
-# AutoGluon additional features
-autogluon_features:
-  enable: true
-  max_additional_features: 500
-  
-# Feature selection settings
-feature_selection:
-  enable: true
-  method: "auto"  # AutoGluon automatic selection
-  max_features: 1000
-  
-# Feature interaction settings
-feature_interactions:
-  enable: true
-  max_interaction_depth: 2
-  interaction_threshold: 0.01
+  # Wave Features
+  wave_features:
+    - name: "wave_signal_5_candles_up"
+      description: "If Signal=1, probability of 5 candles up or reversal"
+      type: "classification"
+      target_values: ["5_candles_up", "reversal"]
+      condition: "signal == 1"
+      
+    - name: "wave_signal_5_percent_direction"
+      description: "If Signal=1, probability of 5% price movement in same direction"
+      type: "classification"
+      target_values: ["5_percent_up", "5_percent_down"]
+      condition: "signal == 1"
+      
+    - name: "wave_signal_ma_condition_5_candles"
+      description: "If Signal=1 & ma<open, probability of 5 candles up or reversal"
+      type: "classification"
+      target_values: ["5_candles_up", "reversal"]
+      condition: "signal == 1 AND ma < open"
+      
+    - name: "wave_signal_ma_condition_5_percent"
+      description: "If Signal=1 & ma<open, probability of 5% price movement"
+      type: "classification"
+      target_values: ["5_percent_up", "5_percent_down"]
+      condition: "signal == 1 AND ma < open"
+      
+    - name: "wave_reverse_peak_sign_probability"
+      description: "Probability of next peak sign (+ or -)"
+      type: "classification"
+      target_values: ["positive_peak", "negative_peak"]
+      condition: "reverse == 1"
+      
+    - name: "wave_reverse_peak_timing_probability"
+      description: "Probability of next peak within 10 candles"
+      type: "classification"
+      target_values: ["within_10_candles", "later"]
+      condition: "reverse == 1"
+
+  # Short3 Features
+  short3_features:
+    - name: "short3_signal_1_up_probability"
+      description: "If signal=1, probability of 5% price movement up"
+      type: "classification"
+      target_values: ["5_percent_up", "no_movement"]
+      condition: "signal == 1"
+      
+    - name: "short3_signal_4_down_probability"
+      description: "If signal=4, probability of 10% strong downward movement"
+      type: "classification"
+      target_values: ["10_percent_down", "no_movement"]
+      condition: "signal == 4"
+      
+    - name: "short3_direction_change_probability"
+      description: "Probability of direction change from 1,4 to 2,3 in 10 candles"
+      type: "classification"
+      target_values: ["direction_change", "no_change"]
+      condition: "direction in [1, 4]"
+
+# Feature Engineering Pipeline
+feature_pipeline:
+  # Data preprocessing
+  preprocessing:
+    - step: "handle_missing_values"
+      method: "forward_fill"
+      
+    - step: "normalize_prices"
+      method: "min_max_scaling"
+      
+    - step: "create_lag_features"
+      lags: [1, 2, 3, 5, 10]
+      
+    - step: "create_rolling_features"
+      windows: [3, 5, 10, 20]
+      functions: ["mean", "std", "min", "max"]
+
+  # Custom feature creation
+  custom_features:
+    - step: "create_schr_features"
+      description: "Create SCHR Levels based features"
+      
+    - step: "create_wave_features"
+      description: "Create Wave indicator based features"
+      
+    - step: "create_short3_features"
+      description: "Create Short3 indicator based features"
+
+# Model Configuration for Custom Features
+model_config:
+  # Target variable configuration
+  target_variable:
+    name: "trading_signal"
+    type: "multiclass"
+    classes: ["buy", "sell", "hold"]
+    
+  # Feature selection
+  feature_selection:
+    method: "mutual_information"
+    max_features: 50
+    min_importance: 0.01
+    
+  # Cross-validation
+  cross_validation:
+    method: "time_series_split"
+    n_splits: 5
+    test_size: 0.2
+    
+  # Evaluation metrics
+  evaluation_metrics:
+    primary: "accuracy"
+    secondary: ["precision", "recall", "f1_score"]
+    trading_metrics: ["profit_factor", "sharpe_ratio", "max_drawdown"]
+
+# Data Requirements
+data_requirements:
+  # Required columns for SCHR features
+  schr_columns:
+    - "timestamp"
+    - "open"
+    - "high"
+    - "low"
+    - "close"
+    - "volume"
+    - "yellow_line"
+    - "blue_line"
+    - "pv"
+    
+  # Required columns for Wave features
+  wave_columns:
+    - "timestamp"
+    - "open"
+    - "high"
+    - "low"
+    - "close"
+    - "signal"
+    - "ma"
+    - "reverse"
+    
+  # Required columns for Short3 features
+  short3_columns:
+    - "timestamp"
+    - "open"
+    - "high"
+    - "low"
+    - "close"
+    - "signal"
+    - "direction"
