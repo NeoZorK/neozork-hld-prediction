@@ -32,7 +32,76 @@ class MultiIndicatorLoader:
         self.scanner = AutoDataScanner(base_path)
         self.selector = InteractiveDataSelector(self.scanner)
         
-    def load_symbol_data(self, symbol: str, timeframe: str) -> Dict[str, pd.DataFrame]:
+    def load_basic_data(self, symbol: str, timeframe: str) -> pd.DataFrame:
+        """
+        Load basic OHLCV data for automatic feature generation.
+        Загрузить базовые OHLCV данные для автоматической генерации признаков.
+        
+        Args:
+            symbol: Trading symbol (e.g., 'BTCUSD')
+            timeframe: Timeframe (e.g., 'D1', 'H1', 'M15')
+            
+        Returns:
+            DataFrame with basic OHLCV data
+        """
+        logger.info(f"Loading basic OHLCV data for {symbol} {timeframe}...")
+        
+        # Try to load CSVExport data (contains OHLCV)
+        csv_export_file = self.base_path / f"CSVExport_{symbol}_PERIOD_{timeframe}.parquet"
+        
+        if csv_export_file.exists():
+            logger.info(f"Loading CSVExport data from {csv_export_file}")
+            data = self.data_loader.load_file(str(csv_export_file))
+            
+            # Ensure we have basic OHLCV columns
+            required_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+            if all(col in data.columns for col in required_columns):
+                logger.info(f"✅ Basic OHLCV data loaded: {len(data)} rows, {len(data.columns)} columns")
+                return data
+            else:
+                logger.warning(f"⚠️ CSVExport data missing required OHLCV columns: {required_columns}")
+        
+        # If no CSVExport data, create synthetic data for demonstration
+        logger.warning(f"⚠️ No basic data found for {symbol} {timeframe}, creating synthetic data...")
+        return self._create_synthetic_data(symbol, timeframe)
+    
+    def _create_synthetic_data(self, symbol: str, timeframe: str) -> pd.DataFrame:
+        """
+        Create synthetic OHLCV data for demonstration.
+        Создать синтетические OHLCV данные для демонстрации.
+        """
+        import numpy as np
+        from datetime import datetime, timedelta
+        
+        # Generate synthetic data
+        n_periods = 1000
+        dates = pd.date_range(start='2020-01-01', periods=n_periods, freq='D')
+        
+        # Generate price data with some trend and volatility
+        np.random.seed(42)  # For reproducibility
+        base_price = 50000 if 'BTC' in symbol else 1.0
+        returns = np.random.normal(0, 0.02, n_periods)  # 2% daily volatility
+        prices = base_price * np.exp(np.cumsum(returns))
+        
+        # Generate OHLCV data
+        data = pd.DataFrame({
+            'Open': prices * (1 + np.random.normal(0, 0.001, n_periods)),
+            'High': prices * (1 + np.abs(np.random.normal(0, 0.01, n_periods))),
+            'Low': prices * (1 - np.abs(np.random.normal(0, 0.01, n_periods))),
+            'Close': prices,
+            'Volume': np.random.uniform(1000, 10000, n_periods)
+        })
+        
+        # Ensure High >= max(Open, Close) and Low <= min(Open, Close)
+        data['High'] = np.maximum(data['High'], np.maximum(data['Open'], data['Close']))
+        data['Low'] = np.minimum(data['Low'], np.minimum(data['Open'], data['Close']))
+        
+        data.index = dates
+        
+        logger.info(f"✅ Synthetic data created: {len(data)} rows")
+        return data
+
+    def load_symbol_data(self, symbol: str, timeframe: str, indicator: str = None) -> Dict[str, pd.DataFrame]:
         """
         Load all indicator data for a specific symbol and timeframe.
         Загрузить все данные индикаторов для конкретного символа и таймфрейма.
@@ -169,7 +238,7 @@ class MultiIndicatorLoader:
         logger.info(f"Combined data: {len(combined_df)} rows, {len(combined_df.columns)} columns")
         return combined_df
     
-    def create_target_variable(self, data: pd.DataFrame, method: str = 'price_direction') -> pd.DataFrame:
+    def create_target_variable(self, data: pd.DataFrame, method: str = 'price_direction', problem_type: str = 'regression') -> pd.DataFrame:
         """
         Create target variable for machine learning.
         Создать целевую переменную для машинного обучения.
@@ -177,28 +246,43 @@ class MultiIndicatorLoader:
         Args:
             data: Input dataframe
             method: Method for creating target ('price_direction', 'price_change', 'volatility')
+            problem_type: Type of problem ('regression', 'binary', 'multiclass')
             
         Returns:
             Dataframe with target variable added
         """
-        logger.info(f"Creating target variable using method: {method}")
+        logger.info(f"Creating target variable using method: {method}, problem_type: {problem_type}")
         
         result_df = data.copy()
         
-        if method == 'price_direction':
+        if problem_type == 'binary':
             # Binary classification: 1 if price goes up, 0 if down
             result_df['target'] = (result_df['Close'].diff() > 0).astype(int)
+            logger.info("✅ Binary classification target: 1=up, 0=down")
             
-        elif method == 'price_change':
-            # Regression: actual price change percentage
-            result_df['target'] = result_df['Close'].pct_change()
+        elif problem_type == 'multiclass':
+            # Multiclass classification: 0=down, 1=sideways, 2=up
+            price_change = result_df['Close'].pct_change()
+            result_df['target'] = pd.cut(price_change, 
+                                       bins=[-np.inf, -0.01, 0.01, np.inf], 
+                                       labels=[0, 1, 2]).astype(int)
+            logger.info("✅ Multiclass target: 0=down, 1=sideways, 2=up")
             
-        elif method == 'volatility':
-            # Regression: rolling volatility
-            result_df['target'] = result_df['Close'].rolling(20).std()
-            
+        elif problem_type == 'regression':
+            if method == 'price_change':
+                # Regression: actual price change percentage
+                result_df['target'] = result_df['Close'].pct_change()
+                logger.info("✅ Regression target: price change percentage")
+            elif method == 'volatility':
+                # Regression: rolling volatility
+                result_df['target'] = result_df['Close'].rolling(20).std()
+                logger.info("✅ Regression target: rolling volatility")
+            else:
+                # Default: price change percentage
+                result_df['target'] = result_df['Close'].pct_change()
+                logger.info("✅ Regression target: price change percentage (default)")
         else:
-            raise ValueError(f"Unknown target method: {method}")
+            raise ValueError(f"Unknown problem type: {problem_type}")
         
         # Remove rows with NaN target
         initial_rows = len(result_df)

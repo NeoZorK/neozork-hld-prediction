@@ -27,14 +27,17 @@ def main():
     """Main function for improved demo."""
     parser = argparse.ArgumentParser(description='Improved AutoGluon Demo')
     parser.add_argument('--symbol', default='BTCUSD', help='Symbol to analyze (default: BTCUSD)')
-    parser.add_argument('--indicator', default='WAVE2', choices=['WAVE2', 'SHORT3', 'CSVExport'], 
-                       help='Indicator to use (default: WAVE2)')
+    parser.add_argument('--indicator', default=None, choices=['WAVE2', 'SHORT3', 'CSVExport'], 
+                        help='Indicator to use (default: None for automatic feature generation)')
     parser.add_argument('--timeframes', nargs='+', default=['D1'], 
                        help='Timeframes to use (default: D1). Use "ALL" for all available timeframes')
     parser.add_argument('--quick', action='store_true', 
                        help='Run quick analysis with limited data')
     parser.add_argument('--interactive', action='store_true', 
-                       help='Run in interactive mode')
+                        help='Run in interactive mode')
+    parser.add_argument('--problem-type', default='regression', 
+                        choices=['regression', 'binary', 'multiclass'],
+                        help='Problem type: regression (continuous values), binary (2 classes), multiclass (3+ classes)')
     
     args = parser.parse_args()
     
@@ -75,14 +78,15 @@ def main():
     print("🚀 Improved AutoGluon Demo")
     print("=" * 60)
     print(f"📊 Symbol: {args.symbol}")
-    print(f"🎯 Indicator: {args.indicator}")
+    print(f"🎯 Indicator: {args.indicator if args.indicator else 'Auto Feature Generation'}")
     print(f"⏰ Timeframes: {', '.join(args.timeframes)}")
     print(f"⚡ Quick mode: {'Yes' if args.quick else 'No'}")
+    print(f"🎯 Problem Type: {args.problem_type}")
     print("=" * 60)
     
     try:
         # Initialize pipeline
-        pipeline = CompleteTradingPipeline()
+        pipeline = CompleteTradingPipeline(problem_type=args.problem_type)
         
         # Run pipeline with specific parameters
         results = pipeline.run_complete_pipeline(
@@ -91,7 +95,9 @@ def main():
             target_symbol=args.symbol,
             target_timeframe=args.timeframes[0],
             use_auto_scan=False,  # Disable auto-scan to use specific parameters
-            interactive=args.interactive
+            interactive=args.interactive,
+            indicator=args.indicator,
+            problem_type=args.problem_type
         )
         
         # Print results

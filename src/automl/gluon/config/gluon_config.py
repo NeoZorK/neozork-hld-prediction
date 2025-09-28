@@ -42,6 +42,10 @@ class GluonConfig:
     dynamic_stacking: bool = True
     num_stack_levels: int = 1
     
+    # Problem type settings
+    problem_type: str = 'regression'  # 'regression', 'binary', 'multiclass'
+    eval_metric: str = None  # Auto-determined based on problem_type
+    
     def __post_init__(self):
         """Initialize default values."""
         if self.presets is None:
