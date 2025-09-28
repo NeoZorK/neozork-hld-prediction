@@ -127,12 +127,10 @@ def test_prediction(data, task="pressure_vector_sign"):
         if results:
             # Тестируем предсказание на последней записи
             test_data = data.tail(1)
-            predictions = pipeline.predict_for_trading(test_data, task)
+            predictions = pipeline.predict(test_data, task)
             
             print(f"✅ Предсказания получены!")
-            print(f"🔮 Предсказание: {predictions['predictions'].iloc[0]}")
-            if predictions['probabilities'] is not None:
-                print(f"🔮 Вероятности: {predictions['probabilities'].iloc[0].to_dict()}")
+            print(f"🔮 Предсказание: {predictions.iloc[0]}")
             
             return predictions
     except Exception as e:
