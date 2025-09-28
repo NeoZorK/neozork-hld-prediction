@@ -266,7 +266,26 @@ class SCHRLevelsAutoMLPipeline:
             data['year'] = data.index.year
         
         # Удаляем строки с NaN
-        data = data.dropna()
+        # Обрабатываем бесконечные значения
+        data = data.replace([np.inf, -np.inf], np.nan)
+        
+        # Заполняем NaN значения вместо удаления
+        # Для числовых колонок заполняем медианой
+        numeric_cols = data.select_dtypes(include=[np.number]).columns
+        for col in numeric_cols:
+            if data[col].isna().any():
+                data[col] = data[col].fillna(data[col].median())
+        
+        # Удаляем только строки где все значения NaN
+        data = data.dropna(how='all')
+        
+        # Если все еще есть NaN, заполняем 0
+        data = data.fillna(0)
+        
+        # Проверяем на оставшиеся бесконечные значения
+        if np.isinf(data.select_dtypes(include=[np.number])).any().any():
+            logger.warning("Обнаружены бесконечные значения, заменяем на 0")
+            data = data.replace([np.inf, -np.inf], 0)
         
         logger.info(f"Создано {len(data.columns)} признаков, {len(data)} записей")
         return data
@@ -709,6 +728,10 @@ class SCHRLevelsAutoMLPipeline:
         # Создаем признаки для новых данных (без целевых переменных)
         features_data = self.create_features(new_data)
         
+        # Проверяем, что данные не пустые
+        if len(features_data) == 0:
+            raise ValueError("Нет данных для предсказания после создания признаков")
+        
         # Удаляем целевые переменные если они есть
         target_cols = [col for col in features_data.columns if col.startswith('target_')]
         features_data = features_data.drop(columns=target_cols, errors='ignore')
@@ -773,15 +796,21 @@ def main():
         
         # Пример предсказания (загружаем новые данные)
         logger.info("🔮 Тестируем предсказания...")
-        new_data = pipeline.load_schr_data("BTCUSD", "MN1").tail(1)  # Последняя запись
+        new_data = pipeline.load_schr_data("BTCUSD", "MN1").tail(10)  # Последние 10 записей для надежности
+        
+        # Создаем признаки для новых данных
+        new_data = pipeline.create_features(new_data)
         
         # Предсказания для всех задач
         for task in pipeline.task_configs.keys():
             if task in pipeline.models:
-                prediction_results = pipeline.predict_for_trading(new_data, task)
-                logger.info(f"🔮 Предсказание для {task}: {prediction_results['predictions']}")
-                if prediction_results['probabilities'] is not None:
-                    logger.info(f"🔮 Вероятности: {prediction_results['probabilities'].values}")
+                try:
+                    prediction_results = pipeline.predict_for_trading(new_data, task)
+                    logger.info(f"🔮 Предсказание для {task}: {prediction_results['predictions']}")
+                    if prediction_results['probabilities'] is not None:
+                        logger.info(f"🔮 Вероятности: {prediction_results['probabilities'].values}")
+                except Exception as e:
+                    logger.error(f"❌ Ошибка предсказания для {task}: {e}")
         
         logger.info("✅ Анализ завершен успешно!")
         
