@@ -146,33 +146,42 @@ class SCHRLevelsAutoMLPipeline:
         
         # Задача 1: Знак PRESSURE_VECTOR в следующем периоде
         if 'pressure_vector' in data.columns:
-            data['target_pv_sign'] = (data['pressure_vector'].shift(-1) > 0).astype(int)
+            # Обрабатываем NaN и inf значения
+            pv_clean = data['pressure_vector'].replace([np.inf, -np.inf], np.nan)
+            pv_sign = (pv_clean.shift(-1) > 0)
+            data['target_pv_sign'] = pv_sign.astype(float)  # Используем float для совместимости
             logger.info("✅ Создана target_pv_sign (0=отрицательный, 1=положительный)")
         
         # Задача 2: Направление цены на 5 периодов
         if 'Close' in data.columns:
             future_returns = data['Close'].pct_change(5).shift(-5)
-            data['target_price_direction'] = pd.cut(
-                future_returns, 
+            # Обрабатываем NaN значения
+            future_returns_clean = future_returns.replace([np.inf, -np.inf], np.nan)
+            price_direction = pd.cut(
+                future_returns_clean, 
                 bins=[-np.inf, -0.02, 0.02, np.inf], 
                 labels=[0, 1, 2]  # 0=down, 1=hold, 2=up
-            ).astype(int)
+            )
+            data['target_price_direction'] = price_direction.astype(float)  # Используем float для совместимости
             logger.info("✅ Создана target_price_direction (0=вниз, 1=удержание, 2=вверх)")
         
         # Задача 3: Пробитие уровней или удержание между ними
         if all(col in data.columns for col in ['Close', 'predicted_high', 'predicted_low']):
             close_next = data['Close'].shift(-1)
-            pred_high = data['predicted_high']
-            pred_low = data['predicted_low']
+            pred_high = data['predicted_high'].replace([np.inf, -np.inf], np.nan)
+            pred_low = data['predicted_low'].replace([np.inf, -np.inf], np.nan)
+            
+            # Обрабатываем случаи с NaN в уровнях
+            valid_levels = ~(pred_high.isna() | pred_low.isna() | close_next.isna())
             
             conditions = [
-                close_next > pred_high,  # Пробитие вверх
-                close_next < pred_low,   # Пробитие вниз
-                (close_next >= pred_low) & (close_next <= pred_high)  # Между уровнями
+                (close_next > pred_high) & valid_levels,  # Пробитие вверх
+                (close_next < pred_low) & valid_levels,   # Пробитие вниз
+                (close_next >= pred_low) & (close_next <= pred_high) & valid_levels  # Между уровнями
             ]
             choices = [2, 0, 1]  # 2=пробитие вверх, 0=пробитие вниз, 1=между уровнями
             
-            data['target_level_breakout'] = np.select(conditions, choices, default=1)
+            data['target_level_breakout'] = np.select(conditions, choices, default=1).astype(float)
             logger.info("✅ Создана target_level_breakout (0=пробитие вниз, 1=между уровнями, 2=пробитие вверх)")
         
         # Удаляем строки с NaN в целевых переменных
