@@ -1,9 +1,15 @@
-# -*- coding: utf-8 -*-
 """
-Utilities module for AutoGluon integration.
+Utilities Module for SCHR Levels AutoML
+
+Provides utility functions for data processing and visualization.
 """
 
-from .logger import GluonLogger
-from .metrics import ValueScoreAnalyzer
+from .data_loader import DataLoader
+from .feature_engineering import FeatureEngineer
+from .visualization import PlotUtils
 
-__all__ = ['GluonLogger', 'ValueScoreAnalyzer']
+__all__ = [
+    "DataLoader",
+    "FeatureEngineer", 
+    "PlotUtils"
+]

@@ -1,10 +1,13 @@
-# -*- coding: utf-8 -*-
 """
-Model training and evaluation module for AutoGluon integration.
+Model Management Module for SCHR Levels AutoML
+
+Provides model lifecycle management and persistence.
 """
 
-from .gluon_trainer import GluonTrainer
-from .gluon_predictor import GluonPredictor
-from .gluon_evaluator import GluonEvaluator
+from .manager import ModelManager
+from .persistence import ModelPersistence
 
-__all__ = ['GluonTrainer', 'GluonPredictor', 'GluonEvaluator']
+__all__ = [
+    "ModelManager",
+    "ModelPersistence"
+]
