@@ -177,6 +177,9 @@ class CompleteTradingPipeline:
             ]
             
             logger.info(f"🚀 Running isolated training: {' '.join(cmd)}")
+            
+            # Run isolated training with simple progress indication
+            logger.info("🔄 Starting isolated training process...")
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=7200)  # 2 hour timeout
             
             # Clean up temporary files
