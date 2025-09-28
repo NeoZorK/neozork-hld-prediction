@@ -8,6 +8,13 @@
 import sys
 import logging
 from pathlib import Path
+import os
+
+# Disable CUDA for MacBook M1
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+os.environ["AUTOGLUON_USE_GPU"] = "false"
+os.environ["AUTOGLUON_USE_GPU_TORCH"] = "false"
+os.environ["AUTOGLUON_USE_GPU_FASTAI"] = "false"
 
 # Добавляем текущую директорию в путь
 sys.path.append(str(Path(__file__).parent))
