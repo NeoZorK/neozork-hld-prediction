@@ -86,10 +86,10 @@ class SCHRLevelsAutoMLPipeline:
                 'eval_metric': 'roc_auc',
                 'time_limit': 1800  # 30 минут
             },
-            'price_direction_5periods': {
+            'price_direction_1period': {
                 'problem_type': 'multiclass', 
                 'eval_metric': 'accuracy',
-                'time_limit': 2400  # 40 минут
+                'time_limit': 1800  # 30 минут
             },
             'level_breakout': {
                 'problem_type': 'multiclass',
@@ -160,18 +160,18 @@ class SCHRLevelsAutoMLPipeline:
             data['target_pv_sign'] = pv_sign.astype(float)  # Используем float для совместимости
             logger.info("✅ Создана target_pv_sign (0=отрицательный, 1=положительный)")
         
-        # Задача 2: Направление цены на 5 периодов
+        # Задача 2: Направление цены на 1 период
         if 'Close' in data.columns:
-            future_returns = data['Close'].pct_change(5).shift(-5)
+            future_returns = data['Close'].pct_change(1).shift(-1)
             # Обрабатываем NaN значения
             future_returns_clean = future_returns.replace([np.inf, -np.inf], np.nan)
             price_direction = pd.cut(
                 future_returns_clean, 
-                bins=[-np.inf, -0.02, 0.02, np.inf], 
+                bins=[-np.inf, -0.01, 0.01, np.inf], 
                 labels=[0, 1, 2]  # 0=down, 1=hold, 2=up
             )
             data['target_price_direction'] = price_direction.astype(float)  # Используем float для совместимости
-            logger.info("✅ Создана target_price_direction (0=вниз, 1=удержание, 2=вверх)")
+            logger.info("✅ Создана target_price_direction (0=вниз, 1=удержание, 2=вверх) на 1 период")
         
         # Задача 3: Пробитие уровней или удержание между ними
         if all(col in data.columns for col in ['Close', 'predicted_high', 'predicted_low']):
@@ -303,7 +303,7 @@ class SCHRLevelsAutoMLPipeline:
         """
         target_mapping = {
             'pressure_vector_sign': 'target_pv_sign',
-            'price_direction_5periods': 'target_price_direction', 
+            'price_direction_1period': 'target_price_direction', 
             'level_breakout': 'target_level_breakout'
         }
         
