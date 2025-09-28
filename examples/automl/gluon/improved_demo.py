@@ -30,13 +30,47 @@ def main():
     parser.add_argument('--indicator', default='WAVE2', choices=['WAVE2', 'SHORT3', 'CSVExport'], 
                        help='Indicator to use (default: WAVE2)')
     parser.add_argument('--timeframes', nargs='+', default=['D1'], 
-                       help='Timeframes to use (default: D1)')
+                       help='Timeframes to use (default: D1). Use "ALL" for all available timeframes')
     parser.add_argument('--quick', action='store_true', 
                        help='Run quick analysis with limited data')
     parser.add_argument('--interactive', action='store_true', 
                        help='Run in interactive mode')
     
     args = parser.parse_args()
+    
+    # Handle ALL timeframes flag
+    if 'ALL' in args.timeframes:
+        # Get all available timeframes from the data directory
+        import os
+        from pathlib import Path
+        
+        data_path = Path("data/cache/csv_converted/")
+        available_timeframes = set()
+        
+        if data_path.exists():
+            for file_path in data_path.glob("*.parquet"):
+                filename = file_path.name
+                # Extract timeframe from filename patterns
+                if f"_{args.symbol}_PERIOD_" in filename:
+                    parts = filename.split("_PERIOD_")
+                    if len(parts) > 1:
+                        timeframe = parts[1].replace(".parquet", "")
+                        available_timeframes.add(timeframe)
+        
+        # Sort timeframes in logical order
+        timeframe_order = ['M1', 'M5', 'M15', 'H1', 'H4', 'D1', 'W1', 'MN1']
+        sorted_timeframes = []
+        for tf in timeframe_order:
+            if tf in available_timeframes:
+                sorted_timeframes.append(tf)
+        
+        # Add any remaining timeframes not in the standard order
+        for tf in sorted(available_timeframes):
+            if tf not in sorted_timeframes:
+                sorted_timeframes.append(tf)
+        
+        args.timeframes = sorted_timeframes
+        print(f"🔍 Found {len(args.timeframes)} available timeframes for {args.symbol}")
     
     print("🚀 Improved AutoGluon Demo")
     print("=" * 60)

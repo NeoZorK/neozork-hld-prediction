@@ -62,22 +62,13 @@ def train_model_isolated(train_data_path: str, val_data_path: str,
         logger.info("🔄 Creating fresh GluonAutoML instance...")
         gluon = GluonAutoML()
         
-        # Train model with progress bar
+        # Train model with simple progress indication
         logger.info("🤖 Training model...")
         
-        # Create a progress bar for training
-        with tqdm(total=100, desc="🤖 Training", unit="%", 
-                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]') as pbar:
-            
-            # Start training
-            pbar.set_description("🤖 Training: Starting...")
-            pbar.update(10)
-            
-            # Train model
-            gluon.train_models(train_data, target_column, val_data, model_path=model_path)
-            
-            pbar.set_description("🤖 Training: Completed!")
-            pbar.update(90)
+        # Simple progress indication without complex progress bar
+        logger.info("🔄 Initializing AutoGluon...")
+        gluon.train_models(train_data, target_column, val_data, model_path=model_path)
+        logger.info("✅ AutoGluon training completed!")
         
         logger.info("✅ Model training completed successfully!")
         return True
