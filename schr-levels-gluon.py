@@ -77,6 +77,7 @@ class SCHRLevelsAutoMLPipeline:
         self.data_path = Path(data_path)
         self.models = {}
         self.results = {}
+        self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         
         # Настройки для разных задач
         self.task_configs = {
@@ -665,6 +666,30 @@ class SCHRLevelsAutoMLPipeline:
         
         logger.info("\n" + "="*80)
     
+    def predict(self, data: pd.DataFrame, task: str) -> pd.Series:
+        """
+        Простые предсказания для тестирования
+        
+        Args:
+            data: Данные для предсказания
+            task: Название задачи
+            
+        Returns:
+            Предсказания
+        """
+        try:
+            # Загружаем обученную модель
+            model_path = f"models/schr_levels_{task}_{self.timestamp}"
+            predictor = TabularPredictor.load(model_path)
+            
+            # Предсказания
+            predictions = predictor.predict(data)
+            return predictions
+            
+        except Exception as e:
+            logger.error(f"Ошибка предсказания: {e}")
+            raise
+
     def predict_for_trading(self, new_data: pd.DataFrame, task: str) -> Dict[str, Any]:
         """
         Предсказания для реальной торговли.
