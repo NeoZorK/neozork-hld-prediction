@@ -298,7 +298,22 @@ class GluonAutoML:
             raise ValueError("Models must be trained before prediction")
         
         if not self.predictor.can_predict_proba:
-            raise ValueError(f"Probability predictions not supported for problem type: {self.predictor.problem_type}")
+            self.logger.warning(f"Probability predictions not supported for problem type: {self.predictor.problem_type}")
+            self.logger.info("Using regular predictions instead of probabilities...")
+            # Return regular predictions as probabilities
+            predictions = self.predictor.predict(data)
+            # Convert to probability format (simplified)
+            if isinstance(predictions, pd.Series):
+                probabilities = pd.DataFrame({
+                    'prediction': predictions,
+                    'confidence': np.abs(predictions)  # Simple confidence measure
+                })
+            else:
+                probabilities = pd.DataFrame({
+                    'prediction': predictions,
+                    'confidence': np.abs(predictions)
+                })
+            return probabilities
         
         self.logger.info("Making probability predictions...")
         

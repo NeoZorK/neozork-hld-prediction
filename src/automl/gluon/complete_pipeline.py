@@ -29,12 +29,13 @@ class CompleteTradingPipeline:
     Полный пайплайн для создания робастных и прибыльных торговых моделей.
     """
     
-    def __init__(self, base_data_path: str = "data/cache/csv_converted/"):
+    def __init__(self, base_data_path: str = "data/cache/csv_converted/", problem_type: str = 'regression'):
         """
         Initialize Complete Trading Pipeline.
         
         Args:
             base_data_path: Base path to data directory
+            problem_type: Type of problem ('regression', 'binary', 'multiclass')
         """
         self.base_data_path = base_data_path
         self.multi_loader = MultiIndicatorLoader(base_data_path)
@@ -50,7 +51,8 @@ class CompleteTradingPipeline:
             num_bag_folds=5,
             # Disable dynamic stacking to avoid "Learner is already fit" error
             dynamic_stacking=False,
-            num_stack_levels=1
+            num_stack_levels=1,
+            problem_type=problem_type
         )
         
         # Initialize gluon as None - will be created fresh each time
@@ -201,9 +203,10 @@ class CompleteTradingPipeline:
             logger.error(f"❌ Isolated training error: {e}")
             return False
         
-    def run_complete_pipeline(self, symbols: List[str] = None, timeframes: List[str] = None, 
+    def run_complete_pipeline(self, symbols: List[str] = None, timeframes: List[str] = None,
                             target_symbol: str = None, target_timeframe: str = None,
-                            use_auto_scan: bool = True, interactive: bool = True) -> Dict[str, Any]:
+                            use_auto_scan: bool = True, interactive: bool = True,
+                            indicator: str = None, problem_type: str = 'regression') -> Dict[str, Any]:
         """
         Run complete trading strategy pipeline.
         Запустить полный пайплайн торговой стратегии.
@@ -239,7 +242,8 @@ class CompleteTradingPipeline:
                 symbols=symbols, 
                 timeframes=timeframes,
                 use_auto_scan=use_auto_scan,
-                interactive=interactive
+                interactive=interactive,
+                indicator=indicator
             )
             # Get actual loaded symbols and timeframes from data
             if use_auto_scan:
@@ -262,7 +266,7 @@ class CompleteTradingPipeline:
             
             # Step 2: Feature engineering
             logger.info("🔧 Step 2: Feature engineering...")
-            data_with_features = self._create_all_features(combined_data, target_symbol, target_timeframe)
+            data_with_features = self._create_all_features(combined_data, target_symbol, target_timeframe, problem_type)
             results['feature_engineering'] = {
                 'features_created': len([col for col in data_with_features.columns if 'probability' in col]),
                 'total_features': len(data_with_features.columns),
@@ -388,7 +392,8 @@ class CompleteTradingPipeline:
         return results
     
     def _load_and_combine_data(self, symbols: List[str] = None, timeframes: List[str] = None, 
-                              use_auto_scan: bool = True, interactive: bool = True) -> pd.DataFrame:
+                              use_auto_scan: bool = True, interactive: bool = True, 
+                              indicator: str = None) -> pd.DataFrame:
         """
         Load and combine data from multiple sources.
         Загрузить и объединить данные из множественных источников.
@@ -428,11 +433,15 @@ class CompleteTradingPipeline:
                     try:
                         logger.info(f"📊 Loading {symbol} {timeframe}...")
                         
-                        # Load all indicators for this symbol/timeframe
-                        symbol_data = self.multi_loader.load_symbol_data(symbol, timeframe)
-                        
-                        # Combine indicators
-                        combined_symbol_data = self.multi_loader.combine_indicators(symbol_data)
+                        if indicator:
+                            # Load specific indicator
+                            symbol_data = self.multi_loader.load_symbol_data(symbol, timeframe, indicator)
+                            combined_symbol_data = self.multi_loader.combine_indicators(symbol_data)
+                        else:
+                            # Load basic OHLCV data for automatic feature generation
+                            logger.info(f"🔄 Loading basic OHLCV data for automatic feature generation...")
+                            symbol_data = self.multi_loader.load_basic_data(symbol, timeframe)
+                            combined_symbol_data = symbol_data
                         
                         if not combined_symbol_data.empty:
                             # Add metadata
@@ -466,7 +475,7 @@ class CompleteTradingPipeline:
             
             return final_data
     
-    def _create_all_features(self, data: pd.DataFrame, target_symbol: str, target_timeframe: str) -> pd.DataFrame:
+    def _create_all_features(self, data: pd.DataFrame, target_symbol: str, target_timeframe: str, problem_type: str = 'regression') -> pd.DataFrame:
         """Create all custom features."""
         
         logger.info("🔧 Creating custom features...")
@@ -481,7 +490,7 @@ class CompleteTradingPipeline:
                 logger.warning(f"Target data not found, using all data")
         
         # Create target variable
-        data = self.multi_loader.create_target_variable(data, method='price_direction')
+        data = self.multi_loader.create_target_variable(data, method='price_direction', problem_type=problem_type)
         
         # Create custom features using the updated feature engineer
         # For now, we'll create features based on available columns
