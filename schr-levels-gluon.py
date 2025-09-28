@@ -25,6 +25,13 @@ from sklearn.model_selection import TimeSeriesSplit
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+# Disable CUDA for MacBook M1
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+os.environ["AUTOGLUON_USE_GPU"] = "false"
+os.environ["AUTOGLUON_USE_GPU_TORCH"] = "false"
+os.environ["AUTOGLUON_USE_GPU_FASTAI"] = "false"
+
 # AutoGluon imports
 try:
     from autogluon.tabular import TabularPredictor
@@ -331,14 +338,18 @@ class SCHRLevelsAutoMLPipeline:
             path=model_path
         )
         
-        # Настройки для MacBook M1
+        # Настройки для MacBook M1 (полностью отключаем GPU)
         fit_args = {
             'time_limit': config['time_limit'],
             'presets': 'best_quality',
-            'excluded_model_types': ['NN_TORCH', 'NN_FASTAI'],  # Исключаем GPU-модели
+            'excluded_model_types': ['NN_TORCH', 'NN_FASTAI', 'FASTAI', 'NeuralNetFastAI'],  # Исключаем все GPU-модели
             'num_bag_folds': 5,
             'num_stack_levels': 1,
-            'verbosity': 2
+            'verbosity': 2,
+            'ag_args_fit': {
+                'use_gpu': False,
+                'num_gpus': 0
+            }
         }
         
         logger.info("Запускаем обучение AutoGluon...")
@@ -423,13 +434,17 @@ class SCHRLevelsAutoMLPipeline:
                 path=model_path
             )
             
-            # Быстрое обучение для валидации
+            # Быстрое обучение для валидации (без GPU)
             predictor.fit(
                 train_data,
                 time_limit=600,  # 10 минут на fold
                 presets='medium_quality_faster_train',
-                excluded_model_types=['NN_TORCH', 'NN_FASTAI'],
-                verbosity=0
+                excluded_model_types=['NN_TORCH', 'NN_FASTAI', 'FASTAI', 'NeuralNetFastAI'],
+                verbosity=0,
+                ag_args_fit={
+                    'use_gpu': False,
+                    'num_gpus': 0
+                }
             )
             
             # Предсказания
@@ -516,8 +531,12 @@ class SCHRLevelsAutoMLPipeline:
                     train_data,
                     time_limit=300,  # 5 минут на итерацию
                     presets='medium_quality_faster_train',
-                    excluded_model_types=['NN_TORCH', 'NN_FASTAI'],
-                    verbosity=0
+                    excluded_model_types=['NN_TORCH', 'NN_FASTAI', 'FASTAI', 'NeuralNetFastAI'],
+                    verbosity=0,
+                    ag_args_fit={
+                        'use_gpu': False,
+                        'num_gpus': 0
+                    }
                 )
                 
                 predictions = predictor.predict(test_data)
