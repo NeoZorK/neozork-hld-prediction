@@ -1,7 +1,17 @@
 """
-Analysis module for AutoGluon integration.
+Analysis Module for SCHR Levels AutoML
+
+Provides analysis tools for backtesting, validation, and model evaluation.
 """
 
-from .value_score_analyzer import ValueScoreAnalyzer
+from .pipeline import SCHRLevelsAutoMLPipeline
+from .backtest import SCHRBacktester
+from .validator import SCHRValidator
+from .evaluator import SCHREvaluator
 
-__all__ = ['ValueScoreAnalyzer']
+__all__ = [
+    "SCHRLevelsAutoMLPipeline",
+    "SCHRBacktester", 
+    "SCHRValidator",
+    "SCHREvaluator"
+]

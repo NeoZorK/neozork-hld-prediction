@@ -1,10 +1,28 @@
-# -*- coding: utf-8 -*-
 """
-AutoGluon Integration Module for NeoZork HLDP
+SCHR Levels AutoML - Gluon Integration Module
 
-This module provides AutoGluon-based AutoML capabilities for trading strategy development.
+This module provides AutoML capabilities for SCHR Levels financial data analysis
+using AutoGluon for machine learning model training and prediction.
+
+Main Components:
+- CLI interface for flexible script control
+- Web dashboard for visualization
+- Analysis tools for backtesting and validation
+- Model management and utilities
+
+Author: Neozork Team
+Version: 1.0.0
 """
 
-from .gluon import GluonAutoML
+from .cli.main import SCHRCLI
+from .analysis.pipeline import SCHRLevelsAutoMLPipeline
+from .web.dashboard import SCHRWebDashboard
 
-__all__ = ['GluonAutoML']
+__version__ = "1.0.0"
+__author__ = "Neozork Team"
+
+__all__ = [
+    "SCHRCLI",
+    "SCHRLevelsAutoMLPipeline", 
+    "SCHRWebDashboard"
+]
