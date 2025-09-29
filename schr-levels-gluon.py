@@ -415,7 +415,7 @@ class SCHRLevelsAutoMLPipeline:
         Returns:
             Словарь с результатами обучения
         """
-        logger.info(f"Начинаем обучение модели для задачи: {task}")
+        # Обучение модели для задачи: {task}
         
         data, target_col = self.prepare_data_for_task(df, task)
         config = self.task_configs[task]
@@ -425,8 +425,8 @@ class SCHRLevelsAutoMLPipeline:
         train_data = data.iloc[:split_idx]
         test_data = data.iloc[split_idx:]
         
-        logger.info(f"Обучающая выборка: {len(train_data)} записей")
-        logger.info(f"Тестовая выборка: {len(test_data)} записей")
+        # Обучающая выборка: {len(train_data)} записей
+        # Тестовая выборка: {len(test_data)} записей
         
         # Создаем уникальный путь для модели
         model_path = f"models/schr_levels_{task}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
@@ -476,8 +476,6 @@ class SCHRLevelsAutoMLPipeline:
             logger.warning("Ray недоступен - используем последовательное обучение")
             fit_args['num_bag_folds'] = 0  # Отключаем bagging для последовательного обучения
             fit_args['num_stack_levels'] = 0  # Отключаем stacking
-        
-        console.print("🤖 Запускаем обучение AutoGluon...", style="blue")
         
         # Подавляем вывод AutoGluon
         devnull = suppress_autogluon_output()
@@ -541,7 +539,7 @@ class SCHRLevelsAutoMLPipeline:
         Returns:
             Результаты валидации
         """
-        logger.info(f"Запускаем Walk Forward валидацию для задачи {task}")
+        # Walk Forward валидация (без дополнительных сообщений)
         
         data, target_col = self.prepare_data_for_task(df, task)
         config = self.task_configs[task]
@@ -634,7 +632,7 @@ class SCHRLevelsAutoMLPipeline:
             'max_accuracy': np.max(accuracies)
         }
         
-        logger.info(f"✅ Walk Forward валидация завершена")
+        # Walk Forward валидация завершена
         logger.info(f"📊 Средняя точность: {wf_results['mean_accuracy']:.4f} ± {wf_results['std_accuracy']:.4f}")
         
         return wf_results
@@ -652,7 +650,7 @@ class SCHRLevelsAutoMLPipeline:
         Returns:
             Результаты Monte Carlo валидации
         """
-        logger.info(f"Запускаем Monte Carlo валидацию для задачи {task} ({n_iterations} итераций)")
+        # Monte Carlo валидация (без дополнительных сообщений)
         
         data, target_col = self.prepare_data_for_task(df, task)
         config = self.task_configs[task]
@@ -754,7 +752,7 @@ class SCHRLevelsAutoMLPipeline:
             'stability_score': 1 - (np.std(accuracies) / np.mean(accuracies))  # Чем ближе к 1, тем стабильнее
         }
         
-        logger.info(f"✅ Monte Carlo валидация завершена")
+        # Monte Carlo валидация завершена
         logger.info(f"📊 Средняя точность: {mc_results['mean_accuracy']:.4f} ± {mc_results['std_accuracy']:.4f}")
         logger.info(f"📊 Стабильность: {mc_results['stability_score']:.4f}")
         
