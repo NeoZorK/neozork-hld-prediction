@@ -43,6 +43,16 @@ except ImportError:
 warnings.filterwarnings('ignore')
 logger = logging.getLogger(__name__)
 
+# Ray import check
+try:
+    import ray
+    RAY_AVAILABLE = True
+    logger.info("Ray доступен - будет использоваться параллельное обучение")
+except ImportError:
+    RAY_AVAILABLE = False
+    logger.warning("Ray не установлен - будет использоваться последовательное обучение")
+    logger.info("Для установки ray выполните: pip install 'ray>=2.10.0,<2.45.0'")
+
 # Настройка логирования
 logging.basicConfig(
     level=logging.INFO,
@@ -99,6 +109,13 @@ class SCHRLevelsAutoMLPipeline:
         }
         
         logger.info("SCHR Levels AutoML Pipeline инициализирован")
+        
+        # Информируем о режиме обучения
+        if RAY_AVAILABLE:
+            logger.info("✅ Ray доступен - будет использоваться параллельное обучение")
+        else:
+            logger.warning("⚠️  Ray недоступен - будет использоваться последовательное обучение")
+            logger.info("💡 Для ускорения установите ray: pip install 'ray>=2.10.0,<2.45.0'")
     
     def load_schr_data(self, symbol: str = "BTCUSD", timeframe: str = "MN1") -> pd.DataFrame:
         """
@@ -372,6 +389,12 @@ class SCHRLevelsAutoMLPipeline:
             }
         }
         
+        # Если ray недоступен, используем последовательное обучение
+        if not RAY_AVAILABLE:
+            logger.warning("Ray недоступен - используем последовательное обучение")
+            fit_args['num_bag_folds'] = 0  # Отключаем bagging для последовательного обучения
+            fit_args['num_stack_levels'] = 0  # Отключаем stacking
+        
         logger.info("Запускаем обучение AutoGluon...")
         predictor.fit(train_data, **fit_args)
         
@@ -455,17 +478,23 @@ class SCHRLevelsAutoMLPipeline:
             )
             
             # Быстрое обучение для валидации (без GPU)
-            predictor.fit(
-                train_data,
-                time_limit=600,  # 10 минут на fold
-                presets='medium_quality_faster_train',
-                excluded_model_types=['NN_TORCH', 'NN_FASTAI', 'FASTAI', 'NeuralNetFastAI'],
-                verbosity=0,
-                ag_args_fit={
+            wf_fit_args = {
+                'time_limit': 600,  # 10 минут на fold
+                'presets': 'medium_quality_faster_train',
+                'excluded_model_types': ['NN_TORCH', 'NN_FASTAI', 'FASTAI', 'NeuralNetFastAI'],
+                'verbosity': 0,
+                'ag_args_fit': {
                     'use_gpu': False,
                     'num_gpus': 0
                 }
-            )
+            }
+            
+            # Если ray недоступен, используем последовательное обучение
+            if not RAY_AVAILABLE:
+                wf_fit_args['num_bag_folds'] = 0
+                wf_fit_args['num_stack_levels'] = 0
+            
+            predictor.fit(train_data, **wf_fit_args)
             
             # Предсказания
             predictions = predictor.predict(test_data)
@@ -547,17 +576,23 @@ class SCHRLevelsAutoMLPipeline:
                     path=model_path
                 )
                 
-                predictor.fit(
-                    train_data,
-                    time_limit=300,  # 5 минут на итерацию
-                    presets='medium_quality_faster_train',
-                    excluded_model_types=['NN_TORCH', 'NN_FASTAI', 'FASTAI', 'NeuralNetFastAI'],
-                    verbosity=0,
-                    ag_args_fit={
+                mc_fit_args = {
+                    'time_limit': 300,  # 5 минут на итерацию
+                    'presets': 'medium_quality_faster_train',
+                    'excluded_model_types': ['NN_TORCH', 'NN_FASTAI', 'FASTAI', 'NeuralNetFastAI'],
+                    'verbosity': 0,
+                    'ag_args_fit': {
                         'use_gpu': False,
                         'num_gpus': 0
                     }
-                )
+                }
+                
+                # Если ray недоступен, используем последовательное обучение
+                if not RAY_AVAILABLE:
+                    mc_fit_args['num_bag_folds'] = 0
+                    mc_fit_args['num_stack_levels'] = 0
+                
+                predictor.fit(train_data, **mc_fit_args)
                 
                 predictions = predictor.predict(test_data)
                 actual = test_data[target_col]
