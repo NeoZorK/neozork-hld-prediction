@@ -25,12 +25,16 @@ from sklearn.model_selection import TimeSeriesSplit
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Disable CUDA for MacBook M1
+# Disable CUDA for MacBook M1 and set OpenMP paths
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 os.environ["AUTOGLUON_USE_GPU"] = "false"
 os.environ["AUTOGLUON_USE_GPU_TORCH"] = "false"
 os.environ["AUTOGLUON_USE_GPU_FASTAI"] = "false"
+
+# Set OpenMP paths for macOS
+os.environ["LDFLAGS"] = "-L/opt/homebrew/opt/libomp/lib"
+os.environ["CPPFLAGS"] = "-I/opt/homebrew/opt/libomp/include"
 
 # AutoGluon imports
 try:
@@ -375,11 +379,15 @@ class SCHRLevelsAutoMLPipeline:
             path=model_path
         )
         
-        # Настройки для MacBook M1 (полностью отключаем GPU)
+        # Настройки для MacBook M1 (полностью отключаем GPU и проблемные модели)
         fit_args = {
             'time_limit': config['time_limit'],
             'presets': 'best_quality',
-            'excluded_model_types': ['NN_TORCH', 'NN_FASTAI', 'FASTAI', 'NeuralNetFastAI'],  # Исключаем все GPU-модели
+            'excluded_model_types': [
+                'NN_TORCH', 'NN_FASTAI', 'FASTAI', 'NeuralNetFastAI',  # GPU модели
+                'XGBoost', 'LightGBM',  # Модели с проблемами OpenMP на macOS
+                'XGBoostLarge', 'LightGBMLarge'  # Большие версии
+            ],
             'num_bag_folds': 5,
             'num_stack_levels': 1,
             'verbosity': 2,
@@ -477,11 +485,15 @@ class SCHRLevelsAutoMLPipeline:
                 path=model_path
             )
             
-            # Быстрое обучение для валидации (без GPU)
+            # Быстрое обучение для валидации (без GPU и проблемных моделей)
             wf_fit_args = {
                 'time_limit': 600,  # 10 минут на fold
                 'presets': 'medium_quality_faster_train',
-                'excluded_model_types': ['NN_TORCH', 'NN_FASTAI', 'FASTAI', 'NeuralNetFastAI'],
+                'excluded_model_types': [
+                    'NN_TORCH', 'NN_FASTAI', 'FASTAI', 'NeuralNetFastAI',  # GPU модели
+                    'XGBoost', 'LightGBM',  # Модели с проблемами OpenMP на macOS
+                    'XGBoostLarge', 'LightGBMLarge'  # Большие версии
+                ],
                 'verbosity': 0,
                 'ag_args_fit': {
                     'use_gpu': False,
@@ -579,7 +591,11 @@ class SCHRLevelsAutoMLPipeline:
                 mc_fit_args = {
                     'time_limit': 300,  # 5 минут на итерацию
                     'presets': 'medium_quality_faster_train',
-                    'excluded_model_types': ['NN_TORCH', 'NN_FASTAI', 'FASTAI', 'NeuralNetFastAI'],
+                    'excluded_model_types': [
+                        'NN_TORCH', 'NN_FASTAI', 'FASTAI', 'NeuralNetFastAI',  # GPU модели
+                        'XGBoost', 'LightGBM',  # Модели с проблемами OpenMP на macOS
+                        'XGBoostLarge', 'LightGBMLarge'  # Большие версии
+                    ],
                     'verbosity': 0,
                     'ag_args_fit': {
                         'use_gpu': False,
