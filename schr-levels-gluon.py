@@ -21,6 +21,10 @@ import warnings
 from datetime import datetime, timedelta
 import joblib
 import argparse
+import sys
+import os
+from contextlib import redirect_stdout, redirect_stderr
+from io import StringIO
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.model_selection import TimeSeriesSplit
 import matplotlib.pyplot as plt
@@ -49,6 +53,10 @@ os.environ['MKL_NUM_THREADS'] = '1'
 os.environ['VECLIB_MAXIMUM_THREADS'] = '1'
 os.environ['NUMEXPR_NUM_THREADS'] = '1'
 
+# Suppress AutoGluon output
+os.environ['AUTOGLUON_VERBOSITY'] = '0'
+os.environ['AUTOGLUON_LOG_LEVEL'] = 'ERROR'
+
 # AutoGluon imports
 try:
     from autogluon.tabular import TabularPredictor
@@ -69,6 +77,28 @@ logging.basicConfig(
     handlers=[logging.StreamHandler()]
 )
 logger = logging.getLogger(__name__)
+
+# Suppress AutoGluon preset messages
+logging.getLogger('autogluon').setLevel(logging.ERROR)
+logging.getLogger('autogluon.tabular').setLevel(logging.ERROR)
+
+# Suppress Ray messages
+logging.getLogger('ray').setLevel(logging.ERROR)
+
+# Function to suppress AutoGluon output
+def suppress_autogluon_output():
+    """Подавляет вывод AutoGluon включая 'Preset alias specified' сообщения."""
+    # Redirect stdout and stderr to devnull
+    devnull = open(os.devnull, 'w')
+    sys.stdout = devnull
+    sys.stderr = devnull
+    return devnull
+
+def restore_output(devnull):
+    """Восстанавливает стандартный вывод."""
+    devnull.close()
+    sys.stdout = sys.__stdout__
+    sys.stderr = sys.__stderr__
 
 # Ray import check
 try:
@@ -418,7 +448,7 @@ class SCHRLevelsAutoMLPipeline:
             ],
             'num_bag_folds': 5,
             'num_stack_levels': 1,
-            'verbosity': 1,
+            'verbosity': 0,
             'ag_args_fit': {
                 'use_gpu': False,
                 'num_gpus': 0
@@ -447,8 +477,14 @@ class SCHRLevelsAutoMLPipeline:
             fit_args['num_bag_folds'] = 0  # Отключаем bagging для последовательного обучения
             fit_args['num_stack_levels'] = 0  # Отключаем stacking
         
-        logger.info("Запускаем обучение AutoGluon...")
-        predictor.fit(train_data, **fit_args)
+        console.print("🤖 Запускаем обучение AutoGluon...", style="blue")
+        
+        # Подавляем вывод AutoGluon
+        devnull = suppress_autogluon_output()
+        try:
+            predictor.fit(train_data, **fit_args)
+        finally:
+            restore_output(devnull)
         
         # Предсказания на тестовых данных
         predictions = predictor.predict(test_data)
@@ -564,7 +600,12 @@ class SCHRLevelsAutoMLPipeline:
                 wf_fit_args['num_bag_folds'] = 0
                 wf_fit_args['num_stack_levels'] = 0
             
-            predictor.fit(train_data, **wf_fit_args)
+            # Подавляем вывод AutoGluon
+            devnull = suppress_autogluon_output()
+            try:
+                predictor.fit(train_data, **wf_fit_args)
+            finally:
+                restore_output(devnull)
             
             # Предсказания
             predictions = predictor.predict(test_data)
@@ -680,7 +721,12 @@ class SCHRLevelsAutoMLPipeline:
                     mc_fit_args['num_bag_folds'] = 0
                     mc_fit_args['num_stack_levels'] = 0
                 
-                predictor.fit(train_data, **mc_fit_args)
+                # Подавляем вывод AutoGluon
+                devnull = suppress_autogluon_output()
+                try:
+                    predictor.fit(train_data, **mc_fit_args)
+                finally:
+                    restore_output(devnull)
                 
                 predictions = predictor.predict(test_data)
                 actual = test_data[target_col]
@@ -769,20 +815,31 @@ class SCHRLevelsAutoMLPipeline:
         task_progress = progress.add_task("🤖 Обучение моделей...", total=len(tasks))
         
         for i, task in enumerate(tasks):
-            console.print(f"🎯 Обрабатываем задачу: {task}", style="bold yellow")
+            # Создаем отдельный progress bar для каждой задачи
+            task_name = task.replace('_', ' ').title()
+            task_progress_detailed = progress.add_task(
+                f"🎯 Обрабатываем задачу: {task_name}", 
+                total=3
+            )
             
             try:
                 # Обучение основной модели
+                progress.update(task_progress_detailed, description=f"🤖 Обучение модели {task_name}...")
                 model_results = self.train_model(final_data, task)
                 complete_results['models'][task] = model_results
+                progress.update(task_progress_detailed, advance=1)
                 
                 # Walk Forward валидация
+                progress.update(task_progress_detailed, description=f"🔄 Walk Forward валидация {task_name}...")
                 wf_results = self.walk_forward_validation(final_data, task, n_splits=3)
                 complete_results['validations'][f'{task}_walk_forward'] = wf_results
+                progress.update(task_progress_detailed, advance=1)
                 
-                # Monte Carlo валидация (меньше итераций для экономии времени)
+                # Monte Carlo валидация
+                progress.update(task_progress_detailed, description=f"🎲 Monte Carlo валидация {task_name}...")
                 mc_results = self.monte_carlo_validation(final_data, task, n_iterations=20)
                 complete_results['validations'][f'{task}_monte_carlo'] = mc_results
+                progress.update(task_progress_detailed, completed=3)
                 
                 progress.update(task_progress, advance=1)
                 
