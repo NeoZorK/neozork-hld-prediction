@@ -56,6 +56,8 @@ os.environ['NUMEXPR_NUM_THREADS'] = '1'
 # Suppress AutoGluon output
 os.environ['AUTOGLUON_VERBOSITY'] = '0'
 os.environ['AUTOGLUON_LOG_LEVEL'] = 'ERROR'
+os.environ['AUTOGLUON_QUIET'] = '1'
+os.environ['AUTOGLUON_SILENT'] = '1'
 
 # AutoGluon imports
 try:
@@ -84,6 +86,8 @@ logging.getLogger('autogluon.tabular').setLevel(logging.ERROR)
 
 # Suppress Ray messages
 logging.getLogger('ray').setLevel(logging.ERROR)
+os.environ['RAY_DISABLE_IMPORT_WARNING'] = '1'
+os.environ['RAY_DEDUP_LOGS'] = '0'
 
 # Function to suppress AutoGluon output
 def suppress_autogluon_output():
@@ -99,6 +103,18 @@ def restore_output(devnull):
     devnull.close()
     sys.stdout = sys.__stdout__
     sys.stderr = sys.__stderr__
+
+# Custom print function to filter out preset messages
+original_print = print
+def filtered_print(*args, **kwargs):
+    """Фильтрует сообщения 'Preset alias specified'."""
+    message = ' '.join(str(arg) for arg in args)
+    if 'Preset alias specified' not in message:
+        original_print(*args, **kwargs)
+
+# Monkey patch print function
+import builtins
+builtins.print = filtered_print
 
 # Ray import check
 try:
@@ -403,7 +419,7 @@ class SCHRLevelsAutoMLPipeline:
         logger.info(f"Подготовлены данные для задачи {task}: {len(data)} записей")
         return data, target_col
     
-    def train_model(self, df: pd.DataFrame, task: str, test_size: float = 0.2) -> Dict[str, Any]:
+    def train_model(self, df: pd.DataFrame, task: str, test_size: float = 0.2, progress=None, task_id=None) -> Dict[str, Any]:
         """
         Обучение модели AutoGluon для конкретной задачи.
         
@@ -416,6 +432,7 @@ class SCHRLevelsAutoMLPipeline:
             Словарь с результатами обучения
         """
         # Обучение модели для задачи: {task}
+        task_name = task.replace('_', ' ').title()
         
         data, target_col = self.prepare_data_for_task(df, task)
         config = self.task_configs[task]
@@ -480,7 +497,26 @@ class SCHRLevelsAutoMLPipeline:
         # Подавляем вывод AutoGluon
         devnull = suppress_autogluon_output()
         try:
+            # Обновляем progress bar после инициализации Ray
+            if progress and task_id:
+                progress.update(task_id, description=f"🚀 Инициализация Ray и обучение {task_name}...")
+            
+            # Дополнительно перенаправляем stdout/stderr для подавления preset сообщений
+            old_stdout = sys.stdout
+            old_stderr = sys.stderr
+            sys.stdout = devnull
+            sys.stderr = devnull
+            
             predictor.fit(train_data, **fit_args)
+            
+            # Восстанавливаем stdout/stderr
+            sys.stdout = old_stdout
+            sys.stderr = old_stderr
+            
+            # Обновляем progress bar после завершения обучения
+            if progress and task_id:
+                progress.update(task_id, description=f"✅ Обучение {task_name} завершено")
+                
         finally:
             restore_output(devnull)
         
@@ -823,7 +859,7 @@ class SCHRLevelsAutoMLPipeline:
             try:
                 # Обучение основной модели
                 progress.update(task_progress_detailed, description=f"🤖 Обучение модели {task_name}...")
-                model_results = self.train_model(final_data, task)
+                model_results = self.train_model(final_data, task, progress=progress, task_id=task_progress_detailed)
                 complete_results['models'][task] = model_results
                 progress.update(task_progress_detailed, advance=1)
                 
