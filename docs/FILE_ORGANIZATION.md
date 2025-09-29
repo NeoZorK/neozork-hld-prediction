@@ -17,6 +17,11 @@
 - **Стало:** `src/automl/run_quick_test.py` (основной файл)
 - **CLI в корне:** `run_quick_test.py` (вызывает src/automl/run_quick_test.py)
 
+### **4. Тест системы:**
+- **Было:** `test_unified_system.py` (в корне)
+- **Стало:** `src/automl/test_unified_system.py` (основной файл)
+- **CLI в корне:** `test_unified_system.py` (вызывает src/automl/test_unified_system.py)
+
 ## 📂 **ФИНАЛЬНАЯ СТРУКТУРА:**
 
 ```
@@ -24,7 +29,8 @@
 ├── src/automl/
 │   ├── unified_schr_system.py    # Основная система
 │   ├── quick_test.py             # Быстрый тест
-│   └── run_quick_test.py         # CLI быстрого теста
+│   ├── run_quick_test.py         # CLI быстрого теста
+│   └── test_unified_system.py    # Тест системы
 ├── docs/
 │   ├── FINAL_REPORT.md           # Итоговый отчет
 │   ├── FILE_ORGANIZATION.md      # Организация файлов
@@ -32,7 +38,7 @@
 │       └── unified_schr_system.md # Документация
 ├── run_unified_schr.py           # CLI основной системы
 ├── run_quick_test.py             # CLI быстрого теста (вызывает src/automl/run_quick_test.py)
-└── test_unified_system.py        # Тест системы
+└── test_unified_system.py        # CLI тестов (вызывает src/automl/test_unified_system.py)
 ```
 
 ## 🚀 **КОМАНДЫ ДЛЯ ЗАПУСКА:**
