@@ -18,6 +18,7 @@ import joblib
 import argparse
 import sys
 import os
+import time
 from contextlib import redirect_stdout, redirect_stderr
 from io import StringIO
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
@@ -119,30 +120,30 @@ class UnifiedSCHRSystem:
         self.results = {}
         self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         
-        # Enhanced task configurations
+        # Enhanced task configurations with production-ready settings
         self.task_configs = {
             'pressure_vector_sign': {
                 'problem_type': 'binary',
                 'eval_metric': 'roc_auc',
-                'time_limit': 1800,
+                'time_limit': 1800,  # 30 minutes for production
                 'description': 'Prediction of PRESSURE_VECTOR sign (+ or -)'
             },
             'price_direction_1period': {
                 'problem_type': 'multiclass', 
                 'eval_metric': 'accuracy',
-                'time_limit': 1800,
+                'time_limit': 1800,  # 30 minutes for production
                 'description': 'Price direction prediction (up/down/hold) for 1 period'
             },
             'level_breakout': {
                 'problem_type': 'multiclass',
                 'eval_metric': 'accuracy', 
-                'time_limit': 2400,
+                'time_limit': 2400,  # 40 minutes for production
                 'description': 'Level breakout prediction (break high/break low/between levels)'
             },
             'trading_signal': {
                 'problem_type': 'multiclass',
                 'eval_metric': 'accuracy',
-                'time_limit': 2000,
+                'time_limit': 2000,  # 33 minutes for production
                 'description': 'Comprehensive trading signal (buy/sell/hold)'
             }
         }
@@ -296,8 +297,8 @@ class UnifiedSCHRSystem:
         if 'pressure_vector' in data.columns:
             pv_clean = data['pressure_vector'].replace([np.inf, -np.inf], np.nan)
             pv_sign = (pv_clean.shift(-1) > 0)
-            data['target_pv_sign'] = pv_sign.astype(float)
-            logger.info("✅ Created target_pv_sign")
+            data['target_pressure_vector_sign'] = pv_sign.astype(float)
+            logger.info("✅ Created target_pressure_vector_sign")
         
         # Task 2: Price direction prediction
         if 'Close' in data.columns:
@@ -308,8 +309,8 @@ class UnifiedSCHRSystem:
                 bins=[-np.inf, -0.01, 0.01, np.inf], 
                 labels=[0, 1, 2]  # 0=down, 1=hold, 2=up
             )
-            data['target_price_direction'] = price_direction.astype(float)
-            logger.info("✅ Created target_price_direction")
+            data['target_price_direction_1period'] = price_direction.astype(float)
+            logger.info("✅ Created target_price_direction_1period")
         
         # Task 3: Level breakout prediction
         if all(col in data.columns for col in ['Close', 'predicted_high', 'predicted_low']):
@@ -396,14 +397,14 @@ class UnifiedSCHRSystem:
                     path=model_path
                 )
                 
-                # Enhanced training configuration
+                # Enhanced training configuration with faster settings
                 fit_args = {
                     'time_limit': config['time_limit'],
-                    'presets': 'best_quality',
+                    'presets': 'medium_quality_faster_train',  # Faster training
                     'excluded_model_types': [
                         'NN_TORCH', 'NN_FASTAI', 'FASTAI', 'NeuralNetFastAI'
                     ],
-                    'num_bag_folds': 5,
+                    'num_bag_folds': 3,  # Reduced for faster training
                     'num_stack_levels': 1,
                     'verbosity': 0,
                     'ag_args_fit': {

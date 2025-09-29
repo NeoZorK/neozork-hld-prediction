@@ -29,10 +29,18 @@ Unified SCHR System - это единая система для создания
 ```
 src/automl/
 ├── unified_schr_system.py    # Основная система
-└── run_unified_schr.py       # CLI для запуска
+├── quick_test.py             # Быстрый тест
+└── run_quick_test.py         # CLI быстрого теста
 
-docs/automl/
-└── unified_schr_system.md    # Документация
+docs/
+├── FINAL_REPORT.md           # Итоговый отчет
+└── automl/
+    └── unified_schr_system.md # Документация
+
+# CLI в корне проекта
+run_unified_schr.py           # CLI основной системы
+run_quick_test.py             # CLI быстрого теста
+test_unified_system.py        # Тест системы
 ```
 
 ## 🛠 Установка и запуск
@@ -44,17 +52,20 @@ pip install autogluon pandas numpy scikit-learn rich matplotlib seaborn
 
 ### 2. Запуск системы:
 ```bash
+# Быстрый тест системы
+uv run run_quick_test.py
+
 # Анализ по умолчанию (BTCUSD MN1)
-python run_unified_schr.py
+uv run run_unified_schr.py
 
 # Анализ конкретного символа
-python run_unified_schr.py -s EURUSD -t D1
+uv run run_unified_schr.py -s EURUSD -t D1
 
 # Анализ конкретного файла
-python run_unified_schr.py -f data/GBPUSD.parquet
+uv run run_unified_schr.py -f data/GBPUSD.parquet
 
 # Указать путь к данным
-python run_unified_schr.py --data-path data/cache/csv_converted/
+uv run run_unified_schr.py --data-path data/cache/csv_converted/
 ```
 
 ## 📊 Результаты
