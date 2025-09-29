@@ -36,6 +36,13 @@ os.environ["AUTOGLUON_USE_GPU_FASTAI"] = "false"
 os.environ["LDFLAGS"] = "-L/opt/homebrew/opt/libomp/lib"
 os.environ["CPPFLAGS"] = "-I/opt/homebrew/opt/libomp/include"
 
+# Configure threading for XGBoost and LightGBM to avoid OpenMP issues
+os.environ['OMP_NUM_THREADS'] = '1'
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
+os.environ['MKL_NUM_THREADS'] = '1'
+os.environ['VECLIB_MAXIMUM_THREADS'] = '1'
+os.environ['NUMEXPR_NUM_THREADS'] = '1'
+
 # AutoGluon imports
 try:
     from autogluon.tabular import TabularPredictor
@@ -379,14 +386,12 @@ class SCHRLevelsAutoMLPipeline:
             path=model_path
         )
         
-        # Настройки для MacBook M1 (полностью отключаем GPU и проблемные модели)
+        # Настройки для MacBook M1 (отключаем только GPU модели)
         fit_args = {
             'time_limit': config['time_limit'],
             'presets': 'best_quality',
             'excluded_model_types': [
-                'NN_TORCH', 'NN_FASTAI', 'FASTAI', 'NeuralNetFastAI',  # GPU модели
-                'XGBoost', 'LightGBM',  # Модели с проблемами OpenMP на macOS
-                'XGBoostLarge', 'LightGBMLarge'  # Большие версии
+                'NN_TORCH', 'NN_FASTAI', 'FASTAI', 'NeuralNetFastAI'  # Только GPU модели
             ],
             'num_bag_folds': 5,
             'num_stack_levels': 1,
@@ -394,6 +399,22 @@ class SCHRLevelsAutoMLPipeline:
             'ag_args_fit': {
                 'use_gpu': False,
                 'num_gpus': 0
+            },
+            # Специальные настройки для XGBoost и LightGBM
+            'hyperparameters': {
+                'XGB': {
+                    'n_jobs': 1,
+                    'n_estimators': 100,
+                    'max_depth': 6,
+                    'learning_rate': 0.1
+                },
+                'GBM': {
+                    'n_jobs': 1,
+                    'n_estimators': 100,
+                    'max_depth': 6,
+                    'learning_rate': 0.1,
+                    'verbose': -1
+                }
             }
         }
         
@@ -485,19 +506,33 @@ class SCHRLevelsAutoMLPipeline:
                 path=model_path
             )
             
-            # Быстрое обучение для валидации (без GPU и проблемных моделей)
+            # Быстрое обучение для валидации (только без GPU)
             wf_fit_args = {
                 'time_limit': 600,  # 10 минут на fold
                 'presets': 'medium_quality_faster_train',
                 'excluded_model_types': [
-                    'NN_TORCH', 'NN_FASTAI', 'FASTAI', 'NeuralNetFastAI',  # GPU модели
-                    'XGBoost', 'LightGBM',  # Модели с проблемами OpenMP на macOS
-                    'XGBoostLarge', 'LightGBMLarge'  # Большие версии
+                    'NN_TORCH', 'NN_FASTAI', 'FASTAI', 'NeuralNetFastAI'  # Только GPU модели
                 ],
                 'verbosity': 0,
                 'ag_args_fit': {
                     'use_gpu': False,
                     'num_gpus': 0
+                },
+                # Специальные настройки для XGBoost и LightGBM
+                'hyperparameters': {
+                    'XGB': {
+                        'n_jobs': 1,
+                        'n_estimators': 50,
+                        'max_depth': 4,
+                        'learning_rate': 0.1
+                    },
+                    'GBM': {
+                        'n_jobs': 1,
+                        'n_estimators': 50,
+                        'max_depth': 4,
+                        'learning_rate': 0.1,
+                        'verbose': -1
+                    }
                 }
             }
             
@@ -592,14 +627,28 @@ class SCHRLevelsAutoMLPipeline:
                     'time_limit': 300,  # 5 минут на итерацию
                     'presets': 'medium_quality_faster_train',
                     'excluded_model_types': [
-                        'NN_TORCH', 'NN_FASTAI', 'FASTAI', 'NeuralNetFastAI',  # GPU модели
-                        'XGBoost', 'LightGBM',  # Модели с проблемами OpenMP на macOS
-                        'XGBoostLarge', 'LightGBMLarge'  # Большие версии
+                        'NN_TORCH', 'NN_FASTAI', 'FASTAI', 'NeuralNetFastAI'  # Только GPU модели
                     ],
                     'verbosity': 0,
                     'ag_args_fit': {
                         'use_gpu': False,
                         'num_gpus': 0
+                    },
+                    # Специальные настройки для XGBoost и LightGBM
+                    'hyperparameters': {
+                        'XGB': {
+                            'n_jobs': 1,
+                            'n_estimators': 30,
+                            'max_depth': 3,
+                            'learning_rate': 0.1
+                        },
+                        'GBM': {
+                            'n_jobs': 1,
+                            'n_estimators': 30,
+                            'max_depth': 3,
+                            'learning_rate': 0.1,
+                            'verbose': -1
+                        }
                     }
                 }
                 
