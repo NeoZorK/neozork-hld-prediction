@@ -21,7 +21,7 @@ sys.path.append(str(Path(__file__).parent))
 
 # Импортируем класс напрямую из файла
 import importlib.util
-spec = importlib.util.spec_from_file_location("schr_levels_gluon", "schr-levels-gluon.py")
+spec = importlib.util.spec_from_file_location("schr_levels_gluon", "../../../schr-levels-gluon.py")
 schr_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(schr_module)
 SCHRLevelsAutoMLPipeline = schr_module.SCHRLevelsAutoMLPipeline
