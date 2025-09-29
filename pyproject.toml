@@ -117,7 +117,7 @@ dependencies = [
     "websocket-client==1.8.0",
     "python-dotenv==1.1.0",
     "yfinance==0.2.25",
-    "rich==13.6.0",
+    "rich>=13.0.0",
     "tqdm==4.67.1",
     "pytest",
     "pytest-xdist>=3.7.0",
@@ -158,6 +158,7 @@ dependencies = [
     "lightgbm>=4.6.0",
     "catboost>=1.2.8",
     "xgboost>=3.0.5",
+    "click>=8.0.0",
 ]
 
 [build-system]

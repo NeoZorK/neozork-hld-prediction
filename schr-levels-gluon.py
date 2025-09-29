@@ -20,10 +20,16 @@ from pathlib import Path
 import warnings
 from datetime import datetime, timedelta
 import joblib
+import argparse
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.model_selection import TimeSeriesSplit
 import matplotlib.pyplot as plt
 import seaborn as sns
+from rich.console import Console
+from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TimeElapsedColumn, TimeRemainingColumn, MofNCompleteColumn
+from rich.panel import Panel
+from rich.table import Table
+from rich import print as rprint
 
 # Disable CUDA for MacBook M1 and set OpenMP paths
 import os
@@ -52,27 +58,35 @@ except ImportError:
     TabularPredictor = None
 
 warnings.filterwarnings('ignore')
+
+# Initialize Rich console
+console = Console()
+
+# Setup logging with minimal verbosity
+logging.basicConfig(
+    level=logging.WARNING,  # Minimal verbosity
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[logging.StreamHandler()]
+)
 logger = logging.getLogger(__name__)
 
 # Ray import check
 try:
     import ray
     RAY_AVAILABLE = True
-    logger.info("Ray доступен - будет использоваться параллельное обучение")
+    console.print("✅ Ray доступен - будет использоваться параллельное обучение", style="green")
 except ImportError:
     RAY_AVAILABLE = False
-    logger.warning("Ray не установлен - будет использоваться последовательное обучение")
-    logger.info("Для установки ray выполните: pip install 'ray>=2.10.0,<2.45.0'")
+    console.print("⚠️  Ray не установлен - будет использоваться последовательное обучение", style="yellow")
+    console.print("💡 Для установки ray выполните: pip install 'ray>=2.10.0,<2.45.0'", style="blue")
 
-# Настройка логирования
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('logs/schr_levels_automl.log'),
-        logging.StreamHandler()
-    ]
-)
+# File logging setup
+os.makedirs('logs', exist_ok=True)
+file_handler = logging.FileHandler('logs/schr_levels_automl.log')
+file_handler.setLevel(logging.INFO)
+file_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(file_formatter)
+logger.addHandler(file_handler)
 
 
 class SCHRLevelsAutoMLPipeline:
@@ -85,17 +99,19 @@ class SCHRLevelsAutoMLPipeline:
     3. Предсказание пробития PREDICTED_HIGH/PREDICTED_LOW или удержания между ними
     """
     
-    def __init__(self, data_path: str = "data/cache/csv_converted/"):
+    def __init__(self, data_path: str = "data/cache/csv_converted/", data_file: Optional[str] = None):
         """
         Инициализация пайплайна.
         
         Args:
             data_path: Путь к папке с данными
+            data_file: Конкретный файл данных для анализа
         """
         if not AUTOGLUON_AVAILABLE:
             raise ImportError("AutoGluon не установлен. Установите: pip install autogluon")
         
         self.data_path = Path(data_path)
+        self.data_file = data_file
         self.models = {}
         self.results = {}
         self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -119,14 +135,14 @@ class SCHRLevelsAutoMLPipeline:
             }
         }
         
-        logger.info("SCHR Levels AutoML Pipeline инициализирован")
+        console.print("🚀 SCHR Levels AutoML Pipeline инициализирован", style="bold blue")
         
         # Информируем о режиме обучения
         if RAY_AVAILABLE:
-            logger.info("✅ Ray доступен - будет использоваться параллельное обучение")
+            console.print("✅ Ray доступен - будет использоваться параллельное обучение", style="green")
         else:
-            logger.warning("⚠️  Ray недоступен - будет использоваться последовательное обучение")
-            logger.info("💡 Для ускорения установите ray: pip install 'ray>=2.10.0,<2.45.0'")
+            console.print("⚠️  Ray недоступен - будет использоваться последовательное обучение", style="yellow")
+            console.print("💡 Для ускорения установите ray: pip install 'ray>=2.10.0,<2.45.0'", style="blue")
     
     def load_schr_data(self, symbol: str = "BTCUSD", timeframe: str = "MN1") -> pd.DataFrame:
         """
@@ -139,13 +155,20 @@ class SCHRLevelsAutoMLPipeline:
         Returns:
             DataFrame с данными SCHR Levels
         """
-        filename = f"CSVExport_{symbol}_PERIOD_{timeframe}.parquet"
-        file_path = self.data_path / filename
+        if self.data_file:
+            # Используем конкретный файл, если указан
+            file_path = Path(self.data_file)
+            if not file_path.exists():
+                raise FileNotFoundError(f"Файл данных не найден: {file_path}")
+            console.print(f"📁 Загружаем данные: {file_path.name}", style="blue")
+        else:
+            # Используем стандартный путь
+            filename = f"CSVExport_{symbol}_PERIOD_{timeframe}.parquet"
+            file_path = self.data_path / filename
+            if not file_path.exists():
+                raise FileNotFoundError(f"Файл не найден: {file_path}")
+            console.print(f"📁 Загружаем данные: {filename}", style="blue")
         
-        if not file_path.exists():
-            raise FileNotFoundError(f"Файл не найден: {file_path}")
-        
-        logger.info(f"Загружаем данные: {filename}")
         df = pd.read_parquet(file_path)
         
         # Проверяем наличие необходимых колонок
@@ -163,7 +186,7 @@ class SCHRLevelsAutoMLPipeline:
             # Создаем временной индекс если его нет
             df.index = pd.date_range(start='2020-01-01', periods=len(df), freq='MS' if timeframe == 'MN1' else 'D')
         
-        logger.info(f"Загружено {len(df)} записей с {len(df.columns)} колонками")
+        console.print(f"📊 Загружено {len(df)} записей с {len(df.columns)} колонками", style="green")
         return df
     
     def create_target_variables(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -395,7 +418,7 @@ class SCHRLevelsAutoMLPipeline:
             ],
             'num_bag_folds': 5,
             'num_stack_levels': 1,
-            'verbosity': 2,
+            'verbosity': 1,
             'ag_args_fit': {
                 'use_gpu': False,
                 'num_gpus': 0
@@ -702,16 +725,32 @@ class SCHRLevelsAutoMLPipeline:
         Returns:
             Полные результаты анализа
         """
-        logger.info(f"🚀 Запускаем полный анализ для {symbol} {timeframe}")
+        console.print(f"🚀 Запускаем полный анализ для {symbol} {timeframe}", style="bold blue")
         
-        # 1. Загрузка данных
-        raw_data = self.load_schr_data(symbol, timeframe)
-        
-        # 2. Создание целевых переменных и признаков
-        data_with_targets = self.create_target_variables(raw_data)
-        final_data = self.create_features(data_with_targets)
-        
-        logger.info(f"📊 Итоговый датасет: {len(final_data)} записей, {len(final_data.columns)} признаков")
+        # Создаем progress bar
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            MofNCompleteColumn(),
+            TimeElapsedColumn(),
+            TimeRemainingColumn(),
+            console=console
+        ) as progress:
+            
+            # 1. Загрузка данных
+            task1 = progress.add_task("📁 Загрузка данных...", total=1)
+            raw_data = self.load_schr_data(symbol, timeframe)
+            progress.update(task1, completed=1)
+            
+            # 2. Создание целевых переменных и признаков
+            task2 = progress.add_task("🔧 Создание признаков...", total=2)
+            data_with_targets = self.create_target_variables(raw_data)
+            progress.update(task2, advance=1)
+            final_data = self.create_features(data_with_targets)
+            progress.update(task2, completed=2)
+            
+            console.print(f"📊 Итоговый датасет: {len(final_data)} записей, {len(final_data.columns)} признаков", style="green")
         
         complete_results = {
             'symbol': symbol,
@@ -726,8 +765,11 @@ class SCHRLevelsAutoMLPipeline:
         }
         
         # 3. Обучение моделей для всех задач
-        for task in self.task_configs.keys():
-            logger.info(f"🎯 Обрабатываем задачу: {task}")
+        tasks = list(self.task_configs.keys())
+        task_progress = progress.add_task("🤖 Обучение моделей...", total=len(tasks))
+        
+        for i, task in enumerate(tasks):
+            console.print(f"🎯 Обрабатываем задачу: {task}", style="bold yellow")
             
             try:
                 # Обучение основной модели
@@ -742,9 +784,12 @@ class SCHRLevelsAutoMLPipeline:
                 mc_results = self.monte_carlo_validation(final_data, task, n_iterations=20)
                 complete_results['validations'][f'{task}_monte_carlo'] = mc_results
                 
+                progress.update(task_progress, advance=1)
+                
             except Exception as e:
-                logger.error(f"❌ Ошибка при обработке задачи {task}: {e}")
+                console.print(f"❌ Ошибка при обработке задачи {task}: {e}", style="red")
                 complete_results['models'][task] = {'error': str(e)}
+                progress.update(task_progress, advance=1)
         
         # 4. Сводная оценка
         self._generate_summary_report(complete_results)
@@ -878,25 +923,87 @@ class SCHRLevelsAutoMLPipeline:
             logger.info(f"📂 Результаты анализа загружены: {results_file}")
 
 
-def main():
-    """Пример использования пайплайна."""
-    # Создаем папку для логов если её нет
-    Path("logs").mkdir(exist_ok=True)
+
+
+def parse_arguments():
+    """Парсинг аргументов командной строки."""
+    parser = argparse.ArgumentParser(
+        description="SCHR Levels AutoML Pipeline - Комплексное решение для создания ML-моделей",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Примеры использования:
+  python schr-levels-gluon.py                           # Анализ по умолчанию (BTCUSD MN1)
+  python schr-levels-gluon.py -f data/GBPUSD.parquet  # Анализ конкретного файла
+  python schr-levels-gluon.py -s EURUSD -t W1         # Анализ EURUSD недельные данные
+  python schr-levels-gluon.py --symbol GBPUSD --timeframe D1  # Анализ GBPUSD дневные данные
+        """
+    )
     
-    # Инициализация пайплайна
-    pipeline = SCHRLevelsAutoMLPipeline()
+    parser.add_argument(
+        '-f', '--file',
+        type=str,
+        help='Путь к конкретному файлу данных для анализа'
+    )
+    
+    parser.add_argument(
+        '-s', '--symbol',
+        type=str,
+        default='BTCUSD',
+        help='Торговый символ (по умолчанию: BTCUSD)'
+    )
+    
+    parser.add_argument(
+        '-t', '--timeframe',
+        type=str,
+        default='MN1',
+        help='Таймфрейм (по умолчанию: MN1)'
+    )
+    
+    parser.add_argument(
+        '--data-path',
+        type=str,
+        default='data/cache/csv_converted/',
+        help='Путь к папке с данными (по умолчанию: data/cache/csv_converted/)'
+    )
+    
+    parser.add_argument(
+        '--models-path',
+        type=str,
+        default='models',
+        help='Путь к папке для сохранения моделей (по умолчанию: models)'
+    )
+    
+    return parser.parse_args()
+
+
+def main():
+    """Основная функция с поддержкой CLI аргументов."""
+    args = parse_arguments()
     
     try:
-        # Запуск полного анализа для BTCUSD месячных данных
-        logger.info("🚀 Запускаем полный анализ SCHR Levels...")
-        results = pipeline.run_complete_analysis(symbol="BTCUSD", timeframe="MN1")
+        # Создаем пайплайн с переданными параметрами
+        pipeline = SCHRLevelsAutoMLPipeline(
+            data_path=args.data_path,
+            data_file=args.file
+        )
         
-        # Сохранение моделей
+        # Запускаем анализ
+        if args.file:
+            console.print(f"🚀 Запускаем анализ файла: {args.file}", style="bold blue")
+            results = pipeline.run_complete_analysis("CUSTOM", "CUSTOM")
+        else:
+            console.print(f"🚀 Запускаем анализ для {args.symbol} {args.timeframe}", style="bold blue")
+            results = pipeline.run_complete_analysis(args.symbol, args.timeframe)
+        
+        # Сохраняем результаты
         pipeline.save_models()
         
         # Пример предсказания (загружаем новые данные)
-        logger.info("🔮 Тестируем предсказания...")
-        new_data = pipeline.load_schr_data("BTCUSD", "MN1").tail(10)  # Последние 10 записей для надежности
+        console.print("🔮 Тестируем предсказания...", style="blue")
+        if args.file:
+            new_data = pipeline.load_schr_data().tail(10)
+        else:
+            new_data = pipeline.load_schr_data(args.symbol, args.timeframe).tail(10)
         
         # Создаем признаки для новых данных
         new_data = pipeline.create_features(new_data)
@@ -906,16 +1013,16 @@ def main():
             if task in pipeline.models:
                 try:
                     prediction_results = pipeline.predict_for_trading(new_data, task)
-                    logger.info(f"🔮 Предсказание для {task}: {prediction_results['predictions']}")
+                    console.print(f"🔮 Предсказание для {task}: {prediction_results['predictions']}", style="green")
                     if prediction_results['probabilities'] is not None:
-                        logger.info(f"🔮 Вероятности: {prediction_results['probabilities'].values}")
+                        console.print(f"🔮 Вероятности: {prediction_results['probabilities'].values}", style="cyan")
                 except Exception as e:
-                    logger.error(f"❌ Ошибка предсказания для {task}: {e}")
+                    console.print(f"❌ Ошибка предсказания для {task}: {e}", style="red")
         
-        logger.info("✅ Анализ завершен успешно!")
+        console.print("✅ Анализ завершен успешно!", style="bold green")
         
     except Exception as e:
-        logger.error(f"❌ Ошибка в основном процессе: {e}")
+        console.print(f"❌ Ошибка в основном процессе: {e}", style="bold red")
         raise
 
 
