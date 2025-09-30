@@ -26,6 +26,9 @@
 16. [Продвинутые темы](./16_advanced_topics.md)
 17. [Этика и ответственный AI](./17_ethics_and_responsible_ai.md)
 18. [Кейс-стади](./18_case_studies.md)
+19. [WAVE2 Индикатор - Полный анализ](./19_wave2_indicator_analysis.md)
+20. [SCHR Levels - Анализ и ML-модель](./20_schr_levels_analysis.md)
+21. [SCHR SHORT3 - Краткосрочная торговля](./21_schr_short3_analysis.md)
 
 ## Что такое AutoML Gluon?
 
