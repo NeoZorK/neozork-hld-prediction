@@ -80,7 +80,8 @@ def create_enhanced_html_content(html_content):
         {"id": "section-21", "title": "SCHR SHORT3 - Краткосрочная торговля", "file": "21_schr_short3_analysis.md"},
         {"id": "section-22", "title": "Супер-система: Объединение всех индикаторов", "file": "22_super_system_ultimate.md"},
         {"id": "section-23", "title": "Руководство по изучению учебника", "file": "23_reading_guide.md"},
-        {"id": "section-24", "title": "Правильное использование вероятностей", "file": "24_probability_usage_guide.md"}
+        {"id": "section-24", "title": "Правильное использование вероятностей", "file": "24_probability_usage_guide.md"},
+        {"id": "section-25", "title": "Мониторинг торгового бота - Лучшие практики", "file": "25_trading_bot_monitoring.md"}
     ]
     
     # Создание навигации
