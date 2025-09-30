@@ -50,7 +50,7 @@ def check_dependencies():
 def create_combined_markdown():
     """Создание объединенного Markdown файла"""
     
-    docs_dir = Path(__file__).parent.parent.parent.parent / "docs" / "automl" / "gluon"
+    docs_dir = Path(__file__).parent.parent.parent.parent.parent / "docs" / "automl" / "gluon"
     
     # Порядок файлов
     files_order = [
