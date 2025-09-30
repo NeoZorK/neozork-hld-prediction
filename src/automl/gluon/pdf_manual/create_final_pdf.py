@@ -75,7 +75,9 @@ def create_combined_markdown():
         "18_case_studies.md",
         "19_wave2_indicator_analysis.md",
         "20_schr_levels_analysis.md",
-        "21_schr_short3_analysis.md"
+        "21_schr_short3_analysis.md",
+        "22_super_system_ultimate.md",
+        "23_reading_guide.md"
     ]
     
     combined_content = []
