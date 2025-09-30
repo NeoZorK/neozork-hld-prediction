@@ -8,6 +8,9 @@
 ![Сравнение метрик](images/metrics_comparison.png)
 *Рисунок 3: Сравнение метрик для классификации и регрессии*
 
+![Детальная визуализация метрик](images/metrics_detailed.png)
+*Рисунок 3.1: Детальная визуализация метрик - ROC Curve, Precision-Recall, Confusion Matrix, Accuracy vs Threshold, F1 Score vs Threshold*
+
 Метрики в AutoML Gluon используются для:
 - Оценки качества моделей
 - Сравнения различных алгоритмов
