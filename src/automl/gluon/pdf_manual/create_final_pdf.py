@@ -2,6 +2,9 @@
 """
 Финальный скрипт для создания PDF учебника AutoML Gluon
 Создает PDF с рабочими ссылками и навигацией
+
+Автор: Shcherbyna Rostyslav
+Дата: 2024
 """
 
 import os
@@ -47,7 +50,7 @@ def check_dependencies():
 def create_combined_markdown():
     """Создание объединенного Markdown файла"""
     
-    docs_dir = Path(__file__).parent
+    docs_dir = Path(__file__).parent.parent.parent.parent / "docs" / "automl" / "gluon"
     
     # Порядок файлов
     files_order = [

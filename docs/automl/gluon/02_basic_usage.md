@@ -1,6 +1,12 @@
 # Базовое использование AutoML Gluon
 
+**Автор:** Shcherbyna Rostyslav  
+**Дата:** 2024  
+
 ## Введение в TabularPredictor
+
+![Архитектура AutoML Gluon](images/architecture_diagram.png)
+*Рисунок 2: Архитектура AutoML Gluon с основными компонентами*
 
 `TabularPredictor` - это основной класс для работы с табличными данными в AutoGluon. Он автоматически определяет тип задачи (классификация, регрессия) и выбирает лучшие алгоритмы.
 
