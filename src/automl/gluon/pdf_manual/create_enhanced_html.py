@@ -154,12 +154,13 @@ def create_enhanced_html():
         }}
         
         code {{
-            background: #f8f9fa;
+            background: #2c3e50;
+            color: #ecf0f1;
             padding: 3px 8px;
             border-radius: 4px;
             font-family: 'Courier New', monospace;
             font-size: 0.95em;
-            color: #e74c3c;
+            border: 1px solid #34495e;
         }}
         
         pre {{
@@ -170,6 +171,45 @@ def create_enhanced_html():
             overflow-x: auto;
             margin: 20px 0;
             font-size: 0.95em;
+            border: 1px solid #34495e;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }}
+        
+        pre code {{
+            background: transparent;
+            color: inherit;
+            padding: 0;
+            border: none;
+            border-radius: 0;
+        }}
+        
+        /* Стили для ссылок внутри кода */
+        code a, pre a {{
+            color: #f39c12 !important;  /* Оранжевый цвет для ссылок в коде */
+            text-decoration: underline;
+        }}
+        
+        code a:hover, pre a:hover {{
+            color: #e67e22 !important;  /* Темнее при наведении */
+        }}
+        
+        /* Стили для ключевых слов в коде */
+        code .keyword, pre .keyword {{
+            color: #e74c3c;  /* Красный для ключевых слов */
+            font-weight: bold;
+        }}
+        
+        code .string, pre .string {{
+            color: #2ecc71;  /* Зеленый для строк */
+        }}
+        
+        code .number, pre .number {{
+            color: #9b59b6;  /* Фиолетовый для чисел */
+        }}
+        
+        code .boolean, pre .boolean {{
+            color: #f39c12;  /* Оранжевый для булевых значений */
+            font-weight: bold;
         }}
         
         blockquote {{
@@ -395,6 +435,43 @@ def create_enhanced_html():
                 }}
             }});
         }});
+        
+        // Улучшение читаемости кода
+        function improveCodeReadability() {{
+            // Находим все блоки кода
+            const codeBlocks = document.querySelectorAll('code, pre');
+            
+            codeBlocks.forEach(block => {{
+                let html = block.innerHTML;
+                
+                // Выделяем булевые значения
+                html = html.replace(/\\b(True|False|true|false)\\b/g, '<span class="boolean">$1</span>');
+                
+                // Выделяем ключевые слова Python
+                html = html.replace(/\\b(def|class|if|else|elif|for|while|try|except|finally|with|import|from|as|return|yield|lambda|and|or|not|in|is|None)\\b/g, '<span class="keyword">$1</span>');
+                
+                // Выделяем строки в кавычках
+                html = html.replace(/(["'])((?:(?!\\1)[^\\\\]|\\\\.)*)(\\1)/g, '<span class="string">$1$2$3</span>');
+                
+                // Выделяем числа
+                html = html.replace(/\\b(\\d+\\.?\\d*)\\b/g, '<span class="number">$1</span>');
+                
+                // Выделяем комментарии
+                html = html.replace(/(#.*$)/gm, '<span style="color: #95a5a6; font-style: italic;">$1</span>');
+                
+                block.innerHTML = html;
+            }});
+        }}
+        
+        // Запускаем улучшение читаемости после загрузки
+        document.addEventListener('DOMContentLoaded', improveCodeReadability);
+        
+        // Также запускаем при изменении содержимого
+        if (document.readyState === 'loading') {{
+            document.addEventListener('DOMContentLoaded', improveCodeReadability);
+        }} else {{
+            improveCodeReadability();
+        }}
     </script>
 </body>
 </html>
