@@ -1,6 +1,12 @@
 # Установка AutoML Gluon
 
+**Автор:** Shcherbyna Rostyslav  
+**Дата:** 2024  
+
 ## Системные требования
+
+![Установка AutoML Gluon](images/installation_flowchart.png)
+*Рисунок 1: Блок-схема процесса установки AutoML Gluon*
 
 ### Минимальные требования
 - **Python**: 3.7, 3.8, 3.9, 3.10, 3.11

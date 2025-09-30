@@ -1,6 +1,12 @@
 # Troubleshooting AutoML Gluon
 
+**Автор:** Shcherbyna Rostyslav  
+**Дата:** 2024  
+
 ## Введение в troubleshooting
+
+![Troubleshooting блок-схема](images/troubleshooting_flowchart.png)
+*Рисунок 8: Блок-схема решения проблем AutoML Gluon*
 
 В этом разделе рассмотрим типичные проблемы, возникающие при работе с AutoML Gluon, и способы их решения. Каждая проблема включает описание, причины возникновения и пошаговые инструкции по устранению.
 
