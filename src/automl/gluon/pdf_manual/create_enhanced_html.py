@@ -24,7 +24,7 @@ def create_enhanced_html():
         print(f"Используем абсолютный путь: {docs_dir}")
         print(f"Docs dir exists: {docs_dir.exists()}")
     
-    html_file = docs_dir / "AutoML_Gluon_Complete_Manual_Enhanced.html"
+    html_file = docs_dir / "AutoML_Gluon_Complete_Manual.html"
     enhanced_html_file = docs_dir / "AutoML_Gluon_Complete_Manual_Reading_Friendly.html"
     
     print("=== Создание улучшенной HTML версии ===")
