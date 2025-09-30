@@ -1,7 +1,8 @@
 # AutoML Gluon - Полное руководство пользователя
 
-**Автор:** Shcherbyna Rostyslav  
-**Дата:** 2024  
+**Автор:** NeoZorK (Shcherbyna Rostyslav)  
+**Дата:** 2025  
+**Местоположение:** Ukraine, Zaporizhzhya  
 **Версия:** 1.0  
 
 Добро пожаловать в исчерпывающее руководство по AutoML Gluon - мощному инструменту автоматизированного машинного обучения от Amazon.
@@ -29,6 +30,8 @@
 19. [WAVE2 Индикатор - Полный анализ](./19_wave2_indicator_analysis.md)
 20. [SCHR Levels - Анализ и ML-модель](./20_schr_levels_analysis.md)
 21. [SCHR SHORT3 - Краткосрочная торговля](./21_schr_short3_analysis.md)
+22. [Супер-система: Объединение всех индикаторов](./22_super_system_ultimate.md)
+23. [Руководство по изучению учебника](./23_reading_guide.md)
 
 ## Что такое AutoML Gluon?
 
