@@ -1,6 +1,12 @@
 # Оптимизация AutoML Gluon для Apple Silicon (M1/M2/M3)
 
+**Автор:** Shcherbyna Rostyslav  
+**Дата:** 2024  
+
 ## Введение в оптимизацию для Apple Silicon
+
+![Оптимизация для Apple Silicon](images/apple_silicon_optimization.png)
+*Рисунок 9: Оптимизация AutoML Gluon для Apple Silicon*
 
 Apple Silicon MacBook с чипами M1, M2, M3 предоставляют уникальные возможности для ускорения машинного обучения через:
 - **MLX** - фреймворк Apple для машинного обучения на Apple Silicon
