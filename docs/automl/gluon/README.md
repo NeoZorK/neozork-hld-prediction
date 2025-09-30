@@ -32,6 +32,7 @@
 21. [SCHR SHORT3 - Краткосрочная торговля](./21_schr_short3_analysis.md)
 22. [Супер-система: Объединение всех индикаторов](./22_super_system_ultimate.md)
 23. [Руководство по изучению учебника](./23_reading_guide.md)
+24. [Правильное использование вероятностей](./24_probability_usage_guide.md)
 
 ## Что такое AutoML Gluon?
 
