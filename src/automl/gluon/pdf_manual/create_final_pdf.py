@@ -72,7 +72,10 @@ def create_combined_markdown():
         "15_interpretability_and_explainability.md",
         "16_advanced_topics.md",
         "17_ethics_and_responsible_ai.md",
-        "18_case_studies.md"
+        "18_case_studies.md",
+        "19_wave2_indicator_analysis.md",
+        "20_schr_levels_analysis.md",
+        "21_schr_short3_analysis.md"
     ]
     
     combined_content = []
