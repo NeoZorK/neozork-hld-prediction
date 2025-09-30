@@ -1,103 +1,236 @@
-# AutoGluon Integration Documentation
+# SCHR Levels AutoML - Gluon Integration
 
-## 📚 Documentation Overview
+Advanced AutoML platform for SCHR Levels financial data analysis with comprehensive CLI and web visualization capabilities.
 
-This directory contains comprehensive documentation for the AutoGluon integration system.
+## 🚀 Quick Start
 
-### 📖 User Manuals
+### CLI Usage
 
-- **[English User Manual](user_manual_en.md)** - Complete user guide in English
-- **[Руководство пользователя (Русский)](user_manual_ru.md)** - Полное руководство пользователя на русском языке
+```bash
+# Show all available options
+python schr_gluon_cli.py --help
 
-### 🎯 Quick Start
+# Train all models with web visualization
+python schr_gluon_cli.py train --symbol BTCUSD --timeframe MN1 --web --browser
 
-1. **Installation**: `uv add autogluon.tabular`
-2. **Basic Usage**: See [Quick Start section](user_manual_en.md#-quick-start)
-3. **Configuration**: See [Configuration section](user_manual_en.md#-configuration)
+# Quick prediction
+python schr_gluon_cli.py predict --symbol BTCUSD --timeframe MN1 --web
 
-### 🔧 Key Features
+# Comprehensive backtest
+python schr_gluon_cli.py backtest --symbol BTCUSD --timeframe MN1 --web --browser
 
-- **Universal Data Loading**: Support for Parquet, CSV, JSON, Excel, HDF5
-- **Time Series Processing**: Proper chronological train/validation/test splitting
-- **AutoGluon-First Architecture**: Minimal wrapper, maximum AutoGluon utilization
-- **Value Scores Analysis**: Trading-specific metrics (Profit Factor, Sharpe Ratio, etc.)
-- **Model Deployment**: Export for walk forward and Monte Carlo analysis
-- **Drift Monitoring**: Automatic model drift detection
-- **Auto Retraining**: Scheduled and drift-triggered retraining
+# Walk-forward validation
+python schr_gluon_cli.py validate --type walk-forward --symbol BTCUSD --web
 
-### 📊 System Status
+# Monte Carlo validation
+python schr_gluon_cli.py validate --type monte-carlo --symbol BTCUSD --web
 
-- ✅ **Core Functionality**: 100% operational
-- ✅ **Data Loading**: 100% functional
-- ✅ **Model Training**: 100% functional
-- ✅ **Model Evaluation**: 100% functional
-- ✅ **Model Deployment**: 100% functional
-- ✅ **Testing**: 100% test coverage
-- ✅ **Documentation**: Complete
-
-### 🚀 Getting Started
-
-```python
-from src.automl.gluon import GluonAutoML
-
-# Initialize AutoGluon
-gluon = GluonAutoML()
-
-# Load data
-data = gluon.load_data("data/cache/csv_converted/")
-
-# Create time series split
-train, val, test = gluon.create_time_series_split(data, "target")
-
-# Train model
-model = gluon.train_models(train, "target", val)
-
-# Make predictions
-predictions = gluon.predict(model, test)
-
-# Evaluate model
-evaluation = gluon.evaluate_models(model, test, "target")
-
-print(f"Model accuracy: {evaluation['accuracy']:.3f}")
+# Launch web dashboard
+python schr_gluon_cli.py web --port 8080 --browser
 ```
 
-### 📁 Directory Structure
+### Demo All Visualizations
 
-```
-docs/automl/gluon/
-├── README.md                    # This file
-├── user_manual_en.md           # English user manual
-├── user_manual_ru.md           # Russian user manual
-├── autogluon-integration-plan-en.md  # Integration plan (English)
-└── autogluon-integration-plan-ru.md  # Integration plan (Russian)
+```bash
+# Launch complete demo with all web visualizations
+python demo_schr_gluon.py
 ```
 
-### 🎯 Use Cases
+## 📁 Project Structure
 
-1. **Trading Strategy Development**: Create robust ML models for trading
-2. **Financial Data Analysis**: Analyze market data with AutoML
-3. **Risk Management**: Monitor model drift and performance
-4. **Portfolio Optimization**: Use value scores for strategy evaluation
-5. **Research and Development**: Experiment with different ML approaches
+```
+src/automl/gluon/
+├── __init__.py                 # Main module exports
+├── cli/                        # Command-line interface
+│   ├── __init__.py
+│   ├── main.py                 # CLI controller (300 lines)
+│   └── commands.py             # Command implementations (300 lines)
+├── web/                        # Web dashboard
+│   ├── __init__.py
+│   ├── dashboard.py            # Main dashboard (300 lines)
+│   ├── components.py           # Visualization components (300 lines)
+│   └── templates/
+│       └── index.html          # Dashboard template
+├── analysis/                   # Analysis tools
+│   ├── __init__.py
+│   ├── pipeline.py             # Core pipeline (300 lines)
+│   ├── backtest.py             # Backtesting engine (300 lines)
+│   ├── validator.py            # Validation tools (300 lines)
+│   └── evaluator.py            # Model evaluation (300 lines)
+├── models/                     # Model management
+│   ├── __init__.py
+│   ├── manager.py              # Model lifecycle (300 lines)
+│   └── persistence.py          # Save/load models (300 lines)
+└── utils/                      # Utilities
+    ├── __init__.py
+    ├── data_loader.py          # Data loading utilities (300 lines)
+    ├── feature_engineering.py  # Feature creation (300 lines)
+    └── visualization.py        # Plot utilities (300 lines)
+```
 
-### 🔗 Related Documentation
+## 🎯 Features
 
-- **Integration Plans**: See `autogluon-integration-plan-*.md`
-- **API Documentation**: See `src/automl/gluon/` source code
-- **Examples**: See `src/automl/gluon/examples/`
-- **Configuration**: See `src/automl/gluon/config/`
+### CLI Capabilities
+- **Flexible Training**: Custom time limits, model exclusions, presets
+- **Multiple Tasks**: pressure_vector_sign, price_direction_1period, level_breakout
+- **Validation Options**: Walk-forward, Monte Carlo, Cross-validation
+- **Backtesting**: Simple, Advanced, Ensemble strategies
+- **Web Integration**: Automatic browser launching
+- **Performance Tuning**: GPU support, parallel processing, memory limits
 
-### 📞 Support
+### Web Visualizations
+- **Backtest Analysis**: Equity curves, drawdown, returns distribution
+- **Forecast Predictions**: Price forecasts, confidence intervals, probability heatmaps
+- **Walk-Forward Validation**: Fold-by-fold accuracy, stability analysis
+- **Monte Carlo Analysis**: Distribution histograms, robustness assessment
+- **Accuracy & Stability**: Model comparison, radar charts, recommendations
+- **Probabilities Analysis**: Confidence levels, signal strength, risk insights
 
-For questions and support:
+### Analysis Tools
+- **Data Processing**: SCHR Levels data loading and preprocessing
+- **Feature Engineering**: Technical indicators, volatility measures
+- **Model Training**: AutoGluon integration with custom configurations
+- **Validation**: Multiple validation strategies for time series
+- **Backtesting**: Comprehensive trading strategy testing
+- **Evaluation**: Performance metrics and model comparison
 
-1. **Check the user manuals** above
-2. **Review the examples** in `src/automl/gluon/examples/`
-3. **Check the configuration** in `src/automl/gluon/config/`
-4. **Run the tests** in `src/automl/gluon/tests/`
+## 🔧 Configuration
 
-### 🎉 Status
+### CLI Flags
 
-**Ready for Production Use** 🚀
+#### Global Options
+- `--verbose, -v`: Enable verbose logging
+- `--quiet, -q`: Suppress output except errors
+- `--config, -c`: Path to configuration file
+- `--output-dir, -o`: Output directory for results
+- `--log-level`: Logging level (DEBUG, INFO, WARNING, ERROR)
 
-The AutoGluon integration is fully functional and ready for production use in trading strategy development.
+#### Data Options
+- `--data-path`: Path to data directory
+- `--symbol`: Trading symbol (BTCUSD, ETHUSD, EURUSD, etc.)
+- `--timeframe`: Timeframe (MN1, W1, D1, H4, H1, M15, M5, M1)
+
+#### Model Options
+- `--tasks`: ML tasks to run (pressure_vector_sign, price_direction_1period, level_breakout, all)
+- `--time-limit`: Training time limit in seconds
+- `--presets`: AutoGluon presets (best_quality, high_quality, good_quality, medium_quality)
+- `--exclude-models`: Models to exclude (NN_TORCH, FASTAI, etc.)
+
+#### Validation Options
+- `--test-size`: Test set size (0.0-1.0)
+- `--cv-folds`: Cross-validation folds
+- `--random-state`: Random state for reproducibility
+
+#### Web Options
+- `--web`: Enable web visualization
+- `--browser`: Open browser automatically
+- `--port`: Web server port
+- `--host`: Web server host
+- `--theme`: Dashboard theme (dark, light)
+
+#### Backtest Options
+- `--start-date`: Backtest start date (YYYY-MM-DD)
+- `--end-date`: Backtest end date (YYYY-MM-DD)
+- `--initial-capital`: Initial capital for backtesting
+- `--commission`: Trading commission rate
+
+#### Performance Options
+- `--n-jobs`: Number of parallel jobs (-1 for all cores)
+- `--memory-limit`: Memory limit for training
+- `--gpu`: Enable GPU acceleration
+
+## 📊 Web Dashboard Features
+
+### Interactive Visualizations
+- **Real-time Updates**: Auto-refresh capabilities
+- **Responsive Design**: Mobile and desktop optimized
+- **Dark Theme**: Professional financial interface
+- **Multiple Tabs**: Organized by analysis type
+- **Export Options**: Save charts and data
+
+### Analysis Components
+- **Equity Curves**: Portfolio performance over time
+- **Drawdown Analysis**: Risk assessment and management
+- **Returns Distribution**: Statistical analysis of returns
+- **Probability Heatmaps**: Model confidence visualization
+- **Validation Charts**: Model stability assessment
+- **Accuracy Comparisons**: Performance benchmarking
+
+## 🎯 Use Cases
+
+### Trading Strategy Development
+1. **Data Analysis**: Load and explore SCHR Levels data
+2. **Feature Engineering**: Create technical indicators
+3. **Model Training**: Train ML models for predictions
+4. **Validation**: Test model performance with walk-forward
+5. **Backtesting**: Simulate trading strategies
+6. **Deployment**: Use models for live trading
+
+### Research & Development
+1. **Model Comparison**: Test different algorithms
+2. **Parameter Tuning**: Optimize model settings
+3. **Feature Selection**: Identify important indicators
+4. **Performance Analysis**: Evaluate model stability
+5. **Risk Assessment**: Analyze model confidence
+
+### Educational & Demo
+1. **Interactive Learning**: Visualize ML concepts
+2. **Strategy Testing**: Experiment with different approaches
+3. **Performance Tracking**: Monitor model evolution
+4. **Results Sharing**: Export and present findings
+
+## 🚀 Getting Started
+
+1. **Install Dependencies**:
+   ```bash
+   pip install autogluon plotly flask pandas numpy scikit-learn
+   ```
+
+2. **Prepare Data**:
+   - Ensure SCHR Levels data is in `data/cache/csv_converted/`
+   - Data should be in parquet format with required columns
+
+3. **Run Demo**:
+   ```bash
+   python demo_schr_gluon.py
+   ```
+
+4. **Use CLI**:
+   ```bash
+   python schr_gluon_cli.py --help
+   ```
+
+## 📈 Performance
+
+- **Training Speed**: Optimized for fast model training
+- **Memory Usage**: Efficient data processing
+- **Scalability**: Parallel processing support
+- **GPU Acceleration**: CUDA support for compatible hardware
+- **Web Performance**: Fast, responsive visualizations
+
+## 🔒 Security
+
+- **Local Processing**: All data stays on your machine
+- **No External APIs**: No data sent to external services
+- **Configurable Ports**: Choose your own web server ports
+- **Access Control**: Localhost-only by default
+
+## 📝 License
+
+This project is part of the Neozork HLD Prediction system.
+All rights reserved.
+
+## 🤝 Contributing
+
+1. Follow the 300-line file limit
+2. Maintain clean, documented code
+3. Add comprehensive tests
+4. Update documentation
+5. Follow the established project structure
+
+## 📞 Support
+
+For issues and questions:
+- Check the CLI help: `python schr_gluon_cli.py --help`
+- Review the demo: `python demo_schr_gluon.py`
+- Examine the web dashboards for visual guidance
