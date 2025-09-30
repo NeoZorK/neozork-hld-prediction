@@ -438,28 +438,78 @@ def create_enhanced_html():
         
         // Улучшение читаемости кода
         function improveCodeReadability() {{
-            // Находим все блоки кода
-            const codeBlocks = document.querySelectorAll('code, pre');
+            // Находим все блоки кода, но только те, которые еще не обработаны
+            const codeBlocks = document.querySelectorAll('code:not(.processed), pre:not(.processed)');
             
             codeBlocks.forEach(block => {{
-                let html = block.innerHTML;
-                
-                // Выделяем булевые значения
-                html = html.replace(/\\b(True|False|true|false)\\b/g, '<span class="boolean">$1</span>');
-                
-                // Выделяем ключевые слова Python
-                html = html.replace(/\\b(def|class|if|else|elif|for|while|try|except|finally|with|import|from|as|return|yield|lambda|and|or|not|in|is|None)\\b/g, '<span class="keyword">$1</span>');
-                
-                // Выделяем строки в кавычках
-                html = html.replace(/(["'])((?:(?!\\1)[^\\\\]|\\\\.)*)(\\1)/g, '<span class="string">$1$2$3</span>');
-                
-                // Выделяем числа
-                html = html.replace(/\\b(\\d+\\.?\\d*)\\b/g, '<span class="number">$1</span>');
-                
-                // Выделяем комментарии
-                html = html.replace(/(#.*$)/gm, '<span style="color: #95a5a6; font-style: italic;">$1</span>');
-                
-                block.innerHTML = html;
+                // Проверяем, что это простой текстовый блок кода
+                if (block.children.length === 0 || block.textContent === block.innerText) {{
+                    let text = block.textContent;
+                    let html = '';
+                    let i = 0;
+                    
+                    while (i < text.length) {{
+                        // Проверяем комментарии
+                        if (text[i] === '#') {{
+                            let commentEnd = text.indexOf('\\n', i);
+                            if (commentEnd === -1) commentEnd = text.length;
+                            html += '<span style="color: #95a5a6; font-style: italic;">' + text.substring(i, commentEnd) + '</span>';
+                            i = commentEnd;
+                        }}
+                        // Проверяем строки в кавычках
+                        else if (text[i] === '"' || text[i] === "'") {{
+                            let quote = text[i];
+                            let stringEnd = i + 1;
+                            while (stringEnd < text.length && text[stringEnd] !== quote) {{
+                                if (text[stringEnd] === '\\\\' && stringEnd + 1 < text.length) {{
+                                    stringEnd += 2; // Пропускаем экранированные символы
+                                }} else {{
+                                    stringEnd++;
+                                }}
+                            }}
+                            if (stringEnd < text.length) stringEnd++;
+                            html += '<span class="string">' + text.substring(i, stringEnd) + '</span>';
+                            i = stringEnd;
+                        }}
+                        // Проверяем ключевые слова и булевы значения
+                        else if (/[a-zA-Z_]/.test(text[i])) {{
+                            let wordEnd = i;
+                            while (wordEnd < text.length && /[a-zA-Z0-9_]/.test(text[wordEnd])) {{
+                                wordEnd++;
+                            }}
+                            let word = text.substring(i, wordEnd);
+                            
+                            // Ключевые слова Python
+                            if (/^(def|class|if|else|elif|for|while|try|except|finally|with|import|from|as|return|yield|lambda|and|or|not|in|is|None)$/.test(word)) {{
+                                html += '<span class="keyword">' + word + '</span>';
+                            }}
+                            // Булевы значения
+                            else if (/^(True|False|true|false)$/.test(word)) {{
+                                html += '<span class="boolean">' + word + '</span>';
+                            }}
+                            else {{
+                                html += word;
+                            }}
+                            i = wordEnd;
+                        }}
+                        // Проверяем числа
+                        else if (/[0-9]/.test(text[i])) {{
+                            let numEnd = i;
+                            while (numEnd < text.length && /[0-9.]/.test(text[numEnd])) {{
+                                numEnd++;
+                            }}
+                            html += '<span class="number">' + text.substring(i, numEnd) + '</span>';
+                            i = numEnd;
+                        }}
+                        else {{
+                            html += text[i];
+                            i++;
+                        }}
+                    }}
+                    
+                    block.innerHTML = html;
+                    block.classList.add('processed');
+                }}
             }});
         }}
         
