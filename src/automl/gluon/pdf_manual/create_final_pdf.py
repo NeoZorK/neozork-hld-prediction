@@ -65,7 +65,14 @@ def create_combined_markdown():
         "08_best_practices.md",
         "09_examples.md",
         "10_troubleshooting.md",
-        "11_apple_silicon_optimization.md"
+        "11_apple_silicon_optimization.md",
+        "12_simple_production_example.md",
+        "13_advanced_production_example.md",
+        "14_theory_and_fundamentals.md",
+        "15_interpretability_and_explainability.md",
+        "16_advanced_topics.md",
+        "17_ethics_and_responsible_ai.md",
+        "18_case_studies.md"
     ]
     
     combined_content = []
