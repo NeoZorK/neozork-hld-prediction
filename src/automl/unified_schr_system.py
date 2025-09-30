@@ -125,25 +125,57 @@ class UnifiedSCHRSystem:
             'pressure_vector_sign': {
                 'problem_type': 'binary',
                 'eval_metric': 'roc_auc',
-                'time_limit': 1800,  # 30 minutes for production
+                'time_limit': 3600,  # 1 hour for better quality
+                'presets': 'best_quality',  # Best quality for production
+                'num_bag_folds': 8,  # More folds for better validation
+                'num_stack_levels': 2,  # Stacking for better performance
+                'hyperparameter_tune_kwargs': {
+                    'num_trials': 20,  # More trials for better hyperparameters
+                    'scheduler': 'local',
+                    'searcher': 'auto'
+                },
                 'description': 'Prediction of PRESSURE_VECTOR sign (+ or -)'
             },
             'price_direction_1period': {
                 'problem_type': 'multiclass', 
                 'eval_metric': 'accuracy',
-                'time_limit': 1800,  # 30 minutes for production
+                'time_limit': 3600,  # 1 hour for better quality
+                'presets': 'best_quality',
+                'num_bag_folds': 8,
+                'num_stack_levels': 2,
+                'hyperparameter_tune_kwargs': {
+                    'num_trials': 20,
+                    'scheduler': 'local',
+                    'searcher': 'auto'
+                },
                 'description': 'Price direction prediction (up/down/hold) for 1 period'
             },
             'level_breakout': {
                 'problem_type': 'multiclass',
                 'eval_metric': 'accuracy', 
-                'time_limit': 2400,  # 40 minutes for production
+                'time_limit': 3600,  # 1 hour for better quality
+                'presets': 'best_quality',
+                'num_bag_folds': 8,
+                'num_stack_levels': 2,
+                'hyperparameter_tune_kwargs': {
+                    'num_trials': 20,
+                    'scheduler': 'local',
+                    'searcher': 'auto'
+                },
                 'description': 'Level breakout prediction (break high/break low/between levels)'
             },
             'trading_signal': {
                 'problem_type': 'multiclass',
                 'eval_metric': 'accuracy',
-                'time_limit': 2000,  # 33 minutes for production
+                'time_limit': 3600,  # 1 hour for better quality
+                'presets': 'best_quality',
+                'num_bag_folds': 8,
+                'num_stack_levels': 2,
+                'hyperparameter_tune_kwargs': {
+                    'num_trials': 20,
+                    'scheduler': 'local',
+                    'searcher': 'auto'
+                },
                 'description': 'Comprehensive trading signal (buy/sell/hold)'
             }
         }
@@ -206,26 +238,70 @@ class UnifiedSCHRSystem:
         
         data = df.copy()
         
-        # Basic technical indicators
+        # Enhanced technical indicators
         if 'Close' in data.columns:
-            # Moving averages
-            for window in [5, 10, 20, 50]:
+            # Moving averages with more periods
+            for window in [3, 5, 8, 13, 21, 34, 55, 89]:
                 data[f'sma_{window}'] = data['Close'].rolling(window).mean()
                 data[f'close_sma_{window}_ratio'] = data['Close'] / data[f'sma_{window}']
+                data[f'sma_{window}_slope'] = data[f'sma_{window}'].diff()
             
-            # Volatility indicators
-            data['volatility_5'] = data['Close'].pct_change().rolling(5).std()
-            data['volatility_20'] = data['Close'].pct_change().rolling(20).std()
-            data['atr_14'] = self._calculate_atr(data, 14)
+            # Exponential moving averages
+            for window in [5, 10, 20, 50]:
+                data[f'ema_{window}'] = data['Close'].ewm(span=window).mean()
+                data[f'close_ema_{window}_ratio'] = data['Close'] / data[f'ema_{window}']
             
-            # RSI
-            data['rsi_14'] = self._calculate_rsi(data['Close'], 14)
+            # Bollinger Bands
+            for window in [20, 50]:
+                sma = data['Close'].rolling(window).mean()
+                std = data['Close'].rolling(window).std()
+                data[f'bb_upper_{window}'] = sma + (2 * std)
+                data[f'bb_lower_{window}'] = sma - (2 * std)
+                data[f'bb_position_{window}'] = (data['Close'] - data[f'bb_lower_{window}']) / (data[f'bb_upper_{window}'] - data[f'bb_lower_{window}'])
             
-            # MACD
-            macd_data = self._calculate_macd(data['Close'])
-            data['macd'] = macd_data['macd']
-            data['macd_signal'] = macd_data['signal']
-            data['macd_histogram'] = macd_data['histogram']
+            # Volatility indicators with more periods
+            for window in [3, 5, 10, 20, 50]:
+                data[f'volatility_{window}'] = data['Close'].pct_change().rolling(window).std()
+                data[f'volatility_ratio_{window}'] = data[f'volatility_{window}'] / data[f'volatility_{window}'].rolling(50).mean()
+            
+            # ATR with multiple periods
+            for period in [7, 14, 21]:
+                data[f'atr_{period}'] = self._calculate_atr(data, period)
+                data[f'atr_ratio_{period}'] = data[f'atr_{period}'] / data['Close']
+            
+            # RSI with multiple periods
+            for period in [7, 14, 21]:
+                data[f'rsi_{period}'] = self._calculate_rsi(data['Close'], period)
+                data[f'rsi_{period}_overbought'] = (data[f'rsi_{period}'] > 70).astype(int)
+                data[f'rsi_{period}_oversold'] = (data[f'rsi_{period}'] < 30).astype(int)
+            
+            # MACD with multiple settings
+            for fast, slow, signal in [(12, 26, 9), (5, 35, 5), (19, 39, 9)]:
+                macd_data = self._calculate_macd(data['Close'], fast, slow, signal)
+                data[f'macd_{fast}_{slow}_{signal}'] = macd_data['macd']
+                data[f'macd_signal_{fast}_{slow}_{signal}'] = macd_data['signal']
+                data[f'macd_hist_{fast}_{slow}_{signal}'] = macd_data['histogram']
+            
+            # Stochastic Oscillator
+            for k_period, d_period in [(14, 3), (21, 5)]:
+                stoch_data = self._calculate_stochastic(data, k_period, d_period)
+                data[f'stoch_k_{k_period}'] = stoch_data['k']
+                data[f'stoch_d_{k_period}'] = stoch_data['d']
+            
+            # Williams %R
+            for period in [14, 21]:
+                data[f'williams_r_{period}'] = self._calculate_williams_r(data, period)
+            
+            # Price momentum
+            for period in [1, 3, 5, 10, 20]:
+                data[f'momentum_{period}'] = data['Close'] / data['Close'].shift(period) - 1
+                data[f'price_change_{period}'] = data['Close'].diff(period)
+            
+            # Volume indicators (if available)
+            if 'Volume' in data.columns:
+                data['volume_sma_20'] = data['Volume'].rolling(20).mean()
+                data['volume_ratio'] = data['Volume'] / data['volume_sma_20']
+                data['price_volume'] = data['Close'] * data['Volume']
         
         # SCHR Levels features
         if all(col in data.columns for col in ['Close', 'predicted_high', 'predicted_low']):
@@ -698,6 +774,27 @@ class UnifiedSCHRSystem:
             'signal': signal_line,
             'histogram': histogram
         }
+    
+    def _calculate_stochastic(self, data: pd.DataFrame, k_period: int = 14, d_period: int = 3) -> Dict[str, pd.Series]:
+        """Calculate Stochastic Oscillator."""
+        low_min = data['Low'].rolling(window=k_period).min()
+        high_max = data['High'].rolling(window=k_period).max()
+        
+        k_percent = 100 * ((data['Close'] - low_min) / (high_max - low_min))
+        d_percent = k_percent.rolling(window=d_period).mean()
+        
+        return {
+            'k': k_percent,
+            'd': d_percent
+        }
+    
+    def _calculate_williams_r(self, data: pd.DataFrame, period: int = 14) -> pd.Series:
+        """Calculate Williams %R."""
+        high_max = data['High'].rolling(window=period).max()
+        low_min = data['Low'].rolling(window=period).min()
+        
+        williams_r = -100 * ((high_max - data['Close']) / (high_max - low_min))
+        return williams_r
     
     def run_complete_pipeline(self, symbol: str = "BTCUSD", timeframe: str = "MN1") -> Dict[str, Any]:
         """
