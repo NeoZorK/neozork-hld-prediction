@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AutoML Gluon - Полное руководство</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <style>
         * {
             box-sizing: border-box;
@@ -45,32 +46,103 @@
             margin-top: 25px;
         }
         
+        /* Улучшенные стили для inline кода */
         code {
-            background-color: #f4f4f4;
-            padding: 2px 6px;
-            border-radius: 3px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
             font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
+        /* Стили для блоков кода */
         pre {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
             overflow-x: auto;
             border-left: 4px solid #3498db;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        pre::before {
+            content: "Code";
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: #3498db;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
         }
         
         pre code {
             background: none;
             padding: 0;
+            color: inherit;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        /* Специальные стили для Python кода */
+        pre[class*="python"] {
+            background: linear-gradient(135deg, #3776ab 0%, #2d5a87 100%);
+        }
+        
+        pre[class*="python"]::before {
+            content: "Python";
+            background: #ffd43b;
+            color: #2d5a87;
+        }
+        
+        /* Стили для JSON кода */
+        pre[class*="json"] {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+        
+        pre[class*="json"]::before {
+            content: "JSON";
+            background: #fff;
+            color: #e67e22;
+        }
+        
+        /* Стили для YAML кода */
+        pre[class*="yaml"] {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        }
+        
+        pre[class*="yaml"]::before {
+            content: "YAML";
+            background: #fff;
+            color: #27ae60;
+        }
+        
+        /* Стили для bash/shell кода */
+        pre[class*="bash"], pre[class*="shell"] {
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+        }
+        
+        pre[class*="bash"]::before, pre[class*="shell"]::before {
+            content: "Terminal";
+            background: #fff;
+            color: #8e44ad;
         }
         
         blockquote {
             border-left: 4px solid #3498db;
             margin: 20px 0;
-            padding: 10px 20px;
-            background-color: #f8f9fa;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             font-style: italic;
+            border-radius: 0 8px 8px 0;
         }
         
         ul, ol {
@@ -78,20 +150,22 @@
         }
         
         li {
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
         
         .toc {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 5px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 25px;
+            border-radius: 8px;
             margin-bottom: 30px;
+            border: 1px solid #dee2e6;
         }
         
         .toc h2 {
             margin-top: 0;
             border: none;
             padding: 0;
+            color: #2c3e50;
         }
         
         .toc ul {
@@ -100,41 +174,49 @@
         }
         
         .toc li {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
         
         .toc a {
             text-decoration: none;
             color: #3498db;
             font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
         }
         
         .toc a:hover {
-            text-decoration: underline;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
         }
         
         .highlight {
-            background-color: #fff3cd;
-            padding: 15px;
-            border-radius: 5px;
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            padding: 20px;
+            border-radius: 8px;
             border-left: 4px solid #ffc107;
             margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(255, 193, 7, 0.2);
         }
         
         .warning {
-            background-color: #f8d7da;
-            padding: 15px;
-            border-radius: 5px;
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            padding: 20px;
+            border-radius: 8px;
             border-left: 4px solid #dc3545;
             margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2);
         }
         
         .success {
-            background-color: #d4edda;
-            padding: 15px;
-            border-radius: 5px;
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            padding: 20px;
+            border-radius: 8px;
             border-left: 4px solid #28a745;
             margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
         }
         
         /* Улучшенные стили для изображений */
@@ -144,8 +226,13 @@
             display: block;
             margin: 20px auto;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             border: 1px solid #e0e0e0;
+            transition: transform 0.3s ease;
+        }
+        
+        img:hover {
+            transform: scale(1.02);
         }
         
         /* Специальные стили для больших изображений */
@@ -154,7 +241,7 @@
             max-height: 600px;
             object-fit: contain;
             background-color: #fafafa;
-            padding: 10px;
+            padding: 15px;
         }
         
         /* Стили для схем и диаграмм */
@@ -192,7 +279,8 @@
             
             pre {
                 overflow-x: auto;
-                font-size: 14px;
+                font-size: 13px;
+                padding: 15px;
             }
         }
         
@@ -204,25 +292,21 @@
             overflow-x: auto;
             display: block;
             white-space: nowrap;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
         table th, table td {
-            border: 1px solid #ddd;
+            border: 1px solid #dee2e6;
             padding: 12px;
             text-align: left;
         }
         
         table th {
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             font-weight: 600;
-        }
-        
-        /* Стили для кода */
-        .codehilite {
-            background-color: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            border-radius: 5px;
-            overflow-x: auto;
+            color: #495057;
         }
         
         /* Стили для навигации */
@@ -231,27 +315,56 @@
             justify-content: space-between;
             margin: 30px 0;
             padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 8px;
         }
         
         .nav-links a {
             color: #3498db;
             text-decoration: none;
             font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
         }
         
         .nav-links a:hover {
-            text-decoration: underline;
+            background: #3498db;
+            color: white;
+        }
+        
+        /* Стили для заголовков с градиентами */
+        h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            position: relative;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border-radius: 2px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>AutoML Gluon - Полное руководство</h1>
-        <p><strong>Автор:</strong> Shcherbyna Rostyslav<br>
-        <strong>Дата:</strong> 2024<br>
-        <strong>Версия:</strong> 2.0 (Расширенная с детальными объяснениями)</p>
+        <p><strong>Автор:</strong> NeoZorK (Shcherbyna Rostyslav)<br>
+        <strong>Дата:</strong> 2025<br>
+        <strong>Местоположение:</strong> Ukraine, Zaporizhzhya<br>
+        <strong>Версия:</strong> 1.0</p>
         
         <div class="toc">
             <h2>Содержание</h2>
