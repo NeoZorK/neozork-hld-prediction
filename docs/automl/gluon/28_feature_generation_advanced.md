@@ -8,12 +8,14 @@
 **Почему 80% успеха машинного обучения зависит от качества признаков?** Потому что даже самый лучший алгоритм не сможет найти паттерны в плохих данных. Feature Generation - это искусство превращения сырых данных в золото для машинного обучения.
 
 ### Что дает правильная генерация признаков?
+
 - **Точность**: Модели работают на 20-50% лучше
 - **Интерпретируемость**: Понимание того, что влияет на результат
 - **Робастность**: Модели работают стабильно на новых данных
 - **Эффективность**: Меньше данных, лучшие результаты
 
 ### Что происходит без правильной генерации признаков?
+
 - **Плохие результаты**: Модели не находят паттерны
 - **Переобучение**: Модели запоминают данные вместо обучения
 - **Нестабильность**: Модели работают по-разному на похожих данных
@@ -79,11 +81,12 @@ graph TD
 
 **Feature Engineering как оптимизационная задача:**
 
-```
+```math
 F* = argmax P(Y|X, F(X))
 ```
 
 Где:
+
 - `F*` - оптимальная функция генерации признаков
 - `Y` - целевая переменная
 - `X` - исходные данные
@@ -162,27 +165,32 @@ graph TD
     style O fill:#fff3e0
 ```
 
-**1. Исходные признаки (Raw Features)**
+### 1. Исходные признаки (Raw Features)
+
 - Необработанные данные из источника
 - Часто требуют предобработки
 - Могут содержать шум и выбросы
 
-**2. Производные признаки (Derived Features)**
+### 2. Производные признаки (Derived Features)
+
 - Создаются из исходных признаков
 - Математические преобразования
 - Статистические характеристики
 
-**3. Интерактивные признаки (Interaction Features)**
+### 3. Интерактивные признаки (Interaction Features)
+
 - Комбинации нескольких признаков
 - Полиномиальные признаки
 - Логические операции
 
-**4. Временные признаки (Temporal Features)**
+### 4. Временные признаки (Temporal Features)
+
 - Признаки, зависящие от времени
 - Лаговые признаки
 - Скользящие окна
 
-**5. Категориальные признаки (Categorical Features)**
+### 5. Категориальные признаки (Categorical Features)
+
 - Дискретные значения
 - Требуют кодирования
 - Могут быть иерархическими
@@ -257,74 +265,698 @@ graph TD
 **Лаговые признаки (Lag Features):**
 
 ```python
-def create_lag_features(df, target_col, lags=[1, 2, 3, 7, 14, 30]):
-    """Создание лаговых признаков"""
+def create_lag_features(df, target_col, lags=[1, 2, 3, 7, 14, 30], fill_method='forward', 
+                       include_original=False, lag_prefix='lag', config=None):
+    """
+    Создание лаговых признаков для временных рядов
+    
+    Args:
+        df (pd.DataFrame): Исходный DataFrame с временными данными
+        target_col (str): Название целевой колонки для создания лагов
+        lags (list): Список лагов для создания (по умолчанию [1, 2, 3, 7, 14, 30])
+            - 1: Предыдущий период
+            - 2-3: Краткосрочные лаги
+            - 7: Недельный лаг
+            - 14: Двухнедельный лаг
+            - 30: Месячный лаг
+        fill_method (str): Метод заполнения пропусков ('forward', 'backward', 'interpolate', 'zero')
+            - 'forward': Заполнение предыдущим значением (ffill)
+            - 'backward': Заполнение следующим значением (bfill)
+            - 'interpolate': Линейная интерполяция
+            - 'zero': Заполнение нулями
+        include_original (bool): Включать ли исходную колонку в результат
+        lag_prefix (str): Префикс для названий лаговых признаков
+        config (dict): Дополнительная конфигурация
+            - max_lag: Максимальный лаг (по умолчанию max(lags))
+            - min_lag: Минимальный лаг (по умолчанию min(lags))
+            - lag_step: Шаг между лагами (по умолчанию 1)
+            - validation: Валидация данных (True/False)
+            - memory_efficient: Эффективное использование памяти (True/False)
+    
+    Returns:
+        pd.DataFrame: DataFrame с добавленными лаговыми признаками
+        
+    Raises:
+        ValueError: Если target_col не существует в DataFrame
+        ValueError: Если lags содержит недопустимые значения
+        TypeError: Если fill_method не поддерживается
+    """
+    if config is None:
+        config = {
+            'max_lag': max(lags) if lags else 1,
+            'min_lag': min(lags) if lags else 1,
+            'lag_step': 1,
+            'validation': True,
+            'memory_efficient': False
+        }
+    
+    # Валидация входных данных
+    if config['validation']:
+        if target_col not in df.columns:
+            raise ValueError(f"Column '{target_col}' not found in DataFrame")
+        
+        if not lags or not all(isinstance(lag, int) and lag > 0 for lag in lags):
+            raise ValueError("lags must be a list of positive integers")
+        
+        if fill_method not in ['forward', 'backward', 'interpolate', 'zero']:
+            raise ValueError("fill_method must be one of: 'forward', 'backward', 'interpolate', 'zero'")
+    
+    # Создание копии DataFrame для безопасности
+    result_df = df.copy() if not config['memory_efficient'] else df
+    
+    # Создание лаговых признаков
     for lag in lags:
-        df[f'{target_col}_lag_{lag}'] = df[target_col].shift(lag)
-    return df
+        # Создание лагового признака
+        lag_col_name = f'{target_col}_{lag_prefix}_{lag}'
+        result_df[lag_col_name] = result_df[target_col].shift(lag)
+        
+        # Заполнение пропусков в зависимости от метода
+        if fill_method == 'forward':
+            result_df[lag_col_name] = result_df[lag_col_name].fillna(method='ffill')
+        elif fill_method == 'backward':
+            result_df[lag_col_name] = result_df[lag_col_name].fillna(method='bfill')
+        elif fill_method == 'interpolate':
+            result_df[lag_col_name] = result_df[lag_col_name].interpolate(method='linear')
+        elif fill_method == 'zero':
+            result_df[lag_col_name] = result_df[lag_col_name].fillna(0)
+    
+    # Удаление исходной колонки если не требуется
+    if not include_original and target_col in result_df.columns:
+        result_df = result_df.drop(columns=[target_col])
+    
+    return result_df
 
-# Пример использования
-df = create_lag_features(df, 'price', lags=[1, 2, 3, 7, 14, 30])
+# Пример использования с детальными параметрами
+df = create_lag_features(
+    df, 
+    target_col='price', 
+    lags=[1, 2, 3, 7, 14, 30],  # Лаги от 1 до 30 дней
+    fill_method='forward',       # Заполнение предыдущим значением
+    include_original=True,       # Сохранить исходную колонку
+    lag_prefix='lag',           # Префикс для названий
+    config={
+        'max_lag': 30,          # Максимальный лаг
+        'min_lag': 1,           # Минимальный лаг
+        'validation': True,     # Включить валидацию
+        'memory_efficient': False  # Не экономить память
+    }
+)
 ```
 
 **Скользящие окна (Rolling Windows):**
 
 ```python
-def create_rolling_features(df, target_col, windows=[3, 7, 14, 30]):
-    """Создание признаков скользящих окон"""
+def create_rolling_features(df, target_col, windows=[3, 7, 14, 30], 
+                          statistics=['mean', 'std', 'min', 'max', 'median'],
+                          min_periods=None, center=False, win_type=None,
+                          on=None, axis=0, closed=None, config=None):
+    """
+    Создание признаков скользящих окон для временных рядов
+    
+    Args:
+        df (pd.DataFrame): Исходный DataFrame с временными данными
+        target_col (str): Название целевой колонки для создания скользящих окон
+        windows (list): Список размеров окон (по умолчанию [3, 7, 14, 30])
+            - 3: Краткосрочное окно (3 периода)
+            - 7: Недельное окно (7 периодов)
+            - 14: Двухнедельное окно (14 периодов)
+            - 30: Месячное окно (30 периодов)
+        statistics (list): Список статистик для вычисления
+            - 'mean': Среднее значение
+            - 'std': Стандартное отклонение
+            - 'var': Дисперсия
+            - 'min': Минимальное значение
+            - 'max': Максимальное значение
+            - 'median': Медиана
+            - 'sum': Сумма
+            - 'count': Количество значений
+            - 'skew': Асимметрия
+            - 'kurt': Эксцесс
+            - 'quantile': Квантили (требует дополнительного параметра q)
+        min_periods (int): Минимальное количество наблюдений в окне
+            - None: Использовать размер окна
+            - 1: Минимум 1 наблюдение
+            - window//2: Половина размера окна
+        center (bool): Центрировать окно (False для обычного, True для центрированного)
+        win_type (str): Тип весового окна
+            - None: Обычное окно
+            - 'boxcar': Прямоугольное окно
+            - 'triang': Треугольное окно
+            - 'blackman': Окно Блэкмана
+            - 'hamming': Окно Хэмминга
+            - 'bartlett': Окно Бартлетта
+        on (str): Колонка для группировки по времени
+        axis (int): Ось для применения (0 для строк, 1 для колонок)
+        closed (str): Какая сторона окна включена ('right', 'left', 'both', 'neither')
+        config (dict): Дополнительная конфигурация
+            - quantiles: Список квантилей для вычисления (по умолчанию [0.25, 0.5, 0.75])
+            - custom_functions: Словарь пользовательских функций
+            - fill_method: Метод заполнения пропусков ('forward', 'backward', 'interpolate', 'zero')
+            - validation: Валидация данных (True/False)
+            - memory_efficient: Эффективное использование памяти (True/False)
+            - prefix: Префикс для названий признаков (по умолчанию 'rolling')
+    
+    Returns:
+        pd.DataFrame: DataFrame с добавленными признаками скользящих окон
+        
+    Raises:
+        ValueError: Если target_col не существует в DataFrame
+        ValueError: Если windows содержит недопустимые значения
+        ValueError: Если statistics содержит неподдерживаемые функции
+        TypeError: Если параметры имеют неправильный тип
+    """
+    if config is None:
+        config = {
+            'quantiles': [0.25, 0.5, 0.75],
+            'custom_functions': {},
+            'fill_method': 'forward',
+            'validation': True,
+            'memory_efficient': False,
+            'prefix': 'rolling'
+        }
+    
+    # Валидация входных данных
+    if config['validation']:
+        if target_col not in df.columns:
+            raise ValueError(f"Column '{target_col}' not found in DataFrame")
+        
+        if not windows or not all(isinstance(w, int) and w > 0 for w in windows):
+            raise ValueError("windows must be a list of positive integers")
+        
+        valid_stats = ['mean', 'std', 'var', 'min', 'max', 'median', 'sum', 'count', 
+                      'skew', 'kurt', 'quantile']
+        invalid_stats = [s for s in statistics if s not in valid_stats and s not in config['custom_functions']]
+        if invalid_stats:
+            raise ValueError(f"Invalid statistics: {invalid_stats}. Valid options: {valid_stats}")
+    
+    # Создание копии DataFrame для безопасности
+    result_df = df.copy() if not config['memory_efficient'] else df
+    
+    # Создание признаков скользящих окон
     for window in windows:
-        # Среднее
-        df[f'{target_col}_rolling_mean_{window}'] = df[target_col].rolling(window).mean()
-        # Стандартное отклонение
-        df[f'{target_col}_rolling_std_{window}'] = df[target_col].rolling(window).std()
-        # Минимум
-        df[f'{target_col}_rolling_min_{window}'] = df[target_col].rolling(window).min()
-        # Максимум
-        df[f'{target_col}_rolling_max_{window}'] = df[target_col].rolling(window).max()
-        # Медиана
-        df[f'{target_col}_rolling_median_{window}'] = df[target_col].rolling(window).median()
-    return df
+        # Создание объекта rolling
+        rolling_obj = result_df[target_col].rolling(
+            window=window,
+            min_periods=min_periods or window,
+            center=center,
+            win_type=win_type,
+            on=on,
+            axis=axis,
+            closed=closed
+        )
+        
+        # Вычисление статистик
+        for stat in statistics:
+            if stat == 'mean':
+                col_name = f'{target_col}_{config["prefix"]}_mean_{window}'
+                result_df[col_name] = rolling_obj.mean()
+            elif stat == 'std':
+                col_name = f'{target_col}_{config["prefix"]}_std_{window}'
+                result_df[col_name] = rolling_obj.std()
+            elif stat == 'var':
+                col_name = f'{target_col}_{config["prefix"]}_var_{window}'
+                result_df[col_name] = rolling_obj.var()
+            elif stat == 'min':
+                col_name = f'{target_col}_{config["prefix"]}_min_{window}'
+                result_df[col_name] = rolling_obj.min()
+            elif stat == 'max':
+                col_name = f'{target_col}_{config["prefix"]}_max_{window}'
+                result_df[col_name] = rolling_obj.max()
+            elif stat == 'median':
+                col_name = f'{target_col}_{config["prefix"]}_median_{window}'
+                result_df[col_name] = rolling_obj.median()
+            elif stat == 'sum':
+                col_name = f'{target_col}_{config["prefix"]}_sum_{window}'
+                result_df[col_name] = rolling_obj.sum()
+            elif stat == 'count':
+                col_name = f'{target_col}_{config["prefix"]}_count_{window}'
+                result_df[col_name] = rolling_obj.count()
+            elif stat == 'skew':
+                col_name = f'{target_col}_{config["prefix"]}_skew_{window}'
+                result_df[col_name] = rolling_obj.skew()
+            elif stat == 'kurt':
+                col_name = f'{target_col}_{config["prefix"]}_kurt_{window}'
+                result_df[col_name] = rolling_obj.kurt()
+            elif stat == 'quantile':
+                for q in config['quantiles']:
+                    col_name = f'{target_col}_{config["prefix"]}_q{int(q*100)}_{window}'
+                    result_df[col_name] = rolling_obj.quantile(q)
+        
+        # Применение пользовательских функций
+        for func_name, func in config['custom_functions'].items():
+            col_name = f'{target_col}_{config["prefix"]}_{func_name}_{window}'
+            result_df[col_name] = rolling_obj.apply(func)
+        
+        # Заполнение пропусков
+        if config['fill_method'] == 'forward':
+            for col in result_df.columns:
+                if col.startswith(f'{target_col}_{config["prefix"]}_'):
+                    result_df[col] = result_df[col].fillna(method='ffill')
+        elif config['fill_method'] == 'backward':
+            for col in result_df.columns:
+                if col.startswith(f'{target_col}_{config["prefix"]}_'):
+                    result_df[col] = result_df[col].fillna(method='bfill')
+        elif config['fill_method'] == 'interpolate':
+            for col in result_df.columns:
+                if col.startswith(f'{target_col}_{config["prefix"]}_'):
+                    result_df[col] = result_df[col].interpolate(method='linear')
+        elif config['fill_method'] == 'zero':
+            for col in result_df.columns:
+                if col.startswith(f'{target_col}_{config["prefix"]}_'):
+                    result_df[col] = result_df[col].fillna(0)
+    
+    return result_df
 
-# Пример использования
-df = create_rolling_features(df, 'price', windows=[3, 7, 14, 30])
+# Пример использования с детальными параметрами
+df = create_rolling_features(
+    df, 
+    target_col='price', 
+    windows=[3, 7, 14, 30],  # Размеры окон
+    statistics=['mean', 'std', 'min', 'max', 'median', 'quantile'],  # Статистики
+    min_periods=1,           # Минимум 1 наблюдение
+    center=False,            # Обычное окно
+    win_type=None,           # Без весов
+    config={
+        'quantiles': [0.25, 0.5, 0.75, 0.9, 0.95],  # Квантили
+        'custom_functions': {  # Пользовательские функции
+            'range': lambda x: x.max() - x.min(),
+            'iqr': lambda x: x.quantile(0.75) - x.quantile(0.25)
+        },
+        'fill_method': 'forward',  # Заполнение предыдущим значением
+        'validation': True,        # Включить валидацию
+        'memory_efficient': False, # Не экономить память
+        'prefix': 'rolling'        # Префикс для названий
+    }
+)
 ```
 
 **Экспоненциальное сглаживание (Exponential Smoothing):**
 
 ```python
-def create_ewm_features(df, target_col, alphas=[0.1, 0.3, 0.5, 0.7]):
-    """Создание признаков экспоненциального сглаживания"""
+def create_ewm_features(df, target_col, alphas=[0.1, 0.3, 0.5, 0.7], 
+                       statistics=['mean'], adjust=True, ignore_na=False,
+                       bias=False, config=None):
+    """
+    Создание признаков экспоненциального сглаживания для временных рядов
+    
+    Args:
+        df (pd.DataFrame): Исходный DataFrame с временными данными
+        target_col (str): Название целевой колонки для создания EWM признаков
+        alphas (list): Список коэффициентов сглаживания (по умолчанию [0.1, 0.3, 0.5, 0.7])
+            - 0.1: Медленное сглаживание (больше веса истории)
+            - 0.3: Умеренное сглаживание
+            - 0.5: Сбалансированное сглаживание
+            - 0.7: Быстрое сглаживание (больше веса текущим значениям)
+            - 0.9: Очень быстрое сглаживание
+        statistics (list): Список статистик для вычисления
+            - 'mean': Экспоненциально взвешенное среднее
+            - 'std': Экспоненциально взвешенное стандартное отклонение
+            - 'var': Экспоненциально взвешенная дисперсия
+            - 'min': Экспоненциально взвешенный минимум
+            - 'max': Экспоненциально взвешенный максимум
+            - 'sum': Экспоненциально взвешенная сумма
+            - 'count': Экспоненциально взвешенный счетчик
+        adjust (bool): Использовать корректировку для учета начальных значений
+            - True: Корректировка включена (рекомендуется)
+            - False: Корректировка отключена
+        ignore_na (bool): Игнорировать NaN значения при вычислении
+            - True: Игнорировать NaN
+            - False: Учитывать NaN
+        bias (bool): Использовать смещенную оценку дисперсии
+            - True: Смещенная оценка
+            - False: Несмещенная оценка (рекомендуется)
+        config (dict): Дополнительная конфигурация
+            - span: Альтернатива alpha (span = 2/alpha - 1)
+            - halflife: Альтернатива alpha (halflife = ln(2)/alpha)
+            - com: Альтернатива alpha (com = 1/alpha - 1)
+            - fill_method: Метод заполнения пропусков ('forward', 'backward', 'interpolate', 'zero')
+            - validation: Валидация данных (True/False)
+            - memory_efficient: Эффективное использование памяти (True/False)
+            - prefix: Префикс для названий признаков (по умолчанию 'ewm')
+            - custom_functions: Словарь пользовательских функций
+    
+    Returns:
+        pd.DataFrame: DataFrame с добавленными признаками экспоненциального сглаживания
+        
+    Raises:
+        ValueError: Если target_col не существует в DataFrame
+        ValueError: Если alphas содержит недопустимые значения
+        ValueError: Если statistics содержит неподдерживаемые функции
+        TypeError: Если параметры имеют неправильный тип
+    """
+    if config is None:
+        config = {
+            'span': None,
+            'halflife': None,
+            'com': None,
+            'fill_method': 'forward',
+            'validation': True,
+            'memory_efficient': False,
+            'prefix': 'ewm',
+            'custom_functions': {}
+        }
+    
+    # Валидация входных данных
+    if config['validation']:
+        if target_col not in df.columns:
+            raise ValueError(f"Column '{target_col}' not found in DataFrame")
+        
+        if not alphas or not all(isinstance(a, (int, float)) and 0 < a <= 1 for a in alphas):
+            raise ValueError("alphas must be a list of numbers between 0 and 1")
+        
+        valid_stats = ['mean', 'std', 'var', 'min', 'max', 'sum', 'count']
+        invalid_stats = [s for s in statistics if s not in valid_stats and s not in config['custom_functions']]
+        if invalid_stats:
+            raise ValueError(f"Invalid statistics: {invalid_stats}. Valid options: {valid_stats}")
+    
+    # Создание копии DataFrame для безопасности
+    result_df = df.copy() if not config['memory_efficient'] else df
+    
+    # Создание признаков экспоненциального сглаживания
     for alpha in alphas:
-        df[f'{target_col}_ewm_{alpha}'] = df[target_col].ewm(alpha=alpha).mean()
-    return df
+        # Создание объекта EWM
+        ewm_obj = result_df[target_col].ewm(
+            alpha=alpha,
+            adjust=adjust,
+            ignore_na=ignore_na,
+            bias=bias,
+            span=config['span'],
+            halflife=config['halflife'],
+            com=config['com']
+        )
+        
+        # Вычисление статистик
+        for stat in statistics:
+            if stat == 'mean':
+                col_name = f'{target_col}_{config["prefix"]}_mean_{alpha}'
+                result_df[col_name] = ewm_obj.mean()
+            elif stat == 'std':
+                col_name = f'{target_col}_{config["prefix"]}_std_{alpha}'
+                result_df[col_name] = ewm_obj.std()
+            elif stat == 'var':
+                col_name = f'{target_col}_{config["prefix"]}_var_{alpha}'
+                result_df[col_name] = ewm_obj.var()
+            elif stat == 'min':
+                col_name = f'{target_col}_{config["prefix"]}_min_{alpha}'
+                result_df[col_name] = ewm_obj.min()
+            elif stat == 'max':
+                col_name = f'{target_col}_{config["prefix"]}_max_{alpha}'
+                result_df[col_name] = ewm_obj.max()
+            elif stat == 'sum':
+                col_name = f'{target_col}_{config["prefix"]}_sum_{alpha}'
+                result_df[col_name] = ewm_obj.sum()
+            elif stat == 'count':
+                col_name = f'{target_col}_{config["prefix"]}_count_{alpha}'
+                result_df[col_name] = ewm_obj.count()
+        
+        # Применение пользовательских функций
+        for func_name, func in config['custom_functions'].items():
+            col_name = f'{target_col}_{config["prefix"]}_{func_name}_{alpha}'
+            result_df[col_name] = ewm_obj.apply(func)
+        
+        # Заполнение пропусков
+        if config['fill_method'] == 'forward':
+            for col in result_df.columns:
+                if col.startswith(f'{target_col}_{config["prefix"]}_'):
+                    result_df[col] = result_df[col].fillna(method='ffill')
+        elif config['fill_method'] == 'backward':
+            for col in result_df.columns:
+                if col.startswith(f'{target_col}_{config["prefix"]}_'):
+                    result_df[col] = result_df[col].fillna(method='bfill')
+        elif config['fill_method'] == 'interpolate':
+            for col in result_df.columns:
+                if col.startswith(f'{target_col}_{config["prefix"]}_'):
+                    result_df[col] = result_df[col].interpolate(method='linear')
+        elif config['fill_method'] == 'zero':
+            for col in result_df.columns:
+                if col.startswith(f'{target_col}_{config["prefix"]}_'):
+                    result_df[col] = result_df[col].fillna(0)
+    
+    return result_df
 
-# Пример использования
-df = create_ewm_features(df, 'price', alphas=[0.1, 0.3, 0.5, 0.7])
+# Пример использования с детальными параметрами
+df = create_ewm_features(
+    df, 
+    target_col='price', 
+    alphas=[0.1, 0.3, 0.5, 0.7],  # Коэффициенты сглаживания
+    statistics=['mean', 'std', 'var'],  # Статистики
+    adjust=True,                # Корректировка включена
+    ignore_na=False,            # Учитывать NaN
+    bias=False,                 # Несмещенная оценка
+    config={
+        'span': None,           # Не использовать span
+        'halflife': None,       # Не использовать halflife
+        'com': None,            # Не использовать com
+        'fill_method': 'forward',  # Заполнение предыдущим значением
+        'validation': True,     # Включить валидацию
+        'memory_efficient': False,  # Не экономить память
+        'prefix': 'ewm',        # Префикс для названий
+        'custom_functions': {   # Пользовательские функции
+            'trend': lambda x: x.iloc[-1] - x.iloc[0] if len(x) > 1 else 0,
+            'volatility': lambda x: x.std() if len(x) > 1 else 0
+        }
+    }
+)
 ```
 
 **Сезонные признаки (Seasonal Features):**
 
 ```python
-def create_seasonal_features(df, date_col):
-    """Создание сезонных признаков"""
-    df['year'] = df[date_col].dt.year
-    df['month'] = df[date_col].dt.month
-    df['day'] = df[date_col].dt.day
-    df['dayofweek'] = df[date_col].dt.dayofweek
-    df['dayofyear'] = df[date_col].dt.dayofyear
-    df['week'] = df[date_col].dt.isocalendar().week
-    df['quarter'] = df[date_col].dt.quarter
+def create_seasonal_features(df, date_col, features=['year', 'month', 'day', 'dayofweek', 'dayofyear', 'week', 'quarter'],
+                           cyclic_features=True, timezone=None, business_hours=False, 
+                           holidays=None, config=None):
+    """
+    Создание сезонных признаков из временных данных
     
-    # Циклические признаки
-    df['month_sin'] = np.sin(2 * np.pi * df['month'] / 12)
-    df['month_cos'] = np.cos(2 * np.pi * df['month'] / 12)
-    df['dayofweek_sin'] = np.sin(2 * np.pi * df['dayofweek'] / 7)
-    df['dayofweek_cos'] = np.cos(2 * np.pi * df['dayofweek'] / 7)
+    Args:
+        df (pd.DataFrame): Исходный DataFrame с временными данными
+        date_col (str): Название колонки с датой/временем
+        features (list): Список сезонных признаков для создания
+            - 'year': Год (2020, 2021, 2022, ...)
+            - 'month': Месяц (1-12)
+            - 'day': День месяца (1-31)
+            - 'dayofweek': День недели (0=понедельник, 6=воскресенье)
+            - 'dayofyear': День года (1-366)
+            - 'week': Неделя года (1-53)
+            - 'quarter': Квартал (1-4)
+            - 'hour': Час дня (0-23)
+            - 'minute': Минута (0-59)
+            - 'second': Секунда (0-59)
+            - 'is_weekend': Выходной день (True/False)
+            - 'is_month_start': Начало месяца (True/False)
+            - 'is_month_end': Конец месяца (True/False)
+            - 'is_quarter_start': Начало квартала (True/False)
+            - 'is_quarter_end': Конец квартала (True/False)
+            - 'is_year_start': Начало года (True/False)
+            - 'is_year_end': Конец года (True/False)
+        cyclic_features (bool): Создавать ли циклические признаки (sin/cos)
+            - True: Создавать циклические признаки для периодических данных
+            - False: Создавать только обычные признаки
+        timezone (str): Часовой пояс для конвертации (например, 'UTC', 'Europe/Moscow')
+        business_hours (bool): Создавать ли признаки рабочих часов
+            - True: Создавать признаки рабочих часов (9-17, понедельник-пятница)
+            - False: Не создавать признаки рабочих часов
+        holidays (list): Список праздничных дней для создания признаков
+            - None: Не учитывать праздники
+            - ['2023-01-01', '2023-12-25']: Список дат праздников
+        config (dict): Дополнительная конфигурация
+            - cyclic_periods: Периоды для циклических признаков
+                - 'month': 12 (месяцы)
+                - 'dayofweek': 7 (дни недели)
+                - 'hour': 24 (часы)
+                - 'dayofyear': 365 (дни года)
+            - business_hours_start: Начало рабочих часов (по умолчанию 9)
+            - business_hours_end: Конец рабочих часов (по умолчанию 17)
+            - business_days: Рабочие дни (по умолчанию [0,1,2,3,4] - пн-пт)
+            - fill_method: Метод заполнения пропусков ('forward', 'backward', 'interpolate', 'zero')
+            - validation: Валидация данных (True/False)
+            - memory_efficient: Эффективное использование памяти (True/False)
+            - prefix: Префикс для названий признаков (по умолчанию 'seasonal')
     
-    return df
+    Returns:
+        pd.DataFrame: DataFrame с добавленными сезонными признаками
+        
+    Raises:
+        ValueError: Если date_col не существует в DataFrame
+        ValueError: Если date_col не является datetime
+        ValueError: Если features содержит неподдерживаемые признаки
+        TypeError: Если параметры имеют неправильный тип
+    """
+    if config is None:
+        config = {
+            'cyclic_periods': {
+                'month': 12,
+                'dayofweek': 7,
+                'hour': 24,
+                'dayofyear': 365
+            },
+            'business_hours_start': 9,
+            'business_hours_end': 17,
+            'business_days': [0, 1, 2, 3, 4],  # пн-пт
+            'fill_method': 'forward',
+            'validation': True,
+            'memory_efficient': False,
+            'prefix': 'seasonal'
+        }
+    
+    # Валидация входных данных
+    if config['validation']:
+        if date_col not in df.columns:
+            raise ValueError(f"Column '{date_col}' not found in DataFrame")
+        
+        if not pd.api.types.is_datetime64_any_dtype(df[date_col]):
+            raise ValueError(f"Column '{date_col}' must be datetime type")
+        
+        valid_features = ['year', 'month', 'day', 'dayofweek', 'dayofyear', 'week', 'quarter',
+                         'hour', 'minute', 'second', 'is_weekend', 'is_month_start', 'is_month_end',
+                         'is_quarter_start', 'is_quarter_end', 'is_year_start', 'is_year_end']
+        invalid_features = [f for f in features if f not in valid_features]
+        if invalid_features:
+            raise ValueError(f"Invalid features: {invalid_features}. Valid options: {valid_features}")
+    
+    # Создание копии DataFrame для безопасности
+    result_df = df.copy() if not config['memory_efficient'] else df
+    
+    # Конвертация в datetime если необходимо
+    if not pd.api.types.is_datetime64_any_dtype(result_df[date_col]):
+        result_df[date_col] = pd.to_datetime(result_df[date_col])
+    
+    # Конвертация часового пояса если указан
+    if timezone:
+        result_df[date_col] = result_df[date_col].dt.tz_convert(timezone)
+    
+    # Создание сезонных признаков
+    for feature in features:
+        if feature == 'year':
+            col_name = f'{config["prefix"]}_year'
+            result_df[col_name] = result_df[date_col].dt.year
+        elif feature == 'month':
+            col_name = f'{config["prefix"]}_month'
+            result_df[col_name] = result_df[date_col].dt.month
+        elif feature == 'day':
+            col_name = f'{config["prefix"]}_day'
+            result_df[col_name] = result_df[date_col].dt.day
+        elif feature == 'dayofweek':
+            col_name = f'{config["prefix"]}_dayofweek'
+            result_df[col_name] = result_df[date_col].dt.dayofweek
+        elif feature == 'dayofyear':
+            col_name = f'{config["prefix"]}_dayofyear'
+            result_df[col_name] = result_df[date_col].dt.dayofyear
+        elif feature == 'week':
+            col_name = f'{config["prefix"]}_week'
+            result_df[col_name] = result_df[date_col].dt.isocalendar().week
+        elif feature == 'quarter':
+            col_name = f'{config["prefix"]}_quarter'
+            result_df[col_name] = result_df[date_col].dt.quarter
+        elif feature == 'hour':
+            col_name = f'{config["prefix"]}_hour'
+            result_df[col_name] = result_df[date_col].dt.hour
+        elif feature == 'minute':
+            col_name = f'{config["prefix"]}_minute'
+            result_df[col_name] = result_df[date_col].dt.minute
+        elif feature == 'second':
+            col_name = f'{config["prefix"]}_second'
+            result_df[col_name] = result_df[date_col].dt.second
+        elif feature == 'is_weekend':
+            col_name = f'{config["prefix"]}_is_weekend'
+            result_df[col_name] = result_df[date_col].dt.dayofweek.isin([5, 6])
+        elif feature == 'is_month_start':
+            col_name = f'{config["prefix"]}_is_month_start'
+            result_df[col_name] = result_df[date_col].dt.is_month_start
+        elif feature == 'is_month_end':
+            col_name = f'{config["prefix"]}_is_month_end'
+            result_df[col_name] = result_df[date_col].dt.is_month_end
+        elif feature == 'is_quarter_start':
+            col_name = f'{config["prefix"]}_is_quarter_start'
+            result_df[col_name] = result_df[date_col].dt.is_quarter_start
+        elif feature == 'is_quarter_end':
+            col_name = f'{config["prefix"]}_is_quarter_end'
+            result_df[col_name] = result_df[date_col].dt.is_quarter_end
+        elif feature == 'is_year_start':
+            col_name = f'{config["prefix"]}_is_year_start'
+            result_df[col_name] = result_df[date_col].dt.is_year_start
+        elif feature == 'is_year_end':
+            col_name = f'{config["prefix"]}_is_year_end'
+            result_df[col_name] = result_df[date_col].dt.is_year_end
+    
+    # Создание циклических признаков
+    if cyclic_features:
+        for feature in features:
+            if feature == 'month' and feature in features:
+                period = config['cyclic_periods']['month']
+                result_df[f'{config["prefix"]}_month_sin'] = np.sin(2 * np.pi * result_df[f'{config["prefix"]}_month'] / period)
+                result_df[f'{config["prefix"]}_month_cos'] = np.cos(2 * np.pi * result_df[f'{config["prefix"]}_month'] / period)
+            elif feature == 'dayofweek' and feature in features:
+                period = config['cyclic_periods']['dayofweek']
+                result_df[f'{config["prefix"]}_dayofweek_sin'] = np.sin(2 * np.pi * result_df[f'{config["prefix"]}_dayofweek'] / period)
+                result_df[f'{config["prefix"]}_dayofweek_cos'] = np.cos(2 * np.pi * result_df[f'{config["prefix"]}_dayofweek'] / period)
+            elif feature == 'hour' and feature in features:
+                period = config['cyclic_periods']['hour']
+                result_df[f'{config["prefix"]}_hour_sin'] = np.sin(2 * np.pi * result_df[f'{config["prefix"]}_hour'] / period)
+                result_df[f'{config["prefix"]}_hour_cos'] = np.cos(2 * np.pi * result_df[f'{config["prefix"]}_hour'] / period)
+            elif feature == 'dayofyear' and feature in features:
+                period = config['cyclic_periods']['dayofyear']
+                result_df[f'{config["prefix"]}_dayofyear_sin'] = np.sin(2 * np.pi * result_df[f'{config["prefix"]}_dayofyear'] / period)
+                result_df[f'{config["prefix"]}_dayofyear_cos'] = np.cos(2 * np.pi * result_df[f'{config["prefix"]}_dayofyear'] / period)
+    
+    # Создание признаков рабочих часов
+    if business_hours:
+        result_df[f'{config["prefix"]}_is_business_hour'] = (
+            (result_df[date_col].dt.hour >= config['business_hours_start']) &
+            (result_df[date_col].dt.hour < config['business_hours_end']) &
+            (result_df[date_col].dt.dayofweek.isin(config['business_days']))
+        )
+        result_df[f'{config["prefix"]}_is_business_day'] = result_df[date_col].dt.dayofweek.isin(config['business_days'])
+    
+    # Создание признаков праздников
+    if holidays:
+        result_df[f'{config["prefix"]}_is_holiday'] = result_df[date_col].dt.date.isin([pd.to_datetime(h).date() for h in holidays])
+    
+    # Заполнение пропусков
+    if config['fill_method'] == 'forward':
+        for col in result_df.columns:
+            if col.startswith(f'{config["prefix"]}_'):
+                result_df[col] = result_df[col].fillna(method='ffill')
+    elif config['fill_method'] == 'backward':
+        for col in result_df.columns:
+            if col.startswith(f'{config["prefix"]}_'):
+                result_df[col] = result_df[col].fillna(method='bfill')
+    elif config['fill_method'] == 'interpolate':
+        for col in result_df.columns:
+            if col.startswith(f'{config["prefix"]}_'):
+                result_df[col] = result_df[col].interpolate(method='linear')
+    elif config['fill_method'] == 'zero':
+        for col in result_df.columns:
+            if col.startswith(f'{config["prefix"]}_'):
+                result_df[col] = result_df[col].fillna(0)
+    
+    return result_df
 
-# Пример использования
-df = create_seasonal_features(df, 'date')
+# Пример использования с детальными параметрами
+df = create_seasonal_features(
+    df, 
+    date_col='date',
+    features=['year', 'month', 'day', 'dayofweek', 'dayofyear', 'week', 'quarter', 'hour', 'is_weekend'],
+    cyclic_features=True,           # Создавать циклические признаки
+    timezone='UTC',                # Часовой пояс UTC
+    business_hours=True,           # Создавать признаки рабочих часов
+    holidays=['2023-01-01', '2023-12-25'],  # Праздничные дни
+    config={
+        'cyclic_periods': {        # Периоды для циклических признаков
+            'month': 12,
+            'dayofweek': 7,
+            'hour': 24,
+            'dayofyear': 365
+        },
+        'business_hours_start': 9,  # Начало рабочих часов
+        'business_hours_end': 17,   # Конец рабочих часов
+        'business_days': [0, 1, 2, 3, 4],  # Рабочие дни (пн-пт)
+        'fill_method': 'forward',   # Заполнение предыдущим значением
+        'validation': True,         # Включить валидацию
+        'memory_efficient': False,  # Не экономить память
+        'prefix': 'seasonal'        # Префикс для названий
+    }
+)
 ```
 
 ### 2. Статистические признаки (Statistical Features)
@@ -1626,6 +2258,125 @@ def validate_features(df, target_col, feature_cols, validation_method='cross_val
 validation_results = validate_features(df, 'target', feature_cols, validation_method='cross_validation')
 ```
 
+## Сводная таблица параметров генерации признаков
+
+### 📊 Основные параметры функций генерации признаков
+
+| Функция | Параметр | Значение по умолчанию | Описание | Диапазон/Влияние |
+|---------|----------|----------------------|----------|------------------|
+| **create_lag_features** | | | | |
+| | `lags` | [1, 2, 3, 7, 14, 30] | Список лагов для создания | 1-365 дней |
+| | `fill_method` | 'forward' | Метод заполнения пропусков | forward, backward, interpolate, zero |
+| | `include_original` | False | Включать исходную колонку | True, False |
+| | `lag_prefix` | 'lag' | Префикс для названий | str |
+| | `config.max_lag` | max(lags) | Максимальный лаг | 1-365 |
+| | `config.min_lag` | min(lags) | Минимальный лаг | 1-365 |
+| | `config.validation` | True | Валидация данных | True, False |
+| | `config.memory_efficient` | False | Эффективное использование памяти | True, False |
+| **create_rolling_features** | | | | |
+| | `windows` | [3, 7, 14, 30] | Размеры окон | 1-365 периодов |
+| | `statistics` | ['mean', 'std', 'min', 'max', 'median'] | Статистики для вычисления | mean, std, var, min, max, median, sum, count, skew, kurt, quantile |
+| | `min_periods` | None | Минимальное количество наблюдений | 1-window |
+| | `center` | False | Центрировать окно | True, False |
+| | `win_type` | None | Тип весового окна | None, boxcar, triang, blackman, hamming, bartlett |
+| | `config.quantiles` | [0.25, 0.5, 0.75] | Квантили для вычисления | 0.0-1.0 |
+| | `config.custom_functions` | {} | Пользовательские функции | dict |
+| | `config.fill_method` | 'forward' | Метод заполнения пропусков | forward, backward, interpolate, zero |
+| | `config.prefix` | 'rolling' | Префикс для названий | str |
+| **create_ewm_features** | | | | |
+| | `alphas` | [0.1, 0.3, 0.5, 0.7] | Коэффициенты сглаживания | 0.0-1.0 |
+| | `statistics` | ['mean'] | Статистики для вычисления | mean, std, var, min, max, sum, count |
+| | `adjust` | True | Корректировка для начальных значений | True, False |
+| | `ignore_na` | False | Игнорировать NaN | True, False |
+| | `bias` | False | Смещенная оценка дисперсии | True, False |
+| | `config.span` | None | Альтернатива alpha | 1-1000 |
+| | `config.halflife` | None | Альтернатива alpha | 1-1000 |
+| | `config.com` | None | Альтернатива alpha | 1-1000 |
+| | `config.prefix` | 'ewm' | Префикс для названий | str |
+| **create_seasonal_features** | | | | |
+| | `features` | ['year', 'month', 'day', 'dayofweek', 'dayofyear', 'week', 'quarter'] | Сезонные признаки | year, month, day, dayofweek, dayofyear, week, quarter, hour, minute, second, is_weekend, is_month_start, is_month_end, is_quarter_start, is_quarter_end, is_year_start, is_year_end |
+| | `cyclic_features` | True | Создавать циклические признаки | True, False |
+| | `timezone` | None | Часовой пояс | str (UTC, Europe/Moscow, etc.) |
+| | `business_hours` | False | Создавать признаки рабочих часов | True, False |
+| | `holidays` | None | Список праздничных дней | list of dates |
+| | `config.cyclic_periods` | {'month': 12, 'dayofweek': 7, 'hour': 24, 'dayofyear': 365} | Периоды для циклических признаков | dict |
+| | `config.business_hours_start` | 9 | Начало рабочих часов | 0-23 |
+| | `config.business_hours_end` | 17 | Конец рабочих часов | 0-23 |
+| | `config.business_days` | [0, 1, 2, 3, 4] | Рабочие дни | list of int (0-6) |
+| | `config.prefix` | 'seasonal' | Префикс для названий | str |
+| **create_moment_features** | | | | |
+| | `windows` | [7, 14, 30] | Окна для вычисления | 1-365 периодов |
+| | `config.prefix` | 'moment' | Префикс для названий | str |
+| **create_change_features** | | | | |
+| | `periods` | [1, 2, 3, 7, 14, 30] | Периоды для изменений | 1-365 периодов |
+| | `config.prefix` | 'change' | Префикс для названий | str |
+| **create_volatility_features** | | | | |
+| | `windows` | [7, 14, 30] | Окна для волатильности | 1-365 периодов |
+| | `config.prefix` | 'vol' | Префикс для названий | str |
+| **create_trend_features** | | | | |
+| | `windows` | [7, 14, 30, 50, 200] | Окна для трендовых индикаторов | 1-365 периодов |
+| | `config.prefix` | 'trend' | Префикс для названий | str |
+| **create_momentum_features** | | | | |
+| | `windows` | [7, 14, 30] | Окна для моментум индикаторов | 1-365 периодов |
+| | `config.prefix` | 'momentum' | Префикс для названий | str |
+| **create_volatility_indicators** | | | | |
+| | `windows` | [7, 14, 30] | Окна для волатильность индикаторов | 1-365 периодов |
+| | `config.prefix` | 'vol_ind' | Префикс для названий | str |
+| **create_categorical_features** | | | | |
+| | `categorical_cols` | [] | Список категориальных колонок | list of str |
+| | `config.prefix` | 'cat' | Префикс для названий | str |
+| **create_hierarchical_features** | | | | |
+| | `hierarchical_cols` | [] | Список иерархических колонок | list of str |
+| | `config.prefix` | 'hier' | Префикс для названий | str |
+| **create_text_features** | | | | |
+| | `text_col` | '' | Название текстовой колонки | str |
+| | `config.prefix` | 'text' | Префикс для названий | str |
+| **create_tfidf_features** | | | | |
+| | `text_col` | '' | Название текстовой колонки | str |
+| | `max_features` | 1000 | Максимальное количество признаков | 100-10000 |
+| | `config.prefix` | 'tfidf' | Префикс для названий | str |
+| **create_word2vec_features** | | | | |
+| | `text_col` | '' | Название текстовой колонки | str |
+| | `vector_size` | 100 | Размер вектора | 50-500 |
+| | `config.prefix` | 'w2v' | Префикс для названий | str |
+| **genetic_feature_generation** | | | | |
+| | `generations` | 50 | Количество поколений | 10-1000 |
+| | `population_size` | 100 | Размер популяции | 50-1000 |
+| | `config.prefix` | 'genetic' | Префикс для названий | str |
+| **create_polynomial_features** | | | | |
+| | `feature_cols` | [] | Список признаков для полиномиальных | list of str |
+| | `degree` | 2 | Степень полинома | 1-5 |
+| | `interaction_only` | False | Только взаимодействия | True, False |
+| | `config.prefix` | 'poly' | Префикс для названий | str |
+| **create_interaction_features** | | | | |
+| | `feature_cols` | [] | Список признаков для взаимодействий | list of str |
+| | `max_interactions` | 10 | Максимальное количество взаимодействий | 2-50 |
+| | `config.prefix` | 'interaction' | Префикс для названий | str |
+
+### 🎯 Рекомендации по настройке параметров
+
+#### Для начинающих
+
+- Используйте значения по умолчанию для большинства параметров
+- Настройте только основные параметры (lags, windows, alphas)
+- Включите базовые статистики (mean, std, min, max)
+- Используйте простые методы заполнения пропусков (forward)
+
+#### Для опытных пользователей
+
+- Настройте все параметры в соответствии с вашими данными
+- Добавьте пользовательские функции и циклические признаки
+- Используйте расширенные статистики (skew, kurt, quantile)
+- Настройте валидацию и эффективное использование памяти
+
+#### Для продакшена
+
+- Настройте все параметры в соответствии с требованиями SLA
+- Включите все типы признаков (временные, статистические, технические, категориальные, текстовые)
+- Используйте автоматическую генерацию признаков
+- Настройте мониторинг и валидацию признаков
+- Включите все проверки безопасности и производительности
+
 ## Заключение
 
 Feature Generation - это основа успешного машинного обучения. Правильная генерация признаков может:
@@ -1635,7 +2386,7 @@ Feature Generation - это основа успешного машинного �
 3. **Повысить робастность** моделей
 4. **Сократить время** обучения
 
-### Ключевые принципы:
+### Ключевые принципы
 
 1. **Понимание данных** - знайте, с чем работаете
 2. **Доменные знания** - используйте экспертизу в предметной области
@@ -1643,9 +2394,10 @@ Feature Generation - это основа успешного машинного �
 4. **Валидация** - всегда проверяйте качество признаков
 5. **Мониторинг** - следите за стабильностью признаков
 
-### Следующие шаги:
+### Следующие шаги
 
 После освоения генерации признаков переходите к:
+
 - [Методикам бэктестинга](./27_backtesting_methods.md)
 - [Walk-forward анализу](./28_walk_forward_analysis.md)
 - [Monte Carlo симуляциям](./29_monte_carlo_simulations.md)
