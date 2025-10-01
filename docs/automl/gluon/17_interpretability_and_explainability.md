@@ -22,9 +22,15 @@
 ## Введение в интерпретируемость
 
 <img src="images/optimized/interpretability_overview.png" alt="Интерпретируемость ML" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 15.1: Обзор методов интерпретируемости и объяснимости ML-моделей*
+*Рисунок 17.1: Обзор методов интерпретируемости и объяснимости ML-моделей - основные категории и методы*
 
 **Почему интерпретируемость - это не роскошь, а необходимость?** Потому что в современном мире ML-модели принимают решения, влияющие на жизни людей, и эти решения должны быть понятными и справедливыми.
+
+**Основные категории интерпретируемости:**
+- **Intrinsic Interpretability**: Модели, которые изначально интерпретируемы (линейные, деревья решений)
+- **Post-hoc Interpretability**: Методы объяснения "черных ящиков" (SHAP, LIME, Integrated Gradients)
+- **Global Methods**: Объяснение модели в целом (Feature Importance, PDP, ALE)
+- **Local Methods**: Объяснение конкретных предсказаний (LIME, SHAP Local, Counterfactuals)
 
 Интерпретируемость машинного обучения - это способность понимать и объяснять решения, принимаемые ML-моделями. Это критически важно для:
 - **Доверия к модели** - понимание логики принятия решений
@@ -34,9 +40,18 @@
 
 ## Типы интерпретируемости
 
+<img src="images/optimized/intrinsic_vs_posthoc.png" alt="Сравнение типов интерпретируемости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 17.2: Сравнение внутренней и пост-хок интерпретируемости - преимущества и характеристики*
+
 ### 1. Внутренняя интерпретируемость (Intrinsic Interpretability)
 
 **Почему внутренняя интерпретируемость - это золотой стандарт?** Потому что модель сама по себе понятна, не требует дополнительных методов объяснения и дает точные интерпретации.
+
+**Характеристики внутренней интерпретируемости:**
+- **Linear Regression**: Коэффициенты показывают влияние признаков
+- **Decision Tree**: Правила принятия решений видны в структуре дерева
+- **Logistic Regression**: Вероятности и коэффициенты интерпретируемы
+- **Rule-based**: Логические правила понятны человеку
 
 Модели, которые изначально интерпретируемы:
 
@@ -92,7 +107,27 @@ shap.summary_plot(shap_values, X_test)
 
 ## Методы глобальной интерпретируемости
 
+<img src="images/optimized/global_methods.png" alt="Глобальные методы интерпретируемости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 17.3: Глобальные методы интерпретируемости - объяснение модели в целом*
+
+**Типы глобальных методов:**
+- **Feature Importance**: Важность признаков для модели
+- **Partial Dependence Plots (PDP)**: Зависимость предсказания от признака
+- **Accumulated Local Effects (ALE)**: Локальные эффекты с учетом корреляций
+- **Permutation Importance**: Важность через перестановку признаков
+- **SHAP Global**: Глобальные SHAP значения
+- **Surrogate Models**: Простые модели-аппроксиматоры
+
 ### 1. Feature Importance
+
+<img src="images/optimized/feature_importance_methods.png" alt="Методы важности признаков" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 17.5: Методы определения важности признаков - сравнение различных подходов*
+
+**Методы определения важности признаков:**
+- **Built-in Importance**: Встроенная важность (для tree-based моделей)
+- **Permutation Importance**: Важность через перестановку признаков
+- **SHAP Values**: SHAP значения для объяснения вклада признаков
+- **Сравнение методов**: Анализ согласованности различных подходов
 
 ```python
 def get_feature_importance(predictor, method='permutation'):
@@ -197,6 +232,17 @@ def plot_ale(predictor, X, features):
 
 ## Методы локальной интерпретируемости
 
+<img src="images/optimized/local_methods.png" alt="Локальные методы интерпретируемости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 17.4: Локальные методы интерпретируемости - объяснение конкретных предсказаний*
+
+**Типы локальных методов:**
+- **LIME**: Локальные аппроксимации для объяснения предсказаний
+- **SHAP Local**: Локальные SHAP значения для конкретных экземпляров
+- **Integrated Gradients**: Градиентные методы для нейронных сетей
+- **Counterfactual Explanations**: Объяснения через контрфактические примеры
+- **Attention Mechanisms**: Механизмы внимания в нейронных сетях
+- **Saliency Maps**: Карты значимости для визуализации
+
 ### 1. LIME (Local Interpretable Model-agnostic Explanations)
 
 ```python
@@ -230,6 +276,15 @@ def explain_with_lime(predictor, X, instance_idx, num_features=5):
 ```
 
 ### 2. SHAP (SHapley Additive exPlanations)
+
+<img src="images/optimized/shap_lime_comparison.png" alt="Сравнение SHAP и LIME" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 17.6: Сравнение SHAP и LIME методов объяснения - характеристики и применение*
+
+**Сравнение SHAP и LIME:**
+- **SHAP**: Теоретически обоснованный, согласованный, универсальный
+- **LIME**: Локальные аппроксимации, простота понимания, быстрота вычислений
+- **Корреляция**: Анализ согласованности между методами
+- **Применение**: Выбор подходящего метода для конкретной задачи
 
 ```python
 import shap
@@ -358,6 +413,15 @@ def explain_ensemble(predictor, X, method='weighted'):
 ```
 
 ## Визуализация объяснений
+
+<img src="images/optimized/explanation_dashboard.png" alt="Дашборд объяснений" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 17.7: Комплексный дашборд объяснений ML-модели - важность признаков, SHAP, PDP, метрики*
+
+**Компоненты дашборда объяснений:**
+- **Feature Importance**: Топ-10 важных признаков
+- **SHAP Summary**: Распределение SHAP значений
+- **Partial Dependence Plot**: Зависимость от ключевого признака
+- **Model Performance**: Метрики производительности модели
 
 ### 1. Comprehensive Explanation Dashboard
 
