@@ -21,7 +21,7 @@
 
 ## Введение в кейс-стади
 
-![Кейс-стади AutoML](images/case_studies_overview.png)
+<img src="images/optimized/case_studies_overview.png" alt="Кейс-стади AutoML" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 18.1: Обзор реальных проектов и их результатов с использованием AutoML Gluon*
 
 **Почему кейс-стади - это мост между теорией и практикой?** Потому что они показывают, как абстрактные концепции превращаются в работающие системы, решающие реальные бизнес-задачи.

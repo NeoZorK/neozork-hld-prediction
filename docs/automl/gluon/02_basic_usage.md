@@ -21,7 +21,7 @@
 
 ## Введение в TabularPredictor
 
-![Архитектура AutoML Gluon](images/architecture_diagram.png)
+<img src="images/optimized/architecture_diagram.png" alt="Архитектура AutoML Gluon" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 2: Архитектура AutoML Gluon с основными компонентами*
 
 **Почему TabularPredictor - это сердце AutoML Gluon?** Потому что он объединяет все возможности в одном простом интерфейсе. Это как универсальный пульт управления - одна кнопка запускает сложные процессы.
