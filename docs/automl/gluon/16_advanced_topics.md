@@ -3,10 +3,28 @@
 **Автор:** Shcherbyna Rostyslav  
 **Дата:** 2024  
 
+## Почему продвинутые темы критически важны
+
+**Почему 95% ML-инженеров не знают о продвинутых техниках?** Потому что они фокусируются на базовых алгоритмах, не понимая, что современные методы могут дать в 10-100 раз лучшие результаты.
+
+### Проблемы без знания продвинутых тем
+- **Устаревшие методы**: Используют техники 5-летней давности
+- **Плохие результаты**: Не могут достичь state-of-the-art производительности
+- **Потеря конкурентоспособности**: Отстают от команд, использующих современные методы
+- **Ограниченные возможности**: Не могут решать сложные задачи
+
+### Преимущества знания продвинутых тем
+- **Лучшие результаты**: State-of-the-art производительность
+- **Конкурентоспособность**: Используют самые современные методы
+- **Решение сложных задач**: Могут работать с мультимодальными данными
+- **Инновации**: Могут создавать новые решения
+
 ## Введение в продвинутые темы
 
 ![Продвинутые темы AutoML](images/advanced_topics_overview.png)
 *Рисунок 16.1: Обзор продвинутых тем и современных направлений в AutoML*
+
+**Почему продвинутые темы - это будущее ML?** Потому что они решают проблемы, которые невозможно решить традиционными методами: автоматический дизайн архитектур, обучение на малых данных, мультимодальное понимание.
 
 Этот раздел охватывает передовые темы и современные направления в области автоматизированного машинного обучения, включая нейроархитектурный поиск, мета-обучение, мультимодальное обучение и другие cutting-edge технологии.
 
@@ -14,13 +32,21 @@
 
 ### 1. Differentiable Architecture Search (DARTS)
 
+**Почему DARTS - это революция в дизайне нейросетей?** Потому что он позволяет искать архитектуры через градиентный спуск, что в 1000 раз быстрее традиционных методов поиска.
+
+**Преимущества DARTS:**
+- **Скорость**: В 1000 раз быстрее случайного поиска
+- **Качество**: Находит архитектуры лучше созданных человеком
+- **Гибкость**: Может искать любые типы операций
+- **Масштабируемость**: Работает с большими датасетами
+
 ```python
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 class DARTS(nn.Module):
-    """Differentiable Architecture Search"""
+    """Differentiable Architecture Search - автоматический дизайн нейросетей"""
     
     def __init__(self, input_channels, output_channels, num_ops=8):
         super(DARTS, self).__init__()
@@ -28,26 +54,26 @@ class DARTS(nn.Module):
         self.output_channels = output_channels
         self.num_ops = num_ops
         
-        # Операции
+        # Операции - кандидаты для архитектуры
         self.ops = nn.ModuleList([
-            nn.Conv2d(input_channels, output_channels, 1, bias=False),
-            nn.Conv2d(input_channels, output_channels, 3, padding=1, bias=False),
-            nn.Conv2d(input_channels, output_channels, 5, padding=2, bias=False),
-            nn.MaxPool2d(3, stride=1, padding=1),
-            nn.AvgPool2d(3, stride=1, padding=1),
-            nn.Identity() if input_channels == output_channels else None,
-            nn.Conv2d(input_channels, output_channels, 3, padding=1, dilation=2, bias=False),
-            nn.Conv2d(input_channels, output_channels, 3, padding=1, dilation=3, bias=False)
+            nn.Conv2d(input_channels, output_channels, 1, bias=False),      # 1x1 conv
+            nn.Conv2d(input_channels, output_channels, 3, padding=1, bias=False),  # 3x3 conv
+            nn.Conv2d(input_channels, output_channels, 5, padding=2, bias=False),  # 5x5 conv
+            nn.MaxPool2d(3, stride=1, padding=1),                          # Max pooling
+            nn.AvgPool2d(3, stride=1, padding=1),                          # Average pooling
+            nn.Identity() if input_channels == output_channels else None,  # Identity
+            nn.Conv2d(input_channels, output_channels, 3, padding=1, dilation=2, bias=False),  # Dilated conv
+            nn.Conv2d(input_channels, output_channels, 3, padding=1, dilation=3, bias=False)   # Dilated conv
         ])
         
-        # Архитектурные веса
+        # Архитектурные веса - что оптимизируется
         self.alpha = nn.Parameter(torch.randn(num_ops))
         
     def forward(self, x):
-        # Softmax для архитектурных весов
+        # Softmax для архитектурных весов - нормализация весов
         weights = F.softmax(self.alpha, dim=0)
         
-        # Взвешенная сумма операций
+        # Взвешенная сумма операций - комбинация всех операций
         output = sum(w * op(x) for w, op in zip(weights, self.ops) if op is not None)
         
         return output
