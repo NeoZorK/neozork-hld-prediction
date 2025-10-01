@@ -34,6 +34,11 @@
 23. [Руководство по изучению учебника](./23_reading_guide.md)
 24. [Правильное использование вероятностей](./24_probability_usage_guide.md)
 25. [Мониторинг торгового бота - Лучшие практики](./25_trading_bot_monitoring.md)
+26. [Углубленное описание feature generation and apply](./26_feature_generation_advanced.md)
+27. [Углубленное описание методик бэктестинга](./27_backtesting_methods.md)
+28. [Углубленное описание методик walk-forward](./28_walk_forward_analysis.md)
+29. [Углубленное описание методик Monte Carlo для создания робастных стратегий](./29_monte_carlo_simulations.md)
+30. [Углубленное описание методик создания и управления портфолио](./30_portfolio_management.md)
 
 ## Что такое AutoML Gluon?
 
