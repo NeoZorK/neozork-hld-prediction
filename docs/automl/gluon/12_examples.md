@@ -21,8 +21,8 @@
 
 ## Введение в примеры
 
-<img src="images/optimized/monte_carlo_analysis.png" alt="Monte Carlo анализ" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 1: Monte Carlo анализ - робастные vs переобученные системы, распределение прибыли, risk-return профиль*
+<img src="images/optimized/metrics_comparison_detailed.png" alt="Сравнение метрик и задач" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 1: Сравнение метрик для классификации и регрессии - ROC Curve, Precision-Recall, Confusion Matrix, метрики регрессии*
 
 **Почему примеры - это язык машинного обучения?** Потому что они переводят сложные алгоритмы в понятные числа. Это как переводчик между техническими деталями и бизнес-результатами.
 
@@ -36,8 +36,8 @@
 
 ## Пример 1: Классификация клиентов банка
 
-<img src="images/optimized/robustness_analysis.png" alt="Банковский пример" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 2: Пример классификации клиентов банка - предсказание дефолта*
+<img src="images/optimized/bank_classification_analysis.png" alt="Банковский пример" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 2: Пример классификации клиентов банка - ROC Curve, Precision-Recall, Confusion Matrix, важность признаков*
 
 **Почему начинаем с банковской задачи?** Потому что это классический пример ML в финансах - понятный, важный и с четкими бизнес-метриками.
 
@@ -244,6 +244,14 @@ print(bank_results['feature_importance'].head(10))
 ```
 
 ### Визуализация результатов
+
+**Почему визуализация критически важна для понимания метрик?** Потому что картинки показывают то, что числа скрывают:
+
+- **ROC Curve**: Показывает качество разделения классов при разных порогах
+- **Precision-Recall**: Демонстрирует баланс между точностью и полнотой
+- **Confusion Matrix**: Визуализирует типы ошибок модели
+- **Feature Importance**: Показывает, какие факторы важны для предсказания
+
 ```python
 def visualize_bank_results(results, test_data):
     """Визуализация результатов банковской модели"""
@@ -290,8 +298,8 @@ visualize_bank_results(bank_results, bank_test_data)
 
 ## Пример 2: Прогнозирование цен на недвижимость
 
-<img src="images/optimized/performance_comparison.png" alt="Пример недвижимости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 3: Пример прогнозирования цен на недвижимость - регрессионная задача*
+<img src="images/optimized/real_estate_regression_analysis.png" alt="Пример недвижимости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 3: Пример прогнозирования цен на недвижимость - предсказания vs факт, распределение ошибок, важность признаков, метрики качества*
 
 **Почему недвижимость - отличный пример для регрессии?** Потому что это понятная задача с множеством факторов влияния:
 
@@ -480,6 +488,14 @@ print(f"MAPE: {real_estate_results['mape']:.2f}%")
 ```
 
 ### Визуализация результатов
+
+**Почему визуализация регрессии отличается от классификации?** Потому что здесь мы предсказываем непрерывные значения, а не классы:
+
+- **Scatter Plot**: Показывает корреляцию между предсказанными и фактическими значениями
+- **Error Distribution**: Демонстрирует характер ошибок модели (нормальность, выбросы)
+- **Feature Importance**: Выявляет наиболее влиятельные факторы на цену
+- **Error vs Price**: Показывает, зависит ли точность от диапазона цен
+
 ```python
 def visualize_real_estate_results(results, test_data):
     """Визуализация результатов модели недвижимости"""
@@ -520,8 +536,8 @@ visualize_real_estate_results(real_estate_results, real_estate_test_data)
 
 ## Пример 3: Анализ временных рядов
 
-<img src="images/optimized/walk_forward_analysis.png" alt="Пример временных рядов" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 4: Пример анализа временных рядов - прогнозирование продаж*
+<img src="images/optimized/time_series_analysis.png" alt="Пример временных рядов" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 4: Пример анализа временных рядов - временной ряд с прогнозом, ошибки по времени, распределение ошибок, метрики MASE/MAPE*
 
 **Почему временные ряды - особый тип задач?** Потому что они имеют временную зависимость и требуют специальных методов:
 
@@ -715,6 +731,14 @@ for product, perf in sales_results['product_performance'].items():
 ```
 
 ### Визуализация временных рядов
+
+**Почему визуализация временных рядов особенная?** Потому что время - это дополнительное измерение, которое нужно учитывать:
+
+- **Time Series Plot**: Показывает тренды, сезонность и качество прогноза во времени
+- **Error Analysis**: Демонстрирует, как ошибки распределены по времени
+- **Feature Importance**: Выявляет, какие временные признаки важны
+- **Performance by Product**: Сравнивает качество прогноза для разных продуктов
+
 ```python
 def visualize_sales_results(results, test_data):
     """Визуализация результатов модели продаж"""
@@ -763,8 +787,8 @@ visualize_sales_results(sales_results, sales_test_data)
 
 ## Пример 4: Многоклассовая классификация
 
-<img src="images/optimized/advanced_topics_overview.png" alt="Пример многоклассовой классификации" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 5: Пример многоклассовой классификации - классификация изображений*
+<img src="images/optimized/multiclass_classification_analysis.png" alt="Пример многоклассовой классификации" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 5: Пример многоклассовой классификации - Confusion Matrix, точность по классам, распределение предсказаний, метрики качества*
 
 **Почему многоклассовая классификация сложнее бинарной?** Потому что нужно различать множество классов одновременно:
 
@@ -946,6 +970,14 @@ for class_name, metrics in image_results['classification_report'].items():
 ```
 
 ### Визуализация результатов
+
+**Почему многоклассовая классификация требует особой визуализации?** Потому что нужно анализировать качество по каждому классу отдельно:
+
+- **Confusion Matrix**: Показывает, какие классы путает модель между собой
+- **Class Accuracy**: Демонстрирует точность для каждого класса отдельно
+- **Prediction Distribution**: Выявляет, не предсказывает ли модель только популярные классы
+- **Feature Importance**: Показывает, какие признаки важны для различения классов
+
 ```python
 def visualize_image_results(results, test_data):
     """Визуализация результатов модели классификации изображений"""
@@ -993,6 +1025,9 @@ visualize_image_results(image_results, image_test_data)
 ```
 
 ## Пример 5: Продакшен система
+
+<img src="images/optimized/production_system_architecture.png" alt="Архитектура продакшен системы" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 7: Архитектура продакшен системы AutoML Gluon - компоненты, потоки данных, мониторинг*
 
 ### Полная продакшен система
 ```python
@@ -1202,8 +1237,8 @@ if __name__ == "__main__":
 
 ## Продвинутые примеры
 
-<img src="images/optimized/production_comparison.png" alt="Продвинутые примеры" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 6: Продвинутые примеры использования AutoML Gluon*
+<img src="images/optimized/advanced_metrics_analysis.png" alt="Продвинутые примеры" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 6: Продвинутые метрики - ROC с порогами, Precision-Recall, сравнение метрик, влияние порога на качество*
 
 **Почему важны продвинутые примеры?** Потому что они показывают, как решать сложные реальные задачи:
 
