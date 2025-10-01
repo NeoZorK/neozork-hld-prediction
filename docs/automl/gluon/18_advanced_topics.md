@@ -22,13 +22,32 @@
 ## Введение в продвинутые темы
 
 <img src="images/optimized/advanced_topics_overview.png" alt="Продвинутые темы AutoML" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 16.1: Обзор продвинутых тем и современных направлений в AutoML*
+*Рисунок 18.1: Обзор продвинутых тем и современных направлений в AutoML - основные категории и методы*
 
 **Почему продвинутые темы - это будущее ML?** Потому что они решают проблемы, которые невозможно решить традиционными методами: автоматический дизайн архитектур, обучение на малых данных, мультимодальное понимание.
+
+**Основные категории продвинутых тем:**
+- **Neural Architecture Search (NAS)**: Автоматический поиск оптимальных архитектур нейросетей
+- **Meta-Learning**: Обучение тому, как учиться на новых задачах
+- **Multi-Modal Learning**: Работа с различными типами данных одновременно
+- **Federated Learning**: Распределенное обучение с сохранением приватности
+- **Continual Learning**: Непрерывное обучение без забывания предыдущих знаний
+- **Quantum Machine Learning**: Использование квантовых вычислений для ML
 
 Этот раздел охватывает передовые темы и современные направления в области автоматизированного машинного обучения, включая нейроархитектурный поиск, мета-обучение, мультимодальное обучение и другие cutting-edge технологии.
 
 ## Neural Architecture Search (NAS)
+
+<img src="images/optimized/neural_architecture_search.png" alt="Neural Architecture Search" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 18.2: Neural Architecture Search - методы автоматического поиска архитектур нейросетей*
+
+**Типы методов NAS:**
+- **DARTS (Differentiable)**: Дифференцируемый поиск через градиентный спуск
+- **ENAS (Efficient)**: Эффективный поиск через контроллер RNN
+- **Random Search**: Случайный поиск в пространстве архитектур
+- **Evolutionary Search**: Эволюционный поиск с генетическими алгоритмами
+- **Reinforcement Learning**: Поиск через обучение с подкреплением
+- **Bayesian Optimization**: Байесовская оптимизация архитектур
 
 ### 1. Differentiable Architecture Search (DARTS)
 
@@ -164,6 +183,17 @@ class ENAS(nn.Module):
 
 ## Meta-Learning
 
+<img src="images/optimized/meta_learning.png" alt="Meta-Learning" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 18.3: Meta-Learning (Learning to Learn) - методы обучения тому, как учиться*
+
+**Типы методов мета-обучения:**
+- **MAML (Model-Agnostic)**: Универсальный мета-обучение для любых моделей
+- **Prototypical Networks**: Обучение через прототипы классов
+- **Matching Networks**: Сопоставление примеров для классификации
+- **Reptile**: Простой и эффективный мета-обучение
+- **Meta-SGD**: Мета-обучение с адаптивными шагами обучения
+- **Gradient Meta-Learning**: Мета-обучение через градиенты
+
 ### 1. Model-Agnostic Meta-Learning (MAML)
 
 ```python
@@ -255,6 +285,22 @@ class PrototypicalNetworks(nn.Module):
 
 ## Multi-Modal Learning
 
+<img src="images/optimized/multimodal_learning.png" alt="Multi-Modal Learning" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 18.4: Multi-Modal Learning - работа с различными типами данных одновременно*
+
+**Типы модальностей:**
+- **Vision (Images)**: Обработка изображений и визуальных данных
+- **Language (Text)**: Обработка текста и естественного языка
+- **Audio (Sound)**: Обработка звуковых и аудио данных
+- **Video (Motion)**: Обработка видео и временных последовательностей
+- **Sensor Data**: Обработка данных с датчиков
+- **Structured Data**: Обработка структурированных данных
+
+**Методы фьюжна:**
+- **Early Fusion**: Раннее объединение модальностей
+- **Late Fusion**: Позднее объединение модальностей
+- **Cross-Modal Attention**: Взаимное внимание между модальностями
+
 ### 1. Vision-Language Models
 
 ```python
@@ -341,6 +387,23 @@ class CrossModalAttention(nn.Module):
 ```
 
 ## Federated Learning
+
+<img src="images/optimized/federated_learning.png" alt="Federated Learning" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 18.5: Federated Learning Architecture - распределенное обучение с сохранением приватности*
+
+**Архитектура федеративного обучения:**
+- **Global Server**: Центральный сервер для агрегации моделей
+- **Clients**: Распределенные клиенты с локальными данными
+- **Local Training**: Локальное обучение на каждом клиенте
+- **Model Aggregation**: Агрегация обновлений модели
+- **Privacy Preservation**: Сохранение приватности данных
+
+**Преимущества федеративного обучения:**
+- **Сохранение приватности**: Данные не покидают клиентов
+- **Распределенные данные**: Обучение на распределенных данных
+- **Масштабируемость**: Масштабирование на множество клиентов
+- **Снижение коммуникации**: Минимизация передачи данных
+- **Локальная обработка**: Обработка данных на устройстве
 
 ### 1. Federated Averaging (FedAvg)
 
@@ -436,6 +499,23 @@ class DifferentialPrivacy:
 ```
 
 ## Continual Learning
+
+<img src="images/optimized/continual_learning.png" alt="Continual Learning" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 18.6: Continual Learning (Lifelong Learning) - непрерывное обучение без забывания*
+
+**Типы методов непрерывного обучения:**
+- **EWC (Elastic Weight)**: Эластичное закрепление весов для сохранения знаний
+- **Progressive Networks**: Прогрессивные сети с боковыми соединениями
+- **Memory Replay**: Воспроизведение предыдущих примеров
+- **Regularization Methods**: Регуляризация для предотвращения забывания
+- **Architectural Methods**: Архитектурные изменения для новых задач
+- **Meta-Learning Approaches**: Мета-обучение для непрерывной адаптации
+
+**Проблема катастрофического забывания:**
+- **Забывание предыдущих задач**: Потеря знаний о старых задачах
+- **Интерференция между задачами**: Конфликт между новыми и старыми знаниями
+- **Необходимость сохранения знаний**: Важность сохранения предыдущего опыта
+- **Баланс между старым и новым**: Равновесие между старыми и новыми знаниями
 
 ### 1. Elastic Weight Consolidation (EWC)
 
@@ -542,6 +622,24 @@ class ProgressiveNeuralNetwork(nn.Module):
 
 ## Quantum Machine Learning
 
+<img src="images/optimized/quantum_ml.png" alt="Quantum Machine Learning" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 18.7: Quantum Machine Learning - использование квантовых вычислений для ML*
+
+**Компоненты квантового ML:**
+- **Quantum Neural Networks**: Квантовые нейронные сети
+- **Quantum Circuits**: Квантовые схемы и алгоритмы
+- **Quantum Algorithms**: Квантовые алгоритмы для ML
+- **Quantum Gates**: Квантовые вентили для вычислений
+- **Quantum Entanglement**: Квантовая запутанность для параллелизма
+- **Quantum Superposition**: Квантовая суперпозиция для экспоненциального ускорения
+
+**Квантовые преимущества:**
+- **Экспоненциальное ускорение**: Экспоненциальное ускорение вычислений
+- **Параллельные вычисления**: Параллельная обработка информации
+- **Квантовая суперпозиция**: Одновременное нахождение в нескольких состояниях
+- **Квантовая запутанность**: Коррелированные состояния для вычислений
+- **Квантовые интерференции**: Интерференция для оптимизации
+
 ### 1. Quantum Neural Networks
 
 ```python
@@ -598,6 +696,15 @@ def train_quantum_model(X, y, num_layers=3):
 ```
 
 ## Заключение
+
+<img src="images/optimized/advanced_methods_comparison.png" alt="Сравнение продвинутых методов" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 18.8: Сравнение продвинутых методов AutoML - производительность, сложность, время обучения, требования к данным*
+
+**Сравнение продвинутых методов:**
+- **Performance vs Complexity**: Баланс между производительностью и сложностью
+- **Training Time**: Время обучения различных методов
+- **Data Requirements**: Требования к объему данных
+- **Real-world Applicability**: Применимость в реальных задачах
 
 Продвинутые темы AutoML представляют собой быстро развивающуюся область, включающую:
 
