@@ -21,7 +21,7 @@
 
 ## Введение в troubleshooting
 
-![Troubleshooting блок-схема](images/troubleshooting_flowchart.png)
+<img src="images/optimized/troubleshooting_flowchart.png" alt="Troubleshooting блок-схема" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 8: Блок-схема решения проблем AutoML Gluon*
 
 **Почему troubleshooting - это искусство, а не наука?** Потому что каждая проблема уникальна, но паттерны повторяются. Это как медицинская диагностика - симптомы похожи, но причины разные.

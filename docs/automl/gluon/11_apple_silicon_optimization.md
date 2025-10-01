@@ -21,7 +21,7 @@
 
 ## Введение в оптимизацию для Apple Silicon
 
-![Оптимизация для Apple Silicon](images/apple_silicon_optimization.png)
+<img src="images/optimized/apple_silicon_optimization.png" alt="Оптимизация для Apple Silicon" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 9: Оптимизация AutoML Gluon для Apple Silicon*
 
 **Почему Apple Silicon требует специального подхода?** Потому что это архитектура ARM, а не x86, и требует специальных оптимизаций для максимальной производительности.
