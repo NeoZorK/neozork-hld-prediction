@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoML Gluon - Глава 1: Установка (Превью)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow-x: hidden;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+            position: relative;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border-radius: 2px;
+        }
+        
+        h3 {
+            color: #2c3e50;
+            margin-top: 25px;
+        }
+        
+        h4 {
+            color: #34495e;
+            margin-top: 20px;
+            font-size: 1.1em;
+        }
+        
+        /* Улучшенные стили для inline кода */
+        code {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        /* Стили для блоков кода */
+        pre {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            border-left: 4px solid #3498db;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        pre::before {
+            content: "Code";
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: #3498db;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        /* Специальные стили для Python кода */
+        pre[class*="python"] {
+            background: linear-gradient(135deg, #3776ab 0%, #2d5a87 100%);
+        }
+        
+        pre[class*="python"]::before {
+            content: "Python";
+            background: #ffd43b;
+            color: #2d5a87;
+        }
+        
+        /* Стили для bash кода */
+        pre[class*="bash"] {
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+        }
+        
+        pre[class*="bash"]::before {
+            content: "Terminal";
+            background: #fff;
+            color: #8e44ad;
+        }
+        
+        blockquote {
+            border-left: 4px solid #3498db;
+            margin: 20px 0;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        ul, ol {
+            padding-left: 25px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        /* Стили для предупреждений и советов */
+        .highlight {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(255, 193, 7, 0.2);
+        }
+        
+        .warning {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #dc3545;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2);
+        }
+        
+        .success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+        }
+        
+        /* Улучшенные стили для изображений */
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: 1px solid #e0e0e0;
+            transition: transform 0.3s ease;
+        }
+        
+        img:hover {
+            transform: scale(1.02);
+        }
+        
+        /* Стили для таблиц */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            overflow-x: auto;
+            display: block;
+            white-space: nowrap;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        table th, table td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        table th {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        /* Адаптивность для мобильных устройств */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            img {
+                max-width: 100%;
+                height: auto;
+                margin: 15px auto;
+            }
+            
+            pre {
+                overflow-x: auto;
+                font-size: 13px;
+                padding: 15px;
+            }
+        }
+        
+        /* Стили для навигации */
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 8px;
+        }
+        
+        .nav-links a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            background: #3498db;
+            color: white;
+        }
+        
+        /* Стили для эмодзи */
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AutoML Gluon - Глава 1: Установка (Превью)</h1>
+        <p><strong>Автор:</strong> NeoZorK (Shcherbyna Rostyslav)<br>
+        <strong>Дата:</strong> 2025<br>
+        <strong>Местоположение:</strong> Ukraine, Zaporizhzhya<br>
+        <strong>Версия:</strong> 1.0</p>
+        
+        <div class="success">
+            <strong>🎯 Это превью расширенной Главы 1</strong><br>
+            Здесь показано, как будет выглядеть каждая глава после расширения с детальными объяснениями, практическими примерами и улучшенным форматированием.
+        </div>
+        
+        <h1 id="automl-gluon">Установка AutoML Gluon</h1>
+<p><strong>Автор:</strong> NeoZorK (Shcherbyna Rostyslav)<br />
+<strong>Дата:</strong> 2025<br />
+<strong>Местоположение:</strong> Ukraine, Zaporizhzhya<br />
+<strong>Версия:</strong> 1.0</p>
+<h2 id="_1">Почему правильная установка критически важна</h2>
+<p><strong>Почему 70% проблем с AutoML Gluon связаны с неправильной установкой?</strong> Потому что машинное обучение требует точной настройки окружения. Неправильная установка может привести к нестабильной работе, ошибкам и потере времени.</p>
+<h3 id="_2">🚨 Реальные последствия неправильной установки</h3>
+<p><strong>Случай 1: Конфликт версий NumPy</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Что происходит при конфликте версий</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="c1"># Ошибка: &quot;numpy.core.multiarray failed to import&quot;</span>
+<span class="c1"># Результат: AutoML Gluon не запускается</span>
+</code></pre></div>
+
+<p><strong>Случай 2: Проблемы с CUDA</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Что происходит без правильной CUDA</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">())</span>  <span class="c1"># False</span>
+<span class="c1"># Результат: Обучение в 100 раз медленнее</span>
+</code></pre></div>
+
+<p><strong>Случай 3: Нехватка памяти</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Что происходит при нехватке RAM</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;large_dataset.csv&#39;</span><span class="p">)</span>  <span class="c1"># MemoryError</span>
+<span class="c1"># Результат: Невозможно обработать большие данные</span>
+</code></pre></div>
+
+<h3 id="_3">Что происходит при неправильной установке?</h3>
+<ul>
+<li><strong>Конфликты зависимостей</strong>: Разные версии библиотек вызывают ошибки</li>
+<li><em>Пример</em>: NumPy 1.19 vs 1.21 - разные API, код ломается</li>
+<li><em>Решение</em>: Использовать виртуальные окружения</li>
+<li><strong>Проблемы с производительностью</strong>: Модели работают медленно или не работают вообще</li>
+<li><em>Пример</em>: Обучение 1 час вместо 5 минут</li>
+<li><em>Причина</em>: Неоптимальные версии библиотек</li>
+<li><strong>Ошибки компиляции</strong>: Некоторые алгоритмы не могут быть скомпилированы</li>
+<li><em>Пример</em>: XGBoost не компилируется на старых системах</li>
+<li><em>Решение</em>: Обновить компилятор и зависимости</li>
+<li><strong>Проблемы с GPU</strong>: CUDA не работает, обучение идет только на CPU</li>
+<li><em>Пример</em>: Обучение 10 часов вместо 1 часа</li>
+<li><em>Решение</em>: Правильная установка CUDA и cuDNN</li>
+</ul>
+<h3 id="_4">Что дает правильная установка?</h3>
+<ul>
+<li><strong>Стабильная работа</strong>: Все компоненты работают без ошибок</li>
+<li><em>Результат</em>: 99.9% времени без сбоев</li>
+<li><em>Экономия</em>: Не тратите время на отладку</li>
+<li><strong>Оптимальная производительность</strong>: Максимальная скорость обучения</li>
+<li><em>Результат</em>: Обучение в 10-100 раз быстрее</li>
+<li><em>Экономия</em>: Часы вместо дней</li>
+<li><strong>Простота использования</strong>: Все функции доступны из коробки</li>
+<li><em>Результат</em>: Сразу можно начинать ML-проекты</li>
+<li><em>Экономия</em>: Не нужно изучать настройку</li>
+<li><strong>Легкость обновления</strong>: Простое обновление до новых версий</li>
+<li><em>Результат</em>: Всегда актуальные возможности</li>
+<li><em>Экономия</em>: Не нужно переустанавливать все</li>
+</ul>
+<h2 id="_5">Системные требования</h2>
+<p><img alt="Установка AutoML Gluon" src="images/installation_flowchart.png" /><br />
+<em>Рисунок 1: Блок-схема процесса установки AutoML Gluon</em></p>
+<h3 id="_6">Минимальные требования</h3>
+<p><strong>Почему минимальные требования важны?</strong> Потому что они определяют, сможете ли вы вообще запустить AutoML Gluon:</p>
+<ul>
+<li><strong>Python</strong>: 3.7, 3.8, 3.9, 3.10, 3.11</li>
+<li><em>Почему именно эти версии?</em> Потому что AutoML Gluon использует современные возможности Python</li>
+<li><em>Что происходит с Python 3.6?</em> Ошибки компиляции, несовместимость библиотек</li>
+<li><em>Что происходит с Python 3.12?</em> Некоторые зависимости еще не поддерживают</li>
+<li><em>Рекомендация</em>: Используйте Python 3.9 или 3.10 для стабильности</li>
+<li><strong>ОС</strong>: Linux, macOS, Windows</li>
+<li><em>Почему все ОС поддерживаются?</em> Потому что ML-разработка ведется на разных платформах</li>
+<li><em>Linux</em>: Лучшая производительность, больше возможностей</li>
+<li><em>macOS</em>: Удобство разработки, хорошая производительность</li>
+<li><em>Windows</em>: Простота использования, но возможны проблемы с некоторыми библиотеками</li>
+<li><strong>RAM</strong>: 4GB (рекомендуется 8GB+)</li>
+<li><em>Почему нужно много памяти?</em> Потому что ML-модели загружают большие датасеты в память</li>
+<li><em>Что происходит с 2GB RAM?</em> Система зависает, обучение прерывается</li>
+<li><em>Что происходит с 16GB+ RAM?</em> Можно обрабатывать датасеты в 10 раз больше</li>
+<li><em>Практический пример</em>: Датасет 1GB требует 4GB RAM для обработки</li>
+<li><strong>CPU</strong>: 2 ядра (рекомендуется 4+ ядра)</li>
+<li><em>Почему важны ядра?</em> Потому что AutoML Gluon использует параллельные вычисления</li>
+<li><em>Что происходит с 1 ядром?</em> Обучение в 4 раза медленнее</li>
+<li><em>Что происходит с 8+ ядрами?</em> Обучение в 4-8 раз быстрее</li>
+<li><em>Практический пример</em>: Обучение 1 час на 2 ядрах = 15 минут на 8 ядрах</li>
+<li><strong>Диск</strong>: 2GB свободного места</li>
+<li><em>Почему нужно место?</em> Потому что модели и данные занимают много места</li>
+<li><em>Что занимает место?</em> Модели (500MB-2GB), кэш (1-5GB), данные (зависит от размера)</li>
+<li><em>Практический пример</em>: Проект с 10 моделями занимает 5-10GB</li>
+</ul>
+<h3 id="_7">Рекомендуемые требования</h3>
+<p><strong>Почему рекомендуемые требования дают лучший опыт?</strong> Потому что они обеспечивают оптимальную производительность:</p>
+<ul>
+<li><strong>Python</strong>: 3.9 или 3.10</li>
+<li><em>Почему именно эти версии?</em> Потому что они наиболее стабильны и быстры</li>
+<li><em>Преимущества</em>: Лучшая производительность, стабильность, совместимость</li>
+<li><em>Практический пример</em>: Обучение на Python 3.10 на 15% быстрее чем на 3.8</li>
+<li><strong>RAM</strong>: 16GB+</li>
+<li><em>Почему много памяти?</em> Потому что большие датасеты требуют много RAM</li>
+<li><em>Что можно с 16GB?</em> Обрабатывать датасеты до 10GB, обучать сложные модели</li>
+<li><em>Что можно с 32GB+?</em> Обрабатывать датасеты до 50GB, обучать ансамбли моделей</li>
+<li><em>Практический пример</em>: Датасет 5GB требует 20GB RAM для комфортной работы</li>
+<li><strong>CPU</strong>: 8+ ядер</li>
+<li><em>Почему много ядер?</em> Потому что AutoML Gluon использует все доступные ядра</li>
+<li><em>Что происходит с 8 ядрами?</em> Обучение в 4-8 раз быстрее чем с 2 ядрами</li>
+<li><em>Что происходит с 16+ ядрами?</em> Обучение в 8-16 раз быстрее</li>
+<li><em>Практический пример</em>: Обучение 1 час на 2 ядрах = 7 минут на 16 ядрах</li>
+<li><strong>GPU</strong>: NVIDIA GPU с CUDA поддержкой (опционально)</li>
+<li><em>Почему GPU важен?</em> Потому что он ускоряет обучение в 10-100 раз</li>
+<li><em>Минимальные требования GPU</em>: GTX 1060 6GB или лучше</li>
+<li><em>Рекомендуемые GPU</em>: RTX 3070, RTX 4080, A100 для профессиональной работы</li>
+<li><em>Практический пример</em>: Обучение 10 часов на CPU = 1 час на RTX 3070</li>
+<li><strong>Диск</strong>: 10GB+ свободного места</li>
+<li><em>Почему много места?</em> Потому что модели и кэш занимают много места</li>
+<li><em>SSD vs HDD</em>: SSD в 5-10 раз быстрее для загрузки данных</li>
+<li><em>Практический пример</em>: Проект с 50 моделями занимает 20-50GB</li>
+</ul>
+<h2 id="pip">Установка через pip</h2>
+<p><strong>Почему pip - самый популярный способ установки?</strong> Потому что он простой, надежный и автоматически решает зависимости.</p>
+<h3 id="_8">🚀 Базовая установка</h3>
+<p><strong>Почему начинаем с базовой установки?</strong> Потому что она дает все необходимое для начала работы:</p>
+<div class="codehilite"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>autogluon
+</code></pre></div>
+
+<p><strong>Что происходит при этой команде?</strong><br />
+- Устанавливается основной пакет AutoML Gluon<br />
+- Автоматически устанавливаются все необходимые зависимости<br />
+- Создается окружение для работы с табличными данными<br />
+- Настраивается базовая конфигурация</p>
+<p><strong>Детальный процесс установки:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Что происходит внутри pip install autogluon</span>
+<span class="c1"># 1. Скачивание пакета (50-100MB)</span>
+<span class="c1"># 2. Установка зависимостей:</span>
+<span class="c1">#    - numpy, pandas, scikit-learn</span>
+<span class="c1">#    - xgboost, lightgbm, catboost</span>
+<span class="c1">#    - torch, torchvision</span>
+<span class="c1">#    - matplotlib, seaborn</span>
+<span class="c1"># 3. Проверка совместимости версий</span>
+<span class="c1"># 4. Создание конфигурационных файлов</span>
+<span class="c1"># 5. Тестирование установки</span>
+</code></pre></div>
+
+<p><strong>Время установки:</strong><br />
+- Быстрый интернет: 5-10 минут<br />
+- Медленный интернет: 30-60 минут<br />
+- Первая установка: Дольше из-за компиляции<br />
+- Последующие обновления: Быстрее</p>
+<h3 id="_9">🎯 Установка с дополнительными зависимостями</h3>
+<p><strong>Почему нужны дополнительные компоненты?</strong> Потому что разные задачи требуют разных инструментов:</p>
+<h4 id="_10">📊 Для работы с табличными данными</h4>
+<div class="codehilite"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>autogluon.tabular
+</code></pre></div>
+
+<p><strong>Что дает autogluon.tabular?</strong><br />
+- Оптимизированные алгоритмы для табличных данных<br />
+- Автоматическая обработка категориальных переменных<br />
+- Встроенная валидация и метрики<br />
+- Поддержка больших датасетов</p>
+<p><strong>Детальные возможности:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Что включает autogluon.tabular</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">autogluon.tabular</span><span class="w"> </span><span class="kn">import</span> <span class="n">TabularPredictor</span>
+
+<span class="c1"># Алгоритмы:</span>
+<span class="c1"># - XGBoost, LightGBM, CatBoost</span>
+<span class="c1"># - Random Forest, Extra Trees</span>
+<span class="c1"># - Neural Networks</span>
+<span class="c1"># - Linear Models</span>
+<span class="c1"># - Ensemble Methods</span>
+
+<span class="c1"># Автоматические возможности:</span>
+<span class="c1"># - Feature Engineering</span>
+<span class="c1"># - Hyperparameter Tuning</span>
+<span class="c1"># - Model Selection</span>
+<span class="c1"># - Cross-Validation</span>
+</code></pre></div>
+
+<p><strong>Когда использовать:</strong><br />
+- Классификация и регрессия<br />
+- Табличные данные (CSV, Excel, SQL)<br />
+- Структурированные данные<br />
+- Бизнес-аналитика</p>
+<h4 id="_11">⏰ Для работы с временными рядами</h4>
+<div class="codehilite"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>autogluon.timeseries
+</code></pre></div>
+
+<p><strong>Что дает autogluon.timeseries?</strong><br />
+- Специальные алгоритмы для временных рядов<br />
+- Автоматическое определение сезонности<br />
+- Поддержка многомерных временных рядов<br />
+- Встроенное прогнозирование</p>
+<p><strong>Детальные возможности:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Что включает autogluon.timeseries</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">autogluon.timeseries</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeSeriesPredictor</span>
+
+<span class="c1"># Алгоритмы:</span>
+<span class="c1"># - ARIMA, SARIMA</span>
+<span class="c1"># - Prophet, ETS</span>
+<span class="c1"># - Deep Learning (LSTM, Transformer)</span>
+<span class="c1"># - Ensemble Methods</span>
+
+<span class="c1"># Автоматические возможности:</span>
+<span class="c1"># - Seasonality Detection</span>
+<span class="c1"># - Trend Analysis</span>
+<span class="c1"># - Anomaly Detection</span>
+<span class="c1"># - Multi-step Forecasting</span>
+</code></pre></div>
+
+<p><strong>Когда использовать:</strong><br />
+- Прогнозирование продаж<br />
+- Анализ временных рядов<br />
+- Финансовые данные<br />
+- IoT данные</p>
+<h4 id="_12">🖼️ Для работы с изображениями</h4>
+<div class="codehilite"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>autogluon.vision
+</code></pre></div>
+
+<p><strong>Что дает autogluon.vision?</strong><br />
+- Готовые CNN архитектуры<br />
+- Автоматическое увеличение данных<br />
+- Предобученные модели<br />
+- Поддержка GPU ускорения</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Для работы с текстом</span>
+pip<span class="w"> </span>install<span class="w"> </span>autogluon.text
+</code></pre></div>
+
+<p><strong>Что дает autogluon.text?</strong><br />
+- Современные NLP модели<br />
+- Автоматическая токенизация<br />
+- Предобученные эмбеддинги<br />
+- Поддержка трансформеров</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Полная установка всех компонентов</span>
+pip<span class="w"> </span>install<span class="w"> </span>autogluon<span class="o">[</span>all<span class="o">]</span>
+</code></pre></div>
+
+<p><strong>Почему полная установка удобна?</strong> Потому что вы получаете все возможности сразу, но это занимает больше места и времени.</p>
+<h2 id="conda">Установка через conda</h2>
+<h3 id="_13">Создание нового окружения</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Создание окружения с Python 3.9</span>
+conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>autogluon<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.9
+conda<span class="w"> </span>activate<span class="w"> </span>autogluon
+
+<span class="c1"># Установка AutoGluon</span>
+conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>autogluon
+</code></pre></div>
+
+<h3 id="gpu">Установка с GPU поддержкой</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Создание окружения с CUDA</span>
+conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>autogluon-gpu<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.9
+conda<span class="w"> </span>activate<span class="w"> </span>autogluon-gpu
+
+<span class="c1"># Установка PyTorch с CUDA</span>
+conda<span class="w"> </span>install<span class="w"> </span>pytorch<span class="w"> </span>torchvision<span class="w"> </span>torchaudio<span class="w"> </span>pytorch-cuda<span class="o">=</span><span class="m">11</span>.8<span class="w"> </span>-c<span class="w"> </span>pytorch<span class="w"> </span>-c<span class="w"> </span>nvidia
+
+<span class="c1"># Установка AutoGluon</span>
+pip<span class="w"> </span>install<span class="w"> </span>autogluon
+</code></pre></div>
+
+<h2 id="_14">Установка из исходного кода</h2>
+<h3 id="_15">Клонирование репозитория</h3>
+<div class="codehilite"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/autogluon/autogluon.git
+<span class="nb">cd</span><span class="w"> </span>autogluon
+</code></pre></div>
+
+<h3 id="_16">Установка в режиме разработки</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Установка зависимостей</span>
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+
+<span class="c1"># Или для конкретного модуля</span>
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>./tabular
+</code></pre></div>
+
+<h2 id="_17">Проверка установки</h2>
+<h3 id="_18">Базовый тест</h3>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">autogluon</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ag</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AutoGluon version: </span><span class="si">{</span><span class="n">ag</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Тест импорта основных модулей</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">autogluon.tabular</span><span class="w"> </span><span class="kn">import</span> <span class="n">TabularPredictor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">autogluon.timeseries</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeSeriesPredictor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">autogluon.vision</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImagePredictor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">autogluon.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextPredictor</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;All modules imported successfully!&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="_19">Тест с простым примером</h3>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">autogluon.tabular</span><span class="w"> </span><span class="kn">import</span> <span class="n">TabularPredictor</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Создание тестовых данных</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">&#39;feature1&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+    <span class="s1">&#39;feature2&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+    <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="p">})</span>
+
+<span class="c1"># Тест обучения</span>
+<span class="n">predictor</span> <span class="o">=</span> <span class="n">TabularPredictor</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;target&#39;</span><span class="p">)</span>
+<span class="n">predictor</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">time_limit</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>  <span class="c1"># 10 секунд для быстрого теста</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Installation test passed!&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<h2 id="_20">Установка дополнительных зависимостей</h2>
+<h3 id="gpu_1">Для работы с GPU</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Установка CUDA toolkit (Ubuntu/Debian)</span>
+wget<span class="w"> </span>https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
+sudo<span class="w"> </span>mv<span class="w"> </span>cuda-ubuntu2004.pin<span class="w"> </span>/etc/apt/preferences.d/cuda-repository-pin-600
+wget<span class="w"> </span>https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda-repository-ubuntu2004-11-8-local_11.8.0-520.61.05-1_amd64.deb
+sudo<span class="w"> </span>dpkg<span class="w"> </span>-i<span class="w"> </span>cuda-repository-ubuntu2004-11-8-local_11.8.0-520.61.05-1_amd64.deb
+sudo<span class="w"> </span>apt-key<span class="w"> </span>add<span class="w"> </span>/var/cuda-repository-ubuntu2004-11-8-local/7fa2af80.pub
+sudo<span class="w"> </span>apt-get<span class="w"> </span>update
+sudo<span class="w"> </span>apt-get<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span>cuda
+
+<span class="c1"># Установка PyTorch с CUDA</span>
+pip<span class="w"> </span>install<span class="w"> </span>torch<span class="w"> </span>torchvision<span class="w"> </span>torchaudio<span class="w"> </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/cu118
+</code></pre></div>
+
+<h3 id="_21">Для работы с большими датасетами</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Установка дополнительных библиотек для обработки больших данных</span>
+pip<span class="w"> </span>install<span class="w"> </span>dask<span class="o">[</span>complete<span class="o">]</span>
+pip<span class="w"> </span>install<span class="w"> </span>ray<span class="o">[</span>default<span class="o">]</span>
+pip<span class="w"> </span>install<span class="w"> </span>modin<span class="o">[</span>all<span class="o">]</span>
+</code></pre></div>
+
+<h3 id="_22">Для работы с временными рядами</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Специальные библиотеки для временных рядов</span>
+pip<span class="w"> </span>install<span class="w"> </span>gluonts
+pip<span class="w"> </span>install<span class="w"> </span>mxnet
+pip<span class="w"> </span>install<span class="w"> </span>statsmodels
+</code></pre></div>
+
+<h2 id="_23">Настройка окружения</h2>
+<h3 id="_24">Переменные окружения</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Установка переменных для оптимизации производительности</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">OMP_NUM_THREADS</span><span class="o">=</span><span class="m">4</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">MKL_NUM_THREADS</span><span class="o">=</span><span class="m">4</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">OPENBLAS_NUM_THREADS</span><span class="o">=</span><span class="m">4</span>
+
+<span class="c1"># Для GPU</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">CUDA_VISIBLE_DEVICES</span><span class="o">=</span><span class="m">0</span>
+
+<span class="c1"># Для отладки</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">AUTOGLUON_DEBUG</span><span class="o">=</span><span class="m">1</span>
+</code></pre></div>
+
+<h3 id="_25">Конфигурационный файл</h3>
+<p>Создайте файл <code>~/.autogluon/config.yaml</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Конфигурация AutoGluon</span>
+<span class="nt">default</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">time_limit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3600</span><span class="w">  </span><span class="c1"># 1 час по умолчанию</span>
+<span class="w">  </span><span class="nt">memory_limit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span><span class="w">  </span><span class="c1"># 8GB RAM</span>
+<span class="w">  </span><span class="nt">num_cpus</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span><span class="w">  </span><span class="c1"># Количество CPU ядер</span>
+<span class="w">  </span><span class="nt">num_gpus</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w">  </span><span class="c1"># Количество GPU</span>
+
+<span class="c1"># Настройки для разных задач</span>
+<span class="nt">tabular</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">presets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;best_quality&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;high_quality&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;good_quality&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;medium_quality&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;optimize_for_deployment&#39;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">hyperparameter_tune_kwargs</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">num_trials</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">    </span><span class="nt">scheduler</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;local&#39;</span>
+<span class="w">    </span><span class="nt">searcher</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;auto&#39;</span>
+
+<span class="nt">timeseries</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">prediction_length</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">24</span>
+<span class="w">  </span><span class="nt">freq</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;H&#39;</span>
+<span class="w">  </span><span class="nt">target_column</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;target&#39;</span>
+</code></pre></div>
+
+<h2 id="_26">Устранение проблем при установке</h2>
+<h3 id="_27">Проблемы с зависимостями</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Очистка кэша pip</span>
+pip<span class="w"> </span>cache<span class="w"> </span>purge
+
+<span class="c1"># Переустановка с игнорированием кэша</span>
+pip<span class="w"> </span>install<span class="w"> </span>--no-cache-dir<span class="w"> </span>autogluon
+
+<span class="c1"># Установка конкретной версии</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="nv">autogluon</span><span class="o">==</span><span class="m">0</span>.8.2
+</code></pre></div>
+
+<h3 id="cuda">Проблемы с CUDA</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Проверка версии CUDA</span>
+nvidia-smi
+
+<span class="c1"># Проверка совместимости PyTorch</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import torch; print(torch.cuda.is_available())&quot;</span>
+
+<span class="c1"># Установка совместимой версии PyTorch</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="nv">torch</span><span class="o">==</span><span class="m">1</span>.13.1+cu117<span class="w"> </span><span class="nv">torchvision</span><span class="o">==</span><span class="m">0</span>.14.1+cu117<span class="w"> </span>--extra-index-url<span class="w"> </span>https://download.pytorch.org/whl/cu117
+</code></pre></div>
+
+<h3 id="_28">Проблемы с памятью</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Установка с ограничением памяти</span>
+pip<span class="w"> </span>install<span class="w"> </span>--no-cache-dir<span class="w"> </span>--no-deps<span class="w"> </span>autogluon
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</code></pre></div>
+
+<h2 id="_29">Проверка работоспособности</h2>
+<h3 id="_30">Полный тест установки</h3>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">autogluon</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">autogluon.tabular</span><span class="w"> </span><span class="kn">import</span> <span class="n">TabularPredictor</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_installation</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Полный тест установки AutoGluon&quot;&quot;&quot;</span>
+
+    <span class="c1"># Создание тестовых данных</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+    <span class="n">n_samples</span> <span class="o">=</span> <span class="mi">1000</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+        <span class="s1">&#39;feature1&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_samples</span><span class="p">),</span>
+        <span class="s1">&#39;feature2&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_samples</span><span class="p">),</span>
+        <span class="s1">&#39;feature3&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_samples</span><span class="p">),</span>
+        <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">)</span>
+    <span class="p">})</span>
+
+    <span class="c1"># Разделение на train/test</span>
+    <span class="n">train_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="mi">800</span><span class="p">]</span>
+    <span class="n">test_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">800</span><span class="p">:]</span>
+
+    <span class="c1"># Создание и обучение модели</span>
+    <span class="n">predictor</span> <span class="o">=</span> <span class="n">TabularPredictor</span><span class="p">(</span>
+        <span class="n">label</span><span class="o">=</span><span class="s1">&#39;target&#39;</span><span class="p">,</span>
+        <span class="n">problem_type</span><span class="o">=</span><span class="s1">&#39;binary&#39;</span><span class="p">,</span>
+        <span class="n">eval_metric</span><span class="o">=</span><span class="s1">&#39;accuracy&#39;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Обучение с ограничением времени</span>
+    <span class="n">predictor</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+        <span class="n">train_data</span><span class="p">,</span>
+        <span class="n">time_limit</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>  <span class="c1"># 1 минута</span>
+        <span class="n">presets</span><span class="o">=</span><span class="s1">&#39;medium_quality&#39;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Предсказания</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">predictor</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+
+    <span class="c1"># Оценка качества</span>
+    <span class="n">performance</span> <span class="o">=</span> <span class="n">predictor</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model performance: </span><span class="si">{</span><span class="n">performance</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Installation test completed successfully!&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">test_installation</span><span class="p">()</span>
+</code></pre></div>
+
+<h2 id="_31">Следующие шаги</h2>
+<p>После успешной установки переходите к:<br />
+- <a href="./02_basic_usage.md">Базовому использованию</a><br />
+- <a href="./03_advanced_configuration.md">Продвинутой конфигурации</a><br />
+- <a href="./04_metrics.md">Работе с метриками</a></p>
+<h2 id="_32">Полезные ссылки</h2>
+<ul>
+<li><a href="https://auto.gluon.ai/">Официальная документация</a></li>
+<li><a href="https://github.com/autogluon/autogluon">GitHub репозиторий</a></li>
+<li><a href="https://github.com/autogluon/autogluon/tree/master/examples">Примеры использования</a></li>
+<li><a href="https://discuss.autogluon.ai/">Форум сообщества</a></li>
+</ul>
+        
+        <div class="nav-links">
+            <a href="#top">↑ Наверх</a>
+            <a href="#next">Следующая глава →</a>
+        </div>
+    </div>
+</body>
+</html>
