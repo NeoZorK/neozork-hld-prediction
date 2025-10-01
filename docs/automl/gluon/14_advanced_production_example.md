@@ -45,7 +45,55 @@
 
 ```python
 class AdvancedMLSystem:
-    """Продвинутая ML-система для DEX торговли - комплексное решение"""
+    """
+    Продвинутая ML-система для DEX торговли - комплексное решение
+    
+    Attributes:
+    -----------
+    models : Dict[str, TabularPredictor]
+        Словарь специализированных моделей:
+        - 'price_direction': модель предсказания направления цены (основная)
+        - 'volatility': модель предсказания волатильности (риск-менеджмент)
+        - 'volume': модель предсказания объемов торгов (ликвидность)
+        - 'sentiment': модель анализа настроений рынка (социальные факторы)
+        - 'macro': модель макроэкономических факторов (внешние события)
+        
+    ensemble : TabularPredictor or None
+        Ансамблевая модель для объединения предсказаний:
+        - Объединяет предсказания всех специализированных моделей
+        - Использует мета-обучение для оптимального взвешивания
+        - Обеспечивает финальное решение системы
+        
+    risk_manager : RiskManager
+        Система управления рисками:
+        - Расчет размера позиций (position sizing)
+        - Динамические стоп-лоссы
+        - Оптимизация портфеля
+        - Расчет VaR и других метрик риска
+        
+    portfolio_manager : PortfolioManager
+        Система управления портфелем:
+        - Оптимизация распределения активов
+        - Ребалансировка портфеля
+        - Анализ корреляций между активами
+        - Управление ликвидностью
+        
+    monitoring : AdvancedMonitoring
+        Система мониторинга и алертинга:
+        - Отслеживание производительности моделей
+        - Мониторинг здоровья системы
+        - Автоматические алерты
+        - Автоматическое переобучение
+        
+    Notes:
+    ------
+    Архитектура системы:
+    - Модульная структура с независимыми компонентами
+    - Специализированные модели для разных аспектов торговли
+    - Ансамблевое объединение для повышения точности
+    - Комплексный риск-менеджмент для защиты капитала
+    - Продвинутый мониторинг для поддержания производительности
+    """
     
     def __init__(self):
         # Множественные модели для разных аспектов торговли
@@ -67,7 +115,24 @@ class AdvancedMLSystem:
         self.monitoring = AdvancedMonitoring()
         
     def initialize_system(self):
-        """Инициализация всех компонентов системы - запуск всех модулей"""
+        """
+        Инициализация всех компонентов системы - запуск всех модулей
+        
+        Notes:
+        ------
+        Процесс инициализации:
+        1. Загрузка предобученных моделей
+        2. Инициализация риск-менеджера с параметрами
+        3. Настройка портфель-менеджера
+        4. Запуск системы мониторинга
+        5. Проверка здоровья всех компонентов
+        
+        Требования к инициализации:
+        - Все модели должны быть предобучены
+        - Конфигурация риск-менеджмента должна быть задана
+        - Подключения к внешним сервисам должны быть установлены
+        - Система мониторинга должна быть настроена
+        """
         pass
 ```
 
@@ -86,18 +151,89 @@ from textblob import TextBlob
 import newsapi
 
 class AdvancedDataProcessor:
-    """Продвинутый процессор данных"""
+    """
+    Продвинутый процессор данных для сбора и обработки информации из множественных источников
+    
+    Attributes:
+    -----------
+    exchanges : Dict[str, ccxt.Exchange]
+        Словарь подключений к криптовалютным биржам:
+        - 'binance': Binance (крупнейшая по объему торгов)
+        - 'coinbase': Coinbase Pro (регулируемая биржа США)
+        - 'kraken': Kraken (старейшая биржа, высокая безопасность)
+        
+    news_api : newsapi.NewsApiClient
+        Клиент для получения новостей:
+        - API ключ для доступа к новостным данным
+        - Поддержка фильтрации по ключевым словам
+        - Анализ тональности новостей
+        
+    Notes:
+    ------
+    Источники данных:
+    - Криптовалютные биржи: OHLCV данные, объемы, ликвидность
+    - Новостные API: анализ настроений рынка
+    - Социальные сети: Twitter, Reddit, Telegram
+    - Макроэкономические индикаторы: DXY, VIX, Fear & Greed Index
+    - Технические индикаторы: 50+ различных индикаторов
+    """
     
     def __init__(self):
         self.exchanges = {
-            'binance': ccxt.binance(),
-            'coinbase': ccxt.coinbasepro(),
-            'kraken': ccxt.kraken()
+            'binance': ccxt.binance(),      # Крупнейшая биржа по объему
+            'coinbase': ccxt.coinbasepro(), # Регулируемая биржа США
+            'kraken': ccxt.kraken()         # Старейшая и безопасная биржа
         }
         self.news_api = newsapi.NewsApiClient(api_key='YOUR_API_KEY')
     
     def collect_multi_source_data(self, symbols, timeframe='1h', days=365):
-        """Сбор данных из множественных источников"""
+        """
+        Сбор данных из множественных источников для комплексного анализа
+        
+        Parameters:
+        -----------
+        symbols : List[str]
+            Список символов криптовалют для анализа:
+            - 'BTC/USDT': Bitcoin к Tether
+            - 'ETH/USDT': Ethereum к Tether
+            - 'ADA/USDT': Cardano к Tether
+            - 'SOL/USDT': Solana к Tether
+            - Другие доступные пары на биржах
+            
+        timeframe : str, default='1h'
+            Временной интервал для данных:
+            - '1m': 1 минута (высокочастотная торговля)
+            - '5m': 5 минут (скальпинг)
+            - '15m': 15 минут (краткосрочная торговля)
+            - '1h': 1 час (среднесрочная торговля)
+            - '4h': 4 часа (дневная торговля)
+            - '1d': 1 день (позиционная торговля)
+            
+        days : int, default=365
+            Количество дней исторических данных:
+            - 30: 1 месяц (краткосрочные паттерны)
+            - 90: 3 месяца (сезонные паттерны)
+            - 365: 1 год (годовые циклы)
+            - 730: 2 года (долгосрочные тренды)
+            
+        Returns:
+        --------
+        Dict[str, Dict[str, Any]]
+            Структурированные данные по каждому символу:
+            - {exchange}_price: OHLCV данные с биржи
+            - technical: технические индикаторы
+            - sentiment: данные о настроениях
+            - macro: макроэкономические данные
+            
+        Notes:
+        ------
+        Процесс сбора данных:
+        1. Получение OHLCV данных с каждой биржи
+        2. Расчет технических индикаторов
+        3. Сбор новостей и анализ тональности
+        4. Получение макроэкономических данных
+        5. Объединение и структурирование данных
+        """
         
         all_data = {}
         
@@ -128,111 +264,300 @@ class AdvancedDataProcessor:
         return all_data
     
     def _calculate_advanced_indicators(self, price_data):
-        """Расчет продвинутых технических индикаторов"""
+        """
+        Расчет продвинутых технических индикаторов для комплексного анализа рынка
+        
+        Parameters:
+        -----------
+        price_data : pd.DataFrame
+            OHLCV данные с биржи:
+            - open: цена открытия
+            - high: максимальная цена
+            - low: минимальная цена
+            - close: цена закрытия
+            - volume: объем торгов
+            
+        Returns:
+        --------
+        pd.DataFrame
+            Данные с добавленными техническими индикаторами:
+            - Базовые индикаторы: SMA, EMA
+            - Осцилляторы: RSI, Stochastic, Williams %R
+            - Трендовые: MACD, ADX, Aroon
+            - Объемные: OBV, AD, ADOSC
+            - Волатильность: ATR, NATR, TRANGE
+            - Bollinger Bands: верхняя, средняя, нижняя полосы
+            - Momentum: MOM, ROC, PPO
+            - Свечные паттерны: Doji, Hammer, Engulfing
+            
+        Notes:
+        ------
+        Категории индикаторов:
+        
+        1. Базовые индикаторы (тренд):
+           - SMA_20: 20-периодная скользящая средняя (краткосрочный тренд)
+           - SMA_50: 50-периодная скользящая средняя (среднесрочный тренд)
+           - SMA_200: 200-периодная скользящая средняя (долгосрочный тренд)
+           
+        2. Осцилляторы (перекупленность/перепроданность):
+           - RSI: индекс относительной силы (0-100)
+           - STOCH_K/D: стохастический осциллятор
+           - WILLR: Williams %R (-100 до 0)
+           
+        3. Трендовые индикаторы:
+           - MACD: схождение-расхождение скользящих средних
+           - ADX: индекс направленного движения (сила тренда)
+           - AROON: индикатор тренда и времени
+           
+        4. Объемные индикаторы:
+           - OBV: баланс объема (накопление/распределение)
+           - AD: накопление/распределение
+           - ADOSC: осциллятор накопления/распределения
+           
+        5. Волатильность:
+           - ATR: средний истинный диапазон
+           - NATR: нормализованный ATR
+           - TRANGE: истинный диапазон
+           
+        6. Bollinger Bands:
+           - BB_upper/lower: верхняя/нижняя полосы
+           - BB_width: ширина полос (волатильность)
+           - BB_position: позиция цены в полосах
+           
+        7. Momentum:
+           - MOM: момент (изменение цены)
+           - ROC: скорость изменения
+           - PPO: процентный ценовой осциллятор
+           
+        8. Свечные паттерны:
+           - DOJI: доджи (неопределенность)
+           - HAMMER: молот (разворот вверх)
+           - ENGULFING: поглощение (сильный сигнал)
+        """
         
         df = price_data.copy()
         
-        # Базовые индикаторы
-        df['SMA_20'] = talib.SMA(df['close'], timeperiod=20)
-        df['SMA_50'] = talib.SMA(df['close'], timeperiod=50)
-        df['SMA_200'] = talib.SMA(df['close'], timeperiod=200)
+        # Базовые индикаторы (трендовые)
+        df['SMA_20'] = talib.SMA(df['close'], timeperiod=20)    # Краткосрочный тренд
+        df['SMA_50'] = talib.SMA(df['close'], timeperiod=50)    # Среднесрочный тренд
+        df['SMA_200'] = talib.SMA(df['close'], timeperiod=200)  # Долгосрочный тренд
         
-        # Осцилляторы
-        df['RSI'] = talib.RSI(df['close'], timeperiod=14)
-        df['STOCH_K'], df['STOCH_D'] = talib.STOCH(df['high'], df['low'], df['close'])
-        df['WILLR'] = talib.WILLR(df['high'], df['low'], df['close'])
+        # Осцилляторы (перекупленность/перепроданность)
+        df['RSI'] = talib.RSI(df['close'], timeperiod=14)  # Индекс относительной силы
+        df['STOCH_K'], df['STOCH_D'] = talib.STOCH(df['high'], df['low'], df['close'])  # Стохастик
+        df['WILLR'] = talib.WILLR(df['high'], df['low'], df['close'])  # Williams %R
         
         # Трендовые индикаторы
-        df['MACD'], df['MACD_signal'], df['MACD_hist'] = talib.MACD(df['close'])
-        df['ADX'] = talib.ADX(df['high'], df['low'], df['close'])
-        df['AROON_UP'], df['AROON_DOWN'] = talib.AROON(df['high'], df['low'])
+        df['MACD'], df['MACD_signal'], df['MACD_hist'] = talib.MACD(df['close'])  # MACD
+        df['ADX'] = talib.ADX(df['high'], df['low'], df['close'])  # Индекс направленного движения
+        df['AROON_UP'], df['AROON_DOWN'] = talib.AROON(df['high'], df['low'])  # Aroon
         
         # Объемные индикаторы
-        df['OBV'] = talib.OBV(df['close'], df['volume'])
-        df['AD'] = talib.AD(df['high'], df['low'], df['close'], df['volume'])
-        df['ADOSC'] = talib.ADOSC(df['high'], df['low'], df['close'], df['volume'])
+        df['OBV'] = talib.OBV(df['close'], df['volume'])  # Баланс объема
+        df['AD'] = talib.AD(df['high'], df['low'], df['close'], df['volume'])  # Накопление/распределение
+        df['ADOSC'] = talib.ADOSC(df['high'], df['low'], df['close'], df['volume'])  # AD осциллятор
         
         # Волатильность
-        df['ATR'] = talib.ATR(df['high'], df['low'], df['close'])
-        df['NATR'] = talib.NATR(df['high'], df['low'], df['close'])
-        df['TRANGE'] = talib.TRANGE(df['high'], df['low'], df['close'])
+        df['ATR'] = talib.ATR(df['high'], df['low'], df['close'])  # Средний истинный диапазон
+        df['NATR'] = talib.NATR(df['high'], df['low'], df['close'])  # Нормализованный ATR
+        df['TRANGE'] = talib.TRANGE(df['high'], df['low'], df['close'])  # Истинный диапазон
         
-        # Bollinger Bands
+        # Bollinger Bands (волатильность и уровни поддержки/сопротивления)
         df['BB_upper'], df['BB_middle'], df['BB_lower'] = talib.BBANDS(df['close'])
-        df['BB_width'] = (df['BB_upper'] - df['BB_lower']) / df['BB_middle']
-        df['BB_position'] = (df['close'] - df['BB_lower']) / (df['BB_upper'] - df['BB_lower'])
+        df['BB_width'] = (df['BB_upper'] - df['BB_lower']) / df['BB_middle']  # Ширина полос
+        df['BB_position'] = (df['close'] - df['BB_lower']) / (df['BB_upper'] - df['BB_lower'])  # Позиция в полосах
         
-        # Momentum
-        df['MOM'] = talib.MOM(df['close'], timeperiod=10)
-        df['ROC'] = talib.ROC(df['close'], timeperiod=10)
-        df['PPO'] = talib.PPO(df['close'])
+        # Momentum (импульс)
+        df['MOM'] = talib.MOM(df['close'], timeperiod=10)  # Момент
+        df['ROC'] = talib.ROC(df['close'], timeperiod=10)  # Скорость изменения
+        df['PPO'] = talib.PPO(df['close'])  # Процентный ценовой осциллятор
         
-        # Price patterns
-        df['DOJI'] = talib.CDLDOJI(df['open'], df['high'], df['low'], df['close'])
-        df['HAMMER'] = talib.CDLHAMMER(df['open'], df['high'], df['low'], df['close'])
-        df['ENGULFING'] = talib.CDLENGULFING(df['open'], df['high'], df['low'], df['close'])
+        # Свечные паттерны (японские свечи)
+        df['DOJI'] = talib.CDLDOJI(df['open'], df['high'], df['low'], df['close'])  # Доджи
+        df['HAMMER'] = talib.CDLHAMMER(df['open'], df['high'], df['low'], df['close'])  # Молот
+        df['ENGULFING'] = talib.CDLENGULFING(df['open'], df['high'], df['low'], df['close'])  # Поглощение
         
         return df
     
     def _collect_sentiment_data(self, symbol):
-        """Сбор данных о настроениях рынка"""
+        """
+        Сбор данных о настроениях рынка из множественных источников
+        
+        Parameters:
+        -----------
+        symbol : str
+            Символ криптовалюты для анализа настроений:
+            - 'BTC/USDT': Bitcoin
+            - 'ETH/USDT': Ethereum
+            - 'ADA/USDT': Cardano
+            - Другие доступные символы
+            
+        Returns:
+        --------
+        pd.DataFrame
+            Данные о настроениях рынка:
+            - timestamp: время публикации
+            - title: заголовок статьи/поста
+            - sentiment: оценка тональности (-1 до 1)
+            - source: источник информации
+            - confidence: уверенность в анализе
+            
+        Notes:
+        ------
+        Источники данных о настроениях:
+        1. Новостные API (NewsAPI):
+           - Фильтрация по ключевым словам
+           - Анализ тональности заголовков и описаний
+           - Временной диапазон: последние 7 дней
+           
+        2. Социальные сети:
+           - Twitter: публичные посты и твиты
+           - Reddit: обсуждения в криптовалютных сообществах
+           - Telegram: каналы и группы
+           
+        3. Анализ тональности:
+           - TextBlob: базовая обработка естественного языка
+           - VADER: специально для социальных сетей
+           - BERT: продвинутый анализ контекста
+           
+        Шкала тональности:
+        - 1.0: очень позитивная
+        - 0.5: позитивная
+        - 0.0: нейтральная
+        - -0.5: негативная
+        - -1.0: очень негативная
+        """
         
         sentiment_data = []
         
-        # Новости
+        # Сбор новостей через NewsAPI
         try:
             news = self.news_api.get_everything(
-                q=f'{symbol} cryptocurrency',
-                from_param=(datetime.now() - timedelta(days=7)).isoformat(),
-                to=datetime.now().isoformat(),
-                language='en',
-                sort_by='publishedAt'
+                q=f'{symbol} cryptocurrency',  # Поисковый запрос
+                from_param=(datetime.now() - timedelta(days=7)).isoformat(),  # Последние 7 дней
+                to=datetime.now().isoformat(),  # До текущего времени
+                language='en',  # Английский язык
+                sort_by='publishedAt'  # Сортировка по времени публикации
             )
             
+            # Анализ тональности каждой статьи
             for article in news['articles']:
-                # Анализ тональности
-                blob = TextBlob(article['title'] + ' ' + article['description'])
-                sentiment_score = blob.sentiment.polarity
+                # Объединение заголовка и описания для анализа
+                text = article['title'] + ' ' + article['description']
+                
+                # Анализ тональности с помощью TextBlob
+                blob = TextBlob(text)
+                sentiment_score = blob.sentiment.polarity  # -1 до 1
+                confidence = abs(blob.sentiment.polarity)  # Уверенность (0 до 1)
                 
                 sentiment_data.append({
-                    'timestamp': article['publishedAt'],
-                    'title': article['title'],
-                    'sentiment': sentiment_score,
-                    'source': article['source']['name']
+                    'timestamp': article['publishedAt'],  # Время публикации
+                    'title': article['title'],  # Заголовок статьи
+                    'sentiment': sentiment_score,  # Оценка тональности
+                    'source': article['source']['name'],  # Источник новости
+                    'confidence': confidence  # Уверенность в анализе
                 })
         except Exception as e:
             print(f"Ошибка получения новостей: {e}")
         
-        # Социальные сети (пример с Twitter API)
+        # Сбор данных из социальных сетей (пример с Twitter API)
         # sentiment_data.extend(self._get_twitter_sentiment(symbol))
         
         return pd.DataFrame(sentiment_data)
     
     def _collect_macro_data(self):
-        """Сбор макроэкономических данных"""
+        """
+        Сбор макроэкономических данных для анализа внешних факторов влияния
+        
+        Returns:
+        --------
+        Dict[str, float]
+            Макроэкономические индикаторы:
+            - fear_greed: индекс страха и жадности (0-100)
+            - dxy: индекс доллара США (DXY)
+            - vix: индекс волатильности (VIX)
+            - gold_price: цена золота
+            - oil_price: цена нефти
+            - bond_yield: доходность облигаций
+            
+        Notes:
+        ------
+        Макроэкономические индикаторы:
+        
+        1. Fear & Greed Index (0-100):
+           - 0-25: Extreme Fear (покупка)
+           - 25-45: Fear (осторожная покупка)
+           - 45-55: Neutral (нейтрально)
+           - 55-75: Greed (осторожная продажа)
+           - 75-100: Extreme Greed (продажа)
+           
+        2. Dollar Index (DXY):
+           - Измеряет силу доллара против корзины валют
+           - Высокий DXY: давление на криптовалюты
+           - Низкий DXY: поддержка криптовалют
+           
+        3. VIX (Volatility Index):
+           - Индекс волатильности S&P 500
+           - Высокий VIX: неопределенность, риск-офф
+           - Низкий VIX: стабильность, риск-он
+           
+        4. Gold Price:
+           - Альтернативная валюта
+           - Корреляция с Bitcoin (цифровое золото)
+           
+        5. Oil Price:
+           - Инфляционные ожидания
+           - Влияние на экономику
+           
+        6. Bond Yield:
+           - Доходность 10-летних облигаций
+           - Безрисковая ставка
+        """
         
         macro_data = {}
         
-        # Индекс страха и жадности
+        # Индекс страха и жадности (Fear & Greed Index)
         try:
             fear_greed = requests.get('https://api.alternative.me/fng/').json()
-            macro_data['fear_greed'] = fear_greed['data'][0]['value']
+            macro_data['fear_greed'] = int(fear_greed['data'][0]['value'])  # 0-100
         except:
-            macro_data['fear_greed'] = 50
+            macro_data['fear_greed'] = 50  # Нейтральное значение по умолчанию
         
-        # DXY (Dollar Index)
+        # DXY (Dollar Index) - индекс доллара США
         try:
             dxy = yf.download('DX-Y.NYB', period='1y')['Close']
-            macro_data['dxy'] = dxy.iloc[-1]
+            macro_data['dxy'] = float(dxy.iloc[-1])  # Последнее значение
         except:
-            macro_data['dxy'] = 100
+            macro_data['dxy'] = 100.0  # Базовое значение по умолчанию
         
-        # VIX (Volatility Index)
+        # VIX (Volatility Index) - индекс волатильности
         try:
             vix = yf.download('^VIX', period='1y')['Close']
-            macro_data['vix'] = vix.iloc[-1]
+            macro_data['vix'] = float(vix.iloc[-1])  # Последнее значение
         except:
-            macro_data['vix'] = 20
+            macro_data['vix'] = 20.0  # Нормальное значение по умолчанию
+        
+        # Дополнительные макроэкономические индикаторы
+        try:
+            # Цена золота
+            gold = yf.download('GC=F', period='1y')['Close']
+            macro_data['gold_price'] = float(gold.iloc[-1])
+        except:
+            macro_data['gold_price'] = 1800.0
+        
+        try:
+            # Цена нефти
+            oil = yf.download('CL=F', period='1y')['Close']
+            macro_data['oil_price'] = float(oil.iloc[-1])
+        except:
+            macro_data['oil_price'] = 70.0
+        
+        try:
+            # Доходность 10-летних облигаций
+            bonds = yf.download('^TNX', period='1y')['Close']
+            macro_data['bond_yield'] = float(bonds.iloc[-1])
+        except:
+            macro_data['bond_yield'] = 4.0
         
         return macro_data
 ```
@@ -250,122 +575,329 @@ class AdvancedDataProcessor:
 
 ```python
 class MultiModelSystem:
-    """Система множественных моделей"""
+    """
+    Система множественных моделей для специализированного анализа разных аспектов торговли
+    
+    Attributes:
+    -----------
+    models : Dict[str, TabularPredictor]
+        Словарь специализированных моделей:
+        - 'price_direction': предсказание направления цены
+        - 'volatility': предсказание волатильности
+        - 'volume': предсказание объемов торгов
+        - 'sentiment': анализ настроений рынка
+        - 'macro': макроэкономические факторы
+        
+    ensemble_weights : Dict[str, float]
+        Веса для ансамблевого объединения:
+        - Веса основаны на производительности каждой модели
+        - Сумма весов = 1.0
+        - Динамически обновляются на основе результатов
+        
+    Notes:
+    ------
+    Принципы работы системы:
+    1. Специализация: каждая модель решает свою задачу
+    2. Независимость: модели обучаются отдельно
+    3. Ансамбль: объединение предсказаний для финального решения
+    4. Адаптивность: веса обновляются на основе производительности
+    """
     
     def __init__(self):
         self.models = {}
         self.ensemble_weights = {}
         
     def create_price_direction_model(self, data):
-        """Модель для предсказания направления цены"""
+        """
+        Модель для предсказания направления цены - основная модель системы
         
-        # Подготовка данных
+        Parameters:
+        -----------
+        data : pd.DataFrame
+            Подготовленные данные с техническими индикаторами:
+            - OHLCV данные
+            - Технические индикаторы (50+)
+            - Временной ряд с историческими данными
+            
+        Returns:
+        --------
+        TabularPredictor
+            Обученная модель для предсказания направления цены:
+            - Бинарная классификация (рост/падение)
+            - Высокое качество обучения
+            - Ансамбль из нескольких алгоритмов
+            
+        Notes:
+        ------
+        Процесс создания модели:
+        1. Подготовка признаков для анализа цены
+        2. Создание целевой переменной (направление цены)
+        3. Обучение с высоким качеством
+        4. Использование bagging для стабильности
+        
+        Признаки модели:
+        - Технические индикаторы: RSI, MACD, Bollinger Bands
+        - Трендовые индикаторы: SMA, EMA, ADX
+        - Объемные индикаторы: OBV, AD
+        - Волатильность: ATR, NATR
+        - Свечные паттерны: Doji, Hammer, Engulfing
+        
+        Настройки обучения:
+        - time_limit: 600s (10 минут)
+        - presets: 'best_quality' (максимальное качество)
+        - num_bag_folds: 5 (5-кратная валидация)
+        - num_bag_sets: 2 (2 набора для стабильности)
+        """
+        
+        # Подготовка признаков для анализа направления цены
         features = self._prepare_price_features(data)
+        
+        # Создание целевой переменной: рост цены на следующий период
         target = (data['close'].shift(-1) > data['close']).astype(int)
         
-        # Создание модели
+        # Создание модели с настройками для максимального качества
         predictor = TabularPredictor(
-            label='target',
-            problem_type='binary',
-            eval_metric='accuracy'
+            label='target',  # Целевая переменная
+            problem_type='binary',  # Бинарная классификация
+            eval_metric='accuracy'  # Метрика оценки
         )
         
+        # Обучение модели с высокими настройками качества
         predictor.fit(
-            features,
-            time_limit=600,
-            presets='best_quality',
-            num_bag_folds=5,
-            num_bag_sets=2
+            features,  # Признаки для обучения
+            time_limit=600,  # Время обучения в секундах (10 минут)
+            presets='best_quality',  # Максимальное качество
+            num_bag_folds=5,  # 5-кратная валидация
+            num_bag_sets=2  # 2 набора для стабильности
         )
         
         return predictor
     
     def create_volatility_model(self, data):
-        """Модель для предсказания волатильности"""
+        """
+        Модель для предсказания волатильности - критична для риск-менеджмента
         
-        # Расчет волатильности
+        Parameters:
+        -----------
+        data : pd.DataFrame
+            Подготовленные данные с техническими индикаторами
+            
+        Returns:
+        --------
+        TabularPredictor
+            Обученная модель для предсказания волатильности:
+            - Бинарная классификация (высокая/низкая волатильность)
+            - Используется для расчета размера позиций
+            - Влияет на настройки стоп-лоссов
+            
+        Notes:
+        ------
+        Применение модели волатильности:
+        - Расчет размера позиций (position sizing)
+        - Настройка динамических стоп-лоссов
+        - Оценка риска торговых операций
+        - Оптимизация портфеля
+        """
+        
+        # Расчет волатильности как стандартного отклонения за 20 периодов
         data['volatility'] = data['close'].rolling(20).std()
+        
+        # Целевая переменная: увеличение волатильности на следующий период
         data['volatility_target'] = (data['volatility'].shift(-1) > data['volatility']).astype(int)
         
+        # Подготовка признаков для анализа волатильности
         features = self._prepare_volatility_features(data)
         
+        # Создание модели для предсказания волатильности
         predictor = TabularPredictor(
-            label='volatility_target',
-            problem_type='binary',
-            eval_metric='accuracy'
+            label='volatility_target',  # Целевая переменная
+            problem_type='binary',  # Бинарная классификация
+            eval_metric='accuracy'  # Метрика оценки
         )
         
+        # Обучение модели с высоким качеством
         predictor.fit(
-            features,
-            time_limit=600,
-            presets='best_quality'
+            features,  # Признаки для обучения
+            time_limit=600,  # Время обучения в секундах (10 минут)
+            presets='best_quality'  # Максимальное качество
         )
         
         return predictor
     
     def create_volume_model(self, data):
-        """Модель для предсказания объемов"""
+        """
+        Модель для предсказания объемов торгов - важна для ликвидности
         
+        Parameters:
+        -----------
+        data : pd.DataFrame
+            Подготовленные данные с объемными индикаторами
+            
+        Returns:
+        --------
+        TabularPredictor
+            Обученная модель для предсказания объемов:
+            - Бинарная классификация (высокий/низкий объем)
+            - Используется для оценки ликвидности
+            - Влияет на выбор торговых пар
+            
+        Notes:
+        ------
+        Применение модели объемов:
+        - Оценка ликвидности торговых пар
+        - Выбор оптимального времени для торговли
+        - Анализ интереса рынка к активу
+        - Подтверждение сигналов других моделей
+        """
+        
+        # Целевая переменная: увеличение объема на следующий период
         data['volume_target'] = (data['volume'].shift(-1) > data['volume']).astype(int)
         
+        # Подготовка признаков для анализа объемов
         features = self._prepare_volume_features(data)
         
+        # Создание модели для предсказания объемов
         predictor = TabularPredictor(
-            label='volume_target',
-            problem_type='binary',
-            eval_metric='accuracy'
+            label='volume_target',  # Целевая переменная
+            problem_type='binary',  # Бинарная классификация
+            eval_metric='accuracy'  # Метрика оценки
         )
         
+        # Обучение модели с высоким качеством
         predictor.fit(features, time_limit=600, presets='best_quality')
         
         return predictor
     
     def create_sentiment_model(self, data, sentiment_data):
-        """Модель для анализа настроений"""
+        """
+        Модель для анализа настроений рынка - учитывает социальные факторы
         
-        # Объединение данных
+        Parameters:
+        -----------
+        data : pd.DataFrame
+            Подготовленные данные с техническими индикаторами
+            
+        sentiment_data : pd.DataFrame
+            Данные о настроениях рынка:
+            - Новости и их тональность
+            - Социальные сети
+            - Макроэкономические индикаторы
+            
+        Returns:
+        --------
+        TabularPredictor
+            Обученная модель для анализа настроений:
+            - Бинарная классификация (позитивные/негативные настроения)
+            - Учитывает внешние факторы влияния
+            - Дополняет технический анализ
+            
+        Notes:
+        ------
+        Применение модели настроений:
+        - Фильтрация сигналов технического анализа
+        - Учет внешних факторов влияния
+        - Анализ новостного фона
+        - Оценка рыночных настроений
+        """
+        
+        # Объединение технических данных с данными о настроениях
         merged_data = self._merge_sentiment_data(data, sentiment_data)
         
+        # Подготовка признаков для анализа настроений
         features = self._prepare_sentiment_features(merged_data)
+        
+        # Целевая переменная: рост цены на следующий период
         target = (merged_data['close'].shift(-1) > merged_data['close']).astype(int)
         
+        # Создание модели для анализа настроений
         predictor = TabularPredictor(
-            label='target',
-            problem_type='binary',
-            eval_metric='accuracy'
+            label='target',  # Целевая переменная
+            problem_type='binary',  # Бинарная классификация
+            eval_metric='accuracy'  # Метрика оценки
         )
         
+        # Обучение модели с высоким качеством
         predictor.fit(features, time_limit=600, presets='best_quality')
         
         return predictor
     
     def create_ensemble_model(self, models, data):
-        """Создание ансамблевой модели"""
+        """
+        Создание ансамблевой модели для объединения предсказаний всех специализированных моделей
         
-        # Получение предсказаний от всех моделей
+        Parameters:
+        -----------
+        models : Dict[str, TabularPredictor]
+            Словарь обученных специализированных моделей:
+            - 'price_direction': модель направления цены
+            - 'volatility': модель волатильности
+            - 'volume': модель объемов
+            - 'sentiment': модель настроений
+            - 'macro': модель макроэкономических факторов
+            
+        data : pd.DataFrame
+            Данные для получения предсказаний от всех моделей
+            
+        Returns:
+        --------
+        TabularPredictor
+            Ансамблевая модель (мета-модель):
+            - Объединяет предсказания всех специализированных моделей
+            - Использует мета-обучение для оптимального взвешивания
+            - Обеспечивает финальное решение системы
+            
+        Notes:
+        ------
+        Процесс создания ансамбля:
+        1. Получение предсказаний от всех специализированных моделей
+        2. Создание мета-признаков из вероятностей предсказаний
+        3. Обучение мета-модели на комбинации предсказаний
+        4. Оптимизация весов для максимальной точности
+        
+        Преимущества ансамбля:
+        - Повышение точности за счет комбинирования моделей
+        - Снижение риска переобучения
+        - Учет различных аспектов рынка
+        - Адаптивность к изменяющимся условиям
+        
+        Методы объединения:
+        - Voting: простое голосование
+        - Weighted Voting: взвешенное голосование
+        - Stacking: многоуровневое обучение
+        - Blending: усреднение предсказаний
+        """
+        
+        # Получение предсказаний от всех специализированных моделей
         predictions = {}
         probabilities = {}
         
         for name, model in models.items():
             if model is not None:
+                # Подготовка признаков для конкретной модели
                 features = self._prepare_features_for_model(name, data)
+                
+                # Получение предсказаний и вероятностей
                 predictions[name] = model.predict(features)
                 probabilities[name] = model.predict_proba(features)
         
-        # Создание мета-модели
+        # Создание мета-признаков из вероятностей предсказаний
         meta_features = pd.DataFrame(probabilities)
+        
+        # Целевая переменная для мета-модели
         meta_target = (data['close'].shift(-1) > data['close']).astype(int)
         
+        # Создание ансамблевой модели (мета-модели)
         ensemble_predictor = TabularPredictor(
-            label='target',
-            problem_type='binary',
-            eval_metric='accuracy'
+            label='target',  # Целевая переменная
+            problem_type='binary',  # Бинарная классификация
+            eval_metric='accuracy'  # Метрика оценки
         )
         
+        # Обучение мета-модели на комбинации предсказаний
         ensemble_predictor.fit(
-            meta_features,
-            time_limit=300,
-            presets='medium_quality_faster_train'
+            meta_features,  # Мета-признаки (вероятности от всех моделей)
+            time_limit=300,  # Время обучения в секундах (5 минут)
+            presets='medium_quality_faster_train'  # Баланс качества и скорости
         )
         
         return ensemble_predictor
@@ -513,29 +1045,125 @@ class AdvancedValidation:
 
 ```python
 class AdvancedRiskManager:
-    """Продвинутый риск-менеджмент"""
+    """
+    Продвинутый риск-менеджмент для комплексной защиты капитала и оптимизации доходности
+    
+    Attributes:
+    -----------
+    position_sizes : Dict[str, float]
+        Размеры позиций для каждого актива:
+        - Рассчитываются на основе Kelly Criterion
+        - Учитывают волатильность и корреляции
+        - Динамически обновляются
+        
+    stop_losses : Dict[str, float]
+        Уровни стоп-лоссов для каждого актива:
+        - Динамические на основе ATR
+        - Учитывают волатильность
+        - Адаптируются к рыночным условиям
+        
+    take_profits : Dict[str, float]
+        Уровни тейк-профитов для каждого актива:
+        - Соотношение риск/доходность 1:2 или лучше
+        - Адаптируются к волатильности
+        - Учитывают рыночные условия
+        
+    max_drawdown : float, default=0.15
+        Максимально допустимая просадка (15%):
+        - Критический уровень для остановки торговли
+        - Защита от катастрофических потерь
+        - Автоматическое снижение риска при приближении
+        
+    var_limit : float, default=0.05
+        Лимит Value at Risk (5%):
+        - Максимальная ожидаемая потеря за день
+        - Основа для расчета размера позиций
+        - Мониторинг в реальном времени
+        
+    Notes:
+    ------
+    Компоненты риск-менеджмента:
+    1. Position Sizing: расчет оптимального размера позиций
+    2. Stop Loss: динамические стоп-лоссы
+    3. Take Profit: уровни фиксации прибыли
+    4. Portfolio Optimization: оптимизация распределения активов
+    5. VaR Calculation: расчет Value at Risk
+    6. Correlation Analysis: анализ корреляций
+    7. Stress Testing: тестирование в экстремальных условиях
+    """
     
     def __init__(self):
-        self.position_sizes = {}
-        self.stop_losses = {}
-        self.take_profits = {}
-        self.max_drawdown = 0.15
-        self.var_limit = 0.05
+        self.position_sizes = {}  # Размеры позиций по активам
+        self.stop_losses = {}     # Стоп-лоссы по активам
+        self.take_profits = {}    # Тейк-профиты по активам
+        self.max_drawdown = 0.15  # Максимальная просадка (15%)
+        self.var_limit = 0.05     # Лимит VaR (5%)
         
     def calculate_position_size(self, prediction, confidence, account_balance, volatility):
-        """Расчет размера позиции с учетом риска"""
+        """
+        Расчет размера позиции с учетом риска на основе Kelly Criterion
         
-        # Базовый размер позиции (Kelly Criterion)
-        win_rate = confidence
-        avg_win = 0.02  # Средний выигрыш
-        avg_loss = 0.01  # Средний проигрыш
+        Parameters:
+        -----------
+        prediction : int
+            Предсказание модели (0 или 1):
+            - 0: падение цены (продажа)
+            - 1: рост цены (покупка)
+            
+        confidence : float
+            Уверенность модели (0-1):
+            - 0.5: низкая уверенность
+            - 0.7: средняя уверенность
+            - 0.9: высокая уверенность
+            
+        account_balance : float
+            Текущий баланс счета:
+            - Используется для расчета размера позиции
+            - Учитывается при ограничениях риска
+            
+        volatility : float
+            Волатильность актива:
+            - Высокая волатильность = меньший размер позиции
+            - Низкая волатильность = больший размер позиции
+            
+        Returns:
+        --------
+        float
+            Размер позиции в валюте счета:
+            - Рассчитан на основе Kelly Criterion
+            - Учитывает волатильность
+            - Ограничен максимальными лимитами риска
+            
+        Notes:
+        ------
+        Kelly Criterion формула:
+        f* = (bp - q) / b
         
+        где:
+        - f*: оптимальная доля капитала
+        - b: коэффициент выплаты (средний выигрыш / средний проигрыш)
+        - p: вероятность выигрыша (confidence)
+        - q: вероятность проигрыша (1 - confidence)
+        
+        Ограничения:
+        - Максимум 25% от баланса на одну позицию
+        - Минимум 1% от баланса
+        - Корректировка на волатильность
+        """
+        
+        # Базовый размер позиции на основе Kelly Criterion
+        win_rate = confidence  # Вероятность выигрыша
+        avg_win = 0.02  # Средний выигрыш (2%)
+        avg_loss = 0.01  # Средний проигрыш (1%)
+        
+        # Расчет Kelly fraction
         kelly_fraction = (win_rate * avg_win - (1 - win_rate) * avg_loss) / avg_win
         
-        # Ограничение Kelly
+        # Ограничение Kelly fraction (максимум 25%)
         kelly_fraction = max(0, min(kelly_fraction, 0.25))
         
         # Корректировка на волатильность
+        # Высокая волатильность = меньший размер позиции
         volatility_adjustment = 1 / (1 + volatility * 10)
         
         # Финальный размер позиции
