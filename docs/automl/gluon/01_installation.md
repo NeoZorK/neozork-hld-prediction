@@ -65,7 +65,7 @@ df = pd.read_csv('large_dataset.csv')  # MemoryError
 
 ## Системные требования
 
-![Установка AutoML Gluon](images/installation_flowchart.png)
+<img src="images/optimized/installation_flowchart.png" alt="Установка AutoML Gluon" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 1: Блок-схема процесса установки AutoML Gluon*
 
 ### Минимальные требования

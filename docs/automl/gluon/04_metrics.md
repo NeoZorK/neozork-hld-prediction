@@ -21,10 +21,10 @@
 
 ## Введение в метрики
 
-![Сравнение метрик](images/metrics_comparison.png)
+<img src="images/optimized/metrics_comparison.png" alt="Сравнение метрик" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 3: Сравнение метрик для классификации и регрессии*
 
-![Детальная визуализация метрик](images/metrics_detailed.png)
+<img src="images/optimized/metrics_detailed.png" alt="Детальная визуализация метрик" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 3.1: Детальная визуализация метрик - ROC Curve, Precision-Recall, Confusion Matrix, Accuracy vs Threshold, F1 Score vs Threshold*
 
 **Почему метрики - это язык машинного обучения?** Потому что они переводят сложные алгоритмы в понятные числа. Это как переводчик между техническими деталями и бизнес-результатами.

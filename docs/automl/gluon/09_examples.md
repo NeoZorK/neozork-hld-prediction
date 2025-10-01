@@ -21,7 +21,7 @@
 
 ## Введение в примеры
 
-![Monte Carlo анализ](images/monte_carlo_analysis.png)
+<img src="images/optimized/monte_carlo_analysis.png" alt="Monte Carlo анализ" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 8.1: Monte Carlo анализ - робастные vs переобученные системы, распределение прибыли, risk-return профиль*
 
 **Почему примеры - это язык машинного обучения?** Потому что они переводят сложные алгоритмы в понятные числа. Это как переводчик между техническими деталями и бизнес-результатами.

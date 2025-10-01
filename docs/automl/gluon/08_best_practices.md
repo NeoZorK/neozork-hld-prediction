@@ -21,10 +21,10 @@
 
 ## Введение в лучшие практики
 
-![Сравнение производительности](images/performance_comparison.png)
+<img src="images/optimized/performance_comparison.png" alt="Сравнение производительности" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 7: Сравнение производительности различных моделей*
 
-![Анализ робастности](images/robustness_analysis.png)
+<img src="images/optimized/robustness_analysis.png" alt="Анализ робастности" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 7.1: Анализ робастности - робастные vs переобученные системы, стабильность производительности*
 
 **Почему лучшие практики - это не просто "сделать хорошо"?** Это систематический подход к решению типичных проблем, основанный на опыте тысяч проектов. Это как медицинские протоколы - они спасают жизни.

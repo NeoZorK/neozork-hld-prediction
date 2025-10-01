@@ -21,10 +21,10 @@
 
 ## Введение в валидацию
 
-![Методы валидации](images/validation_methods.png)
+<img src="images/optimized/validation_methods.png" alt="Методы валидации" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 4: Методы валидации в AutoML Gluon*
 
-![Walk-Forward анализ](images/walk_forward_analysis.png)
+<img src="images/optimized/walk_forward_analysis.png" alt="Walk-Forward анализ" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 4.1: Walk-Forward валидация - схема, производительность, выбор параметров*
 
 **Почему валидация - это не просто "проверка модели"?** Это процесс, который определяет, готова ли ваша модель к реальному миру. Представьте, что вы готовите пилота к полету - валидация это симулятор, который показывает, как он поведет себя в реальных условиях.
