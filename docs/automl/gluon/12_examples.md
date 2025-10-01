@@ -74,7 +74,40 @@ import seaborn as sns
 
 # Создание синтетических данных для банковской задачи
 def create_bank_data(n_samples=10000):
-    """Создание синтетических банковских данных - имитация реальных банковских данных"""
+    """
+    Создание синтетических банковских данных - имитация реальных банковских данных
+    
+    Parameters:
+    -----------
+    n_samples : int, default=10000
+        Размер выборки для генерации:
+        - 1000-5000: небольшие датасеты (быстрое тестирование)
+        - 5000-20000: средние датасеты (баланс качества и скорости)
+        - 20000+: большие датасеты (максимальное качество)
+        
+    Returns:
+    --------
+    pd.DataFrame
+        Синтетические банковские данные:
+        - Числовые признаки: возраст, доход, кредитный рейтинг, долг/доход
+        - Категориальные признаки: статус занятости, образование, семейное положение
+        - Временные признаки: дата подачи заявки
+        - Целевая переменная: default_risk (0/1)
+        
+    Notes:
+    ------
+    Структура банковских данных:
+    - 20 числовых признаков (возраст, доход, кредитный рейтинг и др.)
+    - 15 информативных признаков (влияют на дефолт)
+    - 5 избыточных признаков (коррелированные с информативными)
+    - 3 категориальных признака (статус, образование, семейное положение)
+    - Временные метки для анализа трендов
+    
+    Бизнес-контекст:
+    - Задача: предсказание дефолта по кредиту
+    - Целевая переменная: default_risk (0 - нет дефолта, 1 - дефолт)
+    - Применение: кредитное скоринг, риск-менеджмент
+    """
     
     # Генерация данных с реалистичными параметрами
     X, y = make_classification(
@@ -117,23 +150,64 @@ print("Default rate:", bank_data['default_risk'].mean())
 ### Подготовка данных
 ```python
 def prepare_bank_data(data):
-    """Подготовка банковских данных"""
+    """
+    Подготовка банковских данных для машинного обучения
+    
+    Parameters:
+    -----------
+    data : pd.DataFrame
+        Исходные банковские данные:
+        - Содержит числовые и категориальные признаки
+        - Может содержать пропущенные значения
+        - Может содержать выбросы
+        
+    Returns:
+    --------
+    pd.DataFrame
+        Подготовленные данные:
+        - Заполнены пропущенные значения
+        - Созданы новые признаки
+        - Обработаны выбросы
+        - Готовы для обучения модели
+        
+    Notes:
+    ------
+    Процесс подготовки данных:
+    1. Заполнение пропущенных значений медианой
+    2. Создание новых признаков (feature engineering)
+    3. Обработка выбросов методом IQR
+    4. Нормализация данных
+    
+    Новые признаки:
+    - debt_to_income: отношение долга к доходу
+    - credit_utilization_ratio: коэффициент использования кредита
+    - payment_stability: стабильность платежей
+    
+    Обработка выбросов:
+    - Метод IQR (Interquartile Range)
+    - Замена выбросов на граничные значения
+    - Сохранение целевой переменной
+    """
     
     # Обработка пропущенных значений
+    # Медиана более устойчива к выбросам чем среднее
     data = data.fillna(data.median())
     
-    # Создание новых признаков
-    data['debt_to_income'] = data['debt_ratio'] * data['income']
-    data['credit_utilization_ratio'] = data['credit_utilization'] / (data['credit_score'] + 1)
-    data['payment_stability'] = data['payment_history'] / (data['late_payments'] + 1)
+    # Создание новых признаков (feature engineering)
+    # Комбинирование существующих признаков для улучшения качества
+    data['debt_to_income'] = data['debt_ratio'] * data['income']  # Отношение долга к доходу
+    data['credit_utilization_ratio'] = data['credit_utilization'] / (data['credit_score'] + 1)  # Коэффициент использования кредита
+    data['payment_stability'] = data['payment_history'] / (data['late_payments'] + 1)  # Стабильность платежей
     
-    # Обработка выбросов
+    # Обработка выбросов методом IQR
+    # IQR = Q3 - Q1, выбросы: < Q1 - 1.5*IQR или > Q3 + 1.5*IQR
     numeric_columns = data.select_dtypes(include=[np.number]).columns
     for col in numeric_columns:
-        if col != 'default_risk':
-            Q1 = data[col].quantile(0.25)
-            Q3 = data[col].quantile(0.75)
-            IQR = Q3 - Q1
+        if col != 'default_risk':  # Не обрабатываем целевую переменную
+            Q1 = data[col].quantile(0.25)  # Первый квартиль
+            Q3 = data[col].quantile(0.75)  # Третий квартиль
+            IQR = Q3 - Q1  # Межквартильный размах
+            # Замена выбросов на граничные значения
             data[col] = np.where(data[col] < Q1 - 1.5 * IQR, Q1 - 1.5 * IQR, data[col])
             data[col] = np.where(data[col] > Q3 + 1.5 * IQR, Q3 + 1.5 * IQR, data[col])
     
@@ -146,58 +220,98 @@ bank_data_processed = prepare_bank_data(bank_data)
 ### Обучение модели
 ```python
 def train_bank_model(data):
-    """Обучение модели для банковской задачи"""
+    """
+    Обучение модели для банковской задачи классификации дефолта
+    
+    Parameters:
+    -----------
+    data : pd.DataFrame
+        Подготовленные банковские данные:
+        - Содержит целевую переменную 'default_risk'
+        - Обработаны пропущенные значения и выбросы
+        - Созданы новые признаки
+        
+    Returns:
+    --------
+    tuple
+        (predictor, test_data):
+        - predictor: обученная модель TabularPredictor
+        - test_data: тестовые данные для оценки
+        
+    Notes:
+    ------
+    Процесс обучения:
+    1. Разделение данных на train/test (80/20)
+    2. Стратифицированное разделение (сохранение пропорций классов)
+    3. Создание предиктора с настройками для банковской задачи
+    4. Настройка гиперпараметров для разных алгоритмов
+    5. Обучение с высоким качеством и бэггингом
+    
+    Настройки для банковской задачи:
+    - problem_type: 'binary' (бинарная классификация)
+    - eval_metric: 'roc_auc' (ROC-AUC для несбалансированных данных)
+    - presets: 'high_quality' (максимальное качество)
+    - num_bag_folds: 5 (бэггинг для стабильности)
+    - time_limit: 1800s (30 минут обучения)
+    """
     
     # Разделение на train/test
-    train_data, test_data = train_test_split(data, test_size=0.2, random_state=42, stratify=data['default_risk'])
+    # Стратифицированное разделение сохраняет пропорции классов
+    train_data, test_data = train_test_split(
+        data, 
+        test_size=0.2,  # 20% для тестирования
+        random_state=42,  # Воспроизводимость
+        stratify=data['default_risk']  # Стратификация по целевому признаку
+    )
     
-    # Создание предиктора
+    # Создание предиктора с настройками для банковской задачи
     predictor = TabularPredictor(
-        label='default_risk',
-        problem_type='binary',
-        eval_metric='roc_auc',
-        path='./bank_models'
+        label='default_risk',  # Целевая переменная
+        problem_type='binary',  # Бинарная классификация
+        eval_metric='roc_auc',  # ROC-AUC для несбалансированных данных
+        path='./bank_models'  # Путь для сохранения модели
     )
     
     # Настройка гиперпараметров для банковской задачи
+    # Оптимизированы для бинарной классификации с несбалансированными данными
     hyperparameters = {
-        'GBM': [
+        'GBM': [  # Gradient Boosting Machine (LightGBM)
             {
-                'num_boost_round': 200,
-                'learning_rate': 0.1,
-                'num_leaves': 31,
-                'feature_fraction': 0.9,
-                'bagging_fraction': 0.8,
-                'min_data_in_leaf': 20
+                'num_boost_round': 200,  # Количество итераций бустинга (100-500)
+                'learning_rate': 0.1,  # Скорость обучения (0.01-0.3)
+                'num_leaves': 31,  # Количество листьев в дереве (10-100)
+                'feature_fraction': 0.9,  # Доля признаков для каждого дерева (0.5-1.0)
+                'bagging_fraction': 0.8,  # Доля данных для каждого дерева (0.5-1.0)
+                'min_data_in_leaf': 20  # Минимум образцов в листе (10-100)
             }
         ],
-        'XGB': [
+        'XGB': [  # XGBoost
             {
-                'n_estimators': 200,
-                'learning_rate': 0.1,
-                'max_depth': 6,
-                'subsample': 0.8,
-                'colsample_bytree': 0.8
+                'n_estimators': 200,  # Количество деревьев (100-1000)
+                'learning_rate': 0.1,  # Скорость обучения (0.01-0.3)
+                'max_depth': 6,  # Максимальная глубина дерева (3-10)
+                'subsample': 0.8,  # Доля образцов для обучения (0.5-1.0)
+                'colsample_bytree': 0.8  # Доля признаков для дерева (0.5-1.0)
             }
         ],
-        'CAT': [
+        'CAT': [  # CatBoost
             {
-                'iterations': 200,
-                'learning_rate': 0.1,
-                'depth': 6,
-                'l2_leaf_reg': 3.0
+                'iterations': 200,  # Количество итераций (100-1000)
+                'learning_rate': 0.1,  # Скорость обучения (0.01-0.3)
+                'depth': 6,  # Глубина дерева (3-10)
+                'l2_leaf_reg': 3.0  # L2 регуляризация (1.0-10.0)
             }
         ]
     }
     
-    # Обучение модели
+    # Обучение модели с оптимизированными параметрами
     predictor.fit(
-        train_data,
-        hyperparameters=hyperparameters,
-        time_limit=1800,  # 30 минут
-        presets='high_quality',
-        num_bag_folds=5,
-        num_bag_sets=1
+        train_data,  # Данные для обучения
+        hyperparameters=hyperparameters,  # Настройки алгоритмов
+        time_limit=1800,  # Время обучения в секундах (30 минут)
+        presets='high_quality',  # Предустановки качества (high_quality для максимального качества)
+        num_bag_folds=5,  # Количество фолдов для бэггинга (3-10)
+        num_bag_sets=1  # Количество наборов бэггинга (1-3)
     )
     
     return predictor, test_data
@@ -209,27 +323,72 @@ bank_predictor, bank_test_data = train_bank_model(bank_data_processed)
 ### Оценка качества
 ```python
 def evaluate_bank_model(predictor, test_data):
-    """Оценка качества банковской модели"""
+    """
+    Оценка качества банковской модели для классификации дефолта
     
-    # Предсказания
+    Parameters:
+    -----------
+    predictor : TabularPredictor
+        Обученная модель для оценки:
+        - Должна быть обучена на банковских данных
+        - Поддерживает predict() и predict_proba()
+        - Содержит информацию о важности признаков
+        
+    test_data : pd.DataFrame
+        Тестовые данные для оценки:
+        - Содержит целевую переменную 'default_risk'
+        - Имеет те же признаки что и обучающие данные
+        - Не участвовали в обучении модели
+        
+    Returns:
+    --------
+    Dict[str, Any]
+        Результаты оценки модели:
+        - performance: метрики качества (accuracy, roc_auc, precision, recall)
+        - feature_importance: важность признаков для предсказания
+        - leaderboard: сравнение различных моделей
+        - predictions: предсказания классов (0/1)
+        - probabilities: вероятности классов
+        
+    Notes:
+    ------
+    Метрики оценки для банковской задачи:
+    - ROC-AUC: основная метрика для несбалансированных данных
+    - Precision: доля правильных предсказаний дефолта
+    - Recall: доля найденных дефолтов
+    - F1-score: гармоническое среднее precision и recall
+    - Accuracy: общая точность классификации
+    
+    Анализ важности признаков:
+    - Показывает какие факторы важны для предсказания дефолта
+    - Помогает понять логику модели
+    - Используется для feature selection
+    """
+    
+    # Предсказания классов (0 - нет дефолта, 1 - дефолт)
     predictions = predictor.predict(test_data)
+    
+    # Вероятности классов (для анализа уверенности модели)
     probabilities = predictor.predict_proba(test_data)
     
-    # Оценка качества
+    # Оценка качества модели
+    # Автоматический расчет метрик для бинарной классификации
     performance = predictor.evaluate(test_data)
     
     # Анализ важности признаков
+    # Показывает вклад каждого признака в предсказание
     feature_importance = predictor.feature_importance()
     
     # Лидерборд моделей
+    # Сравнение различных алгоритмов и их комбинаций
     leaderboard = predictor.leaderboard(test_data)
     
     return {
-        'performance': performance,
-        'feature_importance': feature_importance,
-        'leaderboard': leaderboard,
-        'predictions': predictions,
-        'probabilities': probabilities
+        'performance': performance,  # Метрики качества
+        'feature_importance': feature_importance,  # Важность признаков
+        'leaderboard': leaderboard,  # Сравнение моделей
+        'predictions': predictions,  # Предсказания классов
+        'probabilities': probabilities  # Вероятности классов
     }
 
 # Оценка модели
@@ -317,19 +476,57 @@ visualize_bank_results(bank_results, bank_test_data)
 ### Данные
 ```python
 def create_real_estate_data(n_samples=5000):
-    """Создание синтетических данных о недвижимости"""
+    """
+    Создание синтетических данных о недвижимости для регрессионного анализа
     
-    np.random.seed(42)
+    Parameters:
+    -----------
+    n_samples : int, default=5000
+        Размер выборки для генерации:
+        - 1000-3000: небольшие датасеты (быстрое тестирование)
+        - 3000-10000: средние датасеты (баланс качества и скорости)
+        - 10000+: большие датасеты (максимальное качество)
+        
+    Returns:
+    --------
+    pd.DataFrame
+        Синтетические данные о недвижимости:
+        - Числовые признаки: площадь, спальни, ванные, возраст
+        - Бинарные признаки: гараж, бассейн, сад
+        - Категориальные признаки: район, тип недвижимости, состояние
+        - Целевая переменная: price (цена в рублях)
+        
+    Notes:
+    ------
+    Структура данных недвижимости:
+    - 7 числовых признаков (площадь, спальни, ванные, возраст)
+    - 3 бинарных признака (гараж, бассейн, сад)
+    - 3 категориальных признака (район, тип, состояние)
+    - Целевая переменная: price (непрерывная)
     
-    # Основные характеристики
+    Бизнес-логика ценообразования:
+    - Базовая цена: 100,000 рублей
+    - Площадь: +1,000 руб/м²
+    - Спальни: +10,000 руб за спальню
+    - Ванные: +5,000 руб за ванную
+    - Гараж: +15,000 руб
+    - Бассейн: +25,000 руб
+    - Сад: +10,000 руб
+    - Возраст: -2,000 руб за год
+    - Шум: ±20,000 руб (случайная составляющая)
+    """
+    
+    np.random.seed(42)  # Воспроизводимость результатов
+    
+    # Основные характеристики недвижимости
     data = pd.DataFrame({
-        'area': np.random.normal(120, 30, n_samples),
-        'bedrooms': np.random.poisson(3, n_samples),
-        'bathrooms': np.random.poisson(2, n_samples),
-        'age': np.random.exponential(10, n_samples),
-        'garage': np.random.binomial(1, 0.7, n_samples),
-        'pool': np.random.binomial(1, 0.2, n_samples),
-        'garden': np.random.binomial(1, 0.6, n_samples)
+        'area': np.random.normal(120, 30, n_samples),  # Площадь (м²) - нормальное распределение
+        'bedrooms': np.random.poisson(3, n_samples),  # Количество спален - распределение Пуассона
+        'bathrooms': np.random.poisson(2, n_samples),  # Количество ванных - распределение Пуассона
+        'age': np.random.exponential(10, n_samples),  # Возраст (лет) - экспоненциальное распределение
+        'garage': np.random.binomial(1, 0.7, n_samples),  # Наличие гаража (70% вероятность)
+        'pool': np.random.binomial(1, 0.2, n_samples),  # Наличие бассейна (20% вероятность)
+        'garden': np.random.binomial(1, 0.6, n_samples)  # Наличие сада (60% вероятность)
     })
     
     # Категориальные переменные
@@ -555,25 +752,65 @@ visualize_real_estate_results(real_estate_results, real_estate_test_data)
 ### Данные
 ```python
 def create_sales_data(n_days=365, n_products=10):
-    """Создание синтетических данных о продажах"""
+    """
+    Создание синтетических данных о продажах для анализа временных рядов
     
-    np.random.seed(42)
+    Parameters:
+    -----------
+    n_days : int, default=365
+        Количество дней для генерации:
+        - 30-90: краткосрочные тренды (месяц-квартал)
+        - 90-365: среднесрочные тренды (квартал-год)
+        - 365+: долгосрочные тренды (год+)
+        
+    n_products : int, default=10
+        Количество продуктов для анализа:
+        - 1-5: анализ одного продукта
+        - 5-20: анализ продуктовой линейки
+        - 20+: анализ большого ассортимента
+        
+    Returns:
+    --------
+    pd.DataFrame
+        Синтетические данные о продажах:
+        - date: дата продажи
+        - product_id: идентификатор продукта
+        - sales: количество продаж
+        - day_of_week: день недели (0-6)
+        - month: месяц (1-12)
+        - quarter: квартал (1-4)
+        
+    Notes:
+    ------
+    Структура временного ряда:
+    - Тренд: линейный рост продаж во времени
+    - Сезонность: еженедельные колебания (выходные vs будни)
+    - Шум: случайные колебания (рыночные факторы)
+    - Негативные продажи: исключены (продажи ≥ 0)
+    
+    Временные признаки:
+    - day_of_week: день недели для анализа выходных
+    - month: месяц для сезонного анализа
+    - quarter: квартал для квартального анализа
+    """
+    
+    np.random.seed(42)  # Воспроизводимость результатов
     
     # Создание временного ряда
     dates = pd.date_range('2023-01-01', periods=n_days, freq='D')
     
     data = []
     for product_id in range(n_products):
-        # Базовый тренд
-        trend = np.linspace(100, 150, n_days)
+        # Базовый тренд (линейный рост продаж)
+        trend = np.linspace(100, 150, n_days)  # Рост с 100 до 150 продаж
         
-        # Сезонность (еженедельная)
-        seasonality = 20 * np.sin(2 * np.pi * np.arange(n_days) / 7)
+        # Сезонность (еженедельные колебания)
+        seasonality = 20 * np.sin(2 * np.pi * np.arange(n_days) / 7)  # Амплитуда ±20
         
-        # Случайный шум
-        noise = np.random.normal(0, 10, n_days)
+        # Случайный шум (рыночные факторы)
+        noise = np.random.normal(0, 10, n_days)  # Стандартное отклонение 10
         
-        # Продажи
+        # Продажи (комбинация тренда, сезонности и шума)
         sales = trend + seasonality + noise
         sales = np.maximum(sales, 0)  # Негативные продажи невозможны
         
@@ -600,25 +837,64 @@ print(sales_data['sales'].describe())
 ### Подготовка данных для временных рядов
 ```python
 def prepare_sales_data(data):
-    """Подготовка данных о продажах для временных рядов"""
+    """
+    Подготовка данных о продажах для анализа временных рядов
+    
+    Parameters:
+    -----------
+    data : pd.DataFrame
+        Исходные данные о продажах:
+        - Содержит колонки: date, product_id, sales, day_of_week, month, quarter
+        - Отсортированы по product_id и date
+        - Могут содержать пропущенные значения
+        
+    Returns:
+    --------
+    pd.DataFrame
+        Подготовленные данные с временными признаками:
+        - Лаговые признаки: sales_lag_1, sales_lag_2, sales_lag_3, sales_lag_7, sales_lag_14, sales_lag_30
+        - Скользящие средние: sales_ma_7, sales_ma_14, sales_ma_30
+        - Трендовые признаки: sales_trend
+        - Сезонные признаки: is_weekend, is_month_start, is_month_end
+        
+    Notes:
+    ------
+    Временные признаки для прогнозирования:
+    - Лаговые признаки: значения продаж в предыдущие дни
+    - Скользящие средние: сглаженные тренды за разные периоды
+    - Трендовые признаки: направление изменения продаж
+    - Сезонные признаки: календарные эффекты (выходные, начало/конец месяца)
+    
+    Лаговые признаки:
+    - sales_lag_1: продажи вчера (краткосрочная зависимость)
+    - sales_lag_7: продажи неделю назад (еженедельная сезонность)
+    - sales_lag_30: продажи месяц назад (месячная сезонность)
+    
+    Скользящие средние:
+    - sales_ma_7: средние продажи за неделю
+    - sales_ma_14: средние продажи за 2 недели
+    - sales_ma_30: средние продажи за месяц
+    """
     
     # Создание лаговых признаков
+    # Сортировка по продукту и дате для корректного сдвига
     data = data.sort_values(['product_id', 'date'])
     
-    for lag in [1, 2, 3, 7, 14, 30]:
+    # Лаговые признаки (значения продаж в предыдущие дни)
+    for lag in [1, 2, 3, 7, 14, 30]:  # Разные лаги для разных временных зависимостей
         data[f'sales_lag_{lag}'] = data.groupby('product_id')['sales'].shift(lag)
     
-    # Скользящие средние
-    for window in [7, 14, 30]:
+    # Скользящие средние (сглаженные тренды)
+    for window in [7, 14, 30]:  # Разные окна для разных временных масштабов
         data[f'sales_ma_{window}'] = data.groupby('product_id')['sales'].rolling(window=window).mean().reset_index(0, drop=True)
     
-    # Тренды
+    # Трендовые признаки (направление изменения продаж)
     data['sales_trend'] = data.groupby('product_id')['sales'].rolling(window=7).mean().reset_index(0, drop=True)
     
-    # Сезонные признаки
-    data['is_weekend'] = (data['day_of_week'] >= 5).astype(int)
-    data['is_month_start'] = (data['date'].dt.day <= 7).astype(int)
-    data['is_month_end'] = (data['date'].dt.day >= 25).astype(int)
+    # Сезонные признаки (календарные эффекты)
+    data['is_weekend'] = (data['day_of_week'] >= 5).astype(int)  # Выходные дни
+    data['is_month_start'] = (data['date'].dt.day <= 7).astype(int)  # Начало месяца
+    data['is_month_end'] = (data['date'].dt.day >= 25).astype(int)  # Конец месяца
     
     return data
 
@@ -806,27 +1082,67 @@ visualize_sales_results(sales_results, sales_test_data)
 ### Данные
 ```python
 def create_image_data(n_samples=5000, n_features=100):
-    """Создание синтетических данных изображений"""
+    """
+    Создание синтетических данных изображений для многоклассовой классификации
     
-    np.random.seed(42)
+    Parameters:
+    -----------
+    n_samples : int, default=5000
+        Размер выборки для генерации:
+        - 1000-3000: небольшие датасеты (быстрое тестирование)
+        - 3000-10000: средние датасеты (баланс качества и скорости)
+        - 10000+: большие датасеты (максимальное качество)
+        
+    n_features : int, default=100
+        Количество признаков изображения:
+        - 50-100: базовые признаки (цвет, текстура)
+        - 100-500: расширенные признаки (формы, объекты)
+        - 500+: сложные признаки (глубокие характеристики)
+        
+    Returns:
+    --------
+    pd.DataFrame
+        Синтетические данные изображений:
+        - Числовые признаки: feature_0, feature_1, ..., feature_n
+        - Категориальные признаки: class, image_size, resolution
+        - Числовые метаданные: color_channels
+        
+    Notes:
+    ------
+    Структура данных изображений:
+    - n_features числовых признаков (извлеченные характеристики)
+    - 5 классов объектов: cat, dog, bird, car, tree
+    - 3 размера изображений: small, medium, large
+    - 2 типа цветов: grayscale (1), RGB (3)
+    - 3 разрешения: low, medium, high
     
-    # Создание признаков изображений
+    Бизнес-контекст:
+    - Задача: классификация объектов на изображениях
+    - Применение: компьютерное зрение, автоматическая маркировка
+    - Метрики: accuracy, precision, recall для каждого класса
+    - Валидация: стратифицированное разделение по классам
+    """
+    
+    np.random.seed(42)  # Воспроизводимость результатов
+    
+    # Создание признаков изображений (извлеченные характеристики)
+    # Нормальное распределение имитирует реальные признаки CNN
     features = np.random.randn(n_samples, n_features)
     
-    # Создание целевых классов
+    # Создание целевых классов (5 категорий объектов)
     n_classes = 5
-    classes = ['cat', 'dog', 'bird', 'car', 'tree']
-    y = np.random.choice(n_classes, n_samples)
+    classes = ['cat', 'dog', 'bird', 'car', 'tree']  # 5 классов объектов
+    y = np.random.choice(n_classes, n_samples)  # Случайное распределение классов
     
-    # Создание DataFrame
+    # Создание DataFrame с признаками
     feature_names = [f'feature_{i}' for i in range(n_features)]
     data = pd.DataFrame(features, columns=feature_names)
-    data['class'] = [classes[i] for i in y]
+    data['class'] = [classes[i] for i in y]  # Целевая переменная
     
-    # Добавление метаданных
-    data['image_size'] = np.random.choice(['small', 'medium', 'large'], n_samples)
-    data['color_channels'] = np.random.choice([1, 3], n_samples)
-    data['resolution'] = np.random.choice(['low', 'medium', 'high'], n_samples)
+    # Добавление метаданных изображений
+    data['image_size'] = np.random.choice(['small', 'medium', 'large'], n_samples)  # Размер изображения
+    data['color_channels'] = np.random.choice([1, 3], n_samples)  # Количество цветовых каналов
+    data['resolution'] = np.random.choice(['low', 'medium', 'high'], n_samples)  # Разрешение изображения
     
     return data
 
@@ -840,18 +1156,55 @@ print(image_data['class'].value_counts())
 ### Подготовка данных
 ```python
 def prepare_image_data(data):
-    """Подготовка данных изображений"""
+    """
+    Подготовка данных изображений для многоклассовой классификации
     
-    # Создание новых признаков
-    data['feature_sum'] = data.select_dtypes(include=[np.number]).sum(axis=1)
-    data['feature_mean'] = data.select_dtypes(include=[np.number]).mean(axis=1)
-    data['feature_std'] = data.select_dtypes(include=[np.number]).std(axis=1)
+    Parameters:
+    -----------
+    data : pd.DataFrame
+        Исходные данные изображений:
+        - Содержит числовые признаки (feature_0, feature_1, ...)
+        - Содержит категориальные признаки (class, image_size, resolution)
+        - Содержит метаданные (color_channels)
+        
+    Returns:
+    --------
+    pd.DataFrame
+        Подготовленные данные изображений:
+        - Созданы агрегированные признаки (feature_sum, feature_mean, feature_std)
+        - Нормализованы числовые признаки
+        - Готовы для обучения модели
+        
+    Notes:
+    ------
+    Процесс подготовки данных:
+    1. Создание агрегированных признаков (сумма, среднее, стандартное отклонение)
+    2. Нормализация числовых признаков (z-score нормализация)
+    3. Сохранение категориальных признаков без изменений
     
-    # Нормализация признаков
+    Агрегированные признаки:
+    - feature_sum: сумма всех признаков (общая "активность" изображения)
+    - feature_mean: среднее значение признаков (средняя "яркость")
+    - feature_std: стандартное отклонение признаков (вариативность)
+    
+    Нормализация:
+    - Z-score нормализация: (x - mean) / std
+    - Применяется ко всем числовым признакам кроме color_channels
+    - Обеспечивает стабильность обучения
+    """
+    
+    # Создание новых признаков (feature engineering)
+    # Агрегированные признаки помогают модели понять общие характеристики изображения
+    data['feature_sum'] = data.select_dtypes(include=[np.number]).sum(axis=1)  # Сумма всех признаков
+    data['feature_mean'] = data.select_dtypes(include=[np.number]).mean(axis=1)  # Среднее значение признаков
+    data['feature_std'] = data.select_dtypes(include=[np.number]).std(axis=1)  # Стандартное отклонение признаков
+    
+    # Нормализация признаков (z-score нормализация)
+    # Нормализация улучшает стабильность и скорость обучения
     numeric_columns = data.select_dtypes(include=[np.number]).columns
     for col in numeric_columns:
-        if col != 'color_channels':
-            data[col] = (data[col] - data[col].mean()) / data[col].std()
+        if col != 'color_channels':  # Не нормализуем метаданные
+            data[col] = (data[col] - data[col].mean()) / data[col].std()  # Z-score нормализация
     
     return data
 
@@ -1054,16 +1407,83 @@ models = {}
 model_metadata = {}
 
 class PredictionRequest(BaseModel):
+    """
+    Запрос на предсказание для продакшен API
+    
+    Parameters:
+    -----------
+    model_name : str
+        Название модели для предсказания:
+        - 'bank_default': модель классификации дефолта
+        - 'real_estate': модель регрессии цен недвижимости
+        - 'sales_forecast': модель прогнозирования продаж
+        
+    data : List[Dict[str, Any]]
+        Данные для предсказания:
+        - Список словарей с признаками
+        - Каждый словарь - один образец для предсказания
+        - Ключи должны соответствовать признакам модели
+    """
     model_name: str
     data: List[Dict[str, Any]]
 
 class PredictionResponse(BaseModel):
+    """
+    Ответ с результатами предсказания
+    
+    Parameters:
+    -----------
+    predictions : List[Any]
+        Предсказания модели:
+        - Для классификации: классы (0/1, 'cat'/'dog' и т.д.)
+        - Для регрессии: числовые значения (цены, продажи)
+        
+    probabilities : List[Dict[str, float]], optional
+        Вероятности классов (только для классификации):
+        - Словарь с вероятностями для каждого класса
+        - None для регрессионных моделей
+        
+    model_info : Dict[str, Any]
+        Информация о модели:
+        - model_name: название модели
+        - model_type: тип задачи (classification/regression)
+        - target: целевая переменная
+        - features: список признаков
+        
+    timestamp : str
+        Время выполнения предсказания (ISO формат)
+    """
     predictions: List[Any]
     probabilities: List[Dict[str, float]] = None
     model_info: Dict[str, Any]
     timestamp: str
 
 class ModelInfo(BaseModel):
+    """
+    Информация о модели в продакшен системе
+    
+    Parameters:
+    -----------
+    model_name : str
+        Название модели в системе
+        
+    model_type : str
+        Тип модели:
+        - 'binary_classification': бинарная классификация
+        - 'multiclass_classification': многоклассовая классификация
+        - 'regression': регрессия
+        
+    performance : Dict[str, float]
+        Метрики производительности модели:
+        - accuracy, roc_auc, precision, recall (для классификации)
+        - rmse, mae, r2 (для регрессии)
+        
+    features : List[str]
+        Список признаков модели
+        
+    created_at : str
+        Дата создания модели (ISO формат)
+    """
     model_name: str
     model_type: str
     performance: Dict[str, float]
@@ -1072,28 +1492,48 @@ class ModelInfo(BaseModel):
 
 @app.on_event("startup")
 async def load_models():
-    """Загрузка моделей при запуске"""
+    """
+    Загрузка моделей при запуске продакшен системы
+    
+    Notes:
+    ------
+    Процесс загрузки моделей:
+    1. Загрузка банковской модели (классификация дефолта)
+    2. Загрузка модели недвижимости (регрессия цен)
+    3. Создание метаданных для каждой модели
+    4. Логирование результатов загрузки
+    
+    Метаданные модели:
+    - model_type: тип задачи (binary_classification, regression)
+    - target: целевая переменная
+    - features: список признаков модели
+    
+    Обработка ошибок:
+    - Логирование ошибок загрузки
+    - Продолжение работы при частичной загрузке
+    - Возврат ошибок через health check
+    """
     global models, model_metadata
     
-    # Загрузка банковской модели
+    # Загрузка банковской модели (классификация дефолта)
     try:
         models['bank_default'] = TabularPredictor.load('./bank_models')
         model_metadata['bank_default'] = {
-            'model_type': 'binary_classification',
-            'target': 'default_risk',
-            'features': ['age', 'income', 'credit_score', 'debt_ratio', 'employment_years']
+            'model_type': 'binary_classification',  # Бинарная классификация
+            'target': 'default_risk',  # Целевая переменная
+            'features': ['age', 'income', 'credit_score', 'debt_ratio', 'employment_years']  # Основные признаки
         }
         logger.info("Bank model loaded successfully")
     except Exception as e:
         logger.error(f"Failed to load bank model: {e}")
     
-    # Загрузка модели недвижимости
+    # Загрузка модели недвижимости (регрессия цен)
     try:
         models['real_estate'] = TabularPredictor.load('./real_estate_models')
         model_metadata['real_estate'] = {
-            'model_type': 'regression',
-            'target': 'price',
-            'features': ['area', 'bedrooms', 'bathrooms', 'age', 'location']
+            'model_type': 'regression',  # Регрессия
+            'target': 'price',  # Целевая переменная
+            'features': ['area', 'bedrooms', 'bathrooms', 'age', 'location']  # Основные признаки
         }
         logger.info("Real estate model loaded successfully")
     except Exception as e:
@@ -1101,52 +1541,108 @@ async def load_models():
 
 @app.get("/health")
 async def health_check():
-    """Health check endpoint"""
+    """
+    Health check endpoint для мониторинга состояния системы
+    
+    Returns:
+    --------
+    Dict[str, Any]
+        Статус системы:
+        - status: "healthy" если модели загружены, "unhealthy" если нет
+        - loaded_models: список загруженных моделей
+        - timestamp: время проверки (ISO формат)
+        
+    Notes:
+    ------
+    Health check используется для:
+    - Мониторинга состояния системы
+    - Проверки доступности моделей
+    - Автоматического перезапуска при сбоях
+    - Load balancer health checks
+    """
     loaded_models = list(models.keys())
     return {
-        "status": "healthy" if loaded_models else "unhealthy",
-        "loaded_models": loaded_models,
-        "timestamp": datetime.now().isoformat()
+        "status": "healthy" if loaded_models else "unhealthy",  # Статус системы
+        "loaded_models": loaded_models,  # Список загруженных моделей
+        "timestamp": datetime.now().isoformat()  # Время проверки
     }
 
 @app.post("/predict", response_model=PredictionResponse)
 async def predict(request: PredictionRequest):
-    """Endpoint для предсказаний"""
+    """
+    Endpoint для предсказаний с использованием обученных моделей
+    
+    Parameters:
+    -----------
+    request : PredictionRequest
+        Запрос на предсказание:
+        - model_name: название модели
+        - data: данные для предсказания
+        
+    Returns:
+    --------
+    PredictionResponse
+        Результаты предсказания:
+        - predictions: предсказания модели
+        - probabilities: вероятности классов (для классификации)
+        - model_info: информация о модели
+        - timestamp: время выполнения
+        
+    Raises:
+    -------
+    HTTPException
+        - 404: модель не найдена
+        - 500: ошибка выполнения предсказания
+        
+    Notes:
+    ------
+    Процесс предсказания:
+    1. Проверка существования модели
+    2. Преобразование данных в DataFrame
+    3. Выполнение предсказания
+    4. Получение вероятностей (для классификации)
+    5. Формирование ответа
+    
+    Обработка ошибок:
+    - Логирование ошибок предсказания
+    - Возврат HTTP ошибок с описанием
+    - Graceful handling исключений
+    """
     
     if request.model_name not in models:
         raise HTTPException(status_code=404, detail=f"Model {request.model_name} not found")
     
     try:
-        model = models[request.model_name]
-        metadata = model_metadata[request.model_name]
+        model = models[request.model_name]  # Получение модели
+        metadata = model_metadata[request.model_name]  # Получение метаданных
         
-        # Преобразование данных
+        # Преобразование данных в DataFrame
         df = pd.DataFrame(request.data)
         
-        # Предсказания
+        # Предсказания модели
         predictions = model.predict(df)
         
-        # Вероятности (если доступны)
+        # Вероятности классов (только для классификации)
         probabilities = None
-        if hasattr(model, 'predict_proba'):
+        if hasattr(model, 'predict_proba'):  # Проверка поддержки вероятностей
             proba = model.predict_proba(df)
-            probabilities = proba.to_dict('records')
+            probabilities = proba.to_dict('records')  # Преобразование в список словарей
         
         return PredictionResponse(
-            predictions=predictions.tolist(),
-            probabilities=probabilities,
+            predictions=predictions.tolist(),  # Преобразование в список
+            probabilities=probabilities,  # Вероятности классов
             model_info={
-                "model_name": request.model_name,
-                "model_type": metadata['model_type'],
-                "target": metadata['target'],
-                "features": metadata['features']
+                "model_name": request.model_name,  # Название модели
+                "model_type": metadata['model_type'],  # Тип задачи
+                "target": metadata['target'],  # Целевая переменная
+                "features": metadata['features']  # Список признаков
             },
-            timestamp=datetime.now().isoformat()
+            timestamp=datetime.now().isoformat()  # Время выполнения
         )
         
     except Exception as e:
-        logger.error(f"Prediction error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Prediction error: {e}")  # Логирование ошибки
+        raise HTTPException(status_code=500, detail=str(e))  # Возврат HTTP ошибки
 
 @app.get("/models")
 async def list_models():
