@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пример улучшенного форматирования Python кода</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+        
+        /* Улучшенные стили для Python кода */
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            border-left: 4px solid #3776ab;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin: 20px 0;
+            position: relative;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        pre::before {
+            content: "Python";
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: #3776ab;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        /* Цветовое выделение для Python синтаксиса */
+        .token.comment {
+            color: #6a9955;
+            font-style: italic;
+        }
+        
+        .token.keyword {
+            color: #569cd6;
+            font-weight: bold;
+        }
+        
+        .token.string {
+            color: #ce9178;
+        }
+        
+        .token.number {
+            color: #b5cea8;
+        }
+        
+        .token.function {
+            color: #dcdcaa;
+        }
+        
+        .token.class-name {
+            color: #4ec9b0;
+        }
+        
+        .token.operator {
+            color: #d4d4d4;
+        }
+        
+        .token.punctuation {
+            color: #d4d4d4;
+        }
+        
+        .token.variable {
+            color: #9cdcfe;
+        }
+        
+        .token.constant {
+            color: #4fc1ff;
+        }
+        
+        .token.builtin {
+            color: #dcdcaa;
+        }
+        
+        .token.boolean {
+            color: #569cd6;
+        }
+        
+        .token.parameter {
+            color: #9cdcfe;
+        }
+        
+        .token.property {
+            color: #9cdcfe;
+        }
+        
+        .token.attribute {
+            color: #9cdcfe;
+        }
+        
+        .token.tag {
+            color: #569cd6;
+        }
+        
+        .token.attr-name {
+            color: #92c5f8;
+        }
+        
+        .token.attr-value {
+            color: #ce9178;
+        }
+        
+        .explanation {
+            background: #f8f9fa;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .color-legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .color-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        
+        .color-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Пример улучшенного форматирования Python кода</h1>
+        
+        <div class="explanation">
+            <strong>🎨 Цветовое выделение Python кода:</strong><br>
+            Теперь каждый элемент Python кода имеет свой цвет для лучшей читаемости и понимания структуры кода.
+        </div>
+        
+        <h2>Пример Python кода с улучшенным форматированием</h2>
+        
+        <pre><code class="language-python"># Установка конкретной версии
+pip install autogluon==0.8.2
+
+# Установка с дополнительными зависимостями
+pip install autogluon[tabular,timeseries,vision]
+
+# Проверка установки
+import autogluon as ag
+print(f"AutoML Gluon версия: {ag.__version__}")
+
+# Создание предсказателя
+from autogluon.tabular import TabularPredictor
+predictor = TabularPredictor(label='target_column')
+
+# Обучение модели
+predictor.fit(train_data, time_limit=3600)
+
+# Предсказания
+predictions = predictor.predict(test_data)</code></pre>
+        
+        <h2>Легенда цветов</h2>
+        <div class="color-legend">
+            <div class="color-item">
+                <div class="color-box" style="background-color: #6a9955;"></div>
+                <span>Комментарии (зеленый)</span>
+            </div>
+            <div class="color-item">
+                <div class="color-box" style="background-color: #569cd6;"></div>
+                <span>Ключевые слова (синий)</span>
+            </div>
+            <div class="color-item">
+                <div class="color-box" style="background-color: #ce9178;"></div>
+                <span>Строки (оранжевый)</span>
+            </div>
+            <div class="color-item">
+                <div class="color-box" style="background-color: #b5cea8;"></div>
+                <span>Числа (светло-зеленый)</span>
+            </div>
+            <div class="color-item">
+                <div class="color-box" style="background-color: #dcdcaa;"></div>
+                <span>Функции (желтый)</span>
+            </div>
+            <div class="color-item">
+                <div class="color-box" style="background-color: #4ec9b0;"></div>
+                <span>Классы (бирюзовый)</span>
+            </div>
+            <div class="color-item">
+                <div class="color-box" style="background-color: #9cdcfe;"></div>
+                <span>Переменные (светло-синий)</span>
+            </div>
+            <div class="color-item">
+                <div class="color-box" style="background-color: #4fc1ff;"></div>
+                <span>Константы (голубой)</span>
+            </div>
+        </div>
+        
+        <div class="explanation">
+            <strong>💡 Преимущества улучшенного форматирования:</strong><br>
+            • <strong>Лучшая читаемость:</strong> Каждый элемент кода имеет свой цвет<br>
+            • <strong>Быстрое понимание:</strong> Сразу видно структуру кода<br>
+            • <strong>Профессиональный вид:</strong> Код выглядит как в IDE<br>
+            • <strong>Удобство изучения:</strong> Легче изучать новые концепты
+        </div>
+    </div>
+    
+    <script>
+        // Инициализация Prism.js для синтаксического выделения
+        if (typeof Prism !== 'undefined') {
+            Prism.highlightAll();
+        }
+    </script>
+</body>
+</html>
