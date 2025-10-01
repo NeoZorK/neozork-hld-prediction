@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AutoML Gluon - Полное руководство</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
@@ -14,33 +18,40 @@
             padding: 20px;
             background-color: #f8f9fa;
         }
+        
         .container {
             background: white;
             padding: 40px;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow-x: hidden;
         }
+        
         h1 {
             color: #2c3e50;
             border-bottom: 3px solid #3498db;
             padding-bottom: 10px;
         }
+        
         h2 {
             color: #34495e;
             margin-top: 30px;
             border-left: 4px solid #3498db;
             padding-left: 15px;
         }
+        
         h3 {
             color: #2c3e50;
             margin-top: 25px;
         }
+        
         code {
             background-color: #f4f4f4;
             padding: 2px 6px;
             border-radius: 3px;
             font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
         }
+        
         pre {
             background-color: #f8f9fa;
             padding: 15px;
@@ -48,10 +59,12 @@
             overflow-x: auto;
             border-left: 4px solid #3498db;
         }
+        
         pre code {
             background: none;
             padding: 0;
         }
+        
         blockquote {
             border-left: 4px solid #3498db;
             margin: 20px 0;
@@ -59,38 +72,47 @@
             background-color: #f8f9fa;
             font-style: italic;
         }
+        
         ul, ol {
             padding-left: 25px;
         }
+        
         li {
             margin-bottom: 5px;
         }
+        
         .toc {
             background-color: #f8f9fa;
             padding: 20px;
             border-radius: 5px;
             margin-bottom: 30px;
         }
+        
         .toc h2 {
             margin-top: 0;
             border: none;
             padding: 0;
         }
+        
         .toc ul {
             list-style-type: none;
             padding-left: 0;
         }
+        
         .toc li {
             margin-bottom: 8px;
         }
+        
         .toc a {
             text-decoration: none;
             color: #3498db;
             font-weight: 500;
         }
+        
         .toc a:hover {
             text-decoration: underline;
         }
+        
         .highlight {
             background-color: #fff3cd;
             padding: 15px;
@@ -98,6 +120,7 @@
             border-left: 4px solid #ffc107;
             margin: 20px 0;
         }
+        
         .warning {
             background-color: #f8d7da;
             padding: 15px;
@@ -105,12 +128,121 @@
             border-left: 4px solid #dc3545;
             margin: 20px 0;
         }
+        
         .success {
             background-color: #d4edda;
             padding: 15px;
             border-radius: 5px;
             border-left: 4px solid #28a745;
             margin: 20px 0;
+        }
+        
+        /* Улучшенные стили для изображений */
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
+        }
+        
+        /* Специальные стили для больших изображений */
+        img[src*=".png"], img[src*=".jpg"], img[src*=".jpeg"] {
+            max-width: 100%;
+            max-height: 600px;
+            object-fit: contain;
+            background-color: #fafafa;
+            padding: 10px;
+        }
+        
+        /* Стили для схем и диаграмм */
+        img[alt*="схема"], img[alt*="диаграмма"], img[alt*="архитектура"] {
+            max-width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+            background-color: white;
+            border: 2px solid #e0e0e0;
+        }
+        
+        /* Стили для скриншотов */
+        img[alt*="скриншот"], img[alt*="интерфейс"] {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            border: 1px solid #ddd;
+        }
+        
+        /* Адаптивность для мобильных устройств */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            img {
+                max-width: 100%;
+                height: auto;
+                margin: 15px auto;
+            }
+            
+            pre {
+                overflow-x: auto;
+                font-size: 14px;
+            }
+        }
+        
+        /* Стили для таблиц */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            overflow-x: auto;
+            display: block;
+            white-space: nowrap;
+        }
+        
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        /* Стили для кода */
+        .codehilite {
+            background-color: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        
+        /* Стили для навигации */
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .nav-links a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -173,7 +305,7 @@
 <li><strong>Легкость обновления</strong>: Простое обновление до новых версий</li>
 </ul>
 <h2 id="_4">Системные требования</h2>
-<p><img alt="Установка AutoML Gluon" src="images/installation_flowchart.png" />
+<p><img alt="Установка AutoML Gluon" src="images/installation_flowchart.png" /><br />
 <em>Рисунок 1: Блок-схема процесса установки AutoML Gluon</em></p>
 <h3 id="_5">Минимальные требования</h3>
 <p><strong>Почему минимальные требования важны?</strong> Потому что они определяют, сможете ли вы вообще запустить AutoML Gluon:</p>
@@ -210,10 +342,10 @@
 <div class="codehilite"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>autogluon
 </code></pre></div>
 
-<p><strong>Что происходит при этой команде?</strong>
-- Устанавливается основной пакет AutoML Gluon
-- Автоматически устанавливаются все необходимые зависимости
-- Создается окружение для работы с табличными данными
+<p><strong>Что происходит при этой команде?</strong><br />
+- Устанавливается основной пакет AutoML Gluon<br />
+- Автоматически устанавливаются все необходимые зависимости<br />
+- Создается окружение для работы с табличными данными<br />
 - Настраивается базовая конфигурация</p>
 <h3 id="_8">Установка с дополнительными зависимостями</h3>
 <p><strong>Почему нужны дополнительные компоненты?</strong> Потому что разные задачи требуют разных инструментов:</p>
@@ -221,37 +353,37 @@
 pip<span class="w"> </span>install<span class="w"> </span>autogluon.tabular
 </code></pre></div>
 
-<p><strong>Что дает autogluon.tabular?</strong>
-- Оптимизированные алгоритмы для табличных данных
-- Автоматическая обработка категориальных переменных
-- Встроенная валидация и метрики
+<p><strong>Что дает autogluon.tabular?</strong><br />
+- Оптимизированные алгоритмы для табличных данных<br />
+- Автоматическая обработка категориальных переменных<br />
+- Встроенная валидация и метрики<br />
 - Поддержка больших датасетов</p>
 <div class="codehilite"><pre><span></span><code><span class="c1"># Для работы с временными рядами</span>
 pip<span class="w"> </span>install<span class="w"> </span>autogluon.timeseries
 </code></pre></div>
 
-<p><strong>Что дает autogluon.timeseries?</strong>
-- Специальные алгоритмы для временных рядов
-- Автоматическое определение сезонности
-- Поддержка многомерных временных рядов
+<p><strong>Что дает autogluon.timeseries?</strong><br />
+- Специальные алгоритмы для временных рядов<br />
+- Автоматическое определение сезонности<br />
+- Поддержка многомерных временных рядов<br />
 - Встроенное прогнозирование</p>
 <div class="codehilite"><pre><span></span><code><span class="c1"># Для работы с изображениями</span>
 pip<span class="w"> </span>install<span class="w"> </span>autogluon.vision
 </code></pre></div>
 
-<p><strong>Что дает autogluon.vision?</strong>
-- Готовые CNN архитектуры
-- Автоматическое увеличение данных
-- Предобученные модели
+<p><strong>Что дает autogluon.vision?</strong><br />
+- Готовые CNN архитектуры<br />
+- Автоматическое увеличение данных<br />
+- Предобученные модели<br />
 - Поддержка GPU ускорения</p>
 <div class="codehilite"><pre><span></span><code><span class="c1"># Для работы с текстом</span>
 pip<span class="w"> </span>install<span class="w"> </span>autogluon.text
 </code></pre></div>
 
-<p><strong>Что дает autogluon.text?</strong>
-- Современные NLP модели
-- Автоматическая токенизация
-- Предобученные эмбеддинги
+<p><strong>Что дает autogluon.text?</strong><br />
+- Современные NLP модели<br />
+- Автоматическая токенизация<br />
+- Предобученные эмбеддинги<br />
 - Поддержка трансформеров</p>
 <div class="codehilite"><pre><span></span><code><span class="c1"># Полная установка всех компонентов</span>
 pip<span class="w"> </span>install<span class="w"> </span>autogluon<span class="o">[</span>all<span class="o">]</span>
@@ -475,9 +607,9 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 </code></pre></div>
 
 <h2 id="_27">Следующие шаги</h2>
-<p>После успешной установки переходите к:
-- <a href="./02_basic_usage.md">Базовому использованию</a>
-- <a href="./03_advanced_configuration.md">Продвинутой конфигурации</a>
+<p>После успешной установки переходите к:<br />
+- <a href="./02_basic_usage.md">Базовому использованию</a><br />
+- <a href="./03_advanced_configuration.md">Продвинутой конфигурации</a><br />
 - <a href="./04_metrics.md">Работе с метриками</a></p>
 <h2 id="_28">Полезные ссылки</h2>
 <ul>
@@ -507,7 +639,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <li><strong>Разочарование</strong>: Сложность отпугивает от изучения</li>
 </ul>
 <h2 id="tabularpredictor">Введение в TabularPredictor</h2>
-<p><img alt="Архитектура AutoML Gluon" src="images/architecture_diagram.png" />
+<p><img alt="Архитектура AutoML Gluon" src="images/architecture_diagram.png" /><br />
 <em>Рисунок 2: Архитектура AutoML Gluon с основными компонентами</em></p>
 <p><strong>Почему TabularPredictor - это сердце AutoML Gluon?</strong> Потому что он объединяет все возможности в одном простом интерфейсе. Это как универсальный пульт управления - одна кнопка запускает сложные процессы.</p>
 <p><code>TabularPredictor</code> - это основной класс для работы с табличными данными в AutoGluon. Он автоматически определяет тип задачи (классификация, регрессия) и выбирает лучшие алгоритмы.</p>
@@ -525,9 +657,9 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 </code></pre></div>
 
-<p><strong>Почему именно эти импорты?</strong>
-- <code>TabularPredictor</code> - основной класс для работы с табличными данными
-- <code>pandas</code> - для работы с данными в табличном формате
+<p><strong>Почему именно эти импорты?</strong><br />
+- <code>TabularPredictor</code> - основной класс для работы с табличными данными<br />
+- <code>pandas</code> - для работы с данными в табличном формате<br />
 - <code>numpy</code> - для численных вычислений</p>
 <p><strong>Почему не импортируем все сразу?</strong> Потому что это замедляет загрузку и может вызвать конфликты.</p>
 <div class="codehilite"><pre><span></span><code><span class="c1"># Создание предиктора</span>
@@ -538,19 +670,19 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <span class="p">)</span>
 </code></pre></div>
 
-<p><strong>Объяснение параметров:</strong>
-- <code>label='target_column'</code> - название столбца с целевой переменной (что мы предсказываем)
-- <code>problem_type='auto'</code> - AutoML Gluon сам определит, классификация это или регрессия
+<p><strong>Объяснение параметров:</strong><br />
+- <code>label='target_column'</code> - название столбца с целевой переменной (что мы предсказываем)<br />
+- <code>problem_type='auto'</code> - AutoML Gluon сам определит, классификация это или регрессия<br />
 - <code>eval_metric='auto'</code> - автоматический выбор лучшей метрики для оценки</p>
 <p><strong>Почему используем 'auto'?</strong> Потому что AutoML Gluon умнее нас в выборе оптимальных параметров.</p>
 <h2 id="_33">Типы задач</h2>
 <p><strong>Почему важно понимать типы задач?</strong> Потому что разные задачи требуют разных подходов. Это как разница между диагностикой болезни и измерением температуры - методы разные.</p>
 <h3 id="_34">Классификация</h3>
 <p><strong>Что такое классификация?</strong> Это предсказание категории или класса. Например, спам/не спам, больной/здоровый, покупатель/не покупатель.</p>
-<p><strong>Почему классификация так популярна?</strong> Потому что большинство бизнес-задач - это классификация:
-- Обнаружение мошенничества
-- Медицинская диагностика
-- Рекомендательные системы
+<p><strong>Почему классификация так популярна?</strong> Потому что большинство бизнес-задач - это классификация:<br />
+- Обнаружение мошенничества<br />
+- Медицинская диагностика<br />
+- Рекомендательные системы<br />
 - Анализ настроений</p>
 <div class="codehilite"><pre><span></span><code><span class="c1"># Бинарная классификация</span>
 <span class="n">predictor</span> <span class="o">=</span> <span class="n">TabularPredictor</span><span class="p">(</span>
@@ -572,10 +704,10 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <p><strong>Почему многоклассовая сложнее?</strong> Потому что нужно выбрать из множества вариантов, и ошибки более дорогие.</p>
 <h3 id="_35">Регрессия</h3>
 <p><strong>Что такое регрессия?</strong> Это предсказание численного значения. Например, цена дома, количество продаж, время до события.</p>
-<p><strong>Почему регрессия важна?</strong> Потому что многие бизнес-метрики - это числа:
-- Прогнозирование продаж
-- Оценка недвижимости
-- Предсказание времени
+<p><strong>Почему регрессия важна?</strong> Потому что многие бизнес-метрики - это числа:<br />
+- Прогнозирование продаж<br />
+- Оценка недвижимости<br />
+- Предсказание времени<br />
 - Финансовое моделирование</p>
 <div class="codehilite"><pre><span></span><code><span class="c1"># Регрессия</span>
 <span class="n">predictor</span> <span class="o">=</span> <span class="n">TabularPredictor</span><span class="p">(</span>
@@ -1006,9 +1138,9 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 </code></pre></div>
 
 <h2 id="_72">Следующие шаги</h2>
-<p>После освоения базового использования переходите к:
-- <a href="./03_advanced_configuration.md">Продвинутой конфигурации</a>
-- <a href="./04_metrics.md">Работе с метриками</a>
+<p>После освоения базового использования переходите к:<br />
+- <a href="./03_advanced_configuration.md">Продвинутой конфигурации</a><br />
+- <a href="./04_metrics.md">Работе с метриками</a><br />
 - <a href="./05_validation.md">Методам валидации</a></p>
 <hr />
 <h1 id="automl-gluon_2">Продвинутая конфигурация AutoML Gluon</h1>
@@ -1540,9 +1672,9 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 </code></pre></div>
 
 <h2 id="_104">Следующие шаги</h2>
-<p>После освоения продвинутой конфигурации переходите к:
-- <a href="./04_metrics.md">Работе с метриками</a>
-- <a href="./05_validation.md">Методам валидации</a>
+<p>После освоения продвинутой конфигурации переходите к:<br />
+- <a href="./04_metrics.md">Работе с метриками</a><br />
+- <a href="./05_validation.md">Методам валидации</a><br />
 - <a href="./06_production.md">Продакшен деплою</a></p>
 <hr />
 <h1 id="automl-gluon_3">Метрики и оценка качества в AutoML Gluon</h1>
@@ -1565,24 +1697,24 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <li><strong>Бизнес-успех</strong>: Модель действительно помогает бизнесу</li>
 </ul>
 <h2 id="_108">Введение в метрики</h2>
-<p><img alt="Сравнение метрик" src="images/metrics_comparison.png" />
+<p><img alt="Сравнение метрик" src="images/metrics_comparison.png" /><br />
 <em>Рисунок 3: Сравнение метрик для классификации и регрессии</em></p>
-<p><img alt="Детальная визуализация метрик" src="images/metrics_detailed.png" />
+<p><img alt="Детальная визуализация метрик" src="images/metrics_detailed.png" /><br />
 <em>Рисунок 3.1: Детальная визуализация метрик - ROC Curve, Precision-Recall, Confusion Matrix, Accuracy vs Threshold, F1 Score vs Threshold</em></p>
 <p><strong>Почему метрики - это язык машинного обучения?</strong> Потому что они переводят сложные алгоритмы в понятные числа. Это как переводчик между техническими деталями и бизнес-результатами.</p>
-<p>Метрики в AutoML Gluon используются для:
-- <strong>Оценки качества моделей</strong>: Понимание того, насколько хорошо работает модель
-- <strong>Сравнения различных алгоритмов</strong>: Выбор лучшего алгоритма для задачи
-- <strong>Выбора лучшей модели</strong>: Автоматический отбор оптимальной модели
+<p>Метрики в AutoML Gluon используются для:<br />
+- <strong>Оценки качества моделей</strong>: Понимание того, насколько хорошо работает модель<br />
+- <strong>Сравнения различных алгоритмов</strong>: Выбор лучшего алгоритма для задачи<br />
+- <strong>Выбора лучшей модели</strong>: Автоматический отбор оптимальной модели<br />
 - <strong>Мониторинга производительности</strong>: Отслеживание качества в продакшене</p>
 <h2 id="_109">Метрики для классификации</h2>
 <p><strong>Почему классификация требует особых метрик?</strong> Потому что здесь важны не только правильные ответы, но и типы ошибок. Ложные срабатывания и пропуски имеют разную цену.</p>
 <h3 id="_110">Базовые метрики</h3>
 <h4 id="accuracy">Accuracy (Точность)</h4>
 <p><strong>Почему Accuracy - самая популярная метрика?</strong> Потому что она интуитивно понятна - это просто процент правильных ответов.</p>
-<p><strong>Когда Accuracy вводит в заблуждение?</strong>
-- При несбалансированных данных (99% одного класса)
-- При разной важности ошибок (медицинская диагностика)
+<p><strong>Когда Accuracy вводит в заблуждение?</strong><br />
+- При несбалансированных данных (99% одного класса)<br />
+- При разной важности ошибок (медицинская диагностика)<br />
 - При небольшом количестве данных</p>
 <div class="codehilite"><pre><span></span><code><span class="c1"># Процент правильных предсказаний</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">accuracy_score</span>
@@ -1591,15 +1723,15 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accuracy: </span><span class="si">{</span><span class="n">accuracy</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-<p><strong>Почему Accuracy может быть обманчивой?</strong>
-- Модель может просто предсказывать мажоритарный класс
-- Не показывает, какие ошибки делает модель
+<p><strong>Почему Accuracy может быть обманчивой?</strong><br />
+- Модель может просто предсказывать мажоритарный класс<br />
+- Не показывает, какие ошибки делает модель<br />
 - Не учитывает важность разных типов ошибок</p>
 <h4 id="precision">Precision (Точность)</h4>
 <p><strong>Почему Precision критически важен?</strong> Потому что он показывает, насколько можно доверять положительным предсказаниям модели.</p>
-<p><strong>Когда Precision особенно важен?</strong>
-- Медицинская диагностика (ложные диагнозы опасны)
-- Обнаружение мошенничества (ложные обвинения дороги)
+<p><strong>Когда Precision особенно важен?</strong><br />
+- Медицинская диагностика (ложные диагнозы опасны)<br />
+- Обнаружение мошенничества (ложные обвинения дороги)<br />
 - Спам-фильтры (важные письма не должны попадать в спам)</p>
 <div class="codehilite"><pre><span></span><code><span class="c1"># Доля правильно предсказанных положительных случаев</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">precision_score</span>
@@ -1612,8 +1744,8 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <span class="n">precision_micro</span> <span class="o">=</span> <span class="n">precision_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s1">&#39;micro&#39;</span><span class="p">)</span>  <span class="c1"># Глобальное среднее</span>
 </code></pre></div>
 
-<p><strong>Почему нужны разные типы усреднения?</strong>
-- <strong>macro</strong>: Каждый класс имеет равный вес (хорошо для несбалансированных данных)
+<p><strong>Почему нужны разные типы усреднения?</strong><br />
+- <strong>macro</strong>: Каждый класс имеет равный вес (хорошо для несбалансированных данных)<br />
 - <strong>micro</strong>: Учитывает количество примеров в каждом классе (хорошо для сбалансированных данных)</p>
 <h4 id="recall">Recall (Полнота)</h4>
 <div class="codehilite"><pre><span></span><code><span class="c1"># Доля положительных случаев, которые были правильно предсказаны</span>
@@ -2042,9 +2174,9 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 </code></pre></div>
 
 <h2 id="_131">Следующие шаги</h2>
-<p>После освоения работы с метриками переходите к:
-- <a href="./05_validation.md">Методам валидации</a>
-- <a href="./06_production.md">Продакшен деплою</a>
+<p>После освоения работы с метриками переходите к:<br />
+- <a href="./05_validation.md">Методам валидации</a><br />
+- <a href="./06_production.md">Продакшен деплою</a><br />
 - <a href="./07_retraining.md">Переобучению моделей</a></p>
 <hr />
 <h1 id="automl-gluon_4">Валидация моделей в AutoML Gluon</h1>
@@ -2067,9 +2199,9 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <li><strong>Уверенность в продакшене</strong>: Модель действительно будет работать</li>
 </ul>
 <h2 id="_135">Введение в валидацию</h2>
-<p><img alt="Методы валидации" src="images/validation_methods.png" />
+<p><img alt="Методы валидации" src="images/validation_methods.png" /><br />
 <em>Рисунок 4: Методы валидации в AutoML Gluon</em></p>
-<p><img alt="Walk-Forward анализ" src="images/walk_forward_analysis.png" />
+<p><img alt="Walk-Forward анализ" src="images/walk_forward_analysis.png" /><br />
 <em>Рисунок 4.1: Walk-Forward валидация - схема, производительность, выбор параметров</em></p>
 <p><strong>Почему валидация - это не просто "проверка модели"?</strong> Это процесс, который определяет, готова ли ваша модель к реальному миру. Представьте, что вы готовите пилота к полету - валидация это симулятор, который показывает, как он поведет себя в реальных условиях.</p>
 <p>Валидация - это критически важный процесс для оценки качества ML-моделей и предотвращения переобучения. В AutoML Gluon доступны различные методы валидации для разных типов задач.</p>
@@ -2077,14 +2209,14 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <p><strong>Почему AutoML Gluon предлагает разные типы валидации?</strong> Потому что разные задачи требуют разных подходов. Это как разные виды экзаменов для разных предметов.</p>
 <h3 id="1-holdout">1. Holdout валидация</h3>
 <p><strong>Почему Holdout валидация - самый простой и популярный метод?</strong> Потому что она интуитивно понятна: вы просто разделяете данные на две части - одну для обучения, другую для проверки. Это как экзамен в школе - вы учитесь по учебнику, а экзамен сдаете по новым задачам.</p>
-<p><strong>Преимущества Holdout валидации:</strong>
-- <strong>Простота</strong>: Легко понять и реализовать
-- <strong>Скорость</strong>: Быстро выполняется
-- <strong>Эффективность</strong>: Подходит для больших датасетов
+<p><strong>Преимущества Holdout валидации:</strong><br />
+- <strong>Простота</strong>: Легко понять и реализовать<br />
+- <strong>Скорость</strong>: Быстро выполняется<br />
+- <strong>Эффективность</strong>: Подходит для больших датасетов<br />
 - <strong>Интуитивность</strong>: Понятно заинтересованным сторонам</p>
-<p><strong>Недостатки Holdout валидации:</strong>
-- <strong>Нестабильность</strong>: Результат зависит от случайного разделения
-- <strong>Неэффективность</strong>: 20% данных не участвуют в обучении
+<p><strong>Недостатки Holdout валидации:</strong><br />
+- <strong>Нестабильность</strong>: Результат зависит от случайного разделения<br />
+- <strong>Неэффективность</strong>: 20% данных не участвуют в обучении<br />
 - <strong>Случайность</strong>: Плохое разделение может исказить результаты</p>
 <div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">autogluon.tabular</span><span class="w"> </span><span class="kn">import</span> <span class="n">TabularPredictor</span>
 
@@ -2099,20 +2231,20 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <p><strong>Почему 20% для валидации?</strong> Это компромисс между достаточным количеством данных для обучения и достаточным количеством для валидации.</p>
 <h3 id="2-k-fold-">2. K-Fold кросс-валидация</h3>
 <p><strong>Почему K-Fold кросс-валидация более надежна, чем Holdout?</strong> Потому что она использует ВСЕ данные и для обучения, и для валидации. Это как сдать 5 экзаменов вместо одного - результат будет более точным.</p>
-<p><strong>Как работает K-Fold кросс-валидация:</strong>
-1. <strong>Разделение на K частей</strong>: Данные делятся на K равных частей (обычно K=5 или K=10)
-2. <strong>K итераций</strong>: В каждой итерации одна часть используется для валидации, остальные K-1 для обучения
-3. <strong>Обучение модели</strong>: Модель обучается на K-1 частях
-4. <strong>Тестирование</strong>: Модель тестируется на оставшейся части
+<p><strong>Как работает K-Fold кросс-валидация:</strong><br />
+1. <strong>Разделение на K частей</strong>: Данные делятся на K равных частей (обычно K=5 или K=10)<br />
+2. <strong>K итераций</strong>: В каждой итерации одна часть используется для валидации, остальные K-1 для обучения<br />
+3. <strong>Обучение модели</strong>: Модель обучается на K-1 частях<br />
+4. <strong>Тестирование</strong>: Модель тестируется на оставшейся части<br />
 5. <strong>Усреднение результатов</strong>: Итоговая оценка - среднее по всем K итерациям</p>
-<p><strong>Преимущества K-Fold валидации:</strong>
-- <strong>Использование всех данных</strong>: Каждая точка данных участвует и в обучении, и в валидации
-- <strong>Стабильность</strong>: Результат не зависит от случайного разделения
-- <strong>Оценка дисперсии</strong>: Показывает, насколько стабильна модель
+<p><strong>Преимущества K-Fold валидации:</strong><br />
+- <strong>Использование всех данных</strong>: Каждая точка данных участвует и в обучении, и в валидации<br />
+- <strong>Стабильность</strong>: Результат не зависит от случайного разделения<br />
+- <strong>Оценка дисперсии</strong>: Показывает, насколько стабильна модель<br />
 - <strong>Надежность</strong>: Более точная оценка качества модели</p>
-<p><strong>Недостатки K-Fold валидации:</strong>
-- <strong>Время</strong>: Выполняется в K раз дольше
-- <strong>Сложность</strong>: Требует больше вычислительных ресурсов
+<p><strong>Недостатки K-Fold валидации:</strong><br />
+- <strong>Время</strong>: Выполняется в K раз дольше<br />
+- <strong>Сложность</strong>: Требует больше вычислительных ресурсов<br />
 - <strong>Память</strong>: Нужно хранить K моделей</p>
 <div class="codehilite"><pre><span></span><code><span class="c1"># K-fold кросс-валидация</span>
 <span class="n">predictor</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
@@ -2125,19 +2257,19 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <p><strong>Почему обычно используют 5 или 10 фолдов?</strong> Потому что это оптимальный баланс между точностью и скоростью.</p>
 <h3 id="3">3. Стратифицированная валидация</h3>
 <p><strong>Почему стратифицированная валидация критически важна для несбалансированных данных?</strong> Потому что обычная валидация может дать искаженные результаты, когда один класс представлен в 100 раз больше другого. Это как оценивать качество врача только по здоровым пациентам.</p>
-<p><strong>Проблема несбалансированных данных:</strong>
-- <strong>Медицинская диагностика</strong>: 99% здоровых, 1% больных
-- <strong>Обнаружение мошенничества</strong>: 99.9% легальных транзакций, 0.1% мошеннических
+<p><strong>Проблема несбалансированных данных:</strong><br />
+- <strong>Медицинская диагностика</strong>: 99% здоровых, 1% больных<br />
+- <strong>Обнаружение мошенничества</strong>: 99.9% легальных транзакций, 0.1% мошеннических<br />
 - <strong>Спам-фильтры</strong>: 90% обычных писем, 10% спама</p>
-<p><strong>Как работает стратификация:</strong>
-1. <strong>Анализ распределения</strong>: AutoML Gluon анализирует пропорции классов
-2. <strong>Сохранение пропорций</strong>: В каждом фолде сохраняется исходное распределение
-3. <strong>Сбалансированная оценка</strong>: Модель оценивается на репрезентативных данных
+<p><strong>Как работает стратификация:</strong><br />
+1. <strong>Анализ распределения</strong>: AutoML Gluon анализирует пропорции классов<br />
+2. <strong>Сохранение пропорций</strong>: В каждом фолде сохраняется исходное распределение<br />
+3. <strong>Сбалансированная оценка</strong>: Модель оценивается на репрезентативных данных<br />
 4. <strong>Корректные метрики</strong>: Получаем точные оценки для всех классов</p>
-<p><strong>Когда использовать стратификацию:</strong>
-- <strong>Использовать</strong>: Когда классы несбалансированы (соотношение &gt; 10:1)
-- <strong>Использовать</strong>: Когда важны все классы (медицина, безопасность)
-- <strong>Не использовать</strong>: Когда данные сбалансированы
+<p><strong>Когда использовать стратификацию:</strong><br />
+- <strong>Использовать</strong>: Когда классы несбалансированы (соотношение &gt; 10:1)<br />
+- <strong>Использовать</strong>: Когда важны все классы (медицина, безопасность)<br />
+- <strong>Не использовать</strong>: Когда данные сбалансированы<br />
 - <strong>Не использовать</strong>: Когда важны только мажоритарные классы</p>
 <div class="codehilite"><pre><span></span><code><span class="c1"># Стратифицированная валидация для несбалансированных данных</span>
 <span class="n">predictor</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
@@ -2639,9 +2771,9 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 </code></pre></div>
 
 <h2 id="_148">Следующие шаги</h2>
-<p>После освоения методов валидации переходите к:
-- <a href="./06_production.md">Продакшен деплою</a>
-- <a href="./07_retraining.md">Переобучению моделей</a>
+<p>После освоения методов валидации переходите к:<br />
+- <a href="./06_production.md">Продакшен деплою</a><br />
+- <a href="./07_retraining.md">Переобучению моделей</a><br />
 - <a href="./08_best_practices.md">Лучшим практикам</a></p>
 <hr />
 <h1 id="automl-gluon_5">Продакшен и деплой AutoML Gluon моделей</h1>
@@ -2664,27 +2796,27 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <li><strong>Бизнес-ценность</strong>: Реальная польза для компании и пользователей</li>
 </ul>
 <h2 id="_152">Введение в продакшен</h2>
-<p><img alt="Продакшен архитектура" src="images/production_architecture.png" />
+<p><img alt="Продакшен архитектура" src="images/production_architecture.png" /><br />
 <em>Рисунок 5: Архитектура продакшен системы AutoML Gluon</em></p>
 <p><strong>Почему продакшен в ML кардинально отличается от обычной разработки?</strong> Потому что ML-модели - это не просто код, а живые системы, которые учатся и изменяются. Это как разница между заводом и садом - завод работает по плану, а сад требует постоянного ухода.</p>
-<p><strong>Уникальные особенности ML продакшена:</strong>
-- <strong>Данные меняются</strong>: Модель может "забыть" то, что знала
-- <strong>Концептуальный дрифт</strong>: Реальность изменяется быстрее модели
-- <strong>Зависимость от данных</strong>: Нет данных = нет предсказаний
+<p><strong>Уникальные особенности ML продакшена:</strong><br />
+- <strong>Данные меняются</strong>: Модель может "забыть" то, что знала<br />
+- <strong>Концептуальный дрифт</strong>: Реальность изменяется быстрее модели<br />
+- <strong>Зависимость от данных</strong>: Нет данных = нет предсказаний<br />
 - <strong>Черный ящик</strong>: Сложно понять, почему модель приняла решение</p>
 <p>Продакшен деплой ML-моделей - это критически важный этап, который требует тщательного планирования, мониторинга и поддержки. В этом разделе рассмотрим все аспекты деплоя AutoML Gluon моделей в продакшен.</p>
 <h2 id="_153">Подготовка модели к продакшену</h2>
 <h3 id="_154">Оптимизация модели</h3>
 <p><strong>Почему модель, которая отлично работает в Jupyter, может провалиться в продакшене?</strong> Потому что продакшен предъявляет совершенно другие требования к производительности, памяти и скорости.</p>
-<p><strong>Проблемы неоптимизированных моделей в продакшене:</strong>
-- <strong>Медленные предсказания</strong>: 5 секунд вместо 50мс - пользователи уйдут
-- <strong>Высокое потребление памяти</strong>: Сервер падает под нагрузкой
-- <strong>Большой размер модели</strong>: Не помещается в контейнер
+<p><strong>Проблемы неоптимизированных моделей в продакшене:</strong><br />
+- <strong>Медленные предсказания</strong>: 5 секунд вместо 50мс - пользователи уйдут<br />
+- <strong>Высокое потребление памяти</strong>: Сервер падает под нагрузкой<br />
+- <strong>Большой размер модели</strong>: Не помещается в контейнер<br />
 - <strong>Нестабильность</strong>: Модель работает нестабильно на разных серверах</p>
-<p><strong>Методы оптимизации моделей:</strong>
-- <strong>Квантизация</strong>: Уменьшение точности весов (float32 → float16)
-- <strong>Прунинг</strong>: Удаление неважных нейронов
-- <strong>Дистилляция</strong>: Обучение маленькой модели на большой
+<p><strong>Методы оптимизации моделей:</strong><br />
+- <strong>Квантизация</strong>: Уменьшение точности весов (float32 → float16)<br />
+- <strong>Прунинг</strong>: Удаление неважных нейронов<br />
+- <strong>Дистилляция</strong>: Обучение маленькой модели на большой<br />
 - <strong>Оптимизация архитектуры</strong>: Выбор более эффективных алгоритмов</p>
 <div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">autogluon.tabular</span><span class="w"> </span><span class="kn">import</span> <span class="n">TabularPredictor</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
@@ -3606,9 +3738,9 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 </code></pre></div>
 
 <h2 id="_168">Следующие шаги</h2>
-<p>После освоения продакшен деплоя переходите к:
-- <a href="./07_retraining.md">Переобучению моделей</a>
-- <a href="./08_best_practices.md">Лучшим практикам</a>
+<p>После освоения продакшен деплоя переходите к:<br />
+- <a href="./07_retraining.md">Переобучению моделей</a><br />
+- <a href="./08_best_practices.md">Лучшим практикам</a><br />
 - <a href="./09_examples.md">Примерам использования</a></p>
 <hr />
 <h1 id="automl-gluon_6">Переобучение моделей AutoML Gluon</h1>
@@ -3631,27 +3763,27 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <li><strong>Доверие пользователей</strong>: Результаты остаются точными и полезными</li>
 </ul>
 <h2 id="_172">Введение в переобучение</h2>
-<p><img alt="Процесс переобучения" src="images/retraining_workflow.png" />
+<p><img alt="Процесс переобучения" src="images/retraining_workflow.png" /><br />
 <em>Рисунок 6: Процесс переобучения моделей AutoML Gluon</em></p>
 <p><strong>Почему переобучение - это не просто "обновить модель"?</strong> Это процесс адаптации модели к изменяющемуся миру. Представьте врача, который не изучает новые методы лечения - он станет неэффективным.</p>
-<p><strong>Почему модели "стареют" в продакшене?</strong>
-- <strong>Концептуальный дрифт</strong>: Реальность меняется быстрее модели
-- <strong>Данные дрифт</strong>: Новые типы данных, которых не было при обучении
-- <strong>Пользовательские предпочтения</strong>: Люди меняют поведение и вкусы
+<p><strong>Почему модели "стареют" в продакшене?</strong><br />
+- <strong>Концептуальный дрифт</strong>: Реальность меняется быстрее модели<br />
+- <strong>Данные дрифт</strong>: Новые типы данных, которых не было при обучении<br />
+- <strong>Пользовательские предпочтения</strong>: Люди меняют поведение и вкусы<br />
 - <strong>Технологические изменения</strong>: Новые устройства, платформы, интерфейсы</p>
 <p>Переобучение (retraining) - это критически важный процесс для поддержания актуальности ML-моделей в продакшене. В этом разделе рассмотрим все аспекты автоматизированного переобучения моделей.</p>
 <h2 id="_173">Стратегии переобучения</h2>
 <h3 id="1">1. Периодическое переобучение</h3>
 <p><strong>Почему периодическое переобучение - самый простой и надежный подход?</strong> Потому что оно работает по расписанию, как будильник, который напоминает обновить знания. Это как регулярные курсы повышения квалификации для врачей.</p>
-<p><strong>Преимущества периодического переобучения:</strong>
-- <strong>Простота</strong>: Легко настроить и поддерживать
-- <strong>Надежность</strong>: Регулярные обновления предотвращают деградацию
-- <strong>Планируемость</strong>: Можно заранее подготовить ресурсы
+<p><strong>Преимущества периодического переобучения:</strong><br />
+- <strong>Простота</strong>: Легко настроить и поддерживать<br />
+- <strong>Надежность</strong>: Регулярные обновления предотвращают деградацию<br />
+- <strong>Планируемость</strong>: Можно заранее подготовить ресурсы<br />
 - <strong>Контроль качества</strong>: Время на тестирование перед внедрением</p>
-<p><strong>Выбор интервала переобучения:</strong>
-- <strong>Ежедневно</strong>: Для быстро меняющихся данных (финансы, новости)
-- <strong>Еженедельно</strong>: Для большинства бизнес-задач
-- <strong>Ежемесячно</strong>: Для стабильных доменов (медицина, образование)
+<p><strong>Выбор интервала переобучения:</strong><br />
+- <strong>Ежедневно</strong>: Для быстро меняющихся данных (финансы, новости)<br />
+- <strong>Еженедельно</strong>: Для большинства бизнес-задач<br />
+- <strong>Ежемесячно</strong>: Для стабильных доменов (медицина, образование)<br />
 - <strong>По требованию</strong>: При значительных изменениях в данных</p>
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">schedule</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
@@ -4505,9 +4637,9 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 </code></pre></div>
 
 <h2 id="_184">Следующие шаги</h2>
-<p>После освоения переобучения моделей переходите к:
-- <a href="./08_best_practices.md">Лучшим практикам</a>
-- <a href="./09_examples.md">Примерам использования</a>
+<p>После освоения переобучения моделей переходите к:<br />
+- <a href="./08_best_practices.md">Лучшим практикам</a><br />
+- <a href="./09_examples.md">Примерам использования</a><br />
 - <a href="./10_troubleshooting.md">Troubleshooting</a></p>
 <hr />
 <h1 id="automl-gluon_7">Лучшие практики AutoML Gluon</h1>
@@ -4530,29 +4662,29 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <li><strong>Этичность</strong>: Система работает справедливо и безопасно</li>
 </ul>
 <h2 id="_188">Введение в лучшие практики</h2>
-<p><img alt="Сравнение производительности" src="images/performance_comparison.png" />
+<p><img alt="Сравнение производительности" src="images/performance_comparison.png" /><br />
 <em>Рисунок 7: Сравнение производительности различных моделей</em></p>
-<p><img alt="Анализ робастности" src="images/robustness_analysis.png" />
+<p><img alt="Анализ робастности" src="images/robustness_analysis.png" /><br />
 <em>Рисунок 7.1: Анализ робастности - робастные vs переобученные системы, стабильность производительности</em></p>
 <p><strong>Почему лучшие практики - это не просто "сделать хорошо"?</strong> Это систематический подход к решению типичных проблем, основанный на опыте тысяч проектов. Это как медицинские протоколы - они спасают жизни.</p>
-<p><strong>Почему 80% ML-проектов повторяют одни и те же ошибки?</strong> Потому что команды не знают о существовании проверенных решений:
-- <strong>Проблемы с данными</strong>: Неправильная подготовка, утечки, смещения
-- <strong>Проблемы с валидацией</strong>: Неправильное разделение, переобучение
-- <strong>Проблемы с продакшеном</strong>: Неготовность к реальным условиям
+<p><strong>Почему 80% ML-проектов повторяют одни и те же ошибки?</strong> Потому что команды не знают о существовании проверенных решений:<br />
+- <strong>Проблемы с данными</strong>: Неправильная подготовка, утечки, смещения<br />
+- <strong>Проблемы с валидацией</strong>: Неправильное разделение, переобучение<br />
+- <strong>Проблемы с продакшеном</strong>: Неготовность к реальным условиям<br />
 - <strong>Проблемы с этикой</strong>: Дискриминация, предвзятость, безопасность</p>
 <p>Лучшие практики - это накопленный опыт использования AutoML Gluon, который поможет избежать типичных ошибок и достичь максимальной эффективности. В этом разделе рассмотрим все аспекты правильного использования инструмента.</p>
 <h2 id="_189">Подготовка данных</h2>
 <h3 id="1_1">1. Качество данных</h3>
 <p><strong>Почему "мусор на входе = мусор на выходе" особенно актуально для ML?</strong> Потому что модель учится на данных, и если данные плохие, модель будет делать плохие предсказания. Это как обучение врача на неправильных диагнозах.</p>
-<p><strong>Почему 60% времени ML-проекта тратится на подготовку данных?</strong> Потому что реальные данные всегда "грязные":
-- <strong>Отсутствующие значения</strong>: 30-50% данных могут быть пустыми
-- <strong>Некорректные значения</strong>: Опечатки, неправильные форматы
-- <strong>Дубликаты</strong>: Одинаковые записи в разных форматах
+<p><strong>Почему 60% времени ML-проекта тратится на подготовку данных?</strong> Потому что реальные данные всегда "грязные":<br />
+- <strong>Отсутствующие значения</strong>: 30-50% данных могут быть пустыми<br />
+- <strong>Некорректные значения</strong>: Опечатки, неправильные форматы<br />
+- <strong>Дубликаты</strong>: Одинаковые записи в разных форматах<br />
 - <strong>Выбросы</strong>: Экстремальные значения, которые искажают модель</p>
-<p><strong>Типы проблем с данными:</strong>
-- <strong>Структурные проблемы</strong>: Неправильные типы данных, форматы
-- <strong>Семантические проблемы</strong>: Некорректные значения, логические ошибки
-- <strong>Статистические проблемы</strong>: Смещения, корреляции, выбросы
+<p><strong>Типы проблем с данными:</strong><br />
+- <strong>Структурные проблемы</strong>: Неправильные типы данных, форматы<br />
+- <strong>Семантические проблемы</strong>: Некорректные значения, логические ошибки<br />
+- <strong>Статистические проблемы</strong>: Смещения, корреляции, выбросы<br />
 - <strong>Этические проблемы</strong>: Дискриминация, предвзятость</p>
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -5430,8 +5562,8 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 </code></pre></div>
 
 <h2 id="_198">Следующие шаги</h2>
-<p>После освоения лучших практик переходите к:
-- <a href="./09_examples.md">Примерам использования</a>
+<p>После освоения лучших практик переходите к:<br />
+- <a href="./09_examples.md">Примерам использования</a><br />
 - <a href="./10_troubleshooting.md">Troubleshooting</a></p>
 <hr />
 <h1 id="automl-gluon_8">Примеры использования AutoML Gluon</h1>
@@ -5454,13 +5586,13 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <li><strong>Вдохновение</strong>: Идеи для собственных проектов</li>
 </ul>
 <h2 id="_202">Введение в примеры</h2>
-<p><img alt="Monte Carlo анализ" src="images/monte_carlo_analysis.png" />
+<p><img alt="Monte Carlo анализ" src="images/monte_carlo_analysis.png" /><br />
 <em>Рисунок 8.1: Monte Carlo анализ - робастные vs переобученные системы, распределение прибыли, risk-return профиль</em></p>
 <p><strong>Почему примеры - это язык машинного обучения?</strong> Потому что они переводят сложные алгоритмы в понятные числа. Это как переводчик между техническими деталями и бизнес-результатами.</p>
-<p><strong>Типы примеров в AutoML Gluon:</strong>
-- <strong>Базовые примеры</strong>: Простые задачи для понимания основ
-- <strong>Продвинутые примеры</strong>: Сложные сценарии для опытных пользователей
-- <strong>Реальные проекты</strong>: Полные решения реальных бизнес-задач
+<p><strong>Типы примеров в AutoML Gluon:</strong><br />
+- <strong>Базовые примеры</strong>: Простые задачи для понимания основ<br />
+- <strong>Продвинутые примеры</strong>: Сложные сценарии для опытных пользователей<br />
+- <strong>Реальные проекты</strong>: Полные решения реальных бизнес-задач<br />
 - <strong>Специализированные примеры</strong>: Для конкретных доменов (медицина, финансы)</p>
 <p>В этом разделе представлены практические примеры использования AutoML Gluon для различных задач машинного обучения. Каждый пример включает полный код, объяснения и лучшие практики.</p>
 <h2 id="1_10">Пример 1: Классификация клиентов банка</h2>
@@ -5468,10 +5600,10 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <h3 id="_203">Задача</h3>
 <p><strong>Почему предсказание дефолта так важно?</strong> Потому что неправильное решение может стоить банку миллионы долларов. Это как медицинская диагностика, но для денег.</p>
 <p>Предсказание вероятности дефолта клиента банка на основе финансовых показателей.</p>
-<p><strong>Бизнес-контекст:</strong>
-- <strong>Цель</strong>: Минимизировать потери от плохих кредитов
-- <strong>Метрика</strong>: ROC-AUC (важнее точность для положительных случаев)
-- <strong>Стоимость ошибки</strong>: Ложный отрицательный результат дороже ложного положительного
+<p><strong>Бизнес-контекст:</strong><br />
+- <strong>Цель</strong>: Минимизировать потери от плохих кредитов<br />
+- <strong>Метрика</strong>: ROC-AUC (важнее точность для положительных случаев)<br />
+- <strong>Стоимость ошибки</strong>: Ложный отрицательный результат дороже ложного положительного<br />
 - <strong>Объем данных</strong>: Обычно 100K-1M записей</p>
 <h3 id="_204">Данные</h3>
 <p><strong>Почему используем синтетические данные?</strong> Потому что реальные банковские данные конфиденциальны, но структура и паттерны остаются теми же.</p>
@@ -6545,8 +6677,8 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 </code></pre></div>
 
 <h2 id="_229">Следующие шаги</h2>
-<p>После изучения примеров переходите к:
-- <a href="./10_troubleshooting.md">Troubleshooting</a>
+<p>После изучения примеров переходите к:<br />
+- <a href="./10_troubleshooting.md">Troubleshooting</a><br />
 - <a href="./08_best_practices.md">Лучшим практикам</a></p>
 <hr />
 <h1 id="troubleshooting-automl-gluon">Troubleshooting AutoML Gluon</h1>
@@ -6569,13 +6701,13 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <li><strong>Уверенность</strong>: Команда знает, как решать проблемы</li>
 </ul>
 <h2 id="troubleshooting_2">Введение в troubleshooting</h2>
-<p><img alt="Troubleshooting блок-схема" src="images/troubleshooting_flowchart.png" />
+<p><img alt="Troubleshooting блок-схема" src="images/troubleshooting_flowchart.png" /><br />
 <em>Рисунок 8: Блок-схема решения проблем AutoML Gluon</em></p>
 <p><strong>Почему troubleshooting - это искусство, а не наука?</strong> Потому что каждая проблема уникальна, но паттерны повторяются. Это как медицинская диагностика - симптомы похожи, но причины разные.</p>
-<p><strong>Типы проблем в AutoML Gluon:</strong>
-- <strong>Проблемы установки</strong>: Конфликты зависимостей, версии Python
-- <strong>Проблемы данных</strong>: Форматы, размеры, качество
-- <strong>Проблемы производительности</strong>: Медленная работа, нехватка памяти
+<p><strong>Типы проблем в AutoML Gluon:</strong><br />
+- <strong>Проблемы установки</strong>: Конфликты зависимостей, версии Python<br />
+- <strong>Проблемы данных</strong>: Форматы, размеры, качество<br />
+- <strong>Проблемы производительности</strong>: Медленная работа, нехватка памяти<br />
 - <strong>Проблемы моделей</strong>: Плохая точность, переобучение</p>
 <p>В этом разделе рассмотрим типичные проблемы, возникающие при работе с AutoML Gluon, и способы их решения. Каждая проблема включает описание, причины возникновения и пошаговые инструкции по устранению.</p>
 <h2 id="_231">Проблемы установки</h2>
@@ -7298,8 +7430,8 @@ pip<span class="w"> </span>install<span class="w"> </span><span class="nv">torch
 </code></pre></div>
 
 <h2 id="_246">Следующие шаги</h2>
-<p>После решения проблем переходите к:
-- <a href="./08_best_practices.md">Лучшим практикам</a>
+<p>После решения проблем переходите к:<br />
+- <a href="./08_best_practices.md">Лучшим практикам</a><br />
 - <a href="./09_examples.md">Примерам использования</a></p>
 <hr />
 <h1 id="automl-gluon-apple-silicon-m1m2m3">Оптимизация AutoML Gluon для Apple Silicon (M1/M2/M3)</h1>
@@ -7322,13 +7454,13 @@ pip<span class="w"> </span>install<span class="w"> </span><span class="nv">torch
 <li><strong>Неэффективное использование ресурсов</strong>: Только CPU, игнорирование GPU</li>
 </ul>
 <h2 id="apple-silicon_1">Введение в оптимизацию для Apple Silicon</h2>
-<p><img alt="Оптимизация для Apple Silicon" src="images/apple_silicon_optimization.png" />
+<p><img alt="Оптимизация для Apple Silicon" src="images/apple_silicon_optimization.png" /><br />
 <em>Рисунок 9: Оптимизация AutoML Gluon для Apple Silicon</em></p>
 <p><strong>Почему Apple Silicon требует специального подхода?</strong> Потому что это архитектура ARM, а не x86, и требует специальных оптимизаций для максимальной производительности.</p>
-<p>Apple Silicon MacBook с чипами M1, M2, M3 предоставляют уникальные возможности для ускорения машинного обучения через:
-- <strong>MLX</strong> - фреймворк Apple для машинного обучения на Apple Silicon
-- <strong>Ray</strong> - распределенные вычисления с поддержкой Apple Silicon
-- <strong>OpenMP</strong> - параллельные вычисления
+<p>Apple Silicon MacBook с чипами M1, M2, M3 предоставляют уникальные возможности для ускорения машинного обучения через:<br />
+- <strong>MLX</strong> - фреймворк Apple для машинного обучения на Apple Silicon<br />
+- <strong>Ray</strong> - распределенные вычисления с поддержкой Apple Silicon<br />
+- <strong>OpenMP</strong> - параллельные вычисления<br />
 - <strong>Metal Performance Shaders (MPS)</strong> - GPU ускорение</p>
 <h2 id="apple-silicon_2">Установка для Apple Silicon</h2>
 <p><strong>Почему установка для Apple Silicon требует особого внимания?</strong> Потому что большинство пакетов по умолчанию собираются для x86, что приводит к медленной работе через эмуляцию Rosetta.</p>
@@ -7350,10 +7482,10 @@ pip<span class="w"> </span>install<span class="w"> </span>autogluon
 
 <h3 id="2-mlx-apple-silicon">2. Установка MLX для Apple Silicon</h3>
 <p><strong>Почему MLX - это будущее ML на Apple Silicon?</strong> Потому что это единственный фреймворк, специально разработанный Apple для их чипов, обеспечивающий максимальную производительность.</p>
-<p><strong>Преимущества MLX:</strong>
-- <strong>Нативная поддержка</strong>: Специально для Apple Silicon
-- <strong>Высокая производительность</strong>: В 2-3 раза быстрее PyTorch
-- <strong>Энергоэффективность</strong>: Меньше потребление энергии
+<p><strong>Преимущества MLX:</strong><br />
+- <strong>Нативная поддержка</strong>: Специально для Apple Silicon<br />
+- <strong>Высокая производительность</strong>: В 2-3 раза быстрее PyTorch<br />
+- <strong>Энергоэффективность</strong>: Меньше потребление энергии<br />
 - <strong>Простота использования</strong>: API похож на NumPy</p>
 <div class="codehilite"><pre><span></span><code><span class="c1"># Установка MLX - фреймворк Apple для ML</span>
 pip<span class="w"> </span>install<span class="w"> </span>mlx<span class="w"> </span>mlx-lm
@@ -8284,7 +8416,7 @@ pip<span class="w"> </span>install<span class="w"> </span>openmp-python
 <li><strong>Мотивация</strong>: Видимый прогресс вдохновляет команду</li>
 </ul>
 <h2 id="_255">Введение</h2>
-<p><img alt="Простой пример продакшена" src="images/simple_production_flow.png" />
+<p><img alt="Простой пример продакшена" src="images/simple_production_flow.png" /><br />
 <em>Рисунок 12.1: Простой пример создания робастной ML-модели от идеи до продакшена</em></p>
 <p><strong>Почему начинаем с простого примера?</strong> Потому что он показывает весь цикл разработки ML-системы от начала до конца, не отвлекаясь на сложные детали.</p>
 <p>Этот раздел показывает <strong>самый простой путь</strong> создания робастной прибыльной ML-модели с использованием AutoML Gluon - от первоначальной идеи до полного продакшен деплоя на DEX blockchain.</p>
@@ -8293,10 +8425,10 @@ pip<span class="w"> </span>install<span class="w"> </span>openmp-python
 <h3 id="_256">Идея</h3>
 <p><strong>Почему выбираем предсказание цены токена?</strong> Потому что это понятная задача с четкими метриками успеха и доступными данными.</p>
 <p>Создать модель для предсказания цены токена на основе исторических данных и технических индикаторов.</p>
-<p><strong>Почему именно криптовалюты?</strong>
-- <strong>Доступность данных</strong>: Бесплатные исторические данные
-- <strong>Волатильность</strong>: Высокая изменчивость цены для обучения
-- <strong>Прозрачность</strong>: Все транзакции публичны
+<p><strong>Почему именно криптовалюты?</strong><br />
+- <strong>Доступность данных</strong>: Бесплатные исторические данные<br />
+- <strong>Волатильность</strong>: Высокая изменчивость цены для обучения<br />
+- <strong>Прозрачность</strong>: Все транзакции публичны<br />
 - <strong>Актуальность</strong>: Быстро меняющийся рынок</p>
 <h3 id="_257">Цель</h3>
 <p><strong>Почему 70% точности достаточно?</strong> Потому что в трейдинге даже небольшое преимущество дает прибыль, а 70% - это уже статистически значимое преимущество.</p>
@@ -8766,7 +8898,7 @@ pip<span class="w"> </span>install<span class="w"> </span>openmp-python
 <li><strong>Мониторинг</strong>: Отслеживание производительности в реальном времени</li>
 </ul>
 <h2 id="_266">Введение</h2>
-<p><img alt="Сложный пример продакшена" src="images/advanced_production_flow.png" />
+<p><img alt="Сложный пример продакшена" src="images/advanced_production_flow.png" /><br />
 <em>Рисунок 13.1: Сложный пример создания продвинутой ML-системы с множественными моделями, ансамблями и продвинутым риск-менеджментом</em></p>
 <p><strong>Почему продвинутый подход - это следующий уровень?</strong> Потому что он решает реальные проблемы сложных ML-систем: масштабируемость, надежность, производительность.</p>
 <p>Этот раздел показывает <strong>продвинутый подход</strong> к созданию робастной прибыльной ML-системы с использованием AutoML Gluon - от сложной архитектуры до полного продакшен деплоя с продвинутыми техниками.</p>
@@ -9681,7 +9813,7 @@ pip<span class="w"> </span>install<span class="w"> </span>openmp-python
 <li><strong>Независимость</strong>: Могут решать проблемы и адаптировать систему</li>
 </ul>
 <h2 id="automl_2">Введение в теорию AutoML</h2>
-<p><img alt="Теория AutoML" src="images/automl_theory.png" />
+<p><img alt="Теория AutoML" src="images/automl_theory.png" /><br />
 <em>Рисунок 14.1: Теоретические основы автоматизированного машинного обучения</em></p>
 <p><strong>Почему AutoML - это не просто "нажать кнопку"?</strong> Потому что это сложная система алгоритмов, которая автоматизирует процесс создания ML-моделей, но требует понимания принципов для эффективного использования.</p>
 <p>AutoML (Automated Machine Learning) - это область машинного обучения, которая автоматизирует процесс создания ML-моделей. Понимание теоретических основ критически важно для эффективного использования AutoML Gluon.</p>
@@ -9689,10 +9821,10 @@ pip<span class="w"> </span>install<span class="w"> </span>openmp-python
 <h3 id="1-neural-architecture-search-nas">1. Neural Architecture Search (NAS)</h3>
 <p><strong>Почему NAS - это революция в дизайне нейросетей?</strong> Потому что он автоматически находит архитектуры, которые превосходят созданные человеком, экономя месяцы работы экспертов.</p>
 <p>Neural Architecture Search - это процесс автоматического поиска оптимальной архитектуры нейронной сети.</p>
-<p><strong>Почему NAS работает лучше человека?</strong>
-- <strong>Объективность</strong>: Не ограничен предрассудками и опытом
-- <strong>Эксплуатация</strong>: Может тестировать тысячи архитектур
-- <strong>Оптимизация</strong>: Находит архитектуры, оптимизированные под конкретную задачу
+<p><strong>Почему NAS работает лучше человека?</strong><br />
+- <strong>Объективность</strong>: Не ограничен предрассудками и опытом<br />
+- <strong>Эксплуатация</strong>: Может тестировать тысячи архитектур<br />
+- <strong>Оптимизация</strong>: Находит архитектуры, оптимизированные под конкретную задачу<br />
 - <strong>Инновации</strong>: Может найти неожиданные решения</p>
 <div class="codehilite"><pre><span></span><code><span class="c1"># Пример NAS в AutoGluon - автоматический поиск архитектуры</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">autogluon.vision</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImagePredictor</span>
@@ -10086,22 +10218,22 @@ pip<span class="w"> </span>install<span class="w"> </span>openmp-python
 <li><strong>Улучшение модели</strong>: Понимание важности признаков</li>
 </ul>
 <h2 id="_282">Введение в интерпретируемость</h2>
-<p><img alt="Интерпретируемость ML" src="images/interpretability_overview.png" />
+<p><img alt="Интерпретируемость ML" src="images/interpretability_overview.png" /><br />
 <em>Рисунок 15.1: Обзор методов интерпретируемости и объяснимости ML-моделей</em></p>
 <p><strong>Почему интерпретируемость - это не роскошь, а необходимость?</strong> Потому что в современном мире ML-модели принимают решения, влияющие на жизни людей, и эти решения должны быть понятными и справедливыми.</p>
-<p>Интерпретируемость машинного обучения - это способность понимать и объяснять решения, принимаемые ML-моделями. Это критически важно для:
-- <strong>Доверия к модели</strong> - понимание логики принятия решений
-- <strong>Соответствие регулятивным требованиям</strong> - GDPR, AI Act
-- <strong>Отладка моделей</strong> - выявление ошибок и смещений
+<p>Интерпретируемость машинного обучения - это способность понимать и объяснять решения, принимаемые ML-моделями. Это критически важно для:<br />
+- <strong>Доверия к модели</strong> - понимание логики принятия решений<br />
+- <strong>Соответствие регулятивным требованиям</strong> - GDPR, AI Act<br />
+- <strong>Отладка моделей</strong> - выявление ошибок и смещений<br />
 - <strong>Улучшение моделей</strong> - понимание важности признаков</p>
 <h2 id="_283">Типы интерпретируемости</h2>
 <h3 id="1-intrinsic-interpretability">1. Внутренняя интерпретируемость (Intrinsic Interpretability)</h3>
 <p><strong>Почему внутренняя интерпретируемость - это золотой стандарт?</strong> Потому что модель сама по себе понятна, не требует дополнительных методов объяснения и дает точные интерпретации.</p>
 <p>Модели, которые изначально интерпретируемы:</p>
-<p><strong>Преимущества внутренней интерпретируемости:</strong>
-- <strong>Точность</strong>: Интерпретации точно отражают логику модели
-- <strong>Простота</strong>: Не нужны дополнительные методы объяснения
-- <strong>Надежность</strong>: Интерпретации всегда доступны
+<p><strong>Преимущества внутренней интерпретируемости:</strong><br />
+- <strong>Точность</strong>: Интерпретации точно отражают логику модели<br />
+- <strong>Простота</strong>: Не нужны дополнительные методы объяснения<br />
+- <strong>Надежность</strong>: Интерпретации всегда доступны<br />
 - <strong>Понятность</strong>: Логика модели прозрачна</p>
 <div class="codehilite"><pre><span></span><code><span class="c1"># Линейная регрессия - внутренне интерпретируема</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearRegression</span>
@@ -10588,17 +10720,17 @@ pip<span class="w"> </span>install<span class="w"> </span>openmp-python
 <li><strong>Инновации</strong>: Могут создавать новые решения</li>
 </ul>
 <h2 id="_292">Введение в продвинутые темы</h2>
-<p><img alt="Продвинутые темы AutoML" src="images/advanced_topics_overview.png" />
+<p><img alt="Продвинутые темы AutoML" src="images/advanced_topics_overview.png" /><br />
 <em>Рисунок 16.1: Обзор продвинутых тем и современных направлений в AutoML</em></p>
 <p><strong>Почему продвинутые темы - это будущее ML?</strong> Потому что они решают проблемы, которые невозможно решить традиционными методами: автоматический дизайн архитектур, обучение на малых данных, мультимодальное понимание.</p>
 <p>Этот раздел охватывает передовые темы и современные направления в области автоматизированного машинного обучения, включая нейроархитектурный поиск, мета-обучение, мультимодальное обучение и другие cutting-edge технологии.</p>
 <h2 id="neural-architecture-search-nas">Neural Architecture Search (NAS)</h2>
 <h3 id="1-differentiable-architecture-search-darts">1. Differentiable Architecture Search (DARTS)</h3>
 <p><strong>Почему DARTS - это революция в дизайне нейросетей?</strong> Потому что он позволяет искать архитектуры через градиентный спуск, что в 1000 раз быстрее традиционных методов поиска.</p>
-<p><strong>Преимущества DARTS:</strong>
-- <strong>Скорость</strong>: В 1000 раз быстрее случайного поиска
-- <strong>Качество</strong>: Находит архитектуры лучше созданных человеком
-- <strong>Гибкость</strong>: Может искать любые типы операций
+<p><strong>Преимущества DARTS:</strong><br />
+- <strong>Скорость</strong>: В 1000 раз быстрее случайного поиска<br />
+- <strong>Качество</strong>: Находит архитектуры лучше созданных человеком<br />
+- <strong>Гибкость</strong>: Может искать любые типы операций<br />
 - <strong>Масштабируемость</strong>: Работает с большими датасетами</p>
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
@@ -11163,17 +11295,17 @@ pip<span class="w"> </span>install<span class="w"> </span>openmp-python
 <li><strong>Долгосрочный успех</strong>: Устойчивое развитие бизнеса</li>
 </ul>
 <h2 id="ai_4">Введение в этику AI</h2>
-<p><img alt="Этика и ответственный AI" src="images/ai_ethics_overview.png" />
+<p><img alt="Этика и ответственный AI" src="images/ai_ethics_overview.png" /><br />
 <em>Рисунок 17.1: Принципы этичного и ответственного использования искусственного интеллекта</em></p>
 <p><strong>Почему этика AI - это не просто "хорошо быть хорошим"?</strong> Потому что неэтичные AI-системы могут причинить реальный вред людям и привести к серьезным юридическим и репутационным проблемам.</p>
 <p>Разработка и использование ML-моделей несут значительную ответственность. Этот раздел охватывает этические принципы, правовые требования и лучшие практики для создания ответственных AI-систем.</p>
 <h2 id="ai_5">Основные принципы этичного AI</h2>
 <h3 id="1_24">1. Справедливость и отсутствие дискриминации</h3>
 <p><strong>Почему справедливость - это основа этичного AI?</strong> Потому что несправедливые модели могут дискриминировать людей по полу, расе, возрасту и другим признакам, что недопустимо в современном обществе.</p>
-<p><strong>Почему модели могут быть несправедливыми?</strong>
-- <strong>Предвзятые данные</strong>: Исторические данные содержат дискриминацию
-- <strong>Неправильные признаки</strong>: Использование чувствительных атрибутов
-- <strong>Неравномерное качество</strong>: Модель работает хуже для некоторых групп
+<p><strong>Почему модели могут быть несправедливыми?</strong><br />
+- <strong>Предвзятые данные</strong>: Исторические данные содержат дискриминацию<br />
+- <strong>Неправильные признаки</strong>: Использование чувствительных атрибутов<br />
+- <strong>Неравномерное качество</strong>: Модель работает хуже для некоторых групп<br />
 - <strong>Скрытые смещения</strong>: Неочевидные паттерны дискриминации</p>
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -11794,7 +11926,7 @@ pip<span class="w"> </span>install<span class="w"> </span>openmp-python
 <li><strong>Лучшие результаты</strong>: Достигают state-of-the-art производительности</li>
 </ul>
 <h2 id="-_1">Введение в кейс-стади</h2>
-<p><img alt="Кейс-стади AutoML" src="images/case_studies_overview.png" />
+<p><img alt="Кейс-стади AutoML" src="images/case_studies_overview.png" /><br />
 <em>Рисунок 18.1: Обзор реальных проектов и их результатов с использованием AutoML Gluon</em></p>
 <p><strong>Почему кейс-стади - это мост между теорией и практикой?</strong> Потому что они показывают, как абстрактные концепции превращаются в работающие системы, решающие реальные бизнес-задачи.</p>
 <p>Этот раздел содержит детальные кейс-стади реальных проектов, демонстрирующих применение AutoML Gluon в различных отраслях и задачах.</p>
@@ -11803,10 +11935,10 @@ pip<span class="w"> </span>install<span class="w"> </span>openmp-python
 <h3 id="_298">Задача</h3>
 <p><strong>Почему автоматизация кредитных решений так важна?</strong> Потому что ручная обработка заявок медленная, дорогая и подвержена человеческим ошибкам.</p>
 <p>Создание системы кредитного скоринга для банка с целью автоматизации принятия решений о выдаче кредитов.</p>
-<p><strong>Бизнес-контекст:</strong>
-- <strong>Цель</strong>: Автоматизировать 80% кредитных решений
-- <strong>Метрика</strong>: ROC-AUC &gt; 0.85
-- <strong>Стоимость ошибки</strong>: Ложный отрицательный результат = потеря клиента
+<p><strong>Бизнес-контекст:</strong><br />
+- <strong>Цель</strong>: Автоматизировать 80% кредитных решений<br />
+- <strong>Метрика</strong>: ROC-AUC &gt; 0.85<br />
+- <strong>Стоимость ошибки</strong>: Ложный отрицательный результат = потеря клиента<br />
 - <strong>Время обработки</strong>: Сократить с дней до минут</p>
 <h3 id="_299">Данные</h3>
 <p><strong>Почему качество данных критично для кредитного скоринга?</strong> Потому что неправильные данные приводят к неправильным решениям, что может стоить банку миллионы.</p>
@@ -13663,11 +13795,11 @@ pip<span class="w"> </span>install<span class="w"> </span>openmp-python
 <p>WAVE2 - это продвинутый технический индикатор, который анализирует волновую структуру рынка и предоставляет уникальные сигналы для торговли. Этот раздел посвящен глубокому анализу индикатора WAVE2 и созданию на его основе высокоточной ML-модели.</p>
 <h2 id="wave2_2">Что такое WAVE2?</h2>
 <p><strong>Почему WAVE2 - это не просто еще один индикатор?</strong> Потому что он анализирует саму структуру рынка, а не просто сглаживает цену. Это как разница между анализом симптомов болезни и анализом самой болезни.</p>
-<p>WAVE2 - это многомерный индикатор, который:
-- <strong>Анализирует волновую структуру рынка</strong> - понимает, как движется цена
-- <strong>Определяет фазы накопления и распределения</strong> - показывает, когда крупные игроки покупают/продают
-- <strong>Предсказывает развороты тренда</strong> - находит точки смены направления
-- <strong>Оценивает силу движения цены</strong> - измеряет импульс рынка
+<p>WAVE2 - это многомерный индикатор, который:<br />
+- <strong>Анализирует волновую структуру рынка</strong> - понимает, как движется цена<br />
+- <strong>Определяет фазы накопления и распределения</strong> - показывает, когда крупные игроки покупают/продают<br />
+- <strong>Предсказывает развороты тренда</strong> - находит точки смены направления<br />
+- <strong>Оценивает силу движения цены</strong> - измеряет импульс рынка<br />
 - <strong>Идентифицирует ключевые уровни поддержки/сопротивления</strong> - находит важные ценовые зоны</p>
 <h2 id="wave2_3">Структура данных WAVE2</h2>
 <h3 id="parquet">Основные колонки в parquet файле:</h3>
@@ -14374,11 +14506,11 @@ pip<span class="w"> </span>install<span class="w"> </span>openmp-python
 <p>SCHR Levels - это продвинутый индикатор уровней поддержки и сопротивления, который использует алгоритмический анализ для определения ключевых ценовых уровней. Этот раздел посвящен глубокому анализу индикатора SCHR Levels и созданию на его основе высокоточной ML-модели.</p>
 <h2 id="schr-levels_2">Что такое SCHR Levels?</h2>
 <p><strong>Почему SCHR Levels - это не просто еще один индикатор уровней?</strong> Потому что он анализирует давление на уровни, а не просто рисует линии. Это как разница между анализом симптомов болезни и анализом самой болезни.</p>
-<p>SCHR Levels - это многомерный индикатор, который:
-- <strong>Определяет ключевые уровни поддержки и сопротивления</strong> - находит важные ценовые зоны
-- <strong>Анализирует давление на эти уровни</strong> - показывает, когда уровень может быть пробит
-- <strong>Предсказывает пробои и отскоки</strong> - находит точки смены направления
-- <strong>Оценивает силу уровней</strong> - измеряет надежность уровня
+<p>SCHR Levels - это многомерный индикатор, который:<br />
+- <strong>Определяет ключевые уровни поддержки и сопротивления</strong> - находит важные ценовые зоны<br />
+- <strong>Анализирует давление на эти уровни</strong> - показывает, когда уровень может быть пробит<br />
+- <strong>Предсказывает пробои и отскоки</strong> - находит точки смены направления<br />
+- <strong>Оценивает силу уровней</strong> - измеряет надежность уровня<br />
 - <strong>Идентифицирует зоны накопления и распределения</strong> - показывает, где крупные игроки покупают/продают</p>
 <h2 id="schr-levels_3">Структура данных SCHR Levels</h2>
 <h3 id="parquet_1">Основные колонки в parquet файле:</h3>
@@ -15090,11 +15222,11 @@ pip<span class="w"> </span>install<span class="w"> </span>openmp-python
 <p>SCHR SHORT3 - это продвинутый индикатор для краткосрочной торговли, который использует алгоритмический анализ для определения краткосрочных торговых возможностей. Этот раздел посвящен глубокому анализу индикатора SCHR SHORT3 и созданию на его основе высокоточной ML-модели.</p>
 <h2 id="schr-short3_2">Что такое SCHR SHORT3?</h2>
 <p><strong>Почему SCHR SHORT3 - это не просто еще один индикатор для скальпинга?</strong> Потому что он анализирует краткосрочную структуру рынка, а не просто сглаживает цену. Это как разница между анализом симптомов болезни и анализом самой болезни.</p>
-<p>SCHR SHORT3 - это многомерный индикатор, который:
-- <strong>Определяет краткосрочные торговые возможности</strong> - находит краткосрочные движения
-- <strong>Анализирует краткосрочные паттерны</strong> - понимает краткосрочную структуру рынка
-- <strong>Предсказывает краткосрочные движения</strong> - находит точки краткосрочных разворотов
-- <strong>Оценивает краткосрочную волатильность</strong> - измеряет краткосрочную изменчивость
+<p>SCHR SHORT3 - это многомерный индикатор, который:<br />
+- <strong>Определяет краткосрочные торговые возможности</strong> - находит краткосрочные движения<br />
+- <strong>Анализирует краткосрочные паттерны</strong> - понимает краткосрочную структуру рынка<br />
+- <strong>Предсказывает краткосрочные движения</strong> - находит точки краткосрочных разворотов<br />
+- <strong>Оценивает краткосрочную волатильность</strong> - измеряет краткосрочную изменчивость<br />
 - <strong>Идентифицирует краткосрочные сигналы</strong> - показывает краткосрочные торговые возможности</p>
 <h2 id="schr-short3_3">Структура данных SCHR SHORT3</h2>
 <h3 id="parquet_2">Основные колонки в parquet файле:</h3>
