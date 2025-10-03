@@ -119,3 +119,6 @@ web-build/
 !data/indicators/parquet/*UNKNOWN*.parquet
 !data/indicators/csv/*UNKNOWN*.csv
 !data/indicators/json/*UNKNOWN*.json
+!/docs/automl/neozork/Python_Formatting_Example.html
+!/docs/automl/neozork/Python_Formatting_Example.html
+!/docs/automl/neozork/neozork-manual.html
