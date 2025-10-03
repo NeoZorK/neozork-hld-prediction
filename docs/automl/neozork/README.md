@@ -24,7 +24,14 @@
 
 1. **[01_environment_setup.md](01_environment_setup.md)** - Установка окружения на macOS M1 Pro
 2. **[02_robust_systems_fundamentals.md](02_robust_systems_fundamentals.md)** - Основы робастных систем
-3. **[10_blockchain_deployment.md](10_blockchain_deployment.md)** - Деплой на блокчейне
+3. **[03_data_preparation.md](03_data_preparation.md)** - Подготовка данных
+4. **[04_feature_engineering.md](04_feature_engineering.md)** - Инженерия признаков
+5. **[05_model_training.md](05_model_training.md)** - Обучение моделей
+6. **[06_backtesting.md](06_backtesting.md)** - Бэктестинг
+7. **[07_walk_forward_analysis.md](07_walk_forward_analysis.md)** - Walk-forward анализ
+8. **[08_monte_carlo_simulation.md](08_monte_carlo_simulation.md)** - Монте-Карло симуляция
+9. **[09_risk_management.md](09_risk_management.md)** - Управление рисками
+10. **[10_blockchain_deployment.md](10_blockchain_deployment.md)** - Деплой на блокчейне
 
 ### 🎯 Специализированные разделы
 
