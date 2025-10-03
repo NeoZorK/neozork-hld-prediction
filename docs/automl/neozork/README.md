@@ -35,7 +35,12 @@
 15. **[15_portfolio_optimization.md](15_portfolio_optimization.md)** - Оптимизация портфолио
 16. **[16_metrics_analysis.md](16_metrics_analysis.md)** - Метрики и анализ
 17. **[17_examples.md](17_examples.md)** - Практические примеры
-18. **[18_100_percent_plan.md](18_100_percent_plan.md)** - План достижения 100%+ доходности
+18. **Полная система заработка 100%+ в месяц**
+    - [18_complete_system.md](18_complete_system.md) - Полная система с детальным кодом от идеи до деплоя
+    - [18_system_components.md](18_system_components.md) - Детальные компоненты системы (модели, индикаторы)
+    - [18_blockchain_system.md](18_blockchain_system.md) - Блокчейн-система с переобучением для testnet
+    - [18_monitoring_metrics.md](18_monitoring_metrics.md) - Мониторинг и метрики производительности
+    - [18_README.md](18_README.md) - Полная документация по запуску и использованию системы
 
 ## Быстрый старт
 
