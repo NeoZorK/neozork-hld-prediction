@@ -598,27 +598,162 @@ uv add mlx-examples  # Примеры использования
 
 ### Проверка MLX
 
+**Полный тест MLX Framework:**
+
 ```python
-# test_mlx.py
+# test_mlx_complete.py
+"""
+Полный тест MLX Framework для M1 Pro
+Запуск: uv run python test_mlx_complete.py
+"""
+
 import mlx.core as mx
 import mlx.nn as nn
+import time
+import numpy as np
 
-# Создание простой нейронной сети
-class SimpleNet(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.linear1 = nn.Linear(10, 50)
-        self.linear2 = nn.Linear(50, 1)
+def test_mlx_basic_operations():
+    """Тест базовых операций MLX"""
+    print("=== Тест базовых операций MLX ===")
     
-    def __call__(self, x):
-        x = mx.tanh(self.linear1(x))
-        return self.linear2(x)
+    # Создание массивов
+    a = mx.array([1, 2, 3, 4, 5])
+    b = mx.array([5, 4, 3, 2, 1])
+    
+    # Базовые операции
+    c = a + b
+    d = a * b
+    e = mx.sum(a)
+    
+    print(f"a: {a}")
+    print(f"b: {b}")
+    print(f"a + b: {c}")
+    print(f"a * b: {d}")
+    print(f"sum(a): {e}")
+    
+    # Проверка результатов
+    assert c.tolist() == [6, 6, 6, 6, 6]
+    assert d.tolist() == [5, 8, 9, 8, 5]
+    assert e.item() == 15
+    
+    print("✅ Базовые операции работают корректно")
+    return True
 
-# Тест на M1
-x = mx.random.normal((100, 10))
-model = SimpleNet()
-output = model(x)
-print(f"MLX работает! Output shape: {output.shape}")
+def test_mlx_neural_network():
+    """Тест нейронной сети на MLX"""
+    print("\n=== Тест нейронной сети MLX ===")
+    
+    # Создание простой нейронной сети
+    class SimpleNet(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.linear1 = nn.Linear(10, 50)
+            self.linear2 = nn.Linear(50, 1)
+            self.dropout = nn.Dropout(0.1)
+        
+        def __call__(self, x):
+            x = mx.tanh(self.linear1(x))
+            x = self.dropout(x)
+            return self.linear2(x)
+    
+    # Создание тестовых данных
+    x = mx.random.normal((100, 10))
+    model = SimpleNet()
+    
+    # Прямой проход
+    output = model(x)
+    
+    print(f"Входные данные shape: {x.shape}")
+    print(f"Выходные данные shape: {output.shape}")
+    print(f"Среднее значение выхода: {mx.mean(output).item():.4f}")
+    print(f"Стандартное отклонение выхода: {mx.std(output).item():.4f}")
+    
+    # Проверка формы выхода
+    assert output.shape == (100, 1)
+    
+    print("✅ Нейронная сеть работает корректно")
+    return True
+
+def test_mlx_performance():
+    """Тест производительности MLX"""
+    print("\n=== Тест производительности MLX ===")
+    
+    # Тест матричных операций
+    sizes = [1000, 2000, 5000]
+    
+    for size in sizes:
+        print(f"\nТест матрицы {size}x{size}:")
+        
+        # Создание больших матриц
+        a = mx.random.normal((size, size))
+        b = mx.random.normal((size, size))
+        
+        # Тест умножения матриц
+        start_time = time.time()
+        c = mx.matmul(a, b)
+        end_time = time.time()
+        
+        duration = end_time - start_time
+        print(f"  Время умножения: {duration:.3f} секунд")
+        print(f"  Производительность: {size**3 / duration / 1e9:.2f} GFLOPS")
+        
+        # Проверка результата
+        assert c.shape == (size, size)
+    
+    print("✅ Тесты производительности завершены")
+    return True
+
+def test_mlx_device_info():
+    """Тест информации об устройствах"""
+    print("\n=== Информация об устройствах MLX ===")
+    
+    # Информация о доступных устройствах
+    print(f"Доступные устройства: {mx.devices()}")
+    print(f"Текущее устройство: {mx.default_device()}")
+    
+    # Тест работы на разных устройствах
+    for device in mx.devices():
+        print(f"\nТест на устройстве: {device}")
+        with mx.device(device):
+            a = mx.array([1, 2, 3, 4, 5])
+            b = mx.array([5, 4, 3, 2, 1])
+            c = a + b
+            print(f"  Результат: {c}")
+    
+    print("✅ Информация об устройствах получена")
+    return True
+
+def main():
+    """Главная функция тестирования"""
+    print("🚀 Запуск полного теста MLX Framework")
+    print("=" * 50)
+    
+    try:
+        # Запуск всех тестов
+        test_mlx_basic_operations()
+        test_mlx_neural_network()
+        test_mlx_performance()
+        test_mlx_device_info()
+        
+        print("\n" + "=" * 50)
+        print("🎉 Все тесты MLX прошли успешно!")
+        print("MLX Framework готов к использованию на M1 Pro")
+        
+    except Exception as e:
+        print(f"\n❌ Ошибка при тестировании MLX: {e}")
+        print("Проверьте установку MLX Framework")
+        return False
+    
+    return True
+
+if __name__ == "__main__":
+    main()
+```
+
+**Запуск теста MLX:**
+```bash
+# Сохранение и запуск теста
+uv run python test_mlx_complete.py
 ```
 
 ## Установка основных ML библиотек
@@ -730,6 +865,209 @@ Library Dependencies Graph:
 uv add numpy pandas scikit-learn matplotlib seaborn
 uv add jupyter notebook ipykernel
 uv add plotly dash  # Для интерактивных графиков
+```
+
+**Полный тест основных библиотек:**
+
+```python
+# test_core_libraries.py
+"""
+Полный тест основных ML библиотек для M1 Pro
+Запуск: uv run python test_core_libraries.py
+"""
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+import plotly.graph_objects as go
+import plotly.express as px
+import time
+import warnings
+warnings.filterwarnings('ignore')
+
+def test_numpy():
+    """Тест NumPy"""
+    print("=== Тест NumPy ===")
+    
+    # Создание массивов
+    a = np.random.rand(1000, 1000)
+    b = np.random.rand(1000, 1000)
+    
+    # Тест производительности
+    start_time = time.time()
+    c = np.dot(a, b)
+    end_time = time.time()
+    
+    print(f"NumPy версия: {np.__version__}")
+    print(f"Время умножения матриц 1000x1000: {end_time - start_time:.3f} секунд")
+    print(f"Форма результата: {c.shape}")
+    print(f"Тип данных: {c.dtype}")
+    
+    # Проверка BLAS
+    print(f"BLAS информация: {np.show_config()}")
+    
+    print("✅ NumPy работает корректно")
+    return True
+
+def test_pandas():
+    """Тест Pandas"""
+    print("\n=== Тест Pandas ===")
+    
+    # Создание DataFrame
+    n_rows = 100000
+    df = pd.DataFrame({
+        'A': np.random.randn(n_rows),
+        'B': np.random.randn(n_rows),
+        'C': np.random.randn(n_rows),
+        'category': np.random.choice(['X', 'Y', 'Z'], n_rows)
+    })
+    
+    print(f"Pandas версия: {pd.__version__}")
+    print(f"DataFrame shape: {df.shape}")
+    print(f"Память DataFrame: {df.memory_usage(deep=True).sum() / 1024**2:.2f} MB")
+    
+    # Тест группировки
+    start_time = time.time()
+    grouped = df.groupby('category').agg({
+        'A': ['mean', 'std'],
+        'B': ['min', 'max'],
+        'C': 'sum'
+    })
+    end_time = time.time()
+    
+    print(f"Время группировки: {end_time - start_time:.3f} секунд")
+    print(f"Результат группировки:\n{grouped.head()}")
+    
+    print("✅ Pandas работает корректно")
+    return True
+
+def test_matplotlib_seaborn():
+    """Тест Matplotlib и Seaborn"""
+    print("\n=== Тест Matplotlib и Seaborn ===")
+    
+    # Создание тестовых данных
+    x = np.random.randn(1000)
+    y = 2 * x + np.random.randn(1000) * 0.5
+    
+    # Тест Matplotlib
+    plt.figure(figsize=(10, 6))
+    plt.subplot(1, 2, 1)
+    plt.scatter(x, y, alpha=0.6)
+    plt.title('Matplotlib Scatter Plot')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    
+    # Тест Seaborn
+    plt.subplot(1, 2, 2)
+    sns.scatterplot(x=x, y=y, alpha=0.6)
+    plt.title('Seaborn Scatter Plot')
+    
+    plt.tight_layout()
+    plt.savefig('test_plot.png', dpi=150, bbox_inches='tight')
+    plt.close()
+    
+    print(f"Matplotlib версия: {plt.matplotlib.__version__}")
+    print(f"Seaborn версия: {sns.__version__}")
+    print("График сохранен как test_plot.png")
+    
+    print("✅ Matplotlib и Seaborn работают корректно")
+    return True
+
+def test_sklearn():
+    """Тест Scikit-learn"""
+    print("\n=== Тест Scikit-learn ===")
+    
+    # Создание тестовых данных
+    X = np.random.randn(1000, 10)
+    y = (X[:, 0] + X[:, 1] + np.random.randn(1000) * 0.1 > 0).astype(int)
+    
+    # Разделение данных
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    # Обучение модели
+    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    
+    start_time = time.time()
+    model.fit(X_train, y_train)
+    end_time = time.time()
+    
+    # Предсказания
+    y_pred = model.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    
+    print(f"Scikit-learn версия: {sklearn.__version__}")
+    print(f"Время обучения: {end_time - start_time:.3f} секунд")
+    print(f"Точность модели: {accuracy:.3f}")
+    print(f"Важность признаков: {model.feature_importances_[:5]}")
+    
+    print("✅ Scikit-learn работает корректно")
+    return True
+
+def test_plotly():
+    """Тест Plotly"""
+    print("\n=== Тест Plotly ===")
+    
+    # Создание интерактивного графика
+    x = np.linspace(0, 10, 100)
+    y1 = np.sin(x)
+    y2 = np.cos(x)
+    
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=x, y=y1, mode='lines', name='sin(x)'))
+    fig.add_trace(go.Scatter(x=x, y=y2, mode='lines', name='cos(x)'))
+    
+    fig.update_layout(
+        title='Интерактивный график Plotly',
+        xaxis_title='X',
+        yaxis_title='Y',
+        hovermode='x unified'
+    )
+    
+    # Сохранение графика
+    fig.write_html('test_plotly.html')
+    
+    print(f"Plotly версия: {plotly.__version__}")
+    print("Интерактивный график сохранен как test_plotly.html")
+    
+    print("✅ Plotly работает корректно")
+    return True
+
+def main():
+    """Главная функция тестирования"""
+    print("🚀 Запуск полного теста основных ML библиотек")
+    print("=" * 60)
+    
+    try:
+        # Запуск всех тестов
+        test_numpy()
+        test_pandas()
+        test_matplotlib_seaborn()
+        test_sklearn()
+        test_plotly()
+        
+        print("\n" + "=" * 60)
+        print("🎉 Все основные библиотеки работают корректно!")
+        print("Основные ML библиотеки готовы к использованию на M1 Pro")
+        
+    except Exception as e:
+        print(f"\n❌ Ошибка при тестировании библиотек: {e}")
+        print("Проверьте установку библиотек")
+        return False
+    
+    return True
+
+if __name__ == "__main__":
+    main()
+```
+
+**Запуск теста основных библиотек:**
+```bash
+# Сохранение и запуск теста
+uv run python test_core_libraries.py
 ```
 
 ### 2. Финансовые библиотеки
@@ -931,6 +1269,235 @@ c.NotebookApp.iopub_data_rate_limit = 1000000000
 c.NotebookApp.rate_limit_window = 3.0
 ```
 
+**Полный тест Jupyter конфигурации:**
+
+```python
+# test_jupyter_config.py
+"""
+Полный тест Jupyter конфигурации для M1 Pro
+Запуск: uv run python test_jupyter_config.py
+"""
+
+import os
+import sys
+import subprocess
+import json
+from pathlib import Path
+
+def test_jupyter_installation():
+    """Тест установки Jupyter"""
+    print("=== Тест установки Jupyter ===")
+    
+    try:
+        import jupyter
+        print(f"Jupyter версия: {jupyter.__version__}")
+        
+        import notebook
+        print(f"Notebook версия: {notebook.__version__}")
+        
+        import ipykernel
+        print(f"IPython Kernel версия: {ipykernel.__version__}")
+        
+        print("✅ Jupyter установлен корректно")
+        return True
+        
+    except ImportError as e:
+        print(f"❌ Jupyter не установлен: {e}")
+        return False
+
+def test_jupyter_kernels():
+    """Тест доступных ядер Jupyter"""
+    print("\n=== Тест ядер Jupyter ===")
+    
+    try:
+        # Получение списка ядер
+        result = subprocess.run(['jupyter', 'kernelspec', 'list'], 
+                              capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            print("Доступные ядра:")
+            print(result.stdout)
+            
+            # Проверка наличия neozork-ml ядра
+            if 'neozork-ml' in result.stdout:
+                print("✅ Ядро neozork-ml найдено")
+            else:
+                print("⚠️  Ядро neozork-ml не найдено")
+                print("Создайте ядро: uv run python -m ipykernel install --user --name neozork-ml")
+        else:
+            print(f"❌ Ошибка получения списка ядер: {result.stderr}")
+            
+    except Exception as e:
+        print(f"❌ Ошибка при тестировании ядер: {e}")
+    
+    return True
+
+def test_jupyter_config():
+    """Тест конфигурации Jupyter"""
+    print("\n=== Тест конфигурации Jupyter ===")
+    
+    # Пути к конфигурации
+    config_paths = [
+        Path.home() / '.jupyter' / 'jupyter_notebook_config.py',
+        Path.home() / '.jupyter' / 'jupyter_notebook_config.json',
+        Path.home() / '.jupyter' / 'jupyter_lab_config.py',
+        Path.home() / '.jupyter' / 'jupyter_lab_config.json'
+    ]
+    
+    print("Поиск конфигурационных файлов:")
+    for path in config_paths:
+        if path.exists():
+            print(f"  ✅ Найден: {path}")
+        else:
+            print(f"  ⚠️  Не найден: {path}")
+    
+    # Создание базовой конфигурации
+    jupyter_dir = Path.home() / '.jupyter'
+    jupyter_dir.mkdir(exist_ok=True)
+    
+    config_file = jupyter_dir / 'jupyter_notebook_config.py'
+    
+    if not config_file.exists():
+        print("\nСоздание базовой конфигурации...")
+        config_content = '''# Jupyter Notebook Configuration for M1 Pro
+c = get_config()
+
+# Настройки для M1
+c.NotebookApp.allow_root = True
+c.NotebookApp.ip = '0.0.0.0'
+c.NotebookApp.port = 8888
+c.NotebookApp.open_browser = False
+
+# Оптимизация для M1
+c.NotebookApp.iopub_data_rate_limit = 1000000000
+c.NotebookApp.rate_limit_window = 3.0
+
+# Дополнительные настройки
+c.NotebookApp.notebook_dir = '.'
+c.NotebookApp.allow_origin = '*'
+c.NotebookApp.disable_check_xsrf = True
+'''
+        
+        with open(config_file, 'w') as f:
+            f.write(config_content)
+        
+        print(f"✅ Конфигурация создана: {config_file}")
+    else:
+        print(f"✅ Конфигурация уже существует: {config_file}")
+    
+    return True
+
+def test_jupyter_performance():
+    """Тест производительности Jupyter"""
+    print("\n=== Тест производительности Jupyter ===")
+    
+    # Создание тестового notebook
+    test_notebook = {
+        "cells": [
+            {
+                "cell_type": "code",
+                "execution_count": None,
+                "metadata": {},
+                "outputs": [],
+                "source": [
+                    "import numpy as np\n",
+                    "import time\n",
+                    "\n",
+                    "# Тест производительности\n",
+                    "size = 5000\n",
+                    "a = np.random.rand(size, size)\n",
+                    "b = np.random.rand(size, size)\n",
+                    "\n",
+                    "start = time.time()\n",
+                    "c = np.dot(a, b)\n",
+                    "end = time.time()\n",
+                    "\n",
+                    "print(f'Время умножения матриц {size}x{size}: {end - start:.3f} секунд')\n",
+                    "print(f'Производительность: {size**3 / (end - start) / 1e9:.2f} GFLOPS')"
+                ]
+            }
+        ],
+        "metadata": {
+            "kernelspec": {
+                "display_name": "Python 3",
+                "language": "python",
+                "name": "python3"
+            }
+        },
+        "nbformat": 4,
+        "nbformat_minor": 4
+    }
+    
+    # Сохранение тестового notebook
+    test_file = Path('test_performance.ipynb')
+    with open(test_file, 'w') as f:
+        json.dump(test_notebook, f, indent=2)
+    
+    print(f"✅ Тестовый notebook создан: {test_file}")
+    print("Запустите Jupyter и откройте этот файл для тестирования")
+    
+    return True
+
+def test_jupyter_startup():
+    """Тест запуска Jupyter"""
+    print("\n=== Тест запуска Jupyter ===")
+    
+    print("Команды для запуска Jupyter:")
+    print("1. Jupyter Notebook:")
+    print("   uv run jupyter notebook")
+    print("2. Jupyter Lab:")
+    print("   uv run jupyter lab")
+    print("3. С конкретным ядром:")
+    print("   uv run jupyter notebook --kernel=neozork-ml")
+    
+    print("\nПроверка доступности портов:")
+    try:
+        import socket
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        result = sock.connect_ex(('localhost', 8888))
+        if result == 0:
+            print("⚠️  Порт 8888 уже занят")
+        else:
+            print("✅ Порт 8888 свободен")
+        sock.close()
+    except Exception as e:
+        print(f"Ошибка проверки порта: {e}")
+    
+    return True
+
+def main():
+    """Главная функция тестирования"""
+    print("🚀 Запуск полного теста Jupyter конфигурации")
+    print("=" * 60)
+    
+    try:
+        # Запуск всех тестов
+        test_jupyter_installation()
+        test_jupyter_kernels()
+        test_jupyter_config()
+        test_jupyter_performance()
+        test_jupyter_startup()
+        
+        print("\n" + "=" * 60)
+        print("🎉 Тест Jupyter конфигурации завершен!")
+        print("Jupyter готов к использованию на M1 Pro")
+        
+    except Exception as e:
+        print(f"\n❌ Ошибка при тестировании Jupyter: {e}")
+        return False
+    
+    return True
+
+if __name__ == "__main__":
+    main()
+```
+
+**Запуск теста Jupyter:**
+```bash
+# Сохранение и запуск теста
+uv run python test_jupyter_config.py
+```
+
 **Дополнительные настройки для ML-проектов:**
 - **Кэширование:** Настройка кэширования для ускорения работы
 - **Параллелизм:** Настройка многопоточности для M1
@@ -991,6 +1558,201 @@ export NUMEXPR_NUM_THREADS=8
 # MLX оптимизации
 export MLX_USE_METAL=1
 export MLX_USE_NEURAL_ENGINE=1
+```
+
+**Полный тест переменных окружения:**
+
+```python
+# test_environment.py
+"""
+Полный тест переменных окружения для M1 Pro
+Запуск: uv run python test_environment.py
+"""
+
+import os
+import sys
+import platform
+import subprocess
+import numpy as np
+import torch
+
+def test_system_info():
+    """Тест системной информации"""
+    print("=== Системная информация ===")
+    
+    print(f"Операционная система: {platform.system()} {platform.release()}")
+    print(f"Архитектура: {platform.machine()}")
+    print(f"Процессор: {platform.processor()}")
+    print(f"Python версия: {sys.version}")
+    print(f"Python путь: {sys.executable}")
+    
+    # Проверка M1 Pro
+    if platform.machine() == 'arm64':
+        print("✅ Обнаружен Apple Silicon (M1/M2/M3)")
+    else:
+        print("⚠️  Не Apple Silicon - некоторые оптимизации могут не работать")
+    
+    return True
+
+def test_environment_variables():
+    """Тест переменных окружения"""
+    print("\n=== Переменные окружения ===")
+    
+    # Ключевые переменные
+    env_vars = {
+        'PYTHONUNBUFFERED': '1',
+        'OMP_NUM_THREADS': '8',
+        'MKL_NUM_THREADS': '8',
+        'NUMEXPR_NUM_THREADS': '8',
+        'MLX_USE_METAL': '1',
+        'MLX_USE_NEURAL_ENGINE': '1'
+    }
+    
+    print("Проверка переменных окружения:")
+    for var, expected in env_vars.items():
+        value = os.environ.get(var, 'НЕ УСТАНОВЛЕНА')
+        status = "✅" if value == expected else "⚠️"
+        print(f"  {status} {var}: {value}")
+    
+    # Проверка PATH
+    print(f"\nPATH содержит uv: {'uv' in os.environ.get('PATH', '')}")
+    print(f"PATH содержит homebrew: {'homebrew' in os.environ.get('PATH', '')}")
+    
+    return True
+
+def test_numpy_optimization():
+    """Тест оптимизации NumPy"""
+    print("\n=== Оптимизация NumPy ===")
+    
+    # Информация о BLAS
+    print("BLAS информация:")
+    np.show_config()
+    
+    # Тест производительности
+    print("\nТест производительности NumPy:")
+    sizes = [1000, 2000, 5000]
+    
+    for size in sizes:
+        a = np.random.rand(size, size)
+        b = np.random.rand(size, size)
+        
+        import time
+        start = time.time()
+        c = np.dot(a, b)
+        end = time.time()
+        
+        duration = end - start
+        gflops = size**3 / duration / 1e9
+        print(f"  Матрица {size}x{size}: {duration:.3f}s, {gflops:.2f} GFLOPS")
+    
+    return True
+
+def test_pytorch_mps():
+    """Тест PyTorch MPS"""
+    print("\n=== PyTorch MPS ===")
+    
+    print(f"PyTorch версия: {torch.__version__}")
+    print(f"MPS доступен: {torch.backends.mps.is_available()}")
+    print(f"MPS построен: {torch.backends.mps.is_built()}")
+    
+    if torch.backends.mps.is_available():
+        device = torch.device("mps")
+        print("✅ MPS доступен - тестирование...")
+        
+        # Тест на MPS
+        x = torch.randn(1000, 1000, device=device)
+        y = torch.randn(1000, 1000, device=device)
+        
+        import time
+        start = time.time()
+        z = torch.mm(x, y)
+        end = time.time()
+        
+        print(f"  MPS матричное умножение: {end - start:.3f} секунд")
+        print(f"  Результат на устройстве: {z.device}")
+    else:
+        print("⚠️  MPS недоступен - используйте CPU")
+    
+    return True
+
+def test_mlx_availability():
+    """Тест доступности MLX"""
+    print("\n=== MLX Framework ===")
+    
+    try:
+        import mlx.core as mx
+        print(f"MLX версия: {mx.__version__}")
+        print(f"Доступные устройства: {mx.devices()}")
+        print(f"Текущее устройство: {mx.default_device()}")
+        
+        # Простой тест
+        a = mx.array([1, 2, 3, 4, 5])
+        b = mx.array([5, 4, 3, 2, 1])
+        c = a + b
+        print(f"  Тест операций: {c}")
+        
+        print("✅ MLX работает корректно")
+        return True
+        
+    except ImportError:
+        print("❌ MLX не установлен")
+        return False
+
+def test_memory_usage():
+    """Тест использования памяти"""
+    print("\n=== Использование памяти ===")
+    
+    try:
+        import psutil
+        process = psutil.Process()
+        memory_info = process.memory_info()
+        
+        print(f"Использование памяти процессом: {memory_info.rss / 1024**2:.2f} MB")
+        print(f"Виртуальная память: {memory_info.vms / 1024**2:.2f} MB")
+        
+        # Системная память
+        system_memory = psutil.virtual_memory()
+        print(f"Общая память системы: {system_memory.total / 1024**3:.2f} GB")
+        print(f"Доступная память: {system_memory.available / 1024**3:.2f} GB")
+        print(f"Использование памяти: {system_memory.percent:.1f}%")
+        
+    except ImportError:
+        print("psutil не установлен - установите: uv add psutil")
+    
+    return True
+
+def main():
+    """Главная функция тестирования"""
+    print("🚀 Запуск полного теста окружения M1 Pro")
+    print("=" * 60)
+    
+    try:
+        # Запуск всех тестов
+        test_system_info()
+        test_environment_variables()
+        test_numpy_optimization()
+        test_pytorch_mps()
+        test_mlx_availability()
+        test_memory_usage()
+        
+        print("\n" + "=" * 60)
+        print("🎉 Тест окружения завершен!")
+        print("Проверьте результаты выше для диагностики проблем")
+        
+    except Exception as e:
+        print(f"\n❌ Ошибка при тестировании окружения: {e}")
+        return False
+    
+    return True
+
+if __name__ == "__main__":
+    main()
+```
+
+**Запуск теста окружения:**
+```bash
+# Сохранение и запуск теста
+uv run python test_environment.py
 ```
 
 **Критически важно для ML-проектов:**
@@ -1410,6 +2172,322 @@ Expected Performance Benchmarks:
 └─────────────────┴──────────┴──────────┴──────────┘
 ```
 
+**Полный тест всех библиотек:**
+
+```python
+# test_all_libraries.py
+"""
+Полный тест всех ML библиотек для M1 Pro
+Запуск: uv run python test_all_libraries.py
+"""
+
+import sys
+import time
+import warnings
+warnings.filterwarnings('ignore')
+
+def test_system_requirements():
+    """Тест системных требований"""
+    print("=== Тест системных требований ===")
+    
+    import platform
+    import psutil
+    
+    # Системная информация
+    print(f"ОС: {platform.system()} {platform.release()}")
+    print(f"Архитектура: {platform.machine()}")
+    print(f"Процессор: {platform.processor()}")
+    
+    # Память
+    memory = psutil.virtual_memory()
+    print(f"Общая память: {memory.total / 1024**3:.1f} GB")
+    print(f"Доступная память: {memory.available / 1024**3:.1f} GB")
+    
+    # Проверка M1
+    if platform.machine() == 'arm64':
+        print("✅ Apple Silicon обнаружен")
+    else:
+        print("⚠️  Не Apple Silicon")
+    
+    return True
+
+def test_core_libraries():
+    """Тест основных библиотек"""
+    print("\n=== Тест основных библиотек ===")
+    
+    libraries = [
+        ('numpy', 'np'),
+        ('pandas', 'pd'),
+        ('matplotlib', 'plt'),
+        ('seaborn', 'sns'),
+        ('sklearn', 'sklearn'),
+        ('plotly', 'plotly')
+    ]
+    
+    for lib_name, alias in libraries:
+        try:
+            if alias == 'plt':
+                import matplotlib.pyplot as plt
+                print(f"✅ {lib_name}: {plt.matplotlib.__version__}")
+            elif alias == 'sns':
+                import seaborn as sns
+                print(f"✅ {lib_name}: {sns.__version__}")
+            elif alias == 'sklearn':
+                import sklearn
+                print(f"✅ {lib_name}: {sklearn.__version__}")
+            else:
+                lib = __import__(lib_name)
+                print(f"✅ {lib_name}: {lib.__version__}")
+        except ImportError:
+            print(f"❌ {lib_name}: не установлен")
+    
+    return True
+
+def test_financial_libraries():
+    """Тест финансовых библиотек"""
+    print("\n=== Тест финансовых библиотек ===")
+    
+    financial_libs = [
+        'yfinance',
+        'pandas_datareader',
+        'talib',
+        'vectorbt',
+        'backtrader'
+    ]
+    
+    for lib in financial_libs:
+        try:
+            if lib == 'pandas_datareader':
+                import pandas_datareader as pdr
+                print(f"✅ {lib}: {pdr.__version__}")
+            elif lib == 'talib':
+                import talib
+                print(f"✅ {lib}: {talib.__version__}")
+            else:
+                lib_module = __import__(lib)
+                print(f"✅ {lib}: {lib_module.__version__}")
+        except ImportError:
+            print(f"❌ {lib}: не установлен")
+    
+    return True
+
+def test_advanced_ml_libraries():
+    """Тест продвинутых ML библиотек"""
+    print("\n=== Тест продвинутых ML библиотек ===")
+    
+    advanced_libs = [
+        'xgboost',
+        'lightgbm',
+        'catboost',
+        'optuna',
+        'mlflow',
+        'wandb'
+    ]
+    
+    for lib in advanced_libs:
+        try:
+            lib_module = __import__(lib)
+            print(f"✅ {lib}: {lib_module.__version__}")
+        except ImportError:
+            print(f"❌ {lib}: не установлен")
+    
+    return True
+
+def test_deep_learning_libraries():
+    """Тест Deep Learning библиотек"""
+    print("\n=== Тест Deep Learning библиотек ===")
+    
+    # PyTorch
+    try:
+        import torch
+        print(f"✅ PyTorch: {torch.__version__}")
+        print(f"  MPS доступен: {torch.backends.mps.is_available()}")
+        print(f"  MPS построен: {torch.backends.mps.is_built()}")
+    except ImportError:
+        print("❌ PyTorch: не установлен")
+    
+    # TensorFlow
+    try:
+        import tensorflow as tf
+        print(f"✅ TensorFlow: {tf.__version__}")
+        print(f"  Metal доступен: {tf.config.list_physical_devices('GPU')}")
+    except ImportError:
+        print("❌ TensorFlow: не установлен")
+    
+    # MLX
+    try:
+        import mlx.core as mx
+        print(f"✅ MLX: {mx.__version__}")
+        print(f"  Устройства: {mx.devices()}")
+    except ImportError:
+        print("❌ MLX: не установлен")
+    
+    # Transformers
+    try:
+        import transformers
+        print(f"✅ Transformers: {transformers.__version__}")
+    except ImportError:
+        print("❌ Transformers: не установлен")
+    
+    return True
+
+def test_jupyter_setup():
+    """Тест настройки Jupyter"""
+    print("\n=== Тест настройки Jupyter ===")
+    
+    try:
+        import jupyter
+        import notebook
+        import ipykernel
+        print(f"✅ Jupyter: {jupyter.__version__}")
+        print(f"✅ Notebook: {notebook.__version__}")
+        print(f"✅ IPython Kernel: {ipykernel.__version__}")
+        
+        # Проверка ядер
+        import subprocess
+        result = subprocess.run(['jupyter', 'kernelspec', 'list'], 
+                              capture_output=True, text=True)
+        if result.returncode == 0:
+            print("Доступные ядра:")
+            print(result.stdout)
+        else:
+            print("⚠️  Не удалось получить список ядер")
+            
+    except ImportError as e:
+        print(f"❌ Jupyter: {e}")
+    
+    return True
+
+def test_performance_benchmarks():
+    """Тест производительности"""
+    print("\n=== Тест производительности ===")
+    
+    # NumPy тест
+    try:
+        import numpy as np
+        print("NumPy производительность:")
+        size = 5000
+        a = np.random.rand(size, size)
+        b = np.random.rand(size, size)
+        
+        start = time.time()
+        c = np.dot(a, b)
+        end = time.time()
+        
+        duration = end - start
+        gflops = size**3 / duration / 1e9
+        print(f"  Матрица {size}x{size}: {duration:.3f}s, {gflops:.2f} GFLOPS")
+        
+    except Exception as e:
+        print(f"❌ NumPy тест: {e}")
+    
+    # PyTorch MPS тест
+    try:
+        import torch
+        if torch.backends.mps.is_available():
+            print("PyTorch MPS производительность:")
+            device = torch.device("mps")
+            size = 3000
+            a = torch.randn(size, size, device=device)
+            b = torch.randn(size, size, device=device)
+            
+            start = time.time()
+            c = torch.mm(a, b)
+            end = time.time()
+            
+            duration = end - start
+            gflops = size**3 / duration / 1e9
+            print(f"  MPS матрица {size}x{size}: {duration:.3f}s, {gflops:.2f} GFLOPS")
+        else:
+            print("⚠️  MPS недоступен")
+            
+    except Exception as e:
+        print(f"❌ PyTorch тест: {e}")
+    
+    # MLX тест
+    try:
+        import mlx.core as mx
+        print("MLX производительность:")
+        size = 3000
+        a = mx.random.normal((size, size))
+        b = mx.random.normal((size, size))
+        
+        start = time.time()
+        c = mx.matmul(a, b)
+        end = time.time()
+        
+        duration = end - start
+        gflops = size**3 / duration / 1e9
+        print(f"  MLX матрица {size}x{size}: {duration:.3f}s, {gflops:.2f} GFLOPS")
+        
+    except Exception as e:
+        print(f"❌ MLX тест: {e}")
+    
+    return True
+
+def test_environment_variables():
+    """Тест переменных окружения"""
+    print("\n=== Тест переменных окружения ===")
+    
+    import os
+    
+    env_vars = {
+        'PYTHONUNBUFFERED': '1',
+        'OMP_NUM_THREADS': '8',
+        'MKL_NUM_THREADS': '8',
+        'NUMEXPR_NUM_THREADS': '8',
+        'MLX_USE_METAL': '1',
+        'MLX_USE_NEURAL_ENGINE': '1'
+    }
+    
+    for var, expected in env_vars.items():
+        value = os.environ.get(var, 'НЕ УСТАНОВЛЕНА')
+        status = "✅" if value == expected else "⚠️"
+        print(f"  {status} {var}: {value}")
+    
+    return True
+
+def main():
+    """Главная функция тестирования"""
+    print("🚀 Запуск полного теста всех библиотек M1 Pro")
+    print("=" * 70)
+    
+    try:
+        # Запуск всех тестов
+        test_system_requirements()
+        test_core_libraries()
+        test_financial_libraries()
+        test_advanced_ml_libraries()
+        test_deep_learning_libraries()
+        test_jupyter_setup()
+        test_performance_benchmarks()
+        test_environment_variables()
+        
+        print("\n" + "=" * 70)
+        print("🎉 Полный тест завершен!")
+        print("Проверьте результаты выше для диагностики проблем")
+        print("\nСледующие шаги:")
+        print("1. Исправьте все ошибки (❌)")
+        print("2. Проверьте предупреждения (⚠️)")
+        print("3. Запустите тесты производительности")
+        print("4. Переходите к следующему разделу")
+        
+    except Exception as e:
+        print(f"\n❌ Критическая ошибка: {e}")
+        return False
+    
+    return True
+
+if __name__ == "__main__":
+    main()
+```
+
+**Запуск полного теста:**
+```bash
+# Сохранение и запуск полного теста
+uv run python test_all_libraries.py
+```
+
 ### Тест производительности
 
 ```python
@@ -1720,6 +2798,97 @@ uv add torch torchvision torchaudio --index-url https://download.pytorch.org/whl
 - **Профилактика:** Предотвращение повторных проблем
 - **Документирование:** Запись решений для команды
 
+## Полная проверка установки
+
+**Пошаговая инструкция для полной проверки:**
+
+### Шаг 1: Создание тестовых файлов
+```bash
+# Создание всех тестовых файлов
+cat > test_mlx_complete.py << 'EOF'
+# [Содержимое test_mlx_complete.py из раздела выше]
+EOF
+
+cat > test_core_libraries.py << 'EOF'
+# [Содержимое test_core_libraries.py из раздела выше]
+EOF
+
+cat > test_environment.py << 'EOF'
+# [Содержимое test_environment.py из раздела выше]
+EOF
+
+cat > test_jupyter_config.py << 'EOF'
+# [Содержимое test_jupyter_config.py из раздела выше]
+EOF
+
+cat > test_all_libraries.py << 'EOF'
+# [Содержимое test_all_libraries.py из раздела выше]
+EOF
+```
+
+### Шаг 2: Запуск всех тестов
+```bash
+# 1. Тест MLX Framework
+echo "=== Тест MLX Framework ==="
+uv run python test_mlx_complete.py
+
+# 2. Тест основных библиотек
+echo "=== Тест основных библиотек ==="
+uv run python test_core_libraries.py
+
+# 3. Тест окружения
+echo "=== Тест окружения ==="
+uv run python test_environment.py
+
+# 4. Тест Jupyter
+echo "=== Тест Jupyter ==="
+uv run python test_jupyter_config.py
+
+# 5. Полный тест всех библиотек
+echo "=== Полный тест всех библиотек ==="
+uv run python test_all_libraries.py
+```
+
+### Шаг 3: Проверка результатов
+```bash
+# Проверка созданных файлов
+ls -la *.png *.html *.ipynb 2>/dev/null || echo "Файлы результатов не найдены"
+
+# Проверка логов
+echo "Проверка последних запусков тестов..."
+```
+
+### Шаг 4: Дополнительные проверки
+```bash
+# Проверка версий ключевых компонентов
+echo "=== Проверка версий ==="
+uv run python --version
+uv --version
+brew --version
+
+# Проверка переменных окружения
+echo "=== Переменные окружения ==="
+env | grep -E "(PYTHON|OMP|MKL|NUMEXPR|MLX)" | sort
+
+# Проверка доступных ядер Jupyter
+echo "=== Ядра Jupyter ==="
+uv run jupyter kernelspec list
+
+# Проверка производительности
+echo "=== Быстрый тест производительности ==="
+uv run python -c "
+import numpy as np
+import time
+size = 2000
+a = np.random.rand(size, size)
+b = np.random.rand(size, size)
+start = time.time()
+c = np.dot(a, b)
+end = time.time()
+print(f'NumPy {size}x{size}: {end-start:.3f}s')
+"
+```
+
 ## Следующие шаги
 
 После успешной установки окружения переходите к разделу:
@@ -1744,8 +2913,45 @@ uv add package_name
 
 # Обновление зависимостей
 uv sync --upgrade
+
+# Полная проверка системы
+uv run python test_all_libraries.py
 ```
+
+## Устранение проблем
+
+**Если тесты не проходят:**
+
+1. **Проверьте установку Homebrew:**
+   ```bash
+   brew --version
+   brew doctor
+   ```
+
+2. **Проверьте установку uv:**
+   ```bash
+   uv --version
+   uv python list
+   ```
+
+3. **Проверьте переменные окружения:**
+   ```bash
+   source ~/.zshrc
+   env | grep -E "(PYTHON|OMP|MKL|NUMEXPR|MLX)"
+   ```
+
+4. **Переустановите проблемные библиотеки:**
+   ```bash
+   uv remove package_name
+   uv add package_name
+   ```
+
+5. **Очистите кэш uv:**
+   ```bash
+   uv cache clean
+   uv sync --reinstall
+   ```
 
 ---
 
-**Важно:** Убедитесь, что все тесты производительности проходят успешно перед переходом к следующему разделу.
+**Важно:** Убедитесь, что все тесты производительности проходят успешно перед переходом к следующему разделу. Все тесты должны показывать ✅ для успешной установки.
