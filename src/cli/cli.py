@@ -1141,11 +1141,11 @@ def parse_sma_parameters(params_str: str) -> tuple[str, dict]:
         'price_type': price_type
     }
 
-def parse_wave_parameters(prams_str: str) -> tuple[str, dict]:
+def parse_wave_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Wave parameters: long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period,price_type"""
-    params = prams_str.split(',')
+    params = params_str.split(',')
     if len(params) != 11:
-        raise ValueError(f"Wave requires exactly 11 parameters: long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period,price_type. Got: {prams_str}")
+        raise ValueError(f"Wave requires exactly 11 parameters: long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period,price_type. Got: {params_str}")
 
     try:
         long1 = int(float(params[0].strip())) # Handle float values like 14.0
@@ -1223,7 +1223,7 @@ def parse_wave_parameters(prams_str: str) -> tuple[str, dict]:
         sma_period = int(float(params[9].strip()))
         price_type = params[10].strip().lower()
     except (ValueError, IndexError) as e:
-        raise ValueError(f"Invalid Wave parameters: {prams_str}. Error: {e}")
+        raise ValueError(f"Invalid Wave parameters: {params_str}. Error: {e}")
 
     if price_type not in ['open', 'close']:
         raise ValueError(f"Wave price_type must be 'open' or 'close', got: {price_type}")

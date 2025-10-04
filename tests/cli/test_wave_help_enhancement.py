@@ -67,7 +67,7 @@ class TestWaveHelpEnhancement:
         
         # Run the command with invalid parameters to trigger help
         result = subprocess.run(
-            [sys.executable, str(script_path), "show", "csv", "mn1", "btcusd", "-d", "fastest", "--rule", "wave:1,2,3"],
+            [sys.executable, str(script_path), "show", "csv", "WAVE2_BTCUSD_PERIOD_MN1", "-d", "fastest", "--rule", "wave:1,2,3"],
             capture_output=True,
             text=True,
             cwd=project_root
@@ -77,7 +77,7 @@ class TestWaveHelpEnhancement:
         output = result.stdout
         
         # Check that output contains expected content
-        assert "WAVE (Wave Momentum Indicator) Help" in output, "Output should contain Wave help header"
+        assert "📊 WAVE (Wave Momentum Indicator) Help:" in output, "Output should contain Wave help header"
         assert "Individual Trading Rules (ENUM_MOM_TR):" in output, "Output should show Individual Trading Rules section"
         assert "Global Trading Rules (ENUM_GLOBAL_TR):" in output, "Output should show Global Trading Rules section"
         
