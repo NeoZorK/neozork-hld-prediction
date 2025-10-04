@@ -2,15 +2,22 @@
 
 **Цель:** Понять, как правильно измерять и анализировать производительность ML-системы для достижения доходности 100%+ в месяц.
 
-## Почему метрики критически важны?
+## Введение в метрики производительности
 
-**Теория:** Метрики представляют собой количественные показатели, которые позволяют объективно оценивать производительность ML-системы. Без правильных метрик невозможно понять, насколько эффективна система и как её улучшить.
+**Теория:** Метрики производительности представляют собой количественные показатели, которые позволяют объективно оценивать эффективность ML-системы в финансовой торговле. В контексте высокочастотной торговли и алгоритмических стратегий, правильный выбор и интерпретация метрик критически важны для:
 
-**Почему метрики критически важны:**
-- **Объективная оценка:** Обеспечивают объективную оценку производительности
-- **Принятие решений:** Критически важны для принятия правильных решений
-- **Оптимизация:** Помогают оптимизировать систему
-- **Сравнение:** Позволяют сравнивать различные подходы
+1. **Оценки реальной доходности** - понимания того, действительно ли система генерирует прибыль
+2. **Управления рисками** - контроля потенциальных потерь и просадок
+3. **Оптимизации стратегии** - выявления слабых мест и возможностей для улучшения
+4. **Сравнения подходов** - выбора лучших алгоритмов и параметров
+5. **Мониторинга стабильности** - отслеживания деградации производительности во времени
+
+**Почему метрики критически важны в финансовой торговле:**
+- **Объективная оценка:** Обеспечивают объективную оценку производительности без эмоциональных искажений
+- **Принятие решений:** Критически важны для принятия правильных торговых решений
+- **Оптимизация:** Помогают оптимизировать параметры стратегии и алгоритмы
+- **Сравнение:** Позволяют сравнивать различные торговые стратегии и подходы
+- **Риск-менеджмент:** Обеспечивают контроль рисков и защиту капитала
 
 ### Проблемы без правильных метрик
 
@@ -99,293 +106,1362 @@
 
 ### 1. Метрики доходности
 
-**Теория:** Метрики доходности представляют собой показатели, которые измеряют способность системы генерировать прибыль. Это критически важно для оценки финансовой эффективности системы.
+**Теория:** Метрики доходности представляют собой фундаментальные показатели, которые измеряют способность торговой системы генерировать прибыль. В контексте алгоритмической торговли эти метрики критически важны для:
 
-**Почему метрики доходности важны:**
-- **Финансовая эффективность:** Обеспечивают оценку финансовой эффективности
-- **Сравнение:** Позволяют сравнивать различные стратегии
-- **Планирование:** Помогают в планировании инвестиций
-- **Оценка успеха:** Критически важны для оценки успеха системы
+- **Оценки финансовой эффективности** - понимания того, насколько прибыльна система
+- **Сравнения стратегий** - выбора лучших торговых подходов
+- **Планирования инвестиций** - определения размера позиций и капитала
+- **Оценки успеха** - понимания достижения целевых показателей доходности
 
-**Плюсы:**
-- Прямая оценка финансовой эффективности
-- Простота понимания
-- Возможность сравнения
-- Практическая ценность
+**Детальное объяснение каждой метрики:**
 
-**Минусы:**
-- Не учитывают риски
-- Могут быть вводящими в заблуждение
-- Зависимость от временного периода
+1. **Общая доходность (Total Return)** - суммарная прибыль/убыток за весь период
+2. **Годовая доходность (Annualized Return)** - доходность, приведенная к годовому периоду
+3. **CAGR (Compound Annual Growth Rate)** - среднегодовая доходность с учетом сложного процента
+4. **Периодические доходности** - доходность по различным временным интервалам
+
+**Практическое применение:** Эти метрики используются для первоначальной оценки стратегии, сравнения с бенчмарками и принятия решений о продолжении торговли.
+
+**Полный функциональный код с импортами и примерами:**
 
 ```python
+# Необходимые импорты для всех примеров в этом файле
+import numpy as np
+import pandas as pd
+from datetime import datetime, timedelta
+import matplotlib.pyplot as plt
+import seaborn as sns
+from typing import Dict, List, Optional, Union
+from sklearn.linear_model import LinearRegression
+from sklearn.cluster import KMeans
+from sklearn.metrics import r2_score
+import warnings
+warnings.filterwarnings('ignore')
+
+# Настройка для корректного отображения
+plt.style.use('seaborn-v0_8')
+pd.set_option('display.max_columns', None)
+pd.set_option('display.width', None)
+
 class ReturnMetrics:
-    """Метрики доходности"""
+    """
+    Класс для расчета метрик доходности торговой системы.
     
-    def __init__(self):
+    Этот класс предоставляет методы для расчета различных показателей доходности,
+    которые критически важны для оценки эффективности торговых стратегий.
+    """
+    
+    def __init__(self, trading_days_per_year: int = 252):
+        """
+        Инициализация класса метрик доходности.
+        
+        Args:
+            trading_days_per_year (int): Количество торговых дней в году (по умолчанию 252)
+        """
+        self.trading_days_per_year = trading_days_per_year
         self.metrics = {}
     
-    def calculate_total_return(self, returns):
-        """Расчет общей доходности"""
-        total_return = np.sum(returns)
-        return total_return
+    def calculate_total_return(self, returns: pd.Series) -> float:
+        """
+        Расчет общей доходности за весь период.
+        
+        Общая доходность показывает суммарную прибыль или убыток за весь период торговли.
+        Это базовая метрика, которая показывает общую эффективность стратегии.
+        
+        Args:
+            returns (pd.Series): Серия доходностей (например, дневные доходности)
+            
+        Returns:
+            float: Общая доходность в виде десятичной дроби (0.1 = 10%)
+            
+        Example:
+            >>> returns = pd.Series([0.01, 0.02, -0.01, 0.03])
+            >>> metrics = ReturnMetrics()
+            >>> total_return = metrics.calculate_total_return(returns)
+            >>> print(f"Общая доходность: {total_return:.2%}")
+        """
+        if returns.empty:
+            return 0.0
+        
+        # Общая доходность = произведение (1 + доходность) - 1
+        total_return = (1 + returns).prod() - 1
+        return float(total_return)
     
-    def calculate_annualized_return(self, returns):
-        """Расчет годовой доходности"""
-        annualized_return = np.mean(returns) * 252  # 252 торговых дня в году
-        return annualized_return
+    def calculate_annualized_return(self, returns: pd.Series) -> float:
+        """
+        Расчет годовой доходности.
+        
+        Годовая доходность показывает, какую доходность система генерировала бы
+        в среднем за год, если бы работала с такой же эффективностью.
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            
+        Returns:
+            float: Годовая доходность в виде десятичной дроби
+            
+        Example:
+            >>> returns = pd.Series([0.01] * 252)  # 1% в день в течение года
+            >>> metrics = ReturnMetrics()
+            >>> annual_return = metrics.calculate_annualized_return(returns)
+            >>> print(f"Годовая доходность: {annual_return:.2%}")
+        """
+        if returns.empty:
+            return 0.0
+        
+        # Средняя дневная доходность * количество торговых дней в году
+        mean_daily_return = returns.mean()
+        annualized_return = mean_daily_return * self.trading_days_per_year
+        return float(annualized_return)
     
-    def calculate_compound_annual_growth_rate(self, returns):
-        """Расчет CAGR"""
-        total_return = np.sum(returns)
-        years = len(returns) / 252
+    def calculate_compound_annual_growth_rate(self, returns: pd.Series) -> float:
+        """
+        Расчет CAGR (Compound Annual Growth Rate).
+        
+        CAGR показывает среднегодовую доходность с учетом сложного процента.
+        Это более точная метрика для долгосрочной оценки, чем простая средняя.
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            
+        Returns:
+            float: CAGR в виде десятичной дроби
+            
+        Example:
+            >>> returns = pd.Series([0.1, 0.2, -0.05, 0.15])  # 4 дня торговли
+            >>> metrics = ReturnMetrics()
+            >>> cagr = metrics.calculate_compound_annual_growth_rate(returns)
+            >>> print(f"CAGR: {cagr:.2%}")
+        """
+        if returns.empty:
+            return 0.0
+        
+        # Общая доходность
+        total_return = self.calculate_total_return(returns)
+        
+        # Количество лет
+        years = len(returns) / self.trading_days_per_year
+        
+        if years <= 0:
+            return 0.0
+        
+        # CAGR = (1 + общая_доходность)^(1/годы) - 1
         cagr = (1 + total_return) ** (1 / years) - 1
-        return cagr
+        return float(cagr)
     
-    def calculate_monthly_return(self, returns):
-        """Расчет месячной доходности"""
-        monthly_returns = returns.resample('M').sum()
+    def calculate_monthly_returns(self, returns: pd.Series) -> pd.Series:
+        """
+        Расчет месячных доходностей.
+        
+        Месячные доходности показывают производительность по месяцам,
+        что важно для выявления сезонных паттернов и месячной стабильности.
+        
+        Args:
+            returns (pd.Series): Серия доходностей с временными метками
+            
+        Returns:
+            pd.Series: Месячные доходности
+            
+        Example:
+            >>> dates = pd.date_range('2023-01-01', periods=365, freq='D')
+            >>> returns = pd.Series(np.random.normal(0.001, 0.02, 365), index=dates)
+            >>> metrics = ReturnMetrics()
+            >>> monthly = metrics.calculate_monthly_returns(returns)
+            >>> print(monthly.head())
+        """
+        if returns.empty:
+            return pd.Series(dtype=float)
+        
+        # Группировка по месяцам и суммирование доходностей
+        monthly_returns = returns.resample('M').apply(lambda x: (1 + x).prod() - 1)
         return monthly_returns
     
-    def calculate_weekly_return(self, returns):
-        """Расчет недельной доходности"""
-        weekly_returns = returns.resample('W').sum()
+    def calculate_weekly_returns(self, returns: pd.Series) -> pd.Series:
+        """
+        Расчет недельных доходностей.
+        
+        Недельные доходности полезны для анализа краткосрочной производительности
+        и выявления недельных паттернов в торговле.
+        
+        Args:
+            returns (pd.Series): Серия доходностей с временными метками
+            
+        Returns:
+            pd.Series: Недельные доходности
+        """
+        if returns.empty:
+            return pd.Series(dtype=float)
+        
+        # Группировка по неделям и суммирование доходностей
+        weekly_returns = returns.resample('W').apply(lambda x: (1 + x).prod() - 1)
         return weekly_returns
     
-    def calculate_daily_return(self, returns):
-        """Расчет дневной доходности"""
-        daily_returns = returns.resample('D').sum()
-        return daily_returns
+    def calculate_daily_returns(self, returns: pd.Series) -> pd.Series:
+        """
+        Расчет дневных доходностей.
+        
+        Дневные доходности - это базовые данные для всех остальных расчетов.
+        Они показывают ежедневную производительность системы.
+        
+        Args:
+            returns (pd.Series): Серия доходностей с временными метками
+            
+        Returns:
+            pd.Series: Дневные доходности (то же самое, что входные данные)
+        """
+        return returns
+    
+    def get_all_return_metrics(self, returns: pd.Series) -> Dict[str, float]:
+        """
+        Расчет всех метрик доходности.
+        
+        Удобный метод для получения всех основных метрик доходности
+        в одном вызове.
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            
+        Returns:
+            Dict[str, float]: Словарь с метриками доходности
+        """
+        metrics = {
+            'total_return': self.calculate_total_return(returns),
+            'annualized_return': self.calculate_annualized_return(returns),
+            'cagr': self.calculate_compound_annual_growth_rate(returns),
+            'mean_daily_return': returns.mean(),
+            'median_daily_return': returns.median(),
+            'std_daily_return': returns.std(),
+            'min_daily_return': returns.min(),
+            'max_daily_return': returns.max()
+        }
+        
+        # Добавляем периодические метрики если есть временные метки
+        if not returns.empty and hasattr(returns.index, 'to_pydatetime'):
+            monthly_returns = self.calculate_monthly_returns(returns)
+            if not monthly_returns.empty:
+                metrics.update({
+                    'mean_monthly_return': monthly_returns.mean(),
+                    'std_monthly_return': monthly_returns.std(),
+                    'positive_months_ratio': (monthly_returns > 0).mean(),
+                    'best_month': monthly_returns.max(),
+                    'worst_month': monthly_returns.min()
+                })
+        
+        return metrics
+
+# Практический пример использования
+def example_return_metrics():
+    """
+    Практический пример использования метрик доходности.
+    
+    Этот пример показывает, как создать тестовые данные и рассчитать
+    различные метрики доходности для торговой стратегии.
+    """
+    print("=== Пример использования метрик доходности ===\n")
+    
+    # Создание тестовых данных
+    np.random.seed(42)
+    dates = pd.date_range('2023-01-01', periods=252, freq='D')
+    
+    # Симуляция доходностей с трендом и волатильностью
+    trend = 0.0005  # 0.05% в день
+    volatility = 0.02  # 2% волатильность
+    returns = pd.Series(
+        np.random.normal(trend, volatility, len(dates)),
+        index=dates
+    )
+    
+    # Создание экземпляра класса
+    metrics = ReturnMetrics()
+    
+    # Расчет всех метрик
+    all_metrics = metrics.get_all_return_metrics(returns)
+    
+    # Вывод результатов
+    print("Результаты анализа доходности:")
+    print("-" * 40)
+    for metric, value in all_metrics.items():
+        if 'return' in metric or 'cagr' in metric:
+            print(f"{metric:25}: {value:8.2%}")
+        else:
+            print(f"{metric:25}: {value:8.4f}")
+    
+    # Дополнительный анализ
+    print(f"\nДополнительная информация:")
+    print(f"Период анализа: {len(returns)} дней")
+    print(f"Положительных дней: {(returns > 0).sum()} ({(returns > 0).mean():.1%})")
+    print(f"Отрицательных дней: {(returns < 0).sum()} ({(returns < 0).mean():.1%})")
+    
+    return all_metrics
+
+# Запуск примера
+if __name__ == "__main__":
+    example_return_metrics()
 ```
 
 ### 2. Метрики риска
 
-**Теория:** Метрики риска представляют собой показатели, которые измеряют уровень риска, связанного с системой. Это критически важно для понимания потенциальных потерь и управления рисками.
+**Теория:** Метрики риска представляют собой критически важные показатели, которые измеряют уровень риска, связанного с торговой системой. В алгоритмической торговле управление рисками является основой для сохранения капитала и обеспечения долгосрочной прибыльности.
 
-**Почему метрики риска важны:**
-- **Управление рисками:** Критически важны для управления рисками
-- **Защита капитала:** Помогают защитить капитал
-- **Планирование:** Помогают в планировании инвестиций
-- **Сравнение:** Позволяют сравнивать риски различных стратегий
+**Почему метрики риска критически важны:**
+- **Управление рисками** - предотвращение катастрофических потерь
+- **Защита капитала** - сохранение торгового капитала для будущих операций
+- **Планирование позиций** - определение оптимального размера позиций
+- **Сравнение стратегий** - выбор менее рискованных подходов
+- **Соответствие регуляторным требованиям** - соблюдение лимитов риска
 
-**Плюсы:**
-- Оценка потенциальных потерь
-- Помощь в управлении рисками
-- Защита капитала
-- Сравнение рисков
+**Детальное объяснение основных метрик риска:**
 
-**Минусы:**
-- Сложность расчета
-- Потенциальные проблемы с данными
-- Необходимость понимания статистики
+1. **Волатильность (Volatility)** - стандартное отклонение доходностей, мера нестабильности
+2. **Максимальная просадка (Max Drawdown)** - наибольшая потеря от пика до минимума
+3. **Value at Risk (VaR)** - максимальная ожидаемая потеря с заданной вероятностью
+4. **Conditional VaR (CVaR)** - средняя потеря в худших сценариях
+5. **Downside Deviation** - волатильность только отрицательных доходностей
+
+**Практическое применение:** Эти метрики используются для установления лимитов риска, определения размера позиций и мониторинга стабильности системы.
+
+**Полный функциональный код с детальными объяснениями:**
 
 ```python
 class RiskMetrics:
-    """Метрики риска"""
+    """
+    Класс для расчета метрик риска торговой системы.
     
-    def __init__(self):
+    Этот класс предоставляет методы для расчета различных показателей риска,
+    которые критически важны для управления рисками в алгоритмической торговле.
+    """
+    
+    def __init__(self, trading_days_per_year: int = 252):
+        """
+        Инициализация класса метрик риска.
+        
+        Args:
+            trading_days_per_year (int): Количество торговых дней в году
+        """
+        self.trading_days_per_year = trading_days_per_year
         self.metrics = {}
     
-    def calculate_volatility(self, returns):
-        """Расчет волатильности"""
-        volatility = np.std(returns) * np.sqrt(252)
-        return volatility
+    def calculate_volatility(self, returns: pd.Series, annualized: bool = True) -> float:
+        """
+        Расчет волатильности доходностей.
+        
+        Волатильность измеряет степень изменчивости доходностей и является
+        основным показателем риска. Высокая волатильность означает высокий риск.
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            annualized (bool): Приводить ли к годовому периоду
+            
+        Returns:
+            float: Волатильность (стандартное отклонение доходностей)
+            
+        Example:
+            >>> returns = pd.Series([0.01, -0.02, 0.03, -0.01, 0.02])
+            >>> risk_metrics = RiskMetrics()
+            >>> vol = risk_metrics.calculate_volatility(returns)
+            >>> print(f"Волатильность: {vol:.2%}")
+        """
+        if returns.empty:
+            return 0.0
+        
+        volatility = returns.std()
+        
+        if annualized:
+            volatility *= np.sqrt(self.trading_days_per_year)
+        
+        return float(volatility)
     
-    def calculate_max_drawdown(self, returns):
-        """Расчет максимальной просадки"""
-        cumulative_returns = np.cumsum(returns)
-        running_max = np.maximum.accumulate(cumulative_returns)
-        drawdown = cumulative_returns - running_max
-        max_drawdown = np.min(drawdown)
-        return max_drawdown
+    def calculate_max_drawdown(self, returns: pd.Series) -> float:
+        """
+        Расчет максимальной просадки.
+        
+        Максимальная просадка показывает наибольшую потерю от пика до минимума
+        за весь период торговли. Это критически важная метрика для оценки
+        максимального риска системы.
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            
+        Returns:
+            float: Максимальная просадка в виде десятичной дроби
+            
+        Example:
+            >>> returns = pd.Series([0.1, -0.05, 0.2, -0.15, 0.1])
+            >>> risk_metrics = RiskMetrics()
+            >>> max_dd = risk_metrics.calculate_max_drawdown(returns)
+            >>> print(f"Максимальная просадка: {max_dd:.2%}")
+        """
+        if returns.empty:
+            return 0.0
+        
+        # Кумулятивные доходности
+        cumulative_returns = (1 + returns).cumprod()
+        
+        # Бегущий максимум
+        running_max = cumulative_returns.expanding().max()
+        
+        # Просадка = (текущее значение - максимум) / максимум
+        drawdown = (cumulative_returns - running_max) / running_max
+        
+        # Максимальная просадка (наибольшая отрицательная)
+        max_drawdown = drawdown.min()
+        
+        return float(max_drawdown)
     
-    def calculate_value_at_risk(self, returns, confidence_level=0.05):
-        """Расчет VaR"""
+    def calculate_value_at_risk(self, returns: pd.Series, confidence_level: float = 0.05) -> float:
+        """
+        Расчет Value at Risk (VaR).
+        
+        VaR показывает максимальную ожидаемую потерю с заданной вероятностью
+        за определенный период времени. Например, VaR 5% означает, что
+        с вероятностью 95% потери не превысят этого значения.
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            confidence_level (float): Уровень доверия (0.05 = 5% VaR)
+            
+        Returns:
+            float: VaR в виде десятичной дроби
+            
+        Example:
+            >>> returns = pd.Series(np.random.normal(0.001, 0.02, 1000))
+            >>> risk_metrics = RiskMetrics()
+            >>> var_5 = risk_metrics.calculate_value_at_risk(returns, 0.05)
+            >>> print(f"VaR 5%: {var_5:.2%}")
+        """
+        if returns.empty:
+            return 0.0
+        
+        # VaR = процентиль доходностей на уровне confidence_level
         var = np.percentile(returns, confidence_level * 100)
-        return var
+        
+        return float(var)
     
-    def calculate_conditional_var(self, returns, confidence_level=0.05):
-        """Расчет CVaR"""
+    def calculate_conditional_var(self, returns: pd.Series, confidence_level: float = 0.05) -> float:
+        """
+        Расчет Conditional Value at Risk (CVaR).
+        
+        CVaR (также известный как Expected Shortfall) показывает среднюю потерю
+        в худших сценариях, которые превышают VaR. Это более консервативная
+        мера риска, чем VaR.
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            confidence_level (float): Уровень доверия
+            
+        Returns:
+            float: CVaR в виде десятичной дроби
+            
+        Example:
+            >>> returns = pd.Series(np.random.normal(0.001, 0.02, 1000))
+            >>> risk_metrics = RiskMetrics()
+            >>> cvar = risk_metrics.calculate_conditional_var(returns, 0.05)
+            >>> print(f"CVaR 5%: {cvar:.2%}")
+        """
+        if returns.empty:
+            return 0.0
+        
+        # Сначала рассчитываем VaR
         var = self.calculate_value_at_risk(returns, confidence_level)
-        cvar = np.mean(returns[returns <= var])
-        return cvar
+        
+        # CVaR = средняя доходность среди тех, что хуже VaR
+        tail_returns = returns[returns <= var]
+        
+        if len(tail_returns) == 0:
+            return 0.0
+        
+        cvar = tail_returns.mean()
+        
+        return float(cvar)
     
-    def calculate_downside_deviation(self, returns, target_return=0):
-        """Расчет downside deviation"""
+    def calculate_downside_deviation(self, returns: pd.Series, target_return: float = 0.0) -> float:
+        """
+        Расчет Downside Deviation.
+        
+        Downside Deviation измеряет волатильность только отрицательных доходностей
+        относительно целевого уровня доходности. Это более точная мера риска,
+        чем общая волатильность, так как учитывает только нежелательные отклонения.
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            target_return (float): Целевой уровень доходности
+            
+        Returns:
+            float: Downside Deviation
+            
+        Example:
+            >>> returns = pd.Series([0.01, -0.02, 0.03, -0.01, 0.02])
+            >>> risk_metrics = RiskMetrics()
+            >>> dd = risk_metrics.calculate_downside_deviation(returns, 0.0)
+            >>> print(f"Downside Deviation: {dd:.2%}")
+        """
+        if returns.empty:
+            return 0.0
+        
+        # Только доходности ниже целевого уровня
         downside_returns = returns[returns < target_return]
-        downside_deviation = np.std(downside_returns)
-        return downside_deviation
+        
+        if len(downside_returns) == 0:
+            return 0.0
+        
+        # Стандартное отклонение downside доходностей
+        downside_deviation = downside_returns.std()
+        
+        return float(downside_deviation)
+    
+    def calculate_sharpe_ratio(self, returns: pd.Series, risk_free_rate: float = 0.02) -> float:
+        """
+        Расчет коэффициента Шарпа.
+        
+        Коэффициент Шарпа показывает избыточную доходность на единицу риска.
+        Это одна из самых важных метрик для оценки эффективности торговой стратегии.
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            risk_free_rate (float): Безрисковая ставка (годовая)
+            
+        Returns:
+            float: Коэффициент Шарпа
+            
+        Example:
+            >>> returns = pd.Series(np.random.normal(0.001, 0.02, 252))
+            >>> risk_metrics = RiskMetrics()
+            >>> sharpe = risk_metrics.calculate_sharpe_ratio(returns)
+            >>> print(f"Коэффициент Шарпа: {sharpe:.2f}")
+        """
+        if returns.empty:
+            return 0.0
+        
+        # Годовая доходность
+        annual_return = returns.mean() * self.trading_days_per_year
+        
+        # Годовая волатильность
+        annual_volatility = self.calculate_volatility(returns, annualized=True)
+        
+        if annual_volatility == 0:
+            return 0.0
+        
+        # Коэффициент Шарпа = (доходность - безрисковая ставка) / волатильность
+        sharpe_ratio = (annual_return - risk_free_rate) / annual_volatility
+        
+        return float(sharpe_ratio)
+    
+    def calculate_sortino_ratio(self, returns: pd.Series, target_return: float = 0.0) -> float:
+        """
+        Расчет коэффициента Сортино.
+        
+        Коэффициент Сортино аналогичен коэффициенту Шарпа, но использует
+        downside deviation вместо общей волатильности. Это более точная
+        мера для оценки эффективности, так как учитывает только нежелательные риски.
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            target_return (float): Целевой уровень доходности
+            
+        Returns:
+            float: Коэффициент Сортино
+        """
+        if returns.empty:
+            return 0.0
+        
+        # Годовая доходность
+        annual_return = returns.mean() * self.trading_days_per_year
+        
+        # Downside deviation
+        downside_dev = self.calculate_downside_deviation(returns, target_return)
+        
+        if downside_dev == 0:
+            return 0.0
+        
+        # Коэффициент Сортино = (доходность - целевая доходность) / downside deviation
+        sortino_ratio = (annual_return - target_return) / downside_dev
+        
+        return float(sortino_ratio)
+    
+    def get_all_risk_metrics(self, returns: pd.Series, risk_free_rate: float = 0.02) -> Dict[str, float]:
+        """
+        Расчет всех метрик риска.
+        
+        Удобный метод для получения всех основных метрик риска в одном вызове.
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            risk_free_rate (float): Безрисковая ставка
+            
+        Returns:
+            Dict[str, float]: Словарь с метриками риска
+        """
+        metrics = {
+            'volatility': self.calculate_volatility(returns),
+            'max_drawdown': self.calculate_max_drawdown(returns),
+            'var_5pct': self.calculate_value_at_risk(returns, 0.05),
+            'var_1pct': self.calculate_value_at_risk(returns, 0.01),
+            'cvar_5pct': self.calculate_conditional_var(returns, 0.05),
+            'cvar_1pct': self.calculate_conditional_var(returns, 0.01),
+            'downside_deviation': self.calculate_downside_deviation(returns),
+            'sharpe_ratio': self.calculate_sharpe_ratio(returns, risk_free_rate),
+            'sortino_ratio': self.calculate_sortino_ratio(returns)
+        }
+        
+        return metrics
+
+# Практический пример использования метрик риска
+def example_risk_metrics():
+    """
+    Практический пример использования метрик риска.
+    
+    Этот пример показывает, как рассчитать различные метрики риска
+    для торговой стратегии и интерпретировать результаты.
+    """
+    print("=== Пример использования метрик риска ===\n")
+    
+    # Создание тестовых данных с различными характеристиками риска
+    np.random.seed(42)
+    dates = pd.date_range('2023-01-01', periods=252, freq='D')
+    
+    # Симуляция доходностей с трендом и волатильностью
+    trend = 0.0008  # 0.08% в день
+    volatility = 0.025  # 2.5% волатильность
+    returns = pd.Series(
+        np.random.normal(trend, volatility, len(dates)),
+        index=dates
+    )
+    
+    # Добавляем несколько экстремальных событий для демонстрации
+    extreme_days = [50, 100, 200]
+    for day in extreme_days:
+        returns.iloc[day] = -0.08  # -8% в день
+    
+    # Создание экземпляра класса
+    risk_metrics = RiskMetrics()
+    
+    # Расчет всех метрик риска
+    all_metrics = risk_metrics.get_all_risk_metrics(returns)
+    
+    # Вывод результатов
+    print("Результаты анализа риска:")
+    print("-" * 50)
+    for metric, value in all_metrics.items():
+        if 'ratio' in metric:
+            print(f"{metric:20}: {value:8.2f}")
+        else:
+            print(f"{metric:20}: {value:8.2%}")
+    
+    # Интерпретация результатов
+    print(f"\nИнтерпретация результатов:")
+    print(f"Волатильность: {all_metrics['volatility']:.1%} - {'Высокая' if all_metrics['volatility'] > 0.2 else 'Умеренная' if all_metrics['volatility'] > 0.1 else 'Низкая'}")
+    print(f"Максимальная просадка: {all_metrics['max_drawdown']:.1%} - {'Критическая' if all_metrics['max_drawdown'] < -0.2 else 'Высокая' if all_metrics['max_drawdown'] < -0.1 else 'Приемлемая'}")
+    print(f"Коэффициент Шарпа: {all_metrics['sharpe_ratio']:.2f} - {'Отличный' if all_metrics['sharpe_ratio'] > 2 else 'Хороший' if all_metrics['sharpe_ratio'] > 1 else 'Слабый' if all_metrics['sharpe_ratio'] > 0 else 'Плохой'}")
+    
+    return all_metrics
+
+# Запуск примера
+if __name__ == "__main__":
+    example_risk_metrics()
 ```
 
 ### 3. Метрики эффективности
 
-**Теория:** Метрики эффективности представляют собой показатели, которые измеряют эффективность системы с учетом рисков. Это критически важно для понимания реальной эффективности системы.
+**Теория:** Метрики эффективности представляют собой комплексные показатели, которые измеряют эффективность торговой системы с учетом рисков. Эти метрики критически важны для понимания реальной эффективности системы, так как они учитывают не только доходность, но и связанные с ней риски.
 
-**Почему метрики эффективности важны:**
-- **Реальная эффективность:** Обеспечивают оценку реальной эффективности
-- **Учет рисков:** Учитывают риски при оценке эффективности
-- **Сравнение:** Позволяют сравнивать эффективность различных стратегий
-- **Оптимизация:** Помогают оптимизировать систему
+**Почему метрики эффективности критически важны:**
+- **Реальная оценка эффективности** - показывают истинную эффективность с учетом рисков
+- **Сравнение стратегий** - позволяют объективно сравнивать различные торговые подходы
+- **Оптимизация параметров** - помогают найти оптимальные настройки системы
+- **Управление рисками** - обеспечивают баланс между доходностью и риском
+- **Принятие решений** - дают количественную основу для торговых решений
 
-**Плюсы:**
-- Учет рисков
-- Реалистичная оценка эффективности
-- Возможность сравнения
-- Помощь в оптимизации
+**Детальное объяснение основных метрик эффективности:**
 
-**Минусы:**
-- Сложность расчета
-- Необходимость понимания рисков
-- Потенциальные проблемы с данными
+1. **Коэффициент Шарпа (Sharpe Ratio)** - избыточная доходность на единицу общего риска
+2. **Коэффициент Сортино (Sortino Ratio)** - избыточная доходность на единицу downside риска
+3. **Коэффициент Калмара (Calmar Ratio)** - доходность относительно максимальной просадки
+4. **Information Ratio** - избыточная доходность относительно tracking error
+5. **Коэффициент Трейнора (Treynor Ratio)** - доходность относительно систематического риска
+
+**Практическое применение:** Эти метрики используются для выбора лучших стратегий, оптимизации параметров и управления портфелем.
+
+**Полный функциональный код с детальными объяснениями:**
 
 ```python
 class EfficiencyMetrics:
-    """Метрики эффективности"""
+    """
+    Класс для расчета метрик эффективности торговой системы.
     
-    def __init__(self, risk_free_rate=0.02):
+    Этот класс предоставляет методы для расчета различных показателей эффективности,
+    которые учитывают как доходность, так и риски торговой стратегии.
+    """
+    
+    def __init__(self, risk_free_rate: float = 0.02, trading_days_per_year: int = 252):
+        """
+        Инициализация класса метрик эффективности.
+        
+        Args:
+            risk_free_rate (float): Безрисковая ставка (годовая)
+            trading_days_per_year (int): Количество торговых дней в году
+        """
         self.risk_free_rate = risk_free_rate
+        self.trading_days_per_year = trading_days_per_year
+        self.metrics = {}
     
-    def calculate_sharpe_ratio(self, returns):
-        """Расчет Sharpe Ratio"""
-        excess_return = np.mean(returns) - self.risk_free_rate
-        volatility = np.std(returns)
-        sharpe_ratio = excess_return / volatility if volatility > 0 else 0
-        return sharpe_ratio
+    def calculate_sharpe_ratio(self, returns: pd.Series) -> float:
+        """
+        Расчет коэффициента Шарпа.
+        
+        Коэффициент Шарпа показывает избыточную доходность на единицу общего риска.
+        Это одна из самых важных метрик для оценки эффективности торговой стратегии.
+        
+        Формула: (E[R] - Rf) / σ(R)
+        где E[R] - ожидаемая доходность, Rf - безрисковая ставка, σ(R) - волатильность
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            
+        Returns:
+            float: Коэффициент Шарпа
+            
+        Example:
+            >>> returns = pd.Series(np.random.normal(0.001, 0.02, 252))
+            >>> eff_metrics = EfficiencyMetrics()
+            >>> sharpe = eff_metrics.calculate_sharpe_ratio(returns)
+            >>> print(f"Коэффициент Шарпа: {sharpe:.2f}")
+        """
+        if returns.empty:
+            return 0.0
+        
+        # Годовая доходность
+        annual_return = returns.mean() * self.trading_days_per_year
+        
+        # Годовая волатильность
+        annual_volatility = returns.std() * np.sqrt(self.trading_days_per_year)
+        
+        if annual_volatility == 0:
+            return 0.0
+        
+        # Коэффициент Шарпа
+        sharpe_ratio = (annual_return - self.risk_free_rate) / annual_volatility
+        
+        return float(sharpe_ratio)
     
-    def calculate_sortino_ratio(self, returns, target_return=0):
-        """Расчет Sortino Ratio"""
-        excess_return = np.mean(returns) - target_return
-        downside_deviation = self.calculate_downside_deviation(returns, target_return)
-        sortino_ratio = excess_return / downside_deviation if downside_deviation > 0 else 0
-        return sortino_ratio
+    def calculate_sortino_ratio(self, returns: pd.Series, target_return: float = 0.0) -> float:
+        """
+        Расчет коэффициента Сортино.
+        
+        Коэффициент Сортино аналогичен коэффициенту Шарпа, но использует
+        downside deviation вместо общей волатильности. Это более точная
+        мера для оценки эффективности, так как учитывает только нежелательные риски.
+        
+        Формула: (E[R] - T) / σ_down(R)
+        где T - целевая доходность, σ_down(R) - downside deviation
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            target_return (float): Целевой уровень доходности
+            
+        Returns:
+            float: Коэффициент Сортино
+        """
+        if returns.empty:
+            return 0.0
+        
+        # Годовая доходность
+        annual_return = returns.mean() * self.trading_days_per_year
+        
+        # Downside deviation
+        downside_returns = returns[returns < target_return]
+        if len(downside_returns) == 0:
+            return np.inf if annual_return > target_return else 0.0
+        
+        downside_deviation = downside_returns.std() * np.sqrt(self.trading_days_per_year)
+        
+        if downside_deviation == 0:
+            return 0.0
+        
+        # Коэффициент Сортино
+        sortino_ratio = (annual_return - target_return) / downside_deviation
+        
+        return float(sortino_ratio)
     
-    def calculate_calmar_ratio(self, returns):
-        """Расчет Calmar Ratio"""
-        annualized_return = np.mean(returns) * 252
-        max_drawdown = self.calculate_max_drawdown(returns)
-        calmar_ratio = annualized_return / abs(max_drawdown) if max_drawdown != 0 else 0
-        return calmar_ratio
+    def calculate_calmar_ratio(self, returns: pd.Series) -> float:
+        """
+        Расчет коэффициента Калмара.
+        
+        Коэффициент Калмара показывает отношение годовой доходности к максимальной просадке.
+        Это важная метрика для оценки способности системы восстанавливаться после потерь.
+        
+        Формула: Annual Return / |Max Drawdown|
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            
+        Returns:
+            float: Коэффициент Калмара
+        """
+        if returns.empty:
+            return 0.0
+        
+        # Годовая доходность
+        annual_return = returns.mean() * self.trading_days_per_year
+        
+        # Максимальная просадка
+        cumulative_returns = (1 + returns).cumprod()
+        running_max = cumulative_returns.expanding().max()
+        drawdown = (cumulative_returns - running_max) / running_max
+        max_drawdown = abs(drawdown.min())
+        
+        if max_drawdown == 0:
+            return np.inf if annual_return > 0 else 0.0
+        
+        # Коэффициент Калмара
+        calmar_ratio = annual_return / max_drawdown
+        
+        return float(calmar_ratio)
     
-    def calculate_information_ratio(self, returns, benchmark_returns):
-        """Расчет Information Ratio"""
-        excess_returns = returns - benchmark_returns
-        tracking_error = np.std(excess_returns)
-        information_ratio = np.mean(excess_returns) / tracking_error if tracking_error > 0 else 0
-        return information_ratio
+    def calculate_information_ratio(self, returns: pd.Series, benchmark_returns: pd.Series) -> float:
+        """
+        Расчет Information Ratio.
+        
+        Information Ratio показывает избыточную доходность относительно tracking error.
+        Это важная метрика для оценки эффективности активного управления.
+        
+        Формула: (E[R] - E[Rb]) / σ(R - Rb)
+        где Rb - доходность бенчмарка
+        
+        Args:
+            returns (pd.Series): Серия доходностей стратегии
+            benchmark_returns (pd.Series): Серия доходностей бенчмарка
+            
+        Returns:
+            float: Information Ratio
+        """
+        if returns.empty or benchmark_returns.empty:
+            return 0.0
+        
+        # Выравниваем индексы
+        common_index = returns.index.intersection(benchmark_returns.index)
+        if len(common_index) == 0:
+            return 0.0
+        
+        returns_aligned = returns.loc[common_index]
+        benchmark_aligned = benchmark_returns.loc[common_index]
+        
+        # Избыточные доходности
+        excess_returns = returns_aligned - benchmark_aligned
+        
+        # Tracking error
+        tracking_error = excess_returns.std() * np.sqrt(self.trading_days_per_year)
+        
+        if tracking_error == 0:
+            return 0.0
+        
+        # Information Ratio
+        information_ratio = excess_returns.mean() * self.trading_days_per_year / tracking_error
+        
+        return float(information_ratio)
+    
+    def calculate_treynor_ratio(self, returns: pd.Series, market_returns: pd.Series) -> float:
+        """
+        Расчет коэффициента Трейнора.
+        
+        Коэффициент Трейнора показывает доходность относительно систематического риска (beta).
+        Это важная метрика для оценки эффективности в контексте рыночного риска.
+        
+        Формула: (E[R] - Rf) / β
+        где β - бета стратегии относительно рынка
+        
+        Args:
+            returns (pd.Series): Серия доходностей стратегии
+            market_returns (pd.Series): Серия доходностей рынка
+            
+        Returns:
+            float: Коэффициент Трейнора
+        """
+        if returns.empty or market_returns.empty:
+            return 0.0
+        
+        # Выравниваем индексы
+        common_index = returns.index.intersection(market_returns.index)
+        if len(common_index) < 2:
+            return 0.0
+        
+        returns_aligned = returns.loc[common_index]
+        market_aligned = market_returns.loc[common_index]
+        
+        # Расчет беты
+        covariance = np.cov(returns_aligned, market_aligned)[0, 1]
+        market_variance = np.var(market_aligned)
+        
+        if market_variance == 0:
+            return 0.0
+        
+        beta = covariance / market_variance
+        
+        if beta == 0:
+            return 0.0
+        
+        # Годовая доходность
+        annual_return = returns_aligned.mean() * self.trading_days_per_year
+        
+        # Коэффициент Трейнора
+        treynor_ratio = (annual_return - self.risk_free_rate) / beta
+        
+        return float(treynor_ratio)
+    
+    def calculate_omega_ratio(self, returns: pd.Series, threshold: float = 0.0) -> float:
+        """
+        Расчет Omega Ratio.
+        
+        Omega Ratio показывает отношение прибыли к убыткам относительно заданного порога.
+        Это более полная мера эффективности, чем коэффициент Шарпа.
+        
+        Формула: ∫[threshold to ∞] (1 - F(x)) dx / ∫[-∞ to threshold] F(x) dx
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            threshold (float): Пороговый уровень доходности
+            
+        Returns:
+            float: Omega Ratio
+        """
+        if returns.empty:
+            return 0.0
+        
+        # Прибыли и убытки относительно порога
+        gains = returns[returns > threshold] - threshold
+        losses = threshold - returns[returns < threshold]
+        
+        if len(losses) == 0:
+            return np.inf if len(gains) > 0 else 0.0
+        
+        # Omega Ratio
+        omega_ratio = gains.sum() / losses.sum()
+        
+        return float(omega_ratio)
+    
+    def get_all_efficiency_metrics(self, returns: pd.Series, 
+                                 benchmark_returns: Optional[pd.Series] = None,
+                                 market_returns: Optional[pd.Series] = None) -> Dict[str, float]:
+        """
+        Расчет всех метрик эффективности.
+        
+        Удобный метод для получения всех основных метрик эффективности в одном вызове.
+        
+        Args:
+            returns (pd.Series): Серия доходностей стратегии
+            benchmark_returns (pd.Series, optional): Доходности бенчмарка
+            market_returns (pd.Series, optional): Доходности рынка
+            
+        Returns:
+            Dict[str, float]: Словарь с метриками эффективности
+        """
+        metrics = {
+            'sharpe_ratio': self.calculate_sharpe_ratio(returns),
+            'sortino_ratio': self.calculate_sortino_ratio(returns),
+            'calmar_ratio': self.calculate_calmar_ratio(returns),
+            'omega_ratio': self.calculate_omega_ratio(returns)
+        }
+        
+        if benchmark_returns is not None:
+            metrics['information_ratio'] = self.calculate_information_ratio(returns, benchmark_returns)
+        
+        if market_returns is not None:
+            metrics['treynor_ratio'] = self.calculate_treynor_ratio(returns, market_returns)
+        
+        return metrics
+
+# Практический пример использования метрик эффективности
+def example_efficiency_metrics():
+    """
+    Практический пример использования метрик эффективности.
+    
+    Этот пример показывает, как рассчитать различные метрики эффективности
+    и сравнить две торговые стратегии.
+    """
+    print("=== Пример использования метрик эффективности ===\n")
+    
+    # Создание тестовых данных для двух стратегий
+    np.random.seed(42)
+    dates = pd.date_range('2023-01-01', periods=252, freq='D')
+    
+    # Стратегия 1: Высокая доходность, высокая волатильность
+    strategy1_returns = pd.Series(
+        np.random.normal(0.0015, 0.03, len(dates)),
+        index=dates
+    )
+    
+    # Стратегия 2: Умеренная доходность, низкая волатильность
+    strategy2_returns = pd.Series(
+        np.random.normal(0.0008, 0.015, len(dates)),
+        index=dates
+    )
+    
+    # Бенчмарк (рыночный индекс)
+    benchmark_returns = pd.Series(
+        np.random.normal(0.0005, 0.02, len(dates)),
+        index=dates
+    )
+    
+    # Создание экземпляра класса
+    eff_metrics = EfficiencyMetrics()
+    
+    # Расчет метрик для обеих стратегий
+    strategy1_metrics = eff_metrics.get_all_efficiency_metrics(
+        strategy1_returns, benchmark_returns, benchmark_returns
+    )
+    strategy2_metrics = eff_metrics.get_all_efficiency_metrics(
+        strategy2_returns, benchmark_returns, benchmark_returns
+    )
+    
+    # Вывод результатов
+    print("Сравнение метрик эффективности:")
+    print("-" * 60)
+    print(f"{'Метрика':<20} {'Стратегия 1':<15} {'Стратегия 2':<15}")
+    print("-" * 60)
+    
+    for metric in strategy1_metrics.keys():
+        val1 = strategy1_metrics[metric]
+        val2 = strategy2_metrics[metric]
+        print(f"{metric:<20} {val1:<15.3f} {val2:<15.3f}")
+    
+    # Определение лучшей стратегии
+    print(f"\nАнализ результатов:")
+    if strategy1_metrics['sharpe_ratio'] > strategy2_metrics['sharpe_ratio']:
+        print("Стратегия 1 имеет лучший коэффициент Шарпа")
+    else:
+        print("Стратегия 2 имеет лучший коэффициент Шарпа")
+    
+    if strategy1_metrics['calmar_ratio'] > strategy2_metrics['calmar_ratio']:
+        print("Стратегия 1 имеет лучший коэффициент Калмара")
+    else:
+        print("Стратегия 2 имеет лучший коэффициент Калмара")
+    
+    return strategy1_metrics, strategy2_metrics
+
+# Запуск примера
+if __name__ == "__main__":
+    example_efficiency_metrics()
 ```
 
 ## Продвинутые метрики
 
-**Теория:** Продвинутые метрики представляют собой сложные показатели, которые обеспечивают глубокое понимание производительности системы. Эти метрики критически важны для создания высокоэффективных систем.
+**Теория:** Продвинутые метрики представляют собой сложные показатели, которые обеспечивают глубокое понимание производительности торговой системы. Эти метрики выходят за рамки базовых показателей доходности и риска, предоставляя детальную информацию о стабильности, адаптивности и предсказательной способности системы.
 
-**Почему продвинутые метрики критичны:**
-- **Глубокое понимание:** Обеспечивают глубокое понимание производительности
-- **Детальный анализ:** Позволяют проводить детальный анализ
-- **Оптимизация:** Помогают оптимизировать систему
-- **Предсказание:** Помогают предсказывать будущую производительность
+**Почему продвинутые метрики критически важны:**
+- **Глубокое понимание производительности** - выявление скрытых паттернов и характеристик
+- **Детальный анализ системы** - понимание внутренних механизмов работы стратегии
+- **Оптимизация параметров** - точная настройка системы для максимальной эффективности
+- **Предсказание будущей производительности** - оценка устойчивости стратегии во времени
+- **Управление рисками** - выявление потенциальных проблем до их возникновения
 
 ### 1. Метрики стабильности
 
-**Теория:** Метрики стабильности представляют собой показатели, которые измеряют стабильность производительности системы. Это критически важно для понимания надежности системы.
+**Теория:** Метрики стабильности представляют собой показатели, которые измеряют стабильность и предсказуемость производительности торговой системы. В алгоритмической торговле стабильность критически важна для долгосрочного успеха, так как нестабильные системы могут показывать отличные результаты в краткосрочной перспективе, но терпеть неудачу в долгосрочной.
 
-**Почему метрики стабильности важны:**
-- **Надежность:** Обеспечивают оценку надежности системы
-- **Предсказуемость:** Помогают предсказывать будущую производительность
-- **Управление рисками:** Критически важны для управления рисками
-- **Планирование:** Помогают в планировании инвестиций
+**Почему метрики стабильности критически важны:**
+- **Надежность системы** - оценка способности системы поддерживать производительность
+- **Предсказуемость результатов** - понимание того, насколько стабильны результаты
+- **Управление рисками** - выявление периодов нестабильности
+- **Планирование инвестиций** - принятие решений о размере капитала
+- **Оптимизация стратегии** - выявление параметров, влияющих на стабильность
 
-**Плюсы:**
-- Оценка надежности
-- Предсказуемость
-- Помощь в управлении рисками
-- Планирование инвестиций
+**Детальное объяснение метрик стабильности:**
 
-**Минусы:**
-- Сложность расчета
-- Высокие требования к данным
-- Необходимость длительного наблюдения
+1. **Коэффициент консистентности** - доля положительных периодов
+2. **Коэффициент стабильности** - обратная величина коэффициента вариации
+3. **Соотношение выигрышей к проигрышам** - средний выигрыш к среднему проигрышу
+4. **Profit Factor** - отношение общей прибыли к общим убыткам
+
+**Полный функциональный код с детальными объяснениями:**
 
 ```python
 class StabilityMetrics:
-    """Метрики стабильности"""
+    """
+    Класс для расчета метрик стабильности торговой системы.
+    
+    Этот класс предоставляет методы для оценки стабильности и предсказуемости
+    производительности торговой стратегии.
+    """
     
     def __init__(self):
+        """Инициализация класса метрик стабильности."""
         self.metrics = {}
     
-    def calculate_consistency_ratio(self, returns):
-        """Расчет коэффициента консистентности"""
-        positive_returns = np.sum(returns > 0)
+    def calculate_consistency_ratio(self, returns: pd.Series) -> float:
+        """
+        Расчет коэффициента консистентности.
+        
+        Коэффициент консистентности показывает долю положительных периодов
+        от общего количества периодов. Высокий коэффициент означает
+        стабильную положительную производительность.
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            
+        Returns:
+            float: Коэффициент консистентности (0-1)
+            
+        Example:
+            >>> returns = pd.Series([0.01, -0.02, 0.03, 0.01, -0.01])
+            >>> stability = StabilityMetrics()
+            >>> consistency = stability.calculate_consistency_ratio(returns)
+            >>> print(f"Консистентность: {consistency:.2%}")
+        """
+        if returns.empty:
+            return 0.0
+        
+        positive_returns = (returns > 0).sum()
         total_returns = len(returns)
         consistency_ratio = positive_returns / total_returns
-        return consistency_ratio
+        
+        return float(consistency_ratio)
     
-    def calculate_stability_ratio(self, returns):
-        """Расчет коэффициента стабильности"""
-        # Стабильность = 1 - коэффициент вариации
-        mean_return = np.mean(returns)
-        std_return = np.std(returns)
-        coefficient_of_variation = std_return / abs(mean_return) if mean_return != 0 else np.inf
-        stability_ratio = 1 - coefficient_of_variation
-        return max(0, stability_ratio)
+    def calculate_stability_ratio(self, returns: pd.Series) -> float:
+        """
+        Расчет коэффициента стабильности.
+        
+        Коэффициент стабильности основан на обратной величине коэффициента вариации.
+        Высокий коэффициент означает низкую волатильность относительно средней доходности.
+        
+        Формула: 1 - (σ / |μ|)
+        где σ - стандартное отклонение, μ - средняя доходность
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            
+        Returns:
+            float: Коэффициент стабильности (0-1)
+        """
+        if returns.empty:
+            return 0.0
+        
+        mean_return = returns.mean()
+        std_return = returns.std()
+        
+        if mean_return == 0:
+            return 0.0
+        
+        coefficient_of_variation = std_return / abs(mean_return)
+        stability_ratio = max(0, 1 - coefficient_of_variation)
+        
+        return float(stability_ratio)
     
-    def calculate_win_loss_ratio(self, returns):
-        """Расчет соотношения выигрышей к проигрышам"""
+    def calculate_win_loss_ratio(self, returns: pd.Series) -> float:
+        """
+        Расчет соотношения выигрышей к проигрышам.
+        
+        Win/Loss Ratio показывает отношение среднего выигрыша к среднему проигрышу.
+        Высокий коэффициент означает, что выигрыши значительно превышают проигрыши.
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            
+        Returns:
+            float: Соотношение выигрышей к проигрышам
+        """
+        if returns.empty:
+            return 0.0
+        
         winning_returns = returns[returns > 0]
         losing_returns = returns[returns < 0]
         
         if len(losing_returns) == 0:
-            return np.inf
+            return np.inf if len(winning_returns) > 0 else 0.0
         
-        avg_win = np.mean(winning_returns) if len(winning_returns) > 0 else 0
-        avg_loss = abs(np.mean(losing_returns))
+        avg_win = winning_returns.mean() if len(winning_returns) > 0 else 0.0
+        avg_loss = abs(losing_returns.mean())
         
         win_loss_ratio = avg_win / avg_loss
-        return win_loss_ratio
+        
+        return float(win_loss_ratio)
     
-    def calculate_profit_factor(self, returns):
-        """Расчет Profit Factor"""
-        gross_profit = np.sum(returns[returns > 0])
-        gross_loss = abs(np.sum(returns[returns < 0]))
+    def calculate_profit_factor(self, returns: pd.Series) -> float:
+        """
+        Расчет Profit Factor.
+        
+        Profit Factor показывает отношение общей прибыли к общим убыткам.
+        Значение больше 1 означает прибыльность, больше 2 - хорошую прибыльность.
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            
+        Returns:
+            float: Profit Factor
+        """
+        if returns.empty:
+            return 0.0
+        
+        gross_profit = returns[returns > 0].sum()
+        gross_loss = abs(returns[returns < 0].sum())
         
         if gross_loss == 0:
-            return np.inf
+            return np.inf if gross_profit > 0 else 0.0
         
         profit_factor = gross_profit / gross_loss
-        return profit_factor
+        
+        return float(profit_factor)
+    
+    def calculate_recovery_factor(self, returns: pd.Series) -> float:
+        """
+        Расчет Recovery Factor.
+        
+        Recovery Factor показывает отношение общей прибыли к максимальной просадке.
+        Высокий коэффициент означает способность быстро восстанавливаться после потерь.
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            
+        Returns:
+            float: Recovery Factor
+        """
+        if returns.empty:
+            return 0.0
+        
+        # Общая прибыль
+        total_profit = returns[returns > 0].sum()
+        
+        # Максимальная просадка
+        cumulative_returns = (1 + returns).cumprod()
+        running_max = cumulative_returns.expanding().max()
+        drawdown = (cumulative_returns - running_max) / running_max
+        max_drawdown = abs(drawdown.min())
+        
+        if max_drawdown == 0:
+            return np.inf if total_profit > 0 else 0.0
+        
+        recovery_factor = total_profit / max_drawdown
+        
+        return float(recovery_factor)
+    
+    def get_all_stability_metrics(self, returns: pd.Series) -> Dict[str, float]:
+        """
+        Расчет всех метрик стабильности.
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            
+        Returns:
+            Dict[str, float]: Словарь с метриками стабильности
+        """
+        metrics = {
+            'consistency_ratio': self.calculate_consistency_ratio(returns),
+            'stability_ratio': self.calculate_stability_ratio(returns),
+            'win_loss_ratio': self.calculate_win_loss_ratio(returns),
+            'profit_factor': self.calculate_profit_factor(returns),
+            'recovery_factor': self.calculate_recovery_factor(returns)
+        }
+        
+        return metrics
+
+# Практический пример использования метрик стабильности
+def example_stability_metrics():
+    """
+    Практический пример использования метрик стабильности.
+    """
+    print("=== Пример использования метрик стабильности ===\n")
+    
+    # Создание тестовых данных
+    np.random.seed(42)
+    dates = pd.date_range('2023-01-01', periods=252, freq='D')
+    
+    # Стабильная стратегия
+    stable_returns = pd.Series(
+        np.random.normal(0.0005, 0.01, len(dates)),
+        index=dates
+    )
+    
+    # Нестабильная стратегия
+    unstable_returns = pd.Series(
+        np.random.normal(0.001, 0.05, len(dates)),
+        index=dates
+    )
+    
+    # Создание экземпляра класса
+    stability = StabilityMetrics()
+    
+    # Расчет метрик для обеих стратегий
+    stable_metrics = stability.get_all_stability_metrics(stable_returns)
+    unstable_metrics = stability.get_all_stability_metrics(unstable_returns)
+    
+    # Вывод результатов
+    print("Сравнение метрик стабильности:")
+    print("-" * 50)
+    print(f"{'Метрика':<20} {'Стабильная':<12} {'Нестабильная':<12}")
+    print("-" * 50)
+    
+    for metric in stable_metrics.keys():
+        val1 = stable_metrics[metric]
+        val2 = unstable_metrics[metric]
+        print(f"{metric:<20} {val1:<12.3f} {val2:<12.3f}")
+    
+    return stable_metrics, unstable_metrics
+
+# Запуск примера
+if __name__ == "__main__":
+    example_stability_metrics()
 ```
 
 ### 2. Метрики адаптивности
 
-**Теория:** Метрики адаптивности представляют собой показатели, которые измеряют способность системы адаптироваться к изменениям. Это критически важно для понимания долгосрочной эффективности системы.
+**Теория:** Метрики адаптивности представляют собой показатели, которые измеряют способность торговой системы адаптироваться к изменениям рыночных условий. В динамичной среде финансовых рынков способность к адаптации критически важна для долгосрочного успеха.
 
-**Почему метрики адаптивности важны:**
-- **Долгосрочная эффективность:** Критически важны для долгосрочной эффективности
-- **Устойчивость:** Помогают оценить устойчивость системы
-- **Адаптация:** Обеспечивают понимание способности к адаптации
-- **Планирование:** Помогают в планировании развития системы
+**Почему метрики адаптивности критически важны:**
+- **Долгосрочная эффективность** - оценка способности системы работать в различных рыночных условиях
+- **Устойчивость к изменениям** - понимание того, как система реагирует на смену режимов
+- **Способность к адаптации** - измерение гибкости стратегии
+- **Планирование развития** - выявление необходимости модификации системы
+- **Управление рисками** - предсказание периодов нестабильности
 
-**Плюсы:**
-- Оценка долгосрочной эффективности
-- Понимание устойчивости
-- Оценка способности к адаптации
-- Планирование развития
+**Детальное объяснение метрик адаптивности:**
 
-**Минусы:**
-- Сложность расчета
-- Высокие требования к данным
-- Необходимость длительного наблюдения
+1. **Скорость адаптации** - скорость изменения параметров системы
+2. **Стабильность режимов** - устойчивость к смене рыночных режимов
+3. **Стабильность корреляции** - постоянство связи с рыночными индексами
+4. **Коэффициент адаптивности** - общая мера способности к адаптации
+
+**Полный функциональный код с детальными объяснениями:**
 
 ```python
 class AdaptabilityMetrics:
-    """Метрики адаптивности"""
+    """
+    Класс для расчета метрик адаптивности торговой системы.
     
-    def __init__(self):
+    Этот класс предоставляет методы для оценки способности системы
+    адаптироваться к изменениям рыночных условий.
+    """
+    
+    def __init__(self, window_size: int = 252):
+        """
+        Инициализация класса метрик адаптивности.
+        
+        Args:
+            window_size (int): Размер окна для скользящих расчетов
+        """
+        self.window_size = window_size
         self.metrics = {}
     
-    def calculate_adaptation_speed(self, returns, window=252):
-        """Расчет скорости адаптации"""
+    def calculate_adaptation_speed(self, returns: pd.Series, window: int = None) -> float:
+        """
+        Расчет скорости адаптации системы.
+        
+        Скорость адаптации измеряет, насколько быстро система изменяет
+        свои параметры в ответ на изменения рыночных условий.
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            window (int, optional): Размер окна для расчета
+            
+        Returns:
+            float: Скорость адаптации
+        """
+        if returns.empty or len(returns) < 2:
+            return 0.0
+        
+        window = window or self.window_size
+        if len(returns) < window:
+            window = len(returns) // 2
+        
         # Скользящие метрики
-        rolling_returns = returns.rolling(window)
+        rolling_returns = returns.rolling(window, min_periods=window//2)
         rolling_mean = rolling_returns.mean()
         rolling_std = rolling_returns.std()
         
@@ -393,98 +1469,555 @@ class AdaptabilityMetrics:
         mean_changes = rolling_mean.diff().abs()
         std_changes = rolling_std.diff().abs()
         
-        # Скорость адаптации
-        adaptation_speed = np.mean(mean_changes) + np.mean(std_changes)
-        return adaptation_speed
+        # Скорость адаптации (среднее изменение параметров)
+        adaptation_speed = np.nanmean(mean_changes) + np.nanmean(std_changes)
+        
+        return float(adaptation_speed)
     
-    def calculate_regime_stability(self, returns, n_regimes=3):
-        """Расчет стабильности режимов"""
-        # Кластеризация режимов
-        from sklearn.cluster import KMeans
+    def calculate_regime_stability(self, returns: pd.Series, n_regimes: int = 3) -> float:
+        """
+        Расчет стабильности рыночных режимов.
         
-        # Подготовка данных
-        returns_reshaped = returns.values.reshape(-1, 1)
+        Стабильность режимов показывает, насколько часто система
+        переключается между различными рыночными режимами.
         
-        # Кластеризация
-        kmeans = KMeans(n_clusters=n_regimes, random_state=42)
-        regime_labels = kmeans.fit_predict(returns_reshaped)
+        Args:
+            returns (pd.Series): Серия доходностей
+            n_regimes (int): Количество режимов для кластеризации
+            
+        Returns:
+            float: Стабильность режимов (0-1)
+        """
+        if returns.empty or len(returns) < n_regimes * 2:
+            return 0.0
         
-        # Расчет стабильности режимов
-        regime_changes = np.sum(np.diff(regime_labels) != 0)
-        regime_stability = 1 - (regime_changes / len(returns))
+        try:
+            # Подготовка данных для кластеризации
+            returns_reshaped = returns.values.reshape(-1, 1)
+            
+            # Кластеризация режимов
+            kmeans = KMeans(n_clusters=n_regimes, random_state=42, n_init=10)
+            regime_labels = kmeans.fit_predict(returns_reshaped)
+            
+            # Расчет стабильности режимов
+            regime_changes = np.sum(np.diff(regime_labels) != 0)
+            regime_stability = 1 - (regime_changes / (len(returns) - 1))
+            
+            return float(max(0, regime_stability))
         
-        return regime_stability
+        except Exception:
+            return 0.0
     
-    def calculate_market_correlation_stability(self, returns, market_returns):
-        """Расчет стабильности корреляции с рынком"""
+    def calculate_market_correlation_stability(self, returns: pd.Series, 
+                                             market_returns: pd.Series) -> float:
+        """
+        Расчет стабильности корреляции с рынком.
+        
+        Стабильность корреляции показывает, насколько постоянна
+        связь между системой и рыночным индексом.
+        
+        Args:
+            returns (pd.Series): Серия доходностей системы
+            market_returns (pd.Series): Серия доходностей рынка
+            
+        Returns:
+            float: Стабильность корреляции (0-1)
+        """
+        if returns.empty or market_returns.empty:
+            return 0.0
+        
+        # Выравниваем индексы
+        common_index = returns.index.intersection(market_returns.index)
+        if len(common_index) < self.window_size:
+            return 0.0
+        
+        returns_aligned = returns.loc[common_index]
+        market_aligned = market_returns.loc[common_index]
+        
         # Скользящая корреляция
-        rolling_correlation = returns.rolling(252).corr(market_returns)
+        rolling_correlation = returns_aligned.rolling(self.window_size).corr(market_aligned)
         
-        # Стабильность корреляции
+        # Стабильность корреляции (обратная величина стандартного отклонения)
         correlation_std = rolling_correlation.std()
-        correlation_stability = 1 - correlation_std
+        correlation_stability = max(0, 1 - correlation_std)
         
-        return correlation_stability
+        return float(correlation_stability)
+    
+    def calculate_volatility_regime_adaptation(self, returns: pd.Series) -> float:
+        """
+        Расчет адаптации к изменениям волатильности.
+        
+        Этот показатель измеряет, насколько хорошо система
+        адаптируется к изменениям волатильности рынка.
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            
+        Returns:
+            float: Коэффициент адаптации к волатильности
+        """
+        if returns.empty or len(returns) < self.window_size:
+            return 0.0
+        
+        # Скользящая волатильность
+        rolling_vol = returns.rolling(self.window_size).std()
+        
+        # Изменения волатильности
+        vol_changes = rolling_vol.diff().abs()
+        
+        # Адаптация = обратная величина изменений волатильности
+        adaptation = 1 / (1 + vol_changes.mean()) if vol_changes.mean() > 0 else 1.0
+        
+        return float(adaptation)
+    
+    def calculate_trend_adaptation(self, returns: pd.Series) -> float:
+        """
+        Расчет адаптации к трендовым изменениям.
+        
+        Этот показатель измеряет способность системы
+        адаптироваться к изменениям тренда.
+        
+        Args:
+            returns (pd.Series): Серия доходностей
+            
+        Returns:
+            float: Коэффициент адаптации к тренду
+        """
+        if returns.empty or len(returns) < self.window_size:
+            return 0.0
+        
+        # Скользящий тренд
+        rolling_trend = returns.rolling(self.window_size).mean()
+        
+        # Изменения тренда
+        trend_changes = rolling_trend.diff().abs()
+        
+        # Адаптация = обратная величина изменений тренда
+        adaptation = 1 / (1 + trend_changes.mean()) if trend_changes.mean() > 0 else 1.0
+        
+        return float(adaptation)
+    
+    def get_all_adaptability_metrics(self, returns: pd.Series, 
+                                   market_returns: Optional[pd.Series] = None) -> Dict[str, float]:
+        """
+        Расчет всех метрик адаптивности.
+        
+        Args:
+            returns (pd.Series): Серия доходностей системы
+            market_returns (pd.Series, optional): Серия доходностей рынка
+            
+        Returns:
+            Dict[str, float]: Словарь с метриками адаптивности
+        """
+        metrics = {
+            'adaptation_speed': self.calculate_adaptation_speed(returns),
+            'regime_stability': self.calculate_regime_stability(returns),
+            'volatility_adaptation': self.calculate_volatility_regime_adaptation(returns),
+            'trend_adaptation': self.calculate_trend_adaptation(returns)
+        }
+        
+        if market_returns is not None:
+            metrics['correlation_stability'] = self.calculate_market_correlation_stability(
+                returns, market_returns
+            )
+        
+        return metrics
+
+# Практический пример использования метрик адаптивности
+def example_adaptability_metrics():
+    """
+    Практический пример использования метрик адаптивности.
+    """
+    print("=== Пример использования метрик адаптивности ===\n")
+    
+    # Создание тестовых данных с различными режимами
+    np.random.seed(42)
+    dates = pd.date_range('2023-01-01', periods=500, freq='D')
+    
+    # Симуляция различных рыночных режимов
+    returns = []
+    market_returns = []
+    
+    # Режим 1: Стабильный рост
+    for i in range(100):
+        returns.append(np.random.normal(0.001, 0.01))
+        market_returns.append(np.random.normal(0.0005, 0.008))
+    
+    # Режим 2: Высокая волатильность
+    for i in range(100):
+        returns.append(np.random.normal(0.0005, 0.03))
+        market_returns.append(np.random.normal(0.0002, 0.025))
+    
+    # Режим 3: Нисходящий тренд
+    for i in range(100):
+        returns.append(np.random.normal(-0.0005, 0.015))
+        market_returns.append(np.random.normal(-0.0008, 0.012))
+    
+    # Режим 4: Восстановление
+    for i in range(200):
+        returns.append(np.random.normal(0.0008, 0.02))
+        market_returns.append(np.random.normal(0.0006, 0.018))
+    
+    returns_series = pd.Series(returns, index=dates)
+    market_series = pd.Series(market_returns, index=dates)
+    
+    # Создание экземпляра класса
+    adaptability = AdaptabilityMetrics()
+    
+    # Расчет всех метрик адаптивности
+    all_metrics = adaptability.get_all_adaptability_metrics(returns_series, market_series)
+    
+    # Вывод результатов
+    print("Результаты анализа адаптивности:")
+    print("-" * 40)
+    for metric, value in all_metrics.items():
+        print(f"{metric:25}: {value:8.3f}")
+    
+    # Интерпретация результатов
+    print(f"\nИнтерпретация результатов:")
+    print(f"Скорость адаптации: {all_metrics['adaptation_speed']:.3f} - {'Высокая' if all_metrics['adaptation_speed'] > 0.01 else 'Умеренная' if all_metrics['adaptation_speed'] > 0.005 else 'Низкая'}")
+    print(f"Стабильность режимов: {all_metrics['regime_stability']:.3f} - {'Высокая' if all_metrics['regime_stability'] > 0.8 else 'Умеренная' if all_metrics['regime_stability'] > 0.6 else 'Низкая'}")
+    
+    return all_metrics
+
+# Запуск примера
+if __name__ == "__main__":
+    example_adaptability_metrics()
 ```
 
 ### 3. Метрики предсказательной способности
 
-**Теория:** Метрики предсказательной способности представляют собой показатели, которые измеряют способность системы делать точные предсказания. Это критически важно для оценки качества ML-модели.
+**Теория:** Метрики предсказательной способности представляют собой показатели, которые измеряют качество и точность прогнозов ML-модели. В алгоритмической торговле способность точно предсказывать будущие движения цен критически важна для успеха стратегии.
 
-**Почему метрики предсказательной способности важны:**
-- **Качество модели:** Критически важны для оценки качества модели
-- **Валидация:** Помогают валидировать модель
-- **Оптимизация:** Помогают оптимизировать модель
-- **Сравнение:** Позволяют сравнивать различные модели
+**Почему метрики предсказательной способности критически важны:**
+- **Качество модели** - оценка того, насколько хорошо модель предсказывает будущее
+- **Валидация стратегии** - проверка эффективности торговых сигналов
+- **Оптимизация параметров** - настройка модели для максимальной точности
+- **Сравнение подходов** - выбор лучших алгоритмов и методов
+- **Управление рисками** - понимание надежности прогнозов
 
-**Плюсы:**
-- Оценка качества модели
-- Валидация модели
-- Помощь в оптимизации
-- Сравнение моделей
+**Детальное объяснение метрик предсказательной способности:**
 
-**Минусы:**
-- Сложность расчета
-- Высокие требования к данным
-- Необходимость понимания ML
+1. **Точность предсказаний** - доля правильных предсказаний
+2. **Точность направления** - способность предсказывать направление движения
+3. **Точность величины** - способность предсказывать размер изменений
+4. **Навык прогнозирования** - улучшение относительно простых бенчмарков
+
+**Полный функциональный код с детальными объяснениями:**
 
 ```python
 class PredictiveMetrics:
-    """Метрики предсказательной способности"""
+    """
+    Класс для расчета метрик предсказательной способности ML-модели.
+    
+    Этот класс предоставляет методы для оценки качества прогнозов
+    торговой системы и ML-моделей.
+    """
     
     def __init__(self):
+        """Инициализация класса метрик предсказательной способности."""
         self.metrics = {}
     
-    def calculate_prediction_accuracy(self, predictions, actual):
-        """Расчет точности предсказаний"""
-        accuracy = np.mean(predictions == actual)
-        return accuracy
-    
-    def calculate_directional_accuracy(self, predicted_returns, actual_returns):
-        """Расчет точности направления"""
-        predicted_direction = np.sign(predicted_returns)
-        actual_direction = np.sign(actual_returns)
+    def calculate_prediction_accuracy(self, predictions: np.ndarray, 
+                                    actual: np.ndarray) -> float:
+        """
+        Расчет точности предсказаний.
         
+        Точность предсказаний показывает долю правильных предсказаний
+        от общего количества предсказаний.
+        
+        Args:
+            predictions (np.ndarray): Предсказанные значения
+            actual (np.ndarray): Фактические значения
+            
+        Returns:
+            float: Точность предсказаний (0-1)
+        """
+        if len(predictions) != len(actual):
+            raise ValueError("Длины массивов predictions и actual должны совпадать")
+        
+        if len(predictions) == 0:
+            return 0.0
+        
+        accuracy = np.mean(predictions == actual)
+        return float(accuracy)
+    
+    def calculate_directional_accuracy(self, predicted_returns: pd.Series, 
+                                     actual_returns: pd.Series) -> float:
+        """
+        Расчет точности направления движения.
+        
+        Точность направления показывает, насколько часто модель
+        правильно предсказывает направление изменения цены.
+        
+        Args:
+            predicted_returns (pd.Series): Предсказанные доходности
+            actual_returns (pd.Series): Фактические доходности
+            
+        Returns:
+            float: Точность направления (0-1)
+        """
+        if predicted_returns.empty or actual_returns.empty:
+            return 0.0
+        
+        # Выравниваем индексы
+        common_index = predicted_returns.index.intersection(actual_returns.index)
+        if len(common_index) == 0:
+            return 0.0
+        
+        pred_aligned = predicted_returns.loc[common_index]
+        actual_aligned = actual_returns.loc[common_index]
+        
+        # Направления движения
+        predicted_direction = np.sign(pred_aligned)
+        actual_direction = np.sign(actual_aligned)
+        
+        # Точность направления
         directional_accuracy = np.mean(predicted_direction == actual_direction)
-        return directional_accuracy
+        
+        return float(directional_accuracy)
     
-    def calculate_magnitude_accuracy(self, predicted_returns, actual_returns, tolerance=0.1):
-        """Расчет точности величины"""
-        relative_error = np.abs(predicted_returns - actual_returns) / np.abs(actual_returns)
+    def calculate_magnitude_accuracy(self, predicted_returns: pd.Series, 
+                                   actual_returns: pd.Series, 
+                                   tolerance: float = 0.1) -> float:
+        """
+        Расчет точности величины изменений.
+        
+        Точность величины показывает, насколько точно модель
+        предсказывает размер изменений в пределах заданной толерантности.
+        
+        Args:
+            predicted_returns (pd.Series): Предсказанные доходности
+            actual_returns (pd.Series): Фактические доходности
+            tolerance (float): Допустимая относительная ошибка
+            
+        Returns:
+            float: Точность величины (0-1)
+        """
+        if predicted_returns.empty or actual_returns.empty:
+            return 0.0
+        
+        # Выравниваем индексы
+        common_index = predicted_returns.index.intersection(actual_returns.index)
+        if len(common_index) == 0:
+            return 0.0
+        
+        pred_aligned = predicted_returns.loc[common_index]
+        actual_aligned = actual_returns.loc[common_index]
+        
+        # Исключаем нулевые значения
+        mask = actual_aligned != 0
+        if mask.sum() == 0:
+            return 0.0
+        
+        pred_filtered = pred_aligned[mask]
+        actual_filtered = actual_aligned[mask]
+        
+        # Относительная ошибка
+        relative_error = np.abs(pred_filtered - actual_filtered) / np.abs(actual_filtered)
+        
+        # Точность величины
         magnitude_accuracy = np.mean(relative_error <= tolerance)
-        return magnitude_accuracy
+        
+        return float(magnitude_accuracy)
     
-    def calculate_forecast_skill(self, predicted_returns, actual_returns, benchmark_returns):
-        """Расчет навыка прогнозирования"""
+    def calculate_forecast_skill(self, predicted_returns: pd.Series, 
+                               actual_returns: pd.Series, 
+                               benchmark_returns: pd.Series) -> float:
+        """
+        Расчет навыка прогнозирования.
+        
+        Навык прогнозирования показывает, насколько модель
+        превосходит простой бенчмарк (например, среднее значение).
+        
+        Args:
+            predicted_returns (pd.Series): Предсказанные доходности
+            actual_returns (pd.Series): Фактические доходности
+            benchmark_returns (pd.Series): Бенчмарк доходности
+            
+        Returns:
+            float: Навык прогнозирования
+        """
+        if (predicted_returns.empty or actual_returns.empty or 
+            benchmark_returns.empty):
+            return 0.0
+        
+        # Выравниваем индексы
+        common_index = (predicted_returns.index
+                       .intersection(actual_returns.index)
+                       .intersection(benchmark_returns.index))
+        
+        if len(common_index) == 0:
+            return 0.0
+        
+        pred_aligned = predicted_returns.loc[common_index]
+        actual_aligned = actual_returns.loc[common_index]
+        benchmark_aligned = benchmark_returns.loc[common_index]
+        
         # MSE модели
-        model_mse = np.mean((predicted_returns - actual_returns) ** 2)
+        model_mse = np.mean((pred_aligned - actual_aligned) ** 2)
         
         # MSE бенчмарка
-        benchmark_mse = np.mean((benchmark_returns - actual_returns) ** 2)
+        benchmark_mse = np.mean((benchmark_aligned - actual_aligned) ** 2)
+        
+        if benchmark_mse == 0:
+            return 0.0
         
         # Навык прогнозирования
         forecast_skill = 1 - (model_mse / benchmark_mse)
-        return forecast_skill
+        
+        return float(forecast_skill)
+    
+    def calculate_information_coefficient(self, predicted_returns: pd.Series, 
+                                        actual_returns: pd.Series) -> float:
+        """
+        Расчет информационного коэффициента.
+        
+        Информационный коэффициент показывает корреляцию между
+        предсказаниями и фактическими результатами.
+        
+        Args:
+            predicted_returns (pd.Series): Предсказанные доходности
+            actual_returns (pd.Series): Фактические доходности
+            
+        Returns:
+            float: Информационный коэффициент
+        """
+        if predicted_returns.empty or actual_returns.empty:
+            return 0.0
+        
+        # Выравниваем индексы
+        common_index = predicted_returns.index.intersection(actual_returns.index)
+        if len(common_index) < 2:
+            return 0.0
+        
+        pred_aligned = predicted_returns.loc[common_index]
+        actual_aligned = actual_returns.loc[common_index]
+        
+        # Корреляция
+        correlation = np.corrcoef(pred_aligned, actual_aligned)[0, 1]
+        
+        return float(correlation) if not np.isnan(correlation) else 0.0
+    
+    def calculate_hit_rate(self, predicted_returns: pd.Series, 
+                          actual_returns: pd.Series) -> float:
+        """
+        Расчет коэффициента попаданий.
+        
+        Коэффициент попаданий показывает долю случаев, когда
+        предсказание и фактический результат имеют одинаковый знак.
+        
+        Args:
+            predicted_returns (pd.Series): Предсказанные доходности
+            actual_returns (pd.Series): Фактические доходности
+            
+        Returns:
+            float: Коэффициент попаданий (0-1)
+        """
+        if predicted_returns.empty or actual_returns.empty:
+            return 0.0
+        
+        # Выравниваем индексы
+        common_index = predicted_returns.index.intersection(actual_returns.index)
+        if len(common_index) == 0:
+            return 0.0
+        
+        pred_aligned = predicted_returns.loc[common_index]
+        actual_aligned = actual_returns.loc[common_index]
+        
+        # Попадания (одинаковый знак)
+        hits = (pred_aligned * actual_aligned) > 0
+        hit_rate = hits.mean()
+        
+        return float(hit_rate)
+    
+    def get_all_predictive_metrics(self, predicted_returns: pd.Series, 
+                                 actual_returns: pd.Series,
+                                 benchmark_returns: Optional[pd.Series] = None) -> Dict[str, float]:
+        """
+        Расчет всех метрик предсказательной способности.
+        
+        Args:
+            predicted_returns (pd.Series): Предсказанные доходности
+            actual_returns (pd.Series): Фактические доходности
+            benchmark_returns (pd.Series, optional): Бенчмарк доходности
+            
+        Returns:
+            Dict[str, float]: Словарь с метриками предсказательной способности
+        """
+        metrics = {
+            'directional_accuracy': self.calculate_directional_accuracy(
+                predicted_returns, actual_returns
+            ),
+            'magnitude_accuracy': self.calculate_magnitude_accuracy(
+                predicted_returns, actual_returns
+            ),
+            'information_coefficient': self.calculate_information_coefficient(
+                predicted_returns, actual_returns
+            ),
+            'hit_rate': self.calculate_hit_rate(
+                predicted_returns, actual_returns
+            )
+        }
+        
+        if benchmark_returns is not None:
+            metrics['forecast_skill'] = self.calculate_forecast_skill(
+                predicted_returns, actual_returns, benchmark_returns
+            )
+        
+        return metrics
+
+# Практический пример использования метрик предсказательной способности
+def example_predictive_metrics():
+    """
+    Практический пример использования метрик предсказательной способности.
+    """
+    print("=== Пример использования метрик предсказательной способности ===\n")
+    
+    # Создание тестовых данных
+    np.random.seed(42)
+    dates = pd.date_range('2023-01-01', periods=252, freq='D')
+    
+    # Фактические доходности
+    actual_returns = pd.Series(
+        np.random.normal(0.0005, 0.02, len(dates)),
+        index=dates
+    )
+    
+    # Предсказанные доходности (с некоторой точностью)
+    predicted_returns = actual_returns + np.random.normal(0, 0.01, len(dates))
+    predicted_returns = pd.Series(predicted_returns, index=dates)
+    
+    # Бенчмарк (простое среднее)
+    benchmark_returns = pd.Series(
+        [actual_returns.mean()] * len(dates),
+        index=dates
+    )
+    
+    # Создание экземпляра класса
+    predictive = PredictiveMetrics()
+    
+    # Расчет всех метрик
+    all_metrics = predictive.get_all_predictive_metrics(
+        predicted_returns, actual_returns, benchmark_returns
+    )
+    
+    # Вывод результатов
+    print("Результаты анализа предсказательной способности:")
+    print("-" * 50)
+    for metric, value in all_metrics.items():
+        print(f"{metric:25}: {value:8.3f}")
+    
+    # Интерпретация результатов
+    print(f"\nИнтерпретация результатов:")
+    print(f"Точность направления: {all_metrics['directional_accuracy']:.1%} - {'Отличная' if all_metrics['directional_accuracy'] > 0.7 else 'Хорошая' if all_metrics['directional_accuracy'] > 0.6 else 'Слабая'}")
+    print(f"Информационный коэффициент: {all_metrics['information_coefficient']:.3f} - {'Высокий' if all_metrics['information_coefficient'] > 0.1 else 'Умеренный' if all_metrics['information_coefficient'] > 0.05 else 'Низкий'}")
+    
+    return all_metrics
+
+# Запуск примера
+if __name__ == "__main__":
+    example_predictive_metrics()
 ```
 
 ## Временные метрики
@@ -783,6 +2316,22 @@ class PeerComparison:
             relative_performance[metric_name] = our_metric / peer_mean
         
         return relative_performance
+    
+    def _calculate_metric(self, returns, metric_name):
+        """Вспомогательный метод для расчета метрик"""
+        if metric_name == 'sharpe_ratio':
+            return returns.mean() / returns.std() if returns.std() > 0 else 0
+        elif metric_name == 'total_return':
+            return (1 + returns).prod() - 1
+        elif metric_name == 'volatility':
+            return returns.std()
+        elif metric_name == 'max_drawdown':
+            cumulative = (1 + returns).cumprod()
+            running_max = cumulative.expanding().max()
+            drawdown = (cumulative - running_max) / running_max
+            return drawdown.min()
+        else:
+            return 0.0
 ```
 
 ## Прогнозные метрики
@@ -990,6 +2539,34 @@ class MetricsMonitor:
             })
         
         return metrics
+    
+    def _analyze_trends(self, metrics):
+        """Анализ трендов метрик"""
+        trends = {}
+        for metric, value in metrics.items():
+            if isinstance(value, (int, float)):
+                if value > 0:
+                    trends[metric] = "Положительный"
+                elif value < 0:
+                    trends[metric] = "Отрицательный"
+                else:
+                    trends[metric] = "Нейтральный"
+        return trends
+    
+    def _generate_recommendations(self, metrics):
+        """Генерация рекомендаций на основе метрик"""
+        recommendations = []
+        
+        if metrics.get('sharpe_ratio', 0) < 1.0:
+            recommendations.append("Низкий коэффициент Шарпа - рассмотрите оптимизацию стратегии")
+        
+        if metrics.get('max_drawdown', 0) < -0.15:
+            recommendations.append("Высокая максимальная просадка - усильте управление рисками")
+        
+        if metrics.get('volatility', 0) > 0.3:
+            recommendations.append("Высокая волатильность - рассмотрите диверсификацию")
+        
+        return recommendations
     
     def _check_metric_alerts(self, metrics):
         """Проверка алертов метрик"""
