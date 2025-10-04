@@ -42,7 +42,7 @@ def calculate_putcallratio(price_series: pd.Series, volume_series: pd.Series, pe
         return pd.Series(index=price_series.index, dtype=float)
     
     # Calculate price changes
-    price_changes = price_series.pct_change().values
+    price_changes = price_series.pct_change(fill_method=None).values
     volume_values = volume_series.values
     n = len(price_series)
     putcall_values = np.full(n, np.nan, dtype=float)
