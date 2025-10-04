@@ -118,7 +118,7 @@ class TestGapsDetector:
         assert actual_interval == timedelta(minutes=5)
         
         # Test H1 data (1 hour intervals)
-        dates_h1 = pd.date_range('2023-01-01', periods=10, freq='1H')
+        dates_h1 = pd.date_range('2023-01-01', periods=10, freq='1h')
         actual_interval = self.detector._detect_actual_interval(dates_h1)
         assert actual_interval == timedelta(hours=1)
     
@@ -289,7 +289,7 @@ class TestBackupManager:
                     'High': [101, 102, 103],
                     'Low': [99, 100, 101],
                     'Close': [100.5, 101.5, 102.5]
-                }, index=pd.date_range('2023-01-01', periods=3, freq='1H'))
+        }, index=pd.date_range('2023-01-01', periods=3, freq='1h'))
             }
         }
     

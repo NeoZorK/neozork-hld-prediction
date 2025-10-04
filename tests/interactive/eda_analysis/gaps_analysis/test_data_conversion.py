@@ -32,9 +32,9 @@ class TestDataConversion:
         
         # Create cross timeframes data
         self.cross_data = {
-            'M5': self.sample_data.resample('5T').first(),
-            'M15': self.sample_data.resample('15T').first(),
-            'H1': self.sample_data.resample('1H').first()
+            'M5': self.sample_data.resample('5min').first(),
+            'M15': self.sample_data.resample('15min').first(),
+            'H1': self.sample_data.resample('1h').first()
         }
         
         # Create metadata
