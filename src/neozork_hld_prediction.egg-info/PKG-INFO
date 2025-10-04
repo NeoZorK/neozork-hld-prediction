@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: neozork-hld-prediction
-Version: 0.5.5
+Version: 0.5.7
 Summary: Machine Learning enhancement of proprietary trading indicators using Python
 Requires-Python: >=3.11
 Requires-Dist: anyio==4.9.0
@@ -116,7 +116,7 @@ Requires-Dist: webencodings==0.5.1
 Requires-Dist: websocket-client==1.8.0
 Requires-Dist: python-dotenv==1.1.0
 Requires-Dist: yfinance==0.2.25
-Requires-Dist: rich==13.6.0
+Requires-Dist: rich>=13.0.0
 Requires-Dist: tqdm==4.67.1
 Requires-Dist: pytest
 Requires-Dist: pytest-xdist>=3.7.0
@@ -128,6 +128,7 @@ Requires-Dist: python-binance==1.0.17
 Requires-Dist: pyarrow
 Requires-Dist: mplfinance
 Requires-Dist: statsmodels
+Requires-Dist: arch
 Requires-Dist: bokeh
 Requires-Dist: dask
 Requires-Dist: datashader
@@ -148,3 +149,13 @@ Requires-Dist: pyotp>=2.9.0
 Requires-Dist: bcrypt>=4.3.0
 Requires-Dist: qrcode>=8.2
 Requires-Dist: pyjwt>=2.10.1
+Requires-Dist: arch>=7.2.0
+Requires-Dist: autogluon-tabular>=1.4.0
+Requires-Dist: ray<2.45.0,>=2.10.0
+Requires-Dist: openpyxl>=3.1.5
+Requires-Dist: torch>=2.6.0
+Requires-Dist: lightgbm>=4.6.0
+Requires-Dist: catboost>=1.2.8
+Requires-Dist: xgboost>=3.0.5
+Requires-Dist: click>=8.0.0
+Requires-Dist: markdown>=3.9

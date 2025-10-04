@@ -1,0 +1,173 @@
+# Custom Features Configuration for Trading Strategy
+# This file defines the 13 custom features for trading prediction
+
+# Feature Engineering Configuration
+feature_engineering:
+  # SCHR Levels Features
+  schr_features:
+    - name: "trend_direction_probability"
+      description: "Probability of trend direction (up/down/hold)"
+      type: "classification"
+      target_values: ["up", "down", "hold"]
+      
+    - name: "yellow_line_breakout_probability"
+      description: "Probability of yellow line breakout (up or pullback)"
+      type: "classification"
+      target_values: ["breakout_up", "pullback"]
+      
+    - name: "blue_line_breakdown_probability"
+      description: "Probability of blue line breakdown (down or pullback)"
+      type: "classification"
+      target_values: ["breakdown_down", "pullback"]
+      
+    - name: "pv_sign_probability"
+      description: "Probability of PV sign (+ or -)"
+      type: "classification"
+      target_values: ["positive", "negative"]
+
+  # Wave Features
+  wave_features:
+    - name: "wave_signal_5_candles_up"
+      description: "If Signal=1, probability of 5 candles up or reversal"
+      type: "classification"
+      target_values: ["5_candles_up", "reversal"]
+      condition: "signal == 1"
+      
+    - name: "wave_signal_5_percent_direction"
+      description: "If Signal=1, probability of 5% price movement in same direction"
+      type: "classification"
+      target_values: ["5_percent_up", "5_percent_down"]
+      condition: "signal == 1"
+      
+    - name: "wave_signal_ma_condition_5_candles"
+      description: "If Signal=1 & ma<open, probability of 5 candles up or reversal"
+      type: "classification"
+      target_values: ["5_candles_up", "reversal"]
+      condition: "signal == 1 AND ma < open"
+      
+    - name: "wave_signal_ma_condition_5_percent"
+      description: "If Signal=1 & ma<open, probability of 5% price movement"
+      type: "classification"
+      target_values: ["5_percent_up", "5_percent_down"]
+      condition: "signal == 1 AND ma < open"
+      
+    - name: "wave_reverse_peak_sign_probability"
+      description: "Probability of next peak sign (+ or -)"
+      type: "classification"
+      target_values: ["positive_peak", "negative_peak"]
+      condition: "reverse == 1"
+      
+    - name: "wave_reverse_peak_timing_probability"
+      description: "Probability of next peak within 10 candles"
+      type: "classification"
+      target_values: ["within_10_candles", "later"]
+      condition: "reverse == 1"
+
+  # Short3 Features
+  short3_features:
+    - name: "short3_signal_1_up_probability"
+      description: "If signal=1, probability of 5% price movement up"
+      type: "classification"
+      target_values: ["5_percent_up", "no_movement"]
+      condition: "signal == 1"
+      
+    - name: "short3_signal_4_down_probability"
+      description: "If signal=4, probability of 10% strong downward movement"
+      type: "classification"
+      target_values: ["10_percent_down", "no_movement"]
+      condition: "signal == 4"
+      
+    - name: "short3_direction_change_probability"
+      description: "Probability of direction change from 1,4 to 2,3 in 10 candles"
+      type: "classification"
+      target_values: ["direction_change", "no_change"]
+      condition: "direction in [1, 4]"
+
+# Feature Engineering Pipeline
+feature_pipeline:
+  # Data preprocessing
+  preprocessing:
+    - step: "handle_missing_values"
+      method: "forward_fill"
+      
+    - step: "normalize_prices"
+      method: "min_max_scaling"
+      
+    - step: "create_lag_features"
+      lags: [1, 2, 3, 5, 10]
+      
+    - step: "create_rolling_features"
+      windows: [3, 5, 10, 20]
+      functions: ["mean", "std", "min", "max"]
+
+  # Custom feature creation
+  custom_features:
+    - step: "create_schr_features"
+      description: "Create SCHR Levels based features"
+      
+    - step: "create_wave_features"
+      description: "Create Wave indicator based features"
+      
+    - step: "create_short3_features"
+      description: "Create Short3 indicator based features"
+
+# Model Configuration for Custom Features
+model_config:
+  # Target variable configuration
+  target_variable:
+    name: "trading_signal"
+    type: "multiclass"
+    classes: ["buy", "sell", "hold"]
+    
+  # Feature selection
+  feature_selection:
+    method: "mutual_information"
+    max_features: 50
+    min_importance: 0.01
+    
+  # Cross-validation
+  cross_validation:
+    method: "time_series_split"
+    n_splits: 5
+    test_size: 0.2
+    
+  # Evaluation metrics
+  evaluation_metrics:
+    primary: "accuracy"
+    secondary: ["precision", "recall", "f1_score"]
+    trading_metrics: ["profit_factor", "sharpe_ratio", "max_drawdown"]
+
+# Data Requirements
+data_requirements:
+  # Required columns for SCHR features
+  schr_columns:
+    - "timestamp"
+    - "open"
+    - "high"
+    - "low"
+    - "close"
+    - "volume"
+    - "yellow_line"
+    - "blue_line"
+    - "pv"
+    
+  # Required columns for Wave features
+  wave_columns:
+    - "timestamp"
+    - "open"
+    - "high"
+    - "low"
+    - "close"
+    - "signal"
+    - "ma"
+    - "reverse"
+    
+  # Required columns for Short3 features
+  short3_columns:
+    - "timestamp"
+    - "open"
+    - "high"
+    - "low"
+    - "close"
+    - "signal"
+    - "direction"

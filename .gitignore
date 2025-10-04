@@ -48,6 +48,15 @@ data/cache/gap_tracker.json
 *.png
 *.svg
 *.webp
+
+# Model files
+*.pkl
+*.pth
+*.h5
+*.hdf5
+*.joblib
+*.pickle
+models/
 *.txt
 
 # Backup files
@@ -110,3 +119,6 @@ web-build/
 !data/indicators/parquet/*UNKNOWN*.parquet
 !data/indicators/csv/*UNKNOWN*.csv
 !data/indicators/json/*UNKNOWN*.json
+!/docs/automl/neozork/Python_Formatting_Example.html
+!/docs/automl/neozork/Python_Formatting_Example.html
+!/docs/automl/neozork/neozork-manual.html
