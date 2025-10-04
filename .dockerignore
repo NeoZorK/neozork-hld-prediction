@@ -47,6 +47,18 @@ ENV/
 *.svg
 *.webp
 
+# AutoGluon models and cache
+/models/
+/models/autogluon/
+/models/btc_simple_demo/
+/models/self_learning/
+*.pkl
+*.pth
+*.h5
+*.hdf5
+*.joblib
+*.pickle
+
 # Explicitly ignore indicators folder content
 /data/indicators/parquet/*
 /data/indicators/csv/*
@@ -105,3 +117,5 @@ web-build/
 !/data/indicators/parquet/*UNKNOWN*.parquet
 !/data/indicators/csv/*UNKNOWN*.csv
 !/data/indicators/json/*UNKNOWN*.json
+!/docs/automl/neozork/Python_Formatting_Example.html
+!/docs/automl/neozork/neozork-manual.html
