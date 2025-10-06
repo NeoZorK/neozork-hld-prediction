@@ -38,6 +38,7 @@ def export_metadata(
     export_dir: str,
     file_stem: str,
     extra: Dict[str, object],
+    out_path: str | None = None,
 ) -> str:
     os.makedirs(export_dir, exist_ok=True)
     payload: Dict[str, object] = {
@@ -48,7 +49,8 @@ def export_metadata(
     payload.update(result.metadata or {})
     payload.update(extra or {})
 
-    out_path = os.path.join(export_dir, f"{file_stem}_metadata.json")
+    if out_path is None:
+        out_path = os.path.join(export_dir, f"{file_stem}_metadata.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
     return out_path
