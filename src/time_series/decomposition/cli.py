@@ -12,7 +12,7 @@ from tqdm import tqdm
 from .base import get_decomposer, validate_ready_series
 from .export import export_components, export_metadata
 from .io_utils import discover_files, read_timeseries
-from .plotting import plot_and_save
+from .plotting import plot_and_save, plot_and_save_ceemdan_per_imf, get_ceemdan_explanation
 
 
 def parse_args() -> argparse.Namespace:
@@ -108,7 +108,14 @@ def main() -> None:
 
         opened_path = None
         if args.save_plots:
-            opened_path = plot_and_save(result, plot_dir, file_stem, locale_ru=bool(args.ru))
+            if result.method == "ceemdan":
+                # Сохраняем по одному файлу на IMF и отдельный для остатка
+                generated = plot_and_save_ceemdan_per_imf(result, plot_dir, file_stem, locale_ru=bool(args.ru))
+                # Выводим пояснение CEEMDAN в консоль
+                print(get_ceemdan_explanation(bool(args.ru)))
+                opened_path = generated[0] if generated else None
+            else:
+                opened_path = plot_and_save(result, plot_dir, file_stem, locale_ru=bool(args.ru))
 
         if args.open_safari and opened_path:
             if platform.system() == "Darwin":
