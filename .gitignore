@@ -122,3 +122,6 @@ web-build/
 !/docs/automl/neozork/Python_Formatting_Example.html
 !/docs/automl/neozork/Python_Formatting_Example.html
 !/docs/automl/neozork/neozork-manual.html
+
+# decomposition artifacts
+/data/indicators/decomposed_real/
