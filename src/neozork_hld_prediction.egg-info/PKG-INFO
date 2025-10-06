@@ -159,3 +159,4 @@ Requires-Dist: catboost>=1.2.8
 Requires-Dist: xgboost>=3.0.5
 Requires-Dist: click>=8.0.0
 Requires-Dist: markdown>=3.9
+Requires-Dist: EMD-signal>=0.6.0
