@@ -160,6 +160,7 @@ dependencies = [
     "xgboost>=3.0.5",
     "click>=8.0.0",
     "markdown>=3.9",
+    "EMD-signal>=0.6.0",
 ]
 
 [build-system]
