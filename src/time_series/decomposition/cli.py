@@ -103,7 +103,8 @@ def main() -> None:
             continue
 
         comp_path = export_components(result, method_dir, file_stem, split_components=args.split_components)
-        _ = export_metadata(result, method_dir, file_stem, extra={})
+        meta_out = args.metadata if args.metadata else None
+        _ = export_metadata(result, method_dir, file_stem, extra={}, out_path=meta_out)
 
         opened_path = None
         if args.save_plots:
