@@ -85,7 +85,7 @@ Requires-Dist: pytz==2025.1
 Requires-Dist: PyYAML==6.0.2
 Requires-Dist: pyzmq==26.3.0
 Requires-Dist: referencing==0.36.2
-Requires-Dist: requests==2.32.3
+Requires-Dist: requests>=2.32.4
 Requires-Dist: rfc3339-validator==0.1.4
 Requires-Dist: rfc3986-validator==0.1.1
 Requires-Dist: rpds-py==0.23.1
