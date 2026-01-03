@@ -319,7 +319,7 @@ class MarkdownToHTMLConverter:
 
  <div class="footer">
  <p>Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} |
- <a href="index.html">← Back to Index</a></p>
+ <a href="index.html">← Back to index</a></p>
  </div>
  </div>
 
@@ -467,7 +467,7 @@ class MarkdownToHTMLConverter:
  </div>
 
  <h2>О проекте</h2>
- <p>Neozork AutoML - это комплексная система for создания робастных машинного обучения решений with использованием современных AutoML технологий. documentation охватывает все аспекты from установки окружения to развертывания in production.</p>
+ <p>Neozork AutoML - это комплексная система for создания робастных машинного обучения решений with использованием современных AutoML технологий. documentation охватывает все аспекты from installation окружения to развертывания in production.</p>
 
  <h2>Основные разделы</h2>
  <ul>
@@ -499,10 +499,10 @@ def main():
  """main function to run the converter"""
  parser = argparse.ArgumentParser(description='Convert Markdown files to HTML with beautiful formatting')
  parser.add_argument('--input-dir', '-i',
- default='/Users/rostsh/Documents/DIS/REPO/neozork-hld-Prediction/docs/automl/neozork',
+ default='/users/rostsh/Documents/DIS/REPO/neozork-hld-Prediction/docs/automl/neozork',
  help='Input directory containing .md files')
  parser.add_argument('--output-dir', '-o',
- default='/Users/rostsh/Documents/DIS/REPO/neozork-hld-Prediction/docs/automl/neozork/html',
+ default='/users/rostsh/Documents/DIS/REPO/neozork-hld-Prediction/docs/automl/neozork/html',
  help='Output directory for HTML files')
 
  args = parser.parse_args()
@@ -522,7 +522,7 @@ def main():
  print(f"📁 Input directory: {args.input_dir}")
  print(f"📁 Output directory: {args.output_dir}")
  print(f"📄 Converted {len(html_files)} files")
- print(f"📄 Index file: {index_file.name}")
+ print(f"📄 index file: {index_file.name}")
  print(f"\n🌐 Open {index_file} in your browser to View the documentation!")
 
 

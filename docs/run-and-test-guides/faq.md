@@ -5,7 +5,7 @@
 ### Q: How to quickly Launch the system? / How to quickly Launch the system?
 **A:** Use Quick start:
 ```bash
-# installation зависимостей / install dependencies
+# installation dependencies / install dependencies
 uv pip install -r requirements.txt
 
 # Launch main Analysis / Launch main Analysis
@@ -62,7 +62,7 @@ uv run pytest tests/saas/ -n auto
 uv run pytest tests/pocket_hedge_fund/ -n auto
 ```
 
-### Q: Что делать, если Tests do not start? / What to do if tests don't run?
+### Q: Что делать, если tests do not start? / What to do if tests don't run?
 **A:** Попробуйте Safe mode:
 ```bash
 # Safe mode / Safe mode
@@ -80,7 +80,7 @@ uv run pytest tests/calculation/test_indicators.py::test_rsi -v
 ### Q: Как Launch the system in Docker? / How to run system in Docker?
 **A:** Use Docker Compose:
 ```bash
-# Launch всех сервисов / Launch all Services
+# Launch all сервисов / Launch all Services
 docker-compose up -d
 
 # Launch with логированием / Launch with logging
@@ -93,7 +93,7 @@ docker-compose down
 ### Q: Как запустить тесты in Docker? / How to run tests in Docker?
 **A:** execute team in контейнере:
 ```bash
-# Тесты in контейнере / Tests in container
+# Тесты in контейнере / tests in container
 docker-compose exec neozork-hld uv run pytest tests/ -n auto
 
 # Конкретные тесты / specific tests
@@ -185,8 +185,8 @@ sudo apt-get install postgresql postgresql-contrib
 # create базы данных / Create database
 createdb neozork_fund
 
-# configuration User / Configure User
-createUser neozork_User
+# configuration user / Configure user
+createuser neozork_user
 ```
 
 ## 📊 Вопросы on Monitoringу / Monitoring Questions
@@ -219,13 +219,13 @@ docker-compose ps
 
 ## 🆘 Вопросы on устранению неполадок / Troubleshooting Questions
 
-### Q: Что делать, если возникают Import Errors? / What to do if Import Errors occur?
+### Q: Что делать, если возникают import Errors? / What to do if import Errors occur?
 **A:** Проверьте PYTHONPATH:
 ```bash
 # installation PYTHONPATH / Set PYTHONPATH
 export PYTHONPATH="${PWD}:${PYTHONPATH}"
 
-# check установки / check installation
+# check installation / check installation
 uv pip List | grep neozork
 ```
 
@@ -245,7 +245,7 @@ uv run pytest tests/calculation/ -v
 ### Q: Как получить помощь? / How to get help?
 **A:** Use доступные ресурсы:
 - **documentation / Documentation**: [docs/run-and-test-guides/](.)
-- **GitHub Issues**: https://github.com/Username/neozork-hld-Prediction/issues
+- **GitHub Issues**: https://github.com/username/neozork-hld-Prediction/issues
 - **Discord**: https://discord.gg/neozork
 - **Telegram**: https://t.me/neozork_hld
 

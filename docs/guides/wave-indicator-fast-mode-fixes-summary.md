@@ -54,7 +54,7 @@ if valid_data_mask.any():
 2. **Правильные цвета линий**: Каждая линия имеет свой уникальный цвет and стиль
 3. **Четкая легенда**: Все линии правильно подписаны in легенде
 
-### Технические улучшения:
+### Technical улучшения:
 1. **Гибкость columns**: Поддержка как `_signal` так and `Direction` columns
 2. **Обработка ошибок**: Graceful handling отсутствующих данных
 3. **Производительность**: Оптимизированное отображение только валидных данных
@@ -67,7 +67,7 @@ if valid_data_mask.any():
 - ✅ `test_wave_indicator_fast_mode_signals` - отображение сигналов
 - ✅ `test_wave_indicator_fast_mode_hover_tool` - hover tooltips
 - ✅ `test_wave_indicator_fast_mode_empty_data` - обработка пустых данных
-- ✅ `test_wave_indicator_fast_mode_missing_columns` - отсутствующие колонки
+- ✅ `test_wave_indicator_fast_mode_Missing_columns` - отсутствующие колонки
 - ✅ `test_wave_indicator_fast_mode_integration` - интеграционное тестирование
 
 ### Результаты тестирования:
@@ -86,7 +86,7 @@ if valid_data_mask.any():
 uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
 ```
 
-### Launch тестов:
+### Launch tests:
 ```bash
 uv run pytest tests/plotting/test_wave_fast_mode.py -v
 ```
@@ -97,7 +97,7 @@ uv run pytest tests/plotting/test_wave_fast_mode.py -v
  - `src/plotting/dual_chart_fast.py` - основная логика
  - `tests/plotting/test_wave_fast_mode.py` - тесты
 - **Строк кода добавлено**: ~50
-- **Тестов создано**: 7
+- **tests создано**: 7
 - **Время разработки**: ~2 часа
 
 ## 🎉 Заключение

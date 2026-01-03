@@ -628,7 +628,7 @@ class SCHRLevelsMLModel:
  def prepare_schr_data(self, data_dict):
  """Подготовка данных SCHR Levels for ML"""
 
- # Объединение данных всех Timeframes
+ # Объединение данных all Timeframes
  combined_data = self.combine_Timeframe_data(data_dict)
 
  # create признаков
@@ -650,7 +650,7 @@ class SCHRLevelsMLModel:
 
 - **`self.feature_columns`**: List признаков модели
  - Тип: List[str]
- - Содержит: названия всех признаков SCHR Levels
+ - Содержит: названия all признаков SCHR Levels
  - Применение: for Predictions on новых данных
  - update: при изменении набора признаков
 
@@ -663,12 +663,12 @@ class SCHRLevelsMLModel:
 - **`data_dict`**: Словарь данных on Timeframeм
  - Тип: dict
  - Structure: {Timeframe: dataFrame}
- - Применение: объединение данных всех Timeframes
- - Требования: одинаковые колонки во всех dataFrame
+ - Применение: объединение данных all Timeframes
+ - Требования: одинаковые колонки во all dataFrame
 
 - **`combined_data`**: Объединенные data
  - Тип: dataFrame
- - Содержит: data всех Timeframes
+ - Содержит: data all Timeframes
  - Применение: create признаков and целевой переменной
  - Обработка: remove дубликатов and пропусков
 
@@ -1021,7 +1021,7 @@ class SCHRLevelsMLModel:
  # Признаки отскоков
  bounce_features = self.create_bounce_features(data)
 
- # Объединение всех признаков
+ # Объединение all признаков
  all_features = pd.concat([
  level_features,
  pressure_features,
@@ -1224,7 +1224,7 @@ class SCHRLevelsMLModel:
  - Содержит: направление цены, пробои, отскоки, развороты
  - Применение: обучение модели
  - Формат: бинарные метки (0/1)
- - Требования: соответствие индексов with features
+ - Требования: соответствие indexов with features
 
 - **`data`**: Объединенные data
  - Тип: dataFrame
@@ -1233,7 +1233,7 @@ class SCHRLevelsMLModel:
  - Обработка: remove пропусков
  - Требования: отсутствие NaN значений
 
-- **`split_idx`**: Индекс разделения
+- **`split_idx`**: index разделения
  - Тип: int
  - Формула: int(len(data) * 0.8)
  - Применение: разделение on train/validation
@@ -1370,7 +1370,7 @@ class SCHRLevelsMLModel:
 
 - **`Predictions`**: Предсказания модели
  - Тип: numpy array
- - Содержит: предсказания for всех тестовых данных
+ - Содержит: предсказания for all testsых данных
  - Применение: расчет доходности
  - Формат: бинарные метки (0/1)
  - Интерпретация: 0 = падение, 1 = рост

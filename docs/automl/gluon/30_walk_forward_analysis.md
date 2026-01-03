@@ -13,7 +13,7 @@ graph TD
 
  B -->|Простой бэктестинг| C[❌ Переобучение on исторических данных]
  B -->|Out-of-sample| D[⚠️ Один разбиение данных]
- B -->|Cross-validation| E[⚠️ Нарушение временной структуры]
+ B -->|Cross-validation| E[⚠️ Нарушение temporary структуры]
  B -->|Walk-Forward анализ| F[✅ Золотой стандарт валидации]
 
  C --> G[Нестабильная производительность]
@@ -177,7 +177,7 @@ graph TD
  D --> E[i = train_window]
 
  E --> F[Обучающие data<br/>data[i-train_window:i]]
- E --> G[Тестовые data<br/>data[i:i+test_window]]
+ E --> G[testsые data<br/>data[i:i+test_window]]
 
  F --> H[Обучение модели<br/>model.fit(train_data)]
  G --> I[Предсказания<br/>model.predict(test_data)]
@@ -194,7 +194,7 @@ graph TD
  M --> O
  N --> O
 
- O --> P[update индекса<br/>i += step]
+ O --> P[update indexа<br/>i += step]
  P --> Q{i < len(data) - test_window?}
 
  Q -->|Да| F
@@ -301,7 +301,7 @@ def walk_forward_Analysis(data, model, train_window=252, test_window=30, step=30
  # Обучающие data
  train_data = data[i-train_window:i]
 
- # Тестовые data
+ # testsые data
  test_data = data[i:i+test_window]
 
  # Обучение модели
@@ -424,7 +424,7 @@ def expanding_window_Analysis(data, model, initial_train_window=252, test_window
  # Обучающие data (расширяющееся окно)
  train_data = data[:i]
 
- # Тестовые data
+ # testsые data
  test_data = data[i:i+test_window]
 
  # Обучение модели
@@ -493,7 +493,7 @@ graph TD
  R --> S
  J --> S
 
- S --> T[update индекса<br/>i += step]
+ S --> T[update indexа<br/>i += step]
  T --> U{Продолжить цикл?}
  U -->|Да| E
  U -->|Нет| V[Анализ адаптивности]
@@ -619,7 +619,7 @@ def adaptive_window_Analysis(data, model, min_window=100, max_window=500,
  # Обучающие data
  train_data = data[i-current_window:i]
 
- # Тестовые data
+ # testsые data
  test_data = data[i:i+test_window]
 
  # Обучение модели
@@ -779,7 +779,7 @@ def volatility_adaptive_Analysis(data, model, base_window=252, test_window=30,
  # Обучающие data
  train_data = data[i-window_size:i]
 
- # Тестовые data
+ # testsые data
  test_data = data[i:i+test_window]
 
  # Обучение модели
@@ -888,10 +888,10 @@ def hierarchical_walk_forward(data, models, train_window=252, test_window=30, st
  # Обучающие data
  train_data = data[i-train_window:i]
 
- # Тестовые data
+ # testsые data
  test_data = data[i:i+test_window]
 
- # Обучение всех моделей
+ # Обучение all моделей
  model_Predictions = {}
  for name, model in models.items():
  model.fit(train_data)
@@ -953,7 +953,7 @@ def ensemble_walk_forward(data, base_models, ensemble_model, train_window=252,
  # Обучающие data
  train_data = data[i-train_window:i]
 
- # Тестовые data
+ # testsые data
  test_data = data[i:i+test_window]
 
  # Обучение базовых моделей
@@ -1271,7 +1271,7 @@ def calculate_statistical_significance(results, confidence_level=0.95):
  Returns:
  --------
  dict
- Словарь with результатами статистических тестов:
+ Словарь with результатами статистических tests:
  - 'shapiro_statistic': статистика теста Шапиро-Уилка (float)
  - 'shapiro_pvalue': p-value теста on нормальность (float)
  - > 0.05: data нормально распределены
@@ -1298,7 +1298,7 @@ def calculate_statistical_significance(results, confidence_level=0.95):
  - Тест on нормальность проверяет, что коэффициенты Шарпа нормально распределены
  - Тест on стационарность проверяет, что производительность стабильна во времени
  - Доверительный интервал рассчитывается with использованием t-распределения
- - Рекомендуется минимум 30 periods for надежных статистических тестов
+ - Рекомендуется минимум 30 periods for надежных статистических tests
 
  Examples:
  ---------
@@ -1392,7 +1392,7 @@ def calculate_economic_significance(results, transaction_costs=0.001,
  transaction_costs : float, default=0.001
  Транзакционные издержки on одну сделку (in долях from капитала):
  - 0.001: 0.1% (рекомендуется for акций)
- - 0.0005: 0.05% (for ETF and индексов)
+ - 0.0005: 0.05% (for ETF and indexов)
  - 0.002: 0.2% (for форекса and криптовалют)
  - 0.005: 0.5% (for экзотических активов)
  - Минимум: 0.0001 (0.01%)
@@ -1443,7 +1443,7 @@ def calculate_economic_significance(results, transaction_costs=0.001,
  ------
  - Транзакционные издержки вычитаются из общей доходности
  - Успешным считается период with коэффициентом Шарпа >= min_sharpe
- - Экономическая значимость требует выполнения всех критериев simultaneously
+ - Экономическая значимость требует выполнения all критериев simultaneously
  - Рекомендуется минимум 20 periods for надежной оценки
 
  Examples:
@@ -1537,7 +1537,7 @@ def calculate_profitability(results, initial_capital=100000):
  ------
  - Кумулятивная доходность рассчитывается как произведение (1 + returns)
  - Годовая доходность рассчитывается with учетом количества лет
- - Максимальная просадка берется как минимум из всех periods
+ - Максимальная просадка берется как минимум из all periods
  - Рекомендуется минимум 12 periods for расчета годовой доходности
 
  Examples:
@@ -1589,7 +1589,7 @@ graph TD
  B --> D[Распределительные графики]
  D --> D1[Гистограмма коэффициента Шарпа<br/>with линией среднего значения]
  D --> D2[Box plot метрик<br/>with выбросами and квантилями]
- D --> D3[Q-Q plot нормальности<br/>for статистических тестов]
+ D --> D3[Q-Q plot нормальности<br/>for статистических tests]
 
  B --> E[Тепловые карты]
  E --> E1[Корреляционная матрица<br/>метрик между собой]
@@ -1676,7 +1676,7 @@ def visualize_walk_forward_results(results, save_path=None):
  Если results not содержит колонки 'sharpe', 'max_drawdown', 'total_return'
  Если results пустой or содержит NaN значения
 
- ImportError
+ importError
  Если not установлены matplotlib or seaborn
 
  Notes:
@@ -1792,14 +1792,14 @@ def create_heatmap_Analysis(results, save_path=None):
  Если results not содержит колонки 'sharpe', 'max_drawdown', 'total_return'
  Если results пустой or содержит NaN значения
 
- ImportError
+ importError
  Если not установлены matplotlib or seaborn
 
  Notes:
  ------
  - Создается фигура 1x2 with двумя тепловыми картами:
  1. Корреляционная матрица между метриками (sharpe, max_drawdown, total_return)
- 2. Производительность on периодам (годы × месяцы) - если есть window_size
+ 2. Производительность on периодам (годы × месяцы) - if present window_size
  - Корреляционная матрица использует цветовую схему 'coolwarm' with центром in 0
  - Тепловая карта производительности использует цветовую схему 'RdYlGn' with центром in 1.0
  - Автоматически обрабатывает отсутствие колонки window_size
@@ -1992,7 +1992,7 @@ class WalkForwardPipeline:
  >>> metrics_calc = MetricsCalculator()
  >>> pipeline = WalkForwardPipeline(data, model, metrics_calc)
  >>>
- >>> # Launch всех типов Analysis
+ >>> # Launch all типов Analysis
  >>> pipeline.run_fixed_window_Analysis()
  >>> pipeline.run_expanding_window_Analysis()
  >>> pipeline.run_adaptive_window_Analysis()
@@ -2083,7 +2083,7 @@ class WalkForwardPipeline:
  # Обучающие data
  train_data = self.data[i-train_window:i]
 
- # Тестовые data
+ # testsые data
  test_data = self.data[i:i+test_window]
 
  # Обучение модели
@@ -2173,7 +2173,7 @@ class WalkForwardPipeline:
  # Обучающие data (расширяющееся окно)
  train_data = self.data[:i]
 
- # Тестовые data
+ # testsые data
  test_data = self.data[i:i+test_window]
 
  # Обучение модели
@@ -2274,7 +2274,7 @@ class WalkForwardPipeline:
  # Обучающие data
  train_data = self.data[i-current_window:i]
 
- # Тестовые data
+ # testsые data
  test_data = self.data[i:i+test_window]
 
  # Обучение модели
@@ -2315,7 +2315,7 @@ class WalkForwardPipeline:
  """
  Генерация комплексного Reportа on результатам Walk-Forward Analysis
 
- Создает детальный Report with анализом всех типов Walk-Forward Analysis,
+ Создает детальный Report with анализом all типов Walk-Forward Analysis,
  including сводные метрики, детальные результаты and рекомендации.
 
  Returns:
@@ -2351,7 +2351,7 @@ class WalkForwardPipeline:
 
  Notes:
  ------
- - Report генерируется on basis всех выполненных анализов
+ - Report генерируется on basis all выполненных анализов
  - Рекомендации основаны on пороговых значениях производительности
  - Стабильность рассчитывается как обратная величина к коэффициенту вариации
  - Тренд рассчитывается with помощью линейной регрессии

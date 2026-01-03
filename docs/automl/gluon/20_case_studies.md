@@ -81,7 +81,7 @@ create системы кредитного скоринга for банка with 
 - **Размер датасета**: 100,000 заявок on кредит
 - **Признаки**: 50+ (доход, возраст, кредитная история, занятость and др.)
 - **Целевая переменная**: Дефолт on кредиту (бинарная)
-- **Временной период**: 3 года исторических данных
+- **temporary период**: 3 года исторических данных
 
 ### Решение
 
@@ -319,7 +319,7 @@ scores = credit_system.create_scorecard(test_data)
  - Баланс: выше скорость = быстрее, но может переобучиться
  - Рекомендация: 0.03-0.05 for кредитного скоринга
 
-- **`test_size=0.2`**: Размер тестовой выборки
+- **`test_size=0.2`**: Размер testsой выборки
  - Значение: 0.2 (20%)
  - Применение: разделение данных on train/test
  - Рекомендация: 0.2-0.3 for кредитного скоринга
@@ -589,7 +589,7 @@ print(f"Medical Model AUC: {results['auc_score']:.3f}")
 *Рисунок 20.4: Система рекомендаций for e-commerce - components and результаты*
 
 **components рекомендательной системы:**
-- **User Profiling**: create профилей пользователей
+- **user Profiling**: create профилей пользователей
 - **Item Features**: Анализ характеристик товаров
 - **Collaborative Filtering**: Коллаборативная фильтрация
 - **Content-Based Filtering**: Контентная фильтрация
@@ -611,7 +611,7 @@ create персонализированной рекомендательной �
 - **Размер датасета**: 1,000,000 транзакций
 - **Пользователи**: 50,000 активных покупателей
 - **Товары**: 10,000 SKU
-- **Временной период**: 2 года
+- **temporary период**: 2 года
 
 ### Решение
 
@@ -620,19 +620,19 @@ class EcommerceRecommendationsystem:
  """Система рекомендаций for e-commerce"""
 
  def __init__(self):
- self.User_predictor = None
+ self.user_predictor = None
  self.item_predictor = None
  self.collaborative_filter = None
 
- def prepare_recommendation_data(self, transactions_df, Users_df, items_df):
+ def prepare_recommendation_data(self, transactions_df, users_df, items_df):
  """Подготовка данных for рекомендаций"""
 
  # Объединение данных
- df = transactions_df.merge(Users_df, on='User_id')
+ df = transactions_df.merge(users_df, on='user_id')
  df = df.merge(items_df, on='item_id')
 
- # create признаков User
- User_features = self.create_User_features(df)
+ # create признаков user
+ user_features = self.create_user_features(df)
 
  # create признаков товара
  item_features = self.create_item_features(df)
@@ -640,31 +640,31 @@ class EcommerceRecommendationsystem:
  # create целевой переменной (рейтинг/покупка)
  df['rating'] = self.calculate_implicit_rating(df)
 
- return df, User_features, item_features
+ return df, user_features, item_features
 
- def create_User_features(self, df):
- """create признаков User"""
+ def create_user_features(self, df):
+ """create признаков user"""
 
- User_features = df.groupby('User_id').agg({
+ user_features = df.groupby('user_id').agg({
  'item_id': 'count', # Количество покупок
  'price': ['sum', 'mean'], # Общая and средняя стоимость
  'category': lambda x: x.mode().iloc[0] if len(x.mode()) > 0 else 'Unknown', # Любимая категория
  'brand': lambda x: x.mode().iloc[0] if len(x.mode()) > 0 else 'Unknown' # Любимый бренд
  }).reset_index()
 
- User_features.columns = ['User_id', 'total_purchases', 'total_spent', 'avg_purchase', 'favorite_category', 'favorite_brand']
+ user_features.columns = ['user_id', 'total_purchases', 'total_spent', 'avg_purchase', 'favorite_category', 'favorite_brand']
 
  # Дополнительные признаки
- User_features['purchase_frequency'] = User_features['total_purchases'] / 365 # Покупок in день
- User_features['avg_spent_per_purchase'] = User_features['total_spent'] / User_features['total_purchases']
+ user_features['purchase_frequency'] = user_features['total_purchases'] / 365 # Покупок in день
+ user_features['avg_spent_per_purchase'] = user_features['total_spent'] / user_features['total_purchases']
 
- return User_features
+ return user_features
 
  def create_item_features(self, df):
  """create признаков товара"""
 
  item_features = df.groupby('item_id').agg({
- 'User_id': 'count', # Количество покупателей
+ 'user_id': 'count', # Количество покупателей
  'price': 'mean', # Средняя цена
  'category': lambda x: x.mode().iloc[0] if len(x.mode()) > 0 else 'Unknown',
  'brand': lambda x: x.mode().iloc[0] if len(x.mode()) > 0 else 'Unknown'
@@ -681,23 +681,23 @@ class EcommerceRecommendationsystem:
  """Расчет неявного рейтинга"""
 
  # Простая эвристика: чем больше покупок, тем выше рейтинг
- User_purchase_counts = df.groupby('User_id')['item_id'].count()
- item_purchase_counts = df.groupby('item_id')['User_id'].count()
+ user_purchase_counts = df.groupby('user_id')['item_id'].count()
+ item_purchase_counts = df.groupby('item_id')['user_id'].count()
 
- df['User_activity'] = df['User_id'].map(User_purchase_counts)
+ df['user_activity'] = df['user_id'].map(user_purchase_counts)
  df['item_popularity'] = df['item_id'].map(item_purchase_counts)
 
  # Нормализация рейтинга
- rating = (df['User_activity'] / df['User_activity'].max() +
+ rating = (df['user_activity'] / df['user_activity'].max() +
  df['item_popularity'] / df['item_popularity'].max()) / 2
 
  return rating
 
- def train_collaborative_filtering(self, df, User_features, item_features):
+ def train_collaborative_filtering(self, df, user_features, item_features):
  """Обучение коллаборативной фильтрации"""
 
  # Подготовка данных for AutoML
- recommendation_data = df.merge(User_features, on='User_id')
+ recommendation_data = df.merge(user_features, on='user_id')
  recommendation_data = recommendation_data.merge(item_features, on='item_id')
 
  # create предиктора
@@ -717,22 +717,22 @@ class EcommerceRecommendationsystem:
 
  return self.collaborative_filter
 
- def generate_recommendations(self, User_id, n_recommendations=10):
- """Генерация рекомендаций for User"""
+ def generate_recommendations(self, user_id, n_recommendations=10):
+ """Генерация рекомендаций for user"""
 
- # Получение признаков User
- User_data = self.get_User_features(User_id)
+ # Получение признаков user
+ user_data = self.get_user_features(user_id)
 
- # Получение всех товаров
+ # Получение all товаров
  all_items = self.get_all_items()
 
- # Prediction рейтингов for всех товаров
+ # Prediction рейтингов for all товаров
  Predictions = []
  for item_id in all_items:
  item_data = self.get_item_features(item_id)
 
- # Объединение данных User and товара
- combined_data = pd.dataFrame([{**User_data, **item_data}])
+ # Объединение данных user and товара
+ combined_data = pd.dataFrame([{**user_data, **item_data}])
 
  # Prediction рейтинга
  rating = self.collaborative_filter.predict(combined_data)[0]
@@ -752,12 +752,12 @@ class EcommerceRecommendationsystem:
  recall_scores = []
  ndcg_scores = []
 
- for User_id in test_data['User_id'].unique():
- # Получение реальных покупок User
- actual_items = set(test_data[test_data['User_id'] == User_id]['item_id'])
+ for user_id in test_data['user_id'].unique():
+ # Получение реальных покупок user
+ actual_items = set(test_data[test_data['user_id'] == user_id]['item_id'])
 
  # Генерация рекомендаций
- recommendations = self.generate_recommendations(User_id, n_recommendations)
+ recommendations = self.generate_recommendations(user_id, n_recommendations)
  recommended_items = set([item_id for item_id, _ in recommendations])
 
  # Precision@K
@@ -782,16 +782,16 @@ recommendation_system = EcommerceRecommendationsystem()
 
 # Loading data
 transactions = pd.read_csv('transactions.csv')
-Users = pd.read_csv('Users.csv')
+users = pd.read_csv('users.csv')
 items = pd.read_csv('items.csv')
 
 # Подготовка данных
-df, User_features, item_features = recommendation_system.prepare_recommendation_data(
- transactions, Users, items
+df, user_features, item_features = recommendation_system.prepare_recommendation_data(
+ transactions, users, items
 )
 
 # Обучение модели
-model = recommendation_system.train_collaborative_filtering(df, User_features, item_features)
+model = recommendation_system.train_collaborative_filtering(df, user_features, item_features)
 
 # Оценка
 results = recommendation_system.evaluate_recommendations(df)
@@ -835,7 +835,7 @@ create системы предиктивного обслуживания for п
 - **Оборудование**: 500 единиц промышленного оборудования
 - **Сенсоры**: 50+ датчиков on каждую единицу
 - **Частота измерений**: Каждые 5 minutes
-- **Временной период**: 2 года
+- **temporary период**: 2 года
 
 ### Решение
 
@@ -874,7 +874,7 @@ class Predictivemaintenancesystem:
  window_data.columns = [f'{col[0]}_{col[1]}_{window}h' for col in window_data.columns]
  features.append(window_data)
 
- # Объединение всех признаков
+ # Объединение all признаков
  all_features = pd.concat(features, axis=1)
 
  return all_features
@@ -1036,7 +1036,7 @@ create робастной and сверхприбыльной предсказа�
 
 ### data
 - **Пара**: BTCUSDT
-- **Временной период**: 2 года исторических данных
+- **temporary период**: 2 года исторических данных
 - **Частота**: 1-minutesные свечи
 - **Признаки**: 50+ технических indicators, объем, волатильность
 - **Целевая переменная**: Направление движения цены (1 час вперед)
@@ -1081,7 +1081,7 @@ class BTCUSDTTradingsystem:
 
 - **`self.feature_columns`**: List признаков модели
  - Тип: List[str]
- - Содержит: названия всех технических indicators
+ - Содержит: названия all технических indicators
  - Применение: for Predictions on новых данных
  - update: при изменении набора признаков
 
@@ -1263,14 +1263,14 @@ class BTCUSDTTradingsystem:
  - Баланс: чаще = быстрее реакция, но больше ресурсов
  - Рекомендация: 60-300 секунд for криптотрейдинга
 
-**Технические индикаторы:**
+**Technical индикаторы:**
 
 - **`SMA_20, SMA_50, SMA_200`**: Простые скользящие средние
  - Периоды: 20, 50, 200
  - Применение: определение тренда
  - Интерпретация: пересечения = сигналы
 
-- **`RSI`**: Relative Strength Index
+- **`RSI`**: Relative Strength index
  - Период: 14
  - Диапазон: 0-100
  - Применение: определение перекупленности/перепроданности
@@ -1324,7 +1324,7 @@ class BTCUSDTTradingsystem:
  def create_advanced_features(self, df):
  """create продвинутых признаков for криптотрейдинга"""
 
- # Базовые технические индикаторы
+ # Базовые Technical индикаторы
  df['SMA_20'] = talib.SMA(df['close'], timeperiod=20)
  df['SMA_50'] = talib.SMA(df['close'], timeperiod=50)
  df['SMA_200'] = talib.SMA(df['close'], timeperiod=200)
@@ -1626,7 +1626,7 @@ create высокоточной and стабильно прибыльной то
 
 ### data
 - **Инструменты**: 50+ криптовалютных пар
-- **Временной период**: 3 года исторических данных
+- **temporary период**: 3 года исторических данных
 - **Частота**: 1-minutesные свечи
 - **Признаки**: 100+ технических and фундаментальных indicators
 - **Целевая переменная**: Многоклассовая (BUY, SELL, HOLD)
@@ -1669,7 +1669,7 @@ class HedgeFundTradingsystem:
  def add_fundamental_features(self, df, symbol):
  """add фундаментальных признаков"""
 
- # Fear & Greed Index
+ # Fear & Greed index
  try:
  fear_greed = requests.get('https://api.alternative.me/fng/').json()
  df['fear_greed'] = fear_greed['data'][0]['value']
@@ -1686,7 +1686,7 @@ class HedgeFundTradingsystem:
  # Market Cap
  df['market_cap'] = df['close'] * df['volume'] # Приблизительная оценка
 
- # Volatility Index
+ # Volatility index
  df['volatility_index'] = df['close'].rolling(24).std() / df['close'].rolling(24).mean()
 
  return df
@@ -1731,7 +1731,7 @@ class HedgeFundTradingsystem:
  # add in общий датасет
  ensemble_data.append(data[feature_columns + ['target_class']])
 
- # Объединение всех данных
+ # Объединение all данных
  combined_data = pd.concat(ensemble_data, ignore_index=True)
  combined_data = combined_data.dropna()
 
@@ -1928,7 +1928,7 @@ class HedgeFundTradingsystem:
  # Сбор актуальных данных
  current_data = self.collect_multi_asset_data(trading_pairs, days=1)
 
- # Генерация сигналов for всех пар
+ # Генерация сигналов for all пар
  signals = {}
  for symbol, data in current_data.items():
  if len(data) > 0:
@@ -2049,7 +2049,7 @@ class SecretFeatureEngineering:
  tf_features = self.create_secret_features(tf_data, tf)
  features[tf] = tf_features
 
- # Объединение признаков всех Timeframes
+ # Объединение признаков all Timeframes
  combined_features = self.combine_multi_Timeframe_features(features)
 
  return combined_features
@@ -2060,7 +2060,7 @@ class SecretFeatureEngineering:
  # 1. Hidden Volume Profile
  data['volume_profile'] = self.calculate_hidden_volume_profile(data)
 
- # 2. Smart Money Index
+ # 2. Smart Money index
  data['smart_money_index'] = self.calculate_smart_money_index(data)
 
  # 3. Institutional Flow
@@ -2099,7 +2099,7 @@ class SecretFeatureEngineering:
  return hidden_levels
 
  def calculate_smart_money_index(self, data):
- """Индекс умных денег - отслеживание институциональных игроков"""
+ """index умных денег - отслеживание институциональных игроков"""
 
  # Анализ крупных сделок
  large_trades = data[data['volume'] > data['volume'].quantile(0.95)]
@@ -2107,7 +2107,7 @@ class SecretFeatureEngineering:
  # Направление умных денег
  smart_money_direction = self.analyze_smart_money_direction(large_trades)
 
- # Индекс накопления/распределения
+ # index накопления/распределения
  accumulation_distribution = self.calculate_accumulation_distribution(data)
 
  # Объединение сигналов
@@ -2271,7 +2271,7 @@ class SecretEnsembleTechniques:
  # 4. Temporal Ensemble
  temporal_ensemble = self.create_temporal_ensemble(base_models, meta_features)
 
- # Объединение всех техник
+ # Объединение all техник
  meta_ensemble = self.combine_ensemble_techniques([
  dynamic_weights,
  context_ensemble,
@@ -2324,7 +2324,7 @@ class SecretEnsembleTechniques:
  return super_model
 
  def create_temporal_ensemble(self, models, features):
- """Временной ансамбль"""
+ """temporary ансамбль"""
 
  # Анализ временных паттернов
  temporal_patterns = self.analyze_temporal_patterns(features)
@@ -2412,7 +2412,7 @@ class SecretRiskManagement:
 
 ### Почему эти техники такие прибыльные?
 
-1. **Multi-Timeframe Analysis** - анализ on всех Timeframes дает полную картину рынка
+1. **Multi-Timeframe Analysis** - анализ on all Timeframes дает полную картину рынка
 2. **Smart Money Tracking** - отслеживание институциональных игроков
 3. **MicroStructure Analysis** - понимание рыночной микроструктуры
 4. **Advanced Ensemble** - комбинация лучших моделей

@@ -25,7 +25,7 @@
 - Меньше ложных сигналов
 
 **Минусы:**
-- Сложность settings параметров
+- Сложность Settings параметров
 - Высокие требования к вычислительным ресурсам
 - Необходимость глубокого понимания теории
 
@@ -148,7 +148,7 @@ class WAVE2dataLoader:
  """
  Загрузчик данных WAVE2 из различных источников.
 
- Поддерживает загрузку из parquet файлов, CSV файлов and прямую генерацию
+ Поддерживает загрузку из parquet files, CSV files and прямую генерацию
  WAVE2 индикатора on basis OHLCV данных.
  """
 
@@ -179,11 +179,11 @@ class WAVE2dataLoader:
  data = pd.read_parquet(file_path)
 
  # check наличия required columns
- missing_columns = [col for col in self.required_columns if col not in data.columns]
- if missing_columns:
- raise ValueError(f"Отсутствуют необходимые колонки: {missing_columns}")
+ Missing_columns = [col for col in self.required_columns if col not in data.columns]
+ if Missing_columns:
+ raise ValueError(f"Missing необходимые колонки: {Missing_columns}")
 
- # installation индекса времени
+ # installation indexа времени
  if 'datetime' in data.columns:
  data['datetime'] = pd.to_datetime(data['datetime'])
  data.set_index('datetime', inplace=True)
@@ -193,7 +193,7 @@ class WAVE2dataLoader:
 
  except FileNotfoundError:
  print(f"⚠️ File not found: {file_path}")
- print("Создаем синтетические data WAVE2 for демонстрации...")
+ print("Creating синтетические data WAVE2 for демонстрации...")
  return self._generate_synthetic_wave2_data()
 
  def _generate_synthetic_wave2_data(self, n_periods: int = 1000) -> pd.dataFrame:
@@ -238,7 +238,7 @@ class WAVE2dataLoader:
  'ecore2': wave2 * 0.9
  })
 
- # create временного индекса
+ # create временного indexа
  data.index = pd.date_range(start='2023-01-01', periods=n_periods, freq='H')
 
  print(f"✓ Созданы синтетические data WAVE2: {len(data)} записей")
@@ -256,9 +256,9 @@ class WAVE2dataLoader:
  """
  try:
  # check наличия columns
- missing_columns = [col for col in self.required_columns if col not in data.columns]
- if missing_columns:
- print(f"❌ Missing columns: {missing_columns}")
+ Missing_columns = [col for col in self.required_columns if col not in data.columns]
+ if Missing_columns:
+ print(f"❌ Missing columns: {Missing_columns}")
  return False
 
  # check on NaN значения
@@ -526,7 +526,7 @@ class WAVE2M1Analysis:
  abs(wave2 - fastline2) / (abs(fastline2) + 1e-8)
  ) / 2
 
- # Скальпинг сигнал - комбинация всех условий
+ # Скальпинг сигнал - комбинация all условий
  scalping_signal = signal_consistency & fast_crossover & (signal_strength > self.thresholds['min_trend_strength'])
 
  return {
@@ -1850,7 +1850,7 @@ class WAVE2FeatureEngineer:
 
  Этот класс предоставляет комплексные методы for создания различных типов
  признаков on basis данных WAVE2, including базовые, лаговые, скользящие,
- технические and продвинутые признаки.
+ Technical and продвинутые признаки.
 
  Теория: Качественные признаки являются основой успешного машинного обучения.
  WAVE2 предоставляет богатую основу for создания признаков, которые могут
@@ -2015,11 +2015,11 @@ class WAVE2FeatureEngineer:
 
  return features
 
- def create_technical_features(self, data: pd.dataFrame) -> pd.dataFrame:
+ def create_Technical_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
  create технических признаков WAVE2.
 
- Технические признаки включают различные технические индикаторы,
+ Technical признаки включают различные Technical индикаторы,
  которые помогают анализировать рыночную динамику.
 
  Args:
@@ -2233,7 +2233,7 @@ class WAVE2FeatureEngineer:
 
  def create_all_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
- create всех признаков WAVE2.
+ create all признаков WAVE2.
 
  Args:
  data: dataFrame with data WAVE2
@@ -2251,7 +2251,7 @@ class WAVE2FeatureEngineer:
  rolling_features = self.create_rolling_features(data)
 
  print("create технических признаков...")
- technical_features = self.create_technical_features(data)
+ Technical_features = self.create_Technical_features(data)
 
  print("create продвинутых признаков...")
  advanced_features = self.create_advanced_features(data)
@@ -2259,12 +2259,12 @@ class WAVE2FeatureEngineer:
  print("create временных признаков...")
  temporal_features = self.create_temporal_features(data)
 
- # Объединение всех признаков
+ # Объединение all признаков
  all_features = pd.concat([
  basic_features,
  lag_features,
  rolling_features,
- technical_features,
+ Technical_features,
  advanced_features,
  temporal_features
  ], axis=1)
@@ -2313,7 +2313,7 @@ def run_feature_engineering_example():
  # create инженера признаков
  feature_engineer = WAVE2FeatureEngineer()
 
- # create всех признаков
+ # create all признаков
  features = feature_engineer.create_all_features(data)
 
  # create целевой переменной
@@ -2395,7 +2395,7 @@ def create_advanced_wave2_features(data):
 
 ### 3. Временные признаки
 
-**Теория:** Временные признаки WAVE2 учитывают временные аспекты рыночной динамики, including циклы, сезонность and временные паттерны. Они критически важны for понимания временной структуры рынка.
+**Теория:** Временные признаки WAVE2 учитывают временные аспекты рыночной динамики, including циклы, сезонность and временные паттерны. Они критически важны for понимания temporary структуры рынка.
 
 **Почему временные признаки важны:**
 - **Временная Structure:** Учитывают временные аспекты рынка
@@ -2404,10 +2404,10 @@ def create_advanced_wave2_features(data):
 - **Временные dependencies:** Анализируют dependencies во времени
 
 **Плюсы:**
-- Учет временной структуры
+- Учет temporary структуры
 - Выявление циклов
 - Учет сезонности
-- Анализ временных зависимостей
+- Анализ временных dependencies
 
 **Минусы:**
 - Сложность вычислений
@@ -2697,7 +2697,7 @@ class WAVE2Classifier:
  Args:
  X: dataFrame with приsignми
  y: Series with целевой переменной
- test_size: Размер тестовой выборки
+ test_size: Размер testsой выборки
 
  Returns:
  Словарь with результатами обучения
@@ -3008,7 +3008,7 @@ class WAVE2Regressor:
 
 **Плюсы:**
 - Высокая точность
-- Выявление сложных зависимостей
+- Выявление сложных dependencies
 - Адаптивность к сложным условиям
 - Масштабируемость
 
@@ -3096,7 +3096,7 @@ class WAVE2DeepModel:
 - Валидация стратегии
 
 **Минусы:**
-- Сложность settings
+- Сложность Settings
 - Потенциальные Issues with data
 - Время on тестирование
 
@@ -3755,7 +3755,7 @@ def calculate_performance_metrics(returns):
 - Эффективность
 
 **Минусы:**
-- Сложность settings
+- Сложность Settings
 - Время выполнения
 - Потенциальная нестабильность
 
@@ -3992,7 +3992,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# installation зависимостей
+# installation dependencies
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
@@ -4025,7 +4025,7 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 - Критически важно for управления рисками
 
 **Минусы:**
-- Сложность settings
+- Сложность Settings
 - Необходимость постоянного внимания
 - Потенциальные ложные срабатывания
 
@@ -4090,13 +4090,13 @@ class WAVE2Monitor:
  - **Теория:** WAVE2 представляет собой революционный подход к техническому анализу
  - **Почему важно:** Обеспечивает высокую точность Analysis трендов
  - **Плюсы:** Высокая точность, структурный анализ, адаптивность
- - **Минусы:** Сложность settings, высокие требования к ресурсам
+ - **Минусы:** Сложность Settings, высокие требования к ресурсам
 
 2. **МультиTimeframesый анализ - разные parameters for разных Timeframes**
  - **Теория:** Каждый Timeframe требует специфических параметров for максимальной эффективности
- - **Почему важно:** Обеспечивает оптимальную производительность on всех временных горизонтах
+ - **Почему важно:** Обеспечивает оптимальную производительность on all временных горизонтах
  - **Плюсы:** Оптимизация производительности, снижение рисков, повышение точности
- - **Минусы:** Сложность settings, необходимость понимания каждого Timeframe
+ - **Минусы:** Сложность Settings, необходимость понимания каждого Timeframe
 
 3. **Богатые признаки - множество возможностей for создания признаков**
  - **Теория:** WAVE2 предоставляет богатую основу for создания признаков машинного обучения
@@ -4118,4 +4118,4 @@ class WAVE2Monitor:
 
 ---
 
-**Важно:** WAVE2 требует тщательной settings параметров for каждого Timeframe and актива. Use оптимизацию for достижения максимальной производительности.
+**Важно:** WAVE2 требует тщательной Settings параметров for каждого Timeframe and актива. Use оптимизацию for достижения максимальной производительности.

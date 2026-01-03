@@ -2,16 +2,16 @@
 
 ## Что это такое?
 
-Последовательный тест-раннер - это решение for Launchа тестов in Docker контейнере папка за папкой, что предотвращает сбои воркеров and Issues with ресурсами при параллельном выполнении.
+Последовательный тест-раннер - это решение for Launchа tests in Docker контейнере папка за папкой, что предотвращает сбои воркеров and Issues with ресурсами при параллельном выполнении.
 
 ## Quick start
 
 ### 1. Launch in Docker контейнере
 
 ```bash
-# При Launchе контейнера выберите 'y' for Launchа тестов
+# При Launchе контейнера выберите 'y' for Launchа tests
 docker run -it your-container
-# Ответьте 'y' on вопрос о Launchе тестов
+# Ответьте 'y' on вопрос о Launchе tests
 ```
 
 ### 2. Ручной Launch
@@ -32,13 +32,13 @@ python scripts/run_sequential_tests_docker.py
 uv run pytest tests -n auto # Старый способ (может вызывать проблемы)
 ```
 
-## Порядок выполнения тестов
+## Порядок выполнения tests
 
 Тесты выполняются in следующем порядке:
 
-1. **common** - Базовые утилиты (7 тестов, ~2s)
-2. **unit** - Юнит-тесты (335 тестов, ~7s)
-3. **utils** - Утилиты (30 тестов, ~2s)
+1. **common** - Базовые утилиты (7 tests, ~2s)
+2. **unit** - Юнит-тесты (335 tests, ~7s)
+3. **utils** - Утилиты (30 tests, ~2s)
 4. **data** - Обработка данных
 5. **calculation** - Математические Calculations
 6. **cli** - Командная строка
@@ -59,7 +59,7 @@ uv run pytest tests -n auto # Старый способ (может вызыва
 
 ## configuration
 
-settings находятся in файле `tests/test_execution_order.yaml`:
+Settings находятся in файле `tests/test_execution_order.yaml`:
 
 ```yaml
 test_folders:
@@ -68,7 +68,7 @@ test_folders:
  timeout: 30
  required: true
 
-global_settings:
+global_Settings:
  max_total_time: 3600 # 1 час
  stop_on_failure: true
  skip_empty_folders: true
@@ -106,7 +106,7 @@ Timeout: 60s
 
 ## Решение проблем
 
-### Tests do not start
+### tests do not start
 - Проверьте, что вы in Docker контейнере
 - Убедитесь, что файл `tests/test_execution_order.yaml` существует
 
@@ -136,4 +136,4 @@ docker run --rm your-container python scripts/run_sequential_tests_docker.py
 
 ## Заключение
 
-Последовательный тест-раннер - это надежное решение for Docker окружений, которое обеспечивает стабильное выполнение тестов без сбоев воркеров and проблем with ресурсами.
+Последовательный тест-раннер - это надежное решение for Docker окружений, которое обеспечивает стабильное выполнение tests без сбоев воркеров and проблем with ресурсами.

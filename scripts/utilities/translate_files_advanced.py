@@ -32,7 +32,7 @@ TRANSLATIONS = OrderedDict([
  (r'Common Issues', 'Common Issues'),
  (r'installation Issues', 'installation Issues'),
  (r'Launch Issues', 'Launch Issues'),
- (r'Import Errors', 'Import Errors'),
+ (r'import Errors', 'import Errors'),
  (r'Port Issues', 'Port Issues'),
  (r'Frequently Asked Questions', 'Frequently Asked Questions'),
  (r'Project Structure', 'Project Structure'),
@@ -48,7 +48,7 @@ TRANSLATIONS = OrderedDict([
  (r'Author:', 'Author:'),
  (r'Version:', 'Version:'),
  (r'Comprehensive solution', 'Comprehensive solution'),
- (r'creating ML models', 'creating ML models'),
+ (r'Creating ML models', 'Creating ML models'),
  (r'based on', 'based on'),
  (r'sign', 'sign'),
  (r'price direction', 'price direction'),
@@ -82,12 +82,12 @@ TRANSLATIONS = OrderedDict([
  (r'\bпараметр\b', 'parameter'),
  (r'\bпараметры\b', 'parameters'),
  (r'\bконфигурация\b', 'configuration'),
- (r'\bнастройки\b', 'settings'),
+ (r'\bнастройки\b', 'Settings'),
  (r'\bиндикаторов\b', 'indicators'),
- (r'\bпроверка\b', 'check'),
- (r'\bочистка\b', 'clean'),
- (r'\bкэша\b', 'cache'),
- (r'\bпереустановка\b', 'reinstall'),
+ (r'\bcheck\b', 'check'),
+ (r'\bclean\b', 'clean'),
+ (r'\bcache\b', 'cache'),
+ (r'\breinstall\b', 'reinstall'),
 
  # Common words (lower priority)
  (r'\bдля\b', 'for'),
@@ -171,7 +171,7 @@ TRANSLATIONS = OrderedDict([
  (r'integration', 'integration'),
  (r'Application screens', 'Application screens'),
  (r'Login to system', 'Login to system'),
- (r'User registration', 'User registration'),
+ (r'user registration', 'user registration'),
  (r'main screen', 'main screen'),
  (r'with greeting', 'with greeting'),
  (r'Loading screen', 'Loading screen'),
@@ -231,14 +231,14 @@ TRANSLATIONS = OrderedDict([
  (r'Roadmap', 'Roadmap'),
  (r'product development', 'product development'),
  (r'Issues with', 'Issues with'),
- (r'Tests do not', 'Tests do not'),
+ (r'tests do not', 'tests do not'),
  (r'Safe mode', 'Safe mode'),
  (r'Launch', 'Launch'),
  (r'Slow tests', 'Slow tests'),
  (r'not available', 'not available'),
  (r'symbol', 'symbol'),
  (r'Timeframe', 'Timeframe'),
- (r'data file not found', 'data file not found'),
+ (r'data File not found', 'data File not found'),
  (r'Authentication Management', 'Authentication Management'),
  (r'HTTP client', 'HTTP client'),
  (r'Style constants', 'Style constants'),
@@ -266,8 +266,8 @@ TRANSLATIONS = OrderedDict([
  (r'Working with data', 'Working with data'),
  (r'health check', 'health check'),
  (r'mobile API', 'mobile API'),
- (r'data for main screen', 'data for main screen'),
- (r'User Portfolio', 'User Portfolio'),
+ (r'Data for main screen', 'Data for main screen'),
+ (r'user Portfolio', 'user Portfolio'),
  (r'List of funds', 'List of funds'),
  (r'Investment Management', 'Investment Management'),
  (r'View networks', 'View networks'),
@@ -302,7 +302,7 @@ TRANSLATIONS = OrderedDict([
  (r'main screen', 'main screen'),
  (r'main', 'main'),
  (r'screen', 'screen'),
- (r'User', 'User'),
+ (r'user', 'user'),
  (r'Portfolio', 'Portfolio'),
  (r'List', 'List'),
  (r'funds', 'funds'),
@@ -326,7 +326,7 @@ TRANSLATIONS = OrderedDict([
  (r'organization', 'organization'),
 ])
 
-# Files and directories to exclude
+# files and directories to exclude
 EXCLUDE_PATTERNS = [
  r'.*/russian/.*',
  r'.*-ru\.md$',
@@ -393,7 +393,7 @@ def find_files_with_russian(root_dir: str = '.') -> List[Tuple[str, int]]:
 
 
 def translate_text(text: str) -> str:
- """Translate Russian text to English using comprehensive patterns."""
+ """Translate Russian text to English Using comprehensive patterns."""
  if not has_russian_text(text):
  return text
 
@@ -511,7 +511,7 @@ def main():
  print("=" * 60)
  print()
  print("Note: Please reView translated files for accuracy.")
- print("Complex sentences and technical terms may need manual correction.")
+ print("Complex sentences and Technical terms may need manual correction.")
 
 
 if __name__ == '__main__':

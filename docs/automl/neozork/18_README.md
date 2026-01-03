@@ -10,7 +10,7 @@
 
 ## 📋 Обзор системы
 
-**Теория:** Обзор системы представляет собой комплексное description всех компонентов and возможностей системы. Это критически важно for понимания архитектуры and функциональности системы.
+**Теория:** Обзор системы представляет собой комплексное description all компонентов and возможностей системы. Это критически важно for понимания архитектуры and функциональности системы.
 
 **Почему обзор системы важен:**
 - **Понимание:** Обеспечивает понимание системы
@@ -59,7 +59,7 @@
  - **Плюсы:** Устойчивость, надежность, защита
  - **Минусы:** Сложность реализации, высокие требования
 
-- **Мультиактивный подход - торговля on всех активах**
+- **Мультиактивный подход - торговля on all активах**
  - **Теория:** Мультиактивный подход критически важен for диверсификации рисков
  - **Почему важно:** Обеспечивает диверсификацию рисков
  - **Плюсы:** Диверсификация, максимизация возможностей
@@ -91,7 +91,7 @@
 
 ## 🏗️ Архитектура системы
 
-**Теория:** Архитектура системы представляет собой структурированную организацию всех компонентов системы for обеспечения эффективной работы, масштабируемости and поддерживаемости. Это критически важно for создания надежных and эффективных систем.
+**Теория:** Архитектура системы представляет собой структурированную организацию all компонентов системы for обеспечения эффективной работы, масштабируемости and поддерживаемости. Это критически важно for создания надежных and эффективных систем.
 
 **Почему архитектура системы важна:**
 - **Структурированность:** Обеспечивает структурированный подход
@@ -145,13 +145,13 @@
 
 **Почему Quick start важен:**
 - **Быстрота:** Обеспечивает быстрое начало работы
-- **Простота:** Обеспечивает простоту установки
+- **Простота:** Обеспечивает простоту installation
 - **Эффективность:** Обеспечивает эффективное внедрение
 - **Доступность:** Критически важно for доступности системы
 
 **Плюсы:**
 - Быстрое начало работы
-- Простота установки
+- Простота installation
 - Эффективное внедрение
 - Доступность
 
@@ -160,13 +160,13 @@
 - Требует базовых знаний
 - Возможные ошибки при установке
 
-### 1. installation зависимостей
+### 1. installation dependencies
 
-**Теория:** installation зависимостей критически важна for обеспечения работоспособности системы. Это основа for всех последующих шагов.
+**Теория:** installation dependencies критически важна for обеспечения работоспособности системы. Это основа for all последующих шагов.
 
-**Почему installation зависимостей важна:**
+**Почему installation dependencies важна:**
 - **Работоспособность:** Обеспечивает работоспособность системы
-- **dependencies:** Обеспечивает установку всех required компонентов
+- **dependencies:** Обеспечивает установку all required компонентов
 - **Совместимость:** Обеспечивает совместимость компонентов
 - **Функциональность:** Критически важно for функциональности системы
 
@@ -178,7 +178,7 @@ cd neozork-100-percent-system
 # installation uv (если not installed)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# installation зависимостей
+# installation dependencies
 uv sync
 
 # Активация виртуального окружения
@@ -201,7 +201,7 @@ source .venv/bin/activate
 - **Торговые parameters:** List активов, веса, Timeframeы
 - **Риск-менеджмент:** Лимиты позиций, стоп-лоссы, корреляционные ограничения
 - **ML-модели:** parameters обучения, валидации, переобучения
-- **Блокчейн:** settings подключения, контракты, газовые лимиты
+- **Блокчейн:** Settings подключения, контракты, газовые лимиты
 
 ```bash
 # create директории for конфигурации
@@ -304,7 +304,7 @@ ml_models:
  random_state: 42
  retrain_frequency: "daily"
 
-# Блокчейн settings
+# Блокчейн Settings
 blockchain:
  network: "sepolia" # sepolia, mainnet, polygon
  gas_limit: 500000
@@ -326,7 +326,7 @@ Monitoring:
  enabled: true
  smtp_server: "smtp.gmail.com"
  smtp_port: 587
- Username: "your_email@gmail.com"
+ username: "your_email@gmail.com"
  password: "your_app_password"
  recipients: ["admin@neozork.com"]
 
@@ -345,7 +345,7 @@ database:
  host: "localhost"
  port: 5432
  name: "neozork_100_percent"
- Username: "neozork_User"
+ username: "neozork_user"
  password: "secure_password"
  pool_size: 10
  max_overflow: 20
@@ -364,15 +364,15 @@ python -c "import yaml; yaml.safe_load(open('config/config.yaml'))" && echo "✅
 
 **Почему переменные окружения критически важны:**
 - **Безопасность:** Защищают конфиденциальные data from попадания in репозиторий
-- **Гибкость:** Позволяют легко изменять settings for разных окружений
+- **Гибкость:** Позволяют легко изменять Settings for разных окружений
 - **Масштабируемость:** Упрощают развертывание in различных средах
 - **Соответствие стандартам:** Следуют лучшим практикам DevOps and безопасности
 
 **Категории переменных окружения:**
 - **Блокчейн:** Web3 провайдеры, приватные ключи, адреса контрактов
 - **API ключи:** Торговые платформы, data, Monitoring
-- **Уведомления:** Telegram, Discord, Email settings
-- **База данных:** Подключения, пароли, settings пулов
+- **notifications:** Telegram, Discord, Email Settings
+- **База данных:** Подключения, пароли, Settings пулов
 - **Monitoring:** Логирование, метрики, алерты
 
 ```bash
@@ -385,7 +385,7 @@ cat > .env << 'EOF'
 # Добавьте .env in .gitignore
 
 # ===========================================
-# БЛОКЧЕЙН settings
+# БЛОКЧЕЙН Settings
 # ===========================================
 # Web3 провайдеры for подключения к блокчейну
 WEB3_PROVIDER_mainNET=https://mainnet.infura.io/v3/YOUR_PROJECT_ID
@@ -402,7 +402,7 @@ TRADING_CONTRACT_ADDRESS=0x1234567890abcdef1234567890abcdef12345678
 STAKING_CONTRACT_ADDRESS=0xabcdef1234567890abcdef1234567890abcdef12
 YIELD_FARMING_CONTRACT_ADDRESS=0x9876543210fedcba9876543210fedcba98765432
 
-# settings газа
+# Settings газа
 GAS_LIMIT=500000
 GAS_PRICE_GWEI=20
 MAX_SLIPPAGE=0.01
@@ -438,7 +438,7 @@ QUANDL_API_KEY=your_quandl_api_key
 FRED_API_KEY=your_fred_api_key
 
 # ===========================================
-# УВЕДОМЛЕНИЯ
+# notifications
 # ===========================================
 # Telegram Bot for уведомлений
 TELEGRAM_BOT_TOKEN=1234567890:ABCDEFghijklmnopQRSTUVwxyz
@@ -449,10 +449,10 @@ TELEGRAM_ENABLED=true
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/1234567890/abcdefghijklmnop
 DISCORD_ENABLED=true
 
-# Email settings for детальных Reportов
+# Email Settings for детальных Reportов
 EMAIL_SMTP_SERVER=smtp.gmail.com
 EMAIL_SMTP_PORT=587
-EMAIL_User=your_email@gmail.com
+EMAIL_user=your_email@gmail.com
 EMAIL_PASSWORD=your_app_password
 EMAIL_RECIPIENTS=admin@neozork.com,alerts@neozork.com
 EMAIL_ENABLED=true
@@ -460,12 +460,12 @@ EMAIL_ENABLED=true
 # ===========================================
 # БАЗА ДАННЫХ
 # ===========================================
-# PostgreSQL settings
-database_URL=postgresql://neozork_User:secure_password@localhost:5432/neozork_100_percent
+# PostgreSQL Settings
+database_URL=postgresql://neozork_user:secure_password@localhost:5432/neozork_100_percent
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=neozork_100_percent
-DB_User=neozork_User
+DB_user=neozork_user
 DB_PASSWORD=secure_password
 DB_POOL_SIZE=10
 DB_MAX_OVERFLOW=20
@@ -488,11 +488,11 @@ PROMETHEUS_ENABLED=true
 
 # Grafana for визуализации
 GRAFANA_URL=http://localhost:3000
-GRAFANA_User=admin
+GRAFANA_user=admin
 GRAFANA_PASSWORD=admin_password
 
 # ===========================================
-# СИСТЕМНЫЕ settings
+# СИСТЕМНЫЕ Settings
 # ===========================================
 # Окружение and режим работы
 ENVIRONMENT=production
@@ -519,7 +519,7 @@ JWT_SECRET_KEY=your_super_secret_jwt_key_here
 # Шифрование данных
 ENCRYPTION_KEY=your_32_character_encryption_key
 
-# CORS settings
+# CORS Settings
 CORS_ORIGINS=http://localhost:3000,http://localhost:8000
 
 # ===========================================
@@ -557,7 +557,7 @@ cat > .env.example << 'EOF'
 # ===========================================
 # Скопируйте этот файл in .env and заполните реальными значениями
 
-# Блокчейн settings
+# Блокчейн Settings
 WEB3_PROVIDER_SEPOLIA=https://sepolia.infura.io/v3/YOUR_PROJECT_ID
 PRIVATE_KEY_SEPOLIA=your_sepolia_private_key_here
 TRADING_CONTRACT_ADDRESS=0x...
@@ -566,15 +566,15 @@ TRADING_CONTRACT_ADDRESS=0x...
 BINANCE_API_KEY=your_binance_api_key
 BINANCE_SECRET_KEY=your_binance_secret_key
 
-# Уведомления
+# notifications
 TELEGRAM_BOT_TOKEN=your_bot_token
 TELEGRAM_CHAT_ID=your_chat_id
 DISCORD_WEBHOOK_URL=your_webhook_url
 
 # База данных
-database_URL=postgresql://User:password@localhost:5432/database
+database_URL=postgresql://user:password@localhost:5432/database
 
-# Системные settings
+# Системные Settings
 ENVIRONMENT=development
 DEBUG=true
 LOG_LEVEL=DEBUG
@@ -594,18 +594,18 @@ echo "⚠️ ВАЖНО: Заполните все необходимые зна
 
 ### 4. Launch системы
 
-**Теория:** Launch системы представляет собой критически важный процесс инициализации всех компонентов торговой системы. Правильный Launch обеспечивает корректную работу всех модулей, подключение к внешним сервисам and начало торговых операций. Это основа for стабильной работы всей системы.
+**Теория:** Launch системы представляет собой критически важный процесс инициализации all компонентов торговой системы. Правильный Launch обеспечивает корректную работу all модулей, подключение к внешним сервисам and начало торговых операций. Это основа for стабильной работы всей системы.
 
 **Почему правильный Launch критически важен:**
-- **Инициализация компонентов:** Обеспечивает корректную инициализацию всех модулей системы
-- **check зависимостей:** Валидирует доступность всех внешних сервисов and API
+- **Инициализация компонентов:** Обеспечивает корректную инициализацию all модулей системы
+- **check dependencies:** Валидирует доступность all внешних сервисов and API
 - **Безопасность:** Проверяет корректность конфигурации and переменных окружения
 - **Monitoring:** Launchает системы Monitoringа and логирования
 
 **Этапы Launchа системы:**
 1. **Предварительные проверки:** Валидация конфигурации, переменных окружения, подключений
-2. **Инициализация базы данных:** create таблиц, индексов, начальных данных
-3. **Загрузка ML моделей:** Восстановление обученных моделей из файлов
+2. **Инициализация базы данных:** create таблиц, indexов, начальных данных
+3. **Загрузка ML моделей:** Восстановление обученных моделей из files
 4. **Подключение к API:** installation соединений with торговыми platformми
 5. **Launch Monitoringа:** Инициализация систем отслеживания and алертов
 6. **Начало торговли:** Launch торговых алгоритмов and стратегий
@@ -619,7 +619,7 @@ cat > scripts/pre_startup_checks.sh << 'EOF'
 
 echo "🔍 Выполнение предварительных проверок NeoZorK 100% system..."
 
-# check Python and зависимостей
+# check Python and dependencies
 echo "📦 check Python окружения..."
 python --version || { echo "❌ Python not found"; exit 1; }
 uv --version || { echo "❌ uv not found"; exit 1; }
@@ -667,7 +667,7 @@ try:
  host=result.hostname,
  port=result.port,
  database=result.path[1:],
- User=result.Username,
+ user=result.username,
  password=result.password
  )
  conn.close()
@@ -751,7 +751,7 @@ cat > scripts/init_database.py << 'EOF'
 #!/usr/bin/env python3
 """
 Инициализация базы данных for NeoZorK 100% system
-Создает все необходимые таблицы, индексы and начальные data
+Создает все необходимые таблицы, indexы and начальные data
 """
 
 import os
@@ -783,7 +783,7 @@ def init_database():
  host=result.hostname,
  port=result.port,
  database=result.path[1:],
- User=result.Username,
+ user=result.username,
  password=result.password
  )
  conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
@@ -794,7 +794,7 @@ def init_database():
  # create таблиц
  create_tables(cursor)
 
- # create индексов
+ # create indexов
  create_indexes(cursor)
 
  # Вставка начальных данных
@@ -931,31 +931,31 @@ def create_tables(cursor):
  raise
 
 def create_indexes(cursor):
- """create индексов for оптимизации производительности"""
+ """create indexов for оптимизации производительности"""
 
  indexes = [
- "CREATE INDEX IF NOT EXISTS idx_trading_signals_timestamp ON trading_signals(timestamp)",
- "CREATE INDEX IF NOT EXISTS idx_trading_signals_symbol ON trading_signals(symbol)",
- "CREATE INDEX IF NOT EXISTS idx_trading_signals_model ON trading_signals(model_name)",
- "CREATE INDEX IF NOT EXISTS idx_trades_symbol ON trades(symbol)",
- "CREATE INDEX IF NOT EXISTS idx_trades_status ON trades(status)",
- "CREATE INDEX IF NOT EXISTS idx_trades_created_at ON trades(created_at)",
- "CREATE INDEX IF NOT EXISTS idx_Portfolio_symbol ON Portfolio(symbol)",
- "CREATE INDEX IF NOT EXISTS idx_performance_metrics_date ON performance_metrics(date)",
- "CREATE INDEX IF NOT EXISTS idx_ml_models_name ON ml_models(name)",
- "CREATE INDEX IF NOT EXISTS idx_ml_models_active ON ml_models(is_active)",
- "CREATE INDEX IF NOT EXISTS idx_system_logs_level ON system_logs(level)",
- "CREATE INDEX IF NOT EXISTS idx_system_logs_created_at ON system_logs(created_at)",
- "CREATE INDEX IF NOT EXISTS idx_alerts_status ON alerts(status)",
- "CREATE INDEX IF NOT EXISTS idx_alerts_severity ON alerts(severity)"
+ "CREATE index IF NOT EXISTS idx_trading_signals_timestamp ON trading_signals(timestamp)",
+ "CREATE index IF NOT EXISTS idx_trading_signals_symbol ON trading_signals(symbol)",
+ "CREATE index IF NOT EXISTS idx_trading_signals_model ON trading_signals(model_name)",
+ "CREATE index IF NOT EXISTS idx_trades_symbol ON trades(symbol)",
+ "CREATE index IF NOT EXISTS idx_trades_status ON trades(status)",
+ "CREATE index IF NOT EXISTS idx_trades_created_at ON trades(created_at)",
+ "CREATE index IF NOT EXISTS idx_Portfolio_symbol ON Portfolio(symbol)",
+ "CREATE index IF NOT EXISTS idx_performance_metrics_date ON performance_metrics(date)",
+ "CREATE index IF NOT EXISTS idx_ml_models_name ON ml_models(name)",
+ "CREATE index IF NOT EXISTS idx_ml_models_active ON ml_models(is_active)",
+ "CREATE index IF NOT EXISTS idx_system_logs_level ON system_logs(level)",
+ "CREATE index IF NOT EXISTS idx_system_logs_created_at ON system_logs(created_at)",
+ "CREATE index IF NOT EXISTS idx_alerts_status ON alerts(status)",
+ "CREATE index IF NOT EXISTS idx_alerts_severity ON alerts(severity)"
  ]
 
  for index_sql in indexes:
  try:
  cursor.execute(index_sql)
- logger.info(f"✅ Индекс создан/проверен")
+ logger.info(f"✅ index создан/проверен")
  except Exception as e:
- logger.error(f"❌ Ошибка создания индекса: {e}")
+ logger.error(f"❌ Ошибка создания indexа: {e}")
  raise
 
 def insert_initial_data(cursor):
@@ -1045,7 +1045,7 @@ class NeoZorKsystem:
  signal.signal(signal.SIGTERM, self._signal_handler)
 
  async def initialize(self):
- """Инициализация всех компонентов системы"""
+ """Инициализация all компонентов системы"""
  try:
  self.logger.info("🚀 Инициализация NeoZorK 100% system...")
 
@@ -1101,7 +1101,7 @@ class NeoZorKsystem:
  self.logger.info("🎯 Launch NeoZorK 100% system...")
  self.running = True
 
- # Launch всех компонентов
+ # Launch all компонентов
  tasks = [
  self.data_manager.start(),
  self.model_manager.start(),
@@ -1111,7 +1111,7 @@ class NeoZorKsystem:
  self.Monitoring_system.start()
  ]
 
- # Launch всех задач параллельно
+ # Launch all задач параллельно
  await asyncio.gather(*tasks)
 
  except Exception as e:
@@ -1124,7 +1124,7 @@ class NeoZorKsystem:
  self.logger.info("🛑 Остановка NeoZorK 100% system...")
  self.running = False
 
- # Остановка всех компонентов
+ # Остановка all компонентов
  if self.Monitoring_system:
  await self.Monitoring_system.stop()
  if self.blockchain_manager:
@@ -1190,7 +1190,7 @@ Services:
  container_name: neozork_postgres
  environment:
  POSTGRES_DB: neozork_100_percent
- POSTGRES_User: neozork_User
+ POSTGRES_user: neozork_user
  POSTGRES_PASSWORD: secure_password
  ports:
  - "5432:5432"
@@ -1219,7 +1219,7 @@ Services:
  - postgres
  - redis
  environment:
- - database_URL=postgresql://neozork_User:secure_password@postgres:5432/neozork_100_percent
+ - database_URL=postgresql://neozork_user:secure_password@postgres:5432/neozork_100_percent
  - REDIS_URL=redis://redis:6379/0
  volumes:
  - ./config:/app/config
@@ -1280,7 +1280,7 @@ EOF
 cat > Dockerfile << 'EOF'
 FROM python:3.11-slim
 
-# installation системных зависимостей
+# installation системных dependencies
 RUN apt-get update && apt-get install -y \
  gcc \
  g++ \
@@ -1295,10 +1295,10 @@ ENV PATH="/root/.cargo/bin:$PATH"
 # create рабочей директории
 WORKDIR /app
 
-# Копирование файлов зависимостей
+# Копирование files dependencies
 COPY pyproject.toml uv.lock ./
 
-# installation зависимостей
+# installation dependencies
 RUN uv sync --frozen
 
 # Копирование исходного кода
@@ -1336,10 +1336,10 @@ echo "- Prometheus: http://localhost:9090"
 
 ## 📊 Monitoring производительности
 
-**Теория:** Monitoring производительности представляет собой комплексную system отслеживания and Analysis всех аспектов работы системы. Это критически важно for поддержания высокой эффективности and своевременного выявления проблем.
+**Теория:** Monitoring производительности представляет собой комплексную system отслеживания and Analysis all аспектов работы системы. Это критически важно for поддержания высокой эффективности and своевременного выявления проблем.
 
 **Почему Monitoring производительности важен:**
-- **Отслеживание:** Обеспечивает отслеживание всех аспектов
+- **Отслеживание:** Обеспечивает отслеживание all аспектов
 - **Анализ:** Обеспечивает анализ производительности
 - **Выявление проблем:** Обеспечивает своевременное выявление проблем
 - **Оптимизация:** Критически важно for оптимизации системы
@@ -1458,7 +1458,7 @@ risk_limits:
 - **Высокая точность:** Достигает >95% точности on исторических данных
 - **Робастность:** Устойчив к рыночному шуму and ложным сигналам
 
-**Технические характеристики:**
+**Technical характеристики:**
 - **Тип**: Random Forest Classifier with 100 деревьями
 - **Признаки**: 50+ технических indicators (RSI, MACD, Bollinger Bands, ATR, ADX, Stochastic, Williams %R, CCI, ROC, Momentum)
 - **Goal**: Prediction направления тренда (up/down/SIDEWAYS)
@@ -1518,7 +1518,7 @@ class WAVE2Model:
  features[f'ema_{period}'] = df['close'].ewm(span=period).mean()
  features[f'price_ema_{period}_ratio'] = df['close'] / features[f'ema_{period}']
 
- # RSI (Relative Strength Index)
+ # RSI (Relative Strength index)
  delta = df['close'].diff()
  gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
  loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
@@ -1549,7 +1549,7 @@ class WAVE2Model:
  features['atr'] = true_range.rolling(14).mean()
  features['atr_ratio'] = features['atr'] / df['close']
 
- # ADX (Average Directional Index)
+ # ADX (Average Directional index)
  plus_dm = df['high'].diff()
  minus_dm = df['low'].diff()
  plus_dm = plus_dm.where((plus_dm > minus_dm) & (plus_dm > 0), 0)
@@ -1573,7 +1573,7 @@ class WAVE2Model:
  # Williams %R
  features['williams_r'] = -100 * (high_14 - df['close']) / (high_14 - low_14)
 
- # CCI (Commodity Channel Index)
+ # CCI (Commodity Channel index)
  typical_price = (df['high'] + df['low'] + df['close']) / 3
  sma_tp = typical_price.rolling(20).mean()
  mad = typical_price.rolling(20).apply(lambda x: np.mean(np.abs(x - x.mean())))
@@ -1622,12 +1622,12 @@ class WAVE2Model:
  features = self.create_features(df)
  target = self.create_target(df)
 
- # Выравнивание индексов
+ # Выравнивание indexов
  common_index = features.index.intersection(target.index)
  features = features.loc[common_index]
  target = target.loc[common_index]
 
- # Разделение on обучающую and тестовую выборки
+ # Разделение on обучающую and testsую выборки
  X_train, X_test, y_train, y_test = train_test_split(
  features, target, test_size=0.2, random_state=42, stratify=target
  )
@@ -1644,7 +1644,7 @@ class WAVE2Model:
 
  print(f"✅ WAVE2 модель обучена:")
  print(f" - Точность on обучающей выборке: {train_score:.4f}")
- print(f" - Точность on тестовой выборке: {test_score:.4f}")
+ print(f" - Точность on testsой выборке: {test_score:.4f}")
 
  # Кросс-валидация
  cv_scores = cross_val_score(self.model, X_train, y_train, cv=5)
@@ -1730,7 +1730,7 @@ if __name__ == "__main__":
 - **Риск-менеджмент:** Позволяет устанавливать стоп-лоссы on basis уровней
 - **Психология рынка:** Учитывает поведение трейдеров on ключевых уровнях
 
-**Технические характеристики:**
+**Technical характеристики:**
 - **Тип**: Gradient Boosting Classifier with 200 деревьями
 - **Признаки**: Уровни поддержки/сопротивления, объемы, волатильность
 - **Goal**: Prediction пробоев уровней (BREAKOUT/HOLD/REJECTION)
@@ -1748,7 +1748,7 @@ if __name__ == "__main__":
 - **Микро-паттерны:** Выявляет паттерны, незаметные for других моделей
 - **Скальпинг:** Обеспечивает прибыль on малых движениях цены
 
-**Технические характеристики:**
+**Technical характеристики:**
 - **Тип**: Extra Trees Classifier with 150 деревьями
 - **Признаки**: Краткосрочные паттерны, микро-волатильность, ордер-бук
 - **Goal**: Скальпинг сигналы (BUY/SELL/HOLD)
@@ -1758,7 +1758,7 @@ if __name__ == "__main__":
 
 ### Ensemble Model - Ансамбль моделей
 
-**Теория:** Ensemble модель объединяет предсказания всех трех специализированных моделей, используя взвешенное голосование for получения финального торгового сигнала. Это обеспечивает максимальную точность and робастность.
+**Теория:** Ensemble модель объединяет предсказания all трех специализированных моделей, используя взвешенное голосование for получения финального торгового сигнала. Это обеспечивает максимальную точность and робастность.
 
 **Почему Ensemble критически важен:**
 - **Диверсификация:** Снижает риск ошибок отдельных моделей
@@ -1766,7 +1766,7 @@ if __name__ == "__main__":
 - **Робастность:** Устойчив к переобучению and рыночным аномалиям
 - **Адаптивность:** Автоматически адаптируется к различным рыночным условиям
 
-**Технические характеристики:**
+**Technical характеристики:**
 - **Тип**: Voting Classifier with soft voting
 - **Комбинация**: WAVE2 (40%) + SCHR Levels (35%) + SCHR SHORT3 (25%)
 - **Метод**: Soft voting with весовыми коэффициентами
@@ -2102,7 +2102,7 @@ class Retrainingsystem:
  hours=72
  )
 
- # Полное переобучение всех моделей
+ # Полное переобучение all моделей
  for model_name in ['WAVE2', 'SCHR_Levels', 'SCHR_Short3']:
  await self.full_retrain_model(model_name, emergency_data)
 
@@ -2114,7 +2114,7 @@ class Retrainingsystem:
  try:
  self.logger.info("🔄 update ансамбля моделей...")
 
- # Загрузка всех моделей
+ # Загрузка all моделей
  models = {}
  for model_name in ['WAVE2', 'SCHR_Levels', 'SCHR_Short3']:
  model_path = f"models/{model_name.lower()}_model.pkl"
@@ -2541,7 +2541,7 @@ class PerformanceMetrics:
  if Predictions_df is not None and actual_df is not None:
  ml_metrics = self.calculate_ml_metrics(Predictions_df, actual_df)
 
- # Объединение всех метрик
+ # Объединение all метрик
  all_metrics = {**basic_metrics, **robustness_metrics, **ml_metrics}
 
  # Целевые метрики
@@ -2598,7 +2598,7 @@ class PerformanceMetrics:
 
 # example использования
 if __name__ == "__main__":
- # create тестовых данных
+ # create testsых данных
  dates = pd.date_range('2024-01-01', periods=100, freq='D')
  Portfolio_values = pd.Series(
  np.cumsum(np.random.normal(0.01, 0.02, 100)) + 1000,
@@ -2656,7 +2656,7 @@ if __name__ == "__main__":
 - **Важность:** Основной показатель успешности системы
 
 #### Performance Score (Общий балл производительности)
-- **Определение:** Взвешенная оценка всех метрик (0-100)
+- **Определение:** Взвешенная оценка all метрик (0-100)
 - **Формула:** Сумма нормализованных метрик × весовые коэффициенты
 - **Целевое значение:** >90
 - **Важность:** Комплексная оценка эффективности системы
@@ -2674,7 +2674,7 @@ if __name__ == "__main__":
 - **Раннее предупреждение:** Позволяет быстро реагировать on проблемы to их эскалации
 - **Автоматизация Monitoringа:** Исключает необходимость постоянного ручного контроля
 - **Многоуровневая система:** Обеспечивает различные уровни уведомлений in dependencies from критичности
-- **integration:** Позволяет получать уведомления через различные каналы связи
+- **integration:** Позволяет получать notifications через различные каналы связи
 
 ### Типы алертов
 
@@ -2899,7 +2899,7 @@ class Alertsystem:
  if self.config.alerts.discord.enabled:
  tasks.append(self._send_discord_alert(alert))
 
- # Выполнение всех задач параллельно
+ # Выполнение all задач параллельно
  if tasks:
  await asyncio.gather(*tasks, return_exceptions=True)
 
@@ -2910,7 +2910,7 @@ class Alertsystem:
  """Отправка алерта on email"""
  try:
  msg = MIMEMultipart()
- msg['From'] = self.config.alerts.email.Username
+ msg['From'] = self.config.alerts.email.username
  msg['To'] = ', '.join(self.config.alerts.email.recipients)
  msg['Subject'] = f"[{alert['type']}] {alert['title']}"
 
@@ -2929,7 +2929,7 @@ NeoZorK 100% system Alert system
 
  server = smtplib.SMTP(self.config.alerts.email.smtp_server, self.config.alerts.email.smtp_port)
  server.starttls()
- server.login(self.config.alerts.email.Username, self.config.alerts.email.password)
+ server.login(self.config.alerts.email.username, self.config.alerts.email.password)
  server.send_message(msg)
  server.quit()
 
@@ -3034,9 +3034,9 @@ NeoZorK 100% system Alert system
  self.alert_history[alert_key] = datetime.now()
 
  async def process_alerts(self, metrics: Dict, system_Status: Dict):
- """Обработка всех алертов"""
+ """Обработка all алертов"""
 
- # Получение всех алертов
+ # Получение all алертов
  performance_alerts = await self.check_performance_alerts(metrics)
  system_alerts = await self.check_system_alerts(system_status)
 
@@ -3050,7 +3050,7 @@ NeoZorK 100% system Alert system
 
 # example использования
 if __name__ == "__main__":
- # create тестовых метрик
+ # create testsых метрик
  test_metrics = {
  'monthly_return': 1.2, # 120%
  'max_drawdown': 0.05, # 5%
@@ -3083,15 +3083,15 @@ if __name__ == "__main__":
 - **configuration:** SMTP сервер, учетные data, получатели
 
 #### Telegram (Мессенджер)
-- **Назначение:** Быстрые уведомления and мобильные алерты
-- **Преимущества:** Мгновенная доставка, мобильные уведомления
-- **Использование:** Критические алерты, быстрые уведомления
+- **Назначение:** Быстрые notifications and мобильные алерты
+- **Преимущества:** Мгновенная доставка, мобильные notifications
+- **Использование:** Критические алерты, быстрые notifications
 - **configuration:** Bot Token, Chat ID, форматирование
 
 #### Discord (Командная platform)
 - **Назначение:** integration with командой разработки
 - **Преимущества:** Rich embeds, integration with рабочими процессами
-- **Использование:** Командные уведомления, Monitoring
+- **Использование:** Командные notifications, Monitoring
 - **configuration:** Webhook URL, каналы, роли
 
 #### SMS (Сотовые messages)
@@ -3100,10 +3100,10 @@ if __name__ == "__main__":
 - **Использование:** Только критические ситуации
 - **configuration:** SMS API, номера телефонов, лимиты
 
-#### Push Notifications (Мобильные уведомления)
-- **Назначение:** Мобильные уведомления in приложении
+#### Push notifications (Мобильные notifications)
+- **Назначение:** Мобильные notifications in приложении
 - **Преимущества:** integration with мобильным applicationм
-- **Использование:** Персональные уведомления
+- **Использование:** Персональные notifications
 - **configuration:** Push Services, токены устройств
 
 ## 🔒 Безопасность
@@ -3244,7 +3244,7 @@ MIT License - см. [LICENSE](LICENSE) файл for деталей.
 
 ## 🚀 Практические examples использования
 
-**Теория:** Практические examples демонстрируют реальные сценарии использования системы NeoZorK 100% and помогают Userм быстро начать работу. Эти examples критически важны for понимания возможностей системы and быстрого внедрения.
+**Теория:** Практические examples демонстрируют реальные сценарии использования системы NeoZorK 100% and помогают userм быстро начать работу. Эти examples критически важны for понимания возможностей системы and быстрого внедрения.
 
 ### example 1: Quick start with минимальной конфигурацией
 
@@ -3327,7 +3327,7 @@ from src.Monitoring.alert_system import Alertsystem
 # create системы алертов
 alert_system = Alertsystem(config)
 
-# Тестовые метрики
+# testsые метрики
 test_metrics = {
  'monthly_return': 1.2,
  'max_drawdown': 0.05,
@@ -3376,7 +3376,7 @@ await alert_system.process_alerts(test_metrics, {'status': 'GOOD'})
 **Следующие шаги:**
 1. **Изучите документацию:** Ознакомьтесь with полной документацией системы
 2. **Настройте окружение:** Следуйте инструкциям on установке
-3. **Начните with тестов:** Use testnet for первых экспериментов
+3. **Начните with tests:** Use testnet for первых экспериментов
 4. **Присоединяйтесь к сообществу:** Получайте поддержку and делитесь опытом
 5. **Достигайте целей:** Use system for достижения финансовых целей
 

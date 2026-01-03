@@ -46,8 +46,8 @@
 **Почему справедливость - это основа этичного AI?** Потому что несправедливые модели могут дискриминировать людей on полу, расе, возрасту and другим приsignм, что недопустимо in современном обществе.
 
 **Типы метрик справедливости:**
-- **Statistical Parity**: Равные доли положительных исходов for всех групп
-- **Equalized Odds**: Равные TPR and FPR for всех групп
+- **Statistical Parity**: Равные доли положительных исходов for all групп
+- **Equalized Odds**: Равные TPR and FPR for all групп
 - **Demographic Parity**: Демографический паритет in предсказаниях
 - **Individual Fairness**: Справедливость on индивидуальном уровне
 - **Counterfactual Fairness**: Контрфактическая справедливость
@@ -126,13 +126,13 @@ def calculate_recall(Predictions, actual):
  - Применение: любая модель for классификации or регрессии
  - examples: RandomForest, LogisticRegression, Neural network
 
-- **`X_test`**: Тестовые data for проверки
+- **`X_test`**: testsые data for проверки
  - Тип: pandas dataFrame or numpy array
  - Содержит: признаки for предсказания
  - Требования: должны включать чувствительные атрибуты
  - Размер: обычно 20% from общего датасета
 
-- **`y_test`**: Истинные метки for тестовых данных
+- **`y_test`**: Истинные метки for testsых данных
  - Тип: pandas Series or numpy array
  - Содержит: истинные значения целевой переменной
  - Требования: должны соответствовать X_test
@@ -145,7 +145,7 @@ def calculate_recall(Predictions, actual):
  - Применение: check справедливости on этим атрибутам
 
 - **`Predictions = model.predict(X_test)`**: Предсказания модели
- - Результат: массив Predictions for всех тестовых образцов
+ - Результат: массив Predictions for all testsых образцов
  - Формат: бинарные (0/1) or вероятности
  - Применение: основа for расчета метрик справедливости
 
@@ -202,7 +202,7 @@ def calculate_recall(Predictions, actual):
 **Метрики справедливости:**
 
 - **Statistical Parity**: Равные доли положительных исходов
- - Формула: P(Ŷ=1|A=a) = P(Ŷ=1|A=b) for всех групп
+ - Формула: P(Ŷ=1|A=a) = P(Ŷ=1|A=b) for all групп
  - Применение: check равных возможностей
  - Ограничения: может конфликтовать with точностью
 
@@ -309,7 +309,7 @@ class EthicalModelWrapper:
 
 - **`feature_names`**: Названия признаков модели
  - Тип: List[str]
- - Содержит: названия всех признаков in том же порядке, что and in данных
+ - Содержит: названия all признаков in том же порядке, что and in данных
  - Требования: должны соответствовать X_train.columns
  - Применение: for интерпретации объяснений
 
@@ -681,7 +681,7 @@ class GDPRCompliance:
  def data_portability(self, subject_id):
  """Право on портативность данных"""
 
- # Возврат всех данных субъекта in структурированном формате
+ # Возврат all данных субъекта in структурированном формате
  subject_data = {
  'personal_data': self.get_subject_data(subject_id),
  'consent_records': self.consent_records.get(subject_id, []),
@@ -749,13 +749,13 @@ class AIActCompliance:
  'data governance',
  'Technical documentation',
  'Record keeping',
- 'Transparency and User information',
+ 'Transparency and user information',
  'Human oversight',
  'Accuracy, robustness and cybersecurity'
  ],
  'limited': [
  'Transparency obligations',
- 'User information requirements'
+ 'user information requirements'
  ],
  'minimal': [
  'No specific requirements'
@@ -864,7 +864,7 @@ class BiasDetector:
 
 - **`Predictions`**: Предсказания модели
  - Тип: numpy array or pandas Series
- - Содержит: предсказания модели for всех образцов
+ - Содержит: предсказания модели for all образцов
  - Формат: бинарные (0/1) or вероятности
  - Применение: основа for расчета метрик смещений
 
@@ -1055,10 +1055,10 @@ class BiasMitigation:
 
 **Критерии оценки этичности:**
 - **Отсутствие пропусков**: Минимальное количество пропущенных значений
-- **Баланс классов**: Равномерное представление всех классов
+- **Баланс классов**: Равномерное представление all классов
 - **Качество данных**: Репрезентативность and актуальность данных
 - **Статистический паритет**: Равные доли положительных исходов
-- **Уравненные шансы**: Равные TPR and FPR for всех групп
+- **Уравненные шансы**: Равные TPR and FPR for all групп
 - **Демографический паритет**: Справедливое распределение Predictions
 
 ### 1. AI Ethics checkList
@@ -1084,12 +1084,12 @@ class AIEthicscheckList:
  checks = []
 
  # check on пропущенные значения
- missing_ratio = data.isnull().sum().sum() / (len(data) * len(data.columns))
+ Missing_ratio = data.isnull().sum().sum() / (len(data) * len(data.columns))
  checks.append({
  'check': 'Missing values ratio',
- 'value': missing_ratio,
- 'passed': missing_ratio < 0.1,
- 'recommendation': 'Clean missing values' if missing_ratio >= 0.1 else None
+ 'value': Missing_ratio,
+ 'passed': Missing_ratio < 0.1,
+ 'recommendation': 'Clean Missing values' if Missing_ratio >= 0.1 else None
  })
 
  # check on дубликаты

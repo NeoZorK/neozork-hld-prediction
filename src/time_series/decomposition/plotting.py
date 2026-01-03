@@ -27,7 +27,7 @@ def _localized_texts(locale_ru: bool) -> Dict[str, str]:
  "низкие — высокочастотные (шум/микроStructure)."
  ),
  "desc_res": (
- "Остаток после вычитания всех IMF. Часто интерпретируется как медленная часть/тренд."
+ "Остаток после вычитания all IMF. Часто интерпретируется как медленная часть/тренд."
  ),
  }
  return {
@@ -118,7 +118,7 @@ def plot_and_save_ceemdan_per_imf(
  comp.plot(ax=ax, lw=1)
  ax.set_xlim(result.original.index.min(), result.original.index.max())
  ax.set_title(texts["title_imf"].format(n=n))
- # Вставляем детализированное description on сам рисунок
+ # Вставляем detailsзированное description on сам рисунок
  fig.text(
  0.01,
  0.01,

@@ -148,10 +148,10 @@ graph TD
  A[Исходные временные data] --> B[Разделение in time]
 
  B --> C[Обучающие data<br/>70% from начала]
- B --> D[Тестовые data<br/>30% from конца]
+ B --> D[testsые data<br/>30% from конца]
 
  C --> E[Обучение модели]
- E --> F[Предсказания on тестовых данных]
+ E --> F[Предсказания on testsых данных]
 
  D --> G[Реальные доходности]
  F --> H[Стратегические доходности]
@@ -191,7 +191,7 @@ def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
  Parameters:
  -----------
  data : pd.dataFrame
- Временной ряд данных with колонками 'returns' and другими приsignми
+ temporary ряд данных with колонками 'returns' and другими приsignми
  - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
  - Рекомендуется минимум 1000 наблюдений for надежности
@@ -218,7 +218,7 @@ def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
  config : dict, optional
  Дополнительная configuration for бэктестинга
  - 'min_train_samples': int, default=100 - минимальное количество обучающих образцов
- - 'min_test_samples': int, default=50 - минимальное количество тестовых образцов
+ - 'min_test_samples': int, default=50 - минимальное количество testsых образцов
  - 'shuffle': bool, default=False - перемешивать ли data (not рекомендуется for временных рядов)
  - 'stratify': bool, default=False - стратифицированное разделение
  - 'return_Predictions': bool, default=True - возвращать предсказания
@@ -247,7 +247,7 @@ def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
  - 'volatility': float - волатильность стратегии
  - 'Predictions': np.array - предсказания модели (если return_Predictions=True)
  - 'train_metrics': dict - метрики on обучающих данных
- - 'test_metrics': dict - метрики on тестовых данных
+ - 'test_metrics': dict - метрики on testsых данных
  - 'config_Used': dict - использованная configuration
 
  Raises:
@@ -310,11 +310,11 @@ def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
  raise ValueError(f"Недостаточно обучающих данных: {len(train_data)} < {config['min_train_samples']}")
 
  if len(test_data) < config['min_test_samples']:
- raise ValueError(f"Недостаточно тестовых данных: {len(test_data)} < {config['min_test_samples']}")
+ raise ValueError(f"Недостаточно testsых данных: {len(test_data)} < {config['min_test_samples']}")
 
  if config['verbose']:
  print(f"Обучающих образцов: {len(train_data)}")
- print(f"Тестовых образцов: {len(test_data)}")
+ print(f"testsых образцов: {len(test_data)}")
 
  # Обучение модели
  try:
@@ -367,7 +367,7 @@ def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
  'volatility': train_strategy_returns.std() * np.sqrt(252)
  }
 
- # Метрики on тестовых данных
+ # Метрики on testsых данных
  results['test_metrics'] = {
  'sharpe': sharpe,
  'max_drawdown': max_drawdown,
@@ -382,18 +382,18 @@ def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
 results = time_series_backtest(data, model, train_size=0.7, test_size=0.3)
 ```
 
-**Учет временных зависимостей:**
+**Учет временных dependencies:**
 
 ```python
 def temporal_dependency_backtest(data, model, lookback=30, step=1,
  config=None, validation=True, random_state=None):
  """
- Бэктестинг with учетом временных зависимостей and детальными параметрами
+ Бэктестинг with учетом временных dependencies and детальными параметрами
 
  Parameters:
  -----------
  data : pd.dataFrame
- Временной ряд данных with колонками 'returns' and другими приsignми
+ temporary ряд данных with колонками 'returns' and другими приsignми
  - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
  - Рекомендуется минимум 1000 наблюдений for надежности
@@ -452,7 +452,7 @@ def temporal_dependency_backtest(data, model, lookback=30, step=1,
  - 'max_drawdown': float - максимальная просадка
  - 'Predictions': np.array - предсказания модели (если return_Predictions=True)
  - 'train_size': int - размер обучающей выборки
- - 'test_size': int - размер тестовой выборки
+ - 'test_size': int - размер testsой выборки
 
  Raises:
  -------
@@ -522,7 +522,7 @@ def temporal_dependency_backtest(data, model, lookback=30, step=1,
  # Обучающие data
  train_data = data[i-lookback:i]
 
- # Тестовые data
+ # testsые data
  test_data = data[i:i+step]
 
  # Обучение модели
@@ -646,7 +646,7 @@ def monte_carlo_backtest(data, model, n_simulations=1000, confidence_level=0.95,
  Parameters:
  -----------
  data : pd.dataFrame
- Временной ряд данных with колонками 'returns' and другими приsignми
+ temporary ряд данных with колонками 'returns' and другими приsignми
  - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
  - Рекомендуется минимум 1000 наблюдений for надежности
@@ -708,9 +708,9 @@ def monte_carlo_backtest(data, model, n_simulations=1000, confidence_level=0.95,
  - 'mean_total_return': float - средняя общая доходность
  - 'std_total_return': float - стандартное отклонение общей доходности
  - 'confidence_interval': List - доверительный интервал for коэффициента Шарпа
- - 'percentiles': dict - перцентили for всех метрик
+ - 'percentiles': dict - перцентили for all метрик
  - 'success_rate': float - доля успешных симуляций (sharpe > 1.0)
- - 'results': pd.dataFrame - детальные результаты всех симуляций
+ - 'results': pd.dataFrame - детальные результаты all симуляций
  - 'config_Used': dict - использованная configuration
 
  Raises:
@@ -930,7 +930,7 @@ def bootstrap_backtest(data, model, n_bootstrap=1000, block_size=10,
  Parameters:
  -----------
  data : pd.dataFrame
- Временной ряд данных with колонками 'returns' and другими приsignми
+ temporary ряд данных with колонками 'returns' and другими приsignми
  - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
  - Рекомендуется минимум 1000 наблюдений for надежности
@@ -993,7 +993,7 @@ def bootstrap_backtest(data, model, n_bootstrap=1000, block_size=10,
  - 'volatility': float - волатильность стратегии
  - 'annual_return': float - годовая доходность
  - 'train_size': int - размер обучающей выборки
- - 'test_size': int - размер тестовой выборки
+ - 'test_size': int - размер testsой выборки
  - 'n_blocks': int - количество блоков in выборке
  - 'Predictions': np.array - предсказания модели (если return_Predictions=True)
 
@@ -1084,7 +1084,7 @@ def bootstrap_backtest(data, model, n_bootstrap=1000, block_size=10,
 
  # Случайный выбор блоков
  while len(bootstrap_data) < config['min_samples'] and n_blocks < config['max_blocks']:
- # Случайный выбор начального индекса блока
+ # Случайный выбор начального indexа блока
  start_idx = np.random.randint(0, len(data) - block_size + 1)
  block = data[start_idx:start_idx + block_size]
 
@@ -1244,7 +1244,7 @@ def stress_test_backtest(data, model, stress_scenarios, config=None, validation=
  Parameters:
  -----------
  data : pd.dataFrame
- Временной ряд данных with колонками 'returns' and другими приsignми
+ temporary ряд данных with колонками 'returns' and другими приsignми
  - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
  - Рекомендуется минимум 1000 наблюдений for надежности
@@ -1518,7 +1518,7 @@ def regime_based_backtest(data, model, regime_detector, config=None, validation=
  Parameters:
  -----------
  data : pd.dataFrame
- Временной ряд данных with колонками 'returns' and другими приsignми
+ temporary ряд данных with колонками 'returns' and другими приsignми
  - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
  - Рекомендуется минимум 1000 наблюдений for надежности
@@ -1860,7 +1860,7 @@ def Portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
  - Минимум 2 стратегии for диверсификации
 
  data : pd.dataFrame
- Временной ряд данных with колонками 'returns' and другими приsignми
+ temporary ряд данных with колонками 'returns' and другими приsignми
  - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
  - Рекомендуется минимум 1000 наблюдений for надежности
@@ -2033,7 +2033,7 @@ def Portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
  print(f"Ошибка обучения стратегии {i+1}: {e}")
  continue
 
- # Получение Predictions from всех стратегий
+ # Получение Predictions from all стратегий
  Predictions = {}
  individual_returns = {}
 
@@ -2170,7 +2170,7 @@ def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
  - Минимум 2 стратегии for диверсификации
 
  data : pd.dataFrame
- Временной ряд данных with колонками 'returns' and другими приsignми
+ temporary ряд данных with колонками 'returns' and другими приsignми
  - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
  - Рекомендуется минимум 1000 наблюдений for надежности
@@ -2320,10 +2320,10 @@ def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
  # Обучающие data
  train_data = data[i-lookback_window:i]
 
- # Тестовые data
+ # testsые data
  test_data = data[i:i+config['test_window']]
 
- # Обучение всех стратегий
+ # Обучение all стратегий
  strategy_Predictions = {}
  strategy_returns = {}
 
@@ -2485,7 +2485,7 @@ def calculate_basic_metrics(returns, config=None, validation=True):
  Parameters:
  -----------
  returns : pd.Series or np.array
- Временной ряд доходностей стратегии
+ temporary ряд доходностей стратегии
  - Должен содержать числовые значения
  - Рекомендуется минимум 100 наблюдений for надежности
  - Может содержать NaN, которые будут проигнорированы
@@ -2644,7 +2644,7 @@ def calculate_basic_metrics(returns, config=None, validation=True):
  'pvalue': jb_pvalue,
  'is_normal': jb_pvalue > 0.05
  }
- except ImportError:
+ except importError:
  if config['verbose']:
  print("scipy not installed, пропускаем тест Жарка-Бера")
 
@@ -2658,7 +2658,7 @@ def calculate_basic_metrics(returns, config=None, validation=True):
  'max_autocorr': np.max(np.abs(autocorr[1:])),
  'has_autocorr': np.max(np.abs(autocorr[1:])) > 0.1
  }
- except ImportError:
+ except importError:
  if config['verbose']:
  print("statsmodels not installed, пропускаем автокорреляцию")
 
@@ -2672,7 +2672,7 @@ def calculate_basic_metrics(returns, config=None, validation=True):
  'adf_critical': adf_critical,
  'is_stationary': adf_pvalue < 0.05
  }
- except ImportError:
+ except importError:
  if config['verbose']:
  print("statsmodels not installed, пропускаем тест стационарности")
 
@@ -2695,7 +2695,7 @@ def calculate_max_drawdown(returns, config=None, validation=True):
  Parameters:
  -----------
  returns : pd.Series or np.array
- Временной ряд доходностей стратегии
+ temporary ряд доходностей стратегии
  - Должен содержать числовые значения
  - Рекомендуется минимум 100 наблюдений for надежности
  - Может содержать NaN, которые будут проигнорированы
@@ -2919,7 +2919,7 @@ def calculate_stability_metrics(returns, window=252, config=None, validation=Tru
  Parameters:
  -----------
  returns : pd.Series or np.array
- Временной ряд доходностей стратегии
+ temporary ряд доходностей стратегии
  - Должен содержать числовые значения
  - Рекомендуется минимум 100 наблюдений for надежности
  - Может содержать NaN, которые будут проигнорированы
@@ -3135,7 +3135,7 @@ def calculate_stability_metrics(returns, window=252, config=None, validation=Tru
  'spectral_density': psd.max(),
  'has_cyclical_pattern': cycle_length > 0 and cycle_length < len(returns_clean) / 2
  }
- except ImportError:
+ except importError:
  if config['verbose']:
  print("scipy not installed, пропускаем метрики циклов")
 
@@ -3489,7 +3489,7 @@ class BacktestingPipeline:
  # Обучающие data
  train_data = self.data[i-train_window:i]
 
- # Тестовые data
+ # testsые data
  test_data = self.data[i:i+test_window]
 
  # Обучение модели

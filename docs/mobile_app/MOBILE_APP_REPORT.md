@@ -14,7 +14,7 @@ mobile application for Pocket Hedge fund successfully created and integrated wit
 
 ### 2. **Application screens**
 - ✅ **Loginscreen** - Login to system
-- ✅ **Registerscreen** - User registration
+- ✅ **Registerscreen** - user registration
 - ✅ **Dashboardscreen** - main screen with greeting
 - ✅ **Loadingscreen** - Loading screen
 
@@ -25,14 +25,14 @@ mobile application for Pocket Hedge fund successfully created and integrated wit
 
 ### 4. **Backend API endpoints**
 - ✅ `/mobile/health` - health check mobile API
-- ✅ `/mobile/dashboard` - data for main screen
-- ✅ `/mobile/Portfolio` - User Portfolio
+- ✅ `/mobile/dashboard` - Data for main screen
+- ✅ `/mobile/Portfolio` - user Portfolio
 - ✅ `/mobile/funds` - List of funds
 - ✅ `/mobile/investments` - Investment Management
-- ✅ `/mobile/sync` - Synchronization данных
-- ✅ `/mobile/notifications/push` - Push уведомления
+- ✅ `/mobile/sync` - Data Synchronization
+- ✅ `/mobile/notifications/Push` - Push notifications
 
-## 🔧 Технические детали
+## 🔧 Technical details
 
 ### dependencies
 ```json
@@ -47,7 +47,7 @@ mobile application for Pocket Hedge fund successfully created and integrated wit
 }
 ```
 
-### Structure файлов
+### File Structure
 ```
 src/mobile_app/
 ├── App.js # Главный файл приложения
@@ -74,7 +74,7 @@ src/mobile_app/
 
 ## 🚀 Launch приложения
 
-### 1. installation зависимостей
+### 1. installation dependencies
 ```bash
 cd src/mobile_app
 npm install
@@ -108,7 +108,7 @@ npx expo start --web
 - `GET /mobile/funds` - List of funds (требует аутентификации)
 - `POST /mobile/investments` - create инвестиции (требует аутентификации)
 - `POST /mobile/sync` - Synchronization (требует аутентификации)
-- `POST /mobile/notifications/push` - Push уведомления (требует аутентификации)
+- `POST /mobile/notifications/Push` - Push notifications (требует аутентификации)
 
 ### Authentication
 - JWT токены for аутентификации
@@ -163,11 +163,11 @@ curl -X GET "http://localhost:8080/mobile/dashboard"
 1. **Дополнительные экраны**
  - Детальный View funds
  - История транзакций
- - settings профиля
- - Уведомления
+ - Settings профиля
+ - notifications
 
 2. **Расширенная функциональность**
- - Push уведомления
+ - Push notifications
  - Офлайн режим
  - Биометрическая Authentication
  - Графики and аналитика

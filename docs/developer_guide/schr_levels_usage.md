@@ -12,7 +12,7 @@ SCHR Levels AutoML - это автоматизированный пайплай�
 
 ### 1. Простой тест
 ```bash
-cd /Users/rostsh/Documents/DIS/REPO/neozork-hld-Prediction
+cd /users/rostsh/Documents/DIS/REPO/neozork-hld-Prediction
 uv run python test_schr_pipeline.py
 ```
 
@@ -56,16 +56,16 @@ uv run python schr-levels-gluon.py
 ```python
 from schr_levels_gluon import SCHRLevelsAutoMLPipeline
 
-# Создаем пайплайн
+# Creating пайплайн
 pipeline = SCHRLevelsAutoMLPipeline()
 
 # Loading data
 data = pipeline.load_schr_data('BTCUSD', 'MN1')
 
-# Создаем целевые переменные
+# Creating целевые переменные
 data = pipeline.create_target_variables(data)
 
-# Создаем признаки
+# Creating признаки
 data = pipeline.create_features(data)
 
 # Обучаем модель
@@ -96,7 +96,7 @@ mc_results = pipeline.monte_carlo_validation(data, 'pressure_vector_sign', n_ite
 print(f"Средняя точность: {mc_results['mean_accuracy']:.2%}")
 ```
 
-## 📁 Structure файлов
+## 📁 File Structure
 
 ```
 models/schr_levels_production/
@@ -177,7 +177,7 @@ print(feature_importance.head(10))
 
 ### Ошибка "No such file or directory"
 ```bash
-# Проверьте presence файлов данных
+# Проверьте presence files данных
 ls data/cache/csv_converted/
 ```
 
@@ -257,7 +257,7 @@ for task in ['pressure_vector_sign', 'price_direction_5periods', 'level_breakout
 При возникновении проблем:
 1. Проверьте логи in папке `logs/`
 2. Убедитесь, что data загружены корректно
-3. Проверьте presence всех зависимостей: `uv run pip List`
+3. Проверьте presence all dependencies: `uv run pip List`
 
 ---
 

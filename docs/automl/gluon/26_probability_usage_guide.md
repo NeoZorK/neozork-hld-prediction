@@ -80,16 +80,16 @@ predictor = TabularPredictor(
  eval_metric='accuracy', # Метрика оценки: 'accuracy', 'f1', 'roc_auc', 'log_loss'
  path='./models', # Путь for сохранения моделей
  verbosity=2, # Уровень вывода: 0-4 (0=тихо, 4=подробно)
- presets='best_quality' # Предустановки: 'best_quality', 'high_quality', 'good_quality', 'medium_quality'
+ presets='best_quality' # Предinstallation: 'best_quality', 'high_quality', 'good_quality', 'medium_quality'
 )
 
 # Обучение модели with параметрами
 predictor.fit(
  train_data, # Обучающие data
  time_limit=3600, # Лимит времени обучения in секундах
- presets='best_quality', # Предустановки качества
+ presets='best_quality', # Предinstallation качества
  num_trials=10, # Количество попыток оптимизации
- hyperparameter_tune_kwargs={ # parameters settings гиперпараметров
+ hyperparameter_tune_kwargs={ # parameters Settings гиперпараметров
  'scheduler': 'local',
  'searcher': 'auto'
  },
@@ -103,7 +103,7 @@ predictor.fit(
  feature_prune=True, # Обрезка неважных признаков
  excluded_model_types=[], # Исключенные типы моделей
  included_model_types=[], # Включенные типы моделей
- refit_full=True, # Переобучение on всех данных
+ refit_full=True, # Переобучение on all данных
  set_best_to_refit_full=True, # installation лучшей модели как refit_full
  save_space=True, # Экономия места on диске
  save_bag_folds=True, # Сохранение бэггинг фолдов
@@ -118,7 +118,7 @@ Predictions = predictor.predict(test_data)
 
 # Получение вероятностей with параметрами
 probabilities = predictor.predict_proba(
- test_data, # Тестовые data
+ test_data, # testsые data
  as_pandas=True, # Возврат in формате pandas dataFrame
  transform_features=True # Применение трансформаций к приsignм
 )
@@ -250,7 +250,7 @@ class ProbabilityCalibration:
  base_estimator=None, # AutoML Gluon модель
  method=self.config['platt_method'], # 'sigmoid' or 'isotonic'
  cv=self.config['cv_folds'], # Количество фолдов
- n_jobs=-1, # Использование всех ядер
+ n_jobs=-1, # Использование all ядер
  ensemble=True # Использование ансамбля
  )
 
@@ -441,7 +441,7 @@ class AdaptiveRiskManagement:
  'max_drawdown': 0.2, # Максимальная просадка
  'var_confidence': 0.95, # Уровень доверия for VaR
  'var_horizon': 1, # Горизонт VaR (дни)
- 'stress_test_scenarios': 5, # Количество сценариев стресс-тестов
+ 'stress_test_scenarios': 5, # Количество сценариев стресс-tests
  'liquidity_buffer': 0.05, # Буфер ликвидности
  'transaction_costs': 0.001, # Транзакционные издержки
  'slippage_factor': 0.0005, # Фактор проскальзывания
@@ -1072,7 +1072,7 @@ class ProbabilityDriftMonitor:
  'psi_threshold': 0.2, # Порог for PSI
  'wasserstein_threshold': 0.1 # Порог for Вассерштейна
  },
- 'alert_settings': {
+ 'alert_Settings': {
  'enable_alerts': True, # Включение алертов
  'alert_threshold': 0.1, # Порог for алертов
  'alert_frequency': 'immediate', # Частота алертов
@@ -1087,7 +1087,7 @@ class ProbabilityDriftMonitor:
  'correlation_drift': True, # Дрифт корреляции
  'entropy_drift': True # Дрифт энтропии
  },
- 'adaptation_settings': {
+ 'adaptation_Settings': {
  'auto_adapt': False, # Автоматическая адаптация
  'adaptation_threshold': 0.15, # Порог for адаптации
  'adaptation_method': 'retrain', # Метод адаптации
@@ -1104,10 +1104,10 @@ class ProbabilityDriftMonitor:
  'plot_size': (12, 8) # Размер графиков
  },
  'data_quality': {
- 'check_missing': True, # check пропущенных значений
+ 'check_Missing': True, # check пропущенных значений
  'check_outliers': True, # check выбросов
  'outlier_threshold': 3.0, # Порог for выбросов
- 'missing_threshold': 0.1, # Порог for пропущенных значений
+ 'Missing_threshold': 0.1, # Порог for пропущенных значений
  'data_validation': True # Валидация данных
  },
  'performance': {
@@ -1201,7 +1201,7 @@ class ProbabilityDriftMonitor:
  self.drift_history.append(results)
 
  # check алертов
- if self.config['alert_settings']['enable_alerts']:
+ if self.config['alert_Settings']['enable_alerts']:
  self._check_alerts(results)
 
  return results
@@ -1289,7 +1289,7 @@ class ProbabilityDriftMonitor:
 
  def psi_drift_test(self, current, baseline, drift_threshold=None):
  """
- PSI (Population Stability Index) тест
+ PSI (Population Stability index) тест
 
  Args:
  current (array): Текущие вероятности
@@ -1337,15 +1337,15 @@ class ProbabilityDriftMonitor:
  def _validate_probabilities(self, current, baseline):
  """Валидация вероятностей"""
  # check on пропущенные значения
- if self.config['data_quality']['check_missing']:
- missing_current = np.isnan(current).sum()
- missing_baseline = np.isnan(baseline).sum()
+ if self.config['data_quality']['check_Missing']:
+ Missing_current = np.isnan(current).sum()
+ Missing_baseline = np.isnan(baseline).sum()
 
- if missing_current > len(current) * self.config['data_quality']['missing_threshold']:
- raise ValueError(f"Too many missing values in current probabilities: {missing_current}")
+ if Missing_current > len(current) * self.config['data_quality']['Missing_threshold']:
+ raise ValueError(f"Too many Missing values in current probabilities: {Missing_current}")
 
- if missing_baseline > len(baseline) * self.config['data_quality']['missing_threshold']:
- raise ValueError(f"Too many missing values in baseline probabilities: {missing_baseline}")
+ if Missing_baseline > len(baseline) * self.config['data_quality']['Missing_threshold']:
+ raise ValueError(f"Too many Missing values in baseline probabilities: {Missing_baseline}")
 
  # check on выбросы
  if self.config['data_quality']['check_outliers']:
@@ -1373,7 +1373,7 @@ class ProbabilityDriftMonitor:
  def _check_alerts(self, results):
  """check алертов"""
  if results['drift_detected']:
- alert_threshold = self.config['alert_settings']['alert_threshold']
+ alert_threshold = self.config['alert_Settings']['alert_threshold']
 
  # check порога алерта
  if any(results.get(method, False) for method in self.config['test_methods']):
@@ -2220,7 +2220,7 @@ class ProbabilityTradingsystem:
  if all(field in signal for field in required_fields):
  validated_signals.append(signal)
  else:
- print(f"Warning: signal missing required fields: {signal}")
+ print(f"Warning: signal Missing required fields: {signal}")
 
  return validated_signals
 
@@ -2400,7 +2400,7 @@ graph TD
 | `max_drawdown` | `0.2` | Максимальная просадка | `0.05-0.5` |
 | `var_confidence` | `0.95` | Уровень доверия for VaR | `0.9-0.99` |
 | `var_horizon` | `1` | Горизонт VaR (дни) | `1-30` |
-| `stress_test_scenarios` | `5` | Количество сценариев стресс-тестов | `3-20` |
+| `stress_test_scenarios` | `5` | Количество сценариев стресс-tests | `3-20` |
 | `liquidity_buffer` | `0.05` | Буфер ликвидности | `0.01-0.2` |
 | `transaction_costs` | `0.001` | Транзакционные издержки | `0.0001-0.01` |
 | `slippage_factor` | `0.0005` | Фактор проскальзывания | `0.0001-0.005` |
@@ -2480,10 +2480,10 @@ graph TD
 | `plot_format` | `'png'` | Формат графиков | `['png', 'jpg', 'svg', 'pdf']` |
 | `plot_dpi` | `300` | DPI графиков | `72-600` |
 | `plot_size` | `(12, 8)` | Размер графиков | `(6, 4)-(20, 16)` |
-| `check_missing` | `True` | check пропущенных значений | `True/False` |
+| `check_Missing` | `True` | check пропущенных значений | `True/False` |
 | `check_outliers` | `True` | check выбросов | `True/False` |
 | `outlier_threshold` | `3.0` | Порог for выбросов | `2.0-5.0` |
-| `missing_threshold` | `0.1` | Порог for пропущенных значений | `0.05-0.3` |
+| `Missing_threshold` | `0.1` | Порог for пропущенных значений | `0.05-0.3` |
 | `data_validation` | `True` | Валидация данных | `True/False` |
 | `parallel_processing` | `True` | Параллельная обработка | `True/False` |
 | `n_jobs` | `-1` | Количество процессов | `-1, 1-32` |

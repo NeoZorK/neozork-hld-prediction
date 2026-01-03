@@ -46,7 +46,7 @@ def _create_discontinuous_line_segments(x_data, y_data, mask):
  # Create segments for each continuous segment
  for start_idx, end_idx in zip(starts, ends):
  if start_idx <= end_idx: # Valid segment
- # Handle both Series and Index for x_data
+ # Handle both Series and index for x_data
  if hasattr(x_data, 'iloc'):
  segment_x = x_data.iloc[start_idx:end_idx+1]
  else:
@@ -128,14 +128,14 @@ if plot_wave_col and plot_color_col:
 - **Сигналы**: Отображаются on верхнем графике как зеленые/красные треугольники
 
 ### 4. **Тестирование**
-- ✅ Создан полный набор тестов in `tests/plotting/test_wave_fast_mode.py`
-- ✅ Все 7 тестов прошли успешно
+- ✅ Создан полный набор tests in `tests/plotting/test_wave_fast_mode.py`
+- ✅ Все 7 tests прошли успешно
 - ✅ Протестирована реальная Working with data
 - ✅ Сравнение with fastest режимом показало идентичность
 
 ### 5. **documentation**
-- Создана подробная documentation всех исправлений
-- Описаны технические детали and examples использования
+- Создана подробная documentation all исправлений
+- Описаны Technical details and examples использования
 
 ## 🎉 Заключение
 Wave indicator теперь полностью Workingет in `-d fast` режиме with прерывистыми линиями, точно как in `-d fastest` режиме. Линии отображаются только там, где есть сигналы, а промежутки без сигналов остаются невидимыми.

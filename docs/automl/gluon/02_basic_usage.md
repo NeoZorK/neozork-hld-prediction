@@ -51,7 +51,7 @@
 
 ### Импорт and create базового предиктора
 
-**Почему начинаем with импорта?** Потому что это основа любого Python проекта. Правильный импорт - это как правильная configuration инструмента.
+**Почему начинаем with import?** Потому что это основа любого Python проекта. Правильный импорт - это как правильная configuration инструмента.
 
 ```python
 from autogluon.tabular import TabularPredictor
@@ -404,7 +404,7 @@ predictor.fit(
 
 **parameter `verbosity`:**
 
-- **Что означает**: Уровень детализации вывода (from 0 to 4)
+- **Что означает**: Уровень detailsзации вывода (from 0 to 4)
 - **Зачем нужен**: Контролирует количество информации, выводимой во время обучения
 - **on умолчанию**: `2` (средний уровень)
 - **Доступные уровни**:
@@ -412,7 +412,7 @@ predictor.fit(
  - **`1`** - Минимальная информация
  - **`2`** - Стандартная информация (on умолчанию)
  - **`3`** - Подробная информация
- - **`4`** - Максимальная детализация
+ - **`4`** - Максимальная detailsзация
 - **Практические examples**:
  - **Продакшен**: `verbosity=1` (минимальный вывод)
  - **Разработка**: `verbosity=2` (стандартный вывод)
@@ -538,7 +538,7 @@ predictor.fit(
 ### Базовые метрики
 
 ```python
-# Оценка on тестовых данных
+# Оценка on testsых данных
 performance = predictor.evaluate(test_data)
 print(f"Model performance: {performance}")
 
@@ -1091,13 +1091,13 @@ probabilities = predictor.predict_proba(test_data)
 - **on умолчанию**: `True` (pandas dataFrame)
 - **Доступные значения**:
  - **`True`** - pandas dataFrame with названиями классов
- - **`False`** - numpy array with индексами классов
+ - **`False`** - numpy array with indexами классов
 - **Практические examples**:
  - **Анализ вероятностей**: `as_pandas=True` (удобно читать)
  - **Математические вычисления**: `as_pandas=False` (быстрее)
 - **Влияние on результат**:
  - **pandas dataFrame**: Колонки with названиями классов
- - **numpy array**: Колонки with индексами классов
+ - **numpy array**: Колонки with indexами классов
 - **Когда использовать**:
  - **Интерпретация результатов**: `as_pandas=True`
  - **Вычисления**: `as_pandas=False`
@@ -1138,13 +1138,13 @@ individual_Predictions = predictor.predict_multi(test_data)
 - **on умолчанию**: `True` (pandas dataFrame)
 - **Доступные значения**:
  - **`True`** - pandas dataFrame with названиями моделей
- - **`False`** - numpy array with индексами моделей
+ - **`False`** - numpy array with indexами моделей
 - **Практические examples**:
  - **Анализ моделей**: `as_pandas=True` (удобно сравнивать)
  - **Вычисления**: `as_pandas=False` (быстрее)
 - **Влияние on результат**:
  - **pandas dataFrame**: Колонки with названиями моделей
- - **numpy array**: Колонки with индексами моделей
+ - **numpy array**: Колонки with indexами моделей
 - **Когда использовать**:
  - **Сравнение моделей**: `as_pandas=True`
  - **Ансамблирование**: `as_pandas=False`
@@ -1170,7 +1170,7 @@ individual_Predictions = predictor.predict_multi(test_data)
 - **on умолчанию**: `True` (pandas dataFrame)
 - **Доступные значения**:
  - **`True`** - pandas dataFrame with названиями моделей and классов
- - **`False`** - numpy array with индексами моделей and классов
+ - **`False`** - numpy array with indexами моделей and классов
 - **Практические examples**:
  - **Анализ вероятностей**: `as_pandas=True` (удобно читать)
  - **Вычисления**: `as_pandas=False` (быстрее)
@@ -1351,12 +1351,12 @@ leaderboard = predictor.leaderboard(
 )
 ```
 
-## Продвинутые settings
+## Продвинутые Settings
 
 ### ⚙️ configuration гиперпараметров
 
 <img src="images/optimized/monte_carlo_Analysis.png" alt="configuration гиперпараметров" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 8: Процесс settings гиперпараметров and оптимизации*
+*Рисунок 8: Процесс Settings гиперпараметров and оптимизации*
 
 **Почему важна configuration гиперпараметров?** Потому что правильные parameters могут улучшить качество модели on 10-30%:
 
@@ -1596,7 +1596,7 @@ hyperparameters = {
 ]
 ```
 
-**Полный example settings hyperparameters:**
+**Полный example Settings hyperparameters:**
 
 ```python
 # Комплексная configuration гиперпараметров
@@ -1645,7 +1645,7 @@ predictor.fit(
 )
 ```
 
-**Стратегии settings гиперпараметров:**
+**Стратегии Settings гиперпараметров:**
 
 ```python
 # Стратегия 1: Быстрое тестирование

@@ -45,7 +45,7 @@ SCHR SHORT3 основан on комбинации нескольких мате
 - Меньше ложных сигналов
 
 **Минусы:**
-- Сложность settings параметров
+- Сложность Settings параметров
 - Высокие требования к вычислительным ресурсам
 - Необходимость глубокого понимания теории
 
@@ -67,7 +67,7 @@ SCHR SHORT3 основан on комбинации нескольких мате
 
 **Минусы:**
 - Сложность понимания
-- Необходимость settings
+- Необходимость Settings
 - Потенциальные ошибки in применении
 
 **Детальное объяснение кода:**
@@ -564,7 +564,7 @@ class SCHRShort3M1Analysis:
 # example использования M1 Analysis
 def demonstrate_m1_Analysis():
  """Демонстрация M1 Analysis"""
- # create тестовых данных
+ # create testsых данных
  test_data = create_schr_short3_data_Structure()
 
  # Инициализация Analysisтора
@@ -842,7 +842,7 @@ class SCHRShort3M5Analysis:
 # example использования M5 Analysis
 def demonstrate_m5_Analysis():
  """Демонстрация M5 Analysis"""
- # create тестовых данных
+ # create testsых данных
  test_data = create_schr_short3_data_Structure()
 
  # Инициализация Analysisтора
@@ -1136,7 +1136,7 @@ class SCHRShort3H1Analysis:
 # example использования H1 Analysis
 def demonstrate_h1_Analysis():
  """Демонстрация H1 Analysis"""
- # create тестовых данных
+ # create testsых данных
  test_data = create_schr_short3_data_Structure()
 
  # Инициализация Analysisтора
@@ -1425,17 +1425,17 @@ class SCHRShort3FeatureEngineer:
  # 10. Корреляция краткосрочных сигналов
  features['short_signal_correlation'] = data['short_term_signal'].rolling(20).corr(data['short_term_strength'])
 
- # 11. Индекс силы сигнала
+ # 11. index силы сигнала
  features['signal_strength_index'] = (
  data['short_term_strength'] * data['short_term_direction'] * data['short_term_momentum']
  )
 
- # 12. Индекс волатильности сигнала
+ # 12. index волатильности сигнала
  features['signal_volatility_index'] = (
  data['short_term_volatility'] * data['short_term_strength']
  )
 
- # 13. Комбинированный индекс
+ # 13. Комбинированный index
  features['combined_signal_index'] = (
  features['signal_strength_index'] * features['signal_volatility_index']
  )
@@ -1445,7 +1445,7 @@ class SCHRShort3FeatureEngineer:
 
  def create_all_features(self, data):
  """
- create всех признаков
+ create all признаков
 
  Объединяет все типы признаков in один dataFrame.
 
@@ -1455,13 +1455,13 @@ class SCHRShort3FeatureEngineer:
  Returns:
  dataFrame со allи приsignми
  """
- # create всех типов признаков
+ # create all типов признаков
  basic_features = self.create_basic_features(data)
  lag_features = self.create_lag_features(data)
  rolling_features = self.create_rolling_features(data)
  advanced_features = self.create_advanced_features(data)
 
- # Объединение всех признаков
+ # Объединение all признаков
  all_features = pd.concat([
  basic_features,
  lag_features,
@@ -1480,13 +1480,13 @@ class SCHRShort3FeatureEngineer:
 # example использования создания признаков
 def demonstrate_feature_engineering():
  """Демонстрация создания признаков"""
- # create тестовых данных
+ # create testsых данных
  test_data = create_schr_short3_data_Structure()
 
  # Инициализация инженера признаков
  feature_engineer = SCHRShort3FeatureEngineer()
 
- # create всех признаков
+ # create all признаков
  features = feature_engineer.create_all_features(test_data)
 
  print("Feature Engineering Results:")
@@ -1592,22 +1592,22 @@ def create_advanced_schr_short3_features(data):
  # Корреляция между сигналом and его силой
  features['short_signal_correlation'] = data['short_term_signal'].rolling(20).corr(data['short_term_strength'])
 
- # 11. Индекс силы сигнала
- # Комбинированный индекс силы, учитывающий все components
+ # 11. index силы сигнала
+ # Комбинированный index силы, учитывающий все components
  features['signal_strength_index'] = (
  data['short_term_strength'] *
  data['short_term_direction'] *
  data['short_term_momentum']
  )
 
- # 12. Индекс волатильности сигнала
- # Индекс, учитывающий волатильность and силу сигнала
+ # 12. index волатильности сигнала
+ # index, учитывающий волатильность and силу сигнала
  features['signal_volatility_index'] = (
  data['short_term_volatility'] *
  data['short_term_strength']
  )
 
- # 13. Комбинированный индекс
+ # 13. Комбинированный index
  # Объединяет силу and волатильность сигнала
  features['combined_signal_index'] = (
  features['signal_strength_index'] *
@@ -1628,18 +1628,18 @@ def create_advanced_schr_short3_features(data):
  data['short_term_volatility'].rolling(50).mean()
  )
 
- # 16. Индекс стабильности сигнала
+ # 16. index стабильности сигнала
  # Обратная величина стандартного отклонения сигнала
  features['signal_stability_index'] = 1 / (data['short_term_signal'].rolling(20).std() + 1e-8)
 
- # 17. Индекс изменчивости сигнала
+ # 17. index изменчивости сигнала
  # Коэффициент вариации сигнала
  features['signal_variability_index'] = (
  data['short_term_signal'].rolling(20).std() /
  (data['short_term_signal'].rolling(20).mean().abs() + 1e-8)
  )
 
- # 18. Индекс тренда сигнала
+ # 18. index тренда сигнала
  # Наклон линейной регрессии сигнала
  def calculate_trend_slope(series, window=10):
  """Расчет наклона тренда for серии"""
@@ -1659,21 +1659,21 @@ def create_advanced_schr_short3_features(data):
 
  features['signal_trend_slope'] = calculate_trend_slope(data['short_term_signal'])
 
- # 19. Индекс цикличности сигнала
+ # 19. index цикличности сигнала
  # Автокорреляция сигнала with различными лагами
  features['signal_cyclicality'] = data['short_term_signal'].rolling(20).apply(
  lambda x: x.autocorr(lag=1) if len(x) > 1 else 0
  )
 
- # 20. Индекс асимметрии сигнала
+ # 20. index асимметрии сигнала
  # Асимметрия распределения сигнала
  features['signal_skewness'] = data['short_term_signal'].rolling(20).skew()
 
- # 21. Индекс эксцесса сигнала
+ # 21. index эксцесса сигнала
  # Эксцесс распределения сигнала
  features['signal_kurtosis'] = data['short_term_signal'].rolling(20).kurt()
 
- # 22. Индекс энтропии сигнала
+ # 22. index энтропии сигнала
  # Энтропия Шеннона for сигнала
  def calculate_entropy(series, bins=10):
  """Расчет энтропии Шеннона"""
@@ -1689,7 +1689,7 @@ def create_advanced_schr_short3_features(data):
  lambda x: calculate_entropy(x) if len(x) > 1 else 0
  )
 
- # 23. Индекс фрактальности сигнала
+ # 23. index фрактальности сигнала
  # Упрощенная мера фрактальности (Hurst exponent)
  def calculate_hurst_exponent(series):
  """Расчет экспоненты Херста"""
@@ -1707,11 +1707,11 @@ def create_advanced_schr_short3_features(data):
  lambda x: calculate_hurst_exponent(x) if len(x) > 10 else 0.5
  )
 
- # 24. Индекс персистентности сигнала
+ # 24. index персистентности сигнала
  # Мера персистентности тренда
  features['signal_persistence'] = np.abs(features['signal_hurst_exponent'] - 0.5)
 
- # 25. Индекс случайности сигнала
+ # 25. index случайности сигнала
  # Обратная величина персистентности
  features['signal_randomness'] = 1 - features['signal_persistence']
 
@@ -1720,7 +1720,7 @@ def create_advanced_schr_short3_features(data):
 # example использования продвинутых признаков
 def demonstrate_advanced_features():
  """Демонстрация создания продвинутых признаков"""
- # create тестовых данных
+ # create testsых данных
  test_data = create_schr_short3_data_Structure()
 
  # create продвинутых признаков
@@ -1743,7 +1743,7 @@ if __name__ == "__main__":
 
 ### 3. Временные признаки
 
-**Теория:** Временные признаки SCHR SHORT3 учитывают временные аспекты краткосрочной торговой динамики, including циклы, сезонность and временные паттерны краткосрочных сигналов. Они критически важны for понимания временной структуры краткосрочной торговли.
+**Теория:** Временные признаки SCHR SHORT3 учитывают временные аспекты краткосрочной торговой динамики, including циклы, сезонность and временные паттерны краткосрочных сигналов. Они критически важны for понимания temporary структуры краткосрочной торговли.
 
 **Почему временные признаки важны:**
 - **Временная Structure:** Учитывают временные аспекты краткосрочных сигналов
@@ -1752,10 +1752,10 @@ if __name__ == "__main__":
 - **Временные dependencies:** Анализируют dependencies во времени
 
 **Плюсы:**
-- Учет временной структуры
+- Учет temporary структуры
 - Выявление циклов
 - Учет сезонности
-- Анализ временных зависимостей
+- Анализ временных dependencies
 
 **Минусы:**
 - Сложность вычислений
@@ -1817,7 +1817,7 @@ def create_temporal_schr_short3_features(data):
  frequencies = {}
 
  for window in windows:
- # Частота всех сигналов
+ # Частота all сигналов
  frequencies[f'signal_frequency_{window}'] = (
  data['short_term_signal'].rolling(window).apply(
  lambda x: (x != 0).sum() / window
@@ -1882,7 +1882,7 @@ def create_temporal_schr_short3_features(data):
  lambda x: x.autocorr(lag=lag) if len(x) > lag else 0
  )
 
- # Сезонные components (если есть временная информация)
+ # Сезонные components (if present временная информация)
  if hasattr(data.index, 'hour'):
  # Час дня
  patterns['hour_of_day'] = data.index.hour
@@ -1958,28 +1958,28 @@ def create_temporal_schr_short3_features(data):
  trend_features = calculate_temporal_trends(data)
  features = pd.concat([features, pd.dataFrame(trend_features, index=data.index)], axis=1)
 
- # 7. Временные индексы
- # Создает различные временные индексы
+ # 7. Временные indexы
+ # Создает различные временные indexы
  def create_temporal_indexes(data):
- """create временных индексов"""
+ """create временных indexов"""
  indexes = {}
 
- # Индекс времени (нормализованный)
+ # index времени (нормализованный)
  if hasattr(data.index, 'hour'):
  indexes['time_index'] = (
  data.index.hour * 60 +
  data.index.minute
  ) / (24 * 60) # Нормализация к [0, 1]
 
- # Индекс дня недели (нормализованный)
+ # index дня недели (нормализованный)
  if hasattr(data.index, 'dayofweek'):
  indexes['weekday_index'] = data.index.dayofweek / 6 # Нормализация к [0, 1]
 
- # Индекс месяца (нормализованный)
+ # index месяца (нормализованный)
  if hasattr(data.index, 'month'):
  indexes['month_index'] = data.index.month / 12 # Нормализация к [0, 1]
 
- # Циклические индексы (синус and косинус)
+ # Циклические indexы (синус and косинус)
  if hasattr(data.index, 'hour'):
  hour_rad = 2 * np.pi * data.index.hour / 24
  indexes['hour_sin'] = np.sin(hour_rad)
@@ -2005,7 +2005,7 @@ def create_temporal_schr_short3_features(data):
 # example использования временных признаков
 def demonstrate_temporal_features():
  """Демонстрация создания временных признаков"""
- # create тестовых данных
+ # create testsых данных
  test_data = create_schr_short3_data_Structure()
 
  # create временных признаков
@@ -2239,7 +2239,7 @@ def create_short_risk_target(data, horizon=1):
  volatility = data['Close'].pct_change().rolling(horizon).std()
  max_drawdown = abs(price_change)
 
- # Комбинированный индекс риска
+ # Комбинированный index риска
  risk_index = volatility * max_drawdown
 
  # Классификация риска
@@ -2254,7 +2254,7 @@ def create_short_risk_target(data, horizon=1):
 
 def create_all_targets(data, horizon=1):
  """
- create всех целевых переменных
+ create all целевых переменных
 
  Эта function создает все типы целевых переменных for комплексного
  Analysis краткосрочных движений цены.
@@ -2268,7 +2268,7 @@ def create_all_targets(data, horizon=1):
  """
  targets = pd.dataFrame(index=data.index)
 
- # create всех типов целевых переменных
+ # create all типов целевых переменных
  targets['direction'] = create_short_direction_target(data, horizon)
  targets['strength'] = create_short_strength_target(data, horizon)
  targets['volatility'] = create_short_volatility_target(data, horizon)
@@ -2289,10 +2289,10 @@ def create_all_targets(data, horizon=1):
 # example использования создания целевых переменных
 def demonstrate_target_creation():
  """Демонстрация создания целевых переменных"""
- # create тестовых данных
+ # create testsых данных
  test_data = create_schr_short3_data_Structure()
 
- # create всех целевых переменных
+ # create all целевых переменных
  targets = create_all_targets(test_data)
 
  print("Target Creation Results:")
@@ -2669,7 +2669,7 @@ class SCHRShort3DeepModel:
  Deep Learning модель for SCHR SHORT3
 
  Этот класс реализует нейронную сеть for Analysis
- сложных нелинейных зависимостей in краткосрочных сигналах.
+ сложных нелинейных dependencies in краткосрочных сигналах.
  """
 
  def __init__(self, input_dim, output_dim):
@@ -2806,7 +2806,7 @@ class SCHRShort3DeepModel:
 # example использования ML-моделей
 def demonstrate_ml_models():
  """Демонстрация ML-моделей"""
- # create тестовых данных
+ # create testsых данных
  test_data = create_schr_short3_data_Structure()
 
  # create признаков
@@ -2816,7 +2816,7 @@ def demonstrate_ml_models():
  # create целевых переменных
  targets = create_all_targets(test_data)
 
- # Выравнивание индексов
+ # Выравнивание indexов
  common_index = features.index.intersection(targets.index)
  features = features.loc[common_index]
  targets = targets.loc[common_index]
@@ -2901,7 +2901,7 @@ class SCHRShort3Regressor:
 
 **Плюсы:**
 - Высокая точность
-- Выявление сложных зависимостей
+- Выявление сложных dependencies
 - Адаптивность к сложным условиям
 - Масштабируемость
 
@@ -2989,7 +2989,7 @@ class SCHRShort3DeepModel:
 - Валидация стратегии
 
 **Минусы:**
-- Сложность settings
+- Сложность Settings
 - Потенциальные Issues with data
 - Время on тестирование
 
@@ -2998,7 +2998,7 @@ class SCHRShort3DeepModel:
 Бэктестинг SCHR SHORT3 модели является критически важным этапом for валидации эффективности торговой стратегии. Он позволяет:
 
 - **Проверить эффективность:** Оценить производительность on исторических данных
-- **Оптимизировать parameters:** Найти оптимальные settings
+- **Оптимизировать parameters:** Найти оптимальные Settings
 - **Управлять рисками:** Оценить потенциальные риски
 
 ```python
@@ -3270,7 +3270,7 @@ class SCHRShort3Backtester:
 # example использования бэктестера
 def demonstrate_backtesting():
  """Демонстрация бэктестинга"""
- # create тестовых данных
+ # create testsых данных
  test_data = create_schr_short3_data_Structure()
 
  # create признаков
@@ -3280,7 +3280,7 @@ def demonstrate_backtesting():
  # create целевых переменных
  targets = create_all_targets(test_data)
 
- # Выравнивание индексов
+ # Выравнивание indexов
  common_index = features.index.intersection(targets.index)
  features = features.loc[common_index]
  targets = targets.loc[common_index]
@@ -3605,7 +3605,7 @@ def calculate_volatility_persistence(returns):
 # example использования метрик производительности
 def demonstrate_performance_metrics():
  """Демонстрация расчета метрик производительности"""
- # create тестовых данных
+ # create testsых данных
  test_data = create_schr_short3_data_Structure()
 
  # create признаков
@@ -3615,7 +3615,7 @@ def demonstrate_performance_metrics():
  # create целевых переменных
  targets = create_all_targets(test_data)
 
- # Выравнивание индексов
+ # Выравнивание indexов
  common_index = features.index.intersection(targets.index)
  features = features.loc[common_index]
  targets = targets.loc[common_index]
@@ -3677,7 +3677,7 @@ if __name__ == "__main__":
 - Эффективность
 
 **Минусы:**
-- Сложность settings
+- Сложность Settings
 - Время выполнения
 - Потенциальная нестабильность
 
@@ -3945,7 +3945,7 @@ class SCHRShort3Optimizer:
  best_score = -np.inf
  best_params = None
 
- # Перебор всех комбинаций параметров
+ # Перебор all комбинаций параметров
  for params in ParameterGrid(param_grid):
  try:
  score = self._evaluate_parameters(params)
@@ -4043,7 +4043,7 @@ class SCHRShort3Optimizer:
 # example использования оптимизатора
 def demonstrate_optimization():
  """Демонстрация оптимизации параметров"""
- # create тестовых данных
+ # create testsых данных
  test_data = create_schr_short3_data_Structure()
 
  # create оптимизатора
@@ -4246,7 +4246,7 @@ def load_model():
  logger.info(f"Model loaded successfully from {model_path}")
  return True
  else:
- logger.error(f"Model file not found: {model_path}")
+ logger.error(f"Model File not found: {model_path}")
  return False
  except Exception as e:
  logger.error(f"Error Loading model: {e}")
@@ -4382,7 +4382,7 @@ async def retrain_model(new_data_path: str):
 
  # Загрузка новых данных
  if not os.path.exists(new_data_path):
- raise HTTPException(status_code=404, detail="data file not found")
+ raise HTTPException(status_code=404, detail="data File not found")
 
  new_data = pd.read_parquet(new_data_path)
 
@@ -4481,16 +4481,16 @@ if __name__ == "__main__":
 Docker контейнеризация SCHR SHORT3 модели обеспечивает полную изоляцию, портабельность and масштабируемость in продакшн среде. Это критически важно for обеспечения стабильности, простоты развертывания and управления зависимостями.
 
 **Ключевые преимущества Docker:**
-- **Изоляция:** Полная изоляция модели and её зависимостей
+- **Изоляция:** Полная изоляция модели and её dependencies
 - **Портабельность:** Легкое перенесение между различными средами
 - **Масштабируемость:** Простое масштабирование and оркестрация
-- **Версионирование:** Контроль версий модели and зависимостей
+- **Версионирование:** Контроль версий модели and dependencies
 
 ```dockerfile
 # Dockerfile for SCHR SHORT3 модели
 FROM python:3.11-slim
 
-# installation системных зависимостей
+# installation системных dependencies
 RUN apt-get update && apt-get install -y \
  gcc \
  g++ \
@@ -4500,13 +4500,13 @@ RUN apt-get update && apt-get install -y \
 # create рабочей директории
 WORKDIR /app
 
-# create User for безопасности
-RUN Useradd -m -u 1000 appUser
+# create user for безопасности
+RUN useradd -m -u 1000 appuser
 
-# Копирование файлов зависимостей
+# Копирование files dependencies
 COPY requirements.txt .
 
-# installation Python зависимостей
+# installation Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Копирование кода приложения
@@ -4516,10 +4516,10 @@ COPY . .
 RUN mkdir -p models logs data
 
 # installation прав доступа
-RUN chown -R appUser:appUser /app
+RUN chown -R appuser:appuser /app
 
-# Переключение on User приложения
-User appUser
+# Переключение on user приложения
+user appuser
 
 # Открытие порта
 EXPOSE 8000
@@ -4596,7 +4596,7 @@ Services:
  - "3000:3000"
  environment:
  - GF_SECURITY_ADMIN_PASSWORD=admin
- - GF_UserS_allOW_sign_UP=false
+ - GF_userS_allOW_sign_UP=false
  volumes:
  - grafana_data:/var/lib/grafana
  - ./Monitoring/grafana/dashboards:/var/lib/grafana/dashboards
@@ -4702,7 +4702,7 @@ echo "starting SCHR SHORT3 deployment..."
 # create required директорий
 mkdir -p models config logs data Monitoring/grafana/dashboards Monitoring/grafana/provisioning
 
-# Копирование конфигурационных файлов
+# Копирование конфигурационных files
 cp production_config.json config/
 cp prometheus.yml Monitoring/
 
@@ -4816,7 +4816,7 @@ if __name__ == "__main__":
  if container:
  print("deployment successful!")
 
- # Ожидание User
+ # Ожидание user
  input("Press Enter to cleanup...")
 
  # clean
@@ -4842,7 +4842,7 @@ if __name__ == "__main__":
 - Критически важно for управления рисками
 
 **Минусы:**
-- Сложность settings
+- Сложность Settings
 - Необходимость постоянного внимания
 - Потенциальные ложные срабатывания
 
@@ -4854,7 +4854,7 @@ Monitoring производительности SCHR SHORT3 модели явл�
 - **Метрики производительности:** Точность, задержка, пропускная способность
 - **Метрики краткосрочных сигналов:** Частота, точность, стабильность
 - **Системные метрики:** Использование ресурсов, доступность
-- **Алертинг:** Автоматические уведомления о проблемах
+- **Алертинг:** Автоматические notifications о проблемах
 
 ```python
 import time
@@ -4879,7 +4879,7 @@ class AlertConfig:
  email_recipients: List[str] = None
  smtp_server: str = "smtp.gmail.com"
  smtp_port: int = 587
- smtp_Username: str = ""
+ smtp_username: str = ""
  smtp_password: str = ""
  webhook_url: str = ""
  alert_cooldown: int = 300 # 5 minutes
@@ -5151,7 +5151,7 @@ class SCHRShort3Monitor:
  """Отправка email алерта"""
  try:
  msg = MIMEMultipart()
- msg['From'] = self.alert_config.smtp_Username
+ msg['From'] = self.alert_config.smtp_username
  msg['To'] = ', '.join(self.alert_config.email_recipients)
  msg['Subject'] = f"SCHR SHORT3 Alert: {title}"
 
@@ -5171,7 +5171,7 @@ class SCHRShort3Monitor:
 
  server = smtplib.SMTP(self.alert_config.smtp_server, self.alert_config.smtp_port)
  server.starttls()
- server.login(self.alert_config.smtp_Username, self.alert_config.smtp_password)
+ server.login(self.alert_config.smtp_username, self.alert_config.smtp_password)
  server.send_message(msg)
  server.quit()
 
@@ -5310,7 +5310,7 @@ if __name__ == "__main__":
  - **Теория:** SCHR SHORT3 представляет собой революционный подход к краткосрочной торговле
  - **Почему важно:** Обеспечивает высокую точность краткосрочных сигналов
  - **Плюсы:** Высокая точность, краткосрочные сигналы, Prediction будущего, адаптивность
- - **Минусы:** Сложность settings, высокие требования к ресурсам
+ - **Минусы:** Сложность Settings, высокие требования к ресурсам
 
 2. **Краткосрочные сигналы - ключевой фактор for скальпинга**
  - **Теория:** Краткосрочные сигналы критически важны for скальпинга
@@ -5320,9 +5320,9 @@ if __name__ == "__main__":
 
 3. **МультиTimeframesый анализ - разные parameters for разных Timeframes**
  - **Теория:** Каждый Timeframe требует специфических параметров for максимальной эффективности
- - **Почему важно:** Обеспечивает оптимальную производительность on всех временных горизонтах
+ - **Почему важно:** Обеспечивает оптимальную производительность on all временных горизонтах
  - **Плюсы:** Оптимизация производительности, снижение рисков, повышение точности
- - **Минусы:** Сложность settings, необходимость понимания каждого Timeframe
+ - **Минусы:** Сложность Settings, необходимость понимания каждого Timeframe
 
 4. **Высокая точность - возможность достижения 95%+ точности**
  - **Теория:** Правильно настроенная SCHR SHORT3 модель может достигать очень высокой точности

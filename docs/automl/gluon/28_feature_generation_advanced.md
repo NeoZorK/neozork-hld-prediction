@@ -34,7 +34,7 @@ graph TD
 
  B --> F[Временные признаки]
  B --> G[Статистические признаки]
- B --> H[Технические индикаторы]
+ B --> H[Technical индикаторы]
  B --> I[Категориальные признаки]
  B --> J[Текстовые признаки]
 
@@ -203,7 +203,7 @@ graph TD
 
 ```mermaid
 graph TD
- A[Временной ряд] --> B{Тип временных признаков}
+ A[temporary ряд] --> B{Тип временных признаков}
 
  B -->|Лаговые| C[Лаговые признаки]
  B -->|Скользящие окна| D[Скользящие окна]
@@ -1097,9 +1097,9 @@ def create_volatility_features(df, target_col, windows=[7, 14, 30]):
 df = create_volatility_features(df, 'price', windows=[7, 14, 30])
 ```
 
-### 3. Технические индикаторы (Technical Indicators)
+### 3. Technical индикаторы (Technical Indicators)
 
-### 📊 Технические индикаторы and их классификация
+### 📊 Technical индикаторы and их классификация
 
 ```mermaid
 graph TD
@@ -1114,7 +1114,7 @@ graph TD
  C --> C3[WMA - Weighted Moving Average]
  C --> C4[Trend - разность цены and SMA]
 
- D --> D1[RSI - Relative Strength Index]
+ D --> D1[RSI - Relative Strength index]
  D --> D2[Stochastic Oscillator]
  D --> D3[Williams %R]
  D --> D4[ROC - Rate of Change]
@@ -1124,7 +1124,7 @@ graph TD
  E --> E3[Volatility on окнам]
  E --> E4[Position in Bollinger Bands]
 
- C1 --> F[Технические индикаторы]
+ C1 --> F[Technical индикаторы]
  C2 --> F
  C3 --> F
  C4 --> F
@@ -1209,7 +1209,7 @@ df = create_trend_features(df, 'price', windows=[7, 14, 30, 50, 200])
 def create_momentum_features(df, target_col, windows=[7, 14, 30]):
  """create моментум indicators"""
  for window in windows:
- # RSI (Relative Strength Index)
+ # RSI (Relative Strength index)
  delta = df[target_col].diff()
  gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
  loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
@@ -1641,7 +1641,7 @@ def create_interaction_features(df, feature_cols, max_interactions=10):
  """create интерактивных признаков"""
  from itertools import combinations
 
- # create всех возможных комбинаций
+ # create all возможных комбинаций
  interactions = []
  for r in range(2, min(len(feature_cols) + 1, max_interactions + 1)):
  interactions.extend(combinations(feature_cols, r))
@@ -1720,7 +1720,7 @@ graph TD
 
  L --> M[Финальный набор признаков]
 
- M --> N[Валидация on тестовых данных]
+ M --> N[Валидация on testsых данных]
  N --> O[check производительности]
  O --> P[Monitoring in продакшене]
 
@@ -1922,7 +1922,7 @@ graph TD
 
  Q --> R[MSE/RMSE]
  Q --> S[R² Score]
- Q --> T[Feature Importance]
+ Q --> T[Feature importance]
 
  R --> U[Результаты]
  S --> U
@@ -2058,7 +2058,7 @@ graph TD
  B --> C[Генераторы признаков]
  C --> D[Временные признаки]
  C --> E[Статистические признаки]
- C --> F[Технические индикаторы]
+ C --> F[Technical индикаторы]
  C --> G[Категориальные признаки]
  C --> H[Текстовые признаки]
 
@@ -2372,7 +2372,7 @@ validation_results = validate_features(df, 'target', feature_cols, validation_me
 #### for продакшена
 
 - Настройте все parameters in соответствии with требованиями SLA
-- Включите все типы признаков (временные, статистические, технические, категориальные, текстовые)
+- Включите все типы признаков (временные, статистические, Technical, категориальные, текстовые)
 - Use автоматическую генерацию признаков
 - Настройте Monitoring and валидацию признаков
 - Включите все проверки безопасности and производительности

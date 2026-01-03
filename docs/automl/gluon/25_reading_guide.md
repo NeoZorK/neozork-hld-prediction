@@ -84,7 +84,7 @@ graph TD
 **Фокус:** installation and первый Launch
 
 1. **Раздел 1** - Введение and installation
- - **parameters установки:**
+ - **parameters installation:**
  - `pip install autogluon.tabular[all]` - полная installation
  - `pip install autogluon.tabular` - минимальная installation
  - `conda install -c conda-forge autogluon` - через conda
@@ -161,7 +161,7 @@ graph TD
  - `num_bag_folds`: Количество фолдов for бэггинга
  - `num_stack_levels`: Уровни стекинга
  - `auto_stack`: Автоматический стекинг
- - `refit_full`: Переобучение on всех данных
+ - `refit_full`: Переобучение on all данных
 
 8. **Раздел 8** - Лучшие практики
  - **parameters качества:**
@@ -441,7 +441,7 @@ graph TD
 #### parameters for аналитиков данных
 
 1. **Раздел 1** - Введение and installation
- - **parameters установки:**
+ - **parameters installation:**
  - `pip install autogluon.tabular[all]` - полная installation with визуализацией
  - `pip install matplotlib seaborn plotly` - дополнительные библиотеки визуализации
  - **Системные требования:**
@@ -523,7 +523,7 @@ graph TD
 #### parameters for ML-инженеров
 
 1. **Раздел 1** - Введение and installation
- - **parameters установки for продакшена:**
+ - **parameters installation for продакшена:**
  - `pip install autogluon.tabular[all]` - полная installation
  - `pip install gunicorn uwsgi` - WSGI серверы
  - `pip install docker kubernetes` - контейнеризация
@@ -654,10 +654,10 @@ graph TD
 #### parameters for трейдеров
 
 1. **Раздел 1** - Введение and installation
- - **parameters установки for trading:**
+ - **parameters installation for trading:**
  - `pip install autogluon.tabular[all]` - полная installation
  - `pip install yfinance ccxt` - data with бирж
- - `pip install ta-lib` - технические индикаторы
+ - `pip install ta-lib` - Technical индикаторы
  - **Системные требования:**
  - RAM: 16GB+ (for обработки больших объемов данных)
  - CPU: 8+ ядер (for быстрых вычислений)
@@ -796,7 +796,7 @@ graph TD
 #### parameters for бизнес-аналитиков
 
 1. **Раздел 1** - Введение and installation
- - **parameters установки for бизнеса:**
+ - **parameters installation for бизнеса:**
  - `pip install autogluon.tabular[all]` - полная installation
  - `pip install plotly dash` - интерактивные дашборды
  - `pip install jupyter voila` - презентации
@@ -881,7 +881,7 @@ graph TD
  - `feature_prune=True`: Отбор признаков
  - `excluded_model_types=['KNN']`: Исключение медленных моделей
  - `included_model_types=['RF', 'GBM', 'XGB']`: Интерпретируемые модели
- - `refit_full=True`: Переобучение on всех данных
+ - `refit_full=True`: Переобучение on all данных
  - **Бизнес-configuration:**
  ```python
  business_config = {
@@ -938,7 +938,7 @@ graph TD
 
 #### Упражнение 1: Первая модель (30 minutes)
 
-**Goal:** Создать первую модель AutoML Gluon with пониманием всех параметров
+**Goal:** Создать первую модель AutoML Gluon with пониманием all параметров
 
 ```python
 # Создайте простую модель on датасете Iris
@@ -958,7 +958,7 @@ predictor = TabularPredictor(
  eval_metric='accuracy', # Метрика оценки: 'accuracy', 'f1', 'roc_auc', 'log_loss'
  path='iris_model', # Путь for сохранения модели
  verbosity=2, # Уровень вывода: 0-4 (0=тихо, 4=подробно)
- presets='medium_quality_faster_inference' # Предустановки качества
+ presets='medium_quality_faster_inference' # Предinstallation качества
 )
 
 # Обучение модели with параметрами
@@ -967,7 +967,7 @@ predictor.fit(
  time_limit=60, # Лимит времени обучения (секунды)
  presets='medium_quality', # Качество моделей: 'best_quality', 'high_quality', 'medium_quality', 'optimize_for_deployment'
  num_trials=10, # Количество попыток for hyperparameter tuning
- hyperparameter_tune_kwargs={ # parameters settings гиперпараметров
+ hyperparameter_tune_kwargs={ # parameters Settings гиперпараметров
  'scheduler': 'local', # Planировщик: 'local', 'ray'
  'searcher': 'auto', # Поисковик: 'auto', 'random', 'bayes'
  'num_trials': 10, # Количество попыток
@@ -983,7 +983,7 @@ predictor.fit(
  feature_prune=True, # Отбор признаков
  excluded_model_types=[], # Исключенные типы моделей
  included_model_types=[], # Включенные типы моделей ([]=все)
- refit_full=True, # Переобучение on всех данных
+ refit_full=True, # Переобучение on all данных
  set_best_to_refit_full=True, # installation лучшей модели как refit_full
  save_space=True, # Экономия места on диске
  save_bag_folds=True, # Сохранение бэггинг фолдов
@@ -1014,7 +1014,7 @@ print(f"Важность признаков: {predictor.feature_importance(data)
 
 #### Упражнение 2: Валидация (1 час)
 
-**Goal:** Провести полную валидацию модели with пониманием всех параметров валидации
+**Goal:** Провести полную валидацию модели with пониманием all параметров валидации
 
 ```python
 # Проведите полную валидацию модели
@@ -1025,7 +1025,7 @@ import numpy as np
 # Разделение данных with параметрами
 train_data, test_data = train_test_split(
  data,
- test_size=0.2, # Доля тестовых данных (20%)
+ test_size=0.2, # Доля testsых данных (20%)
  random_state=42, # Случайное состояние for воспроизводимости
  stratify=data['target'] # Стратификация on целевой переменной
 )
@@ -1056,11 +1056,11 @@ predictor.fit(
  'search_space': 'default'
  },
  feature_prune=True, # Отбор признаков
- refit_full=True, # Переобучение on всех данных
+ refit_full=True, # Переобучение on all данных
  set_best_to_refit_full=True
 )
 
-# Валидация on тестовых данных
+# Валидация on testsых данных
 test_Predictions = predictor.predict(test_data)
 test_accuracy = predictor.evaluate(test_data, silent=True)
 
@@ -1128,12 +1128,12 @@ if np.sum(errors) > 0:
  true_class = class_names[test_data['target'].iloc[idx]]
  pred_class = class_names[test_Predictions[idx]]
  confidence_error = confidence[idx]
- print(f" Индекс {idx}: Истина={true_class}, Prediction={pred_class}, Уверенность={confidence_error:.4f}")
+ print(f" index {idx}: Истина={true_class}, Prediction={pred_class}, Уверенность={confidence_error:.4f}")
 ```
 
 #### Упражнение 3: Продакшен (2 часа)
 
-**Goal:** Создать полноценную продакшен API with пониманием всех параметров деплоя
+**Goal:** Создать полноценную продакшен API with пониманием all параметров деплоя
 
 ```python
 # Создайте простую API for модели
@@ -1641,7 +1641,7 @@ graph TD
 | **num_stack_levels** | 0-1 | 1-2 | 2+ | Уровни стекинга |
 | **verbosity** | 2-3 | 1-2 | 0-1 | Уровень вывода |
 | **feature_prune** | False | True | True | Отбор признаков |
-| **refit_full** | False | True | True | Переобучение on всех данных |
+| **refit_full** | False | True | True | Переобучение on all данных |
 
 ### parameters on специализациям
 

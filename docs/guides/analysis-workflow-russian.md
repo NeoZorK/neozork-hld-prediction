@@ -9,12 +9,12 @@
 ### 1. Генерация признаков (Первый этап)
 
 **Почему первым:**
-- Создает основу for всех последующих анализов
+- Создает основу for all последующих анализов
 - Генерирует "сырье" из исходных данных
 - Без признаков невозможно провести корреляционный анализ or анализ важности
 
 **Что включает:**
-- Технические индикаторы (SMA, EMA, RSI, MACD, Bollinger Bands)
+- Technical индикаторы (SMA, EMA, RSI, MACD, Bollinger Bands)
 - Статистические признаки (волатильность, скос, эксцесс)
 - Моментные признаки (ROC, Momentum)
 - Ценовые признаки (доходность, изменения цен)
@@ -25,7 +25,7 @@
 # Используя существующий FeatureEngineer
 features = feature_engineer.generate_features(
  market_data,
- feature_types=['technical', 'statistical', 'momentum', 'price', 'volume']
+ feature_types=['Technical', 'statistical', 'momentum', 'price', 'volume']
 )
 ```
 
@@ -81,7 +81,7 @@ importance_Analysis = feature_importance_analyzer.analyze_importance(
 # 1. Генерация признаков
 features = feature_engineer.generate_features(
  market_data,
- feature_types=['technical', 'statistical', 'momentum', 'price', 'volume']
+ feature_types=['Technical', 'statistical', 'momentum', 'price', 'volume']
 )
 
 # 2. Анализ корреляций

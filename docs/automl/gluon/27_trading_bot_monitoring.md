@@ -90,9 +90,9 @@ class TradingBotMonitoringsystem:
  - metrics_interval: Интервал сбора метрик (секунды)
  - alert_channels: Каналы уведомлений
  - dashboard_refresh: Частота обновления дашборда
- - log_rotation: settings ротации логов
+ - log_rotation: Settings ротации логов
  - health_check_interval: Интервал проверки health
- - performance_tracking: settings отслеживания производительности
+ - performance_tracking: Settings отслеживания производительности
  """
  self.config = config or self._get_default_config()
 
@@ -102,7 +102,7 @@ class TradingBotMonitoringsystem:
  storage_config=self.config['metrics_storage']
  )
 
- # Management уведомлениями - когда что-то идет not так
+ # Management notificationsми - когда что-то идет not так
  self.alert_manager = AlertManager(
  channels=self.config['alert_channels'],
  rules_config=self.config['alert_rules']
@@ -138,27 +138,27 @@ class TradingBotMonitoringsystem:
  'metrics_interval': 60, # Интервал сбора метрик (секунды)
  'alert_channels': ['email', 'telegram'], # Каналы уведомлений
  'dashboard_refresh': 30, # Частота обновления дашборда (секунды)
- 'log_rotation': { # settings ротации логов
+ 'log_rotation': { # Settings ротации логов
  'max_size': '100MB', # Максимальный размер файла
- 'max_files': 10, # Максимальное количество файлов
+ 'max_files': 10, # Максимальное количество files
  'rotation_time': 'daily', # Время ротации
  'compression': True, # Сжатие старых логов
  'retention_days': 30 # Хранение логов (дни)
  },
  'health_check_interval': 300, # Интервал проверки health (секунды)
- 'performance_tracking': { # settings отслеживания производительности
+ 'performance_tracking': { # Settings отслеживания производительности
  'enable_tracking': True, # Включить отслеживание
  'tracking_interval': 60, # Интервал отслеживания (секунды)
  'metrics_retention': 7, # Хранение метрик (дни)
  'benchmark_comparison': True, # Сравнение with бенчмарками
  'optimization_suggestions': True # Предложения on оптимизации
  },
- 'metrics_storage': { # settings хранения метрик
+ 'metrics_storage': { # Settings хранения метрик
  'type': 'influxdb', # Тип хранилища
  'host': 'localhost', # Хост базы данных
  'port': 8086, # Порт базы данных
  'database': 'trading_metrics', # Имя базы данных
- 'Username': 'admin', # Имя User
+ 'username': 'admin', # Имя user
  'password': 'password', # Пароль
  'retention_policy': '30d' # Политика хранения
  },
@@ -183,7 +183,7 @@ class TradingBotMonitoringsystem:
  'uptime_hours': 24 # Время работы (часы)
  }
  },
- 'dashboard_widgets': { # settings виджетов дашборда
+ 'dashboard_widgets': { # Settings виджетов дашборда
  'overView': { # Виджет обзора
  'enabled': True, # Включен
  'refresh_interval': 30, # Интервал обновления (секунды)
@@ -212,7 +212,7 @@ class TradingBotMonitoringsystem:
  'market_conditions': { # Виджет рыночных условий
  'enabled': True,
  'refresh_interval': 60,
- 'metrics': ['volatility', 'trend', 'volume', 'technical_indicators']
+ 'metrics': ['volatility', 'trend', 'volume', 'Technical_indicators']
  }
  },
  'log_patterns': { # Паттерны for Analysis логов
@@ -378,7 +378,7 @@ graph TD
  E --> E1[Волатильность]
  E --> E2[Тренд рынка]
  E --> E3[Объем торгов]
- E --> E4[Технические индикаторы]
+ E --> E4[Technical индикаторы]
 
  F --> F1[CPU Usage]
  F --> F2[Memory Usage]
@@ -428,7 +428,7 @@ class MetricsCollector:
  - host: Хост базы данных
  - port: Порт базы данных
  - database: Имя базы данных
- - Username: Имя User
+ - username: Имя user
  - password: Пароль
  - retention_policy: Политика хранения
  """
@@ -439,7 +439,7 @@ class MetricsCollector:
  self.collection_thread = None
  self.is_running = False
 
- # settings сбора метрик
+ # Settings сбора метрик
  self.metrics_config = {
  'trading_metrics': { # Торговые метрики
  'enabled': True, # Включить сбор
@@ -490,7 +490,7 @@ class MetricsCollector:
  'host': 'localhost', # Хост базы данных
  'port': 8086, # Порт базы данных
  'database': 'trading_metrics', # Имя базы данных
- 'Username': 'admin', # Имя User
+ 'username': 'admin', # Имя user
  'password': 'password', # Пароль
  'retention_policy': '30d', # Политика хранения
  'batch_size': 1000, # Размер батча for записи
@@ -524,7 +524,7 @@ class MetricsCollector:
  """Основной цикл сбора метрик"""
  while self.is_running:
  try:
- # Сбор всех типов метрик
+ # Сбор all типов метрик
  if self.metrics_config['trading_metrics']['enabled']:
  trading_metrics = self.collect_trading_metrics()
  self._store_metrics('trading', trading_metrics)
@@ -595,7 +595,7 @@ class MetricsCollector:
  'recovery_factor': self.calculate_recovery_factor(bot_state), # Фактор восстановления
  'expectancy': self.calculate_expectancy(bot_state), # Математическое ожидание
 
- # Технические метрики
+ # Technical метрики
  'cpu_usage': bot_state.get('cpu_usage', 0), # Использование CPU
  'memory_usage': bot_state.get('memory_usage', 0), # Использование памяти
  'disk_usage': bot_state.get('disk_usage', 0), # Использование диска
@@ -639,7 +639,7 @@ class MetricsCollector:
 
  # Качество данных
  'data_quality_score': model_state.get('data_quality_score', 0),
- 'missing_data_rate': model_state.get('missing_data_rate', 0),
+ 'Missing_data_rate': model_state.get('Missing_data_rate', 0),
  'outlier_rate': model_state.get('outlier_rate', 0),
  'data_freshness': model_state.get('data_freshness', 0),
 
@@ -665,7 +665,7 @@ class MetricsCollector:
  'volume_24h': market_data.get('volume_24h', 0),
  'volume_change_24h': market_data.get('volume_change_24h', 0),
 
- # Технические индикаторы
+ # Technical индикаторы
  'rsi': market_data.get('rsi', 50),
  'macd': market_data.get('macd', 0),
  'bollinger_position': market_data.get('bollinger_position', 0.5),
@@ -820,7 +820,7 @@ class AlertManager:
  },
  'repeated_alerts': { # Повторяющиеся алерты
  'condition': 'same_alert_3_times_in_1_hour',
- 'action': 'escalate_to_technical_lead',
+ 'action': 'escalate_to_Technical_lead',
  'channels': ['phone', 'email'],
  'escalation_time': 3600
  },
@@ -838,7 +838,7 @@ class AlertManager:
  }
  },
  'notification_templates': { # Шаблоны уведомлений
- 'critical': { # Критические уведомления
+ 'critical': { # Критические notifications
  'subject': '🚨 КРИТИЧЕСКАЯ ОШИБКА - Торговый бот',
  'template': '''
 🚨 *КРИТИЧЕСКАЯ ОШИБКА*
@@ -905,7 +905,7 @@ Status: {status}
  'email': { # Email
  'smtp_server': 'smtp.gmail.com',
  'smtp_port': 587,
- 'Username': 'bot@example.com',
+ 'username': 'bot@example.com',
  'password': 'password',
  'from_email': 'bot@example.com',
  'to_emails': ['admin@example.com', 'manager@example.com'],
@@ -930,7 +930,7 @@ Status: {status}
  'slack': { # Slack
  'webhook_url': 'https://hooks.slack.com/Services/...',
  'channel': '#trading-alerts',
- 'Username': 'Trading Bot',
+ 'username': 'Trading Bot',
  'icon_emoji': ':robot_face:',
  'timeout': 30
  }
@@ -1218,7 +1218,7 @@ graph TD
  H --> H1[Волатильность]
  H --> H2[Тренд рынка]
  H --> H3[Объем торгов]
- H --> H4[Технические индикаторы]
+ H --> H4[Technical индикаторы]
 
  style A fill:#e3f2fd
  style B fill:#c8e6c9
@@ -1241,13 +1241,13 @@ class MonitoringDashboard:
  Args:
  refresh_interval (int): Интервал обновления дашборда (секунды)
  widgets_config (dict): configuration виджетов дашборда
- - overView: settings виджета обзора
- - performance: settings виджета производительности
- - trading_activity: settings виджета торговой активности
- - risk_metrics: settings виджета метрик риска
- - system_health: settings виджета health системы
- - model_metrics: settings виджета метрик модели
- - market_conditions: settings виджета рыночных условий
+ - overView: Settings виджета обзора
+ - performance: Settings виджета производительности
+ - trading_activity: Settings виджета торговой активности
+ - risk_metrics: Settings виджета метрик риска
+ - system_health: Settings виджета health системы
+ - model_metrics: Settings виджета метрик модели
+ - market_conditions: Settings виджета рыночных условий
  """
  self.refresh_interval = refresh_interval
  self.widgets_config = widgets_config or self._get_default_widgets_config()
@@ -1257,7 +1257,7 @@ class MonitoringDashboard:
  self.refresh_thread = None
  self.is_running = False
 
- # settings дашборда
+ # Settings дашборда
  self.dashboard_config = {
  'theme': 'dark', # Тема дашборда (dark/light)
  'layout': 'grid', # Макет (grid/List)
@@ -1302,7 +1302,7 @@ class MonitoringDashboard:
  'uptime': {'type': 'duration', 'format': 'hours'},
  'total_trades': {'type': 'number', 'separator': ','}
  },
- 'alerts': { # settings алертов
+ 'alerts': { # Settings алертов
  'profit_loss': {'threshold': -1000, 'color': 'critical'},
  'win_rate': {'threshold': 0.4, 'color': 'warning'},
  'error_rate': {'threshold': 0.05, 'color': 'critical'}
@@ -1342,7 +1342,7 @@ class MonitoringDashboard:
  'colors': ['#2ecc71', '#e74c3c']
  }
  ],
- 'time_range': { # Временной диапазон
+ 'time_range': { # temporary диапазон
  'default': '24h', # on умолчанию
  'options': ['1h', '6h', '24h', '7d', '30d'],
  'auto_refresh': True
@@ -1368,7 +1368,7 @@ class MonitoringDashboard:
  }
  ],
  'filters': { # Фильтры
- 'time_range': True, # Временной диапазон
+ 'time_range': True, # temporary диапазон
  'trade_type': True, # Тип сделок
  'symbol': True # Символ
  }
@@ -1992,7 +1992,7 @@ class healthchecker:
 
 ```python
 class AlertBestPractices:
- """Лучшие практики settings алертов"""
+ """Лучшие практики Settings алертов"""
 
  def __init__(self):
  self.alert_hierarchy = {}
@@ -2033,7 +2033,7 @@ class AlertBestPractices:
  },
  'repeated_alerts': {
  'condition': 'same_alert_3_times_in_1_hour',
- 'action': 'escalate_to_technical_lead',
+ 'action': 'escalate_to_Technical_lead',
  'channels': ['phone', 'email']
  },
  'system_down': {
@@ -2105,7 +2105,7 @@ class LogRotation:
  log_dir = os.path.dirname(log_file)
  log_pattern = f"{log_file}.*"
 
- # Получение всех логов
+ # Получение all логов
  log_files = glob.glob(log_pattern)
 
  # Фильтрация on возрасту
@@ -2291,7 +2291,7 @@ graph TD
  E --> E3[Статус системы]
 
  C1 --> F[ПереLaunch бота]
- C2 --> G[Закрытие всех позиций]
+ C2 --> G[Закрытие all позиций]
  C3 --> H[Переключение API]
 
  D1 --> I[Анализ проигрышных сделок]
@@ -2430,7 +2430,7 @@ class AutomatedActions:
  return {'success': False, 'error': str(e)}
 
  def close_all_positions(self, trigger_data):
- """Закрытие всех позиций"""
+ """Закрытие all позиций"""
 
  try:
  # Получение активных позиций
@@ -2624,7 +2624,7 @@ class Externalintegrations:
 
 | Категория | parameter | Значение on умолчанию | description | Диапазон/Влияние |
 |-----------|----------|----------------------|----------|------------------|
-| **Общие settings** | | | | |
+| **Общие Settings** | | | | |
 | | `metrics_interval` | 60 сек | Интервал сбора метрик | 30-300 сек |
 | | `alert_channels` | ['email', 'telegram'] | Каналы уведомлений | email, sms, telegram, slack |
 | | `dashboard_refresh` | 30 сек | Частота обновления дашборда | 10-120 сек |
@@ -2662,7 +2662,7 @@ class Externalintegrations:
 | | `sharpe_ratio` | 2.0 | Коэффициент Шарпа | 1.0-5.0 |
 | | `max_consecutive_wins` | 10 | Максимум побед подряд | 5-50 |
 | | `recovery_factor` | 2.0 | Фактор восстановления | 1.0-5.0 |
-| **settings дашборда** | | | | |
+| **Settings дашборда** | | | | |
 | | `theme` | 'dark' | Тема дашборда | dark, light |
 | | `layout` | 'grid' | Макет | grid, List |
 | | `auto_refresh` | True | Автообновление | True, False |
@@ -2677,9 +2677,9 @@ class Externalintegrations:
 | | `warning` | '#f39c12' | Предупреждение (оранжевый) | hex цвет |
 | | `info` | '#3498db' | Информация (синий) | hex цвет |
 | | `success` | '#2ecc71' | Успех (зеленый) | hex цвет |
-| **settings ротации логов** | | | | |
+| **Settings ротации логов** | | | | |
 | | `max_size` | '100MB' | Максимальный размер файла | 10MB-1GB |
-| | `max_files` | 10 | Максимальное количество файлов | 5-100 |
+| | `max_files` | 10 | Максимальное количество files | 5-100 |
 | | `rotation_time` | 'daily' | Время ротации | daily, weekly, monthly |
 | | `compression` | True | Сжатие старых логов | True, False |
 | | `retention_days` | 30 | Хранение логов (дни) | 7-365 дней |
@@ -2688,7 +2688,7 @@ class Externalintegrations:
 | | `repeated_alerts` | 3 раза/час | Повторяющиеся алерты | 2-10 раз/час |
 | | `system_down` | 10 мин | Система not Workingет | 5-30 мин |
 | | `critical_loss` | 15% | Критические потери | 10-25% |
-| **settings производительности** | | | | |
+| **Settings производительности** | | | | |
 | | `enable_tracking` | True | Включить отслеживание | True, False |
 | | `tracking_interval` | 60 сек | Интервал отслеживания | 30-300 сек |
 | | `metrics_retention` | 7 дней | Хранение метрик | 1-30 дней |

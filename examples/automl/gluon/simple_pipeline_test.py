@@ -110,12 +110,12 @@ def test_feature_engineering(combined_data):
  return data_with_short3
 
 
-def test_technical_indicators(data):
- """Test technical indicators."""
- print("\n📈 testing technical indicators...")
+def test_Technical_indicators(data):
+ """Test Technical indicators."""
+ print("\n📈 testing Technical indicators...")
 
  loader = MultiIndicatorLoader()
- data_with_indicators = loader.add_technical_indicators(data)
+ data_with_indicators = loader.add_Technical_indicators(data)
 
  new_indicators = [col for col in data_with_indicators.columns if col not in data.columns]
  print(f" Technical indicators added: {len(new_indicators)}")
@@ -152,7 +152,7 @@ def main():
  return False
 
  # Test 4: Technical indicators
- final_data = test_technical_indicators(data_with_features)
+ final_data = test_Technical_indicators(data_with_features)
 
  if final_data.empty:
  print("❌ Technical indicators failed")
@@ -172,13 +172,13 @@ def main():
  schr_features = [col for col in final_data.columns if 'probability' in col and any(x in col for x in ['trend', 'yellow', 'blue', 'pv'])]
  wave_features = [col for col in final_data.columns if 'wave' in col and 'probability' in col]
  short3_features = [col for col in final_data.columns if 'short3' in col and 'probability' in col]
- technical_features = [col for col in final_data.columns if any(x in col for x in ['sma', 'ema', 'rsi', 'macd', 'volatility'])]
+ Technical_features = [col for col in final_data.columns if any(x in col for x in ['sma', 'ema', 'rsi', 'macd', 'volatility'])]
 
  print(f"\n🔧 Features Created:")
  print(f" SCHR features: {len(schr_features)}")
  print(f" WAVE2 features: {len(wave_features)}")
  print(f" SHORT3 features: {len(short3_features)}")
- print(f" Technical indicators: {len(technical_features)}")
+ print(f" Technical indicators: {len(Technical_features)}")
  print(f" Total custom features: {len(schr_features) + len(wave_features) + len(short3_features)}")
 
  print(f"\n🎯 data Quality:")

@@ -63,7 +63,7 @@ def main():
  # Sort Timeframes in logical order
  Timeframe_order = ['M1', 'M5', 'M15', 'H1', 'H4', 'D1', 'W1', 'MN1']
  sorted_Timeframes = []
- for tf in timeframe_order:
+ for tf in Timeframe_order:
  if tf in available_Timeframes:
  sorted_Timeframes.append(tf)
 

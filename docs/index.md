@@ -20,17 +20,17 @@ The NeoZork HLD Prediction project is a comprehensive financial Analysis and Pre
 
 ### ❌ **Not Implemented (Stubs Only)**
 - **Real database integration** (0%): No persistent data storage
-- **Real Authentication** (0%): No User Authentication system
+- **Real Authentication** (0%): No user Authentication system
 - **Real Trading Execution** (0%): No actual trade execution
-- **Investor Portal** (0%): No User interface
+- **Investor Portal** (0%): No user interface
 
 ## 🚨 Critical Issues
 
 ### High Priority
 1. **database integration** - No data persistence
-2. **Authentication system** - No User security
+2. **Authentication system** - No user security
 3. **Real Trading Execution** - No actual trading
-4. **Investor Portal** - No User interface
+4. **Investor Portal** - No user interface
 
 ### Medium Priority
 1. **Blockchain integration** - No DeFi features
@@ -85,7 +85,7 @@ The NeoZork HLD Prediction project is a comprehensive financial Analysis and Pre
 ### Native Apple Silicon Container (macOS 26+)
 ```bash
 # Clone and run interactive container manager
-git clone https://github.com/Username/neozork-hld-Prediction.git
+git clone https://github.com/username/neozork-hld-Prediction.git
 cd neozork-hld-Prediction
 ./scripts/native-container/native-container.sh
 ```
@@ -168,7 +168,7 @@ python run_Analysis.py demo --rule PHLD
 ### testing
 - [testing Documentation](testing/index.md) - Comprehensive testing documentation
 - [Test Structure](testing/test-Structure.md) - **NEW**: Detailed test organization and Structure
-- [UV-Only Mode Tests](testing/docker/uv-only-mode-tests.md) - Docker UV testing
+- [UV-Only Mode tests](testing/docker/uv-only-mode-tests.md) - Docker UV testing
 - [CLI testing](testing/cli/comprehensive-testing.md) - Command-line interface testing
 
 ### deployment
@@ -180,7 +180,7 @@ python run_Analysis.py demo --rule PHLD
 
 ### Features
 - [data Sources](guides/data-sources.md) - Supported financial data sources
-- [Technical Indicators](guides/indicators.md) - available technical indicators (including new [COT](reference/indicators/sentiment/cot-indicator.md), [Put/Call Ratio](reference/indicators/sentiment/putcallratio-indicator.md), [SuperTrend](reference/indicators/trend/supertrend-indicator.md), [SMA](reference/indicators/trend/sma-indicator.md), [Wave](reference/indicators/trend/wave-indicator.md) with full seaborn mode support)
+- [Technical Indicators](guides/indicators.md) - available Technical indicators (including new [COT](reference/indicators/sentiment/cot-indicator.md), [Put/Call Ratio](reference/indicators/sentiment/putcallratio-indicator.md), [SuperTrend](reference/indicators/trend/supertrend-indicator.md), [SMA](reference/indicators/trend/sma-indicator.md), [Wave](reference/indicators/trend/wave-indicator.md) with full seaborn mode support)
 - [Analysis Tools](guides/Analysis-tools.md) - Analysis and visualization tools
 - [CLI interface](guides/cli-interface.md) - Command-line interface usage
 - [Batch CSV Processing](guides/batch-csv-processing.md) - **NEW**: Batch processing of CSV folders
@@ -194,7 +194,7 @@ python run_Analysis.py demo --rule PHLD
 
 ### 🌊 Wave Indicator Tutorials (New!)
 - [Complete Wave Tutorial](guides/adding-wave-indicator-tutorial.md) - Advanced dual-system indicator implementation with fast mode support
-- [Wave Indicator Documentation](reference/indicators/trend/wave-indicator.md) - Comprehensive technical reference with display modes
+- [Wave Indicator Documentation](reference/indicators/trend/wave-indicator.md) - Comprehensive Technical reference with display modes
 - [Wave Implementation Summary](guides/adding-wave-indicator-summary.md) - Quick implementation overView
 - [Wave testing and Fixes](guides/wave-indicator-fixes-summary.md) - testing framework and bug fixes
 - [Wave Fast Mode Support](guides/wave-indicator-fast-mode-support.md) - ⭐ **NEW** Fast mode implementation details
@@ -245,7 +245,7 @@ python run_Analysis.py demo --rule PHLD
 - [Plan commercialization (Русский)](business/commercialization-Plan-ru.md) - Comprehensive strategy commercialization for SaaS platform
 - [Pocket Hedge fund Launch Guide](business/POCKET_HEDGE_FUND_Launch.md) - **80% Functional**: Complete Launch instructions and implementation guide
 ### SaaS platform (100% Functional) ⭐ **COMPLETE**
-- [SaaS platform OverView](saas/index.md) - **NEW**: Complete technical platform overView
+- [SaaS platform OverView](saas/index.md) - **NEW**: Complete Technical platform overView
 - [SaaS platform Launch Guide](business/SAAS_platform_Launch.md) - Business Launch guide
 - [Frontend Dashboard](saas/frontend/) - **NEW**: React dashboard components
 - [Usage Tracking](saas/usage_tracking/) - **NEW**: Advanced analytics system
@@ -265,7 +265,7 @@ python run_Analysis.py demo --rule PHLD
 - **Docker integration**: Seamless UV integration in Docker containers
 - **Native Container Support**: **NEW**: Native Apple Silicon container with 30-50% performance improvement
 - **Local Development**: UV support for local development environments
-- **Adaptive testing**: Tests that work in both Docker and local environments
+- **Adaptive testing**: tests that work in both Docker and local environments
 
 ### Financial Analysis
 - **Multiple data Sources**: Polygon, YFinance, Binance, MQL5
@@ -274,7 +274,7 @@ python run_Analysis.py demo --rule PHLD
 - **Visualization**: Interactive charts and plots
 
 ### Interactive ML Trading system
-- **Interactive Menu system**: Modern, colorful User interface with progress indicators
+- **Interactive Menu system**: Modern, colorful user interface with progress indicators
 - **Advanced ML/DL**: Apple MLX integration, Deep Reinforcement Learning, Ensemble methods
 - **Risk Management**: Monte Carlo simulations, VaR/CVaR, Dynamic position sizing
 - **Multi-Exchange Trading**: CEX and DEX integration with Web3 support
@@ -317,15 +317,15 @@ python scripts/check_uv_mode.py --verbose
 
 ### Test Categories
 - **UV-specific tests**: Package manager validation
-- **Environment Tests**: Docker vs local detection
-- **integration Tests**: End-to-end functionality
-- **Performance Tests**: UV vs pip comparison
-- **CLI Tests**: Command-line interface validation
-- **Native Container Tests**: Full functionality validation
+- **Environment tests**: Docker vs local detection
+- **integration tests**: End-to-end functionality
+- **Performance tests**: UV vs pip comparison
+- **CLI tests**: Command-line interface validation
+- **Native Container tests**: Full functionality validation
 
 ### testing Documentation
 - [testing Documentation](testing/index.md) - Comprehensive testing guide
-- [UV-Only Mode Tests](testing/docker/uv-only-mode-tests.md) - Docker UV testing details
+- [UV-Only Mode tests](testing/docker/uv-only-mode-tests.md) - Docker UV testing details
 - [CLI testing](testing/cli/comprehensive-testing.md) - CLI testing suite documentation
 - [CI/CD testing](development/ci-cd.md#testing-github-actions-integration-with-act) - GitHub Actions workflow testing with Act
 - [MCP Server testing](reference/mcp-servers/README.md#cicd-testing-with-act) - MCP server integration testing

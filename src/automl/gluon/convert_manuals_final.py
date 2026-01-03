@@ -11,21 +11,21 @@ import sys
 import os
 from pathlib import Path
 
-# Добавляем текущую директорию in путь for импорта модулей
+# Добавляем текущую директорию in путь for import модулей
 sys.path.append(str(Path(__file__).parent))
 
 from simple_html_converter import SimpleAutoMLGluonHTMLConverter
 from Reportlab_pdf_converter import ReportLabPDFConverter
 
 def check_dependencies():
- """Проверяет presence required зависимостей"""
+ """Проверяет presence required dependencies"""
  print("🔍 checking dependencies...")
 
  # checking markdown
  try:
  import markdown
  print("✅ markdown installed")
- except ImportError:
+ except importError:
  print("❌ markdown not installed. install: pip install markdown")
  return False
 
@@ -33,14 +33,14 @@ def check_dependencies():
  try:
  import pygments
  print("✅ pygments installed")
- except ImportError:
+ except importError:
  print("⚠️ pygments not installed. install: pip install pygments")
 
  # checking Reportlab for PDF
  try:
  import Reportlab
  print("✅ Reportlab installed")
- except ImportError:
+ except importError:
  print("❌ Reportlab not installed. install: pip install Reportlab")
  return False
 
@@ -48,7 +48,7 @@ def check_dependencies():
 
 def create_directories():
  """Создает необходимые директории"""
- print("📁 Создаем директории...")
+ print("📁 Creating директории...")
 
  directories = [
  "src/automl/gluon",
@@ -97,7 +97,7 @@ def main():
  print("Author: Shcherbyna Rostyslav")
  print("=" * 50)
 
- # Создаем директории
+ # Creating директории
  create_directories()
 
  # checking dependencies

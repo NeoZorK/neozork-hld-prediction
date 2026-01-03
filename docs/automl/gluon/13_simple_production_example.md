@@ -24,7 +24,7 @@
 <img src="images/optimized/ml_workflow_process.png" alt="Workflow процесса создания ML-системы" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 13.1: Workflow процесса создания ML-системы - 8 этапов from идеи to продакшен деплоя with временными рамками*
 
-**Почему начинаем with простого примера?** Потому что он показывает весь цикл разработки ML-системы from начала to конца, not отвлекаясь on сложные детали.
+**Почему начинаем with простого примера?** Потому что он показывает весь цикл разработки ML-системы from начала to конца, not отвлекаясь on сложные details.
 
 Этот раздел показывает **самый простой путь** создания робастной прибыльной ML-модели with использованием AutoML Gluon - from первоначальной идеи to полного продакшен деплоя on DEX blockchain.
 
@@ -54,7 +54,7 @@
 
 - **Точность**: >70% правильных Predictions направления движения цены
 - **Робастность**: Стабильная Working in различных рыночных условиях
-- **Прибыльность**: Положительный ROI on тестовых данных
+- **Прибыльность**: Положительный ROI on testsых данных
 
 ## Шаг 2: Подготовка данных
 
@@ -107,17 +107,17 @@ def prepare_crypto_data(symbol='BTC-USD', period='2y'):
  Подготовленные data with техническими индикаторами:
  - OHLCV data: Open, High, Low, Close, Volume
  - SMA индикаторы: SMA_20, SMA_50 (скользящие средние)
- - RSI индикатор: RSI (индекс относительной силы)
+ - RSI индикатор: RSI (index относительной силы)
  - MACD индикатор: MACD, MACD_signal, MACD_hist
  - Bollinger Bands: BB_upper, BB_middle, BB_lower
  - Целевая переменная: target (0/1 for price direction)
 
  Notes:
  ------
- Технические индикаторы:
+ Technical индикаторы:
  - SMA_20: 20-периодная скользящая средняя (краткосрочный тренд)
  - SMA_50: 50-периодная скользящая средняя (среднесрочный тренд)
- - RSI: индекс относительной силы (0-100, перекупленность/перепроданность)
+ - RSI: index относительной силы (0-100, перекупленность/перепроданность)
  - MACD: схождение-расхождение скользящих средних (трендовый индикатор)
  - Bollinger Bands: полосы Боллинджера (волатильность and уровни поддержки/сопротивления)
 
@@ -131,10 +131,10 @@ def prepare_crypto_data(symbol='BTC-USD', period='2y'):
  ticker = yf.Ticker(symbol)
  data = ticker.history(period=period)
 
- # Технические индикаторы for Analysis трендов and волатильности
+ # Technical индикаторы for Analysis трендов and волатильности
  data['SMA_20'] = talib.SMA(data['Close'], timeperiod=20) # 20-периодная скользящая средняя
  data['SMA_50'] = talib.SMA(data['Close'], timeperiod=50) # 50-периодная скользящая средняя
- data['RSI'] = talib.RSI(data['Close'], timeperiod=14) # Индекс относительной силы (14 periods)
+ data['RSI'] = talib.RSI(data['Close'], timeperiod=14) # index относительной силы (14 periods)
  data['MACD'], data['MACD_signal'], data['MACD_hist'] = talib.MACD(data['Close']) # MACD индикатор
  data['BB_upper'], data['BB_middle'], data['BB_lower'] = talib.BBANDS(data['Close']) # Полосы Боллинджера
 
@@ -171,9 +171,9 @@ def create_simple_model(data, test_size=0.2):
  -----------
  data : pd.dataFrame
  Подготовленные data with техническими индикаторами:
- - Содержит OHLCV data and технические индикаторы
+ - Содержит OHLCV data and Technical индикаторы
  - Должны быть обWorkingны (удалены NaN)
- - Временной ряд with историческими данными
+ - temporary ряд with историческими данными
 
  test_size : float, default=0.2
  Доля данных for тестирования:
@@ -186,13 +186,13 @@ def create_simple_model(data, test_size=0.2):
  tuple
  (predictor, test_data, feature_columns):
  - predictor: обученная модель TabularPredictor
- - test_data: тестовые data for оценки
+ - test_data: testsые data for оценки
  - feature_columns: List признаков модели
 
  Notes:
  ------
  Процесс создания модели:
- 1. Подготовка признаков (OHLCV + технические индикаторы)
+ 1. Подготовка признаков (OHLCV + Technical индикаторы)
  2. create целевой переменной (направление цены)
  3. Разделение on train/test (временное разделение)
  4. create предиктора with настройками for бинарной классификации
@@ -201,11 +201,11 @@ def create_simple_model(data, test_size=0.2):
  Признаки модели:
  - OHLCV: Open, High, Low, Close, Volume
  - SMA: SMA_20, SMA_50 (скользящие средние)
- - RSI: индекс относительной силы
+ - RSI: index относительной силы
  - MACD: MACD, MACD_signal, MACD_hist
  - Bollinger Bands: BB_upper, BB_middle, BB_lower
 
- settings обучения:
+ Settings обучения:
  - problem_type: 'binary' (бинарная классификация)
  - eval_metric: 'accuracy' (точность)
  - time_limit: 300s (5 minutes)
@@ -213,11 +213,11 @@ def create_simple_model(data, test_size=0.2):
  """
 
  # Подготовка признаков for модели
- # Включаем OHLCV data and все технические индикаторы
+ # Включаем OHLCV data and все Technical индикаторы
  feature_columns = [
  'Open', 'High', 'Low', 'Close', 'Volume', # OHLCV data
  'SMA_20', 'SMA_50', # Скользящие средние
- 'RSI', # Индекс относительной силы
+ 'RSI', # index относительной силы
  'MACD', 'MACD_signal', 'MACD_hist', # MACD индикатор
  'BB_upper', 'BB_middle', 'BB_lower' # Полосы Боллинджера
  ]
@@ -230,7 +230,7 @@ def create_simple_model(data, test_size=0.2):
  # Разделение on train/test (временное разделение for временных рядов)
  split_idx = int(len(data) * (1 - test_size))
  train_data = data.iloc[:split_idx] # Обучающие data (первые 80%)
- test_data = data.iloc[split_idx:] # Тестовые data (последние 20%)
+ test_data = data.iloc[split_idx:] # testsые data (последние 20%)
 
  # create предиктора with настройками for бинарной классификации
  predictor = TabularPredictor(
@@ -243,7 +243,7 @@ def create_simple_model(data, test_size=0.2):
  predictor.fit(
  train_data[feature_columns + ['target']], # data for обучения
  time_limit=300, # Время обучения in секундах (5 minutes)
- presets='medium_quality_faster_train' # Быстрые предустановки
+ presets='medium_quality_faster_train' # Быстрые предinstallation
  )
 
  return predictor, test_data, feature_columns
@@ -274,7 +274,7 @@ def simple_backtest(predictor, test_data, features):
  - Готова for предсказания on новых данных
 
  test_data : pd.dataFrame
- Тестовые data for backtest:
+ testsые data for backtest:
  - Содержит исторические data (OHLCV + индикаторы)
  - Включает целевую переменную 'target'
  - not участвовали in обучении модели
@@ -282,7 +282,7 @@ def simple_backtest(predictor, test_data, features):
  features : List[str]
  List признаков for предсказания:
  - Должны соответствовать приsignм обучения
- - Включают OHLCV data and технические индикаторы
+ - Включают OHLCV data and Technical индикаторы
 
  Returns:
  --------
@@ -312,7 +312,7 @@ def simple_backtest(predictor, test_data, features):
  - Отсутствие slippage
  """
 
- # Предсказания модели on тестовых данных
+ # Предсказания модели on testsых данных
  Predictions = predictor.predict(test_data[features])
  probabilities = predictor.predict_proba(test_data[features])
 
@@ -358,14 +358,14 @@ def simple_walk_forward(data, features, window_size=252, step_size=30):
  -----------
  data : pd.dataFrame
  Полные исторические data:
- - Содержит OHLCV data and технические индикаторы
+ - Содержит OHLCV data and Technical индикаторы
  - Включает целевую переменную 'target'
  - Отсортированы in time (хронологический порядок)
 
  features : List[str]
  List признаков for обучения:
- - Должны быть доступны во всех временных периодах
- - Включают OHLCV data and технические индикаторы
+ - Должны быть доступны во all временных периодах
+ - Включают OHLCV data and Technical индикаторы
 
  window_size : int, default=252
  Размер обучающего окна (количество дней):
@@ -384,10 +384,10 @@ def simple_walk_forward(data, features, window_size=252, step_size=30):
  --------
  List[Dict[str, Any]]
  Результаты walk-forward валидации:
- - period: индекс начала тестового периода
- - accuracy: точность модели on тестовом периоде
+ - period: index начала testsого периода
+ - accuracy: точность модели on testsом периоде
  - train_size: размер обучающей выборки
- - test_size: размер тестовой выборки
+ - test_size: размер testsой выборки
 
  Notes:
  ------
@@ -399,7 +399,7 @@ def simple_walk_forward(data, features, window_size=252, step_size=30):
 
  Преимущества:
  - Реалистичная оценка производительности
- - Учет временной dependencies данных
+ - Учет temporary dependencies данных
  - Оценка стабильности модели
 
  Ограничения:
@@ -415,7 +415,7 @@ def simple_walk_forward(data, features, window_size=252, step_size=30):
  # Обучающие data (исторические data)
  train_data = data.iloc[i-window_size:i]
 
- # Тестовые data (будущие data)
+ # testsые data (будущие data)
  test_data = data.iloc[i:i+step_size]
 
  # create and обучение модели for текущего периода
@@ -429,19 +429,19 @@ def simple_walk_forward(data, features, window_size=252, step_size=30):
  predictor.fit(
  train_data[features + ['target']], # Обучающие data
  time_limit=60, # Время обучения in секундах (1 minutesа)
- presets='medium_quality_faster_train' # Быстрые предустановки
+ presets='medium_quality_faster_train' # Быстрые предinstallation
  )
 
- # Предсказания on тестовых данных
+ # Предсказания on testsых данных
  Predictions = predictor.predict(test_data[features])
- accuracy = (Predictions == test_data['target']).mean() # Точность on тестовом периоде
+ accuracy = (Predictions == test_data['target']).mean() # Точность on testsом периоде
 
  # Сохранение результатов for текущего периода
  results.append({
- 'period': i, # Индекс начала тестового периода
+ 'period': i, # index начала testsого периода
  'accuracy': accuracy, # Точность модели
  'train_size': len(train_data), # Размер обучающей выборки
- 'test_size': len(test_data) # Размер тестовой выборки
+ 'test_size': len(test_data) # Размер testsой выборки
  })
 
  return results
@@ -462,14 +462,14 @@ def simple_monte_carlo(data, features, n_simulations=100):
  -----------
  data : pd.dataFrame
  Полные исторические data:
- - Содержит OHLCV data and технические индикаторы
+ - Содержит OHLCV data and Technical индикаторы
  - Включает целевую переменную 'target'
  - Достаточный размер for случайной выборки
 
  features : List[str]
  List признаков for обучения:
- - Должны быть доступны во всех выборках
- - Включают OHLCV data and технические индикаторы
+ - Должны быть доступны во all выборках
+ - Включают OHLCV data and Technical индикаторы
 
  n_simulations : int, default=100
  Количество симуляций Monte Carlo:
@@ -486,7 +486,7 @@ def simple_monte_carlo(data, features, n_simulations=100):
  - std_accuracy: стандартное отклонение точности
  - min_accuracy: минимальная точность
  - max_accuracy: максимальная точность
- - results: List всех результатов точности
+ - results: List all результатов точности
 
  Notes:
  ------
@@ -518,7 +518,7 @@ def simple_monte_carlo(data, features, n_simulations=100):
  # Разделение on train/test (80/20)
  split_idx = int(len(sample_data) * 0.8)
  train_data = sample_data.iloc[:split_idx] # Обучающие data
- test_data = sample_data.iloc[split_idx:] # Тестовые data
+ test_data = sample_data.iloc[split_idx:] # testsые data
 
  # create модели for текущей симуляции
  predictor = TabularPredictor(
@@ -531,10 +531,10 @@ def simple_monte_carlo(data, features, n_simulations=100):
  predictor.fit(
  train_data[features + ['target']], # Обучающие data
  time_limit=30, # Время обучения in секундах (30 секунд)
- presets='medium_quality_faster_train' # Быстрые предустановки
+ presets='medium_quality_faster_train' # Быстрые предinstallation
  )
 
- # Предсказания on тестовых данных
+ # Предсказания on testsых данных
  Predictions = predictor.predict(test_data[features])
  accuracy = (Predictions == test_data['target']).mean() # Точность текущей симуляции
 
@@ -583,9 +583,9 @@ def predict():
  request.json : Dict[str, Any]
  JSON запрос with data for предсказания:
  - symbol: str - символ криптовалюты (например, 'BTC-USD')
- - Timeframe: str - временной интервал (например, '1h', '1d')
+ - Timeframe: str - temporary интервал (например, '1h', '1d')
  - timestamp: int - временная метка запроса
- - features: Dict[str, float] - технические индикаторы (опционально)
+ - features: Dict[str, float] - Technical индикаторы (опционально)
 
  Returns:
  --------
@@ -659,10 +659,10 @@ if __name__ == '__main__':
 
 ## Шаг 6: Docker контейнеризация
 
-**Почему Docker критически важен for продакшен деплоя?** Потому что он обеспечивает консистентность среды выполнения, упрощает развертывание and масштабирование, а также изолирует application from системных зависимостей.
+**Почему Docker критически важен for продакшен деплоя?** Потому что он обеспечивает консистентность среды выполнения, упрощает развертывание and масштабирование, а также изолирует application from системных dependencies.
 
 **Преимущества Docker for ML-систем:**
-- **Консистентность**: Одинаковая среда on всех серверах
+- **Консистентность**: Одинаковая среда on all серверах
 - **Портабельность**: Легкое перемещение между серверами
 - **Изоляция**: application not влияет on system
 - **Масштабирование**: Простое горизонтальное масштабирование
@@ -674,23 +674,23 @@ FROM python:3.9-slim
 # installation рабочей директории
 WORKDIR /app
 
-# installation системных зависимостей
+# installation системных dependencies
 RUN apt-get update && apt-get install -y \
  gcc \
  g++ \
  && rm -rf /var/lib/apt/Lists/*
 
-# installation Python зависимостей
+# installation Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Копирование кода приложения
 COPY . .
 
-# create User for безопасности
-RUN Useradd -m -u 1000 appUser && \
- chown -R appUser:appUser /app
-User appUser
+# create user for безопасности
+RUN useradd -m -u 1000 appuser && \
+ chown -R appuser:appuser /app
+user appuser
 
 # Открытие порта for API
 EXPOSE 5000
@@ -803,7 +803,7 @@ class MLPredictionContract:
  - Другие доступные символы
 
  Timeframe : str
- Временной интервал for предсказания:
+ temporary интервал for предсказания:
  - '1h': 1 час
  - '4h': 4 часа
  - '1d': 1 день
@@ -826,7 +826,7 @@ class MLPredictionContract:
  # Вызов ML API for получения предсказания
  response = requests.post('http://ml-api:5000/predict', json={
  'symbol': symbol, # Символ криптовалюты
- 'Timeframe': Timeframe, # Временной интервал
+ 'Timeframe': Timeframe, # temporary интервал
  'timestamp': int(time.time()) # Временная метка
  })
 
@@ -913,7 +913,7 @@ def monitor_and_retrain():
 
  Процесс развертывания:
  - Сохранение новой модели
- - Валидация on тестовых данных
+ - Валидация on testsых данных
  - Постепенное переключение трафика
  - Откат при проблемах
  """
@@ -960,10 +960,10 @@ def main():
  - ML API: получение Predictions from модели
  - Blockchain Contract: выполнение торговых операций
  - Monitoring: Monitoring производительности
- - Logging: запись всех операций
+ - Logging: запись all операций
 
  Процесс работы:
- 1. Инициализация всех компонентов
+ 1. Инициализация all компонентов
  2. Получение предсказания from ML модели
  3. Выполнение торговой операции on blockchain
  4. Логирование результата
@@ -971,12 +971,12 @@ def main():
  6. Пауза to следующего цикла
 
  Обработка ошибок:
- - Логирование всех ошибок
+ - Логирование all ошибок
  - Пауза при критических ошибках
  - Продолжение работы при некритических ошибках
  - Автоматический переLaunch при сбоях
 
- settings:
+ Settings:
  - Интервал обновления: 1 час (3600 секунд)
  - Пауза при ошибке: 1 minutesа (60 секунд)
  - Уровень логирования: INFO

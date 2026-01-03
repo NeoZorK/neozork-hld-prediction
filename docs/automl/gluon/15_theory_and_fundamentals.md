@@ -24,7 +24,7 @@
 <img src="images/optimized/automl_theory_overView.png" alt="Теория AutoML" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 15.1: Теоретические основы автоматизированного машинного обучения - основные components and принципы работы*
 
-**Почему AutoML - это not просто "нажать кнопку"?** Потому что это сложная система алгоритмов, которая автоматизирует процесс creating ML models, но требует понимания принципов for эффективного использования.
+**Почему AutoML - это not просто "нажать кнопку"?** Потому что это сложная система алгоритмов, которая автоматизирует процесс Creating ML models, но требует понимания принципов for эффективного использования.
 
 **Ключевые components AutoML:**
 - **Neural Architecture Search (NAS)**: Автоматический поиск оптимальной архитектуры нейронных networks
@@ -33,7 +33,7 @@
 - **Ensemble Methods**: Комбинирование множественных моделей for improving accuracy
 - **Performance Optimization**: Оптимизация производительности and ресурсов
 
-AutoML (Automated Machine Learning) - это область машинного обучения, которая автоматизирует процесс creating ML models. Понимание теоретических основ критически важно for эффективного использования AutoML Gluon.
+AutoML (Automated Machine Learning) - это область машинного обучения, которая автоматизирует процесс Creating ML models. Понимание теоретических основ критически важно for эффективного использования AutoML Gluon.
 
 ## Основные концепции AutoML
 
@@ -271,7 +271,7 @@ class Focalloss(nn.Module):
 **Детальные описания параметров Focal Loss:**
 
 - **`alpha`**: Весовой коэффициент for балансировки классов (0.1-2.0)
- - `1.0`: Равные веса for всех классов (стандарт)
+ - `1.0`: Равные веса for all классов (стандарт)
  - `0.5`: Уменьшить вес for частых классов
  - `2.0`: Увеличить вес for редких классов
  - Применение: дисбаланс классов, редкие события
@@ -634,7 +634,7 @@ class MetaLearner:
  'n_samples': len(dataset),
  'n_features': len(dataset.columns) - 1,
  'n_classes': len(dataset['target'].unique()),
- 'missing_ratio': dataset.isnull().sum().sum() / (len(dataset) * len(dataset.columns)),
+ 'Missing_ratio': dataset.isnull().sum().sum() / (len(dataset) * len(dataset.columns)),
  'categorical_ratio': len(dataset.select_dtypes(include=['object']).columns) / len(dataset.columns)
  }
  return features

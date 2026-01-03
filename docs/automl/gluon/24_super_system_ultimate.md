@@ -1,4 +1,4 @@
-# Супер-система: Объединение всех indicators
+# Супер-система: Объединение all indicators
 
 **Author:** NeoZorK (Shcherbyna Rostyslav)
 **Дата:** 2025
@@ -24,7 +24,7 @@
 ## Введение
 
 <img src="images/optimized/super_system_overView.png" alt="Супер-система" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 24.1: Супер-система - объединение всех indicators and компонентов*
+*Рисунок 24.1: Супер-система - объединение all indicators and компонентов*
 
 **Почему супер-система - это будущее торговли?** Потому что она объединяет все лучшие техники and индикаторы, создавая system, которая Workingет in любых условиях and приносит стабильную прибыль.
 
@@ -44,7 +44,7 @@
 - **Sharpe Ratio**: 5.2
 - **Годовая доходность**: 156.7%
 
-Супер-система - это объединение всех лучших техник and indicators for создания идеальной торговой системы. Мы объединим SCHR Levels, WAVE2 and SCHR SHORT3 with самыми современными техниками машинного обучения for создания системы мечты.
+Супер-система - это объединение all лучших техник and indicators for создания идеальной торговой системы. Мы объединим SCHR Levels, WAVE2 and SCHR SHORT3 with самыми современными техниками машинного обучения for создания системы мечты.
 
 ## Философия супер-системы
 
@@ -53,7 +53,7 @@
 **Почему принципы объединения критически важны?** Потому что неправильное объединение indicators может привести к конфликту сигналов and потере денег.
 
 1. **Синергия indicators** - каждый индикатор дополняет другие, создавая синергетический эффект
-2. **Многоуровневая валидация** - check on всех уровнях for максимальной точности
+2. **Многоуровневая валидация** - check on all уровнях for максимальной точности
 3. **Адаптивность** - система адаптируется к изменениям рынка, оставаясь актуальной
 4. **Робастность** - устойчивость к рыночным шокам, Working in любых условиях
 5. **Прибыльность** - стабильная доходность > 100% in месяц with минимальными рисками
@@ -61,7 +61,7 @@
 ### Почему это Workingет всегда
 
 1. **Разнообразие сигналов** - разные индикаторы ловят разные паттерны
-2. **Временная адаптация** - система Workingет on всех Timeframes
+2. **Временная адаптация** - система Workingет on all Timeframes
 3. **Машинное обучение** - автоматическая оптимизация
 4. **Риск-менеджмент** - защита from потерь
 5. **Непрерывное обучение** - система постоянно улучшается
@@ -74,14 +74,14 @@
 **Уровни системы:**
 - **Level 1 - Base Indicators**: SCHR Levels, WAVE2, SCHR SHORT3
 - **Level 2 - ML Models**: SCHR ML Model, WAVE2 ML Model, SHORT3 ML Model
-- **Level 3 - Meta Model**: Объединение всех моделей
+- **Level 3 - Meta Model**: Объединение all моделей
 - **Level 4 - Risk Management**: Management рисками
 - **Level 5 - Portfolio Manager**: Management портфелем
 - **Level 6 - Continuous Learning**: Непрерывное обучение
 
 **Принципы объединения:**
 - **Синергия indicators**: Каждый индикатор дополняет другие
-- **Многоуровневая валидация**: check on всех уровнях
+- **Многоуровневая валидация**: check on all уровнях
 - **Адаптивность**: Система адаптируется к изменениям рынка
 - **Робастность**: Устойчивость к рыночным шокам
 - **Прибыльность**: Стабильная доходность > 100% in месяц
@@ -95,7 +95,7 @@ class SuperTradingsystem:
  parameters инициализации:
  - Все components инициализируются with параметрами on умолчанию
  - Каждый компонент имеет свои специфические parameters конфигурации
- - Система поддерживает кастомизацию всех параметров через конфигурационные файлы
+ - Система поддерживает кастомизацию all параметров через конфигурационные файлы
  """
 
  def __init__(self, config=None):
@@ -158,7 +158,7 @@ class SuperTradingsystem:
  )
 
  def _get_default_config(self):
- """Возвращает конфигурацию on умолчанию for всех компонентов системы"""
+ """Возвращает конфигурацию on умолчанию for all компонентов системы"""
  return {
  'schr_levels_config': {
  'lookback_period': 50, # Период for Analysis уровней (свечей)
@@ -245,7 +245,7 @@ class SuperTradingsystem:
 - **SCHR SHORT3**: Краткосрочные сигналы, краткосрочные паттерны, краткосрочная волатильность
 
 **Процесс интеграции:**
-- **Получение сигналов**: Сбор сигналов from всех indicators
+- **Получение сигналов**: Сбор сигналов from all indicators
 - **Анализ корреляций**: Изучение взаимосвязей между сигналами
 - **Взвешивание сигналов**: Присвоение весов on basis производительности
 - **create мета-сигнала**: Объединение взвешенных сигналов
@@ -255,7 +255,7 @@ class SuperTradingsystem:
 
 ```python
 class Indicatorintegration:
- """integration всех indicators
+ """integration all indicators
 
  parameters интеграции:
  - indicators: Словарь with индикаторами and их конфигурациями
@@ -312,7 +312,7 @@ class Indicatorintegration:
 
  def integrate_signals(self, data, market_context=None):
  """
- integration сигналов всех indicators
+ integration сигналов all indicators
 
  Args:
  data (pd.dataFrame): Рыночные data (OHLCV)
@@ -333,7 +333,7 @@ class Indicatorintegration:
  if market_context is None:
  market_context = self._analyze_market_context(data)
 
- # Получение сигналов from всех indicators
+ # Получение сигналов from all indicators
  schr_signals = self.get_schr_signals(data, market_context)
  wave2_signals = self.get_wave2_signals(data, market_context)
  short3_signals = self.get_short3_signals(data, market_context)
@@ -556,7 +556,7 @@ class Indicatorintegration:
 **Методы объединения:**
 - **Временное объединение**: Анализ сигналов во времени
 - **Иерархическое объединение**: Многоуровневая Structure объединения
-- **Финальное объединение**: Оптимальное сочетание всех методов
+- **Финальное объединение**: Оптимальное сочетание all методов
 - **Отслеживание производительности**: Постоянный Monitoring качества
 
 ### 3. Мета-модель
@@ -828,10 +828,10 @@ class AdvancedRiskManager:
 
  def calculate_dynamic_risk(self, signals, market_data, Portfolio_state, historical_data=None):
  """
- Расчет динамического риска with учетом всех факторов
+ Расчет динамического риска with учетом all факторов
 
  Args:
- signals (dict): Торговые сигналы from всех indicators
+ signals (dict): Торговые сигналы from all indicators
  - schr_signals: Сигналы SCHR Levels
  - wave2_signals: Сигналы WAVE2
  - short3_signals: Сигналы SCHR SHORT3
@@ -1148,10 +1148,10 @@ class ContinuousLearningsystem:
 def prepare_super_system_data(self, data_dict):
  """Подготовка данных for супер-системы"""
 
- # Объединение данных всех Timeframes
+ # Объединение данных all Timeframes
  combined_data = self.combine_all_Timeframes(data_dict)
 
- # create признаков всех indicators
+ # create признаков all indicators
  schr_features = self.schr_levels.create_features(combined_data)
  wave2_features = self.wave2.create_features(combined_data)
  short3_features = self.schr_short3.create_features(combined_data)
@@ -1167,7 +1167,7 @@ def prepare_super_system_data(self, data_dict):
 def create_meta_features(self, schr_features, wave2_features, short3_features):
  """create мета-признаков"""
 
- # Объединение всех признаков
+ # Объединение all признаков
  all_features = pd.concat([schr_features, wave2_features, short3_features], axis=1)
 
  # create взаимодействий между индикаторами
@@ -1179,7 +1179,7 @@ def create_meta_features(self, schr_features, wave2_features, short3_features):
  # create статистических признаков
  statistical_features = self.create_statistical_features(all_features)
 
- # Объединение всех мета-признаков
+ # Объединение all мета-признаков
  meta_features = pd.concat([
  all_features,
  interaction_features,
@@ -1236,7 +1236,7 @@ def train_super_model(self, features, target, config=None):
  config (dict, optional): configuration обучения
  - train_split: Доля обучающих данных (0.0-1.0)
  - val_split: Доля валидационных данных (0.0-1.0)
- - test_split: Доля тестовых данных (0.0-1.0)
+ - test_split: Доля testsых данных (0.0-1.0)
  - random_state: Случайное состояние for воспроизводимости
  - stratify: Стратификация on целевой переменной
  - feature_selection: Отбор признаков
@@ -1538,7 +1538,7 @@ contract SuperTradingsystemContract {
  return signals[signalCount - 1];
  }
 
- function getsignalByIndex(uint256 index) external View returns (Supersignal memory) {
+ function getsignalByindex(uint256 index) external View returns (Supersignal memory) {
  return signals[index];
  }
 }
@@ -1624,7 +1624,7 @@ contract SuperTradingsystemContract {
 | **problem_type** | binary | binary | binary | Тип задачи |
 | **eval_metric** | accuracy | accuracy | accuracy | Метрика оценки |
 | **time_limit** | 1800 | 1800 | 1800 | Лимит времени обучения (сек) |
-| **presets** | best_quality | best_quality | best_quality | Предустановки качества |
+| **presets** | best_quality | best_quality | best_quality | Предinstallation качества |
 | **learning_rate** | 0.01-0.3 | 0.01-0.3 | 0.01-0.3 | Скорость обучения |
 | **num_leaves** | 31-100 | 31-100 | 31-100 | Количество листьев |
 | **feature_fraction** | 0.8-1.0 | 0.8-1.0 | 0.8-1.0 | Доля признаков |
@@ -1707,7 +1707,7 @@ contract SuperTradingsystemContract {
 
 - install строгие лимиты риска
 - Use консервативные parameters обучения
-- Настройте Monitoring всех критических параметров
+- Настройте Monitoring all критических параметров
 
 ## Заключение
 

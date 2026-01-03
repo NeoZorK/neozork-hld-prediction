@@ -31,7 +31,7 @@ class MultiMTFdata:
 
 ### 2. Признаки Multi MTF
 ```python
-# for каждого Timeframe создаем:
+# for каждого Timeframe Creating:
 - SCHR Levels признаки (как сейчас)
 - Cross-Timeframe признаки:
  - Тренд on высшем Timeframeе
@@ -45,7 +45,7 @@ class MultiMTFdata:
 # Три типа моделей:
 1. Single TF модели (как сейчас) - for каждого Timeframe отдельно
 2. Cross TF модели - учитывают взаимодействие Timeframes
-3. Ensemble модели - комбинируют предсказания всех Timeframes
+3. Ensemble модели - комбинируют предсказания all Timeframes
 ```
 
 ## 🔧 Реализация
@@ -108,14 +108,14 @@ class MultiMTFPipeline:
 ```python
 def predict_multi_mtf(self, data: MultiMTFdata) -> Dict[str, Any]:
  """
- Предсказания with учетом всех Timeframes
+ Предсказания with учетом all Timeframes
 
  Returns:
  {
  'single_tf_Predictions': {...}, # Предсказания on каждому TF
  'cross_tf_Predictions': {...}, # Cross-Timeframe предсказания
  'ensemble_Predictions': {...}, # Ensemble предсказания
- 'consensus': {...}, # Консенсус всех моделей
+ 'consensus': {...}, # Консенсус all моделей
  'confidence': {...} # Уверенность in предсказаниях
  }
  """

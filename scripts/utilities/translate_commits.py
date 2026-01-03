@@ -26,9 +26,9 @@ TRANSLATIONS = {
  r'\bобновление документации on инженерии признаков and обучению моделей for финансовых данных\b': 'update documentation on feature engineering and model training for financial data',
  r'\bобновление документации on Монте-Карло симуляции and управлению рисками\b': 'update documentation on Monte Carlo simulation and risk Management',
  r'\bобновление документации on анализу SCHR Levels and SCHR SHORT3\b': 'update documentation on SCHR Levels and SCHR SHORT3 Analysis',
- r'\bобновление файлов \.dockerignore and \.gitignore for\b': 'update .dockerignore and .gitignore files for',
- r'\bобновление файлов \.dockerignore and \.gitignore for исключения and включения документации\b': 'update .dockerignore and .gitignore files for exclusion and inclusion of documentation',
- r'\bобновление файлов \.dockerignore and \.gitignore for декомпозиции\b': 'update .dockerignore and .gitignore files for decomposition',
+ r'\bобновление files \.dockerignore and \.gitignore for\b': 'update .dockerignore and .gitignore files for',
+ r'\bобновление files \.dockerignore and \.gitignore for исключения and включения документации\b': 'update .dockerignore and .gitignore files for exclusion and inclusion of documentation',
+ r'\bобновление files \.dockerignore and \.gitignore for декомпозиции\b': 'update .dockerignore and .gitignore files for decomposition',
  r'\bобновление functions экспорта метаданных in декомпозиции временных рядов\b': 'update metadata export function in time series decomposition',
  r'\bдобавление новых функций for визуализации результатов CEEMDAN\b': 'add new functions for CEEMDAN visualization results',
  r'\bдобавление новых функций for декомпозиции временных рядов\b': 'add new functions for time series decomposition',
@@ -48,8 +48,8 @@ TRANSLATIONS = {
  r'\bдобавление новых функций\b': 'add new functions',
  r'\bобновление functions\b': 'update function',
  r'\bдобавление модуля\b': 'add module',
- r'\bобновление файлов\b': 'update files',
- r'\bдобавление новых зависимостей\b': 'add new dependencies',
+ r'\bобновление files\b': 'update files',
+ r'\bдобавление новых dependencies\b': 'add new dependencies',
 
  # Common verbs
  r'\bобновление\b': 'update',
@@ -133,7 +133,7 @@ TRANSLATIONS = {
 
 # Direct translations for specific commit messages
 DIRECT_TRANSLATIONS = {
- 'chore: update зависимостей h11 and httpcore to new versions':
+ 'chore: update dependencies h11 and httpcore to new versions':
  'chore: update dependencies h11 and httpcore to new versions',
  'feat: add new dependencies in проект':
  'feat: add new dependencies to project',
@@ -158,9 +158,9 @@ DIRECT_TRANSLATIONS = {
  'feat: добавлена полная система заработка 100%+ in месяц - Создана детальная система with рабочим кодом from идеи to деплоя - Добавлены все components: модели, индикаторы, блокчейн-integration - Реализована система автоматического переобучения - Добавлен полный Monitoring and система алертов - Создана documentation on Launch and использованию - Система готова for тестирования on блокчейн testnet':
  'feat: add complete earning system 100%+ per month - Created Detailed system with Working code from idea to deployment - Added all components: models, indicators, blockchain integration - Implemented automatic retraining system - Added full Monitoring and alert system - Created documentation on Launch and usage - system ready for testing on blockchain testnet',
  'feat: создан полный учебник on созданию робастных прибыльных ML systems':
- 'feat: create complete tutorial on creating robust profitable ML systems',
- 'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Простой example" and "Сложный example" showcasing the development and deployment of robust ML models using AutoML Gluon. - included Detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide Users with practical insights into building and deploying ML models, catering to both novice and advanced Users.':
- 'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Simple Example" and "Advanced Example" showcasing the development and deployment of robust ML models using AutoML Gluon. - included Detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide Users with practical insights into building and deploying ML models, catering to both novice and advanced Users.',
+ 'feat: create complete tutorial on Creating robust profitable ML systems',
+ 'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Простой example" and "Сложный example" showcasing the development and deployment of robust ML models Using AutoML Gluon. - included Detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide users with practical insights into building and deploying ML models, catering to both novice and advanced users.':
+ 'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Simple Example" and "Advanced Example" showcasing the development and deployment of robust ML models Using AutoML Gluon. - included Detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide users with practical insights into building and deploying ML models, catering to both novice and advanced users.',
  'fix dual charts for -d fastest and MACD ок with scale date':
  'fix dual charts for -d fastest and MACD OK with scale date',
  'fix dual charts for -d fastest and MACD ок':
@@ -364,7 +364,7 @@ if __name__ == '__main__':
  print("\n✓ Successfully translated all commit messages!")
  print("\nNext steps:")
  print("1. ReView the changes: git log --oneline -20")
- print("2. If everything looks good, force push: git push --force --all")
+ print("2. If everything looks good, force Push: git Push --force --all")
  print("3. If something went wrong, restore: git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch -r .' --prune-empty --tag-name-filter cat -- --all")
  else:
  print(f"\n✗ Error during filter-branch:", file=sys.stderr)

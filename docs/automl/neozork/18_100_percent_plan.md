@@ -66,7 +66,7 @@
 
 **Ключевые принципы:**
 
-- **Мультиактивный подход - торговля on всех активах simultaneously**
+- **Мультиактивный подход - торговля on all активах simultaneously**
  - **Теория:** Мультиактивный подход критически важен for диверсификации рисков and максимизации возможностей
  - **Почему важно:** Обеспечивает диверсификацию and максимизацию возможностей
  - **Плюсы:** Диверсификация рисков, максимизация возможностей, стабильность
@@ -141,7 +141,7 @@
 
 **Детальное объяснение реализации мультиактивного подхода:**
 
-Мультиактивный подход основан on принципе диверсификации, который является фундаментальным in современном портфельном управлении. Вместо концентрации on одном активе or классе активов, мы создаем system, которая simultaneously торгует on различных рынках: криптовалютном, валютном, fundsом and товарном. Это позволяет нам:
+Мультиактивный подход основан on принципе диверсификации, который является фундаментальным in современном портфельном управлении. Вместо концентрации on одном активе or классе активов, мы Creating system, которая simultaneously торгует on различных рынках: криптовалютном, валютном, fundsом and товарном. Это позволяет нам:
 
 1. **Снизить общий риск портфеля** - когда один актив падает, другие могут расти
 2. **Максимизировать возможности** - мы not упускаем прибыльные движения on любом рынке
@@ -226,7 +226,7 @@ class MultiAssetStrategy:
  - parameters управления рисками
  - Историю производительности
  """
- print("create стратегий for всех активов and Timeframes...")
+ print("create стратегий for all активов and Timeframes...")
 
  total_strategies = 0
  for asset_type, symbols in self.assets.items():
@@ -340,7 +340,7 @@ class MultiAssetStrategy:
  if len(features) < 50:
  return None
 
- # Разделение on обучающую and тестовую выборки
+ # Разделение on обучающую and testsую выборки
  X_train, X_test, y_train, y_test = train_test_split(
  features, target, test_size=0.2, random_state=42
  )
@@ -378,7 +378,7 @@ class MultiAssetStrategy:
  """
  features = []
 
- # Технические индикаторы
+ # Technical индикаторы
  data['sma_20'] = data['close'].rolling(20).mean()
  data['sma_50'] = data['close'].rolling(50).mean()
  data['rsi'] = self._calculate_rsi(data['close'])
@@ -456,7 +456,7 @@ class MultiAssetStrategy:
  Словарь with приsignми
  """
  return {
- 'technical_indicators': True,
+ 'Technical_indicators': True,
  'price_patterns': True,
  'volume_Analysis': True,
  'volatility_metrics': True,
@@ -484,12 +484,12 @@ class MultiAssetStrategy:
 
  # Корректировка in dependencies from Timeframe
  Timeframe_multiplier = {
- '1m': 0.5, # Более агрессивные settings for коротких Timeframes
+ '1m': 0.5, # Более агрессивные Settings for коротких Timeframes
  '5m': 0.7,
  '15m': 0.8,
  '1h': 1.0,
  '4h': 1.2,
- '1d': 1.5 # Более консервативные settings for длинных Timeframes
+ '1d': 1.5 # Более консервативные Settings for длинных Timeframes
  }
 
  multiplier = Timeframe_multiplier.get(Timeframe, 1.0)
@@ -505,7 +505,7 @@ class MultiAssetStrategy:
 
  def get_strategy_performance(self) -> pd.dataFrame:
  """
- Получение производительности всех стратегий
+ Получение производительности all стратегий
 
  Returns:
  dataFrame with метриками производительности
@@ -533,7 +533,7 @@ if __name__ == "__main__":
  # create стратегии with начальным капиталом $100,000
  strategy = MultiAssetStrategy(initial_capital=100000)
 
- # create стратегий for всех активов
+ # create стратегий for all активов
  strategy.create_asset_strategies()
 
  # Вывод информации о созданных стратегиях
@@ -1098,7 +1098,7 @@ class IndicatorCombination:
 
  def combine_signals(self, data: pd.dataFrame) -> Dict:
  """
- Комбинирование сигналов всех indicators
+ Комбинирование сигналов all indicators
 
  Args:
  data: dataFrame with ценовыми данными (OHLCV)
@@ -1263,7 +1263,7 @@ class IndicatorCombination:
 if __name__ == "__main__":
  import yfinance as yf
 
- # Загрузка тестовых данных
+ # Загрузка testsых данных
  ticker = yf.Ticker("AAPL")
  data = ticker.history(period="6mo", interval="1d")
 
@@ -1403,8 +1403,8 @@ class Adaptivesystem:
  self.performance_history = []
  self.market_Analysis_history = []
 
- # settings адаптации
- self.adaptation_settings = {
+ # Settings адаптации
+ self.adaptation_Settings = {
  'min_performance_drop': 0.05, # Минимальное падение производительности for адаптации
  'max_adaptation_frequency': 24, # Максимальная частота адаптации (часы)
  'adaptation_cooldown': 4, # Время ожидания между адаптациями (часы)
@@ -1483,7 +1483,7 @@ class Adaptivesystem:
 
  # check времени with последней адаптации
  time_since_last = datetime.now() - self.last_adaptation
- if time_since_last.total_seconds() < self.adaptation_settings['adaptation_cooldown'] * 3600:
+ if time_since_last.total_seconds() < self.adaptation_Settings['adaptation_cooldown'] * 3600:
  return False
 
  return True
@@ -1881,7 +1881,7 @@ class Adaptivesystem:
  def _tune_parameters(self, market_data: pd.dataFrame) -> None:
  """configuration параметров"""
  print("Выполняется configuration параметров...")
- # Здесь должна быть реализация settings параметров
+ # Здесь должна быть реализация Settings параметров
  pass
 
  def get_adaptation_statistics(self) -> Dict[str, Any]:
@@ -1920,7 +1920,7 @@ class Adaptivesystem:
 if __name__ == "__main__":
  import yfinance as yf
 
- # Загрузка тестовых данных
+ # Загрузка testsых данных
  ticker = yf.Ticker("AAPL")
  data = ticker.history(period="6mo", interval="1d")
 
@@ -1968,17 +1968,17 @@ if __name__ == "__main__":
 
 ### Этап 1: Подготовка (1-2 недели)
 
-**Теория:** Этап подготовки критически важен for создания фундамента for всей системы. Это основа for всех последующих этапов.
+**Теория:** Этап подготовки критически важен for создания фундамента for всей системы. Это основа for all последующих этапов.
 
 **Почему этап подготовки важен:**
 - **Фундамент:** Создает фундамент for всей системы
-- **Подготовка:** Обеспечивает подготовку всех required компонентов
+- **Подготовка:** Обеспечивает подготовку all required компонентов
 - **Эффективность:** Обеспечивает эффективность последующих этапов
 - **Успех:** Критически важно for успеха всего проекта
 
 **Детальное объяснение этапа подготовки:**
 
-Этап подготовки является критически важным фундаментом for всей системы. on этом этапе мы создаем все необходимые components инфраструктуры, которые будут использоваться on протяжении всего жизненного цикла проекта. Правильная подготовка обеспечивает стабильность, масштабируемость and эффективность всей системы.
+Этап подготовки является критически важным фундаментом for всей системы. on этом этапе мы Creating все необходимые components инфраструктуры, которые будут использоваться on протяжении всего жизненного цикла проекта. Правильная подготовка обеспечивает стабильность, масштабируемость and эффективность всей системы.
 
 1. **installation окружения**
  - **Теория:** installation окружения критически важна for создания рабочей среды
@@ -1986,9 +1986,9 @@ if __name__ == "__main__":
  - **Плюсы:** Рабочая среда, совместимость, производительность
  - **Минусы:** Требует времени and ресурсов
 
- **Детальное description установки окружения:**
+ **Детальное description installation окружения:**
 
- installation окружения включает настройку всех required инструментов and библиотек for разработки and Launchа ML-систем. Это критически важно for обеспечения совместимости and производительности.
+ installation окружения включает настройку all required инструментов and библиотек for разработки and Launchа ML-систем. Это критически важно for обеспечения совместимости and производительности.
 
  ```bash
  # installation uv for управления зависимостями
@@ -1998,7 +1998,7 @@ if __name__ == "__main__":
  uv venv neozork-trading
  source neozork-trading/bin/activate
 
- # installation основных зависимостей
+ # installation основных dependencies
  uv add numpy pandas scikit-learn matplotlib seaborn
  uv add yfinance talib-binary plotly dash
  uv add jupyter notebook ipykernel
@@ -2042,7 +2042,7 @@ if __name__ == "__main__":
  self.Timeframes = ['1m', '5m', '15m', '1h', '4h', '1d']
 
  def download_all_data(self, period: str = "2y"):
- """Загрузка всех данных"""
+ """Загрузка all данных"""
  print("Начинаем загрузку данных...")
 
  for asset_type, symbols in self.assets.items():
@@ -2080,7 +2080,7 @@ if __name__ == "__main__":
 
  **Детальное description создания структуры:**
 
- create базовой структуры включает организацию файлов, create основных классов and настройку системы логирования. Это обеспечивает масштабируемость and поддерживаемость проекта.
+ create базовой структуры включает организацию files, create основных классов and настройку системы логирования. Это обеспечивает масштабируемость and поддерживаемость проекта.
 
  ```python
  import logging
@@ -2114,11 +2114,11 @@ if __name__ == "__main__":
  for directory in directories:
  (self.project_root / directory).mkdir(parents=True, exist_ok=True)
 
- # create основных файлов
+ # create основных files
  self._create_main_files()
 
  def _create_main_files(self):
- """create основных файлов"""
+ """create основных files"""
  # __init__.py файлы
  init_files = [
  "src/__init__.py",
@@ -2164,7 +2164,7 @@ if __name__ == "__main__":
 
 **Детальное объяснение этапа разработки моделей:**
 
-on этом этапе мы создаем and оптимизируем все components ML-системы, including индикаторы, признаки and модели. Каждый компонент тщательно анализируется and оптимизируется for максимальной эффективности.
+on этом этапе мы Creating and оптимизируем все components ML-системы, including индикаторы, признаки and модели. Каждый компонент тщательно анализируется and оптимизируется for максимальной эффективности.
 
 1. **Анализ indicators**
  - **Теория:** Анализ indicators критически важен for понимания их эффективности and оптимизации параметров
@@ -2234,7 +2234,7 @@ on этом этапе мы создаем and оптимизируем все c
 
  def _evaluate_indicator(self, indicator, data):
  """Оценка эффективности индикатора"""
- # Разделение данных on обучающую and тестовую выборки
+ # Разделение данных on обучающую and testsую выборки
  tscv = TimeSeriesSplit(n_splits=5)
 
  scores = []
@@ -2316,7 +2316,7 @@ on этом этапе мы создаем and оптимизируем все c
  self.feature_names.extend(features.columns)
  return features
 
- def create_technical_features(self, data):
+ def create_Technical_features(self, data):
  """create технических признаков"""
  features = pd.dataFrame(index=data.index)
 
@@ -2420,14 +2420,14 @@ on этом этапе мы создаем and оптимизируем все c
  # Использование
  engineer = FeatureEngineer()
  basic_features = engineer.create_basic_features(data)
- technical_features = engineer.create_technical_features(data)
+ Technical_features = engineer.create_Technical_features(data)
  advanced_features = engineer.create_advanced_features(data)
  time_features = engineer.create_time_features(data)
 
- # Объединение всех признаков
+ # Объединение all признаков
  all_features = pd.concat([
  basic_features,
- technical_features,
+ Technical_features,
  advanced_features,
  time_features
  ], axis=1)
@@ -3043,7 +3043,7 @@ on этом этапе мы создаем and оптимизируем все c
 
 ## Ключевые факторы успеха
 
-**Теория:** Ключевые факторы успеха представляют собой комплекс факторов, критически важных for создания высокодоходных ML-систем. Эти факторы охватывают технические, управленческие and психологические аспекты.
+**Теория:** Ключевые факторы успеха представляют собой комплекс факторов, критически важных for создания высокодоходных ML-систем. Эти факторы охватывают Technical, управленческие and психологические аспекты.
 
 **Почему ключевые факторы успеха важны:**
 - **Комплексность:** Обеспечивает комплексный подход к успеху
@@ -3051,11 +3051,11 @@ on этом этапе мы создаем and оптимизируем все c
 - **Практичность:** Обеспечивают практическое применение
 - **Эффективность:** Критически важны for эффективности
 
-### 1. Технические факторы
+### 1. Technical факторы
 
-**Теория:** Технические факторы представляют собой фундаментальные технические аспекты, критически важные for создания эффективных ML-систем.
+**Теория:** Technical факторы представляют собой фундаментальные Technical аспекты, критически важные for создания эффективных ML-систем.
 
-**Почему технические факторы важны:**
+**Почему Technical факторы важны:**
 - **Фундаментальность:** Обеспечивают фундаментальную основу
 - **Эффективность:** Критически важны for эффективности
 - **Качество:** Обеспечивают качество системы
@@ -3178,7 +3178,7 @@ on этом этапе мы создаем and оптимизируем все c
 
 ## Риски and их минимизация
 
-### 1. Технические риски
+### 1. Technical риски
 
 - **Переобучение** - использование кросс-валидации
 - **Нестабильность** - регулярное переобучение
@@ -3195,7 +3195,7 @@ on этом этапе мы создаем and оптимизируем все c
 ### 3. Операционные риски
 
 - **Человеческий фактор** - автоматизация
-- **Технические сбои** - Monitoring
+- **Technical сбои** - Monitoring
 - **Безопасность** - защита данных
 - **Масштабирование** - Planирование роста
 
@@ -3235,8 +3235,8 @@ on этом этапе мы создаем and оптимизируем все c
  - **Плюсы:** Защита капитала, стабильность, долгосрочный успех
  - **Минусы:** Потенциальные ограничения доходности
 
-5. **Автоматизация всех процессов**
- - **Теория:** Автоматизация всех процессов критически важна for эффективности and масштабируемости
+5. **Автоматизация all процессов**
+ - **Теория:** Автоматизация all процессов критически важна for эффективности and масштабируемости
  - **Почему важно:** Обеспечивает эффективность and масштабируемость
  - **Плюсы:** Эффективность, масштабируемость, автоматизация
  - **Минусы:** Сложность реализации, потенциальные сбои

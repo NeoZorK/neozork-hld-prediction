@@ -49,7 +49,7 @@
 - **Нормализация**: Приведение данных к единому масштабу
 - **Feature Engineering**: create новых признаков
 - **Валидация данных**: check качества and консистентности
-- **Документирование**: Фиксация всех преобразований
+- **Документирование**: Фиксация all преобразований
 
 ### 1. Качество данных
 
@@ -83,7 +83,7 @@ def data_quality_check(data: pd.dataFrame) -> Dict[str, Any]:
  data : pd.dataFrame
  Датафрейм for проверки качества данных. Должен содержать:
  - Числовые and категориальные колонки
- - Целевую переменную (если есть)
+ - Целевую переменную (if present)
  - Временные метки (for временных рядов)
 
  Returns:
@@ -91,8 +91,8 @@ def data_quality_check(data: pd.dataFrame) -> Dict[str, Any]:
  Dict[str, Any]
  Словарь with результатами проверки качества:
  - shape: tuple - размер датасета (строки, колонки)
- - missing_values: dict - количество пропущенных значений on колонкам
- - missing_percent: dict - процент пропущенных значений on колонкам
+ - Missing_values: dict - количество пропущенных значений on колонкам
+ - Missing_percent: dict - процент пропущенных значений on колонкам
  - data_types: dict - типы данных on колонкам
  - duplicates: int - количество дублированных строк
  - outliers: dict - количество выбросов on числовым колонкам
@@ -103,12 +103,12 @@ def data_quality_check(data: pd.dataFrame) -> Dict[str, Any]:
  function использует следующие методы детекции выбросов:
  - IQR (Interquartile Range): Q1 - 1.5*IQR to Q3 + 1.5*IQR
  - Корреляции рассчитываются только for числовых columns
- - Дубликаты определяются on полному совпадению всех значений
+ - Дубликаты определяются on полному совпадению all значений
  """
 
  quality_Report = {
  'shape': data.shape, # Размер датасета (строки, колонки)
- 'missing_values': data.isnull().sum().to_dict(), # Пропущенные значения on колонкам
+ 'Missing_values': data.isnull().sum().to_dict(), # Пропущенные значения on колонкам
  'data_types': data.dtypes.to_dict(), # Типы данных on колонкам
  'duplicates': data.duplicated().sum(), # Количество дублированных строк
  'outliers': {}, # Выбросы on числовым колонкам
@@ -116,8 +116,8 @@ def data_quality_check(data: pd.dataFrame) -> Dict[str, Any]:
  }
 
  # check пропущенных значений
- missing_percent = (data.isnull().sum() / len(data)) * 100
- quality_Report['missing_percent'] = missing_percent.to_dict()
+ Missing_percent = (data.isnull().sum() / len(data)) * 100
+ quality_Report['Missing_percent'] = Missing_percent.to_dict()
 
  # check выбросов for числовых columns
  numeric_columns = data.select_dtypes(include=[np.number]).columns
@@ -145,7 +145,7 @@ for key, value in quality_Report.items():
 ### 2. Обработка пропущенных значений
 
 ```python
-def handle_missing_values(data: pd.dataFrame, strategy: str = 'auto') -> pd.dataFrame:
+def handle_Missing_values(data: pd.dataFrame, strategy: str = 'auto') -> pd.dataFrame:
  """
  Обработка пропущенных значений in датасете
 
@@ -159,7 +159,7 @@ def handle_missing_values(data: pd.dataFrame, strategy: str = 'auto') -> pd.data
  - 'auto': Автоматический выбор стратегии on типу данных
  * for категориальных (object) - мода (наиболее частое значение)
  * for числовых - медиана (устойчива к выбросам)
- - 'drop': remove всех строк with пропущенными значениями
+ - 'drop': remove all строк with пропущенными значениями
  * Используется когда пропусков мало (< 5%)
  * Может значительно уменьшить размер датасета
  - 'interpolate': Линейная интерполяция for временных рядов
@@ -227,7 +227,7 @@ def handle_missing_values(data: pd.dataFrame, strategy: str = 'auto') -> pd.data
  return data
 
 # Использование
-train_data_clean = handle_missing_values(train_data, strategy='auto')
+train_data_clean = handle_Missing_values(train_data, strategy='auto')
 ```
 
 ### 3. Обработка выбросов
@@ -570,7 +570,7 @@ def create_hyperparameter_strategy(data_size: int, problem_type: str) -> Dict[st
  Стратегия выбора гиперпараметров:
  - Маленькие датасеты: Простые модели, быстрая конвергенция, избегание переобучения
  - Средние датасеты: Баланс между качеством and скоростью, умеренная сложность
- - Большие датасеты: Сложные модели, высокое качество, использование всех данных
+ - Большие датасеты: Сложные модели, высокое качество, использование all данных
  """
 
  if data_size < 1000:
@@ -695,7 +695,7 @@ def optimize_training_time(data_size: int, available_time: int) -> Dict[str, Any
  Стратегия оптимизации времени:
  - Маленькие датасеты: Быстрое обучение, избегание переобучения
  - Средние датасеты: Баланс между качеством and временем
- - Большие датасеты: Качественное обучение, использование всех данных
+ - Большие датасеты: Качественное обучение, использование all данных
  - Ограниченное время: Простые модели, быстрая конвергенция
  - Достаточно времени: Сложные модели, высокое качество
  """
@@ -729,7 +729,7 @@ def optimize_training_time(data_size: int, available_time: int) -> Dict[str, Any
 
  else:
  # Качественное обучение for больших датасетов
- # Максимальное качество, использование всех данных
+ # Максимальное качество, использование all данных
  return {
  'time_limit': time_per_model,
  'presets': 'high_quality',
@@ -840,7 +840,7 @@ def select_validation_strategy(data_size: int, problem_type: str,
  Notes:
  ------
  Рекомендации on выбору стратегии валидации:
- - Временные ряды: time_series_split (сохранение временной структуры)
+ - Временные ряды: time_series_split (сохранение temporary структуры)
  - Маленькие датасеты: holdout (больше данных for обучения)
  - Средние датасеты: k-fold 5 (баланс стабильности and времени)
  - Большие датасеты: k-fold 10 (максимальная стабильность)
@@ -1206,10 +1206,10 @@ parallel_config = configure_parallelization(len(train_data), 'binary')
 
 **Почему критически важен Monitoring ML-систем?** Потому что модели могут деградировать and Workingть некорректно:
 
-- **Система логирования**: Детальная фиксация всех событий
+- **Система логирования**: Детальная фиксация all событий
 - **Monitoring качества**: Отслеживание метрик производительности
 - **Детекция дрейфа**: Обнаружение изменений in данных
-- **Алертинг**: Уведомления о проблемах in реальном времени
+- **Алертинг**: notifications о проблемах in реальном времени
 - **Дашборды**: Визуализация состояния системы
 - **Анализ логов**: Поиск причин проблем and оптимизация
 
@@ -1723,8 +1723,8 @@ class PredictionCache:
  hit_rate = количество_попаданий / общее_количество_обращений
 
  Где:
- - количество_попаданий = размер_кэша
- - общее_количество_обращений = сумма_всех_счетчиков_обращений
+ - количество_попаданий = размер_cache
+ - общее_количество_обращений = сумма_all_счетчиков_обращений
  """
  if not self.access_count:
  return 0.0

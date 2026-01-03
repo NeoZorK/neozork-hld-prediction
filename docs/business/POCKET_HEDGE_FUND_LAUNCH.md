@@ -9,7 +9,7 @@
 ### ✅ 1. Бизнес-Planы (Русский + Английский)
 - **`docs/business/pocket-hedge-fund-strategy-en.md`** - Полный бизнес-Plan on английском
 - **`docs/business/pocket-hedge-fund-strategy-ru.md`** - Полный бизнес-Plan on русском
-- **`docs/development/pocket-hedge-fund-technical-Plan.md`** - Технический Plan реализации
+- **`docs/development/pocket-hedge-fund-Technical-Plan.md`** - Технический Plan реализации
 
 ### ✅ 2. Project Structure
 ```
@@ -38,7 +38,7 @@ src/pocket_hedge_fund/
 ### ✅ 4. documentation
 - **`src/pocket_hedge_fund/README.md`** - Полная documentation
 - **`run_pocket_hedge_fund.py`** - Скрипт Launchа
-- **Обновленный `docs/business/index.md`** - Индекс бизнес-Planов
+- **Обновленный `docs/business/index.md`** - index бизнес-Planов
 
 ## 🚀 Как Запустить
 
@@ -54,7 +54,7 @@ python run_pocket_hedge_fund.py
 python run_saas.py
 ```
 
-### 3. Launch Тестов
+### 3. Launch tests
 ```bash
 # Запустить все тесты
 uv run pytest tests/ -n auto
@@ -86,7 +86,7 @@ uv run pytest tests/saas/ -n auto
 ### 👥 Портал Инвесторов
 - **Dashboard**: Live Monitoring портфеля
 - **Reportы**: Детальные Reportы о производительности
-- **Уведомления**: Система уведомлений
+- **notifications**: Система уведомлений
 - **Мобильная поддержка**: Мобильный interface
 
 ### 🏪 Маркетплейс Стратегий
@@ -142,7 +142,7 @@ uv run pytest tests/saas/ -n auto
 - [x] Созданы все классы-заглушки
 - [x] Создана documentation
 - [x] Создан скрипт Launchа
-- [x] Обновлен индекс документации
+- [x] Обновлен index документации
 
 ### 🎯 Готово к Реализации
 - [x] Автономный торговый бот

@@ -1,6 +1,6 @@
 # Kubernetes Documentation
 
-This section contains comprehensive documentation for deploying and managing the Neozork HLD Prediction project using Kubernetes.
+This section contains comprehensive documentation for deploying and managing the Neozork HLD Prediction project Using Kubernetes.
 
 ## Table of Contents
 
@@ -25,7 +25,7 @@ This section contains comprehensive documentation for deploying and managing the
 ### Prerequisites
 - Kubernetes cluster (v1.20+)
 - kubectl configured
-- Docker images built and pushed to registry
+- Docker images built and Pushed to registry
 
 ### Basic deployment
 ```bash

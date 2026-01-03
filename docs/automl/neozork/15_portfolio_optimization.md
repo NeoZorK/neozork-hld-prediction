@@ -98,7 +98,7 @@
  - **Теория:** Эффективные стратегии управления рисками
  - **Почему важно:** Критически важно for долгосрочного успеха
  - **Плюсы:** Снижение рисков, защита капитала, стабильность
- - **Минусы:** Сложность settings, потенциальные ограничения доходности
+ - **Минусы:** Сложность Settings, потенциальные ограничения доходности
 
 - **Блокчейн-интеграцию**
  - **Теория:** Использование блокчейн-технологий for увеличения доходности
@@ -173,7 +173,7 @@ class FeatureEngineer:
  """create признаков из финансовых данных"""
  features = pd.dataFrame()
 
- # Технические индикаторы
+ # Technical индикаторы
  features['sma_5'] = data['Close'].rolling(5).mean()
  features['sma_20'] = data['Close'].rolling(20).mean()
  features['sma_50'] = data['Close'].rolling(50).mean()
@@ -268,7 +268,7 @@ class AssetReturnPredictor:
  Args:
  asset (str): Название актива
  data (pd.dataFrame): data with колонками OHLCV
- test_size (float): Доля тестовых данных
+ test_size (float): Доля testsых данных
 
  Returns:
  dict: Метрики производительности модели
@@ -281,12 +281,12 @@ class AssetReturnPredictor:
  # create целевой переменной (доходность on следующий день)
  target = self._create_target(data)
 
- # Synchronization индексов
+ # Synchronization indexов
  common_index = features.index.intersection(target.index)
  features = features.loc[common_index]
  target = target.loc[common_index]
 
- # Разделение on обучающую and тестовую выборки
+ # Разделение on обучающую and testsую выборки
  X_train, X_test, y_train, y_test = train_test_split(
  features, target, test_size=test_size, random_state=42, shuffle=False
  )
@@ -362,7 +362,7 @@ class AssetReturnPredictor:
  return dict(zip(feature_names, importance))
 
  def get_performance_summary(self):
- """Получение сводки on производительности всех моделей"""
+ """Получение сводки on производительности all моделей"""
  summary = {}
  for asset, metrics in self.performance_metrics.items():
  summary[asset] = {
@@ -378,7 +378,7 @@ class AssetReturnPredictor:
 
 # example использования
 if __name__ == "__main__":
- # create тестовых данных
+ # create testsых данных
  np.random.seed(42)
  dates = pd.date_range('2020-01-01', '2023-12-31', freq='D')
  n_days = len(dates)
@@ -727,7 +727,7 @@ class PortfolioOptimizer:
  min_return = np.min(expected_returns)
  max_return = np.max(expected_returns)
 
- # Создаем диапазон целевых доходностей
+ # Creating диапазон целевых доходностей
  target_returns = np.linspace(min_return, max_return, n_Portfolios)
 
  efficient_Portfolios = []
@@ -787,7 +787,7 @@ class PortfolioOptimizer:
  self.optimize_risk_parity(cov_matrix)
  self.optimize_mean_variance(expected_returns, cov_matrix)
 
- # Создаем сравнительную таблицу
+ # Creating сравнительную таблицу
  comparison = {}
  for method, results in self.optimization_results.items():
  if results['success']:
@@ -802,7 +802,7 @@ class PortfolioOptimizer:
 
 # example использования
 if __name__ == "__main__":
- # create тестовых данных
+ # create testsых данных
  np.random.seed(42)
  n_assets = 5
  n_periods = 252
@@ -887,7 +887,7 @@ max|w_current - w_target| > threshold
 **Минусы:**
 - Потенциальные частые сделки
 - Комиссии за сделки
-- Сложность settings
+- Сложность Settings
 
 **Практическое применение:** in нашем коде мы реализуем интеллектуальную system перебалансирования, которая учитывает транзакционные издержки, волатильность рынка and другие факторы for принятия оптимальных решений о перебалансировании.
 
@@ -1220,7 +1220,7 @@ class DynamicRebalancer:
 
 # example использования
 if __name__ == "__main__":
- # create тестовых данных
+ # create testsых данных
  np.random.seed(42)
  n_assets = 5
  n_days = 100
@@ -1303,13 +1303,13 @@ if __name__ == "__main__":
 
 **Математическая основа:** Мультиактивный анализ основан on многомерном статистическом анализе, где мы изучаем:
 - **Ковариационные матрицы:** for понимания взаимосвязей между активами
-- **Корреляционные структуры:** for выявления скрытых зависимостей
+- **Корреляционные структуры:** for выявления скрытых dependencies
 - **Факторные модели:** for понимания общих источников риска
 - **Кластерный анализ:** for группировки похожих активов
 
 **Методы мультиактивного Analysis:**
-1. **Корреляционный анализ:** Изучение линейных зависимостей
-2. **Копулы:** Анализ нелинейных зависимостей
+1. **Корреляционный анализ:** Изучение линейных dependencies
+2. **Копулы:** Анализ нелинейных dependencies
 3. **Факторные модели:** Выявление общих факторов риска
 4. **Кластерный анализ:** Группировка активов on схожести
 5. **Сетевой анализ:** Понимание структуры взаимосвязей
@@ -1401,7 +1401,7 @@ class CorrelationAnalyzer:
  return corr_matrix
 
  def calculate_all_correlations(self, returns):
- """Расчет всех типов корреляций"""
+ """Расчет all типов корреляций"""
  correlations = {}
 
  # Пирсон (линейная корреляция)
@@ -1682,7 +1682,7 @@ class CorrelationAnalyzer:
  """
  Report = {}
 
- # Расчет всех типов корреляций
+ # Расчет all типов корреляций
  correlations = self.calculate_all_correlations(returns)
  Report['correlations'] = correlations
 
@@ -1706,7 +1706,7 @@ class CorrelationAnalyzer:
 
 # example использования
 if __name__ == "__main__":
- # create тестовых данных
+ # create testsых данных
  np.random.seed(42)
  n_assets = 10
  n_days = 1000
@@ -1812,7 +1812,7 @@ if __name__ == "__main__":
 try:
  from arch import arch_model
  ARCH_available = True
-except ImportError:
+except importError:
  ARCH_available = False
  print("Warning: arch package not available. GARCH models will be disabled.")
 
@@ -2176,7 +2176,7 @@ class VolatilityAnalyzer:
 
 # example использования
 if __name__ == "__main__":
- # create тестовых данных
+ # create testsых данных
  np.random.seed(42)
  n_days = 1000
 
@@ -2243,7 +2243,7 @@ if __name__ == "__main__":
 
 **Математическая основа:** Современный риск-менеджмент основан on:
 - **Стохастических процессах:** for моделирования динамики цен
-- **Копулах:** for моделирования зависимостей между активами
+- **Копулах:** for моделирования dependencies между активами
 - **Экстремальной теории значений:** for Analysis хвостовых рисков
 - **Монте-Карло симуляциям:** for комплексного Analysis рисков
 
@@ -2338,7 +2338,7 @@ class VaRCalculator:
  # Сортировка доходностей
  sorted_returns = np.sort(returns)
 
- # Индекс for VaR
+ # index for VaR
  var_index = int(confidence_level * len(sorted_returns))
 
  # VaR
@@ -2715,7 +2715,7 @@ class VaRCalculator:
 
 # example использования
 if __name__ == "__main__":
- # create тестовых данных
+ # create testsых данных
  np.random.seed(42)
  n_days = 1000
 
@@ -2777,7 +2777,7 @@ if __name__ == "__main__":
 - **Историческом анализе:** Использование прошлых кризисов как шаблонов
 - **Корреляционном анализе:** Учет изменений корреляций in кризисных условиях
 
-**Типы стресс-тестов:**
+**Типы стресс-tests:**
 1. **Исторические сценарии:** Воспроизведение прошлых кризисов
 2. **Гипотетические сценарии:** Моделирование новых кризисных ситуаций
 3. **Факторные стресс-тесты:** Изменение конкретных факторов риска
@@ -2798,7 +2798,7 @@ if __name__ == "__main__":
 - Planирование инвестиций
 
 **Минусы:**
-- Сложность settings
+- Сложность Settings
 - Потенциальные Issues with data
 - Необходимость понимания рыночных условий
 - Субъективность in выборе сценариев
@@ -2969,14 +2969,14 @@ class StressTester:
 
  def run_historical_stress_test(self, Portfolio_weights, base_returns=None):
  """
- Launch исторических стресс-тестов
+ Launch исторических стресс-tests
 
  Args:
  Portfolio_weights (dict): Веса активов in Portfolio
  base_returns (dict): Базовые доходности активов
 
  Returns:
- dict: Результаты исторических стресс-тестов
+ dict: Результаты исторических стресс-tests
  """
  if not self.historical_scenarios:
  self.define_historical_scenarios()
@@ -3005,14 +3005,14 @@ class StressTester:
 
  def run_hypothetical_stress_test(self, Portfolio_weights, base_returns=None):
  """
- Launch гипотетических стресс-тестов
+ Launch гипотетических стресс-tests
 
  Args:
  Portfolio_weights (dict): Веса активов in Portfolio
  base_returns (dict): Базовые доходности активов
 
  Returns:
- dict: Результаты гипотетических стресс-тестов
+ dict: Результаты гипотетических стресс-tests
  """
  if not self.stress_scenarios:
  self.define_hypothetical_scenarios()
@@ -3044,7 +3044,7 @@ class StressTester:
 
  def run_factor_stress_test(self, Portfolio_weights, base_returns, base_volatilities):
  """
- Launch факторных стресс-тестов
+ Launch факторных стресс-tests
 
  Args:
  Portfolio_weights (dict): Веса активов in Portfolio
@@ -3052,7 +3052,7 @@ class StressTester:
  base_volatilities (dict): Базовые волатильности активов
 
  Returns:
- dict: Результаты факторных стресс-тестов
+ dict: Результаты факторных стресс-tests
  """
  if not self.factor_scenarios:
  self.define_factor_scenarios()
@@ -3271,7 +3271,7 @@ class StressTester:
 
 # example использования
 if __name__ == "__main__":
- # create тестовых данных
+ # create testsых данных
  Portfolio_weights = {
  'equity': 0.4,
  'bonds': 0.3,
@@ -3485,7 +3485,7 @@ class YieldFarmingOptimizer:
 
  def optimize_farming_allocation(self, total_capital):
  """Оптимизация распределения for фарминга"""
- # Получение APR всех пулов
+ # Получение APR all пулов
  pool_aprs = {}
  for pool_name, pool_info in self.farming_pools.items():
  apr = self.defi_manager.calculate_defi_yield(pool_name)
@@ -3563,7 +3563,7 @@ class YieldFarmingOptimizer:
 
 **components системы Monitoringа:**
 1. **Метрики производительности:** Отслеживание доходности and рисков
-2. **Алерты:** Уведомления о критических событиях
+2. **Алерты:** notifications о критических событиях
 3. **Дашборды:** Визуализация состояния Portfolio
 4. **Reportы:** Автоматическая генерация Reportов
 5. **Прогнозирование:** Prediction будущих проблем
@@ -3582,7 +3582,7 @@ class YieldFarmingOptimizer:
 - Оптимизация производительности
 
 **Минусы:**
-- Сложность settings
+- Сложность Settings
 - Потенциальные ложные срабатывания
 - Высокие требования к ресурсам
 
@@ -3785,7 +3785,7 @@ class AutomatedPortfolioManager:
 **Теория:** Ключевые выводы суммируют наиболее важные аспекты оптимизации Portfolio for создания прибыльных Portfolio with доходностью 100%+ in месяц. Эти выводы критически важны for понимания того, как создать эффективные Portfolio. Современная оптимизация Portfolio требует комплексного подхода, объединяющего передовые технологии and научные методы.
 
 **Математическая основа:** Все выводы основаны on строгих математических принципах:
-- **Теория Portfolio Марковица:** Классическая основа современной оптимизации
+- **Теория Portfolio Марковица:** Классическая основа соtemporary оптимизации
 - **Стохастические процессы:** Моделирование динамики финансовых рынков
 - **Машинное обучение:** Адаптивные алгоритмы for принятия решений
 - **Оптимизация:** Математические методы поиска оптимальных решений
@@ -3815,7 +3815,7 @@ class AutomatedPortfolioManager:
  - **Теория:** Продвинутый риск-менеджмент критически важен for долгосрочного успеха
  - **Почему важно:** Обеспечивает защиту капитала and стабильность
  - **Плюсы:** Защита капитала, стабильность, долгосрочный успех
- - **Минусы:** Сложность settings, потенциальные ограничения доходности
+ - **Минусы:** Сложность Settings, потенциальные ограничения доходности
  - **Практическое применение:** Множественные методы VaR, стресс-тестирование, бэктестинг
 
 5. **Блокчейн-integration - использование DeFi for увеличения доходности**
@@ -3832,7 +3832,7 @@ class AutomatedPortfolioManager:
  - **Минусы:** Сложность реализации, потенциальные ошибки
  - **Практическое применение:** Системы Monitoringа, алгоритмическая торговля
 
-**integration компонентов:** Успешная оптимизация Portfolio требует интеграции всех компонентов in единую system, где каждый элемент дополняет and усиливает другие. Это обеспечивает синергетический эффект and максимальную эффективность.
+**integration компонентов:** Успешная оптимизация Portfolio требует интеграции all компонентов in единую system, где каждый элемент дополняет and усиливает другие. Это обеспечивает синергетический эффект and максимальную эффективность.
 
 **Будущие направления:** Развитие оптимизации Portfolio будет включать:
 - **Квантовые вычисления:** for решения сложных задач оптимизации

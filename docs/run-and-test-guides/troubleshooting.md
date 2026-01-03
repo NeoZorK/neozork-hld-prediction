@@ -9,16 +9,16 @@
 # installation UV / install UV
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# check установки / check installation
+# check installation / check installation
 uv --version
 ```
 
-#### зависимостей / Dependency errors Errors
+#### dependencies / Dependency errors Errors
 ```bash
 # clean cache UV / Clean UV cache
 uv cache clean
 
-# reinstall зависимостей / Reinstall dependencies
+# reinstall dependencies / reinstall dependencies
 uv pip install -r requirements.txt --force-reinstall
 ```
 
@@ -27,14 +27,14 @@ uv pip install -r requirements.txt --force-reinstall
 # clean cache npm / Clean npm cache
 npm cache clean --force
 
-# reinstall зависимостей / Reinstall dependencies
+# reinstall dependencies / reinstall dependencies
 rm -rf node_modules package-lock.json
 npm install
 ```
 
 ### Launch Issues / Launch Issues
 
-#### импорта / Import Errors Errors
+#### import / import Errors Errors
 ```bash
 # check PYTHONPATH / check PYTHONPATH
 export PYTHONPATH="${PWD}:${PYTHONPATH}"
@@ -43,7 +43,7 @@ export PYTHONPATH="${PWD}:${PYTHONPATH}"
 uv pip List | grep neozork
 ```
 
-#### with портами / Port Issues Issues
+#### with ports / Port Issues Issues
 ```bash
 # check occupied ports / check occupied ports
 lsof -i :8080
@@ -57,7 +57,7 @@ kill -9 $(lsof -t -i:8080)
 #### with database / database issues Issues
 ```bash
 # check PostgreSQL connection / check PostgreSQL connection
-psql -h localhost -U neozork_User -d neozork_fund
+psql -h localhost -U neozork_user -d neozork_fund
 
 # Restart PostgreSQL / Restart PostgreSQL
 sudo systemctl Restart PostgreSQL
@@ -65,7 +65,7 @@ sudo systemctl Restart PostgreSQL
 
 ### Issues with testing / testing Issues
 
-#### Tests do not start / Tests don't run
+#### tests do not start / tests don't run
 ```bash
 # Safe mode / Safe mode
 ./scripts/run_tests_safe.sh
@@ -189,7 +189,7 @@ docker volume ls
 
 ### Анализ логов / Log Analysis
 ```bash
-# View всех логов / View all logs
+# View all логов / View all logs
 find logs/ -name "*.log" -exec tail -f {} \;
 
 # Поиск ошибок / Search for errors
@@ -222,7 +222,7 @@ python scripts/mcp/debug_mcp_detection.py
 
 ### Полное восстановление / Full Recovery
 ```bash
-# Остановка всех сервисов / Stop all Services
+# Остановка all сервисов / Stop all Services
 docker-compose down
 ./scripts/native-container/stop.sh
 
@@ -231,7 +231,7 @@ uv cache clean
 docker system prune -a
 ./scripts/native-container/cleanup.sh --all --force
 
-# reinstall зависимостей / Reinstall dependencies
+# reinstall dependencies / reinstall dependencies
 uv pip install -r requirements.txt --force-reinstall
 cd src/mobile_app && npm install && cd ../..
 cd src/admin_panel && npm install && cd ../..
@@ -243,10 +243,10 @@ docker-compose up -d
 ### Восстановление данных / data Recovery
 ```bash
 # Резервное копирование / Backup
-docker-compose exec neozork-hld pg_dump -U neozork_User neozork_fund > backup.sql
+docker-compose exec neozork-hld pg_dump -U neozork_user neozork_fund > backup.sql
 
 # Восстановление / Restore
-docker-compose exec neozork-hld psql -U neozork_User neozork_fund < backup.sql
+docker-compose exec neozork-hld psql -U neozork_user neozork_fund < backup.sql
 ```
 
 ### Восстановление конфигурации / Configuration Recovery
@@ -270,7 +270,7 @@ tar -xzf config-backup.tar.gz
 ```
 
 ### Сообщество / Community
-- **GitHub Issues**: https://github.com/Username/neozork-hld-Prediction/issues
+- **GitHub Issues**: https://github.com/username/neozork-hld-Prediction/issues
 - **Discord**: https://discord.gg/neozork
 - **Telegram**: https://t.me/neozork_hld
 

@@ -25,7 +25,7 @@
 - Адаптивность к изменениям
 
 **Минусы:**
-- Сложность settings параметров
+- Сложность Settings параметров
 - Высокие требования к вычислительным ресурсам
 - Необходимость глубокого понимания теории
 
@@ -120,9 +120,9 @@ class SCHRLevelsAnalyzer:
  try:
  # check наличия required columns
  required_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
- missing_columns = [col for col in required_columns if col not in data.columns]
- if missing_columns:
- raise ValueError(f"Missing columns: {missing_columns}")
+ Missing_columns = [col for col in required_columns if col not in data.columns]
+ if Missing_columns:
+ raise ValueError(f"Missing columns: {Missing_columns}")
 
  # Расчет уровней
  levels = self._calculate_levels(data)
@@ -219,7 +219,7 @@ class SCHRLevelsAnalyzer:
 - **Анализ давления:** Критически важно for предсказания пробоев
 - **integration with ML:** Оптимизирована for машинного обучения
 
-**Практическая реализация:** Structure данных SCHR Levels представляет собой стандартизированный формат for хранения and обработки всех компонентов Analysis уровней. Эта Structure оптимизирована for машинного обучения and обеспечивает максимальную эффективность обработки.
+**Практическая реализация:** Structure данных SCHR Levels представляет собой стандартизированный формат for хранения and обработки all компонентов Analysis уровней. Эта Structure оптимизирована for машинного обучения and обеспечивает максимальную эффективность обработки.
 
 **Детальное объяснение структуры данных:**
 - **Основные уровни:** Содержат предсказанные and текущие уровни поддержки and сопротивления
@@ -314,9 +314,9 @@ class SCHRLevelsdataStructure:
  validation_results = {}
 
  # check наличия обязательных columns
- missing_columns = [col for col in self.required_columns if col not in df.columns]
- validation_results['has_required_columns'] = len(missing_columns) == 0
- validation_results['missing_columns'] = missing_columns
+ Missing_columns = [col for col in self.required_columns if col not in df.columns]
+ validation_results['has_required_columns'] = len(Missing_columns) == 0
+ validation_results['Missing_columns'] = Missing_columns
 
  # check типов данных
  numeric_columns = [col for col in self.schr_columns.keys()
@@ -421,7 +421,7 @@ class SCHRLevelsdataStructure:
  # Валидация перед экспортом
  validation = self.validate_dataframe(df)
  if not validation['has_required_columns']:
- print(f"Ошибка: Missing columns {validation['missing_columns']}")
+ print(f"Ошибка: Missing columns {validation['Missing_columns']}")
  return False
 
  # Экспорт
@@ -449,7 +449,7 @@ class SCHRLevelsdataStructure:
  # Валидация загруженных данных
  validation = self.validate_dataframe(df)
  if not validation['has_required_columns']:
- print(f"Предупреждение: Missing columns {validation['missing_columns']}")
+ print(f"Предупреждение: Missing columns {validation['Missing_columns']}")
 
  print(f"data успешно загружены из {filepath}")
  print(f"Размер данных: {df.shape}")
@@ -540,7 +540,7 @@ if __name__ == "__main__":
 **Почему M1 анализ критичен:**
 - **Высокая частота сигналов:** Обеспечивает множество торговых возможностей
 - **Быстрая реакция:** Позволяет быстро реагировать on изменения рынка
-- **Микро-анализ:** Выявляет детали, недоступные on больших Timeframes
+- **Микро-анализ:** Выявляет details, недоступные on больших Timeframes
 - **Скальпинг:** Подходит for высокочастотных торговых стратегий
 
 ```python
@@ -945,7 +945,7 @@ if __name__ == "__main__":
  # create Analysisтора M1
  m1_analyzer = SCHRLevelsM1Analysis()
 
- # create тестовых данных
+ # create testsых данных
  dates = pd.date_range('2023-01-01', periods=100, freq='1min')
  test_data = pd.dataFrame({
  'Open': np.random.uniform(1.25, 1.35, 100),
@@ -1555,7 +1555,7 @@ if __name__ == "__main__":
  # create Analysisтора M5
  m5_analyzer = SCHRLevelsM5Analysis()
 
- # create тестовых данных
+ # create testsых данных
  dates = pd.date_range('2023-01-01', periods=200, freq='5min')
  test_data = pd.dataFrame({
  'Open': np.random.uniform(1.25, 1.35, 200),
@@ -1955,7 +1955,7 @@ class SCHRLevelsH1Analysis:
  bb_upper = bb_middle + (bb_std * 2)
  bb_lower = bb_middle - (bb_std * 2)
 
- # ADX (Average Directional Index)
+ # ADX (Average Directional index)
  adx = self._calculate_adx(high, low, close, 14)
 
  # Stochastic Oscillator
@@ -2297,7 +2297,7 @@ if __name__ == "__main__":
  # create Analysisтора H1
  h1_analyzer = SCHRLevelsH1Analysis()
 
- # create тестовых данных
+ # create testsых данных
  dates = pd.date_range('2023-01-01', periods=500, freq='1H')
  test_data = pd.dataFrame({
  'Open': np.random.uniform(1.25, 1.35, 500),
@@ -2340,7 +2340,7 @@ if __name__ == "__main__":
 - **Стабильность:** Обеспечивают стабильную основу for Analysis
 - **Эффективность:** Минимальные вычислительные требования
 
-**Практическая реализация:** Класс `SCHRLevelsFeatureEngineer` представляет собой комплексную system создания признаков for машинного обучения on basis SCHR Levels. Этот класс обеспечивает create всех required признаков for достижения высокой точности ML-моделей.
+**Практическая реализация:** Класс `SCHRLevelsFeatureEngineer` представляет собой комплексную system создания признаков for машинного обучения on basis SCHR Levels. Этот класс обеспечивает create all required признаков for достижения высокой точности ML-моделей.
 
 **Детальное объяснение создания признаков:**
 - **Базовые признаки:** Фундаментальные components SCHR Levels for Analysis уровней
@@ -2680,7 +2680,7 @@ class SCHRLevelsFeatureEngineer:
 
  def create_all_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
- create всех признаков SCHR Levels.
+ create all признаков SCHR Levels.
 
  Объединяет все типы признаков in единый dataFrame for обучения ML-модели.
 
@@ -2705,7 +2705,7 @@ class SCHRLevelsFeatureEngineer:
  print("create статистических признаков...")
  statistical_features = self.create_statistical_features(data)
 
- # Объединение всех признаков
+ # Объединение all признаков
  all_features = pd.concat([
  basic_features,
  pressure_features,
@@ -2810,7 +2810,7 @@ if __name__ == "__main__":
  # create инженера признаков
  feature_engineer = SCHRLevelsFeatureEngineer()
 
- # create тестовых данных
+ # create testsых данных
  dates = pd.date_range('2023-01-01', periods=1000, freq='1H')
  test_data = pd.dataFrame({
  'Open': np.random.uniform(1.25, 1.35, 1000),
@@ -2828,7 +2828,7 @@ if __name__ == "__main__":
  'pressure_direction': np.random.choice([-1, 0, 1], 1000)
  }, index=dates)
 
- # create всех признаков
+ # create all признаков
  features = feature_engineer.create_all_features(test_data)
 
  # create целевой переменной for демонстрации
@@ -3320,7 +3320,7 @@ def _calculate_multi_Timeframe_strength(data: pd.dataFrame) -> pd.Series:
 
 # example использования
 if __name__ == "__main__":
- # create тестовых данных
+ # create testsых данных
  dates = pd.date_range('2023-01-01', periods=1000, freq='1H')
  test_data = pd.dataFrame({
  'Open': np.random.uniform(1.25, 1.35, 1000),
@@ -3344,7 +3344,7 @@ if __name__ == "__main__":
 
 ### 3. Временные признаки
 
-**Теория:** Временные признаки SCHR Levels учитывают временные аспекты рыночной динамики, including циклы, сезонность and временные паттерны уровней. Они критически важны for понимания временной структуры рынка.
+**Теория:** Временные признаки SCHR Levels учитывают временные аспекты рыночной динамики, including циклы, сезонность and временные паттерны уровней. Они критически важны for понимания temporary структуры рынка.
 
 **Почему временные признаки важны:**
 - **Временная Structure:** Учитывают временные аспекты рыночных уровней
@@ -3353,10 +3353,10 @@ if __name__ == "__main__":
 - **Временные dependencies:** Анализируют dependencies во времени
 
 **Плюсы:**
-- Учет временной структуры
+- Учет temporary структуры
 - Выявление циклов
 - Учет сезонности
-- Анализ временных зависимостей
+- Анализ временных dependencies
 
 **Минусы:**
 - Сложность вычислений
@@ -3649,7 +3649,7 @@ class SCHRLevelsRegressor:
 
 **Плюсы:**
 - Высокая точность
-- Выявление сложных зависимостей
+- Выявление сложных dependencies
 - Адаптивность к сложным условиям
 - Масштабируемость
 
@@ -3737,7 +3737,7 @@ class SCHRLevelsDeepModel:
 - Валидация стратегии
 
 **Минусы:**
-- Сложность settings
+- Сложность Settings
 - Потенциальные Issues with data
 - Время on тестирование
 
@@ -3896,7 +3896,7 @@ def calculate_schr_performance_metrics(returns):
 - Эффективность
 
 **Минусы:**
-- Сложность settings
+- Сложность Settings
 - Время выполнения
 - Потенциальная нестабильность
 
@@ -4137,7 +4137,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# installation зависимостей
+# installation dependencies
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
@@ -4170,7 +4170,7 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 - Критически важно for управления рисками
 
 **Минусы:**
-- Сложность settings
+- Сложность Settings
 - Необходимость постоянного внимания
 - Потенциальные ложные срабатывания
 
@@ -4247,7 +4247,7 @@ class SCHRLevelsMonitor:
  - **Теория:** SCHR Levels представляет собой революционный подход к анализу уровней поддержки and сопротивления
  - **Почему важно:** Обеспечивает высокую точность Analysis уровней
  - **Плюсы:** Высокая точность, учет давления, Prediction будущего, адаптивность
- - **Минусы:** Сложность settings, высокие требования к ресурсам
+ - **Минусы:** Сложность Settings, высокие требования к ресурсам
 
 2. **Давление on уровни - ключевой фактор for предсказания пробоев**
  - **Теория:** Анализ давления on уровни критически важен for предсказания пробоев
@@ -4257,9 +4257,9 @@ class SCHRLevelsMonitor:
 
 3. **МультиTimeframesый анализ - разные parameters for разных Timeframes**
  - **Теория:** Каждый Timeframe требует специфических параметров for максимальной эффективности
- - **Почему важно:** Обеспечивает оптимальную производительность on всех временных горизонтах
+ - **Почему важно:** Обеспечивает оптимальную производительность on all временных горизонтах
  - **Плюсы:** Оптимизация производительности, снижение рисков, повышение точности
- - **Минусы:** Сложность settings, необходимость понимания каждого Timeframe
+ - **Минусы:** Сложность Settings, необходимость понимания каждого Timeframe
 
 4. **Высокая точность - возможность достижения 95%+ точности**
  - **Теория:** Правильно настроенная SCHR Levels модель может достигать очень высокой точности

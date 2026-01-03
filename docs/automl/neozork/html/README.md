@@ -31,7 +31,7 @@
 
 ### 🎨 Стилизация
 - **Современный дизайн** with использованием Apple system Fonts
-- **Адаптивная верстка** for всех устройств
+- **Адаптивная верстка** for all устройств
 - **Темная тема** for блоков кода
 - **Цветовое выделение** синтаксиса Python, Bash, JSON, YAML, SQL
 
@@ -57,7 +57,7 @@
 3. Все ссылки Workingют локально
 
 ### 🔄 update документации
-for обновления HTML версии при изменении .md файлов:
+for обновления HTML версии при изменении .md files:
 
 ```bash
 # Перейти in корень проекта
@@ -75,7 +75,7 @@ uv run python scripts/convert_md_to_html.py
 uv run python scripts/convert_md_to_html.py --input-dir /path/to/md --output-dir /path/to/html
 ```
 
-## Технические детали
+## Technical details
 
 ### 📦 dependencies
 - **markdown** - конвертация Markdown in HTML
@@ -86,11 +86,11 @@ uv run python scripts/convert_md_to_html.py --input-dir /path/to/md --output-dir
 Все functions конвертера покрыты unit тестами:
 
 ```bash
-# Launch тестов
+# Launch tests
 uv run pytest tests/test_md_to_html_converter.py -v
 ```
 
-### 📁 Structure файлов
+### 📁 File Structure
 ```
 docs/automl/neozork/
 ├── *.md # Исходные Markdown файлы

@@ -37,7 +37,7 @@
 - **Теория:** Признаки часто сильно коррелированы, что может привести к мультиколлинеарности
 - **Почему проблематично:** Коррелированные признаки могут искажать результаты
 - **Последствия:** Нестабильность модели, сложность интерпретации
-- **Плюсы:** Возможность выявления зависимостей
+- **Плюсы:** Возможность выявления dependencies
 - **Минусы:** Сложность обработки, риск переобучения
 
 ### Лучшие алгоритмы for финансов
@@ -47,7 +47,7 @@
 **1. Ансамблевые методы**
 - **Почему эффективны:** Комбинируют множество моделей, снижая риск переобучения
 - **Плюсы:** Высокая точность, устойчивость к выбросам, интерпретируемость
-- **Минусы:** Высокие вычислительные затраты, сложность settings
+- **Минусы:** Высокие вычислительные затраты, сложность Settings
 - **Применение:** Random Forest, XGBoost, LightGBM for классификации and регрессии
 
 **2. Нейронные сети**
@@ -59,13 +59,13 @@
 **3. SVM (Support Vector Machine)**
 - **Почему эффективны:** Хорошо Workingют with нелинейными зависимостями
 - **Плюсы:** Эффективны on малых данных, устойчивы к выбросам
-- **Минусы:** Медленное обучение on больших данных, сложность settings
+- **Минусы:** Медленное обучение on больших данных, сложность Settings
 - **Применение:** Классификация направлений движения цен
 
 **4. Logistic Regression**
 - **Почему эффективны:** Простые, интерпретируемые, быстрые
 - **Плюсы:** Легкая интерпретация, быстрая Working, стабильность
-- **Минусы:** Ограниченная способность к моделированию сложных зависимостей
+- **Минусы:** Ограниченная способность к моделированию сложных dependencies
 - **Применение:** Базовые модели, интерпретируемые системы
 
 **Дополнительные соображения:**
@@ -93,7 +93,7 @@
 **Принцип работы:**
 1. **Bootstrap Sampling:** Каждое дерево обучается on случайной выборке with возвращением (обычно 63% данных)
 2. **Feature Randomness:** on каждом узле дерева выбирается случайное подмножество признаков
-3. **Voting/Averaging:** Финальное Prediction - это среднее (регрессия) or голосование (классификация) всех деревьев
+3. **Voting/Averaging:** Финальное Prediction - это среднее (регрессия) or голосование (классификация) all деревьев
 
 **Почему Random Forest эффективен for финансов:**
 - **Устойчивость к переобучению:** Множество деревьев снижают риск переобучения on шуме
@@ -117,17 +117,17 @@
 
 **Минусы Random Forest:**
 - Могут быть менее точными on очень сложных данных
-- Требуют settings параметров (n_estimators, max_depth, etc.)
+- Требуют Settings параметров (n_estimators, max_depth, etc.)
 - Могут быть избыточными for простых задач
 - Плохо Workingют with очень разреженными данными
 - Могут переобучиться on очень маленьких датасетах
 **Практическая реализация Random Forest:**
 
 **Что делает этот код:**
-1. **Разделение данных:** Создает обучающую and тестовую выборки with сохранением пропорций классов
+1. **Разделение данных:** Создает обучающую and testsую выборки with сохранением пропорций классов
 2. **create модели:** Настраивает parameters Random Forest for финансовых данных
 3. **Обучение:** Обучает модель on обучающих данных
-4. **Оценка:** Проверяет производительность on обучающей and тестовой выборках
+4. **Оценка:** Проверяет производительность on обучающей and testsой выборках
 
 **Объяснение параметров:**
 - `n_estimators=100`: Количество деревьев in лесу (больше = лучше, но медленнее)
@@ -152,7 +152,7 @@ def train_random_forest(X, y, test_size=0.2, random_state=42):
  Args:
  X (array-like): Матрица признаков (samples, features)
  y (array-like): Целевые переменные (samples,)
- test_size (float): Доля тестовых данных (0.0-1.0)
+ test_size (float): Доля testsых данных (0.0-1.0)
  random_state (int): Seed for воспроизводимости
 
  Returns:
@@ -169,7 +169,7 @@ def train_random_forest(X, y, test_size=0.2, random_state=42):
  )
 
  print(f"Обучающая выборка: {X_train.shape[0]} образцов")
- print(f"Тестовая выборка: {X_test.shape[0]} образцов")
+ print(f"testsая выборка: {X_test.shape[0]} образцов")
 
  # create модели with оптимизированными параметрами for финансов
  rf = RandomForestClassifier(
@@ -299,7 +299,7 @@ def example_random_forest_usage():
 **Почему XGBoost эффективен for финансов:**
 - **Высокая точность:** Часто показывает лучшие результаты on табличных данных
 - **Обработка выбросов:** Устойчив к аномальным значениям
-- **Feature Importance:** Позволяет анализировать важность признаков
+- **Feature importance:** Позволяет анализировать важность признаков
 - **Быстрота:** Оптимизирован for скорости
 - **Регуляризация:** Встроенная защита from переобучения
 
@@ -321,7 +321,7 @@ def example_random_forest_usage():
 1. **configuration параметров:** Оптимизирует parameters for финансовых данных
 2. **Early Stopping:** Предотвращает переобучение через валидацию
 3. **Оценка производительности:** Использует метрики, подходящие for финансов
-4. **Feature Importance:** Анализирует важность признаков
+4. **Feature importance:** Анализирует важность признаков
 
 ```python
 import numpy as np
@@ -339,7 +339,7 @@ def train_xgboost(X, y, test_size=0.2, random_state=42, early_stopping_rounds=10
  Args:
  X (array-like): Матрица признаков (samples, features)
  y (array-like): Целевые переменные (samples,)
- test_size (float): Доля тестовых данных (0.0-1.0)
+ test_size (float): Доля testsых данных (0.0-1.0)
  random_state (int): Seed for воспроизводимости
  early_stopping_rounds (int): Количество раундов for early stopping
 
@@ -357,7 +357,7 @@ def train_xgboost(X, y, test_size=0.2, random_state=42, early_stopping_rounds=10
  )
 
  print(f"Обучающая выборка: {X_train.shape[0]} образцов")
- print(f"Тестовая выборка: {X_test.shape[0]} образцов")
+ print(f"testsая выборка: {X_test.shape[0]} образцов")
 
  # Оптимизированные parameters for финансовых данных
  params = {
@@ -559,7 +559,7 @@ def example_xgboost_usage():
 1. **Оптимизированные parameters:** configuration for финансовых данных
 2. **Early Stopping:** Предотвращение переобучения
 3. **Валидация:** Monitoring производительности
-4. **Feature Importance:** Анализ важности признаков
+4. **Feature importance:** Анализ важности признаков
 
 ```python
 import numpy as np
@@ -577,7 +577,7 @@ def train_lightgbm(X, y, test_size=0.2, random_state=42, early_stopping_rounds=1
  Args:
  X (array-like): Матрица признаков (samples, features)
  y (array-like): Целевые переменные (samples,)
- test_size (float): Доля тестовых данных (0.0-1.0)
+ test_size (float): Доля testsых данных (0.0-1.0)
  random_state (int): Seed for воспроизводимости
  early_stopping_rounds (int): Количество раундов for early stopping
 
@@ -595,7 +595,7 @@ def train_lightgbm(X, y, test_size=0.2, random_state=42, early_stopping_rounds=1
  )
 
  print(f"Обучающая выборка: {X_train.shape[0]} образцов")
- print(f"Тестовая выборка: {X_test.shape[0]} образцов")
+ print(f"testsая выборка: {X_test.shape[0]} образцов")
 
  # Оптимизированные parameters for финансовых данных
  params = {
@@ -613,7 +613,7 @@ def train_lightgbm(X, y, test_size=0.2, random_state=42, early_stopping_rounds=1
  'lambda_l2': 1.0, # L2 регуляризация
  'min_gain_to_split': 0.0, # Минимальный прирост for разделения
  'max_depth': -1, # Максимальная глубина (-1 = неограниченно)
- 'save_binary': True, # Сохранение бинарных файлов
+ 'save_binary': True, # Сохранение бинарных files
  'seed': random_state, # Seed for воспроизводимости
  'feature_fraction_seed': random_state,
  'bagging_seed': random_state,
@@ -785,7 +785,7 @@ def example_lightgbm_usage():
 
 ## Нейронные сети
 
-**Теория:** Нейронные сети - это мощный инструмент for моделирования сложных нелинейных зависимостей in финансовых данных. Они особенно эффективны for выявления скрытых паттернов and взаимодействий между приsignми.
+**Теория:** Нейронные сети - это мощный инструмент for моделирования сложных нелинейных dependencies in финансовых данных. Они особенно эффективны for выявления скрытых паттернов and взаимодействий между приsignми.
 
 **Почему нейронные сети эффективны for финансов:**
 - **Нелинейность:** Могут моделировать сложные нелинейные dependencies
@@ -889,7 +889,7 @@ def train_neural_network(X, y, epochs=100, batch_size=32, learning_rate=0.001,
  epochs (int): Количество эпох обучения
  batch_size (int): Размер батча
  learning_rate (float): Скорость обучения
- test_size (float): Доля тестовых данных
+ test_size (float): Доля testsых данных
  random_state (int): Seed for воспроизводимости
 
  Returns:
@@ -906,7 +906,7 @@ def train_neural_network(X, y, epochs=100, batch_size=32, learning_rate=0.001,
  )
 
  print(f"Обучающая выборка: {X_train.shape[0]} образцов")
- print(f"Тестовая выборка: {X_test.shape[0]} образцов")
+ print(f"testsая выборка: {X_test.shape[0]} образцов")
 
  # Преобразование in тензоры PyTorch
  X_train_tensor = torch.FloatTensor(X_train)
@@ -970,7 +970,7 @@ def train_neural_network(X, y, epochs=100, batch_size=32, learning_rate=0.001,
  train_losses.append(avg_loss)
  train_accuracies.append(train_accuracy)
 
- # Оценка on тестовых данных
+ # Оценка on testsых данных
  model.eval()
  with torch.no_grad():
  test_outputs = model(X_test_tensor)
@@ -1237,11 +1237,11 @@ def train_lstm_model(X, y, sequence_length=10, epochs=100, batch_size=32,
  Args:
  X: Матрица признаков
  y: Целевые переменные
- sequence_length: Длина временной последовательности
+ sequence_length: Длина temporary последовательности
  epochs: Количество эпох обучения
  batch_size: Размер батча
  learning_rate: Скорость обучения
- test_size: Доля тестовых данных
+ test_size: Доля testsых данных
  random_state: Seed for воспроизводимости
 
  Returns:
@@ -1263,7 +1263,7 @@ def train_lstm_model(X, y, sequence_length=10, epochs=100, batch_size=32,
  )
 
  print(f"Обучающая выборка: {X_train.shape[0]} последовательностей")
- print(f"Тестовая выборка: {X_test.shape[0]} последовательностей")
+ print(f"testsая выборка: {X_test.shape[0]} последовательностей")
 
  # Преобразование in тензоры PyTorch
  X_train_tensor = torch.FloatTensor(X_train)
@@ -1337,7 +1337,7 @@ def train_lstm_model(X, y, sequence_length=10, epochs=100, batch_size=32,
  train_losses.append(avg_loss)
  train_accuracies.append(train_accuracy)
 
- # Оценка on тестовых данных
+ # Оценка on testsых данных
  model.eval()
  with torch.no_grad():
  test_outputs = model(X_test_tensor)
@@ -1423,7 +1423,7 @@ def example_lstm_usage():
  n_samples, n_features = 1000, 10
  sequence_length = 10
 
- # Генерация признаков with временной структурой
+ # Генерация признаков with temporary структурой
  X = np.random.randn(n_samples, n_features)
 
  # create целевой переменной with временными зависимостями
@@ -1464,7 +1464,7 @@ def example_lstm_usage():
 
 ## Валидация моделей
 
-**Теория:** Валидация моделей for финансовых данных критически важна, так как стандартные методы кросс-валидации могут привести к data leakage (утечке данных) из-за временной природы финансовых данных.
+**Теория:** Валидация моделей for финансовых данных критически важна, так как стандартные методы кросс-валидации могут привести к data leakage (утечке данных) из-за temporary природы финансовых данных.
 
 **Почему стандартная кросс-валидация not подходит:**
 - **data Leakage:** Будущие data могут "протекать" in обучающую выборку
@@ -1509,7 +1509,7 @@ def time_series_cv(model, X, y, n_splits=5, test_size=None, random_state=42):
  X: Матрица признаков (samples, features)
  y: Целевые переменные (samples,)
  n_splits: Количество фолдов
- test_size: Размер тестового фолда (если None, вычисляется автоматически)
+ test_size: Размер testsого фолда (если None, вычисляется автоматически)
  random_state: Seed for воспроизводимости
 
  Returns:
@@ -1707,7 +1707,7 @@ def example_tscv_usage():
  np.random.seed(42)
  n_samples, n_features = 1000, 20
 
- # Генерация признаков with временной структурой
+ # Генерация признаков with temporary структурой
  X = np.random.randn(n_samples, n_features)
 
  # create целевой переменной with временными зависимостями
@@ -1785,7 +1785,7 @@ def walk_forward_validation(model, X, y, train_size=1000, step_size=100,
  y: Целевые переменные (samples,)
  train_size: Размер обучающего окна
  step_size: Размер шага for продвижения окна
- min_test_size: Минимальный размер тестовой выборки
+ min_test_size: Минимальный размер testsой выборки
  random_state: Seed for воспроизводимости
 
  Returns:
@@ -1815,14 +1815,14 @@ def walk_forward_validation(model, X, y, train_size=1000, step_size=100,
  test_start_idx = train_end_idx
  test_end_idx = min(test_start_idx + step_size, len(X))
 
- # check минимального размера тестовой выборки
+ # check минимального размера testsой выборки
  if test_end_idx - test_start_idx < min_test_size:
  print(f"Итерация {i+1}: Недостаточно данных for тестирования, пропускаем")
  continue
 
  print(f"\n--- Итерация {i+1}/{n_iterations} ---")
  print(f"Обучающий период: {start_idx} - {train_end_idx-1}")
- print(f"Тестовый период: {test_start_idx} - {test_end_idx-1}")
+ print(f"testsый период: {test_start_idx} - {test_end_idx-1}")
 
  # Разделение данных
  X_train = X[start_idx:train_end_idx]
@@ -1942,7 +1942,7 @@ def plot_walk_forward_results(results, figsize=(15, 12)):
  axes[0, 0].legend()
  axes[0, 0].grid(True)
 
- # График всех метрик on итерациям
+ # График all метрик on итерациям
  axes[0, 1].plot(iterations, accuracies, 'o-', label='Accuracy')
  axes[0, 1].plot(iterations, precisions, 's-', label='Precision')
  axes[0, 1].plot(iterations, recalls, '^-', label='Recall')
@@ -2055,7 +2055,7 @@ def example_walk_forward_usage():
  np.random.seed(42)
  n_samples, n_features = 2000, 20
 
- # Генерация признаков with временной структурой
+ # Генерация признаков with temporary структурой
  X = np.random.randn(n_samples, n_features)
 
  # create целевой переменной with временными зависимостями and дрейфом
@@ -2107,7 +2107,7 @@ def example_walk_forward_usage():
 - **Риск-доходность:** Баланс между точностью and стабильностью
 
 **Методы оптимизации:**
-1. **Grid Search:** Полный перебор всех комбинаций параметров
+1. **Grid Search:** Полный перебор all комбинаций параметров
 2. **Random Search:** Случайный поиск in пространстве параметров
 3. **Bayesian Optimization:** Умный поиск with использованием предыдущих результатов
 4. **Optuna:** Современная библиотека for оптимизации
@@ -2191,7 +2191,7 @@ def optimize_random_forest(X, y, param_grid=None, cv_folds=5,
  for values in param_grid.values():
  total_combinations *= len(values)
  print(f"Всего комбинаций: {total_combinations}")
- print(f"Всего тестов: {total_combinations * cv_folds}")
+ print(f"Всего tests: {total_combinations * cv_folds}")
 
  # create базовой модели
  rf = RandomForestClassifier(random_state=random_state, n_jobs=1)
@@ -2351,7 +2351,7 @@ def example_grid_search_usage():
  # Анализ результатов
  analyze_grid_search_stability(grid_search)
 
- # Визуализация (если есть data)
+ # Визуализация (if present data)
  if 'n_estimators' in best_params:
  plot_grid_search_results(grid_search, 'n_estimators')
 
@@ -2526,13 +2526,13 @@ def plot_optuna_results(study, figsize=(15, 10)):
  importances = List(importance.values())
 
  axes[0, 1].barh(params, importances)
- axes[0, 1].set_title('Parameter Importance')
- axes[0, 1].set_xlabel('Importance')
+ axes[0, 1].set_title('Parameter importance')
+ axes[0, 1].set_xlabel('importance')
  axes[0, 1].grid(True, alpha=0.3)
  except Exception as e:
- axes[0, 1].text(0.5, 0.5, f'Importance not available:\n{str(e)}',
+ axes[0, 1].text(0.5, 0.5, f'importance not available:\n{str(e)}',
  ha='center', va='center', transform=axes[0, 1].transAxes)
- axes[0, 1].set_title('Parameter Importance')
+ axes[0, 1].set_title('Parameter importance')
 
  # График распределения значений
  if len(values) > 0:
@@ -2709,7 +2709,7 @@ def create_ensemble_model(X, y, voting='soft', test_size=0.2, random_state=42):
  X: Матрица признаков (samples, features)
  y: Целевые переменные (samples,)
  voting: Тип голосования ('hard' or 'soft')
- test_size: Доля тестовых данных
+ test_size: Доля testsых данных
  random_state: Seed for воспроизводимости
 
  Returns:
@@ -2727,7 +2727,7 @@ def create_ensemble_model(X, y, voting='soft', test_size=0.2, random_state=42):
  )
 
  print(f"Обучающая выборка: {X_train.shape[0]} образцов")
- print(f"Тестовая выборка: {X_test.shape[0]} образцов")
+ print(f"testsая выборка: {X_test.shape[0]} образцов")
 
  # create индивидуальных моделей
  models = {
@@ -3000,7 +3000,7 @@ def create_stacking_model(X, y, test_size=0.2, cv_folds=5, random_state=42):
  Args:
  X: Матрица признаков (samples, features)
  y: Целевые переменные (samples,)
- test_size: Доля тестовых данных
+ test_size: Доля testsых данных
  cv_folds: Количество фолдов for кросс-валидации
  random_state: Seed for воспроизводимости
 
@@ -3019,7 +3019,7 @@ def create_stacking_model(X, y, test_size=0.2, cv_folds=5, random_state=42):
  )
 
  print(f"Обучающая выборка: {X_train.shape[0]} образцов")
- print(f"Тестовая выборка: {X_test.shape[0]} образцов")
+ print(f"testsая выборка: {X_test.shape[0]} образцов")
 
  # create базовых моделей
  base_models = [
@@ -3338,7 +3338,7 @@ def example_stacking_usage():
 **Основные метрики:**
 - **Accuracy:** Доля правильно классифицированных образцов
 - **Precision:** Доля истинно положительных среди предсказанных положительных
-- **Recall:** Доля истинно положительных среди всех положительных
+- **Recall:** Доля истинно положительных среди all положительных
 - **F1-Score:** Гармоническое среднее Precision and Recall
 
 **Практическая реализация метрик классификации:**
@@ -3365,8 +3365,8 @@ def evaluate_model(model, X_test, y_test, model_name="Model"):
 
  Args:
  model: Обученная модель
- X_test: Тестовые признаки
- y_test: Тестовые метки
+ X_test: testsые признаки
+ y_test: testsые метки
  model_name: Название модели for Reportов
 
  Returns:
@@ -3374,7 +3374,7 @@ def evaluate_model(model, X_test, y_test, model_name="Model"):
  """
 
  print(f"=== Оценка модели: {model_name} ===")
- print(f"Размер тестовой выборки: {len(y_test)} образцов")
+ print(f"Размер testsой выборки: {len(y_test)} образцов")
  print(f"Классы: {np.unique(y_test, return_counts=True)}")
 
  # Предсказания
@@ -3508,7 +3508,7 @@ def analyze_class_balance(y_test, y_pred):
  unique_classes, counts = np.unique(y_test, return_counts=True)
  total_samples = len(y_test)
 
- print(f"Распределение классов in тестовой выборке:")
+ print(f"Распределение классов in testsой выборке:")
  for class_label, count in zip(unique_classes, counts):
  percentage = count / total_samples * 100
  print(f" Класс {class_label}: {count} ({percentage:.1f}%)")
@@ -3926,7 +3926,7 @@ def train_complete_trading_model(X, y, returns=None, test_size=0.2,
  X: Матрица признаков (samples, features)
  y: Целевые переменные (samples,)
  returns: Доходность активов (samples,)
- test_size: Доля тестовых данных
+ test_size: Доля testsых данных
  validation_size: Доля валидационных данных
  random_state: Seed for воспроизводимости
 
@@ -3941,7 +3941,7 @@ def train_complete_trading_model(X, y, returns=None, test_size=0.2,
  # 1. Разделение данных
  print(f"\n1. Разделение данных...")
 
- # Сначала отделяем тестовые data
+ # Сначала отделяем testsые data
  X_temp, X_test, y_temp, y_test = train_test_split(
  X, y, test_size=test_size, random_state=random_state, stratify=y
  )
@@ -4010,7 +4010,7 @@ def train_complete_trading_model(X, y, returns=None, test_size=0.2,
  X_fold_train, X_fold_val = X_cv[train_idx], X_cv[val_idx]
  y_fold_train, y_fold_val = y_cv[train_idx], y_cv[val_idx]
 
- # Создаем копию модели
+ # Creating копию модели
  fold_model = type(best_model)(**best_model.get_params())
  fold_model.fit(X_fold_train, y_fold_train)
 
@@ -4034,7 +4034,7 @@ def train_complete_trading_model(X, y, returns=None, test_size=0.2,
  ensemble_models.append((name, models[name]))
  print(f" {name}: {score:.4f}")
 
- # Создаем Voting Classifier
+ # Creating Voting Classifier
  ensemble = VotingClassifier(
  estimators=ensemble_models,
  voting='soft',
@@ -4046,10 +4046,10 @@ def train_complete_trading_model(X, y, returns=None, test_size=0.2,
  ensemble_score = ensemble.score(X_val, y_val)
  print(f" Ensemble validation accuracy: {ensemble_score:.4f}")
 
- # 5. Оценка on тестовых данных
- print(f"\n5. Оценка on тестовых данных...")
+ # 5. Оценка on testsых данных
+ print(f"\n5. Оценка on testsых данных...")
 
- # Предсказания всех моделей
+ # Предсказания all моделей
  test_Predictions = {}
  test_scores = {}
 
@@ -4072,7 +4072,7 @@ def train_complete_trading_model(X, y, returns=None, test_size=0.2,
  if returns is not None:
  print(f"\n6. Расчет торговых метрик...")
 
- # Use только тестовые data for торговых метрик
+ # Use только testsые data for торговых метрик
  test_returns = returns[-len(y_test):]
 
  # Рассчитываем метрики for ансамбля
@@ -4267,7 +4267,7 @@ def example_complete_training_usage():
 
 **Практические рекомендации:**
 
-- **Начните with бэктестинга** - это основа for всех дальнейших решений
+- **Начните with бэктестинга** - это основа for all дальнейших решений
 - **Use walk-forward анализ** - он наиболее реалистичен for финансовых данных
 - **Тестируйте on разных рыночных условиях** - бычий/медвежий рынок, волатильность
 - **Проверяйте стабильность результатов** - избегайте переобучения

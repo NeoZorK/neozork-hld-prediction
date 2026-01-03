@@ -60,7 +60,7 @@ class AdvancedMLsystem:
 
  ensemble : TabularPredictor or None
  Ансамблевая модель for объединения Predictions:
- - Объединяет предсказания всех специализированных моделей
+ - Объединяет предсказания all специализированных моделей
  - Использует мета-обучение for оптимального взвешивания
  - Обеспечивает финальное решение системы
 
@@ -116,7 +116,7 @@ class AdvancedMLsystem:
 
  def initialize_system(self):
  """
- Инициализация всех компонентов системы - Launch всех модулей
+ Инициализация all компонентов системы - Launch all модулей
 
  Notes:
  ------
@@ -125,7 +125,7 @@ class AdvancedMLsystem:
  2. Инициализация риск-менеджера with параметрами
  3. configuration портфель-менеджера
  4. Launch системы Monitoringа
- 5. health check всех компонентов
+ 5. health check all компонентов
 
  Требования к инициализации:
  - Все модели должны быть предобучены
@@ -174,8 +174,8 @@ class AdvanceddataProcessor:
  - Криптовалютные биржи: OHLCV data, объемы, ликвидность
  - Новостные API: анализ настроений рынка
  - Социальные сети: Twitter, Reddit, Telegram
- - Макроэкономические индикаторы: DXY, VIX, Fear & Greed Index
- - Технические индикаторы: 50+ различных indicators
+ - Макроэкономические индикаторы: DXY, VIX, Fear & Greed index
+ - Technical индикаторы: 50+ различных indicators
  """
 
  def __init__(self):
@@ -201,7 +201,7 @@ class AdvanceddataProcessor:
  - Другие доступные пары on биржах
 
  Timeframe : str, default='1h'
- Временной интервал for данных:
+ temporary интервал for данных:
  - '1m': 1 minutesа (высокочастотная торговля)
  - '5m': 5 minutes (скальпинг)
  - '15m': 15 minutes (краткосрочная торговля)
@@ -221,7 +221,7 @@ class AdvanceddataProcessor:
  Dict[str, Dict[str, Any]]
  Структурированные data on каждому символу:
  - {exchange}_price: OHLCV data with биржи
- - technical: технические индикаторы
+ - Technical: Technical индикаторы
  - sentiment: data о настроениях
  - macro: макроэкономические data
 
@@ -250,8 +250,8 @@ class AdvanceddataProcessor:
  except Exception as e:
  print(f"Ошибка получения данных with {exchange_name}: {e}")
 
- # 2. Технические индикаторы
- symbol_data['technical'] = self._calculate_advanced_indicators(symbol_data['binance_price'])
+ # 2. Technical индикаторы
+ symbol_data['Technical'] = self._calculate_advanced_indicators(symbol_data['binance_price'])
 
  # 3. Новости and настроения
  symbol_data['sentiment'] = self._collect_sentiment_data(symbol)
@@ -300,13 +300,13 @@ class AdvanceddataProcessor:
  - SMA_200: 200-периодная скользящая средняя (Long-term trend)
 
  2. Осцилляторы (перекупленность/перепроданность):
- - RSI: индекс относительной силы (0-100)
+ - RSI: index относительной силы (0-100)
  - STOCH_K/D: стохастический осциллятор
  - WILLR: Williams %R (-100 to 0)
 
  3. Трендовые индикаторы:
  - MACD: схождение-расхождение скользящих средних
- - ADX: индекс направленного движения (сила тренда)
+ - ADX: index направленного движения (сила тренда)
  - AROON: индикатор тренда and времени
 
  4. Объемные индикаторы:
@@ -343,13 +343,13 @@ class AdvanceddataProcessor:
  df['SMA_200'] = talib.SMA(df['close'], timeperiod=200) # Long-term trend
 
  # Осцилляторы (перекупленность/перепроданность)
- df['RSI'] = talib.RSI(df['close'], timeperiod=14) # Индекс относительной силы
+ df['RSI'] = talib.RSI(df['close'], timeperiod=14) # index относительной силы
  df['STOCH_K'], df['STOCH_D'] = talib.STOCH(df['high'], df['low'], df['close']) # Стохастик
  df['WILLR'] = talib.WILLR(df['high'], df['low'], df['close']) # Williams %R
 
  # Трендовые индикаторы
  df['MACD'], df['MACD_signal'], df['MACD_hist'] = talib.MACD(df['close']) # MACD
- df['ADX'] = talib.ADX(df['high'], df['low'], df['close']) # Индекс направленного движения
+ df['ADX'] = talib.ADX(df['high'], df['low'], df['close']) # index направленного движения
  df['AROON_UP'], df['AROON_DOWN'] = talib.AROON(df['high'], df['low']) # Aroon
 
  # Объемные индикаторы
@@ -408,7 +408,7 @@ class AdvanceddataProcessor:
  1. Новостные API (NewsAPI):
  - Фильтрация on ключевым словам
  - Анализ тональности заголовков and описаний
- - Временной диапазон: последние 7 дней
+ - temporary диапазон: последние 7 дней
 
  2. Социальные сети:
  - Twitter: публичные посты and твиты
@@ -473,9 +473,9 @@ class AdvanceddataProcessor:
  --------
  Dict[str, float]
  Макроэкономические индикаторы:
- - fear_greed: индекс страха and жадности (0-100)
- - dxy: индекс доллара США (DXY)
- - vix: индекс волатильности (VIX)
+ - fear_greed: index страха and жадности (0-100)
+ - dxy: index доллара США (DXY)
+ - vix: index волатильности (VIX)
  - gold_price: цена золота
  - oil_price: цена нефти
  - bond_yield: доходность облигаций
@@ -484,20 +484,20 @@ class AdvanceddataProcessor:
  ------
  Макроэкономические индикаторы:
 
- 1. Fear & Greed Index (0-100):
+ 1. Fear & Greed index (0-100):
  - 0-25: Extreme Fear (покупка)
  - 25-45: Fear (осторожная покупка)
  - 45-55: Neutral (нейтрально)
  - 55-75: Greed (осторожная продажа)
  - 75-100: Extreme Greed (продажа)
 
- 2. Dollar Index (DXY):
+ 2. Dollar index (DXY):
  - Измеряет силу доллара против корзины валют
  - Высокий DXY: давление on криптовалюты
  - Низкий DXY: поддержка криптовалют
 
- 3. VIX (Volatility Index):
- - Индекс волатильности S&P 500
+ 3. VIX (Volatility index):
+ - index волатильности S&P 500
  - Высокий VIX: неопределенность, риск-офф
  - Низкий VIX: стабильность, риск-он
 
@@ -516,21 +516,21 @@ class AdvanceddataProcessor:
 
  macro_data = {}
 
- # Индекс страха and жадности (Fear & Greed Index)
+ # index страха and жадности (Fear & Greed index)
  try:
  fear_greed = requests.get('https://api.alternative.me/fng/').json()
  macro_data['fear_greed'] = int(fear_greed['data'][0]['value']) # 0-100
  except:
  macro_data['fear_greed'] = 50 # Нейтральное значение on умолчанию
 
- # DXY (Dollar Index) - индекс доллара США
+ # DXY (Dollar index) - index доллара США
  try:
  dxy = yf.download('DX-Y.NYB', period='1y')['Close']
  macro_data['dxy'] = float(dxy.iloc[-1]) # Последнее значение
  except:
  macro_data['dxy'] = 100.0 # Базовое значение on умолчанию
 
- # VIX (Volatility Index) - индекс волатильности
+ # VIX (Volatility index) - index волатильности
  try:
  vix = yf.download('^VIX', period='1y')['Close']
  macro_data['vix'] = float(vix.iloc[-1]) # Последнее значение
@@ -616,8 +616,8 @@ class MultiModelsystem:
  data : pd.dataFrame
  Подготовленные data with техническими индикаторами:
  - OHLCV data
- - Технические индикаторы (50+)
- - Временной ряд with историческими данными
+ - Technical индикаторы (50+)
+ - temporary ряд with историческими данными
 
  Returns:
  --------
@@ -636,13 +636,13 @@ class MultiModelsystem:
  4. Использование bagging for стабильности
 
  Признаки модели:
- - Технические индикаторы: RSI, MACD, Bollinger Bands
+ - Technical индикаторы: RSI, MACD, Bollinger Bands
  - Трендовые индикаторы: SMA, EMA, ADX
  - Объемные индикаторы: OBV, AD
  - Волатильность: ATR, NATR
  - Свечные паттерны: Doji, Hammer, Engulfing
 
- settings обучения:
+ Settings обучения:
  - time_limit: 600s (10 minutes)
  - presets: 'best_quality' (максимальное качество)
  - num_bag_folds: 5 (5-кратная валидация)
@@ -688,7 +688,7 @@ class MultiModelsystem:
  Обученная модель for предсказания волатильности:
  - Бинарная классификация (высокая/низкая волатильность)
  - Используется for расчета размера позиций
- - Влияет on settings стоп-лоссов
+ - Влияет on Settings стоп-лоссов
 
  Notes:
  ------
@@ -823,7 +823,7 @@ class MultiModelsystem:
 
  def create_ensemble_model(self, models, data):
  """
- create ансамблевой модели for объединения Predictions всех специализированных моделей
+ create ансамблевой модели for объединения Predictions all специализированных моделей
 
  Parameters:
  -----------
@@ -836,20 +836,20 @@ class MultiModelsystem:
  - 'macro': модель макроэкономических факторов
 
  data : pd.dataFrame
- data for получения Predictions from всех моделей
+ data for получения Predictions from all моделей
 
  Returns:
  --------
  TabularPredictor
  Ансамблевая модель (мета-модель):
- - Объединяет предсказания всех специализированных моделей
+ - Объединяет предсказания all специализированных моделей
  - Использует мета-обучение for оптимального взвешивания
  - Обеспечивает финальное решение системы
 
  Notes:
  ------
  Процесс создания ансамбля:
- 1. Получение Predictions from всех специализированных моделей
+ 1. Получение Predictions from all специализированных моделей
  2. create мета-признаков из вероятностей Predictions
  3. Обучение мета-модели on комбинации Predictions
  4. Оптимизация весов for максимальной точности
@@ -867,7 +867,7 @@ class MultiModelsystem:
  - Blending: усреднение Predictions
  """
 
- # Получение Predictions from всех специализированных моделей
+ # Получение Predictions from all специализированных моделей
  Predictions = {}
  probabilities = {}
 
@@ -895,7 +895,7 @@ class MultiModelsystem:
 
  # Обучение мета-модели on комбинации Predictions
  ensemble_predictor.fit(
- meta_features, # Мета-признаки (вероятности from всех моделей)
+ meta_features, # Мета-признаки (вероятности from all моделей)
  time_limit=300, # Время обучения in секундах (5 minutes)
  presets='medium_quality_faster_train' # Баланс качества and скорости
  )
@@ -970,7 +970,7 @@ class AdvancedValidation:
  # Обучающие data
  train_data = data.iloc[i-min_train_size:i]
 
- # Тестовые data
+ # testsые data
  test_data = data.iloc[i:i+window_size]
 
  # Переобучение моделей
@@ -1314,7 +1314,7 @@ class ModelService:
  self.load_models()
 
  def predict(self, data):
- """Получение предсказания from всех моделей"""
+ """Получение предсказания from all моделей"""
 
  Predictions = {}
 
@@ -1405,7 +1405,7 @@ spec:
  - name: REDIS_URL
  value: "redis://redis-service:6379"
  - name: database_URL
- value: "postgresql://User:pass@postgres-service:5432/mldb"
+ value: "postgresql://user:pass@postgres-service:5432/mldb"
 
  - name: data-service
  image: ml-system/data-service:latest
@@ -1476,8 +1476,8 @@ spec:
 - **Производительность моделей**: Отслеживание точности каждой модели
 - **Метрики риска**: Monitoring VaR, максимальной просадки, коэффициента Шарпа
 - **Доходность**: Отслеживание кумулятивной доходности системы
-- **Статус системы**: health check всех компонентов
-- **Автоматические алерты**: Уведомления о проблемах
+- **Статус системы**: health check all компонентов
+- **Автоматические алерты**: notifications о проблемах
 - **Автоматическое переобучение**: update моделей при деградации
 
 ```python
@@ -1539,7 +1539,7 @@ class AdvancedMonitoring:
 
  self.alerts.append(alert)
 
- # Отправка уведомления
+ # Отправка notifications
  self.send_notification(alert)
 
  def auto_retrain(self, model_name, performance_threshold=0.6):

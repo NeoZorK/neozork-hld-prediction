@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Конвертер Markdown in HTML Manual for AutoML Gluon
-Преобразует 33 главы из .md файлов in единый HTML мануал in стиле Python_Formatting_Example.html
+Преобразует 33 главы из .md files in единый HTML мануал in стиле Python_Formatting_Example.html
 
 Author: Shcherbyna Rostyslav
 Дата: 2024
@@ -17,7 +17,7 @@ import markdown
 from markdown.extensions import codehilite, tables, toc
 
 class AutoMLGluonHTMLConverter:
- """Конвертер Markdown файлов in HTML мануал for AutoML Gluon"""
+ """Конвертер Markdown files in HTML мануал for AutoML Gluon"""
 
  def __init__(self, source_dir: str = "docs/automl/gluon", output_dir: str = "docs/automl/gluon"):
  self.source_dir = Path(source_dir)
@@ -211,7 +211,7 @@ class AutoMLGluonHTMLConverter:
  "installation and configuration": "Пошаговая installation, системные требования, configuration",
  "Базовое использование": "Основы работы with TabularPredictor, обучение моделей",
  "Продвинутая configuration": "Гиперпараметры, ансамбли, валидация, feature engineering",
- "Анализ рисков": "Технические, бизнес and операционные риски ML-систем",
+ "Анализ рисков": "Technical, бизнес and операционные риски ML-систем",
  "Низкорисковые системы": "create надежных and устойчивых ML-систем",
  "Метрики and оценка": "Классификация, регрессия, временные ряды, финансовые метрики",
  "Валидация моделей": "Cross-validation, временные ряды, walk-forward анализ",

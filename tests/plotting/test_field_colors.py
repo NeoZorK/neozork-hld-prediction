@@ -2,7 +2,7 @@
 # tests/plotting/test_field_colors.py
 
 """
-Tests for field color assignment functionality.
+tests for field color assignment functionality.
 """
 
 import pytest

@@ -188,7 +188,7 @@ class dataCleaner:
  if target_column and target_column in data.columns:
  target_info = {
  'target_unique_values': data[target_column].nunique(),
- 'target_missing': data[target_column].isnull().sum(),
+ 'target_Missing': data[target_column].isnull().sum(),
  'target_type': str(data[target_column].dtype)
  }
  validation_Report['target_info'] = target_info

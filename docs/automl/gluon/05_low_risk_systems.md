@@ -79,11 +79,11 @@ class ResilientsystemDesign:
 - **parameters**:
  - **`service_name`**: Название сервиса
  - **Тип**: str
- - **description**: Идентификатор сервиса for settings выключателя
+ - **description**: Идентификатор сервиса for Settings выключателя
  - **examples**: 'recommendation_service', 'Prediction_api', 'data_processor'
  - **`config`**: configuration выключателя
  - **Тип**: dict
- - **description**: parameters settings автоматического выключателя
+ - **description**: parameters Settings автоматического выключателя
  - **Structure**: {parameter: значение}
 - **Возвращаемое значение**: dict - configuration автоматического выключателя
 - **parameters конфигурации**:
@@ -300,7 +300,7 @@ class RiskMonitoringsystem:
 - **parameters**:
  - **`metrics`**: Метрики for Monitoringа
  - **Тип**: dict or List
- - **description**: List метрик for settings Monitoringа
+ - **description**: List метрик for Settings Monitoringа
  - **examples**: ['response_time', 'throughput', 'error_rate']
 - **Возвращаемое значение**: dict - configuration Monitoringа производительности
 - **Метрики производительности**:
@@ -373,7 +373,7 @@ class RiskMonitoringsystem:
 - **parameters**:
  - **`business_metrics`**: Бизнес-метрики for Monitoringа
  - **Тип**: dict or List
- - **description**: List бизнес-метрик for settings Monitoringа
+ - **description**: List бизнес-метрик for Settings Monitoringа
  - **examples**: ['revenue_impact', 'customer_satisfaction', 'conversion_rate']
 - **Возвращаемое значение**: dict - configuration Monitoringа бизнес-метрик
 - **Бизнес-метрики**:
@@ -422,7 +422,7 @@ class RiskMonitoringsystem:
  def setup_data_quality_Monitoring(self, data_sources):
  """configuration Monitoringа качества данных"""
  data_quality_config = {
- 'missing_values': {'threshold': 0.1, 'unit': 'percentage'},
+ 'Missing_values': {'threshold': 0.1, 'unit': 'percentage'},
  'duplicate_records': {'threshold': 0.05, 'unit': 'percentage'},
  'data_freshness': {'threshold': 3600, 'unit': 'seconds'},
  'schema_changes': {'monitor': True, 'alert': True}
@@ -437,11 +437,11 @@ class RiskMonitoringsystem:
 - **parameters**:
  - **`data_sources`**: Источники данных for Monitoringа
  - **Тип**: dict or List
- - **description**: List источников данных for settings Monitoringа
+ - **description**: List источников данных for Settings Monitoringа
  - **examples**: ['database', 'api', 'files', 'streams']
 - **Возвращаемое значение**: dict - configuration Monitoringа качества данных
 - **Метрики качества данных**:
- - **`missing_values`**: Пропущенные значения
+ - **`Missing_values`**: Пропущенные значения
  - **`threshold`**: Пороговое значение (on умолчанию 0.1)
  - **Тип**: float
  - **Диапазон**: [0, 1]
@@ -472,7 +472,7 @@ class RiskMonitoringsystem:
  - **`monitor`**: Monitoring изменений (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение Monitoringа изменений схемы
- - **`alert`**: Уведомления об изменениях (on умолчанию True)
+ - **`alert`**: notifications об изменениях (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение уведомлений об изменениях схемы
 - **Использование**:
@@ -524,7 +524,7 @@ class AutomatedProblemDetection:
  - **`Concept_drift`**: Концептуальный дрейф
  - **Тип**: float
  - **Диапазон**: [0, 1]
- - **description**: Мера изменения концепции/зависимостей
+ - **description**: Мера изменения концепции/dependencies
  - **Интерпретация**: 0 = нет дрейфа, 1 = полный дрейф
  - **`data_drift`**: Дрейф данных
  - **Тип**: float
@@ -560,7 +560,7 @@ class AutomatedProblemDetection:
 - **parameters**:
  - **`metrics_data`**: data метрик
  - **Тип**: dataFrame or dict
- - **description**: Временной ряд метрик for Analysis аномалий
+ - **description**: temporary ряд метрик for Analysis аномалий
  - **Structure**: {timestamp: {metric: value}} or dataFrame
 - **Возвращаемое значение**: dict - результаты детекции аномалий
 - **Типы аномалий**:
@@ -694,7 +694,7 @@ class MonitoringTools:
  - **Structure**: {rule_name: {condition, action, recipients}}
  - **`dashboard_config`**: configuration дашборда
  - **Тип**: dict
- - **description**: settings дашборда for визуализации
+ - **description**: Settings дашборда for визуализации
  - **Structure**: {widgets, layout, refresh_interval}
 - **Использование**:
  - **Monitoring производительности**: Отслеживание производительности приложения
@@ -733,9 +733,9 @@ class MonitoringTools:
  - **Тип**: dict
  - **description**: Правила for парсинга логов
  - **Structure**: {source: {pattern, fields, format}}
- - **`indexing_strategy`**: Стратегия индексации (on умолчанию 'time_based')
+ - **`indexing_strategy`**: Стратегия indexации (on умолчанию 'time_based')
  - **Тип**: str
- - **description**: Стратегия индексации логов
+ - **description**: Стратегия indexации логов
  - **Варианты**: 'time_based', 'size_based', 'hybrid'
  - **`retention_policy`**: Политика хранения (on умолчанию '30_days')
  - **Тип**: str
@@ -745,7 +745,7 @@ class MonitoringTools:
  - **Тип**: bool
  - **description**: Включение возможностей поиска on логам
 - **Использование**:
- - **Централизованный сбор**: Сбор логов из всех источников
+ - **Централизованный сбор**: Сбор логов из all источников
  - **Анализ**: Анализ логов for выявления проблем
  - **Поиск**: Быстрый поиск on логам
  - **Reportность**: create Reportов on basis логов
@@ -923,7 +923,7 @@ class AutoMLRiskintegration:
  - **`underfitting_detection`**: Детекция недообучения
  - **Тип**: dict
  - **description**: Monitoring недообучения модели
- - **Метрики**: Низкая производительность on всех данных
+ - **Метрики**: Низкая производительность on all данных
  - **`bias_detection`**: Детекция смещения
  - **Тип**: dict
  - **description**: Monitoring смещения модели
@@ -931,7 +931,7 @@ class AutoMLRiskintegration:
  - **`fairness_Monitoring`**: Monitoring справедливости
  - **Тип**: dict
  - **description**: Monitoring справедливости модели
- - **Метрики**: Равные возможности for всех групп
+ - **Метрики**: Равные возможности for all групп
 - **Использование**:
  - **Контроль качества**: Обеспечение качества ML-моделей
  - **Раннее предупреждение**: Обнаружение проблем with моделями
@@ -1213,7 +1213,7 @@ class LowRiskForecastingsystem:
  - **Structure**: {diversity_score, correlation_matrix, uniqueness_metrics}
  - **`uncertainty_aggregation`**: Агрегация неопределенности
  - **Тип**: dict
- - **description**: Агрегация неопределенности from всех моделей
+ - **description**: Агрегация неопределенности from all моделей
  - **Structure**: {aggregated_uncertainty, aggregation_method, weights}
  - **`confidence_weighting`**: Взвешивание on уверенности
  - **Тип**: dict
@@ -1293,7 +1293,7 @@ class AutomatedRiskResponse:
 - **parameters**:
  - **`risk_scenarios`**: Сценарии рисков
  - **Тип**: List
- - **description**: List сценариев рисков for settings ответов
+ - **description**: List сценариев рисков for Settings ответов
  - **examples**: ['performance_degradation', 'model_drift', 'data_quality_issues']
 - **Возвращаемое значение**: dict - configuration автоматических ответов
 - **Сценарии рисков**:
@@ -1319,7 +1319,7 @@ class AutomatedRiskResponse:
  - **description**: Включение переключения on резервную модель
  - **`notify_data_team`**: Уведомление team данных (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение уведомления team данных
+ - **description**: Включение notifications team данных
  - **`update_Monitoring`**: update Monitoringа (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение обновления Monitoringа
@@ -1348,7 +1348,7 @@ class AutomatedRiskResponse:
  - **description**: Включение аудит-логирования
  - **`notify_compliance`**: Уведомление о соответствии (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение уведомления о соответствии
+ - **description**: Включение notifications о соответствии
 - **Использование**:
  - **Быстрая реакция**: Быстрая реакция on проблемы
  - **Автоматизация**: Автоматизация процессов управления рисками
@@ -1396,7 +1396,7 @@ class AutomatedRiskResponse:
 - **parameters**:
  - **`risk_levels`**: Уровни рисков
  - **Тип**: List
- - **description**: List уровней рисков for settings эскалации
+ - **description**: List уровней рисков for Settings эскалации
  - **examples**: ['low_risk', 'medium_risk', 'high_risk', 'critical_risk']
 - **Возвращаемое значение**: dict - configuration правил эскалации
 - **Уровни рисков**:
@@ -1409,7 +1409,7 @@ class AutomatedRiskResponse:
  - **description**: Включение логирования инцидента
  - **`notify_team`**: Уведомление team (on умолчанию False)
  - **Тип**: bool
- - **description**: Включение уведомления team
+ - **description**: Включение notifications team
  - **`medium_risk`**: Средний риск
  - **`auto_resolve`**: Автоматическое разрешение (on умолчанию False)
  - **Тип**: bool
@@ -1419,7 +1419,7 @@ class AutomatedRiskResponse:
  - **description**: Включение логирования инцидента
  - **`notify_team`**: Уведомление team (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение уведомления team
+ - **description**: Включение notifications team
  - **`escalate_after`**: Эскалация через (on умолчанию 30)
  - **Тип**: int
  - **Единицы**: minutesы
@@ -1433,13 +1433,13 @@ class AutomatedRiskResponse:
  - **description**: Включение логирования инцидента
  - **`notify_team`**: Уведомление team (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение уведомления team
+ - **description**: Включение notifications team
  - **`escalate_immediately`**: Немедленная эскалация (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение немедленной эскалации
  - **`notify_Management`**: Уведомление руководства (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение уведомления руководства
+ - **description**: Включение notifications руководства
  - **`critical_risk`**: Критический риск
  - **`auto_resolve`**: Автоматическое разрешение (on умолчанию False)
  - **Тип**: bool
@@ -1449,23 +1449,23 @@ class AutomatedRiskResponse:
  - **description**: Включение логирования инцидента
  - **`notify_team`**: Уведомление team (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение уведомления team
+ - **description**: Включение notifications team
  - **`escalate_immediately`**: Немедленная эскалация (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение немедленной эскалации
  - **`notify_Management`**: Уведомление руководства (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение уведомления руководства
+ - **description**: Включение notifications руководства
  - **`notify_executives`**: Уведомление руководства (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение уведомления руководства
+ - **description**: Включение notifications руководства
  - **`activate_incident_response`**: Активация ответа on инцидент (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение активации ответа on инцидент
 - **Использование**:
  - **Management рисками**: Management рисками on уровням критичности
  - **Автоматизация**: Автоматизация процессов эскалации
- - **Уведомления**: Уведомления соответствующих уровней
+ - **notifications**: notifications соответствующих уровней
  - **Reportность**: create Reportов о рисках
 ```
 
@@ -1482,7 +1482,7 @@ class MLBasedRiskManagement:
  risk_model = {
  'features': [
  'system_metrics', 'business_metrics', 'external_factors',
- 'time_patterns', 'User_behavior', 'data_quality'
+ 'time_patterns', 'user_behavior', 'data_quality'
  ],
  'target': 'risk_probability',
  'algorithms': ['random_forest', 'gradient_boosting', 'neural_network'],
@@ -1503,10 +1503,10 @@ class MLBasedRiskManagement:
  - **Structure**: {features: values, target: values, timestamp: values}
 - **Возвращаемое значение**: dict - configuration модели предсказания рисков
 - **parameters модели**:
- - **`features`**: Признаки (on умолчанию ['system_metrics', 'business_metrics', 'external_factors', 'time_patterns', 'User_behavior', 'data_quality'])
+ - **`features`**: Признаки (on умолчанию ['system_metrics', 'business_metrics', 'external_factors', 'time_patterns', 'user_behavior', 'data_quality'])
  - **Тип**: List
  - **description**: List признаков for модели предсказания рисков
- - **Варианты**: 'system_metrics', 'business_metrics', 'external_factors', 'time_patterns', 'User_behavior', 'data_quality'
+ - **Варианты**: 'system_metrics', 'business_metrics', 'external_factors', 'time_patterns', 'user_behavior', 'data_quality'
  - **`target`**: Целевая переменная (on умолчанию 'risk_probability')
  - **Тип**: str
  - **description**: Целевая переменная for предсказания
@@ -1599,7 +1599,7 @@ class RiskMetrics:
  def calculate_risk_score(self, risk_factors):
  """Расчет общего показателя риска"""
  risk_score = {
- 'technical_risk': self.calculate_technical_risk(risk_factors),
+ 'Technical_risk': self.calculate_Technical_risk(risk_factors),
  'business_risk': self.calculate_business_risk(risk_factors),
  'operational_risk': self.calculate_operational_risk(risk_factors),
  'overall_risk': self.calculate_overall_risk(risk_factors)
@@ -1618,7 +1618,7 @@ class RiskMetrics:
  - **Structure**: {factor_name: {value, weight, impact}}
 - **Возвращаемое значение**: dict - показатели риска
 - **Типы рисков**:
- - **`technical_risk`**: Технический риск
+ - **`Technical_risk`**: Технический риск
  - **Тип**: float
  - **Диапазон**: [0, 1]
  - **description**: Показатель технического риска системы
@@ -1637,7 +1637,7 @@ class RiskMetrics:
  - **Тип**: float
  - **Диапазон**: [0, 1]
  - **description**: Общий показатель риска системы
- - **Формула**: Взвешенная сумма всех типов рисков
+ - **Формула**: Взвешенная сумма all типов рисков
 - **Использование**:
  - **Оценка рисков**: Оценка общего уровня рисков системы
  - **Приоритизация**: Приоритизация рисков on важности
@@ -1812,7 +1812,7 @@ def integrate_risk_Management_with_development():
 **🔧 Детальное description параметров integrate_risk_Management_with_development:**
 
 **function integrate_risk_Management_with_development:**
-- **Назначение**: integration управления рисками with жизненным циклом разработки for обеспечения безопасности on всех этапах
+- **Назначение**: integration управления рисками with жизненным циклом разработки for обеспечения безопасности on all этапах
 - **parameters**: Нет
 - **Возвращаемое значение**: dict - configuration интеграции with жизненным циклом разработки
 - **Фазы разработки**:
@@ -1870,7 +1870,7 @@ def integrate_risk_Management_with_development():
  - **description**: Включение возможности отката
  - **`Monitoring_setup`**: configuration Monitoringа (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение settings Monitoringа
+ - **description**: Включение Settings Monitoringа
  - **`production`**: Продакшн
  - **`continuous_Monitoring`**: Непрерывный Monitoring (on умолчанию True)
  - **Тип**: bool
@@ -1886,8 +1886,8 @@ def integrate_risk_Management_with_development():
  - **description**: Включение регулярных обзоров
 - **Использование**:
  - **integration**: integration управления рисками with разработкой
- - **Безопасность**: Обеспечение безопасности on всех этапах
- - **Качество**: Обеспечение качества on всех этапах
+ - **Безопасность**: Обеспечение безопасности on all этапах
+ - **Качество**: Обеспечение качества on all этапах
  - **Reportность**: create Reportов о интеграции
 ```
 

@@ -232,7 +232,7 @@ def normal_monte_carlo(returns, n_simulations=10000, time_horizon=252):
  Влияет on точность статистических оценок and время выполнения.
 
  time_horizon : int, default=252
- Временной горизонт симуляции in торговых днях.
+ temporary горизонт симуляции in торговых днях.
  Стандартные значения:
  - 252 дня = 1 торговый год (252 рабочих дня)
  - 126 дней = 6 месяцев
@@ -346,7 +346,7 @@ def t_distribution_monte_carlo(returns, n_simulations=10000, time_horizon=252):
  - Максимум: 100000 (for высокой точности)
 
  time_horizon : int, default=252
- Временной горизонт симуляции in торговых днях.
+ temporary горизонт симуляции in торговых днях.
  Стандартные значения:
  - 252 дня = 1 торговый год
  - 126 дней = 6 месяцев
@@ -473,7 +473,7 @@ def mixture_monte_carlo(returns, n_simulations=10000, time_horizon=252, n_compon
  - Максимум: 100000 (for высокой точности)
 
  time_horizon : int, default=252
- Временной горизонт симуляции in торговых днях.
+ temporary горизонт симуляции in торговых днях.
  Стандартные значения:
  - 252 дня = 1 торговый год
  - 126 дней = 6 месяцев
@@ -670,7 +670,7 @@ def bootstrap_monte_carlo(returns, n_simulations=10000, time_horizon=252, block_
  """
  Бутстрап Monte Carlo симуляция with блочной выборкой
 
- Использует блочный бутстрап for сохранения временной структуры данных
+ Использует блочный бутстрап for сохранения temporary структуры данных
  and автокорреляции in финансовых временных рядах.
 
  Parameters:
@@ -689,7 +689,7 @@ def bootstrap_monte_carlo(returns, n_simulations=10000, time_horizon=252, block_
  - Максимум: 100000 (for высокой точности)
 
  time_horizon : int, default=252
- Временной горизонт симуляции in торговых днях.
+ temporary горизонт симуляции in торговых днях.
  Стандартные значения:
  - 252 дня = 1 торговый год
  - 126 дней = 6 месяцев
@@ -704,7 +704,7 @@ def bootstrap_monte_carlo(returns, n_simulations=10000, time_horizon=252, block_
  - 10-20: Средние блоки (баланс между структурой and гибкостью)
  - 50+: Длинные блоки (сохраняет долгосрочные паттерны)
 
- Влияет on сохранение временной структуры данных.
+ Влияет on сохранение temporary структуры данных.
 
  Returns:
  --------
@@ -840,7 +840,7 @@ def permutation_monte_carlo(returns, n_simulations=10000, time_horizon=252):
  - Максимум: 100000 (for высокой точности)
 
  time_horizon : int, default=252
- Временной горизонт симуляции in торговых днях.
+ temporary горизонт симуляции in торговых днях.
  Стандартные значения:
  - 252 дня = 1 торговый год
  - 126 дней = 6 месяцев
@@ -1029,7 +1029,7 @@ def garch_monte_carlo(returns, n_simulations=10000, time_horizon=252, p=1, q=1, 
  - Максимум: 100000 (for высокой точности)
 
  time_horizon : int, default=252
- Временной горизонт симуляции in торговых днях.
+ temporary горизонт симуляции in торговых днях.
  Стандартные значения:
  - 252 дня = 1 торговый год
  - 126 дней = 6 месяцев
@@ -1095,7 +1095,7 @@ def garch_monte_carlo(returns, n_simulations=10000, time_horizon=252, p=1, q=1, 
  - parameters p and q определяют сложность модели
  - Большие значения p,q могут привести к переобучению
  - EGARCH and GJR-GARCH лучше подходят for асимметричных данных
- - Требует установки библиотеки arch: pip install arch
+ - Требует installation библиотеки arch: pip install arch
  """
  from arch import arch_model
 
@@ -1187,8 +1187,8 @@ def copula_monte_carlo(returns, n_simulations=10000, time_horizon=252, copula_ty
  """
  Copula Monte Carlo симуляция
 
- Использует копулы for моделирования зависимостей между переменными,
- сохраняя маргинальные распределения and структуру зависимостей.
+ Использует копулы for моделирования dependencies между переменными,
+ сохраняя маргинальные распределения and структуру dependencies.
 
  Parameters:
  -----------
@@ -1206,7 +1206,7 @@ def copula_monte_carlo(returns, n_simulations=10000, time_horizon=252, copula_ty
  - Максимум: 100000 (for высокой точности)
 
  time_horizon : int, default=252
- Временной горизонт симуляции in торговых днях.
+ temporary горизонт симуляции in торговых днях.
  Стандартные значения:
  - 252 дня = 1 торговый год
  - 126 дней = 6 месяцев
@@ -1214,7 +1214,7 @@ def copula_monte_carlo(returns, n_simulations=10000, time_horizon=252, copula_ty
  Должен быть положительным целым числом.
 
  copula_type : str, default='gaussian'
- Тип копулы for моделирования зависимостей.
+ Тип копулы for моделирования dependencies.
  Доступные варианты:
  - 'gaussian': Гауссова копула (линейные dependencies)
  - 't': t-копула (хвостовые dependencies)
@@ -1256,10 +1256,10 @@ def copula_monte_carlo(returns, n_simulations=10000, time_horizon=252, copula_ty
  Notes:
  ------
  - Копулы разделяют маргинальные распределения and dependencies
- - Гауссова копула подходит for линейных зависимостей
+ - Гауссова копула подходит for линейных dependencies
  - t-копула лучше моделирует хвостовые dependencies
- - Архимедовы копулы (Clayton, Gumbel, Frank) for асимметричных зависимостей
- - Требует установки библиотеки scipy
+ - Архимедовы копулы (Clayton, Gumbel, Frank) for асимметричных dependencies
+ - Требует installation библиотеки scipy
  """
  from scipy.stats import gaussian_kde
 
@@ -1331,7 +1331,7 @@ copula_simulations = copula_monte_carlo(
  returns=returns, # Исторические data for подгонки копулы
  n_simulations=10000, # 10,000 симуляций
  time_horizon=252, # 1 торговый год
- copula_type='gaussian' # Гауссова копула for линейных зависимостей
+ copula_type='gaussian' # Гауссова копула for линейных dependencies
 )
 ```
 
@@ -1431,7 +1431,7 @@ def stress_test_monte_carlo(returns, n_simulations=10000, time_horizon=252,
  - Максимум: 100000 (for высокой точности)
 
  time_horizon : int, default=252
- Временной горизонт симуляции in торговых днях.
+ temporary горизонт симуляции in торговых днях.
  Стандартные значения:
  - 252 дня = 1 торговый год
  - 126 дней = 6 месяцев
@@ -1691,7 +1691,7 @@ def regime_monte_carlo(returns, n_simulations=10000, time_horizon=252, n_regimes
  - Максимум: 100000 (for высокой точности)
 
  time_horizon : int, default=252
- Временной горизонт симуляции in торговых днях.
+ temporary горизонт симуляции in торговых днях.
  Стандартные значения:
  - 252 дня = 1 торговый год
  - 126 дней = 6 месяцев
@@ -1958,14 +1958,14 @@ def calculate_distribution_metrics(simulations, metrics=['sharpe', 'max_drawdown
  >>> import pandas as pd
  >>> import numpy as np
  >>>
- >>> # create тестовых данных
+ >>> # create testsых данных
  >>> simulations = pd.dataFrame({
  ... 'sharpe': np.random.normal(1.0, 0.3, 1000),
  ... 'max_drawdown': np.random.normal(-0.1, 0.05, 1000),
  ... 'cumulative_return': np.random.normal(0.15, 0.1, 1000)
  ... })
  >>>
- >>> # Расчет метрик for всех стандартных метрик
+ >>> # Расчет метрик for all стандартных метрик
  >>> metrics = calculate_distribution_metrics(simulations)
  >>> print(f"Средний Sharpe: {metrics['sharpe']['mean']:.2f}")
  >>> print(f"95% квантиль просадки: {metrics['max_drawdown']['q95']:.2f}")
@@ -1990,9 +1990,9 @@ def calculate_distribution_metrics(simulations, metrics=['sharpe', 'max_drawdown
 
  # check наличия required columns
  available_metrics = simulations.columns.toList()
- missing_metrics = [m for m in metrics if m not in available_metrics]
- if missing_metrics:
- raise ValueError(f"Отсутствуют метрики: {missing_metrics}. Доступные: {available_metrics}")
+ Missing_metrics = [m for m in metrics if m not in available_metrics]
+ if Missing_metrics:
+ raise ValueError(f"Missing метрики: {Missing_metrics}. Доступные: {available_metrics}")
 
  # Валидация метрик
  valid_metrics = ['sharpe', 'max_drawdown', 'cumulative_return', 'volatility', 'calmar']
@@ -2058,7 +2058,7 @@ simulations = pd.dataFrame({
  'cumulative_return': np.random.normal(0.15, 0.1, 1000)
 })
 
-# Расчет метрик for всех стандартных метрик
+# Расчет метрик for all стандартных метрик
 distribution_metrics = calculate_distribution_metrics(
  simulations=simulations, # dataFrame with результатами симуляций
  metrics=['sharpe', 'max_drawdown', 'cumulative_return'] # Метрики for Analysis
@@ -2127,7 +2127,7 @@ def calculate_confidence_intervals(simulations, confidence_levels=[0.90, 0.95, 0
  >>> import pandas as pd
  >>> import numpy as np
  >>>
- >>> # create тестовых данных
+ >>> # create testsых данных
  >>> simulations = pd.dataFrame({
  ... 'sharpe': np.random.normal(1.0, 0.3, 1000),
  ... 'max_drawdown': np.random.normal(-0.1, 0.05, 1000),
@@ -2168,9 +2168,9 @@ def calculate_confidence_intervals(simulations, confidence_levels=[0.90, 0.95, 0
 
  # check наличия required columns
  available_metrics = simulations.columns.toList()
- missing_metrics = [m for m in metrics if m not in available_metrics]
- if missing_metrics:
- raise ValueError(f"Отсутствуют метрики: {missing_metrics}. Доступные: {available_metrics}")
+ Missing_metrics = [m for m in metrics if m not in available_metrics]
+ if Missing_metrics:
+ raise ValueError(f"Missing метрики: {Missing_metrics}. Доступные: {available_metrics}")
 
  # Валидация метрик
  valid_metrics = ['sharpe', 'max_drawdown', 'cumulative_return', 'volatility', 'calmar']
@@ -2295,7 +2295,7 @@ def calculate_var_metrics(simulations, confidence_levels=[0.90, 0.95, 0.99],
  >>> import pandas as pd
  >>> import numpy as np
  >>>
- >>> # create тестовых данных
+ >>> # create testsых данных
  >>> simulations = pd.dataFrame({
  ... 'sharpe': np.random.normal(1.0, 0.3, 1000),
  ... 'max_drawdown': np.random.normal(-0.1, 0.05, 1000),
@@ -2337,9 +2337,9 @@ def calculate_var_metrics(simulations, confidence_levels=[0.90, 0.95, 0.99],
 
  # check наличия required columns
  available_metrics = simulations.columns.toList()
- missing_metrics = [m for m in metrics if m not in available_metrics]
- if missing_metrics:
- raise ValueError(f"Отсутствуют метрики: {missing_metrics}. Доступные: {available_metrics}")
+ Missing_metrics = [m for m in metrics if m not in available_metrics]
+ if Missing_metrics:
+ raise ValueError(f"Missing метрики: {Missing_metrics}. Доступные: {available_metrics}")
 
  # Валидация метрик
  valid_metrics = ['sharpe', 'max_drawdown', 'cumulative_return', 'volatility', 'calmar']
@@ -2461,7 +2461,7 @@ def calculate_es_metrics(simulations, confidence_levels=[0.90, 0.95, 0.99],
  >>> import pandas as pd
  >>> import numpy as np
  >>>
- >>> # create тестовых данных
+ >>> # create testsых данных
  >>> simulations = pd.dataFrame({
  ... 'sharpe': np.random.normal(1.0, 0.3, 1000),
  ... 'max_drawdown': np.random.normal(-0.1, 0.05, 1000),
@@ -2503,9 +2503,9 @@ def calculate_es_metrics(simulations, confidence_levels=[0.90, 0.95, 0.99],
 
  # check наличия required columns
  available_metrics = simulations.columns.toList()
- missing_metrics = [m for m in metrics if m not in available_metrics]
- if missing_metrics:
- raise ValueError(f"Отсутствуют метрики: {missing_metrics}. Доступные: {available_metrics}")
+ Missing_metrics = [m for m in metrics if m not in available_metrics]
+ if Missing_metrics:
+ raise ValueError(f"Missing метрики: {Missing_metrics}. Доступные: {available_metrics}")
 
  # Валидация метрик
  valid_metrics = ['sharpe', 'max_drawdown', 'cumulative_return', 'volatility', 'calmar']
@@ -2674,7 +2674,7 @@ def calculate_success_probability(simulations, min_sharpe=1.0, max_drawdown=-0.2
  >>> import pandas as pd
  >>> import numpy as np
  >>>
- >>> # create тестовых данных
+ >>> # create testsых данных
  >>> simulations = pd.dataFrame({
  ... 'sharpe': np.random.normal(1.0, 0.3, 1000),
  ... 'max_drawdown': np.random.normal(-0.1, 0.05, 1000),
@@ -2720,9 +2720,9 @@ def calculate_success_probability(simulations, min_sharpe=1.0, max_drawdown=-0.2
 
  # check наличия required columns
  required_columns = ['sharpe', 'max_drawdown', 'cumulative_return']
- missing_columns = [col for col in required_columns if col not in simulations.columns]
- if missing_columns:
- raise ValueError(f"Missing columns: {missing_columns}")
+ Missing_columns = [col for col in required_columns if col not in simulations.columns]
+ if Missing_columns:
+ raise ValueError(f"Missing columns: {Missing_columns}")
 
  # Валидация параметров условий
  if max_drawdown > 0:
@@ -2923,7 +2923,7 @@ def calculate_profitability_metrics(simulations, initial_capital=100000,
  >>> import pandas as pd
  >>> import numpy as np
  >>>
- >>> # create тестовых данных
+ >>> # create testsых данных
  >>> simulations = pd.dataFrame({
  ... 'cumulative_return': np.random.normal(0.15, 0.1, 1000)
  ... })

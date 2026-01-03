@@ -95,7 +95,7 @@ docker-compose up -d
 # Остановка / Stop
 docker-compose down
 
-# Тесты in Docker / Tests in Docker
+# Тесты in Docker / tests in Docker
 docker-compose exec neozork-hld uv run pytest tests/ -n auto
 ```
 

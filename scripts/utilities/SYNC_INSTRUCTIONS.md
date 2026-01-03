@@ -1,7 +1,7 @@
 # instructions on синхронизации Git после перевода коммитов
 
 ## Проблема
-После использования `git filter-branch` for перевода коммитов, GitHub not может обWorkingть такой большой push (153MB, 18714 объектов) за один раз из-за таймаута HTTP 408.
+После использования `git filter-branch` for перевода коммитов, GitHub not может обWorkingть такой большой Push (153MB, 18714 объектов) за один раз из-за таймаута HTTP 408.
 
 ## Текущее состояние
 - ✅ Локально переведено: **2271 из 2289 коммитов (99.2%)**
@@ -15,14 +15,14 @@
 GitHub может иметь временные ограничения. Попробуйте через несколько часов:
 
 ```bash
-./scripts/utilities/push_with_retry.sh v0.5.8 origin
+./scripts/utilities/Push_with_retry.sh v0.5.8 origin
 ```
 
 ### Вариант 2: Использовать GitHub CLI for создания нового репозитория
 ```bash
 # Создать новый репозиторий with переведенными коммитами
 gh repo create neozork-hld-Prediction-translated --public --source=. --remote=origin-new
-git push origin-new v0.5.8
+git Push origin-new v0.5.8
 ```
 
 ### Вариант 3: Использовать git bundle через веб-interface
@@ -32,7 +32,7 @@ git push origin-new v0.5.8
 ### Вариант 4: Связаться with поддержкой GitHub
 Обратитесь in GitHub Support for временного увеличения лимитов for вашего аккаунта.
 
-### Вариант 5: Использовать частичный push (экспериментально)
+### Вариант 5: Использовать частичный Push (экспериментально)
 ```bash
 ./scripts/utilities/smart_sync.sh v0.5.8 origin 200
 ```
@@ -46,7 +46,7 @@ git push origin-new v0.5.8
 git checkout -b v0.5.8-recent-translated
 git reset --soft HEAD~100
 git commit -m "chore: batch update - translated commit messages (last 100 commits)"
-git push origin v0.5.8-recent-translated
+git Push origin v0.5.8-recent-translated
 ```
 
 ## check статуса
@@ -63,7 +63,7 @@ git log --oneline v0.5.8 ^origin/v0.5.8 | wc -l
 ```
 
 ## Рекомендация
-**Лучший вариант**: Попробовать позже (через несколько часов) with помощью `push_with_retry.sh`. GitHub может иметь временные ограничения, которые снимаются через некоторое время.
+**Лучший вариант**: Попробовать позже (через несколько часов) with помощью `Push_with_retry.sh`. GitHub может иметь временные ограничения, которые снимаются через некоторое время.
 
 Если это not сWorkingет, Use **Вариант 2** (create нового репозитория через GitHub CLI) or **Вариант 4** (обращение in поддержку).
 

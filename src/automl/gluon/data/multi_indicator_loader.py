@@ -59,10 +59,10 @@ class MultiIndicatorLoader:
  logger.info(f"✅ Basic OHLCV data loaded: {len(data)} rows, {len(data.columns)} columns")
  return data
  else:
- logger.warning(f"⚠️ CSVExport data missing required OHLCV columns: {required_columns}")
+ logger.warning(f"⚠️ CSVExport data Missing required OHLCV columns: {required_columns}")
 
  # If no CSVExport data, create synthetic data for demonstration
- logger.warning(f"⚠️ No basic data found for {symbol} {Timeframe}, creating synthetic data...")
+ logger.warning(f"⚠️ No basic data found for {symbol} {Timeframe}, Creating synthetic data...")
  return self._create_synthetic_data(symbol, Timeframe)
 
  def _create_synthetic_data(self, symbol: str, Timeframe: str) -> pd.dataFrame:
@@ -245,13 +245,13 @@ class MultiIndicatorLoader:
 
  Args:
  data: Input dataframe
- method: Method for creating target ('price_direction', 'price_change', 'volatility')
+ method: Method for Creating target ('price_direction', 'price_change', 'volatility')
  problem_type: Type of problem ('regression', 'binary', 'multiclass')
 
  Returns:
  dataframe with target variable added
  """
- logger.info(f"Creating target variable using method: {method}, problem_type: {problem_type}")
+ logger.info(f"Creating target variable Using method: {method}, problem_type: {problem_type}")
 
  result_df = data.copy()
 
@@ -295,18 +295,18 @@ class MultiIndicatorLoader:
  logger.info(f"Target variable created: {len(result_df)} rows")
  return result_df
 
- def add_technical_indicators(self, data: pd.dataFrame) -> pd.dataFrame:
+ def add_Technical_indicators(self, data: pd.dataFrame) -> pd.dataFrame:
  """
- Add common technical indicators to the data.
- Добавить общие технические индикаторы к данным.
+ Add common Technical indicators to the data.
+ Добавить общие Technical индикаторы к данным.
 
  Args:
  data: Input dataframe
 
  Returns:
- dataframe with technical indicators added
+ dataframe with Technical indicators added
  """
- logger.info("Adding technical indicators...")
+ logger.info("Adding Technical indicators...")
 
  result_df = data.copy()
 
@@ -339,7 +339,7 @@ class MultiIndicatorLoader:
  result_df['macd_signal'] = signal_line
  result_df['macd_histogram'] = histogram
 
- logger.info(f"Added {len([col for col in result_df.columns if col not in data.columns])} technical indicators")
+ logger.info(f"Added {len([col for col in result_df.columns if col not in data.columns])} Technical indicators")
  return result_df
 
  def _calculate_rsi(self, prices: pd.Series, period: int = 14) -> pd.Series:
@@ -376,7 +376,7 @@ class MultiIndicatorLoader:
  'rows': 0,
  'columns': 0,
  'date_range': None,
- 'missing_values': {},
+ 'Missing_values': {},
  'data_types': {},
  'summary': 'No data available'
  }
@@ -388,7 +388,7 @@ class MultiIndicatorLoader:
  'start': data.index.min() if hasattr(data.index, 'min') else None,
  'end': data.index.max() if hasattr(data.index, 'max') else None
  },
- 'missing_values': data.isnull().sum().to_dict(),
+ 'Missing_values': data.isnull().sum().to_dict(),
  'data_types': data.dtypes.to_dict(),
  'memory_usage': data.memory_usage(deep=True).sum(),
  'numeric_columns': len(data.select_dtypes(include=[np.number]).columns),
@@ -524,8 +524,8 @@ class MultiIndicatorLoader:
  logger.info("🔄 Combining all data...")
  combined_data = pd.concat(all_data, ignore_index=True)
 
- # Add technical indicators
- combined_data = self.add_technical_indicators(combined_data)
+ # Add Technical indicators
+ combined_data = self.add_Technical_indicators(combined_data)
 
  logger.info(f"📊 Final combined data: {len(combined_data)} rows, {len(combined_data.columns)} columns")
 
@@ -583,8 +583,8 @@ class MultiIndicatorLoader:
  logger.info("🔄 Combining all multi-indicator data...")
  final_data = pd.concat(all_combined_data, ignore_index=True)
 
- # Add technical indicators
- final_data = self.add_technical_indicators(final_data)
+ # Add Technical indicators
+ final_data = self.add_Technical_indicators(final_data)
 
  logger.info(f"📊 Final multi-indicator data: {len(final_data)} rows, {len(final_data.columns)} columns")
 

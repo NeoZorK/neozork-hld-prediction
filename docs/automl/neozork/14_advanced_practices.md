@@ -68,7 +68,7 @@
  - **Теория:** Анализ on различных временных горизонтах
  - **Почему важно:** Обеспечивает полное понимание рыночной динамики
  - **Плюсы:** Комплексный анализ, снижение рисков, повышение точности
- - **Минусы:** Сложность settings, высокие вычислительные требования
+ - **Минусы:** Сложность Settings, высокие вычислительные требования
 
 - **Адаптивных систем**
  - **Теория:** Системы, которые автоматически адаптируются к изменениям
@@ -80,7 +80,7 @@
  - **Теория:** Эффективные стратегии управления рисками
  - **Почему важно:** Критически важно for долгосрочного успеха
  - **Плюсы:** Снижение рисков, защита капитала, стабильность
- - **Минусы:** Сложность settings, потенциальные ограничения доходности
+ - **Минусы:** Сложность Settings, потенциальные ограничения доходности
 
 - **Блокчейн-интеграции**
  - **Теория:** Использование блокчейн-технологий for увеличения доходности
@@ -180,7 +180,7 @@ class AdaptiveEnsemble:
  """
  Prediction with адаптивными весами
 
- Этот метод комбинирует предсказания всех моделей, используя
+ Этот метод комбинирует предсказания all моделей, используя
  текущие веса for взвешивания результатов.
 
  Args:
@@ -319,7 +319,7 @@ if __name__ == "__main__":
  models = create_sample_models()
  X, y = generate_sample_data()
 
- # Разделение on обучающую and тестовую выборки
+ # Разделение on обучающую and testsую выборки
  split_idx = int(0.8 * len(X))
  X_train, X_test = X[:split_idx], X[split_idx:]
  y_train, y_test = y[:split_idx], y[split_idx:]
@@ -356,7 +356,7 @@ if __name__ == "__main__":
 
  # Вывод важности моделей
  importance = ensemble.get_model_importance()
- print("\nModel Importance:")
+ print("\nModel importance:")
  for model_name, info in importance.items():
  print(f"{model_name}: Weight={info['weight']:.4f}, Avg Performance={info['avg_performance']:.4f}")
 ```
@@ -560,7 +560,7 @@ class MetaLearner:
  Оценка скорости адаптации
 
  Args:
- test_tasks: Тестовые задачи
+ test_tasks: testsые задачи
  adaptation_steps_List: List количества шагов адаптации for тестирования
  """
  results = {}
@@ -572,7 +572,7 @@ class MetaLearner:
  # Адаптация модели
  adapted_model = self.quick_adapt(task, steps)
 
- # Оценка on тестовых данных
+ # Оценка on testsых данных
  X_test, y_test = task['X_test'], task['y_test']
  Predictions = self.predict(adapted_model, X_test)
 
@@ -609,7 +609,7 @@ class MetaLearner:
 # Вспомогательные functions for создания задач
 def create_trading_task(X, y, task_id=None):
  """create торговой задачи for meta-learning"""
- # Разделение on обучающую and тестовую выборки
+ # Разделение on обучающую and testsую выборки
  split_idx = int(0.8 * len(X))
 
  return {
@@ -660,7 +660,7 @@ if __name__ == "__main__":
  print("starting meta-training...")
  meta_learner.meta_train(train_tasks, meta_epochs=50, inner_steps=5)
 
- # Генерация тестовых задач
+ # Генерация testsых задач
  print("Generating test tasks...")
  test_tasks = generate_multiple_tasks(n_tasks=5, n_samples=200, n_features=input_dim)
 
@@ -750,7 +750,7 @@ class ReplayBuffer:
  def __init__(self, capacity):
  self.buffer = deque(maxlen=capacity)
 
- def push(self, state, action, reward, next_state, done):
+ def Push(self, state, action, reward, next_state, done):
  """add опыта in буфер"""
  self.buffer.append((state, action, reward, next_state, done))
 
@@ -875,7 +875,7 @@ class TradingRLAgent:
  next_state: Следующее состояние
  done: Флаг завершения эпизода
  """
- self.replay_buffer.push(state, action, reward, next_state, done)
+ self.replay_buffer.Push(state, action, reward, next_state, done)
 
  def train(self, batch_size=32):
  """
@@ -1106,7 +1106,7 @@ class SimpleTradingEnvironment:
  """Получение текущего состояния"""
  current_price = self.price_trajectory[self.step_count]
 
- # Простые технические индикаторы
+ # Простые Technical индикаторы
  if len(self.price_history) >= 5:
  sma_5 = np.mean(self.price_history[-5:])
  price_change = (current_price - self.price_history[-1]) / self.price_history[-1]
@@ -1262,10 +1262,10 @@ if __name__ == "__main__":
 - Структурированный анализ
 - Взвешенные решения
 - Сбалансированность
-- Гибкость settings
+- Гибкость Settings
 
 **Минусы:**
-- Сложность settings
+- Сложность Settings
 - Потенциальные конфликты между Timeframeми
 - Высокие вычислительные требования
 
@@ -1302,7 +1302,7 @@ class TimeframeAnalyzer:
  Базовый Analysisтор for одного Timeframe
 
  Этот класс реализует анализ данных on конкретном Timeframeе,
- including технические индикаторы and торговые сигналы.
+ including Technical индикаторы and торговые сигналы.
  """
 
  def __init__(self, Timeframe, weight=1.0):
@@ -1321,7 +1321,7 @@ class TimeframeAnalyzer:
 
  print(f"initialized {Timeframe} analyzer with weight {weight}")
 
- def calculate_technical_indicators(self, data):
+ def calculate_Technical_indicators(self, data):
  """
  Расчет технических indicators
 
@@ -1429,7 +1429,7 @@ class TimeframeAnalyzer:
  Словарь with результатами Analysis
  """
  # Расчет технических indicators
- data_with_indicators = self.calculate_technical_indicators(data)
+ data_with_indicators = self.calculate_Technical_indicators(data)
 
  # Генерация сигналов
  signals = self.generate_signals(data_with_indicators)
@@ -1560,7 +1560,7 @@ class HierarchicalTimeframeAnalyzer:
 
  def analyze(self, data_dict):
  """
- Анализ on всех Timeframes
+ Анализ on all Timeframes
 
  Args:
  data_dict: Словарь with data for каждого Timeframe
@@ -1822,7 +1822,7 @@ if __name__ == "__main__":
 **Минусы:**
 - Сложность реализации
 - Потенциальные задержки in сигналах
-- Необходимость settings порогов
+- Необходимость Settings порогов
 
 **Детальное объяснение синхронизации сигналов:**
 
@@ -2331,7 +2331,7 @@ if __name__ == "__main__":
 - Гибкость реагирования
 
 **Минусы:**
-- Сложность settings
+- Сложность Settings
 - Потенциальная нестабильность
 - Высокие требования к данным
 
@@ -2509,7 +2509,7 @@ class PortfolioRiskManager:
 **Почему DeFi integration важна:**
 - **Децентрализация:** Обеспечивает децентрализацию торговых систем
 - **Автоматизация:** Позволяет полностью автоматизировать торговлю
-- **Прозрачность:** Обеспечивает прозрачность всех операций
+- **Прозрачность:** Обеспечивает прозрачность all операций
 - **Новые возможности:** Предоставляет новые возможности for заработка
 
 **Плюсы:**
@@ -2716,7 +2716,7 @@ class YieldFarmingintegration:
 - Оптимизация производительности
 
 **Минусы:**
-- Сложность settings
+- Сложность Settings
 - Потенциальные ложные срабатывания
 - Высокие требования к ресурсам
 
@@ -2902,13 +2902,13 @@ class AutoRetrainingsystem:
  - **Теория:** Анализ on различных временных горизонтах обеспечивает полное понимание
  - **Почему важно:** Обеспечивает комплексный Market Analysis
  - **Плюсы:** Комплексный анализ, снижение рисков, повышение точности
- - **Минусы:** Сложность settings, высокие вычислительные требования
+ - **Минусы:** Сложность Settings, высокие вычислительные требования
 
 5. **Продвинутый риск-менеджмент - динамическое Management рисками**
  - **Теория:** Динамическое Management рисками критически важно for долгосрочного успеха
  - **Почему важно:** Обеспечивает защиту капитала and стабильность
  - **Плюсы:** Защита капитала, стабильность, долгосрочный успех
- - **Минусы:** Сложность settings, потенциальные ограничения доходности
+ - **Минусы:** Сложность Settings, потенциальные ограничения доходности
 
 6. **Блокчейн-integration - использование DeFi for увеличения доходности**
  - **Теория:** Блокчейн-integration предоставляет новые возможности for заработка

@@ -122,10 +122,10 @@
 
 **Практическое применение:** Эти метрики используются for первоначальной оценки стратегии, сравнения with бенчмарками and принятия решений о продолжении торговли.
 
-**Полный функциональный код with импортами and примерами:**
+**Полный функциональный код with importми and примерами:**
 
 ```python
-# Необходимые импорты for всех примеров in этом файле
+# Необходимые импорты for all примеров in этом файле
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
@@ -300,7 +300,7 @@ class ReturnMetrics:
  """
  Расчет дневных доходностей.
 
- Дневные доходности - это базовые data for всех остальных расчетов.
+ Дневные доходности - это базовые data for all остальных расчетов.
  Они показывают ежедневную производительность системы.
 
  Args:
@@ -313,9 +313,9 @@ class ReturnMetrics:
 
  def get_all_return_metrics(self, returns: pd.Series) -> Dict[str, float]:
  """
- Расчет всех метрик доходности.
+ Расчет all метрик доходности.
 
- Удобный метод for получения всех основных метрик доходности
+ Удобный метод for получения all основных метрик доходности
  in одном вызове.
 
  Args:
@@ -335,7 +335,7 @@ class ReturnMetrics:
  'max_daily_return': returns.max()
  }
 
- # Добавляем периодические метрики если есть временные метки
+ # Добавляем периодические метрики if present временные метки
  if not returns.empty and hasattr(returns.index, 'to_pydatetime'):
  monthly_returns = self.calculate_monthly_returns(returns)
  if not monthly_returns.empty:
@@ -354,12 +354,12 @@ def example_return_metrics():
  """
  Практический example использования метрик доходности.
 
- Этот example показывает, как создать тестовые data and рассчитать
+ Этот example показывает, как создать testsые data and рассчитать
  различные метрики доходности for торговой стратегии.
  """
  print("=== example использования метрик доходности ===\n")
 
- # create тестовых данных
+ # create testsых данных
  np.random.seed(42)
  dates = pd.date_range('2023-01-01', periods=252, freq='D')
 
@@ -374,7 +374,7 @@ def example_return_metrics():
  # create экземпляра класса
  metrics = ReturnMetrics()
 
- # Расчет всех метрик
+ # Расчет all метрик
  all_metrics = metrics.get_all_return_metrics(returns)
 
  # Вывод результатов
@@ -680,9 +680,9 @@ class RiskMetrics:
 
  def get_all_risk_metrics(self, returns: pd.Series, risk_free_rate: float = 0.02) -> Dict[str, float]:
  """
- Расчет всех метрик риска.
+ Расчет all метрик риска.
 
- Удобный метод for получения всех основных метрик риска in одном вызове.
+ Удобный метод for получения all основных метрик риска in одном вызове.
 
  Args:
  returns (pd.Series): Серия доходностей
@@ -715,7 +715,7 @@ def example_risk_metrics():
  """
  print("=== example использования метрик риска ===\n")
 
- # create тестовых данных with различными характеристиками риска
+ # create testsых данных with различными характеристиками риска
  np.random.seed(42)
  dates = pd.date_range('2023-01-01', periods=252, freq='D')
 
@@ -735,7 +735,7 @@ def example_risk_metrics():
  # create экземпляра класса
  risk_metrics = RiskMetrics()
 
- # Расчет всех метрик риска
+ # Расчет all метрик риска
  all_metrics = risk_metrics.get_all_risk_metrics(returns)
 
  # Вывод результатов
@@ -767,7 +767,7 @@ if __name__ == "__main__":
 **Почему метрики эффективности критически важны:**
 - **Реальная оценка эффективности** - показывают истинную эффективность with учетом рисков
 - **Сравнение стратегий** - позволяют объективно сравнивать различные торговые подходы
-- **Оптимизация параметров** - помогают найти оптимальные settings системы
+- **Оптимизация параметров** - помогают найти оптимальные Settings системы
 - **Management рисками** - обеспечивают баланс между доходностью and риском
 - **Принятие решений** - дают количественную основу for торговых решений
 
@@ -937,7 +937,7 @@ class EfficiencyMetrics:
  if returns.empty or benchmark_returns.empty:
  return 0.0
 
- # Выравниваем индексы
+ # Выравниваем indexы
  common_index = returns.index.intersection(benchmark_returns.index)
  if len(common_index) == 0:
  return 0.0
@@ -979,7 +979,7 @@ class EfficiencyMetrics:
  if returns.empty or market_returns.empty:
  return 0.0
 
- # Выравниваем индексы
+ # Выравниваем indexы
  common_index = returns.index.intersection(market_returns.index)
  if len(common_index) < 2:
  return 0.0
@@ -1042,9 +1042,9 @@ class EfficiencyMetrics:
  benchmark_returns: Optional[pd.Series] = None,
  market_returns: Optional[pd.Series] = None) -> Dict[str, float]:
  """
- Расчет всех метрик эффективности.
+ Расчет all метрик эффективности.
 
- Удобный метод for получения всех основных метрик эффективности in одном вызове.
+ Удобный метод for получения all основных метрик эффективности in одном вызове.
 
  Args:
  returns (pd.Series): Серия доходностей стратегии
@@ -1079,7 +1079,7 @@ def example_efficiency_metrics():
  """
  print("=== example использования метрик эффективности ===\n")
 
- # create тестовых данных for двух стратегий
+ # create testsых данных for двух стратегий
  np.random.seed(42)
  dates = pd.date_range('2023-01-01', periods=252, freq='D')
 
@@ -1095,7 +1095,7 @@ def example_efficiency_metrics():
  index=dates
  )
 
- # Бенчмарк (рыночный индекс)
+ # Бенчмарк (рыночный index)
  benchmark_returns = pd.Series(
  np.random.normal(0.0005, 0.02, len(dates)),
  index=dates
@@ -1334,7 +1334,7 @@ class StabilityMetrics:
 
  def get_all_stability_metrics(self, returns: pd.Series) -> Dict[str, float]:
  """
- Расчет всех метрик стабильности.
+ Расчет all метрик стабильности.
 
  Args:
  returns (pd.Series): Серия доходностей
@@ -1359,7 +1359,7 @@ def example_stability_metrics():
  """
  print("=== example использования метрик стабильности ===\n")
 
- # create тестовых данных
+ # create testsых данных
  np.random.seed(42)
  dates = pd.date_range('2023-01-01', periods=252, freq='D')
 
@@ -1415,7 +1415,7 @@ if __name__ == "__main__":
 
 1. **Скорость адаптации** - скорость изменения параметров системы
 2. **Стабильность режимов** - устойчивость к смене рыночных режимов
-3. **Стабильность корреляции** - постоянство связи with рыночными индексами
+3. **Стабильность корреляции** - постоянство связи with рыночными indexами
 4. **Коэффициент адаптивности** - общая мера способности к адаптации
 
 **Полный функциональный код with детальными объяснениями:**
@@ -1514,7 +1514,7 @@ class AdaptabilityMetrics:
  Расчет стабильности корреляции with рынком.
 
  Стабильность корреляции показывает, насколько постоянна
- связь между системой and рыночным индексом.
+ связь между системой and рыночным indexом.
 
  Args:
  returns (pd.Series): Серия доходностей системы
@@ -1526,7 +1526,7 @@ class AdaptabilityMetrics:
  if returns.empty or market_returns.empty:
  return 0.0
 
- # Выравниваем индексы
+ # Выравниваем indexы
  common_index = returns.index.intersection(market_returns.index)
  if len(common_index) < self.window_size:
  return 0.0
@@ -1600,7 +1600,7 @@ class AdaptabilityMetrics:
  def get_all_adaptability_metrics(self, returns: pd.Series,
  market_returns: Optional[pd.Series] = None) -> Dict[str, float]:
  """
- Расчет всех метрик адаптивности.
+ Расчет all метрик адаптивности.
 
  Args:
  returns (pd.Series): Серия доходностей системы
@@ -1630,7 +1630,7 @@ def example_adaptability_metrics():
  """
  print("=== example использования метрик адаптивности ===\n")
 
- # create тестовых данных with различными режимами
+ # create testsых данных with различными режимами
  np.random.seed(42)
  dates = pd.date_range('2023-01-01', periods=500, freq='D')
 
@@ -1664,7 +1664,7 @@ def example_adaptability_metrics():
  # create экземпляра класса
  adaptability = AdaptabilityMetrics()
 
- # Расчет всех метрик адаптивности
+ # Расчет all метрик адаптивности
  all_metrics = adaptability.get_all_adaptability_metrics(returns_series, market_series)
 
  # Вывод результатов
@@ -1760,7 +1760,7 @@ class PredictiveMetrics:
  if predicted_returns.empty or actual_returns.empty:
  return 0.0
 
- # Выравниваем индексы
+ # Выравниваем indexы
  common_index = predicted_returns.index.intersection(actual_returns.index)
  if len(common_index) == 0:
  return 0.0
@@ -1797,7 +1797,7 @@ class PredictiveMetrics:
  if predicted_returns.empty or actual_returns.empty:
  return 0.0
 
- # Выравниваем индексы
+ # Выравниваем indexы
  common_index = predicted_returns.index.intersection(actual_returns.index)
  if len(common_index) == 0:
  return 0.0
@@ -1842,7 +1842,7 @@ class PredictiveMetrics:
  benchmark_returns.empty):
  return 0.0
 
- # Выравниваем индексы
+ # Выравниваем indexы
  common_index = (predicted_returns.index
  .intersection(actual_returns.index)
  .intersection(benchmark_returns.index))
@@ -1886,7 +1886,7 @@ class PredictiveMetrics:
  if predicted_returns.empty or actual_returns.empty:
  return 0.0
 
- # Выравниваем индексы
+ # Выравниваем indexы
  common_index = predicted_returns.index.intersection(actual_returns.index)
  if len(common_index) < 2:
  return 0.0
@@ -1917,7 +1917,7 @@ class PredictiveMetrics:
  if predicted_returns.empty or actual_returns.empty:
  return 0.0
 
- # Выравниваем индексы
+ # Выравниваем indexы
  common_index = predicted_returns.index.intersection(actual_returns.index)
  if len(common_index) == 0:
  return 0.0
@@ -1935,7 +1935,7 @@ class PredictiveMetrics:
  actual_returns: pd.Series,
  benchmark_returns: Optional[pd.Series] = None) -> Dict[str, float]:
  """
- Расчет всех метрик предсказательной способности.
+ Расчет all метрик предсказательной способности.
 
  Args:
  predicted_returns (pd.Series): Предсказанные доходности
@@ -1974,7 +1974,7 @@ def example_predictive_metrics():
  """
  print("=== example использования метрик предсказательной способности ===\n")
 
- # create тестовых данных
+ # create testsых данных
  np.random.seed(42)
  dates = pd.date_range('2023-01-01', periods=252, freq='D')
 
@@ -1997,7 +1997,7 @@ def example_predictive_metrics():
  # create экземпляра класса
  predictive = PredictiveMetrics()
 
- # Расчет всех метрик
+ # Расчет all метрик
  all_metrics = predictive.get_all_predictive_metrics(
  predicted_returns, actual_returns, benchmark_returns
  )
@@ -2032,16 +2032,16 @@ if __name__ == "__main__":
 
 ### 1. Метрики on периодам
 
-**Теория:** Метрики on периодам представляют собой показатели, которые измеряют производительность за различные временные периоды. Это критически важно for понимания временной динамики производительности.
+**Теория:** Метрики on периодам представляют собой показатели, которые измеряют производительность за различные временные периоды. Это критически важно for понимания temporary динамики производительности.
 
 **Почему метрики on периодам важны:**
-- **Временная динамика:** Обеспечивают понимание временной динамики
+- **Временная динамика:** Обеспечивают понимание temporary динамики
 - **Выявление паттернов:** Помогают выявлять временные паттерны
 - **Planирование:** Помогают in Planировании
 - **Сравнение:** Позволяют сравнивать различные периоды
 
 **Плюсы:**
-- Понимание временной динамики
+- Понимание temporary динамики
 - Выявление паттернов
 - Помощь in Planировании
 - Сравнение periods
@@ -2106,7 +2106,7 @@ class TemporalMetrics:
 
 ### 2. Метрики сезонности
 
-**Теория:** Метрики сезонности представляют собой показатели, которые измеряют сезонные паттерны in производительности системы. Это критически важно for понимания временных зависимостей.
+**Теория:** Метрики сезонности представляют собой показатели, которые измеряют сезонные паттерны in производительности системы. Это критически важно for понимания временных dependencies.
 
 **Почему метрики сезонности важны:**
 - **Сезонные паттерны:** Помогают выявлять сезонные паттерны
@@ -2475,7 +2475,7 @@ class ForecastStabilityMetrics:
 - Оптимизация системы
 
 **Минусы:**
-- Сложность settings
+- Сложность Settings
 - Потенциальные ложные срабатывания
 - Высокие требования к ресурсам
 
@@ -2513,7 +2513,7 @@ class MetricsMonitor:
  }
 
  def _calculate_all_metrics(self, returns, Predictions=None):
- """Расчет всех метрик"""
+ """Расчет all метрик"""
  metrics = {}
 
  # Базовые метрики
@@ -2602,7 +2602,7 @@ class MetricsMonitor:
 - Помощь in Planировании
 
 **Минусы:**
-- Сложность settings
+- Сложность Settings
 - Потенциальные Issues with шаблонами
 - Высокие требования к ресурсам
 
@@ -2692,7 +2692,7 @@ class MetricsReporter:
 
 2. **Временные метрики - анализ on периодам**
  - **Теория:** Временные метрики обеспечивают понимание динамики производительности
- - **Почему важно:** Обеспечивает понимание временной динамики
+ - **Почему важно:** Обеспечивает понимание temporary динамики
  - **Плюсы:** Понимание динамики, выявление трендов
  - **Минусы:** Сложность расчета, высокие требования к данным
 
@@ -2712,13 +2712,13 @@ class MetricsReporter:
  - **Теория:** Автоматический Monitoring критически важен for поддержания эффективности
  - **Почему важно:** Обеспечивает непрерывный контроль
  - **Плюсы:** Непрерывный контроль, своевременное выявление проблем
- - **Минусы:** Сложность settings, высокие требования к ресурсам
+ - **Минусы:** Сложность Settings, высокие требования к ресурсам
 
 6. **Автоматическая Reportность - регулярные Reportы**
  - **Теория:** Автоматическая Reportность критически важна for управления
  - **Почему важно:** Обеспечивает регулярные Reportы
  - **Плюсы:** Регулярные Reportы, автоматизация
- - **Минусы:** Сложность settings, высокие требования к ресурсам
+ - **Минусы:** Сложность Settings, высокие требования к ресурсам
 
 ---
 

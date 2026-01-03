@@ -236,7 +236,7 @@ def train_bank_model(data):
  tuple
  (predictor, test_data):
  - predictor: обученная модель TabularPredictor
- - test_data: тестовые data for оценки
+ - test_data: testsые data for оценки
 
  Notes:
  ------
@@ -247,7 +247,7 @@ def train_bank_model(data):
  4. configuration гиперпараметров for разных алгоритмов
  5. Обучение with высоким качеством and бэггингом
 
- settings for банковской задачи:
+ Settings for банковской задачи:
  - problem_type: 'binary' (бинарная классификация)
  - eval_metric: 'roc_auc' (ROC-AUC for несбалансированных данных)
  - presets: 'high_quality' (максимальное качество)
@@ -307,9 +307,9 @@ def train_bank_model(data):
  # Обучение модели with оптимизированными параметрами
  predictor.fit(
  train_data, # data for обучения
- hyperparameters=hyperparameters, # settings алгоритмов
+ hyperparameters=hyperparameters, # Settings алгоритмов
  time_limit=1800, # Время обучения in секундах (30 minutes)
- presets='high_quality', # Предустановки качества (high_quality for максимального качества)
+ presets='high_quality', # Предinstallation качества (high_quality for максимального качества)
  num_bag_folds=5, # Количество фолдов for бэггинга (3-10)
  num_bag_sets=1 # Количество наборов бэггинга (1-3)
  )
@@ -335,7 +335,7 @@ def evaluate_bank_model(predictor, test_data):
  - Содержит информацию о важности признаков
 
  test_data : pd.dataFrame
- Тестовые data for оценки:
+ testsые data for оценки:
  - Содержит целевую переменную 'default_risk'
  - Имеет те же признаки что and обучающие data
  - not участвовали in обучении модели
@@ -398,7 +398,7 @@ print("Bank Model Performance:")
 for metric, value in bank_results['performance'].items():
  print(f"{metric}: {value:.4f}")
 
-print("\nTop 10 Feature Importance:")
+print("\nTop 10 Feature importance:")
 print(bank_results['feature_importance'].head(10))
 ```
 
@@ -409,7 +409,7 @@ print(bank_results['feature_importance'].head(10))
 - **ROC Curve**: Показывает качество разделения классов при разных порогах
 - **Precision-Recall**: Демонстрирует баланс между точностью and полнотой
 - **Confusion Matrix**: Визуализирует типы ошибок модели
-- **Feature Importance**: Показывает, What факторы важны for предсказания
+- **Feature importance**: Показывает, What факторы важны for предсказания
 
 ```python
 def visualize_bank_results(results, test_data):
@@ -440,7 +440,7 @@ def visualize_bank_results(results, test_data):
 
  # Важность признаков
  results['feature_importance'].head(10).plot(kind='barh', ax=axes[1, 0])
- axes[1, 0].set_title('Top 10 Feature Importance')
+ axes[1, 0].set_title('Top 10 Feature importance')
 
  # Распределение вероятностей
  axes[1, 1].hist(results['probabilities'][1], bins=50, alpha=0.7)
@@ -690,7 +690,7 @@ print(f"MAPE: {real_estate_results['mape']:.2f}%")
 
 - **Scatter Plot**: Показывает корреляцию между предсказанными and фактическими значениями
 - **Error Distribution**: Демонстрирует характер ошибок модели (нормальность, выбросы)
-- **Feature Importance**: Выявляет наиболее влиятельные факторы on цену
+- **Feature importance**: Выявляет наиболее влиятельные факторы on цену
 - **Error vs Price**: Показывает, зависит ли точность from диапазона цен
 
 ```python
@@ -715,7 +715,7 @@ def visualize_real_estate_results(results, test_data):
 
  # Важность признаков
  results['feature_importance'].head(10).plot(kind='barh', ax=axes[1, 0])
- axes[1, 0].set_title('Top 10 Feature Importance')
+ axes[1, 0].set_title('Top 10 Feature importance')
 
  # Ошибки on цене
  axes[1, 1].scatter(test_data['price'], results['errors'], alpha=0.6)
@@ -734,7 +734,7 @@ visualize_real_estate_results(real_estate_results, real_estate_test_data)
 ## example 3: Анализ временных рядов
 
 <img src="images/optimized/time_series_Analysis.png" alt="example временных рядов" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 4: example Analysis временных рядов - временной ряд with прогнозом, ошибки in time, распределение ошибок, метрики MASE/MAPE*
+*Рисунок 4: example Analysis временных рядов - temporary ряд with прогнозом, ошибки in time, распределение ошибок, метрики MASE/MAPE*
 
 **Почему временные ряды - особый тип задач?** Потому что они имеют временную dependency and требуют специальных методов:
 
@@ -881,7 +881,7 @@ def prepare_sales_data(data):
  data = data.sort_values(['product_id', 'date'])
 
  # Лаговые признаки (значения продаж in предыдущие дни)
- for lag in [1, 2, 3, 7, 14, 30]: # Разные лаги for разных временных зависимостей
+ for lag in [1, 2, 3, 7, 14, 30]: # Разные лаги for разных временных dependencies
  data[f'sales_lag_{lag}'] = data.groupby('product_id')['sales'].shift(lag)
 
  # Скользящие средние (сглаженные тренды)
@@ -1012,7 +1012,7 @@ for product, perf in sales_results['product_performance'].items():
 
 - **Time Series Plot**: Показывает тренды, сезонность and качество прогноза во времени
 - **Error Analysis**: Демонстрирует, как ошибки распределены in time
-- **Feature Importance**: Выявляет, What временные признаки важны
+- **Feature importance**: Выявляет, What временные признаки важны
 - **Performance by Product**: Сравнивает качество прогноза for разных продуктов
 
 ```python
@@ -1021,7 +1021,7 @@ def visualize_sales_results(results, test_data):
 
  fig, axes = plt.subplots(2, 2, figsize=(15, 12))
 
- # Временной ряд for одного продукта
+ # temporary ряд for одного продукта
  product_id = test_data['product_id'].iloc[0]
  product_data = test_data[test_data['product_id'] == product_id]
  product_Predictions = results['Predictions'][test_data['product_id'] == product_id]
@@ -1042,7 +1042,7 @@ def visualize_sales_results(results, test_data):
 
  # Важность признаков
  results['feature_importance'].head(10).plot(kind='barh', ax=axes[1, 0])
- axes[1, 0].set_title('Top 10 Feature Importance')
+ axes[1, 0].set_title('Top 10 Feature importance')
 
  # Производительность on продуктам
  products = List(results['product_performance'].keys())
@@ -1183,7 +1183,7 @@ def prepare_image_data(data):
  3. Сохранение категориальных признаков без изменений
 
  Агрегированные признаки:
- - feature_sum: сумма всех признаков (общая "активность" изображения)
+ - feature_sum: сумма all признаков (общая "активность" изображения)
  - feature_mean: среднее значение признаков (средняя "яркость")
  - feature_std: стандартное отклонение признаков (вариативность)
 
@@ -1195,7 +1195,7 @@ def prepare_image_data(data):
 
  # create новых признаков (feature engineering)
  # Агрегированные признаки помогают модели понять общие характеристики изображения
- data['feature_sum'] = data.select_dtypes(include=[np.number]).sum(axis=1) # Сумма всех признаков
+ data['feature_sum'] = data.select_dtypes(include=[np.number]).sum(axis=1) # Сумма all признаков
  data['feature_mean'] = data.select_dtypes(include=[np.number]).mean(axis=1) # Среднее значение признаков
  data['feature_std'] = data.select_dtypes(include=[np.number]).std(axis=1) # Стандартное отклонение признаков
 
@@ -1329,7 +1329,7 @@ for class_name, metrics in image_results['classification_Report'].items():
 - **Confusion Matrix**: Показывает, What классы путает модель между собой
 - **Class Accuracy**: Демонстрирует точность for каждого класса отдельно
 - **Prediction Distribution**: Выявляет, not предсказывает ли модель только популярные классы
-- **Feature Importance**: Показывает, What признаки важны for различения классов
+- **Feature importance**: Показывает, What признаки важны for различения классов
 
 ```python
 def visualize_image_results(results, test_data):
@@ -1346,7 +1346,7 @@ def visualize_image_results(results, test_data):
 
  # Важность признаков
  results['feature_importance'].head(15).plot(kind='barh', ax=axes[0, 1])
- axes[0, 1].set_title('Top 15 Feature Importance')
+ axes[0, 1].set_title('Top 15 Feature importance')
 
  # Распределение Predictions
  Prediction_counts = pd.Series(results['Predictions']).value_counts()
@@ -1726,7 +1726,7 @@ def test_production_api():
  response = requests.post(f"{base_url}/predict", json=real_estate_data)
  print("Real estate Prediction:", response.json())
 
-# Launch тестов
+# Launch tests
 if __name__ == "__main__":
  test_production_api()
 ```

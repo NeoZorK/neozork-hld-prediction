@@ -16,7 +16,7 @@ neozork-hld-Prediction/
 ├── src/interactive/ # Интерактивная система / Interactive system
 ├── src/mobile_app/ # mobile application / mobile application
 ├── src/admin_panel/ # Админ панель / Admin panel
-├── tests/ # Тесты / Tests
+├── tests/ # Тесты / tests
 ├── scripts/ # Скрипты Launchа / Launch scripts
 ├── docs/ # documentation / Documentation
 ├── data/ # data / data
@@ -38,7 +38,7 @@ neozork-hld-Prediction/
 - `scripts/run_all_tests.sh` - Run all tests / Run all tests
 - `scripts/run_tests_safe.sh` - Безопасное тестирование / Safe testing
 
-## 🧪 Structure тестов / Test Structure
+## 🧪 Structure tests / Test Structure
 
 ```
 tests/
@@ -71,12 +71,12 @@ tests/
 - **Kubernetes** (`k8s/`) - Оркестрация / Orchestration
 - **deployment** (`deployment/`) - Развертывание / deployment
 
-## 🔧 Конфигурационные файлы / Configuration Files
+## 🔧 Конфигурационные файлы / Configuration files
 
 ### Python configuration / Python Configuration
 - `pyproject.toml` - configuration проекта / Project configuration
-- `requirements.txt` - dependencies / Dependencies
-- `pytest.ini` - configuration тестов / Test configuration
+- `requirements.txt` - dependencies / dependencies
+- `pytest.ini` - configuration tests / Test configuration
 
 ### Node.js configuration / Node.js Configuration
 - `src/mobile_app/package.json` - mobile application / mobile app

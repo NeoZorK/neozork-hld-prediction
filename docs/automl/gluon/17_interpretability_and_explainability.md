@@ -29,7 +29,7 @@
 **Основные категории интерпретируемости:**
 - **Intrinsic Interpretability**: Модели, которые изначально интерпретируемы (линейные, деревья решений)
 - **Post-hoc Interpretability**: Методы объяснения "черных ящиков" (SHAP, LIME, integrated Gradients)
-- **Global Methods**: Объяснение модели in целом (Feature Importance, PDP, ALE)
+- **Global Methods**: Объяснение модели in целом (Feature importance, PDP, ALE)
 - **Local Methods**: Объяснение конкретных Predictions (LIME, SHAP Local, Counterfactuals)
 
 Интерпретируемость машинного обучения - это способность понимать and объяснять решения, принимаемые ML-моделями. Это критически важно for:
@@ -111,21 +111,21 @@ shap.summary_plot(shap_values, X_test)
 *Рисунок 17.3: Глобальные методы интерпретируемости - объяснение модели in целом*
 
 **Типы глобальных методов:**
-- **Feature Importance**: Важность признаков for модели
+- **Feature importance**: Важность признаков for модели
 - **Partial Dependence Plots (PDP)**: dependency предсказания from приsign
 - **Accumulated Local Effects (ALE)**: Локальные эффекты with учетом корреляций
-- **Permutation Importance**: Важность через перестановку признаков
+- **Permutation importance**: Важность через перестановку признаков
 - **SHAP Global**: Глобальные SHAP значения
 - **Surrogate Models**: Простые модели-аппроксиматоры
 
-### 1. Feature Importance
+### 1. Feature importance
 
 <img src="images/optimized/feature_importance_methods.png" alt="Методы важности признаков" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 17.5: Методы определения важности признаков - сравнение различных подходов*
 
 **Методы определения важности признаков:**
-- **Built-in Importance**: Встроенная важность (for tree-based моделей)
-- **Permutation Importance**: Важность через перестановку признаков
+- **Built-in importance**: Встроенная важность (for tree-based моделей)
+- **Permutation importance**: Важность через перестановку признаков
 - **SHAP Values**: SHAP значения for объяснения вклада признаков
 - **Сравнение методов**: Анализ согласованности различных подходов
 
@@ -182,9 +182,9 @@ def get_feature_importance(predictor, method='permutation'):
  - `None`: Случайное значение (not воспроизводимо)
  - Применение: обеспечение воспроизводимости результатов
 
-- **`X_test, y_test`**: Тестовые data for оценки важности
- - `X_test`: Тестовые признаки
- - `y_test`: Тестовые метки
+- **`X_test, y_test`**: testsые data for оценки важности
+ - `X_test`: testsые признаки
+ - `y_test`: testsые метки
  - Применение: оценка важности on независимых данных
  - Рекомендация: использовать holdout set
 
@@ -194,7 +194,7 @@ def get_feature_importance(predictor, method='permutation'):
  - Интерпретация: чем больше, тем важнее признак
 
 - **`shap_values.mean(0)`**: Средние SHAP значения
- - `shap_values`: SHAP значения for всех образцов
+ - `shap_values`: SHAP значения for all образцов
  - `mean(0)`: Среднее on образцам (ось 0)
  - `np.abs()`: Абсолютные значения (важность без sign)
  - Применение: глобальная важность признаков
@@ -375,14 +375,14 @@ def explain_with_lime(predictor, X, instance_idx, num_features=5):
 
 **Детальные описания параметров LIME:**
 
-- **`instance_idx`**: Индекс экземпляра for объяснения
+- **`instance_idx`**: index экземпляра for объяснения
  - `0`: Первый экземпляр in датасете
  - `100`: 101-й экземпляр
  - `len(X)-1`: Последний экземпляр
  - Применение: выбор конкретного образца for Analysis
 
 - **`num_features=5`**: Количество признаков for объяснения
- - `5`: Стандартное количество (баланс детализации and простоты)
+ - `5`: Стандартное количество (баланс detailsзации and простоты)
  - `3`: Минимальное количество (очень простое объяснение)
  - `10`: Большое количество (детальное объяснение)
  - `20`: Очень большое количество (очень детальное)
@@ -463,7 +463,7 @@ def explain_with_shap(predictor, X, instance_idx):
 
 **Детальные описания параметров SHAP:**
 
-- **`instance_idx`**: Индекс экземпляра for объяснения
+- **`instance_idx`**: index экземпляра for объяснения
  - `0`: Первый экземпляр in датасете
  - `100`: 101-й экземпляр
  - `len(X)-1`: Последний экземпляр
@@ -512,7 +512,7 @@ def explain_with_shap(predictor, X, instance_idx):
 **Дополнительные parameters SHAP:**
 
 - **`shap.summary_plot(shap_values, X)`**: Сводный график
- - Показывает важность всех признаков
+ - Показывает важность all признаков
  - Цвета показывают значения признаков
  - Применение: общий обзор важности признаков
 
@@ -712,7 +712,7 @@ def explain_ensemble(predictor, X, method='weighted'):
 *Рисунок 17.7: Комплексный дашборд объяснений ML-модели - важность признаков, SHAP, PDP, метрики*
 
 **components дашборда объяснений:**
-- **Feature Importance**: Топ-10 важных признаков
+- **Feature importance**: Топ-10 важных признаков
 - **SHAP Summary**: Распределение SHAP значений
 - **Partial Dependence Plot**: dependency from ключевого приsign
 - **Model Performance**: Метрики производительности модели
@@ -726,7 +726,7 @@ def create_exPlanation_dashboard(predictor, X, y, instance_idx=0):
  fig, axes = plt.subplots(2, 3, figsize=(18, 12))
  fig.suptitle('Comprehensive Model ExPlanation Dashboard', fontsize=16)
 
- # 1. Feature Importance
+ # 1. Feature importance
  ax1 = axes[0, 0]
  importance = get_feature_importance(predictor)
  feature_names = X.columns
@@ -735,8 +735,8 @@ def create_exPlanation_dashboard(predictor, X, y, instance_idx=0):
  ax1.barh(range(len(sorted_idx)), importance[sorted_idx])
  ax1.set_yticks(range(len(sorted_idx)))
  ax1.set_yticklabels([feature_names[i] for i in sorted_idx])
- ax1.set_title('Top 10 Feature Importance')
- ax1.set_xlabel('Importance')
+ ax1.set_title('Top 10 Feature importance')
+ ax1.set_xlabel('importance')
 
  # 2. SHAP Summary
  ax2 = axes[0, 1]
@@ -871,7 +871,7 @@ def choose_exPlanation_method(model_type, data_size, interpretability_requiremen
 
 - **`interpretability_requirement`**: Требования к интерпретируемости
  - `'high'`: Высокие требования (детальные объяснения)
- - `'medium'`: Средние требования (баланс детализации and скорости)
+ - `'medium'`: Средние требования (баланс detailsзации and скорости)
  - `'low'`: Низкие требования (быстрые объяснения)
 
 - **`'coefficients'`**: Коэффициенты линейных моделей
@@ -1012,7 +1012,7 @@ def validate_exPlanations(predictor, X, y, exPlanation_method='shap'):
  - Применение: check согласованности
 
 - **`completeness_score`**: Полнота объяснений
- - Покрытие всех важных признаков
+ - Покрытие all важных признаков
  - Диапазон: from 0 to 1
  - Применение: check полноты
 

@@ -39,7 +39,7 @@ from sklearn.metrics import mean_squared_error, r2_score, classification_Report
 import featuretools as ft
 from tsfresh import extract_features, select_features
 from tsfresh.utilities.dataframe_functions import impute
-import tsfresh.feature_extraction.settings
+import tsfresh.feature_extraction.Settings
 
 # Библиотеки for визуализации
 import plotly.graph_objects as go
@@ -58,7 +58,7 @@ print(f"🔢 NumPy Version: {np.__version__}")
 print(f"📈 Matplotlib Version: {plt.matplotlib.__version__}")
 ```
 
-## create тестовых данных
+## create testsых данных
 
 **Теория:** for демонстрации инженерии признаков нам нужны реалистичные финансовые data. Мы создадим синтетические data, которые имитируют реальные рыночные условия, including тренды, волатильность, сезонность and шум.
 
@@ -82,7 +82,7 @@ def create_sample_trading_data(n_days=1000, start_date='2020-01-01'):
  """
  np.random.seed(42) # for воспроизводимости
 
- # create временного индекса
+ # create временного indexа
  dates = pd.date_range(start=start_date, periods=n_days, freq='D')
 
  # Базовые parameters
@@ -136,7 +136,7 @@ def create_sample_trading_data(n_days=1000, start_date='2020-01-01'):
 
  return df
 
-# create тестовых данных
+# create testsых данных
 print("🔄 create синтетических торговых данных...")
 sample_data = create_sample_trading_data(n_days=1000)
 print(f"✅ Создано {len(sample_data)} дней данных")
@@ -188,11 +188,11 @@ print(sample_data.head())
 
 **Теория:** Признаки in финансовых ML-моделях можно классифицировать on различным критериям. Понимание типов признаков критично for создания эффективных моделей and предотвращения ошибок.
 
-### 1. Технические индикаторы
+### 1. Technical индикаторы
 
-**Теория:** Технические индикаторы - это математические преобразования ценовых данных, которые помогают выявить паттерны and тренды. Они основаны on многолетнем опыте технических аналитиков and являются стандартом in финансовой индустрии.
+**Теория:** Technical индикаторы - это математические преобразования ценовых данных, которые помогают выявить паттерны and тренды. Они основаны on многолетнем опыте технических аналитиков and являются стандартом in финансовой индустрии.
 
-**Почему технические индикаторы важны:**
+**Почему Technical индикаторы важны:**
 - **Проверенность временем:** Многолетний опыт использования
 - **Стандартизация:** Универсальные метрики for Analysis
 - **Интерпретируемость:** Легко понимать and объяснять
@@ -213,12 +213,12 @@ print(sample_data.head())
 **Минусы технических indicators:**
 - Могут быть запаздывающими
 - Могут генерировать ложные сигналы
-- Требуют settings параметров
+- Требуют Settings параметров
 - Могут быть избыточными
 ```python
 def calculate_rsi(prices, window=14):
  """
- Расчет Relative Strength Index (RSI)
+ Расчет Relative Strength index (RSI)
 
  Теория: RSI - это осциллятор, который измеряет скорость and изменение ценовых движений.
  Значения from 0 to 100, где:
@@ -371,12 +371,12 @@ def calculate_atr(high, low, close, window=14):
 
  return atr
 
-def create_technical_indicators(df):
+def create_Technical_indicators(df):
  """
  create полного набора технических indicators
 
- Теория: Технические индикаторы помогают выявить паттерны in ценовых данных
- and генерировать торговые сигналы. Мы создаем разнообразные индикаторы for
+ Теория: Technical индикаторы помогают выявить паттерны in ценовых данных
+ and генерировать торговые сигналы. Мы Creating разнообразные индикаторы for
  покрытия различных аспектов рыночного поведения:
  - Трендовые индикаторы (SMA, EMA, MACD)
  - Осцилляторы (RSI, Stochastic)
@@ -391,7 +391,7 @@ def create_technical_indicators(df):
  """
  print("🔄 create технических indicators...")
 
- # RSI (Relative Strength Index)
+ # RSI (Relative Strength index)
  df['RSI'] = calculate_rsi(df['Close'])
  df['RSI_oversold'] = (df['RSI'] < 30).astype(int)
  df['RSI_overbought'] = (df['RSI'] > 70).astype(int)
@@ -442,7 +442,7 @@ def create_technical_indicators(df):
  df['Williams_R'] = ((df['High'].rolling(14).max() - df['Close']) /
  (df['High'].rolling(14).max() - df['Low'].rolling(14).min())) * -100
 
- # Commodity Channel Index (CCI)
+ # Commodity Channel index (CCI)
  typical_price = (df['High'] + df['Low'] + df['Close']) / 3
  sma_tp = typical_price.rolling(20).mean()
  mad = typical_price.rolling(20).apply(lambda x: np.mean(np.abs(x - x.mean())))
@@ -457,8 +457,8 @@ print("\n" + "="*60)
 print("🔧 ДЕМОНСТРАЦИЯ: create технических indicators")
 print("="*60)
 
-# create indicators for тестовых данных
-df_with_indicators = create_technical_indicators(sample_data.copy())
+# create indicators for testsых данных
+df_with_indicators = create_Technical_indicators(sample_data.copy())
 
 # Показ статистики on индикаторам
 print(f"\n📊 Статистика on основным индикаторам:")
@@ -684,7 +684,7 @@ print(stats_examples)
 - **Сезонные:** Признаки, связанные with сезонностью
 
 **Плюсы временных признаков:**
-- Учет временной структуры
+- Учет temporary структуры
 - Выявление сезонных паттернов
 - improve предсказательной способности
 - Более полное понимание данных
@@ -712,7 +712,7 @@ def create_time_features(df):
  6. Трендовые признаки - for выявления трендов
 
  parameters:
- - df: dataFrame with OHLCV данными and DatetimeIndex
+ - df: dataFrame with OHLCV данными and Datetimeindex
 
  Возвращает:
  - dataFrame with добавленными временными приsignми
@@ -904,7 +904,7 @@ print(time_examples)
 - **Логические:** Логические комбинации
 
 **Плюсы интерактивных признаков:**
-- Выявление нелинейных зависимостей
+- Выявление нелинейных dependencies
 - improve предсказательной способности
 - Учет контекста
 - Более полное моделирование
@@ -1254,7 +1254,7 @@ def create_volume_features(df):
  # Volume Price Trend (VPT)
  df['VPT'] = (df['Volume'] * df['Close'].pct_change()).cumsum()
 
- # Money Flow Index (MFI) - объемно-взвешенный RSI
+ # Money Flow index (MFI) - объемно-взвешенный RSI
  typical_price = (df['High'] + df['Low'] + df['Close']) / 3
  money_flow = typical_price * df['Volume']
 
@@ -1621,7 +1621,7 @@ def create_multiTimeframe_features(df, Timeframes=['1H', '4H', '1D']):
  print(f" ⚠️ Недостаточно данных for Timeframe {tf}")
  continue
 
- # 1. Технические индикаторы for каждого Timeframe
+ # 1. Technical индикаторы for каждого Timeframe
  resampled[f'RSI_{tf}'] = calculate_rsi(resampled['Close'])
  macd_line, signal_line, histogram = calculate_macd(resampled['Close'])
  resampled[f'MACD_{tf}'] = macd_line
@@ -1722,7 +1722,7 @@ def create_seasonal_features(df):
  5. Годовые паттерны (месяцы года)
 
  parameters:
- - df: dataFrame with DatetimeIndex
+ - df: dataFrame with Datetimeindex
 
  Возвращает:
  - dataFrame with добавленными сезонными приsignми
@@ -1945,7 +1945,7 @@ def extract_time_series_features(df):
  df,
  column_id="id",
  column_sort="timestamp",
- default_fc_parameters=tsfresh.feature_extraction.settings.ComprehensiveFCParameters()
+ default_fc_parameters=tsfresh.feature_extraction.Settings.ComprehensiveFCParameters()
  )
 
  # Импутация пропущенных значений
@@ -1972,7 +1972,7 @@ def create_comprehensive_features(df):
  Теория: Эта function объединяет все изученные техники инженерии признаков
  for создания максимально информативного набора признаков. Она включает:
 
- 1. Технические индикаторы (RSI, MACD, Bollinger Bands, etc.)
+ 1. Technical индикаторы (RSI, MACD, Bollinger Bands, etc.)
  2. Статистические признаки (моменты, квантили, корреляции)
  3. Временные признаки (лаги, сезонность, тренды)
  4. Интерактивные признаки (комбинации признаков)
@@ -1980,7 +1980,7 @@ def create_comprehensive_features(df):
  6. Отбор and clean признаков
 
  parameters:
- - df: dataFrame with OHLCV данными and DatetimeIndex
+ - df: dataFrame with OHLCV данными and Datetimeindex
 
  Возвращает:
  - dataFrame with комплексным набором признаков
@@ -1993,7 +1993,7 @@ def create_comprehensive_features(df):
  original_columns = df.columns.toList()
  feature_info = {
  'original_features': len(original_columns),
- 'technical_indicators': 0,
+ 'Technical_indicators': 0,
  'statistical_features': 0,
  'time_features': 0,
  'interaction_features': 0,
@@ -2001,38 +2001,38 @@ def create_comprehensive_features(df):
  'final_features': 0
  }
 
- # 1. Технические индикаторы
+ # 1. Technical индикаторы
  print("📊 1. create технических indicators...")
- df = create_technical_indicators(df)
- technical_cols = [col for col in df.columns if col not in original_columns]
- feature_info['technical_indicators'] = len(technical_cols)
- print(f" ✅ Создано {len(technical_cols)} технических indicators")
+ df = create_Technical_indicators(df)
+ Technical_cols = [col for col in df.columns if col not in original_columns]
+ feature_info['Technical_indicators'] = len(Technical_cols)
+ print(f" ✅ Создано {len(Technical_cols)} технических indicators")
 
  # 2. Статистические признаки
  print("📈 2. create статистических признаков...")
  df = create_statistical_features(df)
- stats_cols = [col for col in df.columns if col not in original_columns + technical_cols]
+ stats_cols = [col for col in df.columns if col not in original_columns + Technical_cols]
  feature_info['statistical_features'] = len(stats_cols)
  print(f" ✅ Создано {len(stats_cols)} статистических признаков")
 
  # 3. Временные признаки
  print("⏰ 3. create временных признаков...")
  df = create_time_features(df)
- time_cols = [col for col in df.columns if col not in original_columns + technical_cols + stats_cols]
+ time_cols = [col for col in df.columns if col not in original_columns + Technical_cols + stats_cols]
  feature_info['time_features'] = len(time_cols)
  print(f" ✅ Создано {len(time_cols)} временных признаков")
 
  # 4. Интерактивные признаки
  print("🔗 4. create интерактивных признаков...")
  df = create_interaction_features(df)
- interaction_cols = [col for col in df.columns if col not in original_columns + technical_cols + stats_cols + time_cols]
+ interaction_cols = [col for col in df.columns if col not in original_columns + Technical_cols + stats_cols + time_cols]
  feature_info['interaction_features'] = len(interaction_cols)
  print(f" ✅ Создано {len(interaction_cols)} интерактивных признаков")
 
  # 5. Специализированные торговые признаки
  print("💰 5. create торговых признаков...")
  df = create_trading_features(df)
- trading_cols = [col for col in df.columns if col not in original_columns + technical_cols + stats_cols + time_cols + interaction_cols]
+ trading_cols = [col for col in df.columns if col not in original_columns + Technical_cols + stats_cols + time_cols + interaction_cols]
  feature_info['trading_features'] = len(trading_cols)
  print(f" ✅ Создано {len(trading_cols)} торговых признаков")
 
@@ -2045,7 +2045,7 @@ def create_comprehensive_features(df):
  print("="*60)
  print("🎉 Комплексная инженерия признаков завершена!")
  print(f"📊 Итого создано: {feature_info['final_features']} признаков")
- print(f" - Технические индикаторы: {feature_info['technical_indicators']}")
+ print(f" - Technical индикаторы: {feature_info['Technical_indicators']}")
  print(f" - Статистические признаки: {feature_info['statistical_features']}")
  print(f" - Временные признаки: {feature_info['time_features']}")
  print(f" - Интерактивные признаки: {feature_info['interaction_features']}")
@@ -2103,7 +2103,7 @@ def create_trading_features(df):
 
  return df
 
-def clean_and_select_features(df, correlation_threshold=0.95, missing_threshold=0.5):
+def clean_and_select_features(df, correlation_threshold=0.95, Missing_threshold=0.5):
  """
  clean and отбор признаков
 
@@ -2116,10 +2116,10 @@ def clean_and_select_features(df, correlation_threshold=0.95, missing_threshold=
  print(" 🔄 clean and отбор признаков...")
 
  # 1. remove признаков with большим количеством пропущенных значений
- missing_ratio = df.isnull().sum() / len(df)
- cols_to_drop = missing_ratio[missing_ratio > missing_threshold].index
+ Missing_ratio = df.isnull().sum() / len(df)
+ cols_to_drop = Missing_ratio[Missing_ratio > Missing_threshold].index
  df = df.drop(columns=cols_to_drop)
- print(f" 🗑️ Удалено {len(cols_to_drop)} признаков with >{missing_threshold*100}% пропусков")
+ print(f" 🗑️ Удалено {len(cols_to_drop)} признаков with >{Missing_threshold*100}% пропусков")
 
  # 2. remove константных признаков
  constant_cols = df.columns[df.nunique() <= 1]
@@ -2165,7 +2165,7 @@ print(final_examples)
 
 # Статистика on типам признаков
 print(f"\n📈 Статистика on типам признаков:")
-print(f"Технические индикаторы: {feature_info['technical_indicators']}")
+print(f"Technical индикаторы: {feature_info['Technical_indicators']}")
 print(f"Статистические признаки: {feature_info['statistical_features']}")
 print(f"Временные признаки: {feature_info['time_features']}")
 print(f"Интерактивные признаки: {feature_info['interaction_features']}")
@@ -2261,7 +2261,7 @@ def validate_features(df, target_col='Close'):
 
  return {
  'shape': df.shape,
- 'missing_values': df.isnull().sum().sum(),
+ 'Missing_values': df.isnull().sum().sum(),
  'infinite_values': np.isinf(df.select_dtypes(include=[np.number])).sum().sum(),
  'high_correlations': len(high_corr_pairs),
  'feature_importance': feature_importance if 'feature_importance' in locals() else None

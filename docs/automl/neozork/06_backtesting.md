@@ -29,7 +29,7 @@
  - **Минусы:** Прошлые риски могут not отражать будущие
 
 - **Оптимизация параметров** стратегии
- - **Почему важно:** Позволяет найти лучшие settings for стратегии
+ - **Почему важно:** Позволяет найти лучшие Settings for стратегии
  - **Плюсы:** improve производительности, адаптация к данным
  - **Минусы:** Риск переобучения, необходимость валидации
 
@@ -148,9 +148,9 @@ def good_survivorship_test():
 - Возможное снижение производительности
 - Необходимость разделения данных
 ```python
-# ❌ НЕПРАВИЛЬНО - оптимизируем on всех данных
+# ❌ НЕПРАВИЛЬНО - оптимизируем on all данных
 def bad_optimization(df):
- # Оптимизируем parameters on всех данных
+ # Оптимизируем parameters on all данных
  best_params = optimize_parameters(df) # Переобучение!
  return backtest_with_params(df, best_params)
 
@@ -169,7 +169,7 @@ def good_optimization(df):
 
 ## Правильный бэктестинг
 
-**Теория:** Правильный бэктестинг требует тщательной структуры and учета всех аспектов торговли. Основные принципы включают:
+**Теория:** Правильный бэктестинг требует тщательной структуры and учета all аспектов торговли. Основные принципы включают:
 
 1. **Четкое разделение логики** - отделение стратегии from исполнения
 2. **Учет транзакционных издержек** - комиссии, спреды, проскальзывание
@@ -190,7 +190,7 @@ def good_optimization(df):
 - **Management капиталом:** Отслеживание доступного капитала and позиций
 - **Исполнение сделок:** Логика открытия and закрытия позиций
 - **Расчет метрик:** Оценка производительности стратегии
-- **Ведение истории:** Запись всех торговых операций
+- **Ведение истории:** Запись all торговых операций
 
 ```python
 import pandas as pd
@@ -288,14 +288,14 @@ class Backtester:
  timestamp: Временная метка сделки
  """
  if signal == 'BUY' and self.position <= 0:
- # Покупка: закрываем короткую позицию (если есть) and открываем длинную
+ # Покупка: закрываем короткую позицию (if present) and открываем длинную
  if self.position < 0:
  self.close_position(row['Close'], timestamp, 'SHORT')
 
  self.open_position(row['Close'], 'LONG', timestamp)
 
  elif signal == 'SELL' and self.position >= 0:
- # Продажа: закрываем длинную позицию (если есть) and открываем короткую
+ # Продажа: закрываем длинную позицию (if present) and открываем короткую
  if self.position > 0:
  self.close_position(row['Close'], timestamp, 'LONG')
 
@@ -558,7 +558,7 @@ def calculate_metrics(self) -> Dict[str, Any]:
  else:
  coefficient_of_variation = float('inf')
 
- # Индекс стабильности (Stability Index)
+ # index стабильности (Stability index)
  # Показывает стабильность доходности
  if self.daily_returns:
  stability_index = 1 - (np.std(self.daily_returns) / abs(avg_daily_return)) if avg_daily_return != 0 else 0
@@ -667,7 +667,7 @@ def _empty_metrics(self) -> Dict[str, Any]:
 
 **Ключевые parameters:**
 - **Train Period:** Длина обучающего периода (обычно 1-2 года)
-- **Test Period:** Длина тестового периода (обычно 1-3 месяца)
+- **Test Period:** Длина testsого периода (обычно 1-3 месяца)
 - **Step Size:** Шаг сдвига окна (обычно равен test_period)
 
 ```python
@@ -687,11 +687,11 @@ def walk_forward_Analysis(data: pd.dataFrame, strategy,
  data: Исторические data (OHLCV)
  strategy: Объект стратегии with методами train() and get_signal()
  train_period: Длина обучающего периода in днях (on умолчанию 252)
- test_period: Длина тестового периода in днях (on умолчанию 63)
+ test_period: Длина testsого периода in днях (on умолчанию 63)
  step_size: Шаг сдвига окна in днях (on умолчанию равен test_period)
 
  Returns:
- List результатов for каждого тестового периода
+ List результатов for каждого testsого периода
  """
  if step_size is None:
  step_size = test_period
@@ -701,7 +701,7 @@ def walk_forward_Analysis(data: pd.dataFrame, strategy,
 
  print(f"Launch Walk-Forward Analysis:")
  print(f" - Обучающий период: {train_period} дней")
- print(f" - Тестовый период: {test_period} дней")
+ print(f" - testsый период: {test_period} дней")
  print(f" - Шаг сдвига: {step_size} дней")
  print(f" - Всего periods: {total_periods // step_size + 1}")
 
@@ -766,7 +766,7 @@ def analyze_walk_forward_results(results: List[Dict[str, Any]]) -> Dict[str, Any
  if not results:
  return {}
 
- # Извлекаем метрики из всех periods
+ # Извлекаем метрики из all periods
  all_returns = [r['metrics']['total_return'] for r in results]
  all_sharpe = [r['metrics']['sharpe_ratio'] for r in results]
  all_max_dd = [r['metrics']['max_drawdown'] for r in results]
@@ -802,7 +802,7 @@ def analyze_walk_forward_results(results: List[Dict[str, Any]]) -> Dict[str, Any
 
 **Теория:** Monte Carlo симуляция - это статистический метод, который использует случайную выборку for оценки неопределенности in результатах бэктестинга. Основная идея:
 
-1. **Случайная перестановка данных** - создаем множество случайных последовательностей торговых дней
+1. **Случайная перестановка данных** - Creating множество случайных последовательностей торговых дней
 2. **Множественные бэктесты** - тестируем стратегию on каждой перестановке
 3. **Статистический анализ** - анализируем распределение результатов
 
@@ -901,7 +901,7 @@ def _block_shuffle_data(data: pd.dataFrame, block_size: int) -> pd.dataFrame:
  # Объединяем блоки
  shuffled_data = pd.concat(blocks, ignore_index=True)
 
- # Добавляем оставшиеся data, если есть
+ # Добавляем оставшиеся data, if present
  remaining = len(data) % block_size
  if remaining > 0:
  remaining_data = data.iloc[-remaining:].copy()
@@ -1027,9 +1027,9 @@ def _calculate_kurtosis(data: List[float]) -> float:
 **Теория:** Bootstrap анализ - это статистический метод, который использует повторную выборку with возвращением for оценки неопределенности in результатах. in отличие from Monte Carlo, bootstrap сохраняет временную структуру данных.
 
 **Основные принципы:**
-1. **Блочная выборка** - создаем выборки из блоков данных
+1. **Блочная выборка** - Creating выборки из блоков данных
 2. **Сохранение структуры** - поддерживаем временные dependencies
-3. **Повторная выборка** - создаем множество вариантов данных
+3. **Повторная выборка** - Creating множество вариантов данных
 4. **Статистический анализ** - оцениваем неопределенность результатов
 
 **Преимущества Bootstrap:**
@@ -1052,7 +1052,7 @@ def bootstrap_Analysis(data: pd.dataFrame, strategy,
  Проведение Bootstrap Analysis for оценки неопределенности результатов
 
  Bootstrap анализ создает множество выборок из исходных данных
- with сохранением временной структуры. Это позволяет оценить
+ with сохранением temporary структуры. Это позволяет оценить
  неопределенность in результатах бэктестинга.
 
  Args:
@@ -1114,7 +1114,7 @@ def _create_bootstrap_sample(data: pd.dataFrame, block_size: int, n_blocks: int)
  max_start_idx = len(data) - block_size
 
  for _ in range(n_blocks):
- # Случайно выбираем начальный индекс блока
+ # Случайно выбираем начальный index блока
  start_idx = np.random.randint(0, max_start_idx + 1)
  end_idx = start_idx + block_size
 
@@ -1587,7 +1587,7 @@ class LiquidityAwareBacktester(ReaListicBacktester):
  else: # SELL
  price = row['Close'] - slippage - market_impact
 
- # Создаем ордер with задержкой исполнения
+ # Creating ордер with задержкой исполнения
  if self.execution_delay > 0:
  self.pending_orders.append({
  'signal': signal,
@@ -1651,7 +1651,7 @@ class LiquidityAwareBacktester(ReaListicBacktester):
  price: Цена исполнения
  timestamp: Временная метка
  """
- # Создаем временную строку данных with скорректированной ценой
+ # Creating временную строку данных with скорректированной ценой
  temp_row = pd.Series({'Close': price})
 
  # Выполняем сделку через родительский метод
@@ -1701,7 +1701,7 @@ def plot_equity_curve(equity_curve: List[float],
 
  Args:
  equity_curve: List значений капитала
- dates: List дат (если есть)
+ dates: List дат (if present)
  benchmark: Кривая бенчмарка for сравнения
  benchmark_dates: Даты бенчмарка
  title: Заголовок графика
@@ -1720,7 +1720,7 @@ def plot_equity_curve(equity_curve: List[float],
  # Основная кривая капитала
  plt.plot(x_data, equity_curve, label='Strategy', linewidth=2, color='blue')
 
- # Бенчмарк (если есть)
+ # Бенчмарк (if present)
  if benchmark is not None:
  if benchmark_dates is not None:
  plt.plot(benchmark_dates, benchmark, label='Benchmark',
@@ -2104,7 +2104,7 @@ def plot_risk_return_scatter(returns: List[float],
 3. **Monte Carlo симуляция** - оценка неопределенности
 4. **Bootstrap анализ** - статистическая валидация
 5. **Визуализация** - графическое представление результатов
-6. **Report** - сводка всех метрик and выводов
+6. **Report** - сводка all метрик and выводов
 
 ```python
 class CompleteBacktest:
@@ -2162,7 +2162,7 @@ class CompleteBacktest:
  bootstrap_block_size: Размер блоков for Bootstrap
 
  Returns:
- Словарь with результатами всех анализов
+ Словарь with результатами all анализов
  """
  print("=" * 60)
  print("Launch ПОЛНОГО БЭКТЕСТИНГА СТРАТЕГИИ")
@@ -2240,7 +2240,7 @@ class CompleteBacktest:
  f"{bootstrap_Analysis['return_ci']['upper']:.2%}")
 
  def _create_visualizations(self) -> None:
- """create всех графиков"""
+ """create all графиков"""
  # Основные графики
  plot_equity_curve_with_metrics(
  self.basic_results.get('equity_curve', []),
@@ -2306,7 +2306,7 @@ class CompleteBacktest:
  plt.ylabel('Cumulative Probability')
  plt.grid(True, alpha=0.3)
 
- # Временной ряд доходностей
+ # temporary ряд доходностей
  plt.subplot(2, 2, 3)
  plt.plot(mc_returns[:100], alpha=0.7) # Показываем первые 100
  plt.title('Monte Carlo Returns (First 100)')
@@ -2372,7 +2372,7 @@ class CompleteBacktest:
  f"{'Да' if bootstrap_Analysis['significance']['return_significant'] else 'Нет'}")
 
  def _compile_results(self) -> Dict[str, Any]:
- """Компиляция всех результатов"""
+ """Компиляция all результатов"""
  return {
  'basic_results': self.basic_results,
  'walk_forward_results': self.wf_results,
@@ -2394,7 +2394,7 @@ def run_complete_backtest_example():
  Этот example демонстрирует, как использовать класс CompleteBacktest
  for проведения комплексного Analysis торговой стратегии.
  """
- # Создаем простую стратегию for примера
+ # Creating простую стратегию for примера
  class SimpleMovingAverageStrategy:
  def __init__(self, short_window=20, long_window=50):
  self.short_window = short_window
@@ -2418,7 +2418,7 @@ def run_complete_backtest_example():
  else:
  return 'HOLD'
 
- # Генерируем тестовые data
+ # Генерируем testsые data
  np.random.seed(42)
  dates = pd.date_range('2020-01-01', '2023-12-31', freq='D')
  prices = 100 * np.cumprod(1 + np.random.normal(0.0005, 0.02, len(dates)))
@@ -2431,7 +2431,7 @@ def run_complete_backtest_example():
  'Volume': np.random.randint(1000, 10000, len(dates))
  }, index=dates)
 
- # Создаем стратегию
+ # Creating стратегию
  strategy = SimpleMovingAverageStrategy()
 
  # Launchаем полный анализ

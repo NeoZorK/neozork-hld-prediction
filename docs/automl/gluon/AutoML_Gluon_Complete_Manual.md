@@ -1,4 +1,4 @@
-# AutoML Gluon - Complete guide User
+# AutoML Gluon - Complete guide user
 
 **Author:** NeoZorK (Shcherbyna Rostyslav)
 **Дата:** 2025
@@ -30,7 +30,7 @@
 19. [WAVE2 Индикатор - Полный анализ](./19_wave2_indicator_Analysis.md)
 20. [SCHR Levels - Анализ and ML-модель](./20_schr_levels_Analysis.md)
 21. [SCHR SHORT3 - Краткосрочная торговля](./21_schr_short3_Analysis.md)
-22. [Супер-система: Объединение всех indicators](./22_super_system_ultimate.md)
+22. [Супер-система: Объединение all indicators](./22_super_system_ultimate.md)
 23. [guide on изучению учебника](./23_reading_guide.md)
 24. [Правильное использование вероятностей](./24_probability_usage_guide.md)
 25. [Monitoring торгового бота - Лучшие практики](./25_trading_bot_Monitoring.md)
@@ -62,7 +62,7 @@ AutoML Gluon - это библиотека from Amazon Web Services for авто
 ## for кого этот мануал?
 
 Этот мануал предназначен for:
-- data Scientists, которые хотят ускорить процесс creating ML models
+- data Scientists, которые хотят ускорить процесс Creating ML models
 - ML Engineers, Workingющих with продакшен системами
 - Аналитиков, изучающих автоматизированное машинное обучение
 - Разработчиков, интегрирующих ML in приложения
@@ -77,7 +77,7 @@ AutoML Gluon - это библиотека from Amazon Web Services for авто
 ## Специальные разделы
 
 ### Оптимизация for Apple Silicon
-Раздел [11_apple_silicon_optimization.md](./11_apple_silicon_optimization.md) содержит специальные settings for:
+Раздел [11_apple_silicon_optimization.md](./11_apple_silicon_optimization.md) содержит специальные Settings for:
 - **MLX integration** - использование Apple MLX фреймворка for acceleration
 - **Ray configuration** - распределенные вычисления on Apple Silicon
 - **OpenMP оптимизация** - параллельные вычисления with максимальной эффективностью
@@ -113,7 +113,7 @@ AutoML Gluon - это библиотека from Amazon Web Services for авто
 - **Глобальная интерпретируемость** - понимание модели in целом
 - **Локальная интерпретируемость** - объяснение конкретных Predictions
 - **SHAP and LIME** - современные методы объяснения
-- **Feature Importance** - важность признаков
+- **Feature importance** - важность признаков
 - **Model-specific Interpretability** - специфичные for AutoML Gluon методы
 
 ### Продвинутые темы (Раздел 16):
@@ -139,7 +139,7 @@ AutoML Gluon - это библиотека from Amazon Web Services for авто
 
 ---
 
-*Этот мануал содержит исчерпывающую информацию on all аспектам работы with AutoML Gluon, from установки to продакшен деплоя, including специальную оптимизацию for Apple Silicon.*
+*Этот мануал содержит исчерпывающую информацию on all аспектам работы with AutoML Gluon, from installation to продакшен деплоя, including специальную оптимизацию for Apple Silicon.*
 
 ---
 
@@ -152,9 +152,9 @@ AutoML Gluon - это библиотека from Amazon Web Services for авто
 
 ## Why правильная installation критически важна
 
-**Почему 70% проблем with AutoML Gluon связаны with неправильной установкой?** Потому что машинное обучение требует точной settings окружения. Неправильная installation может привести к нестабильной работе, ошибкам and потере времени.
+**Почему 70% проблем with AutoML Gluon связаны with неправильной установкой?** Потому что машинное обучение требует точной Settings окружения. Неправильная installation может привести к нестабильной работе, ошибкам and потере времени.
 
-### 🚨 Реальные Consequences неправильной установки
+### 🚨 Реальные Consequences неправильной installation
 
 **Случай 1: Конфликт версий NumPy**
 ```python
@@ -181,7 +181,7 @@ df = pd.read_csv('large_dataset.csv') # MemoryError
 ```
 
 ### What Happens with Incorrect installation?
-- **Конфликты зависимостей**: Разные версии библиотек вызывают ошибки
+- **Конфликты dependencies**: Разные версии библиотек вызывают ошибки
  - *example*: NumPy 1.19 vs 1.21 - разные API, код ломается
  - *Решение*: Использовать виртуальные окружения
 - **Issues with производительностью**: Модели Workingют медленно or not Workingют вообще
@@ -211,7 +211,7 @@ df = pd.read_csv('large_dataset.csv') # MemoryError
 ## Системные требования
 
 ![AutoML Gluon installation](images/installation_flowchart.png)
-*Рисунок 1: Блок-схема процесса установки AutoML Gluon*
+*Рисунок 1: Блок-схема процесса installation AutoML Gluon*
 
 ### Минимальные требования
 **Почему минимальные требования важны?** Потому что они определяют, сможете ли вы вообще запустить AutoML Gluon:
@@ -270,7 +270,7 @@ df = pd.read_csv('large_dataset.csv') # MemoryError
 
 ## installation через pip
 
-**Почему pip - самый популярный способ установки?** Потому что он простой, надежный and автоматически решает dependencies.
+**Почему pip - самый популярный способ installation?** Потому что он простой, надежный and автоматически решает dependencies.
 
 ## 🚀 installation через uv (Рекомендуется)
 
@@ -280,7 +280,7 @@ df = pd.read_csv('large_dataset.csv') # MemoryError
 **uv** - это современный менеджер пакетов Python, написанный on Rust. Он решает все проблемы pip:
 
 - **Скорость**: in 10-100 раз быстрее pip
-- **Надежность**: Лучше разрешает конфликты зависимостей
+- **Надежность**: Лучше разрешает конфликты dependencies
 - **Безопасность**: Проверяет целостность пакетов
 - **Совместимость**: Полная совместимость with pip
 
@@ -319,12 +319,12 @@ uv pip install autogluon
 
 **Преимущества uv над pip:**
 - **Скорость**: installation in 10 раз быстрее
-- **Надежность**: Меньше конфликтов зависимостей
+- **Надежность**: Меньше конфликтов dependencies
 - **Кэширование**: Умное кэширование пакетов
 - **Параллелизм**: installation нескольких пакетов simultaneously
 
 ### 🚀 Базовая installation
-**Почему начинаем with базовой установки?** Потому что она дает все необходимое for начала работы:
+**Почему начинаем with базовой installation?** Потому что она дает все необходимое for начала работы:
 
 ```bash
 pip install autogluon
@@ -336,21 +336,21 @@ pip install autogluon
 - Создается окружение for работы with табличными данными
 - Настраивается базовая configuration
 
-**Детальный процесс установки:**
+**Детальный процесс installation:**
 ```python
 # Что происходит внутри pip install autogluon
 # 1. Скачивание пакета (50-100MB)
-# 2. installation зависимостей:
+# 2. installation dependencies:
 # - numpy, pandas, scikit-learn
 # - xgboost, lightgbm, catboost
 # - torch, torchvision
 # - matplotlib, seaborn
 # 3. check совместимости версий
-# 4. create конфигурационных файлов
-# 5. Тестирование установки
+# 4. create конфигурационных files
+# 5. Тестирование installation
 ```
 
-**Время установки:**
+**Время installation:**
 - Быстрый интернет: 5-10 minutes
 - Медленный интернет: 30-60 minutes
 - Первая installation: Дольше из-за компиляции
@@ -452,7 +452,7 @@ pip install autogluon.text
 - Поддержка трансформеров
 
 ```bash
-# Полная installation всех компонентов
+# Полная installation all компонентов
 pip install autogluon[all]
 ```
 **Почему полная installation удобна?** Потому что вы получаете все возможности сразу, но это занимает больше места and времени.
@@ -492,21 +492,21 @@ cd autogluon
 
 ### installation in режиме разработки
 ```bash
-# installation зависимостей
+# installation dependencies
 pip install -e .
 
 # or for конкретного модуля
 pip install -e ./tabular
 ```
 
-## check установки
+## check installation
 
 ### Базовый тест
 ```python
 import autogluon as ag
 print(f"AutoGluon Version: {ag.__version__}")
 
-# Тест импорта основных модулей
+# Тест import основных модулей
 from autogluon.tabular import TabularPredictor
 from autogluon.timeseries import TimeSeriesPredictor
 from autogluon.vision import ImagePredictor
@@ -521,7 +521,7 @@ from autogluon.tabular import TabularPredictor
 import pandas as pd
 import numpy as np
 
-# create тестовых данных
+# create testsых данных
 data = pd.dataFrame({
  'feature1': np.random.randn(100),
  'feature2': np.random.randn(100),
@@ -534,7 +534,7 @@ predictor.fit(data, time_limit=10) # 10 секунд for быстрого тес
 print("installation test passed!")
 ```
 
-## installation дополнительных зависимостей
+## installation дополнительных dependencies
 
 ### for работы with GPU
 ```bash
@@ -595,7 +595,7 @@ default:
  num_cpus: 4 # Количество CPU ядер
  num_gpus: 1 # Количество GPU
 
-# settings for different tasks
+# Settings for different tasks
 ```
 
 #### 🔧 Детальное description параметров конфигурации
@@ -694,7 +694,7 @@ default:
 - **Рекомендуемые значения**:
  - `0` - если нет GPU or for CPU-only задач
  - `1` - for одной GPU
- - `2+` - for нескольких GPU (требует специальной settings)
+ - `2+` - for нескольких GPU (требует специальной Settings)
 - **Что происходит при неправильном значении**: AutoML Gluon автоматически определяет доступные GPU
 - **Практический example**: Если у вас RTX 3070, install `num_gpus: 1`
 - **Детальная configuration on типам GPU**:
@@ -861,7 +861,7 @@ pip install -r requirements.txt
 
 ## check работоспособности
 
-### Полный тест установки
+### Полный тест installation
 ```python
 import autogluon as ag
 from autogluon.tabular import TabularPredictor
@@ -869,9 +869,9 @@ import pandas as pd
 import numpy as np
 
 def test_installation():
- """Полный тест установки AutoGluon"""
+ """Полный тест installation AutoGluon"""
 
- # create тестовых данных
+ # create testsых данных
  np.random.seed(42)
  n_samples = 1000
  data = pd.dataFrame({
@@ -916,7 +916,7 @@ if __name__ == "__main__":
 
 ## Следующие шаги
 
-После успешной установки переходите к:
+После успешной installation переходите к:
 - [Базовому использованию](./02_basic_usage.md)
 - [Продвинутой конфигурации](./03_advanced_configuration.md)
 - [Работе with метриками](./04_metrics.md)
@@ -969,7 +969,7 @@ if __name__ == "__main__":
 
 ### Импорт and create базового предиктора
 
-**Почему начинаем with импорта?** Потому что это основа любого Python проекта. Правильный импорт - это как правильная configuration инструмента.
+**Почему начинаем with import?** Потому что это основа любого Python проекта. Правильный импорт - это как правильная configuration инструмента.
 
 ```python
 from autogluon.tabular import TabularPredictor
@@ -1280,7 +1280,7 @@ predictor.fit(
 ### Базовые метрики
 
 ```python
-# Оценка on тестовых данных
+# Оценка on testsых данных
 performance = predictor.evaluate(test_data)
 print(f"Model performance: {performance}")
 
@@ -1421,7 +1421,7 @@ leaderboard = predictor.leaderboard(
 )
 ```
 
-## Продвинутые settings
+## Продвинутые Settings
 
 ### configuration гиперпараметров
 
@@ -1724,7 +1724,7 @@ predictor.fit(
 
 ## Why продвинутая configuration критически важна
 
-**Почему 90% пользователей AutoML Gluon not используют продвинутые settings?** Потому что они not понимают, какую мощь они упускают. Это как водить Ferrari on первой передаче - машина едет, но not показывает своих возможностей.
+**Почему 90% пользователей AutoML Gluon not используют продвинутые Settings?** Потому что они not понимают, какую мощь они упускают. Это как водить Ferrari on первой передаче - машина едет, но not показывает своих возможностей.
 
 ### Что дает продвинутая configuration?
 - **Точность**: Модели Workingют on 10-30% лучше
@@ -1734,7 +1734,7 @@ predictor.fit(
 
 ### Что происходит без продвинутой конфигурации?
 - **Средние результаты**: Модели Workingют "как получится"
-- **Медленное обучение**: Тратите время on неоптимальные settings
+- **Медленное обучение**: Тратите время on неоптимальные Settings
 - **Недоиспользование ресурсов**: GPU and CPU Workingют неэффективно
 - **Разочарование**: not понимаете, почему результаты not улучшаются
 
@@ -1744,7 +1744,7 @@ predictor.fit(
 
 ### create кастомных гиперпараметров
 
-**Почему нужны кастомные гиперпараметры?** Потому что стандартные settings подходят for средних случаев, а ваши data могут быть особенными.
+**Почему нужны кастомные гиперпараметры?** Потому что стандартные Settings подходят for средних случаев, а ваши data могут быть особенными.
 
 ```python
 # Детальная configuration for каждого алгоритма
@@ -1780,7 +1780,7 @@ hyperparameters = {
  'feature_fraction': 0.8, # Меньше признаков for предотвращения переобучения
  'bagging_fraction': 0.7, # Меньше данных for большего разнообразия
  'bagging_freq': 5, # Та же частота bagging
- 'min_data_in_leaf': 10, # Меньше данных in листе for детализации
+ 'min_data_in_leaf': 10, # Меньше данных in листе for detailsзации
  'min_sum_hessian_in_leaf': 1e-3, # Тот же минимум градиентов
  'lambda_l1': 0.1, # L1 регуляризация for отбора признаков
  'lambda_l2': 0.1, # L2 регуляризация for сглаживания
@@ -2040,7 +2040,7 @@ predictor.fit(
 
 ## configuration ресурсов
 
-### CPU and GPU settings
+### CPU and GPU Settings
 
 ```python
 # configuration ресурсов for обучения
@@ -2268,7 +2268,7 @@ predictor.fit(
 ### Оптимизация for деплоя
 
 ```python
-# settings for продакшена
+# Settings for продакшена
 production_config = {
  'presets': 'optimize_for_deployment',
  'ag_args_fit': {
@@ -2367,7 +2367,7 @@ advanced_hyperparameters = {
  ]
 }
 
-# settings ресурсов
+# Settings ресурсов
 ag_args_fit = {
  'num_cpus': 8,
  'num_gpus': 1,
@@ -2512,7 +2512,7 @@ precision_micro = precision_score(y_true, y_pred, average='micro') # Глоба�
 - **micro**: Учитывает количество примеров in каждом классе (хорошо for сбалансированных данных)
 
 **Метрика Precision:**
-- **Что означает**: Доля правильно предсказанных положительных случаев from всех предсказанных положительных
+- **Что означает**: Доля правильно предсказанных положительных случаев from all предсказанных положительных
 - **Формула**: `TP / (TP + FP)`
 - **Диапазон значений**: `[0, 1]` (0% - 100%)
 - **Когда использовать**:
@@ -2757,7 +2757,7 @@ predictor.fit(
  eval_metric=['accuracy', 'f1', 'roc_auc']
 )
 
-# Получение всех метрик
+# Получение all метрик
 performance = predictor.evaluate(test_data)
 print(performance)
 ```
@@ -2813,8 +2813,8 @@ print(feature_importance)
 import matplotlib.pyplot as plt
 
 feature_importance.plot(kind='barh', figsize=(10, 8))
-plt.title('Feature Importance')
-plt.xlabel('Importance')
+plt.title('Feature importance')
+plt.xlabel('importance')
 plt.show()
 ```
 
@@ -2942,7 +2942,7 @@ class MetricsAlert:
 # Использование
 alert = MetricsAlert(threshold=0.8, metric_name='accuracy')
 if alert.check_alert(0.75):
- # Отправка уведомления
+ # Отправка notifications
  pass
 ```
 
@@ -3001,7 +3001,7 @@ print(leaderboard)
 
 # Важность признаков
 feature_importance = predictor.feature_importance()
-print("\nFeature Importance:")
+print("\nFeature importance:")
 print(feature_importance.head(10))
 
 # Визуализация
@@ -3034,7 +3034,7 @@ axes[1, 0].set_title('Confusion Matrix')
 
 # Важность признаков
 feature_importance.head(10).plot(kind='barh', ax=axes[1, 1])
-axes[1, 1].set_title('Top 10 Feature Importance')
+axes[1, 1].set_title('Top 10 Feature importance')
 
 plt.tight_layout()
 plt.show()
@@ -3127,7 +3127,7 @@ predictor.fit(
 5. **Усреднение результатов**: Итоговая оценка - среднее on all K итерациям
 
 **Преимущества K-Fold валидации:**
-- **Использование всех данных**: Каждая точка данных участвует and in обучении, and in валидации
+- **Использование all данных**: Каждая точка данных участвует and in обучении, and in валидации
 - **Стабильность**: Результат not зависит from случайного разделения
 - **Оценка дисперсии**: Показывает, насколько стабильна модель
 - **Надежность**: Более точная оценка качества модели
@@ -3161,7 +3161,7 @@ predictor.fit(
 1. **Анализ распределения**: AutoML Gluon анализирует пропорции классов
 2. **Сохранение пропорций**: in каждом фолде сохраняется исходное распределение
 3. **Сбалансированная оценка**: Модель оценивается on репрезентативных данных
-4. **Корректные метрики**: Получаем точные оценки for всех классов
+4. **Корректные метрики**: Получаем точные оценки for all классов
 
 **Когда использовать стратификацию:**
 - **Использовать**: Когда классы несбалансированы (соотношение > 10:1)
@@ -3282,7 +3282,7 @@ def walk_forward_validation(data, target_col, train_size=1000, test_size=100):
  # Обучающая выборка
  train_data = data.iloc[i-train_size:i]
 
- # Тестовая выборка
+ # testsая выборка
  test_data = data.iloc[i:i+test_size]
 
  # Обучение модели
@@ -3328,7 +3328,7 @@ def adaptive_walk_forward(data, target_col, min_train_size=500, max_train_size=2
  # Обучающая выборка
  train_data = data.iloc[i-current_train_size:i]
 
- # Тестовая выборка
+ # testsая выборка
  test_data = data.iloc[i:i+100]
 
  # Обучение модели
@@ -3472,7 +3472,7 @@ def financial_validation(data, target_col, lookback_window=252, forward_window=2
  # Обучающая выборка (lookback_window дней)
  train_data = data.iloc[i-lookback_window:i]
 
- # Тестовая выборка (forward_window дней)
+ # testsая выборка (forward_window дней)
  test_data = data.iloc[i:i+forward_window]
 
  # Обучение модели
@@ -3562,7 +3562,7 @@ def plot_validation_results(results, metric='accuracy'):
  # График
  plt.figure(figsize=(12, 8))
 
- # Временной ряд метрики
+ # temporary ряд метрики
  plt.subplot(2, 2, 1)
  plt.plot(values)
  plt.title(f'{metric} over time')
@@ -3625,7 +3625,7 @@ X, y = make_classification(
 data = pd.dataFrame(X, columns=[f'feature_{i}' for i in range(20)])
 data['target'] = y
 
-# add временной метки
+# add temporary метки
 data['timestamp'] = pd.date_range('2020-01-01', periods=len(data), freq='D')
 data = data.set_index('timestamp')
 
@@ -3785,7 +3785,7 @@ def create_production_model(train_data, target_col):
  # Обучение with оптимизацией for деплоя
  predictor.fit(
  train_data,
- presets='optimize_for_deployment', # Специальные settings for продакшена
+ presets='optimize_for_deployment', # Специальные Settings for продакшена
  time_limit=3600, # 1 час - ограничение времени обучения
  num_bag_folds=3, # Меньше фолдов for скорости
  num_bag_sets=1,
@@ -4100,7 +4100,7 @@ if __name__ == "__main__":
 # Dockerfile for продакшена
 FROM python:3.9-slim
 
-# installation системных зависимостей
+# installation системных dependencies
 RUN apt-get update && apt-get install -y \
  gcc \
  g++ \
@@ -4112,15 +4112,15 @@ WORKDIR /app
 # Копирование requirements
 COPY requirements.txt .
 
-# installation Python зависимостей
+# installation Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Копирование кода приложения
 COPY . .
 
-# create User for безопасности
-RUN Useradd -m -u 1000 appUser && chown -R appUser:appUser /app
-User appUser
+# create user for безопасности
+RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
+user appuser
 
 # Открытие порта
 EXPOSE 8000
@@ -4344,7 +4344,7 @@ class ProductionMonitor:
  def check_model_health(self, model) -> Dict[str, Any]:
  """health check модели"""
  try:
- # Тестовое Prediction
+ # testsое Prediction
  test_data = pd.dataFrame({'feature1': [1.0], 'feature2': [2.0]})
  start_time = time.time()
  Prediction = model.predict(test_data)
@@ -4363,7 +4363,7 @@ class ProductionMonitor:
  }
 ```
 
-### Алерты and уведомления
+### Алерты and notifications
 
 ```python
 import smtplib
@@ -4405,7 +4405,7 @@ class Alertsystem:
  try:
  payload = {
  "text": message,
- "Username": "AutoML Gluon Monitor",
+ "username": "AutoML Gluon Monitor",
  "icon_emoji": ":robot_face:"
  }
 
@@ -4547,11 +4547,11 @@ class SecurityManager:
  self.secret_key = secret_key
  self.api_keys = {}
 
- def generate_api_key(self, User_id: str) -> str:
+ def generate_api_key(self, user_id: str) -> str:
  """Генерация API ключа"""
  api_key = secrets.token_urlsafe(32)
  self.api_keys[api_key] = {
- 'User_id': User_id,
+ 'user_id': user_id,
  'created_at': datetime.now(),
  'permissions': ['predict', 'model_info']
  }
@@ -4561,8 +4561,8 @@ class SecurityManager:
  """Валидация API ключа"""
  return api_key in self.api_keys
 
- def get_User_permissions(self, api_key: str) -> List:
- """Получение разрешений User"""
+ def get_user_permissions(self, api_key: str) -> List:
+ """Получение разрешений user"""
  if api_key in self.api_keys:
  return self.api_keys[api_key]['permissions']
  return []
@@ -4579,8 +4579,8 @@ class SecurityManager:
 
  # check разрешений
  if permissions:
- User_permissions = self.get_User_permissions(api_key)
- if not any(perm in User_permissions for perm in permissions):
+ user_permissions = self.get_user_permissions(api_key)
+ if not any(perm in user_permissions for perm in permissions):
  return jsonify({'error': 'Insufficient permissions'}), 403
 
  return f(*args, **kwargs)
@@ -4605,7 +4605,7 @@ class InputValidator:
  """Валидация входных данных"""
  try:
  for record in data:
- # check наличия всех обязательных признаков
+ # check наличия all обязательных признаков
  for feature, schema in self.feature_schema.items():
  if feature not in record:
  raise ValueError(f"Missing required feature: {feature}")
@@ -4689,15 +4689,15 @@ class LoadTester:
  'error': str(e)
  }
 
- async def load_test(self, concurrent_Users: int,
- requests_per_User: int,
+ async def load_test(self, concurrent_users: int,
+ requests_per_user: int,
  test_data: List[Dict[str, Any]]) -> Dict[str, Any]:
  """Нагрузочное тестирование"""
  async with aiohttp.ClientSession() as session:
  tasks = []
 
- for User in range(concurrent_Users):
- for request in range(requests_per_User):
+ for user in range(concurrent_users):
+ for request in range(requests_per_user):
  data = test_data[request % len(test_data)]
  task = self.single_request(session, data)
  tasks.append(task)
@@ -5141,7 +5141,7 @@ class RetrainingValidator:
  async def validate_new_model(self, new_predictor, old_predictor=None) -> bool:
  """Валидация новой модели"""
  try:
- # Загрузка тестовых данных
+ # Загрузка testsых данных
  test_data = await self.load_test_data()
 
  # Предсказания новой модели
@@ -5567,7 +5567,7 @@ class CompleteRetrainingsystem:
  async def validate_new_model(self, new_predictor) -> bool:
  """Валидация новой модели"""
  try:
- # Загрузка тестовых данных
+ # Загрузка testsых данных
  test_data = await self.load_test_data()
 
  # Предсказания новой модели
@@ -5736,7 +5736,7 @@ def data_quality_check(data: pd.dataFrame) -> Dict[str, Any]:
 
  quality_Report = {
  'shape': data.shape, # Размер датасета
- 'missing_values': data.isnull().sum().to_dict(), # Пропущенные значения
+ 'Missing_values': data.isnull().sum().to_dict(), # Пропущенные значения
  'data_types': data.dtypes.to_dict(), # Типы данных
  'duplicates': data.duplicated().sum(), # Дубликаты
  'outliers': {}, # Выбросы
@@ -5744,8 +5744,8 @@ def data_quality_check(data: pd.dataFrame) -> Dict[str, Any]:
  }
 
  # check пропущенных значений
- missing_percent = (data.isnull().sum() / len(data)) * 100
- quality_Report['missing_percent'] = missing_percent.to_dict()
+ Missing_percent = (data.isnull().sum() / len(data)) * 100
+ quality_Report['Missing_percent'] = Missing_percent.to_dict()
 
  # check выбросов for числовых columns
  numeric_columns = data.select_dtypes(include=[np.number]).columns
@@ -5773,7 +5773,7 @@ for key, value in quality_Report.items():
 ### 2. Обработка пропущенных значений
 
 ```python
-def handle_missing_values(data: pd.dataFrame, strategy: str = 'auto') -> pd.dataFrame:
+def handle_Missing_values(data: pd.dataFrame, strategy: str = 'auto') -> pd.dataFrame:
  """Обработка пропущенных значений"""
 
  if strategy == 'auto':
@@ -5797,7 +5797,7 @@ def handle_missing_values(data: pd.dataFrame, strategy: str = 'auto') -> pd.data
  return data
 
 # Использование
-train_data_clean = handle_missing_values(train_data, strategy='auto')
+train_data_clean = handle_Missing_values(train_data, strategy='auto')
 ```
 
 ### 3. Обработка выбросов
@@ -6883,7 +6883,7 @@ print("Bank Model Performance:")
 for metric, value in bank_results['performance'].items():
  print(f"{metric}: {value:.4f}")
 
-print("\nTop 10 Feature Importance:")
+print("\nTop 10 Feature importance:")
 print(bank_results['feature_importance'].head(10))
 ```
 
@@ -6917,7 +6917,7 @@ def visualize_bank_results(results, test_data):
 
  # Важность признаков
  results['feature_importance'].head(10).plot(kind='barh', ax=axes[1, 0])
- axes[1, 0].set_title('Top 10 Feature Importance')
+ axes[1, 0].set_title('Top 10 Feature importance')
 
  # Распределение вероятностей
  axes[1, 1].hist(results['probabilities'][1], bins=50, alpha=0.7)
@@ -7133,7 +7133,7 @@ def visualize_real_estate_results(results, test_data):
 
  # Важность признаков
  results['feature_importance'].head(10).plot(kind='barh', ax=axes[1, 0])
- axes[1, 0].set_title('Top 10 Feature Importance')
+ axes[1, 0].set_title('Top 10 Feature importance')
 
  # Ошибки on цене
  axes[1, 1].scatter(test_data['price'], results['errors'], alpha=0.6)
@@ -7339,7 +7339,7 @@ def visualize_sales_results(results, test_data):
 
  fig, axes = plt.subplots(2, 2, figsize=(15, 12))
 
- # Временной ряд for одного продукта
+ # temporary ряд for одного продукта
  product_id = test_data['product_id'].iloc[0]
  product_data = test_data[test_data['product_id'] == product_id]
  product_Predictions = results['Predictions'][test_data['product_id'] == product_id]
@@ -7360,7 +7360,7 @@ def visualize_sales_results(results, test_data):
 
  # Важность признаков
  results['feature_importance'].head(10).plot(kind='barh', ax=axes[1, 0])
- axes[1, 0].set_title('Top 10 Feature Importance')
+ axes[1, 0].set_title('Top 10 Feature importance')
 
  # Производительность on продуктам
  products = List(results['product_performance'].keys())
@@ -7566,7 +7566,7 @@ def visualize_image_results(results, test_data):
 
  # Важность признаков
  results['feature_importance'].head(15).plot(kind='barh', ax=axes[0, 1])
- axes[0, 1].set_title('Top 15 Feature Importance')
+ axes[0, 1].set_title('Top 15 Feature importance')
 
  # Распределение Predictions
  Prediction_counts = pd.Series(results['Predictions']).value_counts()
@@ -7800,7 +7800,7 @@ def test_production_api():
  response = requests.post(f"{base_url}/predict", json=real_estate_data)
  print("Real estate Prediction:", response.json())
 
-# Launch тестов
+# Launch tests
 if __name__ == "__main__":
  test_production_api()
 ```
@@ -7843,20 +7843,20 @@ if __name__ == "__main__":
 **Почему Troubleshooting - это искусство, а not наука?** Потому что каждая проблема уникальна, но паттерны повторяются. Это как медицинская диагностика - симптомы похожи, но причины разные.
 
 **Типы проблем in AutoML Gluon:**
-- **Проблемы установки**: Конфликты зависимостей, версии Python
+- **Проблемы installation**: Конфликты dependencies, версии Python
 - **Проблемы данных**: Форматы, размеры, качество
 - **Проблемы производительности**: Медленная Working, нехватка памяти
 - **Проблемы моделей**: Плохая точность, переобучение
 
 in этом разделе рассмотрим типичные проблемы, возникающие при работе with AutoML Gluon, and способы их решения. Каждая проблема включает description, причины возникновения and пошаговые instructions on устранению.
 
-## Проблемы установки
+## Проблемы installation
 
-**Почему проблемы установки - самые частые in ML?** Потому что ML-библиотеки имеют сложные dependencies между собой. Это как пазл, где каждая деталь должна точно подходить.
+**Почему проблемы installation - самые частые in ML?** Потому что ML-библиотеки имеют сложные dependencies между собой. Это как пазл, где каждая деталь должна точно подходить.
 
-### 1. Ошибки зависимостей
+### 1. Ошибки dependencies
 
-**Почему конфликты версий так распространены?** Потому что разные библиотеки требуют разные версии одних and тех же пакетов. Это как попытка использовать детали from разных моделей автомобилей.
+**Почему конфликты версий так распространены?** Потому что разные библиотеки требуют разные версии одних and тех же пакетов. Это как попытка использовать details from разных моделей автомобилей.
 
 #### Проблема: Конфликт версий пакетов
 ```bash
@@ -8100,11 +8100,11 @@ def diagnose_Prediction_issues(predictor, data):
  model_features = predictor.feature_importance().index.toList()
  data_features = data.columns.toList()
 
- missing_features = set(model_features) - set(data_features)
+ Missing_features = set(model_features) - set(data_features)
  extra_features = set(data_features) - set(model_features)
 
- if missing_features:
- print(f"Missing features: {missing_features}")
+ if Missing_features:
+ print(f"Missing features: {Missing_features}")
  if extra_features:
  print(f"Extra features: {extra_features}")
 
@@ -8362,7 +8362,7 @@ def diagnose_model_Loading(model_path):
  """Диагностика загрузки модели"""
 
  try:
- # check существования файлов
+ # check существования files
  import os
  if not os.path.exists(model_path):
  print(f"Model path does not exist: {model_path}")
@@ -8373,7 +8373,7 @@ def diagnose_model_Loading(model_path):
  for file in required_files:
  file_path = os.path.join(model_path, file)
  if not os.path.exists(file_path):
- print(f"required file missing: {file_path}")
+ print(f"required file Missing: {file_path}")
  return False
 
  # Попытка загрузки
@@ -8671,7 +8671,7 @@ Apple Silicon MacBook with чипами M1, M2, M3 предоставляют у
 conda create -n autogluon-m1 python=3.9
 conda activate autogluon-m1
 
-# installation базовых зависимостей - нативные ARM64 версии
+# installation базовых dependencies - нативные ARM64 версии
 conda install -c conda-forge numpy pandas scikit-learn matplotlib seaborn
 
 # installation PyTorch with поддержкой MPS (Metal Performance Shaders)
@@ -9234,7 +9234,7 @@ def train_optimized_apple_silicon(data: pd.dataFrame, target_col: str):
 def run_optimized_training():
  """Launch оптимизированного обучения"""
 
- # create тестовых данных
+ # create testsых данных
  from sklearn.datasets import make_classification
  X, y = make_classification(n_samples=10000, n_features=20, n_classes=2, random_state=42)
 
@@ -9642,7 +9642,7 @@ def train_with_optimal_config(data: pd.dataFrame, target_col: str):
 - **Monitoring производительности** for Apple Silicon
 - **Troubleshooting** типичных проблем
 
-Все settings оптимизированы for максимальной производительности on Apple Silicon with учетом особенностей архитектуры M1/M2/M3 чипов.
+Все Settings оптимизированы for максимальной производительности on Apple Silicon with учетом особенностей архитектуры M1/M2/M3 чипов.
 
 
 ---
@@ -9673,7 +9673,7 @@ def train_with_optimal_config(data: pd.dataFrame, target_col: str):
 ![Простой example продакшена](images/simple_production_flow.png)
 *Рисунок 12.1: Простой example создания робастной ML-модели from идеи to продакшена*
 
-**Почему начинаем with простого примера?** Потому что он показывает весь цикл разработки ML-системы from начала to конца, not отвлекаясь on сложные детали.
+**Почему начинаем with простого примера?** Потому что он показывает весь цикл разработки ML-системы from начала to конца, not отвлекаясь on сложные details.
 
 Этот раздел показывает **самый простой путь** создания робастной прибыльной ML-модели with использованием AutoML Gluon - from первоначальной идеи to полного продакшен деплоя on DEX blockchain.
 
@@ -9697,7 +9697,7 @@ def train_with_optimal_config(data: pd.dataFrame, target_col: str):
 
 - **Точность**: >70% правильных Predictions направления движения цены
 - **Робастность**: Стабильная Working in различных рыночных условиях
-- **Прибыльность**: Положительный ROI on тестовых данных
+- **Прибыльность**: Положительный ROI on testsых данных
 
 ## Шаг 2: Подготовка данных
 
@@ -9716,7 +9716,7 @@ def prepare_crypto_data(symbol='BTC-USD', period='2y'):
  ticker = yf.Ticker(symbol)
  data = ticker.history(period=period)
 
- # Технические индикаторы
+ # Technical индикаторы
  data['SMA_20'] = talib.SMA(data['Close'], timeperiod=20)
  data['SMA_50'] = talib.SMA(data['Close'], timeperiod=50)
  data['RSI'] = talib.RSI(data['Close'], timeperiod=14)
@@ -9831,7 +9831,7 @@ def simple_walk_forward(data, features, window_size=252, step_size=30):
  # Обучающие data
  train_data = data.iloc[i-window_size:i]
 
- # Тестовые data
+ # testsые data
  test_data = data.iloc[i:i+step_size]
 
  # create and обучение модели
@@ -9970,16 +9970,16 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-# installation зависимостей
+# installation dependencies
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 # Копирование кода
 COPY . .
 
-# create User
-RUN Useradd -m -u 1000 appUser
-User appUser
+# create user
+RUN useradd -m -u 1000 appuser
+user appuser
 
 # Launch приложения
 CMD ["python", "app.py"]
@@ -10224,7 +10224,7 @@ class AdvancedMLsystem:
  self.Monitoring = AdvancedMonitoring()
 
  def initialize_system(self):
- """Инициализация всех компонентов системы - Launch всех модулей"""
+ """Инициализация all компонентов системы - Launch all модулей"""
  pass
 ```
 
@@ -10271,8 +10271,8 @@ class AdvanceddataProcessor:
  except Exception as e:
  print(f"Ошибка получения данных with {exchange_name}: {e}")
 
- # 2. Технические индикаторы
- symbol_data['technical'] = self._calculate_advanced_indicators(symbol_data['binance_price'])
+ # 2. Technical индикаторы
+ symbol_data['Technical'] = self._calculate_advanced_indicators(symbol_data['binance_price'])
 
  # 3. Новости and настроения
  symbol_data['sentiment'] = self._collect_sentiment_data(symbol)
@@ -10370,21 +10370,21 @@ class AdvanceddataProcessor:
 
  macro_data = {}
 
- # Индекс страха and жадности
+ # index страха and жадности
  try:
  fear_greed = requests.get('https://api.alternative.me/fng/').json()
  macro_data['fear_greed'] = fear_greed['data'][0]['value']
  except:
  macro_data['fear_greed'] = 50
 
- # DXY (Dollar Index)
+ # DXY (Dollar index)
  try:
  dxy = yf.download('DX-Y.NYB', period='1y')['Close']
  macro_data['dxy'] = dxy.iloc[-1]
  except:
  macro_data['dxy'] = 100
 
- # VIX (Volatility Index)
+ # VIX (Volatility index)
  try:
  vix = yf.download('^VIX', period='1y')['Close']
  macro_data['vix'] = vix.iloc[-1]
@@ -10490,7 +10490,7 @@ class MultiModelsystem:
  def create_ensemble_model(self, models, data):
  """create ансамблевой модели"""
 
- # Получение Predictions from всех моделей
+ # Получение Predictions from all моделей
  Predictions = {}
  probabilities = {}
 
@@ -10577,7 +10577,7 @@ class AdvancedValidation:
  # Обучающие data
  train_data = data.iloc[i-min_train_size:i]
 
- # Тестовые data
+ # testsые data
  test_data = data.iloc[i:i+window_size]
 
  # Переобучение моделей
@@ -10804,7 +10804,7 @@ class ModelService:
  self.load_models()
 
  def predict(self, data):
- """Получение предсказания from всех моделей"""
+ """Получение предсказания from all моделей"""
 
  Predictions = {}
 
@@ -10884,7 +10884,7 @@ spec:
  - name: REDIS_URL
  value: "redis://redis-service:6379"
  - name: database_URL
- value: "postgresql://User:pass@postgres-service:5432/mldb"
+ value: "postgresql://user:pass@postgres-service:5432/mldb"
 
  - name: data-service
  image: ml-system/data-service:latest
@@ -11007,7 +11007,7 @@ class AdvancedMonitoring:
 
  self.alerts.append(alert)
 
- # Отправка уведомления
+ # Отправка notifications
  self.send_notification(alert)
 
  def auto_retrain(self, model_name, performance_threshold=0.6):
@@ -11132,9 +11132,9 @@ if __name__ == '__main__':
 ![Теория AutoML](images/automl_theory.png)
 *Рисунок 14.1: Теоретические основы автоматизированного машинного обучения*
 
-**Почему AutoML - это not просто "нажать кнопку"?** Потому что это сложная система алгоритмов, которая автоматизирует процесс creating ML models, но требует понимания принципов for эффективного использования.
+**Почему AutoML - это not просто "нажать кнопку"?** Потому что это сложная система алгоритмов, которая автоматизирует процесс Creating ML models, но требует понимания принципов for эффективного использования.
 
-AutoML (Automated Machine Learning) - это область машинного обучения, которая автоматизирует процесс creating ML models. Понимание теоретических основ критически важно for эффективного использования AutoML Gluon.
+AutoML (Automated Machine Learning) - это область машинного обучения, которая автоматизирует процесс Creating ML models. Понимание теоретических основ критически важно for эффективного использования AutoML Gluon.
 
 ## Основные концепции AutoML
 
@@ -11405,7 +11405,7 @@ class MetaLearner:
  'n_samples': len(dataset),
  'n_features': len(dataset.columns) - 1,
  'n_classes': len(dataset['target'].unique()),
- 'missing_ratio': dataset.isnull().sum().sum() / (len(dataset) * len(dataset.columns)),
+ 'Missing_ratio': dataset.isnull().sum().sum() / (len(dataset) * len(dataset.columns)),
  'categorical_ratio': len(dataset.select_dtypes(include=['object']).columns) / len(dataset.columns)
  }
  return features
@@ -11667,7 +11667,7 @@ shap.summary_plot(shap_values, X_test)
 
 ## Методы глобальной интерпретируемости
 
-### 1. Feature Importance
+### 1. Feature importance
 
 ```python
 def get_feature_importance(predictor, method='permutation'):
@@ -11943,7 +11943,7 @@ def create_exPlanation_dashboard(predictor, X, y, instance_idx=0):
  fig, axes = plt.subplots(2, 3, figsize=(18, 12))
  fig.suptitle('Comprehensive Model ExPlanation Dashboard', fontsize=16)
 
- # 1. Feature Importance
+ # 1. Feature importance
  ax1 = axes[0, 0]
  importance = get_feature_importance(predictor)
  feature_names = X.columns
@@ -11952,8 +11952,8 @@ def create_exPlanation_dashboard(predictor, X, y, instance_idx=0):
  ax1.barh(range(len(sorted_idx)), importance[sorted_idx])
  ax1.set_yticks(range(len(sorted_idx)))
  ax1.set_yticklabels([feature_names[i] for i in sorted_idx])
- ax1.set_title('Top 10 Feature Importance')
- ax1.set_xlabel('Importance')
+ ax1.set_title('Top 10 Feature importance')
+ ax1.set_xlabel('importance')
 
  # 2. SHAP Summary
  ax2 = axes[0, 1]
@@ -12198,7 +12198,7 @@ class DARTS(nn.Module):
  # Softmax for архитектурных весов - нормализация весов
  weights = F.softmax(self.alpha, dim=0)
 
- # Взвешенная сумма операций - комбинация всех операций
+ # Взвешенная сумма операций - комбинация all операций
  output = sum(w * op(x) for w, op in zip(weights, self.ops) if op is not None)
 
  return output
@@ -13023,7 +13023,7 @@ class GDPRCompliance:
  def data_portability(self, subject_id):
  """Право on портативность данных"""
 
- # Возврат всех данных субъекта in структурированном формате
+ # Возврат all данных субъекта in структурированном формате
  subject_data = {
  'personal_data': self.get_subject_data(subject_id),
  'consent_records': self.consent_records.get(subject_id, []),
@@ -13091,13 +13091,13 @@ class AIActCompliance:
  'data governance',
  'Technical documentation',
  'Record keeping',
- 'Transparency and User information',
+ 'Transparency and user information',
  'Human oversight',
  'Accuracy, robustness and cybersecurity'
  ],
  'limited': [
  'Transparency obligations',
- 'User information requirements'
+ 'user information requirements'
  ],
  'minimal': [
  'No specific requirements'
@@ -13287,12 +13287,12 @@ class AIEthicscheckList:
  checks = []
 
  # check on пропущенные значения
- missing_ratio = data.isnull().sum().sum() / (len(data) * len(data.columns))
+ Missing_ratio = data.isnull().sum().sum() / (len(data) * len(data.columns))
  checks.append({
  'check': 'Missing values ratio',
- 'value': missing_ratio,
- 'passed': missing_ratio < 0.1,
- 'recommendation': 'Clean missing values' if missing_ratio >= 0.1 else None
+ 'value': Missing_ratio,
+ 'passed': Missing_ratio < 0.1,
+ 'recommendation': 'Clean Missing values' if Missing_ratio >= 0.1 else None
  })
 
  # check on дубликаты
@@ -13452,7 +13452,7 @@ create системы кредитного скоринга for банка with 
 - **Размер датасета**: 100,000 заявок on кредит
 - **Признаки**: 50+ (доход, возраст, кредитная история, занятость and др.)
 - **Целевая переменная**: Дефолт on кредиту (бинарная)
-- **Временной период**: 3 года исторических данных
+- **temporary период**: 3 года исторических данных
 
 ### Решение
 
@@ -13782,7 +13782,7 @@ create персонализированной рекомендательной �
 - **Размер датасета**: 1,000,000 транзакций
 - **Пользователи**: 50,000 активных покупателей
 - **Товары**: 10,000 SKU
-- **Временной период**: 2 года
+- **temporary период**: 2 года
 
 ### Решение
 
@@ -13791,19 +13791,19 @@ class EcommerceRecommendationsystem:
  """Система рекомендаций for e-commerce"""
 
  def __init__(self):
- self.User_predictor = None
+ self.user_predictor = None
  self.item_predictor = None
  self.collaborative_filter = None
 
- def prepare_recommendation_data(self, transactions_df, Users_df, items_df):
+ def prepare_recommendation_data(self, transactions_df, users_df, items_df):
  """Подготовка данных for рекомендаций"""
 
  # Объединение данных
- df = transactions_df.merge(Users_df, on='User_id')
+ df = transactions_df.merge(users_df, on='user_id')
  df = df.merge(items_df, on='item_id')
 
- # create признаков User
- User_features = self.create_User_features(df)
+ # create признаков user
+ user_features = self.create_user_features(df)
 
  # create признаков товара
  item_features = self.create_item_features(df)
@@ -13811,31 +13811,31 @@ class EcommerceRecommendationsystem:
  # create целевой переменной (рейтинг/покупка)
  df['rating'] = self.calculate_implicit_rating(df)
 
- return df, User_features, item_features
+ return df, user_features, item_features
 
- def create_User_features(self, df):
- """create признаков User"""
+ def create_user_features(self, df):
+ """create признаков user"""
 
- User_features = df.groupby('User_id').agg({
+ user_features = df.groupby('user_id').agg({
  'item_id': 'count', # Количество покупок
  'price': ['sum', 'mean'], # Общая and средняя стоимость
  'category': lambda x: x.mode().iloc[0] if len(x.mode()) > 0 else 'Unknown', # Любимая категория
  'brand': lambda x: x.mode().iloc[0] if len(x.mode()) > 0 else 'Unknown' # Любимый бренд
  }).reset_index()
 
- User_features.columns = ['User_id', 'total_purchases', 'total_spent', 'avg_purchase', 'favorite_category', 'favorite_brand']
+ user_features.columns = ['user_id', 'total_purchases', 'total_spent', 'avg_purchase', 'favorite_category', 'favorite_brand']
 
  # Дополнительные признаки
- User_features['purchase_frequency'] = User_features['total_purchases'] / 365 # Покупок in день
- User_features['avg_spent_per_purchase'] = User_features['total_spent'] / User_features['total_purchases']
+ user_features['purchase_frequency'] = user_features['total_purchases'] / 365 # Покупок in день
+ user_features['avg_spent_per_purchase'] = user_features['total_spent'] / user_features['total_purchases']
 
- return User_features
+ return user_features
 
  def create_item_features(self, df):
  """create признаков товара"""
 
  item_features = df.groupby('item_id').agg({
- 'User_id': 'count', # Количество покупателей
+ 'user_id': 'count', # Количество покупателей
  'price': 'mean', # Средняя цена
  'category': lambda x: x.mode().iloc[0] if len(x.mode()) > 0 else 'Unknown',
  'brand': lambda x: x.mode().iloc[0] if len(x.mode()) > 0 else 'Unknown'
@@ -13852,23 +13852,23 @@ class EcommerceRecommendationsystem:
  """Расчет неявного рейтинга"""
 
  # Простая эвристика: чем больше покупок, тем выше рейтинг
- User_purchase_counts = df.groupby('User_id')['item_id'].count()
- item_purchase_counts = df.groupby('item_id')['User_id'].count()
+ user_purchase_counts = df.groupby('user_id')['item_id'].count()
+ item_purchase_counts = df.groupby('item_id')['user_id'].count()
 
- df['User_activity'] = df['User_id'].map(User_purchase_counts)
+ df['user_activity'] = df['user_id'].map(user_purchase_counts)
  df['item_popularity'] = df['item_id'].map(item_purchase_counts)
 
  # Нормализация рейтинга
- rating = (df['User_activity'] / df['User_activity'].max() +
+ rating = (df['user_activity'] / df['user_activity'].max() +
  df['item_popularity'] / df['item_popularity'].max()) / 2
 
  return rating
 
- def train_collaborative_filtering(self, df, User_features, item_features):
+ def train_collaborative_filtering(self, df, user_features, item_features):
  """Обучение коллаборативной фильтрации"""
 
  # Подготовка данных for AutoML
- recommendation_data = df.merge(User_features, on='User_id')
+ recommendation_data = df.merge(user_features, on='user_id')
  recommendation_data = recommendation_data.merge(item_features, on='item_id')
 
  # create предиктора
@@ -13888,22 +13888,22 @@ class EcommerceRecommendationsystem:
 
  return self.collaborative_filter
 
- def generate_recommendations(self, User_id, n_recommendations=10):
- """Генерация рекомендаций for User"""
+ def generate_recommendations(self, user_id, n_recommendations=10):
+ """Генерация рекомендаций for user"""
 
- # Получение признаков User
- User_data = self.get_User_features(User_id)
+ # Получение признаков user
+ user_data = self.get_user_features(user_id)
 
- # Получение всех товаров
+ # Получение all товаров
  all_items = self.get_all_items()
 
- # Prediction рейтингов for всех товаров
+ # Prediction рейтингов for all товаров
  Predictions = []
  for item_id in all_items:
  item_data = self.get_item_features(item_id)
 
- # Объединение данных User and товара
- combined_data = pd.dataFrame([{**User_data, **item_data}])
+ # Объединение данных user and товара
+ combined_data = pd.dataFrame([{**user_data, **item_data}])
 
  # Prediction рейтинга
  rating = self.collaborative_filter.predict(combined_data)[0]
@@ -13923,12 +13923,12 @@ class EcommerceRecommendationsystem:
  recall_scores = []
  ndcg_scores = []
 
- for User_id in test_data['User_id'].unique():
- # Получение реальных покупок User
- actual_items = set(test_data[test_data['User_id'] == User_id]['item_id'])
+ for user_id in test_data['user_id'].unique():
+ # Получение реальных покупок user
+ actual_items = set(test_data[test_data['user_id'] == user_id]['item_id'])
 
  # Генерация рекомендаций
- recommendations = self.generate_recommendations(User_id, n_recommendations)
+ recommendations = self.generate_recommendations(user_id, n_recommendations)
  recommended_items = set([item_id for item_id, _ in recommendations])
 
  # Precision@K
@@ -13953,16 +13953,16 @@ recommendation_system = EcommerceRecommendationsystem()
 
 # Loading data
 transactions = pd.read_csv('transactions.csv')
-Users = pd.read_csv('Users.csv')
+users = pd.read_csv('users.csv')
 items = pd.read_csv('items.csv')
 
 # Подготовка данных
-df, User_features, item_features = recommendation_system.prepare_recommendation_data(
- transactions, Users, items
+df, user_features, item_features = recommendation_system.prepare_recommendation_data(
+ transactions, users, items
 )
 
 # Обучение модели
-model = recommendation_system.train_collaborative_filtering(df, User_features, item_features)
+model = recommendation_system.train_collaborative_filtering(df, user_features, item_features)
 
 # Оценка
 results = recommendation_system.evaluate_recommendations(df)
@@ -13988,7 +13988,7 @@ create системы предиктивного обслуживания for п
 - **Оборудование**: 500 единиц промышленного оборудования
 - **Сенсоры**: 50+ датчиков on каждую единицу
 - **Частота измерений**: Каждые 5 minutes
-- **Временной период**: 2 года
+- **temporary период**: 2 года
 
 ### Решение
 
@@ -14027,7 +14027,7 @@ class Predictivemaintenancesystem:
  window_data.columns = [f'{col[0]}_{col[1]}_{window}h' for col in window_data.columns]
  features.append(window_data)
 
- # Объединение всех признаков
+ # Объединение all признаков
  all_features = pd.concat(features, axis=1)
 
  return all_features
@@ -14170,7 +14170,7 @@ create робастной and сверхприбыльной предсказа�
 
 ### data
 - **Пара**: BTCUSDT
-- **Временной период**: 2 года исторических данных
+- **temporary период**: 2 года исторических данных
 - **Частота**: 1-minutesные свечи
 - **Признаки**: 50+ технических indicators, объем, волатильность
 - **Целевая переменная**: Направление движения цены (1 час вперед)
@@ -14228,7 +14228,7 @@ class BTCUSDTTradingsystem:
  def create_advanced_features(self, df):
  """create продвинутых признаков for криптотрейдинга"""
 
- # Базовые технические индикаторы
+ # Базовые Technical индикаторы
  df['SMA_20'] = talib.SMA(df['close'], timeperiod=20)
  df['SMA_50'] = talib.SMA(df['close'], timeperiod=50)
  df['SMA_200'] = talib.SMA(df['close'], timeperiod=200)
@@ -14511,7 +14511,7 @@ create высокоточной and стабильно прибыльной то
 
 ### data
 - **Инструменты**: 50+ криптовалютных пар
-- **Временной период**: 3 года исторических данных
+- **temporary период**: 3 года исторических данных
 - **Частота**: 1-minutesные свечи
 - **Признаки**: 100+ технических and фундаментальных indicators
 - **Целевая переменная**: Многоклассовая (BUY, SELL, HOLD)
@@ -14554,7 +14554,7 @@ class HedgeFundTradingsystem:
  def add_fundamental_features(self, df, symbol):
  """add фундаментальных признаков"""
 
- # Fear & Greed Index
+ # Fear & Greed index
  try:
  fear_greed = requests.get('https://api.alternative.me/fng/').json()
  df['fear_greed'] = fear_greed['data'][0]['value']
@@ -14571,7 +14571,7 @@ class HedgeFundTradingsystem:
  # Market Cap
  df['market_cap'] = df['close'] * df['volume'] # Приблизительная оценка
 
- # Volatility Index
+ # Volatility index
  df['volatility_index'] = df['close'].rolling(24).std() / df['close'].rolling(24).mean()
 
  return df
@@ -14616,7 +14616,7 @@ class HedgeFundTradingsystem:
  # add in общий датасет
  ensemble_data.append(data[feature_columns + ['target_class']])
 
- # Объединение всех данных
+ # Объединение all данных
  combined_data = pd.concat(ensemble_data, ignore_index=True)
  combined_data = combined_data.dropna()
 
@@ -14813,7 +14813,7 @@ class HedgeFundTradingsystem:
  # Сбор актуальных данных
  current_data = self.collect_multi_asset_data(trading_pairs, days=1)
 
- # Генерация сигналов for всех пар
+ # Генерация сигналов for all пар
  signals = {}
  for symbol, data in current_data.items():
  if len(data) > 0:
@@ -14925,7 +14925,7 @@ class SecretFeatureEngineering:
  tf_features = self.create_secret_features(tf_data, tf)
  features[tf] = tf_features
 
- # Объединение признаков всех Timeframes
+ # Объединение признаков all Timeframes
  combined_features = self.combine_multi_Timeframe_features(features)
 
  return combined_features
@@ -14936,7 +14936,7 @@ class SecretFeatureEngineering:
  # 1. Hidden Volume Profile
  data['volume_profile'] = self.calculate_hidden_volume_profile(data)
 
- # 2. Smart Money Index
+ # 2. Smart Money index
  data['smart_money_index'] = self.calculate_smart_money_index(data)
 
  # 3. Institutional Flow
@@ -14975,7 +14975,7 @@ class SecretFeatureEngineering:
  return hidden_levels
 
  def calculate_smart_money_index(self, data):
- """Индекс умных денег - отслеживание институциональных игроков"""
+ """index умных денег - отслеживание институциональных игроков"""
 
  # Анализ крупных сделок
  large_trades = data[data['volume'] > data['volume'].quantile(0.95)]
@@ -14983,7 +14983,7 @@ class SecretFeatureEngineering:
  # Направление умных денег
  smart_money_direction = self.analyze_smart_money_direction(large_trades)
 
- # Индекс накопления/распределения
+ # index накопления/распределения
  accumulation_distribution = self.calculate_accumulation_distribution(data)
 
  # Объединение сигналов
@@ -15147,7 +15147,7 @@ class SecretEnsembleTechniques:
  # 4. Temporal Ensemble
  temporal_ensemble = self.create_temporal_ensemble(base_models, meta_features)
 
- # Объединение всех техник
+ # Объединение all техник
  meta_ensemble = self.combine_ensemble_techniques([
  dynamic_weights,
  context_ensemble,
@@ -15200,7 +15200,7 @@ class SecretEnsembleTechniques:
  return super_model
 
  def create_temporal_ensemble(self, models, features):
- """Временной ансамбль"""
+ """temporary ансамбль"""
 
  # Анализ временных паттернов
  temporal_patterns = self.analyze_temporal_patterns(features)
@@ -15288,7 +15288,7 @@ class SecretRiskManagement:
 
 ### Почему эти техники такие прибыльные?
 
-1. **Multi-Timeframe Analysis** - анализ on всех Timeframes дает полную картину рынка
+1. **Multi-Timeframe Analysis** - анализ on all Timeframes дает полную картину рынка
 2. **Smart Money Tracking** - отслеживание институциональных игроков
 3. **MicroStructure Analysis** - понимание рыночной микроструктуры
 4. **Advanced Ensemble** - комбинация лучших моделей
@@ -15641,7 +15641,7 @@ class Wave2MLModel:
  def prepare_wave2_data(self, data_dict):
  """Подготовка данных WAVE2 for ML"""
 
- # Объединение данных всех Timeframes
+ # Объединение данных all Timeframes
  combined_data = self.combine_Timeframe_data(data_dict)
 
  # create признаков
@@ -15667,7 +15667,7 @@ class Wave2MLModel:
  # Статистические волновые признаки
  statistical_wave_features = self.create_statistical_wave_features(data)
 
- # Объединение всех признаков
+ # Объединение all признаков
  all_features = pd.concat([
  wave_features,
  multi_wave_features,
@@ -16042,7 +16042,7 @@ class Wave2DEXintegration:
 2. **Временная адаптивность** - адаптируется к изменениям рынка
 3. **Высокая точность** - обеспечивает точные сигналы
 4. **Робастность** - устойчив к рыночным шокам
-5. **Масштабируемость** - Workingет on всех Timeframes
+5. **Масштабируемость** - Workingет on all Timeframes
 
 ### Слабые стороны WAVE2
 
@@ -16399,7 +16399,7 @@ class SCHRLevelsMLModel:
  def prepare_schr_data(self, data_dict):
  """Подготовка данных SCHR Levels for ML"""
 
- # Объединение данных всех Timeframes
+ # Объединение данных all Timeframes
  combined_data = self.combine_Timeframe_data(data_dict)
 
  # create признаков
@@ -16425,7 +16425,7 @@ class SCHRLevelsMLModel:
  # Признаки отскоков
  bounce_features = self.create_bounce_features(data)
 
- # Объединение всех признаков
+ # Объединение all признаков
  all_features = pd.concat([
  level_features,
  pressure_features,
@@ -17163,7 +17163,7 @@ class SCHRShort3MLModel:
  def prepare_schr_short3_data(self, data_dict):
  """Подготовка данных SCHR SHORT3 for ML"""
 
- # Объединение данных всех Timeframes
+ # Объединение данных all Timeframes
  combined_data = self.combine_Timeframe_data(data_dict)
 
  # create признаков
@@ -17189,7 +17189,7 @@ class SCHRShort3MLModel:
  # Признаки краткосрочной волатильности
  volatility_features = self.create_volatility_features(data)
 
- # Объединение всех признаков
+ # Объединение all признаков
  all_features = pd.concat([
  short_features,
  signal_features,
@@ -17599,7 +17599,7 @@ class SCHRShort3DEXintegration:
 2. **Быстрая адаптация** - быстро адаптируется к изменениям рынка
 3. **Высокая частота сигналов** - генерирует много торговых возможностей
 4. **Низкий лаг** - минимальная задержка in сигналах
-5. **Масштабируемость** - Workingет on всех Timeframes
+5. **Масштабируемость** - Workingет on all Timeframes
 
 ### Слабые стороны SCHR SHORT3
 
@@ -17616,7 +17616,7 @@ SCHR SHORT3 - это мощный индикатор for создания выс
 
 ---
 
-# Супер-система: Объединение всех indicators
+# Супер-система: Объединение all indicators
 
 **Author:** NeoZorK (Shcherbyna Rostyslav)
 **Дата:** 2025
@@ -17643,7 +17643,7 @@ SCHR SHORT3 - это мощный индикатор for создания выс
 
 **Почему супер-система - это будущее торговли?** Потому что она объединяет все лучшие техники and индикаторы, создавая system, которая Workingет in любых условиях and приносит стабильную прибыль.
 
-Супер-система - это объединение всех лучших техник and indicators for создания идеальной торговой системы. Мы объединим SCHR Levels, WAVE2 and SCHR SHORT3 with самыми современными техниками машинного обучения for создания системы мечты.
+Супер-система - это объединение all лучших техник and indicators for создания идеальной торговой системы. Мы объединим SCHR Levels, WAVE2 and SCHR SHORT3 with самыми современными техниками машинного обучения for создания системы мечты.
 
 ## Философия супер-системы
 
@@ -17652,7 +17652,7 @@ SCHR SHORT3 - это мощный индикатор for создания выс
 **Почему принципы объединения критически важны?** Потому что неправильное объединение indicators может привести к конфликту сигналов and потере денег.
 
 1. **Синергия indicators** - каждый индикатор дополняет другие, создавая синергетический эффект
-2. **Многоуровневая валидация** - check on всех уровнях for максимальной точности
+2. **Многоуровневая валидация** - check on all уровнях for максимальной точности
 3. **Адаптивность** - система адаптируется к изменениям рынка, оставаясь актуальной
 4. **Робастность** - устойчивость к рыночным шокам, Working in любых условиях
 5. **Прибыльность** - стабильная доходность > 100% in месяц with минимальными рисками
@@ -17660,7 +17660,7 @@ SCHR SHORT3 - это мощный индикатор for создания выс
 ### Почему это Workingет всегда
 
 1. **Разнообразие сигналов** - разные индикаторы ловят разные паттерны
-2. **Временная адаптация** - система Workingет on всех Timeframes
+2. **Временная адаптация** - система Workingет on all Timeframes
 3. **Машинное обучение** - автоматическая оптимизация
 4. **Риск-менеджмент** - защита from потерь
 5. **Непрерывное обучение** - система постоянно улучшается
@@ -17701,7 +17701,7 @@ class SuperTradingsystem:
 
 ```python
 class Indicatorintegration:
- """integration всех indicators"""
+ """integration all indicators"""
 
  def __init__(self):
  self.indicators = {}
@@ -17709,9 +17709,9 @@ class Indicatorintegration:
  self.correlations = {}
 
  def integrate_signals(self, data):
- """integration сигналов всех indicators"""
+ """integration сигналов all indicators"""
 
- # Получение сигналов from всех indicators
+ # Получение сигналов from all indicators
  schr_signals = self.get_schr_signals(data)
  wave2_signals = self.get_wave2_signals(data)
  short3_signals = self.get_short3_signals(data)
@@ -17983,10 +17983,10 @@ class ContinuousLearningsystem:
 def prepare_super_system_data(self, data_dict):
  """Подготовка данных for супер-системы"""
 
- # Объединение данных всех Timeframes
+ # Объединение данных all Timeframes
  combined_data = self.combine_all_Timeframes(data_dict)
 
- # create признаков всех indicators
+ # create признаков all indicators
  schr_features = self.schr_levels.create_features(combined_data)
  wave2_features = self.wave2.create_features(combined_data)
  short3_features = self.schr_short3.create_features(combined_data)
@@ -18002,7 +18002,7 @@ def prepare_super_system_data(self, data_dict):
 def create_meta_features(self, schr_features, wave2_features, short3_features):
  """create мета-признаков"""
 
- # Объединение всех признаков
+ # Объединение all признаков
  all_features = pd.concat([schr_features, wave2_features, short3_features], axis=1)
 
  # create взаимодействий между индикаторами
@@ -18014,7 +18014,7 @@ def create_meta_features(self, schr_features, wave2_features, short3_features):
  # create статистических признаков
  statistical_features = self.create_statistical_features(all_features)
 
- # Объединение всех мета-признаков
+ # Объединение all мета-признаков
  meta_features = pd.concat([
  all_features,
  interaction_features,
@@ -18209,7 +18209,7 @@ contract SuperTradingsystemContract {
  return signals[signalCount - 1];
  }
 
- function getsignalByIndex(uint256 index) external View returns (Supersignal memory) {
+ function getsignalByindex(uint256 index) external View returns (Supersignal memory) {
  return signals[index];
  }
 }
@@ -19396,7 +19396,7 @@ class TradingBotMonitoringsystem:
  def __init__(self):
  # Сбор метрик - что происходит with ботом
  self.metrics_collector = MetricsCollector()
- # Management уведомлениями - когда что-то идет not так
+ # Management notificationsми - когда что-то идет not так
  self.alert_manager = AlertManager()
  # Дашборд - визуализация данных
  self.dashboard = MonitoringDashboard()
@@ -19470,7 +19470,7 @@ class MetricsCollector:
  'var_95': self.calculate_var_95(bot_state),
  'expected_shortfall': self.calculate_expected_shortfall(bot_state),
 
- # Технические
+ # Technical
  'cpu_usage': bot_state.get('cpu_usage', 0),
  'memory_usage': bot_state.get('memory_usage', 0),
  'disk_usage': bot_state.get('disk_usage', 0),
@@ -19510,7 +19510,7 @@ class MetricsCollector:
 
  # Качество данных
  'data_quality_score': model_state.get('data_quality_score', 0),
- 'missing_data_rate': model_state.get('missing_data_rate', 0),
+ 'Missing_data_rate': model_state.get('Missing_data_rate', 0),
  'outlier_rate': model_state.get('outlier_rate', 0),
  'data_freshness': model_state.get('data_freshness', 0),
 
@@ -19536,7 +19536,7 @@ class MetricsCollector:
  'volume_24h': market_data.get('volume_24h', 0),
  'volume_change_24h': market_data.get('volume_change_24h', 0),
 
- # Технические индикаторы
+ # Technical индикаторы
  'rsi': market_data.get('rsi', 50),
  'macd': market_data.get('macd', 0),
  'bollinger_position': market_data.get('bollinger_position', 0.5),
@@ -20130,7 +20130,7 @@ class healthchecker:
 
 ```python
 class AlertBestPractices:
- """Лучшие практики settings алертов"""
+ """Лучшие практики Settings алертов"""
 
  def __init__(self):
  self.alert_hierarchy = {}
@@ -20171,7 +20171,7 @@ class AlertBestPractices:
  },
  'repeated_alerts': {
  'condition': 'same_alert_3_times_in_1_hour',
- 'action': 'escalate_to_technical_lead',
+ 'action': 'escalate_to_Technical_lead',
  'channels': ['phone', 'email']
  },
  'system_down': {
@@ -20243,7 +20243,7 @@ class LogRotation:
  log_dir = os.path.dirname(log_file)
  log_pattern = f"{log_file}.*"
 
- # Получение всех логов
+ # Получение all логов
  log_files = glob.glob(log_pattern)
 
  # Фильтрация on возрасту
@@ -20433,7 +20433,7 @@ class AutomatedActions:
  return {'success': False, 'error': str(e)}
 
  def close_all_positions(self, trigger_data):
- """Закрытие всех позиций"""
+ """Закрытие all позиций"""
 
  try:
  # Получение активных позиций

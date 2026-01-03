@@ -1,6 +1,6 @@
 # 18.2. Детальные components системы
 
-**Теория:** Детальные components системы представляют собой Detailed description всех ключевых компонентов системы, их функций and взаимодействий. Это критически важно for понимания архитектуры and реализации системы.
+**Теория:** Детальные components системы представляют собой Detailed description all ключевых компонентов системы, их функций and взаимодействий. Это критически важно for понимания архитектуры and реализации системы.
 
 **Почему детальные components системы важны:**
 - **Понимание:** Обеспечивает глубокое понимание системы
@@ -21,7 +21,7 @@
 
 ## 📊 Сборщик данных
 
-**Теория:** Сборщик данных представляет собой критически важный компонент системы, отвечающий за сбор, очистку and подготовку данных for дальнейшего Analysis. Это основа for всех ML-моделей and торговых решений.
+**Теория:** Сборщик данных представляет собой критически важный компонент системы, отвечающий за сбор, очистку and подготовку данных for дальнейшего Analysis. Это основа for all ML-моделей and торговых решений.
 
 **Почему сборщик данных важен:**
 - **Качество данных:** Обеспечивает качество данных
@@ -42,7 +42,7 @@
 
 **Детальная реализация сборщика данных:**
 
-Сборщик данных является фундаментальным компонентом системы, который обеспечивает получение, очистку and подготовку рыночных данных for всех последующих аналитических процессов. Этот компонент критически важен for работы всей системы, поскольку качество данных напрямую влияет on точность всех ML-моделей and торговых решений.
+Сборщик данных является фундаментальным компонентом системы, который обеспечивает получение, очистку and подготовку рыночных данных for all последующих аналитических процессов. Этот компонент критически важен for работы всей системы, поскольку качество данных напрямую влияет on точность all ML-моделей and торговых решений.
 
 **Архитектурные принципы:**
 - **Модульность**: Каждый источник данных обрабатывается независимо
@@ -74,7 +74,7 @@ import time
 
 class dataCollector:
  """
- Продвинутый сборщик данных for всех активов and Timeframes
+ Продвинутый сборщик данных for all активов and Timeframes
 
  Этот класс обеспечивает:
  - Многопоточный сбор данных
@@ -155,14 +155,14 @@ class dataCollector:
 
  # add метаданных and технических indicators
  data = self._add_metadata(data, symbol, Timeframe)
- data = self._add_technical_indicators(data)
+ data = self._add_Technical_indicators(data)
 
  # Валидация качества данных
  if not self._validate_data_quality(data):
  self.logger.error(f"data quality validation failed for {symbol} {Timeframe}")
  return pd.dataFrame()
 
- # Кэширование with временной меткой
+ # Кэширование with temporary меткой
  self.data_cache[cache_key] = data
  self.last_update[cache_key] = time.time()
 
@@ -205,7 +205,7 @@ class dataCollector:
  # remove NaN
  data = data.dropna()
 
- # remove дубликатов on индексу
+ # remove дубликатов on indexу
  data = data[~data.index.duplicated(keep='first')]
 
  # Сортировка in time
@@ -215,7 +215,7 @@ class dataCollector:
  data = self._remove_anomalies(data)
 
  # Восстановление пропущенных данных
- data = self._fill_missing_data(data)
+ data = self._fill_Missing_data(data)
 
  # Валидация OHLC данных
  data = self._validate_ohlc_data(data)
@@ -270,7 +270,7 @@ class dataCollector:
 
  return data
 
- def _fill_missing_data(self, data: pd.dataFrame) -> pd.dataFrame:
+ def _fill_Missing_data(self, data: pd.dataFrame) -> pd.dataFrame:
  """Восстановление пропущенных данных методом интерполяции"""
  if data.empty:
  return data
@@ -320,7 +320,7 @@ class dataCollector:
 
  return data
 
- def _add_technical_indicators(self, data: pd.dataFrame) -> pd.dataFrame:
+ def _add_Technical_indicators(self, data: pd.dataFrame) -> pd.dataFrame:
  """add базовых технических indicators"""
  if data.empty or len(data) < 20:
  return data
@@ -355,7 +355,7 @@ class dataCollector:
  return data
 
  def _calculate_rsi(self, prices: pd.Series, window: int = 14) -> pd.Series:
- """Расчет RSI (Relative Strength Index)"""
+ """Расчет RSI (Relative Strength index)"""
  delta = prices.diff()
  gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
  loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
@@ -450,7 +450,7 @@ class dataCollector:
  return current_data
 
  def get_all_data(self) -> Dict[str, pd.dataFrame]:
- """Получение всех кэшированных данных"""
+ """Получение all кэшированных данных"""
  return self.data_cache.copy()
 
  def save_data(self, data: pd.dataFrame, symbol: str, Timeframe: str, format: str = 'parquet'):
@@ -603,7 +603,7 @@ if __name__ == "__main__":
 **Математические основы WAVE2:**
 - **Волновой анализ**: Использует принципы волн Эллиотта for идентификации трендовых паттернов
 - **Машинное обучение**: Применяет ансамблевые методы for классификации рыночных состояний
-- **Технические индикаторы**: Интегрирует RSI, MACD, Bollinger Bands and другие индикаторы
+- **Technical индикаторы**: Интегрирует RSI, MACD, Bollinger Bands and другие индикаторы
 - **Временные ряды**: Анализирует лаговые dependencies and сезонные паттерны
 - **Статистический анализ**: Использует корреляционный анализ and регрессионные модели
 
@@ -815,7 +815,7 @@ class Wave2Indicator:
  # Определение весов ансамбля
  self.ensemble_weights = self._calculate_ensemble_weights(model_scores)
 
- # Финальная оценка on тестовых данных
+ # Финальная оценка on testsых данных
  test_Predictions = self._ensemble_predict(X_test_selected)
  test_accuracy = accuracy_score(y_test, test_Predictions)
 
@@ -891,7 +891,7 @@ class Wave2Indicator:
 
  Включает:
  - Волновые паттерны Эллиотта
- - Технические индикаторы
+ - Technical индикаторы
  - Статистические признаки
  - Временные паттерны
  - Объемные индикаторы
@@ -908,8 +908,8 @@ class Wave2Indicator:
  # Волновые признаки Эллиотта
  features.update(self._calculate_elliott_waves(df))
 
- # Технические индикаторы
- features.update(self._calculate_technical_indicators(df))
+ # Technical индикаторы
+ features.update(self._calculate_Technical_indicators(df))
 
  # Статистические признаки
  features.update(self._calculate_statistical_features(df))
@@ -992,7 +992,7 @@ class Wave2Indicator:
  price_change = (prices.iloc[-1] - prices.iloc[0]) / prices.iloc[0]
  return 1.0 if price_change > 0.03 else 0.0
 
- def _calculate_technical_indicators(self, df: pd.dataFrame) -> Dict[str, pd.Series]:
+ def _calculate_Technical_indicators(self, df: pd.dataFrame) -> Dict[str, pd.Series]:
  """Расчет технических indicators"""
  indicators = {}
 
@@ -1040,7 +1040,7 @@ class Wave2Indicator:
  return indicators
 
  def _calculate_rsi(self, prices: pd.Series, window: int = 14) -> pd.Series:
- """Расчет RSI (Relative Strength Index)"""
+ """Расчет RSI (Relative Strength index)"""
  delta = prices.diff()
  gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
  loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
@@ -1146,7 +1146,7 @@ class Wave2Indicator:
  vpt = (df['Close'].pct_change() * df['Volume']).cumsum()
  volume['vpt'] = vpt
 
- # Money Flow Index (MFI)
+ # Money Flow index (MFI)
  typical_price = (df['High'] + df['Low'] + df['Close']) / 3
  money_flow = typical_price * df['Volume']
  positive_flow = money_flow.where(typical_price > typical_price.shift(1), 0).rolling(14).sum()
@@ -1173,7 +1173,7 @@ class Wave2Indicator:
  for period in [5, 10, 20]:
  momentum[f'momentum_{period}'] = df['Close'] - df['Close'].shift(period)
 
- # Commodity Channel Index (CCI)
+ # Commodity Channel index (CCI)
  typical_price = (df['High'] + df['Low'] + df['Close']) / 3
  sma_tp = typical_price.rolling(20).mean()
  mad = typical_price.rolling(20).apply(lambda x: np.mean(np.abs(x - x.mean())))
@@ -1394,7 +1394,7 @@ class Wave2Indicator:
 # example использования and тестирования
 def create_wave2_example():
  """create примера использования WAVE2"""
- # Генерация тестовых данных
+ # Генерация testsых данных
  np.random.seed(42)
  dates = pd.date_range('2020-01-01', periods=1000, freq='H')
 
@@ -1424,7 +1424,7 @@ def create_wave2_example():
  return data
 
 if __name__ == "__main__":
- # create тестовых данных
+ # create testsых данных
  test_data = create_wave2_example()
 
  # Инициализация индикатора
@@ -1457,7 +1457,7 @@ if __name__ == "__main__":
 - **Кластерный анализ**: Группировка схожих ценовых уровней for выявления значимых зон
 - **Машинное обучение**: Использование алгоритмов классификации for предсказания поведения цен
 - **Статистический анализ**: Анализ частоты касаний and силы уровней
-- **Временной анализ**: Учет временных паттернов in формировании уровней
+- **temporary анализ**: Учет временных паттернов in формировании уровней
 - **Объемный анализ**: integration данных об объемах for подтверждения значимости уровней
 
 **Архитектурные принципы:**
@@ -1664,7 +1664,7 @@ class SCHRLevelsIndicator:
  # Определение весов ансамбля
  self.ensemble_weights = self._calculate_ensemble_weights(model_scores)
 
- # Финальная оценка on тестовых данных
+ # Финальная оценка on testsых данных
  test_Predictions = self._ensemble_predict(X_test_selected)
  test_accuracy = accuracy_score(y_test, test_Predictions)
 
@@ -2123,7 +2123,7 @@ class SCHRLevelsIndicator:
 
 # example использования
 if __name__ == "__main__":
- # create тестовых данных
+ # create testsых данных
  np.random.seed(42)
  dates = pd.date_range('2020-01-01', periods=1000, freq='H')
 

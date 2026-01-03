@@ -17,8 +17,8 @@
 - ✅ Исправлена ошибка with `line_dash='dot'` → `line_dash='dotted'`
 
 ### 3. **Тестирование**
-- ✅ Создан полный набор тестов in `tests/plotting/test_wave_fast_mode.py`
-- ✅ 7 тестов покрывают все аспекты функциональности
+- ✅ Создан полный набор tests in `tests/plotting/test_wave_fast_mode.py`
+- ✅ 7 tests покрывают все аспекты функциональности
 - ✅ 100% покрытие тестами новой функциональности
 - ✅ Все тесты проходят успешно
 
@@ -26,7 +26,7 @@
 - ✅ Создана подробная documentation in `docs/guides/wave-indicator-fast-mode-support.md`
 - ✅ Создано краткое резюме in `docs/guides/wave-indicator-fast-mode-implementation-summary.md`
 
-## 🔧 Технические детали
+## 🔧 Technical details
 
 ### Добавленная функциональность
 ```python
@@ -60,7 +60,7 @@ uv run run_Analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
 uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
 ```
 
-### Результаты тестов
+### Результаты tests
 ```
 ============================================ 7 passed in 0.42s =============================================
 ✅ Basic Wave indicator fast mode test passed
@@ -68,7 +68,7 @@ uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fast,22,11,4,fast,prime
 ✅ Wave indicator signal filtering test passed
 ✅ Wave indicator hover tool test passed
 ✅ Wave indicator empty data test passed
-✅ Wave indicator missing columns test passed
+✅ Wave indicator Missing columns test passed
 ✅ Wave indicator integration test passed
 
 🎉 all Wave Fast Mode tests passed successfully!
@@ -83,7 +83,7 @@ uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fast,22,11,4,fast,prime
 - Исправлена ошибка with line_dash параметром
 
 ### 2. `tests/plotting/test_wave_fast_mode.py` (новый файл)
-- 7 тестов for полного покрытия функциональности
+- 7 tests for полного покрытия функциональности
 - Тестирование различных сценариев использования
 - check обработки ошибок
 

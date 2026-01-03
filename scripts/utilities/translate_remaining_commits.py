@@ -36,9 +36,9 @@ COMMIT_TRANSLATIONS = {
  'c67140eb0ec3b33369c97fd972d371f6fdd20416':
  'feat: add complete earning system 100%+ per month - Created Detailed system with Working code from idea to deployment - Added all components: models, indicators, blockchain integration - Implemented automatic retraining system - Added full Monitoring and alert system - Created documentation on Launch and usage - system ready for testing on blockchain testnet',
  '02ec3296859726ca6f6026281a1496e64ea3b6e1':
- 'feat: create complete tutorial on creating robust profitable ML systems',
+ 'feat: create complete tutorial on Creating robust profitable ML systems',
  '619544aef875fc061c16e143436fdd6b940bc2b5':
- 'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Simple Example" and "Advanced Example" showcasing the development and deployment of robust ML models using AutoML Gluon. - included Detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide Users with practical insights into building and deploying ML models, catering to both novice and advanced Users.',
+ 'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Simple Example" and "Advanced Example" showcasing the development and deployment of robust ML models Using AutoML Gluon. - included Detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide users with practical insights into building and deploying ML models, catering to both novice and advanced users.',
  '877585aab0c1d60842bd7dc938175011d3892c67':
  'fix dual charts for -d fastest and MACD OK with scale date',
  '816bc990ee2430c7a06c59fecb72225178f74913':
@@ -54,7 +54,7 @@ def create_msg_filter_script():
  """Create a msg-filter script for git filter-branch."""
  # Also create message-based translations
  message_translations = {
- 'chore: update зависимостей h11 and httpcore to new versions':
+ 'chore: update dependencies h11 and httpcore to new versions':
  'chore: update dependencies h11 and httpcore to new versions',
  'feat: add new dependencies in проект':
  'feat: add new dependencies to project',
@@ -108,7 +108,7 @@ def translate_message(message):
 
  # Replace common Russian words
  replacements = [
- (r'\\bзависимостей\\b', 'dependencies'),
+ (r'\\bdependencies\\b', 'dependencies'),
  (r'\\bдо new versions\\b', 'to new versions'),
  (r'\\bв проект\\b', 'to project'),
  (r'\\bисключения\\b', 'exclusion'),
@@ -148,7 +148,7 @@ def translate_message(message):
  (r'\\bтестирования\\b', 'testing'),
  (r'\\bблокчейн testnet\\b', 'blockchain testnet'),
  (r'\\bсоздан полный учебник\\b', 'created complete tutorial'),
- (r'\\bна созданию\\b', 'on creating'),
+ (r'\\bна созданию\\b', 'on Creating'),
  (r'\\bробастных прибыльных\\b', 'robust profitable'),
  (r'\\bПростой example\\b', 'Simple example'),
  (r'\\bСложный example\\b', 'Advanced example'),
@@ -240,7 +240,7 @@ def main():
  print("\nNext steps:")
  print("1. ReView the changes: git log --oneline -20")
  print("2. check for remaining Russian text: git log --format='%s' | grep -E '[А-Яа-яЁё]'")
- print("3. If everything looks good, push: git push --force origin v0.5.8")
+ print("3. If everything looks good, Push: git Push --force origin v0.5.8")
  else:
  print(f"\n✗ Error during filter-branch:", file=sys.stderr)
  print(result.stderr, file=sys.stderr)

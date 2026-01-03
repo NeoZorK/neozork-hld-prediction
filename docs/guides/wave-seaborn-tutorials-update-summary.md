@@ -1,11 +1,11 @@
 # Wave Indicator Seaborn Tutorials Update Summary
 
 ## 🎯 Задача
-Обновить учебные пособия for wave indicator, добавив информацию о поддержке режима `-d sb` (seaborn backend) and обновить индексы документации and README.md.
+Обновить учебные пособия for wave indicator, добавив информацию о поддержке режима `-d sb` (seaborn backend) and обновить indexы документации and README.md.
 
 ## ✅ Выполненные обновления
 
-### 1. **Обновлен главный индекс документации** (`docs/index.md`)
+### 1. **Обновлен главный index документации** (`docs/index.md`)
 
 #### Добавлены новые ссылки in раздел Wave Indicator Tutorials:
 - [Wave Seaborn Mode](docs/guides/wave-indicator-seaborn-mode.md) - ⭐ **NEW** Complete Wave indicator support for seaborn mode (-d sb)
@@ -57,7 +57,7 @@ uv run run_Analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast
 #### Добавлен новый раздел Seaborn Mode Support ⭐ **NEW**:
 - **Visual Features**: description научного стиля отображения
 - **Usage Example**: example использования
-- **Technical Implementation**: Технические детали реализации
+- **Technical Implementation**: Technical details реализации
 - **Documentation**: Ссылки on документацию
 
 #### Обновлен раздел Documentation:
@@ -85,7 +85,7 @@ uv run run_Analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast
  ```
 
 #### Обновлены Best Practices:
-- Добавлена рекомендация on testing всех режимов
+- Добавлена рекомендация on testing all режимов
 - Добавлена рекомендация on использованию seaborn режима for профессиональных Reportов
 
 #### Обновлено Summary:
@@ -135,7 +135,7 @@ uv run run_Analysis.py show csv mn1 -d sb --rule wave:500,50,10,bettertrend,200,
 - [Wave Seaborn integration Summary](docs/guides/wave-seaborn-integration-summary.md) - Техническое резюме реализации
 
 ### Обновленные документы
-- [docs/index.md](docs/index.md) - Главный индекс документации
+- [docs/index.md](docs/index.md) - Главный index документации
 - [README.md](README.md) - Основной README файл
 - [adding-wave-indicator-tutorial.md](docs/guides/adding-wave-indicator-tutorial.md) - Основное учебное пособие
 - [adding-wave-indicator-fast-mode-tutorial.md](docs/guides/adding-wave-indicator-fast-mode-tutorial.md) - Учебное пособие for fast mode
@@ -151,7 +151,7 @@ uv run run_Analysis.py show csv mn1 -d sb --rule wave:500,50,10,bettertrend,200,
 ### ✅ Обновленная documentation
 - Все учебные пособия обновлены with информацией о seaborn режиме
 - Добавлены examples использования and лучшие практики
-- Обновлены индексы and README.md
+- Обновлены indexы and README.md
 - Создана полная documentation on seaborn режиму
 
 ### ✅ Готовность к использованию
@@ -159,6 +159,6 @@ uv run run_Analysis.py show csv mn1 -d sb --rule wave:500,50,10,bettertrend,200,
 - **Научных презентаций** with профессиональным стилем
 - **Публикаций** with высоким качеством изображений
 - **Analysis данных** with четкой визуализацией сигналов
-- **Профессиональных Reportов** with современной эстетикой
+- **Профессиональных Reportов** with соtemporary эстетикой
 
 Wave indicator in режиме `-d sb` теперь предоставляет научно-презентационный стиль визуализации with полным набором функций and возможностей, идентичным другим режимам отображения.

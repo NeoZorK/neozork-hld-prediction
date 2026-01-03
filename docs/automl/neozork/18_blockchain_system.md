@@ -112,7 +112,7 @@
 ##### 1. Базовые модели
 - **Logistic Regression** - линейная модель for выявления трендов
 - **Support Vector Machine** - нелинейная классификация паттернов
-- **Neural network** - глубокое обучение сложных зависимостей
+- **Neural network** - глубокое обучение сложных dependencies
 - **XGBoost** - градиентный бустинг for точных Predictions
 - **LightGBM** - быстрый градиентный бустинг
 - **CatBoost** - категориальный бустинг
@@ -159,7 +159,7 @@
 - Надежность системы
 
 **Недостатки:**
-- Сложность реализации and settings
+- Сложность реализации and Settings
 - Высокие требования к вычислительным ресурсам
 - Потенциальные конфликты между моделями
 - Необходимость тщательной калибровки весов
@@ -230,7 +230,7 @@ class EnsembleModel:
  self.feature_importance = {}
  self.performance_metrics = {}
 
- # settings
+ # Settings
  self.random_state = self.config.get('random_state', 42)
  self.cv_folds = self.config.get('cv_folds', 5)
  self.test_size = self.config.get('test_size', 0.2)
@@ -389,7 +389,7 @@ class EnsembleModel:
 
  def _prepare_ensemble_data(self, wave2_data: pd.dataFrame, schr_levels_data: pd.dataFrame, schr_short3_data: pd.dataFrame) -> tuple:
  """Подготовка данных for ансамбля"""
- # Объединение всех признаков
+ # Объединение all признаков
  all_features = []
 
  if not wave2_data.empty:
@@ -404,7 +404,7 @@ class EnsembleModel:
  if not all_features:
  return pd.dataFrame(), pd.Series()
 
- # Объединение on индексу
+ # Объединение on indexу
  X = pd.concat(all_features, axis=1)
  X = X.dropna()
 
@@ -594,7 +594,7 @@ class EnsembleModel:
  if 'low' in market_data:
  data.append(('low', market_data['low']))
 
- # Технические индикаторы (упрощенные)
+ # Technical индикаторы (упрощенные)
  if 'price' in market_data and 'volume' in market_data:
  price = market_data['price']
  volume = market_data['volume']
@@ -623,10 +623,10 @@ class EnsembleModel:
 
  def evaluate_model(self, test_data: pd.dataFrame) -> Dict:
  """
- Оценка модели on тестовых данных
+ Оценка модели on testsых данных
 
  Args:
- test_data: Тестовые data
+ test_data: testsые data
 
  Returns:
  Словарь with метриками оценки
@@ -739,7 +739,7 @@ class EnsembleModel:
 - Долгосрочная эффективность системы
 
 **Недостатки:**
-- Сложность реализации and settings
+- Сложность реализации and Settings
 - Потенциальные сбои in процессе переобучения
 - Высокие требования к вычислительным ресурсам
 - Необходимость тщательного Monitoringа
@@ -1097,7 +1097,7 @@ class Retrainingsystem:
  data.columns = [col.lower() for col in data.columns]
 
  # add технических indicators
- data = self._add_technical_indicators(data)
+ data = self._add_Technical_indicators(data)
 
  self.logger.info(f"Reference data loaded: {len(data)} records")
  return data
@@ -1106,7 +1106,7 @@ class Retrainingsystem:
  self.logger.error(f"Error Loading reference data: {e}")
  return pd.dataFrame()
 
- def _add_technical_indicators(self, data: pd.dataFrame) -> pd.dataFrame:
+ def _add_Technical_indicators(self, data: pd.dataFrame) -> pd.dataFrame:
  """add технических indicators"""
  try:
  if data.empty:
@@ -1138,7 +1138,7 @@ class Retrainingsystem:
  return data
 
  except Exception as e:
- self.logger.error(f"Error adding technical indicators: {e}")
+ self.logger.error(f"Error adding Technical indicators: {e}")
  return data
 
  def _get_current_data(self) -> pd.dataFrame:
@@ -1156,7 +1156,7 @@ class Retrainingsystem:
  data.columns = [col.lower() for col in data.columns]
 
  # add технических indicators
- data = self._add_technical_indicators(data)
+ data = self._add_Technical_indicators(data)
 
  return data
 
@@ -1284,7 +1284,7 @@ class Retrainingsystem:
  # Выбор признаков
  feature_cols = data.select_dtypes(include=[np.number]).columns.toList()
 
- # remove целевой переменной если есть
+ # remove целевой переменной if present
  if 'target' in feature_cols:
  feature_cols.remove('target')
 
@@ -1305,10 +1305,10 @@ class Retrainingsystem:
 
  y = y.astype(int)
  else:
- # Если нет цены, создаем случайную целевую переменную
+ # Если нет цены, Creating случайную целевую переменную
  y = pd.Series(np.random.randint(0, 3, len(X)), index=X.index)
 
- # Synchronization индексов
+ # Synchronization indexов
  common_index = X.index.intersection(y.index)
  X = X.loc[common_index]
  y = y.loc[common_index]
@@ -1425,7 +1425,7 @@ class Retrainingsystem:
 
 **Почему блокчейн-integration критически важна:**
 - **Децентрализация:** Обеспечивает децентрализованную торговлю без посредников
-- **Прозрачность:** Обеспечивает полную прозрачность всех операций
+- **Прозрачность:** Обеспечивает полную прозрачность all операций
 - **Безопасность:** Обеспечивает безопасное тестирование стратегий
 - **Реалистичность:** Критически важно for реалистичного тестирования
 
@@ -1436,7 +1436,7 @@ class Retrainingsystem:
 - Реалистичные условия тестирования
 
 **Недостатки:**
-- Сложность интеграции and settings
+- Сложность интеграции and Settings
 - Высокие требования к техническим знаниям
 - Потенциальные Issues with безопасностью ключей
 - Необходимость понимания блокчейн-технологий
@@ -1500,7 +1500,7 @@ class TestnetBlockchainsystem:
  - Децентрализованная торговля через смарт-контракты
  - ML-генерация торговых сигналов
  - Автоматическое Management рисками
- - Прозрачность всех операций
+ - Прозрачность all операций
  - Goal: 100% прибыли in месяц
  """
 
@@ -1606,7 +1606,7 @@ class TestnetBlockchainsystem:
  def _load_contracts(self):
  """Загрузка смарт-контрактов"""
  try:
- # ABI for тестового контракта
+ # ABI for testsого контракта
  test_contract_abi = [
  {
  "inputs": [{"name": "amount", "type": "uint256"}],
@@ -1628,7 +1628,7 @@ class TestnetBlockchainsystem:
  }
  ]
 
- # Адрес тестового контракта
+ # Адрес testsого контракта
  test_contract_address = self.config.get('test_contract_address')
 
  if test_contract_address:
@@ -1673,7 +1673,7 @@ class TestnetBlockchainsystem:
  time.sleep(60) # 1 minutesа
 
  except KeyboardInterrupt:
- self.logger.info("Trading system stopped by User")
+ self.logger.info("Trading system stopped by user")
  break
  except Exception as e:
  self.logger.error(f"Error in trading cycle: {e}")
@@ -1847,7 +1847,7 @@ class TestnetBlockchainsystem:
  balance = self.contracts['test'].functions.getBalance().call()
  return balance / 1e18 # Конвертация из wei
  else:
- return 1000.0 # Тестовый баланс
+ return 1000.0 # testsый баланс
 
  except Exception as e:
  self.logger.error(f"Error getting balance: {e}")
@@ -1997,7 +1997,7 @@ class TestnetBlockchainsystem:
  except Exception as e:
  self.logger.error(f"Error saving final Report: {e}")
 
- def _add_technical_indicators(self, data: pd.dataFrame) -> pd.dataFrame:
+ def _add_Technical_indicators(self, data: pd.dataFrame) -> pd.dataFrame:
  """add технических indicators"""
  try:
  if data.empty or 'close' not in data.columns:
@@ -2025,7 +2025,7 @@ class TestnetBlockchainsystem:
  return data
 
  except Exception as e:
- self.logger.error(f"Error adding technical indicators: {e}")
+ self.logger.error(f"Error adding Technical indicators: {e}")
  return data
 
  def _calculate_risk_metrics(self) -> Dict:
@@ -2094,9 +2094,9 @@ class TestnetBlockchainsystem:
 
 #### Concept централизованного управления
 
-**Теория:** Главный скрипт Launchа представляет собой центральный оркестратор всей блокчейн-торговой системы, который координирует работу всех подсистем and обеспечивает их бесшовную интеграцию. Этот компонент критически важен for:
+**Теория:** Главный скрипт Launchа представляет собой центральный оркестратор всей блокчейн-торговой системы, который координирует работу all подсистем and обеспечивает их бесшовную интеграцию. Этот компонент критически важен for:
 
-1. **Координации работы** всех ML-моделей and блокчейн-компонентов
+1. **Координации работы** all ML-моделей and блокчейн-компонентов
 2. **Управления жизненным циклом** системы from Launchа to остановки
 3. **Monitoringа производительности** and автоматического реагирования on проблемы
 4. **Обеспечения надежности** через обработку ошибок and восстановление
@@ -2108,7 +2108,7 @@ class TestnetBlockchainsystem:
 ##### 1. Система инициализации
 - **ConfigLoader** - загрузка and валидация конфигурации
 - **LoggerSetup** - configuration системы логирования
-- **Dependencychecker** - check зависимостей and окружения
+- **Dependencychecker** - check dependencies and окружения
 - **ResourceManager** - Management ресурсами системы
 
 ##### 2. Компонент-менеджер
@@ -2132,7 +2132,7 @@ class TestnetBlockchainsystem:
 #### Преимущества централизованного управления
 
 **Координация:**
-- Synchronization работы всех компонентов
+- Synchronization работы all компонентов
 - Management зависимостями между модулями
 - Обеспечение последовательности операций
 - Минимизация конфликтов ресурсов
@@ -2140,7 +2140,7 @@ class TestnetBlockchainsystem:
 **Надежность:**
 - Централизованная обработка ошибок
 - Автоматическое восстановление после сбоев
-- Monitoring состояния всех компонентов
+- Monitoring состояния all компонентов
 - Graceful shutdown при критических ошибках
 
 **Масштабируемость:**
@@ -2156,7 +2156,7 @@ class TestnetBlockchainsystem:
 - Детальное логирование событий
 
 **Почему главный скрипт критически важен:**
-- **Координация:** Обеспечивает слаженную работу всех компонентов
+- **Координация:** Обеспечивает слаженную работу all компонентов
 - **integration:** Обеспечивает бесшовную интеграцию подсистем
 - **Management:** Обеспечивает централизованное Management системой
 - **Эффективность:** Критически важно for эффективной работы всей системы
@@ -2164,7 +2164,7 @@ class TestnetBlockchainsystem:
 **Преимущества:**
 - Централизованное Management allи componentsи
 - Слаженная координация работы подсистем
-- Бесшовная integration всех модулей
+- Бесшовная integration all модулей
 - Высокая эффективность работы системы
 
 **Недостатки:**
@@ -2203,7 +2203,7 @@ try:
  from src.models.ensemble import EnsembleModel
  from src.models.retraining_system import Retrainingsystem
  from src.blockchain.testnet_integration import TestnetBlockchainsystem
-except ImportError as e:
+except importError as e:
  print(f"Error importing modules: {e}")
  print("Please ensure all required modules are installed and paths are correct")
  sys.exit(1)
@@ -2227,7 +2227,7 @@ def load_config():
  config_path = "config/config.yaml"
 
  if not Path(config_path).exists():
- print(f"Config file not found: {config_path}")
+ print(f"Config File not found: {config_path}")
  sys.exit(1)
 
  with open(config_path, 'r') as file:
@@ -2273,7 +2273,7 @@ def main():
  blockchain_system.start_trading_system()
 
  except KeyboardInterrupt:
- print("\nsystem stopped by User")
+ print("\nsystem stopped by user")
  except Exception as e:
  print(f"system error: {e}")
  logging.error(f"system error: {e}")
@@ -2308,7 +2308,7 @@ class NeoZorK100Percentsystem:
  self._initialize_components()
 
  def _initialize_components(self):
- """Инициализация всех компонентов системы"""
+ """Инициализация all компонентов системы"""
  try:
  self.logger.info("Initializing system components...")
 
@@ -2402,7 +2402,7 @@ class NeoZorK100Percentsystem:
  self.logger.error(f"Error generating final Report: {e}")
 
 def check_dependencies():
- """check зависимостей системы"""
+ """check dependencies системы"""
  try:
  import pandas
  import numpy
@@ -2415,9 +2415,9 @@ def check_dependencies():
  print("✅ all dependencies are available")
  return True
 
- except ImportError as e:
+ except importError as e:
  print(f"❌ Missing dependency: {e}")
- print("Please install missing dependencies:")
+ print("Please install Missing dependencies:")
  print("pip install pandas numpy scikit-learn web3 yfinance TA-Lib schedule")
  return False
 
@@ -2469,7 +2469,7 @@ if __name__ == "__main__":
 - Изоляция компонентов
 
 **Минусы:**
-- Сложность settings
+- Сложность Settings
 - Потенциальные Issues with производительностью
 - Требует знаний Docker
 
@@ -2479,18 +2479,18 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# installation системных зависимостей
+# installation системных dependencies
 RUN apt-get update && apt-get install -y \
  gcc \
  g++ \
  make \
  && rm -rf /var/lib/apt/Lists/*
 
-# Копирование файлов
+# Копирование files
 COPY requirements.txt .
 COPY pyproject.toml .
 
-# installation Python зависимостей
+# installation Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Копирование исходного кода
@@ -2539,7 +2539,7 @@ Services:
  container_name: neozork-postgres
  environment:
  - POSTGRES_DB=neozork
- - POSTGRES_User=neozork
+ - POSTGRES_user=neozork
  - POSTGRES_PASSWORD=neozork123
  volumes:
  - postgres_data:/var/lib/postgresql/data
@@ -2569,7 +2569,7 @@ networks:
 
 ### Скрипт деплоя
 
-**Теория:** Скрипт деплоя представляет собой автоматизированный процесс развертывания системы, который обеспечивает быстрое and надежное развертывание всех компонентов. Это критически важно for эффективного развертывания and управления системой.
+**Теория:** Скрипт деплоя представляет собой автоматизированный процесс развертывания системы, который обеспечивает быстрое and надежное развертывание all компонентов. Это критически важно for эффективного развертывания and управления системой.
 
 **Почему скрипт деплоя важен:**
 - **Автоматизация:** Обеспечивает автоматизацию развертывания
@@ -2584,7 +2584,7 @@ networks:
 - Консистентность
 
 **Минусы:**
-- Сложность settings
+- Сложность Settings
 - Потенциальные ошибки
 - Требует тестирования
 
@@ -2728,7 +2728,7 @@ Monitoring:
  performance_dashboard: true
 ```
 
-### Файл зависимостей
+### Файл dependencies
 
 ```txt
 # requirements.txt
@@ -2792,7 +2792,7 @@ Services:
  container_name: neozork-postgres
  environment:
  - POSTGRES_DB=neozork
- - POSTGRES_User=neozork
+ - POSTGRES_user=neozork
  - POSTGRES_PASSWORD=neozork123
  volumes:
  - postgres_data:/var/lib/postgresql/data
@@ -2844,7 +2844,7 @@ TEST_CONTRACT_ADDRESS=0x...
 
 # База данных
 POSTGRES_DB=neozork
-POSTGRES_User=neozork
+POSTGRES_user=neozork
 POSTGRES_PASSWORD=neozork123
 POSTGRES_HOST=postgres
 POSTGRES_PORT=5432
@@ -2867,14 +2867,14 @@ ALERT_EMAIL=admin@example.com
 
 ## 🚀 instructions on Launch
 
-### 1. installation зависимостей
+### 1. installation dependencies
 
 ```bash
 # Клонирование репозитория
 git clone <repository-url>
 cd neozork-hld-Prediction
 
-# installation зависимостей
+# installation dependencies
 pip install -r requirements.txt
 
 # or with использованием uv
@@ -2931,6 +2931,6 @@ docker-compose logs -f neozork-100-percent
 2. **Тестирование** - всегда тестируйте on testnet перед переходом on mainnet
 3. **Monitoring** - постоянно отслеживайте производительность системы
 4. **Резервное копирование** - регулярно сохраняйте конфигурацию and модели
-5. **Обновления** - следите за обновлениями зависимостей and безопасности
+5. **Обновления** - следите за обновлениями dependencies and безопасности
 
 Это полная система for достижения 100% прибыли in месяц on блокчейн testnet with автоматическим переобучением and робастной архитектурой!

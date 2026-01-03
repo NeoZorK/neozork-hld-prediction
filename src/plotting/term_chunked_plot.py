@@ -2,7 +2,7 @@
 # src/plotting/term_chunked_plot.py
 
 """
-Enhanced terminal-based chunked plotting using plotext for displaying data in intervals.
+Enhanced terminal-based chunked plotting Using plotext for displaying data in intervals.
 Automatically calculates optimal chunk size based on total data length.
 Supports all rules: OHLCV, AUTO, PV, SR, PHLD, and RSI variants (rsi, rsi_mom, rsi_div).
 """
@@ -19,12 +19,12 @@ import sys
 try:
  from common import logger
  from src.common.constants import TradingRule, BUY, SELL, NOTRADE
-except ImportError:
+except importError:
  try:
  # Fallback to relative imports when run as module
  from src.common import logger
  from src.common.constants import TradingRule, BUY, SELL, NOTRADE
- except ImportError:
+ except importError:
  # Final fallback for pytest with -n auto
  import sys
  import os
@@ -32,14 +32,14 @@ except ImportError:
  from src.common import logger
  from src.common.constants import TradingRule, BUY, SELL, NOTRADE
 
-# Import Navigation system
+# import Navigation system
 try:
  from .term_Navigation import TerminalNavigator, create_Navigation_prompt, parse_Navigation_input
-except ImportError:
+except importError:
  try:
  # Fallback to relative imports when run as module
  from src.plotting.term_Navigation import TerminalNavigator, create_Navigation_prompt, parse_Navigation_input
- except ImportError:
+ except importError:
  # Final fallback for pytest with -n auto
  from src.plotting.term_Navigation import TerminalNavigator, create_Navigation_prompt, parse_Navigation_input
 
@@ -153,7 +153,7 @@ def parse_rsi_rule(rule_str: str) -> Tuple[str, Dict[str, Any]]:
 
  return rule_type, parameters
 
- except (ValueError, IndexError) as e:
+ except (ValueError, indexError) as e:
  logger.print_warning(f"Invalid RSI rule format: {rule_str}. Using defaults.")
  return rule_type, {
  'period': 14,
@@ -336,7 +336,7 @@ def plot_auto_chunks(df: pd.dataFrame, title: str = "AUTO Chunks", style: str = 
  numeric_columns = df.select_dtypes(include=[np.number]).columns.toList()
 
  # Skip standard columns for individual field plots
- skip_columns = {'Open', 'High', 'Low', 'Close', 'Volume', 'DateTime', 'Timestamp', 'Date', 'Time', 'Index', 'index'}
+ skip_columns = {'Open', 'High', 'Low', 'Close', 'Volume', 'DateTime', 'Timestamp', 'Date', 'Time', 'index', 'index'}
  field_columns = [col for col in numeric_columns if col not in skip_columns]
 
  if Use_Navigation:
@@ -1102,7 +1102,7 @@ def plot_macd_chunks(df: pd.dataFrame, title: str = "MACD Chunks", style: str = 
  # Show chunk statistics
  _show_chunk_statistics(chunk, f"{title} - MACD", chunk_start_idx, chunk_end_idx)
 
- # Wait for User input before showing next chunk
+ # Wait for user input before showing next chunk
  if i < len(chunks) - 1: # Don't wait after the last chunk
  input("\nPress Enter to continue to next chunk...")
 
@@ -1250,7 +1250,7 @@ def plot_indicator_chunks(df: pd.dataFrame, indicator_name: str, title: str = "I
  # Show chunk statistics
  _show_chunk_statistics(chunk, f"{title} - {indicator_name}", chunk_start_idx, chunk_end_idx)
 
- # Wait for User input before showing next chunk
+ # Wait for user input before showing next chunk
  if i < len(chunks) - 1: # Don't wait after the last chunk
  input("\nPress Enter to continue to next chunk...")
 
@@ -1706,7 +1706,7 @@ def _add_rsi_indicator_to_subplot(chunk: pd.dataFrame, x_values: List, rule: str
  if len(params) >= 3:
  oversold_level = float(params[1]) # second parameter
  overbought_level = float(params[2]) # third parameter
- except (ValueError, IndexError):
+ except (ValueError, indexError):
  # If parsing fails, Use defaults
  pass
 

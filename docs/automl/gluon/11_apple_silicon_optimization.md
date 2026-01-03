@@ -42,7 +42,7 @@ Apple Silicon MacBook with чипами M1, M2, M3 предоставляют у
 
 **Почему installation for Apple Silicon требует особого внимания?** Потому что большинство пакетов on умолчанию собираются for x86, что приводит к медленной работе через эмуляцию Rosetta.
 
-**Ключевые аспекты оптимизированной установки:**
+**Ключевые аспекты оптимизированной installation:**
 
 - **Нативные ARM64 пакеты**: Использование conda вместо pip
 - **Оптимизированные библиотеки**: NumPy, SciPy with поддержкой Accelerate
@@ -60,7 +60,7 @@ Apple Silicon MacBook with чипами M1, M2, M3 предоставляют у
 conda create -n autogluon-m1 python=3.9
 conda activate autogluon-m1
 
-# installation базовых зависимостей - нативные ARM64 версии
+# installation базовых dependencies - нативные ARM64 версии
 conda install -c conda-forge numpy pandas scikit-learn matplotlib seaborn
 
 # installation PyTorch with поддержкой MPS (Metal Performance Shaders)
@@ -114,7 +114,7 @@ pip install openmp-python
 <img src="images/optimized/metrics_Detailed.png" alt="configuration for Apple Silicon" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 3: Оптимизированная configuration AutoML Gluon for Apple Silicon*
 
-**Почему важна правильная configuration for Apple Silicon?** Потому что неправильные settings могут снизить производительность in 2-3 раза:
+**Почему важна правильная configuration for Apple Silicon?** Потому что неправильные Settings могут снизить производительность in 2-3 раза:
 
 **Ключевые аспекты конфигурации:**
 
@@ -173,13 +173,13 @@ def configure_apple_silicon():
 
  Notes:
  ------
- Ключевые settings for Apple Silicon:
+ Ключевые Settings for Apple Silicon:
  - num_gpus: 0 - отключение CUDA (not поддерживается on Apple Silicon)
- - num_cpus: torch.get_num_threads() - использование всех доступных CPU ядер
+ - num_cpus: torch.get_num_threads() - использование all доступных CPU ядер
  - memory_limit: 8GB - оптимальный лимит памяти for Apple Silicon
  - time_limit: 3600s - стандартное время обучения (1 час)
 
- MPS (Metal Performance Shaders) settings:
+ MPS (Metal Performance Shaders) Settings:
  - Автоматическое определение доступности MPS
  - Fallback on CPU если MPS not available
  - Оптимизация for унифицированной памяти Apple Silicon
@@ -637,7 +637,7 @@ def train_model_remote(data_chunk, model_config):
  - problem_type: str - тип задачи ('auto', 'binary', 'multiclass', 'regression')
  - eval_metric: str - метрика оценки ('auto', 'accuracy', 'f1', 'rmse')
  - time_limit: int - время обучения in секундах
- - presets: str - предустановки качества ('medium_quality', 'high_quality')
+ - presets: str - предinstallation качества ('medium_quality', 'high_quality')
 
  Returns:
  --------
@@ -666,7 +666,7 @@ def train_model_remote(data_chunk, model_config):
  predictor.fit(
  data_chunk, # Часть данных for обучения
  time_limit=model_config['time_limit'], # Время обучения
- presets=model_config['presets'] # Предустановки качества
+ presets=model_config['presets'] # Предinstallation качества
  )
 
  return predictor
@@ -700,12 +700,12 @@ def distributed_training_apple_silicon(data: pd.dataFrame, n_workers: int = 4):
  1. Разделение данных on части
  2. create конфигурации модели
  3. Launch удаленных задач обучения
- 4. Ожидание завершения всех задач
+ 4. Ожидание завершения all задач
  5. Возврат обученных моделей
 
  Преимущества распределенного обучения:
  - Параллельная обработка данных
- - Использование всех CPU ядер
+ - Использование all CPU ядер
  - Масштабирование on большие датасеты
  - Оптимизация for Apple Silicon
  """
@@ -715,13 +715,13 @@ def distributed_training_apple_silicon(data: pd.dataFrame, n_workers: int = 4):
  chunk_size = len(data) // n_workers
  data_chunks = [data.iloc[i:i+chunk_size] for i in range(0, len(data), chunk_size)]
 
- # configuration модели for всех воркеров
+ # configuration модели for all воркеров
  model_config = {
  'label': 'target', # Целевая переменная
  'problem_type': 'auto', # Автоматическое определение типа задачи
  'eval_metric': 'auto', # Автоматический выбор метрики
  'time_limit': 1800, # Время обучения in секундах (30 minutes)
- 'presets': 'medium_quality' # Предустановки качества
+ 'presets': 'medium_quality' # Предinstallation качества
  }
 
  # Launch удаленных задач обучения
@@ -731,7 +731,7 @@ def distributed_training_apple_silicon(data: pd.dataFrame, n_workers: int = 4):
  future = train_model_remote.remote(chunk, model_config)
  futures.append(future)
 
- # Ожидание завершения всех задач
+ # Ожидание завершения all задач
  # Ray автоматически управляет ресурсами and процессами
  results = ray.get(futures)
 
@@ -797,7 +797,7 @@ def configure_openmp_apple_silicon():
  - OMP_NESTED: 'TRUE' - вложенный параллелизм
 
  Преимущества OpenMP on Apple Silicon:
- - Параллельные вычисления on всех ядрах
+ - Параллельные вычисления on all ядрах
  - Оптимизация for многоядерных систем
  - Эффективное использование ресурсов
  - Ускорение матричных операций
@@ -871,14 +871,14 @@ def parallel_data_processing(data: pd.dataFrame, n_workers: int = None):
  4. Объединение результатов
 
  Преимущества параллельной обработки:
- - Использование всех CPU ядер
+ - Использование all CPU ядер
  - Ускорение обработки данных
  - Оптимизация for Apple Silicon
  - Эффективное использование памяти
  """
 
  if n_workers is None:
- n_workers = mp.cpu_count() # Использование всех доступных ядер
+ n_workers = mp.cpu_count() # Использование all доступных ядер
 
  def process_chunk(chunk):
  """
@@ -901,8 +901,8 @@ def parallel_data_processing(data: pd.dataFrame, n_workers: int = None):
  # create новых признаков
  # add агрегированных признаков for улучшения качества
  if len(chunk.columns) > 1:
- chunk['feature_sum'] = chunk.sum(axis=1) # Сумма всех признаков
- chunk['feature_mean'] = chunk.mean(axis=1) # Среднее всех признаков
+ chunk['feature_sum'] = chunk.sum(axis=1) # Сумма all признаков
+ chunk['feature_mean'] = chunk.mean(axis=1) # Среднее all признаков
 
  return chunk
 
@@ -917,7 +917,7 @@ def parallel_data_processing(data: pd.dataFrame, n_workers: int = None):
  processed_chunks = List(executor.map(process_chunk, chunks))
 
  # Объединение результатов
- # Конкатенация всех обWorkingнных частей
+ # Конкатенация all обWorkingнных частей
  processed_data = pd.concat(processed_chunks, ignore_index=True)
 
  return processed_data
@@ -966,7 +966,7 @@ class AppleSiliconOptimizer:
  ------
  AppleSiliconOptimizer обеспечивает:
  - Комплексную настройку системы for Apple Silicon
- - Оптимизацию всех компонентов (OpenMP, PyTorch, AutoGluon, Ray)
+ - Оптимизацию all компонентов (OpenMP, PyTorch, AutoGluon, Ray)
  - Автоматическое определение оптимальных параметров
  - Monitoring производительности
  - Management ресурсами
@@ -983,14 +983,14 @@ class AppleSiliconOptimizer:
 
  Notes:
  ------
- Процесс settings системы:
+ Процесс Settings системы:
  1. Отключение CUDA (not поддерживается on Apple Silicon)
  2. configuration OpenMP for параллельных вычислений
  3. configuration PyTorch for MPS acceleration
  4. configuration AutoGluon for Apple Silicon
  5. configuration Ray for распределенных вычислений
 
- Результат settings:
+ Результат Settings:
  - Оптимизированная система for Apple Silicon
  - Максимальная производительность
  - Эффективное использование ресурсов
@@ -1073,7 +1073,7 @@ class AppleSiliconOptimizer:
  --------
  dict
  Оптимальная configuration for Apple Silicon:
- - presets: предустановки качества
+ - presets: предinstallation качества
  - num_bag_folds: количество фолдов for бэггинга
  - num_bag_sets: количество наборов for бэггинга
  - time_limit: время обучения in секундах
@@ -1166,7 +1166,7 @@ def train_optimized_apple_silicon(data: pd.dataFrame, target_col: str):
 def run_optimized_training():
  """Launch оптимизированного обучения"""
 
- # create тестовых данных
+ # create testsых данных
  from sklearn.datasets import make_classification
  X, y = make_classification(n_samples=10000, n_features=20, n_classes=2, random_state=42)
 
@@ -1607,7 +1607,7 @@ def get_optimal_config_apple_silicon(data_size: int, data_type: str = 'tabular')
  --------
  Dict[str, Any]
  Оптимальная configuration for Apple Silicon:
- - presets: предустановки качества
+ - presets: предinstallation качества
  - num_bag_folds: количество фолдов for бэггинга
  - num_bag_sets: количество наборов for бэггинга
  - time_limit: время обучения in секундах
@@ -1748,4 +1748,4 @@ def train_with_optimal_config(data: pd.dataFrame, target_col: str):
 - **Monitoring производительности** for Apple Silicon
 - **Troubleshooting** типичных проблем
 
-Все settings оптимизированы for максимальной производительности on Apple Silicon with учетом особенностей архитектуры M1/M2/M3 чипов.
+Все Settings оптимизированы for максимальной производительности on Apple Silicon with учетом особенностей архитектуры M1/M2/M3 чипов.

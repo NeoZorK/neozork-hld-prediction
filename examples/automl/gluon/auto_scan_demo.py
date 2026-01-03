@@ -64,7 +64,7 @@ def test_interactive_selection(scanner):
  print(f" Indicator: {selection['indicator']}")
  print(f" symbol: {selection['symbol']}")
  print(f" Timeframes: {', '.join(selection['Timeframes'])}")
- print(f" Files: {len(selection.get('file_paths', {}))}")
+ print(f" files: {len(selection.get('file_paths', {}))}")
  return selection
  else:
  print(f"❌ Selection failed: {selection.get('error')}")

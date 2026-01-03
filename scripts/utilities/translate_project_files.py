@@ -19,7 +19,7 @@ TRANSLATION_PATTERNS = {
  r'Why Proper installation is Critical': 'Why Proper installation is Critical',
  r'Real Consequences of Incorrect installation': 'Real Consequences of Incorrect installation',
  r'Что происходит при неправильной установке\?': 'What Happens with Incorrect installation?',
- r'Конфликты зависимостей': 'Dependency Conflicts',
+ r'Конфликты dependencies': 'Dependency Conflicts',
  r'Issues with производительностью': 'Performance Issues',
  r'Ошибки компиляции': 'Compilation Errors',
  r'Issues with GPU': 'GPU Issues',
@@ -27,7 +27,7 @@ TRANSLATION_PATTERNS = {
  r'Common Issues': 'Common Issues',
  r'installation Issues': 'installation Issues',
  r'Launch Issues': 'Launch Issues',
- r'Import Errors': 'Import Errors',
+ r'import Errors': 'import Errors',
  r'Port Issues': 'Port Issues',
  r'Frequently Asked Questions': 'Frequently Asked Questions',
  r'Project Structure': 'Project Structure',
@@ -61,7 +61,7 @@ TRANSLATION_PATTERNS = {
  r'\bпараметр\b': 'parameter',
  r'\bпараметры\b': 'parameters',
  r'\bконфигурация\b': 'configuration',
- r'\bнастройки\b': 'settings',
+ r'\bнастройки\b': 'Settings',
 
  # Code comments and docstrings
  r'Comprehensive solution for': 'Comprehensive solution for',
@@ -82,7 +82,7 @@ TRANSLATION_PATTERNS = {
  r'\bдо\b': 'to',
 }
 
-# Files and directories to exclude
+# files and directories to exclude
 EXCLUDE_PATTERNS = [
  r'.*/russian/.*',
  r'.*-ru\.md$',
@@ -151,7 +151,7 @@ def find_files_with_russian(root_dir: str = '.') -> List[Tuple[str, int]]:
 
 
 def translate_text(text: str) -> str:
- """Translate Russian text to English using patterns."""
+ """Translate Russian text to English Using patterns."""
  if not has_russian_text(text):
  return text
 

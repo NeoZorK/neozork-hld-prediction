@@ -19,7 +19,7 @@ from datetime import datetime, timedelta
 import warnings
 warnings.filterwarnings('ignore')
 
-# Создаем демонстрационные финансовые data
+# Creating демонстрационные финансовые data
 def create_financial_data(n_samples=1000, noise_level=0.1):
  """create синтетических финансовых данных with различными рыночными условиями"""
  np.random.seed(42)
@@ -46,7 +46,7 @@ def create_financial_data(n_samples=1000, noise_level=0.1):
  rsi = 50 + 20 * np.sin(2 * np.pi * np.arange(n_samples) / 50) + np.random.normal(0, 5, n_samples)
  rsi = np.clip(rsi, 0, 100)
 
- # Создаем dataFrame
+ # Creating dataFrame
  data = pd.dataFrame({
  'price': prices,
  'volume': volumes,
@@ -61,7 +61,7 @@ def create_financial_data(n_samples=1000, noise_level=0.1):
 
  return data
 
-# Создаем признаки
+# Creating признаки
 def create_features(data, window=20):
  """create признаков for ML-модели"""
  df = data.copy()
@@ -76,7 +76,7 @@ def create_features(data, window=20):
  df['volume_ma'] = df['volume'].rolling(window).mean()
  df['volume_ratio'] = df['volume'] / df['volume_ma']
 
- # Технические индикаторы
+ # Technical индикаторы
  df['rsi_ma'] = df['rsi'].rolling(window).mean()
  df['rsi_signal'] = (df['rsi'] > 70).astype(int) - (df['rsi'] < 30).astype(int)
 
@@ -101,7 +101,7 @@ class RobustMLsystem:
  """Обучение робастной системы"""
  print("🚀 Обучение робастной ML-системы...")
 
- # Создаем признаки
+ # Creating признаки
  df = create_features(data)
 
  # Выбираем признаки
@@ -114,7 +114,7 @@ class RobustMLsystem:
  # Нормализация with робастным скейлером
  X_scaled = self.scaler.fit_transform(X)
 
- # Создаем ансамбль моделей
+ # Creating ансамбль моделей
  self.models = {
  'random_forest': RandomForestRegressor(n_estimators=100, random_state=42),
  'ridge': Ridge(alpha=1.0),
@@ -126,7 +126,7 @@ class RobustMLsystem:
  print(f" 📊 Обучение {name}...")
  model.fit(X_scaled, y)
 
- # Создаем voting ensemble
+ # Creating voting ensemble
  self.ensemble = VotingRegressor([
  ('rf', self.models['random_forest']),
  ('ridge', self.models['ridge']),
@@ -144,13 +144,13 @@ class RobustMLsystem:
  if not self.is_trained:
  raise ValueError("Модель not обучена!")
 
- # Создаем признаки
+ # Creating признаки
  df = create_features(data)
 
- # checking presence всех признаков
- missing_cols = set(self.feature_columns) - set(df.columns)
- if missing_cols:
- print(f"⚠️ Отсутствуют признаки: {missing_cols}")
+ # checking presence all признаков
+ Missing_cols = set(self.feature_columns) - set(df.columns)
+ if Missing_cols:
+ print(f"⚠️ Missing признаки: {Missing_cols}")
  return np.zeros(len(df))
 
  X = df[self.feature_columns].values
@@ -193,7 +193,7 @@ if __name__ == "__main__":
  print("🎯 ДЕМОНСТРАЦИЯ РОБАСТНОЙ ML-СИСТЕМЫ")
  print("=" * 60)
 
- # 1. Создаем data
+ # 1. Creating data
  print("\n1️⃣ create демонстрационных данных...")
  data = create_financial_data(n_samples=500)
  print(f" 📊 Создано {len(data)} записей")
@@ -231,7 +231,7 @@ if __name__ == "__main__":
 **Запустите этот код, чтобы увидеть робастную system in действии!**
 
 ```bash
-# installation зависимостей
+# installation dependencies
 pip install numpy pandas scikit-learn scipy matplotlib
 
 # Launch полной демонстрации
@@ -243,7 +243,7 @@ python -c "from robust_systems_examples import demonstrate_data_robustness; demo
 
 ## 📋 Требования for Launchа
 
-for работы всех примеров install dependencies:
+for работы all примеров install dependencies:
 
 ```bash
 pip install numpy pandas scikit-learn scipy matplotlib
@@ -253,7 +253,7 @@ pip install numpy pandas scikit-learn scipy matplotlib
 
 1. **Скачайте файл with примерами:**
  ```bash
- wget https://raw.githubUsercontent.com/your-repo/neozork-hld-Prediction/main/docs/automl/neozork/robust_systems_examples.py
+ wget https://raw.githubusercontent.com/your-repo/neozork-hld-Prediction/main/docs/automl/neozork/robust_systems_examples.py
  ```
 
 2. **Запустите полную демонстрацию:**
@@ -398,7 +398,7 @@ def unstable_Prediction(data):
 def robust_Prediction(data, threshold=0.02):
  """Робастная система - учитывает контекст and тренды"""
  if isinstance(data, dict):
- # Если data in виде словаря, создаем временный dataFrame
+ # Если data in виде словаря, Creating временный dataFrame
  df = pd.dataFrame([data])
  price_trend = df['price'].rolling(1).mean()
  volatility = df['price'].rolling(1).std()
@@ -431,7 +431,7 @@ def demonstrate_stability():
  print("🔍 Демонстрация стабильности систем")
  print("=" * 50)
 
- # Создаем тестовые data
+ # Creating testsые data
  np.random.seed(42)
  base_price = 105.0
 
@@ -443,8 +443,8 @@ def demonstrate_stability():
  robust_result = robust_Prediction(data)
  print(f" Цена: {price:6.1f} | Нестабильная: {unstable_result:4} | Робастная: {robust_result:4}")
 
- # Тест 2: Создаем временной ряд
- print("\n📊 Тест 2: Временной ряд with трендом")
+ # Тест 2: Creating temporary ряд
+ print("\n📊 Тест 2: temporary ряд with трендом")
  dates = pd.date_range('2023-01-01', periods=30, freq='D')
  prices = 100 + np.cumsum(np.random.normal(0.1, 0.5, 30)) # Восходящий тренд with шумом
 
@@ -591,7 +591,7 @@ def demonstrate_adaptivity():
  print("🔄 Демонстрация адаптивной системы")
  print("=" * 50)
 
- # Создаем адаптивную system
+ # Creating адаптивную system
  system = Adaptivesystem()
 
  # Симулируем различные условия производительности
@@ -630,10 +630,10 @@ if __name__ == "__main__":
 - **Качество данных:** Финансовые data часто содержат ошибки and аномалии
 - **Экстремальные события:** Рыночные кризисы могут создавать выбросы
 - **Манипуляции:** Попытки манипулирования рынком могут создавать ложные сигналы
-- **Технические сбои:** Ошибки in системах сбора данных
+- **Technical сбои:** Ошибки in системах сбора данных
 
 **Типы выбросов:**
-- **Глобальные выбросы:** Значения, которые значительно отличаются from всех остальных
+- **Глобальные выбросы:** Значения, которые значительно отличаются from all остальных
 - **Контекстуальные выбросы:** Значения, которые нормальны in одном контексте, но аномальны in другом
 - **Коллективные выбросы:** Группы значений, которые вместе образуют аномалию
 
@@ -651,7 +651,7 @@ if __name__ == "__main__":
 
 **Минусы устойчивых к выбросам систем:**
 - Могут игнорировать важные сигналы
-- Сложность settings пороговых значений
+- Сложность Settings пороговых значений
 - Возможная потеря чувствительности к реальным изменениям
 - Сложность интерпретации результатов
 ```python
@@ -731,7 +731,7 @@ def demonstrate_outlier_robustness():
  print("🛡️ Демонстрация устойчивости к выбросам")
  print("=" * 50)
 
- # Создаем data with выбросами
+ # Creating data with выбросами
  np.random.seed(42)
  n_samples = 100
 
@@ -742,7 +742,7 @@ def demonstrate_outlier_robustness():
  outlier_indices = np.random.choice(n_samples, size=10, replace=False)
  normal_data[outlier_indices] = np.random.choice([50, 150], size=10) # Экстремальные значения
 
- # Создаем dataFrame
+ # Creating dataFrame
  df = pd.dataFrame({
  'price': normal_data,
  'timestamp': pd.date_range('2023-01-01', periods=n_samples, freq='D')
@@ -908,7 +908,7 @@ def clean_outliers(data, method='iqr'):
  (cleaned_data['price'] <= upper_bound)]
  return cleaned_data
 
-def fill_missing_values(data):
+def fill_Missing_values(data):
  """Заполнение пропущенных значений"""
  return data.fillna(method='ffill').fillna(method='bfill')
 
@@ -918,7 +918,7 @@ def demonstrate_data_robustness():
  print("📊 ДЕМОНСТРАЦИЯ РОБАСТНОСТИ К ДАННЫМ")
  print("=" * 50)
 
- # Создаем тестовые data
+ # Creating testsые data
  np.random.seed(42)
  data = pd.dataFrame({
  'price': np.random.normal(100, 10, 100),
@@ -933,12 +933,12 @@ def demonstrate_data_robustness():
  print(f"Исходные data: {len(data)} записей")
  print(f"Выбросы: {data['price'].isnull().sum()} пропущенных значений")
 
- # Создаем робастную system
+ # Creating робастную system
  system = dataRobustsystem()
  system.add_validator(validate_price_range)
  system.add_validator(validate_no_nans)
  system.add_cleaner(clean_outliers)
- system.add_cleaner(fill_missing_values)
+ system.add_cleaner(fill_Missing_values)
 
  # Обрабатываем data
  try:
@@ -1072,7 +1072,7 @@ class ParameterRobustsystem:
 
  def _train_model(self, data, params):
  """Обучение модели with заданными параметрами"""
- # Создаем простую модель
+ # Creating простую модель
  X = data[['price']].values if 'price' in data.columns else np.random.random((len(data), 1))
  y = np.random.random(len(data))
 
@@ -1112,13 +1112,13 @@ def demonstrate_parameter_robustness():
  print("\n⚙️ ДЕМОНСТРАЦИЯ РОБАСТНОСТИ К ПАРАМЕТРАМ")
  print("=" * 50)
 
- # Создаем тестовые data
+ # Creating testsые data
  data = pd.dataFrame({
  'price': np.random.normal(100, 10, 200),
  'volume': np.random.poisson(1000, 200)
  })
 
- # Создаем system
+ # Creating system
  base_params = {'learning_rate': 0.01, 'batch_size': 32}
  system = ParameterRobustsystem(base_params)
 
@@ -1182,7 +1182,7 @@ if __name__ == "__main__":
 - **Гибридная адаптация:** Комбинация различных подходов
 
 **Monitoring условий:**
-- **Технические индикаторы:** RSI, MACD, Bollinger Bands
+- **Technical индикаторы:** RSI, MACD, Bollinger Bands
 - **Фундаментальные показатели:** P/E, P/B, дивидендная доходность
 - **Макроэкономические data:** ВВП, инфляция, безработица
 - **Рыночные метрики:** VIX, спреды, объемы
@@ -1199,7 +1199,7 @@ if __name__ == "__main__":
 - Сложность реализации детекции условий
 - Возможная задержка in адаптации
 - Высокие требования к вычислительным ресурсам
-- Сложность тестирования on всех условиях
+- Сложность тестирования on all условиях
 - Риск ложных срабатываний детектора условий
 
 **Проблема:** Система должна Workingть in разных рыночных условиях.
@@ -1303,7 +1303,7 @@ def demonstrate_condition_robustness():
  print("\n🌍 ДЕМОНСТРАЦИЯ РОБАСТНОСТИ К УСЛОВИЯМ")
  print("=" * 50)
 
- # Создаем data with разными условиями
+ # Creating data with разными условиями
  np.random.seed(42)
  n_samples = 300
 
@@ -1313,7 +1313,7 @@ def demonstrate_condition_robustness():
  'volume': np.random.poisson(1000, n_samples)
  })
 
- # Создаем system
+ # Creating system
  system = MarketConditionRobustsystem()
  system.train_condition_models(trend_data)
 
@@ -1404,7 +1404,7 @@ def Prediction_stability(model, data, n_iterations=100):
 
 def outlier_robustness(model, data, outlier_ratio=0.1):
  """Измерение устойчивости к выбросам"""
- # Создаем data with выбросами
+ # Creating data with выбросами
  outlier_data = data.copy()
  if 'price' in outlier_data.columns:
  n_outliers = int(len(data) * outlier_ratio)
@@ -1463,7 +1463,7 @@ def demonstrate_metrics():
  print("\n📈 ДЕМОНСТРАЦИЯ МЕТРИК РОБАСТНОСТИ")
  print("=" * 50)
 
- # Создаем тестовые data
+ # Creating testsые data
  data = pd.dataFrame({
  'price': np.random.normal(100, 10, 100),
  'volume': np.random.poisson(1000, 100)
@@ -1485,7 +1485,7 @@ def demonstrate_metrics():
  print(f"Устойчивость к выбросам: {robustness:.3f}")
  print(f"Адаптивность: {adaptability_score:.3f}")
 
-# Создаем тестовые data
+# Creating testsые data
 data = pd.dataFrame({
  'price': np.random.normal(100, 10, 100),
  'volume': np.random.poisson(1000, 100)
@@ -1525,11 +1525,11 @@ if __name__ == "__main__":
 - **Качество данных:** Финансовые data часто содержат ошибки and аномалии
 - **Экстремальные события:** Рыночные кризисы могут создавать выбросы
 - **Манипуляции:** Попытки манипулирования рынком могут создавать ложные сигналы
-- **Технические сбои:** Ошибки in системах сбора данных
+- **Technical сбои:** Ошибки in системах сбора данных
 - **Человеческие ошибки:** Ошибки ввода данных операторами
 
 **Типы выбросов in финансовых данных:**
-- **Глобальные выбросы:** Значения, которые значительно отличаются from всех остальных
+- **Глобальные выбросы:** Значения, которые значительно отличаются from all остальных
 - **Контекстуальные выбросы:** Значения, которые нормальны in одном контексте, но аномальны in другом
 - **Коллективные выбросы:** Группы значений, которые вместе образуют аномалию
 - **Временные выбросы:** Аномалии, которые происходят in определенные моменты времени
@@ -1537,7 +1537,7 @@ if __name__ == "__main__":
 
 **Источники выбросов:**
 - **Ошибки ввода:** Человеческие ошибки при вводе данных
-- **Технические сбои:** Issues with системами сбора данных
+- **Technical сбои:** Issues with системами сбора данных
 - **Экстремальные события:** Финансовые кризисы, природные катастрофы
 - **Манипуляции:** Намеренные попытки исказить data
 - **Изменения in методологии:** Изменения in способах расчета показателей
@@ -1565,7 +1565,7 @@ if __name__ == "__main__":
 
 **Минусы устойчивости к выбросам:**
 - Могут игнорировать важные сигналы
-- Сложность settings пороговых значений
+- Сложность Settings пороговых значений
 - Возможная потеря чувствительности к реальным изменениям
 - Сложность интерпретации результатов
 - Риск удаления важной информации
@@ -1577,7 +1577,7 @@ from scipy import stats
 
 def outlier_robustness(model, data, outlier_ratio=0.1):
  """Измерение устойчивости к выбросам"""
- # Создаем data with выбросами
+ # Creating data with выбросами
  outlier_data = data.copy()
  if 'price' in outlier_data.columns:
  n_outliers = int(len(data) * outlier_ratio)
@@ -1677,7 +1677,7 @@ def demonstrate_outlier_robustness():
  print("🛡️ Демонстрация устойчивости к выбросам")
  print("=" * 50)
 
- # Создаем data with выбросами
+ # Creating data with выбросами
  np.random.seed(42)
  n_samples = 100
 
@@ -1688,7 +1688,7 @@ def demonstrate_outlier_robustness():
  outlier_indices = np.random.choice(n_samples, size=10, replace=False)
  normal_data[outlier_indices] = np.random.choice([50, 150], size=10) # Экстремальные значения
 
- # Создаем dataFrame
+ # Creating dataFrame
  df = pd.dataFrame({
  'price': normal_data,
  'timestamp': pd.date_range('2023-01-01', periods=n_samples, freq='D')
@@ -1916,7 +1916,7 @@ def demonstrate_adaptivity():
  print("🔄 Демонстрация адаптивной системы")
  print("=" * 50)
 
- # Создаем адаптивную system
+ # Creating адаптивную system
  system = Adaptivesystem()
 
  # Симулируем различные условия производительности
@@ -1989,7 +1989,7 @@ if __name__ == "__main__":
 - **Метрики:** Количественные показатели производительности
 - **Логи:** Детальная информация о событиях системы
 - **Трейсы:** Отслеживание запросов через system
-- **Алерты:** Уведомления о критических событиях
+- **Алерты:** notifications о критических событиях
 - **Дашборды:** Визуализация состояния системы
 - **Аналитика:** Анализ трендов and паттернов
 
@@ -2176,7 +2176,7 @@ def demonstrate_architecture():
  print("🏗️ ДЕМОНСТРАЦИЯ АРХИТЕКТУРЫ РОБАСТНОЙ СИСТЕМЫ")
  print("=" * 60)
 
- # Создаем тестовые data
+ # Creating testsые data
  np.random.seed(42)
  data = pd.dataFrame({
  'price': np.random.normal(100, 10, 200),
@@ -2184,7 +2184,7 @@ def demonstrate_architecture():
  'timestamp': pd.date_range('2023-01-01', periods=200, freq='D')
  })
 
- # Создаем робастную system
+ # Creating робастную system
  system = RobustMLsystem()
 
  # Обучаем system
@@ -2259,7 +2259,7 @@ if __name__ == "__main__":
 - **Схема данных:** check типов and структуры данных
 - **Диапазоны значений:** check on разумные значения
 - **Консистентность:** check логических связей между полями
-- **Полнота:** check наличия всех required данных
+- **Полнота:** check наличия all required данных
 - **Актуальность:** check свежести данных
 
 **Плюсы робастной обработки данных:**
@@ -2270,7 +2270,7 @@ if __name__ == "__main__":
 - Повышение доверия пользователей
 
 **Минусы робастной обработки данных:**
-- Сложность реализации and settings
+- Сложность реализации and Settings
 - Возможная потеря информации при очистке
 - Высокие требования к вычислительным ресурсам
 - Сложность отладки при проблемах
@@ -2342,7 +2342,7 @@ class RobustNormalizer:
 class RobustdataProcessor:
  def __init__(self):
  self.outlier_detector = OutlierDetector()
- self.missing_handler = MissingValueHandler()
+ self.Missing_handler = MissingValueHandler()
  self.normalizer = RobustNormalizer()
 
  def process(self, data):
@@ -2350,7 +2350,7 @@ class RobustdataProcessor:
  print("🔧 Робастная обработка данных...")
 
  # 1. Обработка пропущенных значений
- data = self.missing_handler.handle(data)
+ data = self.Missing_handler.handle(data)
  print(" ✅ ОбWorkingны пропущенные значения")
 
  # 2. Обнаружение and обработка выбросов
@@ -2409,7 +2409,7 @@ def demonstrate_data_processing():
  print("🔧 ДЕМОНСТРАЦИЯ РОБАСТНОЙ ОБРАБОТКИ ДАННЫХ")
  print("=" * 60)
 
- # Создаем тестовые data with проблемами
+ # Creating testsые data with проблемами
  np.random.seed(42)
  n_samples = 100
 
@@ -2509,7 +2509,7 @@ if __name__ == "__main__":
 - **Увеличение данных:** add новых примеров
 - **Аугментация данных:** create синтетических данных
 - **Регуляризация:** add штрафов за сложность
-- **Валидация:** Постоянная check on тестовых данных
+- **Валидация:** Постоянная check on testsых данных
 
 **Адаптивное обучение:**
 - **Online Learning:** update модели on новых данных
@@ -2526,7 +2526,7 @@ if __name__ == "__main__":
 - Лучшая производительность in продакшене
 
 **Минусы робастного обучения:**
-- Сложность settings параметров
+- Сложность Settings параметров
 - Высокие требования к вычислительным ресурсам
 - Возможное снижение точности on обучающих данных
 - Сложность интерпретации результатов
@@ -2594,7 +2594,7 @@ class EnsembleBuilder:
  # Выбираем лучшие модели
  best_models = List(models.values())[:3] # Берем первые 3 модели
 
- # Создаем VotingRegressor
+ # Creating VotingRegressor
  ensemble = VotingRegressor([
  (f'model_{i}', model) for i, model in enumerate(best_models)
  ])
@@ -2670,7 +2670,7 @@ def demonstrate_model_training():
  print("🎓 ДЕМОНСТРАЦИЯ РОБАСТНОГО ОБУЧЕНИЯ МОДЕЛИ")
  print("=" * 60)
 
- # Создаем тестовые data
+ # Creating testsые data
  np.random.seed(42)
  n_samples = 200
  n_features = 5
@@ -2720,11 +2720,11 @@ if __name__ == "__main__":
 **Почему стресс-тестирование важно:**
 - **Кризисные события:** Система должна Workingть во время финансовых кризисов
 - **Экстремальная волатильность:** Высокая нестабильность рынка
-- **Технические сбои:** Отказы инфраструктуры or networks
+- **Technical сбои:** Отказы инфраструктуры or networks
 - **Регуляторные требования:** Финансовые регуляторы требуют стресс-тестирования
 - **Management рисками:** Понимание пределов системы
 
-**Типы стресс-тестов:**
+**Типы стресс-tests:**
 - **Нагрузочное тестирование:** Тестирование при высокой нагрузке
 - **Объемное тестирование:** Тестирование with большими объемами данных
 - **Временное тестирование:** Тестирование in течение длительного времени
@@ -2735,7 +2735,7 @@ if __name__ == "__main__":
 - **Финансовые кризисы:** Резкие падения рынка
 - **Высокая волатильность:** Экстремальные колебания цен
 - **Низкая ликвидность:** Ограниченная доступность активов
-- **Технические сбои:** Отказы серверов or networks
+- **Technical сбои:** Отказы серверов or networks
 - **Регуляторные изменения:** Новые правила and ограничения
 
 **Методы стресс-тестирования:**
@@ -2815,14 +2815,14 @@ def stress_test_system(system, data):
 
  # Тест 2: remove данных
  print(" 📊 Тест 2: remove данных")
- missing_ratios = [0.1, 0.2, 0.3, 0.5]
- for ratio in missing_ratios:
+ Missing_ratios = [0.1, 0.2, 0.3, 0.5]
+ for ratio in Missing_ratios:
  incomplete_data = remove_data(data, ratio)
  if hasattr(system, 'predict'):
  performance = np.random.random() # Упрощенная оценка
  else:
  performance = 0.5
- results[f'missing_{ratio}'] = performance
+ results[f'Missing_{ratio}'] = performance
  print(f" Удалено {ratio*100:.0f}%: производительность = {performance:.3f}")
 
  # Тест 3: Изменение распределения
@@ -2845,35 +2845,35 @@ def demonstrate_stress_testing():
  print("\n🔥 ДЕМОНСТРАЦИЯ СТРЕСС-ТЕСТИРОВАНИЯ")
  print("=" * 50)
 
- # Создаем тестовые data
+ # Creating testsые data
  data = pd.dataFrame({
  'price': np.random.normal(100, 10, 100),
  'volume': np.random.poisson(1000, 100)
  })
 
  # Простая система
- class Testsystem:
+ class testsystem:
  def predict(self, data):
  return np.random.random(len(data))
 
- system = Testsystem()
+ system = testsystem()
  results = stress_test_system(system, data)
 
  print(f"✅ Стресс-тестирование COMPLETED")
- print(f"Результаты: {len(results)} тестов проведено")
+ print(f"Результаты: {len(results)} tests проведено")
 
-# Создаем тестовые data
+# Creating testsые data
 data = pd.dataFrame({
  'price': np.random.normal(100, 10, 100),
  'volume': np.random.poisson(1000, 100)
 })
 
 # Простая система for тестирования
-class Testsystem:
+class testsystem:
  def predict(self, data):
  return np.random.random(len(data))
 
-system = Testsystem()
+system = testsystem()
 
 # Проводим стресс-тестирование
 print("🔥 Launch стресс-тестирования...")
@@ -2923,7 +2923,7 @@ if __name__ == "__main__":
 - **Ликвидные условия:** Высокая доступность активов for trading
 - **Неликвидные условия:** Ограниченная доступность активов
 
-**Методы создания тестовых условий:**
+**Методы создания testsых условий:**
 - **Исторические data:** Использование прошлых рыночных periods
 - **Синтетические data:** Искусственное create условий
 - **Фильтрация данных:** Выделение определенных periods
@@ -2956,7 +2956,7 @@ if __name__ == "__main__":
 - Высокие требования к данным
 - Сложность интерпретации результатов
 - Необходимость in длительном тестировании
-- Возможность переобучения on тестовых условиях
+- Возможность переобучения on testsых условиях
 
 ```python
 import numpy as np
@@ -3036,11 +3036,11 @@ def demonstrate_market_condition_testing():
  print("\n🌍 ДЕМОНСТРАЦИЯ ТЕСТИРОВАНИЯ on РАЗНЫХ УСЛОВИЯХ")
  print("=" * 60)
 
- # Создаем тестовые data with разными условиями
+ # Creating testsые data with разными условиями
  np.random.seed(42)
  n_samples = 500
 
- # Создаем data with различными рыночными условиями
+ # Creating data with различными рыночными условиями
  dates = pd.date_range('2023-01-01', periods=n_samples, freq='D')
 
  # Бычий рынок (первые 100 дней)
@@ -3067,16 +3067,16 @@ def demonstrate_market_condition_testing():
  'timestamp': dates
  })
 
- print(f"📊 Созданы тестовые data:")
+ print(f"📊 Созданы testsые data:")
  print(f" Общее количество образцов: {len(data)}")
  print(f" Диапазон цен: {data['price'].min():.2f} - {data['price'].max():.2f}")
 
  # Простая система for тестирования
- class Testsystem:
+ class testsystem:
  def predict(self, data):
  return np.random.random(len(data))
 
- system = Testsystem()
+ system = testsystem()
 
  # Тестируем on разных условиях
  results = market_condition_test(system, data)
@@ -3118,7 +3118,7 @@ if __name__ == "__main__":
 - **Сбор метрик:** Автоматический сбор показателей производительности
 - **Анализ данных:** Обработка and анализ собранных метрик
 - **Детекция аномалий:** Выявление необычных паттернов
-- **Алертинг:** Уведомления о критических событиях
+- **Алертинг:** notifications о критических событиях
 - **Визуализация:** Дашборды and графики for Monitoringа
 - **Автоматизация:** Автоматические реакции on события
 
@@ -3137,11 +3137,11 @@ if __name__ == "__main__":
 - **Ансамбли:** Комбинация различных методов
 
 **Стратегии алертинга:**
-- **Пороговые алерты:** Уведомления при превышении порогов
-- **Трендовые алерты:** Уведомления при изменении трендов
-- **Аномальные алерты:** Уведомления при обнаружении аномалий
+- **Пороговые алерты:** notifications при превышении порогов
+- **Трендовые алерты:** notifications при изменении трендов
+- **Аномальные алерты:** notifications при обнаружении аномалий
 - **Каскадные алерты:** Эскалация при критических событиях
-- **Умные алерты:** Контекстные уведомления with рекомендациями
+- **Умные алерты:** Контекстные notifications with рекомендациями
 
 **Плюсы системы Monitoringа:**
 - Быстрое обнаружение проблем
@@ -3151,7 +3151,7 @@ if __name__ == "__main__":
 - improve производительности
 
 **Минусы системы Monitoringа:**
-- Сложность settings and поддержки
+- Сложность Settings and поддержки
 - Высокие требования к ресурсам
 - Возможность ложных срабатываний
 - Сложность интерпретации данных
@@ -3237,7 +3237,7 @@ def demonstrate_Monitoring():
  print("\n📊 ДЕМОНСТРАЦИЯ MonitoringА")
  print("=" * 50)
 
- # Создаем монитор
+ # Creating монитор
  monitor = RobustnessMonitor()
 
  # Симулируем Monitoring
@@ -3396,12 +3396,12 @@ def demonstrate_auto_adaptation():
  print("\n🔄 ДЕМОНСТРАЦИЯ АВТОМАТИЧЕСКОЙ АДАПТАЦИИ")
  print("=" * 50)
 
- # Создаем system
- class Testsystem:
+ # Creating system
+ class testsystem:
  def predict(self, data):
  return np.random.random(len(data))
 
- system = Testsystem()
+ system = testsystem()
  adaptation = AutoAdaptation(system)
 
  # Симулируем адаптацию
@@ -3447,7 +3447,7 @@ def prevent_overfitting(model, data):
 
  # 1. Регуляризация
  if hasattr(model, 'alpha'):
- model.alpha = 1.0 # Устанавливаем регуляризацию
+ model.alpha = 1.0 # Setting регуляризацию
  print(" ✅ Добавлена регуляризация")
 
  # 2. Ранняя остановка (for итеративных алгоритмов)
@@ -3502,7 +3502,7 @@ def bootstrap_training(system, data):
  n_bootstrap = 5
 
  for i in range(n_bootstrap):
- # Создаем бутстрап выборку
+ # Creating бутстрап выборку
  bootstrap_indices = np.random.choice(len(data), size=len(data), replace=True)
  bootstrap_data = data.iloc[bootstrap_indices] if hasattr(data, 'iloc') else data[bootstrap_indices]
 
@@ -3526,7 +3526,7 @@ def bagging_training(system, data):
  n_bags = 5
 
  for i in range(n_bags):
- # Создаем подвыборку
+ # Creating подвыборку
  bag_indices = np.random.choice(len(data), size=len(data)//2, replace=False)
  bag_data = data.iloc[bag_indices] if hasattr(data, 'iloc') else data[bag_indices]
 
@@ -3550,7 +3550,7 @@ def demonstrate_practical_recommendations():
  print("💡 ДЕМОНСТРАЦИЯ ПРАКТИЧЕСКИХ РЕКОМЕНДАЦИЙ")
  print("=" * 60)
 
- # Создаем тестовые data
+ # Creating testsые data
  np.random.seed(42)
  data = pd.dataFrame({
  'feature1': np.random.normal(0, 1, 100),
@@ -3558,8 +3558,8 @@ def demonstrate_practical_recommendations():
  'feature3': np.random.normal(0, 1, 100)
  })
 
- # Создаем простую system
- class Testsystem:
+ # Creating простую system
+ class testsystem:
  def __init__(self):
  self.model = Ridge(alpha=1.0)
 
@@ -3573,7 +3573,7 @@ def demonstrate_practical_recommendations():
  X = data.values if hasattr(data, 'values') else data
  return self.model.predict(X)
 
- system = Testsystem()
+ system = testsystem()
 
  # 1. Предотвращение переобучения
  print("\n1️⃣ Предотвращение переобучения:")
@@ -3651,13 +3651,13 @@ class MyRobustsystem:
  X_scaled = self.scaler.transform(X)
  return self.ensemble.predict(X_scaled)
 
-# Создаем тестовые data
+# Creating testsые data
 data = pd.dataFrame({
  'price': np.random.normal(100, 10, 200),
  'volume': np.random.poisson(1000, 200)
 })
 
-# Создаем and обучаем system
+# Creating and обучаем system
 my_system = MyRobustsystem()
 my_system.train(data)
 
@@ -3690,8 +3690,8 @@ def test_my_system_robustness(system, data):
 
  # Тест 2: remove данных
  print(" 📊 Тест 2: remove данных")
- missing_ratios = [0.1, 0.2, 0.3]
- for ratio in missing_ratios:
+ Missing_ratios = [0.1, 0.2, 0.3]
+ for ratio in Missing_ratios:
  n_remove = int(len(data) * ratio)
  remove_indices = np.random.choice(len(data), n_remove, replace=False)
  incomplete_data = data.drop(remove_indices).reset_index(drop=True)
@@ -3753,7 +3753,7 @@ class MyRobustnessMonitor:
  'last_update': recent_metrics['timestamp']
  }
 
-# Создаем монитор
+# Creating монитор
 monitor = MyRobustnessMonitor()
 
 # Симулируем Monitoring

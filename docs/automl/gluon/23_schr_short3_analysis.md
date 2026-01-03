@@ -32,7 +32,7 @@
 - **Быстрая адаптация**: Быстро адаптируется к изменениям рынка
 - **Высокая частота сигналов**: Генерирует много торговых возможностей
 - **Низкий лаг**: Минимальная задержка in сигналах
-- **Масштабируемость**: Workingет on всех Timeframes
+- **Масштабируемость**: Workingет on all Timeframes
 - **integration with блокчейном**: Прозрачные and автоматизированные операции
 
 **Результаты SCHR SHORT3:**
@@ -332,7 +332,7 @@ schr_short3_columns = {
 - **Низкий лаг**: Минимальная задержка in сигналах
 - **Быстрая адаптация**: Быстро адаптируется к изменениям рынка
 - **Высокая точность**: Точные краткосрочные сигналы
-- **Масштабируемость**: Workingет on всех Timeframes
+- **Масштабируемость**: Workingет on all Timeframes
 - **integration with блокчейном**: Прозрачные and автоматизированные операции
 
 ### M1 (1 minutesа) - Высокочастотная торговля
@@ -626,7 +626,7 @@ class SCHRShort3MLModel:
  def prepare_schr_short3_data(self, data_dict):
  """Подготовка данных SCHR SHORT3 for ML"""
 
- # Объединение данных всех Timeframes
+ # Объединение данных all Timeframes
  combined_data = self.combine_Timeframe_data(data_dict)
 
  # create признаков
@@ -648,7 +648,7 @@ class SCHRShort3MLModel:
 
 - **`self.feature_columns`**: List признаков модели
  - Тип: List[str]
- - Содержит: названия всех признаков SCHR SHORT3
+ - Содержит: названия all признаков SCHR SHORT3
  - Применение: for Predictions on новых краткосрочных данных
  - update: при изменении набора краткосрочных признаков
 
@@ -661,12 +661,12 @@ class SCHRShort3MLModel:
 - **`data_dict`**: Словарь данных on Timeframeм
  - Тип: dict
  - Structure: {Timeframe: dataFrame}
- - Применение: объединение данных всех Timeframes
- - Требования: одинаковые колонки во всех dataFrame
+ - Применение: объединение данных all Timeframes
+ - Требования: одинаковые колонки во all dataFrame
 
 - **`combined_data`**: Объединенные data
  - Тип: dataFrame
- - Содержит: data всех Timeframes
+ - Содержит: data all Timeframes
  - Применение: create краткосрочных признаков and целевой переменной
  - Обработка: remove дубликатов and пропусков
 
@@ -1093,7 +1093,7 @@ class SCHRShort3MLModel:
  # Признаки краткосрочной волатильности
  volatility_features = self.create_volatility_features(data)
 
- # Объединение всех признаков
+ # Объединение all признаков
  all_features = pd.concat([
  short_features,
  signal_features,
@@ -1308,7 +1308,7 @@ class SCHRShort3MLModel:
  - Содержит: направление цены, краткосрочные сигналы, паттерны, отскоки
  - Применение: обучение модели
  - Формат: бинарные метки (0/1)
- - Требования: соответствие индексов with features
+ - Требования: соответствие indexов with features
 
 - **`data`**: Объединенные data
  - Тип: dataFrame
@@ -1317,7 +1317,7 @@ class SCHRShort3MLModel:
  - Обработка: remove пропусков
  - Требования: отсутствие NaN значений
 
-- **`split_idx`**: Индекс разделения
+- **`split_idx`**: index разделения
  - Тип: int
  - Формула: int(len(data) * 0.8)
  - Применение: разделение on train/validation
@@ -1454,7 +1454,7 @@ class SCHRShort3MLModel:
 
 - **`Predictions`**: Предсказания модели
  - Тип: numpy array
- - Содержит: предсказания for всех тестовых данных
+ - Содержит: предсказания for all testsых данных
  - Применение: расчет доходности
  - Формат: бинарные метки (0/1)
  - Интерпретация: 0 = падение, 1 = рост
@@ -1817,7 +1817,7 @@ class SCHRShort3DEXintegration:
 2. **Быстрая адаптация** - быстро адаптируется к изменениям рынка
 3. **Высокая частота сигналов** - генерирует много торговых возможностей
 4. **Низкий лаг** - минимальная задержка in сигналах
-5. **Масштабируемость** - Workingет on всех Timeframes
+5. **Масштабируемость** - Workingет on all Timeframes
 
 ### Слабые стороны SCHR SHORT3
 

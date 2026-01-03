@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 class UpdatedCustomFeatureEngineer:
  """
  Creates custom features for trading strategy based on actual column names from data files.
- Создает пользовательские признаки on basis реальных имен columns из файлов данных.
+ Создает пользовательские признаки on basis реальных имен columns из files данных.
  """
 
  def __init__(self, config_path: Optional[str] = None):

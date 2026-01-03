@@ -42,7 +42,7 @@ class AutodataScanner:
  def scan_directory(self) -> Dict[str, Any]:
  """
  Scan directory for available data files.
- Сканировать директорию on presence доступных файлов данных.
+ Сканировать директорию on presence доступных files данных.
 
  Returns:
  Dictionary with scan results
@@ -273,7 +273,7 @@ class AutodataScanner:
 
  summary = self.get_data_summary()
 
- print(f"📊 Total Files: {summary['total_files']}")
+ print(f"📊 Total files: {summary['total_files']}")
  print(f"📁 Total Size: {summary['total_size_gb']:.2f} GB")
  print(f"🎯 Indicators: {', '.join(summary['indicators'])}")
  print(f"💱 symbols: {', '.join(summary['symbols'])}")
@@ -484,7 +484,7 @@ class InteractivedataSelector:
  print(f" Indicator: {indicator}")
  print(f" symbol: {symbol}")
  print(f" Timeframes: {', '.join(Timeframes)}")
- print(f" Files found: {len(selection['file_paths'])}")
+ print(f" files found: {len(selection['file_paths'])}")
 
  return selection
 

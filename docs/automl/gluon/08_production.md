@@ -85,7 +85,7 @@ def create_production_model(train_data, target_col):
  # Обучение with оптимизацией for деплоя
  predictor.fit(
  train_data,
- presets='optimize_for_deployment', # Специальные settings for продакшена
+ presets='optimize_for_deployment', # Специальные Settings for продакшена
  time_limit=3600, # 1 час - ограничение времени обучения
  num_bag_folds=3, # Меньше фолдов for скорости
  num_bag_sets=1,
@@ -129,11 +129,11 @@ def create_production_model(train_data, target_col):
  - **description**: Автоматический выбор метрики on типу задачи
 - **`path`**: Путь for сохранения модели
  - **Тип**: str
- - **description**: Директория for сохранения файлов модели
+ - **description**: Директория for сохранения files модели
  - **Рекомендации**: Use отдельную папку for продакшен моделей
 
 **parameters predictor.fit():**
-- **`presets`**: Предустановленные settings
+- **`presets`**: Предустановленные Settings
  - **Тип**: str
  - **Значения**: 'optimize_for_deployment', 'best_quality', 'high_quality', 'good_quality', 'medium_quality', 'optimize_for_size'
  - **description**: 'optimize_for_deployment' оптимизирует модель for продакшена
@@ -197,7 +197,7 @@ def compress_model(predictor, model_name):
 **🔧 Детальное description параметров сжатия модели:**
 
 **function compress_model:**
-- **Назначение**: Сжатие модели for уменьшения размера файлов
+- **Назначение**: Сжатие модели for уменьшения размера files
 - **parameters**:
  - **`predictor`**: Обученная модель
  - **Тип**: TabularPredictor
@@ -217,10 +217,10 @@ def compress_model(predictor, model_name):
  - **on умолчанию**: True
  - **description**: Удаляет временные файлы for экономии места
  - **Влияние**: Уменьшает размер модели on 20-30%
-- **`compress`**: Сжатие файлов
+- **`compress`**: Сжатие files
  - **Тип**: bool
  - **on умолчанию**: True
- - **description**: Использует gzip сжатие for файлов модели
+ - **description**: Использует gzip сжатие for files модели
  - **Влияние**: Уменьшает размер модели on 40-60%
 - **`save_info`**: Сохранение информации о модели
  - **Тип**: bool
@@ -229,8 +229,8 @@ def compress_model(predictor, model_name):
  - **Использование**: Нужно for загрузки and отладки модели
 
 **Методы сжатия:**
-- **remove временных файлов**: clean промежуточных результатов
-- **Gzip сжатие**: Сжатие файлов модели
+- **remove временных files**: clean промежуточных результатов
+- **Gzip сжатие**: Сжатие files модели
 - **Оптимизация весов**: remove неUseых параметров
 - **Квантизация**: Уменьшение точности весов (float32 → float16)
 
@@ -271,7 +271,7 @@ def validate_production_model(predictor, test_data, performance_thresholds):
  - **`predictor`**: Обученная модель
  - **Тип**: TabularPredictor
  - **description**: Модель for валидации
- - **`test_data`**: Тестовые data
+ - **`test_data`**: testsые data
  - **Тип**: dataFrame
  - **description**: data for тестирования модели
  - **Требования**: Должны содержать целевую переменную
@@ -596,11 +596,11 @@ if __name__ == "__main__":
 
 **Почему важна контейнеризация for ML-моделей?** Потому что она обеспечивает консистентность and изоляцию:
 
-- **Консистентность**: Одинаковая среда on всех серверах
+- **Консистентность**: Одинаковая среда on all серверах
 - **Изоляция**: Модель not влияет on другие приложения
 - **Портативность**: Легко переносить между серверами
 - **Масштабируемость**: Простое горизонтальное масштабирование
-- **Версионирование**: Контроль версий моделей and зависимостей
+- **Версионирование**: Контроль версий моделей and dependencies
 - **Безопасность**: Изолированная среда выполнения
 
 ### Dockerfile for продакшена
@@ -609,7 +609,7 @@ if __name__ == "__main__":
 # Dockerfile for продакшена
 FROM python:3.9-slim
 
-# installation системных зависимостей
+# installation системных dependencies
 RUN apt-get update && apt-get install -y \
  gcc \
  g++ \
@@ -621,15 +621,15 @@ WORKDIR /app
 # Копирование requirements
 COPY requirements.txt .
 
-# installation Python зависимостей
+# installation Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Копирование кода приложения
 COPY . .
 
-# create User for безопасности
-RUN Useradd -m -u 1000 appUser && chown -R appUser:appUser /app
-User appUser
+# create user for безопасности
+RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
+user appuser
 
 # Открытие порта
 EXPOSE 8000
@@ -645,29 +645,29 @@ CMD ["python", "app.py"]
  - **description**: Использует Python 3.9 on базе Debian slim
  - **Размер**: ~150MB (компактный образ)
  - **Преимущества**: Быстрая загрузка, минимальная поверхность атаки
-- **`RUN apt-get update && apt-get install -y`**: installation системных зависимостей
+- **`RUN apt-get update && apt-get install -y`**: installation системных dependencies
  - **`gcc`**: Компилятор C for сборки Python пакетов
  - **`g++`**: Компилятор C++ for сборки Python пакетов
  - **`&& rm -rf /var/lib/apt/Lists/*`**: clean cache apt for уменьшения размера
 - **`WORKDIR /app`**: Рабочая директория
  - **description**: Устанавливает /app как рабочую директорию
  - **Преимущества**: Изолирует файлы приложения
-- **`COPY requirements.txt .`**: Копирование файла зависимостей
+- **`COPY requirements.txt .`**: Копирование файла dependencies
  - **description**: Копирует requirements.txt in контейнер
  - **Преимущества**: Кэширование слоев Docker
-- **`RUN pip install --no-cache-dir -r requirements.txt`**: installation Python зависимостей
+- **`RUN pip install --no-cache-dir -r requirements.txt`**: installation Python dependencies
  - **`--no-cache-dir`**: Отключает кэш pip for уменьшения размера
  - **Преимущества**: Уменьшает размер образа on 50-100MB
 - **`COPY . .`**: Копирование кода приложения
  - **description**: Копирует весь код приложения in контейнер
- - **Рекомендации**: Use .dockerignore for исключения ненужных файлов
-- **`RUN Useradd -m -u 1000 appUser && chown -R appUser:appUser /app`**: create User
+ - **Рекомендации**: Use .dockerignore for исключения ненужных files
+- **`RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app`**: create user
  - **`-m`**: Создает домашнюю директорию
  - **`-u 1000`**: Устанавливает UID 1000
- - **`chown -R`**: Изменяет владельца всех файлов
- - **Безопасность**: Launch not from root User
-- **`User appUser`**: Переключение on User
- - **description**: Переключается on созданного User
+ - **`chown -R`**: Изменяет владельца all files
+ - **Безопасность**: Launch not from root user
+- **`user appuser`**: Переключение on user
+ - **description**: Переключается on созданного user
  - **Безопасность**: Ограничивает права доступа
 - **`EXPOSE 8000`**: Открытие порта
  - **description**: Документирует, что application использует порт 8000
@@ -964,7 +964,7 @@ spec:
 
 - **Детекция дрейфа**: Изменение распределения входных данных
 - **Monitoring производительности**: Отслеживание скорости and точности
-- **Алертинг**: Уведомления о проблемах in реальном времени
+- **Алертинг**: notifications о проблемах in реальном времени
 - **Логирование**: Детальная информация for отладки
 - **Метрики бизнеса**: Связь технических метрик with бизнес-результатами
 - **Автоматическое восстановление**: Реагирование on проблемы без вмешательства человека
@@ -1033,7 +1033,7 @@ class ProductionMonitor:
  def check_model_health(self, model) -> Dict[str, Any]:
  """health check модели"""
  try:
- # Тестовое Prediction
+ # testsое Prediction
  test_data = pd.dataFrame({'feature1': [1.0], 'feature2': [2.0]})
  start_time = time.time()
  Prediction = model.predict(test_data)
@@ -1134,14 +1134,14 @@ class ProductionMonitor:
  - **`status`**: Статус модели
  - **Тип**: str
  - **Значения**: 'healthy', 'unhealthy'
- - **`processing_time`**: Время обработки тестового запроса
+ - **`processing_time`**: Время обработки testsого запроса
  - **Тип**: float
- - **description**: Время выполнения тестового предсказания
- - **`error`**: description ошибки (если есть)
+ - **description**: Время выполнения testsого предсказания
+ - **`error`**: description ошибки (if present)
  - **Тип**: str
  - **description**: Текст ошибки при неудачной проверке
 
-### Алерты and уведомления
+### Алерты and notifications
 
 ```python
 import smtplib
@@ -1183,7 +1183,7 @@ class Alertsystem:
  try:
  payload = {
  "text": message,
- "Username": "AutoML Gluon Monitor",
+ "username": "AutoML Gluon Monitor",
  "icon_emoji": ":robot_face:"
  }
 
@@ -1231,11 +1231,11 @@ class Alertsystem:
 - **parameters**:
  - **`subject`**: Тема письма
  - **Тип**: str
- - **description**: Заголовок email уведомления
+ - **description**: Заголовок email notifications
  - **examples**: "Model Performance Alert", "system health Warning"
  - **`message`**: Текст messages
  - **Тип**: str
- - **description**: Содержимое email уведомления
+ - **description**: Содержимое email notifications
  - **`recipients`**: List получателей
  - **Тип**: List
  - **description**: List email адресов получателей
@@ -1250,10 +1250,10 @@ class Alertsystem:
  - **Формат**: https://hooks.slack.com/Services/...
  - **`message`**: Текст messages
  - **Тип**: str
- - **description**: Содержимое Slack уведомления
+ - **description**: Содержимое Slack notifications
 - **Structure payload**:
  - **`text`**: Текст messages
- - **`Username`**: Имя отправителя
+ - **`username`**: Имя отправителя
  - **`icon_emoji`**: Иконка отправителя
 
 **Метод check_performance_thresholds():**
@@ -1529,11 +1529,11 @@ class SecurityManager:
  self.secret_key = secret_key
  self.api_keys = {}
 
- def generate_api_key(self, User_id: str) -> str:
+ def generate_api_key(self, user_id: str) -> str:
  """Генерация API ключа"""
  api_key = secrets.token_urlsafe(32)
  self.api_keys[api_key] = {
- 'User_id': User_id,
+ 'user_id': user_id,
  'created_at': datetime.now(),
  'permissions': ['predict', 'model_info']
  }
@@ -1543,8 +1543,8 @@ class SecurityManager:
  """Валидация API ключа"""
  return api_key in self.api_keys
 
- def get_User_permissions(self, api_key: str) -> List:
- """Получение разрешений User"""
+ def get_user_permissions(self, api_key: str) -> List:
+ """Получение разрешений user"""
  if api_key in self.api_keys:
  return self.api_keys[api_key]['permissions']
  return []
@@ -1561,8 +1561,8 @@ class SecurityManager:
 
  # check разрешений
  if permissions:
- User_permissions = self.get_User_permissions(api_key)
- if not any(perm in User_permissions for perm in permissions):
+ user_permissions = self.get_user_permissions(api_key)
+ if not any(perm in user_permissions for perm in permissions):
  return jsonify({'error': 'Insufficient permissions'}), 403
 
  return f(*args, **kwargs)
@@ -1587,7 +1587,7 @@ class InputValidator:
  """Валидация входных данных"""
  try:
  for record in data:
- # check наличия всех обязательных признаков
+ # check наличия all обязательных признаков
  for feature, schema in self.feature_schema.items():
  if feature not in record:
  raise ValueError(f"Missing required feature: {feature}")
@@ -1671,15 +1671,15 @@ class LoadTester:
  'error': str(e)
  }
 
- async def load_test(self, concurrent_Users: int,
- requests_per_User: int,
+ async def load_test(self, concurrent_users: int,
+ requests_per_user: int,
  test_data: List[Dict[str, Any]]) -> Dict[str, Any]:
  """Нагрузочное тестирование"""
  async with aiohttp.ClientSession() as session:
  tasks = []
 
- for User in range(concurrent_Users):
- for request in range(requests_per_User):
+ for user in range(concurrent_users):
+ for request in range(requests_per_user):
  data = test_data[request % len(test_data)]
  task = self.single_request(session, data)
  tasks.append(task)

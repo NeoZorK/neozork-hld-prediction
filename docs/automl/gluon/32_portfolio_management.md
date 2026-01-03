@@ -359,7 +359,7 @@ def black_litterman_optimization(market_caps, cov_matrix, risk_aversion=3.0,
  - 0.1: Низкая уверенность (слабый взгляд)
  - 0.5: Средняя уверенность
  - 1.0: Высокая уверенность (сильный взгляд)
- Если None, используется значение 0.1 for всех взглядов.
+ Если None, используется значение 0.1 for all взглядов.
 
  Returns:
  --------
@@ -544,7 +544,7 @@ def minimum_variance_optimization(cov_matrix):
  Оптимизация Portfolio with минимальной дисперсией (Minimum Variance Portfolio)
 
  Minimum Variance Portfolio - это Portfolio with наименьшей возможной
- дисперсией (риском) среди всех возможных Portfolio. Это консервативный
+ дисперсией (риском) среди all возможных Portfolio. Это консервативный
  подход, который минимизирует волатильность Portfolio.
 
  Parameters:
@@ -580,7 +580,7 @@ def minimum_variance_optimization(cov_matrix):
  где 1 - вектор из единиц
 
  Преимущества:
- 1. Минимальный риск среди всех возможных Portfolio
+ 1. Минимальный риск среди all возможных Portfolio
  2. Простота расчета and интерпретации
  3. Стабильность весов
  4. Подходит for консервативных инвесторов
@@ -819,8 +819,8 @@ def clustering_Portfolio_optimization(returns, n_clusters=5, method='kmeans'):
  returns : pandas.dataFrame, shape (n_periods, n_assets)
  Матрица доходностей активов. Строки представляют временные периоды,
  столбцы - активы. data должны быть in формате pandas dataFrame
- with индексами дат and названиями активов in столбцах.
- example: dataFrame with индексами дат and столбцами ['AAPL', 'GOOGL', 'MSFT', 'TSLA']
+ with indexами дат and названиями активов in столбцах.
+ example: dataFrame with indexами дат and столбцами ['AAPL', 'GOOGL', 'MSFT', 'TSLA']
 
  n_clusters : int, default=5
  Количество кластеров for группировки активов. Рекомендуемые значения:
@@ -933,12 +933,12 @@ def ml_Portfolio_optimization(returns, features, model, n_Portfolios=1000):
  returns : pandas.dataFrame, shape (n_periods, n_assets)
  Матрица доходностей активов. Строки представляют временные периоды,
  столбцы - активы. data должны быть in формате pandas dataFrame
- with индексами дат and названиями активов in столбцах.
- example: dataFrame with индексами дат and столбцами ['AAPL', 'GOOGL', 'MSFT', 'TSLA']
+ with indexами дат and названиями активов in столбцах.
+ example: dataFrame with indexами дат and столбцами ['AAPL', 'GOOGL', 'MSFT', 'TSLA']
 
  features : pandas.dataFrame, shape (n_periods, n_features)
  Матрица признаков for ML-модели. Строки представляют временные периоды,
- столбцы - признаки. Может включать технические индикаторы,
+ столбцы - признаки. Может включать Technical индикаторы,
  макроэкономические data, новостные data and т.д.
  example: dataFrame with приsignми ['RSI', 'MACD', 'Volume', 'GDP_growth']
 
@@ -974,7 +974,7 @@ def ml_Portfolio_optimization(returns, features, model, n_Portfolios=1000):
  Коэффициент Шарпа Portfolio
 
  all_Portfolios : List
- List всех сгенерированных Portfolio with теми же ключами,
+ List all сгенерированных Portfolio with теми же ключами,
  что and best_Portfolio
 
  Raises:
@@ -987,7 +987,7 @@ def ml_Portfolio_optimization(returns, features, model, n_Portfolios=1000):
  Алгоритм работы:
  1. Разделение данных on train/test (80/20)
  2. Обучение ML-модели on исторических данных
- 3. Prediction доходностей on тестовых данных
+ 3. Prediction доходностей on testsых данных
  4. Генерация n_Portfolios случайных весов
  5. Расчет метрик for каждого Portfolio
  6. Выбор Portfolio with максимальным коэффициентом Шарпа
@@ -1074,7 +1074,7 @@ graph TD
 
  D --> D1[Fama-French факторы<br/>Market, Size, Value]
  D --> D2[Макроэкономические факторы<br/>Interest rates, Inflation, GDP]
- D --> D3[Технические факторы<br/>Momentum, Volatility, Liquidity]
+ D --> D3[Technical факторы<br/>Momentum, Volatility, Liquidity]
  D --> D4[Фундаментальные факторы<br/>P/E, P/B, ROE, Debt/Equity]
 
  B1 --> E[Ограничения on странам<br/>max_weight_per_country ≤ 30%]
@@ -1492,7 +1492,7 @@ def historical_var(returns, confidence_level=0.95):
  # Сортировка доходностей
  sorted_returns = np.sort(returns)
 
- # Индекс for VaR
+ # index for VaR
  var_index = int((1 - confidence_level) * len(sorted_returns))
 
  # VaR
@@ -1666,7 +1666,7 @@ def time_based_rebalancing(returns, target_weights, rebalance_freq='M'):
  returns : pandas.dataFrame, shape (n_periods, n_assets)
  Матрица доходностей активов. Строки представляют временные периоды,
  столбцы - активы. data должны быть in формате pandas dataFrame
- with индексами дат and названиями активов in столбцах.
+ with indexами дат and названиями активов in столбцах.
 
  target_weights : array-like, shape (n_assets,)
  Целевые веса активов in Portfolio. Должен быть одномерный массив
@@ -1684,8 +1684,8 @@ def time_based_rebalancing(returns, target_weights, rebalance_freq='M'):
  Returns:
  --------
  pandas.Series, shape (n_periods,)
- Временной ряд доходностей ребалансированного Portfolio.
- Индекс соответствует индексу входных данных returns.
+ temporary ряд доходностей ребалансированного Portfolio.
+ index соответствует indexу входных данных returns.
 
  Raises:
  -------
@@ -1714,7 +1714,7 @@ def time_based_rebalancing(returns, target_weights, rebalance_freq='M'):
  3. not адаптируется к изменениям волатильности
  4. Может приводить к избыточной торговле
  """
- # create индекса for ребалансировки
+ # create indexа for ребалансировки
  if rebalance_freq == 'D':
  rebalance_dates = returns.index
  elif rebalance_freq == 'W':
@@ -1866,7 +1866,7 @@ graph TD
  E --> E2[Еженедельные Reportы<br/>Weekly risk and return Analysis]
  E --> E3[Ежемесячные Reportы<br/>Monthly Portfolio reView]
  E --> E4[Квартальные Reportы<br/>Quarterly attribution Analysis]
- E --> E5[Алерты and уведомления<br/>Risk alerts, Performance alerts]
+ E --> E5[Алерты and notifications<br/>Risk alerts, Performance alerts]
 
  B1 --> F[Расчет метрик]
  B2 --> F
@@ -1920,8 +1920,8 @@ def calculate_Portfolio_metrics(returns, risk_free_rate=0.02):
  Parameters:
  -----------
  returns : pandas.Series or array-like, shape (n_periods,)
- Временной ряд доходностей Portfolio. Может быть pandas.Series
- with индексами дат or numpy.array. data должны быть in формате
+ temporary ряд доходностей Portfolio. Может быть pandas.Series
+ with indexами дат or numpy.array. data должны быть in формате
  доходностей (например, 0.05 for 5% доходности).
 
  risk_free_rate : float, default=0.02
