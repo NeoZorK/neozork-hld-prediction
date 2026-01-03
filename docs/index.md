@@ -2,7 +2,7 @@
 
 ## 🎯 Project Overview
 
-The NeoZork HLD Prediction project is a comprehensive financial analysis and prediction system that provides advanced trading capabilities, machine learning models, and fund management tools.
+The NeoZork HLD Prediction project is a comprehensive financial analysis and Prediction system that provides advanced trading capabilities, machine learning models, and fund management tools.
 
 ## 📊 Current Implementation Status
 
@@ -85,8 +85,8 @@ The NeoZork HLD Prediction project is a comprehensive financial analysis and pre
 ### Native Apple Silicon Container (macOS 26+)
 ```bash
 # Clone and run interactive container manager
-git clone https://github.com/username/neozork-hld-prediction.git
-cd neozork-hld-prediction
+git clone https://github.com/username/neozork-hld-Prediction.git
+cd neozork-hld-Prediction
 ./scripts/native-container/native-container.sh
 ```
 
@@ -101,7 +101,7 @@ cd neozork-hld-prediction
 
 **Interactive Menu Options:**
 1. Start Container (Full Sequence) - Smart startup (handles already running containers)
-2. Stop Container (Full Sequence)  
+2. Stop Container (Full Sequence)
 3. Show Container Status
 4. Help
 0. Exit
@@ -137,17 +137,17 @@ python run_analysis.py demo --rule PHLD
 - [Project Structure](getting-started/project-structure.md) - Understanding the codebase
 - [Installation Guide](getting-started/installation.md) - Step-by-step installation
 
-### 🚀 Run and Test Guides / Руководства по запуску и тестированию
+### 🚀 Run and Test Guides / Run and Test Guides
 - [Complete Manual (English)](run-and-test-guides/english/complete-manual-en.md) - **NEW**: Complete run and test manual
-- [Complete Manual (Русский)](run-and-test-guides/russian/complete-manual-ru.md) - **NEW**: Полное руководство по запуску и тестированию
+- [Complete Manual (Русский)](run-and-test-guides/russian/complete-manual-ru.md) - **NEW**: Полное guide on запуску and тестированию
 - [Quick Start (English)](run-and-test-guides/english/quick-start-en.md) - **NEW**: Quick start guide
 - [Quick Start (Русский)](run-and-test-guides/russian/quick-start-ru.md) - **NEW**: Быстрый старт
 - [Testing Guide (English)](run-and-test-guides/english/testing-guide-en.md) - **NEW**: Comprehensive testing guide
-- [Testing Guide (Русский)](run-and-test-guides/russian/testing-guide-ru.md) - **NEW**: Руководство по тестированию
+- [Testing Guide (Русский)](run-and-test-guides/russian/testing-guide-ru.md) - **NEW**: guide on тестированию
 - [Deployment Guide (English)](run-and-test-guides/english/deployment-guide-en.md) - **NEW**: Deployment guide
-- [Deployment Guide (Русский)](run-and-test-guides/russian/deployment-guide-ru.md) - **NEW**: Руководство по развертыванию
-- [Troubleshooting](run-and-test-guides/troubleshooting.md) - **NEW**: Common issues and solutions
-- [FAQ](run-and-test-guides/faq.md) - **NEW**: Frequently asked questions
+- [Deployment Guide (Русский)](run-and-test-guides/russian/deployment-guide-ru.md) - **NEW**: guide on развертыванию
+- [Troubleshooting](run-and-test-guides/Troubleshooting.md) - **NEW**: Common Issues and solutions
+- [FAQ](run-and-test-guides/faq.md) - **NEW**: Frequently Asked Questions
 
 ### Containers
 - [Container Documentation](containers/index.md) - **NEW**: Comprehensive container documentation
@@ -204,7 +204,7 @@ python run_analysis.py demo --rule PHLD
 - [Wave Seaborn Mode](guides/wave-indicator-seaborn-mode.md) - ⭐ **NEW** Complete Wave indicator support for seaborn mode (-d sb)
 - [Wave Seaborn Integration Summary](guides/wave-seaborn-integration-summary.md) - ⭐ **NEW** Technical implementation summary for seaborn mode
 - [Wave Terminal Mode](guides/wave-indicator-terminal-mode.md) - ⭐ **NEW** Complete Wave indicator support for terminal mode (-d term)
-- [Wave Terminal Signals Fix](development/WAVE_TERMINAL_SIGNALS_IMPLEMENTATION.md) - ⭐ **NEW** Signal display logic fixes for terminal mode
+- [Wave Terminal signals Fix](development/WAVE_TERMINAL_signALS_IMPLEMENTATION.md) - ⭐ **NEW** signal display logic fixes for terminal mode
 
 ### Reference
 - [API Reference](reference/index.md) - Complete API documentation
@@ -222,7 +222,7 @@ python run_analysis.py demo --rule PHLD
 - [Interactive System README](interactive/README.md) - Complete system overview and quick start guide
 - [Interactive System README Complete](interactive/README_COMPLETE.md) - Comprehensive implementation plan and architecture details
 - [Strategic Plan (English)](interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_EN.md) - Complete strategic plan for robust profitable ML trading strategies
-- [Стратегический План (Русский)](interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_RU.md) - Полный стратегический план для робастных прибыльных ML торговых стратегий
+- [Стратегический План (Русский)](interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_RU.md) - Полный стратегический план for робастных прибыльных ML торговых стратегий
 - [Next Steps Plan](interactive/next-steps-plan.md) - Production development roadmap and implementation plan
 - [Phase 4 Completion Summary](interactive/PHASE4_COMPLETION_SUMMARY.md) - Final completion summary for Phase 4 Advanced Features
 
@@ -242,7 +242,7 @@ python run_analysis.py demo --rule PHLD
 
 ### Business Plans
 - [Commercialization Plan (English)](business/commercialization-plan-en.md) - Comprehensive commercialization strategy for SaaS platform
-- [План Коммерциализации (Русский)](business/commercialization-plan-ru.md) - Комплексная стратегия коммерциализации для SaaS платформы
+- [План Коммерциализации (Русский)](business/commercialization-plan-ru.md) - Комплексная стратегия коммерциализации for SaaS платформы
 - [Pocket Hedge Fund Launch Guide](business/POCKET_HEDGE_FUND_LAUNCH.md) - **80% Functional**: Complete launch instructions and implementation guide
 ### SaaS Platform (100% Functional) ⭐ **COMPLETE**
 - [SaaS Platform Overview](saas/index.md) - **NEW**: Complete technical platform overview
@@ -333,34 +333,34 @@ python scripts/check_uv_mode.py --verbose
 ## 📊 Project Structure
 
 ```
-neozork-hld-prediction/
-├── src/                    # Source code
-│   ├── calculation/        # Technical indicators
-│   ├── data/              # Data acquisition
-│   ├── eda/               # Exploratory data analysis
-│   ├── plotting/          # Visualization tools
-│   └── cli/               # Command-line interface
-├── tests/                 # Test suite
-│   ├── docker/            # Docker-specific tests
-│   └── ...                # Other test categories
-├── docs/                  # Documentation
-│   ├── containers/        # Container documentation
-│   │   ├── native-container/  # Native container docs
-│   │   └── index.md       # Container overview
-│   ├── testing/           # Testing documentation
-│   │   ├── docker/        # Docker testing docs
-│   │   └── cli/           # CLI testing docs
-│   └── ...                # Other documentation
-├── scripts/               # **REORGANIZED**: Utility scripts
-│   ├── mcp/               # MCP server management scripts
-│   ├── analysis/          # Analysis and testing scripts
-│   ├── utilities/         # Utility and setup scripts
-│   ├── demos/             # Demonstration scripts
-│   ├── debug/             # Debugging scripts
-│   ├── docker/            # Docker-specific scripts
-│   └── native-container/  # Native container scripts
-├── data/                  # Data storage
-└── results/               # Analysis results
+neozork-hld-Prediction/
+├── src/ # Source code
+│ ├── calculation/ # Technical indicators
+│ ├── data/ # Data acquisition
+│ ├── eda/ # Exploratory data analysis
+│ ├── plotting/ # Visualization tools
+│ └── cli/ # Command-line interface
+├── tests/ # Test suite
+│ ├── docker/ # Docker-specific tests
+│ └── ... # Other test categories
+├── docs/ # Documentation
+│ ├── containers/ # Container documentation
+│ │ ├── native-container/ # Native container docs
+│ │ └── index.md # Container overview
+│ ├── testing/ # Testing documentation
+│ │ ├── docker/ # Docker testing docs
+│ │ └── cli/ # CLI testing docs
+│ └── ... # Other documentation
+├── scripts/ # **REORGANIZED**: Utility scripts
+│ ├── mcp/ # MCP server management scripts
+│ ├── analysis/ # Analysis and testing scripts
+│ ├── utilities/ # Utility and setup scripts
+│ ├── demos/ # Demonstration scripts
+│ ├── debug/ # Debugging scripts
+│ ├── docker/ # Docker-specific scripts
+│ └── native-container/ # Native container scripts
+├── data/ # Data storage
+└── results/ # Analysis results
 ```
 
 ### Scripts Organization

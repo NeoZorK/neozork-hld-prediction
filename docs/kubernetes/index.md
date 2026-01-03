@@ -9,16 +9,16 @@ This section contains comprehensive documentation for deploying and managing the
 - [Deployment Guide](./english/deployment-guide-en.md) - Complete deployment instructions
 - [Configuration Reference](./english/configuration-reference-en.md) - All configuration options
 - [Monitoring and Logging](./english/monitoring-logging-en.md) - Observability setup
-- [Troubleshooting](./english/troubleshooting-en.md) - Common issues and solutions
+- [Troubleshooting](./english/Troubleshooting-en.md) - Common Issues and solutions
 - [Advanced Topics](./english/advanced-topics-en.md) - Scaling, security, and optimization
 
-### Russian Documentation (Русская документация)
-- [Начало работы с Kubernetes](./russian/getting-started-ru.md) - Базовая настройка и развертывание
-- [Руководство по развертыванию](./russian/deployment-guide-ru.md) - Полные инструкции по развертыванию
-- [Справочник конфигурации](./russian/configuration-reference-ru.md) - Все параметры конфигурации
-- [Мониторинг и логирование](./russian/monitoring-logging-ru.md) - Настройка наблюдаемости
-- [Устранение неполадок](./russian/troubleshooting-ru.md) - Частые проблемы и решения
-- [Продвинутые темы](./russian/advanced-topics-ru.md) - Масштабирование, безопасность и оптимизация
+### Russian Documentation (Русская documentation)
+- [Начало работы with Kubernetes](./russian/getting-started-ru.md) - Базовая configuration and развертывание
+- [guide on развертыванию](./russian/deployment-guide-ru.md) - Полные instructions on развертыванию
+- [Справочник конфигурации](./russian/configuration-reference-ru.md) - Все parameters конфигурации
+- [Мониторинг and логирование](./russian/monitoring-logging-ru.md) - configuration наблюдаемости
+- [Troubleshooting](./russian/Troubleshooting-ru.md) - Common Issues and решения
+- [Продвинутые темы](./russian/advanced-topics-ru.md) - Масштабирование, безопасность and оптимизация
 
 ## Quick Start
 
@@ -59,6 +59,6 @@ The project supports multiple deployment strategies:
 ## Support
 
 For issues and questions:
-- Check the troubleshooting guides
+- Check the Troubleshooting guides
 - Review the configuration reference
 - Open an issue in the project repository
