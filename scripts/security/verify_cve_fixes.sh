@@ -85,8 +85,8 @@ fi
 # 3. Run security scan with safety
 echo ""
 echo "3. Running security scan (safety)..."
-if command -v safety &> /dev/null; then
-    if safety check > /tmp/safety_output.txt 2>&1; then
+if uv pip list | grep -q "^safety "; then
+    if uv run safety check > /tmp/safety_output.txt 2>&1; then
         print_status "OK" "No known vulnerabilities found (safety)"
     else
         print_status "WARN" "Safety found some issues:"
@@ -103,8 +103,8 @@ fi
 # 4. Run pip-audit if available
 echo ""
 echo "4. Running pip-audit..."
-if command -v pip-audit &> /dev/null; then
-    if pip-audit --desc > /tmp/pip_audit_output.txt 2>&1; then
+if uv pip list | grep -q "^pip-audit "; then
+    if uv run pip-audit --desc > /tmp/pip_audit_output.txt 2>&1; then
         CRITICAL_COUNT=$(grep -i "critical\|high" /tmp/pip_audit_output.txt | wc -l | tr -d ' ')
         if [ "$CRITICAL_COUNT" -eq 0 ]; then
             print_status "OK" "No critical/high vulnerabilities found (pip-audit)"
@@ -127,8 +127,8 @@ fi
 # 5. Run Bandit security linter
 echo ""
 echo "5. Running Bandit security linter..."
-if command -v bandit &> /dev/null; then
-    if bandit -r src/ -f json -o /tmp/bandit_report.json > /dev/null 2>&1; then
+if uv pip list | grep -q "^bandit "; then
+    if uv run bandit -r src/ -f json -o /tmp/bandit_report.json > /dev/null 2>&1; then
         HIGH_ISSUES=$(jq -r '.metrics._totals | .SEVERITY.HIGH // 0' /tmp/bandit_report.json 2>/dev/null || echo "0")
         if [ "$HIGH_ISSUES" -eq 0 ]; then
             print_status "OK" "No high severity issues found (bandit)"
