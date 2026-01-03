@@ -176,20 +176,26 @@ def translate_text_advanced(text: str, use_api: bool = True) -> str:
                 api_translated = None
                 
                 # Try MyMemory first (more reliable)
-                if HAS_REQUESTS:
+                try:
+                    import requests
                     api_translated = translate_with_mymemory(line.strip())
                     if api_translated:
                         translated_lines.append(api_translated)
                         time.sleep(0.3)  # Rate limiting
                         continue
+                except:
+                    pass
                 
                 # Fallback to googletrans
                 if not api_translated and HAS_GOOGLETRANS:
-                    api_translated = translate_with_googletrans(line.strip())
-                    if api_translated:
-                        translated_lines.append(api_translated)
-                        time.sleep(0.3)  # Rate limiting
-                        continue
+                    try:
+                        api_translated = translate_with_googletrans(line.strip())
+                        if api_translated:
+                            translated_lines.append(api_translated)
+                            time.sleep(0.3)  # Rate limiting
+                            continue
+                    except:
+                        pass
                 
                 # If API failed, keep original
                 if not api_translated:
@@ -244,16 +250,23 @@ def main():
     
     # Check available translation methods
     if not args.no_api:
-        if not HAS_REQUESTS and not HAS_GOOGLETRANS:
+        # Try to import requests dynamically
+        try:
+            import requests
+            has_requests = True
+        except ImportError:
+            has_requests = False
+        
+        if not has_requests and not HAS_GOOGLETRANS:
             print("Warning: No translation API libraries found.")
-            print("Install one of: pip install requests  (for MyMemory API)")
-            print("                pip install googletrans==4.0.0rc1  (for Google Translate)")
+            print("Install: uv pip install requests  (for MyMemory API)")
+            print("Or run with: uv run python3 scripts/utilities/translate_with_api.py")
             print("Continuing with pattern-based translation only...")
             print()
             use_api = False
         else:
             use_api = True
-            if HAS_REQUESTS:
+            if has_requests:
                 print("✓ Using MyMemory Translation API (free)")
             if HAS_GOOGLETRANS:
                 print("✓ Using Google Translate (googletrans)")

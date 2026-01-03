@@ -161,7 +161,7 @@ Compare Performance
 - *Practical example*: Training 10 hours on CPU = 1 hour on RTX 3070
 - **Disk**: 10GB+ free space
 - *Why so much space?* Because models and cache take up so much space
-- *SSD vs HDD*: SSD in 5-10 times faster for data loading
+- *SSD vs HDD*: SSD in 5-10 times faster for data Loading
 - *Practical example*: A project with 50 models takes 20-50GB
 
 ## AutoML Gluon 🔄 Workflows
@@ -171,7 +171,7 @@ Compare Performance
 
 **Why is it important to understand workflows?** Because it helps to understand how AutoML Gluon automates the entire machine learning process:
 
-- ** Data preparation **: Automatic clean and preprocessing
+- ** data preparation **: Automatic clean and preprocessing
 - **Feature Engineering**: create new features from existing ones
 - **Selection of algorithms**: Automatic selection of the best algorithms for the problem
 - **Training models**: parallel training of multiple models
@@ -208,7 +208,7 @@ brew install uv
 ```
 
 **What happens when uv is installed?**
-- Downloading binary file uv (5-10MB)
+- DownLoading binary file uv (5-10MB)
 - Installed in system PATH
 - Configuration file is created
 - Configures the package cache
@@ -497,7 +497,7 @@ pip install modin[all]
 
 #### 📊 Detailed description of libraries for large datasets
 
-**Dask - Distributed Computing for Big Data**
+**Dask - Distributed Computing for Big data**
 
 Intended purpose
 - Parallel processing of data that is not stored in memory
@@ -505,7 +505,7 @@ Intended purpose
 - integration with pandas, numpy, scikit-learn
 
 ADVANTAGES
-- **Scalability**: Data processing in 10-100 times more available memory
+- **Scalability**: data processing in 10-100 times more available memory
 - **Compatibility**: API similar to on pandas/numpy, easy to migrate code
 - **Flexibility**: Works on a single computer or cluster
 - **integration**: Integrates well with AutoML Gluon
@@ -515,180 +515,180 @@ Deficiencies
 - **Complexity of settings**: Requires understanding of distributed systems
 - **Overhead**: for small data may be slower than pandas
 - **Debugging * *: It's harder to debug distributed code
-- **dependencies**: Много дополнительных пакетов
+- **dependencies**: Many additional packages
 
-**Практические examples использования:**
+**Practical examples of use:**
 ```python
-# Обработка больших CSV файлов
+# Processing large CSV files
 import dask.dataframe as dd
 
-# Загрузка файла 50GB (not помещается in RAM)
-df = dd.read_csv('huge_dataset.csv') # Загружается on частям
+# 50GB file upload (not fit in RAM)
+df = dd.read_csv('huge_dataset.csv') # Loaded on parts
 
-# Операции выполняются лениво
-result = df.groupby('category').sum().compute() # Выполняется только при compute()
+# Operations are performed lazily
+result = df.groupby('category').sum().compute() # Executed only when compute()
 
 # integration with AutoML Gluon
 from autogluon.tabular import TabularPredictor
 predictor = TabularPredictor(label='target')
-predictor.fit(df, time_limit=3600) # Workingет with Dask dataFrame
+predictor.fit(df, time_limit=3600) # Works with Dask dataFrame
 ```
 
-**Ray - Распределенный фреймворк for ML**
+**Ray - Distributed Framework for ML**
 
-**Назначение:**
-- Распределенное машинное обучение
-- Параллельная обработка задач
-- Management ресурсами in кластере
+Intended purpose
+- Distributed machine learning
+- Parallel task processing
+- Management of resources in the cluster
 
-**Преимущества:**
-- **Производительность**: Очень быстрые распределенные вычисления
-- **ML-оптимизация**: Специально создан for машинного обучения
-- **Автоматическое масштабирование**: Автоматически использует доступные ресурсы
-- **Отказоустойчивость**: Встроенная обработка ошибок
-- **Гибкость**: Поддерживает любые Python functions
+ADVANTAGES
+- **Performance**: Very fast distributed computing
+- **ML optimization **: Specially created for machine learning
+- **Automatic scaling**: Automatically uses available resources
+- **Fault tolerance**: Built-in error handling
+- **Flexibility**: Supports any Python functions
 
-**Недостатки:**
-- **Сложность**: Сложнее in освоении чем Dask
-- **Ресурсы**: Требует больше памяти for координации
-- **Отладка**: Сложнее отлаживать распределенные задачи
-- **dependencies**: Много системных зависимостей
+Deficiencies
+- **Difficulty**: Harder to learn than Dask
+- **Resources**: Requires more memory for coordination
+- **Debugging * *: It's harder to debug distributed tasks
+- **dependencies**: Many system dependencies
 
-**Практические examples использования:**
+**Practical examples of use:**
 ```python
 import ray
 from autogluon.tabular import TabularPredictor
 
-# Инициализация Ray
+# Ray Initialization
 ray.init()
 
-# Распределенное обучение моделей
+# Distributed model training
 @ray.remote
 def train_model(data_chunk):
  predictor = TabularPredictor(label='target')
  predictor.fit(data_chunk, time_limit=1800)
  return predictor
 
-# parallel training on разных частях данных
+# parallel training on different parts of the data
 futures = [train_model.remote(chunk) for chunk in data_chunks]
 models = ray.get(futures)
 
-# Ансамбль моделей
+# Model Ensemble
 ensemble_Predictions = []
 for model in models:
  pred = model.predict(test_data)
  ensemble_Predictions.append(pred)
 ```
 
-**Modin - Ускоренный pandas**
+**Modin - Accelerated Pandas**
 
-**Назначение:**
-- Ускорение операций pandas in 2-10 раз
-- Автоматическое использование всех доступных ядер
-- Прозрачная замена pandas
+Intended purpose
+- Acceleration of pandas operations by 2-10 times
+- Automatic use of all available cores
+- Transparent pandas replacement
 
-**Преимущества:**
-- **Простота**: Прямая замена pandas, минимум изменений in коде
-- **Скорость**: Автоматическое ускорение pandas операций
-- **Совместимость**: Полная совместимость with pandas API
-- **Производительность**: Использует все доступные ядра
-- **integration**: Легко интегрируется with существующим кодом
+ADVANTAGES
+- **Simplicity**: Direct replacement of pandas, minimal code changes
+- **Speed**: Automatic acceleration of pandas operations
+- **Compatibility**: Fully compatible with pandas API
+- **Performance**: Uses all available cores
+- **integration**: Easily integrates with existing code
 
-**Недостатки:**
-- **Ограниченная функциональность**: not все pandas functions поддерживаются
-- **Память**: Может использовать больше памяти чем pandas
-- **Стабильность**: Менее стабилен чем оригинальный pandas
-- **dependencies**: Требует Ray or Dask как backend
+Deficiencies
+- **Limited functionality**: not all pandas functions are supported
+- **Memory**: Can use more memory than pandas
+- **Stability**: Less stable than original pandas
+- **dependencies**: Requires Ray or Dask as backend
 
-**Практические examples использования:**
+**Practical examples of use:**
 ```python
-# Простая замена pandas on modin
-import modin.pandas as pd # Вместо import pandas as pd
+# Easy replacement of pandas on modin
+import modin.pandas as pd # Instead of import pandas as pd
 
-# Все операции автоматически ускоряются
-df = pd.read_csv('large_dataset.csv') # in 2-5 раз быстрее
-result = df.groupby('category').sum() # in 3-8 раз быстрее
+# All operations are automatically accelerated
+df = pd.read_csv('large_dataset.csv') # 2-5 times faster
+result = df.groupby('category').sum() # in 3-8 times faster
 
 # integration with AutoML Gluon
 from autogluon.tabular import TabularPredictor
 predictor = TabularPredictor(label='target')
-predictor.fit(df, time_limit=3600) # Workingет with Modin dataFrame
+predictor.fit(df, time_limit=3600) # Works with Modin dataFrame
 ```
 
-**Сравнение библиотек for больших данных:**
+**Comparison of Libraries for Big Data:**
 
-| Библиотека | Размер данных | Сложность | Скорость | Стабильность |
+| Library | Data Size | Difficulty | Speed | Stability |
 |------------|---------------|-----------|----------|--------------|
-| **Dask** | 10GB - 1TB+ | Средняя | Высокая | Высокая |
-| **Ray** | 1GB - 100GB+ | Высокая | Очень высокая | Средняя |
-| **Modin** | 100MB - 10GB | Низкая | Средняя | Средняя |
+| **Dask** | 10GB - 1TB+ | Medium | High | High |
+| **Ray** | 1GB - 100GB+ | High | Very High | Medium |
+| **Modin** | 100MB - 10GB | Low | Medium | Medium |
 
-**Рекомендации on выбору:**
+**Recommendations for choosing:**
 
-**Use Dask если:**
-- data больше доступной памяти
-- Нужна максимальная совместимость with pandas
-- Workingете with кластером
-- Нужна отказоустойчивость
+**Use Dask if:**
+- data more available memory
+- Maximum compatibility with pandas is required
+- Working with a cluster
+- Fault tolerance is required
 
-**Use Ray если:**
-- Нужна максимальная производительность
-- Workingете with ML задачами
-- Есть опыт with распределенными системами
-- Нужно автоматическое масштабирование
+**Use Ray if:**
+- Maximum performance is required
+- Working with ML tasks
+- Experience with distributed systems
+- Automatic scaling is required
 
-**Use Modin если:**
-- data помещаются in память
-- Нужно минимальное изменение кода
-- Workingете on одном компьютере
-- Нужно быстрое прототипирование
+**Use Modin if:**
+- data are placed in memory
+- Minimal code change required
+- Working on one computer
+- Need rapid prototyping
 
-### for работы with временными рядами
+### for working with time series
 ```bash
-# Специальные библиотеки for временных рядов
+# Special libraries for time series
 pip install gluonts
 pip install mxnet
 pip install statsmodels
 ```
 
-#### ⏰ Детальное description библиотек for временных рядов
+#### # Detailed description of libraries for time series
 
-**GluonTS - Специализированная библиотека for временных рядов**
+**GluonTS - Specialized Library for Time Series**
 
-**Назначение:**
-- Глубокое обучение for прогнозирования временных рядов
-- Готовые модели for различных типов временных рядов
+Intended purpose
+- Deep learning for time series prediction
+- Ready-made models for various types of time series
 - integration with MXNet and PyTorch
-- Автоматическое определение сезонности and трендов
+- Automatic detection of seasonality and trends
 
-**Возможности:**
-- **Готовые модели**: DeepAR, Transformer, WaveNet, MQ-CNN
-- **Автоматическая обработка**: Определение сезонности, трендов, аномалий
-- **Многомерные ряды**: Working with несколькими связанными временными рядами
-- **Неопределенность**: Квантильные прогнозы and доверительные интервалы
-- **Масштабируемость**: Обработка тысяч временных рядов simultaneously
+ Facilities
+- **Finished models**: DeepAR, Transformer, WaveNet, MQ-CNN
+- **Automatic processing**: Determination of seasonality, trends, anomalies
+- **Multidimensional series**: Working with multiple linked time series
+- **Uncertainty**: Quantile predictions and confidence intervals
+- **Scalability**: Processing thousands of time series simultaneously
 
-**Практические examples использования:**
+**Practical examples of use:**
 ```python
 import gluonts
 from gluonts.dataset import common
 from gluonts.model.deepar import DeepAREstimator
 from gluonts.trainer import Trainer
 
-# create датасета for временных рядов
+# create dataset for time series
 dataset = common.Listdataset(
  data_iter=[{"start": "2020-01-01", "target": [1, 2, 3, 4, 5]}],
  freq="D"
 )
 
-# Обучение модели DeepAR
+# DeepAR Model Training
 estimator = DeepAREstimator(
  freq="D",
  Prediction_length=7,
  trainer=Trainer(epochs=10)
 )
 
-# Обучение and прогнозирование
+# Learning and Forecasting
 predictor = estimator.train(dataset)
 forecast = predictor.predict(dataset)
 
@@ -702,18 +702,18 @@ predictor = TimeSeriesPredictor(
 predictor.fit(train_data, time_limit=3600)
 ```
 
-**MXNet - Глубокое обучение for временных рядов**
+**MXNet - Deep Learning for Time Series**
 
-**Назначение:**
-- Гибкий фреймворк for глубокого обучения
-- Оптимизация for временных рядов
-- Поддержка GPU and распределенных вычислений
+Intended purpose
+- Flexible framework for deep learning
+- Optimization for time series
+- GPU and distributed computing support
 - integration with GluonTS
 
-**Возможности:**
-- **Гибкая архитектура**: create кастомных моделей for временных рядов
-- **GPU ускорение**: Быстрое обучение on GPU
-- **Распределенность**: Обучение on кластере
+ Facilities
+- **Flexible architecture**: create custom models for time series
+- **GPU acceleration**: Quick learning on GPU
+- **Distribution**: Training on the cluster
 - **Оптимизация**: Автоматическая оптимизация градиентов
 - **integration**: Хорошо Workingет with GluonTS
 
