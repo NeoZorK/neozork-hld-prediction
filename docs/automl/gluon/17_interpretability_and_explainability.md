@@ -30,7 +30,7 @@
 - **Intrinsic Interpretability**: Модели, которые изначально интерпретируемы (линейные, деревья решений)
 - **Post-hoc Interpretability**: Методы объяснения "черных ящиков" (SHAP, LIME, Integrated Gradients)
 - **Global Methods**: Объяснение модели in целом (Feature Importance, PDP, ALE)
-- **Local Methods**: Объяснение конкретных предсказаний (LIME, SHAP Local, Counterfactuals)
+- **Local Methods**: Объяснение конкретных predictions (LIME, SHAP Local, Counterfactuals)
 
 Интерпретируемость машинного обучения - это способность понимать and объяснять решения, принимаемые ML-моделями. Это критически важно for:
 - **Доверия к модели** - понимание логики принятия решений
@@ -201,7 +201,7 @@ def get_feature_importance(predictor, method='permutation'):
 
 - **`model.feature_importances_`**: Встроенная важность модели
  - Доступно for: Random Forest, XGBoost, LightGBM, CatBoost
- - Недоступно for: Linear Regression, Neural Networks
+ - Недоступно for: Linear Regression, Neural networks
  - Диапазон: from 0 to 1 (сумма = 1)
  - Интерпретация: доля важности приsign
 
@@ -331,10 +331,10 @@ def plot_ale(predictor, X, features):
 ## Методы локальной интерпретируемости
 
 <img src="images/optimized/local_methods.png" alt="Локальные методы интерпретируемости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 17.4: Локальные методы интерпретируемости - объяснение конкретных предсказаний*
+*Рисунок 17.4: Локальные методы интерпретируемости - объяснение конкретных predictions*
 
 **Типы локальных методов:**
-- **LIME**: Локальные аппроксимации for объяснения предсказаний
+- **LIME**: Локальные аппроксимации for объяснения predictions
 - **SHAP Local**: Локальные SHAP значения for конкретных экземпляров
 - **Integrated Gradients**: Градиентные методы for нейронных сетей
 - **Counterfactual Explanations**: Объяснения через контрфактические examples
@@ -476,7 +476,7 @@ def explain_with_shap(predictor, X, instance_idx):
 
 - **`shap.TreeExplainer(model)`**: Explainer for tree-based моделей
  - Подходит for: Random Forest, XGBoost, LightGBM, CatBoost
- - not подходит for: Linear Regression, Neural Networks
+ - not подходит for: Linear Regression, Neural networks
  - Преимущества: быстрые вычисления, точные результаты
  - Применение: оптимальный выбор for tree-based моделей
 
@@ -605,7 +605,7 @@ def integrated_gradients(model, X, baseline=None, steps=50):
  - `gradients = tape.gradient()`: Вычисление градиентов
  - Применение: автоматическое дифференцирование
 
-- **`gradients`**: Градиенты предсказаний on входным данным
+- **`gradients`**: Градиенты predictions on входным данным
  - Форма: (steps, batch_size, n_features)
  - Содержит: градиенты for каждого шага интерполяции
  - Применение: анализ чувствительности модели
@@ -860,7 +860,7 @@ def choose_explanation_method(model_type, data_size, interpretability_requiremen
  - `'Logistic'`: Логистическая регрессия
  - `'RandomForest'`: Случайный лес
  - `'XGBoost'`: XGBoost
- - `'NeuralNetwork'`: Нейронная сеть
+ - `'Neuralnetwork'`: Нейронная сеть
  - `'SVM'`: Support Vector Machine
 
 - **`data_size`**: Размер датасета
@@ -876,7 +876,7 @@ def choose_explanation_method(model_type, data_size, interpretability_requiremen
 
 - **`'coefficients'`**: Коэффициенты линейных моделей
  - Подходит for: Linear Regression, Logistic Regression
- - not подходит for: Tree-based, Neural Networks
+ - not подходит for: Tree-based, Neural networks
  - Преимущества: точные, быстрые, понятные
  - Применение: когда модель линейная
 
@@ -900,7 +900,7 @@ def choose_explanation_method(model_type, data_size, interpretability_requiremen
 
 - **`'feature_importance'`**: Встроенная важность
  - Подходит for: Tree-based модели
- - not подходит for: Linear, Neural Networks
+ - not подходит for: Linear, Neural networks
  - Преимущества: очень быстрые, встроенные
  - Недостатки: только for tree-based моделей
  - Применение: когда модель tree-based

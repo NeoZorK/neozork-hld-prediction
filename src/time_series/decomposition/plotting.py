@@ -71,7 +71,7 @@ def plot_and_save(result: DecompositionResult, plots_dir: str, file_stem: str, l
  title = texts["title_classical"] if result.method == "classical" else texts["title_stl"]
  fig.suptitle(title, fontsize=12)
  else:
- # for CEEMDAN используйте функцию ниже plot_and_save_ceemdan_per_imf
+ # for CEEMDAN Use функцию ниже plot_and_save_ceemdan_per_imf
  raise RuntimeError("Use plot_and_save_ceemdan_per_imf for CEEMDAN method")
 
  fig.tight_layout(rect=[0, 0.03, 1, 0.95])
@@ -88,7 +88,7 @@ def get_ceemdan_explanation(locale_ru: bool) -> str:
  "- IMF1 — высокочастотные колебания (шум/микроструктура).\n"
  "- IMF2..IMFk — промежуточные частоты (циклы/реакции рынка).\n"
  "- Остаток — медленная часть/тренд после вычитания IMF.\n"
- "Используйте энергию IMF как признаки, моделируйте трендовую часть отдельно,\n"
+ "Use энергию IMF как признаки, моделируйте трендовую часть отдельно,\n"
  "and применяйте walk-forward/учёт комиссий при проверке стратегий."
  )
  return (

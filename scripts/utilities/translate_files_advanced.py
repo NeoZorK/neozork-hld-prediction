@@ -117,11 +117,11 @@ TRANSLATIONS = OrderedDict([
  (r'coverage', 'coverage'),
  (r'coverage cache', 'coverage cache'),
  (r'network', 'network'),
- (r'with отладкой', 'with debugging'),
+ (r'with debugging', 'with debugging'),
  (r'specific test', 'specific test'),
- (r'with таймаутом', 'with timeout'),
- (r'with ограниченными потоками', 'with limited threads'),
- (r'Контейнеры not start', 'Containers do not start'),
+ (r'with timeout', 'with timeout'),
+ (r'with limited threads', 'with limited threads'),
+ (r'Containers do not start', 'Containers do not start'),
  (r'Rebuild containers', 'Rebuild containers'),
  (r'Restart Docker', 'Restart Docker'),
  (r'View volumes', 'View volumes'),
@@ -142,6 +142,117 @@ TRANSLATIONS = OrderedDict([
  (r'different tasks', 'different tasks'),
  (r'minutes', 'minutes'),
  (r'initialized', 'initialized'),
+
+ # Additional Russian words and phrases
+ (r'including', 'including'),
+ (r'messages', 'messages'),
+ (r'execute', 'execute'),
+ (r'Comprehensive pipeline', 'Comprehensive pipeline'),
+ (r'Informing about', 'Informing about'),
+ (r'training mode', 'training mode'),
+ (r'acceleration', 'acceleration'),
+ (r'install', 'install'),
+ (r'Loading data', 'Loading data'),
+ (r'specified', 'specified'),
+ (r'Trading symbol', 'Trading symbol'),
+ (r'Timeframe', 'Timeframe'),
+ (r'Mobile application', 'Mobile application'),
+ (r'Report', 'Report'),
+ (r'Status:', 'Status:'),
+ (r'COMPLETED', 'COMPLETED'),
+ (r'successfully created', 'successfully created'),
+ (r'integrated', 'integrated'),
+ (r'Implemented', 'Implemented'),
+ (r'Application structure', 'Application structure'),
+ (r'application', 'application'),
+ (r'Navigation', 'Navigation'),
+ (r'Authentication', 'Authentication'),
+ (r'state management', 'state management'),
+ (r'integration', 'integration'),
+ (r'Application screens', 'Application screens'),
+ (r'Login to system', 'Login to system'),
+ (r'User registration', 'User registration'),
+ (r'Main screen', 'Main screen'),
+ (r'with greeting', 'with greeting'),
+ (r'Loading screen', 'Loading screen'),
+ (r'Plan', 'Plan'),
+ (r'Goal', 'Goal'),
+ (r'Create system', 'Create system'),
+ (r'нескольких Timeframeах', 'multiple timeframes'),
+ (r'simultaneously', 'simultaneously'),
+ (r'improving accuracy', 'improving accuracy'),
+ (r'predictions', 'Predictions'),
+ (r'Concept', 'Concept'),
+ (r'Иерархия Timeframeов', 'Timeframe hierarchy'),
+ (r'Базовый Timeframe', 'Base timeframe'),
+ (r'for trading', 'for trading'),
+ (r'Средний Timeframe', 'Medium timeframe'),
+ (r'for trend', 'for trend'),
+ (r'Long-term trend', 'Long-term trend'),
+ (r'Macro trend', 'Macro trend'),
+ (r'Fundamental trend', 'Fundamental trend'),
+ (r'Analysis principles', 'Analysis principles'),
+ (r'Synchronization', 'Synchronization'),
+ (r'must be synchronized', 'must be synchronized'),
+ (r'in time', 'in time'),
+ (r'Influence hierarchy', 'Influence hierarchy'),
+ (r'Высшие Timeframeы', 'Higher timeframes'),
+ (r'influence', 'influence'),
+ (r'lower', 'lower'),
+ (r'Conflict resolution', 'Conflict resolution'),
+ (r'In case of conflict', 'In case of conflict'),
+ (r'priority to', 'priority to'),
+ (r'высшего Timeframeа', 'higher timeframe'),
+ (r'General questions', 'General questions'),
+ (r'How to quickly', 'How to quickly'),
+ (r'launch the system', 'launch the system'),
+ (r'Use', 'Use'),
+ (r'quick start', 'quick start'),
+ (r'Launch main analysis', 'Launch main analysis'),
+ (r'Main page', 'Main page'),
+ (r'Complete guide', 'Complete guide'),
+ (r'quick start', 'Quick start'),
+ (r'guide on', 'guide on'),
+ (r'testing', 'testing'),
+ (r'deployment', 'deployment'),
+ (r'Main structure', 'Main structure'),
+ (r'Main code', 'Main code'),
+ (r'platform', 'platform'),
+ (r'Hedge fund', 'Hedge fund'),
+ (r'Monitoring', 'Monitoring'),
+ (r'Comprehensive strategy', 'Comprehensive strategy'),
+ (r'commercialization', 'commercialization'),
+ (r'Market analysis', 'Market analysis'),
+ (r'opportunity assessment', 'opportunity assessment'),
+ (r'Business model', 'Business model'),
+ (r'revenue streams', 'revenue streams'),
+ (r'Go-to-market strategy', 'Go-to-market strategy'),
+ (r'on рынок', 'to market'),
+ (r'Roadmap', 'Roadmap'),
+ (r'product development', 'product development'),
+ (r'Issues with', 'Issues with'),
+ (r'Tests do not', 'Tests do not'),
+ (r'Safe mode', 'Safe mode'),
+ (r'Launch', 'Launch'),
+  (r'Slow tests', 'Slow tests'),
+  (r'неavailable', 'not available'),
+  (r'символа', 'symbol'),
+  (r'Timeframeа', 'Timeframe'),
+  (r'Файл данных not найден', 'Data file not found'),
+  (r'Управление аутентификацией', 'Authentication management'),
+  (r'HTTP клиент', 'HTTP client'),
+  (r'Константы стилей', 'Style constants'),
+  (r'Сервисы', 'Services'),
+  (r'Используем конкретный файл', 'Use specific file'),
+  (r'если указан', 'if specified'),
+  (r'найден', 'found'),
+  (r'Используем', 'Use'),
+  (r'конкретный файл', 'specific file'),
+  (r'указан', 'specified'),
+  (r'не найден', 'not found'),
+  (r'Файл данных', 'Data file'),
+  (r'символа and', 'symbol and'),
+  (r'and Timeframeа', 'and Timeframe'),
 ])
 
 # Files and directories to exclude
@@ -167,75 +278,75 @@ INCLUDE_EXTENSIONS = {'.py', '.md', '.txt', '.json', '.yaml', '.yml', '.ts', '.t
 
 
 def should_exclude_file(file_path: str) -> bool:
- """Check if file should be excluded from translation."""
- for pattern in EXCLUDE_PATTERNS:
- if re.search(pattern, file_path):
- return True
- return False
+    """Check if file should be excluded from translation."""
+    for pattern in EXCLUDE_PATTERNS:
+        if re.search(pattern, file_path):
+            return True
+    return False
 
 
 def has_russian_text(text: str) -> bool:
- """Check if text contains Cyrillic characters."""
- return bool(re.search(r'[А-Яа-яЁё]', text))
+    """Check if text contains Cyrillic characters."""
+    return bool(re.search(r'[А-Яа-яЁё]', text))
 
 
 def find_files_with_russian(root_dir: str = '.') -> List[Tuple[str, int]]:
- """Find all files containing Russian text."""
- files_with_russian = []
-
- for root, dirs, files in os.walk(root_dir):
- # Skip excluded directories
- dirs[:] = [d for d in dirs if not should_exclude_file(os.path.join(root, d))]
-
- for file in files:
- file_path = os.path.join(root, file)
- rel_path = os.path.relpath(file_path, root_dir)
-
- if should_exclude_file(rel_path):
- continue
-
- ext = Path(file).suffix
- if ext not in INCLUDE_EXTENSIONS:
- continue
-
- try:
- with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
- content = f.read()
- if has_russian_text(content):
- russian_lines = sum(1 for line in content.split('\n') if has_russian_text(line))
- files_with_russian.append((rel_path, russian_lines))
- except Exception as e:
- print(f"Warning: Could not read {rel_path}: {e}")
-
- return sorted(files_with_russian)
+    """Find all files containing Russian text."""
+    files_with_russian = []
+    
+    for root, dirs, files in os.walk(root_dir):
+        # Skip excluded directories
+        dirs[:] = [d for d in dirs if not should_exclude_file(os.path.join(root, d))]
+        
+        for file in files:
+            file_path = os.path.join(root, file)
+            rel_path = os.path.relpath(file_path, root_dir)
+            
+            if should_exclude_file(rel_path):
+                continue
+            
+            ext = Path(file).suffix
+            if ext not in INCLUDE_EXTENSIONS:
+                continue
+            
+            try:
+                with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    content = f.read()
+                    if has_russian_text(content):
+                        russian_lines = sum(1 for line in content.split('\n') if has_russian_text(line))
+                        files_with_russian.append((rel_path, russian_lines))
+            except Exception as e:
+                print(f"Warning: Could not read {rel_path}: {e}")
+    
+    return sorted(files_with_russian)
 
 
 def translate_text(text: str) -> str:
- """Translate Russian text to English using comprehensive patterns."""
- if not has_russian_text(text):
- return text
-
- translated = text
-
- # Apply translations in order (longer patterns first)
- for pattern, replacement in TRANSLATIONS.items():
- translated = re.sub(pattern, replacement, translated, flags=re.MULTILINE | re.IGNORECASE)
-
- # Clean up multiple spaces but preserve structure
- lines = translated.split('\n')
- cleaned_lines = []
- for line in lines:
- # Preserve markdown and code structure
- if (line.strip().startswith('#') or
- line.strip().startswith('*') or
- line.strip().startswith('-') or
- line.strip().startswith('```') or
- line.strip().startswith('`')):
- cleaned_lines.append(re.sub(r'[ \t]+', ' ', line.rstrip()))
- else:
- cleaned_lines.append(re.sub(r'[ \t]+', ' ', line.rstrip()))
-
- return '\n'.join(cleaned_lines)
+    """Translate Russian text to English using comprehensive patterns."""
+    if not has_russian_text(text):
+        return text
+    
+    translated = text
+    
+    # Apply translations in order (longer patterns first)
+    for pattern, replacement in TRANSLATIONS.items():
+        translated = re.sub(pattern, replacement, translated, flags=re.MULTILINE | re.IGNORECASE)
+    
+    # Clean up multiple spaces but preserve structure
+    lines = translated.split('\n')
+    cleaned_lines = []
+    for line in lines:
+        # Preserve markdown and code structure
+        if (line.strip().startswith('#') or 
+            line.strip().startswith('*') or 
+            line.strip().startswith('-') or
+            line.strip().startswith('```') or
+            line.strip().startswith('`')):
+            cleaned_lines.append(re.sub(r'[ \t]+', ' ', line.rstrip()))
+        else:
+            cleaned_lines.append(re.sub(r'[ \t]+', ' ', line.rstrip()))
+    
+    return '\n'.join(cleaned_lines)
 
 
 def main():
@@ -286,7 +397,7 @@ def main():
  return
 
  print()
- print("Starting translation...")
+ print("starting translation...")
  print("Note: This uses pattern-based translation. Complex sentences may need review.")
  print()
 

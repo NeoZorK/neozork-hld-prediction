@@ -17,8 +17,8 @@ from pathlib import Path
 TRANSLATIONS = {
  # Long specific phrases (must come first)
  r'\bобновление документации on полной системе заработка 100%\+ in месяц\b': 'update documentation on complete earning system 100%+ per month',
- r'\bобновление документации on системе мониторинга and метрик for достижения 100% прибыли\b': 'update documentation on monitoring system and metrics for achieving 100% profit',
- r'\bобновление документации on метрикам and мониторингу for достижения 100% прибыли\b': 'update documentation on metrics and monitoring for achieving 100% profit',
+ r'\bобновление документации on системе Monitoringа and метрик for достижения 100% прибыли\b': 'update documentation on monitoring system and metrics for achieving 100% profit',
+ r'\bобновление документации on метрикам and Monitoringу for достижения 100% прибыли\b': 'update documentation on metrics and monitoring for achieving 100% profit',
  r'\bобновление документации on детальным компонентам системы NeoZorK\b': 'update documentation on detailed components of NeoZorK system',
  r'\bобновление документации on установке and настройке MLX and Jupyter for Apple Silicon\b': 'update documentation on installation and configuration of MLX and Jupyter for Apple Silicon',
  r'\bобновление документации on основам робастных систем in ML\b': 'update documentation on basics of robust systems in ML',
@@ -86,7 +86,7 @@ TRANSLATIONS = {
  r'\bдекомпозиции\b': 'decomposition',
  r'\bэкспорта метаданных\b': 'metadata export',
  r'\bвизуализации результатов\b': 'visualization results',
- r'\bметрикам and мониторингу\b': 'metrics and monitoring',
+ r'\bметрикам and Monitoringу\b': 'metrics and monitoring',
  r'\bдля достижения 100% прибыли\b': 'for achieving 100% profit',
  r'\bанализу\b': 'analysis',
  r'\bМонте-Карло симуляции\b': 'Monte Carlo simulation',
@@ -100,7 +100,7 @@ TRANSLATIONS = {
  r'\bосновам робастных систем\b': 'basics of robust systems',
  r'\bустановке and настройке\b': 'installation and configuration',
  r'\bдетальным компонентам\b': 'detailed components',
- r'\bсистеме мониторинга\b': 'monitoring system',
+ r'\bсистеме Monitoringа\b': 'monitoring system',
  r'\bполной системе заработка\b': 'complete earning system',
  r'\bблокчейн-системам\b': 'blockchain systems',
  r'\bавтоматическому переобучению\b': 'automatic retraining',
@@ -155,7 +155,7 @@ DIRECT_TRANSLATIONS = {
  'feat: update NeoZorK guide with installation of environment for macOS M1 Pro',
  'feat: добавлен HTML-интерфейс for учебника':
  'feat: add HTML interface for tutorial',
- 'feat: добавлена полная система заработка 100%+ in месяц - Создана детальная система with рабочим кодом from идеи to деплоя - Добавлены все компоненты: модели, индикаторы, блокчейн-интеграция - Реализована система автоматического переобучения - Добавлен полный мониторинг and система алертов - Создана documentation on запуску and использованию - Система готова for тестирования on блокчейн testnet':
+ 'feat: добавлена полная система заработка 100%+ in месяц - Создана детальная система with рабочим кодом from идеи to деплоя - Добавлены все компоненты: модели, индикаторы, блокчейн-integration - Реализована система автоматического переобучения - Добавлен полный Monitoring and система алертов - Создана documentation on Launchу and использованию - Система готова for тестирования on блокчейн testnet':
  'feat: add complete earning system 100%+ per month - Created detailed system with working code from idea to deployment - Added all components: models, indicators, blockchain integration - Implemented automatic retraining system - Added full monitoring and alert system - Created documentation on launch and usage - System ready for testing on blockchain testnet',
  'feat: создан полный учебник on созданию робастных прибыльных ML systems':
  'feat: create complete tutorial on creating robust profitable ML systems',

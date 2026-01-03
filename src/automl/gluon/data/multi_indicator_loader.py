@@ -104,7 +104,7 @@ class MultiIndicatorLoader:
  def load_symbol_data(self, symbol: str, timeframe: str, indicator: str = None) -> Dict[str, pd.DataFrame]:
  """
  Load all indicator data for a specific symbol and timeframe.
- Загрузить все данные indicators for конкретного символа and таймфрейма.
+ Загрузить все данные indicators for конкретного символа and Timeframeа.
 
  Args:
  symbol: Trading symbol (e.g., 'BTCUSD')
@@ -146,7 +146,7 @@ class MultiIndicatorLoader:
  def load_multiple_symbols(self, symbols: List[str], timeframes: List[str]) -> Dict[str, Dict[str, pd.DataFrame]]:
  """
  Load data for multiple symbols and timeframes.
- Загрузить данные for множественных символов and таймфреймов.
+ Загрузить данные for множественных символов and Timeframeов.
 
  Args:
  symbols: List of trading symbols
@@ -198,7 +198,7 @@ class MultiIndicatorLoader:
  logger.warning("No data to combine")
  return pd.DataFrame()
 
- # Start with CSVExport as base (has OHLCV data)
+ # start with CSVExport as base (has OHLCV data)
  if 'csv_export' in data_sources and not data_sources['csv_export'].empty:
  combined_df = data_sources['csv_export'].copy()
  logger.info(f"Base data from CSVExport: {len(combined_df)} rows")
@@ -425,7 +425,7 @@ class MultiIndicatorLoader:
 
  if interactive:
  # Interactive selection
- logger.info("🎯 Starting interactive selection...")
+ logger.info("🎯 starting interactive selection...")
  selection = self.selector.interactive_selection()
 
  if not selection.get('success', False):
@@ -593,7 +593,7 @@ class MultiIndicatorLoader:
  def auto_load_data(self, interactive: bool = True) -> pd.DataFrame:
  """
  Complete auto-loading process: scan, select, and load data.
- Полный процесс автоматической загрузки: сканирование, выбор and загрузка данных.
+ Полный процесс автоматической загрузки: сканирование, выбор and Loading data.
 
  Args:
  interactive: Whether to use interactive selection
@@ -601,7 +601,7 @@ class MultiIndicatorLoader:
  Returns:
  Combined dataframe with all selected data
  """
- logger.info("🚀 Starting auto-loading process...")
+ logger.info("🚀 starting auto-loading process...")
 
  # Step 1: Auto-scan and select
  selection = self.auto_scan_and_select(interactive=interactive)

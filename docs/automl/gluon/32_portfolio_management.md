@@ -170,7 +170,7 @@ graph TD
  C --> C4[Equal Weight Portfolio<br/>1/N allocation]
 
  D --> D1[Clustering-based Portfolio<br/>K-means, Hierarchical]
- D --> D2[ML-based Optimization<br/>Random Forest, Neural Networks]
+ D --> D2[ML-based Optimization<br/>Random Forest, Neural networks]
  D --> D3[Factor-based Portfolio<br/>Fama-French factors]
  D --> D4[Reinforcement Learning<br/>Dynamic optimization]
 
@@ -720,7 +720,7 @@ weights = maximum_sharpe_optimization(expected_returns, cov_matrix, risk_free_ra
 
 ### 3. Машинное обучение in управлении портфолио
 
-### 🤖 Интеграция машинного обучения in управление портфолио
+### 🤖 integration машинного обучения in управление портфолио
 
 ```mermaid
 graph TD
@@ -732,7 +732,7 @@ graph TD
 
  B --> B1[Time Series Models<br/>LSTM, GRU, Transformer]
  B --> B2[Ensemble Methods<br/>Random Forest, XGBoost]
- B --> B3[Deep Learning<br/>Neural Networks, CNN]
+ B --> B3[Deep Learning<br/>Neural networks, CNN]
  B --> B4[Feature Engineering<br/>Technical indicators, Sentiment]
 
  C --> C1[K-means Clustering<br/>Group similar assets]
@@ -746,7 +746,7 @@ graph TD
  D --> D4[Multi-objective Optimization<br/>Pareto frontier]
 
  E --> E1[VaR Prediction<br/>ML-based VaR estimation]
- E --> E2[Stress Testing<br/>Scenario generation with ML]
+ E --> E2[Stress testing<br/>Scenario generation with ML]
  E --> E3[Anomaly Detection<br/>Outlier detection in returns]
  E --> E4[Regime Detection<br/>Market regime classification]
 
@@ -779,7 +779,7 @@ graph TD
  G --> H[Обучение моделей<br/>Train on historical data]
  H --> I[Валидация<br/>Cross-validation, Walk-forward]
  I --> J[Деплой in продакшен<br/>Real-time Predictions]
- J --> K[Мониторинг производительности<br/>Model performance tracking]
+ J --> K[Monitoring производительности<br/>Model performance tracking]
 
  K --> L{Модель эффективна?}
  L -->|Да| M[✅ Продолжить использование]
@@ -1596,7 +1596,7 @@ max_dd = maximum_drawdown(portfolio_returns)
 graph TD
  A[Динамическое управление портфолио] --> B[Ребалансировка]
  A --> C[Адаптивное управление]
- A --> D[Мониторинг and контроль]
+ A --> D[Monitoring and контроль]
 
  B --> B1[Временная ребалансировка<br/>Fixed schedule: Daily, Weekly, Monthly]
  B --> B2[Пороговая ребалансировка<br/>When deviation > threshold]
@@ -1655,7 +1655,7 @@ graph TD
 ```python
 def time_based_rebalancing(returns, target_weights, rebalance_freq='M'):
  """
- Ребалансировка портфолио on времени
+ Ребалансировка портфолио in time
 
  Этот метод выполняет ребалансировку портфолио через заданные
  временные интервалы, возвращая веса к целевым значениям.
@@ -1832,16 +1832,16 @@ rebalanced_returns = momentum_based_rebalancing(returns, target_weights,
  momentum_window=20, momentum_threshold=0.1)
 ```
 
-## Мониторинг and оценка портфолио
+## Monitoring and оценка портфолио
 
-### 📊 Мониторинг and оценка портфолио
+### 📊 Monitoring and оценка портфолио
 
 ```mermaid
 graph TD
- A[Мониторинг and оценка портфолио] --> B[Метрики производительности]
+ A[Monitoring and оценка портфолио] --> B[Метрики производительности]
  A --> C[Анализ рисков]
  A --> D[Визуализация]
- A --> E[Отчетность]
+ A --> E[Reportность]
 
  B --> B1[Доходность<br/>Total Return, Annual Return]
  B --> B2[Риск-скорректированная доходность<br/>Sharpe Ratio, Sortino Ratio]
@@ -1862,10 +1862,10 @@ graph TD
  D --> D5[Сравнение with бенчмарком<br/>Portfolio vs Benchmark]
  D --> D6[Анализ вклада активов<br/>Asset contribution analysis]
 
- E --> E1[Ежедневные отчеты<br/>Daily performance summary]
- E --> E2[Еженедельные отчеты<br/>Weekly risk and return analysis]
- E --> E3[Ежемесячные отчеты<br/>Monthly portfolio review]
- E --> E4[Квартальные отчеты<br/>Quarterly attribution analysis]
+ E --> E1[Ежедневные Reportы<br/>Daily performance summary]
+ E --> E2[Еженедельные Reportы<br/>Weekly risk and return analysis]
+ E --> E3[Ежемесячные Reportы<br/>Monthly portfolio review]
+ E --> E4[Квартальные Reportы<br/>Quarterly attribution analysis]
  E --> E5[Алерты and уведомления<br/>Risk alerts, Performance alerts]
 
  B1 --> F[Расчет метрик]
@@ -1894,7 +1894,7 @@ graph TD
 
  N --> O[Анализ проблем<br/>Identify underperformance causes]
  O --> P[Корректировка стратегии<br/>Adjust allocation, rebalance]
- P --> Q[Мониторинг изменений<br/>Track improvement]
+ P --> Q[Monitoring изменений<br/>Track improvement]
  Q --> K
 
  style A fill:#e3f2fd
@@ -1914,7 +1914,7 @@ def calculate_portfolio_metrics(returns, risk_free_rate=0.02):
  Расчет метрик производительности портфолио
 
  Эта function рассчитывает комплексный набор метрик for оценки
- производительности портфолио, включая доходность, риск and
+ производительности портфолио, including доходность, риск and
  риск-скорректированные показатели.
 
  Parameters:
@@ -2137,7 +2137,7 @@ visualize_portfolio_performance(portfolio_returns, benchmark_returns,
 1. **Диверсификация** - not кладите все яйца in одну корзину
 2. **Управление рисками** - контролируйте VaR and максимальную просадку
 3. **Ребалансировка** - регулярно корректируйте веса
-4. **Мониторинг** - постоянно отслеживайте производительность
+4. **Monitoring** - постоянно отслеживайте производительность
 5. **Адаптивность** - приспосабливайтесь к изменяющимся условиям
 
 ### Следующие шаги

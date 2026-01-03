@@ -256,7 +256,7 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str =
 
  plt.show()
 
- # Start navigation
+ # start navigation
  navigator.navigate(plot_chunk_with_navigation)
 
  else:
@@ -389,7 +389,7 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
  if current_field and current_field in chunk.columns and group_info['name'] != 'OHLC':
  _plot_single_field_chunk(chunk, current_field, f"{title} - {current_field} (Chunk {chunk_info['index']})", style)
 
- # Start navigation
+ # start navigation
  navigator.navigate(plot_chunk_with_navigation)
 
  else:
@@ -516,7 +516,7 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "mat
 
  plt.show()
 
- # Start navigation
+ # start navigation
  navigator.navigate(plot_chunk_with_navigation)
 
  else:
@@ -645,7 +645,7 @@ def plot_sr_chunks(df: pd.DataFrame, title: str = "SR Chunks", style: str = "mat
 
  plt.show()
 
- # Start navigation
+ # start navigation
  navigator.navigate(plot_chunk_with_navigation)
 
  else:
@@ -774,7 +774,7 @@ def plot_phld_chunks(df: pd.DataFrame, title: str = "PHLD Chunks", style: str = 
 
  plt.show()
 
- # Start navigation
+ # start navigation
  navigator.navigate(plot_chunk_with_navigation)
 
  else:
@@ -905,7 +905,7 @@ def plot_rsi_chunks(df: pd.DataFrame, rule: str, title: str = "RSI Chunks", styl
 
  plt.show()
 
- # Start navigation
+ # start navigation
  navigator.navigate(plot_chunk_with_navigation)
 
  else:
@@ -1040,7 +1040,7 @@ def plot_macd_chunks(df: pd.DataFrame, title: str = "MACD Chunks", style: str = 
 
  plt.show()
 
- # Start navigation
+ # start navigation
  navigator.navigate(plot_chunk_with_navigation)
 
  else:
@@ -1187,7 +1187,7 @@ def plot_indicator_chunks(df: pd.DataFrame, indicator_name: str, title: str = "I
 
  plt.show()
 
- # Start navigation
+ # start navigation
  navigator.navigate(plot_chunk_with_navigation)
 
  else:
@@ -1845,7 +1845,7 @@ def _add_sma_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
 
  # Debug: print available columns if no SMA found
  if not sma_columns:
- logger.print_warning(f"No SMA columns found. Available columns: {list(chunk.columns)}")
+ logger.print_warning(f"No SMA columns found. available columns: {list(chunk.columns)}")
 
  except Exception as e:
  logger.print_error(f"Error adding SMA indicator: {e}")
@@ -2496,7 +2496,7 @@ def _show_chunk_statistics(chunk: pd.DataFrame, title: str, start_idx: int, end_
  Args:
  chunk (pd.DataFrame): DataFrame chunk
  title (str): Chunk title
- start_idx (int): Start index
+ start_idx (int): start index
  end_idx (int): End index
  """
  try:

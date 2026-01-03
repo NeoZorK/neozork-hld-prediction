@@ -233,7 +233,7 @@ class UpdatedCustomFeatureEngineer:
  bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]',
  position=3, leave=True) as main_pbar:
 
- # Start with CSVExport data as base
+ # start with CSVExport data as base
  result_df = csv_export_data.copy()
 
  # Add SCHR features

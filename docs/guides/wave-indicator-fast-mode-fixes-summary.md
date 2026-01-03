@@ -86,7 +86,7 @@ if valid_data_mask.any():
 uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
 ```
 
-### Запуск тестов:
+### Launch тестов:
 ```bash
 uv run pytest tests/plotting/test_wave_fast_mode.py -v
 ```

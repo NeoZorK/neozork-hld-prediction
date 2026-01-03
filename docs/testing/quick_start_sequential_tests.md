@@ -1,23 +1,23 @@
-# Quick Start: Sequential Test Runner
+# Quick start: Sequential Test Runner
 
 ## Что это такое?
 
-Последовательный тест-раннер - это решение for запуска тестов in Docker контейнере папка за папкой, что предотвращает сбои воркеров and проблемы with ресурсами при параллельном выполнении.
+Последовательный тест-раннер - это решение for Launchа тестов in Docker контейнере папка за папкой, что предотвращает сбои воркеров and Issues with ресурсами при параллельном выполнении.
 
-## Быстрый старт
+## quick start
 
-### 1. Запуск in Docker контейнере
+### 1. Launch in Docker контейнере
 
 ```bash
-# При запуске контейнера выберите 'y' for запуска тестов
+# При Launchе контейнера выберите 'y' for Launchа тестов
 docker run -it your-container
-# Ответьте 'y' on вопрос о запуске тестов
+# Ответьте 'y' on вопрос о Launchе тестов
 ```
 
-### 2. Ручной запуск
+### 2. Ручной Launch
 
 ```bash
-# Запуск всех тестов последовательно
+# Launch всех тестов последовательно
 python scripts/run_sequential_tests_docker.py
 
 # Тестирование функциональности раннера
@@ -51,8 +51,8 @@ uv run pytest tests -n auto # Старый способ (может вызыва
 13. **mcp** - MCP сервер
 14. **docker** - Docker тесты
 15. **native-container** - Нативные контейнеры
-16. **pocket_hedge_fund** - Приложение
-17. **saas** - SaaS приложение
+16. **pocket_hedge_fund** - application
+17. **saas** - SaaS application
 18. **scripts** - Скрипты
 19. **workflow** - Рабочие процессы
 20. **e2e** - End-to-end тесты
@@ -106,7 +106,7 @@ Timeout: 60s
 
 ## Решение проблем
 
-### Тесты not start
+### Tests do not start
 - Проверьте, что вы in Docker контейнере
 - Убедитесь, что файл `tests/test_execution_order.yaml` существует
 
@@ -118,7 +118,7 @@ Timeout: 60s
 - Запустите `python scripts/test_sequential_runner.py` for диагностики
 - Проверьте синтаксис YAML файла
 
-## Интеграция with CI/CD
+## integration with CI/CD
 
 ```bash
 # in CI/CD пайплайне
@@ -131,7 +131,7 @@ docker run --rm your-container python scripts/run_sequential_tests_docker.py
 |---------------------------|------------------|
 | ❌ Сбои воркеров | ✅ Стабильная работа |
 | ❌ Непредсказуемый порядок | ✅ Контролируемый порядок |
-| ❌ Проблемы with ресурсами | ✅ Управление ресурсами |
+| ❌ Issues with ресурсами | ✅ Управление ресурсами |
 | ✅ Быстрее | ⚠️ Медленнее, но надежнее |
 
 ## Заключение

@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 class AutoDataScanner:
  """
  Automatically scans data directory and extracts available indicators, symbols, and timeframes.
- Автоматически сканирует директорию данных and извлекает доступные индикаторы, символы and таймфреймы.
+ Автоматически сканирует директорию данных and извлекает доступные индикаторы, символы and Timeframeы.
  """
 
  def __init__(self, data_path: str = "data/cache/csv_converted/"):
@@ -160,7 +160,7 @@ class AutoDataScanner:
  def get_symbol_timeframes(self, indicator: str, symbol: str) -> List[str]:
  """
  Get available timeframes for specific indicator-symbol combination.
- Получить доступные таймфреймы for конкретной комбинации индикатор-символ.
+ Получить доступные Timeframeы for конкретной комбинации индикатор-символ.
 
  Args:
  indicator: Indicator name
@@ -181,7 +181,7 @@ class AutoDataScanner:
  def get_file_path(self, indicator: str, symbol: str, timeframe: str) -> Optional[str]:
  """
  Get file path for specific indicator-symbol-timeframe combination.
- Получить путь к файлу for конкретной комбинации индикатор-символ-таймфрейм.
+ Получить путь к файлу for конкретной комбинации индикатор-символ-Timeframe.
 
  Args:
  indicator: Indicator name
@@ -206,7 +206,7 @@ class AutoDataScanner:
  def get_all_timeframes_for_symbol(self, symbol: str) -> List[str]:
  """
  Get all available timeframes for a symbol across all indicators.
- Получить все доступные таймфреймы for символа on всем индикаторам.
+ Получить все доступные Timeframeы for символа on всем индикаторам.
 
  Args:
  symbol: Symbol name
@@ -279,11 +279,11 @@ class AutoDataScanner:
  print(f"💱 Symbols: {', '.join(summary['symbols'])}")
  print(f"⏰ Timeframes: {', '.join(summary['timeframes'])}")
 
- print(f"\n📋 Available Combinations:")
+ print(f"\n📋 available Combinations:")
  for indicator, info in summary['combinations'].items():
  print(f" {indicator}: {info['count']} symbols ({', '.join(info['symbols'])})")
 
- print(f"\n🕐 Timeframe Coverage:")
+ print(f"\n🕐 Timeframe coverage:")
  for timeframe in self.timeframe_order:
  if timeframe in self.timeframes:
  count = sum(
@@ -323,7 +323,7 @@ class InteractiveDataSelector:
  print("❌ No indicators found!")
  return None
 
- print(f"\n🎯 Available Indicators:")
+ print(f"\n🎯 available Indicators:")
  for i, indicator in enumerate(indicators, 1):
  symbol_count = len(self.scanner.available_data[indicator])
  print(f" {i}. {indicator} ({symbol_count} symbols)")
@@ -357,7 +357,7 @@ class InteractiveDataSelector:
  print(f"❌ No symbols found for indicator: {indicator}")
  return None
 
- print(f"\n💱 Available Symbols for {indicator}:")
+ print(f"\n💱 available Symbols for {indicator}:")
  for i, symbol in enumerate(symbols, 1):
  timeframe_count = len(self.scanner.available_data[indicator][symbol])
  timeframes = [f['timeframe'] for f in self.scanner.available_data[indicator][symbol]]
@@ -380,7 +380,7 @@ class InteractiveDataSelector:
  def select_timeframes(self, indicator: str, symbol: str, auto_select_all: bool = True) -> List[str]:
  """
  Interactive timeframe selection.
- Интерактивный выбор таймфреймов.
+ Интерактивный выбор Timeframeов.
 
  Args:
  indicator: Selected indicator
@@ -400,7 +400,7 @@ class InteractiveDataSelector:
  print(f"✅ Auto-selected all timeframes for {indicator} {symbol}: {', '.join(timeframes)}")
  return timeframes
 
- print(f"\n⏰ Available Timeframes for {indicator} {symbol}:")
+ print(f"\n⏰ available Timeframes for {indicator} {symbol}:")
  for i, timeframe in enumerate(timeframes, 1):
  print(f" {i}. {timeframe}")
 

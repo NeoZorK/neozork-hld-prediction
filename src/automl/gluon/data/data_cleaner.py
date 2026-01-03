@@ -36,7 +36,7 @@ class DataCleaner:
  Returns:
  Tuple of (cleaned_data, cleaning_report)
  """
- self.logger.info("🧹 Starting data cleaning...")
+ self.logger.info("🧹 starting data cleaning...")
 
  original_shape = data.shape
  cleaning_report = {
@@ -52,7 +52,7 @@ class DataCleaner:
  'final_cols': 0
  }
 
- # Start with a copy
+ # start with a copy
  cleaned_data = data.copy()
 
  # Step 1: Remove infinity values

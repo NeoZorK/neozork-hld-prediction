@@ -20,9 +20,9 @@ TRANSLATION_PATTERNS = {
  r'Real Consequences of Incorrect Installation': 'Real Consequences of Incorrect Installation',
  r'Что происходит при неправильной установке\?': 'What Happens with Incorrect Installation?',
  r'Конфликты зависимостей': 'Dependency Conflicts',
- r'Проблемы with производительностью': 'Performance Issues',
+ r'Issues with производительностью': 'Performance Issues',
  r'Ошибки компиляции': 'Compilation Errors',
- r'Проблемы with GPU': 'GPU Issues',
+ r'Issues with GPU': 'GPU Issues',
  r'Troubleshooting': 'Troubleshooting',
  r'Common Issues': 'Common Issues',
  r'Installation Issues': 'Installation Issues',
@@ -226,7 +226,7 @@ def main():
  return
 
  print()
- print("Starting translation...")
+ print("starting translation...")
  print("Note: This script uses pattern-based translation.")
  print("Complex sentences may require manual review.")
  print()

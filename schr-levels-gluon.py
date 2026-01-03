@@ -62,9 +62,9 @@ os.environ['AUTOGLUON_SILENT'] = '1'
 # AutoGluon imports
 try:
  from autogluon.tabular import TabularPredictor
- AUTOGLUON_AVAILABLE = True
+ AUTOGLUON_available = True
 except ImportError:
- AUTOGLUON_AVAILABLE = False
+ AUTOGLUON_available = False
  TabularPredictor = None
 
 warnings.filterwarnings('ignore')
@@ -91,7 +91,7 @@ os.environ['RAY_DEDUP_LOGS'] = '0'
 
 # Function to suppress AutoGluon output
 def suppress_autogluon_output():
- """Suppresses output AutoGluon включая 'Preset alias specified' сообщения."""
+ """Suppresses output AutoGluon including 'Preset alias specified' messages."""
  # Redirect stdout and stderr to devnull
  devnull = open(os.devnull, 'w')
  sys.stdout = devnull
@@ -119,12 +119,12 @@ builtins.print = filtered_print
 # Ray import check
 try:
  import ray
- RAY_AVAILABLE = True
+ RAY_available = True
  console.print("✅ Ray available - will be used parallel training", style="green")
 except ImportError:
- RAY_AVAILABLE = False
+ RAY_available = False
  console.print("⚠️ Ray not installed - will be used sequential training", style="yellow")
- console.print("💡 to install ray выполните: pip install 'ray>=2.10.0,<2.45.0'", style="blue")
+ console.print("💡 to install ray execute: pip install 'ray>=2.10.0,<2.45.0'", style="blue")
 
 # File logging setup
 os.makedirs('logs', exist_ok=True)
@@ -137,7 +137,7 @@ logger.addHandler(file_handler)
 
 class SCHRLevelsAutoMLPipeline:
  """
- Комплексный пайплайн for creating ML models on basis SCHR Levels indicators.
+ Comprehensive pipeline for creating ML models on basis SCHR Levels indicators.
 
  Solves 3 main tasks:
  1. Prediction sign PRESSURE_VECTOR (+ or -)
@@ -153,7 +153,7 @@ class SCHRLevelsAutoMLPipeline:
  data_path: Path to folder with data
  data_file: Specific data file for analysis
  """
- if not AUTOGLUON_AVAILABLE:
+ if not AUTOGLUON_available:
  raise ImportError("AutoGluon not installed. Install: pip install autogluon")
 
  self.data_path = Path(data_path)
@@ -183,20 +183,20 @@ class SCHRLevelsAutoMLPipeline:
 
  console.print("🚀 SCHR Levels AutoML Pipeline initialized", style="bold blue")
 
- # Информируем о режиме обучения
- if RAY_AVAILABLE:
+ # Informing about training mode
+ if RAY_available:
  console.print("✅ Ray available - will be used parallel training", style="green")
  else:
  console.print("⚠️ Ray неavailable - will be used sequential training", style="yellow")
- console.print("💡 for ускорения установите ray: pip install 'ray>=2.10.0,<2.45.0'", style="blue")
+ console.print("💡 for acceleration install ray: pip install 'ray>=2.10.0,<2.45.0'", style="blue")
 
  def load_schr_data(self, symbol: str = "BTCUSD", timeframe: str = "MN1") -> pd.DataFrame:
  """
- Загрузка данных SCHR Levels for указанного символа and таймфрейма.
+ Loading data SCHR Levels for specified символа and Timeframeа.
 
  Args:
- symbol: Торговый символ (BTCUSD, EURUSD, etc.)
- timeframe: Таймфрейм (MN1, W1, D1, H4, H1, M15, M5, M1)
+ symbol: Trading symbol (BTCUSD, EURUSD, etc.)
+ timeframe: Timeframe (MN1, W1, D1, H4, H1, M15, M5, M1)
 
  Returns:
  DataFrame with data SCHR Levels
@@ -489,7 +489,7 @@ class SCHRLevelsAutoMLPipeline:
  }
 
  # Если ray неavailable, используем sequential training
- if not RAY_AVAILABLE:
+ if not RAY_available:
  logger.warning("Ray неavailable - используем sequential training")
  fit_args['num_bag_folds'] = 0 # Отключаем bagging for последовательного обучения
  fit_args['num_stack_levels'] = 0 # Отключаем stacking
@@ -515,7 +515,7 @@ class SCHRLevelsAutoMLPipeline:
 
  # Обновляем progress bar после завершения обучения
  if progress and task_id:
- progress.update(task_id, description=f"✅ Обучение {task_name} завершено")
+ progress.update(task_id, description=f"✅ Обучение {task_name} COMPLETED")
 
  finally:
  restore_output(devnull)
@@ -630,7 +630,7 @@ class SCHRLevelsAutoMLPipeline:
  }
 
  # Если ray неavailable, используем sequential training
- if not RAY_AVAILABLE:
+ if not RAY_available:
  wf_fit_args['num_bag_folds'] = 0
  wf_fit_args['num_stack_levels'] = 0
 
@@ -751,7 +751,7 @@ class SCHRLevelsAutoMLPipeline:
  }
 
  # Если ray неavailable, используем sequential training
- if not RAY_AVAILABLE:
+ if not RAY_available:
  mc_fit_args['num_bag_folds'] = 0
  mc_fit_args['num_stack_levels'] = 0
 
@@ -796,16 +796,16 @@ class SCHRLevelsAutoMLPipeline:
 
  def run_complete_analysis(self, symbol: str = "BTCUSD", timeframe: str = "MN1") -> Dict[str, Any]:
  """
- Запуск полного анализа for всех трех задач.
+ Launch полного анализа for всех трех задач.
 
  Args:
- symbol: Торговый символ
- timeframe: Таймфрейм
+ symbol: Trading symbol
+ timeframe: Timeframe
 
  Returns:
  Полные результаты анализа
  """
- console.print(f"🚀 Запускаем полный анализ for {symbol} {timeframe}", style="bold blue")
+ console.print(f"🚀 Launchаем полный анализ for {symbol} {timeframe}", style="bold blue")
 
  # Создаем progress bar
  with Progress(
@@ -818,8 +818,8 @@ class SCHRLevelsAutoMLPipeline:
  console=console
  ) as progress:
 
- # 1. Загрузка данных
- task1 = progress.add_task("📁 Загрузка данных...", total=1)
+ # 1. Loading data
+ task1 = progress.add_task("📁 Loading data...", total=1)
  raw_data = self.load_schr_data(symbol, timeframe)
  progress.update(task1, completed=1)
 
@@ -889,9 +889,9 @@ class SCHRLevelsAutoMLPipeline:
  return complete_results
 
  def _generate_summary_report(self, results: Dict[str, Any]):
- """Генерация сводного отчета."""
+ """Генерация сводного Reportа."""
  logger.info("\n" + "="*80)
- logger.info("📋 СВОДНЫЙ ОТЧЕТ on МОДЕЛЯМ SCHR LEVELS")
+ logger.info("📋 СВОДНЫЙ Report on МОДЕЛЯМ SCHR LEVELS")
  logger.info("="*80)
 
  for task, model_results in results['models'].items():
@@ -1040,14 +1040,14 @@ examples использования:
  '-s', '--symbol',
  type=str,
  default='BTCUSD',
- help='Торговый символ (on умолчанию: BTCUSD)'
+ help='Trading symbol (on умолчанию: BTCUSD)'
  )
 
  parser.add_argument(
  '-t', '--timeframe',
  type=str,
  default='MN1',
- help='Таймфрейм (on умолчанию: MN1)'
+ help='Timeframe (on умолчанию: MN1)'
  )
 
  parser.add_argument(
@@ -1078,12 +1078,12 @@ def main():
  data_file=args.file
  )
 
- # Запускаем анализ
+ # Launchаем анализ
  if args.file:
- console.print(f"🚀 Запускаем анализ файла: {args.file}", style="bold blue")
+ console.print(f"🚀 Launchаем анализ файла: {args.file}", style="bold blue")
  results = pipeline.run_complete_analysis("CUSTOM", "CUSTOM")
  else:
- console.print(f"🚀 Запускаем анализ for {args.symbol} {args.timeframe}", style="bold blue")
+ console.print(f"🚀 Launchаем анализ for {args.symbol} {args.timeframe}", style="bold blue")
  results = pipeline.run_complete_analysis(args.symbol, args.timeframe)
 
  # Сохраняем результаты

@@ -30,10 +30,10 @@
 **Почему лучшие практики - это not просто "сделать хорошо"?** Это систематический подход к решению типичных проблем, основанный on опыте тысяч проектов. Это как медицинские протоколы - они спасают жизни.
 
 **Почему 80% ML-проектов повторяют одни and те же ошибки?** Потому что команды not знают о существовании проверенных решений:
-- **Проблемы with data**: Неправильная подготовка, утечки, смещения
-- **Проблемы with валидацией**: Неправильное разделение, переобучение
-- **Проблемы with продакшеном**: Неготовность к реальным условиям
-- **Проблемы with этикой**: Дискриминация, предвзятость, безопасность
+- **Issues with data**: Неправильная подготовка, утечки, смещения
+- **Issues with валидацией**: Неправильное разделение, переобучение
+- **Issues with продакшеном**: Неготовность к реальным условиям
+- **Issues with этикой**: Дискриминация, предвзятость, безопасность
 
 Лучшие практики - это накопленный опыт использования AutoML Gluon, который поможет избежать типичных ошибок and достичь максимальной эффективности. in этом разделе рассмотрим все аспекты правильного использования инструмента.
 
@@ -351,7 +351,7 @@ def select_classification_metrics(problem_type: str, data_balance: str = 'balanc
  Тип задачи классификации:
  - 'binary': Бинарная классификация (2 класса)
  - 'multiclass': Многоклассовая классификация (3+ классов)
- - 'multilabel': Многометочная классификация (несколько меток одновременно)
+ - 'multilabel': Многометочная классификация (несколько меток simultaneously)
 
  data_balance : str, default='balanced'
  Баланс классов in данных:
@@ -1037,7 +1037,7 @@ for key, value in ensemble_analysis.items():
 - **Параллелизация**: Ускорение обучения and инференса
 - **Кэширование**: Сохранение результатов for повторного использования
 - **Профилирование**: Выявление узких мест in производительности
-- **Мониторинг**: Отслеживание метрик производительности
+- **Monitoring**: Отслеживание метрик производительности
 - **Масштабирование**: Адаптация к росту нагрузки
 
 ### 1. configuration ресурсов
@@ -1077,7 +1077,7 @@ def optimize_resources(data_size: int, available_resources: Dict[str, int]) -> D
  num_gpus : int
  Количество GPU for обучения (0-8):
  - 0: CPU-only обучение (универсально)
- - 1: Один GPU for ускорения (рекомендуется)
+ - 1: Один GPU for acceleration (рекомендуется)
  - 2-4: Множественные GPU for больших моделей
  - >4: Экстремально большие модели
 
@@ -1199,15 +1199,15 @@ parallel_config = configure_parallelization(len(train_data), 'binary')
 # Применение конфигурации через ag_args_fit
 ```
 
-## Мониторинг and логирование
+## Monitoring and логирование
 
-<img src="images/optimized/production_architecture.png" alt="Мониторинг and логирование" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 6: Лучшие практики мониторинга and логирования ML-систем*
+<img src="images/optimized/production_architecture.png" alt="Monitoring and логирование" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 6: Лучшие практики Monitoringа and логирования ML-систем*
 
-**Почему критически важен мониторинг ML-систем?** Потому что модели могут деградировать and работать некорректно:
+**Почему критически важен Monitoring ML-систем?** Потому что модели могут деградировать and работать некорректно:
 
 - **Система логирования**: Детальная фиксация всех событий
-- **Мониторинг качества**: Отслеживание метрик производительности
+- **Monitoring качества**: Отслеживание метрик производительности
 - **Детекция дрейфа**: Обнаружение изменений in данных
 - **Алертинг**: Уведомления о проблемах in реальном времени
 - **Дашборды**: Визуализация состояния системы
@@ -1276,7 +1276,7 @@ logger = AutoGluonLogger()
 logger.log_training_start({'data_size': len(train_data), 'features': len(train_data.columns)})
 ```
 
-### 2. Мониторинг производительности
+### 2. Monitoring производительности
 
 ```python
 import psutil
@@ -1284,7 +1284,7 @@ import time
 from typing import Dict, Any
 
 class PerformanceMonitor:
- """Мониторинг производительности"""
+ """Monitoring производительности"""
 
  def __init__(self):
  self.metrics_history = []
@@ -1299,14 +1299,14 @@ class PerformanceMonitor:
  }
 
  def monitor_training(self, predictor, data: pd.DataFrame):
- """Мониторинг обучения"""
+ """Monitoring обучения"""
  start_time = time.time()
 
  # Начальные метрики
  initial_metrics = self.get_system_metrics()
  self.metrics_history.append(initial_metrics)
 
- # Обучение with мониторингом
+ # Обучение with Monitoringом
  predictor.fit(data, time_limit=3600)
 
  # Финальные метрики
@@ -1529,7 +1529,7 @@ optimization_result = optimize_for_production(predictor, target_size_mb=50)
 print(f"Optimization result: {optimization_result}")
 ```
 
-### 2. Кэширование предсказаний
+### 2. Кэширование predictions
 
 ```python
 import hashlib
@@ -1538,12 +1538,12 @@ from typing import Optional
 
 class PredictionCache:
  """
- Система кэширования предсказаний for ускорения инференса
+ Система кэширования predictions for acceleration инференса
 
  Parameters:
  -----------
  cache_size : int, default=1000
- Максимальный размер cache (количество предсказаний):
+ Максимальный размер cache (количество predictions):
  - 100-500: Маленький кэш for простых систем
  - 500-1000: Стандартный кэш for большинства задач
  - 1000-5000: Большой кэш for высоконагруженных систем
@@ -1552,7 +1552,7 @@ class PredictionCache:
  Attributes:
  -----------
  cache : Dict[str, Any]
- Словарь кэшированных предсказаний
+ Словарь кэшированных predictions
  Ключ: MD5 хеш входных данных
  Значение: Результат предсказания
 
@@ -1569,7 +1569,7 @@ class PredictionCache:
  - LRU (Least Recently Used): remove наименее используемых элементов
  - MD5 хеширование: Быстрое сравнение входных данных
  - Автоматическое управление размером: Предотвращение переполнения памяти
- - Статистика использования: Мониторинг эффективности cache
+ - Статистика использования: Monitoring эффективности cache
  """
 
  def __init__(self, cache_size: int = 1000):

@@ -46,7 +46,7 @@ in этом разделе представлены практические exa
 - **Регулирование**: Соблюдение банковских стандартов
 - **Интерпретируемость**: Объяснимость решений for регуляторов
 - **Справедливость**: Предотвращение дискриминации
-- **Мониторинг**: Отслеживание качества in реальном времени
+- **Monitoring**: Отслеживание качества in реальном времени
 - **A/B тестирование**: Сравнение моделей on реальных данных
 
 ### Задача
@@ -55,7 +55,7 @@ in этом разделе представлены практические exa
 Prediction вероятности дефолта клиента банка on basis финансовых показателей.
 
 **Бизнес-контекст:**
-- **Цель**: Минимизировать потери from плохих кредитов
+- **Goal**: Минимизировать потери from плохих кредитов
 - **Метрика**: ROC-AUC (важнее точность for положительных случаев)
 - **Стоимость ошибки**: Ложный отрицательный результат дороже ложного положительного
 - **Объем данных**: Обычно 100K-1M записей
@@ -98,7 +98,7 @@ def create_bank_data(n_samples=10000):
  ------
  Структура банковских данных:
  - 20 числовых признаков (возраст, доход, кредитный рейтинг and др.)
- - 15 информативных признаков (влияют on дефолт)
+ - 15 информативных признаков (influence дефолт)
  - 5 избыточных признаков (коррелированные with информативными)
  - 3 категориальных приsign (статус, образование, семейное положение)
  - Временные метки for analysis трендов
@@ -354,7 +354,7 @@ def evaluate_bank_model(predictor, test_data):
  ------
  Метрики оценки for банковской задачи:
  - ROC-AUC: основная метрика for несбалансированных данных
- - Precision: доля правильных предсказаний дефолта
+ - Precision: доля правильных predictions дефолта
  - Recall: доля найденных дефолтов
  - F1-score: гармоническое среднее precision and recall
  - Accuracy: общая точность классификации
@@ -734,7 +734,7 @@ visualize_real_estate_results(real_estate_results, real_estate_test_data)
 ## example 3: Анализ временных рядов
 
 <img src="images/optimized/time_series_analysis.png" alt="example временных рядов" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 4: example анализа временных рядов - временной ряд with прогнозом, ошибки on времени, распределение ошибок, метрики MASE/MAPE*
+*Рисунок 4: example анализа временных рядов - временной ряд with прогнозом, ошибки in time, распределение ошибок, метрики MASE/MAPE*
 
 **Почему временные ряды - особый тип задач?** Потому что они имеют временную dependency and требуют специальных методов:
 
@@ -1011,7 +1011,7 @@ for product, perf in sales_results['product_performance'].items():
 **Почему визуализация временных рядов особенная?** Потому что время - это дополнительное измерение, которое нужно учитывать:
 
 - **Time Series Plot**: Показывает тренды, сезонность and качество прогноза во времени
-- **Error Analysis**: Демонстрирует, как ошибки распределены on времени
+- **Error Analysis**: Демонстрирует, как ошибки распределены in time
 - **Feature Importance**: Выявляет, какие временные признаки важны
 - **Performance by Product**: Сравнивает качество прогноза for разных продуктов
 
@@ -1064,9 +1064,9 @@ visualize_sales_results(sales_results, sales_test_data)
 ## example 4: Многоклассовая классификация
 
 <img src="images/optimized/multiclass_classification_analysis.png" alt="example многоклассовой классификации" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 5: example многоклассовой классификации - Confusion Matrix, точность on классам, распределение предсказаний, метрики качества*
+*Рисунок 5: example многоклассовой классификации - Confusion Matrix, точность on классам, распределение predictions, метрики качества*
 
-**Почему многоклассовая классификация сложнее бинарной?** Потому что нужно различать множество классов одновременно:
+**Почему многоклассовая классификация сложнее бинарной?** Потому что нужно различать множество классов simultaneously:
 
 **Ключевые аспекты многоклассовой классификации:**
 - **Множественные классы**: Более 2 категорий for классификации
@@ -1348,7 +1348,7 @@ def visualize_image_results(results, test_data):
  results['feature_importance'].head(15).plot(kind='barh', ax=axes[0, 1])
  axes[0, 1].set_title('Top 15 Feature Importance')
 
- # Распределение предсказаний
+ # Распределение predictions
  Prediction_counts = pd.Series(results['Predictions']).value_counts()
  Prediction_counts.plot(kind='bar', ax=axes[1, 0])
  axes[1, 0].set_title('Distribution of Predictions')
@@ -1380,7 +1380,7 @@ visualize_image_results(image_results, image_test_data)
 ## example 5: Продакшен система
 
 <img src="images/optimized/production_system_architecture.png" alt="Архитектура продакшен системы" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 7: Архитектура продакшен системы AutoML Gluon - компоненты, потоки данных, мониторинг*
+*Рисунок 7: Архитектура продакшен системы AutoML Gluon - компоненты, потоки данных, Monitoring*
 
 ### Полная продакшен система
 ```python
@@ -1493,7 +1493,7 @@ class ModelInfo(BaseModel):
 @app.on_event("startup")
 async def load_models():
  """
- Загрузка моделей при запуске продакшен системы
+ Загрузка моделей при Launchе продакшен системы
 
  Notes:
  ------
@@ -1542,7 +1542,7 @@ async def load_models():
 @app.get("/health")
 async def health_check():
  """
- Health check endpoint for мониторинга состояния системы
+ Health check endpoint for Monitoringа состояния системы
 
  Returns:
  --------
@@ -1555,9 +1555,9 @@ async def health_check():
  Notes:
  ------
  Health check используется for:
- - Мониторинга состояния системы
+ - Monitoringа состояния системы
  - Проверки доступности моделей
- - Автоматического перезапуска при сбоях
+ - Автоматического переLaunchа при сбоях
  - Load balancer health checks
  """
  loaded_models = list(models.keys())
@@ -1570,7 +1570,7 @@ async def health_check():
 @app.post("/predict", response_model=PredictionResponse)
 async def predict(request: PredictionRequest):
  """
- Endpoint for предсказаний with использованием обученных моделей
+ Endpoint for predictions with использованием обученных моделей
 
  Parameters:
  -----------
@@ -1690,7 +1690,7 @@ def test_production_api():
 
  # Список моделей
  response = requests.get(f"{base_url}/models")
- print("Available models:", response.json())
+ print("available models:", response.json())
 
  # Тест банковской модели
  bank_data = {
@@ -1726,7 +1726,7 @@ def test_production_api():
  response = requests.post(f"{base_url}/predict", json=real_estate_data)
  print("Real estate Prediction:", response.json())
 
-# Запуск тестов
+# Launch тестов
 if __name__ == "__main__":
  test_production_api()
 ```
@@ -1766,7 +1766,7 @@ if __name__ == "__main__":
 - **Стоимость ошибок**: Разная цена за разные типы ошибок
 - **Валидация**: Стратифицированное разделение данных
 - **Ансамбли**: Комбинирование моделей for лучшего качества
-- **Мониторинг**: Отслеживание качества on редких классах
+- **Monitoring**: Отслеживание качества on редких классах
 
 ## Следующие шаги
 

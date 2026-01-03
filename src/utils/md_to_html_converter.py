@@ -410,7 +410,7 @@ class MarkdownToHTMLConverter:
  <h1>Neozork AutoML Documentation</h1>
 
  <div class="explanation">
- <strong>📚 Полное guide on Neozork AutoML:</strong><br>
+ <strong>📚 Complete guide on Neozork AutoML:</strong><br>
  Комплексная documentation on созданию робастных ML-систем with использованием AutoML технологий.
  </div>
 
@@ -476,7 +476,7 @@ class MarkdownToHTMLConverter:
  <li><strong>Обучение моделей:</strong> AutoML подходы and best practices</li>
  <li><strong>Тестирование:</strong> Backtesting and валидация моделей</li>
  <li><strong>Риск-менеджмент:</strong> Управление рисками in ML системах</li>
- <li><strong>Развертывание:</strong> Production deployment and мониторинг</li>
+ <li><strong>Развертывание:</strong> Production deployment and Monitoring</li>
  </ul>
 
  <div class="explanation">
@@ -511,7 +511,7 @@ def main():
  converter = MarkdownToHTMLConverter(args.input_dir, args.output_dir)
 
  # Convert all files
- print("Starting conversion process...")
+ print("starting conversion process...")
  html_files = converter.convert_all_files()
 
  # Create index file

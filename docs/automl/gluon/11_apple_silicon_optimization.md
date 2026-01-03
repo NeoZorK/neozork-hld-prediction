@@ -28,7 +28,7 @@
 
 **Почему Apple Silicon требует специального подхода?** Потому что это архитектура ARM, а not x86, and требует специальных оптимизаций for максимальной производительности.
 
-Apple Silicon MacBook with чипами M1, M2, M3 предоставляют уникальные возможности for ускорения машинного обучения через:
+Apple Silicon MacBook with чипами M1, M2, M3 предоставляют уникальные возможности for acceleration машинного обучения через:
 
 - **MLX** - фреймворк Apple for машинного обучения on Apple Silicon
 - **Ray** - распределенные вычисления with поддержкой Apple Silicon
@@ -123,7 +123,7 @@ pip install openmp-python
 - **Управление памятью**: Эффективное использование унифицированной памяти
 - **Metal Performance Shaders**: GPU ускорение for матричных операций
 - **OpenMP**: Параллельные вычисления on CPU
-- **MLX интеграция**: Использование специализированных Apple библиотек
+- **MLX integration**: Использование специализированных Apple библиотек
 
 ### 1. Отключение CUDA and configuration MPS
 
@@ -195,7 +195,7 @@ def configure_apple_silicon():
  })
 
  # configuration for MPS (Metal Performance Shaders)
- # MPS - это Apple-специфичный backend for GPU ускорения
+ # MPS - это Apple-специфичный backend for GPU acceleration
  if torch.backends.mps.is_available():
  print("Используется MPS ускорение (Metal Performance Shaders)")
  # MPS обеспечивает GPU ускорение for матричных операций
@@ -211,7 +211,7 @@ def configure_apple_silicon():
 configure_apple_silicon()
 ```
 
-## Интеграция with MLX
+## integration with MLX
 
 ### 1. create MLX-оптимизированных моделей
 
@@ -251,7 +251,7 @@ class MLXOptimizedPredictor:
  MLX (Machine Learning eXtended) - это фреймворк Apple for ML:
  - Специально разработан for Apple Silicon
  - in 2-3 раза быстрее PyTorch on Apple Silicon
- - Использует Metal Performance Shaders for GPU ускорения
+ - Использует Metal Performance Shaders for GPU acceleration
  - Оптимизирован for унифицированной памяти
  - API похож on NumPy for простоты использования
  """
@@ -699,7 +699,7 @@ def distributed_training_apple_silicon(data: pd.DataFrame, n_workers: int = 4):
  Процесс распределенного обучения:
  1. Разделение данных on части
  2. create конфигурации модели
- 3. Запуск удаленных задач обучения
+ 3. Launch удаленных задач обучения
  4. Ожидание завершения всех задач
  5. Возврат обученных моделей
 
@@ -724,7 +724,7 @@ def distributed_training_apple_silicon(data: pd.DataFrame, n_workers: int = 4):
  'presets': 'medium_quality' # Предустановки качества
  }
 
- # Запуск удаленных задач обучения
+ # Launch удаленных задач обучения
  # Каждая задача выполняется on отдельном процессе
  futures = []
  for chunk in data_chunks:
@@ -739,12 +739,12 @@ def distributed_training_apple_silicon(data: pd.DataFrame, n_workers: int = 4):
 
 # Использование распределенного обучения
 def run_distributed_training(data: pd.DataFrame):
- """Запуск распределенного обучения"""
+ """Launch распределенного обучения"""
 
  # configuration Ray
  configure_ray_apple_silicon()
 
- # Запуск распределенного обучения
+ # Launch распределенного обучения
  models = distributed_training_apple_silicon(data, n_workers=4)
 
  print(f"Обучено {len(models)} моделей")
@@ -766,7 +766,7 @@ def run_distributed_training(data: pd.DataFrame):
 - **Управление памятью**: Эффективное использование cache
 - **Параллельные алгоритмы**: Оптимизация for многоядерных систем
 - **Профилирование**: Выявление узких мест in производительности
-- **Мониторинг**: Отслеживание использования ресурсов
+- **Monitoring**: Отслеживание использования ресурсов
 
 ### 1. configuration OpenMP for Apple Silicon
 
@@ -968,7 +968,7 @@ class AppleSiliconOptimizer:
  - Комплексную настройку системы for Apple Silicon
  - Оптимизацию всех компонентов (OpenMP, PyTorch, AutoGluon, Ray)
  - Автоматическое определение оптимальных параметров
- - Мониторинг производительности
+ - Monitoring производительности
  - Управление ресурсами
  """
 
@@ -986,7 +986,7 @@ class AppleSiliconOptimizer:
  Процесс settings системы:
  1. Отключение CUDA (not поддерживается on Apple Silicon)
  2. configuration OpenMP for параллельных вычислений
- 3. configuration PyTorch for MPS ускорения
+ 3. configuration PyTorch for MPS acceleration
  4. configuration AutoGluon for Apple Silicon
  5. configuration Ray for распределенных вычислений
 
@@ -1005,8 +1005,8 @@ class AppleSiliconOptimizer:
  # Оптимизация for многоядерных систем Apple Silicon
  self.configure_openmp()
 
- # configuration PyTorch for MPS ускорения
- # Включение Metal Performance Shaders for GPU ускорения
+ # configuration PyTorch for MPS acceleration
+ # Включение Metal Performance Shaders for GPU acceleration
  self.configure_pytorch()
 
  # configuration AutoGluon for Apple Silicon
@@ -1164,7 +1164,7 @@ def train_optimized_apple_silicon(data: pd.DataFrame, target_col: str):
 
 # Использование
 def run_optimized_training():
- """Запуск оптимизированного обучения"""
+ """Launch оптимизированного обучения"""
 
  # create тестовых данных
  from sklearn.datasets import make_classification
@@ -1180,18 +1180,18 @@ def run_optimized_training():
  test_data = data.sample(1000)
  Predictions = predictor.predict(test_data)
 
- print(f"Обучение завершено, предсказания: {len(Predictions)}")
+ print(f"Обучение COMPLETED, предсказания: {len(Predictions)}")
 
  return predictor
 
-# Запуск
+# Launch
 if __name__ == "__main__":
  predictor = run_optimized_training()
 ```
 
-## Мониторинг производительности
+## Monitoring производительности
 
-### 1. Система мониторинга for Apple Silicon
+### 1. Система Monitoringа for Apple Silicon
 
 ```python
 import psutil
@@ -1200,12 +1200,12 @@ from datetime import datetime
 
 class AppleSiliconMonitor:
  """
- Мониторинг производительности for Apple Silicon
+ Monitoring производительности for Apple Silicon
 
  Attributes:
  -----------
  start_time : float
- Время начала мониторинга (timestamp)
+ Время начала Monitoringа (timestamp)
 
  metrics : List[Dict[str, Any]]
  Список метрик производительности:
@@ -1221,15 +1221,15 @@ class AppleSiliconMonitor:
  Notes:
  ------
  AppleSiliconMonitor обеспечивает:
- - Мониторинг системных ресурсов
+ - Monitoring системных ресурсов
  - Отслеживание производительности обучения
  - Анализ использования CPU, памяти, диска
  - Контроль температуры процессора
- - Генерацию отчетов о производительности
+ - Генерацию Reportов о производительности
  """
 
  def __init__(self):
- self.start_time = time.time() # Время начала мониторинга
+ self.start_time = time.time() # Время начала Monitoringа
  self.metrics = [] # Список метрик производительности
 
  def get_system_metrics(self):
@@ -1297,15 +1297,15 @@ class AppleSiliconMonitor:
  }
 
  def monitor_training(self, predictor, data):
- """Мониторинг обучения"""
+ """Monitoring обучения"""
 
- print("Начало мониторинга обучения...")
+ print("Начало Monitoringа обучения...")
 
  # Начальные метрики
  initial_metrics = self.get_system_metrics()
  self.metrics.append(initial_metrics)
 
- # Обучение with мониторингом
+ # Обучение with Monitoringом
  start_time = time.time()
  predictor.fit(data, time_limit=3600)
  training_time = time.time() - start_time
@@ -1315,18 +1315,18 @@ class AppleSiliconMonitor:
  final_metrics['training_time'] = training_time
  self.metrics.append(final_metrics)
 
- print(f"Обучение завершено за {training_time:.2f} секунд")
+ print(f"Обучение COMPLETED за {training_time:.2f} секунд")
 
  return final_metrics
 
  def generate_report(self):
  """
- Генерация отчета о производительности for Apple Silicon
+ Генерация Reportа о производительности for Apple Silicon
 
  Returns:
  --------
  Dict[str, Any] or str
- Отчет о производительности or сообщение об ошибке:
+ Report о производительности or сообщение об ошибке:
  - total_time: общее время выполнения (секунды)
  - training_time: время обучения (секунды)
  - avg_cpu_usage: среднее использование CPU (%)
@@ -1350,13 +1350,13 @@ class AppleSiliconMonitor:
  """
 
  if not self.metrics:
- return "Нет данных for отчета"
+ return "Нет данных for Reportа"
 
  # Анализ метрик производительности
  cpu_usage = [m['cpu_percent'] for m in self.metrics]
  memory_usage = [m['memory_percent'] for m in self.metrics]
 
- # Генерация отчета о производительности
+ # Генерация Reportа о производительности
  report = {
  'total_time': self.metrics[-1]['elapsed_time'], # Общее время выполнения
  'training_time': self.metrics[-1].get('training_time', 0), # Время обучения
@@ -1369,9 +1369,9 @@ class AppleSiliconMonitor:
 
  return report
 
-# Использование мониторинга
+# Использование Monitoringа
 def run_with_monitoring():
- """Запуск with мониторингом"""
+ """Launch with Monitoringом"""
 
  # create монитора
  monitor = AppleSiliconMonitor()
@@ -1389,12 +1389,12 @@ def run_with_monitoring():
  eval_metric='accuracy'
  )
 
- # Обучение with мониторингом
+ # Обучение with Monitoringом
  final_metrics = monitor.monitor_training(predictor, data)
 
- # Генерация отчета
+ # Генерация Reportа
  report = monitor.generate_report()
- print("Отчет о производительности:")
+ print("Report о производительности:")
  for key, value in report.items():
  print(f"{key}: {value}")
 
@@ -1435,7 +1435,7 @@ def complete_apple_silicon_example():
  optimized_data = optimize_data_for_mlx(data)
  print("Данные оптимизированы for MLX")
 
- # 4. Обучение with мониторингом
+ # 4. Обучение with Monitoringом
  monitor = AppleSiliconMonitor()
 
  predictor = TabularPredictor(
@@ -1459,15 +1459,15 @@ def complete_apple_silicon_example():
  print(f"Производительность: {performance}")
  print(f"Время обучения: {final_metrics['training_time']:.2f} секунд")
 
- # 7. Отчет о производительности
+ # 7. Report о производительности
  report = monitor.generate_report()
- print("Отчет о производительности:")
+ print("Report о производительности:")
  for key, value in report.items():
  print(f" {key}: {value}")
 
  return predictor, report
 
-# Запуск полного примера
+# Launch полного примера
 if __name__ == "__main__":
  predictor, report = complete_apple_silicon_example()
 ```
@@ -1532,7 +1532,7 @@ def compare_performance():
  'speedup': basic_time/optimized_time
  }
 
-# Запуск сравнения
+# Launch сравнения
 if __name__ == "__main__":
  results = compare_performance()
 ```
@@ -1551,7 +1551,7 @@ def troubleshoot_apple_silicon():
  if torch.backends.mps.is_available():
  print("✓ MPS available")
  else:
- print("✗ MPS неavailable - используйте CPU")
+ print("✗ MPS неavailable - Use CPU")
 
  # check Ray
  try:
@@ -1576,7 +1576,7 @@ def troubleshoot_apple_silicon():
  cpu_count = mp.cpu_count()
  print(f"CPU ядер: {cpu_count}")
 
-# Запуск диагностики
+# Launch диагностики
 if __name__ == "__main__":
  troubleshoot_apple_silicon()
 ```
@@ -1701,7 +1701,7 @@ def train_with_optimal_config(data: pd.DataFrame, target_col: str):
 
 **Почему важно использовать GPU ускорение on Apple Silicon?** Потому что GPU может ускорить матричные операции in 5-10 раз:
 
-**Ключевые аспекты GPU ускорения:**
+**Ключевые аспекты GPU acceleration:**
 
 - **Metal Performance Shaders**: Специализированные GPU операции
 - **MPS Backend**: PyTorch with поддержкой Apple GPU
@@ -1724,7 +1724,7 @@ def train_with_optimal_config(data: pd.DataFrame, target_col: str):
 - **Оптимизация потоков**: configuration OpenMP for многоядерных систем
 - **Управление памятью**: Эффективное использование унифицированной памяти
 - **GPU ускорение**: Использование Metal Performance Shaders
-- **Мониторинг производительности**: Отслеживание использования ресурсов
+- **Monitoring производительности**: Отслеживание использования ресурсов
 
 ### 🎯 Ключевые рекомендации
 
@@ -1733,19 +1733,19 @@ def train_with_optimal_config(data: pd.DataFrame, target_col: str):
 - **Принцип "Нативности"**: Использование ARM64 пакетов вместо x86
 - **Принцип "Специализации"**: Использование Apple-специфичных библиотек
 - **Принцип "Оптимизации"**: configuration под конкретную архитектуру
-- **Принцип "Мониторинга"**: Постоянное отслеживание производительности
+- **Принцип "Monitoringа"**: Постоянное отслеживание производительности
 - **Принцип "Тестирования"**: Регулярная check эффективности
 - **Принцип "Обновления"**: Использование последних версий библиотек
 
 ## Заключение
 
-Этот раздел предоставляет полную оптимизацию AutoML Gluon for Apple Silicon MacBook M1/M2/M3, включая:
+Этот раздел предоставляет полную оптимизацию AutoML Gluon for Apple Silicon MacBook M1/M2/M3, including:
 
-- **MLX интеграцию** for ускорения вычислений
+- **MLX интеграцию** for acceleration вычислений
 - **Ray настройку** for распределенных вычислений
 - **OpenMP оптимизацию** for параллельных вычислений
 - **Отключение CUDA** and настройку MPS
-- **Мониторинг производительности** for Apple Silicon
+- **Monitoring производительности** for Apple Silicon
 - **Troubleshooting** типичных проблем
 
 Все settings оптимизированы for максимальной производительности on Apple Silicon with учетом особенностей архитектуры M1/M2/M3 чипов.

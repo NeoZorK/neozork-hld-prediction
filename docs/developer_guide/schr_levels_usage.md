@@ -8,7 +8,7 @@ SCHR Levels AutoML - это автоматизированный пайплай�
 2. **`price_direction_5periods`** - Prediction price direction for 5 periods вперед
 3. **`level_breakout`** - Prediction пробоя уровней PREDICTED_HIGH/PREDICTED_LOW
 
-## 🚀 Быстрый старт
+## 🚀 quick start
 
 ### 1. Простой тест
 ```bash
@@ -77,7 +77,7 @@ Prediction = pipeline.predict(data.tail(1), 'pressure_vector_sign')
 print(f"Prediction: {Prediction.iloc[0]}")
 ```
 
-### Предсказания for торговли
+### Предсказания for trading
 ```python
 # Детальные предсказания with вероятностями
 trading_pred = pipeline.predict_for_trading(data.tail(1), 'pressure_vector_sign')
@@ -117,7 +117,7 @@ results/
 ### Символы
 - BTCUSD, GBPUSD, EURUSD, and другие
 
-### Таймфреймы
+### Timeframeы
 - MN1 (месячные), W1 (недельные), D1 (дневные)
 - H4 (4-часовые), H1 (часовые)
 - M15 (15-minutesные), M5 (5-minutesные), M1 (minutesные)
@@ -128,7 +128,7 @@ results/
 data_btc = pipeline.load_schr_data('BTCUSD', 'MN1')
 data_gbp = pipeline.load_schr_data('GBPUSD', 'MN1')
 
-# Разные таймфреймы
+# Разные Timeframeы
 data_daily = pipeline.load_schr_data('BTCUSD', 'D1')
 data_hourly = pipeline.load_schr_data('BTCUSD', 'H4')
 ```
@@ -211,7 +211,7 @@ tomorrow_Prediction = pipeline.predict(data.tail(1), 'pressure_vector_sign')
 print(f"Завтра PRESSURE_VECTOR будет: {'положительным' if tomorrow_Prediction.iloc[0] == 1 else 'отрицательным'}")
 ```
 
-### Анализ разных таймфреймов
+### Анализ разных Timeframeов
 ```python
 timeframes = ['MN1', 'W1', 'D1', 'H4']
 

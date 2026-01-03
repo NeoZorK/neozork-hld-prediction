@@ -98,7 +98,7 @@ importance_analysis = feature_importance_analyzer.analyze_importance(
 )
 ```
 
-## Интеграция with существующими инструментами
+## integration with существующими инструментами
 
 ### Доступные компоненты
 
@@ -129,15 +129,15 @@ data/
 │ ├── correlations/ # Матрицы корреляций
 │ └── feature_importance/ # Результаты анализа важности
 ├── analysis/
-│ ├── feature_generation/ # Отчеты on генерации признаков
-│ ├── correlation_analysis/ # Отчеты on корреляционному анализу
-│ └── importance_analysis/ # Отчеты on анализу важности
+│ ├── feature_generation/ # Reportы on генерации признаков
+│ ├── correlation_analysis/ # Reportы on корреляционному анализу
+│ └── importance_analysis/ # Reportы on анализу важности
 ```
 
 ## Лучшие практики
 
 1. **Начните with чистых данных:**
- - Используйте данные из директории `data/fixed/`
+ - Use данные из директории `data/fixed/`
  - Обеспечьте качество данных перед генерацией признаков
 
 2. **Итеративный процесс:**

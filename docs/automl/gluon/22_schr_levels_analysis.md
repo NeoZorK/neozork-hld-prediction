@@ -4,7 +4,7 @@
 **Дата:** 2024
 **Version:** 1.0
 
-## Why SCHR Levels критически важен for торговли
+## Why SCHR Levels критически важен for trading
 
 **Почему 95% трейдеров теряют деньги, not понимая уровни поддержки and сопротивления?** Потому что они торгуют без понимания ключевых ценовых зон, где цена может развернуться. SCHR Levels - это ключ к пониманию рыночной структуры.
 
@@ -33,7 +33,7 @@
 - **Prediction пробоев**: Предсказывает пробои and отскоки from уровней
 - **Многомерный анализ**: Учитывает множество факторов
 - **Адаптивность**: Адаптируется к изменениям рынка
-- **Интеграция with блокчейном**: Прозрачные and автоматизированные операции
+- **integration with блокчейном**: Прозрачные and автоматизированные операции
 
 **Результаты SCHR Levels:**
 - **Точность**: 93.2%
@@ -309,14 +309,14 @@ schr_columns = {
 **Практические рекомендации:**
 
 - **Качество данных**: Критично for точности SCHR Levels
-- **Временные рамки**: Использовать множественные таймфреймы
+- **Временные рамки**: Использовать множественные Timeframeы
 - **Валидация**: Обязательна for торговых сигналов
 - **Риск-менеджмент**: Использовать стоп-лоссы on basis уровней
-- **Мониторинг**: Постоянный контроль качества сигналов
+- **Monitoring**: Постоянный контроль качества сигналов
 - **Адаптация**: Регулярное update параметров под рынок
 ```
 
-## Анализ on таймфреймам
+## Анализ on Timeframeам
 
 <img src="images/optimized/level_analysis.png" alt="Анализ уровней" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 22.3: Анализ уровней поддержки and сопротивления - типы and характеристики*
@@ -341,7 +341,7 @@ schr_columns = {
 
 ```python
 class SCHRLevelsM1Analysis:
- """Анализ SCHR Levels on 1-minutesном таймфрейме"""
+ """Анализ SCHR Levels on 1-minutesном Timeframeе"""
 
  def __init__(self):
  self.timeframe = 'M1'
@@ -405,7 +405,7 @@ class SCHRLevelsM1Analysis:
 
 ```python
 class SCHRLevelsM5Analysis:
- """Анализ SCHR Levels on 5-minutesном таймфрейме"""
+ """Анализ SCHR Levels on 5-minutesном Timeframeе"""
 
  def analyze_m5_features(self, data):
  """Анализ признаков for M5"""
@@ -444,7 +444,7 @@ class SCHRLevelsM5Analysis:
 
 ```python
 class SCHRLevelsM15Analysis:
- """Анализ SCHR Levels on 15-minutesном таймфрейме"""
+ """Анализ SCHR Levels on 15-minutesном Timeframeе"""
 
  def analyze_m15_features(self, data):
  """Анализ признаков for M15"""
@@ -465,7 +465,7 @@ class SCHRLevelsM15Analysis:
 
 ```python
 class SCHRLevelsH1Analysis:
- """Анализ SCHR Levels on часовом таймфрейме"""
+ """Анализ SCHR Levels on часовом Timeframeе"""
 
  def analyze_h1_features(self, data):
  """Анализ признаков for H1"""
@@ -486,7 +486,7 @@ class SCHRLevelsH1Analysis:
 
 ```python
 class SCHRLevelsH4Analysis:
- """Анализ SCHR Levels on 4-часовом таймфрейме"""
+ """Анализ SCHR Levels on 4-часовом Timeframeе"""
 
  def analyze_h4_features(self, data):
  """Анализ признаков for H4"""
@@ -507,7 +507,7 @@ class SCHRLevelsH4Analysis:
 
 ```python
 class SCHRLevelsD1Analysis:
- """Анализ SCHR Levels on дневном таймфрейме"""
+ """Анализ SCHR Levels on дневном Timeframeе"""
 
  def analyze_d1_features(self, data):
  """Анализ признаков for D1"""
@@ -531,7 +531,7 @@ class SCHRLevelsD1Analysis:
 
 ```python
 class SCHRLevelsW1Analysis:
- """Анализ SCHR Levels on недельном таймфрейме"""
+ """Анализ SCHR Levels on недельном Timeframeе"""
 
  def analyze_w1_features(self, data):
  """Анализ признаков for W1"""
@@ -555,7 +555,7 @@ class SCHRLevelsW1Analysis:
 
 ```python
 class SCHRLevelsMN1Analysis:
- """Анализ SCHR Levels on месячном таймфрейме"""
+ """Анализ SCHR Levels on месячном Timeframeе"""
 
  def analyze_mn1_features(self, data):
  """Анализ признаков for MN1"""
@@ -599,7 +599,7 @@ class SCHRLevelsMN1Analysis:
 *Рисунок 22.5: ML-модель on basis SCHR Levels - этапы создания and результаты*
 
 **Этапы создания ML-модели:**
-- **Data Preparation**: Объединение таймфреймов, clean данных, нормализация
+- **Data Preparation**: Объединение Timeframeов, clean данных, нормализация
 - **Feature Engineering**: Базовые признаки уровней, признаки давления, признаки пробоев, признаки отскоков
 - **Model Training**: Обучение with AutoML Gluon, оптимизация гиперпараметров
 - **Level Features**: Признаки уровней поддержки, сопротивления, пивотных
@@ -628,7 +628,7 @@ class SCHRLevelsMLModel:
  def prepare_schr_data(self, data_dict):
  """Подготовка данных SCHR Levels for ML"""
 
- # Объединение данных всех таймфреймов
+ # Объединение данных всех Timeframeов
  combined_data = self.combine_timeframe_data(data_dict)
 
  # create признаков
@@ -651,24 +651,24 @@ class SCHRLevelsMLModel:
 - **`self.feature_columns`**: Список признаков модели
  - Тип: List[str]
  - Содержит: названия всех признаков SCHR Levels
- - Применение: for предсказаний on новых данных
+ - Применение: for predictions on новых данных
  - update: при изменении набора признаков
 
-- **`self.timeframes`**: Список таймфреймов
+- **`self.timeframes`**: Список Timeframeов
  - Тип: List[str]
  - Значения: ['M1', 'M5', 'M15', 'H1', 'H4', 'D1', 'W1', 'MN1']
- - Применение: анализ on множественных таймфреймах
+ - Применение: анализ on множественных Timeframeах
  - Преимущества: полная картина рынка
 
-- **`data_dict`**: Словарь данных on таймфреймам
+- **`data_dict`**: Словарь данных on Timeframeам
  - Тип: dict
  - Структура: {timeframe: DataFrame}
- - Применение: объединение данных всех таймфреймов
+ - Применение: объединение данных всех Timeframeов
  - Требования: одинаковые колонки во всех DataFrame
 
 - **`combined_data`**: Объединенные данные
  - Тип: DataFrame
- - Содержит: данные всех таймфреймов
+ - Содержит: данные всех Timeframeов
  - Применение: create признаков and целевой переменной
  - Обработка: remove дубликатов and пропусков
 
@@ -987,7 +987,7 @@ class SCHRLevelsMLModel:
  - Диапазон: from 0 to 1
  - Применение: оценка точности предсказания максимума
  - Интерпретация: 1 = очень точное, 0 = неточное
- - Расчет: on basis исторической точности предсказаний
+ - Расчет: on basis исторической точности predictions
 
 - **`Prediction_accuracy_low`**: Точность предсказания минимума
  - Тип: float
@@ -995,15 +995,15 @@ class SCHRLevelsMLModel:
  - Диапазон: from 0 to 1
  - Применение: оценка точности предсказания минимума
  - Интерпретация: 1 = очень точное, 0 = неточное
- - Расчет: on basis исторической точности предсказаний
+ - Расчет: on basis исторической точности predictions
 
 **Практические рекомендации:**
 
 - **Качество данных**: Критично for точности SCHR Levels
-- **Временные рамки**: Использовать множественные таймфреймы
+- **Временные рамки**: Использовать множественные Timeframeы
 - **Валидация**: Обязательна for торговых сигналов
 - **Риск-менеджмент**: Использовать стоп-лоссы on basis уровней
-- **Мониторинг**: Постоянный контроль качества сигналов
+- **Monitoring**: Постоянный контроль качества сигналов
 - **Адаптация**: Регулярное update параметров под рынок
 
  def create_schr_features(self, data):
@@ -1124,7 +1124,7 @@ class SCHRLevelsMLModel:
  features['relative_distance_predicted_high'] = features['distance_to_predicted_high'] / data['close']
  features['relative_distance_predicted_low'] = features['distance_to_predicted_low'] / data['close']
 
- # Точность предсказаний
+ # Точность predictions
  features['Prediction_accuracy_high'] = self.calculate_Prediction_accuracy(data, 'predicted_high')
  features['Prediction_accuracy_low'] = self.calculate_Prediction_accuracy(data, 'predicted_low')
 
@@ -1279,7 +1279,7 @@ class SCHRLevelsMLModel:
  - Тип: str
  - Применение: сохранение обученной модели
  - Содержит: веса модели, метаданные, конфигурацию
- - Использование: загрузка for предсказаний
+ - Использование: загрузка for predictions
  - Формат: директория with файлами модели
 
 - **`time_limit=3600`**: Лимит времени обучения
@@ -1375,7 +1375,7 @@ class SCHRLevelsMLModel:
  - Формат: бинарные метки (0/1)
  - Интерпретация: 0 = падение, 1 = рост
 
-- **`probabilities`**: Вероятности предсказаний
+- **`probabilities`**: Вероятности predictions
  - Тип: numpy array
  - Содержит: вероятности for каждого класса
  - Применение: оценка уверенности
@@ -1455,10 +1455,10 @@ class SCHRLevelsMLModel:
 **Практические рекомендации:**
 
 - **Качество данных**: Критично for точности SCHR Levels
-- **Временные рамки**: Использовать множественные таймфреймы
+- **Временные рамки**: Использовать множественные Timeframeы
 - **Валидация**: Обязательна for торговых сигналов
 - **Риск-менеджмент**: Использовать стоп-лоссы on basis уровней
-- **Мониторинг**: Постоянный контроль качества сигналов
+- **Monitoring**: Постоянный контроль качества сигналов
 - **Адаптация**: Регулярное update параметров под рынок
 ```
 
@@ -1472,8 +1472,8 @@ class SCHRLevelsMLModel:
 - **Walk-Forward Analysis**: Скользящее окно, адаптация к рынку, реалистичная оценка
 - **Monte Carlo Simulation**: Случайные выборки, статистическая значимость
 - **Cross-Validation**: Кросс-валидация, check стабильности
-- **Out-of-Sample Testing**: Тестирование on новых данных
-- **Stress Testing**: Тестирование in экстремальных условиях
+- **Out-of-Sample testing**: Тестирование on новых данных
+- **Stress testing**: Тестирование in экстремальных условиях
 
 **Результаты валидации:**
 - **Sharpe Ratio**: 2.8
@@ -1558,8 +1558,8 @@ def schr_monte_carlo(self, data, n_simulations=1000):
 
 ## Деплой on блокчейне
 
-<img src="images/optimized/blockchain_schr.png" alt="Интеграция with блокчейном SCHR" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 22.7: Интеграция SCHR Levels with блокчейном - from смарт-контрактов to автоматической торговли*
+<img src="images/optimized/blockchain_schr.png" alt="integration with блокчейном SCHR" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 22.7: integration SCHR Levels with блокчейном - from смарт-контрактов to автоматической торговли*
 
 **Компоненты интеграции:**
 - **Smart Contracts**: Хранение сигналов, автоматическое выполнение, прозрачность операций
@@ -1632,11 +1632,11 @@ contract SCHRLevelsTradingContract {
 }
 ```
 
-### Интеграция with DEX
+### integration with DEX
 
 ```python
 class SCHRLevelsDEXIntegration:
- """Интеграция SCHR Levels with DEX"""
+ """integration SCHR Levels with DEX"""
 
  def __init__(self, contract_address, private_key):
  self.contract_address = contract_address
@@ -1692,7 +1692,7 @@ class SCHRLevelsDEXIntegration:
 - **Win Rate**: 75.2%
 - **Profit Factor**: 2.4
 
-**Доходность on таймфреймам:**
+**Доходность on Timeframeам:**
 - **M1**: 42.1%
 - **M5**: 48.7%
 - **M15**: 58.3%

@@ -29,12 +29,12 @@
 **Основные категории продвинутых тем:**
 - **Neural Architecture Search (NAS)**: Автоматический поиск оптимальных архитектур нейросетей
 - **Meta-Learning**: Обучение тому, как учиться on новых задачах
-- **Multi-Modal Learning**: Работа with различными типами данных одновременно
+- **Multi-Modal Learning**: Работа with различными типами данных simultaneously
 - **Federated Learning**: Распределенное обучение with сохранением приватности
 - **Continual Learning**: Непрерывное обучение без забывания предыдущих знаний
 - **Quantum Machine Learning**: Использование квантовых вычислений for ML
 
-Этот раздел охватывает передовые темы and современные направления in области автоматизированного машинного обучения, включая нейроархитектурный поиск, мета-обучение, мультимодальное обучение and другие cutting-edge технологии.
+Этот раздел охватывает передовые темы and современные направления in области автоматизированного машинного обучения, including нейроархитектурный поиск, мета-обучение, мультимодальное обучение and другие cutting-edge технологии.
 
 ## Neural Architecture Search (NAS)
 
@@ -253,7 +253,7 @@ def search_architecture(train_loader, val_loader, epochs=50):
  - `0.1`: Очень большой learning rate (может быть нестабильным)
 
 - **`model.train()`**: Режим обучения
- - Включает: dropout, batch normalization in режиме обучения
+ - Включает: dropout, batch normalization in training mode
  - Отключает: детерминированное поведение
  - Применение: активация обучающих компонентов
 
@@ -280,7 +280,7 @@ def search_architecture(train_loader, val_loader, epochs=50):
 
 - **`model.eval()`**: Режим оценки
  - Включает: детерминированное поведение
- - Отключает: dropout, batch normalization in режиме обучения
+ - Отключает: dropout, batch normalization in training mode
  - Применение: стабильная оценка on валидации
 
 - **`torch.no_grad()`**: Отключение градиентов
@@ -466,8 +466,8 @@ class ENAS(nn.Module):
 
 **Типы методов мета-обучения:**
 - **MAML (Model-Agnostic)**: Универсальный мета-обучение for любых моделей
-- **Prototypical Networks**: Обучение через прототипы классов
-- **Matching Networks**: Сопоставление примеров for классификации
+- **Prototypical networks**: Обучение через прототипы классов
+- **Matching networks**: Сопоставление примеров for классификации
 - **Reptile**: Простой and эффективный мета-обучение
 - **Meta-SGD**: Мета-обучение with адаптивными шагами обучения
 - **Gradient Meta-Learning**: Мета-обучение через градиенты
@@ -612,14 +612,14 @@ class MAML(nn.Module):
 - **Continual Learning**: Непрерывное обучение
 ```
 
-### 2. Prototypical Networks
+### 2. Prototypical networks
 
 ```python
-class PrototypicalNetworks(nn.Module):
- """Prototypical Networks for few-shot learning"""
+class Prototypicalnetworks(nn.Module):
+ """Prototypical networks for few-shot learning"""
 
  def __init__(self, input_dim, hidden_dim=64):
- super(PrototypicalNetworks, self).__init__()
+ super(Prototypicalnetworks, self).__init__()
  self.encoder = nn.Sequential(
  nn.Linear(input_dim, hidden_dim),
  nn.ReLU(),
@@ -659,7 +659,7 @@ class PrototypicalNetworks(nn.Module):
 ## Multi-Modal Learning
 
 <img src="images/optimized/multimodal_learning.png" alt="Multi-Modal Learning" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 18.4: Multi-Modal Learning - работа with различными типами данных одновременно*
+*Рисунок 18.4: Multi-Modal Learning - работа with различными типами данных simultaneously*
 
 **Типы модальностей:**
 - **Vision (Images)**: Обработка изображений and визуальных данных
@@ -969,7 +969,7 @@ class DifferentialPrivacy:
 
 **Типы методов непрерывного обучения:**
 - **EWC (Elastic Weight)**: Эластичное закрепление весов for сохранения знаний
-- **Progressive Networks**: Прогрессивные сети with боковыми соединениями
+- **Progressive networks**: Прогрессивные сети with боковыми соединениями
 - **Memory Replay**: Воспроизведение предыдущих примеров
 - **Regularization Methods**: Регуляризация for предотвращения забывания
 - **Architectural Methods**: Архитектурные изменения for новых задач
@@ -1032,14 +1032,14 @@ class ElasticWeightConsolidation:
  return ewc_loss
 ```
 
-### 2. Progressive Neural Networks
+### 2. Progressive Neural networks
 
 ```python
-class ProgressiveNeuralNetwork(nn.Module):
- """Progressive Neural Networks for непрерывного обучения"""
+class ProgressiveNeuralnetwork(nn.Module):
+ """Progressive Neural networks for непрерывного обучения"""
 
  def __init__(self, input_dim, hidden_dim=64):
- super(ProgressiveNeuralNetwork, self).__init__()
+ super(ProgressiveNeuralnetwork, self).__init__()
  self.columns = nn.ModuleList()
  self.lateral_connections = nn.ModuleList()
 
@@ -1090,21 +1090,21 @@ class ProgressiveNeuralNetwork(nn.Module):
 *Рисунок 18.7: Quantum Machine Learning - использование квантовых вычислений for ML*
 
 **Компоненты квантового ML:**
-- **Quantum Neural Networks**: Квантовые нейронные сети
+- **Quantum Neural networks**: Квантовые нейронные сети
 - **Quantum Circuits**: Квантовые схемы and алгоритмы
 - **Quantum Algorithms**: Квантовые алгоритмы for ML
 - **Quantum Gates**: Квантовые вентили for вычислений
 - **Quantum Entanglement**: Квантовая запутанность for параллелизма
-- **Quantum Superposition**: Квантовая суперпозиция for экспоненциального ускорения
+- **Quantum Superposition**: Квантовая суперпозиция for экспоненциального acceleration
 
 **Квантовые преимущества:**
 - **Экспоненциальное ускорение**: Экспоненциальное ускорение вычислений
 - **Параллельные вычисления**: Параллельная обработка информации
-- **Квантовая суперпозиция**: Одновременное нахождение in нескольких состояниях
+- **Квантовая суперпозиция**: simultaneouslyе нахождение in нескольких состояниях
 - **Квантовая запутанность**: Коррелированные состояния for вычислений
 - **Квантовые интерференции**: Интерференция for оптимизации
 
-### 1. Quantum Neural Networks
+### 1. Quantum Neural networks
 
 ```python
 # example with использованием PennyLane

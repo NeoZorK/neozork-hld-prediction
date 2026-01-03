@@ -9,7 +9,7 @@
 
 ### Проблемы сложных подходов
 - **Переусложнение**: Попытка решить все проблемы сразу
-- **Долгая разработка**: Месяцы on планирование, дни on реализацию
+- **Долгая разработка**: Месяцы on Planирование, дни on реализацию
 - **Технический долг**: Сложная архитектура, которую сложно поддерживать
 - **Разочарование**: Команда теряет мотивацию из-за сложности
 
@@ -33,7 +33,7 @@
 **Почему определение задачи - самый важный шаг?** Потому что неправильно определенная задача приводит к неправильному решению. Это как постройка дома - если фундамент кривой, весь дом будет кривым.
 
 **Ключевые принципы определения задачи:**
-- **Четкая цель**: Что именно мы хотим предсказать?
+- **Четкая Goal**: Что именно мы хотим предсказать?
 - **Измеримые метрики**: Как мы будем оценивать успех?
 - **Доступные данные**: Есть ли достаточно данных for обучения?
 - **Практическая применимость**: Будет ли решение полезным in реальности?
@@ -49,10 +49,10 @@
 - **Прозрачность**: Все транзакции публичны
 - **Актуальность**: Быстро меняющийся рынок
 
-### Цель
+### Goal
 **Почему 70% точности достаточно?** Потому что in трейдинге даже небольшое преимущество дает прибыль, а 70% - это уже статистически значимое преимущество.
 
-- **Точность**: >70% правильных предсказаний направления движения цены
+- **Точность**: >70% правильных predictions направления движения цены
 - **Робастность**: Стабильная работа in различных рыночных условиях
 - **Прибыльность**: Положительный ROI on тестовых данных
 
@@ -288,7 +288,7 @@ def simple_backtest(predictor, test_data, features):
  --------
  Dict[str, Any]
  Результаты backtest:
- - accuracy: точность предсказаний (0-1)
+ - accuracy: точность predictions (0-1)
  - total_return: общая доходность стратегии
  - sharpe_ratio: коэффициент Шарпа (риск-скорректированная доходность)
  - Predictions: предсказания модели (0/1)
@@ -302,7 +302,7 @@ def simple_backtest(predictor, test_data, features):
  - Удержание: если уверенность < 0.6
 
  Метрики оценки:
- - Accuracy: доля правильных предсказаний направления
+ - Accuracy: доля правильных predictions направления
  - Total Return: суммарная доходность стратегии
  - Sharpe Ratio: доходность on единицу риска (стандартизированная)
 
@@ -334,14 +334,14 @@ def simple_backtest(predictor, test_data, features):
  sharpe_ratio = test_data['strategy_returns'].mean() / test_data['strategy_returns'].std() * np.sqrt(252) # Коэффициент Шарпа (годовой)
 
  return {
- 'accuracy': accuracy, # Точность предсказаний
+ 'accuracy': accuracy, # Точность predictions
  'total_return': total_return, # Общая доходность
  'sharpe_ratio': sharpe_ratio, # Коэффициент Шарпа
  'Predictions': Predictions, # Предсказания модели
  'probabilities': probabilities # Вероятности классов
  }
 
-# Запуск backtest
+# Launch backtest
 backtest_results = simple_backtest(model, test_data, features)
 print(f"Точность: {backtest_results['accuracy']:.3f}")
 print(f"Общая доходность: {backtest_results['total_return']:.3f}")
@@ -360,7 +360,7 @@ def simple_walk_forward(data, features, window_size=252, step_size=30):
  Полные исторические данные:
  - Содержит OHLCV данные and технические индикаторы
  - Включает целевую переменную 'target'
- - Отсортированы on времени (хронологический порядок)
+ - Отсортированы in time (хронологический порядок)
 
  features : List[str]
  Список признаков for обучения:
@@ -410,7 +410,7 @@ def simple_walk_forward(data, features, window_size=252, step_size=30):
 
  results = []
 
- # Walk-forward валидация: скользящее окно on времени
+ # Walk-forward валидация: скользящее окно in time
  for i in range(window_size, len(data) - step_size, step_size):
  # Обучающие данные (исторические данные)
  train_data = data.iloc[i-window_size:i]
@@ -446,7 +446,7 @@ def simple_walk_forward(data, features, window_size=252, step_size=30):
 
  return results
 
-# Запуск walk-forward валидации
+# Launch walk-forward валидации
 wf_results = simple_walk_forward(crypto_data, features)
 avg_accuracy = np.mean([r['accuracy'] for r in wf_results])
 print(f"Средняя точность walk-forward: {avg_accuracy:.3f}")
@@ -549,7 +549,7 @@ def simple_monte_carlo(data, features, n_simulations=100):
  'results': results # Все результаты for детального анализа
  }
 
-# Запуск Monte Carlo
+# Launch Monte Carlo
 mc_results = simple_monte_carlo(crypto_data, features)
 print(f"Monte Carlo - Средняя точность: {mc_results['mean_accuracy']:.3f}")
 print(f"Monte Carlo - Стандартное отклонение: {mc_results['std_accuracy']:.3f}")
@@ -659,12 +659,12 @@ if __name__ == '__main__':
 
 ## Шаг 6: Docker контейнеризация
 
-**Почему Docker критически важен for продакшен деплоя?** Потому что он обеспечивает консистентность среды выполнения, упрощает развертывание and масштабирование, а также изолирует приложение from системных зависимостей.
+**Почему Docker критически важен for продакшен деплоя?** Потому что он обеспечивает консистентность среды выполнения, упрощает развертывание and масштабирование, а также изолирует application from системных зависимостей.
 
 **Преимущества Docker for ML-систем:**
 - **Консистентность**: Одинаковая среда on всех серверах
 - **Портабельность**: Легкое перемещение между серверами
-- **Изоляция**: Приложение not влияет on систему
+- **Изоляция**: application not влияет on систему
 - **Масштабирование**: Простое горизонтальное масштабирование
 
 ```dockerfile
@@ -695,7 +695,7 @@ USER appuser
 # Открытие порта for API
 EXPOSE 5000
 
-# Запуск приложения
+# Launch приложения
 CMD ["python", "app.py"]
 ```
 
@@ -714,7 +714,7 @@ services:
  volumes:
  - ./models:/app/models # Монтирование моделей
  - ./logs:/app/logs # Монтирование логов
- restart: unless-stopped # Автоматический перезапуск
+ restart: unless-stopped # Автоматический переLaunch
  depends_on:
  - redis # dependency from Redis
  healthcheck:
@@ -727,7 +727,7 @@ services:
  image: redis:alpine # Легкий Redis образ
  ports:
  - "6379:6379" # Проброс порта Redis
- restart: unless-stopped # Автоматический перезапуск
+ restart: unless-stopped # Автоматический переLaunch
  volumes:
  - redis_data:/data # Постоянное хранение данных
  command: redis-server --appendonly yes # Включение AOF
@@ -738,10 +738,10 @@ volumes:
 
 ## Шаг 7: Деплой on DEX blockchain
 
-<img src="images/optimized/blockchain_integration_flow.png" alt="Интеграция ML-системы with DEX Blockchain" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 13.4: Интеграция ML-системы with DEX Blockchain - потоки данных, компоненты, example торговой операции*
+<img src="images/optimized/blockchain_integration_flow.png" alt="integration ML-системы with DEX Blockchain" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 13.4: integration ML-системы with DEX Blockchain - потоки данных, компоненты, example торговой операции*
 
-**Почему blockchain интеграция революционна?** Потому что она позволяет автоматизировать торговые решения on basis ML-предсказаний, устраняя человеческий фактор and обеспечивая прозрачность операций.
+**Почему blockchain integration революционна?** Потому что она позволяет автоматизировать торговые решения on basis ML-predictions, устраняя человеческий фактор and обеспечивая прозрачность операций.
 
 ```python
 # smart_contract.py
@@ -751,7 +751,7 @@ import json
 
 class MLPredictionContract:
  """
- Smart contract for автоматической торговли on basis ML предсказаний
+ Smart contract for автоматической торговли on basis ML predictions
 
  Parameters:
  -----------
@@ -884,21 +884,21 @@ Prediction = contract.get_Prediction('BTC-USD', '1h')
 trade_result = contract.execute_trade(Prediction, 1000)
 ```
 
-## Шаг 8: Мониторинг and переобучение
+## Шаг 8: Monitoring and переобучение
 
-<img src="images/optimized/monitoring_dashboard.png" alt="Дашборд мониторинга ML-системы" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 13.5: Дашборд мониторинга ML-системы - статус компонентов, метрики in реальном времени, алерты*
+<img src="images/optimized/monitoring_dashboard.png" alt="Дашборд Monitoringа ML-системы" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 13.5: Дашборд Monitoringа ML-системы - статус компонентов, метрики in реальном времени, алерты*
 
-**Почему мониторинг критически важен?** Потому что ML-модели могут деградировать со временем, and без постоянного мониторинга система может начать принимать неправильные решения, что приведет к финансовым потерям.
+**Почему Monitoring критически важен?** Потому что ML-модели могут деградировать со временем, and без постоянного Monitoringа система может начать принимать неправильные решения, что приведет к финансовым потерям.
 
 ```python
 def monitor_and_retrain():
  """
- Мониторинг производительности модели and автоматическое переобучение
+ Monitoring производительности модели and автоматическое переобучение
 
  Notes:
  ------
- Процесс мониторинга and переобучения:
+ Процесс Monitoringа and переобучения:
  1. check текущей производительности модели
  2. Сравнение with пороговым значением
  3. Загрузка новых данных при необходимости
@@ -922,7 +922,7 @@ def monitor_and_retrain():
  current_accuracy = check_model_performance()
 
  if current_accuracy < 0.6: # Порог for переобучения (60%)
- print("Производительность упала, запускаем переобучение...")
+ print("Производительность упала, Launchаем переобучение...")
 
  # Загрузка новых данных for переобучения
  new_data = prepare_crypto_data('BTC-USD', '1y') # Последний год данных
@@ -938,7 +938,7 @@ def monitor_and_retrain():
 
  print("Модель успешно переобучена and развернута")
 
-# Запуск мониторинга
+# Launch Monitoringа
 schedule.every().day.at("02:00").do(monitor_and_retrain)
 ```
 
@@ -957,9 +957,9 @@ def main():
  Notes:
  ------
  Архитектура системы:
- - ML API: получение предсказаний from модели
+ - ML API: получение predictions from модели
  - Blockchain Contract: выполнение торговых операций
- - Monitoring: мониторинг производительности
+ - Monitoring: Monitoring производительности
  - Logging: запись всех операций
 
  Процесс работы:
@@ -967,14 +967,14 @@ def main():
  2. Получение предсказания from ML модели
  3. Выполнение торговой операции on blockchain
  4. Логирование результата
- 5. Мониторинг производительности
+ 5. Monitoring производительности
  6. Пауза to следующего цикла
 
  Обработка ошибок:
  - Логирование всех ошибок
  - Пауза при критических ошибках
  - Продолжение работы при некритических ошибках
- - Автоматический перезапуск при сбоях
+ - Автоматический переLaunch при сбоях
 
  settings:
  - Интервал обновления: 1 час (3600 секунд)
@@ -993,9 +993,9 @@ def main():
  )
 
  # Инициализация компонентов системы
- ml_api = MLPredictionAPI() # API for получения предсказаний
- blockchain_contract = MLPredictionContract() # Smart contract for торговли
- monitoring = ModelMonitoring() # Мониторинг производительности
+ ml_api = MLPredictionAPI() # API for получения predictions
+ blockchain_contract = MLPredictionContract() # Smart contract for trading
+ monitoring = ModelMonitoring() # Monitoring производительности
 
  # Основной цикл работы системы
  while True:
@@ -1009,7 +1009,7 @@ def main():
  # Логирование результата операции
  logging.info(f"Trade executed: {trade_result}")
 
- # Мониторинг производительности модели
+ # Monitoring производительности модели
  monitoring.check_performance()
 
  # Пауза to следующего цикла (1 час)
@@ -1027,7 +1027,7 @@ if __name__ == '__main__':
 ## Результаты
 
 <img src="images/optimized/performance_metrics_analysis.png" alt="Метрики производительности ML-системы" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 13.6: Метрики производительности ML-системы - точность on времени, доходность, коэффициент Шарпа, распределение ошибок*
+*Рисунок 13.6: Метрики производительности ML-системы - точность in time, доходность, коэффициент Шарпа, распределение ошибок*
 
 **Почему важно анализировать результаты?** Потому что только через детальный анализ метрик можно понять, работает ли система эффективно and приносит ли она реальную пользу.
 
@@ -1050,6 +1050,6 @@ if __name__ == '__main__':
 
 ## Заключение
 
-Этот простой example показывает, как можно быстро создать and развернуть робастную ML-модель for торговли on DEX blockchain. Хотя подход простой, он обеспечивает стабильную работу and положительную доходность.
+Этот простой example показывает, как можно быстро создать and развернуть робастную ML-модель for trading on DEX blockchain. Хотя подход простой, он обеспечивает стабильную работу and положительную доходность.
 
 **Следующий раздел** покажет более сложный example with продвинутыми техниками and лучшими практиками.

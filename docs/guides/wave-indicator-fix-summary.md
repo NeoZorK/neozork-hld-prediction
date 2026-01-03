@@ -40,7 +40,7 @@ if signal_col not in df.columns:
  signal_col = col
  break
  else:
- self._display_error(f"signal column '{signal_col}' not found in data. Available columns: {list(df.columns)}")
+ self._display_error(f"signal column '{signal_col}' not found in data. available columns: {list(df.columns)}")
  return {}
 ```
 
@@ -50,7 +50,7 @@ if signal_col not in df.columns:
 3. `Direction` - стандартная колонка
 4. `signal` - резервная колонка
 
-## 🧪 Testing Results
+## 🧪 testing Results
 
 ### Команда to исправления
 ```bash

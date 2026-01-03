@@ -30,7 +30,7 @@
 - **Neural Architecture Search (NAS)**: Автоматический поиск оптимальной архитектуры нейронных сетей
 - **Hyperparameter Optimization**: Оптимизация гиперпараметров with помощью различных методов
 - **Feature Engineering Automation**: Автоматическое create and отбор признаков
-- **Ensemble Methods**: Комбинирование множественных моделей for повышения точности
+- **Ensemble Methods**: Комбинирование множественных моделей for improving accuracy
 - **Performance Optimization**: Оптимизация производительности and ресурсов
 
 AutoML (Automated Machine Learning) - это область машинного обучения, которая автоматизирует процесс creating ML models. Понимание теоретических основ критически важно for эффективного использования AutoML Gluon.
@@ -434,7 +434,7 @@ regularization = {
 **Типы методов ансамблирования:**
 - **Bagging**: parallel training on bootstrap выборках
 - **Boosting**: sequential training with весами ошибок
-- **Stacking**: Мета-обучение for комбинирования предсказаний
+- **Stacking**: Мета-обучение for комбинирования predictions
 
 ### 1. Bagging
 
@@ -466,7 +466,7 @@ predictor = TabularPredictor(
  - `0`: Без стекинга (только bagging)
  - `1`: Один уровень стекинга (рекомендуется)
  - `2-3`: Многоуровневый стекинг
- - Эффект: мета-обучение for комбинирования предсказаний
+ - Эффект: мета-обучение for комбинирования predictions
 
 ### 2. Boosting
 
@@ -758,9 +758,9 @@ def parallel_processing(data, n_jobs=-1):
  - `10000`: Фиксированный размер for больших данных
 
 **Оптимизация производительности:**
-- **CPU-bound задачи**: Используйте `n_jobs = mp.cpu_count()`
-- **I/O-bound задачи**: Используйте `n_jobs = mp.cpu_count() * 2`
-- **Memory-bound задачи**: Используйте `n_jobs = mp.cpu_count() // 2`
+- **CPU-bound задачи**: Use `n_jobs = mp.cpu_count()`
+- **I/O-bound задачи**: Use `n_jobs = mp.cpu_count() * 2`
+- **Memory-bound задачи**: Use `n_jobs = mp.cpu_count() // 2`
 
 **Рекомендации on выбору n_jobs:**
 - **Малые данные (< 10K строк)**: `n_jobs = 2-4`

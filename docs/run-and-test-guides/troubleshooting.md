@@ -54,50 +54,50 @@ lsof -i :9090
 kill -9 $(lsof -t -i:8080)
 ```
 
-#### with database / Database issues Issues
+#### with database / database issues Issues
 ```bash
 # check PostgreSQL connection / Check PostgreSQL connection
 psql -h localhost -U neozork_user -d neozork_fund
 
 # Restart PostgreSQL / Restart PostgreSQL
-sudo systemctl restart postgresql
+sudo systemctl Restart PostgreSQL
 ```
 
-### Проблемы with testing / Testing Issues
+### Issues with testing / testing Issues
 
-#### Тесты not start / Tests don't run
+#### Tests do not start / Tests don't run
 ```bash
-# Безопасный режим / Safe mode
+# Safe mode / Safe mode
 ./scripts/run_tests_safe.sh
 
-# Запуск with отладкой / Run with debugging
+# Launch with debugging / Run with debugging
 uv run pytest tests/ -v -s
 
-# Запуск specific test / Run specific test
+# Launch specific test / Run specific test
 uv run pytest tests/calculation/test_indicators.py::test_rsi -v
 ```
 
-#### with coverage / Coverage issues Issues
+#### with coverage / coverage issues Issues
 ```bash
 # clean coverage cache / Clean coverage cache
 rm -rf .coverage htmlcov/
 
-# Запуск with coverage / Run with coverage
+# Launch with coverage / Run with coverage
 uv run pytest tests/ --cov=src --cov-report=html -n auto
 ```
 
-#### Медленные тесты / Slow tests
+#### Slow tests / Slow tests
 ```bash
-# Запуск with таймаутом / Run with timeout
+# Launch with timeout / Run with timeout
 ./scripts/run_tests_with_timeout.sh
 
-# Запуск with ограниченными потоками / Run with limited threads
+# Launch with limited threads / Run with limited threads
 uv run pytest tests/ -n 2
 ```
 
-### Проблемы with Docker / Docker Issues
+### Issues with Docker / Docker Issues
 
-#### Контейнеры not start / Containers don't start
+#### Containers do not start / Containers don't start
 ```bash
 # Rebuild containers / Rebuild containers
 docker-compose build --no-cache
@@ -106,7 +106,7 @@ docker-compose build --no-cache
 docker system prune -a
 
 # Restart Docker / Restart Docker
-sudo systemctl restart docker
+sudo systemctl Restart Docker
 ```
 
 #### with volumes / Volume issues Issues
@@ -121,7 +121,7 @@ docker volume prune
 docker volume create neozork_data
 ```
 
-#### with network / Network issues Issues
+#### with network / network issues Issues
 ```bash
 # Просмотр сетей / View networks
 docker network ls
@@ -133,7 +133,7 @@ docker network prune
 docker network create neozork_network
 ```
 
-### Проблемы with Kubernetes / Kubernetes Issues
+### Issues with Kubernetes / Kubernetes Issues
 
 #### Pods not start / Pods don't start
 ```bash
@@ -236,7 +236,7 @@ uv pip install -r requirements.txt --force-reinstall
 cd src/mobile_app && npm install && cd ../..
 cd src/admin_panel && npm install && cd ../..
 
-# Запуск сервисов / Start services
+# Launch сервисов / start services
 docker-compose up -d
 ```
 
@@ -275,6 +275,6 @@ tar -xzf config-backup.tar.gz
 - **Telegram**: https://t.me/neozork_hld
 
 ### documentation / Documentation
-- [Полное guide / Complete Manual](russian/complete-manual-ru.md)
-- [guide on тестированию / Testing Guide](russian/testing-guide-ru.md)
-- [guide on развертыванию / Deployment Guide](russian/deployment-guide-ru.md)
+- [Complete guide / Complete Manual](russian/complete-manual-ru.md)
+- [guide on testing / testing Guide](russian/testing-guide-ru.md)
+- [guide on deployment / Deployment Guide](russian/deployment-guide-ru.md)

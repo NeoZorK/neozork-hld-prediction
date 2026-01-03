@@ -1,22 +1,22 @@
-# 📱 Мобильное приложение Pocket Hedge Fund - Отчет
+# 📱 Mobile application Pocket Hedge Fund - Report
 
-## ✅ Статус: ЗАВЕРШЕНО
+## ✅ Status: COMPLETED
 
-Мобильное приложение for Pocket Hedge Fund успешно создано and интегрировано with backend API.
+Mobile application for Pocket Hedge Fund successfully created and integrated with backend API.
 
-## 🎯 Реализованные functions
+## 🎯 Implemented functions
 
-### 1. **Структура приложения**
-- ✅ React Native/Expo приложение
-- ✅ Навигация with React Navigation
-- ✅ Аутентификация and управление состоянием
-- ✅ API интеграция with backend
+### 1. **Application structure**
+- ✅ React Native/Expo application
+- ✅ Navigation with React Navigation
+- ✅ Authentication and state management
+- ✅ API integration with backend
 
-### 2. **Экраны приложения**
-- ✅ **LoginScreen** - Вход in систему
-- ✅ **RegisterScreen** - Регистрация пользователя
-- ✅ **DashboardScreen** - Главный экран with приветствием
-- ✅ **LoadingScreen** - Экран загрузки
+### 2. **Application screens**
+- ✅ **LoginScreen** - Login to system
+- ✅ **RegisterScreen** - User registration
+- ✅ **DashboardScreen** - Main screen with greeting
+- ✅ **LoadingScreen** - Loading screen
 
 ### 3. **Сервисы**
 - ✅ **AuthContext** - Управление аутентификацией
@@ -29,7 +29,7 @@
 - ✅ `/mobile/portfolio` - Портфолио пользователя
 - ✅ `/mobile/funds` - Список фондов
 - ✅ `/mobile/investments` - Управление инвестициями
-- ✅ `/mobile/sync` - Синхронизация данных
+- ✅ `/mobile/sync` - Synchronization данных
 - ✅ `/mobile/notifications/push` - Push уведомления
 
 ## 🔧 Технические детали
@@ -61,7 +61,7 @@ src/mobile_app/
  │ ├── AuthContext.js # Контекст аутентификации
  │ └── ApiService.js # HTTP клиент
  ├── navigation/
- │ └── AppNavigator.js # Навигация
+ │ └── AppNavigator.js # Navigation
  ├── components/
  │ └── LoadingScreen.js # Компонент загрузки
  └── screens/
@@ -69,10 +69,10 @@ src/mobile_app/
  │ ├── LoginScreen.js # Экран входа
  │ └── RegisterScreen.js # Экран регистрации
  └── main/
- └── DashboardScreen.js # Главный экран
+ └── DashboardScreen.js # Main screen
 ```
 
-## 🚀 Запуск приложения
+## 🚀 Launch приложения
 
 ### 1. installation зависимостей
 ```bash
@@ -80,12 +80,12 @@ cd src/mobile_app
 npm install
 ```
 
-### 2. Запуск in режиме разработки
+### 2. Launch in режиме разработки
 ```bash
 npx expo start
 ```
 
-### 3. Запуск on устройстве
+### 3. Launch on устройстве
 ```bash
 # Android
 npx expo start --android
@@ -97,7 +97,7 @@ npx expo start --ios
 npx expo start --web
 ```
 
-## 🔗 Интеграция with Backend
+## 🔗 integration with Backend
 
 ### API Endpoints
 Все мобильные endpoints доступны on адресу `http://localhost:8080/mobile/`:
@@ -107,28 +107,28 @@ npx expo start --web
 - `GET /mobile/portfolio` - Портфолио (требует аутентификации)
 - `GET /mobile/funds` - Список фондов (требует аутентификации)
 - `POST /mobile/investments` - create инвестиции (требует аутентификации)
-- `POST /mobile/sync` - Синхронизация (требует аутентификации)
+- `POST /mobile/sync` - Synchronization (требует аутентификации)
 - `POST /mobile/notifications/push` - Push уведомления (требует аутентификации)
 
-### Аутентификация
+### Authentication
 - JWT токены for аутентификации
 - AsyncStorage for хранения токенов
 - Автоматическое update токенов
 
 ## 📱 Функциональность
 
-### 1. **Аутентификация**
+### 1. **Authentication**
 - Регистрация новых пользователей
-- Вход in систему
+- Login to system
 - Автоматическое сохранение сессии
 - Выход из системы
 
-### 2. **Навигация**
-- Stack навигация между экранами
-- Условная навигация (auth/main)
+### 2. **Navigation**
+- Stack Navigation между экранами
+- Условная Navigation (auth/main)
 - Защищенные маршруты
 
-### 3. **API интеграция**
+### 3. **API integration**
 - HTTP клиент with axios
 - Обработка ошибок
 - Автоматическое add токенов
@@ -169,7 +169,7 @@ curl -X GET "http://localhost:8080/mobile/dashboard"
 2. **Расширенная функциональность**
  - Push уведомления
  - Офлайн режим
- - Биометрическая аутентификация
+ - Биометрическая Authentication
  - Графики and аналитика
 
 3. **UI/UX улучшения**
@@ -180,8 +180,8 @@ curl -X GET "http://localhost:8080/mobile/dashboard"
 
 ## 🎉 Заключение
 
-Мобильное приложение Pocket Hedge Fund успешно создано and интегрировано with backend API. Приложение готово к использованию and может быть запущено on iOS, Android or in веб-браузере.
+Mobile application Pocket Hedge Fund successfully created and integrated with backend API. application готово к использованию and может быть запущено on iOS, Android or in веб-браузере.
 
-**Статус**: ✅ **ЗАВЕРШЕНО**
+**Статус**: ✅ **COMPLETED**
 **Дата**: 9 сентября 2025
 **Версия**: 1.0.0

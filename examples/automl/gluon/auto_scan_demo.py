@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 
 def test_auto_scanner():
  """Test the auto scanner functionality."""
- print("🔍 Testing Auto Data Scanner")
+ print("🔍 testing Auto Data Scanner")
  print("=" * 50)
 
  # Initialize scanner
@@ -53,7 +53,7 @@ def test_auto_scanner():
 
 def test_interactive_selection(scanner):
  """Test interactive selection."""
- print("\n🎯 Testing Interactive Selection")
+ print("\n🎯 testing Interactive Selection")
  print("=" * 50)
 
  selector = InteractiveDataSelector(scanner)
@@ -73,7 +73,7 @@ def test_interactive_selection(scanner):
 
 def test_auto_pipeline():
  """Test the complete pipeline with auto-scanning."""
- print("\n🚀 Testing Auto Pipeline")
+ print("\n🚀 testing Auto Pipeline")
  print("=" * 50)
 
  # Initialize pipeline

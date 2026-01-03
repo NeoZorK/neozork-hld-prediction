@@ -70,7 +70,7 @@ graph TB
  J --> K[Instance 1<br/>Code Generation]
  J --> L[Instance 2<br/>Code Review]
  J --> M[Instance 3<br/>Documentation]
- J --> N[Instance 4<br/>Testing]
+ J --> N[Instance 4<br/>testing]
  end
 
  subgraph "External Resources"
@@ -113,7 +113,7 @@ hdiutil attach ~/Downloads/Docker.dmg
 sudo cp -R /Volumes/Docker/Docker.app /Applications/
 hdiutil detach /Volumes/Docker
 
-# Запускаем Docker Desktop
+# Launchаем Docker Desktop
 open /Applications/Docker.app
 ```
 
@@ -125,12 +125,12 @@ Version: '3.8'
 services:
  vllm-server:
  image: vllm/vllm-openai:latest # Официальный образ vLLM with поддержкой OpenAI API
- platform: linux/arm64 # Платформа for Apple Silicon (M1/M2/M3)
+ platform: linux/arm64 # platform for Apple Silicon (M1/M2/M3)
  ports:
  - "8000:8000" # Проброс порта: внешний:внутренний
  volumes:
  - ./models:/models # Монтирование папки with моделями
- - ./cache:/cache # Монтирование папки cache for ускорения
+ - ./cache:/cache # Монтирование папки cache for acceleration
  environment:
  - CUDA_VISIBLE_DEVICES="" # Отключаем CUDA (not нужен for Apple Silicon)
  - VLLM_USE_MODELSCOPE=false # Отключаем ModelScope (используем HuggingFace)
@@ -155,7 +155,7 @@ services:
 - **`./models:/models`** - монтирует локальную папку with моделями in контейнер
  - Левый путь (`./models`) - папка on хосте
  - Правый путь (`/models`) - папка внутри контейнера
-- **`./cache:/cache`** - монтирует папку cache for ускорения загрузки моделей
+- **`./cache:/cache`** - монтирует папку cache for acceleration загрузки моделей
 
 #### Переменные окружения:
 - **`CUDA_VISIBLE_DEVICES=""`** - отключает CUDA (not поддерживается on Apple Silicon)
@@ -288,7 +288,7 @@ COPY start_server.py .
 # Открываем порт
 EXPOSE 8000
 
-# Запускаем сервер
+# Launchаем сервер
 CMD ["python", "start_server.py"]
 ```
 
@@ -726,9 +726,9 @@ if __name__ == "__main__":
  asyncio.run(main())
 ```
 
-## Интеграция with IDE
+## integration with IDE
 
-### VS Code / Cursor интеграция
+### VS Code / Cursor integration
 
 #### 6.1 configuration расширения
 
@@ -746,18 +746,18 @@ if __name__ == "__main__":
 }
 ```
 
-#### 6.2 Скрипт for автоматического запуска
+#### 6.2 Скрипт for автоматического Launchа
 
 ```bash
 #!/bin/bash
 # start_llm_server.sh
 
-echo "🚀 Запуск локальной LLM for кодинга on MacBook M3 Pro"
+echo "🚀 Launch локальной LLM for кодинга on MacBook M3 Pro"
 echo "📱 Оптимизировано for Apple Silicon"
 
 # Проверяем Docker
 if ! docker info > /dev/null 2>&1; then
- echo "❌ Docker not запущен. Запускаем Docker Desktop..."
+ echo "❌ Docker not запущен. Launchаем Docker Desktop..."
  open /Applications/Docker.app
  sleep 10
 fi
@@ -768,12 +768,12 @@ if [ ! -d "./models/codellama-7b-instruct" ]; then
  python download_model.py
 fi
 
-# Запускаем контейнер
-echo "🐳 Запускаем vLLM контейнер..."
+# Launchаем контейнер
+echo "🐳 Launchаем vLLM контейнер..."
 docker-compose up -d
 
-# Ждем запуска
-echo "⏳ Ожидаем запуска сервера..."
+# Ждем Launchа
+echo "⏳ Ожидаем Launchа сервера..."
 sleep 30
 
 # Проверяем статус
@@ -782,14 +782,14 @@ if curl -s http://localhost:8000/health > /dev/null; then
  echo "🌐 API available on адресу: http://localhost:8000"
  echo "📚 documentation: http://localhost:8000/docs"
 else
- echo "❌ Ошибка запуска сервера"
+ echo "❌ Ошибка Launchа сервера"
  exit 1
 fi
 ```
 
-## Мониторинг and оптимизация
+## Monitoring and оптимизация
 
-### 7.1 Мониторинг производительности
+### 7.1 Monitoring производительности
 
 ```python
 # monitoring.py
@@ -800,7 +800,7 @@ from datetime import datetime
 import json
 
 class LLMMonitor:
- """Мониторинг производительности локальной LLM"""
+ """Monitoring производительности локальной LLM"""
 
  def __init__(self, api_url: str = "http://localhost:8000"):
  """
@@ -881,10 +881,10 @@ class LLMMonitor:
 
  def run_monitoring_cycle(self):
  """
- Запускает цикл мониторинга
+ Launchает цикл Monitoringа
 
  Returns:
- dict: Данные текущего цикла мониторинга
+ dict: Данные текущего цикла Monitoringа
  """
  system_metrics = self.get_system_metrics()
  llm_metrics = self.get_llm_metrics()
@@ -899,19 +899,19 @@ class LLMMonitor:
  self.metrics.append(cycle_data)
 
  # Выводим текущие метрики
- print(f"📊 Мониторинг - {datetime.now().strftime('%H:%M:%S')}")
+ print(f"📊 Monitoring - {datetime.now().strftime('%H:%M:%S')}")
  print(f" CPU: {system_metrics['cpu_percent']:.1f}%")
  print(f" Память: {system_metrics['memory_percent']:.1f}% ({system_metrics['memory_used_gb']:.1f}GB)")
  print(f" Время ответа: {response_test.get('response_time', 'N/A'):.2f}s")
- print(f" Статус: {'✅' if response_test.get('success') else '❌'}")
+ print(f" Status: {'✅' if response_test.get('success') else '❌'}")
  print("-" * 50)
 
  return cycle_data
 
-# Запуск мониторинга
+# Launch Monitoringа
 monitor = LLMMonitor()
 
-# Запускаем мониторинг in фоне
+# Launchаем Monitoring in фоне
 import threading
 import time
 
@@ -924,7 +924,7 @@ monitoring_thread = threading.Thread(target=monitoring_loop, daemon=True)
 monitoring_thread.start()
 ```
 
-### Детальное description параметров мониторинга
+### Детальное description параметров Monitoringа
 
 #### parameters инициализации:
 
@@ -1017,7 +1017,7 @@ monitoring_thread.start()
 - **Влияние**: not влияет on время ответа, только on качество
 - **Рекомендация**: Стандартное значение 0.7
 
-#### parameters мониторинга:
+#### parameters Monitoringа:
 
 ##### `timeout` (int, default: 30):
 - **Назначение**: Таймаут for HTTP запросов in секундах
@@ -1027,11 +1027,11 @@ monitoring_thread.start()
  - `60s` - for медленных систем
 
 ##### `interval` (int, default: 60):
-- **Назначение**: Интервал между циклами мониторинга in секундах
+- **Назначение**: Интервал между циклами Monitoringа in секундах
 - **Рекомендации**:
- - `30s` - for детального мониторинга
- - `60s` - for обычного мониторинга
- - `300s` - for периодического мониторинга
+ - `30s` - for детального Monitoringа
+ - `60s` - for обычного Monitoringа
+ - `300s` - for периодического Monitoringа
 
 ### 7.2 Оптимизация for MacBook M3 Pro
 
@@ -1143,12 +1143,12 @@ class MacBookM3ProOptimizer:
 
  def run_full_optimization(self):
  """
- Запускает полную оптимизацию системы
+ Launchает полную оптимизацию системы
 
  Returns:
  dict: Словарь with конфигурациями Docker and vLLM
  """
- print("🚀 Запуск полной оптимизации for MacBook M3 Pro...")
+ print("🚀 Launch полной оптимизации for MacBook M3 Pro...")
  print(f" Архитектура: {self.architecture}")
  print(f" Память: {self.memory_gb}GB")
  print(f" CPU ядер: {self.cpu_cores}")
@@ -1166,7 +1166,7 @@ class MacBookM3ProOptimizer:
  "vllm": vllm_config
  }
 
-# Запуск оптимизации
+# Launch оптимизации
 optimizer = MacBookM3ProOptimizer()
 config = optimizer.run_full_optimization()
 ```
@@ -1452,14 +1452,14 @@ class LLMBenchmark:
 
  async def run_full_benchmark(self):
  """
- Запускает полный бенчмарк
+ Launchает полный бенчмарк
 
  Выполняет тесты:
  - Одиночных запросов
  - Параллельных запросов
  - Анализ производительности
  """
- print("🚀 Запуск бенчмарка локальной LLM on MacBook M3 Pro")
+ print("🚀 Launch бенчмарка локальной LLM on MacBook M3 Pro")
  print("=" * 60)
 
  # Тест одиночных запросов
@@ -1492,7 +1492,7 @@ class LLMBenchmark:
  print("\n" + "=" * 60)
  print("✅ Бенчмарк завершен!")
 
-# Запуск бенчмарка
+# Launch бенчмарка
 async def main():
  benchmark = LLMBenchmark()
  await benchmark.run_full_benchmark()
@@ -1651,7 +1651,7 @@ graph TD
 
  B -->|Медленная работа| C[Проблемы производительности]
  B -->|Ошибки памяти| D[Проблемы памяти]
- B -->|not запускается| E[Проблемы запуска]
+ B -->|not Launchается| E[Проблемы Launchа]
  B -->|Плохое качество| F[Проблемы качества]
 
  C --> C1[Увеличить gpu_memory_utilization]
@@ -1806,7 +1806,7 @@ class LLMDiagnostics:
  return all_exist
 
  def run_full_diagnostics(self):
- """Запускает полную диагностику"""
+ """Launchает полную диагностику"""
  print("🔍 Диагностика локальной LLM on MacBook M3 Pro")
  print("=" * 60)
  print(f"Время: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -1835,7 +1835,7 @@ class LLMDiagnostics:
 
  return results
 
-# Запуск диагностики
+# Launch диагностики
 diagnostics = LLMDiagnostics()
 results = diagnostics.run_full_diagnostics()
 ```
@@ -1867,7 +1867,7 @@ graph LR
 1. **Полнофункциональную локальную LLM** for кодинга on MacBook M3 Pro
 2. **Оптимизированную архитектуру** with Docker + vLLM + MLX
 3. **Параллельные вычисления** for максимальной производительности
-4. **Готовые скрипты** for мониторинга and диагностики
+4. **Готовые скрипты** for Monitoringа and диагностики
 5. **Интеграцию with IDE** for удобной работы
 
 ### Следующие шаги:
@@ -1875,6 +1875,6 @@ graph LR
 1. Запустите `start_llm_server.sh` for автоматической settings
 2. Настройте интеграцию with вашим IDE
 3. Запустите бенчмарк for проверки производительности
-4. Настройте мониторинг for отслеживания работы
+4. Настройте Monitoring for отслеживания работы
 
 **Теперь у вас есть мощная локальная LLM, оптимизированная for MacBook M3 Pro, которая обеспечит эффективное кодинг без ограничений облачных API!** 🚀

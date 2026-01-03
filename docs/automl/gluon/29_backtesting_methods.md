@@ -145,7 +145,7 @@ graph TB
 
 ```mermaid
 graph TD
- A[Исходные временные данные] --> B[Разделение on времени]
+ A[Исходные временные данные] --> B[Разделение in time]
 
  B --> C[Обучающие данные<br/>70% from начала]
  B --> D[Тестовые данные<br/>30% from конца]
@@ -192,14 +192,14 @@ def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
  -----------
  data : pd.DataFrame
  Временной ряд данных with колонками 'returns' and другими приsignми
- - Должен быть отсортирован on времени
+ - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
  - Рекомендуется минимум 1000 наблюдений for надежности
 
  model : object
  Обученная ML модель with методами fit() and predict()
  - Должен поддерживать fit(X, y) for обучения
- - Должен поддерживать predict(X) for предсказаний
+ - Должен поддерживать predict(X) for predictions
  - Рекомендуется использовать TabularPredictor из AutoGluon
 
  train_size : float, default=0.7
@@ -299,7 +299,7 @@ def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
  if abs(train_size + test_size - 1.0) > 1e-6:
  raise ValueError("train_size + test_size должно равняться 1.0")
 
- # Разделение данных on времени
+ # Разделение данных in time
  split_point = int(len(data) * train_size)
 
  train_data = data[:split_point]
@@ -394,14 +394,14 @@ def temporal_dependency_backtest(data, model, lookback=30, step=1,
  -----------
  data : pd.DataFrame
  Временной ряд данных with колонками 'returns' and другими приsignми
- - Должен быть отсортирован on времени
+ - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
  - Рекомендуется минимум 1000 наблюдений for надежности
 
  model : object
  Обученная ML модель with методами fit() and predict()
  - Должен поддерживать fit(X, y) for обучения
- - Должен поддерживать predict(X) for предсказаний
+ - Должен поддерживать predict(X) for predictions
  - Рекомендуется использовать TabularPredictor из AutoGluon
 
  lookback : int, default=30
@@ -416,7 +416,7 @@ def temporal_dependency_backtest(data, model, lookback=30, step=1,
  - 1 означает тестирование каждого периода
  - Больше 1 означает пропуск periods
  - Рекомендуется 1 for максимальной точности
- - Больше 1 for ускорения (но менее точно)
+ - Больше 1 for acceleration (но менее точно)
 
  config : dict, optional
  Дополнительная configuration for бэктестинга
@@ -559,7 +559,7 @@ def temporal_dependency_backtest(data, model, lookback=30, step=1,
  results.append(result)
 
  if config['verbose'] and (i - lookback) % (step * 10) == 0:
- print(f"Завершено: {i - lookback + 1} из {total_iterations} итераций")
+ print(f"COMPLETED: {i - lookback + 1} из {total_iterations} итераций")
 
  except Exception as e:
  if config['verbose']:
@@ -647,14 +647,14 @@ def monte_carlo_backtest(data, model, n_simulations=1000, confidence_level=0.95,
  -----------
  data : pd.DataFrame
  Временной ряд данных with колонками 'returns' and другими приsignми
- - Должен быть отсортирован on времени
+ - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
  - Рекомендуется минимум 1000 наблюдений for надежности
 
  model : object
  Обученная ML модель with методами fit() and predict()
  - Должен поддерживать fit(X, y) for обучения
- - Должен поддерживать predict(X) for предсказаний
+ - Должен поддерживать predict(X) for predictions
  - Рекомендуется использовать TabularPredictor из AutoGluon
 
  n_simulations : int, default=1000
@@ -855,7 +855,7 @@ def monte_carlo_backtest(data, model, n_simulations=1000, confidence_level=0.95,
  break
 
  if config['verbose'] and (i + 1) % 100 == 0:
- print(f"Завершено: {i + 1} из {n_simulations} симуляций")
+ print(f"COMPLETED: {i + 1} из {n_simulations} симуляций")
 
  except Exception as e:
  if config['verbose']:
@@ -931,14 +931,14 @@ def bootstrap_backtest(data, model, n_bootstrap=1000, block_size=10,
  -----------
  data : pd.DataFrame
  Временной ряд данных with колонками 'returns' and другими приsignми
- - Должен быть отсортирован on времени
+ - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
  - Рекомендуется минимум 1000 наблюдений for надежности
 
  model : object
  Обученная ML модель with методами fit() and predict()
  - Должен поддерживать fit(X, y) for обучения
- - Должен поддерживать predict(X) for предсказаний
+ - Должен поддерживать predict(X) for predictions
  - Рекомендуется использовать TabularPredictor из AutoGluon
 
  n_bootstrap : int, default=1000
@@ -1157,7 +1157,7 @@ def bootstrap_backtest(data, model, n_bootstrap=1000, block_size=10,
  break
 
  if config['verbose'] and (i + 1) % 100 == 0:
- print(f"Завершено: {i + 1} из {n_bootstrap} бутстрап итераций")
+ print(f"COMPLETED: {i + 1} из {n_bootstrap} бутстрап итераций")
 
  except Exception as e:
  if config['verbose']:
@@ -1245,14 +1245,14 @@ def stress_test_backtest(data, model, stress_scenarios, config=None, validation=
  -----------
  data : pd.DataFrame
  Временной ряд данных with колонками 'returns' and другими приsignми
- - Должен быть отсортирован on времени
+ - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
  - Рекомендуется минимум 1000 наблюдений for надежности
 
  model : object
  Обученная ML модель with методами fit() and predict()
  - Должен поддерживать fit(X, y) for обучения
- - Должен поддерживать predict(X) for предсказаний
+ - Должен поддерживать predict(X) for predictions
  - Рекомендуется использовать TabularPredictor из AutoGluon
 
  stress_scenarios : dict
@@ -1519,14 +1519,14 @@ def regime_based_backtest(data, model, regime_detector, config=None, validation=
  -----------
  data : pd.DataFrame
  Временной ряд данных with колонками 'returns' and другими приsignми
- - Должен быть отсортирован on времени
+ - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
  - Рекомендуется минимум 1000 наблюдений for надежности
 
  model : object
  Обученная ML модель with методами fit() and predict()
  - Должен поддерживать fit(X, y) for обучения
- - Должен поддерживать predict(X) for предсказаний
+ - Должен поддерживать predict(X) for predictions
  - Рекомендуется использовать TabularPredictor из AutoGluon
 
  regime_detector : object
@@ -1804,7 +1804,7 @@ graph TD
  C --> F[Предсказания стратегии 2]
  D --> G[Предсказания стратегии 3]
 
- E --> H[Взвешивание предсказаний]
+ E --> H[Взвешивание predictions]
  F --> H
  G --> H
 
@@ -1861,7 +1861,7 @@ def portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
 
  data : pd.DataFrame
  Временной ряд данных with колонками 'returns' and другими приsignми
- - Должен быть отсортирован on времени
+ - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
  - Рекомендуется минимум 1000 наблюдений for надежности
 
@@ -2033,7 +2033,7 @@ def portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
  print(f"Ошибка обучения стратегии {i+1}: {e}")
  continue
 
- # Получение предсказаний from всех стратегий
+ # Получение predictions from всех стратегий
  Predictions = {}
  individual_returns = {}
 
@@ -2053,7 +2053,7 @@ def portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
  # create DataFrame with предсказаниями
  Predictions_df = pd.DataFrame(Predictions)
 
- # Взвешивание предсказаний
+ # Взвешивание predictions
  weighted_Predictions = (Predictions_df * weights).sum(axis=1)
 
  # Расчет доходности портфеля
@@ -2171,7 +2171,7 @@ def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
 
  data : pd.DataFrame
  Временной ряд данных with колонками 'returns' and другими приsignми
- - Должен быть отсортирован on времени
+ - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
  - Рекомендуется минимум 1000 наблюдений for надежности
 
@@ -2364,7 +2364,7 @@ def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
  if previous_weights is not None and config['weight_smoothing'] > 0:
  weights = (1 - config['weight_smoothing']) * weights + config['weight_smoothing'] * previous_weights
 
- # Взвешивание предсказаний
+ # Взвешивание predictions
  weighted_Predictions = sum(w * p for w, p in zip(weights, strategy_Predictions.values()))
 
  # Расчет доходности портфеля
@@ -2404,7 +2404,7 @@ def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
  previous_weights = weights.copy()
 
  if config['verbose'] and len(results) % 10 == 0:
- print(f"Завершено итераций: {len(results)}")
+ print(f"COMPLETED итераций: {len(results)}")
 
  except Exception as e:
  if config['verbose']:
@@ -3414,7 +3414,7 @@ graph TD
  K --> M
  L --> M
 
- M --> N[Генерация отчета]
+ M --> N[Генерация Reportа]
  N --> O[Сводка on методам]
  N --> P[Детальные результаты]
 
@@ -3539,7 +3539,7 @@ class BacktestingPipeline:
  return self.results['monte_carlo']
 
  def generate_report(self):
- """Генерация отчета"""
+ """Генерация Reportа"""
  report = {
  'summary': {},
  'detailed_results': self.results
@@ -3640,7 +3640,7 @@ visualize_backtest_results(results, save_path='backtest_results.png')
 | **temporal_dependency_backtest** | `lookback`, `step`, `config`, `validation` | Бэктестинг with временными зависимостями | lookback: 20-50, step: 1-10 | lookback=30, step=1 for точности |
 | **monte_carlo_backtest** | `n_simulations`, `confidence_level`, `config` | Монте-Карло бэктестинг | n_simulations: 500-2000, confidence: 0.90-0.99 | 1000 симуляций, 95% доверие |
 | **bootstrap_backtest** | `n_bootstrap`, `block_size`, `config` | Бутстрап бэктестинг | n_bootstrap: 500-2000, block_size: 5-20 | 1000 итераций, block_size=10 |
-| **stress_test_backtest** | `stress_scenarios`, `config`, `validation` | Стресс-тестинг стратегии | scenarios: 3-10, volatility_multiplier: 0.5-3.0 | 5-7 сценариев, включая экстремальные |
+| **stress_test_backtest** | `stress_scenarios`, `config`, `validation` | Стресс-тестинг стратегии | scenarios: 3-10, volatility_multiplier: 0.5-3.0 | 5-7 сценариев, including экстремальные |
 | **regime_based_backtest** | `regime_detector`, `config`, `validation` | Бэктестинг on рыночным режимам | min_samples_per_regime: 50-100 | 50 образцов on режим минимум |
 | **portfolio_backtest** | `strategies`, `weights`, `rebalance_freq`, `config` | Портфельный бэктестинг | strategies: 2-10, rebalance_freq: 'M' | 3-5 стратегий, ежемесячная перебалансировка |
 | **dynamic_rebalance_backtest** | `rebalance_freq`, `lookback_window`, `config` | Динамическое перебалансирование | lookback_window: 100-500, test_window: 30-60 | 252 дня обучения, 30 дней тестирования |
@@ -3673,24 +3673,24 @@ visualize_backtest_results(results, save_path='backtest_results.png')
 
 #### for начинающих
 
-- Используйте `time_series_backtest` with `train_size=0.7`, `test_size=0.3`
-- Установите `validation=True`, `verbose=True` for понимания процесса
+- Use `time_series_backtest` with `train_size=0.7`, `test_size=0.3`
+- install `validation=True`, `verbose=True` for понимания процесса
 - Начните with `min_samples=100`, `n_simulations=500`
-- Используйте базовые метрики: Sharpe, Max Drawdown, Total Return
+- Use базовые метрики: Sharpe, Max Drawdown, Total Return
 
 #### for опытных пользователей
 
-- Используйте `monte_carlo_backtest` with `n_simulations=1000`
+- Use `monte_carlo_backtest` with `n_simulations=1000`
 - Добавьте `stress_test_backtest` with 5-7 сценариями
-- Используйте `portfolio_backtest` with 3-5 стратегиями
+- Use `portfolio_backtest` with 3-5 стратегиями
 - Включите продвинутые метрики: Sortino, Calmar, Stability
 
 #### for продакшена
 
-- Используйте `dynamic_rebalance_backtest` with `rebalance_freq='M'`
-- Установите `parallel=True`, `n_jobs=4-8`
+- Use `dynamic_rebalance_backtest` with `rebalance_freq='M'`
+- install `parallel=True`, `n_jobs=4-8`
 - Добавьте `transaction_costs=0.001`, `slippage=0.0005`
-- Используйте все метрики качества and валидацию
+- Use все метрики качества and валидацию
 
 ### 🚨 Частые ошибки and решения
 
@@ -3713,7 +3713,7 @@ visualize_backtest_results(results, save_path='backtest_results.png')
 
 ### Ключевые принципы
 
-1. **Реалистичность** - используйте реалистичные данные and условия
+1. **Реалистичность** - Use реалистичные данные and условия
 2. **Статистическая значимость** - проверяйте значимость результатов
 3. **Экономическая значимость** - учитывайте транзакционные издержки
 4. **Робастность** - тестируйте on разных рыночных условиях

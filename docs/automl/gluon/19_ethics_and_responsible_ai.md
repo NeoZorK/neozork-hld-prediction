@@ -32,7 +32,7 @@
 - **Privacy & Data Protection**: Приватность and защита персональных данных
 - **Legal Compliance**: Соответствие правовым требованиям (GDPR, AI Act)
 - **Bias Detection & Mitigation**: Обнаружение and снижение смещений
-- **Accountability & Responsibility**: Ответственность and подотчетность
+- **Accountability & Responsibility**: Ответственность and подReportность
 
 Разработка and использование ML-моделей несут значительную ответственность. Этот раздел охватывает этические принципы, правовые требования and лучшие практики for создания ответственных AI-систем.
 
@@ -51,7 +51,7 @@
 - **Demographic Parity**: Демографический паритет in предсказаниях
 - **Individual Fairness**: Справедливость on индивидуальном уровне
 - **Counterfactual Fairness**: Контрфактическая справедливость
-- **Calibration**: Калибровка предсказаний for разных групп
+- **Calibration**: Калибровка predictions for разных групп
 
 **Почему модели могут быть несправедливыми?**
 - **Предвзятые данные**: Исторические данные содержат дискриминацию
@@ -124,7 +124,7 @@ def calculate_recall(Predictions, actual):
  - Тип: sklearn model, pytorch model, tensorflow model
  - Требования: должен поддерживать predict() метод
  - Применение: любая модель for классификации or регрессии
- - examples: RandomForest, LogisticRegression, Neural Network
+ - examples: RandomForest, LogisticRegression, Neural network
 
 - **`X_test`**: Тестовые данные for проверки
  - Тип: pandas DataFrame or numpy array
@@ -145,7 +145,7 @@ def calculate_recall(Predictions, actual):
  - Применение: check справедливости on этим атрибутам
 
 - **`Predictions = model.predict(X_test)`**: Предсказания модели
- - Результат: массив предсказаний for всех тестовых образцов
+ - Результат: массив predictions for всех тестовых образцов
  - Формат: бинарные (0/1) or вероятности
  - Применение: основа for расчета метрик справедливости
 
@@ -173,7 +173,7 @@ def calculate_recall(Predictions, actual):
  - Формула: (правильные предсказания) / (общее количество)
  - Диапазон: from 0 to 1
  - Применение: основная метрика производительности
- - Интерпретация: доля правильных предсказаний
+ - Интерпретация: доля правильных predictions
 
 - **`precision = calculate_precision(group_Predictions, group_actual)`**: Точность for группы
  - Формула: TP / (TP + FP)
@@ -213,7 +213,7 @@ def calculate_recall(Predictions, actual):
 
 - **Demographic Parity**: Демографический паритет
  - Формула: P(Ŷ=1|A=a) = P(Ŷ=1|A=b)
- - Применение: равное распределение предсказаний
+ - Применение: равное распределение predictions
  - Ограничения: может быть несправедливым
 
 - **Individual Fairness**: Справедливость on индивидуальном уровне
@@ -226,9 +226,9 @@ def calculate_recall(Predictions, actual):
  - Применение: check причинной справедливости
  - Сложность: требует контрфактического анализа
 
-- **Calibration**: Калибровка предсказаний
+- **Calibration**: Калибровка predictions
  - Принцип: предсказанные вероятности должны соответствовать истинным
- - Применение: check надежности предсказаний
+ - Применение: check надежности predictions
  - Метрика: Brier Score, Reliability Diagram
 ```
 
@@ -305,7 +305,7 @@ class EthicalModelWrapper:
  - Тип: sklearn model, pytorch model, tensorflow model
  - Требования: должен поддерживать predict() and predict_proba()
  - Применение: любая модель for классификации
- - examples: RandomForest, LogisticRegression, Neural Network
+ - examples: RandomForest, LogisticRegression, Neural network
 
 - **`feature_names`**: Названия признаков модели
  - Тип: List[str]
@@ -891,10 +891,10 @@ class BiasDetector:
  - Размер: соответствует размеру Predictions
 
 - **`group_positive_rate = Predictions[group_mask].mean()`**: Доля положительных исходов for группы
- - Формула: (количество положительных предсказаний) / (общее количество)
+ - Формула: (количество положительных predictions) / (общее количество)
  - Диапазон: from 0 to 1
  - Применение: расчет статистического паритета
- - Интерпретация: доля положительных предсказаний in группе
+ - Интерпретация: доля положительных predictions in группе
 
 - **`spd = max(spd_values) - min(spd_values)`**: Статистическая разность паритета
  - Результат: разность между максимальной and минимальной долей положительных исходов
@@ -954,7 +954,7 @@ class BiasDetector:
 
 - **Demographic Parity Difference (DPD)**:
  - Формула: max(P(Ŷ=1|A=a)) - min(P(Ŷ=1|A=a))
- - Применение: равное распределение предсказаний
+ - Применение: равное распределение predictions
  - Ограничения: может быть несправедливым
  - Порог: < 0.1 for справедливости
 
@@ -963,7 +963,7 @@ class BiasDetector:
 - **Выбор метрик**: SPD for равных возможностей, EOD for равной производительности
 - **Пороги справедливости**: 0.1 (10%) for большинства случаев
 - **Баланс**: между справедливостью and точностью
-- **Мониторинг**: регулярная check метрик справедливости
+- **Monitoring**: регулярная check метрик справедливости
 - **Корректировка**: адаптация порогов in dependencies from контекста
 ```
 
@@ -1059,7 +1059,7 @@ class BiasMitigation:
 - **Качество данных**: Репрезентативность and актуальность данных
 - **Статистический паритет**: Равные доли положительных исходов
 - **Уравненные шансы**: Равные TPR and FPR for всех групп
-- **Демографический паритет**: Справедливое распределение предсказаний
+- **Демографический паритет**: Справедливое распределение predictions
 
 ### 1. AI Ethics Checklist
 
@@ -1148,7 +1148,7 @@ class AIEthicsChecklist:
  return checks
 
  def generate_ethics_report(self):
- """Генерация отчета on этичности"""
+ """Генерация Reportа on этичности"""
 
  report = {
  'overall_score': 0,
@@ -1188,13 +1188,13 @@ class AIEthicsChecklist:
 *Рисунок 19.7: Workflow внедрения этичности in AI - этапы and процессы*
 
 **Этапы внедрения этичности:**
-- **Ethics Planning**: Планирование этических принципов and требований
+- **Ethics Planning**: Planирование этических принципов and требований
 - **Data Assessment**: Оценка качества and справедливости данных
 - **Model Development**: Разработка этичных моделей
-- **Bias Testing**: Тестирование on смещения and предвзятость
+- **Bias testing**: Тестирование on смещения and предвзятость
 - **Privacy Review**: check защиты приватности
 - **Legal Compliance**: Соответствие правовым требованиям
-- **Deployment Monitoring**: Мониторинг этичности in продакшене
+- **Deployment Monitoring**: Monitoring этичности in продакшене
 - **Continuous Improvement**: Непрерывное improve этичности
 
 Этика and ответственный AI - это not просто дополнительные требования, а фундаментальные принципы разработки ML-систем. Ключевые аспекты:

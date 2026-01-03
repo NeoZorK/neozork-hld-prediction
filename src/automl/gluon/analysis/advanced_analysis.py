@@ -44,7 +44,7 @@ class AdvancedTradingAnalyzer:
  Returns:
  Dictionary with backtesting results
  """
- logger.info("Starting comprehensive backtesting...")
+ logger.info("starting comprehensive backtesting...")
 
  # Get Predictions
  Predictions = model.predict(test_data)
@@ -178,7 +178,7 @@ class AdvancedTradingAnalyzer:
  Returns:
  Dictionary with walk forward results
  """
- logger.info(f"Starting Walk Forward Analysis: window={window_size}, step={step_size}")
+ logger.info(f"starting Walk Forward Analysis: window={window_size}, step={step_size}")
 
  results = []
  last_retrain = 0
@@ -271,7 +271,7 @@ class AdvancedTradingAnalyzer:
  Returns:
  Dictionary with Monte Carlo results
  """
- logger.info(f"Starting Monte Carlo simulation: {n_simulations} simulations, sample size {sample_size}")
+ logger.info(f"starting Monte Carlo simulation: {n_simulations} simulations, sample size {sample_size}")
 
  simulation_results = []
 
@@ -343,7 +343,7 @@ class AdvancedTradingAnalyzer:
  def create_performance_report(self, backtest_results: Dict, wf_results: Dict, mc_results: Dict) -> str:
  """
  Create comprehensive performance report.
- Создать комплексный отчет о производительности.
+ Создать комплексный Report о производительности.
 
  Args:
  backtest_results: Backtesting results
@@ -356,7 +356,7 @@ class AdvancedTradingAnalyzer:
 
  report = f"""
 # 📊 COMPREHENSIVE TRADING MODEL PERFORMANCE REPORT
-# Отчет о производительности торговой модели
+# Report о производительности торговой модели
 
 ## 🎯 Executive Summary / Исполнительное резюме
 

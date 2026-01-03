@@ -5,7 +5,7 @@ This section contains comprehensive documentation for deploying and managing the
 ## Table of Contents
 
 ### English Documentation
-- [Getting Started with Kubernetes](./english/getting-started-en.md) - Basic setup and deployment
+- [Getting started with Kubernetes](./english/getting-started-en.md) - Basic setup and deployment
 - [Deployment Guide](./english/deployment-guide-en.md) - Complete deployment instructions
 - [Configuration Reference](./english/configuration-reference-en.md) - All configuration options
 - [Monitoring and Logging](./english/monitoring-logging-en.md) - Observability setup
@@ -14,13 +14,13 @@ This section contains comprehensive documentation for deploying and managing the
 
 ### Russian Documentation (Русская documentation)
 - [Начало работы with Kubernetes](./russian/getting-started-ru.md) - Базовая configuration and развертывание
-- [guide on развертыванию](./russian/deployment-guide-ru.md) - Полные instructions on развертыванию
+- [guide on deployment](./russian/deployment-guide-ru.md) - Полные instructions on deployment
 - [Справочник конфигурации](./russian/configuration-reference-ru.md) - Все parameters конфигурации
-- [Мониторинг and логирование](./russian/monitoring-logging-ru.md) - configuration наблюдаемости
+- [Monitoring and логирование](./russian/monitoring-logging-ru.md) - configuration наблюдаемости
 - [Troubleshooting](./russian/Troubleshooting-ru.md) - Common Issues and решения
 - [Продвинутые темы](./russian/advanced-topics-ru.md) - Масштабирование, безопасность and оптимизация
 
-## Quick Start
+## Quick start
 
 ### Prerequisites
 - Kubernetes cluster (v1.20+)

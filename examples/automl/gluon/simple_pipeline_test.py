@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 def test_data_loading():
  """Test data loading functionality."""
- print("🔍 Testing data loading...")
+ print("🔍 testing data loading...")
 
  loader = MultiIndicatorLoader()
 
@@ -47,7 +47,7 @@ def test_data_loading():
 
 def test_data_combination(data_sources):
  """Test data combination."""
- print("\n🔄 Testing data combination...")
+ print("\n🔄 testing data combination...")
 
  loader = MultiIndicatorLoader()
  combined_data = loader.combine_indicators(data_sources)
@@ -60,7 +60,7 @@ def test_data_combination(data_sources):
 
 def test_feature_engineering(combined_data):
  """Test feature engineering."""
- print("\n🔧 Testing feature engineering...")
+ print("\n🔧 testing feature engineering...")
 
  # Create target variable
  loader = MultiIndicatorLoader()
@@ -112,7 +112,7 @@ def test_feature_engineering(combined_data):
 
 def test_technical_indicators(data):
  """Test technical indicators."""
- print("\n📈 Testing technical indicators...")
+ print("\n📈 testing technical indicators...")
 
  loader = MultiIndicatorLoader()
  data_with_indicators = loader.add_technical_indicators(data)

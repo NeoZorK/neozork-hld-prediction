@@ -9,7 +9,7 @@ Advanced financial analysis platform with UV package management, comprehensive t
 [![Tests](https://img.shields.io/badge/Tests-Adaptive-green.svg)](https://pytest.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-## 🚀 Quick Start
+## 🚀 Quick start
 
 ### Native Apple Silicon Container (macOS 26+) - **FULL DOCKER PARITY**
 ```bash
@@ -21,21 +21,21 @@ cd neozork-hld-Prediction
 
 **Quick Commands (Non-interactive):**
 ```bash
-# Start container (full sequence with all features)
+# start container (full sequence with all features)
 ./scripts/native-container/setup.sh && ./scripts/native-container/run.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/exec.sh --shell
 
 # Stop container (full sequence)
 ./scripts/native-container/stop.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/cleanup.sh --all --force
 ```
 
-**Available Commands Inside Container:**
+**available Commands Inside Container:**
 ```bash
 nz --interactive # Interactive analysis
 nz demo --rule PHLD # Demo analysis
 eda -dqc # Data quality checks
 uv-install # Install dependencies
 uv-pytest # Run tests with UV
-mcp-start # Start MCP server
+mcp-start # start MCP server
 mcp-check # Check MCP server status
 ```
 
@@ -112,7 +112,7 @@ This project uses **UV package manager** exclusively for dependency management, 
 - **Docker Integration**: Seamless UV in containers
 - **Native Container Integration**: Full UV support in Apple Silicon containers
 - **Local Development**: UV support for local environments
-- **Adaptive Testing**: Tests that work in both Docker and local
+- **Adaptive testing**: Tests that work in both Docker and local
 - **Performance**: Lightning-fast dependency resolution
 
 ### UV Commands
@@ -237,9 +237,9 @@ uv run pytest tests -n auto
 - **Documentation:**
  - [Complete SMA Tutorial](docs/guides/adding-sma-indicator-tutorial.md) 📖
  - [SMA Reference](docs/reference/indicators/trend/sma-indicator.md) 📋
- - [Quick Start Guide](docs/guides/sma-quick-start-guide.md) ⚡
+ - [Quick start Guide](docs/guides/sma-quick-start-guide.md) ⚡
  - [Practical Examples](docs/guides/sma-practical-examples.md) 🎯
- - [Testing Guide](docs/guides/sma-testing-guide.md) 🧪
+ - [testing Guide](docs/guides/sma-testing-guide.md) 🧪
  - [Tutorials Summary](docs/guides/sma-tutorials-summary.md) 📋
 
 #### New: Wave Indicator ⭐ **ADVANCED DUAL-SYSTEM**
@@ -289,9 +289,9 @@ uv run pytest tests -n auto
 - **Display Modes:** All 6 modes supported (fastest, fast, plotly, mpl, seaborn, term)
 - **Documentation:**
  - [Complete SMA Tutorial](docs/guides/adding-sma-indicator-tutorial.md) 📖
- - [Quick Start Guide](docs/guides/sma-quick-start-guide.md) ⚡
+ - [Quick start Guide](docs/guides/sma-quick-start-guide.md) ⚡
  - [Practical Examples](docs/guides/sma-practical-examples.md) 🎯
- - [Testing Guide](docs/guides/sma-testing-guide.md) 🧪
+ - [testing Guide](docs/guides/sma-testing-guide.md) 🧪
  - [Tutorials Summary](docs/guides/sma-tutorials-summary.md) 📋
 
 #### Fixed: Volume Indicators
@@ -321,9 +321,9 @@ uv run pytest tests -n auto
 - **Pattern Recognition**: Hidden pattern detection and cross-market analysis
 - **Automated Retraining**: Continuous learning and adaptation pipelines
 
-## 🧪 Testing
+## 🧪 testing
 
-### Adaptive Testing Framework
+### Adaptive testing Framework
 Tests are designed to work in both Docker and local environments:
 
 ```bash
@@ -343,7 +343,7 @@ uv run pytest tests/native-container/test_native_container_full_functionality.py
 uv run pytest tests -n auto
 ```
 
-### CI/CD Testing with Act
+### CI/CD testing with Act
 Test GitHub Actions workflows and MCP server integration locally without downloading Docker images:
 
 ```bash
@@ -366,7 +366,7 @@ act -l
 **Benefits:**
 - **No Docker Downloads**: Prevents downloading large Docker images
 - **Fast Validation**: Quickly validates workflow syntax and structure
-- **MCP Server Testing**: Verify MCP server communication protocols
+- **MCP Server testing**: Verify MCP server communication protocols
 - **Resource Efficient**: Uses minimal system resources
 
 ## 🐛 Recent Fixes & Improvements
@@ -393,7 +393,7 @@ uv run run_analysis.py show csv mn1 -d fastest --rule obv:
 
 ### UV Integration Improvements
 - **Exclusive UV Usage**: All commands now use UV for consistency
-- **Multithreaded Testing**: `uv run pytest tests -n auto`
+- **Multithreaded testing**: `uv run pytest tests -n auto`
 - **Docker Integration**: Seamless UV in containers
 - **Native Container Support**: Full UV support in Apple Silicon containers
 
@@ -441,7 +441,7 @@ uv run run_analysis.py demo --rule PHLD -d plotly
 uv run run_analysis.py demo --rule PHLD --export-parquet --export-csv
 ```
 
-### Testing
+### testing
 ```bash
 # Run all tests (multithreaded)
 uv run pytest tests -n auto
@@ -468,7 +468,7 @@ uv pip install -r requirements.txt # ~3-10 seconds
 uv pip install -r requirements.txt # ~1-3 seconds (subsequent runs)
 ```
 
-### Multithreaded Testing
+### Multithreaded testing
 ```bash
 # Single-threaded testing
 pytest tests/ # ~2-5 minutes
@@ -479,16 +479,16 @@ uv run pytest tests -n auto # ~30-60 seconds
 
 ## 📚 Documentation
 
-- **[Getting Started](docs/getting-started/)** - Setup and first steps
+- **[Getting started](docs/getting-started/)** - Setup and first steps
 - **[Examples](docs/examples/)** - Practical usage examples
 - **[Guides](docs/guides/)** - Step-by-step tutorials
 - **[Reference](docs/reference/)** - Technical documentation
-- **[Testing](docs/testing/)** - Testing strategies and examples
+- **[testing](docs/testing/)** - testing strategies and examples
 
 ### 🚀 Interactive ML Trading System (NEW!)
 - **[Interactive ML Trading System](docs/interactive/)** - **NEW**: Comprehensive interactive system for ML trading strategy development
 - **[Strategic Plan (English)](docs/interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_EN.md)** - **NEW**: Complete strategic plan for robust profitable ML trading strategies
-- **[Стратегический План (Русский)](docs/interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_RU.md)** - **NEW**: Полный стратегический план for робастных прибыльных ML торговых стратегий
+- **[Стратегический Plan (Русский)](docs/interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_RU.md)** - **NEW**: Полный стратегический Plan for робастных прибыльных ML торговых стратегий
 - **[Next Steps Plan](docs/interactive/next-steps-plan.md)** - **NEW**: Production development roadmap and implementation plan
 - **[Phase 1 Completion Report](docs/interactive/phase1-completion-report.md)** - **NEW**: Real API integrations and ML models implementation report
 - **[Phase 1 Final Completion Report](docs/interactive/phase1-final-completion-report.md)** - **NEW**: Complete Phase 1 implementation with web interface and CI/CD
@@ -506,9 +506,9 @@ uv run pytest tests -n auto # ~30-60 seconds
 
 ### 🎯 SMA Indicator Tutorials (New!)
 - **[Complete SMA Tutorial](docs/guides/adding-sma-indicator-tutorial.md)** - Full implementation guide
-- **[Quick Start Guide](docs/guides/sma-quick-start-guide.md)** - Get started in minutes
+- **[Quick start Guide](docs/guides/sma-quick-start-guide.md)** - Get started in minutes
 - **[Practical Examples](docs/guides/sma-practical-examples.md)** - Real-world scenarios
-- **[Testing Guide](docs/guides/sma-testing-guide.md)** - Comprehensive testing
+- **[testing Guide](docs/guides/sma-testing-guide.md)** - Comprehensive testing
 - **[Tutorials Summary](docs/guides/sma-tutorials-summary.md)** - Complete overview
 
 ### 🌊 Wave Indicator Tutorials (New!)

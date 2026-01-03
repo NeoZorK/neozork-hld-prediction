@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Финальный скрипт for конвертации AutoML Gluon мануала
-Запускает оба конвертера: HTML and PDF (with reportlab)
+Launchает оба конвертера: HTML and PDF (with reportlab)
 
 Author: Shcherbyna Rostyslav
 Дата: 2024
@@ -104,7 +104,7 @@ def main():
  deps_ok = check_dependencies()
 
  if not deps_ok:
- print("\n❌ not все dependencies установлены. Установите их and попробуйте снова.")
+ print("\n❌ not все dependencies установлены. install их and попробуйте снова.")
  return
 
  # Конвертируем in HTML
@@ -113,9 +113,9 @@ def main():
  # Конвертируем in PDF
  pdf_success = convert_to_pdf()
 
- # Итоговый отчет
+ # Итоговый Report
  print("\n" + "="*50)
- print("📊 ИТОГОВЫЙ ОТЧЕТ")
+ print("📊 ИТОГОВЫЙ Report")
  print("="*50)
 
  if html_success:
