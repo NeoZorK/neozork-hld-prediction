@@ -95,39 +95,39 @@ pip install torchvision==0.14.1
 **Детальные описания параметров решения конфликтов dependencies:**
 
 - **`conda create -n autogluon python=3.9`**: create изолированного окружения
- - `-n autogluon`: Имя окружения (может быть любым)
- - `python=3.9`: Версия Python (3.8-3.11 поддерживаются)
- - Преимущества: полная изоляция from системных пакетов
+- `-n autogluon`: Имя окружения (может быть любым)
+- `python=3.9`: Версия Python (3.8-3.11 поддерживаются)
+- Преимущества: полная изоляция from системных пакетов
 
 - **`conda activate autogluon`**: Активация окружения
- - Активирует созданное окружение
- - Изолирует установленные пакеты
- - Предотвращает конфликты with другими проектами
+- Активирует созданное окружение
+- Изолирует установленные пакеты
+- Предотвращает конфликты with другими проектами
 
 - **`pip install --upgrade pip`**: update pip
- - Устанавливает последнюю версию pip
- - Улучшает разрешение dependencies
- - Рекомендуется перед установкой пакетов
+- Устанавливает последнюю версию pip
+- Улучшает разрешение dependencies
+- Рекомендуется перед установкой пакетов
 
 - **`pip install autogluon`**: installation AutoGluon
- - Устанавливает последнюю стабильную версию
- - Автоматически разрешает dependencies
- - Может занять 5-15 minutes
+- Устанавливает последнюю стабильную версию
+- Автоматически разрешает dependencies
+- Может занять 5-15 minutes
 
 - **`pip install autogluon==0.8.2`**: installation конкретной версии
- - `0.8.2`: Стабильная версия (рекомендуется)
- - `0.8.1`: Предыдущая версия
- - `0.9.0`: Бета-версия (not рекомендуется for продакшена)
+- `0.8.2`: Стабильная версия (рекомендуется)
+- `0.8.1`: Предыдущая версия
+- `0.9.0`: Бета-версия (not рекомендуется for продакшена)
 
 - **`pip install torch==1.13.1`**: installation PyTorch
- - `1.13.1`: Совместимая версия with AutoGluon
- - `1.12.1`: Предыдущая стабильная версия
- - `1.14.0`: Новая версия (может быть несовместима)
+- `1.13.1`: Совместимая версия with AutoGluon
+- `1.12.1`: Предыдущая стабильная версия
+- `1.14.0`: Новая версия (может быть несовместима)
 
 - **`pip install torchvision==0.14.1`**: installation TorchVision
- - `0.14.1`: Совместимая версия with PyTorch 1.13.1
- - `0.13.1`: Предыдущая версия
- - `0.15.0`: Новая версия (может быть несовместима)
+- `0.14.1`: Совместимая версия with PyTorch 1.13.1
+- `0.13.1`: Предыдущая версия
+- `0.15.0`: Новая версия (может быть несовместима)
 
 #### Проблема: Ошибки CUDA
 ```bash
@@ -152,30 +152,30 @@ os.environ['CUDA_VISIBLE_DEVICES'] = ''
 **Детальные описания параметров решения проблем CUDA:**
 
 - **`torch.cuda.is_available()`**: check доступности CUDA
- - `True`: CUDA доступна and Workingет
- - `False`: CUDA недоступна or not установлена
- - Причины False: неправильная installation, несовместимая версия
+- `True`: CUDA доступна and Workingет
+- `False`: CUDA недоступна or not установлена
+- Причины False: неправильная installation, несовместимая версия
 
 - **`torch.version.cuda`**: Версия CUDA
- - `11.7`: CUDA 11.7 (рекомендуется)
- - `11.6`: CUDA 11.6 (поддерживается)
- - `12.0`: CUDA 12.0 (может быть несовместима)
+- `11.7`: CUDA 11.7 (рекомендуется)
+- `11.6`: CUDA 11.6 (поддерживается)
+- `12.0`: CUDA 12.0 (может быть несовместима)
 
 - **`pip install torch==1.13.1+cu117`**: installation PyTorch with CUDA
- - `1.13.1`: Версия PyTorch
- - `+cu117`: Версия CUDA (11.7)
- - `--extra-index-url`: Дополнительный index пакетов
+- `1.13.1`: Версия PyTorch
+- `+cu117`: Версия CUDA (11.7)
+- `--extra-index-url`: Дополнительный index пакетов
 
 - **`torchvision==0.14.1+cu117`**: installation TorchVision with CUDA
- - `0.14.1`: Версия TorchVision
- - `+cu117`: Версия CUDA (11.7)
- - Должна соответствовать версии PyTorch
+- `0.14.1`: Версия TorchVision
+- `+cu117`: Версия CUDA (11.7)
+- Должна соответствовать версии PyTorch
 
 - **`os.environ['CUDA_VISIBLE_DEVICES'] = ''`**: Отключение CUDA
- - `''`: Пустая строка отключает все GPU
- - `'0'`: Использовать только GPU 0
- - `'0,1'`: Использовать GPU 0 and 1
- - Применение: при проблемах with памятью GPU
+- `''`: Пустая строка отключает все GPU
+- `'0'`: Использовать только GPU 0
+- `'0,1'`: Использовать GPU 0 and 1
+- Применение: при проблемах with памятью GPU
 
 ### 2. Issues with памятью
 
@@ -201,34 +201,34 @@ train_data = train_data.sample(frac=0.5) # Использовать 50% данн
 **Детальные описания параметров решения проблем with памятью:**
 
 - **`ag.set_config({'memory_limit': 4})`**: Ограничение памяти AutoGluon
- - `4`: Лимит памяти in GB (рекомендуется 4-8 GB)
- - `2`: Минимальный лимит for небольших данных
- - `8`: Максимальный лимит for больших данных
- - `16+`: for очень больших данных
+- `4`: Лимит памяти in GB (рекомендуется 4-8 GB)
+- `2`: Минимальный лимит for небольших данных
+- `8`: Максимальный лимит for больших данных
+- `16+`: for очень больших данных
 
 - **`os.environ['AUTOGLUON_MEMORY_LIMIT'] = '4'`**: installation через переменные окружения
- - `'4'`: Лимит памяти in GB (строка)
- - `'2'`: Минимальный лимит
- - `'8'`: Максимальный лимит
- - Преимущества: глобальная configuration for all процессов
+- `'4'`: Лимит памяти in GB (строка)
+- `'2'`: Минимальный лимит
+- `'8'`: Максимальный лимит
+- Преимущества: глобальная configuration for all процессов
 
 - **`train_data.sample(frac=0.5)`**: Уменьшение размера данных
- - `0.5`: Использовать 50% данных (рекомендуется)
- - `0.3`: Использовать 30% данных (for очень больших датасетов)
- - `0.7`: Использовать 70% данных (компромисс между качеством and памятью)
- - `0.1`: Использовать 10% данных (только for тестирования)
+- `0.5`: Использовать 50% данных (рекомендуется)
+- `0.3`: Использовать 30% данных (for очень больших датасетов)
+- `0.7`: Использовать 70% данных (компромисс между качеством and памятью)
+- `0.1`: Использовать 10% данных (только for тестирования)
 
 **Дополнительные parameters оптимизации памяти:**
 
 - **`ag.set_config({'num_cpus': 2})`**: Ограничение CPU
- - `2`: Использовать 2 CPU ядра
- - `4`: Использовать 4 CPU ядра (рекомендуется)
- - `8`: Использовать 8 CPU ядер (for мощных систем)
+- `2`: Использовать 2 CPU ядра
+- `4`: Использовать 4 CPU ядра (рекомендуется)
+- `8`: Использовать 8 CPU ядер (for мощных систем)
 
 - **`ag.set_config({'time_limit': 300})`**: Ограничение времени обучения
- - `300`: 5 minutes (for быстрого тестирования)
- - `600`: 10 minutes (стандартное время)
- - `1800`: 30 minutes (for качественных моделей)
+- `300`: 5 minutes (for быстрого тестирования)
+- `600`: 10 minutes (стандартное время)
+- `1800`: 30 minutes (for качественных моделей)
 
 ## Проблемы обучения
 
@@ -272,13 +272,13 @@ print(f"Training time: {time.time() - start_time:.2f} seconds")
 # Оптимизация параметров
 predictor.fit(
  train_data,
- presets='optimize_for_deployment', # Быстрое обучение
+presets='optimize_for_deployment', # Быстрое обучение
  time_limit=600, # 10 minutes
- num_bag_folds=3, # Меньше фолдов
+num_bag_folds=3, # Меньше фолдов
  num_bag_sets=1,
  ag_args_fit={
- 'num_cpus': 2, # Ограничение CPU
- 'memory_limit': 4 # Ограничение памяти
+'num_cpus': 2, # Ограничение CPU
+'memory_limit': 4 # Ограничение памяти
  }
 )
 ```
@@ -286,38 +286,38 @@ predictor.fit(
 **Детальные описания параметров оптимизации обучения:**
 
 - **`presets='optimize_for_deployment'`**: Предустановка for быстрого обучения
- - `'optimize_for_deployment'`: Быстрое обучение (рекомендуется)
- - `'best_quality'`: Максимальное качество (медленно)
- - `'medium_quality_faster_train'`: Компромисс качества and скорости
- - `'fast'`: Очень быстрое обучение (низкое качество)
+- `'optimize_for_deployment'`: Быстрое обучение (рекомендуется)
+- `'best_quality'`: Максимальное качество (медленно)
+- `'medium_quality_faster_train'`: Компромисс качества and скорости
+- `'fast'`: Очень быстрое обучение (низкое качество)
 
 - **`time_limit=600`**: Ограничение времени обучения
- - `600`: 10 minutes (стандартное время)
- - `300`: 5 minutes (быстрое тестирование)
- - `1800`: 30 minutes (качественные модели)
- - `3600`: 1 час (максимальное качество)
+- `600`: 10 minutes (стандартное время)
+- `300`: 5 minutes (быстрое тестирование)
+- `1800`: 30 minutes (качественные модели)
+- `3600`: 1 час (максимальное качество)
 
 - **`num_bag_folds=3`**: Количество фолдов for bagging
- - `3`: Быстрое обучение (рекомендуется for оптимизации)
- - `5`: Стандартное значение
- - `10`: Высокое качество (медленно)
- - `1`: Минимальное значение (очень быстро)
+- `3`: Быстрое обучение (рекомендуется for оптимизации)
+- `5`: Стандартное значение
+- `10`: Высокое качество (медленно)
+- `1`: Минимальное значение (очень быстро)
 
 - **`num_bag_sets=1`**: Количество наборов моделей
- - `1`: Один набор (быстрое обучение)
- - `2`: Два набора (стандартное значение)
- - `3`: Три набора (высокое качество)
- - `5`: Пять наборов (максимальное качество)
+- `1`: Один набор (быстрое обучение)
+- `2`: Два набора (стандартное значение)
+- `3`: Три набора (высокое качество)
+- `5`: Пять наборов (максимальное качество)
 
 - **`ag_args_fit={'num_cpus': 2}`**: Дополнительные аргументы обучения
- - `'num_cpus': 2`: Использовать 2 CPU ядра
- - `'num_cpus': 4`: Использовать 4 CPU ядра (рекомендуется)
- - `'num_cpus': 8`: Использовать 8 CPU ядер (for мощных систем)
+- `'num_cpus': 2`: Использовать 2 CPU ядра
+- `'num_cpus': 4`: Использовать 4 CPU ядра (рекомендуется)
+- `'num_cpus': 8`: Использовать 8 CPU ядер (for мощных систем)
 
 - **`ag_args_fit={'memory_limit': 4}`**: Ограничение памяти
- - `'memory_limit': 4`: 4 GB памяти
- - `'memory_limit': 8`: 8 GB памяти (рекомендуется)
- - `'memory_limit': 16`: 16 GB памяти (for больших данных)
+- `'memory_limit': 4`: 4 GB памяти
+- `'memory_limit': 8`: 8 GB памяти (рекомендуется)
+- `'memory_limit': 16`: 16 GB памяти (for больших данных)
 
 ### 2. Плохое качество модели
 
@@ -325,18 +325,18 @@ predictor.fit(
 ```python
 # Диагностика качества данных
 def diagnose_data_quality(data):
- """Диагностика качества данных"""
+"""Диагностика качества данных"""
 
  print("data shape:", data.shape)
  print("Missing values:", data.isnull().sum().sum())
  print("data types:", data.dtypes.value_counts())
 
- # check целевой переменной
+# check целевой переменной
  if 'target' in data.columns:
  print("Target distribution:")
  print(data['target'].value_counts())
 
- # check on дисбаланс
+# check on дисбаланс
  target_counts = data['target'].value_counts()
  imbalance_ratio = target_counts.max() / target_counts.min()
  print(f"Imbalance ratio: {imbalance_ratio:.2f}")
@@ -350,33 +350,33 @@ def diagnose_data_quality(data):
 **Детальные описания параметров диагностики качества данных:**
 
 - **`data.shape`**: Размеры датасета
- - `(1000, 10)`: 1000 строк, 10 столбцов (малый датасет)
- - `(10000, 50)`: 10000 строк, 50 столбцов (средний датасет)
- - `(100000, 100)`: 100000 строк, 100 столбцов (большой датасет)
- - Применение: оценка размера данных for обучения
+- `(1000, 10)`: 1000 строк, 10 столбцов (малый датасет)
+- `(10000, 50)`: 10000 строк, 50 столбцов (средний датасет)
+- `(100000, 100)`: 100000 строк, 100 столбцов (большой датасет)
+- Применение: оценка размера данных for обучения
 
 - **`data.isnull().sum().sum()`**: Общее количество пропущенных значений
- - `0`: Нет пропущенных значений (идеально)
- - `100`: 100 пропущенных значений (приемлемо)
- - `1000+`: Много пропущенных значений (требует обработки)
- - `> 10%`: Критический уровень пропущенных значений
+- `0`: Нет пропущенных значений (идеально)
+- `100`: 100 пропущенных значений (приемлемо)
+- `1000+`: Много пропущенных значений (требует обработки)
+- `> 10%`: Критический уровень пропущенных значений
 
 - **`data.dtypes.value_counts()`**: Распределение типов данных
- - `int64`: Целочисленные data
- - `float64`: Вещественные data
- - `object`: Строковые/категориальные data
- - `datetime64`: Временные data
+- `int64`: Целочисленные data
+- `float64`: Вещественные data
+- `object`: Строковые/категориальные data
+- `datetime64`: Временные data
 
 - **`target_counts`**: Распределение целевой переменной
- - `{0: 800, 1: 200}`: Дисбаланс 4:1 (приемлемо)
- - `{0: 900, 1: 100}`: Дисбаланс 9:1 (требует внимания)
- - `{0: 950, 1: 50}`: Дисбаланс 19:1 (критический)
+- `{0: 800, 1: 200}`: Дисбаланс 4:1 (приемлемо)
+- `{0: 900, 1: 100}`: Дисбаланс 9:1 (требует внимания)
+- `{0: 950, 1: 50}`: Дисбаланс 19:1 (критический)
 
 - **`imbalance_ratio`**: Коэффициент дисбаланса классов
- - `1.0`: Идеальный баланс (1:1)
- - `2.0`: Легкий дисбаланс (2:1)
- - `5.0`: Умеренный дисбаланс (5:1)
- - `10.0+`: Сильный дисбаланс (10:1+)
+- `1.0`: Идеальный баланс (1:1)
+- `2.0`: Легкий дисбаланс (2:1)
+- `5.0`: Умеренный дисбаланс (5:1)
+- `10.0+`: Сильный дисбаланс (10:1+)
 
 # Использование
 diagnose_data_quality(train_data)
@@ -386,12 +386,12 @@ diagnose_data_quality(train_data)
 ```python
 # improve качества данных
 def improve_data_quality(data):
- """improve качества данных"""
+"""improve качества данных"""
 
- # Обработка пропущенных значений
+# Обработка пропущенных значений
  data = data.fillna(data.median())
 
- # Обработка выбросов
+# Обработка выбросов
  numeric_columns = data.select_dtypes(include=[np.number]).columns
  for col in numeric_columns:
  if col != 'target':
@@ -401,7 +401,7 @@ def improve_data_quality(data):
  data[col] = np.where(data[col] < Q1 - 1.5 * IQR, Q1 - 1.5 * IQR, data[col])
  data[col] = np.where(data[col] > Q3 + 1.5 * IQR, Q3 + 1.5 * IQR, data[col])
 
- # create новых признаков
+# create новых признаков
  if 'feature1' in data.columns and 'feature2' in data.columns:
  data['feature_interaction'] = data['feature1'] * data['feature2']
  data['feature_ratio'] = data['feature1'] / (data['feature2'] + 1e-8)
@@ -418,22 +418,22 @@ train_data_improved = improve_data_quality(train_data)
 ```python
 # Диагностика валидации
 def diagnose_validation_issues(predictor, test_data):
- """Диагностика проблем валидации"""
+"""Диагностика проблем валидации"""
 
  try:
- # check совместимости данных
+# check совместимости данных
  print("Test data shape:", test_data.shape)
  print("Test data columns:", test_data.columns.toList())
 
- # check типов данных
+# check типов данных
  print("data types:")
  print(test_data.dtypes)
 
- # check пропущенных значений
+# check пропущенных значений
  print("Missing values:")
  print(test_data.isnull().sum())
 
- # Попытка предсказания
+# Попытка предсказания
  predictions = predictor.predict(test_data)
  print("predictions shape:", predictions.shape)
 
@@ -452,22 +452,22 @@ if not diagnose_validation_issues(predictor, test_data):
 ```python
 # fix проблем валидации
 def fix_validation_issues(test_data):
- """fix проблем валидации"""
+"""fix проблем валидации"""
 
- # Обработка пропущенных значений
+# Обработка пропущенных значений
  test_data = test_data.fillna(test_data.median())
 
- # Приведение типов данных
+# Приведение типов данных
  for col in test_data.columns:
  if test_data[col].dtype == 'object':
- # Попытка преобразования in числовой тип
+# Попытка преобразования in числовой тип
  try:
  test_data[col] = pd.to_numeric(test_data[col])
  except:
- # Если not удается, оставляем как есть
+# Если not удается, оставляем как есть
  pass
 
- # remove константных columns
+# remove константных columns
  constant_columns = test_data.columns[test_data.nunique() <= 1]
  test_data = test_data.drop(columns=constant_columns)
 
@@ -496,14 +496,14 @@ test_data_fixed = fix_validation_issues(test_data)
 ```python
 # Диагностика predictions
 def diagnose_Prediction_issues(predictor, data):
- """Диагностика проблем predictions"""
+"""Диагностика проблем predictions"""
 
  try:
- # check входных данных
+# check входных данных
  print("Input data shape:", data.shape)
  print("Input data types:", data.dtypes)
 
- # check совместимости with моделью
+# check совместимости with моделью
  model_features = predictor.feature_importance().index.toList()
  data_features = data.columns.toList()
 
@@ -515,7 +515,7 @@ def diagnose_Prediction_issues(predictor, data):
  if extra_features:
  print(f"Extra features: {extra_features}")
 
- # Попытка предсказания
+# Попытка предсказания
  predictions = predictor.predict(data)
  print("predictions successful")
 
@@ -534,20 +534,20 @@ if not diagnose_Prediction_issues(predictor, new_data):
 ```python
 # fix проблем predictions
 def fix_Prediction_issues(predictor, data):
- """fix проблем predictions"""
+"""fix проблем predictions"""
 
- # Получение ожидаемых признаков
+# Получение ожидаемых признаков
  expected_features = predictor.feature_importance().index.toList()
 
- # add недостающих признаков
+# add недостающих признаков
  for feature in expected_features:
  if feature not in data.columns:
- data[feature] = 0 # Заполнение нулями
+data[feature] = 0 # Заполнение нулями
 
- # remove лишних признаков
+# remove лишних признаков
  data = data[expected_features]
 
- # Обработка пропущенных значений
+# Обработка пропущенных значений
  data = data.fillna(0)
 
  return data
@@ -563,7 +563,7 @@ predictions = predictor.predict(new_data_fixed)
 ```python
 # Диагностика стабильности
 def diagnose_Prediction_stability(predictor, data, n_tests=5):
- """Диагностика стабильности predictions"""
+"""Диагностика стабильности predictions"""
 
  predictions = []
 
@@ -571,7 +571,7 @@ def diagnose_Prediction_stability(predictor, data, n_tests=5):
  pred = predictor.predict(data)
  predictions.append(pred)
 
- # check согласованности
+# check согласованности
  predictions_array = np.array(predictions)
  consistency = np.mean(predictions_array == predictions_array[0])
 
@@ -590,12 +590,12 @@ consistency = diagnose_Prediction_stability(predictor, test_data)
 ```python
 # Стабилизация predictions
 def stabilize_predictions(predictor, data, n_samples=3):
- """Стабилизация predictions"""
+"""Стабилизация predictions"""
 
  predictions = []
 
  for _ in range(n_samples):
- # add небольшого шума for стабилизации
+# add небольшого шума for стабилизации
  noisy_data = data.copy()
  for col in noisy_data.columns:
  if noisy_data[col].dtype in [np.float64, np.int64]:
@@ -605,11 +605,11 @@ def stabilize_predictions(predictor, data, n_samples=3):
  pred = predictor.predict(noisy_data)
  predictions.append(pred)
 
- # Усреднение predictions
+# Усреднение predictions
  if predictor.problem_type == 'regression':
  stable_predictions = np.mean(predictions, axis=0)
  else:
- # for классификации - голосование
+# for классификации - голосование
  stable_predictions = []
  for i in range(len(predictions[0])):
  votes = [pred[i] for pred in predictions]
@@ -652,9 +652,9 @@ stable_predictions = stabilize_predictions(predictor, test_data)
 import time
 
 def diagnose_Prediction_performance(predictor, data):
- """Диагностика производительности predictions"""
+"""Диагностика производительности predictions"""
 
- # Тест on небольшой выборке
+# Тест on небольшой выборке
  small_data = data.head(100)
 
  start_time = time.time()
@@ -664,7 +664,7 @@ def diagnose_Prediction_performance(predictor, data):
  print(f"Prediction time for 100 samples: {Prediction_time:.4f} seconds")
  print(f"Prediction time per sample: {Prediction_time/100:.6f} seconds")
 
- # Оценка времени for полного датасета
+# Оценка времени for полного датасета
  estimated_time = Prediction_time * len(data) / 100
  print(f"Estimated time for full dataset: {estimated_time:.2f} seconds")
 
@@ -678,9 +678,9 @@ Prediction_time = diagnose_Prediction_performance(predictor, test_data)
 ```python
 # Оптимизация производительности
 def optimize_Prediction_performance(predictor, data):
- """Оптимизация производительности predictions"""
+"""Оптимизация производительности predictions"""
 
- # Пакетная обработка
+# Пакетная обработка
  batch_size = 1000
  predictions = []
 
@@ -695,38 +695,38 @@ def optimize_Prediction_performance(predictor, data):
 **Детальные описания параметров оптимизации производительности:**
 
 - **`batch_size = 1000`**: Размер пакета for обработки
- - `1000`: Стандартный размер пакета (рекомендуется)
- - `500`: Меньший пакет (for ограниченной памяти)
- - `2000`: Больший пакет (for быстрых систем)
- - `100`: Минимальный пакет (for очень медленных систем)
+- `1000`: Стандартный размер пакета (рекомендуется)
+- `500`: Меньший пакет (for ограниченной памяти)
+- `2000`: Больший пакет (for быстрых систем)
+- `100`: Минимальный пакет (for очень медленных систем)
 
 - **`range(0, len(data), batch_size)`**: Итерация on данным
- - `0`: Начальный index
- - `len(data)`: Конечный index
- - `batch_size`: Шаг итерации
- - Применение: обработка данных on частям
+- `0`: Начальный index
+- `len(data)`: Конечный index
+- `batch_size`: Шаг итерации
+- Применение: обработка данных on частям
 
 - **`data.iloc[i:i+batch_size]`**: Выборка данных
- - `i`: Начальный index пакета
- - `i+batch_size`: Конечный index пакета
- - `iloc`: Позиционный доступ к данным
- - Преимущества: эффективная Working with большими датасетами
+- `i`: Начальный index пакета
+- `i+batch_size`: Конечный index пакета
+- `iloc`: Позиционный доступ к данным
+- Преимущества: эффективная Working with большими датасетами
 
 **Дополнительные parameters оптимизации:**
 
 - **`predictor.predict(batch)`**: Prediction for пакета
- - `batch`: data пакета
- - Возвращает: массив predictions
- - Оптимизация: обработка множественных образцов simultaneously
+- `batch`: data пакета
+- Возвращает: массив predictions
+- Оптимизация: обработка множественных образцов simultaneously
 
 - **`predictions.extend(batch_predictions)`**: Объединение результатов
- - `extend()`: Добавляет все элементы списка
- - `append()`: Добавляет один элемент
- - Преимущества: эффективное объединение массивов
+- `extend()`: Добавляет все элементы списка
+- `append()`: Добавляет один элемент
+- Преимущества: эффективное объединение массивов
 
 # or использование более простой модели
 def create_fast_model(predictor, data):
- """create быстрой модели"""
+"""create быстрой модели"""
 
  fast_predictor = TabularPredictor(
  label=predictor.label,
@@ -735,7 +735,7 @@ def create_fast_model(predictor, data):
  path='./fast_models'
  )
 
- # Обучение только on быстрых алгоритмах
+# Обучение только on быстрых алгоритмах
  fast_predictor.fit(
  data,
  hyperparameters={
@@ -751,39 +751,39 @@ def create_fast_model(predictor, data):
 **Детальные описания параметров создания быстрой модели:**
 
 - **`label=predictor.label`**: Целевая переменная
- - Копирует целевую переменную из исходной модели
- - Обеспечивает совместимость with data
- - Применение: сохранение структуры задачи
+- Копирует целевую переменную из исходной модели
+- Обеспечивает совместимость with data
+- Применение: сохранение структуры задачи
 
 - **`problem_type=predictor.problem_type`**: Тип задачи
- - `'binary'`: Бинарная классификация
- - `'multiclass'`: Многоклассовая классификация
- - `'regression'`: Регрессия
- - `'quantile'`: Квантильная регрессия
+- `'binary'`: Бинарная классификация
+- `'multiclass'`: Многоклассовая классификация
+- `'regression'`: Регрессия
+- `'quantile'`: Квантильная регрессия
 
 - **`eval_metric=predictor.eval_metric`**: Метрика оценки
- - `'accuracy'`: Точность (классификация)
- - `'rmse'`: RMSE (регрессия)
- - `'mae'`: MAE (регрессия)
- - `'f1'`: F1-score (классификация)
+- `'accuracy'`: Точность (классификация)
+- `'rmse'`: RMSE (регрессия)
+- `'mae'`: MAE (регрессия)
+- `'f1'`: F1-score (классификация)
 
 - **`path='./fast_models'`**: Путь for сохранения модели
- - `'./fast_models'`: Локальная папка
- - `'./models/fast'`: Вложенная папка
- - `'/tmp/fast_models'`: Временная папка
- - Применение: изоляция быстрых моделей
+- `'./fast_models'`: Локальная папка
+- `'./models/fast'`: Вложенная папка
+- `'/tmp/fast_models'`: Временная папка
+- Применение: изоляция быстрых моделей
 
 - **`hyperparameters={'GBM': [{'num_boost_round': 50}]}`**: Гиперпараметры
  - `'GBM'`: Gradient Boosting Machine
- - `'num_boost_round': 50`: 50 итераций (быстро)
+- `'num_boost_round': 50`: 50 итераций (быстро)
  - `'RF'`: Random Forest
- - `'n_estimators': 50`: 50 деревьев (быстро)
+- `'n_estimators': 50`: 50 деревьев (быстро)
 
 - **`time_limit=300`**: Ограничение времени обучения
- - `300`: 5 minutes (быстрое обучение)
- - `600`: 10 minutes (стандартное время)
- - `1800`: 30 minutes (качественные модели)
- - Применение: контроль времени обучения
+- `300`: 5 minutes (быстрое обучение)
+- `600`: 10 minutes (стандартное время)
+- `1800`: 30 minutes (качественные модели)
+- Применение: контроль времени обучения
 
 # Использование
 fast_predictor = create_fast_model(predictor, train_data)
@@ -799,7 +799,7 @@ import psutil
 import gc
 
 def diagnose_memory_usage():
- """Диагностика использования памяти"""
+"""Диагностика использования памяти"""
 
  process = psutil.Process()
  memory_info = process.memory_info()
@@ -817,9 +817,9 @@ memory_usage = diagnose_memory_usage()
 ```python
 # Оптимизация памяти
 def optimize_memory_usage(predictor, data):
- """Оптимизация использования памяти"""
+"""Оптимизация использования памяти"""
 
- # Обработка данных on частям
+# Обработка данных on частям
  chunk_size = 1000
  predictions = []
 
@@ -828,7 +828,7 @@ def optimize_memory_usage(predictor, data):
  chunk_predictions = predictor.predict(chunk)
  predictions.extend(chunk_predictions)
 
- # clean памяти
+# clean памяти
  del chunk
  gc.collect()
 
@@ -836,7 +836,7 @@ def optimize_memory_usage(predictor, data):
 
 # or использование более эффективных типов данных
 def optimize_data_types(data):
- """Оптимизация типов данных"""
+"""Оптимизация типов данных"""
 
  for col in data.columns:
  if data[col].dtype == 'float64':
@@ -879,16 +879,16 @@ data_optimized = optimize_data_types(data)
 ```python
 # Диагностика загрузки модели
 def diagnose_model_Loading(model_path):
- """Диагностика загрузки модели"""
+"""Диагностика загрузки модели"""
 
  try:
- # check существования files
+# check существования files
  import os
  if not os.path.exists(model_path):
  print(f"Model path does not exist: {model_path}")
  return False
 
- # check структуры модели
+# check структуры модели
  required_files = ['predictor.pkl', 'metadata.json']
  for file in required_files:
  file_path = os.path.join(model_path, file)
@@ -896,7 +896,7 @@ def diagnose_model_Loading(model_path):
  print(f"required file Missing: {file_path}")
  return False
 
- # Попытка загрузки
+# Попытка загрузки
  predictor = TabularPredictor.load(model_path)
  print("Model loaded successfully")
  return True
@@ -914,17 +914,17 @@ if not diagnose_model_Loading('./models'):
 ```python
 # fix проблем загрузки модели
 def fix_model_Loading_issues(model_path):
- """fix проблем загрузки модели"""
+"""fix проблем загрузки модели"""
 
  try:
- # check версии AutoGluon
+# check версии AutoGluon
  import autogluon as ag
  print(f"AutoGluon Version: {ag.__version__}")
 
- # Загрузка with проверкой совместимости
+# Загрузка with проверкой совместимости
  predictor = TabularPredictor.load(
  model_path,
- require_version_match=False # Игнорировать несовпадение версий
+require_version_match=False # Игнорировать несовпадение версий
  )
 
  return predictor
@@ -932,9 +932,9 @@ def fix_model_Loading_issues(model_path):
  except Exception as e:
  print(f"Failed to load model: {e}")
 
- # Попытка пересоздания модели
+# Попытка пересоздания модели
  print("Attempting to recreate model...")
- # Здесь должна быть Logsка пересоздания модели
+# Здесь должна быть Logsка пересоздания модели
  return None
 
 # Использование
@@ -947,7 +947,7 @@ predictor = fix_model_Loading_issues('./models')
 ```python
 # Диагностика API
 def diagnose_api_issues(api_url, test_data):
- """Диагностика проблем API"""
+"""Диагностика проблем API"""
 
  try:
  # health check
@@ -956,7 +956,7 @@ def diagnose_api_issues(api_url, test_data):
  print(f"health check failed: {response.status_code}")
  return False
 
- # Тест предсказания
+# Тест предсказания
  response = requests.post(f"{api_url}/predict", json=test_data)
  if response.status_code != 200:
  print(f"Prediction failed: {response.status_code}")
@@ -979,17 +979,17 @@ if not diagnose_api_issues("http://localhost:8000", test_data):
 ```python
 # fix проблем API
 def fix_api_issues(api_url, test_data):
- """fix проблем API"""
+"""fix проблем API"""
 
  try:
- # check доступности API
+# check доступности API
  response = requests.get(f"{api_url}/health", timeout=5)
 
  if response.status_code == 200:
  health_data = response.json()
  print(f"API Status: {health_data['status']}")
 
- # check загруженных моделей
+# check загруженных моделей
  if 'loaded_models' in health_data:
  print(f"Loaded models: {health_data['loaded_models']}")
 
@@ -1041,16 +1041,16 @@ else:
 ### 1. Система Monitoringа
 ```python
 class AutoGluonMonitor:
- """Monitoring AutoGluon системы"""
+"""Monitoring AutoGluon системы"""
 
  def __init__(self):
  self.metrics = {}
  self.alerts = []
 
  def check_system_health(self):
- """health check системы"""
+"""health check системы"""
 
- # check памяти
+# check памяти
  memory = psutil.virtual_memory()
  if memory.percent > 90:
  self.alerts.append("High memory usage")
@@ -1060,7 +1060,7 @@ class AutoGluonMonitor:
  if cpu > 90:
  self.alerts.append("High CPU usage")
 
- # check диска
+# check диска
  disk = psutil.disk_usage('/')
  if disk.percent > 90:
  self.alerts.append("High disk usage")
@@ -1071,48 +1071,48 @@ class AutoGluonMonitor:
 **Детальные описания параметров системы Monitoringа:**
 
 - **`memory.percent > 90`**: check использования памяти
- - `90`: Критический порог (90% использования)
- - `80`: Предупреждающий порог (80% использования)
- - `95`: Экстремальный порог (95% использования)
- - Применение: предотвращение нехватки памяти
+- `90`: Критический порог (90% использования)
+- `80`: Предупреждающий порог (80% использования)
+- `95`: Экстремальный порог (95% использования)
+- Применение: предотвращение нехватки памяти
 
 - **`cpu > 90`**: check использования CPU
- - `90`: Критический порог (90% использования)
- - `80`: Предупреждающий порог (80% использования)
- - `95`: Экстремальный порог (95% использования)
- - Применение: предотвращение перегрузки CPU
+- `90`: Критический порог (90% использования)
+- `80`: Предупреждающий порог (80% использования)
+- `95`: Экстремальный порог (95% использования)
+- Применение: предотвращение перегрузки CPU
 
 - **`disk.percent > 90`**: check использования диска
- - `90`: Критический порог (90% использования)
- - `80`: Предупреждающий порог (80% использования)
- - `95`: Экстремальный порог (95% использования)
- - Применение: предотвращение нехватки места on диске
+- `90`: Критический порог (90% использования)
+- `80`: Предупреждающий порог (80% использования)
+- `95`: Экстремальный порог (95% использования)
+- Применение: предотвращение нехватки места on диске
 
 - **`self.alerts.append()`**: add алертов
- - `"High memory usage"`: Алерт о высокой памяти
- - `"High CPU usage"`: Алерт о высокой загрузке CPU
- - `"High disk usage"`: Алерт о высокой загрузке диска
- - Применение: notifications о проблемах
+- `"High memory usage"`: Алерт о высокой памяти
+- `"High CPU usage"`: Алерт о высокой загрузке CPU
+- `"High disk usage"`: Алерт о высокой загрузке диска
+- Применение: notifications о проблемах
 
 - **`len(self.alerts) == 0`**: check наличия алертов
- - `True`: Нет алертов (система здорова)
- - `False`: Есть алерты (система нездорова)
- - Применение: общая оценка состояния системы
+- `True`: Нет алертов (система здорова)
+- `False`: Есть алерты (система нездорова)
+- Применение: общая оценка состояния системы
 
  def check_model_performance(self, predictor, test_data):
- """check производительности модели"""
+"""check производительности модели"""
 
  try:
- # Тест предсказания
+# Тест предсказания
  start_time = time.time()
  predictions = predictor.predict(test_data.head(100))
  Prediction_time = time.time() - start_time
 
- # check времени
- if Prediction_time > 10: # 10 секунд for 100 образцов
+# check времени
+if Prediction_time > 10: # 10 секунд for 100 образцов
  self.alerts.append("Slow Prediction performance")
 
- # check качества
+# check качества
  performance = predictor.evaluate(test_data.head(100))
  if performance.get('accuracy', 0) < 0.8:
  self.alerts.append("Low model accuracy")
@@ -1124,7 +1124,7 @@ class AutoGluonMonitor:
  return False
 
  def generate_Report(self):
- """Генерация Reportа"""
+"""Генерация Reportа"""
 
  Report = {
  'timestamp': datetime.now().isoformat(),
@@ -1147,14 +1147,14 @@ import logging
 from datetime import datetime
 
 class AutoGluonLogger:
- """Система Logsрования for AutoGluon"""
+"""Система Logsрования for AutoGluon"""
 
  def __init__(self, log_file='autogluon.log'):
  self.log_file = log_file
  self.setup_logging()
 
  def setup_logging(self):
- """configuration Logsрования"""
+"""configuration Logsрования"""
 
  logging.basicConfig(
  level=logging.INFO,
@@ -1171,49 +1171,49 @@ class AutoGluonLogger:
 **Детальные описания параметров системы Logsрования:**
 
 - **`level=logging.INFO`**: Уровень Logsрования
- - `logging.DEBUG`: Отладочная информация (все messages)
- - `logging.INFO`: Информационные messages (рекомендуется)
- - `logging.WARNING`: Предупреждения and ошибки
- - `logging.ERROR`: Только ошибки
- - `logging.CRITICAL`: Только критические ошибки
+- `logging.DEBUG`: Отладочная информация (все messages)
+- `logging.INFO`: Информационные messages (рекомендуется)
+- `logging.WARNING`: Предупреждения and ошибки
+- `logging.ERROR`: Только ошибки
+- `logging.CRITICAL`: Только критические ошибки
 
 - **`format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'`**: Формат логов
- - `%(asctime)s`: Время события
- - `%(name)s`: Имя логгера
- - `%(levelname)s`: Уровень Logsрования
- - `%(message)s`: Сообщение
- - Применение: структурированное Logsрование
+- `%(asctime)s`: Время события
+- `%(name)s`: Имя логгера
+- `%(levelname)s`: Уровень Logsрования
+- `%(message)s`: Сообщение
+- Применение: структурированное Logsрование
 
 - **`logging.FileHandler(self.log_file)`**: Обработчик файла
- - `self.log_file`: Путь к файлу лога
- - `'autogluon.log'`: Стандартное имя файла
- - `'./Logs/autogluon.log'`: Вложенная папка
- - Применение: сохранение логов in файл
+- `self.log_file`: Путь к файлу лога
+- `'autogluon.log'`: Стандартное имя файла
+- `'./Logs/autogluon.log'`: Вложенная папка
+- Применение: сохранение логов in файл
 
 - **`logging.StreamHandler()`**: Обработчик консоли
- - Выводит Logs in консоль
- - Полезно for отладки
- - Применение: Monitoring in реальном времени
+- Выводит Logs in консоль
+- Полезно for отладки
+- Применение: Monitoring in реальном времени
 
 - **`logging.getLogger(__name__)`**: create логгера
- - `__name__`: Имя текущего модуля
- - Создает уникальный логгер
- - Применение: идентификация источника логов
+- `__name__`: Имя текущего модуля
+- Создает уникальный логгер
+- Применение: идентификация источника логов
 
  def log_training_start(self, data_info):
- """Logsрование начала обучения"""
+"""Logsрование начала обучения"""
  self.logger.info(f"Training started: {data_info}")
 
  def log_training_complete(self, results):
- """Logsрование завершения обучения"""
+"""Logsрование завершения обучения"""
  self.logger.info(f"Training COMPLETED: {results}")
 
  def log_Prediction(self, input_data, Prediction, processing_time):
- """Logsрование предсказания"""
+"""Logsрование предсказания"""
  self.logger.info(f"Prediction: input={input_data}, Prediction={Prediction}, time={processing_time}")
 
  def log_error(self, error, context):
- """Logsрование ошибок"""
+"""Logsрование ошибок"""
  self.logger.error(f"Error: {error}, context: {context}")
 
 # Использование

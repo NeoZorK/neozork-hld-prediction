@@ -37,32 +37,32 @@ Monitoring торгового бота - это критически важны�
 
 ```mermaid
 graph TD
- A[Торговый бот] --> B[Сборщик метрик]
- A --> C[Analysisтор логов]
+A[Торговый бот] --> B[Сборщик метрик]
+A --> C[Analysisтор логов]
 
- B --> D[Хранилище метрик]
- C --> E[Хранилище логов]
+B --> D[Хранилище метрик]
+C --> E[Хранилище логов]
 
- D --> F[Дашборд Monitoringа]
+D --> F[Дашборд Monitoringа]
  E --> F
 
- F --> G[Система алертов]
- G --> H[Каналы уведомлений]
+F --> G[Система алертов]
+G --> H[Каналы уведомлений]
 
  H --> I[Email]
  H --> J[Telegram]
  H --> K[SMS]
  H --> L[Slack]
 
- B --> M[Отслеживание производительности]
+B --> M[Отслеживание производительности]
  M --> N[health check]
 
- N --> O[Автоматические действия]
- O --> P[ПереLaunch бота]
- O --> Q[Закрытие позиций]
- O --> R[Переобучение модели]
+N --> O[Автоматические действия]
+O --> P[ПереLaunch бота]
+O --> Q[Закрытие позиций]
+O --> R[Переобучение модели]
 
- F --> S[Внешние интеграции]
+F --> S[Внешние интеграции]
  S --> T[Prometheus]
  S --> U[Grafana]
  S --> V[Webhooks]
@@ -79,144 +79,144 @@ graph TD
 
 ```python
 class TradingBotMonitoringsystem:
- """Система Monitoringа торгового бота - Comprehensive solution"""
+"""Система Monitoringа торгового бота - Comprehensive solution"""
 
  def __init__(self, config=None):
  """
- Инициализация системы Monitoringа
+Инициализация системы Monitoringа
 
  Args:
- config (dict): configuration системы Monitoringа
- - metrics_interval: Интервал сбора метрик (секунды)
- - alert_channels: Каналы уведомлений
- - dashboard_refresh: Частота обновления дашборда
- - log_rotation: Settings ротации логов
- - health_check_interval: Интервал проверки health
- - performance_tracking: Settings отслеживания производительности
+config (dict): configuration системы Monitoringа
+- metrics_interval: Интервал сбора метрик (секунды)
+- alert_channels: Каналы уведомлений
+- dashboard_refresh: Частота обновления дашборда
+- log_rotation: Settings ротации логов
+- health_check_interval: Интервал проверки health
+- performance_tracking: Settings отслеживания производительности
  """
  self.config = config or self._get_default_config()
 
- # Сбор метрик - что происходит with ботом
+# Сбор метрик - что происходит with ботом
  self.metrics_collector = MetricsCollector(
  collection_interval=self.config['metrics_interval'],
  storage_config=self.config['metrics_storage']
  )
 
- # Management notificationsми - когда что-то идет not так
+# Management notificationsми - когда что-то идет not так
  self.alert_manager = AlertManager(
  channels=self.config['alert_channels'],
  rules_config=self.config['alert_rules']
  )
 
- # Дашборд - визуализация данных
+# Дашборд - визуализация данных
  self.dashboard = MonitoringDashboard(
  refresh_interval=self.config['dashboard_refresh'],
  widgets_config=self.config['dashboard_widgets']
  )
 
- # Анализ логов - поиск проблем
+# Анализ логов - поиск проблем
  self.log_analyzer = LogAnalyzer(
  log_patterns=self.config['log_patterns'],
  rotation_config=self.config['log_rotation']
  )
 
- # Отслеживание производительности - как Workingет бот
+# Отслеживание производительности - как Workingет бот
  self.performance_tracker = PerformanceTracker(
  tracking_config=self.config['performance_tracking'],
  benchmarks=self.config['performance_benchmarks']
  )
 
- # health check - все ли in порядке
+# health check - все ли in порядке
  self.health_checker = healthchecker(
  check_interval=self.config['health_check_interval'],
  health_rules=self.config['health_rules']
  )
 
  def _get_default_config(self):
- """Получение конфигурации on умолчанию"""
+"""Получение конфигурации on умолчанию"""
  return {
- 'metrics_interval': 60, # Интервал сбора метрик (секунды)
- 'alert_channels': ['email', 'telegram'], # Каналы уведомлений
- 'dashboard_refresh': 30, # Частота обновления дашборда (секунды)
- 'log_rotation': { # Settings ротации логов
- 'max_size': '100MB', # Максимальный размер файла
- 'max_files': 10, # Максимальное количество files
- 'rotation_time': 'daily', # Время ротации
- 'compression': True, # Сжатие старых логов
- 'retention_days': 30 # Хранение логов (дни)
+'metrics_interval': 60, # Интервал сбора метрик (секунды)
+'alert_channels': ['email', 'telegram'], # Каналы уведомлений
+'dashboard_refresh': 30, # Частота обновления дашборда (секунды)
+'log_rotation': { # Settings ротации логов
+'max_size': '100MB', # Максимальный размер файла
+'max_files': 10, # Максимальное количество files
+'rotation_time': 'daily', # Время ротации
+'compression': True, # Сжатие старых логов
+'retention_days': 30 # Хранение логов (дни)
  },
- 'health_check_interval': 300, # Интервал проверки health (секунды)
- 'performance_tracking': { # Settings отслеживания производительности
- 'enable_tracking': True, # Включить отслеживание
- 'tracking_interval': 60, # Интервал отслеживания (секунды)
- 'metrics_retention': 7, # Хранение метрик (дни)
- 'benchmark_comparison': True, # Сравнение with бенчмарками
- 'optimization_suggestions': True # Предложения on оптимизации
+'health_check_interval': 300, # Интервал проверки health (секунды)
+'performance_tracking': { # Settings отслеживания производительности
+'enable_tracking': True, # Включить отслеживание
+'tracking_interval': 60, # Интервал отслеживания (секунды)
+'metrics_retention': 7, # Хранение метрик (дни)
+'benchmark_comparison': True, # Сравнение with бенчмарками
+'optimization_suggestions': True # Предложения on оптимизации
  },
- 'metrics_storage': { # Settings хранения метрик
- 'type': 'influxdb', # Тип хранилища
- 'host': 'localhost', # Хост базы данных
- 'port': 8086, # Порт базы данных
- 'database': 'trading_metrics', # Имя базы данных
- 'Username': 'admin', # Имя User
- 'password': 'password', # Пароль
- 'retention_policy': '30d' # Политика хранения
+'metrics_storage': { # Settings хранения метрик
+'type': 'influxdb', # Тип хранилища
+'host': 'localhost', # Хост базы данных
+'port': 8086, # Порт базы данных
+'database': 'trading_metrics', # Имя базы данных
+'Username': 'admin', # Имя User
+'password': 'password', # Пароль
+'retention_policy': '30d' # Политика хранения
  },
- 'alert_rules': { # Правила алертов
- 'critical_thresholds': { # Критические пороги
- 'bot_down_time': 300, # Время простоя бота (секунды)
- 'max_drawdown': 0.1, # Максимальная просадка
- 'error_rate': 0.05, # Частота ошибок
- 'memory_usage': 0.9, # Использование памяти
- 'cpu_usage': 0.95 # Использование CPU
+'alert_rules': { # Правила алертов
+'critical_thresholds': { # Критические пороги
+'bot_down_time': 300, # Время простоя бота (секунды)
+'max_drawdown': 0.1, # Максимальная просадка
+'error_rate': 0.05, # Частота ошибок
+'memory_usage': 0.9, # Использование памяти
+'cpu_usage': 0.95 # Использование CPU
  },
- 'warning_thresholds': { # Предупреждающие пороги
- 'win_rate': 0.4, # Процент выигрышных сделок
- 'model_drift': 0.1, # Дрифт модели
- 'network_latency': 1000, # Задержка сети (мс)
- 'disk_usage': 0.8, # Использование диска
- 'api_response_time': 2000 # Время ответа API (мс)
+'warning_thresholds': { # Предупреждающие пороги
+'win_rate': 0.4, # Процент выигрышных сделок
+'model_drift': 0.1, # Дрифт модели
+'network_latency': 1000, # Задержка сети (мс)
+'disk_usage': 0.8, # Использование диска
+'api_response_time': 2000 # Время ответа API (мс)
  },
- 'info_thresholds': { # Информационные пороги
- 'daily_pnl': 1000, # Дневная прибыль
- 'trades_count': 50, # Количество сделок
- 'uptime_hours': 24 # Время работы (часы)
+'info_thresholds': { # Информационные пороги
+'daily_pnl': 1000, # Дневная прибыль
+'trades_count': 50, # Количество сделок
+'uptime_hours': 24 # Время работы (часы)
  }
  },
- 'dashboard_widgets': { # Settings виджетов дашборда
- 'overView': { # Виджет обзора
- 'enabled': True, # Включен
- 'refresh_interval': 30, # Интервал обновления (секунды)
+'dashboard_widgets': { # Settings виджетов дашборда
+'overView': { # Виджет обзора
+'enabled': True, # Включен
+'refresh_interval': 30, # Интервал обновления (секунды)
  'metrics': ['profit_loss', 'win_rate', 'active_positions', 'uptime']
  },
- 'performance': { # Виджет производительности
+'performance': { # Виджет производительности
  'enabled': True,
  'refresh_interval': 60,
  'charts': ['pnl_timeline', 'trades_distribution', 'drawdown_chart']
  },
- 'risk_metrics': { # Виджет метрик риска
+'risk_metrics': { # Виджет метрик риска
  'enabled': True,
  'refresh_interval': 60,
  'metrics': ['max_drawdown', 'sharpe_ratio', 'var_95', 'current_exposure']
  },
- 'system_health': { # Виджет health системы
+'system_health': { # Виджет health системы
  'enabled': True,
  'refresh_interval': 30,
  'metrics': ['cpu_usage', 'memory_usage', 'disk_usage', 'network_latency']
  },
- 'model_metrics': { # Виджет метрик модели
+'model_metrics': { # Виджет метрик модели
  'enabled': True,
  'refresh_interval': 120,
  'metrics': ['model_accuracy', 'model_drift', 'data_quality', 'Prediction_confidence']
  },
- 'market_conditions': { # Виджет рыночных условий
+'market_conditions': { # Виджет рыночных условий
  'enabled': True,
  'refresh_interval': 60,
  'metrics': ['volatility', 'trend', 'volume', 'Technical_indicators']
  }
  },
- 'log_patterns': { # Паттерны for Analysis логов
- 'error_patterns': [ # Паттерны ошибок
+'log_patterns': { # Паттерны for Analysis логов
+'error_patterns': [ # Паттерны ошибок
  r'ERROR: (.+)',
  r'EXCEPTION: (.+)',
  r'CRITICAL: (.+)',
@@ -224,14 +224,14 @@ class TradingBotMonitoringsystem:
  r'Connection error: (.+)',
  r'API error: (.+)'
  ],
- 'performance_patterns': [ # Паттерны производительности
+'performance_patterns': [ # Паттерны производительности
  r'Slow operation: (.+) took (\d+)ms',
  r'High memory usage: (\d+)MB',
  r'CPU spike detected: (\d+)%',
  r'network timeout: (.+)',
  r'database slow query: (.+)'
  ],
- 'trading_patterns': [ # Паттерны торговли
+'trading_patterns': [ # Паттерны торговли
  r'Trade executed: (.+)',
  r'Order placed: (.+)',
  r'Position opened: (.+)',
@@ -240,63 +240,63 @@ class TradingBotMonitoringsystem:
  r'Take profit triggered: (.+)'
  ]
  },
- 'health_rules': { # Правила проверки health
- 'bot_running': { # check работы бота
+'health_rules': { # Правила проверки health
+'bot_running': { # check работы бота
  'enabled': True,
- 'max_downtime': 300, # Максимальное время простоя (секунды)
- 'check_interval': 60 # Интервал проверки (секунды)
+'max_downtime': 300, # Максимальное время простоя (секунды)
+'check_interval': 60 # Интервал проверки (секунды)
  },
- 'api_connectivity': { # check подключения к API
+'api_connectivity': { # check подключения к API
  'enabled': True,
- 'max_latency': 1000, # Максимальная задержка (мс)
- 'max_error_rate': 0.05, # Максимальная частота ошибок
- 'check_interval': 30 # Интервал проверки (секунды)
+'max_latency': 1000, # Максимальная задержка (мс)
+'max_error_rate': 0.05, # Максимальная частота ошибок
+'check_interval': 30 # Интервал проверки (секунды)
  },
- 'model_loaded': { # check загрузки модели
+'model_loaded': { # check загрузки модели
  'enabled': True,
- 'min_accuracy': 0.7, # Минимальная точность
- 'check_interval': 120 # Интервал проверки (секунды)
+'min_accuracy': 0.7, # Минимальная точность
+'check_interval': 120 # Интервал проверки (секунды)
  },
- 'data_freshness': { # check свежести данных
+'data_freshness': { # check свежести данных
  'enabled': True,
- 'max_age': 300, # Максимальный возраст данных (секунды)
- 'check_interval': 60 # Интервал проверки (секунды)
+'max_age': 300, # Максимальный возраст данных (секунды)
+'check_interval': 60 # Интервал проверки (секунды)
  },
- 'resource_usage': { # check использования ресурсов
+'resource_usage': { # check использования ресурсов
  'enabled': True,
- 'max_memory_usage': 0.9, # Максимальное использование памяти
- 'max_cpu_usage': 0.95, # Максимальное использование CPU
- 'max_disk_usage': 0.8, # Максимальное использование диска
- 'check_interval': 60 # Интервал проверки (секунды)
+'max_memory_usage': 0.9, # Максимальное использование памяти
+'max_cpu_usage': 0.95, # Максимальное использование CPU
+'max_disk_usage': 0.8, # Максимальное использование диска
+'check_interval': 60 # Интервал проверки (секунды)
  }
  },
- 'performance_benchmarks': { # Бенчмарки производительности
- 'trading_benchmarks': { # Торговые бенчмарки
- 'min_win_rate': 0.5, # Минимальный процент выигрышных сделок
- 'max_drawdown': 0.1, # Максимальная просадка
- 'min_sharpe_ratio': 1.0, # Минимальный коэффициент Шарпа
- 'min_trades_per_day': 5 # Минимальное количество сделок in день
+'performance_benchmarks': { # Бенчмарки производительности
+'trading_benchmarks': { # Торговые бенчмарки
+'min_win_rate': 0.5, # Минимальный процент выигрышных сделок
+'max_drawdown': 0.1, # Максимальная просадка
+'min_sharpe_ratio': 1.0, # Минимальный коэффициент Шарпа
+'min_trades_per_day': 5 # Минимальное количество сделок in день
  },
- 'system_benchmarks': { # Системные бенчмарки
- 'max_response_time': 1000, # Максимальное время ответа (мс)
- 'max_error_rate': 0.01, # Максимальная частота ошибок
- 'min_uptime': 0.99, # Минимальное время работы
- 'max_memory_usage': 0.8 # Максимальное использование памяти
+'system_benchmarks': { # Системные бенчмарки
+'max_response_time': 1000, # Максимальное время ответа (мс)
+'max_error_rate': 0.01, # Максимальная частота ошибок
+'min_uptime': 0.99, # Минимальное время работы
+'max_memory_usage': 0.8 # Максимальное использование памяти
  },
- 'model_benchmarks': { # Бенчмарки модели
- 'min_accuracy': 0.8, # Минимальная точность
- 'max_drift': 0.1, # Максимальный дрифт
- 'min_confidence': 0.7, # Минимальная уверенность
- 'max_Prediction_time': 100 # Максимальное время предсказания (мс)
+'model_benchmarks': { # Бенчмарки модели
+'min_accuracy': 0.8, # Минимальная точность
+'max_drift': 0.1, # Максимальный дрифт
+'min_confidence': 0.7, # Минимальная уверенность
+'max_Prediction_time': 100 # Максимальное время предсказания (мс)
  }
  }
  }
 
  def start_Monitoring(self):
- """Launch системы Monitoringа"""
+"""Launch системы Monitoringа"""
 
  try:
- # Инициализация компонентов
+# Инициализация компонентов
  self.metrics_collector.start()
  self.alert_manager.start()
  self.dashboard.start()
@@ -304,18 +304,18 @@ class TradingBotMonitoringsystem:
  self.performance_tracker.start()
  self.health_checker.start()
 
- print("✅ Система Monitoringа запущена")
+print("✅ Система Monitoringа запущена")
  return True
 
  except Exception as e:
- print(f"❌ Ошибка Launchа системы Monitoringа: {e}")
+print(f"❌ Ошибка Launchа системы Monitoringа: {e}")
  return False
 
  def stop_Monitoring(self):
- """Остановка системы Monitoringа"""
+"""Остановка системы Monitoringа"""
 
  try:
- # Остановка компонентов
+# Остановка компонентов
  self.metrics_collector.stop()
  self.alert_manager.stop()
  self.dashboard.stop()
@@ -323,15 +323,15 @@ class TradingBotMonitoringsystem:
  self.performance_tracker.stop()
  self.health_checker.stop()
 
- print("⏹️ Система Monitoringа остановлена")
+print("⏹️ Система Monitoringа остановлена")
  return True
 
  except Exception as e:
- print(f"❌ Ошибка остановки системы Monitoringа: {e}")
+print(f"❌ Ошибка остановки системы Monitoringа: {e}")
  return False
 
  def get_Monitoring_status(self):
- """Получение статуса Monitoringа"""
+"""Получение статуса Monitoringа"""
 
  return {
  'metrics_collector': self.metrics_collector.is_running(),
@@ -357,35 +357,35 @@ class TradingBotMonitoringsystem:
 
 ```mermaid
 graph TD
- A[Торговый бот] --> B{Тип метрик}
+A[Торговый бот] --> B{Тип метрик}
 
- B -->|Торговые| C[Торговые метрики]
- B -->|ML Модель| D[Метрики модели]
- B -->|Рыночные| E[Рыночные метрики]
- B -->|Системные| F[Системные метрики]
+B -->|Торговые| C[Торговые метрики]
+B -->|ML Модель| D[Метрики модели]
+B -->|Рыночные| E[Рыночные метрики]
+B -->|Системные| F[Системные метрики]
 
  C --> C1[P&L]
  C --> C2[Win Rate]
- C --> C3[Количество сделок]
- C --> C4[Максимальная просадка]
+C --> C3[Количество сделок]
+C --> C4[Максимальная просадка]
  C --> C5[Sharpe Ratio]
 
- D --> D1[Точность модели]
- D --> D2[Дрифт модели]
- D --> D3[Качество данных]
- D --> D4[Уверенность predictions]
+D --> D1[Точность модели]
+D --> D2[Дрифт модели]
+D --> D3[Качество данных]
+D --> D4[Уверенность predictions]
 
- E --> E1[Волатильность]
- E --> E2[Тренд рынка]
- E --> E3[Объем торгов]
- E --> E4[Technical индикаторы]
+E --> E1[Волатильность]
+E --> E2[Тренд рынка]
+E --> E3[Объем торгов]
+E --> E4[Technical индикаторы]
 
  F --> F1[CPU Usage]
  F --> F2[Memory Usage]
  F --> F3[network Latency]
  F --> F4[Error Rate]
 
- C1 --> G[Сборщик метрик]
+C1 --> G[Сборщик метрик]
  C2 --> G
  C3 --> G
  C4 --> G
@@ -403,10 +403,10 @@ graph TD
  F3 --> G
  F4 --> G
 
- G --> H[Хранилище метрик]
- H --> I[Дашборд]
- H --> J[Алерты]
- H --> K[Анализ трендов]
+G --> H[Хранилище метрик]
+H --> I[Дашборд]
+H --> J[Алерты]
+H --> K[Анализ трендов]
 
  style A fill:#e3f2fd
  style G fill:#c8e6c9
@@ -415,22 +415,22 @@ graph TD
 
 ```python
 class MetricsCollector:
- """Сборщик метрик торгового бота"""
+"""Сборщик метрик торгового бота"""
 
  def __init__(self, collection_interval=60, storage_config=None):
  """
- Инициализация сборщика метрик
+Инициализация сборщика метрик
 
  Args:
- collection_interval (int): Интервал сбора метрик (секунды)
- storage_config (dict): configuration хранилища метрик
- - type: Тип хранилища (influxdb, prometheus, file)
- - host: Хост базы данных
- - port: Порт базы данных
- - database: Имя базы данных
- - Username: Имя User
- - password: Пароль
- - retention_policy: Политика хранения
+collection_interval (int): Интервал сбора метрик (секунды)
+storage_config (dict): configuration хранилища метрик
+- type: Тип хранилища (influxdb, prometheus, file)
+- host: Хост базы данных
+- port: Порт базы данных
+- database: Имя базы данных
+- Username: Имя User
+- password: Пароль
+- retention_policy: Политика хранения
  """
  self.metrics = {}
  self.collection_interval = collection_interval
@@ -439,43 +439,43 @@ class MetricsCollector:
  self.collection_thread = None
  self.is_running = False
 
- # Settings сбора метрик
+# Settings сбора метрик
  self.metrics_config = {
- 'trading_metrics': { # Торговые метрики
- 'enabled': True, # Включить сбор
- 'collection_interval': 60, # Интервал сбора (секунды)
- 'retention_days': 30, # Хранение (дни)
- 'metrics': [ # Собираемые метрики
+'trading_metrics': { # Торговые метрики
+'enabled': True, # Включить сбор
+'collection_interval': 60, # Интервал сбора (секунды)
+'retention_days': 30, # Хранение (дни)
+'metrics': [ # Собираемые метрики
  'total_trades', 'winning_trades', 'losing_trades',
  'win_rate', 'profit_loss', 'max_drawdown', 'sharpe_ratio',
  'trades_per_hour', 'active_positions', 'pending_orders',
  'current_exposure', 'risk_utilization', 'var_95', 'expected_shortfall'
  ]
  },
- 'model_metrics': { # Метрики модели
+'model_metrics': { # Метрики модели
  'enabled': True,
- 'collection_interval': 120, # Интервал сбора (секунды)
- 'retention_days': 7, # Хранение (дни)
+'collection_interval': 120, # Интервал сбора (секунды)
+'retention_days': 7, # Хранение (дни)
  'metrics': [
  'model_accuracy', 'model_precision', 'model_recall', 'model_f1_score',
  'model_auc', 'Prediction_confidence', 'Prediction_uncertainty',
  'model_drift_detected', 'drift_score', 'data_quality_score'
  ]
  },
- 'market_metrics': { # Рыночные метрики
+'market_metrics': { # Рыночные метрики
  'enabled': True,
- 'collection_interval': 60, # Интервал сбора (секунды)
- 'retention_days': 14, # Хранение (дни)
+'collection_interval': 60, # Интервал сбора (секунды)
+'retention_days': 14, # Хранение (дни)
  'metrics': [
  'market_volatility', 'market_trend', 'market_regime',
  'liquidity_score', 'price_change_1h', 'price_change_24h',
  'volume_24h', 'rsi', 'macd', 'bollinger_position'
  ]
  },
- 'system_metrics': { # Системные метрики
+'system_metrics': { # Системные метрики
  'enabled': True,
- 'collection_interval': 30, # Интервал сбора (секунды)
- 'retention_days': 7, # Хранение (дни)
+'collection_interval': 30, # Интервал сбора (секунды)
+'retention_days': 7, # Хранение (дни)
  'metrics': [
  'cpu_usage', 'memory_usage', 'disk_usage', 'network_latency',
  'api_calls_per_minute', 'error_rate', 'uptime'
@@ -484,47 +484,47 @@ class MetricsCollector:
  }
 
  def _get_default_storage_config(self):
- """Получение конфигурации хранилища on умолчанию"""
+"""Получение конфигурации хранилища on умолчанию"""
  return {
- 'type': 'influxdb', # Тип хранилища
- 'host': 'localhost', # Хост базы данных
- 'port': 8086, # Порт базы данных
- 'database': 'trading_metrics', # Имя базы данных
- 'Username': 'admin', # Имя User
- 'password': 'password', # Пароль
- 'retention_policy': '30d', # Политика хранения
- 'batch_size': 1000, # Размер батча for записи
- 'flush_interval': 5, # Интервал сброса (секунды)
- 'timeout': 30, # Таймаут подключения (секунды)
- 'retry_attempts': 3, # Количество попыток повтора
- 'retry_delay': 1 # Задержка между попытками (секунды)
+'type': 'influxdb', # Тип хранилища
+'host': 'localhost', # Хост базы данных
+'port': 8086, # Порт базы данных
+'database': 'trading_metrics', # Имя базы данных
+'Username': 'admin', # Имя User
+'password': 'password', # Пароль
+'retention_policy': '30d', # Политика хранения
+'batch_size': 1000, # Размер батча for записи
+'flush_interval': 5, # Интервал сброса (секунды)
+'timeout': 30, # Таймаут подключения (секунды)
+'retry_attempts': 3, # Количество попыток повтора
+'retry_delay': 1 # Задержка между попытками (секунды)
  }
 
  def start(self):
- """Launch сбора метрик"""
+"""Launch сбора метрик"""
  if not self.is_running:
  self.is_running = True
  self.collection_thread = threading.Thread(target=self._collection_loop)
  self.collection_thread.daemon = True
  self.collection_thread.start()
- print("✅ Сборщик метрик запущен")
+print("✅ Сборщик метрик запущен")
 
  def stop(self):
- """Остановка сбора метрик"""
+"""Остановка сбора метрик"""
  self.is_running = False
  if self.collection_thread:
  self.collection_thread.join()
- print("⏹️ Сборщик метрик остановлен")
+print("⏹️ Сборщик метрик остановлен")
 
  def is_running(self):
- """check статуса работы"""
+"""check статуса работы"""
  return self.is_running
 
  def _collection_loop(self):
- """Основной цикл сбора метрик"""
+"""Основной цикл сбора метрик"""
  while self.is_running:
  try:
- # Сбор all типов метрик
+# Сбор all типов метрик
  if self.metrics_config['trading_metrics']['enabled']:
  trading_metrics = self.collect_trading_metrics()
  self._store_metrics('trading', trading_metrics)
@@ -541,137 +541,137 @@ class MetricsCollector:
  system_metrics = self.collect_system_metrics()
  self._store_metrics('system', system_metrics)
 
- # Ожидание следующего цикла
+# Ожидание следующего цикла
  time.sleep(self.collection_interval)
 
  except Exception as e:
- print(f"❌ Ошибка сбора метрик: {e}")
- time.sleep(5) # Короткая пауза при ошибке
+print(f"❌ Ошибка сбора метрик: {e}")
+time.sleep(5) # Короткая пауза при ошибке
 
  def collect_trading_metrics(self, bot_state=None):
- """Сбор торговых метрик"""
+"""Сбор торговых метрик"""
 
- # Получение состояния бота
+# Получение состояния бота
  if bot_state is None:
  bot_state = self._get_bot_state()
 
  trading_metrics = {
- # Производительность торговли
- 'total_trades': bot_state.get('total_trades', 0), # Общее количество сделок
- 'winning_trades': bot_state.get('winning_trades', 0), # Количество выигрышных сделок
- 'losing_trades': bot_state.get('losing_trades', 0), # Количество проигрышных сделок
- 'win_rate': self.calculate_win_rate(bot_state), # Процент выигрышных сделок
- 'profit_loss': bot_state.get('profit_loss', 0), # Текущая прибыль/убыток
- 'max_drawdown': bot_state.get('max_drawdown', 0), # Максимальная просадка
- 'sharpe_ratio': self.calculate_sharpe_ratio(bot_state), # Коэффициент Шарпа
- 'sortino_ratio': self.calculate_sortino_ratio(bot_state), # Коэффициент Сортино
- 'calmar_ratio': self.calculate_calmar_ratio(bot_state), # Коэффициент Калмара
+# Производительность торговли
+'total_trades': bot_state.get('total_trades', 0), # Общее количество сделок
+'winning_trades': bot_state.get('winning_trades', 0), # Количество выигрышных сделок
+'losing_trades': bot_state.get('losing_trades', 0), # Количество проигрышных сделок
+'win_rate': self.calculate_win_rate(bot_state), # Процент выигрышных сделок
+'profit_loss': bot_state.get('profit_loss', 0), # Текущая прибыль/убыток
+'max_drawdown': bot_state.get('max_drawdown', 0), # Максимальная просадка
+'sharpe_ratio': self.calculate_sharpe_ratio(bot_state), # Коэффициент Шарпа
+'sortino_ratio': self.calculate_sortino_ratio(bot_state), # Коэффициент Сортино
+'calmar_ratio': self.calculate_calmar_ratio(bot_state), # Коэффициент Калмара
 
- # Торговая активность
- 'trades_per_hour': self.calculate_trades_per_hour(bot_state), # Сделок in час
- 'trades_per_day': self.calculate_trades_per_day(bot_state), # Сделок in день
- 'last_trade_time': bot_state.get('last_trade_time'), # Время последней сделки
- 'active_positions': bot_state.get('active_positions', 0), # Активные позиции
- 'pending_orders': bot_state.get('pending_orders', 0), # Ожидающие ордера
- 'position_size_avg': self.calculate_avg_position_size(bot_state), # Средний размер позиции
- 'position_duration_avg': self.calculate_avg_position_duration(bot_state), # Средняя длительность позиции
+# Торговая активность
+'trades_per_hour': self.calculate_trades_per_hour(bot_state), # Сделок in час
+'trades_per_day': self.calculate_trades_per_day(bot_state), # Сделок in день
+'last_trade_time': bot_state.get('last_trade_time'), # Время последней сделки
+'active_positions': bot_state.get('active_positions', 0), # Активные позиции
+'pending_orders': bot_state.get('pending_orders', 0), # Ожидающие ордера
+'position_size_avg': self.calculate_avg_position_size(bot_state), # Средний размер позиции
+'position_duration_avg': self.calculate_avg_position_duration(bot_state), # Средняя длительность позиции
 
- # Management рисками
- 'current_exposure': bot_state.get('current_exposure', 0), # Текущая экспозиция
- 'max_exposure': bot_state.get('max_exposure', 0), # Максимальная экспозиция
- 'risk_utilization': self.calculate_risk_utilization(bot_state), # Использование риска
+# Management рисками
+'current_exposure': bot_state.get('current_exposure', 0), # Текущая экспозиция
+'max_exposure': bot_state.get('max_exposure', 0), # Максимальная экспозиция
+'risk_utilization': self.calculate_risk_utilization(bot_state), # Использование риска
  'var_95': self.calculate_var_95(bot_state), # Value at Risk 95%
  'var_99': self.calculate_var_99(bot_state), # Value at Risk 99%
  'expected_shortfall': self.calculate_expected_shortfall(bot_state), # Expected Shortfall
- 'max_consecutive_losses': self.calculate_max_consecutive_losses(bot_state), # Максимум потерь подряд
- 'max_consecutive_wins': self.calculate_max_consecutive_wins(bot_state), # Максимум побед подряд
+'max_consecutive_losses': self.calculate_max_consecutive_losses(bot_state), # Максимум потерь подряд
+'max_consecutive_wins': self.calculate_max_consecutive_wins(bot_state), # Максимум побед подряд
 
- # Финансовые метрики
- 'total_pnl': bot_state.get('total_pnl', 0), # Общая прибыль/убыток
- 'daily_pnl': self.calculate_daily_pnl(bot_state), # Дневная прибыль/убыток
- 'weekly_pnl': self.calculate_weekly_pnl(bot_state), # Недельная прибыль/убыток
- 'monthly_pnl': self.calculate_monthly_pnl(bot_state), # Месячная прибыль/убыток
- 'profit_factor': self.calculate_profit_factor(bot_state), # Профит-фактор
- 'recovery_factor': self.calculate_recovery_factor(bot_state), # Фактор восстановления
- 'expectancy': self.calculate_expectancy(bot_state), # Математическое ожидание
+# Финансовые метрики
+'total_pnl': bot_state.get('total_pnl', 0), # Общая прибыль/убыток
+'daily_pnl': self.calculate_daily_pnl(bot_state), # Дневная прибыль/убыток
+'weekly_pnl': self.calculate_weekly_pnl(bot_state), # Недельная прибыль/убыток
+'monthly_pnl': self.calculate_monthly_pnl(bot_state), # Месячная прибыль/убыток
+'profit_factor': self.calculate_profit_factor(bot_state), # Профит-фактор
+'recovery_factor': self.calculate_recovery_factor(bot_state), # Фактор восстановления
+'expectancy': self.calculate_expectancy(bot_state), # Математическое ожидание
 
- # Technical метрики
- 'cpu_usage': bot_state.get('cpu_usage', 0), # Использование CPU
- 'memory_usage': bot_state.get('memory_usage', 0), # Использование памяти
- 'disk_usage': bot_state.get('disk_usage', 0), # Использование диска
- 'network_latency': bot_state.get('network_latency', 0), # Задержка сети
- 'api_calls_per_minute': bot_state.get('api_calls_per_minute', 0), # API вызовов in minutesу
- 'error_rate': bot_state.get('error_rate', 0), # Частота ошибок
- 'response_time_avg': self.calculate_avg_response_time(bot_state), # Среднее время ответа
- 'response_time_p95': self.calculate_p95_response_time(bot_state), # 95-й перцентиль времени ответа
+# Technical метрики
+'cpu_usage': bot_state.get('cpu_usage', 0), # Использование CPU
+'memory_usage': bot_state.get('memory_usage', 0), # Использование памяти
+'disk_usage': bot_state.get('disk_usage', 0), # Использование диска
+'network_latency': bot_state.get('network_latency', 0), # Задержка сети
+'api_calls_per_minute': bot_state.get('api_calls_per_minute', 0), # API вызовов in minutesу
+'error_rate': bot_state.get('error_rate', 0), # Частота ошибок
+'response_time_avg': self.calculate_avg_response_time(bot_state), # Среднее время ответа
+'response_time_p95': self.calculate_p95_response_time(bot_state), # 95-й перцентиль времени ответа
 
- # Временные метки
- 'timestamp': datetime.now().isoformat(), # Временная метка
- 'uptime': self.calculate_uptime(bot_state), # Время работы
- 'last_activity': bot_state.get('last_activity'), # Последняя активность
- 'collection_time': time.time() # Время сбора метрик
+# Временные метки
+'timestamp': datetime.now().isoformat(), # Временная метка
+'uptime': self.calculate_uptime(bot_state), # Время работы
+'last_activity': bot_state.get('last_activity'), # Последняя активность
+'collection_time': time.time() # Время сбора метрик
  }
 
  return trading_metrics
 
  def collect_model_metrics(self, model_state):
- """Сбор метрик ML-модели"""
+"""Сбор метрик ML-модели"""
 
  model_metrics = {
- # Точность модели
+# Точность модели
  'model_accuracy': model_state.get('accuracy', 0),
  'model_precision': model_state.get('precision', 0),
  'model_recall': model_state.get('recall', 0),
  'model_f1_score': model_state.get('f1_score', 0),
  'model_auc': model_state.get('auc', 0),
 
- # Прогнозирование
+# Прогнозирование
  'Prediction_confidence': model_state.get('Prediction_confidence', 0),
  'Prediction_uncertainty': model_state.get('Prediction_uncertainty', 0),
  'last_Prediction_time': model_state.get('last_Prediction_time'),
  'predictions_per_hour': model_state.get('predictions_per_hour', 0),
 
- # Дрифт модели
+# Дрифт модели
  'model_drift_detected': model_state.get('drift_detected', False),
  'drift_score': model_state.get('drift_score', 0),
  'last_retraining': model_state.get('last_retraining'),
  'retraining_frequency': model_state.get('retraining_frequency', 0),
 
- # Качество данных
+# Качество данных
  'data_quality_score': model_state.get('data_quality_score', 0),
  'Missing_data_rate': model_state.get('Missing_data_rate', 0),
  'outlier_rate': model_state.get('outlier_rate', 0),
  'data_freshness': model_state.get('data_freshness', 0),
 
- # Временные метки
+# Временные метки
  'timestamp': datetime.now().isoformat()
  }
 
  return model_metrics
 
  def collect_market_metrics(self, market_data):
- """Сбор рыночных метрик"""
+"""Сбор рыночных метрик"""
 
  market_metrics = {
- # Рыночные условия
+# Рыночные условия
  'market_volatility': market_data.get('volatility', 0),
  'market_trend': market_data.get('trend', 'unknown'),
  'market_regime': market_data.get('regime', 'unknown'),
  'liquidity_score': market_data.get('liquidity_score', 0),
 
- # Ценовые метрики
+# Ценовые метрики
  'price_change_1h': market_data.get('price_change_1h', 0),
  'price_change_24h': market_data.get('price_change_24h', 0),
  'volume_24h': market_data.get('volume_24h', 0),
  'volume_change_24h': market_data.get('volume_change_24h', 0),
 
- # Technical индикаторы
+# Technical индикаторы
  'rsi': market_data.get('rsi', 50),
  'macd': market_data.get('macd', 0),
  'bollinger_position': market_data.get('bollinger_position', 0.5),
  'support_resistance_strength': market_data.get('support_resistance_strength', 0),
 
- # Временные метки
+# Временные метки
  'timestamp': datetime.now().isoformat()
  }
 
@@ -684,35 +684,35 @@ class MetricsCollector:
 
 ```mermaid
 graph TD
- A[Метрики] --> B{check условий}
+A[Метрики] --> B{check условий}
 
- B -->|Критические| C[Критические алерты]
- B -->|Предупреждения| D[Предупреждения]
- B -->|Информационные| E[Информационные]
+B -->|Критические| C[Критические алерты]
+B -->|Предупреждения| D[Предупреждения]
+B -->|Информационные| E[Информационные]
 
- C --> C1[Бот остановлен]
- C --> C2[Высокая просадка > 10%]
- C --> C3[Ошибки API > 5%]
+C --> C1[Бот остановлен]
+C --> C2[Высокая просадка > 10%]
+C --> C3[Ошибки API > 5%]
 
- D --> D1[Низкий Win Rate < 40%]
- D --> D2[Дрифт модели]
- D --> D3[Высокая задержка > 1000ms]
+D --> D1[Низкий Win Rate < 40%]
+D --> D2[Дрифт модели]
+D --> D3[Высокая задержка > 1000ms]
 
- E --> E1[Ежедневный Report]
- E --> E2[Достижение целей]
- E --> E3[Статус системы]
+E --> E1[Ежедневный Report]
+E --> E2[Достижение целей]
+E --> E3[Статус системы]
 
- C1 --> F[Немедленная отправка]
+C1 --> F[Немедленная отправка]
  C2 --> F
  C3 --> F
- D1 --> G[Отправка with задержкой]
+D1 --> G[Отправка with задержкой]
  D2 --> G
  D3 --> G
- E1 --> H[Planируемая отправка]
+E1 --> H[Planируемая отправка]
  E2 --> H
  E3 --> H
 
- F --> I[Каналы уведомлений]
+F --> I[Каналы уведомлений]
  G --> I
  H --> I
 
@@ -721,18 +721,18 @@ graph TD
  I --> L[Telegram]
  I --> M[Slack]
 
- J --> N[Администратор]
+J --> N[Администратор]
  K --> N
  L --> N
  M --> N
 
- N --> O{Ответ получен?}
- O -->|Да| P[Алерт обWorkingн]
- O -->|Нет| Q[Эскалация]
+N --> O{Ответ получен?}
+O -->|Да| P[Алерт обWorkingн]
+O -->|Нет| Q[Эскалация]
 
- Q --> R[Менеджер]
- R --> S[Технический лидер]
- S --> T[Экстренный контакт]
+Q --> R[Менеджер]
+R --> S[Технический лидер]
+S --> T[Экстренный контакт]
 
  style C fill:#ffcdd2
  style D fill:#fff3e0
@@ -744,20 +744,20 @@ graph TD
 
 ```python
 class AlertManager:
- """Менеджер алертов"""
+"""Менеджер алертов"""
 
  def __init__(self, channels=None, rules_config=None):
  """
- Инициализация менеджера алертов
+Инициализация менеджера алертов
 
  Args:
- channels (List): List каналов уведомлений
- rules_config (dict): configuration правил алертов
- - critical_thresholds: Критические пороги
- - warning_thresholds: Предупреждающие пороги
- - info_thresholds: Информационные пороги
- - escalation_rules: Правила эскалации
- - notification_templates: Шаблоны уведомлений
+channels (List): List каналов уведомлений
+rules_config (dict): configuration правил алертов
+- critical_thresholds: Критические пороги
+- warning_thresholds: Предупреждающие пороги
+- info_thresholds: Информационные пороги
+- escalation_rules: Правила эскалации
+- notification_templates: Шаблоны уведомлений
  """
  self.channels = channels or ['email', 'telegram']
  self.rules_config = rules_config or self._get_default_rules_config()
@@ -768,78 +768,78 @@ class AlertManager:
  self.escalation_queue = []
  self.notification_templates = {}
 
- # Инициализация каналов уведомлений
+# Инициализация каналов уведомлений
  self._setup_alert_channels()
 
- # configuration правил алертов
+# configuration правил алертов
  self.setup_alert_rules()
 
  def _get_default_rules_config(self):
- """Получение конфигурации правил on умолчанию"""
+"""Получение конфигурации правил on умолчанию"""
  return {
- 'critical_thresholds': { # Критические пороги
- 'bot_down_time': 300, # Время простоя бота (секунды)
- 'max_drawdown': 0.1, # Максимальная просадка
- 'error_rate': 0.05, # Частота ошибок
- 'memory_usage': 0.9, # Использование памяти
- 'cpu_usage': 0.95, # Использование CPU
- 'api_response_time': 5000, # Время ответа API (мс)
- 'data_freshness': 600, # Свежесть данных (секунды)
- 'model_accuracy': 0.5, # Точность модели
- 'network_latency': 2000, # Задержка сети (мс)
- 'disk_usage': 0.95 # Использование диска
+'critical_thresholds': { # Критические пороги
+'bot_down_time': 300, # Время простоя бота (секунды)
+'max_drawdown': 0.1, # Максимальная просадка
+'error_rate': 0.05, # Частота ошибок
+'memory_usage': 0.9, # Использование памяти
+'cpu_usage': 0.95, # Использование CPU
+'api_response_time': 5000, # Время ответа API (мс)
+'data_freshness': 600, # Свежесть данных (секунды)
+'model_accuracy': 0.5, # Точность модели
+'network_latency': 2000, # Задержка сети (мс)
+'disk_usage': 0.95 # Использование диска
  },
- 'warning_thresholds': { # Предупреждающие пороги
- 'win_rate': 0.4, # Процент выигрышных сделок
- 'model_drift': 0.1, # Дрифт модели
- 'network_latency': 1000, # Задержка сети (мс)
- 'disk_usage': 0.8, # Использование диска
- 'api_response_time': 2000, # Время ответа API (мс)
- 'memory_usage': 0.8, # Использование памяти
- 'cpu_usage': 0.8, # Использование CPU
- 'trades_per_hour': 0.1, # Минимальное количество сделок in час
- 'Prediction_confidence': 0.6, # Уверенность predictions
- 'data_quality_score': 0.7 # Качество данных
+'warning_thresholds': { # Предупреждающие пороги
+'win_rate': 0.4, # Процент выигрышных сделок
+'model_drift': 0.1, # Дрифт модели
+'network_latency': 1000, # Задержка сети (мс)
+'disk_usage': 0.8, # Использование диска
+'api_response_time': 2000, # Время ответа API (мс)
+'memory_usage': 0.8, # Использование памяти
+'cpu_usage': 0.8, # Использование CPU
+'trades_per_hour': 0.1, # Минимальное количество сделок in час
+'Prediction_confidence': 0.6, # Уверенность predictions
+'data_quality_score': 0.7 # Качество данных
  },
- 'info_thresholds': { # Информационные пороги
- 'daily_pnl': 1000, # Дневная прибыль
- 'trades_count': 50, # Количество сделок
- 'uptime_hours': 24, # Время работы (часы)
- 'weekly_pnl': 5000, # Недельная прибыль
- 'monthly_pnl': 20000, # Месячная прибыль
- 'sharpe_ratio': 2.0, # Коэффициент Шарпа
- 'max_consecutive_wins': 10, # Максимум побед подряд
- 'recovery_factor': 2.0 # Фактор восстановления
+'info_thresholds': { # Информационные пороги
+'daily_pnl': 1000, # Дневная прибыль
+'trades_count': 50, # Количество сделок
+'uptime_hours': 24, # Время работы (часы)
+'weekly_pnl': 5000, # Недельная прибыль
+'monthly_pnl': 20000, # Месячная прибыль
+'sharpe_ratio': 2.0, # Коэффициент Шарпа
+'max_consecutive_wins': 10, # Максимум побед подряд
+'recovery_factor': 2.0 # Фактор восстановления
  },
- 'escalation_rules': { # Правила эскалации
- 'no_response': { # Нет ответа
+'escalation_rules': { # Правила эскалации
+'no_response': { # Нет ответа
  'condition': 'no_response_for_30_minutes',
  'action': 'escalate_to_manager',
  'channels': ['phone', 'sms'],
- 'escalation_time': 1800 # Время эскалации (секунды)
+'escalation_time': 1800 # Время эскалации (секунды)
  },
- 'repeated_alerts': { # Повторяющиеся алерты
+'repeated_alerts': { # Повторяющиеся алерты
  'condition': 'same_alert_3_times_in_1_hour',
  'action': 'escalate_to_Technical_lead',
  'channels': ['phone', 'email'],
  'escalation_time': 3600
  },
- 'system_down': { # Система not Workingет
+'system_down': { # Система not Workingет
  'condition': 'bot_down_for_10_minutes',
  'action': 'escalate_to_emergency_contact',
  'channels': ['phone', 'sms', 'email'],
  'escalation_time': 600
  },
- 'critical_loss': { # Критические потери
+'critical_loss': { # Критические потери
  'condition': 'drawdown_exceeds_15_percent',
  'action': 'escalate_to_risk_manager',
  'channels': ['phone', 'sms', 'email'],
  'escalation_time': 300
  }
  },
- 'notification_templates': { # Шаблоны уведомлений
- 'critical': { # Критические notifications
- 'subject': '🚨 КРИТИЧЕСКАЯ ОШИБКА - Торговый бот',
+'notification_templates': { # Шаблоны уведомлений
+'critical': { # Критические notifications
+'subject': '🚨 КРИТИЧЕСКАЯ ОШИБКА - Торговый бот',
  'template': '''
 🚨 *КРИТИЧЕСКАЯ ОШИБКА*
 Торговый бот: {bot_name}
@@ -860,8 +860,8 @@ class AlertManager:
  'priority': 'high',
  'channels': ['email', 'sms', 'telegram', 'slack']
  },
- 'warning': { # Предупреждения
- 'subject': '⚠️ ПРЕДУПРЕЖДЕНИЕ - Торговый бот',
+'warning': { # Предупреждения
+'subject': '⚠️ ПРЕДУПРЕЖДЕНИЕ - Торговый бот',
  'template': '''
 ⚠️ *ПРЕДУПРЕЖДЕНИЕ*
 Торговый бот: {bot_name}
@@ -881,8 +881,8 @@ class AlertManager:
  'priority': 'medium',
  'channels': ['email', 'telegram']
  },
- 'info': { # Информационные
- 'subject': '📊 Report - Торговый бот',
+'info': { # Информационные
+'subject': '📊 Report - Торговый бот',
  'template': '''
 📊 *Report*
 Торговый бот: {bot_name}
@@ -901,7 +901,7 @@ Status: {status}
  'channels': ['telegram']
  }
  },
- 'channel_configs': { # Конфигурации каналов
+'channel_configs': { # Конфигурации каналов
  'email': { # Email
  'smtp_server': 'smtp.gmail.com',
  'smtp_port': 587,
@@ -938,7 +938,7 @@ Status: {status}
  }
 
  def _setup_alert_channels(self):
- """configuration каналов уведомлений"""
+"""configuration каналов уведомлений"""
 
  for channel in self.channels:
  if channel == 'email':
@@ -959,10 +959,10 @@ Status: {status}
  )
 
  def setup_alert_rules(self):
- """configuration правил алертов"""
+"""configuration правил алертов"""
 
  self.alert_rules = {
- # Критические алерты
+# Критические алерты
  'critical': {
  'bot_down': {
  'condition': lambda metrics: metrics.get('uptime', 0) == 0,
@@ -1011,14 +1011,14 @@ Status: {status}
  }
  },
 
- # Предупреждения
+# Предупреждения
  'warning': {
  'low_win_rate': {
  'condition': lambda metrics: metrics.get('win_rate', 0) < self.rules_config['warning_thresholds']['win_rate'],
  'message_template': 'low_win_rate',
  'channels': ['email', 'telegram'],
  'cooldown': 1800, # 30 minutes
- 'escalation_time': 3600, # 1 час
+'escalation_time': 3600, # 1 час
  'auto_actions': ['analyze_losing_trades', 'adjust_strategy'],
  'priority': 'warning'
  },
@@ -1026,8 +1026,8 @@ Status: {status}
  'condition': lambda metrics: metrics.get('model_drift_detected', False),
  'message_template': 'model_drift',
  'channels': ['email', 'telegram'],
- 'cooldown': 3600, # 1 час
- 'escalation_time': 7200, # 2 часа
+'cooldown': 3600, # 1 час
+'escalation_time': 7200, # 2 часа
  'auto_actions': ['retrain_model', 'adjust_parameters'],
  'priority': 'warning'
  },
@@ -1044,20 +1044,20 @@ Status: {status}
  'condition': lambda metrics: metrics.get('trades_per_hour', 0) < self.rules_config['warning_thresholds']['trades_per_hour'],
  'message_template': 'low_trading_activity',
  'channels': ['telegram'],
- 'cooldown': 3600, # 1 час
- 'escalation_time': 7200, # 2 часа
+'cooldown': 3600, # 1 час
+'escalation_time': 7200, # 2 часа
  'auto_actions': ['check_market_conditions', 'reView_strategy'],
  'priority': 'warning'
  }
  },
 
- # Информационные
+# Информационные
  'info': {
  'daily_summary': {
  'condition': lambda metrics: self.is_daily_summary_time(),
  'message_template': 'daily_summary',
  'channels': ['email', 'telegram'],
- 'cooldown': 86400, # 24 часа
+'cooldown': 86400, # 24 часа
  'escalation_time': 0,
  'auto_actions': ['generate_Report'],
  'priority': 'info'
@@ -1066,7 +1066,7 @@ Status: {status}
  'condition': lambda metrics: self.is_milestone_reached(metrics),
  'message_template': 'milestone_reached',
  'channels': ['telegram'],
- 'cooldown': 3600, # 1 час
+'cooldown': 3600, # 1 час
  'escalation_time': 0,
  'auto_actions': ['log_achievement'],
  'priority': 'info'
@@ -1075,7 +1075,7 @@ Status: {status}
  'condition': lambda metrics: self.is_weekly_summary_time(),
  'message_template': 'weekly_summary',
  'channels': ['email', 'telegram'],
- 'cooldown': 604800, # 7 дней
+'cooldown': 604800, # 7 дней
  'escalation_time': 0,
  'auto_actions': ['generate_weekly_Report'],
  'priority': 'info'
@@ -1084,40 +1084,40 @@ Status: {status}
  }
 
  def check_alerts(self, metrics):
- """check алертов"""
+"""check алертов"""
 
  for severity, rules in self.alert_rules.items():
  for rule_name, rule in rules.items():
  try:
- # check условия
+# check условия
  if rule['condition'](metrics):
- # check кулдауна
+# check кулдауна
  if self.is_cooldown_active(rule_name):
  continue
 
- # Отправка алерта
+# Отправка алерта
  self.send_alert(rule_name, rule, metrics)
 
- # installation кулдауна
+# installation кулдауна
  self.set_cooldown(rule_name, rule['cooldown'])
 
  except Exception as e:
- print(f"Ошибка при проверке алерта {rule_name}: {e}")
+print(f"Ошибка при проверке алерта {rule_name}: {e}")
 
  def send_alert(self, rule_name, rule, metrics):
- """Отправка алерта"""
+"""Отправка алерта"""
 
- # Форматирование messages
+# Форматирование messages
  message = rule['message'].format(**metrics)
 
- # Отправка on каналам
+# Отправка on каналам
  for channel in rule['channels']:
  try:
  self.send_to_channel(channel, message, metrics)
  except Exception as e:
- print(f"Ошибка отправки in {channel}: {e}")
+print(f"Ошибка отправки in {channel}: {e}")
 
- # Сохранение in историю
+# Сохранение in историю
  self.alert_history.append({
  'timestamp': datetime.now().isoformat(),
  'rule': rule_name,
@@ -1126,7 +1126,7 @@ Status: {status}
  })
 
  def send_to_channel(self, channel, message, metrics):
- """Отправка in конкретный канал"""
+"""Отправка in конкретный канал"""
 
  if channel == 'email':
  self.send_email_alert(message, metrics)
@@ -1138,7 +1138,7 @@ Status: {status}
  self.send_slack_alert(message, metrics)
 
  def send_telegram_alert(self, message, metrics):
- """Отправка алерта in Telegram"""
+"""Отправка алерта in Telegram"""
 
  import requests
 
@@ -1150,11 +1150,11 @@ Status: {status}
 
  url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
 
- # Форматирование messages for Telegram
- formatted_message = f"🤖 *Торговый Бот*\n\n{message}\n\n"
- formatted_message += f"⏰ Время: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+# Форматирование messages for Telegram
+formatted_message = f"🤖 *Торговый Бот*\n\n{message}\n\n"
+formatted_message += f"⏰ Время: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
  formatted_message += f"📊 P&L: {metrics.get('profit_loss', 0):.2f}\n"
- formatted_message += f"📈 Сделки: {metrics.get('total_trades', 0)}\n"
+formatted_message += f"📈 Сделки: {metrics.get('total_trades', 0)}\n"
  formatted_message += f"🎯 Win Rate: {metrics.get('win_rate', 0):.2%}"
 
  payload = {
@@ -1173,52 +1173,52 @@ Status: {status}
 
 ```mermaid
 graph TD
- A[Дашборд Monitoringа] --> B[Общий обзор]
- A --> C[Производительность]
- A --> D[Торговая активность]
- A --> E[Метрики риска]
- A --> F[Здоровье системы]
- A --> G[Метрики модели]
- A --> H[Рыночные условия]
+A[Дашборд Monitoringа] --> B[Общий обзор]
+A --> C[Производительность]
+A --> D[Торговая активность]
+A --> E[Метрики риска]
+A --> F[Здоровье системы]
+A --> G[Метрики модели]
+A --> H[Рыночные условия]
 
  B --> B1[P&L]
  B --> B2[Win Rate]
- B --> B3[Активные позиции]
- B --> B4[Время работы]
- B --> B5[Статус]
+B --> B3[Активные позиции]
+B --> B4[Время работы]
+B --> B5[Статус]
 
- C --> C1[График P&L]
- C --> C2[Сделки on дням]
- C --> C3[Распределение сделок]
- C --> C4[Тренды производительности]
+C --> C1[График P&L]
+C --> C2[Сделки on дням]
+C --> C3[Распределение сделок]
+C --> C4[Тренды производительности]
 
- D --> D1[Количество сделок]
- D --> D2[Частота торговли]
- D --> D3[Время holding позиций]
- D --> D4[Активность on часам]
+D --> D1[Количество сделок]
+D --> D2[Частота торговли]
+D --> D3[Время holding позиций]
+D --> D4[Активность on часам]
 
- E --> E1[Максимальная просадка]
+E --> E1[Максимальная просадка]
  E --> E2[Sharpe Ratio]
  E --> E3[VaR 95%]
- E --> E4[Текущая экспозиция]
- E --> E5[График просадки]
+E --> E4[Текущая экспозиция]
+E --> E5[График просадки]
 
  F --> F1[CPU Usage]
  F --> F2[Memory Usage]
  F --> F3[Disk Usage]
  F --> F4[network Latency]
  F --> F5[Error Rate]
- F --> F6[Gauge ресурсов]
+F --> F6[Gauge ресурсов]
 
- G --> G1[Точность модели]
- G --> G2[Дрифт модели]
- G --> G3[Качество данных]
- G --> G4[Уверенность predictions]
+G --> G1[Точность модели]
+G --> G2[Дрифт модели]
+G --> G3[Качество данных]
+G --> G4[Уверенность predictions]
 
- H --> H1[Волатильность]
- H --> H2[Тренд рынка]
- H --> H3[Объем торгов]
- H --> H4[Technical индикаторы]
+H --> H1[Волатильность]
+H --> H2[Тренд рынка]
+H --> H3[Объем торгов]
+H --> H4[Technical индикаторы]
 
  style A fill:#e3f2fd
  style B fill:#c8e6c9
@@ -1232,22 +1232,22 @@ graph TD
 
 ```python
 class MonitoringDashboard:
- """Дашборд Monitoringа"""
+"""Дашборд Monitoringа"""
 
  def __init__(self, refresh_interval=30, widgets_config=None):
  """
- Инициализация дашборда Monitoringа
+Инициализация дашборда Monitoringа
 
  Args:
- refresh_interval (int): Интервал обновления дашборда (секунды)
- widgets_config (dict): configuration виджетов дашборда
- - overView: Settings виджета обзора
- - performance: Settings виджета производительности
- - trading_activity: Settings виджета торговой активности
- - risk_metrics: Settings виджета метрик риска
- - system_health: Settings виджета health системы
- - model_metrics: Settings виджета метрик модели
- - market_conditions: Settings виджета рыночных условий
+refresh_interval (int): Интервал обновления дашборда (секунды)
+widgets_config (dict): configuration виджетов дашборда
+- overView: Settings виджета обзора
+- performance: Settings виджета производительности
+- trading_activity: Settings виджета торговой активности
+- risk_metrics: Settings виджета метрик риска
+- system_health: Settings виджета health системы
+- model_metrics: Settings виджета метрик модели
+- market_conditions: Settings виджета рыночных условий
  """
  self.refresh_interval = refresh_interval
  self.widgets_config = widgets_config or self._get_default_widgets_config()
@@ -1257,66 +1257,66 @@ class MonitoringDashboard:
  self.refresh_thread = None
  self.is_running = False
 
- # Settings дашборда
+# Settings дашборда
  self.dashboard_config = {
- 'theme': 'dark', # Тема дашборда (dark/light)
- 'layout': 'grid', # Макет (grid/List)
- 'auto_refresh': True, # Автообновление
- 'refresh_interval': refresh_interval, # Интервал обновления (секунды)
- 'data_retention': 7, # Хранение данных (дни)
- 'chart_types': { # Типы графиков
- 'line': {'color': '#3498db', 'width': 2}, # Линейные графики
- 'bar': {'color': '#e74c3c', 'width': 1}, # Столбчатые графики
- 'pie': {'colors': ['#3498db', '#e74c3c', '#f39c12', '#2ecc71']}, # Круговые графики
- 'gauge': {'min': 0, 'max': 100, 'thresholds': [50, 80, 90]} # Датчики
+'theme': 'dark', # Тема дашборда (dark/light)
+'layout': 'grid', # Макет (grid/List)
+'auto_refresh': True, # Автообновление
+'refresh_interval': refresh_interval, # Интервал обновления (секунды)
+'data_retention': 7, # Хранение данных (дни)
+'chart_types': { # Типы графиков
+'line': {'color': '#3498db', 'width': 2}, # Линейные графики
+'bar': {'color': '#e74c3c', 'width': 1}, # Столбчатые графики
+'pie': {'colors': ['#3498db', '#e74c3c', '#f39c12', '#2ecc71']}, # Круговые графики
+'gauge': {'min': 0, 'max': 100, 'thresholds': [50, 80, 90]} # Датчики
  },
- 'alert_colors': { # Цвета алертов
- 'critical': '#e74c3c', # Критический (красный)
- 'warning': '#f39c12', # Предупреждение (оранжевый)
- 'info': '#3498db', # Информация (синий)
- 'success': '#2ecc71' # Успех (зеленый)
+'alert_colors': { # Цвета алертов
+'critical': '#e74c3c', # Критический (красный)
+'warning': '#f39c12', # Предупреждение (оранжевый)
+'info': '#3498db', # Информация (синий)
+'success': '#2ecc71' # Успех (зеленый)
  },
- 'widget_sizes': { # Размеры виджетов
- 'small': {'width': 1, 'height': 1}, # Маленький
- 'medium': {'width': 2, 'height': 1}, # Средний
- 'large': {'width': 2, 'height': 2}, # Большой
- 'xlarge': {'width': 3, 'height': 2} # Очень большой
+'widget_sizes': { # Размеры виджетов
+'small': {'width': 1, 'height': 1}, # Маленький
+'medium': {'width': 2, 'height': 1}, # Средний
+'large': {'width': 2, 'height': 2}, # Большой
+'xlarge': {'width': 3, 'height': 2} # Очень большой
  }
  }
 
  def _get_default_widgets_config(self):
- """Получение конфигурации виджетов on умолчанию"""
+"""Получение конфигурации виджетов on умолчанию"""
  return {
- 'overView': { # Виджет обзора
- 'enabled': True, # Включен
- 'refresh_interval': 30, # Интервал обновления (секунды)
- 'size': 'large', # Размер виджета
- 'position': {'x': 0, 'y': 0}, # Позиция on дашборде
- 'metrics': [ # Отображаемые метрики
+'overView': { # Виджет обзора
+'enabled': True, # Включен
+'refresh_interval': 30, # Интервал обновления (секунды)
+'size': 'large', # Размер виджета
+'position': {'x': 0, 'y': 0}, # Позиция on дашборде
+'metrics': [ # Отображаемые метрики
  'profit_loss', 'win_rate', 'active_positions', 'uptime',
  'total_trades', 'sharpe_ratio', 'max_drawdown', 'error_rate'
  ],
- 'formatting': { # Форматирование
+'formatting': { # Форматирование
  'profit_loss': {'type': 'currency', 'symbol': '$', 'decimals': 2},
  'win_rate': {'type': 'percentage', 'decimals': 1},
  'uptime': {'type': 'duration', 'format': 'hours'},
  'total_trades': {'type': 'number', 'separator': ','}
  },
- 'alerts': { # Settings алертов
+'alerts': { # Settings алертов
  'profit_loss': {'threshold': -1000, 'color': 'critical'},
  'win_rate': {'threshold': 0.4, 'color': 'warning'},
  'error_rate': {'threshold': 0.05, 'color': 'critical'}
  }
  },
- 'performance': { # Виджет производительности
+'performance': { # Виджет производительности
  'enabled': True,
  'refresh_interval': 60,
  'size': 'xlarge',
  'position': {'x': 0, 'y': 1},
- 'charts': [ # Графики
+'charts': [ # Графики
  {
  'type': 'line',
- 'title': 'P&L во времени',
+'title': 'P&L во времени',
  'data_source': 'profit_loss_history',
  'x_axis': 'timestamp',
  'y_axis': 'profit_loss',
@@ -1326,7 +1326,7 @@ class MonitoringDashboard:
  },
  {
  'type': 'bar',
- 'title': 'Сделки on дням',
+'title': 'Сделки on дням',
  'data_source': 'trades_by_day',
  'x_axis': 'date',
  'y_axis': 'trade_count',
@@ -1335,20 +1335,20 @@ class MonitoringDashboard:
  },
  {
  'type': 'pie',
- 'title': 'Распределение сделок',
+'title': 'Распределение сделок',
  'data_source': 'trade_distribution',
- 'labels': ['Выигрышные', 'Проигрышные'],
+'labels': ['Выигрышные', 'Проигрышные'],
  'values': ['winning_trades', 'losing_trades'],
  'colors': ['#2ecc71', '#e74c3c']
  }
  ],
- 'time_range': { # temporary диапазон
- 'default': '24h', # on умолчанию
+'time_range': { # temporary диапазон
+'default': '24h', # on умолчанию
  'options': ['1h', '6h', '24h', '7d', '30d'],
  'auto_refresh': True
  }
  },
- 'trading_activity': { # Виджет торговой активности
+'trading_activity': { # Виджет торговой активности
  'enabled': True,
  'refresh_interval': 60,
  'size': 'medium',
@@ -1360,20 +1360,20 @@ class MonitoringDashboard:
  'charts': [
  {
  'type': 'line',
- 'title': 'Активность on часам',
+'title': 'Активность on часам',
  'data_source': 'trades_by_hour',
  'x_axis': 'hour',
  'y_axis': 'trade_count',
  'color': '#f39c12'
  }
  ],
- 'filters': { # Фильтры
- 'time_range': True, # temporary диапазон
- 'trade_type': True, # Тип сделок
- 'symbol': True # Символ
+'filters': { # Фильтры
+'time_range': True, # temporary диапазон
+'trade_type': True, # Тип сделок
+'symbol': True # Символ
  }
  },
- 'risk_metrics': { # Виджет метрик риска
+'risk_metrics': { # Виджет метрик риска
  'enabled': True,
  'refresh_interval': 60,
  'size': 'large',
@@ -1385,7 +1385,7 @@ class MonitoringDashboard:
  'charts': [
  {
  'type': 'line',
- 'title': 'Просадка во времени',
+'title': 'Просадка во времени',
  'data_source': 'drawdown_history',
  'x_axis': 'timestamp',
  'y_axis': 'drawdown',
@@ -1395,7 +1395,7 @@ class MonitoringDashboard:
  },
  {
  'type': 'gauge',
- 'title': 'Использование риска',
+'title': 'Использование риска',
  'data_source': 'risk_utilization',
  'min': 0,
  'max': 1,
@@ -1408,7 +1408,7 @@ class MonitoringDashboard:
  'risk_utilization': {'threshold': 0.8, 'color': 'warning'}
  }
  },
- 'system_health': { # Виджет health системы
+'system_health': { # Виджет health системы
  'enabled': True,
  'refresh_interval': 30,
  'size': 'medium',
@@ -1420,7 +1420,7 @@ class MonitoringDashboard:
  'charts': [
  {
  'type': 'gauge',
- 'title': 'Использование ресурсов',
+'title': 'Использование ресурсов',
  'data_source': 'resource_usage',
  'min': 0,
  'max': 100,
@@ -1434,7 +1434,7 @@ class MonitoringDashboard:
  'error_rate': {'threshold': 0.05, 'color': 'critical'}
  }
  },
- 'model_metrics': { # Виджет метрик модели
+'model_metrics': { # Виджет метрик модели
  'enabled': True,
  'refresh_interval': 120,
  'size': 'medium',
@@ -1446,7 +1446,7 @@ class MonitoringDashboard:
  'charts': [
  {
  'type': 'line',
- 'title': 'Точность модели во времени',
+'title': 'Точность модели во времени',
  'data_source': 'accuracy_history',
  'x_axis': 'timestamp',
  'y_axis': 'accuracy',
@@ -1458,7 +1458,7 @@ class MonitoringDashboard:
  'drift_score': {'threshold': 0.1, 'color': 'warning'}
  }
  },
- 'market_conditions': { # Виджет рыночных условий
+'market_conditions': { # Виджет рыночных условий
  'enabled': True,
  'refresh_interval': 60,
  'size': 'medium',
@@ -1471,7 +1471,7 @@ class MonitoringDashboard:
  'charts': [
  {
  'type': 'line',
- 'title': 'Волатильность рынка',
+'title': 'Волатильность рынка',
  'data_source': 'volatility_history',
  'x_axis': 'timestamp',
  'y_axis': 'volatility',
@@ -1482,46 +1482,46 @@ class MonitoringDashboard:
  }
 
  def start(self):
- """Launch дашборда"""
+"""Launch дашборда"""
  if not self.is_running:
  self.is_running = True
  self.refresh_thread = threading.Thread(target=self._refresh_loop)
  self.refresh_thread.daemon = True
  self.refresh_thread.start()
- print("✅ Дашборд Monitoringа запущен")
+print("✅ Дашборд Monitoringа запущен")
 
  def stop(self):
- """Остановка дашборда"""
+"""Остановка дашборда"""
  self.is_running = False
  if self.refresh_thread:
  self.refresh_thread.join()
- print("⏹️ Дашборд Monitoringа остановлен")
+print("⏹️ Дашборд Monitoringа остановлен")
 
  def is_running(self):
- """check статуса работы"""
+"""check статуса работы"""
  return self.is_running
 
  def _refresh_loop(self):
- """Основной цикл обновления дашборда"""
+"""Основной цикл обновления дашборда"""
  while self.is_running:
  try:
- # update данных дашборда
+# update данных дашборда
  self.update_dashboard_data()
 
- # update виджетов
+# update виджетов
  self.update_widgets()
 
- # Ожидание следующего обновления
+# Ожидание следующего обновления
  time.sleep(self.refresh_interval)
 
  except Exception as e:
- print(f"❌ Ошибка обновления дашборда: {e}")
- time.sleep(5) # Короткая пауза при ошибке
+print(f"❌ Ошибка обновления дашборда: {e}")
+time.sleep(5) # Короткая пауза при ошибке
 
  def create_dashboard(self):
- """create дашборда"""
+"""create дашборда"""
 
- # Основные виджеты
+# Основные виджеты
  self.widgets = {
  'overView': self.create_overView_widget(),
  'performance': self.create_performance_widget(),
@@ -1535,68 +1535,68 @@ class MonitoringDashboard:
  return self.widgets
 
  def create_overView_widget(self):
- """Виджет обзора"""
+"""Виджет обзора"""
 
  return {
  'type': 'overView',
- 'title': 'Общий обзор',
+'title': 'Общий обзор',
  'metrics': [
  {'name': 'P&L', 'value': 'profit_loss', 'format': 'currency'},
  {'name': 'Win Rate', 'value': 'win_rate', 'format': 'percentage'},
- {'name': 'Активных позиций', 'value': 'active_positions', 'format': 'number'},
- {'name': 'Время работы', 'value': 'uptime', 'format': 'duration'},
- {'name': 'Статус', 'value': 'status', 'format': 'status'}
+{'name': 'Активных позиций', 'value': 'active_positions', 'format': 'number'},
+{'name': 'Время работы', 'value': 'uptime', 'format': 'duration'},
+{'name': 'Статус', 'value': 'status', 'format': 'status'}
  ]
  }
 
  def create_performance_widget(self):
- """Виджет производительности"""
+"""Виджет производительности"""
 
  return {
  'type': 'performance',
- 'title': 'Производительность',
+'title': 'Производительность',
  'charts': [
  {
  'type': 'line',
- 'title': 'P&L во времени',
+'title': 'P&L во времени',
  'data': 'profit_loss_history',
  'x_axis': 'timestamp',
  'y_axis': 'profit_loss'
  },
  {
  'type': 'bar',
- 'title': 'Сделки on дням',
+'title': 'Сделки on дням',
  'data': 'trades_by_day',
  'x_axis': 'date',
  'y_axis': 'trade_count'
  },
  {
  'type': 'pie',
- 'title': 'Распределение сделок',
+'title': 'Распределение сделок',
  'data': 'trade_distribution',
- 'labels': ['Выигрышные', 'Проигрышные'],
+'labels': ['Выигрышные', 'Проигрышные'],
  'values': ['winning_trades', 'losing_trades']
  }
  ]
  }
 
  def create_risk_metrics_widget(self):
- """Виджет метрик риска"""
+"""Виджет метрик риска"""
 
  return {
  'type': 'risk_metrics',
- 'title': 'Метрики риска',
+'title': 'Метрики риска',
  'metrics': [
- {'name': 'Максимальная просадка', 'value': 'max_drawdown', 'format': 'percentage'},
+{'name': 'Максимальная просадка', 'value': 'max_drawdown', 'format': 'percentage'},
  {'name': 'Sharpe Ratio', 'value': 'sharpe_ratio', 'format': 'number'},
  {'name': 'VaR 95%', 'value': 'var_95', 'format': 'currency'},
- {'name': 'Текущая экспозиция', 'value': 'current_exposure', 'format': 'currency'},
- {'name': 'Использование риска', 'value': 'risk_utilization', 'format': 'percentage'}
+{'name': 'Текущая экспозиция', 'value': 'current_exposure', 'format': 'currency'},
+{'name': 'Использование риска', 'value': 'risk_utilization', 'format': 'percentage'}
  ],
  'charts': [
  {
  'type': 'line',
- 'title': 'Просадка во времени',
+'title': 'Просадка во времени',
  'data': 'drawdown_history',
  'x_axis': 'timestamp',
  'y_axis': 'drawdown'
@@ -1605,22 +1605,22 @@ class MonitoringDashboard:
  }
 
  def create_system_health_widget(self):
- """Виджет health системы"""
+"""Виджет health системы"""
 
  return {
  'type': 'system_health',
- 'title': 'Здоровье системы',
+'title': 'Здоровье системы',
  'metrics': [
  {'name': 'CPU', 'value': 'cpu_usage', 'format': 'percentage'},
- {'name': 'Память', 'value': 'memory_usage', 'format': 'percentage'},
- {'name': 'Диск', 'value': 'disk_usage', 'format': 'percentage'},
- {'name': 'Задержка сети', 'value': 'network_latency', 'format': 'duration'},
- {'name': 'Ошибки API', 'value': 'error_rate', 'format': 'percentage'}
+{'name': 'Память', 'value': 'memory_usage', 'format': 'percentage'},
+{'name': 'Диск', 'value': 'disk_usage', 'format': 'percentage'},
+{'name': 'Задержка сети', 'value': 'network_latency', 'format': 'duration'},
+{'name': 'Ошибки API', 'value': 'error_rate', 'format': 'percentage'}
  ],
  'charts': [
  {
  'type': 'gauge',
- 'title': 'Использование ресурсов',
+'title': 'Использование ресурсов',
  'data': 'resource_usage',
  'max_value': 100
  }
@@ -1632,7 +1632,7 @@ class MonitoringDashboard:
 
 ```python
 class LogAnalyzer:
- """Analysisтор логов"""
+"""Analysisтор логов"""
 
  def __init__(self):
  self.log_patterns = {}
@@ -1640,7 +1640,7 @@ class LogAnalyzer:
  self.performance_patterns = {}
 
  def analyze_Logs(self, log_file):
- """Анализ логов"""
+"""Анализ логов"""
 
  Analysis_results = {
  'errors': self.analyze_errors(log_file),
@@ -1652,7 +1652,7 @@ class LogAnalyzer:
  return Analysis_results
 
  def analyze_errors(self, log_file):
- """Анализ ошибок"""
+"""Анализ ошибок"""
 
  error_patterns = [
  r'ERROR: (.+)',
@@ -1680,7 +1680,7 @@ class LogAnalyzer:
  return errors
 
  def analyze_performance_issues(self, log_file):
- """Анализ проблем производительности"""
+"""Анализ проблем производительности"""
 
  performance_patterns = [
  r'Slow operation: (.+) took (\d+)ms',
@@ -1707,7 +1707,7 @@ class LogAnalyzer:
  return performance_issues
 
  def analyze_trading_patterns(self, log_file):
- """Анализ торговых паттернов"""
+"""Анализ торговых паттернов"""
 
  trading_patterns = [
  r'Trade executed: (.+)',
@@ -1739,7 +1739,7 @@ class LogAnalyzer:
 
 ```python
 class PerformanceTracker:
- """Отслеживание производительности"""
+"""Отслеживание производительности"""
 
  def __init__(self):
  self.performance_metrics = {}
@@ -1747,15 +1747,15 @@ class PerformanceTracker:
  self.optimization_suggestions = {}
 
  def track_performance(self, metrics):
- """Отслеживание производительности"""
+"""Отслеживание производительности"""
 
- # Расчет ключевых метрик
+# Расчет ключевых метрик
  performance_score = self.calculate_performance_score(metrics)
 
- # Сравнение with бенчмарками
+# Сравнение with бенчмарками
  benchmark_comparison = self.compare_with_benchmarks(metrics)
 
- # Генерация предложений on оптимизации
+# Генерация предложений on оптимизации
  optimization_suggestions = self.generate_optimization_suggestions(metrics)
 
  return {
@@ -1766,9 +1766,9 @@ class PerformanceTracker:
  }
 
  def calculate_performance_score(self, metrics):
- """Расчет оценки производительности"""
+"""Расчет оценки производительности"""
 
- # Веса for различных метрик
+# Веса for различных метрик
  weights = {
  'win_rate': 0.25,
  'sharpe_ratio': 0.20,
@@ -1779,10 +1779,10 @@ class PerformanceTracker:
  'uptime': 0.05
  }
 
- # Нормализация метрик
+# Нормализация метрик
  normalized_metrics = self.normalize_metrics(metrics)
 
- # Расчет взвешенной оценки
+# Расчет взвешенной оценки
  performance_score = sum(
  normalized_metrics[metric] * weight
  for metric, weight in weights.items()
@@ -1791,43 +1791,43 @@ class PerformanceTracker:
  return performance_score
 
  def generate_optimization_suggestions(self, metrics):
- """Генерация предложений on оптимизации"""
+"""Генерация предложений on оптимизации"""
 
  suggestions = []
 
- # Анализ win rate
+# Анализ win rate
  if metrics.get('win_rate', 0) < 0.5:
  suggestions.append({
  'category': 'trading_strategy',
  'priority': 'high',
- 'suggestion': 'Низкий процент выигрышных сделок. Рассмотрите пересмотр торговой стратегии.',
+'suggestion': 'Низкий процент выигрышных сделок. Рассмотрите пересмотр торговой стратегии.',
  'action': 'analyze_losing_trades'
  })
 
- # Анализ просадки
+# Анализ просадки
  if metrics.get('max_drawdown', 0) > 0.1:
  suggestions.append({
  'category': 'risk_Management',
  'priority': 'high',
- 'suggestion': 'Высокая просадка. Улучшите Management рисками.',
+'suggestion': 'Высокая просадка. Улучшите Management рисками.',
  'action': 'reduce_position_sizes'
  })
 
- # Анализ ошибок
+# Анализ ошибок
  if metrics.get('error_rate', 0) > 0.02:
  suggestions.append({
  'category': 'system_stability',
  'priority': 'medium',
- 'suggestion': 'Высокий уровень ошибок. Проверьте стабильность системы.',
+'suggestion': 'Высокий уровень ошибок. Проверьте стабильность системы.',
  'action': 'reView_error_Logs'
  })
 
- # Анализ производительности
+# Анализ производительности
  if metrics.get('trades_per_hour', 0) < 1:
  suggestions.append({
  'category': 'trading_activity',
  'priority': 'low',
- 'suggestion': 'Низкая торговая активность. Проверьте условия входа.',
+'suggestion': 'Низкая торговая активность. Проверьте условия входа.',
  'action': 'reView_entry_conditions'
  })
 
@@ -1840,40 +1840,40 @@ class PerformanceTracker:
 
 ```mermaid
 graph TD
- A[Система Monitoringа] --> B[health check]
+A[Система Monitoringа] --> B[health check]
 
- B --> C[check работы бота]
+B --> C[check работы бота]
  B --> D[check API]
- B --> E[check модели]
- B --> F[check данных]
- B --> G[check ресурсов]
- B --> H[check сети]
+B --> E[check модели]
+B --> F[check данных]
+B --> G[check ресурсов]
+B --> H[check сети]
 
- C --> C1{Бот Workingет?}
- C1 -->|Да| C2[Status: healthy]
- C1 -->|Нет| C3[Status: Unhealthy]
+C --> C1{Бот Workingет?}
+C1 -->|Да| C2[Status: healthy]
+C1 -->|Нет| C3[Status: Unhealthy]
 
  D --> D1{API available?}
- D1 -->|Да| D2[Status: healthy]
- D1 -->|Нет| D3[Status: Unhealthy]
+D1 -->|Да| D2[Status: healthy]
+D1 -->|Нет| D3[Status: Unhealthy]
 
- E --> E1{Модель загружена?}
- E1 -->|Да| E2[Status: healthy]
- E1 -->|Нет| E3[Status: Unhealthy]
+E --> E1{Модель загружена?}
+E1 -->|Да| E2[Status: healthy]
+E1 -->|Нет| E3[Status: Unhealthy]
 
- F --> F1{data свежие?}
- F1 -->|Да| F2[Status: healthy]
- F1 -->|Нет| F3[Status: Unhealthy]
+F --> F1{data свежие?}
+F1 -->|Да| F2[Status: healthy]
+F1 -->|Нет| F3[Status: Unhealthy]
 
- G --> G1{Ресурсы in норме?}
- G1 -->|Да| G2[Status: healthy]
- G1 -->|Нет| G3[Status: Unhealthy]
+G --> G1{Ресурсы in норме?}
+G1 -->|Да| G2[Status: healthy]
+G1 -->|Нет| G3[Status: Unhealthy]
 
- H --> H1{Сеть стабильна?}
- H1 -->|Да| H2[Status: healthy]
- H1 -->|Нет| H3[Status: Unhealthy]
+H --> H1{Сеть стабильна?}
+H1 -->|Да| H2[Status: healthy]
+H1 -->|Нет| H3[Status: Unhealthy]
 
- C2 --> I[Общий статус]
+C2 --> I[Общий статус]
  C3 --> I
  D2 --> I
  D3 --> I
@@ -1886,13 +1886,13 @@ graph TD
  H2 --> I
  H3 --> I
 
- I --> J{Все проверки пройдены?}
- J -->|Да| K[Status: healthy]
- J -->|Нет| L[Status: Unhealthy]
+I --> J{Все проверки пройдены?}
+J -->|Да| K[Status: healthy]
+J -->|Нет| L[Status: Unhealthy]
 
- K --> M[Продолжить работу]
- L --> N[Генерация алертов]
- N --> O[Автоматические действия]
+K --> M[Продолжить работу]
+L --> N[Генерация алертов]
+N --> O[Автоматические действия]
 
  style A fill:#e3f2fd
  style K fill:#c8e6c9
@@ -1903,14 +1903,14 @@ graph TD
 
 ```python
 class healthchecker:
- """health check системы"""
+"""health check системы"""
 
  def __init__(self):
  self.health_checks = {}
  self.health_status = {}
 
  def perform_health_checks(self, system_state):
- """Выполнение проверок health"""
+"""Выполнение проверок health"""
 
  health_checks = {
  'bot_running': self.check_bot_running(system_state),
@@ -1922,7 +1922,7 @@ class healthchecker:
  'network_connectivity': self.check_network_connectivity(system_state)
  }
 
- # Общий статус health
+# Общий статус health
  overall_health = self.calculate_overall_health(health_checks)
 
  return {
@@ -1932,17 +1932,17 @@ class healthchecker:
  }
 
  def check_bot_running(self, system_state):
- """check работы бота"""
+"""check работы бота"""
 
  uptime = system_state.get('uptime', 0)
  last_activity = system_state.get('last_activity', 0)
 
- # Бот считается Workingющим, если время работы > 0 and последняя активность < 5 minutes
+# Бот считается Workingющим, если время работы > 0 and последняя активность < 5 minutes
  is_running = uptime > 0 and (time.time() - last_activity) < 300
 
  return {
  'status': 'healthy' if is_running else 'unhealthy',
- 'message': 'Бот Workingет' if is_running else 'Бот not Workingет',
+'message': 'Бот Workingет' if is_running else 'Бот not Workingет',
  'details': {
  'uptime': uptime,
  'last_activity': last_activity
@@ -1950,17 +1950,17 @@ class healthchecker:
  }
 
  def check_api_connectivity(self, system_state):
- """check подключения к API"""
+"""check подключения к API"""
 
  api_latency = system_state.get('api_latency', 0)
  api_error_rate = system_state.get('api_error_rate', 0)
 
- # API считается здоровым, если задержка < 1000ms and ошибок < 5%
+# API считается здоровым, если задержка < 1000ms and ошибок < 5%
  is_healthy = api_latency < 1000 and api_error_rate < 0.05
 
  return {
  'status': 'healthy' if is_healthy else 'unhealthy',
- 'message': 'API подключение стабильно' if is_healthy else 'Issues with API',
+'message': 'API подключение стабильно' if is_healthy else 'Issues with API',
  'details': {
  'latency': api_latency,
  'error_rate': api_error_rate
@@ -1968,17 +1968,17 @@ class healthchecker:
  }
 
  def check_model_loaded(self, system_state):
- """check загрузки модели"""
+"""check загрузки модели"""
 
  model_loaded = system_state.get('model_loaded', False)
  model_accuracy = system_state.get('model_accuracy', 0)
 
- # Модель считается здоровой, если загружена and точность > 0.7
+# Модель считается здоровой, если загружена and точность > 0.7
  is_healthy = model_loaded and model_accuracy > 0.7
 
  return {
  'status': 'healthy' if is_healthy else 'unhealthy',
- 'message': 'Модель загружена and Workingет' if is_healthy else 'Issues with моделью',
+'message': 'Модель загружена and Workingет' if is_healthy else 'Issues with моделью',
  'details': {
  'loaded': model_loaded,
  'accuracy': model_accuracy
@@ -1992,14 +1992,14 @@ class healthchecker:
 
 ```python
 class AlertBestPractices:
- """Лучшие практики Settings алертов"""
+"""Лучшие практики Settings алертов"""
 
  def __init__(self):
  self.alert_hierarchy = {}
  self.escalation_rules = {}
 
  def setup_alert_hierarchy(self):
- """configuration иерархии алертов"""
+"""configuration иерархии алертов"""
 
  self.alert_hierarchy = {
  'critical': {
@@ -2023,7 +2023,7 @@ class AlertBestPractices:
  }
 
  def setup_escalation_rules(self):
- """configuration правил эскалации"""
+"""configuration правил эскалации"""
 
  self.escalation_rules = {
  'no_response': {
@@ -2048,7 +2048,7 @@ class AlertBestPractices:
 
 ```python
 class LogRotation:
- """Ротация логов"""
+"""Ротация логов"""
 
  def __init__(self):
  self.rotation_config = {}
@@ -2056,7 +2056,7 @@ class LogRotation:
  self.retention_config = {}
 
  def setup_log_rotation(self):
- """configuration ротации логов"""
+"""configuration ротации логов"""
 
  self.rotation_config = {
  'max_size': '100MB',
@@ -2067,18 +2067,18 @@ class LogRotation:
  }
 
  def rotate_Logs(self, log_file):
- """Ротация логов"""
+"""Ротация логов"""
 
  import shutil
  import gzip
  from datetime import datetime
 
- # create резервной копии
+# create резервной копии
  timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
  backup_file = f"{log_file}.{timestamp}"
  shutil.copy2(log_file, backup_file)
 
- # Сжатие старого лога
+# Сжатие старого лога
  if self.rotation_config['compression']:
  with open(backup_file, 'rb') as f_in:
  with gzip.open(f"{backup_file}.gz", 'wb') as f_out:
@@ -2086,17 +2086,17 @@ class LogRotation:
  os.remove(backup_file)
  backup_file = f"{backup_file}.gz"
 
- # clean текущего лога
+# clean текущего лога
  with open(log_file, 'w') as f:
  f.write('')
 
- # remove старых логов
+# remove старых логов
  self.cleanup_old_Logs(log_file)
 
  return backup_file
 
  def cleanup_old_Logs(self, log_file):
- """clean старых логов"""
+"""clean старых логов"""
 
  import glob
  import os
@@ -2105,10 +2105,10 @@ class LogRotation:
  log_dir = os.path.dirname(log_file)
  log_pattern = f"{log_file}.*"
 
- # Получение all логов
+# Получение all логов
  log_files = glob.glob(log_pattern)
 
- # Фильтрация on возрасту
+# Фильтрация on возрасту
  cutoff_date = datetime.now() - timedelta(days=self.retention_config['retention_days'])
 
  for file_path in log_files:
@@ -2123,38 +2123,38 @@ class LogRotation:
 
 ```mermaid
 graph TD
- A[SLA метрики] --> B[Доступность]
- A --> C[Время отклика]
- A --> D[Частота ошибок]
- A --> E[Пропускная способность]
- A --> F[Свежесть данных]
- A --> G[Точность модели]
+A[SLA метрики] --> B[Доступность]
+A --> C[Время отклика]
+A --> D[Частота ошибок]
+A --> E[Пропускная способность]
+A --> F[Свежесть данных]
+A --> G[Точность модели]
 
  B --> B1[Goal: 99.9%]
- B --> B2[Расчет: uptime / total_time]
- B --> B3[Monitoring: каждую minutesу]
+B --> B2[Расчет: uptime / total_time]
+B --> B3[Monitoring: каждую minutesу]
 
  C --> C1[P95: < 2000ms]
  C --> C2[P99: < 5000ms]
- C --> C3[Среднее: < 1000ms]
+C --> C3[Среднее: < 1000ms]
 
  D --> D1[Goal: < 0.1%]
- D --> D2[Расчет: errors / total_requests]
- D --> D3[Типы ошибок: API, сеть, Logsка]
+D --> D2[Расчет: errors / total_requests]
+D --> D3[Типы ошибок: API, сеть, Logsка]
 
  E --> E1[Goal: 100 RPS]
- E --> E2[Расчет: requests_per_second]
- E --> E3[Пиковая нагрузка: 200 RPS]
+E --> E2[Расчет: requests_per_second]
+E --> E3[Пиковая нагрузка: 200 RPS]
 
  F --> F1[Goal: < 5 minutes]
- F --> F2[Расчет: current_time - last_update]
- F --> F3[Критично for trading]
+F --> F2[Расчет: current_time - last_update]
+F --> F3[Критично for trading]
 
  G --> G1[Goal: > 80%]
- G --> G2[Расчет: correct_predictions / total]
- G --> G3[Monitoring дрифта]
+G --> G2[Расчет: correct_predictions / total]
+G --> G3[Monitoring дрифта]
 
- B1 --> H[Соответствие SLA]
+B1 --> H[Соответствие SLA]
  B2 --> H
  B3 --> H
  C1 --> H
@@ -2173,13 +2173,13 @@ graph TD
  G2 --> H
  G3 --> H
 
- H --> I{Все SLA соблюдены?}
- I -->|Да| J[Status: Green]
- I -->|Нет| K[Status: Red]
+H --> I{Все SLA соблюдены?}
+I -->|Да| J[Status: Green]
+I -->|Нет| K[Status: Red]
 
- J --> L[Продолжить работу]
- K --> M[Генерация алертов]
- M --> N[Корректирующие действия]
+J --> L[Продолжить работу]
+K --> M[Генерация алертов]
+M --> N[Корректирующие действия]
 
  style A fill:#e3f2fd
  style H fill:#c8e6c9
@@ -2190,7 +2190,7 @@ graph TD
 
 ```python
 class PerformanceMetrics:
- """Метрики производительности"""
+"""Метрики производительности"""
 
  def __init__(self):
  self.metrics_definitions = {}
@@ -2198,29 +2198,29 @@ class PerformanceMetrics:
  self.sla_targets = {}
 
  def define_metrics(self):
- """Определение метрик"""
+"""Определение метрик"""
 
  self.metrics_definitions = {
  'availability': {
- 'describe': 'Доступность системы',
+'describe': 'Доступность системы',
  'calculation': 'uptime / total_time',
  'target': 0.999, # 99.9%
  'unit': 'percentage'
  },
  'response_time': {
- 'describe': 'Время отклика',
+'describe': 'Время отклика',
  'calculation': 'average_response_time',
- 'target': 1000, # 1 секунда
+'target': 1000, # 1 секунда
  'unit': 'milliseconds'
  },
  'error_rate': {
- 'describe': 'Частота ошибок',
+'describe': 'Частота ошибок',
  'calculation': 'errors / total_requests',
  'target': 0.001, # 0.1%
  'unit': 'percentage'
  },
  'throughput': {
- 'describe': 'Пропускная способность',
+'describe': 'Пропускная способность',
  'calculation': 'requests_per_second',
  'target': 100, # 100 RPS
  'unit': 'requests_per_second'
@@ -2228,19 +2228,19 @@ class PerformanceMetrics:
  }
 
  def setup_sla_targets(self):
- """configuration SLA целей"""
+"""configuration SLA целей"""
 
  self.sla_targets = {
  'availability': 0.999, # 99.9%
- 'response_time_p95': 2000, # 2 секунды
- 'response_time_p99': 5000, # 5 секунд
+'response_time_p95': 2000, # 2 секунды
+'response_time_p99': 5000, # 5 секунд
  'error_rate': 0.001, # 0.1%
  'data_freshness': 300, # 5 minutes
  'model_accuracy': 0.8 # 80%
  }
 
  def calculate_sla_compliance(self, metrics):
- """Расчет соответствия SLA"""
+"""Расчет соответствия SLA"""
 
  compliance = {}
 
@@ -2248,13 +2248,13 @@ class PerformanceMetrics:
  current_value = metrics.get(metric, 0)
 
  if metric in ['availability', 'model_accuracy']:
- # for метрик "больше лучше"
+# for метрик "больше лучше"
  compliance[metric] = current_value >= target
  else:
- # for метрик "меньше лучше"
+# for метрик "меньше лучше"
  compliance[metric] = current_value <= target
 
- # Общее соответствие SLA
+# Общее соответствие SLA
  overall_compliance = all(compliance.values())
 
  return {
@@ -2272,37 +2272,37 @@ class PerformanceMetrics:
 
 ```mermaid
 graph TD
- A[Обнаружение проблемы] --> B{Тип проблемы}
+A[Обнаружение проблемы] --> B{Тип проблемы}
 
- B -->|Критическая| C[Критические действия]
- B -->|Предупреждение| D[Предупреждающие действия]
- B -->|Информационная| E[Информационные действия]
+B -->|Критическая| C[Критические действия]
+B -->|Предупреждение| D[Предупреждающие действия]
+B -->|Информационная| E[Информационные действия]
 
- C --> C1[Бот остановлен > 5 мин]
- C --> C2[Просадка > 10%]
- C --> C3[Ошибки API > 5%]
+C --> C1[Бот остановлен > 5 мин]
+C --> C2[Просадка > 10%]
+C --> C3[Ошибки API > 5%]
 
- D --> D1[Низкий Win Rate]
- D --> D2[Дрифт модели]
- D --> D3[Высокая задержка]
+D --> D1[Низкий Win Rate]
+D --> D2[Дрифт модели]
+D --> D3[Высокая задержка]
 
- E --> E1[Ежедневный Report]
- E --> E2[Достижение целей]
- E --> E3[Статус системы]
+E --> E1[Ежедневный Report]
+E --> E2[Достижение целей]
+E --> E3[Статус системы]
 
- C1 --> F[ПереLaunch бота]
- C2 --> G[Закрытие all позиций]
- C3 --> H[Переключение API]
+C1 --> F[ПереLaunch бота]
+C2 --> G[Закрытие all позиций]
+C3 --> H[Переключение API]
 
- D1 --> I[Анализ проигрышных сделок]
- D2 --> J[Переобучение модели]
- D3 --> K[Оптимизация сети]
+D1 --> I[Анализ проигрышных сделок]
+D2 --> J[Переобучение модели]
+D3 --> K[Оптимизация сети]
 
- E1 --> L[Генерация Reportа]
- E2 --> M[Уведомление о достижении]
- E3 --> N[update статуса]
+E1 --> L[Генерация Reportа]
+E2 --> M[Уведомление о достижении]
+E3 --> N[update статуса]
 
- F --> O[check результата]
+F --> O[check результата]
  G --> O
  H --> O
  I --> O
@@ -2312,18 +2312,18 @@ graph TD
  M --> O
  N --> O
 
- O --> P{Действие успешно?}
- P -->|Да| Q[Запись in лог]
- P -->|Нет| R[Повторная попытка]
+O --> P{Действие успешно?}
+P -->|Да| Q[Запись in лог]
+P -->|Нет| R[Повторная попытка]
 
- R --> S{Максимум попыток?}
- S -->|Нет| T[Повторить действие]
- S -->|Да| U[Эскалация проблемы]
+R --> S{Максимум попыток?}
+S -->|Нет| T[Повторить действие]
+S -->|Да| U[Эскалация проблемы]
 
  T --> O
- U --> V[Уведомление администратора]
+U --> V[Уведомление администратора]
 
- Q --> W[Продолжить Monitoring]
+Q --> W[Продолжить Monitoring]
  V --> W
 
  style A fill:#e3f2fd
@@ -2336,14 +2336,14 @@ graph TD
 
 ```python
 class AutomatedActions:
- """Автоматические действия"""
+"""Автоматические действия"""
 
  def __init__(self):
  self.action_rules = {}
  self.action_history = []
 
  def setup_automated_actions(self):
- """configuration автоматических действий"""
+"""configuration автоматических действий"""
 
  self.action_rules = {
  'restart_bot': {
@@ -2362,37 +2362,37 @@ class AutomatedActions:
  'trigger': 'high_volatility_detected',
  'action': self.reduce_position_sizes,
  'max_attempts': 5,
- 'cooldown': 3600 # 1 час
+'cooldown': 3600 # 1 час
  },
  'retrain_model': {
  'trigger': 'model_drift_detected',
  'action': self.retrain_model,
  'max_attempts': 1,
- 'cooldown': 86400 # 24 часа
+'cooldown': 86400 # 24 часа
  }
  }
 
  def execute_automated_action(self, action_name, trigger_data):
- """Выполнение автоматического действия"""
+"""Выполнение автоматического действия"""
 
  if action_name not in self.action_rules:
  return False
 
  rule = self.action_rules[action_name]
 
- # check кулдауна
+# check кулдауна
  if self.is_action_in_cooldown(action_name):
  return False
 
- # check максимального количества попыток
+# check максимального количества попыток
  if self.get_action_attempts(action_name) >= rule['max_attempts']:
  return False
 
  try:
- # Выполнение действия
+# Выполнение действия
  result = rule['action'](trigger_data)
 
- # Запись in историю
+# Запись in историю
  self.action_history.append({
  'timestamp': datetime.now().isoformat(),
  'action': action_name,
@@ -2401,42 +2401,42 @@ class AutomatedActions:
  'success': result.get('success', False)
  })
 
- # installation кулдауна
+# installation кулдауна
  if result.get('success', False):
  self.set_action_cooldown(action_name, rule['cooldown'])
 
  return result
 
  except Exception as e:
- print(f"Ошибка выполнения действия {action_name}: {e}")
+print(f"Ошибка выполнения действия {action_name}: {e}")
  return {'success': False, 'error': str(e)}
 
  def restart_bot(self, trigger_data):
- """ПереLaunch бота"""
+"""ПереLaunch бота"""
 
  try:
- # Остановка бота
+# Остановка бота
  self.stop_bot()
 
- # Ожидание
+# Ожидание
  time.sleep(10)
 
- # Launch бота
+# Launch бота
  self.start_bot()
 
- return {'success': True, 'message': 'Бот перезапущен'}
+return {'success': True, 'message': 'Бот перезапущен'}
 
  except Exception as e:
  return {'success': False, 'error': str(e)}
 
  def close_all_positions(self, trigger_data):
- """Закрытие all позиций"""
+"""Закрытие all позиций"""
 
  try:
- # Получение активных позиций
+# Получение активных позиций
  active_positions = self.get_active_positions()
 
- # Закрытие позиций
+# Закрытие позиций
  closed_positions = []
  for position in active_positions:
  result = self.close_position(position['id'])
@@ -2445,7 +2445,7 @@ class AutomatedActions:
 
  return {
  'success': True,
- 'message': f'Закрыто позиций: {len(closed_positions)}',
+'message': f'Закрыто позиций: {len(closed_positions)}',
  'closed_positions': closed_positions
  }
 
@@ -2459,7 +2459,7 @@ class AutomatedActions:
 
 ```mermaid
 graph TD
- A[Система Monitoringа] --> B[Внешние интеграции]
+A[Система Monitoringа] --> B[Внешние интеграции]
 
  B --> C[Prometheus]
  B --> D[Grafana]
@@ -2467,32 +2467,32 @@ graph TD
  B --> F[New Relic]
  B --> G[Webhooks]
 
- C --> C1[Сбор метрик]
- C --> C2[Хранение временных рядов]
+C --> C1[Сбор метрик]
+C --> C2[Хранение временных рядов]
  C --> C3[HTTP endpoint: :8000]
- C --> C4[Метрики: trades_total, profit_loss]
+C --> C4[Метрики: trades_total, profit_loss]
 
- D --> D1[Визуализация]
- D --> D2[Дашборды]
- D --> D3[Алерты]
- D --> D4[Источники данных: Prometheus]
+D --> D1[Визуализация]
+D --> D2[Дашборды]
+D --> D3[Алерты]
+D --> D4[Источники данных: Prometheus]
 
  E --> E1[APM Monitoring]
- E --> E2[Logs and трейсинг]
- E --> E3[Инфраструктурные метрики]
- E --> E4[Корреляция events]
+E --> E2[Logs and трейсинг]
+E --> E3[Инфраструктурные метрики]
+E --> E4[Корреляция events]
 
  F --> F1[application Performance]
  F --> F2[InfraStructure Monitoring]
  F --> F3[Error Tracking]
  F --> F4[Custom Dashboards]
 
- G --> G1[Торговые события]
- G --> G2[Системные алерты]
- G --> G3[Reportы производительности]
- G --> G4[Внешние API]
+G --> G1[Торговые события]
+G --> G2[Системные алерты]
+G --> G3[Reportы производительности]
+G --> G4[Внешние API]
 
- C1 --> H[Централизованный Monitoring]
+C1 --> H[Централизованный Monitoring]
  C2 --> H
  C3 --> H
  C4 --> H
@@ -2513,9 +2513,9 @@ graph TD
  G3 --> H
  G4 --> H
 
- H --> I[Единая панель Monitoringа]
- I --> J[Комплексный анализ]
- J --> K[Быстрое реагирование]
+H --> I[Единая панель Monitoringа]
+I --> J[Комплексный анализ]
+J --> K[Быстрое реагирование]
 
  style A fill:#e3f2fd
  style B fill:#c8e6c9
@@ -2525,14 +2525,14 @@ graph TD
 
 ```python
 class Externalintegrations:
- """integration with внешними системами"""
+"""integration with внешними системами"""
 
  def __init__(self):
  self.integrations = {}
  self.webhook_endpoints = {}
 
  def setup_integrations(self):
- """configuration интеграций"""
+"""configuration интеграций"""
 
  self.integrations = {
  'prometheus': self.setup_prometheus_integration(),
@@ -2547,7 +2547,7 @@ class Externalintegrations:
 
  from prometheus_client import Counter, Histogram, Gauge, start_http_server
 
- # Метрики
+# Метрики
  self.prometheus_metrics = {
  'trades_total': Counter('trading_bot_trades_total', 'Total number of trades'),
  'profit_loss': Gauge('trading_bot_profit_loss', 'Current profit/loss'),
@@ -2556,7 +2556,7 @@ class Externalintegrations:
  'error_rate': Gauge('trading_bot_error_rate', 'Current error rate')
  }
 
- # Launch HTTP сервера for метрик
+# Launch HTTP сервера for метрик
  start_http_server(8000)
 
  return True
@@ -2564,7 +2564,7 @@ class Externalintegrations:
  def setup_grafana_integration(self):
  """integration with Grafana"""
 
- # configuration дашборда Grafana
+# configuration дашборда Grafana
  grafana_config = {
  'datasource': 'prometheus',
  'dashboard_url': 'http://grafana:3000/d/trading-bot',
@@ -2601,7 +2601,7 @@ class Externalintegrations:
  return True
 
  def send_webhook(self, endpoint, data):
- """Отправка webhook"""
+"""Отправка webhook"""
 
  import requests
 
@@ -2614,7 +2614,7 @@ class Externalintegrations:
  response = requests.post(url, json=data, timeout=10)
  return response.status_code == 200
  except Exception as e:
- print(f"Ошибка отправки webhook: {e}")
+print(f"Ошибка отправки webhook: {e}")
  return False
 ```
 

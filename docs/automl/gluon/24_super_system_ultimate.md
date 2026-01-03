@@ -90,32 +90,32 @@
 
 ```python
 class SuperTradingsystem:
- """Супер-торговая система объединяющая все индикаторы
+"""Супер-торговая система объединяющая все индикаторы
 
- parameters инициализации:
- - Все components инициализируются with параметрами on умолчанию
- - Каждый компонент имеет свои специфические parameters конфигурации
- - Система поддерживает кастомизацию all параметров через конфигурационные файлы
+parameters инициализации:
+- Все components инициализируются with параметрами on умолчанию
+- Каждый компонент имеет свои специфические parameters конфигурации
+- Система поддерживает кастомизацию all параметров через конфигурационные файлы
  """
 
  def __init__(self, config=None):
  """
- Инициализация супер-торговой системы
+Инициализация супер-торговой системы
 
  Args:
- config (dict, optional): Конфигурационный словарь with параметрами системы
- - schr_levels_config: parameters for SCHR Levels Analysisтора
- - wave2_config: parameters for WAVE2 Analysisтора
- - schr_short3_config: parameters for SCHR SHORT3 Analysisтора
- - ml_models_config: parameters for ML моделей
- - risk_config: parameters риск-менеджмента
- - Portfolio_config: parameters портфельного менеджера
- - learning_config: parameters системы обучения
+config (dict, optional): Конфигурационный словарь with параметрами системы
+- schr_levels_config: parameters for SCHR Levels Analysisтора
+- wave2_config: parameters for WAVE2 Analysisтора
+- schr_short3_config: parameters for SCHR SHORT3 Analysisтора
+- ml_models_config: parameters for ML моделей
+- risk_config: parameters риск-менеджмента
+- Portfolio_config: parameters портфельного менеджера
+- learning_config: parameters системы обучения
  """
  if config is None:
  config = self._get_default_config()
 
- # Уровень 1: Базовые индикаторы
+# Уровень 1: Базовые индикаторы
  self.schr_levels = SCHRLevelsAnalyzer(
  **config.get('schr_levels_config', {})
  )
@@ -126,7 +126,7 @@ class SuperTradingsystem:
  **config.get('schr_short3_config', {})
  )
 
- # Уровень 2: ML модели
+# Уровень 2: ML модели
  self.schr_ml = SCHRLevelsMLModel(
  **config.get('ml_models_config', {}).get('schr', {})
  )
@@ -137,56 +137,56 @@ class SuperTradingsystem:
  **config.get('ml_models_config', {}).get('short3', {})
  )
 
- # Уровень 3: Мета-модель
+# Уровень 3: Мета-модель
  self.meta_model = MetaEnsembleModel(
  **config.get('meta_model_config', {})
  )
 
- # Уровень 4: Риск-менеджмент
+# Уровень 4: Риск-менеджмент
  self.risk_manager = AdvancedRiskManager(
  **config.get('risk_config', {})
  )
 
- # Уровень 5: Портфельный менеджер
+# Уровень 5: Портфельный менеджер
  self.Portfolio_manager = SuperPortfolioManager(
  **config.get('Portfolio_config', {})
  )
 
- # Уровень 6: Monitoring and переобучение
+# Уровень 6: Monitoring and переобучение
  self.Monitoring_system = ContinuousLearningsystem(
  **config.get('learning_config', {})
  )
 
  def _get_default_config(self):
- """Возвращает конфигурацию on умолчанию for all компонентов системы"""
+"""Возвращает конфигурацию on умолчанию for all компонентов системы"""
  return {
  'schr_levels_config': {
- 'lookback_period': 50, # Период for Analysis уровней (свечей)
- 'min_touches': 3, # Минимальное количество касаний уровня
- 'tolerance': 0.001, # Допуск for определения уровня (in %)
- 'pressure_threshold': 0.7, # Порог давления for сигналов
- 'breakout_threshold': 0.8 # Порог пробоя for сигналов
+'lookback_period': 50, # Период for Analysis уровней (свечей)
+'min_touches': 3, # Минимальное количество касаний уровня
+'tolerance': 0.001, # Допуск for определения уровня (in %)
+'pressure_threshold': 0.7, # Порог давления for сигналов
+'breakout_threshold': 0.8 # Порог пробоя for сигналов
  },
  'wave2_config': {
- 'min_wave_length': 5, # Минимальная длина волны (свечей)
- 'max_wave_length': 50, # Максимальная длина волны (свечей)
- 'amplitude_threshold': 0.02, # Порог амплитуды волны (in %)
- 'frequency_threshold': 0.1, # Порог частоты волны
- 'phase_threshold': 0.3 # Порог фазы волны
+'min_wave_length': 5, # Минимальная длина волны (свечей)
+'max_wave_length': 50, # Максимальная длина волны (свечей)
+'amplitude_threshold': 0.02, # Порог амплитуды волны (in %)
+'frequency_threshold': 0.1, # Порог частоты волны
+'phase_threshold': 0.3 # Порог фазы волны
  },
  'schr_short3_config': {
- 'short_period': 3, # Краткосрочный период (свечей)
- 'volatility_window': 10, # Окно for расчета волатильности
- 'momentum_threshold': 0.5, # Порог момента
- 'volatility_threshold': 0.02, # Порог волатильности
- 'signal_strength': 0.6 # Сила сигнала
+'short_period': 3, # Краткосрочный период (свечей)
+'volatility_window': 10, # Окно for расчета волатильности
+'momentum_threshold': 0.5, # Порог момента
+'volatility_threshold': 0.02, # Порог волатильности
+'signal_strength': 0.6 # Сила сигнала
  },
  'ml_models_config': {
  'schr': {
  'model_type': 'TabularPredictor',
  'problem_type': 'binary',
  'eval_metric': 'accuracy',
- 'time_limit': 1800, # Лимит времени обучения (секунды)
+'time_limit': 1800, # Лимит времени обучения (секунды)
  'presets': 'best_quality'
  },
  'wave2': {
@@ -206,32 +206,32 @@ class SuperTradingsystem:
  },
  'meta_model_config': {
  'ensemble_methods': ['adaptive', 'context', 'temporal', 'hierarchical'],
- 'weight_update_frequency': 100, # Частота обновления весов (свечей)
- 'performance_window': 500, # Окно for Analysis производительности
- 'confidence_threshold': 0.7, # Порог уверенности for сигналов
- 'min_models_agreement': 2 # Минимальное согласие моделей
+'weight_update_frequency': 100, # Частота обновления весов (свечей)
+'performance_window': 500, # Окно for Analysis производительности
+'confidence_threshold': 0.7, # Порог уверенности for сигналов
+'min_models_agreement': 2 # Минимальное согласие моделей
  },
  'risk_config': {
- 'max_position_size': 0.1, # Максимальный размер позиции (10% капитала)
- 'stop_loss_threshold': 0.02, # Порог стоп-лосса (2%)
- 'take_profit_threshold': 0.04, # Порог тейк-профита (4%)
- 'max_drawdown': 0.05, # Максимальная просадка (5%)
- 'correlation_threshold': 0.7, # Порог корреляции между позициями
- 'liquidity_threshold': 1000000 # Порог ликвидности (USD)
+'max_position_size': 0.1, # Максимальный размер позиции (10% капитала)
+'stop_loss_threshold': 0.02, # Порог стоп-лосса (2%)
+'take_profit_threshold': 0.04, # Порог тейк-профита (4%)
+'max_drawdown': 0.05, # Максимальная просадка (5%)
+'correlation_threshold': 0.7, # Порог корреляции между позициями
+'liquidity_threshold': 1000000 # Порог ликвидности (USD)
  },
  'Portfolio_config': {
- 'max_positions': 10, # Максимальное количество позиций
- 'rebalance_frequency': 24, # Частота ребалансировки (часы)
- 'diversification_threshold': 0.3, # Порог диверсификации
- 'concentration_limit': 0.2, # Лимит концентрации on одном активе
- 'volatility_target': 0.15 # Целевая волатильность портфеля
+'max_positions': 10, # Максимальное количество позиций
+'rebalance_frequency': 24, # Частота ребалансировки (часы)
+'diversification_threshold': 0.3, # Порог диверсификации
+'concentration_limit': 0.2, # Лимит концентрации on одном активе
+'volatility_target': 0.15 # Целевая волатильность портфеля
  },
  'learning_config': {
- 'retrain_frequency': 1000, # Частота переобучения (свечей)
- 'drift_detection_window': 200, # Окно for обнаружения дрифта
- 'performance_threshold': 0.8, # Порог производительности for адаптации
- 'adaptation_rate': 0.1, # Скорость адаптации
- 'memory_size': 10000 # Размер памяти for обучения
+'retrain_frequency': 1000, # Частота переобучения (свечей)
+'drift_detection_window': 200, # Окно for обнаружения дрифта
+'performance_threshold': 0.8, # Порог производительности for адаптации
+'adaptation_rate': 0.1, # Скорость адаптации
+'memory_size': 10000 # Размер памяти for обучения
  }
  }
 ```
@@ -257,25 +257,25 @@ class SuperTradingsystem:
 class Indicatorintegration:
  """integration all indicators
 
- parameters интеграции:
- - indicators: Словарь with индикаторами and их конфигурациями
- - weights: Адаптивные веса for каждого индикатора
- - correlations: Матрица корреляций между индикаторами
- - integration_method: Метод объединения сигналов
- - confidence_threshold: Порог уверенности for финального сигнала
+parameters интеграции:
+- indicators: Словарь with индикаторами and их конфигурациями
+- weights: Адаптивные веса for каждого индикатора
+- correlations: Матрица корреляций между индикаторами
+- integration_method: Метод объединения сигналов
+- confidence_threshold: Порог уверенности for финального сигнала
  """
 
  def __init__(self, config=None):
  """
- Инициализация системы интеграции indicators
+Инициализация системы интеграции indicators
 
  Args:
- config (dict, optional): configuration интеграции
- - integration_method: Метод объединения ('weighted', 'voting', 'stacking')
- - confidence_threshold: Порог уверенности (0.0-1.0)
- - correlation_window: Окно for расчета корреляций (свечей)
- - weight_update_frequency: Частота обновления весов (свечей)
- - min_indicators_agreement: Минимальное согласие indicators
+config (dict, optional): configuration интеграции
+- integration_method: Метод объединения ('weighted', 'voting', 'stacking')
+- confidence_threshold: Порог уверенности (0.0-1.0)
+- correlation_window: Окно for расчета корреляций (свечей)
+- weight_update_frequency: Частота обновления весов (свечей)
+- min_indicators_agreement: Минимальное согласие indicators
  """
  if config is None:
  config = self._get_default_integration_config()
@@ -289,103 +289,103 @@ class Indicatorintegration:
  self.weight_update_frequency = config.get('weight_update_frequency', 50)
  self.min_indicators_agreement = config.get('min_indicators_agreement', 2)
 
- # Инициализация весов on умолчанию
+# Инициализация весов on умолчанию
  self.weights = {
- 'schr_levels': 0.4, # Вес SCHR Levels (40%)
- 'wave2': 0.35, # Вес WAVE2 (35%)
- 'schr_short3': 0.25 # Вес SCHR SHORT3 (25%)
+'schr_levels': 0.4, # Вес SCHR Levels (40%)
+'wave2': 0.35, # Вес WAVE2 (35%)
+'schr_short3': 0.25 # Вес SCHR SHORT3 (25%)
  }
 
  def _get_default_integration_config(self):
- """Возвращает конфигурацию on умолчанию for интеграции"""
+"""Возвращает конфигурацию on умолчанию for интеграции"""
  return {
- 'integration_method': 'weighted', # Метод объединения сигналов
- 'confidence_threshold': 0.7, # Порог уверенности for сигналов
- 'correlation_window': 100, # Окно for расчета корреляций
- 'weight_update_frequency': 50, # Частота обновления весов
- 'min_indicators_agreement': 2, # Минимальное согласие indicators
- 'signal_strength_threshold': 0.6, # Порог силы сигнала
- 'noise_reduction_factor': 0.1, # Фактор снижения шума
- 'trend_confirmation_required': True, # Требуется подтверждение тренда
- 'volatility_adjustment': True # Корректировка on волатильности
+'integration_method': 'weighted', # Метод объединения сигналов
+'confidence_threshold': 0.7, # Порог уверенности for сигналов
+'correlation_window': 100, # Окно for расчета корреляций
+'weight_update_frequency': 50, # Частота обновления весов
+'min_indicators_agreement': 2, # Минимальное согласие indicators
+'signal_strength_threshold': 0.6, # Порог силы сигнала
+'noise_reduction_factor': 0.1, # Фактор снижения шума
+'trend_confirmation_required': True, # Требуется подтверждение тренда
+'volatility_adjustment': True # Корректировка on волатильности
  }
 
  def integrate_signals(self, data, market_context=None):
  """
- integration сигналов all indicators
+integration сигналов all indicators
 
  Args:
- data (pd.dataFrame): Рыночные data (OHLCV)
- market_context (dict, optional): Контекст рынка
- - trend: Направление тренда ('up', 'down', 'sideways')
- - volatility: Уровень волатильности ('low', 'medium', 'high')
- - volume: Объем торгов ('low', 'normal', 'high')
- - time_of_day: Время дня ('asian', 'european', 'american')
+data (pd.dataFrame): Рыночные data (OHLCV)
+market_context (dict, optional): Контекст рынка
+- trend: Направление тренда ('up', 'down', 'sideways')
+- volatility: Уровень волатильности ('low', 'medium', 'high')
+- volume: Объем торгов ('low', 'normal', 'high')
+- time_of_day: Время дня ('asian', 'european', 'american')
 
  Returns:
- dict: Интегрированный сигнал with метаданными
- - signal: Основной сигнал ('buy', 'sell', 'hold')
- - confidence: Уверенность in сигнале (0.0-1.0)
- - strength: Сила сигнала (0.0-1.0)
- - components: Сигналы from каждого индикатора
- - reasoning: Обоснование решения
+dict: Интегрированный сигнал with метаданными
+- signal: Основной сигнал ('buy', 'sell', 'hold')
+- confidence: Уверенность in сигнале (0.0-1.0)
+- strength: Сила сигнала (0.0-1.0)
+- components: Сигналы from каждого индикатора
+- reasoning: Обоснование решения
  """
  if market_context is None:
  market_context = self._analyze_market_context(data)
 
- # Получение сигналов from all indicators
+# Получение сигналов from all indicators
  schr_signals = self.get_schr_signals(data, market_context)
  wave2_signals = self.get_wave2_signals(data, market_context)
  short3_signals = self.get_short3_signals(data, market_context)
 
- # Анализ корреляций между индикаторами
+# Анализ корреляций между индикаторами
  correlations = self.analyze_correlations(schr_signals, wave2_signals, short3_signals)
 
- # update весов on basis корреляций and производительности
+# update весов on basis корреляций and производительности
  self._update_weights(schr_signals, wave2_signals, short3_signals, correlations)
 
- # Взвешивание сигналов
+# Взвешивание сигналов
  weighted_signals = self.weight_signals(schr_signals, wave2_signals, short3_signals, correlations)
 
- # create мета-сигнала
+# create мета-сигнала
  meta_signal = self.create_meta_signal(weighted_signals, market_context)
 
  return meta_signal
 
  def get_schr_signals(self, data, market_context=None):
  """
- Получение сигналов SCHR Levels
+Получение сигналов SCHR Levels
 
  Args:
- data (pd.dataFrame): Рыночные data (OHLCV)
- market_context (dict, optional): Контекст рынка for адаптации параметров
+data (pd.dataFrame): Рыночные data (OHLCV)
+market_context (dict, optional): Контекст рынка for адаптации параметров
 
  Returns:
- dict: Сигналы SCHR Levels
- - levels: Словарь with уровнями поддержки/сопротивления
- - support_levels: List уровней поддержки
- - resistance_levels: List уровней сопротивления
- - level_strength: Сила каждого уровня (0.0-1.0)
- - level_touches: Количество касаний каждого уровня
- - pressure: Анализ давления on уровни
- - buy_pressure: Давление покупок (0.0-1.0)
- - sell_pressure: Давление продаж (0.0-1.0)
- - pressure_ratio: Соотношение давлений
- - pressure_trend: Тренд давления ('increasing', 'decreasing', 'stable')
- - breakout_signals: Сигналы пробоев/отскоков
- - breakout_direction: Направление пробоя ('up', 'down', 'none')
- - breakout_strength: Сила пробоя (0.0-1.0)
- - breakout_volume: Объем при пробое
- - false_breakout_probability: Вероятность ложного пробоя
- - confidence: Общая уверенность in сигналах (0.0-1.0)
+dict: Сигналы SCHR Levels
+- levels: Словарь with уровнями поддержки/сопротивления
+- support_levels: List уровней поддержки
+- resistance_levels: List уровней сопротивления
+- level_strength: Сила каждого уровня (0.0-1.0)
+- level_touches: Количество касаний каждого уровня
+- pressure: Анализ давления on уровни
+- buy_pressure: Давление покупок (0.0-1.0)
+- sell_pressure: Давление продаж (0.0-1.0)
+- pressure_ratio: Соотношение давлений
+- pressure_trend: Тренд давления ('increasing', 'decreasing', 'stable')
+- breakout_signals: Сигналы пробоев/отскоков
+- breakout_direction: Направление пробоя ('up', 'down', 'none')
+- breakout_strength: Сила пробоя (0.0-1.0)
+- breakout_volume: Объем при пробое
+- false_breakout_probability: Вероятность ложного пробоя
+- confidence: Общая уверенность in сигналах (0.0-1.0)
  """
  if market_context is None:
  market_context = {}
 
- # Адаптация параметров on basis контекста
+# Адаптация параметров on basis контекста
  adaptive_params = self._adapt_schr_parameters(market_context)
 
- # Анализ уровней поддержки/сопротивления
+# Анализ уровней поддержки/сопротивления
  levels = self.schr_levels.analyze_levels(
  data,
  lookback_period=adaptive_params['lookback_period'],
@@ -393,14 +393,14 @@ class Indicatorintegration:
  tolerance=adaptive_params['tolerance']
  )
 
- # Анализ давления on уровни
+# Анализ давления on уровни
  pressure = self.schr_levels.analyze_pressure(
  data,
  pressure_threshold=adaptive_params['pressure_threshold'],
  volume_weight=adaptive_params['volume_weight']
  )
 
- # Сигналы пробоев/отскоков
+# Сигналы пробоев/отскоков
  breakout_signals = self.schr_levels.detect_breakouts(
  data,
  breakout_threshold=adaptive_params['breakout_threshold'],
@@ -417,40 +417,40 @@ class Indicatorintegration:
 
  def get_wave2_signals(self, data, market_context=None):
  """
- Получение сигналов WAVE2
+Получение сигналов WAVE2
 
  Args:
- data (pd.dataFrame): Рыночные data (OHLCV)
- market_context (dict, optional): Контекст рынка for адаптации параметров
+data (pd.dataFrame): Рыночные data (OHLCV)
+market_context (dict, optional): Контекст рынка for адаптации параметров
 
  Returns:
- dict: Сигналы WAVE2
- - wave_Analysis: Волновой анализ
- - current_wave: Текущая волна
- - wave_type: Тип волны ('impulse', 'corrective')
- - wave_phase: Фаза волны ('start', 'middle', 'end')
- - wave_amplitude: Амплитуда волны (in %)
- - wave_duration: Длительность волны (свечей)
- - wave_sequence: Последовательность волн
- - wave_count: Количество волн in последовательности
- - wave_patterns: Обнаруженные волновые паттерны
- - elliott_patterns: Паттерны Эллиотта
- - harmonic_patterns: Гармонические паттерны
- - pattern_confidence: Уверенность in паттернах
- - wave_signals: Торговые сигналы on basis волн
- - entry_signal: Сигнал входа ('buy', 'sell', 'hold')
- - entry_strength: Сила сигнала входа (0.0-1.0)
- - target_levels: Целевые уровни
- - stop_levels: Стоп-уровни
- - confidence: Общая уверенность in сигналах (0.0-1.0)
+dict: Сигналы WAVE2
+- wave_Analysis: Волновой анализ
+- current_wave: Текущая волна
+- wave_type: Тип волны ('impulse', 'corrective')
+- wave_phase: Фаза волны ('start', 'middle', 'end')
+- wave_amplitude: Амплитуда волны (in %)
+- wave_duration: Длительность волны (свечей)
+- wave_sequence: Последовательность волн
+- wave_count: Количество волн in последовательности
+- wave_patterns: Обнаруженные волновые паттерны
+- elliott_patterns: Паттерны Эллиотта
+- harmonic_patterns: Гармонические паттерны
+- pattern_confidence: Уверенность in паттернах
+- wave_signals: Торговые сигналы on basis волн
+- entry_signal: Сигнал входа ('buy', 'sell', 'hold')
+- entry_strength: Сила сигнала входа (0.0-1.0)
+- target_levels: Целевые уровни
+- stop_levels: Стоп-уровни
+- confidence: Общая уверенность in сигналах (0.0-1.0)
  """
  if market_context is None:
  market_context = {}
 
- # Адаптация параметров on basis контекста
+# Адаптация параметров on basis контекста
  adaptive_params = self._adapt_wave2_parameters(market_context)
 
- # Волновой анализ
+# Волновой анализ
  wave_Analysis = self.wave2.analyze_waves(
  data,
  min_wave_length=adaptive_params['min_wave_length'],
@@ -458,14 +458,14 @@ class Indicatorintegration:
  amplitude_threshold=adaptive_params['amplitude_threshold']
  )
 
- # Волновые паттерны
+# Волновые паттерны
  wave_patterns = self.wave2.detect_patterns(
  data,
  pattern_types=adaptive_params['pattern_types'],
  min_pattern_confidence=adaptive_params['min_pattern_confidence']
  )
 
- # Волновые сигналы
+# Волновые сигналы
  wave_signals = self.wave2.generate_signals(
  data,
  signal_threshold=adaptive_params['signal_threshold'],
@@ -482,51 +482,51 @@ class Indicatorintegration:
 
  def get_short3_signals(self, data, market_context=None):
  """
- Получение сигналов SCHR SHORT3
+Получение сигналов SCHR SHORT3
 
  Args:
- data (pd.dataFrame): Рыночные data (OHLCV)
- market_context (dict, optional): Контекст рынка for адаптации параметров
+data (pd.dataFrame): Рыночные data (OHLCV)
+market_context (dict, optional): Контекст рынка for адаптации параметров
 
  Returns:
- dict: Сигналы SCHR SHORT3
- - short_signals: Краткосрочные торговые сигналы
- - momentum_signal: Сигнал момента ('buy', 'sell', 'hold')
- - momentum_strength: Сила момента (0.0-1.0)
- - reversal_signal: Сигнал разворота
- - continuation_signal: Сигнал продолжения
- - short_patterns: Краткосрочные паттерны
- - candlestick_patterns: Свечные паттерны
- - price_action_patterns: Паттерны ценового действия
- - volume_patterns: Паттерны объема
- - short_volatility: Анализ краткосрочной волатильности
- - current_volatility: Текущая волатильность
- - volatility_trend: Тренд волатильности
- - volatility_breakout: Пробой волатильности
- - volatility_squeeze: Сжатие волатильности
- - confidence: Общая уверенность in сигналах (0.0-1.0)
+dict: Сигналы SCHR SHORT3
+- short_signals: Краткосрочные торговые сигналы
+- momentum_signal: Сигнал момента ('buy', 'sell', 'hold')
+- momentum_strength: Сила момента (0.0-1.0)
+- reversal_signal: Сигнал разворота
+- continuation_signal: Сигнал продолжения
+- short_patterns: Краткосрочные паттерны
+- candlestick_patterns: Свечные паттерны
+- price_action_patterns: Паттерны ценового действия
+- volume_patterns: Паттерны объема
+- short_volatility: Анализ краткосрочной волатильности
+- current_volatility: Текущая волатильность
+- volatility_trend: Тренд волатильности
+- volatility_breakout: Пробой волатильности
+- volatility_squeeze: Сжатие волатильности
+- confidence: Общая уверенность in сигналах (0.0-1.0)
  """
  if market_context is None:
  market_context = {}
 
- # Адаптация параметров on basis контекста
+# Адаптация параметров on basis контекста
  adaptive_params = self._adapt_short3_parameters(market_context)
 
- # Краткосрочные сигналы
+# Краткосрочные сигналы
  short_signals = self.schr_short3.analyze_short_term(
  data,
  short_period=adaptive_params['short_period'],
  momentum_threshold=adaptive_params['momentum_threshold']
  )
 
- # Краткосрочные паттерны
+# Краткосрочные паттерны
  short_patterns = self.schr_short3.detect_short_patterns(
  data,
  pattern_types=adaptive_params['pattern_types'],
  min_pattern_strength=adaptive_params['min_pattern_strength']
  )
 
- # Краткосрочная волатильность
+# Краткосрочная волатильность
  short_volatility = self.schr_short3.analyze_volatility(
  data,
  volatility_window=adaptive_params['volatility_window'],
@@ -563,28 +563,28 @@ class Indicatorintegration:
 
 ```python
 class MetaEnsembleModel:
- """Мета-модель объединяющая все ML модели
+"""Мета-модель объединяющая все ML модели
 
- parameters мета-модели:
- - base_models: Словарь with базовыми ML моделями
- - meta_weights: Адаптивные веса for каждой модели
- - ensemble_methods: Методы объединения моделей
- - performance_tracker: Отслеживание производительности
- - context_analyzer: Analysisтор рыночного контекста
+parameters мета-модели:
+- base_models: Словарь with базовыми ML моделями
+- meta_weights: Адаптивные веса for каждой модели
+- ensemble_methods: Методы объединения моделей
+- performance_tracker: Отслеживание производительности
+- context_analyzer: Analysisтор рыночного контекста
  """
 
  def __init__(self, config=None):
  """
- Инициализация мета-ансамбля
+Инициализация мета-ансамбля
 
  Args:
- config (dict, optional): configuration мета-модели
- - ensemble_methods: List методов объединения
- - weight_update_frequency: Частота обновления весов
- - performance_window: Окно for Analysis производительности
- - confidence_threshold: Порог уверенности
- - min_models_agreement: Минимальное согласие моделей
- - context_sensitivity: Чувствительность к контексту
+config (dict, optional): configuration мета-модели
+- ensemble_methods: List методов объединения
+- weight_update_frequency: Частота обновления весов
+- performance_window: Окно for Analysis производительности
+- confidence_threshold: Порог уверенности
+- min_models_agreement: Минимальное согласие моделей
+- context_sensitivity: Чувствительность к контексту
  """
  if config is None:
  config = self._get_default_meta_config()
@@ -598,14 +598,14 @@ class MetaEnsembleModel:
  self.min_models_agreement = config.get('min_models_agreement', 2)
  self.context_sensitivity = config.get('context_sensitivity', 0.8)
 
- # Инициализация весов on умолчанию
+# Инициализация весов on умолчанию
  self.meta_weights = {
- 'schr_ml': 0.35, # Вес SCHR ML модели (35%)
- 'wave2_ml': 0.35, # Вес WAVE2 ML модели (35%)
- 'short3_ml': 0.30 # Вес SHORT3 ML модели (30%)
+'schr_ml': 0.35, # Вес SCHR ML модели (35%)
+'wave2_ml': 0.35, # Вес WAVE2 ML модели (35%)
+'short3_ml': 0.30 # Вес SHORT3 ML модели (30%)
  }
 
- # Инициализация трекеров производительности
+# Инициализация трекеров производительности
  self.performance_tracker = {
  'accuracy_history': [],
  'precision_history': [],
@@ -615,75 +615,75 @@ class MetaEnsembleModel:
  }
 
  def _get_default_meta_config(self):
- """Возвращает конфигурацию on умолчанию for мета-модели"""
+"""Возвращает конфигурацию on умолчанию for мета-модели"""
  return {
  'ensemble_methods': ['adaptive', 'context', 'temporal', 'hierarchical'],
- 'weight_update_frequency': 100, # Частота обновления весов (свечей)
- 'performance_window': 500, # Окно for Analysis производительности
- 'confidence_threshold': 0.7, # Порог уверенности for сигналов
- 'min_models_agreement': 2, # Минимальное согласие моделей
- 'context_sensitivity': 0.8, # Чувствительность к контексту
- 'adaptive_learning_rate': 0.01, # Скорость адаптивного обучения
- 'temporal_decay_factor': 0.95, # Фактор временного затухания
- 'hierarchical_levels': 3, # Количество иерархических уровней
- 'uncertainty_threshold': 0.3, # Порог неопределенности
- 'model_diversity_weight': 0.2 # Вес разнообразия моделей
+'weight_update_frequency': 100, # Частота обновления весов (свечей)
+'performance_window': 500, # Окно for Analysis производительности
+'confidence_threshold': 0.7, # Порог уверенности for сигналов
+'min_models_agreement': 2, # Минимальное согласие моделей
+'context_sensitivity': 0.8, # Чувствительность к контексту
+'adaptive_learning_rate': 0.01, # Скорость адаптивного обучения
+'temporal_decay_factor': 0.95, # Фактор временного затухания
+'hierarchical_levels': 3, # Количество иерархических уровней
+'uncertainty_threshold': 0.3, # Порог неопределенности
+'model_diversity_weight': 0.2 # Вес разнообразия моделей
  }
 
  def create_meta_ensemble(self, base_predictions, market_context, historical_data=None):
  """
- create мета-ансамбля with адаптивным взвешиванием
+create мета-ансамбля with адаптивным взвешиванием
 
  Args:
- base_predictions (dict): Предсказания from базовых моделей
- - schr_ml: Предсказания SCHR ML модели
- - Prediction: Основное Prediction (0.0-1.0)
- - confidence: Уверенность in предсказании (0.0-1.0)
- - features_importance: Важность признаков
- - wave2_ml: Предсказания WAVE2 ML модели
- - short3_ml: Предсказания SHORT3 ML модели
- market_context (dict): Контекст рынка
- - trend: Направление тренда
- - volatility: Уровень волатильности
- - volume: Объем торгов
- - time_of_day: Время дня
- historical_data (pd.dataFrame, optional): Исторические data for Analysis
+base_predictions (dict): Предсказания from базовых моделей
+- schr_ml: Предсказания SCHR ML модели
+- Prediction: Основное Prediction (0.0-1.0)
+- confidence: Уверенность in предсказании (0.0-1.0)
+- features_importance: Важность признаков
+- wave2_ml: Предсказания WAVE2 ML модели
+- short3_ml: Предсказания SHORT3 ML модели
+market_context (dict): Контекст рынка
+- trend: Направление тренда
+- volatility: Уровень волатильности
+- volume: Объем торгов
+- time_of_day: Время дня
+historical_data (pd.dataFrame, optional): Исторические data for Analysis
 
  Returns:
- dict: Мета-Prediction
- - final_Prediction: Финальное Prediction (0.0-1.0)
- - confidence: Общая уверенность (0.0-1.0)
- - ensemble_weights: Использованные веса
- - method_Used: Примененный метод объединения
- - reasoning: Обоснование решения
+dict: Мета-Prediction
+- final_Prediction: Финальное Prediction (0.0-1.0)
+- confidence: Общая уверенность (0.0-1.0)
+- ensemble_weights: Использованные веса
+- method_Used: Примененный метод объединения
+- reasoning: Обоснование решения
  """
- # Адаптивное взвешивание on basis производительности
+# Адаптивное взвешивание on basis производительности
  adaptive_weights = self.calculate_adaptive_weights(
  base_predictions,
  market_context,
  historical_data
  )
 
- # Контекстно-зависимое объединение
+# Контекстно-зависимое объединение
  context_ensemble = self.create_context_ensemble(
  base_predictions,
  market_context
  )
 
- # Временное объединение with учетом истории
+# Временное объединение with учетом истории
  temporal_ensemble = self.create_temporal_ensemble(
  base_predictions,
  market_context,
  historical_data
  )
 
- # Иерархическое объединение
+# Иерархическое объединение
  hierarchical_ensemble = self.create_hierarchical_ensemble(
  base_predictions,
  market_context
  )
 
- # Выбор оптимального метода объединения
+# Выбор оптимального метода объединения
  ensemble_results = {
  'adaptive': adaptive_weights,
  'context': context_ensemble,
@@ -691,7 +691,7 @@ class MetaEnsembleModel:
  'hierarchical': hierarchical_ensemble
  }
 
- # Финальное объединение with учетом контекста
+# Финальное объединение with учетом контекста
  final_Prediction = self.combine_ensembles(
  ensemble_results,
  market_context
@@ -700,29 +700,29 @@ class MetaEnsembleModel:
  return final_Prediction
 
  def calculate_adaptive_weights(self, predictions, context):
- """Адаптивное взвешивание моделей"""
+"""Адаптивное взвешивание моделей"""
 
- # Анализ производительности каждой модели
+# Анализ производительности каждой модели
  model_performance = {}
  for model_name, Prediction in predictions.items():
  performance = self.evaluate_model_performance(Prediction, context)
  model_performance[model_name] = performance
 
- # Адаптивные веса
+# Адаптивные веса
  adaptive_weights = self.calculate_weights(model_performance, context)
 
  return adaptive_weights
 
  def create_context_ensemble(self, predictions, context):
- """Контекстно-зависимое объединение"""
+"""Контекстно-зависимое объединение"""
 
- # Определение рыночного контекста
+# Определение рыночного контекста
  market_context = self.determine_market_context(context)
 
- # Выбор моделей for контекста
+# Выбор моделей for контекста
  context_models = self.select_models_for_context(predictions, market_context)
 
- # Взвешивание on basis контекста
+# Взвешивание on basis контекста
  context_weights = self.calculate_context_weights(context_models, market_context)
 
  return context_weights
@@ -750,30 +750,30 @@ class MetaEnsembleModel:
 
 ```python
 class AdvancedRiskManager:
- """Продвинутый риск-менеджмент for супер-системы
+"""Продвинутый риск-менеджмент for супер-системы
 
- parameters риск-менеджмента:
- - risk_metrics: Метрики риска in реальном времени
- - risk_limits: Лимиты риска for различных компонентов
- - hedging_strategies: Стратегии хеджирования
- - correlation_matrix: Матрица корреляций между активами
- - volatility_forecaster: Прогнозировщик волатильности
+parameters риск-менеджмента:
+- risk_metrics: Метрики риска in реальном времени
+- risk_limits: Лимиты риска for различных компонентов
+- hedging_strategies: Стратегии хеджирования
+- correlation_matrix: Матрица корреляций между активами
+- volatility_forecaster: Прогнозировщик волатильности
  """
 
  def __init__(self, config=None):
  """
- Инициализация продвинутого риск-менеджера
+Инициализация продвинутого риск-менеджера
 
  Args:
- config (dict, optional): configuration риск-менеджмента
- - max_position_size: Максимальный размер позиции (доля капитала)
- - stop_loss_threshold: Порог стоп-лосса (in %)
- - take_profit_threshold: Порог тейк-профита (in %)
- - max_drawdown: Максимальная просадка (in %)
- - correlation_threshold: Порог корреляции между позициями
- - liquidity_threshold: Порог ликвидности (USD)
- - volatility_window: Окно for расчета волатильности
- - risk_update_frequency: Частота обновления рисков
+config (dict, optional): configuration риск-менеджмента
+- max_position_size: Максимальный размер позиции (доля капитала)
+- stop_loss_threshold: Порог стоп-лосса (in %)
+- take_profit_threshold: Порог тейк-профита (in %)
+- max_drawdown: Максимальная просадка (in %)
+- correlation_threshold: Порог корреляции между позициями
+- liquidity_threshold: Порог ликвидности (USD)
+- volatility_window: Окно for расчета волатильности
+- risk_update_frequency: Частота обновления рисков
  """
  if config is None:
  config = self._get_default_risk_config()
@@ -784,8 +784,8 @@ class AdvancedRiskManager:
  self.correlation_matrix = {}
  self.volatility_forecaster = None
 
- # Основные лимиты риска
- self.max_position_size = config.get('max_position_size', 0.1) # 10% капитала
+# Основные лимиты риска
+self.max_position_size = config.get('max_position_size', 0.1) # 10% капитала
  self.stop_loss_threshold = config.get('stop_loss_threshold', 0.02) # 2%
  self.take_profit_threshold = config.get('take_profit_threshold', 0.04) # 4%
  self.max_drawdown = config.get('max_drawdown', 0.05) # 5%
@@ -794,7 +794,7 @@ class AdvancedRiskManager:
  self.volatility_window = config.get('volatility_window', 20)
  self.risk_update_frequency = config.get('risk_update_frequency', 10)
 
- # Инициализация метрик риска
+# Инициализация метрик риска
  self.risk_metrics = {
  'current_drawdown': 0.0,
  'max_drawdown': 0.0,
@@ -807,81 +807,81 @@ class AdvancedRiskManager:
  }
 
  def _get_default_risk_config(self):
- """Возвращает конфигурацию on умолчанию for риск-менеджмента"""
+"""Возвращает конфигурацию on умолчанию for риск-менеджмента"""
  return {
- 'max_position_size': 0.1, # Максимальный размер позиции (10%)
- 'stop_loss_threshold': 0.02, # Порог стоп-лосса (2%)
- 'take_profit_threshold': 0.04, # Порог тейк-профита (4%)
- 'max_drawdown': 0.05, # Максимальная просадка (5%)
- 'correlation_threshold': 0.7, # Порог корреляции
- 'liquidity_threshold': 1000000, # Порог ликвидности ($1M)
- 'volatility_window': 20, # Окно волатильности (свечей)
- 'risk_update_frequency': 10, # Частота обновления (свечей)
- 'var_confidence_level': 0.95, # Уровень доверия for VaR
- 'stress_test_scenarios': 1000, # Количество сценариев стресс-теста
- 'monte_carlo_simulations': 10000, # Количество симуляций Монте-Карло
- 'hedging_cost_threshold': 0.001, # Порог стоимости хеджирования
- 'dynamic_position_sizing': True, # Динамическое определение размера позиции
- 'volatility_adjustment': True, # Корректировка on волатильности
- 'correlation_adjustment': True # Корректировка on корреляциям
+'max_position_size': 0.1, # Максимальный размер позиции (10%)
+'stop_loss_threshold': 0.02, # Порог стоп-лосса (2%)
+'take_profit_threshold': 0.04, # Порог тейк-профита (4%)
+'max_drawdown': 0.05, # Максимальная просадка (5%)
+'correlation_threshold': 0.7, # Порог корреляции
+'liquidity_threshold': 1000000, # Порог ликвидности ($1M)
+'volatility_window': 20, # Окно волатильности (свечей)
+'risk_update_frequency': 10, # Частота обновления (свечей)
+'var_confidence_level': 0.95, # Уровень доверия for VaR
+'stress_test_scenarios': 1000, # Количество сценариев стресс-теста
+'monte_carlo_simulations': 10000, # Количество симуляций Монте-Карло
+'hedging_cost_threshold': 0.001, # Порог стоимости хеджирования
+'dynamic_position_sizing': True, # Динамическое определение размера позиции
+'volatility_adjustment': True, # Корректировка on волатильности
+'correlation_adjustment': True # Корректировка on корреляциям
  }
 
  def calculate_dynamic_risk(self, signals, market_data, Portfolio_state, historical_data=None):
  """
- Расчет динамического риска with учетом all факторов
+Расчет динамического риска with учетом all факторов
 
  Args:
- signals (dict): Торговые сигналы from all indicators
- - schr_signals: Сигналы SCHR Levels
- - wave2_signals: Сигналы WAVE2
- - short3_signals: Сигналы SCHR SHORT3
- - meta_signal: Мета-сигнал
- market_data (pd.dataFrame): Текущие рыночные data (OHLCV)
- Portfolio_state (dict): Состояние портфеля
- - positions: Текущие позиции
- - cash: Доступные средства
- - total_value: Общая стоимость портфеля
- - unrealized_pnl: Нереализованная прибыль/убыток
- historical_data (pd.dataFrame, optional): Исторические data for Analysis
+signals (dict): Торговые сигналы from all indicators
+- schr_signals: Сигналы SCHR Levels
+- wave2_signals: Сигналы WAVE2
+- short3_signals: Сигналы SCHR SHORT3
+- meta_signal: Мета-сигнал
+market_data (pd.dataFrame): Текущие рыночные data (OHLCV)
+Portfolio_state (dict): Состояние портфеля
+- positions: Текущие позиции
+- cash: Доступные средства
+- total_value: Общая стоимость портфеля
+- unrealized_pnl: Нереализованная прибыль/убыток
+historical_data (pd.dataFrame, optional): Исторические data for Analysis
 
  Returns:
- dict: Анализ риска
- - total_risk: Общий уровень риска (0.0-1.0)
- - risk_components: components риска
- - market_risk: Рыночный риск
- - Portfolio_risk: Портфельный риск
- - correlation_risk: Корреляционный риск
- - liquidity_risk: Риск ликвидности
- - risk_metrics: Метрики риска
- - recommendations: Рекомендации on управлению рисками
+dict: Анализ риска
+- total_risk: Общий уровень риска (0.0-1.0)
+- risk_components: components риска
+- market_risk: Рыночный риск
+- Portfolio_risk: Портфельный риск
+- correlation_risk: Корреляционный риск
+- liquidity_risk: Риск ликвидности
+- risk_metrics: Метрики риска
+- recommendations: Рекомендации on управлению рисками
  """
- # Анализ рыночного риска
+# Анализ рыночного риска
  market_risk = self.analyze_market_risk(
  market_data,
  historical_data,
  volatility_window=self.volatility_window
  )
 
- # Анализ портфельного риска
+# Анализ портфельного риска
  Portfolio_risk = self.analyze_Portfolio_risk(
  Portfolio_state,
  max_position_size=self.max_position_size,
  max_drawdown=self.max_drawdown
  )
 
- # Анализ корреляционного риска
+# Анализ корреляционного риска
  correlation_risk = self.analyze_correlation_risk(
  signals,
  correlation_threshold=self.correlation_threshold
  )
 
- # Анализ ликвидности
+# Анализ ликвидности
  liquidity_risk = self.analyze_liquidity_risk(
  market_data,
  liquidity_threshold=self.liquidity_threshold
  )
 
- # Объединение рисков with весами
+# Объединение рисков with весами
  risk_components = {
  'market_risk': market_risk,
  'Portfolio_risk': Portfolio_risk,
@@ -891,7 +891,7 @@ class AdvancedRiskManager:
 
  total_risk = self.combine_risks(risk_components)
 
- # Генерация рекомендаций
+# Генерация рекомендаций
  recommendations = self.generate_risk_recommendations(
  total_risk,
  risk_components,
@@ -906,19 +906,19 @@ class AdvancedRiskManager:
  }
 
  def create_hedging_strategy(self, risk_Analysis, signals):
- """create стратегии хеджирования"""
+"""create стратегии хеджирования"""
 
- # Определение необходимости хеджирования
+# Определение необходимости хеджирования
  hedging_needed = self.determine_hedging_need(risk_Analysis)
 
  if hedging_needed:
- # Выбор инструментов хеджирования
+# Выбор инструментов хеджирования
  hedging_instruments = self.select_hedging_instruments(risk_Analysis)
 
- # Расчет размера хеджа
+# Расчет размера хеджа
  hedge_size = self.calculate_hedge_size(risk_Analysis, signals)
 
- # create хеджирующих позиций
+# create хеджирующих позиций
  hedge_positions = self.create_hedge_positions(hedging_instruments, hedge_size)
 
  return hedge_positions
@@ -948,29 +948,29 @@ class AdvancedRiskManager:
 
 ```python
 class ContinuousLearningsystem:
- """Система непрерывного обучения
+"""Система непрерывного обучения
 
- parameters системы обучения:
- - learning_algorithms: Алгоритмы machine learning
- - performance_tracker: Отслеживание производительности
- - adaptation_strategies: Стратегии адаптации
- - drift_detector: Детектор дрифта данных
- - model_updater: Обновлятель моделей
+parameters системы обучения:
+- learning_algorithms: Алгоритмы machine learning
+- performance_tracker: Отслеживание производительности
+- adaptation_strategies: Стратегии адаптации
+- drift_detector: Детектор дрифта данных
+- model_updater: Обновлятель моделей
  """
 
  def __init__(self, config=None):
  """
- Инициализация системы непрерывного обучения
+Инициализация системы непрерывного обучения
 
  Args:
- config (dict, optional): configuration системы обучения
- - retrain_frequency: Частота переобучения (свечей)
- - drift_detection_window: Окно for обнаружения дрифта
- - performance_threshold: Порог производительности for адаптации
- - adaptation_rate: Скорость адаптации (0.0-1.0)
- - memory_size: Размер памяти for обучения
- - learning_rate: Скорость обучения
- - regularization_strength: Сила регуляризации
+config (dict, optional): configuration системы обучения
+- retrain_frequency: Частота переобучения (свечей)
+- drift_detection_window: Окно for обнаружения дрифта
+- performance_threshold: Порог производительности for адаптации
+- adaptation_rate: Скорость адаптации (0.0-1.0)
+- memory_size: Размер памяти for обучения
+- learning_rate: Скорость обучения
+- regularization_strength: Сила регуляризации
  """
  if config is None:
  config = self._get_default_learning_config()
@@ -981,7 +981,7 @@ class ContinuousLearningsystem:
  self.drift_detector = None
  self.model_updater = None
 
- # Основные parameters обучения
+# Основные parameters обучения
  self.retrain_frequency = config.get('retrain_frequency', 1000)
  self.drift_detection_window = config.get('drift_detection_window', 200)
  self.performance_threshold = config.get('performance_threshold', 0.8)
@@ -990,7 +990,7 @@ class ContinuousLearningsystem:
  self.learning_rate = config.get('learning_rate', 0.01)
  self.regularization_strength = config.get('regularization_strength', 0.001)
 
- # Инициализация трекеров
+# Инициализация трекеров
  self.performance_tracker = {
  'accuracy_history': [],
  'loss_history': [],
@@ -1000,64 +1000,64 @@ class ContinuousLearningsystem:
  }
 
  def _get_default_learning_config(self):
- """Возвращает конфигурацию on умолчанию for системы обучения"""
+"""Возвращает конфигурацию on умолчанию for системы обучения"""
  return {
- 'retrain_frequency': 1000, # Частота переобучения (свечей)
- 'drift_detection_window': 200, # Окно for обнаружения дрифта
- 'performance_threshold': 0.8, # Порог производительности
- 'adaptation_rate': 0.1, # Скорость адаптации
- 'memory_size': 10000, # Размер памяти for обучения
- 'learning_rate': 0.01, # Скорость обучения
- 'regularization_strength': 0.001, # Сила регуляризации
- 'drift_threshold': 0.1, # Порог дрифта
- 'performance_window': 100, # Окно Analysis производительности
+'retrain_frequency': 1000, # Частота переобучения (свечей)
+'drift_detection_window': 200, # Окно for обнаружения дрифта
+'performance_threshold': 0.8, # Порог производительности
+'adaptation_rate': 0.1, # Скорость адаптации
+'memory_size': 10000, # Размер памяти for обучения
+'learning_rate': 0.01, # Скорость обучения
+'regularization_strength': 0.001, # Сила регуляризации
+'drift_threshold': 0.1, # Порог дрифта
+'performance_window': 100, # Окно Analysis производительности
  'adaptation_methods': ['online', 'incremental', 'transfer'],
  'model_selection_criteria': ['accuracy', 'stability', 'efficiency'],
- 'early_stopping_patience': 50, # Терпение for ранней остановки
- 'validation_split': 0.2, # Доля валидационных данных
- 'batch_size': 32, # Размер батча
- 'epochs_per_retrain': 100, # Эпох при переобучении
- 'gradient_clipping': 1.0, # Обрезка градиентов
- 'dropout_rate': 0.1, # Коэффициент дропаута
- 'batch_normalization': True, # Использование batch normalization
- 'learning_rate_schedule': 'exponential' # Расписание скорости обучения
+'early_stopping_patience': 50, # Терпение for ранней остановки
+'validation_split': 0.2, # Доля валидационных данных
+'batch_size': 32, # Размер батча
+'epochs_per_retrain': 100, # Эпох при переобучении
+'gradient_clipping': 1.0, # Обрезка градиентов
+'dropout_rate': 0.1, # Коэффициент дропаута
+'batch_normalization': True, # Использование batch normalization
+'learning_rate_schedule': 'exponential' # Расписание скорости обучения
  }
 
  def continuous_learning_cycle(self, new_data, market_conditions, model_state=None):
  """
- Цикл непрерывного обучения with адаптацией
+Цикл непрерывного обучения with адаптацией
 
  Args:
- new_data (pd.dataFrame): Новые рыночные data
- market_conditions (dict): Условия рынка
- - trend: Направление тренда
- - volatility: Уровень волатильности
- - volume: Объем торгов
- - regime: Рыночный режим ('bull', 'bear', 'sideways')
- model_state (dict, optional): Состояние моделей
- - current_models: Текущие модели
- - model_weights: Веса моделей
- - performance_metrics: Метрики производительности
+new_data (pd.dataFrame): Новые рыночные data
+market_conditions (dict): Условия рынка
+- trend: Направление тренда
+- volatility: Уровень волатильности
+- volume: Объем торгов
+- regime: Рыночный режим ('bull', 'bear', 'sideways')
+model_state (dict, optional): Состояние моделей
+- current_models: Текущие модели
+- model_weights: Веса моделей
+- performance_metrics: Метрики производительности
 
  Returns:
- dict: Результат цикла обучения
- - updated_models: Обновленные модели
- - performance_metrics: Метрики производительности
- - adaptation_actions: Выполненные действия адаптации
- - drift_detected: Обнаружен ли дрифт
- - retraining_performed: Выполнено ли переобучение
+dict: Результат цикла обучения
+- updated_models: Обновленные модели
+- performance_metrics: Метрики производительности
+- adaptation_actions: Выполненные действия адаптации
+- drift_detected: Обнаружен ли дрифт
+- retraining_performed: Выполнено ли переобучение
  """
  if model_state is None:
  model_state = self._get_default_model_state()
 
- # Анализ производительности текущих моделей
+# Анализ производительности текущих моделей
  performance = self.analyze_performance(
  new_data,
  model_state,
  window_size=self.performance_threshold
  )
 
- # Обнаружение дрифта in данных
+# Обнаружение дрифта in данных
  drift_detected = self.detect_drift(
  new_data,
  performance,
@@ -1067,7 +1067,7 @@ class ContinuousLearningsystem:
  adaptation_actions = []
 
  if drift_detected:
- # Адаптация моделей к новым условиям
+# Адаптация моделей к новым условиям
  adaptation_result = self.adapt_models(
  new_data,
  market_conditions,
@@ -1075,7 +1075,7 @@ class ContinuousLearningsystem:
  )
  adaptation_actions.append('model_adaptation')
 
- # Переобучение при необходимости
+# Переобучение при необходимости
  if self.needs_retraining(performance, adaptation_result):
  retraining_result = self.retrain_models(
  new_data,
@@ -1083,7 +1083,7 @@ class ContinuousLearningsystem:
  )
  adaptation_actions.append('model_retraining')
 
- # update весов моделей
+# update весов моделей
  weight_update_result = self.update_weights(
  performance,
  market_conditions,
@@ -1091,7 +1091,7 @@ class ContinuousLearningsystem:
  )
  adaptation_actions.append('weight_update')
 
- # Оптимизация гиперпараметров
+# Оптимизация гиперпараметров
  optimization_result = self.optimize_parameters(
  new_data,
  regularization_strength=self.regularization_strength
@@ -1107,18 +1107,18 @@ class ContinuousLearningsystem:
  }
 
  def detect_drift(self, performance):
- """Обнаружение дрифта модели"""
+"""Обнаружение дрифта модели"""
 
- # Анализ точности
+# Анализ точности
  accuracy_drift = self.analyze_accuracy_drift(performance)
 
- # Анализ распределения
+# Анализ распределения
  distribution_drift = self.analyze_distribution_drift(performance)
 
- # Анализ корреляций
+# Анализ корреляций
  correlation_drift = self.analyze_correlation_drift(performance)
 
- # Объединение сигналов дрифта
+# Объединение сигналов дрифта
  drift_detected = any([
  accuracy_drift,
  distribution_drift,
@@ -1128,15 +1128,15 @@ class ContinuousLearningsystem:
  return drift_detected
 
  def adapt_models(self, new_data, market_conditions):
- """Адаптация моделей"""
+"""Адаптация моделей"""
 
- # Адаптация весов
+# Адаптация весов
  self.adapt_weights(new_data, market_conditions)
 
- # Адаптация параметров
+# Адаптация параметров
  self.adapt_parameters(new_data, market_conditions)
 
- # Адаптация архитектуры
+# Адаптация архитектуры
  self.adapt_architecture(new_data, market_conditions)
 ```
 
@@ -1146,40 +1146,40 @@ class ContinuousLearningsystem:
 
 ```python
 def prepare_super_system_data(self, data_dict):
- """Подготовка данных for супер-системы"""
+"""Подготовка данных for супер-системы"""
 
- # Объединение данных all Timeframes
+# Объединение данных all Timeframes
  combined_data = self.combine_all_Timeframes(data_dict)
 
- # create признаков all indicators
+# create признаков all indicators
  schr_features = self.schr_levels.create_features(combined_data)
  wave2_features = self.wave2.create_features(combined_data)
  short3_features = self.schr_short3.create_features(combined_data)
 
- # create мета-признаков
+# create мета-признаков
  meta_features = self.create_meta_features(schr_features, wave2_features, short3_features)
 
- # create целевой переменной
+# create целевой переменной
  target = self.create_super_target(combined_data)
 
  return meta_features, target
 
 def create_meta_features(self, schr_features, wave2_features, short3_features):
- """create мета-признаков"""
+"""create мета-признаков"""
 
- # Объединение all признаков
+# Объединение all признаков
  all_features = pd.concat([schr_features, wave2_features, short3_features], axis=1)
 
- # create взаимодействий между индикаторами
+# create взаимодействий между индикаторами
  interaction_features = self.create_interaction_features(all_features)
 
- # create временных признаков
+# create временных признаков
  temporal_features = self.create_temporal_features(all_features)
 
- # create статистических признаков
+# create статистических признаков
  statistical_features = self.create_statistical_features(all_features)
 
- # Объединение all мета-признаков
+# Объединение all мета-признаков
  meta_features = pd.concat([
  all_features,
  interaction_features,
@@ -1190,26 +1190,26 @@ def create_meta_features(self, schr_features, wave2_features, short3_features):
  return meta_features
 
 def create_interaction_features(self, features):
- """create признаков взаимодействия"""
+"""create признаков взаимодействия"""
 
  interaction_features = pd.dataFrame()
 
- # Взаимодействие SCHR Levels and WAVE2
+# Взаимодействие SCHR Levels and WAVE2
  interaction_features['schr_wave2_interaction'] = (
  features['schr_pressure'] * features['wave2_amplitude']
  )
 
- # Взаимодействие WAVE2 and SCHR SHORT3
+# Взаимодействие WAVE2 and SCHR SHORT3
  interaction_features['wave2_short3_interaction'] = (
  features['wave2_frequency'] * features['short3_volatility']
  )
 
- # Взаимодействие SCHR Levels and SCHR SHORT3
+# Взаимодействие SCHR Levels and SCHR SHORT3
  interaction_features['schr_short3_interaction'] = (
  features['schr_pressure'] * features['short3_momentum']
  )
 
- # Трехстороннее взаимодействие
+# Трехстороннее взаимодействие
  interaction_features['triple_interaction'] = (
  features['schr_pressure'] *
  features['wave2_amplitude'] *
@@ -1224,48 +1224,48 @@ def create_interaction_features(self, features):
 ```python
 def train_super_model(self, features, target, config=None):
  """
- Обучение супер-модели with детальными параметрами
+Обучение супер-модели with детальными параметрами
 
  Args:
- features (pd.dataFrame): Признаки for обучения
- - schr_features: Признаки SCHR Levels
- - wave2_features: Признаки WAVE2
- - short3_features: Признаки SCHR SHORT3
- - meta_features: Мета-признаки
- target (pd.Series): Целевая переменная (0/1)
- config (dict, optional): configuration обучения
- - train_split: Доля обучающих данных (0.0-1.0)
- - val_split: Доля валидационных данных (0.0-1.0)
- - test_split: Доля testsых данных (0.0-1.0)
- - random_state: Случайное состояние for воспроизводимости
- - stratify: Стратификация on целевой переменной
- - feature_selection: Отбор признаков
- - hyperparameter_tuning: configuration гиперпараметров
- - cross_validation: Кросс-валидация
- - early_stopping: Ранняя остановка
- - model_ensemble: Ансамбль моделей
+features (pd.dataFrame): Признаки for обучения
+- schr_features: Признаки SCHR Levels
+- wave2_features: Признаки WAVE2
+- short3_features: Признаки SCHR SHORT3
+- meta_features: Мета-признаки
+target (pd.Series): Целевая переменная (0/1)
+config (dict, optional): configuration обучения
+- train_split: Доля обучающих данных (0.0-1.0)
+- val_split: Доля валидационных данных (0.0-1.0)
+- test_split: Доля testsых данных (0.0-1.0)
+- random_state: Случайное состояние for воспроизводимости
+- stratify: Стратификация on целевой переменной
+- feature_selection: Отбор признаков
+- hyperparameter_tuning: configuration гиперпараметров
+- cross_validation: Кросс-валидация
+- early_stopping: Ранняя остановка
+- model_ensemble: Ансамбль моделей
 
  Returns:
- dict: Результаты обучения
- - meta_model: Обученная мета-модель
- - base_models: Базовые модели
- - performance_metrics: Метрики производительности
- - feature_importance: Важность признаков
- - training_history: История обучения
+dict: Результаты обучения
+- meta_model: Обученная мета-модель
+- base_models: Базовые модели
+- performance_metrics: Метрики производительности
+- feature_importance: Важность признаков
+- training_history: История обучения
  """
  if config is None:
  config = self._get_default_training_config()
 
- # Подготовка данных
+# Подготовка данных
  data = pd.concat([features, target], axis=1)
  data = data.dropna()
 
- # Отбор признаков если включен
+# Отбор признаков если включен
  if config.get('feature_selection', False):
  features = self._select_features(features, target, config['feature_selection'])
  data = pd.concat([features, target], axis=1)
 
- # Разделение on train/validation/test
+# Разделение on train/validation/test
  train_data, val_data, test_data = self.split_data(
  data,
  train_split=config.get('train_split', 0.7),
@@ -1275,14 +1275,14 @@ def train_super_model(self, features, target, config=None):
  stratify=config.get('stratify', True)
  )
 
- # Обучение базовых моделей
+# Обучение базовых моделей
  base_models = self.train_base_models(
  train_data,
  hyperparameter_tuning=config.get('hyperparameter_tuning', True),
  cross_validation=config.get('cross_validation', True)
  )
 
- # Обучение мета-модели
+# Обучение мета-модели
  meta_model = self.train_meta_model(
  base_models,
  val_data,
@@ -1290,20 +1290,20 @@ def train_super_model(self, features, target, config=None):
  model_ensemble=config.get('model_ensemble', True)
  )
 
- # Финальная оценка
+# Финальная оценка
  test_predictions = meta_model.predict(test_data)
  test_accuracy = accuracy_score(test_data['target'], test_predictions)
 
- # Дополнительные метрики
+# Дополнительные метрики
  performance_metrics = self._calculate_performance_metrics(
  test_data['target'],
  test_predictions
  )
 
- # Важность признаков
+# Важность признаков
  feature_importance = self._calculate_feature_importance(meta_model, features)
 
- print(f"Точность супер-модели: {test_accuracy:.3f}")
+print(f"Точность супер-модели: {test_accuracy:.3f}")
  print(f"Precision: {performance_metrics['precision']:.3f}")
  print(f"Recall: {performance_metrics['recall']:.3f}")
  print(f"F1-Score: {performance_metrics['f1_score']:.3f}")
@@ -1318,19 +1318,19 @@ def train_super_model(self, features, target, config=None):
 
 def train_base_models(self, train_data, hyperparameter_tuning=True, cross_validation=True):
  """
- Обучение базовых моделей with детальными параметрами
+Обучение базовых моделей with детальными параметрами
 
  Args:
- train_data (pd.dataFrame): Обучающие data
- hyperparameter_tuning (bool): configuration гиперпараметров
- cross_validation (bool): Кросс-валидация
+train_data (pd.dataFrame): Обучающие data
+hyperparameter_tuning (bool): configuration гиперпараметров
+cross_validation (bool): Кросс-валидация
 
  Returns:
- dict: Обученные базовые модели
+dict: Обученные базовые модели
  """
  base_models = {}
 
- # configuration for каждой модели
+# configuration for каждой модели
  model_configs = {
  'schr': {
  'label': 'target',
@@ -1341,7 +1341,7 @@ def train_base_models(self, train_data, hyperparameter_tuning=True, cross_valida
  'presets': 'best_quality',
  'hyperparameter_tuning': hyperparameter_tuning,
  'cross_validation': cross_validation,
- 'num_trials': 20, # Количество попыток for hyperparameter tuning
+'num_trials': 20, # Количество попыток for hyperparameter tuning
  'search_space': {
  'learning_rate': [0.01, 0.1, 0.3],
  'num_leaves': [31, 50, 100],
@@ -1388,11 +1388,11 @@ def train_base_models(self, train_data, hyperparameter_tuning=True, cross_valida
  }
  }
 
- # Обучение каждой модели
+# Обучение каждой модели
  for model_name, config in model_configs.items():
- print(f"Обучение модели {model_name}...")
+print(f"Обучение модели {model_name}...")
 
- # create модели
+# create модели
  model = TabularPredictor(
  label=config['label'],
  problem_type=config['problem_type'],
@@ -1401,7 +1401,7 @@ def train_base_models(self, train_data, hyperparameter_tuning=True, cross_valida
  presets=config['presets']
  )
 
- # Обучение with настройкой гиперпараметров
+# Обучение with настройкой гиперпараметров
  if config['hyperparameter_tuning']:
  model.fit(
  train_data,
@@ -1414,7 +1414,7 @@ def train_base_models(self, train_data, hyperparameter_tuning=True, cross_valida
  else:
  model.fit(train_data, time_limit=config['time_limit'])
 
- # Кросс-валидация если включена
+# Кросс-валидация если включена
  if config['cross_validation']:
  cv_results = model.fit(
  train_data,
@@ -1425,7 +1425,7 @@ def train_base_models(self, train_data, hyperparameter_tuning=True, cross_valida
  print(f"CV Score for {model_name}: {cv_results['best_score']:.3f}")
 
  base_models[model_name] = model
- print(f"Модель {model_name} обучена успешно")
+print(f"Модель {model_name} обучена успешно")
 
  return base_models
 ```
@@ -1476,7 +1476,7 @@ contract SuperTradingsystemContract {
  int256 short3Volatility;
  bool short3Buysignal;
 
- // Мета-сигнал
+// Мета-сигнал
  bool metaBuysignal;
  bool metaSellsignal;
  uint256 metaConfidence;
@@ -1505,7 +1505,7 @@ contract SuperTradingsystemContract {
  int256 short3Volatility,
  bool short3Buysignal,
 
- // Мета-сигнал
+// Мета-сигнал
  bool metaBuysignal,
  bool metaSellsignal,
  uint256 metaConfidence,

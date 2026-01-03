@@ -73,26 +73,26 @@ import numpy as np
 
 # create оптимизированной модели for продакшена
 def create_production_model(train_data, target_col):
- """create модели, оптимизированной for продакшена"""
+"""create модели, оптимизированной for продакшена"""
 
  predictor = TabularPredictor(
  label=target_col,
  problem_type='auto',
  eval_metric='auto',
- path='./production_models' # Отдельная папка for продакшен моделей
+path='./production_models' # Отдельная папка for продакшен моделей
  )
 
- # Обучение with оптимизацией for деплоя
+# Обучение with оптимизацией for деплоя
  predictor.fit(
  train_data,
- presets='optimize_for_deployment', # Специальные Settings for продакшена
- time_limit=3600, # 1 час - ограничение времени обучения
- num_bag_folds=3, # Меньше фолдов for скорости
+presets='optimize_for_deployment', # Специальные Settings for продакшена
+time_limit=3600, # 1 час - ограничение времени обучения
+num_bag_folds=3, # Меньше фолдов for скорости
  num_bag_sets=1,
  ag_args_fit={
- 'num_cpus': 4, # Ограничение CPU for стабильности
- 'num_gpus': 0, # Отключение GPU for совместимости
- 'memory_limit': 8 # Ограничение памяти in GB
+'num_cpus': 4, # Ограничение CPU for стабильности
+'num_gpus': 0, # Отключение GPU for совместимости
+'memory_limit': 8 # Ограничение памяти in GB
  }
  )
 
@@ -104,71 +104,71 @@ def create_production_model(train_data, target_col):
 **function create_production_model:**
 - **Назначение**: create модели, оптимизированной for продакшен деплоя
 - **parameters**:
- - **`train_data`**: data for обучения
- - **Тип**: dataFrame
- - **describe**: Таблица with обучающими данными
- - **Требования**: Должна содержать целевую переменную
- - **`target_col`**: Название целевой переменной
- - **Тип**: str
- - **describe**: Название столбца with целевой переменной
+- **`train_data`**: data for обучения
+- **Тип**: dataFrame
+- **describe**: Таблица with обучающими данными
+- **Требования**: Должна содержать целевую переменную
+- **`target_col`**: Название целевой переменной
+- **Тип**: str
+- **describe**: Название столбца with целевой переменной
 - **Возвращаемое значение**: TabularPredictor - оптимизированная модель
 
 **parameters TabularPredictor:**
 - **`label`**: Название целевой переменной
- - **Тип**: str
- - **describe**: Столбец with целевой переменной for предсказания
+- **Тип**: str
+- **describe**: Столбец with целевой переменной for предсказания
 - **`problem_type`**: Тип задачи machine learning
- - **Тип**: str
- - **Значения**: 'auto', 'binary', 'multiclass', 'regression'
- - **on умолчанию**: 'auto'
- - **describe**: AutoGluon автоматически определяет тип задачи
+- **Тип**: str
+- **Значения**: 'auto', 'binary', 'multiclass', 'regression'
+- **on умолчанию**: 'auto'
+- **describe**: AutoGluon автоматически определяет тип задачи
 - **`eval_metric`**: Метрика for оценки качества
- - **Тип**: str
- - **Значения**: 'auto', 'accuracy', 'f1', 'roc_auc', 'rmse', 'mae'
- - **on умолчанию**: 'auto'
- - **describe**: Автоматический выбор метрики on типу задачи
+- **Тип**: str
+- **Значения**: 'auto', 'accuracy', 'f1', 'roc_auc', 'rmse', 'mae'
+- **on умолчанию**: 'auto'
+- **describe**: Автоматический выбор метрики on типу задачи
 - **`path`**: Путь for сохранения модели
- - **Тип**: str
- - **describe**: Директория for сохранения files модели
- - **Рекомендации**: Use отдельную папку for продакшен моделей
+- **Тип**: str
+- **describe**: Директория for сохранения files модели
+- **Рекомендации**: Use отдельную папку for продакшен моделей
 
 **parameters predictor.fit():**
 - **`presets`**: Предустановленные Settings
- - **Тип**: str
- - **Значения**: 'optimize_for_deployment', 'best_quality', 'high_quality', 'good_quality', 'medium_quality', 'optimize_for_size'
- - **describe**: 'optimize_for_deployment' оптимизирует модель for продакшена
+- **Тип**: str
+- **Значения**: 'optimize_for_deployment', 'best_quality', 'high_quality', 'good_quality', 'medium_quality', 'optimize_for_size'
+- **describe**: 'optimize_for_deployment' оптимизирует модель for продакшена
 - **`time_limit`**: Ограничение времени обучения
- - **Тип**: int
- - **Диапазон значений**: `[60, 86400]` (1 minutesа - 24 часа)
- - **on умолчанию**: 3600 (1 час)
- - **Рекомендации**: for продакшена Use 1-2 часа
+- **Тип**: int
+- **Диапазон значений**: `[60, 86400]` (1 minutesа - 24 часа)
+- **on умолчанию**: 3600 (1 час)
+- **Рекомендации**: for продакшена Use 1-2 часа
 - **`num_bag_folds`**: Количество фолдов for валидации
- - **Тип**: int
- - **Диапазон значений**: `[2, 10]` (рекомендуется 3-5)
- - **on умолчанию**: 8
- - **Рекомендации**: for продакшена Use 3-5 фолдов
+- **Тип**: int
+- **Диапазон значений**: `[2, 10]` (рекомендуется 3-5)
+- **on умолчанию**: 8
+- **Рекомендации**: for продакшена Use 3-5 фолдов
 - **`num_bag_sets`**: Количество наборов фолдов
- - **Тип**: int
- - **Диапазон значений**: `[1, 5]` (рекомендуется 1-2)
- - **on умолчанию**: 1
- - **Рекомендации**: for продакшена Use 1 набор
+- **Тип**: int
+- **Диапазон значений**: `[1, 5]` (рекомендуется 1-2)
+- **on умолчанию**: 1
+- **Рекомендации**: for продакшена Use 1 набор
 
 **parameters ag_args_fit:**
 - **`num_cpus`**: Количество CPU for обучения
- - **Тип**: int
- - **Диапазон значений**: `[1, 32]` (рекомендуется 2-8)
- - **on умолчанию**: 4
- - **Рекомендации**: for продакшена Use 2-4 CPU
+- **Тип**: int
+- **Диапазон значений**: `[1, 32]` (рекомендуется 2-8)
+- **on умолчанию**: 4
+- **Рекомендации**: for продакшена Use 2-4 CPU
 - **`num_gpus`**: Количество GPU for обучения
- - **Тип**: int
- - **Диапазон значений**: `[0, 8]` (рекомендуется 0-2)
- - **on умолчанию**: 0
- - **Рекомендации**: for продакшена отключите GPU for совместимости
+- **Тип**: int
+- **Диапазон значений**: `[0, 8]` (рекомендуется 0-2)
+- **on умолчанию**: 0
+- **Рекомендации**: for продакшена отключите GPU for совместимости
 - **`memory_limit`**: Ограничение памяти in GB
- - **Тип**: int
- - **Диапазон значений**: `[1, 64]` (рекомендуется 4-16)
- - **on умолчанию**: 8
- - **Рекомендации**: for продакшена Use 4-8 GB
+- **Тип**: int
+- **Диапазон значений**: `[1, 64]` (рекомендуется 4-16)
+- **on умолчанию**: 8
+- **Рекомендации**: for продакшена Use 4-8 GB
 
 **Почему важны ограничения ресурсов?** Потому что продакшен серверы имеют ограниченные ресурсы, and модель должна Workingть in этих рамках.
 
@@ -176,9 +176,9 @@ def create_production_model(train_data, target_col):
 
 ```python
 def compress_model(predictor, model_name):
- """Сжатие модели for продакшена"""
+"""Сжатие модели for продакшена"""
 
- # Сохранение сжатой модели
+# Сохранение сжатой модели
  predictor.save(
  model_name,
  save_space=True,
@@ -186,7 +186,7 @@ def compress_model(predictor, model_name):
  save_info=True
  )
 
- # Получение размера модели
+# Получение размера модели
  import os
  model_size = os.path.getsize(f"{model_name}/predictor.pkl") / (1024 * 1024) # MB
  print(f"Model size: {model_size:.2f} MB")
@@ -199,34 +199,34 @@ def compress_model(predictor, model_name):
 **function compress_model:**
 - **Назначение**: Сжатие модели for уменьшения размера files
 - **parameters**:
- - **`predictor`**: Обученная модель
- - **Тип**: TabularPredictor
- - **describe**: Обученная модель AutoGluon
- - **`model_name`**: Имя for сохранения модели
- - **Тип**: str
- - **describe**: Путь and имя for сохранения сжатой модели
+- **`predictor`**: Обученная модель
+- **Тип**: TabularPredictor
+- **describe**: Обученная модель AutoGluon
+- **`model_name`**: Имя for сохранения модели
+- **Тип**: str
+- **describe**: Путь and имя for сохранения сжатой модели
 - **Возвращаемое значение**: float - размер модели in MB
 
 **parameters predictor.save():**
 - **`model_name`**: Имя модели
- - **Тип**: str
- - **describe**: Путь for сохранения модели
- - **Рекомендации**: Use описательные имена with версиями
+- **Тип**: str
+- **describe**: Путь for сохранения модели
+- **Рекомендации**: Use описательные имена with версиями
 - **`save_space`**: Оптимизация размера
- - **Тип**: bool
- - **on умолчанию**: True
- - **describe**: Удаляет временные файлы for экономии места
- - **Влияние**: Уменьшает размер модели on 20-30%
+- **Тип**: bool
+- **on умолчанию**: True
+- **describe**: Удаляет временные файлы for экономии места
+- **Влияние**: Уменьшает размер модели on 20-30%
 - **`compress`**: Сжатие files
- - **Тип**: bool
- - **on умолчанию**: True
- - **describe**: Использует gzip сжатие for files модели
- - **Влияние**: Уменьшает размер модели on 40-60%
+- **Тип**: bool
+- **on умолчанию**: True
+- **describe**: Использует gzip сжатие for files модели
+- **Влияние**: Уменьшает размер модели on 40-60%
 - **`save_info`**: Сохранение информации о модели
- - **Тип**: bool
- - **on умолчанию**: True
- - **describe**: Сохраняет метаdata о модели
- - **Использование**: Нужно for загрузки and отладки модели
+- **Тип**: bool
+- **on умолчанию**: True
+- **describe**: Сохраняет метаdata о модели
+- **Использование**: Нужно for загрузки and отладки модели
 
 **Методы сжатия:**
 - **remove временных files**: clean промежуточных результатов
@@ -238,15 +238,15 @@ def compress_model(predictor, model_name):
 
 ```python
 def validate_production_model(predictor, test_data, performance_thresholds):
- """Валидация модели for продакшена"""
+"""Валидация модели for продакшена"""
 
- # Предсказания
+# Предсказания
  predictions = predictor.predict(test_data)
 
- # Оценка качества
+# Оценка качества
  performance = predictor.evaluate(test_data)
 
- # check пороговых значений
+# check пороговых значений
  validation_results = {}
  for metric, threshold in performance_thresholds.items():
  if metric in performance:
@@ -254,11 +254,11 @@ def validate_production_model(predictor, test_data, performance_thresholds):
  else:
  validation_results[metric] = False
 
- # check стабильности predictions
+# check стабильности predictions
  if hasattr(predictor, 'predict_proba'):
  probabilities = predictor.predict_proba(test_data)
  prob_std = probabilities.std().mean()
- validation_results['stability'] = prob_std < 0.1 # Стабильность вероятностей
+validation_results['stability'] = prob_std < 0.1 # Стабильность вероятностей
 
  return validation_results, performance
 ```
@@ -268,28 +268,28 @@ def validate_production_model(predictor, test_data, performance_thresholds):
 **function validate_production_model:**
 - **Назначение**: Валидация модели перед деплоем in продакшен
 - **parameters**:
- - **`predictor`**: Обученная модель
- - **Тип**: TabularPredictor
- - **describe**: Модель for валидации
- - **`test_data`**: testsые data
- - **Тип**: dataFrame
- - **describe**: data for тестирования модели
- - **Требования**: Должны содержать целевую переменную
- - **`performance_thresholds`**: Пороговые значения метрик
- - **Тип**: dict
- - **describe**: Словарь with минимальными значениями метрик
+- **`predictor`**: Обученная модель
+- **Тип**: TabularPredictor
+- **describe**: Модель for валидации
+- **`test_data`**: testsые data
+- **Тип**: dataFrame
+- **describe**: data for тестирования модели
+- **Требования**: Должны содержать целевую переменную
+- **`performance_thresholds`**: Пороговые значения метрик
+- **Тип**: dict
+- **describe**: Словарь with минимальными значениями метрик
  - **example**: {'accuracy': 0.85, 'f1': 0.80, 'roc_auc': 0.90}
 - **Возвращаемое значение**: tuple - (validation_results, performance)
- - **`validation_results`**: dict - результаты валидации
- - **`performance`**: dict - метрики производительности
+- **`validation_results`**: dict - результаты валидации
+- **`performance`**: dict - метрики производительности
 
 **Structure validation_results:**
 - **`metric_name`**: bool - результат проверки метрики
- - **True**: Метрика превышает пороговое значение
- - **False**: Метрика ниже порогового значения
+- **True**: Метрика превышает пороговое значение
+- **False**: Метрика ниже порогового значения
 - **`stability`**: bool - стабильность predictions
- - **True**: Стандартное отклонение вероятностей < 0.1
- - **False**: Высокая нестабильность predictions
+- **True**: Стандартное отклонение вероятностей < 0.1
+- **False**: Высокая нестабильность predictions
 
 **Structure performance:**
 - **Метрики классификации**: accuracy, precision, recall, f1, roc_auc
@@ -329,18 +329,18 @@ app = FastAPI(title="AutoML Gluon Production API", version="1.0.0")
 model = None
 
 class PredictionRequest(BaseModel):
- """Схема запроса for предсказания"""
+"""Схема запроса for предсказания"""
  data: List[Dict[str, Any]]
 
 class PredictionResponse(BaseModel):
- """Схема ответа with предсказаниями"""
+"""Схема ответа with предсказаниями"""
  predictions: List[Any]
  probabilities: List[Dict[str, float]] = None
  model_info: Dict[str, Any]
  timestamp: str
 
 class healthResponse(BaseModel):
- """Схема ответа for health check"""
+"""Схема ответа for health check"""
  Status: str
  model_loaded: bool
  model_info: Dict[str, Any] = None
@@ -349,51 +349,51 @@ class healthResponse(BaseModel):
 
 **FastAPI application:**
 - **`title`**: Название API
- - **Тип**: str
- - **describe**: Отображается in документации Swagger
- - **Рекомендации**: Use описательное название
+- **Тип**: str
+- **describe**: Отображается in документации Swagger
+- **Рекомендации**: Use описательное название
 - **`version`**: Версия API
- - **Тип**: str
- - **describe**: Версия API for отслеживания изменений
- - **Рекомендации**: Use семантическое версионирование (1.0.0)
+- **Тип**: str
+- **describe**: Версия API for отслеживания изменений
+- **Рекомендации**: Use семантическое версионирование (1.0.0)
 
 **Класс PredictionRequest:**
 - **`data`**: data for предсказания
- - **Тип**: List[Dict[str, Any]]
- - **describe**: List записей for предсказания
- - **Structure**: Каждая запись - словарь with приsignми
+- **Тип**: List[Dict[str, Any]]
+- **describe**: List записей for предсказания
+- **Structure**: Каждая запись - словарь with приsignми
  - **example**: [{"feature1": 1.0, "feature2": 2.0}, {"feature1": 3.0, "feature2": 4.0}]
 
 **Класс PredictionResponse:**
 - **`predictions`**: Предсказания модели
- - **Тип**: List[Any]
- - **describe**: List predictions for каждой записи
+- **Тип**: List[Any]
+- **describe**: List predictions for каждой записи
 - **`probabilities`**: Вероятности predictions
- - **Тип**: List[Dict[str, float]] = None
- - **describe**: Вероятности for каждого класса (только for классификации)
+- **Тип**: List[Dict[str, float]] = None
+- **describe**: Вероятности for каждого класса (только for классификации)
  - **Structure**: [{"class1": 0.8, "class2": 0.2}, ...]
 - **`model_info`**: Информация о модели
- - **Тип**: Dict[str, Any]
- - **describe**: Метаdata о модели
+- **Тип**: Dict[str, Any]
+- **describe**: Метаdata о модели
 - **`timestamp`**: Время предсказания
- - **Тип**: str
- - **describe**: ISO формат времени предсказания
+- **Тип**: str
+- **describe**: ISO формат времени предсказания
 
 **Класс healthResponse:**
 - **`status`**: Статус API
- - **Тип**: str
- - **Значения**: "healthy", "unhealthy"
- - **describe**: Общий статус API
+- **Тип**: str
+- **Значения**: "healthy", "unhealthy"
+- **describe**: Общий статус API
 - **`model_loaded`**: Статус загрузки модели
- - **Тип**: bool
- - **describe**: Загружена ли модель
+- **Тип**: bool
+- **describe**: Загружена ли модель
 - **`model_info`**: Информация о модели
- - **Тип**: Dict[str, Any] = None
- - **describe**: Метаdata о модели (только если модель загружена)
+- **Тип**: Dict[str, Any] = None
+- **describe**: Метаdata о модели (только если модель загружена)
 
 @app.on_event("startup")
 async def load_model():
- """Загрузка модели при Launchе сервера"""
+"""Загрузка модели при Launchе сервера"""
  global model
  try:
  model = TabularPredictor.load('./production_models')
@@ -428,19 +428,19 @@ async def predict(request: PredictionRequest):
  raise HTTPException(status_code=503, detail="Model not loaded")
 
  try:
- # Преобразование данных in dataFrame
+# Преобразование данных in dataFrame
  df = pd.dataFrame(request.data)
 
- # Предсказания
+# Предсказания
  predictions = model.predict(df)
 
- # Вероятности (если доступны)
+# Вероятности (если доступны)
  probabilities = None
  if hasattr(model, 'predict_proba'):
  proba = model.predict_proba(df)
  probabilities = proba.to_dict('records')
 
- # Информация о модели
+# Информация о модели
  model_info = {
  "model_path": model.path,
  "problem_type": model.problem_type,
@@ -461,7 +461,7 @@ async def predict(request: PredictionRequest):
 
 @app.get("/model/info")
 async def model_info():
- """Информация о модели"""
+"""Информация о модели"""
  if model is None:
  raise HTTPException(status_code=503, detail="Model not loaded")
 
@@ -499,7 +499,7 @@ app = Flask(__name__)
 model = None
 
 def load_model():
- """Загрузка модели"""
+"""Загрузка модели"""
  global model
  try:
  model = TabularPredictor.load('./production_models')
@@ -535,19 +535,19 @@ def predict():
  return jsonify({"error": "Model not loaded"}), 503
 
  try:
- # Получение данных
+# Получение данных
  data = request.get_json()
 
  if 'data' not in data:
  return jsonify({"error": "No data provided"}), 400
 
- # Преобразование in dataFrame
+# Преобразование in dataFrame
  df = pd.dataFrame(data['data'])
 
- # Предсказания
+# Предсказания
  predictions = model.predict(df)
 
- # Вероятности (если доступны)
+# Вероятности (если доступны)
  probabilities = None
  if hasattr(model, 'predict_proba'):
  proba = model.predict_proba(df)
@@ -571,7 +571,7 @@ def predict():
 
 @app.route('/model/info', methods=['GET'])
 def model_info():
- """Информация о модели"""
+"""Информация о модели"""
  if model is None:
  return jsonify({"error": "Model not loaded"}), 503
 
@@ -642,39 +642,39 @@ CMD ["python", "app.py"]
 
 **Dockerfile instructions:**
 - **`FROM python:3.9-slim`**: Базовый образ
- - **describe**: Использует Python 3.9 on базе Debian slim
- - **Размер**: ~150MB (компактный образ)
- - **Преимущества**: Быстрая загрузка, минимальная поверхность атаки
+- **describe**: Использует Python 3.9 on базе Debian slim
+- **Размер**: ~150MB (компактный образ)
+- **Преимущества**: Быстрая загрузка, минимальная поверхность атаки
 - **`RUN apt-get update && apt-get install -y`**: installation системных dependencies
- - **`gcc`**: Компилятор C for сборки Python пакетов
- - **`g++`**: Компилятор C++ for сборки Python пакетов
- - **`&& rm -rf /var/lib/apt/Lists/*`**: clean cache apt for уменьшения размера
+- **`gcc`**: Компилятор C for сборки Python пакетов
+- **`g++`**: Компилятор C++ for сборки Python пакетов
+- **`&& rm -rf /var/lib/apt/Lists/*`**: clean cache apt for уменьшения размера
 - **`WORKDIR /app`**: Рабочая директория
- - **describe**: Устанавливает /app как рабочую директорию
- - **Преимущества**: Изолирует файлы приложения
+- **describe**: Устанавливает /app как рабочую директорию
+- **Преимущества**: Изолирует файлы приложения
 - **`COPY requirements.txt .`**: Копирование файла dependencies
- - **describe**: Копирует requirements.txt in контейнер
- - **Преимущества**: Кэширование слоев Docker
+- **describe**: Копирует requirements.txt in контейнер
+- **Преимущества**: Кэширование слоев Docker
 - **`RUN pip install --no-cache-dir -r requirements.txt`**: installation Python dependencies
- - **`--no-cache-dir`**: Отключает кэш pip for уменьшения размера
- - **Преимущества**: Уменьшает размер образа on 50-100MB
+- **`--no-cache-dir`**: Отключает кэш pip for уменьшения размера
+- **Преимущества**: Уменьшает размер образа on 50-100MB
 - **`COPY . .`**: Копирование кода приложения
- - **describe**: Копирует весь код приложения in контейнер
- - **Рекомендации**: Use .dockerignore for исключения ненужных files
+- **describe**: Копирует весь код приложения in контейнер
+- **Рекомендации**: Use .dockerignore for исключения ненужных files
 - **`RUN Useradd -m -u 1000 appUser && chown -R appUser:appUser /app`**: create User
- - **`-m`**: Создает домашнюю директорию
- - **`-u 1000`**: Устанавливает UID 1000
- - **`chown -R`**: Изменяет владельца all files
- - **Безопасность**: Launch not from root User
+- **`-m`**: Создает домашнюю директорию
+- **`-u 1000`**: Устанавливает UID 1000
+- **`chown -R`**: Изменяет владельца all files
+- **Безопасность**: Launch not from root User
 - **`User appUser`**: Переключение on User
- - **describe**: Переключается on созданного User
- - **Безопасность**: Ограничивает права доступа
+- **describe**: Переключается on созданного User
+- **Безопасность**: Ограничивает права доступа
 - **`EXPOSE 8000`**: Открытие порта
- - **describe**: Документирует, что application использует порт 8000
- - **Примечание**: not открывает порт автоматически
+- **describe**: Документирует, что application использует порт 8000
+- **Примечание**: not открывает порт автоматически
 - **`CMD ["python", "app.py"]`**: Команда Launchа
- - **describe**: Launchает application при старте контейнера
- - **Формат**: JSON массив for избежания shell интерпретации
+- **describe**: Launchает application при старте контейнера
+- **Формат**: JSON массив for избежания shell интерпретации
 
 ### Docker Compose for продакшена
 
@@ -729,56 +729,56 @@ volumes:
 
 **Версия Docker Compose:**
 - **`Version: '3.8'`**: Версия формата файла
- - **describe**: Использует формат Docker Compose версии 3.8
- - **Преимущества**: Поддержка новых функций and улучшенная совместимость
+- **describe**: Использует формат Docker Compose версии 3.8
+- **Преимущества**: Поддержка новых функций and улучшенная совместимость
 
 **Сервис autogluon-api:**
 - **`build: .`**: Сборка образа
- - **describe**: Собирает образ из Dockerfile in текущей директории
- - **Альтернативы**: Можно использовать `image: имя_образа` for готового образа
+- **describe**: Собирает образ из Dockerfile in текущей директории
+- **Альтернативы**: Можно использовать `image: имя_образа` for готового образа
 - **`ports`**: Проброс портов
- - **`"8000:8000"`**: Пробрасывает порт 8000 контейнера on порт 8000 хоста
- - **Формат**: "хост:контейнер"
+- **`"8000:8000"`**: Пробрасывает порт 8000 контейнера on порт 8000 хоста
+- **Формат**: "хост:контейнер"
 - **`environment`**: Переменные окружения
- - **`MODEL_PATH=/app/models`**: Путь к моделям in контейнере
- - **`LOG_LEVEL=INFO`**: Уровень Logsрования
+- **`MODEL_PATH=/app/models`**: Путь к моделям in контейнере
+- **`LOG_LEVEL=INFO`**: Уровень Logsрования
 - **`volumes`**: Монтирование томов
- - **`./models:/app/models`**: Монтирует локальную папку models in контейнер
- - **`./Logs:/app/Logs`**: Монтирует локальную папку Logs in контейнер
+- **`./models:/app/models`**: Монтирует локальную папку models in контейнер
+- **`./Logs:/app/Logs`**: Монтирует локальную папку Logs in контейнер
 - **`restart: unless-stopped`**: Политика переLaunchа
- - **describe**: ПереLaunchает контейнер при сбое, кроме ручной остановки
- - **Альтернативы**: always, on-failure, no
+- **describe**: ПереLaunchает контейнер при сбое, кроме ручной остановки
+- **Альтернативы**: always, on-failure, no
 - **`healthcheck`**: health check
- - **`test`**: Команда for проверки health
- - **`interval: 30s`**: Интервал проверки
- - **`timeout: 10s`**: Таймаут team
- - **`retries: 3`**: Количество попыток
- - **`start_period: 40s`**: Время ожидания перед первой проверкой
+- **`test`**: Команда for проверки health
+- **`interval: 30s`**: Интервал проверки
+- **`timeout: 10s`**: Таймаут team
+- **`retries: 3`**: Количество попыток
+- **`start_period: 40s`**: Время ожидания перед первой проверкой
 
 **Сервис nginx:**
 - **`image: nginx:alpine`**: Готовый образ Nginx
- - **describe**: Использует Alpine Linux версию Nginx
- - **Размер**: ~15MB (компактный образ)
+- **describe**: Использует Alpine Linux версию Nginx
+- **Размер**: ~15MB (компактный образ)
 - **`ports`**: Проброс портов
- - **`"80:80"`**: HTTP порт
- - **`"443:443"`**: HTTPS порт
+- **`"80:80"`**: HTTP порт
+- **`"443:443"`**: HTTPS порт
 - **`volumes`**: Монтирование конфигурации
  - **`./nginx.conf:/etc/nginx/nginx.conf`**: configuration Nginx
- - **`./ssl:/etc/nginx/ssl`**: SSL сертификаты
+- **`./ssl:/etc/nginx/ssl`**: SSL сертификаты
 - **`depends_on`**: dependencies
- - **`autogluon-api`**: Nginx Launchается после API service
+- **`autogluon-api`**: Nginx Launchается после API service
 
 **Сервис redis:**
 - **`image: redis:alpine`**: Готовый образ Redis
- - **describe**: Использует Alpine Linux версию Redis
- - **Размер**: ~7MB (компактный образ)
+- **describe**: Использует Alpine Linux версию Redis
+- **Размер**: ~7MB (компактный образ)
 - **`volumes`**: Постоянное хранение
- - **`redis_data:/data`**: Именованный том for данных Redis
+- **`redis_data:/data`**: Именованный том for данных Redis
 
 **Тома:**
 - **`redis_data`**: Именованный том
- - **describe**: Создает постоянный том for данных Redis
- - **Преимущества**: data сохраняются при переLaunchе контейнеров
+- **describe**: Создает постоянный том for данных Redis
+- **Преимущества**: data сохраняются при переLaunchе контейнеров
 
 ## Kubernetes деплой
 
@@ -884,76 +884,76 @@ spec:
 
 **deployment манифест:**
 - **`apiVersion: apps/v1`**: Версия API
- - **describe**: Использует стабильную версию API for deployment
+- **describe**: Использует стабильную версию API for deployment
 - **`kind: deployment`**: Тип ресурса
- - **describe**: Создает deployment for управления подами
+- **describe**: Создает deployment for управления подами
 - **`metadata.name`**: Имя deployment
- - **describe**: Уникальное имя for идентификации
+- **describe**: Уникальное имя for идентификации
 - **`spec.replicas: 3`**: Количество реплик
- - **describe**: Создает 3 копии приложения
- - **Преимущества**: Высокая доступность and нагрузочная способность
+- **describe**: Создает 3 копии приложения
+- **Преимущества**: Высокая доступность and нагрузочная способность
 - **`spec.selector.matchLabels`**: Селектор подов
- - **describe**: Выбирает поды with соответствующими метками
+- **describe**: Выбирает поды with соответствующими метками
 - **`spec.template`**: Шаблон пода
- - **describe**: Определяет конфигурацию подов
+- **describe**: Определяет конфигурацию подов
 
 **Контейнер:**
 - **`name: autogluon-api`**: Имя контейнера
- - **describe**: Уникальное имя контейнера in поде
+- **describe**: Уникальное имя контейнера in поде
 - **`image: autogluon-api:latest`**: Образ контейнера
- - **describe**: Docker образ for Launchа
- - **Рекомендации**: Use конкретные теги версий вместо latest
+- **describe**: Docker образ for Launchа
+- **Рекомендации**: Use конкретные теги версий вместо latest
 - **`ports.containerPort: 8000`**: Порт контейнера
- - **describe**: Порт, который слушает application
+- **describe**: Порт, который слушает application
 - **`env`**: Переменные окружения
- - **`MODEL_PATH`**: Путь к моделям in контейнере
- - **`LOG_LEVEL`**: Уровень Logsрования
+- **`MODEL_PATH`**: Путь к моделям in контейнере
+- **`LOG_LEVEL`**: Уровень Logsрования
 
 **Ресурсы:**
 - **`resources.requests`**: Минимальные ресурсы
- - **`memory: "1Gi"`**: Минимум 1GB RAM
- - **`cpu: "500m"`**: Минимум 0.5 CPU
+- **`memory: "1Gi"`**: Минимум 1GB RAM
+- **`cpu: "500m"`**: Минимум 0.5 CPU
 - **`resources.limits`**: Максимальные ресурсы
- - **`memory: "2Gi"`**: Максимум 2GB RAM
- - **`cpu: "1000m"`**: Максимум 1 CPU
+- **`memory: "2Gi"`**: Максимум 2GB RAM
+- **`cpu: "1000m"`**: Максимум 1 CPU
 
 **Проверки health:**
 - **`livenessProbe`**: check жизнеспособности
- - **`httpGet`**: HTTP запрос for проверки
- - **`path: /health`**: Путь for проверки
- - **`port: 8000`**: Порт for проверки
- - **`initialDelaySeconds: 30`**: Задержка перед первой проверкой
- - **`periodseconds: 10`**: Интервал проверки
+- **`httpGet`**: HTTP запрос for проверки
+- **`path: /health`**: Путь for проверки
+- **`port: 8000`**: Порт for проверки
+- **`initialDelaySeconds: 30`**: Задержка перед первой проверкой
+- **`periodseconds: 10`**: Интервал проверки
 - **`readinessProbe`**: check готовности
- - **describe**: Проверяет, готов ли контейнер принимать трафик
- - **`initialDelaySeconds: 5`**: Быстрая check готовности
+- **describe**: Проверяет, готов ли контейнер принимать трафик
+- **`initialDelaySeconds: 5`**: Быстрая check готовности
 
 **Тома:**
 - **`volumeMounts`**: Монтирование томов in контейнер
- - **`model-storage`**: Том for моделей
- - **`log-storage`**: Том for логов
+- **`model-storage`**: Том for моделей
+- **`log-storage`**: Том for логов
 - **`volumes`**: Определение томов
- - **`persistentVolumeClaim`**: Использование PVC for постоянного хранения
+- **`persistentVolumeClaim`**: Использование PVC for постоянного хранения
 
 **service:**
 - **`kind: service`**: Тип ресурса
- - **describe**: Создает сервис for доступа к подам
+- **describe**: Создает сервис for доступа к подам
 - **`spec.selector`**: Селектор подов
- - **describe**: Выбирает поды for балансировки нагрузки
+- **describe**: Выбирает поды for балансировки нагрузки
 - **`spec.ports`**: Проброс портов
- - **`port: 80`**: Внешний порт
- - **`targetPort: 8000`**: Порт контейнера
+- **`port: 80`**: Внешний порт
+- **`targetPort: 8000`**: Порт контейнера
 - **`type: LoadBalancer`**: Тип service
- - **describe**: Создает внешний LoadBalancer
+- **describe**: Создает внешний LoadBalancer
 
 **PersistentVolumeClaim:**
 - **`kind: PersistentVolumeClaim`**: Тип ресурса
- - **describe**: Запрос on постоянное хранилище
+- **describe**: Запрос on постоянное хранилище
 - **`spec.accessModes`**: Режимы доступа
- - **`ReadWriteOnce`**: Чтение/запись одним узлом
+- **`ReadWriteOnce`**: Чтение/запись одним узлом
 - **`spec.resources.requests.storage`**: Размер хранилища
- - **`10Gi`**: 10GB for моделей
- - **`5Gi`**: 5GB for логов
+- **`10Gi`**: 10GB for моделей
+- **`5Gi`**: 5GB for логов
 
 ## Monitoring and Logsрование
 
@@ -980,7 +980,7 @@ import requests
 from typing import Dict, Any
 
 class ProductionMonitor:
- """Monitoring продакшен системы"""
+"""Monitoring продакшен системы"""
 
  def __init__(self, log_file='production.log'):
  self.log_file = log_file
@@ -988,7 +988,7 @@ class ProductionMonitor:
  self.metrics = {}
 
  def setup_logging(self):
- """configuration Logsрования"""
+"""configuration Logsрования"""
  logging.basicConfig(
  level=logging.INFO,
  format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -1001,7 +1001,7 @@ class ProductionMonitor:
 
  def log_Prediction(self, input_data: Dict, Prediction: Any,
  processing_time: float, model_info: Dict):
- """Logsрование предсказания"""
+"""Logsрование предсказания"""
  log_entry = {
  'timestamp': datetime.now().isoformat(),
  'input_data': input_data,
@@ -1012,7 +1012,7 @@ class ProductionMonitor:
  self.logger.info(f"Prediction: {log_entry}")
 
  def log_error(self, error: Exception, context: Dict):
- """Logsрование ошибок"""
+"""Logsрование ошибок"""
  error_entry = {
  'timestamp': datetime.now().isoformat(),
  'error': str(error),
@@ -1022,7 +1022,7 @@ class ProductionMonitor:
  self.logger.error(f"Error: {error_entry}")
 
  def get_system_metrics(self) -> Dict[str, Any]:
- """Получение системных метрик"""
+"""Получение системных метрик"""
  return {
  'cpu_percent': psutil.cpu_percent(),
  'memory_percent': psutil.virtual_memory().percent,
@@ -1031,9 +1031,9 @@ class ProductionMonitor:
  }
 
  def check_model_health(self, model) -> Dict[str, Any]:
- """health check модели"""
+"""health check модели"""
  try:
- # testsое Prediction
+# testsое Prediction
  test_data = pd.dataFrame({'feature1': [1.0], 'feature2': [2.0]})
  start_time = time.time()
  Prediction = model.predict(test_data)
@@ -1057,89 +1057,89 @@ class ProductionMonitor:
 **Класс ProductionMonitor:**
 - **Назначение**: Monitoring продакшен системы AutoML Gluon
 - **parameters конструктора**:
- - **`log_file`**: Путь к файлу логов
- - **Тип**: str
- - **on умолчанию**: 'production.log'
- - **describe**: Файл for записи логов Monitoringа
+- **`log_file`**: Путь к файлу логов
+- **Тип**: str
+- **on умолчанию**: 'production.log'
+- **describe**: Файл for записи логов Monitoringа
 
 **Метод setup_logging():**
 - **Назначение**: configuration системы Logsрования
 - **parameters logging.basicConfig():**
- - **`level=logging.INFO`**: Уровень Logsрования
- - **Тип**: int
- - **Значения**: DEBUG(10), INFO(20), WARNING(30), ERROR(40), CRITICAL(50)
- - **describe**: Logsрует messages уровня INFO and выше
- - **`format`**: Формат логов
- - **Тип**: str
- - **describe**: Шаблон for форматирования логов
- - **components**: время, имя логгера, уровень, сообщение
- - **`handlers`**: Обработчики логов
- - **`FileHandler`**: Запись in файл
- - **`StreamHandler`**: Вывод in консоль
+- **`level=logging.INFO`**: Уровень Logsрования
+- **Тип**: int
+- **Значения**: DEBUG(10), INFO(20), WARNING(30), ERROR(40), CRITICAL(50)
+- **describe**: Logsрует messages уровня INFO and выше
+- **`format`**: Формат логов
+- **Тип**: str
+- **describe**: Шаблон for форматирования логов
+- **components**: время, имя логгера, уровень, сообщение
+- **`handlers`**: Обработчики логов
+- **`FileHandler`**: Запись in файл
+- **`StreamHandler`**: Вывод in консоль
 
 **Метод log_Prediction():**
 - **Назначение**: Logsрование predictions модели
 - **parameters**:
- - **`input_data`**: Входные data
- - **Тип**: Dict
- - **describe**: data, поdata on вход модели
- - **`Prediction`**: Prediction модели
- - **Тип**: Any
- - **describe**: Результат предсказания
- - **`processing_time`**: Время обработки
- - **Тип**: float
- - **describe**: Время выполнения предсказания in секундах
- - **`model_info`**: Информация о модели
- - **Тип**: Dict
- - **describe**: Метаdata о модели
+- **`input_data`**: Входные data
+- **Тип**: Dict
+- **describe**: data, поdata on вход модели
+- **`Prediction`**: Prediction модели
+- **Тип**: Any
+- **describe**: Результат предсказания
+- **`processing_time`**: Время обработки
+- **Тип**: float
+- **describe**: Время выполнения предсказания in секундах
+- **`model_info`**: Информация о модели
+- **Тип**: Dict
+- **describe**: Метаdata о модели
 
 **Метод log_error():**
 - **Назначение**: Logsрование ошибок системы
 - **parameters**:
- - **`error`**: Исключение
- - **Тип**: Exception
- - **describe**: Ошибка, которая произошла
- - **`context`**: Контекст ошибки
- - **Тип**: Dict
- - **describe**: Дополнительная информация об ошибке
+- **`error`**: Исключение
+- **Тип**: Exception
+- **describe**: Ошибка, которая произошла
+- **`context`**: Контекст ошибки
+- **Тип**: Dict
+- **describe**: Дополнительная информация об ошибке
 
 **Метод get_system_metrics():**
 - **Назначение**: Получение системных метрик
 - **Возвращаемое значение**: Dict[str, Any] - системные метрики
 - **Метрики**:
- - **`cpu_percent`**: Загрузка CPU
- - **Тип**: float
- - **Диапазон**: 0.0-100.0
- - **describe**: Процент использования CPU
- - **`memory_percent`**: Использование памяти
- - **Тип**: float
- - **Диапазон**: 0.0-100.0
- - **describe**: Процент использования RAM
- - **`disk_percent`**: Использование диска
- - **Тип**: float
- - **Диапазон**: 0.0-100.0
- - **describe**: Процент использования диска
- - **`timestamp`**: Время измерения
- - **Тип**: str
- - **describe**: ISO формат времени
+- **`cpu_percent`**: Загрузка CPU
+- **Тип**: float
+- **Диапазон**: 0.0-100.0
+- **describe**: Процент использования CPU
+- **`memory_percent`**: Использование памяти
+- **Тип**: float
+- **Диапазон**: 0.0-100.0
+- **describe**: Процент использования RAM
+- **`disk_percent`**: Использование диска
+- **Тип**: float
+- **Диапазон**: 0.0-100.0
+- **describe**: Процент использования диска
+- **`timestamp`**: Время измерения
+- **Тип**: str
+- **describe**: ISO формат времени
 
 **Метод check_model_health():**
 - **Назначение**: health check модели
 - **parameters**:
- - **`model`**: Модель for проверки
- - **Тип**: TabularPredictor
- - **describe**: Модель AutoGluon for тестирования
+- **`model`**: Модель for проверки
+- **Тип**: TabularPredictor
+- **describe**: Модель AutoGluon for тестирования
 - **Возвращаемое значение**: Dict[str, Any] - статус health
 - **Structure результата**:
- - **`status`**: Статус модели
- - **Тип**: str
- - **Значения**: 'healthy', 'unhealthy'
- - **`processing_time`**: Время обработки testsого запроса
- - **Тип**: float
- - **describe**: Время выполнения testsого предсказания
- - **`error`**: describe ошибки (if present)
- - **Тип**: str
- - **describe**: Текст ошибки при неудачной проверке
+- **`status`**: Статус модели
+- **Тип**: str
+- **Значения**: 'healthy', 'unhealthy'
+- **`processing_time`**: Время обработки testsого запроса
+- **Тип**: float
+- **describe**: Время выполнения testsого предсказания
+- **`error`**: describe ошибки (if present)
+- **Тип**: str
+- **describe**: Текст ошибки при неудачной проверке
 
 ### Алерты and notifications
 
@@ -1150,7 +1150,7 @@ from email.mime.multipart import MIMEMultipart
 import requests
 
 class Alertsystem:
- """Система алертов for продакшена"""
+"""Система алертов for продакшена"""
 
  def __init__(self, smtp_server, smtp_port, email, password):
  self.smtp_server = smtp_server
@@ -1159,7 +1159,7 @@ class Alertsystem:
  self.password = password
 
  def send_email_alert(self, subject: str, message: str, recipients: List):
- """Отправка email алерта"""
+"""Отправка email алерта"""
  try:
  msg = MIMEMultipart()
  msg['From'] = self.email
@@ -1179,7 +1179,7 @@ class Alertsystem:
  print(f"Failed to send email alert: {e}")
 
  def send_slack_alert(self, webhook_url: str, message: str):
- """Отправка Slack алерта"""
+"""Отправка Slack алерта"""
  try:
  payload = {
  "text": message,
@@ -1196,7 +1196,7 @@ class Alertsystem:
 
  def check_performance_thresholds(self, metrics: Dict[str, float],
  thresholds: Dict[str, float]):
- """check пороговых значений производительности"""
+"""check пороговых значений производительности"""
  alerts = []
 
  for metric, threshold in thresholds.items():
@@ -1211,67 +1211,67 @@ class Alertsystem:
 **Класс Alertsystem:**
 - **Назначение**: Система уведомлений for продакшен Monitoringа
 - **parameters конструктора**:
- - **`smtp_server`**: SMTP сервер
- - **Тип**: str
- - **describe**: Адрес SMTP сервера for отправки email
+- **`smtp_server`**: SMTP сервер
+- **Тип**: str
+- **describe**: Адрес SMTP сервера for отправки email
  - **examples**: 'smtp.gmail.com', 'smtp.yandex.ru'
- - **`smtp_port`**: Порт SMTP сервера
- - **Тип**: int
- - **on умолчанию**: 587 (TLS), 465 (SSL)
- - **describe**: Порт for подключения к SMTP серверу
- - **`email`**: Email отправителя
- - **Тип**: str
- - **describe**: Email адрес for отправки уведомлений
- - **`password`**: Пароль email
- - **Тип**: str
- - **describe**: Пароль for аутентификации on SMTP сервере
+- **`smtp_port`**: Порт SMTP сервера
+- **Тип**: int
+- **on умолчанию**: 587 (TLS), 465 (SSL)
+- **describe**: Порт for подключения к SMTP серверу
+- **`email`**: Email отправителя
+- **Тип**: str
+- **describe**: Email адрес for отправки уведомлений
+- **`password`**: Пароль email
+- **Тип**: str
+- **describe**: Пароль for аутентификации on SMTP сервере
 
 **Метод send_email_alert():**
 - **Назначение**: Отправка email уведомлений
 - **parameters**:
- - **`subject`**: Тема письма
- - **Тип**: str
- - **describe**: Заголовок email notifications
+- **`subject`**: Тема письма
+- **Тип**: str
+- **describe**: Заголовок email notifications
  - **examples**: "Model Performance Alert", "system health Warning"
- - **`message`**: Текст messages
- - **Тип**: str
- - **describe**: Содержимое email notifications
- - **`recipients`**: List получателей
- - **Тип**: List
- - **describe**: List email адресов получателей
+- **`message`**: Текст messages
+- **Тип**: str
+- **describe**: Содержимое email notifications
+- **`recipients`**: List получателей
+- **Тип**: List
+- **describe**: List email адресов получателей
  - **example**: ['admin@company.com', 'devops@company.com']
 
 **Метод send_slack_alert():**
 - **Назначение**: Отправка уведомлений in Slack
 - **parameters**:
  - **`webhook_url`**: URL webhook
- - **Тип**: str
- - **describe**: URL Slack webhook for отправки сообщений
- - **Формат**: https://hooks.slack.com/services/...
- - **`message`**: Текст messages
- - **Тип**: str
- - **describe**: Содержимое Slack notifications
+- **Тип**: str
+- **describe**: URL Slack webhook for отправки сообщений
+- **Формат**: https://hooks.slack.com/services/...
+- **`message`**: Текст messages
+- **Тип**: str
+- **describe**: Содержимое Slack notifications
 - **Structure payload**:
- - **`text`**: Текст messages
- - **`Username`**: Имя отправителя
- - **`icon_emoji`**: Иконка отправителя
+- **`text`**: Текст messages
+- **`Username`**: Имя отправителя
+- **`icon_emoji`**: Иконка отправителя
 
 **Метод check_performance_thresholds():**
 - **Назначение**: check пороговых значений метрик
 - **parameters**:
- - **`metrics`**: Текущие метрики
- - **Тип**: Dict[str, float]
- - **describe**: Словарь with текущими значениями метрик
+- **`metrics`**: Текущие метрики
+- **Тип**: Dict[str, float]
+- **describe**: Словарь with текущими значениями метрик
  - **example**: {'accuracy': 0.85, 'response_time': 0.5}
- - **`thresholds`**: Пороговые значения
- - **Тип**: Dict[str, float]
- - **describe**: Словарь with минимальными значениями метрик
+- **`thresholds`**: Пороговые значения
+- **Тип**: Dict[str, float]
+- **describe**: Словарь with минимальными значениями метрик
  - **example**: {'accuracy': 0.90, 'response_time': 1.0}
 - **Возвращаемое значение**: List - List алертов
 - **Logsка проверки**:
- - Сравнивает текущие метрики with пороговыми значениями
- - Создает алерт, если метрика ниже порога
- - Возвращает List строк with описанием проблем
+- Сравнивает текущие метрики with пороговыми значениями
+- Создает алерт, если метрика ниже порога
+- Возвращает List строк with описанием проблем
 
 ## Масштабирование
 
@@ -1297,7 +1297,7 @@ import queue
 import threading
 
 class Scalablepredictionservice:
- """Масштабируемый сервис predictions"""
+"""Масштабируемый сервис predictions"""
 
  def __init__(self, max_workers=4):
  self.max_workers = max_workers
@@ -1306,10 +1306,10 @@ class Scalablepredictionservice:
  self.result_queue = queue.Queue()
 
  async def process_Prediction(self, data: Dict) -> Dict:
- """Асинхронная обработка предсказания"""
+"""Асинхронная обработка предсказания"""
  loop = asyncio.get_event_loop()
 
- # Выполнение предсказания in отдельном потоке
+# Выполнение предсказания in отдельном потоке
  result = await loop.run_in_executor(
  self.executor,
  self._predict_sync,
@@ -1319,20 +1319,20 @@ class Scalablepredictionservice:
  return result
 
  def _predict_sync(self, data: Dict) -> Dict:
- """Синхронное Prediction"""
- # Ваша Logsка предсказания
+"""Синхронное Prediction"""
+# Ваша Logsка предсказания
  pass
 
  def batch_predict(self, batch_data: List[Dict]) -> List[Dict]:
- """Пакетная обработка predictions"""
+"""Пакетная обработка predictions"""
  results = []
 
- # Разделение on батчи
+# Разделение on батчи
  batch_size = 100
  for i in range(0, len(batch_data), batch_size):
  batch = batch_data[i:i+batch_size]
 
- # Параллельная обработка батча
+# Параллельная обработка батча
  with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
  futures = [executor.submit(self._predict_sync, data) for data in batch]
  batch_results = [future.result() for future in futures]
@@ -1346,54 +1346,54 @@ class Scalablepredictionservice:
 **Класс Scalablepredictionservice:**
 - **Назначение**: Масштабируемый сервис for обработки predictions
 - **parameters конструктора**:
- - **`max_workers`**: Максимальное количество потоков
- - **Тип**: int
- - **on умолчанию**: 4
- - **Диапазон значений**: `[1, 32]` (рекомендуется 2-16)
- - **describe**: Количество параллельных потоков for обработки
- - **Рекомендации**: Use количество CPU ядер × 2
+- **`max_workers`**: Максимальное количество потоков
+- **Тип**: int
+- **on умолчанию**: 4
+- **Диапазон значений**: `[1, 32]` (рекомендуется 2-16)
+- **describe**: Количество параллельных потоков for обработки
+- **Рекомендации**: Use количество CPU ядер × 2
 
 **Метод process_Prediction():**
 - **Назначение**: Асинхронная обработка предсказания
 - **parameters**:
- - **`data`**: data for предсказания
- - **Тип**: Dict
- - **describe**: Входные data for модели
+- **`data`**: data for предсказания
+- **Тип**: Dict
+- **describe**: Входные data for модели
 - **Возвращаемое значение**: Dict - результат предсказания
 - **Особенности**:
- - **Асинхронность**: not блокирует основной поток
- - **Параллельность**: Использует отдельный поток for вычислений
- - **Масштабируемость**: Поддерживает множественные запросы
+- **Асинхронность**: not блокирует основной поток
+- **Параллельность**: Использует отдельный поток for вычислений
+- **Масштабируемость**: Поддерживает множественные запросы
 
 **Метод _predict_sync():**
 - **Назначение**: Синхронное выполнение предсказания
 - **parameters**:
- - **`data`**: data for предсказания
- - **Тип**: Dict
- - **describe**: Входные data for модели
+- **`data`**: data for предсказания
+- **Тип**: Dict
+- **describe**: Входные data for модели
 - **Возвращаемое значение**: Dict - результат предсказания
 - **Особенности**:
- - **Синхронность**: Блокирующее выполнение
- - **Потокобезопасность**: Может выполняться in разных потоках
- - **Производительность**: Оптимизирован for быстрого выполнения
+- **Синхронность**: Блокирующее выполнение
+- **Потокобезопасность**: Может выполняться in разных потоках
+- **Производительность**: Оптимизирован for быстрого выполнения
 
 **Метод batch_predict():**
 - **Назначение**: Пакетная обработка множественных predictions
 - **parameters**:
- - **`batch_data`**: List данных for предсказания
- - **Тип**: List[Dict]
- - **describe**: List входных данных
+- **`batch_data`**: List данных for предсказания
+- **Тип**: List[Dict]
+- **describe**: List входных данных
 - **Возвращаемое значение**: List[Dict] - List результатов
 - **parameters обработки**:
- - **`batch_size`**: Размер батча
- - **Тип**: int
- - **on умолчанию**: 100
- - **Диапазон значений**: `[10, 1000]` (рекомендуется 50-200)
- - **describe**: Количество запросов in одном батче
+- **`batch_size`**: Размер батча
+- **Тип**: int
+- **on умолчанию**: 100
+- **Диапазон значений**: `[10, 1000]` (рекомендуется 50-200)
+- **describe**: Количество запросов in одном батче
 - **Особенности**:
- - **Пакетная обработка**: Группирует запросы for эффективности
- - **Параллельность**: Обрабатывает батчи параллельно
- - **Память**: Контролирует использование памяти через размер батча
+- **Пакетная обработка**: Группирует запросы for эффективности
+- **Параллельность**: Обрабатывает батчи параллельно
+- **Память**: Контролирует использование памяти через размер батча
 
 ### Кэширование
 
@@ -1404,19 +1404,19 @@ import hashlib
 from typing import Any, Optional
 
 class Predictioncache:
- """Кэш for predictions"""
+"""Кэш for predictions"""
 
  def __init__(self, redis_host='localhost', redis_port=6379, ttl=3600):
  self.redis_client = redis.Redis(host=redis_host, port=redis_port, decode_responses=True)
  self.ttl = ttl
 
  def _generate_cache_key(self, data: Dict) -> str:
- """Генерация ключа cache"""
+"""Генерация ключа cache"""
  data_str = json.dumps(data, sort_keys=True)
  return hashlib.md5(data_str.encode()).hexdigest()
 
  def get_Prediction(self, data: Dict) -> Optional[Dict]:
- """Получение предсказания из cache"""
+"""Получение предсказания из cache"""
  cache_key = self._generate_cache_key(data)
  cached_result = self.redis_client.get(cache_key)
 
@@ -1426,7 +1426,7 @@ class Predictioncache:
  return None
 
  def set_Prediction(self, data: Dict, Prediction: Dict):
- """Сохранение предсказания in кэш"""
+"""Сохранение предсказания in кэш"""
  cache_key = self._generate_cache_key(data)
  self.redis_client.setex(
  cache_key,
@@ -1446,71 +1446,71 @@ class Predictioncache:
 **Класс Predictioncache:**
 - **Назначение**: Кэширование predictions for acceleration ответов
 - **parameters конструктора**:
- - **`redis_host`**: Хост Redis сервера
- - **Тип**: str
- - **on умолчанию**: 'localhost'
- - **describe**: Адрес Redis сервера for кэширования
- - **`redis_port`**: Порт Redis сервера
- - **Тип**: int
- - **on умолчанию**: 6379
- - **describe**: Порт for подключения к Redis
- - **`ttl`**: Время жизни cache
- - **Тип**: int
- - **on умолчанию**: 3600 (1 час)
- - **Диапазон значений**: `[60, 86400]` (1 minutesа - 24 часа)
- - **describe**: Время in секундах, через которое кэш истекает
+- **`redis_host`**: Хост Redis сервера
+- **Тип**: str
+- **on умолчанию**: 'localhost'
+- **describe**: Адрес Redis сервера for кэширования
+- **`redis_port`**: Порт Redis сервера
+- **Тип**: int
+- **on умолчанию**: 6379
+- **describe**: Порт for подключения к Redis
+- **`ttl`**: Время жизни cache
+- **Тип**: int
+- **on умолчанию**: 3600 (1 час)
+- **Диапазон значений**: `[60, 86400]` (1 minutesа - 24 часа)
+- **describe**: Время in секундах, через которое кэш истекает
 
 **Метод _generate_cache_key():**
 - **Назначение**: Генерация уникального ключа for cache
 - **parameters**:
- - **`data`**: data for предсказания
- - **Тип**: Dict
- - **describe**: Входные data for генерации ключа
+- **`data`**: data for предсказания
+- **Тип**: Dict
+- **describe**: Входные data for генерации ключа
 - **Возвращаемое значение**: str - MD5 хеш ключа
 - **Алгоритм**:
- - Сериализует data in JSON with сортировкой ключей
- - Создает MD5 хеш from строки данных
- - Возвращает 32-символьный хеш
+- Сериализует data in JSON with сортировкой ключей
+- Создает MD5 хеш from строки данных
+- Возвращает 32-символьный хеш
 
 **Метод get_Prediction():**
 - **Назначение**: Получение предсказания из cache
 - **parameters**:
- - **`data`**: data for поиска
- - **Тип**: Dict
- - **describe**: Входные data for поиска in кэше
+- **`data`**: data for поиска
+- **Тип**: Dict
+- **describe**: Входные data for поиска in кэше
 - **Возвращаемое значение**: Optional[Dict] - результат из cache or None
 - **Logsка работы**:
- - Генерирует ключ cache из данных
- - Ищет значение in Redis
- - Десериализует JSON in словарь
- - Возвращает None, если ключ not found
+- Генерирует ключ cache из данных
+- Ищет значение in Redis
+- Десериализует JSON in словарь
+- Возвращает None, если ключ not found
 
 **Метод set_Prediction():**
 - **Назначение**: Сохранение предсказания in кэш
 - **parameters**:
- - **`data`**: Входные data
- - **Тип**: Dict
- - **describe**: data for генерации ключа
- - **`Prediction`**: Результат предсказания
- - **Тип**: Dict
- - **describe**: Prediction for сохранения
+- **`data`**: Входные data
+- **Тип**: Dict
+- **describe**: data for генерации ключа
+- **`Prediction`**: Результат предсказания
+- **Тип**: Dict
+- **describe**: Prediction for сохранения
 - **Особенности**:
- - Использует `setex` to install TTL
- - Сериализует Prediction in JSON
- - Автоматически истекает через TTL
+- Использует `setex` to install TTL
+- Сериализует Prediction in JSON
+- Автоматически истекает через TTL
 
 **Метод invalidate_cache():**
 - **Назначение**: clean cache
 - **parameters**:
- - **`pattern`**: Паттерн for поиска ключей
- - **Тип**: str
- - **on умолчанию**: "*" (все ключи)
- - **describe**: Паттерн for поиска ключей in Redis
+- **`pattern`**: Паттерн for поиска ключей
+- **Тип**: str
+- **on умолчанию**: "*" (все ключи)
+- **describe**: Паттерн for поиска ключей in Redis
  - **examples**: "*", "Prediction:*", "model_v1:*"
 - **Особенности**:
- - Использует `keys()` for поиска ключей
- - Удаляет все foundные ключи
- - Поддерживает wildcard паттерны
+- Использует `keys()` for поиска ключей
+- Удаляет все foundные ключи
+- Поддерживает wildcard паттерны
 
 ## Безопасность
 
@@ -1523,14 +1523,14 @@ from datetime import datetime, timedelta
 import secrets
 
 class SecurityManager:
- """Менеджер безопасности"""
+"""Менеджер безопасности"""
 
  def __init__(self, secret_key: str):
  self.secret_key = secret_key
  self.api_keys = {}
 
  def generate_api_key(self, User_id: str) -> str:
- """Генерация API ключа"""
+"""Генерация API ключа"""
  api_key = secrets.token_urlsafe(32)
  self.api_keys[api_key] = {
  'User_id': User_id,
@@ -1540,26 +1540,26 @@ class SecurityManager:
  return api_key
 
  def validate_api_key(self, api_key: str) -> bool:
- """Валидация API ключа"""
+"""Валидация API ключа"""
  return api_key in self.api_keys
 
  def get_User_permissions(self, api_key: str) -> List:
- """Получение разрешений User"""
+"""Получение разрешений User"""
  if api_key in self.api_keys:
  return self.api_keys[api_key]['permissions']
  return []
 
  def require_auth(self, permissions: List = None):
- """Декоратор for проверки аутентификации"""
+"""Декоратор for проверки аутентификации"""
  def decorator(f):
  @wraps(f)
  def decorated_function(*args, **kwargs):
- # check API ключа
+# check API ключа
  api_key = request.headers.get('X-API-Key')
  if not api_key or not self.validate_api_key(api_key):
  return jsonify({'error': 'Invalid API key'}), 401
 
- # check разрешений
+# check разрешений
  if permissions:
  User_permissions = self.get_User_permissions(api_key)
  if not any(perm in User_permissions for perm in permissions):
@@ -1578,25 +1578,25 @@ from typing import List, Dict, Any, Union
 import numpy as np
 
 class InputValidator:
- """Валидатор входных данных"""
+"""Валидатор входных данных"""
 
  def __init__(self, feature_schema: Dict[str, Any]):
  self.feature_schema = feature_schema
 
  def validate_input(self, data: List[Dict[str, Any]]) -> bool:
- """Валидация входных данных"""
+"""Валидация входных данных"""
  try:
  for record in data:
- # check наличия all обязательных признаков
+# check наличия all обязательных признаков
  for feature, schema in self.feature_schema.items():
  if feature not in record:
  raise ValueError(f"Missing required feature: {feature}")
 
- # check типа данных
+# check типа данных
  if not isinstance(record[feature], schema['type']):
  raise ValueError(f"Invalid type for feature {feature}")
 
- # check диапазона значений
+# check диапазона значений
  if 'min' in schema and record[feature] < schema['min']:
  raise ValueError(f"Value too small for feature {feature}")
 
@@ -1609,13 +1609,13 @@ class InputValidator:
  return False
 
  def sanitize_input(self, data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
- """clean входных данных"""
+"""clean входных данных"""
  sanitized_data = []
 
  for record in data:
  sanitized_record = {}
  for feature, value in record.items():
- # clean from потенциально опасных символов
+# clean from потенциально опасных символов
  if isinstance(value, str):
  sanitized_record[feature] = value.strip()
  else:
@@ -1638,7 +1638,7 @@ from typing import List, Dict, Any
 import statistics
 
 class LoadTester:
- """Нагрузочное тестирование API"""
+"""Нагрузочное тестирование API"""
 
  def __init__(self, base_url: str):
  self.base_url = base_url
@@ -1646,7 +1646,7 @@ class LoadTester:
 
  async def single_request(self, session: aiohttp.ClientSession,
  data: Dict[str, Any]) -> Dict[str, Any]:
- """Одиночный запрос"""
+"""Одиночный запрос"""
  start_time = time.time()
 
  try:
@@ -1674,7 +1674,7 @@ class LoadTester:
  async def load_test(self, concurrent_Users: int,
  requests_per_User: int,
  test_data: List[Dict[str, Any]]) -> Dict[str, Any]:
- """Нагрузочное тестирование"""
+"""Нагрузочное тестирование"""
  async with aiohttp.ClientSession() as session:
  tasks = []
 
@@ -1686,7 +1686,7 @@ class LoadTester:
 
  results = await asyncio.gather(*tasks)
 
- # Анализ результатов
+# Анализ результатов
  successful_requests = [r for r in results if r['success']]
  failed_requests = [r for r in results if not r['success']]
 

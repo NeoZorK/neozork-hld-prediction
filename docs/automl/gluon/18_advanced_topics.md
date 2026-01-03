@@ -65,7 +65,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class DARTS(nn.Module):
- """Differentiable Architecture Search - автоматический дизайн нейроnetworks"""
+"""Differentiable Architecture Search - автоматический дизайн нейроnetworks"""
 
  def __init__(self, input_channels, output_channels, num_ops=8):
  super(DARTS, self).__init__()
@@ -73,7 +73,7 @@ class DARTS(nn.Module):
  self.output_channels = output_channels
  self.num_ops = num_ops
 
- # Операции - кандидаты for архитектуры
+# Операции - кандидаты for архитектуры
  self.ops = nn.ModuleList([
  nn.Conv2d(input_channels, output_channels, 1, bias=False), # 1x1 conv
  nn.Conv2d(input_channels, output_channels, 3, padding=1, bias=False), # 3x3 conv
@@ -85,14 +85,14 @@ class DARTS(nn.Module):
  nn.Conv2d(input_channels, output_channels, 3, padding=1, dilation=3, bias=False) # Dilated conv
  ])
 
- # Архитектурные веса - что оптимизируется
+# Архитектурные веса - что оптимизируется
  self.alpha = nn.Parameter(torch.randn(num_ops))
 
  def forward(self, x):
- # Softmax for архитектурных весов - нормализация весов
+# Softmax for архитектурных весов - нормализация весов
  weights = F.softmax(self.alpha, dim=0)
 
- # Взвешенная сумма операций - комбинация all операций
+# Взвешенная сумма операций - комбинация all операций
  output = sum(w * op(x) for w, op in zip(weights, self.ops) if op is not None)
 
  return output
@@ -101,95 +101,95 @@ class DARTS(nn.Module):
 **Детальные описания параметров DARTS:**
 
 - **`input_channels`**: Количество входных каналов
- - `3`: RGB изображения (стандартно)
- - `1`: Grayscale изображения
- - `4`: RGBA изображения
- - `64`: Промежуточные слои
- - `256`: Глубокие слои
- - Применение: определение размерности входных данных
+- `3`: RGB изображения (стандартно)
+- `1`: Grayscale изображения
+- `4`: RGBA изображения
+- `64`: Промежуточные слои
+- `256`: Глубокие слои
+- Применение: определение размерности входных данных
 
 - **`output_channels`**: Количество выходных каналов
- - `64`: Стандартное количество for начальных слоев
- - `128`: Увеличенное количество for средних слоев
- - `256`: Большое количество for глубоких слоев
- - `512`: Очень большое количество for очень глубоких слоев
- - Применение: определение пропускной способности слоя
+- `64`: Стандартное количество for начальных слоев
+- `128`: Увеличенное количество for средних слоев
+- `256`: Большое количество for глубоких слоев
+- `512`: Очень большое количество for очень глубоких слоев
+- Применение: определение пропускной способности слоя
 
 - **`num_ops=8`**: Количество операций-кандидатов
- - `8`: Стандартное количество (рекомендуется)
- - `4`: Минимальное количество (быстрое обучение)
- - `12`: Большое количество (детальный поиск)
- - `16`: Очень большое количество (очень детальный поиск)
- - Применение: разнообразие архитектурных вариантов
+- `8`: Стандартное количество (рекомендуется)
+- `4`: Минимальное количество (быстрое обучение)
+- `12`: Большое количество (детальный поиск)
+- `16`: Очень большое количество (очень детальный поиск)
+- Применение: разнообразие архитектурных вариантов
 
 - **`nn.Conv2d(input_channels, output_channels, 1, bias=False)`**: 1x1 свертка
- - `1`: Размер ядра (1x1)
- - `bias=False`: Без смещения (рекомендуется)
- - Применение: точечная свертка for изменения каналов
- - Преимущества: быстрая, эффективная
+- `1`: Размер ядра (1x1)
+- `bias=False`: Без смещения (рекомендуется)
+- Применение: точечная свертка for изменения каналов
+- Преимущества: быстрая, эффективная
 
 - **`nn.Conv2d(input_channels, output_channels, 3, padding=1, bias=False)`**: 3x3 свертка
- - `3`: Размер ядра (3x3)
- - `padding=1`: Заполнение for сохранения размера
- - Применение: стандартная свертка for извлечения признаков
- - Преимущества: баланс между качеством and скоростью
+- `3`: Размер ядра (3x3)
+- `padding=1`: Заполнение for сохранения размера
+- Применение: стандартная свертка for извлечения признаков
+- Преимущества: баланс между качеством and скоростью
 
 - **`nn.Conv2d(input_channels, output_channels, 5, padding=2, bias=False)`**: 5x5 свертка
- - `5`: Размер ядра (5x5)
- - `padding=2`: Заполнение for сохранения размера
- - Применение: большая свертка for глобальных признаков
- - Преимущества: захват больших паттернов
+- `5`: Размер ядра (5x5)
+- `padding=2`: Заполнение for сохранения размера
+- Применение: большая свертка for глобальных признаков
+- Преимущества: захват больших паттернов
 
 - **`nn.MaxPool2d(3, stride=1, padding=1)`**: Max pooling
- - `3`: Размер окна (3x3)
- - `stride=1`: Шаг 1 for сохранения размера
- - `padding=1`: Заполнение for сохранения размера
- - Применение: извлечение максимальных значений
- - Преимущества: инвариантность к сдвигам
+- `3`: Размер окна (3x3)
+- `stride=1`: Шаг 1 for сохранения размера
+- `padding=1`: Заполнение for сохранения размера
+- Применение: извлечение максимальных значений
+- Преимущества: инвариантность к сдвигам
 
 - **`nn.AvgPool2d(3, stride=1, padding=1)`**: Average pooling
- - `3`: Размер окна (3x3)
- - `stride=1`: Шаг 1 for сохранения размера
- - `padding=1`: Заполнение for сохранения размера
- - Применение: извлечение средних значений
- - Преимущества: сглаживание шума
+- `3`: Размер окна (3x3)
+- `stride=1`: Шаг 1 for сохранения размера
+- `padding=1`: Заполнение for сохранения размера
+- Применение: извлечение средних значений
+- Преимущества: сглаживание шума
 
 - **`nn.Identity()`**: Тождественная операция
- - Применение: когда input_channels == output_channels
- - Преимущества: пропуск данных без изменений
- - Использование: for skip connections
+- Применение: когда input_channels == output_channels
+- Преимущества: пропуск данных без изменений
+- Использование: for skip connections
 
 - **`dilation=2`**: Дилатированная свертка
- - `2`: Коэффициент дилатации
- - Применение: увеличение рецептивного поля
- - Преимущества: захват больших паттернов без увеличения параметров
+- `2`: Коэффициент дилатации
+- Применение: увеличение рецептивного поля
+- Преимущества: захват больших паттернов без увеличения параметров
 
 - **`dilation=3`**: Дилатированная свертка
- - `3`: Коэффициент дилатации
- - Применение: еще большее рецептивное поле
- - Преимущества: очень большие паттерны
+- `3`: Коэффициент дилатации
+- Применение: еще большее рецептивное поле
+- Преимущества: очень большие паттерны
 
 - **`self.alpha = nn.Parameter(torch.randn(num_ops))`**: Архитектурные веса
- - `torch.randn(num_ops)`: Случайная инициализация
- - `nn.Parameter`: Обучаемые parameters
- - Применение: оптимизация архитектуры
- - Диапазон: from -∞ to +∞ (нормализуется через softmax)
+- `torch.randn(num_ops)`: Случайная инициализация
+- `nn.Parameter`: Обучаемые parameters
+- Применение: оптимизация архитектуры
+- Диапазон: from -∞ to +∞ (нормализуется через softmax)
 
 - **`F.softmax(self.alpha, dim=0)`**: Нормализация весов
- - `dim=0`: Нормализация on операциям
- - Результат: веса from 0 to 1, сумма = 1
- - Применение: вероятностное распределение on операциям
- - Интерпретация: важность каждой операции
+- `dim=0`: Нормализация on операциям
+- Результат: веса from 0 to 1, сумма = 1
+- Применение: вероятностное распределение on операциям
+- Интерпретация: важность каждой операции
 
 # Использование DARTS
 def search_architecture(train_loader, val_loader, epochs=50):
- """Поиск архитектуры with помощью DARTS"""
+"""Поиск архитектуры with помощью DARTS"""
 
  model = DARTS(input_channels=3, output_channels=64)
  optimizer = torch.optim.Adam(model.parameters(), lr=0.025)
 
  for epoch in range(epochs):
- # update архитектурных весов
+# update архитектурных весов
  model.train()
  for batch_idx, (data, target) in enumerate(train_loader):
  optimizer.zero_grad()
@@ -198,7 +198,7 @@ def search_architecture(train_loader, val_loader, epochs=50):
  loss.backward()
  optimizer.step()
 
- # Валидация
+# Валидация
  model.eval()
  val_loss = 0
  with torch.no_grad():
@@ -214,84 +214,84 @@ def search_architecture(train_loader, val_loader, epochs=50):
 **Детальные описания параметров поиска архитектуры:**
 
 - **`train_loader`**: Загрузчик обучающих данных
- - Тип: dataLoader
- - Содержит: батчи (data, target)
- - Применение: обучение архитектурных весов
- - Рекомендация: сбалансированные батчи
+- Тип: dataLoader
+- Содержит: батчи (data, target)
+- Применение: обучение архитектурных весов
+- Рекомендация: сбалансированные батчи
 
 - **`val_loader`**: Загрузчик валидационных данных
- - Тип: dataLoader
- - Содержит: батчи (data, target)
- - Применение: оценка качества архитектуры
- - Рекомендация: независимый from train_loader
+- Тип: dataLoader
+- Содержит: батчи (data, target)
+- Применение: оценка качества архитектуры
+- Рекомендация: независимый from train_loader
 
 - **`epochs=50`**: Количество эпох обучения
- - `50`: Стандартное количество (рекомендуется)
- - `25`: Быстрое обучение (менее точно)
- - `100`: Длительное обучение (более точно)
- - `200`: Очень длительное обучение (очень точно)
- - Применение: контроль времени обучения
+- `50`: Стандартное количество (рекомендуется)
+- `25`: Быстрое обучение (менее точно)
+- `100`: Длительное обучение (более точно)
+- `200`: Очень длительное обучение (очень точно)
+- Применение: контроль времени обучения
 
 - **`input_channels=3`**: Количество входных каналов
- - `3`: RGB изображения (стандартно)
- - `1`: Grayscale изображения
- - `4`: RGBA изображения
- - Применение: соответствие входным данным
+- `3`: RGB изображения (стандартно)
+- `1`: Grayscale изображения
+- `4`: RGBA изображения
+- Применение: соответствие входным данным
 
 - **`output_channels=64`**: Количество выходных каналов
- - `64`: Стандартное количество for начальных слоев
- - `32`: Меньше каналов (быстрее)
- - `128`: Больше каналов (качественнее)
- - `256`: Очень много каналов (очень качественно)
- - Применение: баланс между скоростью and качеством
+- `64`: Стандартное количество for начальных слоев
+- `32`: Меньше каналов (быстрее)
+- `128`: Больше каналов (качественнее)
+- `256`: Очень много каналов (очень качественно)
+- Применение: баланс между скоростью and качеством
 
 - **`torch.optim.Adam(model.parameters(), lr=0.025)`**: Оптимизатор Adam
- - `model.parameters()`: Все parameters модели
- - `lr=0.025`: Learning rate (рекомендуется for DARTS)
- - `0.01`: Меньший learning rate (стабильнее)
- - `0.05`: Больший learning rate (быстрее)
- - `0.1`: Очень большой learning rate (может быть нестабильным)
+- `model.parameters()`: Все parameters модели
+- `lr=0.025`: Learning rate (рекомендуется for DARTS)
+- `0.01`: Меньший learning rate (стабильнее)
+- `0.05`: Больший learning rate (быстрее)
+- `0.1`: Очень большой learning rate (может быть нестабильным)
 
 - **`model.train()`**: Режим обучения
- - Включает: dropout, batch normalization in training mode
- - Отключает: детерминированное поведение
- - Применение: активация обучающих компонентов
+- Включает: dropout, batch normalization in training mode
+- Отключает: детерминированное поведение
+- Применение: активация обучающих компонентов
 
 - **`optimizer.zero_grad()`**: Обнуление градиентов
- - Обнуляет: накопленные градиенты
- - Применение: предотвращение накопления градиентов
- - Обязательно: перед каждым backward pass
+- Обнуляет: накопленные градиенты
+- Применение: предотвращение накопления градиентов
+- Обязательно: перед каждым backward pass
 
 - **`F.cross_entropy(output, target)`**: function потерь
- - `output`: Предсказания модели
- - `target`: Истинные метки
- - Применение: классификация
- - Альтернативы: F.mse_loss for регрессии
+- `output`: Предсказания модели
+- `target`: Истинные метки
+- Применение: классификация
+- Альтернативы: F.mse_loss for регрессии
 
 - **`loss.backward()`**: Обратное распространение
- - Вычисляет: градиенты on all параметрам
- - Применение: подготовка к обновлению весов
- - Обязательно: перед optimizer.step()
+- Вычисляет: градиенты on all параметрам
+- Применение: подготовка к обновлению весов
+- Обязательно: перед optimizer.step()
 
 - **`optimizer.step()`**: update параметров
- - Обновляет: все parameters модели
- - Применение: оптимизация архитектурных весов
- - Результат: improve архитектуры
+- Обновляет: все parameters модели
+- Применение: оптимизация архитектурных весов
+- Результат: improve архитектуры
 
 - **`model.eval()`**: Режим оценки
- - Включает: детерминированное поведение
- - Отключает: dropout, batch normalization in training mode
- - Применение: стабильная оценка on валидации
+- Включает: детерминированное поведение
+- Отключает: dropout, batch normalization in training mode
+- Применение: стабильная оценка on валидации
 
 - **`torch.no_grad()`**: Отключение градиентов
- - Отключает: вычисление градиентов
- - Применение: ускорение валидации
- - Экономия: памяти and вычислений
+- Отключает: вычисление градиентов
+- Применение: ускорение валидации
+- Экономия: памяти and вычислений
 
 - **`val_loss += F.cross_entropy(output, target).item()`**: Накопление потерь
- - `.item()`: Преобразование in Python float
- - Применение: избежание накопления градиентов
- - Результат: скалярное значение потерь
+- `.item()`: Преобразование in Python float
+- Применение: избежание накопления градиентов
+- Результат: скалярное значение потерь
 ```
 
 ### 2. Efficient Neural Architecture Search (ENAS)
@@ -305,11 +305,11 @@ class ENAS(nn.Module):
  self.num_nodes = num_nodes
  self.num_ops = num_ops
 
- # Контроллер (RNN)
+# Контроллер (RNN)
  self.controller = nn.LSTM(32, 32, num_layers=2, batch_first=True)
  self.controller_output = nn.Linear(32, num_nodes * num_ops)
 
- # Операции
+# Операции
  self.ops = nn.ModuleList([
  nn.Conv2d(3, 64, 3, padding=1),
  nn.Conv2d(3, 64, 5, padding=2),
@@ -322,8 +322,8 @@ class ENAS(nn.Module):
  ])
 
  def sample_architecture(self):
- """Сэмплирование архитектуры"""
- # Генерация архитектуры через контроллер
+"""Сэмплирование архитектуры"""
+# Генерация архитектуры через контроллер
  hidden = torch.zeros(2, 1, 32) # LSTM hidden state
  outputs = []
 
@@ -341,7 +341,7 @@ class ENAS(nn.Module):
  if architecture is None:
  architecture = self.sample_architecture()
 
- # Применение архитектуры
+# Применение архитектуры
  for i, op_idx in enumerate(architecture):
  x = self.ops[op_idx](x)
 
@@ -351,112 +351,112 @@ class ENAS(nn.Module):
 **Детальные описания параметров ENAS:**
 
 - **`num_nodes=5`**: Количество узлов in архитектуре
- - `5`: Стандартное количество (рекомендуется)
- - `3`: Простая архитектура (быстрее)
- - `8`: Сложная архитектура (качественнее)
- - `10`: Очень сложная архитектура (очень качественно)
- - Применение: контроль сложности архитектуры
+- `5`: Стандартное количество (рекомендуется)
+- `3`: Простая архитектура (быстрее)
+- `8`: Сложная архитектура (качественнее)
+- `10`: Очень сложная архитектура (очень качественно)
+- Применение: контроль сложности архитектуры
 
 - **`num_ops=8`**: Количество операций-кандидатов
- - `8`: Стандартное количество (рекомендуется)
- - `4`: Минимальное количество (быстрое обучение)
- - `12`: Большое количество (детальный поиск)
- - `16`: Очень большое количество (очень детальный поиск)
- - Применение: разнообразие архитектурных вариантов
+- `8`: Стандартное количество (рекомендуется)
+- `4`: Минимальное количество (быстрое обучение)
+- `12`: Большое количество (детальный поиск)
+- `16`: Очень большое количество (очень детальный поиск)
+- Применение: разнообразие архитектурных вариантов
 
 - **`nn.LSTM(32, 32, num_layers=2, batch_first=True)`**: LSTM контроллер
- - `32`: Размер входа and скрытого состояния
- - `num_layers=2`: Количество слоев LSTM
- - `batch_first=True`: Первая размерность - batch
- - Применение: генерация архитектурных решений
- - Преимущества: учет последовательности решений
+- `32`: Размер входа and скрытого состояния
+- `num_layers=2`: Количество слоев LSTM
+- `batch_first=True`: Первая размерность - batch
+- Применение: генерация архитектурных решений
+- Преимущества: учет последовательности решений
 
 - **`nn.Linear(32, num_nodes * num_ops)`**: Выходной слой контроллера
- - `32`: Размер входа (размер скрытого состояния LSTM)
- - `num_nodes * num_ops`: Размер выхода (все возможные решения)
- - Применение: преобразование скрытого состояния in Logsты
- - Результат: вероятности for каждой операции in каждом узле
+- `32`: Размер входа (размер скрытого состояния LSTM)
+- `num_nodes * num_ops`: Размер выхода (все возможные решения)
+- Применение: преобразование скрытого состояния in Logsты
+- Результат: вероятности for каждой операции in каждом узле
 
 - **`torch.zeros(2, 1, 32)`**: Инициализация скрытого состояния LSTM
- - `2`: Количество слоев LSTM
- - `1`: Batch size (один образец)
- - `32`: Размер скрытого состояния
- - Применение: начальное состояние for генерации
- - Результат: детерминированная инициализация
+- `2`: Количество слоев LSTM
+- `1`: Batch size (один образец)
+- `32`: Размер скрытого состояния
+- Применение: начальное состояние for генерации
+- Результат: детерминированная инициализация
 
 - **`torch.randn(1, 1, 32)`**: Входной тензор for LSTM
  - `1`: Batch size
  - `1`: Sequence length
  - `32`: Feature dimension
- - Применение: входные data for контроллера
- - Альтернативы: можно использовать learnable embeddings
+- Применение: входные data for контроллера
+- Альтернативы: можно использовать learnable embeddings
 
 - **`logits.View(self.num_nodes, self.num_ops)`**: Изменение формы Logsтов
- - `num_nodes`: Количество узлов
- - `num_ops`: Количество операций
- - Применение: группировка Logsтов on узлам
- - Результат: матрица (num_nodes, num_ops)
+- `num_nodes`: Количество узлов
+- `num_ops`: Количество операций
+- Применение: группировка Logsтов on узлам
+- Результат: матрица (num_nodes, num_ops)
 
 - **`F.softmax(logits[i], dim=0)`**: Нормализация вероятностей
- - `logits[i]`: Logsты for i-го узла
- - `dim=0`: Нормализация on операциям
- - Результат: вероятности from 0 to 1, сумма = 1
- - Применение: вероятностное распределение on операциям
+- `logits[i]`: Logsты for i-го узла
+- `dim=0`: Нормализация on операциям
+- Результат: вероятности from 0 to 1, сумма = 1
+- Применение: вероятностное распределение on операциям
 
 - **`torch.multinomial(probs, 1)`**: Сэмплирование операции
- - `probs`: Вероятности операций
- - `1`: Количество образцов
- - Результат: index выбранной операции
- - Применение: стохастический выбор операции
+- `probs`: Вероятности операций
+- `1`: Количество образцов
+- Результат: index выбранной операции
+- Применение: стохастический выбор операции
 
 - **`action.item()`**: Преобразование in Python int
- - Преобразует: tensor in Python int
- - Применение: использование in качестве indexа
- - Результат: целое число from 0 to num_ops-1
+- Преобразует: tensor in Python int
+- Применение: использование in качестве indexа
+- Результат: целое число from 0 to num_ops-1
 
 - **`self.ops[op_idx](x)`**: Применение выбранной операции
- - `op_idx`: index выбранной операции
- - `x`: Входные data
- - Применение: выполнение операции on данных
- - Результат: преобразованные data
+- `op_idx`: index выбранной операции
+- `x`: Входные data
+- Применение: выполнение операции on данных
+- Результат: преобразованные data
 
 **Операции ENAS:**
 
 - **`nn.Conv2d(3, 64, 3, padding=1)`**: 3x3 свертка
- - `3`: Входные каналы
- - `64`: Выходные каналы
- - `3`: Размер ядра
- - `padding=1`: Заполнение for сохранения размера
+- `3`: Входные каналы
+- `64`: Выходные каналы
+- `3`: Размер ядра
+- `padding=1`: Заполнение for сохранения размера
 
 - **`nn.Conv2d(3, 64, 5, padding=2)`**: 5x5 свертка
- - `5`: Размер ядра (больше рецептивное поле)
- - `padding=2`: Заполнение for сохранения размера
+- `5`: Размер ядра (больше рецептивное поле)
+- `padding=2`: Заполнение for сохранения размера
 
 - **`nn.MaxPool2d(3, stride=1, padding=1)`**: Max pooling
- - `3`: Размер окна
- - `stride=1`: Шаг 1 for сохранения размера
- - `padding=1`: Заполнение for сохранения размера
+- `3`: Размер окна
+- `stride=1`: Шаг 1 for сохранения размера
+- `padding=1`: Заполнение for сохранения размера
 
 - **`nn.AvgPool2d(3, stride=1, padding=1)`**: Average pooling
- - `3`: Размер окна
- - `stride=1`: Шаг 1 for сохранения размера
- - `padding=1`: Заполнение for сохранения размера
+- `3`: Размер окна
+- `stride=1`: Шаг 1 for сохранения размера
+- `padding=1`: Заполнение for сохранения размера
 
 - **`nn.Conv2d(3, 64, 1)`**: 1x1 свертка
- - `1`: Размер ядра (точечная свертка)
- - Применение: изменение каналов без изменения размера
+- `1`: Размер ядра (точечная свертка)
+- Применение: изменение каналов без изменения размера
 
 - **`dilation=2`**: Дилатированная свертка
- - `2`: Коэффициент дилатации
- - Применение: увеличение рецептивного поля
+- `2`: Коэффициент дилатации
+- Применение: увеличение рецептивного поля
 
 - **`dilation=3`**: Дилатированная свертка
- - `3`: Коэффициент дилатации
- - Применение: еще большее рецептивное поле
+- `3`: Коэффициент дилатации
+- Применение: еще большее рецептивное поле
 
 - **`nn.Identity()`**: Тождественная операция
- - Применение: пропуск данных без изменений
- - Использование: for skip connections
+- Применение: пропуск данных без изменений
+- Использование: for skip connections
 ```
 
 ## Meta-Learning
@@ -487,113 +487,113 @@ class MAML(nn.Module):
  return self.model(x)
 
  def meta_update(self, support_set, query_set, num_inner_steps=5):
- """Мета-update модели"""
+"""Мета-update модели"""
 
- # Копирование параметров
+# Копирование параметров
  fast_weights = {name: param.clone() for name, param in self.model.named_parameters()}
 
- # Внутренние обновления
+# Внутренние обновления
  for step in range(num_inner_steps):
  # Forward pass on support set
  support_pred = self.forward_with_weights(support_set[0], fast_weights)
  support_loss = F.cross_entropy(support_pred, support_set[1])
 
- # Градиенты
+# Градиенты
  grads = torch.autograd.grad(support_loss, fast_weights.values(), create_graph=True)
 
- # update весов
+# update весов
  fast_weights = {name: weight - self.lr * grad
  for (name, weight), grad in zip(fast_weights.items(), grads)}
 
- # Оценка on query set
+# Оценка on query set
  query_pred = self.forward_with_weights(query_set[0], fast_weights)
  query_loss = F.cross_entropy(query_pred, query_set[1])
 
  return query_loss
 
  def forward_with_weights(self, x, weights):
- """Forward pass with заданными весами"""
- # Реализация forward pass with custom весами
+"""Forward pass with заданными весами"""
+# Реализация forward pass with custom весами
  pass
 ```
 
 **Детальные описания параметров MAML:**
 
 - **`model`**: Базовая модель for мета-обучения
- - Тип: nn.Module
- - Требования: должна поддерживать named_parameters()
- - Применение: любая модель (CNN, RNN, Transformer)
+- Тип: nn.Module
+- Требования: должна поддерживать named_parameters()
+- Применение: любая модель (CNN, RNN, Transformer)
  - examples: ResNet, LSTM, BERT
 
 - **`lr=0.01`**: Learning rate for внутренних обновлений
- - `0.01`: Стандартное значение (рекомендуется)
- - `0.001`: Меньший learning rate (стабильнее)
- - `0.1`: Больший learning rate (быстрее)
- - `0.5`: Очень большой learning rate (может быть нестабильным)
- - Применение: скорость адаптации к новым задачам
+- `0.01`: Стандартное значение (рекомендуется)
+- `0.001`: Меньший learning rate (стабильнее)
+- `0.1`: Больший learning rate (быстрее)
+- `0.5`: Очень большой learning rate (может быть нестабильным)
+- Применение: скорость адаптации к новым задачам
 
 - **`support_set`**: Поддерживающий набор данных
- - Формат: (data, labels) tuple
- - Размер: обычно 5-20 образцов (few-shot learning)
- - Применение: быстрая адаптация к новой задаче
- - Рекомендация: сбалансированные классы
+- Формат: (data, labels) tuple
+- Размер: обычно 5-20 образцов (few-shot learning)
+- Применение: быстрая адаптация к новой задаче
+- Рекомендация: сбалансированные классы
 
 - **`query_set`**: Запросный набор данных
- - Формат: (data, labels) tuple
- - Размер: обычно 15-100 образцов
- - Применение: оценка качества адаптации
- - Рекомендация: независимый from support_set
+- Формат: (data, labels) tuple
+- Размер: обычно 15-100 образцов
+- Применение: оценка качества адаптации
+- Рекомендация: независимый from support_set
 
 - **`num_inner_steps=5`**: Количество внутренних шагов
- - `5`: Стандартное количество (рекомендуется)
- - `1`: Быстрая адаптация (менее точно)
- - `10`: Медленная адаптация (более точно)
- - `20`: Очень медленная адаптация (очень точно)
- - Применение: контроль скорости адаптации
+- `5`: Стандартное количество (рекомендуется)
+- `1`: Быстрая адаптация (менее точно)
+- `10`: Медленная адаптация (более точно)
+- `20`: Очень медленная адаптация (очень точно)
+- Применение: контроль скорости адаптации
 
 - **`fast_weights`**: Быстрые веса for адаптации
- - Тип: dict with параметрами модели
- - Инициализация: копия исходных весов
- - Применение: временные веса for новой задачи
- - update: через градиентный спуск
+- Тип: dict with параметрами модели
+- Инициализация: копия исходных весов
+- Применение: временные веса for новой задачи
+- update: через градиентный спуск
 
 - **`support_pred = self.forward_with_weights(support_set[0], fast_weights)`**: Prediction on support set
  - `support_set[0]`: data support set
- - `fast_weights`: Текущие быстрые веса
- - Результат: предсказания модели
- - Применение: вычисление потерь for адаптации
+- `fast_weights`: Текущие быстрые веса
+- Результат: предсказания модели
+- Применение: вычисление потерь for адаптации
 
 - **`F.cross_entropy(support_pred, support_set[1])`**: function потерь
- - `support_pred`: Предсказания модели
- - `support_set[1]`: Истинные метки
- - Применение: классификация
- - Альтернативы: F.mse_loss for регрессии
+- `support_pred`: Предсказания модели
+- `support_set[1]`: Истинные метки
+- Применение: классификация
+- Альтернативы: F.mse_loss for регрессии
 
 - **`torch.autograd.grad(support_loss, fast_weights.values(), create_graph=True)`**: Вычисление градиентов
- - `support_loss`: Потери on support set
- - `fast_weights.values()`: parameters for дифференцирования
- - `create_graph=True`: Сохранение графа for второго порядка
- - Результат: градиенты on параметрам
- - Применение: update быстрых весов
+- `support_loss`: Потери on support set
+- `fast_weights.values()`: parameters for дифференцирования
+- `create_graph=True`: Сохранение графа for второго порядка
+- Результат: градиенты on параметрам
+- Применение: update быстрых весов
 
 - **`weight - self.lr * grad`**: update весов
- - `weight`: Текущий вес
+- `weight`: Текущий вес
  - `self.lr`: Learning rate
- - `grad`: Градиент веса
- - Результат: новый вес
- - Применение: градиентный спуск
+- `grad`: Градиент веса
+- Результат: новый вес
+- Применение: градиентный спуск
 
 - **`query_pred = self.forward_with_weights(query_set[0], fast_weights)`**: Prediction on query set
  - `query_set[0]`: data query set
- - `fast_weights`: Адаптированные веса
- - Результат: предсказания on query set
- - Применение: оценка качества адаптации
+- `fast_weights`: Адаптированные веса
+- Результат: предсказания on query set
+- Применение: оценка качества адаптации
 
 - **`query_loss = F.cross_entropy(query_pred, query_set[1])`**: Потери on query set
- - `query_pred`: Предсказания on query set
- - `query_set[1]`: Истинные метки query set
- - Результат: финальные потери
- - Применение: мета-обучение
+- `query_pred`: Предсказания on query set
+- `query_set[1]`: Истинные метки query set
+- Результат: финальные потери
+- Применение: мета-обучение
 
 **Ключевые особенности MAML:**
 
@@ -631,26 +631,26 @@ class Prototypicalnetworks(nn.Module):
  def forward(self, support_set, query_set, num_classes):
  """Forward pass for few-shot learning"""
 
- # Кодирование support set
+# Кодирование support set
  support_embeddings = self.encoder(support_set)
 
- # Вычисление прототипов классов
+# Вычисление прототипов классов
  prototypes = []
  for i in range(num_classes):
- class_mask = (support_set[:, -1] == i) # Предполагаем, что последний столбец - это класс
+class_mask = (support_set[:, -1] == i) # Предполагаем, что последний столбец - это класс
  class_embeddings = support_embeddings[class_mask]
  prototype = class_embeddings.mean(dim=0)
  prototypes.append(prototype)
 
  prototypes = torch.stack(prototypes)
 
- # Кодирование query set
+# Кодирование query set
  query_embeddings = self.encoder(query_set)
 
- # Вычисление расстояний to прототипов
+# Вычисление расстояний to прототипов
  distances = torch.cdist(query_embeddings, prototypes)
 
- # Предсказания (ближайший прототип)
+# Предсказания (ближайший прототип)
  predictions = torch.argmin(distances, dim=1)
 
  return predictions, distances
@@ -678,26 +678,26 @@ class Prototypicalnetworks(nn.Module):
 
 ```python
 class VisionLanguageModel(nn.Module):
- """Мультимодальная модель for изображений and текста"""
+"""Мультимодальная модель for изображений and текста"""
 
  def __init__(self, image_dim=2048, text_dim=768, hidden_dim=512):
  super(VisionLanguageModel, self).__init__()
 
- # Визуальный энкодер
+# Визуальный энкодер
  self.vision_encoder = nn.Sequential(
  nn.Linear(image_dim, hidden_dim),
  nn.ReLU(),
  nn.Linear(hidden_dim, hidden_dim)
  )
 
- # Текстовый энкодер
+# Текстовый энкодер
  self.text_encoder = nn.Sequential(
  nn.Linear(text_dim, hidden_dim),
  nn.ReLU(),
  nn.Linear(hidden_dim, hidden_dim)
  )
 
- # Фьюжн module
+# Фьюжн module
  self.fusion = nn.Sequential(
  nn.Linear(hidden_dim * 2, hidden_dim),
  nn.ReLU(),
@@ -705,13 +705,13 @@ class VisionLanguageModel(nn.Module):
  )
 
  def forward(self, images, texts):
- # Кодирование изображений
+# Кодирование изображений
  image_features = self.vision_encoder(images)
 
- # Кодирование текста
+# Кодирование текста
  text_features = self.text_encoder(texts)
 
- # Объединение признаков
+# Объединение признаков
  combined = torch.cat([image_features, text_features], dim=1)
 
  # Prediction
@@ -724,16 +724,16 @@ class VisionLanguageModel(nn.Module):
 
 ```python
 class CrossModalAttention(nn.Module):
- """Cross-modal attention for мультимодального обучения"""
+"""Cross-modal attention for мультимодального обучения"""
 
  def __init__(self, dim):
  super(CrossModalAttention, self).__init__()
  self.dim = dim
 
- # Attention механизмы
+# Attention механизмы
  self.attention = nn.MultiheadAttention(dim, num_heads=8)
 
- # Нормализация
+# Нормализация
  self.norm1 = nn.LayerNorm(dim)
  self.norm2 = nn.LayerNorm(dim)
 
@@ -745,7 +745,7 @@ class CrossModalAttention(nn.Module):
  )
 
  def forward(self, modality1, modality2):
- # Cross-attention между модальностями
+# Cross-attention между модальностями
  attended1, _ = self.attention(modality1, modality2, modality2)
  attended1 = self.norm1(attended1 + modality1)
 
@@ -782,35 +782,35 @@ class CrossModalAttention(nn.Module):
 
 ```python
 class FederatedAveraging:
- """Federated Averaging for распределенного обучения"""
+"""Federated Averaging for распределенного обучения"""
 
  def __init__(self, global_model, clients):
  self.global_model = global_model
  self.clients = clients
 
  def federated_round(self, num_epochs=5):
- """Один раунд федеративного обучения"""
+"""Один раунд федеративного обучения"""
 
- # Обучение on клиентах
+# Обучение on клиентах
  client_models = []
  client_weights = []
 
  for client in self.clients:
- # Локальное обучение
+# Локальное обучение
  local_model = self.train_client(client, num_epochs)
  client_models.append(local_model)
- client_weights.append(len(client.data)) # Вес пропорционален размеру данных
+client_weights.append(len(client.data)) # Вес пропорционален размеру данных
 
- # Агрегация моделей
+# Агрегация моделей
  self.aggregate_models(client_models, client_weights)
 
  def train_client(self, client, num_epochs):
- """Обучение модели on клиенте"""
+"""Обучение модели on клиенте"""
 
- # Копирование глобальной модели
+# Копирование глобальной модели
  local_model = copy.deepcopy(self.global_model)
 
- # Локальное обучение
+# Локальное обучение
  optimizer = torch.optim.SGD(local_model.parameters(), lr=0.01)
 
  for epoch in range(num_epochs):
@@ -824,15 +824,15 @@ class FederatedAveraging:
  return local_model
 
  def aggregate_models(self, client_models, weights):
- """Агрегация моделей with учетом весов"""
+"""Агрегация моделей with учетом весов"""
 
  total_weight = sum(weights)
 
- # Инициализация глобальной модели
+# Инициализация глобальной модели
  for param in self.global_model.parameters():
  param.data.zero_()
 
- # Взвешенное усреднение
+# Взвешенное усреднение
  for model, weight in zip(client_models, weights):
  for global_param, local_param in zip(self.global_model.parameters(), model.parameters()):
  global_param.data += local_param.data * (weight / total_weight)
@@ -841,68 +841,68 @@ class FederatedAveraging:
 **Детальные описания параметров Federated Learning:**
 
 - **`global_model`**: Глобальная модель on сервере
- - Тип: nn.Module
- - Применение: центральная модель for агрегации
- - Инициализация: случайные веса or предобученная модель
- - update: через агрегацию локальных моделей
+- Тип: nn.Module
+- Применение: центральная модель for агрегации
+- Инициализация: случайные веса or предобученная модель
+- update: через агрегацию локальных моделей
 
 - **`clients`**: List клиентов
- - Тип: List[Client]
- - Содержит: локальные data and модели
- - Применение: распределенное обучение
- - Рекомендация: 10-1000 клиентов
+- Тип: List[Client]
+- Содержит: локальные data and модели
+- Применение: распределенное обучение
+- Рекомендация: 10-1000 клиентов
 
 - **`num_epochs=5`**: Количество эпох локального обучения
- - `5`: Стандартное количество (рекомендуется)
- - `1`: Быстрое обучение (менее точно)
- - `10`: Медленное обучение (более точно)
- - `20`: Очень медленное обучение (очень точно)
- - Применение: контроль локального обучения
+- `5`: Стандартное количество (рекомендуется)
+- `1`: Быстрое обучение (менее точно)
+- `10`: Медленное обучение (более точно)
+- `20`: Очень медленное обучение (очень точно)
+- Применение: контроль локального обучения
 
 - **`client.data`**: Локальные data клиента
- - Тип: dataset
- - Содержит: приватные data клиента
- - Применение: локальное обучение
- - Приватность: data not покидают клиента
+- Тип: dataset
+- Содержит: приватные data клиента
+- Применение: локальное обучение
+- Приватность: data not покидают клиента
 
 - **`len(client.data)`**: Размер данных клиента
- - Применение: вес for агрегации
- - Logsка: больше данных = больше вес
- - Результат: пропорциональное влияние on глобальную модель
+- Применение: вес for агрегации
+- Logsка: больше данных = больше вес
+- Результат: пропорциональное влияние on глобальную модель
 
 - **`copy.deepcopy(self.global_model)`**: Копирование глобальной модели
- - Применение: инициализация локальной модели
- - Результат: независимая копия модели
- - Преимущества: изоляция обучения
+- Применение: инициализация локальной модели
+- Результат: независимая копия модели
+- Преимущества: изоляция обучения
 
 - **`torch.optim.SGD(local_model.parameters(), lr=0.01)`**: SGD оптимизатор
- - `local_model.parameters()`: parameters локальной модели
- - `lr=0.01`: Learning rate (рекомендуется for FedAvg)
- - `0.001`: Меньший learning rate (стабильнее)
- - `0.1`: Больший learning rate (быстрее)
- - Применение: локальная оптимизация
+- `local_model.parameters()`: parameters локальной модели
+- `lr=0.01`: Learning rate (рекомендуется for FedAvg)
+- `0.001`: Меньший learning rate (стабильнее)
+- `0.1`: Больший learning rate (быстрее)
+- Применение: локальная оптимизация
 
 - **`client.data_loader`**: Загрузчик данных клиента
- - Тип: dataLoader
- - Содержит: батчи локальных данных
- - Применение: итерация on данным
- - Рекомендация: сбалансированные батчи
+- Тип: dataLoader
+- Содержит: батчи локальных данных
+- Применение: итерация on данным
+- Рекомендация: сбалансированные батчи
 
 - **`total_weight = sum(weights)`**: Общий вес all клиентов
- - Вычисление: сумма весов all клиентов
- - Применение: нормализация весов
- - Результат: сумма all весов
+- Вычисление: сумма весов all клиентов
+- Применение: нормализация весов
+- Результат: сумма all весов
 
 - **`param.data.zero_()`**: Обнуление параметров глобальной модели
- - Применение: подготовка к агрегации
- - Результат: нулевые parameters
- - Необходимо: перед взвешенным усреднением
+- Применение: подготовка к агрегации
+- Результат: нулевые parameters
+- Необходимо: перед взвешенным усреднением
 
 - **`global_param.data += local_param.data * (weight / total_weight)`**: Взвешенное усреднение
- - `global_param`: parameter глобальной модели
- - `local_param`: parameter локальной модели
- - `weight / total_weight`: Нормализованный вес
- - Результат: взвешенная сумма параметров
+- `global_param`: parameter глобальной модели
+- `local_param`: parameter локальной модели
+- `weight / total_weight`: Нормализованный вес
+- Результат: взвешенная сумма параметров
 
 **Ключевые особенности Federated Learning:**
 
@@ -933,28 +933,28 @@ class FederatedAveraging:
 
 ```python
 class DifferentialPrivacy:
- """Differential Privacy for защиты приватности"""
+"""Differential Privacy for защиты приватности"""
 
  def __init__(self, epsilon=1.0, delta=1e-5):
  self.epsilon = epsilon
  self.delta = delta
 
  def add_noise(self, gradients, sensitivity=1.0):
- """add шума for обеспечения дифференциальной приватности"""
+"""add шума for обеспечения дифференциальной приватности"""
 
- # Вычисление стандартного отклонения шума
+# Вычисление стандартного отклонения шума
  sigma = np.sqrt(2 * np.log(1.25 / self.delta)) * sensitivity / self.epsilon
 
- # add гауссовского шума
+# add гауссовского шума
  noise = torch.normal(0, sigma, size=gradients.shape)
  noisy_gradients = gradients + noise
 
  return noisy_gradients
 
  def clip_gradients(self, gradients, max_norm=1.0):
- """Обрезка градиентов for ограничения чувствительности"""
+"""Обрезка градиентов for ограничения чувствительности"""
 
- # L2 нормализация
+# L2 нормализация
  grad_norm = torch.norm(gradients)
  if grad_norm > max_norm:
  gradients = gradients * (max_norm / grad_norm)
@@ -985,7 +985,7 @@ class DifferentialPrivacy:
 
 ```python
 class ElasticWeightConsolidation:
- """Elastic Weight Consolidation for непрерывного обучения"""
+"""Elastic Weight Consolidation for непрерывного обучения"""
 
  def __init__(self, model, lambda_ewc=1000):
  self.model = model
@@ -994,7 +994,7 @@ class ElasticWeightConsolidation:
  self.optimal_params = {}
 
  def compute_fisher_information(self, dataloader):
- """Вычисление информации Фишера"""
+"""Вычисление информации Фишера"""
 
  self.model.eval()
  fisher_info = {}
@@ -1012,14 +1012,14 @@ class ElasticWeightConsolidation:
  if param.grad is not None:
  fisher_info[name] += param.grad ** 2
 
- # Нормализация
+# Нормализация
  for name in fisher_info:
  fisher_info[name] /= len(dataloader)
 
  self.fisher_information = fisher_info
 
  def ewc_loss(self, current_loss):
- """add EWC регуляризации к loss"""
+"""add EWC регуляризации к loss"""
 
  ewc_loss = current_loss
 
@@ -1036,14 +1036,14 @@ class ElasticWeightConsolidation:
 
 ```python
 class ProgressiveNeuralnetwork(nn.Module):
- """Progressive Neural networks for непрерывного обучения"""
+"""Progressive Neural networks for непрерывного обучения"""
 
  def __init__(self, input_dim, hidden_dim=64):
  super(ProgressiveNeuralnetwork, self).__init__()
  self.columns = nn.ModuleList()
  self.lateral_connections = nn.ModuleList()
 
- # Первая колонка
+# Первая колонка
  first_column = nn.Sequential(
  nn.Linear(input_dim, hidden_dim),
  nn.ReLU(),
@@ -1052,9 +1052,9 @@ class ProgressiveNeuralnetwork(nn.Module):
  self.columns.append(first_column)
 
  def add_column(self, input_dim, hidden_dim=64):
- """add новой колонки for новой задачи"""
+"""add новой колонки for новой задачи"""
 
- # Новая колонка
+# Новая колонка
  new_column = nn.Sequential(
  nn.Linear(input_dim, hidden_dim),
  nn.ReLU(),
@@ -1062,19 +1062,19 @@ class ProgressiveNeuralnetwork(nn.Module):
  )
  self.columns.append(new_column)
 
- # Боковые соединения with предыдущими колонками
+# Боковые соединения with предыдущими колонками
  lateral_conn = nn.ModuleList()
  for i in range(len(self.columns) - 1):
  lateral_conn.append(nn.Linear(hidden_dim, hidden_dim))
  self.lateral_connections.append(lateral_conn)
 
  def forward(self, x, column_idx):
- """Forward pass for конкретной колонки"""
+"""Forward pass for конкретной колонки"""
 
- # Основной путь через текущую колонку
+# Основной путь через текущую колонку
  output = self.columns[column_idx](x)
 
- # Боковые соединения with предыдущими колонками
+# Боковые соединения with предыдущими колонками
  for i in range(column_idx):
  lateral_output = self.lateral_connections[column_idx][i](
  self.columns[i](x)
@@ -1112,22 +1112,22 @@ import pennylane as qml
 import numpy as np
 
 def quantum_neural_network(params, x):
- """Квантовая нейронная сеть"""
+"""Квантовая нейронная сеть"""
 
- # Кодирование данных
+# Кодирование данных
  for i in range(len(x)):
  qml.RY(x[i], wires=i)
 
- # Параметризованные слои
+# Параметризованные слои
  for layer in range(len(params)):
  for i in range(len(x)):
  qml.RY(params[layer][i], wires=i)
 
- # Энтangling gates
+# Энтangling gates
  for i in range(len(x) - 1):
  qml.CNOT(wires=[i, i+1])
 
- # Измерение
+# Измерение
  return [qml.expval(qml.PauliZ(i)) for i in range(len(x))]
 
 # create квантового устройства
@@ -1138,19 +1138,19 @@ qnode = qml.QNode(quantum_neural_network, dev)
 
 # Обучение квантовой модели
 def train_quantum_model(X, y, num_layers=3):
- """Обучение квантовой нейронной сети"""
+"""Обучение квантовой нейронной сети"""
 
- # Инициализация параметров
+# Инициализация параметров
  params = np.random.uniform(0, 2*np.pi, (num_layers, len(X[0])))
 
- # Оптимизатор
+# Оптимизатор
  opt = qml.GradientDescentOptimizer(stepsize=0.1)
 
  for iteration in range(100):
- # Вычисление градиентов
+# Вычисление градиентов
  grads = qml.grad(qnode)(params, X[0])
 
- # update параметров
+# update параметров
  params = opt.step(qnode, params, X[0])
 
  if iteration % 10 == 0:

@@ -164,46 +164,46 @@ import autogluon as ag
 # configuration for Apple Silicon
 def configure_apple_silicon():
  """
- configuration AutoGluon for оптимальной работы on Apple Silicon
+configuration AutoGluon for оптимальной работы on Apple Silicon
 
  Returns:
  --------
  autogluon
- Настроенный объект AutoGluon with оптимизацией for Apple Silicon
+Настроенный объект AutoGluon with оптимизацией for Apple Silicon
 
  Notes:
  ------
- Ключевые Settings for Apple Silicon:
- - num_gpus: 0 - отключение CUDA (not поддерживается on Apple Silicon)
- - num_cpus: torch.get_num_threads() - использование all доступных CPU ядер
- - memory_limit: 8GB - оптимальный лимит памяти for Apple Silicon
- - time_limit: 3600s - стандартное время обучения (1 час)
+Ключевые Settings for Apple Silicon:
+- num_gpus: 0 - отключение CUDA (not поддерживается on Apple Silicon)
+- num_cpus: torch.get_num_threads() - использование all доступных CPU ядер
+- memory_limit: 8GB - оптимальный лимит памяти for Apple Silicon
+- time_limit: 3600s - стандартное время обучения (1 час)
 
  MPS (Metal Performance Shaders) Settings:
- - Автоматическое определение доступности MPS
- - Fallback on CPU если MPS not available
- - Оптимизация for унифицированной памяти Apple Silicon
+- Автоматическое определение доступности MPS
+- Fallback on CPU если MPS not available
+- Оптимизация for унифицированной памяти Apple Silicon
  """
 
- # Отключение CUDA (not поддерживается on Apple Silicon)
- # Использование MPS (Metal Performance Shaders) вместо CUDA
+# Отключение CUDA (not поддерживается on Apple Silicon)
+# Использование MPS (Metal Performance Shaders) вместо CUDA
  ag.set_config({
- 'num_gpus': 0, # Отключение CUDA GPU
- 'num_cpus': torch.get_num_threads(), # Все доступные CPU ядра
- 'memory_limit': 8, # Лимит памяти in GB (оптимально for Apple Silicon)
- 'time_limit': 3600 # Время обучения in секундах (1 час)
+'num_gpus': 0, # Отключение CUDA GPU
+'num_cpus': torch.get_num_threads(), # Все доступные CPU ядра
+'memory_limit': 8, # Лимит памяти in GB (оптимально for Apple Silicon)
+'time_limit': 3600 # Время обучения in секундах (1 час)
  })
 
  # configuration for MPS (Metal Performance Shaders)
- # MPS - это Apple-специфичный backend for GPU acceleration
+# MPS - это Apple-специфичный backend for GPU acceleration
  if torch.backends.mps.is_available():
- print("Используется MPS ускорение (Metal Performance Shaders)")
- # MPS обеспечивает GPU ускорение for матричных операций
- # Workingет with унифицированной памятью Apple Silicon
+print("Используется MPS ускорение (Metal Performance Shaders)")
+# MPS обеспечивает GPU ускорение for матричных операций
+# Workingет with унифицированной памятью Apple Silicon
  else:
- print("Используется CPU (MPS not available)")
- # Fallback on CPU если MPS not available
- # Все вычисления будут выполняться on CPU ядрах
+print("Используется CPU (MPS not available)")
+# Fallback on CPU если MPS not available
+# Все вычисления будут выполняться on CPU ядрах
 
  return ag
 
@@ -223,37 +223,37 @@ import numpy as np
 
 class MLXOptimizedPredictor:
  """
- MLX-оптимизированный предиктор for Apple Silicon
+MLX-оптимизированный предиктор for Apple Silicon
 
  Parameters:
  -----------
  model_path : str
- Путь к директории with моделью AutoGluon:
- - Должен содержать файлы модели (.pkl)
- - Может содержать MLX веса (mlx_weights.npz)
- - Метаdata модели (model_info.json)
+Путь к директории with моделью AutoGluon:
+- Должен содержать файлы модели (.pkl)
+- Может содержать MLX веса (mlx_weights.npz)
+- Метаdata модели (model_info.json)
 
  Attributes:
  -----------
  model_path : str
- Путь к директории with моделью
+Путь к директории with моделью
 
  mlx_model : MLXTabularModel or None
- MLX модель for ускоренного инференса
- None если модель not загружена
+MLX модель for ускоренного инференса
+None если модель not загружена
 
  feature_names : List[str] or None
- List названий признаков
- None если not определены
+List названий признаков
+None если not определены
 
  Notes:
  ------
- MLX (Machine Learning eXtended) - это фреймворк Apple for ML:
- - Специально разWorkingн for Apple Silicon
- - in 2-3 раза быстрее PyTorch on Apple Silicon
- - Использует Metal Performance Shaders for GPU acceleration
- - Оптимизирован for унифицированной памяти
- - API похож on NumPy for простоты использования
+MLX (Machine Learning eXtended) - это фреймворк Apple for ML:
+- Специально разWorkingн for Apple Silicon
+- in 2-3 раза быстрее PyTorch on Apple Silicon
+- Использует Metal Performance Shaders for GPU acceleration
+- Оптимизирован for унифицированной памяти
+- API похож on NumPy for простоты использования
  """
 
  def __init__(self, model_path: str):
@@ -263,124 +263,124 @@ class MLXOptimizedPredictor:
 
  def load_mlx_model(self):
  """
- Загрузка модели in MLX for ускоренного инференса
+Загрузка модели in MLX for ускоренного инференса
 
  Returns:
  --------
  bool
- True если модель успешно загружена, False in противном случае
+True если модель успешно загружена, False in противном случае
 
  Notes:
  ------
- Процесс загрузки MLX модели:
- 1. Загрузка весов из файла mlx_weights.npz
- 2. create архитектуры модели with загруженными весами
- 3. Инициализация MLX модели for инференса
- 4. check совместимости архитектуры
+Процесс загрузки MLX модели:
+1. Загрузка весов из файла mlx_weights.npz
+2. create архитектуры модели with загруженными весами
+3. Инициализация MLX модели for инференса
+4. check совместимости архитектуры
 
- Требования к файлу весов:
- - Формат: .npz (NumPy compressed archive)
- - Содержит: веса слоев, смещения, метаdata
- - Structure: словарь with ключами for каждого слоя
+Требования к файлу весов:
+- Формат: .npz (NumPy compressed archive)
+- Содержит: веса слоев, смещения, метаdata
+- Structure: словарь with ключами for каждого слоя
  """
  try:
- # Загрузка весов модели из MLX формата
- # mlx_weights.npz содержит веса in формате, оптимизированном for MLX
+# Загрузка весов модели из MLX формата
+# mlx_weights.npz содержит веса in формате, оптимизированном for MLX
  weights = mx.load(f"{self.model_path}/mlx_weights.npz")
 
- # create архитектуры модели with загруженными весами
- # Архитектура определяется автоматически on basis весов
+# create архитектуры модели with загруженными весами
+# Архитектура определяется автоматически on basis весов
  self.mlx_model = self.create_mlx_architecture(weights)
 
- print("MLX модель загружена успешно")
+print("MLX модель загружена успешно")
  return True
 
  except Exception as e:
- print(f"Ошибка загрузки MLX модели: {e}")
- # Fallback: можно использовать стандартную AutoGluon модель
+print(f"Ошибка загрузки MLX модели: {e}")
+# Fallback: можно использовать стандартную AutoGluon модель
  return False
 
  def create_mlx_architecture(self, weights):
  """
- create архитектуры MLX модели on basis загруженных весов
+create архитектуры MLX модели on basis загруженных весов
 
  Parameters:
  -----------
  weights : Dict[str, mx.array]
- Словарь with весами модели:
- - Ключи: названия слоев (например, 'layer_0.weight', 'layer_0.bias')
- - Значения: MLX массивы with весами and смещениями
+Словарь with весами модели:
+- Ключи: названия слоев (например, 'layer_0.weight', 'layer_0.bias')
+- Значения: MLX массивы with весами and смещениями
 
  Returns:
  --------
  MLXTabularModel
- Класс MLX модели for табличных данных
+Класс MLX модели for табличных данных
 
  Notes:
  ------
- Архитектура MLX модели:
- - Входной слой: Linear(input_size, hidden_sizes[0])
- - Скрытые слои: Linear + ReLU активация
- - Выходной слой: Linear(hidden_sizes[-1], output_size)
+Архитектура MLX модели:
+- Входной слой: Linear(input_size, hidden_sizes[0])
+- Скрытые слои: Linear + ReLU активация
+- Выходной слой: Linear(hidden_sizes[-1], output_size)
 
- Преимущества MLX архитектуры:
- - Оптимизирована for Apple Silicon
- - Использует Metal Performance Shaders
- - Эффективная Working with унифицированной памятью
- - Автоматическая оптимизация for GPU/CPU
+Преимущества MLX архитектуры:
+- Оптимизирована for Apple Silicon
+- Использует Metal Performance Shaders
+- Эффективная Working with унифицированной памятью
+- Автоматическая оптимизация for GPU/CPU
  """
 
  class MLXTabularModel(nn.Module):
  """
- MLX модель for табличных данных
+MLX модель for табличных данных
 
  Parameters:
  -----------
  input_size : int
- Размер входного слоя (количество признаков)
+Размер входного слоя (количество признаков)
 
  hidden_sizes : List[int]
- Размеры скрытых слоев:
- - [64, 32]: Два скрытых слоя (64 and 32 нейрона)
- - [128, 64, 32]: Три скрытых слоя
- - [256]: Один скрытый слой (256 нейронов)
+Размеры скрытых слоев:
+- [64, 32]: Два скрытых слоя (64 and 32 нейрона)
+- [128, 64, 32]: Три скрытых слоя
+- [256]: Один скрытый слой (256 нейронов)
 
  output_size : int
- Размер выходного слоя:
- - 1: Регрессия or бинарная классификация
- - 2+: Многоклассовая классификация
+Размер выходного слоя:
+- 1: Регрессия or бинарная классификация
+- 2+: Многоклассовая классификация
  """
  def __init__(self, input_size, hidden_sizes, output_size):
  super().__init__()
  self.layers = []
 
- # Входной слой
- # Преобразует входные признаки in скрытое представление
+# Входной слой
+# Преобразует входные признаки in скрытое представление
  self.layers.append(nn.Linear(input_size, hidden_sizes[0]))
 
- # Скрытые слои with активацией
- # Каждый слой: Linear + ReLU for нелинейности
+# Скрытые слои with активацией
+# Каждый слой: Linear + ReLU for нелинейности
  for i in range(len(hidden_sizes) - 1):
  self.layers.append(nn.Linear(hidden_sizes[i], hidden_sizes[i + 1]))
- self.layers.append(nn.ReLU()) # ReLU активация for нелинейности
+self.layers.append(nn.ReLU()) # ReLU активация for нелинейности
 
- # Выходной слой
- # Финальное преобразование in Prediction
+# Выходной слой
+# Финальное преобразование in Prediction
  self.layers.append(nn.Linear(hidden_sizes[-1], output_size))
 
  def __call__(self, x):
  """
- Прямой проход через модель
+Прямой проход через модель
 
  Parameters:
  -----------
  x : mx.array
- Входные data (batch_size, input_size)
+Входные data (batch_size, input_size)
 
  Returns:
  --------
  mx.array
- Выходные предсказания (batch_size, output_size)
+Выходные предсказания (batch_size, output_size)
  """
  for layer in self.layers:
  x = layer(x)
@@ -390,61 +390,61 @@ class MLXOptimizedPredictor:
 
  def predict_mlx(self, data: np.ndarray) -> np.ndarray:
  """
- Prediction with использованием MLX for ускоренного инференса
+Prediction with использованием MLX for ускоренного инференса
 
  Parameters:
  -----------
  data : np.ndarray
- Входные data for предсказания:
- - Формат: (n_samples, n_features)
- - Тип: float32 (оптимально for MLX)
- - Нормализованные data (рекомендуется)
+Входные data for предсказания:
+- Формат: (n_samples, n_features)
+- Тип: float32 (оптимально for MLX)
+- Нормализованные data (рекомендуется)
 
  Returns:
  --------
  np.ndarray
- Предсказания модели:
- - Формат: (n_samples, n_outputs)
- - Тип: float32
- - Значения: предсказания for каждого образца
+Предсказания модели:
+- Формат: (n_samples, n_outputs)
+- Тип: float32
+- Значения: предсказания for каждого образца
 
  Raises:
  -------
  ValueError
- Если MLX модель not загружена
+Если MLX модель not загружена
 
  Notes:
  ------
- Процесс MLX предсказания:
- 1. Преобразование NumPy in MLX массив
- 2. Выполнение прямого прохода через модель
- 3. Обработка результатов with mx.eval()
- 4. Преобразование обратно in NumPy
+Процесс MLX предсказания:
+1. Преобразование NumPy in MLX массив
+2. Выполнение прямого прохода через модель
+3. Обработка результатов with mx.eval()
+4. Преобразование обратно in NumPy
 
- Преимущества MLX предсказания:
- - in 2-3 раза быстрее PyTorch on Apple Silicon
- - Автоматическое использование GPU/CPU
- - Оптимизация for унифицированной памяти
- - Низкое энергопотребление
+Преимущества MLX предсказания:
+- in 2-3 раза быстрее PyTorch on Apple Silicon
+- Автоматическое использование GPU/CPU
+- Оптимизация for унифицированной памяти
+- Низкое энергопотребление
  """
  if self.mlx_model is None:
- raise ValueError("MLX модель not загружена")
+raise ValueError("MLX модель not загружена")
 
- # Преобразование in MLX массив
- # MLX Workingет with float32 for оптимальной производительности
+# Преобразование in MLX массив
+# MLX Workingет with float32 for оптимальной производительности
  mlx_data = mx.array(data.astype(np.float32))
 
  # Prediction with MLX
- # mx.eval() обеспечивает ленивое выполнение and оптимизацию
+# mx.eval() обеспечивает ленивое выполнение and оптимизацию
  with mx.eval():
  predictions = self.mlx_model(mlx_data)
 
- # Преобразование обратно in NumPy for совместимости
+# Преобразование обратно in NumPy for совместимости
  return np.array(predictions)
 
 # Использование MLX предиктора
 def create_mlx_predictor(model_path: str):
- """create MLX предиктора"""
+"""create MLX предиктора"""
  predictor = MLXOptimizedPredictor(model_path)
 
  if predictor.load_mlx_model():
@@ -458,50 +458,50 @@ def create_mlx_predictor(model_path: str):
 ```python
 def optimize_data_for_mlx(data: pd.dataFrame) -> np.ndarray:
  """
- Оптимизация данных for MLX on Apple Silicon
+Оптимизация данных for MLX on Apple Silicon
 
  Parameters:
  -----------
  data : pd.dataFrame
- Исходные data for оптимизации:
- - Содержит числовые and категориальные признаки
- - Может содержать пропущенные значения
- - Различные типы данных (int, float, object)
+Исходные data for оптимизации:
+- Содержит числовые and категориальные признаки
+- Может содержать пропущенные значения
+- Различные типы данных (int, float, object)
 
  Returns:
  --------
  np.ndarray
- Оптимизированные data for MLX:
- - Формат: (n_samples, n_features)
- - Тип: float32 (оптимально for MLX)
- - Нормализованные значения (mean=0, std=1)
- - Без пропущенных значений
+Оптимизированные data for MLX:
+- Формат: (n_samples, n_features)
+- Тип: float32 (оптимально for MLX)
+- Нормализованные значения (mean=0, std=1)
+- Без пропущенных значений
 
  Notes:
  ------
- Процесс оптимизации for MLX:
- 1. Выбор только числовых признаков
- 2. Преобразование in float32 (оптимально for Apple Silicon)
- 3. Нормализация (z-score) for стабильности обучения
- 4. Обработка пропущенных значений
+Процесс оптимизации for MLX:
+1. Выбор только числовых признаков
+2. Преобразование in float32 (оптимально for Apple Silicon)
+3. Нормализация (z-score) for стабильности обучения
+4. Обработка пропущенных значений
 
- Преимущества оптимизации:
- - Ускорение вычислений in 2-3 раза
- - Стабильность обучения
- - Эффективное использование памяти
- - Оптимизация for Metal Performance Shaders
+Преимущества оптимизации:
+- Ускорение вычислений in 2-3 раза
+- Стабильность обучения
+- Эффективное использование памяти
+- Оптимизация for Metal Performance Shaders
  """
 
- # Преобразование in numpy with правильным типом
- # MLX Workingет быстрее with float32 on Apple Silicon
+# Преобразование in numpy with правильным типом
+# MLX Workingет быстрее with float32 on Apple Silicon
  data_array = data.select_dtypes(include=[np.number]).values.astype(np.float32)
 
- # Нормализация for MLX (z-score нормализация)
- # Обеспечивает стабильность обучения and лучшую производительность
+# Нормализация for MLX (z-score нормализация)
+# Обеспечивает стабильность обучения and лучшую производительность
  mean_values = data_array.mean(axis=0)
  std_values = data_array.std(axis=0)
 
- # Избегаем деления on ноль
+# Избегаем деления on ноль
  data_array = (data_array - mean_values) / (std_values + 1e-8)
 
  return data_array
@@ -509,57 +509,57 @@ def optimize_data_for_mlx(data: pd.dataFrame) -> np.ndarray:
 # Использование
 def train_with_mlx_optimization(train_data: pd.dataFrame):
  """
- Обучение with MLX оптимизацией for Apple Silicon
+Обучение with MLX оптимизацией for Apple Silicon
 
  Parameters:
  -----------
  train_data : pd.dataFrame
- data for обучения:
- - Содержит целевую переменную 'target'
- - Смешанные типы данных (числовые and категориальные)
- - Может содержать пропущенные значения
+data for обучения:
+- Содержит целевую переменную 'target'
+- Смешанные типы данных (числовые and категориальные)
+- Может содержать пропущенные значения
 
  Returns:
  --------
  TabularPredictor
- Обученный предиктор with оптимизацией for Apple Silicon
+Обученный предиктор with оптимизацией for Apple Silicon
 
  Notes:
  ------
- Процесс MLX оптимизации:
- 1. Оптимизация данных for MLX
- 2. configuration предиктора for Apple Silicon
- 3. Обучение with оптимизированными параметрами
- 4. Сохранение модели in MLX-совместимом формате
+Процесс MLX оптимизации:
+1. Оптимизация данных for MLX
+2. configuration предиктора for Apple Silicon
+3. Обучение with оптимизированными параметрами
+4. Сохранение модели in MLX-совместимом формате
 
- parameters оптимизации:
- - num_cpus: все доступные CPU ядра
- - num_gpus: 0 (отключение CUDA)
- - memory_limit: 8GB (оптимально for Apple Silicon)
- - time_limit: 3600s (1 час обучения)
+parameters оптимизации:
+- num_cpus: все доступные CPU ядра
+- num_gpus: 0 (отключение CUDA)
+- memory_limit: 8GB (оптимально for Apple Silicon)
+- time_limit: 3600s (1 час обучения)
  """
 
- # Оптимизация данных for MLX
- # Преобразование in формат, optimized for Apple Silicon
+# Оптимизация данных for MLX
+# Преобразование in формат, optimized for Apple Silicon
  optimized_data = optimize_data_for_mlx(train_data)
 
- # create предиктора with оптимизацией for Apple Silicon
+# create предиктора with оптимизацией for Apple Silicon
  predictor = TabularPredictor(
- label='target', # Целевая переменная
- problem_type='auto', # Автоматическое определение типа задачи
- eval_metric='auto', # Автоматический выбор метрики
- path='./mlx_models' # Путь for сохранения MLX-совместимых моделей
+label='target', # Целевая переменная
+problem_type='auto', # Автоматическое определение типа задачи
+eval_metric='auto', # Автоматический выбор метрики
+path='./mlx_models' # Путь for сохранения MLX-совместимых моделей
  )
 
- # Обучение with оптимизацией for Apple Silicon
+# Обучение with оптимизацией for Apple Silicon
  predictor.fit(
- train_data, # Исходные data (not оптимизированные for совместимости)
+train_data, # Исходные data (not оптимизированные for совместимости)
  ag_args_fit={
- 'num_cpus': torch.get_num_threads(), # Все доступные CPU ядра
- 'num_gpus': 0, # Отключение CUDA (not поддерживается on Apple Silicon)
- 'memory_limit': 8 # Лимит памяти in GB (оптимально for Apple Silicon)
+'num_cpus': torch.get_num_threads(), # Все доступные CPU ядра
+'num_gpus': 0, # Отключение CUDA (not поддерживается on Apple Silicon)
+'memory_limit': 8 # Лимит памяти in GB (оптимально for Apple Silicon)
  },
- time_limit=3600 # Время обучения in секундах (1 час)
+time_limit=3600 # Время обучения in секундах (1 час)
  )
 
  return predictor
@@ -576,38 +576,38 @@ import autogluon as ag
 
 def configure_ray_apple_silicon():
  """
- configuration Ray for оптимальной работы on Apple Silicon
+configuration Ray for оптимальной работы on Apple Silicon
 
  Returns:
  --------
  ray
- initializedный Ray кластер with оптимизацией for Apple Silicon
+initializedный Ray кластер with оптимизацией for Apple Silicon
 
  Notes:
  ------
  Ray configuration for Apple Silicon:
- - num_cpus: все доступные CPU ядра
- - num_gpus: 0 (отключение CUDA GPU)
- - object_store_memory: 2GB (оптимально for Apple Silicon)
- - ignore_reinit_error: True (игнорирование ошибок переинициализации)
+- num_cpus: все доступные CPU ядра
+- num_gpus: 0 (отключение CUDA GPU)
+- object_store_memory: 2GB (оптимально for Apple Silicon)
+- ignore_reinit_error: True (игнорирование ошибок переинициализации)
 
- Преимущества Ray on Apple Silicon:
- - Распределенные вычисления on CPU ядрах
- - Эффективное использование унифицированной памяти
- - Параллельная обработка данных
- - Масштабирование on несколько процессов
+Преимущества Ray on Apple Silicon:
+- Распределенные вычисления on CPU ядрах
+- Эффективное использование унифицированной памяти
+- Параллельная обработка данных
+- Масштабирование on несколько процессов
  """
 
- # Инициализация Ray with настройками for Apple Silicon
+# Инициализация Ray with настройками for Apple Silicon
  ray.init(
- num_cpus=torch.get_num_threads(), # Все доступные CPU ядра
- num_gpus=0, # Отключение GPU for Apple Silicon (CUDA not поддерживается)
- object_store_memory=2 * 1024 * 1024 * 1024, # 2GB объектного хранилища
- ignore_reinit_error=True # Игнорирование ошибок переинициализации
+num_cpus=torch.get_num_threads(), # Все доступные CPU ядра
+num_gpus=0, # Отключение GPU for Apple Silicon (CUDA not поддерживается)
+object_store_memory=2 * 1024 * 1024 * 1024, # 2GB объектного хранилища
+ignore_reinit_error=True # Игнорирование ошибок переинициализации
  )
 
- print(f"Ray кластер initialized: {ray.is_initialized()}")
- print(f"Доступные ресурсы: {ray.cluster_resources()}")
+print(f"Ray кластер initialized: {ray.is_initialized()}")
+print(f"Доступные ресурсы: {ray.cluster_resources()}")
 
  return ray
 
@@ -621,133 +621,133 @@ ray_cluster = configure_ray_apple_silicon()
 @ray.remote
 def train_model_remote(data_chunk, model_config):
  """
- Удаленное обучение модели with Ray on Apple Silicon
+Удаленное обучение модели with Ray on Apple Silicon
 
  Parameters:
  -----------
  data_chunk : pd.dataFrame
- Часть данных for обучения:
- - Подмножество исходного датасета
- - Содержит целевую переменную
- - Может быть предобWorkingна
+Часть данных for обучения:
+- Подмножество исходного датасета
+- Содержит целевую переменную
+- Может быть предобWorkingна
 
  model_config : Dict[str, Any]
- configuration модели:
- - label: str - название целевой переменной
- - problem_type: str - тип задачи ('auto', 'binary', 'multiclass', 'regression')
- - eval_metric: str - метрика оценки ('auto', 'accuracy', 'f1', 'rmse')
- - time_limit: int - время обучения in секундах
- - presets: str - предinstallation качества ('medium_quality', 'high_quality')
+configuration модели:
+- label: str - название целевой переменной
+- problem_type: str - тип задачи ('auto', 'binary', 'multiclass', 'regression')
+- eval_metric: str - метрика оценки ('auto', 'accuracy', 'f1', 'rmse')
+- time_limit: int - время обучения in секундах
+- presets: str - предinstallation качества ('medium_quality', 'high_quality')
 
  Returns:
  --------
  TabularPredictor
- Обученный предиктор on части данных
+Обученный предиктор on части данных
 
  Notes:
  ------
- Ray remote function for распределенного обучения:
- - Выполняется on отдельном процессе
- - Использует выделенные ресурсы CPU
- - Оптимизирована for Apple Silicon
- - Возвращает обученную модель
+Ray remote function for распределенного обучения:
+- Выполняется on отдельном процессе
+- Использует выделенные ресурсы CPU
+- Оптимизирована for Apple Silicon
+- Возвращает обученную модель
  """
 
  from autogluon.tabular import TabularPredictor
 
- # create предиктора with конфигурацией
+# create предиктора with конфигурацией
  predictor = TabularPredictor(
- label=model_config['label'], # Целевая переменная
- problem_type=model_config['problem_type'], # Тип задачи
- eval_metric=model_config['eval_metric'] # Метрика оценки
+label=model_config['label'], # Целевая переменная
+problem_type=model_config['problem_type'], # Тип задачи
+eval_metric=model_config['eval_metric'] # Метрика оценки
  )
 
- # Обучение on части данных
+# Обучение on части данных
  predictor.fit(
- data_chunk, # Часть данных for обучения
- time_limit=model_config['time_limit'], # Время обучения
- presets=model_config['presets'] # Предinstallation качества
+data_chunk, # Часть данных for обучения
+time_limit=model_config['time_limit'], # Время обучения
+presets=model_config['presets'] # Предinstallation качества
  )
 
  return predictor
 
 def distributed_training_apple_silicon(data: pd.dataFrame, n_workers: int = 4):
  """
- Распределенное обучение for Apple Silicon with Ray
+Распределенное обучение for Apple Silicon with Ray
 
  Parameters:
  -----------
  data : pd.dataFrame
- data for распределенного обучения:
- - Содержит целевую переменную 'target'
- - Смешанные типы данных
- - Может содержать пропущенные значения
+data for распределенного обучения:
+- Содержит целевую переменную 'target'
+- Смешанные типы данных
+- Может содержать пропущенные значения
 
  n_workers : int, default=4
- Количество воркеров for распределенного обучения:
- - 2-4: for небольших датасетов (<10K образцов)
- - 4-8: for средних датасетов (10K-100K образцов)
- - 8-16: for больших датасетов (>100K образцов)
+Количество воркеров for распределенного обучения:
+- 2-4: for небольших датасетов (<10K образцов)
+- 4-8: for средних датасетов (10K-100K образцов)
+- 8-16: for больших датасетов (>100K образцов)
 
  Returns:
  --------
  List[TabularPredictor]
- List обученных предикторов on частях данных
+List обученных предикторов on частях данных
 
  Notes:
  ------
- Процесс распределенного обучения:
- 1. Разделение данных on части
- 2. create конфигурации модели
- 3. Launch удаленных задач обучения
- 4. Ожидание завершения all задач
- 5. Возврат обученных моделей
+Процесс распределенного обучения:
+1. Разделение данных on части
+2. create конфигурации модели
+3. Launch удаленных задач обучения
+4. Ожидание завершения all задач
+5. Возврат обученных моделей
 
- Преимущества распределенного обучения:
- - Параллельная обработка данных
- - Использование all CPU ядер
- - Масштабирование on большие датасеты
- - Оптимизация for Apple Silicon
+Преимущества распределенного обучения:
+- Параллельная обработка данных
+- Использование all CPU ядер
+- Масштабирование on большие датасеты
+- Оптимизация for Apple Silicon
  """
 
- # Разделение данных on части
- # Каждый воркер получает примерно равную часть данных
+# Разделение данных on части
+# Каждый воркер получает примерно равную часть данных
  chunk_size = len(data) // n_workers
  data_chunks = [data.iloc[i:i+chunk_size] for i in range(0, len(data), chunk_size)]
 
- # configuration модели for all воркеров
+# configuration модели for all воркеров
  model_config = {
- 'label': 'target', # Целевая переменная
- 'problem_type': 'auto', # Автоматическое определение типа задачи
- 'eval_metric': 'auto', # Автоматический выбор метрики
- 'time_limit': 1800, # Время обучения in секундах (30 minutes)
- 'presets': 'medium_quality' # Предinstallation качества
+'label': 'target', # Целевая переменная
+'problem_type': 'auto', # Автоматическое определение типа задачи
+'eval_metric': 'auto', # Автоматический выбор метрики
+'time_limit': 1800, # Время обучения in секундах (30 minutes)
+'presets': 'medium_quality' # Предinstallation качества
  }
 
- # Launch удаленных задач обучения
- # Каждая задача выполняется on отдельном процессе
+# Launch удаленных задач обучения
+# Каждая задача выполняется on отдельном процессе
  futures = []
  for chunk in data_chunks:
  future = train_model_remote.remote(chunk, model_config)
  futures.append(future)
 
- # Ожидание завершения all задач
- # Ray автоматически управляет ресурсами and процессами
+# Ожидание завершения all задач
+# Ray автоматически управляет ресурсами and процессами
  results = ray.get(futures)
 
  return results
 
 # Использование распределенного обучения
 def run_distributed_training(data: pd.dataFrame):
- """Launch распределенного обучения"""
+"""Launch распределенного обучения"""
 
  # configuration Ray
  configure_ray_apple_silicon()
 
- # Launch распределенного обучения
+# Launch распределенного обучения
  models = distributed_training_apple_silicon(data, n_workers=4)
 
- print(f"Обучено {len(models)} моделей")
+print(f"Обучено {len(models)} моделей")
 
  return models
 ```
@@ -776,52 +776,52 @@ import multiprocessing as mp
 
 def configure_openmp_apple_silicon():
  """
- configuration OpenMP for оптимальной работы on Apple Silicon
+configuration OpenMP for оптимальной работы on Apple Silicon
 
  Returns:
  --------
  int
- Количество доступных CPU ядер
+Количество доступных CPU ядер
 
  Notes:
  ------
  OpenMP configuration for Apple Silicon:
- - OMP_NUM_THREADS: количество потоков for OpenMP
- - MKL_NUM_THREADS: количество потоков for Intel MKL
- - OPENBLAS_NUM_THREADS: количество потоков for OpenBLAS
- - VECLIB_MAXIMUM_THREADS: количество потоков for Apple Accelerate
+- OMP_NUM_THREADS: количество потоков for OpenMP
+- MKL_NUM_THREADS: количество потоков for Intel MKL
+- OPENBLAS_NUM_THREADS: количество потоков for OpenBLAS
+- VECLIB_MAXIMUM_THREADS: количество потоков for Apple Accelerate
 
- parameters оптимизации:
- - OMP_SCHEDULE: 'dynamic' - динамическое распределение задач
- - OMP_DYNAMIC: 'TRUE' - динамическое Management потоками
- - OMP_NESTED: 'TRUE' - вложенный параллелизм
+parameters оптимизации:
+- OMP_SCHEDULE: 'dynamic' - динамическое распределение задач
+- OMP_DYNAMIC: 'TRUE' - динамическое Management потоками
+- OMP_NESTED: 'TRUE' - вложенный параллелизм
 
- Преимущества OpenMP on Apple Silicon:
- - Параллельные вычисления on all ядрах
- - Оптимизация for многоядерных систем
- - Эффективное использование ресурсов
- - Ускорение матричных операций
+Преимущества OpenMP on Apple Silicon:
+- Параллельные вычисления on all ядрах
+- Оптимизация for многоядерных систем
+- Эффективное использование ресурсов
+- Ускорение матричных операций
  """
 
- # Получение количества ядер
- # Apple Silicon M1/M2/M3 имеют 8-16 ядер
+# Получение количества ядер
+# Apple Silicon M1/M2/M3 имеют 8-16 ядер
  num_cores = mp.cpu_count()
- print(f"Доступно ядер: {num_cores}")
+print(f"Доступно ядер: {num_cores}")
 
- # configuration переменных окружения for OpenMP
- # Все библиотеки используют одинаковое количество потоков
- os.environ['OMP_NUM_THREADS'] = str(num_cores) # Основные OpenMP потоки
- os.environ['MKL_NUM_THREADS'] = str(num_cores) # Intel MKL потоки
- os.environ['OPENBLAS_NUM_THREADS'] = str(num_cores) # OpenBLAS потоки
- os.environ['VECLIB_MAXIMUM_THREADS'] = str(num_cores) # Apple Accelerate потоки
+# configuration переменных окружения for OpenMP
+# Все библиотеки используют одинаковое количество потоков
+os.environ['OMP_NUM_THREADS'] = str(num_cores) # Основные OpenMP потоки
+os.environ['MKL_NUM_THREADS'] = str(num_cores) # Intel MKL потоки
+os.environ['OPENBLAS_NUM_THREADS'] = str(num_cores) # OpenBLAS потоки
+os.environ['VECLIB_MAXIMUM_THREADS'] = str(num_cores) # Apple Accelerate потоки
 
  # configuration for Apple Silicon
- # Оптимизация for многоядерных систем Apple Silicon
- os.environ['OMP_SCHEDULE'] = 'dynamic' # Динамическое распределение задач
- os.environ['OMP_DYNAMIC'] = 'TRUE' # Динамическое Management потоками
- os.environ['OMP_NESTED'] = 'TRUE' # Вложенный параллелизм
+# Оптимизация for многоядерных систем Apple Silicon
+os.environ['OMP_SCHEDULE'] = 'dynamic' # Динамическое распределение задач
+os.environ['OMP_DYNAMIC'] = 'TRUE' # Динамическое Management потоками
+os.environ['OMP_NESTED'] = 'TRUE' # Вложенный параллелизм
 
- print("OpenMP настроен for Apple Silicon")
+print("OpenMP настроен for Apple Silicon")
 
  return num_cores
 
@@ -837,99 +837,99 @@ import numpy as np
 
 def parallel_data_processing(data: pd.dataFrame, n_workers: int = None):
  """
- Параллельная обработка данных for Apple Silicon with OpenMP
+Параллельная обработка данных for Apple Silicon with OpenMP
 
  Parameters:
  -----------
  data : pd.dataFrame
- data for параллельной обработки:
- - Содержит числовые and категориальные признаки
- - Может содержать пропущенные значения
- - Различные типы данных
+data for параллельной обработки:
+- Содержит числовые and категориальные признаки
+- Может содержать пропущенные значения
+- Различные типы данных
 
  n_workers : int, optional
- Количество воркеров for параллельной обработки:
- - None: автоматическое определение (все CPU ядра)
- - 2-4: for небольших датасетов
- - 4-8: for средних датасетов
- - 8-16: for больших датасетов
+Количество воркеров for параллельной обработки:
+- None: автоматическое определение (все CPU ядра)
+- 2-4: for небольших датасетов
+- 4-8: for средних датасетов
+- 8-16: for больших датасетов
 
  Returns:
  --------
  pd.dataFrame
- ОбWorkingнные data with новыми приsignми:
- - Заполнены пропущенные значения
- - Добавлены новые признаки (feature_sum, feature_mean)
- - Оптимизированы for Apple Silicon
+ОбWorkingнные data with новыми приsignми:
+- Заполнены пропущенные значения
+- Добавлены новые признаки (feature_sum, feature_mean)
+- Оптимизированы for Apple Silicon
 
  Notes:
  ------
- Процесс параллельной обработки:
- 1. Разделение данных on части
- 2. Параллельная обработка каждой части
- 3. create новых признаков
- 4. Объединение результатов
+Процесс параллельной обработки:
+1. Разделение данных on части
+2. Параллельная обработка каждой части
+3. create новых признаков
+4. Объединение результатов
 
- Преимущества параллельной обработки:
- - Использование all CPU ядер
- - Ускорение обработки данных
- - Оптимизация for Apple Silicon
- - Эффективное использование памяти
+Преимущества параллельной обработки:
+- Использование all CPU ядер
+- Ускорение обработки данных
+- Оптимизация for Apple Silicon
+- Эффективное использование памяти
  """
 
  if n_workers is None:
- n_workers = mp.cpu_count() # Использование all доступных ядер
+n_workers = mp.cpu_count() # Использование all доступных ядер
 
  def process_chunk(chunk):
  """
- Обработка части данных
+Обработка части данных
 
  Parameters:
  -----------
  chunk : pd.dataFrame
- Часть данных for обработки
+Часть данных for обработки
 
  Returns:
  --------
  pd.dataFrame
- ОбWorkingнная часть данных
+ОбWorkingнная часть данных
  """
- # Нормализация and заполнение пропущенных значений
- # Использование медианы for числовых признаков
+# Нормализация and заполнение пропущенных значений
+# Использование медианы for числовых признаков
  chunk = chunk.fillna(chunk.median())
 
- # create новых признаков
- # add агрегированных признаков for улучшения качества
+# create новых признаков
+# add агрегированных признаков for улучшения качества
  if len(chunk.columns) > 1:
- chunk['feature_sum'] = chunk.sum(axis=1) # Сумма all признаков
- chunk['feature_mean'] = chunk.mean(axis=1) # Среднее all признаков
+chunk['feature_sum'] = chunk.sum(axis=1) # Сумма all признаков
+chunk['feature_mean'] = chunk.mean(axis=1) # Среднее all признаков
 
  return chunk
 
- # Разделение данных on части
- # Каждый воркер получает примерно равную часть данных
+# Разделение данных on части
+# Каждый воркер получает примерно равную часть данных
  chunk_size = len(data) // n_workers
  chunks = [data.iloc[i:i+chunk_size] for i in range(0, len(data), chunk_size)]
 
- # Параллельная обработка with ThreadPoolExecutor
- # ThreadPoolExecutor оптимизирован for I/O операций
+# Параллельная обработка with ThreadPoolExecutor
+# ThreadPoolExecutor оптимизирован for I/O операций
  with ThreadPoolExecutor(max_workers=n_workers) as executor:
  processed_chunks = List(executor.map(process_chunk, chunks))
 
- # Объединение результатов
- # Конкатенация all обWorkingнных частей
+# Объединение результатов
+# Конкатенация all обWorkingнных частей
  processed_data = pd.concat(processed_chunks, ignore_index=True)
 
  return processed_data
 
 # Использование параллельной обработки
 def optimize_data_processing(data: pd.dataFrame):
- """Оптимизация обработки данных"""
+"""Оптимизация обработки данных"""
 
  # configuration OpenMP
  configure_openmp_apple_silicon()
 
- # Параллельная обработка
+# Параллельная обработка
  processed_data = parallel_data_processing(data)
 
  return processed_data
@@ -942,82 +942,82 @@ def optimize_data_processing(data: pd.dataFrame):
 ```python
 class AppleSiliconOptimizer:
  """
- Оптимизатор for Apple Silicon with комплексной настройкой системы
+Оптимизатор for Apple Silicon with комплексной настройкой системы
 
  Attributes:
  -----------
  num_cores : int
- Количество доступных CPU ядер:
- - M1: 8 ядер (4 производительных + 4 энергоэффективных)
- - M2: 8-10 ядер (4-6 производительных + 4 энергоэффективных)
- - M3: 8-12 ядер (4-6 производительных + 4-6 энергоэффективных)
+Количество доступных CPU ядер:
+- M1: 8 ядер (4 производительных + 4 энергоэффективных)
+- M2: 8-10 ядер (4-6 производительных + 4 энергоэффективных)
+- M3: 8-12 ядер (4-6 производительных + 4-6 энергоэффективных)
 
  mps_available : bool
- Доступность MPS (Metal Performance Shaders):
- - True: GPU ускорение доступно
- - False: только CPU вычисления
+Доступность MPS (Metal Performance Shaders):
+- True: GPU ускорение доступно
+- False: только CPU вычисления
 
  ray_initialized : bool
- Статус инициализации Ray кластера:
- - True: Ray кластер активен
- - False: Ray кластер not initialized
+Статус инициализации Ray кластера:
+- True: Ray кластер активен
+- False: Ray кластер not initialized
 
  Notes:
  ------
- AppleSiliconOptimizer обеспечивает:
- - Комплексную настройку системы for Apple Silicon
- - Оптимизацию all компонентов (OpenMP, PyTorch, AutoGluon, Ray)
- - Автоматическое определение оптимальных параметров
- - Monitoring производительности
- - Management ресурсами
+AppleSiliconOptimizer обеспечивает:
+- Комплексную настройку системы for Apple Silicon
+- Оптимизацию all компонентов (OpenMP, PyTorch, AutoGluon, Ray)
+- Автоматическое определение оптимальных параметров
+- Monitoring производительности
+- Management ресурсами
  """
 
  def __init__(self):
- self.num_cores = mp.cpu_count() # Количество CPU ядер
- self.mps_available = torch.backends.mps.is_available() # Доступность MPS
- self.ray_initialized = False # Статус Ray кластера
+self.num_cores = mp.cpu_count() # Количество CPU ядер
+self.mps_available = torch.backends.mps.is_available() # Доступность MPS
+self.ray_initialized = False # Статус Ray кластера
 
  def configure_system(self):
  """
- Комплексная configuration системы for Apple Silicon
+Комплексная configuration системы for Apple Silicon
 
  Notes:
  ------
- Процесс Settings системы:
- 1. Отключение CUDA (not поддерживается on Apple Silicon)
- 2. configuration OpenMP for параллельных вычислений
+Процесс Settings системы:
+1. Отключение CUDA (not поддерживается on Apple Silicon)
+2. configuration OpenMP for параллельных вычислений
  3. configuration PyTorch for MPS acceleration
  4. configuration AutoGluon for Apple Silicon
- 5. configuration Ray for распределенных вычислений
+5. configuration Ray for распределенных вычислений
 
- Результат Settings:
- - Оптимизированная система for Apple Silicon
- - Максимальная производительность
- - Эффективное использование ресурсов
- - Готовность к обучению моделей
+Результат Settings:
+- Оптимизированная система for Apple Silicon
+- Максимальная производительность
+- Эффективное использование ресурсов
+- Готовность к обучению моделей
  """
 
- # Отключение CUDA (not поддерживается on Apple Silicon)
- # Использование MPS (Metal Performance Shaders) вместо CUDA
+# Отключение CUDA (not поддерживается on Apple Silicon)
+# Использование MPS (Metal Performance Shaders) вместо CUDA
  os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
- # configuration OpenMP for параллельных вычислений
- # Оптимизация for многоядерных систем Apple Silicon
+# configuration OpenMP for параллельных вычислений
+# Оптимизация for многоядерных систем Apple Silicon
  self.configure_openmp()
 
  # configuration PyTorch for MPS acceleration
- # Включение Metal Performance Shaders for GPU acceleration
+# Включение Metal Performance Shaders for GPU acceleration
  self.configure_pytorch()
 
  # configuration AutoGluon for Apple Silicon
- # configuration for оптимальной работы on Apple Silicon
+# configuration for оптимальной работы on Apple Silicon
  self.configure_autogluon()
 
- # configuration Ray for распределенных вычислений
- # Инициализация кластера for параллельной обработки
+# configuration Ray for распределенных вычислений
+# Инициализация кластера for параллельной обработки
  self.configure_ray()
 
- print("Система оптимизирована for Apple Silicon")
+print("Система оптимизирована for Apple Silicon")
 
  def configure_openmp(self):
  """configuration OpenMP"""
@@ -1030,9 +1030,9 @@ class AppleSiliconOptimizer:
  """configuration PyTorch"""
  if self.mps_available:
  os.environ['PYTORCH_ENABLE_MPS_FallBACK'] = '1'
- print("MPS ускорение включено")
+print("MPS ускорение включено")
  else:
- print("MPS not available, используется CPU")
+print("MPS not available, используется CPU")
 
  def configure_autogluon(self):
  """configuration AutoGluon"""
@@ -1053,68 +1053,68 @@ class AppleSiliconOptimizer:
  ignore_reinit_error=True
  )
  self.ray_initialized = True
- print("Ray кластер initialized")
+print("Ray кластер initialized")
  except Exception as e:
- print(f"Ошибка инициализации Ray: {e}")
+print(f"Ошибка инициализации Ray: {e}")
 
  def get_optimal_config(self, data_size: int) -> dict:
  """
- Получение оптимальной конфигурации for Apple Silicon
+Получение оптимальной конфигурации for Apple Silicon
 
  Parameters:
  -----------
  data_size : int
- Размер датасета for оптимизации:
- - <1000: небольшие датасеты (быстрое обучение)
- - 1000-10000: средние датасеты (баланс качества and скорости)
- - >10000: большие датасеты (максимальное качество)
+Размер датасета for оптимизации:
+- <1000: небольшие датасеты (быстрое обучение)
+- 1000-10000: средние датасеты (баланс качества and скорости)
+- >10000: большие датасеты (максимальное качество)
 
  Returns:
  --------
  dict
- Оптимальная configuration for Apple Silicon:
- - presets: предinstallation качества
- - num_bag_folds: количество фолдов for бэггинга
- - num_bag_sets: количество наборов for бэггинга
- - time_limit: время обучения in секундах
+Оптимальная configuration for Apple Silicon:
+- presets: предinstallation качества
+- num_bag_folds: количество фолдов for бэггинга
+- num_bag_sets: количество наборов for бэггинга
+- time_limit: время обучения in секундах
 
  Notes:
  ------
- Стратегия оптимизации on размеру данных:
- - Малые датасеты: быстрое обучение, базовое качество
- - Средние датасеты: баланс качества and скорости
- - Большие датасеты: максимальное качество, длительное обучение
+Стратегия оптимизации on размеру данных:
+- Малые датасеты: быстрое обучение, базовое качество
+- Средние датасеты: баланс качества and скорости
+- Большие датасеты: максимальное качество, длительное обучение
 
- parameters оптимизации:
- - presets: качество моделей (deployment, medium, high)
- - num_bag_folds: количество фолдов (3-5)
- - num_bag_sets: количество наборов (1-2)
- - time_limit: время обучения (10-60 minutes)
+parameters оптимизации:
+- presets: качество моделей (deployment, medium, high)
+- num_bag_folds: количество фолдов (3-5)
+- num_bag_sets: количество наборов (1-2)
+- time_limit: время обучения (10-60 minutes)
  """
 
  if data_size < 1000:
- # Небольшие датасеты: быстрое обучение
+# Небольшие датасеты: быстрое обучение
  return {
- 'presets': 'optimize_for_deployment', # Быстрое развертывание
- 'num_bag_folds': 3, # Минимальное количество фолдов
- 'num_bag_sets': 1, # Один набор for бэггинга
- 'time_limit': 600 # 10 minutes обучения
+'presets': 'optimize_for_deployment', # Быстрое развертывание
+'num_bag_folds': 3, # Минимальное количество фолдов
+'num_bag_sets': 1, # Один набор for бэггинга
+'time_limit': 600 # 10 minutes обучения
  }
  elif data_size < 10000:
- # Средние датасеты: баланс качества and скорости
+# Средние датасеты: баланс качества and скорости
  return {
- 'presets': 'medium_quality', # Среднее качество
- 'num_bag_folds': 5, # Стандартное количество фолдов
- 'num_bag_sets': 1, # Один набор for бэггинга
- 'time_limit': 1800 # 30 minutes обучения
+'presets': 'medium_quality', # Среднее качество
+'num_bag_folds': 5, # Стандартное количество фолдов
+'num_bag_sets': 1, # Один набор for бэггинга
+'time_limit': 1800 # 30 minutes обучения
  }
  else:
- # Большие датасеты: максимальное качество
+# Большие датасеты: максимальное качество
  return {
- 'presets': 'high_quality', # Высокое качество
- 'num_bag_folds': 5, # Стандартное количество фолдов
- 'num_bag_sets': 2, # Два набора for бэггинга
- 'time_limit': 3600 # 60 minutes обучения
+'presets': 'high_quality', # Высокое качество
+'num_bag_folds': 5, # Стандартное количество фолдов
+'num_bag_sets': 2, # Два набора for бэггинга
+'time_limit': 3600 # 60 minutes обучения
  }
 
 # Использование оптимизатора
@@ -1126,16 +1126,16 @@ optimizer.configure_system()
 
 ```python
 def train_optimized_apple_silicon(data: pd.dataFrame, target_col: str):
- """Оптимизированное обучение for Apple Silicon"""
+"""Оптимизированное обучение for Apple Silicon"""
 
- # configuration системы
+# configuration системы
  optimizer = AppleSiliconOptimizer()
  optimizer.configure_system()
 
- # Получение оптимальной конфигурации
+# Получение оптимальной конфигурации
  config = optimizer.get_optimal_config(len(data))
 
- # create предиктора
+# create предиктора
  predictor = TabularPredictor(
  label=target_col,
  problem_type='auto',
@@ -1143,10 +1143,10 @@ def train_optimized_apple_silicon(data: pd.dataFrame, target_col: str):
  path='./apple_silicon_models'
  )
 
- # Оптимизация данных
+# Оптимизация данных
  optimized_data = optimize_data_for_mlx(data)
 
- # Обучение with оптимизацией
+# Обучение with оптимизацией
  predictor.fit(
  data,
  presets=config['presets'],
@@ -1164,23 +1164,23 @@ def train_optimized_apple_silicon(data: pd.dataFrame, target_col: str):
 
 # Использование
 def run_optimized_training():
- """Launch оптимизированного обучения"""
+"""Launch оптимизированного обучения"""
 
- # create testsых данных
+# create testsых данных
  from sklearn.datasets import make_classification
  X, y = make_classification(n_samples=10000, n_features=20, n_classes=2, random_state=42)
 
  data = pd.dataFrame(X, columns=[f'feature_{i}' for i in range(20)])
  data['target'] = y
 
- # Оптимизированное обучение
+# Оптимизированное обучение
  predictor = train_optimized_apple_silicon(data, 'target')
 
- # Тестирование
+# Тестирование
  test_data = data.sample(1000)
  predictions = predictor.predict(test_data)
 
- print(f"Обучение COMPLETED, предсказания: {len(predictions)}")
+print(f"Обучение COMPLETED, предсказания: {len(predictions)}")
 
  return predictor
 
@@ -1200,201 +1200,201 @@ from datetime import datetime
 
 class AppleSiliconMonitor:
  """
- Monitoring производительности for Apple Silicon
+Monitoring производительности for Apple Silicon
 
  Attributes:
  -----------
  start_time : float
- Время начала Monitoringа (timestamp)
+Время начала Monitoringа (timestamp)
 
  metrics : List[Dict[str, Any]]
- List метрик производительности:
- - timestamp: время измерения
- - cpu_percent: использование CPU (%)
- - cpu_freq: частота CPU (MHz)
- - memory_percent: использование памяти (%)
- - memory_available: доступная память (GB)
- - disk_percent: использование диска (%)
- - cpu_temp: температура CPU (°C)
- - elapsed_time: время выполнения (секунды)
+List метрик производительности:
+- timestamp: время измерения
+- cpu_percent: использование CPU (%)
+- cpu_freq: частота CPU (MHz)
+- memory_percent: использование памяти (%)
+- memory_available: доступная память (GB)
+- disk_percent: использование диска (%)
+- cpu_temp: температура CPU (°C)
+- elapsed_time: время выполнения (секунды)
 
  Notes:
  ------
- AppleSiliconMonitor обеспечивает:
- - Monitoring системных ресурсов
- - Отслеживание производительности обучения
- - Анализ использования CPU, памяти, диска
- - Контроль температуры процессора
- - Генерацию Reportов о производительности
+AppleSiliconMonitor обеспечивает:
+- Monitoring системных ресурсов
+- Отслеживание производительности обучения
+- Анализ использования CPU, памяти, диска
+- Контроль температуры процессора
+- Генерацию Reportов о производительности
  """
 
  def __init__(self):
- self.start_time = time.time() # Время начала Monitoringа
- self.metrics = [] # List метрик производительности
+self.start_time = time.time() # Время начала Monitoringа
+self.metrics = [] # List метрик производительности
 
  def get_system_metrics(self):
  """
- Получение системных метрик for Apple Silicon
+Получение системных метрик for Apple Silicon
 
  Returns:
  --------
  Dict[str, Any]
- Словарь with системными метриками:
- - timestamp: время измерения (ISO формат)
- - cpu_percent: использование CPU (%)
- - cpu_freq: частота CPU (MHz)
- - memory_percent: использование памяти (%)
- - memory_available: доступная память (GB)
- - disk_percent: использование диска (%)
- - cpu_temp: температура CPU (°C)
- - elapsed_time: время выполнения (секунды)
+Словарь with системными метриками:
+- timestamp: время измерения (ISO формат)
+- cpu_percent: использование CPU (%)
+- cpu_freq: частота CPU (MHz)
+- memory_percent: использование памяти (%)
+- memory_available: доступная память (GB)
+- disk_percent: использование диска (%)
+- cpu_temp: температура CPU (°C)
+- elapsed_time: время выполнения (секунды)
 
  Notes:
  ------
- Метрики производительности:
- - CPU: использование and частота процессора
- - Память: использование and доступная память
- - Диск: использование дискового пространства
- - Температура: контроль перегрева (если доступно)
- - Время: отслеживание длительности выполнения
+Метрики производительности:
+- CPU: использование and частота процессора
+- Память: использование and доступная память
+- Диск: использование дискового пространства
+- Температура: контроль перегрева (если доступно)
+- Время: отслеживание длительности выполнения
 
- Особенности Apple Silicon:
- - Унифицированная память (CPU and GPU)
- - Энергоэффективные ядра
- - Контроль температуры for предотвращения дросселирования
+Особенности Apple Silicon:
+- Унифицированная память (CPU and GPU)
+- Энергоэффективные ядра
+- Контроль температуры for предотвращения дросселирования
  """
 
- # CPU метрики
- # Измерение использования CPU за 1 секунду
+# CPU метрики
+# Измерение использования CPU за 1 секунду
  cpu_percent = psutil.cpu_percent(interval=1)
- cpu_freq = psutil.cpu_freq() # Частота CPU
+cpu_freq = psutil.cpu_freq() # Частота CPU
 
- # Память
- # Информация об использовании памяти
+# Память
+# Информация об использовании памяти
  memory = psutil.virtual_memory()
 
- # Диск
- # Использование дискового пространства
+# Диск
+# Использование дискового пространства
  disk = psutil.disk_usage('/')
 
- # Температура (если доступна)
- # Контроль температуры for предотвращения перегрева
+# Температура (если доступна)
+# Контроль температуры for предотвращения перегрева
  try:
  temps = psutil.sensors_temperatures()
  cpu_temp = temps.get('cpu_thermal', [{}])[0].get('current', 0)
  except:
- cpu_temp = 0 # Температура недоступна
+cpu_temp = 0 # Температура недоступна
 
  return {
- 'timestamp': datetime.now().isoformat(), # Время измерения
- 'cpu_percent': cpu_percent, # Использование CPU (%)
- 'cpu_freq': cpu_freq.current if cpu_freq else 0, # Частота CPU (MHz)
- 'memory_percent': memory.percent, # Использование памяти (%)
- 'memory_available': memory.available / (1024**3), # Доступная память (GB)
- 'disk_percent': disk.percent, # Использование диска (%)
- 'cpu_temp': cpu_temp, # Температура CPU (°C)
- 'elapsed_time': time.time() - self.start_time # Время выполнения (секунды)
+'timestamp': datetime.now().isoformat(), # Время измерения
+'cpu_percent': cpu_percent, # Использование CPU (%)
+'cpu_freq': cpu_freq.current if cpu_freq else 0, # Частота CPU (MHz)
+'memory_percent': memory.percent, # Использование памяти (%)
+'memory_available': memory.available / (1024**3), # Доступная память (GB)
+'disk_percent': disk.percent, # Использование диска (%)
+'cpu_temp': cpu_temp, # Температура CPU (°C)
+'elapsed_time': time.time() - self.start_time # Время выполнения (секунды)
  }
 
  def monitor_training(self, predictor, data):
- """Monitoring обучения"""
+"""Monitoring обучения"""
 
- print("Начало Monitoringа обучения...")
+print("Начало Monitoringа обучения...")
 
- # Начальные метрики
+# Начальные метрики
  initial_metrics = self.get_system_metrics()
  self.metrics.append(initial_metrics)
 
- # Обучение with Monitoringом
+# Обучение with Monitoringом
  start_time = time.time()
  predictor.fit(data, time_limit=3600)
  training_time = time.time() - start_time
 
- # Финальные метрики
+# Финальные метрики
  final_metrics = self.get_system_metrics()
  final_metrics['training_time'] = training_time
  self.metrics.append(final_metrics)
 
- print(f"Обучение COMPLETED за {training_time:.2f} секунд")
+print(f"Обучение COMPLETED за {training_time:.2f} секунд")
 
  return final_metrics
 
  def generate_Report(self):
  """
- Генерация Reportа о производительности for Apple Silicon
+Генерация Reportа о производительности for Apple Silicon
 
  Returns:
  --------
  Dict[str, Any] or str
- Report о производительности or сообщение об ошибке:
- - total_time: общее время выполнения (секунды)
- - training_time: время обучения (секунды)
- - avg_cpu_usage: среднее использование CPU (%)
- - max_cpu_usage: максимальное использование CPU (%)
- - avg_memory_usage: среднее использование памяти (%)
- - max_memory_usage: максимальное использование памяти (%)
- - cpu_temp: температура CPU (°C)
+Report о производительности or сообщение об ошибке:
+- total_time: общее время выполнения (секунды)
+- training_time: время обучения (секунды)
+- avg_cpu_usage: среднее использование CPU (%)
+- max_cpu_usage: максимальное использование CPU (%)
+- avg_memory_usage: среднее использование памяти (%)
+- max_memory_usage: максимальное использование памяти (%)
+- cpu_temp: температура CPU (°C)
 
  Notes:
  ------
- Анализ производительности:
- - Время выполнения: общее and время обучения
- - Использование CPU: среднее and максимальное
- - Использование памяти: среднее and максимальное
- - Температура: контроль перегрева
+Анализ производительности:
+- Время выполнения: общее and время обучения
+- Использование CPU: среднее and максимальное
+- Использование памяти: среднее and максимальное
+- Температура: контроль перегрева
 
- Рекомендации on оптимизации:
- - Высокое использование CPU: увеличить количество ядер
- - Высокое использование памяти: уменьшить размер батча
- - Высокая температура: снизить нагрузку or улучшить охлаждение
+Рекомендации on оптимизации:
+- Высокое использование CPU: увеличить количество ядер
+- Высокое использование памяти: уменьшить размер батча
+- Высокая температура: снизить нагрузку or улучшить охлаждение
  """
 
  if not self.metrics:
- return "Нет данных for Reportа"
+return "Нет данных for Reportа"
 
- # Анализ метрик производительности
+# Анализ метрик производительности
  cpu_usage = [m['cpu_percent'] for m in self.metrics]
  memory_usage = [m['memory_percent'] for m in self.metrics]
 
- # Генерация Reportа о производительности
+# Генерация Reportа о производительности
  Report = {
- 'total_time': self.metrics[-1]['elapsed_time'], # Общее время выполнения
- 'training_time': self.metrics[-1].get('training_time', 0), # Время обучения
- 'avg_cpu_usage': sum(cpu_usage) / len(cpu_usage), # Среднее использование CPU
- 'max_cpu_usage': max(cpu_usage), # Максимальное использование CPU
- 'avg_memory_usage': sum(memory_usage) / len(memory_usage), # Среднее использование памяти
- 'max_memory_usage': max(memory_usage), # Максимальное использование памяти
- 'cpu_temp': self.metrics[-1]['cpu_temp'] # Температура CPU
+'total_time': self.metrics[-1]['elapsed_time'], # Общее время выполнения
+'training_time': self.metrics[-1].get('training_time', 0), # Время обучения
+'avg_cpu_usage': sum(cpu_usage) / len(cpu_usage), # Среднее использование CPU
+'max_cpu_usage': max(cpu_usage), # Максимальное использование CPU
+'avg_memory_usage': sum(memory_usage) / len(memory_usage), # Среднее использование памяти
+'max_memory_usage': max(memory_usage), # Максимальное использование памяти
+'cpu_temp': self.metrics[-1]['cpu_temp'] # Температура CPU
  }
 
  return Report
 
 # Использование Monitoringа
 def run_with_Monitoring():
- """Launch with Monitoringом"""
+"""Launch with Monitoringом"""
 
- # create монитора
+# create монитора
  monitor = AppleSiliconMonitor()
 
- # create данных
+# create данных
  from sklearn.datasets import make_classification
  X, y = make_classification(n_samples=5000, n_features=20, n_classes=2, random_state=42)
  data = pd.dataFrame(X, columns=[f'feature_{i}' for i in range(20)])
  data['target'] = y
 
- # create предиктора
+# create предиктора
  predictor = TabularPredictor(
  label='target',
  problem_type='binary',
  eval_metric='accuracy'
  )
 
- # Обучение with Monitoringом
+# Обучение with Monitoringом
  final_metrics = monitor.monitor_training(predictor, data)
 
- # Генерация Reportа
+# Генерация Reportа
  Report = monitor.generate_Report()
- print("Report о производительности:")
+print("Report о производительности:")
  for key, value in Report.items():
  print(f"{key}: {value}")
 
@@ -1407,15 +1407,15 @@ def run_with_Monitoring():
 
 ```python
 def complete_apple_silicon_example():
- """Полный example оптимизации for Apple Silicon"""
+"""Полный example оптимизации for Apple Silicon"""
 
- print("=== Оптимизация AutoML Gluon for Apple Silicon ===")
+print("=== Оптимизация AutoML Gluon for Apple Silicon ===")
 
- # 1. configuration системы
+# 1. configuration системы
  optimizer = AppleSiliconOptimizer()
  optimizer.configure_system()
 
- # 2. create данных
+# 2. create данных
  from sklearn.datasets import make_classification
  X, y = make_classification(
  n_samples=10000,
@@ -1429,13 +1429,13 @@ def complete_apple_silicon_example():
  data = pd.dataFrame(X, columns=[f'feature_{i}' for i in range(50)])
  data['target'] = y
 
- print(f"Создан датасет: {data.shape}")
+print(f"Создан датасет: {data.shape}")
 
- # 3. Оптимизация данных
+# 3. Оптимизация данных
  optimized_data = optimize_data_for_mlx(data)
- print("data оптимизированы for MLX")
+print("data оптимизированы for MLX")
 
- # 4. Обучение with Monitoringом
+# 4. Обучение with Monitoringом
  monitor = AppleSiliconMonitor()
 
  predictor = TabularPredictor(
@@ -1445,23 +1445,23 @@ def complete_apple_silicon_example():
  path='./apple_silicon_optimized'
  )
 
- # Обучение
+# Обучение
  final_metrics = monitor.monitor_training(predictor, data)
 
- # 5. Тестирование
+# 5. Тестирование
  test_data = data.sample(1000)
  predictions = predictor.predict(test_data)
 
- # 6. Оценка качества
+# 6. Оценка качества
  performance = predictor.evaluate(test_data)
 
- print("Результаты:")
- print(f"Производительность: {performance}")
- print(f"Время обучения: {final_metrics['training_time']:.2f} секунд")
+print("Результаты:")
+print(f"Производительность: {performance}")
+print(f"Время обучения: {final_metrics['training_time']:.2f} секунд")
 
- # 7. Report о производительности
+# 7. Report о производительности
  Report = monitor.generate_Report()
- print("Report о производительности:")
+print("Report о производительности:")
  for key, value in Report.items():
  print(f" {key}: {value}")
 
@@ -1476,16 +1476,16 @@ if __name__ == "__main__":
 
 ```python
 def compare_performance():
- """Сравнение производительности with оптимизацией and без"""
+"""Сравнение производительности with оптимизацией and без"""
 
- # create данных
+# create данных
  from sklearn.datasets import make_classification
  X, y = make_classification(n_samples=5000, n_features=20, n_classes=2, random_state=42)
  data = pd.dataFrame(X, columns=[f'feature_{i}' for i in range(20)])
  data['target'] = y
 
- # Тест без оптимизации
- print("=== Тест без оптимизации ===")
+# Тест без оптимизации
+print("=== Тест без оптимизации ===")
  start_time = time.time()
 
  predictor_basic = TabularPredictor(
@@ -1497,8 +1497,8 @@ def compare_performance():
  predictor_basic.fit(data, time_limit=600)
  basic_time = time.time() - start_time
 
- # Тест with оптимизацией
- print("=== Тест with оптимизацией ===")
+# Тест with оптимизацией
+print("=== Тест with оптимизацией ===")
  start_time = time.time()
 
  optimizer = AppleSiliconOptimizer()
@@ -1521,10 +1521,10 @@ def compare_performance():
  )
  optimized_time = time.time() - start_time
 
- # Сравнение результатов
- print(f"Время без оптимизации: {basic_time:.2f} секунд")
- print(f"Время with оптимизацией: {optimized_time:.2f} секунд")
- print(f"Ускорение: {basic_time/optimized_time:.2f}x")
+# Сравнение результатов
+print(f"Время без оптимизации: {basic_time:.2f} секунд")
+print(f"Время with оптимизацией: {optimized_time:.2f} секунд")
+print(f"Ускорение: {basic_time/optimized_time:.2f}x")
 
  return {
  'basic_time': basic_time,
@@ -1543,11 +1543,11 @@ if __name__ == "__main__":
 
 ```python
 def troubleshoot_apple_silicon():
- """Решение типичных проблем for Apple Silicon"""
+"""Решение типичных проблем for Apple Silicon"""
 
  print("=== Troubleshooting for Apple Silicon ===")
 
- # check доступности MPS
+# check доступности MPS
  if torch.backends.mps.is_available():
  print("✓ MPS available")
  else:
@@ -1559,22 +1559,22 @@ def troubleshoot_apple_silicon():
  print("✓ Ray initialized")
  ray.shutdown()
  except Exception as e:
- print(f"✗ Ошибка Ray: {e}")
+print(f"✗ Ошибка Ray: {e}")
 
  # check OpenMP
  import os
  if 'OMP_NUM_THREADS' in os.environ:
- print(f"✓ OpenMP настроен: {os.environ['OMP_NUM_THREADS']} потоков")
+print(f"✓ OpenMP настроен: {os.environ['OMP_NUM_THREADS']} потоков")
  else:
- print("✗ OpenMP not настроен")
+print("✗ OpenMP not настроен")
 
- # check памяти
+# check памяти
  memory = psutil.virtual_memory()
- print(f"Память: {memory.percent}% использовано, {memory.available/(1024**3):.1f}GB доступно")
+print(f"Память: {memory.percent}% использовано, {memory.available/(1024**3):.1f}GB доступно")
 
  # check CPU
  cpu_count = mp.cpu_count()
- print(f"CPU ядер: {cpu_count}")
+print(f"CPU ядер: {cpu_count}")
 
 # Launch диагностики
 if __name__ == "__main__":
@@ -1586,102 +1586,102 @@ if __name__ == "__main__":
 ```python
 def get_optimal_config_apple_silicon(data_size: int, data_type: str = 'tabular'):
  """
- Получение оптимальной конфигурации for Apple Silicon
+Получение оптимальной конфигурации for Apple Silicon
 
  Parameters:
  -----------
  data_size : int
- Размер датасета for оптимизации:
- - <1000: небольшие датасеты (быстрое обучение)
- - 1000-10000: средние датасеты (баланс качества and скорости)
- - >10000: большие датасеты (максимальное качество)
+Размер датасета for оптимизации:
+- <1000: небольшие датасеты (быстрое обучение)
+- 1000-10000: средние датасеты (баланс качества and скорости)
+- >10000: большие датасеты (максимальное качество)
 
  data_type : str, default='tabular'
- Тип данных for оптимизации:
- - 'tabular': табличные data (on умолчанию)
- - 'time_series': временные ряды
- - 'image': изображения
- - 'text': текстовые data
+Тип данных for оптимизации:
+- 'tabular': табличные data (on умолчанию)
+- 'time_series': временные ряды
+- 'image': изображения
+- 'text': текстовые data
 
  Returns:
  --------
  Dict[str, Any]
- Оптимальная configuration for Apple Silicon:
- - presets: предinstallation качества
- - num_bag_folds: количество фолдов for бэггинга
- - num_bag_sets: количество наборов for бэггинга
- - time_limit: время обучения in секундах
- - ag_args_fit: parameters обучения AutoGluon
+Оптимальная configuration for Apple Silicon:
+- presets: предinstallation качества
+- num_bag_folds: количество фолдов for бэггинга
+- num_bag_sets: количество наборов for бэггинга
+- time_limit: время обучения in секундах
+- ag_args_fit: parameters обучения AutoGluon
 
  Notes:
  ------
- Стратегия оптимизации on размеру данных:
- - Малые датасеты: быстрое обучение, минимальные ресурсы
- - Средние датасеты: баланс качества and скорости
- - Большие датасеты: максимальное качество, все ресурсы
+Стратегия оптимизации on размеру данных:
+- Малые датасеты: быстрое обучение, минимальные ресурсы
+- Средние датасеты: баланс качества and скорости
+- Большие датасеты: максимальное качество, все ресурсы
 
- parameters ресурсов:
- - num_cpus: количество CPU ядер (2-16)
- - num_gpus: 0 (отключение CUDA)
- - memory_limit: лимит памяти in GB (4-16)
- - time_limit: время обучения (5-60 minutes)
+parameters ресурсов:
+- num_cpus: количество CPU ядер (2-16)
+- num_gpus: 0 (отключение CUDA)
+- memory_limit: лимит памяти in GB (4-16)
+- time_limit: время обучения (5-60 minutes)
  """
 
  if data_size < 1000:
- # Небольшие датасеты: быстрое обучение
+# Небольшие датасеты: быстрое обучение
  return {
- 'presets': 'optimize_for_deployment', # Быстрое развертывание
- 'num_bag_folds': 3, # Минимальное количество фолдов
- 'num_bag_sets': 1, # Один набор for бэггинга
- 'time_limit': 300, # 5 minutes обучения
+'presets': 'optimize_for_deployment', # Быстрое развертывание
+'num_bag_folds': 3, # Минимальное количество фолдов
+'num_bag_sets': 1, # Один набор for бэггинга
+'time_limit': 300, # 5 minutes обучения
  'ag_args_fit': {
- 'num_cpus': min(4, mp.cpu_count()), # to 4 ядер
- 'num_gpus': 0, # Отключение CUDA
- 'memory_limit': 4 # 4GB памяти
+'num_cpus': min(4, mp.cpu_count()), # to 4 ядер
+'num_gpus': 0, # Отключение CUDA
+'memory_limit': 4 # 4GB памяти
  }
  }
  elif data_size < 10000:
- # Средние датасеты: баланс качества and скорости
+# Средние датасеты: баланс качества and скорости
  return {
- 'presets': 'medium_quality', # Среднее качество
- 'num_bag_folds': 5, # Стандартное количество фолдов
- 'num_bag_sets': 1, # Один набор for бэггинга
- 'time_limit': 1800, # 30 minutes обучения
+'presets': 'medium_quality', # Среднее качество
+'num_bag_folds': 5, # Стандартное количество фолдов
+'num_bag_sets': 1, # Один набор for бэггинга
+'time_limit': 1800, # 30 minutes обучения
  'ag_args_fit': {
- 'num_cpus': min(8, mp.cpu_count()), # to 8 ядер
- 'num_gpus': 0, # Отключение CUDA
- 'memory_limit': 8 # 8GB памяти
+'num_cpus': min(8, mp.cpu_count()), # to 8 ядер
+'num_gpus': 0, # Отключение CUDA
+'memory_limit': 8 # 8GB памяти
  }
  }
  else:
- # Большие датасеты: максимальное качество
+# Большие датасеты: максимальное качество
  return {
- 'presets': 'high_quality', # Высокое качество
- 'num_bag_folds': 5, # Стандартное количество фолдов
- 'num_bag_sets': 2, # Два набора for бэггинга
- 'time_limit': 3600, # 60 minutes обучения
+'presets': 'high_quality', # Высокое качество
+'num_bag_folds': 5, # Стандартное количество фолдов
+'num_bag_sets': 2, # Два набора for бэггинга
+'time_limit': 3600, # 60 minutes обучения
  'ag_args_fit': {
- 'num_cpus': mp.cpu_count(), # Все доступные ядра
- 'num_gpus': 0, # Отключение CUDA
- 'memory_limit': 16 # 16GB памяти
+'num_cpus': mp.cpu_count(), # Все доступные ядра
+'num_gpus': 0, # Отключение CUDA
+'memory_limit': 16 # 16GB памяти
  }
  }
 
 # Использование
 def train_with_optimal_config(data: pd.dataFrame, target_col: str):
- """Обучение with оптимальной конфигурацией"""
+"""Обучение with оптимальной конфигурацией"""
 
- # Получение конфигурации
+# Получение конфигурации
  config = get_optimal_config_apple_silicon(len(data))
 
- # create предиктора
+# create предиктора
  predictor = TabularPredictor(
  label=target_col,
  problem_type='auto',
  eval_metric='auto'
  )
 
- # Обучение with оптимальной конфигурацией
+# Обучение with оптимальной конфигурацией
  predictor.fit(
  data,
  presets=config['presets'],

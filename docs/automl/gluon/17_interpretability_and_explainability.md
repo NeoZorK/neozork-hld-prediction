@@ -131,7 +131,7 @@ shap.summary_plot(shap_values, X_test)
 
 ```python
 def get_feature_importance(predictor, method='permutation'):
- """Получение важности признаков различными методами"""
+"""Получение важности признаков различными методами"""
 
  if method == 'permutation':
  # Permutation importance
@@ -154,7 +154,7 @@ def get_feature_importance(predictor, method='permutation'):
  return np.abs(shap_values).mean(0)
 
  elif method == 'builtin':
- # Встроенная важность (for tree-based моделей)
+# Встроенная важность (for tree-based моделей)
  model = predictor.get_model_best()
  if hasattr(model, 'feature_importances_'):
  return model.feature_importances_
@@ -165,45 +165,45 @@ def get_feature_importance(predictor, method='permutation'):
 **Детальные описания параметров методов важности признаков:**
 
 - **`method='permutation'`**: Метод определения важности признаков
- - `'permutation'`: Перестановочная важность (рекомендуется)
- - `'shap'`: SHAP важность (теоретически обоснованная)
- - `'builtin'`: Встроенная важность (только for tree-based моделей)
- - `'correlation'`: Корреляционная важность (простая)
+- `'permutation'`: Перестановочная важность (рекомендуется)
+- `'shap'`: SHAP важность (теоретически обоснованная)
+- `'builtin'`: Встроенная важность (только for tree-based моделей)
+- `'correlation'`: Корреляционная важность (простая)
 
 - **`n_repeats=10`**: Количество повторений for перестановочной важности
- - `10`: Стандартное значение (баланс точности and скорости)
- - `5`: Быстрое вычисление (менее точно)
- - `20`: Точное вычисление (медленнее)
- - `50`: Очень точное вычисление (очень медленно)
+- `10`: Стандартное значение (баланс точности and скорости)
+- `5`: Быстрое вычисление (менее точно)
+- `20`: Точное вычисление (медленнее)
+- `50`: Очень точное вычисление (очень медленно)
 
 - **`random_state=42`**: Семя for воспроизводимости
- - `42`: Стандартное значение (любое число)
- - `0`: Альтернативное значение
- - `None`: Случайное значение (not воспроизводимо)
- - Применение: обеспечение воспроизводимости результатов
+- `42`: Стандартное значение (любое число)
+- `0`: Альтернативное значение
+- `None`: Случайное значение (not воспроизводимо)
+- Применение: обеспечение воспроизводимости результатов
 
 - **`X_test, y_test`**: testsые data for оценки важности
- - `X_test`: testsые признаки
- - `y_test`: testsые метки
- - Применение: оценка важности on независимых данных
- - Рекомендация: использовать holdout set
+- `X_test`: testsые признаки
+- `y_test`: testsые метки
+- Применение: оценка важности on независимых данных
+- Рекомендация: использовать holdout set
 
 - **`perm_importance.importances_mean`**: Средняя важность признаков
- - Возвращает: массив важности for каждого приsign
- - Диапазон: from 0 to бесконечности
- - Интерпретация: чем больше, тем важнее признак
+- Возвращает: массив важности for каждого приsign
+- Диапазон: from 0 to бесконечности
+- Интерпретация: чем больше, тем важнее признак
 
 - **`shap_values.mean(0)`**: Средние SHAP значения
- - `shap_values`: SHAP значения for all образцов
- - `mean(0)`: Среднее on образцам (ось 0)
- - `np.abs()`: Абсолютные значения (важность без sign)
- - Применение: глобальная важность признаков
+- `shap_values`: SHAP значения for all образцов
+- `mean(0)`: Среднее on образцам (ось 0)
+- `np.abs()`: Абсолютные значения (важность без sign)
+- Применение: глобальная важность признаков
 
 - **`model.feature_importances_`**: Встроенная важность модели
- - Доступно for: Random Forest, XGBoost, LightGBM, CatBoost
- - Недоступно for: Linear Regression, Neural networks
- - Диапазон: from 0 to 1 (сумма = 1)
- - Интерпретация: доля важности приsign
+- Доступно for: Random Forest, XGBoost, LightGBM, CatBoost
+- Недоступно for: Linear Regression, Neural networks
+- Диапазон: from 0 to 1 (сумма = 1)
+- Интерпретация: доля важности приsign
 
 ### 2. Partial Dependence Plots (PDP)
 
@@ -212,12 +212,12 @@ from sklearn.inspection import partial_dependence, plot_partial_dependence
 import matplotlib.pyplot as plt
 
 def plot_pdp(predictor, X, features, model=None):
- """Построение графиков частичной dependencies"""
+"""Построение графиков частичной dependencies"""
 
  if model is None:
  model = predictor.get_model_best()
 
- # PDP for одного приsign
+# PDP for одного приsign
  if len(features) == 1:
  pdp, axes = partial_dependence(
  model, X, features, grid_resolution=50
@@ -231,7 +231,7 @@ def plot_pdp(predictor, X, features, model=None):
  plt.grid(True)
  plt.show()
 
- # PDP for двух признаков
+# PDP for двух признаков
  elif len(features) == 2:
  pdp, axes = partial_dependence(
  model, X, features, grid_resolution=20
@@ -249,57 +249,57 @@ def plot_pdp(predictor, X, features, model=None):
 **Детальные описания параметров Partial Dependence Plots:**
 
 - **`features`**: List признаков for Analysis
- - `['feature1']`: Один признак (1D график)
- - `['feature1', 'feature2']`: Два приsign (2D график)
- - `['feature1', 'feature2', 'feature3']`: Три приsign (3D график)
- - Применение: выбор признаков for Analysis dependencies
+- `['feature1']`: Один признак (1D график)
+- `['feature1', 'feature2']`: Два приsign (2D график)
+- `['feature1', 'feature2', 'feature3']`: Три приsign (3D график)
+- Применение: выбор признаков for Analysis dependencies
 
 - **`grid_resolution=50`**: Разрешение сетки for 1D PDP
- - `50`: Стандартное разрешение (баланс точности and скорости)
- - `20`: Низкое разрешение (быстро, менее точно)
- - `100`: Высокое разрешение (медленно, более точно)
- - `200`: Очень высокое разрешение (очень медленно)
+- `50`: Стандартное разрешение (баланс точности and скорости)
+- `20`: Низкое разрешение (быстро, менее точно)
+- `100`: Высокое разрешение (медленно, более точно)
+- `200`: Очень высокое разрешение (очень медленно)
 
 - **`grid_resolution=20`**: Разрешение сетки for 2D PDP
- - `20`: Стандартное разрешение for 2D (400 точек)
- - `10`: Низкое разрешение (100 точек)
- - `30`: Высокое разрешение (900 точек)
- - `50`: Очень высокое разрешение (2500 точек)
+- `20`: Стандартное разрешение for 2D (400 точек)
+- `10`: Низкое разрешение (100 точек)
+- `30`: Высокое разрешение (900 точек)
+- `50`: Очень высокое разрешение (2500 точек)
 
 - **`figsize=(10, 6)`**: Размер фигуры for 1D PDP
- - `(10, 6)`: Стандартный размер (ширина x высота)
- - `(8, 5)`: Компактный размер
- - `(12, 8)`: Большой размер
- - `(15, 10)`: Очень большой размер
+- `(10, 6)`: Стандартный размер (ширина x высота)
+- `(8, 5)`: Компактный размер
+- `(12, 8)`: Большой размер
+- `(15, 10)`: Очень большой размер
 
 - **`figsize=(10, 8)`**: Размер фигуры for 2D PDP
- - `(10, 8)`: Стандартный размер for 2D
- - `(8, 6)`: Компактный размер
- - `(12, 10)`: Большой размер
- - `(15, 12)`: Очень большой размер
+- `(10, 8)`: Стандартный размер for 2D
+- `(8, 6)`: Компактный размер
+- `(12, 10)`: Большой размер
+- `(15, 12)`: Очень большой размер
 
 - **`levels=20`**: Количество уровней контура
- - `20`: Стандартное количество уровней
- - `10`: Меньше уровней (менее детально)
- - `30`: Больше уровней (более детально)
- - `50`: Очень много уровней (очень детально)
+- `20`: Стандартное количество уровней
+- `10`: Меньше уровней (менее детально)
+- `30`: Больше уровней (более детально)
+- `50`: Очень много уровней (очень детально)
 
 - **`cmap='viridis'`**: Цветовая карта
- - `'viridis'`: Стандартная карта (зелено-желтая)
- - `'plasma'`: Пурпурно-желтая карта
- - `'inferno'`: Красно-желтая карта
- - `'magma'`: Пурпурно-белая карта
- - `'coolwarm'`: Сине-красная карта
+- `'viridis'`: Стандартная карта (зелено-желтая)
+- `'plasma'`: Пурпурно-желтая карта
+- `'inferno'`: Красно-желтая карта
+- `'magma'`: Пурпурно-белая карта
+- `'coolwarm'`: Сине-красная карта
 
 - **`plt.grid(True)`**: Включение сетки
- - `True`: Показать сетку (рекомендуется)
- - `False`: Скрыть сетку
- - Применение: improve читаемости графика
+- `True`: Показать сетку (рекомендуется)
+- `False`: Скрыть сетку
+- Применение: improve читаемости графика
 
 - **`plt.colorbar()`**: Цветовая шкала
- - Показывает соответствие цветов and значений
- - Обязательно for 2D графиков
- - Применение: интерпретация значений
+- Показывает соответствие цветов and значений
+- Обязательно for 2D графиков
+- Применение: интерпретация значений
 
 ### 3. Accumulated Local Effects (ALE)
 
@@ -308,17 +308,17 @@ import alibi
 from alibi.explainers import ALE
 
 def plot_ale(predictor, X, features):
- """Построение ALE графиков"""
+"""Построение ALE графиков"""
 
  model = predictor.get_model_best()
 
  # create ALE explainer
  ale = ALE(model.predict, feature_names=X.columns.toList())
 
- # Вычисление ALE
+# Вычисление ALE
  ale_exp = ale.explain(X.values, features=features)
 
- # Визуализация
+# Визуализация
  fig, ax = plt.subplots(figsize=(10, 6))
  ax.plot(ale_exp.feature_values[0], ale_exp.ale_values[0])
  ax.set_xlabel(features[0])
@@ -348,7 +348,7 @@ import lime
 import lime.lime_tabular
 
 def explain_with_lime(predictor, X, instance_idx, num_features=5):
- """Объяснение конкретного предсказания with помощью LIME"""
+"""Объяснение конкретного предсказания with помощью LIME"""
 
  model = predictor.get_model_best()
 
@@ -360,14 +360,14 @@ def explain_with_lime(predictor, X, instance_idx, num_features=5):
  mode='classification'
  )
 
- # Объяснение конкретного экземпляра
+# Объяснение конкретного экземпляра
  exPlanation = explainer.explain_instance(
  X.iloc[instance_idx].values,
  model.predict_proba,
  num_features=num_features
  )
 
- # Визуализация
+# Визуализация
  exPlanation.show_in_notebook(show_table=True)
 
  return exPlanation
@@ -376,55 +376,55 @@ def explain_with_lime(predictor, X, instance_idx, num_features=5):
 **Детальные описания параметров LIME:**
 
 - **`instance_idx`**: index экземпляра for объяснения
- - `0`: Первый экземпляр in датасете
- - `100`: 101-й экземпляр
- - `len(X)-1`: Последний экземпляр
- - Применение: выбор конкретного образца for Analysis
+- `0`: Первый экземпляр in датасете
+- `100`: 101-й экземпляр
+- `len(X)-1`: Последний экземпляр
+- Применение: выбор конкретного образца for Analysis
 
 - **`num_features=5`**: Количество признаков for объяснения
- - `5`: Стандартное количество (баланс detailsзации and простоты)
- - `3`: Минимальное количество (очень простое объяснение)
- - `10`: Большое количество (детальное объяснение)
- - `20`: Очень большое количество (очень детальное)
+- `5`: Стандартное количество (баланс detailsзации and простоты)
+- `3`: Минимальное количество (очень простое объяснение)
+- `10`: Большое количество (детальное объяснение)
+- `20`: Очень большое количество (очень детальное)
 
 - **`X.values`**: data in формате numpy array
- - `X.values`: Преобразование dataFrame in numpy array
- - `X.to_numpy()`: Альтернативный способ
- - Применение: LIME требует numpy array for работы
+- `X.values`: Преобразование dataFrame in numpy array
+- `X.to_numpy()`: Альтернативный способ
+- Применение: LIME требует numpy array for работы
 
 - **`feature_names=X.columns.toList()`**: Имена признаков
- - `X.columns.toList()`: List имен столбцов
- - `['feature1', 'feature2', ...]`: Ручное задание имен
- - Применение: читаемые названия in объяснениях
+- `X.columns.toList()`: List имен столбцов
+- `['feature1', 'feature2', ...]`: Ручное задание имен
+- Применение: читаемые названия in объяснениях
 
 - **`class_names=['Class 0', 'Class 1']`**: Имена классов
- - `['Class 0', 'Class 1']`: Стандартные имена for бинарной классификации
- - `['Negative', 'Positive']`: Семантические имена
- - `['No', 'Yes']`: Простые имена
- - Применение: понятные названия классов in объяснениях
+- `['Class 0', 'Class 1']`: Стандартные имена for бинарной классификации
+- `['Negative', 'Positive']`: Семантические имена
+- `['No', 'Yes']`: Простые имена
+- Применение: понятные названия классов in объяснениях
 
 - **`mode='classification'`**: Режим работы LIME
- - `'classification'`: Классификация (рекомендуется)
- - `'regression'`: Регрессия
- - `'multiclass'`: Многоклассовая классификация
- - Применение: выбор алгоритма объяснения
+- `'classification'`: Классификация (рекомендуется)
+- `'regression'`: Регрессия
+- `'multiclass'`: Многоклассовая классификация
+- Применение: выбор алгоритма объяснения
 
 - **`model.predict_proba`**: function предсказания вероятностей
- - `model.predict_proba`: Метод предсказания вероятностей
- - `model.predict`: Метод предсказания классов
- - Применение: LIME использует вероятности for объяснения
+- `model.predict_proba`: Метод предсказания вероятностей
+- `model.predict`: Метод предсказания классов
+- Применение: LIME использует вероятности for объяснения
 
 - **`exPlanation.show_in_notebook(show_table=True)`**: Визуализация объяснения
- - `show_table=True`: Показать таблицу with деталями
- - `show_table=False`: Показать только график
- - Применение: отображение результатов in Jupyter notebook
+- `show_table=True`: Показать таблицу with деталями
+- `show_table=False`: Показать только график
+- Применение: отображение результатов in Jupyter notebook
 
 - **`exPlanation.score`**: Качество объяснения
- - Диапазон: from 0 to 1
- - `> 0.8`: Высокое качество (хорошее объяснение)
- - `0.5-0.8`: Среднее качество (приемлемое объяснение)
- - `< 0.5`: Низкое качество (плохое объяснение)
- - Применение: оценка надежности объяснения
+- Диапазон: from 0 to 1
+- `> 0.8`: Высокое качество (хорошее объяснение)
+- `0.5-0.8`: Среднее качество (приемлемое объяснение)
+- `< 0.5`: Низкое качество (плохое объяснение)
+- Применение: оценка надежности объяснения
 
 ### 2. SHAP (SHapley Additive exPlanations)
 
@@ -441,21 +441,21 @@ def explain_with_lime(predictor, X, instance_idx, num_features=5):
 import shap
 
 def explain_with_shap(predictor, X, instance_idx):
- """Объяснение with помощью SHAP"""
+"""Объяснение with помощью SHAP"""
 
  model = predictor.get_model_best()
 
  # create SHAP explainer
  if hasattr(model, 'predict_proba'):
- # for tree-based моделей
+# for tree-based моделей
  explainer = shap.TreeExplainer(model)
  shap_values = explainer.shap_values(X.iloc[instance_idx:instance_idx+1])
  else:
- # for других моделей
+# for других моделей
  explainer = shap.Explainer(model)
  shap_values = explainer(X.iloc[instance_idx:instance_idx+1])
 
- # Водопадный график for конкретного предсказания
+# Водопадный график for конкретного предсказания
  shap.waterfall_plot(explainer.expected_value, shap_values[0], X.iloc[instance_idx])
 
  return shap_values
@@ -464,67 +464,67 @@ def explain_with_shap(predictor, X, instance_idx):
 **Детальные описания параметров SHAP:**
 
 - **`instance_idx`**: index экземпляра for объяснения
- - `0`: Первый экземпляр in датасете
- - `100`: 101-й экземпляр
- - `len(X)-1`: Последний экземпляр
- - Применение: выбор конкретного образца for Analysis
+- `0`: Первый экземпляр in датасете
+- `100`: 101-й экземпляр
+- `len(X)-1`: Последний экземпляр
+- Применение: выбор конкретного образца for Analysis
 
 - **`X.iloc[instance_idx:instance_idx+1]`**: Выборка одного экземпляра
- - `instance_idx:instance_idx+1`: Срез for получения одного образца
- - `X.iloc[instance_idx]`: Альтернативный способ (но может вызвать ошибки)
- - Применение: SHAP требует 2D массив даже for одного образца
+- `instance_idx:instance_idx+1`: Срез for получения одного образца
+- `X.iloc[instance_idx]`: Альтернативный способ (но может вызвать ошибки)
+- Применение: SHAP требует 2D массив даже for одного образца
 
 - **`shap.TreeExplainer(model)`**: Explainer for tree-based моделей
- - Подходит for: Random Forest, XGBoost, LightGBM, CatBoost
- - not подходит for: Linear Regression, Neural networks
- - Преимущества: быстрые вычисления, точные результаты
- - Применение: оптимальный выбор for tree-based моделей
+- Подходит for: Random Forest, XGBoost, LightGBM, CatBoost
+- not подходит for: Linear Regression, Neural networks
+- Преимущества: быстрые вычисления, точные результаты
+- Применение: оптимальный выбор for tree-based моделей
 
 - **`shap.Explainer(model)`**: Универсальный explainer
- - Подходит for: любых моделей
- - Медленнее: чем TreeExplainer
- - Точность: зависит from модели
- - Применение: когда TreeExplainer not подходит
+- Подходит for: любых моделей
+- Медленнее: чем TreeExplainer
+- Точность: зависит from модели
+- Применение: когда TreeExplainer not подходит
 
 - **`explainer.expected_value`**: Ожидаемое значение модели
- - Диапазон: зависит from задачи
- - Классификация: средняя вероятность класса
- - Регрессия: среднее Prediction
- - Применение: базовая линия for объяснения
+- Диапазон: зависит from задачи
+- Классификация: средняя вероятность класса
+- Регрессия: среднее Prediction
+- Применение: базовая линия for объяснения
 
 - **`shap_values[0]`**: SHAP значения for первого образца
- - Форма: (n_features,) for одного образца
- - Значения: могут быть положительными or отрицательными
- - Интерпретация: вклад каждого приsign in Prediction
- - Применение: анализ важности признаков
+- Форма: (n_features,) for одного образца
+- Значения: могут быть положительными or отрицательными
+- Интерпретация: вклад каждого приsign in Prediction
+- Применение: анализ важности признаков
 
 - **`shap.waterfall_plot()`**: Водопадный график
- - `explainer.expected_value`: Базовая линия
- - `shap_values[0]`: SHAP значения
- - `X.iloc[instance_idx]`: Значения признаков
- - Применение: визуализация вклада каждого приsign
+- `explainer.expected_value`: Базовая линия
+- `shap_values[0]`: SHAP значения
+- `X.iloc[instance_idx]`: Значения признаков
+- Применение: визуализация вклада каждого приsign
 
 - **`hasattr(model, 'predict_proba')`**: check поддержки вероятностей
- - `True`: Модель поддерживает predict_proba
- - `False`: Модель not поддерживает predict_proba
- - Применение: выбор подходящего explainer
+- `True`: Модель поддерживает predict_proba
+- `False`: Модель not поддерживает predict_proba
+- Применение: выбор подходящего explainer
 
 **Дополнительные parameters SHAP:**
 
 - **`shap.summary_plot(shap_values, X)`**: Сводный график
- - Показывает важность all признаков
- - Цвета показывают значения признаков
- - Применение: общий обзор важности признаков
+- Показывает важность all признаков
+- Цвета показывают значения признаков
+- Применение: общий обзор важности признаков
 
 - **`shap.force_plot()`**: Силовой график
- - Показывает влияние каждого приsign
- - Интерактивная визуализация
- - Применение: детальный анализ одного предсказания
+- Показывает влияние каждого приsign
+- Интерактивная визуализация
+- Применение: детальный анализ одного предсказания
 
 - **`shap.bar_plot()`**: Столбчатый график
- - Простая визуализация важности
- - Сортировка on важности
- - Применение: быстрый обзор важности признаков
+- Простая визуализация важности
+- Сортировка on важности
+- Применение: быстрый обзор важности признаков
 
 ### 3. integrated Gradients
 
@@ -533,29 +533,29 @@ import tensorflow as tf
 import numpy as np
 
 def integrated_gradients(model, X, baseline=None, steps=50):
- """Вычисление integrated Gradients"""
+"""Вычисление integrated Gradients"""
 
  if baseline is None:
  baseline = np.zeros_like(X)
 
- # create альфа значений
+# create альфа значений
  alphas = np.linspace(0, 1, steps)
 
- # Интерполяция между baseline and X
+# Интерполяция между baseline and X
  interpolated = []
  for alpha in alphas:
  interpolated.append(baseline + alpha * (X - baseline))
 
  interpolated = np.array(interpolated)
 
- # Вычисление градиентов
+# Вычисление градиентов
  with tf.GradientTape() as tape:
  tape.watch(interpolated)
  predictions = model(interpolated)
 
  gradients = tape.gradient(predictions, interpolated)
 
- # Интегрирование градиентов
+# Интегрирование градиентов
  integrated_grads = np.mean(gradients, axis=0) * (X - baseline)
 
  return integrated_grads
@@ -564,80 +564,80 @@ def integrated_gradients(model, X, baseline=None, steps=50):
 **Детальные описания параметров integrated Gradients:**
 
 - **`model`**: TensorFlow модель for Analysis
- - Должна быть: TensorFlow/Keras модель
- - not подходит for: sklearn модели, XGBoost
- - Требования: поддержка GradientTape
- - Применение: анализ нейронных networks
+- Должна быть: TensorFlow/Keras модель
+- not подходит for: sklearn модели, XGBoost
+- Требования: поддержка GradientTape
+- Применение: анализ нейронных networks
 
 - **`X`**: Входные data for Analysis
- - Форма: (batch_size, n_features)
- - Тип: numpy array or TensorFlow tensor
- - Применение: data for объяснения
- - Рекомендация: нормализованные data
+- Форма: (batch_size, n_features)
+- Тип: numpy array or TensorFlow tensor
+- Применение: data for объяснения
+- Рекомендация: нормализованные data
 
 - **`baseline=None`**: Базовое значение for интерполяции
- - `None`: Автоматически устанавливается in нули
- - `np.zeros_like(X)`: Явное задание нулей
- - `np.mean(X, axis=0)`: Среднее значение on приsignм
- - `np.median(X, axis=0)`: Медианное значение
- - Применение: точка отсчета for объяснения
+- `None`: Автоматически устанавливается in нули
+- `np.zeros_like(X)`: Явное задание нулей
+- `np.mean(X, axis=0)`: Среднее значение on приsignм
+- `np.median(X, axis=0)`: Медианное значение
+- Применение: точка отсчета for объяснения
 
 - **`steps=50`**: Количество шагов интерполяции
- - `50`: Стандартное значение (баланс точности and скорости)
- - `20`: Быстрое вычисление (менее точно)
- - `100`: Точное вычисление (медленнее)
- - `200`: Очень точное вычисление (очень медленно)
+- `50`: Стандартное значение (баланс точности and скорости)
+- `20`: Быстрое вычисление (менее точно)
+- `100`: Точное вычисление (медленнее)
+- `200`: Очень точное вычисление (очень медленно)
 
 - **`alphas = np.linspace(0, 1, steps)`**: Коэффициенты интерполяции
- - `0`: Начальная точка (baseline)
- - `1`: Конечная точка (X)
- - `steps`: Количество промежуточных точек
- - Применение: равномерное распределение точек интерполяции
+- `0`: Начальная точка (baseline)
+- `1`: Конечная точка (X)
+- `steps`: Количество промежуточных точек
+- Применение: равномерное распределение точек интерполяции
 
 - **`interpolated`**: Интерполированные data
- - Форма: (steps, batch_size, n_features)
- - Содержит: промежуточные значения между baseline and X
- - Применение: вычисление градиентов in промежуточных точках
+- Форма: (steps, batch_size, n_features)
+- Содержит: промежуточные значения между baseline and X
+- Применение: вычисление градиентов in промежуточных точках
 
 - **`tf.GradientTape()`**: Контекст for вычисления градиентов
- - `tape.watch(interpolated)`: Отслеживание переменных
- - `predictions = model(interpolated)`: Предсказания модели
- - `gradients = tape.gradient()`: Вычисление градиентов
- - Применение: автоматическое дифференцирование
+- `tape.watch(interpolated)`: Отслеживание переменных
+- `predictions = model(interpolated)`: Предсказания модели
+- `gradients = tape.gradient()`: Вычисление градиентов
+- Применение: автоматическое дифференцирование
 
 - **`gradients`**: Градиенты predictions on входным данным
- - Форма: (steps, batch_size, n_features)
- - Содержит: градиенты for каждого шага интерполяции
- - Применение: анализ чувствительности модели
+- Форма: (steps, batch_size, n_features)
+- Содержит: градиенты for каждого шага интерполяции
+- Применение: анализ чувствительности модели
 
 - **`np.mean(gradients, axis=0)`**: Средние градиенты
- - `axis=0`: Среднее on шагам интерполяции
- - Результат: (batch_size, n_features)
- - Применение: усреднение градиентов
+- `axis=0`: Среднее on шагам интерполяции
+- Результат: (batch_size, n_features)
+- Применение: усреднение градиентов
 
 - **`(X - baseline)`**: Разность между данными and базовой линией
- - Форма: (batch_size, n_features)
- - Содержит: изменение каждого приsign
- - Применение: масштабирование градиентов
+- Форма: (batch_size, n_features)
+- Содержит: изменение каждого приsign
+- Применение: масштабирование градиентов
 
 - **`integrated_grads`**: Интегрированные градиенты
- - Форма: (batch_size, n_features)
- - Содержит: важность каждого приsign
- - Интерпретация: вклад приsign in Prediction
- - Применение: объяснение решений модели
+- Форма: (batch_size, n_features)
+- Содержит: важность каждого приsign
+- Интерпретация: вклад приsign in Prediction
+- Применение: объяснение решений модели
 
 **Дополнительные parameters integrated Gradients:**
 
 - **`method='riemann'`**: Метод интегрирования
- - `'riemann'`: Метод Римана (стандартный)
- - `'gausslegendre'`: Метод Гаусса-Лежандра (более точный)
- - `'trapezoidal'`: Трапециевидный метод (простой)
+- `'riemann'`: Метод Римана (стандартный)
+- `'gausslegendre'`: Метод Гаусса-Лежандра (более точный)
+- `'trapezoidal'`: Трапециевидный метод (простой)
 
 - **`target_class=None`**: Целевой класс for многоклассовой классификации
- - `None`: Автоматический выбор
- - `0`: Первый класс
- - `1`: Второй класс
- - Применение: объяснение конкретного класса
+- `None`: Автоматический выбор
+- `0`: Первый класс
+- `1`: Второй класс
+- Применение: объяснение конкретного класса
 
 ## Специфичные методы for AutoML Gluon
 
@@ -645,7 +645,7 @@ def integrated_gradients(model, X, baseline=None, steps=50):
 
 ```python
 def get_model_specific_exPlanations(predictor):
- """Получение объяснений специфичных for конкретной модели"""
+"""Получение объяснений специфичных for конкретной модели"""
 
  model = predictor.get_model_best()
  model_name = predictor.get_model_best().__class__.__name__
@@ -653,17 +653,17 @@ def get_model_specific_exPlanations(predictor):
  exPlanations = {}
 
  if 'XGB' in model_name or 'LGB' in model_name or 'GBM' in model_name:
- # Tree-based модели
+# Tree-based модели
  exPlanations['feature_importance'] = model.feature_importances_
  exPlanations['tree_Structure'] = model.get_booster().get_dump()
 
  elif 'Neural' in model_name or 'TabNet' in model_name:
- # Нейронные сети
+# Нейронные сети
  exPlanations['attention_weights'] = model.attention_weights
  exPlanations['feature_embeddings'] = model.feature_embeddings
 
  elif 'Linear' in model_name or 'Logistic' in model_name:
- # Линейные модели
+# Линейные модели
  exPlanations['coefficients'] = model.coef_
  exPlanations['intercept'] = model.intercept_
 
@@ -674,7 +674,7 @@ def get_model_specific_exPlanations(predictor):
 
 ```python
 def explain_ensemble(predictor, X, method='weighted'):
- """Объяснение ансамбля моделей"""
+"""Объяснение ансамбля моделей"""
 
  models = predictor.get_model_names()
  weights = predictor.get_model_weights()
@@ -685,18 +685,18 @@ def explain_ensemble(predictor, X, method='weighted'):
  model = predictor.get_model(model_name)
 
  if method == 'weighted':
- # Взвешенное объяснение
+# Взвешенное объяснение
  if hasattr(model, 'feature_importances_'):
  importance = model.feature_importances_ * weight
  exPlanations[model_name] = importance
 
  elif method == 'shap':
- # SHAP for каждой модели
+# SHAP for каждой модели
  explainer = shap.TreeExplainer(model)
  shap_values = explainer.shap_values(X)
  exPlanations[model_name] = shap_values * weight
 
- # Агрегация объяснений
+# Агрегация объяснений
  if method == 'weighted':
  ensemble_importance = np.sum(List(exPlanations.values()), axis=0)
  return ensemble_importance
@@ -721,7 +721,7 @@ def explain_ensemble(predictor, X, method='weighted'):
 
 ```python
 def create_exPlanation_dashboard(predictor, X, y, instance_idx=0):
- """create комплексной панели объяснений"""
+"""create комплексной панели объяснений"""
 
  fig, axes = plt.subplots(2, 3, figsize=(18, 12))
  fig.suptitle('Comprehensive Model ExPlanation Dashboard', fontsize=16)
@@ -742,7 +742,7 @@ def create_exPlanation_dashboard(predictor, X, y, instance_idx=0):
  ax2 = axes[0, 1]
  model = predictor.get_model_best()
  explainer = shap.TreeExplainer(model)
- shap_values = explainer.shap_values(X.iloc[:100]) # Первые 100 образцов
+shap_values = explainer.shap_values(X.iloc[:100]) # Первые 100 образцов
 
  shap.summary_plot(shap_values, X.iloc[:100], show=False, ax=ax2)
  ax2.set_title('SHAP Summary Plot')
@@ -759,7 +759,7 @@ def create_exPlanation_dashboard(predictor, X, y, instance_idx=0):
 
  # 4. Local ExPlanation (LIME)
  ax4 = axes[1, 0]
- # Здесь будет LIME объяснение for конкретного экземпляра
+# Здесь будет LIME объяснение for конкретного экземпляра
  ax4.text(0.5, 0.5, 'LIME ExPlanation\nfor Instance',
  ha='center', va='center', transform=ax4.transAxes)
  ax4.set_title('Local ExPlanation (LIME)')
@@ -794,15 +794,15 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 def create_interactive_exPlanation(predictor, X, instance_idx=0):
- """create интерактивных объяснений"""
+"""create интерактивных объяснений"""
 
  model = predictor.get_model_best()
 
- # SHAP значения
+# SHAP значения
  explainer = shap.TreeExplainer(model)
  shap_values = explainer.shap_values(X.iloc[instance_idx:instance_idx+1])
 
- # create интерактивного графика
+# create интерактивного графика
  fig = go.Figure()
 
  # Waterfall plot
@@ -832,78 +832,78 @@ def create_interactive_exPlanation(predictor, X, instance_idx=0):
 
 ```python
 def choose_exPlanation_method(model_type, data_size, interpretability_requirement):
- """Выбор подходящего метода объяснения"""
+"""Выбор подходящего метода объяснения"""
 
  if interpretability_requirement == 'high':
- # Высокие требования к интерпретируемости
+# Высокие требования к интерпретируемости
  if model_type in ['Linear', 'Logistic']:
  return 'coefficients'
  else:
  return 'lime'
 
  elif interpretability_requirement == 'medium':
- # Средние требования
+# Средние требования
  if data_size < 10000:
  return 'shap'
  else:
  return 'permutation_importance'
 
  else:
- # Низкие требования
+# Низкие требования
  return 'feature_importance'
 ```
 
 **Детальные описания параметров выбора метода объяснения:**
 
 - **`model_type`**: Тип модели for Analysis
- - `'Linear'`: Линейная регрессия
- - `'Logistic'`: Logsстическая регрессия
- - `'RandomForest'`: Случайный лес
+- `'Linear'`: Линейная регрессия
+- `'Logistic'`: Logsстическая регрессия
+- `'RandomForest'`: Случайный лес
  - `'XGBoost'`: XGBoost
- - `'Neuralnetwork'`: Нейронная сеть
+- `'Neuralnetwork'`: Нейронная сеть
  - `'SVM'`: Support Vector Machine
 
 - **`data_size`**: Размер датасета
- - `< 1000`: Малый датасет (быстрые методы)
- - `1000-10000`: Средний датасет (баланс скорости and точности)
- - `10000-100000`: Большой датасет (эффективные методы)
- - `> 100000`: Очень большой датасет (масштабируемые методы)
+- `< 1000`: Малый датасет (быстрые методы)
+- `1000-10000`: Средний датасет (баланс скорости and точности)
+- `10000-100000`: Большой датасет (эффективные методы)
+- `> 100000`: Очень большой датасет (масштабируемые методы)
 
 - **`interpretability_requirement`**: Требования к интерпретируемости
- - `'high'`: Высокие требования (детальные объяснения)
- - `'medium'`: Средние требования (баланс detailsзации and скорости)
- - `'low'`: Низкие требования (быстрые объяснения)
+- `'high'`: Высокие требования (детальные объяснения)
+- `'medium'`: Средние требования (баланс detailsзации and скорости)
+- `'low'`: Низкие требования (быстрые объяснения)
 
 - **`'coefficients'`**: Коэффициенты линейных моделей
- - Подходит for: Linear Regression, Logistic Regression
- - not подходит for: Tree-based, Neural networks
- - Преимущества: точные, быстрые, понятные
- - Применение: когда модель линейная
+- Подходит for: Linear Regression, Logistic Regression
+- not подходит for: Tree-based, Neural networks
+- Преимущества: точные, быстрые, понятные
+- Применение: когда модель линейная
 
 - **`'lime'`**: LIME объяснения
- - Подходит for: любых моделей
- - Преимущества: локальные объяснения, понятность
- - Недостатки: медленные for больших данных
- - Применение: когда нужны детальные локальные объяснения
+- Подходит for: любых моделей
+- Преимущества: локальные объяснения, понятность
+- Недостатки: медленные for больших данных
+- Применение: когда нужны детальные локальные объяснения
 
 - **`'shap'`**: SHAP объяснения
- - Подходит for: любых моделей
- - Преимущества: теоретически обоснованные, согласованные
- - Недостатки: медленные for больших данных
- - Применение: когда нужны точные глобальные объяснения
+- Подходит for: любых моделей
+- Преимущества: теоретически обоснованные, согласованные
+- Недостатки: медленные for больших данных
+- Применение: когда нужны точные глобальные объяснения
 
 - **`'permutation_importance'`**: Перестановочная важность
- - Подходит for: любых моделей
- - Преимущества: быстрые, масштабируемые
- - Недостатки: менее точные чем SHAP
- - Применение: for больших датасетов
+- Подходит for: любых моделей
+- Преимущества: быстрые, масштабируемые
+- Недостатки: менее точные чем SHAP
+- Применение: for больших датасетов
 
 - **`'feature_importance'`**: Встроенная важность
- - Подходит for: Tree-based модели
- - not подходит for: Linear, Neural networks
- - Преимущества: очень быстрые, встроенные
- - Недостатки: только for tree-based моделей
- - Применение: когда модель tree-based
+- Подходит for: Tree-based модели
+- not подходит for: Linear, Neural networks
+- Преимущества: очень быстрые, встроенные
+- Недостатки: только for tree-based моделей
+- Применение: когда модель tree-based
 
 **Рекомендации on выбору метода:**
 
@@ -918,14 +918,14 @@ def choose_exPlanation_method(model_type, data_size, interpretability_requiremen
 
 ```python
 def validate_exPlanations(predictor, X, y, exPlanation_method='shap'):
- """Валидация качества объяснений"""
+"""Валидация качества объяснений"""
 
- # create объяснений
+# create объяснений
  if exPlanation_method == 'shap':
  explainer = shap.TreeExplainer(predictor.get_model_best())
  shap_values = explainer.shap_values(X)
 
- # check согласованности
+# check согласованности
  consistency_score = shap.utils.consistency_score(shap_values)
 
  return {
@@ -934,12 +934,12 @@ def validate_exPlanations(predictor, X, y, exPlanation_method='shap'):
  }
 
  elif exPlanation_method == 'lime':
- # Валидация LIME
+# Валидация LIME
  lime_explainer = lime.lime_tabular.LimeTabularExplainer(
  X.values, feature_names=X.columns.toList()
  )
 
- # Тестирование on нескольких экземплярах
+# Тестирование on нескольких экземплярах
  fidelity_scores = []
  for i in range(min(10, len(X))):
  exPlanation = lime_explainer.explain_instance(
@@ -956,70 +956,70 @@ def validate_exPlanations(predictor, X, y, exPlanation_method='shap'):
 **Детальные описания параметров валидации объяснений:**
 
 - **`exPlanation_method='shap'`**: Метод объяснения for валидации
- - `'shap'`: SHAP объяснения (рекомендуется)
- - `'lime'`: LIME объяснения
- - `'permutation'`: Перестановочная важность
- - `'feature_importance'`: Встроенная важность
+- `'shap'`: SHAP объяснения (рекомендуется)
+- `'lime'`: LIME объяснения
+- `'permutation'`: Перестановочная важность
+- `'feature_importance'`: Встроенная важность
 
 - **`X, y`**: data for валидации
- - `X`: Признаки for Analysis
- - `y`: Целевые переменные
- - Применение: тестирование качества объяснений
- - Рекомендация: использовать holdout set
+- `X`: Признаки for Analysis
+- `y`: Целевые переменные
+- Применение: тестирование качества объяснений
+- Рекомендация: использовать holdout set
 
 - **`shap.utils.consistency_score(shap_values)`**: Оценка согласованности SHAP
- - Диапазон: from 0 to 1
- - `> 0.8`: Высокая согласованность (хорошие объяснения)
- - `0.5-0.8`: Средняя согласованность (приемлемые объяснения)
- - `< 0.5`: Низкая согласованность (плохие объяснения)
- - Применение: check стабильности SHAP значений
+- Диапазон: from 0 to 1
+- `> 0.8`: Высокая согласованность (хорошие объяснения)
+- `0.5-0.8`: Средняя согласованность (приемлемые объяснения)
+- `< 0.5`: Низкая согласованность (плохие объяснения)
+- Применение: check стабильности SHAP значений
 
 - **`consistency_score > 0.8`**: Порог for высокого качества
- - `0.8`: Стандартный порог (рекомендуется)
- - `0.7`: Более мягкий порог
- - `0.9`: Более строгий порог
- - Применение: классификация качества объяснений
+- `0.8`: Стандартный порог (рекомендуется)
+- `0.7`: Более мягкий порог
+- `0.9`: Более строгий порог
+- Применение: классификация качества объяснений
 
 - **`min(10, len(X))`**: Количество экземпляров for тестирования LIME
- - `10`: Стандартное количество (баланс скорости and точности)
- - `5`: Быстрое тестирование (менее точно)
- - `20`: Точное тестирование (медленнее)
- - `len(X)`: Все экземпляры (очень медленно)
+- `10`: Стандартное количество (баланс скорости and точности)
+- `5`: Быстрое тестирование (менее точно)
+- `20`: Точное тестирование (медленнее)
+- `len(X)`: Все экземпляры (очень медленно)
 
 - **`exPlanation.score`**: Качество LIME объяснения
- - Диапазон: from 0 to 1
- - `> 0.8`: Высокое качество (хорошее объяснение)
- - `0.5-0.8`: Среднее качество (приемлемое объяснение)
- - `< 0.5`: Низкое качество (плохое объяснение)
- - Применение: оценка надежности LIME объяснения
+- Диапазон: from 0 to 1
+- `> 0.8`: Высокое качество (хорошее объяснение)
+- `0.5-0.8`: Среднее качество (приемлемое объяснение)
+- `< 0.5`: Низкое качество (плохое объяснение)
+- Применение: оценка надежности LIME объяснения
 
 - **`np.mean(fidelity_scores)`**: Среднее качество LIME объяснений
- - Диапазон: from 0 to 1
- - Интерпретация: средняя точность объяснений
- - Применение: общая оценка качества LIME
+- Диапазон: from 0 to 1
+- Интерпретация: средняя точность объяснений
+- Применение: общая оценка качества LIME
 
 - **`exPlanation_quality`**: Качественная оценка объяснений
- - `'high'`: Высокое качество (надежные объяснения)
- - `'medium'`: Среднее качество (приемлемые объяснения)
- - `'low'`: Низкое качество (ненадежные объяснения)
- - Применение: классификация качества объяснений
+- `'high'`: Высокое качество (надежные объяснения)
+- `'medium'`: Среднее качество (приемлемые объяснения)
+- `'low'`: Низкое качество (ненадежные объяснения)
+- Применение: классификация качества объяснений
 
 **Дополнительные метрики валидации:**
 
 - **`stability_score`**: Стабильность объяснений
- - Тестирование on похожих экземплярах
- - Диапазон: from 0 to 1
- - Применение: check согласованности
+- Тестирование on похожих экземплярах
+- Диапазон: from 0 to 1
+- Применение: check согласованности
 
 - **`completeness_score`**: Полнота объяснений
- - Покрытие all важных признаков
- - Диапазон: from 0 to 1
- - Применение: check полноты
+- Покрытие all важных признаков
+- Диапазон: from 0 to 1
+- Применение: check полноты
 
 - **`accuracy_score`**: Точность объяснений
- - Соответствие реальному поведению модели
- - Диапазон: from 0 to 1
- - Применение: check корректности
+- Соответствие реальному поведению модели
+- Диапазон: from 0 to 1
+- Применение: check корректности
 
 ## Заключение
 

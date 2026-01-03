@@ -73,69 +73,69 @@ from autogluon.tabular import TabularPredictor
 import logging
 
 class PeriodicRetraining:
- """Периодическое переобучение моделей"""
+"""Периодическое переобучение моделей"""
 
  def __init__(self, model_path: str, retraining_interval: int = 7):
  """
- Инициализация системы периодического переобучения
+Инициализация системы периодического переобучения
 
  Parameters:
  -----------
  model_path : str
- Путь к директории with моделью AutoGluon. Должен содержать:
- - Модельные файлы (.pkl)
- - Метаdata модели
- - Конфигурационные файлы
+Путь к директории with моделью AutoGluon. Должен содержать:
+- Модельные файлы (.pkl)
+- Метаdata модели
+- Конфигурационные файлы
  example: "./models/production_model_v1"
 
  retraining_interval : int, default=7
- Интервал переобучения in днях. Определяет частоту автоматического
- переобучения модели:
- - 1: Ежедневное переобучение (for быстро меняющихся данных)
- - 7: Еженедельное переобучение (рекомендуется for большинства задач)
- - 30: Ежемесячное переобучение (for стабильных доменов)
- - 90: Квартальное переобучение (for очень стабильных систем)
+Интервал переобучения in днях. Определяет частоту автоматического
+переобучения модели:
+- 1: Ежедневное переобучение (for быстро меняющихся данных)
+- 7: Еженедельное переобучение (рекомендуется for большинства задач)
+- 30: Ежемесячное переобучение (for стабильных доменов)
+- 90: Квартальное переобучение (for очень стабильных систем)
  """
  self.model_path = model_path
- self.retraining_interval = retraining_interval # дни
+self.retraining_interval = retraining_interval # дни
  self.logger = logging.getLogger(__name__)
 
  def schedule_retraining(self):
- """Planирование переобучения"""
- # Еженедельное переобучение - основной механизм
+"""Planирование переобучения"""
+# Еженедельное переобучение - основной механизм
  schedule.every().week.do(self.retrain_model)
 
- # Ежедневная check необходимости переобучения - Monitoring
+# Ежедневная check необходимости переобучения - Monitoring
  schedule.every().day.do(self.check_retraining_need)
 
- # Launch Planировщика - бесконечный цикл
+# Launch Planировщика - бесконечный цикл
  while True:
  schedule.run_pending()
- time.sleep(3600) # check каждый час
+time.sleep(3600) # check каждый час
 
  def retrain_model(self):
- """Переобучение модели - основной процесс обновления"""
+"""Переобучение модели - основной процесс обновления"""
  try:
  self.logger.info("starting model retraining...")
- # Logsрование начала процесса for Monitoringа
+# Logsрование начала процесса for Monitoringа
 
- # Загрузка новых данных
+# Загрузка новых данных
  new_data = self.load_new_data()
 
- # create новой модели
+# create новой модели
  predictor = TabularPredictor(
  label='target',
  path=f"{self.model_path}_new"
  )
 
- # Обучение on новых данных
- # time_limit=3600: Максимальное время обучения in секундах (1 час)
- # Это предотвращает бесконечное обучение and позволяет контролировать ресурсы
+# Обучение on новых данных
+# time_limit=3600: Максимальное время обучения in секундах (1 час)
+# Это предотвращает бесконечное обучение and позволяет контролировать ресурсы
  predictor.fit(new_data, time_limit=3600)
 
- # Валидация новой модели
+# Валидация новой модели
  if self.validate_new_model(predictor):
- # Замена старой модели
+# Замена старой модели
  self.deploy_new_model(predictor)
  self.logger.info("Model retraining COMPLETED successfully")
  else:
@@ -145,21 +145,21 @@ class PeriodicRetraining:
  self.logger.error(f"Model retraining failed: {e}")
 
  def check_retraining_need(self):
- """check необходимости переобучения"""
- # check качества текущей модели
+"""check необходимости переобучения"""
+# check качества текущей модели
  current_performance = self.evaluate_current_model()
 
- # check дрейфа данных
+# check дрейфа данных
  data_drift = self.check_data_drift()
 
- # check времени последнего переобучения
+# check времени последнего переобучения
  last_retraining = self.get_last_retraining_time()
  days_since_retraining = (datetime.now() - last_retraining).days
 
- # Критерии for переобучения
- # current_performance < 0.8: Точность модели упала ниже 80%
- # data_drift > 0.1: Дрейф данных превысил 10% (значительные изменения)
- # days_since_retraining >= self.retraining_interval: Прошло достаточно времени
+# Критерии for переобучения
+# current_performance < 0.8: Точность модели упала ниже 80%
+# data_drift > 0.1: Дрейф данных превысил 10% (значительные изменения)
+# days_since_retraining >= self.retraining_interval: Прошло достаточно времени
  if (current_performance < 0.8 or
  data_drift > 0.1 or
  days_since_retraining >= self.retraining_interval):
@@ -183,26 +183,26 @@ class PeriodicRetraining:
 
 ```python
 class AdaptiveRetraining:
- """Адаптивное переобучение on basis производительности"""
+"""Адаптивное переобучение on basis производительности"""
 
  def __init__(self, model_path: str, performance_threshold: float = 0.8):
  """
- Инициализация системы адаптивного переобучения
+Инициализация системы адаптивного переобучения
 
  Parameters:
  -----------
  model_path : str
- Путь к директории with текущей моделью AutoGluon.
- Используется for загрузки and обновления модели.
+Путь к директории with текущей моделью AutoGluon.
+Используется for загрузки and обновления модели.
 
  performance_threshold : float, default=0.8
- Минимальный порог производительности модели (0.0 - 1.0).
- При падении производительности ниже этого значения
- автоматически Launchается переобучение:
- - 0.9: Очень высокие требования (критически важные системы)
- - 0.8: Высокие требования (рекомендуется for продакшена)
- - 0.7: Средние требования (разработка and тестирование)
- - 0.6: Низкие требования (экспериментальные модели)
+Минимальный порог производительности модели (0.0 - 1.0).
+При падении производительности ниже этого значения
+автоматически Launchается переобучение:
+- 0.9: Очень высокие требования (критически важные системы)
+- 0.8: Высокие требования (рекомендуется for продакшена)
+- 0.7: Средние требования (разработка and тестирование)
+- 0.6: Низкие требования (экспериментальные модели)
  """
  self.model_path = model_path
  self.performance_threshold = performance_threshold
@@ -210,34 +210,34 @@ class AdaptiveRetraining:
  self.logger = logging.getLogger(__name__)
 
  def monitor_performance(self, predictions: List, actuals: List):
- """Monitoring производительности модели"""
- # Расчет текущей производительности
+"""Monitoring производительности модели"""
+# Расчет текущей производительности
  current_performance = self.calculate_performance(predictions, actuals)
 
- # add in историю
+# add in историю
  self.performance_history.append({
  'timestamp': datetime.now(),
  'performance': current_performance
  })
 
- # check тренда производительности
+# check тренда производительности
  if self.detect_performance_degradation():
  self.logger.warning("Performance degradation detected")
  self.trigger_retraining()
 
  def detect_performance_degradation(self) -> bool:
- """Обнаружение деградации производительности"""
+"""Обнаружение деградации производительности"""
  if len(self.performance_history) < 10:
  return False
 
- # Анализ тренда за последние 10 измерений
- # Используется скользящее окно for Analysis тренда производительности
+# Анализ тренда за последние 10 измерений
+# Используется скользящее окно for Analysis тренда производительности
  recent_performance = [p['performance'] for p in self.performance_history[-10:]]
 
- # check снижения производительности
- # Условия for Launchа переобучения:
- # 1. Текущая производительность ниже порога
- # 2. Производительность ухудшилась compared to началом периода
+# check снижения производительности
+# Условия for Launchа переобучения:
+# 1. Текущая производительность ниже порога
+# 2. Производительность ухудшилась compared to началом периода
  if (recent_performance[-1] < self.performance_threshold and
  recent_performance[-1] < recent_performance[0]):
  return True
@@ -245,13 +245,13 @@ class AdaptiveRetraining:
  return False
 
  def trigger_retraining(self):
- """Launch переобучения"""
+"""Launch переобучения"""
  self.logger.info("Triggering adaptive retraining...")
 
- # Loading data for переобучения
+# Loading data for переобучения
  retraining_data = self.load_retraining_data()
 
- # create and обучение новой модели
+# create and обучение новой модели
  predictor = TabularPredictor(
  label='target',
  path=f"{self.model_path}_adaptive"
@@ -259,52 +259,52 @@ class AdaptiveRetraining:
 
  predictor.fit(retraining_data, time_limit=3600)
 
- # Валидация and деплой
+# Валидация and деплой
  if self.validate_new_model(predictor):
  self.deploy_new_model(predictor)
- self.performance_history = [] # Сброс истории
+self.performance_history = [] # Сброс истории
 ```
 
 ### 3. Инкрементальное переобучение
 
 ```python
 class IncrementalRetraining:
- """Инкрементальное переобучение with сохранением знаний"""
+"""Инкрементальное переобучение with сохранением знаний"""
 
  def __init__(self, model_path: str, batch_size: int = 1000):
  """
- Инициализация системы инкрементального переобучения
+Инициализация системы инкрементального переобучения
 
  Parameters:
  -----------
  model_path : str
- Путь к директории with текущей моделью AutoGluon.
- Модель будет обновляться инкрементально with новыми данными.
+Путь к директории with текущей моделью AutoGluon.
+Модель будет обновляться инкрементально with новыми данными.
 
  batch_size : int, default=1000
- Размер батча for обработки новых данных. Влияет on:
- - Потребление памяти: Больше batch_size = больше памяти
- - Скорость обработки: Оптимальный размер ускоряет обучение
- - Качество модели: Слишком маленький/большой размер может ухудшить качество
- Рекомендации:
- - 100-500: for небольших датасетов (< 10K записей)
- - 1000-5000: for средних датасетов (10K-100K записей)
- - 5000-10000: for больших датасетов (> 100K записей)
+Размер батча for обработки новых данных. Влияет on:
+- Потребление памяти: Больше batch_size = больше памяти
+- Скорость обработки: Оптимальный размер ускоряет обучение
+- Качество модели: Слишком маленький/большой размер может ухудшить качество
+Рекомендации:
+- 100-500: for небольших датасетов (< 10K записей)
+- 1000-5000: for средних датасетов (10K-100K записей)
+- 5000-10000: for больших датасетов (> 100K записей)
  """
  self.model_path = model_path
  self.batch_size = batch_size
  self.logger = logging.getLogger(__name__)
 
  def incremental_update(self, new_data: pd.dataFrame):
- """Инкрементальное update модели"""
+"""Инкрементальное update модели"""
  try:
- # Загрузка текущей модели
+# Загрузка текущей модели
  current_predictor = TabularPredictor.load(self.model_path)
 
- # Объединение старых and новых данных
+# Объединение старых and новых данных
  combined_data = self.combine_data(current_predictor, new_data)
 
- # Обучение on объединенных данных
+# Обучение on объединенных данных
  updated_predictor = TabularPredictor(
  label='target',
  path=f"{self.model_path}_updated"
@@ -312,7 +312,7 @@ class IncrementalRetraining:
 
  updated_predictor.fit(combined_data, time_limit=3600)
 
- # Валидация обновленной модели
+# Валидация обновленной модели
  if self.validate_updated_model(updated_predictor):
  self.deploy_updated_model(updated_predictor)
  self.logger.info("Incremental update COMPLETED")
@@ -323,11 +323,11 @@ class IncrementalRetraining:
  self.logger.error(f"Incremental update failed: {e}")
 
  def combine_data(self, current_predictor, new_data: pd.dataFrame) -> pd.dataFrame:
- """Объединение старых and новых данных"""
- # Получение старых данных из модели (если доступно)
+"""Объединение старых and новых данных"""
+# Получение старых данных из модели (если доступно)
  old_data = self.extract_old_data(current_predictor)
 
- # Объединение данных
+# Объединение данных
  if old_data is not None:
  combined_data = pd.concat([old_data, new_data], ignore_index=True)
  else:
@@ -360,23 +360,23 @@ import json
 from datetime import datetime, timedelta
 
 class AutomatedRetrainingsystem:
- """Система автоматического переобучения"""
+"""Система автоматического переобучения"""
 
  def __init__(self, config: Dict[str, Any]):
  """
- Инициализация системы автоматического переобучения
+Инициализация системы автоматического переобучения
 
  Parameters:
  -----------
  config : Dict[str, Any]
- Конфигурационный словарь with параметрами системы:
- - data_quality_threshold: float - минимальный порог качества данных (0.0-1.0)
- - performance_threshold: float - минимальный порог производительности (0.0-1.0)
- - drift_threshold: float - порог детекции дрейфа данных (0.0-1.0)
- - max_retraining_time: int - максимальное время переобучения in секундах
- - retraining_interval: int - интервал проверки необходимости переобучения
- - model_path: str - путь к директории with моделями
- - backup_path: str - путь for резервных копий
+Конфигурационный словарь with параметрами системы:
+- data_quality_threshold: float - минимальный порог качества данных (0.0-1.0)
+- performance_threshold: float - минимальный порог производительности (0.0-1.0)
+- drift_threshold: float - порог детекции дрейфа данных (0.0-1.0)
+- max_retraining_time: int - максимальное время переобучения in секундах
+- retraining_interval: int - интервал проверки необходимости переобучения
+- model_path: str - путь к директории with моделями
+- backup_path: str - путь for резервных копий
  """
  self.config = config
  self.logger = logging.getLogger(__name__)
@@ -384,7 +384,7 @@ class AutomatedRetrainingsystem:
  self.is_retraining = False
 
  async def start_Monitoring(self):
- """Launch Monitoringа системы"""
+"""Launch Monitoringа системы"""
  tasks = [
  self.monitor_data_quality(),
  self.monitor_model_performance(),
@@ -395,76 +395,76 @@ class AutomatedRetrainingsystem:
  await asyncio.gather(*tasks)
 
  async def monitor_data_quality(self):
- """Monitoring качества данных"""
+"""Monitoring качества данных"""
  while True:
  try:
- # check качества новых данных
+# check качества новых данных
  data_quality = await self.check_data_quality()
 
- # check качества данных
- # data_quality_threshold: порог качества данных (0.0-1.0)
- # 0.9: Очень высокие требования к качеству
- # 0.8: Высокие требования (рекомендуется)
- # 0.7: Средние требования
- # 0.6: Низкие требования
+# check качества данных
+# data_quality_threshold: порог качества данных (0.0-1.0)
+# 0.9: Очень высокие требования к качеству
+# 0.8: Высокие требования (рекомендуется)
+# 0.7: Средние требования
+# 0.6: Низкие требования
  if data_quality['score'] < self.config['data_quality_threshold']:
  self.logger.warning(f"data quality issue: {data_quality}")
  await self.trigger_retraining('data_quality')
 
- await asyncio.sleep(3600) # check каждый час
+await asyncio.sleep(3600) # check каждый час
 
  except Exception as e:
  self.logger.error(f"data quality Monitoring error: {e}")
  await asyncio.sleep(300)
 
  async def monitor_model_performance(self):
- """Monitoring производительности модели"""
+"""Monitoring производительности модели"""
  while True:
  try:
- # Получение метрик производительности
+# Получение метрик производительности
  performance = await self.get_model_performance()
 
- # check производительности модели
- # performance_threshold: минимальный порог точности (0.0-1.0)
- # 0.95: Критически важные системы (медицина, финансы)
- # 0.9: Высокие требования (рекомендательные системы)
- # 0.8: Стандартные требования (большинство задач)
- # 0.7: Низкие требования (экспериментальные модели)
+# check производительности модели
+# performance_threshold: минимальный порог точности (0.0-1.0)
+# 0.95: Критически важные системы (медицина, финансы)
+# 0.9: Высокие требования (рекомендательные системы)
+# 0.8: Стандартные требования (большинство задач)
+# 0.7: Низкие требования (экспериментальные модели)
  if performance['accuracy'] < self.config['performance_threshold']:
  self.logger.warning(f"Performance degradation: {performance}")
  await self.trigger_retraining('performance')
 
- await asyncio.sleep(1800) # check каждые 30 minutes
+await asyncio.sleep(1800) # check каждые 30 minutes
 
  except Exception as e:
  self.logger.error(f"Performance Monitoring error: {e}")
  await asyncio.sleep(300)
 
  async def monitor_data_drift(self):
- """Monitoring дрейфа данных"""
+"""Monitoring дрейфа данных"""
  while True:
  try:
- # check дрейфа данных
+# check дрейфа данных
  drift_score = await self.check_data_drift()
 
- # check дрейфа данных
- # drift_threshold: порог детекции дрейфа (0.0-1.0)
- # 0.1: Очень чувствительная детекция (быстрое реагирование)
- # 0.2: Стандартная чувствительность (рекомендуется)
- # 0.3: Низкая чувствительность (стабильные системы)
- # 0.5: Очень низкая чувствительность (только критические изменения)
+# check дрейфа данных
+# drift_threshold: порог детекции дрейфа (0.0-1.0)
+# 0.1: Очень чувствительная детекция (быстрое реагирование)
+# 0.2: Стандартная чувствительность (рекомендуется)
+# 0.3: Низкая чувствительность (стабильные системы)
+# 0.5: Очень низкая чувствительность (только критические изменения)
  if drift_score > self.config['drift_threshold']:
  self.logger.warning(f"data drift detected: {drift_score}")
  await self.trigger_retraining('data_drift')
 
- await asyncio.sleep(7200) # check каждые 2 часа
+await asyncio.sleep(7200) # check каждые 2 часа
 
  except Exception as e:
  self.logger.error(f"data drift Monitoring error: {e}")
  await asyncio.sleep(300)
 
  async def trigger_retraining(self, reason: str):
- """Launch переобучения"""
+"""Launch переобучения"""
  if self.is_retraining:
  self.logger.info("Retraining already in progress")
  return
@@ -479,13 +479,13 @@ class AutomatedRetrainingsystem:
  self.logger.info(f"Retraining queued: {retraining_request}")
 
  async def process_retraining_queue(self):
- """Обработка очереди переобучения"""
+"""Обработка очереди переобучения"""
  while True:
  try:
- # Получение запроса on переобучение
+# Получение запроса on переобучение
  request = await self.retraining_queue.get()
 
- # Выполнение переобучения
+# Выполнение переобучения
  await self.execute_retraining(request)
 
  self.retraining_queue.task_done()
@@ -495,7 +495,7 @@ class AutomatedRetrainingsystem:
  await asyncio.sleep(300)
 
  async def execute_retraining(self, request: Dict[str, Any]):
- """Выполнение переобучения"""
+"""Выполнение переобучения"""
  self.is_retraining = True
 
  try:
@@ -504,18 +504,18 @@ class AutomatedRetrainingsystem:
  # Loading data
  data = await self.load_retraining_data()
 
- # create новой модели
+# create новой модели
  predictor = TabularPredictor(
  label='target',
  path=f"./models/retrained_{request['timestamp']}"
  )
 
- # Обучение
+# Обучение
  predictor.fit(data, time_limit=3600)
 
- # Валидация
+# Валидация
  if await self.validate_new_model(predictor):
- # Деплой новой модели
+# Деплой новой модели
  await self.deploy_new_model(predictor)
  self.logger.info("Retraining COMPLETED successfully")
  else:
@@ -533,56 +533,56 @@ class AutomatedRetrainingsystem:
 
 ```python
 class RetrainingValidator:
- """Валидатор переобученных моделей"""
+"""Валидатор переобученных моделей"""
 
  def __init__(self, validation_config: Dict[str, Any]):
  """
- Инициализация валидатора переобученных моделей
+Инициализация валидатора переобученных моделей
 
  Parameters:
  -----------
  validation_config : Dict[str, Any]
- configuration валидации with параметрами:
- - improvement_threshold: float - минимальное improve for принятия модели (0.0-1.0)
- - performance_metrics: List[str] - List метрик for сравнения
- - minimum_requirements: Dict[str, float] - минимальные требования к метрикам
- - stability_threshold: float - порог стабильности predictions (0.0-1.0)
- - required_Version: str - требуемая версия AutoGluon
+configuration валидации with параметрами:
+- improvement_threshold: float - минимальное improve for принятия модели (0.0-1.0)
+- performance_metrics: List[str] - List метрик for сравнения
+- minimum_requirements: Dict[str, float] - минимальные требования к метрикам
+- stability_threshold: float - порог стабильности predictions (0.0-1.0)
+- required_Version: str - требуемая версия AutoGluon
  """
  self.config = validation_config
  self.logger = logging.getLogger(__name__)
 
  async def validate_new_model(self, new_predictor, old_predictor=None) -> bool:
- """Валидация новой модели"""
+"""Валидация новой модели"""
  try:
- # Загрузка testsых данных
+# Загрузка testsых данных
  test_data = await self.load_test_data()
 
- # Предсказания новой модели
+# Предсказания новой модели
  new_predictions = new_predictor.predict(test_data)
  new_performance = new_predictor.evaluate(test_data)
 
- # Сравнение with старой моделью (если доступна)
+# Сравнение with старой моделью (если доступна)
  if old_predictor is not None:
  old_predictions = old_predictor.predict(test_data)
  old_performance = old_predictor.evaluate(test_data)
 
- # check улучшения производительности
+# check улучшения производительности
  if not self.check_performance_improvement(new_performance, old_performance):
  self.logger.warning("New model doesn't improve performance")
  return False
 
- # check минимальных требований
+# check минимальных требований
  if not self.check_minimum_requirements(new_performance):
  self.logger.warning("New model doesn't meet minimum requirements")
  return False
 
- # check стабильности
+# check стабильности
  if not self.check_model_stability(new_predictor, test_data):
  self.logger.warning("New model is not stable")
  return False
 
- # check совместимости
+# check совместимости
  if not self.check_compatibility(new_predictor):
  self.logger.warning("New model is not compatible")
  return False
@@ -595,27 +595,27 @@ class RetrainingValidator:
 
  def check_performance_improvement(self, new_perf: Dict, old_perf: Dict) -> bool:
  """
- check улучшения производительности новой модели
+check улучшения производительности новой модели
 
  Parameters:
  -----------
  new_perf : Dict
- Метрики производительности новой модели
+Метрики производительности новой модели
  old_perf : Dict
- Метрики производительности старой модели
+Метрики производительности старой модели
 
  Returns:
  --------
  bool
- True если новая модель показывает improve on all метрикам
+True если новая модель показывает improve on all метрикам
 
  Notes:
  ------
- improvement_threshold: минимальное improve for принятия модели
- - 0.01 (1%): Минимальное improve (консервативный подход)
- - 0.02 (2%): Стандартное improve (рекомендуется)
- - 0.05 (5%): Значительное improve (агрессивный подход)
- - 0.0: Любое improve (экспериментальный подход)
+improvement_threshold: минимальное improve for принятия модели
+- 0.01 (1%): Минимальное improve (консервативный подход)
+- 0.02 (2%): Стандартное improve (рекомендуется)
+- 0.05 (5%): Значительное improve (агрессивный подход)
+- 0.0: Любое improve (экспериментальный подход)
  """
  improvement_threshold = self.config.get('improvement_threshold', 0.02)
 
@@ -628,7 +628,7 @@ class RetrainingValidator:
  return True
 
  def check_minimum_requirements(self, performance: Dict) -> bool:
- """check минимальных требований"""
+"""check минимальных требований"""
  for metric, threshold in self.config['minimum_requirements'].items():
  if metric in performance and performance[metric] < threshold:
  return False
@@ -637,48 +637,48 @@ class RetrainingValidator:
 
  def check_model_stability(self, predictor, test_data: pd.dataFrame) -> bool:
  """
- check стабильности модели
+check стабильности модели
 
  Parameters:
  -----------
  predictor : TabularPredictor
- Модель for проверки стабильности
+Модель for проверки стабильности
  test_data : pd.dataFrame
- testsые data for проверки
+testsые data for проверки
 
  Returns:
  --------
  bool
- True если модель стабильна (предсказания согласованы)
+True если модель стабильна (предсказания согласованы)
 
  Notes:
  ------
- stability_threshold: порог согласованности predictions (0.0-1.0)
- - 0.99: Очень высокая стабильность (критически важные системы)
- - 0.95: Высокая стабильность (рекомендуется for продакшена)
- - 0.90: Средняя стабильность (приемлемо for большинства задач)
- - 0.85: Низкая стабильность (только for экспериментов)
+stability_threshold: порог согласованности predictions (0.0-1.0)
+- 0.99: Очень высокая стабильность (критически важные системы)
+- 0.95: Высокая стабильность (рекомендуется for продакшена)
+- 0.90: Средняя стабильность (приемлемо for большинства задач)
+- 0.85: Низкая стабильность (только for экспериментов)
  """
- # Множественные предсказания on одних and тех же данных
- # 5 итераций for проверки воспроизводимости результатов
+# Множественные предсказания on одних and тех же данных
+# 5 итераций for проверки воспроизводимости результатов
  predictions = []
  for _ in range(5):
  pred = predictor.predict(test_data)
  predictions.append(pred)
 
- # check согласованности predictions
- # Высокая согласованность = стабильная модель
+# check согласованности predictions
+# Высокая согласованность = стабильная модель
  consistency = self.calculate_Prediction_consistency(predictions)
  return consistency > self.config.get('stability_threshold', 0.95)
 
  def check_compatibility(self, predictor) -> bool:
- """check совместимости модели"""
- # check версии AutoGluon
+"""check совместимости модели"""
+# check версии AutoGluon
  if hasattr(predictor, 'version'):
  if predictor.version != self.config.get('required_version'):
  return False
 
- # check формата модели
+# check формата модели
  if not self.check_model_format(predictor):
  return False
 
@@ -703,59 +703,59 @@ class RetrainingValidator:
 
 ```python
 class RetrainingMonitor:
- """Monitoring процесса переобучения"""
+"""Monitoring процесса переобучения"""
 
  def __init__(self, Monitoring_config: Dict[str, Any]):
  """
- Инициализация системы Monitoringа переобучения
+Инициализация системы Monitoringа переобучения
 
  Parameters:
  -----------
  Monitoring_config : Dict[str, Any]
- configuration Monitoringа with параметрами:
- - max_retraining_time: int - максимальное время переобучения in секундах
- - cpu_threshold: float - порог использования CPU (0.0-1.0)
- - memory_threshold: float - порог использования памяти (0.0-1.0)
- - disk_threshold: float - порог использования диска (0.0-1.0)
- - check_interval: int - интервал проверки ресурсов in секундах
+configuration Monitoringа with параметрами:
+- max_retraining_time: int - максимальное время переобучения in секундах
+- cpu_threshold: float - порог использования CPU (0.0-1.0)
+- memory_threshold: float - порог использования памяти (0.0-1.0)
+- disk_threshold: float - порог использования диска (0.0-1.0)
+- check_interval: int - интервал проверки ресурсов in секундах
  """
  self.config = Monitoring_config
  self.logger = logging.getLogger(__name__)
  self.metrics = {}
 
  def start_Monitoring(self, retraining_process):
- """Launch Monitoringа"""
- # Monitoring ресурсов
+"""Launch Monitoringа"""
+# Monitoring ресурсов
  self.monitor_resources()
 
- # Monitoring прогресса
+# Monitoring прогресса
  self.monitor_progress(retraining_process)
 
- # Monitoring качества
+# Monitoring качества
  self.monitor_quality(retraining_process)
 
  def monitor_resources(self):
- """Monitoring системных ресурсов"""
+"""Monitoring системных ресурсов"""
  import psutil
 
  while True:
  try:
- # CPU использование
+# CPU использование
  cpu_percent = psutil.cpu_percent()
 
- # Память
+# Память
  memory = psutil.virtual_memory()
  memory_percent = memory.percent
 
- # Диск
+# Диск
  disk = psutil.disk_usage('/')
  disk_percent = disk.percent
 
- # Logsрование метрик
+# Logsрование метрик
  self.logger.info(f"Resources - CPU: {cpu_percent}%, Memory: {memory_percent}%, Disk: {disk_percent}%")
 
- # check лимитов ресурсов
- # Пороги можно настроить in конфигурации Monitoringа
+# check лимитов ресурсов
+# Пороги можно настроить in конфигурации Monitoringа
  cpu_threshold = self.config.get('cpu_threshold', 0.9) * 100
  memory_threshold = self.config.get('memory_threshold', 0.9) * 100
  disk_threshold = self.config.get('disk_threshold', 0.9) * 100
@@ -769,39 +769,39 @@ class RetrainingMonitor:
  if disk_percent > disk_threshold:
  self.logger.warning(f"High disk usage detected: {disk_percent}% > {disk_threshold}%")
 
- time.sleep(60) # check каждую minutesу
+time.sleep(60) # check каждую minutesу
 
  except Exception as e:
  self.logger.error(f"Resource Monitoring error: {e}")
  time.sleep(300)
 
  def monitor_progress(self, retraining_process):
- """Monitoring прогресса переобучения"""
+"""Monitoring прогресса переобучения"""
  start_time = datetime.now()
 
  while retraining_process.is_alive():
  elapsed_time = datetime.now() - start_time
 
- # check времени выполнения
- # max_retraining_time: максимальное время переобучения in секундах
- # 3600 (1 час): Быстрое переобучение for простых моделей
- # 7200 (2 часа): Стандартное время (рекомендуется)
- # 14400 (4 часа): Длительное переобучение for сложных моделей
- # 28800 (8 часов): Очень длительное переобучение (только for больших датасетов)
+# check времени выполнения
+# max_retraining_time: максимальное время переобучения in секундах
+# 3600 (1 час): Быстрое переобучение for простых моделей
+# 7200 (2 часа): Стандартное время (рекомендуется)
+# 14400 (4 часа): Длительное переобучение for сложных моделей
+# 28800 (8 часов): Очень длительное переобучение (только for больших датасетов)
  max_time = self.config.get('max_retraining_time', 7200)
  if elapsed_time.total_seconds() > max_time:
  self.logger.error(f"Retraining timeout exceeded: {elapsed_time} > {max_time}s")
  retraining_process.terminate()
  break
 
- # Logsрование прогресса
+# Logsрование прогресса
  self.logger.info(f"Retraining progress: {elapsed_time}")
 
- time.sleep(300) # check каждые 5 minutes
+time.sleep(300) # check каждые 5 minutes
 
  def monitor_quality(self, retraining_process):
- """Monitoring качества переобучения"""
- # Monitoring метрик качества
+"""Monitoring качества переобучения"""
+# Monitoring метрик качества
  quality_metrics = {
  'accuracy': [],
  'precision': [],
@@ -811,18 +811,18 @@ class RetrainingMonitor:
 
  while retraining_process.is_alive():
  try:
- # Получение текущих метрик
+# Получение текущих метрик
  current_metrics = self.get_current_metrics()
 
- # add in историю
+# add in историю
  for metric, value in current_metrics.items():
  if metric in quality_metrics:
  quality_metrics[metric].append(value)
 
- # Анализ тренда
+# Анализ тренда
  self.analyze_quality_trend(quality_metrics)
 
- time.sleep(600) # check каждые 10 minutes
+time.sleep(600) # check каждые 10 minutes
 
  except Exception as e:
  self.logger.error(f"Quality Monitoring error: {e}")
@@ -835,35 +835,35 @@ class RetrainingMonitor:
 
 ```python
 class ModelRollback:
- """Система Rollbackа моделей"""
+"""Система Rollbackа моделей"""
 
  def __init__(self, Rollback_config: Dict[str, Any]):
  """
- Инициализация системы Rollbackа моделей
+Инициализация системы Rollbackа моделей
 
  Parameters:
  -----------
  Rollback_config : Dict[str, Any]
- configuration Rollbackа with параметрами:
- - current_model_path: str - путь к текущей активной модели
- - backup_model_path: str - путь for хранения резервных копий
- - max_versions: int - максимальное количество версий for хранения
- - backup_retention_days: int - количество дней хранения резервных копий
+configuration Rollbackа with параметрами:
+- current_model_path: str - путь к текущей активной модели
+- backup_model_path: str - путь for хранения резервных копий
+- max_versions: int - максимальное количество версий for хранения
+- backup_retention_days: int - количество дней хранения резервных копий
  """
  self.config = Rollback_config
  self.logger = logging.getLogger(__name__)
  self.model_versions = []
 
  def create_backup(self, model_path: str):
- """create резервной копии модели"""
+"""create резервной копии модели"""
  backup_path = f"{model_path}_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
  try:
- # Копирование модели
+# Копирование модели
  import shutil
  shutil.copytree(model_path, backup_path)
 
- # Сохранение информации о версии
+# Сохранение информации о версии
  version_info = {
  'timestamp': datetime.now().isoformat(),
  'path': backup_path,
@@ -880,30 +880,30 @@ class ModelRollback:
  return None
 
  def Rollback_model(self, target_Version: str = None):
- """Rollback к предыдущей версии модели"""
+"""Rollback к предыдущей версии модели"""
  try:
  if target_version is None:
- # Rollback к последней версии
+# Rollback к последней версии
  if len(self.model_versions) < 2:
  self.logger.warning("No previous version available for Rollback")
  return False
 
  target_version = self.model_versions[-2]['path']
  else:
- # Rollback к specifiedной версии
+# Rollback к specifiedной версии
  target_version = self.find_version_path(target_version)
  if target_version is None:
  self.logger.error(f"Version {target_version} not found")
  return False
 
- # Восстановление модели
+# Восстановление модели
  current_path = self.config['current_model_path']
  backup_path = self.config['backup_model_path']
 
- # create резервной копии текущей модели
+# create резервной копии текущей модели
  self.create_backup(current_path)
 
- # Восстановление из резервной копии
+# Восстановление из резервной копии
  import shutil
  shutil.copytree(target_version, current_path, dirs_exist_ok=True)
 
@@ -915,7 +915,7 @@ class ModelRollback:
  return False
 
  def find_version_path(self, version_id: str) -> str:
- """Поиск пути к версии модели"""
+"""Поиск пути к версии модели"""
  for version in self.model_versions:
  if version_id in version['path']:
  return version['path']
@@ -939,7 +939,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class CompleteRetrainingsystem:
- """Полная система переобучения"""
+"""Полная система переобучения"""
 
  def __init__(self, config: Dict[str, Any]):
  self.config = config
@@ -948,15 +948,15 @@ class CompleteRetrainingsystem:
  self.retraining_history = []
 
  async def initialize(self):
- """Инициализация системы"""
- # Загрузка текущей модели
+"""Инициализация системы"""
+# Загрузка текущей модели
  self.current_model = TabularPredictor.load(self.config['model_path'])
 
- # Launch Monitoringа
+# Launch Monitoringа
  await self.start_Monitoring()
 
  async def start_Monitoring(self):
- """Launch Monitoringа"""
+"""Launch Monitoringа"""
  tasks = [
  self.monitor_performance(),
  self.monitor_data_drift(),
@@ -966,45 +966,45 @@ class CompleteRetrainingsystem:
  await asyncio.gather(*tasks)
 
  async def monitor_performance(self):
- """Monitoring производительности"""
+"""Monitoring производительности"""
  while True:
  try:
- # Получение метрик производительности
+# Получение метрик производительности
  performance = await self.get_current_performance()
 
- # check деградации
+# check деградации
  if performance['accuracy'] < self.config['performance_threshold']:
  self.logger.warning(f"Performance degradation detected: {performance}")
  await self.trigger_retraining('performance_degradation')
 
- await asyncio.sleep(1800) # check каждые 30 minutes
+await asyncio.sleep(1800) # check каждые 30 minutes
 
  except Exception as e:
  self.logger.error(f"Performance Monitoring error: {e}")
  await asyncio.sleep(300)
 
  async def monitor_data_drift(self):
- """Monitoring дрейфа данных"""
+"""Monitoring дрейфа данных"""
  while True:
  try:
- # check дрейфа данных
+# check дрейфа данных
  drift_score = await self.check_data_drift()
 
  if drift_score > self.config['drift_threshold']:
  self.logger.warning(f"data drift detected: {drift_score}")
  await self.trigger_retraining('data_drift')
 
- await asyncio.sleep(3600) # check каждый час
+await asyncio.sleep(3600) # check каждый час
 
  except Exception as e:
  self.logger.error(f"data drift Monitoring error: {e}")
  await asyncio.sleep(300)
 
  async def monitor_schedule(self):
- """Monitoring расписания"""
+"""Monitoring расписания"""
  while True:
  try:
- # check времени последнего переобучения
+# check времени последнего переобучения
  last_retraining = self.get_last_retraining_time()
  days_since_retraining = (datetime.now() - last_retraining).days
 
@@ -1012,38 +1012,38 @@ class CompleteRetrainingsystem:
  self.logger.info("Scheduled retraining triggered")
  await self.trigger_retraining('scheduled')
 
- await asyncio.sleep(3600) # check каждый час
+await asyncio.sleep(3600) # check каждый час
 
  except Exception as e:
  self.logger.error(f"Schedule Monitoring error: {e}")
  await asyncio.sleep(300)
 
  async def trigger_retraining(self, reason: str):
- """Launch переобучения"""
+"""Launch переобучения"""
  self.logger.info(f"Triggering retraining: {reason}")
 
  try:
- # create резервной копии
+# create резервной копии
  backup_path = self.create_model_backup()
 
- # Загрузка новых данных
+# Загрузка новых данных
  new_data = await self.load_new_data()
 
- # create новой модели
+# create новой модели
  new_predictor = TabularPredictor(
  label=self.config['target_column'],
  path=f"{self.config['model_path']}_new"
  )
 
- # Обучение
+# Обучение
  new_predictor.fit(new_data, time_limit=3600)
 
- # Валидация
+# Валидация
  if await self.validate_new_model(new_predictor):
- # Деплой новой модели
+# Деплой новой модели
  await self.deploy_new_model(new_predictor)
 
- # update истории
+# update истории
  self.retraining_history.append({
  'timestamp': datetime.now().isoformat(),
  'reason': reason,
@@ -1053,7 +1053,7 @@ class CompleteRetrainingsystem:
 
  self.logger.info("Retraining COMPLETED successfully")
  else:
- # Rollback к предыдущей версии
+# Rollback к предыдущей версии
  self.Rollback_model(backup_path)
 
  self.retraining_history.append({
@@ -1068,32 +1068,32 @@ class CompleteRetrainingsystem:
  except Exception as e:
  self.logger.error(f"Retraining failed: {e}")
 
- # Rollback in случае ошибки
+# Rollback in случае ошибки
  if 'backup_path' in locals():
  self.Rollback_model(backup_path)
 
  async def validate_new_model(self, new_predictor) -> bool:
- """Валидация новой модели"""
+"""Валидация новой модели"""
  try:
- # Загрузка testsых данных
+# Загрузка testsых данных
  test_data = await self.load_test_data()
 
- # Предсказания новой модели
+# Предсказания новой модели
  new_predictions = new_predictor.predict(test_data)
  new_performance = new_predictor.evaluate(test_data)
 
- # Сравнение with текущей моделью
+# Сравнение with текущей моделью
  current_predictions = self.current_model.predict(test_data)
  current_performance = self.current_model.evaluate(test_data)
 
- # check улучшения
+# check улучшения
  improvement = new_performance['accuracy'] - current_performance['accuracy']
 
  if improvement < self.config.get('improvement_threshold', 0.01):
  self.logger.warning(f"Insufficient improvement: {improvement}")
  return False
 
- # check минимальных требований
+# check минимальных требований
  if new_performance['accuracy'] < self.config.get('minimum_accuracy', 0.8):
  self.logger.warning(f"Accuracy below minimum: {new_performance['accuracy']}")
  return False
@@ -1105,19 +1105,19 @@ class CompleteRetrainingsystem:
  return False
 
  async def deploy_new_model(self, new_predictor):
- """Деплой новой модели"""
+"""Деплой новой модели"""
  try:
- # Остановка текущего service
+# Остановка текущего service
  await self.stop_current_service()
 
- # Замена модели
+# Замена модели
  import shutil
  shutil.copytree(new_predictor.path, self.config['model_path'], dirs_exist_ok=True)
 
- # update текущей модели
+# update текущей модели
  self.current_model = new_predictor
 
- # Launch обновленного service
+# Launch обновленного service
  await self.start_updated_service()
 
  self.logger.info("New model deployed successfully")
@@ -1127,7 +1127,7 @@ class CompleteRetrainingsystem:
  raise
 
  def create_model_backup(self) -> str:
- """create резервной копии модели"""
+"""create резервной копии модели"""
  backup_path = f"{self.config['model_path']}_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
  import shutil
@@ -1136,39 +1136,39 @@ class CompleteRetrainingsystem:
  return backup_path
 
  def Rollback_model(self, backup_path: str):
- """Rollback к предыдущей версии"""
+"""Rollback к предыдущей версии"""
  import shutil
  shutil.copytree(backup_path, self.config['model_path'], dirs_exist_ok=True)
 
- # update текущей модели
+# update текущей модели
  self.current_model = TabularPredictor.load(self.config['model_path'])
 
  self.logger.info(f"Model rolled back to: {backup_path}")
 
 # configuration системы переобучения
 config = {
- 'model_path': './production_models', # Путь к директории with моделями
- 'target_column': 'target', # Название целевой переменной
- 'performance_threshold': 0.8, # Минимальный порог производительности (80%)
- 'drift_threshold': 0.1, # Порог детекции дрейфа данных (10%)
- 'retraining_interval': 7, # Интервал переобучения in днях
- 'improvement_threshold': 0.01, # Минимальное improve for принятия модели (1%)
- 'minimum_accuracy': 0.8, # Минимальная точность модели (80%)
+'model_path': './production_models', # Путь к директории with моделями
+'target_column': 'target', # Название целевой переменной
+'performance_threshold': 0.8, # Минимальный порог производительности (80%)
+'drift_threshold': 0.1, # Порог детекции дрейфа данных (10%)
+'retraining_interval': 7, # Интервал переобучения in днях
+'improvement_threshold': 0.01, # Минимальное improve for принятия модели (1%)
+'minimum_accuracy': 0.8, # Минимальная точность модели (80%)
 
- # Дополнительные parameters Monitoringа
- 'data_quality_threshold': 0.8, # Порог качества данных (80%)
- 'max_retraining_time': 7200, # Максимальное время переобучения (2 часа)
- 'stability_threshold': 0.95, # Порог стабильности predictions (95%)
+# Дополнительные parameters Monitoringа
+'data_quality_threshold': 0.8, # Порог качества данных (80%)
+'max_retraining_time': 7200, # Максимальное время переобучения (2 часа)
+'stability_threshold': 0.95, # Порог стабильности predictions (95%)
 
- # parameters ресурсов
- 'cpu_threshold': 0.9, # Порог использования CPU (90%)
- 'memory_threshold': 0.9, # Порог использования памяти (90%)
- 'disk_threshold': 0.9, # Порог использования диска (90%)
+# parameters ресурсов
+'cpu_threshold': 0.9, # Порог использования CPU (90%)
+'memory_threshold': 0.9, # Порог использования памяти (90%)
+'disk_threshold': 0.9, # Порог использования диска (90%)
 
- # parameters Rollbackа
- 'backup_path': './model_backups', # Путь for резервных копий
- 'max_versions': 10, # Максимальное количество версий
- 'backup_retention_days': 30 # Дни хранения резервных копий
+# parameters Rollbackа
+'backup_path': './model_backups', # Путь for резервных копий
+'max_versions': 10, # Максимальное количество версий
+'backup_retention_days': 30 # Дни хранения резервных копий
 }
 
 # Launch системы
@@ -1304,8 +1304,8 @@ if __name__ == "__main__":
 financial_config = {
  'performance_threshold': 0.95,
  'drift_threshold': 0.08,
- 'retraining_interval': 1, # ежедневно
- 'max_retraining_time': 3600, # 1 час
+'retraining_interval': 1, # ежедневно
+'max_retraining_time': 3600, # 1 час
  'improvement_threshold': 0.01,
  'stability_threshold': 0.99,
  'cpu_threshold': 0.95,
@@ -1320,8 +1320,8 @@ financial_config = {
 recommendation_config = {
  'performance_threshold': 0.85,
  'drift_threshold': 0.15,
- 'retraining_interval': 7, # еженедельно
- 'max_retraining_time': 7200, # 2 часа
+'retraining_interval': 7, # еженедельно
+'max_retraining_time': 7200, # 2 часа
  'improvement_threshold': 0.02,
  'stability_threshold': 0.95,
  'cpu_threshold': 0.90,
@@ -1336,8 +1336,8 @@ recommendation_config = {
 research_config = {
  'performance_threshold': 0.70,
  'drift_threshold': 0.30,
- 'retraining_interval': 30, # ежемесячно
- 'max_retraining_time': 14400, # 4 часа
+'retraining_interval': 30, # ежемесячно
+'max_retraining_time': 14400, # 4 часа
  'improvement_threshold': 0.05,
  'stability_threshold': 0.90,
  'cpu_threshold': 0.80,

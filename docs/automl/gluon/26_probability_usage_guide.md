@@ -37,21 +37,21 @@
 
 ```mermaid
 graph TD
- A[Входные data] --> B[ML Модель]
+A[Входные data] --> B[ML Модель]
  B --> C[Prediction]
- B --> D[Вероятность]
+B --> D[Вероятность]
 
- C --> E[Класс/Значение]
- D --> F[Уверенность модели]
+C --> E[Класс/Значение]
+D --> F[Уверенность модели]
 
- F --> G{Уровень уверенности}
- G -->|Высокая > 0.8| H[Надежное Prediction]
- G -->|Средняя 0.5-0.8| I[Умеренное Prediction]
- G -->|Низкая < 0.5| J[Ненадежное Prediction]
+F --> G{Уровень уверенности}
+G -->|Высокая > 0.8| H[Надежное Prediction]
+G -->|Средняя 0.5-0.8| I[Умеренное Prediction]
+G -->|Низкая < 0.5| J[Ненадежное Prediction]
 
- H --> K[Действие Торговать]
- I --> L[Действие: Осторожно]
- J --> M[Действие: not торговать]
+H --> K[Действие Торговать]
+I --> L[Действие: Осторожно]
+J --> M[Действие: not торговать]
 
  style A fill:#e3f2fd
  style B fill:#f3e5f5
@@ -75,42 +75,42 @@ from autogluon.tabular import TabularPredictor
 
 # create предиктора with детальными параметрами
 predictor = TabularPredictor(
- label='target', # Целевая переменная for предсказания
- problem_type='binary', # Тип задачи: 'binary', 'multiclass', 'regression'
- eval_metric='accuracy', # Метрика оценки: 'accuracy', 'f1', 'roc_auc', 'log_loss'
- path='./models', # Путь for сохранения моделей
- verbosity=2, # Уровень вывода: 0-4 (0=тихо, 4=подробно)
- presets='best_quality' # Предinstallation: 'best_quality', 'high_quality', 'good_quality', 'medium_quality'
+label='target', # Целевая переменная for предсказания
+problem_type='binary', # Тип задачи: 'binary', 'multiclass', 'regression'
+eval_metric='accuracy', # Метрика оценки: 'accuracy', 'f1', 'roc_auc', 'log_loss'
+path='./models', # Путь for сохранения моделей
+verbosity=2, # Уровень вывода: 0-4 (0=тихо, 4=подробно)
+presets='best_quality' # Предinstallation: 'best_quality', 'high_quality', 'good_quality', 'medium_quality'
 )
 
 # Обучение модели with параметрами
 predictor.fit(
- train_data, # Обучающие data
- time_limit=3600, # Лимит времени обучения in секундах
- presets='best_quality', # Предinstallation качества
- num_trials=10, # Количество попыток оптимизации
- hyperparameter_tune_kwargs={ # parameters Settings гиперпараметров
+train_data, # Обучающие data
+time_limit=3600, # Лимит времени обучения in секундах
+presets='best_quality', # Предinstallation качества
+num_trials=10, # Количество попыток оптимизации
+hyperparameter_tune_kwargs={ # parameters Settings гиперпараметров
  'scheduler': 'local',
  'searcher': 'auto'
  },
- holdout_frac=0.2, # Доля данных for holdout валидации
- num_bag_folds=8, # Количество фолдов for бэггинга
- num_stack_levels=1, # Количество уровней стекинга
- auto_stack=True, # Автоматический стекинг
- num_gpus=1, # Количество GPU for обучения
- num_cpus=4, # Количество CPU for обучения
- memory_limit='8GB', # Лимит памяти
- feature_prune=True, # Обрезка неважных признаков
- excluded_model_types=[], # Исключенные типы моделей
- included_model_types=[], # Включенные типы моделей
- refit_full=True, # Переобучение on all данных
- set_best_to_refit_full=True, # installation лучшей модели как refit_full
- save_space=True, # Экономия места on диске
- save_bag_folds=True, # Сохранение бэггинг фолдов
- keep_only_best=True, # Сохранение только лучшей модели
- num_bag_sets=1, # Количество наборов бэггинга
- ag_args_fit={}, # Дополнительные аргументы for fit
- ag_args_ensemble={} # Дополнительные аргументы for ансамбля
+holdout_frac=0.2, # Доля данных for holdout валидации
+num_bag_folds=8, # Количество фолдов for бэггинга
+num_stack_levels=1, # Количество уровней стекинга
+auto_stack=True, # Автоматический стекинг
+num_gpus=1, # Количество GPU for обучения
+num_cpus=4, # Количество CPU for обучения
+memory_limit='8GB', # Лимит памяти
+feature_prune=True, # Обрезка неважных признаков
+excluded_model_types=[], # Исключенные типы моделей
+included_model_types=[], # Включенные типы моделей
+refit_full=True, # Переобучение on all данных
+set_best_to_refit_full=True, # installation лучшей модели как refit_full
+save_space=True, # Экономия места on диске
+save_bag_folds=True, # Сохранение бэггинг фолдов
+keep_only_best=True, # Сохранение только лучшей модели
+num_bag_sets=1, # Количество наборов бэггинга
+ag_args_fit={}, # Дополнительные аргументы for fit
+ag_args_ensemble={} # Дополнительные аргументы for ансамбля
 )
 
 # Получение predictions
@@ -118,9 +118,9 @@ predictions = predictor.predict(test_data)
 
 # Получение вероятностей with параметрами
 probabilities = predictor.predict_proba(
- test_data, # testsые data
- as_pandas=True, # Возврат in формате pandas dataFrame
- transform_features=True # Применение трансформаций к приsignм
+test_data, # testsые data
+as_pandas=True, # Возврат in формате pandas dataFrame
+transform_features=True # Применение трансформаций к приsignм
 )
 
 print("Предсказания:", predictions)
@@ -135,25 +135,25 @@ print("Вероятности:", probabilities)
 
 ```mermaid
 graph TD
- A[Некалиброванные вероятности] --> B{Выбор метода калибровки}
+A[Некалиброванные вероятности] --> B{Выбор метода калибровки}
 
  B -->|Platt Scaling| C[Sigmoid function]
- B -->|Isotonic Regression| D[Монотонная регрессия]
- B -->|Temperature Scaling| E[Температурное масштабирование]
+B -->|Isotonic Regression| D[Монотонная регрессия]
+B -->|Temperature Scaling| E[Температурное масштабирование]
 
- C --> C1[Подходит for большинства случаев]
- C --> C2[Быстрая калибровка]
- C --> C3[Хорошо Workingет with переобучением]
+C --> C1[Подходит for большинства случаев]
+C --> C2[Быстрая калибровка]
+C --> C3[Хорошо Workingет with переобучением]
 
- D --> D1[Непараметрический метод]
- D --> D2[Монотонная калибровка]
- D --> D3[Лучше for малых данных]
+D --> D1[Непараметрический метод]
+D --> D2[Монотонная калибровка]
+D --> D3[Лучше for малых данных]
 
- E --> E1[for нейронных networks]
- E --> E2[Один parameter температуры]
- E --> E3[Быстрая оптимизация]
+E --> E1[for нейронных networks]
+E --> E2[Один parameter температуры]
+E --> E3[Быстрая оптимизация]
 
- C1 --> F[Калиброванные вероятности]
+C1 --> F[Калиброванные вероятности]
  C2 --> F
  C3 --> F
  D1 --> F
@@ -163,10 +163,10 @@ graph TD
  E2 --> F
  E3 --> F
 
- F --> G[check калибровки]
- G --> H{Калибровка хорошая?}
- H -->|Да| I[Использование in продакшене]
- H -->|Нет| J[Попробовать другой метод]
+F --> G[check калибровки]
+G --> H{Калибровка хорошая?}
+H -->|Да| I[Использование in продакшене]
+H -->|Нет| J[Попробовать другой метод]
  J --> B
 
  style A fill:#ffcdd2
@@ -176,25 +176,25 @@ graph TD
 
 ```python
 class ProbabilityCalibration:
- """Калибровка вероятностей for improving accuracy"""
+"""Калибровка вероятностей for improving accuracy"""
 
  def __init__(self, config=None):
  """
- Инициализация системы калибровки вероятностей
+Инициализация системы калибровки вероятностей
 
  Args:
- config (dict): configuration калибровки
- - calibration_methods: List методов калибровки
- - cv_folds: Количество фолдов for кросс-валидации
- - temperature_init: Начальная температура for temperature scaling
- - isotonic_bounds: Границы for изотонической регрессии
+config (dict): configuration калибровки
+- calibration_methods: List методов калибровки
+- cv_folds: Количество фолдов for кросс-валидации
+- temperature_init: Начальная температура for temperature scaling
+- isotonic_bounds: Границы for изотонической регрессии
  """
  self.config = config or self._get_default_config()
  self.calibration_methods = {}
  self.calibrated_models = {}
 
  def _get_default_config(self):
- """Получение конфигурации on умолчанию"""
+"""Получение конфигурации on умолчанию"""
  return {
  'calibration_methods': ['platt', 'isotonic', 'temperature'],
  'cv_folds': 5,
@@ -209,15 +209,15 @@ class ProbabilityCalibration:
 
  def calibrate_probabilities(self, probabilities, true_labels, method='all'):
  """
- Калибровка вероятностей
+Калибровка вероятностей
 
  Args:
- probabilities (array): Исходные вероятности (n_samples, n_classes)
- true_labels (array): Истинные метки (n_samples,)
- method (str): Метод калибровки ('all', 'platt', 'isotonic', 'temperature')
+probabilities (array): Исходные вероятности (n_samples, n_classes)
+true_labels (array): Истинные метки (n_samples,)
+method (str): Метод калибровки ('all', 'platt', 'isotonic', 'temperature')
 
  Returns:
- dict: Словарь with калиброванными вероятностями for каждого метода
+dict: Словарь with калиброванными вероятностями for каждого метода
  """
  results = {}
 
@@ -234,89 +234,89 @@ class ProbabilityCalibration:
 
  def platt_scaling(self, probabilities, true_labels):
  """
- Platt Scaling for калибровки
+Platt Scaling for калибровки
 
  Args:
- probabilities (array): Исходные вероятности
- true_labels (array): Истинные метки
+probabilities (array): Исходные вероятности
+true_labels (array): Истинные метки
 
  Returns:
- array: Калиброванные вероятности
+array: Калиброванные вероятности
  """
  from sklearn.calibration import CalibratedClassifierCV
 
- # create калиброванного классификатора with параметрами
+# create калиброванного классификатора with параметрами
  calibrated_clf = CalibratedClassifierCV(
- base_estimator=None, # AutoML Gluon модель
+base_estimator=None, # AutoML Gluon модель
  method=self.config['platt_method'], # 'sigmoid' or 'isotonic'
- cv=self.config['cv_folds'], # Количество фолдов
- n_jobs=-1, # Использование all ядер
- ensemble=True # Использование ансамбля
+cv=self.config['cv_folds'], # Количество фолдов
+n_jobs=-1, # Использование all ядер
+ensemble=True # Использование ансамбля
  )
 
- # Калибровка
+# Калибровка
  calibrated_clf.fit(probabilities.reshape(-1, 1), true_labels)
  calibrated_probs = calibrated_clf.predict_proba(probabilities.reshape(-1, 1))
 
- # Сохранение модели
+# Сохранение модели
  self.calibrated_models['platt'] = calibrated_clf
 
  return calibrated_probs
 
  def isotonic_regression(self, probabilities, true_labels):
  """
- Isotonic Regression for калибровки
+Isotonic Regression for калибровки
 
  Args:
- probabilities (array): Исходные вероятности
- true_labels (array): Истинные метки
+probabilities (array): Исходные вероятности
+true_labels (array): Истинные метки
 
  Returns:
- array: Калиброванные вероятности
+array: Калиброванные вероятности
  """
  from sklearn.isotonic import IsotonicRegression
 
- # create изотонической регрессии with параметрами
+# create изотонической регрессии with параметрами
  isotonic_reg = IsotonicRegression(
  out_of_bounds=self.config['isotonic_bounds'], # 'clip' or 'nan'
- increasing=True, # Монотонно возрастающая
- y_min=None, # Минимальное значение y
- y_max=None # Максимальное значение y
+increasing=True, # Монотонно возрастающая
+y_min=None, # Минимальное значение y
+y_max=None # Максимальное значение y
  )
 
- # Обучение on вероятностях
+# Обучение on вероятностях
  isotonic_reg.fit(probabilities, true_labels)
  calibrated_probs = isotonic_reg.transform(probabilities)
 
- # Сохранение модели
+# Сохранение модели
  self.calibrated_models['isotonic'] = isotonic_reg
 
  return calibrated_probs
 
  def temperature_scaling(self, probabilities, true_labels):
  """
- Temperature Scaling for калибровки
+Temperature Scaling for калибровки
 
  Args:
- probabilities (array): Исходные вероятности
- true_labels (array): Истинные метки
+probabilities (array): Исходные вероятности
+true_labels (array): Истинные метки
 
  Returns:
- array: Калиброванные вероятности
+array: Калиброванные вероятности
  """
  import torch
  import torch.nn as nn
 
- # Преобразование in тензоры
+# Преобразование in тензоры
  probs_tensor = torch.tensor(probabilities, dtype=torch.float32)
  labels_tensor = torch.tensor(true_labels, dtype=torch.long)
 
- # Temperature Scaling with параметрами
+# Temperature Scaling with параметрами
  temperature = nn.Parameter(
  torch.ones(1) * self.config['temperature_init']
  )
 
- # Оптимизация температуры
+# Оптимизация температуры
  optimizer = torch.optim.LBFGS(
  [temperature],
  lr=self.config['learning_rate'],
@@ -334,10 +334,10 @@ class ProbabilityCalibration:
 
  optimizer.step(eval_loss)
 
- # Применение температуры
+# Применение температуры
  calibrated_probs = torch.softmax(probs_tensor / temperature, dim=1)
 
- # Сохранение модели
+# Сохранение модели
  self.calibrated_models['temperature'] = temperature
 
  return calibrated_probs.detach().numpy()
@@ -349,27 +349,27 @@ class ProbabilityCalibration:
 
 ```mermaid
 graph TD
- A[Вероятность предсказания] --> B{Анализ уверенности}
+A[Вероятность предсказания] --> B{Анализ уверенности}
 
- B -->|Высокая > 0.8| C[Высокая уверенность]
- B -->|Средняя 0.5-0.8| D[Средняя уверенность]
- B -->|Низкая < 0.5| E[Низкая уверенность]
+B -->|Высокая > 0.8| C[Высокая уверенность]
+B -->|Средняя 0.5-0.8| D[Средняя уверенность]
+B -->|Низкая < 0.5| E[Низкая уверенность]
 
- C --> C1[Увеличить размер позиции]
- C --> C2[Широкий стоп-лосс]
- C --> C3[Меньше хеджирования]
+C --> C1[Увеличить размер позиции]
+C --> C2[Широкий стоп-лосс]
+C --> C3[Меньше хеджирования]
 
- D --> D1[Стандартный размер позиции]
- D --> D2[Обычный стоп-лосс]
- D --> D3[Умеренное хеджирование]
+D --> D1[Стандартный размер позиции]
+D --> D2[Обычный стоп-лосс]
+D --> D3[Умеренное хеджирование]
 
- E --> E1[Уменьшить размер позиции]
- E --> E2[Узкий стоп-лосс]
- E --> E3[Активное хеджирование]
+E --> E1[Уменьшить размер позиции]
+E --> E2[Узкий стоп-лосс]
+E --> E3[Активное хеджирование]
 
- C1 --> F[Расчет размера позиции]
- C2 --> G[installation стоп-лосса]
- C3 --> H[Стратегия хеджирования]
+C1 --> F[Расчет размера позиции]
+C2 --> G[installation стоп-лосса]
+C3 --> H[Стратегия хеджирования]
 
  D1 --> F
  D2 --> G
@@ -379,14 +379,14 @@ graph TD
  E2 --> G
  E3 --> H
 
- F --> I[Итоговое решение]
+F --> I[Итоговое решение]
  G --> I
  H --> I
 
- I --> J[Monitoring результатов]
- J --> K{Результат положительный?}
- K -->|Да| L[Корректировка параметров]
- K -->|Нет| M[Пересмотр стратегии]
+I --> J[Monitoring результатов]
+J --> K{Результат положительный?}
+K -->|Да| L[Корректировка параметров]
+K -->|Нет| M[Пересмотр стратегии]
 
  L --> A
  M --> A
@@ -400,20 +400,20 @@ graph TD
 
 ```python
 class AdaptiveRiskManagement:
- """Адаптивное Management рисками on basis вероятностей"""
+"""Адаптивное Management рисками on basis вероятностей"""
 
  def __init__(self, config=None):
  """
- Инициализация системы управления рисками
+Инициализация системы управления рисками
 
  Args:
- config (dict): configuration управления рисками
- - base_position_size: Базовый размер позиции (0.0-1.0)
- - max_position_size: Максимальный размер позиции (0.0-1.0)
- - confidence_threshold: Порог уверенности for увеличения позиции
- - base_stop_loss: Базовый стоп-лосс in процентах
- - volatility_multiplier: Множитель волатильности
- - hedging_threshold: Порог for активации хеджирования
+config (dict): configuration управления рисками
+- base_position_size: Базовый размер позиции (0.0-1.0)
+- max_position_size: Максимальный размер позиции (0.0-1.0)
+- confidence_threshold: Порог уверенности for увеличения позиции
+- base_stop_loss: Базовый стоп-лосс in процентах
+- volatility_multiplier: Множитель волатильности
+- hedging_threshold: Порог for активации хеджирования
  """
  self.config = config or self._get_default_config()
  self.risk_thresholds = {}
@@ -421,79 +421,79 @@ class AdaptiveRiskManagement:
  self.hedging_strategies = {}
 
  def _get_default_config(self):
- """Получение конфигурации on умолчанию"""
+"""Получение конфигурации on умолчанию"""
  return {
- 'base_position_size': 0.1, # 10% from капитала
- 'max_position_size': 0.2, # Максимум 20%
- 'min_position_size': 0.01, # Минимум 1%
- 'confidence_threshold': 0.7, # Порог уверенности
- 'base_stop_loss': 0.05, # 5% базовый стоп-лосс
- 'max_stop_loss': 0.15, # Максимум 15% стоп-лосс
- 'min_stop_loss': 0.02, # Минимум 2% стоп-лосс
- 'volatility_multiplier': 0.5, # Множитель волатильности
- 'hedging_threshold': 0.3, # Порог for хеджирования
- 'risk_budget': 0.1, # Бюджет риска
- 'correlation_threshold': 0.7, # Порог корреляции
- 'max_correlation': 0.9, # Максимальная корреляция
- 'rebalance_frequency': 'daily', # Частота ребалансировки
- 'Monitoring_window': 30, # Окно Monitoringа (дни)
- 'alert_threshold': 0.05, # Порог for алертов
- 'max_drawdown': 0.2, # Максимальная просадка
- 'var_confidence': 0.95, # Уровень доверия for VaR
- 'var_horizon': 1, # Горизонт VaR (дни)
- 'stress_test_scenarios': 5, # Количество сценариев стресс-tests
- 'liquidity_buffer': 0.05, # Буфер ликвидности
- 'transaction_costs': 0.001, # Транзакционные издержки
- 'slippage_factor': 0.0005, # Фактор проскальзывания
- 'market_impact_factor': 0.001, # Фактор рыночного воздействия
- 'regulatory_limits': { # Регуляторные лимиты
- 'max_single_position': 0.1, # Максимальная позиция in одном активе
- 'max_sector_exposure': 0.3, # Максимальная экспозиция on сектору
- 'max_currency_exposure': 0.5 # Максимальная валютная экспозиция
+'base_position_size': 0.1, # 10% from капитала
+'max_position_size': 0.2, # Максимум 20%
+'min_position_size': 0.01, # Минимум 1%
+'confidence_threshold': 0.7, # Порог уверенности
+'base_stop_loss': 0.05, # 5% базовый стоп-лосс
+'max_stop_loss': 0.15, # Максимум 15% стоп-лосс
+'min_stop_loss': 0.02, # Минимум 2% стоп-лосс
+'volatility_multiplier': 0.5, # Множитель волатильности
+'hedging_threshold': 0.3, # Порог for хеджирования
+'risk_budget': 0.1, # Бюджет риска
+'correlation_threshold': 0.7, # Порог корреляции
+'max_correlation': 0.9, # Максимальная корреляция
+'rebalance_frequency': 'daily', # Частота ребалансировки
+'Monitoring_window': 30, # Окно Monitoringа (дни)
+'alert_threshold': 0.05, # Порог for алертов
+'max_drawdown': 0.2, # Максимальная просадка
+'var_confidence': 0.95, # Уровень доверия for VaR
+'var_horizon': 1, # Горизонт VaR (дни)
+'stress_test_scenarios': 5, # Количество сценариев стресс-tests
+'liquidity_buffer': 0.05, # Буфер ликвидности
+'transaction_costs': 0.001, # Транзакционные издержки
+'slippage_factor': 0.0005, # Фактор проскальзывания
+'market_impact_factor': 0.001, # Фактор рыночного воздействия
+'regulatory_limits': { # Регуляторные лимиты
+'max_single_position': 0.1, # Максимальная позиция in одном активе
+'max_sector_exposure': 0.3, # Максимальная экспозиция on сектору
+'max_currency_exposure': 0.5 # Максимальная валютная экспозиция
  }
  }
 
  def calculate_position_size(self, probability, confidence_threshold=None,
  market_volatility=None, correlation_risk=None):
  """
- Расчет размера позиции on basis вероятности
+Расчет размера позиции on basis вероятности
 
  Args:
- probability (float): Вероятность успеха (0.0-1.0)
- confidence_threshold (float): Порог уверенности (on умолчанию из config)
- market_volatility (float): Волатильность рынка (0.0-1.0)
- correlation_risk (float): Риск корреляции (0.0-1.0)
+probability (float): Вероятность успеха (0.0-1.0)
+confidence_threshold (float): Порог уверенности (on умолчанию из config)
+market_volatility (float): Волатильность рынка (0.0-1.0)
+correlation_risk (float): Риск корреляции (0.0-1.0)
 
  Returns:
- float: Размер позиции (0.0-1.0)
+float: Размер позиции (0.0-1.0)
  """
  if confidence_threshold is None:
  confidence_threshold = self.config['confidence_threshold']
 
- # Базовый размер позиции
+# Базовый размер позиции
  base_size = self.config['base_position_size']
 
- # Корректировка on basis вероятности
+# Корректировка on basis вероятности
  if probability > confidence_threshold:
- # Высокая уверенность - увеличиваем размер
+# Высокая уверенность - увеличиваем размер
  confidence_multiplier = probability / confidence_threshold
  position_size = base_size * confidence_multiplier
  else:
- # Низкая уверенность - уменьшаем размер
+# Низкая уверенность - уменьшаем размер
  confidence_multiplier = (probability / confidence_threshold) * 0.5
  position_size = base_size * confidence_multiplier
 
- # Корректировка on волатильность
+# Корректировка on волатильность
  if market_volatility is not None:
  volatility_adjustment = 1 - (market_volatility * self.config['volatility_multiplier'])
  position_size *= volatility_adjustment
 
- # Корректировка on корреляцию
+# Корректировка on корреляцию
  if correlation_risk is not None:
  correlation_adjustment = 1 - (correlation_risk * 0.5)
  position_size *= correlation_adjustment
 
- # Применение лимитов
+# Применение лимитов
  position_size = max(position_size, self.config['min_position_size'])
  position_size = min(position_size, self.config['max_position_size'])
 
@@ -502,52 +502,52 @@ class AdaptiveRiskManagement:
  def dynamic_stop_loss(self, probability, entry_price, volatility=None,
  market_conditions=None, time_held=None):
  """
- Динамический стоп-лосс on basis вероятности
+Динамический стоп-лосс on basis вероятности
 
  Args:
- probability (float): Вероятность успеха
- entry_price (float): Цена входа
- volatility (float): Волатильность актива
- market_conditions (dict): Рыночные условия
- time_held (int): Время holding позиции (дни)
+probability (float): Вероятность успеха
+entry_price (float): Цена входа
+volatility (float): Волатильность актива
+market_conditions (dict): Рыночные условия
+time_held (int): Время holding позиции (дни)
 
  Returns:
- float: Цена стоп-лосса
+float: Цена стоп-лосса
  """
- # Базовый стоп-лосс
+# Базовый стоп-лосс
  base_stop = self.config['base_stop_loss']
 
- # Корректировка on basis вероятности
+# Корректировка on basis вероятности
  if probability > 0.8:
- # Высокая уверенность - более широкий стоп-лосс
+# Высокая уверенность - более широкий стоп-лосс
  stop_loss_pct = base_stop * (1 - 0.4 * (1 - probability))
  elif probability > 0.6:
- # Средняя уверенность - обычный стоп-лосс
+# Средняя уверенность - обычный стоп-лосс
  stop_loss_pct = base_stop
  else:
- # Низкая уверенность - более узкий стоп-лосс
+# Низкая уверенность - более узкий стоп-лосс
  stop_loss_pct = base_stop * (1 + 0.5 * (1 - probability))
 
- # Корректировка on волатильность
+# Корректировка on волатильность
  if volatility is not None:
  volatility_adjustment = 1 + (volatility * self.config['volatility_multiplier'])
  stop_loss_pct *= volatility_adjustment
 
- # Корректировка on рыночные условия
+# Корректировка on рыночные условия
  if market_conditions:
  market_adjustment = self._calculate_market_adjustment(market_conditions)
  stop_loss_pct *= market_adjustment
 
- # Корректировка on время holding
+# Корректировка on время holding
  if time_held is not None:
  time_adjustment = self._calculate_time_adjustment(time_held)
  stop_loss_pct *= time_adjustment
 
- # Применение лимитов
+# Применение лимитов
  stop_loss_pct = max(stop_loss_pct, self.config['min_stop_loss'])
  stop_loss_pct = min(stop_loss_pct, self.config['max_stop_loss'])
 
- # Расчет цены стоп-лосса
+# Расчет цены стоп-лосса
  stop_loss_price = entry_price * (1 - stop_loss_pct)
 
  return stop_loss_price
@@ -555,24 +555,24 @@ class AdaptiveRiskManagement:
  def probability_based_hedging(self, probabilities, market_conditions,
  Portfolio_state=None, risk_budget=None):
  """
- Хеджирование on basis вероятностей
+Хеджирование on basis вероятностей
 
  Args:
- probabilities (array): Массив вероятностей
- market_conditions (dict): Рыночные условия
- Portfolio_state (dict): Состояние портфеля
- risk_budget (float): Бюджет риска
+probabilities (array): Массив вероятностей
+market_conditions (dict): Рыночные условия
+Portfolio_state (dict): Состояние портфеля
+risk_budget (float): Бюджет риска
 
  Returns:
- dict: Стратегия хеджирования
+dict: Стратегия хеджирования
  """
  if risk_budget is None:
  risk_budget = self.config['risk_budget']
 
- # Анализ распределения вероятностей
+# Анализ распределения вероятностей
  prob_distribution = self.analyze_probability_distribution(probabilities)
 
- # Определение необходимости хеджирования
+# Определение необходимости хеджирования
  hedging_needed = self.determine_hedging_need(
  prob_distribution,
  market_conditions,
@@ -580,19 +580,19 @@ class AdaptiveRiskManagement:
  )
 
  if hedging_needed:
- # Расчет размера хеджа
+# Расчет размера хеджа
  hedge_size = self.calculate_hedge_size(
  prob_distribution,
  risk_budget
  )
 
- # Выбор инструментов хеджирования
+# Выбор инструментов хеджирования
  hedge_instruments = self.select_hedge_instruments(
  market_conditions,
  Portfolio_state
  )
 
- # Расчет стоимости хеджирования
+# Расчет стоимости хеджирования
  hedging_cost = self.calculate_hedging_cost(
  hedge_size,
  hedge_instruments
@@ -610,16 +610,16 @@ class AdaptiveRiskManagement:
  return {'hedge_needed': False}
 
  def _calculate_market_adjustment(self, market_conditions):
- """Расчет корректировки on рыночные условия"""
+"""Расчет корректировки on рыночные условия"""
  adjustment = 1.0
 
- # Корректировка on тренд
+# Корректировка on тренд
  if market_conditions.get('trend') == 'bull':
- adjustment *= 1.1 # Увеличиваем стоп-лосс in бычьем рынке
+adjustment *= 1.1 # Увеличиваем стоп-лосс in бычьем рынке
  elif market_conditions.get('trend') == 'bear':
- adjustment *= 0.9 # Уменьшаем стоп-лосс in медвежьем рынке
+adjustment *= 0.9 # Уменьшаем стоп-лосс in медвежьем рынке
 
- # Корректировка on волатильность
+# Корректировка on волатильность
  if market_conditions.get('volatility') == 'high':
  adjustment *= 1.2
  elif market_conditions.get('volatility') == 'low':
@@ -628,13 +628,13 @@ class AdaptiveRiskManagement:
  return adjustment
 
  def _calculate_time_adjustment(self, time_held):
- """Расчет корректировки on время holding"""
+"""Расчет корректировки on время holding"""
  if time_held < 1:
- return 1.0 # Нет корректировки for внутридневных позиций
+return 1.0 # Нет корректировки for внутридневных позиций
  elif time_held < 7:
- return 0.95 # Небольшая корректировка for краткосрочных позиций
+return 0.95 # Небольшая корректировка for краткосрочных позиций
  else:
- return 0.9 # Большая корректировка for долгосрочных позиций
+return 0.9 # Большая корректировка for долгосрочных позиций
 ```
 
 ### 3. Ансамблирование on basis вероятностей
@@ -643,25 +643,25 @@ class AdaptiveRiskManagement:
 
 ```mermaid
 graph TD
- A[Множество моделей] --> B{Тип ансамблирования}
+A[Множество моделей] --> B{Тип ансамблирования}
 
- B -->|Weighted Ensemble| C[Взвешенный ансамбль]
- B -->|Confidence Weighted| D[on уверенности]
- B -->|Bayesian Ensemble| E[Байесовский]
+B -->|Weighted Ensemble| C[Взвешенный ансамбль]
+B -->|Confidence Weighted| D[on уверенности]
+B -->|Bayesian Ensemble| E[Байесовский]
 
- C --> C1[Фиксированные веса]
- C --> C2[Простота реализации]
- C --> C3[Быстрое вычисление]
+C --> C1[Фиксированные веса]
+C --> C2[Простота реализации]
+C --> C3[Быстрое вычисление]
 
- D --> D1[Веса on уверенности]
- D --> D2[Адаптивные веса]
- D --> D3[Учет качества моделей]
+D --> D1[Веса on уверенности]
+D --> D2[Адаптивные веса]
+D --> D3[Учет качества моделей]
 
- E --> E1[Учет неопределенности]
- E --> E2[Байесовские веса]
- E --> E3[Сложная реализация]
+E --> E1[Учет неопределенности]
+E --> E2[Байесовские веса]
+E --> E3[Сложная реализация]
 
- C1 --> F[Объединение вероятностей]
+C1 --> F[Объединение вероятностей]
  C2 --> F
  C3 --> F
  D1 --> F
@@ -671,11 +671,11 @@ graph TD
  E2 --> F
  E3 --> F
 
- F --> G[Итоговая вероятность]
- G --> H[Оценка качества ансамбля]
- H --> I{Качество приемлемое?}
- I -->|Да| J[Использование in продакшене]
- I -->|Нет| K[configuration параметров]
+F --> G[Итоговая вероятность]
+G --> H[Оценка качества ансамбля]
+H --> I{Качество приемлемое?}
+I -->|Да| J[Использование in продакшене]
+I -->|Нет| K[configuration параметров]
  K --> B
 
  style A fill:#e3f2fd
@@ -686,18 +686,18 @@ graph TD
 
 ```python
 class ProbabilityEnsemble:
- """Ансамблирование on basis вероятностей"""
+"""Ансамблирование on basis вероятностей"""
 
  def __init__(self, config=None):
  """
- Инициализация системы ансамблирования
+Инициализация системы ансамблирования
 
  Args:
- config (dict): configuration ансамблирования
- - ensemble_methods: List методов ансамблирования
- - weight_calculation: Метод расчета весов
- - uncertainty_estimation: Метод оценки неопределенности
- - model_selection: Критерии отбора моделей
+config (dict): configuration ансамблирования
+- ensemble_methods: List методов ансамблирования
+- weight_calculation: Метод расчета весов
+- uncertainty_estimation: Метод оценки неопределенности
+- model_selection: Критерии отбора моделей
  """
  self.config = config or self._get_default_config()
  self.ensemble_methods = {}
@@ -705,85 +705,85 @@ class ProbabilityEnsemble:
  self.ensemble_models = {}
 
  def _get_default_config(self):
- """Получение конфигурации on умолчанию"""
+"""Получение конфигурации on умолчанию"""
  return {
  'ensemble_methods': ['weighted', 'confidence_weighted', 'bayesian'],
  'weight_calculation': 'performance_based',
  'uncertainty_estimation': 'variance',
  'model_selection': {
- 'min_performance': 0.6, # Минимальная производительность
- 'max_correlation': 0.8, # Максимальная корреляция между моделями
- 'min_diversity': 0.3, # Минимальное разнообразие
- 'max_models': 10 # Максимальное количество моделей
+'min_performance': 0.6, # Минимальная производительность
+'max_correlation': 0.8, # Максимальная корреляция между моделями
+'min_diversity': 0.3, # Минимальное разнообразие
+'max_models': 10 # Максимальное количество моделей
  },
- 'weight_regularization': 0.01, # Регуляризация весов
- 'uncertainty_threshold': 0.1, # Порог неопределенности
- 'confidence_threshold': 0.7, # Порог уверенности
- 'diversity_weight': 0.3, # Вес разнообразия
- 'performance_weight': 0.7, # Вес производительности
- 'uncertainty_weight': 0.2, # Вес неопределенности
- 'adaptive_weights': True, # Адаптивные веса
- 'weight_update_frequency': 100, # Частота обновления весов
- 'ensemble_size': 5, # Размер ансамбля
+'weight_regularization': 0.01, # Регуляризация весов
+'uncertainty_threshold': 0.1, # Порог неопределенности
+'confidence_threshold': 0.7, # Порог уверенности
+'diversity_weight': 0.3, # Вес разнообразия
+'performance_weight': 0.7, # Вес производительности
+'uncertainty_weight': 0.2, # Вес неопределенности
+'adaptive_weights': True, # Адаптивные веса
+'weight_update_frequency': 100, # Частота обновления весов
+'ensemble_size': 5, # Размер ансамбля
  'selection_criteria': ['accuracy', 'f1', 'roc_auc'],
- 'weight_normalization': 'softmax', # Нормализация весов
- 'uncertainty_combination': 'average', # Комбинирование неопределенности
- 'model_validation': True, # Валидация моделей
- 'cross_validation_folds': 5, # Фолды for кросс-валидации
- 'bootstrap_samples': 1000, # Количество bootstrap выборок
- 'monte_carlo_samples': 1000, # Количество Monte Carlo выборок
- 'bayesian_prior': 'uniform', # Байесовский априор
- 'bayesian_alpha': 1.0, # parameter альфа for Байеса
- 'bayesian_beta': 1.0, # parameter бета for Байеса
- 'temperature_scaling': True, # Температурное масштабирование
- 'temperature_value': 1.0, # Значение температуры
- 'ensemble_validation': True, # Валидация ансамбля
+'weight_normalization': 'softmax', # Нормализация весов
+'uncertainty_combination': 'average', # Комбинирование неопределенности
+'model_validation': True, # Валидация моделей
+'cross_validation_folds': 5, # Фолды for кросс-валидации
+'bootstrap_samples': 1000, # Количество bootstrap выборок
+'monte_carlo_samples': 1000, # Количество Monte Carlo выборок
+'bayesian_prior': 'uniform', # Байесовский априор
+'bayesian_alpha': 1.0, # parameter альфа for Байеса
+'bayesian_beta': 1.0, # parameter бета for Байеса
+'temperature_scaling': True, # Температурное масштабирование
+'temperature_value': 1.0, # Значение температуры
+'ensemble_validation': True, # Валидация ансамбля
  'performance_metrics': ['accuracy', 'f1', 'roc_auc', 'log_loss'],
  'uncertainty_metrics': ['entropy', 'variance', 'mutual_info'],
- 'weight_constraints': { # Ограничения on веса
- 'min_weight': 0.01, # Минимальный вес
- 'max_weight': 0.5, # Максимальный вес
- 'sum_constraint': 1.0 # Сумма весов должна быть 1
+'weight_constraints': { # Ограничения on веса
+'min_weight': 0.01, # Минимальный вес
+'max_weight': 0.5, # Максимальный вес
+'sum_constraint': 1.0 # Сумма весов должна быть 1
  }
  }
 
  def weighted_ensemble(self, model_probabilities, model_weights,
  performance_metrics=None, regularization=None):
  """
- Взвешенный ансамбль on basis вероятностей
+Взвешенный ансамбль on basis вероятностей
 
  Args:
- model_probabilities (array): Вероятности from разных моделей (n_models, n_samples, n_classes)
- model_weights (array): Веса моделей (n_models,)
- performance_metrics (dict): Метрики производительности моделей
- regularization (float): Коэффициент регуляризации весов
+model_probabilities (array): Вероятности from разных моделей (n_models, n_samples, n_classes)
+model_weights (array): Веса моделей (n_models,)
+performance_metrics (dict): Метрики производительности моделей
+regularization (float): Коэффициент регуляризации весов
 
  Returns:
- array: Ансамблевые вероятности (n_samples, n_classes)
+array: Ансамблевые вероятности (n_samples, n_classes)
  """
  if regularization is None:
  regularization = self.config['weight_regularization']
 
- # Нормализация весов with регуляризацией
+# Нормализация весов with регуляризацией
  if self.config['weight_normalization'] == 'softmax':
- # Softmax нормализация
+# Softmax нормализация
  weights_exp = np.exp(model_weights - np.max(model_weights))
  normalized_weights = weights_exp / np.sum(weights_exp)
  else:
- # L1 нормализация
+# L1 нормализация
  normalized_weights = model_weights / np.sum(model_weights)
 
- # Применение ограничений on веса
+# Применение ограничений on веса
  normalized_weights = self._apply_weight_constraints(normalized_weights)
 
- # Взвешенное объединение вероятностей
+# Взвешенное объединение вероятностей
  ensemble_probability = np.average(
  model_probabilities,
  weights=normalized_weights,
  axis=0
  )
 
- # Сохранение информации об ансамбле
+# Сохранение информации об ансамбле
  self.ensemble_models['weighted'] = {
  'weights': normalized_weights,
  'performance': performance_metrics,
@@ -795,29 +795,29 @@ class ProbabilityEnsemble:
  def confidence_weighted_ensemble(self, model_probabilities, model_confidences,
  confidence_threshold=None, uncertainty_weight=None):
  """
- Ансамбль with весами on basis уверенности
+Ансамбль with весами on basis уверенности
 
  Args:
- model_probabilities (array): Вероятности from разных моделей
- model_confidences (array): Уверенность моделей (n_models,)
- confidence_threshold (float): Порог уверенности
- uncertainty_weight (float): Вес неопределенности
+model_probabilities (array): Вероятности from разных моделей
+model_confidences (array): Уверенность моделей (n_models,)
+confidence_threshold (float): Порог уверенности
+uncertainty_weight (float): Вес неопределенности
 
  Returns:
- array: Ансамблевые вероятности
+array: Ансамблевые вероятности
  """
  if confidence_threshold is None:
  confidence_threshold = self.config['confidence_threshold']
  if uncertainty_weight is None:
  uncertainty_weight = self.config['uncertainty_weight']
 
- # Расчет весов on basis уверенности
+# Расчет весов on basis уверенности
  confidence_weights = self.calculate_confidence_weights(
  model_confidences,
  confidence_threshold
  )
 
- # Корректировка on неопределенность
+# Корректировка on неопределенность
  if uncertainty_weight > 0:
  uncertainty_weights = self.calculate_uncertainty_weights(
  model_probabilities
@@ -825,14 +825,14 @@ class ProbabilityEnsemble:
  confidence_weights = (1 - uncertainty_weight) * confidence_weights + \
  uncertainty_weight * uncertainty_weights
 
- # Взвешенное объединение
+# Взвешенное объединение
  ensemble_probability = np.average(
  model_probabilities,
  weights=confidence_weights,
  axis=0
  )
 
- # Сохранение информации об ансамбле
+# Сохранение информации об ансамбле
  self.ensemble_models['confidence_weighted'] = {
  'weights': confidence_weights,
  'confidences': model_confidences,
@@ -844,17 +844,17 @@ class ProbabilityEnsemble:
  def bayesian_ensemble(self, model_probabilities, model_uncertainties,
  prior_type=None, alpha=None, beta=None):
  """
- Байесовский ансамбль
+Байесовский ансамбль
 
  Args:
- model_probabilities (array): Вероятности from разных моделей
- model_uncertainties (array): Неопределенность моделей (n_models,)
- prior_type (str): Тип априорного распределения
- alpha (float): parameter альфа for Байеса
- beta (float): parameter бета for Байеса
+model_probabilities (array): Вероятности from разных моделей
+model_uncertainties (array): Неопределенность моделей (n_models,)
+prior_type (str): Тип априорного распределения
+alpha (float): parameter альфа for Байеса
+beta (float): parameter бета for Байеса
 
  Returns:
- dict: Ансамблевые вероятности and неопределенность
+dict: Ансамблевые вероятности and неопределенность
  """
  if prior_type is None:
  prior_type = self.config['bayesian_prior']
@@ -863,7 +863,7 @@ class ProbabilityEnsemble:
  if beta is None:
  beta = self.config['bayesian_beta']
 
- # Байесовское объединение
+# Байесовское объединение
  bayesian_weights = self.calculate_bayesian_weights(
  model_uncertainties,
  prior_type,
@@ -871,21 +871,21 @@ class ProbabilityEnsemble:
  beta
  )
 
- # Объединение with учетом неопределенности
+# Объединение with учетом неопределенности
  ensemble_probability = np.average(
  model_probabilities,
  weights=bayesian_weights,
  axis=0
  )
 
- # add неопределенности
+# add неопределенности
  ensemble_uncertainty = self.calculate_ensemble_uncertainty(
  model_probabilities,
  model_uncertainties,
  bayesian_weights
  )
 
- # Сохранение информации об ансамбле
+# Сохранение информации об ансамбле
  self.ensemble_models['bayesian'] = {
  'weights': bayesian_weights,
  'uncertainties': model_uncertainties,
@@ -901,15 +901,15 @@ class ProbabilityEnsemble:
  }
 
  def calculate_confidence_weights(self, model_confidences, threshold):
- """Расчет весов on basis уверенности"""
- # Фильтрация моделей on порогу уверенности
+"""Расчет весов on basis уверенности"""
+# Фильтрация моделей on порогу уверенности
  valid_models = model_confidences >= threshold
 
  if not np.any(valid_models):
- # Если нет моделей выше порога, Use все
+# Если нет моделей выше порога, Use все
  valid_models = np.ones_like(model_confidences, dtype=bool)
 
- # Нормализация весов
+# Нормализация весов
  weights = np.zeros_like(model_confidences)
  weights[valid_models] = model_confidences[valid_models]
  weights = weights / np.sum(weights)
@@ -917,32 +917,32 @@ class ProbabilityEnsemble:
  return weights
 
  def calculate_uncertainty_weights(self, model_probabilities):
- """Расчет весов on basis неопределенности"""
- # Расчет энтропии for каждой модели
+"""Расчет весов on basis неопределенности"""
+# Расчет энтропии for каждой модели
  entropies = []
  for probs in model_probabilities:
  entropy = -np.sum(probs * np.log(probs + 1e-10), axis=1)
  entropies.append(np.mean(entropy))
 
- # Инвертирование энтропии (меньше энтропии = больше вес)
+# Инвертирование энтропии (меньше энтропии = больше вес)
  weights = 1.0 / (np.array(entropies) + 1e-10)
  weights = weights / np.sum(weights)
 
  return weights
 
  def calculate_bayesian_weights(self, model_uncertainties, prior_type, alpha, beta):
- """Расчет байесовских весов"""
+"""Расчет байесовских весов"""
  if prior_type == 'uniform':
- # Равномерный априор
+# Равномерный априор
  prior_weights = np.ones(len(model_uncertainties)) / len(model_uncertainties)
  elif prior_type == 'dirichlet':
- # Дирихле априор
+# Дирихле априор
  prior_weights = np.random.dirichlet([alpha] * len(model_uncertainties))
  else:
- # on умолчанию равномерный
+# on умолчанию равномерный
  prior_weights = np.ones(len(model_uncertainties)) / len(model_uncertainties)
 
- # Байесовское update весов
+# Байесовское update весов
  likelihood = 1.0 / (model_uncertainties + 1e-10)
  posterior_weights = prior_weights * likelihood
  posterior_weights = posterior_weights / np.sum(posterior_weights)
@@ -950,30 +950,30 @@ class ProbabilityEnsemble:
  return posterior_weights
 
  def calculate_ensemble_uncertainty(self, model_probabilities, model_uncertainties, weights):
- """Расчет неопределенности ансамбля"""
+"""Расчет неопределенности ансамбля"""
  if self.config['uncertainty_combination'] == 'average':
- # Среднее арифметическое неопределенности
+# Среднее арифметическое неопределенности
  ensemble_uncertainty = np.average(model_uncertainties, weights=weights)
  elif self.config['uncertainty_combination'] == 'weighted_variance':
- # Взвешенная дисперсия
+# Взвешенная дисперсия
  ensemble_uncertainty = np.average(model_uncertainties**2, weights=weights)
  else:
- # on умолчанию среднее
+# on умолчанию среднее
  ensemble_uncertainty = np.average(model_uncertainties, weights=weights)
 
  return ensemble_uncertainty
 
  def _apply_weight_constraints(self, weights):
- """Применение ограничений on веса"""
+"""Применение ограничений on веса"""
  constraints = self.config['weight_constraints']
 
- # Минимальный вес
+# Минимальный вес
  weights = np.maximum(weights, constraints['min_weight'])
 
- # Максимальный вес
+# Максимальный вес
  weights = np.minimum(weights, constraints['max_weight'])
 
- # Нормализация to суммы 1
+# Нормализация to суммы 1
  weights = weights / np.sum(weights)
 
  return weights
@@ -985,26 +985,26 @@ class ProbabilityEnsemble:
 
 ```mermaid
 graph TD
- A[Базовые вероятности] --> B[Текущие вероятности]
- B --> C{Сравнение распределений}
+A[Базовые вероятности] --> B[Текущие вероятности]
+B --> C{Сравнение распределений}
 
- C -->|Статистический тест| D[t-тест / Mann-Whitney]
- C -->|KS тест| E[Колмогоров-Смирнов]
- C -->|Wasserstein| F[Расстояние Вассерштейна]
+C -->|Статистический тест| D[t-тест / Mann-Whitney]
+C -->|KS тест| E[Колмогоров-Смирнов]
+C -->|Wasserstein| F[Расстояние Вассерштейна]
 
- D --> D1[Сравнение средних]
+D --> D1[Сравнение средних]
  D --> D2[p-value < 0.05]
- D --> D3[Обнаружение дрифта]
+D --> D3[Обнаружение дрифта]
 
- E --> E1[Сравнение распределений]
- E --> E2[KS статистика]
- E --> E3[Критическое значение]
+E --> E1[Сравнение распределений]
+E --> E2[KS статистика]
+E --> E3[Критическое значение]
 
- F --> F1[Метрика расстояния]
- F --> F2[Пороговое значение]
- F --> F3[Изменение формы]
+F --> F1[Метрика расстояния]
+F --> F2[Пороговое значение]
+F --> F3[Изменение формы]
 
- D1 --> G[Анализ результатов]
+D1 --> G[Анализ результатов]
  D2 --> G
  D3 --> G
  E1 --> G
@@ -1014,17 +1014,17 @@ graph TD
  F2 --> G
  F3 --> G
 
- G --> H{Дрифт обнаружен?}
- H -->|Да| I[Алерт о дрифте]
- H -->|Нет| J[Продолжить Monitoring]
+G --> H{Дрифт обнаружен?}
+H -->|Да| I[Алерт о дрифте]
+H -->|Нет| J[Продолжить Monitoring]
 
- I --> K[Анализ причин дрифта]
- K --> L[Корректировка модели]
- L --> M[Переобучение]
- M --> N[update базовой линии]
+I --> K[Анализ причин дрифта]
+K --> L[Корректировка модели]
+L --> M[Переобучение]
+M --> N[update базовой линии]
  N --> A
 
- J --> O[Следующая check]
+J --> O[Следующая check]
  O --> A
 
  style A fill:#e3f2fd
@@ -1036,18 +1036,18 @@ graph TD
 
 ```python
 class ProbabilityDriftMonitor:
- """Monitoring дрифта вероятностей"""
+"""Monitoring дрифта вероятностей"""
 
  def __init__(self, config=None):
  """
- Инициализация системы Monitoringа дрифта
+Инициализация системы Monitoringа дрифта
 
  Args:
- config (dict): configuration Monitoringа
- - drift_threshold: Порог for обнаружения дрифта
- - test_methods: List методов тестирования
- - window_size: Размер окна for Analysis
- - update_frequency: Частота обновления
+config (dict): configuration Monitoringа
+- drift_threshold: Порог for обнаружения дрифта
+- test_methods: List методов тестирования
+- window_size: Размер окна for Analysis
+- update_frequency: Частота обновления
  """
  self.config = config or self._get_default_config()
  self.drift_detectors = {}
@@ -1056,82 +1056,82 @@ class ProbabilityDriftMonitor:
  self.alert_thresholds = {}
 
  def _get_default_config(self):
- """Получение конфигурации on умолчанию"""
+"""Получение конфигурации on умолчанию"""
  return {
- 'drift_threshold': 0.05, # Порог for обнаружения дрифта
+'drift_threshold': 0.05, # Порог for обнаружения дрифта
  'test_methods': ['statistical', 'ks', 'wasserstein', 'psi'],
- 'window_size': 1000, # Размер окна for Analysis
- 'update_frequency': 'daily', # Частота обновления
- 'baseline_period': 30, # Период for базовой линии (дни)
- 'min_samples': 100, # Минимальное количество образцов
- 'max_samples': 10000, # Максимальное количество образцов
+'window_size': 1000, # Размер окна for Analysis
+'update_frequency': 'daily', # Частота обновления
+'baseline_period': 30, # Период for базовой линии (дни)
+'min_samples': 100, # Минимальное количество образцов
+'max_samples': 10000, # Максимальное количество образцов
  'statistical_tests': {
- 'ttest_alpha': 0.05, # Альфа for t-теста
- 'mannwhitney_alpha': 0.05, # Альфа for теста Манна-Уитни
- 'ks_alpha': 0.05, # Альфа for KS теста
- 'psi_threshold': 0.2, # Порог for PSI
- 'wasserstein_threshold': 0.1 # Порог for Вассерштейна
+'ttest_alpha': 0.05, # Альфа for t-теста
+'mannwhitney_alpha': 0.05, # Альфа for теста Манна-Уитни
+'ks_alpha': 0.05, # Альфа for KS теста
+'psi_threshold': 0.2, # Порог for PSI
+'wasserstein_threshold': 0.1 # Порог for Вассерштейна
  },
  'alert_Settings': {
- 'enable_alerts': True, # Включение алертов
- 'alert_threshold': 0.1, # Порог for алертов
- 'alert_frequency': 'immediate', # Частота алертов
+'enable_alerts': True, # Включение алертов
+'alert_threshold': 0.1, # Порог for алертов
+'alert_frequency': 'immediate', # Частота алертов
  'alert_channels': ['email', 'slack', 'webhook'],
- 'alert_recipients': [], # Получатели алертов
- 'alert_template': 'default' # Шаблон алерта
+'alert_recipients': [], # Получатели алертов
+'alert_template': 'default' # Шаблон алерта
  },
  'Monitoring_metrics': {
- 'mean_drift': True, # Дрифт среднего
- 'variance_drift': True, # Дрифт дисперсии
- 'distribution_drift': True, # Дрифт распределения
- 'correlation_drift': True, # Дрифт корреляции
- 'entropy_drift': True # Дрифт энтропии
+'mean_drift': True, # Дрифт среднего
+'variance_drift': True, # Дрифт дисперсии
+'distribution_drift': True, # Дрифт распределения
+'correlation_drift': True, # Дрифт корреляции
+'entropy_drift': True # Дрифт энтропии
  },
  'adaptation_Settings': {
- 'auto_adapt': False, # Автоматическая адаптация
- 'adaptation_threshold': 0.15, # Порог for адаптации
- 'adaptation_method': 'retrain', # Метод адаптации
- 'adaptation_frequency': 'weekly', # Частота адаптации
- 'model_backup': True, # Резервное копирование модели
- 'Rollback_threshold': 0.2 # Порог for Rollbackа
+'auto_adapt': False, # Автоматическая адаптация
+'adaptation_threshold': 0.15, # Порог for адаптации
+'adaptation_method': 'retrain', # Метод адаптации
+'adaptation_frequency': 'weekly', # Частота адаптации
+'model_backup': True, # Резервное копирование модели
+'Rollback_threshold': 0.2 # Порог for Rollbackа
  },
  'visualization': {
- 'enable_plots': True, # Включение графиков
- 'plot_frequency': 'daily', # Частота построения графиков
- 'save_plots': True, # Сохранение графиков
- 'plot_format': 'png', # Формат графиков
- 'plot_dpi': 300, # DPI графиков
- 'plot_size': (12, 8) # Размер графиков
+'enable_plots': True, # Включение графиков
+'plot_frequency': 'daily', # Частота построения графиков
+'save_plots': True, # Сохранение графиков
+'plot_format': 'png', # Формат графиков
+'plot_dpi': 300, # DPI графиков
+'plot_size': (12, 8) # Размер графиков
  },
  'data_quality': {
- 'check_Missing': True, # check пропущенных значений
- 'check_outliers': True, # check выбросов
- 'outlier_threshold': 3.0, # Порог for выбросов
- 'Missing_threshold': 0.1, # Порог for пропущенных значений
- 'data_validation': True # Валидация данных
+'check_Missing': True, # check пропущенных значений
+'check_outliers': True, # check выбросов
+'outlier_threshold': 3.0, # Порог for выбросов
+'Missing_threshold': 0.1, # Порог for пропущенных значений
+'data_validation': True # Валидация данных
  },
  'performance': {
- 'parallel_processing': True, # Параллельная обработка
- 'n_jobs': -1, # Количество процессов
- 'memory_limit': '2GB', # Лимит памяти
- 'cache_results': True, # Кэширование результатов
- 'cache_size': 1000 # Размер cache
+'parallel_processing': True, # Параллельная обработка
+'n_jobs': -1, # Количество процессов
+'memory_limit': '2GB', # Лимит памяти
+'cache_results': True, # Кэширование результатов
+'cache_size': 1000 # Размер cache
  }
  }
 
  def detect_probability_drift(self, current_probabilities, baseline_probabilities=None,
  drift_threshold=None, test_methods=None):
  """
- Обнаружение дрифта вероятностей
+Обнаружение дрифта вероятностей
 
  Args:
- current_probabilities (array): Текущие вероятности
- baseline_probabilities (array): Базовые вероятности (если None, используется сохраненная)
- drift_threshold (float): Порог for обнаружения дрифта
- test_methods (List): List методов тестирования
+current_probabilities (array): Текущие вероятности
+baseline_probabilities (array): Базовые вероятности (если None, используется сохраненная)
+drift_threshold (float): Порог for обнаружения дрифта
+test_methods (List): List методов тестирования
 
  Returns:
- dict: Результаты обнаружения дрифта
+dict: Результаты обнаружения дрифта
  """
  if baseline_probabilities is None:
  baseline_probabilities = self.baseline_distribution
@@ -1145,13 +1145,13 @@ class ProbabilityDriftMonitor:
  if test_methods is None:
  test_methods = self.config['test_methods']
 
- # Валидация данных
+# Валидация данных
  self._validate_probabilities(current_probabilities, baseline_probabilities)
 
  results = {}
  drift_detected = False
 
- # Статистические тесты
+# Статистические тесты
  if 'statistical' in test_methods:
  statistical_drift = self.statistical_drift_test(
  current_probabilities,
@@ -1161,7 +1161,7 @@ class ProbabilityDriftMonitor:
  results['statistical'] = statistical_drift
  drift_detected = drift_detected or statistical_drift
 
- # Тест Колмогорова-Смирнова
+# Тест Колмогорова-Смирнова
  if 'ks' in test_methods:
  ks_drift = self.ks_drift_test(
  current_probabilities,
@@ -1171,7 +1171,7 @@ class ProbabilityDriftMonitor:
  results['ks'] = ks_drift
  drift_detected = drift_detected or ks_drift
 
- # Тест Вассерштейна
+# Тест Вассерштейна
  if 'wasserstein' in test_methods:
  wasserstein_drift = self.wasserstein_drift_test(
  current_probabilities,
@@ -1181,7 +1181,7 @@ class ProbabilityDriftMonitor:
  results['wasserstein'] = wasserstein_drift
  drift_detected = drift_detected or wasserstein_drift
 
- # PSI тест
+# PSI тест
  if 'psi' in test_methods:
  psi_drift = self.psi_drift_test(
  current_probabilities,
@@ -1191,16 +1191,16 @@ class ProbabilityDriftMonitor:
  results['psi'] = psi_drift
  drift_detected = drift_detected or psi_drift
 
- # Объединение результатов
+# Объединение результатов
  results['drift_detected'] = drift_detected
  results['timestamp'] = pd.Timestamp.now()
  results['current_samples'] = len(current_probabilities)
  results['baseline_samples'] = len(baseline_probabilities)
 
- # Сохранение истории
+# Сохранение истории
  self.drift_history.append(results)
 
- # check алертов
+# check алертов
  if self.config['alert_Settings']['enable_alerts']:
  self._check_alerts(results)
 
@@ -1208,28 +1208,28 @@ class ProbabilityDriftMonitor:
 
  def statistical_drift_test(self, current, baseline, drift_threshold=None):
  """
- Статистический тест дрифта
+Статистический тест дрифта
 
  Args:
- current (array): Текущие вероятности
- baseline (array): Базовые вероятности
- drift_threshold (float): Порог for обнаружения дрифта
+current (array): Текущие вероятности
+baseline (array): Базовые вероятности
+drift_threshold (float): Порог for обнаружения дрифта
 
  Returns:
- bool: Обнаружен ли дрифт
+bool: Обнаружен ли дрифт
  """
  if drift_threshold is None:
  drift_threshold = self.config['drift_threshold']
 
  from scipy import stats
 
- # t-тест for средних
+# t-тест for средних
  t_stat, t_pvalue = stats.ttest_ind(current, baseline)
 
- # Тест Манна-Уитни
+# Тест Манна-Уитни
  u_stat, u_pvalue = stats.mannwhitneyu(current, baseline)
 
- # Критерий дрифта
+# Критерий дрифта
  alpha = self.config['statistical_tests']['ttest_alpha']
  drift_detected = (t_pvalue < alpha) or (u_pvalue < alpha)
 
@@ -1237,25 +1237,25 @@ class ProbabilityDriftMonitor:
 
  def ks_drift_test(self, current, baseline, drift_threshold=None):
  """
- Тест Колмогорова-Смирнова
+Тест Колмогорова-Смирнова
 
  Args:
- current (array): Текущие вероятности
- baseline (array): Базовые вероятности
- drift_threshold (float): Порог for обнаружения дрифта
+current (array): Текущие вероятности
+baseline (array): Базовые вероятности
+drift_threshold (float): Порог for обнаружения дрифта
 
  Returns:
- bool: Обнаружен ли дрифт
+bool: Обнаружен ли дрифт
  """
  if drift_threshold is None:
  drift_threshold = self.config['drift_threshold']
 
  from scipy import stats
 
- # KS тест
+# KS тест
  ks_stat, ks_pvalue = stats.ks_2samp(current, baseline)
 
- # Критерий дрифта
+# Критерий дрифта
  alpha = self.config['statistical_tests']['ks_alpha']
  drift_detected = ks_pvalue < alpha
 
@@ -1263,25 +1263,25 @@ class ProbabilityDriftMonitor:
 
  def wasserstein_drift_test(self, current, baseline, drift_threshold=None):
  """
- Тест Вассерштейна
+Тест Вассерштейна
 
  Args:
- current (array): Текущие вероятности
- baseline (array): Базовые вероятности
- drift_threshold (float): Порог for обнаружения дрифта
+current (array): Текущие вероятности
+baseline (array): Базовые вероятности
+drift_threshold (float): Порог for обнаружения дрифта
 
  Returns:
- bool: Обнаружен ли дрифт
+bool: Обнаружен ли дрифт
  """
  if drift_threshold is None:
  drift_threshold = self.config['drift_threshold']
 
  from scipy.stats import wasserstein_distance
 
- # Расчет расстояния Вассерштейна
+# Расчет расстояния Вассерштейна
  wasserstein_dist = wasserstein_distance(current, baseline)
 
- # Критерий дрифта
+# Критерий дрифта
  threshold = self.config['statistical_tests']['wasserstein_threshold']
  drift_detected = wasserstein_dist > threshold
 
@@ -1289,44 +1289,44 @@ class ProbabilityDriftMonitor:
 
  def psi_drift_test(self, current, baseline, drift_threshold=None):
  """
- PSI (Population Stability index) тест
+PSI (Population Stability index) тест
 
  Args:
- current (array): Текущие вероятности
- baseline (array): Базовые вероятности
- drift_threshold (float): Порог for обнаружения дрифта
+current (array): Текущие вероятности
+baseline (array): Базовые вероятности
+drift_threshold (float): Порог for обнаружения дрифта
 
  Returns:
- bool: Обнаружен ли дрифт
+bool: Обнаружен ли дрифт
  """
  if drift_threshold is None:
  drift_threshold = self.config['drift_threshold']
 
- # Расчет PSI
+# Расчет PSI
  psi_value = self._calculate_psi(current, baseline)
 
- # Критерий дрифта
+# Критерий дрифта
  threshold = self.config['statistical_tests']['psi_threshold']
  drift_detected = psi_value > threshold
 
  return drift_detected
 
  def _calculate_psi(self, current, baseline, bins=10):
- """Расчет PSI"""
- # create бинов
+"""Расчет PSI"""
+# create бинов
  min_val = min(np.min(current), np.min(baseline))
  max_val = max(np.max(current), np.max(baseline))
  bin_edges = np.linspace(min_val, max_val, bins + 1)
 
- # Расчет гистограмм
+# Расчет гистограмм
  current_hist, _ = np.histogram(current, bins=bin_edges)
  baseline_hist, _ = np.histogram(baseline, bins=bin_edges)
 
- # Нормализация
+# Нормализация
  current_hist = current_hist / np.sum(current_hist)
  baseline_hist = baseline_hist / np.sum(baseline_hist)
 
- # Расчет PSI
+# Расчет PSI
  psi = 0
  for i in range(len(current_hist)):
  if current_hist[i] > 0 and baseline_hist[i] > 0:
@@ -1335,8 +1335,8 @@ class ProbabilityDriftMonitor:
  return psi
 
  def _validate_probabilities(self, current, baseline):
- """Валидация вероятностей"""
- # check on пропущенные значения
+"""Валидация вероятностей"""
+# check on пропущенные значения
  if self.config['data_quality']['check_Missing']:
  Missing_current = np.isnan(current).sum()
  Missing_baseline = np.isnan(baseline).sum()
@@ -1347,19 +1347,19 @@ class ProbabilityDriftMonitor:
  if Missing_baseline > len(baseline) * self.config['data_quality']['Missing_threshold']:
  raise ValueError(f"Too many Missing values in baseline probabilities: {Missing_baseline}")
 
- # check on выбросы
+# check on выбросы
  if self.config['data_quality']['check_outliers']:
  current_outliers = self._detect_outliers(current)
  baseline_outliers = self._detect_outliers(baseline)
 
- if len(current_outliers) > len(current) * 0.1: # 10% выбросов
+if len(current_outliers) > len(current) * 0.1: # 10% выбросов
  print(f"Warning: High number of outliers in current probabilities: {len(current_outliers)}")
 
  if len(baseline_outliers) > len(baseline) * 0.1:
  print(f"Warning: High number of outliers in baseline probabilities: {len(baseline_outliers)}")
 
  def _detect_outliers(self, data, threshold=None):
- """Обнаружение выбросов"""
+"""Обнаружение выбросов"""
  if threshold is None:
  threshold = self.config['data_quality']['outlier_threshold']
 
@@ -1371,17 +1371,17 @@ class ProbabilityDriftMonitor:
  return np.where(outliers)[0]
 
  def _check_alerts(self, results):
- """check алертов"""
+"""check алертов"""
  if results['drift_detected']:
  alert_threshold = self.config['alert_Settings']['alert_threshold']
 
- # check порога алерта
+# check порога алерта
  if any(results.get(method, False) for method in self.config['test_methods']):
  self._send_alert(results)
 
  def _send_alert(self, results):
- """Отправка алерта"""
- # Реализация отправки алертов
+"""Отправка алерта"""
+# Реализация отправки алертов
  print(f"ALERT: Probability drift detected at {results['timestamp']}")
  print(f"Drift details: {results}")
 ```
@@ -1392,21 +1392,21 @@ class ProbabilityDriftMonitor:
 
 ```python
 class ProbabilityOverfittingPrevention:
- """Предотвращение переобучения on вероятностях"""
+"""Предотвращение переобучения on вероятностях"""
 
  def __init__(self):
  self.regularization_methods = {}
 
  def prevent_overfitting(self, probabilities, true_labels):
- """Предотвращение переобучения"""
+"""Предотвращение переобучения"""
 
- # L1 регуляризация
+# L1 регуляризация
  l1_regularized = self.l1_regularization(probabilities, true_labels)
 
- # L2 регуляризация
+# L2 регуляризация
  l2_regularized = self.l2_regularization(probabilities, true_labels)
 
- # Dropout for вероятностей
+# Dropout for вероятностей
  dropout_regularized = self.dropout_regularization(probabilities, true_labels)
 
  return {
@@ -1416,20 +1416,20 @@ class ProbabilityOverfittingPrevention:
  }
 
  def l1_regularization(self, probabilities, true_labels):
- """L1 регуляризация"""
+"""L1 регуляризация"""
 
- # add L1 штрафа
+# add L1 штрафа
  l1_penalty = np.sum(np.abs(probabilities))
 
- # update вероятностей
+# update вероятностей
  regularized_probs = probabilities - 0.01 * l1_penalty
 
  return regularized_probs
 
  def dropout_regularization(self, probabilities, true_labels):
- """Dropout регуляризация"""
+"""Dropout регуляризация"""
 
- # Случайное обнуление части вероятностей
+# Случайное обнуление части вероятностей
  dropout_mask = np.random.binomial(1, 0.5, probabilities.shape)
  regularized_probs = probabilities * dropout_mask
 
@@ -1440,18 +1440,18 @@ class ProbabilityOverfittingPrevention:
 
 ```python
 class ProbabilityInterpretation:
- """Правильная интерпретация вероятностей"""
+"""Правильная интерпретация вероятностей"""
 
  def __init__(self):
  self.interpretation_guidelines = {}
 
  def interpret_probabilities(self, probabilities, context):
- """Правильная интерпретация вероятностей"""
+"""Правильная интерпретация вероятностей"""
 
- # Анализ контекста
+# Анализ контекста
  context_Analysis = self.analyze_context(context)
 
- # Корректировка интерпретации
+# Корректировка интерпретации
  corrected_interpretation = self.correct_interpretation(
  probabilities,
  context_Analysis
@@ -1460,15 +1460,15 @@ class ProbabilityInterpretation:
  return corrected_interpretation
 
  def analyze_context(self, context):
- """Анализ контекста for интерпретации"""
+"""Анализ контекста for интерпретации"""
 
- # Рыночные условия
+# Рыночные условия
  market_conditions = context.get('market_conditions', {})
 
- # Временные факторы
+# Временные факторы
  temporal_factors = context.get('temporal_factors', {})
 
- # Внешние факторы
+# Внешние факторы
  external_factors = context.get('external_factors', {})
 
  return {
@@ -1478,15 +1478,15 @@ class ProbabilityInterpretation:
  }
 
  def correct_interpretation(self, probabilities, context_Analysis):
- """Корректировка интерпретации"""
+"""Корректировка интерпретации"""
 
- # Корректировка on basis рыночных условий
+# Корректировка on basis рыночных условий
  market_corrected = self.market_correction(probabilities, context_Analysis['market'])
 
- # Корректировка on basis временных факторов
+# Корректировка on basis временных факторов
  temporal_corrected = self.temporal_correction(market_corrected, context_Analysis['temporal'])
 
- # Корректировка on basis внешних факторов
+# Корректировка on basis внешних факторов
  external_corrected = self.external_correction(temporal_corrected, context_Analysis['external'])
 
  return external_corrected
@@ -1496,21 +1496,21 @@ class ProbabilityInterpretation:
 
 ```python
 class CalibrationIssues:
- """Issues with калибровкой вероятностей"""
+"""Issues with калибровкой вероятностей"""
 
  def __init__(self):
  self.calibration_problems = {}
 
  def identify_calibration_issues(self, probabilities, true_labels):
- """Идентификация проблем калибровки"""
+"""Идентификация проблем калибровки"""
 
- # Анализ калибровочной кривой
+# Анализ калибровочной кривой
  calibration_curve = self.analyze_calibration_curve(probabilities, true_labels)
 
- # Анализ надежности
+# Анализ надежности
  reliability_Analysis = self.analyze_reliability(probabilities, true_labels)
 
- # Анализ резолюции
+# Анализ резолюции
  resolution_Analysis = self.analyze_resolution(probabilities, true_labels)
 
  return {
@@ -1520,21 +1520,21 @@ class CalibrationIssues:
  }
 
  def analyze_calibration_curve(self, probabilities, true_labels):
- """Анализ калибровочной кривой"""
+"""Анализ калибровочной кривой"""
 
  from sklearn.calibration import calibration_curve
 
- # Построение калибровочной кривой
+# Построение калибровочной кривой
  fraction_of_positives, mean_predicted_value = calibration_curve(
  true_labels,
  probabilities,
  n_bins=10
  )
 
- # Анализ отклонений
+# Анализ отклонений
  deviations = np.abs(fraction_of_positives - mean_predicted_value)
 
- # Критерий плохой калибровки
+# Критерий плохой калибровки
  bad_calibration = np.mean(deviations) > 0.1
 
  return {
@@ -1552,25 +1552,25 @@ class CalibrationIssues:
 
 ```mermaid
 graph TD
- A[Вероятности модели] --> B{Тип валидации}
+A[Вероятности модели] --> B{Тип валидации}
 
- B -->|Cross-Validation| C[Кросс-валидация]
- B -->|Temporal Validation| D[Временная валидация]
- B -->|Stochastic Validation| E[Стохастическая валидация]
+B -->|Cross-Validation| C[Кросс-валидация]
+B -->|Temporal Validation| D[Временная валидация]
+B -->|Stochastic Validation| E[Стохастическая валидация]
 
- C --> C1[Разделение on фолды]
- C --> C2[Обучение on каждом фолде]
- C --> C3[Тестирование on остальных]
+C --> C1[Разделение on фолды]
+C --> C2[Обучение on каждом фолде]
+C --> C3[Тестирование on остальных]
 
- D --> D1[Временные ряды]
- D --> D2[Обучение on прошлом]
- D --> D3[Тестирование on будущем]
+D --> D1[Временные ряды]
+D --> D2[Обучение on прошлом]
+D --> D3[Тестирование on будущем]
 
- E --> E1[Множественные Launchи]
- E --> E2[Случайные разбиения]
- E --> E3[Статистическая значимость]
+E --> E1[Множественные Launchи]
+E --> E2[Случайные разбиения]
+E --> E3[Статистическая значимость]
 
- C1 --> F[Метрики качества]
+C1 --> F[Метрики качества]
  C2 --> F
  C3 --> F
  D1 --> F
@@ -1584,13 +1584,13 @@ graph TD
  F --> H[Brier Score]
  F --> I[Calibration Error]
 
- G --> J[Оценка качества]
+G --> J[Оценка качества]
  H --> J
  I --> J
 
- J --> K{Качество приемлемое?}
- K -->|Да| L[Модель готова]
- K -->|Нет| M[improve модели]
+J --> K{Качество приемлемое?}
+K -->|Да| L[Модель готова]
+K -->|Нет| M[improve модели]
  M --> A
 
  style A fill:#e3f2fd
@@ -1601,21 +1601,21 @@ graph TD
 
 ```python
 class ProbabilityValidation:
- """Валидация вероятностей"""
+"""Валидация вероятностей"""
 
  def __init__(self):
  self.validation_methods = {}
 
  def validate_probabilities(self, probabilities, true_labels):
- """Валидация вероятностей"""
+"""Валидация вероятностей"""
 
- # Кросс-валидация
+# Кросс-валидация
  cv_validation = self.cross_validation(probabilities, true_labels)
 
- # Временная валидация
+# Временная валидация
  temporal_validation = self.temporal_validation(probabilities, true_labels)
 
- # Стохастическая валидация
+# Стохастическая валидация
  stochastic_validation = self.stochastic_validation(probabilities, true_labels)
 
  return {
@@ -1625,11 +1625,11 @@ class ProbabilityValidation:
  }
 
  def cross_validation(self, probabilities, true_labels):
- """Кросс-валидация вероятностей"""
+"""Кросс-валидация вероятностей"""
 
  from sklearn.model_selection import cross_val_score
 
- # Кросс-валидация with калибровкой
+# Кросс-валидация with калибровкой
  cv_scores = cross_val_score(
  probabilities,
  true_labels,
@@ -1648,21 +1648,21 @@ class ProbabilityValidation:
 
 ```python
 class ProbabilityMonitoring:
- """Monitoring производительности вероятностей"""
+"""Monitoring производительности вероятностей"""
 
  def __init__(self):
  self.Monitoring_metrics = {}
 
  def monitor_performance(self, probabilities, true_labels):
- """Monitoring производительности"""
+"""Monitoring производительности"""
 
- # Логарифмическая потеря
+# Логарифмическая потеря
  log_loss = self.calculate_log_loss(probabilities, true_labels)
 
  # Brier Score
  brier_score = self.calculate_brier_score(probabilities, true_labels)
 
- # Калибровочная ошибка
+# Калибровочная ошибка
  calibration_error = self.calculate_calibration_error(probabilities, true_labels)
 
  return {
@@ -1672,17 +1672,17 @@ class ProbabilityMonitoring:
  }
 
  def calculate_log_loss(self, probabilities, true_labels):
- """Расчет логарифмической потери"""
+"""Расчет логарифмической потери"""
 
  from sklearn.metrics import log_loss
 
- # Логарифмическая потеря
+# Логарифмическая потеря
  loss = log_loss(true_labels, probabilities)
 
  return loss
 
  def calculate_brier_score(self, probabilities, true_labels):
- """Расчет Brier Score"""
+"""Расчет Brier Score"""
 
  from sklearn.metrics import brier_score_loss
 
@@ -1700,32 +1700,32 @@ class ProbabilityMonitoring:
 
 ```mermaid
 graph TD
- A[Рыночные data] --> B[ML Модель]
- B --> C[Вероятности предсказания]
+A[Рыночные data] --> B[ML Модель]
+B --> C[Вероятности предсказания]
 
- C --> D{Анализ вероятности}
- D -->|> 0.8| E[Высокая уверенность]
- D -->|0.6-0.8| F[Средняя уверенность]
- D -->|0.4-0.6| G[Низкая уверенность]
- D -->|< 0.4| H[Очень низкая уверенность]
+C --> D{Анализ вероятности}
+D -->|> 0.8| E[Высокая уверенность]
+D -->|0.6-0.8| F[Средняя уверенность]
+D -->|0.4-0.6| G[Низкая уверенность]
+D -->|< 0.4| H[Очень низкая уверенность]
 
- E --> E1[Сильный сигнал BUY]
- E --> E2[Большой размер позиции]
- E --> E3[Широкий стоп-лосс]
+E --> E1[Сильный сигнал BUY]
+E --> E2[Большой размер позиции]
+E --> E3[Широкий стоп-лосс]
 
- F --> F1[Умеренный сигнал BUY]
- F --> F2[Средний размер позиции]
- F --> F3[Обычный стоп-лосс]
+F --> F1[Умеренный сигнал BUY]
+F --> F2[Средний размер позиции]
+F --> F3[Обычный стоп-лосс]
 
- G --> G1[Слабый сигнал HOLD]
- G --> G2[Малый размер позиции]
- G --> G3[Узкий стоп-лосс]
+G --> G1[Слабый сигнал HOLD]
+G --> G2[Малый размер позиции]
+G --> G3[Узкий стоп-лосс]
 
- H --> H1[Сигнал SELL]
- H --> H2[Минимальный размер]
- H --> H3[Очень узкий стоп-лосс]
+H --> H1[Сигнал SELL]
+H --> H2[Минимальный размер]
+H --> H3[Очень узкий стоп-лосс]
 
- E1 --> I[Генерация торгового сигнала]
+E1 --> I[Генерация торгового сигнала]
  E2 --> I
  E3 --> I
  F1 --> I
@@ -1738,12 +1738,12 @@ graph TD
  H2 --> I
  H3 --> I
 
- I --> J[Management рисками]
- J --> K[Исполнение сделки]
- K --> L[Monitoring позиции]
- L --> M{Результат сделки}
- M -->|Прибыль| N[Корректировка параметров]
- M -->|Убыток| O[Анализ ошибок]
+I --> J[Management рисками]
+J --> K[Исполнение сделки]
+K --> L[Monitoring позиции]
+L --> M{Результат сделки}
+M -->|Прибыль| N[Корректировка параметров]
+M -->|Убыток| O[Анализ ошибок]
  N --> A
  O --> A
 
@@ -1758,18 +1758,18 @@ graph TD
 
 ```python
 class ProbabilityTradingsystem:
- """Торговая система on basis вероятностей"""
+"""Торговая система on basis вероятностей"""
 
  def __init__(self, config=None):
  """
- Инициализация торговой системы
+Инициализация торговой системы
 
  Args:
- config (dict): configuration торговой системы
- - probability_thresholds: Пороги вероятностей for сигналов
- - risk_Management: parameters управления рисками
- - signal_generation: parameters генерации сигналов
- - market_conditions: Условия рынка
+config (dict): configuration торговой системы
+- probability_thresholds: Пороги вероятностей for сигналов
+- risk_Management: parameters управления рисками
+- signal_generation: parameters генерации сигналов
+- market_conditions: Условия рынка
  """
  self.config = config or self._get_default_config()
  self.probability_thresholds = {}
@@ -1778,180 +1778,180 @@ class ProbabilityTradingsystem:
  self.performance_metrics = {}
 
  def _get_default_config(self):
- """Получение конфигурации on умолчанию"""
+"""Получение конфигурации on умолчанию"""
  return {
  'probability_thresholds': {
- 'strong_buy': 0.8, # Сильный сигнал покупки
- 'moderate_buy': 0.6, # Умеренный сигнал покупки
- 'weak_buy': 0.5, # Слабый сигнал покупки
- 'hold': 0.4, # Удержание позиции
- 'weak_sell': 0.3, # Слабый сигнал продажи
- 'moderate_sell': 0.2, # Умеренный сигнал продажи
- 'strong_sell': 0.1 # Сильный сигнал продажи
+'strong_buy': 0.8, # Сильный сигнал покупки
+'moderate_buy': 0.6, # Умеренный сигнал покупки
+'weak_buy': 0.5, # Слабый сигнал покупки
+'hold': 0.4, # Удержание позиции
+'weak_sell': 0.3, # Слабый сигнал продажи
+'moderate_sell': 0.2, # Умеренный сигнал продажи
+'strong_sell': 0.1 # Сильный сигнал продажи
  },
  'risk_Management': {
- 'max_position_size': 0.2, # Максимальный размер позиции
- 'min_position_size': 0.01, # Минимальный размер позиции
- 'stop_loss_threshold': 0.05, # Порог стоп-лосса
- 'take_profit_threshold': 0.1, # Порог тейк-профита
- 'max_drawdown': 0.15, # Максимальная просадка
- 'risk_per_trade': 0.02, # Риск on сделку
- 'max_correlation': 0.7, # Максимальная корреляция
- 'volatility_threshold': 0.3, # Порог волатильности
- 'liquidity_threshold': 1000000, # Порог ликвидности
- 'slippage_tolerance': 0.001, # Толерантность к проскальзыванию
- 'transaction_costs': 0.001, # Транзакционные издержки
- 'margin_requirement': 0.1, # Требования к марже
- 'leverage_limit': 3.0, # Лимит плеча
- 'position_limits': { # Лимиты позиций
- 'max_single_position': 0.1, # Максимальная позиция in одном активе
- 'max_sector_exposure': 0.3, # Максимальная экспозиция on сектору
- 'max_currency_exposure': 0.5 # Максимальная валютная экспозиция
+'max_position_size': 0.2, # Максимальный размер позиции
+'min_position_size': 0.01, # Минимальный размер позиции
+'stop_loss_threshold': 0.05, # Порог стоп-лосса
+'take_profit_threshold': 0.1, # Порог тейк-профита
+'max_drawdown': 0.15, # Максимальная просадка
+'risk_per_trade': 0.02, # Риск on сделку
+'max_correlation': 0.7, # Максимальная корреляция
+'volatility_threshold': 0.3, # Порог волатильности
+'liquidity_threshold': 1000000, # Порог ликвидности
+'slippage_tolerance': 0.001, # Толерантность к проскальзыванию
+'transaction_costs': 0.001, # Транзакционные издержки
+'margin_requirement': 0.1, # Требования к марже
+'leverage_limit': 3.0, # Лимит плеча
+'position_limits': { # Лимиты позиций
+'max_single_position': 0.1, # Максимальная позиция in одном активе
+'max_sector_exposure': 0.3, # Максимальная экспозиция on сектору
+'max_currency_exposure': 0.5 # Максимальная валютная экспозиция
  }
  },
  'signal_generation': {
  'signal_types': ['BUY', 'SELL', 'HOLD'],
  'signal_strengths': ['STRONG', 'MODERATE', 'WEAK', 'NONE'],
  'confidence_levels': [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1],
- 'signal_validation': True, # Валидация сигналов
- 'signal_filtering': True, # Фильтрация сигналов
- 'signal_aggregation': 'weighted', # Агрегация сигналов
- 'signal_persistence': 5, # Персистентность сигналов (minutesы)
- 'signal_decay': 0.1, # Затухание сигналов
- 'signal_memory': 1000, # Память сигналов
- 'signal_learning': True, # Обучение on сигналах
- 'signal_adaptation': True, # Адаптация сигналов
- 'signal_optimization': True # Оптимизация сигналов
+'signal_validation': True, # Валидация сигналов
+'signal_filtering': True, # Фильтрация сигналов
+'signal_aggregation': 'weighted', # Агрегация сигналов
+'signal_persistence': 5, # Персистентность сигналов (minutesы)
+'signal_decay': 0.1, # Затухание сигналов
+'signal_memory': 1000, # Память сигналов
+'signal_learning': True, # Обучение on сигналах
+'signal_adaptation': True, # Адаптация сигналов
+'signal_optimization': True # Оптимизация сигналов
  },
  'market_conditions': {
- 'trend_Analysis': True, # Анализ тренда
- 'volatility_Analysis': True, # Анализ волатильности
- 'liquidity_Analysis': True, # Анализ ликвидности
- 'correlation_Analysis': True, # Анализ корреляции
- 'momentum_Analysis': True, # Анализ моментума
- 'support_resistance': True, # Анализ поддержки/сопротивления
- 'volume_Analysis': True, # Анализ объема
- 'market_microStructure': True, # МикроStructure рынка
- 'news_sentiment': True, # Новостной сентимент
- 'economic_indicators': True, # Экономические индикаторы
- 'central_bank_policy': True, # Политика центрального банка
- 'geopolitical_events': True, # Геополитические события
- 'seasonal_patterns': True, # Сезонные паттерны
- 'market_regime': 'normal' # Режим рынка
+'trend_Analysis': True, # Анализ тренда
+'volatility_Analysis': True, # Анализ волатильности
+'liquidity_Analysis': True, # Анализ ликвидности
+'correlation_Analysis': True, # Анализ корреляции
+'momentum_Analysis': True, # Анализ моментума
+'support_resistance': True, # Анализ поддержки/сопротивления
+'volume_Analysis': True, # Анализ объема
+'market_microStructure': True, # МикроStructure рынка
+'news_sentiment': True, # Новостной сентимент
+'economic_indicators': True, # Экономические индикаторы
+'central_bank_policy': True, # Политика центрального банка
+'geopolitical_events': True, # Геополитические события
+'seasonal_patterns': True, # Сезонные паттерны
+'market_regime': 'normal' # Режим рынка
  },
  'performance_Monitoring': {
- 'real_time_Monitoring': True, # Monitoring in реальном времени
+'real_time_Monitoring': True, # Monitoring in реальном времени
  'performance_metrics': ['sharpe', 'sortino', 'calmar', 'max_drawdown'],
- 'benchmark_comparison': True, # Сравнение with бенчмарком
- 'risk_adjusted_returns': True, # Риск-скорректированная доходность
- 'attribution_Analysis': True, # Анализ атрибуции
- 'stress_testing': True, # Стресс-тестирование
- 'scenario_Analysis': True, # Сценарный анализ
- 'monte_carlo_simulation': True, # Монте-Карло симуляция
- 'backtesting': True, # Бэктестинг
- 'walk_forward_Analysis': True, # Walk-forward анализ
- 'out_of_sample_testing': True # Вневыборочное тестирование
+'benchmark_comparison': True, # Сравнение with бенчмарком
+'risk_adjusted_returns': True, # Риск-скорректированная доходность
+'attribution_Analysis': True, # Анализ атрибуции
+'stress_testing': True, # Стресс-тестирование
+'scenario_Analysis': True, # Сценарный анализ
+'monte_carlo_simulation': True, # Монте-Карло симуляция
+'backtesting': True, # Бэктестинг
+'walk_forward_Analysis': True, # Walk-forward анализ
+'out_of_sample_testing': True # Вневыборочное тестирование
  },
  'execution': {
- 'execution_algorithm': 'TWAP', # Алгоритм исполнения
- 'execution_priority': 'price', # Приоритет исполнения
- 'execution_timing': 'immediate', # Время исполнения
- 'execution_venue': 'primary', # Веню исполнения
- 'execution_quality': 'high', # Качество исполнения
- 'execution_cost': 'minimize', # Минимизация стоимости
- 'execution_risk': 'minimize', # Минимизация риска
- 'execution_speed': 'fast', # Скорость исполнения
- 'execution_reliability': 'high', # Надежность исполнения
- 'execution_transparency': 'full' # Прозрачность исполнения
+'execution_algorithm': 'TWAP', # Алгоритм исполнения
+'execution_priority': 'price', # Приоритет исполнения
+'execution_timing': 'immediate', # Время исполнения
+'execution_venue': 'primary', # Веню исполнения
+'execution_quality': 'high', # Качество исполнения
+'execution_cost': 'minimize', # Минимизация стоимости
+'execution_risk': 'minimize', # Минимизация риска
+'execution_speed': 'fast', # Скорость исполнения
+'execution_reliability': 'high', # Надежность исполнения
+'execution_transparency': 'full' # Прозрачность исполнения
  },
  'compliance': {
- 'regulatory_compliance': True, # Регуляторное соответствие
- 'risk_limits': True, # Лимиты риска
- 'position_limits': True, # Лимиты позиций
- 'concentration_limits': True, # Лимиты концентрации
- 'leverage_limits': True, # Лимиты плеча
- 'liquidity_requirements': True, # Требования к ликвидности
- 'capital_requirements': True, # Требования к капиталу
- 'Reporting_requirements': True, # Требования к Reportности
- 'audit_trail': True, # Аудит-трейл
- 'data_retention': 7, # Хранение данных (лет)
- 'privacy_protection': True, # Защита конфиденциальности
- 'data_security': True, # Безопасность данных
- 'access_control': True, # Контроль доступа
- 'encryption': True, # Шифрование
- 'backup_recovery': True # Резервное копирование
+'regulatory_compliance': True, # Регуляторное соответствие
+'risk_limits': True, # Лимиты риска
+'position_limits': True, # Лимиты позиций
+'concentration_limits': True, # Лимиты концентрации
+'leverage_limits': True, # Лимиты плеча
+'liquidity_requirements': True, # Требования к ликвидности
+'capital_requirements': True, # Требования к капиталу
+'Reporting_requirements': True, # Требования к Reportности
+'audit_trail': True, # Аудит-трейл
+'data_retention': 7, # Хранение данных (лет)
+'privacy_protection': True, # Защита конфиденциальности
+'data_security': True, # Безопасность данных
+'access_control': True, # Контроль доступа
+'encryption': True, # Шифрование
+'backup_recovery': True # Резервное копирование
  }
  }
 
  def generate_trading_signals(self, probabilities, market_data,
  signal_config=None, risk_config=None):
  """
- Генерация торговых сигналов
+Генерация торговых сигналов
 
  Args:
- probabilities (array): Вероятности предсказания
- market_data (dict): Рыночные data
- signal_config (dict): configuration сигналов
- risk_config (dict): configuration рисков
+probabilities (array): Вероятности предсказания
+market_data (dict): Рыночные data
+signal_config (dict): configuration сигналов
+risk_config (dict): configuration рисков
 
  Returns:
- List: List торговых сигналов
+List: List торговых сигналов
  """
  if signal_config is None:
  signal_config = self.config['signal_generation']
  if risk_config is None:
  risk_config = self.config['risk_Management']
 
- # Анализ вероятностей
+# Анализ вероятностей
  prob_Analysis = self.analyze_probabilities(probabilities)
 
- # Генерация сигналов
+# Генерация сигналов
  signals = self.generate_signals(prob_Analysis, market_data, signal_config)
 
- # Management рисками
+# Management рисками
  risk_adjusted_signals = self.adjust_for_risk(signals, probabilities, risk_config)
 
- # Валидация сигналов
+# Валидация сигналов
  if signal_config.get('signal_validation', True):
  validated_signals = self.validate_signals(risk_adjusted_signals)
  else:
  validated_signals = risk_adjusted_signals
 
- # Фильтрация сигналов
+# Фильтрация сигналов
  if signal_config.get('signal_filtering', True):
  filtered_signals = self.filter_signals(validated_signals)
  else:
  filtered_signals = validated_signals
 
- # Сохранение истории сигналов
+# Сохранение истории сигналов
  self.signal_history.extend(filtered_signals)
 
  return filtered_signals
 
  def analyze_probabilities(self, probabilities):
  """
- Анализ вероятностей
+Анализ вероятностей
 
  Args:
- probabilities (array): Массив вероятностей
+probabilities (array): Массив вероятностей
 
  Returns:
- dict: Анализ вероятностей
+dict: Анализ вероятностей
  """
- # Статистические характеристики
+# Статистические характеристики
  mean_prob = np.mean(probabilities)
  std_prob = np.std(probabilities)
  max_prob = np.max(probabilities)
  min_prob = np.min(probabilities)
  median_prob = np.median(probabilities)
 
- # Распределение вероятностей
+# Распределение вероятностей
  prob_distribution = self.analyze_distribution(probabilities)
 
- # Анализ уверенности
+# Анализ уверенности
  confidence_Analysis = self.analyze_confidence(probabilities)
 
- # Анализ неопределенности
+# Анализ неопределенности
  uncertainty_Analysis = self.analyze_uncertainty(probabilities)
 
  return {
@@ -1968,21 +1968,21 @@ class ProbabilityTradingsystem:
 
  def generate_signals(self, prob_Analysis, market_data, signal_config):
  """
- Генерация сигналов
+Генерация сигналов
 
  Args:
- prob_Analysis (dict): Анализ вероятностей
- market_data (dict): Рыночные data
- signal_config (dict): configuration сигналов
+prob_Analysis (dict): Анализ вероятностей
+market_data (dict): Рыночные data
+signal_config (dict): configuration сигналов
 
  Returns:
- List: List сигналов
+List: List сигналов
  """
  signals = []
  thresholds = self.config['probability_thresholds']
 
  for i, prob in enumerate(prob_Analysis['probabilities']):
- # Определение типа сигнала
+# Определение типа сигнала
  if prob >= thresholds['strong_buy']:
  signal_type = 'BUY'
  strength = 'STRONG'
@@ -2012,7 +2012,7 @@ class ProbabilityTradingsystem:
  strength = 'NONE'
  confidence = 0.5
 
- # create сигнала
+# create сигнала
  signal = {
  'type': signal_type,
  'strength': strength,
@@ -2038,38 +2038,38 @@ class ProbabilityTradingsystem:
 
  def adjust_for_risk(self, signals, probabilities, risk_config):
  """
- Корректировка сигналов on риск
+Корректировка сигналов on риск
 
  Args:
- signals (List): List сигналов
- probabilities (array): Вероятности
- risk_config (dict): configuration рисков
+signals (List): List сигналов
+probabilities (array): Вероятности
+risk_config (dict): configuration рисков
 
  Returns:
- List: Скорректированные сигналы
+List: Скорректированные сигналы
  """
  adjusted_signals = []
 
  for signal in signals:
- # Расчет размера позиции
+# Расчет размера позиции
  position_size = self.calculate_position_size(
  signal['probability'],
  risk_config
  )
 
- # Расчет стоп-лосса
+# Расчет стоп-лосса
  stop_loss = self.calculate_stop_loss(
  signal['probability'],
  risk_config
  )
 
- # Расчет тейк-профита
+# Расчет тейк-профита
  take_profit = self.calculate_take_profit(
  signal['probability'],
  risk_config
  )
 
- # update сигнала
+# update сигнала
  signal['position_size'] = position_size
  signal['stop_loss'] = stop_loss
  signal['take_profit'] = take_profit
@@ -2083,11 +2083,11 @@ class ProbabilityTradingsystem:
  return adjusted_signals
 
  def calculate_position_size(self, probability, risk_config):
- """Расчет размера позиции"""
- # Базовый размер позиции
+"""Расчет размера позиции"""
+# Базовый размер позиции
  base_size = risk_config.get('risk_per_trade', 0.02)
 
- # Корректировка on вероятность
+# Корректировка on вероятность
  if probability > 0.8:
  size_multiplier = 1.5
  elif probability > 0.6:
@@ -2099,45 +2099,45 @@ class ProbabilityTradingsystem:
 
  position_size = base_size * size_multiplier
 
- # Применение лимитов
+# Применение лимитов
  position_size = max(position_size, risk_config.get('min_position_size', 0.01))
  position_size = min(position_size, risk_config.get('max_position_size', 0.2))
 
  return position_size
 
  def calculate_stop_loss(self, probability, risk_config):
- """Расчет стоп-лосса"""
+"""Расчет стоп-лосса"""
  base_stop = risk_config.get('stop_loss_threshold', 0.05)
 
- # Корректировка on вероятность
+# Корректировка on вероятность
  if probability > 0.8:
- stop_multiplier = 0.8 # Более широкий стоп-лосс
+stop_multiplier = 0.8 # Более широкий стоп-лосс
  elif probability > 0.6:
- stop_multiplier = 1.0 # Обычный стоп-лосс
+stop_multiplier = 1.0 # Обычный стоп-лосс
  else:
- stop_multiplier = 1.2 # Более узкий стоп-лосс
+stop_multiplier = 1.2 # Более узкий стоп-лосс
 
  return base_stop * stop_multiplier
 
  def calculate_take_profit(self, probability, risk_config):
- """Расчет тейк-профита"""
+"""Расчет тейк-профита"""
  base_take = risk_config.get('take_profit_threshold', 0.1)
 
- # Корректировка on вероятность
+# Корректировка on вероятность
  if probability > 0.8:
- take_multiplier = 1.5 # Больший тейк-профит
+take_multiplier = 1.5 # Больший тейк-профит
  elif probability > 0.6:
- take_multiplier = 1.0 # Обычный тейк-профит
+take_multiplier = 1.0 # Обычный тейк-профит
  else:
- take_multiplier = 0.8 # Меньший тейк-профит
+take_multiplier = 0.8 # Меньший тейк-профит
 
  return base_take * take_multiplier
 
  def calculate_signal_priority(self, signal_type, strength, confidence):
- """Расчет приоритета сигнала"""
+"""Расчет приоритета сигнала"""
  priority = 0
 
- # Приоритет on типу
+# Приоритет on типу
  if signal_type == 'BUY':
  priority += 3
  elif signal_type == 'SELL':
@@ -2145,7 +2145,7 @@ class ProbabilityTradingsystem:
  else:
  priority += 1
 
- # Приоритет on силе
+# Приоритет on силе
  if strength == 'STRONG':
  priority += 3
  elif strength == 'MODERATE':
@@ -2153,34 +2153,34 @@ class ProbabilityTradingsystem:
  elif strength == 'WEAK':
  priority += 1
 
- # Приоритет on уверенности
+# Приоритет on уверенности
  priority += int(confidence * 5)
 
  return priority
 
  def analyze_market_conditions(self, market_data):
- """Анализ рыночных условий"""
+"""Анализ рыночных условий"""
  conditions = {}
 
- # Анализ тренда
+# Анализ тренда
  if 'price' in market_data:
  price = market_data['price']
  if len(price) > 1:
  trend = 'up' if price[-1] > price[0] else 'down'
  conditions['trend'] = trend
 
- # Анализ волатильности
+# Анализ волатильности
  if 'volatility' in market_data:
  conditions['volatility'] = market_data['volatility']
 
- # Анализ объема
+# Анализ объема
  if 'volume' in market_data:
  conditions['volume'] = market_data['volume']
 
  return conditions
 
  def calculate_risk_metrics(self, probability, market_conditions):
- """Расчет метрик риска"""
+"""Расчет метрик риска"""
  metrics = {}
 
  # VaR (Value at Risk)
@@ -2190,32 +2190,32 @@ class ProbabilityTradingsystem:
  # Expected Shortfall
  metrics['expected_shortfall'] = self.calculate_expected_shortfall(probability)
 
- # Максимальная просадка
+# Максимальная просадка
  metrics['max_drawdown'] = self.calculate_max_drawdown(probability)
 
  return metrics
 
  def calculate_var(self, probability, confidence_level):
- """Расчет VaR"""
- # Упрощенный расчет VaR
+"""Расчет VaR"""
+# Упрощенный расчет VaR
  return (1 - probability) * (1 - confidence_level)
 
  def calculate_expected_shortfall(self, probability):
- """Расчет Expected Shortfall"""
- # Упрощенный расчет ES
+"""Расчет Expected Shortfall"""
+# Упрощенный расчет ES
  return (1 - probability) * 0.5
 
  def calculate_max_drawdown(self, probability):
- """Расчет максимальной просадки"""
- # Упрощенный расчет максимальной просадки
+"""Расчет максимальной просадки"""
+# Упрощенный расчет максимальной просадки
  return (1 - probability) * 0.3
 
  def validate_signals(self, signals):
- """Валидация сигналов"""
+"""Валидация сигналов"""
  validated_signals = []
 
  for signal in signals:
- # check обязательных полей
+# check обязательных полей
  required_fields = ['type', 'strength', 'confidence', 'timestamp']
  if all(field in signal for field in required_fields):
  validated_signals.append(signal)
@@ -2225,12 +2225,12 @@ class ProbabilityTradingsystem:
  return validated_signals
 
  def filter_signals(self, signals):
- """Фильтрация сигналов"""
+"""Фильтрация сигналов"""
  filtered_signals = []
 
  for signal in signals:
- # Фильтрация on уверенности
- if signal['confidence'] > 0.3: # Минимальная уверенность
+# Фильтрация on уверенности
+if signal['confidence'] > 0.3: # Минимальная уверенность
  filtered_signals.append(signal)
 
  return filtered_signals
@@ -2240,46 +2240,46 @@ class ProbabilityTradingsystem:
 
 ```python
 class ProbabilityPortfolioManagement:
- """Management портфелем on basis вероятностей"""
+"""Management портфелем on basis вероятностей"""
 
  def __init__(self):
  self.Portfolio_weights = {}
  self.risk_budget = {}
 
  def optimize_Portfolio(self, asset_probabilities, risk_budget):
- """Оптимизация портфеля"""
+"""Оптимизация портфеля"""
 
- # Расчет весов on basis вероятностей
+# Расчет весов on basis вероятностей
  weights = self.calculate_weights(asset_probabilities)
 
- # Корректировка on риск
+# Корректировка on риск
  risk_adjusted_weights = self.adjust_for_risk(weights, risk_budget)
 
- # Оптимизация распределения
+# Оптимизация распределения
  optimized_weights = self.optimize_allocation(risk_adjusted_weights)
 
  return optimized_weights
 
  def calculate_weights(self, asset_probabilities):
- """Расчет весов on basis вероятностей"""
+"""Расчет весов on basis вероятностей"""
 
- # Нормализация вероятностей
+# Нормализация вероятностей
  normalized_probs = asset_probabilities / np.sum(asset_probabilities)
 
- # Корректировка on дисперсию
+# Корректировка on дисперсию
  variance_adjusted = self.adjust_for_variance(normalized_probs)
 
  return variance_adjusted
 
  def adjust_for_risk(self, weights, risk_budget):
- """Корректировка on риск"""
+"""Корректировка on риск"""
 
- # Расчет риска портфеля
+# Расчет риска портфеля
  Portfolio_risk = self.calculate_Portfolio_risk(weights)
 
- # Корректировка весов
+# Корректировка весов
  if Portfolio_risk > risk_budget:
- # Уменьшение весов
+# Уменьшение весов
  adjustment_factor = risk_budget / Portfolio_risk
  adjusted_weights = weights * adjustment_factor
  else:
@@ -2296,48 +2296,48 @@ class ProbabilityPortfolioManagement:
 
 ```mermaid
 graph TD
- A[Правильное использование вероятностей] --> B[Калибровка]
- A --> C[Валидация]
+A[Правильное использование вероятностей] --> B[Калибровка]
+A --> C[Валидация]
  A --> D[Monitoring]
- A --> E[Интерпретация]
- A --> F[Риск-менеджмент]
+A --> E[Интерпретация]
+A --> F[Риск-менеджмент]
 
  B --> B1[Platt Scaling]
  B --> B2[Isotonic Regression]
  B --> B3[Temperature Scaling]
- B1 --> G[Точные вероятности]
+B1 --> G[Точные вероятности]
  B2 --> G
  B3 --> G
 
  C --> C1[Cross-Validation]
  C --> C2[Temporal Validation]
  C --> C3[Stochastic Validation]
- C1 --> H[Надежная оценка]
+C1 --> H[Надежная оценка]
  C2 --> H
  C3 --> H
 
- D --> D1[Статистические тесты]
- D --> D2[KS тест]
- D --> D3[Wasserstein расстояние]
- D1 --> I[Обнаружение дрифта]
+D --> D1[Статистические тесты]
+D --> D2[KS тест]
+D --> D3[Wasserstein расстояние]
+D1 --> I[Обнаружение дрифта]
  D2 --> I
  D3 --> I
 
- E --> E1[Контекстный анализ]
- E --> E2[Рыночные условия]
- E --> E3[Временные факторы]
- E1 --> J[Правильные решения]
+E --> E1[Контекстный анализ]
+E --> E2[Рыночные условия]
+E --> E3[Временные факторы]
+E1 --> J[Правильные решения]
  E2 --> J
  E3 --> J
 
- F --> F1[Размер позиции]
- F --> F2[Стоп-лосс]
- F --> F3[Хеджирование]
- F1 --> K[Оптимальный риск]
+F --> F1[Размер позиции]
+F --> F2[Стоп-лосс]
+F --> F3[Хеджирование]
+F1 --> K[Оптимальный риск]
  F2 --> K
  F3 --> K
 
- G --> L[Успешная ML-система]
+G --> L[Успешная ML-система]
  H --> L
  I --> L
  J --> L

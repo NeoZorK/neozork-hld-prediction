@@ -843,16 +843,16 @@ train_data = pd.dataFrame({
 # create предиктора
 predictor = TimeSeriesPredictor(
  target="target",
- Prediction_length=24, # Прогноз on 24 часа
- freq="H", # Почасовые data
+Prediction_length=24, # Прогноз on 24 часа
+freq="H", # Почасовые data
  eval_metric="MAPE"
 )
 
 # Обучение with различными моделями
 predictor.fit(
  train_data,
- time_limit=3600, # 1 час
- presets="best_quality" # Лучшее качество
+time_limit=3600, # 1 час
+presets="best_quality" # Лучшее качество
 )
 
 # Прогнозирование
@@ -918,12 +918,12 @@ import time
 
 # Тест производительности with разным количеством потоков
 def test_omp_performance():
- # create большой матрицы
+# create большой матрицы
  size = 5000
  a = np.random.randn(size, size)
  b = np.random.randn(size, size)
 
- # Измерение времени умножения матриц
+# Измерение времени умножения матриц
  start_time = time.time()
  result = np.dot(a, b)
  end_time = time.time()
@@ -975,17 +975,17 @@ print(f"MKL_NUM_THREADS: {np.getenv('MKL_NUM_THREADS', 'not set')}")
 
 # Тест производительности
 def test_mkl_performance():
- # create больших массивов
+# create больших массивов
  a = np.random.randn(3000, 3000)
  b = np.random.randn(3000, 3000)
 
- # Тест различных операций
+# Тест различных операций
  start = time.time()
- result1 = np.dot(a, b) # Матричное умножение
+result1 = np.dot(a, b) # Матричное умножение
  time1 = time.time() - start
 
  start = time.time()
- result2 = np.linalg.svd(a) # SVD разложение
+result2 = np.linalg.svd(a) # SVD разложение
  time2 = time.time() - start
 
  print(f"Matrix multiplication: {time1:.2f}s")
@@ -1031,12 +1031,12 @@ print(f"NumPy LAPACK info: {np.__config__.lapack_opt_info}")
 
 # Тест производительности
 def test_blas_performance():
- # create больших матриц
+# create больших матриц
  size = 2000
  a = np.random.randn(size, size)
  b = np.random.randn(size, size)
 
- # Тест матричного умножения
+# Тест матричного умножения
  start = time.time()
  result = np.dot(a, b)
  end = time.time()
@@ -1097,15 +1097,15 @@ def test_gpu_performance():
  if torch.cuda.is_available():
  device = torch.device('cuda')
 
- # create больших тензоров
+# create больших тензоров
  size = 2000
  a = torch.randn(size, size, device=device)
  b = torch.randn(size, size, device=device)
 
- # Тест матричного умножения on GPU
+# Тест матричного умножения on GPU
  start = time.time()
  result = torch.mm(a, b)
- torch.cuda.synchronize() # Ждем завершения
+torch.cuda.synchronize() # Ждем завершения
  end = time.time()
 
  print(f"GPU matrix multiplication: {end - start:.2f} seconds")
@@ -1211,7 +1211,7 @@ import pandas as pd
 from autogluon.tabular import TabularPredictor
 
 def benchmark_environment():
- """Тест производительности with текущими настройками"""
+"""Тест производительности with текущими настройками"""
 
  print("=== Environment Benchmark ===")
  print(f"OMP_NUM_THREADS: {os.getenv('OMP_NUM_THREADS', 'default')}")
@@ -1219,7 +1219,7 @@ def benchmark_environment():
  print(f"OPENBLAS_NUM_THREADS: {os.getenv('OPENBLAS_NUM_THREADS', 'default')}")
  print(f"CUDA_VISIBLE_DEVICES: {os.getenv('CUDA_VISIBLE_DEVICES', 'default')}")
 
- # Тест NumPy производительности
+# Тест NumPy производительности
  print("\n=== NumPy Performance Test ===")
  size = 2000
  a = np.random.randn(size, size)
@@ -1230,7 +1230,7 @@ def benchmark_environment():
  numpy_time = time.time() - start
  print(f"Matrix multiplication: {numpy_time:.2f} seconds")
 
- # Тест AutoML Gluon
+# Тест AutoML Gluon
  print("\n=== AutoML Gluon Test ===")
  data = pd.dataFrame({
  'feature1': np.random.randn(1000),
@@ -1258,10 +1258,10 @@ benchmark_environment()
 ```yaml
 # configuration AutoGluon
 default:
- time_limit: 3600 # 1 час on умолчанию
+time_limit: 3600 # 1 час on умолчанию
  memory_limit: 8 # 8GB RAM
- num_cpus: 4 # Количество CPU ядер
- num_gpus: 1 # Количество GPU
+num_cpus: 4 # Количество CPU ядер
+num_gpus: 1 # Количество GPU
 
 # Settings for different tasks
 ```
@@ -1273,13 +1273,13 @@ default:
 - **Что означает**: Максимальное время обучения in секундах
 - **Зачем нужен**: Предотвращает бесконечное обучение, контролирует ресурсы
 - **Рекомендуемые значения**:
- - `3600` (1 час) - for быстрых экспериментов
- - `7200` (2 часа) - for средних задач
- - `14400` (4 часа) - for сложных задач
+- `3600` (1 час) - for быстрых экспериментов
+- `7200` (2 часа) - for средних задач
+- `14400` (4 часа) - for сложных задач
 - **Что происходит при превышении**: Обучение останавливается, возвращается лучшая модель
 - **Практический example**: Если у вас есть 2 часа on задачу, install `time_limit: 7200`
 - **Детальная configuration on типам задач**:
- - **Классификация (малые data < 10K строк)**: `1800` (30 minutes)
+- **Классификация (малые data < 10K строк)**: `1800` (30 minutes)
 - **Классификация (средние data 10K-100K строк)**: `3600` (1 час)
 - **Классификация (большие data > 100K строк)**: `7200` (2 часа)
 - **Регрессия (малые data < 10K строк)**: `1800` (30 minutes)
@@ -1288,11 +1288,11 @@ default:
 - **Временные ряды (короткие серии < 1K точек)**: `3600` (1 час)
 - **Временные ряды (длинные серии > 1K точек)**: `7200` (2 часа)
 - **Влияние on качество модели**:
- - **Короткое время (30 мин)**: Базовая точность, быстрые результаты
+- **Короткое время (30 мин)**: Базовая точность, быстрые результаты
 - **Среднее время (1-2 часа)**: Хорошая точность, сбалансированный подход
 - **Длинное время (4+ часов)**: Максимальная точность, лучшие модели
 - **Оптимизация on ресурсам**:
- - **CPU только**: Увеличить время in 2-3 раза
+- **CPU только**: Увеличить время in 2-3 раза
 - **GPU доступна**: Уменьшить время in 2-3 раза
 - **Много ядер (8+)**: Уменьшить время on 30-50%
 - **Мало памяти (< 8GB)**: Увеличить время из-за ограничений
@@ -1302,22 +1302,22 @@ default:
 - **Что означает**: Максимальное использование RAM in гигабайтах
 - **Зачем нужен**: Предотвращает переполнение памяти, контролирует ресурсы
 - **Рекомендуемые значения**:
- - `4` - for систем with 8GB RAM
- - `8` - for систем with 16GB RAM
- - `16` - for систем with 32GB RAM
+- `4` - for систем with 8GB RAM
+- `8` - for систем with 16GB RAM
+- `16` - for систем with 32GB RAM
 - **Что происходит при превышении**: Обучение останавливается with ошибкой памяти
 - **Практический example**: Если у вас 16GB RAM, install `memory_limit: 12` (оставляя 4GB for системы)
 - **Детальная configuration on размеру данных**:
- - **Малые data (< 1MB)**: `2-4` GB
+- **Малые data (< 1MB)**: `2-4` GB
 - **Средние data (1-100MB)**: `4-8` GB
 - **Большие data (100MB-1GB)**: `8-16` GB
 - **Очень большие data (> 1GB)**: `16-32` GB
 - **Влияние on производительность**:
- - **Мало памяти**: Медленная Working, возможные ошибки
+- **Мало памяти**: Медленная Working, возможные ошибки
 - **Достаточно памяти**: Быстрая Working, стабильность
 - **Много памяти**: Максимальная скорость, обработка больших данных
 - **Оптимизация on типу задач**:
- - **Классификация**: 2-4x размер данных
+- **Классификация**: 2-4x размер данных
 - **Регрессия**: 3-5x размер данных
 - **Временные ряды**: 4-6x размер данных
 - **Изображения**: 6-10x размер данных
@@ -1331,26 +1331,26 @@ default:
 - **Что означает**: Количество CPU ядер for параллельных вычислений
 - **Зачем нужен**: Ускоряет обучение, использует все доступные ядра
 - **Рекомендуемые значения**:
- - `2` - for систем with 4 ядрами
- - `4` - for систем with 8 ядрами
- - `8` - for систем with 16+ ядрами
+- `2` - for систем with 4 ядрами
+- `4` - for систем with 8 ядрами
+- `8` - for систем with 16+ ядрами
 - **Что происходит при превышении**: Используется только доступное количество ядер
 - **Практический example**: Если у вас 8 ядер, install `num_cpus: 6` (оставляя 2 for системы)
 - **Детальная configuration on типам задач**:
- - **Классификация (малые data)**: `2-4` ядра
+- **Классификация (малые data)**: `2-4` ядра
 - **Классификация (большие data)**: `4-8` ядер
 - **Регрессия (малые data)**: `2-4` ядра
 - **Регрессия (большие data)**: `6-12` ядер
 - **Временные ряды**: `4-8` ядер
 - **Изображения**: `8-16` ядер
 - **Влияние on скорость обучения**:
- - **1 ядро**: Базовая скорость (100%)
+- **1 ядро**: Базовая скорость (100%)
 - **2 ядра**: Ускорение in 1.5-1.8 раза
 - **4 ядра**: Ускорение in 2.5-3.5 раза
 - **8 ядер**: Ускорение in 4-6 раз
 - **16+ ядер**: Ускорение in 6-10 раз
 - **Оптимизация on алгоритмам**:
- - **XGBoost**: Эффективно использует 4-8 ядер
+- **XGBoost**: Эффективно использует 4-8 ядер
 - **LightGBM**: Эффективно использует 4-12 ядер
 - **CatBoost**: Эффективно использует 2-8 ядер
 - **Neural networks**: Эффективно использует 8-16 ядер
@@ -1364,32 +1364,32 @@ default:
 - **Что означает**: Количество GPU for acceleration обучения
 - **Зачем нужен**: Ускоряет обучение нейронных networks in 10-100 раз
 - **Рекомендуемые значения**:
- - `0` - если нет GPU or for CPU-only задач
- - `1` - for одной GPU
- - `2+` - for нескольких GPU (требует специальной Settings)
+- `0` - если нет GPU or for CPU-only задач
+- `1` - for одной GPU
+- `2+` - for нескольких GPU (требует специальной Settings)
 - **Что происходит при неправильном значении**: AutoML Gluon автоматически определяет доступные GPU
 - **Практический example**: Если у вас RTX 3070, install `num_gpus: 1`
 - **Детальная configuration on типам GPU**:
- - **Нет GPU**: `num_gpus: 0` - обучение только on CPU
+- **Нет GPU**: `num_gpus: 0` - обучение только on CPU
 - **GTX 1060 6GB**: `num_gpus: 1` - базовая поддержка GPU
 - **RTX 3070 8GB**: `num_gpus: 1` - хорошая производительность
 - **RTX 4080 16GB**: `num_gpus: 1` - высокая производительность
 - **A100 40GB**: `num_gpus: 1` - профессиональная Working
 - **Несколько GPU**: `num_gpus: 2+` - for large models
 - **Влияние on скорость обучения**:
- - **CPU только**: Базовая скорость (100%)
+- **CPU только**: Базовая скорость (100%)
 - **GTX 1060**: Ускорение by 3-5 times
 - **RTX 3070**: Ускорение in 8-15 раз
 - **RTX 4080**: Ускорение in 15-25 раз
 - **A100**: Ускорение in 25-50 раз
 - **Оптимизация on типам задач**:
- - **Классификация (табличные data)**: GPU not критична
+- **Классификация (табличные data)**: GPU not критична
 - **Регрессия (табличные data)**: GPU not критична
 - **Временные ряды**: GPU ускоряет in 2-5 раз
 - **Изображения**: GPU критична, ускорение in 10-50 раз
 - **Текст**: GPU ускоряет in 5-20 раз
 - **Требования to memory GPU**:
- - **Малые модели (< 1M параметров)**: 2-4 GB VRAM
+- **Малые модели (< 1M параметров)**: 2-4 GB VRAM
 - **Средние модели (1-10M параметров)**: 4-8 GB VRAM
 - **Большие модели (10-100M параметров)**: 8-16 GB VRAM
 - **Очень большие модели (> 100M параметров)**: 16+ GB VRAM
@@ -1456,10 +1456,10 @@ timeseries:
 - **Что означает**: Количество попыток тюнинга гиперпараметров
 - **Зачем нужен**: Больше попыток = лучше качество, но дольше время
 - **Рекомендуемые значения**:
- - `5` - for быстрых экспериментов
- - `10` - for стандартных задач
- - `20` - for важных задач
- - `50+` - for максимального качества
+- `5` - for быстрых экспериментов
+- `10` - for стандартных задач
+- `20` - for важных задач
+- `50+` - for максимального качества
 - **Практический example**: Если у вас есть 2 часа, install `num_trials: 10`
 
 **parameter `scheduler`:**
@@ -1467,9 +1467,9 @@ timeseries:
 - **Что означает**: Planировщик for распределения задач
 - **Зачем нужен**: Управляет параллельным выполнением
 - **Доступные значения**:
- - `'local'` - локальное выполнение (on умолчанию)
- - `'ray'` - распределенное выполнение через Ray
- - `'dask'` - распределенное выполнение через Dask
+- `'local'` - локальное выполнение (on умолчанию)
+- `'ray'` - распределенное выполнение через Ray
+- `'dask'` - распределенное выполнение через Dask
 - **Практический example**: for одного компьютера Use `'local'`
 
 #### ⏰ Детальное describe параметров for временных рядов
@@ -1479,9 +1479,9 @@ timeseries:
 - **Что означает**: Количество будущих точек for прогнозирования
 - **Зачем нужен**: Определяет горизонт прогнозирования
 - **Рекомендуемые значения**:
- - `24` - for почасовых данных (прогноз on сутки)
- - `7` - for дневных данных (прогноз on неделю)
- - `30` - for дневных данных (прогноз on месяц)
+- `24` - for почасовых данных (прогноз on сутки)
+- `7` - for дневных данных (прогноз on неделю)
+- `30` - for дневных данных (прогноз on месяц)
 - **Практический example**: for прогноза продаж on неделю install `Prediction_length: 7`
 
 **parameter `freq`:**
@@ -1489,10 +1489,10 @@ timeseries:
 - **Что означает**: Частота временного ряда
 - **Зачем нужен**: Определяет интервал между точками
 - **Доступные значения**:
- - `'H'` - почасовые data
- - `'D'` - дневные data
- - `'W'` - недельные data
- - `'M'` - месячные data
+- `'H'` - почасовые data
+- `'D'` - дневные data
+- `'W'` - недельные data
+- `'M'` - месячные data
 - **Практический example**: for дневных продаж install `freq: 'D'`
 
 **parameter `target_column`:**
@@ -1545,9 +1545,9 @@ import pandas as pd
 import numpy as np
 
 def test_installation():
- """Полный тест installation AutoGluon"""
+"""Полный тест installation AutoGluon"""
 
- # create testsых данных
+# create testsых данных
  np.random.seed(42)
  n_samples = 1000
  data = pd.dataFrame({
@@ -1557,28 +1557,28 @@ def test_installation():
  'target': np.random.randint(0, 2, n_samples)
  })
 
- # Разделение on train/test
+# Разделение on train/test
  train_data = data[:800]
  test_data = data[800:]
 
- # create and обучение модели
+# create and обучение модели
  predictor = TabularPredictor(
  label='target',
  problem_type='binary',
  eval_metric='accuracy'
  )
 
- # Обучение with ограничением времени
+# Обучение with ограничением времени
  predictor.fit(
  train_data,
- time_limit=60, # 1 minutesа
+time_limit=60, # 1 minutesа
  presets='medium_quality'
  )
 
- # Предсказания
+# Предсказания
  predictions = predictor.predict(test_data)
 
- # Оценка качества
+# Оценка качества
  performance = predictor.evaluate(test_data)
 
  print(f"Model performance: {performance}")
