@@ -12,7 +12,7 @@
 - **Оценка рисков:** Позволяет количественно оценить различные типы рисков
 - **Planирование капитала:** Помогает определить оптимальный размер позиций
 - **Стресс-тестирование:** Проверяет устойчивость стратегии in экстремальных условиях
-- **Валидация стратегии:** Оценивает робастность торговых стратегий
+- **validation стратегии:** Оценивает робастность торговых стратегий
 
 ### Зачем нужна Монте-Карло симуляция?
 
@@ -33,7 +33,7 @@
  - **Плюсы:** Выявление уязвимостей, подготовка к кризисам
  - **Disadvantages:** Может показать худшие результаты, сложность Settings сценариев
 
-- **Валидация стратегии** - check робастности
+- **validation стратегии** - check робастности
  - **Почему важно:** Стратегия должна Workingть in различных условиях
  - **Плюсы:** Оценка стабильности, выявление проблем
  - **Disadvantages:** Требует много времени, сложность интерпретации результатов
@@ -62,7 +62,7 @@
 - **Базовый подход:** Служит основой for более сложных методов
 - **Понятность:** Легко понять and интерпретировать результаты
 - **Быстрота:** Быстро выполняется даже on больших данных
-- **Валидация:** Позволяет проверить правильность реализации
+- **validation:** Позволяет проверить правильность реализации
 - **Параметрическая гибкость:** Легко настраивать parameters распределения
 
 **Алгоритм простой симуляции:**
@@ -159,10 +159,10 @@ def analyze_simulation_results(results):
  """
  Комплексный анализ результатов Монте-Карло симуляции
 
- Эта function вычисляет ключевые статистические метрики for Analysis
+ Эта function вычисляет ключевые статистические metrics for Analysis
  распределения результатов симуляции. Она помогает понять риски and возможности.
 
- Вычисляемые метрики:
+ Вычисляемые metrics:
  - Описательная статистика (среднее, стандартное отклонение)
  - Квантили распределения (5%, 25%, 50%, 75%, 95%)
  - Вероятности положительных and отрицательных результатов
@@ -178,7 +178,7 @@ def analyze_simulation_results(results):
  print("Анализ результатов симуляции:")
  print(f" Общее количество сценариев: {len(results):,}")
 
- # Базовые статистические метрики
+ # Базовые статистические metrics
  mean_return = np.mean(results)
  std_return = np.std(results)
 
@@ -186,7 +186,7 @@ def analyze_simulation_results(results):
  percentiles = [5, 25, 50, 75, 95]
  percentile_values = {f'percentile_{p}': np.percentile(results, p) for p in percentiles}
 
- # Вероятностные метрики
+ # Вероятностные metrics
  probability_positive = np.mean(results > 0)
  probability_loss = np.mean(results < 0)
 
@@ -194,7 +194,7 @@ def analyze_simulation_results(results):
  max_loss = np.min(results)
  max_gain = np.max(results)
 
- # Дополнительные метрики for лучшего понимания
+ # Дополнительные metrics for лучшего понимания
  skewness = stats.skew(results) # Асимметрия распределения
  kurtosis = stats.kurtosis(results) # Эксцесс (островершинность)
 
@@ -347,7 +347,7 @@ def bootstrap_monte_carlo(returns, n_simulations=10000, time_horizon=252):
 
 def compare_simulation_methods(returns, n_simulations=5000):
  """
- Сравнение различных методов Монте-Карло симуляции
+ comparison различных методов Монте-Карло симуляции
 
  Эта function сравнивает простую параметрическую симуляцию with bootstrap методом,
  показывая различия in результатах and их интерпретацию.
@@ -360,7 +360,7 @@ def compare_simulation_methods(returns, n_simulations=5000):
  - словарь with результатами обоих методов
  """
 
- print("=== Сравнение методов Монте-Карло симуляции ===")
+ print("=== comparison методов Монте-Карло симуляции ===")
 
  # Простая параметрическая симуляция
  print("\n1. Параметрическая симуляция (нормальное распределение):")
@@ -636,7 +636,7 @@ def optimize_block_size(returns, max_block_size=20, n_simulations=1000):
 **Theory:** Автокорреляция in финансовых данных означает, что доходности in соседних периодах коррелируют между собой. Это критически важно for точного моделирования, так как игнорирование автокорреляции может привести к недооценке рисков.
 
 **Математические основы автокорреляции:**
-- **AR(1) процесс:** X_t = φX_{t-1} + ε_t, где φ - коэффициент автокорреляции
+- **AR(1) process:** X_t = φX_{t-1} + ε_t, где φ - коэффициент автокорреляции
 - **Автокорреляционная function:** ρ(k) = E[(X_t - μ)(X_{t+k} - μ)] / σ²
 - **Условная дисперсия:** Var(X_t | X_{t-1}) = σ²(1 - φ²)
 - **Стационарность:** |φ| < 1 for стационарности процесса
@@ -654,12 +654,12 @@ def autocorrelated_monte_carlo(returns, n_simulations=10000, time_horizon=252):
  """
  Монте-Карло симуляция with учетом автокорреляции
 
- Эта function реализует AR(1) процесс for моделирования автокорреляции
+ Эта function реализует AR(1) process for моделирования автокорреляции
  in финансовых данных. Она использует авторегрессионную модель первого порядка
  for генерации реалистичных временных рядов доходностей.
 
  Математическая основа:
- - AR(1) процесс: X_t = φX_{t-1} + ε_t
+ - AR(1) process: X_t = φX_{t-1} + ε_t
  - φ - коэффициент автокорреляции (оценивается из данных)
  - ε_t ~ N(0, σ²(1 - φ²)) - белый шум
  - Условная дисперсия: Var(X_t | X_{t-1}) = σ²(1 - φ²)
@@ -688,7 +688,7 @@ def autocorrelated_monte_carlo(returns, n_simulations=10000, time_horizon=252):
  # check on стационарность
  if abs(autocorr) >= 1:
  print(f"Предупреждение: Коэффициент автокорреляции ({autocorr:.4f}) >= 1")
- print("Процесс может быть нестационарным. Используется значение 0.9")
+ print("process может быть нестационарным. Используется значение 0.9")
  autocorr = 0.9 if autocorr > 0 else -0.9
 
  # Оценка параметров распределения
@@ -720,7 +720,7 @@ def autocorrelated_monte_carlo(returns, n_simulations=10000, time_horizon=252):
 
  # Шаг 4: Последующие значения with учетом автокорреляции
  for t in range(1, time_horizon):
- # AR(1) процесс: X_t = φX_{t-1} + ε_t
+ # AR(1) process: X_t = φX_{t-1} + ε_t
  # где ε_t ~ N(0, σ²(1 - φ²))
  error_term = np.random.normal(0, conditional_std)
  next_return = mean_return + autocorr * (simulated_returns[-1] - mean_return) + error_term
@@ -793,7 +793,7 @@ def analyze_autocorrelation(returns, max_lags=20):
  print(f"\nРекомендации:")
  print(f" - Автокорреляция незначима")
  print(f" - Можно использовать простую параметрическую симуляцию")
- print(f" - Bootstrap методы также подходят")
+ print(f" - Bootstrap methods также подходят")
 
  return {
  'autocorr_values': autocorr_values,
@@ -988,7 +988,7 @@ def analyze_volatility_clustering(returns, window=30):
  print(f"\nРекомендации:")
  print(f" - Кластеризация волатильности незначима")
  print(f" - Можно использовать простые модели")
- print(f" - Bootstrap методы подходят")
+ print(f" - Bootstrap methods подходят")
 
  return {
  'vol_autocorr': vol_autocorr,
@@ -1338,10 +1338,10 @@ def plot_risk_curve(simulation_results, confidence_levels):
  plt.show()
 ```
 
-### 3. Сравнение сценариев
+### 3. comparison сценариев
 ```python
 def plot_scenario_comparison(stress_results):
- """Сравнение стрессовых сценариев"""
+ """comparison стрессовых сценариев"""
 
  fig, axes = plt.subplots(2, 2, figsize=(15, 10))
  axes = axes.flatten()
@@ -1358,9 +1358,9 @@ def plot_scenario_comparison(stress_results):
  plt.show()
 ```
 
-## Полный рабочий example with testsыми данными
+## Полный workflow example with testsыми данными
 
-**Theory:** Этот раздел содержит полный рабочий example, который демонстрирует все методы Монте-Карло симуляции on реальных testsых данных. Вы можете скопировать and запустить этот код for изучения all техник.
+**Theory:** Этот раздел содержит полный workflow example, который демонстрирует все methods Монте-Карло симуляции on реальных testsых данных. Вы можете скопировать and запустить этот код for изучения all техник.
 
 **Детальное describe полного примера:**
 
@@ -1442,7 +1442,7 @@ def complete_monte_carlo_Analysis(returns, n_simulations=5000):
  Полный комплексный Монте-Карло анализ
 
  Эта function выполняет полный анализ all методов Монте-Карло симуляции,
- including сравнение методов, анализ рисков and визуализацию результатов.
+ including comparison методов, анализ рисков and визуализацию результатов.
 
  parameters:
  - returns: исторические доходности (pandas Series or numpy array)
@@ -1551,7 +1551,7 @@ def complete_monte_carlo_Analysis(returns, n_simulations=5000):
  if garch_Analysis is not None:
  methods_comparison['GARCH'] = garch_Analysis
 
- print("Сравнение методов on ключевым метрикам:")
+ print("comparison методов on ключевым метрикам:")
  print(f"{'Метод':<25} {'Средняя':<10} {'Стд.откл.':<10} {'5% VaR':<10} {'95% VaR':<10}")
  print("-" * 70)
 
@@ -1565,7 +1565,7 @@ def complete_monte_carlo_Analysis(returns, n_simulations=5000):
 
  # create графиков
  fig, axes = plt.subplots(2, 3, figsize=(18, 12))
- fig.suptitle('Монте-Карло симуляция - Сравнение методов', fontsize=16)
+ fig.suptitle('Монте-Карло симуляция - comparison методов', fontsize=16)
 
  # График 1: Распределения результатов
  axes[0, 0].hist(simple_results, bins=50, alpha=0.7, density=True, label='Простая', color='blue')
@@ -1587,7 +1587,7 @@ def complete_monte_carlo_Analysis(returns, n_simulations=5000):
  axes[0, 1].grid(True, alpha=0.3)
  axes[0, 1].legend()
 
- # График 3: Сравнение квантилей
+ # График 3: comparison квантилей
  percentiles = [5, 10, 25, 50, 75, 90, 95]
  simple_quantiles = [np.percentile(simple_results, p) for p in percentiles]
  bootstrap_quantiles = [np.percentile(bootstrap_results, p) for p in percentiles]
@@ -1597,7 +1597,7 @@ def complete_monte_carlo_Analysis(returns, n_simulations=5000):
 
  axes[0, 2].bar(x - width/2, simple_quantiles, width, label='Простая', alpha=0.7)
  axes[0, 2].bar(x + width/2, bootstrap_quantiles, width, label='Bootstrap', alpha=0.7)
- axes[0, 2].set_title('Сравнение квантилей')
+ axes[0, 2].set_title('comparison квантилей')
  axes[0, 2].set_xlabel('Квантиль (%)')
  axes[0, 2].set_ylabel('Доходность')
  axes[0, 2].set_xticks(x)
@@ -1693,14 +1693,14 @@ def run_complete_example():
  """
  Launch полного примера Монте-Карло симуляции
 
- Эта function демонстрирует полный рабочий example использования
+ Эта function демонстрирует полный workflow example использования
  all методов Монte-Карло симуляции on testsых данных.
  """
 
  print("=" * 80)
  print("ПОЛНЫЙ example МОНТЕ-КАРЛО СИМУЛЯЦИИ")
  print("=" * 80)
- print("Этот example демонстрирует все методы Монte-Карло симуляции")
+ print("Этот example демонстрирует все methods Монte-Карло симуляции")
  print("on реалистичных testsых данных.")
  print("=" * 80)
 
@@ -1748,7 +1748,7 @@ if __name__ == "__main__":
  print("\n" + "=" * 80)
  print("example ЗАВЕРШЕН УСПЕШНО!")
  print("=" * 80)
- print("Все методы Монte-Карло симуляции продемонстрированы.")
+ print("Все methods Монte-Карло симуляции продемонстрированы.")
  print("Вы можете использовать этот код как основу for своих анализов.")
  print("=" * 80)
 ```
@@ -1779,9 +1779,9 @@ results = complete_monte_carlo_Analysis(your_returns, n_simulations=10000)
 
 **Что включает полный example:**
 - ✅ Генерация реалистичных testsых данных
-- ✅ Все методы Монte-Карло симуляции
+- ✅ Все methods Монte-Карло симуляции
 - ✅ Анализ автокорреляции and кластеризации волатильности
-- ✅ Сравнение различных методов
+- ✅ comparison различных методов
 - ✅ Анализ рисков (VaR, Expected Shortfall)
 - ✅ Стресс-тестирование
 - ✅ Многомерная симуляция портфеля
@@ -1834,7 +1834,7 @@ def generate_monte_carlo_Report(results, title="Монте-Карло анали
  </div>
 
  <div class="section">
- <h2>Ключевые метрики</h2>
+ <h2>Ключевые metrics</h2>
  <div class="metric">
  <strong>Средняя доходность:</strong><br>
  {results['Analysis_results']['Простая параметрическая']['mean_return']:.2%}
@@ -1861,7 +1861,7 @@ def generate_monte_carlo_Report(results, title="Монте-Карло анали
  </div>
 
  <div class="section">
- <h2>Сравнение методов</h2>
+ <h2>comparison методов</h2>
  <table>
  <tr>
  <th>Метод</th>
@@ -1938,7 +1938,7 @@ def create_interactive_dashboard(results):
  fig = make_subplots(
  rows=3, cols=2,
  subplot_titles=('Распределения результатов', 'Кривая риска (VaR)',
- 'Сравнение методов', 'Стресс-тестирование',
+ 'comparison методов', 'Стресс-тестирование',
  'Q-Q Plot', 'temporary ряд'),
  specs=[[{"secondary_y": False}, {"secondary_y": False}],
  [{"secondary_y": False}, {"secondary_y": False}],
@@ -1967,7 +1967,7 @@ def create_interactive_dashboard(results):
  row=1, col=2
  )
 
- # График 3: Сравнение методов
+ # График 3: comparison методов
  methods = List(results['Analysis_results'].keys())
  means = [results['Analysis_results'][method]['mean_return'] for method in methods]
  stds = [results['Analysis_results'][method]['std_return'] for method in methods]
@@ -2053,7 +2053,7 @@ def export_results_to_excel(results, filename="monte_carlo_results.xlsx"):
  ]
  }
  risk_df = pd.dataFrame(risk_data)
- risk_df.to_excel(writer, sheet_name='Метрики риска', index=False)
+ risk_df.to_excel(writer, sheet_name='metrics риска', index=False)
 
  print(f"Результаты экспортированы in файл: {filename}")
 ```
@@ -2170,12 +2170,12 @@ def run_monte_carlo_tests():
 ## Ключевые выводы
 
 1. **Монte-Карло симуляция** - мощный инструмент оценки рисков and неопределенности
-2. **Bootstrap методы** сохраняют структуру исторических данных
+2. **Bootstrap methods** сохраняют структуру исторических данных
 3. **Block Bootstrap** учитывает временные dependencies
 4. **GARCH модели** учитывают кластеризацию волатильности
 5. **Многомерная симуляция** необходима for портфельного Analysis
 6. **Стресс-тестирование** проверяет устойчивость стратегий
-7. **VaR and Expected Shortfall** - ключевые метрики риска
+7. **VaR and Expected Shortfall** - ключевые metrics риска
 8. **Визуализация** критически важна for понимания результатов
 9. **Автоматическое тестирование** обеспечивает надежность кода
 10. **Выбор метода** зависит from характеристик данных
@@ -2196,7 +2196,7 @@ def run_monte_carlo_tests():
 **for продакшена:**
 - Всегда тестируйте код перед использованием
 - Документируйте выбор методов and параметров
-- Мониторьте производительность симуляций
+- Мониторьте performance симуляций
 - Создавайте автоматические Reportы
 
 ---

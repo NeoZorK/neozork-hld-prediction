@@ -36,8 +36,8 @@
 **Типы проблем in AutoML Gluon:**
 - **Проблемы installation**: Конфликты dependencies, версии Python
 - **Проблемы данных**: Форматы, размеры, качество
-- **Проблемы производительности**: Медленная Working, нехватка памяти
-- **Проблемы моделей**: Плохая точность, переобучение
+- **Проблемы performance**: Медленная Working, нехватка памяти
+- **Проблемы моделей**: Плохая точность, retraining
 
 in этом разделе рассмотрим типичные проблемы, возникающие при работе with AutoML Gluon, and способы их решения. Каждая проблема включает describe, причины возникновения and пошаговые instructions on устранению.
 
@@ -233,22 +233,22 @@ train_data = train_data.sample(frac=0.5) # Использовать 50% данн
 ## Проблемы обучения
 
 <img src="images/optimized/training_issues.png" alt="Проблемы обучения" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 16.3: Диагностика and решение проблем обучения AutoML Gluon - типы проблем and методы решения*
+*Рисунок 16.3: Диагностика and решение проблем обучения AutoML Gluon - типы проблем and methods решения*
 
 **Почему проблемы обучения так критичны?** Потому что они influence качество and скорость получения результатов:
 
 **Типы проблем обучения:**
 - **Slow Training**: Медленное обучение модели
 - **Poor Model Quality**: Низкое качество модели
-- **Validation Errors**: Ошибки валидации
+- **Validation Errors**: Ошибки validation
 - **data Quality Issues**: Issues with качеством данных
 - **Resource Shortage**: Нехватка вычислительных ресурсов
 - **Configuration Problems**: Issues with конфигурацией
 
 **Ключевые аспекты проблем обучения:**
 - **Медленное обучение**: Неоптимальные Settings, нехватка ресурсов
-- **Плохое качество модели**: Неправильные data, переобучение
-- **Ошибки валидации**: Неправильное разделение данных
+- **Плохое качество модели**: Неправильные data, retraining
+- **Ошибки validation**: Неправильное разделение данных
 - **Issues with data**: Некачественные or неподходящие data
 - **Issues with ресурсами**: Нехватка памяти, CPU, GPU
 - **Issues with конфигурацией**: Неправильные parameters обучения
@@ -412,13 +412,13 @@ def improve_data_quality(data):
 train_data_improved = improve_data_quality(train_data)
 ```
 
-### 3. Ошибки валидации
+### 3. Ошибки validation
 
-#### Проблема: Ошибки при валидации
+#### Проблема: Ошибки при validation
 ```python
-# Диагностика валидации
+# Диагностика validation
 def diagnose_validation_issues(predictor, test_data):
-"""Диагностика проблем валидации"""
+"""Диагностика проблем validation"""
 
  try:
 # check совместимости данных
@@ -450,9 +450,9 @@ if not diagnose_validation_issues(predictor, test_data):
 
 **Решение:**
 ```python
-# fix проблем валидации
+# fix проблем validation
 def fix_validation_issues(test_data):
-"""fix проблем валидации"""
+"""fix проблем validation"""
 
 # Обработка пропущенных значений
  test_data = test_data.fillna(test_data.median())
@@ -480,7 +480,7 @@ test_data_fixed = fix_validation_issues(test_data)
 ## Проблемы predictions
 
 <img src="images/optimized/Prediction_issues.png" alt="Проблемы predictions" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 16.4: Диагностика and решение проблем predictions AutoML Gluon - типы ошибок and методы исправления*
+*Рисунок 16.4: Диагностика and решение проблем predictions AutoML Gluon - типы ошибок and methods исправления*
 
 **Типы проблем predictions:**
 - **Prediction Errors**: Ошибки при выполнении predictions
@@ -621,14 +621,14 @@ def stabilize_predictions(predictor, data, n_samples=3):
 stable_predictions = stabilize_predictions(predictor, test_data)
 ```
 
-## Проблемы производительности
+## Проблемы performance
 
-<img src="images/optimized/performance_issues.png" alt="Проблемы производительности" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 16.5: Диагностика and решение проблем производительности AutoML Gluon - метрики and оптимизация*
+<img src="images/optimized/performance_issues.png" alt="Проблемы performance" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 16.5: Диагностика and решение проблем performance AutoML Gluon - metrics and оптимизация*
 
-**Почему проблемы производительности критичны for продакшена?** Потому что медленные системы неэффективны and дороги:
+**Почему проблемы performance критичны for продакшена?** Потому что медленные системы неэффективны and дороги:
 
-**Типы проблем производительности:**
+**Типы проблем performance:**
 - **Slow predictions**: Медленные предсказания
 - **High Memory Usage**: Высокое использование памяти
 - **GPU Problems**: Issues with GPU
@@ -636,7 +636,7 @@ stable_predictions = stabilize_predictions(predictor, test_data)
 - **network Issues**: Issues with network
 - **Disk I/O Problems**: Issues with диском
 
-**Ключевые аспекты проблем производительности:**
+**Ключевые аспекты проблем performance:**
 - **Медленные предсказания**: Неоптимизированные модели, неэффективные алгоритмы
 - **Высокое использование памяти**: Утечки памяти, неэффективное Management ресурсами
 - **Issues with GPU**: Неправильная configuration GPU, неэффективное использование
@@ -648,11 +648,11 @@ stable_predictions = stabilize_predictions(predictor, test_data)
 
 #### Проблема: Медленные предсказания
 ```python
-# Диагностика производительности
+# Диагностика performance
 import time
 
 def diagnose_Prediction_performance(predictor, data):
-"""Диагностика производительности predictions"""
+"""Диагностика performance predictions"""
 
 # Тест on небольшой выборке
  small_data = data.head(100)
@@ -676,9 +676,9 @@ Prediction_time = diagnose_Prediction_performance(predictor, test_data)
 
 **Решение:**
 ```python
-# Оптимизация производительности
+# Оптимизация performance
 def optimize_Prediction_performance(predictor, data):
-"""Оптимизация производительности predictions"""
+"""Оптимизация performance predictions"""
 
 # Пакетная обработка
  batch_size = 1000
@@ -692,7 +692,7 @@ def optimize_Prediction_performance(predictor, data):
  return predictions
 ```
 
-**Детальные описания параметров оптимизации производительности:**
+**Детальные описания параметров оптимизации performance:**
 
 - **`batch_size = 1000`**: Размер пакета for обработки
 - `1000`: Стандартный размер пакета (рекомендуется)
@@ -869,7 +869,7 @@ data_optimized = optimize_data_types(data)
 - **Ошибки загрузки модели**: Issues with сериализацией, несовместимость версий
 - **Ошибки API**: Неправильная configuration API, Issues with форматами данных
 - **Issues with инфраструктурой**: Нехватка ресурсов, Issues with network
-- **Issues with Monitoringом**: Отсутствие алертов, неправильные метрики
+- **Issues with Monitoringом**: Отсутствие алертов, неправильные metrics
 - **Issues with безопасностью**: Уязвимости, неправильная Authentication
 - **Issues with масштабированием**: Неэффективное масштабирование, узкие места
 
@@ -1025,16 +1025,16 @@ else:
 **Типы инструментов диагностики:**
 - **system Monitoring**: Monitoring системы in реальном времени
 - **Logging system**: Система Logsрования events
-- **Performance Profiling**: Профилирование производительности
+- **Performance Profiling**: Профилирование performance
 - **Metrics Collection**: Сбор метрик
 - **Alerting system**: Система уведомлений
 - **Dashboard Visualization**: Визуализация данных
 
 **Ключевые аспекты инструментов диагностики:**
-- **Система Monitoringа**: Отслеживание производительности in реальном времени
+- **Система Monitoringа**: Отслеживание performance in реальном времени
 - **Система Logsрования**: Детальная фиксация all events and ошибок
-- **Профилирование**: Выявление узких мест in производительности
-- **Метрики**: Количественные показатели качества системы
+- **Профилирование**: Выявление узких мест in performance
+- **metrics**: Количественные показатели качества системы
 - **Алертинг**: notifications о проблемах in реальном времени
 - **Дашборды**: Визуализация состояния системы
 
@@ -1100,7 +1100,7 @@ class AutoGluonMonitor:
 - Применение: общая оценка состояния системы
 
  def check_model_performance(self, predictor, test_data):
-"""check производительности модели"""
+"""check performance модели"""
 
  try:
 # Тест предсказания

@@ -100,7 +100,7 @@ class SCHRShort3Analyzer:
  Analysisтор краткосрочных сигналов SCHR SHORT3
 
  Этот класс реализует комплексный анализ краткосрочных торговых сигналов,
- используя алгоритмические методы for выявления краткосрочных возможностей.
+ используя алгоритмические methods for выявления краткосрочных возможностей.
  """
 
  def __init__(self):
@@ -214,7 +214,7 @@ class SCHRShort3Analyzer:
 **Disadvantages:**
 - Сложность структуры
 - Потенциальные Issues with data
-- Необходимость валидации
+- Необходимость validation
 
 **Детальное объяснение структуры данных:**
 
@@ -339,7 +339,7 @@ if __name__ == "__main__":
 **Theory:** Анализ SCHR SHORT3 on различным Timeframeм критически важен for понимания поведения индикатора on разных временных горизонтах. Каждый Timeframe требует специфических параметров and подходов for максимальной эффективности.
 
 **Почему анализ on Timeframeм критичен:**
-- **Оптимизация производительности:** Каждый Timeframe требует специфических параметров
+- **Оптимизация performance:** Каждый Timeframe требует специфических параметров
 - **Снижение рисков:** Различные Timeframeы имеют разные уровни риска
 - **Повышение точности:** Специфические parameters повышают точность
 - **Адаптация стратегий:** Позволяет адаптировать стратегии к Timeframeм
@@ -746,7 +746,7 @@ class SCHRShort3M5Analysis:
  """
  Анализ краткосрочной волатильности
 
- Рассчитывает различные метрики волатильности for M5 Timeframe.
+ Рассчитывает различные metrics волатильности for M5 Timeframe.
  """
  volatility_metrics = {}
 
@@ -1518,7 +1518,7 @@ if __name__ == "__main__":
 
 **Disadvantages:**
 - Сложность вычислений
-- Потенциальное переобучение
+- Потенциальное retraining
 - Сложность интерпретации
 - Высокие требования к данным
 
@@ -2397,7 +2397,7 @@ def create_short_volatility_target(data, horizon=1):
 **Почему ML-модели критичны:**
 - **Высокая точность:** Обеспечивают высокую точность predictions
 - **Адаптивность:** Могут адаптироваться к изменениям рынка
-- **Автоматизация:** Автоматизируют процесс Analysis and принятия решений
+- **Автоматизация:** Автоматизируют process Analysis and принятия решений
 - **Scalability:** Могут обрабатывать большие объемы данных
 
 ### 1. Классификатор краткосрочных сигналов
@@ -2501,7 +2501,7 @@ class SCHRShort3Classifier:
  # Обучение ансамбля
  self.ensemble.fit(X_train_scaled, y_train)
 
- # Валидация
+ # validation
  val_score = self.ensemble.score(X_val_scaled, y_val)
  print(f"Validation accuracy: {val_score:.4f}")
 
@@ -2633,7 +2633,7 @@ class SCHRShort3Regressor:
  # Обучение ансамбля
  self.ensemble.fit(X_train_scaled, y_train)
 
- # Валидация
+ # validation
  val_score = self.ensemble.score(X_val_scaled, y_val)
  print(f"Validation R² score: {val_score:.4f}")
 
@@ -2908,7 +2908,7 @@ class SCHRShort3Regressor:
 **Disadvantages:**
 - Сложность обучения
 - Высокие требования к данным
-- Потенциальное переобучение
+- Потенциальное retraining
 - Сложность интерпретации
 
 ```python
@@ -2964,10 +2964,10 @@ class SCHRShort3DeepModel:
 
 ## Бэктестинг SCHR SHORT3 модели
 
-**Theory:** Бэктестинг SCHR SHORT3 модели является критически важным этапом for валидации эффективности торговой стратегии on basis краткосрочных сигналов. Это позволяет оценить производительность модели on исторических данных перед реальным использованием.
+**Theory:** Бэктестинг SCHR SHORT3 модели является критически важным этапом for validation эффективности торговой стратегии on basis краткосрочных сигналов. Это позволяет оценить performance модели on исторических данных перед реальным использованием.
 
 **Почему бэктестинг критичен:**
-- **Валидация стратегии:** Позволяет проверить эффективность стратегии
+- **validation стратегии:** Позволяет проверить эффективность стратегии
 - **Оценка рисков:** Помогает оценить потенциальные риски
 - **Оптимизация параметров:** Позволяет оптимизировать parameters стратегии
 - **Уверенность:** Повышает уверенность in стратегии
@@ -2978,15 +2978,15 @@ class SCHRShort3DeepModel:
 
 **Почему стратегия бэктестинга важна:**
 - **Достоверность результатов:** Обеспечивает достоверность результатов
-- **Избежание переобучения:** Помогает избежать переобучения
+- **Избежание retraining:** Помогает избежать retraining
 - **Реалистичность:** Обеспечивает реалистичность тестирования
-- **Валидация:** Позволяет валидировать стратегию
+- **validation:** Позволяет валидировать стратегию
 
 **Плюсы:**
 - Достоверность результатов
-- Избежание переобучения
+- Избежание retraining
 - Реалистичность тестирования
-- Валидация стратегии
+- validation стратегии
 
 **Disadvantages:**
 - Сложность Settings
@@ -2995,9 +2995,9 @@ class SCHRShort3DeepModel:
 
 **Детальное объяснение бэктестинга:**
 
-Бэктестинг SCHR SHORT3 модели является критически важным этапом for валидации эффективности торговой стратегии. Он позволяет:
+Бэктестинг SCHR SHORT3 модели является критически важным этапом for validation эффективности торговой стратегии. Он позволяет:
 
-- **Проверить эффективность:** Оценить производительность on исторических данных
+- **Проверить эффективность:** Оценить performance on исторических данных
 - **Оптимизировать parameters:** Найти оптимальные Settings
 - **Управлять рисками:** Оценить потенциальные риски
 
@@ -3042,7 +3042,7 @@ class SCHRShort3Backtester:
  # Расчет доходности
  returns = self._calculate_returns(test_data, predictions)
 
- # Метрики производительности
+ # Metrics performance
  metrics = self._calculate_metrics(returns)
 
  # Детальный анализ сделок
@@ -3125,7 +3125,7 @@ class SCHRShort3Backtester:
 
  def _calculate_metrics(self, returns):
  """
- Расчет метрик производительности
+ Расчет метрик performance
 
  Args:
  returns: List доходностей
@@ -3160,7 +3160,7 @@ class SCHRShort3Backtester:
  gross_loss = abs(np.sum(returns[returns < 0]))
  profit_factor = gross_profit / gross_loss if gross_loss > 0 else np.inf
 
- # Специфичные метрики for краткосрочных сигналов
+ # Специфичные metrics for краткосрочных сигналов
  short_signal_accuracy = self._calculate_short_signal_accuracy(returns)
  short_signal_frequency = self._calculate_short_signal_frequency(returns)
  short_signal_efficiency = self._calculate_short_signal_efficiency(returns)
@@ -3250,7 +3250,7 @@ class SCHRShort3Backtester:
  axes[1, 0].set_xlabel('Returns')
  axes[1, 0].set_ylabel('Frequency')
 
- # Метрики производительности
+ # Metrics performance
  metrics = results['metrics']
  metric_names = ['Total Return', 'Sharpe Ratio', 'Win Rate', 'Profit Factor']
  metric_values = [
@@ -3309,13 +3309,13 @@ if __name__ == "__main__":
  demonstrate_backtesting()
 ```
 
-### 2. Метрики производительности
+### 2. Metrics performance
 
-**Theory:** Метрики производительности являются критически важными for оценки эффективности SCHR SHORT3 модели. Они обеспечивают количественную оценку различных аспектов производительности торговой стратегии on basis краткосрочных сигналов.
+**Theory:** Metrics performance являются критически важными for оценки эффективности SCHR SHORT3 модели. Они обеспечивают количественную оценку различных аспектов performance торговой стратегии on basis краткосрочных сигналов.
 
-**Почему метрики производительности важны:**
-- **Количественная оценка:** Обеспечивают количественную оценку производительности
-- **Сравнение стратегий:** Позволяют сравнивать различные стратегии
+**Почему Metrics performance важны:**
+- **Количественная оценка:** Обеспечивают количественную оценку performance
+- **comparison стратегий:** Позволяют сравнивать различные стратегии
 - **Оптимизация:** Помогают in оптимизации параметров
 - **Management рисками:** Критически важны for управления рисками
 
@@ -3330,18 +3330,18 @@ if __name__ == "__main__":
 - Потенциальные Issues with data
 - Необходимость понимания метрик
 
-**Детальное объяснение метрик производительности:**
+**Детальное объяснение метрик performance:**
 
-Метрики производительности являются критически важными for оценки эффективности SCHR SHORT3 модели. Каждая метрика решает специфическую задачу:
+Metrics performance являются критически важными for оценки эффективности SCHR SHORT3 модели. Каждая метрика решает специфическую задачу:
 
-- **Финансовые метрики:** Оценивают прибыльность and риски
-- **Статистические метрики:** Анализируют распределение доходности
-- **Специфичные метрики:** Оценивают качество краткосрочных сигналов
+- **Финансовые metrics:** Оценивают прибыльность and риски
+- **Статистические metrics:** Анализируют распределение доходности
+- **Специфичные metrics:** Оценивают качество краткосрочных сигналов
 
 ```python
 def calculate_schr_short3_performance_metrics(returns):
  """
- Расчет метрик производительности for SCHR SHORT3
+ Расчет метрик performance for SCHR SHORT3
 
  Эта function рассчитывает комплексный набор метрик for оценки
  эффективности торговой стратегии on basis краткосрочных сигналов.
@@ -3350,7 +3350,7 @@ def calculate_schr_short3_performance_metrics(returns):
  returns: List доходностей
 
  Returns:
- Словарь with метриками производительности
+ Словарь with метриками performance
  """
  returns = np.array(returns)
 
@@ -3382,22 +3382,22 @@ def calculate_schr_short3_performance_metrics(returns):
  gross_loss = abs(np.sum(returns[returns < 0]))
  profit_factor = gross_profit / gross_loss if gross_loss > 0 else np.inf
 
- # Специфичные метрики for краткосрочных сигналов
+ # Специфичные metrics for краткосрочных сигналов
  short_signal_accuracy = calculate_short_signal_accuracy(returns)
  short_signal_frequency = calculate_short_signal_frequency(returns)
  short_signal_efficiency = calculate_short_signal_efficiency(returns)
 
- # Дополнительные метрики
+ # Дополнительные metrics
  calmar_ratio = annualized_return / abs(max_drawdown) if max_drawdown != 0 else 0
  sortino_ratio = calculate_sortino_ratio(returns, risk_free_rate)
  omega_ratio = calculate_omega_ratio(returns, risk_free_rate)
 
- # Метрики риска
+ # metrics риска
  var_95 = calculate_var(returns, 0.05)
  cvar_95 = calculate_cvar(returns, 0.05)
  max_consecutive_losses = calculate_max_consecutive_losses(returns)
 
- # Метрики стабильности
+ # metrics стабильности
  stability_ratio = calculate_stability_ratio(returns)
  consistency_ratio = calculate_consistency_ratio(returns)
 
@@ -3503,7 +3503,7 @@ def calculate_consistency_ratio(returns):
 
 def calculate_advanced_metrics(returns):
  """
- Расчет продвинутых метрик производительности
+ Расчет продвинутых метрик performance
 
  Args:
  returns: List доходностей
@@ -3516,19 +3516,19 @@ def calculate_advanced_metrics(returns):
  if len(returns) == 0:
  return {}
 
- # Метрики распределения
+ # metrics распределения
  skewness = calculate_skewness(returns)
  kurtosis = calculate_kurtosis(returns)
 
- # Метрики автокорреляции
+ # metrics автокорреляции
  autocorr_1 = calculate_autocorrelation(returns, 1)
  autocorr_5 = calculate_autocorrelation(returns, 5)
 
- # Метрики тренда
+ # metrics тренда
  trend_strength = calculate_trend_strength(returns)
  mean_reversion = calculate_mean_reversion(returns)
 
- # Метрики волатильности
+ # metrics волатильности
  volatility_clustering = calculate_volatility_clustering(returns)
  volatility_persistence = calculate_volatility_persistence(returns)
 
@@ -3602,9 +3602,9 @@ def calculate_volatility_persistence(returns):
  abs_returns = np.abs(returns)
  return np.corrcoef(abs_returns[:-1], abs_returns[1:])[0, 1]
 
-# example использования метрик производительности
+# example использования метрик performance
 def demonstrate_performance_metrics():
- """Демонстрация расчета метрик производительности"""
+ """Демонстрация расчета метрик performance"""
  # create testsых данных
  test_data = create_schr_short3_data_Structure()
 
@@ -3652,17 +3652,17 @@ if __name__ == "__main__":
 
 ## Оптимизация параметров SCHR SHORT3
 
-**Theory:** Оптимизация параметров SCHR SHORT3 является критически важным этапом for достижения максимальной эффективности торговой стратегии on basis краткосрочных сигналов. Правильно оптимизированные parameters могут значительно повысить производительность системы.
+**Theory:** Оптимизация параметров SCHR SHORT3 является критически важным этапом for достижения максимальной эффективности торговой стратегии on basis краткосрочных сигналов. Правильно оптимизированные parameters могут значительно повысить performance системы.
 
 **Почему оптимизация параметров критична:**
-- **Максимизация производительности:** Позволяет достичь максимальной производительности
+- **Максимизация performance:** Позволяет достичь максимальной performance
 - **Адаптация к рынку:** Помогает адаптироваться к различным рыночным условиям
 - **Снижение рисков:** Может снизить риски стратегии
 - **Повышение прибыльности:** Может значительно повысить прибыльность
 
 ### 1. Генетический алгоритм
 
-**Theory:** Генетический алгоритм представляет собой эволюционный метод оптимизации, который имитирует процесс естественного отбора for поиска оптимальных параметров SCHR SHORT3. Это особенно эффективно for сложных многомерных задач оптимизации.
+**Theory:** Генетический алгоритм представляет собой эволюционный метод оптимизации, который имитирует process естественного отбора for поиска оптимальных параметров SCHR SHORT3. Это особенно эффективно for сложных многомерных задач оптимизации.
 
 **Почему генетический алгоритм важен:**
 - **Глобальная оптимизация:** Может найти глобальный оптимум
@@ -3694,7 +3694,7 @@ class SCHRShort3Optimizer:
  """
  Оптимизатор параметров SCHR SHORT3
 
- Этот класс реализует различные методы оптимизации параметров
+ Этот класс реализует различные methods оптимизации параметров
  for достижения максимальной эффективности торговой стратегии.
  """
 
@@ -3788,14 +3788,14 @@ class SCHRShort3Optimizer:
  # Генерация сигналов
  signals = analyzer.generate_short_term_signal(self.data)
 
- # Расчет производительности
+ # Расчет performance
  performance = self._calculate_performance(signals)
 
  return performance
 
  def _calculate_performance(self, signals):
- """Расчет производительности"""
- # Упрощенный расчет производительности
+ """Расчет performance"""
+ # Упрощенный расчет performance
  signal_accuracy = np.mean(signals['signal'] != 0)
  signal_consistency = np.mean(np.abs(signals['strength']))
 
@@ -4130,7 +4130,7 @@ class SCHRShort3BayesianOptimizer:
  schr_short3_data = self._calculate_schr_short3(short_term_threshold, short_term_strength,
  short_term_direction, short_term_volatility, short_term_momentum)
 
- # Расчет производительности
+ # Расчет performance
  performance = self._calculate_performance(schr_short3_data)
 
  # Возвращаем отрицательное значение for минимизации
@@ -4145,7 +4145,7 @@ class SCHRShort3BayesianOptimizer:
 - **Практическое применение:** Обеспечивает практическое применение системы
 - **Автоматизация:** Автоматизирует торговые процессы
 - **Scalability:** Позволяет масштабировать system
-- **Monitoring:** Обеспечивает Monitoring производительности
+- **Monitoring:** Обеспечивает Monitoring performance
 
 ### 1. API for SCHR SHORT3 модели
 
@@ -4173,8 +4173,8 @@ class SCHRShort3BayesianOptimizer:
 API for SCHR SHORT3 модели представляет собой критически важный компонент for интеграции with торговыми системами. Он обеспечивает программный interface for получения predictions in реальном времени, что позволяет автоматизировать торговые процессы.
 
 **Ключевые особенности API:**
-- **RESTful архитектура:** Стандартизированный подход к созданию веб-services
-- **Валидация данных:** Автоматическая check входных параметров
+- **RESTful architecture:** Стандартизированный подход к созданию веб-services
+- **validation данных:** Автоматическая check входных параметров
 - **Обработка ошибок:** Надежная обработка исключительных ситуаций
 - **documentation:** Автоматическая генерация документации API
 
@@ -4203,7 +4203,7 @@ app = FastAPI(
  redoc_url="/redoc"
 )
 
-# Модели данных for валидации
+# Модели данных for validation
 class SCHRShort3PredictionRequest(BaseModel):
  """Запрос on Prediction SCHR SHORT3"""
  short_term_signal: int = Field(..., describe="Краткосрочный сигнал (-1, 0, 1)")
@@ -4333,7 +4333,7 @@ async def predict(
  # Logsрование
  logger.info(f"Prediction made: {Prediction}, confidence: {confidence}, time: {processing_time:.3f}s")
 
- # Сохранение метрик производительности
+ # Сохранение метрик performance
  performance_metrics.append({
  'timestamp': datetime.now(),
  'processing_time': processing_time,
@@ -4359,7 +4359,7 @@ async def predict(
 
 @app.get("/metrics")
 async def get_metrics():
- """Получение метрик производительности"""
+ """Получение метрик performance"""
  if not performance_metrics:
  return {"message": "No metrics available yet"}
 
@@ -4376,7 +4376,7 @@ async def get_metrics():
 
 @app.post("/retrain")
 async def retrain_model(new_data_path: str):
- """Переобучение модели with новыми данными"""
+ """retraining модели with новыми данными"""
  try:
  logger.info(f"starting model retraining with data from {new_data_path}")
 
@@ -4386,7 +4386,7 @@ async def retrain_model(new_data_path: str):
 
  new_data = pd.read_parquet(new_data_path)
 
- # Здесь должна быть Logsка переобучения модели
+ # Здесь должна быть Logsка retraining модели
  # for демонстрации просто переLoading модель
  success = load_model()
 
@@ -4401,7 +4401,7 @@ async def retrain_model(new_data_path: str):
  raise HTTPException(status_code=500, detail=str(e))
 
 def save_performance_metrics():
- """Сохранение метрик производительности"""
+ """Сохранение метрик performance"""
  try:
  if performance_metrics:
  # Сохранение только последних 1000 записей
@@ -4825,14 +4825,14 @@ if __name__ == "__main__":
  print("deployment failed!")
 ```
 
-### 3. Monitoring производительности
+### 3. Monitoring performance
 
-**Theory:** Monitoring производительности SCHR SHORT3 модели является критически важным for обеспечения стабильности and эффективности торговой системы in продакшн среде. Это позволяет быстро выявлять and устранять проблемы.
+**Theory:** Monitoring performance SCHR SHORT3 модели является критически важным for обеспечения стабильности and эффективности торговой системы in продакшн среде. Это позволяет быстро выявлять and устранять проблемы.
 
-**Почему Monitoring производительности важен:**
+**Почему Monitoring performance важен:**
 - **Стабильность:** Обеспечивает стабильность системы
 - **Быстрое выявление проблем:** Позволяет быстро выявлять проблемы
-- **Оптимизация:** Помогает in оптимизации производительности
+- **Оптимизация:** Помогает in оптимизации performance
 - **Management рисками:** Критически важно for управления рисками
 
 **Плюсы:**
@@ -4846,14 +4846,14 @@ if __name__ == "__main__":
 - Необходимость постоянного внимания
 - Потенциальные ложные срабатывания
 
-**Детальное объяснение Monitoringа производительности:**
+**Детальное объяснение Monitoringа performance:**
 
-Monitoring производительности SCHR SHORT3 модели является критически важным компонентом for обеспечения стабильности and эффективности торговой системы. Он позволяет in реальном времени отслеживать ключевые метрики and быстро реагировать on проблемы.
+Monitoring performance SCHR SHORT3 модели является критически важным компонентом for обеспечения стабильности and эффективности торговой системы. Он позволяет in реальном времени отслеживать ключевые metrics and быстро реагировать on проблемы.
 
 **Ключевые аспекты Monitoringа:**
-- **Метрики производительности:** Точность, задержка, пропускная способность
-- **Метрики краткосрочных сигналов:** Частота, точность, стабильность
-- **Системные метрики:** Использование ресурсов, доступность
+- **Metrics performance:** Точность, задержка, пропускная способность
+- **metrics краткосрочных сигналов:** Частота, точность, стабильность
+- **Системные metrics:** Использование ресурсов, доступность
 - **Алертинг:** Автоматические notifications о проблемах
 
 ```python
@@ -4888,8 +4888,8 @@ class SCHRShort3Monitor:
  """
  Комплексный Monitoring SCHR SHORT3 модели
 
- Этот класс обеспечивает полный Monitoring производительности модели,
- including метрики точности, задержки, системные ресурсы and алертинг.
+ Этот класс обеспечивает полный Monitoring performance модели,
+ including metrics точности, задержки, системные ресурсы and алертинг.
  """
 
  def __init__(self, alert_config: AlertConfig = None):
@@ -4912,7 +4912,7 @@ class SCHRShort3Monitor:
  'disk_usage': 90.0
  }
 
- # Prometheus метрики
+ # Prometheus metrics
  self._setup_prometheus_metrics()
 
  # Launch Monitoringа системных ресурсов
@@ -5002,7 +5002,7 @@ class SCHRShort3Monitor:
  short_signal_accuracy = self._calculate_short_signal_accuracy(short_signal_data)
  short_signal_frequency = self._calculate_short_signal_frequency(short_signal_data)
 
- # create записи о производительности
+ # create записи о performance
  performance_record = {
  'timestamp': datetime.now(),
  'accuracy': accuracy,
@@ -5067,7 +5067,7 @@ class SCHRShort3Monitor:
  return 0.0
 
  def _check_alerts(self):
- """check алертов производительности"""
+ """check алертов performance"""
  if len(self.performance_history) < 10:
  return
 
@@ -5197,7 +5197,7 @@ class SCHRShort3Monitor:
  self.logger.error(f"Error sending webhook alert: {e}")
 
  def get_performance_summary(self) -> Dict[str, Any]:
- """Получение сводки производительности"""
+ """Получение сводки performance"""
  try:
  if not self.performance_history:
  return {"message": "No performance data available"}
@@ -5282,7 +5282,7 @@ def demonstrate_Monitoring():
  # Небольшая задержка
  time.sleep(1)
 
- # Получение сводки производительности
+ # Получение сводки performance
  summary = monitor.get_performance_summary()
  print("Performance Summary:")
  print(json.dumps(summary, indent=2))
@@ -5320,15 +5320,15 @@ if __name__ == "__main__":
 
 3. **МультиTimeframesый анализ - разные parameters for разных Timeframes**
  - **Theory:** Каждый Timeframe требует специфических параметров for максимальной эффективности
- - **Почему важно:** Обеспечивает оптимальную производительность on all временных горизонтах
- - **Плюсы:** Оптимизация производительности, снижение рисков, повышение точности
+ - **Почему важно:** Обеспечивает оптимальную performance on all временных горизонтах
+ - **Плюсы:** Оптимизация performance, снижение рисков, повышение точности
  - **Disadvantages:** Сложность Settings, необходимость понимания каждого Timeframe
 
 4. **Высокая точность - возможность достижения 95%+ точности**
  - **Theory:** Правильно настроенная SCHR SHORT3 модель может достигать очень высокой точности
  - **Почему важно:** Высокая точность критична for прибыльной торговли
  - **Плюсы:** Высокая прибыльность, снижение рисков, уверенность in стратегии
- - **Disadvantages:** Высокие требования к настройке, потенциальное переобучение
+ - **Disadvantages:** Высокие требования к настройке, потенциальное retraining
 
 5. **Продакшн готовность - полная integration with продакшн системами**
  - **Theory:** SCHR SHORT3 модель может быть полностью интегрирована in продакшн системы

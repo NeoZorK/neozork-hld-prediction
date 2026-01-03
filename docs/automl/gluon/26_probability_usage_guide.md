@@ -93,7 +93,7 @@ hyperparameter_tune_kwargs={ # parameters Settings гиперпараметро�
  'scheduler': 'local',
  'searcher': 'auto'
  },
-holdout_frac=0.2, # Доля данных for holdout валидации
+holdout_frac=0.2, # Доля данных for holdout validation
 num_bag_folds=8, # Количество фолдов for бэггинга
 num_stack_levels=1, # Количество уровней стекинга
 auto_stack=True, # Автоматический стекинг
@@ -103,7 +103,7 @@ memory_limit='8GB', # Лимит памяти
 feature_prune=True, # Обрезка неважных признаков
 excluded_model_types=[], # Исключенные типы моделей
 included_model_types=[], # Включенные типы моделей
-refit_full=True, # Переобучение on all данных
+refit_full=True, # retraining on all данных
 set_best_to_refit_full=True, # installation лучшей модели как refit_full
 save_space=True, # Экономия места on диске
 save_bag_folds=True, # Сохранение бэггинг фолдов
@@ -131,7 +131,7 @@ print("Вероятности:", probabilities)
 
 ### 1. Калибровка уверенности
 
-### 🔧 Методы калибровки вероятностей
+### 🔧 methods калибровки вероятностей
 
 ```mermaid
 graph TD
@@ -185,7 +185,7 @@ class ProbabilityCalibration:
  Args:
 config (dict): configuration калибровки
 - calibration_methods: List методов калибровки
-- cv_folds: Количество фолдов for кросс-валидации
+- cv_folds: Количество фолдов for кросс-validation
 - temperature_init: Начальная температура for temperature scaling
 - isotonic_bounds: Границы for изотонической регрессии
  """
@@ -639,7 +639,7 @@ return 0.9 # Большая корректировка for долгосрочн�
 
 ### 3. Ансамблирование on basis вероятностей
 
-### 🤝 Методы ансамблирования вероятностей
+### 🤝 methods ансамблирования вероятностей
 
 ```mermaid
 graph TD
@@ -711,7 +711,7 @@ config (dict): configuration ансамблирования
  'weight_calculation': 'performance_based',
  'uncertainty_estimation': 'variance',
  'model_selection': {
-'min_performance': 0.6, # Минимальная производительность
+'min_performance': 0.6, # Минимальная performance
 'max_correlation': 0.8, # Максимальная корреляция между моделями
 'min_diversity': 0.3, # Минимальное разнообразие
 'max_models': 10 # Максимальное количество моделей
@@ -720,7 +720,7 @@ config (dict): configuration ансамблирования
 'uncertainty_threshold': 0.1, # Порог неопределенности
 'confidence_threshold': 0.7, # Порог уверенности
 'diversity_weight': 0.3, # Вес разнообразия
-'performance_weight': 0.7, # Вес производительности
+'performance_weight': 0.7, # Вес performance
 'uncertainty_weight': 0.2, # Вес неопределенности
 'adaptive_weights': True, # Адаптивные веса
 'weight_update_frequency': 100, # Частота обновления весов
@@ -728,8 +728,8 @@ config (dict): configuration ансамблирования
  'selection_criteria': ['accuracy', 'f1', 'roc_auc'],
 'weight_normalization': 'softmax', # Нормализация весов
 'uncertainty_combination': 'average', # Комбинирование неопределенности
-'model_validation': True, # Валидация моделей
-'cross_validation_folds': 5, # Фолды for кросс-валидации
+'model_validation': True, # validation моделей
+'cross_validation_folds': 5, # Фолды for кросс-validation
 'bootstrap_samples': 1000, # Количество bootstrap выборок
 'monte_carlo_samples': 1000, # Количество Monte Carlo выборок
 'bayesian_prior': 'uniform', # Байесовский априор
@@ -737,7 +737,7 @@ config (dict): configuration ансамблирования
 'bayesian_beta': 1.0, # parameter бета for Байеса
 'temperature_scaling': True, # Температурное масштабирование
 'temperature_value': 1.0, # Значение температуры
-'ensemble_validation': True, # Валидация ансамбля
+'ensemble_validation': True, # validation ансамбля
  'performance_metrics': ['accuracy', 'f1', 'roc_auc', 'log_loss'],
  'uncertainty_metrics': ['entropy', 'variance', 'mutual_info'],
 'weight_constraints': { # Ограничения on веса
@@ -755,7 +755,7 @@ config (dict): configuration ансамблирования
  Args:
 model_probabilities (array): Вероятности from разных моделей (n_models, n_samples, n_classes)
 model_weights (array): Веса моделей (n_models,)
-performance_metrics (dict): Метрики производительности моделей
+performance_metrics (dict): Metrics performance моделей
 regularization (float): Коэффициент регуляризации весов
 
  Returns:
@@ -986,17 +986,17 @@ dict: Ансамблевые вероятности and неопределенн
 ```mermaid
 graph TD
 A[Базовые вероятности] --> B[Текущие вероятности]
-B --> C{Сравнение распределений}
+B --> C{comparison распределений}
 
 C -->|Статистический тест| D[t-тест / Mann-Whitney]
 C -->|KS тест| E[Колмогоров-Смирнов]
 C -->|Wasserstein| F[Расстояние Вассерштейна]
 
-D --> D1[Сравнение средних]
+D --> D1[comparison средних]
  D --> D2[p-value < 0.05]
 D --> D3[Обнаружение дрифта]
 
-E --> E1[Сравнение распределений]
+E --> E1[comparison распределений]
 E --> E2[KS статистика]
 E --> E3[Критическое значение]
 
@@ -1020,7 +1020,7 @@ H -->|Нет| J[Продолжить Monitoring]
 
 I --> K[Анализ причин дрифта]
 K --> L[Корректировка модели]
-L --> M[Переобучение]
+L --> M[retraining]
 M --> N[update базовой линии]
  N --> A
 
@@ -1108,7 +1108,7 @@ config (dict): configuration Monitoringа
 'check_outliers': True, # check выбросов
 'outlier_threshold': 3.0, # Порог for выбросов
 'Missing_threshold': 0.1, # Порог for пропущенных значений
-'data_validation': True # Валидация данных
+'data_validation': True # validation данных
  },
  'performance': {
 'parallel_processing': True, # Параллельная обработка
@@ -1145,7 +1145,7 @@ dict: Результаты обнаружения дрифта
  if test_methods is None:
  test_methods = self.config['test_methods']
 
-# Валидация данных
+# validation данных
  self._validate_probabilities(current_probabilities, baseline_probabilities)
 
  results = {}
@@ -1335,7 +1335,7 @@ bool: Обнаружен ли дрифт
  return psi
 
  def _validate_probabilities(self, current, baseline):
-"""Валидация вероятностей"""
+"""validation вероятностей"""
 # check on пропущенные значения
  if self.config['data_quality']['check_Missing']:
  Missing_current = np.isnan(current).sum()
@@ -1388,17 +1388,17 @@ if len(current_outliers) > len(current) * 0.1: # 10% выбросов
 
 ## Слабые стороны использования вероятностей
 
-### 1. Переобучение on вероятностях
+### 1. retraining on вероятностях
 
 ```python
 class ProbabilityOverfittingPrevention:
-"""Предотвращение переобучения on вероятностях"""
+"""Предотвращение retraining on вероятностях"""
 
  def __init__(self):
  self.regularization_methods = {}
 
  def prevent_overfitting(self, probabilities, true_labels):
-"""Предотвращение переобучения"""
+"""Предотвращение retraining"""
 
 # L1 регуляризация
  l1_regularized = self.l1_regularization(probabilities, true_labels)
@@ -1546,17 +1546,17 @@ class CalibrationIssues:
 
 ## Лучшие практики использования вероятностей
 
-### 1. Валидация вероятностей
+### 1. validation вероятностей
 
-### 📊 Метрики валидации вероятностей
+### 📊 Metrics validation вероятностей
 
 ```mermaid
 graph TD
-A[Вероятности модели] --> B{Тип валидации}
+A[Вероятности модели] --> B{Тип validation}
 
-B -->|Cross-Validation| C[Кросс-валидация]
-B -->|Temporal Validation| D[Временная валидация]
-B -->|Stochastic Validation| E[Стохастическая валидация]
+B -->|Cross-Validation| C[Кросс-validation]
+B -->|Temporal Validation| D[Временная validation]
+B -->|Stochastic Validation| E[Стохастическая validation]
 
 C --> C1[Разделение on фолды]
 C --> C2[Обучение on каждом фолде]
@@ -1570,7 +1570,7 @@ E --> E1[Множественные Launchи]
 E --> E2[Случайные разбиения]
 E --> E3[Статистическая значимость]
 
-C1 --> F[Метрики качества]
+C1 --> F[metrics качества]
  C2 --> F
  C3 --> F
  D1 --> F
@@ -1601,21 +1601,21 @@ K -->|Нет| M[improve модели]
 
 ```python
 class ProbabilityValidation:
-"""Валидация вероятностей"""
+"""validation вероятностей"""
 
  def __init__(self):
  self.validation_methods = {}
 
  def validate_probabilities(self, probabilities, true_labels):
-"""Валидация вероятностей"""
+"""validation вероятностей"""
 
-# Кросс-валидация
+# Кросс-validation
  cv_validation = self.cross_validation(probabilities, true_labels)
 
-# Временная валидация
+# Временная validation
  temporal_validation = self.temporal_validation(probabilities, true_labels)
 
-# Стохастическая валидация
+# Стохастическая validation
  stochastic_validation = self.stochastic_validation(probabilities, true_labels)
 
  return {
@@ -1625,11 +1625,11 @@ class ProbabilityValidation:
  }
 
  def cross_validation(self, probabilities, true_labels):
-"""Кросс-валидация вероятностей"""
+"""Кросс-validation вероятностей"""
 
  from sklearn.model_selection import cross_val_score
 
-# Кросс-валидация with калибровкой
+# Кросс-validation with калибровкой
  cv_scores = cross_val_score(
  probabilities,
  true_labels,
@@ -1644,17 +1644,17 @@ class ProbabilityValidation:
  }
 ```
 
-### 2. Monitoring производительности
+### 2. Monitoring performance
 
 ```python
 class ProbabilityMonitoring:
-"""Monitoring производительности вероятностей"""
+"""Monitoring performance вероятностей"""
 
  def __init__(self):
  self.Monitoring_metrics = {}
 
  def monitor_performance(self, probabilities, true_labels):
-"""Monitoring производительности"""
+"""Monitoring performance"""
 
 # Логарифмическая потеря
  log_loss = self.calculate_log_loss(probabilities, true_labels)
@@ -1813,7 +1813,7 @@ config (dict): configuration торговой системы
  'signal_types': ['BUY', 'SELL', 'HOLD'],
  'signal_strengths': ['STRONG', 'MODERATE', 'WEAK', 'NONE'],
  'confidence_levels': [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1],
-'signal_validation': True, # Валидация сигналов
+'signal_validation': True, # validation сигналов
 'signal_filtering': True, # Фильтрация сигналов
 'signal_aggregation': 'weighted', # Агрегация сигналов
 'signal_persistence': 5, # Персистентность сигналов (minutesы)
@@ -1842,7 +1842,7 @@ config (dict): configuration торговой системы
  'performance_Monitoring': {
 'real_time_Monitoring': True, # Monitoring in реальном времени
  'performance_metrics': ['sharpe', 'sortino', 'calmar', 'max_drawdown'],
-'benchmark_comparison': True, # Сравнение with бенчмарком
+'benchmark_comparison': True, # comparison with бенчмарком
 'risk_adjusted_returns': True, # Риск-скорректированная доходность
 'attribution_Analysis': True, # Анализ атрибуции
 'stress_testing': True, # Стресс-тестирование
@@ -1911,7 +1911,7 @@ List: List торговых сигналов
 # Management рисками
  risk_adjusted_signals = self.adjust_for_risk(signals, probabilities, risk_config)
 
-# Валидация сигналов
+# validation сигналов
  if signal_config.get('signal_validation', True):
  validated_signals = self.validate_signals(risk_adjusted_signals)
  else:
@@ -2211,7 +2211,7 @@ take_multiplier = 0.8 # Меньший тейк-профит
  return (1 - probability) * 0.3
 
  def validate_signals(self, signals):
-"""Валидация сигналов"""
+"""validation сигналов"""
  validated_signals = []
 
  for signal in signals:
@@ -2297,7 +2297,7 @@ class ProbabilityPortfolioManagement:
 ```mermaid
 graph TD
 A[Правильное использование вероятностей] --> B[Калибровка]
-A --> C[Валидация]
+A --> C[validation]
  A --> D[Monitoring]
 A --> E[Интерпретация]
 A --> F[Риск-менеджмент]
@@ -2355,7 +2355,7 @@ G --> L[Успешная ML-система]
 ### Ключевые принципы
 
 1. **Калибровка** - всегда калибруйте вероятности
-2. **Валидация** - проверяйте качество вероятностей
+2. **validation** - проверяйте качество вероятностей
 3. **Monitoring** - отслеживайте дрифт вероятностей
 4. **Интерпретация** - правильно интерпретируйте результаты
 5. **Риск-менеджмент** - Use вероятности for управления рисками
@@ -2368,14 +2368,14 @@ G --> L[Успешная ML-система]
 
 | parameter | Значение on умолчанию | describe | Диапазон |
 |----------|----------------------|----------|----------|
-| `calibration_methods` | `['platt', 'isotonic', 'temperature']` | Методы калибровки | `['platt', 'isotonic', 'temperature']` |
-| `cv_folds` | `5` | Количество фолдов for кросс-валидации | `3-10` |
+| `calibration_methods` | `['platt', 'isotonic', 'temperature']` | methods калибровки | `['platt', 'isotonic', 'temperature']` |
+| `cv_folds` | `5` | Количество фолдов for кросс-validation | `3-10` |
 | `temperature_init` | `1.5` | Начальная температура for temperature scaling | `0.1-5.0` |
 | `isotonic_bounds` | `'clip'` | Границы for изотонической регрессии | `['clip', 'nan']` |
 | `platt_method` | `'sigmoid'` | Метод for Platt Scaling | `['sigmoid', 'isotonic']` |
 | `optimization_iterations` | `50` | Количество итераций оптимизации | `10-200` |
 | `learning_rate` | `0.01` | Скорость обучения | `0.001-0.1` |
-| `validation_split` | `0.2` | Доля данных for валидации | `0.1-0.5` |
+| `validation_split` | `0.2` | Доля данных for validation | `0.1-0.5` |
 | `random_state` | `42` | Случайное состояние | `0-2^32-1` |
 
 ### parameters управления рисками
@@ -2410,10 +2410,10 @@ G --> L[Успешная ML-система]
 
 | parameter | Значение on умолчанию | describe | Диапазон |
 |----------|----------------------|----------|----------|
-| `ensemble_methods` | `['weighted', 'confidence_weighted', 'bayesian']` | Методы ансамблирования | `['weighted', 'confidence_weighted', 'bayesian']` |
+| `ensemble_methods` | `['weighted', 'confidence_weighted', 'bayesian']` | methods ансамблирования | `['weighted', 'confidence_weighted', 'bayesian']` |
 | `weight_calculation` | `'performance_based'` | Метод расчета весов | `['performance_based', 'confidence_based', 'uncertainty_based']` |
 | `uncertainty_estimation` | `'variance'` | Метод оценки неопределенности | `['variance', 'entropy', 'mutual_info']` |
-| `min_performance` | `0.6` | Минимальная производительность | `0.3-0.9` |
+| `min_performance` | `0.6` | Минимальная performance | `0.3-0.9` |
 | `max_correlation` | `0.8` | Максимальная корреляция между моделями | `0.3-0.9` |
 | `min_diversity` | `0.3` | Минимальное разнообразие | `0.1-0.8` |
 | `max_models` | `10` | Максимальное количество моделей | `3-50` |
@@ -2421,7 +2421,7 @@ G --> L[Успешная ML-система]
 | `uncertainty_threshold` | `0.1` | Порог неопределенности | `0.01-0.5` |
 | `confidence_threshold` | `0.7` | Порог уверенности | `0.5-0.9` |
 | `diversity_weight` | `0.3` | Вес разнообразия | `0.1-0.8` |
-| `performance_weight` | `0.7` | Вес производительности | `0.2-0.9` |
+| `performance_weight` | `0.7` | Вес performance | `0.2-0.9` |
 | `uncertainty_weight` | `0.2` | Вес неопределенности | `0.1-0.5` |
 | `adaptive_weights` | `True` | Адаптивные веса | `True/False` |
 | `weight_update_frequency` | `100` | Частота обновления весов | `10-1000` |
@@ -2429,8 +2429,8 @@ G --> L[Успешная ML-система]
 | `selection_criteria` | `['accuracy', 'f1', 'roc_auc']` | Критерии отбора | `['accuracy', 'f1', 'roc_auc', 'log_loss']` |
 | `weight_normalization` | `'softmax'` | Нормализация весов | `['softmax', 'l1', 'l2']` |
 | `uncertainty_combination` | `'average'` | Комбинирование неопределенности | `['average', 'weighted_variance']` |
-| `model_validation` | `True` | Валидация моделей | `True/False` |
-| `cross_validation_folds` | `5` | Фолды for кросс-валидации | `3-10` |
+| `model_validation` | `True` | validation моделей | `True/False` |
+| `cross_validation_folds` | `5` | Фолды for кросс-validation | `3-10` |
 | `bootstrap_samples` | `1000` | Количество bootstrap выборок | `100-10000` |
 | `monte_carlo_samples` | `1000` | Количество Monte Carlo выборок | `100-10000` |
 | `bayesian_prior` | `'uniform'` | Байесовский априор | `['uniform', 'dirichlet']` |
@@ -2438,7 +2438,7 @@ G --> L[Успешная ML-система]
 | `bayesian_beta` | `1.0` | parameter бета for Байеса | `0.1-10.0` |
 | `temperature_scaling` | `True` | Температурное масштабирование | `True/False` |
 | `temperature_value` | `1.0` | Значение температуры | `0.1-5.0` |
-| `ensemble_validation` | `True` | Валидация ансамбля | `True/False` |
+| `ensemble_validation` | `True` | validation ансамбля | `True/False` |
 | `min_weight` | `0.01` | Минимальный вес | `0.001-0.1` |
 | `max_weight` | `0.5` | Максимальный вес | `0.1-0.8` |
 | `sum_constraint` | `1.0` | Сумма весов должна быть 1 | `1.0` |
@@ -2448,7 +2448,7 @@ G --> L[Успешная ML-система]
 | parameter | Значение on умолчанию | describe | Диапазон |
 |----------|----------------------|----------|----------|
 | `drift_threshold` | `0.05` | Порог for обнаружения дрифта | `0.01-0.2` |
-| `test_methods` | `['statistical', 'ks', 'wasserstein', 'psi']` | Методы тестирования | `['statistical', 'ks', 'wasserstein', 'psi']` |
+| `test_methods` | `['statistical', 'ks', 'wasserstein', 'psi']` | methods тестирования | `['statistical', 'ks', 'wasserstein', 'psi']` |
 | `window_size` | `1000` | Размер окна for Analysis | `100-10000` |
 | `update_frequency` | `'daily'` | Частота обновления | `['hourly', 'daily', 'weekly']` |
 | `baseline_period` | `30` | Период for базовой линии (дни) | `7-365` |
@@ -2484,7 +2484,7 @@ G --> L[Успешная ML-система]
 | `check_outliers` | `True` | check выбросов | `True/False` |
 | `outlier_threshold` | `3.0` | Порог for выбросов | `2.0-5.0` |
 | `Missing_threshold` | `0.1` | Порог for пропущенных значений | `0.05-0.3` |
-| `data_validation` | `True` | Валидация данных | `True/False` |
+| `data_validation` | `True` | validation данных | `True/False` |
 | `parallel_processing` | `True` | Параллельная обработка | `True/False` |
 | `n_jobs` | `-1` | Количество процессов | `-1, 1-32` |
 | `memory_limit` | `'2GB'` | Лимит памяти | `'1GB'-'16GB'` |
@@ -2518,7 +2518,7 @@ G --> L[Успешная ML-система]
 | `max_single_position` | `0.1` | Максимальная позиция in одном активе | `0.05-0.3` |
 | `max_sector_exposure` | `0.3` | Максимальная экспозиция on сектору | `0.1-0.5` |
 | `max_currency_exposure` | `0.5` | Максимальная валютная экспозиция | `0.2-0.8` |
-| `signal_validation` | `True` | Валидация сигналов | `True/False` |
+| `signal_validation` | `True` | validation сигналов | `True/False` |
 | `signal_filtering` | `True` | Фильтрация сигналов | `True/False` |
 | `signal_aggregation` | `'weighted'` | Агрегация сигналов | `['weighted', 'majority', 'consensus']` |
 | `signal_persistence` | `5` | Персистентность сигналов (minutesы) | `1-60` |
@@ -2542,8 +2542,8 @@ G --> L[Успешная ML-система]
 | `seasonal_patterns` | `True` | Сезонные паттерны | `True/False` |
 | `market_regime` | `'normal'` | Режим рынка | `['normal', 'crisis', 'recovery', 'growth']` |
 | `real_time_Monitoring` | `True` | Monitoring in реальном времени | `True/False` |
-| `performance_metrics` | `['sharpe', 'sortino', 'calmar', 'max_drawdown']` | Метрики производительности | `['sharpe', 'sortino', 'calmar', 'max_drawdown', 'var', 'es']` |
-| `benchmark_comparison` | `True` | Сравнение with бенчмарком | `True/False` |
+| `performance_metrics` | `['sharpe', 'sortino', 'calmar', 'max_drawdown']` | Metrics performance | `['sharpe', 'sortino', 'calmar', 'max_drawdown', 'var', 'es']` |
+| `benchmark_comparison` | `True` | comparison with бенчмарком | `True/False` |
 | `risk_adjusted_returns` | `True` | Риск-скорректированная доходность | `True/False` |
 | `attribution_Analysis` | `True` | Анализ атрибуции | `True/False` |
 | `stress_testing` | `True` | Стресс-тестирование | `True/False` |
@@ -2590,7 +2590,7 @@ G --> L[Успешная ML-система]
 #### for опытных пользователей
 
 - Настройте parameters под ваши data
-- Use продвинутые методы ансамблирования
+- Use продвинутые methods ансамблирования
 - Активируйте адаптивные алгоритмы
 - Настройте Monitoring дрифта
 
@@ -2599,4 +2599,4 @@ G --> L[Успешная ML-система]
 - install строгие лимиты риска
 - Включите все проверки соответствия
 - Настройте алерты and Monitoring
-- Use высококачественные методы исполнения
+- Use высококачественные methods исполнения

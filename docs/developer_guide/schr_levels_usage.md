@@ -85,13 +85,13 @@ print(f"Prediction: {trading_pred['predictions'].iloc[0]}")
 print(f"Вероятности: {trading_pred['probabilities'].iloc[0].to_dict()}")
 ```
 
-### Валидация моделей
+### validation моделей
 ```python
-# Walk Forward валидация
+# Walk Forward validation
 wf_results = pipeline.walk_forward_validation(data, 'pressure_vector_sign', n_splits=5)
 print(f"Средняя точность: {wf_results['mean_accuracy']:.2%}")
 
-# Monte Carlo валидация
+# Monte Carlo validation
 mc_results = pipeline.monte_carlo_validation(data, 'pressure_vector_sign', n_iterations=10)
 print(f"Средняя точность: {mc_results['mean_accuracy']:.2%}")
 ```

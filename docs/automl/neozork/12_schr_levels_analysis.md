@@ -44,7 +44,7 @@
 
 **Детальное объяснение параметров:**
 - **pressure_threshold (0.7):** Минимальное значение давления, при котором уровень считается значимым. Более высокие значения дают более консервативные сигналы, но могут пропустить слабые, но важные уровни.
-- **level_strength (0.8):** Минимальная сила уровня for его валидации. Определяет, насколько сильным должен быть уровень, чтобы считаться надежным.
+- **level_strength (0.8):** Минимальная сила уровня for его validation. Определяет, насколько сильным должен быть уровень, чтобы считаться надежным.
 - **Prediction_horizon (20):** Количество periods вперед for предсказания. Большие значения дают более долгосрочные прогнозы, но with меньшей точностью.
 - **volatility_factor (1.5):** Множитель волатильности for адаптации к рыночным условиям. Высокие значения лучше подходят for волатильных рынков.
 - **trend_weight (0.6):** Вес трендового компонента in анализе. Балансирует влияние тренда and уровней on финальное решение.
@@ -74,7 +74,7 @@ class SCHRLevelsAnalyzer:
  Инициализация Analysisтора SCHR Levels.
 
  Args:
- pressure_threshold: Минимальное давление for валидации уровня (0.0-1.0)
+ pressure_threshold: Минимальное давление for validation уровня (0.0-1.0)
  level_strength: Минимальная сила уровня (0.0-1.0)
  Prediction_horizon: Горизонт предсказания in периодах
  volatility_factor: Фактор адаптации к волатильности
@@ -88,14 +88,14 @@ class SCHRLevelsAnalyzer:
  'trend_weight': trend_weight
  }
 
- # Валидация параметров
+ # validation параметров
  self._validate_parameters()
 
  # История расчетов for Analysis
  self.calculation_history = []
 
  def _validate_parameters(self):
- """Валидация входных параметров"""
+ """validation входных параметров"""
  if not 0.0 <= self.parameters['pressure_threshold'] <= 1.0:
  raise ValueError("pressure_threshold должен быть между 0.0 and 1.0")
  if not 0.0 <= self.parameters['level_strength'] <= 1.0:
@@ -193,11 +193,11 @@ class SCHRLevelsAnalyzer:
  }
 
  def get_performance_metrics(self) -> Dict:
- """Получение метрик производительности Analysisтора"""
+ """Получение метрик performance Analysisтора"""
  if not self.calculation_history:
  return {"error": "Нет данных for Analysis"}
 
- # Простые метрики on basis истории расчетов
+ # Простые metrics on basis истории расчетов
  total_Calculations = len(self.calculation_history)
  avg_pressure = np.mean([calc['pressure_Analysis']['pressure'].mean()
  for calc in self.calculation_history])
@@ -223,8 +223,8 @@ class SCHRLevelsAnalyzer:
 
 **Детальное объяснение структуры данных:**
 - **Основные уровни:** Содержат предсказанные and текущие уровни поддержки and сопротивления
-- **Давление on уровни:** Количественные метрики рыночного давления and его направления
-- **Дополнительные components:** Вероятностные and уверенностные метрики for принятия решений
+- **Давление on уровни:** Количественные metrics рыночного давления and его направления
+- **Дополнительные components:** Вероятностные and уверенностные metrics for принятия решений
 
 **Почему эта Structure критична:**
 - **Стандартизация:** Обеспечивает единообразную обработку данных
@@ -298,18 +298,18 @@ class SCHRLevelsdataStructure:
  'Timeframe': 'Timeframe'
  }
 
- # Валидация columns
+ # validation columns
  self.required_columns = List(self.schr_columns.keys())
 
  def validate_dataframe(self, df: pd.dataFrame) -> Dict[str, bool]:
  """
- Валидация dataFrame on соответствие структуре SCHR Levels.
+ validation dataFrame on соответствие структуре SCHR Levels.
 
  Args:
- df: dataFrame for валидации
+ df: dataFrame for validation
 
  Returns:
- Dict with результатами валидации
+ Dict with результатами validation
  """
  validation_results = {}
 
@@ -337,7 +337,7 @@ class SCHRLevelsdataStructure:
  return validation_results
 
  def _validate_value_ranges(self, df: pd.dataFrame) -> bool:
- """Валидация диапазонов значений"""
+ """validation диапазонов значений"""
  try:
  # check вероятностей (должны быть 0-1)
  prob_columns = ['level_confidence', 'level_breakout_probability', 'level_bounce_probability']
@@ -418,7 +418,7 @@ class SCHRLevelsdataStructure:
  True если экспорт успешен
  """
  try:
- # Валидация перед экспортом
+ # validation перед экспортом
  validation = self.validate_dataframe(df)
  if not validation['has_required_columns']:
  print(f"Ошибка: Missing columns {validation['Missing_columns']}")
@@ -446,7 +446,7 @@ class SCHRLevelsdataStructure:
  try:
  df = pd.read_parquet(filepath)
 
- # Валидация загруженных данных
+ # validation загруженных данных
  validation = self.validate_dataframe(df)
  if not validation['has_required_columns']:
  print(f"Предупреждение: Missing columns {validation['Missing_columns']}")
@@ -488,9 +488,9 @@ if __name__ == "__main__":
  # create образца данных
  sample_data = schr_Structure.create_sample_data(100)
 
- # Валидация данных
+ # validation данных
  validation_results = schr_Structure.validate_dataframe(sample_data)
- print("Результаты валидации:", validation_results)
+ print("Результаты validation:", validation_results)
 
  # Получение сводки
  summary = schr_Structure.get_data_summary(sample_data)
@@ -589,11 +589,11 @@ class SCHRLevelsM1Analysis:
  self.scaler = StandardScaler()
  self.feature_history = []
 
- # Валидация параметров
+ # validation параметров
  self._validate_parameters()
 
  def _validate_parameters(self):
- """Валидация параметров for M1"""
+ """validation параметров for M1"""
  if not 0.0 <= self.optimal_params['pressure_threshold'] <= 1.0:
  raise ValueError("pressure_threshold должен быть между 0.0 and 1.0")
  if not 0.0 <= self.optimal_params['level_strength'] <= 1.0:
@@ -871,7 +871,7 @@ class SCHRLevelsM1Analysis:
  Волатильность критически важна for M1 Analysis, так как она определяет
  эффективность скальпинговых стратегий and риск быстрых движений.
  """
- # Базовые метрики волатильности
+ # Базовые metrics волатильности
  returns = data['Close'].pct_change()
  volatility_1min = returns.rolling(window=5).std()
  volatility_5min = returns.rolling(window=25).std()
@@ -1052,11 +1052,11 @@ class SCHRLevelsM5Analysis:
  self.feature_history = []
  self.level_clusters = None
 
- # Валидация параметров
+ # validation параметров
  self._validate_parameters()
 
  def _validate_parameters(self):
- """Валидация параметров for M5"""
+ """validation параметров for M5"""
  if not 0.0 <= self.optimal_params['pressure_threshold'] <= 1.0:
  raise ValueError("pressure_threshold должен быть между 0.0 and 1.0")
  if not 0.0 <= self.optimal_params['level_strength'] <= 1.0:
@@ -1664,11 +1664,11 @@ class SCHRLevelsH1Analysis:
  self.feature_history = []
  self.trend_models = {}
 
- # Валидация параметров
+ # validation параметров
  self._validate_parameters()
 
  def _validate_parameters(self):
- """Валидация параметров for H1"""
+ """validation параметров for H1"""
  if not 0.0 <= self.optimal_params['pressure_threshold'] <= 1.0:
  raise ValueError("pressure_threshold должен быть между 0.0 and 1.0")
  if not 0.0 <= self.optimal_params['level_strength'] <= 1.0:
@@ -2344,9 +2344,9 @@ if __name__ == "__main__":
 
 **Детальное объяснение создания признаков:**
 - **Базовые признаки:** Фундаментальные components SCHR Levels for Analysis уровней
-- **Признаки давления:** Количественные метрики рыночного давления and его динамики
+- **Признаки давления:** Количественные metrics рыночного давления and его динамики
 - **Временные признаки:** Анализ временных аспектов and паттернов
-- **Статистические признаки:** Статистические метрики for улучшения качества модели
+- **Статистические признаки:** Статистические metrics for улучшения качества модели
 
 **Почему create признаков критично:**
 - **Качество данных:** Качественные признаки определяют качество ML-модели
@@ -2865,7 +2865,7 @@ if __name__ == "__main__":
 
 **Disadvantages:**
 - Сложность вычислений
-- Потенциальное переобучение
+- Потенциальное retraining
 - Сложность интерпретации
 - Высокие требования к данным
 
@@ -3524,7 +3524,7 @@ def create_pressure_direction_target(data, horizon=1):
 **Почему ML-модели критичны:**
 - **Высокая точность:** Обеспечивают высокую точность predictions
 - **Адаптивность:** Могут адаптироваться к изменениям рынка
-- **Автоматизация:** Автоматизируют процесс Analysis and принятия решений
+- **Автоматизация:** Автоматизируют process Analysis and принятия решений
 - **Scalability:** Могут обрабатывать большие объемы данных
 
 ### 1. Классификатор пробоев
@@ -3575,7 +3575,7 @@ class SCHRLevelsClassifier:
  # Обучение ансамбля
  self.ensemble.fit(X_train, y_train)
 
- # Валидация
+ # validation
  val_score = self.ensemble.score(X_val, y_val)
  print(f"Validation accuracy: {val_score:.4f}")
 
@@ -3656,7 +3656,7 @@ class SCHRLevelsRegressor:
 **Disadvantages:**
 - Сложность обучения
 - Высокие требования к данным
-- Потенциальное переобучение
+- Потенциальное retraining
 - Сложность интерпретации
 
 ```python
@@ -3712,10 +3712,10 @@ class SCHRLevelsDeepModel:
 
 ## Бэктестинг SCHR Levels модели
 
-**Theory:** Бэктестинг SCHR Levels модели является критически важным этапом for валидации эффективности торговой стратегии on basis уровней. Это позволяет оценить производительность модели on исторических данных перед реальным использованием.
+**Theory:** Бэктестинг SCHR Levels модели является критически важным этапом for validation эффективности торговой стратегии on basis уровней. Это позволяет оценить performance модели on исторических данных перед реальным использованием.
 
 **Почему бэктестинг критичен:**
-- **Валидация стратегии:** Позволяет проверить эффективность стратегии
+- **validation стратегии:** Позволяет проверить эффективность стратегии
 - **Оценка рисков:** Помогает оценить потенциальные риски
 - **Оптимизация параметров:** Позволяет оптимизировать parameters стратегии
 - **Уверенность:** Повышает уверенность in стратегии
@@ -3726,15 +3726,15 @@ class SCHRLevelsDeepModel:
 
 **Почему стратегия бэктестинга важна:**
 - **Достоверность результатов:** Обеспечивает достоверность результатов
-- **Избежание переобучения:** Помогает избежать переобучения
+- **Избежание retraining:** Помогает избежать retraining
 - **Реалистичность:** Обеспечивает реалистичность тестирования
-- **Валидация:** Позволяет валидировать стратегию
+- **validation:** Позволяет валидировать стратегию
 
 **Плюсы:**
 - Достоверность результатов
-- Избежание переобучения
+- Избежание retraining
 - Реалистичность тестирования
-- Валидация стратегии
+- validation стратегии
 
 **Disadvantages:**
 - Сложность Settings
@@ -3762,7 +3762,7 @@ class SCHRLevelsBacktester:
  # Расчет доходности
  returns = self._calculate_returns(test_data, predictions)
 
- # Метрики производительности
+ # Metrics performance
  metrics = self._calculate_metrics(returns)
 
  return {
@@ -3801,13 +3801,13 @@ class SCHRLevelsBacktester:
  return returns
 ```
 
-### 2. Метрики производительности
+### 2. Metrics performance
 
-**Theory:** Метрики производительности являются критически важными for оценки эффективности SCHR Levels модели. Они обеспечивают количественную оценку различных аспектов производительности торговой стратегии on basis уровней.
+**Theory:** Metrics performance являются критически важными for оценки эффективности SCHR Levels модели. Они обеспечивают количественную оценку различных аспектов performance торговой стратегии on basis уровней.
 
-**Почему метрики производительности важны:**
-- **Количественная оценка:** Обеспечивают количественную оценку производительности
-- **Сравнение стратегий:** Позволяют сравнивать различные стратегии
+**Почему Metrics performance важны:**
+- **Количественная оценка:** Обеспечивают количественную оценку performance
+- **comparison стратегий:** Позволяют сравнивать различные стратегии
 - **Оптимизация:** Помогают in оптимизации параметров
 - **Management рисками:** Критически важны for управления рисками
 
@@ -3824,7 +3824,7 @@ class SCHRLevelsBacktester:
 
 ```python
 def calculate_schr_performance_metrics(returns):
- """Расчет метрик производительности for SCHR Levels"""
+ """Расчет метрик performance for SCHR Levels"""
  returns = np.array(returns)
 
  # Базовая статистика
@@ -3852,7 +3852,7 @@ def calculate_schr_performance_metrics(returns):
  gross_loss = abs(np.sum(returns[returns < 0]))
  profit_factor = gross_profit / gross_loss if gross_loss > 0 else np.inf
 
- # Специфичные метрики for уровней
+ # Специфичные metrics for уровней
  level_hit_rate = self._calculate_level_hit_rate(returns)
  breakout_accuracy = self._calculate_breakout_accuracy(returns)
 
@@ -3871,17 +3871,17 @@ def calculate_schr_performance_metrics(returns):
 
 ## Оптимизация параметров SCHR Levels
 
-**Theory:** Оптимизация параметров SCHR Levels является критически важным этапом for достижения максимальной эффективности торговой стратегии on basis уровней. Правильно оптимизированные parameters могут значительно повысить производительность системы.
+**Theory:** Оптимизация параметров SCHR Levels является критически важным этапом for достижения максимальной эффективности торговой стратегии on basis уровней. Правильно оптимизированные parameters могут значительно повысить performance системы.
 
 **Почему оптимизация параметров критична:**
-- **Максимизация производительности:** Позволяет достичь максимальной производительности
+- **Максимизация performance:** Позволяет достичь максимальной performance
 - **Адаптация к рынку:** Помогает адаптироваться к различным рыночным условиям
 - **Снижение рисков:** Может снизить риски стратегии
 - **Повышение прибыльности:** Может значительно повысить прибыльность
 
 ### 1. Генетический алгоритм
 
-**Theory:** Генетический алгоритм представляет собой эволюционный метод оптимизации, который имитирует процесс естественного отбора for поиска оптимальных параметров SCHR Levels. Это особенно эффективно for сложных многомерных задач оптимизации.
+**Theory:** Генетический алгоритм представляет собой эволюционный метод оптимизации, который имитирует process естественного отбора for поиска оптимальных параметров SCHR Levels. Это особенно эффективно for сложных многомерных задач оптимизации.
 
 **Почему генетический алгоритм важен:**
 - **Глобальная оптимизация:** Может найти глобальный оптимум
@@ -4011,7 +4011,7 @@ class SCHRLevelsBayesianOptimizer:
  schr_data = self._calculate_schr_levels(pressure_threshold, level_strength,
  Prediction_horizon, volatility_factor, trend_weight)
 
- # Расчет производительности
+ # Расчет performance
  performance = self._calculate_performance(schr_data)
 
  # Возвращаем отрицательное значение for минимизации
@@ -4026,7 +4026,7 @@ class SCHRLevelsBayesianOptimizer:
 - **Практическое применение:** Обеспечивает практическое применение системы
 - **Автоматизация:** Автоматизирует торговые процессы
 - **Scalability:** Позволяет масштабировать system
-- **Monitoring:** Обеспечивает Monitoring производительности
+- **Monitoring:** Обеспечивает Monitoring performance
 
 ### 1. API for SCHR Levels модели
 
@@ -4153,14 +4153,14 @@ EXPOSE 8000
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
-### 3. Monitoring производительности
+### 3. Monitoring performance
 
-**Theory:** Monitoring производительности SCHR Levels модели является критически важным for обеспечения стабильности and эффективности торговой системы in продакшн среде. Это позволяет быстро выявлять and устранять проблемы.
+**Theory:** Monitoring performance SCHR Levels модели является критически важным for обеспечения стабильности and эффективности торговой системы in продакшн среде. Это позволяет быстро выявлять and устранять проблемы.
 
-**Почему Monitoring производительности важен:**
+**Почему Monitoring performance важен:**
 - **Стабильность:** Обеспечивает стабильность системы
 - **Быстрое выявление проблем:** Позволяет быстро выявлять проблемы
-- **Оптимизация:** Помогает in оптимизации производительности
+- **Оптимизация:** Помогает in оптимизации performance
 - **Management рисками:** Критически важно for управления рисками
 
 **Плюсы:**
@@ -4257,15 +4257,15 @@ class SCHRLevelsMonitor:
 
 3. **МультиTimeframesый анализ - разные parameters for разных Timeframes**
  - **Theory:** Каждый Timeframe требует специфических параметров for максимальной эффективности
- - **Почему важно:** Обеспечивает оптимальную производительность on all временных горизонтах
- - **Плюсы:** Оптимизация производительности, снижение рисков, повышение точности
+ - **Почему важно:** Обеспечивает оптимальную performance on all временных горизонтах
+ - **Плюсы:** Оптимизация performance, снижение рисков, повышение точности
  - **Disadvantages:** Сложность Settings, необходимость понимания каждого Timeframe
 
 4. **Высокая точность - возможность достижения 95%+ точности**
  - **Theory:** Правильно настроенная SCHR Levels модель может достигать очень высокой точности
  - **Почему важно:** Высокая точность критична for прибыльной торговли
  - **Плюсы:** Высокая прибыльность, снижение рисков, уверенность in стратегии
- - **Disadvantages:** Высокие требования к настройке, потенциальное переобучение
+ - **Disadvantages:** Высокие требования к настройке, потенциальное retraining
 
 5. **Продакшн готовность - полная integration with продакшн системами**
  - **Theory:** SCHR Levels модель может быть полностью интегрирована in продакшн системы

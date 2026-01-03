@@ -21,8 +21,8 @@
 
 ## Введение in examples
 
-<img src="images/optimized/metrics_comparison_Detailed.png" alt="Сравнение метрик and задач" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 1: Сравнение метрик for классификации and регрессии - ROC Curve, Precision-Recall, Confusion Matrix, метрики регрессии*
+<img src="images/optimized/metrics_comparison_Detailed.png" alt="comparison метрик and задач" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 1: comparison метрик for классификации and регрессии - ROC Curve, Precision-Recall, Confusion Matrix, metrics регрессии*
 
 **Почему examples - это язык machine learning?** Потому что они переводят сложные алгоритмы in понятные числа. Это как переводчик между техническими деталями and бизнес-результатами.
 
@@ -47,7 +47,7 @@ in этом разделе представлены практические exa
 - **Интерпретируемость**: Объяснимость решений for регуляторов
 - **Справедливость**: Предотвращение дискриминации
 - **Monitoring**: Отслеживание качества in реальном времени
-- **A/B тестирование**: Сравнение моделей on реальных данных
+- **A/B тестирование**: comparison моделей on реальных данных
 
 ### Задача
 **Почему Prediction дефолта так важно?** Потому что неправильное решение может стоить банку миллионы долларов. Это как медицинская диагностика, но for денег.
@@ -172,7 +172,7 @@ def prepare_bank_data(data):
 
  Notes:
  ------
-Процесс подготовки данных:
+process подготовки данных:
 1. Заполнение пропущенных значений медианой
 2. create новых признаков (feature engineering)
 3. Обработка выбросов методом IQR
@@ -240,7 +240,7 @@ def train_bank_model(data):
 
  Notes:
  ------
-Процесс обучения:
+process обучения:
 1. Разделение данных on train/test (80/20)
 2. Стратифицированное разделение (сохранение пропорций классов)
 3. create предиктора with настройками for банковской задачи
@@ -344,15 +344,15 @@ testsые data for оценки:
  --------
  Dict[str, Any]
 Результаты оценки модели:
-- performance: метрики качества (accuracy, roc_auc, precision, recall)
+- performance: metrics качества (accuracy, roc_auc, precision, recall)
 - feature_importance: важность признаков for предсказания
-- leaderboard: сравнение различных моделей
+- leaderboard: comparison различных моделей
 - predictions: предсказания классов (0/1)
 - probabilities: вероятности классов
 
  Notes:
  ------
-Метрики оценки for банковской задачи:
+metrics оценки for банковской задачи:
 - ROC-AUC: основная метрика for несбалансированных данных
 - Precision: доля правильных predictions дефолта
 - Recall: доля foundных дефолтов
@@ -380,13 +380,13 @@ testsые data for оценки:
  feature_importance = predictor.feature_importance()
 
 # Лидерборд моделей
-# Сравнение различных алгоритмов and их комбинаций
+# comparison различных алгоритмов and их комбинаций
  leaderboard = predictor.leaderboard(test_data)
 
  return {
-'performance': performance, # Метрики качества
+'performance': performance, # metrics качества
 'feature_importance': feature_importance, # Важность признаков
-'leaderboard': leaderboard, # Сравнение моделей
+'leaderboard': leaderboard, # comparison моделей
 'predictions': predictions, # Предсказания классов
 'probabilities': probabilities # Вероятности классов
  }
@@ -458,7 +458,7 @@ visualize_bank_results(bank_results, bank_test_data)
 ## example 2: Прогнозирование цен on недвижимость
 
 <img src="images/optimized/real_estate_regression_Analysis.png" alt="example недвижимости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 3: example прогнозирования цен on недвижимость - предсказания vs факт, распределение ошибок, важность признаков, метрики качества*
+*Рисунок 3: example прогнозирования цен on недвижимость - предсказания vs факт, распределение ошибок, важность признаков, metrics качества*
 
 **Почему недвижимость - отличный example for регрессии?** Потому что это понятная задача with множеством факторов влияния:
 
@@ -466,9 +466,9 @@ visualize_bank_results(bank_results, bank_test_data)
 - **Множественные факторы**: Площадь, район, этаж, год постройки
 - **Непрерывная целевая переменная**: Цена in рублях
 - **Feature Engineering**: create новых признаков из существующих
-- **Валидация**: check on переобучение
+- **validation**: check on retraining
 - **Интерпретируемость**: Понимание влияния каждого фактора
-- **Метрики качества**: RMSE, MAE, R² for оценки точности
+- **metrics качества**: RMSE, MAE, R² for оценки точности
 
 ### Задача
 Prediction цены недвижимости on basis характеристик объекта.
@@ -734,7 +734,7 @@ visualize_real_estate_results(real_estate_results, real_estate_test_data)
 ## example 3: Анализ временных рядов
 
 <img src="images/optimized/time_series_Analysis.png" alt="example временных рядов" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 4: example Analysis временных рядов - temporary ряд with прогнозом, ошибки in time, распределение ошибок, метрики MASE/MAPE*
+*Рисунок 4: example Analysis временных рядов - temporary ряд with прогнозом, ошибки in time, распределение ошибок, metrics MASE/MAPE*
 
 **Почему временные ряды - особый тип задач?** Потому что они имеют временную dependency and требуют специальных методов:
 
@@ -743,7 +743,7 @@ visualize_real_estate_results(real_estate_results, real_estate_test_data)
 - **Сезонность**: Повторяющиеся паттерны во времени
 - **Тренды**: Долгосрочные изменения
 - **Станционарность**: Стабильность статистических свойств
-- **Валидация**: Специальные методы for временных данных
+- **validation**: Специальные methods for временных данных
 - **Прогнозирование**: Prediction будущих значений
 
 ### Задача
@@ -1044,7 +1044,7 @@ def visualize_sales_results(results, test_data):
  results['feature_importance'].head(10).plot(kind='barh', ax=axes[1, 0])
  axes[1, 0].set_title('Top 10 Feature importance')
 
-# Производительность on продуктам
+# performance on продуктам
  products = List(results['product_performance'].keys())
  maes = [results['product_performance'][p]['mae'] for p in products]
 
@@ -1064,16 +1064,16 @@ visualize_sales_results(sales_results, sales_test_data)
 ## example 4: Многоклассовая классификация
 
 <img src="images/optimized/multiclass_classification_Analysis.png" alt="example многоклассовой классификации" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 5: example многоклассовой классификации - Confusion Matrix, точность on классам, распределение predictions, метрики качества*
+*Рисунок 5: example многоклассовой классификации - Confusion Matrix, точность on классам, распределение predictions, metrics качества*
 
 **Почему многоклассовая классификация сложнее бинарной?** Потому что нужно различать множество классов simultaneously:
 
 **Ключевые аспекты многоклассовой классификации:**
 - **Множественные классы**: Более 2 категорий for классификации
 - **Импбаланс классов**: Неравномерное распределение примеров
-- **Метрики качества**: Accuracy, Precision, Recall for каждого класса
+- **metrics качества**: Accuracy, Precision, Recall for каждого класса
 - **Feature Engineering**: Извлечение признаков из изображений
-- **Валидация**: Стратифицированное разделение данных
+- **validation**: Стратифицированное разделение данных
 - **Интерпретируемость**: Понимание решений модели
 
 ### Задача
@@ -1119,8 +1119,8 @@ Structure данных изображений:
 Бизнес-контекст:
 - Задача: классификация объектов on изображениях
 - Применение: компьютерное зрение, автоматическая маркировка
-- Метрики: accuracy, precision, recall for каждого класса
-- Валидация: стратифицированное разделение on классам
+- metrics: accuracy, precision, recall for каждого класса
+- validation: стратифицированное разделение on классам
  """
 
 np.random.seed(42) # Воспроизводимость результатов
@@ -1177,7 +1177,7 @@ def prepare_image_data(data):
 
  Notes:
  ------
-Процесс подготовки данных:
+process подготовки данных:
 1. create агрегированных признаков (сумма, среднее, стандартное отклонение)
 2. Нормализация числовых признаков (z-score нормализация)
 3. Сохранение категориальных признаков без изменений
@@ -1379,8 +1379,8 @@ visualize_image_results(image_results, image_test_data)
 
 ## example 5: Продакшен система
 
-<img src="images/optimized/production_system_architecture.png" alt="Архитектура продакшен системы" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 7: Архитектура продакшен системы AutoML Gluon - components, потоки данных, Monitoring*
+<img src="images/optimized/production_system_architecture.png" alt="architecture продакшен системы" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 7: architecture продакшен системы AutoML Gluon - components, потоки данных, Monitoring*
 
 ### Полная продакшен система
 ```python
@@ -1474,7 +1474,7 @@ class ModelInfo(BaseModel):
 - 'regression': регрессия
 
  performance : Dict[str, float]
-Метрики производительности модели:
+Metrics performance модели:
 - accuracy, roc_auc, precision, recall (for классификации)
 - rmse, mae, r2 (for регрессии)
 
@@ -1497,7 +1497,7 @@ async def load_models():
 
  Notes:
  ------
-Процесс загрузки моделей:
+process загрузки моделей:
 1. Загрузка банковской модели (классификация дефолта)
 2. Загрузка модели недвижимости (регрессия цен)
 3. create метаданных for каждой модели
@@ -1596,7 +1596,7 @@ Endpoint for predictions with использованием обученных м
 
  Notes:
  ------
-Процесс предсказания:
+process предсказания:
 1. check существования модели
 2. Преобразование данных in dataFrame
 3. Выполнение предсказания
@@ -1734,7 +1734,7 @@ if __name__ == "__main__":
 ## Продвинутые examples
 
 <img src="images/optimized/advanced_metrics_Analysis.png" alt="Продвинутые examples" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 6: Продвинутые метрики - ROC with порогами, Precision-Recall, сравнение метрик, влияние порога on качество*
+*Рисунок 6: Продвинутые metrics - ROC with порогами, Precision-Recall, comparison метрик, влияние порога on качество*
 
 **Почему важны продвинутые examples?** Потому что они показывают, как решать сложные реальные задачи:
 
@@ -1751,7 +1751,7 @@ if __name__ == "__main__":
 **Почему ансамбли часто Workingют лучше одиночных моделей?** Потому что они объединяют сильные стороны разных алгоритмов:
 
 - **Разнообразие моделей**: Разные алгоритмы находят разные паттерны
-- **Снижение переобучения**: Усреднение снижает риск переобучения
+- **Снижение retraining**: Усреднение снижает риск retraining
 - **Повышение стабильности**: Результат менее зависит from конкретной модели
 - **Лучшая обобщающая способность**: Модель Workingет лучше on новых данных
 - **Автоматический выбор**: AutoML сам выбирает лучшие комбинации
@@ -1762,9 +1762,9 @@ if __name__ == "__main__":
 **Почему несбалансированные data - частая проблема?** Потому что in реальности редкие события встречаются редко:
 
 - **Стратегии балансировки**: SMOTE, undersampling, oversampling
-- **Метрики качества**: F1-score, Precision, Recall вместо Accuracy
+- **metrics качества**: F1-score, Precision, Recall вместо Accuracy
 - **Стоимость ошибок**: Разная цена за разные типы ошибок
-- **Валидация**: Стратифицированное разделение данных
+- **validation**: Стратифицированное разделение данных
 - **Ансамбли**: Комбинирование моделей for лучшего качества
 - **Monitoring**: Отслеживание качества on редких классах
 

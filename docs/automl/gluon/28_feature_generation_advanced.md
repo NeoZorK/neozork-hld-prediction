@@ -17,7 +17,7 @@
 ### Что происходит без правильной генерации признаков?
 
 - **Плохие результаты**: Модели not находят паттерны
-- **Переобучение**: Модели запоминают data вместо обучения
+- **retraining**: Модели запоминают data вместо обучения
 - **Нестабильность**: Модели Workingют on-разному on похожих данных
 - **Разочарование**: not понимаете, почему результаты not улучшаются
 
@@ -199,7 +199,7 @@ K --> O[f(X) ∈ [0,1] or стандартизовано]
 
 ### 1. Временные признаки (Time Series Features)
 
-### ⏰ Процесс создания временных признаков
+### ⏰ process создания временных признаков
 
 ```mermaid
 graph TD
@@ -290,7 +290,7 @@ config (dict): Дополнительная configuration
 - max_lag: Максимальный лаг (on умолчанию max(lags))
 - min_lag: Минимальный лаг (on умолчанию min(lags))
 - lag_step: Шаг между лагами (on умолчанию 1)
-- validation: Валидация данных (True/False)
+- validation: validation данных (True/False)
 - memory_efficient: Эффективное использование памяти (True/False)
 
  Returns:
@@ -310,7 +310,7 @@ TypeError: Если fill_method not поддерживается
  'memory_efficient': False
  }
 
-# Валидация входных данных
+# validation входных данных
  if config['validation']:
  if target_col not in df.columns:
  raise ValueError(f"Column '{target_col}' not found in dataFrame")
@@ -412,7 +412,7 @@ config (dict): Дополнительная configuration
 - quantiles: List квантилей for вычисления (on умолчанию [0.25, 0.5, 0.75])
 - custom_functions: Словарь пользовательских функций
 - fill_method: Метод заполнения пропусков ('forward', 'backward', 'interpolate', 'zero')
-- validation: Валидация данных (True/False)
+- validation: validation данных (True/False)
 - memory_efficient: Эффективное использование памяти (True/False)
 - prefix: Префикс for названий признаков (on умолчанию 'rolling')
 
@@ -435,7 +435,7 @@ TypeError: Если parameters имеют неправильный тип
  'prefix': 'rolling'
  }
 
-# Валидация входных данных
+# validation входных данных
  if config['validation']:
  if target_col not in df.columns:
  raise ValueError(f"Column '{target_col}' not found in dataFrame")
@@ -590,7 +590,7 @@ config (dict): Дополнительная configuration
 - halflife: Альтернатива alpha (halflife = ln(2)/alpha)
 - com: Альтернатива alpha (com = 1/alpha - 1)
 - fill_method: Метод заполнения пропусков ('forward', 'backward', 'interpolate', 'zero')
-- validation: Валидация данных (True/False)
+- validation: validation данных (True/False)
 - memory_efficient: Эффективное использование памяти (True/False)
 - prefix: Префикс for названий признаков (on умолчанию 'ewm')
 - custom_functions: Словарь пользовательских функций
@@ -616,7 +616,7 @@ TypeError: Если parameters имеют неправильный тип
  'custom_functions': {}
  }
 
-# Валидация входных данных
+# validation входных данных
  if config['validation']:
  if target_col not in df.columns:
  raise ValueError(f"Column '{target_col}' not found in dataFrame")
@@ -769,7 +769,7 @@ config (dict): Дополнительная configuration
 - business_hours_end: Конец рабочих часов (on умолчанию 17)
 - business_days: Рабочие дни (on умолчанию [0,1,2,3,4] - пн-пт)
 - fill_method: Метод заполнения пропусков ('forward', 'backward', 'interpolate', 'zero')
-- validation: Валидация данных (True/False)
+- validation: validation данных (True/False)
 - memory_efficient: Эффективное использование памяти (True/False)
 - prefix: Префикс for названий признаков (on умолчанию 'seasonal')
 
@@ -799,7 +799,7 @@ TypeError: Если parameters имеют неправильный тип
  'prefix': 'seasonal'
  }
 
-# Валидация входных данных
+# validation входных данных
  if config['validation']:
  if date_col not in df.columns:
  raise ValueError(f"Column '{date_col}' not found in dataFrame")
@@ -1486,7 +1486,7 @@ L --> M[Финальный набор признаков]
 
 M --> N[Применение in AutoML Gluon]
 N --> O[Обучение модели]
-O --> P[Оценка производительности]
+O --> P[Оценка performance]
 P --> Q[Оптимизация признаков]
 
 Q --> R{improve результата?}
@@ -1669,7 +1669,7 @@ df = create_interaction_features(df, ['feature1', 'feature2', 'feature3'], max_i
 
 ## Оценка качества признаков
 
-### 📊 Метрики оценки качества признаков
+### 📊 metrics оценки качества признаков
 
 ```mermaid
 graph TD
@@ -1720,8 +1720,8 @@ H --> L[Отбор признаков]
 
 L --> M[Финальный набор признаков]
 
-M --> N[Валидация on testsых данных]
-N --> O[check производительности]
+M --> N[validation on testsых данных]
+N --> O[check performance]
 O --> P[Monitoring in продакшене]
 
 P --> Q{Качество приемлемое?}
@@ -1854,7 +1854,7 @@ def evaluate_feature_stability(df, target_col, n_splits=5):
  X = df.drop(columns=[target_col])
  y = df[target_col]
 
-# K-fold кросс-валидация
+# K-fold кросс-validation
  kf = KFold(n_splits=n_splits, shuffle=True, random_state=42)
 
 # List for хранения важности признаков
@@ -1942,7 +1942,7 @@ Z --> AA[configuration параметров]
 
 W --> BB[Monitoring in продакшене]
 BB --> CC[Отслеживание дрифта]
-CC --> DD[Переобучение при необходимости]
+CC --> DD[retraining при необходимости]
 
  style A fill:#e3f2fd
  style I fill:#c8e6c9
@@ -2079,7 +2079,7 @@ K --> O[Отбор признаков]
  M --> O
  N --> O
 
-O --> P[Валидация признаков]
+O --> P[validation признаков]
  P --> Q[Cross-validation]
  P --> R[Stability testing]
  P --> S[Drift detection]
@@ -2090,7 +2090,7 @@ Q --> T[Финальный набор признаков]
 
 T --> U[Применение in AutoML Gluon]
 U --> V[Обучение модели]
-V --> W[Оценка производительности]
+V --> W[Оценка performance]
 
 W --> X{Результат приемлемый?}
 X -->|Да| Y[Деплой in продакшен]
@@ -2106,7 +2106,7 @@ Z --> CC[add новых методов]
 
 Y --> DD[Monitoring in продакшене]
 DD --> EE[Отслеживание качества]
-EE --> FF[Автоматическое переобучение]
+EE --> FF[Автоматическое retraining]
 
  style A fill:#e3f2fd
  style B fill:#c8e6c9
@@ -2175,7 +2175,7 @@ pipeline.add_selector(automatic_feature_selection, method='mutual_info', k=50)
 df_transformed = pipeline.fit_transform(df, 'target')
 ```
 
-## Monitoring and валидация признаков
+## Monitoring and validation признаков
 
 ### 1. Monitoring дрейфа признаков
 
@@ -2221,11 +2221,11 @@ def monitor_feature_drift(df_baseline, df_current, feature_cols, threshold=0.1):
 drift_results = monitor_feature_drift(df_baseline, df_current, feature_cols, threshold=0.1)
 ```
 
-### 2. Валидация признаков
+### 2. validation признаков
 
 ```python
 def validate_features(df, target_col, feature_cols, validation_method='cross_validation'):
-"""Валидация признаков"""
+"""validation признаков"""
  from sklearn.model_selection import cross_val_score
  from sklearn.ensemble import RandomForestRegressor
  from sklearn.linear_model import LinearRegression
@@ -2234,7 +2234,7 @@ def validate_features(df, target_col, feature_cols, validation_method='cross_val
  X = df[feature_cols]
  y = df[target_col]
 
-# Модели for валидации
+# Модели for validation
  models = {
  'RandomForest': RandomForestRegressor(n_estimators=100, random_state=42),
  'LinearRegression': LinearRegression()
@@ -2243,7 +2243,7 @@ def validate_features(df, target_col, feature_cols, validation_method='cross_val
  validation_results = {}
 
  for model_name, model in models.items():
-# Кросс-валидация
+# Кросс-validation
  scores = cross_val_score(model, X, y, cv=5, scoring='r2')
 
  validation_results[model_name] = {
@@ -2271,7 +2271,7 @@ validation_results = validate_features(df, 'target', feature_cols, validation_me
 | | `lag_prefix` | 'lag' | Префикс for названий | str |
 | | `config.max_lag` | max(lags) | Максимальный лаг | 1-365 |
 | | `config.min_lag` | min(lags) | Минимальный лаг | 1-365 |
-| | `config.validation` | True | Валидация данных | True, False |
+| | `config.validation` | True | validation данных | True, False |
 | | `config.memory_efficient` | False | Эффективное использование памяти | True, False |
 | **create_rolling_features** | | | | |
 | | `windows` | [3, 7, 14, 30] | Размеры окон | 1-365 periods |
@@ -2360,7 +2360,7 @@ validation_results = validate_features(df, 'target', feature_cols, validation_me
 - Use значения on умолчанию for большинства параметров
 - Настройте только основные parameters (lags, windows, alphas)
 - Включите базовые статистики (mean, std, min, max)
-- Use простые методы заполнения пропусков (forward)
+- Use простые methods заполнения пропусков (forward)
 
 #### for опытных пользователей
 
@@ -2375,7 +2375,7 @@ validation_results = validate_features(df, 'target', feature_cols, validation_me
 - Включите все типы признаков (временные, статистические, Technical, категориальные, текстовые)
 - Use автоматическую генерацию признаков
 - Настройте Monitoring and валидацию признаков
-- Включите все проверки безопасности and производительности
+- Включите все проверки безопасности and performance
 
 ## Заключение
 
@@ -2391,7 +2391,7 @@ Feature Generation - это основа успешного machine learning. П
 1. **Понимание данных** - знайте, with чем Workingете
 2. **Доменные знания** - Use экспертизу in предметной области
 3. **Автоматизация** - автоматизируйте рутинные процессы
-4. **Валидация** - всегда проверяйте качество признаков
+4. **validation** - всегда проверяйте качество признаков
 5. **Monitoring** - следите за стабильностью признаков
 
 ### Следующие шаги

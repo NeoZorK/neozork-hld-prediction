@@ -76,7 +76,7 @@ elif 'Direction' in display_df.columns:
 - ✅ Создан полный набор tests in `tests/plotting/test_wave_fast_mode.py`
 - ✅ Все 7 tests прошли успешно
 - ✅ Протестирована реальная Working with data
-- ✅ Сравнение with fastest режимом показало идентичность
+- ✅ comparison with fastest режимом показало идентичность
 
 ### 5. **documentation**
 - Создана подробная documentation in `docs/guides/`

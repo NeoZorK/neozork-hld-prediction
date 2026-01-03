@@ -70,7 +70,7 @@ system requirements
 
 ### AutoML Gluon 🏗️ Architecture
 
-<img src="images/optimized/architecture_diagram.png" alt="Архитектура AutoML Gluon" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/architecture_diagram.png" alt="Architecture AutoML Gluon" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Figure 2: AutoML Gluon Architectural Diagram *
 
 **Why is it important to understand architecture?** BecaUse it helps to understand how AutoML Gluon works inside and why it is so effective:
@@ -113,7 +113,7 @@ Minimum requirements
 
 Compare Performance
 
-<img src="images/optimized/performance_comparison.png" alt="Сравнение производительности" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/performance_comparison.png" alt="Comparison performance" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Figure 3: Comparison of AutoML Gluon performance on different configurations*
 
 **Why is it important to understand performance?** BecaUse it helps to choose the optimal configuration for your tasks:
@@ -125,7 +125,7 @@ Compare Performance
 
 ### Model Quality 🎯 Metrics
 
-<img src="images/optimized/metrics_comparison.png" alt="Сравнение метрик" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/metrics_comparison.png" alt="comparison метрик" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Figure 4: Comparison of different model quality metrics *
 
 **Why is it important to understand metrics?** BecaUse different tasks require different metrics for quality assessment:
@@ -166,7 +166,7 @@ Compare Performance
 
 ## AutoML Gluon 🔄 Workflows
 
-<img src="images/optimized/retraining_workflow.png" alt="Рабочий процесс переобучения" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/retraining_workflow.png" alt="Workflow retraining" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Figure 5: Model retraining workflow diagram *
 
 **Why is it important to understand workflows?** BecaUse it helps to understand how AutoML Gluon automates the entire machine learning process:
@@ -412,7 +412,7 @@ pip install -e ./tabular
 
 ## Validation and testing 📋 Methods
 
-<img src="images/optimized/validation_methods.png" alt="Методы валидации" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/validation_methods.png" alt="Methods validation" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Figure 6: Various model validation methods *
 
 **Why is validation important?** BecaUse it ensures the reliability and quality of models:
@@ -798,9 +798,9 @@ predictor = TimeSeriesPredictor(
 predictor.fit(train_data, time_limit=3600)
 ```
 
-**Сравнение библиотек for временных рядов:**
+**comparison библиотек for временных рядов:**
 
-| Библиотека | Тип моделей | Сложность | Производительность | Точность |
+| Библиотека | Тип моделей | Сложность | performance | Точность |
 |------------|-------------|-----------|-------------------|----------|
 | **GluonTS** | Deep Learning | Высокая | Очень высокая | Очень высокая |
 | **MXNet** | Custom Deep Learning | Очень высокая | Высокая | Высокая |
@@ -868,7 +868,7 @@ print(f"Model performance: {performance}")
 
 ### Переменные окружения
 ```bash
-# installation переменных for оптимизации производительности
+# installation переменных for оптимизации performance
 export OMP_NUM_THREADS=4
 export MKL_NUM_THREADS=4
 export OPENBLAS_NUM_THREADS=4
@@ -886,7 +886,7 @@ export AUTOGLUON_DEBUG=1
 
 **Назначение:**
 - Контролирует количество потоков for OpenMP операций
-- Влияет on производительность numpy, scipy, scikit-learn
+- Влияет on performance numpy, scipy, scikit-learn
 - Оптимизирует использование CPU ядер
 
 **Рекомендуемые значения:**
@@ -906,9 +906,9 @@ export OMP_NUM_THREADS=3 # Оставляем 1 ядро for системы
 export OMP_NUM_THREADS=12 # Оставляем 4 ядра for системы
 ```
 
-**Влияние on производительность:**
+**Влияние on performance:**
 - **Слишком мало потоков**: Недоиспользование CPU
-- **Слишком много потоков**: Конкуренция за ресурсы, снижение производительности
+- **Слишком много потоков**: Конкуренция за ресурсы, снижение performance
 - **Оптимальное значение**: 70-80% from доступных ядер
 
 **check эффективности:**
@@ -916,7 +916,7 @@ export OMP_NUM_THREADS=12 # Оставляем 4 ядра for системы
 import numpy as np
 import time
 
-# Тест производительности with разным количеством потоков
+# Тест performance with разным количеством потоков
 def test_omp_performance():
 # create большой матрицы
  size = 5000
@@ -939,13 +939,13 @@ test_omp_performance()
 
 **Назначение:**
 - Контролирует количество потоков for Intel Math Kernel Library
-- Влияет on производительность numpy, scipy, pandas
+- Влияет on performance numpy, scipy, pandas
 - Оптимизирует математические операции
 
 **Рекомендуемые значения:**
 - **Должно быть равно OMP_NUM_THREADS**: `MKL_NUM_THREADS=4`
 - **for избежания конфликтов**: not должно превышать OMP_NUM_THREADS
-- **for максимальной производительности**: Равно количеству физических ядер
+- **for максимальной performance**: Равно количеству физических ядер
 
 **Практические examples:**
 ```bash
@@ -960,9 +960,9 @@ export MKL_NUM_THREADS=4 # Use 4 ядра
 export MKL_NUM_THREADS=2 # Меньше потоков for AMD
 ```
 
-**Влияние on производительность:**
+**Влияние on performance:**
 - **Synchronization with OMP**: Предотвращает перегрузку системы
-- **Оптимизация MKL**: Максимальная производительность математических операций
+- **Оптимизация MKL**: Максимальная performance математических операций
 - **Избежание конфликтов**: Предотвращает конкуренцию за ресурсы
 
 **check Settings:**
@@ -973,7 +973,7 @@ import numpy as np
 print(f"OMP_NUM_THREADS: {np.getenv('OMP_NUM_THREADS', 'not set')}")
 print(f"MKL_NUM_THREADS: {np.getenv('MKL_NUM_THREADS', 'not set')}")
 
-# Тест производительности
+# Тест performance
 def test_mkl_performance():
 # create больших массивов
  a = np.random.randn(3000, 3000)
@@ -999,7 +999,7 @@ test_mkl_performance()
 **Назначение:**
 - Контролирует количество потоков for OpenBLAS библиотеки
 - Альтернатива Intel MKL for систем без Intel CPU
-- Влияет on производительность линейной алгебры
+- Влияет on performance линейной алгебры
 
 **Рекомендуемые значения:**
 - **for систем with Intel MKL**: not используется (MKL имеет приоритет)
@@ -1029,7 +1029,7 @@ import numpy as np
 print(f"NumPy BLAS info: {np.__config__.blas_opt_info}")
 print(f"NumPy LAPACK info: {np.__config__.lapack_opt_info}")
 
-# Тест производительности
+# Тест performance
 def test_blas_performance():
 # create больших матриц
  size = 2000
@@ -1092,7 +1092,7 @@ if torch.cuda.is_available():
  print(f"GPU {i}: {torch.cuda.get_device_name(i)}")
  print(f"GPU {i} memory: {torch.cuda.get_device_properties(i).total_memory / 1e9:.1f} GB")
 
-# Тест производительности GPU
+# Тест performance GPU
 def test_gpu_performance():
  if torch.cuda.is_available():
  device = torch.device('cuda')
@@ -1163,7 +1163,7 @@ predictor.fit(data, time_limit=60)
 # Выведет детальную информацию о:
 # - Выборе алгоритмов
 # - Процессе обучения
-# - Валидации моделей
+# - validation моделей
 # - Создании ансамблей
 ```
 
@@ -1211,7 +1211,7 @@ import pandas as pd
 from autogluon.tabular import TabularPredictor
 
 def benchmark_environment():
-"""Тест производительности with текущими настройками"""
+"""Тест performance with текущими настройками"""
 
  print("=== Environment Benchmark ===")
  print(f"OMP_NUM_THREADS: {os.getenv('OMP_NUM_THREADS', 'default')}")
@@ -1219,7 +1219,7 @@ def benchmark_environment():
  print(f"OPENBLAS_NUM_THREADS: {os.getenv('OPENBLAS_NUM_THREADS', 'default')}")
  print(f"CUDA_VISIBLE_DEVICES: {os.getenv('CUDA_VISIBLE_DEVICES', 'default')}")
 
-# Тест NumPy производительности
+# Тест NumPy performance
  print("\n=== NumPy Performance Test ===")
  size = 2000
  a = np.random.randn(size, size)
@@ -1312,7 +1312,7 @@ num_gpus: 1 # Количество GPU
 - **Средние data (1-100MB)**: `4-8` GB
 - **Большие data (100MB-1GB)**: `8-16` GB
 - **Очень большие data (> 1GB)**: `16-32` GB
-- **Влияние on производительность**:
+- **Влияние on performance**:
 - **Мало памяти**: Медленная Working, возможные ошибки
 - **Достаточно памяти**: Быстрая Working, стабильность
 - **Много памяти**: Максимальная скорость, обработка больших данных
@@ -1372,8 +1372,8 @@ num_gpus: 1 # Количество GPU
 - **Детальная configuration on типам GPU**:
 - **Нет GPU**: `num_gpus: 0` - обучение только on CPU
 - **GTX 1060 6GB**: `num_gpus: 1` - базовая поддержка GPU
-- **RTX 3070 8GB**: `num_gpus: 1` - хорошая производительность
-- **RTX 4080 16GB**: `num_gpus: 1` - высокая производительность
+- **RTX 3070 8GB**: `num_gpus: 1` - хорошая performance
+- **RTX 4080 16GB**: `num_gpus: 1` - высокая performance
 - **A100 40GB**: `num_gpus: 1` - профессиональная Working
 - **Несколько GPU**: `num_gpus: 2+` - for large models
 - **Влияние on скорость обучения**:
@@ -1590,24 +1590,24 @@ if __name__ == "__main__":
  test_installation()
 ```
 
-## 🚀 Архитектура продакшена
+## 🚀 architecture продакшена
 
-<img src="images/optimized/production_architecture.png" alt="Архитектура продакшена" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 8: Архитектура deployment AutoML Gluon in продакшене*
+<img src="images/optimized/production_architecture.png" alt="architecture продакшена" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 8: architecture deployment AutoML Gluon in продакшене*
 
 **Почему важно понимать архитектуру продакшена?** Потому что это помогает правильно сPlanировать развертывание:
 
 - **Модель**: Обученная модель AutoML Gluon
 - **API Gateway**: Точка входа for запросов
 - **Load Balancer**: Распределение нагрузки между инстансами
-- **Monitoring**: Monitoring производительности and качества
+- **Monitoring**: Monitoring performance and качества
 - **Scaling**: Автоматическое масштабирование под нагрузку
-- **data Pipeline**: Поток данных for переобучения
+- **data Pipeline**: Поток данных for retraining
 
-### 📊 Сравнение продакшен решений
+### 📊 comparison продакшен решений
 
-<img src="images/optimized/production_comparison.png" alt="Сравнение продакшен решений" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 9: Сравнение различных подходов к deployment*
+<img src="images/optimized/production_comparison.png" alt="comparison продакшен решений" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 9: comparison различных подходов к deployment*
 
 **Почему важно сравнивать решения?** Потому что разные задачи требуют разных подходов:
 

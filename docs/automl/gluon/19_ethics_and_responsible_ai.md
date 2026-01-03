@@ -40,8 +40,8 @@
 
 ### 1. Справедливость and отсутствие дискриминации
 
-<img src="images/optimized/fairness_metrics.png" alt="Метрики справедливости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 19.2: Метрики справедливости in ML - различные подходы к измерению справедливости*
+<img src="images/optimized/fairness_metrics.png" alt="metrics справедливости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 19.2: metrics справедливости in ML - различные подходы к измерению справедливости*
 
 **Почему справедливость - это основа этичного AI?** Потому что несправедливые модели могут дискриминировать людей on полу, расе, возрасту and другим приsignм, что недопустимо in современном обществе.
 
@@ -82,7 +82,7 @@ def check_fairness(model, X_test, y_test, sensitive_attributes):
  group_predictions = predictions[mask]
  group_actual = y_test[mask]
 
-# Метрики for каждой группы - сравнение производительности
+# metrics for каждой группы - Comparison performance
  accuracy = (group_predictions == group_actual).mean()
  precision = calculate_precision(group_predictions, group_actual)
  recall = calculate_recall(group_predictions, group_actual)
@@ -172,7 +172,7 @@ def calculate_recall(predictions, actual):
 - **`accuracy = (group_predictions == group_actual).mean()`**: Точность for группы
 - Формула: (правильные предсказания) / (общее количество)
 - Диапазон: from 0 to 1
-- Применение: основная метрика производительности
+- Применение: основная метрика performance
 - Интерпретация: доля правильных predictions
 
 - **`precision = calculate_precision(group_predictions, group_actual)`**: Точность for группы
@@ -199,7 +199,7 @@ def calculate_recall(predictions, actual):
 - Применение: бинарная оценка справедливости
 - Рекомендация: можно настроить порог
 
-**Метрики справедливости:**
+**metrics справедливости:**
 
 - **Statistical Parity**: Равные доли положительных исходов
 - Формула: P(Ŷ=1|A=a) = P(Ŷ=1|A=b) for all групп
@@ -208,7 +208,7 @@ def calculate_recall(predictions, actual):
 
 - **Equalized Odds**: Равные TPR and FPR
 - Формула: TPR_A = TPR_B and FPR_A = FPR_B
-- Применение: check равной производительности
+- Применение: check равной performance
 - Преимущества: учитывает истинные метки
 
 - **Demographic Parity**: Демографический паритет
@@ -390,7 +390,7 @@ class EthicalModelWrapper:
 - Результат: булево значение наличия смещений
 - Рекомендация: можно настроить порог
 
-**Методы объяснения:**
+**methods объяснения:**
 
 - **SHAP (SHapley Additive exPlanations)**:
 - Принцип: игровая теория for объяснения
@@ -415,9 +415,9 @@ class EthicalModelWrapper:
 ### 3. Приватность and защита данных
 
 <img src="images/optimized/privacy_protection.png" alt="Защита приватности" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 19.4: Защита приватности in ML - методы and принципы*
+*Рисунок 19.4: Защита приватности in ML - methods and принципы*
 
-**Методы защиты приватности:**
+**methods защиты приватности:**
 - **Differential Privacy**: Математическая гарантия приватности with контролируемым шумом
 - **k-Anonymity**: Минимум k записей in группе for защиты from идентификации
 - **l-Diversity**: Разнообразие чувствительных значений in группах
@@ -577,7 +577,7 @@ class PrivacyPreservingML:
 - Применение: check l-разнообразия
 - Критерий: unique_sensitive_values >= l
 
-**Методы защиты приватности:**
+**methods защиты приватности:**
 
 - **Differential Privacy (ε, δ)**:
 - Принцип: математическая гарантия приватности
@@ -768,14 +768,14 @@ class AIActCompliance:
 ## Bias Detection and Mitigation
 
 <img src="images/optimized/bias_detection.png" alt="Обнаружение and снижение смещений" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 19.3: Обнаружение and снижение смещений in ML - этапы and методы*
+*Рисунок 19.3: Обнаружение and снижение смещений in ML - этапы and methods*
 
 **Этапы обнаружения смещений:**
 - **data Bias**: Смещения in данных (исторические предрассудки, неравномерное представление)
 - **Algorithm Bias**: Смещения in алгоритмах (неправильные признаки, скрытые корреляции)
-- **Evaluation Bias**: Смещения in оценке (неравномерные метрики, предвзятые тесты)
+- **Evaluation Bias**: Смещения in оценке (неравномерные metrics, предвзятые тесты)
 
-**Методы снижения смещений:**
+**methods снижения смещений:**
 - **Preprocessing Mitigation**: remove чувствительных признаков, балансировка данных
 - **In-processing Mitigation**: Fairness constraints, adversarial training, regularization
 - **Post-processing Mitigation**: Калибровка порогов, адаптивные решения
@@ -938,7 +938,7 @@ class BiasDetector:
 - Применение: общая мера справедливости
 - Интерпретация: чем меньше, тем справедливее
 
-**Метрики справедливости:**
+**metrics справедливости:**
 
 - **Statistical Parity Difference (SPD)**:
 - Формула: max(P(Ŷ=1|A=a)) - min(P(Ŷ=1|A=a))
@@ -948,7 +948,7 @@ class BiasDetector:
 
 - **Equalized Odds Difference (EOD)**:
 - Формула: max(|TPR_A - TPR_B|, |FPR_A - FPR_B|)
-- Применение: check равной производительности
+- Применение: check равной performance
 - Преимущества: учитывает истинные метки
 - Порог: < 0.1 for справедливости
 
@@ -960,7 +960,7 @@ class BiasDetector:
 
 **Практические рекомендации:**
 
-- **Выбор метрик**: SPD for равных возможностей, EOD for равной производительности
+- **Выбор метрик**: SPD for равных возможностей, EOD for равной performance
 - **Пороги справедливости**: 0.1 (10%) for большинства случаев
 - **Баланс**: между справедливостью and точностью
 - **Monitoring**: регулярная check метрик справедливости
@@ -971,7 +971,7 @@ class BiasDetector:
 
 ```python
 class BiasMitigation:
-"""Методы снижения смещений"""
+"""methods снижения смещений"""
 
  def __init__(self):
  self.mitigation_strategies = {}
@@ -1036,7 +1036,7 @@ class BiasMitigation:
  def calculate_fair_threshold(self, predictions, group):
 """Расчет справедливого порога for группы"""
 
-# Простая эвристика - можно заменить on более сложные методы
+# Простая эвристика - можно заменить on более сложные methods
  return 0.5
 ```
 

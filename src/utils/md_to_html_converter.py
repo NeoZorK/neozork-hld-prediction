@@ -472,9 +472,9 @@ class MarkdownToHTMLConverter:
  <h2>Основные разделы</h2>
  <ul>
  <li><strong>installation and configuration:</strong> Полная configuration окружения for development</li>
- <li><strong>Подготовка данных:</strong> Методы очистки and подготовки данных</li>
+ <li><strong>Подготовка данных:</strong> methods очистки and подготовки данных</li>
  <li><strong>Обучение моделей:</strong> AutoML подходы and best practices</li>
- <li><strong>Тестирование:</strong> Backtesting and валидация моделей</li>
+ <li><strong>Тестирование:</strong> Backtesting and validation моделей</li>
  <li><strong>Риск-менеджмент:</strong> Management рисками in ML системах</li>
  <li><strong>Развертывание:</strong> Production deployment and Monitoring</li>
  </ul>

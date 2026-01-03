@@ -72,7 +72,7 @@ src/mobile_app/
  └── Dashboardscreen.js # main screen
 ```
 
-## 🚀 Launch приложения
+## 🚀 Launch apps
 
 ### 1. installation dependencies
 ```bash
@@ -80,12 +80,12 @@ cd src/mobile_app
 npm install
 ```
 
-### 2. Launch in режиме разработки
+### 2. Launch in development mode
 ```bash
 npx expo start
 ```
 
-### 3. Launch on устройстве
+### 3. Launch on the device
 ```bash
 # Android
 npx expo start --android
@@ -100,88 +100,88 @@ npx expo start --web
 ## 🔗 integration with Backend
 
 ### API Endpoints
-Все мобильные endpoints доступны on адресу `http://localhost:8080/mobile/`:
+All mobile endpoints are available at 'http://localhost:8080/mobile/`:
 
 - `GET /mobile/health` - health check
-- `GET /mobile/dashboard` - data dashboard (требует аутентификации)
-- `GET /mobile/Portfolio` - Portfolio (требует аутентификации)
-- `GET /mobile/funds` - List of funds (требует аутентификации)
-- `POST /mobile/investments` - create инвестиции (требует аутентификации)
-- `POST /mobile/sync` - Synchronization (требует аутентификации)
-- `POST /mobile/notifications/Push` - Push notifications (требует аутентификации)
+- `GET /mobile/dashboard` - data dashboard (requires authentication)
+- `GET /mobile/Portfolio` - Portfolio (requires authentication)
+- `GET /mobile/funds` - List of funds (requires authentication)
+- `post /mobile/investments` - create investments (requires authentication)
+- `post /mobile/sync` - Synchronization (requires authentication)
+- `post /mobile/notifications/push` - Push notifications (requires authentication)
 
 ### Authentication
-- JWT токены for аутентификации
-- AsyncStorage for хранения токенов
-- Автоматическое update токенов
+- JWT tokens for authentication
+- AsyncStorage for storing tokens
+- Automatic token update
 
-## 📱 Функциональность
+Functionality
 
 ### 1. **Authentication**
-- Регистрация новых пользователей
+New registration
 - Login to system
-- Автоматическое сохранение сессии
-- Выход из системы
+- Automatically save session
+- Logout
 
 ### 2. **Navigation**
-- Stack Navigation между screenми
-- Условная Navigation (auth/main)
-- Защищенные маршруты
+- Stack Navigation between screens
+- Conditional Navigation (auth/main)
+- Protected routes
 
 ### 3. **API integration**
 - HTTP client with axios
-- Обработка ошибок
-- Автоматическое add токенов
-- Базовый URL configuration
+- Error handling
+- Automatic add tokens
+- Basic URL configuration
 
 ### 4. **UI/UX**
-- Современный дизайн
-- Консистентные стили
-- Адаптивная верстка
-- Индикаторы загрузки
+- Modern design
+- Consistent styles
+- Adaptive layout
+- Loading indicators
 
-## 🧪 Тестирование
+Testing
 
 ### check API endpoints
 ```bash
 # health check
 curl -X GET "http://localhost:8080/mobile/health"
 
-# check dashboard (требует аутентификации)
+# check dashboard (requires authentication)
 curl -X GET "http://localhost:8080/mobile/dashboard"
 ```
 
-### Результаты тестирования
-- ✅ `/mobile/health` - Workingет корректно
-- ✅ `/mobile/dashboard` - требует аутентификации (ожидаемо)
-- ✅ `/mobile/Portfolio` - требует аутентификации (ожидаемо)
-- ✅ Все endpoints доступны in OpenAPI схеме
+### Test results
+- ✅ `/mobile/health` - Works correctly
+- ✅ `/mobile/dashboard` - requires authentication (expected)
+- ✅ `/mobile/Portfolio` - requires authentication (expected)
+- ✅ All endpoints are available in OpenAPI schema
 
-## 📋 Следующие шаги
+Next steps
 
-### Возможные улучшения:
-1. **Дополнительные экраны**
- - Детальный View funds
- - История транзакций
- - Settings профиля
+### Possible improvements:
+1. **Additional screens**
+ - Detailed View funds
+ - Transaction history
+ - Profile Settings
  - notifications
 
-2. **Расширенная функциональность**
+2. **Advanced functionality**
  - Push notifications
- - Офлайн режим
- - Биометрическая Authentication
- - Графики and аналитика
+- Offline mode
+ - Biometric Authentication
+ - Charts and analytics
 
-3. **UI/UX улучшения**
- - Анимации
- - Темная тема
- - Локализация
+3. **UI/UX improvements**
+ - Animations
+ - Dark theme
+ - Localization
  - Accessibility
 
-## 🎉 Заключение
+CONCLUSION
 
-mobile application Pocket Hedge fund successfully created and integrated with backend API. application готово к использованию and может быть запущено on iOS, Android or in веб-браузере.
+mobile application Pocket Hedge fund successfully created and integrated with backend API. application is ready to use and can be run on iOS, Android or in a web browser.
 
-**Статус**: ✅ **COMPLETED**
-**Дата**: 9 сентября 2025
-**Версия**: 1.0.0
+**Status**: ✅ **COMPLETED**
+**Date**: September 9, 2025
+**Version**: 1.0.0

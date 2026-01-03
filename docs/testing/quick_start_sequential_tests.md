@@ -125,7 +125,7 @@ Timeout: 60s
 docker run --rm your-container python scripts/run_sequential_tests_docker.py
 ```
 
-## Сравнение with параллельным выполнением
+## comparison with параллельным выполнением
 
 | Параллельное (`-n auto`) | Последовательное |
 |---------------------------|------------------|

@@ -210,7 +210,7 @@ tail -f Logs/*.log
 # health check / health check
 curl http://localhost:8080/health
 
-# Prometheus метрики / Prometheus metrics
+# Prometheus metrics / Prometheus metrics
 curl http://localhost:9090/metrics
 
 # Статус Docker / Docker status

@@ -14,7 +14,7 @@ graph TD
  B -->|Нет| C[95% стратегий терпят неудачу]
  C --> D[❌ Ложная уверенность in результатах]
  C --> E[❌ Неожиdata потери in реальной торговле]
- C --> F[❌ Нестабильная производительность]
+ C --> F[❌ Нестабильная performance]
  C --> G[❌ Потеря времени and денег]
 
  B -->|Да| H[5% успешных стратегий]
@@ -82,7 +82,7 @@ P(Strategy_Success) = ∫ P(Success|Parameters, Market_Conditions) × P(Market_C
 
 ### Типы Monte Carlo симуляций
 
-### 📊 Сравнение типов Monte Carlo симуляций
+### 📊 comparison типов Monte Carlo симуляций
 
 ```mermaid
 graph TB
@@ -150,7 +150,7 @@ graph TB
 
 ### 1.1 Параметрические симуляции
 
-### 📈 Процесс параметрических симуляций
+### 📈 process параметрических симуляций
 
 ```mermaid
 graph TD
@@ -227,7 +227,7 @@ def normal_monte_carlo(returns, n_simulations=10000, time_horizon=252):
  Количество симуляций for выполнения Monte Carlo Analysis.
  Рекомендуемые значения:
  - Минимум: 1000 (for быстрого тестирования)
- - Оптимально: 10000 (for баланса точности and производительности)
+ - Оптимально: 10000 (for баланса точности and performance)
  - Максимум: 100000 (for высокой точности, но медленно)
  Влияет on точность статистических оценок and время выполнения.
 
@@ -271,7 +271,7 @@ def normal_monte_carlo(returns, n_simulations=10000, time_horizon=252):
  - Максимальная просадка рассчитывается как максимальное падение from пика
  - for более точных результатов рекомендуется использовать >= 10000 симуляций
  """
- # Валидация входных параметров
+ # validation входных параметров
  if len(returns) == 0:
  raise ValueError("Массив returns not может быть пустым")
 
@@ -298,7 +298,7 @@ def normal_monte_carlo(returns, n_simulations=10000, time_horizon=252):
  # Расчет кумулятивной доходности: (1 + r1) * (1 + r2) * ... * (1 + rn) - 1
  cumulative_return = np.prod(1 + random_returns) - 1
 
- # Метрики качества
+ # metrics качества
  sharpe = np.mean(random_returns) / np.std(random_returns) * np.sqrt(252) # Годовой Sharpe
  max_drawdown = calculate_max_drawdown(random_returns) # Максимальная просадка
 
@@ -342,7 +342,7 @@ def t_distribution_monte_carlo(returns, n_simulations=10000, time_horizon=252):
  Количество симуляций for выполнения Monte Carlo Analysis.
  Рекомендуемые значения:
  - Минимум: 1000 (for быстрого тестирования)
- - Оптимально: 10000 (for баланса точности and производительности)
+ - Оптимально: 10000 (for баланса точности and performance)
  - Максимум: 100000 (for высокой точности)
 
  time_horizon : int, default=252
@@ -390,7 +390,7 @@ def t_distribution_monte_carlo(returns, n_simulations=10000, time_horizon=252):
  """
  from scipy import stats
 
- # Валидация входных параметров
+ # validation входных параметров
  if len(returns) == 0:
  raise ValueError("Массив returns not может быть пустым")
 
@@ -425,7 +425,7 @@ def t_distribution_monte_carlo(returns, n_simulations=10000, time_horizon=252):
  # Расчет кумулятивной доходности
  cumulative_return = np.prod(1 + random_returns) - 1
 
- # Метрики качества
+ # metrics качества
  sharpe = np.mean(random_returns) / np.std(random_returns) * np.sqrt(252)
  max_drawdown = calculate_max_drawdown(random_returns)
 
@@ -469,7 +469,7 @@ def mixture_monte_carlo(returns, n_simulations=10000, time_horizon=252, n_compon
  Количество симуляций for выполнения Monte Carlo Analysis.
  Рекомендуемые значения:
  - Минимум: 1000 (for быстрого тестирования)
- - Оптимально: 10000 (for баланса точности and производительности)
+ - Оптимально: 10000 (for баланса точности and performance)
  - Максимум: 100000 (for высокой точности)
 
  time_horizon : int, default=252
@@ -525,13 +525,13 @@ def mixture_monte_carlo(returns, n_simulations=10000, time_horizon=252, n_compon
  ------
  - GMM автоматически определяет веса and parameters каждого компонента
  - Модель может выявить скрытые рыночные режимы
- - Больше компонентов = более гибкая модель, но риск переобучения
+ - Больше компонентов = более гибкая модель, но риск retraining
  - Использует EM-алгоритм for подгонки параметров
  - random_state=42 обеспечивает воспроизводимость результатов
  """
  from sklearn.mixture import GaussianMixture
 
- # Валидация входных параметров
+ # validation входных параметров
  if len(returns) == 0:
  raise ValueError("Массив returns not может быть пустым")
 
@@ -573,7 +573,7 @@ def mixture_monte_carlo(returns, n_simulations=10000, time_horizon=252, n_compon
  # Расчет кумулятивной доходности
  cumulative_return = np.prod(1 + random_returns) - 1
 
- # Метрики качества
+ # metrics качества
  sharpe = np.mean(random_returns) / np.std(random_returns) * np.sqrt(252)
  max_drawdown = calculate_max_drawdown(random_returns)
 
@@ -598,7 +598,7 @@ mixture_simulations = mixture_monte_carlo(
 
 ### 1.2 Непараметрические симуляции
 
-### 🔄 Процесс непараметрических симуляций
+### 🔄 process непараметрических симуляций
 
 ```mermaid
 graph TD
@@ -638,7 +638,7 @@ graph TD
  U -->|Нет| M
  U -->|Да| V[Анализ результатов]
 
- V --> W[Сравнение with историческими данными]
+ V --> W[comparison with историческими данными]
  V --> X[Оценка реалистичности]
  V --> Y[Статистические тесты]
 
@@ -685,7 +685,7 @@ def bootstrap_monte_carlo(returns, n_simulations=10000, time_horizon=252, block_
  Количество симуляций for выполнения Monte Carlo Analysis.
  Рекомендуемые значения:
  - Минимум: 1000 (for быстрого тестирования)
- - Оптимально: 10000 (for баланса точности and производительности)
+ - Оптимально: 10000 (for баланса точности and performance)
  - Максимум: 100000 (for высокой точности)
 
  time_horizon : int, default=252
@@ -745,7 +745,7 @@ def bootstrap_monte_carlo(returns, n_simulations=10000, time_horizon=252, block_
  - Оптимальный block_size зависит from характера данных
  - Метод not требует предположений о распределении данных
  """
- # Валидация входных параметров
+ # validation входных параметров
  if len(returns) == 0:
  raise ValueError("Массив returns not может быть пустым")
 
@@ -791,7 +791,7 @@ def bootstrap_monte_carlo(returns, n_simulations=10000, time_horizon=252, block_
  # Расчет кумулятивной доходности
  cumulative_return = np.prod(1 + bootstrap_returns) - 1
 
- # Метрики качества
+ # metrics качества
  sharpe = np.mean(bootstrap_returns) / np.std(bootstrap_returns) * np.sqrt(252)
  max_drawdown = calculate_max_drawdown(bootstrap_returns)
 
@@ -836,7 +836,7 @@ def permutation_monte_carlo(returns, n_simulations=10000, time_horizon=252):
  Количество симуляций for выполнения Monte Carlo Analysis.
  Рекомендуемые значения:
  - Минимум: 1000 (for быстрого тестирования)
- - Оптимально: 10000 (for баланса точности and производительности)
+ - Оптимально: 10000 (for баланса точности and performance)
  - Максимум: 100000 (for высокой точности)
 
  time_horizon : int, default=252
@@ -884,7 +884,7 @@ def permutation_monte_carlo(returns, n_simulations=10000, time_horizon=252):
  - Подходит for тестирования гипотез о случайности
  - Менее реалистично for финансовых данных with автокорреляцией
  """
- # Валидация входных параметров
+ # validation входных параметров
  if len(returns) == 0:
  raise ValueError("Массив returns not может быть пустым")
 
@@ -913,7 +913,7 @@ def permutation_monte_carlo(returns, n_simulations=10000, time_horizon=252):
  # Расчет кумулятивной доходности
  cumulative_return = np.prod(1 + permuted_returns) - 1
 
- # Метрики качества
+ # metrics качества
  sharpe = np.mean(permuted_returns) / np.std(permuted_returns) * np.sqrt(252)
  max_drawdown = calculate_max_drawdown(permuted_returns)
 
@@ -937,7 +937,7 @@ permutation_simulations = permutation_monte_carlo(
 
 ### 1.3 Гибридные симуляции
 
-### 🧠 Архитектура гибридных симуляций
+### 🧠 architecture гибридных симуляций
 
 ```mermaid
 graph TD
@@ -978,8 +978,8 @@ graph TD
  U -->|Нет| J
  U -->|Да| V[Анализ гибридных результатов]
 
- V --> W[Сравнение with параметрическими]
- V --> X[Сравнение with непараметрическими]
+ V --> W[comparison with параметрическими]
+ V --> X[comparison with непараметрическими]
  V --> Y[Оценка качества моделирования]
 
  W --> Z[Оценка преимуществ гибридного подхода]
@@ -1025,7 +1025,7 @@ def garch_monte_carlo(returns, n_simulations=10000, time_horizon=252, p=1, q=1, 
  Количество симуляций for выполнения Monte Carlo Analysis.
  Рекомендуемые значения:
  - Минимум: 1000 (for быстрого тестирования)
- - Оптимально: 10000 (for баланса точности and производительности)
+ - Оптимально: 10000 (for баланса точности and performance)
  - Максимум: 100000 (for высокой точности)
 
  time_horizon : int, default=252
@@ -1099,7 +1099,7 @@ def garch_monte_carlo(returns, n_simulations=10000, time_horizon=252, p=1, q=1, 
  """
  from arch import arch_model
 
- # Валидация входных параметров
+ # validation входных параметров
  if len(returns) == 0:
  raise ValueError("Массив returns not может быть пустым")
 
@@ -1155,7 +1155,7 @@ def garch_monte_carlo(returns, n_simulations=10000, time_horizon=252, p=1, q=1, 
  # Расчет кумулятивной доходности
  cumulative_return = np.prod(1 + random_returns) - 1
 
- # Метрики качества
+ # metrics качества
  sharpe = np.mean(random_returns) / np.std(random_returns) * np.sqrt(252)
  max_drawdown = calculate_max_drawdown(random_returns)
 
@@ -1202,7 +1202,7 @@ def copula_monte_carlo(returns, n_simulations=10000, time_horizon=252, copula_ty
  Количество симуляций for выполнения Monte Carlo Analysis.
  Рекомендуемые значения:
  - Минимум: 1000 (for быстрого тестирования)
- - Оптимально: 10000 (for баланса точности and производительности)
+ - Оптимально: 10000 (for баланса точности and performance)
  - Максимум: 100000 (for высокой точности)
 
  time_horizon : int, default=252
@@ -1263,7 +1263,7 @@ def copula_monte_carlo(returns, n_simulations=10000, time_horizon=252, copula_ty
  """
  from scipy.stats import gaussian_kde
 
- # Валидация входных параметров
+ # validation входных параметров
  if len(returns) == 0:
  raise ValueError("Массив returns not может быть пустым")
 
@@ -1312,7 +1312,7 @@ def copula_monte_carlo(returns, n_simulations=10000, time_horizon=252, copula_ty
  # Расчет кумулятивной доходности
  cumulative_return = np.prod(1 + random_returns) - 1
 
- # Метрики качества
+ # metrics качества
  sharpe = np.mean(random_returns) / np.std(random_returns) * np.sqrt(252)
  max_drawdown = calculate_max_drawdown(random_returns)
 
@@ -1377,7 +1377,7 @@ graph TD
  T -->|Нет| J
  T -->|Да| U[Анализ стресс-результатов]
 
- U --> V[Сравнение сценариев<br/>crash vs high_vol vs low_vol vs regimes]
+ U --> V[comparison сценариев<br/>crash vs high_vol vs low_vol vs regimes]
  U --> W[Оценка устойчивости стратегии<br/>performance under stress]
  U --> X[Расчет VaR and ES for каждого сценария]
 
@@ -1427,7 +1427,7 @@ def stress_test_monte_carlo(returns, n_simulations=10000, time_horizon=252,
  Количество симуляций for выполнения Monte Carlo Analysis.
  Рекомендуемые значения:
  - Минимум: 1000 (for быстрого тестирования)
- - Оптимально: 10000 (for баланса точности and производительности)
+ - Оптимально: 10000 (for баланса точности and performance)
  - Максимум: 100000 (for высокой точности)
 
  time_horizon : int, default=252
@@ -1506,7 +1506,7 @@ def stress_test_monte_carlo(returns, n_simulations=10000, time_horizon=252,
  - tail_risk_multiplier усиливает экстремальные события
  - Рекомендуется тестировать on исторических кризисах
  """
- # Валидация входных параметров
+ # validation входных параметров
  if len(returns) == 0:
  raise ValueError("Массив returns not может быть пустым")
 
@@ -1545,7 +1545,7 @@ def stress_test_monte_carlo(returns, n_simulations=10000, time_horizon=252,
  }
  }
 
- # Валидация сценариев
+ # validation сценариев
  for scenario_name, params in stress_scenarios.items():
  if 'volatility_multiplier' not in params or 'return_shift' not in params:
  raise ValueError(f"Сценарий {scenario_name} должен содержать volatility_multiplier and return_shift")
@@ -1571,7 +1571,7 @@ def stress_test_monte_carlo(returns, n_simulations=10000, time_horizon=252,
  # Расчет кумулятивной доходности
  cumulative_return = np.prod(1 + random_returns) - 1
 
- # Метрики качества
+ # metrics качества
  sharpe = np.mean(random_returns) / np.std(random_returns) * np.sqrt(252)
  max_drawdown = calculate_max_drawdown(random_returns)
 
@@ -1687,7 +1687,7 @@ def regime_monte_carlo(returns, n_simulations=10000, time_horizon=252, n_regimes
  Количество симуляций for выполнения Monte Carlo Analysis.
  Рекомендуемые значения:
  - Минимум: 1000 (for быстрого тестирования)
- - Оптимально: 10000 (for баланса точности and производительности)
+ - Оптимально: 10000 (for баланса точности and performance)
  - Максимум: 100000 (for высокой точности)
 
  time_horizon : int, default=252
@@ -1750,12 +1750,12 @@ def regime_monte_carlo(returns, n_simulations=10000, time_horizon=252, n_regimes
  - GMM автоматически выявляет скрытые режимы in данных
  - Каждый режим характеризуется своим распределением доходностей
  - Режимы могут интерпретироваться как рыночные состояния
- - Больше режимов = более гибкая модель, но риск переобучения
+ - Больше режимов = более гибкая модель, но риск retraining
  - random_state=42 обеспечивает воспроизводимость результатов
  """
  from sklearn.mixture import GaussianMixture
 
- # Валидация входных параметров
+ # validation входных параметров
  if len(returns) == 0:
  raise ValueError("Массив returns not может быть пустым")
 
@@ -1818,7 +1818,7 @@ def regime_monte_carlo(returns, n_simulations=10000, time_horizon=252, n_regimes
  # Расчет кумулятивной доходности
  cumulative_return = np.prod(1 + random_returns) - 1
 
- # Метрики качества
+ # metrics качества
  sharpe = np.mean(random_returns) / np.std(random_returns) * np.sqrt(252)
  max_drawdown = calculate_max_drawdown(random_returns)
 
@@ -1842,15 +1842,15 @@ regime_simulations = regime_monte_carlo(
 )
 ```
 
-## Метрики качества Monte Carlo симуляций
+## metrics качества Monte Carlo симуляций
 
 ### 📊 Классификация метрик качества Monte Carlo симуляций
 
 ```mermaid
 graph TD
- A[Метрики качества Monte Carlo] --> B[Статистические метрики]
- A --> C[Риск-метрики]
- A --> D[Экономические метрики]
+ A[metrics качества Monte Carlo] --> B[Статистические metrics]
+ A --> C[Риск-metrics]
+ A --> D[Экономические metrics]
 
  B --> B1[Распределение результатов]
  B1 --> B11[Среднее значение<br/>mean_sharpe]
@@ -1886,7 +1886,7 @@ graph TD
  D1 --> D11[Условия успеха<br/>sharpe >= 1.0 AND drawdown >= -0.2]
  D1 --> D12[Вероятность успеха<br/>success_condition.mean()]
  D1 --> D13[Количество успешных симуляций<br/>n_successful]
- D1 --> D14[Средние метрики for успешных<br/>avg_sharpe, avg_drawdown, avg_return]
+ D1 --> D14[Средние metrics for успешных<br/>avg_sharpe, avg_drawdown, avg_return]
 
  D --> D2[Рентабельность]
  D2 --> D21[Финальная стоимость портфеля<br/>initial_capital * (1 + cumulative_return)]
@@ -1902,7 +1902,7 @@ graph TD
  style D fill:#f3e5f5
 ```
 
-### 1. Статистические метрики
+### 1. Статистические metrics
 
 **Распределение результатов:**
 
@@ -1923,7 +1923,7 @@ def calculate_distribution_metrics(simulations, metrics=['sharpe', 'max_drawdown
 
  metrics : List, default=['sharpe', 'max_drawdown', 'cumulative_return']
  List метрик for расчета статистик распределения.
- Доступные метрики:
+ Доступные metrics:
  - 'sharpe': Коэффициент Шарпа
  - 'max_drawdown': Максимальная просадка
  - 'cumulative_return': Кумулятивная доходность
@@ -1933,10 +1933,10 @@ def calculate_distribution_metrics(simulations, metrics=['sharpe', 'max_drawdown
  Returns:
  --------
  dict
- Словарь with метриками распределения for каждой specifiedной метрики.
+ Словарь with метриками распределения for каждой specifiedной metrics.
  Structure: {metric_name: {statistic_name: value}}
 
- Статистики for каждой метрики:
+ Статистики for каждой metrics:
  - 'mean': Среднее значение
  - 'std': Стандартное отклонение
  - 'median': Медиана
@@ -1950,8 +1950,8 @@ def calculate_distribution_metrics(simulations, metrics=['sharpe', 'max_drawdown
  -------
  ValueError
  Если simulations пустой or not содержит необходимые колонки
- Если metrics содержит несуществующие метрики
- Если все значения метрики равны (std = 0)
+ Если metrics содержит несуществующие metrics
+ Если все значения metrics равны (std = 0)
 
  Examples:
  ---------
@@ -1981,7 +1981,7 @@ def calculate_distribution_metrics(simulations, metrics=['sharpe', 'max_drawdown
  - Эксцесс > 3 означает "тяжелые хвосты" (больше экстремальных значений)
  - Квантили помогают оценить риски on разных уровнях доверия
  """
- # Валидация входных параметров
+ # validation входных параметров
  if simulations.empty:
  raise ValueError("dataFrame simulations not может быть пустым")
 
@@ -1992,13 +1992,13 @@ def calculate_distribution_metrics(simulations, metrics=['sharpe', 'max_drawdown
  available_metrics = simulations.columns.toList()
  Missing_metrics = [m for m in metrics if m not in available_metrics]
  if Missing_metrics:
- raise ValueError(f"Missing метрики: {Missing_metrics}. Доступные: {available_metrics}")
+ raise ValueError(f"Missing metrics: {Missing_metrics}. Доступные: {available_metrics}")
 
- # Валидация метрик
+ # validation метрик
  valid_metrics = ['sharpe', 'max_drawdown', 'cumulative_return', 'volatility', 'calmar']
  invalid_metrics = [m for m in metrics if m not in valid_metrics]
  if invalid_metrics:
- raise ValueError(f"Неподдерживаемые метрики: {invalid_metrics}. Поддерживаемые: {valid_metrics}")
+ raise ValueError(f"Неподдерживаемые metrics: {invalid_metrics}. Поддерживаемые: {valid_metrics}")
 
  results = {}
 
@@ -2009,7 +2009,7 @@ def calculate_distribution_metrics(simulations, metrics=['sharpe', 'max_drawdown
  data = simulations[metric].dropna() # Удаляем NaN значения
 
  if len(data) == 0:
- raise ValueError(f"Нет данных for метрики {metric}")
+ raise ValueError(f"Нет данных for metrics {metric}")
 
  # Базовые статистики
  mean_val = data.mean()
@@ -2061,7 +2061,7 @@ simulations = pd.dataFrame({
 # Расчет метрик for all стандартных метрик
 distribution_metrics = calculate_distribution_metrics(
  simulations=simulations, # dataFrame with результатами симуляций
- metrics=['sharpe', 'max_drawdown', 'cumulative_return'] # Метрики for Analysis
+ metrics=['sharpe', 'max_drawdown', 'cumulative_return'] # metrics for Analysis
 )
 ```
 
@@ -2095,7 +2095,7 @@ def calculate_confidence_intervals(simulations, confidence_levels=[0.90, 0.95, 0
 
  metrics : List, default=['sharpe', 'max_drawdown', 'cumulative_return']
  List метрик for расчета доверительных интервалов.
- Доступные метрики:
+ Доступные metrics:
  - 'sharpe': Коэффициент Шарпа
  - 'max_drawdown': Максимальная просадка
  - 'cumulative_return': Кумулятивная доходность
@@ -2105,7 +2105,7 @@ def calculate_confidence_intervals(simulations, confidence_levels=[0.90, 0.95, 0
  Returns:
  --------
  dict
- Словарь with доверительными интервалами for каждой метрики and уровня доверия.
+ Словарь with доверительными интервалами for каждой metrics and уровня доверия.
  Structure: {confidence_level: {metric: {'lower': value, 'upper': value}}}
 
  for каждой комбинации уровень_доверия-метрика:
@@ -2119,7 +2119,7 @@ def calculate_confidence_intervals(simulations, confidence_levels=[0.90, 0.95, 0
  ValueError
  Если simulations пустой or not содержит необходимые колонки
  Если confidence_levels содержит невалидные значения
- Если metrics содержит несуществующие метрики
+ Если metrics содержит несуществующие metrics
  Если нет данных for расчета интервалов
 
  Examples:
@@ -2149,19 +2149,19 @@ def calculate_confidence_intervals(simulations, confidence_levels=[0.90, 0.95, 0
  Notes:
  ------
  - Доверительные интервалы показывают диапазон, in котором with заданной вероятностью
- находится истинное значение метрики
+ находится истинное значение metrics
  - Более широкие интервалы указывают on большую неопределенность
  - 95% интервал означает, что in 95% случаев истинное значение будет in этом диапазоне
  - for односторонних интервалов Use квантили напрямую
  """
- # Валидация входных параметров
+ # validation входных параметров
  if simulations.empty:
  raise ValueError("dataFrame simulations not может быть пустым")
 
  if not isinstance(simulations, pd.dataFrame):
  raise ValueError("simulations должен быть pandas dataFrame")
 
- # Валидация уровней доверия
+ # validation уровней доверия
  for level in confidence_levels:
  if not (0 < level < 1):
  raise ValueError(f"Уровень доверия {level} должен быть in диапазоне (0, 1)")
@@ -2170,13 +2170,13 @@ def calculate_confidence_intervals(simulations, confidence_levels=[0.90, 0.95, 0
  available_metrics = simulations.columns.toList()
  Missing_metrics = [m for m in metrics if m not in available_metrics]
  if Missing_metrics:
- raise ValueError(f"Missing метрики: {Missing_metrics}. Доступные: {available_metrics}")
+ raise ValueError(f"Missing metrics: {Missing_metrics}. Доступные: {available_metrics}")
 
- # Валидация метрик
+ # validation метрик
  valid_metrics = ['sharpe', 'max_drawdown', 'cumulative_return', 'volatility', 'calmar']
  invalid_metrics = [m for m in metrics if m not in valid_metrics]
  if invalid_metrics:
- raise ValueError(f"Неподдерживаемые метрики: {invalid_metrics}. Поддерживаемые: {valid_metrics}")
+ raise ValueError(f"Неподдерживаемые metrics: {invalid_metrics}. Поддерживаемые: {valid_metrics}")
 
  confidence_intervals = {}
 
@@ -2194,7 +2194,7 @@ def calculate_confidence_intervals(simulations, confidence_levels=[0.90, 0.95, 0
  data = simulations[metric].dropna()
 
  if len(data) == 0:
- raise ValueError(f"Нет данных for метрики {metric}")
+ raise ValueError(f"Нет данных for metrics {metric}")
 
  # Расчет квантилей for доверительного интервала
  lower_bound = data.quantile(lower_percentile / 100)
@@ -2228,11 +2228,11 @@ simulations = pd.dataFrame({
 confidence_intervals = calculate_confidence_intervals(
  simulations=simulations, # dataFrame with результатами симуляций
  confidence_levels=[0.90, 0.95, 0.99], # Уровни доверия
- metrics=['sharpe', 'max_drawdown', 'cumulative_return'] # Метрики for Analysis
+ metrics=['sharpe', 'max_drawdown', 'cumulative_return'] # metrics for Analysis
 )
 ```
 
-### 2. Риск-метрики
+### 2. Риск-metrics
 
 **Value at Risk (VaR):**
 
@@ -2264,7 +2264,7 @@ def calculate_var_metrics(simulations, confidence_levels=[0.90, 0.95, 0.99],
 
  metrics : List, default=['sharpe', 'max_drawdown', 'cumulative_return']
  List метрик for расчета VaR.
- Доступные метрики:
+ Доступные metrics:
  - 'sharpe': Коэффициент Шарпа (VaR показывает худший ожидаемый Sharpe)
  - 'max_drawdown': Максимальная просадка (VaR показывает худшую ожидаемую просадку)
  - 'cumulative_return': Кумулятивная доходность (VaR показывает худшую ожидаемую доходность)
@@ -2274,7 +2274,7 @@ def calculate_var_metrics(simulations, confidence_levels=[0.90, 0.95, 0.99],
  Returns:
  --------
  dict
- Словарь with VaR метриками for каждой метрики and уровня доверия.
+ Словарь with VaR метриками for каждой metrics and уровня доверия.
  Structure: {confidence_level: {metric: var_value}}
 
  for каждой комбинации уровень_доверия-метрика:
@@ -2287,7 +2287,7 @@ def calculate_var_metrics(simulations, confidence_levels=[0.90, 0.95, 0.99],
  ValueError
  Если simulations пустой or not содержит необходимые колонки
  Если confidence_levels содержит невалидные значения
- Если metrics содержит несуществующие метрики
+ Если metrics содержит несуществующие metrics
  Если нет данных for расчета VaR
 
  Examples:
@@ -2302,7 +2302,7 @@ def calculate_var_metrics(simulations, confidence_levels=[0.90, 0.95, 0.99],
  ... 'cumulative_return': np.random.normal(0.15, 0.1, 1000)
  ... })
  >>>
- >>> # Стандартные VaR метрики
+ >>> # Стандартные VaR metrics
  >>> var_metrics = calculate_var_metrics(simulations)
  >>> print(f"VaR 95% for Sharpe: {var_metrics[0.95]['sharpe']:.2f}")
  >>> print(f"VaR 95% for просадки: {var_metrics[0.95]['max_drawdown']:.2f}")
@@ -2323,14 +2323,14 @@ def calculate_var_metrics(simulations, confidence_levels=[0.90, 0.95, 0.99],
  - for Sharpe: VaR 95% = квантиль 5% (худшие 5% коэффициентов Шарпа)
  - VaR not учитывает размер потерь за пределами квантиля (Use ES)
  """
- # Валидация входных параметров
+ # validation входных параметров
  if simulations.empty:
  raise ValueError("dataFrame simulations not может быть пустым")
 
  if not isinstance(simulations, pd.dataFrame):
  raise ValueError("simulations должен быть pandas dataFrame")
 
- # Валидация уровней доверия
+ # validation уровней доверия
  for level in confidence_levels:
  if not (0 < level < 1):
  raise ValueError(f"Уровень доверия {level} должен быть in диапазоне (0, 1)")
@@ -2339,13 +2339,13 @@ def calculate_var_metrics(simulations, confidence_levels=[0.90, 0.95, 0.99],
  available_metrics = simulations.columns.toList()
  Missing_metrics = [m for m in metrics if m not in available_metrics]
  if Missing_metrics:
- raise ValueError(f"Missing метрики: {Missing_metrics}. Доступные: {available_metrics}")
+ raise ValueError(f"Missing metrics: {Missing_metrics}. Доступные: {available_metrics}")
 
- # Валидация метрик
+ # validation метрик
  valid_metrics = ['sharpe', 'max_drawdown', 'cumulative_return', 'volatility', 'calmar']
  invalid_metrics = [m for m in metrics if m not in valid_metrics]
  if invalid_metrics:
- raise ValueError(f"Неподдерживаемые метрики: {invalid_metrics}. Поддерживаемые: {valid_metrics}")
+ raise ValueError(f"Неподдерживаемые metrics: {invalid_metrics}. Поддерживаемые: {valid_metrics}")
 
  var_metrics = {}
 
@@ -2362,7 +2362,7 @@ def calculate_var_metrics(simulations, confidence_levels=[0.90, 0.95, 0.99],
  data = simulations[metric].dropna()
 
  if len(data) == 0:
- raise ValueError(f"Нет данных for метрики {metric}")
+ raise ValueError(f"Нет данных for metrics {metric}")
 
  # Расчет VaR как квантиль
  var_value = data.quantile(var_percentile / 100)
@@ -2390,11 +2390,11 @@ simulations = pd.dataFrame({
  'cumulative_return': np.random.normal(0.15, 0.1, 1000)
 })
 
-# Стандартные VaR метрики
+# Стандартные VaR metrics
 var_metrics = calculate_var_metrics(
  simulations=simulations, # dataFrame with результатами симуляций
  confidence_levels=[0.90, 0.95, 0.99], # Уровни доверия
- metrics=['sharpe', 'max_drawdown', 'cumulative_return'] # Метрики for Analysis
+ metrics=['sharpe', 'max_drawdown', 'cumulative_return'] # metrics for Analysis
 )
 ```
 
@@ -2429,7 +2429,7 @@ def calculate_es_metrics(simulations, confidence_levels=[0.90, 0.95, 0.99],
 
  metrics : List, default=['sharpe', 'max_drawdown', 'cumulative_return']
  List метрик for расчета ES.
- Доступные метрики:
+ Доступные metrics:
  - 'sharpe': Коэффициент Шарпа (ES показывает средний Sharpe in худших сценариях)
  - 'max_drawdown': Максимальная просадка (ES показывает среднюю просадку in худших сценариях)
  - 'cumulative_return': Кумулятивная доходность (ES показывает среднюю доходность in худших сценариях)
@@ -2439,7 +2439,7 @@ def calculate_es_metrics(simulations, confidence_levels=[0.90, 0.95, 0.99],
  Returns:
  --------
  dict
- Словарь with ES метриками for каждой метрики and уровня доверия.
+ Словарь with ES метриками for каждой metrics and уровня доверия.
  Structure: {confidence_level: {metric: es_value}}
 
  for каждой комбинации уровень_доверия-метрика:
@@ -2453,7 +2453,7 @@ def calculate_es_metrics(simulations, confidence_levels=[0.90, 0.95, 0.99],
  ValueError
  Если simulations пустой or not содержит необходимые колонки
  Если confidence_levels содержит невалидные значения
- Если metrics содержит несуществующие метрики
+ Если metrics содержит несуществующие metrics
  Если нет данных for расчета ES
 
  Examples:
@@ -2468,7 +2468,7 @@ def calculate_es_metrics(simulations, confidence_levels=[0.90, 0.95, 0.99],
  ... 'cumulative_return': np.random.normal(0.15, 0.1, 1000)
  ... })
  >>>
- >>> # Стандартные ES метрики
+ >>> # Стандартные ES metrics
  >>> es_metrics = calculate_es_metrics(simulations)
  >>> print(f"ES 95% for Sharpe: {es_metrics[0.95]['sharpe']:.2f}")
  >>> print(f"ES 95% for просадки: {es_metrics[0.95]['max_drawdown']:.2f}")
@@ -2489,14 +2489,14 @@ def calculate_es_metrics(simulations, confidence_levels=[0.90, 0.95, 0.99],
  - ES более консервативная мера риска, чем VaR
  - ES используется in регулятивных требованиях (Basel III, Solvency II)
  """
- # Валидация входных параметров
+ # validation входных параметров
  if simulations.empty:
  raise ValueError("dataFrame simulations not может быть пустым")
 
  if not isinstance(simulations, pd.dataFrame):
  raise ValueError("simulations должен быть pandas dataFrame")
 
- # Валидация уровней доверия
+ # validation уровней доверия
  for level in confidence_levels:
  if not (0 < level < 1):
  raise ValueError(f"Уровень доверия {level} должен быть in диапазоне (0, 1)")
@@ -2505,13 +2505,13 @@ def calculate_es_metrics(simulations, confidence_levels=[0.90, 0.95, 0.99],
  available_metrics = simulations.columns.toList()
  Missing_metrics = [m for m in metrics if m not in available_metrics]
  if Missing_metrics:
- raise ValueError(f"Missing метрики: {Missing_metrics}. Доступные: {available_metrics}")
+ raise ValueError(f"Missing metrics: {Missing_metrics}. Доступные: {available_metrics}")
 
- # Валидация метрик
+ # validation метрик
  valid_metrics = ['sharpe', 'max_drawdown', 'cumulative_return', 'volatility', 'calmar']
  invalid_metrics = [m for m in metrics if m not in valid_metrics]
  if invalid_metrics:
- raise ValueError(f"Неподдерживаемые метрики: {invalid_metrics}. Поддерживаемые: {valid_metrics}")
+ raise ValueError(f"Неподдерживаемые metrics: {invalid_metrics}. Поддерживаемые: {valid_metrics}")
 
  es_metrics = {}
 
@@ -2528,7 +2528,7 @@ def calculate_es_metrics(simulations, confidence_levels=[0.90, 0.95, 0.99],
  data = simulations[metric].dropna()
 
  if len(data) == 0:
- raise ValueError(f"Нет данных for метрики {metric}")
+ raise ValueError(f"Нет данных for metrics {metric}")
 
  # Определение порога for хвоста распределения
  threshold = data.quantile(tail_probability)
@@ -2569,15 +2569,15 @@ simulations = pd.dataFrame({
  'cumulative_return': np.random.normal(0.15, 0.1, 1000)
 })
 
-# Стандартные ES метрики
+# Стандартные ES metrics
 es_metrics = calculate_es_metrics(
  simulations=simulations, # dataFrame with результатами симуляций
  confidence_levels=[0.90, 0.95, 0.99], # Уровни доверия
- metrics=['sharpe', 'max_drawdown', 'cumulative_return'] # Метрики for Analysis
+ metrics=['sharpe', 'max_drawdown', 'cumulative_return'] # metrics for Analysis
 )
 ```
 
-### 3. Экономические метрики
+### 3. Экономические metrics
 
 **Вероятность успеха:**
 
@@ -2646,19 +2646,19 @@ def calculate_success_probability(simulations, min_sharpe=1.0, max_drawdown=-0.2
  dict
  Словарь with метриками вероятности успеха.
 
- Основные метрики:
+ Основные metrics:
  - 'success_probability': float - вероятность успеха (0-1)
  - 'n_successful': int - количество успешных симуляций
  - 'n_total': int - общее количество симуляций
  - 'success_rate': float - процент успешных симуляций
 
- Метрики for успешных симуляций:
+ metrics for успешных симуляций:
  - 'avg_sharpe_successful': float - средний Sharpe успешных симуляций
  - 'avg_drawdown_successful': float - средняя просадка успешных симуляций
  - 'avg_return_successful': float - средняя доходность успешных симуляций
  - 'avg_volatility_successful': float - средняя волатильность успешных симуляций
 
- Дополнительные метрики:
+ Дополнительные metrics:
  - 'success_confidence_interval': tuple - доверительный интервал for вероятности успеха
  - 'failure_Analysis': dict - анализ причин неудач
 
@@ -2711,7 +2711,7 @@ def calculate_success_probability(simulations, min_sharpe=1.0, max_drawdown=-0.2
  - Анализ неудач помогает понять основные причины провалов стратегии
  - Рекомендуется использовать несколько уровней строгости критериев
  """
- # Валидация входных параметров
+ # validation входных параметров
  if simulations.empty:
  raise ValueError("dataFrame simulations not может быть пустым")
 
@@ -2724,7 +2724,7 @@ def calculate_success_probability(simulations, min_sharpe=1.0, max_drawdown=-0.2
  if Missing_columns:
  raise ValueError(f"Missing columns: {Missing_columns}")
 
- # Валидация параметров условий
+ # validation параметров условий
  if max_drawdown > 0:
  raise ValueError("max_drawdown должно быть отрицательным")
 
@@ -2759,13 +2759,13 @@ def calculate_success_probability(simulations, min_sharpe=1.0, max_drawdown=-0.2
  if 'volatility' in simulations.columns:
  success_condition &= (simulations['volatility'] <= max_volatility)
 
- # Основные метрики
+ # Основные metrics
  n_total = len(simulations)
  n_successful = success_condition.sum()
  success_probability = success_condition.mean()
  success_rate = success_probability * 100
 
- # Метрики for успешных симуляций
+ # metrics for успешных симуляций
  successful_simulations = simulations[success_condition]
 
  if len(successful_simulations) > 0:
@@ -2846,7 +2846,7 @@ def calculate_profitability_metrics(simulations, initial_capital=100000,
  """
  Расчет метрик рентабельности for Monte Carlo симуляций
 
- Вычисляет финансовые метрики рентабельности on basis результатов
+ Вычисляет финансовые metrics рентабельности on basis результатов
  Monte Carlo симуляций for оценки экономической эффективности стратегии.
 
  Parameters:
@@ -2886,7 +2886,7 @@ def calculate_profitability_metrics(simulations, initial_capital=100000,
  dict
  Словарь with метриками рентабельности.
 
- Основные метрики стоимости:
+ Основные metrics стоимости:
  - 'mean_final_value': float - средняя финальная стоимость
  - 'median_final_value': float - медианная финальная стоимость
  - 'std_final_value': float - стандартное отклонение финальной стоимости
@@ -2905,7 +2905,7 @@ def calculate_profitability_metrics(simulations, initial_capital=100000,
  - 'significant_loss_probability': float - вероятность значительных потерь (>50%)
  - 'doubling_probability': float - вероятность удвоения капитала
 
- Дополнительные метрики:
+ Дополнительные metrics:
  - 'excess_return': float - средняя избыточная доходность
  - 'value_at_risk_95': float - VaR 95% for финальной стоимости
  - 'expected_shortfall_95': float - ES 95% for финальной стоимости
@@ -2928,7 +2928,7 @@ def calculate_profitability_metrics(simulations, initial_capital=100000,
  ... 'cumulative_return': np.random.normal(0.15, 0.1, 1000)
  ... })
  >>>
- >>> # Стандартные метрики рентабельности
+ >>> # Стандартные metrics рентабельности
  >>> profitability = calculate_profitability_metrics(simulations)
  >>> print(f"Средняя финальная стоимость: ${profitability['mean_final_value']:,.2f}")
  >>> print(f"Вероятность потерь: {profitability['loss_probability']:.2%}")
@@ -2949,7 +2949,7 @@ def calculate_profitability_metrics(simulations, initial_capital=100000,
  - VaR and ES рассчитываются for финальной стоимости портфеля
  - Вероятности помогают оценить риски and возможности стратегии
  """
- # Валидация входных параметров
+ # validation входных параметров
  if simulations.empty:
  raise ValueError("dataFrame simulations not может быть пустым")
 
@@ -3025,7 +3025,7 @@ simulations = pd.dataFrame({
  'cumulative_return': np.random.normal(0.15, 0.1, 1000)
 })
 
-# Стандартные метрики рентабельности
+# Стандартные metrics рентабельности
 profitability_metrics = calculate_profitability_metrics(
  simulations=simulations, # dataFrame with результатами симуляций
  initial_capital=100000, # Начальный капитал $100,000
@@ -3059,13 +3059,13 @@ graph TD
  E --> E1[Box plot метрик<br/>with выбросами and квантилями]
  E --> E2[Violin plot распределений<br/>плотность вероятности]
  E --> E3[Корреляционная матрица<br/>heatmap correlations]
- E --> E4[Кумулятивные распределения<br/>CDF for каждой метрики]
+ E --> E4[Кумулятивные распределения<br/>CDF for каждой metrics]
 
  B --> F[Сравнительные графики]
- F --> F1[Сравнение методов симуляции<br/>parametric vs nonparametric vs hybrid]
- F --> F2[Сравнение сценариев стресс-тестирования<br/>crash vs high_vol vs low_vol]
- F --> F3[Сравнение доверительных интервалов<br/>90% vs 95% vs 99%]
- F --> F4[Сравнение VaR and ES<br/>различные уровни доверия]
+ F --> F1[comparison методов симуляции<br/>parametric vs nonparametric vs hybrid]
+ F --> F2[comparison сценариев стресс-тестирования<br/>crash vs high_vol vs low_vol]
+ F --> F3[comparison доверительных интервалов<br/>90% vs 95% vs 99%]
+ F --> F4[comparison VaR and ES<br/>различные уровни доверия]
 
  C1 --> G[Интерактивные элементы]
  C2 --> G
@@ -3100,7 +3100,7 @@ graph TD
  M --> N[Анализ распределений]
  M --> O[Выявление аномалий]
  M --> P[Оценка рисков]
- M --> Q[Сравнение стратегий]
+ M --> Q[comparison стратегий]
 
  N --> R[Рекомендации on стратегии]
  O --> R
@@ -3297,10 +3297,10 @@ graph TD
  P --> W[ES 95%<br/>es_95]
 
  Q --> X[Индивидуальные результаты симуляций]
- Q --> Y[Сравнение методов]
+ Q --> Y[comparison методов]
  Q --> Z[Статистические тесты]
 
- R --> AA[Оценка производительности]
+ R --> AA[Оценка performance]
  AA --> BB[Отличная: Sharpe > 1.5, Success > 70%]
  AA --> CC[Хорошая: Sharpe > 1.0, Success > 50%]
  AA --> DD[Требует улучшения: иначе]
@@ -3408,13 +3408,13 @@ class MonteCarloPipeline:
  # Анализ каждого метода
  for method, simulations in self.results.items():
  if isinstance(simulations, pd.dataFrame):
- # Базовые метрики
+ # Базовые metrics
  mean_sharpe = simulations['sharpe'].mean()
  std_sharpe = simulations['sharpe'].std()
  mean_max_drawdown = simulations['max_drawdown'].mean()
  success_rate = (simulations['sharpe'] > 1.0).mean()
 
- # Риск-метрики
+ # Риск-metrics
  var_95 = simulations['sharpe'].quantile(0.05)
  es_95 = simulations[simulations['sharpe'] <= var_95]['sharpe'].mean()
 
@@ -3429,9 +3429,9 @@ class MonteCarloPipeline:
 
  # Рекомендации
  if mean_sharpe > 1.5 and success_rate > 0.7:
- Report['recommendations'].append(f"{method}: Отличная производительность")
+ Report['recommendations'].append(f"{method}: Отличная performance")
  elif mean_sharpe > 1.0 and success_rate > 0.5:
- Report['recommendations'].append(f"{method}: Хорошая производительность")
+ Report['recommendations'].append(f"{method}: Хорошая performance")
  else:
  Report['recommendations'].append(f"{method}: Требует улучшения")
 
@@ -3461,7 +3461,7 @@ Monte Carlo симуляции - это ключ к созданию робас�
 2. **Статистическая значимость** - проверяйте значимость результатов
 3. **Management рисками** - учитывайте VaR and ES
 4. **Экономическая значимость** - проверяйте рентабельность
-5. **Валидация** - проверяйте результаты on out-of-sample данных
+5. **validation** - проверяйте результаты on out-of-sample данных
 
 ### Следующие шаги
 

@@ -343,7 +343,7 @@ class AdvancedTradingAnalyzer:
  def create_performance_Report(self, backtest_results: Dict, wf_results: Dict, mc_results: Dict) -> str:
  """
  Create comprehensive performance Report.
- Создать комплексный Report о производительности.
+ Создать комплексный Report о performance.
 
  Args:
  backtest_results: Backtesting results
@@ -356,7 +356,7 @@ class AdvancedTradingAnalyzer:
 
  Report = f"""
 # 📊 COMPREHENSIVE TRADING MODEL PERFORMANCE Report
-# Report о производительности торговой модели
+# Report о performance торговой модели
 
 ## 🎯 Executive Summary / Исполнительное резюме
 

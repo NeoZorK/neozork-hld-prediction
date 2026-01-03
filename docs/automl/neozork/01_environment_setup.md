@@ -188,7 +188,7 @@ Performance vs Other Frameworks:
 - **Unified API:** Единый interface for CPU, GPU and Neural Engine
 
 **Плюсы:**
-- Максимальная производительность on Apple Silicon
+- Максимальная performance on Apple Silicon
 - Простота использования
 - Энергоэффективность
 - Автоматическая оптимизация
@@ -258,11 +258,11 @@ system Requirements Visualization:
  - **Disadvantages:** dependency from интернет-соединения
 
 ### Рекомендуемые требования
-**Theory:** Рекомендуемые требования обеспечивают оптимальную производительность and комфортную работу with большими ML-проектами.
+**Theory:** Рекомендуемые требования обеспечивают оптимальную performance and комфортную работу with большими ML-проектами.
 
 - **macOS:** 14.0+ (Sonoma)
  - **Почему:** Новейшие оптимизации for M1, улучшенная поддержка ML-фреймворков
- - **Плюсы:** Максимальная производительность, новые возможности
+ - **Плюсы:** Максимальная performance, новые возможности
  - **Disadvantages:** Может быть менее стабильной on ранних этапах
 
 - **RAM:** 32GB+
@@ -276,11 +276,11 @@ system Requirements Visualization:
  - **Disadvantages:** Высокая стоимость compared to HDD
 
 - **GPU:** M1 Pro/Max/Ultra
- - **Theory:** Более мощные чипы обеспечивают лучшую производительность for ML
- - **M1 Pro:** Хороший баланс производительности and стоимости
- - **M1 Max:** Максимальная производительность for профессиональных задач
- - **M1 Ultra:** Экстремальная производительность for исследовательских задач
- - **Плюсы:** Высокая производительность, энергоэффективность
+ - **Theory:** Более мощные чипы обеспечивают лучшую performance for ML
+ - **M1 Pro:** Хороший баланс performance and стоимости
+ - **M1 Max:** Максимальная performance for профессиональных задач
+ - **M1 Ultra:** Экстремальная performance for исследовательских задач
+ - **Плюсы:** Высокая performance, энергоэффективность
  - **Disadvantages:** Высокая стоимость, ограниченная доступность
 
 ## installation базового окружения
@@ -366,7 +366,7 @@ source ~/.zshrc
 
 **Важные моменты for M1:**
 - **Путь installation:** `/opt/homebrew/` вместо `/usr/local/`
-- **Архитектура:** Автоматическая installation ARM64 версий
+- **architecture:** Автоматическая installation ARM64 версий
 - **Совместимость:** Поддержка как ARM64, так and x86_64 пакетов через Rosetta
 
 ### 2. installation uv (Ultra-fast Python package manager)
@@ -464,14 +464,14 @@ uv --version
 **Theory:** Выбор версии Python критичен for ML-проектов. Python 3.11 обеспечивает оптимальный баланс между производительностью, стабильностью and поддержкой ML-библиотек on M1.
 
 **Почему Python 3.11 for M1:**
-- **Производительность:** to 25% быстрее Python 3.10 благодаря оптимизациям
+- **performance:** to 25% быстрее Python 3.10 благодаря оптимизациям
 - **Совместимость:** Полная поддержка all ML-библиотек
 - **Стабильность:** Зрелая версия with исправленными багами
 - **Оптимизация for M1:** Лучшая поддержка ARM64 архитектуры
 - **Память:** Более эффективное использование памяти
 
 **Плюсы Python 3.11:**
-- Высокая производительность
+- Высокая performance
 - Отличная совместимость with ML-библиотеками
 - Стабильность and надежность
 - Оптимизация for M1
@@ -497,7 +497,7 @@ uv python List
 
 **Критически важно for ML:**
 - **Воспроизводимость:** Одинаковая версия Python on all машинах
-- **Производительность:** Быстрое выполнение ML-алгоритмов
+- **performance:** Быстрое выполнение ML-алгоритмов
 - **Совместимость:** Поддержка all required ML-библиотек
 - **Стабильность:** Минимизация ошибок во время обучения моделей
 
@@ -505,7 +505,7 @@ uv python List
 
 ### Что такое MLX?
 
-**Theory:** MLX (Machine Learning eXtended) - это Specialized фреймворк Apple for machine learning, разWorkingнный for максимального использования возможностей Apple Silicon чипов. This is critical for robust ML systems, так как обеспечивает оптимальную производительность on M1/M2/M3.
+**Theory:** MLX (Machine Learning eXtended) - это Specialized фреймворк Apple for machine learning, разWorkingнный for максимального использования возможностей Apple Silicon чипов. This is critical for robust ML systems, так как обеспечивает оптимальную performance on M1/M2/M3.
 
 **MLX - это Apple-специфичный фреймворк for ML:**
 
@@ -534,7 +534,7 @@ uv python List
 - **Обучение:** Минимальное время on изучение нового API
 
 **Плюсы MLX:**
-- Максимальная производительность on Apple Silicon
+- Максимальная performance on Apple Silicon
 - Энергоэффективность
 - Простота использования
 - Автоматическая оптимизация
@@ -553,7 +553,7 @@ uv python List
 **Почему правильная installation критична:**
 - **Архитектурная совместимость:** MLX Workingет только on Apple Silicon and требует правильной Settings
 - **dependencies:** MLX имеет специфические dependencies, которые должны быть установлены in правильном порядке
-- **Производительность:** Неправильная installation может привести к значительной потере производительности
+- **performance:** Неправильная installation может привести к значительной потере performance
 - **Стабильность:** Правильная configuration обеспечивает стабильную работу системы
 
 **Этапы installation MLX:**
@@ -592,7 +592,7 @@ uv add mlx-examples # examples использования
 
 **Критически важно for ML-проектов:**
 - **Воспроизводимость:** Правильная configuration обеспечивает одинаковые результаты on разных машинах
-- **Производительность:** Оптимальная configuration MLX обеспечивает максимальную производительность
+- **performance:** Оптимальная configuration MLX обеспечивает максимальную performance
 - **Совместимость:** Правильная installation обеспечивает совместимость with другими ML-библиотеками
 - **Scalability:** Правильная configuration позволяет легко масштабировать проект
 
@@ -675,8 +675,8 @@ def test_mlx_neural_network():
  return True
 
 def test_mlx_performance():
- """Тест производительности MLX"""
- print("\n=== Тест производительности MLX ===")
+ """Тест performance MLX"""
+ print("\n=== Тест performance MLX ===")
 
  # Тест матричных операций
  sizes = [1000, 2000, 5000]
@@ -695,12 +695,12 @@ def test_mlx_performance():
 
  duration = end_time - start_time
  print(f" Время умножения: {duration:.3f} секунд")
- print(f" Производительность: {size**3 / duration / 1e9:.2f} GFLOPS")
+ print(f" performance: {size**3 / duration / 1e9:.2f} GFLOPS")
 
  # check результата
  assert c.shape == (size, size)
 
- print("✅ Тесты производительности завершены")
+ print("✅ Тесты performance завершены")
  return True
 
 def test_mlx_device_info():
@@ -822,7 +822,7 @@ Library dependencies Graph:
 **Принципы выбора ML-библиотек:**
 - **Специализация:** Каждая библиотека решает конкретные задачи
 - **Совместимость:** Библиотеки должны Workingть вместе без конфликтов
-- **Производительность:** Оптимизация for M1 архитектуры
+- **performance:** Оптимизация for M1 архитектуры
 - **Активное развитие:** Регулярные обновления and поддержка сообщества
 - **documentation:** Хорошая documentation for быстрого освоения
 
@@ -897,7 +897,7 @@ def test_numpy():
  a = np.random.rand(1000, 1000)
  b = np.random.rand(1000, 1000)
 
- # Тест производительности
+ # Тест performance
  start_time = time.time()
  c = np.dot(a, b)
  end_time = time.time()
@@ -1090,9 +1090,9 @@ uv run python test_core_libraries.py
 - **Критичность:** Необходимы for создания торговых стратегий
 
 **VectorBT - векторизованный бэктестинг:**
-- **Theory:** Векторизованный бэктестинг обеспечивает высокую производительность
+- **Theory:** Векторизованный бэктестинг обеспечивает высокую performance
 - **Практика:** Быстрое тестирование стратегий on исторических данных
-- **Критичность:** Необходим for валидации торговых стратегий
+- **Критичность:** Необходим for validation торговых стратегий
 
 **Backtrader - альтернативный бэктестер:**
 - **Theory:** Более гибкий подход к бэктестингу
@@ -1119,7 +1119,7 @@ uv add backtrader # Альтернативный бэктестер
 **Optuna - гиперпараметрическая оптимизация:**
 - **Theory:** Автоматический поиск оптимальных гиперпараметров
 - **Практика:** Bayesian optimization for эффективного поиска
-- **Критичность:** Необходима for достижения максимальной производительности
+- **Критичность:** Необходима for достижения максимальной performance
 
 **MLflow - MLOps:**
 - **Theory:** MLOps обеспечивает воспроизводимость and Management ML-моделями
@@ -1129,7 +1129,7 @@ uv add backtrader # Альтернативный бэктестер
 **Weights & Biases - эксперименты:**
 - **Theory:** Продвинутое отслеживание экспериментов and визуализация
 - **Практика:** integration with различными ML-фреймворками
-- **Критичность:** Улучшает процесс разработки ML-моделей
+- **Критичность:** Улучшает process разработки ML-моделей
 
 ```bash
 # Продвинутые ML библиотеки
@@ -1161,7 +1161,7 @@ uv add wandb # Эксперименты
 **Оптимизация for M1:**
 - **Theory:** M1 требует специальных версий библиотек
 - **Практика:** Использование Metal Performance Shaders
-- **Критичность:** Необходима for максимальной производительности
+- **Критичность:** Необходима for максимальной performance
 
 ```bash
 # Deep Learning (совместимость with M1)
@@ -1172,7 +1172,7 @@ uv add transformers # Hugging Face
 
 **Критически важно for robust ML systems:**
 - **Совместимость:** Все библиотеки должны Workingть вместе
-- **Производительность:** Оптимизация for M1 архитектуры
+- **performance:** Оптимизация for M1 архитектуры
 - **Воспроизводимость:** Детерминированные версии all библиотек
 - **Scalability:** Возможность работы with большими данными
 
@@ -1209,9 +1209,9 @@ uv add transformers # Hugging Face
 - **Воспроизводимость:** Одинаковые результаты on разных машинах
 - **Management версиями:** Контроль версий all библиотек
 - **Безопасность:** Изоляция from системных пакетов
-- **Производительность:** Оптимизация for конкретного проекта
+- **performance:** Оптимизация for конкретного проекта
 
-**Процесс создания ядра:**
+**process создания ядра:**
 1. **Инициализация ядра:** create нового ядра with уникальным именем
 2. **installation dependencies:** installation all required библиотек
 3. **configuration:** configuration параметров for оптимальной работы
@@ -1228,7 +1228,7 @@ uv run jupyter notebook
 **Критически важно for ML-проектов:**
 - **Воспроизводимость:** Одинаковые результаты on all машинах
 - **Изоляция:** Предотвращение конфликтов dependencies
-- **Производительность:** Оптимизация for конкретных задач
+- **performance:** Оптимизация for конкретных задач
 - **Management:** Легкое переключение между проектами
 
 ### configuration Jupyter
@@ -1236,13 +1236,13 @@ uv run jupyter notebook
 **Theory:** Правильная configuration Jupyter критична for оптимальной работы on M1. Settings должны учитывать особенности архитектуры Apple Silicon and требования ML-проектов.
 
 **Ключевые Settings for M1:**
-- **Производительность:** Оптимизация for M1 архитектуры
+- **performance:** Оптимизация for M1 архитектуры
 - **Память:** configuration лимитов памяти for больших датасетов
 - **Сеть:** configuration for удаленного доступа
 - **Безопасность:** configuration прав доступа
 - **Стабильность:** Предотвращение сбоев при больших вычислениях
 
-**Settings производительности:**
+**Settings performance:**
 - **iopub_data_rate_limit:** Увеличение лимита передачи данных
 - **rate_limit_window:** configuration окна ограничения скорости
 - **memory_limit:** Ограничение использования памяти
@@ -1388,8 +1388,8 @@ c.NotebookApp.disable_check_xsrf = True
  return True
 
 def test_jupyter_performance():
- """Тест производительности Jupyter"""
- print("\n=== Тест производительности Jupyter ===")
+ """Тест performance Jupyter"""
+ print("\n=== Тест performance Jupyter ===")
 
  # create testsого notebook
  test_notebook = {
@@ -1403,7 +1403,7 @@ def test_jupyter_performance():
  "import numpy as np\n",
  "import time\n",
  "\n",
- "# Тест производительности\n",
+ "# Тест performance\n",
  "size = 5000\n",
  "a = np.random.rand(size, size)\n",
  "b = np.random.rand(size, size)\n",
@@ -1413,7 +1413,7 @@ def test_jupyter_performance():
  "end = time.time()\n",
  "\n",
  "print(f'Время умножения матриц {size}x{size}: {end - start:.3f} секунд')\n",
- "print(f'Производительность: {size**3 / (end - start) / 1e9:.2f} GFLOPS')"
+ "print(f'performance: {size**3 / (end - start) / 1e9:.2f} GFLOPS')"
  ]
  }
  ],
@@ -1506,17 +1506,17 @@ uv run python test_jupyter_config.py
 
 **Критически важно for robust ML systems:**
 - **Стабильность:** Предотвращение сбоев при больших вычислениях
-- **Производительность:** Максимальное использование возможностей M1
+- **performance:** Максимальное использование возможностей M1
 - **Scalability:** Возможность работы with большими данными
 - **Воспроизводимость:** Одинаковые результаты on all машинах
 
 ## Оптимизация for M1 Pro
 
-**Theory:** Оптимизация for M1 Pro критична for достижения максимальной производительности ML-систем. M1 Pro имеет уникальную архитектуру, которая требует специальной Settings for оптимальной работы.
+**Theory:** Оптимизация for M1 Pro критична for достижения максимальной performance ML-систем. M1 Pro имеет уникальную архитектуру, которая требует специальной Settings for оптимальной работы.
 
 **Почему оптимизация критична:**
 - **Архитектурные особенности:** M1 Pro имеет специфическую архитектуру, требующую специальной Settings
-- **Производительность:** Правильная оптимизация может увеличить производительность by 3-5 times
+- **performance:** Правильная оптимизация может увеличить performance by 3-5 times
 - **Энергоэффективность:** Оптимизация снижает потребление энергии and нагрев
 - **Стабильность:** Правильная configuration предотвращает сбои при больших вычислениях
 - **Scalability:** Оптимизация позволяет Workingть with большими данными
@@ -1581,7 +1581,7 @@ def test_system_info():
  print("=== Системная информация ===")
 
  print(f"Операционная система: {platform.system()} {platform.release()}")
- print(f"Архитектура: {platform.machine()}")
+ print(f"architecture: {platform.machine()}")
  print(f"Процессор: {platform.processor()}")
  print(f"Python Version: {sys.version}")
  print(f"Python путь: {sys.executable}")
@@ -1628,8 +1628,8 @@ def test_numpy_optimization():
  print("BLAS информация:")
  np.show_config()
 
- # Тест производительности
- print("\nТест производительности NumPy:")
+ # Тест performance
+ print("\nТест performance NumPy:")
  sizes = [1000, 2000, 5000]
 
  for size in sizes:
@@ -1757,13 +1757,13 @@ uv run python test_environment.py
 
 **Критически важно for ML-проектов:**
 - **Воспроизводимость:** Одинаковые Settings on all машинах
-- **Производительность:** Максимальное использование ресурсов M1 Pro
+- **performance:** Максимальное использование ресурсов M1 Pro
 - **Стабильность:** Предотвращение сбоев при больших вычислениях
 - **Энергоэффективность:** Оптимальное потребление энергии
 
 ### 2. configuration NumPy for M1
 
-**Theory:** NumPy - основа all ML-библиотек, поэтому его оптимизация критична for производительности всей системы. M1 Pro требует специальной Settings for оптимальной работы.
+**Theory:** NumPy - основа all ML-библиотек, поэтому его оптимизация критична for performance всей системы. M1 Pro требует специальной Settings for оптимальной работы.
 
 **Ключевые аспекты оптимизации NumPy:**
 - **BLAS библиотеки:** Использование оптимизированных BLAS for M1
@@ -1774,14 +1774,14 @@ uv run python test_environment.py
 **check оптимизации:**
 - **Version:** Убедиться in использовании правильной версии
 - **BLAS:** Проверить использование оптимизированных BLAS
-- **Архитектура:** Убедиться in поддержке ARM64
-- **Производительность:** Тестирование on реальных задачах
+- **architecture:** Убедиться in поддержке ARM64
+- **performance:** Тестирование on реальных задачах
 
-**Тестирование производительности:**
+**Тестирование performance:**
 - **Матричные операции:** Тест базовых операций
 - **Память:** Тест работы with большими массивами
 - **Параллелизм:** Тест многопоточности
-- **Сравнение:** Сравнение with эталонными значениями
+- **comparison:** comparison with эталонными значениями
 
 ```python
 # numpy_config.py
@@ -1791,7 +1791,7 @@ import numpy as np
 print(f"NumPy Version: {np.__version__}")
 print(f"BLAS info: {np.show_config()}")
 
-# Тест производительности
+# Тест performance
 import time
 
 # Тест матричных операций
@@ -1807,14 +1807,14 @@ print(f"Matrix multiplication time: {end - start:.2f} seconds")
 ```
 
 **Критически важно for ML-проектов:**
-- **Производительность:** NumPy - основа all вычислений
+- **performance:** NumPy - основа all вычислений
 - **Совместимость:** Правильная Working with другими библиотеками
 - **Стабильность:** Предотвращение ошибок вычислений
 - **Scalability:** Working with большими данными
 
 ### 3. configuration PyTorch for M1
 
-**Theory:** PyTorch on M1 Pro может использовать Metal Performance Shaders (MPS) for GPU acceleration. Правильная configuration критична for максимальной производительности.
+**Theory:** PyTorch on M1 Pro может использовать Metal Performance Shaders (MPS) for GPU acceleration. Правильная configuration критична for максимальной performance.
 
 **MPS (Metal Performance Shaders):**
 - **Theory:** MPS обеспечивает GPU ускорение on Apple Silicon
@@ -1825,7 +1825,7 @@ print(f"Matrix multiplication time: {end - start:.2f} seconds")
 **check MPS:**
 - **Доступность:** check поддержки MPS
 - **Устройство:** Выбор правильного устройства
-- **Производительность:** Тестирование acceleration
+- **performance:** Тестирование acceleration
 - **Совместимость:** check работы with моделями
 
 **Оптимизация for M1 Pro:**
@@ -1846,7 +1846,7 @@ else:
  device = torch.device("cpu")
  print("MPS not available, Use CPU")
 
-# Тест производительности
+# Тест performance
 x = torch.randn(1000, 1000, device=device)
 y = torch.randn(1000, 1000, device=device)
 
@@ -1858,7 +1858,7 @@ print(f"PyTorch MPS time: {end - start:.2f} seconds")
 ```
 
 **Критически важно for ML-проектов:**
-- **Производительность:** GPU ускорение критично for large models
+- **performance:** GPU ускорение критично for large models
 - **Совместимость:** Правильная Working with существующим кодом
 - **Стабильность:** Предотвращение сбоев при обучении
 - **Scalability:** Возможность работы with большими данными
@@ -2074,8 +2074,8 @@ neozork-ml-system/
 
 **src/backtesting/ - бэктестинг:**
 - **engine.py:** Движок бэктестинга
-- **metrics.py:** Метрики производительности
-- **Критичность:** Валидация торговых стратегий
+- **metrics.py:** Metrics performance
+- **Критичность:** validation торговых стратегий
 
 **src/deployment/ - развертывание:**
 - **api.py:** REST API for модели
@@ -2195,7 +2195,7 @@ def test_system_requirements():
 
  # Системная информация
  print(f"ОС: {platform.system()} {platform.release()}")
- print(f"Архитектура: {platform.machine()}")
+ print(f"architecture: {platform.machine()}")
  print(f"Процессор: {platform.processor()}")
 
  # Память
@@ -2359,13 +2359,13 @@ def test_jupyter_setup():
  return True
 
 def test_performance_benchmarks():
- """Тест производительности"""
- print("\n=== Тест производительности ===")
+ """Тест performance"""
+ print("\n=== Тест performance ===")
 
  # NumPy тест
  try:
  import numpy as np
- print("NumPy производительность:")
+ print("NumPy performance:")
  size = 5000
  a = np.random.rand(size, size)
  b = np.random.rand(size, size)
@@ -2385,7 +2385,7 @@ def test_performance_benchmarks():
  try:
  import torch
  if torch.backends.mps.is_available():
- print("PyTorch MPS производительность:")
+ print("PyTorch MPS performance:")
  device = torch.device("mps")
  size = 3000
  a = torch.randn(size, size, device=device)
@@ -2407,7 +2407,7 @@ def test_performance_benchmarks():
  # MLX тест
  try:
  import mlx.core as mx
- print("MLX производительность:")
+ print("MLX performance:")
  size = 3000
  a = mx.random.normal((size, size))
  b = mx.random.normal((size, size))
@@ -2469,7 +2469,7 @@ def main():
  print("\nСледующие шаги:")
  print("1. Исправьте все ошибки (❌)")
  print("2. Проверьте предупреждения (⚠️)")
- print("3. Запустите тесты производительности")
+ print("3. Запустите тесты performance")
  print("4. Переходите к следующему разделу")
 
  except Exception as e:
@@ -2488,7 +2488,7 @@ if __name__ == "__main__":
 uv run python test_all_libraries.py
 ```
 
-### Тест производительности
+### Тест performance
 
 ```python
 # performance_test.py
@@ -2499,7 +2499,7 @@ from sklearn.ensemble import RandomForestRegressor
 import torch
 
 def test_numpy_performance():
- """Тест производительности NumPy on M1"""
+ """Тест performance NumPy on M1"""
  print("testing NumPy performance...")
 
  # Большая матрица
@@ -2515,7 +2515,7 @@ def test_numpy_performance():
  return end - start
 
 def test_pandas_performance():
- """Тест производительности Pandas on M1"""
+ """Тест performance Pandas on M1"""
  print("testing Pandas performance...")
 
  # Большой dataFrame
@@ -2534,7 +2534,7 @@ def test_pandas_performance():
  return end - start
 
 def test_sklearn_performance():
- """Тест производительности scikit-learn on M1"""
+ """Тест performance scikit-learn on M1"""
  print("testing scikit-learn performance...")
 
  # Большой датасет
@@ -2554,7 +2554,7 @@ def test_sklearn_performance():
  return end - start
 
 def test_pytorch_performance():
- """Тест производительности PyTorch on M1"""
+ """Тест performance PyTorch on M1"""
  print("testing PyTorch performance...")
 
  if torch.backends.mps.is_available():
@@ -2672,7 +2672,7 @@ Problem Resolution Flow:
 - **Отсутствие Xcode Command Line Tools:** Необходимы for компиляции C/C++ кода
 - **Отсутствие CMake:** Требуется for сборки многих библиотек
 - **Отсутствие pkg-config:** Необходим for поиска библиотек
-- **Неправильная архитектура:** Компиляция for x86_64 вместо ARM64
+- **Неправильная architecture:** Компиляция for x86_64 вместо ARM64
 - **Устаревшие инструменты:** Старые версии инструментов разработки
 
 **Симптомы ошибок компиляции:**
@@ -2699,7 +2699,7 @@ brew install cmake pkg-config
 
 **Критически важно for ML-проектов:**
 - **Воспроизводимость:** Одинаковые инструменты on all машинах
-- **Производительность:** Правильная компиляция for M1 архитектуры
+- **performance:** Правильная компиляция for M1 архитектуры
 - **Стабильность:** Предотвращение ошибок сборки
 - **Совместимость:** Совместимость with ML-библиотеками
 
@@ -2709,7 +2709,7 @@ brew install cmake pkg-config
 
 **Причины проблем with ta-lib:**
 - **Отсутствие системной библиотеки:** TA-Lib должна быть установлена on системном уровне
-- **Неправильная архитектура:** Компиляция for x86_64 вместо ARM64
+- **Неправильная architecture:** Компиляция for x86_64 вместо ARM64
 - **Конфликт версий:** Несовместимость версий системной and Python библиотек
 - **Issues with путями:** Неправильные пути к библиотекам
 - **Отсутствие dependencies:** Недостающие системные dependencies
@@ -2738,7 +2738,7 @@ uv add TA-Lib
 
 **Критически важно for финансовых ML-проектов:**
 - **Технический анализ:** TA-Lib - основа for технических indicators
-- **Производительность:** Оптимизированная C-реализация
+- **performance:** Оптимизированная C-реализация
 - **Точность:** Проверенные алгоритмы технического Analysis
 - **Совместимость:** integration with pandas and numpy
 
@@ -2773,7 +2773,7 @@ uv add torch torchvision torchaudio --index-url https://download.pytorch.org/whl
 ```
 
 **Критически важно for ML-проектов:**
-- **Производительность:** GPU ускорение on M1
+- **performance:** GPU ускорение on M1
 - **Совместимость:** Working with существующим кодом
 - **Стабильность:** Предотвращение сбоев при обучении
 - **Scalability:** Возможность работы with большими моделями
@@ -2794,7 +2794,7 @@ uv add torch torchvision torchaudio --index-url https://download.pytorch.org/whl
 
 **Критически важно for robust ML systems:**
 - **Диагностика:** Быстрая идентификация проблем
-- **Решение:** Эффективные методы устранения проблем
+- **Решение:** Эффективные methods устранения проблем
 - **Профилактика:** Предотвращение повторных проблем
 - **Документирование:** Запись решений for team
 
@@ -2874,8 +2874,8 @@ env | grep -E "(PYTHON|OMP|MKL|NUMEXPR|MLX)" | sort
 echo "=== Ядра Jupyter ==="
 uv run jupyter kernelspec List
 
-# check производительности
-echo "=== Быстрый тест производительности ==="
+# check performance
+echo "=== Быстрый тест performance ==="
 uv run python -c "
 import numpy as np
 import time
@@ -2954,4 +2954,4 @@ uv run python test_all_libraries.py
 
 ---
 
-**Важно:** Убедитесь, что все тесты производительности проходят успешно перед переходом к следующему разделу. Все тесты должны показывать ✅ for успешной installation.
+**Важно:** Убедитесь, что все тесты performance проходят успешно перед переходом к следующему разделу. Все тесты должны показывать ✅ for успешной installation.

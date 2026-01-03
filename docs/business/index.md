@@ -24,7 +24,7 @@ This section contains comprehensive business and commercialization Plans for the
  - team Structure and organization
  - Финансовые прогнозы and требования к финансированию
  - Анализ рисков and стратегии смягчения
- - Метрики успеха and KPI
+ - metrics успеха and KPI
  - Roadmap реализации
 
 ### Pocket Hedge fund Strategy

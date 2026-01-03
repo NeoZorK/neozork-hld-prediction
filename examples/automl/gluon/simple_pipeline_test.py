@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Simple Pipeline Test - Quick validation without full training
-Простой тест пайплайна - быстрая валидация без полного обучения
+Простой тест пайплайна - быстрая validation без полного обучения
 """
 
 import sys

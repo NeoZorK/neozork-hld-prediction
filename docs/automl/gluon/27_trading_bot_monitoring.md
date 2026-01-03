@@ -20,20 +20,20 @@
 
 - **Полный контроль**: Понимают, что происходит with ботом
 - **Быстрое обнаружение проблем**: Решают проблемы to потери денег
-- **Оптимизация производительности**: Постоянно улучшают работу бота
+- **Оптимизация performance**: Постоянно улучшают работу бота
 - **Спокойствие**: Уверены in работе системы
 
 ## Введение
 
 **Почему Monitoring - это глаза and уши торгового бота?** Потому что без него вы not знаете, что происходит with вашей системой, and not можете принимать правильные решения.
 
-Monitoring торгового бота - это критически важный аспект поддержания стабильной and прибыльной торговой системы. Этот раздел посвящен лучшим практикам Monitoringа, которые помогут вам быстро выявлять проблемы, оптимизировать производительность and обеспечивать непрерывную работу торгового бота.
+Monitoring торгового бота - это критически важный аспект поддержания стабильной and прибыльной торговой системы. Этот раздел посвящен лучшим практикам Monitoringа, которые помогут вам быстро выявлять проблемы, оптимизировать performance and обеспечивать непрерывную работу торгового бота.
 
-## Архитектура системы Monitoringа
+## architecture системы Monitoringа
 
-**Почему архитектура Monitoringа критически важна?** Потому что неправильная архитектура может привести к пропуску критических проблем and потере денег.
+**Почему architecture Monitoringа критически важна?** Потому что неправильная architecture может привести к пропуску критических проблем and потере денег.
 
-### 🏗️ Архитектура системы Monitoringа
+### 🏗️ architecture системы Monitoringа
 
 ```mermaid
 graph TD
@@ -54,13 +54,13 @@ G --> H[Каналы уведомлений]
  H --> K[SMS]
  H --> L[Slack]
 
-B --> M[Отслеживание производительности]
+B --> M[Отслеживание performance]
  M --> N[health check]
 
 N --> O[Автоматические действия]
 O --> P[ПереLaunch бота]
 O --> Q[Закрытие позиций]
-O --> R[Переобучение модели]
+O --> R[retraining модели]
 
 F --> S[Внешние интеграции]
  S --> T[Prometheus]
@@ -92,7 +92,7 @@ config (dict): configuration системы Monitoringа
 - dashboard_refresh: Частота обновления дашборда
 - log_rotation: Settings ротации логов
 - health_check_interval: Интервал проверки health
-- performance_tracking: Settings отслеживания производительности
+- performance_tracking: Settings отслеживания performance
  """
  self.config = config or self._get_default_config()
 
@@ -120,7 +120,7 @@ config (dict): configuration системы Monitoringа
  rotation_config=self.config['log_rotation']
  )
 
-# Отслеживание производительности - как Workingет бот
+# Отслеживание performance - как Workingет бот
  self.performance_tracker = PerformanceTracker(
  tracking_config=self.config['performance_tracking'],
  benchmarks=self.config['performance_benchmarks']
@@ -146,11 +146,11 @@ config (dict): configuration системы Monitoringа
 'retention_days': 30 # Хранение логов (дни)
  },
 'health_check_interval': 300, # Интервал проверки health (секунды)
-'performance_tracking': { # Settings отслеживания производительности
+'performance_tracking': { # Settings отслеживания performance
 'enable_tracking': True, # Включить отслеживание
 'tracking_interval': 60, # Интервал отслеживания (секунды)
 'metrics_retention': 7, # Хранение метрик (дни)
-'benchmark_comparison': True, # Сравнение with бенчмарками
+'benchmark_comparison': True, # comparison with бенчмарками
 'optimization_suggestions': True # Предложения on оптимизации
  },
 'metrics_storage': { # Settings хранения метрик
@@ -189,7 +189,7 @@ config (dict): configuration системы Monitoringа
 'refresh_interval': 30, # Интервал обновления (секунды)
  'metrics': ['profit_loss', 'win_rate', 'active_positions', 'uptime']
  },
-'performance': { # Виджет производительности
+'performance': { # Виджет performance
  'enabled': True,
  'refresh_interval': 60,
  'charts': ['pnl_timeline', 'trades_distribution', 'drawdown_chart']
@@ -224,7 +224,7 @@ config (dict): configuration системы Monitoringа
  r'Connection error: (.+)',
  r'API error: (.+)'
  ],
-'performance_patterns': [ # Паттерны производительности
+'performance_patterns': [ # Паттерны performance
  r'Slow operation: (.+) took (\d+)ms',
  r'High memory usage: (\d+)MB',
  r'CPU spike detected: (\d+)%',
@@ -270,7 +270,7 @@ config (dict): configuration системы Monitoringа
 'check_interval': 60 # Интервал проверки (секунды)
  }
  },
-'performance_benchmarks': { # Бенчмарки производительности
+'performance_benchmarks': { # Бенчмарки performance
 'trading_benchmarks': { # Торговые бенчмарки
 'min_win_rate': 0.5, # Минимальный процент выигрышных сделок
 'max_drawdown': 0.1, # Максимальная просадка
@@ -353,16 +353,16 @@ print(f"❌ Ошибка остановки системы Monitoringа: {e}")
 
 ### 2. Сбор метрик
 
-### 📊 Процесс сбора метрик
+### 📊 process сбора метрик
 
 ```mermaid
 graph TD
 A[Торговый бот] --> B{Тип метрик}
 
-B -->|Торговые| C[Торговые метрики]
-B -->|ML Модель| D[Метрики модели]
-B -->|Рыночные| E[Рыночные метрики]
-B -->|Системные| F[Системные метрики]
+B -->|Торговые| C[Торговые metrics]
+B -->|ML Модель| D[metrics модели]
+B -->|Рыночные| E[Рыночные metrics]
+B -->|Системные| F[Системные metrics]
 
  C --> C1[P&L]
  C --> C2[Win Rate]
@@ -441,18 +441,18 @@ storage_config (dict): configuration хранилища метрик
 
 # Settings сбора метрик
  self.metrics_config = {
-'trading_metrics': { # Торговые метрики
+'trading_metrics': { # Торговые metrics
 'enabled': True, # Включить сбор
 'collection_interval': 60, # Интервал сбора (секунды)
 'retention_days': 30, # Хранение (дни)
-'metrics': [ # Собираемые метрики
+'metrics': [ # Собираемые metrics
  'total_trades', 'winning_trades', 'losing_trades',
  'win_rate', 'profit_loss', 'max_drawdown', 'sharpe_ratio',
  'trades_per_hour', 'active_positions', 'pending_orders',
  'current_exposure', 'risk_utilization', 'var_95', 'expected_shortfall'
  ]
  },
-'model_metrics': { # Метрики модели
+'model_metrics': { # metrics модели
  'enabled': True,
 'collection_interval': 120, # Интервал сбора (секунды)
 'retention_days': 7, # Хранение (дни)
@@ -462,7 +462,7 @@ storage_config (dict): configuration хранилища метрик
  'model_drift_detected', 'drift_score', 'data_quality_score'
  ]
  },
-'market_metrics': { # Рыночные метрики
+'market_metrics': { # Рыночные metrics
  'enabled': True,
 'collection_interval': 60, # Интервал сбора (секунды)
 'retention_days': 14, # Хранение (дни)
@@ -472,7 +472,7 @@ storage_config (dict): configuration хранилища метрик
  'volume_24h', 'rsi', 'macd', 'bollinger_position'
  ]
  },
-'system_metrics': { # Системные метрики
+'system_metrics': { # Системные metrics
  'enabled': True,
 'collection_interval': 30, # Интервал сбора (секунды)
 'retention_days': 7, # Хранение (дни)
@@ -556,7 +556,7 @@ time.sleep(5) # Короткая пауза при ошибке
  bot_state = self._get_bot_state()
 
  trading_metrics = {
-# Производительность торговли
+# performance торговли
 'total_trades': bot_state.get('total_trades', 0), # Общее количество сделок
 'winning_trades': bot_state.get('winning_trades', 0), # Количество выигрышных сделок
 'losing_trades': bot_state.get('losing_trades', 0), # Количество проигрышных сделок
@@ -586,7 +586,7 @@ time.sleep(5) # Короткая пауза при ошибке
 'max_consecutive_losses': self.calculate_max_consecutive_losses(bot_state), # Максимум потерь подряд
 'max_consecutive_wins': self.calculate_max_consecutive_wins(bot_state), # Максимум побед подряд
 
-# Финансовые метрики
+# Финансовые metrics
 'total_pnl': bot_state.get('total_pnl', 0), # Общая прибыль/убыток
 'daily_pnl': self.calculate_daily_pnl(bot_state), # Дневная прибыль/убыток
 'weekly_pnl': self.calculate_weekly_pnl(bot_state), # Недельная прибыль/убыток
@@ -595,7 +595,7 @@ time.sleep(5) # Короткая пауза при ошибке
 'recovery_factor': self.calculate_recovery_factor(bot_state), # Фактор восстановления
 'expectancy': self.calculate_expectancy(bot_state), # Математическое ожидание
 
-# Technical метрики
+# Technical metrics
 'cpu_usage': bot_state.get('cpu_usage', 0), # Использование CPU
 'memory_usage': bot_state.get('memory_usage', 0), # Использование памяти
 'disk_usage': bot_state.get('disk_usage', 0), # Использование диска
@@ -659,7 +659,7 @@ time.sleep(5) # Короткая пауза при ошибке
  'market_regime': market_data.get('regime', 'unknown'),
  'liquidity_score': market_data.get('liquidity_score', 0),
 
-# Ценовые метрики
+# Ценовые metrics
  'price_change_1h': market_data.get('price_change_1h', 0),
  'price_change_24h': market_data.get('price_change_24h', 0),
  'volume_24h': market_data.get('volume_24h', 0),
@@ -684,7 +684,7 @@ time.sleep(5) # Короткая пауза при ошибке
 
 ```mermaid
 graph TD
-A[Метрики] --> B{check условий}
+A[metrics] --> B{check условий}
 
 B -->|Критические| C[Критические алерты]
 B -->|Предупреждения| D[Предупреждения]
@@ -846,7 +846,7 @@ rules_config (dict): configuration правил алертов
 Время: {timestamp}
 Проблема: {issue_describe}
 
-Метрики:
+metrics:
 - P&L: {profit_loss:.2f}
 - Win Rate: {win_rate:.2%}
 - Активные позиции: {active_positions}
@@ -868,7 +868,7 @@ rules_config (dict): configuration правил алертов
 Время: {timestamp}
 Проблема: {issue_describe}
 
-Метрики:
+metrics:
 - P&L: {profit_loss:.2f}
 - Win Rate: {win_rate:.2%}
 - Активные позиции: {active_positions}
@@ -1174,11 +1174,11 @@ formatted_message += f"📈 Сделки: {metrics.get('total_trades', 0)}\n"
 ```mermaid
 graph TD
 A[Дашборд Monitoringа] --> B[Общий обзор]
-A --> C[Производительность]
+A --> C[performance]
 A --> D[Торговая активность]
-A --> E[Метрики риска]
+A --> E[metrics риска]
 A --> F[Здоровье системы]
-A --> G[Метрики модели]
+A --> G[metrics модели]
 A --> H[Рыночные условия]
 
  B --> B1[P&L]
@@ -1190,7 +1190,7 @@ B --> B5[Статус]
 C --> C1[График P&L]
 C --> C2[Сделки on дням]
 C --> C3[Распределение сделок]
-C --> C4[Тренды производительности]
+C --> C4[Тренды performance]
 
 D --> D1[Количество сделок]
 D --> D2[Частота торговли]
@@ -1242,7 +1242,7 @@ class MonitoringDashboard:
 refresh_interval (int): Интервал обновления дашборда (секунды)
 widgets_config (dict): configuration виджетов дашборда
 - overView: Settings виджета обзора
-- performance: Settings виджета производительности
+- performance: Settings виджета performance
 - trading_activity: Settings виджета торговой активности
 - risk_metrics: Settings виджета метрик риска
 - system_health: Settings виджета health системы
@@ -1292,7 +1292,7 @@ widgets_config (dict): configuration виджетов дашборда
 'refresh_interval': 30, # Интервал обновления (секунды)
 'size': 'large', # Размер виджета
 'position': {'x': 0, 'y': 0}, # Позиция on дашборде
-'metrics': [ # Отображаемые метрики
+'metrics': [ # Отображаемые metrics
  'profit_loss', 'win_rate', 'active_positions', 'uptime',
  'total_trades', 'sharpe_ratio', 'max_drawdown', 'error_rate'
  ],
@@ -1308,7 +1308,7 @@ widgets_config (dict): configuration виджетов дашборда
  'error_rate': {'threshold': 0.05, 'color': 'critical'}
  }
  },
-'performance': { # Виджет производительности
+'performance': { # Виджет performance
  'enabled': True,
  'refresh_interval': 60,
  'size': 'xlarge',
@@ -1550,11 +1550,11 @@ time.sleep(5) # Короткая пауза при ошибке
  }
 
  def create_performance_widget(self):
-"""Виджет производительности"""
+"""Виджет performance"""
 
  return {
  'type': 'performance',
-'title': 'Производительность',
+'title': 'performance',
  'charts': [
  {
  'type': 'line',
@@ -1585,7 +1585,7 @@ time.sleep(5) # Короткая пауза при ошибке
 
  return {
  'type': 'risk_metrics',
-'title': 'Метрики риска',
+'title': 'metrics риска',
  'metrics': [
 {'name': 'Максимальная просадка', 'value': 'max_drawdown', 'format': 'percentage'},
  {'name': 'Sharpe Ratio', 'value': 'sharpe_ratio', 'format': 'number'},
@@ -1680,7 +1680,7 @@ class LogAnalyzer:
  return errors
 
  def analyze_performance_issues(self, log_file):
-"""Анализ проблем производительности"""
+"""Анализ проблем performance"""
 
  performance_patterns = [
  r'Slow operation: (.+) took (\d+)ms',
@@ -1735,11 +1735,11 @@ class LogAnalyzer:
  return trading_events
 ```
 
-### 6. Отслеживание производительности
+### 6. Отслеживание performance
 
 ```python
 class PerformanceTracker:
-"""Отслеживание производительности"""
+"""Отслеживание performance"""
 
  def __init__(self):
  self.performance_metrics = {}
@@ -1747,12 +1747,12 @@ class PerformanceTracker:
  self.optimization_suggestions = {}
 
  def track_performance(self, metrics):
-"""Отслеживание производительности"""
+"""Отслеживание performance"""
 
 # Расчет ключевых метрик
  performance_score = self.calculate_performance_score(metrics)
 
-# Сравнение with бенчмарками
+# comparison with бенчмарками
  benchmark_comparison = self.compare_with_benchmarks(metrics)
 
 # Генерация предложений on оптимизации
@@ -1766,7 +1766,7 @@ class PerformanceTracker:
  }
 
  def calculate_performance_score(self, metrics):
-"""Расчет оценки производительности"""
+"""Расчет оценки performance"""
 
 # Веса for различных метрик
  weights = {
@@ -1822,7 +1822,7 @@ class PerformanceTracker:
  'action': 'reView_error_Logs'
  })
 
-# Анализ производительности
+# Анализ performance
  if metrics.get('trades_per_hour', 0) < 1:
  suggestions.append({
  'category': 'trading_activity',
@@ -2117,13 +2117,13 @@ class LogRotation:
  os.remove(file_path)
 ```
 
-### 3. Метрики производительности
+### 3. Metrics performance
 
-### 📈 SLA метрики and производительность
+### 📈 SLA metrics and performance
 
 ```mermaid
 graph TD
-A[SLA метрики] --> B[Доступность]
+A[SLA metrics] --> B[Доступность]
 A --> C[Время отклика]
 A --> D[Частота ошибок]
 A --> E[Пропускная способность]
@@ -2190,7 +2190,7 @@ M --> N[Корректирующие действия]
 
 ```python
 class PerformanceMetrics:
-"""Метрики производительности"""
+"""Metrics performance"""
 
  def __init__(self):
  self.metrics_definitions = {}
@@ -2295,7 +2295,7 @@ C2 --> G[Закрытие all позиций]
 C3 --> H[Переключение API]
 
 D1 --> I[Анализ проигрышных сделок]
-D2 --> J[Переобучение модели]
+D2 --> J[retraining модели]
 D3 --> K[Оптимизация сети]
 
 E1 --> L[Генерация Reportа]
@@ -2470,7 +2470,7 @@ A[Система Monitoringа] --> B[Внешние интеграции]
 C --> C1[Сбор метрик]
 C --> C2[Хранение временных рядов]
  C --> C3[HTTP endpoint: :8000]
-C --> C4[Метрики: trades_total, profit_loss]
+C --> C4[metrics: trades_total, profit_loss]
 
 D --> D1[Визуализация]
 D --> D2[Дашборды]
@@ -2479,7 +2479,7 @@ D --> D4[Источники данных: Prometheus]
 
  E --> E1[APM Monitoring]
 E --> E2[Logs and трейсинг]
-E --> E3[Инфраструктурные метрики]
+E --> E3[Инфраструктурные metrics]
 E --> E4[Корреляция events]
 
  F --> F1[application Performance]
@@ -2489,7 +2489,7 @@ E --> E4[Корреляция events]
 
 G --> G1[Торговые события]
 G --> G2[Системные алерты]
-G --> G3[Reportы производительности]
+G --> G3[Reportы performance]
 G --> G4[Внешние API]
 
 C1 --> H[Централизованный Monitoring]
@@ -2547,7 +2547,7 @@ class Externalintegrations:
 
  from prometheus_client import Counter, Histogram, Gauge, start_http_server
 
-# Метрики
+# metrics
  self.prometheus_metrics = {
  'trades_total': Counter('trading_bot_trades_total', 'Total number of trades'),
  'profit_loss': Gauge('trading_bot_profit_loss', 'Current profit/loss'),
@@ -2688,13 +2688,13 @@ print(f"Ошибка отправки webhook: {e}")
 | | `repeated_alerts` | 3 раза/час | Повторяющиеся алерты | 2-10 раз/час |
 | | `system_down` | 10 мин | Система not Workingет | 5-30 мин |
 | | `critical_loss` | 15% | Критические потери | 10-25% |
-| **Settings производительности** | | | | |
+| **Settings performance** | | | | |
 | | `enable_tracking` | True | Включить отслеживание | True, False |
 | | `tracking_interval` | 60 сек | Интервал отслеживания | 30-300 сек |
 | | `metrics_retention` | 7 дней | Хранение метрик | 1-30 дней |
-| | `benchmark_comparison` | True | Сравнение with бенчмарками | True, False |
+| | `benchmark_comparison` | True | comparison with бенчмарками | True, False |
 | | `optimization_suggestions` | True | Предложения on оптимизации | True, False |
-| **Бенчмарки производительности** | | | | |
+| **Бенчмарки performance** | | | | |
 | | `min_win_rate` | 0.5 | Минимальный процент выигрышных сделок | 0.3-0.7 |
 | | `max_drawdown` | 0.1 | Максимальная просадка | 0.05-0.2 |
 | | `min_sharpe_ratio` | 1.0 | Минимальный коэффициент Шарпа | 0.5-2.0 |
@@ -2738,7 +2738,7 @@ print(f"Ошибка отправки webhook: {e}")
 Monitoring торгового бота - это критически важный аспект поддержания стабильной and прибыльной торговой системы. Следуя лучшим практикам, описанным in этом разделе, вы сможете:
 
 1. **Быстро выявлять проблемы** - with помощью системы алертов and проверок health
-2. **Оптимизировать производительность** - через анализ метрик and предложения on улучшению
+2. **Оптимизировать performance** - через анализ метрик and предложения on улучшению
 3. **Обеспечивать непрерывную работу** - with помощью автоматических действий and восстановления
 4. **Интегрироваться with внешними системами** - for расширенного Monitoringа and Analysis
 

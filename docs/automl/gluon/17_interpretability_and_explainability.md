@@ -22,13 +22,13 @@
 ## Введение in интерпретируемость
 
 <img src="images/optimized/interpretability_overView.png" alt="Интерпретируемость ML" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 17.1: Обзор методов интерпретируемости and объяснимости ML-моделей - основные категории and методы*
+*Рисунок 17.1: Обзор методов интерпретируемости and объяснимости ML-моделей - основные категории and methods*
 
 **Почему интерпретируемость - это not роскошь, а необходимость?** Потому что in современном мире ML-модели принимают решения, влияющие on жизни людей, and эти решения должны быть понятными and справедливыми.
 
 **Основные категории интерпретируемости:**
 - **Intrinsic Interpretability**: Модели, которые изначально интерпретируемы (линейные, деревья решений)
-- **Post-hoc Interpretability**: Методы объяснения "черных ящиков" (SHAP, LIME, integrated Gradients)
+- **Post-hoc Interpretability**: methods объяснения "черных ящиков" (SHAP, LIME, integrated Gradients)
 - **Global Methods**: Объяснение модели in целом (Feature importance, PDP, ALE)
 - **Local Methods**: Объяснение конкретных predictions (LIME, SHAP Local, Counterfactuals)
 
@@ -40,8 +40,8 @@
 
 ## Типы интерпретируемости
 
-<img src="images/optimized/intrinsic_vs_posthoc.png" alt="Сравнение типов интерпретируемости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 17.2: Сравнение внутренней and пост-хок интерпретируемости - преимущества and характеристики*
+<img src="images/optimized/intrinsic_vs_posthoc.png" alt="comparison типов интерпретируемости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 17.2: comparison внутренней and пост-хок интерпретируемости - преимущества and характеристики*
 
 ### 1. Внутренняя интерпретируемость (Intrinsic Interpretability)
 
@@ -57,7 +57,7 @@
 
 **Преимущества внутренней интерпретируемости:**
 - **Точность**: Интерпретации точно отражают Logsку модели
-- **Простота**: not нужны дополнительные методы объяснения
+- **Простота**: not нужны дополнительные methods объяснения
 - **Надежность**: Интерпретации всегда доступны
 - **Понятность**: Logsка модели прозрачна
 
@@ -105,10 +105,10 @@ shap_values = explainer.shap_values(X_test)
 shap.summary_plot(shap_values, X_test)
 ```
 
-## Методы глобальной интерпретируемости
+## methods глобальной интерпретируемости
 
-<img src="images/optimized/global_methods.png" alt="Глобальные методы интерпретируемости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 17.3: Глобальные методы интерпретируемости - объяснение модели in целом*
+<img src="images/optimized/global_methods.png" alt="Глобальные methods интерпретируемости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 17.3: Глобальные methods интерпретируемости - объяснение модели in целом*
 
 **Типы глобальных методов:**
 - **Feature importance**: Важность признаков for модели
@@ -120,14 +120,14 @@ shap.summary_plot(shap_values, X_test)
 
 ### 1. Feature importance
 
-<img src="images/optimized/feature_importance_methods.png" alt="Методы важности признаков" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 17.5: Методы определения важности признаков - сравнение различных подходов*
+<img src="images/optimized/feature_importance_methods.png" alt="methods важности признаков" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 17.5: methods определения важности признаков - comparison различных подходов*
 
-**Методы определения важности признаков:**
+**methods определения важности признаков:**
 - **Built-in importance**: Встроенная важность (for tree-based моделей)
 - **Permutation importance**: Важность через перестановку признаков
 - **SHAP Values**: SHAP значения for объяснения вклада признаков
-- **Сравнение методов**: Анализ согласованности различных подходов
+- **comparison методов**: Анализ согласованности различных подходов
 
 ```python
 def get_feature_importance(predictor, method='permutation'):
@@ -328,15 +328,15 @@ def plot_ale(predictor, X, features):
  plt.show()
 ```
 
-## Методы локальной интерпретируемости
+## methods локальной интерпретируемости
 
-<img src="images/optimized/local_methods.png" alt="Локальные методы интерпретируемости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 17.4: Локальные методы интерпретируемости - объяснение конкретных predictions*
+<img src="images/optimized/local_methods.png" alt="Локальные methods интерпретируемости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 17.4: Локальные methods интерпретируемости - объяснение конкретных predictions*
 
 **Типы локальных методов:**
 - **LIME**: Локальные аппроксимации for объяснения predictions
 - **SHAP Local**: Локальные SHAP значения for конкретных экземпляров
-- **integrated Gradients**: Градиентные методы for нейронных networks
+- **integrated Gradients**: Градиентные methods for нейронных networks
 - **Counterfactual ExPlanations**: Объяснения через контрфактические examples
 - **Attention Mechanisms**: Механизмы внимания in нейронных сетях
 - **Saliency Maps**: Карты значимости for визуализации
@@ -428,10 +428,10 @@ def explain_with_lime(predictor, X, instance_idx, num_features=5):
 
 ### 2. SHAP (SHapley Additive exPlanations)
 
-<img src="images/optimized/shap_lime_comparison.png" alt="Сравнение SHAP and LIME" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 17.6: Сравнение SHAP and LIME методов объяснения - характеристики and применение*
+<img src="images/optimized/shap_lime_comparison.png" alt="comparison SHAP and LIME" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 17.6: comparison SHAP and LIME методов объяснения - характеристики and применение*
 
-**Сравнение SHAP and LIME:**
+**comparison SHAP and LIME:**
 - **SHAP**: Теоретически обоснованный, согласованный, универсальный
 - **LIME**: Локальные аппроксимации, простота понимания, быстрота вычислений
 - **Корреляция**: Анализ согласованности между методами
@@ -639,7 +639,7 @@ def integrated_gradients(model, X, baseline=None, steps=50):
 - `1`: Второй класс
 - Применение: объяснение конкретного класса
 
-## Специфичные методы for AutoML Gluon
+## Специфичные methods for AutoML Gluon
 
 ### 1. Model-specific Interpretability
 
@@ -709,13 +709,13 @@ def explain_ensemble(predictor, X, method='weighted'):
 ## Визуализация объяснений
 
 <img src="images/optimized/exPlanation_dashboard.png" alt="Дашборд объяснений" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 17.7: Комплексный дашборд объяснений ML-модели - важность признаков, SHAP, PDP, метрики*
+*Рисунок 17.7: Комплексный дашборд объяснений ML-модели - важность признаков, SHAP, PDP, metrics*
 
 **components дашборда объяснений:**
 - **Feature importance**: Топ-10 важных признаков
 - **SHAP Summary**: Распределение SHAP значений
 - **Partial Dependence Plot**: dependency from ключевого приsign
-- **Model Performance**: Метрики производительности модели
+- **Model Performance**: Metrics performance модели
 
 ### 1. Comprehensive ExPlanation Dashboard
 
@@ -864,10 +864,10 @@ def choose_exPlanation_method(model_type, data_size, interpretability_requiremen
  - `'SVM'`: Support Vector Machine
 
 - **`data_size`**: Размер датасета
-- `< 1000`: Малый датасет (быстрые методы)
+- `< 1000`: Малый датасет (быстрые methods)
 - `1000-10000`: Средний датасет (баланс скорости and точности)
-- `10000-100000`: Большой датасет (эффективные методы)
-- `> 100000`: Очень большой датасет (масштабируемые методы)
+- `10000-100000`: Большой датасет (эффективные methods)
+- `> 100000`: Очень большой датасет (масштабируемые methods)
 
 - **`interpretability_requirement`**: Требования к интерпретируемости
 - `'high'`: Высокие требования (детальные объяснения)
@@ -914,11 +914,11 @@ def choose_exPlanation_method(model_type, data_size, interpretability_requiremen
 - **for детальных объяснений**: `lime` (локальные) or `shap` (глобальные)
 - **for быстрых объяснений**: `feature_importance` (если доступно)
 
-### 2. Валидация объяснений
+### 2. validation объяснений
 
 ```python
 def validate_exPlanations(predictor, X, y, exPlanation_method='shap'):
-"""Валидация качества объяснений"""
+"""validation качества объяснений"""
 
 # create объяснений
  if exPlanation_method == 'shap':
@@ -934,7 +934,7 @@ def validate_exPlanations(predictor, X, y, exPlanation_method='shap'):
  }
 
  elif exPlanation_method == 'lime':
-# Валидация LIME
+# validation LIME
  lime_explainer = lime.lime_tabular.LimeTabularExplainer(
  X.values, feature_names=X.columns.toList()
  )
@@ -953,15 +953,15 @@ def validate_exPlanations(predictor, X, y, exPlanation_method='shap'):
  }
 ```
 
-**Детальные описания параметров валидации объяснений:**
+**Детальные описания параметров validation объяснений:**
 
-- **`exPlanation_method='shap'`**: Метод объяснения for валидации
+- **`exPlanation_method='shap'`**: Метод объяснения for validation
 - `'shap'`: SHAP объяснения (рекомендуется)
 - `'lime'`: LIME объяснения
 - `'permutation'`: Перестановочная важность
 - `'feature_importance'`: Встроенная важность
 
-- **`X, y`**: data for валидации
+- **`X, y`**: data for validation
 - `X`: Признаки for Analysis
 - `y`: Целевые переменные
 - Применение: тестирование качества объяснений
@@ -1004,7 +1004,7 @@ def validate_exPlanations(predictor, X, y, exPlanation_method='shap'):
 - `'low'`: Низкое качество (ненадежные объяснения)
 - Применение: классификация качества объяснений
 
-**Дополнительные метрики валидации:**
+**Дополнительные Metrics validation:**
 
 - **`stability_score`**: Стабильность объяснений
 - Тестирование on похожих экземплярах

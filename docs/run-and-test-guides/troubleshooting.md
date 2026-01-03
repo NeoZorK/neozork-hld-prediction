@@ -198,7 +198,7 @@ grep -r "ERROR" Logs/
 # Поиск предупреждений / Search for warnings
 grep -r "WARNING" Logs/
 
-# Анализ производительности / Performance Analysis
+# Анализ performance / Performance Analysis
 grep -r "performance" Logs/
 ```
 

@@ -125,16 +125,16 @@ TRANSLATIONS = OrderedDict([
     (r'all', 'all'),
     (r'tests', 'tests'),
     # Common single words
-    (r'\bдля\b', 'for'),
-    (r'\bпо\b', 'on'),
-    (r'\bс\b', 'with'),
-    (r'\bи\b', 'and'),
-    (r'\bили\b', 'or'),
-    (r'\bв\b', 'in'),
-    (r'\bна\b', 'on'),
-    (r'\bот\b', 'from'),
-    (r'\bдо\b', 'to'),
-    (r'\bне\b', 'not'),
+ (r'\bдля\b', 'for'),
+ (r'\bпо\b', 'on'),
+ (r'\bс\b', 'with'),
+ (r'\bи\b', 'and'),
+ (r'\bили\b', 'or'),
+ (r'\bв\b', 'in'),
+ (r'\bна\b', 'on'),
+ (r'\bот\b', 'from'),
+ (r'\bдо\b', 'to'),
+ (r'\bне\b', 'not'),
     # Additional common phrases
     (r'installation', 'installation'),
     (r'package installation', 'package installation'),
@@ -357,7 +357,7 @@ def should_exclude_file(file_path: str) -> bool:
 
 def has_russian(text: str) -> bool:
     """check if text contains Russian."""
-    return bool(re.search(r'[А-Яа-яЁё]', text))
+ return bool(re.search(r'[А-Яа-яЁё]', text))
 
 
 def translate_text(text: str) -> str:

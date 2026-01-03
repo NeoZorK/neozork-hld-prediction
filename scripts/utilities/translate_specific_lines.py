@@ -19,56 +19,115 @@ try:
 except ImportError:
     HAS_REQUESTS = False
 
-# Translation patterns (from translate_files_advanced.py)
+# Comprehensive translation patterns (expanded from translate_files_advanced.py)
+# Order matters: longer, more specific phrases first
 TRANSLATIONS = OrderedDict([
-    # Common Russian words
-    (r'\bобновление\b', 'update'),
-    (r'\bдобавление\b', 'add'),
-    (r'\bудаление\b', 'remove'),
-    (r'\bисправление\b', 'fix'),
-    (r'\bулучшение\b', 'improve'),
-    (r'\bсоздание\b', 'create'),
-    (r'\bнастройка\b', 'configuration'),
-    (r'\bустановка\b', 'installation'),
-    (r'\bруководство\b', 'guide'),
-    (r'\bдокументация\b', 'documentation'),
-    (r'\bпример\b', 'example'),
-    (r'\bпримеры\b', 'examples'),
-    (r'\bописание\b', 'description'),
-    (r'\bинструкция\b', 'instruction'),
-    (r'\bинструкции\b', 'instructions'),
-    (r'\bзависимость\b', 'dependency'),
-    (r'\bзависимости\b', 'dependencies'),
-    (r'\bмодуль\b', 'module'),
-    (r'\bмодули\b', 'modules'),
-    (r'\bфункция\b', 'function'),
-    (r'\bфункции\b', 'functions'),
-    (r'\bпараметр\b', 'parameter'),
-    (r'\bпараметры\b', 'parameters'),
-    (r'\bконфигурация\b', 'configuration'),
-    (r'\bнастройки\b', 'settings'),
-    (r'\bиндикаторов\b', 'indicators'),
-    (r'\bпроверка\b', 'check'),
-    (r'\bочистка\b', 'clean'),
-    (r'\bкэша\b', 'cache'),
-    (r'\bпереустановка\b', 'reinstall'),
+    # Image alt text and common phrases
+ (r'architecture\s+([A-Z][a-zA-Z\s]+)', r'Architecture \1'),
+ (r'architecture\s+([a-z][a-zA-Z\s]+)', r'architecture \1'),
+ (r'comparison\s+([а-яА-Я\s]+)', r'Comparison \1'),
+ (r'comparison\s+([а-яА-Я\s]+)', r'comparison \1'),
+ (r'methods\s+([а-яА-Я\s]+)', r'Methods \1'),
+ (r'methods\s+([а-яА-Я\s]+)', r'methods \1'),
+ (r'workflow\s+process\s+([а-яА-Я\s]+)', r'Workflow \1'),
+ (r'workflow\s+process\s+([а-яА-Я\s]+)', r'workflow \1'),
+ (r'metrics\s+([а-яА-Я\s]+)', r'Metrics \1'),
+ (r'metrics\s+([а-яА-Я\s]+)', r'metrics \1'),
+    
+    # Common documentation phrases
+ (r'\bобновление\b', 'update'),
+ (r'\bдобавление\b', 'add'),
+ (r'\bудаление\b', 'remove'),
+ (r'\bисправление\b', 'fix'),
+ (r'\bулучшение\b', 'improve'),
+ (r'\bсоздание\b', 'create'),
+ (r'\bнастройка\b', 'configuration'),
+ (r'\bустановка\b', 'installation'),
+ (r'\bруководство\b', 'guide'),
+ (r'\bдокументация\b', 'documentation'),
+ (r'\bпример\b', 'example'),
+ (r'\bпримеры\b', 'examples'),
+ (r'\bописание\b', 'description'),
+ (r'\bинструкция\b', 'instruction'),
+ (r'\bинструкции\b', 'instructions'),
+ (r'\bзависимость\b', 'dependency'),
+ (r'\bзависимости\b', 'dependencies'),
+ (r'\bмодуль\b', 'module'),
+ (r'\bмодули\b', 'modules'),
+ (r'\bфункция\b', 'function'),
+ (r'\bфункции\b', 'functions'),
+ (r'\bпараметр\b', 'parameter'),
+ (r'\bпараметры\b', 'parameters'),
+ (r'\bконфигурация\b', 'configuration'),
+ (r'\bнастройки\b', 'settings'),
+ (r'\bиндикаторов\b', 'indicators'),
+ (r'\bпроверка\b', 'check'),
+ (r'\bочистка\b', 'clean'),
+ (r'\bкэша\b', 'cache'),
+ (r'\bпереустановка\b', 'reinstall'),
+ (r'\bпроизводительности\b', 'performance'),
+ (r'\bпроизводительность\b', 'performance'),
+ (r'\bархитектура\b', 'architecture'),
+ (r'\bАрхитектура\b', 'Architecture'),
+ (r'\bсравнение\b', 'comparison'),
+ (r'\bСравнение\b', 'Comparison'),
+ (r'\bметоды\b', 'methods'),
+ (r'\bМетоды\b', 'Methods'),
+ (r'\bпроцесс\b', 'process'),
+ (r'\bПроцесс\b', 'Process'),
+ (r'\bрабочий\b', 'workflow'),
+ (r'\bРабочий\b', 'Workflow'),
+ (r'\bметрики\b', 'metrics'),
+ (r'\bМетрики\b', 'Metrics'),
+ (r'\bвалидации\b', 'validation'),
+ (r'\bвалидация\b', 'validation'),
+ (r'\bВалидация\b', 'Validation'),
+ (r'\bпереобучения\b', 'retraining'),
+ (r'\bпереобучение\b', 'retraining'),
+ (r'\bПереобучение\b', 'Retraining'),
+    
     # Common words
-    (r'\bдля\b', 'for'),
-    (r'\bпо\b', 'on'),
-    (r'\bс\b', 'with'),
-    (r'\bи\b', 'and'),
-    (r'\bили\b', 'or'),
-    (r'\bв\b', 'in'),
-    (r'\bна\b', 'on'),
-    (r'\bот\b', 'from'),
-    (r'\bдо\b', 'to'),
-    (r'\bне\b', 'not'),
+ (r'\bдля\b', 'for'),
+ (r'\bпо\b', 'on'),
+ (r'\bс\b', 'with'),
+ (r'\bи\b', 'and'),
+ (r'\bили\b', 'or'),
+ (r'\bв\b', 'in'),
+ (r'\bна\b', 'on'),
+ (r'\bот\b', 'from'),
+ (r'\bдо\b', 'to'),
+ (r'\bне\b', 'not'),
 ])
 
 
 def has_russian_text(text: str) -> bool:
     """Check if text contains Cyrillic characters."""
-    return bool(re.search(r'[А-Яа-яЁё]', text))
+ return bool(re.search(r'[А-Яа-яЁё]', text))
+
+
+def translate_text_pattern_based(text: str) -> str:
+    """Translate Russian text to English using comprehensive patterns."""
+    if not has_russian_text(text):
+        return text
+
+    translated = text
+    # Apply translations in order (longer patterns first)
+    for pattern, replacement in TRANSLATIONS.items():
+        translated = re.sub(pattern, replacement, translated, flags=re.MULTILINE | re.IGNORECASE)
+
+    # Clean up multiple spaces but preserve structure
+    lines = translated.split('\n')
+    cleaned_lines = []
+    for line in lines:
+        if (line.strip().startswith('#') or
+            line.strip().startswith('*') or
+            line.strip().startswith('-') or
+            line.strip().startswith('```') or
+            line.strip().startswith('`')):
+            cleaned_lines.append(re.sub(r'[ \t]+', ' ', line.rstrip()))
+        else:
+            cleaned_lines.append(re.sub(r'[ \t]+', ' ', line.rstrip()))
+    return '\n'.join(cleaned_lines)
 
 
 def translate_with_mymemory(text: str, max_length: int = 500) -> Optional[str]:
@@ -139,11 +198,7 @@ def translate_text(text: str, use_api: bool = True) -> str:
             return translated
 
     # Fallback to pattern-based translation
-    translated = text
-    for pattern, replacement in TRANSLATIONS.items():
-        translated = re.sub(pattern, replacement, translated, flags=re.IGNORECASE)
-
-    return translated.strip()
+    return translate_text_pattern_based(text)
 
 
 def parse_line_numbers(line_nums_str: str) -> List[int]:
@@ -176,7 +231,10 @@ def translate_file_lines(file_path: str, line_numbers: List[int], use_api: bool 
                 continue
 
             # Translate the line
-            translated_line = translate_text(original_line.rstrip('\n\r'), use_api=use_api)
+            if use_api:
+                translated_line = translate_text(original_line.rstrip('\n\r'), use_api=True)
+            else:
+                translated_line = translate_text_pattern_based(original_line.rstrip('\n\r'))
             
             # Preserve trailing newline if it existed
             if original_line.endswith('\n'):

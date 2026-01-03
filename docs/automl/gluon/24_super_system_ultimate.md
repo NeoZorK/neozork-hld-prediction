@@ -17,7 +17,7 @@
 
 ### Преимущества супер-системы
 - **Всесторонний анализ**: Объединяет все лучшие техники
-- **Высокая точность**: Множественная валидация сигналов
+- **Высокая точность**: Множественная validation сигналов
 - **Стабильность**: Workingет in любых рыночных условиях
 - **Прибыльность**: Стабильная доходность > 100% in месяц
 
@@ -30,7 +30,7 @@
 
 **Ключевые особенности супер-системы:**
 - **Всесторонний анализ**: Объединяет все лучшие техники
-- **Высокая точность**: Множественная валидация сигналов (97.8%)
+- **Высокая точность**: Множественная validation сигналов (97.8%)
 - **Стабильность**: Workingет in любых рыночных условиях
 - **Прибыльность**: Стабильная доходность > 100% in месяц
 - **Робастность**: Устойчивость к рыночным шокам
@@ -53,7 +53,7 @@
 **Почему принципы объединения критически важны?** Потому что неправильное объединение indicators может привести к конфликту сигналов and потере денег.
 
 1. **Синергия indicators** - каждый индикатор дополняет другие, создавая синергетический эффект
-2. **Многоуровневая валидация** - check on all уровнях for максимальной точности
+2. **Многоуровневая validation** - check on all уровнях for максимальной точности
 3. **Адаптивность** - система адаптируется к изменениям рынка, оставаясь актуальной
 4. **Робастность** - устойчивость к рыночным шокам, Working in любых условиях
 5. **Прибыльность** - стабильная доходность > 100% in месяц with минимальными рисками
@@ -66,10 +66,10 @@
 4. **Риск-менеджмент** - защита from потерь
 5. **Непрерывное обучение** - система постоянно улучшается
 
-## Архитектура супер-системы
+## architecture супер-системы
 
-<img src="images/optimized/system_architecture.png" alt="Архитектура супер-системы" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 24.2: Архитектура супер-системы - многоуровневая Structure*
+<img src="images/optimized/system_architecture.png" alt="architecture супер-системы" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 24.2: architecture супер-системы - многоуровневая Structure*
 
 **Уровни системы:**
 - **Level 1 - Base Indicators**: SCHR Levels, WAVE2, SCHR SHORT3
@@ -81,7 +81,7 @@
 
 **Принципы объединения:**
 - **Синергия indicators**: Каждый индикатор дополняет другие
-- **Многоуровневая валидация**: check on all уровнях
+- **Многоуровневая validation**: check on all уровнях
 - **Адаптивность**: Система адаптируется к изменениям рынка
 - **Робастность**: Устойчивость к рыночным шокам
 - **Прибыльность**: Стабильная доходность > 100% in месяц
@@ -152,7 +152,7 @@ config (dict, optional): Конфигурационный словарь with п
  **config.get('Portfolio_config', {})
  )
 
-# Уровень 6: Monitoring and переобучение
+# Уровень 6: Monitoring and retraining
  self.Monitoring_system = ContinuousLearningsystem(
  **config.get('learning_config', {})
  )
@@ -207,7 +207,7 @@ config (dict, optional): Конфигурационный словарь with п
  'meta_model_config': {
  'ensemble_methods': ['adaptive', 'context', 'temporal', 'hierarchical'],
 'weight_update_frequency': 100, # Частота обновления весов (свечей)
-'performance_window': 500, # Окно for Analysis производительности
+'performance_window': 500, # Окно for Analysis performance
 'confidence_threshold': 0.7, # Порог уверенности for сигналов
 'min_models_agreement': 2 # Минимальное согласие моделей
  },
@@ -227,9 +227,9 @@ config (dict, optional): Конфигурационный словарь with п
 'volatility_target': 0.15 # Целевая волатильность портфеля
  },
  'learning_config': {
-'retrain_frequency': 1000, # Частота переобучения (свечей)
+'retrain_frequency': 1000, # Частота retraining (свечей)
 'drift_detection_window': 200, # Окно for обнаружения дрифта
-'performance_threshold': 0.8, # Порог производительности for адаптации
+'performance_threshold': 0.8, # Порог performance for адаптации
 'adaptation_rate': 0.1, # Скорость адаптации
 'memory_size': 10000 # Размер памяти for обучения
  }
@@ -244,12 +244,12 @@ config (dict, optional): Конфигурационный словарь with п
 - **WAVE2**: Волновой анализ, волновые паттерны, волновые сигналы
 - **SCHR SHORT3**: Краткосрочные сигналы, краткосрочные паттерны, краткосрочная волатильность
 
-**Процесс интеграции:**
+**process интеграции:**
 - **Получение сигналов**: Сбор сигналов from all indicators
 - **Анализ корреляций**: Изучение взаимосвязей между сигналами
-- **Взвешивание сигналов**: Присвоение весов on basis производительности
+- **Взвешивание сигналов**: Присвоение весов on basis performance
 - **create мета-сигнала**: Объединение взвешенных сигналов
-- **Валидация результата**: check качества финального сигнала
+- **validation результата**: check качества финального сигнала
 
 ### 2. integration indicators
 
@@ -341,7 +341,7 @@ dict: Интегрированный сигнал with метаданными
 # Анализ корреляций между индикаторами
  correlations = self.analyze_correlations(schr_signals, wave2_signals, short3_signals)
 
-# update весов on basis корреляций and производительности
+# update весов on basis корреляций and performance
  self._update_weights(schr_signals, wave2_signals, short3_signals, correlations)
 
 # Взвешивание сигналов
@@ -546,18 +546,18 @@ dict: Сигналы SCHR SHORT3
 *Рисунок 24.4: Мета-модель объединения - from адаптивных весов to финального объединения*
 
 **components мета-модели:**
-- **Adaptive Weights**: Анализ производительности, адаптивные веса, динамическое взвешивание
+- **Adaptive Weights**: Анализ performance, адаптивные веса, динамическое взвешивание
 - **Context Ensemble**: Рыночный контекст, контекстные модели, контекстные веса
 - **Temporal Ensemble**: Временное объединение, анализ трендов, временные паттерны
 - **Hierarchical Ensemble**: Иерархическое объединение, многоуровневая Structure
 - **Final Combination**: Финальное объединение, оптимизация результата
-- **Performance Tracking**: Отслеживание производительности, Monitoring качества
+- **Performance Tracking**: Отслеживание performance, Monitoring качества
 
-**Методы объединения:**
+**methods объединения:**
 - **Временное объединение**: Анализ сигналов во времени
 - **Иерархическое объединение**: Многоуровневая Structure объединения
 - **Финальное объединение**: Оптимальное сочетание all методов
-- **Отслеживание производительности**: Постоянный Monitoring качества
+- **Отслеживание performance**: Постоянный Monitoring качества
 
 ### 3. Мета-модель
 
@@ -568,8 +568,8 @@ class MetaEnsembleModel:
 parameters мета-модели:
 - base_models: Словарь with базовыми ML моделями
 - meta_weights: Адаптивные веса for каждой модели
-- ensemble_methods: Методы объединения моделей
-- performance_tracker: Отслеживание производительности
+- ensemble_methods: methods объединения моделей
+- performance_tracker: Отслеживание performance
 - context_analyzer: Analysisтор рыночного контекста
  """
 
@@ -581,7 +581,7 @@ parameters мета-модели:
 config (dict, optional): configuration мета-модели
 - ensemble_methods: List методов объединения
 - weight_update_frequency: Частота обновления весов
-- performance_window: Окно for Analysis производительности
+- performance_window: Окно for Analysis performance
 - confidence_threshold: Порог уверенности
 - min_models_agreement: Минимальное согласие моделей
 - context_sensitivity: Чувствительность к контексту
@@ -605,7 +605,7 @@ config (dict, optional): configuration мета-модели
 'short3_ml': 0.30 # Вес SHORT3 ML модели (30%)
  }
 
-# Инициализация трекеров производительности
+# Инициализация трекеров performance
  self.performance_tracker = {
  'accuracy_history': [],
  'precision_history': [],
@@ -619,7 +619,7 @@ config (dict, optional): configuration мета-модели
  return {
  'ensemble_methods': ['adaptive', 'context', 'temporal', 'hierarchical'],
 'weight_update_frequency': 100, # Частота обновления весов (свечей)
-'performance_window': 500, # Окно for Analysis производительности
+'performance_window': 500, # Окно for Analysis performance
 'confidence_threshold': 0.7, # Порог уверенности for сигналов
 'min_models_agreement': 2, # Минимальное согласие моделей
 'context_sensitivity': 0.8, # Чувствительность к контексту
@@ -657,7 +657,7 @@ dict: Мета-Prediction
 - method_Used: Примененный метод объединения
 - reasoning: Обоснование решения
  """
-# Адаптивное взвешивание on basis производительности
+# Адаптивное взвешивание on basis performance
  adaptive_weights = self.calculate_adaptive_weights(
  base_predictions,
  market_context,
@@ -702,7 +702,7 @@ dict: Мета-Prediction
  def calculate_adaptive_weights(self, predictions, context):
 """Адаптивное взвешивание моделей"""
 
-# Анализ производительности каждой модели
+# Анализ performance каждой модели
  model_performance = {}
  for model_name, Prediction in predictions.items():
  performance = self.evaluate_model_performance(Prediction, context)
@@ -753,7 +753,7 @@ class AdvancedRiskManager:
 """Продвинутый риск-менеджмент for супер-системы
 
 parameters риск-менеджмента:
-- risk_metrics: Метрики риска in реальном времени
+- risk_metrics: metrics риска in реальном времени
 - risk_limits: Лимиты риска for различных компонентов
 - hedging_strategies: Стратегии хеджирования
 - correlation_matrix: Матрица корреляций между активами
@@ -852,7 +852,7 @@ dict: Анализ риска
 - Portfolio_risk: Портфельный риск
 - correlation_risk: Корреляционный риск
 - liquidity_risk: Риск ликвидности
-- risk_metrics: Метрики риска
+- risk_metrics: metrics риска
 - recommendations: Рекомендации on управлению рисками
  """
 # Анализ рыночного риска
@@ -927,21 +927,21 @@ dict: Анализ риска
 ```
 
 <img src="images/optimized/continuous_learning.png" alt="Непрерывное обучение" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 24.6: Система непрерывного обучения - from Analysis производительности to адаптации моделей*
+*Рисунок 24.6: Система непрерывного обучения - from Analysis performance to адаптации моделей*
 
 **components обучения:**
-- **Performance Analysis**: Анализ производительности, метрики качества, тренды производительности
+- **Performance Analysis**: Анализ performance, metrics качества, тренды performance
 - **Drift Detection**: Обнаружение дрифта, анализ точности, анализ распределения
 - **Model Adaptation**: Адаптация моделей, update параметров, оптимизация архитектуры
 - **Weight Update**: update весов, адаптация к новым данным
 - **Parameter Optimization**: Оптимизация параметров, поиск оптимальных значений
-- **Retraining Cycle**: Цикл переобучения, полное update моделей
+- **Retraining Cycle**: Цикл retraining, полное update моделей
 
-**Процесс адаптации:**
+**process адаптации:**
 - **Адаптация весов**: update весов моделей on basis новых данных
-- **Адаптация параметров**: Изменение параметров for улучшения производительности
+- **Адаптация параметров**: Изменение параметров for улучшения performance
 - **Адаптация архитектуры**: Модификация структуры моделей при необходимости
-- **update весов**: Постоянное update весов on basis производительности
+- **update весов**: Постоянное update весов on basis performance
 - **Оптимизация параметров**: Поиск оптимальных значений параметров
 
 ### 5. Система непрерывного обучения
@@ -952,7 +952,7 @@ class ContinuousLearningsystem:
 
 parameters системы обучения:
 - learning_algorithms: Алгоритмы machine learning
-- performance_tracker: Отслеживание производительности
+- performance_tracker: Отслеживание performance
 - adaptation_strategies: Стратегии адаптации
 - drift_detector: Детектор дрифта данных
 - model_updater: Обновлятель моделей
@@ -964,9 +964,9 @@ parameters системы обучения:
 
  Args:
 config (dict, optional): configuration системы обучения
-- retrain_frequency: Частота переобучения (свечей)
+- retrain_frequency: Частота retraining (свечей)
 - drift_detection_window: Окно for обнаружения дрифта
-- performance_threshold: Порог производительности for адаптации
+- performance_threshold: Порог performance for адаптации
 - adaptation_rate: Скорость адаптации (0.0-1.0)
 - memory_size: Размер памяти for обучения
 - learning_rate: Скорость обучения
@@ -1002,15 +1002,15 @@ config (dict, optional): configuration системы обучения
  def _get_default_learning_config(self):
 """Возвращает конфигурацию on умолчанию for системы обучения"""
  return {
-'retrain_frequency': 1000, # Частота переобучения (свечей)
+'retrain_frequency': 1000, # Частота retraining (свечей)
 'drift_detection_window': 200, # Окно for обнаружения дрифта
-'performance_threshold': 0.8, # Порог производительности
+'performance_threshold': 0.8, # Порог performance
 'adaptation_rate': 0.1, # Скорость адаптации
 'memory_size': 10000, # Размер памяти for обучения
 'learning_rate': 0.01, # Скорость обучения
 'regularization_strength': 0.001, # Сила регуляризации
 'drift_threshold': 0.1, # Порог дрифта
-'performance_window': 100, # Окно Analysis производительности
+'performance_window': 100, # Окно Analysis performance
  'adaptation_methods': ['online', 'incremental', 'transfer'],
  'model_selection_criteria': ['accuracy', 'stability', 'efficiency'],
 'early_stopping_patience': 50, # Терпение for ранней остановки
@@ -1037,20 +1037,20 @@ market_conditions (dict): Условия рынка
 model_state (dict, optional): Состояние моделей
 - current_models: Текущие модели
 - model_weights: Веса моделей
-- performance_metrics: Метрики производительности
+- performance_metrics: Metrics performance
 
  Returns:
 dict: Результат цикла обучения
 - updated_models: Обновленные модели
-- performance_metrics: Метрики производительности
+- performance_metrics: Metrics performance
 - adaptation_actions: Выполненные действия адаптации
 - drift_detected: Обнаружен ли дрифт
-- retraining_performed: Выполнено ли переобучение
+- retraining_performed: Выполнено ли retraining
  """
  if model_state is None:
  model_state = self._get_default_model_state()
 
-# Анализ производительности текущих моделей
+# Анализ performance текущих моделей
  performance = self.analyze_performance(
  new_data,
  model_state,
@@ -1075,7 +1075,7 @@ dict: Результат цикла обучения
  )
  adaptation_actions.append('model_adaptation')
 
-# Переобучение при необходимости
+# retraining при необходимости
  if self.needs_retraining(performance, adaptation_result):
  retraining_result = self.retrain_models(
  new_data,
@@ -1241,7 +1241,7 @@ config (dict, optional): configuration обучения
 - stratify: Стратификация on целевой переменной
 - feature_selection: Отбор признаков
 - hyperparameter_tuning: configuration гиперпараметров
-- cross_validation: Кросс-валидация
+- cross_validation: Кросс-validation
 - early_stopping: Ранняя остановка
 - model_ensemble: Ансамбль моделей
 
@@ -1249,7 +1249,7 @@ config (dict, optional): configuration обучения
 dict: Результаты обучения
 - meta_model: Обученная мета-модель
 - base_models: Базовые модели
-- performance_metrics: Метрики производительности
+- performance_metrics: Metrics performance
 - feature_importance: Важность признаков
 - training_history: История обучения
  """
@@ -1294,7 +1294,7 @@ dict: Результаты обучения
  test_predictions = meta_model.predict(test_data)
  test_accuracy = accuracy_score(test_data['target'], test_predictions)
 
-# Дополнительные метрики
+# Дополнительные metrics
  performance_metrics = self._calculate_performance_metrics(
  test_data['target'],
  test_predictions
@@ -1323,7 +1323,7 @@ def train_base_models(self, train_data, hyperparameter_tuning=True, cross_valida
  Args:
 train_data (pd.dataFrame): Обучающие data
 hyperparameter_tuning (bool): configuration гиперпараметров
-cross_validation (bool): Кросс-валидация
+cross_validation (bool): Кросс-validation
 
  Returns:
 dict: Обученные базовые модели
@@ -1414,7 +1414,7 @@ print(f"Обучение модели {model_name}...")
  else:
  model.fit(train_data, time_limit=config['time_limit'])
 
-# Кросс-валидация если включена
+# Кросс-validation если включена
  if config['cross_validation']:
  cv_results = model.fit(
  train_data,
@@ -1438,7 +1438,7 @@ print(f"Модель {model_name} обучена успешно")
 - **DEX integration**: Прямая торговля, ликвидность, децентрализация
 - **signal Storage**: Хранение сигналов on блокчейне, неизменяемость
 - **Automated Trading**: Автоматическая торговля, исполнение сигналов
-- **Performance Tracking**: Отслеживание производительности, метрики
+- **Performance Tracking**: Отслеживание performance, metrics
 - **Governance system**: Система управления, принятие решений
 
 **Преимущества блокчейн-деплоя:**
@@ -1546,10 +1546,10 @@ contract SuperTradingsystemContract {
 
 ## Результаты супер-системы
 
-<img src="images/optimized/performance_results.png" alt="Результаты производительности" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 24.8: Результаты производительности супер-системы - метрики, доходность and сравнение*
+<img src="images/optimized/performance_results.png" alt="Результаты performance" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 24.8: Результаты performance супер-системы - metrics, доходность and comparison*
 
-**Производительность модели:**
+**performance модели:**
 - **Точность**: 97.8%
 - **Precision**: 97.6%
 - **Recall**: 97.4%
@@ -1558,7 +1558,7 @@ contract SuperTradingsystemContract {
 - **Максимальная просадка**: 2.1%
 - **Годовая доходность**: 156.7%
 
-**Финансовые метрики:**
+**Финансовые metrics:**
 - **Sharpe Ratio**: 5.2
 - **Max Drawdown**: 2.1%
 - **Win Rate**: 89.2%
@@ -1578,7 +1578,7 @@ contract SuperTradingsystemContract {
 - **Ноябрь**: 19.8%
 - **Декабрь**: 22.4%
 
-**Сравнение with отдельными индикаторами:**
+**comparison with отдельными индикаторами:**
 - **Super system**: 156.7%
 - **SCHR Levels**: 76.8%
 - **WAVE2**: 89.3%
@@ -1635,9 +1635,9 @@ contract SuperTradingsystemContract {
 
 | parameter | Значение | describe | Влияние on system |
 |----------|----------|----------|-------------------|
-| **ensemble_methods** | ['adaptive', 'context', 'temporal', 'hierarchical'] | Методы объединения | Определяет качество финального сигнала |
+| **ensemble_methods** | ['adaptive', 'context', 'temporal', 'hierarchical'] | methods объединения | Определяет качество финального сигнала |
 | **weight_update_frequency** | 100 | Частота обновления весов (свечей) | Скорость адаптации к изменениям |
-| **performance_window** | 500 | Окно for Analysis производительности | Стабильность оценки качества |
+| **performance_window** | 500 | Окно for Analysis performance | Стабильность оценки качества |
 | **confidence_threshold** | 0.7 | Порог уверенности for сигналов | Фильтрация слабых сигналов |
 | **min_models_agreement** | 2 | Минимальное согласие моделей | Надежность консенсуса |
 | **context_sensitivity** | 0.8 | Чувствительность к контексту | Адаптивность к рыночным условиям |
@@ -1674,18 +1674,18 @@ contract SuperTradingsystemContract {
 
 ### parameters системы обучения
 
-| parameter | Значение | describe | Влияние on производительность |
+| parameter | Значение | describe | Влияние on performance |
 |----------|----------|----------|------------------------------|
-| **retrain_frequency** | 1000 | Частота переобучения (свечей) | Баланс актуальности/стабильности |
+| **retrain_frequency** | 1000 | Частота retraining (свечей) | Баланс актуальности/стабильности |
 | **drift_detection_window** | 200 | Окно for обнаружения дрифта | Чувствительность к изменениям |
-| **performance_threshold** | 0.8 | Порог производительности | Критерий адаптации |
+| **performance_threshold** | 0.8 | Порог performance | Критерий адаптации |
 | **adaptation_rate** | 0.1 | Скорость адаптации | Консервативность изменений |
 | **memory_size** | 10000 | Размер памяти for обучения | Качество обучения |
 | **learning_rate** | 0.01 | Скорость обучения | Сходимость алгоритма |
-| **regularization_strength** | 0.001 | Сила регуляризации | Предотвращение переобучения |
+| **regularization_strength** | 0.001 | Сила регуляризации | Предотвращение retraining |
 | **drift_threshold** | 0.1 | Порог дрифта | Чувствительность к изменениям |
-| **early_stopping_patience** | 50 | Терпение for ранней остановки | Предотвращение переобучения |
-| **validation_split** | 0.2 | Доля валидационных данных | Качество валидации |
+| **early_stopping_patience** | 50 | Терпение for ранней остановки | Предотвращение retraining |
+| **validation_split** | 0.2 | Доля валидационных данных | Качество validation |
 | **batch_size** | 32 | Размер батча | Эффективность обучения |
 | **epochs_per_retrain** | 100 | Эпох при переобучении | Качество обучения |
 
@@ -1711,4 +1711,4 @@ contract SuperTradingsystemContract {
 
 ## Заключение
 
-Супер-система объединяет все лучшие техники and индикаторы for создания идеальной торговой системы. При правильной реализации она обеспечивает максимальную прибыльность and робастность. Детальная configuration параметров критически важна for достижения оптимальной производительности системы.
+Супер-система объединяет все лучшие техники and индикаторы for создания идеальной торговой системы. При правильной реализации она обеспечивает максимальную прибыльность and робастность. Детальная configuration параметров критически важна for достижения оптимальной performance системы.

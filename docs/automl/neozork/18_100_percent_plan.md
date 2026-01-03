@@ -24,8 +24,8 @@
 
 **Основные проблемы:**
 
-1. **Переобучение - Workingют только on исторических данных**
- - **Theory:** Переобучение представляет собой критическую проблему, когда модели Workingют только on исторических данных and not могут адаптироваться к новым условиям
+1. **retraining - Workingют только on исторических данных**
+ - **Theory:** retraining представляет собой критическую проблему, когда модели Workingют только on исторических данных and not могут адаптироваться к новым условиям
  - **Почему это проблема:** Обеспечивает нестабильность and низкую эффективность
  - **Плюсы:** Может обеспечить высокую точность on исторических данных
  - **Disadvantages:** Нестабильность, низкая адаптивность, непредсказуемость
@@ -56,7 +56,7 @@
 
 ### Наша революционная стратегия
 
-**Theory:** Революционная стратегия представляет собой комплексный подход к созданию высокодоходных ML-систем, объединяющий все современные техноLogsи and методы. Это критически важно for достижения доходности 100%+ in месяц.
+**Theory:** Революционная стратегия представляет собой комплексный подход к созданию высокодоходных ML-систем, объединяющий все современные техноLogsи and methods. Это критически важно for достижения доходности 100%+ in месяц.
 
 **Почему революционная стратегия важна:**
 - **Комплексность:** Обеспечивает комплексный подход к торговле
@@ -102,8 +102,8 @@
  - **Плюсы:** Дополнительные источники дохода, инновации, автоматизация
  - **Disadvantages:** Высокие риски, сложность интеграции
 
-- **Автоматическое переобучение - еженедельное update моделей**
- - **Theory:** Автоматическое переобучение критически важно for поддержания актуальности моделей
+- **Автоматическое retraining - еженедельное update моделей**
+ - **Theory:** Автоматическое retraining критически важно for поддержания актуальности моделей
  - **Почему важно:** Обеспечивает поддержание актуальности моделей
  - **Плюсы:** Актуальность моделей, автоматизация, эффективность
  - **Disadvantages:** Сложность реализации, потенциальные сбои
@@ -152,7 +152,7 @@
 - create отдельных стратегий for каждого актива and Timeframe
 - Management корреляциями между активами
 - Динамическое перераспределение капитала между активами
-- Monitoring производительности каждого актива
+- Monitoring performance каждого актива
 
 ```python
 import numpy as np
@@ -224,7 +224,7 @@ class MultiAssetStrategy:
  - Модель machine learning
  - Набор признаков
  - parameters управления рисками
- - Историю производительности
+ - Историю performance
  """
  print("create стратегий for all активов and Timeframes...")
 
@@ -505,10 +505,10 @@ class MultiAssetStrategy:
 
  def get_strategy_performance(self) -> pd.dataFrame:
  """
- Получение производительности all стратегий
+ Получение performance all стратегий
 
  Returns:
- dataFrame with метриками производительности
+ dataFrame with метриками performance
  """
  performance_data = []
 
@@ -540,7 +540,7 @@ if __name__ == "__main__":
  print(f"Создано стратегий: {len(strategy.strategies)}")
  print(f"Начальный капитал: ${strategy.initial_capital:,.2f}")
 
- # Получение производительности стратегий
+ # Получение performance стратегий
  performance = strategy.get_strategy_performance()
  print("\nПроизводительность стратегий:")
  print(performance.head(10))
@@ -1294,7 +1294,7 @@ if __name__ == "__main__":
 
 ### 3. Адаптивная система
 
-**Theory:** Адаптивная система представляет собой критически важный компонент for поддержания эффективности ML-систем in изменяющихся рыночных условиях. Система автоматически анализирует свою производительность and рыночные условия, затем адаптирует свои parameters and стратегии for поддержания оптимальной эффективности.
+**Theory:** Адаптивная система представляет собой критически важный компонент for поддержания эффективности ML-систем in изменяющихся рыночных условиях. Система автоматически анализирует свою performance and рыночные условия, затем адаптирует свои parameters and стратегии for поддержания оптимальной эффективности.
 
 **Почему адаптивная система важна:**
 - **Поддержание эффективности:** Обеспечивает поддержание эффективности in изменяющихся условиях
@@ -1304,16 +1304,16 @@ if __name__ == "__main__":
 
 **Детальное объяснение адаптивной системы:**
 
-Адаптивная система основана on принципах machine learning with подкреплением and онлайн-обучения. Система постоянно мониторит свою производительность and рыночные условия, затем принимает решения о том, как адаптироваться:
+Адаптивная система основана on принципах machine learning with подкреплением and онлайн-обучения. Система постоянно мониторит свою performance and рыночные условия, затем принимает решения о том, как адаптироваться:
 
 1. **Анализ рыночных условий** - определение текущего состояния рынка (тренд, волатильность, объем)
-2. **Анализ производительности** - оценка эффективности текущих стратегий
+2. **Анализ performance** - оценка эффективности текущих стратегий
 3. **Принятие решений об адаптации** - выбор типа адаптации on basis Analysis
 4. **Применение адаптации** - реализация выбранных изменений
 5. **Monitoring результатов** - отслеживание эффективности адаптации
 
 **Типы адаптации:**
-- **Retrain** - полное переобучение моделей on новых данных
+- **Retrain** - полное retraining моделей on новых данных
 - **Recalibrate** - корректировка параметров существующих моделей
 - **Ensemble Update** - update весов ансамблевых моделей
 - **Feature Selection** - изменение набора признаков
@@ -1350,7 +1350,7 @@ class AdaptationType(Enum):
 
 @dataclass
 class PerformanceMetrics:
- """Метрики производительности системы"""
+ """Metrics performance системы"""
  accuracy: float
  profit_factor: float
  sharpe_ratio: float
@@ -1358,7 +1358,7 @@ class PerformanceMetrics:
  win_rate: float
  avg_trade_duration: float
  total_trades: int
- recent_performance: float # Производительность за последний период
+ recent_performance: float # performance за последний период
 
 @dataclass
 class MarketAnalysis:
@@ -1384,7 +1384,7 @@ class Adaptivesystem:
  """
  Адаптивная система for автоматической оптимизации торговых стратегий
 
- Эта система постоянно мониторит производительность and рыночные условия,
+ Эта система постоянно мониторит performance and рыночные условия,
  автоматически адаптируя parameters and стратегии for поддержания оптимальной
  эффективности in изменяющихся условиях.
  """
@@ -1395,7 +1395,7 @@ class Adaptivesystem:
 
  Args:
  adaptation_rate: Скорость адаптации (0-1)
- performance_threshold: Порог производительности for Launchа адаптации
+ performance_threshold: Порог performance for Launchа адаптации
  """
  self.adaptation_rate = adaptation_rate
  self.performance_threshold = performance_threshold
@@ -1405,10 +1405,10 @@ class Adaptivesystem:
 
  # Settings адаптации
  self.adaptation_Settings = {
- 'min_performance_drop': 0.05, # Минимальное падение производительности for адаптации
+ 'min_performance_drop': 0.05, # Минимальное падение performance for адаптации
  'max_adaptation_frequency': 24, # Максимальная частота адаптации (часы)
  'adaptation_cooldown': 4, # Время ожидания между адаптациями (часы)
- 'performance_lookback': 100, # Период Analysis производительности
+ 'performance_lookback': 100, # Период Analysis performance
  'market_Analysis_lookback': 50 # Период Analysis рынка
  }
 
@@ -1429,7 +1429,7 @@ class Adaptivesystem:
 
  Args:
  market_data: data о рынке (OHLCV)
- performance: Метрики производительности
+ performance: Metrics performance
 
  Returns:
  Решение об адаптации
@@ -1448,7 +1448,7 @@ class Adaptivesystem:
  market_Analysis = self._analyze_market_condition(market_data)
  self.market_Analysis_history.append(market_Analysis)
 
- # Анализ производительности
+ # Анализ performance
  performance_metrics = self._analyze_performance(performance)
  self.performance_history.append(performance_metrics)
 
@@ -1643,8 +1643,8 @@ class Adaptivesystem:
  return MarketCondition.RANGING
 
  def _analyze_performance(self, performance: Dict[str, float]) -> PerformanceMetrics:
- """Анализ производительности системы"""
- # Расчет недавней производительности
+ """Анализ performance системы"""
+ # Расчет недавней performance
  recent_performance = self._calculate_recent_performance()
 
  return PerformanceMetrics(
@@ -1659,7 +1659,7 @@ class Adaptivesystem:
  )
 
  def _calculate_recent_performance(self) -> float:
- """Расчет недавней производительности"""
+ """Расчет недавней performance"""
  if len(self.performance_history) < 5:
  return 0.0
 
@@ -1669,7 +1669,7 @@ class Adaptivesystem:
  avg_profit_factor = np.mean([p.profit_factor for p in recent_metrics])
  avg_sharpe = np.mean([p.sharpe_ratio for p in recent_metrics])
 
- # Взвешенная оценка производительности
+ # Взвешенная оценка performance
  recent_performance = (avg_accuracy * 0.4 + avg_profit_factor * 0.3 + avg_sharpe * 0.3)
 
  return recent_performance
@@ -1713,7 +1713,7 @@ class Adaptivesystem:
  def _needs_adaptation(self, market_Analysis: MarketAnalysis,
  performance: PerformanceMetrics) -> bool:
  """Определение необходимости адаптации"""
- # check падения производительности
+ # check падения performance
  if performance.recent_performance < self.performance_threshold:
  return True
 
@@ -1732,7 +1732,7 @@ class Adaptivesystem:
  def _select_adaptation_type(self, market_Analysis: MarketAnalysis,
  performance: PerformanceMetrics) -> AdaptationType:
  """Выбор типа адаптации"""
- # Критическое падение производительности - полное переобучение
+ # Критическое падение performance - полное retraining
  if performance.accuracy < 0.5 or performance.profit_factor < 1.0:
  return AdaptationType.RETRAIN
 
@@ -1783,7 +1783,7 @@ class Adaptivesystem:
  """Оценка ожидаемого улучшения"""
  base_improvement = 0.05 # 5% базовое improve
 
- # Увеличение ожидаемого улучшения при плохой производительности
+ # Увеличение ожидаемого улучшения при плохой performance
  if performance.accuracy < 0.6:
  base_improvement += 0.1
 
@@ -1848,9 +1848,9 @@ class Adaptivesystem:
  self.adaptation_in_progress = False
 
  def _retrain_models(self, market_data: pd.dataFrame) -> None:
- """Полное переобучение моделей"""
- print("Выполняется полное переобучение моделей...")
- # Здесь должна быть реализация переобучения
+ """Полное retraining моделей"""
+ print("Выполняется полное retraining моделей...")
+ # Здесь должна быть реализация retraining
  # for примера просто обновляем timestamp
  pass
 
@@ -1927,7 +1927,7 @@ if __name__ == "__main__":
  # create адаптивной системы
  adaptive_system = Adaptivesystem()
 
- # Симуляция производительности
+ # Симуляция performance
  performance = {
  'accuracy': 0.65,
  'profit_factor': 1.8,
@@ -1983,12 +1983,12 @@ if __name__ == "__main__":
 1. **environment installation**
  - **Theory:** environment installation критически важна for создания рабочей среды
  - **Почему важно:** Обеспечивает рабочую среду
- - **Плюсы:** Рабочая среда, совместимость, производительность
+ - **Плюсы:** Рабочая среда, совместимость, performance
  - **Disadvantages:** Требует времени and ресурсов
 
  **Детальное describe environment installation:**
 
- environment installation включает настройку all required инструментов and библиотек for development and Launchа ML-систем. Это критически важно for обеспечения совместимости and производительности.
+ environment installation включает настройку all required инструментов and библиотек for development and Launchа ML-систем. Это критически важно for обеспечения совместимости and performance.
 
  ```bash
  # installation uv for управления зависимостями
@@ -2249,7 +2249,7 @@ on этом этапе мы Creating and оптимизируем все compone
  predictions = indicator.predict(test_data)
  actual = indicator.get_target(test_data)
 
- # Метрики
+ # metrics
  accuracy = accuracy_score(actual, predictions)
  precision = precision_score(actual, predictions, average='weighted')
  recall = recall_score(actual, predictions, average='weighted')
@@ -2260,7 +2260,7 @@ on этом этапе мы Creating and оптимизируем все compone
  'recall': recall
  })
 
- # Средние метрики
+ # Средние metrics
  return {
  'accuracy': np.mean([s['accuracy'] for s in scores]),
  'precision': np.mean([s['precision'] for s in scores]),
@@ -2519,7 +2519,7 @@ on этом этапе мы Creating and оптимизируем все compone
  # Сохранение лучшей модели
  self.models[name] = grid_search.best_estimator_
 
- # Оценка производительности
+ # Оценка performance
  scores = cross_val_score(grid_search.best_estimator_, X, y, cv=5)
  print(f"{name}: {scores.mean():.4f} (+/- {scores.std() * 2:.4f})")
 
@@ -2541,7 +2541,7 @@ on этом этапе мы Creating and оптимизируем все compone
  ensemble.fit(X, y)
  self.models['ensemble'] = ensemble
 
- # Оценка производительности
+ # Оценка performance
  scores = cross_val_score(ensemble, X, y, cv=5)
  print(f"Ensemble: {scores.mean():.4f} (+/- {scores.std() * 2:.4f})")
 
@@ -2605,27 +2605,27 @@ on этом этапе мы Creating and оптимизируем все compone
 
 ### Этап 3: Бэктестинг (1-2 недели)
 
-**Theory:** Этап бэктестинга критически важен for валидации эффективности торговых стратегий on исторических данных. Это позволяет оценить реальную производительность системы to внедрения in продакшн.
+**Theory:** Этап бэктестинга критически важен for validation эффективности торговых стратегий on исторических данных. Это позволяет оценить реальную performance системы to внедрения in продакшн.
 
 **Почему этап бэктестинга важен:**
-- **Валидация стратегий:** Обеспечивает проверку эффективности стратегий
+- **validation стратегий:** Обеспечивает проверку эффективности стратегий
 - **Оценка рисков:** Позволяет оценить потенциальные риски
 - **Оптимизация параметров:** Обеспечивает настройку оптимальных параметров
 - **Уверенность:** Дает уверенность in эффективности системы
 
 **Детальное объяснение этапа бэктестинга:**
 
-Бэктестинг включает комплексное тестирование стратегий on исторических данных with использованием различных методов валидации. Это критически важно for понимания реальной производительности системы.
+Бэктестинг включает комплексное тестирование стратегий on исторических данных with использованием различных методов validation. Это критически важно for понимания реальной performance системы.
 
 1. **Историческое тестирование**
- - **Theory:** Историческое тестирование критически важно for оценки производительности on исторических данных
+ - **Theory:** Историческое тестирование критически важно for оценки performance on исторических данных
  - **Почему важно:** Обеспечивает понимание исторической эффективности
  - **Плюсы:** Объективная оценка, понимание поведения, выявление паттернов
  - **Disadvantages:** Прошлые результаты not гарантируют будущие
 
  **Детальное describe исторического тестирования:**
 
- Историческое тестирование включает Launch стратегий on исторических данных with анализом производительности, рисков and стабильности. Это основа for принятия решений о внедрении стратегий.
+ Историческое тестирование включает Launch стратегий on исторических данных with анализом performance, рисков and стабильности. Это основа for принятия решений о внедрении стратегий.
 
  ```python
  import numpy as np
@@ -2745,7 +2745,7 @@ on этом этапе мы Creating and оптимизируем все compone
  last_trade['commission'] += last_trade['quantity'] * price * self.commission
 
  def _calculate_metrics(self, trades, equity_curve):
- """Расчет метрик производительности"""
+ """Расчет метрик performance"""
  if not trades:
  return {}
 
@@ -2755,21 +2755,21 @@ on этом этапе мы Creating and оптимизируем все compone
  if not COMPLETED_trades:
  return {}
 
- # Базовые метрики
+ # Базовые metrics
  total_trades = len(COMPLETED_trades)
  winning_trades = len([t for t in COMPLETED_trades if t['pnl'] > 0])
  losing_trades = len([t for t in COMPLETED_trades if t['pnl'] < 0])
 
  win_rate = winning_trades / total_trades if total_trades > 0 else 0
 
- # PnL метрики
+ # PnL metrics
  total_pnl = sum(t['pnl'] for t in COMPLETED_trades)
  avg_win = np.mean([t['pnl'] for t in COMPLETED_trades if t['pnl'] > 0]) if winning_trades > 0 else 0
  avg_loss = np.mean([t['pnl'] for t in COMPLETED_trades if t['pnl'] < 0]) if losing_trades > 0 else 0
 
  profit_factor = abs(avg_win * winning_trades / (avg_loss * losing_trades)) if losing_trades > 0 and avg_loss != 0 else float('inf')
 
- # Equity curve метрики
+ # Equity curve metrics
  equity_df = pd.dataFrame(equity_curve)
  returns = equity_df['capital'].pct_change().dropna()
 
@@ -2808,7 +2808,7 @@ on этом этапе мы Creating and оптимизируем все compone
 
 2. **Walk-forward анализ**
  - **Theory:** Walk-forward анализ критически важен for оценки стабильности стратегий во времени
- - **Почему важно:** Обеспечивает понимание стабильности производительности
+ - **Почему важно:** Обеспечивает понимание стабильности performance
  - **Плюсы:** Реалистичная оценка, выявление дрейфа, адаптивность
  - **Disadvantages:** Требует больше времени and ресурсов
 
@@ -3020,13 +3020,13 @@ on этом этапе мы Creating and оптимизируем все compone
  - Смарт-контракты
 
 3. **Автоматизация**
- - Автоматическое переобучение
+ - Автоматическое retraining
  - Автоматическое Management рисками
  - Автоматические алерты
 
 ### Этап 5: Оптимизация (непрерывно)
 
-1. **Monitoring производительности**
+1. **Monitoring performance**
  - Ежедневный Monitoring
  - Еженедельный анализ
  - Ежемесячная оптимизация
@@ -3079,8 +3079,8 @@ on этом этапе мы Creating and оптимизируем все compone
  - **Плюсы:** Долгосрочная эффективность, устойчивость, адаптивность
  - **Disadvantages:** Сложность создания
 
-- **Эффективная архитектура - масштабируемая система**
- - **Theory:** Эффективная архитектура критически важна for масштабируемости
+- **Эффективная architecture - масштабируемая система**
+ - **Theory:** Эффективная architecture критически важна for масштабируемости
  - **Почему важно:** Обеспечивает масштабируемость
  - **Плюсы:** Масштабируемость, эффективность, поддерживаемость
  - **Disadvantages:** Требует Planирования
@@ -3180,8 +3180,8 @@ on этом этапе мы Creating and оптимизируем все compone
 
 ### 1. Technical риски
 
-- **Переобучение** - использование кросс-валидации
-- **Нестабильность** - регулярное переобучение
+- **retraining** - использование кросс-validation
+- **Нестабильность** - регулярное retraining
 - **Ошибки in коде** - тщательное тестирование
 - **Сбои системы** - резервное копирование
 

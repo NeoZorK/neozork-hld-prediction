@@ -5,29 +5,29 @@
 
 ## Why продвинутые темы критически важны
 
-**Почему 95% ML-инженеров not знают о продвинутых техниках?** Потому что они фокусируются on базовых алгоритмах, not понимая, что современные методы могут дать in 10-100 раз лучшие результаты.
+**Почему 95% ML-инженеров not знают о продвинутых техниках?** Потому что они фокусируются on базовых алгоритмах, not понимая, что современные methods могут дать in 10-100 раз лучшие результаты.
 
 ### Проблемы без знания продвинутых тем
-- **Устаревшие методы**: Используют техники 5-летней давности
-- **Плохие результаты**: not могут достичь state-of-the-art производительности
-- **Потеря конкурентоспособности**: Отстают from команд, использующих современные методы
+- **Устаревшие methods**: Используют техники 5-летней давности
+- **Плохие результаты**: not могут достичь state-of-the-art performance
+- **Потеря конкурентоспособности**: Отстают from команд, использующих современные methods
 - **Ограниченные возможности**: not могут решать сложные задачи
 
 ### Преимущества знания продвинутых тем
-- **Лучшие результаты**: State-of-the-art производительность
-- **Конкурентоспособность**: Используют самые современные методы
+- **Лучшие результаты**: State-of-the-art performance
+- **Конкурентоспособность**: Используют самые современные methods
 - **Решение сложных задач**: Могут Workingть with мультимодальными данными
 - **Инновации**: Могут создавать новые решения
 
 ## Введение in продвинутые темы
 
 <img src="images/optimized/advanced_topics_overView.png" alt="Продвинутые темы AutoML" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 18.1: Обзор продвинутых тем and современных направлений in AutoML - основные категории and методы*
+*Рисунок 18.1: Обзор продвинутых тем and современных направлений in AutoML - основные категории and methods*
 
 **Почему продвинутые темы - это будущее ML?** Потому что они решают проблемы, которые невозможно решить традиционными методами: автоматический дизайн архитектур, обучение on малых данных, мультимодальное понимание.
 
 **Основные категории продвинутых тем:**
-- **Neural Architecture Search (NAS)**: Автоматический поиск оптимальных архитектур нейроnetworks
+- **Neural architecture Search (NAS)**: Автоматический поиск оптимальных архитектур нейроnetworks
 - **Meta-Learning**: Обучение тому, как учиться on новых задачах
 - **Multi-Modal Learning**: Working with различными типами данных simultaneously
 - **Federated Learning**: Распределенное обучение with сохранением приватности
@@ -39,7 +39,7 @@
 ## Neural Architecture Search (NAS)
 
 <img src="images/optimized/neural_architecture_search.png" alt="Neural Architecture Search" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 18.2: Neural Architecture Search - методы автоматического поиска архитектур нейроnetworks*
+*Рисунок 18.2: Neural architecture Search - methods автоматического поиска архитектур нейроnetworks*
 
 **Типы методов NAS:**
 - **DARTS (Differentiable)**: Дифференцируемый поиск через градиентный спуск
@@ -65,7 +65,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class DARTS(nn.Module):
-"""Differentiable Architecture Search - автоматический дизайн нейроnetworks"""
+"""Differentiable architecture Search - автоматический дизайн нейроnetworks"""
 
  def __init__(self, input_channels, output_channels, num_ops=8):
  super(DARTS, self).__init__()
@@ -198,7 +198,7 @@ def search_architecture(train_loader, val_loader, epochs=50):
  loss.backward()
  optimizer.step()
 
-# Валидация
+# validation
  model.eval()
  val_loss = 0
  with torch.no_grad():
@@ -281,11 +281,11 @@ def search_architecture(train_loader, val_loader, epochs=50):
 - **`model.eval()`**: Режим оценки
 - Включает: детерминированное поведение
 - Отключает: dropout, batch normalization in training mode
-- Применение: стабильная оценка on валидации
+- Применение: стабильная оценка on validation
 
 - **`torch.no_grad()`**: Отключение градиентов
 - Отключает: вычисление градиентов
-- Применение: ускорение валидации
+- Применение: ускорение validation
 - Экономия: памяти and вычислений
 
 - **`val_loss += F.cross_entropy(output, target).item()`**: Накопление потерь
@@ -352,9 +352,9 @@ class ENAS(nn.Module):
 
 - **`num_nodes=5`**: Количество узлов in архитектуре
 - `5`: Стандартное количество (рекомендуется)
-- `3`: Простая архитектура (быстрее)
-- `8`: Сложная архитектура (качественнее)
-- `10`: Очень сложная архитектура (очень качественно)
+- `3`: Простая architecture (быстрее)
+- `8`: Сложная architecture (качественнее)
+- `10`: Очень сложная architecture (очень качественно)
 - Применение: контроль сложности архитектуры
 
 - **`num_ops=8`**: Количество операций-кандидатов
@@ -462,7 +462,7 @@ class ENAS(nn.Module):
 ## Meta-Learning
 
 <img src="images/optimized/meta_learning.png" alt="Meta-Learning" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 18.3: Meta-Learning (Learning to Learn) - методы обучения тому, как учиться*
+*Рисунок 18.3: Meta-Learning (Learning to Learn) - methods обучения тому, как учиться*
 
 **Типы методов мета-обучения:**
 - **MAML (Model-Agnostic)**: Универсальный мета-обучение for любых моделей
@@ -669,7 +669,7 @@ class_mask = (support_set[:, -1] == i) # Предполагаем, что пос
 - **Sensor data**: Обработка данных with датчиков
 - **Structured data**: Обработка структурированных данных
 
-**Методы фьюжна:**
+**methods фьюжна:**
 - **Early Fusion**: Раннее объединение модальностей
 - **Late Fusion**: Позднее объединение модальностей
 - **Cross-Modal Attention**: Взаимное внимание между модальностями
@@ -764,7 +764,7 @@ class CrossModalAttention(nn.Module):
 <img src="images/optimized/federated_learning.png" alt="Federated Learning" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 18.5: Federated Learning Architecture - распределенное обучение with сохранением приватности*
 
-**Архитектура федеративного обучения:**
+**architecture федеративного обучения:**
 - **Global Server**: Центральный сервер for агрегации моделей
 - **Clients**: Распределенные клиенты with локальными данными
 - **Local Training**: Локальное обучение on каждом клиенте
@@ -1161,10 +1161,10 @@ def train_quantum_model(X, y, num_layers=3):
 
 ## Заключение
 
-<img src="images/optimized/advanced_methods_comparison.png" alt="Сравнение продвинутых методов" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 18.8: Сравнение продвинутых методов AutoML - производительность, сложность, время обучения, требования к данным*
+<img src="images/optimized/advanced_methods_comparison.png" alt="comparison продвинутых методов" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 18.8: comparison продвинутых методов AutoML - performance, сложность, время обучения, требования к данным*
 
-**Сравнение продвинутых методов:**
+**comparison продвинутых методов:**
 - **Performance vs Complexity**: Баланс между производительностью and сложностью
 - **Training Time**: Время обучения различных методов
 - **data Requirements**: Требования к объему данных
@@ -1172,7 +1172,7 @@ def train_quantum_model(X, y, num_layers=3):
 
 Продвинутые темы AutoML представляют собой быстро развивающуюся область, включающую:
 
-1. **Neural Architecture Search** - автоматический поиск оптимальных архитектур
+1. **Neural architecture Search** - автоматический поиск оптимальных архитектур
 2. **Meta-Learning** - обучение тому, как учиться
 3. **Multi-Modal Learning** - Working with различными типами данных
 4. **Federated Learning** - распределенное обучение with сохранением приватности

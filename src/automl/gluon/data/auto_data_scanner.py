@@ -430,7 +430,7 @@ class InteractivedataSelector:
  def interactive_selection(self) -> Dict[str, Any]:
  """
  Complete interactive selection process.
- Полный интерактивный процесс выбора.
+ Полный интерактивный process выбора.
 
  Returns:
  Dictionary with selection results

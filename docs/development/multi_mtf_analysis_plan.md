@@ -19,7 +19,7 @@ MN1 (1 месяц) ← Fundamental trend
 - **influence hierarchy**: higher Timeframes influence lower
 - **Conflict resolution**: In case of conflict priority to higher Timeframe
 
-## 🏗️ Архитектура системы
+## 🏗️ architecture системы
 
 ### 1. Structure данных
 ```python
@@ -66,7 +66,7 @@ def prepare_multi_mtf_data(symbol: str, Timeframes: List[str]) -> MultiMTFdata:
  # 1. Loading data on all Timeframeм
  # 2. Synchronization in time
  # 3. create cross-Timeframe признаков
- # 4. Валидация качества данных
+ # 4. validation качества данных
 ```
 
 ### Этап 2: create признаков
@@ -121,19 +121,19 @@ def predict_multi_mtf(self, data: MultiMTFdata) -> Dict[str, Any]:
  """
 ```
 
-## 📈 Метрики качества
+## 📈 metrics качества
 
 ### 1. Точность on Timeframeм
 - Accuracy for каждого TF отдельно
 - Cross-TF accuracy (согласованность)
 - Ensemble accuracy (общая точность)
 
-### 2. Временные метрики
+### 2. Временные metrics
 - Latency: Время from сигнала to исполнения
 - Persistence: Длительность сигнала
 - Decay: Затухание сигнала во времени
 
-### 3. Торговые метрики
+### 3. Торговые metrics
 - Sharpe ratio on Timeframeм
 - Maximum drawdown
 - Win rate
@@ -151,7 +151,7 @@ def predict_multi_mtf(self, data: MultiMTFdata) -> Dict[str, Any]:
 - [ ] Реализация single TF моделей
 - [ ] create cross TF моделей
 - [ ] Разработка ensemble подходов
-- [ ] Валидация and тестирование
+- [ ] validation and тестирование
 
 ### Фаза 3: integration (1 неделя)
 - [ ] integration in существующий пайплайн
@@ -161,7 +161,7 @@ def predict_multi_mtf(self, data: MultiMTFdata) -> Dict[str, Any]:
 
 ### Фаза 4: Продакшн (1 неделя)
 - [ ] Тестирование on реальных данных
-- [ ] Monitoring производительности
+- [ ] Monitoring performance
 - [ ] A/B тестирование with single TF
 - [ ] documentation for пользователей
 
@@ -212,13 +212,13 @@ def resolve_Timeframe_conflicts(predictions: Dict) -> Dict[str, Any]:
 ### 1. Дашборд Multi MTF
 - Визуализация сигналов on Timeframeм
 - Heatmap согласованности
-- Performance метрики
+- Performance metrics
 - Alert система
 
 ### 2. Logsрование
 - Детальные Logs on каждому TF
 - Трассировка решений
-- Performance метрики
+- Performance metrics
 - Error tracking
 
 ## 🎯 Заключение

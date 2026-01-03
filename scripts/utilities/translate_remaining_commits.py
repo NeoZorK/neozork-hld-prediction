@@ -138,7 +138,7 @@ def translate_message(message):
  (r'\\bмодели\\b', 'models'),
  (r'\\bиндикаторы\\b', 'indicators'),
  (r'\\bблокчейн-integration\\b', 'blockchain integration'),
- (r'\\bРеализована система автоматического переобучения\\b', 'Implemented automatic retraining system'),
+ (r'\\bРеализована система автоматического retraining\\b', 'Implemented automatic retraining system'),
  (r'\\bДобавлен полный Monitoring\\b', 'Added full Monitoring'),
  (r'\\bсистема алертов\\b', 'alert system'),
  (r'\\bСоздана documentation\\b', 'Created documentation'),

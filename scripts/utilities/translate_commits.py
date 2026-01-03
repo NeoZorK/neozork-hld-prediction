@@ -108,7 +108,7 @@ TRANSLATIONS = {
  r'\bвысокодоходных ML-систем\b': 'high-yield ML systems',
  r'\bторговых систем\b': 'trading systems',
  r'\bблокчейн-интеграции\b': 'blockchain integration',
- r'\bметрикам Analysis производительности\b': 'performance Analysis metrics',
+ r'\bметрикам Analysis performance\b': 'performance Analysis metrics',
  r'\bпродвинутым практикам\b': 'advanced practices',
  r'\bоптимизации Portfolio\b': 'Portfolio optimization',
  r'\bтеоретическим обоснованиям\b': 'theoretical foundations',
@@ -155,7 +155,7 @@ DIRECT_TRANSLATIONS = {
  'feat: update NeoZorK guide with installation of environment for macOS M1 Pro',
  'feat: добавлен HTML-interface for учебника':
  'feat: add HTML interface for tutorial',
- 'feat: добавлена полная система заработка 100%+ in месяц - Создана детальная система with рабочим кодом from идеи to деплоя - Добавлены все components: модели, индикаторы, блокчейн-integration - Реализована система автоматического переобучения - Добавлен полный Monitoring and система алертов - Создана documentation on Launch and использованию - Система готова for тестирования on блокчейн testnet':
+ 'feat: добавлена полная система заработка 100%+ in месяц - Создана детальная система with рабочим кодом from идеи to деплоя - Добавлены все components: модели, индикаторы, блокчейн-integration - Реализована система автоматического retraining - Добавлен полный Monitoring and система алертов - Создана documentation on Launch and использованию - Система готова for тестирования on блокчейн testnet':
  'feat: add complete earning system 100%+ per month - Created Detailed system with Working code from idea to deployment - Added all components: models, indicators, blockchain integration - Implemented automatic retraining system - Added full Monitoring and alert system - Created documentation on Launch and usage - system ready for testing on blockchain testnet',
  'feat: создан полный учебник on созданию робастных прибыльных ML systems':
  'feat: create complete tutorial on Creating robust profitable ML systems',

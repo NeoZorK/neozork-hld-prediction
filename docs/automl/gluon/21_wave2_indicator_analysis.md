@@ -112,7 +112,7 @@ wave2_columns = {
 'wave_quality': 'Качество волны',
 'wave_reliability': 'Надежность волны',
 
-# Волновые метрики
+# Волновые metrics
 'wave_energy': 'Энергия волны',
 'wave_momentum': 'Моментум волны',
 'wave_power': 'Мощность волны',
@@ -198,7 +198,7 @@ wave2_columns = {
 - Тип: float
 - Единицы: безразмерная величина
 - Диапазон: from 0 to +∞
-- Применение: сравнение размеров волн
+- Применение: comparison размеров волн
 - Интерпретация: 1 = равные волны, >1 = текущая больше, <1 = текущая меньше
 - Формула: current_wave_range / previous_wave_range
 
@@ -324,7 +324,7 @@ wave2_columns = {
 
 - **Качество данных**: Критично for точности WAVE2
 - **Временные рамки**: Использовать множественные Timeframeы
-- **Валидация**: Обязательна for торговых сигналов
+- **validation**: Обязательна for торговых сигналов
 - **Риск-менеджмент**: Использовать стоп-лоссы on basis волновых уровней
 - **Monitoring**: Постоянный контроль качества сигналов
 - **Адаптация**: Регулярное update параметров под рынок
@@ -349,7 +349,7 @@ wave2_columns = {
 - **Полная картина рынка**: Анализ on all временных масштабах
 - **Подтверждение сигналов**: Согласованность между Timeframeми
 - **Снижение ложных сигналов**: Фильтрация шума
-- **Повышение точности**: Многомерная валидация
+- **Повышение точности**: Многомерная validation
 - **Адаптивность к рынку**: Гибкость стратегии
 
 ### M1 (1 minutesа) - Высокочастотная торговля
@@ -790,7 +790,7 @@ class Wave2MLModel:
 - Тип: float
 - Единицы: безразмерная величина
 - Диапазон: from 0 to +∞
-- Применение: сравнение размеров волн
+- Применение: comparison размеров волн
 - Интерпретация: 1 = равные волны, >1 = текущая больше, <1 = текущая меньше
 
 - **`wave_fibonacci`**: Фибоначчи уровни
@@ -1046,7 +1046,7 @@ class Wave2MLModel:
 
 - **Качество данных**: Критично for точности WAVE2
 - **Временные рамки**: Использовать множественные Timeframeы
-- **Валидация**: Обязательна for торговых сигналов
+- **validation**: Обязательна for торговых сигналов
 - **Риск-менеджмент**: Использовать стоп-лоссы on basis волновых уровней
 - **Monitoring**: Постоянный контроль качества сигналов
 - **Адаптация**: Регулярное update параметров под рынок
@@ -1165,7 +1165,7 @@ class Wave2MLModel:
 
  features = pd.dataFrame()
 
-# Статистические метрики
+# Статистические metrics
  features['wave_amplitude_skew'] = data['wave_amplitude'].rolling(20).skew()
  features['wave_amplitude_kurt'] = data['wave_amplitude'].rolling(20).kurt()
  features['wave_frequency_skew'] = data['wave_frequency'].rolling(20).skew()
@@ -1287,7 +1287,7 @@ print(f"Точность модели WAVE2: {val_accuracy:.3f}")
 - Тип: int
 - Формула: int(len(data) * 0.8)
 - Применение: разделение on train/validation
-- Процент: 80% for обучения, 20% for валидации
+- Процент: 80% for обучения, 20% for validation
 - Рекомендация: 0.7-0.8 for WAVE2
 
 - **`train_data`**: data for обучения
@@ -1297,7 +1297,7 @@ print(f"Точность модели WAVE2: {val_accuracy:.3f}")
 - Требования: отсутствие пропусков
 - Обработка: нормализация признаков
 
-- **`val_data`**: data for валидации
+- **`val_data`**: data for validation
 - Тип: dataFrame
 - Размер: 20% from общих данных
 - Применение: оценка модели
@@ -1362,7 +1362,7 @@ print(f"Точность модели WAVE2: {val_accuracy:.3f}")
 - **`max_depth`**: Максимальная глубина дерева
 - Диапазон: 10-12
 - Применение: контроль сложности модели
-- Баланс: больше глубина = лучше качество, но переобучение
+- Баланс: больше глубина = лучше качество, но retraining
 - Рекомендация: 10-12 for WAVE2
 
 - **`n_estimators`**: Количество деревьев
@@ -1380,24 +1380,24 @@ print(f"Точность модели WAVE2: {val_accuracy:.3f}")
 - **`depth`**: Глубина CatBoost
 - Диапазон: 10-12
 - Применение: контроль сложности модели
-- Баланс: больше глубина = лучше качество, но переобучение
+- Баланс: больше глубина = лучше качество, но retraining
 - Рекомендация: 10-12 for WAVE2
 
-- **`val_predictions`**: Предсказания on валидации
+- **`val_predictions`**: Предсказания on validation
 - Тип: numpy array
 - Содержит: предсказания модели
-- Применение: оценка производительности
+- Применение: оценка performance
 - Формат: бинарные метки (0/1)
 - Интерпретация: 0 = падение, 1 = рост
 
-- **`val_accuracy`**: Точность on валидации
+- **`val_accuracy`**: Точность on validation
 - Тип: float
 - Диапазон: from 0 to 1
 - Применение: оценка качества модели
 - Интерпретация: 0.5 = случайно, 0.7-0.8 = хорошо, 0.8-0.9 = отлично, > 0.9 = превосходно
 - Формула: accuracy_score(val_data['price_direction'], val_predictions)
 
-**parameters валидации:**
+**parameters validation:**
 
 - **`start_date`**: Дата начала backtest
 - Тип: datetime
@@ -1414,7 +1414,7 @@ print(f"Точность модели WAVE2: {val_accuracy:.3f}")
 - **`test_data`**: data for тестирования
 - Тип: dataFrame
 - Содержит: data за период тестирования
-- Применение: оценка производительности
+- Применение: оценка performance
 - Требования: отсутствие пропусков
 - Обработка: та же нормализация, что and for train
 
@@ -1449,7 +1449,7 @@ print(f"Точность модели WAVE2: {val_accuracy:.3f}")
 - **`total_return`**: Общая доходность
 - Тип: float
 - Формула: strategy_returns.sum()
-- Применение: оценка общей производительности
+- Применение: оценка общей performance
 - Единицы: безразмерная величина
 - Интерпретация: положительная = прибыль, отрицательная = убыток
 
@@ -1506,26 +1506,26 @@ print(f"Точность модели WAVE2: {val_accuracy:.3f}")
 
 - **Качество данных**: Критично for точности WAVE2
 - **Временные рамки**: Использовать множественные Timeframeы
-- **Валидация**: Обязательна for торговых сигналов
+- **validation**: Обязательна for торговых сигналов
 - **Риск-менеджмент**: Использовать стоп-лоссы on basis волновых уровней
 - **Monitoring**: Постоянный контроль качества сигналов
 - **Адаптация**: Регулярное update параметров под рынок
 ```
 
-## Валидация модели
+## validation модели
 
-<img src="images/optimized/validation_methods.png" alt="Методы валидации" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 21.5: Методы валидации WAVE2 модели - from backtest to stress testing*
+<img src="images/optimized/validation_methods.png" alt="Methods validation" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 21.5: Methods validation WAVE2 модели - from backtest to stress testing*
 
-**Методы валидации:**
-- **Backtest Analysis**: Историческая производительность, расчет доходности, анализ рисков
+**Methods validation:**
+- **Backtest Analysis**: Историческая performance, расчет доходности, анализ рисков
 - **Walk-Forward Analysis**: Скользящее окно, адаптация к рынку, реалистичная оценка
 - **Monte Carlo Simulation**: Случайные выборки, статистическая значимость
-- **Cross-Validation**: Кросс-валидация, check стабильности
+- **Cross-Validation**: Кросс-validation, check стабильности
 - **Out-of-Sample testing**: Тестирование on новых данных
 - **Stress testing**: Тестирование in экстремальных условиях
 
-**Результаты валидации:**
+**Результаты validation:**
 - **Sharpe Ratio**: 3.2
 - **Максимальная просадка**: 5.8%
 - **Win Rate**: 78.5%
@@ -1549,7 +1549,7 @@ def wave2_backtest(self, data, start_date, end_date):
  returns = test_data['close'].pct_change()
  strategy_returns = predictions * returns
 
-# Метрики backtest
+# metrics backtest
  total_return = strategy_returns.sum()
  sharpe_ratio = strategy_returns.mean() / strategy_returns.std() * np.sqrt(252)
  max_drawdown = self.calculate_max_drawdown(strategy_returns)
@@ -1617,7 +1617,7 @@ def wave2_monte_carlo(self, data, n_simulations=1000):
 - **signal Storage**: Хранение сигналов on блокчейне, неизменяемость
 - **Automated Trading**: Автоматическая торговля, исполнение сигналов
 - **Risk Management**: Management рисками, лимиты позиций
-- **Performance Tracking**: Отслеживание производительности, метрики
+- **Performance Tracking**: Отслеживание performance, metrics
 
 **Преимущества блокчейн-интеграции:**
 - **Прозрачность**: Все операции видны in блокчейне
@@ -1713,10 +1713,10 @@ class Wave2DEXintegration:
 
 ## Результаты
 
-<img src="images/optimized/performance_results.png" alt="Результаты производительности" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 21.7: Результаты производительности WAVE2 - метрики, доходность and сравнение*
+<img src="images/optimized/performance_results.png" alt="Результаты performance" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 21.7: Результаты performance WAVE2 - metrics, доходность and comparison*
 
-**Производительность модели:**
+**performance модели:**
 - **Точность**: 94.7%
 - **Precision**: 94.5%
 - **Recall**: 94.2%
@@ -1725,7 +1725,7 @@ class Wave2DEXintegration:
 - **Максимальная просадка**: 5.8%
 - **Годовая доходность**: 89.3%
 
-**Финансовые метрики:**
+**Финансовые metrics:**
 - **Sharpe Ratio**: 3.2
 - **Max Drawdown**: 5.8%
 - **Win Rate**: 78.5%
@@ -1741,7 +1741,7 @@ class Wave2DEXintegration:
 - **W1**: 91.7%
 - **MN1**: 89.3%
 
-**Сравнение with другими индикаторами:**
+**comparison with другими индикаторами:**
 - **WAVE2**: 89.3%
 - **RSI**: 45.2%
 - **MACD**: 52.8%
@@ -1763,7 +1763,7 @@ class Wave2DEXintegration:
 2. **Вычислительная нагрузка** - требует значительных ресурсов
 3. **dependency from данных** - качество зависит from входных данных
 4. **Лаг** - может иметь задержку in сигналах
-5. **Переобучение** - может переобучаться on исторических данных
+5. **retraining** - может переобучаться on исторических данных
 
 ## Заключение
 

@@ -593,7 +593,7 @@ class MultiIndicatorLoader:
  def auto_load_data(self, interactive: bool = True) -> pd.dataFrame:
  """
  Complete auto-Loading process: scan, select, and load data.
- Полный процесс автоматической загрузки: сканирование, выбор and Loading data.
+ Полный process автоматической загрузки: сканирование, выбор and Loading data.
 
  Args:
  interactive: Whether to Use interactive selection

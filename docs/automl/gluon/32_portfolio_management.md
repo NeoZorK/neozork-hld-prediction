@@ -1,4 +1,4 @@
-# Углубленное describe методик for создания and управления Portfolio, успешные методы диверсификации
+# Углубленное describe методик for создания and управления Portfolio, успешные methods диверсификации
 
 **Author:** Shcherbyna Rostyslav
 **Дата:** 2024
@@ -84,7 +84,7 @@ subject to: w^T 1 = 1, w ≥ 0
 
 ### Типы Portfolio
 
-### 📊 Сравнение типов Portfolio
+### 📊 comparison типов Portfolio
 
 ```mermaid
 graph TB
@@ -150,15 +150,15 @@ graph TB
 
 ## Продвинутые методики создания Portfolio
 
-### 1. Классические методы оптимизации
+### 1. Классические methods оптимизации
 
-### 🔧 Методы оптимизации Portfolio
+### 🔧 methods оптимизации Portfolio
 
 ```mermaid
 graph TD
- A[Методы оптимизации Portfolio] --> B[Классические методы]
- A --> C[Современные методы]
- A --> D[ML-методы]
+ A[methods оптимизации Portfolio] --> B[Классические methods]
+ A --> C[Современные methods]
+ A --> D[ML-methods]
 
  B --> B1[Markowitz Mean-Variance<br/>max w^T μ - λ/2 * w^T Σ w]
  B --> B2[Black-Litterman Model<br/>Incorporates market Views]
@@ -196,7 +196,7 @@ graph TD
  M --> N
 
  N --> O[Оптимальные веса<br/>w* = argmax Utility]
- O --> P[Оценка производительности<br/>Sharpe, VaR, Max DD]
+ O --> P[Оценка performance<br/>Sharpe, VaR, Max DD]
 
  style A fill:#e3f2fd
  style B fill:#c8e6c9
@@ -442,7 +442,7 @@ weights, expected_returns, Portfolio_cov = black_litterman_optimization(
 )
 ```
 
-### 2. Современные методы оптимизации
+### 2. Современные methods оптимизации
 
 **Risk Parity Portfolio:**
 
@@ -777,9 +777,9 @@ graph TD
  F4 --> G
 
  G --> H[Обучение моделей<br/>Train on historical data]
- H --> I[Валидация<br/>Cross-validation, Walk-forward]
+ H --> I[validation<br/>Cross-validation, Walk-forward]
  I --> J[Деплой in продакшен<br/>Real-time predictions]
- J --> K[Monitoring производительности<br/>Model performance tracking]
+ J --> K[Monitoring performance<br/>Model performance tracking]
 
  K --> L{Модель эффективна?}
  L -->|Да| M[✅ Продолжить использование]
@@ -787,8 +787,8 @@ graph TD
 
  N --> O[Анализ деградации<br/>Identify performance decline]
  O --> P[update данных<br/>Include new market data]
- P --> Q[Переобучение<br/>Retrain with updated data]
- Q --> R[Валидация обновленной модели<br/>Test on out-of-sample data]
+ P --> Q[retraining<br/>Retrain with updated data]
+ Q --> R[validation обновленной модели<br/>Test on out-of-sample data]
  R --> S[Деплой обновленной модели<br/>Replace old model]
  S --> K
 
@@ -943,10 +943,10 @@ def ml_Portfolio_optimization(returns, features, model, n_Portfolios=1000):
  example: dataFrame with приsignми ['RSI', 'MACD', 'Volume', 'GDP_growth']
 
  model : sklearn-compatible model
- Обученная ML-модель for предсказания доходностей. Должна иметь методы
+ Обученная ML-модель for предсказания доходностей. Должна иметь methods
  fit() and predict(). Рекомендуемые модели:
  - RandomForestRegressor: Хорошо Workingет with нелинейными зависимостями
- - XGBRegressor: Высокая производительность, устойчивость к переобучению
+ - XGBRegressor: Высокая performance, устойчивость к переобучению
  - LinearRegression: Простая and быстрая модель
  - LSTM/GRU: for временных рядов (требует специальной подготовки данных)
 
@@ -1052,14 +1052,14 @@ def ml_Portfolio_optimization(returns, features, model, n_Portfolios=1000):
 best_Portfolio, all_Portfolios = ml_Portfolio_optimization(returns, features, model)
 ```
 
-## Методы диверсификации
+## methods диверсификации
 
 ### 🌐 Стратегии диверсификации Portfolio
 
 ```mermaid
 graph TD
  A[Стратегии диверсификации] --> B[Классическая диверсификация]
- A --> C[Продвинутые методы]
+ A --> C[Продвинутые methods]
  A --> D[Факторная диверсификация]
 
  B --> B1[Географическая диверсификация<br/>Разные страны and регионы]
@@ -1253,7 +1253,7 @@ def sectoral_diversification(returns_by_sector, max_weight_per_sector=0.25):
 sector_weights = sectoral_diversification(returns_by_sector, max_weight_per_sector=0.25)
 ```
 
-### 2. Продвинутые методы диверсификации
+### 2. Продвинутые methods диверсификации
 
 **Factor-based Diversification:**
 
@@ -1373,14 +1373,14 @@ weights, selected_assets = correlation_diversification(returns, max_correlation=
 
 ## Management рисками Portfolio
 
-### ⚠️ Метрики управления рисками Portfolio
+### ⚠️ metrics управления рисками Portfolio
 
 ```mermaid
 graph TD
- A[Метрики управления рисками] --> B[Value at Risk - VaR]
+ A[metrics управления рисками] --> B[Value at Risk - VaR]
  A --> C[Expected Shortfall - ES]
  A --> D[Максимальная просадка]
- A --> E[Дополнительные метрики]
+ A --> E[Дополнительные metrics]
 
  B --> B1[Historical VaR<br/>Percentile-based approach]
  B --> B2[Parametric VaR<br/>Normal distribution assumption]
@@ -1631,7 +1631,7 @@ graph TD
  H --> I[Динамические веса<br/>w_t = f(market_conditions_t)]
  I --> J[Оценка эффективности<br/>Performance vs Static Portfolio]
 
- J --> K{improve производительности?}
+ J --> K{improve performance?}
  K -->|Да| L[✅ Продолжить динамическое Management]
  K -->|Нет| M[❌ Пересмотреть стратегию]
 
@@ -1838,7 +1838,7 @@ rebalanced_returns = momentum_based_rebalancing(returns, target_weights,
 
 ```mermaid
 graph TD
- A[Monitoring and оценка Portfolio] --> B[Метрики производительности]
+ A[Monitoring and оценка Portfolio] --> B[Metrics performance]
  A --> C[Анализ рисков]
  A --> D[Визуализация]
  A --> E[Reportность]
@@ -1858,8 +1858,8 @@ graph TD
  D --> D1[Кумулятивная доходность<br/>Cumulative return chart]
  D --> D2[Распределение доходностей<br/>Return distribution histogram]
  D --> D3[Просадки<br/>Drawdown chart]
- D --> D4[Скользящие метрики<br/>Rolling Sharpe, Volatility]
- D --> D5[Сравнение with бенчмарком<br/>Portfolio vs Benchmark]
+ D --> D4[Скользящие metrics<br/>Rolling Sharpe, Volatility]
+ D --> D5[comparison with бенчмарком<br/>Portfolio vs Benchmark]
  D --> D6[Анализ вклада активов<br/>Asset contribution Analysis]
 
  E --> E1[Ежедневные Reportы<br/>Daily performance summary]
@@ -1879,9 +1879,9 @@ graph TD
  C4 --> F
  C5 --> F
 
- F --> G[Анализ производительности]
- G --> H[Сравнение with целями<br/>Performance vs Target]
- G --> I[Сравнение with бенчмарком<br/>Performance vs Benchmark]
+ F --> G[Анализ performance]
+ G --> H[comparison with целями<br/>Performance vs Target]
+ G --> I[comparison with бенчмарком<br/>Performance vs Benchmark]
  G --> J[Анализ трендов<br/>Performance trends over time]
 
  H --> K[Оценка Portfolio]
@@ -1906,15 +1906,15 @@ graph TD
  style N fill:#ff9800
 ```
 
-### 1. Метрики производительности
+### 1. Metrics performance
 
 ```python
 def calculate_Portfolio_metrics(returns, risk_free_rate=0.02):
  """
- Расчет метрик производительности Portfolio
+ Расчет метрик performance Portfolio
 
  Эта function рассчитывает комплексный набор метрик for оценки
- производительности Portfolio, including доходность, риск and
+ performance Portfolio, including доходность, риск and
  риск-скорректированные показатели.
 
  Parameters:
@@ -1935,7 +1935,7 @@ def calculate_Portfolio_metrics(returns, risk_free_rate=0.02):
  Returns:
  --------
  dict
- Словарь with метриками производительности Portfolio:
+ Словарь with метриками performance Portfolio:
 
  total_return : float
  Общая доходность за весь период. Рассчитывается как
@@ -1982,12 +1982,12 @@ def calculate_Portfolio_metrics(returns, risk_free_rate=0.02):
  - Calmar: Annual Return / |Max Drawdown|
 
  Интерпретация метрик:
- - Sharpe > 1.0: Хорошая производительность
- - Sortino > 1.5: Отличная производительность
- - Calmar > 1.0: Хорошая производительность
+ - Sharpe > 1.0: Хорошая performance
+ - Sortino > 1.5: Отличная performance
+ - Calmar > 1.0: Хорошая performance
  - Max Drawdown < -0.20: Высокий риск
  """
- # Базовые метрики
+ # Базовые metrics
  total_return = (1 + returns).prod() - 1
  annual_return = (1 + returns).mean() ** 252 - 1
  volatility = returns.std() * np.sqrt(252)
@@ -2053,7 +2053,7 @@ risks = analyze_Portfolio_risks(Portfolio_returns, confidence_levels=[0.90, 0.95
 
 ```python
 def visualize_Portfolio_performance(returns, benchmark_returns=None, save_path=None):
- """Визуализация производительности Portfolio"""
+ """Визуализация performance Portfolio"""
  import matplotlib.pyplot as plt
  import seaborn as sns
 
@@ -2137,7 +2137,7 @@ Management Portfolio - это основа успешного инвестиро
 1. **Диверсификация** - not кладите все яйца in одну корзину
 2. **Management рисками** - контролируйте VaR and максимальную просадку
 3. **Ребалансировка** - регулярно корректируйте веса
-4. **Monitoring** - постоянно отслеживайте производительность
+4. **Monitoring** - постоянно отслеживайте performance
 5. **Адаптивность** - приспосабливайтесь к изменяющимся условиям
 
 ### Следующие шаги

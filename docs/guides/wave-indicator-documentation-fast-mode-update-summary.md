@@ -114,7 +114,7 @@ uv run run_Analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
 # Wave with реальными данными in fast режиме
 uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
 
-# Сравнение fast vs fastest режимов
+# comparison fast vs fastest режимов
 uv run run_Analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
 uv run run_Analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fastest
 ```
@@ -128,33 +128,33 @@ uv run run_Analysis.py demo --rule wave:339,10,2,fastzonereverse,22,11,4,fast,pr
 uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fast,22,11,4,fast,prime,10,close -d fast
 ```
 
-### 6. **Тестирование and валидация**
+### 6. **Тестирование and validation**
 
 #### A. Unit тесты
 - ✅ Создан полный набор tests in `tests/plotting/test_wave_fast_mode.py`
 - ✅ Покрытие all основных функций
 - ✅ Тестирование обработки ошибок
-- ✅ Валидация визуальных элементов
+- ✅ validation визуальных элементов
 
 #### B. Интеграционные тесты
 - ✅ Тестирование with demo данными
 - ✅ Тестирование with реальными данными
-- ✅ Сравнение fast vs fastest режимов
-- ✅ Валидация CLI команд
+- ✅ comparison fast vs fastest режимов
+- ✅ validation CLI команд
 
 ### 7. **documentation on решению проблем**
 
 #### A. Common Issues
 - **Lines Not Displaying**: check наличия columns `_plot_wave` and `_plot_color`
 - **signals Not Appearing**: check колонки `_signal` and значений 1/2
-- **Color Issues**: Валидация значений in `_plot_color` (1=red, 2=blue, 0=no line)
+- **Color Issues**: validation значений in `_plot_color` (1=red, 2=blue, 0=no line)
 - **Hover Tool Issues**: check совместимости имен columns
 
 #### B. Лучшие практики
 - **Test Both Modes**: Всегда тестировать fast and fastest режимы
 - **signal Validation**: Проверять правильность генерации and отображения сигналов
 - **Color Consistency**: Поддерживать согласованность цветового кодирования
-- **Performance**: Мониторить производительность рендеринга
+- **Performance**: Мониторить performance рендеринга
 
 ## 📊 Результаты
 

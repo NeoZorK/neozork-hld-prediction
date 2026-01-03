@@ -45,7 +45,7 @@ def should_exclude_file(file_path: str) -> bool:
 
 
 def has_russian_text(text: str) -> bool:
-    """check if text contains Cyrillic characters."""
+    """Check if text contains Cyrillic characters."""
     return bool(re.search(r'[А-Яа-яЁё]', text))
 
 
@@ -181,7 +181,7 @@ def extract_russian_words_from_file(file_path: str, root_dir: str = '.') -> List
         
         # Extract Russian words (Cyrillic characters)
         # Match words that contain at least one Cyrillic character
-        russian_words = re.findall(r'\b[А-Яа-яЁё]+\b', content)
+        russian_words = re.findall(r"[А-Яа-яЁё]+", content)
         
         # Remove duplicates and sort
         unique_words = sorted(set(russian_words), key=str.lower)
@@ -210,7 +210,7 @@ def extract_russian_words_from_lines(file_path: str, line_numbers: List[int], ro
             
             line = lines[line_num - 1]
             # Extract Russian words from this line
-            words = re.findall(r'\b[А-Яа-яЁё]+\b', line)
+            words = re.findall(r"[А-Яа-яЁё]+", line)
             russian_words.extend(words)
         
         # Remove duplicates and sort

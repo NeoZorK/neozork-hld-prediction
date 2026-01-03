@@ -93,7 +93,7 @@ schr_short3_columns = {
 'short_pivot': 'Краткосрочный пивот',
 'short_fibonacci': 'Краткосрочный фибоначчи',
 
-# Краткосрочные метрики
+# Краткосрочные metrics
 'short_volatility': 'Краткосрочная волатильность',
 'short_volume': 'Краткосрочный объем',
 'short_liquidity': 'Краткосрочная ликвидность',
@@ -308,7 +308,7 @@ schr_short3_columns = {
 
 - **Качество данных**: Критично for точности SCHR SHORT3
 - **Временные рамки**: Использовать множественные Timeframeы
-- **Валидация**: Обязательна for краткосрочных торговых сигналов
+- **validation**: Обязательна for краткосрочных торговых сигналов
 - **Риск-менеджмент**: Использовать стоп-лоссы on basis краткосрочных уровней
 - **Monitoring**: Постоянный контроль качества краткосрочных сигналов
 - **Адаптация**: Регулярное update параметров под краткосрочные изменения рынка
@@ -1073,7 +1073,7 @@ class SCHRShort3MLModel:
 
 - **Качество данных**: Критично for точности SCHR SHORT3
 - **Временные рамки**: Использовать множественные Timeframeы
-- **Валидация**: Обязательна for краткосрочных торговых сигналов
+- **validation**: Обязательна for краткосрочных торговых сигналов
 - **Риск-менеджмент**: Использовать стоп-лоссы on basis краткосрочных уровней
 - **Monitoring**: Постоянный контроль качества краткосрочных сигналов
 - **Адаптация**: Регулярное update параметров под краткосрочные изменения рынка
@@ -1321,7 +1321,7 @@ print(f"Точность модели SCHR SHORT3: {val_accuracy:.3f}")
 - Тип: int
 - Формула: int(len(data) * 0.8)
 - Применение: разделение on train/validation
-- Процент: 80% for обучения, 20% for валидации
+- Процент: 80% for обучения, 20% for validation
 - Рекомендация: 0.7-0.8 for SCHR SHORT3
 
 - **`train_data`**: data for обучения
@@ -1331,7 +1331,7 @@ print(f"Точность модели SCHR SHORT3: {val_accuracy:.3f}")
 - Требования: отсутствие пропусков
 - Обработка: нормализация признаков
 
-- **`val_data`**: data for валидации
+- **`val_data`**: data for validation
 - Тип: dataFrame
 - Размер: 20% from общих данных
 - Применение: оценка модели
@@ -1396,7 +1396,7 @@ print(f"Точность модели SCHR SHORT3: {val_accuracy:.3f}")
 - **`max_depth`**: Максимальная глубина дерева
 - Диапазон: 10-12
 - Применение: контроль сложности модели
-- Баланс: больше глубина = лучше качество, но переобучение
+- Баланс: больше глубина = лучше качество, но retraining
 - Рекомендация: 10-12 for SCHR SHORT3
 
 - **`n_estimators`**: Количество деревьев
@@ -1414,24 +1414,24 @@ print(f"Точность модели SCHR SHORT3: {val_accuracy:.3f}")
 - **`depth`**: Глубина CatBoost
 - Диапазон: 10-12
 - Применение: контроль сложности модели
-- Баланс: больше глубина = лучше качество, но переобучение
+- Баланс: больше глубина = лучше качество, но retraining
 - Рекомендация: 10-12 for SCHR SHORT3
 
-- **`val_predictions`**: Предсказания on валидации
+- **`val_predictions`**: Предсказания on validation
 - Тип: numpy array
 - Содержит: предсказания модели
-- Применение: оценка производительности
+- Применение: оценка performance
 - Формат: бинарные метки (0/1)
 - Интерпретация: 0 = падение, 1 = рост
 
-- **`val_accuracy`**: Точность on валидации
+- **`val_accuracy`**: Точность on validation
 - Тип: float
 - Диапазон: from 0 to 1
 - Применение: оценка качества модели
 - Интерпретация: 0.5 = случайно, 0.7-0.8 = хорошо, 0.8-0.9 = отлично, > 0.9 = превосходно
 - Формула: accuracy_score(val_data['price_direction'], val_predictions)
 
-**parameters валидации:**
+**parameters validation:**
 
 - **`start_date`**: Дата начала backtest
 - Тип: datetime
@@ -1448,7 +1448,7 @@ print(f"Точность модели SCHR SHORT3: {val_accuracy:.3f}")
 - **`test_data`**: data for тестирования
 - Тип: dataFrame
 - Содержит: data за период тестирования
-- Применение: оценка производительности
+- Применение: оценка performance
 - Требования: отсутствие пропусков
 - Обработка: та же нормализация, что and for train
 
@@ -1483,7 +1483,7 @@ print(f"Точность модели SCHR SHORT3: {val_accuracy:.3f}")
 - **`total_return`**: Общая доходность
 - Тип: float
 - Формула: strategy_returns.sum()
-- Применение: оценка общей производительности
+- Применение: оценка общей performance
 - Единицы: безразмерная величина
 - Интерпретация: положительная = прибыль, отрицательная = убыток
 
@@ -1540,26 +1540,26 @@ print(f"Точность модели SCHR SHORT3: {val_accuracy:.3f}")
 
 - **Качество данных**: Критично for точности SCHR SHORT3
 - **Временные рамки**: Использовать множественные Timeframeы
-- **Валидация**: Обязательна for краткосрочных торговых сигналов
+- **validation**: Обязательна for краткосрочных торговых сигналов
 - **Риск-менеджмент**: Использовать стоп-лоссы on basis краткосрочных уровней
 - **Monitoring**: Постоянный контроль качества краткосрочных сигналов
 - **Адаптация**: Регулярное update параметров под краткосрочные изменения рынка
 ```
 
-## Валидация модели
+## validation модели
 
-<img src="images/optimized/validation_short3.png" alt="Методы валидации SHORT3" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 23.6: Методы валидации SCHR SHORT3 модели - from backtest to stress testing*
+<img src="images/optimized/validation_short3.png" alt="Methods validation SHORT3" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 23.6: Methods validation SCHR SHORT3 модели - from backtest to stress testing*
 
-**Методы валидации:**
-- **Backtest Analysis**: Историческая производительность, расчет доходности, анализ рисков
+**Methods validation:**
+- **Backtest Analysis**: Историческая performance, расчет доходности, анализ рисков
 - **Walk-Forward Analysis**: Скользящее окно, адаптация к рынку, реалистичная оценка
 - **Monte Carlo Simulation**: Случайные выборки, статистическая значимость
-- **Cross-Validation**: Кросс-валидация, check стабильности
+- **Cross-Validation**: Кросс-validation, check стабильности
 - **Out-of-Sample testing**: Тестирование on новых данных
 - **Stress testing**: Тестирование in экстремальных условиях
 
-**Результаты валидации:**
+**Результаты validation:**
 - **Sharpe Ratio**: 2.5
 - **Максимальная просадка**: 7.2%
 - **Win Rate**: 72.8%
@@ -1583,7 +1583,7 @@ def schr_short3_backtest(self, data, start_date, end_date):
  returns = test_data['close'].pct_change()
  strategy_returns = predictions * returns
 
-# Метрики backtest
+# metrics backtest
  total_return = strategy_returns.sum()
  sharpe_ratio = strategy_returns.mean() / strategy_returns.std() * np.sqrt(252)
  max_drawdown = self.calculate_max_drawdown(strategy_returns)
@@ -1651,7 +1651,7 @@ def schr_short3_monte_carlo(self, data, n_simulations=1000):
 - **signal Storage**: Хранение сигналов on блокчейне, неизменяемость
 - **Automated Trading**: Автоматическая торговля, исполнение сигналов
 - **Risk Management**: Management рисками, лимиты позиций
-- **Performance Tracking**: Отслеживание производительности, метрики
+- **Performance Tracking**: Отслеживание performance, metrics
 
 **Преимущества блокчейн-интеграции:**
 - **Прозрачность**: Все операции видны in блокчейне
@@ -1775,10 +1775,10 @@ class SCHRShort3DEXintegration:
 
 ## Результаты
 
-<img src="images/optimized/performance_short3.png" alt="Результаты производительности SHORT3" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 23.8: Результаты производительности SCHR SHORT3 - метрики, доходность and сравнение*
+<img src="images/optimized/performance_short3.png" alt="Результаты performance SHORT3" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 23.8: Результаты performance SCHR SHORT3 - metrics, доходность and comparison*
 
-**Производительность модели:**
+**performance модели:**
 - **Точность**: 91.8%
 - **Precision**: 91.2%
 - **Recall**: 90.8%
@@ -1787,7 +1787,7 @@ class SCHRShort3DEXintegration:
 - **Максимальная просадка**: 7.2%
 - **Годовая доходность**: 68.4%
 
-**Финансовые метрики:**
+**Финансовые metrics:**
 - **Sharpe Ratio**: 2.5
 - **Max Drawdown**: 7.2%
 - **Win Rate**: 72.8%
@@ -1803,7 +1803,7 @@ class SCHRShort3DEXintegration:
 - **W1**: 71.2%
 - **MN1**: 68.4%
 
-**Сравнение with другими индикаторами:**
+**comparison with другими индикаторами:**
 - **SCHR SHORT3**: 68.4%
 - **RSI**: 35.2%
 - **MACD**: 42.8%
@@ -1824,7 +1824,7 @@ class SCHRShort3DEXintegration:
 1. **Высокая частота** - может генерировать слишком много сигналов
 2. **Ложные сигналы** - может генерировать ложные краткосрочные сигналы
 3. **dependency from волатильности** - качество зависит from волатильности
-4. **Переобучение** - может переобучаться on исторических данных
+4. **retraining** - может переобучаться on исторических данных
 5. **Сложность** - требует глубокого понимания краткосрочной торговли
 
 ## Заключение

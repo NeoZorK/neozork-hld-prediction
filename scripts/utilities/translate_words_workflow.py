@@ -250,14 +250,54 @@ def replace_words_in_text(text: str, word_map: Dict[str, str], context_check: bo
     return translated, replacement_count
 
 
+def extract_russian_fragments(text: str, max_fragment_length: int = 800) -> List[Tuple[int, str]]:
+    """
+    Extract Russian text fragments from text, grouping consecutive Russian lines.
+    Returns list of (start_line_index, fragment_text) tuples.
+    """
+    lines = text.split('\n')
+    fragments = []
+    current_fragment_lines = []
+    current_fragment_start = None
+    
+    for i, line in enumerate(lines):
+        if has_russian_text(line):
+            if current_fragment_start is None:
+                current_fragment_start = i
+            
+            # Check if adding this line would exceed max length
+            test_fragment = '\n'.join(current_fragment_lines + [line])
+            if len(test_fragment) > max_fragment_length and current_fragment_lines:
+                # Save current fragment and start new one
+                fragments.append((current_fragment_start, '\n'.join(current_fragment_lines)))
+                current_fragment_lines = [line]
+                current_fragment_start = i
+            else:
+                current_fragment_lines.append(line)
+        else:
+            # Non-Russian line - save current fragment if exists
+            if current_fragment_lines:
+                fragments.append((current_fragment_start, '\n'.join(current_fragment_lines)))
+                current_fragment_lines = []
+                current_fragment_start = None
+    
+    # Save last fragment if exists
+    if current_fragment_lines:
+        fragments.append((current_fragment_start, '\n'.join(current_fragment_lines)))
+    
+    return fragments
+
+
 def process_file_with_api_translation(
     file_path: str,
     cache: Dict[str, str],
-    delay: float = 1.5,
-    cache_file: str = None
+    delay: float = 2.0,
+    cache_file: str = None,
+    max_fragment_length: int = 800
 ) -> Tuple[bool, int]:
     """
     Process a file by translating Russian text fragments through API.
+    Optimized: groups consecutive Russian lines into fragments for fewer API calls.
     Returns (success, replacement_count)
     """
     if not os.path.exists(file_path):
@@ -270,58 +310,80 @@ def process_file_with_api_translation(
         if not has_russian_text(original_content):
             return True, 0
         
-        # Extract Russian text fragments (sentences/paragraphs)
-        # Split by newlines first, then by sentences
-        lines = original_content.split('\n')
-        translated_lines = []
+        # Extract Russian fragments (grouped consecutive Russian lines)
+        fragments = extract_russian_fragments(original_content, max_fragment_length)
+        
+        if not fragments:
+            return True, 0
+        
+        total_fragments = len(fragments)
+        print(f"    Found {total_fragments} Russian text fragments to translate")
+        
+        # Build translation map: fragment_text -> translated_text
+        translation_map = {}
         replacement_count = 0
         
-        total_lines = len(lines)
-        russian_lines_count = sum(1 for line in lines if has_russian_text(line))
-        processed_russian = 0
-        
-        print(f"    Found {russian_lines_count} lines with Russian text out of {total_lines} total lines")
-        
-        for i, line in enumerate(lines, 1):
-            if has_russian_text(line):
-                processed_russian += 1
-                # Show progress for Russian lines
-                if russian_lines_count > 0:
-                    progress_percent = (processed_russian / russian_lines_count) * 100
-                    line_preview = line[:60].replace('\n', ' ') if len(line) > 60 else line.replace('\n', ' ')
-                    print(f"    [{processed_russian}/{russian_lines_count}] ({progress_percent:.1f}%) Translating: {line_preview}...", end='\r')
-                    sys.stdout.flush()
-                
-                # Try to translate the line
-                translated_line = translate_text_with_api(
-                    line, 
-                    cache, 
-                    max_length=500,
-                    max_retries=3,
-                    retry_delay=delay
-                )
-                if translated_line and translated_line != line:
-                    translated_lines.append(translated_line)
-                    replacement_count += 1
-                    print(f"    ✓ Translated line {processed_russian}/{russian_lines_count}")
-                else:
-                    translated_lines.append(line)
-                    if not translated_line:
-                        print(f"    ⚠ Skipped line {processed_russian}/{russian_lines_count} (API error)")
-                
-                # Rate limiting
-                time.sleep(delay)
-                
-                # Save cache periodically (every 10 translations)
-                if cache_file and replacement_count > 0 and replacement_count % 10 == 0:
-                    save_translation_cache(cache, cache_file)
+        for i, (start_line_idx, fragment) in enumerate(fragments, 1):
+            # Show progress
+            progress_percent = (i / total_fragments) * 100
+            fragment_preview = fragment[:50].replace('\n', ' ') if len(fragment) > 50 else fragment.replace('\n', ' ')
+            print(f"    [{i}/{total_fragments}] ({progress_percent:.1f}%) Translating fragment ({len(fragment)} chars)...", end='\r')
+            sys.stdout.flush()
+            
+            # Translate fragment
+            translated_fragment = translate_text_with_api(
+                fragment,
+                cache,
+                max_length=max_fragment_length,
+                max_retries=3,
+                retry_delay=delay
+            )
+            
+            if translated_fragment and translated_fragment != fragment:
+                translation_map[fragment] = translated_fragment
+                replacement_count += 1
+                print(f"    ✓ Translated fragment {i}/{total_fragments}")
             else:
-                translated_lines.append(line)
+                if not translated_fragment:
+                    print(f"    ⚠ Skipped fragment {i}/{total_fragments} (API error)")
+                translation_map[fragment] = fragment  # Keep original
+            
+            # Adaptive delay based on fragment size
+            adaptive_delay = delay + (len(fragment) / 1000) * 0.5  # Extra delay for larger fragments
+            time.sleep(adaptive_delay)
+            
+            # Save cache periodically (every 5 fragments)
+            if cache_file and i % 5 == 0:
+                save_translation_cache(cache, cache_file)
         
         print()  # New line after progress
         
         if replacement_count > 0:
-            translated_content = '\n'.join(translated_lines)
+            # Reconstruct file with translations
+            lines = original_content.split('\n')
+            result_lines = []
+            fragment_idx = 0
+            i = 0
+            
+            while i < len(lines):
+                if fragment_idx < len(fragments):
+                    frag_start, frag_text = fragments[fragment_idx]
+                    if i == frag_start:
+                        # Replace fragment
+                        translated = translation_map.get(frag_text, frag_text)
+                        frag_lines = translated.split('\n')
+                        result_lines.extend(frag_lines)
+                        # Skip lines that were part of this fragment
+                        frag_line_count = len(frag_text.split('\n'))
+                        i += frag_line_count
+                        fragment_idx += 1
+                        continue
+                
+                # Regular line (not part of any fragment)
+                result_lines.append(lines[i])
+                i += 1
+            
+            translated_content = '\n'.join(result_lines)
             with open(file_path, 'w', encoding='utf-8') as f:
                 f.write(translated_content)
         
@@ -368,6 +430,38 @@ def process_file_with_translations(
     except Exception as e:
         print(f"  ✗ Error processing {file_path}: {e}", file=sys.stderr)
         return False, 0
+
+
+def find_files_with_russian(root_dir: str = '.') -> List[str]:
+    """Find all files with Russian text (excluding russian/ directories)."""
+    files_with_russian = []
+    
+    for root, dirs, files in os.walk(root_dir):
+        # Skip excluded directories
+        dirs[:] = [d for d in dirs if not any(
+            pattern in os.path.join(root, d) for pattern in [
+                '.git', 'node_modules', '__pycache__', '.venv', 'venv', 
+                '.uv', 'uv_cache', 'russian', 'data', 'Logs', 'models', 'results'
+            ]
+        )]
+        
+        for file in files:
+            file_path = os.path.join(root, file)
+            rel_path = os.path.relpath(file_path, root_dir)
+            
+            # Skip excluded files
+            if any(rel_path.endswith(ext) for ext in ['-ru.md', '_ru.md', '.ru.']):
+                continue
+            
+            try:
+                with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    content = f.read(10000)  # Read first 10KB to check
+                    if has_russian_text(content):
+                        files_with_russian.append(rel_path)
+            except:
+                continue
+    
+    return files_with_russian
 
 
 def parse_words_file(words_file: str) -> Tuple[Dict[str, List[str]], Set[str]]:
@@ -425,8 +519,13 @@ def main():
     parser.add_argument(
         '--words-file',
         type=str,
-        required=True,
-        help='File with Russian words (from count_russian_files.py --words-output)'
+        default=None,
+        help='File with Russian words (from count_russian_files.py --words-output). If not provided, will scan for files with Russian text.'
+    )
+    parser.add_argument(
+        '--scan-files',
+        action='store_true',
+        help='Scan project for files with Russian text (if --words-file not provided)'
     )
     parser.add_argument(
         '--cache-file',
@@ -449,8 +548,14 @@ def main():
     parser.add_argument(
         '--delay',
         type=float,
-        default=3.0,
-        help='Delay between API calls in seconds (default: 3.0)'
+        default=2.5,
+        help='Base delay between API calls in seconds (default: 2.5)'
+    )
+    parser.add_argument(
+        '--max-fragment-length',
+        type=int,
+        default=800,
+        help='Maximum length of text fragment for API translation (default: 800)'
     )
     parser.add_argument(
         '--dry-run',
@@ -474,12 +579,27 @@ def main():
     print("=" * 80)
     print()
     
-    # Step 1: Parse words file
-    print("Step 1: Parsing words file...")
-    file_words_dict, all_words = parse_words_file(args.words_file)
+    # Step 1: Get files with Russian text
+    print("Step 1: Finding files with Russian text...")
     
-    if not all_words:
-        print("  ✗ No Russian words found in file")
+    if args.words_file:
+        file_words_dict, all_words = parse_words_file(args.words_file)
+        if not file_words_dict and not all_words:
+            print("  ⚠ Words file empty or not found, scanning for files...")
+            args.scan_files = True
+    
+    if args.scan_files or not args.words_file:
+        # Scan for files directly
+        files_with_russian = find_files_with_russian('.')
+        file_words_dict = {f: [] for f in files_with_russian}  # Empty word lists, will be processed directly
+        all_words = set()
+        print(f"  ✓ Found {len(files_with_russian)} files with Russian text")
+    else:
+        print(f"  ✓ Found {len(all_words)} unique Russian words")
+        print(f"  ✓ Found {len(file_words_dict)} files with Russian words")
+    
+    if not file_words_dict:
+        print("  ✗ No files with Russian text found")
         return
     
     print(f"  ✓ Found {len(all_words)} unique Russian words")
@@ -572,12 +692,13 @@ def main():
                 failed_files += 1
         else:
             if args.translate_by_file:
-                # Translate entire file through API
+                # Translate entire file through API (optimized)
                 success, count = process_file_with_api_translation(
                     file_path, 
                     cache, 
                     args.delay,
-                    args.cache_file
+                    args.cache_file,
+                    args.max_fragment_length
                 )
                 if success:
                     if count > 0:
