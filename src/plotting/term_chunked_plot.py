@@ -1102,7 +1102,7 @@ def plot_macd_chunks(df: pd.dataFrame, title: str = "MACD Chunks", style: str = 
  # Show chunk statistics
  _show_chunk_statistics(chunk, f"{title} - MACD", chunk_start_idx, chunk_end_idx)
 
- # Wait for user input before showing next chunk
+ # Wait for User input before showing next chunk
  if i < len(chunks) - 1: # Don't wait after the last chunk
  input("\nPress Enter to continue to next chunk...")
 
@@ -1250,7 +1250,7 @@ def plot_indicator_chunks(df: pd.dataFrame, indicator_name: str, title: str = "I
  # Show chunk statistics
  _show_chunk_statistics(chunk, f"{title} - {indicator_name}", chunk_start_idx, chunk_end_idx)
 
- # Wait for user input before showing next chunk
+ # Wait for User input before showing next chunk
  if i < len(chunks) - 1: # Don't wait after the last chunk
  input("\nPress Enter to continue to next chunk...")
 

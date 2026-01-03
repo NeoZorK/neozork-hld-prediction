@@ -46,13 +46,13 @@ class AdvancedTradingAnalyzer:
  """
  logger.info("starting comprehensive backtesting...")
 
- # Get Predictions
- Predictions = model.predict(test_data)
+ # Get predictions
+ predictions = model.predict(test_data)
  probabilities = model.predict_proba(test_data)
 
  # Prepare backtesting data
  backtest_data = test_data.copy()
- backtest_data['Prediction'] = Predictions
+ backtest_data['Prediction'] = predictions
 
  if len(probabilities.columns) > 1:
  backtest_data['probability'] = probabilities.iloc[:, 1]
@@ -205,11 +205,11 @@ class AdvancedTradingAnalyzer:
 
  # Test on current window
  try:
- Predictions = current_model.predict(test_window)
+ predictions = current_model.predict(test_window)
  actual = test_window['target']
 
  # Calculate metrics
- accuracy = accuracy_score(actual, Predictions)
+ accuracy = accuracy_score(actual, predictions)
 
  # Quick backtest on window
  window_results = self.comprehensive_backtesting(current_model, test_window)
@@ -283,19 +283,19 @@ class AdvancedTradingAnalyzer:
  # Random sample with replacement
  sample_data = data.sample(n=min(sample_size, len(data)), replace=True)
 
- # Get Predictions
- Predictions = model.predict(sample_data)
+ # Get predictions
+ predictions = model.predict(sample_data)
  actual = sample_data['target']
 
  # Calculate basic metrics
- accuracy = accuracy_score(actual, Predictions)
+ accuracy = accuracy_score(actual, predictions)
 
  # Quick performance Analysis
  sample_data_copy = sample_data.copy()
- sample_data_copy['Prediction'] = Predictions
+ sample_data_copy['Prediction'] = predictions
 
  # Simple strategy simulation
- sample_data_copy['signal'] = np.where(Predictions == 1, 1, -1)
+ sample_data_copy['signal'] = np.where(predictions == 1, 1, -1)
  sample_data_copy['return'] = sample_data_copy['Close'].pct_change()
  sample_data_copy['strategy_return'] = sample_data_copy['signal'].shift(1) * sample_data_copy['return']
 

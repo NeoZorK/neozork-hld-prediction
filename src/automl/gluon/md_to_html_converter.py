@@ -198,16 +198,16 @@ class AutoMLGluonHTMLConverter:
  toc_html += f'''
  <div class="toc-item">
  <h3>{i}. {chapter_info['name']}</h3>
- <p>{self.get_chapter_description(chapter_info['name'])}</p>
+ <p>{self.get_chapter_describe(chapter_info['name'])}</p>
  </div>
  '''
 
  toc_html += '</div>\n</div>\n'
  return toc_html
 
- def get_chapter_description(self, chapter_name: str) -> str:
- """Возвращает description главы"""
- descriptions = {
+ def get_chapter_describe(self, chapter_name: str) -> str:
+ """Возвращает describe главы"""
+ describes = {
  "installation and configuration": "Пошаговая installation, системные требования, configuration",
  "Базовое использование": "Основы работы with TabularPredictor, обучение моделей",
  "Продвинутая configuration": "Гиперпараметры, ансамбли, валидация, feature engineering",
@@ -221,7 +221,7 @@ class AutoMLGluonHTMLConverter:
  "Apple Silicon оптимизация": "M1/M2/M3, MLX, Metal Performance Shaders",
  "Практические examples": "Банк, недвижимость, временные ряды, классификация",
  "Простой продакшен example": "from идеи to продакшен деплоя за 8 шагов",
- "Продвинутый продакшен": "МикроServices, масштабирование, Monitoring",
+ "Продвинутый продакшен": "Микроservices, масштабирование, Monitoring",
  "Теория and основы": "Математические основы, алгоритмы, принципы",
  "Troubleshooting": "Решение проблем, отладка, оптимизация",
  "Интерпретируемость": "Объяснимость моделей, SHAP, LIME",
@@ -242,7 +242,7 @@ class AutoMLGluonHTMLConverter:
  "Management портфелем": "Оптимизация and диверсификация портфеля",
  "configuration параллельных вычислений": "LLM and параллельные вычисления"
  }
- return descriptions.get(chapter_name, "Detailed description темы")
+ return describes.get(chapter_name, "Detailed describe темы")
 
  def generate_html_template(self) -> str:
  """Генерирует HTML шаблон in стиле Python_Formatting_Example.html"""

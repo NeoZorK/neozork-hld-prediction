@@ -197,8 +197,8 @@ def main():
 
 
 if __name__ == "__main__":
- # Create logs directory if it doesn't exist
- os.makedirs('logs', exist_ok=True)
+ # Create Logs directory if it doesn't exist
+ os.makedirs('Logs', exist_ok=True)
 
  # Run test
  success = main()

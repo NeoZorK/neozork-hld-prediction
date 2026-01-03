@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 def main():
  """main function for improved demo."""
- parser = argparse.ArgumentParser(description='Improved AutoGluon Demo')
+ parser = argparse.ArgumentParser(describe='Improved AutoGluon Demo')
  parser.add_argument('--symbol', default='BTCUSD', help='symbol to analyze (default: BTCUSD)')
  parser.add_argument('--indicator', default=None, choices=['WAVE2', 'SHORT3', 'CSVExport'],
  help='Indicator to Use (default: None for automatic feature generation)')
@@ -63,7 +63,7 @@ def main():
  # Sort Timeframes in logical order
  Timeframe_order = ['M1', 'M5', 'M15', 'H1', 'H4', 'D1', 'W1', 'MN1']
  sorted_Timeframes = []
- for tf in Timeframe_order:
+ for tf in timeframe_order:
  if tf in available_Timeframes:
  sorted_Timeframes.append(tf)
 

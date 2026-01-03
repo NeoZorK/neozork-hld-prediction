@@ -49,7 +49,7 @@ TRANSLATION_PATTERNS = {
  r'\bдокументация\b': 'documentation',
  r'\bпример\b': 'example',
  r'\bпримеры\b': 'examples',
- r'\bописание\b': 'description',
+ r'\bописание\b': 'describe',
  r'\bинструкция\b': 'instruction',
  r'\bинструкции\b': 'instructions',
  r'\bзависимость\b': 'dependency',
@@ -92,7 +92,7 @@ EXCLUDE_PATTERNS = [
  r'^\./node_modules/.*',
  r'^\./__pycache__/.*',
  r'^\./data/.*',
- r'^\./logs/.*',
+ r'^\./Logs/.*',
  r'^\./models/.*',
  r'^\./results/.*',
  r'^\./\.venv/.*',
@@ -164,7 +164,7 @@ def translate_text(text: str) -> str:
  else:
  translated = re.sub(pattern, replacement, translated, flags=re.IGNORECASE)
 
- # Clean up multiple spaces (but preserve newlines in markdown)
+ # clean up multiple spaces (but preserve newlines in markdown)
  lines = translated.split('\n')
  cleaned_lines = []
  for line in lines:
@@ -181,14 +181,14 @@ def translate_text(text: str) -> str:
 
 def main():
  """main function."""
- parser = argparse.ArgumentParser(description='Translate Russian text in project files to English')
+ parser = argparse.ArgumentParser(describe='Translate Russian text in project files to English')
  parser.add_argument('--dry-run', action='store_true', help='Show files that would be translated without making changes')
  parser.add_argument('--file', type=str, help='Translate specific file only')
  parser.add_argument('--yes', '-y', action='store_true', help='Automatically proceed without confirmation')
  args = parser.parse_args()
 
  print("Scanning project for files with Russian text...")
- print("Excluding: russian/ directories, *-ru.md files, and data/logs/models directories")
+ print("Excluding: russian/ directories, *-ru.md files, and data/Logs/models directories")
  print()
 
  if args.file:

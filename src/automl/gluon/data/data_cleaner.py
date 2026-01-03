@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-data Cleaner for AutoGluon Pipeline
+data cleaner for AutoGluon Pipeline
 clean данных for пайплайна AutoGluon
 
 This module handles data cleaning and preprocessing to ensure
@@ -14,7 +14,7 @@ from typing import Tuple, Dict, Any
 
 logger = logging.getLogger(__name__)
 
-class dataCleaner:
+class datacleaner:
  """
  data cleaner for AutoGluon pipeline.
  clean данных for пайплайна AutoGluon.
@@ -26,7 +26,7 @@ class dataCleaner:
 
  def clean_data(self, data: pd.dataFrame, target_column: str = None) -> Tuple[pd.dataFrame, Dict[str, Any]]:
  """
- Clean data by removing infinity, NaN values, and other issues.
+ clean data by removing infinity, NaN values, and other issues.
  Очистить data, удалив бесконечные значения, NaN and другие проблемы.
 
  Args:

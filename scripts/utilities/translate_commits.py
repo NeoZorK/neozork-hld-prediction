@@ -159,8 +159,8 @@ DIRECT_TRANSLATIONS = {
  'feat: add complete earning system 100%+ per month - Created Detailed system with Working code from idea to deployment - Added all components: models, indicators, blockchain integration - Implemented automatic retraining system - Added full Monitoring and alert system - Created documentation on Launch and usage - system ready for testing on blockchain testnet',
  'feat: создан полный учебник on созданию робастных прибыльных ML systems':
  'feat: create complete tutorial on Creating robust profitable ML systems',
- 'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Простой example" and "Сложный example" showcasing the development and deployment of robust ML models Using AutoML Gluon. - included Detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide users with practical insights into building and deploying ML models, catering to both novice and advanced users.':
- 'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Simple Example" and "Advanced Example" showcasing the development and deployment of robust ML models Using AutoML Gluon. - included Detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide users with practical insights into building and deploying ML models, catering to both novice and advanced users.',
+ 'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Простой example" and "Сложный example" showcasing the development and deployment of robust ML models Using AutoML Gluon. - included Detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide Users with practical insights into building and deploying ML models, catering to both novice and advanced Users.':
+ 'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Simple Example" and "Advanced Example" showcasing the development and deployment of robust ML models Using AutoML Gluon. - included Detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide Users with practical insights into building and deploying ML models, catering to both novice and advanced Users.',
  'fix dual charts for -d fastest and MACD ок with scale date':
  'fix dual charts for -d fastest and MACD OK with scale date',
  'fix dual charts for -d fastest and MACD ок':
@@ -188,7 +188,7 @@ def translate_commit_message(message: str) -> str:
  else:
  translated = re.sub(pattern, replacement, translated, flags=re.IGNORECASE)
 
- # Clean up multiple spaces
+ # clean up multiple spaces
  translated = re.sub(r'\s+', ' ', translated)
  translated = translated.strip()
 
@@ -231,7 +231,7 @@ def has_russian_text(text: str) -> bool:
 def main():
  """main function to translate commit messages."""
  parser = argparse.ArgumentParser(
- description='Translate git commit messages from Russian to English'
+ describe='Translate git commit messages from Russian to English'
  )
  parser.add_argument(
  '--yes', '-y',

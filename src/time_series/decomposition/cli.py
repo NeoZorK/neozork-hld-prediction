@@ -16,7 +16,7 @@ from .plotting import plot_and_save, plot_and_save_ceemdan_per_imf, get_ceemdan_
 
 
 def parse_args() -> argparse.Namespace:
- parser = argparse.ArgumentParser(description="Time Series Decomposition CLI (no preprocessing inside)")
+ parser = argparse.ArgumentParser(describe="Time Series Decomposition CLI (no preprocessing inside)")
  parser.add_argument("--input", required=True, help="Path to file or directory")
  parser.add_argument("--column", help="Target column name")
  parser.add_argument("--datetime-col", help="Datetime column if not index")

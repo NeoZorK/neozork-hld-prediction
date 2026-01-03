@@ -38,7 +38,7 @@ COMMIT_TRANSLATIONS = {
  '02ec3296859726ca6f6026281a1496e64ea3b6e1':
  'feat: create complete tutorial on Creating robust profitable ML systems',
  '619544aef875fc061c16e143436fdd6b940bc2b5':
- 'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Simple Example" and "Advanced Example" showcasing the development and deployment of robust ML models Using AutoML Gluon. - included Detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide users with practical insights into building and deploying ML models, catering to both novice and advanced users.',
+ 'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Simple Example" and "Advanced Example" showcasing the development and deployment of robust ML models Using AutoML Gluon. - included Detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide Users with practical insights into building and deploying ML models, catering to both novice and advanced Users.',
  '877585aab0c1d60842bd7dc938175011d3892c67':
  'fix dual charts for -d fastest and MACD OK with scale date',
  '816bc990ee2430c7a06c59fecb72225178f74913':
@@ -163,7 +163,7 @@ def translate_message(message):
  for pattern, replacement in replacements:
  translated = re.sub(pattern, replacement, translated, flags=re.IGNORECASE)
 
- # Clean up
+ # clean up
  translated = re.sub(r'\\s+', ' ', translated)
  translated = translated.strip()
 
@@ -185,7 +185,7 @@ if __name__ == '__main__':
 
 def main():
  """main function."""
- parser = argparse.ArgumentParser(description='Translate remaining Russian commit messages')
+ parser = argparse.ArgumentParser(describe='Translate remaining Russian commit messages')
  parser.add_argument('--yes', '-y', action='store_true', help='Automatically proceed without confirmation')
  args = parser.parse_args()
 

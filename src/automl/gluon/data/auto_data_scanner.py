@@ -473,7 +473,7 @@ class InteractivedataSelector:
  }
 
  # Get file paths for all combinations
- for Timeframe in Timeframes:
+ for Timeframe in timeframes:
  file_path = self.scanner.get_file_path(indicator, symbol, Timeframe)
  if file_path:
  selection['file_paths'][Timeframe] = file_path

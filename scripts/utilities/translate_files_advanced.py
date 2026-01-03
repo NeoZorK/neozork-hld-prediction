@@ -70,7 +70,7 @@ TRANSLATIONS = OrderedDict([
  (r'\bдокументация\b', 'documentation'),
  (r'\bпример\b', 'example'),
  (r'\bпримеры\b', 'examples'),
- (r'\bописание\b', 'description'),
+ (r'\bописание\b', 'describe'),
  (r'\bинструкция\b', 'instruction'),
  (r'\bинструкции\b', 'instructions'),
  (r'\bзависимость\b', 'dependency'),
@@ -171,7 +171,7 @@ TRANSLATIONS = OrderedDict([
  (r'integration', 'integration'),
  (r'Application screens', 'Application screens'),
  (r'Login to system', 'Login to system'),
- (r'user registration', 'user registration'),
+ (r'User registration', 'User registration'),
  (r'main screen', 'main screen'),
  (r'with greeting', 'with greeting'),
  (r'Loading screen', 'Loading screen'),
@@ -181,7 +181,7 @@ TRANSLATIONS = OrderedDict([
  (r'multiple Timeframes', 'multiple Timeframes'),
  (r'simultaneously', 'simultaneously'),
  (r'improving accuracy', 'improving accuracy'),
- (r'Predictions', 'Predictions'),
+ (r'predictions', 'predictions'),
  (r'Concept', 'Concept'),
  (r'Timeframe hierarchy', 'Timeframe hierarchy'),
  (r'Base Timeframe', 'Base Timeframe'),
@@ -242,7 +242,7 @@ TRANSLATIONS = OrderedDict([
  (r'Authentication Management', 'Authentication Management'),
  (r'HTTP client', 'HTTP client'),
  (r'Style constants', 'Style constants'),
- (r'Services', 'Services'),
+ (r'services', 'services'),
  (r'Use specific file', 'Use specific file'),
  (r'if specified', 'if specified'),
  (r'found', 'found'),
@@ -267,7 +267,7 @@ TRANSLATIONS = OrderedDict([
  (r'health check', 'health check'),
  (r'mobile API', 'mobile API'),
  (r'Data for main screen', 'Data for main screen'),
- (r'user Portfolio', 'user Portfolio'),
+ (r'User Portfolio', 'User Portfolio'),
  (r'List of funds', 'List of funds'),
  (r'Investment Management', 'Investment Management'),
  (r'View networks', 'View networks'),
@@ -284,7 +284,7 @@ TRANSLATIONS = OrderedDict([
  (r'for specified symbol', 'for specified symbol'),
  (r'for specified', 'for specified'),
  (r'symbol and', 'symbol and'),
- (r'will be used sequential', 'will be used sequential'),
+ (r'will be Used sequential', 'will be Used sequential'),
  (r'not available -', 'not available -'),
  (r'not available', 'not available'),
  (r'Use standard path', 'Use standard path'),
@@ -302,7 +302,7 @@ TRANSLATIONS = OrderedDict([
  (r'main screen', 'main screen'),
  (r'main', 'main'),
  (r'screen', 'screen'),
- (r'user', 'user'),
+ (r'User', 'User'),
  (r'Portfolio', 'Portfolio'),
  (r'List', 'List'),
  (r'funds', 'funds'),
@@ -336,7 +336,7 @@ EXCLUDE_PATTERNS = [
  r'^\./node_modules/.*',
  r'^\./__pycache__/.*',
  r'^\./data/.*',
- r'^\./logs/.*',
+ r'^\./Logs/.*',
  r'^\./models/.*',
  r'^\./results/.*',
  r'^\./\.venv/.*',
@@ -403,7 +403,7 @@ def translate_text(text: str) -> str:
  for pattern, replacement in TRANSLATIONS.items():
  translated = re.sub(pattern, replacement, translated, flags=re.MULTILINE | re.IGNORECASE)
 
- # Clean up multiple spaces but preserve Structure
+ # clean up multiple spaces but preserve Structure
  lines = translated.split('\n')
  cleaned_lines = []
  for line in lines:
@@ -422,7 +422,7 @@ def translate_text(text: str) -> str:
 
 def main():
  """main function."""
- parser = argparse.ArgumentParser(description='Translate Russian text in project files to English')
+ parser = argparse.ArgumentParser(describe='Translate Russian text in project files to English')
  parser.add_argument('--dry-run', action='store_true', help='Show files without making changes')
  parser.add_argument('--file', type=str, help='Translate specific file only')
  parser.add_argument('--yes', '-y', action='store_true', help='Auto-proceed without confirmation')
@@ -430,7 +430,7 @@ def main():
  args = parser.parse_args()
 
  print("Scanning project for files with Russian text...")
- print("Excluding: russian/ directories, *-ru.md files, and data/logs/models directories")
+ print("Excluding: russian/ directories, *-ru.md files, and data/Logs/models directories")
  print()
 
  if args.file:

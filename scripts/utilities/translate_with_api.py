@@ -65,7 +65,7 @@ EXCLUDE_PATTERNS = [
  r'^\./node_modules/.*',
  r'^\./__pycache__/.*',
  r'^\./data/.*',
- r'^\./logs/.*',
+ r'^\./Logs/.*',
  r'^\./models/.*',
  r'^\./results/.*',
  r'^\./\.venv/.*',
@@ -240,7 +240,7 @@ def find_files_with_russian(root_dir: str = '.') -> List[Tuple[str, int]]:
 
 def main():
  """main function."""
- parser = argparse.ArgumentParser(description='Translate Russian text Using free translation API')
+ parser = argparse.ArgumentParser(describe='Translate Russian text Using free translation API')
  parser.add_argument('--dry-run', action='store_true', help='Show files without making changes')
  parser.add_argument('--file', type=str, help='Translate specific file only')
  parser.add_argument('--yes', '-y', action='store_true', help='Auto-proceed without confirmation')
@@ -275,7 +275,7 @@ def main():
  print("Using pattern-based translation only (API disabled)")
 
  print("Scanning project for files with Russian text...")
- print("Excluding: russian/ directories, *-ru.md files, and data/logs/models directories")
+ print("Excluding: russian/ directories, *-ru.md files, and data/Logs/models directories")
  print()
 
  if args.file:

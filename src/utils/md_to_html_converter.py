@@ -411,7 +411,7 @@ class MarkdownToHTMLConverter:
 
  <div class="exPlanation">
  <strong>📚 Complete guide on Neozork AutoML:</strong><br>
- Комплексная documentation on созданию робастных ML-систем with использованием AutoML технологий.
+ Комплексная documentation on созданию robust ML systems with использованием AutoML техноLogsй.
  </div>
 
  <h2>Содержание</h2>
@@ -467,11 +467,11 @@ class MarkdownToHTMLConverter:
  </div>
 
  <h2>О проекте</h2>
- <p>Neozork AutoML - это комплексная система for создания робастных машинного обучения решений with использованием современных AutoML технологий. documentation охватывает все аспекты from installation окружения to развертывания in production.</p>
+ <p>Neozork AutoML - это комплексная система for создания робастных machine learning решений with использованием современных AutoML техноLogsй. documentation охватывает все аспекты from environment installation to deployment in production.</p>
 
  <h2>Основные разделы</h2>
  <ul>
- <li><strong>installation and configuration:</strong> Полная configuration окружения for разработки</li>
+ <li><strong>installation and configuration:</strong> Полная configuration окружения for development</li>
  <li><strong>Подготовка данных:</strong> Методы очистки and подготовки данных</li>
  <li><strong>Обучение моделей:</strong> AutoML подходы and best practices</li>
  <li><strong>Тестирование:</strong> Backtesting and валидация моделей</li>
@@ -480,7 +480,7 @@ class MarkdownToHTMLConverter:
  </ul>
 
  <div class="exPlanation">
- <strong>💡 Совет:</strong> Начните with раздела "installation окружения" and следуйте документации on порядку for лучшего понимания материала.
+ <strong>💡 Совет:</strong> Начните with раздела "environment installation" and следуйте документации on порядку for лучшего понимания материала.
  </div>
  """
 
@@ -497,12 +497,12 @@ class MarkdownToHTMLConverter:
 
 def main():
  """main function to run the converter"""
- parser = argparse.ArgumentParser(description='Convert Markdown files to HTML with beautiful formatting')
+ parser = argparse.ArgumentParser(describe='Convert Markdown files to HTML with beautiful formatting')
  parser.add_argument('--input-dir', '-i',
- default='/users/rostsh/Documents/DIS/REPO/neozork-hld-Prediction/docs/automl/neozork',
+ default='/Users/rostsh/Documents/DIS/REPO/neozork-hld-Prediction/docs/automl/neozork',
  help='Input directory containing .md files')
  parser.add_argument('--output-dir', '-o',
- default='/users/rostsh/Documents/DIS/REPO/neozork-hld-Prediction/docs/automl/neozork/html',
+ default='/Users/rostsh/Documents/DIS/REPO/neozork-hld-Prediction/docs/automl/neozork/html',
  help='Output directory for HTML files')
 
  args = parser.parse_args()

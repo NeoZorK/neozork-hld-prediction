@@ -162,7 +162,7 @@ class MultiIndicatorLoader:
  for symbol in symbols:
  all_data[symbol] = {}
 
- for Timeframe in Timeframes:
+ for Timeframe in timeframes:
  logger.info(f"📊 Loading {symbol} {Timeframe}...")
 
  try:
@@ -241,7 +241,7 @@ class MultiIndicatorLoader:
  def create_target_variable(self, data: pd.dataFrame, method: str = 'price_direction', problem_type: str = 'regression') -> pd.dataFrame:
  """
  Create target variable for machine learning.
- Создать целевую переменную for машинного обучения.
+ Создать целевую переменную for machine learning.
 
  Args:
  data: Input dataframe
@@ -458,7 +458,7 @@ class MultiIndicatorLoader:
  }
 
  # Get file paths
- for Timeframe in Timeframes:
+ for Timeframe in timeframes:
  file_path = self.scanner.get_file_path(first_indicator, first_symbol, Timeframe)
  if file_path:
  selection['file_paths'][Timeframe] = file_path
@@ -490,7 +490,7 @@ class MultiIndicatorLoader:
 
  all_data = []
 
- for Timeframe in Timeframes:
+ for Timeframe in timeframes:
  if Timeframe in file_paths:
  file_path = file_paths[Timeframe]
 
@@ -547,7 +547,7 @@ class MultiIndicatorLoader:
 
  all_combined_data = []
 
- for Timeframe in Timeframes:
+ for Timeframe in timeframes:
  try:
  logger.info(f"📊 Loading {symbol} {Timeframe}...")
 

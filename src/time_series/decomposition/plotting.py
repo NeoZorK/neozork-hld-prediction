@@ -118,7 +118,7 @@ def plot_and_save_ceemdan_per_imf(
  comp.plot(ax=ax, lw=1)
  ax.set_xlim(result.original.index.min(), result.original.index.max())
  ax.set_title(texts["title_imf"].format(n=n))
- # Вставляем detailsзированное description on сам рисунок
+ # Вставляем detailsзированное describe on сам рисунок
  fig.text(
  0.01,
  0.01,

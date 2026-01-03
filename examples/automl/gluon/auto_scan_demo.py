@@ -24,7 +24,7 @@ logging.basicConfig(
  format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
  handlers=[
  logging.StreamHandler(),
- logging.FileHandler('logs/auto_scan_demo.log')
+ logging.FileHandler('Logs/auto_scan_demo.log')
  ]
 )
 
@@ -170,7 +170,7 @@ def test_auto_pipeline():
  print(" ✅ Model is ready for production")
  print(" ✅ Auto-scanning worked correctly")
  else:
- print(" ❌ Pipeline failed - check logs for details")
+ print(" ❌ Pipeline failed - check Logs for details")
  print(" ❌ Fix issues before deploying to production")
 
  return results
@@ -186,8 +186,8 @@ def main():
  print("🚀 Auto Scan Demo - Interactive data Selection")
  print("=" * 60)
 
- # Create logs directory if it doesn't exist
- os.makedirs('logs', exist_ok=True)
+ # Create Logs directory if it doesn't exist
+ os.makedirs('Logs', exist_ok=True)
 
  try:
  # Test 1: Auto scanner
