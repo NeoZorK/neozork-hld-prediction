@@ -8,6 +8,7 @@ Excludes files in russian/ directories, files with -ru.md suffix, and files with
 import argparse
 import os
 import re
+import sys
 from pathlib import Path
 from typing import List, Tuple, Dict, Set
 from collections import defaultdict
@@ -145,6 +146,61 @@ def find_files_with_russian(root_dir: str = '.') -> List[Tuple[str, int]]:
     return sorted(files_with_russian)
 
 
+def find_russian_lines_in_file(file_path: str, root_dir: str = '.') -> List[int]:
+    """Find line numbers containing Russian text in a file."""
+    full_path = os.path.join(root_dir, file_path) if root_dir != '.' else file_path
+    
+    if not os.path.exists(full_path):
+        return []
+    
+    try:
+        with open(full_path, 'r', encoding='utf-8', errors='ignore') as f:
+            lines = f.readlines()
+        
+        russian_line_numbers = []
+        for line_num, line in enumerate(lines, start=1):
+            if has_russian_text(line):
+                russian_line_numbers.append(line_num)
+        
+        return russian_line_numbers
+    except Exception as e:
+        print(f"Warning: Could not read {file_path}: {e}", file=sys.stderr)
+        return []
+
+
+def print_russian_lines(
+    files_requiring: List[Tuple[str, int]],
+    root_dir: str = '.',
+    output_file: str = None
+) -> None:
+    """Print or save line numbers with Russian text for each file."""
+    output_lines = []
+    
+    for file_path, _ in files_requiring:
+        line_numbers = find_russian_lines_in_file(file_path, root_dir)
+        if line_numbers:
+            # Format: file_path:line1,line2,line3
+            line_nums_str = ','.join(str(ln) for ln in line_numbers)
+            output_lines.append(f"{file_path}:{line_nums_str}")
+    
+    output_text = '\n'.join(output_lines)
+    
+    if output_file:
+        try:
+            with open(output_file, 'w', encoding='utf-8') as f:
+                f.write(output_text)
+            print(f"\nLine numbers saved to: {output_file}")
+        except Exception as e:
+            print(f"Error saving line numbers to {output_file}: {e}", file=sys.stderr)
+    else:
+        print("\n" + "=" * 80)
+        print("RUSSIAN TEXT LINE NUMBERS")
+        print("=" * 80)
+        print()
+        print(output_text)
+        print()
+
+
 def filter_files_requiring_translation(files_with_russian: List[Tuple[str, int]], root_dir: str = '.') -> Tuple[List[Tuple[str, int]], List[Tuple[str, int]]]:
     """
     Filter files requiring translation, excluding those with both RU and ENG versions.
@@ -277,6 +333,16 @@ def main():
         default='.',
         help='Root directory to scan (default: current directory)'
     )
+    parser.add_argument(
+        '--show-lines',
+        action='store_true',
+        help='Show line numbers with Russian text for each file'
+    )
+    parser.add_argument(
+        '--lines-output',
+        type=str,
+        help='Save line numbers to file (format: file_path:line1,line2,line3)'
+    )
     args = parser.parse_args()
 
     print("Scanning project for files with Russian text...")
@@ -293,6 +359,10 @@ def main():
 
     # Print to console
     print_statistics(files_with_russian, files_requiring, files_with_both, args.summary_only)
+
+    # Show or save line numbers if requested
+    if args.show_lines or args.lines_output:
+        print_russian_lines(files_requiring, args.root, args.lines_output)
 
     # Save to file if requested
     if args.output:
