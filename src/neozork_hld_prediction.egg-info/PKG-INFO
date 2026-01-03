@@ -31,8 +31,8 @@ Requires-Dist: fqdn==1.5.1
 Requires-Dist: fsspec==2024.6.1
 Requires-Dist: gitdb==4.0.12
 Requires-Dist: GitPython==3.1.44
-Requires-Dist: h11==0.14.0
-Requires-Dist: httpcore==1.0.7
+Requires-Dist: h11<0.17.0,>=0.16.0
+Requires-Dist: httpcore>=1.0.9
 Requires-Dist: httpx==0.28.1
 Requires-Dist: idna==3.10
 Requires-Dist: ipykernel==6.29.5
