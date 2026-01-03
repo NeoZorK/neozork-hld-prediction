@@ -14,8 +14,8 @@ Advanced financial analysis platform with UV package management, comprehensive t
 ### Native Apple Silicon Container (macOS 26+) - **FULL DOCKER PARITY**
 ```bash
 # Clone and run interactive container manager
-git clone https://github.com/username/neozork-hld-prediction.git
-cd neozork-hld-prediction
+git clone https://github.com/username/neozork-hld-Prediction.git
+cd neozork-hld-Prediction
 ./scripts/native-container/native-container.sh
 ```
 
@@ -30,20 +30,20 @@ cd neozork-hld-prediction
 
 **Available Commands Inside Container:**
 ```bash
-nz --interactive                    # Interactive analysis
-nz demo --rule PHLD                # Demo analysis
-eda -dqc                           # Data quality checks
-uv-install                         # Install dependencies
-uv-pytest                          # Run tests with UV
-mcp-start                          # Start MCP server
-mcp-check                          # Check MCP server status
+nz --interactive # Interactive analysis
+nz demo --rule PHLD # Demo analysis
+eda -dqc # Data quality checks
+uv-install # Install dependencies
+uv-pytest # Run tests with UV
+mcp-start # Start MCP server
+mcp-check # Check MCP server status
 ```
 
 ### Docker (Recommended for other platforms)
 ```bash
 # Clone and start
-git clone https://github.com/username/neozork-hld-prediction.git
-cd neozork-hld-prediction
+git clone https://github.com/username/neozork-hld-Prediction.git
+cd neozork-hld-Prediction
 docker-compose up -d
 
 # Run analysis with UV
@@ -53,8 +53,8 @@ docker-compose exec neozork uv run run_analysis.py demo --rule PHLD
 ### Local Setup with UV
 ```bash
 # Clone repository
-git clone https://github.com/username/neozork-hld-prediction.git
-cd neozork-hld-prediction
+git clone https://github.com/username/neozork-hld-Prediction.git
+cd neozork-hld-Prediction
 
 # Install UV package manager
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -196,28 +196,28 @@ uv run pytest tests -n auto
 - **Category:** Sentiment
 - **Description:** Analyzes futures market positioning to gauge institutional sentiment. Useful for trend confirmation and reversal spotting.
 - **CLI Example:**
-  ```bash
-  uv run run_analysis.py show csv mn1 -d fastest --rule cot:14,close
-  ```
+ ```bash
+ uv run run_analysis.py show csv mn1 -d fastest --rule cot:14,close
+ ```
 - **Documentation:** [COT Indicator](docs/reference/indicators/sentiment/cot-indicator.md)
 
 #### New: Put/Call Ratio Indicator
 - **Category:** Sentiment
 - **Description:** Measures the ratio of put options to call options to gauge market sentiment. Useful as a contrarian indicator for potential market reversals.
 - **CLI Example:**
-  ```bash
-  uv run run_analysis.py show csv mn1 -d fastest --rule putcallratio:20,close
-  ```
+ ```bash
+ uv run run_analysis.py show csv mn1 -d fastest --rule putcallratio:20,close
+ ```
 - **Documentation:** [Put/Call Ratio Indicator](docs/reference/indicators/sentiment/putcallratio-indicator.md)
 
 #### New: SuperTrend Indicator
 - **Category:** Trend
 - **Description:** Advanced trend-following indicator that combines ATR (Average True Range) with price action to identify trend direction and potential reversal points. Provides dynamic support/resistance levels and generates buy/sell signals.
 - **CLI Example:**
-  ```bash
-  uv run run_analysis.py show csv mn1 -d fastest --rule supertrend:10,3.0
-  uv run run_analysis.py show csv mn1 -d fastest --rule supertrend:10,3.0,open
-  ```
+ ```bash
+ uv run run_analysis.py show csv mn1 -d fastest --rule supertrend:10,3.0
+ uv run run_analysis.py show csv mn1 -d fastest --rule supertrend:10,3.0,open
+ ```
 - **Parameters:** period (required), multiplier (required), price_type (optional: open/close)
 - **Documentation:** [SuperTrend Indicator](docs/reference/indicators/trend/supertrend-indicator.md)
 
@@ -225,86 +225,86 @@ uv run pytest tests -n auto
 - **Category:** Trend
 - **Description:** Simple Moving Average that gives equal weight to all prices in the calculation period. Excellent for trend identification and support/resistance levels. Works across all 6 display modes with modern help system.
 - **CLI Examples:**
-  ```bash
-  # Basic SMA with 20-period close prices
-  uv run run_analysis.py demo --rule sma:20,close -d fastest
-  
-  # Multiple SMAs for trend comparison
-  uv run run_analysis.py demo --rule sma:10,close,sma:20,close,sma:50,close -d plotly
-  ```
+ ```bash
+ # Basic SMA with 20-period close prices
+ uv run run_analysis.py demo --rule sma:20,close -d fastest
+
+ # Multiple SMAs for trend comparison
+ uv run run_analysis.py demo --rule sma:10,close,sma:20,close,sma:50,close -d plotly
+ ```
 - **Parameters:** period (required), price_type (required: open/close)
 - **Display Modes:** All 6 modes supported (fastest, fast, plotly, mpl, seaborn, term)
-- **Documentation:** 
-  - [Complete SMA Tutorial](docs/guides/adding-sma-indicator-tutorial.md) 📖
-  - [SMA Reference](docs/reference/indicators/trend/sma-indicator.md) 📋
-  - [Quick Start Guide](docs/guides/sma-quick-start-guide.md) ⚡
-  - [Practical Examples](docs/guides/sma-practical-examples.md) 🎯
-  - [Testing Guide](docs/guides/sma-testing-guide.md) 🧪
-  - [Tutorials Summary](docs/guides/sma-tutorials-summary.md) 📋
+- **Documentation:**
+ - [Complete SMA Tutorial](docs/guides/adding-sma-indicator-tutorial.md) 📖
+ - [SMA Reference](docs/reference/indicators/trend/sma-indicator.md) 📋
+ - [Quick Start Guide](docs/guides/sma-quick-start-guide.md) ⚡
+ - [Practical Examples](docs/guides/sma-practical-examples.md) 🎯
+ - [Testing Guide](docs/guides/sma-testing-guide.md) 🧪
+ - [Tutorials Summary](docs/guides/sma-tutorials-summary.md) 📋
 
 #### New: Wave Indicator ⭐ **ADVANCED DUAL-SYSTEM**
 - **Category:** Trend
 - **Description:** Sophisticated trend-following indicator that combines multiple momentum calculations with dual-wave system, configurable trading rules, and global signal filtering. Features 10 individual trading rules and 7 global trading rules for advanced strategies. **Now supports all display modes including fast mode with discontinuous wave lines, MPL mode with customizable colors, seaborn mode with scientific presentation style, and terminal mode with ASCII-based visualization for SSH/remote connections.**
 - **CLI Examples:**
-  ```bash
-  # Basic Wave with default parameters
-  uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fastest
-  
-  # Wave with custom trading rules
-  uv run run_analysis.py demo --rule wave:33,10,2,strongtrend,22,11,4,fast,reverse,22,open -d plotly
-  
-  # Wave with zone-based filtering
-  uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,primezone,22,open -d fastest
+ ```bash
+ # Basic Wave with default parameters
+ uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fastest
 
-  # Wave with fast display mode (Bokeh-based)
-  uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
+ # Wave with custom trading rules
+ uv run run_analysis.py demo --rule wave:33,10,2,strongtrend,22,11,4,fast,reverse,22,open -d plotly
 
-  # Wave with real data in fast mode
-  uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
+ # Wave with zone-based filtering
+ uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,primezone,22,open -d fastest
 
-  # Wave with MPL mode and custom colors
-  uv run run_analysis.py show csv mn1 -d mpl --rule wave:339,10,2,fast,22,11,4,fast,prime,10,close
+ # Wave with fast display mode (Bokeh-based)
+ uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
 
-  # Wave with seaborn mode (NEW!) - Scientific presentation style
-  uv run run_analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,10,close
+ # Wave with real data in fast mode
+ uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
 
-  # Wave with terminal mode (NEW!) - ASCII-based visualization for SSH/remote
-  uv run run_analysis.py show csv mn1 -d term --rule wave:339,10,2,fast,22,11,4,fast,prime,10,close
-  ```
+ # Wave with MPL mode and custom colors
+ uv run run_analysis.py show csv mn1 -d mpl --rule wave:339,10,2,fast,22,11,4,fast,prime,10,close
+
+ # Wave with seaborn mode (NEW!) - Scientific presentation style
+ uv run run_analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,10,close
+
+ # Wave with terminal mode (NEW!) - ASCII-based visualization for SSH/remote
+ uv run run_analysis.py show csv mn1 -d term --rule wave:339,10,2,fast,22,11,4,fast,prime,10,close
+ ```
 - **Parameters:** long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period,price_type
 - **Documentation:** [Wave Indicator](docs/reference/indicators/trend/wave-indicator.md)
 - **Tutorial:** [Adding Wave Indicator](docs/guides/adding-wave-indicator-tutorial.md)
-- **New Features:** 
-  - [MPL Color Customization](docs/guides/wave-mpl-color-changes.md) - Custom colors for prime rule
-  - [Global Trading Rule Fixes](docs/guides/wave-prime-rule-fix-all-modes.md) - Fixed prime/reverse rules
-  - [Seaborn Mode Support](docs/guides/wave-indicator-seaborn-mode.md) - ⭐ **NEW** Complete seaborn mode support
-  - [Seaborn Integration Summary](docs/guides/wave-seaborn-integration-summary.md) - ⭐ **NEW** Technical implementation details
-  - [Terminal Mode Support](docs/guides/wave-indicator-terminal-mode.md) - ⭐ **NEW** Complete terminal mode support with signal fixes
-  - [Terminal Signals Fix](docs/development/WAVE_TERMINAL_SIGNALS_IMPLEMENTATION.md) - ⭐ **NEW** Signal display logic improvements
-  
-  # Real data analysis
-  uv run run_analysis.py yfinance --ticker AAPL --period 1y --point 0.01 --rule sma:20,close -d fastest
-  ```
+- **New Features:**
+ - [MPL Color Customization](docs/guides/wave-mpl-color-changes.md) - Custom colors for prime rule
+ - [Global Trading Rule Fixes](docs/guides/wave-prime-rule-fix-all-modes.md) - Fixed prime/reverse rules
+ - [Seaborn Mode Support](docs/guides/wave-indicator-seaborn-mode.md) - ⭐ **NEW** Complete seaborn mode support
+ - [Seaborn Integration Summary](docs/guides/wave-seaborn-integration-summary.md) - ⭐ **NEW** Technical implementation details
+ - [Terminal Mode Support](docs/guides/wave-indicator-terminal-mode.md) - ⭐ **NEW** Complete terminal mode support with signal fixes
+ - [Terminal signals Fix](docs/development/WAVE_TERMINAL_signALS_IMPLEMENTATION.md) - ⭐ **NEW** signal display logic improvements
+
+ # Real data analysis
+ uv run run_analysis.py yfinance --ticker AAPL --period 1y --point 0.01 --rule sma:20,close -d fastest
+ ```
 - **Parameters:** period (required), price_type (required: open/close)
 - **Display Modes:** All 6 modes supported (fastest, fast, plotly, mpl, seaborn, term)
-- **Documentation:** 
-  - [Complete SMA Tutorial](docs/guides/adding-sma-indicator-tutorial.md) 📖
-  - [Quick Start Guide](docs/guides/sma-quick-start-guide.md) ⚡
-  - [Practical Examples](docs/guides/sma-practical-examples.md) 🎯
-  - [Testing Guide](docs/guides/sma-testing-guide.md) 🧪
-  - [Tutorials Summary](docs/guides/sma-tutorials-summary.md) 📋
+- **Documentation:**
+ - [Complete SMA Tutorial](docs/guides/adding-sma-indicator-tutorial.md) 📖
+ - [Quick Start Guide](docs/guides/sma-quick-start-guide.md) ⚡
+ - [Practical Examples](docs/guides/sma-practical-examples.md) 🎯
+ - [Testing Guide](docs/guides/sma-testing-guide.md) 🧪
+ - [Tutorials Summary](docs/guides/sma-tutorials-summary.md) 📋
 
 #### Fixed: Volume Indicators
 - **OBV (On-Balance Volume):** Fixed dual chart plotting and parameter parsing
 - **VWAP (Volume Weighted Average Price):** Enhanced volume column handling
 - **CLI Examples:**
-  ```bash
-  # OBV - now works perfectly
-  uv run run_analysis.py show csv mn1 -d fastest --rule obv:
-  
-  # VWAP with custom parameters
-  uv run run_analysis.py show csv mn1 -d fastest --rule vwap:20
-  ```
+ ```bash
+ # OBV - now works perfectly
+ uv run run_analysis.py show csv mn1 -d fastest --rule obv:
+
+ # VWAP with custom parameters
+ uv run run_analysis.py show csv mn1 -d fastest --rule vwap:20
+ ```
 
 ### Analysis Tools
 - **Exploratory Data Analysis**: Comprehensive data exploration
@@ -348,9 +348,9 @@ Test GitHub Actions workflows and MCP server integration locally without downloa
 
 ```bash
 # Install act tool
-brew install act  # macOS
+brew install act # macOS
 # or
-curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash  # Linux
+curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash # Linux
 
 # Test all workflows (dry run - no Docker downloads)
 act -n
@@ -374,7 +374,7 @@ act -l
 ### Volume Indicators Fix
 **Issue:** OBV indicator had dual chart plotting errors and parameter parsing issues.
 
-**Fix:** 
+**Fix:**
 - Fixed parameter parsing for `--rule obv:` (empty parameters after colon)
 - Fixed volume column handling for volume-based indicators
 - Fixed dual chart plotting for OBV with proper argument passing
@@ -459,22 +459,22 @@ uv run pytest tests/ --cov=src -n auto
 ### UV vs Traditional pip
 ```bash
 # Traditional pip (slower)
-pip install -r requirements.txt  # ~30-60 seconds
+pip install -r requirements.txt # ~30-60 seconds
 
 # UV (much faster)
-uv pip install -r requirements.txt  # ~3-10 seconds
+uv pip install -r requirements.txt # ~3-10 seconds
 
 # UV with caching (fastest)
-uv pip install -r requirements.txt  # ~1-3 seconds (subsequent runs)
+uv pip install -r requirements.txt # ~1-3 seconds (subsequent runs)
 ```
 
 ### Multithreaded Testing
 ```bash
 # Single-threaded testing
-pytest tests/  # ~2-5 minutes
+pytest tests/ # ~2-5 minutes
 
 # UV multithreaded testing
-uv run pytest tests -n auto  # ~30-60 seconds
+uv run pytest tests -n auto # ~30-60 seconds
 ```
 
 ## 📚 Documentation
@@ -488,7 +488,7 @@ uv run pytest tests -n auto  # ~30-60 seconds
 ### 🚀 Interactive ML Trading System (NEW!)
 - **[Interactive ML Trading System](docs/interactive/)** - **NEW**: Comprehensive interactive system for ML trading strategy development
 - **[Strategic Plan (English)](docs/interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_EN.md)** - **NEW**: Complete strategic plan for robust profitable ML trading strategies
-- **[Стратегический План (Русский)](docs/interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_RU.md)** - **NEW**: Полный стратегический план для робастных прибыльных ML торговых стратегий
+- **[Стратегический План (Русский)](docs/interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_RU.md)** - **NEW**: Полный стратегический план for робастных прибыльных ML торговых стратегий
 - **[Next Steps Plan](docs/interactive/next-steps-plan.md)** - **NEW**: Production development roadmap and implementation plan
 - **[Phase 1 Completion Report](docs/interactive/phase1-completion-report.md)** - **NEW**: Real API integrations and ML models implementation report
 - **[Phase 1 Final Completion Report](docs/interactive/phase1-final-completion-report.md)** - **NEW**: Complete Phase 1 implementation with web interface and CI/CD
@@ -533,7 +533,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🆘 Support
 
-- **Issues**: [GitHub Issues](https://github.com/username/neozork-hld-prediction/issues)
+- **Issues**: [GitHub Issues](https://github.com/username/neozork-hld-Prediction/issues)
 - **Documentation**: [docs/](docs/)
 - **Examples**: [docs/examples/](docs/examples/)
 
