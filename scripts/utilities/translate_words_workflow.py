@@ -86,21 +86,28 @@ def translate_word_with_api(word: str, cache: Dict[str, str] = None) -> Optional
     return None
 
 
-def translate_words_batch(words: List[str], cache: Dict[str, str] = None, delay: float = 0.1) -> Dict[str, str]:
+def translate_words_batch(words: List[str], cache: Dict[str, str] = None, delay: float = 0.05) -> Dict[str, str]:
     """Translate a batch of words using API."""
     if cache is None:
         cache = {}
     
     translations = {}
-    for word in words:
+    total = len(words)
+    for i, word in enumerate(words, 1):
         if word not in cache:
             translated = translate_word_with_api(word, cache)
             if translated:
                 translations[word] = translated
                 cache[word] = translated
+            # Show progress for every 10 words
+            if i % 10 == 0:
+                print(f"    Progress: {i}/{total} words translated", end='\r', file=sys.stderr)
             time.sleep(delay)  # Rate limiting
         else:
             translations[word] = cache[word]
+    
+    if total > 10:
+        print("", file=sys.stderr)  # New line after progress
     
     return translations
 
