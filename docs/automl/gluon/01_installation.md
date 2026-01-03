@@ -125,7 +125,7 @@ Compare Performance
 
 ### Model Quality 🎯 Metrics
 
-<img src="images/optimized/metrics_comparison.png" alt="comparison метрик" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/metrics_comparison.png" alt="Metrics comparison" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Figure 4: Comparison of different model quality metrics *
 
 **Why is it important to understand metrics?** BecaUse different tasks require different metrics for quality assessment:
@@ -425,7 +425,7 @@ pip install -e ./tabular
 
 ### Troubleshooting 🔧 Diagram
 
-<img src="images/optimized/Troubleshooting_flowchart.png" alt="Диаграмма устранения проблем" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/Troubleshooting_flowchart.png" alt="Troubleshooting diagram" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Figure 7: installation Troubleshooting step-by-step diagram *
 
 **Why do I need a Troubleshooting chart?** BecaUse it helps solve 90% of problems quickly:
@@ -714,16 +714,16 @@ Intended purpose
 - **Flexible architecture**: create custom models for time series
 - **GPU acceleration**: Quick learning on GPU
 - **Distribution**: Training on the cluster
-- **Оптимизация**: Автоматическая оптимизация градиентов
-- **integration**: Хорошо Workingет with GluonTS
+- **Optimization**: Automatic gradient optimization
+- **Integration**: Works well with GluonTS
 
-**Практические examples использования:**
+**Practical usage examples:**
 ```python
 import mxnet as mx
 from mxnet import gluon, autograd
 import numpy as np
 
-# create LSTM модели for временных рядов
+# Create LSTM model for time series
 class LSTMPredictor(gluon.Block):
  def __init__(self, hidden_size, output_size):
  super(LSTMPredictor, self).__init__()
@@ -734,7 +734,7 @@ class LSTMPredictor(gluon.Block):
  output = self.lstm(x)
  return self.dense(output[-1])
 
-# Обучение модели
+# Model training
 model = LSTMPredictor(hidden_size=50, output_size=1)
 model.initialize()
 
@@ -748,42 +748,42 @@ predictor = TimeSeriesPredictor(
 predictor.fit(train_data, time_limit=1800)
 ```
 
-**Statsmodels - Статистические модели for временных рядов**
+**Statsmodels - Statistical Models for Time Series**
 
-**Назначение:**
-- Классические статистические модели
-- Анализ временных рядов
-- Тестирование стационарности
-- Сезонная декомпозиция
+**Purpose:**
+- Classical statistical models
+- Time series analysis
+- Stationarity testing
+- Seasonal decomposition
 
-**Возможности:**
-- **ARIMA/SARIMA**: Классические модели авторегрессии
-- **ETS**: Exponential Smoothing модели
-- **Сезонная декомпозиция**: STL, X-13ARIMA-SEATS
-- **Тестирование**: ADF, KPSS тесты стационарности
-- **Диагностика**: ACF, PACF, Ljung-Box тесты
+**Capabilities:**
+- **ARIMA/SARIMA**: Classical autoregression models
+- **ETS**: Exponential Smoothing models
+- **Seasonal decomposition**: STL, X-13ARIMA-SEATS
+- **Testing**: ADF, KPSS stationarity tests
+- **Diagnostics**: ACF, PACF, Ljung-Box tests
 
-**Практические examples использования:**
+**Practical usage examples:**
 ```python
 import statsmodels.api as sm
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.seasonal import seasonal_decompose
 from statsmodels.tsa.stattools import adfuller
 
-# Анализ стационарности
+# Stationarity analysis
 def check_stationarity(timeseries):
  result = adfuller(timeseries)
  print(f'ADF Statistic: {result[0]}')
  print(f'p-value: {result[1]}')
  return result[1] < 0.05
 
-# Сезонная декомпозиция
+# Seasonal decomposition
 decomposition = seasonal_decompose(timeseries, model='additive')
 trend = decomposition.trend
 seasonal = decomposition.seasonal
 residual = decomposition.resid
 
-# ARIMA модель
+# ARIMA model
 model = ARIMA(timeseries, order=(1,1,1))
 fitted_model = model.fit()
 forecast = fitted_model.forecast(steps=12)
@@ -798,41 +798,41 @@ predictor = TimeSeriesPredictor(
 predictor.fit(train_data, time_limit=3600)
 ```
 
-**comparison библиотек for временных рядов:**
+**Comparison of libraries for time series:**
 
-| Библиотека | Тип моделей | Сложность | performance | Точность |
+| Library | Model Type | Complexity | Performance | Accuracy |
 |------------|-------------|-----------|-------------------|----------|
-| **GluonTS** | Deep Learning | Высокая | Очень высокая | Очень высокая |
-| **MXNet** | Custom Deep Learning | Очень высокая | Высокая | Высокая |
-| **Statsmodels** | Statistical | Низкая | Средняя | Средняя |
+| **GluonTS** | Deep Learning | High | Very High | Very High |
+| **MXNet** | Custom Deep Learning | Very High | High | High |
+| **Statsmodels** | Statistical | Low | Medium | Medium |
 
-**Рекомендации on выбору:**
+**Recommendations for selection:**
 
-**Use GluonTS если:**
-- Нужны современные deep learning модели
-- Workingете with большими объемами данных
-- Нужны квантильные прогнозы
-- Требуется высокая точность
+**Use GluonTS if:**
+- You need modern deep learning models
+- Working with large volumes of data
+- Need quantile forecasts
+- High accuracy is required
 
-**Use MXNet если:**
-- Нужны кастомные архитектуры
-- Требуется максимальная гибкость
-- Workingете with GPU
-- Нужно распределенное обучение
+**Use MXNet if:**
+- You need custom architectures
+- Maximum flexibility is required
+- Working with GPU
+- Need distributed training
 
-**Use Statsmodels если:**
-- Нужны классические статистические модели
-- Требуется интерпретируемость
-- Workingете with малыми данными
-- Нужен детальный анализ
+**Use Statsmodels if:**
+- You need classical statistical models
+- Interpretability is required
+- Working with small data
+- Detailed analysis is needed
 
-**integration with AutoML Gluon for временных рядов:**
+**Integration with AutoML Gluon for time series:**
 
 ```python
 from autogluon.timeseries import TimeSeriesPredictor
 import pandas as pd
 
-# Подготовка данных
+# Data preparation
 train_data = pd.dataFrame({
  'timestamp': pd.date_range('2020-01-01', periods=1000, freq='H'),
  'target': np.random.randn(1000).cumsum(),
@@ -840,90 +840,90 @@ train_data = pd.dataFrame({
  'feature2': np.random.randn(1000)
 })
 
-# create предиктора
+# Create predictor
 predictor = TimeSeriesPredictor(
  target="target",
-Prediction_length=24, # Прогноз on 24 часа
-freq="H", # Почасовые data
+Prediction_length=24, # Forecast for 24 hours
+freq="H", # Hourly data
  eval_metric="MAPE"
 )
 
-# Обучение with различными моделями
+# Training with various models
 predictor.fit(
  train_data,
-time_limit=3600, # 1 час
-presets="best_quality" # Лучшее качество
+time_limit=3600, # 1 hour
+presets="best_quality" # Best quality
 )
 
-# Прогнозирование
+# Forecasting
 predictions = predictor.predict(train_data)
 print(f"predictions shape: {predictions.shape}")
 
-# Оценка качества
+# Quality assessment
 performance = predictor.evaluate(train_data)
 print(f"Model performance: {performance}")
 ```
 
-## configuration окружения
+## Environment Configuration
 
-### Переменные окружения
+### Environment Variables
 ```bash
-# installation переменных for оптимизации performance
+# Set variables for performance optimization
 export OMP_NUM_THREADS=4
 export MKL_NUM_THREADS=4
 export OPENBLAS_NUM_THREADS=4
 
-# for GPU
+# For GPU
 export CUDA_VISIBLE_DEVICES=0
 
-# for отладки
+# For debugging
 export AUTOGLUON_DEBUG=1
 ```
 
-#### 🔧 Детальное describe переменных окружения
+#### 🔧 Detailed Description of Environment Variables
 
-**OMP_NUM_THREADS - Контроль OpenMP потоков**
+**OMP_NUM_THREADS - OpenMP Thread Control**
 
-**Назначение:**
-- Контролирует количество потоков for OpenMP операций
-- Влияет on performance numpy, scipy, scikit-learn
-- Оптимизирует использование CPU ядер
+**Purpose:**
+- Controls the number of threads for OpenMP operations
+- Affects performance of numpy, scipy, scikit-learn
+- Optimizes CPU core usage
 
-**Рекомендуемые значения:**
-- **2-4 ядра**: `OMP_NUM_THREADS=2`
-- **4-8 ядер**: `OMP_NUM_THREADS=4`
-- **8+ ядер**: `OMP_NUM_THREADS=6-8`
+**Recommended values:**
+- **2-4 cores**: `OMP_NUM_THREADS=2`
+- **4-8 cores**: `OMP_NUM_THREADS=4`
+- **8+ cores**: `OMP_NUM_THREADS=6-8`
 
-**Практические examples:**
+**Practical examples:**
 ```bash
-# for системы with 8 ядрами
-export OMP_NUM_THREADS=6 # Оставляем 2 ядра for системы
+# For systems with 8 cores
+export OMP_NUM_THREADS=6 # Leave 2 cores for system
 
-# for системы with 4 ядрами
-export OMP_NUM_THREADS=3 # Оставляем 1 ядро for системы
+# For systems with 4 cores
+export OMP_NUM_THREADS=3 # Leave 1 core for system
 
-# for системы with 16 ядрами
-export OMP_NUM_THREADS=12 # Оставляем 4 ядра for системы
+# For systems with 16 cores
+export OMP_NUM_THREADS=12 # Leave 4 cores for system
 ```
 
-**Влияние on performance:**
-- **Слишком мало потоков**: Недоиспользование CPU
-- **Слишком много потоков**: Конкуренция за ресурсы, снижение performance
-- **Оптимальное значение**: 70-80% from доступных ядер
+**Impact on performance:**
+- **Too few threads**: Underutilization of CPU
+- **Too many threads**: Resource competition, performance degradation
+- **Optimal value**: 70-80% of available cores
 
-**check эффективности:**
+**Efficiency check:**
 ```python
 import numpy as np
 import time
 
-# Тест performance with разным количеством потоков
+# Performance test with different number of threads
 def test_omp_performance():
-# create большой матрицы
+# Create large matrix
  size = 5000
  a = np.random.randn(size, size)
  b = np.random.randn(size, size)
 
-# Измерение времени умножения матриц
+# Measure matrix multiplication time
  start_time = time.time()
  result = np.dot(a, b)
  end_time = time.time()
@@ -931,61 +931,61 @@ def test_omp_performance():
  print(f"Matrix multiplication time: {end_time - start_time:.2f} seconds")
  print(f"OMP_NUM_THREADS: {np.getenv('OMP_NUM_THREADS', 'default')}")
 
-# Launch теста
+# Run test
 test_omp_performance()
 ```
 
-**MKL_NUM_THREADS - Контроль Intel MKL потоков**
+**MKL_NUM_THREADS - Intel MKL Thread Control**
 
-**Назначение:**
-- Контролирует количество потоков for Intel Math Kernel Library
-- Влияет on performance numpy, scipy, pandas
-- Оптимизирует математические операции
+**Purpose:**
+- Controls the number of threads for Intel Math Kernel Library
+- Affects performance of numpy, scipy, pandas
+- Optimizes mathematical operations
 
-**Рекомендуемые значения:**
-- **Должно быть равно OMP_NUM_THREADS**: `MKL_NUM_THREADS=4`
-- **for избежания конфликтов**: not должно превышать OMP_NUM_THREADS
-- **for максимальной performance**: Равно количеству физических ядер
+**Recommended values:**
+- **Should equal OMP_NUM_THREADS**: `MKL_NUM_THREADS=4`
+- **To avoid conflicts**: Should not exceed OMP_NUM_THREADS
+- **For maximum performance**: Equal to number of physical cores
 
-**Практические examples:**
+**Practical examples:**
 ```bash
 # Synchronization with OMP_NUM_THREADS
 export OMP_NUM_THREADS=4
 export MKL_NUM_THREADS=4
 
-# for систем with Intel CPU
-export MKL_NUM_THREADS=4 # Use 4 ядра
+# For systems with Intel CPU
+export MKL_NUM_THREADS=4 # Use 4 cores
 
-# for систем with AMD CPU
-export MKL_NUM_THREADS=2 # Меньше потоков for AMD
+# For systems with AMD CPU
+export MKL_NUM_THREADS=2 # Fewer threads for AMD
 ```
 
-**Влияние on performance:**
-- **Synchronization with OMP**: Предотвращает перегрузку системы
-- **Оптимизация MKL**: Максимальная performance математических операций
-- **Избежание конфликтов**: Предотвращает конкуренцию за ресурсы
+**Impact on performance:**
+- **Synchronization with OMP**: Prevents system overload
+- **MKL optimization**: Maximum performance of mathematical operations
+- **Conflict avoidance**: Prevents resource competition
 
-**check Settings:**
+**Settings check:**
 ```python
 import numpy as np
 
-# check текущих настроек
+# Check current settings
 print(f"OMP_NUM_THREADS: {np.getenv('OMP_NUM_THREADS', 'not set')}")
 print(f"MKL_NUM_THREADS: {np.getenv('MKL_NUM_THREADS', 'not set')}")
 
-# Тест performance
+# Performance test
 def test_mkl_performance():
-# create больших массивов
+# Create large arrays
  a = np.random.randn(3000, 3000)
  b = np.random.randn(3000, 3000)
 
-# Тест различных операций
+# Test various operations
  start = time.time()
-result1 = np.dot(a, b) # Матричное умножение
+result1 = np.dot(a, b) # Matrix multiplication
  time1 = time.time() - start
 
  start = time.time()
-result2 = np.linalg.svd(a) # SVD разложение
+result2 = np.linalg.svd(a) # SVD decomposition
  time2 = time.time() - start
 
  print(f"Matrix multiplication: {time1:.2f}s")
@@ -994,49 +994,49 @@ result2 = np.linalg.svd(a) # SVD разложение
 test_mkl_performance()
 ```
 
-**OPENBLAS_NUM_THREADS - Контроль OpenBLAS потоков**
+**OPENBLAS_NUM_THREADS - OpenBLAS Thread Control**
 
-**Назначение:**
-- Контролирует количество потоков for OpenBLAS библиотеки
-- Альтернатива Intel MKL for систем без Intel CPU
-- Влияет on performance линейной алгебры
+**Purpose:**
+- Controls the number of threads for OpenBLAS library
+- Alternative to Intel MKL for systems without Intel CPU
+- Affects linear algebra performance
 
-**Рекомендуемые значения:**
-- **for систем with Intel MKL**: not используется (MKL имеет приоритет)
-- **for систем без MKL**: `OPENBLAS_NUM_THREADS=4`
-- **for AMD систем**: `OPENBLAS_NUM_THREADS=2-4`
+**Recommended values:**
+- **For systems with Intel MKL**: Not used (MKL has priority)
+- **For systems without MKL**: `OPENBLAS_NUM_THREADS=4`
+- **For AMD systems**: `OPENBLAS_NUM_THREADS=2-4`
 
-**Практические examples:**
+**Practical examples:**
 ```bash
-# for систем with Intel CPU (используется MKL)
+# For systems with Intel CPU (MKL is used)
 export MKL_NUM_THREADS=4
-# OPENBLAS_NUM_THREADS not нужен
+# OPENBLAS_NUM_THREADS not needed
 
-# for систем with AMD CPU (используется OpenBLAS)
+# For systems with AMD CPU (OpenBLAS is used)
 export OPENBLAS_NUM_THREADS=4
 export OMP_NUM_THREADS=4
 
-# for систем без MKL
+# For systems without MKL
 export OPENBLAS_NUM_THREADS=4
 export OMP_NUM_THREADS=4
 ```
 
-**check Useой библиотеки:**
+**Check which library is used:**
 ```python
 import numpy as np
 
-# check какой BLAS используется
+# Check which BLAS is used
 print(f"NumPy BLAS info: {np.__config__.blas_opt_info}")
 print(f"NumPy LAPACK info: {np.__config__.lapack_opt_info}")
 
-# Тест performance
+# Performance test
 def test_blas_performance():
-# create больших матриц
+# Create large matrices
  size = 2000
  a = np.random.randn(size, size)
  b = np.random.randn(size, size)
 
-# Тест матричного умножения
+# Test matrix multiplication
  start = time.time()
  result = np.dot(a, b)
  end = time.time()
@@ -1047,65 +1047,65 @@ def test_blas_performance():
 test_blas_performance()
 ```
 
-**CUDA_VISIBLE_DEVICES - Контроль GPU устройств**
+**CUDA_VISIBLE_DEVICES - GPU Device Control**
 
-**Назначение:**
-- Указывает What GPU устройства использовать
-- Позволяет выбирать конкретные GPU
-- Контролирует доступ к GPU ресурсам
+**Purpose:**
+- Specifies which GPU devices to use
+- Allows selecting specific GPUs
+- Controls access to GPU resources
 
-**Рекомендуемые значения:**
-- **Одна GPU**: `CUDA_VISIBLE_DEVICES=0`
-- **Несколько GPU**: `CUDA_VISIBLE_DEVICES=0,1`
-- **Отключить GPU**: `CUDA_VISIBLE_DEVICES=""`
-- **Все GPU**: `CUDA_VISIBLE_DEVICES=0,1,2,3`
+**Recommended values:**
+- **Single GPU**: `CUDA_VISIBLE_DEVICES=0`
+- **Multiple GPUs**: `CUDA_VISIBLE_DEVICES=0,1`
+- **Disable GPU**: `CUDA_VISIBLE_DEVICES=""`
+- **All GPUs**: `CUDA_VISIBLE_DEVICES=0,1,2,3`
 
-**Практические examples:**
+**Practical examples:**
 ```bash
-# Использование первой GPU
+# Use first GPU
 export CUDA_VISIBLE_DEVICES=0
 
-# Использование второй GPU
+# Use second GPU
 export CUDA_VISIBLE_DEVICES=1
 
-# Использование двух GPU
+# Use two GPUs
 export CUDA_VISIBLE_DEVICES=0,1
 
-# Отключение GPU (только CPU)
+# Disable GPU (CPU only)
 export CUDA_VISIBLE_DEVICES=""
 
-# Использование all доступных GPU
+# Use all available GPUs
 export CUDA_VISIBLE_DEVICES=0,1,2,3
 ```
 
-**check GPU доступности:**
+**Check GPU availability:**
 ```python
 import torch
 
-# check доступности CUDA
+# Check CUDA availability
 print(f"CUDA available: {torch.cuda.is_available()}")
 print(f"CUDA device count: {torch.cuda.device_count()}")
 
-# Информация о GPU
+# GPU information
 if torch.cuda.is_available():
  for i in range(torch.cuda.device_count()):
  print(f"GPU {i}: {torch.cuda.get_device_name(i)}")
  print(f"GPU {i} memory: {torch.cuda.get_device_properties(i).total_memory / 1e9:.1f} GB")
 
-# Тест performance GPU
+# GPU performance test
 def test_gpu_performance():
  if torch.cuda.is_available():
  device = torch.device('cuda')
 
-# create больших тензоров
+# Create large tensors
  size = 2000
  a = torch.randn(size, size, device=device)
  b = torch.randn(size, size, device=device)
 
-# Тест матричного умножения on GPU
+# Test matrix multiplication on GPU
  start = time.time()
  result = torch.mm(a, b)
-torch.cuda.synchronize() # Ждем завершения
+torch.cuda.synchronize() # Wait for completion
  end = time.time()
 
  print(f"GPU matrix multiplication: {end - start:.2f} seconds")
@@ -1115,31 +1115,31 @@ torch.cuda.synchronize() # Ждем завершения
 test_gpu_performance()
 ```
 
-**AUTOGLUON_DEBUG - Режим отладки**
+**AUTOGLUON_DEBUG - Debug Mode**
 
-**Назначение:**
-- Включает детальное Logsрование AutoML Gluon
-- Помогает диагностировать проблемы
-- Показывает внутренние процессы обучения
+**Purpose:**
+- Enables detailed logging of AutoML Gluon
+- Helps diagnose problems
+- Shows internal training processes
 
-**Рекомендуемые значения:**
-- **for отладки**: `AUTOGLUON_DEBUG=1`
-- **for продакшена**: not устанавливать (on умолчанию выключен)
-- **for development**: `AUTOGLUON_DEBUG=1`
+**Recommended values:**
+- **For debugging**: `AUTOGLUON_DEBUG=1`
+- **For production**: Do not set (disabled by default)
+- **For development**: `AUTOGLUON_DEBUG=1`
 
-**Практические examples:**
+**Practical examples:**
 ```bash
-# Включение отладки
+# Enable debugging
 export AUTOGLUON_DEBUG=1
 
-# Отключение отладки
+# Disable debugging
 unset AUTOGLUON_DEBUG
 
-# Временное включение for одного Launchа
+# Temporary enable for single run
 AUTOGLUON_DEBUG=1 python train_model.py
 ```
 
-**Что показывает отладочный режим:**
+**What debug mode shows:**
 ```python
 import os
 os.environ['AUTOGLUON_DEBUG'] = '1'
@@ -1148,41 +1148,41 @@ from autogluon.tabular import TabularPredictor
 import pandas as pd
 import numpy as np
 
-# create testsых данных
+# Create test data
 data = pd.dataFrame({
  'feature1': np.random.randn(100),
  'feature2': np.random.randn(100),
  'target': np.random.randint(0, 2, 100)
 })
 
-# create предиктора with debugging
+# Create predictor with debugging
 predictor = TabularPredictor(label='target')
 
-# Обучение with детальным Logsрованием
+# Training with detailed logging
 predictor.fit(data, time_limit=60)
-# Выведет детальную информацию о:
-# - Выборе алгоритмов
-# - Процессе обучения
-# - validation моделей
-# - Создании ансамблей
+# Will output detailed information about:
+# - Algorithm selection
+# - Training process
+# - Model validation
+# - Ensemble creation
 ```
 
-**Полная configuration переменных окружения:**
+**Complete environment variables configuration:**
 
 ```bash
 #!/bin/bash
-# Скрипт for оптимальной Settings AutoML Gluon
+# Script for optimal AutoML Gluon settings
 
-# Определение количества ядер
+# Determine number of cores
 CPU_CORES=$(nproc)
-RECOMMENDED_THREADS=$((CPU_CORES - 2)) # Оставляем 2 ядра for системы
+RECOMMENDED_THREADS=$((CPU_CORES - 2)) # Leave 2 cores for system
 
-# configuration потоков
+# Thread configuration
 export OMP_NUM_THREADS=$RECOMMENDED_THREADS
 export MKL_NUM_THREADS=$RECOMMENDED_THREADS
 export OPENBLAS_NUM_THREADS=$RECOMMENDED_THREADS
 
-# configuration GPU
+# GPU configuration
 if command -v nvidia-smi &> /dev/null; then
  export CUDA_VISIBLE_DEVICES=0
  echo "GPU detected, CUDA_VISIBLE_DEVICES=0"
@@ -1191,7 +1191,7 @@ else
  echo "No GPU detected, Using CPU only"
 fi
 
-# Отладочный режим (включить при необходимости)
+# Debug mode (enable if needed)
 # export AUTOGLUON_DEBUG=1
 
 echo "Environment variables set:"
@@ -1201,7 +1201,7 @@ echo "OPENBLAS_NUM_THREADS=$OPENBLAS_NUM_THREADS"
 echo "CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES"
 ```
 
-**check эффективности настроек:**
+**Check settings effectiveness:**
 
 ```python
 import os
@@ -1211,7 +1211,7 @@ import pandas as pd
 from autogluon.tabular import TabularPredictor
 
 def benchmark_environment():
-"""Тест performance with текущими настройками"""
+"""Performance test with current settings"""
 
  print("=== Environment Benchmark ===")
  print(f"OMP_NUM_THREADS: {os.getenv('OMP_NUM_THREADS', 'default')}")
@@ -1219,7 +1219,7 @@ def benchmark_environment():
  print(f"OPENBLAS_NUM_THREADS: {os.getenv('OPENBLAS_NUM_THREADS', 'default')}")
  print(f"CUDA_VISIBLE_DEVICES: {os.getenv('CUDA_VISIBLE_DEVICES', 'default')}")
 
-# Тест NumPy performance
+# NumPy performance test
  print("\n=== NumPy Performance Test ===")
  size = 2000
  a = np.random.randn(size, size)
@@ -1230,7 +1230,7 @@ def benchmark_environment():
  numpy_time = time.time() - start
  print(f"Matrix multiplication: {numpy_time:.2f} seconds")
 
-# Тест AutoML Gluon
+# AutoML Gluon test
  print("\n=== AutoML Gluon Test ===")
  data = pd.dataFrame({
  'feature1': np.random.randn(1000),
@@ -1247,156 +1247,156 @@ def benchmark_environment():
 
  return numpy_time, autogluon_time
 
-# Launch теста
+# Run test
 benchmark_environment()
 ```
 
-### 📋 Конфигурационный файл
-**Почему нужен конфигурационный файл?** Потому что он позволяет настроить AutoML Gluon под ваши ресурсы and задачи без изменения кода.
+### 📋 Configuration File
+**Why is a configuration file needed?** Because it allows you to configure AutoML Gluon for your resources and tasks without changing code.
 
-Создайте файл `~/.autogluon/config.yaml`:
+Create file `~/.autogluon/config.yaml`:
 ```yaml
-# configuration AutoGluon
+# AutoGluon configuration
 default:
-time_limit: 3600 # 1 час on умолчанию
+time_limit: 3600 # 1 hour by default
  memory_limit: 8 # 8GB RAM
-num_cpus: 4 # Количество CPU ядер
-num_gpus: 1 # Количество GPU
+num_cpus: 4 # Number of CPU cores
+num_gpus: 1 # Number of GPUs
 
 # Settings for different tasks
 ```
 
-#### 🔧 Детальное describe параметров конфигурации
+#### 🔧 Detailed Description of Configuration Parameters
 
-**parameter `time_limit`:**
+**Parameter `time_limit`:**
 
-- **Что означает**: Максимальное время обучения in секундах
-- **Зачем нужен**: Предотвращает бесконечное обучение, контролирует ресурсы
-- **Рекомендуемые значения**:
-- `3600` (1 час) - for быстрых экспериментов
-- `7200` (2 часа) - for средних задач
-- `14400` (4 часа) - for сложных задач
-- **Что происходит при превышении**: Обучение останавливается, возвращается лучшая модель
-- **Практический example**: Если у вас есть 2 часа on задачу, install `time_limit: 7200`
-- **Детальная configuration on типам задач**:
-- **Классификация (малые data < 10K строк)**: `1800` (30 minutes)
-- **Классификация (средние data 10K-100K строк)**: `3600` (1 час)
-- **Классификация (большие data > 100K строк)**: `7200` (2 часа)
-- **Регрессия (малые data < 10K строк)**: `1800` (30 minutes)
-- **Регрессия (средние data 10K-100K строк)**: `5400` (1.5 часа)
-- **Регрессия (большие data > 100K строк)**: `10800` (3 часа)
-- **Временные ряды (короткие серии < 1K точек)**: `3600` (1 час)
-- **Временные ряды (длинные серии > 1K точек)**: `7200` (2 часа)
-- **Влияние on качество модели**:
-- **Короткое время (30 мин)**: Базовая точность, быстрые результаты
-- **Среднее время (1-2 часа)**: Хорошая точность, сбалансированный подход
-- **Длинное время (4+ часов)**: Максимальная точность, лучшие модели
-- **Оптимизация on ресурсам**:
-- **CPU только**: Увеличить время in 2-3 раза
-- **GPU доступна**: Уменьшить время in 2-3 раза
-- **Много ядер (8+)**: Уменьшить время on 30-50%
-- **Мало памяти (< 8GB)**: Увеличить время из-за ограничений
+- **What it means**: Maximum training time in seconds
+- **Why it's needed**: Prevents infinite training, controls resources
+- **Recommended values**:
+- `3600` (1 hour) - for quick experiments
+- `7200` (2 hours) - for medium tasks
+- `14400` (4 hours) - for complex tasks
+- **What happens when exceeded**: Training stops, best model is returned
+- **Practical example**: If you have 2 hours for a task, set `time_limit: 7200`
+- **Detailed configuration by task type**:
+- **Classification (small data < 10K rows)**: `1800` (30 minutes)
+- **Classification (medium data 10K-100K rows)**: `3600` (1 hour)
+- **Classification (large data > 100K rows)**: `7200` (2 hours)
+- **Regression (small data < 10K rows)**: `1800` (30 minutes)
+- **Regression (medium data 10K-100K rows)**: `5400` (1.5 hours)
+- **Regression (large data > 100K rows)**: `10800` (3 hours)
+- **Time series (short series < 1K points)**: `3600` (1 hour)
+- **Time series (long series > 1K points)**: `7200` (2 hours)
+- **Impact on model quality**:
+- **Short time (30 min)**: Basic accuracy, quick results
+- **Medium time (1-2 hours)**: Good accuracy, balanced approach
+- **Long time (4+ hours)**: Maximum accuracy, best models
+- **Optimization by resources**:
+- **CPU only**: Increase time by 2-3 times
+- **GPU available**: Decrease time by 2-3 times
+- **Many cores (8+)**: Decrease time by 30-50%
+- **Low memory (< 8GB)**: Increase time due to limitations
 
-**parameter `memory_limit`:**
+**Parameter `memory_limit`:**
 
-- **Что означает**: Максимальное использование RAM in гигабайтах
-- **Зачем нужен**: Предотвращает переполнение памяти, контролирует ресурсы
-- **Рекомендуемые значения**:
-- `4` - for систем with 8GB RAM
-- `8` - for систем with 16GB RAM
-- `16` - for систем with 32GB RAM
-- **Что происходит при превышении**: Обучение останавливается with ошибкой памяти
-- **Практический example**: Если у вас 16GB RAM, install `memory_limit: 12` (оставляя 4GB for системы)
-- **Детальная configuration on размеру данных**:
-- **Малые data (< 1MB)**: `2-4` GB
-- **Средние data (1-100MB)**: `4-8` GB
-- **Большие data (100MB-1GB)**: `8-16` GB
-- **Очень большие data (> 1GB)**: `16-32` GB
-- **Влияние on performance**:
-- **Мало памяти**: Медленная Working, возможные ошибки
-- **Достаточно памяти**: Быстрая Working, стабильность
-- **Много памяти**: Максимальная скорость, обработка больших данных
-- **Оптимизация on типу задач**:
-- **Классификация**: 2-4x размер данных
-- **Регрессия**: 3-5x размер данных
-- **Временные ряды**: 4-6x размер данных
-- **Изображения**: 6-10x размер данных
-- **Monitoring использования памяти**:
- - **check**: `import psutil; print(f"RAM usage: {psutil.virtual_memory().percent}%")`
-- **Оптимальное использование**: 70-80% from доступной памяти
-- **Критическое использование**: > 90% from доступной памяти
+- **What it means**: Maximum RAM usage in gigabytes
+- **Why it's needed**: Prevents memory overflow, controls resources
+- **Recommended values**:
+- `4` - for systems with 8GB RAM
+- `8` - for systems with 16GB RAM
+- `16` - for systems with 32GB RAM
+- **What happens when exceeded**: Training stops with memory error
+- **Practical example**: If you have 16GB RAM, set `memory_limit: 12` (leaving 4GB for system)
+- **Detailed configuration by data size**:
+- **Small data (< 1MB)**: `2-4` GB
+- **Medium data (1-100MB)**: `4-8` GB
+- **Large data (100MB-1GB)**: `8-16` GB
+- **Very large data (> 1GB)**: `16-32` GB
+- **Impact on performance**:
+- **Low memory**: Slow operation, possible errors
+- **Sufficient memory**: Fast operation, stability
+- **High memory**: Maximum speed, large data processing
+- **Optimization by task type**:
+- **Classification**: 2-4x data size
+- **Regression**: 3-5x data size
+- **Time series**: 4-6x data size
+- **Images**: 6-10x data size
+- **Memory usage monitoring**:
+ - **Check**: `import psutil; print(f"RAM usage: {psutil.virtual_memory().percent}%")`
+- **Optimal usage**: 70-80% of available memory
+- **Critical usage**: > 90% of available memory
 
-**parameter `num_cpus`:**
+**Parameter `num_cpus`:**
 
-- **Что означает**: Количество CPU ядер for параллельных вычислений
-- **Зачем нужен**: Ускоряет обучение, использует все доступные ядра
-- **Рекомендуемые значения**:
-- `2` - for систем with 4 ядрами
-- `4` - for систем with 8 ядрами
-- `8` - for систем with 16+ ядрами
-- **Что происходит при превышении**: Используется только доступное количество ядер
-- **Практический example**: Если у вас 8 ядер, install `num_cpus: 6` (оставляя 2 for системы)
-- **Детальная configuration on типам задач**:
-- **Классификация (малые data)**: `2-4` ядра
-- **Классификация (большие data)**: `4-8` ядер
-- **Регрессия (малые data)**: `2-4` ядра
-- **Регрессия (большие data)**: `6-12` ядер
-- **Временные ряды**: `4-8` ядер
-- **Изображения**: `8-16` ядер
-- **Влияние on скорость обучения**:
-- **1 ядро**: Базовая скорость (100%)
-- **2 ядра**: Ускорение in 1.5-1.8 раза
-- **4 ядра**: Ускорение in 2.5-3.5 раза
-- **8 ядер**: Ускорение in 4-6 раз
-- **16+ ядер**: Ускорение in 6-10 раз
-- **Оптимизация on алгоритмам**:
-- **XGBoost**: Эффективно использует 4-8 ядер
-- **LightGBM**: Эффективно использует 4-12 ядер
-- **CatBoost**: Эффективно использует 2-8 ядер
-- **Neural networks**: Эффективно использует 8-16 ядер
-- **Monitoring использования CPU**:
- - **check**: `import psutil; print(f"CPU usage: {psutil.cpu_percent()}%")`
-- **Оптимальное использование**: 80-90% from доступных ядер
-- **Перегрузка**: > 95% from доступных ядер
+- **What it means**: Number of CPU cores for parallel computation
+- **Why it's needed**: Speeds up training, uses all available cores
+- **Recommended values**:
+- `2` - for systems with 4 cores
+- `4` - for systems with 8 cores
+- `8` - for systems with 16+ cores
+- **What happens when exceeded**: Only available number of cores is used
+- **Practical example**: If you have 8 cores, set `num_cpus: 6` (leaving 2 for system)
+- **Detailed configuration by task type**:
+- **Classification (small data)**: `2-4` cores
+- **Classification (large data)**: `4-8` cores
+- **Regression (small data)**: `2-4` cores
+- **Regression (large data)**: `6-12` cores
+- **Time series**: `4-8` cores
+- **Images**: `8-16` cores
+- **Impact on training speed**:
+- **1 core**: Base speed (100%)
+- **2 cores**: 1.5-1.8x speedup
+- **4 cores**: 2.5-3.5x speedup
+- **8 cores**: 4-6x speedup
+- **16+ cores**: 6-10x speedup
+- **Optimization by algorithms**:
+- **XGBoost**: Efficiently uses 4-8 cores
+- **LightGBM**: Efficiently uses 4-12 cores
+- **CatBoost**: Efficiently uses 2-8 cores
+- **Neural networks**: Efficiently uses 8-16 cores
+- **CPU usage monitoring**:
+ - **Check**: `import psutil; print(f"CPU usage: {psutil.cpu_percent()}%")`
+- **Optimal usage**: 80-90% of available cores
+- **Overload**: > 95% of available cores
 
-**parameter `num_gpus`:**
+**Parameter `num_gpus`:**
 
-- **Что означает**: Количество GPU for acceleration обучения
-- **Зачем нужен**: Ускоряет обучение нейронных networks in 10-100 раз
-- **Рекомендуемые значения**:
-- `0` - если нет GPU or for CPU-only задач
-- `1` - for одной GPU
-- `2+` - for нескольких GPU (требует специальной Settings)
-- **Что происходит при неправильном значении**: AutoML Gluon автоматически определяет доступные GPU
-- **Практический example**: Если у вас RTX 3070, install `num_gpus: 1`
-- **Детальная configuration on типам GPU**:
-- **Нет GPU**: `num_gpus: 0` - обучение только on CPU
-- **GTX 1060 6GB**: `num_gpus: 1` - базовая поддержка GPU
-- **RTX 3070 8GB**: `num_gpus: 1` - хорошая performance
-- **RTX 4080 16GB**: `num_gpus: 1` - высокая performance
-- **A100 40GB**: `num_gpus: 1` - профессиональная Working
-- **Несколько GPU**: `num_gpus: 2+` - for large models
-- **Влияние on скорость обучения**:
-- **CPU только**: Базовая скорость (100%)
-- **GTX 1060**: Ускорение by 3-5 times
-- **RTX 3070**: Ускорение in 8-15 раз
-- **RTX 4080**: Ускорение in 15-25 раз
-- **A100**: Ускорение in 25-50 раз
-- **Оптимизация on типам задач**:
-- **Классификация (табличные data)**: GPU not критична
-- **Регрессия (табличные data)**: GPU not критична
-- **Временные ряды**: GPU ускоряет in 2-5 раз
-- **Изображения**: GPU критична, ускорение in 10-50 раз
-- **Текст**: GPU ускоряет in 5-20 раз
-- **Требования to memory GPU**:
-- **Малые модели (< 1M параметров)**: 2-4 GB VRAM
-- **Средние модели (1-10M параметров)**: 4-8 GB VRAM
-- **Большие модели (10-100M параметров)**: 8-16 GB VRAM
-- **Очень большие модели (> 100M параметров)**: 16+ GB VRAM
-- **check доступности GPU**:
- - **check CUDA**: `python -c "import torch; print(torch.cuda.is_available())"`
-- **Количество GPU**: `python -c "import torch; print(torch.cuda.device_count())"`
-- **Информация о GPU**: `python -c "import torch; print(torch.cuda.get_device_name(0))"`
+- **What it means**: Number of GPUs for training acceleration
+- **Why it's needed**: Speeds up neural network training by 10-100 times
+- **Recommended values**:
+- `0` - if no GPU or for CPU-only tasks
+- `1` - for single GPU
+- `2+` - for multiple GPUs (requires special settings)
+- **What happens with incorrect value**: AutoML Gluon automatically detects available GPUs
+- **Practical example**: If you have RTX 3070, set `num_gpus: 1`
+- **Detailed configuration by GPU type**:
+- **No GPU**: `num_gpus: 0` - training on CPU only
+- **GTX 1060 6GB**: `num_gpus: 1` - basic GPU support
+- **RTX 3070 8GB**: `num_gpus: 1` - good performance
+- **RTX 4080 16GB**: `num_gpus: 1` - high performance
+- **A100 40GB**: `num_gpus: 1` - professional operation
+- **Multiple GPUs**: `num_gpus: 2+` - for large models
+- **Impact on training speed**:
+- **CPU only**: Base speed (100%)
+- **GTX 1060**: 3-5x speedup
+- **RTX 3070**: 8-15x speedup
+- **RTX 4080**: 15-25x speedup
+- **A100**: 25-50x speedup
+- **Optimization by task type**:
+- **Classification (tabular data)**: GPU not critical
+- **Regression (tabular data)**: GPU not critical
+- **Time series**: GPU speeds up by 2-5 times
+- **Images**: GPU critical, 10-50x speedup
+- **Text**: GPU speeds up by 5-20 times
+- **GPU memory requirements**:
+- **Small models (< 1M parameters)**: 2-4 GB VRAM
+- **Medium models (1-10M parameters)**: 4-8 GB VRAM
+- **Large models (10-100M parameters)**: 8-16 GB VRAM
+- **Very large models (> 100M parameters)**: 16+ GB VRAM
+- **Check GPU availability**:
+ - **Check CUDA**: `python -c "import torch; print(torch.cuda.is_available())"`
+- **GPU count**: `python -c "import torch; print(torch.cuda.device_count())"`
+- **GPU information**: `python -c "import torch; print(torch.cuda.get_device_name(0))"`
 tabular:
  presets: ['best_quality', 'high_quality', 'good_quality', 'medium_quality', 'optimize_for_deployment']
  hyperparameter_tune_kwargs:
@@ -1410,134 +1410,134 @@ timeseries:
  target_column: 'target'
 ```
 
-#### 🎯 Детальное describe параметров for табличных данных
+#### 🎯 Detailed Description of Parameters for Tabular Data
 
-**parameter `presets`:**
+**Parameter `presets`:**
 
-- **Что означает**: Предустановленные конфигурации качества модели
-- **Зачем нужен**: Упрощает выбор между скоростью and качеством
-- **Детальное describe каждого preset**: **`best_quality`:**
-- **Что делает**: Максимальное качество модели
-- **Время обучения**: 4-8 часов
-- **Использует**: Все доступные алгоритмы, ансамбли, тюнинг гиперпараметров
-- **Когда использовать**: for продакшена, когда качество критично
-- **Результат**: Лучшая точность, но долгое обучение
+- **What it means**: Pre-configured model quality settings
+- **Why it's needed**: Simplifies choice between speed and quality
+- **Detailed description of each preset**: **`best_quality`:**
+- **What it does**: Maximum model quality
+- **Training time**: 4-8 hours
+- **Uses**: All available algorithms, ensembles, hyperparameter tuning
+- **When to use**: For production, when quality is critical
+- **Result**: Best accuracy, but long training time
 
  **`high_quality`:**
-- **Что делает**: Высокое качество with разумным временем
-- **Время обучения**: 2-4 часа
-- **Использует**: Основные алгоритмы + ансамбли
-- **Когда использовать**: for большинства задач
-- **Результат**: Хорошая точность за разумное время
+- **What it does**: High quality with reasonable time
+- **Training time**: 2-4 hours
+- **Uses**: Main algorithms + ensembles
+- **When to use**: For most tasks
+- **Result**: Good accuracy in reasonable time
 
  **`good_quality`:**
-- **Что делает**: Хорошее качество за короткое время
-- **Время обучения**: 30-60 minutes
-- **Использует**: Основные алгоритмы без ансамблей
-- **Когда использовать**: for быстрых экспериментов
-- **Результат**: Приемлемая точность быстро
+- **What it does**: Good quality in short time
+- **Training time**: 30-60 minutes
+- **Uses**: Main algorithms without ensembles
+- **When to use**: For quick experiments
+- **Result**: Acceptable accuracy quickly
 
  **`medium_quality`:**
-- **Что делает**: Среднее качество за очень короткое время
-- **Время обучения**: 10-30 minutes
-- **Использует**: Только быстрые алгоритмы
-- **Когда использовать**: for прототипирования
-- **Результат**: Базовая точность очень быстро
+- **What it does**: Medium quality in very short time
+- **Training time**: 10-30 minutes
+- **Uses**: Only fast algorithms
+- **When to use**: For prototyping
+- **Result**: Basic accuracy very quickly
 
  **`optimize_for_deployment`:**
-- **Что делает**: Оптимизация for продакшена
-- **Время обучения**: 1-2 часа
-- **Использует**: Быстрые алгоритмы with оптимизацией
-- **Когда использовать**: for продакшена with ограничениями ресурсов
-- **Результат**: Быстрые предсказания, хорошая точность
+- **What it does**: Optimization for production
+- **Training time**: 1-2 hours
+- **Uses**: Fast algorithms with optimization
+- **When to use**: For production with resource constraints
+- **Result**: Fast predictions, good accuracy
 
-**parameter `num_trials`:**
+**Parameter `num_trials`:**
 
-- **Что означает**: Количество попыток тюнинга гиперпараметров
-- **Зачем нужен**: Больше попыток = лучше качество, но дольше время
-- **Рекомендуемые значения**:
-- `5` - for быстрых экспериментов
-- `10` - for стандартных задач
-- `20` - for важных задач
-- `50+` - for максимального качества
-- **Практический example**: Если у вас есть 2 часа, install `num_trials: 10`
+- **What it means**: Number of hyperparameter tuning attempts
+- **Why it's needed**: More attempts = better quality, but longer time
+- **Recommended values**:
+- `5` - for quick experiments
+- `10` - for standard tasks
+- `20` - for important tasks
+- `50+` - for maximum quality
+- **Practical example**: If you have 2 hours, set `num_trials: 10`
 
-**parameter `scheduler`:**
+**Parameter `scheduler`:**
 
-- **Что означает**: Planировщик for распределения задач
-- **Зачем нужен**: Управляет параллельным выполнением
-- **Доступные значения**:
-- `'local'` - локальное выполнение (on умолчанию)
-- `'ray'` - распределенное выполнение через Ray
-- `'dask'` - распределенное выполнение через Dask
-- **Практический example**: for одного компьютера Use `'local'`
+- **What it means**: Task distribution scheduler
+- **Why it's needed**: Manages parallel execution
+- **Available values**:
+- `'local'` - local execution (by default)
+- `'ray'` - distributed execution via Ray
+- `'dask'` - distributed execution via Dask
+- **Practical example**: For single computer use `'local'`
 
-#### ⏰ Детальное describe параметров for временных рядов
+#### ⏰ Detailed Description of Parameters for Time Series
 
-**parameter `Prediction_length`:**
+**Parameter `Prediction_length`:**
 
-- **Что означает**: Количество будущих точек for прогнозирования
-- **Зачем нужен**: Определяет горизонт прогнозирования
-- **Рекомендуемые значения**:
-- `24` - for почасовых данных (прогноз on сутки)
-- `7` - for дневных данных (прогноз on неделю)
-- `30` - for дневных данных (прогноз on месяц)
-- **Практический example**: for прогноза продаж on неделю install `Prediction_length: 7`
+- **What it means**: Number of future points for forecasting
+- **Why it's needed**: Defines forecasting horizon
+- **Recommended values**:
+- `24` - for hourly data (forecast for 1 day)
+- `7` - for daily data (forecast for 1 week)
+- `30` - for daily data (forecast for 1 month)
+- **Practical example**: For sales forecast for 1 week set `Prediction_length: 7`
 
-**parameter `freq`:**
+**Parameter `freq`:**
 
-- **Что означает**: Частота временного ряда
-- **Зачем нужен**: Определяет интервал между точками
-- **Доступные значения**:
-- `'H'` - почасовые data
-- `'D'` - дневные data
-- `'W'` - недельные data
-- `'M'` - месячные data
-- **Практический example**: for дневных продаж install `freq: 'D'`
+- **What it means**: Time series frequency
+- **Why it's needed**: Defines interval between points
+- **Available values**:
+- `'H'` - hourly data
+- `'D'` - daily data
+- `'W'` - weekly data
+- `'M'` - monthly data
+- **Practical example**: For daily sales set `freq: 'D'`
 
-**parameter `target_column`:**
+**Parameter `target_column`:**
 
-- **Что означает**: Название столбца with целевой переменной
-- **Зачем нужен**: Указывает, что предсказывать
-- **Практический example**: Если у вас есть столбец 'sales', install `target_column: 'sales'`
+- **What it means**: Name of column with target variable
+- **Why it's needed**: Specifies what to predict
+- **Practical example**: If you have column 'sales', set `target_column: 'sales'`
 ```
 
-## Устранение проблем при установке
+## Troubleshooting Installation Issues
 
-### Issues with зависимостями
+### Issues with Dependencies
 ```bash
-# clean cache pip
+# Clean pip cache
 pip cache purge
 
-# reinstall with игнорированием cache
+# Reinstall ignoring cache
 pip install --no-cache-dir autogluon
 
-# installation конкретной версии
+# Install specific version
 pip install autogluon==0.8.2
 ```
 
 ### Issues with CUDA
 ```bash
-# check версии CUDA
+# Check CUDA version
 nvidia-smi
 
-# check совместимости PyTorch
+# Check PyTorch compatibility
 python -c "import torch; print(torch.cuda.is_available())"
 
-# installation совместимой версии PyTorch
+# Install compatible PyTorch version
 pip install torch==1.13.1+cu117 torchvision==0.14.1+cu117 --extra-index-url https://download.pytorch.org/whl/cu117
 ```
 
-### Issues with памятью
+### Issues with Memory
 ```bash
-# installation with ограничением памяти
+# Install with memory limit
 pip install --no-cache-dir --no-deps autogluon
 pip install -r requirements.txt
 ```
 
-## check работоспособности
+## Functionality Check
 
-### Полный тест installation
+### Complete Installation Test
 ```python
 import autogluon as ag
 from autogluon.tabular import TabularPredictor
@@ -1545,9 +1545,9 @@ import pandas as pd
 import numpy as np
 
 def test_installation():
-"""Полный тест installation AutoGluon"""
+"""Complete AutoGluon installation test"""
 
-# create testsых данных
+# Create test data
  np.random.seed(42)
  n_samples = 1000
  data = pd.dataFrame({
@@ -1557,32 +1557,32 @@ def test_installation():
  'target': np.random.randint(0, 2, n_samples)
  })
 
-# Разделение on train/test
+# Split into train/test
  train_data = data[:800]
  test_data = data[800:]
 
-# create and обучение модели
+# Create and train model
  predictor = TabularPredictor(
  label='target',
  problem_type='binary',
  eval_metric='accuracy'
  )
 
-# Обучение with ограничением времени
+# Training with time limit
  predictor.fit(
  train_data,
-time_limit=60, # 1 minutesа
+time_limit=60, # 1 minute
  presets='medium_quality'
  )
 
-# Предсказания
+# Predictions
  predictions = predictor.predict(test_data)
 
-# Оценка качества
+# Quality assessment
  performance = predictor.evaluate(test_data)
 
  print(f"Model performance: {performance}")
- print("installation test COMPLETED successfully!")
+ print("Installation test completed successfully!")
 
  return True
 
@@ -1590,43 +1590,43 @@ if __name__ == "__main__":
  test_installation()
 ```
 
-## 🚀 architecture продакшена
+## 🚀 Production Architecture
 
-<img src="images/optimized/production_architecture.png" alt="architecture продакшена" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 8: architecture deployment AutoML Gluon in продакшене*
+<img src="images/optimized/production_architecture.png" alt="Production architecture" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Figure 8: AutoML Gluon deployment architecture in production*
 
-**Почему важно понимать архитектуру продакшена?** Потому что это помогает правильно сPlanировать развертывание:
+**Why is it important to understand production architecture?** Because it helps properly plan deployment:
 
-- **Модель**: Обученная модель AutoML Gluon
-- **API Gateway**: Точка входа for запросов
-- **Load Balancer**: Распределение нагрузки между инстансами
-- **Monitoring**: Monitoring performance and качества
-- **Scaling**: Автоматическое масштабирование под нагрузку
-- **data Pipeline**: Поток данных for retraining
+- **Model**: Trained AutoML Gluon model
+- **API Gateway**: Entry point for requests
+- **Load Balancer**: Load distribution between instances
+- **Monitoring**: Performance and quality monitoring
+- **Scaling**: Automatic scaling under load
+- **Data Pipeline**: Data flow for retraining
 
-### 📊 comparison продакшен решений
+### 📊 Production Solutions Comparison
 
-<img src="images/optimized/production_comparison.png" alt="comparison продакшен решений" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 9: comparison различных подходов к deployment*
+<img src="images/optimized/production_comparison.png" alt="Production solutions comparison" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Figure 9: Comparison of different deployment approaches*
 
-**Почему важно сравнивать решения?** Потому что разные задачи требуют разных подходов:
+**Why is it important to compare solutions?** Because different tasks require different approaches:
 
-- **Batch Processing**: Обработка данных пакетами (for больших объемов)
-- **Real-time API**: Мгновенные предсказания (for интерактивных приложений)
-- **Edge deployment**: Развертывание on периферийных устройствах
-- **Cloud deployment**: Развертывание in облаке (масштабируемость)
-- **Hybrid Approach**: Комбинированный подход (гибкость)
+- **Batch Processing**: Data processing in batches (for large volumes)
+- **Real-time API**: Instant predictions (for interactive applications)
+- **Edge deployment**: Deployment on edge devices
+- **Cloud deployment**: Deployment in cloud (scalability)
+- **Hybrid Approach**: Combined approach (flexibility)
 
-## Следующие шаги
+## Next Steps
 
-После успешной installation переходите к:
-- [Базовому использованию](./02_basic_usage.md)
-- [Продвинутой конфигурации](./03_advanced_configuration.md)
-- [Работе with метриками](./04_metrics.md)
+After successful installation, proceed to:
+- [Basic Usage](./02_basic_usage.md)
+- [Advanced Configuration](./03_advanced_configuration.md)
+- [Working with Metrics](./04_metrics.md)
 
-## Полезные ссылки
+## Useful Links
 
-- [Официальная documentation](https://auto.gluon.ai/)
-- [GitHub репозиторий](https://github.com/autogluon/autogluon)
-- [examples использования](https://github.com/autogluon/autogluon/tree/master/examples)
-- [Форум сообщества](https://discuss.autogluon.ai/)
+- [Official Documentation](https://auto.gluon.ai/)
+- [GitHub Repository](https://github.com/autogluon/autogluon)
+- [Usage Examples](https://github.com/autogluon/autogluon/tree/master/examples)
+- [Community Forum](https://discuss.autogluon.ai/)
