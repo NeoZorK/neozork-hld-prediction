@@ -131,9 +131,54 @@ TRANSLATIONS = {
     r'\bCVE-\d+-\d+\b': lambda m: m.group(0),  # Keep CVE numbers
 }
 
+# Direct translations for specific commit messages
+DIRECT_TRANSLATIONS = {
+    'chore: update зависимостей h11 and httpcore до new versions': 
+        'chore: update dependencies h11 and httpcore to new versions',
+    'feat: add new dependencies в проект': 
+        'feat: add new dependencies to project',
+    'fix: update .dockerignore and .gitignore files for исключения and включения документации': 
+        'fix: update .dockerignore and .gitignore files for exclusion and inclusion of documentation',
+    'feat: update documentation on концепции and стратегии высокодоходных ML systems': 
+        'feat: update documentation on concepts and strategies of high-yield ML systems',
+    'feat: update documentation on примерам trading systems на основе WAVE2, SCHR Levels and blockchain integration': 
+        'feat: update documentation on examples of trading systems based on WAVE2, SCHR Levels and blockchain integration',
+    'feat: update documentation SCHR SHORT3 with addition of теоретических обоснований and анализа': 
+        'feat: update documentation SCHR SHORT3 with addition of theoretical foundations and analysis',
+    'feat: update documentation SCHR Levels with addition of new sections on analysis уровней поддержки and сопротивления': 
+        'feat: update documentation SCHR Levels with addition of new sections on analysis of support and resistance levels',
+    'feat: update структуры документации NeoZorK with addition of new sections': 
+        'feat: update NeoZorK documentation structure with addition of new sections',
+    'feat: добавлены новые разделы on data preparation, feature engineering, model training, бэктестингу and risk management': 
+        'feat: add new sections on data preparation, feature engineering, model training, backtesting and risk management',
+    'feat: update руководства NeoZorK с установкой окружения for macOS M1 Pro': 
+        'feat: update NeoZorK guide with installation of environment for macOS M1 Pro',
+    'feat: добавлен HTML-интерфейс for учебника': 
+        'feat: add HTML interface for tutorial',
+    'feat: добавлена полная система заработка 100%+ в месяц - Создана детальная система с рабочим кодом от идеи до деплоя - Добавлены все компоненты: модели, индикаторы, блокчейн-интеграция - Реализована система автоматического переобучения - Добавлен полный мониторинг and система алертов - Создана документация on запуску and использованию - Система готова for тестирования на блокчейн testnet': 
+        'feat: add complete earning system 100%+ per month - Created detailed system with working code from idea to deployment - Added all components: models, indicators, blockchain integration - Implemented automatic retraining system - Added full monitoring and alert system - Created documentation on launch and usage - System ready for testing on blockchain testnet',
+    'feat: создан полный учебник on созданию робастных прибыльных ML systems': 
+        'feat: create complete tutorial on creating robust profitable ML systems',
+    'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Простой пример" and "Сложный пример" showcasing the development and deployment of robust ML models using AutoML Gluon. - Included detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide users with practical insights into building and deploying ML models, catering to both novice and advanced users.': 
+        'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Simple Example" and "Advanced Example" showcasing the development and deployment of robust ML models using AutoML Gluon. - Included detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide users with practical insights into building and deploying ML models, catering to both novice and advanced users.',
+    'fix dual charts for -d fastest and MACD ок with scale date': 
+        'fix dual charts for -d fastest and MACD OK with scale date',
+    'fix dual charts for -d fastest and MACD ок': 
+        'fix dual charts for -d fastest and MACD OK',
+    'feat: Улучшить фильтрацию данных on дате в CSV and JSON файлах': 
+        'feat: improve data filtering by date in CSV and JSON files',
+    'add dask datashader bokeh в requirments': 
+        'add dask datashader bokeh to requirements',
+}
+
 
 def translate_commit_message(message: str) -> str:
     """Translate Russian commit message to English."""
+    # Check for direct translation first
+    message_stripped = message.strip()
+    if message_stripped in DIRECT_TRANSLATIONS:
+        return DIRECT_TRANSLATIONS[message_stripped]
+    
     translated = message
     
     # Apply translations in order
