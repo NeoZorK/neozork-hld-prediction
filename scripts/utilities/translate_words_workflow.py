@@ -47,6 +47,95 @@ def extract_russian_words(text: str) -> Set[str]:
     return set(words)
 
 
+def translate_text_with_api(text: str, cache: Dict[str, str] = None, max_length: int = 500, max_retries: int = 3, retry_delay: float = 2.0) -> Optional[str]:
+    """Translate text using MyMemory Translation API with retry logic."""
+    if cache is None:
+        cache = {}
+    
+    # Check cache first
+    if text in cache:
+        return cache[text]
+    
+    if not HAS_HTTP:
+        return None
+    
+    # Handle long text by splitting into chunks
+    if len(text) > max_length:
+        # Split by sentences
+        sentences = re.split(r'([.!?]\s+)', text)
+        chunks = []
+        current_chunk = ""
+        
+        for sentence in sentences:
+            if len(current_chunk) + len(sentence) <= max_length:
+                current_chunk += sentence
+            else:
+                if current_chunk:
+                    chunks.append(current_chunk)
+                current_chunk = sentence
+        
+        if current_chunk:
+            chunks.append(current_chunk)
+        
+        # Translate each chunk
+        translated_chunks = []
+        for chunk in chunks:
+            translated = translate_text_with_api(chunk, cache, max_length, max_retries, retry_delay)
+            if translated:
+                translated_chunks.append(translated)
+            else:
+                translated_chunks.append(chunk)
+            time.sleep(retry_delay)  # Rate limiting between chunks
+        
+        result = ''.join(translated_chunks)
+        cache[text] = result
+        return result
+    
+    # Retry logic for API calls
+    for attempt in range(max_retries):
+        try:
+            url = "https://api.mymemory.translated.net/get"
+            params = {
+                "q": text,
+                "langpair": "ru|en"
+            }
+            query_string = urlencode(params)
+            full_url = f"{url}?{query_string}"
+            
+            req = Request(full_url)
+            req.add_header('User-Agent', 'Mozilla/5.0')
+            
+            with urlopen(req, timeout=15, context=SSL_CONTEXT) as response:
+                if response.status == 200:
+                    result = json_lib.loads(response.read().decode('utf-8'))
+                    if result.get('responseStatus') == 200:
+                        translated = result['responseData']['translatedText'].strip()
+                        cache[text] = translated
+                        return translated
+                elif response.status == 429:
+                    # Rate limited - wait longer and retry
+                    if attempt < max_retries - 1:
+                        wait_time = retry_delay * (attempt + 1) * 2  # Exponential backoff
+                        print(f"    Rate limited, waiting {wait_time:.1f}s before retry {attempt + 1}/{max_retries}...", file=sys.stderr)
+                        time.sleep(wait_time)
+                        continue
+        except URLError as e:
+            if "429" in str(e) or "Too Many Requests" in str(e):
+                if attempt < max_retries - 1:
+                    wait_time = retry_delay * (attempt + 1) * 2
+                    print(f"    Rate limited, waiting {wait_time:.1f}s before retry {attempt + 1}/{max_retries}...", file=sys.stderr)
+                    time.sleep(wait_time)
+                    continue
+            else:
+                if attempt == max_retries - 1:
+                    print(f"  Warning: API error for text (first 50 chars): '{text[:50]}...': {e}", file=sys.stderr)
+        except (json_lib.JSONDecodeError, KeyError, Exception) as e:
+            if attempt == max_retries - 1:
+                print(f"  Warning: API error for text (first 50 chars): '{text[:50]}...': {e}", file=sys.stderr)
+    
+    return None
+
+
 def translate_word_with_api(word: str, cache: Dict[str, str] = None) -> Optional[str]:
     """Translate a single word using MyMemory Translation API."""
     if cache is None:
@@ -56,32 +145,13 @@ def translate_word_with_api(word: str, cache: Dict[str, str] = None) -> Optional
     if word in cache:
         return cache[word]
     
-    if not HAS_HTTP:
-        return None
-    
-    try:
-        url = "https://api.mymemory.translated.net/get"
-        params = {
-            "q": word,
-            "langpair": "ru|en"
-        }
-        query_string = urlencode(params)
-        full_url = f"{url}?{query_string}"
-        
-        req = Request(full_url)
-        req.add_header('User-Agent', 'Mozilla/5.0')
-        
-        with urlopen(req, timeout=5, context=SSL_CONTEXT) as response:
-            if response.status == 200:
-                result = json_lib.loads(response.read().decode('utf-8'))
-                if result.get('responseStatus') == 200:
-                    translated = result['responseData']['translatedText'].strip()
-                    # Clean up translation (remove extra words, keep only first word)
-                    translated = translated.split()[0] if translated.split() else translated
-                    cache[word] = translated
-                    return translated
-    except (URLError, json_lib.JSONDecodeError, KeyError, Exception) as e:
-        print(f"  Warning: API error for '{word}': {e}", file=sys.stderr)
+    # Use text translation for words too
+    translated = translate_text_with_api(word, cache, max_length=100)
+    if translated:
+        # For single words, take only first word
+        translated = translated.split()[0] if translated.split() else translated
+        cache[word] = translated
+        return translated
     
     return None
 
@@ -178,6 +248,92 @@ def replace_words_in_text(text: str, word_map: Dict[str, str], context_check: bo
         print("", file=sys.stderr)  # New line after progress
     
     return translated, replacement_count
+
+
+def process_file_with_api_translation(
+    file_path: str,
+    cache: Dict[str, str],
+    delay: float = 1.5,
+    cache_file: str = None
+) -> Tuple[bool, int]:
+    """
+    Process a file by translating Russian text fragments through API.
+    Returns (success, replacement_count)
+    """
+    if not os.path.exists(file_path):
+        return False, 0
+    
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            original_content = f.read()
+        
+        if not has_russian_text(original_content):
+            return True, 0
+        
+        # Extract Russian text fragments (sentences/paragraphs)
+        # Split by newlines first, then by sentences
+        lines = original_content.split('\n')
+        translated_lines = []
+        replacement_count = 0
+        
+        total_lines = len(lines)
+        russian_lines_count = sum(1 for line in lines if has_russian_text(line))
+        processed_russian = 0
+        
+        print(f"    Found {russian_lines_count} lines with Russian text out of {total_lines} total lines")
+        
+        for i, line in enumerate(lines, 1):
+            if has_russian_text(line):
+                processed_russian += 1
+                # Show progress for Russian lines
+                if russian_lines_count > 0:
+                    progress_percent = (processed_russian / russian_lines_count) * 100
+                    line_preview = line[:60].replace('\n', ' ') if len(line) > 60 else line.replace('\n', ' ')
+                    print(f"    [{processed_russian}/{russian_lines_count}] ({progress_percent:.1f}%) Translating: {line_preview}...", end='\r')
+                    sys.stdout.flush()
+                
+                # Try to translate the line
+                translated_line = translate_text_with_api(
+                    line, 
+                    cache, 
+                    max_length=500,
+                    max_retries=3,
+                    retry_delay=delay
+                )
+                if translated_line and translated_line != line:
+                    translated_lines.append(translated_line)
+                    replacement_count += 1
+                    print(f"    ✓ Translated line {processed_russian}/{russian_lines_count}")
+                else:
+                    translated_lines.append(line)
+                    if not translated_line:
+                        print(f"    ⚠ Skipped line {processed_russian}/{russian_lines_count} (API error)")
+                
+                # Rate limiting
+                time.sleep(delay)
+                
+                # Save cache periodically (every 10 translations)
+                if cache_file and replacement_count > 0 and replacement_count % 10 == 0:
+                    save_translation_cache(cache, cache_file)
+            else:
+                translated_lines.append(line)
+        
+        print()  # New line after progress
+        
+        if replacement_count > 0:
+            translated_content = '\n'.join(translated_lines)
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write(translated_content)
+        
+        # Save cache after processing file
+        if cache_file:
+            save_translation_cache(cache, cache_file)
+        
+        return True, replacement_count
+    
+    except Exception as e:
+        print(f"  ✗ Error processing {file_path}: {e}", file=sys.stderr)
+        return False, 0
 
 
 def process_file_with_translations(
@@ -293,8 +449,8 @@ def main():
     parser.add_argument(
         '--delay',
         type=float,
-        default=0.1,
-        help='Delay between API calls in seconds (default: 0.1)'
+        default=3.0,
+        help='Delay between API calls in seconds (default: 3.0)'
     )
     parser.add_argument(
         '--dry-run',
@@ -305,6 +461,11 @@ def main():
         '--yes',
         action='store_true',
         help='Auto-proceed without confirmation'
+    )
+    parser.add_argument(
+        '--translate-by-file',
+        action='store_true',
+        help='Translate entire file content through API (instead of word-by-word)'
     )
     args = parser.parse_args()
     
@@ -331,39 +492,55 @@ def main():
     print(f"  ✓ Loaded {len(cache)} cached translations")
     print()
     
-    # Step 3: Translate words
-    print("Step 3: Translating words...")
-    words_to_translate = [w for w in all_words if w not in cache]
-    
-    if words_to_translate:
-        print(f"  Translating {len(words_to_translate)} new words...")
+    if args.translate_by_file:
+        # Mode: Translate entire files through API
+        print("Mode: Translating entire files through API")
+        print()
         
-        # Translate in batches
-        word_map = cache.copy()
-        for i in range(0, len(words_to_translate), args.batch_size):
-            batch = words_to_translate[i:i + args.batch_size]
-            print(f"    Batch {i // args.batch_size + 1}: {len(batch)} words...")
-            translations = translate_words_batch(batch, cache, args.delay)
-            word_map.update(translations)
-            print(f"      ✓ Translated {len(translations)} words")
-        
-        # Save cache
-        save_translation_cache(cache, args.cache_file)
-        print(f"  ✓ Saved {len(cache)} translations to cache")
+        # Step 3: Translate files directly
+        print("Step 3: Translating files...")
     else:
-        print("  ✓ All words already translated (using cache)")
-        word_map = cache.copy()
+        # Mode: Translate words first, then replace
+        # Step 3: Translate words
+        print("Step 3: Translating words...")
+        words_to_translate = [w for w in all_words if w not in cache]
+        
+        if words_to_translate:
+            print(f"  Translating {len(words_to_translate)} new words...")
+            
+            # Translate in batches
+            word_map = cache.copy()
+            for i in range(0, len(words_to_translate), args.batch_size):
+                batch = words_to_translate[i:i + args.batch_size]
+                print(f"    Batch {i // args.batch_size + 1}: {len(batch)} words...")
+                translations = translate_words_batch(batch, cache, args.delay)
+                word_map.update(translations)
+                print(f"      ✓ Translated {len(translations)} words")
+            
+            # Save cache
+            save_translation_cache(cache, args.cache_file)
+            print(f"  ✓ Saved {len(cache)} translations to cache")
+        else:
+            print("  ✓ All words already translated (using cache)")
+            word_map = cache.copy()
+        
+        print()
+        
+        # Step 4: Replace words in files
+        print("Step 4: Replacing words in files...")
     
-    print()
-    
-    # Step 4: Replace words in files
-    print("Step 4: Replacing words in files...")
-    
-    if not args.yes and not args.dry_run:
-        response = input(f"Replace Russian words in {len(file_words_dict)} files? (yes/no): ")
-        if response.lower() != 'yes':
-            print("Aborted.")
-            return
+    if not args.translate_by_file:
+        if not args.yes and not args.dry_run:
+            response = input(f"Replace Russian words in {len(file_words_dict)} files? (yes/no): ")
+            if response.lower() != 'yes':
+                print("Aborted.")
+                return
+    else:
+        if not args.yes and not args.dry_run:
+            response = input(f"Translate {len(file_words_dict)} files through API? (yes/no): ")
+            if response.lower() != 'yes':
+                print("Aborted.")
+                return
     
     files_to_process = list(file_words_dict.keys())
     if args.max_files:
@@ -373,9 +550,13 @@ def main():
     successful_files = 0
     failed_files = 0
     
+    print(f"\nProcessing {len(files_to_process)} files...\n")
+    
     for i, file_path in enumerate(files_to_process, 1):
         progress_percent = (i / len(files_to_process)) * 100
-        print(f"  [{i}/{len(files_to_process)}] ({progress_percent:.1f}%) Processing {file_path}...")
+        print(f"\n{'='*80}")
+        print(f"  [{i}/{len(files_to_process)}] ({progress_percent:.1f}%) Processing: {file_path}")
+        print(f"{'='*80}")
         
         if args.dry_run:
             # Count potential replacements
@@ -390,27 +571,60 @@ def main():
                 print(f"    ✗ Error: {e}")
                 failed_files += 1
         else:
-            success, count = process_file_with_translations(file_path, word_map)
-            if success:
-                if count > 0:
-                    print(f"    ✓ Replaced {count} words")
-                    total_replacements += count
+            if args.translate_by_file:
+                # Translate entire file through API
+                success, count = process_file_with_api_translation(
+                    file_path, 
+                    cache, 
+                    args.delay,
+                    args.cache_file
+                )
+                if success:
+                    if count > 0:
+                        print(f"    ✓ Translated {count} lines")
+                        total_replacements += count
+                    else:
+                        print(f"    - No translations needed")
+                    successful_files += 1
                 else:
-                    print(f"    - No replacements needed")
-                successful_files += 1
+                    failed_files += 1
             else:
-                failed_files += 1
+                # Replace words using word map
+                success, count = process_file_with_translations(file_path, word_map)
+                if success:
+                    if count > 0:
+                        print(f"    ✓ Replaced {count} words")
+                        total_replacements += count
+                    else:
+                        print(f"    - No replacements needed")
+                    successful_files += 1
+                else:
+                    failed_files += 1
+    
+    print()
+    # Save cache after file processing
+    if args.translate_by_file:
+        save_translation_cache(cache, args.cache_file)
     
     print()
     print("=" * 80)
     print("WORKFLOW SUMMARY")
     print("=" * 80)
-    print(f"  Total unique words: {len(all_words)}")
-    print(f"  Translated words: {len(word_map)}")
-    print(f"  Files processed: {len(files_to_process)}")
-    print(f"  Successful: {successful_files}")
-    print(f"  Failed: {failed_files}")
-    print(f"  Total replacements: {total_replacements}")
+    if args.translate_by_file:
+        print(f"  Mode: File-by-file translation")
+        print(f"  Files processed: {len(files_to_process)}")
+        print(f"  Successful: {successful_files}")
+        print(f"  Failed: {failed_files}")
+        print(f"  Total lines translated: {total_replacements}")
+        print(f"  Cache size: {len(cache)} translations")
+    else:
+        print(f"  Mode: Word-by-word translation")
+        print(f"  Total unique words: {len(all_words)}")
+        print(f"  Translated words: {len(word_map) if 'word_map' in locals() else len(cache)}")
+        print(f"  Files processed: {len(files_to_process)}")
+        print(f"  Successful: {successful_files}")
+        print(f"  Failed: {failed_files}")
+        print(f"  Total replacements: {total_replacements}")
     if args.dry_run:
         print("  [DRY RUN] No files were modified")
     print("=" * 80)
