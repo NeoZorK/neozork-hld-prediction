@@ -1,32 +1,32 @@
-# Руководства по запуску и тестированию / Run and Test Guides
+# Run and Test Guides / Run and Test Guides
 
 ## 📁 Структура / Structure
 
 ```
 docs/run-and-test-guides/
-├── index.md                           # Главная страница / Main page
-├── project-structure.md              # Структура проекта / Project structure
-├── troubleshooting.md                # Устранение неполадок / Troubleshooting
-├── faq.md                           # Часто задаваемые вопросы / FAQ
-├── russian/                         # Русская версия / Russian version
-│   ├── complete-manual-ru.md        # Полное руководство / Complete manual
-│   ├── quick-start-ru.md            # Быстрый старт / Quick start
-│   ├── testing-guide-ru.md          # Руководство по тестированию / Testing guide
-│   └── deployment-guide-ru.md       # Руководство по развертыванию / Deployment guide
-└── english/                         # Английская версия / English version
-    ├── complete-manual-en.md        # Complete manual
-    ├── quick-start-en.md            # Quick start
-    ├── testing-guide-en.md          # Testing guide
-    └── deployment-guide-en.md       # Deployment guide
+├── index.md # Главная страница / Main page
+├── project-structure.md # Project Structure / Project Structure
+├── Troubleshooting.md # Troubleshooting / Troubleshooting
+├── faq.md # Frequently Asked Questions / FAQ
+├── russian/ # Russian Version / Russian Version
+│ ├── complete-manual-ru.md # Полное guide / Complete manual
+│ ├── quick-start-ru.md # Быстрый старт / Quick start
+│ ├── testing-guide-ru.md # guide on тестированию / Testing guide
+│ └── deployment-guide-ru.md # guide on развертыванию / Deployment guide
+└── english/ # English Version / English Version
+ ├── complete-manual-en.md # Complete manual
+ ├── quick-start-en.md # Quick start
+ ├── testing-guide-en.md # Testing guide
+ └── deployment-guide-en.md # Deployment guide
 ```
 
 ## 🚀 Быстрый доступ / Quick Access
 
-### Русская версия / Russian Version
-- [Полное руководство](russian/complete-manual-ru.md) - Подробное руководство по всем компонентам
-- [Быстрый старт](russian/quick-start-ru.md) - Запуск за 5 минут
-- [Руководство по тестированию](russian/testing-guide-ru.md) - Все о тестировании
-- [Руководство по развертыванию](russian/deployment-guide-ru.md) - Развертывание в продакшне
+### Russian Version / Russian Version
+- [Полное guide](russian/complete-manual-ru.md) - Подробное guide on всем компонентам
+- [Быстрый старт](russian/quick-start-ru.md) - Запуск за 5 minutes
+- [guide on тестированию](russian/testing-guide-ru.md) - Все о тестировании
+- [guide on развертыванию](russian/deployment-guide-ru.md) - Развертывание in продакшне
 
 ### English Version
 - [Complete Manual](english/complete-manual-en.md) - Comprehensive guide for all components
@@ -83,7 +83,7 @@ uv run pytest tests -n auto
 # Безопасный режим / Safe mode
 ./scripts/run_tests_safe.sh
 
-# С покрытием / With coverage
+# with coverage / With coverage
 uv run pytest tests/ --cov=src -n auto
 ```
 
@@ -95,22 +95,22 @@ docker-compose up -d
 # Остановка / Stop
 docker-compose down
 
-# Тесты в Docker / Tests in Docker
+# Тесты in Docker / Tests in Docker
 docker-compose exec neozork-hld uv run pytest tests/ -n auto
 ```
 
 ## 🆘 Поддержка / Support
 
-### Устранение неполадок / Troubleshooting
-- [Устранение неполадок](troubleshooting.md) - Частые проблемы и решения
-- [FAQ](faq.md) - Часто задаваемые вопросы
+### Troubleshooting / Troubleshooting
+- [Troubleshooting](Troubleshooting.md) - Common Issues and решения
+- [FAQ](faq.md) - Frequently Asked Questions
 
 ### Дополнительные ресурсы / Additional Resources
-- [Структура проекта](project-structure.md) - Подробная структура проекта
-- [Основная документация](../index.md) - Главная страница документации
+- [Project Structure](project-structure.md) - Подробная Project Structure
+- [Основная documentation](../index.md) - Главная страница документации
 
 ---
 
-**Версия / Version**: 1.0.0  
-**Последнее обновление / Last Updated**: $(date)  
+**Версия / Version**: 1.0.0
+**Последнее update / Last Updated**: $(date)
 **Автор / Author**: NeoZork Development Team

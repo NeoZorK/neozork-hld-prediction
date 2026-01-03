@@ -1,11 +1,11 @@
-# Часто задаваемые вопросы / Frequently Asked Questions
+# Frequently Asked Questions / Frequently Asked Questions
 
 ## 🚀 Общие вопросы / General Questions
 
 ### Q: Как быстро запустить систему? / How to quickly launch the system?
 **A:** Используйте быстрый старт:
 ```bash
-# Установка зависимостей / Install dependencies
+# Installation зависимостей / Install dependencies
 uv pip install -r requirements.txt
 
 # Запуск основного анализа / Launch main analysis
@@ -15,7 +15,7 @@ uv run run_analysis.py demo --rule PHLD
 uv run pytest tests -n auto
 ```
 
-### Q: Какие компоненты входят в систему? / What components are included in the system?
+### Q: Какие компоненты входят in систему? / What components are included in the system?
 **A:** Система включает:
 - **Основной анализ** (`run_analysis.py`) - Ручное построение графиков / Manual charting
 - **Интерактивная система** (`interactive/`) - ML торговые стратегии / ML trading strategies
@@ -34,7 +34,7 @@ uv run pytest tests -n auto
 - **Память / Memory**: 4GB RAM
 - **Диск / Disk**: 10GB свободного места / free space
 
-## 🧪 Вопросы по тестированию / Testing Questions
+## 🧪 Вопросы on тестированию / Testing Questions
 
 ### Q: Как запустить все тесты? / How to run all tests?
 **A:** Используйте многопоточное тестирование:
@@ -45,12 +45,12 @@ uv run pytest tests -n auto
 # Безопасный режим / Safe mode
 ./scripts/run_tests_safe.sh
 
-# С покрытием / With coverage
+# with coverage / With coverage
 uv run pytest tests/ --cov=src -n auto
 ```
 
 ### Q: Как запустить тесты конкретного компонента? / How to run tests for specific component?
-**A:** Запустите тесты по категориям:
+**A:** Запустите тесты on категориям:
 ```bash
 # Тесты расчетов / Calculation tests
 uv run pytest tests/calculation/ -n auto
@@ -62,58 +62,58 @@ uv run pytest tests/saas/ -n auto
 uv run pytest tests/pocket_hedge_fund/ -n auto
 ```
 
-### Q: Что делать, если тесты не запускаются? / What to do if tests don't run?
+### Q: Что делать, если тесты not start? / What to do if tests don't run?
 **A:** Попробуйте безопасный режим:
 ```bash
 # Безопасный режим / Safe mode
 ./scripts/run_tests_safe.sh
 
-# С отладкой / With debugging
+# with отладкой / With debugging
 uv run pytest tests/ -v -s
 
 # Конкретный тест / Specific test
 uv run pytest tests/calculation/test_indicators.py::test_rsi -v
 ```
 
-## 🐳 Вопросы по Docker / Docker Questions
+## 🐳 Вопросы on Docker / Docker Questions
 
-### Q: Как запустить систему в Docker? / How to run system in Docker?
+### Q: Как запустить систему in Docker? / How to run system in Docker?
 **A:** Используйте Docker Compose:
 ```bash
 # Запуск всех сервисов / Launch all services
 docker-compose up -d
 
-# Запуск с логированием / Launch with logging
+# Запуск with логированием / Launch with logging
 docker-compose up
 
 # Остановка / Stop
 docker-compose down
 ```
 
-### Q: Как запустить тесты в Docker? / How to run tests in Docker?
-**A:** Выполните команды в контейнере:
+### Q: Как запустить тесты in Docker? / How to run tests in Docker?
+**A:** Выполните команды in контейнере:
 ```bash
-# Тесты в контейнере / Tests in container
+# Тесты in контейнере / Tests in container
 docker-compose exec neozork-hld uv run pytest tests/ -n auto
 
 # Конкретные тесты / Specific tests
 docker-compose exec neozork-hld uv run pytest tests/calculation/ -v
 ```
 
-### Q: Что делать, если Docker не запускается? / What to do if Docker doesn't start?
+### Q: Что делать, если Docker not запускается? / What to do if Docker doesn't start?
 **A:** Попробуйте пересборку:
 ```bash
-# Пересборка контейнеров / Rebuild containers
+# Rebuild containers / Rebuild containers
 docker-compose build --no-cache
 
-# Очистка Docker / Clean Docker
+# clean Docker / Clean Docker
 docker system prune -a
 
-# Перезапуск Docker / Restart Docker
+# Restart Docker / Restart Docker
 sudo systemctl restart docker
 ```
 
-## 🍎 Вопросы по Apple Silicon / Apple Silicon Questions
+## 🍎 Вопросы on Apple Silicon / Apple Silicon Questions
 
 ### Q: Как запустить нативный контейнер? / How to run native container?
 **A:** Используйте скрипты нативного контейнера:
@@ -124,7 +124,7 @@ sudo systemctl restart docker
 # Быстрый запуск / Quick launch
 ./scripts/native-container/setup.sh && ./scripts/native-container/run.sh
 
-# Проверка статуса / Check status
+# check статуса / Check status
 ./scripts/native-container/run.sh --status
 ```
 
@@ -137,34 +137,34 @@ sudo systemctl restart docker
 # Перезапуск / Restart
 ./scripts/native-container/force_restart.sh
 
-# Очистка / Cleanup
+# clean / Cleanup
 ./scripts/native-container/cleanup.sh --all --force
 ```
 
-## 🚀 Вопросы по развертыванию / Deployment Questions
+## 🚀 Вопросы on развертыванию / Deployment Questions
 
-### Q: Как развернуть систему в продакшне? / How to deploy system in production?
+### Q: Как развернуть систему in продакшне? / How to deploy system in production?
 **A:** Используйте продакшн конфигурацию:
 ```bash
-# Настройка продакшна / Setup production
+# configuration продакшна / Setup production
 python deploy/production_setup.py
 
 # Запуск продакшн сервисов / Launch production services
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
-### Q: Как развернуть в Kubernetes? / How to deploy in Kubernetes?
+### Q: Как развернуть in Kubernetes? / How to deploy in Kubernetes?
 **A:** Примените манифесты:
 ```bash
 # Применение манифестов / Apply manifests
 kubectl apply -f k8s/
 
-# Проверка статуса / Check status
+# check статуса / Check status
 kubectl get pods
 kubectl get services
 ```
 
-## 🔧 Вопросы по настройке / Configuration Questions
+## 🔧 Вопросы on настройке / Configuration Questions
 
 ### Q: Как настроить переменные окружения? / How to configure environment variables?
 **A:** Отредактируйте файл .env:
@@ -177,19 +177,19 @@ nano .env
 ```
 
 ### Q: Как настроить базу данных? / How to configure database?
-**A:** Установите PostgreSQL и настройте переменные:
+**A:** Установите PostgreSQL and настройте переменные:
 ```bash
-# Установка PostgreSQL / Install PostgreSQL
+# Installation PostgreSQL / Install PostgreSQL
 sudo apt-get install postgresql postgresql-contrib
 
-# Создание базы данных / Create database
+# create базы данных / Create database
 createdb neozork_fund
 
-# Настройка пользователя / Configure user
+# configuration пользователя / Configure user
 createuser neozork_user
 ```
 
-## 📊 Вопросы по мониторингу / Monitoring Questions
+## 📊 Вопросы on мониторингу / Monitoring Questions
 
 ### Q: Как просмотреть логи? / How to view logs?
 **A:** Используйте команды просмотра логов:
@@ -207,7 +207,7 @@ tail -f logs/*.log
 ### Q: Как проверить статус системы? / How to check system status?
 **A:** Используйте команды проверки:
 ```bash
-# Health check / Проверка здоровья
+# Health check / check здоровья
 curl http://localhost:8080/health
 
 # Prometheus метрики / Prometheus metrics
@@ -217,15 +217,15 @@ curl http://localhost:9090/metrics
 docker-compose ps
 ```
 
-## 🆘 Вопросы по устранению неполадок / Troubleshooting Questions
+## 🆘 Вопросы on устранению неполадок / Troubleshooting Questions
 
-### Q: Что делать, если возникают ошибки импорта? / What to do if import errors occur?
+### Q: Что делать, если возникают Import Errors? / What to do if Import Errors occur?
 **A:** Проверьте PYTHONPATH:
 ```bash
-# Установка PYTHONPATH / Set PYTHONPATH
+# Installation PYTHONPATH / Set PYTHONPATH
 export PYTHONPATH="${PWD}:${PYTHONPATH}"
 
-# Проверка установки / Check installation
+# check установки / Check installation
 uv pip list | grep neozork
 ```
 
@@ -244,15 +244,15 @@ uv run pytest tests/calculation/ -v
 
 ### Q: Как получить помощь? / How to get help?
 **A:** Используйте доступные ресурсы:
-- **Документация / Documentation**: [docs/run-and-test-guides/](.)
-- **GitHub Issues**: https://github.com/username/neozork-hld-prediction/issues
+- **documentation / Documentation**: [docs/run-and-test-guides/](.)
+- **GitHub Issues**: https://github.com/username/neozork-hld-Prediction/issues
 - **Discord**: https://discord.gg/neozork
 - **Telegram**: https://t.me/neozork_hld
 
 ## 📚 Дополнительные ресурсы / Additional Resources
 
-- [Полное руководство / Complete Manual](russian/complete-manual-ru.md)
+- [Полное guide / Complete Manual](russian/complete-manual-ru.md)
 - [Быстрый старт / Quick Start](russian/quick-start-ru.md)
-- [Руководство по тестированию / Testing Guide](russian/testing-guide-ru.md)
-- [Руководство по развертыванию / Deployment Guide](russian/deployment-guide-ru.md)
-- [Устранение неполадок / Troubleshooting](troubleshooting.md)
+- [guide on тестированию / Testing Guide](russian/testing-guide-ru.md)
+- [guide on развертыванию / Deployment Guide](russian/deployment-guide-ru.md)
+- [Troubleshooting / Troubleshooting](Troubleshooting.md)

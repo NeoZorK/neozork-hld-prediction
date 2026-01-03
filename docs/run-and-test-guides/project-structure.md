@@ -1,27 +1,27 @@
-# Структура проекта / Project Structure
+# Project Structure / Project Structure
 
 ## 📁 Основная структура / Main Structure
 
 ```
-neozork-hld-prediction/
-├── src/                           # Основной код Python / Main Python code
-│   ├── saas/                     # SaaS платформа / SaaS platform
-│   ├── pocket_hedge_fund/        # Хедж-фонд / Hedge fund
-│   ├── monitoring/               # Мониторинг / Monitoring
-│   ├── calculation/              # Расчеты / Calculations
-│   ├── cli/                      # CLI интерфейс / CLI interface
-│   ├── data/                     # Работа с данными / Data handling
-│   ├── plotting/                 # Построение графиков / Plotting
-│   └── ...
-├── src/interactive/              # Интерактивная система / Interactive system
-├── src/mobile_app/               # Мобильное приложение / Mobile application
-├── src/admin_panel/              # Админ панель / Admin panel
-├── tests/                        # Тесты / Tests
-├── scripts/                      # Скрипты запуска / Launch scripts
-├── docs/                         # Документация / Documentation
-├── data/                         # Данные / Data
-├── logs/                         # Логи / Logs
-└── deployment/                   # Развертывание / Deployment
+neozork-hld-Prediction/
+├── src/ # Основной код Python / Main Python code
+│ ├── saas/ # SaaS платформа / SaaS platform
+│ ├── pocket_hedge_fund/ # Хедж-фонд / Hedge fund
+│ ├── monitoring/ # Мониторинг / Monitoring
+│ ├── calculation/ # Расчеты / Calculations
+│ ├── cli/ # CLI интерфейс / CLI interface
+│ ├── data/ # Работа with data / Data handling
+│ ├── plotting/ # Построение графиков / Plotting
+│ └── ...
+├── src/interactive/ # Интерактивная система / Interactive system
+├── src/mobile_app/ # Мобильное приложение / Mobile application
+├── src/admin_panel/ # Админ панель / Admin panel
+├── tests/ # Тесты / Tests
+├── scripts/ # Скрипты запуска / Launch scripts
+├── docs/ # documentation / Documentation
+├── data/ # Данные / Data
+├── logs/ # Логи / Logs
+└── deployment/ # Развертывание / Deployment
 ```
 
 ## 🚀 Основные скрипты запуска / Main Launch Scripts
@@ -42,16 +42,16 @@ neozork-hld-prediction/
 
 ```
 tests/
-├── calculation/                  # Тесты расчетов / Calculation tests
-├── cli/                         # Тесты CLI / CLI tests
-├── data/                        # Тесты данных / Data tests
-├── saas/                        # Тесты SaaS / SaaS tests
-├── pocket_hedge_fund/           # Тесты хедж-фонда / Hedge fund tests
-├── interactive/                  # Тесты интерактивной системы / Interactive system tests
-├── monitoring/                  # Тесты мониторинга / Monitoring tests
-├── docker/                      # Тесты Docker / Docker tests
-├── native-container/            # Тесты нативного контейнера / Native container tests
-└── integration/                 # Интеграционные тесты / Integration tests
+├── calculation/ # Тесты расчетов / Calculation tests
+├── cli/ # Тесты CLI / CLI tests
+├── data/ # Тесты данных / Data tests
+├── saas/ # Тесты SaaS / SaaS tests
+├── pocket_hedge_fund/ # Тесты хедж-фонда / Hedge fund tests
+├── interactive/ # Тесты интерактивной системы / Interactive system tests
+├── monitoring/ # Тесты мониторинга / Monitoring tests
+├── docker/ # Тесты Docker / Docker tests
+├── native-container/ # Тесты нативного контейнера / Native container tests
+└── integration/ # Интеграционные тесты / Integration tests
 ```
 
 ## 📊 Компоненты системы / System Components
@@ -73,28 +73,28 @@ tests/
 
 ## 🔧 Конфигурационные файлы / Configuration Files
 
-### Python конфигурация / Python Configuration
-- `pyproject.toml` - Конфигурация проекта / Project configuration
-- `requirements.txt` - Зависимости / Dependencies
-- `pytest.ini` - Конфигурация тестов / Test configuration
+### Python configuration / Python Configuration
+- `pyproject.toml` - configuration проекта / Project configuration
+- `requirements.txt` - dependencies / Dependencies
+- `pytest.ini` - configuration тестов / Test configuration
 
-### Node.js конфигурация / Node.js Configuration
+### Node.js configuration / Node.js Configuration
 - `src/mobile_app/package.json` - Мобильное приложение / Mobile app
 - `src/admin_panel/package.json` - Админ панель / Admin panel
 
-### Docker конфигурация / Docker Configuration
+### Docker configuration / Docker Configuration
 - `docker-compose.yml` - Основные сервисы / Main services
 - `docker-compose.prod.yml` - Продакшн сервисы / Production services
 - `docker-compose.apple.yml` - Apple Silicon сервисы / Apple Silicon services
 
-## 📚 Документация / Documentation
+## 📚 documentation / Documentation
 
-### Руководства по запуску и тестированию / Run and Test Guides
+### Run and Test Guides / Run and Test Guides
 - `docs/run-and-test-guides/` - Полные руководства / Complete guides
-- `docs/run-and-test-guides/russian/` - Русская версия / Russian version
-- `docs/run-and-test-guides/english/` - Английская версия / English version
+- `docs/run-and-test-guides/russian/` - Russian Version / Russian Version
+- `docs/run-and-test-guides/english/` - English Version / English Version
 
 ### Другие руководства / Other Guides
 - `docs/guides/` - Пошаговые руководства / Step-by-step guides
-- `docs/examples/` - Примеры использования / Usage examples
-- `docs/reference/` - Справочная документация / Reference documentation
+- `docs/examples/` - examples использования / Usage examples
+- `docs/reference/` - Справочная documentation / Reference documentation
