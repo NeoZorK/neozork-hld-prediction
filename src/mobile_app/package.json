@@ -58,7 +58,8 @@
     "glob": ">=10.5.0",
     "@react-native-community/cli": ">=20.0.0",
     "ip": "1.1.9",
-    "semver": ">=7.5.2"
+    "semver": ">=7.5.2",
+    "axios": ">=1.12.0"
   },
   "jest": {
     "preset": "react-native",
