@@ -164,7 +164,7 @@ def filter_files_requiring_translation(files_with_russian: List[Tuple[str, int]]
 
 def group_by_extension(files: List[Tuple[str, int]]) -> Dict[str, List[Tuple[str, int]]]:
     """Group files by extension."""
-    grouped = defaultdict(List)
+    grouped: Dict[str, List[Tuple[str, int]]] = defaultdict(list)
     for file_path, line_count in files:
         ext = Path(file_path).suffix or '(no extension)'
         grouped[ext].append((file_path, line_count))
@@ -173,7 +173,7 @@ def group_by_extension(files: List[Tuple[str, int]]) -> Dict[str, List[Tuple[str
 
 def group_by_directory(files: List[Tuple[str, int]]) -> Dict[str, List[Tuple[str, int]]]:
     """Group files by top-level directory."""
-    grouped = defaultdict(List)
+    grouped: Dict[str, List[Tuple[str, int]]] = defaultdict(list)
     for file_path, line_count in files:
         parts = Path(file_path).parts
         top_dir = parts[0] if len(parts) > 1 else '.'
@@ -197,12 +197,12 @@ def print_statistics(
     total_lines_both = sum(count for _, count in files_with_both)
 
     print("=" * 80)
-    print("files WITH RUSSIAN TEXT - STATISTICS")
+    print("FILES WITH RUSSIAN TEXT - STATISTICS")
     print("=" * 80)
     print()
     print(f"Total files with Russian text: {total_files} ({total_lines_all} lines)")
-    print(f"files requiring translation: {requiring_count} ({total_lines_requiring} lines)")
-    print(f"files with both RU and ENG versions (excluded): {both_versions_count} ({total_lines_both} lines)")
+    print(f"Files requiring translation: {requiring_count} ({total_lines_requiring} lines)")
+    print(f"Files with both RU and ENG versions (excluded): {both_versions_count} ({total_lines_both} lines)")
     print()
 
     if summary_only:
@@ -230,15 +230,15 @@ def print_statistics(
 
     grouped_by_dir = group_by_directory(files_requiring)
     for dir_name in sorted(grouped_by_dir.keys()):
-        files_List = grouped_by_dir[dir_name]
-        total_lines = sum(count for _, count in files_List)
-        print(f"{dir_name:30} {len(files_List):4} files, {total_lines:5} lines")
+        files_list = grouped_by_dir[dir_name]
+        total_lines = sum(count for _, count in files_list)
+        print(f"{dir_name:30} {len(files_list):4} files, {total_lines:5} lines")
 
     print()
 
-    # Detailed List
+    # Detailed list
     print("=" * 80)
-    print("Detailed List OF files REQUIRING TRANSLATION")
+    print("DETAILED LIST OF FILES REQUIRING TRANSLATION")
     print("=" * 80)
     print()
 
@@ -248,7 +248,7 @@ def print_statistics(
     if files_with_both:
         print()
         print("=" * 80)
-        print("files WITH BOTH RU AND ENG VERSIONS (EXCLUDED FROM TRANSLATION)")
+        print("FILES WITH BOTH RU AND ENG VERSIONS (EXCLUDED FROM TRANSLATION)")
         print("=" * 80)
         print()
 
