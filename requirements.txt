@@ -62,4 +62,4 @@ pytest-mock>=3.14.0
 pytest-timeout>=2.1.0
 
 # Optional: For production deployment
-gunicorn==21.2.0
+gunicorn>=22.0.0
