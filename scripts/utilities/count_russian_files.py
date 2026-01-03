@@ -168,6 +168,60 @@ def find_russian_lines_in_file(file_path: str, root_dir: str = '.') -> List[int]
         return []
 
 
+def extract_russian_words_from_file(file_path: str, root_dir: str = '.') -> List[str]:
+    """Extract unique Russian words from a file."""
+    full_path = os.path.join(root_dir, file_path) if root_dir != '.' else file_path
+    
+    if not os.path.exists(full_path):
+        return []
+    
+    try:
+        with open(full_path, 'r', encoding='utf-8', errors='ignore') as f:
+            content = f.read()
+        
+        # Extract Russian words (Cyrillic characters)
+        # Match words that contain at least one Cyrillic character
+        russian_words = re.findall(r'\b[А-Яа-яЁё]+\b', content)
+        
+        # Remove duplicates and sort
+        unique_words = sorted(set(russian_words), key=str.lower)
+        
+        return unique_words
+    except Exception as e:
+        print(f"Warning: Could not read {file_path}: {e}", file=sys.stderr)
+        return []
+
+
+def extract_russian_words_from_lines(file_path: str, line_numbers: List[int], root_dir: str = '.') -> List[str]:
+    """Extract unique Russian words from specific lines in a file."""
+    full_path = os.path.join(root_dir, file_path) if root_dir != '.' else file_path
+    
+    if not os.path.exists(full_path):
+        return []
+    
+    try:
+        with open(full_path, 'r', encoding='utf-8', errors='ignore') as f:
+            lines = f.readlines()
+        
+        russian_words = []
+        for line_num in line_numbers:
+            if line_num < 1 or line_num > len(lines):
+                continue
+            
+            line = lines[line_num - 1]
+            # Extract Russian words from this line
+            words = re.findall(r'\b[А-Яа-яЁё]+\b', line)
+            russian_words.extend(words)
+        
+        # Remove duplicates and sort
+        unique_words = sorted(set(russian_words), key=str.lower)
+        
+        return unique_words
+    except Exception as e:
+        print(f"Warning: Could not read {file_path}: {e}", file=sys.stderr)
+        return []
+
+
 def print_russian_lines(
     files_requiring: List[Tuple[str, int]],
     root_dir: str = '.',
@@ -198,6 +252,78 @@ def print_russian_lines(
         print("=" * 80)
         print()
         print(output_text)
+        print()
+
+
+def print_russian_words(
+    files_requiring: List[Tuple[str, int]],
+    root_dir: str = '.',
+    output_file: str = None,
+    from_lines_only: bool = False
+) -> None:
+    """Print or save Russian words from files."""
+    all_words = set()
+    file_words = {}
+    
+    for file_path, _ in files_requiring:
+        if from_lines_only:
+            # Extract words only from lines with Russian text
+            line_numbers = find_russian_lines_in_file(file_path, root_dir)
+            if line_numbers:
+                words = extract_russian_words_from_lines(file_path, line_numbers, root_dir)
+            else:
+                words = []
+        else:
+            # Extract all Russian words from file
+            words = extract_russian_words_from_file(file_path, root_dir)
+        
+        if words:
+            file_words[file_path] = words
+            all_words.update(words)
+    
+    # Prepare output
+    output_lines = []
+    
+    # Global word list
+    output_lines.append("# All unique Russian words found:")
+    output_lines.append(','.join(sorted(all_words, key=str.lower)))
+    output_lines.append("")
+    output_lines.append("# Words by file:")
+    output_lines.append("")
+    
+    # Words per file
+    for file_path, words in sorted(file_words.items()):
+        words_str = ','.join(words)
+        output_lines.append(f"{file_path}:{words_str}")
+    
+    output_text = '\n'.join(output_lines)
+    
+    if output_file:
+        try:
+            with open(output_file, 'w', encoding='utf-8') as f:
+                f.write(output_text)
+            print(f"\nRussian words saved to: {output_file}")
+            print(f"Total unique words: {len(all_words)}")
+        except Exception as e:
+            print(f"Error saving words to {output_file}: {e}", file=sys.stderr)
+    else:
+        print("\n" + "=" * 80)
+        print("RUSSIAN WORDS")
+        print("=" * 80)
+        print()
+        print(f"Total unique words: {len(all_words)}")
+        print()
+        print("All words:", ', '.join(sorted(all_words, key=str.lower)[:50]))
+        if len(all_words) > 50:
+            print(f"... and {len(all_words) - 50} more words")
+        print()
+        print("Words by file (showing first 10 files):")
+        for i, (file_path, words) in enumerate(sorted(file_words.items())[:10]):
+            print(f"  {file_path}: {', '.join(words[:20])}")
+            if len(words) > 20:
+                print(f"    ... and {len(words) - 20} more words")
+        if len(file_words) > 10:
+            print(f"  ... and {len(file_words) - 10} more files")
         print()
 
 
@@ -343,6 +469,21 @@ def main():
         type=str,
         help='Save line numbers to file (format: file_path:line1,line2,line3)'
     )
+    parser.add_argument(
+        '--show-words',
+        action='store_true',
+        help='Show Russian words found in files'
+    )
+    parser.add_argument(
+        '--words-output',
+        type=str,
+        help='Save Russian words to file (format: file_path:word1,word2,word3)'
+    )
+    parser.add_argument(
+        '--words-from-lines-only',
+        action='store_true',
+        help='Extract words only from lines with Russian text (when used with --show-words or --words-output)'
+    )
     args = parser.parse_args()
 
     print("Scanning project for files with Russian text...")
@@ -363,6 +504,10 @@ def main():
     # Show or save line numbers if requested
     if args.show_lines or args.lines_output:
         print_russian_lines(files_requiring, args.root, args.lines_output)
+
+    # Show or save Russian words if requested
+    if args.show_words or args.words_output:
+        print_russian_words(files_requiring, args.root, args.words_output, args.words_from_lines_only)
 
     # Save to file if requested
     if args.output:
