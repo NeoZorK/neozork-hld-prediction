@@ -22,10 +22,16 @@ try:
     from urllib.request import urlopen, Request
     from urllib.parse import urlencode
     from urllib.error import URLError
+    import ssl
     import json as json_lib
     HAS_HTTP = True
+    # Create SSL context that doesn't verify certificates (for free API)
+    SSL_CONTEXT = ssl.create_default_context()
+    SSL_CONTEXT.check_hostname = False
+    SSL_CONTEXT.verify_mode = ssl.CERT_NONE
 except ImportError:
     HAS_HTTP = False
+    SSL_CONTEXT = None
     print("Error: urllib not available")
     sys.exit(1)
 
@@ -65,7 +71,7 @@ def translate_word_with_api(word: str, cache: Dict[str, str] = None) -> Optional
         req = Request(full_url)
         req.add_header('User-Agent', 'Mozilla/5.0')
         
-        with urlopen(req, timeout=5) as response:
+        with urlopen(req, timeout=5, context=SSL_CONTEXT) as response:
             if response.status == 200:
                 result = json_lib.loads(response.read().decode('utf-8'))
                 if result.get('responseStatus') == 200:
