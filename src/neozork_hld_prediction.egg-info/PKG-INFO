@@ -26,7 +26,7 @@ Requires-Dist: defusedxml==0.7.1
 Requires-Dist: executing==2.2.0
 Requires-Dist: fastjsonschema==2.21.1
 Requires-Dist: filelock==3.13.1
-Requires-Dist: fonttools==4.56.0
+Requires-Dist: fonttools>=4.60.2
 Requires-Dist: fqdn==1.5.1
 Requires-Dist: fsspec==2024.6.1
 Requires-Dist: gitdb==4.0.12
