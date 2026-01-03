@@ -103,7 +103,7 @@ Requires-Dist: sympy==1.13.1
 Requires-Dist: terminado==0.18.1
 Requires-Dist: threadpoolctl==3.6.0
 Requires-Dist: tinycss2==1.4.0
-Requires-Dist: tornado==6.4.2
+Requires-Dist: tornado>=6.5
 Requires-Dist: traitlets==5.14.3
 Requires-Dist: types-python-dateutil==2.9.0.20241206
 Requires-Dist: typing_extensions==4.12.2
