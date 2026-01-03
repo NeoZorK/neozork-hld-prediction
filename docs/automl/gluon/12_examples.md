@@ -5,7 +5,7 @@
 
 ## Why examples критически важны
 
-**Почему 90% разработчиков начинают with примеров, а not with документации?** Потому что examples показывают, как теория работает on практике. Это как обучение вождению - сначала смотришь, как ездят другие.
+**Почему 90% разработчиков начинают with примеров, а not with документации?** Потому что examples показывают, как теория Workingет on практике. Это как обучение вождению - сначала смотришь, как ездят другие.
 
 ### Проблемы без практических примеров
 - **Долгое изучение**: Месяцы on понимание базовых концепций
@@ -14,14 +14,14 @@
 - **Разочарование**: Сложность отпугивает новичков
 
 ### Преимущества хороших примеров
-- **Быстрое старт**: from идеи to работающего кода за часы
+- **Быстрое старт**: from идеи to Workingющего кода за часы
 - **Правильные паттерны**: Изучение лучших практик on примерах
-- **Уверенность**: Понимание того, как все работает
+- **Уверенность**: Понимание того, как все Workingет
 - **Вдохновение**: Идеи for собственных проектов
 
 ## Введение in examples
 
-<img src="images/optimized/metrics_comparison_detailed.png" alt="Сравнение метрик and задач" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/metrics_comparison_Detailed.png" alt="Сравнение метрик and задач" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 1: Сравнение метрик for классификации and регрессии - ROC Curve, Precision-Recall, Confusion Matrix, метрики регрессии*
 
 **Почему examples - это язык машинного обучения?** Потому что они переводят сложные алгоритмы in понятные числа. Это как переводчик между техническими деталями and бизнес-результатами.
@@ -36,7 +36,7 @@ in этом разделе представлены практические exa
 
 ## example 1: Классификация клиентов банка
 
-<img src="images/optimized/bank_classification_analysis.png" alt="Банковский example" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/bank_classification_Analysis.png" alt="Банковский example" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 2: example классификации клиентов банка - ROC Curve, Precision-Recall, Confusion Matrix, важность признаков*
 
 **Почему начинаем with банковской задачи?** Потому что это классический example ML in финансах - понятный, важный and with четкими бизнес-метриками.
@@ -60,8 +60,8 @@ Prediction вероятности дефолта клиента банка on ba
 - **Стоимость ошибки**: Ложный отрицательный результат дороже ложного положительного
 - **Объем данных**: Обычно 100K-1M записей
 
-### Данные
-**Почему используем синтетические данные?** Потому что реальные банковские данные конфиденциальны, но структура and паттерны остаются теми же.
+### data
+**Почему Use синтетические data?** Потому что реальные банковские data конфиденциальны, но Structure and паттерны остаются теми же.
 
 ```python
 import pandas as pd
@@ -87,8 +87,8 @@ def create_bank_data(n_samples=10000):
 
  Returns:
  --------
- pd.DataFrame
- Синтетические банковские данные:
+ pd.dataFrame
+ Синтетические банковские data:
  - Числовые признаки: возраст, доход, кредитный рейтинг, долг/доход
  - Категориальные признаки: статус занятости, образование, семейное положение
  - Временные признаки: дата подачи заявки
@@ -96,12 +96,12 @@ def create_bank_data(n_samples=10000):
 
  Notes:
  ------
- Структура банковских данных:
+ Structure банковских данных:
  - 20 числовых признаков (возраст, доход, кредитный рейтинг and др.)
  - 15 информативных признаков (influence дефолт)
  - 5 избыточных признаков (коррелированные with информативными)
  - 3 категориальных приsign (статус, образование, семейное положение)
- - Временные метки for analysis трендов
+ - Временные метки for Analysis трендов
 
  Бизнес-контекст:
  - Задача: Prediction дефолта on кредиту
@@ -119,7 +119,7 @@ def create_bank_data(n_samples=10000):
  random_state=42 # Воспроизводимость результатов
  )
 
- # create DataFrame with осмысленными названиями
+ # create dataFrame with осмысленными названиями
  feature_names = [
  'age', 'income', 'credit_score', 'debt_ratio', 'employment_years',
  'loan_amount', 'interest_rate', 'payment_history', 'savings_balance',
@@ -128,7 +128,7 @@ def create_bank_data(n_samples=10000):
  'account_age', 'payment_frequency', 'credit_mix'
  ]
 
- data = pd.DataFrame(X, columns=feature_names)
+ data = pd.dataFrame(X, columns=feature_names)
  data['default_risk'] = y
 
  # add категориальных переменных
@@ -155,19 +155,19 @@ def prepare_bank_data(data):
 
  Parameters:
  -----------
- data : pd.DataFrame
- Исходные банковские данные:
+ data : pd.dataFrame
+ Исходные банковские data:
  - Содержит числовые and категориальные признаки
  - Может содержать пропущенные значения
  - Может содержать выбросы
 
  Returns:
  --------
- pd.DataFrame
- Подготовленные данные:
+ pd.dataFrame
+ Подготовленные data:
  - Заполнены пропущенные значения
  - Созданы новые признаки
- - Обработаны выбросы
+ - ОбWorkingны выбросы
  - Готовы for обучения модели
 
  Notes:
@@ -225,10 +225,10 @@ def train_bank_model(data):
 
  Parameters:
  -----------
- data : pd.DataFrame
- Подготовленные банковские данные:
+ data : pd.dataFrame
+ Подготовленные банковские data:
  - Содержит целевую переменную 'default_risk'
- - Обработаны пропущенные значения and выбросы
+ - ОбWorkingны пропущенные значения and выбросы
  - Созданы новые признаки
 
  Returns:
@@ -236,7 +236,7 @@ def train_bank_model(data):
  tuple
  (predictor, test_data):
  - predictor: обученная модель TabularPredictor
- - test_data: тестовые данные for оценки
+ - test_data: тестовые data for оценки
 
  Notes:
  ------
@@ -306,7 +306,7 @@ def train_bank_model(data):
 
  # Обучение модели with оптимизированными параметрами
  predictor.fit(
- train_data, # Данные for обучения
+ train_data, # data for обучения
  hyperparameters=hyperparameters, # settings алгоритмов
  time_limit=1800, # Время обучения in секундах (30 minutes)
  presets='high_quality', # Предустановки качества (high_quality for максимального качества)
@@ -334,10 +334,10 @@ def evaluate_bank_model(predictor, test_data):
  - Поддерживает predict() and predict_proba()
  - Содержит информацию о важности признаков
 
- test_data : pd.DataFrame
- Тестовые данные for оценки:
+ test_data : pd.dataFrame
+ Тестовые data for оценки:
  - Содержит целевую переменную 'default_risk'
- - Имеет те же признаки что and обучающие данные
+ - Имеет те же признаки что and обучающие data
  - not участвовали in обучении модели
 
  Returns:
@@ -354,13 +354,13 @@ def evaluate_bank_model(predictor, test_data):
  ------
  Метрики оценки for банковской задачи:
  - ROC-AUC: основная метрика for несбалансированных данных
- - Precision: доля правильных predictions дефолта
- - Recall: доля найденных дефолтов
+ - Precision: доля правильных Predictions дефолта
+ - Recall: доля foundных дефолтов
  - F1-score: гармоническое среднее precision and recall
  - Accuracy: общая точность классификации
 
  Анализ важности признаков:
- - Показывает какие факторы важны for предсказания дефолта
+ - Показывает What факторы важны for предсказания дефолта
  - Помогает понять логику модели
  - Используется for feature selection
  """
@@ -368,7 +368,7 @@ def evaluate_bank_model(predictor, test_data):
  # Предсказания классов (0 - нет дефолта, 1 - дефолт)
  Predictions = predictor.predict(test_data)
 
- # Вероятности классов (for analysis уверенности модели)
+ # Вероятности классов (for Analysis уверенности модели)
  probabilities = predictor.predict_proba(test_data)
 
  # Оценка качества модели
@@ -409,7 +409,7 @@ print(bank_results['feature_importance'].head(10))
 - **ROC Curve**: Показывает качество разделения классов при разных порогах
 - **Precision-Recall**: Демонстрирует баланс между точностью and полнотой
 - **Confusion Matrix**: Визуализирует типы ошибок модели
-- **Feature Importance**: Показывает, какие факторы важны for предсказания
+- **Feature Importance**: Показывает, What факторы важны for предсказания
 
 ```python
 def visualize_bank_results(results, test_data):
@@ -457,7 +457,7 @@ visualize_bank_results(bank_results, bank_test_data)
 
 ## example 2: Прогнозирование цен on недвижимость
 
-<img src="images/optimized/real_estate_regression_analysis.png" alt="example недвижимости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/real_estate_regression_Analysis.png" alt="example недвижимости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 3: example прогнозирования цен on недвижимость - предсказания vs факт, распределение ошибок, важность признаков, метрики качества*
 
 **Почему недвижимость - отличный example for регрессии?** Потому что это понятная задача with множеством факторов влияния:
@@ -473,11 +473,11 @@ visualize_bank_results(bank_results, bank_test_data)
 ### Задача
 Prediction цены недвижимости on basis характеристик объекта.
 
-### Данные
+### data
 ```python
 def create_real_estate_data(n_samples=5000):
  """
- create синтетических данных о недвижимости for регрессионного анализа
+ create синтетических данных о недвижимости for регрессионного Analysis
 
  Parameters:
  -----------
@@ -489,8 +489,8 @@ def create_real_estate_data(n_samples=5000):
 
  Returns:
  --------
- pd.DataFrame
- Синтетические данные о недвижимости:
+ pd.dataFrame
+ Синтетические data о недвижимости:
  - Числовые признаки: площадь, спальни, ванные, возраст
  - Бинарные признаки: гараж, бассейн, сад
  - Категориальные признаки: район, тип недвижимости, состояние
@@ -498,7 +498,7 @@ def create_real_estate_data(n_samples=5000):
 
  Notes:
  ------
- Структура данных недвижимости:
+ Structure данных недвижимости:
  - 7 числовых признаков (площадь, спальни, ванные, возраст)
  - 3 бинарных приsign (гараж, бассейн, сад)
  - 3 категориальных приsign (район, тип, состояние)
@@ -519,19 +519,19 @@ def create_real_estate_data(n_samples=5000):
  np.random.seed(42) # Воспроизводимость результатов
 
  # Основные характеристики недвижимости
- data = pd.DataFrame({
+ data = pd.dataFrame({
  'area': np.random.normal(120, 30, n_samples), # Площадь (м²) - нормальное распределение
  'bedrooms': np.random.poisson(3, n_samples), # Количество спален - распределение Пуассона
  'bathrooms': np.random.poisson(2, n_samples), # Количество ванных - распределение Пуассона
  'age': np.random.exponential(10, n_samples), # Возраст (лет) - экспоненциальное распределение
- 'garage': np.random.binomial(1, 0.7, n_samples), # Наличие гаража (70% вероятность)
- 'pool': np.random.binomial(1, 0.2, n_samples), # Наличие бассейна (20% вероятность)
- 'garden': np.random.binomial(1, 0.6, n_samples) # Наличие сада (60% вероятность)
+ 'garage': np.random.binomial(1, 0.7, n_samples), # presence гаража (70% вероятность)
+ 'pool': np.random.binomial(1, 0.2, n_samples), # presence бассейна (20% вероятность)
+ 'garden': np.random.binomial(1, 0.6, n_samples) # presence сада (60% вероятность)
  })
 
  # Категориальные переменные
  data['location'] = np.random.choice(['downtown', 'suburbs', 'rural'], n_samples)
- data['property_type'] = np.random.choice(['house', 'apartment', 'townhouse'], n_samples)
+ data['property_type'] = np.random.choice(['hoUse', 'apartment', 'townhoUse'], n_samples)
  data['condition'] = np.random.choice(['excellent', 'good', 'fair', 'poor'], n_samples)
 
  # create целевой переменной (цена)
@@ -733,8 +733,8 @@ visualize_real_estate_results(real_estate_results, real_estate_test_data)
 
 ## example 3: Анализ временных рядов
 
-<img src="images/optimized/time_series_analysis.png" alt="example временных рядов" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 4: example анализа временных рядов - временной ряд with прогнозом, ошибки in time, распределение ошибок, метрики MASE/MAPE*
+<img src="images/optimized/time_series_Analysis.png" alt="example временных рядов" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 4: example Analysis временных рядов - временной ряд with прогнозом, ошибки in time, распределение ошибок, метрики MASE/MAPE*
 
 **Почему временные ряды - особый тип задач?** Потому что они имеют временную dependency and требуют специальных методов:
 
@@ -749,11 +749,11 @@ visualize_real_estate_results(real_estate_results, real_estate_test_data)
 ### Задача
 Прогнозирование продаж товаров on basis исторических данных.
 
-### Данные
+### data
 ```python
 def create_sales_data(n_days=365, n_products=10):
  """
- create синтетических данных о продажах for analysis временных рядов
+ create синтетических данных о продажах for Analysis временных рядов
 
  Parameters:
  -----------
@@ -764,15 +764,15 @@ def create_sales_data(n_days=365, n_products=10):
  - 365+: долгосрочные тренды (год+)
 
  n_products : int, default=10
- Количество продуктов for analysis:
+ Количество продуктов for Analysis:
  - 1-5: анализ одного продукта
  - 5-20: анализ продуктовой линейки
  - 20+: анализ большого ассортимента
 
  Returns:
  --------
- pd.DataFrame
- Синтетические данные о продажах:
+ pd.dataFrame
+ Синтетические data о продажах:
  - date: дата продажи
  - product_id: идентификатор продукта
  - sales: количество продаж
@@ -782,16 +782,16 @@ def create_sales_data(n_days=365, n_products=10):
 
  Notes:
  ------
- Структура временного ряда:
+ Structure временного ряда:
  - Тренд: линейный рост продаж во времени
  - Сезонность: еженедельные колебания (выходные vs будни)
  - Шум: случайные колебания (рыночные факторы)
  - Негативные продажи: исключены (продажи ≥ 0)
 
  Временные признаки:
- - day_of_week: день недели for analysis выходных
- - month: месяц for сезонного анализа
- - quarter: квартал for квартального анализа
+ - day_of_week: день недели for Analysis выходных
+ - month: месяц for сезонного Analysis
+ - quarter: квартал for квартального Analysis
  """
 
  np.random.seed(42) # Воспроизводимость результатов
@@ -825,7 +825,7 @@ def create_sales_data(n_days=365, n_products=10):
  'quarter': date.quarter
  })
 
- return pd.DataFrame(data)
+ return pd.dataFrame(data)
 
 # create данных
 sales_data = create_sales_data(365, 10)
@@ -838,20 +838,20 @@ print(sales_data['sales'].describe())
 ```python
 def prepare_sales_data(data):
  """
- Подготовка данных о продажах for analysis временных рядов
+ Подготовка данных о продажах for Analysis временных рядов
 
  Parameters:
  -----------
- data : pd.DataFrame
- Исходные данные о продажах:
+ data : pd.dataFrame
+ Исходные data о продажах:
  - Содержит колонки: date, product_id, sales, day_of_week, month, quarter
  - Отсортированы on product_id and date
  - Могут содержать пропущенные значения
 
  Returns:
  --------
- pd.DataFrame
- Подготовленные данные with временными приsignми:
+ pd.dataFrame
+ Подготовленные data with временными приsignми:
  - Лаговые признаки: sales_lag_1, sales_lag_2, sales_lag_3, sales_lag_7, sales_lag_14, sales_lag_30
  - Скользящие средние: sales_ma_7, sales_ma_14, sales_ma_30
  - Трендовые признаки: sales_trend
@@ -1012,7 +1012,7 @@ for product, perf in sales_results['product_performance'].items():
 
 - **Time Series Plot**: Показывает тренды, сезонность and качество прогноза во времени
 - **Error Analysis**: Демонстрирует, как ошибки распределены in time
-- **Feature Importance**: Выявляет, какие временные признаки важны
+- **Feature Importance**: Выявляет, What временные признаки важны
 - **Performance by Product**: Сравнивает качество прогноза for разных продуктов
 
 ```python
@@ -1045,7 +1045,7 @@ def visualize_sales_results(results, test_data):
  axes[1, 0].set_title('Top 10 Feature Importance')
 
  # Производительность on продуктам
- products = list(results['product_performance'].keys())
+ products = List(results['product_performance'].keys())
  maes = [results['product_performance'][p]['mae'] for p in products]
 
  axes[1, 1].bar(products, maes)
@@ -1063,8 +1063,8 @@ visualize_sales_results(sales_results, sales_test_data)
 
 ## example 4: Многоклассовая классификация
 
-<img src="images/optimized/multiclass_classification_analysis.png" alt="example многоклассовой классификации" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 5: example многоклассовой классификации - Confusion Matrix, точность on классам, распределение predictions, метрики качества*
+<img src="images/optimized/multiclass_classification_Analysis.png" alt="example многоклассовой классификации" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 5: example многоклассовой классификации - Confusion Matrix, точность on классам, распределение Predictions, метрики качества*
 
 **Почему многоклассовая классификация сложнее бинарной?** Потому что нужно различать множество классов simultaneously:
 
@@ -1079,7 +1079,7 @@ visualize_sales_results(sales_results, sales_test_data)
 ### Задача
 Классификация изображений on basis извлеченных признаков.
 
-### Данные
+### data
 ```python
 def create_image_data(n_samples=5000, n_features=100):
  """
@@ -1101,15 +1101,15 @@ def create_image_data(n_samples=5000, n_features=100):
 
  Returns:
  --------
- pd.DataFrame
- Синтетические данные изображений:
+ pd.dataFrame
+ Синтетические data изображений:
  - Числовые признаки: feature_0, feature_1, ..., feature_n
  - Категориальные признаки: class, image_size, resolution
- - Числовые метаданные: color_channels
+ - Числовые метаdata: color_channels
 
  Notes:
  ------
- Структура данных изображений:
+ Structure данных изображений:
  - n_features числовых признаков (извлеченные характеристики)
  - 5 классов объектов: cat, dog, bird, car, tree
  - 3 размера изображений: small, medium, large
@@ -1134,9 +1134,9 @@ def create_image_data(n_samples=5000, n_features=100):
  classes = ['cat', 'dog', 'bird', 'car', 'tree'] # 5 классов объектов
  y = np.random.choice(n_classes, n_samples) # Случайное распределение классов
 
- # create DataFrame with приsignми
+ # create dataFrame with приsignми
  feature_names = [f'feature_{i}' for i in range(n_features)]
- data = pd.DataFrame(features, columns=feature_names)
+ data = pd.dataFrame(features, columns=feature_names)
  data['class'] = [classes[i] for i in y] # Целевая переменная
 
  # add метаданных изображений
@@ -1161,16 +1161,16 @@ def prepare_image_data(data):
 
  Parameters:
  -----------
- data : pd.DataFrame
- Исходные данные изображений:
+ data : pd.dataFrame
+ Исходные data изображений:
  - Содержит числовые признаки (feature_0, feature_1, ...)
  - Содержит категориальные признаки (class, image_size, resolution)
- - Содержит метаданные (color_channels)
+ - Содержит метаdata (color_channels)
 
  Returns:
  --------
- pd.DataFrame
- Подготовленные данные изображений:
+ pd.dataFrame
+ Подготовленные data изображений:
  - Созданы агрегированные признаки (feature_sum, feature_mean, feature_std)
  - Нормализованы числовые признаки
  - Готовы for обучения модели
@@ -1189,7 +1189,7 @@ def prepare_image_data(data):
 
  Нормализация:
  - Z-score нормализация: (x - mean) / std
- - Применяется ко всем числовым приsignм кроме color_channels
+ - Применяется ко all числовым приsignм кроме color_channels
  - Обеспечивает стабильность обучения
  """
 
@@ -1203,7 +1203,7 @@ def prepare_image_data(data):
  # Нормализация улучшает стабильность and скорость обучения
  numeric_columns = data.select_dtypes(include=[np.number]).columns
  for col in numeric_columns:
- if col != 'color_channels': # not нормализуем метаданные
+ if col != 'color_channels': # not нормализуем метаdata
  data[col] = (data[col] - data[col].mean()) / data[col].std() # Z-score нормализация
 
  return data
@@ -1294,9 +1294,9 @@ def evaluate_image_model(predictor, test_data):
  leaderboard = predictor.leaderboard(test_data)
 
  # Анализ on классам
- from sklearn.metrics import classification_report, confusion_matrix
+ from sklearn.metrics import classification_Report, confusion_matrix
 
- class_report = classification_report(test_data['class'], Predictions, output_dict=True)
+ class_Report = classification_Report(test_data['class'], Predictions, output_dict=True)
  conf_matrix = confusion_matrix(test_data['class'], Predictions)
 
  return {
@@ -1305,7 +1305,7 @@ def evaluate_image_model(predictor, test_data):
  'leaderboard': leaderboard,
  'Predictions': Predictions,
  'probabilities': probabilities,
- 'classification_report': class_report,
+ 'classification_Report': class_Report,
  'confusion_matrix': conf_matrix
  }
 
@@ -1317,7 +1317,7 @@ for metric, value in image_results['performance'].items():
  print(f"{metric}: {value:.4f}")
 
 print("\nClassification Report:")
-for class_name, metrics in image_results['classification_report'].items():
+for class_name, metrics in image_results['classification_Report'].items():
  if isinstance(metrics, dict):
  print(f"{class_name}: {metrics}")
 ```
@@ -1326,10 +1326,10 @@ for class_name, metrics in image_results['classification_report'].items():
 
 **Почему многоклассовая классификация требует особой визуализации?** Потому что нужно анализировать качество on каждому классу отдельно:
 
-- **Confusion Matrix**: Показывает, какие классы путает модель между собой
+- **Confusion Matrix**: Показывает, What классы путает модель между собой
 - **Class Accuracy**: Демонстрирует точность for каждого класса отдельно
 - **Prediction Distribution**: Выявляет, not предсказывает ли модель только популярные классы
-- **Feature Importance**: Показывает, какие признаки важны for различения классов
+- **Feature Importance**: Показывает, What признаки важны for различения классов
 
 ```python
 def visualize_image_results(results, test_data):
@@ -1348,7 +1348,7 @@ def visualize_image_results(results, test_data):
  results['feature_importance'].head(15).plot(kind='barh', ax=axes[0, 1])
  axes[0, 1].set_title('Top 15 Feature Importance')
 
- # Распределение predictions
+ # Распределение Predictions
  Prediction_counts = pd.Series(results['Predictions']).value_counts()
  Prediction_counts.plot(kind='bar', ax=axes[1, 0])
  axes[1, 0].set_title('Distribution of Predictions')
@@ -1380,7 +1380,7 @@ visualize_image_results(image_results, image_test_data)
 ## example 5: Продакшен система
 
 <img src="images/optimized/production_system_architecture.png" alt="Архитектура продакшен системы" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 7: Архитектура продакшен системы AutoML Gluon - компоненты, потоки данных, Monitoring*
+*Рисунок 7: Архитектура продакшен системы AutoML Gluon - components, потоки данных, Monitoring*
 
 ### Полная продакшен система
 ```python
@@ -1419,8 +1419,8 @@ class PredictionRequest(BaseModel):
  - 'sales_forecast': модель прогнозирования продаж
 
  data : List[Dict[str, Any]]
- Данные for предсказания:
- - Список словарей with приsignми
+ data for предсказания:
+ - List словарей with приsignми
  - Каждый словарь - один образец for предсказания
  - Ключи должны соответствовать приsignм модели
  """
@@ -1448,7 +1448,7 @@ class PredictionResponse(BaseModel):
  - model_name: название модели
  - model_type: тип задачи (classification/regression)
  - target: целевая переменная
- - features: список признаков
+ - features: List признаков
 
  timestamp : str
  Время выполнения предсказания (ISO формат)
@@ -1479,7 +1479,7 @@ class ModelInfo(BaseModel):
  - rmse, mae, r2 (for регрессии)
 
  features : List[str]
- Список признаков модели
+ List признаков модели
 
  created_at : str
  Дата создания модели (ISO формат)
@@ -1503,10 +1503,10 @@ async def load_models():
  3. create метаданных for каждой модели
  4. Логирование результатов загрузки
 
- Метаданные модели:
+ Метаdata модели:
  - model_type: тип задачи (binary_classification, regression)
  - target: целевая переменная
- - features: список признаков модели
+ - features: List признаков модели
 
  Обработка ошибок:
  - Логирование ошибок загрузки
@@ -1542,42 +1542,42 @@ async def load_models():
 @app.get("/health")
 async def health_check():
  """
- Health check endpoint for Monitoringа состояния системы
+ health check endpoint for Monitoringа состояния системы
 
  Returns:
  --------
  Dict[str, Any]
  Статус системы:
- - status: "healthy" если модели загружены, "unhealthy" если нет
- - loaded_models: список загруженных моделей
+ - Status: "healthy" если модели загружены, "unhealthy" если нет
+ - loaded_models: List загруженных моделей
  - timestamp: время проверки (ISO формат)
 
  Notes:
  ------
- Health check используется for:
+ health check используется for:
  - Monitoringа состояния системы
  - Проверки доступности моделей
  - Автоматического переLaunchа при сбоях
  - Load balancer health checks
  """
- loaded_models = list(models.keys())
+ loaded_models = List(models.keys())
  return {
  "status": "healthy" if loaded_models else "unhealthy", # Статус системы
- "loaded_models": loaded_models, # Список загруженных моделей
+ "loaded_models": loaded_models, # List загруженных моделей
  "timestamp": datetime.now().isoformat() # Время проверки
  }
 
 @app.post("/predict", response_model=PredictionResponse)
 async def predict(request: PredictionRequest):
  """
- Endpoint for predictions with использованием обученных моделей
+ Endpoint for Predictions with использованием обученных моделей
 
  Parameters:
  -----------
  request : PredictionRequest
  Запрос on Prediction:
  - model_name: название модели
- - data: данные for предсказания
+ - data: data for предсказания
 
  Returns:
  --------
@@ -1591,14 +1591,14 @@ async def predict(request: PredictionRequest):
  Raises:
  -------
  HTTPException
- - 404: модель not найдена
+ - 404: модель not foundа
  - 500: ошибка выполнения предсказания
 
  Notes:
  ------
  Процесс предсказания:
  1. check существования модели
- 2. Преобразование данных in DataFrame
+ 2. Преобразование данных in dataFrame
  3. Выполнение предсказания
  4. Получение вероятностей (for классификации)
  5. Формирование ответа
@@ -1616,8 +1616,8 @@ async def predict(request: PredictionRequest):
  model = models[request.model_name] # Получение модели
  metadata = model_metadata[request.model_name] # Получение метаданных
 
- # Преобразование данных in DataFrame
- df = pd.DataFrame(request.data)
+ # Преобразование данных in dataFrame
+ df = pd.dataFrame(request.data)
 
  # Предсказания модели
  Predictions = model.predict(df)
@@ -1626,16 +1626,16 @@ async def predict(request: PredictionRequest):
  probabilities = None
  if hasattr(model, 'predict_proba'): # check поддержки вероятностей
  proba = model.predict_proba(df)
- probabilities = proba.to_dict('records') # Преобразование in список словарей
+ probabilities = proba.to_dict('records') # Преобразование in List словарей
 
  return PredictionResponse(
- Predictions=Predictions.tolist(), # Преобразование in список
+ Predictions=Predictions.toList(), # Преобразование in List
  probabilities=probabilities, # Вероятности классов
  model_info={
  "model_name": request.model_name, # Название модели
  "model_type": metadata['model_type'], # Тип задачи
  "target": metadata['target'], # Целевая переменная
- "features": metadata['features'] # Список признаков
+ "features": metadata['features'] # List признаков
  },
  timestamp=datetime.now().isoformat() # Время выполнения
  )
@@ -1645,10 +1645,10 @@ async def predict(request: PredictionRequest):
  raise HTTPException(status_code=500, detail=str(e)) # Возврат HTTP ошибки
 
 @app.get("/models")
-async def list_models():
- """Список доступных моделей"""
+async def List_models():
+ """List доступных моделей"""
  return {
- "models": list(models.keys()),
+ "models": List(models.keys()),
  "metadata": model_metadata
  }
 
@@ -1666,7 +1666,7 @@ async def get_model_info(model_name: str):
  "model_type": metadata['model_type'],
  "target": metadata['target'],
  "features": metadata['features'],
- "performance": model.evaluate(pd.DataFrame([{f: 0 for f in metadata['features']}]))
+ "performance": model.evaluate(pd.dataFrame([{f: 0 for f in metadata['features']}]))
  }
 
 if __name__ == "__main__":
@@ -1684,11 +1684,11 @@ def test_production_api():
 
  base_url = "http://localhost:8000"
 
- # Health check
+ # health check
  response = requests.get(f"{base_url}/health")
- print("Health check:", response.json())
+ print("health check:", response.json())
 
- # Список моделей
+ # List моделей
  response = requests.get(f"{base_url}/models")
  print("available models:", response.json())
 
@@ -1733,7 +1733,7 @@ if __name__ == "__main__":
 
 ## Продвинутые examples
 
-<img src="images/optimized/advanced_metrics_analysis.png" alt="Продвинутые examples" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/advanced_metrics_Analysis.png" alt="Продвинутые examples" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 6: Продвинутые метрики - ROC with порогами, Precision-Recall, сравнение метрик, влияние порога on качество*
 
 **Почему важны продвинутые examples?** Потому что они показывают, как решать сложные реальные задачи:
@@ -1742,24 +1742,24 @@ if __name__ == "__main__":
 - **Ансамбли моделей**: Комбинирование различных алгоритмов
 - **Feature Engineering**: create сложных признаков
 - **Гиперпараметрическая оптимизация**: Автоматический поиск лучших параметров
-- **Несбалансированные данные**: Работа with редкими классами
-- **Большие данные**: Обработка датасетов размером in гигабайты
+- **Несбалансированные data**: Working with редкими классами
+- **Большие data**: Обработка датасетов размером in гигабайты
 - **Продакшен деплой**: Развертывание моделей in реальных системах
 
 ### 🚀 example: Ансамбль моделей for финансового прогнозирования
 
-**Почему ансамбли часто работают лучше одиночных моделей?** Потому что они объединяют сильные стороны разных алгоритмов:
+**Почему ансамбли часто Workingют лучше одиночных моделей?** Потому что они объединяют сильные стороны разных алгоритмов:
 
 - **Разнообразие моделей**: Разные алгоритмы находят разные паттерны
 - **Снижение переобучения**: Усреднение снижает риск переобучения
 - **Повышение стабильности**: Результат менее зависит from конкретной модели
-- **Лучшая обобщающая способность**: Модель работает лучше on новых данных
+- **Лучшая обобщающая способность**: Модель Workingет лучше on новых данных
 - **Автоматический выбор**: AutoML сам выбирает лучшие комбинации
 - **Интерпретируемость**: Можно понять вклад каждой модели
 
-### 🎯 example: Работа with несбалансированными данными
+### 🎯 example: Working with несбалансированными данными
 
-**Почему несбалансированные данные - частая проблема?** Потому что in реальности редкие события встречаются редко:
+**Почему несбалансированные data - частая проблема?** Потому что in реальности редкие события встречаются редко:
 
 - **Стратегии балансировки**: SMOTE, undersampling, oversampling
 - **Метрики качества**: F1-score, Precision, Recall вместо Accuracy

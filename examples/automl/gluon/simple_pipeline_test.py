@@ -24,21 +24,21 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def test_data_loading():
- """Test data loading functionality."""
- print("🔍 testing data loading...")
+def test_data_Loading():
+ """Test data Loading functionality."""
+ print("🔍 testing data Loading...")
 
  loader = MultiIndicatorLoader()
 
- # Test loading single symbol/timeframe
+ # Test Loading single symbol/Timeframe
  data_sources = loader.load_symbol_data('BTCUSD', 'D1')
 
- print(f"📊 Data sources loaded: {list(data_sources.keys())}")
+ print(f"📊 data sources loaded: {List(data_sources.keys())}")
 
  for indicator, data in data_sources.items():
  if not data.empty:
  print(f" {indicator}: {len(data)} rows, {len(data.columns)} columns")
- print(f" Columns: {list(data.columns)}")
+ print(f" columns: {List(data.columns)}")
  else:
  print(f" {indicator}: No data")
 
@@ -53,7 +53,7 @@ def test_data_combination(data_sources):
  combined_data = loader.combine_indicators(data_sources)
 
  print(f"📊 Combined data: {len(combined_data)} rows, {len(combined_data.columns)} columns")
- print(f" Columns: {list(combined_data.columns)}")
+ print(f" columns: {List(combined_data.columns)}")
 
  return combined_data
 
@@ -66,7 +66,7 @@ def test_feature_engineering(combined_data):
  loader = MultiIndicatorLoader()
  data_with_target = loader.create_target_variable(combined_data, method='price_direction')
 
- print(f"📊 Data with target: {len(data_with_target)} rows")
+ print(f"📊 data with target: {len(data_with_target)} rows")
  print(f" Target distribution: {data_with_target['target'].value_counts().to_dict()}")
 
  # Create custom features
@@ -130,18 +130,18 @@ def main():
  print("=" * 50)
 
  try:
- # Test 1: Data loading
- data_sources = test_data_loading()
+ # Test 1: data Loading
+ data_sources = test_data_Loading()
 
  if not any(not df.empty for df in data_sources.values()):
  print("❌ No data loaded - test failed")
  return False
 
- # Test 2: Data combination
+ # Test 2: data combination
  combined_data = test_data_combination(data_sources)
 
  if combined_data.empty:
- print("❌ Data combination failed")
+ print("❌ data combination failed")
  return False
 
  # Test 3: Feature engineering
@@ -163,9 +163,9 @@ def main():
  print("✅ SIMPLE PIPELINE TEST RESULTS")
  print("=" * 50)
 
- print(f"📊 Final Dataset:")
+ print(f"📊 Final dataset:")
  print(f" Rows: {len(final_data):,}")
- print(f" Columns: {len(final_data.columns)}")
+ print(f" columns: {len(final_data.columns)}")
  print(f" Target distribution: {final_data['target'].value_counts().to_dict()}")
 
  # Count features by type
@@ -181,11 +181,11 @@ def main():
  print(f" Technical indicators: {len(technical_features)}")
  print(f" Total custom features: {len(schr_features) + len(wave_features) + len(short3_features)}")
 
- print(f"\n🎯 Data Quality:")
+ print(f"\n🎯 data Quality:")
  print(f" Missing values: {final_data.isnull().sum().sum()}")
- print(f" Data types: {final_data.dtypes.value_counts().to_dict()}")
+ print(f" data types: {final_data.dtypes.value_counts().to_dict()}")
 
- print(f"\n✅ All tests passed! Pipeline is working correctly.")
+ print(f"\n✅ all tests passed! Pipeline is Working correctly.")
  print(f" Ready for model training with {len(final_data)} samples and {len(final_data.columns)} features.")
 
  return True
@@ -204,7 +204,7 @@ if __name__ == "__main__":
  success = main()
 
  if success:
- print("\n🎉 Simple pipeline test completed successfully!")
+ print("\n🎉 Simple pipeline test COMPLETED successfully!")
  else:
  print("\n💥 Simple pipeline test failed!")
  sys.exit(1)

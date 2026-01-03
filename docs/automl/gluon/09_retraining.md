@@ -14,7 +14,7 @@
 - **Медицинские диагнозы**: Устаревшие модели пропускали новые симптомы болезней
 
 ### Преимущества правильного переобучения
-- **Актуальность**: Модель всегда работает with актуальными данными
+- **Актуальность**: Модель всегда Workingет with актуальными данными
 - **Адаптивность**: Автоматически подстраивается под изменения
 - **Конкурентоспособность**: Остается эффективной in динамичной среде
 - **Доверие пользователей**: Результаты остаются точными and полезными
@@ -28,15 +28,15 @@
 
 **Почему модели "стареют" in продакшене?**
 - **Концептуальный дрифт**: Реальность меняется быстрее модели
-- **Данные дрифт**: Новые типы данных, которых not было при обучении
+- **data дрифт**: Новые типы данных, которых not было при обучении
 - **Пользовательские предпочтения**: Люди меняют поведение and вкусы
-- **Технологические изменения**: Новые устройства, платформы, интерфейсы
+- **Технологические изменения**: Новые устройства, платформы, interfaceы
 
 Переобучение (retraining) - это критически важный процесс for поддержания актуальности ML-моделей in продакшене. in этом разделе рассмотрим все аспекты автоматизированного переобучения моделей.
 
 ## Стратегии переобучения
 
-<img src="images/optimized/walk_forward_analysis.png" alt="Стратегии переобучения" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/walk_forward_Analysis.png" alt="Стратегии переобучения" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 2: Различные стратегии переобучения моделей*
 
 **Почему важны разные стратегии переобучения?** Потому что разные типы данных and задач требуют разных подходов:
@@ -50,7 +50,7 @@
 
 ### 1. Периодическое переобучение
 
-**Почему периодическое переобучение - самый простой and надежный подход?** Потому что оно работает on расписанию, как будильник, который напоминает обновить знания. Это как регулярные курсы повышения квалификации for врачей.
+**Почему периодическое переобучение - самый простой and надежный подход?** Потому что оно Workingет on расписанию, как будильник, который напоминает обновить знания. Это как регулярные курсы повышения квалификации for врачей.
 
 **Преимущества периодического переобучения:**
 - **Простота**: Легко настроить and поддерживать
@@ -84,7 +84,7 @@ class PeriodicRetraining:
  model_path : str
  Путь к директории with моделью AutoGluon. Должен содержать:
  - Модельные файлы (.pkl)
- - Метаданные модели
+ - Метаdata модели
  - Конфигурационные файлы
  example: "./models/production_model_v1"
 
@@ -137,7 +137,7 @@ class PeriodicRetraining:
  if self.validate_new_model(predictor):
  # Замена старой модели
  self.deploy_new_model(predictor)
- self.logger.info("Model retraining completed successfully")
+ self.logger.info("Model retraining COMPLETED successfully")
  else:
  self.logger.warning("New model validation failed, keeping old model")
 
@@ -169,7 +169,7 @@ class PeriodicRetraining:
 
 ### 2. Адаптивное переобучение
 
-<img src="images/optimized/monte_carlo_analysis.png" alt="Адаптивное переобучение" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/monte_carlo_Analysis.png" alt="Адаптивное переобучение" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 3: Адаптивное переобучение and детекция дрейфа данных*
 
 **Почему важно адаптивное переобучение?** Потому что оно реагирует on изменения in реальном времени:
@@ -209,7 +209,7 @@ class AdaptiveRetraining:
  self.performance_history = []
  self.logger = logging.getLogger(__name__)
 
- def monitor_performance(self, Predictions: list, actuals: list):
+ def monitor_performance(self, Predictions: List, actuals: List):
  """Monitoring производительности модели"""
  # Расчет текущей производительности
  current_performance = self.calculate_performance(Predictions, actuals)
@@ -231,7 +231,7 @@ class AdaptiveRetraining:
  return False
 
  # Анализ тренда за последние 10 измерений
- # Используется скользящее окно for analysis тренда производительности
+ # Используется скользящее окно for Analysis тренда производительности
  recent_performance = [p['performance'] for p in self.performance_history[-10:]]
 
  # check снижения производительности
@@ -295,7 +295,7 @@ class IncrementalRetraining:
  self.batch_size = batch_size
  self.logger = logging.getLogger(__name__)
 
- def incremental_update(self, new_data: pd.DataFrame):
+ def incremental_update(self, new_data: pd.dataFrame):
  """Инкрементальное update модели"""
  try:
  # Загрузка текущей модели
@@ -315,14 +315,14 @@ class IncrementalRetraining:
  # Валидация обновленной модели
  if self.validate_updated_model(updated_predictor):
  self.deploy_updated_model(updated_predictor)
- self.logger.info("Incremental update completed")
+ self.logger.info("Incremental update COMPLETED")
  else:
  self.logger.warning("Updated model validation failed")
 
  except Exception as e:
  self.logger.error(f"Incremental update failed: {e}")
 
- def combine_data(self, current_predictor, new_data: pd.DataFrame) -> pd.DataFrame:
+ def combine_data(self, current_predictor, new_data: pd.dataFrame) -> pd.dataFrame:
  """Объединение старых and новых данных"""
  # Получение старых данных из модели (если доступно)
  old_data = self.extract_old_data(current_predictor)
@@ -359,7 +359,7 @@ from typing import Dict, List, Any
 import json
 from datetime import datetime, timedelta
 
-class AutomatedRetrainingSystem:
+class AutomatedRetrainingsystem:
  """Система автоматического переобучения"""
 
  def __init__(self, config: Dict[str, Any]):
@@ -383,7 +383,7 @@ class AutomatedRetrainingSystem:
  self.retraining_queue = asyncio.Queue()
  self.is_retraining = False
 
- async def start_monitoring(self):
+ async def start_Monitoring(self):
  """Launch Monitoringа системы"""
  tasks = [
  self.monitor_data_quality(),
@@ -408,13 +408,13 @@ class AutomatedRetrainingSystem:
  # 0.7: Средние требования
  # 0.6: Низкие требования
  if data_quality['score'] < self.config['data_quality_threshold']:
- self.logger.warning(f"Data quality issue: {data_quality}")
+ self.logger.warning(f"data quality issue: {data_quality}")
  await self.trigger_retraining('data_quality')
 
  await asyncio.sleep(3600) # check каждый час
 
  except Exception as e:
- self.logger.error(f"Data quality monitoring error: {e}")
+ self.logger.error(f"data quality Monitoring error: {e}")
  await asyncio.sleep(300)
 
  async def monitor_model_performance(self):
@@ -437,7 +437,7 @@ class AutomatedRetrainingSystem:
  await asyncio.sleep(1800) # check каждые 30 minutes
 
  except Exception as e:
- self.logger.error(f"Performance monitoring error: {e}")
+ self.logger.error(f"Performance Monitoring error: {e}")
  await asyncio.sleep(300)
 
  async def monitor_data_drift(self):
@@ -454,13 +454,13 @@ class AutomatedRetrainingSystem:
  # 0.3: Низкая чувствительность (стабильные системы)
  # 0.5: Очень низкая чувствительность (только критические изменения)
  if drift_score > self.config['drift_threshold']:
- self.logger.warning(f"Data drift detected: {drift_score}")
+ self.logger.warning(f"data drift detected: {drift_score}")
  await self.trigger_retraining('data_drift')
 
  await asyncio.sleep(7200) # check каждые 2 часа
 
  except Exception as e:
- self.logger.error(f"Data drift monitoring error: {e}")
+ self.logger.error(f"data drift Monitoring error: {e}")
  await asyncio.sleep(300)
 
  async def trigger_retraining(self, reason: str):
@@ -517,7 +517,7 @@ class AutomatedRetrainingSystem:
  if await self.validate_new_model(predictor):
  # Деплой новой модели
  await self.deploy_new_model(predictor)
- self.logger.info("Retraining completed successfully")
+ self.logger.info("Retraining COMPLETED successfully")
  else:
  self.logger.warning("New model validation failed")
 
@@ -544,9 +544,9 @@ class RetrainingValidator:
  validation_config : Dict[str, Any]
  configuration валидации with параметрами:
  - improvement_threshold: float - минимальное improve for принятия модели (0.0-1.0)
- - performance_metrics: List[str] - список метрик for сравнения
+ - performance_metrics: List[str] - List метрик for сравнения
  - minimum_requirements: Dict[str, float] - минимальные требования к метрикам
- - stability_threshold: float - порог стабильности predictions (0.0-1.0)
+ - stability_threshold: float - порог стабильности Predictions (0.0-1.0)
  - required_Version: str - требуемая версия AutoGluon
  """
  self.config = validation_config
@@ -607,7 +607,7 @@ class RetrainingValidator:
  Returns:
  --------
  bool
- True если новая модель показывает improve on всем метрикам
+ True если новая модель показывает improve on all метрикам
 
  Notes:
  ------
@@ -635,7 +635,7 @@ class RetrainingValidator:
 
  return True
 
- def check_model_stability(self, predictor, test_data: pd.DataFrame) -> bool:
+ def check_model_stability(self, predictor, test_data: pd.dataFrame) -> bool:
  """
  check стабильности модели
 
@@ -643,8 +643,8 @@ class RetrainingValidator:
  -----------
  predictor : TabularPredictor
  Модель for проверки стабильности
- test_data : pd.DataFrame
- Тестовые данные for проверки
+ test_data : pd.dataFrame
+ Тестовые data for проверки
 
  Returns:
  --------
@@ -653,7 +653,7 @@ class RetrainingValidator:
 
  Notes:
  ------
- stability_threshold: порог согласованности predictions (0.0-1.0)
+ stability_threshold: порог согласованности Predictions (0.0-1.0)
  - 0.99: Очень высокая стабильность (критически важные системы)
  - 0.95: Высокая стабильность (рекомендуется for продакшена)
  - 0.90: Средняя стабильность (приемлемо for большинства задач)
@@ -666,7 +666,7 @@ class RetrainingValidator:
  pred = predictor.predict(test_data)
  Predictions.append(pred)
 
- # check согласованности predictions
+ # check согласованности Predictions
  # Высокая согласованность = стабильная модель
  consistency = self.calculate_Prediction_consistency(Predictions)
  return consistency > self.config.get('stability_threshold', 0.95)
@@ -705,13 +705,13 @@ class RetrainingValidator:
 class RetrainingMonitor:
  """Monitoring процесса переобучения"""
 
- def __init__(self, monitoring_config: Dict[str, Any]):
+ def __init__(self, Monitoring_config: Dict[str, Any]):
  """
  Инициализация системы Monitoringа переобучения
 
  Parameters:
  -----------
- monitoring_config : Dict[str, Any]
+ Monitoring_config : Dict[str, Any]
  configuration Monitoringа with параметрами:
  - max_retraining_time: int - максимальное время переобучения in секундах
  - cpu_threshold: float - порог использования CPU (0.0-1.0)
@@ -719,11 +719,11 @@ class RetrainingMonitor:
  - disk_threshold: float - порог использования диска (0.0-1.0)
  - check_interval: int - интервал проверки ресурсов in секундах
  """
- self.config = monitoring_config
+ self.config = Monitoring_config
  self.logger = logging.getLogger(__name__)
  self.metrics = {}
 
- def start_monitoring(self, retraining_process):
+ def start_Monitoring(self, retraining_process):
  """Launch Monitoringа"""
  # Monitoring ресурсов
  self.monitor_resources()
@@ -772,7 +772,7 @@ class RetrainingMonitor:
  time.sleep(60) # check каждую minutesу
 
  except Exception as e:
- self.logger.error(f"Resource monitoring error: {e}")
+ self.logger.error(f"Resource Monitoring error: {e}")
  time.sleep(300)
 
  def monitor_progress(self, retraining_process):
@@ -825,7 +825,7 @@ class RetrainingMonitor:
  time.sleep(600) # check каждые 10 minutes
 
  except Exception as e:
- self.logger.error(f"Quality monitoring error: {e}")
+ self.logger.error(f"Quality Monitoring error: {e}")
  time.sleep(300)
 ```
 
@@ -890,7 +890,7 @@ class ModelRollback:
 
  target_version = self.model_versions[-2]['path']
  else:
- # Откат к указанной версии
+ # Откат к specifiedной версии
  target_version = self.find_version_path(target_version)
  if target_version is None:
  self.logger.error(f"Version {target_version} not found")
@@ -938,7 +938,7 @@ from autogluon.tabular import TabularPredictor
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-class CompleteRetrainingSystem:
+class CompleteRetrainingsystem:
  """Полная система переобучения"""
 
  def __init__(self, config: Dict[str, Any]):
@@ -953,9 +953,9 @@ class CompleteRetrainingSystem:
  self.current_model = TabularPredictor.load(self.config['model_path'])
 
  # Launch Monitoringа
- await self.start_monitoring()
+ await self.start_Monitoring()
 
- async def start_monitoring(self):
+ async def start_Monitoring(self):
  """Launch Monitoringа"""
  tasks = [
  self.monitor_performance(),
@@ -980,7 +980,7 @@ class CompleteRetrainingSystem:
  await asyncio.sleep(1800) # check каждые 30 minutes
 
  except Exception as e:
- self.logger.error(f"Performance monitoring error: {e}")
+ self.logger.error(f"Performance Monitoring error: {e}")
  await asyncio.sleep(300)
 
  async def monitor_data_drift(self):
@@ -991,13 +991,13 @@ class CompleteRetrainingSystem:
  drift_score = await self.check_data_drift()
 
  if drift_score > self.config['drift_threshold']:
- self.logger.warning(f"Data drift detected: {drift_score}")
+ self.logger.warning(f"data drift detected: {drift_score}")
  await self.trigger_retraining('data_drift')
 
  await asyncio.sleep(3600) # check каждый час
 
  except Exception as e:
- self.logger.error(f"Data drift monitoring error: {e}")
+ self.logger.error(f"data drift Monitoring error: {e}")
  await asyncio.sleep(300)
 
  async def monitor_schedule(self):
@@ -1015,7 +1015,7 @@ class CompleteRetrainingSystem:
  await asyncio.sleep(3600) # check каждый час
 
  except Exception as e:
- self.logger.error(f"Schedule monitoring error: {e}")
+ self.logger.error(f"Schedule Monitoring error: {e}")
  await asyncio.sleep(300)
 
  async def trigger_retraining(self, reason: str):
@@ -1051,7 +1051,7 @@ class CompleteRetrainingSystem:
  'status': 'success'
  })
 
- self.logger.info("Retraining completed successfully")
+ self.logger.info("Retraining COMPLETED successfully")
  else:
  # Откат к предыдущей версии
  self.rollback_model(backup_path)
@@ -1158,7 +1158,7 @@ config = {
  # Дополнительные parameters Monitoringа
  'data_quality_threshold': 0.8, # Порог качества данных (80%)
  'max_retraining_time': 7200, # Максимальное время переобучения (2 часа)
- 'stability_threshold': 0.95, # Порог стабильности predictions (95%)
+ 'stability_threshold': 0.95, # Порог стабильности Predictions (95%)
 
  # parameters ресурсов
  'cpu_threshold': 0.9, # Порог использования CPU (90%)
@@ -1173,7 +1173,7 @@ config = {
 
 # Launch системы
 async def main():
- system = CompleteRetrainingSystem(config)
+ system = CompleteRetrainingsystem(config)
  await system.initialize()
 
 if __name__ == "__main__":
@@ -1182,7 +1182,7 @@ if __name__ == "__main__":
 
 ## Лучшие практики переобучения
 
-<img src="images/optimized/robustness_analysis.png" alt="Лучшие практики переобучения" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/robustness_Analysis.png" alt="Лучшие практики переобучения" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 6: Лучшие практики and рекомендации for переобучения моделей*
 
 **Почему важны лучшие практики переобучения?** Потому что неправильное переобучение может ухудшить качество модели:
@@ -1222,7 +1222,7 @@ if __name__ == "__main__":
 
 ##### drift_threshold (0.0-1.0)
 
-- **0.05-0.10**: Очень чувствительная детекция (быстро меняющиеся данные)
+- **0.05-0.10**: Очень чувствительная детекция (быстро меняющиеся data)
 - **0.10-0.20**: Стандартная чувствительность (рекомендуется)
 - **0.20-0.30**: Низкая чувствительность (стабильные системы)
 - **0.30-0.50**: Очень низкая чувствительность (только критические изменения)

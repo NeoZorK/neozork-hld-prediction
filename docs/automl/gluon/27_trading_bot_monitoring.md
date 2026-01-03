@@ -7,7 +7,7 @@
 
 ## Why Monitoring торгового бота критически важен
 
-**Почему 90% торговых ботов теряют деньги без правильного Monitoringа?** Потому что они работают in слепую, not понимая, что происходит with их системой. Это как вождение автомобиля без приборной панели.
+**Почему 90% торговых ботов теряют деньги без правильного Monitoringа?** Потому что они Workingют in слепую, not понимая, что происходит with их системой. Это как вождение автомобиля без приборной панели.
 
 ### Проблемы без Monitoringа
 
@@ -38,7 +38,7 @@ Monitoring торгового бота - это критически важны�
 ```mermaid
 graph TD
  A[Торговый бот] --> B[Сборщик метрик]
- A --> C[Анализатор логов]
+ A --> C[Analysisтор логов]
 
  B --> D[Хранилище метрик]
  C --> E[Хранилище логов]
@@ -55,7 +55,7 @@ graph TD
  H --> L[Slack]
 
  B --> M[Отслеживание производительности]
- M --> N[check здоровья]
+ M --> N[health check]
 
  N --> O[Автоматические действия]
  O --> P[ПереLaunch бота]
@@ -73,12 +73,12 @@ graph TD
  style O fill:#ffcdd2
 ```
 
-### 1. Компоненты системы Monitoringа
+### 1. components системы Monitoringа
 
-**Почему нужны все компоненты Monitoringа?** Потому что каждый компонент решает свою задачу, а вместе они создают полную картину работы бота.
+**Почему нужны все components Monitoringа?** Потому что каждый компонент решает свою задачу, а вместе они создают полную картину работы бота.
 
 ```python
-class TradingBotMonitoringSystem:
+class TradingBotMonitoringsystem:
  """Система Monitoringа торгового бота - Comprehensive solution"""
 
  def __init__(self, config=None):
@@ -91,7 +91,7 @@ class TradingBotMonitoringSystem:
  - alert_channels: Каналы уведомлений
  - dashboard_refresh: Частота обновления дашборда
  - log_rotation: settings ротации логов
- - health_check_interval: Интервал проверки здоровья
+ - health_check_interval: Интервал проверки health
  - performance_tracking: settings отслеживания производительности
  """
  self.config = config or self._get_default_config()
@@ -102,7 +102,7 @@ class TradingBotMonitoringSystem:
  storage_config=self.config['metrics_storage']
  )
 
- # Управление уведомлениями - когда что-то идет not так
+ # Management уведомлениями - когда что-то идет not так
  self.alert_manager = AlertManager(
  channels=self.config['alert_channels'],
  rules_config=self.config['alert_rules']
@@ -120,14 +120,14 @@ class TradingBotMonitoringSystem:
  rotation_config=self.config['log_rotation']
  )
 
- # Отслеживание производительности - как работает бот
+ # Отслеживание производительности - как Workingет бот
  self.performance_tracker = PerformanceTracker(
  tracking_config=self.config['performance_tracking'],
  benchmarks=self.config['performance_benchmarks']
  )
 
- # check здоровья - все ли in порядке
- self.health_checker = HealthChecker(
+ # health check - все ли in порядке
+ self.health_checker = healthchecker(
  check_interval=self.config['health_check_interval'],
  health_rules=self.config['health_rules']
  )
@@ -145,7 +145,7 @@ class TradingBotMonitoringSystem:
  'compression': True, # Сжатие старых логов
  'retention_days': 30 # Хранение логов (дни)
  },
- 'health_check_interval': 300, # Интервал проверки здоровья (секунды)
+ 'health_check_interval': 300, # Интервал проверки health (секунды)
  'performance_tracking': { # settings отслеживания производительности
  'enable_tracking': True, # Включить отслеживание
  'tracking_interval': 60, # Интервал отслеживания (секунды)
@@ -158,7 +158,7 @@ class TradingBotMonitoringSystem:
  'host': 'localhost', # Хост базы данных
  'port': 8086, # Порт базы данных
  'database': 'trading_metrics', # Имя базы данных
- 'username': 'admin', # Имя пользователя
+ 'Username': 'admin', # Имя User
  'password': 'password', # Пароль
  'retention_policy': '30d' # Политика хранения
  },
@@ -184,7 +184,7 @@ class TradingBotMonitoringSystem:
  }
  },
  'dashboard_widgets': { # settings виджетов дашборда
- 'overview': { # Виджет обзора
+ 'overView': { # Виджет обзора
  'enabled': True, # Включен
  'refresh_interval': 30, # Интервал обновления (секунды)
  'metrics': ['profit_loss', 'win_rate', 'active_positions', 'uptime']
@@ -199,7 +199,7 @@ class TradingBotMonitoringSystem:
  'refresh_interval': 60,
  'metrics': ['max_drawdown', 'sharpe_ratio', 'var_95', 'current_exposure']
  },
- 'system_health': { # Виджет здоровья системы
+ 'system_health': { # Виджет health системы
  'enabled': True,
  'refresh_interval': 30,
  'metrics': ['cpu_usage', 'memory_usage', 'disk_usage', 'network_latency']
@@ -215,7 +215,7 @@ class TradingBotMonitoringSystem:
  'metrics': ['volatility', 'trend', 'volume', 'technical_indicators']
  }
  },
- 'log_patterns': { # Паттерны for analysis логов
+ 'log_patterns': { # Паттерны for Analysis логов
  'error_patterns': [ # Паттерны ошибок
  r'ERROR: (.+)',
  r'EXCEPTION: (.+)',
@@ -240,7 +240,7 @@ class TradingBotMonitoringSystem:
  r'Take profit triggered: (.+)'
  ]
  },
- 'health_rules': { # Правила проверки здоровья
+ 'health_rules': { # Правила проверки health
  'bot_running': { # check работы бота
  'enabled': True,
  'max_downtime': 300, # Максимальное время простоя (секунды)
@@ -292,7 +292,7 @@ class TradingBotMonitoringSystem:
  }
  }
 
- def start_monitoring(self):
+ def start_Monitoring(self):
  """Launch системы Monitoringа"""
 
  try:
@@ -311,7 +311,7 @@ class TradingBotMonitoringSystem:
  print(f"❌ Ошибка Launchа системы Monitoringа: {e}")
  return False
 
- def stop_monitoring(self):
+ def stop_Monitoring(self):
  """Остановка системы Monitoringа"""
 
  try:
@@ -330,7 +330,7 @@ class TradingBotMonitoringSystem:
  print(f"❌ Ошибка остановки системы Monitoringа: {e}")
  return False
 
- def get_monitoring_status(self):
+ def get_Monitoring_status(self):
  """Получение статуса Monitoringа"""
 
  return {
@@ -373,7 +373,7 @@ graph TD
  D --> D1[Точность модели]
  D --> D2[Дрифт модели]
  D --> D3[Качество данных]
- D --> D4[Уверенность predictions]
+ D --> D4[Уверенность Predictions]
 
  E --> E1[Волатильность]
  E --> E2[Тренд рынка]
@@ -428,7 +428,7 @@ class MetricsCollector:
  - host: Хост базы данных
  - port: Порт базы данных
  - database: Имя базы данных
- - username: Имя пользователя
+ - Username: Имя User
  - password: Пароль
  - retention_policy: Политика хранения
  """
@@ -490,7 +490,7 @@ class MetricsCollector:
  'host': 'localhost', # Хост базы данных
  'port': 8086, # Порт базы данных
  'database': 'trading_metrics', # Имя базы данных
- 'username': 'admin', # Имя пользователя
+ 'Username': 'admin', # Имя User
  'password': 'password', # Пароль
  'retention_policy': '30d', # Политика хранения
  'batch_size': 1000, # Размер батча for записи
@@ -576,7 +576,7 @@ class MetricsCollector:
  'position_size_avg': self.calculate_avg_position_size(bot_state), # Средний размер позиции
  'position_duration_avg': self.calculate_avg_position_duration(bot_state), # Средняя длительность позиции
 
- # Управление рисками
+ # Management рисками
  'current_exposure': bot_state.get('current_exposure', 0), # Текущая экспозиция
  'max_exposure': bot_state.get('max_exposure', 0), # Максимальная экспозиция
  'risk_utilization': self.calculate_risk_utilization(bot_state), # Использование риска
@@ -727,7 +727,7 @@ graph TD
  M --> N
 
  N --> O{Ответ получен?}
- O -->|Да| P[Алерт обработан]
+ O -->|Да| P[Алерт обWorkingн]
  O -->|Нет| Q[Эскалация]
 
  Q --> R[Менеджер]
@@ -751,7 +751,7 @@ class AlertManager:
  Инициализация менеджера алертов
 
  Args:
- channels (list): Список каналов уведомлений
+ channels (List): List каналов уведомлений
  rules_config (dict): configuration правил алертов
  - critical_thresholds: Критические пороги
  - warning_thresholds: Предупреждающие пороги
@@ -798,7 +798,7 @@ class AlertManager:
  'memory_usage': 0.8, # Использование памяти
  'cpu_usage': 0.8, # Использование CPU
  'trades_per_hour': 0.1, # Минимальное количество сделок in час
- 'Prediction_confidence': 0.6, # Уверенность predictions
+ 'Prediction_confidence': 0.6, # Уверенность Predictions
  'data_quality_score': 0.7 # Качество данных
  },
  'info_thresholds': { # Информационные пороги
@@ -824,7 +824,7 @@ class AlertManager:
  'channels': ['phone', 'email'],
  'escalation_time': 3600
  },
- 'system_down': { # Система not работает
+ 'system_down': { # Система not Workingет
  'condition': 'bot_down_for_10_minutes',
  'action': 'escalate_to_emergency_contact',
  'channels': ['phone', 'sms', 'email'],
@@ -887,7 +887,7 @@ class AlertManager:
 📊 *Report*
 Торговый бот: {bot_name}
 Время: {timestamp}
-Период: {report_period}
+Период: {Report_period}
 
 Результаты:
 - P&L: {profit_loss:.2f}
@@ -905,11 +905,11 @@ Status: {status}
  'email': { # Email
  'smtp_server': 'smtp.gmail.com',
  'smtp_port': 587,
- 'username': 'bot@example.com',
+ 'Username': 'bot@example.com',
  'password': 'password',
  'from_email': 'bot@example.com',
  'to_emails': ['admin@example.com', 'manager@example.com'],
- 'use_tls': True,
+ 'Use_tls': True,
  'timeout': 30
  },
  'telegram': { # Telegram
@@ -928,9 +928,9 @@ Status: {status}
  'timeout': 30
  },
  'slack': { # Slack
- 'webhook_url': 'https://hooks.slack.com/services/...',
+ 'webhook_url': 'https://hooks.slack.com/Services/...',
  'channel': '#trading-alerts',
- 'username': 'Trading Bot',
+ 'Username': 'Trading Bot',
  'icon_emoji': ':robot_face:',
  'timeout': 30
  }
@@ -1046,7 +1046,7 @@ Status: {status}
  'channels': ['telegram'],
  'cooldown': 3600, # 1 час
  'escalation_time': 7200, # 2 часа
- 'auto_actions': ['check_market_conditions', 'review_strategy'],
+ 'auto_actions': ['check_market_conditions', 'reView_strategy'],
  'priority': 'warning'
  }
  },
@@ -1059,7 +1059,7 @@ Status: {status}
  'channels': ['email', 'telegram'],
  'cooldown': 86400, # 24 часа
  'escalation_time': 0,
- 'auto_actions': ['generate_report'],
+ 'auto_actions': ['generate_Report'],
  'priority': 'info'
  },
  'milestone_reached': {
@@ -1077,7 +1077,7 @@ Status: {status}
  'channels': ['email', 'telegram'],
  'cooldown': 604800, # 7 дней
  'escalation_time': 0,
- 'auto_actions': ['generate_weekly_report'],
+ 'auto_actions': ['generate_weekly_Report'],
  'priority': 'info'
  }
  }
@@ -1169,7 +1169,7 @@ Status: {status}
 
 ### 4. Дашборд Monitoringа
 
-### 📊 Структура дашборда Monitoringа
+### 📊 Structure дашборда Monitoringа
 
 ```mermaid
 graph TD
@@ -1213,7 +1213,7 @@ graph TD
  G --> G1[Точность модели]
  G --> G2[Дрифт модели]
  G --> G3[Качество данных]
- G --> G4[Уверенность predictions]
+ G --> G4[Уверенность Predictions]
 
  H --> H1[Волатильность]
  H --> H2[Тренд рынка]
@@ -1241,11 +1241,11 @@ class MonitoringDashboard:
  Args:
  refresh_interval (int): Интервал обновления дашборда (секунды)
  widgets_config (dict): configuration виджетов дашборда
- - overview: settings виджета обзора
+ - overView: settings виджета обзора
  - performance: settings виджета производительности
  - trading_activity: settings виджета торговой активности
  - risk_metrics: settings виджета метрик риска
- - system_health: settings виджета здоровья системы
+ - system_health: settings виджета health системы
  - model_metrics: settings виджета метрик модели
  - market_conditions: settings виджета рыночных условий
  """
@@ -1260,7 +1260,7 @@ class MonitoringDashboard:
  # settings дашборда
  self.dashboard_config = {
  'theme': 'dark', # Тема дашборда (dark/light)
- 'layout': 'grid', # Макет (grid/list)
+ 'layout': 'grid', # Макет (grid/List)
  'auto_refresh': True, # Автообновление
  'refresh_interval': refresh_interval, # Интервал обновления (секунды)
  'data_retention': 7, # Хранение данных (дни)
@@ -1287,7 +1287,7 @@ class MonitoringDashboard:
  def _get_default_widgets_config(self):
  """Получение конфигурации виджетов on умолчанию"""
  return {
- 'overview': { # Виджет обзора
+ 'overView': { # Виджет обзора
  'enabled': True, # Включен
  'refresh_interval': 30, # Интервал обновления (секунды)
  'size': 'large', # Размер виджета
@@ -1408,7 +1408,7 @@ class MonitoringDashboard:
  'risk_utilization': {'threshold': 0.8, 'color': 'warning'}
  }
  },
- 'system_health': { # Виджет здоровья системы
+ 'system_health': { # Виджет health системы
  'enabled': True,
  'refresh_interval': 30,
  'size': 'medium',
@@ -1523,7 +1523,7 @@ class MonitoringDashboard:
 
  # Основные виджеты
  self.widgets = {
- 'overview': self.create_overview_widget(),
+ 'overView': self.create_overView_widget(),
  'performance': self.create_performance_widget(),
  'trading_activity': self.create_trading_activity_widget(),
  'risk_metrics': self.create_risk_metrics_widget(),
@@ -1534,11 +1534,11 @@ class MonitoringDashboard:
 
  return self.widgets
 
- def create_overview_widget(self):
+ def create_overView_widget(self):
  """Виджет обзора"""
 
  return {
- 'type': 'overview',
+ 'type': 'overView',
  'title': 'Общий обзор',
  'metrics': [
  {'name': 'P&L', 'value': 'profit_loss', 'format': 'currency'},
@@ -1605,7 +1605,7 @@ class MonitoringDashboard:
  }
 
  def create_system_health_widget(self):
- """Виджет здоровья системы"""
+ """Виджет health системы"""
 
  return {
  'type': 'system_health',
@@ -1632,7 +1632,7 @@ class MonitoringDashboard:
 
 ```python
 class LogAnalyzer:
- """Анализатор логов"""
+ """Analysisтор логов"""
 
  def __init__(self):
  self.log_patterns = {}
@@ -1642,14 +1642,14 @@ class LogAnalyzer:
  def analyze_logs(self, log_file):
  """Анализ логов"""
 
- analysis_results = {
+ Analysis_results = {
  'errors': self.analyze_errors(log_file),
  'performance_issues': self.analyze_performance_issues(log_file),
  'trading_patterns': self.analyze_trading_patterns(log_file),
  'system_issues': self.analyze_system_issues(log_file)
  }
 
- return analysis_results
+ return Analysis_results
 
  def analyze_errors(self, log_file):
  """Анализ ошибок"""
@@ -1807,9 +1807,9 @@ class PerformanceTracker:
  # Анализ просадки
  if metrics.get('max_drawdown', 0) > 0.1:
  suggestions.append({
- 'category': 'risk_management',
+ 'category': 'risk_Management',
  'priority': 'high',
- 'suggestion': 'Высокая просадка. Улучшите управление рисками.',
+ 'suggestion': 'Высокая просадка. Улучшите Management рисками.',
  'action': 'reduce_position_sizes'
  })
 
@@ -1819,7 +1819,7 @@ class PerformanceTracker:
  'category': 'system_stability',
  'priority': 'medium',
  'suggestion': 'Высокий уровень ошибок. Проверьте стабильность системы.',
- 'action': 'review_error_logs'
+ 'action': 'reView_error_logs'
  })
 
  # Анализ производительности
@@ -1828,19 +1828,19 @@ class PerformanceTracker:
  'category': 'trading_activity',
  'priority': 'low',
  'suggestion': 'Низкая торговая активность. Проверьте условия входа.',
- 'action': 'review_entry_conditions'
+ 'action': 'reView_entry_conditions'
  })
 
  return suggestions
 ```
 
-### 7. check здоровья системы
+### 7. health check системы
 
-### 🏥 check здоровья системы
+### 🏥 health check системы
 
 ```mermaid
 graph TD
- A[Система Monitoringа] --> B[check здоровья]
+ A[Система Monitoringа] --> B[health check]
 
  B --> C[check работы бота]
  B --> D[check API]
@@ -1849,28 +1849,28 @@ graph TD
  B --> G[check ресурсов]
  B --> H[check сети]
 
- C --> C1{Бот работает?}
- C1 -->|Да| C2[Status: Healthy]
+ C --> C1{Бот Workingет?}
+ C1 -->|Да| C2[Status: healthy]
  C1 -->|Нет| C3[Status: Unhealthy]
 
  D --> D1{API available?}
- D1 -->|Да| D2[Status: Healthy]
+ D1 -->|Да| D2[Status: healthy]
  D1 -->|Нет| D3[Status: Unhealthy]
 
  E --> E1{Модель загружена?}
- E1 -->|Да| E2[Status: Healthy]
+ E1 -->|Да| E2[Status: healthy]
  E1 -->|Нет| E3[Status: Unhealthy]
 
- F --> F1{Данные свежие?}
- F1 -->|Да| F2[Status: Healthy]
+ F --> F1{data свежие?}
+ F1 -->|Да| F2[Status: healthy]
  F1 -->|Нет| F3[Status: Unhealthy]
 
  G --> G1{Ресурсы in норме?}
- G1 -->|Да| G2[Status: Healthy]
+ G1 -->|Да| G2[Status: healthy]
  G1 -->|Нет| G3[Status: Unhealthy]
 
  H --> H1{Сеть стабильна?}
- H1 -->|Да| H2[Status: Healthy]
+ H1 -->|Да| H2[Status: healthy]
  H1 -->|Нет| H3[Status: Unhealthy]
 
  C2 --> I[Общий статус]
@@ -1887,7 +1887,7 @@ graph TD
  H3 --> I
 
  I --> J{Все проверки пройдены?}
- J -->|Да| K[Status: Healthy]
+ J -->|Да| K[Status: healthy]
  J -->|Нет| L[Status: Unhealthy]
 
  K --> M[Продолжить работу]
@@ -1902,15 +1902,15 @@ graph TD
 ```
 
 ```python
-class HealthChecker:
- """check здоровья системы"""
+class healthchecker:
+ """health check системы"""
 
  def __init__(self):
  self.health_checks = {}
  self.health_status = {}
 
  def perform_health_checks(self, system_state):
- """Выполнение проверок здоровья"""
+ """Выполнение проверок health"""
 
  health_checks = {
  'bot_running': self.check_bot_running(system_state),
@@ -1922,7 +1922,7 @@ class HealthChecker:
  'network_connectivity': self.check_network_connectivity(system_state)
  }
 
- # Общий статус здоровья
+ # Общий статус health
  overall_health = self.calculate_overall_health(health_checks)
 
  return {
@@ -1937,12 +1937,12 @@ class HealthChecker:
  uptime = system_state.get('uptime', 0)
  last_activity = system_state.get('last_activity', 0)
 
- # Бот считается работающим, если время работы > 0 and последняя активность < 5 minutes
+ # Бот считается Workingющим, если время работы > 0 and последняя активность < 5 minutes
  is_running = uptime > 0 and (time.time() - last_activity) < 300
 
  return {
  'status': 'healthy' if is_running else 'unhealthy',
- 'message': 'Бот работает' if is_running else 'Бот not работает',
+ 'message': 'Бот Workingет' if is_running else 'Бот not Workingет',
  'details': {
  'uptime': uptime,
  'last_activity': last_activity
@@ -1978,7 +1978,7 @@ class HealthChecker:
 
  return {
  'status': 'healthy' if is_healthy else 'unhealthy',
- 'message': 'Модель загружена and работает' if is_healthy else 'Issues with моделью',
+ 'message': 'Модель загружена and Workingет' if is_healthy else 'Issues with моделью',
  'details': {
  'loaded': model_loaded,
  'accuracy': model_accuracy
@@ -2463,7 +2463,7 @@ graph TD
 
  B --> C[Prometheus]
  B --> D[Grafana]
- B --> E[Datadog]
+ B --> E[datadog]
  B --> F[New Relic]
  B --> G[Webhooks]
 
@@ -2482,8 +2482,8 @@ graph TD
  E --> E3[Инфраструктурные метрики]
  E --> E4[Корреляция событий]
 
- F --> F1[Application Performance]
- F --> F2[Infrastructure Monitoring]
+ F --> F1[application Performance]
+ F --> F2[InfraStructure Monitoring]
  F --> F3[Error Tracking]
  F --> F4[Custom Dashboards]
 
@@ -2524,7 +2524,7 @@ graph TD
 ```
 
 ```python
-class ExternalIntegrations:
+class Externalintegrations:
  """integration with внешними системами"""
 
  def __init__(self):
@@ -2578,7 +2578,7 @@ class ExternalIntegrations:
  ]
  },
  {
- 'title': 'System Health',
+ 'title': 'system health',
  'type': 'singlestat',
  'targets': [
  'trading_bot_error_rate'
@@ -2595,7 +2595,7 @@ class ExternalIntegrations:
  self.webhook_endpoints = {
  'trading_events': 'https://api.example.com/webhooks/trading',
  'system_alerts': 'https://api.example.com/webhooks/alerts',
- 'performance_reports': 'https://api.example.com/webhooks/performance'
+ 'performance_Reports': 'https://api.example.com/webhooks/performance'
  }
 
  return True
@@ -2628,7 +2628,7 @@ class ExternalIntegrations:
 | | `metrics_interval` | 60 сек | Интервал сбора метрик | 30-300 сек |
 | | `alert_channels` | ['email', 'telegram'] | Каналы уведомлений | email, sms, telegram, slack |
 | | `dashboard_refresh` | 30 сек | Частота обновления дашборда | 10-120 сек |
-| | `health_check_interval` | 300 сек | Интервал проверки здоровья | 60-600 сек |
+| | `health_check_interval` | 300 сек | Интервал проверки health | 60-600 сек |
 | **Хранение метрик** | | | | |
 | | `storage_type` | 'influxdb' | Тип хранилища | influxdb, prometheus, file |
 | | `storage_host` | 'localhost' | Хост базы данных | IP адрес or домен |
@@ -2651,7 +2651,7 @@ class ExternalIntegrations:
 | | `win_rate` | 0.4 | Процент выигрышных сделок | 0.3-0.6 |
 | | `model_drift` | 0.1 | Дрифт модели | 0.05-0.2 |
 | | `trades_per_hour` | 0.1 | Минимальное количество сделок in час | 0.01-1.0 |
-| | `Prediction_confidence` | 0.6 | Уверенность predictions | 0.4-0.8 |
+| | `Prediction_confidence` | 0.6 | Уверенность Predictions | 0.4-0.8 |
 | | `data_quality_score` | 0.7 | Качество данных | 0.5-0.9 |
 | **Информационные пороги** | | | | |
 | | `daily_pnl` | 1000 | Дневная прибыль | 100-10000 |
@@ -2664,7 +2664,7 @@ class ExternalIntegrations:
 | | `recovery_factor` | 2.0 | Фактор восстановления | 1.0-5.0 |
 | **settings дашборда** | | | | |
 | | `theme` | 'dark' | Тема дашборда | dark, light |
-| | `layout` | 'grid' | Макет | grid, list |
+| | `layout` | 'grid' | Макет | grid, List |
 | | `auto_refresh` | True | Автообновление | True, False |
 | | `data_retention` | 7 дней | Хранение данных | 1-30 дней |
 | **Размеры виджетов** | | | | |
@@ -2686,7 +2686,7 @@ class ExternalIntegrations:
 | **Правила эскалации** | | | | |
 | | `no_response` | 30 мин | Нет ответа | 15-120 мин |
 | | `repeated_alerts` | 3 раза/час | Повторяющиеся алерты | 2-10 раз/час |
-| | `system_down` | 10 мин | Система not работает | 5-30 мин |
+| | `system_down` | 10 мин | Система not Workingет | 5-30 мин |
 | | `critical_loss` | 15% | Критические потери | 10-25% |
 | **settings производительности** | | | | |
 | | `enable_tracking` | True | Включить отслеживание | True, False |
@@ -2737,9 +2737,9 @@ class ExternalIntegrations:
 
 Monitoring торгового бота - это критически важный аспект поддержания стабильной and прибыльной торговой системы. Следуя лучшим практикам, описанным in этом разделе, вы сможете:
 
-1. **Быстро выявлять проблемы** - with помощью системы алертов and проверок здоровья
+1. **Быстро выявлять проблемы** - with помощью системы алертов and проверок health
 2. **Оптимизировать производительность** - через анализ метрик and предложения on улучшению
 3. **Обеспечивать непрерывную работу** - with помощью автоматических действий and восстановления
-4. **Интегрироваться with внешними системами** - for расширенного Monitoringа and анализа
+4. **Интегрироваться with внешними системами** - for расширенного Monitoringа and Analysis
 
 Помните: хороший Monitoring - это залог успешной торговой системы! 🚀

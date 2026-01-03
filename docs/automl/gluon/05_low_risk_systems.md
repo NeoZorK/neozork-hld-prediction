@@ -5,18 +5,18 @@
 
 ## Why мало рисковые системы критически важны
 
-**Почему 90% ML систем in продакшене работают нестабильно?** Потому что они not спроектированы with учетом рисков. Это как водить машину без ремней безопасности - может работать, но очень опасно.
+**Почему 90% ML систем in продакшене Workingют нестабильно?** Потому что они not спроектированы with учетом рисков. Это как водить машину без ремней безопасности - может Workingть, но очень опасно.
 
 ### Что дают мало рисковые системы?
-- **Надежность**: Система работает стабильно in любых условиях
-- **Устойчивость**: Выдерживает неожиданные нагрузки and сбои
+- **Надежность**: Система Workingет стабильно in любых условиях
+- **Устойчивость**: Выдерживает неожиdata нагрузки and сбои
 - **Предсказуемость**: Поведение системы предсказуемо and контролируемо
 - **Доверие**: Пользователи доверяют системе
 - **Экономия**: Меньше затрат on поддержку and исправления
 
 ### Что происходит без учета рисков?
-- **Неожиданные сбои**: Система падает in критический момент
-- **Потеря данных**: Ценные данные могут быть потеряны
+- **Неожиdata сбои**: Система падает in критический момент
+- **Потеря данных**: Ценные data могут быть потеряны
 - **Репутационные потери**: Пользователи теряют доверие
 - **Финансовые потери**: Дорогостоящие исправления
 - **Юридические проблемы**: Нарушение требований
@@ -45,16 +45,16 @@
 
 **Почему важны паттерны устойчивости?** Потому что они обеспечивают надежность системы in критических ситуациях:
 
-- **Circuit Breaker**: Автоматически отключает неисправные компоненты
+- **Circuit Breaker**: Автоматически отключает неисправные components
 - **Retry Pattern**: Повторяет неудачные операции with экспоненциальной задержкой
 - **Bulkhead Pattern**: Изолирует ресурсы for предотвращения каскадных сбоев
 - **Timeout Pattern**: Ограничивает время выполнения операций
 - **Fallback Pattern**: Предоставляет альтернативные решения при сбоях
-- **Health Check Pattern**: Регулярно проверяет состояние компонентов
+- **health check Pattern**: Регулярно проверяет состояние компонентов
 - **Graceful Degradation**: Плавно снижает функциональность при проблемах
 
 ```python
-class ResilientSystemDesign:
+class ResilientsystemDesign:
  def __init__(self):
  self.patterns = {}
  self.implementations = {}
@@ -84,7 +84,7 @@ class ResilientSystemDesign:
  - **`config`**: configuration выключателя
  - **Тип**: dict
  - **description**: parameters settings автоматического выключателя
- - **Структура**: {parameter: значение}
+ - **Structure**: {parameter: значение}
 - **Возвращаемое значение**: dict - configuration автоматического выключателя
 - **parameters конфигурации**:
  - **`failure_threshold`**: Порог сбоев (on умолчанию 5)
@@ -103,14 +103,14 @@ class ResilientSystemDesign:
  - **description**: Количество повторных попыток перед срабатыванием
  - **Рекомендации**: 2-5 for критичных сервисов, 1-3 for обычных
 - **Состояния выключателя**:
- - **`CLOSED`**: Нормальная работа, запросы проходят
- - **`OPEN`**: Сработал, блокирует все запросы
+ - **`CLOSED`**: Нормальная Working, запросы проходят
+ - **`OPEN`**: СWorkingл, блокирует все запросы
  - **`HALF_OPEN`**: Тестирует восстановление сервиса
 - **Использование**:
  - **Защита from перегрузки**: Предотвращение перегрузки неисправных сервисов
  - **Быстрое восстановление**: Автоматическое восстановление после сбоев
  - **Monitoring**: Отслеживание состояния сервисов
- - **Управление ресурсами**: Контроль использования ресурсов
+ - **Management ресурсами**: Контроль использования ресурсов
 
  def implement_retry_pattern(self, operation, max_retries=3, backoff_factor=2):
  """Реализация паттерна повторных попыток"""
@@ -190,7 +190,7 @@ class ResilientSystemDesign:
  - **`resource_pools`**: Пул ресурсов for изоляции
  - **Тип**: dict
  - **description**: configuration пулов ресурсов for изоляции
- - **Структура**: {тип_ресурса: {parameters}}
+ - **Structure**: {тип_ресурса: {parameters}}
 - **Возвращаемое значение**: dict - configuration изоляции ресурсов
 - **Типы пулов ресурсов**:
  - **`thread_pools`**: Пул потоков for изоляции задач
@@ -262,26 +262,26 @@ class ResilientSystemDesign:
 
 ### Система раннего предупреждения
 
-<img src="images/optimized/robustness_analysis.png" alt="Система Monitoringа рисков" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/robustness_Analysis.png" alt="Система Monitoringа рисков" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 3: Система Monitoringа and детекции рисков*
 
 **Почему важна система раннего предупреждения?** Потому что она позволяет предотвратить проблемы to их возникновения:
 
 - **Anomaly Detection**: Детекция аномалий in поведении системы
 - **Performance Monitoring**: Monitoring производительности
-- **Health Checks**: Проверки здоровья компонентов
-- **Alerting System**: Система оповещений
+- **health checks**: Проверки health компонентов
+- **Alerting system**: Система оповещений
 - **Dashboard Monitoring**: Визуальный Monitoring
 - **Automated Responses**: Автоматические ответы on проблемы
 
 ```python
-class RiskMonitoringSystem:
+class RiskMonitoringsystem:
  def __init__(self):
  self.monitors = {}
  self.alerts = {}
  self.thresholds = {}
 
- def setup_performance_monitoring(self, metrics):
+ def setup_performance_Monitoring(self, metrics):
  """configuration Monitoringа производительности"""
  performance_config = {
  'response_time': {'threshold': 1000, 'unit': 'ms'},
@@ -293,14 +293,14 @@ class RiskMonitoringSystem:
  return performance_config
 ```
 
-**🔧 Детальное description параметров setup_performance_monitoring:**
+**🔧 Детальное description параметров setup_performance_Monitoring:**
 
-**function setup_performance_monitoring:**
+**function setup_performance_Monitoring:**
 - **Назначение**: configuration Monitoringа производительности системы for раннего обнаружения проблем
 - **parameters**:
  - **`metrics`**: Метрики for Monitoringа
- - **Тип**: dict or list
- - **description**: Список метрик for settings Monitoringа
+ - **Тип**: dict or List
+ - **description**: List метрик for settings Monitoringа
  - **examples**: ['response_time', 'throughput', 'error_rate']
 - **Возвращаемое значение**: dict - configuration Monitoringа производительности
 - **Метрики производительности**:
@@ -355,7 +355,7 @@ class RiskMonitoringSystem:
  - **Monitoring качества**: Отслеживание качества обслуживания
  - **Planирование ресурсов**: Определение потребностей in ресурсах
 
- def setup_business_metrics_monitoring(self, business_metrics):
+ def setup_business_metrics_Monitoring(self, business_metrics):
  """configuration Monitoringа бизнес-метрик"""
  business_config = {
  'revenue_impact': {'threshold': -0.05, 'unit': 'percentage'},
@@ -366,14 +366,14 @@ class RiskMonitoringSystem:
  return business_config
 ```
 
-**🔧 Детальное description параметров setup_business_metrics_monitoring:**
+**🔧 Детальное description параметров setup_business_metrics_Monitoring:**
 
-**function setup_business_metrics_monitoring:**
+**function setup_business_metrics_Monitoring:**
 - **Назначение**: configuration Monitoringа бизнес-метрик for отслеживания влияния системы on бизнес-результаты
 - **parameters**:
  - **`business_metrics`**: Бизнес-метрики for Monitoringа
- - **Тип**: dict or list
- - **description**: Список бизнес-метрик for settings Monitoringа
+ - **Тип**: dict or List
+ - **description**: List бизнес-метрик for settings Monitoringа
  - **examples**: ['revenue_impact', 'customer_satisfaction', 'conversion_rate']
 - **Возвращаемое значение**: dict - configuration Monitoringа бизнес-метрик
 - **Бизнес-метрики**:
@@ -419,7 +419,7 @@ class RiskMonitoringSystem:
  - **Автоматические действия**: Триггер for бизнес-действий
  - **Reportность**: create Reportов for руководства
 
- def setup_data_quality_monitoring(self, data_sources):
+ def setup_data_quality_Monitoring(self, data_sources):
  """configuration Monitoringа качества данных"""
  data_quality_config = {
  'missing_values': {'threshold': 0.1, 'unit': 'percentage'},
@@ -430,14 +430,14 @@ class RiskMonitoringSystem:
  return data_quality_config
 ```
 
-**🔧 Детальное description параметров setup_data_quality_monitoring:**
+**🔧 Детальное description параметров setup_data_quality_Monitoring:**
 
-**function setup_data_quality_monitoring:**
+**function setup_data_quality_Monitoring:**
 - **Назначение**: configuration Monitoringа качества данных for обеспечения надежности системы
 - **parameters**:
  - **`data_sources`**: Источники данных for Monitoringа
- - **Тип**: dict or list
- - **description**: Список источников данных for settings Monitoringа
+ - **Тип**: dict or List
+ - **description**: List источников данных for settings Monitoringа
  - **examples**: ['database', 'api', 'files', 'streams']
 - **Возвращаемое значение**: dict - configuration Monitoringа качества данных
 - **Метрики качества данных**:
@@ -494,7 +494,7 @@ class AutomatedProblemDetection:
  """Детекция дрейфа модели"""
  drift_indicators = {
  'statistical_drift': self.calculate_statistical_drift(current_data, historical_data),
- 'concept_drift': self.detect_concept_drift(current_data, historical_data),
+ 'Concept_drift': self.detect_Concept_drift(current_data, historical_data),
  'data_drift': self.detect_data_drift(current_data, historical_data),
  'performance_drift': self.detect_performance_drift(current_data, historical_data)
  }
@@ -506,14 +506,14 @@ class AutomatedProblemDetection:
 **function detect_model_drift:**
 - **Назначение**: Детекция дрейфа модели for обеспечения актуальности and надежности
 - **parameters**:
- - **`current_data`**: Текущие данные
- - **Тип**: DataFrame or dict
+ - **`current_data`**: Текущие data
+ - **Тип**: dataFrame or dict
  - **description**: Текущий набор данных for сравнения with историческими
- - **Структура**: {feature: values} or DataFrame
- - **`historical_data`**: Исторические данные
- - **Тип**: DataFrame or dict
+ - **Structure**: {feature: values} or dataFrame
+ - **`historical_data`**: Исторические data
+ - **Тип**: dataFrame or dict
  - **description**: Исторический набор данных for сравнения
- - **Структура**: {feature: values} or DataFrame
+ - **Structure**: {feature: values} or dataFrame
 - **Возвращаемое значение**: dict - индикаторы дрейфа модели
 - **Типы дрейфа**:
  - **`statistical_drift`**: Статистический дрейф
@@ -521,7 +521,7 @@ class AutomatedProblemDetection:
  - **Диапазон**: [0, 1]
  - **description**: Мера статистического различия между данными
  - **Интерпретация**: 0 = нет дрейфа, 1 = полный дрейф
- - **`concept_drift`**: Концептуальный дрейф
+ - **`Concept_drift`**: Концептуальный дрейф
  - **Тип**: float
  - **Диапазон**: [0, 1]
  - **description**: Мера изменения концепции/зависимостей
@@ -558,27 +558,27 @@ class AutomatedProblemDetection:
 **function detect_anomalies:**
 - **Назначение**: Детекция аномалий in метриках for раннего обнаружения проблем
 - **parameters**:
- - **`metrics_data`**: Данные метрик
- - **Тип**: DataFrame or dict
- - **description**: Временной ряд метрик for analysis аномалий
- - **Структура**: {timestamp: {metric: value}} or DataFrame
+ - **`metrics_data`**: data метрик
+ - **Тип**: dataFrame or dict
+ - **description**: Временной ряд метрик for Analysis аномалий
+ - **Structure**: {timestamp: {metric: value}} or dataFrame
 - **Возвращаемое значение**: dict - результаты детекции аномалий
 - **Типы аномалий**:
  - **`statistical_anomalies`**: Статистические аномалии
- - **Тип**: list
- - **description**: Список статистически аномальных точек
+ - **Тип**: List
+ - **description**: List статистически аномальных точек
  - **Критерии**: Отклонение from среднего on 2-3 стандартных отклонения
  - **`pattern_anomalies`**: Паттернные аномалии
- - **Тип**: list
- - **description**: Список аномальных паттернов in данных
+ - **Тип**: List
+ - **description**: List аномальных паттернов in данных
  - **Критерии**: Необычные последовательности or комбинации значений
  - **`trend_anomalies`**: Трендовые аномалии
- - **Тип**: list
- - **description**: Список аномальных трендов
- - **Критерии**: Неожиданные изменения направления тренда
+ - **Тип**: List
+ - **description**: List аномальных трендов
+ - **Критерии**: Неожиdata изменения направления тренда
  - **`seasonal_anomalies`**: Сезонные аномалии
- - **Тип**: list
- - **description**: Список аномалий in сезонных паттернах
+ - **Тип**: List
+ - **description**: List аномалий in сезонных паттернах
  - **Критерии**: Отклонения from ожидаемых сезонных паттернов
 - **Использование**:
  - **Раннее предупреждение**: Обнаружение проблем to критического состояния
@@ -603,26 +603,26 @@ class AutomatedProblemDetection:
 - **Назначение**: Детекция проблем безопасности for защиты системы from угроз
 - **parameters**:
  - **`system_logs`**: Логи системы
- - **Тип**: DataFrame or list
- - **description**: Логи системы for analysis безопасности
- - **Структура**: {timestamp: {event: details}} or DataFrame
+ - **Тип**: dataFrame or List
+ - **description**: Логи системы for Analysis безопасности
+ - **Structure**: {timestamp: {event: details}} or dataFrame
 - **Возвращаемое значение**: dict - результаты детекции проблем безопасности
 - **Типы проблем безопасности**:
  - **`unauthorized_access`**: Несанкционированный доступ
- - **Тип**: list
- - **description**: Список попыток несанкционированного доступа
+ - **Тип**: List
+ - **description**: List попыток несанкционированного доступа
  - **Критерии**: Попытки доступа без авторизации, подозрительные IP
  - **`suspicious_patterns`**: Подозрительные паттерны
- - **Тип**: list
- - **description**: Список подозрительных паттернов in логах
+ - **Тип**: List
+ - **description**: List подозрительных паттернов in логах
  - **Критерии**: Необычные последовательности действий, аномальное поведение
  - **`data_breaches`**: Утечки данных
- - **Тип**: list
- - **description**: Список потенциальных утечек данных
+ - **Тип**: List
+ - **description**: List потенциальных утечек данных
  - **Критерии**: Необычный доступ к данным, подозрительные запросы
  - **`malicious_activity`**: Вредоносная активность
- - **Тип**: list
- - **description**: Список вредоносной активности
+ - **Тип**: List
+ - **description**: List вредоносной активности
  - **Критерии**: Атаки, попытки взлома, вредоносные запросы
 - **Использование**:
  - **Безопасность**: Защита системы from угроз
@@ -635,17 +635,17 @@ class AutomatedProblemDetection:
 
 ### Платформы Monitoringа
 
-<img src="images/optimized/metrics_detailed.png" alt="Инструменты Monitoringа" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/metrics_Detailed.png" alt="Инструменты Monitoringа" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 4: Инструменты and технологии for мало рисковых систем*
 
-**Почему важны правильные инструменты?** Потому что они обеспечивают эффективный Monitoring and управление рисками:
+**Почему важны правильные инструменты?** Потому что они обеспечивают эффективный Monitoring and Management рисками:
 
 - **APM Tools**: Инструменты Monitoringа производительности приложений
 - **Log Aggregation**: Агрегация and анализ логов
 - **Metrics Collection**: Сбор and анализ метрик
-- **Alerting Systems**: Системы оповещений
+- **Alerting systems**: Системы оповещений
 - **Dashboard Tools**: Инструменты создания дашбордов
-- **Incident Management**: Управление инцидентами
+- **Incident Management**: Management инцидентами
 
 ```python
 class MonitoringTools:
@@ -653,11 +653,11 @@ class MonitoringTools:
  self.tools = {}
  self.integrations = {}
 
- def setup_apm_monitoring(self, application):
+ def setup_apm_Monitoring(self, application):
  """configuration APM Monitoringа"""
  apm_config = {
  'application_name': application.name,
- 'monitoring_agents': ['cpu', 'memory', 'disk', 'network'],
+ 'Monitoring_agents': ['cpu', 'memory', 'disk', 'network'],
  'custom_metrics': application.custom_metrics,
  'alerting_rules': application.alerting_rules,
  'dashboard_config': application.dashboard_config
@@ -665,37 +665,37 @@ class MonitoringTools:
  return apm_config
 ```
 
-**🔧 Детальное description параметров setup_apm_monitoring:**
+**🔧 Детальное description параметров setup_apm_Monitoring:**
 
-**function setup_apm_monitoring:**
-- **Назначение**: configuration APM (Application Performance Monitoring) for Monitoringа производительности приложений
+**function setup_apm_Monitoring:**
+- **Назначение**: configuration APM (application Performance Monitoring) for Monitoringа производительности приложений
 - **parameters**:
  - **`application`**: application for Monitoringа
  - **Тип**: object
  - **description**: Объект приложения with конфигурацией Monitoringа
- - **Структура**: {name, custom_metrics, alerting_rules, dashboard_config}
+ - **Structure**: {name, custom_metrics, alerting_rules, dashboard_config}
 - **Возвращаемое значение**: dict - configuration APM Monitoringа
 - **parameters конфигурации**:
  - **`application_name`**: Название приложения
  - **Тип**: str
  - **description**: Идентификатор приложения for Monitoringа
  - **examples**: 'recommendation_service', 'Prediction_api'
- - **`monitoring_agents`**: Агенты Monitoringа (on умолчанию ['cpu', 'memory', 'disk', 'network'])
- - **Тип**: list
- - **description**: Список агентов for Monitoringа
+ - **`Monitoring_agents`**: Агенты Monitoringа (on умолчанию ['cpu', 'memory', 'disk', 'network'])
+ - **Тип**: List
+ - **description**: List агентов for Monitoringа
  - **Варианты**: 'cpu', 'memory', 'disk', 'network', 'database', 'cache'
  - **`custom_metrics`**: Пользовательские метрики
  - **Тип**: dict
  - **description**: Пользовательские метрики for Monitoringа
- - **Структура**: {metric_name: {threshold, unit, alert}}
+ - **Structure**: {metric_name: {threshold, unit, alert}}
  - **`alerting_rules`**: Правила оповещений
  - **Тип**: dict
  - **description**: Правила for генерации оповещений
- - **Структура**: {rule_name: {condition, action, recipients}}
+ - **Structure**: {rule_name: {condition, action, recipients}}
  - **`dashboard_config`**: configuration дашборда
  - **Тип**: dict
  - **description**: settings дашборда for визуализации
- - **Структура**: {widgets, layout, refresh_interval}
+ - **Structure**: {widgets, layout, refresh_interval}
 - **Использование**:
  - **Monitoring производительности**: Отслеживание производительности приложения
  - **Раннее предупреждение**: Обнаружение проблем to критического состояния
@@ -717,22 +717,22 @@ class MonitoringTools:
 **🔧 Детальное description параметров setup_log_aggregation:**
 
 **function setup_log_aggregation:**
-- **Назначение**: configuration агрегации логов for централизованного сбора and анализа
+- **Назначение**: configuration агрегации логов for централизованного сбора and Analysis
 - **parameters**:
  - **`log_sources`**: Источники логов
- - **Тип**: list
- - **description**: Список источников логов for агрегации
+ - **Тип**: List
+ - **description**: List источников логов for агрегации
  - **examples**: ['application', 'system', 'database', 'network']
 - **Возвращаемое значение**: dict - configuration агрегации логов
 - **parameters конфигурации**:
  - **`sources`**: Источники логов
- - **Тип**: list
- - **description**: Список источников логов
+ - **Тип**: List
+ - **description**: List источников логов
  - **Варианты**: 'application', 'system', 'database', 'network', 'security'
  - **`parsing_rules`**: Правила парсинга
  - **Тип**: dict
  - **description**: Правила for парсинга логов
- - **Структура**: {source: {pattern, fields, format}}
+ - **Structure**: {source: {pattern, fields, format}}
  - **`indexing_strategy`**: Стратегия индексации (on умолчанию 'time_based')
  - **Тип**: str
  - **description**: Стратегия индексации логов
@@ -768,22 +768,22 @@ class MonitoringTools:
 - **Назначение**: configuration сбора метрик for Monitoringа системы
 - **parameters**:
  - **`metric_types`**: Типы метрик
- - **Тип**: list
- - **description**: Список типов метрик for сбора
+ - **Тип**: List
+ - **description**: List типов метрик for сбора
  - **examples**: ['system', 'application', 'business']
 - **Возвращаемое значение**: dict - configuration сбора метрик
 - **parameters конфигурации**:
  - **`system_metrics`**: Системные метрики (on умолчанию ['cpu', 'memory', 'disk', 'network'])
- - **Тип**: list
- - **description**: Список системных метрик for сбора
+ - **Тип**: List
+ - **description**: List системных метрик for сбора
  - **Варианты**: 'cpu', 'memory', 'disk', 'network', 'processes'
  - **`application_metrics`**: Метрики приложения (on умолчанию ['response_time', 'throughput', 'error_rate'])
- - **Тип**: list
- - **description**: Список метрик приложения for сбора
+ - **Тип**: List
+ - **description**: List метрик приложения for сбора
  - **Варианты**: 'response_time', 'throughput', 'error_rate', 'latency'
  - **`business_metrics`**: Бизнес-метрики (on умолчанию ['revenue', 'conversion', 'satisfaction'])
- - **Тип**: list
- - **description**: Список бизнес-метрик for сбора
+ - **Тип**: List
+ - **description**: List бизнес-метрик for сбора
  - **Варианты**: 'revenue', 'conversion', 'satisfaction', 'churn'
  - **`collection_interval`**: Интервал сбора (on умолчанию 60)
  - **Тип**: int
@@ -804,27 +804,27 @@ class MonitoringTools:
 ### integration with AutoML Gluon
 
 ```python
-class AutoMLRiskIntegration:
+class AutoMLRiskintegration:
  def __init__(self):
  self.integrations = {}
- self.monitoring = {}
+ self.Monitoring = {}
 
  def integrate_with_autogluon(self, predictor):
  """integration with AutoML Gluon for Monitoringа рисков"""
  integration_config = {
- 'model_monitoring': {
+ 'model_Monitoring': {
  'performance_tracking': True,
  'drift_detection': True,
- 'accuracy_monitoring': True,
- 'latency_monitoring': True
+ 'accuracy_Monitoring': True,
+ 'latency_Monitoring': True
  },
- 'data_monitoring': {
+ 'data_Monitoring': {
  'quality_checks': True,
  'schema_validation': True,
- 'freshness_monitoring': True,
+ 'freshness_Monitoring': True,
  'completeness_checks': True
  },
- 'Prediction_monitoring': {
+ 'Prediction_Monitoring': {
  'confidence_scores': True,
  'Prediction_distribution': True,
  'anomaly_detection': True,
@@ -842,42 +842,42 @@ class AutoMLRiskIntegration:
  - **`predictor`**: Предиктор AutoML Gluon
  - **Тип**: TabularPredictor
  - **description**: Обученный предиктор AutoML Gluon
- - **Структура**: {model, features, target, performance}
+ - **Structure**: {model, features, target, performance}
 - **Возвращаемое значение**: dict - configuration интеграции with AutoML Gluon
 - **Типы Monitoringа**:
- - **`model_monitoring`**: Monitoring модели
+ - **`model_Monitoring`**: Monitoring модели
  - **`performance_tracking`**: Отслеживание производительности (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение отслеживания производительности модели
  - **`drift_detection`**: Детекция дрейфа (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение детекции дрейфа модели
- - **`accuracy_monitoring`**: Monitoring точности (on умолчанию True)
+ - **`accuracy_Monitoring`**: Monitoring точности (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение Monitoringа точности модели
- - **`latency_monitoring`**: Monitoring задержки (on умолчанию True)
+ - **`latency_Monitoring`**: Monitoring задержки (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение Monitoringа задержки predictions
- - **`data_monitoring`**: Monitoring данных
+ - **description**: Включение Monitoringа задержки Predictions
+ - **`data_Monitoring`**: Monitoring данных
  - **`quality_checks`**: Проверки качества (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение проверок качества данных
  - **`schema_validation`**: Валидация схемы (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение валидации схемы данных
- - **`freshness_monitoring`**: Monitoring свежести (on умолчанию True)
+ - **`freshness_Monitoring`**: Monitoring свежести (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение Monitoringа свежести данных
  - **`completeness_checks`**: Проверки полноты (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение проверок полноты данных
- - **`Prediction_monitoring`**: Monitoring predictions
+ - **`Prediction_Monitoring`**: Monitoring Predictions
  - **`confidence_scores`**: Оценки уверенности (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение Monitoringа оценок уверенности
- - **`Prediction_distribution`**: Распределение predictions (on умолчанию True)
+ - **`Prediction_distribution`**: Распределение Predictions (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение Monitoringа распределения predictions
+ - **description**: Включение Monitoringа распределения Predictions
  - **`anomaly_detection`**: Детекция аномалий (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение детекции аномалий in предсказаниях
@@ -890,30 +890,30 @@ class AutoMLRiskIntegration:
  - **Автоматические действия**: Триггер for переобучения моделей
  - **Reportность**: create Reportов о состоянии ML-систем
 
- def setup_model_risk_monitoring(self, model, production_data):
+ def setup_model_risk_Monitoring(self, model, production_data):
  """configuration Monitoringа рисков модели"""
- risk_monitoring = {
+ risk_Monitoring = {
  'overfitting_detection': self.monitor_overfitting(model, production_data),
  'underfitting_detection': self.monitor_underfitting(model, production_data),
  'bias_detection': self.monitor_bias(model, production_data),
- 'fairness_monitoring': self.monitor_fairness(model, production_data)
+ 'fairness_Monitoring': self.monitor_fairness(model, production_data)
  }
- return risk_monitoring
+ return risk_Monitoring
 ```
 
-**🔧 Детальное description параметров setup_model_risk_monitoring:**
+**🔧 Детальное description параметров setup_model_risk_Monitoring:**
 
-**function setup_model_risk_monitoring:**
+**function setup_model_risk_Monitoring:**
 - **Назначение**: configuration Monitoringа рисков ML-модели for обеспечения надежности and справедливости
 - **parameters**:
  - **`model`**: ML-модель
  - **Тип**: object
  - **description**: Обученная ML-модель for Monitoringа рисков
- - **Структура**: {algorithm, parameters, performance, features}
- - **`production_data`**: Продакшн данные
- - **Тип**: DataFrame or dict
- - **description**: Данные из продакшна for Monitoringа рисков
- - **Структура**: {features: values, target: values}
+ - **Structure**: {algorithm, parameters, performance, features}
+ - **`production_data`**: Продакшн data
+ - **Тип**: dataFrame or dict
+ - **description**: data из продакшна for Monitoringа рисков
+ - **Structure**: {features: values, target: values}
 - **Возвращаемое значение**: dict - configuration Monitoringа рисков модели
 - **Типы Monitoringа рисков**:
  - **`overfitting_detection`**: Детекция переобучения
@@ -928,7 +928,7 @@ class AutoMLRiskIntegration:
  - **Тип**: dict
  - **description**: Monitoring смещения модели
  - **Метрики**: Различия in производительности между группами
- - **`fairness_monitoring`**: Monitoring справедливости
+ - **`fairness_Monitoring`**: Monitoring справедливости
  - **Тип**: dict
  - **description**: Monitoring справедливости модели
  - **Метрики**: Равные возможности for всех групп
@@ -949,16 +949,16 @@ class AutoMLRiskIntegration:
 **Почему важны практические examples?** Потому что они показывают, как применить теорию on практике:
 
 - **Система рекомендаций**: Устойчивая архитектура with множественными уровнями отказоустойчивости
-- **Система прогнозирования**: Квантификация неопределенности and управление рисками
+- **Система прогнозирования**: Квантификация неопределенности and Management рисками
 - **Микросервисная архитектура**: Изоляция компонентов and независимое масштабирование
 - **Event-Driven Architecture**: Асинхронная обработка and отказоустойчивость
 - **CQRS Pattern**: Разделение команд and запросов for повышения производительности
-- **Saga Pattern**: Управление распределенными транзакциями
+- **Saga Pattern**: Management распределенными транзакциями
 
 ### example 1: Система рекомендаций with низким риском
 
 ```python
-class LowRiskRecommendationSystem:
+class LowRiskRecommendationsystem:
  def __init__(self):
  self.components = {}
  self.failover_strategies = {}
@@ -981,7 +981,7 @@ class LowRiskRecommendationSystem:
  'cache': 'redis',
  'backup_db': 'postgresql_replica'
  },
- 'monitoring': {
+ 'Monitoring': {
  'real_time': True,
  'alerting': True,
  'dashboard': True
@@ -996,15 +996,15 @@ class LowRiskRecommendationSystem:
 - **Назначение**: Проектирование устойчивой архитектуры системы for обеспечения надежности
 - **parameters**: Нет
 - **Возвращаемое значение**: dict - configuration устойчивой архитектуры
-- **Компоненты архитектуры**:
+- **components архитектуры**:
  - **`load_balancer`**: Балансировщик нагрузки
  - **`type`**: Тип балансировки (on умолчанию 'round_robin')
  - **Тип**: str
  - **description**: Алгоритм балансировки нагрузки
  - **Варианты**: 'round_robin', 'least_connections', 'weighted_round_robin'
- - **`health_checks`**: Проверки здоровья (on умолчанию True)
+ - **`health_checks`**: Проверки health (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение проверок здоровья серверов
+ - **description**: Включение проверок health серверов
  - **`failover`**: Отказоустойчивость (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение автоматического переключения при сбоях
@@ -1034,7 +1034,7 @@ class LowRiskRecommendationSystem:
  - **Тип**: str
  - **description**: Резервная база данных
  - **Варианты**: 'postgresql_replica', 'mysql_replica', 'mongodb_replica'
- - **`monitoring`**: Monitoring
+ - **`Monitoring`**: Monitoring
  - **`real_time`**: Реальное время (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение Monitoringа in реальном времени
@@ -1082,7 +1082,7 @@ class LowRiskRecommendationSystem:
  - **`model_failover`**: Отказоустойчивость моделей
  - **`primary_model`**: Основная модель (on умолчанию 'deep_learning')
  - **Тип**: str
- - **description**: Основная ML-модель for predictions
+ - **description**: Основная ML-модель for Predictions
  - **Варианты**: 'deep_learning', 'random_forest', 'gradient_boosting'
  - **`secondary_model`**: Резервная модель (on умолчанию 'matrix_factorization')
  - **Тип**: str
@@ -1120,15 +1120,15 @@ class LowRiskRecommendationSystem:
  - **Варианты**: 'static_recommendations', 'default_service', 'emergency_service'
 - **Использование**:
  - **Непрерывность работы**: Обеспечение работы системы при сбоях
- - **Автоматическое переключение**: Автоматическое переключение on резервные компоненты
+ - **Автоматическое переключение**: Автоматическое переключение on резервные components
  - **Градуальное снижение**: Плавное снижение функциональности при сбоях
  - **Восстановление**: Быстрое восстановление после устранения проблем
 ```
 
-### example 2: Система прогнозирования with управлением рисками
+### example 2: Система прогнозирования with Managementм рисками
 
 ```python
-class LowRiskForecastingSystem:
+class LowRiskForecastingsystem:
  def __init__(self):
  self.models = {}
  self.uncertainty_quantification = {}
@@ -1147,37 +1147,37 @@ class LowRiskForecastingSystem:
 **🔧 Детальное description параметров implement_uncertainty_quantification:**
 
 **function implement_uncertainty_quantification:**
-- **Назначение**: Реализация квантификации неопределенности for оценки надежности predictions
+- **Назначение**: Реализация квантификации неопределенности for оценки надежности Predictions
 - **parameters**:
  - **`model`**: ML-модель
  - **Тип**: object
  - **description**: Обученная ML-модель for квантификации неопределенности
- - **Структура**: {algorithm, parameters, performance, features}
- - **`data`**: Данные for analysis
- - **Тип**: DataFrame or dict
- - **description**: Данные for analysis неопределенности
- - **Структура**: {features: values, target: values}
+ - **Structure**: {algorithm, parameters, performance, features}
+ - **`data`**: data for Analysis
+ - **Тип**: dataFrame or dict
+ - **description**: data for Analysis неопределенности
+ - **Structure**: {features: values, target: values}
 - **Возвращаемое значение**: dict - configuration квантификации неопределенности
-- **Компоненты неопределенности**:
- - **`Prediction_intervals`**: Интервалы predictions
+- **components неопределенности**:
+ - **`Prediction_intervals`**: Интервалы Predictions
  - **Тип**: dict
- - **description**: Интервалы predictions with заданной вероятностью
- - **Структура**: {lower_bound, upper_bound, confidence_level}
+ - **description**: Интервалы Predictions with заданной вероятностью
+ - **Structure**: {lower_bound, upper_bound, confidence_level}
  - **`confidence_scores`**: Оценки уверенности
  - **Тип**: dict
  - **description**: Оценки уверенности in предсказаниях
- - **Структура**: {score, threshold, interpretation}
+ - **Structure**: {score, threshold, interpretation}
  - **`uncertainty_sources`**: Источники неопределенности
  - **Тип**: dict
  - **description**: Идентификация источников неопределенности
- - **Структура**: {data_uncertainty, model_uncertainty, epistemic_uncertainty}
+ - **Structure**: {data_uncertainty, model_uncertainty, epistemic_uncertainty}
  - **`risk_metrics`**: Метрики риска
  - **Тип**: dict
- - **description**: Метрики риска for predictions
- - **Структура**: {var, cvar, expected_shortfall}
+ - **description**: Метрики риска for Predictions
+ - **Structure**: {var, cvar, expected_shortfall}
 - **Использование**:
- - **Оценка надежности**: Оценка надежности predictions
- - **Управление рисками**: Управление рисками on basis неопределенности
+ - **Оценка надежности**: Оценка надежности Predictions
+ - **Management рисками**: Management рисками on basis неопределенности
  - **Принятие решений**: Принятие решений with учетом неопределенности
  - **Reportность**: create Reportов о неопределенности
 
@@ -1195,38 +1195,38 @@ class LowRiskForecastingSystem:
 **🔧 Детальное description параметров implement_ensemble_uncertainty:**
 
 **function implement_ensemble_uncertainty:**
-- **Назначение**: Реализация ансамблевой неопределенности for повышения надежности predictions
+- **Назначение**: Реализация ансамблевой неопределенности for повышения надежности Predictions
 - **parameters**:
  - **`models`**: Ансамбль моделей
- - **Тип**: list
- - **description**: Список ML-моделей for ансамбля
- - **Структура**: [{model1}, {model2}, {model3}]
- - **`data`**: Данные for analysis
- - **Тип**: DataFrame or dict
- - **description**: Данные for analysis ансамблевой неопределенности
- - **Структура**: {features: values, target: values}
+ - **Тип**: List
+ - **description**: List ML-моделей for ансамбля
+ - **Structure**: [{model1}, {model2}, {model3}]
+ - **`data`**: data for Analysis
+ - **Тип**: dataFrame or dict
+ - **description**: data for Analysis ансамблевой неопределенности
+ - **Structure**: {features: values, target: values}
 - **Возвращаемое значение**: dict - configuration ансамблевой неопределенности
-- **Компоненты ансамблевой неопределенности**:
+- **components ансамблевой неопределенности**:
  - **`model_diversity`**: Разнообразие моделей
  - **Тип**: dict
  - **description**: Обеспечение разнообразия моделей in ансамбле
- - **Структура**: {diversity_score, correlation_matrix, uniqueness_metrics}
+ - **Structure**: {diversity_score, correlation_matrix, uniqueness_metrics}
  - **`uncertainty_aggregation`**: Агрегация неопределенности
  - **Тип**: dict
  - **description**: Агрегация неопределенности from всех моделей
- - **Структура**: {aggregated_uncertainty, aggregation_method, weights}
+ - **Structure**: {aggregated_uncertainty, aggregation_method, weights}
  - **`confidence_weighting`**: Взвешивание on уверенности
  - **Тип**: dict
  - **description**: Взвешивание моделей on их уверенности
- - **Структура**: {weights, confidence_scores, weighting_method}
+ - **Structure**: {weights, confidence_scores, weighting_method}
  - **`risk_assessment`**: Оценка рисков
  - **Тип**: dict
  - **description**: Оценка рисков ансамбля
- - **Структура**: {ensemble_risk, individual_risks, risk_mitigation}
+ - **Structure**: {ensemble_risk, individual_risks, risk_mitigation}
 - **Использование**:
- - **Повышение надежности**: improve надежности predictions
+ - **Повышение надежности**: improve надежности Predictions
  - **Снижение рисков**: Снижение рисков за счет разнообразия
- - **Управление неопределенностью**: Лучшее управление неопределенностью
+ - **Management неопределенностью**: Лучшее Management неопределенностью
  - **Reportность**: create Reportов о ансамблевой неопределенности
 ```
 
@@ -1268,13 +1268,13 @@ class AutomatedRiskResponse:
  'retrain_model': True,
  'switch_to_backup': True,
  'notify_data_team': True,
- 'update_monitoring': True
+ 'update_Monitoring': True
  },
  'data_quality_issues': {
  'data_validation': True,
  'fallback_to_clean_data': True,
  'alert_data_team': True,
- 'pause_Predictions': True
+ 'paUse_Predictions': True
  },
  'security_breach': {
  'isolate_system': True,
@@ -1292,8 +1292,8 @@ class AutomatedRiskResponse:
 - **Назначение**: configuration автоматических ответов on риски for быстрой реакции on проблемы
 - **parameters**:
  - **`risk_scenarios`**: Сценарии рисков
- - **Тип**: list
- - **description**: Список сценариев рисков for settings ответов
+ - **Тип**: List
+ - **description**: List сценариев рисков for settings ответов
  - **examples**: ['performance_degradation', 'model_drift', 'data_quality_issues']
 - **Возвращаемое значение**: dict - configuration автоматических ответов
 - **Сценарии рисков**:
@@ -1307,9 +1307,9 @@ class AutomatedRiskResponse:
  - **`cache_warming`**: Прогрев cache (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение прогрева cache
- - **`alert_team`**: Оповещение команды (on умолчанию True)
+ - **`alert_team`**: Оповещение team (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение оповещения команды
+ - **description**: Включение оповещения team
  - **`model_drift`**: Дрейф модели
  - **`retrain_model`**: Переобучение модели (on умолчанию True)
  - **Тип**: bool
@@ -1317,32 +1317,32 @@ class AutomatedRiskResponse:
  - **`switch_to_backup`**: Переключение on резервную (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение переключения on резервную модель
- - **`notify_data_team`**: Уведомление команды данных (on умолчанию True)
+ - **`notify_data_team`**: Уведомление team данных (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение уведомления команды данных
- - **`update_monitoring`**: update Monitoringа (on умолчанию True)
+ - **description**: Включение уведомления team данных
+ - **`update_Monitoring`**: update Monitoringа (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение обновления Monitoringа
  - **`data_quality_issues`**: Проблемы качества данных
  - **`data_validation`**: Валидация данных (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение валидации данных
- - **`fallback_to_clean_data`**: Переключение on чистые данные (on умолчанию True)
+ - **`fallback_to_clean_data`**: Переключение on чистые data (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение переключения on чистые данные
- - **`alert_data_team`**: Оповещение команды данных (on умолчанию True)
+ - **description**: Включение переключения on чистые data
+ - **`alert_data_team`**: Оповещение team данных (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение оповещения команды данных
- - **`pause_Predictions`**: Приостановка predictions (on умолчанию True)
+ - **description**: Включение оповещения team данных
+ - **`paUse_Predictions`**: Приостановка Predictions (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение приостановки predictions
+ - **description**: Включение приостановки Predictions
  - **`security_breach`**: Нарушение безопасности
  - **`isolate_system`**: Изоляция системы (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение изоляции системы
- - **`alert_security_team`**: Оповещение команды безопасности (on умолчанию True)
+ - **`alert_security_team`**: Оповещение team безопасности (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение оповещения команды безопасности
+ - **description**: Включение оповещения team безопасности
  - **`enable_audit_logging`**: Включение аудит-логирования (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение аудит-логирования
@@ -1374,14 +1374,14 @@ class AutomatedRiskResponse:
  'log_incident': True,
  'notify_team': True,
  'escalate_immediately': True,
- 'notify_management': True
+ 'notify_Management': True
  },
  'critical_risk': {
  'auto_resolve': False,
  'log_incident': True,
  'notify_team': True,
  'escalate_immediately': True,
- 'notify_management': True,
+ 'notify_Management': True,
  'notify_executives': True,
  'activate_incident_response': True
  }
@@ -1395,8 +1395,8 @@ class AutomatedRiskResponse:
 - **Назначение**: configuration правил эскалации for управления рисками on уровням критичности
 - **parameters**:
  - **`risk_levels`**: Уровни рисков
- - **Тип**: list
- - **description**: Список уровней рисков for settings эскалации
+ - **Тип**: List
+ - **description**: List уровней рисков for settings эскалации
  - **examples**: ['low_risk', 'medium_risk', 'high_risk', 'critical_risk']
 - **Возвращаемое значение**: dict - configuration правил эскалации
 - **Уровни рисков**:
@@ -1407,9 +1407,9 @@ class AutomatedRiskResponse:
  - **`log_incident`**: Логирование инцидента (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение логирования инцидента
- - **`notify_team`**: Уведомление команды (on умолчанию False)
+ - **`notify_team`**: Уведомление team (on умолчанию False)
  - **Тип**: bool
- - **description**: Включение уведомления команды
+ - **description**: Включение уведомления team
  - **`medium_risk`**: Средний риск
  - **`auto_resolve`**: Автоматическое разрешение (on умолчанию False)
  - **Тип**: bool
@@ -1417,9 +1417,9 @@ class AutomatedRiskResponse:
  - **`log_incident`**: Логирование инцидента (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение логирования инцидента
- - **`notify_team`**: Уведомление команды (on умолчанию True)
+ - **`notify_team`**: Уведомление team (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение уведомления команды
+ - **description**: Включение уведомления team
  - **`escalate_after`**: Эскалация через (on умолчанию 30)
  - **Тип**: int
  - **Единицы**: minutesы
@@ -1431,13 +1431,13 @@ class AutomatedRiskResponse:
  - **`log_incident`**: Логирование инцидента (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение логирования инцидента
- - **`notify_team`**: Уведомление команды (on умолчанию True)
+ - **`notify_team`**: Уведомление team (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение уведомления команды
+ - **description**: Включение уведомления team
  - **`escalate_immediately`**: Немедленная эскалация (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение немедленной эскалации
- - **`notify_management`**: Уведомление руководства (on умолчанию True)
+ - **`notify_Management`**: Уведомление руководства (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение уведомления руководства
  - **`critical_risk`**: Критический риск
@@ -1447,13 +1447,13 @@ class AutomatedRiskResponse:
  - **`log_incident`**: Логирование инцидента (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение логирования инцидента
- - **`notify_team`**: Уведомление команды (on умолчанию True)
+ - **`notify_team`**: Уведомление team (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение уведомления команды
+ - **description**: Включение уведомления team
  - **`escalate_immediately`**: Немедленная эскалация (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение немедленной эскалации
- - **`notify_management`**: Уведомление руководства (on умолчанию True)
+ - **`notify_Management`**: Уведомление руководства (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение уведомления руководства
  - **`notify_executives`**: Уведомление руководства (on умолчанию True)
@@ -1463,7 +1463,7 @@ class AutomatedRiskResponse:
  - **Тип**: bool
  - **description**: Включение активации ответа on инцидент
 - **Использование**:
- - **Управление рисками**: Управление рисками on уровням критичности
+ - **Management рисками**: Management рисками on уровням критичности
  - **Автоматизация**: Автоматизация процессов эскалации
  - **Уведомления**: Уведомления соответствующих уровней
  - **Reportность**: create Reportов о рисках
@@ -1482,7 +1482,7 @@ class MLBasedRiskManagement:
  risk_model = {
  'features': [
  'system_metrics', 'business_metrics', 'external_factors',
- 'time_patterns', 'user_behavior', 'data_quality'
+ 'time_patterns', 'User_behavior', 'data_quality'
  ],
  'target': 'risk_probability',
  'algorithms': ['random_forest', 'gradient_boosting', 'neural_network'],
@@ -1497,31 +1497,31 @@ class MLBasedRiskManagement:
 **function train_risk_Prediction_model:**
 - **Назначение**: Обучение модели предсказания рисков for прогнозирования проблем
 - **parameters**:
- - **`historical_data`**: Исторические данные
- - **Тип**: DataFrame or dict
- - **description**: Исторические данные for обучения модели предсказания рисков
- - **Структура**: {features: values, target: values, timestamp: values}
+ - **`historical_data`**: Исторические data
+ - **Тип**: dataFrame or dict
+ - **description**: Исторические data for обучения модели предсказания рисков
+ - **Structure**: {features: values, target: values, timestamp: values}
 - **Возвращаемое значение**: dict - configuration модели предсказания рисков
 - **parameters модели**:
- - **`features`**: Признаки (on умолчанию ['system_metrics', 'business_metrics', 'external_factors', 'time_patterns', 'user_behavior', 'data_quality'])
- - **Тип**: list
- - **description**: Список признаков for модели предсказания рисков
- - **Варианты**: 'system_metrics', 'business_metrics', 'external_factors', 'time_patterns', 'user_behavior', 'data_quality'
+ - **`features`**: Признаки (on умолчанию ['system_metrics', 'business_metrics', 'external_factors', 'time_patterns', 'User_behavior', 'data_quality'])
+ - **Тип**: List
+ - **description**: List признаков for модели предсказания рисков
+ - **Варианты**: 'system_metrics', 'business_metrics', 'external_factors', 'time_patterns', 'User_behavior', 'data_quality'
  - **`target`**: Целевая переменная (on умолчанию 'risk_probability')
  - **Тип**: str
  - **description**: Целевая переменная for предсказания
  - **Варианты**: 'risk_probability', 'risk_level', 'incident_probability'
  - **`algorithms`**: Алгоритмы (on умолчанию ['random_forest', 'gradient_boosting', 'neural_network'])
- - **Тип**: list
- - **description**: Список алгоритмов for обучения
+ - **Тип**: List
+ - **description**: List алгоритмов for обучения
  - **Варианты**: 'random_forest', 'gradient_boosting', 'neural_network', 'svm', 'logistic_regression'
  - **`validation`**: Валидация (on умолчанию 'time_series_split')
  - **Тип**: str
  - **description**: Стратегия валидации модели
  - **Варианты**: 'time_series_split', 'cross_validation', 'holdout'
  - **`metrics`**: Метрики (on умолчанию ['precision', 'recall', 'f1_score', 'auc'])
- - **Тип**: list
- - **description**: Список метрик for оценки модели
+ - **Тип**: List
+ - **description**: List метрик for оценки модели
  - **Варианты**: 'precision', 'recall', 'f1_score', 'auc', 'accuracy', 'log_loss'
 - **Использование**:
  - **Прогнозирование рисков**: Prediction вероятности рисков
@@ -1529,44 +1529,44 @@ class MLBasedRiskManagement:
  - **Автоматические действия**: Триггер for автоматических ответов
  - **Reportность**: create Reportов о предсказаниях рисков
 
- def implement_predictive_monitoring(self, system_metrics):
+ def implement_predictive_Monitoring(self, system_metrics):
  """Реализация предиктивного Monitoringа"""
  predictive_config = {
  'anomaly_detection': self.setup_anomaly_detection(system_metrics),
- 'trend_analysis': self.setup_trend_analysis(system_metrics),
+ 'trend_Analysis': self.setup_trend_Analysis(system_metrics),
  'forecasting': self.setup_forecasting(system_metrics),
  'early_warning': self.setup_early_warning(system_metrics)
  }
  return predictive_config
 ```
 
-**🔧 Детальное description параметров implement_predictive_monitoring:**
+**🔧 Детальное description параметров implement_predictive_Monitoring:**
 
-**function implement_predictive_monitoring:**
+**function implement_predictive_Monitoring:**
 - **Назначение**: Реализация предиктивного Monitoringа for прогнозирования проблем
 - **parameters**:
  - **`system_metrics`**: Системные метрики
- - **Тип**: DataFrame or dict
+ - **Тип**: dataFrame or dict
  - **description**: Системные метрики for предиктивного Monitoringа
- - **Структура**: {timestamp: {metric: value}} or DataFrame
+ - **Structure**: {timestamp: {metric: value}} or dataFrame
 - **Возвращаемое значение**: dict - configuration предиктивного Monitoringа
-- **Компоненты предиктивного Monitoringа**:
+- **components предиктивного Monitoringа**:
  - **`anomaly_detection`**: Детекция аномалий
  - **Тип**: dict
  - **description**: configuration детекции аномалий in метриках
- - **Структура**: {algorithms, thresholds, sensitivity}
- - **`trend_analysis`**: Анализ трендов
+ - **Structure**: {algorithms, thresholds, sensitivity}
+ - **`trend_Analysis`**: Анализ трендов
  - **Тип**: dict
- - **description**: configuration анализа трендов in метриках
- - **Структура**: {trend_detection, change_points, seasonality}
+ - **description**: configuration Analysis трендов in метриках
+ - **Structure**: {trend_detection, change_points, seasonality}
  - **`forecasting`**: Прогнозирование
  - **Тип**: dict
  - **description**: configuration прогнозирования метрик
- - **Структура**: {models, horizons, confidence_intervals}
+ - **Structure**: {models, horizons, confidence_intervals}
  - **`early_warning`**: Раннее предупреждение
  - **Тип**: dict
  - **description**: configuration системы раннего предупреждения
- - **Структура**: {thresholds, alerts, escalation}
+ - **Structure**: {thresholds, alerts, escalation}
 - **Использование**:
  - **Прогнозирование**: Прогнозирование проблем to их возникновения
  - **Раннее предупреждение**: Обнаружение проблем on ранней стадии
@@ -1615,7 +1615,7 @@ class RiskMetrics:
  - **`risk_factors`**: Факторы риска
  - **Тип**: dict
  - **description**: Факторы риска for расчета показателя
- - **Структура**: {factor_name: {value, weight, impact}}
+ - **Structure**: {factor_name: {value, weight, impact}}
 - **Возвращаемое значение**: dict - показатели риска
 - **Типы рисков**:
  - **`technical_risk`**: Технический риск
@@ -1632,7 +1632,7 @@ class RiskMetrics:
  - **Тип**: float
  - **Диапазон**: [0, 1]
  - **description**: Показатель операционного риска системы
- - **Факторы**: Процессы, персонал, инфраструктура, соответствие
+ - **Факторы**: Процессы, персонал, инфраStructure, соответствие
  - **`overall_risk`**: Общий риск
  - **Тип**: float
  - **Диапазон**: [0, 1]
@@ -1660,10 +1660,10 @@ class RiskMetrics:
 **function calculate_reliability_metrics:**
 - **Назначение**: Расчет метрик надежности for оценки устойчивости системы
 - **parameters**:
- - **`system_data`**: Данные системы
- - **Тип**: DataFrame or dict
- - **description**: Данные системы for расчета метрик надежности
- - **Структура**: {timestamp: {status, uptime, downtime}} or DataFrame
+ - **`system_data`**: data системы
+ - **Тип**: dataFrame or dict
+ - **description**: data системы for расчета метрик надежности
+ - **Structure**: {timestamp: {status, uptime, downtime}} or dataFrame
 - **Возвращаемое значение**: dict - метрики надежности
 - **Метрики надежности**:
  - **`availability`**: Доступность
@@ -1708,10 +1708,10 @@ class RiskMetrics:
 **function calculate_resilience_metrics:**
 - **Назначение**: Расчет метрик устойчивости for оценки способности системы к восстановлению
 - **parameters**:
- - **`failure_data`**: Данные о сбоях
- - **Тип**: DataFrame or dict
- - **description**: Данные о сбоях системы for расчета метрик устойчивости
- - **Структура**: {timestamp: {failure_type, recovery_time, impact}} or DataFrame
+ - **`failure_data`**: data о сбоях
+ - **Тип**: dataFrame or dict
+ - **description**: data о сбоях системы for расчета метрик устойчивости
+ - **Structure**: {timestamp: {failure_type, recovery_time, impact}} or dataFrame
 - **Возвращаемое значение**: dict - метрики устойчивости
 - **Метрики устойчивости**:
  - **`recovery_time`**: Время восстановления
@@ -1727,7 +1727,7 @@ class RiskMetrics:
  - **`failover_success`**: Успешность отказоустойчивости
  - **Тип**: float
  - **Диапазон**: [0, 1]
- - **description**: Успешность переключения on резервные компоненты
+ - **description**: Успешность переключения on резервные components
  - **Формула**: количество успешных переключений / общее количество попыток
  - **`resilience_score`**: Показатель устойчивости
  - **Тип**: float
@@ -1755,32 +1755,32 @@ class RiskMetrics:
 
 ### integration with жизненным циклом разработки
 
-<img src="images/optimized/walk_forward_analysis.png" alt="integration with жизненным циклом" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/walk_forward_Analysis.png" alt="integration with жизненным циклом" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 8: integration управления рисками with жизненным циклом разработки*
 
-**Почему важна integration with жизненным циклом?** Потому что управление рисками должно быть встроено in каждый этап разработки:
+**Почему важна integration with жизненным циклом?** Потому что Management рисками должно быть встроено in каждый этап разработки:
 
 - **Planning Phase**: Оценка рисков on этапе Planирования
 - **Development Phase**: Контроль рисков во время разработки
 - **testing Phase**: Тестирование устойчивости and отказоустойчивости
-- **Deployment Phase**: Безопасное развертывание with возможностью отката
-- **Production Phase**: Непрерывный Monitoring and управление рисками
-- **Maintenance Phase**: Регулярная оценка and update стратегий
+- **deployment Phase**: Безопасное развертывание with возможностью отката
+- **Production Phase**: Непрерывный Monitoring and Management рисками
+- **maintenance Phase**: Регулярная оценка and update стратегий
 - **Retirement Phase**: Безопасный вывод системы из эксплуатации
 
 ```python
-def integrate_risk_management_with_development():
+def integrate_risk_Management_with_development():
  """integration управления рисками with жизненным циклом разработки"""
 
  development_phases = {
- 'planning': {
+ 'Planning': {
  'risk_assessment': True,
- 'architecture_review': True,
- 'security_analysis': True,
+ 'architecture_reView': True,
+ 'security_Analysis': True,
  'compliance_check': True
  },
  'development': {
- 'code_review': True,
+ 'code_reView': True,
  'security_testing': True,
  'performance_testing': True,
  'integration_testing': True
@@ -1796,41 +1796,41 @@ def integrate_risk_management_with_development():
  'blue_green_deployment': True,
  'canary_deployment': True,
  'rollback_capability': True,
- 'monitoring_setup': True
+ 'Monitoring_setup': True
  },
  'production': {
- 'continuous_monitoring': True,
+ 'continuous_Monitoring': True,
  'automated_alerting': True,
  'incident_response': True,
- 'regular_reviews': True
+ 'regular_reViews': True
  }
  }
 
  return development_phases
 ```
 
-**🔧 Детальное description параметров integrate_risk_management_with_development:**
+**🔧 Детальное description параметров integrate_risk_Management_with_development:**
 
-**function integrate_risk_management_with_development:**
+**function integrate_risk_Management_with_development:**
 - **Назначение**: integration управления рисками with жизненным циклом разработки for обеспечения безопасности on всех этапах
 - **parameters**: Нет
 - **Возвращаемое значение**: dict - configuration интеграции with жизненным циклом разработки
 - **Фазы разработки**:
- - **`planning`**: Planирование
+ - **`Planning`**: Planирование
  - **`risk_assessment`**: Оценка рисков (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение оценки рисков on этапе Planирования
- - **`architecture_review`**: Обзор архитектуры (on умолчанию True)
+ - **`architecture_reView`**: Обзор архитектуры (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение обзора архитектуры on этапе Planирования
- - **`security_analysis`**: Анализ безопасности (on умолчанию True)
+ - **`security_Analysis`**: Анализ безопасности (on умолчанию True)
  - **Тип**: bool
- - **description**: Включение анализа безопасности on этапе Planирования
+ - **description**: Включение Analysis безопасности on этапе Planирования
  - **`compliance_check`**: check соответствия (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение проверки соответствия on этапе Planирования
  - **`development`**: Разработка
- - **`code_review`**: Обзор кода (on умолчанию True)
+ - **`code_reView`**: Обзор кода (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение обзора кода on этапе разработки
  - **`security_testing`**: Тестирование безопасности (on умолчанию True)
@@ -1868,11 +1868,11 @@ def integrate_risk_management_with_development():
  - **`rollback_capability`**: Возможность отката (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение возможности отката
- - **`monitoring_setup`**: configuration Monitoringа (on умолчанию True)
+ - **`Monitoring_setup`**: configuration Monitoringа (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение settings Monitoringа
  - **`production`**: Продакшн
- - **`continuous_monitoring`**: Непрерывный Monitoring (on умолчанию True)
+ - **`continuous_Monitoring`**: Непрерывный Monitoring (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение непрерывного Monitoringа
  - **`automated_alerting`**: Автоматические оповещения (on умолчанию True)
@@ -1881,7 +1881,7 @@ def integrate_risk_management_with_development():
  - **`incident_response`**: Ответ on инциденты (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение ответа on инциденты
- - **`regular_reviews`**: Регулярные обзоры (on умолчанию True)
+ - **`regular_reViews`**: Регулярные обзоры (on умолчанию True)
  - **Тип**: bool
  - **description**: Включение регулярных обзоров
 - **Использование**:

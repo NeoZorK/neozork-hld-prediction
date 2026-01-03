@@ -4,7 +4,7 @@
 
 Последовательный тест-раннер - это решение for Launchа тестов in Docker контейнере папка за папкой, что предотвращает сбои воркеров and Issues with ресурсами при параллельном выполнении.
 
-## quick start
+## Quick start
 
 ### 1. Launch in Docker контейнере
 
@@ -17,7 +17,7 @@ docker run -it your-container
 ### 2. Ручной Launch
 
 ```bash
-# Launch всех тестов последовательно
+# Run all tests последовательно
 python scripts/run_sequential_tests_docker.py
 
 # Тестирование функциональности раннера
@@ -27,7 +27,7 @@ python scripts/test_sequential_runner.py
 ### 3. Использование in интерактивной оболочке
 
 ```bash
-# in Docker контейнере доступны команды:
+# in Docker контейнере доступны team:
 python scripts/run_sequential_tests_docker.py
 uv run pytest tests -n auto # Старый способ (может вызывать проблемы)
 ```
@@ -40,7 +40,7 @@ uv run pytest tests -n auto # Старый способ (может вызыва
 2. **unit** - Юнит-тесты (335 тестов, ~7s)
 3. **utils** - Утилиты (30 тестов, ~2s)
 4. **data** - Обработка данных
-5. **calculation** - Математические расчеты
+5. **calculation** - Математические Calculations
 6. **cli** - Командная строка
 7. **plotting** - Графики
 8. **export** - Экспорт данных
@@ -78,7 +78,7 @@ global_settings:
 
 ✅ **Стабильность**: Нет сбоев воркеров
 ✅ **Предсказуемость**: Постоянный порядок выполнения
-✅ **Управление ресурсами**: Контроль памяти and CPU
+✅ **Management ресурсами**: Контроль памяти and CPU
 ✅ **Легкая отладка**: Понятно, какая папка вызвала проблему
 ✅ **Гибкость**: Настраиваемые таймауты and parameters
 
@@ -91,7 +91,7 @@ Description: Basic utilities and common functions
 Timeout: 30s
 ============================================================
 2024-01-15 10:30:01 - INFO - Running tests in folder: common (1 files)
-2024-01-15 10:30:05 - INFO - ✅ Folder common completed successfully in 4.23s
+2024-01-15 10:30:05 - INFO - ✅ Folder common COMPLETED successfully in 4.23s
 2024-01-15 10:30:05 - INFO - Passed: 7, Failed: 0, Skipped: 0
 
 ============================================================
@@ -100,7 +100,7 @@ Description: Unit tests for individual components
 Timeout: 60s
 ============================================================
 2024-01-15 10:30:06 - INFO - Running tests in folder: unit (20 files)
-2024-01-15 10:30:15 - INFO - ✅ Folder unit completed successfully in 9.12s
+2024-01-15 10:30:15 - INFO - ✅ Folder unit COMPLETED successfully in 9.12s
 2024-01-15 10:30:15 - INFO - Passed: 335, Failed: 0, Skipped: 53
 ```
 
@@ -112,7 +112,7 @@ Timeout: 60s
 
 ### Таймаут папки
 - Увеличьте `timeout` in конфигурации for медленных папок
-- Проверьте on наличие бесконечных циклов in тестах
+- Проверьте on presence бесконечных циклов in тестах
 
 ### Ошибки конфигурации
 - Запустите `python scripts/test_sequential_runner.py` for диагностики
@@ -129,9 +129,9 @@ docker run --rm your-container python scripts/run_sequential_tests_docker.py
 
 | Параллельное (`-n auto`) | Последовательное |
 |---------------------------|------------------|
-| ❌ Сбои воркеров | ✅ Стабильная работа |
+| ❌ Сбои воркеров | ✅ Стабильная Working |
 | ❌ Непредсказуемый порядок | ✅ Контролируемый порядок |
-| ❌ Issues with ресурсами | ✅ Управление ресурсами |
+| ❌ Issues with ресурсами | ✅ Management ресурсами |
 | ✅ Быстрее | ⚠️ Медленнее, но надежнее |
 
 ## Заключение

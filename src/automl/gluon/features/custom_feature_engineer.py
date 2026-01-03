@@ -1,5 +1,5 @@
 """
-Custom Feature Engineer for Trading Strategy Features
+Custom Feature Engineer for trading Strategy Features
 create 13 пользовательских признаков for торговой стратегии
 """
 
@@ -47,7 +47,7 @@ class CustomFeatureEngineer:
  }
  }
 
- def create_schr_features(self, data: pd.DataFrame) -> pd.DataFrame:
+ def create_schr_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
  Create SCHR Levels based features.
 
@@ -55,7 +55,7 @@ class CustomFeatureEngineer:
  data: Input data with SCHR columns
 
  Returns:
- Data with SCHR features added
+ data with SCHR features added
  """
  logger.info("Creating SCHR features...")
  df = data.copy()
@@ -84,7 +84,7 @@ class CustomFeatureEngineer:
  logger.info(f"Created {len([col for col in df.columns if 'prob' in col])} SCHR features")
  return df
 
- def create_wave_features(self, data: pd.DataFrame) -> pd.DataFrame:
+ def create_wave_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
  Create Wave indicator based features.
 
@@ -92,7 +92,7 @@ class CustomFeatureEngineer:
  data: Input data with Wave columns
 
  Returns:
- Data with Wave features added
+ data with Wave features added
  """
  logger.info("Creating Wave features...")
  df = data.copy()
@@ -132,7 +132,7 @@ class CustomFeatureEngineer:
  logger.info(f"Created {len([col for col in df.columns if 'wave' in col and 'prob' in col])} Wave features")
  return df
 
- def create_short3_features(self, data: pd.DataFrame) -> pd.DataFrame:
+ def create_short3_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
  Create Short3 indicator based features.
 
@@ -140,7 +140,7 @@ class CustomFeatureEngineer:
  data: Input data with Short3 columns
 
  Returns:
- Data with Short3 features added
+ data with Short3 features added
  """
  logger.info("Creating Short3 features...")
  df = data.copy()
@@ -163,7 +163,7 @@ class CustomFeatureEngineer:
  logger.info(f"Created {len([col for col in df.columns if 'short3' in col and 'prob' in col])} Short3 features")
  return df
 
- def create_all_features(self, data: pd.DataFrame) -> pd.DataFrame:
+ def create_all_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
  Create all custom features.
 
@@ -171,7 +171,7 @@ class CustomFeatureEngineer:
  data: Input data
 
  Returns:
- Data with all custom features added
+ data with all custom features added
  """
  logger.info("Creating all custom features...")
 
@@ -187,7 +187,7 @@ class CustomFeatureEngineer:
  logger.info(f"Total custom features created: {len([col for col in data.columns if 'prob' in col])}")
  return data
 
- # Helper methods for feature calculations
+ # Helper methods for feature Calculations
 
  def _calculate_trend_direction(self, close: pd.Series) -> pd.Series:
  """Calculate trend direction."""
@@ -222,7 +222,7 @@ class CustomFeatureEngineer:
  result = pd.Series(0, index=signal.index)
  for i in range(5, len(signal)):
  if signal.iloc[i] == 1:
- # Check if next 5 candles are up
+ # check if next 5 candles are up
  next_5 = close.iloc[i+1:i+6]
  if len(next_5) == 5 and all(next_5.diff() > 0):
  result.iloc[i] = 1
@@ -237,7 +237,7 @@ class CustomFeatureEngineer:
  result = pd.Series(0, index=signal.index)
  for i in range(len(signal)):
  if signal.iloc[i] == 1:
- # Check if price moves 5% in same direction
+ # check if price moves 5% in same direction
  current_price = close.iloc[i]
  future_prices = close.iloc[i+1:i+6]
  if len(future_prices) > 0:
@@ -255,7 +255,7 @@ class CustomFeatureEngineer:
  result = pd.Series(0, index=condition.index)
  for i in range(5, len(condition)):
  if condition.iloc[i]:
- # Check if next 5 candles are up
+ # check if next 5 candles are up
  next_5 = close.iloc[i+1:i+6]
  if len(next_5) == 5 and all(next_5.diff() > 0):
  result.iloc[i] = 1
@@ -270,7 +270,7 @@ class CustomFeatureEngineer:
  result = pd.Series(0, index=condition.index)
  for i in range(len(condition)):
  if condition.iloc[i]:
- # Check if price moves 5% in same direction
+ # check if price moves 5% in same direction
  current_price = close.iloc[i]
  future_prices = close.iloc[i+1:i+6]
  if len(future_prices) > 0:
@@ -305,7 +305,7 @@ class CustomFeatureEngineer:
  result = pd.Series(0, index=reverse.index)
  for i in range(len(reverse)):
  if reverse.iloc[i] == 1:
- # Check if peak occurs within 10 candles
+ # check if peak occurs within 10 candles
  future_prices = close.iloc[i+1:i+11]
  if len(future_prices) > 0:
  peak_idx = future_prices.idxmax()
@@ -322,7 +322,7 @@ class CustomFeatureEngineer:
  result = pd.Series(0, index=signal.index)
  for i in range(len(signal)):
  if signal.iloc[i] == 1:
- # Check if price moves up 5%
+ # check if price moves up 5%
  current_price = close.iloc[i]
  future_prices = close.iloc[i+1:i+6]
  if len(future_prices) > 0:
@@ -340,7 +340,7 @@ class CustomFeatureEngineer:
  result = pd.Series(0, index=signal.index)
  for i in range(len(signal)):
  if signal.iloc[i] == 4:
- # Check if price moves down 10%
+ # check if price moves down 10%
  current_price = close.iloc[i]
  future_prices = close.iloc[i+1:i+6]
  if len(future_prices) > 0:
@@ -358,7 +358,7 @@ class CustomFeatureEngineer:
  result = pd.Series(0, index=direction.index)
  for i in range(10, len(direction)):
  if direction.iloc[i] in [1, 4]:
- # Check if direction changes to 2 or 3 in next 10 candles
+ # check if direction changes to 2 or 3 in next 10 candles
  future_directions = direction.iloc[i+1:i+11]
  if len(future_directions) > 0 and any(future_directions.isin([2, 3])):
  result.iloc[i] = 1

@@ -14,22 +14,22 @@
 - **Facebook алгоритм**: Поляризация общества из-за неправильной оптимизации
 
 ### Преимущества следования лучшим практикам
-- **Надежность**: Система работает стабильно in любых условиях
+- **Надежность**: Система Workingет стабильно in любых условиях
 - **Масштабируемость**: Легко адаптируется к росту нагрузки
-- **Поддерживаемость**: Команда может легко развивать систему
-- **Этичность**: Система работает справедливо and безопасно
+- **Поддерживаемость**: Команда может легко развивать system
+- **Этичность**: Система Workingет справедливо and безопасно
 
 ## Введение in лучшие практики
 
 <img src="images/optimized/performance_comparison.png" alt="Сравнение производительности" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 1: Сравнение производительности различных моделей*
 
-<img src="images/optimized/robustness_analysis.png" alt="Анализ робастности" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/robustness_Analysis.png" alt="Анализ робастности" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 2: Анализ робастности - робастные vs переобученные системы, стабильность производительности*
 
 **Почему лучшие практики - это not просто "сделать хорошо"?** Это систематический подход к решению типичных проблем, основанный on опыте тысяч проектов. Это как медицинские протоколы - они спасают жизни.
 
-**Почему 80% ML-проектов повторяют одни and те же ошибки?** Потому что команды not знают о существовании проверенных решений:
+**Почему 80% ML-проектов повторяют одни and те же ошибки?** Потому что team not знают о существовании проверенных решений:
 - **Issues with data**: Неправильная подготовка, утечки, смещения
 - **Issues with валидацией**: Неправильное разделение, переобучение
 - **Issues with продакшеном**: Неготовность к реальным условиям
@@ -39,7 +39,7 @@
 
 ## Подготовка данных
 
-<img src="images/optimized/advanced_topics_overview.png" alt="Подготовка данных" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/advanced_topics_overView.png" alt="Подготовка данных" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 3: Лучшие практики подготовки данных for ML*
 
 **Почему критически важна правильная подготовка данных?** Потому что качество данных напрямую влияет on качество модели:
@@ -53,9 +53,9 @@
 
 ### 1. Качество данных
 
-**Почему "мусор on входе = мусор on выходе" особенно актуально for ML?** Потому что модель учится on данных, and если данные плохие, модель будет делать плохие предсказания. Это как обучение врача on неправильных диагнозах.
+**Почему "мусор on входе = мусор on выходе" особенно актуально for ML?** Потому что модель учится on данных, and если data плохие, модель будет делать плохие предсказания. Это как обучение врача on неправильных диагнозах.
 
-**Почему 60% времени ML-проекта тратится on подготовку данных?** Потому что реальные данные всегда "грязные":
+**Почему 60% времени ML-проекта тратится on подготовку данных?** Потому что реальные data всегда "грязные":
 - **Отсутствующие значения**: 30-50% данных могут быть пустыми
 - **Некорректные значения**: Опечатки, неправильные форматы
 - **Дубликаты**: Одинаковые записи in разных форматах
@@ -74,13 +74,13 @@ from autogluon.tabular import TabularPredictor
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def data_quality_check(data: pd.DataFrame) -> Dict[str, Any]:
+def data_quality_check(data: pd.dataFrame) -> Dict[str, Any]:
  """
  Комплексная check качества данных - первый шаг к успешному ML
 
  Parameters:
  -----------
- data : pd.DataFrame
+ data : pd.dataFrame
  Датафрейм for проверки качества данных. Должен содержать:
  - Числовые and категориальные колонки
  - Целевую переменную (если есть)
@@ -102,11 +102,11 @@ def data_quality_check(data: pd.DataFrame) -> Dict[str, Any]:
  ------
  function использует следующие методы детекции выбросов:
  - IQR (Interquartile Range): Q1 - 1.5*IQR to Q3 + 1.5*IQR
- - Корреляции рассчитываются только for числовых колонок
+ - Корреляции рассчитываются только for числовых columns
  - Дубликаты определяются on полному совпадению всех значений
  """
 
- quality_report = {
+ quality_Report = {
  'shape': data.shape, # Размер датасета (строки, колонки)
  'missing_values': data.isnull().sum().to_dict(), # Пропущенные значения on колонкам
  'data_types': data.dtypes.to_dict(), # Типы данных on колонкам
@@ -117,41 +117,41 @@ def data_quality_check(data: pd.DataFrame) -> Dict[str, Any]:
 
  # check пропущенных значений
  missing_percent = (data.isnull().sum() / len(data)) * 100
- quality_report['missing_percent'] = missing_percent.to_dict()
+ quality_Report['missing_percent'] = missing_percent.to_dict()
 
- # check выбросов for числовых колонок
+ # check выбросов for числовых columns
  numeric_columns = data.select_dtypes(include=[np.number]).columns
  for col in numeric_columns:
  Q1 = data[col].quantile(0.25)
  Q3 = data[col].quantile(0.75)
  IQR = Q3 - Q1
  outliers = data[(data[col] < Q1 - 1.5 * IQR) | (data[col] > Q3 + 1.5 * IQR)]
- quality_report['outliers'][col] = len(outliers)
+ quality_Report['outliers'][col] = len(outliers)
 
  # check корреляций
  if len(numeric_columns) > 1:
  correlation_matrix = data[numeric_columns].corr()
- quality_report['correlations'] = correlation_matrix.to_dict()
+ quality_Report['correlations'] = correlation_matrix.to_dict()
 
- return quality_report
+ return quality_Report
 
 # Использование
-quality_report = data_quality_check(train_data)
-print("Data Quality Report:")
-for key, value in quality_report.items():
+quality_Report = data_quality_check(train_data)
+print("data Quality Report:")
+for key, value in quality_Report.items():
  print(f"{key}: {value}")
 ```
 
 ### 2. Обработка пропущенных значений
 
 ```python
-def handle_missing_values(data: pd.DataFrame, strategy: str = 'auto') -> pd.DataFrame:
+def handle_missing_values(data: pd.dataFrame, strategy: str = 'auto') -> pd.dataFrame:
  """
  Обработка пропущенных значений in датасете
 
  Parameters:
  -----------
- data : pd.DataFrame
+ data : pd.dataFrame
  Датафрейм with пропущенными значениями for обработки
 
  strategy : str, default='auto'
@@ -172,14 +172,14 @@ def handle_missing_values(data: pd.DataFrame, strategy: str = 'auto') -> pd.Data
 
  Returns:
  --------
- pd.DataFrame
- Датафрейм with обработанными пропущенными значениями
+ pd.dataFrame
+ Датафрейм with обWorkingнными пропущенными значениями
 
  Notes:
  ------
  Рекомендации on выбору стратегии:
  - auto: Универсальная стратегия for большинства случаев
- - drop: Когда пропусков мало and данные критически важны
+ - drop: Когда пропусков мало and data критически важны
  - interpolate: for временных рядов with трендом
  - mean/mode: Когда нужно сохранить статистические свойства
  """
@@ -189,7 +189,7 @@ def handle_missing_values(data: pd.DataFrame, strategy: str = 'auto') -> pd.Data
  for col in data.columns:
  if data[col].dtype == 'object':
  # for категориальных переменных - мода (наиболее частое значение)
- # Если мода пустая, используем 'Unknown'
+ # Если мода пустая, Use 'Unknown'
  data[col].fillna(data[col].mode()[0] if not data[col].mode().empty else 'Unknown', inplace=True)
  else:
  # for числовых переменных - медиана (устойчива к выбросам)
@@ -233,13 +233,13 @@ train_data_clean = handle_missing_values(train_data, strategy='auto')
 ### 3. Обработка выбросов
 
 ```python
-def handle_outliers(data: pd.DataFrame, method: str = 'iqr') -> pd.DataFrame:
+def handle_outliers(data: pd.dataFrame, method: str = 'iqr') -> pd.dataFrame:
  """
  Обработка выбросов in числовых данных
 
  Parameters:
  -----------
- data : pd.DataFrame
+ data : pd.dataFrame
  Датафрейм with числовыми данными for обработки выбросов
 
  method : str, default='iqr'
@@ -265,15 +265,15 @@ def handle_outliers(data: pd.DataFrame, method: str = 'iqr') -> pd.DataFrame:
 
  Returns:
  --------
- pd.DataFrame
- Датафрейм with обработанными выбросами
+ pd.dataFrame
+ Датафрейм with обWorkingнными выбросами
 
  Notes:
  ------
  Рекомендации on выбору метода:
  - iqr: Универсальный метод for большинства случаев
  - zscore: Когда выбросы явно ошибочные
- - winsorize: Когда нужно сохранить все данные
+ - winsorize: Когда нужно сохранить все data
  - isolation_forest: for сложных паттернов выбросов
  - local_outlier_factor: for данных with кластерами
  """
@@ -362,7 +362,7 @@ def select_classification_metrics(problem_type: str, data_balance: str = 'balanc
  Returns:
  --------
  List[str]
- Список рекомендуемых метрик for оценки модели:
+ List рекомендуемых метрик for оценки модели:
 
  for бинарной классификации:
  - accuracy: Общая точность (правильные предсказания / все предсказания)
@@ -380,18 +380,18 @@ def select_classification_metrics(problem_type: str, data_balance: str = 'balanc
  Notes:
  ------
  Рекомендации on выбору метрик:
- - Сбалансированные данные: accuracy, f1, roc_auc
- - Несбалансированные данные: f1, roc_auc, balanced_accuracy
+ - Сбалансированные data: accuracy, f1, roc_auc
+ - Несбалансированные data: f1, roc_auc, balanced_accuracy
  - Критически важные случаи: precision (ложные срабатывания дороги)
  - Пропуск важных случаев недопустим: recall (ложные пропуски дороги)
  """
 
  if problem_type == 'binary':
  if data_balance == 'balanced':
- # Сбалансированные данные - стандартные метрики
+ # Сбалансированные data - стандартные метрики
  return ['accuracy', 'f1', 'roc_auc', 'precision', 'recall']
  elif data_balance == 'imbalanced':
- # Несбалансированные данные - метрики устойчивые к дисбалансу
+ # Несбалансированные data - метрики устойчивые к дисбалансу
  return ['f1', 'roc_auc', 'precision', 'recall', 'balanced_accuracy']
  else:
  # Универсальный набор for бинарной классификации
@@ -399,10 +399,10 @@ def select_classification_metrics(problem_type: str, data_balance: str = 'balanc
 
  elif problem_type == 'multiclass':
  if data_balance == 'balanced':
- # Сбалансированные многоклассовые данные
+ # Сбалансированные многоклассовые data
  return ['accuracy', 'f1_macro', 'f1_micro', 'precision_macro', 'recall_macro']
  elif data_balance == 'imbalanced':
- # Несбалансированные многоклассовые данные
+ # Несбалансированные многоклассовые data
  return ['f1_macro', 'f1_micro', 'balanced_accuracy', 'precision_macro', 'recall_macro']
  else:
  # Универсальный набор for многоклассовой классификации
@@ -444,7 +444,7 @@ def select_regression_metrics(problem_type: str, target_distribution: str = 'nor
  Returns:
  --------
  List[str]
- Список рекомендуемых метрик for оценки регрессионной модели:
+ List рекомендуемых метрик for оценки регрессионной модели:
 
  Основные метрики:
  - rmse: Root Mean Square Error (корень из среднеквадратичной ошибки)
@@ -473,7 +473,7 @@ def select_regression_metrics(problem_type: str, target_distribution: str = 'nor
  Рекомендации on выбору метрик:
  - Нормальное распределение: rmse, mae, r2 (стандартный набор)
  - Асимметричное распределение: mae, mape, smape (процентные метрики)
- - Данные with выбросами: mae, huber_loss (устойчивые метрики)
+ - data with выбросами: mae, huber_loss (устойчивые метрики)
  - Многомодальное распределение: mae, r2 (базовые метрики)
  - Равномерное распределение: rmse, mae (стандартные метрики)
  """
@@ -575,7 +575,7 @@ def create_hyperparameter_strategy(data_size: int, problem_type: str) -> Dict[st
 
  if data_size < 1000:
  # Маленький датасет - простые модели, быстрая конвергенция
- # Избегаем переобучения, используем простые конфигурации
+ # Избегаем переобучения, Use простые конфигурации
  return {
  'GBM': [{'num_boost_round': 100, 'learning_rate': 0.1, 'max_depth': 3}],
  'RF': [{'n_estimators': 100, 'max_depth': 10, 'min_samples_split': 5}],
@@ -584,7 +584,7 @@ def create_hyperparameter_strategy(data_size: int, problem_type: str) -> Dict[st
 
  elif data_size < 10000:
  # Средний датасет - умеренная сложность, баланс качества and скорости
- # Используем несколько конфигураций for поиска оптимальной
+ # Use несколько конфигураций for поиска оптимальной
  return {
  'GBM': [
  {'num_boost_round': 200, 'learning_rate': 0.1, 'max_depth': 6},
@@ -602,7 +602,7 @@ def create_hyperparameter_strategy(data_size: int, problem_type: str) -> Dict[st
 
  else:
  # Большой датасет - сложные модели, высокое качество
- # Используем все доступные алгоритмы with оптимальными параметрами
+ # Use все доступные алгоритмы with оптимальными параметрами
  return {
  'GBM': [
  {'num_boost_round': 500, 'learning_rate': 0.1, 'max_depth': 8},
@@ -707,7 +707,7 @@ def optimize_training_time(data_size: int, available_time: int) -> Dict[str, Any
 
  if data_size < 1000:
  # Быстрое обучение for маленьких датасетов
- # Избегаем переобучения, используем простые модели
+ # Избегаем переобучения, Use простые модели
  return {
  'time_limit': time_per_model,
  'presets': 'optimize_for_deployment',
@@ -782,10 +782,10 @@ def select_validation_strategy(data_size: int, problem_type: str,
 
  data_type : str, default='tabular'
  Тип данных:
- - 'tabular': Табличные данные (стандартная валидация)
+ - 'tabular': Табличные data (стандартная валидация)
  - 'time_series': Временные ряды (временная валидация)
  - 'image': Изображения (стратифицированная валидация)
- - 'text': Текстовые данные (случайная валидация)
+ - 'text': Текстовые data (случайная валидация)
 
  Returns:
  --------
@@ -844,7 +844,7 @@ def select_validation_strategy(data_size: int, problem_type: str,
  - Маленькие датасеты: holdout (больше данных for обучения)
  - Средние датасеты: k-fold 5 (баланс стабильности and времени)
  - Большие датасеты: k-fold 10 (максимальная стабильность)
- - Несбалансированные данные: stratified_kfold (сохранение пропорций)
+ - Несбалансированные data: stratified_kfold (сохранение пропорций)
  """
 
  if data_type == 'time_series':
@@ -890,7 +890,7 @@ predictor.fit(train_data, **validation_config)
 ### 2. Кросс-валидация
 
 ```python
-def perform_cross_validation(predictor, data: pd.DataFrame,
+def perform_cross_validation(predictor, data: pd.dataFrame,
  n_folds: int = 5) -> Dict[str, Any]:
  """Выполнение кросс-валидации"""
 
@@ -953,7 +953,7 @@ for metric, stats in cv_results.items():
  print(f"{metric}: {stats['mean']:.4f} ± {stats['std']:.4f}")
 ```
 
-## Работа with ансамблями
+## Working with ансамблями
 
 ### 1. configuration ансамблей
 
@@ -1000,7 +1000,7 @@ def analyze_ensemble(predictor) -> Dict[str, Any]:
  leaderboard = predictor.leaderboard()
 
  # Анализ производительности
- ensemble_analysis = {
+ ensemble_Analysis = {
  'total_models': len(leaderboard),
  'best_model': leaderboard.iloc[0]['model'],
  'best_score': leaderboard.iloc[0]['score_val'],
@@ -1008,9 +1008,9 @@ def analyze_ensemble(predictor) -> Dict[str, Any]:
  'performance_gap': leaderboard.iloc[0]['score_val'] - leaderboard.iloc[-1]['score_val']
  }
 
- return ensemble_analysis
+ return ensemble_Analysis
 
-def calculate_model_diversity(leaderboard: pd.DataFrame) -> float:
+def calculate_model_diversity(leaderboard: pd.dataFrame) -> float:
  """Расчет разнообразия моделей"""
 
  # Разнообразие on типам моделей
@@ -1020,15 +1020,15 @@ def calculate_model_diversity(leaderboard: pd.DataFrame) -> float:
  return diversity
 
 # Использование
-ensemble_analysis = analyze_ensemble(predictor)
+ensemble_Analysis = analyze_ensemble(predictor)
 print("Ensemble Analysis:")
-for key, value in ensemble_analysis.items():
+for key, value in ensemble_Analysis.items():
  print(f"{key}: {value}")
 ```
 
 ## Оптимизация производительности
 
-<img src="images/optimized/metrics_detailed.png" alt="Оптимизация производительности" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/metrics_Detailed.png" alt="Оптимизация производительности" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 5: Лучшие практики оптимизации производительности ML-моделей*
 
 **Почему важна оптимизация производительности?** Потому что медленные модели неэффективны in продакшене:
@@ -1136,7 +1136,7 @@ def optimize_resources(data_size: int, available_resources: Dict[str, int]) -> D
 
  else:
  # Большой датасет - максимальные ресурсы
- # Используем все доступные ресурсы
+ # Use все доступные ресурсы
  num_cpus = min(8, available_resources.get('cpus', 16))
  memory_limit = min(16, available_resources.get('memory', 32))
  parallel_folds = True # Параллельные фолды
@@ -1204,7 +1204,7 @@ parallel_config = configure_parallelization(len(train_data), 'binary')
 <img src="images/optimized/production_architecture.png" alt="Monitoring and логирование" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 6: Лучшие практики Monitoringа and логирования ML-систем*
 
-**Почему критически важен Monitoring ML-систем?** Потому что модели могут деградировать and работать некорректно:
+**Почему критически важен Monitoring ML-систем?** Потому что модели могут деградировать and Workingть некорректно:
 
 - **Система логирования**: Детальная фиксация всех событий
 - **Monitoring качества**: Отслеживание метрик производительности
@@ -1249,7 +1249,7 @@ class AutoGluonLogger:
 
  def log_training_complete(self, results: Dict[str, Any]):
  """Логирование завершения обучения"""
- self.logger.info(f"Training completed: {results}")
+ self.logger.info(f"Training COMPLETED: {results}")
 
  def log_Prediction(self, input_data: Dict, Prediction: Any,
  processing_time: float):
@@ -1298,7 +1298,7 @@ class PerformanceMonitor:
  'timestamp': datetime.now().isoformat()
  }
 
- def monitor_training(self, predictor, data: pd.DataFrame):
+ def monitor_training(self, predictor, data: pd.dataFrame):
  """Monitoring обучения"""
  start_time = time.time()
 
@@ -1336,8 +1336,8 @@ class PerformanceMonitor:
 # Использование
 monitor = PerformanceMonitor()
 final_metrics = monitor.monitor_training(predictor, train_data)
-performance_analysis = monitor.analyze_performance()
-print(f"Performance analysis: {performance_analysis}")
+performance_Analysis = monitor.analyze_performance()
+print(f"Performance Analysis: {performance_Analysis}")
 ```
 
 ## Обработка ошибок
@@ -1345,7 +1345,7 @@ print(f"Performance analysis: {performance_analysis}")
 ### 1. Обработка исключений
 
 ```python
-def safe_training(predictor, data: pd.DataFrame, **kwargs) -> Dict[str, Any]:
+def safe_training(predictor, data: pd.dataFrame, **kwargs) -> Dict[str, Any]:
  """Безопасное обучение with обработкой ошибок"""
 
  try:
@@ -1388,7 +1388,7 @@ def safe_training(predictor, data: pd.DataFrame, **kwargs) -> Dict[str, Any]:
  'status': 'error',
  'performance': None,
  'error': f'Unexpected error: {str(e)}',
- 'suggestion': 'Check data quality and parameters'
+ 'suggestion': 'check data quality and parameters'
  }
 
 # Использование
@@ -1403,7 +1403,7 @@ else:
 ### 2. Восстановление после ошибок
 
 ```python
-def resilient_training(predictor, data: pd.DataFrame,
+def resilient_training(predictor, data: pd.dataFrame,
  fallback_strategies: List[Dict[str, Any]]) -> Dict[str, Any]:
  """Устойчивое обучение with fallback стратегиями"""
 
@@ -1416,7 +1416,7 @@ def resilient_training(predictor, data: pd.DataFrame,
  if validate_model(predictor):
  return {
  'status': 'success',
- 'strategy_used': i,
+ 'strategy_Used': i,
  'strategy_config': strategy
  }
  else:
@@ -1428,9 +1428,9 @@ def resilient_training(predictor, data: pd.DataFrame,
 
  return {
  'status': 'error',
- 'error': 'All strategies failed',
+ 'error': 'all strategies failed',
  'suggestions': [
- 'Check data quality',
+ 'check data quality',
  'Reduce model complexity',
  'Increase time limits',
  'Use simpler algorithms'
@@ -1529,7 +1529,7 @@ optimization_result = optimize_for_production(predictor, target_size_mb=50)
 print(f"Optimization result: {optimization_result}")
 ```
 
-### 2. Кэширование predictions
+### 2. Кэширование Predictions
 
 ```python
 import hashlib
@@ -1538,12 +1538,12 @@ from typing import Optional
 
 class PredictionCache:
  """
- Система кэширования predictions for acceleration инференса
+ Система кэширования Predictions for acceleration инференса
 
  Parameters:
  -----------
  cache_size : int, default=1000
- Максимальный размер cache (количество predictions):
+ Максимальный размер cache (количество Predictions):
  - 100-500: Маленький кэш for простых систем
  - 500-1000: Стандартный кэш for большинства задач
  - 1000-5000: Большой кэш for высоконагруженных систем
@@ -1552,7 +1552,7 @@ class PredictionCache:
  Attributes:
  -----------
  cache : Dict[str, Any]
- Словарь кэшированных predictions
+ Словарь кэшированных Predictions
  Ключ: MD5 хеш входных данных
  Значение: Результат предсказания
 
@@ -1566,9 +1566,9 @@ class PredictionCache:
  Notes:
  ------
  Стратегия кэширования:
- - LRU (Least Recently Used): remove наименее используемых элементов
+ - LRU (Least Recently Used): remove наименее Useых элементов
  - MD5 хеширование: Быстрое сравнение входных данных
- - Автоматическое управление размером: Предотвращение переполнения памяти
+ - Автоматическое Management размером: Предотвращение переполнения памяти
  - Статистика использования: Monitoring эффективности cache
  """
 
@@ -1584,12 +1584,12 @@ class PredictionCache:
  Parameters:
  -----------
  data : Dict
- Входные данные for предсказания
+ Входные data for предсказания
 
  Returns:
  --------
  str
- MD5 хеш входных данных, используемый как ключ cache
+ MD5 хеш входных данных, Useый как ключ cache
 
  Notes:
  ------
@@ -1601,9 +1601,9 @@ class PredictionCache:
 
  Преимущества MD5:
  - Быстрое вычисление
- - Фиксированная длина (32 символа)
+ - Фиксированная длина (32 symbol)
  - Низкая вероятность коллизий
- - Детерминистичность (одинаковые данные = одинаковый хеш)
+ - Детерминистичность (одинаковые data = одинаковый хеш)
  """
  data_str = json.dumps(data, sort_keys=True)
  return hashlib.md5(data_str.encode()).hexdigest()
@@ -1615,12 +1615,12 @@ class PredictionCache:
  Parameters:
  -----------
  data : Dict
- Входные данные for поиска in кэше
+ Входные data for поиска in кэше
 
  Returns:
  --------
  Optional[Any]
- Кэшированное Prediction or None если not найдено
+ Кэшированное Prediction or None если not foundо
 
  Notes:
  ------
@@ -1646,7 +1646,7 @@ class PredictionCache:
  Parameters:
  -----------
  data : Dict
- Входные данные for кэширования
+ Входные data for кэширования
 
  Prediction : Any
  Результат предсказания for сохранения
@@ -1656,7 +1656,7 @@ class PredictionCache:
  Алгоритм сохранения:
  1. Генерация ключа cache из входных данных
  2. check размера cache
- 3. remove наименее используемого элемента (LRU) если нужно
+ 3. remove наименее Useого элемента (LRU) если нужно
  4. Сохранение нового предсказания
  5. Инициализация счетчика обращений
  """
@@ -1664,10 +1664,10 @@ class PredictionCache:
 
  # check размера cache
  if len(self.cache) >= self.cache_size:
- # remove наименее используемого элемента (LRU)
- least_used_key = min(self.access_count.keys(), key=self.access_count.get)
- del self.cache[least_used_key]
- del self.access_count[least_used_key]
+ # remove наименее Useого элемента (LRU)
+ least_Used_key = min(self.access_count.keys(), key=self.access_count.get)
+ del self.cache[least_Used_key]
+ del self.access_count[least_Used_key]
 
  # add нового элемента
  self.cache[cache_key] = Prediction
@@ -1684,14 +1684,14 @@ class PredictionCache:
  - cache_size: int - текущий размер cache
  - max_cache_size: int - максимальный размер cache
  - hit_rate: float - коэффициент попаданий (0.0-1.0)
- - most_accessed: tuple - наиболее используемый элемент
+ - most_accessed: tuple - наиболее Useый элемент
  - total_accesses: int - общее количество обращений
  - memory_usage: float - примерное использование памяти in MB
 
  Notes:
  ------
  Метрики эффективности cache:
- - hit_rate: Доля запросов, которые были найдены in кэше
+ - hit_rate: Доля запросов, которые были foundы in кэше
  - most_accessed: Самый популярный элемент cache
  - memory_usage: Оценка использования памяти
  """
@@ -1765,7 +1765,7 @@ def cached_predict(predictor, data: Dict) -> Any:
  return cached_Prediction
 
  # Выполнение предсказания
- Prediction = predictor.predict(pd.DataFrame([data]))
+ Prediction = predictor.predict(pd.dataFrame([data]))
 
  # Сохранение in кэш
  cache.set_Prediction(data, Prediction)
@@ -1791,7 +1791,7 @@ def cached_predict(predictor, data: Dict) -> Any:
 
 **Почему следуют этическим принципам?** Потому что это основа доверия and долгосрочного успеха:
 
-- **Принцип "Справедливости"**: Равное отношение ко всем группам
+- **Принцип "Справедливости"**: Равное отношение ко all группам
 - **Принцип "Прозрачности"**: Понятность решений for пользователей
 - **Принцип "Конфиденциальности"**: Защита личных данных
 - **Принцип "Безопасности"**: Защита from злонамеренного использования

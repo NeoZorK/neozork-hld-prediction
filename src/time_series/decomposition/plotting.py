@@ -24,7 +24,7 @@ def _localized_texts(locale_ru: bool) -> Dict[str, str]:
  "title_residual": "CEEMDAN — Остаток",
  "desc_imf": (
  "IMF-компонента {n}. Высокие номера обычно низкочастотные (тренд), "
- "низкие — высокочастотные (шум/микроструктура)."
+ "низкие — высокочастотные (шум/микроStructure)."
  ),
  "desc_res": (
  "Остаток после вычитания всех IMF. Часто интерпретируется как медленная часть/тренд."
@@ -41,7 +41,7 @@ def _localized_texts(locale_ru: bool) -> Dict[str, str]:
  "title_imf": "CEEMDAN — IMF {n}",
  "title_residual": "CEEMDAN — Residual",
  "desc_imf": (
- "IMF component {n}. Lower index ~ higher frequency (noise), higher index ~ lower frequency (trend)."
+ "IMF component {n}. lower index ~ higher frequency (noise), higher index ~ lower frequency (trend)."
  ),
  "desc_res": (
  "Residual after removing all IMFs. Often represents slow part/trend."
@@ -81,19 +81,19 @@ def plot_and_save(result: DecompositionResult, plots_dir: str, file_stem: str, l
  return out_path
 
 
-def get_ceemdan_explanation(locale_ru: bool) -> str:
+def get_ceemdan_exPlanation(locale_ru: bool) -> str:
  if locale_ru:
  return (
  "Пояснение результатов CEEMDAN:\n"
- "- IMF1 — высокочастотные колебания (шум/микроструктура).\n"
+ "- IMF1 — высокочастотные колебания (шум/микроStructure).\n"
  "- IMF2..IMFk — промежуточные частоты (циклы/реакции рынка).\n"
  "- Остаток — медленная часть/тренд после вычитания IMF.\n"
  "Use энергию IMF как признаки, моделируйте трендовую часть отдельно,\n"
  "and применяйте walk-forward/учёт комиссий при проверке стратегий."
  )
  return (
- "CEEMDAN results explanation:\n"
- "- IMF1: highest frequency (noise/microstructure).\n"
+ "CEEMDAN results exPlanation:\n"
+ "- IMF1: highest frequency (noise/microStructure).\n"
  "- IMF2..IMFk: intermediate frequencies (cycles/market reactions).\n"
  "- Residual: slow part/trend after removing IMFs.\n"
  "Use IMF energies as features, model trend separately, and validate with walk-forward/costs."

@@ -1,31 +1,31 @@
 # Frequently Asked Questions / Frequently Asked Questions
 
-## 🚀 General questions / General Questions
+## 🚀 General questions / General questions
 
-### Q: How to quickly launch the system? / How to quickly launch the system?
-**A:** Use quick start:
+### Q: How to quickly Launch the system? / How to quickly Launch the system?
+**A:** Use Quick start:
 ```bash
-# Installation зависимостей / Install dependencies
+# installation зависимостей / install dependencies
 uv pip install -r requirements.txt
 
-# Launch main analysis / Launch main analysis
-uv run run_analysis.py demo --rule PHLD
+# Launch main Analysis / Launch main Analysis
+uv run run_Analysis.py demo --rule PHLD
 
-# Launch всех тестов / Run all tests
+# Run all tests / Run all tests
 uv run pytest tests -n auto
 ```
 
-### Q: Какие компоненты входят in систему? / What components are included in the system?
+### Q: What components are included in the system? / What components are included in the system?
 **A:** Система включает:
-- **Основной анализ** (`run_analysis.py`) - Ручное построение графиков / Manual charting
+- **Основной анализ** (`run_Analysis.py`) - Ручное построение графиков / Manual charting
 - **Интерактивная система** (`interactive/`) - ML торговые стратегии / ML trading strategies
 - **SaaS platform** (`src/saas/`) - Облачная platform / Cloud platform
-- **Pocket Hedge Fund** (`src/pocket_hedge_fund/`) - Hedge fund / Hedge fund
-- **Mobile application** (`src/mobile_app/`) - React Native application / React Native app
+- **Pocket Hedge fund** (`src/pocket_hedge_fund/`) - Hedge fund / Hedge fund
+- **mobile application** (`src/mobile_app/`) - React Native application / React Native app
 - **Админ панель** (`src/admin_panel/`) - Vue.js админка / Vue.js admin panel
-- **Monitoring** (`src/monitoring/`) - Система Monitoringа / Monitoring system
+- **Monitoring** (`src/Monitoring/`) - Система Monitoringа / Monitoring system
 
-### Q: Какие требования к системе? / What are the system requirements?
+### Q: What требования к системе? / What are the system requirements?
 **A:** Минимальные требования:
 - **Python**: 3.11+
 - **Node.js**: 18+
@@ -36,10 +36,10 @@ uv run pytest tests -n auto
 
 ## 🧪 Вопросы on testing / testing Questions
 
-### Q: Как запустить все тесты? / How to run all tests?
+### Q: Как запустить все тесты? / How to Run all tests?
 **A:** Use многопоточное тестирование:
 ```bash
-# Все тесты / All tests
+# Все тесты / all tests
 uv run pytest tests -n auto
 
 # Safe mode / Safe mode
@@ -58,7 +58,7 @@ uv run pytest tests/calculation/ -n auto
 # Тесты SaaS / SaaS tests
 uv run pytest tests/saas/ -n auto
 
-# Тесты Pocket Hedge Fund / Pocket Hedge Fund tests
+# Тесты Pocket Hedge fund / Pocket Hedge fund tests
 uv run pytest tests/pocket_hedge_fund/ -n auto
 ```
 
@@ -68,7 +68,7 @@ uv run pytest tests/pocket_hedge_fund/ -n auto
 # Safe mode / Safe mode
 ./scripts/run_tests_safe.sh
 
-# with debugging / With debugging
+# with debugging / with debugging
 uv run pytest tests/ -v -s
 
 # Конкретный тест / specific test
@@ -77,10 +77,10 @@ uv run pytest tests/calculation/test_indicators.py::test_rsi -v
 
 ## 🐳 Вопросы on Docker / Docker Questions
 
-### Q: Как launch the system in Docker? / How to run system in Docker?
+### Q: Как Launch the system in Docker? / How to run system in Docker?
 **A:** Use Docker Compose:
 ```bash
-# Launch всех сервисов / Launch all services
+# Launch всех сервисов / Launch all Services
 docker-compose up -d
 
 # Launch with логированием / Launch with logging
@@ -91,7 +91,7 @@ docker-compose down
 ```
 
 ### Q: Как запустить тесты in Docker? / How to run tests in Docker?
-**A:** execute команды in контейнере:
+**A:** execute team in контейнере:
 ```bash
 # Тесты in контейнере / Tests in container
 docker-compose exec neozork-hld uv run pytest tests/ -n auto
@@ -118,18 +118,18 @@ sudo systemctl Restart Docker
 ### Q: Как запустить нативный контейнер? / How to run native container?
 **A:** Use скрипты нативного контейнера:
 ```bash
-# Интерактивный Launch / Interactive launch
+# Интерактивный Launch / Interactive Launch
 ./scripts/native-container/native-container.sh
 
-# Быстрый Launch / Quick launch
+# Быстрый Launch / Quick Launch
 ./scripts/native-container/setup.sh && ./scripts/native-container/run.sh
 
-# check статуса / Check status
+# check статуса / check status
 ./scripts/native-container/run.sh --status
 ```
 
 ### Q: Как управлять нативным контейнером? / How to manage native container?
-**A:** Use команды управления:
+**A:** Use team управления:
 ```bash
 # Остановка / Stop
 ./scripts/native-container/stop.sh
@@ -141,15 +141,15 @@ sudo systemctl Restart Docker
 ./scripts/native-container/cleanup.sh --all --force
 ```
 
-## 🚀 Вопросы on deployment / Deployment Questions
+## 🚀 Вопросы on deployment / deployment Questions
 
-### Q: Как развернуть систему in продакшне? / How to deploy system in production?
+### Q: Как развернуть system in продакшне? / How to deploy system in production?
 **A:** Use продакшн конфигурацию:
 ```bash
 # configuration продакшна / Setup production
 python deploy/production_setup.py
 
-# Launch продакшн сервисов / Launch production services
+# Launch продакшн сервисов / Launch production Services
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
@@ -159,9 +159,9 @@ docker-compose -f docker-compose.prod.yml up -d
 # Применение манифестов / Apply manifests
 kubectl apply -f k8s/
 
-# check статуса / Check status
+# check статуса / check status
 kubectl get pods
-kubectl get services
+kubectl get Services
 ```
 
 ## 🔧 Вопросы on настройке / Configuration Questions
@@ -179,35 +179,35 @@ nano .env
 ### Q: Как настроить базу данных? / How to configure database?
 **A:** install PostgreSQL and настройте переменные:
 ```bash
-# Installation PostgreSQL / Install PostgreSQL
+# installation PostgreSQL / install PostgreSQL
 sudo apt-get install postgresql postgresql-contrib
 
 # create базы данных / Create database
 createdb neozork_fund
 
-# configuration пользователя / Configure user
-createuser neozork_user
+# configuration User / Configure User
+createUser neozork_User
 ```
 
 ## 📊 Вопросы on Monitoringу / Monitoring Questions
 
-### Q: Как просмотреть логи? / How to view logs?
-**A:** Use команды просмотра логов:
+### Q: Как Viewеть логи? / How to View logs?
+**A:** Use team Viewа логов:
 ```bash
-# Логи приложения / Application logs
+# Логи приложения / application logs
 tail -f logs/pocket_hedge_fund.log
 
 # Docker логи / Docker logs
 docker-compose logs -f neozork-hld
 
-# Все логи / All logs
+# Все логи / all logs
 tail -f logs/*.log
 ```
 
 ### Q: Как проверить статус системы? / How to check system status?
-**A:** Use команды проверки:
+**A:** Use team проверки:
 ```bash
-# Health check / check здоровья
+# health check / health check
 curl http://localhost:8080/health
 
 # Prometheus метрики / Prometheus metrics
@@ -222,15 +222,15 @@ docker-compose ps
 ### Q: Что делать, если возникают Import Errors? / What to do if Import Errors occur?
 **A:** Проверьте PYTHONPATH:
 ```bash
-# Installation PYTHONPATH / Set PYTHONPATH
+# installation PYTHONPATH / Set PYTHONPATH
 export PYTHONPATH="${PWD}:${PYTHONPATH}"
 
-# check установки / Check installation
-uv pip list | grep neozork
+# check установки / check installation
+uv pip List | grep neozork
 ```
 
-### Q: Что делать, если тесты медленно работают? / What to do if tests run slowly?
-**A:** Use оптимизированные команды:
+### Q: Что делать, если тесты медленно Workingют? / What to do if tests run slowly?
+**A:** Use оптимизированные team:
 ```bash
 # Safe mode / Safe mode
 ./scripts/run_tests_safe.sh
@@ -245,14 +245,14 @@ uv run pytest tests/calculation/ -v
 ### Q: Как получить помощь? / How to get help?
 **A:** Use доступные ресурсы:
 - **documentation / Documentation**: [docs/run-and-test-guides/](.)
-- **GitHub Issues**: https://github.com/username/neozork-hld-Prediction/issues
+- **GitHub Issues**: https://github.com/Username/neozork-hld-Prediction/issues
 - **Discord**: https://discord.gg/neozork
 - **Telegram**: https://t.me/neozork_hld
 
 ## 📚 Дополнительные ресурсы / Additional Resources
 
 - [Complete guide / Complete Manual](russian/complete-manual-ru.md)
-- [quick start / Quick start](russian/quick-start-ru.md)
+- [Quick start / Quick start](russian/quick-start-ru.md)
 - [guide on testing / testing Guide](russian/testing-guide-ru.md)
-- [guide on deployment / Deployment Guide](russian/deployment-guide-ru.md)
+- [guide on deployment / deployment Guide](russian/deployment-guide-ru.md)
 - [Troubleshooting / Troubleshooting](Troubleshooting.md)

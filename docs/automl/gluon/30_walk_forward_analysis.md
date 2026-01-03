@@ -1,4 +1,4 @@
-# Углубленное description методик Walk-Forward анализа
+# Углубленное description методик Walk-Forward Analysis
 
 **Author:** Shcherbyna Rostyslav
 **Дата:** 2024
@@ -58,14 +58,14 @@ graph TD
 - **Стабильность**: Проверяет стабильность стратегии во времени
 - **Робастность**: Выявляет слабые места стратегии
 
-### Что происходит без Walk-Forward анализа?
+### Что происходит без Walk-Forward Analysis?
 
-- **Переобучение**: Модель запоминает исторические данные
-- **Нестабильность**: Стратегия работает нестабильно во времени
+- **Переобучение**: Модель запоминает исторические data
+- **Нестабильность**: Стратегия Workingет нестабильно во времени
 - **Ложная уверенность**: Завышенные ожидания from стратегии
-- **Реальные потери**: Стратегия not работает in реальной торговле
+- **Реальные потери**: Стратегия not Workingет in реальной торговле
 
-## Теоретические основы Walk-Forward анализа
+## Теоретические основы Walk-Forward Analysis
 
 ### Математические принципы
 
@@ -96,13 +96,13 @@ For t = train_window to T - test_window:
 3. **Адаптивность**: модель адаптируется к новым условиям
 4. **Робастность**: результаты стабильны on разных периодах
 
-### Типы Walk-Forward анализа
+### Типы Walk-Forward Analysis
 
-### 📊 Сравнение типов Walk-Forward анализа
+### 📊 Сравнение типов Walk-Forward Analysis
 
 ```mermaid
 graph TB
- A[Типы Walk-Forward анализа] --> B[Фиксированное окно]
+ A[Типы Walk-Forward Analysis] --> B[Фиксированное окно]
  A --> C[Расширяющееся окно]
  A --> D[Скользящее окно]
  A --> E[Адаптивное окно]
@@ -162,22 +162,22 @@ graph TB
 - Сложный in реализации
 - Наиболее гибкий
 
-## Продвинутые методики Walk-Forward анализа
+## Продвинутые методики Walk-Forward Analysis
 
 ### 1. Базовый Walk-Forward анализ
 
-### 🔄 Процесс Walk-Forward анализа
+### 🔄 Процесс Walk-Forward Analysis
 
 ```mermaid
 graph TD
- A[Исходные временные данные] --> B[configuration параметров]
+ A[Исходные временные data] --> B[configuration параметров]
  B --> C[train_window = 252<br/>test_window = 30<br/>step = 30]
 
  C --> D[Инициализация цикла]
  D --> E[i = train_window]
 
- E --> F[Обучающие данные<br/>data[i-train_window:i]]
- E --> G[Тестовые данные<br/>data[i:i+test_window]]
+ E --> F[Обучающие data<br/>data[i-train_window:i]]
+ E --> G[Тестовые data<br/>data[i:i+test_window]]
 
  F --> H[Обучение модели<br/>model.fit(train_data)]
  G --> I[Предсказания<br/>model.predict(test_data)]
@@ -226,13 +226,13 @@ graph TD
 **Простая реализация:**
 
 ```python
-def walk_forward_analysis(data, model, train_window=252, test_window=30, step=30):
+def walk_forward_Analysis(data, model, train_window=252, test_window=30, step=30):
  """
  Базовый Walk-Forward анализ for валидации ML-стратегий
 
  Parameters:
  -----------
- data : pandas.DataFrame
+ data : pandas.dataFrame
  Временные ряды данных with колонками:
  - 'returns': доходность актива (float)
  - 'features': признаки for модели (array-like)
@@ -270,8 +270,8 @@ def walk_forward_analysis(data, model, train_window=252, test_window=30, step=30
 
  Returns:
  --------
- pd.DataFrame
- Результаты анализа with колонками:
+ pd.dataFrame
+ Результаты Analysis with колонками:
  - 'start_date': начало периода обучения (datetime)
  - 'end_date': конец периода обучения (datetime)
  - 'test_start': начало периода тестирования (datetime)
@@ -292,16 +292,16 @@ def walk_forward_analysis(data, model, train_window=252, test_window=30, step=30
  ---------
  >>> data = pd.read_csv('financial_data.csv', index_col=0, parse_dates=True)
  >>> model = RandomForestRegressor(n_estimators=100)
- >>> results = walk_forward_analysis(data, model, train_window=252, test_window=30)
+ >>> results = walk_forward_Analysis(data, model, train_window=252, test_window=30)
  >>> print(f"Средний коэффициент Шарпа: {results['sharpe'].mean():.2f}")
  """
  results = []
 
  for i in range(train_window, len(data) - test_window, step):
- # Обучающие данные
+ # Обучающие data
  train_data = data[i-train_window:i]
 
- # Тестовые данные
+ # Тестовые data
  test_data = data[i:i+test_window]
 
  # Обучение модели
@@ -330,16 +330,16 @@ def walk_forward_analysis(data, model, train_window=252, test_window=30, step=30
  'Predictions': Predictions
  })
 
- return pd.DataFrame(results)
+ return pd.dataFrame(results)
 
 # example использования
-wf_results = walk_forward_analysis(data, model, train_window=252, test_window=30, step=30)
+wf_results = walk_forward_Analysis(data, model, train_window=252, test_window=30, step=30)
 ```
 
 **Расширяющееся окно:**
 
 ```python
-def expanding_window_analysis(data, model, initial_train_window=252, test_window=30, step=30):
+def expanding_window_Analysis(data, model, initial_train_window=252, test_window=30, step=30):
  """
  Walk-Forward анализ with расширяющимся окном обучения
 
@@ -348,7 +348,7 @@ def expanding_window_analysis(data, model, initial_train_window=252, test_window
 
  Parameters:
  -----------
- data : pandas.DataFrame
+ data : pandas.dataFrame
  Временные ряды данных with колонками:
  - 'returns': доходность актива (float)
  - 'features': признаки for модели (array-like)
@@ -386,8 +386,8 @@ def expanding_window_analysis(data, model, initial_train_window=252, test_window
 
  Returns:
  --------
- pd.DataFrame
- Результаты анализа with колонками:
+ pd.dataFrame
+ Результаты Analysis with колонками:
  - 'train_start': начало периода обучения (datetime)
  - 'train_end': конец периода обучения (datetime)
  - 'test_start': начало периода тестирования (datetime)
@@ -408,23 +408,23 @@ def expanding_window_analysis(data, model, initial_train_window=252, test_window
  ------
  - Расширяющееся окно может быть медленнее фиксированного из-за увеличения
  размера данных for обучения
- - Подходит for стратегий, где исторические данные остаются релевантными
+ - Подходит for стратегий, где исторические data остаются релевантными
  - Может привести к переобучению on старых данных
 
  Examples:
  ---------
  >>> data = pd.read_csv('financial_data.csv', index_col=0, parse_dates=True)
  >>> model = RandomForestRegressor(n_estimators=100)
- >>> results = expanding_window_analysis(data, model, initial_train_window=252)
+ >>> results = expanding_window_Analysis(data, model, initial_train_window=252)
  >>> print(f"Финальный размер окна: {results['train_size'].iloc[-1]}")
  """
  results = []
 
  for i in range(initial_train_window, len(data) - test_window, step):
- # Обучающие данные (расширяющееся окно)
+ # Обучающие data (расширяющееся окно)
  train_data = data[:i]
 
- # Тестовые данные
+ # Тестовые data
  test_data = data[i:i+test_window]
 
  # Обучение модели
@@ -453,10 +453,10 @@ def expanding_window_analysis(data, model, initial_train_window=252, test_window
  'total_return': total_return
  })
 
- return pd.DataFrame(results)
+ return pd.dataFrame(results)
 
 # example использования
-expanding_results = expanding_window_analysis(data, model, initial_train_window=252, test_window=30)
+expanding_results = expanding_window_Analysis(data, model, initial_train_window=252, test_window=30)
 ```
 
 ### 2. Адаптивный Walk-Forward анализ
@@ -465,11 +465,11 @@ expanding_results = expanding_window_analysis(data, model, initial_train_window=
 
 ```mermaid
 graph TD
- A[Исходные данные] --> B[Инициализация параметров]
+ A[Исходные data] --> B[Инициализация параметров]
  B --> C[min_window = 100<br/>max_window = 500<br/>current_window = min_window]
 
  C --> D[Цикл Walk-Forward]
- D --> E[Обучающие данные<br/>data[i-current_window:i]]
+ D --> E[Обучающие data<br/>data[i-current_window:i]]
  E --> F[Обучение модели]
  F --> G[Предсказания and метрики]
 
@@ -516,7 +516,7 @@ graph TD
 **Адаптация размера окна:**
 
 ```python
-def adaptive_window_analysis(data, model, min_window=100, max_window=500,
+def adaptive_window_Analysis(data, model, min_window=100, max_window=500,
  test_window=30, step=30, stability_threshold=0.1):
  """
  Walk-Forward анализ with адаптивным окном обучения
@@ -526,7 +526,7 @@ def adaptive_window_analysis(data, model, min_window=100, max_window=500,
 
  Parameters:
  -----------
- data : pandas.DataFrame
+ data : pandas.dataFrame
  Временные ряды данных with колонками:
  - 'returns': доходность актива (float)
  - 'features': признаки for модели (array-like)
@@ -580,8 +580,8 @@ def adaptive_window_analysis(data, model, min_window=100, max_window=500,
 
  Returns:
  --------
- pd.DataFrame
- Результаты анализа with колонками:
+ pd.dataFrame
+ Результаты Analysis with колонками:
  - 'train_start': начало периода обучения (datetime)
  - 'train_end': конец периода обучения (datetime)
  - 'test_start': начало периода тестирования (datetime)
@@ -609,17 +609,17 @@ def adaptive_window_analysis(data, model, min_window=100, max_window=500,
  ---------
  >>> data = pd.read_csv('financial_data.csv', index_col=0, parse_dates=True)
  >>> model = RandomForestRegressor(n_estimators=100)
- >>> results = adaptive_window_analysis(data, model, min_window=100, max_window=500)
+ >>> results = adaptive_window_Analysis(data, model, min_window=100, max_window=500)
  >>> print(f"Средний размер окна: {results['window_size'].mean():.0f}")
  """
  results = []
  current_window = min_window
 
  for i in range(min_window, len(data) - test_window, step):
- # Обучающие данные
+ # Обучающие data
  train_data = data[i-current_window:i]
 
- # Тестовые данные
+ # Тестовые data
  test_data = data[i:i+test_window]
 
  # Обучение модели
@@ -660,16 +660,16 @@ def adaptive_window_analysis(data, model, min_window=100, max_window=500,
  'total_return': total_return
  })
 
- return pd.DataFrame(results)
+ return pd.dataFrame(results)
 
 # example использования
-adaptive_results = adaptive_window_analysis(data, model, min_window=100, max_window=500)
+adaptive_results = adaptive_window_Analysis(data, model, min_window=100, max_window=500)
 ```
 
 **Адаптация on basis волатильности:**
 
 ```python
-def volatility_adaptive_analysis(data, model, base_window=252, test_window=30,
+def volatility_adaptive_Analysis(data, model, base_window=252, test_window=30,
  step=30, volatility_lookback=50):
  """
  Walk-Forward анализ with адаптацией размера окна к волатильности рынка
@@ -680,7 +680,7 @@ def volatility_adaptive_analysis(data, model, base_window=252, test_window=30,
 
  Parameters:
  -----------
- data : pandas.DataFrame
+ data : pandas.dataFrame
  Временные ряды данных with колонками:
  - 'returns': доходность актива (float) - используется for расчета волатильности
  - 'features': признаки for модели (array-like)
@@ -726,8 +726,8 @@ def volatility_adaptive_analysis(data, model, base_window=252, test_window=30,
 
  Returns:
  --------
- pd.DataFrame
- Результаты анализа with колонками:
+ pd.dataFrame
+ Результаты Analysis with колонками:
  - 'train_start': начало периода обучения (datetime)
  - 'train_end': конец периода обучения (datetime)
  - 'test_start': начало периода тестирования (datetime)
@@ -756,7 +756,7 @@ def volatility_adaptive_analysis(data, model, base_window=252, test_window=30,
  ---------
  >>> data = pd.read_csv('financial_data.csv', index_col=0, parse_dates=True)
  >>> model = RandomForestRegressor(n_estimators=100)
- >>> results = volatility_adaptive_analysis(data, model, base_window=252)
+ >>> results = volatility_adaptive_Analysis(data, model, base_window=252)
  >>> print(f"Средний коэффициент волатильности: {results['volatility_ratio'].mean():.2f}")
  """
  results = []
@@ -776,10 +776,10 @@ def volatility_adaptive_analysis(data, model, base_window=252, test_window=30,
  else:
  window_size = base_window
 
- # Обучающие данные
+ # Обучающие data
  train_data = data[i-window_size:i]
 
- # Тестовые данные
+ # Тестовые data
  test_data = data[i:i+test_window]
 
  # Обучение модели
@@ -809,19 +809,19 @@ def volatility_adaptive_analysis(data, model, base_window=252, test_window=30,
  'total_return': total_return
  })
 
- return pd.DataFrame(results)
+ return pd.dataFrame(results)
 
 # example использования
-vol_adaptive_results = volatility_adaptive_analysis(data, model, base_window=252)
+vol_adaptive_results = volatility_adaptive_Analysis(data, model, base_window=252)
 ```
 
 ### 3. Многоуровневый Walk-Forward анализ
 
-### 🏗️ Архитектура многоуровневого анализа
+### 🏗️ Архитектура многоуровневого Analysis
 
 ```mermaid
 graph TD
- A[Исходные данные] --> B[Многоуровневый Walk-Forward анализ]
+ A[Исходные data] --> B[Многоуровневый Walk-Forward анализ]
 
  B --> C[Уровень 1: Базовые модели]
  C --> D[Random Forest]
@@ -885,10 +885,10 @@ def hierarchical_walk_forward(data, models, train_window=252, test_window=30, st
  results = []
 
  for i in range(train_window, len(data) - test_window, step):
- # Обучающие данные
+ # Обучающие data
  train_data = data[i-train_window:i]
 
- # Тестовые данные
+ # Тестовые data
  test_data = data[i:i+test_window]
 
  # Обучение всех моделей
@@ -897,8 +897,8 @@ def hierarchical_walk_forward(data, models, train_window=252, test_window=30, st
  model.fit(train_data)
  model_Predictions[name] = model.predict(test_data)
 
- # Комбинирование predictions
- combined_Predictions = np.mean(list(model_Predictions.values()), axis=0)
+ # Комбинирование Predictions
+ combined_Predictions = np.mean(List(model_Predictions.values()), axis=0)
 
  # Оценка качества
  returns = test_data['returns']
@@ -930,7 +930,7 @@ def hierarchical_walk_forward(data, models, train_window=252, test_window=30, st
  'individual_metrics': individual_metrics
  })
 
- return pd.DataFrame(results)
+ return pd.dataFrame(results)
 
 # example использования
 models = {
@@ -950,10 +950,10 @@ def ensemble_walk_forward(data, base_models, ensemble_model, train_window=252,
  results = []
 
  for i in range(train_window, len(data) - test_window, step):
- # Обучающие данные
+ # Обучающие data
  train_data = data[i-train_window:i]
 
- # Тестовые данные
+ # Тестовые data
  test_data = data[i:i+test_window]
 
  # Обучение базовых моделей
@@ -993,7 +993,7 @@ def ensemble_walk_forward(data, base_models, ensemble_model, train_window=252,
  'ensemble_Predictions': ensemble_Predictions
  })
 
- return pd.DataFrame(results)
+ return pd.dataFrame(results)
 
 # example использования
 base_models = {
@@ -1005,9 +1005,9 @@ ensemble_model = LinearRegression()
 ensemble_results = ensemble_walk_forward(data, base_models, ensemble_model)
 ```
 
-## Метрики качества Walk-Forward анализа
+## Метрики качества Walk-Forward Analysis
 
-### 📊 Классификация метрик качества Walk-Forward анализа
+### 📊 Классификация метрик качества Walk-Forward Analysis
 
 ```mermaid
 graph TD
@@ -1065,12 +1065,12 @@ def calculate_temporal_stability(results):
  Расчет стабильности производительности во времени
 
  Анализирует стабильность коэффициента Шарпа and других метрик во времени,
- что является ключевым показателем качества Walk-Forward анализа.
+ что является ключевым показателем качества Walk-Forward Analysis.
 
  Parameters:
  -----------
- results : pd.DataFrame
- Результаты Walk-Forward анализа with колонками:
+ results : pd.dataFrame
+ Результаты Walk-Forward Analysis with колонками:
  - 'sharpe': коэффициент Шарпа за каждый период (float)
  - 'max_drawdown': максимальная просадка за каждый период (float)
  - 'total_return': общая доходность за каждый период (float)
@@ -1114,7 +1114,7 @@ def calculate_temporal_stability(results):
 
  Examples:
  ---------
- >>> results = walk_forward_analysis(data, model)
+ >>> results = walk_forward_Analysis(data, model)
  >>> stability = calculate_temporal_stability(results)
  >>> print(f"Стабильность Шарпа: {stability['sharpe_stability']:.2f}")
  """
@@ -1155,8 +1155,8 @@ def calculate_adaptability(results, lookback=5):
 
  Parameters:
  -----------
- results : pd.DataFrame
- Результаты Walk-Forward анализа with колонками:
+ results : pd.dataFrame
+ Результаты Walk-Forward Analysis with колонками:
  - 'sharpe': коэффициент Шарпа за каждый период (float)
  - 'max_drawdown': максимальная просадка за каждый период (float)
  - 'total_return': общая доходность за каждый период (float)
@@ -1206,7 +1206,7 @@ def calculate_adaptability(results, lookback=5):
 
  Examples:
  ---------
- >>> results = walk_forward_analysis(data, model)
+ >>> results = walk_forward_Analysis(data, model)
  >>> adaptability = calculate_adaptability(results, lookback=5)
  >>> print(f"Скорость адаптации: {adaptability['mean_adaptation_speed']:.3f}")
  """
@@ -1244,7 +1244,7 @@ adaptability_metrics = calculate_adaptability(wf_results, lookback=5)
 ```python
 def calculate_statistical_significance(results, confidence_level=0.95):
  """
- Расчет статистической значимости результатов Walk-Forward анализа
+ Расчет статистической значимости результатов Walk-Forward Analysis
 
  Проводит статистические тесты for оценки значимости результатов:
  - Тест on нормальность (Shapiro-Wilk)
@@ -1253,8 +1253,8 @@ def calculate_statistical_significance(results, confidence_level=0.95):
 
  Parameters:
  -----------
- results : pd.DataFrame
- Результаты Walk-Forward анализа with колонками:
+ results : pd.dataFrame
+ Результаты Walk-Forward Analysis with колонками:
  - 'sharpe': коэффициент Шарпа за каждый период (float)
  - 'max_drawdown': максимальная просадка за каждый период (float)
  - 'total_return': общая доходность за каждый период (float)
@@ -1274,12 +1274,12 @@ def calculate_statistical_significance(results, confidence_level=0.95):
  Словарь with результатами статистических тестов:
  - 'shapiro_statistic': статистика теста Шапиро-Уилка (float)
  - 'shapiro_pvalue': p-value теста on нормальность (float)
- - > 0.05: данные нормально распределены
- - <= 0.05: данные not нормально распределены
+ - > 0.05: data нормально распределены
+ - <= 0.05: data not нормально распределены
  - 'adf_statistic': статистика теста ADF (float)
  - 'adf_pvalue': p-value теста on стационарность (float)
- - < 0.05: данные стационарны
- - >= 0.05: данные not стационарны
+ - < 0.05: data стационарны
+ - >= 0.05: data not стационарны
  - 'confidence_interval': доверительный интервал (tuple)
  - (lower_bound, upper_bound) for среднего коэффициента Шарпа
  - 'is_significant': общая статистическая значимость (bool)
@@ -1302,7 +1302,7 @@ def calculate_statistical_significance(results, confidence_level=0.95):
 
  Examples:
  ---------
- >>> results = walk_forward_analysis(data, model)
+ >>> results = walk_forward_Analysis(data, model)
  >>> significance = calculate_statistical_significance(results, confidence_level=0.95)
  >>> print(f"Статистически значимо: {significance['is_significant']}")
  """
@@ -1375,15 +1375,15 @@ market_correlation = calculate_market_correlation(wf_results, market_data)
 def calculate_economic_significance(results, transaction_costs=0.001,
  min_sharpe=1.0, max_drawdown=0.2):
  """
- Расчет экономической значимости результатов Walk-Forward анализа
+ Расчет экономической значимости результатов Walk-Forward Analysis
 
  Оценивает экономическую целесообразность стратегии with учетом
  транзакционных издержек and практических ограничений.
 
  Parameters:
  -----------
- results : pd.DataFrame
- Результаты Walk-Forward анализа with колонками:
+ results : pd.dataFrame
+ Результаты Walk-Forward Analysis with колонками:
  - 'sharpe': коэффициент Шарпа за каждый период (float)
  - 'max_drawdown': максимальная просадка за каждый период (float)
  - 'total_return': общая доходность за каждый период (float)
@@ -1448,7 +1448,7 @@ def calculate_economic_significance(results, transaction_costs=0.001,
 
  Examples:
  ---------
- >>> results = walk_forward_analysis(data, model)
+ >>> results = walk_forward_Analysis(data, model)
  >>> economic = calculate_economic_significance(results, transaction_costs=0.001)
  >>> print(f"Экономически значима: {economic['economically_significant']}")
  """
@@ -1483,15 +1483,15 @@ economic_metrics = calculate_economic_significance(wf_results, transaction_costs
 ```python
 def calculate_profitability(results, initial_capital=100000):
  """
- Расчет рентабельности стратегии on basis результатов Walk-Forward анализа
+ Расчет рентабельности стратегии on basis результатов Walk-Forward Analysis
 
  Анализирует финансовую эффективность стратегии with учетом
  начального капитала and кумулятивной доходности.
 
  Parameters:
  -----------
- results : pd.DataFrame
- Результаты Walk-Forward анализа with колонками:
+ results : pd.dataFrame
+ Результаты Walk-Forward Analysis with колонками:
  - 'total_return': общая доходность за каждый период (float)
  - 'max_drawdown': максимальная просадка за каждый период (float)
  - index: временные метки periods (datetime)
@@ -1542,7 +1542,7 @@ def calculate_profitability(results, initial_capital=100000):
 
  Examples:
  ---------
- >>> results = walk_forward_analysis(data, model)
+ >>> results = walk_forward_Analysis(data, model)
  >>> profitability = calculate_profitability(results, initial_capital=100000)
  >>> print(f"Финальная стоимость: ${profitability['final_value']:,.2f}")
  """
@@ -1573,13 +1573,13 @@ def calculate_profitability(results, initial_capital=100000):
 profitability_metrics = calculate_profitability(wf_results, initial_capital=100000)
 ```
 
-## Визуализация Walk-Forward анализа
+## Визуализация Walk-Forward Analysis
 
-### 📈 Дашборд визуализации результатов Walk-Forward анализа
+### 📈 Дашборд визуализации результатов Walk-Forward Analysis
 
 ```mermaid
 graph TD
- A[Результаты Walk-Forward анализа] --> B[Дашборд визуализации]
+ A[Результаты Walk-Forward Analysis] --> B[Дашборд визуализации]
 
  B --> C[Временные графики]
  C --> C1[Коэффициент Шарпа во времени<br/>with линией минимума 1.0]
@@ -1643,15 +1643,15 @@ graph TD
 ```python
 def visualize_walk_forward_results(results, save_path=None):
  """
- Визуализация результатов Walk-Forward анализа
+ Визуализация результатов Walk-Forward Analysis
 
- Создает комплексный дашборд with графиками for analysis производительности
+ Создает комплексный дашборд with графиками for Analysis производительности
  стратегии во времени, including временные ряды and распределения метрик.
 
  Parameters:
  -----------
- results : pd.DataFrame
- Результаты Walk-Forward анализа with колонками:
+ results : pd.dataFrame
+ Результаты Walk-Forward Analysis with колонками:
  - 'sharpe': коэффициент Шарпа за каждый период (float)
  - 'max_drawdown': максимальная просадка за каждый период (float)
  - 'total_return': общая доходность за каждый период (float)
@@ -1692,7 +1692,7 @@ def visualize_walk_forward_results(results, save_path=None):
 
  Examples:
  ---------
- >>> results = walk_forward_analysis(data, model)
+ >>> results = walk_forward_Analysis(data, model)
  >>> visualize_walk_forward_results(results)
  >>> visualize_walk_forward_results(results, save_path='results.png')
  """
@@ -1700,7 +1700,7 @@ def visualize_walk_forward_results(results, save_path=None):
  import seaborn as sns
 
  # configuration стиля
- plt.style.use('seaborn-v0_8')
+ plt.style.Use('seaborn-v0_8')
  sns.set_palette("husl")
 
  # create фигуры
@@ -1756,17 +1756,17 @@ visualize_walk_forward_results(wf_results, save_path='walk_forward_results.png')
 ### 2. Тепловые карты
 
 ```python
-def create_heatmap_analysis(results, save_path=None):
+def create_heatmap_Analysis(results, save_path=None):
  """
- create тепловых карт for analysis результатов Walk-Forward
+ create тепловых карт for Analysis результатов Walk-Forward
 
  Создает тепловые карты for визуализации корреляций между метриками
  and производительности on различным временным периодам.
 
  Parameters:
  -----------
- results : pd.DataFrame
- Результаты Walk-Forward анализа with колонками:
+ results : pd.dataFrame
+ Результаты Walk-Forward Analysis with колонками:
  - 'sharpe': коэффициент Шарпа за каждый период (float)
  - 'max_drawdown': максимальная просадка за каждый период (float)
  - 'total_return': общая доходность за каждый период (float)
@@ -1807,9 +1807,9 @@ def create_heatmap_analysis(results, save_path=None):
 
  Examples:
  ---------
- >>> results = walk_forward_analysis(data, model)
- >>> create_heatmap_analysis(results)
- >>> create_heatmap_analysis(results, save_path='heatmap.png')
+ >>> results = walk_forward_Analysis(data, model)
+ >>> create_heatmap_Analysis(results)
+ >>> create_heatmap_Analysis(results, save_path='heatmap.png')
  """
  import matplotlib.pyplot as plt
  import seaborn as sns
@@ -1845,16 +1845,16 @@ def create_heatmap_analysis(results, save_path=None):
  plt.show()
 
 # example использования
-create_heatmap_analysis(wf_results, save_path='walk_forward_heatmap.png')
+create_heatmap_Analysis(wf_results, save_path='walk_forward_heatmap.png')
 ```
 
-## Автоматизация Walk-Forward анализа
+## Автоматизация Walk-Forward Analysis
 
-### 🤖 Пайплайн автоматизации Walk-Forward анализа
+### 🤖 Пайплайн автоматизации Walk-Forward Analysis
 
 ```mermaid
 graph TD
- A[Исходные данные] --> B[WalkForwardPipeline]
+ A[Исходные data] --> B[WalkForwardPipeline]
  B --> C[configuration параметров]
 
  C --> D[Фиксированное окно<br/>train_window: 252<br/>test_window: 30]
@@ -1916,19 +1916,19 @@ graph TD
  style FF fill:#ffcdd2
 ```
 
-### 1. Пайплайн Walk-Forward анализа
+### 1. Пайплайн Walk-Forward Analysis
 
 ```python
 class WalkForwardPipeline:
  """
- Пайплайн for автоматизации Walk-Forward анализа
+ Пайплайн for автоматизации Walk-Forward Analysis
 
- Комплексный класс for проведения различных типов Walk-Forward анализа
+ Комплексный класс for проведения различных типов Walk-Forward Analysis
  with автоматической генерацией Reportов and рекомендаций.
 
  Parameters:
  -----------
- data : pandas.DataFrame
+ data : pandas.dataFrame
  Временные ряды данных with колонками:
  - 'returns': доходность актива (float)
  - 'features': признаки for модели (array-like)
@@ -1947,8 +1947,8 @@ class WalkForwardPipeline:
 
  Attributes:
  -----------
- data : pandas.DataFrame
- Исходные данные for analysis
+ data : pandas.dataFrame
+ Исходные data for Analysis
 
  model : sklearn-compatible model
  Модель машинного обучения
@@ -1957,23 +1957,23 @@ class WalkForwardPipeline:
  Калькулятор метрик качества
 
  results : dict
- Словарь with результатами различных типов анализа:
+ Словарь with результатами различных типов Analysis:
  - 'fixed_window': результаты фиксированного окна
  - 'expanding_window': результаты расширяющегося окна
  - 'adaptive_window': результаты адаптивного окна
 
  Methods:
  --------
- run_fixed_window_analysis(train_window, test_window, step)
- Launch анализа with фиксированным окном
+ run_fixed_window_Analysis(train_window, test_window, step)
+ Launch Analysis with фиксированным окном
 
- run_expanding_window_analysis(initial_train_window, test_window, step)
- Launch анализа with расширяющимся окном
+ run_expanding_window_Analysis(initial_train_window, test_window, step)
+ Launch Analysis with расширяющимся окном
 
- run_adaptive_window_analysis(min_window, max_window, test_window, step)
- Launch анализа with адаптивным окном
+ run_adaptive_window_Analysis(min_window, max_window, test_window, step)
+ Launch Analysis with адаптивным окном
 
- generate_comprehensive_report()
+ generate_comprehensive_Report()
  Генерация комплексного Reportа
 
  Raises:
@@ -1992,22 +1992,22 @@ class WalkForwardPipeline:
  >>> metrics_calc = MetricsCalculator()
  >>> pipeline = WalkForwardPipeline(data, model, metrics_calc)
  >>>
- >>> # Launch всех типов анализа
- >>> pipeline.run_fixed_window_analysis()
- >>> pipeline.run_expanding_window_analysis()
- >>> pipeline.run_adaptive_window_analysis()
+ >>> # Launch всех типов Analysis
+ >>> pipeline.run_fixed_window_Analysis()
+ >>> pipeline.run_expanding_window_Analysis()
+ >>> pipeline.run_adaptive_window_Analysis()
  >>>
  >>> # Генерация Reportа
- >>> report = pipeline.generate_comprehensive_report()
+ >>> Report = pipeline.generate_comprehensive_Report()
  """
 
  def __init__(self, data, model, metrics_calculator):
  """
- Pipeline initialization Walk-Forward анализа
+ Pipeline initialization Walk-Forward Analysis
 
  Parameters:
  -----------
- data : pandas.DataFrame
+ data : pandas.dataFrame
  Временные ряды данных with колонками 'returns' and 'features'
 
  model : sklearn-compatible model
@@ -2021,9 +2021,9 @@ class WalkForwardPipeline:
  self.metrics_calculator = metrics_calculator
  self.results = {}
 
- def run_fixed_window_analysis(self, train_window=252, test_window=30, step=30):
+ def run_fixed_window_Analysis(self, train_window=252, test_window=30, step=30):
  """
- Launch Walk-Forward анализа with фиксированным окном обучения
+ Launch Walk-Forward Analysis with фиксированным окном обучения
 
  Parameters:
  -----------
@@ -2053,8 +2053,8 @@ class WalkForwardPipeline:
 
  Returns:
  --------
- pd.DataFrame
- Результаты анализа with колонками:
+ pd.dataFrame
+ Результаты Analysis with колонками:
  - 'train_start': начало периода обучения (datetime)
  - 'train_end': конец периода обучения (datetime)
  - 'test_start': начало периода тестирования (datetime)
@@ -2080,10 +2080,10 @@ class WalkForwardPipeline:
  results = []
 
  for i in range(train_window, len(self.data) - test_window, step):
- # Обучающие данные
+ # Обучающие data
  train_data = self.data[i-train_window:i]
 
- # Тестовые данные
+ # Тестовые data
  test_data = self.data[i:i+test_window]
 
  # Обучение модели
@@ -2107,12 +2107,12 @@ class WalkForwardPipeline:
 
  results.append(metrics)
 
- self.results['fixed_window'] = pd.DataFrame(results)
+ self.results['fixed_window'] = pd.dataFrame(results)
  return self.results['fixed_window']
 
- def run_expanding_window_analysis(self, initial_train_window=252, test_window=30, step=30):
+ def run_expanding_window_Analysis(self, initial_train_window=252, test_window=30, step=30):
  """
- Launch Walk-Forward анализа with расширяющимся окном обучения
+ Launch Walk-Forward Analysis with расширяющимся окном обучения
 
  Parameters:
  -----------
@@ -2142,8 +2142,8 @@ class WalkForwardPipeline:
 
  Returns:
  --------
- pd.DataFrame
- Результаты анализа with колонками:
+ pd.dataFrame
+ Результаты Analysis with колонками:
  - 'train_start': начало периода обучения (datetime)
  - 'train_end': конец периода обучения (datetime)
  - 'test_start': начало периода тестирования (datetime)
@@ -2165,15 +2165,15 @@ class WalkForwardPipeline:
  - Результаты сохраняются in self.results['expanding_window']
  - Окно обучения постоянно растет, используя всю доступную историю
  - Может быть медленнее фиксированного окна из-за увеличения размера данных
- - Подходит for стратегий, где исторические данные остаются релевантными
+ - Подходит for стратегий, где исторические data остаются релевантными
  """
  results = []
 
  for i in range(initial_train_window, len(self.data) - test_window, step):
- # Обучающие данные (расширяющееся окно)
+ # Обучающие data (расширяющееся окно)
  train_data = self.data[:i]
 
- # Тестовые данные
+ # Тестовые data
  test_data = self.data[i:i+test_window]
 
  # Обучение модели
@@ -2197,13 +2197,13 @@ class WalkForwardPipeline:
 
  results.append(metrics)
 
- self.results['expanding_window'] = pd.DataFrame(results)
+ self.results['expanding_window'] = pd.dataFrame(results)
  return self.results['expanding_window']
 
- def run_adaptive_window_analysis(self, min_window=100, max_window=500,
+ def run_adaptive_window_Analysis(self, min_window=100, max_window=500,
  test_window=30, step=30):
  """
- Launch Walk-Forward анализа with адаптивным окном обучения
+ Launch Walk-Forward Analysis with адаптивным окном обучения
 
  Parameters:
  -----------
@@ -2241,8 +2241,8 @@ class WalkForwardPipeline:
 
  Returns:
  --------
- pd.DataFrame
- Результаты анализа with колонками:
+ pd.dataFrame
+ Результаты Analysis with колонками:
  - 'train_start': начало периода обучения (datetime)
  - 'train_end': конец периода обучения (datetime)
  - 'test_start': начало периода тестирования (datetime)
@@ -2271,10 +2271,10 @@ class WalkForwardPipeline:
  current_window = min_window
 
  for i in range(min_window, len(self.data) - test_window, step):
- # Обучающие данные
+ # Обучающие data
  train_data = self.data[i-current_window:i]
 
- # Тестовые данные
+ # Тестовые data
  test_data = self.data[i:i+test_window]
 
  # Обучение модели
@@ -2308,14 +2308,14 @@ class WalkForwardPipeline:
 
  results.append(metrics)
 
- self.results['adaptive_window'] = pd.DataFrame(results)
+ self.results['adaptive_window'] = pd.dataFrame(results)
  return self.results['adaptive_window']
 
- def generate_comprehensive_report(self):
+ def generate_comprehensive_Report(self):
  """
- Генерация комплексного Reportа on результатам Walk-Forward анализа
+ Генерация комплексного Reportа on результатам Walk-Forward Analysis
 
- Создает детальный Report with анализом всех типов Walk-Forward анализа,
+ Создает детальный Report with анализом всех типов Walk-Forward Analysis,
  including сводные метрики, детальные результаты and рекомендации.
 
  Returns:
@@ -2333,11 +2333,11 @@ class WalkForwardPipeline:
  - 'success_rate': процент успешных periods (float)
  - 'sharpe_stability': стабильность коэффициента Шарпа (float)
  - 'sharpe_trend': тренд коэффициента Шарпа (float)
- - 'detailed_results': словарь with детальными результатами
- - 'fixed_window': DataFrame with результатами фиксированного окна
- - 'expanding_window': DataFrame with результатами расширяющегося окна
- - 'adaptive_window': DataFrame with результатами адаптивного окна
- - 'recommendations': список рекомендаций (list)
+ - 'Detailed_results': словарь with детальными результатами
+ - 'fixed_window': dataFrame with результатами фиксированного окна
+ - 'expanding_window': dataFrame with результатами расширяющегося окна
+ - 'adaptive_window': dataFrame with результатами адаптивного окна
+ - 'recommendations': List рекомендаций (List)
  - Строки with оценкой производительности каждого метода
  - "Отличная производительность": Sharpe > 1.5, Success > 70%
  - "Хорошая производительность": Sharpe > 1.0, Success > 50%
@@ -2355,27 +2355,27 @@ class WalkForwardPipeline:
  - Рекомендации основаны on пороговых значениях производительности
  - Стабильность рассчитывается как обратная величина к коэффициенту вариации
  - Тренд рассчитывается with помощью линейной регрессии
- - Рекомендуется запустить все типы анализа перед генерацией Reportа
+ - Рекомендуется запустить все типы Analysis перед генерацией Reportа
 
  Examples:
  ---------
  >>> pipeline = WalkForwardPipeline(data, model, metrics_calc)
- >>> pipeline.run_fixed_window_analysis()
- >>> pipeline.run_expanding_window_analysis()
- >>> pipeline.run_adaptive_window_analysis()
+ >>> pipeline.run_fixed_window_Analysis()
+ >>> pipeline.run_expanding_window_Analysis()
+ >>> pipeline.run_adaptive_window_Analysis()
  >>>
- >>> report = pipeline.generate_comprehensive_report()
- >>> print("Рекомендации:", report['recommendations'])
+ >>> Report = pipeline.generate_comprehensive_Report()
+ >>> print("Рекомендации:", Report['recommendations'])
  """
- report = {
+ Report = {
  'summary': {},
- 'detailed_results': self.results,
+ 'Detailed_results': self.results,
  'recommendations': []
  }
 
  # Анализ каждого метода
  for method, results in self.results.items():
- if isinstance(results, pd.DataFrame):
+ if isinstance(results, pd.dataFrame):
  # Базовые метрики
  mean_sharpe = results['sharpe'].mean()
  std_sharpe = results['sharpe'].std()
@@ -2388,7 +2388,7 @@ class WalkForwardPipeline:
  # Тренд
  sharpe_trend = np.polyfit(range(len(results)), results['sharpe'], 1)[0]
 
- report['summary'][method] = {
+ Report['summary'][method] = {
  'mean_sharpe': mean_sharpe,
  'std_sharpe': std_sharpe,
  'mean_max_drawdown': mean_max_drawdown,
@@ -2399,20 +2399,20 @@ class WalkForwardPipeline:
 
  # Рекомендации
  if mean_sharpe > 1.5 and success_rate > 0.7:
- report['recommendations'].append(f"{method}: Отличная производительность")
+ Report['recommendations'].append(f"{method}: Отличная производительность")
  elif mean_sharpe > 1.0 and success_rate > 0.5:
- report['recommendations'].append(f"{method}: Хорошая производительность")
+ Report['recommendations'].append(f"{method}: Хорошая производительность")
  else:
- report['recommendations'].append(f"{method}: Требует улучшения")
+ Report['recommendations'].append(f"{method}: Требует улучшения")
 
- return report
+ return Report
 
 # example использования
 pipeline = WalkForwardPipeline(data, model, metrics_calculator)
-pipeline.run_fixed_window_analysis()
-pipeline.run_expanding_window_analysis()
-pipeline.run_adaptive_window_analysis()
-report = pipeline.generate_comprehensive_report()
+pipeline.run_fixed_window_Analysis()
+pipeline.run_expanding_window_Analysis()
+pipeline.run_adaptive_window_Analysis()
+Report = pipeline.generate_comprehensive_Report()
 ```
 
 ## Заключение
@@ -2420,9 +2420,9 @@ report = pipeline.generate_comprehensive_report()
 Walk-Forward анализ - это золотой стандарт валидации ML-стратегий. Он позволяет:
 
 1. **Имитировать реальную торговлю** - модель постоянно переобучается
-2. **Проверять адаптивность** - модель должна работать in изменяющихся условиях
+2. **Проверять адаптивность** - модель должна Workingть in изменяющихся условиях
 3. **Оценивать стабильность** - результаты должны быть стабильными во времени
-4. **Выявлять переобучение** - модель not должна запоминать исторические данные
+4. **Выявлять переобучение** - модель not должна запоминать исторические data
 
 ### Ключевые принципы
 
@@ -2434,7 +2434,7 @@ Walk-Forward анализ - это золотой стандарт валида�
 
 ### Следующие шаги
 
-После освоения Walk-Forward анализа переходите к:
+После освоения Walk-Forward Analysis переходите к:
 
 - [Monte Carlo симуляциям](./29_monte_carlo_simulations.md)
-- [Управлению портфолио](./30_portfolio_management.md)
+- [Управлению Portfolio](./30_Portfolio_Management.md)

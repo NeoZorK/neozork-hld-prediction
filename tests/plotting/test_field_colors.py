@@ -23,13 +23,13 @@ class TestFieldColorAssignment:
  field_name = "pressure"
  color = _get_field_color(field_name)
 
- # Check that color is a string
+ # check that color is a string
  assert isinstance(color, str)
 
- # Check that color ends with "+" (plotext bright colors)
+ # check that color ends with "+" (plotext bright colors)
  assert color.endswith("+")
 
- # Check that color is not empty
+ # check that color is not empty
  assert len(color) > 0
 
  def test_get_field_color_consistent_for_same_field(self):
@@ -123,13 +123,13 @@ class TestEnhancedFieldColorAssignment:
  field_name = "pressure"
  color = _get_field_color_enhanced(field_name)
 
- # Check that color is a string
+ # check that color is a string
  assert isinstance(color, str)
 
- # Check that color ends with "+" (plotext bright colors)
+ # check that color ends with "+" (plotext bright colors)
  assert color.endswith("+")
 
- # Check that color is not empty
+ # check that color is not empty
  assert len(color) > 0
 
  def test_get_field_color_enhanced_consistent_for_same_field(self):

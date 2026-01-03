@@ -38,9 +38,9 @@ from rich import print as rprint
 # Disable CUDA for MacBook M1 and set OpenMP paths
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
-os.environ["AUTOGLUON_USE_GPU"] = "false"
-os.environ["AUTOGLUON_USE_GPU_TORCH"] = "false"
-os.environ["AUTOGLUON_USE_GPU_FASTAI"] = "false"
+os.environ["AUTOGLUON_Use_GPU"] = "false"
+os.environ["AUTOGLUON_Use_GPU_TORCH"] = "false"
+os.environ["AUTOGLUON_Use_GPU_FASTAI"] = "false"
 
 # Set OpenMP paths for macOS
 os.environ["LDFLAGS"] = "-L/opt/homebrew/opt/libomp/lib"
@@ -120,7 +120,7 @@ builtins.print = filtered_print
 try:
  import ray
  RAY_available = True
- console.print("✅ Ray available - will be used parallel training", style="green")
+ console.print("✅ Ray available - will be Used parallel training", style="green")
 except ImportError:
  RAY_available = False
  console.print("⚠️ Ray not installed - will be used sequential training", style="yellow")
@@ -151,10 +151,10 @@ class SCHRLevelsAutoMLPipeline:
 
  Args:
  data_path: Path to folder with data
- data_file: Specific data file for analysis
+ data_file: Specific data file for Analysis
  """
  if not AUTOGLUON_available:
- raise ImportError("AutoGluon not installed. Install: pip install autogluon")
+ raise ImportError("AutoGluon not installed. install: pip install autogluon")
 
  self.data_path = Path(data_path)
  self.data_file = data_file
@@ -185,39 +185,39 @@ class SCHRLevelsAutoMLPipeline:
 
  # Informing about training mode
  if RAY_available:
- console.print("✅ Ray available - will be used parallel training", style="green")
+ console.print("✅ Ray available - will be Used parallel training", style="green")
  else:
- console.print("⚠️ Ray неavailable - will be used sequential training", style="yellow")
+ console.print("⚠️ Ray not available - will be used sequential training", style="yellow")
  console.print("💡 for acceleration install ray: pip install 'ray>=2.10.0,<2.45.0'", style="blue")
 
- def load_schr_data(self, symbol: str = "BTCUSD", timeframe: str = "MN1") -> pd.DataFrame:
+ def load_schr_data(self, symbol: str = "BTCUSD", Timeframe: str = "MN1") -> pd.dataFrame:
  """
- Loading data SCHR Levels for specified символа and Timeframeа.
+ Loading data SCHR Levels for specified symbol and Timeframe.
 
  Args:
  symbol: Trading symbol (BTCUSD, EURUSD, etc.)
- timeframe: Timeframe (MN1, W1, D1, H4, H1, M15, M5, M1)
+ Timeframe: Timeframe (MN1, W1, D1, H4, H1, M15, M5, M1)
 
  Returns:
- DataFrame with data SCHR Levels
+ dataFrame with data SCHR Levels
  """
  if self.data_file:
- # Используем конкретный файл, если указан
+ # Use specific file if specified
  file_path = Path(self.data_file)
  if not file_path.exists():
- raise FileNotFoundError(f"Файл данных not найден: {file_path}")
- console.print(f"📁 Загружаем данные: {file_path.name}", style="blue")
+ raise FileNotfoundError(f"data file not found: {file_path}")
+ console.print(f"📁 Loading data: {file_path.name}", style="blue")
  else:
- # Используем стандартный путь
- filename = f"CSVExport_{symbol}_PERIOD_{timeframe}.parquet"
+ # Use standard path
+ filename = f"CSVExport_{symbol}_PERIOD_{Timeframe}.parquet"
  file_path = self.data_path / filename
  if not file_path.exists():
- raise FileNotFoundError(f"Файл not найден: {file_path}")
- console.print(f"📁 Загружаем данные: {filename}", style="blue")
+ raise FileNotfoundError(f"File not found: {file_path}")
+ console.print(f"📁 Loading data: {filename}", style="blue")
 
  df = pd.read_parquet(file_path)
 
- # Проверяем наличие необходимых колонок
+ # checking presence of required columns
  required_cols = ['Close', 'High', 'Open', 'Low', 'Volume', 'predicted_low', 'predicted_high', 'pressure', 'pressure_vector']
  missing_cols = [col for col in required_cols if col not in df.columns]
 
@@ -230,20 +230,20 @@ class SCHRLevelsAutoMLPipeline:
  df.set_index('Date', inplace=True)
  elif df.index.name != 'Date' and not isinstance(df.index, pd.DatetimeIndex):
  # Создаем временной индекс если его нет
- df.index = pd.date_range(start='2020-01-01', periods=len(df), freq='MS' if timeframe == 'MN1' else 'D')
+ df.index = pd.date_range(start='2020-01-01', periods=len(df), freq='MS' if Timeframe == 'MN1' else 'D')
 
  console.print(f"📊 Загружено {len(df)} записей with {len(df.columns)} колонками", style="green")
  return df
 
- def create_target_variables(self, df: pd.DataFrame) -> pd.DataFrame:
+ def create_target_variables(self, df: pd.dataFrame) -> pd.dataFrame:
  """
  create целевых переменных for всех 3 задач.
 
  Args:
- df: Исходные данные SCHR Levels
+ df: Исходные data SCHR Levels
 
  Returns:
- DataFrame with добавленными целевыми переменными
+ dataFrame with добавленными целевыми переменными
  """
  logger.info("Создаем целевые переменные for 3 задач...")
 
@@ -254,7 +254,7 @@ class SCHRLevelsAutoMLPipeline:
  # Обрабатываем NaN and inf значения
  pv_clean = data['pressure_vector'].replace([np.inf, -np.inf], np.nan)
  pv_sign = (pv_clean.shift(-1) > 0)
- data['target_pv_sign'] = pv_sign.astype(float) # Используем float for совместимости
+ data['target_pv_sign'] = pv_sign.astype(float) # Use float for совместимости
  logger.info("✅ Создана target_pv_sign (0=отрицательный, 1=положительный)")
 
  # Задача 2: Направление цены on 1 период
@@ -267,7 +267,7 @@ class SCHRLevelsAutoMLPipeline:
  bins=[-np.inf, -0.01, 0.01, np.inf],
  labels=[0, 1, 2] # 0=down, 1=hold, 2=up
  )
- data['target_price_direction'] = price_direction.astype(float) # Используем float for совместимости
+ data['target_price_direction'] = price_direction.astype(float) # Use float for совместимости
  logger.info("✅ Создана target_price_direction (0=вниз, 1=удержание, 2=вверх) on 1 период")
 
  # Задача 3: Пробитие уровней or удержание between them
@@ -296,15 +296,15 @@ class SCHRLevelsAutoMLPipeline:
  logger.info(f"После создания целевых переменных: {len(data)} записей")
  return data
 
- def create_features(self, df: pd.DataFrame) -> pd.DataFrame:
+ def create_features(self, df: pd.dataFrame) -> pd.dataFrame:
  """
  create дополнительных признаков for улучшения качества модели.
 
  Args:
- df: Данные with целевыми переменными
+ df: data with целевыми переменными
 
  Returns:
- DataFrame with дополнительными приsignми
+ dataFrame with дополнительными приsignми
  """
  logger.info("Создаем дополнительные признаки...")
 
@@ -367,7 +367,7 @@ class SCHRLevelsAutoMLPipeline:
  data = data.replace([np.inf, -np.inf], np.nan)
 
  # Заполняем NaN значения вместо удаления
- # for числовых колонок заполняем медианой
+ # for числовых columns заполняем медианой
  numeric_cols = data.select_dtypes(include=[np.number]).columns
  for col in numeric_cols:
  if data[col].isna().any():
@@ -379,7 +379,7 @@ class SCHRLevelsAutoMLPipeline:
  # Если все еще есть NaN, заполняем 0
  data = data.fillna(0)
 
- # Проверяем on оставшиеся бесконечные значения
+ # checking on оставшиеся бесконечные значения
  if np.isinf(data.select_dtypes(include=[np.number])).any().any():
  logger.warning("Обнаружены бесконечные значения, заменяем on 0")
  data = data.replace([np.inf, -np.inf], 0)
@@ -387,16 +387,16 @@ class SCHRLevelsAutoMLPipeline:
  logger.info(f"Создано {len(data.columns)} признаков, {len(data)} записей")
  return data
 
- def prepare_data_for_task(self, df: pd.DataFrame, task: str) -> Tuple[pd.DataFrame, str]:
+ def prepare_data_for_task(self, df: pd.dataFrame, task: str) -> Tuple[pd.dataFrame, str]:
  """
  Подготовка данных for конкретной задачи.
 
  Args:
- df: Данные with приsignми and целевыми переменными
+ df: data with приsignми and целевыми переменными
  task: Название задачи
 
  Returns:
- Tuple[DataFrame, target_column]
+ Tuple[dataFrame, target_column]
  """
  target_mapping = {
  'pressure_vector_sign': 'target_pv_sign',
@@ -407,7 +407,7 @@ class SCHRLevelsAutoMLPipeline:
  target_col = target_mapping[task]
 
  if target_col not in df.columns:
- raise ValueError(f"Целевая переменная {target_col} not найдена")
+ raise ValueError(f"Целевая переменная {target_col} not foundа")
 
  # Удаляем другие целевые переменные
  other_targets = [col for col in target_mapping.values() if col != target_col]
@@ -416,15 +416,15 @@ class SCHRLevelsAutoMLPipeline:
  # Удаляем строки где целевая переменная NaN
  data = data.dropna(subset=[target_col])
 
- logger.info(f"Подготовлены данные for задачи {task}: {len(data)} записей")
+ logger.info(f"Подготовлены data for задачи {task}: {len(data)} записей")
  return data, target_col
 
- def train_model(self, df: pd.DataFrame, task: str, test_size: float = 0.2, progress=None, task_id=None) -> Dict[str, Any]:
+ def train_model(self, df: pd.dataFrame, task: str, test_size: float = 0.2, progress=None, task_id=None) -> Dict[str, Any]:
  """
  Обучение модели AutoGluon for конкретной задачи.
 
  Args:
- df: Подготовленные данные
+ df: Подготовленные data
  task: Название задачи
  test_size: Доля тестовых данных
 
@@ -467,7 +467,7 @@ class SCHRLevelsAutoMLPipeline:
  'num_stack_levels': 1,
  'verbosity': 0,
  'ag_args_fit': {
- 'use_gpu': False,
+ 'Use_gpu': False,
  'num_gpus': 0
  },
  # Специальные settings for XGBoost and LightGBM
@@ -488,9 +488,9 @@ class SCHRLevelsAutoMLPipeline:
  }
  }
 
- # Если ray неavailable, используем sequential training
+ # Если ray not available, Use sequential training
  if not RAY_available:
- logger.warning("Ray неavailable - используем sequential training")
+ logger.warning("Ray not available - Use sequential training")
  fit_args['num_bag_folds'] = 0 # Отключаем bagging for последовательного обучения
  fit_args['num_stack_levels'] = 0 # Отключаем stacking
 
@@ -563,12 +563,12 @@ class SCHRLevelsAutoMLPipeline:
 
  return results
 
- def walk_forward_validation(self, df: pd.DataFrame, task: str, n_splits: int = 5) -> Dict[str, Any]:
+ def walk_forward_validation(self, df: pd.dataFrame, task: str, n_splits: int = 5) -> Dict[str, Any]:
  """
  Walk Forward валидация for проверки робастности модели.
 
  Args:
- df: Данные for валидации
+ df: data for валидации
  task: Название задачи
  n_splits: Количество разделений
 
@@ -608,7 +608,7 @@ class SCHRLevelsAutoMLPipeline:
  ],
  'verbosity': 0,
  'ag_args_fit': {
- 'use_gpu': False,
+ 'Use_gpu': False,
  'num_gpus': 0
  },
  # Специальные settings for XGBoost and LightGBM
@@ -629,7 +629,7 @@ class SCHRLevelsAutoMLPipeline:
  }
  }
 
- # Если ray неavailable, используем sequential training
+ # Если ray not available, Use sequential training
  if not RAY_available:
  wf_fit_args['num_bag_folds'] = 0
  wf_fit_args['num_stack_levels'] = 0
@@ -673,12 +673,12 @@ class SCHRLevelsAutoMLPipeline:
 
  return wf_results
 
- def monte_carlo_validation(self, df: pd.DataFrame, task: str, n_iterations: int = 100, test_size: float = 0.2) -> Dict[str, Any]:
+ def monte_carlo_validation(self, df: pd.dataFrame, task: str, n_iterations: int = 100, test_size: float = 0.2) -> Dict[str, Any]:
  """
  Monte Carlo валидация for оценки стабильности модели.
 
  Args:
- df: Данные for валидации
+ df: data for валидации
  task: Название задачи
  n_iterations: Количество итераций
  test_size: Доля тестовых данных
@@ -729,7 +729,7 @@ class SCHRLevelsAutoMLPipeline:
  ],
  'verbosity': 0,
  'ag_args_fit': {
- 'use_gpu': False,
+ 'Use_gpu': False,
  'num_gpus': 0
  },
  # Специальные settings for XGBoost and LightGBM
@@ -750,7 +750,7 @@ class SCHRLevelsAutoMLPipeline:
  }
  }
 
- # Если ray неavailable, используем sequential training
+ # Если ray not available, Use sequential training
  if not RAY_available:
  mc_fit_args['num_bag_folds'] = 0
  mc_fit_args['num_stack_levels'] = 0
@@ -794,18 +794,18 @@ class SCHRLevelsAutoMLPipeline:
 
  return mc_results
 
- def run_complete_analysis(self, symbol: str = "BTCUSD", timeframe: str = "MN1") -> Dict[str, Any]:
+ def run_complete_Analysis(self, symbol: str = "BTCUSD", Timeframe: str = "MN1") -> Dict[str, Any]:
  """
- Launch полного анализа for всех трех задач.
+ Launch полного Analysis for всех трех задач.
 
  Args:
  symbol: Trading symbol
- timeframe: Timeframe
+ Timeframe: Timeframe
 
  Returns:
- Полные результаты анализа
+ Полные результаты Analysis
  """
- console.print(f"🚀 Launchаем полный анализ for {symbol} {timeframe}", style="bold blue")
+ console.print(f"🚀 Launchаем полный анализ for {symbol} {Timeframe}", style="bold blue")
 
  # Создаем progress bar
  with Progress(
@@ -820,21 +820,21 @@ class SCHRLevelsAutoMLPipeline:
 
  # 1. Loading data
  task1 = progress.add_task("📁 Loading data...", total=1)
- raw_data = self.load_schr_data(symbol, timeframe)
- progress.update(task1, completed=1)
+ raw_data = self.load_schr_data(symbol, Timeframe)
+ progress.update(task1, COMPLETED=1)
 
  # 2. create целевых переменных and признаков
  task2 = progress.add_task("🔧 create признаков...", total=2)
  data_with_targets = self.create_target_variables(raw_data)
  progress.update(task2, advance=1)
  final_data = self.create_features(data_with_targets)
- progress.update(task2, completed=2)
+ progress.update(task2, COMPLETED=2)
 
  console.print(f"📊 Итоговый датасет: {len(final_data)} записей, {len(final_data.columns)} признаков", style="green")
 
  complete_results = {
  'symbol': symbol,
- 'timeframe': timeframe,
+ 'Timeframe': Timeframe,
  'data_info': {
  'total_records': len(final_data),
  'features_count': len(final_data.columns),
@@ -845,35 +845,35 @@ class SCHRLevelsAutoMLPipeline:
  }
 
  # 3. Обучение моделей for всех задач
- tasks = list(self.task_configs.keys())
+ tasks = List(self.task_configs.keys())
  task_progress = progress.add_task("🤖 Обучение моделей...", total=len(tasks))
 
  for i, task in enumerate(tasks):
  # Создаем отдельный progress bar for каждой задачи
  task_name = task.replace('_', ' ').title()
- task_progress_detailed = progress.add_task(
+ task_progress_Detailed = progress.add_task(
  f"🎯 Обрабатываем задачу: {task_name}",
  total=3
  )
 
  try:
  # Обучение основной модели
- progress.update(task_progress_detailed, description=f"🤖 Обучение модели {task_name}...")
- model_results = self.train_model(final_data, task, progress=progress, task_id=task_progress_detailed)
+ progress.update(task_progress_Detailed, description=f"🤖 Обучение модели {task_name}...")
+ model_results = self.train_model(final_data, task, progress=progress, task_id=task_progress_Detailed)
  complete_results['models'][task] = model_results
- progress.update(task_progress_detailed, advance=1)
+ progress.update(task_progress_Detailed, advance=1)
 
  # Walk Forward валидация
- progress.update(task_progress_detailed, description=f"🔄 Walk Forward валидация {task_name}...")
+ progress.update(task_progress_Detailed, description=f"🔄 Walk Forward валидация {task_name}...")
  wf_results = self.walk_forward_validation(final_data, task, n_splits=3)
  complete_results['validations'][f'{task}_walk_forward'] = wf_results
- progress.update(task_progress_detailed, advance=1)
+ progress.update(task_progress_Detailed, advance=1)
 
  # Monte Carlo валидация
- progress.update(task_progress_detailed, description=f"🎲 Monte Carlo валидация {task_name}...")
+ progress.update(task_progress_Detailed, description=f"🎲 Monte Carlo валидация {task_name}...")
  mc_results = self.monte_carlo_validation(final_data, task, n_iterations=20)
  complete_results['validations'][f'{task}_monte_carlo'] = mc_results
- progress.update(task_progress_detailed, completed=3)
+ progress.update(task_progress_Detailed, COMPLETED=3)
 
  progress.update(task_progress, advance=1)
 
@@ -883,12 +883,12 @@ class SCHRLevelsAutoMLPipeline:
  progress.update(task_progress, advance=1)
 
  # 4. Сводная оценка
- self._generate_summary_report(complete_results)
+ self._generate_summary_Report(complete_results)
 
  logger.info("🎉 Полный анализ завершен!")
  return complete_results
 
- def _generate_summary_report(self, results: Dict[str, Any]):
+ def _generate_summary_Report(self, results: Dict[str, Any]):
  """Генерация сводного Reportа."""
  logger.info("\n" + "="*80)
  logger.info("📋 СВОДНЫЙ Report on МОДЕЛЯМ SCHR LEVELS")
@@ -921,19 +921,19 @@ class SCHRLevelsAutoMLPipeline:
 
  logger.info("\n" + "="*80)
 
- def predict(self, data: pd.DataFrame, task: str) -> pd.Series:
+ def predict(self, data: pd.dataFrame, task: str) -> pd.Series:
  """
  Простые предсказания for тестирования
 
  Args:
- data: Данные for предсказания
+ data: data for предсказания
  task: Название задачи
 
  Returns:
  Предсказания
  """
  try:
- # Загружаем обученную модель
+ # Loading обученную модель
  model_path = f"models/schr_levels_{task}_{self.timestamp}"
  predictor = TabularPredictor.load(model_path)
 
@@ -945,12 +945,12 @@ class SCHRLevelsAutoMLPipeline:
  logger.error(f"Ошибка предсказания: {e}")
  raise
 
- def predict_for_trading(self, new_data: pd.DataFrame, task: str) -> Dict[str, Any]:
+ def predict_for_trading(self, new_data: pd.dataFrame, task: str) -> Dict[str, Any]:
  """
  Предсказания for реальной торговли.
 
  Args:
- new_data: Новые данные for предсказания
+ new_data: Новые data for предсказания
  task: Задача for предсказания
 
  Returns:
@@ -964,7 +964,7 @@ class SCHRLevelsAutoMLPipeline:
  # Создаем признаки for новых данных (без целевых переменных)
  features_data = self.create_features(new_data)
 
- # Проверяем, что данные not пустые
+ # checking, что data not пустые
  if len(features_data) == 0:
  raise ValueError("Нет данных for предсказания после создания признаков")
 
@@ -993,9 +993,9 @@ class SCHRLevelsAutoMLPipeline:
  logger.info(f"💾 Модель {task} сохранена: {model_file}")
 
  # Сохраняем результаты
- results_file = save_path / "analysis_results.pkl"
+ results_file = save_path / "Analysis_results.pkl"
  joblib.dump(self.results, results_file)
- logger.info(f"💾 Результаты анализа сохранены: {results_file}")
+ logger.info(f"💾 Результаты Analysis сохранены: {results_file}")
 
  def load_models(self, load_path: str = "models/schr_levels_production/"):
  """Загрузка сохраненных моделей."""
@@ -1007,11 +1007,11 @@ class SCHRLevelsAutoMLPipeline:
  self.models[task] = joblib.load(model_file)
  logger.info(f"📂 Модель {task} загружена: {model_file}")
 
- # Загружаем результаты
- results_file = load_path / "analysis_results.pkl"
+ # Loading результаты
+ results_file = load_path / "Analysis_results.pkl"
  if results_file.exists():
  self.results = joblib.load(results_file)
- logger.info(f"📂 Результаты анализа загружены: {results_file}")
+ logger.info(f"📂 Результаты Analysis загружены: {results_file}")
 
 
 
@@ -1025,15 +1025,15 @@ def parse_arguments():
 examples использования:
  python schr-levels-gluon.py # Анализ on умолчанию (BTCUSD MN1)
  python schr-levels-gluon.py -f data/GBPUSD.parquet # Анализ конкретного файла
- python schr-levels-gluon.py -s EURUSD -t W1 # Анализ EURUSD недельные данные
- python schr-levels-gluon.py --symbol GBPUSD --timeframe D1 # Анализ GBPUSD дневные данные
+ python schr-levels-gluon.py -s EURUSD -t W1 # Анализ EURUSD недельные data
+ python schr-levels-gluon.py --symbol GBPUSD --Timeframe D1 # Анализ GBPUSD дневные data
  """
  )
 
  parser.add_argument(
  '-f', '--file',
  type=str,
- help='Путь к конкретному файлу данных for analysis'
+ help='Путь к конкретному файлу данных for Analysis'
  )
 
  parser.add_argument(
@@ -1044,7 +1044,7 @@ examples использования:
  )
 
  parser.add_argument(
- '-t', '--timeframe',
+ '-t', '--Timeframe',
  type=str,
  default='MN1',
  help='Timeframe (on умолчанию: MN1)'
@@ -1081,20 +1081,20 @@ def main():
  # Launchаем анализ
  if args.file:
  console.print(f"🚀 Launchаем анализ файла: {args.file}", style="bold blue")
- results = pipeline.run_complete_analysis("CUSTOM", "CUSTOM")
+ results = pipeline.run_complete_Analysis("CUSTOM", "CUSTOM")
  else:
- console.print(f"🚀 Launchаем анализ for {args.symbol} {args.timeframe}", style="bold blue")
- results = pipeline.run_complete_analysis(args.symbol, args.timeframe)
+ console.print(f"🚀 Launchаем анализ for {args.symbol} {args.Timeframe}", style="bold blue")
+ results = pipeline.run_complete_Analysis(args.symbol, args.Timeframe)
 
  # Сохраняем результаты
  pipeline.save_models()
 
- # example предсказания (загружаем новые данные)
+ # example предсказания (Loading новые data)
  console.print("🔮 Тестируем предсказания...", style="blue")
  if args.file:
  new_data = pipeline.load_schr_data().tail(10)
  else:
- new_data = pipeline.load_schr_data(args.symbol, args.timeframe).tail(10)
+ new_data = pipeline.load_schr_data(args.symbol, args.Timeframe).tail(10)
 
  # Создаем признаки for новых данных
  new_data = pipeline.create_features(new_data)

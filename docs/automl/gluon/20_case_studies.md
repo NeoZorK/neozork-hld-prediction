@@ -5,7 +5,7 @@
 
 ## Why кейс-стади критически важны
 
-**Почему 80% ML-проектов терпят неудачу без изучения успешных кейсов?** Потому что команды not понимают, как применять теорию on практике. Кейс-стади показывают реальные решения реальных проблем.
+**Почему 80% ML-проектов терпят неудачу без изучения успешных кейсов?** Потому что team not понимают, как применять теорию on практике. Кейс-стади показывают реальные решения реальных проблем.
 
 ### Проблемы без изучения кейсов
 - **Теоретические знания**: Понимают концепции, но not знают, как применить
@@ -14,17 +14,17 @@
 - **Плохие результаты**: not достигают ожидаемой производительности
 
 ### Преимущества изучения кейсов
-- **Практическое понимание**: Видят, как теория работает on практике
+- **Практическое понимание**: Видят, как теория Workingет on практике
 - **Избежание ошибок**: Учатся on чужих ошибках
 - **Быстрая разработка**: Используют проверенные подходы
 - **Лучшие результаты**: Достигают state-of-the-art производительности
 
 ## Введение in кейс-стади
 
-<img src="images/optimized/case_studies_overview.png" alt="Кейс-стади AutoML" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/case_studies_overView.png" alt="Кейс-стади AutoML" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 20.1: Обзор реальных проектов and их результатов with использованием AutoML Gluon*
 
-**Почему кейс-стади - это мост между теорией and практикой?** Потому что они показывают, как абстрактные концепции превращаются in работающие системы, решающие реальные бизнес-задачи.
+**Почему кейс-стади - это мост между теорией and практикой?** Потому что они показывают, как абстрактные концепции превращаются in Workingющие системы, решающие реальные бизнес-задачи.
 
 **Ключевые результаты кейс-стади:**
 - **Кредитный скоринг**: 87.3% точность, AUC 0.923
@@ -35,7 +35,7 @@
 - **Hedge fund**: 89.7% точность, 45.3% доходность
 
 **Преимущества изучения кейсов:**
-- **Практическое понимание**: Видят, как теория работает on практике
+- **Практическое понимание**: Видят, как теория Workingет on практике
 - **Избежание ошибок**: Учатся on чужих ошибках
 - **Быстрая разработка**: Используют проверенные подходы
 - **Лучшие результаты**: Достигают state-of-the-art производительности
@@ -45,12 +45,12 @@
 ## Кейс 1: Финансовые услуги - Кредитный скоринг
 
 <img src="images/optimized/credit_scoring.png" alt="Кредитный скоринг" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 20.2: Система кредитного скоринга - компоненты and результаты*
+*Рисунок 20.2: Система кредитного скоринга - components and результаты*
 
 **Почему кредитный скоринг - это классический example ML in финансах?** Потому что это задача with четкими бизнес-метриками, большим объемом данных and высокой стоимостью ошибок.
 
-**Компоненты системы кредитного скоринга:**
-- **Data Collection**: Сбор данных о заемщиках
+**components системы кредитного скоринга:**
+- **data Collection**: Сбор данных о заемщиках
 - **Feature Engineering**: create признаков for оценки риска
 - **Model Training**: Обучение модели on исторических данных
 - **Risk Assessment**: Оценка кредитного риска
@@ -75,8 +75,8 @@ create системы кредитного скоринга for банка with 
 - **Стоимость ошибки**: Ложный отрицательный результат = потеря клиента
 - **Время обработки**: Сократить with дней to minutes
 
-### Данные
-**Почему качество данных критично for кредитного скоринга?** Потому что неправильные данные приводят к неправильным решениям, что может стоить банку миллионы.
+### data
+**Почему качество данных критично for кредитного скоринга?** Потому что неправильные data приводят к неправильным решениям, что может стоить банку миллионы.
 
 - **Размер датасета**: 100,000 заявок on кредит
 - **Признаки**: 50+ (доход, возраст, кредитная история, занятость and др.)
@@ -93,7 +93,7 @@ from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-class CreditScoringSystem:
+class CreditScoringsystem:
  """Система кредитного скоринга"""
 
  def __init__(self):
@@ -112,7 +112,7 @@ class CreditScoringSystem:
 
  # create новых признаков
  df['debt_to_income_ratio'] = df['debt'] / df['income']
- df['credit_utilization'] = df['credit_used'] / df['credit_limit']
+ df['credit_utilization'] = df['credit_Used'] / df['credit_limit']
  df['age_group'] = pd.cut(df['age'], bins=[0, 25, 35, 50, 100], labels=['Young', 'Adult', 'Middle', 'Senior'])
 
  # Кодирование категориальных переменных
@@ -167,13 +167,13 @@ class CreditScoringSystem:
  probabilities = self.predictor.predict_proba(test_data)
 
  # Метрики
- from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score
+ from sklearn.metrics import classification_Report, confusion_matrix, roc_auc_score
 
  accuracy = (Predictions == test_data['default']).mean()
  auc_score = roc_auc_score(test_data['default'], probabilities[1])
 
  # Report on классификации
- report = classification_report(test_data['default'], Predictions)
+ Report = classification_Report(test_data['default'], Predictions)
 
  # Матрица ошибок
  cm = confusion_matrix(test_data['default'], Predictions)
@@ -181,7 +181,7 @@ class CreditScoringSystem:
  return {
  'accuracy': accuracy,
  'auc_score': auc_score,
- 'classification_report': report,
+ 'classification_Report': Report,
  'confusion_matrix': cm,
  'Predictions': Predictions,
  'probabilities': probabilities
@@ -201,7 +201,7 @@ class CreditScoringSystem:
  return scores
 
 # Использование системы
-credit_system = CreditScoringSystem()
+credit_system = CreditScoringsystem()
 
 # Loading data
 data = credit_system.load_and_prepare_data('credit_data.csv')
@@ -226,7 +226,7 @@ scores = credit_system.create_scorecard(test_data)
 - **`data_path`**: Путь к файлу with data
  - Тип: str
  - Формат: CSV файл with data о заемщиках
- - Содержит: персональные данные, финансовые показатели, кредитную историю
+ - Содержит: персональные data, финансовые показатели, кредитную историю
  - examples: 'credit_data.csv', 'loan_applications.csv'
  - Применение: источник данных for обучения модели
 
@@ -252,7 +252,7 @@ scores = credit_system.create_scorecard(test_data)
  - Пороги: < 0.3 (хорошо), 0.3-0.5 (приемлемо), > 0.5 (риск)
 
 - **`df['credit_utilization']`**: Использование кредитного лимита
- - Формула: credit_used / credit_limit
+ - Формула: credit_Used / credit_limit
  - Диапазон: from 0 to 1
  - Применение: показатель финансовой дисциплины
  - Интерпретация: чем ниже, тем лучше
@@ -265,7 +265,7 @@ scores = credit_system.create_scorecard(test_data)
  - Интерпретация: разные риски for разных возрастов
 
 - **`categorical_features`**: Категориальные признаки
- - Список: ['employment_type', 'education', 'marital_status']
+ - List: ['employment_type', 'education', 'marital_status']
  - Применение: кодирование for ML моделей
  - Преобразование: in тип 'category'
  - examples значений: employment_type: ['Full-time', 'Part-time', 'Self-employed']
@@ -291,8 +291,8 @@ scores = credit_system.create_scorecard(test_data)
 - **`path='credit_scoring_model'`**: Путь for сохранения модели
  - Тип: str
  - Применение: сохранение обученной модели
- - Содержит: веса модели, метаданные, конфигурацию
- - Использование: загрузка for predictions
+ - Содержит: веса модели, метаdata, конфигурацию
+ - Использование: загрузка for Predictions
 
 - **`time_limit=3600`**: Лимит времени обучения
  - Единицы: секунды
@@ -363,7 +363,7 @@ scores = credit_system.create_scorecard(test_data)
  - Интерпретация: 0.5 (случайно), 0.7-0.8 (хорошо), 0.8-0.9 (отлично), > 0.9 (превосходно)
  - Преимущества: устойчивость к дисбалансу классов
 
-- **`classification_report`**: Детальный Report
+- **`classification_Report`**: Детальный Report
  - Содержит: precision, recall, f1-score for каждого класса
  - Применение: анализ производительности on классам
  - Формат: текстовый Report with метриками
@@ -397,7 +397,7 @@ scores = credit_system.create_scorecard(test_data)
 *Рисунок 20.3: Система медицинской диагностики - этапы and результаты*
 
 **Этапы медицинской диагностики:**
-- **Patient Data**: Сбор медицинских данных пациента
+- **Patient data**: Сбор медицинских данных пациента
 - **Medical Validation**: Валидация медицинских показателей
 - **Risk Assessment**: Оценка риска заболевания
 - **Diagnosis Prediction**: Prediction диагноза
@@ -414,16 +414,16 @@ scores = credit_system.create_scorecard(test_data)
 ### Задача
 Разработка системы for ранней диагностики диабета on basis медицинских показателей пациентов.
 
-### Данные
+### data
 - **Размер датасета**: 25,000 пациентов
 - **Признаки**: 8 медицинских показателей (глюкоза, ИМТ, возраст and др.)
 - **Целевая переменная**: Диабет (бинарная)
-- **Источник**: Pima Indians Diabetes Dataset + клинические данные
+- **Источник**: Pima Indians Diabetes dataset + клинические data
 
 ### Решение
 
 ```python
-class DiabetesDiagnosisSystem:
+class DiabetesDiagnosissystem:
  """Система диагностики диабета"""
 
  def __init__(self):
@@ -547,11 +547,11 @@ class DiabetesDiagnosisSystem:
 
  if risk_level in ['High Risk', 'Very High Risk']:
  recommendations.append("Immediate consultation with endocrinologist")
- recommendations.append("Regular blood glucose monitoring")
+ recommendations.append("Regular blood glucose Monitoring")
  recommendations.append("Lifestyle modifications (diet, exercise)")
 
  if patient_data['BMI'].iloc[0] > 30:
- recommendations.append("Weight management program")
+ recommendations.append("Weight Management program")
 
  if patient_data['Glucose'].iloc[0] > 126:
  recommendations.append("Fasting glucose test")
@@ -559,7 +559,7 @@ class DiabetesDiagnosisSystem:
  return recommendations
 
 # Использование системы
-diabetes_system = DiabetesDiagnosisSystem()
+diabetes_system = DiabetesDiagnosissystem()
 
 # Loading data
 medical_data = diabetes_system.load_medical_data('diabetes_data.csv')
@@ -586,9 +586,9 @@ print(f"Medical Model AUC: {results['auc_score']:.3f}")
 ## Кейс 3: E-commerce - Рекомендательная система
 
 <img src="images/optimized/recommendation_system.png" alt="Рекомендательная система" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 20.4: Система рекомендаций for e-commerce - компоненты and результаты*
+*Рисунок 20.4: Система рекомендаций for e-commerce - components and результаты*
 
-**Компоненты рекомендательной системы:**
+**components рекомендательной системы:**
 - **User Profiling**: create профилей пользователей
 - **Item Features**: Анализ характеристик товаров
 - **Collaborative Filtering**: Коллаборативная фильтрация
@@ -607,7 +607,7 @@ print(f"Medical Model AUC: {results['auc_score']:.3f}")
 ### Задача
 create персонализированной рекомендательной системы for интернет-магазина.
 
-### Данные
+### data
 - **Размер датасета**: 1,000,000 транзакций
 - **Пользователи**: 50,000 активных покупателей
 - **Товары**: 10,000 SKU
@@ -616,23 +616,23 @@ create персонализированной рекомендательной �
 ### Решение
 
 ```python
-class EcommerceRecommendationSystem:
+class EcommerceRecommendationsystem:
  """Система рекомендаций for e-commerce"""
 
  def __init__(self):
- self.user_predictor = None
+ self.User_predictor = None
  self.item_predictor = None
  self.collaborative_filter = None
 
- def prepare_recommendation_data(self, transactions_df, users_df, items_df):
+ def prepare_recommendation_data(self, transactions_df, Users_df, items_df):
  """Подготовка данных for рекомендаций"""
 
  # Объединение данных
- df = transactions_df.merge(users_df, on='user_id')
+ df = transactions_df.merge(Users_df, on='User_id')
  df = df.merge(items_df, on='item_id')
 
- # create признаков пользователя
- user_features = self.create_user_features(df)
+ # create признаков User
+ User_features = self.create_User_features(df)
 
  # create признаков товара
  item_features = self.create_item_features(df)
@@ -640,31 +640,31 @@ class EcommerceRecommendationSystem:
  # create целевой переменной (рейтинг/покупка)
  df['rating'] = self.calculate_implicit_rating(df)
 
- return df, user_features, item_features
+ return df, User_features, item_features
 
- def create_user_features(self, df):
- """create признаков пользователя"""
+ def create_User_features(self, df):
+ """create признаков User"""
 
- user_features = df.groupby('user_id').agg({
+ User_features = df.groupby('User_id').agg({
  'item_id': 'count', # Количество покупок
  'price': ['sum', 'mean'], # Общая and средняя стоимость
  'category': lambda x: x.mode().iloc[0] if len(x.mode()) > 0 else 'Unknown', # Любимая категория
  'brand': lambda x: x.mode().iloc[0] if len(x.mode()) > 0 else 'Unknown' # Любимый бренд
  }).reset_index()
 
- user_features.columns = ['user_id', 'total_purchases', 'total_spent', 'avg_purchase', 'favorite_category', 'favorite_brand']
+ User_features.columns = ['User_id', 'total_purchases', 'total_spent', 'avg_purchase', 'favorite_category', 'favorite_brand']
 
  # Дополнительные признаки
- user_features['purchase_frequency'] = user_features['total_purchases'] / 365 # Покупок in день
- user_features['avg_spent_per_purchase'] = user_features['total_spent'] / user_features['total_purchases']
+ User_features['purchase_frequency'] = User_features['total_purchases'] / 365 # Покупок in день
+ User_features['avg_spent_per_purchase'] = User_features['total_spent'] / User_features['total_purchases']
 
- return user_features
+ return User_features
 
  def create_item_features(self, df):
  """create признаков товара"""
 
  item_features = df.groupby('item_id').agg({
- 'user_id': 'count', # Количество покупателей
+ 'User_id': 'count', # Количество покупателей
  'price': 'mean', # Средняя цена
  'category': lambda x: x.mode().iloc[0] if len(x.mode()) > 0 else 'Unknown',
  'brand': lambda x: x.mode().iloc[0] if len(x.mode()) > 0 else 'Unknown'
@@ -681,23 +681,23 @@ class EcommerceRecommendationSystem:
  """Расчет неявного рейтинга"""
 
  # Простая эвристика: чем больше покупок, тем выше рейтинг
- user_purchase_counts = df.groupby('user_id')['item_id'].count()
- item_purchase_counts = df.groupby('item_id')['user_id'].count()
+ User_purchase_counts = df.groupby('User_id')['item_id'].count()
+ item_purchase_counts = df.groupby('item_id')['User_id'].count()
 
- df['user_activity'] = df['user_id'].map(user_purchase_counts)
+ df['User_activity'] = df['User_id'].map(User_purchase_counts)
  df['item_popularity'] = df['item_id'].map(item_purchase_counts)
 
  # Нормализация рейтинга
- rating = (df['user_activity'] / df['user_activity'].max() +
+ rating = (df['User_activity'] / df['User_activity'].max() +
  df['item_popularity'] / df['item_popularity'].max()) / 2
 
  return rating
 
- def train_collaborative_filtering(self, df, user_features, item_features):
+ def train_collaborative_filtering(self, df, User_features, item_features):
  """Обучение коллаборативной фильтрации"""
 
  # Подготовка данных for AutoML
- recommendation_data = df.merge(user_features, on='user_id')
+ recommendation_data = df.merge(User_features, on='User_id')
  recommendation_data = recommendation_data.merge(item_features, on='item_id')
 
  # create предиктора
@@ -717,11 +717,11 @@ class EcommerceRecommendationSystem:
 
  return self.collaborative_filter
 
- def generate_recommendations(self, user_id, n_recommendations=10):
- """Генерация рекомендаций for пользователя"""
+ def generate_recommendations(self, User_id, n_recommendations=10):
+ """Генерация рекомендаций for User"""
 
- # Получение признаков пользователя
- user_data = self.get_user_features(user_id)
+ # Получение признаков User
+ User_data = self.get_User_features(User_id)
 
  # Получение всех товаров
  all_items = self.get_all_items()
@@ -731,8 +731,8 @@ class EcommerceRecommendationSystem:
  for item_id in all_items:
  item_data = self.get_item_features(item_id)
 
- # Объединение данных пользователя and товара
- combined_data = pd.DataFrame([{**user_data, **item_data}])
+ # Объединение данных User and товара
+ combined_data = pd.dataFrame([{**User_data, **item_data}])
 
  # Prediction рейтинга
  rating = self.collaborative_filter.predict(combined_data)[0]
@@ -752,12 +752,12 @@ class EcommerceRecommendationSystem:
  recall_scores = []
  ndcg_scores = []
 
- for user_id in test_data['user_id'].unique():
- # Получение реальных покупок пользователя
- actual_items = set(test_data[test_data['user_id'] == user_id]['item_id'])
+ for User_id in test_data['User_id'].unique():
+ # Получение реальных покупок User
+ actual_items = set(test_data[test_data['User_id'] == User_id]['item_id'])
 
  # Генерация рекомендаций
- recommendations = self.generate_recommendations(user_id, n_recommendations)
+ recommendations = self.generate_recommendations(User_id, n_recommendations)
  recommended_items = set([item_id for item_id, _ in recommendations])
 
  # Precision@K
@@ -778,20 +778,20 @@ class EcommerceRecommendationSystem:
  }
 
 # Использование системы
-recommendation_system = EcommerceRecommendationSystem()
+recommendation_system = EcommerceRecommendationsystem()
 
 # Loading data
 transactions = pd.read_csv('transactions.csv')
-users = pd.read_csv('users.csv')
+Users = pd.read_csv('Users.csv')
 items = pd.read_csv('items.csv')
 
 # Подготовка данных
-df, user_features, item_features = recommendation_system.prepare_recommendation_data(
- transactions, users, items
+df, User_features, item_features = recommendation_system.prepare_recommendation_data(
+ transactions, Users, items
 )
 
 # Обучение модели
-model = recommendation_system.train_collaborative_filtering(df, user_features, item_features)
+model = recommendation_system.train_collaborative_filtering(df, User_features, item_features)
 
 # Оценка
 results = recommendation_system.evaluate_recommendations(df)
@@ -814,10 +814,10 @@ print(f"F1 Score: {results['f1_score']:.3f}")
 *Рисунок 20.5: Система предиктивного обслуживания - этапы and результаты*
 
 **Этапы предиктивного обслуживания:**
-- **Sensor Data**: Сбор данных with датчиков оборудования
+- **Sensor data**: Сбор данных with датчиков оборудования
 - **Anomaly Detection**: Обнаружение аномалий in данных
 - **Failure Prediction**: Prediction отказов оборудования
-- **Maintenance Scheduling**: Planирование обслуживания
+- **maintenance Scheduling**: Planирование обслуживания
 - **Cost Optimization**: Оптимизация затрат on обслуживание
 - **Performance Monitoring**: Monitoring производительности
 
@@ -831,7 +831,7 @@ print(f"F1 Score: {results['f1_score']:.3f}")
 ### Задача
 create системы предиктивного обслуживания for промышленного оборудования.
 
-### Данные
+### data
 - **Оборудование**: 500 единиц промышленного оборудования
 - **Сенсоры**: 50+ датчиков on каждую единицу
 - **Частота измерений**: Каждые 5 minutes
@@ -840,7 +840,7 @@ create системы предиктивного обслуживания for п
 ### Решение
 
 ```python
-class PredictiveMaintenanceSystem:
+class Predictivemaintenancesystem:
  """Система предиктивного обслуживания"""
 
  def __init__(self):
@@ -870,7 +870,7 @@ class PredictiveMaintenanceSystem:
  'voltage': ['mean', 'std', 'max', 'min']
  })
 
- # Переименование колонок
+ # Переименование columns
  window_data.columns = [f'{col[0]}_{col[1]}_{window}h' for col in window_data.columns]
  features.append(window_data)
 
@@ -984,7 +984,7 @@ class PredictiveMaintenanceSystem:
  return schedule
 
 # Использование системы
-maintenance_system = PredictiveMaintenanceSystem()
+maintenance_system = Predictivemaintenancesystem()
 
 # Loading data
 sensor_data = pd.read_csv('sensor_data.csv')
@@ -999,8 +999,8 @@ model = maintenance_system.train_maintenance_model(maintenance_data)
 
 # Оценка
 results = maintenance_system.evaluate_model(maintenance_data)
-print(f"Maintenance Prediction Accuracy: {results['accuracy']:.3f}")
-print(f"Maintenance Prediction AUC: {results['auc_score']:.3f}")
+print(f"maintenance Prediction Accuracy: {results['accuracy']:.3f}")
+print(f"maintenance Prediction AUC: {results['auc_score']:.3f}")
 ```
 
 ### Результаты
@@ -1013,10 +1013,10 @@ print(f"Maintenance Prediction AUC: {results['auc_score']:.3f}")
 ## Кейс 5: Криптовалютная торговля - BTCUSDT
 
 <img src="images/optimized/crypto_trading.png" alt="Криптотрейдинг" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 20.6: Система криптотрейдинга - компоненты and результаты*
+*Рисунок 20.6: Система криптотрейдинга - components and результаты*
 
-**Компоненты системы криптотрейдинга:**
-- **Data Collection**: Сбор данных with биржи
+**components системы криптотрейдинга:**
+- **data Collection**: Сбор данных with биржи
 - **Feature Engineering**: create технических indicators
 - **Model Training**: Обучение торговой модели
 - **Drift Detection**: Обнаружение дрифта модели
@@ -1034,7 +1034,7 @@ print(f"Maintenance Prediction AUC: {results['auc_score']:.3f}")
 ### Задача
 create робастной and сверхприбыльной предсказательной модели for trading BTCUSDT with автоматическим переобучением при дрифте модели.
 
-### Данные
+### data
 - **Пара**: BTCUSDT
 - **Временной период**: 2 года исторических данных
 - **Частота**: 1-minutesные свечи
@@ -1060,7 +1060,7 @@ from sklearn.model_selection import train_test_split
 import warnings
 warnings.filterwarnings('ignore')
 
-class BTCUSDTTradingSystem:
+class BTCUSDTTradingsystem:
  """Система торговли BTCUSDT with AutoML Gluon"""
 
  def __init__(self):
@@ -1079,10 +1079,10 @@ class BTCUSDTTradingSystem:
  - update: при обнаружении дрифта модели
  - Сохранение: in файл for восстановления
 
-- **`self.feature_columns`**: Список признаков модели
+- **`self.feature_columns`**: List признаков модели
  - Тип: List[str]
  - Содержит: названия всех технических indicators
- - Применение: for predictions on новых данных
+ - Применение: for Predictions on новых данных
  - update: при изменении набора признаков
 
 - **`self.model_performance`**: Метрики производительности модели
@@ -1109,7 +1109,7 @@ class BTCUSDTTradingSystem:
  - Применение: определение актива for trading
  - Альтернативы: 'ETHUSDT', 'BNBUSDT', 'ADAUSDT'
 
-- **`timeframe='1m'`**: Timeframe данных
+- **`Timeframe='1m'`**: Timeframe данных
  - Варианты: '1m', '5m', '15m', '1h', '4h', '1d'
  - Применение: частота обновления данных
  - Баланс: меньше = больше данных, но больше шума
@@ -1145,10 +1145,10 @@ class BTCUSDTTradingSystem:
  - Применение: ограничение исторических данных
  - Оптимизация: меньше данных = быстрее загрузка
 
-- **`ohlcv`**: Данные свечей
- - Структура: [timestamp, open, high, low, close, volume]
- - Применение: базовые данные for analysis
- - Обработка: преобразование in DataFrame
+- **`ohlcv`**: data свечей
+ - Structure: [timestamp, open, high, low, close, volume]
+ - Применение: базовые data for Analysis
+ - Обработка: преобразование in dataFrame
  - Нормализация: приведение к стандартному формату
 
 - **`Prediction_horizon=60`**: Горизонт предсказания
@@ -1300,7 +1300,7 @@ class BTCUSDTTradingSystem:
 - **Monitoring**: Постоянный контроль производительности
 - **Безопасность**: Защита API ключей
 
- def collect_crypto_data(self, symbol='BTCUSDT', timeframe='1m', days=30):
+ def collect_crypto_data(self, symbol='BTCUSDT', Timeframe='1m', days=30):
  """Сбор данных with Binance"""
 
  # Подключение к Binance
@@ -1312,10 +1312,10 @@ class BTCUSDTTradingSystem:
 
  # Получение данных
  since = exchange.milliseconds() - days * 24 * 60 * 60 * 1000
- ohlcv = exchange.fetch_ohlcv(symbol, timeframe, since=since)
+ ohlcv = exchange.fetch_ohlcv(symbol, Timeframe, since=since)
 
- # create DataFrame
- df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+ # create dataFrame
+ df = pd.dataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
  df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
  df.set_index('timestamp', inplace=True)
 
@@ -1502,8 +1502,8 @@ class BTCUSDTTradingSystem:
  """Получение исторических данных for переобучения"""
 
  # in реальной системе здесь будет загрузка из базы данных
- # for примера возвращаем пустой DataFrame
- return pd.DataFrame()
+ # for примера возвращаем пустой dataFrame
+ return pd.dataFrame()
 
  def generate_trading_signals(self, current_data):
  """Генерация торговых сигналов"""
@@ -1574,7 +1574,7 @@ class BTCUSDTTradingSystem:
  time.sleep(60) # check каждую minutesу
 
 # Использование системы
-trading_system = BTCUSDTTradingSystem()
+trading_system = BTCUSDTTradingsystem()
 
 # Обучение начальной модели
 print("🎯 Обучение робастной модели for BTCUSDT...")
@@ -1603,13 +1603,13 @@ for metric, value in trading_system.model_performance.items():
 ## Кейс 6: Hedge fund - Продвинутая торговая система
 
 <img src="images/optimized/hedge_fund.png" alt="Hedge fund" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 20.7: Система Hedge fundа - компоненты and результаты*
+*Рисунок 20.7: Система Hedge fundа - components and результаты*
 
-**Компоненты системы Hedge fundа:**
-- **Multi-Asset Data**: Данные on множественным активам
+**components системы Hedge fundа:**
+- **Multi-Asset data**: data on множественным активам
 - **Ensemble Models**: Ансамблевые модели
-- **Risk Management**: Управление рисками
-- **Portfolio Management**: Управление портфелем
+- **Risk Management**: Management рисками
+- **Portfolio Management**: Management портфелем
 - **Performance Tracking**: Отслеживание производительности
 - **Advanced Strategies**: Продвинутые торговые стратегии
 
@@ -1624,7 +1624,7 @@ for metric, value in trading_system.model_performance.items():
 ### Задача
 create высокоточной and стабильно прибыльной торговой системы for Hedge fundа with использованием множественных моделей and продвинутого риск-менеджмента.
 
-### Данные
+### data
 - **Инструменты**: 50+ криптовалютных пар
 - **Временной период**: 3 года исторических данных
 - **Частота**: 1-minutesные свечи
@@ -1634,14 +1634,14 @@ create высокоточной and стабильно прибыльной то
 ### Решение
 
 ```python
-class HedgeFundTradingSystem:
+class HedgeFundTradingsystem:
  """Продвинутая торговая система for Hedge fundа"""
 
  def __init__(self):
  self.models = {} # Модели for разных пар
  self.ensemble_model = None
  self.risk_manager = AdvancedRiskManager()
- self.portfolio_manager = PortfolioManager()
+ self.Portfolio_manager = PortfolioManager()
  self.performance_tracker = PerformanceTracker()
 
  def collect_multi_asset_data(self, symbols, days=90):
@@ -1658,7 +1658,7 @@ class HedgeFundTradingSystem:
  data = self.add_fundamental_features(data, symbol)
 
  all_data[symbol] = data
- print(f"✅ Данные for {symbol} загружены: {len(data)} записей")
+ print(f"✅ data for {symbol} загружены: {len(data)} записей")
 
  except Exception as e:
  print(f"❌ Ошибка загрузки {symbol}: {e}")
@@ -1783,7 +1783,7 @@ class HedgeFundTradingSystem:
 
  return self.ensemble_model
 
- def create_advanced_risk_management(self):
+ def create_advanced_risk_Management(self):
  """create продвинутого риск-менеджмента"""
 
  class AdvancedRiskManager:
@@ -1793,11 +1793,11 @@ class HedgeFundTradingSystem:
  self.var_limit = 0.02 # 2% VaR лимит
  self.correlation_limit = 0.7 # Лимит корреляции между позициями
 
- def calculate_position_size(self, signal_confidence, asset_volatility, portfolio_value):
+ def calculate_position_size(self, signal_confidence, asset_volatility, Portfolio_value):
  """Расчет размера позиции with учетом риска"""
 
  # Базовый размер позиции
- base_size = self.max_position_size * portfolio_value
+ base_size = self.max_position_size * Portfolio_value
 
  # Корректировка on волатильность
  volatility_adjustment = 1 / (1 + asset_volatility * 10)
@@ -1808,9 +1808,9 @@ class HedgeFundTradingSystem:
  # Финальный размер позиции
  position_size = base_size * volatility_adjustment * confidence_adjustment
 
- return min(position_size, self.max_position_size * portfolio_value)
+ return min(position_size, self.max_position_size * Portfolio_value)
 
- def check_portfolio_risk(self, current_positions, new_position):
+ def check_Portfolio_risk(self, current_positions, new_position):
  """check риска портфеля"""
 
  # check максимальной просадки
@@ -1819,8 +1819,8 @@ class HedgeFundTradingSystem:
  return False, "Maximum drawdown exceeded"
 
  # check VaR
- portfolio_var = self.calculate_var(current_positions)
- if portfolio_var > self.var_limit:
+ Portfolio_var = self.calculate_var(current_positions)
+ if Portfolio_var > self.var_limit:
  return False, "VaR limit exceeded"
 
  # check корреляции
@@ -1846,7 +1846,7 @@ class HedgeFundTradingSystem:
 
  return AdvancedRiskManager()
 
- def create_portfolio_manager(self):
+ def create_Portfolio_manager(self):
  """create менеджера портфеля"""
 
  class PortfolioManager:
@@ -1874,7 +1874,7 @@ class HedgeFundTradingSystem:
 
  return False
 
- def calculate_portfolio_value(self, current_prices):
+ def calculate_Portfolio_value(self, current_prices):
  """Расчет стоимости портфеля"""
 
  positions_value = sum(
@@ -1885,7 +1885,7 @@ class HedgeFundTradingSystem:
  self.total_value = self.cash + positions_value
  return self.total_value
 
- def get_portfolio_metrics(self):
+ def get_Portfolio_metrics(self):
  """Получение метрик портфеля"""
 
  return {
@@ -1900,7 +1900,7 @@ class HedgeFundTradingSystem:
  def run_hedge_fund_system(self):
  """Launch системы Hedge fundа"""
 
- # Список торговых пар
+ # List торговых пар
  trading_pairs = [
  'BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'ADAUSDT', 'SOLUSDT',
  'XRPUSDT', 'DOTUSDT', 'DOGEUSDT', 'AVAXUSDT', 'MATICUSDT'
@@ -1913,10 +1913,10 @@ class HedgeFundTradingSystem:
  self.ensemble_model = self.train_ensemble_model(all_data, time_limit=7200)
 
  print("⚖️ Инициализация риск-менеджмента...")
- self.risk_manager = self.create_advanced_risk_management()
+ self.risk_manager = self.create_advanced_risk_Management()
 
  print("💼 Инициализация менеджера портфеля...")
- self.portfolio_manager = self.create_portfolio_manager()
+ self.Portfolio_manager = self.create_Portfolio_manager()
 
  print("🚀 Система Hedge fundа запущена!")
  print(f"📊 Торговые пары: {len(trading_pairs)}")
@@ -1939,7 +1939,7 @@ class HedgeFundTradingSystem:
  signals[symbol] = {
  'direction': ['SELL', 'HOLD', 'BUY'][Prediction[0]],
  'confidence': float(np.max(probability)),
- 'probabilities': probability[0].tolist()
+ 'probabilities': probability[0].toList()
  }
 
  # Применение риск-менеджмента
@@ -1949,19 +1949,19 @@ class HedgeFundTradingSystem:
  position_size = self.risk_manager.calculate_position_size(
  signal['confidence'],
  current_data[symbol]['volatility_index'].iloc[-1],
- self.portfolio_manager.total_value
+ self.Portfolio_manager.total_value
  )
 
  # check риска
- risk_ok, risk_message = self.risk_manager.check_portfolio_risk(
- self.portfolio_manager.positions,
+ risk_ok, risk_message = self.risk_manager.check_Portfolio_risk(
+ self.Portfolio_manager.positions,
  {'symbol': symbol, 'size': position_size}
  )
 
  if risk_ok:
  # Выполнение торговой операции
  current_price = current_data[symbol]['close'].iloc[-1]
- success = self.portfolio_manager.execute_trade(
+ success = self.Portfolio_manager.execute_trade(
  symbol, signal['direction'], position_size, current_price
  )
 
@@ -1972,9 +1972,9 @@ class HedgeFundTradingSystem:
 
  # update стоимости портфеля
  current_prices = {symbol: data['close'].iloc[-1] for symbol, data in current_data.items()}
- portfolio_value = self.portfolio_manager.calculate_portfolio_value(current_prices)
+ Portfolio_value = self.Portfolio_manager.calculate_Portfolio_value(current_prices)
 
- print(f"💰 Стоимость портфеля: ${portfolio_value:,.2f}")
+ print(f"💰 Стоимость портфеля: ${Portfolio_value:,.2f}")
 
  # Пауза между циклами
  time.sleep(300) # 5 minutes
@@ -1984,7 +1984,7 @@ class HedgeFundTradingSystem:
  time.sleep(60)
 
 # Использование системы Hedge fundа
-hedge_fund_system = HedgeFundTradingSystem()
+hedge_fund_system = HedgeFundTradingsystem()
 
 # Launch системы
 # hedge_fund_system.run_hedge_fund_system()
@@ -2036,25 +2036,25 @@ class SecretFeatureEngineering:
  def __init__(self):
  self.secret_techniques = {}
 
- def create_multi_timeframe_features(self, data, timeframes=['1m', '5m', '15m', '1h', '4h', '1d']):
- """create признаков on множественных Timeframeах"""
+ def create_multi_Timeframe_features(self, data, Timeframes=['1m', '5m', '15m', '1h', '4h', '1d']):
+ """create признаков on множественных Timeframes"""
 
  features = {}
 
- for tf in timeframes:
+ for tf in Timeframes:
  # Агрегация данных on Timeframeу
- tf_data = self.aggregate_to_timeframe(data, tf)
+ tf_data = self.aggregate_to_Timeframe(data, tf)
 
  # Секретные признаки
  tf_features = self.create_secret_features(tf_data, tf)
  features[tf] = tf_features
 
- # Объединение признаков всех Timeframeов
- combined_features = self.combine_multi_timeframe_features(features)
+ # Объединение признаков всех Timeframes
+ combined_features = self.combine_multi_Timeframe_features(features)
 
  return combined_features
 
- def create_secret_features(self, data, timeframe):
+ def create_secret_features(self, data, Timeframe):
  """create секретных признаков"""
 
  # 1. Hidden Volume Profile
@@ -2066,8 +2066,8 @@ class SecretFeatureEngineering:
  # 3. Institutional Flow
  data['institutional_flow'] = self.calculate_institutional_flow(data)
 
- # 4. Market Microstructure
- data['microstructure_imbalance'] = self.calculate_microstructure_imbalance(data)
+ # 4. Market MicroStructure
+ data['microStructure_imbalance'] = self.calculate_microStructure_imbalance(data)
 
  # 5. Order Flow Analysis
  data['order_flow_pressure'] = self.calculate_order_flow_pressure(data)
@@ -2136,11 +2136,11 @@ class SecretFeatureEngineering:
 
  return institutional_flow
 
- def calculate_microstructure_imbalance(self, data):
+ def calculate_microStructure_imbalance(self, data):
  """Микроструктурный дисбаланс - анализ рыночной микроструктуры"""
 
  # Анализ спреда bid-ask
- spread_analysis = self.analyze_bid_ask_spread(data)
+ spread_Analysis = self.analyze_bid_ask_spread(data)
 
  # Анализ глубины рынка
  market_depth = self.analyze_market_depth(data)
@@ -2152,14 +2152,14 @@ class SecretFeatureEngineering:
  order_imbalance = self.calculate_order_imbalance(data)
 
  # Объединение микроструктурных сигналов
- microstructure_imbalance = (
- spread_analysis * 0.25 +
+ microStructure_imbalance = (
+ spread_Analysis * 0.25 +
  market_depth * 0.25 +
  execution_speed * 0.25 +
  order_imbalance * 0.25
  )
 
- return microstructure_imbalance
+ return microStructure_imbalance
 
  def calculate_order_flow_pressure(self, data):
  """Давление ордерного потока"""
@@ -2344,7 +2344,7 @@ class SecretRiskManagement:
  def __init__(self):
  self.risk_techniques = {}
 
- def advanced_position_sizing(self, signal_strength, market_conditions, portfolio_state):
+ def advanced_position_sizing(self, signal_strength, market_conditions, Portfolio_state):
  """Продвинутое определение размера позиции"""
 
  # 1. Kelly Criterion with адаптацией
@@ -2354,7 +2354,7 @@ class SecretRiskManagement:
  vol_adjusted_size = self.calculate_volatility_adjusted_size(kelly_size, market_conditions)
 
  # 3. Correlation-Adjusted Sizing
- corr_adjusted_size = self.calculate_correlation_adjusted_size(vol_adjusted_size, portfolio_state)
+ corr_adjusted_size = self.calculate_correlation_adjusted_size(vol_adjusted_size, Portfolio_state)
 
  # 4. Market Regime Sizing
  regime_adjusted_size = self.calculate_regime_adjusted_size(corr_adjusted_size, market_conditions)
@@ -2371,13 +2371,13 @@ class SecretRiskManagement:
  vol_stop = entry_price * (1 - 2 * adaptive_atr)
 
  # Стоп-лосс on basis структуры рынка
- structure_stop = self.calculate_structure_based_stop(entry_price, market_conditions)
+ Structure_stop = self.calculate_Structure_based_stop(entry_price, market_conditions)
 
  # Стоп-лосс on basis ликвидности
  liquidity_stop = self.calculate_liquidity_based_stop(entry_price, market_conditions)
 
  # Выбор оптимального стоп-лосса
- optimal_stop = min(vol_stop, structure_stop, liquidity_stop)
+ optimal_stop = min(vol_stop, Structure_stop, liquidity_stop)
 
  return optimal_stop
 
@@ -2388,13 +2388,13 @@ class SecretRiskManagement:
  resistance_levels = self.find_resistance_levels(entry_price, market_conditions)
 
  # Анализ профитабельности
- profitability_analysis = self.analyze_profitability(entry_price, signal_strength)
+ profitability_Analysis = self.analyze_profitability(entry_price, signal_strength)
 
  # Адаптивный тейк-профит
  adaptive_tp = self.calculate_adaptive_take_profit(
  entry_price,
  resistance_levels,
- profitability_analysis
+ profitability_Analysis
  )
 
  return adaptive_tp
@@ -2412,11 +2412,11 @@ class SecretRiskManagement:
 
 ### Почему эти техники такие прибыльные?
 
-1. **Multi-Timeframe Analysis** - анализ on всех Timeframeах дает полную картину рынка
+1. **Multi-Timeframe Analysis** - анализ on всех Timeframes дает полную картину рынка
 2. **Smart Money Tracking** - отслеживание институциональных игроков
-3. **Microstructure Analysis** - понимание рыночной микроструктуры
+3. **MicroStructure Analysis** - понимание рыночной микроструктуры
 4. **Advanced Ensemble** - комбинация лучших моделей
-5. **Dynamic Risk Management** - адаптивное управление рисками
+5. **Dynamic Risk Management** - адаптивное Management рисками
 6. **Context Awareness** - учет рыночного контекста
 
 Каждый кейс показывает, как AutoML Gluon может решать сложные бизнес-задачи with измеримыми результатами and экономическим эффектом.

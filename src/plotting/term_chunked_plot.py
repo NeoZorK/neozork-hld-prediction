@@ -32,26 +32,26 @@ except ImportError:
  from src.common import logger
  from src.common.constants import TradingRule, BUY, SELL, NOTRADE
 
-# Import navigation system
+# Import Navigation system
 try:
- from .term_navigation import TerminalNavigator, create_navigation_prompt, parse_navigation_input
+ from .term_Navigation import TerminalNavigator, create_Navigation_prompt, parse_Navigation_input
 except ImportError:
  try:
  # Fallback to relative imports when run as module
- from src.plotting.term_navigation import TerminalNavigator, create_navigation_prompt, parse_navigation_input
+ from src.plotting.term_Navigation import TerminalNavigator, create_Navigation_prompt, parse_Navigation_input
  except ImportError:
  # Final fallback for pytest with -n auto
- from src.plotting.term_navigation import TerminalNavigator, create_navigation_prompt, parse_navigation_input
+ from src.plotting.term_Navigation import TerminalNavigator, create_Navigation_prompt, parse_Navigation_input
 
 
 def get_terminal_plot_size() -> Tuple[int, int]:
  """
- Determine the plot size for terminal mode based on whether -d term is used.
+ Determine the plot size for terminal mode based on whether -d term is Used.
 
  Returns:
  Tuple[int, int]: (width, height) for the plot
  """
- # Check if -d term is explicitly used in command line arguments
+ # check if -d term is explicitly Used in command line arguments
  is_term_mode = False
  if len(sys.argv) > 1:
  for i, arg in enumerate(sys.argv):
@@ -96,16 +96,16 @@ def calculate_optimal_chunk_size(total_rows: int, target_chunks: int = 10, min_c
  return max(min_chunk_size, chunk_size)
 
 
-def split_dataframe_into_chunks(df: pd.DataFrame, chunk_size: int) -> List[pd.DataFrame]:
+def split_dataframe_into_chunks(df: pd.dataFrame, chunk_size: int) -> List[pd.dataFrame]:
  """
- Split DataFrame into chunks of specified size.
+ Split dataFrame into chunks of specified size.
 
  Args:
- df (pd.DataFrame): DataFrame to split
+ df (pd.dataFrame): dataFrame to split
  chunk_size (int): Size of each chunk
 
  Returns:
- List[pd.DataFrame]: List of DataFrame chunks
+ List[pd.dataFrame]: List of dataFrame chunks
  """
  if df is None or df.empty:
  return []
@@ -171,30 +171,30 @@ def draw_ohlc_candles(chunk, x_values):
  has_ohlc = all(col in chunk.columns for col in ohlc_columns)
  if has_ohlc:
  ohlc_data = {
- 'Open': chunk['Open'].ffill().fillna(chunk['Close']).tolist(),
- 'High': chunk['High'].ffill().fillna(chunk['Close']).tolist(),
- 'Low': chunk['Low'].ffill().fillna(chunk['Close']).tolist(),
- 'Close': chunk['Close'].ffill().fillna(chunk['Open']).tolist()
+ 'Open': chunk['Open'].ffill().fillna(chunk['Close']).toList(),
+ 'High': chunk['High'].ffill().fillna(chunk['Close']).toList(),
+ 'Low': chunk['Low'].ffill().fillna(chunk['Close']).toList(),
+ 'Close': chunk['Close'].ffill().fillna(chunk['Open']).toList()
  }
  # Add explicit label for candles (if supported)
  try:
  plt.candlestick(x_values, ohlc_data, label="OHLC Candles")
  except TypeError:
- # If label is not supported, use without it
+ # If label is not supported, Use without it
  plt.candlestick(x_values, ohlc_data)
  else:
- logger.print_error("DataFrame must contain OHLC columns (Open, High, Low, Close) for candlestick plot!")
+ logger.print_error("dataFrame must contain OHLC columns (Open, High, Low, Close) for candlestick plot!")
 
 
-def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str = "matrix", use_navigation: bool = False) -> None:
+def plot_ohlcv_chunks(df: pd.dataFrame, title: str = "OHLC Chunks", style: str = "matrix", Use_Navigation: bool = False) -> None:
  """
  Plot OHLC data in chunks (no volume charts).
 
  Args:
- df (pd.DataFrame): DataFrame with OHLC data
+ df (pd.dataFrame): dataFrame with OHLC data
  title (str): Base title for plots
  style (str): Plot style
- use_navigation (bool): Whether to use interactive navigation
+ Use_Navigation (bool): Whether to Use interactive Navigation
  """
  try:
  logger.print_info("Generating OHLC chunked plots...")
@@ -204,7 +204,7 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str =
  has_ohlc = all(col in df.columns for col in ohlc_columns)
 
  if not has_ohlc:
- logger.print_error("DataFrame must contain OHLC columns")
+ logger.print_error("dataFrame must contain OHLC columns")
  return
 
  # Calculate optimal chunk size
@@ -214,12 +214,12 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str =
 
  logger.print_info(f"Split {total_rows} rows into {len(chunks)} chunks of ~{chunk_size} candles each")
 
- if use_navigation:
- # Use navigation system
+ if Use_Navigation:
+ # Use Navigation system
  navigator = TerminalNavigator(chunks, title)
 
- def plot_chunk_with_navigation(chunk: pd.DataFrame, chunk_index: int, chunk_info: dict) -> None:
- """Plot a single chunk with navigation info."""
+ def plot_chunk_with_Navigation(chunk: pd.dataFrame, chunk_index: int, chunk_info: dict) -> None:
+ """Plot a single chunk with Navigation info."""
  if len(chunk) == 0:
  logger.print_warning("Empty chunk, skipping...")
  return
@@ -239,9 +239,9 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str =
  if hasattr(chunk.index, 'strftime'):
  # Use plotext-compatible date format
  x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  else:
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  x_labels = [str(i) for i in x_values]
 
  # OHLC Candlestick Chart
@@ -256,11 +256,11 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str =
 
  plt.show()
 
- # start navigation
- navigator.navigate(plot_chunk_with_navigation)
+ # start Navigation
+ navigator.navigate(plot_chunk_with_Navigation)
 
  else:
- # Original non-navigation behavior
+ # Original non-Navigation behavior
  for i, chunk in enumerate(chunks):
  chunk_start_idx = i * chunk_size
  chunk_end_idx = min((i + 1) * chunk_size, total_rows)
@@ -280,9 +280,9 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str =
  if hasattr(chunk.index, 'strftime'):
  # Use plotext-compatible date format
  x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  else:
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  x_labels = [str(i) for i in x_values]
 
  # OHLC Candlestick Chart
@@ -302,9 +302,9 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str =
 
  plt.show()
 
- # Add pause between chunks for better readability
+ # Add paUse between chunks for better readability
  if i < len(chunks) - 1:
- input(f"\nPress Enter to view next chunk ({i+2}/{len(chunks)})...")
+ input(f"\nPress Enter to View next chunk ({i+2}/{len(chunks)})...")
 
  logger.print_success(f"Successfully displayed {len(chunks)} OHLC chunks!")
 
@@ -312,15 +312,15 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str =
  logger.print_error(f"Error generating OHLCV chunked plots: {e}")
 
 
-def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = "matrix", use_navigation: bool = False) -> None:
+def plot_auto_chunks(df: pd.dataFrame, title: str = "AUTO Chunks", style: str = "matrix", Use_Navigation: bool = False) -> None:
  """
  Plot all fields in chunks with separate charts for each field.
 
  Args:
- df (pd.DataFrame): DataFrame with all fields
+ df (pd.dataFrame): dataFrame with all fields
  title (str): Base title for plots
  style (str): Plot style
- use_navigation (bool): Whether to use interactive navigation
+ Use_Navigation (bool): Whether to Use interactive Navigation
  """
  try:
  logger.print_info("Generating AUTO chunked plots for all fields...")
@@ -333,19 +333,19 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
  logger.print_info(f"Split {total_rows} rows into {len(chunks)} chunks of ~{chunk_size} candles each")
 
  # Get all numeric columns
- numeric_columns = df.select_dtypes(include=[np.number]).columns.tolist()
+ numeric_columns = df.select_dtypes(include=[np.number]).columns.toList()
 
  # Skip standard columns for individual field plots
  skip_columns = {'Open', 'High', 'Low', 'Close', 'Volume', 'DateTime', 'Timestamp', 'Date', 'Time', 'Index', 'index'}
  field_columns = [col for col in numeric_columns if col not in skip_columns]
 
- if use_navigation:
- # Use AUTO navigation system with field switching
- from src.plotting.term_navigation import AutoTerminalNavigator
+ if Use_Navigation:
+ # Use AUTO Navigation system with field switching
+ from src.plotting.term_Navigation import AutoTerminalNavigator
  navigator = AutoTerminalNavigator(chunks, title, field_columns)
 
- def plot_chunk_with_navigation(chunk: pd.DataFrame, chunk_index: int, chunk_info: dict) -> None:
- """Plot a single chunk with navigation info."""
+ def plot_chunk_with_Navigation(chunk: pd.dataFrame, chunk_index: int, chunk_info: dict) -> None:
+ """Plot a single chunk with Navigation info."""
  if len(chunk) == 0:
  logger.print_warning("Empty chunk, skipping...")
  return
@@ -366,9 +366,9 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
  if hasattr(chunk.index, 'strftime'):
  # Use plotext-compatible date format
  x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  else:
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  x_labels = [str(i) for i in x_values]
  plt.clear_data()
  plt.clear_figure()
@@ -389,11 +389,11 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
  if current_field and current_field in chunk.columns and group_info['name'] != 'OHLC':
  _plot_single_field_chunk(chunk, current_field, f"{title} - {current_field} (Chunk {chunk_info['index']})", style)
 
- # start navigation
- navigator.navigate(plot_chunk_with_navigation)
+ # start Navigation
+ navigator.navigate(plot_chunk_with_Navigation)
 
  else:
- # Original non-navigation behavior
+ # Original non-Navigation behavior
  for i, chunk in enumerate(chunks):
  chunk_start_idx = i * chunk_size
  chunk_end_idx = min((i + 1) * chunk_size, total_rows)
@@ -411,9 +411,9 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
  if hasattr(chunk.index, 'strftime'):
  # Use plotext-compatible date format
  x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  else:
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  x_labels = [str(i) for i in x_values]
  plt.clear_data()
  plt.clear_figure()
@@ -435,9 +435,9 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
  if field in chunk.columns:
  _plot_single_field_chunk(chunk, field, f"{title} - {field} (Chunk {i+1})", style)
 
- # Add pause between chunks
+ # Add paUse between chunks
  if i < len(chunks) - 1:
- input(f"\nPress Enter to view next chunk ({i+2}/{len(chunks)})...")
+ input(f"\nPress Enter to View next chunk ({i+2}/{len(chunks)})...")
 
  logger.print_success(f"Successfully displayed {len(chunks)} AUTO chunks!")
 
@@ -445,16 +445,16 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
  logger.print_error(f"Error generating AUTO chunked plots: {e}")
 
 
-def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "matrix", use_navigation: bool = False) -> None:
+def plot_pv_chunks(df: pd.dataFrame, title: str = "PV Chunks", style: str = "matrix", Use_Navigation: bool = False) -> None:
  """
  Plot PV (Pressure Vector) data in chunks with channels and signals (like PHLD).
  OHLC candles are always shown as the base layer (like in PHLD).
 
  Args:
- df (pd.DataFrame): DataFrame with PV data
+ df (pd.dataFrame): dataFrame with PV data
  title (str): Base title for plots
  style (str): Plot style
- use_navigation (bool): Whether to use interactive navigation
+ Use_Navigation (bool): Whether to Use interactive Navigation
  """
  try:
  logger.print_info("Generating PV chunked plots with channels and signals (like PHLD)...")
@@ -466,12 +466,12 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "mat
 
  logger.print_info(f"Split {total_rows} rows into {len(chunks)} chunks of ~{chunk_size} candles each")
 
- if use_navigation:
- # Use navigation system
+ if Use_Navigation:
+ # Use Navigation system
  navigator = TerminalNavigator(chunks, title)
 
- def plot_chunk_with_navigation(chunk: pd.DataFrame, chunk_index: int, chunk_info: dict) -> None:
- """Plot a single chunk with navigation info."""
+ def plot_chunk_with_Navigation(chunk: pd.dataFrame, chunk_index: int, chunk_info: dict) -> None:
+ """Plot a single chunk with Navigation info."""
  if len(chunk) == 0:
  logger.print_warning("Empty chunk, skipping...")
  return
@@ -494,9 +494,9 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "mat
  if hasattr(chunk.index, 'strftime'):
  # Use plotext-compatible date format
  x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  else:
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  x_labels = [str(i) for i in x_values]
 
  # OHLC Candlestick Chart (always as first layer, like in other rules)
@@ -516,11 +516,11 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "mat
 
  plt.show()
 
- # start navigation
- navigator.navigate(plot_chunk_with_navigation)
+ # start Navigation
+ navigator.navigate(plot_chunk_with_Navigation)
 
  else:
- # Original non-navigation behavior
+ # Original non-Navigation behavior
  for i, chunk in enumerate(chunks):
  chunk_start_idx = i * chunk_size
  chunk_end_idx = min((i + 1) * chunk_size, total_rows)
@@ -543,9 +543,9 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "mat
  if hasattr(chunk.index, 'strftime'):
  # Use plotext-compatible date format
  x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  else:
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  x_labels = [str(i) for i in x_values]
 
  # OHLC Candlestick Chart (always as first layer, like in other rules)
@@ -565,9 +565,9 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "mat
 
  plt.show()
 
- # Add pause between chunks
+ # Add paUse between chunks
  if i < len(chunks) - 1:
- input(f"\nPress Enter to view next chunk ({i+2}/{len(chunks)})...")
+ input(f"\nPress Enter to View next chunk ({i+2}/{len(chunks)})...")
 
  logger.print_success(f"Successfully displayed {len(chunks)} PV chunks with channels and signals!")
 
@@ -575,15 +575,15 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "mat
  logger.print_error(f"Error generating PV chunked plots: {e}")
 
 
-def plot_sr_chunks(df: pd.DataFrame, title: str = "SR Chunks", style: str = "matrix", use_navigation: bool = False) -> None:
+def plot_sr_chunks(df: pd.dataFrame, title: str = "SR Chunks", style: str = "matrix", Use_Navigation: bool = False) -> None:
  """
  Plot SR (Support/Resistance) data in chunks with two lines.
 
  Args:
- df (pd.DataFrame): DataFrame with SR data
+ df (pd.dataFrame): dataFrame with SR data
  title (str): Base title for plots
  style (str): Plot style
- use_navigation (bool): Whether to use interactive navigation
+ Use_Navigation (bool): Whether to Use interactive Navigation
  """
  try:
  logger.print_info("Generating SR chunked plots with support/resistance lines...")
@@ -595,12 +595,12 @@ def plot_sr_chunks(df: pd.DataFrame, title: str = "SR Chunks", style: str = "mat
 
  logger.print_info(f"Split {total_rows} rows into {len(chunks)} chunks of ~{chunk_size} candles each")
 
- if use_navigation:
- # Use navigation system
+ if Use_Navigation:
+ # Use Navigation system
  navigator = TerminalNavigator(chunks, title)
 
- def plot_chunk_with_navigation(chunk: pd.DataFrame, chunk_index: int, chunk_info: dict) -> None:
- """Plot a single chunk with navigation info."""
+ def plot_chunk_with_Navigation(chunk: pd.dataFrame, chunk_index: int, chunk_info: dict) -> None:
+ """Plot a single chunk with Navigation info."""
  if len(chunk) == 0:
  logger.print_warning("Empty chunk, skipping...")
  return
@@ -623,9 +623,9 @@ def plot_sr_chunks(df: pd.DataFrame, title: str = "SR Chunks", style: str = "mat
  if hasattr(chunk.index, 'strftime'):
  # Use plotext-compatible date format
  x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  else:
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  x_labels = [str(i) for i in x_values]
 
  # OHLC Candlestick Chart (always as first layer, like in other rules)
@@ -645,11 +645,11 @@ def plot_sr_chunks(df: pd.DataFrame, title: str = "SR Chunks", style: str = "mat
 
  plt.show()
 
- # start navigation
- navigator.navigate(plot_chunk_with_navigation)
+ # start Navigation
+ navigator.navigate(plot_chunk_with_Navigation)
 
  else:
- # Original non-navigation behavior
+ # Original non-Navigation behavior
  for i, chunk in enumerate(chunks):
  chunk_start_idx = i * chunk_size
  chunk_end_idx = min((i + 1) * chunk_size, total_rows)
@@ -672,9 +672,9 @@ def plot_sr_chunks(df: pd.DataFrame, title: str = "SR Chunks", style: str = "mat
  if hasattr(chunk.index, 'strftime'):
  # Use plotext-compatible date format
  x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  else:
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  x_labels = [str(i) for i in x_values]
 
  # OHLC Candlestick Chart (always as first layer, like in other rules)
@@ -694,9 +694,9 @@ def plot_sr_chunks(df: pd.DataFrame, title: str = "SR Chunks", style: str = "mat
 
  plt.show()
 
- # Add pause between chunks
+ # Add paUse between chunks
  if i < len(chunks) - 1:
- input(f"\nPress Enter to view next chunk ({i+2}/{len(chunks)})...")
+ input(f"\nPress Enter to View next chunk ({i+2}/{len(chunks)})...")
 
  logger.print_success(f"Successfully displayed {len(chunks)} SR chunks!")
 
@@ -704,15 +704,15 @@ def plot_sr_chunks(df: pd.DataFrame, title: str = "SR Chunks", style: str = "mat
  logger.print_error(f"Error generating SR chunked plots: {e}")
 
 
-def plot_phld_chunks(df: pd.DataFrame, title: str = "PHLD Chunks", style: str = "matrix", use_navigation: bool = False) -> None:
+def plot_phld_chunks(df: pd.dataFrame, title: str = "PHLD Chunks", style: str = "matrix", Use_Navigation: bool = False) -> None:
  """
  Plot PHLD (Predict High Low Direction) data in chunks with two channels and signals.
 
  Args:
- df (pd.DataFrame): DataFrame with PHLD data
+ df (pd.dataFrame): dataFrame with PHLD data
  title (str): Base title for plots
  style (str): Plot style
- use_navigation (bool): Whether to use interactive navigation
+ Use_Navigation (bool): Whether to Use interactive Navigation
  """
  try:
  logger.print_info("Generating PHLD chunked plots with channels and signals...")
@@ -724,12 +724,12 @@ def plot_phld_chunks(df: pd.DataFrame, title: str = "PHLD Chunks", style: str = 
 
  logger.print_info(f"Split {total_rows} rows into {len(chunks)} chunks of ~{chunk_size} candles each")
 
- if use_navigation:
- # Use navigation system
+ if Use_Navigation:
+ # Use Navigation system
  navigator = TerminalNavigator(chunks, title)
 
- def plot_chunk_with_navigation(chunk: pd.DataFrame, chunk_index: int, chunk_info: dict) -> None:
- """Plot a single chunk with navigation info."""
+ def plot_chunk_with_Navigation(chunk: pd.dataFrame, chunk_index: int, chunk_info: dict) -> None:
+ """Plot a single chunk with Navigation info."""
  if len(chunk) == 0:
  logger.print_warning("Empty chunk, skipping...")
  return
@@ -752,9 +752,9 @@ def plot_phld_chunks(df: pd.DataFrame, title: str = "PHLD Chunks", style: str = 
  if hasattr(chunk.index, 'strftime'):
  # Use plotext-compatible date format
  x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  else:
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  x_labels = [str(i) for i in x_values]
 
  # OHLC Candlestick Chart (always as first layer, like in other rules)
@@ -774,11 +774,11 @@ def plot_phld_chunks(df: pd.DataFrame, title: str = "PHLD Chunks", style: str = 
 
  plt.show()
 
- # start navigation
- navigator.navigate(plot_chunk_with_navigation)
+ # start Navigation
+ navigator.navigate(plot_chunk_with_Navigation)
 
  else:
- # Original non-navigation behavior
+ # Original non-Navigation behavior
  for i, chunk in enumerate(chunks):
  chunk_start_idx = i * chunk_size
  chunk_end_idx = min((i + 1) * chunk_size, total_rows)
@@ -801,9 +801,9 @@ def plot_phld_chunks(df: pd.DataFrame, title: str = "PHLD Chunks", style: str = 
  if hasattr(chunk.index, 'strftime'):
  # Use plotext-compatible date format
  x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  else:
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  x_labels = [str(i) for i in x_values]
 
  # OHLC Candlestick Chart (always as first layer, like in other rules)
@@ -823,9 +823,9 @@ def plot_phld_chunks(df: pd.DataFrame, title: str = "PHLD Chunks", style: str = 
 
  plt.show()
 
- # Add pause between chunks
+ # Add paUse between chunks
  if i < len(chunks) - 1:
- input(f"\nPress Enter to view next chunk ({i+2}/{len(chunks)})...")
+ input(f"\nPress Enter to View next chunk ({i+2}/{len(chunks)})...")
 
  logger.print_success(f"Successfully displayed {len(chunks)} PHLD chunks!")
 
@@ -833,16 +833,16 @@ def plot_phld_chunks(df: pd.DataFrame, title: str = "PHLD Chunks", style: str = 
  logger.print_error(f"Error generating PHLD chunked plots: {e}")
 
 
-def plot_rsi_chunks(df: pd.DataFrame, rule: str, title: str = "RSI Chunks", style: str = "matrix", use_navigation: bool = False) -> None:
+def plot_rsi_chunks(df: pd.dataFrame, rule: str, title: str = "RSI Chunks", style: str = "matrix", Use_Navigation: bool = False) -> None:
  """
- Plot RSI data in chunks with different calculations based on rule type.
+ Plot RSI data in chunks with different Calculations based on rule type.
 
  Args:
- df (pd.DataFrame): DataFrame with RSI data
+ df (pd.dataFrame): dataFrame with RSI data
  rule (str): RSI rule type (rsi, rsi_mom, rsi_div)
  title (str): Base title for plots
  style (str): Plot style
- use_navigation (bool): Whether to use interactive navigation
+ Use_Navigation (bool): Whether to Use interactive Navigation
  """
  try:
  rule_type, params = parse_rsi_rule(rule)
@@ -855,12 +855,12 @@ def plot_rsi_chunks(df: pd.DataFrame, rule: str, title: str = "RSI Chunks", styl
 
  logger.print_info(f"Split {total_rows} rows into {len(chunks)} chunks of ~{chunk_size} candles each")
 
- if use_navigation:
- # Use navigation system
+ if Use_Navigation:
+ # Use Navigation system
  navigator = TerminalNavigator(chunks, title)
 
- def plot_chunk_with_navigation(chunk: pd.DataFrame, chunk_index: int, chunk_info: dict) -> None:
- """Plot a single chunk with navigation info."""
+ def plot_chunk_with_Navigation(chunk: pd.dataFrame, chunk_index: int, chunk_info: dict) -> None:
+ """Plot a single chunk with Navigation info."""
  if len(chunk) == 0:
  logger.print_warning("Empty chunk, skipping...")
  return
@@ -883,9 +883,9 @@ def plot_rsi_chunks(df: pd.DataFrame, rule: str, title: str = "RSI Chunks", styl
  if hasattr(chunk.index, 'strftime'):
  # Use plotext-compatible date format
  x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  else:
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  x_labels = [str(i) for i in x_values]
 
  # OHLC Candlestick Chart (always as first layer, like in other rules)
@@ -905,11 +905,11 @@ def plot_rsi_chunks(df: pd.DataFrame, rule: str, title: str = "RSI Chunks", styl
 
  plt.show()
 
- # start navigation
- navigator.navigate(plot_chunk_with_navigation)
+ # start Navigation
+ navigator.navigate(plot_chunk_with_Navigation)
 
  else:
- # Original non-navigation behavior
+ # Original non-Navigation behavior
  for i, chunk in enumerate(chunks):
  chunk_start_idx = i * chunk_size
  chunk_end_idx = min((i + 1) * chunk_size, total_rows)
@@ -932,9 +932,9 @@ def plot_rsi_chunks(df: pd.DataFrame, rule: str, title: str = "RSI Chunks", styl
  if hasattr(chunk.index, 'strftime'):
  # Use plotext-compatible date format
  x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  else:
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  x_labels = [str(i) for i in x_values]
 
  # OHLC Candlestick Chart (always as first layer, like in other rules)
@@ -954,9 +954,9 @@ def plot_rsi_chunks(df: pd.DataFrame, rule: str, title: str = "RSI Chunks", styl
 
  plt.show()
 
- # Add pause between chunks (no statistics)
+ # Add paUse between chunks (no statistics)
  if i < len(chunks) - 1:
- input(f"\nPress Enter to view next chunk ({i+2}/{len(chunks)})...")
+ input(f"\nPress Enter to View next chunk ({i+2}/{len(chunks)})...")
 
  logger.print_success(f"Successfully displayed {len(chunks)} {rule_type.upper()} chunks!")
 
@@ -964,15 +964,15 @@ def plot_rsi_chunks(df: pd.DataFrame, rule: str, title: str = "RSI Chunks", styl
  logger.print_error(f"Error generating {rule_type.upper()} chunked plots: {e}")
 
 
-def plot_macd_chunks(df: pd.DataFrame, title: str = "MACD Chunks", style: str = "matrix", use_navigation: bool = False) -> None:
+def plot_macd_chunks(df: pd.dataFrame, title: str = "MACD Chunks", style: str = "matrix", Use_Navigation: bool = False) -> None:
  """
  Plot MACD data in chunks with MACD lines and trading signals.
 
  Args:
- df (pd.DataFrame): DataFrame with MACD data
+ df (pd.dataFrame): dataFrame with MACD data
  title (str): Base title for plots
  style (str): Plot style
- use_navigation (bool): Whether to use interactive navigation
+ Use_Navigation (bool): Whether to Use interactive Navigation
  """
  try:
  logger.print_info(f"Generating MACD chunked plots...")
@@ -984,12 +984,12 @@ def plot_macd_chunks(df: pd.DataFrame, title: str = "MACD Chunks", style: str = 
 
  logger.print_info(f"Split {total_rows} rows into {len(chunks)} chunks of ~{chunk_size} candles each")
 
- if use_navigation:
- # Use navigation system
+ if Use_Navigation:
+ # Use Navigation system
  navigator = TerminalNavigator(chunks, title)
 
- def plot_chunk_with_navigation(chunk: pd.DataFrame, chunk_index: int, chunk_info: dict) -> None:
- """Plot a single chunk with navigation info."""
+ def plot_chunk_with_Navigation(chunk: pd.dataFrame, chunk_index: int, chunk_info: dict) -> None:
+ """Plot a single chunk with Navigation info."""
  if len(chunk) == 0:
  logger.print_warning("Empty chunk, skipping...")
  return
@@ -1008,9 +1008,9 @@ def plot_macd_chunks(df: pd.DataFrame, title: str = "MACD Chunks", style: str = 
  if hasattr(chunk.index, 'strftime'):
  # Use plotext-compatible date format
  x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  else:
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  x_labels = [str(i) for i in x_values]
 
  # Plot 1: OHLC Candlestick Chart (top 50%)
@@ -1040,11 +1040,11 @@ def plot_macd_chunks(df: pd.DataFrame, title: str = "MACD Chunks", style: str = 
 
  plt.show()
 
- # start navigation
- navigator.navigate(plot_chunk_with_navigation)
+ # start Navigation
+ navigator.navigate(plot_chunk_with_Navigation)
 
  else:
- # Original non-navigation behavior
+ # Original non-Navigation behavior
  for i, chunk in enumerate(chunks):
  chunk_start_idx = i * chunk_size
  chunk_end_idx = min((i + 1) * chunk_size, total_rows)
@@ -1067,9 +1067,9 @@ def plot_macd_chunks(df: pd.DataFrame, title: str = "MACD Chunks", style: str = 
  if hasattr(chunk.index, 'strftime'):
  # Use plotext-compatible date format
  x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  else:
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  x_labels = [str(i) for i in x_values]
 
  # Plot 1: OHLC Candlestick Chart (top 50%)
@@ -1102,7 +1102,7 @@ def plot_macd_chunks(df: pd.DataFrame, title: str = "MACD Chunks", style: str = 
  # Show chunk statistics
  _show_chunk_statistics(chunk, f"{title} - MACD", chunk_start_idx, chunk_end_idx)
 
- # Wait for user input before showing next chunk
+ # Wait for User input before showing next chunk
  if i < len(chunks) - 1: # Don't wait after the last chunk
  input("\nPress Enter to continue to next chunk...")
 
@@ -1110,16 +1110,16 @@ def plot_macd_chunks(df: pd.DataFrame, title: str = "MACD Chunks", style: str = 
  logger.print_error(f"Error in MACD chunked plotting: {e}")
 
 
-def plot_indicator_chunks(df: pd.DataFrame, indicator_name: str, title: str = "Indicator Chunks", style: str = "matrix", use_navigation: bool = False, rule: str = "") -> None:
+def plot_indicator_chunks(df: pd.dataFrame, indicator_name: str, title: str = "Indicator Chunks", style: str = "matrix", Use_Navigation: bool = False, rule: str = "") -> None:
  """
  Universal function to plot any indicator data in chunks with dual subplot layout.
 
  Args:
- df (pd.DataFrame): DataFrame with indicator data
+ df (pd.dataFrame): dataFrame with indicator data
  indicator_name (str): Name of the indicator (RSI, Stochastic, CCI, etc.)
  title (str): Base title for plots
  style (str): Plot style
- use_navigation (bool): Whether to use interactive navigation
+ Use_Navigation (bool): Whether to Use interactive Navigation
  """
  try:
  logger.print_info(f"Generating {indicator_name.upper()} chunked plots...")
@@ -1131,12 +1131,12 @@ def plot_indicator_chunks(df: pd.DataFrame, indicator_name: str, title: str = "I
 
  logger.print_info(f"Split {total_rows} rows into {len(chunks)} chunks of ~{chunk_size} candles each")
 
- if use_navigation:
- # Use navigation system
+ if Use_Navigation:
+ # Use Navigation system
  navigator = TerminalNavigator(chunks, title)
 
- def plot_chunk_with_navigation(chunk: pd.DataFrame, chunk_index: int, chunk_info: dict) -> None:
- """Plot a single chunk with navigation info."""
+ def plot_chunk_with_Navigation(chunk: pd.dataFrame, chunk_index: int, chunk_info: dict) -> None:
+ """Plot a single chunk with Navigation info."""
  if len(chunk) == 0:
  logger.print_warning("Empty chunk, skipping...")
  return
@@ -1155,9 +1155,9 @@ def plot_indicator_chunks(df: pd.DataFrame, indicator_name: str, title: str = "I
  if hasattr(chunk.index, 'strftime'):
  # Use plotext-compatible date format
  x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  else:
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  x_labels = [str(i) for i in x_values]
 
  # Plot 1: OHLC Candlestick Chart (top 50%)
@@ -1187,11 +1187,11 @@ def plot_indicator_chunks(df: pd.DataFrame, indicator_name: str, title: str = "I
 
  plt.show()
 
- # start navigation
- navigator.navigate(plot_chunk_with_navigation)
+ # start Navigation
+ navigator.navigate(plot_chunk_with_Navigation)
 
  else:
- # Original non-navigation behavior
+ # Original non-Navigation behavior
  for i, chunk in enumerate(chunks):
  chunk_start_idx = i * chunk_size
  chunk_end_idx = min((i + 1) * chunk_size, total_rows)
@@ -1212,12 +1212,12 @@ def plot_indicator_chunks(df: pd.DataFrame, indicator_name: str, title: str = "I
 
  # Create time axis with dates for this chunk
  if hasattr(chunk.index, 'strftime'):
- # If index is datetime, use date strings in plotext-compatible format
+ # If index is datetime, Use date strings in plotext-compatible format
  x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  else:
  # Fallback to numeric indices
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  x_labels = [str(i) for i in x_values]
 
  # Plot 1: OHLC Candlestick Chart (top 50%)
@@ -1250,7 +1250,7 @@ def plot_indicator_chunks(df: pd.DataFrame, indicator_name: str, title: str = "I
  # Show chunk statistics
  _show_chunk_statistics(chunk, f"{title} - {indicator_name}", chunk_start_idx, chunk_end_idx)
 
- # Wait for user input before showing next chunk
+ # Wait for User input before showing next chunk
  if i < len(chunks) - 1: # Don't wait after the last chunk
  input("\nPress Enter to continue to next chunk...")
 
@@ -1327,12 +1327,12 @@ def _get_field_color_enhanced(field_name: str) -> str:
  return colors[color_index]
 
 
-def _plot_single_field_chunk(chunk: pd.DataFrame, field: str, title: str, style: str) -> None:
+def _plot_single_field_chunk(chunk: pd.dataFrame, field: str, title: str, style: str) -> None:
  """
  Plot a single field in a chunk with unique color.
 
  Args:
- chunk (pd.DataFrame): DataFrame chunk
+ chunk (pd.dataFrame): dataFrame chunk
  field (str): Field name to plot
  title (str): Plot title
  style (str): Plot style
@@ -1356,9 +1356,9 @@ def _plot_single_field_chunk(chunk: pd.DataFrame, field: str, title: str, style:
  if hasattr(chunk.index, 'strftime'):
  # Use plotext-compatible date format
  x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  else:
- x_values = list(range(len(chunk)))
+ x_values = List(range(len(chunk)))
  x_labels = [str(i) for i in x_values]
 
  # Get field data
@@ -1367,7 +1367,7 @@ def _plot_single_field_chunk(chunk: pd.DataFrame, field: str, title: str, style:
  field_data = chunk[field].copy()
  # Replace NaN with None for plotext compatibility
  field_data = field_data.replace([np.inf, -np.inf], np.nan)
- values = field_data.where(pd.notna(field_data), None).tolist()
+ values = field_data.where(pd.notna(field_data), None).toList()
 
  # Only plot if we have valid data
  if any(v is not None for v in values):
@@ -1390,12 +1390,12 @@ def _plot_single_field_chunk(chunk: pd.DataFrame, field: str, title: str, style:
  logger.print_error(f"Error plotting field {field}: {e}")
 
 
-def _add_pv_overlays_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_pv_overlays_to_chunk(chunk: pd.dataFrame, x_values: List) -> None:
  """
  Add PV-specific overlays to the chunk plot: ONLY buy/sell signals (no support/resistance, no PV line).
  Args:
- chunk (pd.DataFrame): DataFrame chunk
- x_values (list): X-axis values
+ chunk (pd.dataFrame): dataFrame chunk
+ x_values (List): X-axis values
  """
  try:
  # Only BUY/SELL signals
@@ -1405,44 +1405,44 @@ def _add_pv_overlays_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
  logger.print_error(f"Error adding PV overlays: {e}")
 
 
-def _add_sr_overlays_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_sr_overlays_to_chunk(chunk: pd.dataFrame, x_values: List) -> None:
  """
  Add SR-specific overlays to the chunk plot (two lines without signals).
 
  Args:
- chunk (pd.DataFrame): DataFrame chunk
- x_values (list): X-axis values
+ chunk (pd.dataFrame): dataFrame chunk
+ x_values (List): X-axis values
  """
  try:
  # Add support and resistance lines (no signals)
  if 'PPrice1' in chunk.columns: # Support level
- pprice1_values = chunk['PPrice1'].fillna(0).tolist()
+ pprice1_values = chunk['PPrice1'].fillna(0).toList()
  plt.plot(x_values, pprice1_values, color="green+", label="Support")
 
  if 'PPrice2' in chunk.columns: # Resistance level
- pprice2_values = chunk['PPrice2'].fillna(0).tolist()
+ pprice2_values = chunk['PPrice2'].fillna(0).toList()
  plt.plot(x_values, pprice2_values, color="red+", label="Resistance")
 
  except Exception as e:
  logger.print_error(f"Error adding SR overlays: {e}")
 
 
-def _add_phld_overlays_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_phld_overlays_to_chunk(chunk: pd.dataFrame, x_values: List) -> None:
  """
  Add PHLD-specific overlays to the chunk plot (two channels and signals).
 
  Args:
- chunk (pd.DataFrame): DataFrame chunk
- x_values (list): X-axis values
+ chunk (pd.dataFrame): dataFrame chunk
+ x_values (List): X-axis values
  """
  try:
  # Add support and resistance lines (channels)
  if 'PPrice1' in chunk.columns: # Support level
- pprice1_values = chunk['PPrice1'].fillna(0).tolist()
+ pprice1_values = chunk['PPrice1'].fillna(0).toList()
  plt.plot(x_values, pprice1_values, color="green+", label="Support Channel")
 
  if 'PPrice2' in chunk.columns: # Resistance level
- pprice2_values = chunk['PPrice2'].fillna(0).tolist()
+ pprice2_values = chunk['PPrice2'].fillna(0).toList()
  plt.plot(x_values, pprice2_values, color="red+", label="Resistance Channel")
 
  # Add trading signals
@@ -1453,28 +1453,28 @@ def _add_phld_overlays_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
  logger.print_error(f"Error adding PHLD overlays: {e}")
 
 
-def _add_rsi_overlays_to_chunk(chunk: pd.DataFrame, x_values: list, rule_type: str, params: Dict[str, Any]) -> None:
+def _add_rsi_overlays_to_chunk(chunk: pd.dataFrame, x_values: List, rule_type: str, params: Dict[str, Any]) -> None:
  """
  Add RSI-specific overlays to the chunk plot based on rule type.
 
  Args:
- chunk (pd.DataFrame): DataFrame chunk
- x_values (list): X-axis values
+ chunk (pd.dataFrame): dataFrame chunk
+ x_values (List): X-axis values
  rule_type (str): RSI rule type (rsi, rsi_mom, rsi_div)
  params (Dict): RSI parameters
  """
  try:
  # Add support and resistance lines with yellow and blue colors
  if 'PPrice1' in chunk.columns: # Support level
- pprice1_values = chunk['PPrice1'].fillna(0).tolist()
+ pprice1_values = chunk['PPrice1'].fillna(0).toList()
  plt.plot(x_values, pprice1_values, color="yellow+", label="Support", marker="s")
 
  if 'PPrice2' in chunk.columns: # Resistance level
- pprice2_values = chunk['PPrice2'].fillna(0).tolist()
+ pprice2_values = chunk['PPrice2'].fillna(0).toList()
  plt.plot(x_values, pprice2_values, color="blue+", label="Resistance", marker="s")
 
  # Add RSI as line plot (без маркеров, только линия)
- # Check for RSI column (case insensitive)
+ # check for RSI column (case insensitive)
  rsi_col = None
  for col in chunk.columns:
  if col.lower() == 'rsi':
@@ -1482,17 +1482,17 @@ def _add_rsi_overlays_to_chunk(chunk: pd.DataFrame, x_values: list, rule_type: s
  break
 
  if rsi_col:
- rsi_values = chunk[rsi_col].fillna(50).tolist()
+ rsi_values = chunk[rsi_col].fillna(50).toList()
  plt.plot(x_values, rsi_values, color="cyan+", label=f"RSI ({rule_type})")
 
  # Add RSI momentum for momentum variant
  if rule_type == 'rsi_mom' and 'RSI_Momentum' in chunk.columns:
- momentum_values = chunk['RSI_Momentum'].fillna(0).tolist()
+ momentum_values = chunk['RSI_Momentum'].fillna(0).toList()
  plt.plot(x_values, momentum_values, color="magenta+", label="RSI Momentum")
 
  # Add divergence strength for divergence variant
  if rule_type == 'rsi_div' and 'Diff' in chunk.columns:
- diff_values = chunk['Diff'].fillna(0).tolist()
+ diff_values = chunk['Diff'].fillna(0).toList()
  plt.plot(x_values, diff_values, color="cyan+", label="Divergence Strength")
 
  # Add trading signals with red/aqua colors
@@ -1503,22 +1503,22 @@ def _add_rsi_overlays_to_chunk(chunk: pd.DataFrame, x_values: list, rule_type: s
  logger.print_error(f"Error adding RSI overlays: {e}")
 
 
-def _add_macd_overlays_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_macd_overlays_to_chunk(chunk: pd.dataFrame, x_values: List) -> None:
  """
  Add MACD-specific overlays to the chunk plot (MACD lines and trading signals).
 
  Args:
- chunk (pd.DataFrame): DataFrame chunk
- x_values (list): X-axis values
+ chunk (pd.dataFrame): dataFrame chunk
+ x_values (List): X-axis values
  """
  try:
  # Add MACD lines
  if 'MACD_Line' in chunk.columns:
- macd_values = chunk['MACD_Line'].fillna(0).tolist()
+ macd_values = chunk['MACD_Line'].fillna(0).toList()
  plt.plot(x_values, macd_values, color="blue+", label="MACD Line")
 
  if 'MACD_signal' in chunk.columns:
- signal_values = chunk['MACD_signal'].fillna(0).tolist()
+ signal_values = chunk['MACD_signal'].fillna(0).toList()
  plt.plot(x_values, signal_values, color="orange+", label="signal Line")
 
  # Add trading signals
@@ -1529,27 +1529,27 @@ def _add_macd_overlays_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
  logger.print_error(f"Error adding MACD overlays: {e}")
 
 
-def _add_macd_chart_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_macd_chart_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """
  Add MACD chart to a separate subplot with proper scaling.
 
  Args:
- chunk (pd.DataFrame): DataFrame chunk
- x_values (list): X-axis values
+ chunk (pd.dataFrame): dataFrame chunk
+ x_values (List): X-axis values
  """
  try:
  # Add MACD lines with proper scaling
  if 'MACD_Line' in chunk.columns:
- macd_values = chunk['MACD_Line'].fillna(0).tolist()
+ macd_values = chunk['MACD_Line'].fillna(0).toList()
  plt.plot(x_values, macd_values, color="blue+", label="MACD Line")
 
  if 'MACD_signal' in chunk.columns:
- signal_values = chunk['MACD_signal'].fillna(0).tolist()
+ signal_values = chunk['MACD_signal'].fillna(0).toList()
  plt.plot(x_values, signal_values, color="orange+", label="signal Line")
 
  # Add MACD histogram if available
  if 'MACD_Histogram' in chunk.columns:
- histogram_values = chunk['MACD_Histogram'].fillna(0).tolist()
+ histogram_values = chunk['MACD_Histogram'].fillna(0).toList()
  # Use bars for histogram
  for i, value in enumerate(histogram_values):
  if value >= 0:
@@ -1564,13 +1564,13 @@ def _add_macd_chart_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
  logger.print_error(f"Error adding MACD chart to subplot: {e}")
 
 
-def _add_indicator_chart_to_subplot(chunk: pd.DataFrame, x_values: list, indicator_name: str, rule: str = "") -> None:
+def _add_indicator_chart_to_subplot(chunk: pd.dataFrame, x_values: List, indicator_name: str, rule: str = "") -> None:
  """
  Add indicator chart to a separate subplot with proper scaling.
 
  Args:
- chunk (pd.DataFrame): DataFrame chunk
- x_values (list): X-axis values
+ chunk (pd.dataFrame): dataFrame chunk
+ x_values (List): X-axis values
  indicator_name (str): Name of the indicator
  rule (str): Original rule string for parameter extraction
  """
@@ -1646,7 +1646,7 @@ def _add_indicator_chart_to_subplot(chunk: pd.DataFrame, x_values: list, indicat
  _add_kelly_indicator_to_subplot(chunk, x_values)
 
  # Put/Call Ratio
- elif indicator_upper in ['PUT_CALL_RATIO', 'PUTCALLRATIO']:
+ elif indicator_upper in ['PUT_Call_RATIO', 'PUTCallRATIO']:
  _add_putcall_indicator_to_subplot(chunk, x_values)
 
  # COT indicator
@@ -1681,10 +1681,10 @@ def _add_indicator_chart_to_subplot(chunk: pd.DataFrame, x_values: list, indicat
  logger.print_error(f"Error adding {indicator_name} chart to subplot: {e}")
 
 
-def _add_rsi_indicator_to_subplot(chunk: pd.DataFrame, x_values: list, rule: str = "") -> None:
+def _add_rsi_indicator_to_subplot(chunk: pd.dataFrame, x_values: List, rule: str = "") -> None:
  """Add RSI indicator to subplot."""
  try:
- # Check for RSI column (case insensitive)
+ # check for RSI column (case insensitive)
  rsi_col = None
  for col in chunk.columns:
  if col.lower() == 'rsi':
@@ -1692,7 +1692,7 @@ def _add_rsi_indicator_to_subplot(chunk: pd.DataFrame, x_values: list, rule: str
  break
 
  if rsi_col:
- rsi_values = chunk[rsi_col].fillna(50).tolist()
+ rsi_values = chunk[rsi_col].fillna(50).toList()
  plt.plot(x_values, rsi_values, color="purple+", label="RSI")
 
  # Extract overbought/oversold levels from rule
@@ -1707,7 +1707,7 @@ def _add_rsi_indicator_to_subplot(chunk: pd.DataFrame, x_values: list, rule: str
  oversold_level = float(params[1]) # second parameter
  overbought_level = float(params[2]) # third parameter
  except (ValueError, IndexError):
- # If parsing fails, use defaults
+ # If parsing fails, Use defaults
  pass
 
  # Add overbought/oversold lines with extracted levels
@@ -1721,14 +1721,14 @@ def _add_rsi_indicator_to_subplot(chunk: pd.DataFrame, x_values: list, rule: str
  logger.print_error(f"Error adding RSI indicator: {e}")
 
 
-def _add_stochastic_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_stochastic_indicator_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add Stochastic indicator to subplot."""
  try:
  # Look for different possible column names for Stochastic
  k_col = None
  d_col = None
 
- # Check for various possible column names
+ # check for various possible column names
  for col in chunk.columns:
  if 'stoch' in col.lower() and 'k' in col.lower():
  k_col = col
@@ -1743,12 +1743,12 @@ def _add_stochastic_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) ->
 
  # Plot %K line
  if k_col:
- k_values = chunk[k_col].fillna(50).tolist()
+ k_values = chunk[k_col].fillna(50).toList()
  plt.plot(x_values, k_values, color="blue+", label="%K")
 
  # Plot %D line
  if d_col:
- d_values = chunk[d_col].fillna(50).tolist()
+ d_values = chunk[d_col].fillna(50).toList()
  plt.plot(x_values, d_values, color="red+", label="%D")
 
  # Add overbought/oversold lines
@@ -1759,11 +1759,11 @@ def _add_stochastic_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) ->
  logger.print_error(f"Error adding Stochastic indicator: {e}")
 
 
-def _add_cci_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_cci_indicator_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add CCI indicator to subplot."""
  try:
  if 'CCI' in chunk.columns:
- cci_values = chunk['CCI'].fillna(0).tolist()
+ cci_values = chunk['CCI'].fillna(0).toList()
  plt.plot(x_values, cci_values, color="orange+", label="CCI")
 
  # Add overbought/oversold lines
@@ -1775,35 +1775,35 @@ def _add_cci_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
  logger.print_error(f"Error adding CCI indicator: {e}")
 
 
-def _add_bollinger_bands_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_bollinger_bands_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add Bollinger Bands to subplot."""
  try:
  # Ensure x_values are numeric for plotext compatibility
  numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
 
  if 'BB_Upper' in chunk.columns:
- upper_values = chunk['BB_Upper'].fillna(0).tolist()
+ upper_values = chunk['BB_Upper'].fillna(0).toList()
  # Only plot if we have valid data
  if upper_values and any(v != 0 for v in upper_values):
  plt.plot(numeric_x_values, upper_values, color="green+", label="Upper Band")
 
  if 'BB_Middle' in chunk.columns:
- middle_values = chunk['BB_Middle'].fillna(0).tolist()
+ middle_values = chunk['BB_Middle'].fillna(0).toList()
  # Only plot if we have valid data
  if middle_values and any(v != 0 for v in middle_values):
  plt.plot(numeric_x_values, middle_values, color="white+", label="Middle Band")
 
- if 'BB_Lower' in chunk.columns:
- lower_values = chunk['BB_Lower'].fillna(0).tolist()
+ if 'BB_lower' in chunk.columns:
+ lower_values = chunk['BB_lower'].fillna(0).toList()
  # Only plot if we have valid data
  if lower_values and any(v != 0 for v in lower_values):
- plt.plot(numeric_x_values, lower_values, color="red+", label="Lower Band")
+ plt.plot(numeric_x_values, lower_values, color="red+", label="lower Band")
 
  except Exception as e:
  logger.print_error(f"Error adding Bollinger Bands: {e}")
 
 
-def _add_ema_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_ema_indicator_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add EMA indicator to subplot."""
  try:
  # Look for EMA columns
@@ -1813,7 +1813,7 @@ def _add_ema_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
  numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
 
  for ema_col in ema_columns:
- ema_values = chunk[ema_col].fillna(0).tolist()
+ ema_values = chunk[ema_col].fillna(0).toList()
  try:
  # Try to plot with numeric x_values
  plt.plot(numeric_x_values, ema_values, label=ema_col)
@@ -1825,7 +1825,7 @@ def _add_ema_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
  logger.print_error(f"Error adding EMA indicator: {e}")
 
 
-def _add_sma_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_sma_indicator_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add SMA indicator to subplot."""
  try:
  # Look for SMA columns (case insensitive)
@@ -1835,7 +1835,7 @@ def _add_sma_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
  numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
 
  for sma_col in sma_columns:
- sma_values = chunk[sma_col].fillna(0).tolist()
+ sma_values = chunk[sma_col].fillna(0).toList()
  try:
  # Try to plot with numeric x_values
  plt.plot(numeric_x_values, sma_values, color="blue+", label=sma_col)
@@ -1845,19 +1845,19 @@ def _add_sma_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
 
  # Debug: print available columns if no SMA found
  if not sma_columns:
- logger.print_warning(f"No SMA columns found. available columns: {list(chunk.columns)}")
+ logger.print_warning(f"No SMA columns found. available columns: {List(chunk.columns)}")
 
  except Exception as e:
  logger.print_error(f"Error adding SMA indicator: {e}")
 
 
-def _add_adx_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_adx_indicator_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add ADX indicator to subplot."""
  try:
  # Ensure x_values are numeric for plotext compatibility
  numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
 
- # Check for both possible column naming conventions
+ # check for both possible column naming conventions
  adx_column = None
  di_plus_column = None
  di_minus_column = None
@@ -1878,28 +1878,28 @@ def _add_adx_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
 
  # Plot ADX
  if adx_column:
- adx_values = chunk[adx_column].fillna(0).tolist()
+ adx_values = chunk[adx_column].fillna(0).toList()
  # Only plot if we have valid data
  if adx_values and any(v != 0 for v in adx_values):
  plt.plot(numeric_x_values, adx_values, color="blue+", label="ADX")
 
  # Plot DI+
  if di_plus_column:
- di_plus_values = chunk[di_plus_column].fillna(0).tolist()
+ di_plus_values = chunk[di_plus_column].fillna(0).toList()
  # Only plot if we have valid data
  if di_plus_values and any(v != 0 for v in di_plus_values):
  plt.plot(numeric_x_values, di_plus_values, color="green+", label="DI+")
 
  # Plot DI-
  if di_minus_column:
- di_minus_values = chunk[di_minus_column].fillna(0).tolist()
+ di_minus_values = chunk[di_minus_column].fillna(0).toList()
  # Only plot if we have valid data
  if di_minus_values and any(v != 0 for v in di_minus_values):
  plt.plot(numeric_x_values, di_minus_values, color="red+", label="DI-")
 
  # Fallback to Diff column (DI+ - DI- difference)
  if not any([adx_column, di_plus_column, di_minus_column]) and 'Diff' in chunk.columns:
- diff_values = chunk['Diff'].fillna(0).tolist()
+ diff_values = chunk['Diff'].fillna(0).toList()
  if diff_values and any(v != 0 for v in diff_values):
  plt.plot(numeric_x_values, diff_values, color="blue+", label="DI+ - DI-")
 
@@ -1907,13 +1907,13 @@ def _add_adx_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
  logger.print_error(f"Error adding ADX indicator: {e}")
 
 
-def _add_sar_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_sar_indicator_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add SAR indicator to subplot."""
  try:
  # Ensure x_values are numeric for plotext compatibility
  numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
 
- # Check for both possible column naming conventions
+ # check for both possible column naming conventions
  sar_column = None
 
  # Try SAR naming convention first (from calculation function)
@@ -1922,15 +1922,15 @@ def _add_sar_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
 
  # Plot SAR
  if sar_column:
- sar_values = chunk[sar_column].fillna(0).tolist()
+ sar_values = chunk[sar_column].fillna(0).toList()
  # Only plot if we have valid data
  if sar_values and any(v != 0 for v in sar_values):
  plt.plot(numeric_x_values, sar_values, color="yellow+", label="SAR")
 
  # Fallback to PPrice* naming convention (support and resistance levels)
  if not sar_column and 'PPrice1' in chunk.columns and 'PPrice2' in chunk.columns:
- pprice1_values = chunk['PPrice1'].fillna(0).tolist()
- pprice2_values = chunk['PPrice2'].fillna(0).tolist()
+ pprice1_values = chunk['PPrice1'].fillna(0).toList()
+ pprice2_values = chunk['PPrice2'].fillna(0).toList()
 
  # Plot PPrice1 (support level - SAR with buffer)
  if pprice1_values and any(v != 0 for v in pprice1_values):
@@ -1944,13 +1944,13 @@ def _add_sar_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
  logger.print_error(f"Error adding SAR indicator: {e}")
 
 
-def _add_supertrend_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_supertrend_indicator_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add SuperTrend indicator to subplot."""
  try:
  # Ensure x_values are numeric for plotext compatibility
  numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
 
- # Check for both possible column naming conventions
+ # check for both possible column naming conventions
  supertrend_column = None
 
  # Try SuperTrend naming convention first (from calculation function)
@@ -1959,15 +1959,15 @@ def _add_supertrend_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) ->
 
  # Plot SuperTrend
  if supertrend_column:
- supertrend_values = chunk[supertrend_column].fillna(0).tolist()
+ supertrend_values = chunk[supertrend_column].fillna(0).toList()
  # Only plot if we have valid data
  if supertrend_values and any(v != 0 for v in supertrend_values):
  plt.plot(numeric_x_values, supertrend_values, color="green+", label="SuperTrend")
 
  # Fallback to PPrice* naming convention (support and resistance levels)
  if not supertrend_column and 'PPrice1' in chunk.columns and 'PPrice2' in chunk.columns:
- pprice1_values = chunk['PPrice1'].fillna(0).tolist()
- pprice2_values = chunk['PPrice2'].fillna(0).tolist()
+ pprice1_values = chunk['PPrice1'].fillna(0).toList()
+ pprice2_values = chunk['PPrice2'].fillna(0).toList()
 
  # Plot PPrice1 (support level - SuperTrend with buffer)
  if pprice1_values and any(v != 0 for v in pprice1_values):
@@ -1981,27 +1981,27 @@ def _add_supertrend_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) ->
  logger.print_error(f"Error adding SuperTrend indicator: {e}")
 
 
-def _add_atr_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_atr_indicator_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add ATR indicator to subplot."""
  try:
  # Ensure x_values are numeric for plotext compatibility
  numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
 
  if 'ATR' in chunk.columns:
- atr_values = chunk['ATR'].fillna(0).tolist()
+ atr_values = chunk['ATR'].fillna(0).toList()
  plt.plot(numeric_x_values, atr_values, color="magenta+", label="ATR")
 
  except Exception as e:
  logger.print_error(f"Error adding ATR indicator: {e}")
 
 
-def _add_std_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_std_indicator_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add Standard Deviation indicator to subplot."""
  try:
  # Ensure x_values are numeric for plotext compatibility
  numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
 
- # Check for both possible column names
+ # check for both possible column names
  std_column = None
  if 'StDev' in chunk.columns:
  std_column = 'StDev'
@@ -2011,7 +2011,7 @@ def _add_std_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
  std_column = 'Diff' # STDEV values are stored in Diff column
 
  if std_column:
- std_values = chunk[std_column].fillna(0).tolist()
+ std_values = chunk[std_column].fillna(0).toList()
  # Only plot if we have valid data
  if std_values and any(v != 0 for v in std_values):
  plt.plot(numeric_x_values, std_values, color="yellow+", label="Std Dev")
@@ -2020,13 +2020,13 @@ def _add_std_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
  logger.print_error(f"Error adding Standard Deviation indicator: {e}")
 
 
-def _add_obv_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_obv_indicator_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add OBV indicator to subplot."""
  try:
  # Ensure x_values are numeric for plotext compatibility
  numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
 
- # Check for both possible column names
+ # check for both possible column names
  obv_column = None
  if 'OBV' in chunk.columns:
  obv_column = 'OBV'
@@ -2034,7 +2034,7 @@ def _add_obv_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
  obv_column = 'Diff' # OBV values are stored in Diff column
 
  if obv_column:
- obv_values = chunk[obv_column].fillna(0).tolist()
+ obv_values = chunk[obv_column].fillna(0).toList()
  # Only plot if we have valid data
  if obv_values and any(v != 0 for v in obv_values):
  plt.plot(numeric_x_values, obv_values, color="blue+", label="OBV")
@@ -2043,26 +2043,26 @@ def _add_obv_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
  logger.print_error(f"Error adding OBV indicator: {e}")
 
 
-def _add_vwap_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_vwap_indicator_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add VWAP indicator to subplot."""
  try:
  # Ensure x_values are numeric for plotext compatibility
  numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
 
  if 'VWAP' in chunk.columns:
- vwap_values = chunk['VWAP'].fillna(0).tolist()
+ vwap_values = chunk['VWAP'].fillna(0).toList()
  plt.plot(numeric_x_values, vwap_values, color="orange+", label="VWAP")
 
  except Exception as e:
  logger.print_error(f"Error adding VWAP indicator: {e}")
 
 
-def _add_hma_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_hma_indicator_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add HMA indicator to subplot."""
  try:
  if 'HMA' in chunk.columns:
- hma_values = chunk['HMA'].fillna(0).tolist()
- # Check if we have valid HMA values
+ hma_values = chunk['HMA'].fillna(0).toList()
+ # check if we have valid HMA values
  if any(v != 0 for v in hma_values):
  plt.plot(x_values, hma_values, color="purple+", label="HMA")
 
@@ -2070,11 +2070,11 @@ def _add_hma_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
  logger.print_error(f"Error adding HMA indicator: {e}")
 
 
-def _add_tsf_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_tsf_indicator_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add Time Series Forecast indicator to subplot."""
  try:
  if 'TSForecast' in chunk.columns:
- tsf_values = chunk['TSForecast'].fillna(0).tolist()
+ tsf_values = chunk['TSForecast'].fillna(0).toList()
  # Ensure x_values are numeric for plotext compatibility
  numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
  plt.plot(numeric_x_values, tsf_values, color="cyan+", label="TSF")
@@ -2083,11 +2083,11 @@ def _add_tsf_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
  logger.print_error(f"Error adding TSF indicator: {e}")
 
 
-def _add_monte_carlo_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_monte_carlo_indicator_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add Monte Carlo indicator to subplot."""
  try:
  if 'MonteCarlo' in chunk.columns:
- mc_values = chunk['MonteCarlo'].fillna(0).tolist()
+ mc_values = chunk['MonteCarlo'].fillna(0).toList()
  # Ensure x_values are numeric for plotext compatibility
  numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
  plt.plot(numeric_x_values, mc_values, color="green+", label="Monte Carlo")
@@ -2096,13 +2096,13 @@ def _add_monte_carlo_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -
  logger.print_error(f"Error adding Monte Carlo indicator: {e}")
 
 
-def _add_kelly_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_kelly_indicator_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add Kelly Criterion indicator to subplot."""
  try:
  # Ensure x_values are numeric for plotext compatibility
  numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
 
- # Check for both possible column names
+ # check for both possible column names
  kelly_column = None
  if 'Kelly' in chunk.columns:
  kelly_column = 'Kelly'
@@ -2112,7 +2112,7 @@ def _add_kelly_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None
  kelly_column = 'Diff' # Kelly values are stored in Diff column
 
  if kelly_column:
- kelly_values = chunk[kelly_column].fillna(0).tolist()
+ kelly_values = chunk[kelly_column].fillna(0).toList()
  # Only plot if we have valid data
  if kelly_values and any(v != 0 for v in kelly_values):
  plt.plot(numeric_x_values, kelly_values, color="yellow+", label="Kelly")
@@ -2121,11 +2121,11 @@ def _add_kelly_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None
  logger.print_error(f"Error adding Kelly Criterion indicator: {e}")
 
 
-def _add_putcall_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_putcall_indicator_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add Put/Call Ratio indicator to subplot."""
  try:
  if 'PutCallRatio' in chunk.columns:
- pcr_values = chunk['PutCallRatio'].fillna(50).tolist()
+ pcr_values = chunk['PutCallRatio'].fillna(50).toList()
  # Ensure x_values are numeric for plotext compatibility
  numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
  plt.plot(numeric_x_values, pcr_values, color="red+", label="Put/Call Ratio")
@@ -2137,24 +2137,24 @@ def _add_putcall_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> No
  logger.print_error(f"Error adding Put/Call Ratio indicator: {e}")
 
 
-def _add_cot_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_cot_indicator_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add COT indicator to subplot."""
  try:
  if 'COT' in chunk.columns:
- cot_values = chunk['COT'].fillna(0).tolist()
+ cot_values = chunk['COT'].fillna(0).toList()
  plt.plot(x_values, cot_values, color="blue+", label="COT")
 
  except Exception as e:
  logger.print_error(f"Error adding COT indicator: {e}")
 
 
-def _add_fear_greed_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_fear_greed_indicator_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add Fear & Greed indicator to subplot."""
  try:
  # Ensure x_values are numeric for plotext compatibility
  numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
 
- # Check for both possible column names
+ # check for both possible column names
  fg_column = None
  if 'FearGreed' in chunk.columns:
  fg_column = 'FearGreed'
@@ -2164,7 +2164,7 @@ def _add_fear_greed_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) ->
  fg_column = 'Diff' # Fear & Greed values are stored in Diff column
 
  if fg_column:
- fg_values = chunk[fg_column].fillna(50).tolist()
+ fg_values = chunk[fg_column].fillna(50).toList()
  # Only plot if we have valid data
  if fg_values and any(v != 50 for v in fg_values):
  plt.plot(numeric_x_values, fg_values, color="orange+", label="Fear & Greed")
@@ -2178,10 +2178,10 @@ def _add_fear_greed_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) ->
  logger.print_error(f"Error adding Fear & Greed indicator: {e}")
 
 
-def _add_pivot_points_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_pivot_points_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add Pivot Points to subplot."""
  try:
- # Check for both possible column naming conventions
+ # check for both possible column naming conventions
  pivot_columns = []
  colors = []
 
@@ -2199,7 +2199,7 @@ def _add_pivot_points_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
 
  for i, col in enumerate(pivot_columns):
  if col in chunk.columns:
- values = chunk[col].fillna(0).tolist()
+ values = chunk[col].fillna(0).toList()
  # Only plot if we have valid data
  if values and any(v != 0 for v in values):
  plt.plot(numeric_x_values, values, color=colors[i], label=col)
@@ -2208,13 +2208,13 @@ def _add_pivot_points_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
  logger.print_error(f"Error adding Pivot Points: {e}")
 
 
-def _add_fibonacci_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_fibonacci_indicator_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add Fibonacci Retracement to subplot."""
  try:
  # Ensure x_values are numeric for plotext compatibility
  numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
 
- # Check for both possible column naming conventions
+ # check for both possible column naming conventions
  fib_columns = []
  colors = []
 
@@ -2233,7 +2233,7 @@ def _add_fibonacci_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> 
 
  for i, col in enumerate(fib_columns):
  if col in chunk.columns:
- values = chunk[col].fillna(0).tolist()
+ values = chunk[col].fillna(0).toList()
  # Only plot if we have valid data
  if values and any(v != 0 for v in values):
  plt.plot(numeric_x_values, values, color=colors[i], label=col)
@@ -2242,13 +2242,13 @@ def _add_fibonacci_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> 
  logger.print_error(f"Error adding Fibonacci Retracement: {e}")
 
 
-def _add_donchian_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_donchian_indicator_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add Donchian Channel to subplot."""
  try:
  # Ensure x_values are numeric for plotext compatibility
  numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
 
- # Check for both possible column naming conventions
+ # check for both possible column naming conventions
  upper_column = None
  middle_column = None
  lower_column = None
@@ -2264,31 +2264,31 @@ def _add_donchian_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> N
  elif 'Donchian_Middle' in chunk.columns:
  middle_column = 'Donchian_Middle'
 
- if 'Donchain_Lower' in chunk.columns:
- lower_column = 'Donchain_Lower'
- elif 'Donchian_Lower' in chunk.columns:
- lower_column = 'Donchian_Lower'
+ if 'Donchain_lower' in chunk.columns:
+ lower_column = 'Donchain_lower'
+ elif 'Donchian_lower' in chunk.columns:
+ lower_column = 'Donchian_lower'
 
  # Plot upper band
  if upper_column:
- upper_values = chunk[upper_column].fillna(0).tolist()
+ upper_values = chunk[upper_column].fillna(0).toList()
  # Only plot if we have valid data
  if upper_values and any(v != 0 for v in upper_values):
  plt.plot(numeric_x_values, upper_values, color="green+", label="Upper")
 
  # Plot middle band
  if middle_column:
- middle_values = chunk[middle_column].fillna(0).tolist()
+ middle_values = chunk[middle_column].fillna(0).toList()
  # Only plot if we have valid data
  if middle_values and any(v != 0 for v in middle_values):
  plt.plot(numeric_x_values, middle_values, color="white+", label="Middle")
 
  # Plot lower band
  if lower_column:
- lower_values = chunk[lower_column].fillna(0).tolist()
+ lower_values = chunk[lower_column].fillna(0).toList()
  # Only plot if we have valid data
  if lower_values and any(v != 0 for v in lower_values):
- plt.plot(numeric_x_values, lower_values, color="red+", label="Lower")
+ plt.plot(numeric_x_values, lower_values, color="red+", label="lower")
 
  # Fallback to PPrice* naming convention (support and resistance levels)
  if not any([upper_column, middle_column, lower_column]) and 'PPrice1' in chunk.columns and 'PPrice2' in chunk.columns:
@@ -2297,26 +2297,26 @@ def _add_donchian_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> N
  lower_column = 'PPrice1' # Support level (lower band)
 
  # Plot upper band (PPrice2)
- upper_values = chunk[upper_column].fillna(0).tolist()
+ upper_values = chunk[upper_column].fillna(0).toList()
  if upper_values and any(v != 0 for v in upper_values):
  plt.plot(numeric_x_values, upper_values, color="green+", label="Upper")
 
  # Plot lower band (PPrice1)
- lower_values = chunk[lower_column].fillna(0).tolist()
+ lower_values = chunk[lower_column].fillna(0).toList()
  if lower_values and any(v != 0 for v in lower_values):
- plt.plot(numeric_x_values, lower_values, color="red+", label="Lower")
+ plt.plot(numeric_x_values, lower_values, color="red+", label="lower")
 
  except Exception as e:
  logger.print_error(f"Error adding Donchian Channel: {e}")
 
 
-def _add_wave_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_wave_indicator_to_subplot(chunk: pd.dataFrame, x_values: List) -> None:
  """Add Wave indicator to subplot."""
  try:
  # Ensure x_values are numeric for plotext compatibility
  numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
 
- # Check for Wave indicator columns with different naming conventions
+ # check for Wave indicator columns with different naming conventions
  plot_wave_col = None
  plot_color_col = None
  plot_fastline_col = None
@@ -2343,8 +2343,8 @@ def _add_wave_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
 
  # Plot Wave line with dynamic colors based on signals
  if plot_wave_col and plot_color_col:
- wave_values = chunk[plot_wave_col].fillna(0).tolist()
- color_values = chunk[plot_color_col].fillna(0).tolist()
+ wave_values = chunk[plot_wave_col].fillna(0).toList()
+ color_values = chunk[plot_color_col].fillna(0).toList()
 
  # Create separate arrays for different signal types
  red_x = []
@@ -2371,13 +2371,13 @@ def _add_wave_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
 
  # Plot Fast Line (thin red dotted line)
  if plot_fastline_col:
- fastline_values = chunk[plot_fastline_col].fillna(0).tolist()
+ fastline_values = chunk[plot_fastline_col].fillna(0).toList()
  if fastline_values and any(v != 0 for v in fastline_values):
  plt.plot(numeric_x_values, fastline_values, color="red+", label="Fast Line")
 
  # Plot MA Line (light blue line)
  if ma_line_col:
- ma_values = chunk[ma_line_col].fillna(0).tolist()
+ ma_values = chunk[ma_line_col].fillna(0).toList()
  if ma_values and any(v != 0 for v in ma_values):
  plt.plot(numeric_x_values, ma_values, color="cyan+", label="MA Line")
 
@@ -2388,7 +2388,7 @@ def _add_wave_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
  logger.print_error(f"Error adding Wave indicator: {e}")
 
 
-def _add_generic_indicator_to_subplot(chunk: pd.DataFrame, x_values: list, indicator_name: str) -> None:
+def _add_generic_indicator_to_subplot(chunk: pd.dataFrame, x_values: List, indicator_name: str) -> None:
  """Add generic indicator to subplot by looking for columns with indicator name."""
  try:
  # Look for columns containing the indicator name
@@ -2403,7 +2403,7 @@ def _add_generic_indicator_to_subplot(chunk: pd.DataFrame, x_values: list, indic
 
  if indicator_columns:
  for col in indicator_columns:
- values = chunk[col].fillna(0).tolist()
+ values = chunk[col].fillna(0).toList()
  # Ensure x_values are numeric for plotext compatibility
  numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
  plt.plot(numeric_x_values, values, label=col)
@@ -2414,12 +2414,12 @@ def _add_generic_indicator_to_subplot(chunk: pd.DataFrame, x_values: list, indic
  logger.print_error(f"Error adding generic indicator {indicator_name}: {e}")
 
 
-def _has_trading_signals(chunk: pd.DataFrame) -> bool:
- """Check if chunk has any trading signals."""
+def _has_trading_signals(chunk: pd.dataFrame) -> bool:
+ """check if chunk has any trading signals."""
  return any(col in chunk.columns for col in ['Direction', '_signal'])
 
 
-def _add_trading_signals_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
+def _add_trading_signals_to_chunk(chunk: pd.dataFrame, x_values: List) -> None:
  """
  Add trading signals to the chunk plot.
  BUY: large yellow triangle below Low
@@ -2430,7 +2430,7 @@ def _add_trading_signals_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
  - Direction column (standard indicator)
  """
  try:
- # Check for different signal sources (same priority as other modes)
+ # check for different signal sources (same priority as other modes)
  signal_source = None
  if '_signal' in chunk.columns:
  signal_source = '_signal'
@@ -2489,12 +2489,12 @@ def _add_trading_signals_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
  logger.print_error(f"Error adding trading signals: {e}")
 
 
-def _show_chunk_statistics(chunk: pd.DataFrame, title: str, start_idx: int, end_idx: int) -> None:
+def _show_chunk_statistics(chunk: pd.dataFrame, title: str, start_idx: int, end_idx: int) -> None:
  """
  Show statistics for a chunk.
 
  Args:
- chunk (pd.DataFrame): DataFrame chunk
+ chunk (pd.dataFrame): dataFrame chunk
  title (str): Chunk title
  start_idx (int): start index
  end_idx (int): End index
@@ -2574,57 +2574,57 @@ def _show_field_statistics(field_series: pd.Series, field_name: str) -> None:
  logger.print_error(f"Error showing field statistics: {e}")
 
 
-def plot_chunked_terminal(df: pd.DataFrame, rule: str, title: str = "Chunked Terminal Plot", style: str = "matrix", use_navigation: bool = False) -> None:
+def plot_chunked_terminal(df: pd.dataFrame, rule: str, title: str = "Chunked Terminal Plot", style: str = "matrix", Use_Navigation: bool = False) -> None:
  """
- Main function to plot data in chunks based on the rule.
+ main function to plot data in chunks based on the rule.
 
  Args:
- df (pd.DataFrame): DataFrame with data
+ df (pd.dataFrame): dataFrame with data
  rule (str): Trading rule
  title (str): Plot title
  style (str): Plot style
- use_navigation (bool): Whether to use interactive navigation
+ Use_Navigation (bool): Whether to Use interactive Navigation
  """
  try:
  rule_upper = rule.upper()
 
  # Handle RSI variants with dual subplot
  if rule_upper.startswith('RSI'):
- plot_indicator_chunks(df, 'RSI', title, style, use_navigation, rule)
+ plot_indicator_chunks(df, 'RSI', title, style, Use_Navigation, rule)
 
  # Handle MACD (keep existing MACD logic for compatibility)
  elif rule_upper.startswith('MACD'):
- plot_macd_chunks(df, title, style, use_navigation)
+ plot_macd_chunks(df, title, style, Use_Navigation)
 
  # Handle special rules that don't need dual subplot
  elif rule_upper == 'OHLCV':
- plot_ohlcv_chunks(df, title, style, use_navigation)
+ plot_ohlcv_chunks(df, title, style, Use_Navigation)
  elif rule_upper == 'AUTO':
- plot_auto_chunks(df, title, style, use_navigation)
+ plot_auto_chunks(df, title, style, Use_Navigation)
  elif rule_upper in ['PV', 'PRESSURE_VECTOR']:
- plot_pv_chunks(df, title, style, use_navigation)
+ plot_pv_chunks(df, title, style, Use_Navigation)
  elif rule_upper in ['SR', 'SUPPORT_RESISTANTS']:
- plot_sr_chunks(df, title, style, use_navigation)
+ plot_sr_chunks(df, title, style, Use_Navigation)
  elif rule_upper in ['PHLD', 'PREDICT_HIGH_LOW_DIRECTION']:
- plot_phld_chunks(df, title, style, use_navigation)
+ plot_phld_chunks(df, title, style, Use_Navigation)
 
  # Handle all other indicators with dual subplot
  elif rule_upper in ['STOCHASTIC', 'CCI', 'BOLLINGER_BANDS', 'EMA', 'SMA', 'ADX', 'SAR',
  'SUPERTREND', 'ATR', 'STANDARD_DEVIATION', 'OBV', 'VWAP',
  'HMA', 'TIME_SERIES_FORECAST', 'MONTE_CARLO', 'KELLY_CRITERION',
- 'PUT_CALL_RATIO', 'COT', 'FEAR_GREED', 'PIVOT_POINTS',
+ 'PUT_Call_RATIO', 'COT', 'FEAR_GREED', 'PIVOT_POINTS',
  'FIBONACCI_RETRACEMENT', 'DONCHIAN_CHANNEL']:
- plot_indicator_chunks(df, rule_upper, title, style, use_navigation, rule)
+ plot_indicator_chunks(df, rule_upper, title, style, Use_Navigation, rule)
 
  # Handle parameterized indicators
  elif ':' in rule:
  # Extract indicator name from parameterized rule (e.g., "stochastic:14,3,3" -> "STOCHASTIC")
  indicator_name = rule.split(':')[0].upper()
- plot_indicator_chunks(df, indicator_name, title, style, use_navigation, rule)
+ plot_indicator_chunks(df, indicator_name, title, style, Use_Navigation, rule)
 
  else:
- # Try to use as generic indicator
- plot_indicator_chunks(df, rule_upper, title, style, use_navigation, rule)
+ # Try to Use as generic indicator
+ plot_indicator_chunks(df, rule_upper, title, style, Use_Navigation, rule)
 
  except Exception as e:
  logger.print_error(f"Error in chunked terminal plotting: {e}")

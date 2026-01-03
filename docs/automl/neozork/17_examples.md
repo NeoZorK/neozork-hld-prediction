@@ -9,12 +9,12 @@
 **Почему начинать with простой системы важно:**
 - **Понимание основ:** Обеспечивает понимание основных принципов
 - **Низкие риски:** Минимизирует риски при изучении
-- **Быстрая реализация:** Позволяет быстро создать рабочую систему
+- **Быстрая реализация:** Позволяет быстро создать рабочую system
 - **Обучение:** Помогает изучить основы ML-торговли
 
 ### description системы
 
-**Теория:** Простая система on basis WAVE2 использует базовые принципы волнового анализа for создания торговых сигналов. Это критически важно for создания надежной основы for более сложных систем.
+**Теория:** Простая система on basis WAVE2 использует базовые принципы волнового Analysis for создания торговых сигналов. Это критически важно for создания надежной основы for более сложных систем.
 
 **Почему WAVE2 подходит for начала:**
 - **Простота понимания:** Легко понять and реализовать
@@ -36,9 +36,9 @@
 ### Детальное description реализации
 
 **Теория WAVE2 системы:**
-WAVE2 система основана on принципах волнового анализа Эллиотта, адаптированных for машинного обучения. Основная идея заключается in том, что рынки движутся in предсказуемых волновых паттернах, которые можно выявить with помощью технических indicators and обучить on них ML-модель.
+WAVE2 система основана on принципах волнового Analysis Эллиотта, адаптированных for машинного обучения. Основная идея заключается in том, что рынки движутся in предсказуемых волновых паттернах, которые можно выявить with помощью технических indicators and обучить on них ML-модель.
 
-**Ключевые компоненты системы:**
+**Ключевые components системы:**
 1. **Извлечение признаков:** create технических indicators (RSI, MACD, скользящие средние)
 2. **Целевая переменная:** Классификация направления движения цены on 3 класса (вниз, удержание, вверх)
 3. **ML-модель:** Random Forest for классификации торговых сигналов
@@ -57,21 +57,21 @@ import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_Report
 import yfinance as yf
 from datetime import datetime, timedelta
 import warnings
 warnings.filterwarnings('ignore')
 
-# Installation зависимостей (выполнить перед Launchом):
+# installation зависимостей (выполнить перед Launchом):
 # pip install yfinance scikit-learn pandas numpy matplotlib seaborn
 
-class SimpleWave2System:
+class SimpleWave2system:
  """Простая система on basis WAVE2"""
 
- def __init__(self, symbol='BTC-USD', timeframe='1h'):
+ def __init__(self, symbol='BTC-USD', Timeframe='1h'):
  self.symbol = symbol
- self.timeframe = timeframe
+ self.Timeframe = Timeframe
  self.model = RandomForestClassifier(n_estimators=100, random_state=42)
  self.features = []
  self.target = []
@@ -84,14 +84,14 @@ class SimpleWave2System:
  period (str): Период данных ('1y', '2y', '5y', 'max')
 
  Returns:
- pd.DataFrame: Данные OHLCV with временными метками
+ pd.dataFrame: data OHLCV with временными метками
 
  Теория: Загрузка качественных данных критически важна for обучения ML-модели.
- Используем yfinance for получения исторических данных with биржи.
+ Use yfinance for получения исторических данных with биржи.
  """
  try:
  ticker = yf.Ticker(self.symbol)
- data = ticker.history(period=period, interval=self.timeframe)
+ data = ticker.history(period=period, interval=self.Timeframe)
 
  if data.empty:
  raise ValueError(f"No data available for {self.symbol}")
@@ -104,7 +104,7 @@ class SimpleWave2System:
  return data
 
  except Exception as e:
- print(f"Error loading data: {e}")
+ print(f"Error Loading data: {e}")
  return None
 
  def create_wave2_features(self, data):
@@ -112,10 +112,10 @@ class SimpleWave2System:
  create признаков for WAVE2 системы
 
  Args:
- data (pd.DataFrame): OHLCV данные
+ data (pd.dataFrame): OHLCV data
 
  Returns:
- pd.DataFrame: Признаки for ML-модели
+ pd.dataFrame: Признаки for ML-модели
 
  Теория: WAVE2 признаки основаны on волновом анализе Эллиотта:
  1. Базовые признаки - цена and объем
@@ -124,7 +124,7 @@ class SimpleWave2System:
  4. Лаговые признаки - исторические значения for учета трендов
  5. Волатильность - for оценки риска
  """
- features = pd.DataFrame(index=data.index)
+ features = pd.dataFrame(index=data.index)
 
  # Базовые признаки
  features['close'] = data['Close']
@@ -132,7 +132,7 @@ class SimpleWave2System:
  features['low'] = data['Low']
  features['volume'] = data['Volume']
 
- # Ценовые отношения (важно for волнового анализа)
+ # Ценовые отношения (важно for волнового Analysis)
  features['hl_ratio'] = data['High'] / data['Low']
  features['co_ratio'] = data['Close'] / data['Open']
  features['price_range'] = (data['High'] - data['Low']) / data['Close']
@@ -144,7 +144,7 @@ class SimpleWave2System:
  features['rsi'] = self._calculate_rsi(data['Close'])
  features['macd'] = self._calculate_macd(data['Close'])
 
- # WAVE2-подобные признаки (основа волнового анализа)
+ # WAVE2-подобные признаки (основа волнового Analysis)
  features['price_momentum_1'] = data['Close'].pct_change(1)
  features['price_momentum_5'] = data['Close'].pct_change(5)
  features['price_momentum_10'] = data['Close'].pct_change(10)
@@ -241,7 +241,7 @@ class SimpleWave2System:
  # Оценка
  accuracy = accuracy_score(y_test, y_pred)
  print(f"Model accuracy: {accuracy:.4f}")
- print(classification_report(y_test, y_pred))
+ print(classification_Report(y_test, y_pred))
 
  return accuracy
 
@@ -250,7 +250,7 @@ class SimpleWave2System:
  Детальный бэктестинг системы
 
  Args:
- data (pd.DataFrame): Исторические данные
+ data (pd.dataFrame): Исторические data
  initial_capital (float): Начальный капитал
  transaction_cost (float): Комиссия за сделку (0.1% on умолчанию)
 
@@ -368,7 +368,7 @@ class SimpleWave2System:
 
  # Win Rate
  winning_trades = 0
- for i in range(1, len(trades), 2): # Проверяем закрытые позиции
+ for i in range(1, len(trades), 2): # checking закрытые позиции
  if i < len(trades):
  if trades[i]['capital'] > trades[i-1]['capital']:
  winning_trades += 1
@@ -391,11 +391,11 @@ class SimpleWave2System:
 
 # Практический example использования системы
 if __name__ == "__main__":
- print("=== WAVE2 Trading System Demo ===")
- print("Загружаем данные and обучаем модель...")
+ print("=== WAVE2 Trading system Demo ===")
+ print("Loading data and обучаем модель...")
 
  # create системы
- system = SimpleWave2System('BTC-USD', '1h')
+ system = SimpleWave2system('BTC-USD', '1h')
 
  # Loading data
  data = system.load_data('1y')
@@ -448,7 +448,7 @@ if __name__ == "__main__":
  if results['total_return_pct'] > 50:
  print("🎯 Отличная доходность! Рассмотрите увеличение капитала")
  elif results['total_return_pct'] > 20:
- print("👍 Хорошая доходность, система работает стабильно")
+ print("👍 Хорошая доходность, система Workingет стабильно")
  elif results['total_return_pct'] > 0:
  print("⚠️ Положительная доходность, но есть место for улучшений")
  else:
@@ -473,7 +473,7 @@ if __name__ == "__main__":
 
 ### description системы
 
-**Теория:** Продвинутая система with SCHR Levels использует сложные алгоритмы анализа уровней поддержки and сопротивления for создания торговых сигналов. Это критически важно for создания высокоэффективных систем.
+**Теория:** Продвинутая система with SCHR Levels использует сложные алгоритмы Analysis уровней поддержки and сопротивления for создания торговых сигналов. Это критически важно for создания высокоэффективных систем.
 
 **Почему SCHR Levels эффективны:**
 - **Точность уровней:** Обеспечивает высокую точность определения уровней
@@ -495,7 +495,7 @@ if __name__ == "__main__":
 ### Детальное description SCHR Levels системы
 
 **Теория SCHR Levels:**
-SCHR (Support, Channel, High, Resistance) Levels - это продвинутая система анализа уровней поддержки and сопротивления, основанная on машинном обучении. Система автоматически определяет ключевые уровни, где цена with высокой вероятностью может развернуться.
+SCHR (Support, Channel, High, Resistance) Levels - это продвинутая система Analysis уровней поддержки and сопротивления, основанная on машинном обучении. Система автоматически определяет ключевые уровни, где цена with высокой вероятностью может развернуться.
 
 **Ключевые принципы SCHR Levels:**
 1. **Поддержка (Support):** Уровни, где цена находит поддержку and отскакивает вверх
@@ -507,11 +507,11 @@ SCHR (Support, Channel, High, Resistance) Levels - это продвинутая
 - **Высокая точность:** ML-модель учится on исторических паттернах
 - **Адаптивность:** Система автоматически адаптируется к изменениям рынка
 - **Робастность:** Устойчива к рыночному шуму and ложным сигналам
-- **Масштабируемость:** Работает on разных Timeframeах and активах
+- **Масштабируемость:** Workingет on разных Timeframes and активах
 
 **Ансамбль моделей:**
-Используем XGBoost and Gradient Boosting for создания более точных predictions:
-- **XGBoost:** Быстрая and точная модель for базовых predictions
+Use XGBoost and Gradient Boosting for создания более точных Predictions:
+- **XGBoost:** Быстрая and точная модель for базовых Predictions
 - **Gradient Boosting:** Дополнительная модель for улучшения точности
 - **Взвешенное голосование:** Объединяем предсказания with оптимальными весами
 
@@ -522,22 +522,22 @@ import pandas as pd
 import numpy as np
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.model_selection import TimeSeriesSplit
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_Report
 import xgboost as xgb
 import yfinance as yf
 from datetime import datetime, timedelta
 import warnings
 warnings.filterwarnings('ignore')
 
-# Installation зависимостей (выполнить перед Launchом):
+# installation зависимостей (выполнить перед Launchом):
 # pip install yfinance scikit-learn pandas numpy xgboost matplotlib seaborn
 
-class AdvancedSCHRSystem:
+class AdvancedSCHRsystem:
  """Продвинутая система with SCHR Levels"""
 
- def __init__(self, symbol='BTC-USD', timeframe='1h'):
+ def __init__(self, symbol='BTC-USD', Timeframe='1h'):
  self.symbol = symbol
- self.timeframe = timeframe
+ self.Timeframe = Timeframe
  self.models = {
  'xgboost': xgb.XGBClassifier(n_estimators=100, random_state=42),
  'gradient_boosting': GradientBoostingClassifier(n_estimators=100, random_state=42)
@@ -552,14 +552,14 @@ class AdvancedSCHRSystem:
  period (str): Период данных ('2y', '5y', 'max')
 
  Returns:
- pd.DataFrame: Данные OHLCV with временными метками
+ pd.dataFrame: data OHLCV with временными метками
 
  Теория: SCHR Levels требуют больше данных for точного определения уровней.
  Минимум 2 года данных for стабильной работы системы.
  """
  try:
  ticker = yf.Ticker(self.symbol)
- data = ticker.history(period=period, interval=self.timeframe)
+ data = ticker.history(period=period, interval=self.Timeframe)
 
  if data.empty:
  raise ValueError(f"No data available for {self.symbol}")
@@ -568,11 +568,11 @@ class AdvancedSCHRSystem:
  if len(data) < 1000:
  raise ValueError(f"Insufficient data for SCHR Levels: {len(data)} rows (minimum 1000 required)")
 
- print(f"Loaded {len(data)} data points for SCHR Levels analysis")
+ print(f"Loaded {len(data)} data points for SCHR Levels Analysis")
  return data
 
  except Exception as e:
- print(f"Error loading data: {e}")
+ print(f"Error Loading data: {e}")
  return None
 
  def create_schr_features(self, data):
@@ -580,10 +580,10 @@ class AdvancedSCHRSystem:
  create расширенных признаков for SCHR Levels системы
 
  Args:
- data (pd.DataFrame): OHLCV данные
+ data (pd.dataFrame): OHLCV data
 
  Returns:
- pd.DataFrame: Признаки for ML-модели
+ pd.dataFrame: Признаки for ML-модели
 
  Теория: SCHR признаки основаны on анализе уровней поддержки and сопротивления:
  1. Предсказанные уровни - ML-модель предсказывает ключевые уровни
@@ -591,7 +591,7 @@ class AdvancedSCHRSystem:
  3. Позиционирование - где находится цена относительно уровней
  4. Моментум - направление and сила движения к уровням
  """
- features = pd.DataFrame(index=data.index)
+ features = pd.dataFrame(index=data.index)
 
  # Базовые признаки
  features['close'] = data['Close']
@@ -868,11 +868,11 @@ class AdvancedSCHRSystem:
 
 # Практический example использования SCHR Levels системы
 if __name__ == "__main__":
- print("=== Advanced SCHR Levels Trading System Demo ===")
- print("Загружаем расширенные данные and обучаем ансамбль моделей...")
+ print("=== Advanced SCHR Levels Trading system Demo ===")
+ print("Loading расширенные data and обучаем ансамбль моделей...")
 
  # create системы
- system = AdvancedSCHRSystem('BTC-USD', '1h')
+ system = AdvancedSCHRsystem('BTC-USD', '1h')
 
  # Loading data (минимум 2 года for SCHR Levels)
  data = system.load_data('2y')
@@ -880,7 +880,7 @@ if __name__ == "__main__":
  print("Ошибка загрузки данных!")
  exit(1)
 
- print(f"Загружено {len(data)} свечей данных for SCHR Levels анализа")
+ print(f"Загружено {len(data)} свечей данных for SCHR Levels Analysis")
 
  # Обучение ансамбля моделей
  print("Обучение ансамбля моделей (XGBoost + Gradient Boosting)...")
@@ -903,7 +903,7 @@ if __name__ == "__main__":
  # SCHR-специфичный анализ
  print("\n=== SCHR LEVELS АНАЛИЗ ===")
  if results['total_return'] > 0.5: # 50%+ доходность
- print("🎯 Отличная доходность! SCHR Levels работают эффективно")
+ print("🎯 Отличная доходность! SCHR Levels Workingют эффективно")
  elif results['total_return'] > 0.2: # 20%+ доходность
  print("👍 Хорошая доходность, система стабильна")
  elif results['total_return'] > 0:
@@ -937,7 +937,7 @@ if __name__ == "__main__":
  print("3. Настройте веса ансамбля моделей")
  print("4. Улучшите логику определения давления")
  print("5. Добавьте фильтры for ложных пробоев уровней")
- print("6. Тестируйте on разных активах and Timeframeах")
+ print("6. Тестируйте on разных активах and Timeframes")
 
  # Сравнение with простой WAVE2 системой
  print("\n=== СРАВНЕНИЕ with WAVE2 ===")
@@ -985,7 +985,7 @@ if __name__ == "__main__":
 **Теория блокчейн-интеграции:**
 Блокчейн-integration in торговых системах открывает новые возможности for увеличения доходности через DeFi протоколы, стейкинг, ликвидность and другие механизмы заработка. Это революционный подход к созданию высокодоходных торговых систем.
 
-**Ключевые компоненты блокчейн-системы:**
+**Ключевые components блокчейн-системы:**
 1. **DeFi протоколы:** Uniswap, Compound, Aave for дополнительной доходности
 2. **Стейкинг:** Пассивный доход from блокировки токенов
 3. **Ликвидность:** Предоставление ликвидности in пулы
@@ -1019,12 +1019,12 @@ import time
 import warnings
 warnings.filterwarnings('ignore')
 
-# Installation зависимостей (выполнить перед Launchом):
+# installation зависимостей (выполнить перед Launchом):
 # pip install web3 requests pandas numpy matplotlib seaborn
 # for работы with блокчейном также нужны:
 # pip install eth-account eth-utils
 
-class BlockchainIntegratedSystem:
+class Blockchainintegratedsystem:
  """Система with блокчейн-интеграцией"""
 
  def __init__(self, web3_provider, private_key):
@@ -1108,7 +1108,7 @@ class BlockchainIntegratedSystem:
  pool_info = self.defi_contracts[asset_name].functions.poolInfo(0).call()
 
  # Расчет APR
- total_alloc_point = self.defi_contracts[asset_name].functions.totalAllocPoint().call()
+ total_alloc_point = self.defi_contracts[asset_name].functions.totalallocPoint().call()
  reward_per_block = self.defi_contracts[asset_name].functions.rewardPerBlock().call()
 
  pool_alloc_point = pool_info[1]
@@ -1208,8 +1208,8 @@ class BlockchainIntegratedSystem:
 
  return performance
 
- def rebalance_defi_portfolio(self, current_allocation, target_allocation):
- """Перебалансировка DeFi портфолио"""
+ def rebalance_defi_Portfolio(self, current_allocation, target_allocation):
+ """Перебалансировка DeFi Portfolio"""
  rebalancing_trades = []
 
  for asset_name in set(current_allocation.keys()) | set(target_allocation.keys()):
@@ -1237,7 +1237,7 @@ class BlockchainIntegratedSystem:
 
 # Практический example использования блокчейн-системы
 if __name__ == "__main__":
- print("=== Blockchain-Integrated Trading System Demo ===")
+ print("=== Blockchain-integrated Trading system Demo ===")
  print("⚠️ ВНИМАНИЕ: Это демо-версия! not Use реальные приватные ключи!")
 
  # Демо-configuration (not Use in ПРОДАКШЕНЕ!)
@@ -1247,7 +1247,7 @@ if __name__ == "__main__":
  print("Инициализация блокчейн-системы...")
  try:
  # create системы
- system = BlockchainIntegratedSystem(web3_provider, private_key)
+ system = Blockchainintegratedsystem(web3_provider, private_key)
 
  # configuration DeFi контрактов
  print("configuration DeFi контрактов...")
@@ -1323,9 +1323,9 @@ if __name__ == "__main__":
  print("Это нормально for демо-версии без реальных ключей")
 ```
 
-## example 4: Полная система with автоматическим управлением
+## example 4: Полная система with автоматическим Managementм
 
-**Теория:** Полная система with автоматическим управлением представляет собой комплексную реализацию торговой системы, которая объединяет все аспекты ML-торговли in единую автоматизированную систему. Это критически важно for создания максимально эффективных систем.
+**Теория:** Полная система with автоматическим Managementм представляет собой комплексную реализацию торговой системы, которая объединяет все аспекты ML-торговли in единую автоматизированную system. Это критически важно for создания максимально эффективных систем.
 
 **Почему полная система важна:**
 - **Комплексность:** Обеспечивает комплексный подход к торговле
@@ -1335,10 +1335,10 @@ if __name__ == "__main__":
 
 ### description системы
 
-**Теория:** Полная система with автоматическим управлением объединяет все компоненты ML-торговли in единую систему. Это критически важно for создания максимально эффективных торговых систем.
+**Теория:** Полная система with автоматическим Managementм объединяет все components ML-торговли in единую system. Это критически важно for создания максимально эффективных торговых систем.
 
 **Почему полная система эффективна:**
-- **integration:** Объединяет все компоненты in единую систему
+- **integration:** Объединяет все components in единую system
 - **Автоматизация:** Полностью автоматизирует процесс
 - **Оптимизация:** Обеспечивает оптимальную работу всех компонентов
 - **Monitoring:** Обеспечивает полный Monitoring системы
@@ -1346,7 +1346,7 @@ if __name__ == "__main__":
 **Плюсы:**
 - Полная integration компонентов
 - Полная автоматизация
-- Оптимальная работа
+- Оптимальная Working
 - Полный Monitoring
 
 **Минусы:**
@@ -1357,25 +1357,25 @@ if __name__ == "__main__":
 ### Детальное description автоматической системы
 
 **Теория автоматической торговой системы:**
-Полная автоматическая система объединяет все компоненты ML-торговли in единую интегрированную платформу. Это вершина эволюции торговых систем, обеспечивающая максимальную эффективность and минимальное вмешательство человека.
+Полная автоматическая система объединяет все components ML-торговли in единую интегрированную платформу. Это вершина эволюции торговых систем, обеспечивающая максимальную эффективность and минимальное вмешательство человека.
 
-**Ключевые компоненты автоматической системы:**
+**Ключевые components автоматической системы:**
 1. **Ансамбль моделей:** Объединение WAVE2, SCHR Levels and других стратегий
 2. **Автоматическое обучение:** Регулярное переобучение on новых данных
 3. **Риск-менеджмент:** Автоматический контроль рисков and позиций
-4. **Портфолио-менеджмент:** Оптимизация распределения капитала
+4. **Portfolio-менеджмент:** Оптимизация распределения капитала
 5. **Monitoring:** Непрерывное отслеживание производительности
 6. **DeFi integration:** Автоматическое использование DeFi протоколов
 
 **Архитектура системы:**
-- **Модельный слой:** Ансамбль ML-моделей for predictions
+- **Модельный слой:** Ансамбль ML-моделей for Predictions
 - **Стратегический слой:** Логика принятия торговых решений
-- **Риск-слой:** Контроль рисков and управление позициями
+- **Риск-слой:** Контроль рисков and Management позициями
 - **Исполнительный слой:** Выполнение торговых операций
 - **Monitoring-слой:** Отслеживание and алертинг
 
 **Преимущества автоматизации:**
-- **24/7 работа:** Система работает круглосуточно
+- **24/7 Working:** Система Workingет круглосуточно
 - **Эмоциональная нейтральность:** Нет человеческих эмоций
 - **Скорость:** Мгновенная реакция on рыночные изменения
 - **Масштабируемость:** Легко увеличить объем торговли
@@ -1385,7 +1385,7 @@ if __name__ == "__main__":
 - **Технические сбои:** Issues with сервером, network, кодом
 - **Переобучение:** Модели могут переобучиться on исторических данных
 - **Рыночные изменения:** Система может not адаптироваться к новым условиям
-- **Черные лебеди:** Неожиданные события, not учтенные in модели
+- **Черные лебеди:** Неожиdata события, not учтенные in модели
 - **dependency from данных:** Issues with качеством or доступностью данных
 
 ### Код реализации
@@ -1406,7 +1406,7 @@ import logging
 import warnings
 warnings.filterwarnings('ignore')
 
-# Installation зависимостей (выполнить перед Launchом):
+# installation зависимостей (выполнить перед Launchом):
 # pip install yfinance scikit-learn pandas numpy xgboost schedule matplotlib seaborn
 
 class PerformanceMonitor:
@@ -1434,7 +1434,7 @@ class PerformanceMonitor:
  return alerts
 
 class RiskManager:
- """Управление рисками"""
+ """Management рисками"""
 
  def __init__(self):
  self.max_position_size = 0.1
@@ -1445,12 +1445,12 @@ class RiskManager:
  """Оценка рисков"""
  return {'acceptable': True, 'risk_level': 'low'}
 
- def calculate_position_size(self, signal_analysis, market_data):
+ def calculate_position_size(self, signal_Analysis, market_data):
  """Расчет размера позиции"""
  return 0.1 # 10% from капитала
 
 class PortfolioManager:
- """Управление портфолио"""
+ """Management Portfolio"""
 
  def __init__(self):
  self.positions = {}
@@ -1477,7 +1477,7 @@ class PortfolioManager:
  return {'success': True, 'action': 'sell'}
 
 class DeFiManager:
- """Управление DeFi интеграцией"""
+ """Management DeFi интеграцией"""
 
  def __init__(self):
  self.defi_pools = {}
@@ -1528,7 +1528,7 @@ class SCHRShort3Model:
  """Prediction"""
  return np.random.choice([0, 1, 2], size=len(data))
 
-class AutomatedTradingSystem:
+class AutomatedTradingsystem:
  """Автоматическая торговая система"""
 
  def __init__(self, config):
@@ -1538,14 +1538,14 @@ class AutomatedTradingSystem:
  Args:
  config (dict): configuration системы
 
- Теория: Автоматическая система объединяет все компоненты
+ Теория: Автоматическая система объединяет все components
  in единую интегрированную платформу for максимальной эффективности.
  """
  self.config = config
  self.models = {}
  self.performance_monitor = PerformanceMonitor()
  self.risk_manager = RiskManager()
- self.portfolio_manager = PortfolioManager()
+ self.Portfolio_manager = PortfolioManager()
  self.defi_manager = DeFiManager()
 
  # configuration логирования
@@ -1605,27 +1605,27 @@ class AutomatedTradingSystem:
  def execute_trading_strategy(self, signals, market_data):
  """Выполнение торговой стратегии"""
  # Анализ сигналов
- signal_analysis = self._analyze_signals(signals)
+ signal_Analysis = self._analyze_signals(signals)
 
  # check рисков
  risk_assessment = self.risk_manager.assess_risks(market_data)
 
  # Принятие решения
- if signal_analysis['confidence'] > 0.7 and risk_assessment['acceptable']:
+ if signal_Analysis['confidence'] > 0.7 and risk_assessment['acceptable']:
  # Выполнение сделки
- trade_result = self._execute_trade(signal_analysis, market_data)
+ trade_result = self._execute_trade(signal_Analysis, market_data)
 
  if trade_result['success']:
  self.logger.info(f"Trade executed successfully: {trade_result}")
  else:
  self.logger.error(f"Trade execution failed: {trade_result}")
 
- return signal_analysis, risk_assessment
+ return signal_Analysis, risk_assessment
 
  def _analyze_signals(self, signals):
  """Анализ сигналов"""
  # Согласованность сигналов
- signal_values = list(signals.values())
+ signal_values = List(signals.values())
  agreement = np.mean(signal_values)
 
  # Уверенность in сигнале
@@ -1640,25 +1640,25 @@ class AutomatedTradingSystem:
  'direction': direction
  }
 
- def _execute_trade(self, signal_analysis, market_data):
+ def _execute_trade(self, signal_Analysis, market_data):
  """Выполнение сделки"""
  try:
  # Расчет размера позиции
  position_size = self.risk_manager.calculate_position_size(
- signal_analysis, market_data
+ signal_Analysis, market_data
  )
 
  # Выполнение сделки
- if signal_analysis['direction'] > 0:
+ if signal_Analysis['direction'] > 0:
  # Покупка
- trade_result = self.portfolio_manager.buy(
+ trade_result = self.Portfolio_manager.buy(
  market_data['symbol'],
  position_size,
  market_data['price']
  )
- elif signal_analysis['direction'] < 0:
+ elif signal_Analysis['direction'] < 0:
  # Продажа
- trade_result = self.portfolio_manager.sell(
+ trade_result = self.Portfolio_manager.sell(
  market_data['symbol'],
  position_size,
  market_data['price']
@@ -1714,12 +1714,12 @@ class AutomatedTradingSystem:
  signals = self.get_trading_signals(market_data)
 
  # Выполнение стратегии
- signal_analysis, risk_assessment = self.execute_trading_strategy(
+ signal_Analysis, risk_assessment = self.execute_trading_strategy(
  signals, market_data
  )
 
  # Логирование
- self.logger.info(f"Trading cycle completed: {signal_analysis}")
+ self.logger.info(f"Trading cycle COMPLETED: {signal_Analysis}")
 
  except Exception as e:
  self.logger.error(f"Error in trading cycle: {e}")
@@ -1750,21 +1750,21 @@ class AutomatedTradingSystem:
  """Ежедневное перебалансирование"""
  try:
  # Получение текущих весов
- current_weights = self.portfolio_manager.get_current_weights()
+ current_weights = self.Portfolio_manager.get_current_weights()
 
  # Оптимизация весов
- target_weights = self.portfolio_manager.optimize_weights()
+ target_weights = self.Portfolio_manager.optimize_weights()
 
  # Перебалансирование
- rebalancing_trades = self.portfolio_manager.calculate_rebalancing_trades(
+ rebalancing_trades = self.Portfolio_manager.calculate_rebalancing_trades(
  current_weights, target_weights
  )
 
  # Выполнение сделок
  for trade in rebalancing_trades:
- self.portfolio_manager.execute_trade(trade)
+ self.Portfolio_manager.execute_trade(trade)
 
- self.logger.info("Daily rebalancing completed")
+ self.logger.info("Daily rebalancing COMPLETED")
 
  except Exception as e:
  self.logger.error(f"Error in daily rebalancing: {e}")
@@ -1778,7 +1778,7 @@ class AutomatedTradingSystem:
  # Переобучение моделей
  self.train_all_models(new_data)
 
- self.logger.info("Weekly retraining completed")
+ self.logger.info("Weekly retraining COMPLETED")
 
  except Exception as e:
  self.logger.error(f"Error in weekly retraining: {e}")
@@ -1814,7 +1814,7 @@ class AutomatedTradingSystem:
 # configuration системы
 config = {
  'symbols': ['BTC-USD', 'ETH-USD', 'BNB-USD'],
- 'timeframes': ['1h', '4h', '1d'],
+ 'Timeframes': ['1h', '4h', '1d'],
  'risk_limits': {
  'max_position_size': 0.1,
  'max_drawdown': 0.15,
@@ -1828,13 +1828,13 @@ config = {
 
 # Практический example использования автоматической системы
 if __name__ == "__main__":
- print("=== Automated Trading System Demo ===")
+ print("=== Automated Trading system Demo ===")
  print("Инициализация полной автоматической торговой системы...")
 
  # configuration системы
  config = {
  'symbols': ['BTC-USD', 'ETH-USD', 'BNB-USD'],
- 'timeframes': ['1h', '4h', '1d'],
+ 'Timeframes': ['1h', '4h', '1d'],
  'risk_limits': {
  'max_position_size': 0.1,
  'max_drawdown': 0.15,
@@ -1849,7 +1849,7 @@ if __name__ == "__main__":
  'weekly': True,
  'monthly': True
  },
- 'monitoring': {
+ 'Monitoring': {
  'real_time': True,
  'alerts': True,
  'logging': True
@@ -1857,7 +1857,7 @@ if __name__ == "__main__":
  }
 
  print("create автоматической системы...")
- system = AutomatedTradingSystem(config)
+ system = AutomatedTradingsystem(config)
 
  print("Инициализация компонентов...")
  system.initialize_models()
@@ -1866,7 +1866,7 @@ if __name__ == "__main__":
  data = system._load_market_data()
 
  if data:
- print(f"Загружены данные for {len(data)} активов")
+ print(f"Загружены data for {len(data)} активов")
 
  print("Обучение ансамбля моделей...")
  system.train_all_models(data)
@@ -1886,11 +1886,11 @@ if __name__ == "__main__":
  signals = system.get_trading_signals(market_data)
 
  # Выполнение стратегии
- signal_analysis, risk_assessment = system.execute_trading_strategy(
+ signal_Analysis, risk_assessment = system.execute_trading_strategy(
  signals, market_data
  )
 
- print(f"Сигналы: {signal_analysis}")
+ print(f"Сигналы: {signal_Analysis}")
  print(f"Риски: {risk_assessment}")
 
  # check производительности
@@ -1906,7 +1906,7 @@ if __name__ == "__main__":
 
  print("\n=== РЕЗУЛЬТАТЫ ДЕМО-ТОРГОВЛИ ===")
  print("✅ Система успешно выполнила 5 торговых циклов")
- print("✅ Все компоненты работают корректно")
+ print("✅ Все components Workingют корректно")
  print("✅ Логирование and Monitoring активны")
 
  print("\n=== РЕКОМЕНДАЦИИ on АВТОМАТИЗАЦИИ ===")
@@ -1915,12 +1915,12 @@ if __name__ == "__main__":
  print("3. Настройте алерты for критических событий")
  print("4. Регулярно мониторьте производительность")
  print("5. Имейте Plan остановки системы при проблемах")
- print("6. Резервируйте данные and конфигурации")
+ print("6. Резервируйте data and конфигурации")
 
  print("\n=== ⚠️ ВАЖНЫЕ ПРЕДУПРЕЖДЕНИЯ ===")
  print("🚨 Автоматическая торговля сопряжена with высокими рисками!")
- print("🚨 Всегда тестируйте систему перед использованием реальных средств!")
- print("🚨 Мониторьте систему 24/7 or Use надежные алерты!")
+ print("🚨 Всегда тестируйте system перед использованием реальных средств!")
+ print("🚨 Мониторьте system 24/7 or Use надежные алерты!")
  print("🚨 Имейте Plan действий при технических сбоях!")
  print("🚨 Регулярно обновляйте модели and стратегии!")
 
@@ -1960,11 +1960,11 @@ if __name__ == "__main__":
 - **Минусы:** Требует глубокого понимания системы
 
 **1.2 configuration инфраструктуры**
-- **Теория:** Надежная инфраструктура критически важна for автоматической торговли
+- **Теория:** Надежная инфраStructure критически важна for автоматической торговли
 - **Практические действия:**
  - Настройте VPS or выделенный сервер for 24/7 работы
  - install все необходимые dependencies and библиотеки
- - Настройте систему Monitoringа and алертов
+ - Настройте system Monitoringа and алертов
  - Создайте резервные копии конфигураций and данных
 - **Плюсы:** Надежность, стабильность, масштабируемость
 - **Минусы:** Требует технических знаний and инвестиций
@@ -1982,10 +1982,10 @@ if __name__ == "__main__":
 - **Минусы:** Требует времени and вычислительных ресурсов
 
 **2.2 Paper Trading (виртуальная торговля)**
-- **Теория:** Paper trading позволяет протестировать систему in реальном времени без рисков
+- **Теория:** Paper trading позволяет протестировать system in реальном времени без рисков
 - **Практические действия:**
  - Настройте виртуальную торговлю with реальными данными
- - Запустите систему on 1-2 недели in демо-режиме
+ - Запустите system on 1-2 недели in демо-режиме
  - Анализируйте все сигналы and результаты
  - Корректируйте parameters on basis результатов
 - **Плюсы:** Реальное тестирование, нулевые риски, обучение
@@ -2009,7 +2009,7 @@ if __name__ == "__main__":
  - Настройте алерты for критических событий
  - Ежедневно проверяйте производительность системы
  - Еженедельно анализируйте результаты and корректируйте parameters
- - Ведите статистику on всем метрикам
+ - Ведите статистику on all метрикам
 - **Плюсы:** Своевременное выявление проблем, оптимизация производительности
 - **Минусы:** Требует постоянного внимания and времени
 
@@ -2047,15 +2047,15 @@ if __name__ == "__main__":
 - Анализируйте результаты and извлекайте уроки
 - Адаптируйтесь к изменяющимся рыночным условиям
 
-**3. Управление рисками**
+**3. Management рисками**
 - Никогда not рискуйте больше, чем можете позволить
-- Диверсифицируйте портфолио
+- Диверсифицируйте Portfolio
 - Имейте Plan действий при неблагоприятных сценариях
 
 **4. Техническая надежность**
 - Обеспечьте стабильную работу системы
 - Имейте резервные Planы
-- Регулярно обновляйте and тестируйте систему
+- Регулярно обновляйте and тестируйте system
 
 ## Ключевые выводы
 
@@ -2069,7 +2069,7 @@ if __name__ == "__main__":
  - Начните with WAVE2 системы как основы
  - Изучите каждый компонент детально
  - Постепенно добавляйте сложность
- - not пытайтесь сразу создать сложную систему
+ - not пытайтесь сразу создать сложную system
 - **Плюсы:** Понимание основ, низкие риски, быстрая реализация
 - **Минусы:** Ограниченная сложность, потенциально низкая доходность
 - **Рекомендация:** Потратьте 80% времени on простые системы, 20% on сложные
@@ -2089,7 +2089,7 @@ if __name__ == "__main__":
 - **Теория:** Риск-менеджмент критически важен for долгосрочного успеха and сохранения капитала
 - **Практическое применение:**
  - Максимум 1-2% риска on одну сделку
- - Максимум 5-10% риска on портфолио
+ - Максимум 5-10% риска on Portfolio
  - Use стоп-лоссы and тейк-профиты
  - Диверсифицируйте on активам and стратегиям
 - **Плюсы:** Защита капитала, долгосрочный успех, психологический комфорт
@@ -2120,13 +2120,13 @@ if __name__ == "__main__":
 - **Минусы:** Требует постоянного внимания and времени
 - **Рекомендация:** Автоматизируйте Monitoring, но not игнорируйте его
 
-**6. Адаптация - адаптируйте систему к изменяющимся условиям**
+**6. Адаптация - адаптируйте system к изменяющимся условиям**
 - **Теория:** Адаптация критически важна for долгосрочной эффективности in изменяющихся рыночных условиях
 - **Практическое применение:**
  - Регулярно переобучайте модели
  - Адаптируйте parameters к текущим условиям
  - Добавляйте новые признаки and стратегии
- - Удаляйте устаревшие компоненты
+ - Удаляйте устаревшие components
 - **Плюсы:** Долгосрочная эффективность, устойчивость к изменениям
 - **Минусы:** Сложность реализации, риск переобучения
 - **Рекомендация:** Балансируйте стабильность and адаптивность
@@ -2138,7 +2138,7 @@ if __name__ == "__main__":
 - **Практическое применение:**
  - Торгуйте несколькими активами
  - Use разные стратегии
- - Диверсифицируйте on Timeframeам
+ - Диверсифицируйте on Timeframeм
  - Рассмотрите разные рынки (крипто, акции, форекс)
 - **Плюсы:** Снижение рисков, стабильность доходности
 - **Минусы:** Сложность управления, потенциально низкая доходность

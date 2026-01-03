@@ -13,14 +13,14 @@ graph TD
 
  B -->|Нет| C[90% стратегий терпят неудачу]
  C --> D[❌ Переобучение on исторических данных]
- C --> E[❌ Неожиданные потери in реальной торговле]
+ C --> E[❌ Неожиdata потери in реальной торговле]
  C --> F[❌ Нестабильная производительность]
  C --> G[❌ Потеря времени and денег]
 
  B -->|Да| H[10% успешных стратегий]
  H --> I[✅ Реалистичная оценка производительности]
  H --> J[✅ Понимание рисков and просадок]
- H --> K[✅ Стабильная работа on разных условиях]
+ H --> K[✅ Стабильная Working on разных условиях]
  H --> L[✅ Оптимизированные parameters]
 
  I --> M[Успешная торговля]
@@ -34,7 +34,7 @@ graph TD
  style M fill:#4caf50
 ```
 
-**Почему 90% ML-стратегий терпят неудачу in реальной торговле?** Потому что они not прошли правильный бэктестинг. Бэктестинг - это единственный способ проверить, будет ли ваша стратегия работать in реальных условиях.
+**Почему 90% ML-стратегий терпят неудачу in реальной торговле?** Потому что они not прошли правильный бэктестинг. Бэктестинг - это единственный способ проверить, будет ли ваша стратегия Workingть in реальных условиях.
 
 ### Что дает правильный бэктестинг?
 
@@ -45,9 +45,9 @@ graph TD
 
 ### Что происходит без правильного бэктестинга?
 
-- **Переобучение**: Стратегия работает только on исторических данных
-- **Неожиданные потери**: Реальные результаты хуже ожидаемых
-- **Нестабильность**: Стратегия работает нестабильно
+- **Переобучение**: Стратегия Workingет только on исторических данных
+- **Неожиdata потери**: Реальные результаты хуже ожидаемых
+- **Нестабильность**: Стратегия Workingет нестабильно
 - **Разочарование**: Потеря времени and денег
 
 ## Теоретические основы бэктестинга
@@ -57,12 +57,12 @@ graph TD
 **Бэктестинг как статистическая задача:**
 
 ```math
-P(Strategy|Historical_Data) = P(Returns|Parameters, Market_Conditions)
+P(Strategy|Historical_data) = P(Returns|Parameters, Market_Conditions)
 ```
 
 Где:
 
-- `P(Strategy|Historical_Data)` - вероятность успеха стратегии on исторических данных
+- `P(Strategy|Historical_data)` - вероятность успеха стратегии on исторических данных
 - `P(Returns|Parameters, Market_Conditions)` - распределение доходности при заданных параметрах and рыночных условиях
 
 **Критерии качества бэктестинга:**
@@ -145,10 +145,10 @@ graph TB
 
 ```mermaid
 graph TD
- A[Исходные временные данные] --> B[Разделение in time]
+ A[Исходные временные data] --> B[Разделение in time]
 
- B --> C[Обучающие данные<br/>70% from начала]
- B --> D[Тестовые данные<br/>30% from конца]
+ B --> C[Обучающие data<br/>70% from начала]
+ B --> D[Тестовые data<br/>30% from конца]
 
  C --> E[Обучение модели]
  E --> F[Предсказания on тестовых данных]
@@ -190,7 +190,7 @@ def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
 
  Parameters:
  -----------
- data : pd.DataFrame
+ data : pd.dataFrame
  Временной ряд данных with колонками 'returns' and другими приsignми
  - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
@@ -199,7 +199,7 @@ def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
  model : object
  Обученная ML модель with методами fit() and predict()
  - Должен поддерживать fit(X, y) for обучения
- - Должен поддерживать predict(X) for predictions
+ - Должен поддерживать predict(X) for Predictions
  - Рекомендуется использовать TabularPredictor из AutoGluon
 
  train_size : float, default=0.7
@@ -219,7 +219,7 @@ def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
  Дополнительная configuration for бэктестинга
  - 'min_train_samples': int, default=100 - минимальное количество обучающих образцов
  - 'min_test_samples': int, default=50 - минимальное количество тестовых образцов
- - 'shuffle': bool, default=False - перемешивать ли данные (not рекомендуется for временных рядов)
+ - 'shuffle': bool, default=False - перемешивать ли data (not рекомендуется for временных рядов)
  - 'stratify': bool, default=False - стратифицированное разделение
  - 'return_Predictions': bool, default=True - возвращать предсказания
  - 'return_metrics': bool, default=True - возвращать метрики
@@ -227,7 +227,7 @@ def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
 
  validation : bool, default=True
  Выполнять ли валидацию входных данных
- - Проверяет наличие колонки 'returns'
+ - Проверяет presence колонки 'returns'
  - Проверяет достаточность данных
  - Проверяет корректность train_size and test_size
 
@@ -248,12 +248,12 @@ def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
  - 'Predictions': np.array - предсказания модели (если return_Predictions=True)
  - 'train_metrics': dict - метрики on обучающих данных
  - 'test_metrics': dict - метрики on тестовых данных
- - 'config_used': dict - использованная configuration
+ - 'config_Used': dict - использованная configuration
 
  Raises:
  -------
  ValueError
- Если данные недостаточны or parameters некорректны
+ Если data недостаточны or parameters некорректны
  TypeError
  Если модель not поддерживает необходимые методы
 
@@ -288,7 +288,7 @@ def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
  # Валидация входных данных
  if validation:
  if 'returns' not in data.columns:
- raise ValueError("Колонка 'returns' not найдена in данных")
+ raise ValueError("Колонка 'returns' not foundа in данных")
 
  if len(data) < config['min_train_samples'] + config['min_test_samples']:
  raise ValueError(f"Недостаточно данных. Минимум: {config['min_train_samples'] + config['min_test_samples']}")
@@ -346,7 +346,7 @@ def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
  'total_return': total_return,
  'annual_return': annual_return,
  'volatility': volatility,
- 'config_used': config.copy()
+ 'config_Used': config.copy()
  }
 
  # Дополнительные результаты
@@ -392,7 +392,7 @@ def temporal_dependency_backtest(data, model, lookback=30, step=1,
 
  Parameters:
  -----------
- data : pd.DataFrame
+ data : pd.dataFrame
  Временной ряд данных with колонками 'returns' and другими приsignми
  - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
@@ -401,7 +401,7 @@ def temporal_dependency_backtest(data, model, lookback=30, step=1,
  model : object
  Обученная ML модель with методами fit() and predict()
  - Должен поддерживать fit(X, y) for обучения
- - Должен поддерживать predict(X) for predictions
+ - Должен поддерживать predict(X) for Predictions
  - Рекомендуется использовать TabularPredictor из AutoGluon
 
  lookback : int, default=30
@@ -432,7 +432,7 @@ def temporal_dependency_backtest(data, model, lookback=30, step=1,
 
  validation : bool, default=True
  Выполнять ли валидацию входных данных
- - Проверяет наличие колонки 'returns'
+ - Проверяет presence колонки 'returns'
  - Проверяет достаточность данных
  - Проверяет корректность lookback and step
 
@@ -443,8 +443,8 @@ def temporal_dependency_backtest(data, model, lookback=30, step=1,
 
  Returns:
  --------
- pd.DataFrame
- DataFrame with результатами бэктестинга:
+ pd.dataFrame
+ dataFrame with результатами бэктестинга:
  - 'date': datetime - дата тестирования
  - 'sharpe': float - коэффициент Шарпа стратегии
  - 'return': float - доходность стратегии
@@ -457,7 +457,7 @@ def temporal_dependency_backtest(data, model, lookback=30, step=1,
  Raises:
  -------
  ValueError
- Если данные недостаточны or parameters некорректны
+ Если data недостаточны or parameters некорректны
  TypeError
  Если модель not поддерживает необходимые методы
 
@@ -496,7 +496,7 @@ def temporal_dependency_backtest(data, model, lookback=30, step=1,
  # Валидация входных данных
  if validation:
  if 'returns' not in data.columns:
- raise ValueError("Колонка 'returns' not найдена in данных")
+ raise ValueError("Колонка 'returns' not foundа in данных")
 
  if len(data) < lookback + step:
  raise ValueError(f"Недостаточно данных. Минимум: {lookback + step}")
@@ -519,10 +519,10 @@ def temporal_dependency_backtest(data, model, lookback=30, step=1,
  # Основной цикл бэктестинга
  for i in range(lookback, len(data) - step + 1, step):
  try:
- # Обучающие данные
+ # Обучающие data
  train_data = data[i-lookback:i]
 
- # Тестовые данные
+ # Тестовые data
  test_data = data[i:i+step]
 
  # Обучение модели
@@ -569,8 +569,8 @@ def temporal_dependency_backtest(data, model, lookback=30, step=1,
  if not results:
  raise ValueError("not удалось выполнить ни одной итерации бэктестинга")
 
- # create DataFrame
- results_df = pd.DataFrame(results)
+ # create dataFrame
+ results_df = pd.dataFrame(results)
 
  if config['verbose']:
  print(f"Бэктестинг завершен. Успешных итераций: {len(results_df)}")
@@ -589,7 +589,7 @@ results = temporal_dependency_backtest(data, model, lookback=30, step=1)
 
 ```mermaid
 graph TD
- A[Исходные данные] --> B[configuration параметров]
+ A[Исходные data] --> B[configuration параметров]
  B --> C[n_simulations = 1000]
  B --> D[confidence_level = 0.95]
 
@@ -645,7 +645,7 @@ def monte_carlo_backtest(data, model, n_simulations=1000, confidence_level=0.95,
 
  Parameters:
  -----------
- data : pd.DataFrame
+ data : pd.dataFrame
  Временной ряд данных with колонками 'returns' and другими приsignми
  - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
@@ -654,7 +654,7 @@ def monte_carlo_backtest(data, model, n_simulations=1000, confidence_level=0.95,
  model : object
  Обученная ML модель with методами fit() and predict()
  - Должен поддерживать fit(X, y) for обучения
- - Должен поддерживать predict(X) for predictions
+ - Должен поддерживать predict(X) for Predictions
  - Рекомендуется использовать TabularPredictor из AutoGluon
 
  n_simulations : int, default=1000
@@ -688,7 +688,7 @@ def monte_carlo_backtest(data, model, n_simulations=1000, confidence_level=0.95,
 
  validation : bool, default=True
  Выполнять ли валидацию входных данных
- - Проверяет наличие колонки 'returns'
+ - Проверяет presence колонки 'returns'
  - Проверяет достаточность данных
  - Проверяет корректность параметров
 
@@ -707,16 +707,16 @@ def monte_carlo_backtest(data, model, n_simulations=1000, confidence_level=0.95,
  - 'std_max_drawdown': float - стандартное отклонение максимальной просадки
  - 'mean_total_return': float - средняя общая доходность
  - 'std_total_return': float - стандартное отклонение общей доходности
- - 'confidence_interval': list - доверительный интервал for коэффициента Шарпа
+ - 'confidence_interval': List - доверительный интервал for коэффициента Шарпа
  - 'percentiles': dict - перцентили for всех метрик
  - 'success_rate': float - доля успешных симуляций (sharpe > 1.0)
- - 'results': pd.DataFrame - детальные результаты всех симуляций
- - 'config_used': dict - использованная configuration
+ - 'results': pd.dataFrame - детальные результаты всех симуляций
+ - 'config_Used': dict - использованная configuration
 
  Raises:
  -------
  ValueError
- Если данные недостаточны or parameters некорректны
+ Если data недостаточны or parameters некорректны
  TypeError
  Если модель not поддерживает необходимые методы
 
@@ -759,7 +759,7 @@ def monte_carlo_backtest(data, model, n_simulations=1000, confidence_level=0.95,
  # Валидация входных данных
  if validation:
  if 'returns' not in data.columns:
- raise ValueError("Колонка 'returns' not найдена in данных")
+ raise ValueError("Колонка 'returns' not foundа in данных")
 
  if len(data) < config['min_samples']:
  raise ValueError(f"Недостаточно данных. Минимум: {config['min_samples']}")
@@ -865,8 +865,8 @@ def monte_carlo_backtest(data, model, n_simulations=1000, confidence_level=0.95,
  if not results:
  raise ValueError("not удалось выполнить ни одной успешной симуляции")
 
- # create DataFrame
- results_df = pd.DataFrame(results)
+ # create dataFrame
+ results_df = pd.dataFrame(results)
 
  # Статистический анализ
  mean_sharpe = results_df['sharpe'].mean()
@@ -903,7 +903,7 @@ def monte_carlo_backtest(data, model, n_simulations=1000, confidence_level=0.95,
  'percentiles': percentiles,
  'success_rate': success_rate,
  'results': results_df,
- 'config_used': config.copy(),
+ 'config_Used': config.copy(),
  'successful_simulations': successful_simulations
  }
 
@@ -929,7 +929,7 @@ def bootstrap_backtest(data, model, n_bootstrap=1000, block_size=10,
 
  Parameters:
  -----------
- data : pd.DataFrame
+ data : pd.dataFrame
  Временной ряд данных with колонками 'returns' and другими приsignми
  - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
@@ -938,7 +938,7 @@ def bootstrap_backtest(data, model, n_bootstrap=1000, block_size=10,
  model : object
  Обученная ML модель with методами fit() and predict()
  - Должен поддерживать fit(X, y) for обучения
- - Должен поддерживать predict(X) for predictions
+ - Должен поддерживать predict(X) for Predictions
  - Рекомендуется использовать TabularPredictor из AutoGluon
 
  n_bootstrap : int, default=1000
@@ -973,7 +973,7 @@ def bootstrap_backtest(data, model, n_bootstrap=1000, block_size=10,
 
  validation : bool, default=True
  Выполнять ли валидацию входных данных
- - Проверяет наличие колонки 'returns'
+ - Проверяет presence колонки 'returns'
  - Проверяет достаточность данных
  - Проверяет корректность параметров
 
@@ -984,8 +984,8 @@ def bootstrap_backtest(data, model, n_bootstrap=1000, block_size=10,
 
  Returns:
  --------
- pd.DataFrame
- DataFrame with результатами бутстрап бэктестинга:
+ pd.dataFrame
+ dataFrame with результатами бутстрап бэктестинга:
  - 'bootstrap': int - номер бутстрап итерации
  - 'sharpe': float - коэффициент Шарпа стратегии
  - 'max_drawdown': float - максимальная просадка
@@ -1000,7 +1000,7 @@ def bootstrap_backtest(data, model, n_bootstrap=1000, block_size=10,
  Raises:
  -------
  ValueError
- Если данные недостаточны or parameters некорректны
+ Если data недостаточны or parameters некорректны
  TypeError
  Если модель not поддерживает необходимые методы
 
@@ -1044,7 +1044,7 @@ def bootstrap_backtest(data, model, n_bootstrap=1000, block_size=10,
  # Валидация входных данных
  if validation:
  if 'returns' not in data.columns:
- raise ValueError("Колонка 'returns' not найдена in данных")
+ raise ValueError("Колонка 'returns' not foundа in данных")
 
  if len(data) < config['min_samples']:
  raise ValueError(f"Недостаточно данных. Минимум: {config['min_samples']}")
@@ -1167,8 +1167,8 @@ def bootstrap_backtest(data, model, n_bootstrap=1000, block_size=10,
  if not results:
  raise ValueError("not удалось выполнить ни одной успешной бутстрап итерации")
 
- # create DataFrame
- results_df = pd.DataFrame(results)
+ # create dataFrame
+ results_df = pd.dataFrame(results)
 
  if config['verbose']:
  print(f"Бутстрап бэктестинг завершен. Успешных итераций: {successful_bootstraps}")
@@ -1188,7 +1188,7 @@ bootstrap_results = bootstrap_backtest(data, model, n_bootstrap=1000, block_size
 
 ```mermaid
 graph TD
- A[Исходные данные] --> B[Применение стрессовых сценариев]
+ A[Исходные data] --> B[Применение стрессовых сценариев]
 
  B --> C[Обвал рынка<br/>volatility_multiplier: 3.0<br/>return_shift: -0.1]
  B --> D[Высокая волатильность<br/>volatility_multiplier: 2.0<br/>return_shift: 0.0]
@@ -1243,7 +1243,7 @@ def stress_test_backtest(data, model, stress_scenarios, config=None, validation=
 
  Parameters:
  -----------
- data : pd.DataFrame
+ data : pd.dataFrame
  Временной ряд данных with колонками 'returns' and другими приsignми
  - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
@@ -1252,7 +1252,7 @@ def stress_test_backtest(data, model, stress_scenarios, config=None, validation=
  model : object
  Обученная ML модель with методами fit() and predict()
  - Должен поддерживать fit(X, y) for обучения
- - Должен поддерживать predict(X) for predictions
+ - Должен поддерживать predict(X) for Predictions
  - Рекомендуется использовать TabularPredictor из AutoGluon
 
  stress_scenarios : dict
@@ -1282,7 +1282,7 @@ def stress_test_backtest(data, model, stress_scenarios, config=None, validation=
 
  validation : bool, default=True
  Выполнять ли валидацию входных данных
- - Проверяет наличие колонки 'returns'
+ - Проверяет presence колонки 'returns'
  - Проверяет достаточность данных
  - Проверяет корректность сценариев
 
@@ -1299,12 +1299,12 @@ def stress_test_backtest(data, model, stress_scenarios, config=None, validation=
  - 'comparison_metrics': dict - сравнительные метрики
  - 'scenario_rankings': dict - ранжирование сценариев
  - 'overall_assessment': dict - общая оценка устойчивости
- - 'config_used': dict - использованная configuration
+ - 'config_Used': dict - использованная configuration
 
  Raises:
  -------
  ValueError
- Если данные недостаточны or parameters некорректны
+ Если data недостаточны or parameters некорректны
  TypeError
  Если модель not поддерживает необходимые методы
 
@@ -1351,7 +1351,7 @@ def stress_test_backtest(data, model, stress_scenarios, config=None, validation=
  # Валидация входных данных
  if validation:
  if 'returns' not in data.columns:
- raise ValueError("Колонка 'returns' not найдена in данных")
+ raise ValueError("Колонка 'returns' not foundа in данных")
 
  if len(data) < config['min_samples']:
  raise ValueError(f"Недостаточно данных. Минимум: {config['min_samples']}")
@@ -1487,7 +1487,7 @@ def stress_test_backtest(data, model, stress_scenarios, config=None, validation=
  'comparison_metrics': comparison_metrics,
  'scenario_rankings': scenario_rankings,
  'overall_assessment': overall_assessment,
- 'config_used': config.copy()
+ 'config_Used': config.copy()
  }
 
  if config['verbose']:
@@ -1517,7 +1517,7 @@ def regime_based_backtest(data, model, regime_detector, config=None, validation=
 
  Parameters:
  -----------
- data : pd.DataFrame
+ data : pd.dataFrame
  Временной ряд данных with колонками 'returns' and другими приsignми
  - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
@@ -1526,7 +1526,7 @@ def regime_based_backtest(data, model, regime_detector, config=None, validation=
  model : object
  Обученная ML модель with методами fit() and predict()
  - Должен поддерживать fit(X, y) for обучения
- - Должен поддерживать predict(X) for predictions
+ - Должен поддерживать predict(X) for Predictions
  - Рекомендуется использовать TabularPredictor из AutoGluon
 
  regime_detector : object
@@ -1551,7 +1551,7 @@ def regime_based_backtest(data, model, regime_detector, config=None, validation=
 
  validation : bool, default=True
  Выполнять ли валидацию входных данных
- - Проверяет наличие колонки 'returns'
+ - Проверяет presence колонки 'returns'
  - Проверяет достаточность данных
  - Проверяет корректность детектора режимов
 
@@ -1569,12 +1569,12 @@ def regime_based_backtest(data, model, regime_detector, config=None, validation=
  - 'regime_rankings': dict - ранжирование режимов
  - 'overall_assessment': dict - общая оценка on режимам
  - 'regime_transitions': dict - анализ переходов между режимами
- - 'config_used': dict - использованная configuration
+ - 'config_Used': dict - использованная configuration
 
  Raises:
  -------
  ValueError
- Если данные недостаточны or parameters некорректны
+ Если data недостаточны or parameters некорректны
  TypeError
  Если модель or детектор режимов not поддерживают необходимые методы
 
@@ -1616,7 +1616,7 @@ def regime_based_backtest(data, model, regime_detector, config=None, validation=
  # Валидация входных данных
  if validation:
  if 'returns' not in data.columns:
- raise ValueError("Колонка 'returns' not найдена in данных")
+ raise ValueError("Колонка 'returns' not foundа in данных")
 
  if len(data) < config['min_samples_per_regime'] * 2:
  raise ValueError(f"Недостаточно данных. Минимум: {config['min_samples_per_regime'] * 2}")
@@ -1655,7 +1655,7 @@ def regime_based_backtest(data, model, regime_detector, config=None, validation=
  if config['verbose']:
  print(f"Тестируем режим: {regime}")
 
- # Данные for режима
+ # data for режима
  regime_data = data[regimes == regime]
 
  # check минимального количества образцов
@@ -1774,7 +1774,7 @@ def regime_based_backtest(data, model, regime_detector, config=None, validation=
  'regime_rankings': regime_rankings,
  'overall_assessment': overall_assessment,
  'regime_transitions': regime_transitions,
- 'config_used': config.copy()
+ 'config_Used': config.copy()
  }
 
  if config['verbose']:
@@ -1804,7 +1804,7 @@ graph TD
  C --> F[Предсказания стратегии 2]
  D --> G[Предсказания стратегии 3]
 
- E --> H[Взвешивание predictions]
+ E --> H[Взвешивание Predictions]
  F --> H
  G --> H
 
@@ -1846,20 +1846,20 @@ graph TD
 **Тестирование портфеля стратегий:**
 
 ```python
-def portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
+def Portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
  config=None, validation=True, random_state=None):
  """
  Бэктестинг портфеля стратегий with детальными параметрами
 
  Parameters:
  -----------
- strategies : list
- Список стратегий for портфеля
+ strategies : List
+ List стратегий for портфеля
  - Каждая стратегия должна иметь методы fit() and predict()
  - Рекомендуется использовать TabularPredictor из AutoGluon
  - Минимум 2 стратегии for диверсификации
 
- data : pd.DataFrame
+ data : pd.dataFrame
  Временной ряд данных with колонками 'returns' and другими приsignми
  - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
@@ -1899,7 +1899,7 @@ def portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
 
  validation : bool, default=True
  Выполнять ли валидацию входных данных
- - Проверяет наличие колонки 'returns'
+ - Проверяет presence колонки 'returns'
  - Проверяет достаточность данных
  - Проверяет корректность стратегий and весов
 
@@ -1912,24 +1912,24 @@ def portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
  --------
  dict
  Словарь with результатами портфельного бэктестинга:
- - 'portfolio_metrics': dict - метрики портфеля
+ - 'Portfolio_metrics': dict - метрики портфеля
  - 'individual_metrics': dict - метрики отдельных стратегий
  - 'rebalancing_info': dict - информация о перебалансировке
  - 'risk_metrics': dict - метрики риска портфеля
  - 'diversification_metrics': dict - метрики диверсификации
- - 'config_used': dict - использованная configuration
+ - 'config_Used': dict - использованная configuration
 
  Raises:
  -------
  ValueError
- Если данные недостаточны or parameters некорректны
+ Если data недостаточны or parameters некорректны
  TypeError
  Если стратегии not поддерживают необходимые методы
 
  Examples:
  ---------
  >>> # Базовое использование
- >>> results = portfolio_backtest(strategies, data)
+ >>> results = Portfolio_backtest(strategies, data)
  >>>
  >>> # with кастомной конфигурацией
  >>> config = {
@@ -1941,10 +1941,10 @@ def portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
  ... 'parallel': True,
  ... 'n_jobs': 4
  ... }
- >>> results = portfolio_backtest(strategies, data, weights=[0.4, 0.3, 0.3], config=config)
+ >>> results = Portfolio_backtest(strategies, data, weights=[0.4, 0.3, 0.3], config=config)
  >>>
  >>> # Без валидации (быстрее, но менее безопасно)
- >>> results = portfolio_backtest(strategies, data, validation=False)
+ >>> results = Portfolio_backtest(strategies, data, validation=False)
  """
  # configuration on умолчанию
  if config is None:
@@ -1968,7 +1968,7 @@ def portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
  # Валидация входных данных
  if validation:
  if 'returns' not in data.columns:
- raise ValueError("Колонка 'returns' not найдена in данных")
+ raise ValueError("Колонка 'returns' not foundа in данных")
 
  if len(data) < config['min_samples']:
  raise ValueError(f"Недостаточно данных. Минимум: {config['min_samples']}")
@@ -2033,7 +2033,7 @@ def portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
  print(f"Ошибка обучения стратегии {i+1}: {e}")
  continue
 
- # Получение predictions from всех стратегий
+ # Получение Predictions from всех стратегий
  Predictions = {}
  individual_returns = {}
 
@@ -2050,36 +2050,36 @@ def portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
  if not Predictions:
  raise ValueError("not удалось получить предсказания ни from одной стратегии")
 
- # create DataFrame with предсказаниями
- Predictions_df = pd.DataFrame(Predictions)
+ # create dataFrame with предсказаниями
+ Predictions_df = pd.dataFrame(Predictions)
 
- # Взвешивание predictions
+ # Взвешивание Predictions
  weighted_Predictions = (Predictions_df * weights).sum(axis=1)
 
  # Расчет доходности портфеля
  returns = test_data['returns']
- portfolio_returns = weighted_Predictions * returns
+ Portfolio_returns = weighted_Predictions * returns
 
  # Применение транзакционных издержек and проскальзывания
  if config['transaction_costs'] > 0 or config['slippage'] > 0:
  total_costs = config['transaction_costs'] + config['slippage']
- portfolio_returns = portfolio_returns - total_costs
+ Portfolio_returns = Portfolio_returns - total_costs
 
  # Базовые метрики портфеля
- sharpe = portfolio_returns.mean() / portfolio_returns.std() * np.sqrt(252) if portfolio_returns.std() > 0 else 0
- max_drawdown = calculate_max_drawdown(portfolio_returns)
- total_return = portfolio_returns.sum()
- volatility = portfolio_returns.std() * np.sqrt(252)
- annual_return = portfolio_returns.mean() * 252
+ sharpe = Portfolio_returns.mean() / Portfolio_returns.std() * np.sqrt(252) if Portfolio_returns.std() > 0 else 0
+ max_drawdown = calculate_max_drawdown(Portfolio_returns)
+ total_return = Portfolio_returns.sum()
+ volatility = Portfolio_returns.std() * np.sqrt(252)
+ annual_return = Portfolio_returns.mean() * 252
 
  # Метрики портфеля
- portfolio_metrics = {
+ Portfolio_metrics = {
  'sharpe': sharpe,
  'max_drawdown': max_drawdown,
  'total_return': total_return,
  'volatility': volatility,
  'annual_return': annual_return,
- 'weights': weights.tolist()
+ 'weights': weights.toList()
  }
 
  # Метрики отдельных стратегий
@@ -2104,12 +2104,12 @@ def portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
 
  # Метрики риска портфеля
  risk_metrics = {
- 'var_95': np.percentile(portfolio_returns, 5),
- 'var_99': np.percentile(portfolio_returns, 1),
- 'cvar_95': portfolio_returns[portfolio_returns <= np.percentile(portfolio_returns, 5)].mean(),
- 'cvar_99': portfolio_returns[portfolio_returns <= np.percentile(portfolio_returns, 1)].mean(),
- 'skewness': portfolio_returns.skew(),
- 'kurtosis': portfolio_returns.kurtosis()
+ 'var_95': np.percentile(Portfolio_returns, 5),
+ 'var_99': np.percentile(Portfolio_returns, 1),
+ 'cvar_95': Portfolio_returns[Portfolio_returns <= np.percentile(Portfolio_returns, 5)].mean(),
+ 'cvar_99': Portfolio_returns[Portfolio_returns <= np.percentile(Portfolio_returns, 1)].mean(),
+ 'skewness': Portfolio_returns.skew(),
+ 'kurtosis': Portfolio_returns.kurtosis()
  }
 
  # Метрики диверсификации
@@ -2123,12 +2123,12 @@ def portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
 
  # Финальные результаты
  final_results = {
- 'portfolio_metrics': portfolio_metrics,
+ 'Portfolio_metrics': Portfolio_metrics,
  'individual_metrics': individual_metrics,
  'rebalancing_info': rebalancing_info,
  'risk_metrics': risk_metrics,
  'diversification_metrics': diversification_metrics,
- 'config_used': config.copy()
+ 'config_Used': config.copy()
  }
 
  # Дополнительные результаты
@@ -2137,7 +2137,7 @@ def portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
  final_results['weighted_Predictions'] = weighted_Predictions
 
  if config['return_metrics']:
- final_results['portfolio_returns'] = portfolio_returns
+ final_results['Portfolio_returns'] = Portfolio_returns
  final_results['individual_returns'] = individual_returns
 
  if config['verbose']:
@@ -2150,7 +2150,7 @@ def portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
  return final_results
 
 # example использования
-portfolio_results = portfolio_backtest(strategies, data, weights=[0.4, 0.3, 0.3])
+Portfolio_results = Portfolio_backtest(strategies, data, weights=[0.4, 0.3, 0.3])
 ```
 
 **Динамическое перебалансирование:**
@@ -2163,13 +2163,13 @@ def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
 
  Parameters:
  -----------
- strategies : list
- Список стратегий for портфеля
+ strategies : List
+ List стратегий for портфеля
  - Каждая стратегия должна иметь методы fit() and predict()
  - Рекомендуется использовать TabularPredictor из AutoGluon
  - Минимум 2 стратегии for диверсификации
 
- data : pd.DataFrame
+ data : pd.dataFrame
  Временной ряд данных with колонками 'returns' and другими приsignми
  - Должен быть отсортирован in time
  - Должен содержать колонку 'returns' with доходностями
@@ -2213,7 +2213,7 @@ def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
 
  validation : bool, default=True
  Выполнять ли валидацию входных данных
- - Проверяет наличие колонки 'returns'
+ - Проверяет presence колонки 'returns'
  - Проверяет достаточность данных
  - Проверяет корректность стратегий
 
@@ -2224,14 +2224,14 @@ def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
 
  Returns:
  --------
- pd.DataFrame
- DataFrame with результатами динамического бэктестинга:
+ pd.dataFrame
+ dataFrame with результатами динамического бэктестинга:
  - 'date': datetime - дата перебалансировки
  - 'sharpe': float - коэффициент Шарпа портфеля
  - 'return': float - доходность портфеля
  - 'volatility': float - волатильность портфеля
  - 'max_drawdown': float - максимальная просадка
- - 'weights': list - веса стратегий
+ - 'weights': List - веса стратегий
  - 'rebalance_cost': float - стоимость перебалансировки
  - 'strategy_returns': dict - доходности отдельных стратегий
  - 'Predictions': dict - предсказания стратегий (если return_Predictions=True)
@@ -2239,7 +2239,7 @@ def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
  Raises:
  -------
  ValueError
- Если данные недостаточны or parameters некорректны
+ Если data недостаточны or parameters некорректны
  TypeError
  Если стратегии not поддерживают необходимые методы
 
@@ -2287,7 +2287,7 @@ def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
  # Валидация входных данных
  if validation:
  if 'returns' not in data.columns:
- raise ValueError("Колонка 'returns' not найдена in данных")
+ raise ValueError("Колонка 'returns' not foundа in данных")
 
  if len(data) < config['min_samples']:
  raise ValueError(f"Недостаточно данных. Минимум: {config['min_samples']}")
@@ -2317,10 +2317,10 @@ def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
  # Основной цикл динамического бэктестинга
  for i in range(lookback_window, len(data) - config['test_window'] + 1, config['test_window']):
  try:
- # Обучающие данные
+ # Обучающие data
  train_data = data[i-lookback_window:i]
 
- # Тестовые данные
+ # Тестовые data
  test_data = data[i:i+config['test_window']]
 
  # Обучение всех стратегий
@@ -2364,25 +2364,25 @@ def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
  if previous_weights is not None and config['weight_smoothing'] > 0:
  weights = (1 - config['weight_smoothing']) * weights + config['weight_smoothing'] * previous_weights
 
- # Взвешивание predictions
+ # Взвешивание Predictions
  weighted_Predictions = sum(w * p for w, p in zip(weights, strategy_Predictions.values()))
 
  # Расчет доходности портфеля
  returns = test_data['returns']
- portfolio_returns = weighted_Predictions * returns
+ Portfolio_returns = weighted_Predictions * returns
 
  # Применение транзакционных издержек and проскальзывания
  rebalance_cost = 0.0
  if previous_weights is not None:
  weight_change = np.abs(weights - previous_weights).sum()
  rebalance_cost = weight_change * (config['transaction_costs'] + config['slippage'])
- portfolio_returns = portfolio_returns - rebalance_cost
+ Portfolio_returns = Portfolio_returns - rebalance_cost
 
  # Базовые метрики
- sharpe = portfolio_returns.mean() / portfolio_returns.std() * np.sqrt(252) if portfolio_returns.std() > 0 else 0
- max_drawdown = calculate_max_drawdown(portfolio_returns)
- total_return = portfolio_returns.sum()
- volatility = portfolio_returns.std() * np.sqrt(252)
+ sharpe = Portfolio_returns.mean() / Portfolio_returns.std() * np.sqrt(252) if Portfolio_returns.std() > 0 else 0
+ max_drawdown = calculate_max_drawdown(Portfolio_returns)
+ total_return = Portfolio_returns.sum()
+ volatility = Portfolio_returns.std() * np.sqrt(252)
 
  # Результат итерации
  result = {
@@ -2391,7 +2391,7 @@ def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
  'return': total_return,
  'volatility': volatility,
  'max_drawdown': max_drawdown,
- 'weights': weights.tolist(),
+ 'weights': weights.toList(),
  'rebalance_cost': rebalance_cost,
  'strategy_returns': {k: v.sum() for k, v in strategy_returns.items()}
  }
@@ -2414,8 +2414,8 @@ def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
  if not results:
  raise ValueError("not удалось выполнить ни одной успешной итерации динамического бэктестинга")
 
- # create DataFrame
- results_df = pd.DataFrame(results)
+ # create dataFrame
+ results_df = pd.dataFrame(results)
 
  if config['verbose']:
  print(f"Динамический бэктестинг завершен. Успешных итераций: {len(results_df)}")
@@ -2506,7 +2506,7 @@ def calculate_basic_metrics(returns, config=None, validation=True):
 
  validation : bool, default=True
  Выполнять ли валидацию входных данных
- - Проверяет наличие данных
+ - Проверяет presence данных
  - Проверяет достаточность данных
  - Проверяет корректность параметров
 
@@ -2531,9 +2531,9 @@ def calculate_basic_metrics(returns, config=None, validation=True):
  Raises:
  -------
  ValueError
- Если данные недостаточны or parameters некорректны
+ Если data недостаточны or parameters некорректны
  TypeError
- Если данные not являются числовыми
+ Если data not являются числовыми
 
  Examples:
  ---------
@@ -2574,7 +2574,7 @@ def calculate_basic_metrics(returns, config=None, validation=True):
  raise ValueError(f"Недостаточно данных. Минимум: {config['min_periods']}")
 
  if not np.isfinite(returns).any():
- raise ValueError("Данные not содержат конечных значений")
+ raise ValueError("data not содержат конечных значений")
 
  if not (0 < config['trading_days'] <= 365):
  raise ValueError("trading_days должно быть между 1 and 365")
@@ -2653,8 +2653,8 @@ def calculate_basic_metrics(returns, config=None, validation=True):
  from statsmodels.tsa.stattools import acf
  autocorr = acf(returns_clean, nlags=10, fft=False)
  results['autocorr'] = {
- 'lags': list(range(len(autocorr))),
- 'values': autocorr.tolist(),
+ 'lags': List(range(len(autocorr))),
+ 'values': autocorr.toList(),
  'max_autocorr': np.max(np.abs(autocorr[1:])),
  'has_autocorr': np.max(np.abs(autocorr[1:])) > 0.1
  }
@@ -2665,7 +2665,7 @@ def calculate_basic_metrics(returns, config=None, validation=True):
  if config['include_stationarity']:
  try:
  from statsmodels.tsa.stattools import adfuller
- adf_stat, adf_pvalue, adf_critical, adf_usedlag = adfuller(returns_clean)
+ adf_stat, adf_pvalue, adf_critical, adf_Usedlag = adfuller(returns_clean)
  results['stationarity'] = {
  'adf_statistic': adf_stat,
  'adf_pvalue': adf_pvalue,
@@ -2715,7 +2715,7 @@ def calculate_max_drawdown(returns, config=None, validation=True):
 
  validation : bool, default=True
  Выполнять ли валидацию входных данных
- - Проверяет наличие данных
+ - Проверяет presence данных
  - Проверяет достаточность данных
  - Проверяет корректность параметров
 
@@ -2727,14 +2727,14 @@ def calculate_max_drawdown(returns, config=None, validation=True):
  - 'drawdown_series': pd.Series - серия просадок (если include_drawdown_series=True)
  - 'drawdown_dates': dict - даты просадок (если include_drawdown_dates=True)
  - 'recovery_time': int - время восстановления in днях (если include_recovery_time=True)
- - 'underwater_periods': list - периоды под водой (если include_underwater_periods=True)
+ - 'underwater_periods': List - периоды под водой (если include_underwater_periods=True)
 
  Raises:
  -------
  ValueError
- Если данные недостаточны or parameters некорректны
+ Если data недостаточны or parameters некорректны
  TypeError
- Если данные not являются числовыми
+ Если data not являются числовыми
 
  Examples:
  ---------
@@ -2775,7 +2775,7 @@ def calculate_max_drawdown(returns, config=None, validation=True):
  raise ValueError(f"Недостаточно данных. Минимум: {config['min_periods']}")
 
  if not np.isfinite(returns).any():
- raise ValueError("Данные not содержат конечных значений")
+ raise ValueError("data not содержат конечных значений")
 
  if config['method'] not in ['cumulative', 'rolling', 'peak']:
  raise ValueError("method должен быть 'cumulative', 'rolling' or 'peak'")
@@ -2948,7 +2948,7 @@ def calculate_stability_metrics(returns, window=252, config=None, validation=Tru
 
  validation : bool, default=True
  Выполнять ли валидацию входных данных
- - Проверяет наличие данных
+ - Проверяет presence данных
  - Проверяет достаточность данных
  - Проверяет корректность параметров
 
@@ -2969,9 +2969,9 @@ def calculate_stability_metrics(returns, window=252, config=None, validation=Tru
  Raises:
  -------
  ValueError
- Если данные недостаточны or parameters некорректны
+ Если data недостаточны or parameters некорректны
  TypeError
- Если данные not являются числовыми
+ Если data not являются числовыми
 
  Examples:
  ---------
@@ -3013,7 +3013,7 @@ def calculate_stability_metrics(returns, window=252, config=None, validation=Tru
  raise ValueError(f"Недостаточно данных. Минимум: {config['min_periods']}")
 
  if not np.isfinite(returns).any():
- raise ValueError("Данные not содержат конечных значений")
+ raise ValueError("data not содержат конечных значений")
 
  if not (2 <= window <= len(returns)):
  raise ValueError(f"window должно быть между 2 and {len(returns)}")
@@ -3392,7 +3392,7 @@ overfitting_test = test_overfitting(train_returns, test_returns)
 
 ```mermaid
 graph TD
- A[Исходные данные] --> B[BacktestingPipeline]
+ A[Исходные data] --> B[BacktestingPipeline]
  B --> C[configuration параметров]
 
  C --> D[Простой бэктестинг<br/>train_size: 70%<br/>test_size: 30%]
@@ -3486,10 +3486,10 @@ class BacktestingPipeline:
  results = []
 
  for i in range(train_window, len(self.data) - test_window, step):
- # Обучающие данные
+ # Обучающие data
  train_data = self.data[i-train_window:i]
 
- # Тестовые данные
+ # Тестовые data
  test_data = self.data[i:i+test_window]
 
  # Обучение модели
@@ -3506,7 +3506,7 @@ class BacktestingPipeline:
  metrics['date'] = test_data.index[0]
  results.append(metrics)
 
- self.results['walk_forward'] = pd.DataFrame(results)
+ self.results['walk_forward'] = pd.dataFrame(results)
  return self.results['walk_forward']
 
  def run_monte_carlo_backtest(self, n_simulations=1000, confidence_level=0.95):
@@ -3535,36 +3535,36 @@ class BacktestingPipeline:
  metrics = self.metrics_calculator.calculate(strategy_returns)
  results.append(metrics)
 
- self.results['monte_carlo'] = pd.DataFrame(results)
+ self.results['monte_carlo'] = pd.dataFrame(results)
  return self.results['monte_carlo']
 
- def generate_report(self):
+ def generate_Report(self):
  """Генерация Reportа"""
- report = {
+ Report = {
  'summary': {},
- 'detailed_results': self.results
+ 'Detailed_results': self.results
  }
 
- # Сводка on всем методам
+ # Сводка on all методам
  for method, results in self.results.items():
- if isinstance(results, pd.DataFrame):
- report['summary'][method] = {
+ if isinstance(results, pd.dataFrame):
+ Report['summary'][method] = {
  'mean_sharpe': results['sharpe'].mean(),
  'std_sharpe': results['sharpe'].std(),
  'mean_max_drawdown': results['max_drawdown'].mean(),
  'success_rate': (results['sharpe'] > 1.0).mean()
  }
  else:
- report['summary'][method] = results
+ Report['summary'][method] = results
 
- return report
+ return Report
 
 # example использования
 pipeline = BacktestingPipeline(data, model, metrics_calculator)
 pipeline.run_simple_backtest()
 pipeline.run_walk_forward_backtest()
 pipeline.run_monte_carlo_backtest()
-report = pipeline.generate_report()
+Report = pipeline.generate_Report()
 ```
 
 ### 2. Визуализация результатов
@@ -3576,7 +3576,7 @@ def visualize_backtest_results(results, save_path=None):
  import seaborn as sns
 
  # configuration стиля
- plt.style.use('seaborn-v0_8')
+ plt.style.Use('seaborn-v0_8')
  sns.set_palette("husl")
 
  # create фигуры
@@ -3642,7 +3642,7 @@ visualize_backtest_results(results, save_path='backtest_results.png')
 | **bootstrap_backtest** | `n_bootstrap`, `block_size`, `config` | Бутстрап бэктестинг | n_bootstrap: 500-2000, block_size: 5-20 | 1000 итераций, block_size=10 |
 | **stress_test_backtest** | `stress_scenarios`, `config`, `validation` | Стресс-тестинг стратегии | scenarios: 3-10, volatility_multiplier: 0.5-3.0 | 5-7 сценариев, including экстремальные |
 | **regime_based_backtest** | `regime_detector`, `config`, `validation` | Бэктестинг on рыночным режимам | min_samples_per_regime: 50-100 | 50 образцов on режим минимум |
-| **portfolio_backtest** | `strategies`, `weights`, `rebalance_freq`, `config` | Портфельный бэктестинг | strategies: 2-10, rebalance_freq: 'M' | 3-5 стратегий, ежемесячная перебалансировка |
+| **Portfolio_backtest** | `strategies`, `weights`, `rebalance_freq`, `config` | Портфельный бэктестинг | strategies: 2-10, rebalance_freq: 'M' | 3-5 стратегий, ежемесячная перебалансировка |
 | **dynamic_rebalance_backtest** | `rebalance_freq`, `lookback_window`, `config` | Динамическое перебалансирование | lookback_window: 100-500, test_window: 30-60 | 252 дня обучения, 30 дней тестирования |
 
 ### 🔧 Конфигурационные parameters
@@ -3682,7 +3682,7 @@ visualize_backtest_results(results, save_path='backtest_results.png')
 
 - Use `monte_carlo_backtest` with `n_simulations=1000`
 - Добавьте `stress_test_backtest` with 5-7 сценариями
-- Use `portfolio_backtest` with 3-5 стратегиями
+- Use `Portfolio_backtest` with 3-5 стратегиями
 - Включите продвинутые метрики: Sortino, Calmar, Stability
 
 #### for продакшена
@@ -3699,7 +3699,7 @@ visualize_backtest_results(results, save_path='backtest_results.png')
 | "Недостаточно данных" | Слишком мало образцов | Увеличить `min_samples` or собрать больше данных |
 | "Переобучение" | train_sharpe >> test_sharpe | Уменьшить `train_size`, добавить регуляризацию |
 | "Нестабильные результаты" | Высокая волатильность метрик | Увеличить `n_simulations`, улучшить модель |
-| "Медленная работа" | Слишком много симуляций | Уменьшить `n_simulations`, использовать `parallel=True` |
+| "Медленная Working" | Слишком много симуляций | Уменьшить `n_simulations`, использовать `parallel=True` |
 | "Неточные результаты" | Неправильные parameters | Проверить `validation=True`, настроить `config` |
 
 ## Заключение
@@ -3713,7 +3713,7 @@ visualize_backtest_results(results, save_path='backtest_results.png')
 
 ### Ключевые принципы
 
-1. **Реалистичность** - Use реалистичные данные and условия
+1. **Реалистичность** - Use реалистичные data and условия
 2. **Статистическая значимость** - проверяйте значимость результатов
 3. **Экономическая значимость** - учитывайте транзакционные издержки
 4. **Робастность** - тестируйте on разных рыночных условиях
@@ -3723,6 +3723,6 @@ visualize_backtest_results(results, save_path='backtest_results.png')
 
 После освоения бэктестинга переходите к:
 
-- [Walk-forward анализу](./28_walk_forward_analysis.md)
+- [Walk-forward анализу](./28_walk_forward_Analysis.md)
 - [Monte Carlo симуляциям](./29_monte_carlo_simulations.md)
-- [Управлению портфолио](./30_portfolio_management.md)
+- [Управлению Portfolio](./30_Portfolio_Management.md)

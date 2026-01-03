@@ -68,7 +68,7 @@ graph TB
  I --> J[Model Instances]
 
  J --> K[Instance 1<br/>Code Generation]
- J --> L[Instance 2<br/>Code Review]
+ J --> L[Instance 2<br/>Code ReView]
  J --> M[Instance 3<br/>Documentation]
  J --> N[Instance 4<br/>testing]
  end
@@ -91,7 +91,7 @@ graph TB
  style E fill:#fff8e1
 ```
 
-### Компоненты системы
+### components системы
 
 1. **Docker Desktop**: Контейнеризация and изоляция
 2. **MLX Framework**: Оптимизация for Apple Silicon
@@ -110,11 +110,11 @@ curl -L "https://desktop.docker.com/mac/main/arm64/Docker.dmg" -o ~/Downloads/Do
 
 # Монтируем and устанавливаем
 hdiutil attach ~/Downloads/Docker.dmg
-sudo cp -R /Volumes/Docker/Docker.app /Applications/
+sudo cp -R /Volumes/Docker/Docker.app /applications/
 hdiutil detach /Volumes/Docker
 
 # Launchаем Docker Desktop
-open /Applications/Docker.app
+open /applications/Docker.app
 ```
 
 #### 1.2 configuration Docker for Apple Silicon
@@ -122,7 +122,7 @@ open /Applications/Docker.app
 ```yaml
 # docker-compose.yml
 Version: '3.8'
-services:
+Services:
  vllm-server:
  image: vllm/vllm-openai:latest # Официальный образ vLLM with поддержкой OpenAI API
  platform: linux/arm64 # platform for Apple Silicon (M1/M2/M3)
@@ -133,10 +133,10 @@ services:
  - ./cache:/cache # Монтирование папки cache for acceleration
  environment:
  - CUDA_VISIBLE_DEVICES="" # Отключаем CUDA (not нужен for Apple Silicon)
- - VLLM_USE_MODELSCOPE=false # Отключаем ModelScope (используем HuggingFace)
+ - VLLM_Use_MODELSCOPE=false # Отключаем ModelScope (Use HuggingFace)
  command: >
  --model /models/codellama-7b-instruct # Путь к модели in контейнере
- --host 0.0.0.0 # Привязка ко всем интерфейсам
+ --host 0.0.0.0 # Привязка ко all interfaceам
  --port 8000 # Порт внутри контейнера
  --tensor-parallel-size 1 # Параллелизм тензоров (1 for M3 Pro)
  --gpu-memory-utilization 0.8 # Использование 80% GPU памяти
@@ -159,11 +159,11 @@ services:
 
 #### Переменные окружения:
 - **`CUDA_VISIBLE_DEVICES=""`** - отключает CUDA (not поддерживается on Apple Silicon)
-- **`VLLM_USE_MODELSCOPE=false`** - отключает ModelScope, используем HuggingFace Hub
+- **`VLLM_Use_MODELSCOPE=false`** - отключает ModelScope, Use HuggingFace Hub
 
-#### parameters vLLM команды:
+#### parameters vLLM team:
 - **`--model`**: Путь к модели внутри контейнера
-- **`--host 0.0.0.0`**: Привязка ко всем сетевым интерфейсам (доступ извне)
+- **`--host 0.0.0.0`**: Привязка ко all сетевым interfaceам (доступ извне)
 - **`--port 8000`**: Порт for API внутри контейнера
 - **`--tensor-parallel-size 1`**: Количество GPU for параллелизма (1 for M3 Pro)
 - **`--gpu-memory-utilization 0.8`**: Использование 80% доступной GPU памяти
@@ -228,9 +228,9 @@ class MLXvLLMAdapter:
 
 ### Детальное description параметров MLX конфигурации
 
-#### Основные компоненты MLX:
+#### Основные components MLX:
 - **`mlx.core`**: Основной module MLX for работы with тензорами and операциями
-- **`mlx.nn`**: module нейронных сетей MLX
+- **`mlx.nn`**: module нейронных networks MLX
 - **`mlx_lm`**: Специализированная библиотека for работы with языковыми моделями
 
 #### parameters класса MLXvLLMAdapter:
@@ -273,7 +273,7 @@ FROM python:3.9-slim
 RUN apt-get update && apt-get install -y \
  git \
  build-essential \
- && rm -rf /var/lib/apt/lists/*
+ && rm -rf /var/lib/apt/Lists/*
 
 # Устанавливаем vLLM with поддержкой Apple Silicon
 RUN pip install vllm[apple] --extra-index-url https://download.pytorch.org/whl/cpu
@@ -461,18 +461,18 @@ def download_codellama_model():
  model_name = "codellama/CodeLlama-7b-Instruct-hf"
  local_dir = "./models/codellama-7b-instruct"
 
- print("🔄 Загружаем CodeLlama-7B-Instruct...")
+ print("🔄 Loading CodeLlama-7B-Instruct...")
  print("📱 Оптимизировано for MacBook M3 Pro 16GB")
 
  try:
  # Создаем директорию
  os.makedirs(local_dir, exist_ok=True)
 
- # Загружаем модель
+ # Loading модель
  model_path = hf_hub_download(
  repo_id=model_name,
  local_dir=local_dir,
- local_dir_use_symlinks=False
+ local_dir_Use_symlinks=False
  )
 
  print(f"✅ Модель загружена in: {model_path}")
@@ -511,7 +511,7 @@ class MacBookM3ProConfig:
  "tensor_parallel_size": 1, # M3 Pro имеет единый GPU
  "pipeline_parallel_size": 1,
  "gpu_memory_utilization": 0.75, # 75% from 16GB = 12GB
- "cpu_cores_usage": min(8, self.cpu_cores), # Используем 8 ядер
+ "cpu_cores_usage": min(8, self.cpu_cores), # Use 8 ядер
  "max_model_len": 4096,
  "batch_size": 4,
  "max_tokens": 512,
@@ -567,7 +567,7 @@ config.print_system_info()
  - `0.75` (12GB) - оптимально for стабильной работы
  - `0.8` (12.8GB) - максимальная производительность
  - `0.6` (9.6GB) - если нужна память for других задач
-- **Влияние on систему**: Оставшиеся 4GB for macOS and других приложений
+- **Влияние on system**: Оставшиеся 4GB for macOS and других приложений
 
 #### parameters CPU:
 
@@ -755,16 +755,16 @@ if __name__ == "__main__":
 echo "🚀 Launch локальной LLM for кодинга on MacBook M3 Pro"
 echo "📱 Оптимизировано for Apple Silicon"
 
-# Проверяем Docker
+# checking Docker
 if ! docker info > /dev/null 2>&1; then
  echo "❌ Docker not запущен. Launchаем Docker Desktop..."
- open /Applications/Docker.app
+ open /applications/Docker.app
  sleep 10
 fi
 
-# Проверяем модель
+# checking модель
 if [ ! -d "./models/codellama-7b-instruct" ]; then
- echo "📥 Модель not найдена. Загружаем..."
+ echo "📥 Модель not foundа. Loading..."
  python download_model.py
 fi
 
@@ -776,7 +776,7 @@ docker-compose up -d
 echo "⏳ Ожидаем Launchа сервера..."
 sleep 30
 
-# Проверяем статус
+# checking статус
 if curl -s http://localhost:8000/health > /dev/null; then
  echo "✅ Сервер запущен and готов к работе!"
  echo "🌐 API available on адресу: http://localhost:8000"
@@ -792,7 +792,7 @@ fi
 ### 7.1 Monitoring производительности
 
 ```python
-# monitoring.py
+# Monitoring.py
 import psutil
 import time
 import requests
@@ -823,7 +823,7 @@ class LLMMonitor:
  "timestamp": datetime.now().isoformat(),
  "cpu_percent": psutil.cpu_percent(interval=1),
  "memory_percent": psutil.virtual_memory().percent,
- "memory_used_gb": psutil.virtual_memory().used / (1024**3),
+ "memory_Used_gb": psutil.virtual_memory().Used / (1024**3),
  "memory_available_gb": psutil.virtual_memory().available / (1024**3),
  "disk_usage_percent": psutil.disk_usage('/').percent,
  }
@@ -879,12 +879,12 @@ class LLMMonitor:
  "success": False
  }
 
- def run_monitoring_cycle(self):
+ def run_Monitoring_cycle(self):
  """
  Launchает цикл Monitoringа
 
  Returns:
- dict: Данные текущего цикла Monitoringа
+ dict: data текущего цикла Monitoringа
  """
  system_metrics = self.get_system_metrics()
  llm_metrics = self.get_llm_metrics()
@@ -901,7 +901,7 @@ class LLMMonitor:
  # Выводим текущие метрики
  print(f"📊 Monitoring - {datetime.now().strftime('%H:%M:%S')}")
  print(f" CPU: {system_metrics['cpu_percent']:.1f}%")
- print(f" Память: {system_metrics['memory_percent']:.1f}% ({system_metrics['memory_used_gb']:.1f}GB)")
+ print(f" Память: {system_metrics['memory_percent']:.1f}% ({system_metrics['memory_Used_gb']:.1f}GB)")
  print(f" Время ответа: {response_test.get('response_time', 'N/A'):.2f}s")
  print(f" Status: {'✅' if response_test.get('success') else '❌'}")
  print("-" * 50)
@@ -915,13 +915,13 @@ monitor = LLMMonitor()
 import threading
 import time
 
-def monitoring_loop():
+def Monitoring_loop():
  while True:
- monitor.run_monitoring_cycle()
+ monitor.run_Monitoring_cycle()
  time.sleep(60) # Каждую minutesу
 
-monitoring_thread = threading.Thread(target=monitoring_loop, daemon=True)
-monitoring_thread.start()
+Monitoring_thread = threading.Thread(target=Monitoring_loop, daemon=True)
+Monitoring_thread.start()
 ```
 
 ### Детальное description параметров Monitoringа
@@ -957,9 +957,9 @@ monitoring_thread.start()
  - `>95%` - критическая нехватка памяти
 - **for M3 Pro 16GB**: Рекомендуется держать <85%
 
-##### `memory_used_gb` (float):
+##### `memory_Used_gb` (float):
 - **Назначение**: Использованная память in гигабайтах
-- **Расчет**: `psutil.virtual_memory().used / (1024**3)`
+- **Расчет**: `psutil.virtual_memory().Used / (1024**3)`
 - **for M3 Pro 16GB**: Нормальное значение 8-12GB
 
 ##### `memory_available_gb` (float):
@@ -983,7 +983,7 @@ monitoring_thread.start()
  - `<1s` - отличная производительность
  - `1-3s` - хорошая производительность
  - `3-10s` - приемлемая производительность
- - `>10s` - медленная работа
+ - `>10s` - медленная Working
 
 ##### `status_code` (int):
 - **Назначение**: HTTP статус код ответа
@@ -991,7 +991,7 @@ monitoring_thread.start()
  - `200` - успешный запрос
  - `400` - ошибка in запросе
  - `500` - внутренняя ошибка сервера
- - `503` - сервер неavailable
+ - `503` - сервер not available
 
 ##### `success` (bool):
 - **Назначение**: Успешность выполнения запроса
@@ -1122,7 +1122,7 @@ class MacBookM3ProOptimizer:
  """
  Оптимизирует системные settings macOS
 
- Выполняет системные команды for оптимизации:
+ Выполняет системные team for оптимизации:
  - Отключает энергосбережение CPU
  - Увеличивает лимиты файлов
  """
@@ -1135,7 +1135,7 @@ class MacBookM3ProOptimizer:
 
  # Увеличиваем лимиты файлов
  subprocess.run([
- "sudo", "launchctl", "limit", "maxfiles", "65536", "200000"
+ "sudo", "Launchctl", "limit", "maxfiles", "65536", "200000"
  ], check=False)
 
  print(" ✅ Отключено энергосбережение CPU")
@@ -1286,8 +1286,8 @@ config = optimizer.run_full_optimization()
  - `0.5` - умеренный штраф
  - `1.0` - сильный штраф
 
-##### `stop` (list, default: ["<|endoftext|>", "<|end|>"]):
-- **Назначение**: Список стоп-токенов
+##### `stop` (List, default: ["<|endoftext|>", "<|end|>"]):
+- **Назначение**: List стоп-токенов
 - **Влияние**: Останавливает генерацию при встрече токена
 - **Рекомендация**: Добавить специфичные токены for модели
 
@@ -1316,7 +1316,7 @@ config = optimizer.run_full_optimization()
 
 ##### `maxfiles` (tuple, default: (65536, 200000)):
 - **Назначение**: Лимиты файлов (мягкий, жесткий)
-- **Команда**: `sudo launchctl limit maxfiles 65536 200000`
+- **Команда**: `sudo Launchctl limit maxfiles 65536 200000`
 - **Влияние**: Увеличивает количество открытых файлов
 - **Рекомендация**: Увеличить for работы with большими моделями
 
@@ -1515,7 +1515,7 @@ if __name__ == "__main__":
 
 #### Тестовые промпты:
 
-##### `test_prompts` (list, 10 элементов):
+##### `test_prompts` (List, 10 элементов):
 - **Назначение**: Набор тестовых промптов for бенчмарка
 - **Типы задач**:
  - functions программирования
@@ -1524,7 +1524,7 @@ if __name__ == "__main__":
  - API endpoints
  - Обработка данных
  - Декораторы
- - Работа with файлами
+ - Working with файлами
  - Сетевые операции
  - Шифрование
  - configuration
@@ -1578,7 +1578,7 @@ if __name__ == "__main__":
  - `<1s` - отличная производительность
  - `1-3s` - хорошая производительность
  - `3-10s` - приемлемая производительность
- - `>10s` - медленная работа
+ - `>10s` - медленная Working
 
 ##### `tokens_generated` (int):
 - **Назначение**: Количество сгенерированных токенов
@@ -1609,7 +1609,7 @@ if __name__ == "__main__":
 ##### `failed_requests` (int):
 - **Назначение**: Количество неудачных запросов
 - **Расчет**: `total_requests - successful_requests`
-- **Использование**: for analysis ошибок
+- **Использование**: for Analysis ошибок
 
 ##### `total_time` (float):
 - **Назначение**: Общее время выполнения всех запросов
@@ -1649,7 +1649,7 @@ if __name__ == "__main__":
 graph TD
  A[Проблема with LLM] --> B{Тип проблемы}
 
- B -->|Медленная работа| C[Проблемы производительности]
+ B -->|Медленная Working| C[Проблемы производительности]
  B -->|Ошибки памяти| D[Проблемы памяти]
  B -->|not Launchается| E[Проблемы Launchа]
  B -->|Плохое качество| F[Проблемы качества]
@@ -1698,20 +1698,20 @@ class LLMDiagnostics:
  print("🐳 check Docker...")
 
  try:
- # Проверяем Docker daemon
+ # checking Docker daemon
  self.docker_client.ping()
- print(" ✅ Docker daemon работает")
+ print(" ✅ Docker daemon Workingет")
 
- # Проверяем контейнеры
- containers = self.docker_client.containers.list()
+ # checking контейнеры
+ containers = self.docker_client.containers.List()
  vllm_containers = [c for c in containers if 'vllm' in c.name.lower()]
 
  if vllm_containers:
- print(f" ✅ Найдено {len(vllm_containers)} vLLM контейнеров")
+ print(f" ✅ foundо {len(vllm_containers)} vLLM контейнеров")
  for container in vllm_containers:
  print(f" - {container.name}: {container.status}")
  else:
- print(" ❌ vLLM контейнеры not найдены")
+ print(" ❌ vLLM контейнеры not foundы")
  return False
 
  return True
@@ -1730,13 +1730,13 @@ class LLMDiagnostics:
 
  # Память
  memory = psutil.virtual_memory()
- print(f" Память: {memory.percent:.1f}% ({memory.used / (1024**3):.1f}GB / {memory.total / (1024**3):.1f}GB)")
+ print(f" Память: {memory.percent:.1f}% ({memory.Used / (1024**3):.1f}GB / {memory.total / (1024**3):.1f}GB)")
 
  # Диск
  disk = psutil.disk_usage('/')
- print(f" Диск: {disk.percent:.1f}% ({disk.used / (1024**3):.1f}GB / {disk.total / (1024**3):.1f}GB)")
+ print(f" Диск: {disk.percent:.1f}% ({disk.Used / (1024**3):.1f}GB / {disk.total / (1024**3):.1f}GB)")
 
- # Проверяем, достаточно ли ресурсов
+ # checking, достаточно ли ресурсов
  if memory.percent > 90:
  print(" ⚠️ Высокое использование памяти!")
  return False
@@ -1753,17 +1753,17 @@ class LLMDiagnostics:
  print("\n🌐 check API endpoint...")
 
  try:
- # Проверяем health endpoint
+ # checking health endpoint
  response = requests.get("http://localhost:8000/health", timeout=5)
  if response.status_code == 200:
- print(" ✅ Health endpoint отвечает")
+ print(" ✅ health endpoint отвечает")
  else:
- print(f" ⚠️ Health endpoint вернул код: {response.status_code}")
+ print(f" ⚠️ health endpoint вернул код: {response.status_code}")
  except:
- print(" ❌ Health endpoint неavailable")
+ print(" ❌ health endpoint not available")
 
  try:
- # Проверяем completions endpoint
+ # checking completions endpoint
  response = requests.post(
  "http://localhost:8000/v1/completions",
  json={
@@ -1774,7 +1774,7 @@ class LLMDiagnostics:
  )
 
  if response.status_code == 200:
- print(" ✅ Completions endpoint работает")
+ print(" ✅ Completions endpoint Workingет")
  return True
  else:
  print(f" ❌ Completions endpoint вернул код: {response.status_code}")
@@ -1798,9 +1798,9 @@ class LLMDiagnostics:
  for path in model_paths:
  try:
  with open(path, 'r') as f:
- print(f" ✅ {path} найден")
+ print(f" ✅ {path} found")
  except:
- print(f" ❌ {path} not найден")
+ print(f" ❌ {path} not found")
  all_exist = False
 
  return all_exist
@@ -1829,7 +1829,7 @@ class LLMDiagnostics:
  all_good = all(results.values())
 
  if all_good:
- print("\n🎉 Все системы работают нормально!")
+ print("\n🎉 Все системы Workingют нормально!")
  else:
  print("\n⚠️ Обнаружены проблемы. Проверьте логи выше.")
 

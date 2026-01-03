@@ -6,10 +6,10 @@
 
 **Теория:** Подавляющее большинство Hedge fundов показывает низкую доходность из-за фундаментальных проблем in их подходах к торговле and инвестированию. Понимание этих проблем критически важно for создания прибыльных систем.
 
-**Почему большинство фондов неэффективны:**
+**Почему большинство funds неэффективны:**
 - **Системные проблемы:** Фундаментальные проблемы in методологии
 - **Отсутствие инноваций:** Использование устаревших подходов
-- **Неправильное управление рисками:** Неэффективные стратегии управления рисками
+- **Неправильное Management рисками:** Неэффективные стратегии управления рисками
 - **Отсутствие адаптации:** Неспособность адаптироваться к изменениям рынка
 
 ### Основные проблемы традиционных подходов
@@ -18,7 +18,7 @@
 
 1. **Переобучение on исторических данных**
  - **Теория:** Модели обучаются on исторических данных and теряют способность к обобщению
- - **Почему проблематично:** Исторические данные not всегда отражают будущие условия
+ - **Почему проблематично:** Исторические data not всегда отражают будущие условия
  - **Плюсы:** Хорошая производительность on исторических данных
  - **Минусы:** Плохая производительность on новых данных, переобучение
 
@@ -28,7 +28,7 @@
  - **Плюсы:** Простота реализации
  - **Минусы:** Быстрое устаревание, плохая адаптация
 
-3. **Неправильное управление рисками**
+3. **Неправильное Management рисками**
  - **Теория:** Традиционные подходы к управлению рисками неэффективны
  - **Почему проблематично:** Неправильная оценка рисков приводит к потерям
  - **Плюсы:** Простота понимания
@@ -48,23 +48,23 @@
 
 ### Наш подход к решению
 
-**Теория:** Наш подход основан on комбинации современных ML-технологий, продвинутых методов анализа and инновационных решений for создания высокоэффективных торговых систем. Это позволяет преодолеть ограничения традиционных подходов.
+**Теория:** Наш подход основан on комбинации современных ML-технологий, продвинутых методов Analysis and инновационных решений for создания высокоэффективных торговых систем. Это позволяет преодолеть ограничения традиционных подходов.
 
 **Почему наш подход эффективен:**
 - **Инновационные технологии:** Использование современных ML-алгоритмов
-- **Комплексный анализ:** МультиTimeframeовый анализ for полного понимания рынка
+- **Комплексный анализ:** МультиTimeframesый анализ for полного понимания рынка
 - **Адаптивность:** Системы, которые адаптируются к изменениям
-- **Продвинутое управление рисками:** Эффективные стратегии управления рисками
+- **Продвинутое Management рисками:** Эффективные стратегии управления рисками
 - **Блокчейн-integration:** Использование DeFi for увеличения доходности
 
-**Мы используем комбинацию:**
+**Мы Use комбинацию:**
 - **Продвинутых ML-алгоритмов**
  - **Теория:** Использование современных алгоритмов машинного обучения
- - **Почему важно:** Обеспечивает высокую точность predictions
+ - **Почему важно:** Обеспечивает высокую точность Predictions
  - **Плюсы:** Высокая точность, адаптивность, автоматизация
  - **Минусы:** Сложность реализации, высокие требования к данным
 
-- **МультиTimeframeового анализа**
+- **МультиTimeframesого Analysis**
  - **Теория:** Анализ on различных временных горизонтах
  - **Почему важно:** Обеспечивает полное понимание рыночной динамики
  - **Плюсы:** Комплексный анализ, снижение рисков, повышение точности
@@ -93,7 +93,7 @@
 **Теория:** Продвинутые ML-техники представляют собой современные методы машинного обучения, которые позволяют создавать высокоэффективные торговые системы. Эти техники критически важны for достижения доходности 100%+ in месяц.
 
 **Почему продвинутые ML-техники критичны:**
-- **Высокая точность:** Обеспечивают максимальную точность predictions
+- **Высокая точность:** Обеспечивают максимальную точность Predictions
 - **Адаптивность:** Могут адаптироваться к изменениям рынка
 - **Робастность:** Устойчивы к рыночному шуму
 - **Масштабируемость:** Могут обрабатывать большие объемы данных
@@ -109,7 +109,7 @@
 - **Гибкость:** Возможность добавления новых моделей
 
 **Плюсы:**
-- Высокая точность predictions
+- Высокая точность Predictions
 - Адаптивность к изменениям
 - Робастность к переобучению
 - Гибкость системы
@@ -121,9 +121,9 @@
 
 **Детальное объяснение AdaptiveEnsemble:**
 
-AdaptiveEnsemble представляет собой продвинутую систему ансамблевого обучения, которая автоматически адаптирует веса различных моделей on basis их текущей производительности. Это критически важно for создания робастных торговых систем, которые могут адаптироваться к изменяющимся рыночным условиям.
+AdaptiveEnsemble представляет собой продвинутую system ансамблевого обучения, которая автоматически адаптирует веса различных моделей on basis их текущей производительности. Это критически важно for создания робастных торговых систем, которые могут адаптироваться к изменяющимся рыночным условиям.
 
-**Как работает адаптивный ансамбль:**
+**Как Workingет адаптивный ансамбль:**
 
 1. **Инициализация:** Все модели получают равные веса (1/n, где n - количество моделей)
 2. **Prediction:** Каждая модель делает Prediction, затем результаты взвешиваются
@@ -132,7 +132,7 @@ AdaptiveEnsemble представляет собой продвинутую си
 
 **Почему это эффективно:**
 - **Автоматическая адаптация:** Система сама находит лучшие модели
-- **Робастность:** Плохо работающие модели получают меньший вес
+- **Робастность:** Плохо Workingющие модели получают меньший вес
 - **Гибкость:** Легко добавлять новые модели in ансамбль
 - **Стабильность:** Нормализация весов предотвращает нестабильность
 
@@ -152,7 +152,7 @@ class AdaptiveEnsemble:
  """
  Адаптивный ансамбль моделей for торговых систем
 
- Этот класс реализует продвинутую систему ансамблевого обучения, которая
+ Этот класс реализует продвинутую system ансамблевого обучения, которая
  автоматически адаптирует веса различных моделей on basis их производительности.
  Это критически важно for создания робастных торговых систем.
  """
@@ -162,7 +162,7 @@ class AdaptiveEnsemble:
  Инициализация адаптивного ансамбля
 
  Args:
- models: Список обученных моделей
+ models: List обученных моделей
  adaptation_rate: Скорость адаптации весов (0.01-0.5)
  performance_window: Окно for расчета производительности
  """
@@ -184,21 +184,21 @@ class AdaptiveEnsemble:
  текущие веса for взвешивания результатов.
 
  Args:
- X: Входные данные for предсказания
+ X: Входные data for предсказания
 
  Returns:
  Взвешенное Prediction ансамбля
  """
  Predictions = []
 
- # Получение predictions from каждой модели
+ # Получение Predictions from каждой модели
  for i, model in enumerate(self.models):
  try:
  pred = model.predict(X)
  Predictions.append(pred)
  except Exception as e:
  print(f"Error in model {i}: {e}")
- # Используем нулевое Prediction при ошибке
+ # Use нулевое Prediction при ошибке
  Predictions.append(np.zeros(X.shape[0]))
 
  # Взвешенное Prediction
@@ -215,7 +215,7 @@ class AdaptiveEnsemble:
  Модели with лучшей производительностью получают больший вес.
 
  Args:
- recent_performance: Список производительности каждой модели
+ recent_performance: List производительности каждой модели
  """
  if len(recent_performance) != len(self.models):
  raise ValueError("Performance array length must match number of models")
@@ -233,10 +233,10 @@ class AdaptiveEnsemble:
 
  for i, performance in enumerate(recent_performance):
  if performance > mean_performance:
- # Увеличиваем вес for хорошо работающих моделей
+ # Увеличиваем вес for хорошо Workingющих моделей
  self.weights[i] += self.adaptation_rate
  else:
- # Уменьшаем вес for плохо работающих моделей
+ # Уменьшаем вес for плохо Workingющих моделей
  self.weights[i] -= self.adaptation_rate
 
  # Нормализация весов
@@ -333,7 +333,7 @@ if __name__ == "__main__":
 
  # Симуляция адаптации весов
  for i in range(5):
- # Получение predictions
+ # Получение Predictions
  Predictions = ensemble.predict(X_test)
 
  # Расчет производительности каждой модели
@@ -342,7 +342,7 @@ if __name__ == "__main__":
  model_pred = model.predict(X_test)
  mse = mean_squared_error(y_test, model_pred)
  r2 = r2_score(y_test, model_pred)
- performance = r2 # Используем R² как метрику производительности
+ performance = r2 # Use R² как метрику производительности
  model_performances.append(performance)
 
  # Адаптация весов
@@ -367,8 +367,8 @@ if __name__ == "__main__":
 
 **Почему Meta-Learning важен:**
 - **Быстрая адаптация:** Позволяет быстро адаптироваться к новым условиям
-- **Эффективность:** Минимальные данные for адаптации
-- **Универсальность:** Может работать with различными типами задач
+- **Эффективность:** Минимальные data for адаптации
+- **Универсальность:** Может Workingть with различными типами задач
 - **Робастность:** Устойчивость к изменениям рынка
 
 **Плюсы:**
@@ -386,17 +386,17 @@ if __name__ == "__main__":
 
 Meta-Learning (мета-обучение) представляет собой революционную технику машинного обучения, которая позволяет моделям "учиться учиться". in контексте торговых систем это означает, что модель может быстро адаптироваться к новым рыночным условиям, используя опыт, полученный on других задачах.
 
-**Как работает Meta-Learning:**
+**Как Workingет Meta-Learning:**
 
 1. **Meta-обучение:** Модель обучается on множестве различных задач (разные рынки, периоды, активы)
-2. **Извлечение мета-знаний:** Система извлекает общие принципы, которые работают on different tasksах
+2. **Извлечение мета-знаний:** Система извлекает общие принципы, которые Workingют on different tasksах
 3. **Быстрая адаптация:** При появлении новой задачи модель быстро адаптируется, используя мета-знания
 4. **Несколько шагов обучения:** Вместо полного переобучения требуется всего несколько шагов градиентного спуска
 
 **Почему Meta-Learning критически важен for торговых систем:**
 - **Быстрая адаптация:** Может адаптироваться к новым рыночным условиям за minutesы, а not часы
 - **Эффективность данных:** Требует минимальное количество данных for адаптации
-- **Универсальность:** Один раз обученная система может работать on разных рынках
+- **Универсальность:** Один раз обученная система может Workingть on разных рынках
 - **Робастность:** Устойчива к изменениям рыночной структуры
 
 ```python
@@ -404,7 +404,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import dataLoader, Tensordataset
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 from datetime import datetime
@@ -462,7 +462,7 @@ class MetaLearner:
  Meta-обучение on множестве задач
 
  Args:
- tasks: Список задач for meta-обучения
+ tasks: List задач for meta-обучения
  meta_epochs: Количество эпох meta-обучения
  inner_steps: Количество шагов внутреннего обучения
  """
@@ -490,7 +490,7 @@ class MetaLearner:
 
  # Сохранение мета-весов
  self.meta_weights = self.base_model.state_dict().copy()
- print("Meta-training completed")
+ print("Meta-training COMPLETED")
 
  def quick_adapt(self, new_task, adaptation_steps=5):
  """
@@ -555,17 +555,17 @@ class MetaLearner:
  Predictions = model(X_tensor)
  return Predictions.numpy()
 
- def evaluate_adaptation_speed(self, test_tasks, adaptation_steps_list=[1, 3, 5, 10]):
+ def evaluate_adaptation_speed(self, test_tasks, adaptation_steps_List=[1, 3, 5, 10]):
  """
  Оценка скорости адаптации
 
  Args:
  test_tasks: Тестовые задачи
- adaptation_steps_list: Список количества шагов адаптации for тестирования
+ adaptation_steps_List: List количества шагов адаптации for тестирования
  """
  results = {}
 
- for steps in adaptation_steps_list:
+ for steps in adaptation_steps_List:
  total_loss = 0
 
  for task in test_tasks:
@@ -711,7 +711,7 @@ if __name__ == "__main__":
 
 Reinforcement Learning (обучение with подкреплением) представляет собой мощную парадигму машинного обучения, где агент учится принимать оптимальные решения через взаимодействие with окружающей средой. in контексте торговых систем это означает, что агент учится торговать, получая награды за прибыльные сделки and штрафы за убыточные.
 
-**Как работает RL in торговле:**
+**Как Workingет RL in торговле:**
 
 1. **Состояние (State):** Текущее состояние рынка (цены, индикаторы, объемы)
 2. **Действие (Action):** Торговое решение (покупка, продажа, удержание)
@@ -723,7 +723,7 @@ Reinforcement Learning (обучение with подкреплением) пре
 - **Обучение on опыте:** Агент учится on реальных торговых результатах
 - **Адаптивность:** Может адаптироваться к изменяющимся рыночным условиям
 - **Оптимизация стратегий:** Автоматически находит оптимальные торговые стратегии
-- **Обработка неопределенности:** Умеет работать in условиях неопределенности рынка
+- **Обработка неопределенности:** Умеет Workingть in условиях неопределенности рынка
 
 ```python
 import numpy as np
@@ -824,7 +824,7 @@ class TradingRLAgent:
  self.epsilon_decay = epsilon_decay
  self.epsilon_min = epsilon_min
 
- # create Q-сетей
+ # create Q-networks
  self.q_network = DQN(state_dim, action_dim)
  self.target_network = DQN(state_dim, action_dim)
  self.optimizer = optim.Adam(self.q_network.parameters(), lr=learning_rate)
@@ -832,7 +832,7 @@ class TradingRLAgent:
  # Буфер воспроизведения
  self.replay_buffer = ReplayBuffer(10000)
 
- # История for analysis
+ # История for Analysis
  self.training_history = []
  self.episode_rewards = []
  self.episode_losses = []
@@ -1238,21 +1238,21 @@ if __name__ == "__main__":
  print(f"Final balance: {info['balance']:.2f}")
 ```
 
-## МультиTimeframeовый анализ
+## МультиTimeframesый анализ
 
-**Теория:** МультиTimeframeовый анализ представляет собой комплексный подход к анализу рынка, который учитывает различные временные горизонты for принятия торговых решений. Это критически важно for создания робастных торговых систем.
+**Теория:** МультиTimeframesый анализ представляет собой комплексный подход к анализу рынка, который учитывает различные временные горизонты for принятия торговых решений. Это критически важно for создания робастных торговых систем.
 
-**Почему мультиTimeframeовый анализ критичен:**
+**Почему мультиTimeframesый анализ критичен:**
 - **Полное понимание:** Обеспечивает полное понимание рыночной динамики
 - **Снижение рисков:** Различные Timeframeы помогают снизить риски
 - **Повышение точности:** Комбинация сигналов повышает точность
 - **Адаптивность:** Позволяет адаптироваться к различным рыночным условиям
 
-### 1. Иерархическая система анализа
+### 1. Иерархическая система Analysis
 
-**Теория:** Иерархическая система анализа представляет собой структурированный подход к анализу различных Timeframeов, где каждый уровень иерархии имеет свой вес and влияние on финальное решение. Это критически важно for создания сбалансированных торговых систем.
+**Теория:** Иерархическая система Analysis представляет собой структурированный подход к анализу различных Timeframes, где каждый уровень иерархии имеет свой вес and влияние on финальное решение. Это критически важно for создания сбалансированных торговых систем.
 
-**Почему иерархическая система анализа важна:**
+**Почему иерархическая система Analysis важна:**
 - **Структурированный подход:** Обеспечивает структурированный анализ
 - **Взвешенные решения:** Каждый Timeframe имеет свой вес
 - **Сбалансированность:** Обеспечивает сбалансированность решений
@@ -1266,18 +1266,18 @@ if __name__ == "__main__":
 
 **Минусы:**
 - Сложность settings
-- Потенциальные конфликты между Timeframeами
+- Потенциальные конфликты между Timeframeми
 - Высокие вычислительные требования
 
-**Детальное объяснение иерархического анализа Timeframeов:**
+**Детальное объяснение иерархического Analysis Timeframes:**
 
-Иерархический анализ Timeframeов представляет собой продвинутую систему анализа рынка, которая рассматривает различные временные горизонты как иерархическую структуру, где каждый уровень имеет свой вес and влияние on финальное торговое решение. Это критически важно for создания сбалансированных and робастных торговых систем.
+Иерархический анализ Timeframes представляет собой продвинутую system Analysis рынка, которая рассматривает различные временные горизонты как иерархическую структуру, где каждый уровень имеет свой вес and влияние on финальное торговое решение. Это критически важно for создания сбалансированных and робастных торговых систем.
 
-**Как работает иерархический анализ:**
+**Как Workingет иерархический анализ:**
 
-1. **Многоуровневая структура:** Каждый Timeframe представляет свой уровень анализа
+1. **Многоуровневая Structure:** Каждый Timeframe представляет свой уровень Analysis
 2. **Взвешенные решения:** Каждый Timeframe имеет свой вес in финальном решении
-3. **Synchronization сигналов:** Сигналы with разных Timeframeов синхронизируются
+3. **Synchronization сигналов:** Сигналы with разных Timeframes синхронизируются
 4. **Адаптивные веса:** Веса могут адаптироваться on basis производительности
 
 **Почему иерархический анализ критически важен:**
@@ -1299,37 +1299,37 @@ warnings.filterwarnings('ignore')
 
 class TimeframeAnalyzer:
  """
- Базовый анализатор for одного Timeframeа
+ Базовый Analysisтор for одного Timeframe
 
  Этот класс реализует анализ данных on конкретном Timeframeе,
  including технические индикаторы and торговые сигналы.
  """
 
- def __init__(self, timeframe, weight=1.0):
+ def __init__(self, Timeframe, weight=1.0):
  """
- Инициализация анализатора Timeframeа
+ Инициализация Analysisтора Timeframe
 
  Args:
- timeframe: Название Timeframeа (например, 'M1', 'H1')
- weight: Вес этого Timeframeа in финальном решении
+ Timeframe: Название Timeframe (например, 'M1', 'H1')
+ weight: Вес этого Timeframe in финальном решении
  """
- self.timeframe = timeframe
+ self.Timeframe = Timeframe
  self.weight = weight
  self.scaler = StandardScaler()
  self.model = RandomForestRegressor(n_estimators=100, random_state=42)
  self.is_trained = False
 
- print(f"initialized {timeframe} analyzer with weight {weight}")
+ print(f"initialized {Timeframe} analyzer with weight {weight}")
 
  def calculate_technical_indicators(self, data):
  """
  Расчет технических indicators
 
  Args:
- data: DataFrame with ценовыми данными (OHLCV)
+ data: dataFrame with ценовыми данными (OHLCV)
 
  Returns:
- DataFrame with техническими индикаторами
+ dataFrame with техническими индикаторами
  """
  df = data.copy()
 
@@ -1358,9 +1358,9 @@ class TimeframeAnalyzer:
  df['BB_Middle'] = df['close'].rolling(window=20).mean()
  bb_std = df['close'].rolling(window=20).std()
  df['BB_Upper'] = df['BB_Middle'] + (bb_std * 2)
- df['BB_Lower'] = df['BB_Middle'] - (bb_std * 2)
- df['BB_Width'] = df['BB_Upper'] - df['BB_Lower']
- df['BB_Position'] = (df['close'] - df['BB_Lower']) / (df['BB_Upper'] - df['BB_Lower'])
+ df['BB_lower'] = df['BB_Middle'] - (bb_std * 2)
+ df['BB_Width'] = df['BB_Upper'] - df['BB_lower']
+ df['BB_Position'] = (df['close'] - df['BB_lower']) / (df['BB_Upper'] - df['BB_lower'])
 
  # Stochastic Oscillator
  low_14 = df['low'].rolling(window=14).min()
@@ -1387,7 +1387,7 @@ class TimeframeAnalyzer:
  Генерация торговых сигналов
 
  Args:
- data: DataFrame with техническими индикаторами
+ data: dataFrame with техническими индикаторами
 
  Returns:
  Series with торговыми сигналами (-1, 0, 1)
@@ -1403,7 +1403,7 @@ class TimeframeAnalyzer:
  rsi_overbought = data['RSI'] > 70
 
  # Bollinger Bands сигналы
- bb_oversold = data['close'] < data['BB_Lower']
+ bb_oversold = data['close'] < data['BB_lower']
  bb_overbought = data['close'] > data['BB_Upper']
 
  # Moving Average сигналы
@@ -1423,10 +1423,10 @@ class TimeframeAnalyzer:
  Полный анализ данных on Timeframeе
 
  Args:
- data: DataFrame with ценовыми данными
+ data: dataFrame with ценовыми данными
 
  Returns:
- Словарь with результатами анализа
+ Словарь with результатами Analysis
  """
  # Расчет технических indicators
  data_with_indicators = self.calculate_technical_indicators(data)
@@ -1445,7 +1445,7 @@ class TimeframeAnalyzer:
  'confidence': confidence,
  'signal_strength': signal_strength,
  'indicators': data_with_indicators.iloc[-1].to_dict() if len(data_with_indicators) > 0 else {},
- 'signals_history': signals.tolist()
+ 'signals_history': signals.toList()
  }
 
  def _calculate_confidence(self, data, signals):
@@ -1528,45 +1528,45 @@ class TimeframeAnalyzer:
 
 class HierarchicalTimeframeAnalyzer:
  """
- Иерархический анализатор Timeframeов
+ Иерархический Analysisтор Timeframes
 
- Этот класс координирует анализ on множестве Timeframeов
+ Этот класс координирует анализ on множестве Timeframes
  and объединяет результаты in единое торговое решение.
  """
 
- def __init__(self, timeframe_configs=None):
+ def __init__(self, Timeframe_configs=None):
  """
- Инициализация иерархического анализатора
+ Инициализация иерархического Analysisтора
 
  Args:
- timeframe_configs: Словарь with конфигурацией Timeframeов
+ Timeframe_configs: Словарь with конфигурацией Timeframes
  """
- if timeframe_configs is None:
- timeframe_configs = {
+ if Timeframe_configs is None:
+ Timeframe_configs = {
  'M1': {'weight': 0.1, 'horizon': 1},
  'M5': {'weight': 0.2, 'horizon': 5},
  'M15': {'weight': 0.3, 'horizon': 15},
  'H1': {'weight': 0.4, 'horizon': 60}
  }
 
- self.timeframes = timeframe_configs
+ self.Timeframes = Timeframe_configs
  self.analyzers = {}
 
- # Инициализация анализаторов for каждого Timeframeа
- for tf, config in self.timeframes.items():
+ # Инициализация Analysisторов for каждого Timeframe
+ for tf, config in self.Timeframes.items():
  self.analyzers[tf] = TimeframeAnalyzer(tf, config['weight'])
 
- print(f"initialized HierarchicalTimeframeAnalyzer with {len(self.analyzers)} timeframes")
+ print(f"initialized HierarchicalTimeframeAnalyzer with {len(self.analyzers)} Timeframes")
 
  def analyze(self, data_dict):
  """
- Анализ on всех Timeframeах
+ Анализ on всех Timeframes
 
  Args:
- data_dict: Словарь with data for каждого Timeframeа
+ data_dict: Словарь with data for каждого Timeframe
 
  Returns:
- Словарь with объединенными результатами анализа
+ Словарь with объединенными результатами Analysis
  """
  results = {}
 
@@ -1575,11 +1575,11 @@ class HierarchicalTimeframeAnalyzer:
  if tf in data_dict:
  tf_result = analyzer.analyze(data_dict[tf])
  results[tf] = tf_result
- print(f"{tf} analysis: signal={tf_result['signal']}, "
+ print(f"{tf} Analysis: signal={tf_result['signal']}, "
  f"Confidence={tf_result['confidence']:.3f}, "
  f"Strength={tf_result['signal_strength']:.3f}")
  else:
- print(f"Warning: No data provided for timeframe {tf}")
+ print(f"Warning: No data provided for Timeframe {tf}")
  results[tf] = {
  'signal': 0,
  'confidence': 0.0,
@@ -1595,10 +1595,10 @@ class HierarchicalTimeframeAnalyzer:
 
  def _combine_results(self, results):
  """
- Объединение результатов with разных Timeframeов
+ Объединение результатов with разных Timeframes
 
  Args:
- results: Словарь with результатами анализа on Timeframeам
+ results: Словарь with результатами Analysis on Timeframeм
 
  Returns:
  Словарь with объединенными результатами
@@ -1610,7 +1610,7 @@ class HierarchicalTimeframeAnalyzer:
 
  # Взвешенное объединение сигналов
  for tf, result in results.items():
- weight = self.timeframes[tf]['weight']
+ weight = self.Timeframes[tf]['weight']
  signal = result['signal']
  confidence = result['confidence']
  strength = result['signal_strength']
@@ -1642,12 +1642,12 @@ class HierarchicalTimeframeAnalyzer:
  'signal_strength': combined_signal,
  'confidence': combined_confidence,
  'strength': combined_strength,
- 'timeframe_breakdown': results,
+ 'Timeframe_breakdown': results,
  'consensus': self._calculate_consensus(results)
  }
 
  def _calculate_consensus(self, results):
- """Расчет консенсуса между Timeframeами"""
+ """Расчет консенсуса между Timeframeми"""
  signals = [result['signal'] for result in results.values()]
  confidences = [result['confidence'] for result in results.values()]
 
@@ -1682,18 +1682,18 @@ class HierarchicalTimeframeAnalyzer:
  'weighted_hold': weighted_hold
  }
 
- def plot_analysis(self, results, data_dict):
- """Визуализация результатов анализа"""
+ def plot_Analysis(self, results, data_dict):
+ """Визуализация результатов Analysis"""
  fig, axes = plt.subplots(len(self.analyzers) + 1, 1, figsize=(15, 4 * (len(self.analyzers) + 1)))
 
  if len(self.analyzers) == 1:
  axes = [axes]
 
- # Графики for каждого Timeframeа
+ # Графики for каждого Timeframe
  for i, (tf, analyzer) in enumerate(self.analyzers.items()):
  if tf in data_dict:
  data = data_dict[tf]
- result = results['timeframe_breakdown'][tf]
+ result = results['Timeframe_breakdown'][tf]
 
  ax = axes[i]
  ax.plot(data.index, data['close'], label='Close Price', linewidth=1)
@@ -1732,8 +1732,8 @@ class HierarchicalTimeframeAnalyzer:
  plt.show()
 
 # Практический example использования
-def generate_sample_data(timeframe, periods=1000):
- """Генерация примерных данных for Timeframeа"""
+def generate_sample_data(Timeframe, periods=1000):
+ """Генерация примерных данных for Timeframe"""
  np.random.seed(42)
 
  # Базовые parameters
@@ -1763,16 +1763,16 @@ def generate_sample_data(timeframe, periods=1000):
  'volume': volume
  })
 
- df = pd.DataFrame(data)
- df.index = pd.date_range(start='2023-01-01', periods=len(df), freq=timeframe)
+ df = pd.dataFrame(data)
+ df.index = pd.date_range(start='2023-01-01', periods=len(df), freq=Timeframe)
 
  return df
 
 if __name__ == "__main__":
- # create иерархического анализатора
+ # create иерархического Analysisтора
  analyzer = HierarchicalTimeframeAnalyzer()
 
- # Генерация данных for разных Timeframeов
+ # Генерация данных for разных Timeframes
  data_dict = {
  'M1': generate_sample_data('1min', 1000),
  'M5': generate_sample_data('5min', 200),
@@ -1781,7 +1781,7 @@ if __name__ == "__main__":
  }
 
  # Анализ
- print("Performing hierarchical timeframe analysis...")
+ print("Performing hierarchical Timeframe Analysis...")
  results = analyzer.analyze(data_dict)
 
  # Вывод результатов
@@ -1800,12 +1800,12 @@ if __name__ == "__main__":
  print(f"Hold Votes: {consensus['hold_votes']}")
 
  # Визуализация
- analyzer.plot_analysis(results, data_dict)
+ analyzer.plot_Analysis(results, data_dict)
 ```
 
 ### 2. Synchronization сигналов
 
-**Теория:** Synchronization сигналов представляет собой процесс согласования сигналов with различных Timeframeов for принятия консистентных торговых решений. Это критически важно for избежания конфликтов между сигналами.
+**Теория:** Synchronization сигналов представляет собой процесс согласования сигналов with различных Timeframes for принятия консистентных торговых решений. Это критически важно for избежания конфликтов между сигналами.
 
 **Почему Synchronization сигналов важна:**
 - **Консистентность:** Обеспечивает консистентность торговых решений
@@ -1826,14 +1826,14 @@ if __name__ == "__main__":
 
 **Детальное объяснение синхронизации сигналов:**
 
-Synchronization сигналов представляет собой критически важный процесс согласования торговых сигналов with различных Timeframeов for принятия консистентных and надежных торговых решений. Это предотвращает конфликты между сигналами and обеспечивает стабильность торговой системы.
+Synchronization сигналов представляет собой критически важный процесс согласования торговых сигналов with различных Timeframes for принятия консистентных and надежных торговых решений. Это предотвращает конфликты между сигналами and обеспечивает стабильность торговой системы.
 
-**Как работает Synchronization сигналов:**
+**Как Workingет Synchronization сигналов:**
 
-1. **Анализ согласованности:** Оценка степени согласованности сигналов между Timeframeами
-2. **Взвешивание сигналов:** Учет важности каждого Timeframeа in финальном решении
+1. **Анализ согласованности:** Оценка степени согласованности сигналов между Timeframeми
+2. **Взвешивание сигналов:** Учет важности каждого Timeframe in финальном решении
 3. **Конфликт-резолюция:** Разрешение конфликтов между противоречивыми сигналами
-4. **Временная Synchronization:** Учет временных задержек между Timeframeами
+4. **Временная Synchronization:** Учет временных задержек между Timeframeми
 
 **Почему Synchronization критически важна:**
 - **Консистентность:** Обеспечивает консистентность торговых решений
@@ -1852,25 +1852,25 @@ warnings.filterwarnings('ignore')
 
 class signalSynchronizer:
  """
- Продвинутая система синхронизации сигналов между Timeframeами
+ Продвинутая система синхронизации сигналов между Timeframeми
 
- Этот класс реализует комплексную систему синхронизации торговых сигналов,
+ Этот класс реализует комплексную system синхронизации торговых сигналов,
  including анализ согласованности, разрешение конфликтов and временную синхронизацию.
  """
 
- def __init__(self, synchronization_threshold=0.7, max_history=100):
+ def __init__(self, Synchronization_threshold=0.7, max_history=100):
  """
  Инициализация синхронизатора сигналов
 
  Args:
- synchronization_threshold: Порог for определения согласованности сигналов
+ Synchronization_threshold: Порог for определения согласованности сигналов
  max_history: Максимальное количество записей in истории
  """
- self.synchronization_threshold = synchronization_threshold
+ self.Synchronization_threshold = Synchronization_threshold
  self.max_history = max_history
  self.signal_history = {}
  self.performance_history = deque(maxlen=max_history)
- self.timeframe_weights = {}
+ self.Timeframe_weights = {}
  self.conflict_resolution_strategies = {
  'majority_vote': self._majority_vote_strategy,
  'weighted_average': self._weighted_average_strategy,
@@ -1878,24 +1878,24 @@ class signalSynchronizer:
  'momentum_based': self._momentum_based_strategy
  }
 
- print(f"initialized signalSynchronizer with threshold={synchronization_threshold}")
+ print(f"initialized signalSynchronizer with threshold={Synchronization_threshold}")
 
- def set_timeframe_weights(self, weights):
+ def set_Timeframe_weights(self, weights):
  """
- installation весов for Timeframeов
+ installation весов for Timeframes
 
  Args:
- weights: Словарь with весами for каждого Timeframeа
+ weights: Словарь with весами for каждого Timeframe
  """
- self.timeframe_weights = weights
- print(f"Set timeframe weights: {weights}")
+ self.Timeframe_weights = weights
+ print(f"Set Timeframe weights: {weights}")
 
  def synchronize_signals(self, signals, confidences=None, strategy='majority_vote'):
  """
- Synchronization сигналов with различных Timeframeов
+ Synchronization сигналов with различных Timeframes
 
  Args:
- signals: Словарь with сигналами on Timeframeам
+ signals: Словарь with сигналами on Timeframeм
  confidences: Словарь with уверенностью in сигналах
  strategy: Стратегия разрешения конфликтов
 
@@ -1906,7 +1906,7 @@ class signalSynchronizer:
  return self._empty_result()
 
  # Анализ согласованности сигналов
- agreement_analysis = self._analyze_agreement(signals, confidences)
+ agreement_Analysis = self._analyze_agreement(signals, confidences)
 
  # Выбор стратегии разрешения конфликтов
  if strategy in self.conflict_resolution_strategies:
@@ -1915,10 +1915,10 @@ class signalSynchronizer:
  resolution_strategy = self.conflict_resolution_strategies['majority_vote']
 
  # Применение стратегии
- synchronized_result = resolution_strategy(signals, confidences, agreement_analysis)
+ synchronized_result = resolution_strategy(signals, confidences, agreement_Analysis)
 
  # update истории
- self._update_history(signals, synchronized_result, agreement_analysis)
+ self._update_history(signals, synchronized_result, agreement_Analysis)
 
  return synchronized_result
 
@@ -1941,7 +1941,7 @@ class signalSynchronizer:
  weighted_votes = {'buy': 0, 'sell': 0, 'hold': 0}
 
  for tf, signal in signals.items():
- weight = self.timeframe_weights.get(tf, 1.0)
+ weight = self.Timeframe_weights.get(tf, 1.0)
  confidence = confidences.get(tf, 0.5) if confidences else 0.5
 
  if signal > 0:
@@ -1972,7 +1972,7 @@ class signalSynchronizer:
  for tf, signal in signals.items():
  if signal != consensus and consensus != 0:
  conflicts.append({
- 'timeframe': tf,
+ 'Timeframe': tf,
  'signal': signal,
  'consensus': consensus,
  'confidence': confidences.get(tf, 0.5) if confidences else 0.5
@@ -1984,23 +1984,23 @@ class signalSynchronizer:
  'conflicts': conflicts,
  'votes': votes,
  'weighted_votes': weighted_votes,
- 'is_agreed': agreement_score >= self.synchronization_threshold
+ 'is_agreed': agreement_score >= self.Synchronization_threshold
  }
 
- def _majority_vote_strategy(self, signals, confidences, agreement_analysis):
+ def _majority_vote_strategy(self, signals, confidences, agreement_Analysis):
  """Стратегия большинства голосов"""
- consensus = agreement_analysis['consensus']
- agreement_score = agreement_analysis['agreement_score']
+ consensus = agreement_Analysis['consensus']
+ agreement_score = agreement_Analysis['agreement_score']
 
  return {
  'synchronized_signal': consensus,
  'confidence': agreement_score,
  'strategy': 'majority_vote',
- 'agreement_analysis': agreement_analysis,
- 'is_synchronized': agreement_analysis['is_agreed']
+ 'agreement_Analysis': agreement_Analysis,
+ 'is_synchronized': agreement_Analysis['is_agreed']
  }
 
- def _weighted_average_strategy(self, signals, confidences, agreement_analysis):
+ def _weighted_average_strategy(self, signals, confidences, agreement_Analysis):
  """Стратегия взвешенного среднего"""
  if not signals:
  return self._empty_result()
@@ -2009,7 +2009,7 @@ class signalSynchronizer:
  total_weight = 0
 
  for tf, signal in signals.items():
- weight = self.timeframe_weights.get(tf, 1.0)
+ weight = self.Timeframe_weights.get(tf, 1.0)
  confidence = confidences.get(tf, 0.5) if confidences else 0.5
  effective_weight = weight * confidence
 
@@ -2030,34 +2030,34 @@ class signalSynchronizer:
  return {
  'synchronized_signal': final_signal,
  'raw_signal': synchronized_signal,
- 'confidence': agreement_analysis['agreement_score'],
+ 'confidence': agreement_Analysis['agreement_score'],
  'strategy': 'weighted_average',
- 'agreement_analysis': agreement_analysis,
+ 'agreement_Analysis': agreement_Analysis,
  'is_synchronized': True
  }
 
- def _conservative_strategy(self, signals, confidences, agreement_analysis):
+ def _conservative_strategy(self, signals, confidences, agreement_Analysis):
  """Консервативная стратегия"""
- if agreement_analysis['is_agreed']:
- return self._majority_vote_strategy(signals, confidences, agreement_analysis)
+ if agreement_Analysis['is_agreed']:
+ return self._majority_vote_strategy(signals, confidences, agreement_Analysis)
  else:
  # При отсутствии согласованности - удержание
  return {
  'synchronized_signal': 0,
  'confidence': 0.0,
  'strategy': 'conservative',
- 'agreement_analysis': agreement_analysis,
+ 'agreement_Analysis': agreement_Analysis,
  'is_synchronized': False,
  'reason': 'No agreement reached'
  }
 
- def _momentum_based_strategy(self, signals, confidences, agreement_analysis):
+ def _momentum_based_strategy(self, signals, confidences, agreement_Analysis):
  """Стратегия on basis моментума"""
  if not self.performance_history:
- return self._weighted_average_strategy(signals, confidences, agreement_analysis)
+ return self._weighted_average_strategy(signals, confidences, agreement_Analysis)
 
  # Анализ исторической производительности
- recent_performance = list(self.performance_history)[-10:] # Последние 10 записей
+ recent_performance = List(self.performance_history)[-10:] # Последние 10 записей
 
  # Расчет весов on basis производительности
  performance_weights = {}
@@ -2071,7 +2071,7 @@ class signalSynchronizer:
  total_weight = 0
 
  for tf, signal in signals.items():
- base_weight = self.timeframe_weights.get(tf, 1.0)
+ base_weight = self.Timeframe_weights.get(tf, 1.0)
  confidence = confidences.get(tf, 0.5) if confidences else 0.5
  performance_weight = performance_weights.get(tf, 0.5)
 
@@ -2093,14 +2093,14 @@ class signalSynchronizer:
  return {
  'synchronized_signal': final_signal,
  'raw_signal': synchronized_signal,
- 'confidence': agreement_analysis['agreement_score'],
+ 'confidence': agreement_Analysis['agreement_score'],
  'strategy': 'momentum_based',
- 'agreement_analysis': agreement_analysis,
+ 'agreement_Analysis': agreement_Analysis,
  'performance_weights': performance_weights,
  'is_synchronized': True
  }
 
- def _update_history(self, signals, result, agreement_analysis):
+ def _update_history(self, signals, result, agreement_Analysis):
  """update истории сигналов"""
  timestamp = datetime.now()
 
@@ -2110,11 +2110,11 @@ class signalSynchronizer:
  'synchronized_signal': result['synchronized_signal'],
  'confidence': result['confidence'],
  'strategy': result['strategy'],
- 'agreement_score': agreement_analysis['agreement_score'],
+ 'agreement_score': agreement_Analysis['agreement_score'],
  'is_synchronized': result['is_synchronized']
  }
 
- # Сохранение in истории for каждого Timeframeа
+ # Сохранение in истории for каждого Timeframe
  for tf in signals.keys():
  if tf not in self.signal_history:
  self.signal_history[tf] = deque(maxlen=self.max_history)
@@ -2133,14 +2133,14 @@ class signalSynchronizer:
  'synchronized_signal': 0,
  'confidence': 0.0,
  'strategy': 'none',
- 'agreement_analysis': {'agreement_score': 0, 'consensus': 0, 'conflicts': []},
+ 'agreement_Analysis': {'agreement_score': 0, 'consensus': 0, 'conflicts': []},
  'is_synchronized': False
  }
 
- def get_synchronization_statistics(self):
+ def get_Synchronization_statistics(self):
  """Получение статистики синхронизации"""
  if not self.performance_history:
- return {'message': 'No synchronization history available'}
+ return {'message': 'No Synchronization history available'}
 
  total_entries = len(self.performance_history)
  synchronized_count = sum(1 for entry in self.performance_history if entry['is_synchronized'])
@@ -2156,16 +2156,16 @@ class signalSynchronizer:
  return {
  'total_entries': total_entries,
  'synchronized_count': synchronized_count,
- 'synchronization_rate': synchronized_count / total_entries if total_entries > 0 else 0,
+ 'Synchronization_rate': synchronized_count / total_entries if total_entries > 0 else 0,
  'avg_agreement_score': avg_agreement,
  'avg_confidence': avg_confidence,
  'strategy_usage': strategy_counts
  }
 
- def plot_synchronization_history(self, timeframe=None):
+ def plot_Synchronization_history(self, Timeframe=None):
  """Визуализация истории синхронизации"""
  if not self.performance_history:
- print("No synchronization history available")
+ print("No Synchronization history available")
  return
 
  fig, axes = plt.subplots(2, 2, figsize=(15, 10))
@@ -2175,8 +2175,8 @@ class signalSynchronizer:
  agreement_scores = [entry['agreement_score'] for entry in self.performance_history]
 
  axes[0, 0].plot(timestamps, agreement_scores, marker='o', linewidth=1, markersize=3)
- axes[0, 0].axhline(y=self.synchronization_threshold, color='r', linestyle='--',
- label=f'Threshold ({self.synchronization_threshold})')
+ axes[0, 0].axhline(y=self.Synchronization_threshold, color='r', linestyle='--',
+ label=f'Threshold ({self.Synchronization_threshold})')
  axes[0, 0].set_title('Agreement Score Over Time')
  axes[0, 0].set_ylabel('Agreement Score')
  axes[0, 0].legend()
@@ -2203,8 +2203,8 @@ class signalSynchronizer:
  strategy_counts[strategy] = strategy_counts.get(strategy, 0) + 1
 
  if strategy_counts:
- strategies = list(strategy_counts.keys())
- counts = list(strategy_counts.values())
+ strategies = List(strategy_counts.keys())
+ counts = List(strategy_counts.values())
  axes[1, 1].bar(strategies, counts)
  axes[1, 1].set_title('Strategy Usage')
  axes[1, 1].set_ylabel('Count')
@@ -2213,15 +2213,15 @@ class signalSynchronizer:
  plt.tight_layout()
  plt.show()
 
- def plot_timeframe_signals(self, timeframe):
- """Визуализация сигналов конкретного Timeframeа"""
- if timeframe not in self.signal_history:
- print(f"No history available for timeframe {timeframe}")
+ def plot_Timeframe_signals(self, Timeframe):
+ """Визуализация сигналов конкретного Timeframe"""
+ if Timeframe not in self.signal_history:
+ print(f"No history available for Timeframe {Timeframe}")
  return
 
- history = list(self.signal_history[timeframe])
+ history = List(self.signal_history[Timeframe])
  if not history:
- print(f"No signal history for timeframe {timeframe}")
+ print(f"No signal history for Timeframe {Timeframe}")
  return
 
  timestamps = [entry['timestamp'] for entry in history]
@@ -2229,9 +2229,9 @@ class signalSynchronizer:
  synchronized = [entry['synchronized'] for entry in history]
 
  plt.figure(figsize=(12, 6))
- plt.plot(timestamps, signals, marker='o', label=f'{timeframe} signals', linewidth=1, markersize=3)
+ plt.plot(timestamps, signals, marker='o', label=f'{Timeframe} signals', linewidth=1, markersize=3)
  plt.plot(timestamps, synchronized, marker='s', label='Synchronized signals', linewidth=1, markersize=3)
- plt.title(f'signal Synchronization for {timeframe}')
+ plt.title(f'signal Synchronization for {Timeframe}')
  plt.xlabel('Time')
  plt.ylabel('signal')
  plt.legend()
@@ -2243,19 +2243,19 @@ class signalSynchronizer:
 # Практический example использования
 if __name__ == "__main__":
  # create синхронизатора сигналов
- synchronizer = signalSynchronizer(synchronization_threshold=0.6)
+ synchronizer = signalSynchronizer(Synchronization_threshold=0.6)
 
- # installation весов Timeframeов
- timeframe_weights = {
+ # installation весов Timeframes
+ Timeframe_weights = {
  'M1': 0.1,
  'M5': 0.2,
  'M15': 0.3,
  'H1': 0.4
  }
- synchronizer.set_timeframe_weights(timeframe_weights)
+ synchronizer.set_Timeframe_weights(Timeframe_weights)
 
  # Симуляция сигналов
- print("Simulating signal synchronization...")
+ print("Simulating signal Synchronization...")
 
  strategies = ['majority_vote', 'weighted_average', 'conservative', 'momentum_based']
 
@@ -2288,25 +2288,25 @@ if __name__ == "__main__":
  print(f"Confidences: {confidences}")
  print(f"Synchronized signal: {result['synchronized_signal']}")
  print(f"Confidence: {result['confidence']:.3f}")
- print(f"Agreement Score: {result['agreement_analysis']['agreement_score']:.3f}")
+ print(f"Agreement Score: {result['agreement_Analysis']['agreement_score']:.3f}")
  print(f"Is Synchronized: {result['is_synchronized']}")
 
  # Статистика
  print("\nSynchronization Statistics:")
- stats = synchronizer.get_synchronization_statistics()
+ stats = synchronizer.get_Synchronization_statistics()
  for key, value in stats.items():
  print(f"{key}: {value}")
 
  # Визуализация
- synchronizer.plot_synchronization_history()
+ synchronizer.plot_Synchronization_history()
 
- # Визуализация for конкретного Timeframeа
- synchronizer.plot_timeframe_signals('H1')
+ # Визуализация for конкретного Timeframe
+ synchronizer.plot_Timeframe_signals('H1')
 ```
 
 ## Продвинутый риск-менеджмент
 
-**Теория:** Продвинутый риск-менеджмент представляет собой комплексную систему управления рисками, которая использует современные методы for минимизации потерь and максимизации прибыли. Это критически важно for долгосрочного успеха торговых систем.
+**Теория:** Продвинутый риск-менеджмент представляет собой комплексную system управления рисками, которая использует современные методы for минимизации потерь and максимизации прибыли. Это критически важно for долгосрочного успеха торговых систем.
 
 **Почему продвинутый риск-менеджмент критичен:**
 - **Защита капитала:** Критически важно for защиты капитала
@@ -2314,11 +2314,11 @@ if __name__ == "__main__":
 - **Долгосрочный успех:** Критически важно for долгосрочного успеха
 - **Психологический комфорт:** Снижает стресс and эмоциональные решения
 
-### 1. Динамическое управление позицией
+### 1. Динамическое Management позицией
 
-**Теория:** Динамическое управление позицией представляет собой адаптивную систему управления размером позиций on basis текущих рыночных условий, силы сигналов and уровня риска. Это критически важно for оптимизации доходности при контроле рисков.
+**Теория:** Динамическое Management позицией представляет собой адаптивную system управления размером позиций on basis текущих рыночных условий, силы сигналов and уровня риска. Это критически важно for оптимизации доходности при контроле рисков.
 
-**Почему динамическое управление позицией важно:**
+**Почему динамическое Management позицией важно:**
 - **Адаптивность:** Адаптируется к изменяющимся рыночным условиям
 - **Оптимизация доходности:** Помогает оптимизировать доходность
 - **Контроль рисков:** Обеспечивает эффективный контроль рисков
@@ -2337,7 +2337,7 @@ if __name__ == "__main__":
 
 ```python
 class DynamicPositionManager:
- """Динамическое управление позицией"""
+ """Динамическое Management позицией"""
 
  def __init__(self, initial_capital=100000):
  self.capital = initial_capital
@@ -2417,7 +2417,7 @@ class DynamicPositionManager:
 
 ### 2. Портфельный риск-менеджмент
 
-**Теория:** Портфельный риск-менеджмент представляет собой комплексную систему управления рисками on уровне портфеля, которая учитывает корреляции между активами and оптимизирует распределение капитала. Это критически важно for создания диверсифицированных торговых систем.
+**Теория:** Портфельный риск-менеджмент представляет собой комплексную system управления рисками on уровне портфеля, которая учитывает корреляции между активами and оптимизирует распределение капитала. Это критически важно for создания диверсифицированных торговых систем.
 
 **Почему портфельный риск-менеджмент важен:**
 - **Диверсификация:** Обеспечивает эффективную диверсификацию
@@ -2447,7 +2447,7 @@ class PortfolioRiskManager:
  self.var_limit = 0.05 # 5% VaR лимит
  self.max_correlation = 0.7 # Максимальная корреляция между активами
 
- def calculate_portfolio_var(self, returns):
+ def calculate_Portfolio_var(self, returns):
  """Расчет VaR портфеля"""
  # Расчет ковариационной матрицы
  cov_matrix = np.cov(returns.T)
@@ -2457,15 +2457,15 @@ class PortfolioRiskManager:
  weights = weights / np.sum(weights) if np.sum(weights) > 0 else np.zeros(len(weights))
 
  # Расчет VaR
- portfolio_variance = np.dot(weights.T, np.dot(cov_matrix, weights))
- portfolio_std = np.sqrt(portfolio_variance)
+ Portfolio_variance = np.dot(weights.T, np.dot(cov_matrix, weights))
+ Portfolio_std = np.sqrt(Portfolio_variance)
 
  # VaR on 95% уровне
- var_95 = 1.645 * portfolio_std
+ var_95 = 1.645 * Portfolio_std
 
  return var_95
 
- def optimize_portfolio(self, expected_returns, risk_tolerance=0.5):
+ def optimize_Portfolio(self, expected_returns, risk_tolerance=0.5):
  """Оптимизация портфеля"""
  # Расчет ковариационной матрицы
  cov_matrix = np.cov(expected_returns.T)
@@ -2474,9 +2474,9 @@ class PortfolioRiskManager:
  from scipy.optimize import minimize
 
  def objective(weights):
- portfolio_return = np.dot(weights, expected_returns)
- portfolio_risk = np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights)))
- return -portfolio_return + risk_tolerance * portfolio_risk
+ Portfolio_return = np.dot(weights, expected_returns)
+ Portfolio_risk = np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights)))
+ return -Portfolio_return + risk_tolerance * Portfolio_risk
 
  # Ограничения
  constraints = {'type': 'eq', 'fun': lambda w: np.sum(w) - 1}
@@ -2524,7 +2524,7 @@ class PortfolioRiskManager:
 - Потенциальные Issues with ликвидностью
 
 ```python
-class DeFiIntegration:
+class DeFiintegration:
  """integration with DeFi протоколами"""
 
  def __init__(self, web3_provider, private_key):
@@ -2611,7 +2611,7 @@ class DeFiIntegration:
 - Высокие требования к безопасности
 
 ```python
-class YieldFarmingIntegration:
+class YieldFarmingintegration:
  """integration with Yield Farming"""
 
  def __init__(self, web3_provider, private_key):
@@ -2671,7 +2671,7 @@ class YieldFarmingIntegration:
  pool_info = farming_contract.functions.poolInfo(pool_id).call()
 
  # Расчет APR
- total_alloc_point = farming_contract.functions.totalAllocPoint().call()
+ total_alloc_point = farming_contract.functions.totalallocPoint().call()
  reward_per_block = farming_contract.functions.rewardPerBlock().call()
 
  pool_alloc_point = pool_info[1]
@@ -2691,7 +2691,7 @@ class YieldFarmingIntegration:
 
 ## Автоматическое переобучение
 
-**Теория:** Автоматическое переобучение представляет собой систему, которая автоматически отслеживает производительность модели and переобучает её при необходимости. Это критически важно for поддержания актуальности and эффективности торговых систем.
+**Теория:** Автоматическое переобучение представляет собой system, которая автоматически отслеживает производительность модели and переобучает её при необходимости. Это критически важно for поддержания актуальности and эффективности торговых систем.
 
 **Почему автоматическое переобучение критично:**
 - **Актуальность:** Обеспечивает актуальность модели
@@ -2701,7 +2701,7 @@ class YieldFarmingIntegration:
 
 ### 1. Система Monitoringа производительности
 
-**Теория:** Система Monitoringа производительности представляет собой комплексную систему отслеживания различных метрик производительности торговой системы. Это критически важно for своевременного выявления проблем and необходимости переобучения.
+**Теория:** Система Monitoringа производительности представляет собой комплексную system отслеживания различных метрик производительности торговой системы. Это критически важно for своевременного выявления проблем and необходимости переобучения.
 
 **Почему система Monitoringа производительности важна:**
 - **Своевременное выявление проблем:** Позволяет своевременно выявлять проблемы
@@ -2785,7 +2785,7 @@ class PerformanceMonitor:
 
 ### 2. Автоматическое переобучение
 
-**Теория:** Автоматическое переобучение представляет собой систему, которая автоматически переобучает модель при обнаружении деградации производительности. Это критически важно for поддержания долгосрочной эффективности торговых систем.
+**Теория:** Автоматическое переобучение представляет собой system, которая автоматически переобучает модель при обнаружении деградации производительности. Это критически важно for поддержания долгосрочной эффективности торговых систем.
 
 **Почему автоматическое переобучение важно:**
 - **Поддержание эффективности:** Обеспечивает поддержание эффективности системы
@@ -2805,7 +2805,7 @@ class PerformanceMonitor:
 - Высокие требования к ресурсам
 
 ```python
-class AutoRetrainingSystem:
+class AutoRetrainingsystem:
  """Система автоматического переобучения"""
 
  def __init__(self, model, data_pipeline):
@@ -2849,7 +2849,7 @@ class AutoRetrainingSystem:
  # update времени последнего переобучения
  self.last_retraining = datetime.now()
 
- print(f"Model retraining completed. Validation score: {validation_score:.4f}")
+ print(f"Model retraining COMPLETED. Validation score: {validation_score:.4f}")
 
  return validation_score
 
@@ -2873,8 +2873,8 @@ class AutoRetrainingSystem:
 ## Следующие шаги
 
 После изучения продвинутых практик переходите к:
-- **[15_portfolio_optimization.md](15_portfolio_optimization.md)** - Оптимизация портфолио
-- **[16_metrics_analysis.md](16_metrics_analysis.md)** - Метрики and анализ
+- **[15_Portfolio_optimization.md](15_Portfolio_optimization.md)** - Оптимизация Portfolio
+- **[16_metrics_Analysis.md](16_metrics_Analysis.md)** - Метрики and анализ
 
 ## Ключевые выводы
 
@@ -2882,7 +2882,7 @@ class AutoRetrainingSystem:
 
 1. **Ensemble Learning - комбинация множества моделей for improving accuracy**
  - **Теория:** Ensemble Learning комбинирует множество моделей for improving accuracy
- - **Почему важно:** Обеспечивает высокую точность predictions
+ - **Почему важно:** Обеспечивает высокую точность Predictions
  - **Плюсы:** Высокая точность, робастность, адаптивность
  - **Минусы:** Сложность реализации, высокие требования к ресурсам
 
@@ -2898,14 +2898,14 @@ class AutoRetrainingSystem:
  - **Плюсы:** Автоматическая оптимизация, адаптивность, автоматизация
  - **Минусы:** Длительное время обучения, потенциальная нестабильность
 
-4. **МультиTimeframeовый анализ - анализ on разных временных горизонтах**
+4. **МультиTimeframesый анализ - анализ on разных временных горизонтах**
  - **Теория:** Анализ on различных временных горизонтах обеспечивает полное понимание
- - **Почему важно:** Обеспечивает комплексный Market analysis
+ - **Почему важно:** Обеспечивает комплексный Market Analysis
  - **Плюсы:** Комплексный анализ, снижение рисков, повышение точности
  - **Минусы:** Сложность settings, высокие вычислительные требования
 
-5. **Продвинутый риск-менеджмент - динамическое управление рисками**
- - **Теория:** Динамическое управление рисками критически важно for долгосрочного успеха
+5. **Продвинутый риск-менеджмент - динамическое Management рисками**
+ - **Теория:** Динамическое Management рисками критически важно for долгосрочного успеха
  - **Почему важно:** Обеспечивает защиту капитала and стабильность
  - **Плюсы:** Защита капитала, стабильность, долгосрочный успех
  - **Минусы:** Сложность settings, потенциальные ограничения доходности
@@ -2924,4 +2924,4 @@ class AutoRetrainingSystem:
 
 ---
 
-**Важно:** Продвинутые практики требуют глубокого понимания ML and финансовых рынков. Начните with простых техник and постепенно усложняйте систему.
+**Важно:** Продвинутые практики требуют глубокого понимания ML and финансовых рынков. Начните with простых техник and постепенно усложняйте system.

@@ -3,7 +3,7 @@
 ## 🎯 Задача
 Привести нижний график wave indicator in `-d fast` режиме к точно такому же виду, как in `-d fastest` режиме.
 
-## ✅ Выполненная работа
+## ✅ Выполненная Working
 
 ### 1. **Анализ проблемы**
 - Изучена реализация wave indicator in `dual_chart_fastest.py`
@@ -25,7 +25,7 @@ black_mask = wave_data[plot_color_col] == 0
 # Отображение красных сегментов (BUY = 1)
 if red_mask.any():
  red_data = wave_data[red_mask]
- red_source = ColumnDataSource(red_data)
+ red_source = ColumndataSource(red_data)
  indicator_fig.line(
  'index', plot_wave_col,
  source=red_source,
@@ -37,7 +37,7 @@ if red_mask.any():
 # Отображение синих сегментов (SELL = 2)
 if blue_mask.any():
  blue_data = wave_data[blue_mask]
- blue_source = ColumnDataSource(blue_data)
+ blue_source = ColumndataSource(blue_data)
  indicator_fig.line(
  'index', plot_wave_col,
  source=blue_source,
@@ -52,7 +52,7 @@ if blue_mask.any():
 
 **Решение**: Добавлена поддержка колонки `'_signal'` for wave indicator:
 ```python
-# Добавлена поддержка обеих колонок
+# Добавлена поддержка обеих columns
 signal_col = None
 if '_signal' in display_df.columns:
  signal_col = '_signal'
@@ -75,7 +75,7 @@ elif 'Direction' in display_df.columns:
 ### 4. **Тестирование**
 - ✅ Создан полный набор тестов in `tests/plotting/test_wave_fast_mode.py`
 - ✅ Все 7 тестов прошли успешно
-- ✅ Протестирована реальная работа with data
+- ✅ Протестирована реальная Working with data
 - ✅ Сравнение with fastest режимом показало идентичность
 
 ### 5. **documentation**
@@ -84,7 +84,7 @@ elif 'Direction' in display_df.columns:
 - Добавлены examples использования
 
 ## 🎉 Заключение
-Wave indicator теперь полностью работает in `-d fast` режиме and выглядит идентично `-d fastest` режиму. Все Issues with отображением линий and сигналов исправлены.
+Wave indicator теперь полностью Workingет in `-d fast` режиме and выглядит идентично `-d fastest` режиму. Все Issues with отображением линий and сигналов исправлены.
 
 **Статус**: ✅ **COMPLETED**
 **Дата**: 2025-08-20

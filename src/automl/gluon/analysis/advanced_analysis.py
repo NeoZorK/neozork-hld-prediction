@@ -1,5 +1,5 @@
 """
-Advanced Analysis for Trading Strategy Models
+Advanced Analysis for trading Strategy Models
 Продвинутый анализ for моделей торговых стратегий
 """
 
@@ -17,8 +17,8 @@ logger = logging.getLogger(__name__)
 
 class AdvancedTradingAnalyzer:
  """
- Advanced analysis for trading strategy models including backtesting,
- walk forward analysis, and Monte Carlo simulation.
+ Advanced Analysis for trading strategy models including backtesting,
+ walk forward Analysis, and Monte Carlo simulation.
  """
 
  def __init__(self, initial_capital: float = 10000):
@@ -30,10 +30,10 @@ class AdvancedTradingAnalyzer:
  """
  self.initial_capital = initial_capital
 
- def comprehensive_backtesting(self, model, test_data: pd.DataFrame,
+ def comprehensive_backtesting(self, model, test_data: pd.dataFrame,
  signal_threshold: float = 0.6) -> Dict[str, Any]:
  """
- Comprehensive backtesting analysis.
+ Comprehensive backtesting Analysis.
  Комплексный анализ бэктестинга.
 
  Args:
@@ -69,20 +69,20 @@ class AdvancedTradingAnalyzer:
  backtest_data['price_return'] = backtest_data['Close'].pct_change()
  backtest_data['strategy_return'] = backtest_data['signal'].shift(1) * backtest_data['price_return']
  backtest_data['cumulative_return'] = (1 + backtest_data['strategy_return']).cumprod()
- backtest_data['portfolio_value'] = self.initial_capital * backtest_data['cumulative_return']
+ backtest_data['Portfolio_value'] = self.initial_capital * backtest_data['cumulative_return']
 
  # Calculate performance metrics
  results = self._calculate_performance_metrics(backtest_data)
 
- # Add trade analysis
- trade_analysis = self._analyze_trades(backtest_data)
- results.update(trade_analysis)
+ # Add trade Analysis
+ trade_Analysis = self._analyze_trades(backtest_data)
+ results.update(trade_Analysis)
 
- logger.info(f"Backtesting completed. Total return: {results['total_return']:.2%}")
+ logger.info(f"Backtesting COMPLETED. Total return: {results['total_return']:.2%}")
 
  return results
 
- def _calculate_performance_metrics(self, data: pd.DataFrame) -> Dict[str, Any]:
+ def _calculate_performance_metrics(self, data: pd.dataFrame) -> Dict[str, Any]:
  """Calculate comprehensive performance metrics."""
 
  # Basic returns
@@ -123,10 +123,10 @@ class AdvancedTradingAnalyzer:
  'avg_win': avg_win,
  'avg_loss': avg_loss,
  'total_trades': (data['signal'] != 0).sum(),
- 'final_portfolio_value': data['portfolio_value'].iloc[-1]
+ 'final_Portfolio_value': data['Portfolio_value'].iloc[-1]
  }
 
- def _analyze_trades(self, data: pd.DataFrame) -> Dict[str, Any]:
+ def _analyze_trades(self, data: pd.dataFrame) -> Dict[str, Any]:
  """Analyze individual trades."""
 
  # Find trade entry and exit points
@@ -147,9 +147,9 @@ class AdvancedTradingAnalyzer:
  })
 
  if not trades:
- return {'trade_analysis': 'No trades found'}
+ return {'trade_Analysis': 'No trades found'}
 
- trade_df = pd.DataFrame(trades)
+ trade_df = pd.dataFrame(trades)
 
  return {
  'total_trades': len(trades),
@@ -161,7 +161,7 @@ class AdvancedTradingAnalyzer:
  'losing_trades': len(trade_df[trade_df['return'] <= 0])
  }
 
- def walk_forward_analysis(self, model, data: pd.DataFrame,
+ def walk_forward_Analysis(self, model, data: pd.dataFrame,
  window_size: int = 1000, step_size: int = 100,
  retrain_frequency: int = 500) -> Dict[str, Any]:
  """
@@ -237,7 +237,7 @@ class AdvancedTradingAnalyzer:
  if not results:
  return {'error': 'No valid windows processed'}
 
- results_df = pd.DataFrame(results)
+ results_df = pd.dataFrame(results)
 
  summary = {
  'total_windows': len(results),
@@ -246,17 +246,17 @@ class AdvancedTradingAnalyzer:
  'mean_return': results_df['total_return'].mean(),
  'std_return': results_df['total_return'].std(),
  'mean_sharpe': results_df['sharpe_ratio'].mean(),
- 'stability_score': 1 - results_df['accuracy'].std(), # Lower std = more stable
+ 'stability_score': 1 - results_df['accuracy'].std(), # lower std = more stable
  'consistency_score': (results_df['total_return'] > 0).mean(), # % of profitable windows
  'results': results
  }
 
- logger.info(f"Walk Forward completed: {summary['total_windows']} windows, "
+ logger.info(f"Walk Forward COMPLETED: {summary['total_windows']} windows, "
  f"stability={summary['stability_score']:.3f}")
 
  return summary
 
- def monte_carlo_simulation(self, model, data: pd.DataFrame,
+ def monte_carlo_simulation(self, model, data: pd.dataFrame,
  n_simulations: int = 1000, sample_size: int = 500) -> Dict[str, Any]:
  """
  Monte Carlo simulation for robustness testing.
@@ -264,7 +264,7 @@ class AdvancedTradingAnalyzer:
 
  Args:
  model: Trained model
- data: Dataset for simulation
+ data: dataset for simulation
  n_simulations: Number of simulations
  sample_size: Size of each sample
 
@@ -290,7 +290,7 @@ class AdvancedTradingAnalyzer:
  # Calculate basic metrics
  accuracy = accuracy_score(actual, Predictions)
 
- # Quick performance analysis
+ # Quick performance Analysis
  sample_data_copy = sample_data.copy()
  sample_data_copy['Prediction'] = Predictions
 
@@ -318,7 +318,7 @@ class AdvancedTradingAnalyzer:
  return {'error': 'No successful simulations'}
 
  # Analyze results
- results_df = pd.DataFrame(simulation_results)
+ results_df = pd.dataFrame(simulation_results)
 
  summary = {
  'total_simulations': len(simulation_results),
@@ -335,14 +335,14 @@ class AdvancedTradingAnalyzer:
  'results': simulation_results
  }
 
- logger.info(f"Monte Carlo completed: {summary['total_simulations']} simulations, "
+ logger.info(f"Monte Carlo COMPLETED: {summary['total_simulations']} simulations, "
  f"robustness={summary['robustness_score']:.3f}")
 
  return summary
 
- def create_performance_report(self, backtest_results: Dict, wf_results: Dict, mc_results: Dict) -> str:
+ def create_performance_Report(self, backtest_results: Dict, wf_results: Dict, mc_results: Dict) -> str:
  """
- Create comprehensive performance report.
+ Create comprehensive performance Report.
  Создать комплексный Report о производительности.
 
  Args:
@@ -351,16 +351,16 @@ class AdvancedTradingAnalyzer:
  mc_results: Monte Carlo results
 
  Returns:
- Formatted report string
+ Formatted Report string
  """
 
- report = f"""
-# 📊 COMPREHENSIVE TRADING MODEL PERFORMANCE REPORT
+ Report = f"""
+# 📊 COMPREHENSIVE TRADING MODEL PERFORMANCE Report
 # Report о производительности торговой модели
 
 ## 🎯 Executive Summary / Исполнительное резюме
 
-**Model Performance Overview:**
+**Model Performance OverView:**
 - Backtest Total Return: {backtest_results.get('total_return', 0):.2%}
 - Walk Forward Stability: {wf_results.get('stability_score', 0):.3f}
 - Monte Carlo Robustness: {mc_results.get('robustness_score', 0):.3f}
@@ -416,10 +416,10 @@ class AdvancedTradingAnalyzer:
  mc_results.get('robustness_score', 0) > 0.6
 ]) else '⚠️ Model needs improvement'}
 2. {'Monitor for drift and retrain regularly' if wf_results.get('stability_score', 0) > 0.7 else 'Consider additional feature engineering'}
-3. {'Use conservative position sizing' if backtest_results.get('max_drawdown', 0) < -0.2 else 'Risk management is adequate'}
+3. {'Use conservative position sizing' if backtest_results.get('max_drawdown', 0) < -0.2 else 'Risk Management is adequate'}
 
 ---
 Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 """
 
- return report
+ return Report

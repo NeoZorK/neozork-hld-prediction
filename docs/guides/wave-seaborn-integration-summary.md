@@ -1,14 +1,14 @@
-# Wave Indicator Seaborn Integration Summary
+# Wave Indicator Seaborn integration Summary
 
 ## 🎯 Задача
-Добавить поддержку wave indicator in режим `-d sb` (seaborn backend) так же, как он работает in режиме `-d mpl`.
+Добавить поддержку wave indicator in режим `-d sb` (seaborn backend) так же, как он Workingет in режиме `-d mpl`.
 
-## ✅ Выполненная работа
+## ✅ Выполненная Working
 
 ### 1. **Анализ существующей реализации**
 - Изучена реализация wave indicator in `dual_chart_mpl.py`
-- Проанализирована структура `dual_chart_seaborn.py`
-- Определены ключевые компоненты for интеграции
+- Проанализирована Structure `dual_chart_seaborn.py`
+- Определены ключевые components for интеграции
 
 ### 2. **Основные изменения**
 
@@ -24,7 +24,7 @@ def _create_wave_line_segments(index, values, mask):
  mask: Boolean mask for valid segments
 
  Returns:
- list: List of (x, y) segment tuples
+ List: List of (x, y) segment tuples
  """
 ```
 - Создает прерывистые сегменты линий for разных сигналов
@@ -41,7 +41,7 @@ elif '_Plot_Color' in display_df.columns:
  plot_color_col = '_Plot_Color'
 
 if plot_color_col:
- # Get Wave buy and sell signals - use _signal for actual trading signals
+ # Get Wave buy and sell signals - Use _signal for actual trading signals
  signal_col = None
  if '_signal' in display_df.columns:
  signal_col = '_signal'
@@ -159,7 +159,7 @@ elif indicator_name == 'wave':
 1. `test_create_wave_line_segments` - Тест functions создания сегментов
 2. `test_create_wave_line_segments_empty_mask` - Тест with пустой маской
 3. `test_wave_indicator_basic_plotting` - Базовое тестирование отрисовки
-4. `test_wave_indicator_columns_detection` - check обнаружения колонок
+4. `test_wave_indicator_columns_detection` - check обнаружения columns
 5. `test_wave_indicator_signal_values` - check значений сигналов
 6. `test_wave_indicator_data_quality` - check качества данных
 7. `test_wave_indicator_different_parameters` - Тест разных параметров
@@ -203,10 +203,10 @@ elif indicator_name == 'wave':
 ## 🔧 Техническая реализация
 
 ### Ключевые особенности
-- **Гибкость имен колонок**: Поддержка как верхнего, так and нижнего регистра
+- **Гибкость имен columns**: Поддержка как верхнего, так and нижнего регистра
 - **Умная фильтрация сигналов**: Использование `_signal` вместо `_Plot_Color` for уменьшения шума
 - **Прерывистые сегменты**: Четкое визуальное разделение разных типов сигналов
-- **Обработка ошибок**: Грациозная обработка отсутствующих данных and колонок
+- **Обработка ошибок**: Грациозная обработка отсутствующих данных and columns
 - **Оптимизация производительности**: Эффективная отрисовка for больших наборов данных
 
 ### Совместимость
@@ -225,7 +225,7 @@ elif indicator_name == 'wave':
 
 ### check работоспособности
 ```bash
-# Успешное выполнение команды
+# Успешное выполнение team
 uv run python -m src.cli.cli csv --csv-file data/mn1.csv --point 50 --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d sb
 ```
 

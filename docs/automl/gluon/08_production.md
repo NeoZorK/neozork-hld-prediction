@@ -14,9 +14,9 @@
 - **Facebook алгоритм**: Распространение фейковых новостей из-за плохой валидации
 
 ### Преимущества правильного продакшена
-- **Масштабируемость**: Модель работает with любым объемом данных
+- **Масштабируемость**: Модель Workingет with любым объемом данных
 - **Надежность**: 99.9% uptime, автоматическое восстановление
-- **Monitoring**: Постоянный контроль качества predictions
+- **Monitoring**: Постоянный контроль качества Predictions
 - **Бизнес-ценность**: Реальная польза for компании and пользователей
 
 ## Введение in продакшен
@@ -24,12 +24,12 @@
 <img src="images/optimized/production_architecture.png" alt="Продакшен архитектура" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 1: Архитектура продакшен системы AutoML Gluon*
 
-**Почему продакшен in ML кардинально отличается from обычной разработки?** Потому что ML-модели - это not просто код, а живые системы, которые учатся and изменяются. Это как разница между заводом and садом - завод работает on Planу, а сад требует постоянного ухода.
+**Почему продакшен in ML кардинально отличается from обычной разработки?** Потому что ML-модели - это not просто код, а живые системы, которые учатся and изменяются. Это как разница между заводом and садом - завод Workingет on Planу, а сад требует постоянного ухода.
 
 **Уникальные особенности ML продакшена:**
-- **Данные меняются**: Модель может "забыть" то, что знала
+- **data меняются**: Модель может "забыть" то, что знала
 - **Концептуальный дрифт**: Реальность изменяется быстрее модели
-- **dependency from данных**: Нет данных = нет predictions
+- **dependency from данных**: Нет данных = нет Predictions
 - **Черный ящик**: Сложно понять, почему модель приняла решение
 
 Продакшен деплой ML-моделей - это критически важный этап, который требует тщательного Planирования, Monitoringа and поддержки. in этом разделе рассмотрим все аспекты деплоя AutoML Gluon моделей in продакшен.
@@ -43,12 +43,12 @@
 
 ### 🚀 Ключевые аспекты оптимизации
 
-**Почему модель, которая отлично работает in Jupyter, может провалиться in продакшене?** Потому что продакшен предъявляет совершенно другие требования:
+**Почему модель, которая отлично Workingет in Jupyter, может провалиться in продакшене?** Потому что продакшен предъявляет совершенно другие требования:
 
-- **Производительность**: Скорость predictions критически важна
+- **Производительность**: Скорость Predictions критически важна
 - **Память**: Ограниченные ресурсы сервера
 - **Размер модели**: Должна помещаться in контейнер
-- **Стабильность**: Работа on разных серверах and окружениях
+- **Стабильность**: Working on разных серверах and окружениях
 - **Масштабируемость**: Обработка больших объемов запросов
 - **Надежность**: Отказоустойчивость and восстановление
 
@@ -58,7 +58,7 @@
 - **Медленные предсказания**: 5 секунд вместо 50мс - пользователи уйдут
 - **Высокое потребление памяти**: Сервер падает под нагрузкой
 - **Большой размер модели**: not помещается in контейнер
-- **Нестабильность**: Модель работает нестабильно on разных серверах
+- **Нестабильность**: Модель Workingет нестабильно on разных серверах
 
 **Методы оптимизации моделей:**
 - **Квантизация**: Уменьшение точности весов (float32 → float16)
@@ -104,8 +104,8 @@ def create_production_model(train_data, target_col):
 **function create_production_model:**
 - **Назначение**: create модели, оптимизированной for продакшен деплоя
 - **parameters**:
- - **`train_data`**: Данные for обучения
- - **Тип**: DataFrame
+ - **`train_data`**: data for обучения
+ - **Тип**: dataFrame
  - **description**: Таблица with обучающими данными
  - **Требования**: Должна содержать целевую переменную
  - **`target_col`**: Название целевой переменной
@@ -170,7 +170,7 @@ def create_production_model(train_data, target_col):
  - **on умолчанию**: 8
  - **Рекомендации**: for продакшена Use 4-8 GB
 
-**Почему важны ограничения ресурсов?** Потому что продакшен серверы имеют ограниченные ресурсы, and модель должна работать in этих рамках.
+**Почему важны ограничения ресурсов?** Потому что продакшен серверы имеют ограниченные ресурсы, and модель должна Workingть in этих рамках.
 
 ### Сжатие модели
 
@@ -225,13 +225,13 @@ def compress_model(predictor, model_name):
 - **`save_info`**: Сохранение информации о модели
  - **Тип**: bool
  - **on умолчанию**: True
- - **description**: Сохраняет метаданные о модели
+ - **description**: Сохраняет метаdata о модели
  - **Использование**: Нужно for загрузки and отладки модели
 
 **Методы сжатия:**
 - **remove временных файлов**: clean промежуточных результатов
 - **Gzip сжатие**: Сжатие файлов модели
-- **Оптимизация весов**: remove неиспользуемых параметров
+- **Оптимизация весов**: remove неUseых параметров
 - **Квантизация**: Уменьшение точности весов (float32 → float16)
 
 ### Валидация модели
@@ -254,7 +254,7 @@ def validate_production_model(predictor, test_data, performance_thresholds):
  else:
  validation_results[metric] = False
 
- # check стабильности predictions
+ # check стабильности Predictions
  if hasattr(predictor, 'predict_proba'):
  probabilities = predictor.predict_proba(test_data)
  prob_std = probabilities.std().mean()
@@ -271,9 +271,9 @@ def validate_production_model(predictor, test_data, performance_thresholds):
  - **`predictor`**: Обученная модель
  - **Тип**: TabularPredictor
  - **description**: Модель for валидации
- - **`test_data`**: Тестовые данные
- - **Тип**: DataFrame
- - **description**: Данные for тестирования модели
+ - **`test_data`**: Тестовые data
+ - **Тип**: dataFrame
+ - **description**: data for тестирования модели
  - **Требования**: Должны содержать целевую переменную
  - **`performance_thresholds`**: Пороговые значения метрик
  - **Тип**: dict
@@ -283,23 +283,23 @@ def validate_production_model(predictor, test_data, performance_thresholds):
  - **`validation_results`**: dict - результаты валидации
  - **`performance`**: dict - метрики производительности
 
-**Структура validation_results:**
+**Structure validation_results:**
 - **`metric_name`**: bool - результат проверки метрики
  - **True**: Метрика превышает пороговое значение
  - **False**: Метрика ниже порогового значения
-- **`stability`**: bool - стабильность predictions
+- **`stability`**: bool - стабильность Predictions
  - **True**: Стандартное отклонение вероятностей < 0.1
- - **False**: Высокая нестабильность predictions
+ - **False**: Высокая нестабильность Predictions
 
-**Структура performance:**
+**Structure performance:**
 - **Метрики классификации**: accuracy, precision, recall, f1, roc_auc
 - **Метрики регрессии**: rmse, mae, r2, mape
 - **Кастомные метрики**: Любые метрики, определенные при обучении
 
 **Проверки валидации:**
 - **Пороговые значения**: Сравнение метрик with минимальными требованиями
-- **Стабильность**: Анализ разброса вероятностей predictions
-- **Производительность**: Оценка скорости predictions
+- **Стабильность**: Анализ разброса вероятностей Predictions
+- **Производительность**: Оценка скорости Predictions
 - **Память**: check использования памяти
 - **Совместимость**: Тестирование on разных platformх
 
@@ -339,9 +339,9 @@ class PredictionResponse(BaseModel):
  model_info: Dict[str, Any]
  timestamp: str
 
-class HealthResponse(BaseModel):
+class healthResponse(BaseModel):
  """Схема ответа for health check"""
- status: str
+ Status: str
  model_loaded: bool
  model_info: Dict[str, Any] = None
 
@@ -358,28 +358,28 @@ class HealthResponse(BaseModel):
  - **Рекомендации**: Use семантическое версионирование (1.0.0)
 
 **Класс PredictionRequest:**
-- **`data`**: Данные for предсказания
+- **`data`**: data for предсказания
  - **Тип**: List[Dict[str, Any]]
- - **description**: Список записей for предсказания
- - **Структура**: Каждая запись - словарь with приsignми
+ - **description**: List записей for предсказания
+ - **Structure**: Каждая запись - словарь with приsignми
  - **example**: [{"feature1": 1.0, "feature2": 2.0}, {"feature1": 3.0, "feature2": 4.0}]
 
 **Класс PredictionResponse:**
 - **`Predictions`**: Предсказания модели
  - **Тип**: List[Any]
- - **description**: Список predictions for каждой записи
-- **`probabilities`**: Вероятности predictions
+ - **description**: List Predictions for каждой записи
+- **`probabilities`**: Вероятности Predictions
  - **Тип**: List[Dict[str, float]] = None
  - **description**: Вероятности for каждого класса (только for классификации)
- - **Структура**: [{"class1": 0.8, "class2": 0.2}, ...]
+ - **Structure**: [{"class1": 0.8, "class2": 0.2}, ...]
 - **`model_info`**: Информация о модели
  - **Тип**: Dict[str, Any]
- - **description**: Метаданные о модели
+ - **description**: Метаdata о модели
 - **`timestamp`**: Время предсказания
  - **Тип**: str
  - **description**: ISO формат времени предсказания
 
-**Класс HealthResponse:**
+**Класс healthResponse:**
 - **`status`**: Статус API
  - **Тип**: str
  - **Значения**: "healthy", "unhealthy"
@@ -389,7 +389,7 @@ class HealthResponse(BaseModel):
  - **description**: Загружена ли модель
 - **`model_info`**: Информация о модели
  - **Тип**: Dict[str, Any] = None
- - **description**: Метаданные о модели (только если модель загружена)
+ - **description**: Метаdata о модели (только если модель загружена)
 
 @app.on_event("startup")
 async def load_model():
@@ -402,16 +402,16 @@ async def load_model():
  logger.error(f"Failed to load model: {e}")
  model = None
 
-@app.get("/health", response_model=HealthResponse)
+@app.get("/health", response_model=healthResponse)
 async def health_check():
- """Health check endpoint"""
+ """health check endpoint"""
  if model is None:
- return HealthResponse(
+ return healthResponse(
  status="unhealthy",
  model_loaded=False
  )
 
- return HealthResponse(
+ return healthResponse(
  status="healthy",
  model_loaded=True,
  model_info={
@@ -423,13 +423,13 @@ async def health_check():
 
 @app.post("/predict", response_model=PredictionResponse)
 async def predict(request: PredictionRequest):
- """Endpoint for predictions"""
+ """Endpoint for Predictions"""
  if model is None:
  raise HTTPException(status_code=503, detail="Model not loaded")
 
  try:
- # Преобразование данных in DataFrame
- df = pd.DataFrame(request.data)
+ # Преобразование данных in dataFrame
+ df = pd.dataFrame(request.data)
 
  # Предсказания
  Predictions = model.predict(df)
@@ -449,7 +449,7 @@ async def predict(request: PredictionRequest):
  }
 
  return PredictionResponse(
- Predictions=Predictions.tolist(),
+ Predictions=Predictions.toList(),
  probabilities=probabilities,
  model_info=model_info,
  timestamp=datetime.now().isoformat()
@@ -511,7 +511,7 @@ def load_model():
 
 @app.route('/health', methods=['GET'])
 def health_check():
- """Health check endpoint"""
+ """health check endpoint"""
  if model is None:
  return jsonify({
  "status": "unhealthy",
@@ -530,7 +530,7 @@ def health_check():
 
 @app.route('/predict', methods=['POST'])
 def predict():
- """Endpoint for predictions"""
+ """Endpoint for Predictions"""
  if model is None:
  return jsonify({"error": "Model not loaded"}), 503
 
@@ -541,8 +541,8 @@ def predict():
  if 'data' not in data:
  return jsonify({"error": "No data provided"}), 400
 
- # Преобразование in DataFrame
- df = pd.DataFrame(data['data'])
+ # Преобразование in dataFrame
+ df = pd.dataFrame(data['data'])
 
  # Предсказания
  Predictions = model.predict(df)
@@ -554,7 +554,7 @@ def predict():
  probabilities = proba.to_dict('records')
 
  return jsonify({
- "Predictions": Predictions.tolist(),
+ "Predictions": Predictions.toList(),
  "probabilities": probabilities,
  "model_info": {
  "model_path": model.path,
@@ -609,11 +609,11 @@ if __name__ == "__main__":
 # Dockerfile for продакшена
 FROM python:3.9-slim
 
-# Installation системных зависимостей
+# installation системных зависимостей
 RUN apt-get update && apt-get install -y \
  gcc \
  g++ \
- && rm -rf /var/lib/apt/lists/*
+ && rm -rf /var/lib/apt/Lists/*
 
 # create рабочей директории
 WORKDIR /app
@@ -621,15 +621,15 @@ WORKDIR /app
 # Копирование requirements
 COPY requirements.txt .
 
-# Installation Python зависимостей
+# installation Python зависимостей
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Копирование кода приложения
 COPY . .
 
-# create пользователя for безопасности
-RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
-USER appuser
+# create User for безопасности
+RUN Useradd -m -u 1000 appUser && chown -R appUser:appUser /app
+User appUser
 
 # Открытие порта
 EXPOSE 8000
@@ -648,7 +648,7 @@ CMD ["python", "app.py"]
 - **`RUN apt-get update && apt-get install -y`**: installation системных зависимостей
  - **`gcc`**: Компилятор C for сборки Python пакетов
  - **`g++`**: Компилятор C++ for сборки Python пакетов
- - **`&& rm -rf /var/lib/apt/lists/*`**: clean cache apt for уменьшения размера
+ - **`&& rm -rf /var/lib/apt/Lists/*`**: clean cache apt for уменьшения размера
 - **`WORKDIR /app`**: Рабочая директория
  - **description**: Устанавливает /app как рабочую директорию
  - **Преимущества**: Изолирует файлы приложения
@@ -661,13 +661,13 @@ CMD ["python", "app.py"]
 - **`COPY . .`**: Копирование кода приложения
  - **description**: Копирует весь код приложения in контейнер
  - **Рекомендации**: Use .dockerignore for исключения ненужных файлов
-- **`RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app`**: create пользователя
+- **`RUN Useradd -m -u 1000 appUser && chown -R appUser:appUser /app`**: create User
  - **`-m`**: Создает домашнюю директорию
  - **`-u 1000`**: Устанавливает UID 1000
  - **`chown -R`**: Изменяет владельца всех файлов
- - **Безопасность**: Launch not from root пользователя
-- **`USER appuser`**: Переключение on пользователя
- - **description**: Переключается on созданного пользователя
+ - **Безопасность**: Launch not from root User
+- **`User appUser`**: Переключение on User
+ - **description**: Переключается on созданного User
  - **Безопасность**: Ограничивает права доступа
 - **`EXPOSE 8000`**: Открытие порта
  - **description**: Документирует, что application использует порт 8000
@@ -682,7 +682,7 @@ CMD ["python", "app.py"]
 # docker-compose.prod.yml
 Version: '3.8'
 
-services:
+Services:
  autogluon-api:
  build: .
  ports:
@@ -748,10 +748,10 @@ volumes:
 - **`restart: unless-stopped`**: Политика переLaunchа
  - **description**: ПереLaunchает контейнер при сбое, кроме ручной остановки
  - **Альтернативы**: always, on-failure, no
-- **`healthcheck`**: check здоровья
- - **`test`**: Команда for проверки здоровья
+- **`healthcheck`**: health check
+ - **`test`**: Команда for проверки health
  - **`interval: 30s`**: Интервал проверки
- - **`timeout: 10s`**: Таймаут команды
+ - **`timeout: 10s`**: Таймаут team
  - **`retries: 3`**: Количество попыток
  - **`start_period: 40s`**: Время ожидания перед первой проверкой
 
@@ -778,16 +778,16 @@ volumes:
 **Тома:**
 - **`redis_data`**: Именованный том
  - **description**: Создает постоянный том for данных Redis
- - **Преимущества**: Данные сохраняются при переLaunchе контейнеров
+ - **Преимущества**: data сохраняются при переLaunchе контейнеров
 
 ## Kubernetes деплой
 
-### Deployment манифест
+### deployment манифест
 
 ```yaml
 # k8s-deployment.yaml
 apiVersion: apps/v1
-kind: Deployment
+kind: deployment
 metadata:
  name: autogluon-api
  labels:
@@ -882,12 +882,12 @@ spec:
 
 **🔧 Детальное description параметров Kubernetes деплоя:**
 
-**Deployment манифест:**
+**deployment манифест:**
 - **`apiVersion: apps/v1`**: Версия API
- - **description**: Использует стабильную версию API for Deployment
-- **`kind: Deployment`**: Тип ресурса
- - **description**: Создает Deployment for управления подами
-- **`metadata.name`**: Имя Deployment
+ - **description**: Использует стабильную версию API for deployment
+- **`kind: deployment`**: Тип ресурса
+ - **description**: Создает deployment for управления подами
+- **`metadata.name`**: Имя deployment
  - **description**: Уникальное имя for идентификации
 - **`spec.replicas: 3`**: Количество реплик
  - **description**: Создает 3 копии приложения
@@ -917,7 +917,7 @@ spec:
  - **`memory: "2Gi"`**: Максимум 2GB RAM
  - **`cpu: "1000m"`**: Максимум 1 CPU
 
-**Проверки здоровья:**
+**Проверки health:**
 - **`livenessProbe`**: check жизнеспособности
  - **`httpGet`**: HTTP запрос for проверки
  - **`path: /health`**: Путь for проверки
@@ -1031,10 +1031,10 @@ class ProductionMonitor:
  }
 
  def check_model_health(self, model) -> Dict[str, Any]:
- """check здоровья модели"""
+ """health check модели"""
  try:
  # Тестовое Prediction
- test_data = pd.DataFrame({'feature1': [1.0], 'feature2': [2.0]})
+ test_data = pd.dataFrame({'feature1': [1.0], 'feature2': [2.0]})
  start_time = time.time()
  Prediction = model.predict(test_data)
  processing_time = time.time() - start_time
@@ -1072,17 +1072,17 @@ class ProductionMonitor:
  - **`format`**: Формат логов
  - **Тип**: str
  - **description**: Шаблон for форматирования логов
- - **Компоненты**: время, имя логгера, уровень, сообщение
+ - **components**: время, имя логгера, уровень, сообщение
  - **`handlers`**: Обработчики логов
  - **`FileHandler`**: Запись in файл
  - **`StreamHandler`**: Вывод in консоль
 
 **Метод log_Prediction():**
-- **Назначение**: Логирование predictions модели
+- **Назначение**: Логирование Predictions модели
 - **parameters**:
- - **`input_data`**: Входные данные
+ - **`input_data`**: Входные data
  - **Тип**: Dict
- - **description**: Данные, поданные on вход модели
+ - **description**: data, поdata on вход модели
  - **`Prediction`**: Prediction модели
  - **Тип**: Any
  - **description**: Результат предсказания
@@ -1091,7 +1091,7 @@ class ProductionMonitor:
  - **description**: Время выполнения предсказания in секундах
  - **`model_info`**: Информация о модели
  - **Тип**: Dict
- - **description**: Метаданные о модели
+ - **description**: Метаdata о модели
 
 **Метод log_error():**
 - **Назначение**: Логирование ошибок системы
@@ -1124,13 +1124,13 @@ class ProductionMonitor:
  - **description**: ISO формат времени
 
 **Метод check_model_health():**
-- **Назначение**: check здоровья модели
+- **Назначение**: health check модели
 - **parameters**:
  - **`model`**: Модель for проверки
  - **Тип**: TabularPredictor
  - **description**: Модель AutoGluon for тестирования
-- **Возвращаемое значение**: Dict[str, Any] - статус здоровья
-- **Структура результата**:
+- **Возвращаемое значение**: Dict[str, Any] - статус health
+- **Structure результата**:
  - **`status`**: Статус модели
  - **Тип**: str
  - **Значения**: 'healthy', 'unhealthy'
@@ -1149,7 +1149,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import requests
 
-class AlertSystem:
+class Alertsystem:
  """Система алертов for продакшена"""
 
  def __init__(self, smtp_server, smtp_port, email, password):
@@ -1158,7 +1158,7 @@ class AlertSystem:
  self.email = email
  self.password = password
 
- def send_email_alert(self, subject: str, message: str, recipients: list):
+ def send_email_alert(self, subject: str, message: str, recipients: List):
  """Отправка email алерта"""
  try:
  msg = MIMEMultipart()
@@ -1183,7 +1183,7 @@ class AlertSystem:
  try:
  payload = {
  "text": message,
- "username": "AutoML Gluon Monitor",
+ "Username": "AutoML Gluon Monitor",
  "icon_emoji": ":robot_face:"
  }
 
@@ -1208,7 +1208,7 @@ class AlertSystem:
 
 **🔧 Детальное description параметров системы алертов:**
 
-**Класс AlertSystem:**
+**Класс Alertsystem:**
 - **Назначение**: Система уведомлений for продакшен Monitoringа
 - **parameters конструктора**:
  - **`smtp_server`**: SMTP сервер
@@ -1232,13 +1232,13 @@ class AlertSystem:
  - **`subject`**: Тема письма
  - **Тип**: str
  - **description**: Заголовок email уведомления
- - **examples**: "Model Performance Alert", "System Health Warning"
+ - **examples**: "Model Performance Alert", "system health Warning"
  - **`message`**: Текст messages
  - **Тип**: str
  - **description**: Содержимое email уведомления
- - **`recipients`**: Список получателей
- - **Тип**: list
- - **description**: Список email адресов получателей
+ - **`recipients`**: List получателей
+ - **Тип**: List
+ - **description**: List email адресов получателей
  - **example**: ['admin@company.com', 'devops@company.com']
 
 **Метод send_slack_alert():**
@@ -1247,13 +1247,13 @@ class AlertSystem:
  - **`webhook_url`**: URL webhook
  - **Тип**: str
  - **description**: URL Slack webhook for отправки сообщений
- - **Формат**: https://hooks.slack.com/services/...
+ - **Формат**: https://hooks.slack.com/Services/...
  - **`message`**: Текст messages
  - **Тип**: str
  - **description**: Содержимое Slack уведомления
-- **Структура payload**:
+- **Structure payload**:
  - **`text`**: Текст messages
- - **`username`**: Имя отправителя
+ - **`Username`**: Имя отправителя
  - **`icon_emoji`**: Иконка отправителя
 
 **Метод check_performance_thresholds():**
@@ -1267,11 +1267,11 @@ class AlertSystem:
  - **Тип**: Dict[str, float]
  - **description**: Словарь with минимальными значениями метрик
  - **example**: {'accuracy': 0.90, 'response_time': 1.0}
-- **Возвращаемое значение**: list - список алертов
+- **Возвращаемое значение**: List - List алертов
 - **Логика проверки**:
  - Сравнивает текущие метрики with пороговыми значениями
  - Создает алерт, если метрика ниже порога
- - Возвращает список строк with описанием проблем
+ - Возвращает List строк with описанием проблем
 
 ## Масштабирование
 
@@ -1296,8 +1296,8 @@ from concurrent.futures import ThreadPoolExecutor
 import queue
 import threading
 
-class ScalablePredictionService:
- """Масштабируемый сервис predictions"""
+class ScalablePredictionservice:
+ """Масштабируемый сервис Predictions"""
 
  def __init__(self, max_workers=4):
  self.max_workers = max_workers
@@ -1324,7 +1324,7 @@ class ScalablePredictionService:
  pass
 
  def batch_predict(self, batch_data: List[Dict]) -> List[Dict]:
- """Пакетная обработка predictions"""
+ """Пакетная обработка Predictions"""
  results = []
 
  # Разделение on батчи
@@ -1343,8 +1343,8 @@ class ScalablePredictionService:
 
 **🔧 Детальное description параметров масштабирования:**
 
-**Класс ScalablePredictionService:**
-- **Назначение**: Масштабируемый сервис for обработки predictions
+**Класс ScalablePredictionservice:**
+- **Назначение**: Масштабируемый сервис for обработки Predictions
 - **parameters конструктора**:
  - **`max_workers`**: Максимальное количество потоков
  - **Тип**: int
@@ -1356,9 +1356,9 @@ class ScalablePredictionService:
 **Метод process_Prediction():**
 - **Назначение**: Асинхронная обработка предсказания
 - **parameters**:
- - **`data`**: Данные for предсказания
+ - **`data`**: data for предсказания
  - **Тип**: Dict
- - **description**: Входные данные for модели
+ - **description**: Входные data for модели
 - **Возвращаемое значение**: Dict - результат предсказания
 - **Особенности**:
  - **Асинхронность**: not блокирует основной поток
@@ -1368,9 +1368,9 @@ class ScalablePredictionService:
 **Метод _predict_sync():**
 - **Назначение**: Синхронное выполнение предсказания
 - **parameters**:
- - **`data`**: Данные for предсказания
+ - **`data`**: data for предсказания
  - **Тип**: Dict
- - **description**: Входные данные for модели
+ - **description**: Входные data for модели
 - **Возвращаемое значение**: Dict - результат предсказания
 - **Особенности**:
  - **Синхронность**: Блокирующее выполнение
@@ -1378,12 +1378,12 @@ class ScalablePredictionService:
  - **Производительность**: Оптимизирован for быстрого выполнения
 
 **Метод batch_predict():**
-- **Назначение**: Пакетная обработка множественных predictions
+- **Назначение**: Пакетная обработка множественных Predictions
 - **parameters**:
- - **`batch_data`**: Список данных for предсказания
+ - **`batch_data`**: List данных for предсказания
  - **Тип**: List[Dict]
- - **description**: Список входных данных
-- **Возвращаемое значение**: List[Dict] - список результатов
+ - **description**: List входных данных
+- **Возвращаемое значение**: List[Dict] - List результатов
 - **parameters обработки**:
  - **`batch_size`**: Размер батча
  - **Тип**: int
@@ -1404,7 +1404,7 @@ import hashlib
 from typing import Any, Optional
 
 class PredictionCache:
- """Кэш for predictions"""
+ """Кэш for Predictions"""
 
  def __init__(self, redis_host='localhost', redis_port=6379, ttl=3600):
  self.redis_client = redis.Redis(host=redis_host, port=redis_port, decode_responses=True)
@@ -1444,7 +1444,7 @@ class PredictionCache:
 **🔧 Детальное description параметров кэширования:**
 
 **Класс PredictionCache:**
-- **Назначение**: Кэширование predictions for acceleration ответов
+- **Назначение**: Кэширование Predictions for acceleration ответов
 - **parameters конструктора**:
  - **`redis_host`**: Хост Redis сервера
  - **Тип**: str
@@ -1463,34 +1463,34 @@ class PredictionCache:
 **Метод _generate_cache_key():**
 - **Назначение**: Генерация уникального ключа for cache
 - **parameters**:
- - **`data`**: Данные for предсказания
+ - **`data`**: data for предсказания
  - **Тип**: Dict
- - **description**: Входные данные for генерации ключа
+ - **description**: Входные data for генерации ключа
 - **Возвращаемое значение**: str - MD5 хеш ключа
 - **Алгоритм**:
- - Сериализует данные in JSON with сортировкой ключей
+ - Сериализует data in JSON with сортировкой ключей
  - Создает MD5 хеш from строки данных
  - Возвращает 32-символьный хеш
 
 **Метод get_Prediction():**
 - **Назначение**: Получение предсказания из cache
 - **parameters**:
- - **`data`**: Данные for поиска
+ - **`data`**: data for поиска
  - **Тип**: Dict
- - **description**: Входные данные for поиска in кэше
+ - **description**: Входные data for поиска in кэше
 - **Возвращаемое значение**: Optional[Dict] - результат из cache or None
 - **Логика работы**:
  - Генерирует ключ cache из данных
  - Ищет значение in Redis
  - Десериализует JSON in словарь
- - Возвращает None, если ключ not найден
+ - Возвращает None, если ключ not found
 
 **Метод set_Prediction():**
 - **Назначение**: Сохранение предсказания in кэш
 - **parameters**:
- - **`data`**: Входные данные
+ - **`data`**: Входные data
  - **Тип**: Dict
- - **description**: Данные for генерации ключа
+ - **description**: data for генерации ключа
  - **`Prediction`**: Результат предсказания
  - **Тип**: Dict
  - **description**: Prediction for сохранения
@@ -1509,7 +1509,7 @@ class PredictionCache:
  - **examples**: "*", "Prediction:*", "model_v1:*"
 - **Особенности**:
  - Использует `keys()` for поиска ключей
- - Удаляет все найденные ключи
+ - Удаляет все foundные ключи
  - Поддерживает wildcard паттерны
 
 ## Безопасность
@@ -1529,11 +1529,11 @@ class SecurityManager:
  self.secret_key = secret_key
  self.api_keys = {}
 
- def generate_api_key(self, user_id: str) -> str:
+ def generate_api_key(self, User_id: str) -> str:
  """Генерация API ключа"""
  api_key = secrets.token_urlsafe(32)
  self.api_keys[api_key] = {
- 'user_id': user_id,
+ 'User_id': User_id,
  'created_at': datetime.now(),
  'permissions': ['predict', 'model_info']
  }
@@ -1543,13 +1543,13 @@ class SecurityManager:
  """Валидация API ключа"""
  return api_key in self.api_keys
 
- def get_user_permissions(self, api_key: str) -> list:
- """Получение разрешений пользователя"""
+ def get_User_permissions(self, api_key: str) -> List:
+ """Получение разрешений User"""
  if api_key in self.api_keys:
  return self.api_keys[api_key]['permissions']
  return []
 
- def require_auth(self, permissions: list = None):
+ def require_auth(self, permissions: List = None):
  """Декоратор for проверки аутентификации"""
  def decorator(f):
  @wraps(f)
@@ -1561,8 +1561,8 @@ class SecurityManager:
 
  # check разрешений
  if permissions:
- user_permissions = self.get_user_permissions(api_key)
- if not any(perm in user_permissions for perm in permissions):
+ User_permissions = self.get_User_permissions(api_key)
+ if not any(perm in User_permissions for perm in permissions):
  return jsonify({'error': 'Insufficient permissions'}), 403
 
  return f(*args, **kwargs)
@@ -1671,15 +1671,15 @@ class LoadTester:
  'error': str(e)
  }
 
- async def load_test(self, concurrent_users: int,
- requests_per_user: int,
+ async def load_test(self, concurrent_Users: int,
+ requests_per_User: int,
  test_data: List[Dict[str, Any]]) -> Dict[str, Any]:
  """Нагрузочное тестирование"""
  async with aiohttp.ClientSession() as session:
  tasks = []
 
- for user in range(concurrent_users):
- for request in range(requests_per_user):
+ for User in range(concurrent_Users):
+ for request in range(requests_per_User):
  data = test_data[request % len(test_data)]
  task = self.single_request(session, data)
  tasks.append(task)
@@ -1714,7 +1714,7 @@ class LoadTester:
 - **Planирование**: Тщательное Planирование архитектуры and ресурсов
 - **Тестирование**: Комплексное тестирование перед деплоем
 - **Monitoring**: Непрерывный Monitoring качества and производительности
-- **documentation**: Подробная documentation for команды
+- **documentation**: Подробная documentation for team
 - **Безопасность**: Защита данных and моделей
 - **Версионирование**: Контроль версий моделей and кода
 - **Откат**: Возможность быстрого отката при проблемах

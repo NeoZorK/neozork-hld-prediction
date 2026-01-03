@@ -20,7 +20,7 @@
 
 ### 2. integration ML-алгоритмов
 Система использует ансамбль машинного обучения for:
-- **Анализа рыночных данных** in реальном времени
+- **Analysis рыночных данных** in реальном времени
 - **Генерации торговых сигналов** with высокой точностью
 - **Управления рисками** через динамическое позиционирование
 - **Адаптации к изменениям** рынка через переобучение
@@ -29,7 +29,7 @@
 Смарт-контракты обеспечивают:
 - **Мгновенное выполнение** торговых операций
 - **Прозрачность условий** торговли
-- **Автоматическое управление** позициями
+- **Автоматическое Management** позициями
 - **Снижение человеческого фактора** in торговле
 
 **Почему блокчейн-система критически важна for достижения 100% прибыли:**
@@ -47,11 +47,11 @@
 1. **Безопасного тестирования** высокодоходных стратегий без риска потери реальных средств
 2. **Валидации алгоритмов** in условиях, максимально приближенных к реальным
 3. **Оптимизации параметров** торговых стратегий
-4. **Подготовки к mainnet** with проверенными and протестированными компонентами
+4. **Подготовки к mainnet** with проверенными and протестированными componentsи
 
 ### Архитектура testnet-системы
 
-**Компоненты системы:**
+**components системы:**
 
 #### 1. Смарт-контракты for trading
 - **TradingContract** - основной контракт for выполнения торговых операций
@@ -61,13 +61,13 @@
 
 #### 2. ML-modules
 - **EnsembleModel** - ансамбль ML-моделей for генерации сигналов
-- **RetrainingSystem** - система автоматического переобучения
+- **Retrainingsystem** - система автоматического переобучения
 - **RiskAssessment** - module оценки рисков
 - **signalGenerator** - генератор торговых сигналов
 
 #### 3. Блокчейн-integration
 - **Web3Provider** - подключение к блокчейн-сети
-- **TransactionManager** - управление транзакциями
+- **TransactionManager** - Management транзакциями
 - **GasOptimizer** - оптимизация газовых комиссий
 - **EventMonitor** - Monitoring событий блокчейна
 
@@ -79,7 +79,7 @@
 - Отладка кода in реальных условиях блокчейна
 
 **Реалистичность:**
-- Использование реальных блокчейн-сетей (Sepolia, Goerli)
+- Использование реальных блокчейн-networks (Sepolia, Goerli)
 - Реальные газовые комиссии and задержки
 - Аутентичные условия выполнения транзакций
 
@@ -100,27 +100,27 @@
 
 **Теория:** Ансамблевая модель представляет собой передовую методологию машинного обучения, которая комбинирует множественные ML-модели for создания супер-модели with превосходной точностью and робастностью. in контексте блокчейн-торговли это критически важно for:
 
-1. **improving accuracy predictions** - комбинация моделей снижает ошибки
+1. **improving accuracy Predictions** - комбинация моделей снижает ошибки
 2. **Увеличения робастности** - устойчивость к рыночным изменениям
 3. **Диверсификации подходов** - разные модели анализируют разные аспекты рынка
 4. **Снижения рисков** - уменьшение вероятности ошибочных сигналов
 
 #### Архитектура ансамбля
 
-**Компоненты ансамблевой системы:**
+**components ансамблевой системы:**
 
 ##### 1. Базовые модели
 - **Logistic Regression** - линейная модель for выявления трендов
 - **Support Vector Machine** - нелинейная классификация паттернов
 - **Neural network** - глубокое обучение сложных зависимостей
-- **XGBoost** - градиентный бустинг for точных predictions
+- **XGBoost** - градиентный бустинг for точных Predictions
 - **LightGBM** - быстрый градиентный бустинг
 - **CatBoost** - категориальный бустинг
 
 ##### 2. Методы агрегации
 - **Voting Classifier** - голосование моделей
 - **Stacking** - мета-обучение on предсказаниях базовых моделей
-- **Blending** - взвешенное усреднение predictions
+- **Blending** - взвешенное усреднение Predictions
 - **Bagging** - бутстрап-агрегация
 
 ##### 3. Оптимизация весов
@@ -147,13 +147,13 @@
 - Повышение надежности системы
 
 **Почему ансамблевая модель критически важна for блокчейн-торговли:**
-- **Точность:** Обеспечивает высокую точность predictions (85-95%)
+- **Точность:** Обеспечивает высокую точность Predictions (85-95%)
 - **Робастность:** Повышает устойчивость к рыночным изменениям
 - **Диверсификация:** Обеспечивает диверсификацию торговых подходов
 - **Надежность:** Критически важно for надежности торговой системы
 
 **Преимущества:**
-- Высокая точность predictions (85-95%)
+- Высокая точность Predictions (85-95%)
 - Робастность к рыночным изменениям
 - Диверсификация торговых подходов
 - Надежность системы
@@ -187,7 +187,7 @@ from sklearn.svm import SVC
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import cross_val_score, StratifiedKFold
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_Report, confusion_matrix
 
 # Градиентный бустинг
 import xgboost as xgb
@@ -222,7 +222,7 @@ class EnsembleModel:
  self.config = config or {}
  self.logger = logging.getLogger(__name__)
 
- # Основные компоненты
+ # Основные components
  self.models = {}
  self.ensemble = None
  self.scaler = StandardScaler()
@@ -291,7 +291,7 @@ class EnsembleModel:
  raise
 
  def _create_directories(self):
- """create необходимых директорий"""
+ """create required директорий"""
  directories = [
  'models/trained',
  'data/processed',
@@ -302,14 +302,14 @@ class EnsembleModel:
  for directory in directories:
  Path(directory).mkdir(parents=True, exist_ok=True)
 
- def train(self, wave2_data: pd.DataFrame, schr_levels_data: pd.DataFrame, schr_short3_data: pd.DataFrame):
+ def train(self, wave2_data: pd.dataFrame, schr_levels_data: pd.dataFrame, schr_short3_data: pd.dataFrame):
  """
  Обучение ансамблевой модели
 
  Args:
- wave2_data: Данные волнового анализа
- schr_levels_data: Данные уровней Шредингера
- schr_short3_data: Данные краткосрочного анализа Шредингера
+ wave2_data: data волнового Analysis
+ schr_levels_data: data уровней Шредингера
+ schr_short3_data: data краткосрочного Analysis Шредингера
  """
  try:
  self.logger.info("starting ensemble model training...")
@@ -323,7 +323,7 @@ class EnsembleModel:
 
  # Нормализация данных
  X_scaled = self.scaler.fit_transform(X)
- X_scaled = pd.DataFrame(X_scaled, columns=X.columns, index=X.index)
+ X_scaled = pd.dataFrame(X_scaled, columns=X.columns, index=X.index)
 
  # Разделение on train/test
  from sklearn.model_selection import train_test_split
@@ -347,7 +347,7 @@ class EnsembleModel:
 
  # create ансамбля
  self.ensemble = VotingClassifier(
- estimators=list(self.models.items()),
+ estimators=List(self.models.items()),
  voting='soft'
  )
 
@@ -369,7 +369,7 @@ class EnsembleModel:
  # Расчет метрик
  self.performance_metrics['test'] = {
  'accuracy': (y_pred == y_test).mean(),
- 'classification_report': classification_report(y_test, y_pred, output_dict=True)
+ 'classification_Report': classification_Report(y_test, y_pred, output_dict=True)
  }
 
  # Расчет важности признаков
@@ -387,7 +387,7 @@ class EnsembleModel:
  self.logger.error(f"Error training ensemble model: {e}")
  return False
 
- def _prepare_ensemble_data(self, wave2_data: pd.DataFrame, schr_levels_data: pd.DataFrame, schr_short3_data: pd.DataFrame) -> tuple:
+ def _prepare_ensemble_data(self, wave2_data: pd.dataFrame, schr_levels_data: pd.dataFrame, schr_short3_data: pd.dataFrame) -> tuple:
  """Подготовка данных for ансамбля"""
  # Объединение всех признаков
  all_features = []
@@ -402,7 +402,7 @@ class EnsembleModel:
  all_features.append(schr_short3_data)
 
  if not all_features:
- return pd.DataFrame(), pd.Series()
+ return pd.dataFrame(), pd.Series()
 
  # Объединение on индексу
  X = pd.concat(all_features, axis=1)
@@ -413,13 +413,13 @@ class EnsembleModel:
 
  return X, y
 
- def _create_ensemble_target(self, X: pd.DataFrame) -> pd.Series:
+ def _create_ensemble_target(self, X: pd.dataFrame) -> pd.Series:
  """create целевой переменной for ансамбля"""
- # Используем цену закрытия for создания целевой переменной
+ # Use цену закрытия for создания целевой переменной
  if 'close' in X.columns:
  price = X['close']
  else:
- # Если нет цены, используем первый числовой столбец
+ # Если нет цены, Use первый числовой столбец
  numeric_cols = X.select_dtypes(include=[np.number]).columns
  price = X[numeric_cols[0]]
 
@@ -436,7 +436,7 @@ class EnsembleModel:
 
  return target.astype(int)
 
- def _calculate_feature_importance(self, X: pd.DataFrame, y: pd.Series):
+ def _calculate_feature_importance(self, X: pd.dataFrame, y: pd.Series):
  """Расчет важности признаков"""
  try:
  # for XGBoost
@@ -456,7 +456,7 @@ class EnsembleModel:
  except Exception as e:
  self.logger.error(f"Error calculating feature importance: {e}")
 
- def predict(self, X: pd.DataFrame) -> np.ndarray:
+ def predict(self, X: pd.dataFrame) -> np.ndarray:
  """Prediction ансамбля"""
  if not self.is_trained:
  self.logger.warning("Ensemble model not trained")
@@ -469,7 +469,7 @@ class EnsembleModel:
  self.logger.error(f"Error predicting with ensemble: {e}")
  return np.zeros(len(X))
 
- def predict_proba(self, X: pd.DataFrame) -> np.ndarray:
+ def predict_proba(self, X: pd.dataFrame) -> np.ndarray:
  """Prediction вероятностей"""
  if not self.is_trained:
  self.logger.warning("Ensemble model not trained")
@@ -519,7 +519,7 @@ class EnsembleModel:
  return True
 
  except Exception as e:
- self.logger.error(f"Error loading model: {e}")
+ self.logger.error(f"Error Loading model: {e}")
  return False
 
  def get_feature_importance(self) -> Dict:
@@ -578,10 +578,10 @@ class EnsembleModel:
  self.logger.error(f"Error generating trading signal: {e}")
  return {'signal': 0, 'confidence': 0, 'error': str(e)}
 
- def _prepare_Prediction_data(self, market_data: Dict) -> pd.DataFrame:
+ def _prepare_Prediction_data(self, market_data: Dict) -> pd.dataFrame:
  """Подготовка данных for предсказания"""
  try:
- # create DataFrame из рыночных данных
+ # create dataFrame из рыночных данных
  data = []
 
  # Базовые признаки
@@ -611,22 +611,22 @@ class EnsembleModel:
  data.append(('bb_middle', price))
 
  if not data:
- return pd.DataFrame()
+ return pd.dataFrame()
 
- # create DataFrame
- df = pd.DataFrame([dict(data)])
+ # create dataFrame
+ df = pd.dataFrame([dict(data)])
  return df
 
  except Exception as e:
  self.logger.error(f"Error preparing Prediction data: {e}")
- return pd.DataFrame()
+ return pd.dataFrame()
 
- def evaluate_model(self, test_data: pd.DataFrame) -> Dict:
+ def evaluate_model(self, test_data: pd.dataFrame) -> Dict:
  """
  Оценка модели on тестовых данных
 
  Args:
- test_data: Тестовые данные
+ test_data: Тестовые data
 
  Returns:
  Словарь with метриками оценки
@@ -654,15 +654,15 @@ class EnsembleModel:
  # Confusion matrix
  cm = confusion_matrix(y, y_pred)
 
- # Classification report
- report = classification_report(y, y_pred, output_dict=True)
+ # Classification Report
+ Report = classification_Report(y, y_pred, output_dict=True)
 
  return {
  'accuracy': float(accuracy),
- 'confusion_matrix': cm.tolist(),
- 'classification_report': report,
- 'Predictions': y_pred.tolist(),
- 'probabilities': y_pred_proba.tolist()
+ 'confusion_matrix': cm.toList(),
+ 'classification_Report': Report,
+ 'Predictions': y_pred.toList(),
+ 'probabilities': y_pred_proba.toList()
  }
 
  except Exception as e:
@@ -683,7 +683,7 @@ class EnsembleModel:
 
 #### Архитектура системы переобучения
 
-**Компоненты системы:**
+**components системы:**
 
 ##### 1. Monitoring производительности
 - **Метрики качества** - точность, precision, recall, F1-score
@@ -790,7 +790,7 @@ class RetrainingConfig:
  enable_ab_testing: bool = True
  ab_test_duration_hours: int = 24
 
-class RetrainingSystem:
+class Retrainingsystem:
  """
  Система автоматического переобучения for блокчейн-торговли
 
@@ -825,7 +825,7 @@ class RetrainingSystem:
  self.last_retraining = None
  self.current_model_version = 1
 
- # Данные for analysis
+ # data for Analysis
  self.reference_data = None
  self.current_data = None
  self.performance_metrics = {}
@@ -834,10 +834,10 @@ class RetrainingSystem:
  self._create_directories()
 
  # Инициализация Monitoringа
- self._initialize_monitoring()
+ self._initialize_Monitoring()
 
  def _create_directories(self):
- """create необходимых директорий"""
+ """create required директорий"""
  directories = [
  'models/retraining',
  'data/retraining',
@@ -848,7 +848,7 @@ class RetrainingSystem:
  for directory in directories:
  Path(directory).mkdir(parents=True, exist_ok=True)
 
- def _initialize_monitoring(self):
+ def _initialize_Monitoring(self):
  """Инициализация системы Monitoringа"""
  try:
  # Загрузка эталонных данных
@@ -867,7 +867,7 @@ class RetrainingSystem:
  self.logger.info("Monitoring system initialized")
 
  except Exception as e:
- self.logger.error(f"Error initializing monitoring: {e}")
+ self.logger.error(f"Error initializing Monitoring: {e}")
 
  def start_retraining_system(self):
  """Launch системы переобучения"""
@@ -905,7 +905,7 @@ class RetrainingSystem:
  if self._should_retrain():
  self._retrain_models()
  self.last_retraining = datetime.now()
- self.logger.info("Daily retraining completed")
+ self.logger.info("Daily retraining COMPLETED")
  else:
  self.logger.info("Daily retraining skipped - not needed")
 
@@ -920,7 +920,7 @@ class RetrainingSystem:
  # Принудительное переобучение
  self._retrain_models()
  self.last_retraining = datetime.now()
- self.logger.info("Weekly retraining completed")
+ self.logger.info("Weekly retraining COMPLETED")
 
  except Exception as e:
  self.logger.error(f"Error in weekly retraining: {e}")
@@ -938,7 +938,7 @@ class RetrainingSystem:
  drift_score = self._calculate_drift(current_data)
 
  if drift_score > self.drift_threshold:
- self.logger.warning(f"Data drift detected: {drift_score:.4f}")
+ self.logger.warning(f"data drift detected: {drift_score:.4f}")
  self._retrain_models()
  self.last_retraining = datetime.now()
 
@@ -988,12 +988,12 @@ class RetrainingSystem:
  # update истории производительности
  self._update_performance_history()
 
- self.logger.info("Models retraining completed")
+ self.logger.info("Models retraining COMPLETED")
 
  except Exception as e:
  self.logger.error(f"Error retraining models: {e}")
 
- def _calculate_drift(self, current_data: pd.DataFrame) -> float:
+ def _calculate_drift(self, current_data: pd.dataFrame) -> float:
  """Расчет дрифта данных"""
  try:
  # Загрузка эталонных данных
@@ -1033,17 +1033,17 @@ class RetrainingSystem:
  self.logger.error(f"Error calculating drift: {e}")
  return 0.0
 
- def _load_new_data(self) -> pd.DataFrame:
+ def _load_new_data(self) -> pd.dataFrame:
  """Загрузка новых данных"""
  # Здесь должна быть логика загрузки новых данных
- # for примера возвращаем пустой DataFrame
- return pd.DataFrame()
+ # for примера возвращаем пустой dataFrame
+ return pd.dataFrame()
 
- def _load_reference_data(self) -> pd.DataFrame:
+ def _load_reference_data(self) -> pd.dataFrame:
  """Загрузка эталонных данных"""
  # Здесь должна быть логика загрузки эталонных данных
- # for примера возвращаем пустой DataFrame
- return pd.DataFrame()
+ # for примера возвращаем пустой dataFrame
+ return pd.dataFrame()
 
  def _save_models(self):
  """Сохранение моделей"""
@@ -1081,7 +1081,7 @@ class RetrainingSystem:
 
  self.logger.info("Retraining system stopped")
 
- def _load_reference_data(self) -> pd.DataFrame:
+ def _load_reference_data(self) -> pd.dataFrame:
  """Загрузка эталонных данных for сравнения"""
  try:
  # Загрузка исторических данных BTC/USD
@@ -1090,7 +1090,7 @@ class RetrainingSystem:
 
  if data.empty:
  self.logger.warning("No reference data available")
- return pd.DataFrame()
+ return pd.dataFrame()
 
  # Подготовка данных
  data = data.reset_index()
@@ -1103,10 +1103,10 @@ class RetrainingSystem:
  return data
 
  except Exception as e:
- self.logger.error(f"Error loading reference data: {e}")
- return pd.DataFrame()
+ self.logger.error(f"Error Loading reference data: {e}")
+ return pd.dataFrame()
 
- def _add_technical_indicators(self, data: pd.DataFrame) -> pd.DataFrame:
+ def _add_technical_indicators(self, data: pd.dataFrame) -> pd.dataFrame:
  """add технических indicators"""
  try:
  if data.empty:
@@ -1141,7 +1141,7 @@ class RetrainingSystem:
  self.logger.error(f"Error adding technical indicators: {e}")
  return data
 
- def _get_current_data(self) -> pd.DataFrame:
+ def _get_current_data(self) -> pd.dataFrame:
  """Получение текущих рыночных данных"""
  try:
  # Загрузка последних данных
@@ -1149,7 +1149,7 @@ class RetrainingSystem:
  data = ticker.history(period="7d", interval="1h")
 
  if data.empty:
- return pd.DataFrame()
+ return pd.dataFrame()
 
  # Подготовка данных
  data = data.reset_index()
@@ -1162,7 +1162,7 @@ class RetrainingSystem:
 
  except Exception as e:
  self.logger.error(f"Error getting current data: {e}")
- return pd.DataFrame()
+ return pd.dataFrame()
 
  def _calculate_performance_metrics(self, y_true: np.ndarray, y_pred: np.ndarray) -> Dict:
  """Расчет метрик производительности"""
@@ -1180,7 +1180,7 @@ class RetrainingSystem:
  self.logger.error(f"Error calculating performance metrics: {e}")
  return {}
 
- def _detect_drift(self, current_data: pd.DataFrame) -> float:
+ def _detect_drift(self, current_data: pd.dataFrame) -> float:
  """Детекция дрифта in данных"""
  try:
  if self.reference_data.empty or current_data.empty:
@@ -1214,7 +1214,7 @@ class RetrainingSystem:
  self.logger.error(f"Error detecting drift: {e}")
  return 0.0
 
- def _retrain_models(self, new_data: pd.DataFrame) -> bool:
+ def _retrain_models(self, new_data: pd.dataFrame) -> bool:
  """Переобучение моделей on новых данных"""
  try:
  self.logger.info("starting model retraining...")
@@ -1278,11 +1278,11 @@ class RetrainingSystem:
  self.logger.error(f"Error retraining models: {e}")
  return False
 
- def _prepare_training_data(self, data: pd.DataFrame) -> Tuple[pd.DataFrame, pd.Series]:
+ def _prepare_training_data(self, data: pd.dataFrame) -> Tuple[pd.dataFrame, pd.Series]:
  """Подготовка данных for обучения"""
  try:
  # Выбор признаков
- feature_cols = data.select_dtypes(include=[np.number]).columns.tolist()
+ feature_cols = data.select_dtypes(include=[np.number]).columns.toList()
 
  # remove целевой переменной если есть
  if 'target' in feature_cols:
@@ -1317,7 +1317,7 @@ class RetrainingSystem:
 
  except Exception as e:
  self.logger.error(f"Error preparing training data: {e}")
- return pd.DataFrame(), pd.Series()
+ return pd.dataFrame(), pd.Series()
 
  def _save_retrained_models(self):
  """Сохранение переобученных моделей"""
@@ -1346,7 +1346,7 @@ class RetrainingSystem:
  except Exception as e:
  self.logger.error(f"Error saving retrained models: {e}")
 
- def get_performance_report(self) -> Dict:
+ def get_performance_Report(self) -> Dict:
  """Получение Reportа о производительности"""
  try:
  return {
@@ -1359,7 +1359,7 @@ class RetrainingSystem:
  }
 
  except Exception as e:
- self.logger.error(f"Error generating performance report: {e}")
+ self.logger.error(f"Error generating performance Report: {e}")
  return {}
 ```
 
@@ -1371,12 +1371,12 @@ class RetrainingSystem:
 
 1. **Безопасного тестирования** высокодоходных стратегий без финансовых рисков
 2. **Валидации алгоритмов** in условиях, максимально приближенных к реальным
-3. **Подготовки к mainnet** with проверенными and протестированными компонентами
+3. **Подготовки к mainnet** with проверенными and протестированными componentsи
 4. **Создания прозрачной** and доверенной торговой экосистемы
 
 #### Архитектура блокчейн-интеграции
 
-**Компоненты системы:**
+**components системы:**
 
 ##### 1. Смарт-контракты
 - **TradingContract** - основной контракт for выполнения торговых операций
@@ -1387,14 +1387,14 @@ class RetrainingSystem:
 
 ##### 2. Web3 integration
 - **Web3Provider** - подключение к блокчейн-сети (Sepolia, Goerli)
-- **TransactionManager** - управление транзакциями and газовыми комиссиями
+- **TransactionManager** - Management транзакциями and газовыми комиссиями
 - **EventMonitor** - Monitoring событий блокчейна in реальном времени
 - **GasOptimizer** - оптимизация газовых комиссий
 
 ##### 3. ML-блокчейн мост
 - **signalProcessor** - обработка ML-сигналов for блокчейн-операций
 - **RiskCalculator** - расчет рисков for смарт-контрактов
-- **PositionManager** - управление позициями через блокчейн
+- **PositionManager** - Management позициями через блокчейн
 - **PerformanceAnalyzer** - анализ производительности in реальном времени
 
 #### Преимущества блокчейн-интеграции
@@ -1420,7 +1420,7 @@ class RetrainingSystem:
 **Автоматизация:**
 - Выполнение через смарт-контракты
 - Минимизация человеческого фактора
-- 24/7 работа без перерывов
+- 24/7 Working без перерывов
 - Программируемые условия торговли
 
 **Почему блокчейн-integration критически важна:**
@@ -1489,7 +1489,7 @@ class BlockchainConfig:
  monthly_target: float = 1.0 # 100%
  daily_target: float = 0.033 # 3.3%
 
-class TestnetBlockchainSystem:
+class TestnetBlockchainsystem:
  """
  Блокчейн-система for testnet with робастной прибылью 100% in месяц
 
@@ -1499,7 +1499,7 @@ class TestnetBlockchainSystem:
  Особенности:
  - Децентрализованная торговля через смарт-контракты
  - ML-генерация торговых сигналов
- - Автоматическое управление рисками
+ - Автоматическое Management рисками
  - Прозрачность всех операций
  - Goal: 100% прибыли in месяц
  """
@@ -1516,12 +1516,12 @@ class TestnetBlockchainSystem:
  self.logger = logging.getLogger(__name__)
  self.ml_model = ml_model
 
- # Web3 компоненты
+ # Web3 components
  self.web3 = None
  self.account = None
  self.contracts = {}
 
- # Торговые данные
+ # Торговые data
  self.positions = {}
  self.performance_history = []
  self.trade_history = []
@@ -1536,10 +1536,10 @@ class TestnetBlockchainSystem:
  self._create_directories()
 
  # Инициализация Monitoringа
- self._initialize_monitoring()
+ self._initialize_Monitoring()
 
  def _create_directories(self):
- """create необходимых директорий"""
+ """create required директорий"""
  directories = [
  'blockchain/contracts',
  'blockchain/transactions',
@@ -1550,7 +1550,7 @@ class TestnetBlockchainSystem:
  for directory in directories:
  Path(directory).mkdir(parents=True, exist_ok=True)
 
- def _initialize_monitoring(self):
+ def _initialize_Monitoring(self):
  """Инициализация системы Monitoringа"""
  try:
  # Инициализация метрик производительности
@@ -1572,10 +1572,10 @@ class TestnetBlockchainSystem:
  'profit': 0.0
  })
 
- self.logger.info("Blockchain monitoring initialized")
+ self.logger.info("Blockchain Monitoring initialized")
 
  except Exception as e:
- self.logger.error(f"Error initializing monitoring: {e}")
+ self.logger.error(f"Error initializing Monitoring: {e}")
 
  def initialize_blockchain(self):
  """Инициализация блокчейна"""
@@ -1641,7 +1641,7 @@ class TestnetBlockchainSystem:
  self.logger.info("Contracts loaded successfully")
 
  except Exception as e:
- self.logger.error(f"Error loading contracts: {e}")
+ self.logger.error(f"Error Loading contracts: {e}")
 
  def start_trading_system(self):
  """Launch торговой системы"""
@@ -1673,7 +1673,7 @@ class TestnetBlockchainSystem:
  time.sleep(60) # 1 minutesа
 
  except KeyboardInterrupt:
- self.logger.info("Trading system stopped by user")
+ self.logger.info("Trading system stopped by User")
  break
  except Exception as e:
  self.logger.error(f"Error in trading cycle: {e}")
@@ -1715,7 +1715,7 @@ class TestnetBlockchainSystem:
  return {'signal': 0, 'confidence': 0}
 
  # Здесь должна быть логика генерации сигналов
- # for примера используем простую стратегию
+ # for примера Use простую стратегию
 
  price = market_data['price']
  volume = market_data['volume']
@@ -1903,7 +1903,7 @@ class TestnetBlockchainSystem:
  return 0.0
 
  def _create_directories(self):
- """create необходимых директорий"""
+ """create required директорий"""
  directories = [
  'blockchain/contracts',
  'blockchain/transactions',
@@ -1914,7 +1914,7 @@ class TestnetBlockchainSystem:
  for directory in directories:
  Path(directory).mkdir(parents=True, exist_ok=True)
 
- def _initialize_monitoring(self):
+ def _initialize_Monitoring(self):
  """Инициализация системы Monitoringа"""
  try:
  # Инициализация метрик производительности
@@ -1936,12 +1936,12 @@ class TestnetBlockchainSystem:
  'profit': 0.0
  })
 
- self.logger.info("Blockchain monitoring initialized")
+ self.logger.info("Blockchain Monitoring initialized")
 
  except Exception as e:
- self.logger.error(f"Error initializing monitoring: {e}")
+ self.logger.error(f"Error initializing Monitoring: {e}")
 
- def get_performance_report(self) -> Dict:
+ def get_performance_Report(self) -> Dict:
  """Получение Reportа о производительности"""
  try:
  current_balance = self._get_balance()
@@ -1963,7 +1963,7 @@ class TestnetBlockchainSystem:
  }
 
  except Exception as e:
- self.logger.error(f"Error generating performance report: {e}")
+ self.logger.error(f"Error generating performance Report: {e}")
  return {}
 
  def stop_trading_system(self):
@@ -1976,28 +1976,28 @@ class TestnetBlockchainSystem:
  self.trading_thread.join(timeout=10)
 
  # Сохранение финального Reportа
- self._save_final_report()
+ self._save_final_Report()
 
  self.logger.info("Blockchain trading system stopped")
 
  except Exception as e:
  self.logger.error(f"Error stopping trading system: {e}")
 
- def _save_final_report(self):
+ def _save_final_Report(self):
  """Сохранение финального Reportа"""
  try:
- report = self.get_performance_report()
+ Report = self.get_performance_Report()
 
- report_path = Path("blockchain/transactions/final_report.json")
- with open(report_path, 'w') as f:
- json.dump(report, f, indent=2, default=str)
+ Report_path = Path("blockchain/transactions/final_Report.json")
+ with open(Report_path, 'w') as f:
+ json.dump(Report, f, indent=2, default=str)
 
- self.logger.info(f"Final report saved to {report_path}")
+ self.logger.info(f"Final Report saved to {Report_path}")
 
  except Exception as e:
- self.logger.error(f"Error saving final report: {e}")
+ self.logger.error(f"Error saving final Report: {e}")
 
- def _add_technical_indicators(self, data: pd.DataFrame) -> pd.DataFrame:
+ def _add_technical_indicators(self, data: pd.dataFrame) -> pd.dataFrame:
  """add технических indicators"""
  try:
  if data.empty or 'close' not in data.columns:
@@ -2101,31 +2101,31 @@ class TestnetBlockchainSystem:
 3. **Monitoringа производительности** and автоматического реагирования on проблемы
 4. **Обеспечения надежности** через обработку ошибок and восстановление
 
-#### Архитектура главного скрипта
+#### Архитектура main скрипта
 
-**Компоненты системы:**
+**components системы:**
 
 ##### 1. Система инициализации
 - **ConfigLoader** - загрузка and валидация конфигурации
 - **LoggerSetup** - configuration системы логирования
-- **DependencyChecker** - check зависимостей and окружения
-- **ResourceManager** - управление ресурсами системы
+- **Dependencychecker** - check зависимостей and окружения
+- **ResourceManager** - Management ресурсами системы
 
 ##### 2. Компонент-менеджер
-- **MLModelManager** - управление ML-моделями
-- **BlockchainManager** - управление блокчейн-компонентами
-- **RetrainingManager** - управление системой переобучения
-- **MonitoringManager** - управление Monitoringом
+- **MLModelManager** - Management ML-моделями
+- **BlockchainManager** - Management блокчейн-componentsи
+- **RetrainingManager** - Management системой переобучения
+- **MonitoringManager** - Management Monitoringом
 
 ##### 3. Система координации
 - **EventLoop** - основной цикл обработки событий
 - **TaskScheduler** - Planировщик задач
 - **ErrorHandler** - обработчик ошибок
-- **HealthChecker** - check здоровья системы
+- **healthchecker** - health check системы
 
 ##### 4. Система Monitoringа
 - **PerformanceMonitor** - Monitoring производительности
-- **AlertSystem** - система уведомлений
+- **Alertsystem** - система уведомлений
 - **ReportGenerator** - генерация Reportов
 - **DashboardUpdater** - update дашборда
 
@@ -2133,7 +2133,7 @@ class TestnetBlockchainSystem:
 
 **Координация:**
 - Synchronization работы всех компонентов
-- Управление зависимостями между модулями
+- Management зависимостями между модулями
 - Обеспечение последовательности операций
 - Минимизация конфликтов ресурсов
 
@@ -2158,11 +2158,11 @@ class TestnetBlockchainSystem:
 **Почему главный скрипт критически важен:**
 - **Координация:** Обеспечивает слаженную работу всех компонентов
 - **integration:** Обеспечивает бесшовную интеграцию подсистем
-- **Управление:** Обеспечивает централизованное управление системой
+- **Management:** Обеспечивает централизованное Management системой
 - **Эффективность:** Критически важно for эффективной работы всей системы
 
 **Преимущества:**
-- Централизованное управление всеми компонентами
+- Централизованное Management allи componentsи
 - Слаженная координация работы подсистем
 - Бесшовная integration всех модулей
 - Высокая эффективность работы системы
@@ -2177,7 +2177,7 @@ class TestnetBlockchainSystem:
 # main.py
 #!/usr/bin/env python3
 """
-NeoZorK 100% System - Главный скрипт Launchа
+NeoZorK 100% system - Главный скрипт Launchа
 Система for достижения 100% прибыли in месяц on блокчейн testnet
 
 Этот скрипт является центральным оркестратором всей системы,
@@ -2201,8 +2201,8 @@ warnings.filterwarnings('ignore')
 # Импорт компонентов системы
 try:
  from src.models.ensemble import EnsembleModel
- from src.models.retraining_system import RetrainingSystem
- from src.blockchain.testnet_integration import TestnetBlockchainSystem
+ from src.models.retraining_system import Retrainingsystem
+ from src.blockchain.testnet_integration import TestnetBlockchainsystem
 except ImportError as e:
  print(f"Error importing modules: {e}")
  print("Please ensure all required modules are installed and paths are correct")
@@ -2235,7 +2235,7 @@ def load_config():
 
 def signal_handler(sig, frame):
  """Обработчик сигналов for корректного завершения"""
- print('\nShutting down NeoZorK 100% System...')
+ print('\nShutting down NeoZorK 100% system...')
  sys.exit(0)
 
 def main():
@@ -2249,19 +2249,19 @@ def main():
  signal.signal(signal.SIGINT, signal_handler)
  signal.signal(signal.SIGTERM, signal_handler)
 
- logger.info("starting NeoZorK 100% System...")
+ logger.info("starting NeoZorK 100% system...")
 
  # Загрузка конфигурации
  config = load_config()
 
  # create системы
- system = NeoZorK100PercentSystem(config)
+ system = NeoZorK100Percentsystem(config)
 
  # create системы переобучения
- retraining_system = RetrainingSystem(config)
+ retraining_system = Retrainingsystem(config)
 
  # create блокчейн-системы
- blockchain_system = TestnetBlockchainSystem(config)
+ blockchain_system = TestnetBlockchainsystem(config)
 
  # Launch системы переобучения
  retraining_system.start_retraining_system()
@@ -2273,21 +2273,21 @@ def main():
  blockchain_system.start_trading_system()
 
  except KeyboardInterrupt:
- print("\nSystem stopped by user")
+ print("\nsystem stopped by User")
  except Exception as e:
- print(f"System error: {e}")
- logging.error(f"System error: {e}")
+ print(f"system error: {e}")
+ logging.error(f"system error: {e}")
  finally:
- print("NeoZorK 100% System stopped")
+ print("NeoZorK 100% system stopped")
 
-class NeoZorK100PercentSystem:
+class NeoZorK100Percentsystem:
  """
  Главная система NeoZorK for достижения 100% прибыли in месяц
 
- Эта система объединяет все компоненты:
+ Эта система объединяет все components:
  - ML-модели for генерации торговых сигналов
  - Блокчейн-интеграцию for децентрализованной торговли
- - Систему переобучения for адаптации к изменениям рынка
+ - system переобучения for адаптации к изменениям рынка
  """
 
  def __init__(self, config: Dict):
@@ -2295,7 +2295,7 @@ class NeoZorK100PercentSystem:
  self.config = config
  self.logger = logging.getLogger(__name__)
 
- # Компоненты системы
+ # components системы
  self.ensemble_model = None
  self.retraining_system = None
  self.blockchain_system = None
@@ -2316,18 +2316,18 @@ class NeoZorK100PercentSystem:
  self.ensemble_model = EnsembleModel(self.config.get('ml', {}))
 
  # Инициализация системы переобучения
- self.retraining_system = RetrainingSystem(
+ self.retraining_system = Retrainingsystem(
  self.config,
  models={'ensemble': self.ensemble_model}
  )
 
  # Инициализация блокчейн-системы
- self.blockchain_system = TestnetBlockchainSystem(
+ self.blockchain_system = TestnetBlockchainsystem(
  self.config,
  ml_model=self.ensemble_model
  )
 
- self.logger.info("All components initialized successfully")
+ self.logger.info("all components initialized successfully")
 
  except Exception as e:
  self.logger.error(f"Error initializing components: {e}")
@@ -2336,7 +2336,7 @@ class NeoZorK100PercentSystem:
  def start_system(self):
  """Launch всей системы"""
  try:
- self.logger.info("starting NeoZorK 100% System...")
+ self.logger.info("starting NeoZorK 100% system...")
  self.is_running = True
  self.start_time = datetime.now()
 
@@ -2346,7 +2346,7 @@ class NeoZorK100PercentSystem:
  # Launch блокчейн-системы
  self.blockchain_system.start_trading_system()
 
- self.logger.info("NeoZorK 100% System started successfully")
+ self.logger.info("NeoZorK 100% system started successfully")
 
  except Exception as e:
  self.logger.error(f"Error starting system: {e}")
@@ -2355,7 +2355,7 @@ class NeoZorK100PercentSystem:
  def stop_system(self):
  """Остановка всей системы"""
  try:
- self.logger.info("Stopping NeoZorK 100% System...")
+ self.logger.info("Stopping NeoZorK 100% system...")
  self.is_running = False
 
  # Остановка компонентов
@@ -2366,40 +2366,40 @@ class NeoZorK100PercentSystem:
  self.blockchain_system.stop_trading_system()
 
  # Генерация финального Reportа
- self._generate_final_report()
+ self._generate_final_Report()
 
- self.logger.info("NeoZorK 100% System stopped")
+ self.logger.info("NeoZorK 100% system stopped")
 
  except Exception as e:
  self.logger.error(f"Error stopping system: {e}")
 
- def _generate_final_report(self):
+ def _generate_final_Report(self):
  """Генерация финального Reportа"""
  try:
- report = {
+ Report = {
  'system_info': {
- 'name': 'NeoZorK 100% System',
+ 'name': 'NeoZorK 100% system',
  'version': '1.0.0',
  'start_time': self.start_time.isoformat() if self.start_time else None,
  'stop_time': datetime.now().isoformat(),
  'uptime_hours': (datetime.now() - self.start_time).total_seconds() / 3600 if self.start_time else 0
  },
  'performance': {
- 'blockchain': self.blockchain_system.get_performance_report() if self.blockchain_system else {},
- 'retraining': self.retraining_system.get_performance_report() if self.retraining_system else {}
+ 'blockchain': self.blockchain_system.get_performance_Report() if self.blockchain_system else {},
+ 'retraining': self.retraining_system.get_performance_Report() if self.retraining_system else {}
  }
  }
 
  # Сохранение Reportа
- report_path = Path("logs/final_system_report.json")
- with open(report_path, 'w') as f:
+ Report_path = Path("logs/final_system_Report.json")
+ with open(Report_path, 'w') as f:
  import json
- json.dump(report, f, indent=2, default=str)
+ json.dump(Report, f, indent=2, default=str)
 
- self.logger.info(f"Final report saved to {report_path}")
+ self.logger.info(f"Final Report saved to {Report_path}")
 
  except Exception as e:
- self.logger.error(f"Error generating final report: {e}")
+ self.logger.error(f"Error generating final Report: {e}")
 
 def check_dependencies():
  """check зависимостей системы"""
@@ -2412,7 +2412,7 @@ def check_dependencies():
  import talib
  import schedule
 
- print("✅ All dependencies are available")
+ print("✅ all dependencies are available")
  return True
 
  except ImportError as e:
@@ -2479,18 +2479,18 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Installation системных зависимостей
+# installation системных зависимостей
 RUN apt-get update && apt-get install -y \
  gcc \
  g++ \
  make \
- && rm -rf /var/lib/apt/lists/*
+ && rm -rf /var/lib/apt/Lists/*
 
 # Копирование файлов
 COPY requirements.txt .
 COPY pyproject.toml .
 
-# Installation Python зависимостей
+# installation Python зависимостей
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Копирование исходного кода
@@ -2504,7 +2504,7 @@ COPY main.py .
 # create директорий
 RUN mkdir -p logs data/raw data/processed models/trained
 
-# Installation прав
+# installation прав
 RUN chmod +x main.py
 
 # Экспорт портов
@@ -2518,7 +2518,7 @@ CMD ["python", "main.py"]
 # docker-compose.yml
 Version: '3.8'
 
-services:
+Services:
  neozork-100-percent:
  build: .
  container_name: neozork-100-percent-system
@@ -2539,7 +2539,7 @@ services:
  container_name: neozork-postgres
  environment:
  - POSTGRES_DB=neozork
- - POSTGRES_USER=neozork
+ - POSTGRES_User=neozork
  - POSTGRES_PASSWORD=neozork123
  volumes:
  - postgres_data:/var/lib/postgresql/data
@@ -2592,7 +2592,7 @@ networks:
 #!/bin/bash
 # deploy.sh
 
-echo "🚀 Deploying NeoZorK 100% System to Testnet..."
+echo "🚀 Deploying NeoZorK 100% system to Testnet..."
 
 # check переменных окружения
 if [ -z "$WEB3_PROVIDER" ]; then
@@ -2617,14 +2617,14 @@ echo "🚀 starting system..."
 docker-compose up -d
 
 # check статуса
-echo "✅ Checking system status..."
+echo "✅ checking system status..."
 docker-compose ps
 
-# Просмотр логов
+# View логов
 echo "📋 Viewing logs..."
 docker-compose logs -f neozork-100-percent
 
-echo "🎉 NeoZorK 100% System deployed successfully!"
+echo "🎉 NeoZorK 100% system deployed successfully!"
 echo "📊 Monitor performance at: http://localhost:8000"
 echo "📈 Target: 100% monthly return on testnet"
 ```
@@ -2654,7 +2654,7 @@ echo "📈 Target: 100% monthly return on testnet"
 
 ```yaml
 # config/config.yaml
-# configuration NeoZorK 100% System
+# configuration NeoZorK 100% system
 
 # ML configuration
 ml:
@@ -2720,7 +2720,7 @@ logging:
  backup_count: 5
 
 # configuration Monitoringа
-monitoring:
+Monitoring:
  enable_metrics: true
  metrics_interval: 60 # seconds
  enable_alerts: true
@@ -2732,7 +2732,7 @@ monitoring:
 
 ```txt
 # requirements.txt
-# dependencies for NeoZorK 100% System
+# dependencies for NeoZorK 100% system
 
 # Основные библиотеки
 pandas>=1.5.0
@@ -2767,7 +2767,7 @@ python-dotenv>=0.19.0
 # docker-compose.yml
 Version: '3.8'
 
-services:
+Services:
  neozork-100-percent:
  build: .
  container_name: neozork-100-percent-system
@@ -2792,7 +2792,7 @@ services:
  container_name: neozork-postgres
  environment:
  - POSTGRES_DB=neozork
- - POSTGRES_USER=neozork
+ - POSTGRES_User=neozork
  - POSTGRES_PASSWORD=neozork123
  volumes:
  - postgres_data:/var/lib/postgresql/data
@@ -2811,9 +2811,9 @@ services:
  networks:
  - neozork-network
 
- monitoring:
+ Monitoring:
  image: grafana/grafana:latest
- container_name: neozork-monitoring
+ container_name: neozork-Monitoring
  ports:
  - "3000:3000"
  volumes:
@@ -2835,7 +2835,7 @@ networks:
 
 ```bash
 # .env
-# Переменные окружения for NeoZorK 100% System
+# Переменные окружения for NeoZorK 100% system
 
 # Блокчейн configuration
 WEB3_PROVIDER=https://sepolia.infura.io/v3/YOUR_PROJECT_ID
@@ -2844,7 +2844,7 @@ TEST_CONTRACT_ADDRESS=0x...
 
 # База данных
 POSTGRES_DB=neozork
-POSTGRES_USER=neozork
+POSTGRES_User=neozork
 POSTGRES_PASSWORD=neozork123
 POSTGRES_HOST=postgres
 POSTGRES_PORT=5432
@@ -2865,7 +2865,7 @@ ENABLE_ALERTS=true
 ALERT_EMAIL=admin@example.com
 ```
 
-## 🚀 instructions on Launchу
+## 🚀 instructions on Launch
 
 ### 1. installation зависимостей
 
@@ -2874,7 +2874,7 @@ ALERT_EMAIL=admin@example.com
 git clone <repository-url>
 cd neozork-hld-Prediction
 
-# Installation зависимостей
+# installation зависимостей
 pip install -r requirements.txt
 
 # or with использованием uv
@@ -2908,7 +2908,7 @@ python main.py
 ### 4. Monitoring
 
 ```bash
-# Просмотр логов
+# View логов
 docker-compose logs -f neozork-100-percent
 
 # Monitoring производительности
@@ -2919,7 +2919,7 @@ docker-compose logs -f neozork-100-percent
 
 При правильной настройке and Launchе системы вы должны увидеть:
 
-1. **Инициализацию компонентов** - все ML-модели and блокчейн-компоненты успешно загружаются
+1. **Инициализацию компонентов** - все ML-модели and блокчейн-components успешно загружаются
 2. **Обучение моделей** - ансамблевая модель обучается on исторических данных
 3. **Launch торговли** - система начинает генерировать торговые сигналы
 4. **Блокчейн-операции** - выполнение торговых операций через смарт-контракты

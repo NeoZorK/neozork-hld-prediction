@@ -1,8 +1,8 @@
 """
-Auto Data Scanner for Trading Strategy Pipeline
+Auto data Scanner for trading Strategy Pipeline
 Автоматический сканер данных for пайплайна торговых стратегий
 
-Automatically scans csv_converted folder and extracts indicators, symbols, and timeframes
+Automatically scans csv_converted folder and extracts indicators, symbols, and Timeframes
 from filenames like "SHORT3_GBPUSD_PERIOD_H1.parquet"
 """
 
@@ -17,15 +17,15 @@ from collections import defaultdict
 logger = logging.getLogger(__name__)
 
 
-class AutoDataScanner:
+class AutodataScanner:
  """
- Automatically scans data directory and extracts available indicators, symbols, and timeframes.
+ Automatically scans data directory and extracts available indicators, symbols, and Timeframes.
  Автоматически сканирует директорию данных and извлекает доступные индикаторы, символы and Timeframeы.
  """
 
  def __init__(self, data_path: str = "data/cache/csv_converted/"):
  """
- Initialize Auto Data Scanner.
+ Initialize Auto data Scanner.
 
  Args:
  data_path: Path to data directory
@@ -34,15 +34,15 @@ class AutoDataScanner:
  self.available_data = {}
  self.indicators = set()
  self.symbols = set()
- self.timeframes = set()
+ self.Timeframes = set()
 
- # Supported timeframes in order of importance
- self.timeframe_order = ['M1', 'M5', 'M15', 'H1', 'H4', 'D1', 'W1', 'MN1']
+ # Supported Timeframes in order of importance
+ self.Timeframe_order = ['M1', 'M5', 'M15', 'H1', 'H4', 'D1', 'W1', 'MN1']
 
  def scan_directory(self) -> Dict[str, Any]:
  """
  Scan directory for available data files.
- Сканировать директорию on наличие доступных файлов данных.
+ Сканировать директорию on presence доступных файлов данных.
 
  Returns:
  Dictionary with scan results
@@ -50,14 +50,14 @@ class AutoDataScanner:
  logger.info(f"🔍 Scanning directory: {self.data_path}")
 
  if not self.data_path.exists():
- logger.error(f"❌ Data path does not exist: {self.data_path}")
- return {'error': f'Data path does not exist: {self.data_path}'}
+ logger.error(f"❌ data path does not exist: {self.data_path}")
+ return {'error': f'data path does not exist: {self.data_path}'}
 
- # Pattern to match filenames like "INDICATOR_SYMBOL_PERIOD_TIMEFRAME.parquet"
+ # Pattern to match filenames like "INDICATOR_symbol_PERIOD_Timeframe.parquet"
  # Supports CSVExport (SCHR Levels), WAVE2, SHORT3, and other indicators
  # Updated pattern to include CSVExport files with dots in symbols (e.g., AAPL.NAS)
- # CSVExport files have format: CSVExport_SYMBOL_PERIOD_TIMEFRAME.parquet
- # Other indicators have format: INDICATOR_SYMBOL_PERIOD_TIMEFRAME.parquet
+ # CSVExport files have format: CSVExport_symbol_PERIOD_Timeframe.parquet
+ # Other indicators have format: INDICATOR_symbol_PERIOD_Timeframe.parquet
  # We need to handle both formats
  csv_export_pattern = r'^CSVExport_([A-Z0-9.]+)_PERIOD_([A-Z0-9]+)\.parquet$'
  other_pattern = r'^([A-Z0-9_]+)_([A-Z0-9.]+)_PERIOD_([A-Z0-9]+)\.parquet$'
@@ -71,13 +71,13 @@ class AutoDataScanner:
  # Try CSVExport pattern first
  csv_match = re.match(csv_export_pattern, filename)
  if csv_match:
- symbol, timeframe = csv_match.groups()
+ symbol, Timeframe = csv_match.groups()
  indicator = "CSVExport" # CSVExport is the indicator name
  else:
  # Try other pattern
  other_match = re.match(other_pattern, filename)
  if other_match:
- indicator, symbol, timeframe = other_match.groups()
+ indicator, symbol, Timeframe = other_match.groups()
  else:
  continue # Skip files that don't match either pattern
 
@@ -87,7 +87,7 @@ class AutoDataScanner:
  'filename': filename,
  'indicator': indicator,
  'symbol': symbol,
- 'timeframe': timeframe,
+ 'Timeframe': Timeframe,
  'size_mb': file_path.stat().st_size / (1024 * 1024),
  'exists': True
  }
@@ -97,9 +97,9 @@ class AutoDataScanner:
  # Update sets
  self.indicators.add(indicator)
  self.symbols.add(symbol)
- self.timeframes.add(timeframe)
+ self.Timeframes.add(Timeframe)
 
- logger.info(f"✅ Found: {indicator} {symbol} {timeframe} ({file_info['size_mb']:.1f} MB)")
+ logger.info(f"✅ found: {indicator} {symbol} {Timeframe} ({file_info['size_mb']:.1f} MB)")
  else:
  logger.warning(f"⚠️ Skipped file (doesn't match pattern): {filename}")
 
@@ -108,35 +108,35 @@ class AutoDataScanner:
 
  scan_results = {
  'total_files': len(available_files),
- 'indicators': sorted(list(self.indicators)),
- 'symbols': sorted(list(self.symbols)),
- 'timeframes': sorted(list(self.timeframes)),
+ 'indicators': sorted(List(self.indicators)),
+ 'symbols': sorted(List(self.symbols)),
+ 'Timeframes': sorted(List(self.Timeframes)),
  'available_data': self.available_data,
  'scan_successful': True
  }
 
- logger.info(f"📊 Scan completed: {len(available_files)} files, {len(self.indicators)} indicators, {len(self.symbols)} symbols")
+ logger.info(f"📊 Scan COMPLETED: {len(available_files)} files, {len(self.indicators)} indicators, {len(self.symbols)} symbols")
 
  return scan_results
 
  def _organize_data(self, files: List[Dict]) -> Dict[str, Dict[str, List[Dict]]]:
  """
  Organize data by indicator and symbol.
- Организовать данные on индикаторам and символам.
+ Организовать data on индикаторам and symbolм.
  """
- organized = defaultdict(lambda: defaultdict(list))
+ organized = defaultdict(lambda: defaultdict(List))
 
  for file_info in files:
  indicator = file_info['indicator']
  symbol = file_info['symbol']
  organized[indicator][symbol].append(file_info)
 
- # Sort timeframes by importance
+ # Sort Timeframes by importance
  for indicator in organized:
  for symbol in organized[indicator]:
  organized[indicator][symbol].sort(
- key=lambda x: self.timeframe_order.index(x['timeframe'])
- if x['timeframe'] in self.timeframe_order else 999
+ key=lambda x: self.Timeframe_order.index(x['Timeframe'])
+ if x['Timeframe'] in self.Timeframe_order else 999
  )
 
  return dict(organized)
@@ -152,22 +152,22 @@ class AutoDataScanner:
  combinations = {}
 
  for indicator in self.available_data:
- symbols = list(self.available_data[indicator].keys())
+ symbols = List(self.available_data[indicator].keys())
  combinations[indicator] = symbols
 
  return combinations
 
- def get_symbol_timeframes(self, indicator: str, symbol: str) -> List[str]:
+ def get_symbol_Timeframes(self, indicator: str, symbol: str) -> List[str]:
  """
- Get available timeframes for specific indicator-symbol combination.
+ Get available Timeframes for specific indicator-symbol combination.
  Получить доступные Timeframeы for конкретной комбинации индикатор-символ.
 
  Args:
  indicator: Indicator name
- symbol: Symbol name
+ symbol: symbol name
 
  Returns:
- List of available timeframes
+ List of available Timeframes
  """
  if indicator not in self.available_data:
  return []
@@ -175,18 +175,18 @@ class AutoDataScanner:
  if symbol not in self.available_data[indicator]:
  return []
 
- timeframes = [file_info['timeframe'] for file_info in self.available_data[indicator][symbol]]
- return sorted(timeframes, key=lambda x: self.timeframe_order.index(x) if x in self.timeframe_order else 999)
+ Timeframes = [file_info['Timeframe'] for file_info in self.available_data[indicator][symbol]]
+ return sorted(Timeframes, key=lambda x: self.Timeframe_order.index(x) if x in self.Timeframe_order else 999)
 
- def get_file_path(self, indicator: str, symbol: str, timeframe: str) -> Optional[str]:
+ def get_file_path(self, indicator: str, symbol: str, Timeframe: str) -> Optional[str]:
  """
- Get file path for specific indicator-symbol-timeframe combination.
+ Get file path for specific indicator-symbol-Timeframe combination.
  Получить путь к файлу for конкретной комбинации индикатор-символ-Timeframe.
 
  Args:
  indicator: Indicator name
- symbol: Symbol name
- timeframe: Timeframe
+ symbol: symbol name
+ Timeframe: Timeframe
 
  Returns:
  File path if exists, None otherwise
@@ -198,30 +198,30 @@ class AutoDataScanner:
  return None
 
  for file_info in self.available_data[indicator][symbol]:
- if file_info['timeframe'] == timeframe:
+ if file_info['Timeframe'] == Timeframe:
  return file_info['file_path']
 
  return None
 
- def get_all_timeframes_for_symbol(self, symbol: str) -> List[str]:
+ def get_all_Timeframes_for_symbol(self, symbol: str) -> List[str]:
  """
- Get all available timeframes for a symbol across all indicators.
- Получить все доступные Timeframeы for символа on всем индикаторам.
+ Get all available Timeframes for a symbol across all indicators.
+ Получить все доступные Timeframeы for symbol on all индикаторам.
 
  Args:
- symbol: Symbol name
+ symbol: symbol name
 
  Returns:
- List of available timeframes
+ List of available Timeframes
  """
- timeframes = set()
+ Timeframes = set()
 
  for indicator in self.available_data:
  if symbol in self.available_data[indicator]:
  for file_info in self.available_data[indicator][symbol]:
- timeframes.add(file_info['timeframe'])
+ Timeframes.add(file_info['Timeframe'])
 
- return sorted(timeframes, key=lambda x: self.timeframe_order.index(x) if x in self.timeframe_order else 999)
+ return sorted(Timeframes, key=lambda x: self.Timeframe_order.index(x) if x in self.Timeframe_order else 999)
 
  def get_data_summary(self) -> Dict[str, Any]:
  """
@@ -236,15 +236,15 @@ class AutoDataScanner:
  len(files) for indicator in self.available_data
  for files in self.available_data[indicator].values()
  ),
- 'indicators': sorted(list(self.indicators)),
- 'symbols': sorted(list(self.symbols)),
- 'timeframes': sorted(list(self.timeframes)),
+ 'indicators': sorted(List(self.indicators)),
+ 'symbols': sorted(List(self.symbols)),
+ 'Timeframes': sorted(List(self.Timeframes)),
  'combinations': {}
  }
 
  # Calculate combinations
  for indicator in self.available_data:
- symbols = list(self.available_data[indicator].keys())
+ symbols = List(self.available_data[indicator].keys())
  summary['combinations'][indicator] = {
  'symbols': symbols,
  'count': len(symbols)
@@ -268,7 +268,7 @@ class AutoDataScanner:
  Вывести отформатированные результаты сканирования.
  """
  print("\n" + "="*60)
- print("🔍 AUTO DATA SCAN RESULTS")
+ print("🔍 AUTO data SCAN RESULTS")
  print("="*60)
 
  summary = self.get_data_summary()
@@ -276,39 +276,39 @@ class AutoDataScanner:
  print(f"📊 Total Files: {summary['total_files']}")
  print(f"📁 Total Size: {summary['total_size_gb']:.2f} GB")
  print(f"🎯 Indicators: {', '.join(summary['indicators'])}")
- print(f"💱 Symbols: {', '.join(summary['symbols'])}")
- print(f"⏰ Timeframes: {', '.join(summary['timeframes'])}")
+ print(f"💱 symbols: {', '.join(summary['symbols'])}")
+ print(f"⏰ Timeframes: {', '.join(summary['Timeframes'])}")
 
  print(f"\n📋 available Combinations:")
  for indicator, info in summary['combinations'].items():
  print(f" {indicator}: {info['count']} symbols ({', '.join(info['symbols'])})")
 
  print(f"\n🕐 Timeframe coverage:")
- for timeframe in self.timeframe_order:
- if timeframe in self.timeframes:
+ for Timeframe in self.Timeframe_order:
+ if Timeframe in self.Timeframes:
  count = sum(
  1 for indicator in self.available_data
  for symbol in self.available_data[indicator]
  for file_info in self.available_data[indicator][symbol]
- if file_info['timeframe'] == timeframe
+ if file_info['Timeframe'] == Timeframe
  )
- print(f" {timeframe}: {count} files")
+ print(f" {Timeframe}: {count} files")
 
  print("="*60)
 
 
-class InteractiveDataSelector:
+class InteractivedataSelector:
  """
  Interactive data selector for choosing indicators and symbols.
  Интерактивный селектор данных for выбора indicators and символов.
  """
 
- def __init__(self, scanner: AutoDataScanner):
+ def __init__(self, scanner: AutodataScanner):
  """
- Initialize Interactive Data Selector.
+ Initialize Interactive data Selector.
 
  Args:
- scanner: AutoDataScanner instance
+ scanner: AutodataScanner instance
  """
  self.scanner = scanner
 
@@ -345,7 +345,7 @@ class InteractiveDataSelector:
  def select_symbol(self, indicator: str) -> str:
  """
  Interactive symbol selection for specific indicator.
- Интерактивный выбор символа for конкретного индикатора.
+ Интерактивный выбор symbol for конкретного индикатора.
  """
  if indicator not in self.scanner.available_data:
  print(f"❌ No data found for indicator: {indicator}")
@@ -357,11 +357,11 @@ class InteractiveDataSelector:
  print(f"❌ No symbols found for indicator: {indicator}")
  return None
 
- print(f"\n💱 available Symbols for {indicator}:")
+ print(f"\n💱 available symbols for {indicator}:")
  for i, symbol in enumerate(symbols, 1):
- timeframe_count = len(self.scanner.available_data[indicator][symbol])
- timeframes = [f['timeframe'] for f in self.scanner.available_data[indicator][symbol]]
- print(f" {i}. {symbol} ({timeframe_count} timeframes: {', '.join(timeframes)})")
+ Timeframe_count = len(self.scanner.available_data[indicator][symbol])
+ Timeframes = [f['Timeframe'] for f in self.scanner.available_data[indicator][symbol]]
+ print(f" {i}. {symbol} ({Timeframe_count} Timeframes: {', '.join(Timeframes)})")
 
  while True:
  try:
@@ -377,49 +377,49 @@ class InteractiveDataSelector:
  print("\n❌ Selection cancelled.")
  return None
 
- def select_timeframes(self, indicator: str, symbol: str, auto_select_all: bool = True) -> List[str]:
+ def select_Timeframes(self, indicator: str, symbol: str, auto_select_all: bool = True) -> List[str]:
  """
- Interactive timeframe selection.
- Интерактивный выбор Timeframeов.
+ Interactive Timeframe selection.
+ Интерактивный выбор Timeframes.
 
  Args:
  indicator: Selected indicator
  symbol: Selected symbol
- auto_select_all: If True, automatically select all available timeframes
+ auto_select_all: If True, automatically select all available Timeframes
 
  Returns:
- List of selected timeframes
+ List of selected Timeframes
  """
- timeframes = self.scanner.get_symbol_timeframes(indicator, symbol)
+ Timeframes = self.scanner.get_symbol_Timeframes(indicator, symbol)
 
- if not timeframes:
- print(f"❌ No timeframes found for {indicator} {symbol}")
+ if not Timeframes:
+ print(f"❌ No Timeframes found for {indicator} {symbol}")
  return []
 
  if auto_select_all:
- print(f"✅ Auto-selected all timeframes for {indicator} {symbol}: {', '.join(timeframes)}")
- return timeframes
+ print(f"✅ Auto-selected all Timeframes for {indicator} {symbol}: {', '.join(Timeframes)}")
+ return Timeframes
 
  print(f"\n⏰ available Timeframes for {indicator} {symbol}:")
- for i, timeframe in enumerate(timeframes, 1):
- print(f" {i}. {timeframe}")
+ for i, Timeframe in enumerate(Timeframes, 1):
+ print(f" {i}. {Timeframe}")
 
- print(f" 0. All timeframes")
+ print(f" 0. all Timeframes")
 
  while True:
  try:
- choice = input(f"\nSelect timeframes (0 for all, or comma-separated numbers): ").strip()
+ choice = input(f"\nSelect Timeframes (0 for all, or comma-separated numbers): ").strip()
 
  if choice == "0":
- selected = timeframes
- print(f"✅ Selected all timeframes: {', '.join(selected)}")
+ selected = Timeframes
+ print(f"✅ Selected all Timeframes: {', '.join(selected)}")
  return selected
 
  # Parse comma-separated choices
  choices = [int(x.strip()) - 1 for x in choice.split(',') if x.strip().isdigit()]
- if all(0 <= idx < len(timeframes) for idx in choices):
- selected = [timeframes[idx] for idx in choices]
- print(f"✅ Selected timeframes: {', '.join(selected)}")
+ if all(0 <= idx < len(Timeframes) for idx in choices):
+ selected = [Timeframes[idx] for idx in choices]
+ print(f"✅ Selected Timeframes: {', '.join(selected)}")
  return selected
 
  print("❌ Invalid choice. Please try again.")
@@ -435,7 +435,7 @@ class InteractiveDataSelector:
  Returns:
  Dictionary with selection results
  """
- print("\n🚀 Interactive Data Selection")
+ print("\n🚀 Interactive data Selection")
  print("="*40)
 
  # Scan directory first
@@ -458,32 +458,32 @@ class InteractiveDataSelector:
  if not symbol:
  return {'success': False, 'error': 'No symbol selected'}
 
- # Select timeframes
- timeframes = self.select_timeframes(indicator, symbol, auto_select_all=True)
- if not timeframes:
- return {'success': False, 'error': 'No timeframes selected'}
+ # Select Timeframes
+ Timeframes = self.select_Timeframes(indicator, symbol, auto_select_all=True)
+ if not Timeframes:
+ return {'success': False, 'error': 'No Timeframes selected'}
 
  # Prepare selection results
  selection = {
  'success': True,
  'indicator': indicator,
  'symbol': symbol,
- 'timeframes': timeframes,
+ 'Timeframes': Timeframes,
  'file_paths': {}
  }
 
  # Get file paths for all combinations
- for timeframe in timeframes:
- file_path = self.scanner.get_file_path(indicator, symbol, timeframe)
+ for Timeframe in Timeframes:
+ file_path = self.scanner.get_file_path(indicator, symbol, Timeframe)
  if file_path:
- selection['file_paths'][timeframe] = file_path
+ selection['file_paths'][Timeframe] = file_path
  else:
- print(f"⚠️ File not found for {indicator} {symbol} {timeframe}")
+ print(f"⚠️ File not found for {indicator} {symbol} {Timeframe}")
 
- print(f"\n✅ Selection completed:")
+ print(f"\n✅ Selection COMPLETED:")
  print(f" Indicator: {indicator}")
- print(f" Symbol: {symbol}")
- print(f" Timeframes: {', '.join(timeframes)}")
+ print(f" symbol: {symbol}")
+ print(f" Timeframes: {', '.join(Timeframes)}")
  print(f" Files found: {len(selection['file_paths'])}")
 
  return selection
@@ -491,11 +491,11 @@ class InteractiveDataSelector:
 
 def main():
  """
- Main function for testing auto data scanner.
+ main function for testing auto data scanner.
  Основная function for тестирования автоматического сканера данных.
  """
  # Initialize scanner
- scanner = AutoDataScanner()
+ scanner = AutodataScanner()
 
  # Scan directory
  print("🔍 Scanning data directory...")
@@ -505,12 +505,12 @@ def main():
  scanner.print_scan_results()
 
  # Test interactive selection
- selector = InteractiveDataSelector(scanner)
+ selector = InteractivedataSelector(scanner)
  selection = selector.interactive_selection()
 
  if selection.get('success'):
  print(f"\n🎉 Selection successful!")
- print(f"Selected: {selection['indicator']} {selection['symbol']} {selection['timeframes']}")
+ print(f"Selected: {selection['indicator']} {selection['symbol']} {selection['Timeframes']}")
  else:
  print(f"\n❌ Selection failed: {selection.get('error')}")
  else:

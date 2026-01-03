@@ -18,27 +18,27 @@ COMMIT_TRANSLATIONS = {
  'eff2e35fd9d0de9cfde9ea64aa3098b5ea7c9ff5':
  'fix: update .dockerignore and .gitignore files for exclusion and inclusion of documentation',
  '9e8622e7705e1e1bd23ec9e78dfec5295d4f7633':
- 'feat: update documentation on concepts and strategies of high-yield ML systems',
+ 'feat: update documentation on Concepts and strategies of high-yield ML systems',
  '9b017bf1ef6595f0f185154d14463f12bcf5767a':
  'feat: update documentation on examples of trading systems based on WAVE2, SCHR Levels and blockchain integration',
  '6d64c7d15d954062e9e5e946b602e3fdb4ba3249':
- 'feat: update documentation SCHR SHORT3 with addition of theoretical foundations and analysis',
+ 'feat: update documentation SCHR SHORT3 with addition of theoretical foundations and Analysis',
  '85f504bb3f669c0d1b572831997f56f325f82c0a':
- 'feat: update documentation SCHR Levels with addition of new sections on analysis of support and resistance levels',
+ 'feat: update documentation SCHR Levels with addition of new sections on Analysis of support and resistance levels',
  'b7c2a933339cb74d1a3e0dbc25c9f088cd0a6cdd':
- 'feat: update NeoZorK documentation structure with addition of new sections',
+ 'feat: update NeoZorK documentation Structure with addition of new sections',
  'd2ecdf5e5b88598ce92255b4a8d84b0b65a48457':
- 'feat: add new sections on data preparation, feature engineering, model training, backtesting and risk management',
+ 'feat: add new sections on data preparation, feature engineering, model training, backtesting and risk Management',
  '16acadd1567d2839f767b0df7ccde5a31ca84de3':
  'feat: update NeoZorK guide with installation of environment for macOS M1 Pro',
  'f6a8260c649bf2e9f75b3bb990ee7681dc56974e':
  'feat: add HTML interface for tutorial',
  'c67140eb0ec3b33369c97fd972d371f6fdd20416':
- 'feat: add complete earning system 100%+ per month - Created detailed system with working code from idea to deployment - Added all components: models, indicators, blockchain integration - Implemented automatic retraining system - Added full monitoring and alert system - Created documentation on launch and usage - System ready for testing on blockchain testnet',
+ 'feat: add complete earning system 100%+ per month - Created Detailed system with Working code from idea to deployment - Added all components: models, indicators, blockchain integration - Implemented automatic retraining system - Added full Monitoring and alert system - Created documentation on Launch and usage - system ready for testing on blockchain testnet',
  '02ec3296859726ca6f6026281a1496e64ea3b6e1':
  'feat: create complete tutorial on creating robust profitable ML systems',
  '619544aef875fc061c16e143436fdd6b940bc2b5':
- 'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Simple Example" and "Advanced Example" showcasing the development and deployment of robust ML models using AutoML Gluon. - Included detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide users with practical insights into building and deploying ML models, catering to both novice and advanced users.',
+ 'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Simple Example" and "Advanced Example" showcasing the development and deployment of robust ML models using AutoML Gluon. - included Detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide Users with practical insights into building and deploying ML models, catering to both novice and advanced Users.',
  '877585aab0c1d60842bd7dc938175011d3892c67':
  'fix dual charts for -d fastest and MACD OK with scale date',
  '816bc990ee2430c7a06c59fecb72225178f74913':
@@ -61,7 +61,7 @@ def create_msg_filter_script():
  'fix: update .dockerignore and .gitignore files for исключения and включения документации':
  'fix: update .dockerignore and .gitignore files for exclusion and inclusion of documentation',
  'feat: update documentation on концепции and стратегии высокодоходных ML systems':
- 'feat: update documentation on concepts and strategies of high-yield ML systems',
+ 'feat: update documentation on Concepts and strategies of high-yield ML systems',
  'feat: update documentation on примерам trading systems on basis WAVE2, SCHR Levels and blockchain integration':
  'feat: update documentation on examples of trading systems based on WAVE2, SCHR Levels and blockchain integration',
  }
@@ -94,12 +94,12 @@ MESSAGE_TRANSLATIONS = {
 def translate_message(message):
  message_stripped = message.strip()
 
- # Check by commit hash first
+ # check by commit hash first
  commit_hash = os.environ.get('GIT_COMMIT', '')
  if commit_hash and commit_hash in COMMIT_TRANSLATIONS:
  return COMMIT_TRANSLATIONS[commit_hash]
 
- # Check by message content
+ # check by message content
  if message_stripped in MESSAGE_TRANSLATIONS:
  return MESSAGE_TRANSLATIONS[message_stripped]
 
@@ -113,38 +113,38 @@ def translate_message(message):
  (r'\\bв проект\\b', 'to project'),
  (r'\\bисключения\\b', 'exclusion'),
  (r'\\bвключения\\b', 'inclusion'),
- (r'\\bконцепции\\b', 'concepts'),
+ (r'\\bконцепции\\b', 'Concepts'),
  (r'\\bстратегии\\b', 'strategies'),
  (r'\\bвысокодоходных\\b', 'high-yield'),
  (r'\\bпримерам\\b', 'examples'),
  (r'\\bbased on\\b', 'based on'),
  (r'\\bтеоретических обоснований\\b', 'theoretical foundations'),
- (r'\\bанализа\\b', 'analysis'),
+ (r'\\bAnalysis\\b', 'Analysis'),
  (r'\\bуровней поддержки\\b', 'support levels'),
  (r'\\bсопротивления\\b', 'resistance'),
- (r'\\bструктуры документации\\b', 'documentation structure'),
+ (r'\\bструктуры документации\\b', 'documentation Structure'),
  (r'\\bдобавлены новые разделы\\b', 'add new sections'),
  (r'\\bбэктестингу\\b', 'backtesting'),
  (r'\\bруководства\\b', 'guide'),
  (r'\\bс установкой\\b', 'with installation'),
  (r'\\bокружения\\b', 'environment'),
- (r'\\bдобавлен HTML-интерфейс\\b', 'add HTML interface'),
+ (r'\\bдобавлен HTML-interface\\b', 'add HTML interface'),
  (r'\\bдля учебника\\b', 'for tutorial'),
  (r'\\bдобавлена полная система заработка\\b', 'add complete earning system'),
  (r'\\bв месяц\\b', 'per month'),
- (r'\\bСоздана детальная система\\b', 'Created detailed system'),
- (r'\\bс рабочим кодом from идеи to деплоя\\b', 'with working code from idea to deployment'),
- (r'\\bДобавлены все компоненты\\b', 'Added all components'),
+ (r'\\bСоздана детальная система\\b', 'Created Detailed system'),
+ (r'\\bс рабочим кодом from идеи to деплоя\\b', 'with Working code from idea to deployment'),
+ (r'\\bДобавлены все components\\b', 'Added all components'),
  (r'\\bмодели\\b', 'models'),
  (r'\\bиндикаторы\\b', 'indicators'),
  (r'\\bблокчейн-integration\\b', 'blockchain integration'),
  (r'\\bРеализована система автоматического переобучения\\b', 'Implemented automatic retraining system'),
- (r'\\bДобавлен полный Monitoring\\b', 'Added full monitoring'),
+ (r'\\bДобавлен полный Monitoring\\b', 'Added full Monitoring'),
  (r'\\bсистема алертов\\b', 'alert system'),
  (r'\\bСоздана documentation\\b', 'Created documentation'),
- (r'\\bна Launchу\\b', 'on launch'),
+ (r'\\bна Launch\\b', 'on Launch'),
  (r'\\bиспользованию\\b', 'usage'),
- (r'\\bСистема готова\\b', 'System ready'),
+ (r'\\bСистема готова\\b', 'system ready'),
  (r'\\bтестирования\\b', 'testing'),
  (r'\\bблокчейн testnet\\b', 'blockchain testnet'),
  (r'\\bсоздан полный учебник\\b', 'created complete tutorial'),
@@ -184,17 +184,17 @@ if __name__ == '__main__':
 
 
 def main():
- """Main function."""
+ """main function."""
  parser = argparse.ArgumentParser(description='Translate remaining Russian commit messages')
  parser.add_argument('--yes', '-y', action='store_true', help='Automatically proceed without confirmation')
  args = parser.parse_args()
 
  print("Translating remaining 18 commits with Russian text...")
- print(f"Found {len(COMMIT_TRANSLATIONS)} commits to translate")
+ print(f"found {len(COMMIT_TRANSLATIONS)} commits to translate")
  print()
 
- # Show preview
- print("Preview of translations:")
+ # Show preView
+ print("PreView of translations:")
  for i, (commit_hash, translated) in enumerate(COMMIT_TRANSLATIONS.items(), 1):
  result = subprocess.run(
  ['git', 'log', '--format=%s', '-1', commit_hash],
@@ -238,8 +238,8 @@ def main():
  if result.returncode == 0:
  print("\n✓ Successfully translated all remaining commit messages!")
  print("\nNext steps:")
- print("1. Review the changes: git log --oneline -20")
- print("2. Check for remaining Russian text: git log --format='%s' | grep -E '[А-Яа-яЁё]'")
+ print("1. ReView the changes: git log --oneline -20")
+ print("2. check for remaining Russian text: git log --format='%s' | grep -E '[А-Яа-яЁё]'")
  print("3. If everything looks good, push: git push --force origin v0.5.8")
  else:
  print(f"\n✗ Error during filter-branch:", file=sys.stderr)

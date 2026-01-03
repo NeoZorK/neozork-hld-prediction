@@ -28,15 +28,15 @@ class MarkdownToHTMLConverter:
  'fenced_code',
  'tables',
  'toc',
- 'attr_list',
- 'def_list',
+ 'attr_List',
+ 'def_List',
  'footnotes',
  'md_in_html'
  ],
  extension_configs={
  'codehilite': {
  'css_class': 'highlight',
- 'use_pygments': False,
+ 'Use_pygments': False,
  'guess_lang': True
  }
  }
@@ -48,7 +48,7 @@ class MarkdownToHTMLConverter:
 <html lang="ru">
 <head>
  <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta name="Viewport" content="width=device-width, initial-scale=1.0">
  <title>{title}</title>
  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
@@ -60,7 +60,7 @@ class MarkdownToHTMLConverter:
  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
  <style>
  body {{
- font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+ font-family: -apple-system, BlinkMacsystemFont, 'Segoe UI', Roboto, sans-serif;
  line-height: 1.6;
  color: #333;
  max-width: 1000px;
@@ -326,12 +326,12 @@ class MarkdownToHTMLConverter:
  <script>
  // Initialize Prism.js for syntax highlighting
  if (typeof Prism !== 'undefined') {{
- Prism.highlightAll();
+ Prism.highlightall();
  }}
 
  // Add language labels to code blocks
  document.addEventListener('DOMContentLoaded', function() {{
- const codeBlocks = document.querySelectorAll('pre code');
+ const codeBlocks = document.querySelectorall('pre code');
  codeBlocks.forEach(block => {{
  const pre = block.parentElement;
  const className = block.className;
@@ -390,10 +390,10 @@ class MarkdownToHTMLConverter:
 
  def convert_all_files(self) -> List[Path]:
  """Convert all markdown files in input directory"""
- md_files = list(self.input_dir.glob("*.md"))
+ md_files = List(self.input_dir.glob("*.md"))
  html_files = []
 
- print(f"Found {len(md_files)} markdown files to convert")
+ print(f"found {len(md_files)} markdown files to convert")
 
  for md_file in md_files:
  try:
@@ -409,7 +409,7 @@ class MarkdownToHTMLConverter:
  index_content = """
  <h1>Neozork AutoML Documentation</h1>
 
- <div class="explanation">
+ <div class="exPlanation">
  <strong>📚 Complete guide on Neozork AutoML:</strong><br>
  Комплексная documentation on созданию робастных ML-систем with использованием AutoML технологий.
  </div>
@@ -475,11 +475,11 @@ class MarkdownToHTMLConverter:
  <li><strong>Подготовка данных:</strong> Методы очистки and подготовки данных</li>
  <li><strong>Обучение моделей:</strong> AutoML подходы and best practices</li>
  <li><strong>Тестирование:</strong> Backtesting and валидация моделей</li>
- <li><strong>Риск-менеджмент:</strong> Управление рисками in ML системах</li>
+ <li><strong>Риск-менеджмент:</strong> Management рисками in ML системах</li>
  <li><strong>Развертывание:</strong> Production deployment and Monitoring</li>
  </ul>
 
- <div class="explanation">
+ <div class="exPlanation">
  <strong>💡 Совет:</strong> Начните with раздела "installation окружения" and следуйте документации on порядку for лучшего понимания материала.
  </div>
  """
@@ -496,7 +496,7 @@ class MarkdownToHTMLConverter:
 
 
 def main():
- """Main function to run the converter"""
+ """main function to run the converter"""
  parser = argparse.ArgumentParser(description='Convert Markdown files to HTML with beautiful formatting')
  parser.add_argument('--input-dir', '-i',
  default='/Users/rostsh/Documents/DIS/REPO/neozork-hld-Prediction/docs/automl/neozork',
@@ -518,12 +518,12 @@ def main():
  print("Creating index file...")
  index_file = converter.create_index_file(html_files)
 
- print(f"\n✅ Conversion completed!")
+ print(f"\n✅ Conversion COMPLETED!")
  print(f"📁 Input directory: {args.input_dir}")
  print(f"📁 Output directory: {args.output_dir}")
  print(f"📄 Converted {len(html_files)} files")
  print(f"📄 Index file: {index_file.name}")
- print(f"\n🌐 Open {index_file} in your browser to view the documentation!")
+ print(f"\n🌐 Open {index_file} in your browser to View the documentation!")
 
 
 if __name__ == "__main__":

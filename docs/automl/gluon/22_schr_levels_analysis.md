@@ -9,7 +9,7 @@
 **Почему 95% трейдеров теряют деньги, not понимая уровни поддержки and сопротивления?** Потому что они торгуют без понимания ключевых ценовых зон, где цена может развернуться. SCHR Levels - это ключ к пониманию рыночной структуры.
 
 ### Проблемы без понимания уровней
-- **Торговля in неправильных зонах**: Входят in позицию in середине движения
+- **Торговля in неправильных зонах**: included in позицию in середине движения
 - **Отсутствие стоп-лоссов**: not знают, где поставить стоп
 - **Неправильные цели**: not понимают, где цена может развернуться
 - **Эмоциональная торговля**: Принимают решения on basis страха and жадности
@@ -22,10 +22,10 @@
 
 ## Введение
 
-<img src="images/optimized/schr_overview.png" alt="SCHR Levels индикатор" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 22.1: Обзор SCHR Levels индикатора - компоненты and результаты*
+<img src="images/optimized/schr_overView.png" alt="SCHR Levels индикатор" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 22.1: Обзор SCHR Levels индикатора - components and результаты*
 
-**Почему SCHR Levels - это революция in определении уровней?** Потому что он использует алгоритмический анализ вместо субъективного рисования линий, создавая объективный инструмент for analysis уровней.
+**Почему SCHR Levels - это революция in определении уровней?** Потому что он использует алгоритмический анализ вместо субъективного рисования линий, создавая объективный инструмент for Analysis уровней.
 
 **Ключевые особенности SCHR Levels:**
 - **Точные уровни**: Определяет ключевые ценовые уровни поддержки and сопротивления
@@ -56,10 +56,10 @@ SCHR Levels - это многомерный индикатор, который:
 - **Оценивает силу уровней** - измеряет надежность уровня
 - **Идентифицирует зоны накопления and распределения** - показывает, где крупные игроки покупают/продают
 
-## Структура данных SCHR Levels
+## Structure данных SCHR Levels
 
-<img src="images/optimized/schr_structure.png" alt="Структура SCHR Levels" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 22.2: Структура данных SCHR Levels - категории and parameters*
+<img src="images/optimized/schr_Structure.png" alt="Structure SCHR Levels" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 22.2: Structure данных SCHR Levels - категории and parameters*
 
 **Категории данных SCHR Levels:**
 - **Basic Levels**: Уровни поддержки, сопротивления, пивотные, Фибоначчи
@@ -79,7 +79,7 @@ SCHR Levels - это многомерный индикатор, который:
 ### Основные колонки in parquet файле:
 
 ```python
-# Структура данных SCHR Levels
+# Structure данных SCHR Levels
 schr_columns = {
  # Основные уровни
  'pressure_vector': 'Вектор давления on уровень',
@@ -135,7 +135,7 @@ schr_columns = {
  - Диапазон: from 0 to +∞
  - Применение: прогнозирование верхней границы движения
  - Интерпретация: максимальная цена, которую может достичь актив
- - Расчет: on basis анализа уровней сопротивления and давления
+ - Расчет: on basis Analysis уровней сопротивления and давления
 
 - **`predicted_low`**: Предсказанный минимум
  - Тип: float
@@ -143,7 +143,7 @@ schr_columns = {
  - Диапазон: from 0 to +∞
  - Применение: прогнозирование нижней границы движения
  - Интерпретация: минимальная цена, которую может достичь актив
- - Расчет: on basis анализа уровней поддержки and давления
+ - Расчет: on basis Analysis уровней поддержки and давления
 
 - **`pressure`**: Давление on уровень
  - Тип: float
@@ -159,7 +159,7 @@ schr_columns = {
  - Диапазон: from 0 to +∞
  - Применение: нижняя граница движения цены
  - Интерпретация: уровень, from которого цена может отскочить вверх
- - Расчет: on basis анализа исторических минимумов and объемов
+ - Расчет: on basis Analysis исторических минимумов and объемов
 
 - **`resistance_level`**: Уровень сопротивления
  - Тип: float
@@ -167,7 +167,7 @@ schr_columns = {
  - Диапазон: from 0 to +∞
  - Применение: верхняя граница движения цены
  - Интерпретация: уровень, from которого цена может отскочить вниз
- - Расчет: on basis анализа исторических максимумов and объемов
+ - Расчет: on basis Analysis исторических максимумов and объемов
 
 - **`pivot_level`**: Пивотный уровень
  - Тип: float
@@ -254,28 +254,28 @@ schr_columns = {
  - Значения: 0 (нет пробоя), 1 (пробой вверх), -1 (пробой вниз)
  - Применение: торговый сигнал пробоя
  - Интерпретация: направление пробоя уровня
- - Расчет: on basis анализа давления and объема
+ - Расчет: on basis Analysis давления and объема
 
 - **`bounce_signal`**: Сигнал отскока
  - Тип: int
  - Значения: 0 (нет отскока), 1 (отскок вверх), -1 (отскок вниз)
  - Применение: торговый сигнал отскока
  - Интерпретация: направление отскока from уровня
- - Расчет: on basis анализа реакции цены on уровень
+ - Расчет: on basis Analysis реакции цены on уровень
 
 - **`reversal_signal`**: Сигнал разворота
  - Тип: int
  - Значения: 0 (нет разворота), 1 (разворот вверх), -1 (разворот вниз)
  - Применение: торговый сигнал разворота
  - Интерпретация: направление разворота тренда
- - Расчет: on basis анализа изменения давления
+ - Расчет: on basis Analysis изменения давления
 
 - **`continuation_signal`**: Сигнал продолжения
  - Тип: int
  - Значения: 0 (нет продолжения), 1 (продолжение вверх), -1 (продолжение вниз)
  - Применение: торговый сигнал продолжения
  - Интерпретация: направление продолжения тренда
- - Расчет: on basis анализа устойчивости давления
+ - Расчет: on basis Analysis устойчивости давления
 
 - **`level_hits`**: Количество касаний уровня
  - Тип: int
@@ -316,9 +316,9 @@ schr_columns = {
 - **Адаптация**: Регулярное update параметров под рынок
 ```
 
-## Анализ on Timeframeам
+## Анализ on Timeframeм
 
-<img src="images/optimized/level_analysis.png" alt="Анализ уровней" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/level_Analysis.png" alt="Анализ уровней" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 22.3: Анализ уровней поддержки and сопротивления - типы and характеристики*
 
 **Типы уровней:**
@@ -344,7 +344,7 @@ class SCHRLevelsM1Analysis:
  """Анализ SCHR Levels on 1-minutesном Timeframeе"""
 
  def __init__(self):
- self.timeframe = 'M1'
+ self.Timeframe = 'M1'
  self.features = []
 
  def analyze_m1_features(self, data):
@@ -577,18 +577,18 @@ class SCHRLevelsMN1Analysis:
 
 ## create ML-модели on basis SCHR Levels
 
-<img src="images/optimized/pressure_analysis.png" alt="Анализ давления" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 22.4: Анализ давления on уровни - компоненты and применение*
+<img src="images/optimized/pressure_Analysis.png" alt="Анализ давления" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 22.4: Анализ давления on уровни - components and применение*
 
-**Компоненты анализа давления:**
+**components Analysis давления:**
 - **Pressure Vector**: Направление давления, интенсивность давления, векторная величина
 - **Pressure Strength**: Сила давления on уровень, вероятность пробоя, качество давления
 - **Pressure Direction**: Направление давления, тренд давления, вектор движения
 - **Pressure Momentum**: Моментум давления, ускорение давления, инерция
-- **Pressure Acceleration**: Ускорение давления, изменение силы, динамика
+- **Pressure acceleration**: Ускорение давления, изменение силы, динамика
 - **Breakout Prediction**: Prediction пробоев, оценка вероятности, прогнозирование
 
-**Применения анализа давления:**
+**Применения Analysis давления:**
 - **Prediction пробоев**: Анализ вероятности breakthrough уровня
 - **Оценка силы уровней**: Определение надежности уровня
 - **Определение направления**: Анализ тренда давления
@@ -599,7 +599,7 @@ class SCHRLevelsMN1Analysis:
 *Рисунок 22.5: ML-модель on basis SCHR Levels - этапы создания and результаты*
 
 **Этапы создания ML-модели:**
-- **Data Preparation**: Объединение Timeframeов, clean данных, нормализация
+- **data Preparation**: Объединение Timeframes, clean данных, нормализация
 - **Feature Engineering**: Базовые признаки уровней, признаки давления, признаки пробоев, признаки отскоков
 - **Model Training**: Обучение with AutoML Gluon, оптимизация гиперпараметров
 - **Level Features**: Признаки уровней поддержки, сопротивления, пивотных
@@ -623,13 +623,13 @@ class SCHRLevelsMLModel:
  def __init__(self):
  self.predictor = None
  self.feature_columns = []
- self.timeframes = ['M1', 'M5', 'M15', 'H1', 'H4', 'D1', 'W1', 'MN1']
+ self.Timeframes = ['M1', 'M5', 'M15', 'H1', 'H4', 'D1', 'W1', 'MN1']
 
  def prepare_schr_data(self, data_dict):
  """Подготовка данных SCHR Levels for ML"""
 
- # Объединение данных всех Timeframeов
- combined_data = self.combine_timeframe_data(data_dict)
+ # Объединение данных всех Timeframes
+ combined_data = self.combine_Timeframe_data(data_dict)
 
  # create признаков
  features = self.create_schr_features(combined_data)
@@ -648,38 +648,38 @@ class SCHRLevelsMLModel:
  - update: при переобучении on новых данных
  - Сохранение: in файл for восстановления
 
-- **`self.feature_columns`**: Список признаков модели
+- **`self.feature_columns`**: List признаков модели
  - Тип: List[str]
  - Содержит: названия всех признаков SCHR Levels
- - Применение: for predictions on новых данных
+ - Применение: for Predictions on новых данных
  - update: при изменении набора признаков
 
-- **`self.timeframes`**: Список Timeframeов
+- **`self.Timeframes`**: List Timeframes
  - Тип: List[str]
  - Значения: ['M1', 'M5', 'M15', 'H1', 'H4', 'D1', 'W1', 'MN1']
- - Применение: анализ on множественных Timeframeах
+ - Применение: анализ on множественных Timeframes
  - Преимущества: полная картина рынка
 
-- **`data_dict`**: Словарь данных on Timeframeам
+- **`data_dict`**: Словарь данных on Timeframeм
  - Тип: dict
- - Структура: {timeframe: DataFrame}
- - Применение: объединение данных всех Timeframeов
- - Требования: одинаковые колонки во всех DataFrame
+ - Structure: {Timeframe: dataFrame}
+ - Применение: объединение данных всех Timeframes
+ - Требования: одинаковые колонки во всех dataFrame
 
-- **`combined_data`**: Объединенные данные
- - Тип: DataFrame
- - Содержит: данные всех Timeframeов
+- **`combined_data`**: Объединенные data
+ - Тип: dataFrame
+ - Содержит: data всех Timeframes
  - Применение: create признаков and целевой переменной
  - Обработка: remove дубликатов and пропусков
 
 - **`features`**: Признаки for ML
- - Тип: DataFrame
+ - Тип: dataFrame
  - Содержит: все признаки SCHR Levels
- - Применение: входные данные for модели
+ - Применение: входные data for модели
  - Обработка: нормализация and масштабирование
 
 - **`target`**: Целевая переменная
- - Тип: DataFrame
+ - Тип: dataFrame
  - Содержит: направление цены, пробои, отскоки, развороты
  - Применение: обучение модели
  - Формат: бинарные метки (0/1)
@@ -987,7 +987,7 @@ class SCHRLevelsMLModel:
  - Диапазон: from 0 to 1
  - Применение: оценка точности предсказания максимума
  - Интерпретация: 1 = очень точное, 0 = неточное
- - Расчет: on basis исторической точности predictions
+ - Расчет: on basis исторической точности Predictions
 
 - **`Prediction_accuracy_low`**: Точность предсказания минимума
  - Тип: float
@@ -995,7 +995,7 @@ class SCHRLevelsMLModel:
  - Диапазон: from 0 to 1
  - Применение: оценка точности предсказания минимума
  - Интерпретация: 1 = очень точное, 0 = неточное
- - Расчет: on basis исторической точности predictions
+ - Расчет: on basis исторической точности Predictions
 
 **Практические рекомендации:**
 
@@ -1034,7 +1034,7 @@ class SCHRLevelsMLModel:
  def create_basic_level_features(self, data):
  """create базовых признаков уровней"""
 
- features = pd.DataFrame()
+ features = pd.dataFrame()
 
  # Основные уровни
  features['support_level'] = data['support_level']
@@ -1057,7 +1057,7 @@ class SCHRLevelsMLModel:
  def create_pressure_features(self, data):
  """create признаков давления"""
 
- features = pd.DataFrame()
+ features = pd.dataFrame()
 
  # Давление on уровни
  features['pressure_vector'] = data['pressure_vector']
@@ -1081,7 +1081,7 @@ class SCHRLevelsMLModel:
  def create_breakout_features(self, data):
  """create признаков пробоев"""
 
- features = pd.DataFrame()
+ features = pd.dataFrame()
 
  # Сигналы пробоев
  features['breakout_signal'] = data['breakout_signal']
@@ -1110,7 +1110,7 @@ class SCHRLevelsMLModel:
  def create_bounce_features(self, data):
  """create признаков отскоков"""
 
- features = pd.DataFrame()
+ features = pd.dataFrame()
 
  # Предсказанные уровни
  features['predicted_high'] = data['predicted_high']
@@ -1124,7 +1124,7 @@ class SCHRLevelsMLModel:
  features['relative_distance_predicted_high'] = features['distance_to_predicted_high'] / data['close']
  features['relative_distance_predicted_low'] = features['distance_to_predicted_low'] / data['close']
 
- # Точность predictions
+ # Точность Predictions
  features['Prediction_accuracy_high'] = self.calculate_Prediction_accuracy(data, 'predicted_high')
  features['Prediction_accuracy_low'] = self.calculate_Prediction_accuracy(data, 'predicted_low')
 
@@ -1147,7 +1147,7 @@ class SCHRLevelsMLModel:
  future_reversals = self.calculate_future_reversals(data)
 
  # Объединение целевых переменных
- target = pd.DataFrame({
+ target = pd.dataFrame({
  'price_direction': price_direction,
  'breakout_direction': future_breakouts,
  'bounce_direction': future_bounces,
@@ -1213,21 +1213,21 @@ class SCHRLevelsMLModel:
 **Детальные описания параметров обучения SCHR Levels модели:**
 
 - **`features`**: Признаки for обучения
- - Тип: DataFrame
+ - Тип: dataFrame
  - Содержит: все признаки SCHR Levels
- - Применение: входные данные for модели
+ - Применение: входные data for модели
  - Обработка: нормализация and масштабирование
  - Требования: отсутствие пропусков
 
 - **`target`**: Целевая переменная
- - Тип: DataFrame
+ - Тип: dataFrame
  - Содержит: направление цены, пробои, отскоки, развороты
  - Применение: обучение модели
  - Формат: бинарные метки (0/1)
  - Требования: соответствие индексов with features
 
-- **`data`**: Объединенные данные
- - Тип: DataFrame
+- **`data`**: Объединенные data
+ - Тип: dataFrame
  - Содержит: features + target
  - Применение: обучение модели
  - Обработка: remove пропусков
@@ -1240,15 +1240,15 @@ class SCHRLevelsMLModel:
  - Процент: 80% for обучения, 20% for валидации
  - Рекомендация: 0.7-0.8 for SCHR Levels
 
-- **`train_data`**: Данные for обучения
- - Тип: DataFrame
+- **`train_data`**: data for обучения
+ - Тип: dataFrame
  - Размер: 80% from общих данных
  - Применение: обучение модели
  - Требования: отсутствие пропусков
  - Обработка: нормализация признаков
 
-- **`val_data`**: Данные for валидации
- - Тип: DataFrame
+- **`val_data`**: data for валидации
+ - Тип: dataFrame
  - Размер: 20% from общих данных
  - Применение: оценка модели
  - Требования: отсутствие пропусков
@@ -1278,8 +1278,8 @@ class SCHRLevelsMLModel:
 - **`path='schr_levels_ml_model'`**: Путь for сохранения модели
  - Тип: str
  - Применение: сохранение обученной модели
- - Содержит: веса модели, метаданные, конфигурацию
- - Использование: загрузка for predictions
+ - Содержит: веса модели, метаdata, конфигурацию
+ - Использование: загрузка for Predictions
  - Формат: директория with файлами модели
 
 - **`time_limit=3600`**: Лимит времени обучения
@@ -1361,9 +1361,9 @@ class SCHRLevelsMLModel:
  - Формат: 'YYYY-MM-DD'
  - Рекомендация: not более текущей даты
 
-- **`test_data`**: Данные for тестирования
- - Тип: DataFrame
- - Содержит: данные за период тестирования
+- **`test_data`**: data for тестирования
+ - Тип: dataFrame
+ - Содержит: data за период тестирования
  - Применение: оценка производительности
  - Требования: отсутствие пропусков
  - Обработка: та же нормализация, что and for train
@@ -1375,7 +1375,7 @@ class SCHRLevelsMLModel:
  - Формат: бинарные метки (0/1)
  - Интерпретация: 0 = падение, 1 = рост
 
-- **`probabilities`**: Вероятности predictions
+- **`probabilities`**: Вероятности Predictions
  - Тип: numpy array
  - Содержит: вероятности for каждого класса
  - Применение: оценка уверенности
@@ -1445,8 +1445,8 @@ class SCHRLevelsMLModel:
  - Рекомендация: 1000-10000 for SCHR Levels
  - Баланс: больше = точнее, но медленнее
 
-- **`sample_data`**: Выборочные данные
- - Тип: DataFrame
+- **`sample_data`**: Выборочные data
+ - Тип: dataFrame
  - Размер: 80% from исходных данных
  - Применение: случайная выборка for симуляции
  - Обработка: with заменой (replace=True)
@@ -1561,12 +1561,12 @@ def schr_monte_carlo(self, data, n_simulations=1000):
 <img src="images/optimized/blockchain_schr.png" alt="integration with блокчейном SCHR" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 22.7: integration SCHR Levels with блокчейном - from смарт-контрактов to автоматической торговли*
 
-**Компоненты интеграции:**
+**components интеграции:**
 - **Smart Contracts**: Хранение сигналов, автоматическое выполнение, прозрачность операций
-- **DEX Integration**: Прямая торговля, ликвидность, децентрализация
+- **DEX integration**: Прямая торговля, ликвидность, децентрализация
 - **signal Storage**: Хранение сигналов on блокчейне, неизменяемость
 - **Automated Trading**: Автоматическая торговля, исполнение сигналов
-- **Risk Management**: Управление рисками, лимиты позиций
+- **Risk Management**: Management рисками, лимиты позиций
 - **Performance Tracking**: Отслеживание производительности, метрики
 
 **Преимущества блокчейн-интеграции:**
@@ -1626,7 +1626,7 @@ contract SCHRLevelsTradingContract {
  signalCount++;
  }
 
- function getLatestsignal() external view returns (SCHRLevelssignal memory) {
+ function getLatestsignal() external View returns (SCHRLevelssignal memory) {
  return signals[signalCount - 1];
  }
 }
@@ -1635,7 +1635,7 @@ contract SCHRLevelsTradingContract {
 ### integration with DEX
 
 ```python
-class SCHRLevelsDEXIntegration:
+class SCHRLevelsDEXintegration:
  """integration SCHR Levels with DEX"""
 
  def __init__(self, contract_address, private_key):
@@ -1692,7 +1692,7 @@ class SCHRLevelsDEXIntegration:
 - **Win Rate**: 75.2%
 - **Profit Factor**: 2.4
 
-**Доходность on Timeframeам:**
+**Доходность on Timeframeм:**
 - **M1**: 42.1%
 - **M5**: 48.7%
 - **M15**: 58.3%

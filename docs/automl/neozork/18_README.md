@@ -1,8 +1,8 @@
-# 🚀 NeoZorK 100% System - Полная система заработка 100%+ in месяц
+# 🚀 NeoZorK 100% system - Полная система заработка 100%+ in месяц
 
-**Теория:** NeoZorK 100% System представляет собой революционную систему машинного обучения, объединяющую передовые ML-алгоритмы with блокчейн-технологиями for достижения стабильной прибыли 100%+ in месяц. Это критически важно for создания высокодоходных and робастных торговых систем.
+**Теория:** NeoZorK 100% system представляет собой революционную system машинного обучения, объединяющую передовые ML-алгоритмы with блокчейн-технологиями for достижения стабильной прибыли 100%+ in месяц. Это критически важно for создания высокодоходных and робастных торговых систем.
 
-**Почему NeoZorK 100% System важна:**
+**Почему NeoZorK 100% system важна:**
 - **Революционность:** Представляет революционный подход к торговле
 - **Доходность:** Обеспечивает высокую доходность
 - **Робастность:** Обеспечивает робастность системы
@@ -18,7 +18,7 @@
 - **Функциональность:** Обеспечивает понимание функциональности
 - **Использование:** Критически важно for эффективного использования
 
-**NeoZorK 100% System** - это революционная система машинного обучения for достижения стабильной прибыли 100%+ in месяц on блокчейн testnet. Система использует комбинацию трех мощных indicators (WAVE2, SCHR Levels, SCHR SHORT3) and продвинутые ML-алгоритмы for создания робастной торговой системы.
+**NeoZorK 100% system** - это революционная система машинного обучения for достижения стабильной прибыли 100%+ in месяц on блокчейн testnet. Система использует комбинацию трех мощных indicators (WAVE2, SCHR Levels, SCHR SHORT3) and продвинутые ML-алгоритмы for создания робастной торговой системы.
 
 **Плюсы:**
 - Революционный подход
@@ -65,11 +65,11 @@
  - **Плюсы:** Диверсификация, максимизация возможностей
  - **Минусы:** Сложность управления, высокие требования
 
-- **МультиTimeframeовый анализ - from M1 to D1**
- - **Теория:** МультиTimeframeовый анализ критически важен for полного понимания рынка
+- **МультиTimeframesый анализ - from M1 to D1**
+ - **Теория:** МультиTimeframesый анализ критически важен for полного понимания рынка
  - **Почему важно:** Обеспечивает полное понимание рынка
  - **Плюсы:** Полное понимание, точность сигналов
- - **Минусы:** Сложность анализа, высокие требования
+ - **Минусы:** Сложность Analysis, высокие требования
 
 - **Блокчейн-integration with DeFi протоколами**
  - **Теория:** Блокчейн-integration критически важна for создания дополнительных источников дохода
@@ -101,7 +101,7 @@
 
 **Плюсы:**
 - Структурированный подход
-- Эффективная работа
+- Эффективная Working
 - Масштабируемость
 - Поддерживаемость
 
@@ -112,19 +112,19 @@
 
 ```
 ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
-│ Data Sources │ │ ML Models │ │ Risk Manager │
+│ data Sources │ │ ML Models │ │ Risk Manager │
 │ │ │ │ │ │
 │ • Crypto APIs │───▶│ • WAVE2 Model │───▶│ • Position Size │
 │ • Forex APIs │ │ • SCHR Levels │ │ • Stop Loss │
 │ • Stock APIs │ │ • SCHR SHORT3 │ │ • Take Profit │
-│ • DeFi Data │ │ • Ensemble │ │ • VaR Control │
+│ • DeFi data │ │ • Ensemble │ │ • VaR Control │
 └─────────────────┘ └─────────────────┘ └─────────────────┘
  │ │ │
  ▼ ▼ ▼
 ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
 │ signal Engine │ │ Portfolio Mgr │ │ DeFi Manager │
 │ │ │ │ │ │
-│ • Multi-TF │ │ • Allocation │ │ • Yield Farming │
+│ • Multi-TF │ │ • allocation │ │ • Yield Farming │
 │ • Multi-Asset │ │ • Rebalancing │ │ • Liquidity │
 │ • Ensemble │ │ • Optimization │ │ • Staking │
 └─────────────────┘ └─────────────────┘ └─────────────────┘
@@ -139,11 +139,11 @@
 └─────────────────┘ └─────────────────┘ └─────────────────┘
 ```
 
-## 🚀 quick start
+## 🚀 Quick start
 
-**Теория:** quick start представляет собой пошаговое guide on установке and настройке системы for быстрого начала работы. Это критически важно for эффективного внедрения системы.
+**Теория:** Quick start представляет собой пошаговое guide on установке and настройке системы for быстрого начала работы. Это критически важно for эффективного внедрения системы.
 
-**Почему quick start важен:**
+**Почему Quick start важен:**
 - **Быстрота:** Обеспечивает быстрое начало работы
 - **Простота:** Обеспечивает простоту установки
 - **Эффективность:** Обеспечивает эффективное внедрение
@@ -166,7 +166,7 @@
 
 **Почему installation зависимостей важна:**
 - **Работоспособность:** Обеспечивает работоспособность системы
-- **dependencies:** Обеспечивает установку всех необходимых компонентов
+- **dependencies:** Обеспечивает установку всех required компонентов
 - **Совместимость:** Обеспечивает совместимость компонентов
 - **Функциональность:** Критически важно for функциональности системы
 
@@ -175,10 +175,10 @@
 git clone https://github.com/your-repo/neozork-100-percent-system.git
 cd neozork-100-percent-system
 
-# Installation uv (если not installed)
+# installation uv (если not installed)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Installation зависимостей
+# installation зависимостей
 uv sync
 
 # Активация виртуального окружения
@@ -187,18 +187,18 @@ source .venv/bin/activate
 
 ### 2. configuration конфигурации
 
-**Теория:** configuration системы является критически важным компонентом, который определяет все parameters работы торговой системы. Правильная configuration конфигурации обеспечивает оптимальную производительность, управление рисками and адаптацию к различным рыночным условиям.
+**Теория:** configuration системы является критически важным компонентом, который определяет все parameters работы торговой системы. Правильная configuration конфигурации обеспечивает оптимальную производительность, Management рисками and адаптацию к различным рыночным условиям.
 
 **Почему configuration конфигурации критически важна:**
 - **Параметризация системы:** Позволяет точно настроить все аспекты работы системы под конкретные требования
-- **Управление рисками:** Определяет лимиты потерь, размеры позиций and другие критически важные parameters безопасности
+- **Management рисками:** Определяет лимиты потерь, размеры позиций and другие критически важные parameters безопасности
 - **Адаптивность:** Позволяет легко изменять стратегии без переписывания кода
-- **Monitoring:** Обеспечивает возможность отслеживания and анализа производительности системы
+- **Monitoring:** Обеспечивает возможность отслеживания and Analysis производительности системы
 
-**Структура конфигурации включает:**
+**Structure конфигурации включает:**
 - **Системные parameters:** Название, версия, окружение
 - **Цели производительности:** Целевая доходность, максимальная просадка, коэффициент Шарпа
-- **Торговые parameters:** Список активов, веса, Timeframeы
+- **Торговые parameters:** List активов, веса, Timeframeы
 - **Риск-менеджмент:** Лимиты позиций, стоп-лоссы, корреляционные ограничения
 - **ML-модели:** parameters обучения, валидации, переобучения
 - **Блокчейн:** settings подключения, контракты, газовые лимиты
@@ -212,11 +212,11 @@ cp config/config.example.yaml config/config.yaml
 
 # create полной конфигурации with детальными комментариями
 cat > config/config.yaml << 'EOF'
-# NeoZorK 100% System Configuration
+# NeoZorK 100% system Configuration
 # Этот файл содержит все критические parameters системы
 
 system:
- name: "NeoZorK 100% System"
+ name: "NeoZorK 100% system"
  Version: "1.0.0"
  environment: "production" # production, staging, development
  debug: false
@@ -255,14 +255,14 @@ data_sources:
  min_volume: 100000
  max_spread: 0.005
 
-# Timeframeы for мультиTimeframeового анализа
-timeframes:
+# Timeframeы for мультиTimeframesого Analysis
+Timeframes:
  - "M1" # 1 minutesа - for скальпинга
  - "M5" # 5 minutes - for краткосрочной торговли
  - "M15" # 15 minutes - for внутридневной торговли
  - "H1" # 1 час - for среднесрочной торговли
  - "H4" # 4 часа - for позиционной торговли
- - "D1" # 1 день - for долгосрочного анализа
+ - "D1" # 1 день - for долгосрочного Analysis
 
 # Риск-менеджмент - критически важные ограничения
 risk_limits:
@@ -316,7 +316,7 @@ blockchain:
  yield_farming: "0x..."
 
 # Monitoring and алерты
-monitoring:
+Monitoring:
  dashboard_port: 8000
  metrics_retention_days: 365
  alert_cooldown_minutes: 30
@@ -326,7 +326,7 @@ monitoring:
  enabled: true
  smtp_server: "smtp.gmail.com"
  smtp_port: 587
- username: "your_email@gmail.com"
+ Username: "your_email@gmail.com"
  password: "your_app_password"
  recipients: ["admin@neozork.com"]
 
@@ -345,13 +345,13 @@ database:
  host: "localhost"
  port: 5432
  name: "neozork_100_percent"
- username: "neozork_user"
+ Username: "neozork_User"
  password: "secure_password"
  pool_size: 10
  max_overflow: 20
 EOF
 
-# Installation правильных прав доступа for безопасности
+# installation правильных прав доступа for безопасности
 chmod 600 config/config.yaml
 
 # check синтаксиса YAML
@@ -360,17 +360,17 @@ python -c "import yaml; yaml.safe_load(open('config/config.yaml'))" && echo "✅
 
 ### 3. configuration переменных окружения
 
-**Теория:** Переменные окружения являются критически важным компонентом безопасности системы, позволяя хранить конфиденциальные данные (API ключи, приватные ключи, пароли) отдельно from кода. Это обеспечивает безопасность, гибкость конфигурации and возможность развертывания in различных окружениях без изменения кода.
+**Теория:** Переменные окружения являются критически важным компонентом безопасности системы, позволяя хранить конфиденциальные data (API ключи, приватные ключи, пароли) отдельно from кода. Это обеспечивает безопасность, гибкость конфигурации and возможность развертывания in различных окружениях без изменения кода.
 
 **Почему переменные окружения критически важны:**
-- **Безопасность:** Защищают конфиденциальные данные from попадания in репозиторий
+- **Безопасность:** Защищают конфиденциальные data from попадания in репозиторий
 - **Гибкость:** Позволяют легко изменять settings for разных окружений
 - **Масштабируемость:** Упрощают развертывание in различных средах
 - **Соответствие стандартам:** Следуют лучшим практикам DevOps and безопасности
 
 **Категории переменных окружения:**
 - **Блокчейн:** Web3 провайдеры, приватные ключи, адреса контрактов
-- **API ключи:** Торговые платформы, данные, Monitoring
+- **API ключи:** Торговые платформы, data, Monitoring
 - **Уведомления:** Telegram, Discord, Email settings
 - **База данных:** Подключения, пароли, settings пулов
 - **Monitoring:** Логирование, метрики, алерты
@@ -379,7 +379,7 @@ python -c "import yaml; yaml.safe_load(open('config/config.yaml'))" && echo "✅
 # create .env файла with полным набором переменных
 cat > .env << 'EOF'
 # ===========================================
-# NeoZorK 100% System Environment Variables
+# NeoZorK 100% system Environment Variables
 # ===========================================
 # ВАЖНО: Никогда not коммитьте этот файл in репозиторий!
 # Добавьте .env in .gitignore
@@ -388,12 +388,12 @@ cat > .env << 'EOF'
 # БЛОКЧЕЙН settings
 # ===========================================
 # Web3 провайдеры for подключения к блокчейну
-WEB3_PROVIDER_MAINNET=https://mainnet.infura.io/v3/YOUR_PROJECT_ID
+WEB3_PROVIDER_mainNET=https://mainnet.infura.io/v3/YOUR_PROJECT_ID
 WEB3_PROVIDER_SEPOLIA=https://sepolia.infura.io/v3/YOUR_PROJECT_ID
 WEB3_PROVIDER_POLYGON=https://polygon-mainnet.infura.io/v3/YOUR_PROJECT_ID
 
 # Приватные ключи (ОЧЕНЬ ВАЖНО: Use только testnet ключи!)
-PRIVATE_KEY_MAINNET=your_mainnet_private_key_here
+PRIVATE_KEY_mainNET=your_mainnet_private_key_here
 PRIVATE_KEY_SEPOLIA=your_sepolia_private_key_here
 PRIVATE_KEY_POLYGON=your_polygon_private_key_here
 
@@ -426,7 +426,7 @@ KRAKEN_API_KEY=your_kraken_api_key
 KRAKEN_SECRET_KEY=your_kraken_secret_key
 
 # ===========================================
-# ДАННЫЕ and Monitoring
+# data and Monitoring
 # ===========================================
 # Alpha Vantage API for дополнительных данных
 ALPHA_VANTAGE_API_KEY=your_alpha_vantage_key
@@ -452,7 +452,7 @@ DISCORD_ENABLED=true
 # Email settings for детальных Reportов
 EMAIL_SMTP_SERVER=smtp.gmail.com
 EMAIL_SMTP_PORT=587
-EMAIL_USER=your_email@gmail.com
+EMAIL_User=your_email@gmail.com
 EMAIL_PASSWORD=your_app_password
 EMAIL_RECIPIENTS=admin@neozork.com,alerts@neozork.com
 EMAIL_ENABLED=true
@@ -461,11 +461,11 @@ EMAIL_ENABLED=true
 # БАЗА ДАННЫХ
 # ===========================================
 # PostgreSQL settings
-database_URL=postgresql://neozork_user:secure_password@localhost:5432/neozork_100_percent
+database_URL=postgresql://neozork_User:secure_password@localhost:5432/neozork_100_percent
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=neozork_100_percent
-DB_USER=neozork_user
+DB_User=neozork_User
 DB_PASSWORD=secure_password
 DB_POOL_SIZE=10
 DB_MAX_OVERFLOW=20
@@ -488,7 +488,7 @@ PROMETHEUS_ENABLED=true
 
 # Grafana for визуализации
 GRAFANA_URL=http://localhost:3000
-GRAFANA_USER=admin
+GRAFANA_User=admin
 GRAFANA_PASSWORD=admin_password
 
 # ===========================================
@@ -535,11 +535,11 @@ AWS_REGION=us-east-1
 # ДОПОЛНИТЕЛЬНЫЕ ИНТЕГРАЦИИ
 # ===========================================
 # Slack for командных уведомлений
-SLACK_WEBHOOK_URL=https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
+SLACK_WEBHOOK_URL=https://hooks.slack.com/Services/YOUR/SLACK/WEBHOOK
 SLACK_ENABLED=false
 
 # PagerDuty for критических алертов
-PAGERDUTY_INTEGRATION_KEY=your_pagerduty_key
+PAGERDUTY_integration_KEY=your_pagerduty_key
 PAGERDUTY_ENABLED=false
 
 # Zapier for автоматизации
@@ -547,13 +547,13 @@ ZAPIER_WEBHOOK_URL=https://hooks.zapier.com/hooks/catch/your_webhook_id
 ZAPIER_ENABLED=false
 EOF
 
-# Installation правильных прав доступа for безопасности
+# installation правильных прав доступа for безопасности
 chmod 600 .env
 
 # create .env.example for других разработчиков
 cat > .env.example << 'EOF'
 # ===========================================
-# NeoZorK 100% System Environment Variables Example
+# NeoZorK 100% system Environment Variables Example
 # ===========================================
 # Скопируйте этот файл in .env and заполните реальными значениями
 
@@ -572,7 +572,7 @@ TELEGRAM_CHAT_ID=your_chat_id
 DISCORD_WEBHOOK_URL=your_webhook_url
 
 # База данных
-database_URL=postgresql://user:password@localhost:5432/database
+database_URL=postgresql://User:password@localhost:5432/database
 
 # Системные settings
 ENVIRONMENT=development
@@ -617,24 +617,24 @@ echo "⚠️ ВАЖНО: Заполните все необходимые зна
 cat > scripts/pre_startup_checks.sh << 'EOF'
 #!/bin/bash
 
-echo "🔍 Выполнение предварительных проверок NeoZorK 100% System..."
+echo "🔍 Выполнение предварительных проверок NeoZorK 100% system..."
 
 # check Python and зависимостей
 echo "📦 check Python окружения..."
-python --version || { echo "❌ Python not найден"; exit 1; }
-uv --version || { echo "❌ uv not найден"; exit 1; }
+python --version || { echo "❌ Python not found"; exit 1; }
+uv --version || { echo "❌ uv not found"; exit 1; }
 
 # check конфигурации
 echo "⚙️ check конфигурации..."
 if [ ! -f "config/config.yaml" ]; then
- echo "❌ Файл config/config.yaml not найден"
+ echo "❌ Файл config/config.yaml not found"
  exit 1
 fi
 
 # check переменных окружения
 echo "🔐 check переменных окружения..."
 if [ ! -f ".env" ]; then
- echo "❌ Файл .env not найден"
+ echo "❌ Файл .env not found"
  exit 1
 fi
 
@@ -667,7 +667,7 @@ try:
  host=result.hostname,
  port=result.port,
  database=result.path[1:],
- user=result.username,
+ User=result.Username,
  password=result.password
  )
  conn.close()
@@ -713,7 +713,7 @@ try:
  if response.status_code == 200:
  print('✅ Binance API available')
  else:
- print('⚠️ Binance API неavailable')
+ print('⚠️ Binance API not available')
  else:
  print('⚠️ BINANCE_API_KEY not installed')
 except Exception as e:
@@ -727,7 +727,7 @@ try:
  if response.status_code == 200:
  print('✅ Telegram Bot available')
  else:
- print('⚠️ Telegram Bot неavailable')
+ print('⚠️ Telegram Bot not available')
  else:
  print('⚠️ TELEGRAM_BOT_TOKEN not installed')
 except Exception as e:
@@ -750,8 +750,8 @@ chmod +x scripts/pre_startup_checks.sh
 cat > scripts/init_database.py << 'EOF'
 #!/usr/bin/env python3
 """
-Инициализация базы данных for NeoZorK 100% System
-Создает все необходимые таблицы, индексы and начальные данные
+Инициализация базы данных for NeoZorK 100% system
+Создает все необходимые таблицы, индексы and начальные data
 """
 
 import os
@@ -783,7 +783,7 @@ def init_database():
  host=result.hostname,
  port=result.port,
  database=result.path[1:],
- user=result.username,
+ User=result.Username,
  password=result.password
  )
  conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
@@ -818,7 +818,7 @@ def create_tables(cursor):
  id SERIAL PRIMARY KEY,
  timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
  symbol VARCHAR(20) NOT NULL,
- timeframe VARCHAR(10) NOT NULL,
+ Timeframe VARCHAR(10) NOT NULL,
  signal_type VARCHAR(10) NOT NULL, -- BUY, SELL, HOLD
  confidence FLOAT NOT NULL,
  price DECIMAL(20,8) NOT NULL,
@@ -846,8 +846,8 @@ def create_tables(cursor):
  )
  ''',
 
- 'portfolio': '''
- CREATE TABLE IF NOT EXISTS portfolio (
+ 'Portfolio': '''
+ CREATE TABLE IF NOT EXISTS Portfolio (
  id SERIAL PRIMARY KEY,
  symbol VARCHAR(20) NOT NULL,
  amount DECIMAL(20,8) NOT NULL,
@@ -940,7 +940,7 @@ def create_indexes(cursor):
  "CREATE INDEX IF NOT EXISTS idx_trades_symbol ON trades(symbol)",
  "CREATE INDEX IF NOT EXISTS idx_trades_status ON trades(status)",
  "CREATE INDEX IF NOT EXISTS idx_trades_created_at ON trades(created_at)",
- "CREATE INDEX IF NOT EXISTS idx_portfolio_symbol ON portfolio(symbol)",
+ "CREATE INDEX IF NOT EXISTS idx_Portfolio_symbol ON Portfolio(symbol)",
  "CREATE INDEX IF NOT EXISTS idx_performance_metrics_date ON performance_metrics(date)",
  "CREATE INDEX IF NOT EXISTS idx_ml_models_name ON ml_models(name)",
  "CREATE INDEX IF NOT EXISTS idx_ml_models_active ON ml_models(is_active)",
@@ -977,7 +977,7 @@ def insert_initial_data(cursor):
  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
  ON CONFLICT DO NOTHING
  """, model_data)
- logger.info(f"✅ Начальные данные for модели {model_data[0]} добавлены")
+ logger.info(f"✅ Начальные data for модели {model_data[0]} добавлены")
  except Exception as e:
  logger.error(f"❌ Ошибка добавления начальных данных: {e}")
  raise
@@ -999,8 +999,8 @@ python scripts/init_database.py
 cat > main.py << 'EOF'
 #!/usr/bin/env python3
 """
-NeoZorK 100% System - Главный module Launchа
-Объединяет все компоненты системы for достижения 100%+ месячной прибыли
+NeoZorK 100% system - Главный module Launchа
+Объединяет все components системы for достижения 100%+ месячной прибыли
 """
 
 import os
@@ -1016,14 +1016,14 @@ sys.path.append(str(Path(__file__).parent / "src"))
 
 from src.common.config import Config
 from src.common.logger import setup_logging
-from src.data.data_manager import DataManager
+from src.data.data_manager import dataManager
 from src.ml.model_manager import ModelManager
 from src.trading.trading_engine import TradingEngine
 from src.risk.risk_manager import RiskManager
-from src.monitoring.monitoring_system import MonitoringSystem
+from src.Monitoring.Monitoring_system import Monitoringsystem
 from src.blockchain.blockchain_manager import BlockchainManager
 
-class NeoZorKSystem:
+class NeoZorKsystem:
  """Главный класс системы NeoZorK 100%"""
 
  def __init__(self):
@@ -1032,12 +1032,12 @@ class NeoZorKSystem:
  self.logger = setup_logging()
  self.running = False
 
- # Компоненты системы
+ # components системы
  self.data_manager = None
  self.model_manager = None
  self.trading_engine = None
  self.risk_manager = None
- self.monitoring_system = None
+ self.Monitoring_system = None
  self.blockchain_manager = None
 
  # configuration обработчиков сигналов
@@ -1047,11 +1047,11 @@ class NeoZorKSystem:
  async def initialize(self):
  """Инициализация всех компонентов системы"""
  try:
- self.logger.info("🚀 Инициализация NeoZorK 100% System...")
+ self.logger.info("🚀 Инициализация NeoZorK 100% system...")
 
  # Инициализация менеджера данных
  self.logger.info("📊 Инициализация менеджера данных...")
- self.data_manager = DataManager(self.config)
+ self.data_manager = dataManager(self.config)
  await self.data_manager.initialize()
 
  # Инициализация менеджера ML моделей
@@ -1081,15 +1081,15 @@ class NeoZorKSystem:
 
  # Инициализация системы Monitoringа
  self.logger.info("📈 Инициализация системы Monitoringа...")
- self.monitoring_system = MonitoringSystem(
+ self.Monitoring_system = Monitoringsystem(
  self.config,
  self.trading_engine,
  self.risk_manager,
  self.blockchain_manager
  )
- await self.monitoring_system.initialize()
+ await self.Monitoring_system.initialize()
 
- self.logger.info("✅ Все компоненты системы initializedы успешно")
+ self.logger.info("✅ Все components системы initializedы успешно")
 
  except Exception as e:
  self.logger.error(f"❌ Ошибка инициализации системы: {e}")
@@ -1098,7 +1098,7 @@ class NeoZorKSystem:
  async def start(self):
  """Launch системы"""
  try:
- self.logger.info("🎯 Launch NeoZorK 100% System...")
+ self.logger.info("🎯 Launch NeoZorK 100% system...")
  self.running = True
 
  # Launch всех компонентов
@@ -1108,7 +1108,7 @@ class NeoZorKSystem:
  self.risk_manager.start(),
  self.trading_engine.start(),
  self.blockchain_manager.start(),
- self.monitoring_system.start()
+ self.Monitoring_system.start()
  ]
 
  # Launch всех задач параллельно
@@ -1121,12 +1121,12 @@ class NeoZorKSystem:
  async def stop(self):
  """Остановка системы"""
  try:
- self.logger.info("🛑 Остановка NeoZorK 100% System...")
+ self.logger.info("🛑 Остановка NeoZorK 100% system...")
  self.running = False
 
  # Остановка всех компонентов
- if self.monitoring_system:
- await self.monitoring_system.stop()
+ if self.Monitoring_system:
+ await self.Monitoring_system.stop()
  if self.blockchain_manager:
  await self.blockchain_manager.stop()
  if self.trading_engine:
@@ -1150,7 +1150,7 @@ class NeoZorKSystem:
 
 async def main():
  """Главная function"""
- system = NeoZorKSystem()
+ system = NeoZorKsystem()
 
  try:
  # Инициализация системы
@@ -1183,14 +1183,14 @@ chmod +x main.py
 cat > docker-compose.full.yml << 'EOF'
 Version: '3.8'
 
-services:
+Services:
  # PostgreSQL база данных
  postgres:
  image: postgres:15
  container_name: neozork_postgres
  environment:
  POSTGRES_DB: neozork_100_percent
- POSTGRES_USER: neozork_user
+ POSTGRES_User: neozork_User
  POSTGRES_PASSWORD: secure_password
  ports:
  - "5432:5432"
@@ -1211,7 +1211,7 @@ services:
  networks:
  - neozork_network
 
- # NeoZorK 100% System
+ # NeoZorK 100% system
  neozork_system:
  build: .
  container_name: neozork_system
@@ -1219,7 +1219,7 @@ services:
  - postgres
  - redis
  environment:
- - database_URL=postgresql://neozork_user:secure_password@postgres:5432/neozork_100_percent
+ - database_URL=postgresql://neozork_User:secure_password@postgres:5432/neozork_100_percent
  - REDIS_URL=redis://redis:6379/0
  volumes:
  - ./config:/app/config
@@ -1240,7 +1240,7 @@ services:
  ports:
  - "9090:9090"
  volumes:
- - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+ - ./Monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
  - prometheus_data:/prometheus
  command:
  - '--config.file=/etc/prometheus/prometheus.yml'
@@ -1260,8 +1260,8 @@ services:
  - GF_SECURITY_ADMIN_PASSWORD=admin_password
  volumes:
  - grafana_data:/var/lib/grafana
- - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
- - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+ - ./Monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+ - ./Monitoring/grafana/provisioning:/etc/grafana/provisioning
  networks:
  - neozork_network
 
@@ -1280,15 +1280,15 @@ EOF
 cat > Dockerfile << 'EOF'
 FROM python:3.11-slim
 
-# Installation системных зависимостей
+# installation системных зависимостей
 RUN apt-get update && apt-get install -y \
  gcc \
  g++ \
  libpq-dev \
  curl \
- && rm -rf /var/lib/apt/lists/*
+ && rm -rf /var/lib/apt/Lists/*
 
-# Installation uv
+# installation uv
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/root/.cargo/bin:$PATH"
 
@@ -1298,16 +1298,16 @@ WORKDIR /app
 # Копирование файлов зависимостей
 COPY pyproject.toml uv.lock ./
 
-# Installation зависимостей
+# installation зависимостей
 RUN uv sync --frozen
 
 # Копирование исходного кода
 COPY . .
 
-# create необходимых директорий
+# create required директорий
 RUN mkdir -p logs models data/cache
 
-# Installation прав доступа
+# installation прав доступа
 RUN chmod +x main.py
 
 # Переменные окружения
@@ -1321,7 +1321,7 @@ EXPOSE 8000
 CMD ["python", "main.py"]
 EOF
 
-echo "✅ Система готова к Launchу!"
+echo "✅ Система готова к Launch!"
 echo ""
 echo "🚀 Варианты Launchа:"
 echo "1. Прямой Launch: python main.py"
@@ -1336,7 +1336,7 @@ echo "- Prometheus: http://localhost:9090"
 
 ## 📊 Monitoring производительности
 
-**Теория:** Monitoring производительности представляет собой комплексную систему отслеживания and анализа всех аспектов работы системы. Это критически важно for поддержания высокой эффективности and своевременного выявления проблем.
+**Теория:** Monitoring производительности представляет собой комплексную system отслеживания and Analysis всех аспектов работы системы. Это критически важно for поддержания высокой эффективности and своевременного выявления проблем.
 
 **Почему Monitoring производительности важен:**
 - **Отслеживание:** Обеспечивает отслеживание всех аспектов
@@ -1357,17 +1357,17 @@ echo "- Prometheus: http://localhost:9090"
 
 ### Веб-дашборд
 
-**Теория:** Веб-дашборд представляет собой интерактивный интерфейс for визуализации and анализа данных системы. Это критически важно for удобного Monitoringа and анализа.
+**Теория:** Веб-дашборд представляет собой интерактивный interface for визуализации and Analysis данных системы. Это критически важно for удобного Monitoringа and Analysis.
 
 **Почему веб-дашборд важен:**
 - **Визуализация:** Обеспечивает визуализацию данных
 - **Интерактивность:** Обеспечивает интерактивность
 - **Удобство:** Обеспечивает удобство использования
-- **Анализ:** Критически важно for analysis данных
+- **Анализ:** Критически важно for Analysis данных
 
 ```bash
 # Launch дашборда
-python -m src.monitoring.dashboard
+python -m src.Monitoring.dashboard
 
 # Открыть in браузере
 open http://localhost:8000
@@ -1376,7 +1376,7 @@ open http://localhost:8000
 ### Логи
 
 ```bash
-# Просмотр логов
+# View логов
 tail -f logs/neozork_100_percent.log
 
 # Логи торговых операций
@@ -1400,7 +1400,7 @@ tail -f logs/performance.log
 ```yaml
 # config/config.yaml
 system:
- name: "NeoZorK 100% System"
+ name: "NeoZorK 100% system"
  Version: "1.0.0"
  environment: "production"
 
@@ -1421,7 +1421,7 @@ data_sources:
  # ... другие активы
 
 # Timeframeы
-timeframes:
+Timeframes:
  - "M1"
  - "M5"
  - "M15"
@@ -1450,7 +1450,7 @@ risk_limits:
 
 ### WAVE2 Model - Детектор трендовых волн
 
-**Теория:** WAVE2 модель основана on теории волнового анализа Эллиотта and использует Random Forest for классификации трендовых паттернов. Модель анализирует волновые структуры ценовых движений and предсказывает направление следующей волны.
+**Теория:** WAVE2 модель основана on теории волнового Analysis Эллиотта and использует Random Forest for классификации трендовых паттернов. Модель анализирует волновые структуры ценовых движений and предсказывает направление следующей волны.
 
 **Почему WAVE2 критически важен:**
 - **Трендовая идентификация:** Точно определяет начало and конец трендовых движений
@@ -1472,7 +1472,7 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_Report, confusion_matrix
 import joblib
 from pathlib import Path
 
@@ -1494,7 +1494,7 @@ class WAVE2Model:
 
  def create_features(self, df):
  """create признаков for WAVE2 модели"""
- features = pd.DataFrame(index=df.index)
+ features = pd.dataFrame(index=df.index)
 
  # Базовые ценовые признаки
  features['open'] = df['open']
@@ -1636,7 +1636,7 @@ class WAVE2Model:
  self.model.fit(X_train, y_train)
 
  # Сохранение имен признаков
- self.feature_names = list(features.columns)
+ self.feature_names = List(features.columns)
 
  # Оценка качества
  train_score = self.model.score(X_train, y_train)
@@ -1653,7 +1653,7 @@ class WAVE2Model:
  # Детальный Report
  y_pred = self.model.predict(X_test)
  print("\n📊 Report on классификации:")
- print(classification_report(y_test, y_pred))
+ print(classification_Report(y_test, y_pred))
 
  self.is_trained = True
  return test_score
@@ -1674,7 +1674,7 @@ class WAVE2Model:
  probabilities = self.model.predict_proba(features)
 
  # create результата
- result = pd.DataFrame({
+ result = pd.dataFrame({
  'timestamp': features.index,
  'Prediction': Predictions,
  'confidence': np.max(probabilities, axis=1),
@@ -1722,7 +1722,7 @@ if __name__ == "__main__":
 
 ### SCHR Levels Model - Детектор уровней поддержки/сопротивления
 
-**Теория:** SCHR Levels модель использует Gradient Boosting for идентификации and предсказания пробоев ключевых уровней поддержки and сопротивления. Модель анализирует исторические данные о том, как цена взаимодействует with важными уровнями.
+**Теория:** SCHR Levels модель использует Gradient Boosting for идентификации and предсказания пробоев ключевых уровней поддержки and сопротивления. Модель анализирует исторические data о том, как цена взаимодействует with важными уровнями.
 
 **Почему SCHR Levels критически важен:**
 - **Уровневая торговля:** Основа большинства прибыльных торговых стратегий
@@ -1740,7 +1740,7 @@ if __name__ == "__main__":
 
 ### SCHR SHORT3 Model - Скальпинг система
 
-**Теория:** SCHR SHORT3 модель оптимизирована for краткосрочной торговли and скальпинга. Использует Extra Trees for быстрого анализа микро-паттернов and генерации высокочастотных торговых сигналов.
+**Теория:** SCHR SHORT3 модель оптимизирована for краткосрочной торговли and скальпинга. Использует Extra Trees for быстрого Analysis микро-паттернов and генерации высокочастотных торговых сигналов.
 
 **Почему SCHR SHORT3 критически важен:**
 - **Высокая частота:** Генерирует множество торговых возможностей
@@ -1779,7 +1779,7 @@ if __name__ == "__main__":
 
 **Почему система переобучения критически важна:**
 - **Адаптивность:** Модели автоматически адаптируются к новым рыночным условиям
-- **Производительность:** Поддерживает высокую точность predictions
+- **Производительность:** Поддерживает высокую точность Predictions
 - **Робастность:** Предотвращает деградацию качества моделей со временем
 - **Автоматизация:** Исключает необходимость ручного вмешательства
 
@@ -1806,7 +1806,7 @@ from scipy import stats
 import joblib
 from pathlib import Path
 
-class RetrainingSystem:
+class Retrainingsystem:
  """Система автоматического переобучения ML моделей"""
 
  def __init__(self, config, model_manager, data_manager):
@@ -1849,7 +1849,7 @@ class RetrainingSystem:
  # Получение свежих данных
  fresh_data = await self.data_manager.get_latest_data(
  symbols=self.config.data_sources.crypto,
- timeframes=['M1', 'M5', 'M15', 'H1'],
+ Timeframes=['M1', 'M5', 'M15', 'H1'],
  hours=24
  )
 
@@ -1871,7 +1871,7 @@ class RetrainingSystem:
  # Получение расширенного набора данных
  extended_data = await self.data_manager.get_latest_data(
  symbols=self.config.data_sources.crypto,
- timeframes=['M1', 'M5', 'M15', 'H1', 'H4', 'D1'],
+ Timeframes=['M1', 'M5', 'M15', 'H1', 'H4', 'D1'],
  hours=168 # 7 дней
  )
 
@@ -1895,14 +1895,14 @@ class RetrainingSystem:
  try:
  # Получение текущих and исторических данных
  current_data = await self.data_manager.get_latest_data(
- symbols=['BTC-USD'], # Проверяем on основном активе
- timeframes=['H1'],
+ symbols=['BTC-USD'], # checking on основном активе
+ Timeframes=['H1'],
  hours=24
  )
 
  historical_data = await self.data_manager.get_historical_data(
  symbols=['BTC-USD'],
- timeframes=['H1'],
+ Timeframes=['H1'],
  days=7
  )
 
@@ -1967,12 +1967,12 @@ class RetrainingSystem:
  return avg_drift > self.data_drift_threshold
 
  except Exception as e:
- self.logger.error(f"❌ Ошибка анализа дрифта: {e}")
+ self.logger.error(f"❌ Ошибка Analysis дрифта: {e}")
  return False
 
  def extract_statistical_features(self, data):
- """Извлечение статистических признаков for analysis дрифта"""
- features = pd.DataFrame()
+ """Извлечение статистических признаков for Analysis дрифта"""
+ features = pd.dataFrame()
 
  for symbol in data.columns.get_level_values(0).unique():
  symbol_data = data[symbol]
@@ -2015,7 +2015,7 @@ class RetrainingSystem:
  return len(issues) > 0, issues
 
  except Exception as e:
- self.logger.error(f"❌ Ошибка анализа производительности: {e}")
+ self.logger.error(f"❌ Ошибка Analysis производительности: {e}")
  return False, []
 
  async def retrain_model(self, model_name, data):
@@ -2083,7 +2083,7 @@ class RetrainingSystem:
  # Получение последних данных
  recent_data = await self.data_manager.get_latest_data(
  symbols=self.config.data_sources.crypto,
- timeframes=['M1', 'M5', 'M15', 'H1'],
+ Timeframes=['M1', 'M5', 'M15', 'H1'],
  hours=48
  )
 
@@ -2098,7 +2098,7 @@ class RetrainingSystem:
  # Получение максимального набора данных
  emergency_data = await self.data_manager.get_latest_data(
  symbols=self.config.data_sources.crypto,
- timeframes=['M1', 'M5', 'M15', 'H1', 'H4'],
+ Timeframes=['M1', 'M5', 'M15', 'H1', 'H4'],
  hours=72
  )
 
@@ -2160,7 +2160,7 @@ class RetrainingSystem:
 # example использования
 if __name__ == "__main__":
  # Инициализация системы переобучения
- retraining_system = RetrainingSystem(config, model_manager, data_manager)
+ retraining_system = Retrainingsystem(config, model_manager, data_manager)
  retraining_system.setup_schedule()
 
  # Launch Planировщика
@@ -2191,7 +2191,7 @@ if __name__ == "__main__":
 
 #### 3. Производительность-триггеры
 
-**Теория:** Производительность-триггеры мониторят качество predictions моделей and инициируют переобучение при критическом снижении точности or прибыльности.
+**Теория:** Производительность-триггеры мониторят качество Predictions моделей and инициируют переобучение при критическом снижении точности or прибыльности.
 
 - **Точность:** Снижение точности <90% on валидационных данных
 - **Прибыльность:** Снижение прибыльности <50% from целевого уровня
@@ -2276,25 +2276,25 @@ class PerformanceMetrics:
  self.logger = logging.getLogger(__name__)
  self.metrics_history = []
 
- def calculate_basic_metrics(self, portfolio_values, trades_df):
+ def calculate_basic_metrics(self, Portfolio_values, trades_df):
  """Расчет основных финансовых метрик"""
 
  # Общая доходность
- total_return = (portfolio_values.iloc[-1] - portfolio_values.iloc[0]) / portfolio_values.iloc[0]
+ total_return = (Portfolio_values.iloc[-1] - Portfolio_values.iloc[0]) / Portfolio_values.iloc[0]
 
  # Месячная доходность
- monthly_returns = self.calculate_monthly_returns(portfolio_values)
+ monthly_returns = self.calculate_monthly_returns(Portfolio_values)
  avg_monthly_return = monthly_returns.mean()
 
  # Дневная доходность
- daily_returns = portfolio_values.pct_change().dropna()
+ daily_returns = Portfolio_values.pct_change().dropna()
  avg_daily_return = daily_returns.mean()
 
  # Коэффициент Шарпа (предполагаем безрисковую ставку 0%)
  sharpe_ratio = daily_returns.mean() / daily_returns.std() * np.sqrt(252)
 
  # Максимальная просадка
- max_drawdown = self.calculate_max_drawdown(portfolio_values)
+ max_drawdown = self.calculate_max_drawdown(Portfolio_values)
 
  # Метрики on сделкам
  if not trades_df.empty:
@@ -2316,16 +2316,16 @@ class PerformanceMetrics:
 
  return metrics
 
- def calculate_monthly_returns(self, portfolio_values):
+ def calculate_monthly_returns(self, Portfolio_values):
  """Расчет месячных доходностей"""
- monthly_values = portfolio_values.resample('M').last()
+ monthly_values = Portfolio_values.resample('M').last()
  monthly_returns = monthly_values.pct_change().dropna()
  return monthly_returns
 
- def calculate_max_drawdown(self, portfolio_values):
+ def calculate_max_drawdown(self, Portfolio_values):
  """Расчет максимальной просадки"""
- peak = portfolio_values.expanding().max()
- drawdown = (portfolio_values - peak) / peak
+ peak = Portfolio_values.expanding().max()
+ drawdown = (Portfolio_values - peak) / peak
  max_drawdown = drawdown.min()
  return abs(max_drawdown)
 
@@ -2339,18 +2339,18 @@ class PerformanceMetrics:
 
  return profits / losses
 
- def calculate_robustness_metrics(self, portfolio_values, trades_df):
+ def calculate_robustness_metrics(self, Portfolio_values, trades_df):
  """Расчет метрик робастности"""
 
  # Консистентность (стабильность доходности)
- daily_returns = portfolio_values.pct_change().dropna()
+ daily_returns = Portfolio_values.pct_change().dropna()
  consistency = 1 - daily_returns.std() / abs(daily_returns.mean()) if daily_returns.mean() != 0 else 0
 
  # Стабильность (низкая волатильность)
  stability = 1 / (1 + daily_returns.std())
 
  # Адаптивность (способность к восстановлению после просадок)
- adaptability = self.calculate_adaptability(portfolio_values)
+ adaptability = self.calculate_adaptability(Portfolio_values)
 
  # Устойчивость к стрессу
  stress_resistance = self.calculate_stress_resistance(trades_df)
@@ -2364,11 +2364,11 @@ class PerformanceMetrics:
 
  return robustness_metrics
 
- def calculate_adaptability(self, portfolio_values):
+ def calculate_adaptability(self, Portfolio_values):
  """Расчет адаптивности системы"""
  # Анализ времени восстановления после просадок
- peak = portfolio_values.expanding().max()
- drawdown = (portfolio_values - peak) / peak
+ peak = Portfolio_values.expanding().max()
+ drawdown = (Portfolio_values - peak) / peak
 
  # Находим периоды просадок
  in_drawdown = drawdown < -0.01 # Просадка больше 1%
@@ -2525,16 +2525,16 @@ class PerformanceMetrics:
  else:
  return "CRITICAL"
 
- def generate_performance_report(self, portfolio_values, trades_df, Predictions_df=None, actual_df=None):
+ def generate_performance_Report(self, Portfolio_values, trades_df, Predictions_df=None, actual_df=None):
  """Генерация полного Reportа о производительности"""
 
  self.logger.info("📊 Генерация Reportа о производительности...")
 
  # Основные метрики
- basic_metrics = self.calculate_basic_metrics(portfolio_values, trades_df)
+ basic_metrics = self.calculate_basic_metrics(Portfolio_values, trades_df)
 
  # Метрики робастности
- robustness_metrics = self.calculate_robustness_metrics(portfolio_values, trades_df)
+ robustness_metrics = self.calculate_robustness_metrics(Portfolio_values, trades_df)
 
  # ML метрики
  ml_metrics = {}
@@ -2553,15 +2553,15 @@ class PerformanceMetrics:
  self.metrics_history.append(all_metrics)
 
  # Генерация Reportа
- report = self.format_performance_report(all_metrics)
+ Report = self.format_performance_Report(all_metrics)
 
- return all_metrics, report
+ return all_metrics, Report
 
- def format_performance_report(self, metrics):
+ def format_performance_Report(self, metrics):
  """Форматирование Reportа о производительности"""
 
- report = f"""
-📈 Report О ПРОИЗВОДИТЕЛЬНОСТИ NEOZORK 100% SYSTEM
+ Report = f"""
+📈 Report О ПРОИЗВОДИТЕЛЬНОСТИ NEOZORK 100% system
 {'='*60}
 
 💰 ФИНАНСОВЫЕ МЕТРИКИ:
@@ -2594,27 +2594,27 @@ class PerformanceMetrics:
 {'='*60}
  """
 
- return report
+ return Report
 
 # example использования
 if __name__ == "__main__":
  # create тестовых данных
  dates = pd.date_range('2024-01-01', periods=100, freq='D')
- portfolio_values = pd.Series(
+ Portfolio_values = pd.Series(
  np.cumsum(np.random.normal(0.01, 0.02, 100)) + 1000,
  index=dates
  )
 
- trades_df = pd.DataFrame({
+ trades_df = pd.dataFrame({
  'pnl': np.random.normal(10, 50, 50),
  'timestamp': dates[:50]
  })
 
  # Расчет метрик
  metrics_calculator = PerformanceMetrics()
- metrics, report = metrics_calculator.generate_performance_report(portfolio_values, trades_df)
+ metrics, Report = metrics_calculator.generate_performance_Report(Portfolio_values, trades_df)
 
- print(report)
+ print(Report)
 ```
 
 ### Метрики робастности
@@ -2661,7 +2661,7 @@ if __name__ == "__main__":
 - **Целевое значение:** >90
 - **Важность:** Комплексная оценка эффективности системы
 
-#### System Status (Статус системы)
+#### system Status (Статус системы)
 - **Определение:** Качественная оценка состояния системы
 - **Значения:** EXCELLENT (90+), GOOD (75-89), FAIR (60-74), POOR (40-59), CRITICAL (<40)
 - **Важность:** Быстрая оценка необходимости вмешательства
@@ -2720,7 +2720,7 @@ if __name__ == "__main__":
 **Теория:** Critical алерты сигнализируют о ситуациях, которые могут привести к значительным потерям or полной остановке системы. Эти алерты требуют немедленного реагирования.
 
 - **Критическая просадка (>25%):** Опасное снижение капитала
-- **Полная остановка системы:** Система перестала работать
+- **Полная остановка системы:** Система перестала Workingть
 - **Критические ошибки безопасности:** Подозрительная активность
 - **Потеря данных:** Критическая потеря важной информации
 - **Приоритет:** КРИТИЧЕСКИЙ
@@ -2738,8 +2738,8 @@ from email.mime.multipart import MIMEMultipart
 from typing import Dict, List, Optional
 import json
 
-class AlertSystem:
- """Система алертов for NeoZorK 100% System"""
+class Alertsystem:
+ """Система алертов for NeoZorK 100% system"""
 
  def __init__(self, config):
  self.config = config
@@ -2839,7 +2839,7 @@ class AlertSystem:
 
  return alerts
 
- async def check_system_alerts(self, system_status: Dict):
+ async def check_system_alerts(self, system_Status: Dict):
  """check системных алертов"""
 
  alerts = []
@@ -2910,7 +2910,7 @@ class AlertSystem:
  """Отправка алерта on email"""
  try:
  msg = MIMEMultipart()
- msg['From'] = self.config.alerts.email.username
+ msg['From'] = self.config.alerts.email.Username
  msg['To'] = ', '.join(self.config.alerts.email.recipients)
  msg['Subject'] = f"[{alert['type']}] {alert['title']}"
 
@@ -2922,14 +2922,14 @@ class AlertSystem:
 Тип: {alert['type']}
 
 ---
-NeoZorK 100% System Alert System
+NeoZorK 100% system Alert system
  """
 
  msg.attach(MIMEText(body, 'plain'))
 
  server = smtplib.SMTP(self.config.alerts.email.smtp_server, self.config.alerts.email.smtp_port)
  server.starttls()
- server.login(self.config.alerts.email.username, self.config.alerts.email.password)
+ server.login(self.config.alerts.email.Username, self.config.alerts.email.password)
  server.send_message(msg)
  server.quit()
 
@@ -3000,7 +3000,7 @@ NeoZorK 100% System Alert System
  }
  ],
  "footer": {
- "text": "NeoZorK 100% System Alert System"
+ "text": "NeoZorK 100% system Alert system"
  }
  }
 
@@ -3033,7 +3033,7 @@ NeoZorK 100% System Alert System
  alert_key = f"{alert['type']}_{alert['title']}"
  self.alert_history[alert_key] = datetime.now()
 
- async def process_alerts(self, metrics: Dict, system_status: Dict):
+ async def process_alerts(self, metrics: Dict, system_Status: Dict):
  """Обработка всех алертов"""
 
  # Получение всех алертов
@@ -3068,7 +3068,7 @@ if __name__ == "__main__":
  }
 
  # create and Launch системы алертов
- alert_system = AlertSystem(config)
+ alert_system = Alertsystem(config)
  asyncio.run(alert_system.process_alerts(test_metrics, test_system_status))
 ```
 
@@ -3080,7 +3080,7 @@ if __name__ == "__main__":
 - **Назначение:** Детальные Reportы and documentation
 - **Преимущества:** Форматирование, вложения, архивирование
 - **Использование:** Ежедневные Reportы, детальные алерты
-- **configuration:** SMTP сервер, учетные данные, получатели
+- **configuration:** SMTP сервер, учетные data, получатели
 
 #### Telegram (Мессенджер)
 - **Назначение:** Быстрые уведомления and мобильные алерты
@@ -3104,7 +3104,7 @@ if __name__ == "__main__":
 - **Назначение:** Мобильные уведомления in приложении
 - **Преимущества:** integration with мобильным applicationм
 - **Использование:** Персональные уведомления
-- **configuration:** Push сервисы, токены устройств
+- **configuration:** Push Services, токены устройств
 
 ## 🔒 Безопасность
 
@@ -3127,11 +3127,11 @@ if __name__ == "__main__":
 - Высокие требования к знаниям
 - Потенциальные ограничения функциональности
 
-### Управление ключами
+### Management ключами
 
-**Теория:** Управление ключами критически важно for обеспечения безопасности доступа к системе and защиты конфиденциальных данных. Это основа for безопасной работы системы.
+**Теория:** Management ключами критически важно for обеспечения безопасности доступа к системе and защиты конфиденциальных данных. Это основа for безопасной работы системы.
 
-**Почему управление ключами важно:**
+**Почему Management ключами важно:**
 - **Безопасность доступа:** Обеспечивает безопасность доступа
 - **Защита данных:** Обеспечивает защиту конфиденциальных данных
 - **Контроль:** Обеспечивает контроль доступа
@@ -3154,7 +3154,7 @@ gpg --symmetric --cipher-algo AES256 config/config.yaml
 
 ## 📚 documentation
 
-### Структура документации
+### Structure документации
 
 ```
 docs/automl/neozork/
@@ -3164,21 +3164,21 @@ docs/automl/neozork/
 ├── 04_feature_engineering.md # Инженерия признаков
 ├── 05_model_training.md # Обучение моделей
 ├── 06_backtesting.md # Бэктестинг
-├── 07_walk_forward_analysis.md # Walk-forward анализ
+├── 07_walk_forward_Analysis.md # Walk-forward анализ
 ├── 08_monte_carlo_simulation.md # Монте-Карло симуляция
-├── 09_risk_management.md # Управление рисками
+├── 09_risk_Management.md # Management рисками
 ├── 10_blockchain_deployment.md # Блокчейн деплой
-├── 11_wave2_analysis.md # Анализ WAVE2
-├── 12_schr_levels_analysis.md # Анализ SCHR Levels
-├── 13_schr_short3_analysis.md # Анализ SCHR SHORT3
+├── 11_wave2_Analysis.md # Анализ WAVE2
+├── 12_schr_levels_Analysis.md # Анализ SCHR Levels
+├── 13_schr_short3_Analysis.md # Анализ SCHR SHORT3
 ├── 14_advanced_practices.md # Продвинутые практики
-├── 15_portfolio_optimization.md # Оптимизация портфолио
-├── 16_metrics_analysis.md # Анализ метрик
+├── 15_Portfolio_optimization.md # Оптимизация Portfolio
+├── 16_metrics_Analysis.md # Анализ метрик
 ├── 17_examples.md # examples
 ├── 18_complete_system.md # Полная система
-├── 18_system_components.md # Компоненты системы
+├── 18_system_components.md # components системы
 ├── 18_blockchain_system.md # Блокчейн система
-├── 18_monitoring_metrics.md # Monitoring and метрики
+├── 18_Monitoring_metrics.md # Monitoring and метрики
 └── 18_README.md # Этот файл
 ```
 
@@ -3202,7 +3202,7 @@ MIT License - см. [LICENSE](LICENSE) файл for деталей.
 
 ## ⚠️ Отказ from ответственности
 
-**ВАЖНО**: Эта система предназначена for образовательных and исследовательских целей. Торговля on финансовых рынках сопряжена with высокими рисками. Авторы not несут ответственности за любые потери, возникшие in результате использования данной системы. Всегда тестируйте систему on testnet перед использованием реальных средств.
+**ВАЖНО**: Эта система предназначена for образовательных and исследовательских целей. Торговля on финансовых рынках сопряжена with высокими рисками. Авторы not несут ответственности за любые потери, возникшие in результате использования данной системы. Всегда тестируйте system on testnet перед использованием реальных средств.
 
 ## 🎯 Roadmap
 
@@ -3215,7 +3215,7 @@ MIT License - см. [LICENSE](LICENSE) файл for деталей.
 ### v1.1.0 (Planируется)
 - 🔄 Дополнительные индикаторы
 - 🔄 Улучшенная система рисков
-- 🔄 Mobile application
+- 🔄 mobile application
 
 ### v1.2.0 (Planируется)
 - 🔄 AI-ассистент
@@ -3244,9 +3244,9 @@ MIT License - см. [LICENSE](LICENSE) файл for деталей.
 
 ## 🚀 Практические examples использования
 
-**Теория:** Практические examples демонстрируют реальные сценарии использования системы NeoZorK 100% and помогают пользователям быстро начать работу. Эти examples критически важны for понимания возможностей системы and быстрого внедрения.
+**Теория:** Практические examples демонстрируют реальные сценарии использования системы NeoZorK 100% and помогают Userм быстро начать работу. Эти examples критически важны for понимания возможностей системы and быстрого внедрения.
 
-### example 1: quick start with минимальной конфигурацией
+### example 1: Quick start with минимальной конфигурацией
 
 ```python
 # Минимальная configuration for тестирования
@@ -3259,7 +3259,7 @@ config = Config({
  'data_sources': {
  'crypto': [{'symbol': 'BTC-USD', 'weight': 1.0}]
  },
- 'timeframes': ['H1'],
+ 'Timeframes': ['H1'],
  'targets': {
  'monthly_return': 1.0,
  'max_drawdown': 0.15
@@ -3279,11 +3279,11 @@ await trading_engine.start()
 ```python
 # Полная configuration for продакшена
 import asyncio
-from src.main import NeoZorKSystem
+from src.main import NeoZorKsystem
 
 async def main():
  # create системы
- system = NeoZorKSystem()
+ system = NeoZorKsystem()
 
  # Инициализация
  await system.initialize()
@@ -3304,28 +3304,28 @@ if __name__ == "__main__":
 
 ```python
 # create Reportа о производительности
-from src.monitoring.performance_metrics import PerformanceMetrics
+from src.Monitoring.performance_metrics import PerformanceMetrics
 
 # Loading data
-portfolio_values = pd.read_csv('data/portfolio_values.csv', index_col=0, parse_dates=True)
+Portfolio_values = pd.read_csv('data/Portfolio_values.csv', index_col=0, parse_dates=True)
 trades_df = pd.read_csv('data/trades.csv', parse_dates=True)
 
 # Расчет метрик
 metrics_calculator = PerformanceMetrics()
-metrics, report = metrics_calculator.generate_performance_report(portfolio_values, trades_df)
+metrics, Report = metrics_calculator.generate_performance_Report(Portfolio_values, trades_df)
 
 # Вывод Reportа
-print(report)
+print(Report)
 ```
 
 ### example 4: configuration алертов
 
 ```python
 # configuration системы алертов
-from src.monitoring.alert_system import AlertSystem
+from src.Monitoring.alert_system import Alertsystem
 
 # create системы алертов
-alert_system = AlertSystem(config)
+alert_system = Alertsystem(config)
 
 # Тестовые метрики
 test_metrics = {
@@ -3343,7 +3343,7 @@ await alert_system.process_alerts(test_metrics, {'status': 'GOOD'})
 ### Официальная documentation
 - **API Reference:** [docs/api/](docs/api/)
 - **Configuration Guide:** [docs/configuration/](docs/configuration/)
-- **Deployment Guide:** [docs/deployment/](docs/deployment/)
+- **deployment Guide:** [docs/deployment/](docs/deployment/)
 
 ### Сообщество
 - **GitHub Discussions:** [Обсуждения](https://github.com/your-repo/discussions)
@@ -3357,7 +3357,7 @@ await alert_system.process_alerts(test_metrics, {'status': 'GOOD'})
 
 ## 🎯 Заключение
 
-**Теория:** NeoZorK 100% System представляет собой революционную платформу for автоматизированной торговли, объединяющую передовые технологии машинного обучения with блокчейн-интеграцией. Система спроектирована for достижения стабильной прибыли 100%+ in месяц при минимальных рисках.
+**Теория:** NeoZorK 100% system представляет собой революционную платформу for автоматизированной торговли, объединяющую передовые технологии машинного обучения with блокчейн-интеграцией. Система спроектирована for достижения стабильной прибыли 100%+ in месяц при минимальных рисках.
 
 **Ключевые достижения системы:**
 - **Высокая доходность:** Стабильное достижение 100%+ месячной прибыли
@@ -3366,7 +3366,7 @@ await alert_system.process_alerts(test_metrics, {'status': 'GOOD'})
 - **Масштабируемость:** Возможность работы with любыми активами and объемами
 - **Безопасность:** Комплексная защита данных and операций
 
-**Почему NeoZorK 100% System - это будущее торговли:**
+**Почему NeoZorK 100% system - это будущее торговли:**
 - **Искусственный интеллект:** Использует самые современные ML-алгоритмы
 - **Блокчейн-integration:** Полная integration with DeFi экосистемой
 - **Риск-менеджмент:** Продвинутые системы управления рисками
@@ -3378,7 +3378,7 @@ await alert_system.process_alerts(test_metrics, {'status': 'GOOD'})
 2. **Настройте окружение:** Следуйте инструкциям on установке
 3. **Начните with тестов:** Use testnet for первых экспериментов
 4. **Присоединяйтесь к сообществу:** Получайте поддержку and делитесь опытом
-5. **Достигайте целей:** Use систему for достижения финансовых целей
+5. **Достигайте целей:** Use system for достижения финансовых целей
 
 ---
 
@@ -3386,4 +3386,4 @@ await alert_system.process_alerts(test_metrics, {'status': 'GOOD'})
 
 *Достигайте 100%+ прибыли in месяц with помощью робастных ML-систем!*
 
-**⚠️ Важное напоминание:** Торговля on финансовых рынках сопряжена with высокими рисками. Всегда тестируйте систему on testnet перед использованием реальных средств. Авторы not несут ответственности за любые потери, возникшие in результате использования данной системы.
+**⚠️ Важное напоминание:** Торговля on финансовых рынках сопряжена with высокими рисками. Всегда тестируйте system on testnet перед использованием реальных средств. Авторы not несут ответственности за любые потери, возникшие in результате использования данной системы.

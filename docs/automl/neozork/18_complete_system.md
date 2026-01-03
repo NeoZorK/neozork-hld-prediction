@@ -8,7 +8,7 @@
 - **Доходность:** Критически важно for достижения высокой доходности
 - **Практичность:** Обеспечивает практическое применение знаний
 
-**Goal:** Создать полностью рабочую систему with доходностью более 100% in месяц with детальным кодом and инструкциями.
+**Goal:** Создать полностью рабочую system with доходностью более 100% in месяц with детальным кодом and инструкциями.
 
 ## 🎯 Concept системы
 
@@ -32,8 +32,8 @@
 
 **Основные проблемы:**
 
-1. **Переобучение - работают только on исторических данных**
- - **Теория:** Переобучение представляет собой критическую проблему, когда модели работают только on исторических данных and not могут адаптироваться к новым условиям
+1. **Переобучение - Workingют только on исторических данных**
+ - **Теория:** Переобучение представляет собой критическую проблему, когда модели Workingют только on исторических данных and not могут адаптироваться к новым условиям
  - **Почему это проблема:** Обеспечивает нестабильность and низкую эффективность
  - **Плюсы:** Может обеспечить высокую точность on исторических данных
  - **Минусы:** Нестабильность, низкая адаптивность, непредсказуемость
@@ -80,11 +80,11 @@
  - **Плюсы:** Диверсификация рисков, максимизация возможностей, стабильность
  - **Минусы:** Сложность управления, высокие требования к ресурсам
 
-- **МультиTimeframeовый анализ - from M1 to D1**
- - **Теория:** МультиTimeframeовый анализ критически важен for полного понимания рыночной динамики
+- **МультиTimeframesый анализ - from M1 to D1**
+ - **Теория:** МультиTimeframesый анализ критически важен for полного понимания рыночной динамики
  - **Почему важно:** Обеспечивает полное понимание рыночной динамики
  - **Плюсы:** Полное понимание, точность сигналов, адаптивность
- - **Минусы:** Сложность анализа, высокие требования к данным
+ - **Минусы:** Сложность Analysis, высокие требования к данным
 
 - **Комбинирование indicators - WAVE2 + SCHR Levels + SCHR SHORT3**
  - **Теория:** Комбинирование indicators критически важно for improving accuracy and робастности сигналов
@@ -118,7 +118,7 @@
 
 ## 🏗️ Архитектура системы
 
-**Теория:** Архитектура системы представляет собой структурированный подход к организации компонентов системы for обеспечения эффективной работы, масштабируемости and поддерживаемости. Это критически важно for создания надежных and эффективных систем.
+**Теория:** Архитектура системы представляет собой структурированный подход к organization компонентов системы for обеспечения эффективной работы, масштабируемости and поддерживаемости. Это критически важно for создания надежных and эффективных систем.
 
 **Почему архитектура системы важна:**
 - **Структурированность:** Обеспечивает структурированный подход
@@ -126,11 +126,11 @@
 - **Масштабируемость:** Обеспечивает масштабируемость
 - **Поддерживаемость:** Критически важно for поддерживаемости
 
-### Компоненты системы
+### components системы
 
-**Теория:** Компоненты системы представляют собой отдельные modules, каждый из которых отвечает за определенную функциональность. Это критически важно for создания модульной and масштабируемой системы.
+**Теория:** components системы представляют собой отдельные modules, каждый из которых отвечает за определенную функциональность. Это критически важно for создания модульной and масштабируемой системы.
 
-**Почему компоненты системы важны:**
+**Почему components системы важны:**
 - **Модульность:** Обеспечивает модульность системы
 - **Масштабируемость:** Обеспечивает масштабируемость
 - **Поддерживаемость:** Обеспечивает поддерживаемость
@@ -138,19 +138,19 @@
 
 ```
 ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
-│ Data Sources │ │ ML Models │ │ Risk Manager │
+│ data Sources │ │ ML Models │ │ Risk Manager │
 │ │ │ │ │ │
 │ • Crypto APIs │───▶│ • WAVE2 Model │───▶│ • Position Size │
 │ • Forex APIs │ │ • SCHR Levels │ │ • Stop Loss │
 │ • Stock APIs │ │ • SCHR SHORT3 │ │ • Take Profit │
-│ • DeFi Data │ │ • Ensemble │ │ • VaR Control │
+│ • DeFi data │ │ • Ensemble │ │ • VaR Control │
 └─────────────────┘ └─────────────────┘ └─────────────────┘
  │ │ │
  ▼ ▼ ▼
 ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
 │ signal Engine │ │ Portfolio Mgr │ │ DeFi Manager │
 │ │ │ │ │ │
-│ • Multi-TF │ │ • Allocation │ │ • Yield Farming │
+│ • Multi-TF │ │ • allocation │ │ • Yield Farming │
 │ • Multi-Asset │ │ • Rebalancing │ │ • Liquidity │
 │ • Ensemble │ │ • Optimization │ │ • Staking │
 └─────────────────┘ └─────────────────┘ └─────────────────┘
@@ -171,9 +171,9 @@
 
 **Почему installation and configuration важны:**
 - **Подготовка:** Обеспечивает подготовку системы к работе
-- **dependencies:** Обеспечивает установку всех необходимых зависимостей
+- **dependencies:** Обеспечивает установку всех required зависимостей
 - **configuration:** Обеспечивает правильную настройку
-- **Структура:** Критически важно for создания правильной структуры
+- **Structure:** Критически важно for создания правильной структуры
 
 ### 1. Требования системы
 
@@ -204,7 +204,7 @@ cd neozork-100-percent-system
 # Инициализация uv
 uv init --python 3.11
 
-# Installation основных зависимостей
+# installation основных зависимостей
 uv add numpy pandas scikit-learn matplotlib seaborn plotly
 uv add yfinance pandas-datareader ta-lib vectorbt
 uv add xgboost lightgbm catboost optuna
@@ -214,7 +214,7 @@ uv add fastapi uvicorn
 uv add jupyter notebook ipykernel
 uv add mlx mlx-lm
 
-# Installation дополнительных зависимостей
+# installation дополнительных зависимостей
 uv add psycopg2-binary redis
 uv add python-telegram-bot discord.py
 uv add smtplib email-validator
@@ -245,7 +245,7 @@ neozork-100-percent-system/
 │ ├── trading/
 │ │ ├── __init__.py
 │ │ ├── signal_engine.py
-│ │ ├── portfolio_manager.py
+│ │ ├── Portfolio_manager.py
 │ │ └── risk_manager.py
 │ ├── defi/
 │ │ ├── __init__.py
@@ -256,7 +256,7 @@ neozork-100-percent-system/
 │ │ ├── __init__.py
 │ │ ├── contracts.py
 │ │ └── oracle.py
-│ └── monitoring/
+│ └── Monitoring/
 │ ├── __init__.py
 │ ├── performance.py
 │ └── alerts.py
@@ -283,11 +283,11 @@ neozork-100-percent-system/
 └── README.md
 ```
 
-## 🔧 Main code системы
+## 🔧 main code системы
 
-**Теория:** Main code системы представляет собой реализацию всех компонентов системы in виде программного кода, обеспечивающего их взаимодействие and функциональность. Это критически важно for создания работоспособной системы.
+**Теория:** main code системы представляет собой реализацию всех компонентов системы in виде программного кода, обеспечивающего их взаимодействие and функциональность. Это критически важно for создания работоспособной системы.
 
-**Почему Main code системы важен:**
+**Почему main code системы важен:**
 - **Реализация:** Обеспечивает реализацию всех компонентов
 - **Взаимодействие:** Обеспечивает взаимодействие компонентов
 - **Функциональность:** Обеспечивает необходимую функциональность
@@ -295,11 +295,11 @@ neozork-100-percent-system/
 
 ### 1. configuration системы
 
-**Теория:** configuration системы представляет собой централизованную систему настроек and параметров, определяющих поведение and характеристики всей торговой системы. Это критически важно for адаптации системы под конкретные требования, обеспечения гибкости and возможности быстрого изменения стратегий без переписывания кода.
+**Теория:** configuration системы представляет собой централизованную system настроек and параметров, определяющих поведение and характеристики всей торговой системы. Это критически важно for адаптации системы под конкретные требования, обеспечения гибкости and возможности быстрого изменения стратегий без переписывания кода.
 
 **Почему configuration системы важна:**
-- **Централизованное управление:** Все settings системы находятся in одном месте, что упрощает управление and отладку
-- **Адаптивность:** Позволяет быстро адаптировать систему под различные рыночные условия and стратегии
+- **Централизованное Management:** Все settings системы находятся in одном месте, что упрощает Management and отладку
+- **Адаптивность:** Позволяет быстро адаптировать system под различные рыночные условия and стратегии
 - **Гибкость:** Обеспечивает возможность изменения параметров без остановки системы
 - **Масштабируемость:** Критически важно for масштабирования системы and добавления новых активов
 
@@ -308,7 +308,7 @@ neozork-100-percent-system/
 configuration системы является фундаментальным компонентом, который определяет все аспекты работы торговой системы. Она включает in себя:
 
 1. **Источники данных** - определение всех активов for trading with их весами
-2. **Timeframeы** - временные интервалы for analysis
+2. **Timeframeы** - временные интервалы for Analysis
 3. **Лимиты риска** - parameters управления рисками
 4. **DeFi протоколы** - settings for блокчейн-интеграции
 5. **Monitoring** - parameters системы уведомлений
@@ -328,7 +328,7 @@ configuration системы является фундаментальным к�
 ```python
 # config/config.yaml
 system:
- name: "NeoZorK 100% System"
+ name: "NeoZorK 100% system"
  Version: "1.0.0"
  environment: "production"
 
@@ -365,7 +365,7 @@ data_sources:
  - symbol: "AMZN"
  weight: 0.1
 
-timeframes:
+Timeframes:
  - "M1"
  - "M5"
  - "M15"
@@ -391,7 +391,7 @@ defi_protocols:
  enabled: true
  weight: 0.3
 
-monitoring:
+Monitoring:
  telegram:
  enabled: true
  bot_token: "YOUR_BOT_TOKEN"
@@ -409,23 +409,23 @@ monitoring:
 
 ### 2. Основной класс системы
 
-**Теория:** Основной класс системы представляет собой центральный оркестратор всей торговой системы, который координирует работу всех подсистем, управляет их жизненным циклом and обеспечивает бесшовную интеграцию между ML-моделями, блокчейн-компонентами and системой управления рисками. Это критически важно for создания единой, эффективной and надежной торговой системы.
+**Теория:** Основной класс системы представляет собой центральный оркестратор всей торговой системы, который координирует работу всех подсистем, управляет их жизненным циклом and обеспечивает бесшовную интеграцию между ML-моделями, блокчейн-componentsи and системой управления рисками. Это критически важно for создания единой, эффективной and надежной торговой системы.
 
 **Почему основной класс системы важен:**
 - **Централизованная координация:** Обеспечивает слаженную работу всех компонентов системы
-- **Управление жизненным циклом:** Контролирует Launch, работу and остановку всех подсистем
+- **Management жизненным циклом:** Контролирует Launch, работу and остановку всех подсистем
 - **integration компонентов:** Обеспечивает бесшовную интеграцию между различными модулями
 - **Обработка ошибок:** Критически важно for централизованной обработки ошибок and восстановления
 
 **Детальное объяснение архитектуры основного класса:**
 
-Основной класс `NeoZorK100PercentSystem` является сердцем всей системы and выполняет следующие ключевые functions:
+Основной класс `NeoZorK100Percentsystem` является сердцем всей системы and выполняет следующие ключевые functions:
 
 1. **Инициализация компонентов** - create and configuration всех подсистем
-2. **Управление данными** - координация сбора and обработки рыночных данных
-3. **Обучение моделей** - управление процессом обучения ML-моделей
+2. **Management данными** - координация сбора and обработки рыночных данных
+3. **Обучение моделей** - Management процессом обучения ML-моделей
 4. **Торговый цикл** - основной цикл генерации сигналов and выполнения сделок
-5. **Управление рисками** - Monitoring and контроль рисков
+5. **Management рисками** - Monitoring and контроль рисков
 6. **DeFi операции** - integration with блокчейн-протоколами
 7. **Monitoring производительности** - отслеживание эффективности системы
 
@@ -440,8 +440,8 @@ monitoring:
 **Преимущества централизованного управления:**
 - **Единая точка контроля:** Все операции проходят через главный класс
 - **Упрощенная отладка:** Легче найти and исправить проблемы
-- **Консистентность:** Обеспечение согласованности между компонентами
-- **Безопасность:** Централизованное управление доступом and правами
+- **Консистентность:** Обеспечение согласованности между componentsи
+- **Безопасность:** Централизованное Management доступом and правами
 
 **Практическое применение:**
 - Launch системы одной командой
@@ -452,7 +452,7 @@ monitoring:
 ```python
 # src/main.py
 """
-NeoZorK 100% System - Главный module системы
+NeoZorK 100% system - Главный module системы
 Центральный оркестратор for достижения 100% прибыли in месяц
 
 Этот module координирует работу всех компонентов системы:
@@ -478,20 +478,20 @@ warnings.filterwarnings('ignore')
 
 # Импорт компонентов системы
 try:
- from src.data.collectors import DataCollector
+ from src.data.collectors import dataCollector
  from src.indicators.wave2 import Wave2Indicator
  from src.indicators.schr_levels import SCHRLevelsIndicator
  from src.indicators.schr_short3 import SCHRShort3Indicator
  from src.models.ensemble import EnsembleModel
  from src.trading.signal_engine import signalEngine
- from src.trading.portfolio_manager import PortfolioManager
+ from src.trading.Portfolio_manager import PortfolioManager
  from src.trading.risk_manager import RiskManager
  from src.defi.uniswap import UniswapV2Manager
  from src.defi.compound import CompoundManager
  from src.defi.aave import AaveManager
  from src.blockchain.oracle import MLOracle
- from src.monitoring.performance import PerformanceMonitor
- from src.monitoring.alerts import AlertManager
+ from src.Monitoring.performance import PerformanceMonitor
+ from src.Monitoring.alerts import AlertManager
 except ImportError as e:
  print(f"Warning: Some modules not available: {e}")
  # create заглушек for отсутствующих модулей
@@ -501,7 +501,7 @@ except ImportError as e:
  def __getattr__(self, name):
  return lambda *args, **kwargs: None
 
- DataCollector = MockModule
+ dataCollector = MockModule
  Wave2Indicator = MockModule
  SCHRLevelsIndicator = MockModule
  SCHRShort3Indicator = MockModule
@@ -516,7 +516,7 @@ except ImportError as e:
  PerformanceMonitor = MockModule
  AlertManager = MockModule
 
-class NeoZorK100PercentSystem:
+class NeoZorK100Percentsystem:
  """Главный класс системы заработка 100%+ in месяц"""
 
  def __init__(self, config_path: str = "config/config.yaml"):
@@ -524,13 +524,13 @@ class NeoZorK100PercentSystem:
  self.logger = self._setup_logging()
 
  # Инициализация компонентов
- self.data_collector = DataCollector(self.config)
+ self.data_collector = dataCollector(self.config)
  self.wave2_indicator = Wave2Indicator()
  self.schr_levels_indicator = SCHRLevelsIndicator()
  self.schr_short3_indicator = SCHRShort3Indicator()
  self.ensemble_model = EnsembleModel()
  self.signal_engine = signalEngine(self.config)
- self.portfolio_manager = PortfolioManager(self.config)
+ self.Portfolio_manager = PortfolioManager(self.config)
  self.risk_manager = RiskManager(self.config)
  self.uniswap_manager = UniswapV2Manager(self.config)
  self.compound_manager = CompoundManager(self.config)
@@ -544,7 +544,7 @@ class NeoZorK100PercentSystem:
  self.current_positions = {}
  self.performance_history = []
 
- self.logger.info("NeoZorK 100% System initialized successfully")
+ self.logger.info("NeoZorK 100% system initialized successfully")
 
  def _load_config(self, config_path: str) -> Dict:
  """Загрузка конфигурации"""
@@ -566,7 +566,7 @@ class NeoZorK100PercentSystem:
  def start_system(self):
  """Launch системы"""
  try:
- self.logger.info("starting NeoZorK 100% System...")
+ self.logger.info("starting NeoZorK 100% system...")
 
  # Инициализация данных
  self._initialize_data()
@@ -591,16 +591,16 @@ class NeoZorK100PercentSystem:
  symbol = asset['symbol']
  self.logger.info(f"Collecting data for {symbol}")
 
- # Сбор данных for всех Timeframeов
- for timeframe in self.config['timeframes']:
- data = self.data_collector.collect_data(symbol, timeframe)
- self.data_collector.save_data(data, symbol, timeframe)
+ # Сбор данных for всех Timeframes
+ for Timeframe in self.config['Timeframes']:
+ data = self.data_collector.collect_data(symbol, Timeframe)
+ self.data_collector.save_data(data, symbol, Timeframe)
 
- self.logger.info("Data initialization completed")
+ self.logger.info("data initialization COMPLETED")
 
  def _train_models(self):
  """Обучение моделей"""
- self.logger.info("Training models...")
+ self.logger.info("training models...")
 
  # Обучение WAVE2 модели
  self.wave2_indicator.train(self.data_collector.get_all_data())
@@ -618,7 +618,7 @@ class NeoZorK100PercentSystem:
  schr_short3_data=self.schr_short3_indicator.get_features()
  )
 
- self.logger.info("Models training completed")
+ self.logger.info("Models training COMPLETED")
 
  def _start_main_loop(self):
  """Launch основного цикла"""
@@ -633,7 +633,7 @@ class NeoZorK100PercentSystem:
  # check производительности
  self._performance_check()
 
- # Управление рисками
+ # Management рисками
  self._risk_check()
 
  # DeFi операции
@@ -643,7 +643,7 @@ class NeoZorK100PercentSystem:
  time.sleep(60) # 1 minutesа
 
  except KeyboardInterrupt:
- self.logger.info("System stopped by user")
+ self.logger.info("system stopped by User")
  break
  except Exception as e:
  self.logger.error(f"Error in main loop: {e}")
@@ -659,11 +659,11 @@ class NeoZorK100PercentSystem:
  signals = self.signal_engine.generate_signals(current_data)
 
  # Анализ сигналов
- signal_analysis = self._analyze_signals(signals)
+ signal_Analysis = self._analyze_signals(signals)
 
  # Принятие торговых решений
- if signal_analysis['confidence'] > 0.7:
- self._execute_trades(signal_analysis)
+ if signal_Analysis['confidence'] > 0.7:
+ self._execute_trades(signal_Analysis)
 
  # update позиций
  self._update_positions()
@@ -674,7 +674,7 @@ class NeoZorK100PercentSystem:
  def _analyze_signals(self, signals: Dict) -> Dict:
  """Анализ торговых сигналов"""
  # Согласованность сигналов
- signal_values = list(signals.values())
+ signal_values = List(signals.values())
  agreement = 1 - np.std(signal_values)
 
  # Уверенность in сигнале
@@ -691,31 +691,31 @@ class NeoZorK100PercentSystem:
  'timestamp': datetime.now()
  }
 
- def _execute_trades(self, signal_analysis: Dict):
+ def _execute_trades(self, signal_Analysis: Dict):
  """Выполнение торговых операций"""
  try:
  # check рисков
- if not self.risk_manager.check_risk_limits(signal_analysis):
+ if not self.risk_manager.check_risk_limits(signal_Analysis):
  self.logger.warning("Trade rejected due to risk limits")
  return
 
  # Расчет размера позиции
- position_size = self.risk_manager.calculate_position_size(signal_analysis)
+ position_size = self.risk_manager.calculate_position_size(signal_Analysis)
 
  # Выполнение сделки
- if signal_analysis['direction'] > 0:
+ if signal_Analysis['direction'] > 0:
  # Покупка
- trade_result = self.portfolio_manager.buy(
- symbol=signal_analysis['symbol'],
+ trade_result = self.Portfolio_manager.buy(
+ symbol=signal_Analysis['symbol'],
  amount=position_size,
- price=signal_analysis['price']
+ price=signal_Analysis['price']
  )
- elif signal_analysis['direction'] < 0:
+ elif signal_Analysis['direction'] < 0:
  # Продажа
- trade_result = self.portfolio_manager.sell(
- symbol=signal_analysis['symbol'],
+ trade_result = self.Portfolio_manager.sell(
+ symbol=signal_Analysis['symbol'],
  amount=position_size,
- price=signal_analysis['price']
+ price=signal_Analysis['price']
  )
 
  if trade_result['success']:
@@ -758,7 +758,7 @@ class NeoZorK100PercentSystem:
 
  # Автоматические действия
  if risk_status['action'] == 'reduce_positions':
- self.portfolio_manager.reduce_positions()
+ self.Portfolio_manager.reduce_positions()
  elif risk_status['action'] == 'stop_trading':
  self.is_running = False
 
@@ -796,10 +796,10 @@ class NeoZorK100PercentSystem:
  def _liquidity_provision_cycle(self):
  """Цикл предоставления ликвидности"""
  # Анализ пулов ликвидности
- liquidity_analysis = self._analyze_liquidity_pools()
+ liquidity_Analysis = self._analyze_liquidity_pools()
 
  # Оптимальное распределение
- optimal_liquidity = self._optimize_liquidity_allocation(liquidity_analysis)
+ optimal_liquidity = self._optimize_liquidity_allocation(liquidity_Analysis)
 
  # Выполнение операций
  for pool, allocation in optimal_liquidity.items():
@@ -860,7 +860,7 @@ class NeoZorK100PercentSystem:
  def _analyze_liquidity_pools(self) -> Dict:
  """Анализ пулов ликвидности"""
  try:
- # Здесь должна быть логика анализа пулов
+ # Здесь должна быть логика Analysis пулов
  return {
  'pool1': {'volume': 100000, 'fees': 0.003},
  'pool2': {'volume': 50000, 'fees': 0.002}
@@ -896,7 +896,7 @@ class NeoZorK100PercentSystem:
  def _analyze_staking_opportunities(self) -> Dict:
  """Анализ возможностей стейкинга"""
  try:
- # Здесь должна быть логика анализа стейкинга
+ # Здесь должна быть логика Analysis стейкинга
  return {
  'asset1': {'apy': 0.08, 'lock_period': 30},
  'asset2': {'apy': 0.12, 'lock_period': 90}
@@ -973,35 +973,35 @@ class NeoZorK100PercentSystem:
  with open(state_path, 'w') as f:
  json.dump(state, f, indent=2, default=str)
 
- self.logger.info(f"System state saved to {state_path}")
+ self.logger.info(f"system state saved to {state_path}")
 
  except Exception as e:
  self.logger.error(f"Error saving system state: {e}")
 
  def stop_system(self):
  """Остановка системы"""
- self.logger.info("Stopping NeoZorK 100% System...")
+ self.logger.info("Stopping NeoZorK 100% system...")
  self.is_running = False
 
  # Закрытие всех позиций
- if hasattr(self.portfolio_manager, 'close_all_positions'):
- self.portfolio_manager.close_all_positions()
+ if hasattr(self.Portfolio_manager, 'close_all_positions'):
+ self.Portfolio_manager.close_all_positions()
 
  # Сохранение состояния
  self._save_system_state()
 
- self.logger.info("System stopped successfully")
+ self.logger.info("system stopped successfully")
 
 if __name__ == "__main__":
  # Launch системы
- system = NeoZorK100PercentSystem()
+ system = NeoZorK100Percentsystem()
 
  try:
  system.start_system()
  except KeyboardInterrupt:
  system.stop_system()
  except Exception as e:
- print(f"System error: {e}")
+ print(f"system error: {e}")
  system.stop_system()
 ```
 
@@ -1042,14 +1042,14 @@ if __name__ == "__main__":
 
 1. **Позиционный риск** - контроль размера позиций
 2. **Рыночный риск** - защита from рыночных движений
-3. **Кредитный риск** - управление кредитным плечом
+3. **Кредитный риск** - Management кредитным плечом
 4. **Операционный риск** - защита from технических сбоев
-5. **Ликвидный риск** - управление ликвидностью
+5. **Ликвидный риск** - Management ликвидностью
 
 ```python
 # src/trading/risk_manager.py
 """
-Система управления рисками for NeoZorK 100% System
+Система управления рисками for NeoZorK 100% system
 Обеспечивает защиту капитала and долгосрочную стабильность
 """
 
@@ -1078,11 +1078,11 @@ class RiskManager:
  self.max_drawdown_current = 0.0
  self.peak_balance = 1000.0
 
- def check_risk_limits(self, signal_analysis: Dict) -> bool:
+ def check_risk_limits(self, signal_Analysis: Dict) -> bool:
  """check лимитов риска"""
  try:
  # check размера позиции
- if not self._check_position_size(signal_analysis):
+ if not self._check_position_size(signal_Analysis):
  return False
 
  # check дневных потерь
@@ -1103,10 +1103,10 @@ class RiskManager:
  self.logger.error(f"Error checking risk limits: {e}")
  return False
 
- def _check_position_size(self, signal_analysis: Dict) -> bool:
+ def _check_position_size(self, signal_Analysis: Dict) -> bool:
  """check размера позиции"""
  try:
- position_size = signal_analysis.get('position_size', 0)
+ position_size = signal_Analysis.get('position_size', 0)
  return position_size <= self.max_position_size
  except Exception as e:
  self.logger.error(f"Error checking position size: {e}")
@@ -1137,18 +1137,18 @@ class RiskManager:
  self.logger.error(f"Error checking VaR: {e}")
  return False
 
- def calculate_position_size(self, signal_analysis: Dict) -> float:
+ def calculate_position_size(self, signal_Analysis: Dict) -> float:
  """Расчет размера позиции"""
  try:
  # Базовый размер позиции
  base_size = self.max_position_size
 
  # Корректировка on basis уверенности
- confidence = signal_analysis.get('confidence', 0.5)
+ confidence = signal_Analysis.get('confidence', 0.5)
  adjusted_size = base_size * confidence
 
  # Корректировка on basis волатильности
- volatility = signal_analysis.get('volatility', 0.02)
+ volatility = signal_Analysis.get('volatility', 0.02)
  if volatility > 0.05:
  adjusted_size *= 0.5
 
@@ -1197,9 +1197,9 @@ class RiskManager:
 - **Оптимизация:** Критически важно for оптимизации системы
 
 ```python
-# src/monitoring/performance.py
+# src/Monitoring/performance.py
 """
-Система Monitoringа производительности for NeoZorK 100% System
+Система Monitoringа производительности for NeoZorK 100% system
 Отслеживает эффективность and генерирует алерты
 """
 
@@ -1307,11 +1307,11 @@ class PerformanceMonitor:
  return []
 ```
 
-### 5. instructions on Launchу and testing
+### 5. instructions on Launch and testing
 
-**Теория:** instructions on Launchу and testing представляют собой критически важный компонент for успешного развертывания and использования системы. Это основа for практического применения системы.
+**Теория:** instructions on Launch and testing представляют собой критически важный компонент for успешного развертывания and использования системы. Это основа for практического применения системы.
 
-**Почему instructions on Launchу важны:**
+**Почему instructions on Launch важны:**
 - **Практическое применение:** Обеспечивает возможность Launchа системы
 - **Тестирование:** Позволяет проверить работоспособность
 - **Отладка:** Помогает найти and исправить проблемы
@@ -1326,7 +1326,7 @@ source neozork-100-percent/bin/activate # Linux/Mac
 # or
 neozork-100-percent\Scripts\activate # Windows
 
-# Installation зависимостей
+# installation зависимостей
 pip install -r requirements.txt
 
 # or with использованием uv
@@ -1356,7 +1356,7 @@ docker-compose up -d
 #### Шаг 4: Monitoring
 
 ```bash
-# Просмотр логов
+# View логов
 tail -f logs/neozork_100_percent.log
 
 # Monitoring производительности
@@ -1410,7 +1410,7 @@ python scripts/monitor_performance.py
 **Ключевые преимущества системы:**
 
 1. **Мультиактивный подход** - торговля on всех активах simultaneously
-2. **МультиTimeframeовый анализ** - from M1 to D1
+2. **МультиTimeframesый анализ** - from M1 to D1
 3. **Комбинирование indicators** - WAVE2 + SCHR Levels + SCHR SHORT3
 4. **Адаптивная система** - самообучение and адаптация
 5. **Продвинутый риск-менеджмент** - защита from потерь
@@ -1426,7 +1426,7 @@ python scripts/monitor_performance.py
 
 **Важные замечания:**
 
-1. **Тестирование:** Всегда тестируйте систему on исторических данных перед использованием реальных средств
+1. **Тестирование:** Всегда тестируйте system on исторических данных перед использованием реальных средств
 2. **Риски:** Высокая доходность всегда связана with высокими рисками
 3. **Monitoring:** Постоянно отслеживайте производительность системы
 4. **Обновления:** Регулярно обновляйте модели and стратегии
@@ -1438,4 +1438,4 @@ python scripts/monitor_performance.py
 
 **Удачи in создании прибыльной системы! 🚀**
 
-*NeoZorK 100% System - Ваш путь к финансовой свободе через технологии машинного обучения and блокчейн.*
+*NeoZorK 100% system - Ваш путь к финансовой свободе через технологии машинного обучения and блокчейн.*

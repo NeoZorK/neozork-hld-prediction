@@ -1,6 +1,6 @@
 # NeoZork HLD Prediction
 
-Advanced financial analysis platform with UV package management, comprehensive technical indicators, adaptive testing, and **Interactive ML Trading Strategy Development System**.
+Advanced financial Analysis platform with UV package Management, comprehensive technical indicators, adaptive testing, and **Interactive ML Trading Strategy Development system**.
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![UV Package Manager](https://img.shields.io/badge/UV-Package%20Manager-orange.svg)](https://docs.astral.sh/uv/)
@@ -14,7 +14,7 @@ Advanced financial analysis platform with UV package management, comprehensive t
 ### Native Apple Silicon Container (macOS 26+) - **FULL DOCKER PARITY**
 ```bash
 # Clone and run interactive container manager
-git clone https://github.com/username/neozork-hld-Prediction.git
+git clone https://github.com/Username/neozork-hld-Prediction.git
 cd neozork-hld-Prediction
 ./scripts/native-container/native-container.sh
 ```
@@ -30,110 +30,110 @@ cd neozork-hld-Prediction
 
 **available Commands Inside Container:**
 ```bash
-nz --interactive # Interactive analysis
-nz demo --rule PHLD # Demo analysis
-eda -dqc # Data quality checks
-uv-install # Install dependencies
+nz --interactive # Interactive Analysis
+nz demo --rule PHLD # Demo Analysis
+eda -dqc # data quality checks
+uv-install # install dependencies
 uv-pytest # Run tests with UV
 mcp-start # start MCP server
-mcp-check # Check MCP server status
+mcp-check # check MCP server status
 ```
 
 ### Docker (Recommended for other platforms)
 ```bash
 # Clone and start
-git clone https://github.com/username/neozork-hld-Prediction.git
+git clone https://github.com/Username/neozork-hld-Prediction.git
 cd neozork-hld-Prediction
 docker-compose up -d
 
-# Run analysis with UV
-docker-compose exec neozork uv run run_analysis.py demo --rule PHLD
+# Run Analysis with UV
+docker-compose exec neozork uv run run_Analysis.py demo --rule PHLD
 ```
 
 ### Local Setup with UV
 ```bash
 # Clone repository
-git clone https://github.com/username/neozork-hld-Prediction.git
+git clone https://github.com/Username/neozork-hld-Prediction.git
 cd neozork-hld-Prediction
 
-# Install UV package manager
+# install UV package manager
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Install dependencies
+# install dependencies
 uv pip install -r requirements.txt
 
-# Run analysis
-uv run run_analysis.py demo --rule PHLD
+# Run Analysis
+uv run run_Analysis.py demo --rule PHLD
 ```
 
 ## 🔧 Development Tools
 
 ### Dead Code Analysis
-Find and remove unused code and libraries:
+Find and remove unUsed code and libraries:
 
 **Basic Analyzer (Fast):**
 ```bash
-# Quick analysis
-./scripts/analysis/dead-code/run_dead_code_analysis.sh --all
+# Quick Analysis
+./scripts/Analysis/dead-code/run_dead_code_Analysis.sh --all
 
 # Apply fixes safely
-./scripts/analysis/dead-code/run_dead_code_analysis.sh --all --fix --dry-run
-./scripts/analysis/dead-code/run_dead_code_analysis.sh --all --fix
+./scripts/Analysis/dead-code/run_dead_code_Analysis.sh --all --fix --dry-run
+./scripts/Analysis/dead-code/run_dead_code_Analysis.sh --all --fix
 ```
 
 **Advanced Analyzer (Accurate):**
 ```bash
 # Interactive menu (recommended)
-./scripts/analysis/dead-code/run_advanced_analysis.sh --interactive
+./scripts/Analysis/dead-code/run_advanced_Analysis.sh --interactive
 
-# Comprehensive analysis with AST-based detection
-./scripts/analysis/dead-code/run_advanced_analysis.sh --all --verbose
+# Comprehensive Analysis with AST-based detection
+./scripts/Analysis/dead-code/run_advanced_Analysis.sh --all --verbose
 
-# See [Advanced Dead Code Analysis](docs/development/advanced-dead-code-analysis.md) for details
+# See [Advanced Dead Code Analysis](docs/development/advanced-dead-code-Analysis.md) for details
 ```
 
 **Dependency Test Analyzer (Most Accurate):**
 ```bash
 # Test dependencies by disabling them and running tests
-./scripts/analysis/dead-code/run_dependency_test.sh --dry-run
+./scripts/Analysis/dead-code/run_dependency_test.sh --dry-run
 
 # Interactive menu for dependency testing
-./scripts/analysis/dead-code/run_dependency_test.sh --interactive
+./scripts/Analysis/dead-code/run_dependency_test.sh --interactive
 
-# See [Dependency Test Analysis](docs/development/dependency-test-analysis.md) for details
+# See [Dependency Test Analysis](docs/development/dependency-test-Analysis.md) for details
 ```
 
 ## 🔧 UV Package Management
 
-This project uses **UV package manager** exclusively for dependency management, providing 10-100x faster performance than traditional pip.
+This project Uses **UV package manager** exclusively for dependency Management, providing 10-100x faster performance than traditional pip.
 
 ### UV-Only Mode Features
 - **Exclusive UV Usage**: No fallback to pip
-- **Docker Integration**: Seamless UV in containers
-- **Native Container Integration**: Full UV support in Apple Silicon containers
+- **Docker integration**: Seamless UV in containers
+- **Native Container integration**: Full UV support in Apple Silicon containers
 - **Local Development**: UV support for local environments
 - **Adaptive testing**: Tests that work in both Docker and local
 - **Performance**: Lightning-fast dependency resolution
 
 ### UV Commands
 ```bash
-# Install dependencies
+# install dependencies
 uv pip install -r requirements.txt
 
-# Install specific package
+# install specific package
 uv pip install pandas numpy
 
 # Update packages
 uv pip install --upgrade pandas
 
 # List installed packages
-uv pip list
+uv pip List
 
 # Create virtual environment
 uv venv
 
-# Run analysis with UV
-uv run run_analysis.py demo --rule PHLD
+# Run Analysis with UV
+uv run run_Analysis.py demo --rule PHLD
 
 # Run tests with UV (multithreaded)
 uv run pytest tests -n auto
@@ -141,41 +141,41 @@ uv run pytest tests -n auto
 
 ## 📊 Features
 
-### 🎯 Interactive ML Trading Strategy Development System
-- **✅ 100% Functional**: All 12 phases completed and ready for production
+### 🎯 Interactive ML Trading Strategy Development system
+- **✅ 100% Functional**: all 12 phases COMPLETED and ready for production
 - **✅ Phase 1 Real Implementation**: 100% complete with real APIs, ML models, web interface, and CI/CD
-- **✅ Phase 2 Advanced Features**: 100% complete with blockchain integration, monitoring, advanced ML models, and real trading
+- **✅ Phase 2 Advanced Features**: 100% complete with blockchain integration, Monitoring, advanced ML models, and real trading
 - **✅ Phase 3 Production**: 100% complete with all production features
 - **✅ Phase 4 Advanced Features**: 100% complete with advanced ML models, AI agents, quantitative research, alternative data, and analytics
-- **✅ Phase 5 Enterprise Features**: 100% complete with enterprise security, APIs, monitoring, user management, and reporting
+- **✅ Phase 5 Enterprise Features**: 100% complete with enterprise security, APIs, Monitoring, User Management, and Reporting
 - **✅ Phase 6 Advanced Analytics and AI**: 100% complete with advanced ML models, AI trading strategies, predictive analytics, NLP, and computer vision
-- **✅ Phase 7 Global Expansion and Scaling**: 100% complete with multi-market integration, regulatory compliance, risk management, scalable infrastructure, and international partnerships
+- **✅ Phase 7 Global Expansion and Scaling**: 100% complete with multi-market integration, regulatory compliance, risk Management, scalable infraStructure, and international partnerships
 - **✅ Phase 8 Advanced AI and Machine Learning**: 100% complete with advanced AI models, ML optimization, deep learning integration, AI-powered analytics, and intelligent automation
-- **✅ Phase 9 Advanced Trading Strategies**: 100% complete with advanced trading strategies, quantitative research tools, advanced risk management, and performance analytics
-- **✅ Phase 10 Advanced Security and Compliance**: 100% complete with enterprise-level security, compliance management, security monitoring, and incident response
+- **✅ Phase 9 Advanced Trading Strategies**: 100% complete with advanced trading strategies, quantitative research tools, advanced risk Management, and performance analytics
+- **✅ Phase 10 Advanced Security and Compliance**: 100% complete with enterprise-level security, compliance Management, security Monitoring, and incident response
 - **Advanced ML/DL**: Apple MLX integration, Deep Reinforcement Learning, Ensemble methods
-- **Real API Integrations**: Binance, Bybit with sample data generation
+- **Real API integrations**: Binance, Bybit with sample data generation
 - **Real ML Models**: Linear Regression, Random Forest, Gradient Boosting
-- **Real Trading System**: Paper trading with signal generation
-- **Web Dashboard**: Modern Flask interface with real-time monitoring
+- **Real Trading system**: Paper trading with signal generation
+- **Web Dashboard**: Modern Flask interface with real-time Monitoring
 - **CI/CD Pipeline**: Automated testing and deployment with GitHub Actions
-- **Advanced Blockchain Integration**: Multi-network DEX and DeFi support
+- **Advanced Blockchain integration**: Multi-network DEX and DeFi support
 - **Advanced Monitoring**: Prometheus, Grafana, intelligent alerting
 - **Advanced ML Models**: 108 features, multiple algorithms
-- **Real Trading System**: Live data, backtesting, real money trading
-- **Live Data Manager**: Real-time data from multiple exchanges
-- **Production Deployment**: Multi-cloud infrastructure and containerization
+- **Real Trading system**: Live data, backtesting, real money trading
+- **Live data Manager**: Real-time data from multiple exchanges
+- **Production deployment**: Multi-cloud infraStructure and containerization
 - **Advanced Risk Management**: Comprehensive risk metrics and position sizing
-- **Multi-Strategy Portfolio**: Advanced portfolio optimization and management
+- **Multi-Strategy Portfolio**: Advanced Portfolio optimization and Management
 - **ML Model Optimization**: Model optimization and performance enhancement
 - **Market Making & Arbitrage**: Real-time trading and arbitrage execution
 - **Risk Management**: Monte Carlo simulations, VaR/CVaR, Dynamic position sizing
 - **Multi-Exchange Trading**: CEX and DEX integration with Web3 support
 - **Real-time Monitoring**: Prometheus/Grafana metrics and intelligent alerting
-- **Interactive Menu**: Modern, colorful user interface with progress indicators
+- **Interactive Menu**: Modern, colorful User interface with progress indicators
 - **Production Ready**: Complete system ready for real-world deployment
 
-### Data Sources
+### data Sources
 - **Polygon**: Real-time market data
 - **YFinance**: Yahoo Finance data
 - **Binance**: Cryptocurrency data
@@ -197,7 +197,7 @@ uv run pytest tests -n auto
 - **Description:** Analyzes futures market positioning to gauge institutional sentiment. Useful for trend confirmation and reversal spotting.
 - **CLI Example:**
  ```bash
- uv run run_analysis.py show csv mn1 -d fastest --rule cot:14,close
+ uv run run_Analysis.py show csv mn1 -d fastest --rule cot:14,close
  ```
 - **Documentation:** [COT Indicator](docs/reference/indicators/sentiment/cot-indicator.md)
 
@@ -206,7 +206,7 @@ uv run pytest tests -n auto
 - **Description:** Measures the ratio of put options to call options to gauge market sentiment. Useful as a contrarian indicator for potential market reversals.
 - **CLI Example:**
  ```bash
- uv run run_analysis.py show csv mn1 -d fastest --rule putcallratio:20,close
+ uv run run_Analysis.py show csv mn1 -d fastest --rule putcallratio:20,close
  ```
 - **Documentation:** [Put/Call Ratio Indicator](docs/reference/indicators/sentiment/putcallratio-indicator.md)
 
@@ -215,8 +215,8 @@ uv run pytest tests -n auto
 - **Description:** Advanced trend-following indicator that combines ATR (Average True Range) with price action to identify trend direction and potential reversal points. Provides dynamic support/resistance levels and generates buy/sell signals.
 - **CLI Example:**
  ```bash
- uv run run_analysis.py show csv mn1 -d fastest --rule supertrend:10,3.0
- uv run run_analysis.py show csv mn1 -d fastest --rule supertrend:10,3.0,open
+ uv run run_Analysis.py show csv mn1 -d fastest --rule supertrend:10,3.0
+ uv run run_Analysis.py show csv mn1 -d fastest --rule supertrend:10,3.0,open
  ```
 - **Parameters:** period (required), multiplier (required), price_type (optional: open/close)
 - **Documentation:** [SuperTrend Indicator](docs/reference/indicators/trend/supertrend-indicator.md)
@@ -227,13 +227,13 @@ uv run pytest tests -n auto
 - **CLI Examples:**
  ```bash
  # Basic SMA with 20-period close prices
- uv run run_analysis.py demo --rule sma:20,close -d fastest
+ uv run run_Analysis.py demo --rule sma:20,close -d fastest
 
  # Multiple SMAs for trend comparison
- uv run run_analysis.py demo --rule sma:10,close,sma:20,close,sma:50,close -d plotly
+ uv run run_Analysis.py demo --rule sma:10,close,sma:20,close,sma:50,close -d plotly
  ```
 - **Parameters:** period (required), price_type (required: open/close)
-- **Display Modes:** All 6 modes supported (fastest, fast, plotly, mpl, seaborn, term)
+- **Display Modes:** all 6 modes supported (fastest, fast, plotly, mpl, seaborn, term)
 - **Documentation:**
  - [Complete SMA Tutorial](docs/guides/adding-sma-indicator-tutorial.md) 📖
  - [SMA Reference](docs/reference/indicators/trend/sma-indicator.md) 📋
@@ -242,34 +242,34 @@ uv run pytest tests -n auto
  - [testing Guide](docs/guides/sma-testing-guide.md) 🧪
  - [Tutorials Summary](docs/guides/sma-tutorials-summary.md) 📋
 
-#### New: Wave Indicator ⭐ **ADVANCED DUAL-SYSTEM**
+#### New: Wave Indicator ⭐ **ADVANCED DUAL-system**
 - **Category:** Trend
-- **Description:** Sophisticated trend-following indicator that combines multiple momentum calculations with dual-wave system, configurable trading rules, and global signal filtering. Features 10 individual trading rules and 7 global trading rules for advanced strategies. **Now supports all display modes including fast mode with discontinuous wave lines, MPL mode with customizable colors, seaborn mode with scientific presentation style, and terminal mode with ASCII-based visualization for SSH/remote connections.**
+- **Description:** Sophisticated trend-following indicator that combines multiple momentum Calculations with dual-wave system, configurable trading rules, and global signal filtering. Features 10 individual trading rules and 7 global trading rules for advanced strategies. **Now supports all display modes including fast mode with discontinuous wave lines, MPL mode with customizable colors, seaborn mode with scientific presentation style, and terminal mode with ASCII-based visualization for SSH/remote connections.**
 - **CLI Examples:**
  ```bash
  # Basic Wave with default parameters
- uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fastest
+ uv run run_Analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fastest
 
  # Wave with custom trading rules
- uv run run_analysis.py demo --rule wave:33,10,2,strongtrend,22,11,4,fast,reverse,22,open -d plotly
+ uv run run_Analysis.py demo --rule wave:33,10,2,strongtrend,22,11,4,fast,reverse,22,open -d plotly
 
  # Wave with zone-based filtering
- uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,primezone,22,open -d fastest
+ uv run run_Analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,primezone,22,open -d fastest
 
  # Wave with fast display mode (Bokeh-based)
- uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
+ uv run run_Analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
 
  # Wave with real data in fast mode
- uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
+ uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
 
  # Wave with MPL mode and custom colors
- uv run run_analysis.py show csv mn1 -d mpl --rule wave:339,10,2,fast,22,11,4,fast,prime,10,close
+ uv run run_Analysis.py show csv mn1 -d mpl --rule wave:339,10,2,fast,22,11,4,fast,prime,10,close
 
  # Wave with seaborn mode (NEW!) - Scientific presentation style
- uv run run_analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,10,close
+ uv run run_Analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,10,close
 
  # Wave with terminal mode (NEW!) - ASCII-based visualization for SSH/remote
- uv run run_analysis.py show csv mn1 -d term --rule wave:339,10,2,fast,22,11,4,fast,prime,10,close
+ uv run run_Analysis.py show csv mn1 -d term --rule wave:339,10,2,fast,22,11,4,fast,prime,10,close
  ```
 - **Parameters:** long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period,price_type
 - **Documentation:** [Wave Indicator](docs/reference/indicators/trend/wave-indicator.md)
@@ -278,15 +278,15 @@ uv run pytest tests -n auto
  - [MPL Color Customization](docs/guides/wave-mpl-color-changes.md) - Custom colors for prime rule
  - [Global Trading Rule Fixes](docs/guides/wave-prime-rule-fix-all-modes.md) - Fixed prime/reverse rules
  - [Seaborn Mode Support](docs/guides/wave-indicator-seaborn-mode.md) - ⭐ **NEW** Complete seaborn mode support
- - [Seaborn Integration Summary](docs/guides/wave-seaborn-integration-summary.md) - ⭐ **NEW** Technical implementation details
+ - [Seaborn integration Summary](docs/guides/wave-seaborn-integration-summary.md) - ⭐ **NEW** Technical implementation details
  - [Terminal Mode Support](docs/guides/wave-indicator-terminal-mode.md) - ⭐ **NEW** Complete terminal mode support with signal fixes
  - [Terminal signals Fix](docs/development/WAVE_TERMINAL_signALS_IMPLEMENTATION.md) - ⭐ **NEW** signal display logic improvements
 
- # Real data analysis
- uv run run_analysis.py yfinance --ticker AAPL --period 1y --point 0.01 --rule sma:20,close -d fastest
+ # Real data Analysis
+ uv run run_Analysis.py yfinance --ticker AAPL --period 1y --point 0.01 --rule sma:20,close -d fastest
  ```
 - **Parameters:** period (required), price_type (required: open/close)
-- **Display Modes:** All 6 modes supported (fastest, fast, plotly, mpl, seaborn, term)
+- **Display Modes:** all 6 modes supported (fastest, fast, plotly, mpl, seaborn, term)
 - **Documentation:**
  - [Complete SMA Tutorial](docs/guides/adding-sma-indicator-tutorial.md) 📖
  - [Quick start Guide](docs/guides/sma-quick-start-guide.md) ⚡
@@ -300,25 +300,25 @@ uv run pytest tests -n auto
 - **CLI Examples:**
  ```bash
  # OBV - now works perfectly
- uv run run_analysis.py show csv mn1 -d fastest --rule obv:
+ uv run run_Analysis.py show csv mn1 -d fastest --rule obv:
 
  # VWAP with custom parameters
- uv run run_analysis.py show csv mn1 -d fastest --rule vwap:20
+ uv run run_Analysis.py show csv mn1 -d fastest --rule vwap:20
  ```
 
 ### Analysis Tools
-- **Exploratory Data Analysis**: Comprehensive data exploration
+- **Exploratory data Analysis**: Comprehensive data exploration
 - **Visualization**: Interactive charts and plots
-- **CLI Interface**: Command-line analysis tools
+- **CLI interface**: Command-line Analysis tools
 - **MCP Server**: Enhanced IDE integration
 
-### 🚀 Interactive ML Trading System (NEW!)
-- **Interactive Menu System**: Modern, colorful user interface with progress indicators
+### 🚀 Interactive ML Trading system (NEW!)
+- **Interactive Menu system**: Modern, colorful User interface with progress indicators
 - **Advanced ML/DL**: Apple MLX integration, Deep Reinforcement Learning, Ensemble methods
 - **Risk Management**: Monte Carlo simulations, VaR/CVaR, Dynamic position sizing
 - **Multi-Exchange Trading**: CEX and DEX integration with Web3 support
 - **Real-time Monitoring**: Prometheus/Grafana metrics and intelligent alerting
-- **Pattern Recognition**: Hidden pattern detection and cross-market analysis
+- **Pattern Recognition**: Hidden pattern detection and cross-Market Analysis
 - **Automated Retraining**: Continuous learning and adaptation pipelines
 
 ## 🧪 testing
@@ -333,7 +333,7 @@ docker-compose exec neozork pytest tests/docker/test_uv_simple.py -v
 # Local environment
 pytest tests/docker/test_uv_simple.py -v
 
-# Check UV status
+# check UV status
 python scripts/check_uv_mode.py --verbose
 
 # Native container tests
@@ -344,13 +344,13 @@ uv run pytest tests -n auto
 ```
 
 ### CI/CD testing with Act
-Test GitHub Actions workflows and MCP server integration locally without downloading Docker images:
+Test GitHub Actions workflows and MCP server integration locally without downLoading Docker images:
 
 ```bash
-# Install act tool
+# install act tool
 brew install act # macOS
 # or
-curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash # Linux
+curl https://raw.githubUsercontent.com/nektos/act/master/install.sh | sudo bash # Linux
 
 # Test all workflows (dry run - no Docker downloads)
 act -n
@@ -364,8 +364,8 @@ act -l
 ```
 
 **Benefits:**
-- **No Docker Downloads**: Prevents downloading large Docker images
-- **Fast Validation**: Quickly validates workflow syntax and structure
+- **No Docker Downloads**: Prevents downLoading large Docker images
+- **Fast Validation**: Quickly validates workflow syntax and Structure
 - **MCP Server testing**: Verify MCP server communication protocols
 - **Resource Efficient**: Uses minimal system resources
 
@@ -382,63 +382,63 @@ act -l
 **Before:**
 ```bash
 # This would fail with parameter parsing error
-uv run run_analysis.py show csv mn1 -d fastest --rule obv:
+uv run run_Analysis.py show csv mn1 -d fastest --rule obv:
 ```
 
 **After:**
 ```bash
 # This now works perfectly
-uv run run_analysis.py show csv mn1 -d fastest --rule obv:
+uv run run_Analysis.py show csv mn1 -d fastest --rule obv:
 ```
 
-### UV Integration Improvements
-- **Exclusive UV Usage**: All commands now use UV for consistency
+### UV integration Improvements
+- **Exclusive UV Usage**: all commands now Use UV for consistency
 - **Multithreaded testing**: `uv run pytest tests -n auto`
-- **Docker Integration**: Seamless UV in containers
+- **Docker integration**: Seamless UV in containers
 - **Native Container Support**: Full UV support in Apple Silicon containers
 
 ## 📋 Quick Examples
 
 ### Basic Analysis
 ```bash
-# Demo analysis
-uv run run_analysis.py demo --rule PHLD
+# Demo Analysis
+uv run run_Analysis.py demo --rule PHLD
 
-# SMA analysis (new!)
-uv run run_analysis.py demo --rule sma:20,close -d fastest
+# SMA Analysis (new!)
+uv run run_Analysis.py demo --rule sma:20,close -d fastest
 
-# Yahoo Finance analysis
-uv run run_analysis.py yfinance AAPL --rule RSI
+# Yahoo Finance Analysis
+uv run run_Analysis.py yfinance AAPL --rule RSI
 
-# CSV analysis (fixed volume indicators)
-uv run run_analysis.py show csv mn1 -d fastest --rule obv:
+# CSV Analysis (fixed volume indicators)
+uv run run_Analysis.py show csv mn1 -d fastest --rule obv:
 
 # Batch CSV folder conversion (NEW!)
-uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001
+uv run run_Analysis.py csv --csv-folder mql5_feed --point 0.00001
 
-# Interactive analysis
-uv run run_analysis.py interactive
+# Interactive Analysis
+uv run run_Analysis.py interactive
 ```
 
 ### Advanced Analysis
 ```bash
 # Multiple indicators
-uv run run_analysis.py demo --rule RSI,MACD,PHLD
+uv run run_Analysis.py demo --rule RSI,MACD,PHLD
 
-# Multiple SMAs for trend analysis
-uv run run_analysis.py demo --rule sma:10,close,sma:20,close,sma:50,close -d plotly
+# Multiple SMAs for trend Analysis
+uv run run_Analysis.py demo --rule sma:10,close,sma:20,close,sma:50,close -d plotly
 
 # SMA with real data
-uv run run_analysis.py yfinance --ticker AAPL --period 1y --point 0.01 --rule sma:20,close -d fastest
+uv run run_Analysis.py yfinance --ticker AAPL --period 1y --point 0.01 --rule sma:20,close -d fastest
 
 # Wave indicator with seaborn mode (NEW!)
-uv run run_analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
+uv run run_Analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
 
 # Custom plotting backend
-uv run run_analysis.py demo --rule PHLD -d plotly
+uv run run_Analysis.py demo --rule PHLD -d plotly
 
 # Export results
-uv run run_analysis.py demo --rule PHLD --export-parquet --export-csv
+uv run run_Analysis.py demo --rule PHLD --export-parquet --export-csv
 ```
 
 ### testing
@@ -485,38 +485,38 @@ uv run pytest tests -n auto # ~30-60 seconds
 - **[Reference](docs/reference/)** - Technical documentation
 - **[testing](docs/testing/)** - testing strategies and examples
 
-### 🚀 Interactive ML Trading System (NEW!)
-- **[Interactive ML Trading System](docs/interactive/)** - **NEW**: Comprehensive interactive system for ML trading strategy development
-- **[Strategic Plan (English)](docs/interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_EN.md)** - **NEW**: Complete strategic plan for robust profitable ML trading strategies
-- **[Стратегический Plan (Русский)](docs/interactive/INTERACTIVE_ML_TRADING_STRATEGY_PLAN_RU.md)** - **NEW**: Полный стратегический Plan for робастных прибыльных ML торговых стратегий
-- **[Next Steps Plan](docs/interactive/next-steps-plan.md)** - **NEW**: Production development roadmap and implementation plan
-- **[Phase 1 Completion Report](docs/interactive/phase1-completion-report.md)** - **NEW**: Real API integrations and ML models implementation report
-- **[Phase 1 Final Completion Report](docs/interactive/phase1-final-completion-report.md)** - **NEW**: Complete Phase 1 implementation with web interface and CI/CD
-- **[Phase 2 Completion Report](docs/interactive/phase2-completion-report.md)** - **NEW**: Advanced blockchain integration, monitoring, and ML models
-- **[Phase 2 Final Completion Report](docs/interactive/phase2-final-completion-report.md)** - **NEW**: 100% Complete Phase 2 with real trading and backtesting
-- **[Phase 3 Progress Report](docs/interactive/phase3-progress-report.md)** - **NEW**: 40% Complete Phase 3 with production deployment and risk management
-- **[Phase 3 Final Completion Report](docs/interactive/phase3-final-completion-report.md)** - **NEW**: 100% Complete Phase 3 with all production features
-- **[Phase 4 Final Completion Report](docs/interactive/phase4-final-completion-report.md)** - **NEW**: 100% Complete Phase 4 with all advanced features
-- **[Phase 5 Final Completion Report](docs/interactive/phase5-final-completion-report.md)** - **NEW**: 100% Complete Phase 5 with all enterprise features
-- **[Phase 6 Final Completion Report](docs/interactive/phase6-final-completion-report.md)** - **NEW**: 100% Complete Phase 6 with all AI and analytics features
-- **[Phase 7 Final Completion Report](docs/interactive/phase7-final-completion-report.md)** - **NEW**: 100% Complete Phase 7 with all global expansion features
-- **[Phase 8 Final Completion Report](docs/interactive/phase8-final-completion-report.md)** - **NEW**: 100% Complete Phase 8 with all advanced AI and machine learning features
-- **[Phase 9 Final Completion Report](docs/interactive/phase9-final-completion-report.md)** - **NEW**: 100% Complete Phase 9 with all advanced trading strategies and quantitative research features
-- **[Phase 10 Final Completion Report](docs/interactive/phase10-final-completion-report.md)** - **NEW**: 100% Complete Phase 10 with enterprise-level security and compliance
+### 🚀 Interactive ML Trading system (NEW!)
+- **[Interactive ML Trading system](docs/interactive/)** - **NEW**: Comprehensive interactive system for ML trading strategy development
+- **[Strategic Plan (English)](docs/interactive/INTERACTIVE_ML_TRADING_STRATEGY_Plan_EN.md)** - **NEW**: Complete strategic Plan for robust profitable ML trading strategies
+- **[Стратегический Plan (Русский)](docs/interactive/INTERACTIVE_ML_TRADING_STRATEGY_Plan_RU.md)** - **NEW**: Полный стратегический Plan for робастных прибыльных ML торговых стратегий
+- **[Next Steps Plan](docs/interactive/next-steps-Plan.md)** - **NEW**: Production development Roadmap and implementation Plan
+- **[Phase 1 Completion Report](docs/interactive/phase1-completion-Report.md)** - **NEW**: Real API integrations and ML models implementation Report
+- **[Phase 1 Final Completion Report](docs/interactive/phase1-final-completion-Report.md)** - **NEW**: Complete Phase 1 implementation with web interface and CI/CD
+- **[Phase 2 Completion Report](docs/interactive/phase2-completion-Report.md)** - **NEW**: Advanced blockchain integration, Monitoring, and ML models
+- **[Phase 2 Final Completion Report](docs/interactive/phase2-final-completion-Report.md)** - **NEW**: 100% Complete Phase 2 with real trading and backtesting
+- **[Phase 3 Progress Report](docs/interactive/phase3-progress-Report.md)** - **NEW**: 40% Complete Phase 3 with production deployment and risk Management
+- **[Phase 3 Final Completion Report](docs/interactive/phase3-final-completion-Report.md)** - **NEW**: 100% Complete Phase 3 with all production features
+- **[Phase 4 Final Completion Report](docs/interactive/phase4-final-completion-Report.md)** - **NEW**: 100% Complete Phase 4 with all advanced features
+- **[Phase 5 Final Completion Report](docs/interactive/phase5-final-completion-Report.md)** - **NEW**: 100% Complete Phase 5 with all enterprise features
+- **[Phase 6 Final Completion Report](docs/interactive/phase6-final-completion-Report.md)** - **NEW**: 100% Complete Phase 6 with all AI and analytics features
+- **[Phase 7 Final Completion Report](docs/interactive/phase7-final-completion-Report.md)** - **NEW**: 100% Complete Phase 7 with all global expansion features
+- **[Phase 8 Final Completion Report](docs/interactive/phase8-final-completion-Report.md)** - **NEW**: 100% Complete Phase 8 with all advanced AI and machine learning features
+- **[Phase 9 Final Completion Report](docs/interactive/phase9-final-completion-Report.md)** - **NEW**: 100% Complete Phase 9 with all advanced trading strategies and quantitative research features
+- **[Phase 10 Final Completion Report](docs/interactive/phase10-final-completion-Report.md)** - **NEW**: 100% Complete Phase 10 with enterprise-level security and compliance
 
 ### 🎯 SMA Indicator Tutorials (New!)
 - **[Complete SMA Tutorial](docs/guides/adding-sma-indicator-tutorial.md)** - Full implementation guide
 - **[Quick start Guide](docs/guides/sma-quick-start-guide.md)** - Get started in minutes
 - **[Practical Examples](docs/guides/sma-practical-examples.md)** - Real-world scenarios
 - **[testing Guide](docs/guides/sma-testing-guide.md)** - Comprehensive testing
-- **[Tutorials Summary](docs/guides/sma-tutorials-summary.md)** - Complete overview
+- **[Tutorials Summary](docs/guides/sma-tutorials-summary.md)** - Complete overView
 
 ### 🌊 Wave Indicator Tutorials (New!)
 - **[Complete Wave Tutorial](docs/guides/adding-wave-indicator-tutorial.md)** - Advanced dual-system implementation
 - **[Wave MPL Color Changes](docs/guides/wave-mpl-color-changes.md)** - MPL mode color customization
 - **[Wave Prime Rule Fix](docs/guides/wave-prime-rule-fix-all-modes.md)** - Global trading rule fixes
 - **[Wave Seaborn Mode](docs/guides/wave-indicator-seaborn-mode.md)** - ⭐ **NEW** Complete seaborn mode support
-- **[Wave Seaborn Integration Summary](docs/guides/wave-seaborn-integration-summary.md)** - ⭐ **NEW** Technical implementation details
+- **[Wave Seaborn integration Summary](docs/guides/wave-seaborn-integration-summary.md)** - ⭐ **NEW** Technical implementation details
 - **[Wave Reference](docs/reference/indicators/trend/wave-indicator.md)** - Technical documentation
 
 ## 🤝 Contributing
@@ -533,7 +533,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🆘 Support
 
-- **Issues**: [GitHub Issues](https://github.com/username/neozork-hld-Prediction/issues)
+- **Issues**: [GitHub Issues](https://github.com/Username/neozork-hld-Prediction/issues)
 - **Documentation**: [docs/](docs/)
 - **Examples**: [docs/examples/](docs/examples/)
 

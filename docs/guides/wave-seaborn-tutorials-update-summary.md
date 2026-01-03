@@ -9,7 +9,7 @@
 
 #### Добавлены новые ссылки in раздел Wave Indicator Tutorials:
 - [Wave Seaborn Mode](docs/guides/wave-indicator-seaborn-mode.md) - ⭐ **NEW** Complete Wave indicator support for seaborn mode (-d sb)
-- [Wave Seaborn Integration Summary](docs/guides/wave-seaborn-integration-summary.md) - ⭐ **NEW** Technical implementation summary for seaborn mode
+- [Wave Seaborn integration Summary](docs/guides/wave-seaborn-integration-summary.md) - ⭐ **NEW** Technical implementation summary for seaborn mode
 
 #### Обновлен раздел Features:
 - Добавлена информация о полной поддержке seaborn режима for wave indicator
@@ -28,12 +28,12 @@
 - Обновлены CLI examples with добавлением seaborn режима:
  ```bash
  # Wave with seaborn mode (NEW!) - Scientific presentation style
- uv run run_analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
+ uv run run_Analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
  ```
 
 #### Добавлены новые functions in раздел New Features:
 - [Seaborn Mode Support](docs/guides/wave-indicator-seaborn-mode.md) - ⭐ **NEW** Complete seaborn mode support
-- [Seaborn Integration Summary](docs/guides/wave-seaborn-integration-summary.md) - ⭐ **NEW** Technical implementation details
+- [Seaborn integration Summary](docs/guides/wave-seaborn-integration-summary.md) - ⭐ **NEW** Technical implementation details
 
 #### Обновлен раздел Wave Indicator Tutorials:
 - Добавлены ссылки on новые документы on seaborn режиму
@@ -51,7 +51,7 @@
 #### Добавлены новые CLI examples:
 ```bash
 # Wave with seaborn mode (NEW!) - Scientific presentation style
-uv run run_analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
+uv run run_Analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
 ```
 
 #### Добавлен новый раздел Seaborn Mode Support ⭐ **NEW**:
@@ -68,7 +68,7 @@ uv run run_analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast
 #### Обновлены CLI examples:
 - Добавлен example seaborn режима
 
-#### Обновлен раздел Completed Features:
+#### Обновлен раздел COMPLETED Features:
 - Добавлена поддержка Seaborn Mode Support
 
 #### Обновлен раздел Key Features:
@@ -81,7 +81,7 @@ uv run run_analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast
 - Добавлен тест for seaborn режима:
  ```bash
  # Test seaborn mode functionality
- uv run run_analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
+ uv run run_Analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
  ```
 
 #### Обновлены Best Practices:
@@ -113,26 +113,26 @@ uv run run_analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast
 ### Базовый анализ
 ```bash
 # Wave indicator with seaborn режимом - научный стиль презентации
-uv run run_analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
+uv run run_Analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
 ```
 
 ### Продвинутый анализ
 ```bash
 # Wave with пользовательскими торговыми правилами in seaborn режиме
-uv run run_analysis.py show csv mn1 -d sb --rule wave:100,20,5,strongtrend,50,15,3,zone,primezone,30,close
+uv run run_Analysis.py show csv mn1 -d sb --rule wave:100,20,5,strongtrend,50,15,3,zone,primezone,30,close
 ```
 
 ### Консервативная стратегия
 ```bash
 # Консервативная wave стратегия for стабильных рынков in seaborn режиме
-uv run run_analysis.py show csv mn1 -d sb --rule wave:500,50,10,bettertrend,200,25,8,bettertrend,prime,50,open
+uv run run_Analysis.py show csv mn1 -d sb --rule wave:500,50,10,bettertrend,200,25,8,bettertrend,prime,50,open
 ```
 
 ## 📚 Обновленная documentation
 
 ### Новые документы
 - [Wave Seaborn Mode](docs/guides/wave-indicator-seaborn-mode.md) - Complete guide on seaborn режиму
-- [Wave Seaborn Integration Summary](docs/guides/wave-seaborn-integration-summary.md) - Техническое резюме реализации
+- [Wave Seaborn integration Summary](docs/guides/wave-seaborn-integration-summary.md) - Техническое резюме реализации
 
 ### Обновленные документы
 - [docs/index.md](docs/index.md) - Главный индекс документации
@@ -158,7 +158,7 @@ uv run run_analysis.py show csv mn1 -d sb --rule wave:500,50,10,bettertrend,200,
 Пользователи теперь могут использовать wave indicator in seaborn режиме for:
 - **Научных презентаций** with профессиональным стилем
 - **Публикаций** with высоким качеством изображений
-- **Анализа данных** with четкой визуализацией сигналов
+- **Analysis данных** with четкой визуализацией сигналов
 - **Профессиональных Reportов** with современной эстетикой
 
 Wave indicator in режиме `-d sb` теперь предоставляет научно-презентационный стиль визуализации with полным набором функций and возможностей, идентичным другим режимам отображения.

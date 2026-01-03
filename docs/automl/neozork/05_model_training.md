@@ -4,13 +4,13 @@
 
 ## Выбор алгоритмов for trading
 
-**Теория:** Выбор алгоритмов for финансовых данных критически важен for успеха ML-систем. Финансовые данные имеют уникальные характеристики, которые требуют специальных подходов к обучению моделей.
+**Теория:** Выбор алгоритмов for финансовых данных критически важен for успеха ML-систем. Финансовые data имеют уникальные характеристики, которые требуют специальных подходов к обучению моделей.
 
 ### Почему not все алгоритмы подходят?
 
-**Теория:** Финансовые данные имеют специфические характеристики, которые делают многие стандартные ML-алгоритмы неэффективными or даже опасными. Понимание этих особенностей критично for выбора правильных алгоритмов.
+**Теория:** Финансовые data имеют специфические характеристики, которые делают многие стандартные ML-алгоритмы неэффективными or даже опасными. Понимание этих особенностей критично for выбора правильных алгоритмов.
 
-**Финансовые данные имеют особенности:**
+**Финансовые data имеют особенности:**
 
 **1. Нестационарность**
 - **Теория:** Распределения данных меняются во времени из-за изменения рыночных условий
@@ -20,7 +20,7 @@
 - **Минусы:** Сложность обучения, необходимость регулярного обновления
 
 **2. Высокая волатильность**
-- **Теория:** Финансовые данные содержат много шума and случайных колебаний
+- **Теория:** Финансовые data содержат много шума and случайных колебаний
 - **Почему проблематично:** Шум может переобучить модель on случайных паттернах
 - **Последствия:** Ложные сигналы, переобучение, нестабильность
 - **Плюсы:** Возможность выявления реальных паттернов
@@ -42,7 +42,7 @@
 
 ### Лучшие алгоритмы for финансов
 
-**Теория:** Выбор алгоритмов for финансовых данных должен основываться on их способности работать with нестационарными, зашумленными and коррелированными данными. Некоторые алгоритмы показали особую эффективность in финансовой сфере.
+**Теория:** Выбор алгоритмов for финансовых данных должен основываться on их способности Workingть with нестационарными, зашумленными and коррелированными данными. Некоторые алгоритмы показали особую эффективность in финансовой сфере.
 
 **1. Ансамблевые методы**
 - **Почему эффективны:** Комбинируют множество моделей, снижая риск переобучения
@@ -57,14 +57,14 @@
 - **Применение:** LSTM, GRU for временных рядов, Transformer for последовательностей
 
 **3. SVM (Support Vector Machine)**
-- **Почему эффективны:** Хорошо работают with нелинейными зависимостями
+- **Почему эффективны:** Хорошо Workingют with нелинейными зависимостями
 - **Плюсы:** Эффективны on малых данных, устойчивы к выбросам
 - **Минусы:** Медленное обучение on больших данных, сложность settings
 - **Применение:** Классификация направлений движения цен
 
 **4. Logistic Regression**
 - **Почему эффективны:** Простые, интерпретируемые, быстрые
-- **Плюсы:** Легкая интерпретация, быстрая работа, стабильность
+- **Плюсы:** Легкая интерпретация, быстрая Working, стабильность
 - **Минусы:** Ограниченная способность к моделированию сложных зависимостей
 - **Применение:** Базовые модели, интерпретируемые системы
 
@@ -76,7 +76,7 @@
 
 ## Ансамблевые методы
 
-**Теория:** Ансамблевые методы комбинируют множество моделей for улучшения производительности. Они особенно эффективны for финансовых данных, так как снижают риск переобучения and повышают стабильность predictions.
+**Теория:** Ансамблевые методы комбинируют множество моделей for улучшения производительности. Они особенно эффективны for финансовых данных, так как снижают риск переобучения and повышают стабильность Predictions.
 
 **Почему ансамблевые методы эффективны for финансов:**
 - **Снижение риска:** Комбинация моделей снижает риск ошибок
@@ -112,14 +112,14 @@
 - Устойчивость к переобучению
 - Интерпретируемость через feature importance
 - Быстрота обучения and предсказания
-- Работает with пропущенными значениями
+- Workingет with пропущенными значениями
 - not требует масштабирования признаков
 
 **Минусы Random Forest:**
 - Могут быть менее точными on очень сложных данных
 - Требуют settings параметров (n_estimators, max_depth, etc.)
 - Могут быть избыточными for простых задач
-- Плохо работают with очень разреженными данными
+- Плохо Workingют with очень разреженными данными
 - Могут переобучиться on очень маленьких датасетах
 **Практическая реализация Random Forest:**
 
@@ -141,7 +141,7 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_Report, confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -210,14 +210,14 @@ def train_random_forest(X, y, test_size=0.2, random_state=42):
 
  # Детальный Report
  print(f"\n=== Classification Report (Test) ===")
- print(classification_report(y_test, y_test_pred))
+ print(classification_Report(y_test, y_test_pred))
 
  # Важность признаков
  feature_importance = rf.feature_importances_
  feature_names = [f'feature_{i}' for i in range(X.shape[1])]
 
- # create DataFrame with важностью признаков
- importance_df = pd.DataFrame({
+ # create dataFrame with важностью признаков
+ importance_df = pd.dataFrame({
  'feature': feature_names,
  'importance': feature_importance
  }).sort_values('importance', ascending=False)
@@ -328,7 +328,7 @@ import numpy as np
 import pandas as pd
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.metrics import classification_Report, confusion_matrix, accuracy_score
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -408,14 +408,14 @@ def train_xgboost(X, y, test_size=0.2, random_state=42, early_stopping_rounds=10
 
  # Детальный Report
  print(f"\n=== Classification Report (Test) ===")
- print(classification_report(y_test, y_test_pred))
+ print(classification_Report(y_test, y_test_pred))
 
  # Важность признаков
  feature_importance = xgb_model.feature_importances_
  feature_names = [f'feature_{i}' for i in range(X.shape[1])]
 
- # create DataFrame with важностью признаков
- importance_df = pd.DataFrame({
+ # create dataFrame with важностью признаков
+ importance_df = pd.dataFrame({
  'feature': feature_names,
  'importance': feature_importance
  }).sort_values('importance', ascending=False)
@@ -524,7 +524,7 @@ def example_xgboost_usage():
 
 ### 3. LightGBM
 
-**Теория:** LightGBM (Light Gradient Boosting Machine) - это быстрая and эффективная реализация градиентного бустинга, разработанная Microsoft. Особенно эффективна for больших датасетов and финансовых данных благодаря оптимизированному алгоритму построения деревьев.
+**Теория:** LightGBM (Light Gradient Boosting Machine) - это быстрая and эффективная реализация градиентного бустинга, разWorkingнная Microsoft. Особенно эффективна for больших датасетов and финансовых данных благодаря оптимизированному алгоритму построения деревьев.
 
 **Детальная теория LightGBM:**
 
@@ -538,7 +538,7 @@ def example_xgboost_usage():
 - **Скорость:** in 10-100 раз быстрее XGBoost on больших данных
 - **Память:** Использует меньше памяти благодаря оптимизациям
 - **Точность:** Часто показывает лучшие результаты
-- **Категориальные признаки:** Отлично работает with финансовыми категориями
+- **Категориальные признаки:** Отлично Workingет with финансовыми категориями
 - **Регуляризация:** Встроенная защита from переобучения
 
 **Математическая основа:**
@@ -566,7 +566,7 @@ import numpy as np
 import pandas as pd
 import lightgbm as lgb
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.metrics import classification_Report, confusion_matrix, accuracy_score
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -628,8 +628,8 @@ def train_lightgbm(X, y, test_size=0.2, random_state=42, early_stopping_rounds=1
  print(f"{key}: {value}")
 
  # create датасетов LightGBM
- train_data = lgb.Dataset(X_train, label=y_train)
- test_data = lgb.Dataset(X_test, label=y_test, reference=train_data)
+ train_data = lgb.dataset(X_train, label=y_train)
+ test_data = lgb.dataset(X_test, label=y_test, reference=train_data)
 
  # Обучение модели
  print("\nОбучение модели...")
@@ -663,14 +663,14 @@ def train_lightgbm(X, y, test_size=0.2, random_state=42, early_stopping_rounds=1
 
  # Детальный Report
  print(f"\n=== Classification Report (Test) ===")
- print(classification_report(y_test, y_test_pred_class))
+ print(classification_Report(y_test, y_test_pred_class))
 
  # Важность признаков
  feature_importance = model.feature_importance(importance_type='gain')
  feature_names = [f'feature_{i}' for i in range(X.shape[1])]
 
- # create DataFrame with важностью признаков
- importance_df = pd.DataFrame({
+ # create dataFrame with важностью признаков
+ importance_df = pd.dataFrame({
  'feature': feature_names,
  'importance': feature_importance
  }).sort_values('importance', ascending=False)
@@ -791,7 +791,7 @@ def example_lightgbm_usage():
 - **Нелинейность:** Могут моделировать сложные нелинейные dependencies
 - **Взаимодействия:** Автоматически выявляют взаимодействия между приsignми
 - **Адаптивность:** Могут адаптироваться к изменяющимся рыночным условиям
-- **Масштабируемость:** Хорошо работают with большими объемами данных
+- **Масштабируемость:** Хорошо Workingют with большими объемами данных
 
 ### 1. Простая нейронная сеть
 
@@ -816,15 +816,15 @@ def example_lightgbm_usage():
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import dataLoader, Tensordataset
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.metrics import classification_Report, confusion_matrix, accuracy_score
 from sklearn.model_selection import train_test_split
 
 class TradingNN(nn.Module):
  """
- Нейронная сеть for торговых predictions
+ Нейронная сеть for торговых Predictions
 
  Архитектура:
  - Входной слой: input_size нейронов
@@ -881,7 +881,7 @@ class TradingNN(nn.Module):
 def train_neural_network(X, y, epochs=100, batch_size=32, learning_rate=0.001,
  test_size=0.2, random_state=42):
  """
- Обучение нейронной сети for торговых predictions
+ Обучение нейронной сети for торговых Predictions
 
  Args:
  X (array-like): Матрица признаков
@@ -914,9 +914,9 @@ def train_neural_network(X, y, epochs=100, batch_size=32, learning_rate=0.001,
  X_test_tensor = torch.FloatTensor(X_test)
  y_test_tensor = torch.LongTensor(y_test)
 
- # create датасета and DataLoader
- train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
- train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+ # create датасета and dataLoader
+ train_dataset = Tensordataset(X_train_tensor, y_train_tensor)
+ train_dataloader = dataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
  # create модели
  model = TradingNN(X.shape[1], num_classes=len(np.unique(y)))
@@ -1002,7 +1002,7 @@ def train_neural_network(X, y, epochs=100, batch_size=32, learning_rate=0.001,
 
  # Детальный Report
  print(f"\n=== Classification Report ===")
- print(classification_report(y_test, test_Predictions))
+ print(classification_Report(y_test, test_Predictions))
 
  # История обучения
  history = {
@@ -1088,7 +1088,7 @@ def example_neural_network_usage():
 
 ### 2. LSTM for временных рядов
 
-**Теория:** LSTM (Long Short-Term Memory) - это специальный тип рекуррентной нейронной сети, разработанный for работы with временными последовательностями. LSTM особенно эффективен for финансовых данных, так как может запоминать долгосрочные dependencies and паттерны.
+**Теория:** LSTM (Long Short-Term Memory) - это специальный тип рекуррентной нейронной сети, разWorkingнный for работы with временными последовательностями. LSTM особенно эффективен for финансовых данных, так как может запоминать долгосрочные dependencies and паттерны.
 
 **Детальная теория LSTM:**
 
@@ -1115,7 +1115,7 @@ def example_neural_network_usage():
 **Практическая реализация LSTM:**
 
 **Что делает этот код:**
-1. **create последовательностей:** Преобразует данные in формат временных рядов
+1. **create последовательностей:** Преобразует data in формат временных рядов
 2. **Архитектура LSTM:** Определяет структуру рекуррентной сети
 3. **Обучение:** Использует backpropagation through time (BPTT)
 4. **Валидация:** Оценивает производительность on временных данных
@@ -1124,15 +1124,15 @@ def example_neural_network_usage():
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import dataLoader, Tensordataset
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.metrics import classification_Report, confusion_matrix, accuracy_score
 from sklearn.model_selection import train_test_split
 
 class LSTMTradingModel(nn.Module):
  """
- LSTM модель for торговых predictions on временных рядах
+ LSTM модель for торговых Predictions on временных рядах
 
  Архитектура:
  - LSTM слои: for обработки временных последовательностей
@@ -1183,10 +1183,10 @@ class LSTMTradingModel(nn.Module):
  Прямой проход через LSTM
 
  Args:
- x: Входные данные формы (batch_size, sequence_length, input_size)
+ x: Входные data формы (batch_size, sequence_length, input_size)
 
  Returns:
- Выходные данные формы (batch_size, num_classes)
+ Выходные data формы (batch_size, num_classes)
  """
  batch_size = x.size(0)
 
@@ -1232,7 +1232,7 @@ def create_sequences(X, y, sequence_length):
 def train_lstm_model(X, y, sequence_length=10, epochs=100, batch_size=32,
  learning_rate=0.001, test_size=0.2, random_state=42):
  """
- Обучение LSTM модели for торговых predictions
+ Обучение LSTM модели for торговых Predictions
 
  Args:
  X: Матрица признаков
@@ -1271,9 +1271,9 @@ def train_lstm_model(X, y, sequence_length=10, epochs=100, batch_size=32,
  X_test_tensor = torch.FloatTensor(X_test)
  y_test_tensor = torch.LongTensor(y_test)
 
- # create датасета and DataLoader
- train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
- train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+ # create датасета and dataLoader
+ train_dataset = Tensordataset(X_train_tensor, y_train_tensor)
+ train_dataloader = dataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
  # create модели
  model = LSTMTradingModel(
@@ -1369,7 +1369,7 @@ def train_lstm_model(X, y, sequence_length=10, epochs=100, batch_size=32,
 
  # Детальный Report
  print(f"\n=== Classification Report ===")
- print(classification_report(y_test, test_Predictions))
+ print(classification_Report(y_test, test_Predictions))
 
  # История обучения
  history = {
@@ -1467,20 +1467,20 @@ def example_lstm_usage():
 **Теория:** Валидация моделей for финансовых данных критически важна, так как стандартные методы кросс-валидации могут привести к data leakage (утечке данных) из-за временной природы финансовых данных.
 
 **Почему стандартная кросс-валидация not подходит:**
-- **Data Leakage:** Будущие данные могут "протекать" in обучающую выборку
-- **Временная dependency:** Финансовые данные имеют временную структуру
+- **data Leakage:** Будущие data могут "протекать" in обучающую выборку
+- **Временная dependency:** Финансовые data имеют временную структуру
 - **Нестационарность:** Распределения меняются во времени
 - **Реалистичность:** Нужно имитировать реальные торговые условия
 
 ### 1. Time Series Cross Validation
 
-**Теория:** Time Series Cross Validation (TSCV) - это специальный метод валидации for временных рядов, который предотвращает data leakage, используя только прошлые данные for предсказания будущих.
+**Теория:** Time Series Cross Validation (TSCV) - это специальный метод валидации for временных рядов, который предотвращает data leakage, используя только прошлые data for предсказания будущих.
 
 **Принцип работы TSCV:**
-1. **Временное разделение:** Данные разделяются in time, а not случайно
+1. **Временное разделение:** data разделяются in time, а not случайно
 2. **Строгая последовательность:** Каждая следующая выборка включает предыдущие
 3. **Реалистичность:** Имитирует реальные условия торговли
-4. **Предотвращение leakage:** Будущие данные никогда not используются for обучения
+4. **Предотвращение leakage:** Будущие data никогда not используются for обучения
 
 **Практическая реализация TSCV:**
 
@@ -1495,7 +1495,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import TimeSeriesSplit
 from sklearn.metrics import (accuracy_score, precision_score, recall_score,
- f1_score, confusion_matrix, classification_report)
+ f1_score, confusion_matrix, classification_Report)
 import matplotlib.pyplot as plt
 import seaborn as sns
 from typing import List, Dict, Any, Tuple
@@ -1680,7 +1680,7 @@ def analyze_tscv_stability(results):
 
  # Анализ тренда
  if len(accuracies) >= 3:
- # Проверяем, есть ли тренд (improve/ухудшение со временем)
+ # checking, есть ли тренд (improve/ухудшение со временем)
  from scipy import stats
  slope, intercept, r_value, p_value, std_err = stats.linregress(range(len(accuracies)), accuracies)
 
@@ -1754,7 +1754,7 @@ def example_tscv_usage():
 **Почему WFV эффективен for финансов:**
 - **Реалистичность:** Точно имитирует реальные торговые условия
 - **Адаптивность:** Модель постоянно обновляется
-- **Стабильность:** Показывает, как модель работает in долгосрочной перспективе
+- **Стабильность:** Показывает, как модель Workingет in долгосрочной перспективе
 - **Дрейф данных:** Помогает выявить, когда модель устаревает
 
 **Практическая реализация WFV:**
@@ -1905,12 +1905,12 @@ def walk_forward_validation(model, X, y, train_size=1000, step_size=100,
  print(f"Mean Recall: {results['mean_recall']:.4f}")
  print(f"Mean F1: {results['mean_f1']:.4f}")
 
- # Общая точность on всем предсказаниям
+ # Общая точность on all предсказаниям
  overall_accuracy = accuracy_score(all_true_labels, all_Predictions)
  print(f"Overall Accuracy: {overall_accuracy:.4f}")
 
  else:
- print("Нет результатов for analysis")
+ print("Нет результатов for Analysis")
  results = None
 
  return results
@@ -1989,7 +1989,7 @@ def analyze_walk_forward_stability(results):
  """Анализ стабильности результатов Walk-Forward валидации"""
 
  if results is None:
- print("Нет данных for analysis")
+ print("Нет данных for Analysis")
  return
 
  iteration_results = results['iteration_results']
@@ -2101,7 +2101,7 @@ def example_walk_forward_usage():
 **Теория:** Гиперпараметрическая оптимизация - это процесс поиска наилучших параметров модели for достижения максимальной производительности. for финансовых данных это критически важно, так как неправильные parameters могут привести к переобучению or недообучению.
 
 **Почему оптимизация важна for финансов:**
-- **Переобучение:** Финансовые данные склонны к переобучению
+- **Переобучение:** Финансовые data склонны к переобучению
 - **Стабильность:** Правильные parameters обеспечивают стабильность
 - **Производительность:** Оптимальные parameters улучшают точность
 - **Риск-доходность:** Баланс между точностью and стабильностью
@@ -2125,7 +2125,7 @@ def example_walk_forward_usage():
 **Плюсы Grid Search:**
 - Гарантирует нахождение оптимальных параметров in сетке
 - Простой in понимании and реализации
-- Хорошо работает with небольшими пространствами параметров
+- Хорошо Workingет with небольшими пространствами параметров
 
 **Минусы Grid Search:**
 - Вычислительно дорогой
@@ -2145,7 +2145,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_Report
 import matplotlib.pyplot as plt
 import seaborn as sns
 from typing import Dict, Any, Tuple
@@ -2225,7 +2225,7 @@ def optimize_random_forest(X, y, param_grid=None, cv_folds=5,
  print(f" {param}: {value}")
 
  # Анализ результатов
- results_df = pd.DataFrame(grid_search.cv_results_)
+ results_df = pd.dataFrame(grid_search.cv_results_)
 
  # Топ-5 комбинаций
  top_results = results_df.nlargest(5, 'mean_test_score')[
@@ -2242,7 +2242,7 @@ def optimize_random_forest(X, y, param_grid=None, cv_folds=5,
 def plot_grid_search_results(grid_search, param_name, figsize=(12, 8)):
  """Визуализация результатов Grid Search for одного параметра"""
 
- results_df = pd.DataFrame(grid_search.cv_results_)
+ results_df = pd.dataFrame(grid_search.cv_results_)
 
  # Фильтрация on параметру
  param_results = results_df[results_df['param_' + param_name].notna()]
@@ -2285,7 +2285,7 @@ def plot_grid_search_results(grid_search, param_name, figsize=(12, 8)):
 def analyze_grid_search_stability(grid_search):
  """Анализ стабильности результатов Grid Search"""
 
- results_df = pd.DataFrame(grid_search.cv_results_)
+ results_df = pd.dataFrame(grid_search.cv_results_)
 
  print("=== Анализ стабильности Grid Search ===")
 
@@ -2351,7 +2351,7 @@ def example_grid_search_usage():
  # Анализ результатов
  analyze_grid_search_stability(grid_search)
 
- # Визуализация (если есть данные)
+ # Визуализация (если есть data)
  if 'n_estimators' in best_params:
  plot_grid_search_results(grid_search, 'n_estimators')
 
@@ -2367,13 +2367,13 @@ def example_grid_search_usage():
 
 **Принцип работы Optuna:**
 1. **Bayesian Optimization:** Использует предыдущие результаты for выбора следующих параметров
-2. **Tree-structured Parzen Estimator (TPE):** Эффективный алгоритм for оптимизации
+2. **Tree-Structured Parzen Estimator (TPE):** Эффективный алгоритм for оптимизации
 3. **Pruning:** Прекращает неперспективные испытания раньше
 4. **Параллелизация:** Поддерживает параллельное выполнение испытаний
 
 **Почему Optuna эффективен for финансов:**
 - **Эффективность:** Находит хорошие parameters быстрее Grid Search
-- **Масштабируемость:** Работает with большими пространствами параметров
+- **Масштабируемость:** Workingет with большими пространствами параметров
 - **Pruning:** Экономит вычислительные ресурсы
 - **Гибкость:** Легко настраивается под конкретные задачи
 
@@ -2391,7 +2391,7 @@ import pandas as pd
 import optuna
 import xgboost as xgb
 from sklearn.model_selection import TimeSeriesSplit, cross_val_score
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_Report
 import matplotlib.pyplot as plt
 import seaborn as sns
 from typing import Dict, Any, Tuple
@@ -2522,8 +2522,8 @@ def plot_optuna_results(study, figsize=(15, 10)):
  # График важности параметров
  try:
  importance = optuna.importance.get_param_importances(study)
- params = list(importance.keys())
- importances = list(importance.values())
+ params = List(importance.keys())
+ importances = List(importance.values())
 
  axes[0, 1].barh(params, importances)
  axes[0, 1].set_title('Parameter Importance')
@@ -2551,7 +2551,7 @@ def plot_optuna_results(study, figsize=(15, 10)):
  if len(values) > 1:
  best_values = np.maximum.accumulate(values)
  axes[1, 1].plot(trial_numbers, best_values, 'g-', linewidth=2, label='Best Value')
- axes[1, 1].plot(trial_numbers, values, 'o-', alpha=0.3, label='All Values')
+ axes[1, 1].plot(trial_numbers, values, 'o-', alpha=0.3, label='all Values')
  axes[1, 1].set_title('Convergence')
  axes[1, 1].set_xlabel('Trial Number')
  axes[1, 1].set_ylabel('Best Objective Value')
@@ -2568,15 +2568,15 @@ def analyze_optuna_study(study):
 
  # Основная статистика
  trials = study.trials
- completed_trials = [t for t in trials if t.state == optuna.trial.TrialState.COMPLETE]
+ COMPLETED_trials = [t for t in trials if t.state == optuna.trial.TrialState.COMPLETE]
  pruned_trials = [t for t in trials if t.state == optuna.trial.TrialState.PRUNED]
 
  print(f"Всего испытаний: {len(trials)}")
- print(f"Завершенных: {len(completed_trials)}")
+ print(f"Завершенных: {len(COMPLETED_trials)}")
  print(f"Прерванных: {len(pruned_trials)}")
 
- if completed_trials:
- values = [t.value for t in completed_trials]
+ if COMPLETED_trials:
+ values = [t.value for t in COMPLETED_trials]
  print(f"\nСтатистика значений:")
  print(f" Лучшее: {max(values):.4f}")
  print(f" Худшее: {min(values):.4f}")
@@ -2595,16 +2595,16 @@ def analyze_optuna_study(study):
  print(f"Стабильность (последние {recent_trials} испытаний): {recent_std:.4f}")
 
  # Анализ параметров
- if completed_trials:
+ if COMPLETED_trials:
  print(f"\nАнализ параметров:")
- param_names = list(completed_trials[0].params.keys())
+ param_names = List(COMPLETED_trials[0].params.keys())
 
  for param_name in param_names:
- param_values = [t.params[param_name] for t in completed_trials]
+ param_values = [t.params[param_name] for t in COMPLETED_trials]
  if isinstance(param_values[0], (int, float)):
  print(f" {param_name}: {min(param_values):.4f} - {max(param_values):.4f}")
  else:
- unique_values = list(set(param_values))
+ unique_values = List(set(param_values))
  print(f" {param_name}: {unique_values}")
 
 # example использования:
@@ -2660,7 +2660,7 @@ def example_optuna_usage():
 **Типы ансамблей:**
 1. **Voting:** Простое голосование моделей
 2. **Stacking:** Мета-модель обучается on предсказаниях базовых моделей
-3. **Blending:** Взвешенная комбинация predictions
+3. **Blending:** Взвешенная комбинация Predictions
 4. **Bagging:** Обучение on разных подвыборках данных
 
 ### 1. Voting Classifier
@@ -2673,7 +2673,7 @@ def example_optuna_usage():
 
 **Плюсы Voting:**
 - Простота реализации
-- Хорошо работает with разнообразными моделями
+- Хорошо Workingет with разнообразными моделями
 - Легко интерпретировать
 
 **Минусы Voting:**
@@ -2696,7 +2696,7 @@ from sklearn.ensemble import RandomForestClassifier
 import xgboost as xgb
 import lightgbm as lgb
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.metrics import accuracy_score, classification_Report, confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
 from typing import List, Dict, Any, Tuple
@@ -2761,7 +2761,7 @@ def create_ensemble_model(X, y, voting='soft', test_size=0.2, random_state=42):
 
  # create Voting Classifier
  ensemble = VotingClassifier(
- estimators=list(models.items()),
+ estimators=List(models.items()),
  voting=voting,
  n_jobs=-1
  )
@@ -2811,7 +2811,7 @@ def create_ensemble_model(X, y, voting='soft', test_size=0.2, random_state=42):
 
  # Детальный Report
  print(f"\n=== Classification Report (Ensemble) ===")
- print(classification_report(y_test, y_pred_ensemble))
+ print(classification_Report(y_test, y_pred_ensemble))
 
  # Метрики for возврата
  metrics = {
@@ -2832,8 +2832,8 @@ def plot_ensemble_comparison(metrics, figsize=(12, 8)):
  fig, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize)
 
  # График точности
- models = list(metrics['individual_scores'].keys()) + ['Ensemble']
- scores = list(metrics['individual_scores'].values()) + [metrics['ensemble_accuracy']]
+ models = List(metrics['individual_scores'].keys()) + ['Ensemble']
+ scores = List(metrics['individual_scores'].values()) + [metrics['ensemble_accuracy']]
  colors = ['lightblue'] * len(metrics['individual_scores']) + ['red']
 
  bars = ax1.bar(models, scores, color=colors, alpha=0.7)
@@ -2850,7 +2850,7 @@ def plot_ensemble_comparison(metrics, figsize=(12, 8)):
  ax1.grid(True, alpha=0.3)
 
  # График улучшения
- individual_scores = list(metrics['individual_scores'].values())
+ individual_scores = List(metrics['individual_scores'].values())
  ensemble_score = metrics['ensemble_accuracy']
  improvements = [ensemble_score - score for score in individual_scores]
 
@@ -2870,7 +2870,7 @@ def analyze_ensemble_diversity(individual_Predictions, y_test):
  print("=== Анализ разнообразия ансамбля ===")
 
  # Вычисление согласованности между моделями
- model_names = list(individual_Predictions.keys())
+ model_names = List(individual_Predictions.keys())
  n_models = len(model_names)
 
  # Матрица согласованности
@@ -2952,7 +2952,7 @@ def example_voting_ensemble_usage():
 
 ### 2. Stacking
 
-**Теория:** Stacking (Stacked Generalization) - это продвинутый метод ансамблирования, который использует мета-модель for комбинирования predictions базовых моделей. Мета-модель обучается on предсказаниях базовых моделей, что позволяет ей находить оптимальные способы их комбинирования.
+**Теория:** Stacking (Stacked Generalization) - это продвинутый метод ансамблирования, который использует мета-модель for комбинирования Predictions базовых моделей. Мета-модель обучается on предсказаниях базовых моделей, что позволяет ей находить оптимальные способы их комбинирования.
 
 **Принцип работы Stacking:**
 1. **Базовые модели:** Обучаются on исходных данных
@@ -2974,7 +2974,7 @@ def example_voting_ensemble_usage():
 
 **Что делает этот код:**
 1. **Базовые модели:** Определяет набор разнообразных моделей
-2. **Мета-модель:** Выбирает модель for комбинирования predictions
+2. **Мета-модель:** Выбирает модель for комбинирования Predictions
 3. **Кросс-валидация:** Использует CV for предотвращения переобучения
 4. **Обучение:** Обучает весь стек моделей
 
@@ -2988,7 +2988,7 @@ from sklearn.neural_network import MLPClassifier
 import xgboost as xgb
 import lightgbm as lgb
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.metrics import accuracy_score, classification_Report, confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
 from typing import List, Dict, Any, Tuple
@@ -3157,7 +3157,7 @@ def create_stacking_model(X, y, test_size=0.2, cv_folds=5, random_state=42):
 
  # Детальный Report
  print(f"\n=== Classification Report (Stacking) ===")
- print(classification_report(y_test, y_pred_stacking))
+ print(classification_Report(y_test, y_pred_stacking))
 
  # Метрики for возврата
  metrics = {
@@ -3180,8 +3180,8 @@ def plot_stacking_results(metrics, figsize=(15, 10)):
  fig, axes = plt.subplots(2, 2, figsize=figsize)
 
  # График сравнения базовых моделей and Stacking
- models = list(metrics['base_scores'].keys()) + ['Stacking']
- scores = list(metrics['base_scores'].values()) + [metrics['stacking_accuracy']]
+ models = List(metrics['base_scores'].keys()) + ['Stacking']
+ scores = List(metrics['base_scores'].values()) + [metrics['stacking_accuracy']]
  colors = ['lightblue'] * len(metrics['base_scores']) + ['red']
 
  bars = axes[0, 0].bar(models, scores, color=colors, alpha=0.7)
@@ -3198,8 +3198,8 @@ def plot_stacking_results(metrics, figsize=(15, 10)):
  axes[0, 0].grid(True, alpha=0.3)
 
  # График мета-моделей
- meta_models = list(metrics['meta_scores'].keys())
- meta_scores = list(metrics['meta_scores'].values())
+ meta_models = List(metrics['meta_scores'].keys())
+ meta_scores = List(metrics['meta_scores'].values())
 
  bars = axes[0, 1].bar(meta_models, meta_scores, color='green', alpha=0.7)
  axes[0, 1].set_title('Meta-Model Performance')
@@ -3215,7 +3215,7 @@ def plot_stacking_results(metrics, figsize=(15, 10)):
  axes[0, 1].grid(True, alpha=0.3)
 
  # График улучшения
- base_scores = list(metrics['base_scores'].values())
+ base_scores = List(metrics['base_scores'].values())
  stacking_score = metrics['stacking_accuracy']
  improvements = [stacking_score - score for score in base_scores]
 
@@ -3241,7 +3241,7 @@ def analyze_stacking_contribution(stacking_model, X_test, y_test):
 
  print("=== Анализ вклада базовых моделей ===")
 
- # Получение predictions базовых моделей
+ # Получение Predictions базовых моделей
  base_Predictions = stacking_model.transform(X_test)
 
  # Получение весов мета-модели
@@ -3256,7 +3256,7 @@ def analyze_stacking_contribution(stacking_model, X_test, y_test):
  print(f" {name}: {weight:.4f}")
 
  # Анализ корреляций между базовыми моделями
- base_Predictions_df = pd.DataFrame(
+ base_Predictions_df = pd.dataFrame(
  base_Predictions,
  columns=[name for name, _ in stacking_model.estimators]
  )
@@ -3321,8 +3321,8 @@ def example_stacking_usage():
 
 **Почему стандартные метрики недостаточны:**
 - **Точность not равна прибыльности:** Высокая точность может not означать прибыльность
-- **Классовый дисбаланс:** Финансовые данные часто имеют дисбаланс классов
-- **Временная dependency:** Важна последовательность predictions
+- **Классовый дисбаланс:** Финансовые data часто имеют дисбаланс классов
+- **Временная dependency:** Важна последовательность Predictions
 - **Риск-доходность:** Нужно учитывать риск, а not только доходность
 
 **Типы метрик:**
@@ -3333,7 +3333,7 @@ def example_stacking_usage():
 
 ### 1. Метрики классификации
 
-**Теория:** Классификационные метрики измеряют качество predictions модели on basis правильности классификации образцов on классам.
+**Теория:** Классификационные метрики измеряют качество Predictions модели on basis правильности классификации образцов on классам.
 
 **Основные метрики:**
 - **Accuracy:** Доля правильно классифицированных образцов
@@ -3346,14 +3346,14 @@ def example_stacking_usage():
 **Что делает этот код:**
 1. **Предсказания:** Получает предсказания модели
 2. **Вычисление метрик:** Рассчитывает различные метрики качества
-3. **Визуализация:** Создает графики for analysis
+3. **Визуализация:** Создает графики for Analysis
 4. **Анализ:** Интерпретирует результаты
 
 ```python
 import numpy as np
 import pandas as pd
 from sklearn.metrics import (accuracy_score, precision_score, recall_score,
- f1_score, confusion_matrix, classification_report,
+ f1_score, confusion_matrix, classification_Report,
  roc_auc_score, roc_curve, precision_recall_curve)
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -3428,7 +3428,7 @@ def evaluate_model(model, X_test, y_test, model_name="Model"):
 
  # Детальный Report
  print(f"\n=== Classification Report ===")
- print(classification_report(y_test, y_pred))
+ print(classification_Report(y_test, y_pred))
 
  return results
 
@@ -3513,10 +3513,10 @@ def analyze_class_balance(y_test, y_pred):
  percentage = count / total_samples * 100
  print(f" Класс {class_label}: {count} ({percentage:.1f}%)")
 
- # Анализ predictions
+ # Анализ Predictions
  pred_unique, pred_counts = np.unique(y_pred, return_counts=True)
 
- print(f"\nРаспределение predictions:")
+ print(f"\nРаспределение Predictions:")
  for class_label, count in zip(pred_unique, pred_counts):
  percentage = count / total_samples * 100
  print(f" Класс {class_label}: {count} ({percentage:.1f}%)")
@@ -3578,7 +3578,7 @@ def example_classification_metrics_usage():
 
 ### 2. Торговые метрики
 
-**Теория:** Торговые метрики измеряют реальную эффективность торговой стратегии, учитывая not только точность predictions, но and финансовые результаты.
+**Теория:** Торговые метрики измеряют реальную эффективность торговой стратегии, учитывая not только точность Predictions, но and финансовые результаты.
 
 **Основные торговые метрики:**
 - **Sharpe Ratio:** Отношение доходности к риску
@@ -3593,7 +3593,7 @@ def example_classification_metrics_usage():
 1. **Расчет доходности:** Вычисляет прибыльность стратегии
 2. **Рисковые метрики:** Оценивает риск стратегии
 3. **Торговые показатели:** Анализирует качество торговли
-4. **Визуализация:** Создает графики for analysis
+4. **Визуализация:** Создает графики for Analysis
 
 ```python
 import numpy as np
@@ -3857,7 +3857,7 @@ def example_trading_metrics_usage():
  # create истинных классов (стратегия)
  y_true = np.random.choice([0, 1, 2], n_samples, p=[0.3, 0.4, 0.3])
 
- # create predictions (with некоторой точностью)
+ # create Predictions (with некоторой точностью)
  y_pred = y_true.copy()
  # Добавляем ошибки
  error_indices = np.random.choice(n_samples, size=int(n_samples * 0.3), replace=False)
@@ -3908,7 +3908,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split, TimeSeriesSplit
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_Report
 import xgboost as xgb
 import lightgbm as lgb
 import matplotlib.pyplot as plt
@@ -3941,12 +3941,12 @@ def train_complete_trading_model(X, y, returns=None, test_size=0.2,
  # 1. Разделение данных
  print(f"\n1. Разделение данных...")
 
- # Сначала отделяем тестовые данные
+ # Сначала отделяем тестовые data
  X_temp, X_test, y_temp, y_test = train_test_split(
  X, y, test_size=test_size, random_state=random_state, stratify=y
  )
 
- # Затем разделяем оставшиеся данные on train and validation
+ # Затем разделяем оставшиеся data on train and validation
  X_train, X_val, y_train, y_val = train_test_split(
  X_temp, y_temp, test_size=validation_size/(1-test_size),
  random_state=random_state, stratify=y_temp
@@ -4072,7 +4072,7 @@ def train_complete_trading_model(X, y, returns=None, test_size=0.2,
  if returns is not None:
  print(f"\n6. Расчет торговых метрик...")
 
- # Используем только тестовые данные for торговых метрик
+ # Use только тестовые data for торговых метрик
  test_returns = returns[-len(y_test):]
 
  # Рассчитываем метрики for ансамбля
@@ -4094,7 +4094,7 @@ def train_complete_trading_model(X, y, returns=None, test_size=0.2,
 
  # Детальный Report
  print(f"\n=== Classification Report (Ensemble) ===")
- print(classification_report(y_test, ensemble_pred))
+ print(classification_Report(y_test, ensemble_pred))
 
  # Результаты for возврата
  results = {
@@ -4119,8 +4119,8 @@ def plot_complete_results(results, figsize=(15, 12)):
  fig, axes = plt.subplots(2, 2, figsize=figsize)
 
  # Сравнение моделей
- models = list(results['test_scores'].keys())
- scores = list(results['test_scores'].values())
+ models = List(results['test_scores'].keys())
+ scores = List(results['test_scores'].values())
 
  bars = axes[0, 0].bar(models, scores, color='skyblue', alpha=0.8)
  axes[0, 0].set_title('Model Performance Comparison')
@@ -4246,8 +4246,8 @@ def example_complete_training_usage():
 **Почему важен каждый этап:**
 
 1. **Бэктестинг** - check модели on исторических данных
- - **Goal:** Убедиться, что модель работает on данных, которые она not видела
- - **Методы:** Walk-forward analysis, Monte Carlo simulation
+ - **Goal:** Убедиться, что модель Workingет on данных, которые она not видела
+ - **Методы:** Walk-forward Analysis, Monte Carlo simulation
  - **Критерии:** Стабильность результатов, отсутствие переобучения
 
 2. **Валидация on out-of-sample данных** - Тестирование on новых данных
@@ -4273,7 +4273,7 @@ def example_complete_training_usage():
 - **Проверяйте стабильность результатов** - избегайте переобучения
 - **Документируйте все эксперименты** - это поможет in будущих итерациях
 
-**Структура следующих этапов:**
+**Structure следующих этапов:**
 
 ```
 Обучение модели → Бэктестинг → Валидация → Оптимизация → Monitoring
@@ -4286,8 +4286,8 @@ def example_complete_training_usage():
 - **[06_backtesting.md](06_backtesting.md)** - Бэктестинг торговых стратегий
 - **[07_validation.md](07_validation.md)** - Валидация моделей
 - **[08_optimization.md](08_optimization.md)** - Оптимизация параметров
-- **[09_monitoring.md](09_monitoring.md)** - Monitoring производительности
-- **[07_walk_forward_analysis.md](07_walk_forward_analysis.md)** - Walk-forward анализ
+- **[09_Monitoring.md](09_Monitoring.md)** - Monitoring производительности
+- **[07_walk_forward_Analysis.md](07_walk_forward_Analysis.md)** - Walk-forward анализ
 
 ## Ключевые выводы
 
@@ -4296,7 +4296,7 @@ def example_complete_training_usage():
 **Основные принципы успешного обучения:**
 
 ### 1. **Ансамблевые методы превосходят одиночные модели**
-- **Почему:** Финансовые данные сложны and нестабильны
+- **Почему:** Финансовые data сложны and нестабильны
 - **Преимущества:** Снижение переобучения, повышение стабильности
 - **Рекомендации:** Use Voting, Stacking, Bagging
 - **Практика:** Комбинируйте 3-5 различных алгоритмов
@@ -4320,13 +4320,13 @@ def example_complete_training_usage():
 - **Практика:** Оптимизируйте on торговым метрикам, а not on accuracy
 
 ### 5. **Качество данных определяет успех**
-- **Влияние:** Плохие данные = плохая модель
+- **Влияние:** Плохие data = плохая модель
 - **Требования:** clean, нормализация, feature engineering
 - **check:** Анализ распределений, корреляций, выбросов
 - **Практика:** Инвестируйте время in подготовку данных
 
 ### 6. **Регуляризация предотвращает переобучение**
-- **Проблема:** Финансовые данные склонны к переобучению
+- **Проблема:** Финансовые data склонны к переобучению
 - **Методы:** L1/L2 regularization, dropout, early stopping
 - **Баланс:** Сложность модели vs. обобщающая способность
 - **Практика:** Начинайте with простых моделей, усложняйте постепенно

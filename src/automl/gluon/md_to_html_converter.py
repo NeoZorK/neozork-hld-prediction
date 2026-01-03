@@ -32,15 +32,15 @@ class AutoMLGluonHTMLConverter:
  'tables',
  'toc',
  'fenced_code',
- 'attr_list',
- 'def_list',
+ 'attr_List',
+ 'def_List',
  'footnotes',
  'md_in_html'
  ],
  extension_configs={
  'codehilite': {
  'css_class': 'language-python',
- 'use_pygments': True,
+ 'Use_pygments': True,
  'noclasses': False
  },
  'toc': {
@@ -56,7 +56,7 @@ class AutoMLGluonHTMLConverter:
  "01_installation.md",
  "02_basic_usage.md",
  "03_advanced_configuration.md",
- "04_risk_analysis.md",
+ "04_risk_Analysis.md",
  "05_low_risk_systems.md",
  "06_metrics.md",
  "07_validation.md",
@@ -73,18 +73,18 @@ class AutoMLGluonHTMLConverter:
  "18_advanced_topics.md",
  "19_ethics_and_responsible_ai.md",
  "20_case_studies.md",
- "21_wave2_indicator_analysis.md",
- "22_schr_levels_analysis.md",
- "23_schr_short3_analysis.md",
+ "21_wave2_indicator_Analysis.md",
+ "22_schr_levels_Analysis.md",
+ "23_schr_short3_Analysis.md",
  "24_super_system_ultimate.md",
  "25_reading_guide.md",
  "26_probability_usage_guide.md",
- "27_trading_bot_monitoring.md",
+ "27_trading_bot_Monitoring.md",
  "28_feature_generation_advanced.md",
  "29_backtesting_methods.md",
- "30_walk_forward_analysis.md",
+ "30_walk_forward_Analysis.md",
  "31_monte_carlo_simulations.md",
- "32_portfolio_management.md",
+ "32_Portfolio_Management.md",
  "33_llm_parallel_computing_setup.md"
  ]
 
@@ -98,7 +98,7 @@ class AutoMLGluonHTMLConverter:
  "01_installation": "installation and configuration",
  "02_basic_usage": "Базовое использование",
  "03_advanced_configuration": "Продвинутая configuration",
- "04_risk_analysis": "Анализ рисков",
+ "04_risk_Analysis": "Анализ рисков",
  "05_low_risk_systems": "Низкорисковые системы",
  "06_metrics": "Метрики and оценка",
  "07_validation": "Валидация моделей",
@@ -115,18 +115,18 @@ class AutoMLGluonHTMLConverter:
  "18_advanced_topics": "Продвинутые темы",
  "19_ethics_and_responsible_ai": "Этика and ответственный AI",
  "20_case_studies": "Кейс-стади",
- "21_wave2_indicator_analysis": "Wave2 индикатор анализ",
- "22_schr_levels_analysis": "SCHR уровни анализ",
- "23_schr_short3_analysis": "SCHR short3 анализ",
+ "21_wave2_indicator_Analysis": "Wave2 индикатор анализ",
+ "22_schr_levels_Analysis": "SCHR уровни анализ",
+ "23_schr_short3_Analysis": "SCHR short3 анализ",
  "24_super_system_ultimate": "Супер система Ultimate",
  "25_reading_guide": "guide on чтению",
  "26_probability_usage_guide": "guide on вероятностям",
- "27_trading_bot_monitoring": "Monitoring торгового бота",
+ "27_trading_bot_Monitoring": "Monitoring торгового бота",
  "28_feature_generation_advanced": "Продвинутая генерация признаков",
  "29_backtesting_methods": "Методы бэктестинга",
- "30_walk_forward_analysis": "Walk-forward анализ",
+ "30_walk_forward_Analysis": "Walk-forward анализ",
  "31_monte_carlo_simulations": "Монте-Карло симуляции",
- "32_portfolio_management": "Управление портфелем",
+ "32_Portfolio_Management": "Management портфелем",
  "33_llm_parallel_computing_setup": "configuration параллельных вычислений"
  }
 
@@ -142,7 +142,7 @@ class AutoMLGluonHTMLConverter:
  with open(filepath, 'r', encoding='utf-8') as f:
  content = f.read()
 
- # Извлекаем метаданные
+ # Извлекаем метаdata
  title_match = re.search(r'^# (.+)$', content, re.MULTILINE)
  author_match = re.search(r'\*\*Author:\*\* (.+)$', content, re.MULTILINE)
  date_match = re.search(r'\*\*Дата:\*\* (.+)$', content, re.MULTILINE)
@@ -221,7 +221,7 @@ class AutoMLGluonHTMLConverter:
  "Apple Silicon оптимизация": "M1/M2/M3, MLX, Metal Performance Shaders",
  "Практические examples": "Банк, недвижимость, временные ряды, классификация",
  "Простой продакшен example": "from идеи to продакшен деплоя за 8 шагов",
- "Продвинутый продакшен": "Микросервисы, масштабирование, Monitoring",
+ "Продвинутый продакшен": "МикроServices, масштабирование, Monitoring",
  "Теория and основы": "Математические основы, алгоритмы, принципы",
  "Troubleshooting": "Решение проблем, отладка, оптимизация",
  "Интерпретируемость": "Объяснимость моделей, SHAP, LIME",
@@ -233,16 +233,16 @@ class AutoMLGluonHTMLConverter:
  "SCHR short3 анализ": "Краткосрочный анализ торговых сигналов",
  "Супер система Ultimate": "Комплексная торговая система",
  "guide on чтению": "Как эффективно изучать материал",
- "guide on вероятностям": "Работа with вероятностями in ML",
- "Monitoring торгового бота": "Отслеживание and управление ботом",
+ "guide on вероятностям": "Working with вероятностями in ML",
+ "Monitoring торгового бота": "Отслеживание and Management ботом",
  "Продвинутая генерация признаков": "Feature engineering for сложных задач",
  "Методы бэктестинга": "Тестирование стратегий on исторических данных",
  "Walk-forward анализ": "Скользящее тестирование стратегий",
  "Монте-Карло симуляции": "Стохастическое моделирование рисков",
- "Управление портфелем": "Оптимизация and диверсификация портфеля",
+ "Management портфелем": "Оптимизация and диверсификация портфеля",
  "configuration параллельных вычислений": "LLM and параллельные вычисления"
  }
- return descriptions.get(chapter_name, "Подробное description темы")
+ return descriptions.get(chapter_name, "Detailed description темы")
 
  def generate_html_template(self) -> str:
  """Генерирует HTML шаблон in стиле Python_Formatting_Example.html"""
@@ -250,7 +250,7 @@ class AutoMLGluonHTMLConverter:
 <html lang="ru">
 <head>
  <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta name="Viewport" content="width=device-width, initial-scale=1.0">
  <title>AutoML Gluon - Complete guide (33 главы)</title>
  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
@@ -258,7 +258,7 @@ class AutoMLGluonHTMLConverter:
  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
  <style>
  body {{
- font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+ font-family: -apple-system, BlinkMacsystemFont, 'Segoe UI', Roboto, sans-serif;
  line-height: 1.6;
  color: #333;
  max-width: 1200px;
@@ -444,7 +444,7 @@ class AutoMLGluonHTMLConverter:
  color: #569cd6;
  }
 
- .explanation {
+ .exPlanation {
  background: #f8f9fa;
  border-left: 4px solid #17a2b8;
  padding: 15px;
@@ -583,12 +583,12 @@ class AutoMLGluonHTMLConverter:
  <script>
  // Инициализация Prism.js for синтаксического выделения
  if (typeof Prism !== 'undefined') {
- Prism.highlightAll();
+ Prism.highlightall();
  }
 
  // Плавная прокрутка к якорям
  document.addEventListener('DOMContentLoaded', function() {
- const links = document.querySelectorAll('a[href^="#"]');
+ const links = document.querySelectorall('a[href^="#"]');
  links.forEach(link => {
  link.addEventListener('click', function(e) {
  e.preventDefault();
@@ -639,9 +639,9 @@ class AutoMLGluonHTMLConverter:
  if chapter_data:
  self.chapters.append(chapter_data)
  else:
- print(f"⚠️ Файл not найден: {filename}")
+ print(f"⚠️ File not found: {filename}")
 
- print(f"✅ Обработано {len(self.chapters)} глав")
+ print(f"✅ ОбWorkingно {len(self.chapters)} глав")
 
  def generate_html(self) -> str:
  """Генерирует полный HTML мануал"""

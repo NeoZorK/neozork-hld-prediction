@@ -16,20 +16,20 @@
 ### Преимущества знания продвинутых тем
 - **Лучшие результаты**: State-of-the-art производительность
 - **Конкурентоспособность**: Используют самые современные методы
-- **Решение сложных задач**: Могут работать with мультимодальными данными
+- **Решение сложных задач**: Могут Workingть with мультимодальными данными
 - **Инновации**: Могут создавать новые решения
 
 ## Введение in продвинутые темы
 
-<img src="images/optimized/advanced_topics_overview.png" alt="Продвинутые темы AutoML" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/advanced_topics_overView.png" alt="Продвинутые темы AutoML" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 18.1: Обзор продвинутых тем and современных направлений in AutoML - основные категории and методы*
 
 **Почему продвинутые темы - это будущее ML?** Потому что они решают проблемы, которые невозможно решить традиционными методами: автоматический дизайн архитектур, обучение on малых данных, мультимодальное понимание.
 
 **Основные категории продвинутых тем:**
-- **Neural Architecture Search (NAS)**: Автоматический поиск оптимальных архитектур нейросетей
+- **Neural Architecture Search (NAS)**: Автоматический поиск оптимальных архитектур нейроnetworks
 - **Meta-Learning**: Обучение тому, как учиться on новых задачах
-- **Multi-Modal Learning**: Работа with различными типами данных simultaneously
+- **Multi-Modal Learning**: Working with различными типами данных simultaneously
 - **Federated Learning**: Распределенное обучение with сохранением приватности
 - **Continual Learning**: Непрерывное обучение без забывания предыдущих знаний
 - **Quantum Machine Learning**: Использование квантовых вычислений for ML
@@ -39,7 +39,7 @@
 ## Neural Architecture Search (NAS)
 
 <img src="images/optimized/neural_architecture_search.png" alt="Neural Architecture Search" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 18.2: Neural Architecture Search - методы автоматического поиска архитектур нейросетей*
+*Рисунок 18.2: Neural Architecture Search - методы автоматического поиска архитектур нейроnetworks*
 
 **Типы методов NAS:**
 - **DARTS (Differentiable)**: Дифференцируемый поиск через градиентный спуск
@@ -51,13 +51,13 @@
 
 ### 1. Differentiable Architecture Search (DARTS)
 
-**Почему DARTS - это революция in дизайне нейросетей?** Потому что он позволяет искать архитектуры через градиентный спуск, что in 1000 раз быстрее традиционных методов поиска.
+**Почему DARTS - это революция in дизайне нейроnetworks?** Потому что он позволяет искать архитектуры через градиентный спуск, что in 1000 раз быстрее традиционных методов поиска.
 
 **Преимущества DARTS:**
 - **Скорость**: in 1000 раз быстрее случайного поиска
 - **Качество**: Находит архитектуры лучше созданных человеком
 - **Гибкость**: Может искать любые типы операций
-- **Масштабируемость**: Работает with большими датасетами
+- **Масштабируемость**: Workingет with большими датасетами
 
 ```python
 import torch
@@ -65,7 +65,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class DARTS(nn.Module):
- """Differentiable Architecture Search - автоматический дизайн нейросетей"""
+ """Differentiable Architecture Search - автоматический дизайн нейроnetworks"""
 
  def __init__(self, input_channels, output_channels, num_ops=8):
  super(DARTS, self).__init__()
@@ -214,13 +214,13 @@ def search_architecture(train_loader, val_loader, epochs=50):
 **Детальные описания параметров поиска архитектуры:**
 
 - **`train_loader`**: Загрузчик обучающих данных
- - Тип: DataLoader
+ - Тип: dataLoader
  - Содержит: батчи (data, target)
  - Применение: обучение архитектурных весов
  - Рекомендация: сбалансированные батчи
 
 - **`val_loader`**: Загрузчик валидационных данных
- - Тип: DataLoader
+ - Тип: dataLoader
  - Содержит: батчи (data, target)
  - Применение: оценка качества архитектуры
  - Рекомендация: независимый from train_loader
@@ -269,7 +269,7 @@ def search_architecture(train_loader, val_loader, epochs=50):
  - Альтернативы: F.mse_loss for регрессии
 
 - **`loss.backward()`**: Обратное распространение
- - Вычисляет: градиенты on всем параметрам
+ - Вычисляет: градиенты on all параметрам
  - Применение: подготовка к обновлению весов
  - Обязательно: перед optimizer.step()
 
@@ -330,7 +330,7 @@ class ENAS(nn.Module):
  for i in range(self.num_nodes):
  output, hidden = self.controller(torch.randn(1, 1, 32), hidden)
  logits = self.controller_output(output)
- logits = logits.view(self.num_nodes, self.num_ops)
+ logits = logits.View(self.num_nodes, self.num_ops)
  probs = F.softmax(logits[i], dim=0)
  action = torch.multinomial(probs, 1)
  outputs.append(action.item())
@@ -388,10 +388,10 @@ class ENAS(nn.Module):
  - `1`: Batch size
  - `1`: Sequence length
  - `32`: Feature dimension
- - Применение: входные данные for контроллера
+ - Применение: входные data for контроллера
  - Альтернативы: можно использовать learnable embeddings
 
-- **`logits.view(self.num_nodes, self.num_ops)`**: Изменение формы логитов
+- **`logits.View(self.num_nodes, self.num_ops)`**: Изменение формы логитов
  - `num_nodes`: Количество узлов
  - `num_ops`: Количество операций
  - Применение: группировка логитов on узлам
@@ -416,9 +416,9 @@ class ENAS(nn.Module):
 
 - **`self.ops[op_idx](x)`**: Применение выбранной операции
  - `op_idx`: Индекс выбранной операции
- - `x`: Входные данные
+ - `x`: Входные data
  - Применение: выполнение операции on данных
- - Результат: преобразованные данные
+ - Результат: преобразованные data
 
 **Операции ENAS:**
 
@@ -558,7 +558,7 @@ class MAML(nn.Module):
  - update: через градиентный спуск
 
 - **`support_pred = self.forward_with_weights(support_set[0], fast_weights)`**: Prediction on support set
- - `support_set[0]`: Данные support set
+ - `support_set[0]`: data support set
  - `fast_weights`: Текущие быстрые веса
  - Результат: предсказания модели
  - Применение: вычисление потерь for адаптации
@@ -584,7 +584,7 @@ class MAML(nn.Module):
  - Применение: градиентный спуск
 
 - **`query_pred = self.forward_with_weights(query_set[0], fast_weights)`**: Prediction on query set
- - `query_set[0]`: Данные query set
+ - `query_set[0]`: data query set
  - `fast_weights`: Адаптированные веса
  - Результат: предсказания on query set
  - Применение: оценка качества адаптации
@@ -597,7 +597,7 @@ class MAML(nn.Module):
 
 **Ключевые особенности MAML:**
 
-- **Model-Agnostic**: Работает with любыми моделями
+- **Model-Agnostic**: Workingет with любыми моделями
 - **Few-Shot Learning**: Быстрая адаптация к новым задачам
 - **Meta-Learning**: Обучение тому, как учиться
 - **Gradient-Based**: Использует градиенты for адаптации
@@ -659,15 +659,15 @@ class Prototypicalnetworks(nn.Module):
 ## Multi-Modal Learning
 
 <img src="images/optimized/multimodal_learning.png" alt="Multi-Modal Learning" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 18.4: Multi-Modal Learning - работа with различными типами данных simultaneously*
+*Рисунок 18.4: Multi-Modal Learning - Working with различными типами данных simultaneously*
 
 **Типы модальностей:**
 - **Vision (Images)**: Обработка изображений and визуальных данных
 - **Language (Text)**: Обработка текста and естественного языка
 - **Audio (Sound)**: Обработка звуковых and аудио данных
 - **Video (Motion)**: Обработка видео and временных последовательностей
-- **Sensor Data**: Обработка данных with датчиков
-- **Structured Data**: Обработка структурированных данных
+- **Sensor data**: Обработка данных with датчиков
+- **Structured data**: Обработка структурированных данных
 
 **Методы фьюжна:**
 - **Early Fusion**: Раннее объединение модальностей
@@ -772,8 +772,8 @@ class CrossModalAttention(nn.Module):
 - **Privacy Preservation**: Сохранение приватности данных
 
 **Преимущества федеративного обучения:**
-- **Сохранение приватности**: Данные not покидают клиентов
-- **Распределенные данные**: Обучение on распределенных данных
+- **Сохранение приватности**: data not покидают клиентов
+- **Распределенные data**: Обучение on распределенных данных
 - **Масштабируемость**: Масштабирование on множество клиентов
 - **Снижение коммуникации**: Минимизация передачи данных
 - **Локальная обработка**: Обработка данных on устройстве
@@ -846,9 +846,9 @@ class FederatedAveraging:
  - Инициализация: случайные веса or предобученная модель
  - update: через агрегацию локальных моделей
 
-- **`clients`**: Список клиентов
+- **`clients`**: List клиентов
  - Тип: List[Client]
- - Содержит: локальные данные and модели
+ - Содержит: локальные data and модели
  - Применение: распределенное обучение
  - Рекомендация: 10-1000 клиентов
 
@@ -859,11 +859,11 @@ class FederatedAveraging:
  - `20`: Очень медленное обучение (очень точно)
  - Применение: контроль локального обучения
 
-- **`client.data`**: Локальные данные клиента
- - Тип: Dataset
- - Содержит: приватные данные клиента
+- **`client.data`**: Локальные data клиента
+ - Тип: dataset
+ - Содержит: приватные data клиента
  - Применение: локальное обучение
- - Приватность: данные not покидают клиента
+ - Приватность: data not покидают клиента
 
 - **`len(client.data)`**: Размер данных клиента
  - Применение: вес for агрегации
@@ -883,7 +883,7 @@ class FederatedAveraging:
  - Применение: локальная оптимизация
 
 - **`client.data_loader`**: Загрузчик данных клиента
- - Тип: DataLoader
+ - Тип: dataLoader
  - Содержит: батчи локальных данных
  - Применение: итерация on данным
  - Рекомендация: сбалансированные батчи
@@ -914,7 +914,7 @@ class FederatedAveraging:
 
 **Преимущества Federated Learning:**
 
-- **Data Privacy**: Данные not покидают клиентов
+- **data Privacy**: data not покидают клиентов
 - **Reduced Communication**: Минимизация передачи данных
 - **Local Processing**: Обработка on устройстве
 - **Federated Aggregation**: Агрегация обновлений
@@ -922,10 +922,10 @@ class FederatedAveraging:
 
 **Применение Federated Learning:**
 
-- **Mobile Devices**: Обучение on мобильных устройствах
+- **mobile Devices**: Обучение on мобильных устройствах
 - **IoT Sensors**: Обучение on датчиках
-- **Healthcare**: Медицинские данные
-- **Finance**: Финансовые данные
+- **healthcare**: Медицинские data
+- **Finance**: Финансовые data
 - **Edge Computing**: Обучение on границе сети
 ```
 
@@ -1089,7 +1089,7 @@ class ProgressiveNeuralnetwork(nn.Module):
 <img src="images/optimized/quantum_ml.png" alt="Quantum Machine Learning" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 18.7: Quantum Machine Learning - использование квантовых вычислений for ML*
 
-**Компоненты квантового ML:**
+**components квантового ML:**
 - **Quantum Neural networks**: Квантовые нейронные сети
 - **Quantum Circuits**: Квантовые схемы and алгоритмы
 - **Quantum Algorithms**: Квантовые алгоритмы for ML
@@ -1167,14 +1167,14 @@ def train_quantum_model(X, y, num_layers=3):
 **Сравнение продвинутых методов:**
 - **Performance vs Complexity**: Баланс между производительностью and сложностью
 - **Training Time**: Время обучения различных методов
-- **Data Requirements**: Требования к объему данных
+- **data Requirements**: Требования к объему данных
 - **Real-world Applicability**: Применимость in реальных задачах
 
 Продвинутые темы AutoML представляют собой быстро развивающуюся область, включающую:
 
 1. **Neural Architecture Search** - автоматический поиск оптимальных архитектур
 2. **Meta-Learning** - обучение тому, как учиться
-3. **Multi-Modal Learning** - работа with различными типами данных
+3. **Multi-Modal Learning** - Working with различными типами данных
 4. **Federated Learning** - распределенное обучение with сохранением приватности
 5. **Continual Learning** - непрерывное обучение без забывания
 6. **Quantum Machine Learning** - использование квантовых вычислений

@@ -9,16 +9,16 @@
 
 ### Что дает правильная генерация признаков?
 
-- **Точность**: Модели работают on 20-50% лучше
+- **Точность**: Модели Workingют on 20-50% лучше
 - **Интерпретируемость**: Понимание того, что влияет on результат
-- **Робастность**: Модели работают стабильно on новых данных
+- **Робастность**: Модели Workingют стабильно on новых данных
 - **Эффективность**: Меньше данных, лучшие результаты
 
 ### Что происходит без правильной генерации признаков?
 
 - **Плохие результаты**: Модели not находят паттерны
-- **Переобучение**: Модели запоминают данные вместо обучения
-- **Нестабильность**: Модели работают on-разному on похожих данных
+- **Переобучение**: Модели запоминают data вместо обучения
+- **Нестабильность**: Модели Workingют on-разному on похожих данных
 - **Разочарование**: not понимаете, почему результаты not улучшаются
 
 ## Теоретические основы Feature Generation
@@ -27,8 +27,8 @@
 
 ```mermaid
 graph TD
- A[Сырые данные] --> B[Feature Generation]
- B --> C[Обработанные признаки]
+ A[Сырые data] --> B[Feature Generation]
+ B --> C[ОбWorkingнные признаки]
  C --> D[ML Модель]
  D --> E[Предсказания]
 
@@ -89,7 +89,7 @@ F* = argmax P(Y|X, F(X))
 
 - `F*` - оптимальная function генерации признаков
 - `Y` - целевая переменная
-- `X` - исходные данные
+- `X` - исходные data
 - `F(X)` - сгенерированные признаки
 
 **Критерии качества признаков:**
@@ -111,7 +111,7 @@ graph TD
  A --> E[Временные признаки]
  A --> F[Категориальные признаки]
 
- B --> B1[Необработанные данные]
+ B --> B1[НеобWorkingнные data]
  B --> B2[Требуют предобработки]
  B --> B3[Могут содержать шум]
 
@@ -167,7 +167,7 @@ graph TD
 
 ### 1. Исходные признаки (Raw Features)
 
-- Необработанные данные из источника
+- НеобWorkingнные data из источника
 - Часто требуют предобработки
 - Могут содержать шум and выбросы
 
@@ -271,9 +271,9 @@ def create_lag_features(df, target_col, lags=[1, 2, 3, 7, 14, 30], fill_method='
  create лаговых признаков for временных рядов
 
  Args:
- df (pd.DataFrame): Исходный DataFrame with временными данными
+ df (pd.dataFrame): Исходный dataFrame with временными данными
  target_col (str): Название целевой колонки for создания лагов
- lags (list): Список лагов for создания (on умолчанию [1, 2, 3, 7, 14, 30])
+ lags (List): List лагов for создания (on умолчанию [1, 2, 3, 7, 14, 30])
  - 1: Предыдущий период
  - 2-3: Краткосрочные лаги
  - 7: Недельный лаг
@@ -294,10 +294,10 @@ def create_lag_features(df, target_col, lags=[1, 2, 3, 7, 14, 30], fill_method='
  - memory_efficient: Эффективное использование памяти (True/False)
 
  Returns:
- pd.DataFrame: DataFrame with добавленными лаговыми приsignми
+ pd.dataFrame: dataFrame with добавленными лаговыми приsignми
 
  Raises:
- ValueError: Если target_col not существует in DataFrame
+ ValueError: Если target_col not существует in dataFrame
  ValueError: Если lags содержит недопустимые значения
  TypeError: Если fill_method not поддерживается
  """
@@ -313,15 +313,15 @@ def create_lag_features(df, target_col, lags=[1, 2, 3, 7, 14, 30], fill_method='
  # Валидация входных данных
  if config['validation']:
  if target_col not in df.columns:
- raise ValueError(f"Column '{target_col}' not found in DataFrame")
+ raise ValueError(f"Column '{target_col}' not found in dataFrame")
 
  if not lags or not all(isinstance(lag, int) and lag > 0 for lag in lags):
- raise ValueError("lags must be a list of positive integers")
+ raise ValueError("lags must be a List of positive integers")
 
  if fill_method not in ['forward', 'backward', 'interpolate', 'zero']:
  raise ValueError("fill_method must be one of: 'forward', 'backward', 'interpolate', 'zero'")
 
- # create копии DataFrame for безопасности
+ # create копии dataFrame for безопасности
  result_df = df.copy() if not config['memory_efficient'] else df
 
  # create лаговых признаков
@@ -374,14 +374,14 @@ def create_rolling_features(df, target_col, windows=[3, 7, 14, 30],
  create признаков скользящих окон for временных рядов
 
  Args:
- df (pd.DataFrame): Исходный DataFrame with временными данными
+ df (pd.dataFrame): Исходный dataFrame with временными данными
  target_col (str): Название целевой колонки for создания скользящих окон
- windows (list): Список размеров окон (on умолчанию [3, 7, 14, 30])
+ windows (List): List размеров окон (on умолчанию [3, 7, 14, 30])
  - 3: Краткосрочное окно (3 периода)
  - 7: Недельное окно (7 periods)
  - 14: Двухнедельное окно (14 periods)
  - 30: Месячное окно (30 periods)
- statistics (list): Список статистик for вычисления
+ statistics (List): List статистик for вычисления
  - 'mean': Среднее значение
  - 'std': Стандартное отклонение
  - 'var': Дисперсия
@@ -406,10 +406,10 @@ def create_rolling_features(df, target_col, windows=[3, 7, 14, 30],
  - 'hamming': Окно Хэмминга
  - 'bartlett': Окно Бартлетта
  on (str): Колонка for группировки in time
- axis (int): Ось for применения (0 for строк, 1 for колонок)
+ axis (int): Ось for применения (0 for строк, 1 for columns)
  closed (str): Какая сторона окна включена ('right', 'left', 'both', 'neither')
  config (dict): Дополнительная configuration
- - quantiles: Список квантилей for вычисления (on умолчанию [0.25, 0.5, 0.75])
+ - quantiles: List квантилей for вычисления (on умолчанию [0.25, 0.5, 0.75])
  - custom_functions: Словарь пользовательских функций
  - fill_method: Метод заполнения пропусков ('forward', 'backward', 'interpolate', 'zero')
  - validation: Валидация данных (True/False)
@@ -417,10 +417,10 @@ def create_rolling_features(df, target_col, windows=[3, 7, 14, 30],
  - prefix: Префикс for названий признаков (on умолчанию 'rolling')
 
  Returns:
- pd.DataFrame: DataFrame with добавленными приsignми скользящих окон
+ pd.dataFrame: dataFrame with добавленными приsignми скользящих окон
 
  Raises:
- ValueError: Если target_col not существует in DataFrame
+ ValueError: Если target_col not существует in dataFrame
  ValueError: Если windows содержит недопустимые значения
  ValueError: Если statistics содержит неподдерживаемые functions
  TypeError: Если parameters имеют неправильный тип
@@ -438,10 +438,10 @@ def create_rolling_features(df, target_col, windows=[3, 7, 14, 30],
  # Валидация входных данных
  if config['validation']:
  if target_col not in df.columns:
- raise ValueError(f"Column '{target_col}' not found in DataFrame")
+ raise ValueError(f"Column '{target_col}' not found in dataFrame")
 
  if not windows or not all(isinstance(w, int) and w > 0 for w in windows):
- raise ValueError("windows must be a list of positive integers")
+ raise ValueError("windows must be a List of positive integers")
 
  valid_stats = ['mean', 'std', 'var', 'min', 'max', 'median', 'sum', 'count',
  'skew', 'kurt', 'quantile']
@@ -449,7 +449,7 @@ def create_rolling_features(df, target_col, windows=[3, 7, 14, 30],
  if invalid_stats:
  raise ValueError(f"Invalid statistics: {invalid_stats}. Valid options: {valid_stats}")
 
- # create копии DataFrame for безопасности
+ # create копии dataFrame for безопасности
  result_df = df.copy() if not config['memory_efficient'] else df
 
  # create признаков скользящих окон
@@ -560,15 +560,15 @@ def create_ewm_features(df, target_col, alphas=[0.1, 0.3, 0.5, 0.7],
  create признаков экспоненциального сглаживания for временных рядов
 
  Args:
- df (pd.DataFrame): Исходный DataFrame with временными данными
+ df (pd.dataFrame): Исходный dataFrame with временными данными
  target_col (str): Название целевой колонки for создания EWM признаков
- alphas (list): Список коэффициентов сглаживания (on умолчанию [0.1, 0.3, 0.5, 0.7])
+ alphas (List): List коэффициентов сглаживания (on умолчанию [0.1, 0.3, 0.5, 0.7])
  - 0.1: Медленное сглаживание (больше веса истории)
  - 0.3: Умеренное сглаживание
  - 0.5: Сбалансированное сглаживание
  - 0.7: Быстрое сглаживание (больше веса текущим значениям)
  - 0.9: Очень быстрое сглаживание
- statistics (list): Список статистик for вычисления
+ statistics (List): List статистик for вычисления
  - 'mean': Экспоненциально взвешенное среднее
  - 'std': Экспоненциально взвешенное стандартное отклонение
  - 'var': Экспоненциально взвешенная дисперсия
@@ -596,10 +596,10 @@ def create_ewm_features(df, target_col, alphas=[0.1, 0.3, 0.5, 0.7],
  - custom_functions: Словарь пользовательских функций
 
  Returns:
- pd.DataFrame: DataFrame with добавленными приsignми экспоненциального сглаживания
+ pd.dataFrame: dataFrame with добавленными приsignми экспоненциального сглаживания
 
  Raises:
- ValueError: Если target_col not существует in DataFrame
+ ValueError: Если target_col not существует in dataFrame
  ValueError: Если alphas содержит недопустимые значения
  ValueError: Если statistics содержит неподдерживаемые functions
  TypeError: Если parameters имеют неправильный тип
@@ -619,17 +619,17 @@ def create_ewm_features(df, target_col, alphas=[0.1, 0.3, 0.5, 0.7],
  # Валидация входных данных
  if config['validation']:
  if target_col not in df.columns:
- raise ValueError(f"Column '{target_col}' not found in DataFrame")
+ raise ValueError(f"Column '{target_col}' not found in dataFrame")
 
  if not alphas or not all(isinstance(a, (int, float)) and 0 < a <= 1 for a in alphas):
- raise ValueError("alphas must be a list of numbers between 0 and 1")
+ raise ValueError("alphas must be a List of numbers between 0 and 1")
 
  valid_stats = ['mean', 'std', 'var', 'min', 'max', 'sum', 'count']
  invalid_stats = [s for s in statistics if s not in valid_stats and s not in config['custom_functions']]
  if invalid_stats:
  raise ValueError(f"Invalid statistics: {invalid_stats}. Valid options: {valid_stats}")
 
- # create копии DataFrame for безопасности
+ # create копии dataFrame for безопасности
  result_df = df.copy() if not config['memory_efficient'] else df
 
  # create признаков экспоненциального сглаживания
@@ -729,9 +729,9 @@ def create_seasonal_features(df, date_col, features=['year', 'month', 'day', 'da
  create сезонных признаков из временных данных
 
  Args:
- df (pd.DataFrame): Исходный DataFrame with временными данными
+ df (pd.dataFrame): Исходный dataFrame with временными данными
  date_col (str): Название колонки with датой/временем
- features (list): Список сезонных признаков for создания
+ features (List): List сезонных признаков for создания
  - 'year': Год (2020, 2021, 2022, ...)
  - 'month': Месяц (1-12)
  - 'day': День месяца (1-31)
@@ -756,9 +756,9 @@ def create_seasonal_features(df, date_col, features=['year', 'month', 'day', 'da
  business_hours (bool): Создавать ли признаки рабочих часов
  - True: Создавать признаки рабочих часов (9-17, понедельник-пятница)
  - False: not создавать признаки рабочих часов
- holidays (list): Список праздничных дней for создания признаков
+ holidays (List): List праздничных дней for создания признаков
  - None: not учитывать праздники
- - ['2023-01-01', '2023-12-25']: Список дат праздников
+ - ['2023-01-01', '2023-12-25']: List дат праздников
  config (dict): Дополнительная configuration
  - cyclic_periods: Периоды for циклических признаков
  - 'month': 12 (месяцы)
@@ -774,10 +774,10 @@ def create_seasonal_features(df, date_col, features=['year', 'month', 'day', 'da
  - prefix: Префикс for названий признаков (on умолчанию 'seasonal')
 
  Returns:
- pd.DataFrame: DataFrame with добавленными сезонными приsignми
+ pd.dataFrame: dataFrame with добавленными сезонными приsignми
 
  Raises:
- ValueError: Если date_col not существует in DataFrame
+ ValueError: Если date_col not существует in dataFrame
  ValueError: Если date_col not является datetime
  ValueError: Если features содержит неподдерживаемые признаки
  TypeError: Если parameters имеют неправильный тип
@@ -802,7 +802,7 @@ def create_seasonal_features(df, date_col, features=['year', 'month', 'day', 'da
  # Валидация входных данных
  if config['validation']:
  if date_col not in df.columns:
- raise ValueError(f"Column '{date_col}' not found in DataFrame")
+ raise ValueError(f"Column '{date_col}' not found in dataFrame")
 
  if not pd.api.types.is_datetime64_any_dtype(df[date_col]):
  raise ValueError(f"Column '{date_col}' must be datetime type")
@@ -814,14 +814,14 @@ def create_seasonal_features(df, date_col, features=['year', 'month', 'day', 'da
  if invalid_features:
  raise ValueError(f"Invalid features: {invalid_features}. Valid options: {valid_features}")
 
- # create копии DataFrame for безопасности
+ # create копии dataFrame for безопасности
  result_df = df.copy() if not config['memory_efficient'] else df
 
  # Конвертация in datetime если необходимо
  if not pd.api.types.is_datetime64_any_dtype(result_df[date_col]):
  result_df[date_col] = pd.to_datetime(result_df[date_col])
 
- # Конвертация часового пояса если указан
+ # Конвертация часового пояса if specified
  if timezone:
  result_df[date_col] = result_df[date_col].dt.tz_convert(timezone)
 
@@ -965,7 +965,7 @@ df = create_seasonal_features(
 
 ```mermaid
 graph TD
- A[Исходные данные] --> B{Тип статистических признаков}
+ A[Исходные data] --> B{Тип статистических признаков}
 
  B -->|Моменты распределения| C[Моменты распределения]
  B -->|Признаки изменений| D[Признаки изменений]
@@ -1103,7 +1103,7 @@ df = create_volatility_features(df, 'price', windows=[7, 14, 30])
 
 ```mermaid
 graph TD
- A[Ценовые данные] --> B{Тип технических indicators}
+ A[Ценовые data] --> B{Тип технических indicators}
 
  B -->|Трендовые| C[Трендовые индикаторы]
  B -->|Моментум| D[Моментум индикаторы]
@@ -1368,13 +1368,13 @@ def create_tfidf_features(df, text_col, max_features=1000):
  # Обучение and преобразование
  tfidf_matrix = tfidf.fit_transform(df[text_col].fillna(''))
 
- # create DataFrame with TF-IDF приsignми
- tfidf_df = pd.DataFrame(
+ # create dataFrame with TF-IDF приsignми
+ tfidf_df = pd.dataFrame(
  tfidf_matrix.toarray(),
  columns=[f'tfidf_{i}' for i in range(tfidf_matrix.shape[1])]
  )
 
- # Объединение with исходным DataFrame
+ # Объединение with исходным dataFrame
  df = pd.concat([df, tfidf_df], axis=1)
 
  return df
@@ -1391,7 +1391,7 @@ def create_word2vec_features(df, text_col, vector_size=100):
  from gensim.models import Word2Vec
 
  # Подготовка текста
- sentences = df[text_col].fillna('').str.split().tolist()
+ sentences = df[text_col].fillna('').str.split().toList()
 
  # Обучение Word2Vec модели
  model = Word2Vec(
@@ -1416,13 +1416,13 @@ def create_word2vec_features(df, text_col, vector_size=100):
  # Применение к каждому документу
  doc_vectors = df[text_col].fillna('').str.split().apply(get_document_vector)
 
- # create DataFrame with Word2Vec приsignми
- w2v_df = pd.DataFrame(
- doc_vectors.tolist(),
+ # create dataFrame with Word2Vec приsignми
+ w2v_df = pd.dataFrame(
+ doc_vectors.toList(),
  columns=[f'w2v_{i}' for i in range(vector_size)]
  )
 
- # Объединение with исходным DataFrame
+ # Объединение with исходным dataFrame
  df = pd.concat([df, w2v_df], axis=1)
 
  return df
@@ -1437,7 +1437,7 @@ df = create_word2vec_features(df, 'description', vector_size=100)
 
 ```mermaid
 graph TD
- A[Исходные данные] --> B{Метод автоматической генерации}
+ A[Исходные data] --> B{Метод автоматической генерации}
 
  B -->|Генетическое программирование| C[Генетическое программирование]
  B -->|Полиномиальные признаки| D[Полиномиальные признаки]
@@ -1519,7 +1519,7 @@ def genetic_feature_generation(df, target_col, generations=50, population_size=1
  def exp(x): return np.exp(np.clip(x, -10, 10))
 
  # create набора функций
- pset = base.PrimitiveSet("MAIN", 2)
+ pset = base.PrimitiveSet("main", 2)
  pset.addPrimitive(add, 2)
  pset.addPrimitive(sub, 2)
  pset.addPrimitive(mul, 2)
@@ -1530,13 +1530,13 @@ def genetic_feature_generation(df, target_col, generations=50, population_size=1
 
  # create классов
  creator.create("FitnessMax", base.Fitness, weights=(1.0,))
- creator.create("Individual", list, fitness=creator.FitnessMax)
+ creator.create("Individual", List, fitness=creator.FitnessMax)
 
  # create инструментов
  toolbox = base.Toolbox()
  toolbox.register("expr", tools.genHalfAndHalf, pset=pset, min_=1, max_=3)
  toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.expr)
- toolbox.register("population", tools.initRepeat, list, toolbox.individual)
+ toolbox.register("population", tools.initRepeat, List, toolbox.individual)
 
  # function оценки
  def evaluate(individual):
@@ -1569,13 +1569,13 @@ def genetic_feature_generation(df, target_col, generations=50, population_size=1
  # Эволюция
  for gen in range(generations):
  # Оценка
- fitnesses = list(map(toolbox.evaluate, population))
+ fitnesses = List(map(toolbox.evaluate, population))
  for ind, fit in zip(population, fitnesses):
  ind.fitness.values = fit
 
  # Селекция
  offspring = toolbox.select(population, len(population))
- offspring = list(map(toolbox.clone, offspring))
+ offspring = List(map(toolbox.clone, offspring))
 
  # Кроссовер
  for child1, child2 in zip(offspring[::2], offspring[1::2]):
@@ -1622,10 +1622,10 @@ def create_polynomial_features(df, feature_cols, degree=2, interaction_only=Fals
  # create названий признаков
  feature_names = poly.get_feature_names_out(feature_cols)
 
- # create DataFrame
- poly_df = pd.DataFrame(X_poly, columns=feature_names, index=df.index)
+ # create dataFrame
+ poly_df = pd.dataFrame(X_poly, columns=feature_names, index=df.index)
 
- # Объединение with исходным DataFrame
+ # Объединение with исходным dataFrame
  df = pd.concat([df, poly_df], axis=1)
 
  return df
@@ -1794,8 +1794,8 @@ def evaluate_multicollinearity(df, threshold=0.8):
 
  return {
  'high_correlation_pairs': high_corr_pairs,
- 'low_variance_features': X.columns[~selector.get_support()].tolist(),
- 'selected_features': X.columns[selector.get_support()].tolist()
+ 'low_variance_features': X.columns[~selector.get_support()].toList(),
+ 'selected_features': X.columns[selector.get_support()].toList()
  }
 
 # example использования
@@ -1824,7 +1824,7 @@ def evaluate_feature_importance(df, target_col, n_features=20):
  model.fit(X_train, y_train)
 
  # Важность признаков
- feature_importance = pd.DataFrame({
+ feature_importance = pd.dataFrame({
  'feature': X.columns,
  'importance': model.feature_importances_
  }).sort_values('importance', ascending=False)
@@ -1857,7 +1857,7 @@ def evaluate_feature_stability(df, target_col, n_splits=5):
  # K-fold кросс-валидация
  kf = KFold(n_splits=n_splits, shuffle=True, random_state=42)
 
- # Список for хранения важности признаков
+ # List for хранения важности признаков
  feature_importances = []
 
  for train_idx, val_idx in kf.split(X):
@@ -1875,8 +1875,8 @@ def evaluate_feature_stability(df, target_col, n_splits=5):
  feature_importances = np.array(feature_importances)
  stability = np.std(feature_importances, axis=0)
 
- # create DataFrame
- stability_df = pd.DataFrame({
+ # create dataFrame
+ stability_df = pd.dataFrame({
  'feature': X.columns,
  'stability': stability,
  'mean_importance': np.mean(feature_importances, axis=0)
@@ -2035,7 +2035,7 @@ def automatic_feature_selection(df, target_col, method='mutual_info', k=20):
  X_selected = selector.fit_transform(X, y)
 
  # Получение выбранных признаков
- selected_features = X.columns[selector.get_support()].tolist()
+ selected_features = X.columns[selector.get_support()].toList()
 
  return {
  'selected_features': selected_features,
@@ -2053,7 +2053,7 @@ selected_features = automatic_feature_selection(df, 'target', method='mutual_inf
 
 ```mermaid
 graph TD
- A[Исходные данные] --> B[Feature Generation Pipeline]
+ A[Исходные data] --> B[Feature Generation Pipeline]
 
  B --> C[Генераторы признаков]
  C --> D[Временные признаки]
@@ -2265,7 +2265,7 @@ validation_results = validate_features(df, 'target', feature_cols, validation_me
 | function | parameter | Значение on умолчанию | description | Диапазон/Влияние |
 |---------|----------|----------------------|----------|------------------|
 | **create_lag_features** | | | | |
-| | `lags` | [1, 2, 3, 7, 14, 30] | Список лагов for создания | 1-365 дней |
+| | `lags` | [1, 2, 3, 7, 14, 30] | List лагов for создания | 1-365 дней |
 | | `fill_method` | 'forward' | Метод заполнения пропусков | forward, backward, interpolate, zero |
 | | `include_original` | False | Включать исходную колонку | True, False |
 | | `lag_prefix` | 'lag' | Префикс for названий | str |
@@ -2298,11 +2298,11 @@ validation_results = validate_features(df, 'target', feature_cols, validation_me
 | | `cyclic_features` | True | Создавать циклические признаки | True, False |
 | | `timezone` | None | Часовой пояс | str (UTC, Europe/Moscow, etc.) |
 | | `business_hours` | False | Создавать признаки рабочих часов | True, False |
-| | `holidays` | None | Список праздничных дней | list of dates |
+| | `holidays` | None | List праздничных дней | List of dates |
 | | `config.cyclic_periods` | {'month': 12, 'dayofweek': 7, 'hour': 24, 'dayofyear': 365} | Периоды for циклических признаков | dict |
 | | `config.business_hours_start` | 9 | Начало рабочих часов | 0-23 |
 | | `config.business_hours_end` | 17 | Конец рабочих часов | 0-23 |
-| | `config.business_days` | [0, 1, 2, 3, 4] | Рабочие дни | list of int (0-6) |
+| | `config.business_days` | [0, 1, 2, 3, 4] | Рабочие дни | List of int (0-6) |
 | | `config.prefix` | 'seasonal' | Префикс for названий | str |
 | **create_moment_features** | | | | |
 | | `windows` | [7, 14, 30] | Окна for вычисления | 1-365 periods |
@@ -2323,10 +2323,10 @@ validation_results = validate_features(df, 'target', feature_cols, validation_me
 | | `windows` | [7, 14, 30] | Окна for волатильность indicators | 1-365 periods |
 | | `config.prefix` | 'vol_ind' | Префикс for названий | str |
 | **create_categorical_features** | | | | |
-| | `categorical_cols` | [] | Список категориальных колонок | list of str |
+| | `categorical_cols` | [] | List категориальных columns | List of str |
 | | `config.prefix` | 'cat' | Префикс for названий | str |
 | **create_hierarchical_features** | | | | |
-| | `hierarchical_cols` | [] | Список иерархических колонок | list of str |
+| | `hierarchical_cols` | [] | List иерархических columns | List of str |
 | | `config.prefix` | 'hier' | Префикс for названий | str |
 | **create_text_features** | | | | |
 | | `text_col` | '' | Название текстовой колонки | str |
@@ -2344,12 +2344,12 @@ validation_results = validate_features(df, 'target', feature_cols, validation_me
 | | `population_size` | 100 | Размер популяции | 50-1000 |
 | | `config.prefix` | 'genetic' | Префикс for названий | str |
 | **create_polynomial_features** | | | | |
-| | `feature_cols` | [] | Список признаков for полиномиальных | list of str |
+| | `feature_cols` | [] | List признаков for полиномиальных | List of str |
 | | `degree` | 2 | Степень полинома | 1-5 |
 | | `interaction_only` | False | Только взаимодействия | True, False |
 | | `config.prefix` | 'poly' | Префикс for названий | str |
 | **create_interaction_features** | | | | |
-| | `feature_cols` | [] | Список признаков for взаимодействий | list of str |
+| | `feature_cols` | [] | List признаков for взаимодействий | List of str |
 | | `max_interactions` | 10 | Максимальное количество взаимодействий | 2-50 |
 | | `config.prefix` | 'interaction' | Префикс for названий | str |
 
@@ -2388,7 +2388,7 @@ Feature Generation - это основа успешного машинного �
 
 ### Ключевые принципы
 
-1. **Понимание данных** - знайте, with чем работаете
+1. **Понимание данных** - знайте, with чем Workingете
 2. **Доменные знания** - Use экспертизу in предметной области
 3. **Автоматизация** - автоматизируйте рутинные процессы
 4. **Валидация** - всегда проверяйте качество признаков
@@ -2399,6 +2399,6 @@ Feature Generation - это основа успешного машинного �
 После освоения генерации признаков переходите к:
 
 - [Методикам бэктестинга](./27_backtesting_methods.md)
-- [Walk-forward анализу](./28_walk_forward_analysis.md)
+- [Walk-forward анализу](./28_walk_forward_Analysis.md)
 - [Monte Carlo симуляциям](./29_monte_carlo_simulations.md)
-- [Управлению портфолио](./30_portfolio_management.md)
+- [Управлению Portfolio](./30_Portfolio_Management.md)

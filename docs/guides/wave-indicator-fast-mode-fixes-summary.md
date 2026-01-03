@@ -9,7 +9,7 @@
 
 **fix**:
 ```python
-# Добавлена поддержка обеих колонок
+# Добавлена поддержка обеих columns
 signal_col = None
 if '_signal' in display_df.columns:
  signal_col = '_signal'
@@ -30,7 +30,7 @@ elif 'Direction' in display_df.columns:
 # Add main wave line (black) for all valid data points
 if valid_data_mask.any():
  wave_data = display_df[valid_data_mask]
- wave_source = ColumnDataSource(wave_data)
+ wave_source = ColumndataSource(wave_data)
  indicator_fig.line(
  'index', plot_wave_col,
  source=wave_source,
@@ -55,7 +55,7 @@ if valid_data_mask.any():
 3. **Четкая легенда**: Все линии правильно подписаны in легенде
 
 ### Технические улучшения:
-1. **Гибкость колонок**: Поддержка как `_signal` так and `Direction` колонок
+1. **Гибкость columns**: Поддержка как `_signal` так and `Direction` columns
 2. **Обработка ошибок**: Graceful handling отсутствующих данных
 3. **Производительность**: Оптимизированное отображение только валидных данных
 
@@ -63,7 +63,7 @@ if valid_data_mask.any():
 
 ### Созданы тесты:
 - ✅ `test_wave_indicator_fast_mode_basic` - базовая функциональность
-- ✅ `test_wave_indicator_fast_mode_columns` - поддержка разных названий колонок
+- ✅ `test_wave_indicator_fast_mode_columns` - поддержка разных названий columns
 - ✅ `test_wave_indicator_fast_mode_signals` - отображение сигналов
 - ✅ `test_wave_indicator_fast_mode_hover_tool` - hover tooltips
 - ✅ `test_wave_indicator_fast_mode_empty_data` - обработка пустых данных
@@ -79,11 +79,11 @@ if valid_data_mask.any():
 📈 Total: 7
 ```
 
-## 🎯 Команды for тестирования
+## 🎯 team for тестирования
 
 ### Базовое тестирование:
 ```bash
-uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
+uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
 ```
 
 ### Launch тестов:
@@ -102,10 +102,10 @@ uv run pytest tests/plotting/test_wave_fast_mode.py -v
 
 ## 🎉 Заключение
 
-Wave indicator теперь полностью работает with `-d fast` режимом:
+Wave indicator теперь полностью Workingет with `-d fast` режимом:
 - ✅ Сигналы отображаются on верхнем графике
 - ✅ Линии индикатора отображаются with правильными цветами and стилями
-- ✅ Hover tooltips работают корректно
+- ✅ Hover tooltips Workingют корректно
 - ✅ Все тесты проходят успешно
 - ✅ Код покрыт тестами on 100%
 

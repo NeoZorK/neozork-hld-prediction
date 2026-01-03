@@ -28,9 +28,9 @@
 
 **Ключевые принципы продвинутого подхода:**
 - **Множественные модели**: Каждая модель решает свою специфическую задачу
-- **Ансамбли**: Объединение predictions for improving accuracy
+- **Ансамбли**: Объединение Predictions for improving accuracy
 - **Риск-менеджмент**: Защита from больших потерь and оптимизация доходности
-- **Микросервисы**: Масштабируемая and надежная архитектура
+- **МикроServices**: Масштабируемая and надежная архитектура
 - **Monitoring**: Отслеживание производительности in реальном времени
 
 Этот раздел показывает **продвинутый подход** к созданию робастной прибыльной ML-системы with использованием AutoML Gluon - from сложной архитектуры to полного продакшен деплоя with продвинутыми техниками.
@@ -41,10 +41,10 @@
 
 ### Многоуровневая система
 
-**Почему используем множественные модели?** Потому что каждая модель решает свою задачу лучше всего, а их комбинация дает более точные предсказания.
+**Почему Use множественные модели?** Потому что каждая модель решает свою задачу лучше всего, а их комбинация дает более точные предсказания.
 
 ```python
-class AdvancedMLSystem:
+class AdvancedMLsystem:
  """
  Продвинутая ML-система for DEX торговли - Comprehensive solution
 
@@ -55,11 +55,11 @@ class AdvancedMLSystem:
  - 'price_direction': модель предсказания price direction (основная)
  - 'volatility': модель предсказания волатильности (риск-менеджмент)
  - 'volume': модель предсказания объемов торгов (ликвидность)
- - 'sentiment': модель анализа настроений рынка (социальные факторы)
+ - 'sentiment': модель Analysis настроений рынка (социальные факторы)
  - 'macro': модель макроэкономических факторов (внешние события)
 
  ensemble : TabularPredictor or None
- Ансамблевая модель for объединения predictions:
+ Ансамблевая модель for объединения Predictions:
  - Объединяет предсказания всех специализированных моделей
  - Использует мета-обучение for оптимального взвешивания
  - Обеспечивает финальное решение системы
@@ -71,24 +71,24 @@ class AdvancedMLSystem:
  - Оптимизация портфеля
  - Расчет VaR and других метрик риска
 
- portfolio_manager : PortfolioManager
+ Portfolio_manager : PortfolioManager
  Система управления портфелем:
  - Оптимизация распределения активов
  - Ребалансировка портфеля
  - Анализ корреляций между активами
- - Управление ликвидностью
+ - Management ликвидностью
 
- monitoring : AdvancedMonitoring
+ Monitoring : AdvancedMonitoring
  Система Monitoringа and алертинга:
  - Отслеживание производительности моделей
- - Monitoring здоровья системы
+ - Monitoring health системы
  - Автоматические алерты
  - Автоматическое переобучение
 
  Notes:
  ------
  Архитектура системы:
- - Модульная структура with независимыми компонентами
+ - Модульная Structure with независимыми componentsи
  - Специализированные модели for разных аспектов торговли
  - Ансамблевое объединение for improving accuracy
  - Комплексный риск-менеджмент for защиты капитала
@@ -105,14 +105,14 @@ class AdvancedMLSystem:
  'macro': None # Макроэкономические факторы - внешние события
  }
 
- # Ансамбль for объединения predictions
+ # Ансамбль for объединения Predictions
  self.ensemble = None
  # Риск-менеджмент for защиты from потерь
  self.risk_manager = RiskManager()
- # Управление портфелем for оптимизации
- self.portfolio_manager = PortfolioManager()
+ # Management портфелем for оптимизации
+ self.Portfolio_manager = PortfolioManager()
  # Monitoring for отслеживания производительности
- self.monitoring = AdvancedMonitoring()
+ self.Monitoring = AdvancedMonitoring()
 
  def initialize_system(self):
  """
@@ -125,7 +125,7 @@ class AdvancedMLSystem:
  2. Инициализация риск-менеджера with параметрами
  3. configuration портфель-менеджера
  4. Launch системы Monitoringа
- 5. check здоровья всех компонентов
+ 5. health check всех компонентов
 
  Требования к инициализации:
  - Все модели должны быть предобучены
@@ -150,7 +150,7 @@ import ccxt
 from textblob import TextBlob
 import newsapi
 
-class AdvancedDataProcessor:
+class AdvanceddataProcessor:
  """
  Продвинутый процессор данных for сбора and обработки информации из множественных источников
 
@@ -171,7 +171,7 @@ class AdvancedDataProcessor:
  Notes:
  ------
  Источники данных:
- - Криптовалютные биржи: OHLCV данные, объемы, ликвидность
+ - Криптовалютные биржи: OHLCV data, объемы, ликвидность
  - Новостные API: анализ настроений рынка
  - Социальные сети: Twitter, Reddit, Telegram
  - Макроэкономические индикаторы: DXY, VIX, Fear & Greed Index
@@ -186,21 +186,21 @@ class AdvancedDataProcessor:
  }
  self.news_api = newsapi.NewsApiClient(api_key='YOUR_API_KEY')
 
- def collect_multi_source_data(self, symbols, timeframe='1h', days=365):
+ def collect_multi_source_data(self, symbols, Timeframe='1h', days=365):
  """
- Сбор данных из множественных источников for комплексного анализа
+ Сбор данных из множественных источников for комплексного Analysis
 
  Parameters:
  -----------
  symbols : List[str]
- Список символов криптовалют for analysis:
+ List символов криптовалют for Analysis:
  - 'BTC/USDT': Bitcoin к Tether
  - 'ETH/USDT': Ethereum к Tether
  - 'ADA/USDT': Cardano к Tether
  - 'SOL/USDT': Solana к Tether
  - Другие доступные пары on биржах
 
- timeframe : str, default='1h'
+ Timeframe : str, default='1h'
  Временной интервал for данных:
  - '1m': 1 minutesа (высокочастотная торговля)
  - '5m': 5 minutes (скальпинг)
@@ -219,11 +219,11 @@ class AdvancedDataProcessor:
  Returns:
  --------
  Dict[str, Dict[str, Any]]
- Структурированные данные on каждому символу:
- - {exchange}_price: OHLCV данные with биржи
+ Структурированные data on каждому символу:
+ - {exchange}_price: OHLCV data with биржи
  - technical: технические индикаторы
- - sentiment: данные о настроениях
- - macro: макроэкономические данные
+ - sentiment: data о настроениях
+ - macro: макроэкономические data
 
  Notes:
  ------
@@ -240,11 +240,11 @@ class AdvancedDataProcessor:
  for symbol in symbols:
  symbol_data = {}
 
- # 1. Ценовые данные with разных бирж
+ # 1. Ценовые data with разных бирж
  for exchange_name, exchange in self.exchanges.items():
  try:
- ohlcv = exchange.fetch_ohlcv(symbol, timeframe, limit=days*24)
- df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+ ohlcv = exchange.fetch_ohlcv(symbol, Timeframe, limit=days*24)
+ df = pd.dataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
  df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
  symbol_data[f'{exchange_name}_price'] = df
  except Exception as e:
@@ -256,7 +256,7 @@ class AdvancedDataProcessor:
  # 3. Новости and настроения
  symbol_data['sentiment'] = self._collect_sentiment_data(symbol)
 
- # 4. Макроэкономические данные
+ # 4. Макроэкономические data
  symbol_data['macro'] = self._collect_macro_data()
 
  all_data[symbol] = symbol_data
@@ -265,12 +265,12 @@ class AdvancedDataProcessor:
 
  def _calculate_advanced_indicators(self, price_data):
  """
- Расчет продвинутых технических indicators for комплексного анализа рынка
+ Расчет продвинутых технических indicators for комплексного Analysis рынка
 
  Parameters:
  -----------
- price_data : pd.DataFrame
- OHLCV данные with биржи:
+ price_data : pd.dataFrame
+ OHLCV data with биржи:
  - open: цена открытия
  - high: максимальная цена
  - low: минимальная цена
@@ -279,8 +279,8 @@ class AdvancedDataProcessor:
 
  Returns:
  --------
- pd.DataFrame
- Данные with добавленными техническими индикаторами:
+ pd.dataFrame
+ data with добавленными техническими индикаторами:
  - Базовые индикаторы: SMA, EMA
  - Осцилляторы: RSI, Stochastic, Williams %R
  - Трендовые: MACD, ADX, Aroon
@@ -386,7 +386,7 @@ class AdvancedDataProcessor:
  Parameters:
  -----------
  symbol : str
- Символ криптовалюты for analysis настроений:
+ Символ криптовалюты for Analysis настроений:
  - 'BTC/USDT': Bitcoin
  - 'ETH/USDT': Ethereum
  - 'ADA/USDT': Cardano
@@ -394,8 +394,8 @@ class AdvancedDataProcessor:
 
  Returns:
  --------
- pd.DataFrame
- Данные о настроениях рынка:
+ pd.dataFrame
+ data о настроениях рынка:
  - timestamp: время публикации
  - title: заголовок статьи/поста
  - sentiment: оценка тональности (-1 to 1)
@@ -417,7 +417,7 @@ class AdvancedDataProcessor:
 
  3. Анализ тональности:
  - TextBlob: базовая обработка естественного языка
- - VADER: специально for социальных сетей
+ - VADER: специально for социальных networks
  - BERT: продвинутый анализ контекста
 
  Шкала тональности:
@@ -442,7 +442,7 @@ class AdvancedDataProcessor:
 
  # Анализ тональности каждой статьи
  for article in news['articles']:
- # Объединение заголовка and описания for analysis
+ # Объединение заголовка and описания for Analysis
  text = article['title'] + ' ' + article['description']
 
  # Анализ тональности with помощью TextBlob
@@ -460,14 +460,14 @@ class AdvancedDataProcessor:
  except Exception as e:
  print(f"Ошибка получения новостей: {e}")
 
- # Сбор данных из социальных сетей (example with Twitter API)
+ # Сбор данных из социальных networks (example with Twitter API)
  # sentiment_data.extend(self._get_twitter_sentiment(symbol))
 
- return pd.DataFrame(sentiment_data)
+ return pd.dataFrame(sentiment_data)
 
  def _collect_macro_data(self):
  """
- Сбор макроэкономических данных for analysis внешних факторов влияния
+ Сбор макроэкономических данных for Analysis внешних факторов влияния
 
  Returns:
  --------
@@ -574,9 +574,9 @@ class AdvancedDataProcessor:
 - **Интерпретируемость**: Можно понять, какая модель влияет on решение
 
 ```python
-class MultiModelSystem:
+class MultiModelsystem:
  """
- Система множественных моделей for специализированного анализа разных аспектов торговли
+ Система множественных моделей for специализированного Analysis разных аспектов торговли
 
  Attributes:
  -----------
@@ -599,7 +599,7 @@ class MultiModelSystem:
  Принципы работы системы:
  1. Специализация: каждая модель решает свою задачу
  2. Независимость: модели обучаются отдельно
- 3. Ансамбль: объединение predictions for финального решения
+ 3. Ансамбль: объединение Predictions for финального решения
  4. Адаптивность: веса обновляются on basis производительности
  """
 
@@ -613,9 +613,9 @@ class MultiModelSystem:
 
  Parameters:
  -----------
- data : pd.DataFrame
- Подготовленные данные with техническими индикаторами:
- - OHLCV данные
+ data : pd.dataFrame
+ Подготовленные data with техническими индикаторами:
+ - OHLCV data
  - Технические индикаторы (50+)
  - Временной ряд with историческими данными
 
@@ -630,7 +630,7 @@ class MultiModelSystem:
  Notes:
  ------
  Процесс создания модели:
- 1. Подготовка признаков for analysis цены
+ 1. Подготовка признаков for Analysis цены
  2. create целевой переменной (направление цены)
  3. Обучение with высоким качеством
  4. Использование bagging for стабильности
@@ -649,7 +649,7 @@ class MultiModelSystem:
  - num_bag_sets: 2 (2 набора for стабильности)
  """
 
- # Подготовка признаков for analysis price direction
+ # Подготовка признаков for Analysis price direction
  features = self._prepare_price_features(data)
 
  # create целевой переменной: рост цены on следующий период
@@ -679,8 +679,8 @@ class MultiModelSystem:
 
  Parameters:
  -----------
- data : pd.DataFrame
- Подготовленные данные with техническими индикаторами
+ data : pd.dataFrame
+ Подготовленные data with техническими индикаторами
 
  Returns:
  --------
@@ -705,7 +705,7 @@ class MultiModelSystem:
  # Целевая переменная: увеличение волатильности on следующий период
  data['volatility_target'] = (data['volatility'].shift(-1) > data['volatility']).astype(int)
 
- # Подготовка признаков for analysis волатильности
+ # Подготовка признаков for Analysis волатильности
  features = self._prepare_volatility_features(data)
 
  # create модели for предсказания волатильности
@@ -730,8 +730,8 @@ class MultiModelSystem:
 
  Parameters:
  -----------
- data : pd.DataFrame
- Подготовленные данные with объемными индикаторами
+ data : pd.dataFrame
+ Подготовленные data with объемными индикаторами
 
  Returns:
  --------
@@ -753,7 +753,7 @@ class MultiModelSystem:
  # Целевая переменная: увеличение объема on следующий период
  data['volume_target'] = (data['volume'].shift(-1) > data['volume']).astype(int)
 
- # Подготовка признаков for analysis объемов
+ # Подготовка признаков for Analysis объемов
  features = self._prepare_volume_features(data)
 
  # create модели for предсказания объемов
@@ -770,15 +770,15 @@ class MultiModelSystem:
 
  def create_sentiment_model(self, data, sentiment_data):
  """
- Модель for analysis настроений рынка - учитывает социальные факторы
+ Модель for Analysis настроений рынка - учитывает социальные факторы
 
  Parameters:
  -----------
- data : pd.DataFrame
- Подготовленные данные with техническими индикаторами
+ data : pd.dataFrame
+ Подготовленные data with техническими индикаторами
 
- sentiment_data : pd.DataFrame
- Данные о настроениях рынка:
+ sentiment_data : pd.dataFrame
+ data о настроениях рынка:
  - Новости and их тональность
  - Социальные сети
  - Макроэкономические индикаторы
@@ -786,7 +786,7 @@ class MultiModelSystem:
  Returns:
  --------
  TabularPredictor
- Обученная модель for analysis настроений:
+ Обученная модель for Analysis настроений:
  - Бинарная классификация (позитивные/негативные настроения)
  - Учитывает внешние факторы влияния
  - Дополняет технический анализ
@@ -794,7 +794,7 @@ class MultiModelSystem:
  Notes:
  ------
  Применение модели настроений:
- - Фильтрация сигналов технического анализа
+ - Фильтрация сигналов технического Analysis
  - Учет внешних факторов влияния
  - Анализ новостного фона
  - Оценка рыночных настроений
@@ -803,13 +803,13 @@ class MultiModelSystem:
  # Объединение технических данных with data о настроениях
  merged_data = self._merge_sentiment_data(data, sentiment_data)
 
- # Подготовка признаков for analysis настроений
+ # Подготовка признаков for Analysis настроений
  features = self._prepare_sentiment_features(merged_data)
 
  # Целевая переменная: рост цены on следующий период
  target = (merged_data['close'].shift(-1) > merged_data['close']).astype(int)
 
- # create модели for analysis настроений
+ # create модели for Analysis настроений
  predictor = TabularPredictor(
  label='target', # Целевая переменная
  problem_type='binary', # Бинарная классификация
@@ -823,7 +823,7 @@ class MultiModelSystem:
 
  def create_ensemble_model(self, models, data):
  """
- create ансамблевой модели for объединения predictions всех специализированных моделей
+ create ансамблевой модели for объединения Predictions всех специализированных моделей
 
  Parameters:
  -----------
@@ -835,8 +835,8 @@ class MultiModelSystem:
  - 'sentiment': модель настроений
  - 'macro': модель макроэкономических факторов
 
- data : pd.DataFrame
- Данные for получения predictions from всех моделей
+ data : pd.dataFrame
+ data for получения Predictions from всех моделей
 
  Returns:
  --------
@@ -849,9 +849,9 @@ class MultiModelSystem:
  Notes:
  ------
  Процесс создания ансамбля:
- 1. Получение predictions from всех специализированных моделей
- 2. create мета-признаков из вероятностей predictions
- 3. Обучение мета-модели on комбинации predictions
+ 1. Получение Predictions from всех специализированных моделей
+ 2. create мета-признаков из вероятностей Predictions
+ 3. Обучение мета-модели on комбинации Predictions
  4. Оптимизация весов for максимальной точности
 
  Преимущества ансамбля:
@@ -864,10 +864,10 @@ class MultiModelSystem:
  - Voting: простое голосование
  - Weighted Voting: взвешенное голосование
  - Stacking: многоуровневое обучение
- - Blending: усреднение predictions
+ - Blending: усреднение Predictions
  """
 
- # Получение predictions from всех специализированных моделей
+ # Получение Predictions from всех специализированных моделей
  Predictions = {}
  probabilities = {}
 
@@ -876,12 +876,12 @@ class MultiModelSystem:
  # Подготовка признаков for конкретной модели
  features = self._prepare_features_for_model(name, data)
 
- # Получение predictions and вероятностей
+ # Получение Predictions and вероятностей
  Predictions[name] = model.predict(features)
  probabilities[name] = model.predict_proba(features)
 
- # create мета-признаков из вероятностей predictions
- meta_features = pd.DataFrame(probabilities)
+ # create мета-признаков из вероятностей Predictions
+ meta_features = pd.dataFrame(probabilities)
 
  # Целевая переменная for мета-модели
  meta_target = (data['close'].shift(-1) > data['close']).astype(int)
@@ -893,7 +893,7 @@ class MultiModelSystem:
  eval_metric='accuracy' # Метрика оценки
  )
 
- # Обучение мета-модели on комбинации predictions
+ # Обучение мета-модели on комбинации Predictions
  ensemble_predictor.fit(
  meta_features, # Мета-признаки (вероятности from всех моделей)
  time_limit=300, # Время обучения in секундах (5 minutes)
@@ -904,9 +904,9 @@ class MultiModelSystem:
 ```
 
 <img src="images/optimized/ensemble_model_visualization.png" alt="Ансамблевая модель" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 14.3: Ансамблевая модель - объединение predictions from множественных моделей for improving accuracy*
+*Рисунок 14.3: Ансамблевая модель - объединение Predictions from множественных моделей for improving accuracy*
 
-**Как работает ансамбль:**
+**Как Workingет ансамбль:**
 - **Взвешенное голосование**: Каждая модель имеет свой вес
 - **Мета-обучение**: Модель учится комбинировать предсказания
 - **Бутстрап агрегация**: Использование разных выборок данных
@@ -967,10 +967,10 @@ class AdvancedValidation:
  results = []
 
  for i in range(min_train_size, len(data) - window_size, step_size):
- # Обучающие данные
+ # Обучающие data
  train_data = data.iloc[i-min_train_size:i]
 
- # Тестовые данные
+ # Тестовые data
  test_data = data.iloc[i:i+window_size]
 
  # Переобучение моделей
@@ -1032,10 +1032,10 @@ class AdvancedValidation:
 
 ## Шаг 5: Продвинутый риск-менеджмент
 
-<img src="images/optimized/advanced_risk_management.png" alt="Продвинутый риск-менеджмент" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 14.4: Продвинутый риск-менеджмент - комплексная система управления рисками with множественными компонентами*
+<img src="images/optimized/advanced_risk_Management.png" alt="Продвинутый риск-менеджмент" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 14.4: Продвинутый риск-менеджмент - комплексная система управления рисками with множественными componentsи*
 
-**Компоненты риск-менеджмента:**
+**components риск-менеджмента:**
 - **Position Sizing**: Расчет размера позиции with учетом риска
 - **Stop Loss**: Динамические стоп-лоссы on basis волатильности
 - **Portfolio Optimization**: Оптимизация распределения активов
@@ -1082,7 +1082,7 @@ class AdvancedRiskManager:
 
  Notes:
  ------
- Компоненты риск-менеджмента:
+ components риск-менеджмента:
  1. Position Sizing: расчет оптимального размера позиций
  2. Stop Loss: динамические стоп-лоссы
  3. Take Profit: уровни фиксации прибыли
@@ -1181,7 +1181,7 @@ class AdvancedRiskManager:
 
  return stop_loss
 
- def portfolio_optimization(self, Predictions, correlations, expected_returns):
+ def Portfolio_optimization(self, Predictions, correlations, expected_returns):
  """Оптимизация портфеля"""
 
  from scipy.optimize import minimize
@@ -1197,9 +1197,9 @@ class AdvancedRiskManager:
 
  # Целевая function (максимизация Sharpe ratio)
  def objective(weights):
- portfolio_return = np.sum(weights * expected_returns)
- portfolio_volatility = np.sqrt(np.dot(weights.T, np.dot(correlations, weights)))
- return -(portfolio_return / portfolio_volatility) # Минимизация отрицательного Sharpe
+ Portfolio_return = np.sum(weights * expected_returns)
+ Portfolio_volatility = np.sqrt(np.dot(weights.T, np.dot(correlations, weights)))
+ return -(Portfolio_return / Portfolio_volatility) # Минимизация отрицательного Sharpe
 
  # Оптимизация
  result = minimize(
@@ -1215,8 +1215,8 @@ class AdvancedRiskManager:
 
 ## Шаг 6: Микросервисная архитектура
 
-<img src="images/optimized/microservices_architecture.png" alt="Микросервисная архитектура" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 14.5: Микросервисная архитектура ML-системы - независимые сервисы for масштабируемости and надежности*
+<img src="images/optimized/microServices_architecture.png" alt="Микросервисная архитектура" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 14.5: Микросервисная архитектура ML-системы - независимые Services for масштабируемости and надежности*
 
 **Преимущества микросервисов:**
 - **Независимое масштабирование**: Каждый сервис масштабируется отдельно
@@ -1238,30 +1238,30 @@ class APIGateway:
  """API Gateway for ML системы"""
 
  def __init__(self):
- self.services = {
+ self.Services = {
  'data_service': 'http://data-service:5001',
  'model_service': 'http://model-service:5002',
  'risk_service': 'http://risk-service:5003',
  'trading_service': 'http://trading-service:5004',
- 'monitoring_service': 'http://monitoring-service:5005'
+ 'Monitoring_service': 'http://Monitoring-service:5005'
  }
 
- def get_Prediction(self, symbol, timeframe):
+ def get_Prediction(self, symbol, Timeframe):
  """Получение предсказания"""
 
  # Получение данных
  data_response = requests.get(
- f"{self.services['data_service']}/data/{symbol}/{timeframe}"
+ f"{self.Services['data_service']}/data/{symbol}/{Timeframe}"
  )
 
  if data_response.status_code != 200:
- return {'error': 'Data service unavailable'}, 500
+ return {'error': 'data service unavailable'}, 500
 
  data = data_response.json()
 
  # Получение предсказания
  Prediction_response = requests.post(
- f"{self.services['model_service']}/predict",
+ f"{self.Services['model_service']}/predict",
  json=data
  )
 
@@ -1272,7 +1272,7 @@ class APIGateway:
 
  # Расчет риска
  risk_response = requests.post(
- f"{self.services['risk_service']}/calculate_risk",
+ f"{self.Services['risk_service']}/calculate_risk",
  json={**data, **Prediction}
  )
 
@@ -1288,13 +1288,13 @@ class APIGateway:
  }
 
 # data_service.py
-class DataService:
+class dataService:
  """Сервис данных"""
 
  def __init__(self):
- self.processor = AdvancedDataProcessor()
+ self.processor = AdvanceddataProcessor()
 
- def get_data(self, symbol, timeframe):
+ def get_data(self, symbol, Timeframe):
  """Получение and обработка данных"""
 
  # Сбор данных
@@ -1370,20 +1370,20 @@ class RiskService:
 ## Шаг 7: Kubernetes деплой
 
 <img src="images/optimized/kubernetes_deployment.png" alt="Kubernetes деплой" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 14.6: Kubernetes деплой ML-системы - автоматическое масштабирование, self-healing and управление ресурсами*
+*Рисунок 14.6: Kubernetes деплой ML-системы - автоматическое масштабирование, self-healing and Management ресурсами*
 
 **Преимущества Kubernetes:**
 - **Автоматическое масштабирование**: Система автоматически добавляет/убирает ресурсы
 - **Self-healing**: Автоматическое восстановление после отказов
 - **Rolling updates**: Обновления без простоя системы
 - **Resource limits**: Контроль использования ресурсов
-- **Health checks**: Автоматическая check здоровья сервисов
+- **health checks**: Автоматическая health check сервисов
 - **Load balancing**: Распределение нагрузки между инстансами
 
 ```yaml
 # kubernetes-deployment.yaml
 apiVersion: apps/v1
-kind: Deployment
+kind: deployment
 metadata:
  name: ml-system
 spec:
@@ -1405,7 +1405,7 @@ spec:
  - name: REDIS_URL
  value: "redis://redis-service:6379"
  - name: database_URL
- value: "postgresql://user:pass@postgres-service:5432/mldb"
+ value: "postgresql://User:pass@postgres-service:5432/mldb"
 
  - name: data-service
  image: ml-system/data-service:latest
@@ -1469,14 +1469,14 @@ spec:
 
 ## Шаг 8: Продвинутый Monitoring
 
-<img src="images/optimized/advanced_monitoring_dashboard.png" alt="Продвинутый Monitoring" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/advanced_Monitoring_dashboard.png" alt="Продвинутый Monitoring" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 14.7: Продвинутый Monitoring ML-системы - производительность моделей, метрики риска, доходность and статус системы*
 
-**Компоненты Monitoringа:**
+**components Monitoringа:**
 - **Производительность моделей**: Отслеживание точности каждой модели
 - **Метрики риска**: Monitoring VaR, максимальной просадки, коэффициента Шарпа
 - **Доходность**: Отслеживание кумулятивной доходности системы
-- **Статус системы**: check здоровья всех компонентов
+- **Статус системы**: health check всех компонентов
 - **Автоматические алерты**: Уведомления о проблемах
 - **Автоматическое переобучение**: update моделей при деградации
 
@@ -1511,10 +1511,10 @@ class AdvancedMonitoring:
  self.trigger_alert(f"Model {model_name} performance degraded")
 
  def monitor_system_health(self):
- """Monitoring здоровья системы"""
+ """Monitoring health системы"""
 
  # check доступности сервисов
- for service_name, service_url in self.services.items():
+ for service_name, service_url in self.Services.items():
  try:
  response = requests.get(f"{service_url}/health", timeout=5)
  if response.status_code != 200:
@@ -1562,14 +1562,14 @@ class AdvancedMonitoring:
 
 ```python
 # main_system.py
-class AdvancedMLSystem:
+class AdvancedMLsystem:
  """Полная продвинутая ML система"""
 
  def __init__(self):
- self.data_processor = AdvancedDataProcessor()
- self.model_system = MultiModelSystem()
+ self.data_processor = AdvanceddataProcessor()
+ self.model_system = MultiModelsystem()
  self.risk_manager = AdvancedRiskManager()
- self.monitoring = AdvancedMonitoring()
+ self.Monitoring = AdvancedMonitoring()
  self.api_gateway = APIGateway()
 
  def run_production_system(self):
@@ -1580,7 +1580,7 @@ class AdvancedMLSystem:
  # 1. Сбор данных
  data = self.data_processor.collect_multi_source_data(['BTC-USD', 'ETH-USD'])
 
- # 2. Получение predictions
+ # 2. Получение Predictions
  Predictions = self.model_system.get_Predictions(data)
 
  # 3. Расчет рисков
@@ -1591,20 +1591,20 @@ class AdvancedMLSystem:
  trade_results = self.execute_trades(Predictions, risk_assessment)
 
  # 5. Monitoring
- self.monitoring.monitor_trades(trade_results)
+ self.Monitoring.monitor_trades(trade_results)
 
  # 6. check необходимости переобучения
- if self.monitoring.check_retrain_required():
+ if self.Monitoring.check_retrain_required():
  self.retrain_models()
 
  time.sleep(300) # update каждые 5 minutes
 
  except Exception as e:
- self.monitoring.trigger_alert(f"System error: {e}")
+ self.Monitoring.trigger_alert(f"system error: {e}")
  time.sleep(60)
 
 if __name__ == '__main__':
- system = AdvancedMLSystem()
+ system = AdvancedMLsystem()
  system.run_production_system()
 ```
 
@@ -1636,4 +1636,4 @@ if __name__ == '__main__':
 
 ## Заключение
 
-Продвинутый example показывает, как создать высокопроизводительную ML-систему for trading on DEX blockchain with использованием современных практик and технологий. Хотя система сложная, она обеспечивает максимальную производительность and робастность.
+Продвинутый example показывает, как создать высокопроизводительную ML-system for trading on DEX blockchain with использованием современных практик and технологий. Хотя система сложная, она обеспечивает максимальную производительность and робастность.

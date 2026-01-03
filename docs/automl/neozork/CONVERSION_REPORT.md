@@ -8,14 +8,14 @@
 - Определены требования к конвертеру
 
 ### ✅ 2. create конвертера
-- Разработан класс `MarkdownToHTMLConverter` in `src/utils/md_to_html_converter.py`
+- РазWorkingн класс `MarkdownToHTMLConverter` in `src/utils/md_to_html_converter.py`
 - Реализована поддержка всех основных Markdown элементов
 - Добавлена подсветка синтаксиса for Python, Bash, JSON, YAML, SQL
 - Сохранен стиль and цветовая схема из примера
 
 ### ✅ 3. create HTML файлов
 - Конвертированы все 24 .md файла in HTML
-- Создан `index.html` with навигацией on всем разделам
+- Создан `index.html` with навигацией on all разделам
 - Применены стили in соответствии with `Python_Formatting_Example.html`
 
 ### ✅ 4. Тестирование
@@ -26,43 +26,43 @@
 ## Результаты
 
 ### 📊 Статистика конвертации
-- **Обработано файлов:** 24 .md файла
+- **ОбWorkingно файлов:** 24 .md файла
 - **Создано HTML файлов:** 25 (including index.html)
 - **Покрытие тестами:** 100%
 - **Время выполнения:** < 5 секунд
 
 ### 🎨 Особенности форматирования
-- **Современный дизайн** with Apple System Fonts
+- **Современный дизайн** with Apple system Fonts
 - **Адаптивная верстка** for всех устройств
 - **Темная тема** for блоков кода with подсветкой синтаксиса
 - **Цветовое выделение** for Python, Bash, JSON, YAML, SQL
 - **Интерактивные элементы** (hover эффекты, Navigation)
 
-### 📁 Структура файлов
+### 📁 Structure файлов
 ```
 docs/automl/neozork/html/
-├── index.html # Main page with навигацией
+├── index.html # main page with навигацией
 ├── 01_environment_setup.html # installation окружения
 ├── 02_robust_systems_fundamentals.html
 ├── 03_data_preparation.html
 ├── 04_feature_engineering.html
 ├── 05_model_training.html
 ├── 06_backtesting.html
-├── 07_walk_forward_analysis.html
+├── 07_walk_forward_Analysis.html
 ├── 08_monte_carlo_simulation.html
-├── 09_risk_management.html
+├── 09_risk_Management.html
 ├── 10_blockchain_deployment.html
-├── 11_wave2_analysis.html
-├── 12_schr_levels_analysis.html
-├── 13_schr_short3_analysis.html
+├── 11_wave2_Analysis.html
+├── 12_schr_levels_Analysis.html
+├── 13_schr_short3_Analysis.html
 ├── 14_advanced_practices.html
-├── 15_portfolio_optimization.html
-├── 16_metrics_analysis.html
+├── 15_Portfolio_optimization.html
+├── 16_metrics_Analysis.html
 ├── 17_examples.html
-├── 18_100_percent_plan.html
+├── 18_100_percent_Plan.html
 ├── 18_blockchain_system.html
 ├── 18_complete_system.html
-├── 18_monitoring_metrics.html
+├── 18_Monitoring_metrics.html
 ├── 18_README.html
 ├── 18_system_components.html
 ├── README.html
@@ -71,7 +71,7 @@ docs/automl/neozork/html/
 
 ## Технические детали
 
-### 🛠️ Используемые технологии
+### 🛠️ Useые технологии
 - **Python 3.12** - основной язык
 - **markdown 3.9** - конвертация Markdown
 - **Prism.js 1.29.0** - подсветка синтаксиса
@@ -104,8 +104,8 @@ cd /path/to/neozork-hld-Prediction
 uv run python scripts/convert_md_to_html.py
 ```
 
-### 🌐 Просмотр документации
-Откройте `docs/automl/neozork/html/index.html` in браузере for просмотра полной документации.
+### 🌐 View документации
+Откройте `docs/automl/neozork/html/index.html` in браузере for Viewа полной документации.
 
 ### 🔄 update
 При изменении .md файлов просто запустите конвертер заново - он автоматически обновит все HTML файлы.

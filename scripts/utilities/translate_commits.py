@@ -2,7 +2,7 @@
 """
 Script to translate all git commit messages from Russian to English.
 
-This script uses git filter-branch to rewrite commit history.
+This script Uses git filter-branch to rewrite commit history.
 WARNING: This will rewrite git history. Make sure you have a backup!
 """
 
@@ -17,15 +17,15 @@ from pathlib import Path
 TRANSLATIONS = {
  # Long specific phrases (must come first)
  r'\bобновление документации on полной системе заработка 100%\+ in месяц\b': 'update documentation on complete earning system 100%+ per month',
- r'\bобновление документации on системе Monitoringа and метрик for достижения 100% прибыли\b': 'update documentation on monitoring system and metrics for achieving 100% profit',
- r'\bобновление документации on метрикам and Monitoringу for достижения 100% прибыли\b': 'update documentation on metrics and monitoring for achieving 100% profit',
- r'\bобновление документации on детальным компонентам системы NeoZorK\b': 'update documentation on detailed components of NeoZorK system',
+ r'\bобновление документации on системе Monitoringа and метрик for достижения 100% прибыли\b': 'update documentation on Monitoring system and metrics for achieving 100% profit',
+ r'\bобновление документации on метрикам and Monitoringу for достижения 100% прибыли\b': 'update documentation on metrics and Monitoring for achieving 100% profit',
+ r'\bобновление документации on детальным components системы NeoZorK\b': 'update documentation on Detailed components of NeoZorK system',
  r'\bобновление документации on установке and настройке MLX and Jupyter for Apple Silicon\b': 'update documentation on installation and configuration of MLX and Jupyter for Apple Silicon',
  r'\bобновление документации on основам робастных систем in ML\b': 'update documentation on basics of robust systems in ML',
  r'\bобновление документации on подготовке данных and созданию признаков for ML-систем\b': 'update documentation on data preparation and feature creation for ML systems',
  r'\bобновление документации on инженерии признаков and обучению моделей for финансовых данных\b': 'update documentation on feature engineering and model training for financial data',
- r'\bобновление документации on Монте-Карло симуляции and управлению рисками\b': 'update documentation on Monte Carlo simulation and risk management',
- r'\bобновление документации on анализу SCHR Levels and SCHR SHORT3\b': 'update documentation on SCHR Levels and SCHR SHORT3 analysis',
+ r'\bобновление документации on Монте-Карло симуляции and управлению рисками\b': 'update documentation on Monte Carlo simulation and risk Management',
+ r'\bобновление документации on анализу SCHR Levels and SCHR SHORT3\b': 'update documentation on SCHR Levels and SCHR SHORT3 Analysis',
  r'\bобновление файлов \.dockerignore and \.gitignore for\b': 'update .dockerignore and .gitignore files for',
  r'\bобновление файлов \.dockerignore and \.gitignore for исключения and включения документации\b': 'update .dockerignore and .gitignore files for exclusion and inclusion of documentation',
  r'\bобновление файлов \.dockerignore and \.gitignore for декомпозиции\b': 'update .dockerignore and .gitignore files for decomposition',
@@ -86,11 +86,11 @@ TRANSLATIONS = {
  r'\bдекомпозиции\b': 'decomposition',
  r'\bэкспорта метаданных\b': 'metadata export',
  r'\bвизуализации результатов\b': 'visualization results',
- r'\bметрикам and Monitoringу\b': 'metrics and monitoring',
+ r'\bметрикам and Monitoringу\b': 'metrics and Monitoring',
  r'\bдля достижения 100% прибыли\b': 'for achieving 100% profit',
- r'\bанализу\b': 'analysis',
+ r'\bанализу\b': 'Analysis',
  r'\bМонте-Карло симуляции\b': 'Monte Carlo simulation',
- r'\bуправлению рисками\b': 'risk management',
+ r'\bуправлению рисками\b': 'risk Management',
  r'\bинженерии признаков\b': 'feature engineering',
  r'\bобучению моделей\b': 'model training',
  r'\bфинансовых данных\b': 'financial data',
@@ -99,22 +99,22 @@ TRANSLATIONS = {
  r'\bML-систем\b': 'ML systems',
  r'\bосновам робастных систем\b': 'basics of robust systems',
  r'\bустановке and настройке\b': 'installation and configuration',
- r'\bдетальным компонентам\b': 'detailed components',
- r'\bсистеме Monitoringа\b': 'monitoring system',
+ r'\bдетальным components\b': 'Detailed components',
+ r'\bсистеме Monitoringа\b': 'Monitoring system',
  r'\bполной системе заработка\b': 'complete earning system',
  r'\bблокчейн-системам\b': 'blockchain systems',
  r'\bавтоматическому переобучению\b': 'automatic retraining',
- r'\bконцепции and стратегии\b': 'concepts and strategies',
+ r'\bконцепции and стратегии\b': 'Concepts and strategies',
  r'\bвысокодоходных ML-систем\b': 'high-yield ML systems',
  r'\bторговых систем\b': 'trading systems',
  r'\bблокчейн-интеграции\b': 'blockchain integration',
- r'\bметрикам анализа производительности\b': 'performance analysis metrics',
+ r'\bметрикам Analysis производительности\b': 'performance Analysis metrics',
  r'\bпродвинутым практикам\b': 'advanced practices',
- r'\bоптимизации портфолио\b': 'portfolio optimization',
+ r'\bоптимизации Portfolio\b': 'Portfolio optimization',
  r'\bтеоретическим обоснованиям\b': 'theoretical foundations',
  r'\bуровней поддержки and сопротивления\b': 'support and resistance levels',
  r'\bмашинному обучению\b': 'machine learning',
- r'\bструктуре документации\b': 'documentation structure',
+ r'\bструктуре документации\b': 'documentation Structure',
  r'\bновых разделов\b': 'new sections',
  r'\bисключения and включения\b': 'exclusion and inclusion',
 
@@ -140,27 +140,27 @@ DIRECT_TRANSLATIONS = {
  'fix: update .dockerignore and .gitignore files for исключения and включения документации':
  'fix: update .dockerignore and .gitignore files for exclusion and inclusion of documentation',
  'feat: update documentation on концепции and стратегии высокодоходных ML systems':
- 'feat: update documentation on concepts and strategies of high-yield ML systems',
+ 'feat: update documentation on Concepts and strategies of high-yield ML systems',
  'feat: update documentation on примерам trading systems on basis WAVE2, SCHR Levels and blockchain integration':
  'feat: update documentation on examples of trading systems based on WAVE2, SCHR Levels and blockchain integration',
- 'feat: update documentation SCHR SHORT3 with addition of теоретических обоснований and анализа':
- 'feat: update documentation SCHR SHORT3 with addition of theoretical foundations and analysis',
- 'feat: update documentation SCHR Levels with addition of new sections on analysis уровней поддержки and сопротивления':
- 'feat: update documentation SCHR Levels with addition of new sections on analysis of support and resistance levels',
+ 'feat: update documentation SCHR SHORT3 with addition of теоретических обоснований and Analysis':
+ 'feat: update documentation SCHR SHORT3 with addition of theoretical foundations and Analysis',
+ 'feat: update documentation SCHR Levels with addition of new sections on Analysis уровней поддержки and сопротивления':
+ 'feat: update documentation SCHR Levels with addition of new sections on Analysis of support and resistance levels',
  'feat: update структуры документации NeoZorK with addition of new sections':
- 'feat: update NeoZorK documentation structure with addition of new sections',
- 'feat: добавлены новые разделы on data preparation, feature engineering, model training, бэктестингу and risk management':
- 'feat: add new sections on data preparation, feature engineering, model training, backtesting and risk management',
+ 'feat: update NeoZorK documentation Structure with addition of new sections',
+ 'feat: добавлены новые разделы on data preparation, feature engineering, model training, бэктестингу and risk Management':
+ 'feat: add new sections on data preparation, feature engineering, model training, backtesting and risk Management',
  'feat: update руководства NeoZorK with установкой окружения for macOS M1 Pro':
  'feat: update NeoZorK guide with installation of environment for macOS M1 Pro',
- 'feat: добавлен HTML-интерфейс for учебника':
+ 'feat: добавлен HTML-interface for учебника':
  'feat: add HTML interface for tutorial',
- 'feat: добавлена полная система заработка 100%+ in месяц - Создана детальная система with рабочим кодом from идеи to деплоя - Добавлены все компоненты: модели, индикаторы, блокчейн-integration - Реализована система автоматического переобучения - Добавлен полный Monitoring and система алертов - Создана documentation on Launchу and использованию - Система готова for тестирования on блокчейн testnet':
- 'feat: add complete earning system 100%+ per month - Created detailed system with working code from idea to deployment - Added all components: models, indicators, blockchain integration - Implemented automatic retraining system - Added full monitoring and alert system - Created documentation on launch and usage - System ready for testing on blockchain testnet',
+ 'feat: добавлена полная система заработка 100%+ in месяц - Создана детальная система with рабочим кодом from идеи to деплоя - Добавлены все components: модели, индикаторы, блокчейн-integration - Реализована система автоматического переобучения - Добавлен полный Monitoring and система алертов - Создана documentation on Launch and использованию - Система готова for тестирования on блокчейн testnet':
+ 'feat: add complete earning system 100%+ per month - Created Detailed system with Working code from idea to deployment - Added all components: models, indicators, blockchain integration - Implemented automatic retraining system - Added full Monitoring and alert system - Created documentation on Launch and usage - system ready for testing on blockchain testnet',
  'feat: создан полный учебник on созданию робастных прибыльных ML systems':
  'feat: create complete tutorial on creating robust profitable ML systems',
- 'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Простой example" and "Сложный example" showcasing the development and deployment of robust ML models using AutoML Gluon. - Included detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide users with practical insights into building and deploying ML models, catering to both novice and advanced users.':
- 'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Simple Example" and "Advanced Example" showcasing the development and deployment of robust ML models using AutoML Gluon. - Included detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide users with practical insights into building and deploying ML models, catering to both novice and advanced users.',
+ 'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Простой example" and "Сложный example" showcasing the development and deployment of robust ML models using AutoML Gluon. - included Detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide Users with practical insights into building and deploying ML models, catering to both novice and advanced Users.':
+ 'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Simple Example" and "Advanced Example" showcasing the development and deployment of robust ML models using AutoML Gluon. - included Detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide Users with practical insights into building and deploying ML models, catering to both novice and advanced Users.',
  'fix dual charts for -d fastest and MACD ок with scale date':
  'fix dual charts for -d fastest and MACD OK with scale date',
  'fix dual charts for -d fastest and MACD ок':
@@ -174,7 +174,7 @@ DIRECT_TRANSLATIONS = {
 
 def translate_commit_message(message: str) -> str:
  """Translate Russian commit message to English."""
- # Check for direct translation first
+ # check for direct translation first
  message_stripped = message.strip()
  if message_stripped in DIRECT_TRANSLATIONS:
  return DIRECT_TRANSLATIONS[message_stripped]
@@ -196,7 +196,7 @@ def translate_commit_message(message: str) -> str:
 
 
 def check_git_repo():
- """Check if we're in a git repository."""
+ """check if we're in a git repository."""
  result = subprocess.run(
  ['git', 'rev-parse', '--git-dir'],
  capture_output=True,
@@ -224,12 +224,12 @@ def get_all_commits():
 
 
 def has_russian_text(text: str) -> bool:
- """Check if text contains Cyrillic characters."""
+ """check if text contains Cyrillic characters."""
  return bool(re.search(r'[А-Яа-яЁё]', text))
 
 
 def main():
- """Main function to translate commit messages."""
+ """main function to translate commit messages."""
  parser = argparse.ArgumentParser(
  description='Translate git commit messages from Russian to English'
  )
@@ -260,14 +260,14 @@ def main():
  if translated != message:
  russian_commits.append((commit_hash, message, translated))
 
- print(f"Found {len(russian_commits)} commits with Russian text")
+ print(f"found {len(russian_commits)} commits with Russian text")
 
  if not russian_commits:
  print("No commits to translate.")
  return
 
- # Show first 10 translations as preview
- print("\nPreview of translations (first 10):")
+ # Show first 10 translations as preView
+ print("\nPreView of translations (first 10):")
  for i, (commit_hash, original, translated) in enumerate(russian_commits[:10], 1):
  print(f"\n{i}. {commit_hash[:8]}")
  print(f" Original: {original}")
@@ -322,7 +322,7 @@ def main():
 import os
 
 def translate_commit_message(message):
- # Check if we have a direct translation for this commit
+ # check if we have a direct translation for this commit
  commit_hash = os.environ.get('GIT_COMMIT', '')
  if commit_hash and commit_hash in COMMIT_TRANSLATIONS:
  return COMMIT_TRANSLATIONS[commit_hash]
@@ -363,7 +363,7 @@ if __name__ == '__main__':
  if result.returncode == 0:
  print("\n✓ Successfully translated all commit messages!")
  print("\nNext steps:")
- print("1. Review the changes: git log --oneline -20")
+ print("1. ReView the changes: git log --oneline -20")
  print("2. If everything looks good, force push: git push --force --all")
  print("3. If something went wrong, restore: git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch -r .' --prune-empty --tag-name-filter cat -- --all")
  else:

@@ -4,24 +4,24 @@
 
 ## Что такое WAVE2?
 
-**Теория:** WAVE2 представляет собой революционный подход к техническому анализу, основанный on теории волн Эллиотта and современных методах цифровой обработки сигналов. Это not просто индикатор, а комплексная система анализа рыночной структуры, которая выявляет скрытые паттерны and тренды.
+**Теория:** WAVE2 представляет собой революционный подход к техническому анализу, основанный on теории волн Эллиотта and современных методах цифровой обработки сигналов. Это not просто индикатор, а комплексная система Analysis рыночной структуры, которая выявляет скрытые паттерны and тренды.
 
 ### Определение and принцип работы
 
 **Теория:** WAVE2 основан on принципе двойной волновой системы, где каждая волна анализирует различные аспекты рыночной динамики. Это позволяет получать более точные and надежные сигналы on сравнению with традиционными индикаторами.
 
-**WAVE2** - это продвинутый трендовый индикатор, который использует двойную волновую систему for генерации торговых сигналов. in отличие from простых indicators, WAVE2 анализирует структуру рынка, а not просто сглаживает цену.
+**WAVE2** - это продвинутый трендовый индикатор, который использует двойную волновую system for генерации торговых сигналов. in отличие from простых indicators, WAVE2 анализирует структуру рынка, а not просто сглаживает цену.
 
 **Почему WAVE2 превосходит традиционные индикаторы:**
 - **Структурный анализ:** Анализирует структуру рынка, а not просто сглаживает цену
-- **Двойная волновая система:** Использует две волны for более точного анализа
+- **Двойная волновая система:** Использует две волны for более точного Analysis
 - **Адаптивность:** Адаптируется к различным рыночным условиям
-- **Точность:** Обеспечивает более высокую точность predictions
+- **Точность:** Обеспечивает более высокую точность Predictions
 
 **Плюсы:**
 - Высокая точность сигналов
 - Адаптивность к рыночным условиям
-- Структурный Market analysis
+- Структурный Market Analysis
 - Меньше ложных сигналов
 
 **Минусы:**
@@ -31,12 +31,12 @@
 
 ### Ключевые особенности WAVE2
 
-**Теория:** Ключевые особенности WAVE2 определяют его уникальные возможности for analysis финансовых рынков. Каждый parameter имеет теоретическое обоснование and практическое применение for различных рыночных условий.
+**Теория:** Ключевые особенности WAVE2 определяют его уникальные возможности for Analysis финансовых рынков. Каждый parameter имеет теоретическое обоснование and практическое применение for различных рыночных условий.
 
 **Почему эти особенности критичны:**
 - **Двойная волновая система:** Обеспечивает более точный анализ трендов
 - **Адаптивные parameters:** Позволяют настраивать индикатор под различные условия
-- **МультиTimeframeовый анализ:** Обеспечивает анализ on разных временных горизонтах
+- **МультиTimeframesый анализ:** Обеспечивает анализ on разных временных горизонтах
 - **Торговые правила:** Определяют логику генерации сигналов
 
 ```python
@@ -50,9 +50,9 @@ warnings.filterwarnings('ignore')
 
 class WAVE2Analyzer:
  """
- Анализатор WAVE2 индикатора for создания высокоточной ML-модели.
+ Analysisтор WAVE2 индикатора for создания высокоточной ML-модели.
 
- WAVE2 - это продвинутый трендовый индикатор, который использует двойную волновую систему
+ WAVE2 - это продвинутый трендовый индикатор, который использует двойную волновую system
  for генерации торговых сигналов. in отличие from простых indicators, WAVE2 анализирует
  структуру рынка, а not просто сглаживает цену.
 
@@ -63,9 +63,9 @@ class WAVE2Analyzer:
 
  def __init__(self):
  """
- Инициализация WAVE2 анализатора with оптимальными параметрами.
+ Инициализация WAVE2 Analysisтора with оптимальными параметрами.
 
- parameters подобраны on basis многолетнего анализа различных рыночных условий
+ parameters подобраны on basis многолетнего Analysis различных рыночных условий
  and обеспечивают максимальную эффективность for большинства торговых инструментов.
  """
  self.parameters = {
@@ -108,19 +108,19 @@ class WAVE2Analyzer:
  print("✓ parameters WAVE2 обновлены")
 ```
 
-### Структура данных WAVE2
+### Structure данных WAVE2
 
-**Теория:** Структура данных WAVE2 представляет собой комплексную систему признаков, которая обеспечивает полный анализ рыночной динамики. Каждый компонент имеет специфическое назначение and вносит вклад in общую точность predictions.
+**Теория:** Structure данных WAVE2 представляет собой комплексную system признаков, которая обеспечивает полный анализ рыночной динамики. Каждый компонент имеет специфическое назначение and вносит вклад in общую точность Predictions.
 
-**Почему структура данных критична:**
-- **Полнота анализа:** Обеспечивает всесторонний анализ рыночной ситуации
-- **Точность сигналов:** Каждый компонент повышает точность predictions
+**Почему Structure данных критична:**
+- **Полнота Analysis:** Обеспечивает всесторонний анализ рыночной ситуации
+- **Точность сигналов:** Каждый компонент повышает точность Predictions
 - **Гибкость:** Позволяет адаптироваться к различным рыночным условиям
 - **integration with ML:** Оптимизирована for машинного обучения
 
 ```python
 # Основные колонки WAVE2 in parquet файлах
-WAVE2_COLUMNS = {
+WAVE2_columns = {
  # Основные волны
  'wave1': 'Первая волна - основной трендовый компонент',
  'wave2': 'Вторая волна - дополнительный трендовый компонент',
@@ -139,12 +139,12 @@ WAVE2_COLUMNS = {
  '_Plot_Wave': 'Значение волны for отображения',
  '_Plot_FastLine': 'Значение быстрой линии for отображения',
 
- # Дополнительные компоненты
+ # Дополнительные components
  'ecore1': 'Первый экор (экспоненциальное ядро)',
  'ecore2': 'Второй экор (экспоненциальное ядро)'
 }
 
-class WAVE2DataLoader:
+class WAVE2dataLoader:
  """
  Загрузчик данных WAVE2 из различных источников.
 
@@ -163,22 +163,22 @@ class WAVE2DataLoader:
  self.required_columns = ['wave1', 'wave2', 'fastline1', 'fastline2',
  'Wave1', 'Wave2', '_signal']
 
- def load_wave2_data(self, symbol: str = "GBPUSD", timeframe: str = "H1") -> pd.DataFrame:
+ def load_wave2_data(self, symbol: str = "GBPUSD", Timeframe: str = "H1") -> pd.dataFrame:
  """
  Loading data WAVE2 из parquet файла.
 
  Args:
  symbol: Trading symbol (например, GBPUSD)
- timeframe: Timeframe (M1, M5, H1, H4, D1)
+ Timeframe: Timeframe (M1, M5, H1, H4, D1)
 
  Returns:
- DataFrame with data WAVE2
+ dataFrame with data WAVE2
  """
  try:
- file_path = f"{self.data_path}{symbol}_{timeframe}_WAVE2.parquet"
+ file_path = f"{self.data_path}{symbol}_{Timeframe}_WAVE2.parquet"
  data = pd.read_parquet(file_path)
 
- # check наличия необходимых колонок
+ # check наличия required columns
  missing_columns = [col for col in self.required_columns if col not in data.columns]
  if missing_columns:
  raise ValueError(f"Отсутствуют необходимые колонки: {missing_columns}")
@@ -188,15 +188,15 @@ class WAVE2DataLoader:
  data['datetime'] = pd.to_datetime(data['datetime'])
  data.set_index('datetime', inplace=True)
 
- print(f"✓ Загружены данные WAVE2: {symbol} {timeframe}, {len(data)} записей")
+ print(f"✓ Загружены data WAVE2: {symbol} {Timeframe}, {len(data)} записей")
  return data
 
- except FileNotFoundError:
- print(f"⚠️ Файл not найден: {file_path}")
- print("Создаем синтетические данные WAVE2 for демонстрации...")
+ except FileNotfoundError:
+ print(f"⚠️ File not found: {file_path}")
+ print("Создаем синтетические data WAVE2 for демонстрации...")
  return self._generate_synthetic_wave2_data()
 
- def _generate_synthetic_wave2_data(self, n_periods: int = 1000) -> pd.DataFrame:
+ def _generate_synthetic_wave2_data(self, n_periods: int = 1000) -> pd.dataFrame:
  """
  Генерация синтетических данных WAVE2 for демонстрации.
 
@@ -204,7 +204,7 @@ class WAVE2DataLoader:
  n_periods: Количество periods for генерации
 
  Returns:
- DataFrame with синтетическими данными WAVE2
+ dataFrame with синтетическими данными WAVE2
  """
  # Генерация базовых ценовых данных
  np.random.seed(42)
@@ -222,8 +222,8 @@ class WAVE2DataLoader:
  Wave2 = np.where(wave2 > fastline2, 1, np.where(wave2 < fastline2, -1, 0))
  _signal = np.where((Wave1 == Wave2) & (Wave1 != 0), Wave1, 0)
 
- # create DataFrame
- data = pd.DataFrame({
+ # create dataFrame
+ data = pd.dataFrame({
  'Close': prices,
  'wave1': wave1,
  'wave2': wave2,
@@ -241,21 +241,21 @@ class WAVE2DataLoader:
  # create временного индекса
  data.index = pd.date_range(start='2023-01-01', periods=n_periods, freq='H')
 
- print(f"✓ Созданы синтетические данные WAVE2: {len(data)} записей")
+ print(f"✓ Созданы синтетические data WAVE2: {len(data)} записей")
  return data
 
- def validate_wave2_data(self, data: pd.DataFrame) -> bool:
+ def validate_wave2_data(self, data: pd.dataFrame) -> bool:
  """
  Валидация данных WAVE2 on корректность.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
- True если данные корректны, False иначе
+ True если data корректны, False иначе
  """
  try:
- # check наличия колонок
+ # check наличия columns
  missing_columns = [col for col in self.required_columns if col not in data.columns]
  if missing_columns:
  print(f"❌ Отсутствуют колонки: {missing_columns}")
@@ -264,7 +264,7 @@ class WAVE2DataLoader:
  # check on NaN значения
  nan_columns = data[self.required_columns].isnull().any()
  if nan_columns.any():
- print(f"❌ Найдены NaN значения in колонках: {nan_columns[nan_columns].index.tolist()}")
+ print(f"❌ foundы NaN значения in колонках: {nan_columns[nan_columns].index.toList()}")
  return False
 
  # check диапазонов сигналов
@@ -275,7 +275,7 @@ class WAVE2DataLoader:
  print(f"❌ Некорректные значения in {col}: {unique_values}")
  return False
 
- print("✓ Данные WAVE2 валидированы успешно")
+ print("✓ data WAVE2 валидированы успешно")
  return True
 
  except Exception as e:
@@ -285,7 +285,7 @@ class WAVE2DataLoader:
 # example использования загрузчика данных
 def load_and_validate_wave2_data():
  """example загрузки and валидации данных WAVE2."""
- loader = WAVE2DataLoader()
+ loader = WAVE2dataLoader()
 
  # Loading data
  data = loader.load_wave2_data("GBPUSD", "H1")
@@ -294,12 +294,12 @@ def load_and_validate_wave2_data():
  is_valid = loader.validate_wave2_data(data)
 
  if is_valid:
- print(f"✓ Данные загружены and валидированы: {data.shape}")
- print(f"✓ Колонки: {list(data.columns)}")
+ print(f"✓ data загружены and валидированы: {data.shape}")
+ print(f"✓ Колонки: {List(data.columns)}")
  print(f"✓ Период: {data.index[0]} - {data.index[-1]}")
  return data
  else:
- print("❌ Данные not прошли валидацию")
+ print("❌ data not прошли валидацию")
  return None
 
 # Launch примера
@@ -307,15 +307,15 @@ if __name__ == "__main__":
  wave2_data = load_and_validate_wave2_data()
 ```
 
-## Анализ WAVE2 on Timeframeам
+## Анализ WAVE2 on Timeframeм
 
-**Теория:** Анализ WAVE2 on различным Timeframeам является критически важным for создания робастной торговой системы. Каждый Timeframe имеет свои особенности and требует специфических параметров for достижения максимальной эффективности.
+**Теория:** Анализ WAVE2 on различным Timeframeм является критически важным for создания робастной торговой системы. Каждый Timeframe имеет свои особенности and требует специфических параметров for достижения максимальной эффективности.
 
-**Почему мультиTimeframeовый анализ критичен:**
+**Почему мультиTimeframesый анализ критичен:**
 - **Различные рыночные циклы:** Каждый Timeframe отражает разные рыночные циклы
 - **Оптимизация параметров:** Разные parameters for разных временных горизонтов
-- **Снижение рисков:** Диверсификация on Timeframeам снижает общие риски
-- **Повышение точности:** Комбинирование сигналов with разных Timeframeов
+- **Снижение рисков:** Диверсификация on Timeframeм снижает общие риски
+- **Повышение точности:** Комбинирование сигналов with разных Timeframes
 
 ### M1 (1 minutesа) - Скальпинг
 
@@ -354,8 +354,8 @@ class WAVE2M1Analysis:
  """
 
  def __init__(self):
- """Инициализация анализатора M1 with оптимизированными параметрами."""
- self.timeframe = 'M1'
+ """Инициализация Analysisтора M1 with оптимизированными параметрами."""
+ self.Timeframe = 'M1'
  self.optimal_params = {
  'long1': 50, # Более короткий период for M1 - быстрый отклик
  'fast1': 5, # Очень быстрый отклик - минимальная задержка
@@ -365,7 +365,7 @@ class WAVE2M1Analysis:
  'trend2': 1 # Минимальный тренд - максимальная чувствительность
  }
 
- # Пороги for M1 анализа
+ # Пороги for M1 Analysis
  self.thresholds = {
  'min_volatility': 0.0001, # Минимальная волатильность for сигнала
  'max_spread': 0.0005, # Максимальный спред for trading
@@ -373,15 +373,15 @@ class WAVE2M1Analysis:
  'max_noise_level': 0.0002 # Максимальный уровень шума
  }
 
- def analyze_m1_features(self, data: pd.DataFrame) -> Dict:
+ def analyze_m1_features(self, data: pd.dataFrame) -> Dict:
  """
- Анализ признаков for M1 Timeframeа.
+ Анализ признаков for M1 Timeframe.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
- Словарь with приsignми for M1 анализа
+ Словарь with приsignми for M1 Analysis
  """
  features = {}
 
@@ -405,15 +405,15 @@ class WAVE2M1Analysis:
 
  return features
 
- def _detect_micro_trend(self, data: pd.DataFrame) -> Dict:
+ def _detect_micro_trend(self, data: pd.dataFrame) -> Dict:
  """
- Детекция микро-трендов for M1 анализа.
+ Детекция микро-трендов for M1 Analysis.
 
  Микро-тренды представляют собой краткосрочные движения цены,
  которые могут быть использованы for скальпинга.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
  Словарь with информацией о микро-трендах
@@ -450,15 +450,15 @@ class WAVE2M1Analysis:
  )
  }
 
- def _detect_quick_reversal(self, data: pd.DataFrame) -> Dict:
+ def _detect_quick_reversal(self, data: pd.dataFrame) -> Dict:
  """
- Детекция быстрых разворотов for M1 анализа.
+ Детекция быстрых разворотов for M1 Analysis.
 
  Быстрые развороты представляют собой мгновенные изменения направления
  движения цены, которые критически важны for скальпинга.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
  Словарь with информацией о быстрых разворотах
@@ -493,15 +493,15 @@ class WAVE2M1Analysis:
  )
  }
 
- def _detect_scalping_signal(self, data: pd.DataFrame) -> Dict:
+ def _detect_scalping_signal(self, data: pd.dataFrame) -> Dict:
  """
- Детекция скальпинг сигналов for M1 анализа.
+ Детекция скальпинг сигналов for M1 Analysis.
 
  Скальпинг сигналы представляют собой специальные паттерны,
  которые оптимальны for краткосрочной торговли.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
  Словарь with информацией о скальпинг сигналах
@@ -540,15 +540,15 @@ class WAVE2M1Analysis:
  )
  }
 
- def _calculate_micro_volatility(self, data: pd.DataFrame) -> Dict:
+ def _calculate_micro_volatility(self, data: pd.dataFrame) -> Dict:
  """
- Расчет микро-волатильности for M1 анализа.
+ Расчет микро-волатильности for M1 Analysis.
 
  Микро-волатильность представляет собой краткосрочные колебания цены,
  которые критически важны for управления рисками при скальпинге.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
  Словарь with информацией о микро-волатильности
@@ -587,15 +587,15 @@ class WAVE2M1Analysis:
  )
  }
 
- def _calculate_micro_momentum(self, data: pd.DataFrame) -> Dict:
+ def _calculate_micro_momentum(self, data: pd.dataFrame) -> Dict:
  """
- Расчет микро-моментума for M1 анализа.
+ Расчет микро-моментума for M1 Analysis.
 
  Микро-моментум представляет собой скорость изменения цены
  on краткосрочных интервалах.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
  Словарь with информацией о микро-моментуме
@@ -627,15 +627,15 @@ class WAVE2M1Analysis:
  'momentum_direction': np.where(combined_momentum > 0, 1, -1)
  }
 
- def _detect_fast_crossovers(self, data: pd.DataFrame) -> Dict:
+ def _detect_fast_crossovers(self, data: pd.dataFrame) -> Dict:
  """
- Детекция быстрых пересечений for M1 анализа.
+ Детекция быстрых пересечений for M1 Analysis.
 
  Быстрые пересечения представляют собой моменты, когда
  волны пересекают свои быстрые линии.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
  Словарь with информацией о быстрых пересечениях
@@ -667,21 +667,21 @@ class WAVE2M1Analysis:
  'any_crossover': wave1_cross_up | wave1_cross_down | wave2_cross_up | wave2_cross_down
  }
 
- def generate_m1_signals(self, data: pd.DataFrame) -> pd.DataFrame:
+ def generate_m1_signals(self, data: pd.dataFrame) -> pd.dataFrame:
  """
- Генерация торговых сигналов for M1 Timeframeа.
+ Генерация торговых сигналов for M1 Timeframe.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
- DataFrame with торговыми сигналами
+ dataFrame with торговыми сигналами
  """
  # Анализ признаков
  features = self.analyze_m1_features(data)
 
- # create DataFrame with сигналами
- signals = pd.DataFrame(index=data.index)
+ # create dataFrame with сигналами
+ signals = pd.dataFrame(index=data.index)
 
  # Базовые сигналы
  signals['micro_trend_signal'] = features['micro_trend']['combined_signal']
@@ -706,14 +706,14 @@ class WAVE2M1Analysis:
 
  return signals
 
-# example использования M1 анализа
-def run_m1_analysis_example():
- """example Launchа M1 анализа WAVE2."""
+# example использования M1 Analysis
+def run_m1_Analysis_example():
+ """example Launchа M1 Analysis WAVE2."""
  # Loading data
- loader = WAVE2DataLoader()
+ loader = WAVE2dataLoader()
  data = loader.load_wave2_data("GBPUSD", "M1")
 
- # create анализатора M1
+ # create Analysisтора M1
  m1_analyzer = WAVE2M1Analysis()
 
  # Генерация сигналов
@@ -728,7 +728,7 @@ def run_m1_analysis_example():
 
 # Launch примера
 if __name__ == "__main__":
- m1_signals = run_m1_analysis_example()
+ m1_signals = run_m1_Analysis_example()
 ```
 
 ### M5 (5 minutes) - Краткосрочная торговля
@@ -749,7 +749,7 @@ if __name__ == "__main__":
 
 **Минусы:**
 - Меньше торговых возможностей чем M1
-- Требует больше времени for analysis
+- Требует больше времени for Analysis
 - Потенциальные задержки in сигналах
 
 ```python
@@ -767,8 +767,8 @@ class WAVE2M5Analysis:
  """
 
  def __init__(self):
- """Инициализация анализатора M5 with оптимизированными параметрами."""
- self.timeframe = 'M5'
+ """Инициализация Analysisтора M5 with оптимизированными параметрами."""
+ self.Timeframe = 'M5'
  self.optimal_params = {
  'long1': 100, # Оптимальный for M5 - баланс скорости and стабильности
  'fast1': 10, # Быстрый отклик - достаточная чувствительность
@@ -778,7 +778,7 @@ class WAVE2M5Analysis:
  'trend2': 2 # Короткий тренд - оптимальная чувствительность
  }
 
- # Пороги for M5 анализа
+ # Пороги for M5 Analysis
  self.thresholds = {
  'min_volatility': 0.0005, # Минимальная волатильность for сигнала
  'max_spread': 0.001, # Максимальный спред for trading
@@ -787,15 +787,15 @@ class WAVE2M5Analysis:
  'min_pattern_strength': 0.001 # Минимальная сила паттерна
  }
 
- def analyze_m5_features(self, data: pd.DataFrame) -> Dict:
+ def analyze_m5_features(self, data: pd.dataFrame) -> Dict:
  """
- Анализ признаков for M5 Timeframeа.
+ Анализ признаков for M5 Timeframe.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
- Словарь with приsignми for M5 анализа
+ Словарь with приsignми for M5 Analysis
  """
  features = {}
 
@@ -819,15 +819,15 @@ class WAVE2M5Analysis:
 
  return features
 
- def _detect_short_pattern(self, data: pd.DataFrame) -> Dict:
+ def _detect_short_pattern(self, data: pd.dataFrame) -> Dict:
  """
- Детекция краткосрочных паттернов for M5 анализа.
+ Детекция краткосрочных паттернов for M5 Analysis.
 
  Краткосрочные паттерны представляют собой повторяющиеся структуры
  in движении цены, которые могут быть использованы for прогнозирования.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
  Словарь with информацией о краткосрочных паттернах
@@ -876,7 +876,7 @@ class WAVE2M5Analysis:
 
  for i in range(len(min_indices) - 1):
  if min_indices[i+1] - min_indices[i] <= window * 2:
- # Проверяем близость значений
+ # checking близость значений
  if abs(series[min_indices[i]] - series[min_indices[i+1]]) < series.std() * 0.1:
  double_bottom[min_indices[i]:min_indices[i+1]] = True
 
@@ -896,7 +896,7 @@ class WAVE2M5Analysis:
 
  for i in range(len(max_indices) - 1):
  if max_indices[i+1] - max_indices[i] <= window * 2:
- # Проверяем близость значений
+ # checking близость значений
  if abs(series[max_indices[i]] - series[max_indices[i+1]]) < series.std() * 0.1:
  double_top[max_indices[i]:max_indices[i+1]] = True
 
@@ -945,15 +945,15 @@ class WAVE2M5Analysis:
 
  return pennant
 
- def _detect_quick_impulse(self, data: pd.DataFrame) -> Dict:
+ def _detect_quick_impulse(self, data: pd.dataFrame) -> Dict:
  """
- Детекция быстрых импульсов for M5 анализа.
+ Детекция быстрых импульсов for M5 Analysis.
 
  Быстрые импульсы представляют собой резкие движения цены,
  которые могут быть использованы for краткосрочной торговли.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
  Словарь with информацией о быстрых импульсах
@@ -998,12 +998,12 @@ class WAVE2M5Analysis:
 
  return duration
 
- def _calculate_short_volatility(self, data: pd.DataFrame) -> Dict:
+ def _calculate_short_volatility(self, data: pd.dataFrame) -> Dict:
  """
- Расчет краткосрочной волатильности for M5 анализа.
+ Расчет краткосрочной волатильности for M5 Analysis.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
  Словарь with информацией о краткосрочной волатильности
@@ -1036,8 +1036,8 @@ class WAVE2M5Analysis:
  )
  }
 
- def _detect_short_trend(self, data: pd.DataFrame) -> Dict:
- """Детекция краткосрочных трендов for M5 анализа."""
+ def _detect_short_trend(self, data: pd.dataFrame) -> Dict:
+ """Детекция краткосрочных трендов for M5 Analysis."""
  wave1 = data['wave1']
  fastline1 = data['fastline1']
 
@@ -1072,8 +1072,8 @@ class WAVE2M5Analysis:
 
  return duration
 
- def _detect_impulse_movement(self, data: pd.DataFrame) -> Dict:
- """Детекция импульсных движений for M5 анализа."""
+ def _detect_impulse_movement(self, data: pd.dataFrame) -> Dict:
+ """Детекция импульсных движений for M5 Analysis."""
  wave1 = data['wave1']
 
  # Импульсное движение - резкое изменение
@@ -1091,8 +1091,8 @@ class WAVE2M5Analysis:
  'impulse_strength': impulse_strength
  }
 
- def _detect_consolidation(self, data: pd.DataFrame) -> Dict:
- """Детекция консолидации for M5 анализа."""
+ def _detect_consolidation(self, data: pd.dataFrame) -> Dict:
+ """Детекция консолидации for M5 Analysis."""
  wave1 = data['wave1']
 
  # Консолидация - низкая волатильность
@@ -1121,7 +1121,7 @@ class WAVE2M5Analysis:
 
  return duration
 
- def _calculate_pattern_strength(self, data: pd.DataFrame) -> pd.Series:
+ def _calculate_pattern_strength(self, data: pd.dataFrame) -> pd.Series:
  """Расчет силы паттернов."""
  wave1 = data['wave1']
  fastline1 = data['fastline1']
@@ -1131,7 +1131,7 @@ class WAVE2M5Analysis:
 
  return pattern_strength
 
- def _determine_pattern_direction(self, data: pd.DataFrame) -> pd.Series:
+ def _determine_pattern_direction(self, data: pd.dataFrame) -> pd.Series:
  """Определение направления паттернов."""
  wave1 = data['wave1']
  fastline1 = data['fastline1']
@@ -1141,21 +1141,21 @@ class WAVE2M5Analysis:
 
  return pattern_direction
 
- def generate_m5_signals(self, data: pd.DataFrame) -> pd.DataFrame:
+ def generate_m5_signals(self, data: pd.dataFrame) -> pd.dataFrame:
  """
- Генерация торговых сигналов for M5 Timeframeа.
+ Генерация торговых сигналов for M5 Timeframe.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
- DataFrame with торговыми сигналами
+ dataFrame with торговыми сигналами
  """
  # Анализ признаков
  features = self.analyze_m5_features(data)
 
- # create DataFrame with сигналами
- signals = pd.DataFrame(index=data.index)
+ # create dataFrame with сигналами
+ signals = pd.dataFrame(index=data.index)
 
  # Базовые сигналы
  signals['pattern_signal'] = features['short_pattern']['pattern_direction']
@@ -1180,14 +1180,14 @@ class WAVE2M5Analysis:
 
  return signals
 
-# example использования M5 анализа
-def run_m5_analysis_example():
- """example Launchа M5 анализа WAVE2."""
+# example использования M5 Analysis
+def run_m5_Analysis_example():
+ """example Launchа M5 Analysis WAVE2."""
  # Loading data
- loader = WAVE2DataLoader()
+ loader = WAVE2dataLoader()
  data = loader.load_wave2_data("GBPUSD", "M5")
 
- # create анализатора M5
+ # create Analysisтора M5
  m5_analyzer = WAVE2M5Analysis()
 
  # Генерация сигналов
@@ -1202,12 +1202,12 @@ def run_m5_analysis_example():
 
 # Launch примера
 if __name__ == "__main__":
- m5_signals = run_m5_analysis_example()
+ m5_signals = run_m5_Analysis_example()
 ```
 
 ### H1 (1 час) - Среднесрочная торговля
 
-**Теория:** H1 Timeframe предназначен for среднесрочной торговли and анализа основных трендов. Это критически важный Timeframe for понимания общей рыночной динамики and принятия стратегических решений.
+**Теория:** H1 Timeframe предназначен for среднесрочной торговли and Analysis основных трендов. Это критически важный Timeframe for понимания общей рыночной динамики and принятия стратегических решений.
 
 **Почему H1 анализ важен:**
 - **Анализ трендов:** Обеспечивает анализ основных рыночных трендов
@@ -1224,7 +1224,7 @@ if __name__ == "__main__":
 **Минусы:**
 - Меньше торговых возможностей
 - Медленная реакция on изменения
-- Требует больше времени for analysis
+- Требует больше времени for Analysis
 - Потенциальные упущенные возможности
 
 ```python
@@ -1232,18 +1232,18 @@ class WAVE2H1Analysis:
  """
  Анализ WAVE2 on часовом Timeframeе for среднесрочной торговли.
 
- H1 Timeframe предназначен for среднесрочной торговли and анализа основных трендов.
+ H1 Timeframe предназначен for среднесрочной торговли and Analysis основных трендов.
  Это критически важный Timeframe for понимания общей рыночной динамики and
  принятия стратегических торговых решений.
 
- Теория: H1 анализ основан on принципе анализа основных рыночных трендов,
+ Теория: H1 анализ основан on принципе Analysis основных рыночных трендов,
  что позволяет принимать стратегические решения with минимальным влиянием
  рыночного шума and максимальной стабильностью сигналов.
  """
 
  def __init__(self):
- """Инициализация анализатора H1 with оптимизированными параметрами."""
- self.timeframe = 'H1'
+ """Инициализация Analysisтора H1 with оптимизированными параметрами."""
+ self.Timeframe = 'H1'
  self.optimal_params = {
  'long1': 200, # Стандартный for H1 - стабильный анализ трендов
  'fast1': 20, # Средний отклик - баланс скорости and стабильности
@@ -1253,7 +1253,7 @@ class WAVE2H1Analysis:
  'trend2': 3 # Средний тренд - стабильное определение направления
  }
 
- # Пороги for H1 анализа
+ # Пороги for H1 Analysis
  self.thresholds = {
  'min_volatility': 0.001, # Минимальная волатильность for сигнала
  'max_spread': 0.002, # Максимальный спред for trading
@@ -1263,15 +1263,15 @@ class WAVE2H1Analysis:
  'max_trend_duration': 50 # Максимальная длительность тренда
  }
 
- def analyze_h1_features(self, data: pd.DataFrame) -> Dict:
+ def analyze_h1_features(self, data: pd.dataFrame) -> Dict:
  """
- Анализ признаков for H1 Timeframeа.
+ Анализ признаков for H1 Timeframe.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
- Словарь with приsignми for H1 анализа
+ Словарь with приsignми for H1 Analysis
  """
  features = {}
 
@@ -1295,15 +1295,15 @@ class WAVE2H1Analysis:
 
  return features
 
- def _detect_medium_trend(self, data: pd.DataFrame) -> Dict:
+ def _detect_medium_trend(self, data: pd.dataFrame) -> Dict:
  """
- Детекция среднесрочных трендов for H1 анализа.
+ Детекция среднесрочных трендов for H1 Analysis.
 
  Среднесрочные тренды представляют собой основные движения цены
  on часовом Timeframeе, которые критически важны for стратегических решений.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
  Словарь with информацией о среднесрочных трендах
@@ -1352,15 +1352,15 @@ class WAVE2H1Analysis:
  )
  }
 
- def _detect_trend_reversal(self, data: pd.DataFrame) -> Dict:
+ def _detect_trend_reversal(self, data: pd.dataFrame) -> Dict:
  """
- Детекция трендовых разворотов for H1 анализа.
+ Детекция трендовых разворотов for H1 Analysis.
 
  Трендовые развороты представляют собой критические моменты изменения
  направления основного тренда, которые критически важны for торговых решений.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
  Словарь with информацией о трендовых разворотах
@@ -1410,12 +1410,12 @@ class WAVE2H1Analysis:
  'reversal_direction': reversal_direction
  }
 
- def _calculate_medium_volatility(self, data: pd.DataFrame) -> Dict:
+ def _calculate_medium_volatility(self, data: pd.dataFrame) -> Dict:
  """
- Расчет среднесрочной волатильности for H1 анализа.
+ Расчет среднесрочной волатильности for H1 Analysis.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
  Словарь with информацией о среднесрочной волатильности
@@ -1457,15 +1457,15 @@ class WAVE2H1Analysis:
  )
  }
 
- def _detect_trend_patterns(self, data: pd.DataFrame) -> Dict:
+ def _detect_trend_patterns(self, data: pd.dataFrame) -> Dict:
  """
- Детекция трендовых паттернов for H1 анализа.
+ Детекция трендовых паттернов for H1 Analysis.
 
  Трендовые паттерны представляют собой повторяющиеся структуры
  in движении цены, которые характерны for среднесрочных трендов.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
  Словарь with информацией о трендовых паттернах
@@ -1564,12 +1564,12 @@ class WAVE2H1Analysis:
 
  return flag
 
- def _detect_support_resistance(self, data: pd.DataFrame) -> Dict:
+ def _detect_support_resistance(self, data: pd.dataFrame) -> Dict:
  """
- Детекция уровней поддержки and сопротивления for H1 анализа.
+ Детекция уровней поддержки and сопротивления for H1 Analysis.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
  Словарь with информацией об уровнях поддержки and сопротивления
@@ -1648,12 +1648,12 @@ class WAVE2H1Analysis:
  break_down = series < series[levels].min()
  return break_down
 
- def _detect_trend_channels(self, data: pd.DataFrame) -> Dict:
+ def _detect_trend_channels(self, data: pd.dataFrame) -> Dict:
  """
- Детекция трендовых каналов for H1 анализа.
+ Детекция трендовых каналов for H1 Analysis.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
  Словарь with информацией о трендовых каналах
@@ -1735,7 +1735,7 @@ class WAVE2H1Analysis:
 
  return duration
 
- def _calculate_pattern_strength(self, data: pd.DataFrame) -> pd.Series:
+ def _calculate_pattern_strength(self, data: pd.dataFrame) -> pd.Series:
  """Расчет силы паттернов."""
  wave1 = data['wave1']
  fastline1 = data['fastline1']
@@ -1745,7 +1745,7 @@ class WAVE2H1Analysis:
 
  return pattern_strength
 
- def _determine_pattern_direction(self, data: pd.DataFrame) -> pd.Series:
+ def _determine_pattern_direction(self, data: pd.dataFrame) -> pd.Series:
  """Определение направления паттернов."""
  wave1 = data['wave1']
  fastline1 = data['fastline1']
@@ -1755,21 +1755,21 @@ class WAVE2H1Analysis:
 
  return pattern_direction
 
- def generate_h1_signals(self, data: pd.DataFrame) -> pd.DataFrame:
+ def generate_h1_signals(self, data: pd.dataFrame) -> pd.dataFrame:
  """
- Генерация торговых сигналов for H1 Timeframeа.
+ Генерация торговых сигналов for H1 Timeframe.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
- DataFrame with торговыми сигналами
+ dataFrame with торговыми сигналами
  """
  # Анализ признаков
  features = self.analyze_h1_features(data)
 
- # create DataFrame with сигналами
- signals = pd.DataFrame(index=data.index)
+ # create dataFrame with сигналами
+ signals = pd.dataFrame(index=data.index)
 
  # Базовые сигналы
  signals['trend_signal'] = features['medium_trend']['combined_trend']
@@ -1794,14 +1794,14 @@ class WAVE2H1Analysis:
 
  return signals
 
-# example использования H1 анализа
-def run_h1_analysis_example():
- """example Launchа H1 анализа WAVE2."""
+# example использования H1 Analysis
+def run_h1_Analysis_example():
+ """example Launchа H1 Analysis WAVE2."""
  # Loading data
- loader = WAVE2DataLoader()
+ loader = WAVE2dataLoader()
  data = loader.load_wave2_data("GBPUSD", "H1")
 
- # create анализатора H1
+ # create Analysisтора H1
  h1_analyzer = WAVE2H1Analysis()
 
  # Генерация сигналов
@@ -1816,27 +1816,27 @@ def run_h1_analysis_example():
 
 # Launch примера
 if __name__ == "__main__":
- h1_signals = run_h1_analysis_example()
+ h1_signals = run_h1_Analysis_example()
 ```
 
 ## create признаков for ML
 
-**Теория:** create признаков for машинного обучения on basis WAVE2 является критически важным этапом for достижения высокой точности predictions. Качественные признаки определяют успех ML-модели.
+**Теория:** create признаков for машинного обучения on basis WAVE2 является критически важным этапом for достижения высокой точности Predictions. Качественные признаки определяют успех ML-модели.
 
 **Почему create признаков критично:**
 - **Качество данных:** Качественные признаки определяют качество модели
-- **Точность predictions:** Хорошие признаки повышают точность predictions
+- **Точность Predictions:** Хорошие признаки повышают точность Predictions
 - **Робастность:** Правильные признаки обеспечивают робастность модели
 - **Интерпретируемость:** Понятные признаки облегчают интерпретацию результатов
 
 ### 1. Базовые признаки WAVE2
 
-**Теория:** Базовые признаки WAVE2 представляют собой фундаментальные компоненты for analysis рыночной динамики. Они обеспечивают основу for более сложных признаков and являются основой for ML-модели.
+**Теория:** Базовые признаки WAVE2 представляют собой фундаментальные components for Analysis рыночной динамики. Они обеспечивают основу for более сложных признаков and являются основой for ML-модели.
 
 **Почему базовые признаки важны:**
 - **Фундаментальная основа:** Обеспечивают базовую информацию о рынке
 - **Простота интерпретации:** Легко понимаются and интерпретируются
-- **Стабильность:** Обеспечивают стабильную основу for analysis
+- **Стабильность:** Обеспечивают стабильную основу for Analysis
 - **Эффективность:** Минимальные вычислительные требования
 
 ```python
@@ -1872,22 +1872,22 @@ class WAVE2FeatureEngineer:
  'max_volatility': 0.1
  }
 
- def create_basic_features(self, data: pd.DataFrame) -> pd.DataFrame:
+ def create_basic_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
  create базовых признаков WAVE2.
 
- Базовые признаки представляют собой фундаментальные компоненты
- for analysis рыночной динамики on basis WAVE2.
+ Базовые признаки представляют собой фундаментальные components
+ for Analysis рыночной динамики on basis WAVE2.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
- DataFrame with базовыми приsignми
+ dataFrame with базовыми приsignми
  """
- features = pd.DataFrame(index=data.index)
+ features = pd.dataFrame(index=data.index)
 
- # 1. Основные волны - базовые компоненты WAVE2
+ # 1. Основные волны - базовые components WAVE2
  features['wave1'] = data['wave1']
  features['wave2'] = data['wave2']
  features['fastline1'] = data['fastline1']
@@ -1923,7 +1923,7 @@ class WAVE2FeatureEngineer:
 
  return features
 
- def create_lag_features(self, data: pd.DataFrame) -> pd.DataFrame:
+ def create_lag_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
  create лаговых признаков WAVE2.
 
@@ -1931,12 +1931,12 @@ class WAVE2FeatureEngineer:
  которые помогают модели учитывать временные dependencies.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
- DataFrame with лаговыми приsignми
+ dataFrame with лаговыми приsignми
  """
- features = pd.DataFrame(index=data.index)
+ features = pd.dataFrame(index=data.index)
 
  for lag in self.lag_periods:
  # Лаги основных волн
@@ -1961,7 +1961,7 @@ class WAVE2FeatureEngineer:
 
  return features
 
- def create_rolling_features(self, data: pd.DataFrame) -> pd.DataFrame:
+ def create_rolling_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
  create скользящих признаков WAVE2.
 
@@ -1969,12 +1969,12 @@ class WAVE2FeatureEngineer:
  за различные временные окна, которые помогают выявить тренды and паттерны.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
- DataFrame со скользящими приsignми
+ dataFrame со скользящими приsignми
  """
- features = pd.DataFrame(index=data.index)
+ features = pd.dataFrame(index=data.index)
 
  for window in self.rolling_windows:
  # Скользящие средние
@@ -2015,7 +2015,7 @@ class WAVE2FeatureEngineer:
 
  return features
 
- def create_technical_features(self, data: pd.DataFrame) -> pd.DataFrame:
+ def create_technical_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
  create технических признаков WAVE2.
 
@@ -2023,12 +2023,12 @@ class WAVE2FeatureEngineer:
  которые помогают анализировать рыночную динамику.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
- DataFrame with техническими приsignми
+ dataFrame with техническими приsignми
  """
- features = pd.DataFrame(index=data.index)
+ features = pd.dataFrame(index=data.index)
 
  # RSI for волн
  features['wave1_rsi_14'] = talib.RSI(data['wave1'].values, timeperiod=14)
@@ -2073,7 +2073,7 @@ class WAVE2FeatureEngineer:
 
  return features
 
- def create_advanced_features(self, data: pd.DataFrame) -> pd.DataFrame:
+ def create_advanced_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
  create продвинутых признаков WAVE2.
 
@@ -2081,12 +2081,12 @@ class WAVE2FeatureEngineer:
  базовых признаков, которые выявляют скрытые паттерны.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
- DataFrame with продвинутыми приsignми
+ dataFrame with продвинутыми приsignми
  """
- features = pd.DataFrame(index=data.index)
+ features = pd.dataFrame(index=data.index)
 
  # 1. Пересечения волн
  features['wave1_cross_fastline1'] = (data['wave1'] > data['fastline1']).astype(int)
@@ -2143,7 +2143,7 @@ class WAVE2FeatureEngineer:
 
  return features
 
- def create_temporal_features(self, data: pd.DataFrame) -> pd.DataFrame:
+ def create_temporal_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
  create временных признаков WAVE2.
 
@@ -2151,12 +2151,12 @@ class WAVE2FeatureEngineer:
  including циклы, сезонность and временные паттерны.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
- DataFrame with временными приsignми
+ dataFrame with временными приsignми
  """
- features = pd.DataFrame(index=data.index)
+ features = pd.dataFrame(index=data.index)
 
  # 1. Время with последнего сигнала
  features['time_since_signal'] = self._calculate_time_since_signal(data)
@@ -2183,7 +2183,7 @@ class WAVE2FeatureEngineer:
 
  return features
 
- def _calculate_time_since_signal(self, data: pd.DataFrame) -> pd.Series:
+ def _calculate_time_since_signal(self, data: pd.dataFrame) -> pd.Series:
  """Расчет времени with последнего сигнала."""
  signal_changes = (data['_signal'] != data['_signal'].shift(1))
  time_since = pd.Series(0, index=data.index)
@@ -2196,7 +2196,7 @@ class WAVE2FeatureEngineer:
 
  return time_since
 
- def _calculate_signal_frequency(self, data: pd.DataFrame) -> pd.Series:
+ def _calculate_signal_frequency(self, data: pd.dataFrame) -> pd.Series:
  """Расчет частоты сигналов."""
  window = 50
  signal_frequency = data['_signal'].rolling(window).apply(
@@ -2204,7 +2204,7 @@ class WAVE2FeatureEngineer:
  )
  return signal_frequency
 
- def _calculate_trend_duration(self, data: pd.DataFrame) -> pd.Series:
+ def _calculate_trend_duration(self, data: pd.dataFrame) -> pd.Series:
  """Расчет длительности тренда."""
  trend_changes = (data['Wave1'] != data['Wave1'].shift(1))
  trend_duration = pd.Series(0, index=data.index)
@@ -2219,7 +2219,7 @@ class WAVE2FeatureEngineer:
 
  return trend_duration
 
- def _detect_cyclical_pattern(self, data: pd.DataFrame) -> pd.Series:
+ def _detect_cyclical_pattern(self, data: pd.dataFrame) -> pd.Series:
  """Детекция циклических паттернов."""
  # Анализ автокорреляции
  wave1_autocorr = data['wave1'].rolling(20).apply(
@@ -2231,15 +2231,15 @@ class WAVE2FeatureEngineer:
 
  return cyclical_pattern
 
- def create_all_features(self, data: pd.DataFrame) -> pd.DataFrame:
+ def create_all_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
  create всех признаков WAVE2.
 
  Args:
- data: DataFrame with data WAVE2
+ data: dataFrame with data WAVE2
 
  Returns:
- DataFrame со всеми приsignми
+ dataFrame со allи приsignми
  """
  print("create базовых признаков...")
  basic_features = self.create_basic_features(data)
@@ -2269,7 +2269,7 @@ class WAVE2FeatureEngineer:
  temporal_features
  ], axis=1)
 
- # remove колонок with NaN значениями
+ # remove columns with NaN значениями
  all_features = all_features.dropna()
 
  print(f"✓ Создано {len(all_features.columns)} признаков")
@@ -2277,19 +2277,19 @@ class WAVE2FeatureEngineer:
 
  return all_features
 
- def select_best_features(self, X: pd.DataFrame, y: pd.Series, k: int = 50) -> pd.DataFrame:
+ def select_best_features(self, X: pd.dataFrame, y: pd.Series, k: int = 50) -> pd.dataFrame:
  """
  Выбор лучших признаков for ML модели.
 
  Args:
- X: DataFrame with приsignми
+ X: dataFrame with приsignми
  y: Series with целевой переменной
  k: Количество лучших признаков
 
  Returns:
- DataFrame with отобранными приsignми
+ dataFrame with отобранными приsignми
  """
- # remove колонок with бесконечными значениями
+ # remove columns with бесконечными значениями
  X_clean = X.replace([np.inf, -np.inf], np.nan).dropna()
 
  # Выбор лучших признаков
@@ -2297,17 +2297,17 @@ class WAVE2FeatureEngineer:
  X_selected = selector.fit_transform(X_clean, y[X_clean.index])
 
  # Получение названий отобранных признаков
- selected_features = X_clean.columns[selector.get_support()].tolist()
+ selected_features = X_clean.columns[selector.get_support()].toList()
 
  print(f"✓ Отобрано {len(selected_features)} лучших признаков")
 
- return pd.DataFrame(X_selected, columns=selected_features, index=X_clean.index)
+ return pd.dataFrame(X_selected, columns=selected_features, index=X_clean.index)
 
 # example использования инженера признаков
 def run_feature_engineering_example():
  """example создания признаков WAVE2."""
  # Loading data
- loader = WAVE2DataLoader()
+ loader = WAVE2dataLoader()
  data = loader.load_wave2_data("GBPUSD", "H1")
 
  # create инженера признаков
@@ -2338,12 +2338,12 @@ if __name__ == "__main__":
 
 **Почему продвинутые признаки критичны:**
 - **Выявление паттернов:** Обнаруживают скрытые паттерны in данных
-- **Повышение точности:** Значительно повышают точность predictions
+- **Повышение точности:** Значительно повышают точность Predictions
 - **Робастность:** Обеспечивают устойчивость к рыночному шуму
 - **Адаптивность:** Позволяют модели адаптироваться к изменениям рынка
 
 **Плюсы:**
-- Высокая точность predictions
+- Высокая точность Predictions
 - Выявление скрытых паттернов
 - Повышение робастности
 - Адаптивность к изменениям
@@ -2357,7 +2357,7 @@ if __name__ == "__main__":
 ```python
 def create_advanced_wave2_features(data):
  """create продвинутых признаков WAVE2"""
- features = pd.DataFrame(index=data.index)
+ features = pd.dataFrame(index=data.index)
 
  # 1. Пересечения волн
  features['wave1_cross_fastline1'] = (data['wave1'] > data['fastline1']).astype(int)
@@ -2398,7 +2398,7 @@ def create_advanced_wave2_features(data):
 **Теория:** Временные признаки WAVE2 учитывают временные аспекты рыночной динамики, including циклы, сезонность and временные паттерны. Они критически важны for понимания временной структуры рынка.
 
 **Почему временные признаки важны:**
-- **Временная структура:** Учитывают временные аспекты рынка
+- **Временная Structure:** Учитывают временные аспекты рынка
 - **Циклические паттерны:** Выявляют повторяющиеся паттерны
 - **Сезонность:** Учитывают сезонные эффекты
 - **Временные dependencies:** Анализируют dependencies во времени
@@ -2418,7 +2418,7 @@ def create_advanced_wave2_features(data):
 ```python
 def create_temporal_wave2_features(data):
  """create временных признаков WAVE2"""
- features = pd.DataFrame(index=data.index)
+ features = pd.dataFrame(index=data.index)
 
  # 1. Время with последнего сигнала
  features['time_since_signal'] = self._calculate_time_since_signal(data)
@@ -2493,7 +2493,7 @@ def create_price_direction_target(data, horizon=1):
 **Почему сила движения важна:**
 - **Интенсивность движения:** Учитывает силу движения цены
 - **Оптимизация стратегий:** Позволяет оптимизировать торговые стратегии
-- **Управление рисками:** Помогает in управлении рисками
+- **Management рисками:** Помогает in управлении рисками
 - **Повышение прибыльности:** Может повысить общую прибыльность
 
 **Плюсы:**
@@ -2533,7 +2533,7 @@ def create_movement_strength_target(data, horizon=1):
 **Теория:** Волатильность является критически важной характеристикой финансовых рынков, которая определяет уровень риска and потенциальную прибыльность. Анализ волатильности критичен for создания робастных торговых систем.
 
 **Почему волатильность важна:**
-- **Управление рисками:** Критически важно for управления рисками
+- **Management рисками:** Критически важно for управления рисками
 - **Оптимизация позиций:** Помогает оптимизировать размеры позиций
 - **Адаптация стратегий:** Позволяет адаптировать стратегии к рыночным условиям
 - **Prediction рисков:** Помогает предсказывать потенциальные риски
@@ -2572,12 +2572,12 @@ def create_volatility_target(data, horizon=1):
 
 ## ML-модели for WAVE2
 
-**Теория:** ML-модели for WAVE2 представляют собой комплексную систему машинного обучения, которая использует различные алгоритмы for analysis данных WAVE2 and генерации торговых сигналов. Это критически важно for создания высокоточных торговых систем.
+**Теория:** ML-модели for WAVE2 представляют собой комплексную system машинного обучения, которая использует различные алгоритмы for Analysis данных WAVE2 and генерации торговых сигналов. Это критически важно for создания высокоточных торговых систем.
 
 **Почему ML-модели критичны:**
-- **Высокая точность:** Обеспечивают высокую точность predictions
+- **Высокая точность:** Обеспечивают высокую точность Predictions
 - **Адаптивность:** Могут адаптироваться к изменениям рынка
-- **Автоматизация:** Автоматизируют процесс анализа and принятия решений
+- **Автоматизация:** Автоматизируют процесс Analysis and принятия решений
 - **Масштабируемость:** Могут обрабатывать большие объемы данных
 
 ### 1. Классификация сигналов
@@ -2607,7 +2607,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.metrics import classification_Report, confusion_matrix, accuracy_score
 from sklearn.preprocessing import StandardScaler
 import xgboost as xgb
 import lightgbm as lgb
@@ -2618,8 +2618,8 @@ class WAVE2Classifier:
  """
  Классификатор on basis WAVE2 for предсказания price direction.
 
- Этот класс предоставляет комплексную систему машинного обучения for
- анализа данных WAVE2 and генерации торговых сигналов with высокой точностью.
+ Этот класс предоставляет комплексную system машинного обучения for
+ Analysis данных WAVE2 and генерации торговых сигналов with высокой точностью.
 
  Теория: Классификация сигналов является основной задачей for торговых систем,
  где модель должна предсказать направление движения цены. WAVE2 предоставляет
@@ -2679,7 +2679,7 @@ class WAVE2Classifier:
 
  # create ансамбля
  self.ensemble = VotingClassifier(
- estimators=list(self.models.items()),
+ estimators=List(self.models.items()),
  voting='soft'
  )
 
@@ -2690,12 +2690,12 @@ class WAVE2Classifier:
  self.is_trained = False
  self.feature_importance = None
 
- def train(self, X: pd.DataFrame, y: pd.Series, test_size: float = 0.2) -> dict:
+ def train(self, X: pd.dataFrame, y: pd.Series, test_size: float = 0.2) -> dict:
  """
  Обучение классификатора WAVE2.
 
  Args:
- X: DataFrame with приsignми
+ X: dataFrame with приsignми
  y: Series with целевой переменной
  test_size: Размер тестовой выборки
 
@@ -2748,11 +2748,11 @@ class WAVE2Classifier:
 
  # Метрики производительности
  accuracy = accuracy_score(y_val, y_val_pred)
- report = classification_report(y_val, y_val_pred)
+ Report = classification_Report(y_val, y_val_pred)
  cm = confusion_matrix(y_val, y_val_pred)
 
  print(f"\nValidation Accuracy: {accuracy:.4f}")
- print(f"\nClassification Report:\n{report}")
+ print(f"\nClassification Report:\n{Report}")
  print(f"\nConfusion Matrix:\n{cm}")
 
  # Важность признаков (если доступна)
@@ -2766,17 +2766,17 @@ class WAVE2Classifier:
  'ensemble_score': ensemble_score,
  'cv_scores': cv_scores,
  'accuracy': accuracy,
- 'classification_report': report,
+ 'classification_Report': Report,
  'confusion_matrix': cm,
  'feature_importance': self.feature_importance
  }
 
- def predict(self, X: pd.DataFrame) -> np.ndarray:
+ def predict(self, X: pd.dataFrame) -> np.ndarray:
  """
  Prediction класса.
 
  Args:
- X: DataFrame with приsignми
+ X: dataFrame with приsignми
 
  Returns:
  Массив предсказанных классов
@@ -2786,12 +2786,12 @@ class WAVE2Classifier:
 
  return self.ensemble.predict(X)
 
- def predict_proba(self, X: pd.DataFrame) -> np.ndarray:
+ def predict_proba(self, X: pd.dataFrame) -> np.ndarray:
  """
  Prediction вероятностей классов.
 
  Args:
- X: DataFrame with приsignми
+ X: dataFrame with приsignми
 
  Returns:
  Массив вероятностей for каждого класса
@@ -2801,15 +2801,15 @@ class WAVE2Classifier:
 
  return self.ensemble.predict_proba(X)
 
- def get_feature_importance(self, feature_names: list = None) -> pd.DataFrame:
+ def get_feature_importance(self, feature_names: List = None) -> pd.dataFrame:
  """
  Получение важности признаков.
 
  Args:
- feature_names: Список названий признаков
+ feature_names: List названий признаков
 
  Returns:
- DataFrame with важностью признаков
+ dataFrame with важностью признаков
  """
  if self.feature_importance is None:
  print("Важность признаков недоступна for данной модели")
@@ -2818,19 +2818,19 @@ class WAVE2Classifier:
  if feature_names is None:
  feature_names = [f'feature_{i}' for i in range(len(self.feature_importance))]
 
- importance_df = pd.DataFrame({
+ importance_df = pd.dataFrame({
  'feature': feature_names,
  'importance': self.feature_importance
  }).sort_values('importance', ascending=False)
 
  return importance_df
 
- def optimize_hyperparameters(self, X: pd.DataFrame, y: pd.Series) -> dict:
+ def optimize_hyperparameters(self, X: pd.dataFrame, y: pd.Series) -> dict:
  """
  Оптимизация гиперпараметров for лучших моделей.
 
  Args:
- X: DataFrame with приsignми
+ X: dataFrame with приsignми
  y: Series with целевой переменной
 
  Returns:
@@ -2914,7 +2914,7 @@ class WAVE2Classifier:
 def run_classification_example():
  """example обучения and использования WAVE2 классификатора."""
  # Loading data
- loader = WAVE2DataLoader()
+ loader = WAVE2dataLoader()
  data = loader.load_wave2_data("GBPUSD", "H1")
 
  # create признаков
@@ -2955,13 +2955,13 @@ if __name__ == "__main__":
 
 **Почему регрессия важна:**
 - **Точность прогнозов:** Обеспечивает более точные прогнозы
-- **Управление позициями:** Помогает in точном управлении позициями
+- **Management позициями:** Помогает in точном управлении позициями
 - **Оптимизация стратегий:** Позволяет оптимизировать торговые стратегии
-- **Управление рисками:** Помогает in управлении рисками
+- **Management рисками:** Помогает in управлении рисками
 
 **Плюсы:**
 - Более точные прогнозы
-- Лучшее управление позициями
+- Лучшее Management позициями
 - Оптимизация стратегий
 - improve управления рисками
 
@@ -2983,7 +2983,7 @@ class WAVE2Regressor:
  'neural_network': MLPRegressor()
  }
  self.ensemble = VotingRegressor(
- estimators=list(self.models.items())
+ estimators=List(self.models.items())
  )
 
  def train(self, X, y):
@@ -3002,7 +3002,7 @@ class WAVE2Regressor:
 
 **Почему Deep Learning модели важны:**
 - **Сложные dependencies:** Могут выявлять сложные нелинейные dependencies
-- **Высокая точность:** Обеспечивают максимальную точность predictions
+- **Высокая точность:** Обеспечивают максимальную точность Predictions
 - **Адаптивность:** Могут адаптироваться к сложным рыночным условиям
 - **Масштабируемость:** Могут обрабатывать большие объемы данных
 
@@ -3121,13 +3121,13 @@ class WAVE2Backtester:
  использованием in реальной торговле.
  """
 
- def __init__(self, model, data: pd.DataFrame, initial_capital: float = 10000):
+ def __init__(self, model, data: pd.dataFrame, initial_capital: float = 10000):
  """
  Инициализация бэктестера WAVE2.
 
  Args:
  model: Обученная ML модель
- data: DataFrame with историческими данными
+ data: dataFrame with историческими данными
  initial_capital: Начальный капитал for тестирования
  """
  self.model = model
@@ -3196,14 +3196,14 @@ class WAVE2Backtester:
  risk_metrics = self._calculate_risk_metrics(trading_results)
 
  # Анализ сделок
- trade_analysis = self._analyze_trades(trading_results)
+ trade_Analysis = self._analyze_trades(trading_results)
 
  # Сохранение результатов
  self.results = {
  'trading_results': trading_results,
  'performance_metrics': performance_metrics,
  'risk_metrics': risk_metrics,
- 'trade_analysis': trade_analysis,
+ 'trade_Analysis': trade_Analysis,
  'Predictions': Predictions,
  'probabilities': probabilities,
  'test_period': (start_date, end_date),
@@ -3217,15 +3217,15 @@ class WAVE2Backtester:
 
  return self.results
 
- def _simulate_trading(self, data: pd.DataFrame, Predictions: np.ndarray,
+ def _simulate_trading(self, data: pd.dataFrame, Predictions: np.ndarray,
  probabilities: np.ndarray, transaction_cost: float) -> dict:
  """
- Симуляция торговли on basis predictions модели.
+ Симуляция торговли on basis Predictions модели.
 
  Args:
- data: Данные for тестирования
+ data: data for тестирования
  Predictions: Предсказания модели
- probabilities: Вероятности predictions
+ probabilities: Вероятности Predictions
  transaction_cost: Стоимость транзакций
 
  Returns:
@@ -3575,7 +3575,7 @@ class WAVE2Backtester:
 
  plt.show()
 
- def generate_report(self) -> str:
+ def generate_Report(self) -> str:
  """
  Генерация текстового Reportа о результатах бэктестинга.
 
@@ -3587,14 +3587,14 @@ class WAVE2Backtester:
 
  metrics = self.results['performance_metrics']
  risk_metrics = self.results['risk_metrics']
- trade_analysis = self.results['trade_analysis']
+ trade_Analysis = self.results['trade_Analysis']
 
- report = f"""
+ Report = f"""
 WAVE2 Backtesting Report
 ========================
 
 Test Period: {self.results['test_period'][0]} - {self.results['test_period'][1]}
-Data Points: {self.results['data_points']}
+data Points: {self.results['data_points']}
 
 PERFORMANCE METRICS
 -------------------
@@ -3604,11 +3604,11 @@ Volatility: {metrics['volatility']:.2%}
 Sharpe Ratio: {metrics['sharpe_ratio']:.2f}
 Max Drawdown: {metrics['max_drawdown']:.2%}
 
-TRADE ANALYSIS
+TRADE Analysis
 --------------
-Total Trades: {trade_analysis['total_trades']}
-Winning Trades: {trade_analysis['winning_trades']}
-Losing Trades: {trade_analysis['losing_trades']}
+Total Trades: {trade_Analysis['total_trades']}
+Winning Trades: {trade_Analysis['winning_trades']}
+Losing Trades: {trade_Analysis['losing_trades']}
 Win Rate: {metrics['win_rate']:.2%}
 Profit Factor: {metrics['profit_factor']:.2f}
 Average Win: {metrics['avg_win']:.2%}
@@ -3623,18 +3623,18 @@ Recovery Factor: {risk_metrics['recovery_factor']:.2f}
 
 TRADE DURATION
 --------------
-Average Trade Duration: {trade_analysis['avg_trade_duration']:.1f} hours
-Best Trade: {trade_analysis['best_trade']:.2%}
-Worst Trade: {trade_analysis['worst_trade']:.2%}
+Average Trade Duration: {trade_Analysis['avg_trade_duration']:.1f} hours
+Best Trade: {trade_Analysis['best_trade']:.2%}
+Worst Trade: {trade_Analysis['worst_trade']:.2%}
  """
 
- return report
+ return Report
 
 # example использования бэктестера
 def run_backtesting_example():
  """example Launchа бэктестинга WAVE2 стратегии."""
  # Loading data
- loader = WAVE2DataLoader()
+ loader = WAVE2dataLoader()
  data = loader.load_wave2_data("GBPUSD", "H1")
 
  # create and обучение модели
@@ -3657,7 +3657,7 @@ def run_backtesting_example():
 
  # Отображение результатов
  backtester.plot_results()
- print(backtester.generate_report())
+ print(backtester.generate_Report())
 
  return backtester, results
 
@@ -3674,7 +3674,7 @@ if __name__ == "__main__":
 - **Количественная оценка:** Обеспечивают количественную оценку производительности
 - **Сравнение стратегий:** Позволяют сравнивать различные стратегии
 - **Оптимизация:** Помогают in оптимизации параметров
-- **Управление рисками:** Критически важны for управления рисками
+- **Management рисками:** Критически важны for управления рисками
 
 **Плюсы:**
 - Количественная оценка
@@ -3745,7 +3745,7 @@ def calculate_performance_metrics(returns):
 **Почему генетический алгоритм важен:**
 - **Глобальная оптимизация:** Может найти глобальный оптимум
 - **Робастность:** Устойчив к локальным минимумам
-- **Гибкость:** Может работать with различными типами параметров
+- **Гибкость:** Может Workingть with различными типами параметров
 - **Эффективность:** Эффективен for сложных задач
 
 **Плюсы:**
@@ -3885,12 +3885,12 @@ class WAVE2BayesianOptimizer:
 **Почему продакшн деплой критичен:**
 - **Практическое применение:** Обеспечивает практическое применение системы
 - **Автоматизация:** Автоматизирует торговые процессы
-- **Масштабируемость:** Позволяет масштабировать систему
+- **Масштабируемость:** Позволяет масштабировать system
 - **Monitoring:** Обеспечивает Monitoring производительности
 
 ### 1. API for WAVE2 модели
 
-**Теория:** API for WAVE2 модели обеспечивает программный интерфейс for взаимодействия with моделью, что критически важно for интеграции with торговыми системами and автоматизации процессов.
+**Теория:** API for WAVE2 модели обеспечивает программный interface for взаимодействия with моделью, что критически важно for интеграции with торговыми системами and автоматизации процессов.
 
 **Почему API важен:**
 - **integration:** Обеспечивает интеграцию with торговыми системами
@@ -3973,7 +3973,7 @@ async def predict(request: PredictionRequest):
 - **Изоляция:** Обеспечивает изоляцию модели
 - **Портабельность:** Позволяет легко переносить модель
 - **Масштабируемость:** Упрощает масштабирование
-- **Управление:** Упрощает управление зависимостями
+- **Management:** Упрощает Management зависимостями
 
 **Плюсы:**
 - Изоляция модели
@@ -3992,7 +3992,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Installation зависимостей
+# installation зависимостей
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
@@ -4016,7 +4016,7 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 - **Стабильность:** Обеспечивает стабильность системы
 - **Быстрое выявление проблем:** Позволяет быстро выявлять проблемы
 - **Оптимизация:** Помогает in оптимизации производительности
-- **Управление рисками:** Критически важно for управления рисками
+- **Management рисками:** Критически важно for управления рисками
 
 **Плюсы:**
 - Обеспечение стабильности
@@ -4078,25 +4078,25 @@ class WAVE2Monitor:
 
 ## Следующие шаги
 
-После анализа WAVE2 переходите к:
-- **[12_schr_levels_analysis.md](12_schr_levels_analysis.md)** - Анализ SCHR Levels
-- **[13_schr_short3_analysis.md](13_schr_short3_analysis.md)** - Анализ SCHR SHORT3
+После Analysis WAVE2 переходите к:
+- **[12_schr_levels_Analysis.md](12_schr_levels_Analysis.md)** - Анализ SCHR Levels
+- **[13_schr_short3_Analysis.md](13_schr_short3_Analysis.md)** - Анализ SCHR SHORT3
 
 ## Ключевые выводы
 
-**Теория:** Ключевые выводы суммируют наиболее важные аспекты анализа WAVE2, которые критически важны for создания прибыльной and робастной торговой системы.
+**Теория:** Ключевые выводы суммируют наиболее важные аспекты Analysis WAVE2, которые критически важны for создания прибыльной and робастной торговой системы.
 
-1. **WAVE2 - мощный индикатор for analysis трендов**
+1. **WAVE2 - мощный индикатор for Analysis трендов**
  - **Теория:** WAVE2 представляет собой революционный подход к техническому анализу
- - **Почему важно:** Обеспечивает высокую точность анализа трендов
+ - **Почему важно:** Обеспечивает высокую точность Analysis трендов
  - **Плюсы:** Высокая точность, структурный анализ, адаптивность
  - **Минусы:** Сложность settings, высокие требования к ресурсам
 
-2. **МультиTimeframeовый анализ - разные parameters for разных Timeframeов**
+2. **МультиTimeframesый анализ - разные parameters for разных Timeframes**
  - **Теория:** Каждый Timeframe требует специфических параметров for максимальной эффективности
  - **Почему важно:** Обеспечивает оптимальную производительность on всех временных горизонтах
  - **Плюсы:** Оптимизация производительности, снижение рисков, повышение точности
- - **Минусы:** Сложность settings, необходимость понимания каждого Timeframeа
+ - **Минусы:** Сложность settings, необходимость понимания каждого Timeframe
 
 3. **Богатые признаки - множество возможностей for создания признаков**
  - **Теория:** WAVE2 предоставляет богатую основу for создания признаков машинного обучения
@@ -4118,4 +4118,4 @@ class WAVE2Monitor:
 
 ---
 
-**Важно:** WAVE2 требует тщательной settings параметров for каждого Timeframeа and актива. Use оптимизацию for достижения максимальной производительности.
+**Важно:** WAVE2 требует тщательной settings параметров for каждого Timeframe and актива. Use оптимизацию for достижения максимальной производительности.

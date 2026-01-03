@@ -9,7 +9,7 @@
 **Почему 90% трейдеров теряют деньги, игнорируя волновую структуру рынка?** Потому что они торгуют против волн, not понимая, что рынок движется волнами, а not случайно. WAVE2 - это ключ к пониманию рыночной структуры.
 
 ### Проблемы без понимания волновой структуры
-- **Торговля против тренда**: Входят in позицию против волны
+- **Торговля против тренда**: included in позицию против волны
 - **Неправильные точки входа**: not понимают, где начинается новая волна
 - **Отсутствие стоп-лоссов**: not знают, где заканчивается волна
 - **Эмоциональная торговля**: Принимают решения on basis страха and жадности
@@ -22,17 +22,17 @@
 
 ## Введение
 
-<img src="images/optimized/wave2_overview.png" alt="WAVE2 индикатор" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 21.1: Обзор WAVE2 индикатора - компоненты and результаты*
+<img src="images/optimized/wave2_overView.png" alt="WAVE2 индикатор" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 21.1: Обзор WAVE2 индикатора - components and результаты*
 
-**Почему WAVE2 - это революция in техническом анализе?** Потому что он объединяет математику волн with машинным обучением, создавая объективный инструмент for analysis рынка.
+**Почему WAVE2 - это революция in техническом анализе?** Потому что он объединяет математику волн with машинным обучением, создавая объективный инструмент for Analysis рынка.
 
 **Ключевые особенности WAVE2:**
 - **Многомерный анализ волн**: Учитывает множество параметров волны
 - **Временная адаптивность**: Адаптируется к изменениям рынка
-- **Высокая точность**: 94.7% точность predictions
+- **Высокая точность**: 94.7% точность Predictions
 - **Робастность**: Устойчив к рыночным шокам
-- **Масштабируемость**: Работает on всех Timeframeах
+- **Масштабируемость**: Workingет on всех Timeframes
 - **integration with блокчейном**: Прозрачные and автоматизированные операции
 
 **Результаты WAVE2:**
@@ -56,10 +56,10 @@ WAVE2 - это многомерный индикатор, который:
 - **Оценивает силу движения цены** - измеряет импульс рынка
 - **Идентифицирует ключевые уровни поддержки/сопротивления** - находит важные ценовые зоны
 
-## Структура данных WAVE2
+## Structure данных WAVE2
 
-<img src="images/optimized/wave2_structure.png" alt="Структура WAVE2" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 21.2: Структура данных WAVE2 - категории and parameters*
+<img src="images/optimized/wave2_Structure.png" alt="Structure WAVE2" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 21.2: Structure данных WAVE2 - категории and parameters*
 
 **Категории данных WAVE2:**
 - **Basic Wave Parameters**: Амплитуда, частота, фаза, скорость, ускорение волны
@@ -79,7 +79,7 @@ WAVE2 - это многомерный индикатор, который:
 ### Основные колонки in parquet файле:
 
 ```python
-# Структура данных WAVE2
+# Structure данных WAVE2
 wave2_columns = {
  # Основные волновые parameters
  'wave_amplitude': 'Амплитуда волны',
@@ -231,7 +231,7 @@ wave2_columns = {
  - Значения: 0-10 (различные паттерны)
  - Применение: классификация волнового паттерна
  - Интерпретация: 0 = импульс, 1 = коррекция, 2 = треугольник, and т.д.
- - Расчет: on basis анализа формы волны
+ - Расчет: on basis Analysis формы волны
 
 - **`wave_complexity`**: Сложность волны
  - Тип: float
@@ -262,7 +262,7 @@ wave2_columns = {
  - Значения: -1 (продажа), 0 (нейтрально), 1 (покупка)
  - Применение: торговый сигнал
  - Интерпретация: направление торговли
- - Расчет: on basis анализа всех параметров волны
+ - Расчет: on basis Analysis всех параметров волны
 
 - **`wave_strength`**: Сила волны
  - Тип: float
@@ -330,12 +330,12 @@ wave2_columns = {
 - **Адаптация**: Регулярное update параметров под рынок
 ```
 
-## Анализ on Timeframeам
+## Анализ on Timeframeм
 
-<img src="images/optimized/timeframe_analysis.png" alt="Анализ on Timeframeам" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 21.3: Анализ WAVE2 on Timeframeам - from скальпинга to инвестиций*
+<img src="images/optimized/Timeframe_Analysis.png" alt="Анализ on Timeframeм" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 21.3: Анализ WAVE2 on Timeframeм - from скальпинга to инвестиций*
 
-**Описания Timeframeов:**
+**Описания Timeframes:**
 - **M1 - Скальпинг**: Высокочастотная торговля, микро-волновые паттерны
 - **M5 - Краткосрочная**: Быстрые сигналы, внутридневные паттерны
 - **M15 - Среднесрочная**: Дневные паттерны, краткосрочные тренды
@@ -345,9 +345,9 @@ wave2_columns = {
 - **W1 - Долгосрочная**: Квартальные паттерны, инвестиционные сигналы
 - **MN1 - Инвестиционная**: Годовые паттерны, стратегические решения
 
-**Преимущества многомерного анализа:**
+**Преимущества многомерного Analysis:**
 - **Полная картина рынка**: Анализ on всех временных масштабах
-- **Подтверждение сигналов**: Согласованность между Timeframeами
+- **Подтверждение сигналов**: Согласованность между Timeframeми
 - **Снижение ложных сигналов**: Фильтрация шума
 - **Повышение точности**: Многомерная валидация
 - **Адаптивность к рынку**: Гибкость стратегии
@@ -359,7 +359,7 @@ class Wave2M1Analysis:
  """Анализ WAVE2 on 1-minutesном Timeframeе"""
 
  def __init__(self):
- self.timeframe = 'M1'
+ self.Timeframe = 'M1'
  self.features = []
 
  def analyze_m1_features(self, data):
@@ -372,7 +372,7 @@ class Wave2M1Analysis:
  data['fast_wave_signal'] = self.calculate_fast_wave_signals(data)
 
  # Микроструктурный анализ
- data['microstructure_wave'] = self.analyze_microstructure_waves(data)
+ data['microStructure_wave'] = self.analyze_microStructure_waves(data)
 
  # Скальпинг сигналы
  data['scalping_wave'] = self.calculate_scalping_waves(data)
@@ -596,12 +596,12 @@ class Wave2MN1Analysis:
 *Рисунок 21.4: ML-модель on basis WAVE2 - этапы создания and результаты*
 
 **Этапы создания ML-модели:**
-- **Data Preparation**: Объединение Timeframeов, clean данных, нормализация
+- **data Preparation**: Объединение Timeframes, clean данных, нормализация
 - **Feature Engineering**: Базовые, многомерные, временные, статистические признаки
 - **Model Training**: Обучение with AutoML Gluon, оптимизация гиперпараметров
 - **Feature Selection**: Отбор наиболее важных признаков
 - **Model Validation**: Backtest, Walk-Forward, Monte Carlo анализ
-- **Model Deployment**: integration with блокчейном, автоматическая торговля
+- **Model deployment**: integration with блокчейном, автоматическая торговля
 
 **Результаты ML-модели:**
 - **Точность**: 94.7%
@@ -620,13 +620,13 @@ class Wave2MLModel:
  def __init__(self):
  self.predictor = None
  self.feature_columns = []
- self.timeframes = ['M1', 'M5', 'M15', 'H1', 'H4', 'D1', 'W1', 'MN1']
+ self.Timeframes = ['M1', 'M5', 'M15', 'H1', 'H4', 'D1', 'W1', 'MN1']
 
  def prepare_wave2_data(self, data_dict):
  """Подготовка данных WAVE2 for ML"""
 
- # Объединение данных всех Timeframeов
- combined_data = self.combine_timeframe_data(data_dict)
+ # Объединение данных всех Timeframes
+ combined_data = self.combine_Timeframe_data(data_dict)
 
  # create признаков
  features = self.create_wave2_features(combined_data)
@@ -645,38 +645,38 @@ class Wave2MLModel:
  - update: при переобучении on новых данных
  - Сохранение: in файл for восстановления
 
-- **`self.feature_columns`**: Список признаков модели
+- **`self.feature_columns`**: List признаков модели
  - Тип: List[str]
  - Содержит: названия всех признаков WAVE2
- - Применение: for predictions on новых данных
+ - Применение: for Predictions on новых данных
  - update: при изменении набора признаков
 
-- **`self.timeframes`**: Список Timeframeов
+- **`self.Timeframes`**: List Timeframes
  - Тип: List[str]
  - Значения: ['M1', 'M5', 'M15', 'H1', 'H4', 'D1', 'W1', 'MN1']
- - Применение: анализ on множественных Timeframeах
+ - Применение: анализ on множественных Timeframes
  - Преимущества: полная картина рынка
 
-- **`data_dict`**: Словарь данных on Timeframeам
+- **`data_dict`**: Словарь данных on Timeframeм
  - Тип: dict
- - Структура: {timeframe: DataFrame}
- - Применение: объединение данных всех Timeframeов
- - Требования: одинаковые колонки во всех DataFrame
+ - Structure: {Timeframe: dataFrame}
+ - Применение: объединение данных всех Timeframes
+ - Требования: одинаковые колонки во всех dataFrame
 
-- **`combined_data`**: Объединенные данные
- - Тип: DataFrame
- - Содержит: данные всех Timeframeов
+- **`combined_data`**: Объединенные data
+ - Тип: dataFrame
+ - Содержит: data всех Timeframes
  - Применение: create признаков and целевой переменной
  - Обработка: remove дубликатов and пропусков
 
 - **`features`**: Признаки for ML
- - Тип: DataFrame
+ - Тип: dataFrame
  - Содержит: все признаки WAVE2
- - Применение: входные данные for модели
+ - Применение: входные data for модели
  - Обработка: нормализация and масштабирование
 
 - **`target`**: Целевая переменная
- - Тип: DataFrame
+ - Тип: dataFrame
  - Содержит: направление цены, волатильность, тренд
  - Применение: обучение модели
  - Формат: бинарные метки (0/1)
@@ -1079,7 +1079,7 @@ class Wave2MLModel:
  def create_basic_wave_features(self, data):
  """create базовых волновых признаков"""
 
- features = pd.DataFrame()
+ features = pd.dataFrame()
 
  # Амплитуда волны
  features['wave_amplitude'] = data['wave_amplitude']
@@ -1111,7 +1111,7 @@ class Wave2MLModel:
  def create_multi_wave_features(self, data):
  """create многомерных волновых признаков"""
 
- features = pd.DataFrame()
+ features = pd.dataFrame()
 
  # Отношения между волнами
  features['wave_ratio'] = data['wave_ratio']
@@ -1136,7 +1136,7 @@ class Wave2MLModel:
  def create_temporal_wave_features(self, data):
  """create временных волновых признаков"""
 
- features = pd.DataFrame()
+ features = pd.dataFrame()
 
  # Временные производные
  features['wave_amplitude_diff'] = data['wave_amplitude'].diff()
@@ -1163,7 +1163,7 @@ class Wave2MLModel:
  def create_statistical_wave_features(self, data):
  """create статистических волновых признаков"""
 
- features = pd.DataFrame()
+ features = pd.dataFrame()
 
  # Статистические метрики
  features['wave_amplitude_skew'] = data['wave_amplitude'].rolling(20).skew()
@@ -1198,7 +1198,7 @@ class Wave2MLModel:
  trend_direction = (future_trend_strength > self.calculate_trend_strength(data)).astype(int)
 
  # Объединение целевых переменных
- target = pd.DataFrame({
+ target = pd.dataFrame({
  'price_direction': price_direction,
  'volatility_direction': volatility_direction,
  'trend_direction': trend_direction
@@ -1263,21 +1263,21 @@ class Wave2MLModel:
 **Детальные описания параметров обучения WAVE2 модели:**
 
 - **`features`**: Признаки for обучения
- - Тип: DataFrame
+ - Тип: dataFrame
  - Содержит: все признаки WAVE2
- - Применение: входные данные for модели
+ - Применение: входные data for модели
  - Обработка: нормализация and масштабирование
  - Требования: отсутствие пропусков
 
 - **`target`**: Целевая переменная
- - Тип: DataFrame
+ - Тип: dataFrame
  - Содержит: направление цены, волатильность, тренд
  - Применение: обучение модели
  - Формат: бинарные метки (0/1)
  - Требования: соответствие индексов with features
 
-- **`data`**: Объединенные данные
- - Тип: DataFrame
+- **`data`**: Объединенные data
+ - Тип: dataFrame
  - Содержит: features + target
  - Применение: обучение модели
  - Обработка: remove пропусков
@@ -1290,15 +1290,15 @@ class Wave2MLModel:
  - Процент: 80% for обучения, 20% for валидации
  - Рекомендация: 0.7-0.8 for WAVE2
 
-- **`train_data`**: Данные for обучения
- - Тип: DataFrame
+- **`train_data`**: data for обучения
+ - Тип: dataFrame
  - Размер: 80% from общих данных
  - Применение: обучение модели
  - Требования: отсутствие пропусков
  - Обработка: нормализация признаков
 
-- **`val_data`**: Данные for валидации
- - Тип: DataFrame
+- **`val_data`**: data for валидации
+ - Тип: dataFrame
  - Размер: 20% from общих данных
  - Применение: оценка модели
  - Требования: отсутствие пропусков
@@ -1328,8 +1328,8 @@ class Wave2MLModel:
 - **`path='wave2_ml_model'`**: Путь for сохранения модели
  - Тип: str
  - Применение: сохранение обученной модели
- - Содержит: веса модели, метаданные, конфигурацию
- - Использование: загрузка for predictions
+ - Содержит: веса модели, метаdata, конфигурацию
+ - Использование: загрузка for Predictions
  - Формат: директория with файлами модели
 
 - **`time_limit=3600`**: Лимит времени обучения
@@ -1411,9 +1411,9 @@ class Wave2MLModel:
  - Формат: 'YYYY-MM-DD'
  - Рекомендация: not более текущей даты
 
-- **`test_data`**: Данные for тестирования
- - Тип: DataFrame
- - Содержит: данные за период тестирования
+- **`test_data`**: data for тестирования
+ - Тип: dataFrame
+ - Содержит: data за период тестирования
  - Применение: оценка производительности
  - Требования: отсутствие пропусков
  - Обработка: та же нормализация, что and for train
@@ -1425,7 +1425,7 @@ class Wave2MLModel:
  - Формат: бинарные метки (0/1)
  - Интерпретация: 0 = падение, 1 = рост
 
-- **`probabilities`**: Вероятности predictions
+- **`probabilities`**: Вероятности Predictions
  - Тип: numpy array
  - Содержит: вероятности for каждого класса
  - Применение: оценка уверенности
@@ -1495,8 +1495,8 @@ class Wave2MLModel:
  - Рекомендация: 1000-10000 for WAVE2
  - Баланс: больше = точнее, но медленнее
 
-- **`sample_data`**: Выборочные данные
- - Тип: DataFrame
+- **`sample_data`**: Выборочные data
+ - Тип: dataFrame
  - Размер: 80% from исходных данных
  - Применение: случайная выборка for симуляции
  - Обработка: with заменой (replace=True)
@@ -1611,12 +1611,12 @@ def wave2_monte_carlo(self, data, n_simulations=1000):
 <img src="images/optimized/blockchain_integration.png" alt="integration with блокчейном" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 21.6: integration WAVE2 with блокчейном - from смарт-контрактов to автоматической торговли*
 
-**Компоненты интеграции:**
+**components интеграции:**
 - **Smart Contracts**: Хранение сигналов, автоматическое выполнение, прозрачность операций
-- **DEX Integration**: Прямая торговля, ликвидность, децентрализация
+- **DEX integration**: Прямая торговля, ликвидность, децентрализация
 - **signal Storage**: Хранение сигналов on блокчейне, неизменяемость
 - **Automated Trading**: Автоматическая торговля, исполнение сигналов
-- **Risk Management**: Управление рисками, лимиты позиций
+- **Risk Management**: Management рисками, лимиты позиций
 - **Performance Tracking**: Отслеживание производительности, метрики
 
 **Преимущества блокчейн-интеграции:**
@@ -1639,7 +1639,7 @@ contract Wave2TradingContract {
  int256 waveFrequency;
  int256 wavePhase;
  int256 waveVelocity;
- int256 waveAcceleration;
+ int256 waveacceleration;
  bool buysignal;
  bool sellsignal;
  uint256 confidence;
@@ -1664,7 +1664,7 @@ contract Wave2TradingContract {
  waveFrequency: frequency,
  wavePhase: phase,
  waveVelocity: velocity,
- waveAcceleration: acceleration,
+ waveacceleration: acceleration,
  buysignal: buysignal,
  sellsignal: sellsignal,
  confidence: confidence
@@ -1673,7 +1673,7 @@ contract Wave2TradingContract {
  signalCount++;
  }
 
- function getLatestsignal() external view returns (Wave2signal memory) {
+ function getLatestsignal() external View returns (Wave2signal memory) {
  return signals[signalCount - 1];
  }
 }
@@ -1682,7 +1682,7 @@ contract Wave2TradingContract {
 ### integration with DEX
 
 ```python
-class Wave2DEXIntegration:
+class Wave2DEXintegration:
  """integration WAVE2 with DEX"""
 
  def __init__(self, contract_address, private_key):
@@ -1731,7 +1731,7 @@ class Wave2DEXIntegration:
 - **Win Rate**: 78.5%
 - **Profit Factor**: 2.8
 
-**Доходность on Timeframeам:**
+**Доходность on Timeframeм:**
 - **M1**: 45.2%
 - **M5**: 52.8%
 - **M15**: 67.3%
@@ -1755,7 +1755,7 @@ class Wave2DEXIntegration:
 2. **Временная адаптивность** - адаптируется к изменениям рынка
 3. **Высокая точность** - обеспечивает точные сигналы
 4. **Робастность** - устойчив к рыночным шокам
-5. **Масштабируемость** - работает on всех Timeframeах
+5. **Масштабируемость** - Workingет on всех Timeframes
 
 ### Слабые стороны WAVE2
 

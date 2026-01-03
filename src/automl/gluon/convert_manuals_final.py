@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Финальный скрипт for конвертации AutoML Gluon мануала
-Launchает оба конвертера: HTML and PDF (with reportlab)
+Launchает оба конвертера: HTML and PDF (with Reportlab)
 
 Author: Shcherbyna Rostyslav
 Дата: 2024
@@ -15,33 +15,33 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent))
 
 from simple_html_converter import SimpleAutoMLGluonHTMLConverter
-from reportlab_pdf_converter import ReportLabPDFConverter
+from Reportlab_pdf_converter import ReportLabPDFConverter
 
 def check_dependencies():
- """Проверяет наличие необходимых зависимостей"""
- print("🔍 Проверяем dependencies...")
+ """Проверяет presence required зависимостей"""
+ print("🔍 checking dependencies...")
 
- # Проверяем markdown
+ # checking markdown
  try:
  import markdown
  print("✅ markdown installed")
  except ImportError:
- print("❌ markdown not installed. Install: pip install markdown")
+ print("❌ markdown not installed. install: pip install markdown")
  return False
 
- # Проверяем Pygments for подсветки синтаксиса
+ # checking Pygments for подсветки синтаксиса
  try:
  import pygments
  print("✅ pygments installed")
  except ImportError:
- print("⚠️ pygments not installed. Install: pip install pygments")
+ print("⚠️ pygments not installed. install: pip install pygments")
 
- # Проверяем reportlab for PDF
+ # checking Reportlab for PDF
  try:
- import reportlab
- print("✅ reportlab installed")
+ import Reportlab
+ print("✅ Reportlab installed")
  except ImportError:
- print("❌ reportlab not installed. Install: pip install reportlab")
+ print("❌ Reportlab not installed. install: pip install Reportlab")
  return False
 
  return True
@@ -100,7 +100,7 @@ def main():
  # Создаем директории
  create_directories()
 
- # Проверяем dependencies
+ # checking dependencies
  deps_ok = check_dependencies()
 
  if not deps_ok:
@@ -132,7 +132,7 @@ def main():
 
  if html_success and pdf_success:
  print("🎊 Все мануалы созданы успешно!")
- print("\n📋 Созданные файлы:")
+ print("\n📋 Созdata файлы:")
  print(" 📄 HTML: AutoML_Gluon_Complete_Manual.html (7.5 MB)")
  print(" 📄 PDF: AutoML_Gluon_Complete_Manual.pdf (2.0 MB)")
  print(" 📄 HTML for PDF: AutoML_Gluon_Complete_Manual_ForPDF.html (7.4 MB)")

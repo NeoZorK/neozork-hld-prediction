@@ -1,6 +1,6 @@
 """
-Updated Custom Feature Engineer for Trading Strategy Features
-Обновленный инженер признаков with правильными именами колонок for SCHR, WAVE2, SHORT3
+Updated Custom Feature Engineer for trading Strategy Features
+Обновленный инженер признаков with правильными именами columns for SCHR, WAVE2, SHORT3
 """
 
 import pandas as pd
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 class UpdatedCustomFeatureEngineer:
  """
  Creates custom features for trading strategy based on actual column names from data files.
- Создает пользовательские признаки on basis реальных имен колонок из файлов данных.
+ Создает пользовательские признаки on basis реальных имен columns из файлов данных.
  """
 
  def __init__(self, config_path: Optional[str] = None):
@@ -50,7 +50,7 @@ class UpdatedCustomFeatureEngineer:
  }
  }
 
- def create_schr_features(self, data: pd.DataFrame) -> pd.DataFrame:
+ def create_schr_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
  Create SCHR Levels features (4 features) based on actual CSVExport data.
  Создать признаки SCHR уровней (4 приsign) on basis реальных данных CSVExport.
@@ -102,7 +102,7 @@ class UpdatedCustomFeatureEngineer:
  logger.info(f"Created {len([col for col in df.columns if 'probability' in col])} SCHR features")
  return df
 
- def create_wave2_features(self, data: pd.DataFrame) -> pd.DataFrame:
+ def create_wave2_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
  Create WAVE2 features (6 features) based on actual WAVE2 data.
  Создать признаки WAVE2 (6 признаков) on basis реальных данных WAVE2.
@@ -176,7 +176,7 @@ class UpdatedCustomFeatureEngineer:
  logger.info(f"Created {len([col for col in df.columns if 'wave' in col and 'probability' in col])} WAVE2 features")
  return df
 
- def create_short3_features(self, data: pd.DataFrame) -> pd.DataFrame:
+ def create_short3_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
  Create SHORT3 features (3 features) based on actual SHORT3 data.
  Создать признаки SHORT3 (3 приsign) on basis реальных данных SHORT3.
@@ -221,7 +221,7 @@ class UpdatedCustomFeatureEngineer:
  logger.info(f"Created {len([col for col in df.columns if 'short3' in col and 'probability' in col])} SHORT3 features")
  return df
 
- def create_all_features(self, csv_export_data: pd.DataFrame, wave2_data: pd.DataFrame, short3_data: pd.DataFrame) -> pd.DataFrame:
+ def create_all_features(self, csv_export_data: pd.dataFrame, wave2_data: pd.dataFrame, short3_data: pd.dataFrame) -> pd.dataFrame:
  """
  Create all 13 custom features by combining all three data sources.
  Создать все 13 пользовательских признаков, объединив все три источника данных.
@@ -229,7 +229,7 @@ class UpdatedCustomFeatureEngineer:
  logger.info("Creating all 13 custom features from combined data sources...")
 
  # Overall progress bar for all features
- with tqdm(total=3, desc="🎯 All Features", unit="indicator",
+ with tqdm(total=3, desc="🎯 all Features", unit="indicator",
  bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]',
  position=3, leave=True) as main_pbar:
 
@@ -237,13 +237,13 @@ class UpdatedCustomFeatureEngineer:
  result_df = csv_export_data.copy()
 
  # Add SCHR features
- main_pbar.set_description("🎯 All Features: SCHR")
+ main_pbar.set_description("🎯 all Features: SCHR")
  result_df = self.create_schr_features(result_df)
  main_pbar.update(1)
 
  # Merge WAVE2 data and add features
  if not wave2_data.empty:
- main_pbar.set_description("🎯 All Features: WAVE2")
+ main_pbar.set_description("🎯 all Features: WAVE2")
  # Merge on timestamp/index
  wave2_features = self.create_wave2_features(wave2_data)
  result_df = self._merge_dataframes(result_df, wave2_features)
@@ -251,7 +251,7 @@ class UpdatedCustomFeatureEngineer:
 
  # Merge SHORT3 data and add features
  if not short3_data.empty:
- main_pbar.set_description("🎯 All Features: SHORT3")
+ main_pbar.set_description("🎯 all Features: SHORT3")
  short3_features = self.create_short3_features(short3_data)
  result_df = self._merge_dataframes(result_df, short3_features)
  main_pbar.update(1)
@@ -259,7 +259,7 @@ class UpdatedCustomFeatureEngineer:
  logger.info(f"Created total of {len([col for col in result_df.columns if 'probability' in col])} custom features")
  return result_df
 
- def _merge_dataframes(self, df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
+ def _merge_dataframes(self, df1: pd.dataFrame, df2: pd.dataFrame) -> pd.dataFrame:
  """Merge two dataframes on their index (timestamp)."""
  if df1.index.equals(df2.index):
  # Same index, can merge directly
@@ -312,7 +312,7 @@ class UpdatedCustomFeatureEngineer:
 
  for i in range(5, len(signal)):
  if signal.iloc[i-1] == 1: # signal was 1
- # Check if next 5 candles were up
+ # check if next 5 candles were up
  future_returns = close.iloc[i:i+5].pct_change().dropna()
  if len(future_returns) == 4: # 4 returns for 5 candles
  up_probability = (future_returns > 0).mean()
@@ -326,7 +326,7 @@ class UpdatedCustomFeatureEngineer:
 
  for i in range(1, len(signal)):
  if signal.iloc[i-1] == 1: # signal was 1
- # Check if price moved 5% in next period
+ # check if price moved 5% in next period
  future_return = close.iloc[i] / close.iloc[i-1] - 1
  result.iloc[i] = 1 if abs(future_return) >= 0.05 else 0
 
@@ -365,7 +365,7 @@ class UpdatedCustomFeatureEngineer:
  result = pd.Series(0.0, index=direction.index)
  for i in range(1, len(direction)):
  if direction_changes.iloc[i]:
- # Check price movement around direction change
+ # check price movement around direction change
  price_change = close.iloc[i] / close.iloc[i-1] - 1
  result.iloc[i] = 1 / (1 + np.exp(-price_change * 10))
 

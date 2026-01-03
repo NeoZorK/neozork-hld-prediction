@@ -2,14 +2,14 @@
 
 ## 🆘 Common Issues / Common Issues
 
-### Installation Issues / Installation Issues
+### installation Issues / installation Issues
 
 #### UV not installed / UV not installed
 ```bash
-# Installation UV / Install UV
+# installation UV / install UV
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# check установки / Check installation
+# check установки / check installation
 uv --version
 ```
 
@@ -36,16 +36,16 @@ npm install
 
 #### импорта / Import Errors Errors
 ```bash
-# check PYTHONPATH / Check PYTHONPATH
+# check PYTHONPATH / check PYTHONPATH
 export PYTHONPATH="${PWD}:${PYTHONPATH}"
 
-# check package installation / Check package installation
-uv pip list | grep neozork
+# check package installation / check package installation
+uv pip List | grep neozork
 ```
 
 #### with портами / Port Issues Issues
 ```bash
-# check occupied ports / Check occupied ports
+# check occupied ports / check occupied ports
 lsof -i :8080
 lsof -i :3000
 lsof -i :9090
@@ -56,8 +56,8 @@ kill -9 $(lsof -t -i:8080)
 
 #### with database / database issues Issues
 ```bash
-# check PostgreSQL connection / Check PostgreSQL connection
-psql -h localhost -U neozork_user -d neozork_fund
+# check PostgreSQL connection / check PostgreSQL connection
+psql -h localhost -U neozork_User -d neozork_fund
 
 # Restart PostgreSQL / Restart PostgreSQL
 sudo systemctl Restart PostgreSQL
@@ -83,7 +83,7 @@ uv run pytest tests/calculation/test_indicators.py::test_rsi -v
 rm -rf .coverage htmlcov/
 
 # Launch with coverage / Run with coverage
-uv run pytest tests/ --cov=src --cov-report=html -n auto
+uv run pytest tests/ --cov=src --cov-Report=html -n auto
 ```
 
 #### Slow tests / Slow tests
@@ -123,13 +123,13 @@ docker volume create neozork_data
 
 #### with network / network issues Issues
 ```bash
-# Просмотр сетей / View networks
+# View networks / View networks
 docker network ls
 
-# clean сетей / Clean networks
+# clean networks / clean networks
 docker network prune
 
-# create сети / Create network
+# create network / create network
 docker network create neozork_network
 ```
 
@@ -137,7 +137,7 @@ docker network create neozork_network
 
 #### Pods not start / Pods don't start
 ```bash
-# Просмотр событий / View events
+# View событий / View events
 kubectl get events
 
 # description pod / Describe pod
@@ -149,19 +149,19 @@ kubectl logs <pod-name>
 
 #### with сервисами / Service issues Issues
 ```bash
-# Просмотр сервисов / View services
-kubectl get services
+# View сервисов / View Services
+kubectl get Services
 
 # description сервиса / Describe service
 kubectl describe service <service-name>
 
-# check endpoints / Check endpoints
+# check endpoints / check endpoints
 kubectl get endpoints
 ```
 
-#### with развертыванием / Deployment issues Issues
+#### with развертыванием / deployment issues Issues
 ```bash
-# Просмотр развертываний / View deployments
+# View развертываний / View deployments
 kubectl get deployments
 
 # description развертывания / Describe deployment
@@ -171,17 +171,17 @@ kubectl describe deployment <deployment-name>
 kubectl rollout undo deployment/<deployment-name>
 ```
 
-## 🔧 Отладочные команды / Debug Commands
+## 🔧 Отладочные team / Debug Commands
 
-### check статуса системы / System Status Check
+### check статуса системы / system Status check
 ```bash
-# check UV / Check UV
+# check UV / check UV
 python scripts/utilities/check_uv_mode.py --verbose
 
-# check MCP / Check MCP
+# check MCP / check MCP
 python scripts/check_mcp_status.py
 
-# check Docker / Check Docker
+# check Docker / check Docker
 docker-compose ps
 docker images
 docker volume ls
@@ -189,7 +189,7 @@ docker volume ls
 
 ### Анализ логов / Log Analysis
 ```bash
-# Просмотр всех логов / View all logs
+# View всех логов / View all logs
 find logs/ -name "*.log" -exec tail -f {} \;
 
 # Поиск ошибок / Search for errors
@@ -198,7 +198,7 @@ grep -r "ERROR" logs/
 # Поиск предупреждений / Search for warnings
 grep -r "WARNING" logs/
 
-# Анализ производительности / Performance analysis
+# Анализ производительности / Performance Analysis
 grep -r "performance" logs/
 ```
 
@@ -218,11 +218,11 @@ python scripts/debug_docker_processes.py
 python scripts/mcp/debug_mcp_detection.py
 ```
 
-## 🛠️ Восстановление системы / System Recovery
+## 🛠️ Восстановление системы / system Recovery
 
 ### Полное восстановление / Full Recovery
 ```bash
-# Остановка всех сервисов / Stop all services
+# Остановка всех сервисов / Stop all Services
 docker-compose down
 ./scripts/native-container/stop.sh
 
@@ -236,17 +236,17 @@ uv pip install -r requirements.txt --force-reinstall
 cd src/mobile_app && npm install && cd ../..
 cd src/admin_panel && npm install && cd ../..
 
-# Launch сервисов / start services
+# Launch сервисов / start Services
 docker-compose up -d
 ```
 
-### Восстановление данных / Data Recovery
+### Восстановление данных / data Recovery
 ```bash
 # Резервное копирование / Backup
-docker-compose exec neozork-hld pg_dump -U neozork_user neozork_fund > backup.sql
+docker-compose exec neozork-hld pg_dump -U neozork_User neozork_fund > backup.sql
 
 # Восстановление / Restore
-docker-compose exec neozork-hld psql -U neozork_user neozork_fund < backup.sql
+docker-compose exec neozork-hld psql -U neozork_User neozork_fund < backup.sql
 ```
 
 ### Восстановление конфигурации / Configuration Recovery
@@ -270,11 +270,11 @@ tar -xzf config-backup.tar.gz
 ```
 
 ### Сообщество / Community
-- **GitHub Issues**: https://github.com/username/neozork-hld-Prediction/issues
+- **GitHub Issues**: https://github.com/Username/neozork-hld-Prediction/issues
 - **Discord**: https://discord.gg/neozork
 - **Telegram**: https://t.me/neozork_hld
 
 ### documentation / Documentation
 - [Complete guide / Complete Manual](russian/complete-manual-ru.md)
 - [guide on testing / testing Guide](russian/testing-guide-ru.md)
-- [guide on deployment / Deployment Guide](russian/deployment-guide-ru.md)
+- [guide on deployment / deployment Guide](russian/deployment-guide-ru.md)

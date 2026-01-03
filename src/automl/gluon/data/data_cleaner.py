@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Data Cleaner for AutoGluon Pipeline
+data Cleaner for AutoGluon Pipeline
 clean данных for пайплайна AutoGluon
 
 This module handles data cleaning and preprocessing to ensure
@@ -14,9 +14,9 @@ from typing import Tuple, Dict, Any
 
 logger = logging.getLogger(__name__)
 
-class DataCleaner:
+class dataCleaner:
  """
- Data cleaner for AutoGluon pipeline.
+ data cleaner for AutoGluon pipeline.
  clean данных for пайплайна AutoGluon.
  """
 
@@ -24,22 +24,22 @@ class DataCleaner:
  """Initialize data cleaner."""
  self.logger = logger
 
- def clean_data(self, data: pd.DataFrame, target_column: str = None) -> Tuple[pd.DataFrame, Dict[str, Any]]:
+ def clean_data(self, data: pd.dataFrame, target_column: str = None) -> Tuple[pd.dataFrame, Dict[str, Any]]:
  """
  Clean data by removing infinity, NaN values, and other issues.
- Очистить данные, удалив бесконечные значения, NaN and другие проблемы.
+ Очистить data, удалив бесконечные значения, NaN and другие проблемы.
 
  Args:
  data: Input dataframe
  target_column: Target column name (optional)
 
  Returns:
- Tuple of (cleaned_data, cleaning_report)
+ Tuple of (cleaned_data, cleaning_Report)
  """
  self.logger.info("🧹 starting data cleaning...")
 
  original_shape = data.shape
- cleaning_report = {
+ cleaning_Report = {
  'original_shape': original_shape,
  'original_rows': original_shape[0],
  'original_cols': original_shape[1],
@@ -61,7 +61,7 @@ class DataCleaner:
  inf_count = inf_mask.sum()
  if inf_count > 0:
  cleaned_data = cleaned_data[~inf_mask]
- cleaning_report['infinity_removed'] = inf_count
+ cleaning_Report['infinity_removed'] = inf_count
  self.logger.info(f"✅ Removed {inf_count} rows with infinity values")
 
  # Step 2: Handle NaN values
@@ -82,7 +82,7 @@ class DataCleaner:
  mode_val = cleaned_data[col].mode().iloc[0] if not cleaned_data[col].mode().empty else 'Unknown'
  cleaned_data[col].fillna(mode_val, inplace=True)
 
- cleaning_report['nan_removed'] = nan_count
+ cleaning_Report['nan_removed'] = nan_count
  self.logger.info(f"✅ Handled {nan_count} NaN values")
 
  # Step 3: Remove duplicates
@@ -90,7 +90,7 @@ class DataCleaner:
  duplicate_count = cleaned_data.duplicated().sum()
  if duplicate_count > 0:
  cleaned_data = cleaned_data.drop_duplicates()
- cleaning_report['duplicates_removed'] = duplicate_count
+ cleaning_Report['duplicates_removed'] = duplicate_count
  self.logger.info(f"✅ Removed {duplicate_count} duplicate rows")
 
  # Step 4: Remove extreme outliers (optional)
@@ -114,7 +114,7 @@ class DataCleaner:
  cleaned_data = cleaned_data[~outlier_mask]
 
  if outlier_count > 0:
- cleaning_report['outliers_removed'] = outlier_count
+ cleaning_Report['outliers_removed'] = outlier_count
  self.logger.info(f"✅ Removed {outlier_count} extreme outliers")
 
  # Step 5: Ensure data types are appropriate
@@ -127,34 +127,34 @@ class DataCleaner:
  except:
  pass
 
- # Final report
+ # Final Report
  final_shape = cleaned_data.shape
- cleaning_report['final_shape'] = final_shape
- cleaning_report['final_rows'] = final_shape[0]
- cleaning_report['final_cols'] = final_shape[1]
+ cleaning_Report['final_shape'] = final_shape
+ cleaning_Report['final_rows'] = final_shape[0]
+ cleaning_Report['final_cols'] = final_shape[1]
 
- self.logger.info(f"✅ Data cleaning completed!")
+ self.logger.info(f"✅ data cleaning COMPLETED!")
  self.logger.info(f"📊 Original: {original_shape[0]} rows, {original_shape[1]} cols")
  self.logger.info(f"📊 Final: {final_shape[0]} rows, {final_shape[1]} cols")
  self.logger.info(f"📊 Removed: {original_shape[0] - final_shape[0]} rows total")
 
- return cleaned_data, cleaning_report
+ return cleaned_data, cleaning_Report
 
- def validate_data(self, data: pd.DataFrame, target_column: str = None) -> Dict[str, Any]:
+ def validate_data(self, data: pd.dataFrame, target_column: str = None) -> Dict[str, Any]:
  """
  Validate data quality after cleaning.
  Проверить качество данных после очистки.
 
  Args:
- data: Dataframe to validate
+ data: dataframe to validate
  target_column: Target column name (optional)
 
  Returns:
- Validation report
+ Validation Report
  """
  self.logger.info("🔍 Validating data quality...")
 
- validation_report = {
+ validation_Report = {
  'has_infinity': False,
  'has_nan': False,
  'has_duplicates': False,
@@ -165,35 +165,35 @@ class DataCleaner:
  'memory_usage_mb': data.memory_usage(deep=True).sum() / 1024 / 1024
  }
 
- # Check for infinity
+ # check for infinity
  if np.isinf(data.select_dtypes(include=[np.number])).any().any():
- validation_report['has_infinity'] = True
- self.logger.warning("⚠️ Data still contains infinity values")
+ validation_Report['has_infinity'] = True
+ self.logger.warning("⚠️ data still contains infinity values")
 
- # Check for NaN
+ # check for NaN
  if data.isnull().any().any():
- validation_report['has_nan'] = True
- self.logger.warning("⚠️ Data still contains NaN values")
+ validation_Report['has_nan'] = True
+ self.logger.warning("⚠️ data still contains NaN values")
 
- # Check for duplicates
+ # check for duplicates
  if data.duplicated().any():
- validation_report['has_duplicates'] = True
- self.logger.warning("⚠️ Data still contains duplicates")
+ validation_Report['has_duplicates'] = True
+ self.logger.warning("⚠️ data still contains duplicates")
 
  # Count column types
- validation_report['numeric_cols'] = len(data.select_dtypes(include=[np.number]).columns)
- validation_report['categorical_cols'] = len(data.select_dtypes(include=['object']).columns)
+ validation_Report['numeric_cols'] = len(data.select_dtypes(include=[np.number]).columns)
+ validation_Report['categorical_cols'] = len(data.select_dtypes(include=['object']).columns)
 
- # Check target column if provided
+ # check target column if provided
  if target_column and target_column in data.columns:
  target_info = {
  'target_unique_values': data[target_column].nunique(),
  'target_missing': data[target_column].isnull().sum(),
  'target_type': str(data[target_column].dtype)
  }
- validation_report['target_info'] = target_info
+ validation_Report['target_info'] = target_info
 
- self.logger.info(f"✅ Validation completed: {validation_report['total_rows']} rows, {validation_report['total_cols']} cols")
- self.logger.info(f"📊 Memory usage: {validation_report['memory_usage_mb']:.2f} MB")
+ self.logger.info(f"✅ Validation COMPLETED: {validation_Report['total_rows']} rows, {validation_Report['total_cols']} cols")
+ self.logger.info(f"📊 Memory usage: {validation_Report['memory_usage_mb']:.2f} MB")
 
- return validation_report
+ return validation_Report

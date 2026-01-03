@@ -1,39 +1,39 @@
-# 15. Оптимизация портфолио - create прибыльного портфолио
+# 15. Оптимизация Portfolio - create прибыльного Portfolio
 
-**Goal:** Создать прибыльный портфолио with доходностью более 100% in месяц.
+**Goal:** Создать прибыльный Portfolio with доходностью более 100% in месяц.
 
-## Введение in оптимизацию портфолио
+## Введение in оптимизацию Portfolio
 
-**Теория:** Оптимизация портфолио представляет собой процесс выбора оптимального распределения активов in портфолио for достижения максимальной доходности при минимальном риске. Это одна из самых важных задач in современном инвестировании, которая требует глубокого понимания финансовых рынков, статистических методов and машинного обучения.
+**Теория:** Оптимизация Portfolio представляет собой процесс выбора оптимального распределения активов in Portfolio for достижения максимальной доходности при минимальном риске. Это одна из самых важных задач in современном инвестировании, которая требует глубокого понимания финансовых рынков, статистических методов and машинного обучения.
 
-**Почему оптимизация портфолио критически важна:**
-- **Максимизация доходности:** Правильная оптимизация может значительно увеличить доходность портфолио
-- **Минимизация рисков:** Эффективная диверсификация снижает общий риск портфолио
+**Почему оптимизация Portfolio критически важна:**
+- **Максимизация доходности:** Правильная оптимизация может значительно увеличить доходность Portfolio
+- **Минимизация рисков:** Эффективная диверсификация снижает общий риск Portfolio
 - **Научный подход:** Современные методы оптимизации основаны on научных принципах
 - **Автоматизация:** Позволяет автоматизировать процесс принятия инвестиционных решений
 
-**Исторический контекст:** Concept оптимизации портфолио была впервые формализована Гарри Марковицем in 1952 году in его знаменитой работе "Portfolio Selection". with тех пор эта область значительно развилась, включив in себя современные методы машинного обучения, блокчейн-технологии and продвинутые алгоритмы оптимизации.
+**Исторический контекст:** Concept оптимизации Portfolio была впервые формализована Гарри Марковицем in 1952 году in его знаменитой работе "Portfolio Selection". with тех пор эта область значительно развилась, включив in себя современные методы машинного обучения, блокчейн-технологии and продвинутые алгоритмы оптимизации.
 
-**Современные вызовы:** in современном мире финансовых рынков традиционные методы оптимизации портфолио сталкиваются with новыми вызовами:
+**Современные вызовы:** in современном мире финансовых рынков традиционные методы оптимизации Portfolio сталкиваются with новыми вызовами:
 - Высокая волатильность рынков
 - Сложные корреляции между активами
 - Появление новых классов активов (криптовалюты, DeFi)
 - Необходимость быстрой адаптации к изменениям рынка
 - Требования к прозрачности and автоматизации
 
-## Why большинство портфолио not прибыльны?
+## Why большинство Portfolio not прибыльны?
 
-**Теория:** Подавляющее большинство портфолио показывают низкую доходность or убытки из-за фундаментальных проблем in подходе к их формированию and управлению. Понимание этих проблем критически важно for создания прибыльных портфолио.
+**Теория:** Подавляющее большинство Portfolio показывают низкую доходность or убытки из-за фундаментальных проблем in подходе к их формированию and управлению. Понимание этих проблем критически важно for создания прибыльных Portfolio.
 
-**Почему большинство портфолио неэффективны:**
+**Почему большинство Portfolio неэффективны:**
 - **Системные проблемы:** Фундаментальные проблемы in методологии
 - **Отсутствие оптимизации:** Неиспользование современных методов оптимизации
-- **Неправильное управление рисками:** Неэффективные стратегии управления рисками
+- **Неправильное Management рисками:** Неэффективные стратегии управления рисками
 - **Отсутствие адаптации:** Неспособность адаптироваться к изменениям рынка
 
 ### Основные проблемы
 
-**Теория:** Основные проблемы портфолио связаны with фундаментальными недостатками in подходе к их формированию and управлению. Эти проблемы можно решить with помощью современных ML-технологий and продвинутых методов оптимизации.
+**Теория:** Основные проблемы Portfolio связаны with фундаментальными недостатками in подходе к их формированию and управлению. Эти проблемы можно решить with помощью современных ML-технологий and продвинутых методов оптимизации.
 
 1. **Отсутствие диверсификации**
  - **Теория:** Диверсификация критически важна for снижения рисков
@@ -48,13 +48,13 @@
  - **Минусы:** Неэффективность, низкая доходность
 
 3. **Игнорирование корреляций**
- - **Теория:** Корреляции между активами критически важны for портфолио
+ - **Теория:** Корреляции между активами критически важны for Portfolio
  - **Почему проблематично:** Игнорирование корреляций может привести к концентрации рисков
- - **Плюсы:** Простота анализа
+ - **Плюсы:** Простота Analysis
  - **Минусы:** Неправильная оценка рисков, концентрация рисков
 
 4. **Отсутствие риск-менеджмента**
- - **Теория:** Управление рисками критически важно for долгосрочного успеха
+ - **Теория:** Management рисками критически важно for долгосрочного успеха
  - **Почему проблематично:** Отсутствие риск-менеджмента может привести к катастрофическим потерям
  - **Плюсы:** Простота
  - **Минусы:** Высокие риски, потенциальные катастрофические потери
@@ -67,32 +67,32 @@
 
 ### Наш подход
 
-**Теория:** Наш подход основан on использовании современных ML-технологий, продвинутых методов оптимизации and инновационных решений for создания высокоэффективных портфолио. Это позволяет преодолеть ограничения традиционных подходов.
+**Теория:** Наш подход основан on использовании современных ML-технологий, продвинутых методов оптимизации and инновационных решений for создания высокоэффективных Portfolio. Это позволяет преодолеть ограничения традиционных подходов.
 
 **Почему наш подход эффективен:**
 - **Инновационные технологии:** Использование современных ML-алгоритмов
 - **Научный подход:** Основан on научных принципах оптимизации
-- **Комплексный анализ:** Учитывает все аспекты портфолио
+- **Комплексный анализ:** Учитывает все аспекты Portfolio
 - **Автоматизация:** Полная автоматизация процесса управления
 
-**Мы используем:**
-- **ML-оптимизацию портфолио**
- - **Теория:** Использование машинного обучения for оптимизации портфолио
+**Мы Use:**
+- **ML-оптимизацию Portfolio**
+ - **Теория:** Использование машинного обучения for оптимизации Portfolio
  - **Почему важно:** Обеспечивает научно обоснованную оптимизацию
  - **Плюсы:** Высокая точность, научная обоснованность, автоматизация
  - **Минусы:** Сложность реализации, высокие требования к данным
 
 - **Динамическое перебалансирование**
- - **Теория:** Автоматическая корректировка весов портфолио
+ - **Теория:** Автоматическая корректировка весов Portfolio
  - **Почему важно:** Обеспечивает поддержание оптимальных весов
  - **Плюсы:** Автоматизация, поддержание оптимальности, адаптивность
  - **Минусы:** Потенциальные частые сделки, комиссии
 
 - **Мультиактивный анализ**
  - **Теория:** Комплексный анализ множества активов
- - **Почему важно:** Обеспечивает полное понимание портфолио
+ - **Почему важно:** Обеспечивает полное понимание Portfolio
  - **Плюсы:** Комплексный анализ, снижение рисков, повышение доходности
- - **Минусы:** Сложность анализа, высокие вычислительные требования
+ - **Минусы:** Сложность Analysis, высокие вычислительные требования
 
 - **Продвинутый риск-менеджмент**
  - **Теория:** Эффективные стратегии управления рисками
@@ -106,19 +106,19 @@
  - **Плюсы:** Новые возможности, децентрализация, прозрачность
  - **Минусы:** Сложность интеграции, высокие требования к безопасности
 
-## ML-оптимизация портфолио
+## ML-оптимизация Portfolio
 
-**Теория:** ML-оптимизация портфолио представляет собой использование машинного обучения for научно обоснованной оптимизации портфолио. Это критически важно for создания высокоэффективных портфолио with доходностью 100%+ in месяц.
+**Теория:** ML-оптимизация Portfolio представляет собой использование машинного обучения for научно обоснованной оптимизации Portfolio. Это критически важно for создания высокоэффективных Portfolio with доходностью 100%+ in месяц.
 
 **Почему ML-оптимизация критична:**
 - **Научная обоснованность:** Обеспечивает научно обоснованную оптимизацию
-- **Высокая точность:** Обеспечивает высокую точность predictions
+- **Высокая точность:** Обеспечивает высокую точность Predictions
 - **Автоматизация:** Автоматизирует процесс оптимизации
 - **Адаптивность:** Может адаптироваться к изменениям рынка
 
 ### 1. Prediction доходности активов
 
-**Теория:** Prediction доходности активов является фундаментальной задачей for оптимизации портфолио. Точные предсказания доходности критически важны for принятия правильных инвестиционных решений. Современные методы машинного обучения позволяют создавать сложные модели, которые учитывают множество факторов and могут адаптироваться к изменениям рынка.
+**Теория:** Prediction доходности активов является фундаментальной задачей for оптимизации Portfolio. Точные предсказания доходности критически важны for принятия правильных инвестиционных решений. Современные методы машинного обучения позволяют создавать сложные модели, которые учитывают множество факторов and могут адаптироваться к изменениям рынка.
 
 **Математическая основа:** Prediction доходности активов основано on анализе временных рядов, где мы пытаемся найти функцию f, такую что:
 ```
@@ -127,14 +127,14 @@ R(t+1) = f(X(t), X(t-1), ..., X(t-n)) + ε(t)
 где R(t+1) - доходность in момент t+1, X(t) - признаки in момент t, ε(t) - случайная ошибка.
 
 **Почему Prediction доходности важно:**
-- **Основа оптимизации:** Является основой for оптимизации портфолио
+- **Основа оптимизации:** Является основой for оптимизации Portfolio
 - **Снижение рисков:** Помогает снизить риски инвестиций
 - **Повышение доходности:** Может значительно повысить доходность
 - **Научный подход:** Обеспечивает научный подход к инвестированию
 
 **Методы предсказания:**
 1. **Линейные модели:** Простые, но эффективные for стабильных рынков
-2. **Деревья решений:** Хорошо работают with нелинейными зависимостями
+2. **Деревья решений:** Хорошо Workingют with нелинейными зависимостями
 3. **Нейронные сети:** Могут моделировать сложные нелинейные отношения
 4. **Ансамбли:** Комбинируют несколько моделей for improving accuracy
 
@@ -147,9 +147,9 @@ R(t+1) = f(X(t), X(t-1), ..., X(t-n)) + ε(t)
 **Минусы:**
 - Сложность реализации
 - Высокие требования к данным
-- Потенциальная нестабильность predictions
+- Потенциальная нестабильность Predictions
 
-**Практическое применение:** in нашем коде мы используем XGBoost - градиентный бустинг, который отлично подходит for финансовых данных благодаря своей способности обрабатывать нелинейные dependencies and выбросы.
+**Практическое применение:** in нашем коде мы Use XGBoost - градиентный бустинг, который отлично подходит for финансовых данных благодаря своей способности обрабатывать нелинейные dependencies and выбросы.
 
 ```python
 # Необходимые импорты for полного функционирования
@@ -171,7 +171,7 @@ class FeatureEngineer:
 
  def create_features(self, data):
  """create признаков из финансовых данных"""
- features = pd.DataFrame()
+ features = pd.dataFrame()
 
  # Технические индикаторы
  features['sma_5'] = data['Close'].rolling(5).mean()
@@ -235,7 +235,7 @@ class AssetReturnPredictor:
  Инициализация предсказателя доходности
 
  Args:
- assets (list): Список активов for analysis
+ assets (List): List активов for Analysis
  """
  self.assets = assets
  self.models = {}
@@ -267,13 +267,13 @@ class AssetReturnPredictor:
 
  Args:
  asset (str): Название актива
- data (pd.DataFrame): Данные with колонками OHLCV
+ data (pd.dataFrame): data with колонками OHLCV
  test_size (float): Доля тестовых данных
 
  Returns:
  dict: Метрики производительности модели
  """
- print(f"Training model for {asset}...")
+ print(f"training model for {asset}...")
 
  # create признаков
  features = self.feature_engineers[asset].create_features(data)
@@ -316,7 +316,7 @@ class AssetReturnPredictor:
  'feature_importance': self._get_feature_importance(asset, features.columns)
  }
 
- print(f"Training completed for {asset}. Test R²: {test_r2:.4f}")
+ print(f"Training COMPLETED for {asset}. Test R²: {test_r2:.4f}")
 
  return self.performance_metrics[asset]
 
@@ -326,7 +326,7 @@ class AssetReturnPredictor:
 
  Args:
  asset (str): Название актива
- data (pd.DataFrame): Данные for предсказания
+ data (pd.dataFrame): data for предсказания
 
  Returns:
  np.array: Предсказанные доходности
@@ -400,7 +400,7 @@ if __name__ == "__main__":
  price_data['Low'][i] = base_price * (1 - abs(np.random.randn() * 0.02))
  price_data['Close'][i] = base_price * (1 + np.random.randn() * 0.01)
 
- df = pd.DataFrame(price_data)
+ df = pd.dataFrame(price_data)
  df.set_index('Date', inplace=True)
 
  # Инициализация and обучение
@@ -420,11 +420,11 @@ if __name__ == "__main__":
  print("Performance summary:", summary)
 ```
 
-### 2. Оптимизация весов портфолио
+### 2. Оптимизация весов Portfolio
 
-**Теория:** Оптимизация весов портфолио представляет собой процесс определения оптимальных весов активов in портфолио for максимизации доходности при минимизации рисков. Это критически важно for создания эффективных портфолио. Современные методы оптимизации используют математические алгоритмы for поиска оптимального распределения активов.
+**Теория:** Оптимизация весов Portfolio представляет собой процесс определения оптимальных весов активов in Portfolio for максимизации доходности при минимизации рисков. Это критически важно for создания эффективных Portfolio. Современные методы оптимизации используют математические алгоритмы for поиска оптимального распределения активов.
 
-**Математическая основа:** Задача оптимизации портфолио может быть сформулирована как:
+**Математическая основа:** Задача оптимизации Portfolio может быть сформулирована как:
 ```
 maximize: μ^T * w - λ * w^T * Σ * w
 subject to: Σw_i = 1, w_i ≥ 0
@@ -436,10 +436,10 @@ subject to: Σw_i = 1, w_i ≥ 0
 2. **Black-Litterman Model:** Улучшенная версия MVO with рыночными ожиданиями
 3. **Risk Parity:** Равномерное распределение риска между активами
 4. **Maximum Sharpe Ratio:** Максимизация отношения доходность/риск
-5. **Minimum Variance:** Минимизация общей волатильности портфолио
+5. **Minimum Variance:** Минимизация общей волатильности Portfolio
 
 **Почему оптимизация весов важна:**
-- **Максимизация доходности:** Помогает максимизировать доходность портфолио
+- **Максимизация доходности:** Помогает максимизировать доходность Portfolio
 - **Минимизация рисков:** Помогает минимизировать риски
 - **Научный подход:** Обеспечивает научный подход к распределению активов
 - **Автоматизация:** Автоматизирует процесс принятия решений
@@ -458,20 +458,20 @@ subject to: Σw_i = 1, w_i ≥ 0
 **Практическое применение:** in нашем коде мы реализуем несколько методов оптимизации, including максимизацию коэффициента Шарпа, минимизацию дисперсии and риск-паритет. Это позволяет выбрать наиболее подходящий метод for конкретных рыночных условий.
 
 ```python
-# Дополнительные импорты for оптимизации портфолио
+# Дополнительные импорты for оптимизации Portfolio
 from scipy.optimize import minimize
 from scipy.linalg import cholesky, solve_triangular
 import cvxpy as cp
 
 class PortfolioOptimizer:
- """Продвинутый оптимизатор портфолио with множественными методами"""
+ """Продвинутый оптимизатор Portfolio with множественными методами"""
 
  def __init__(self, assets, risk_free_rate=0.02):
  """
- Инициализация оптимизатора портфолио
+ Инициализация оптимизатора Portfolio
 
  Args:
- assets (list): Список активов
+ assets (List): List активов
  risk_free_rate (float): Безрисковая ставка
  """
  self.assets = assets
@@ -498,13 +498,13 @@ class PortfolioOptimizer:
  """
  def negative_sharpe(weights):
  """Отрицательный коэффициент Шарпа for минимизации"""
- portfolio_return = np.dot(weights, expected_returns)
- portfolio_risk = np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights)))
+ Portfolio_return = np.dot(weights, expected_returns)
+ Portfolio_risk = np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights)))
 
- if portfolio_risk == 0:
+ if Portfolio_risk == 0:
  return -np.inf
 
- sharpe_ratio = (portfolio_return - self.risk_free_rate) / portfolio_risk
+ sharpe_ratio = (Portfolio_return - self.risk_free_rate) / Portfolio_risk
  return -sharpe_ratio
 
  # Начальные веса (равномерное распределение)
@@ -522,14 +522,14 @@ class PortfolioOptimizer:
 
  if result.success:
  optimal_weights = result.x
- portfolio_return = np.dot(optimal_weights, expected_returns)
- portfolio_risk = np.sqrt(np.dot(optimal_weights.T, np.dot(cov_matrix, optimal_weights)))
- sharpe_ratio = (portfolio_return - self.risk_free_rate) / portfolio_risk
+ Portfolio_return = np.dot(optimal_weights, expected_returns)
+ Portfolio_risk = np.sqrt(np.dot(optimal_weights.T, np.dot(cov_matrix, optimal_weights)))
+ sharpe_ratio = (Portfolio_return - self.risk_free_rate) / Portfolio_risk
 
  self.optimization_results['maximum_sharpe'] = {
  'weights': optimal_weights,
- 'return': portfolio_return,
- 'risk': portfolio_risk,
+ 'return': Portfolio_return,
+ 'risk': Portfolio_risk,
  'sharpe_ratio': sharpe_ratio,
  'success': True
  }
@@ -547,7 +547,7 @@ class PortfolioOptimizer:
 
  def optimize_minimum_variance(self, cov_matrix):
  """
- Оптимизация for минимизации дисперсии портфолио
+ Оптимизация for минимизации дисперсии Portfolio
 
  Args:
  cov_matrix (np.array): Ковариационная матрица
@@ -555,8 +555,8 @@ class PortfolioOptimizer:
  Returns:
  dict: Результаты оптимизации
  """
- def portfolio_variance(weights):
- """Дисперсия портфолио"""
+ def Portfolio_variance(weights):
+ """Дисперсия Portfolio"""
  return np.dot(weights.T, np.dot(cov_matrix, weights))
 
  # Начальные веса
@@ -564,7 +564,7 @@ class PortfolioOptimizer:
 
  # Оптимизация
  result = minimize(
- portfolio_variance,
+ Portfolio_variance,
  initial_weights,
  method='SLSQP',
  bounds=self.bounds,
@@ -574,11 +574,11 @@ class PortfolioOptimizer:
 
  if result.success:
  optimal_weights = result.x
- portfolio_risk = np.sqrt(result.fun)
+ Portfolio_risk = np.sqrt(result.fun)
 
  self.optimization_results['minimum_variance'] = {
  'weights': optimal_weights,
- 'risk': portfolio_risk,
+ 'risk': Portfolio_risk,
  'success': True
  }
  else:
@@ -603,7 +603,7 @@ class PortfolioOptimizer:
  """
  def risk_parity_objective(weights):
  """Целевая function for риск-паритета"""
- portfolio_risk = np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights)))
+ Portfolio_risk = np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights)))
 
  # Риск каждого актива
  individual_risks = []
@@ -612,7 +612,7 @@ class PortfolioOptimizer:
  individual_risks.append(asset_risk)
 
  # Целевое распределение риска (равномерное)
- target_risk_per_asset = portfolio_risk / self.n_assets
+ target_risk_per_asset = Portfolio_risk / self.n_assets
 
  # Ошибка from целевого распределения
  error = 0
@@ -637,11 +637,11 @@ class PortfolioOptimizer:
 
  if result.success:
  optimal_weights = result.x
- portfolio_risk = np.sqrt(np.dot(optimal_weights.T, np.dot(cov_matrix, optimal_weights)))
+ Portfolio_risk = np.sqrt(np.dot(optimal_weights.T, np.dot(cov_matrix, optimal_weights)))
 
  self.optimization_results['risk_parity'] = {
  'weights': optimal_weights,
- 'risk': portfolio_risk,
+ 'risk': Portfolio_risk,
  'success': True
  }
  else:
@@ -668,11 +668,11 @@ class PortfolioOptimizer:
  """
  def mean_variance_objective(weights):
  """Целевая function среднее-дисперсия"""
- portfolio_return = np.dot(weights, expected_returns)
- portfolio_variance = np.dot(weights.T, np.dot(cov_matrix, weights))
+ Portfolio_return = np.dot(weights, expected_returns)
+ Portfolio_variance = np.dot(weights.T, np.dot(cov_matrix, weights))
 
  # Максимизируем: return - risk_aversion * variance
- return -(portfolio_return - risk_aversion * portfolio_variance)
+ return -(Portfolio_return - risk_aversion * Portfolio_variance)
 
  # Начальные веса
  initial_weights = np.ones(self.n_assets) / self.n_assets
@@ -689,14 +689,14 @@ class PortfolioOptimizer:
 
  if result.success:
  optimal_weights = result.x
- portfolio_return = np.dot(optimal_weights, expected_returns)
- portfolio_risk = np.sqrt(np.dot(optimal_weights.T, np.dot(cov_matrix, optimal_weights)))
+ Portfolio_return = np.dot(optimal_weights, expected_returns)
+ Portfolio_risk = np.sqrt(np.dot(optimal_weights.T, np.dot(cov_matrix, optimal_weights)))
 
  self.optimization_results['mean_variance'] = {
  'weights': optimal_weights,
- 'return': portfolio_return,
- 'risk': portfolio_risk,
- 'sharpe_ratio': (portfolio_return - self.risk_free_rate) / portfolio_risk,
+ 'return': Portfolio_return,
+ 'risk': Portfolio_risk,
+ 'sharpe_ratio': (Portfolio_return - self.risk_free_rate) / Portfolio_risk,
  'success': True
  }
  else:
@@ -711,26 +711,26 @@ class PortfolioOptimizer:
 
  return self.optimization_results['mean_variance']
 
- def get_efficient_frontier(self, expected_returns, cov_matrix, n_portfolios=100):
+ def get_efficient_frontier(self, expected_returns, cov_matrix, n_Portfolios=100):
  """
  Построение эффективной границы
 
  Args:
  expected_returns (np.array): Ожидаемые доходности
  cov_matrix (np.array): Ковариационная матрица
- n_portfolios (int): Количество портфолио on границе
+ n_Portfolios (int): Количество Portfolio on границе
 
  Returns:
- dict: Данные эффективной границы
+ dict: data эффективной границы
  """
  # Находим минимальную and максимальную ожидаемую доходность
  min_return = np.min(expected_returns)
  max_return = np.max(expected_returns)
 
  # Создаем диапазон целевых доходностей
- target_returns = np.linspace(min_return, max_return, n_portfolios)
+ target_returns = np.linspace(min_return, max_return, n_Portfolios)
 
- efficient_portfolios = []
+ efficient_Portfolios = []
 
  for target_return in target_returns:
  # Ограничение on целевую доходность
@@ -738,7 +738,7 @@ class PortfolioOptimizer:
  {'type': 'eq', 'fun': lambda w: np.dot(w, expected_returns) - target_return}
  ]
 
- def portfolio_variance(weights):
+ def Portfolio_variance(weights):
  return np.dot(weights.T, np.dot(cov_matrix, weights))
 
  # Начальные веса
@@ -746,7 +746,7 @@ class PortfolioOptimizer:
 
  # Оптимизация
  result = minimize(
- portfolio_variance,
+ Portfolio_variance,
  initial_weights,
  method='SLSQP',
  bounds=self.bounds,
@@ -755,19 +755,19 @@ class PortfolioOptimizer:
  )
 
  if result.success:
- portfolio_risk = np.sqrt(result.fun)
- efficient_portfolios.append({
+ Portfolio_risk = np.sqrt(result.fun)
+ efficient_Portfolios.append({
  'weights': result.x,
  'return': target_return,
- 'risk': portfolio_risk,
- 'sharpe_ratio': (target_return - self.risk_free_rate) / portfolio_risk
+ 'risk': Portfolio_risk,
+ 'sharpe_ratio': (target_return - self.risk_free_rate) / Portfolio_risk
  })
 
  return {
- 'portfolios': efficient_portfolios,
- 'returns': [p['return'] for p in efficient_portfolios],
- 'risks': [p['risk'] for p in efficient_portfolios],
- 'sharpe_ratios': [p['sharpe_ratio'] for p in efficient_portfolios]
+ 'Portfolios': efficient_Portfolios,
+ 'returns': [p['return'] for p in efficient_Portfolios],
+ 'risks': [p['risk'] for p in efficient_Portfolios],
+ 'sharpe_ratios': [p['sharpe_ratio'] for p in efficient_Portfolios]
  }
 
  def compare_methods(self, expected_returns, cov_matrix):
@@ -817,7 +817,7 @@ if __name__ == "__main__":
  assets = [f'Asset_{i+1}' for i in range(n_assets)]
  optimizer = PortfolioOptimizer(assets, risk_free_rate=0.02)
 
- print("=== Оптимизация портфолио ===")
+ print("=== Оптимизация Portfolio ===")
  print(f"Активы: {assets}")
  print(f"Ожидаемые доходности: {expected_returns}")
  print()
@@ -852,7 +852,7 @@ if __name__ == "__main__":
 
 ### 3. Динамическое перебалансирование
 
-**Теория:** Динамическое перебалансирование представляет собой автоматическую корректировку весов портфолио for поддержания оптимального распределения активов. Это критически важно for поддержания эффективности портфолио in условиях постоянно изменяющихся рынков.
+**Теория:** Динамическое перебалансирование представляет собой автоматическую корректировку весов Portfolio for поддержания оптимального распределения активов. Это критически важно for поддержания эффективности Portfolio in условиях постоянно изменяющихся рынков.
 
 **Математическая основа:** Перебалансирование происходит когда отклонение текущих весов from целевых превышает заданный порог:
 ```
@@ -869,14 +869,14 @@ max|w_current - w_target| > threshold
 **Почему динамическое перебалансирование важно:**
 - **Поддержание оптимальности:** Обеспечивает поддержание оптимальных весов
 - **Адаптивность:** Позволяет адаптироваться к изменениям рынка
-- **Автоматизация:** Автоматизирует процесс управления портфолио
-- **Повышение доходности:** Может повысить доходность портфолио
+- **Автоматизация:** Автоматизирует процесс управления Portfolio
+- **Повышение доходности:** Может повысить доходность Portfolio
 
 **Факторы, влияющие on перебалансирование:**
 - **Транзакционные издержки:** Комиссии за сделки
 - **Налоговые последствия:** Налоги on реализованную прибыль
 - **Ликвидность рынка:** Возможность быстрого исполнения сделок
-- **Волатильность активов:** Частота необходимых корректировок
+- **Волатильность активов:** Частота required корректировок
 
 **Плюсы:**
 - Поддержание оптимальности
@@ -889,7 +889,7 @@ max|w_current - w_target| > threshold
 - Комиссии за сделки
 - Сложность settings
 
-**Практическое применение:** in нашем коде мы реализуем интеллектуальную систему перебалансирования, которая учитывает транзакционные издержки, волатильность рынка and другие факторы for принятия оптимальных решений о перебалансировании.
+**Практическое применение:** in нашем коде мы реализуем интеллектуальную system перебалансирования, которая учитывает транзакционные издержки, волатильность рынка and другие факторы for принятия оптимальных решений о перебалансировании.
 
 ```python
 # Дополнительные импорты for динамического перебалансирования
@@ -897,7 +897,7 @@ from datetime import datetime, timedelta
 import logging
 
 class DynamicRebalancer:
- """Интеллектуальная система динамического перебалансирования портфолио"""
+ """Интеллектуальная система динамического перебалансирования Portfolio"""
 
  def __init__(self, rebalancing_threshold=0.05, transaction_cost=0.001,
  min_rebalancing_interval=1, volatility_lookback=20):
@@ -932,8 +932,8 @@ class DynamicRebalancer:
  Интеллектуальная check необходимости перебалансирования
 
  Args:
- current_weights (np.array): Текущие веса портфолио
- target_weights (np.array): Целевые веса портфолио
+ current_weights (np.array): Текущие веса Portfolio
+ target_weights (np.array): Целевые веса Portfolio
  current_prices (np.array): Текущие цены активов
  force_rebalance (bool): Принудительное перебалансирование
 
@@ -1028,23 +1028,23 @@ class DynamicRebalancer:
  return benefit
 
  def calculate_rebalancing_trades(self, current_weights, target_weights,
- portfolio_value, current_prices=None):
+ Portfolio_value, current_prices=None):
  """
  Расчет оптимальных сделок for перебалансирования
 
  Args:
  current_weights (np.array): Текущие веса
  target_weights (np.array): Целевые веса
- portfolio_value (float): Общая стоимость портфолио
+ Portfolio_value (float): Общая стоимость Portfolio
  current_prices (np.array): Текущие цены активов
 
  Returns:
- list: Список сделок for перебалансирования
+ List: List сделок for перебалансирования
  """
  trades = []
  n_assets = len(current_weights)
 
- # Расчет необходимых изменений
+ # Расчет required изменений
  weight_changes = target_weights - current_weights
 
  # Фильтрация значимых изменений
@@ -1053,7 +1053,7 @@ class DynamicRebalancer:
  for i in range(n_assets):
  if significant_changes[i]:
  weight_change = weight_changes[i]
- trade_value = weight_change * portfolio_value
+ trade_value = weight_change * Portfolio_value
 
  # Расчет количества единиц актива
  if current_prices is not None and i < len(current_prices):
@@ -1076,13 +1076,13 @@ class DynamicRebalancer:
 
  return trades
 
- def execute_rebalancing(self, trades, portfolio, dry_run=False):
+ def execute_rebalancing(self, trades, Portfolio, dry_run=False):
  """
- Выполнение перебалансирования портфолио
+ Выполнение перебалансирования Portfolio
 
  Args:
- trades (list): Список сделок for выполнения
- portfolio: Объект портфолио
+ trades (List): List сделок for выполнения
+ Portfolio: Объект Portfolio
  dry_run (bool): Режим симуляции без реальных сделок
 
  Returns:
@@ -1111,7 +1111,7 @@ class DynamicRebalancer:
  self.logger.info(f"DRY RUN: {trade}")
  else:
  # Реальное выполнение сделки
- success = portfolio.execute_trade(
+ success = Portfolio.execute_trade(
  asset=trade['asset_index'],
  amount=trade['trade_quantity'],
  price=trade.get('price', None)
@@ -1198,7 +1198,7 @@ class DynamicRebalancer:
  Оптимизация стратегии перебалансирования on basis исторических данных
 
  Args:
- historical_data (dict): Исторические данные портфолио
+ historical_data (dict): Исторические data Portfolio
 
  Returns:
  dict: Оптимизированные parameters
@@ -1248,7 +1248,7 @@ if __name__ == "__main__":
  # Тестирование системы
  current_weights = np.array([0.2, 0.2, 0.2, 0.2, 0.2]) # Равномерное распределение
  target_weights = np.array([0.3, 0.15, 0.25, 0.15, 0.15]) # Целевое распределение
- portfolio_value = 100000 # $100,000
+ Portfolio_value = 100000 # $100,000
 
  print("=== Тестирование системы перебалансирования ===")
  print(f"Текущие веса: {current_weights}")
@@ -1269,7 +1269,7 @@ if __name__ == "__main__":
  if rebalance_decision['should_rebalance']:
  # Расчет сделок
  trades = rebalancer.calculate_rebalancing_trades(
- current_weights, target_weights, portfolio_value, current_prices
+ current_weights, target_weights, Portfolio_value, current_prices
  )
 
  print(f"Сделки for перебалансирования ({len(trades)} шт.):")
@@ -1299,7 +1299,7 @@ if __name__ == "__main__":
 
 ## Мультиактивный анализ
 
-**Теория:** Мультиактивный анализ представляет собой комплексный анализ множества активов for понимания их взаимосвязей and влияния on портфолио. Это критически важно for создания эффективных диверсифицированных портфолио. Современные портфолио содержат десятки or даже сотни активов, and понимание их взаимосвязей является ключом к успешному управлению рисками.
+**Теория:** Мультиактивный анализ представляет собой комплексный анализ множества активов for понимания их взаимосвязей and влияния on Portfolio. Это критически важно for создания эффективных диверсифицированных Portfolio. Современные Portfolio содержат десятки or даже сотни активов, and понимание их взаимосвязей является ключом к успешному управлению рисками.
 
 **Математическая основа:** Мультиактивный анализ основан on многомерном статистическом анализе, где мы изучаем:
 - **Ковариационные матрицы:** for понимания взаимосвязей между активами
@@ -1307,7 +1307,7 @@ if __name__ == "__main__":
 - **Факторные модели:** for понимания общих источников риска
 - **Кластерный анализ:** for группировки похожих активов
 
-**Методы мультиактивного анализа:**
+**Методы мультиактивного Analysis:**
 1. **Корреляционный анализ:** Изучение линейных зависимостей
 2. **Копулы:** Анализ нелинейных зависимостей
 3. **Факторные модели:** Выявление общих факторов риска
@@ -1316,14 +1316,14 @@ if __name__ == "__main__":
 
 **Почему мультиактивный анализ критичен:**
 - **Диверсификация:** Обеспечивает эффективную диверсификацию
-- **Снижение рисков:** Помогает снизить риски портфолио
-- **Повышение доходности:** Может повысить доходность портфолио
+- **Снижение рисков:** Помогает снизить риски Portfolio
+- **Повышение доходности:** Может повысить доходность Portfolio
 - **Понимание взаимосвязей:** Обеспечивает понимание взаимосвязей между активами
 - **Выявление аномалий:** Помогает выявить необычные рыночные условия
 
 ### 1. Анализ корреляций
 
-**Теория:** Анализ корреляций между активами критически важен for понимания их взаимосвязей and создания эффективных портфолио. Корреляции определяют степень диверсификации and риски портфолио. in современном мире финансовых рынков корреляции могут быстро изменяться, особенно во время кризисов, что делает их анализ особенно важным.
+**Теория:** Анализ корреляций между активами критически важен for понимания их взаимосвязей and создания эффективных Portfolio. Корреляции определяют степень диверсификации and риски Portfolio. in современном мире финансовых рынков корреляции могут быстро изменяться, особенно во время кризисов, что делает их анализ особенно важным.
 
 **Математическая основа:** Корреляция между двумя активами i and j определяется как:
 ```
@@ -1340,25 +1340,25 @@ if __name__ == "__main__":
 **Почему анализ корреляций важен:**
 - **Понимание взаимосвязей:** Помогает понять взаимосвязи между активами
 - **Диверсификация:** Обеспечивает эффективную диверсификацию
-- **Снижение рисков:** Помогает снизить риски портфолио
-- **Оптимизация:** Помогает оптимизировать портфолио
+- **Снижение рисков:** Помогает снизить риски Portfolio
+- **Оптимизация:** Помогает оптимизировать Portfolio
 - **Выявление кризисов:** Помогает выявить периоды повышенной корреляции
 
 **Плюсы:**
 - Понимание взаимосвязей
 - Эффективная диверсификация
 - Снижение рисков
-- Оптимизация портфолио
+- Оптимизация Portfolio
 
 **Минусы:**
-- Сложность анализа
+- Сложность Analysis
 - Потенциальная нестабильность корреляций
 - Высокие требования к данным
 
-**Практическое применение:** in нашем коде мы реализуем комплексный анализ корреляций, including различные типы корреляций, анализ их стабильности во времени and кластеризацию активов on корреляционным структурам.
+**Практическое применение:** in нашем коде мы реализуем комплексный анализ корреляций, including различные типы корреляций, анализ их стабильности во времени and кластеризацию активов on корреляционным Structureм.
 
 ```python
-# Дополнительные импорты for analysis корреляций
+# Дополнительные импорты for Analysis корреляций
 from scipy.stats import spearmanr, kendalltau
 from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
 from scipy.spatial.distance import squareform
@@ -1371,22 +1371,22 @@ class CorrelationAnalyzer:
  """Комплексный анализ корреляций между активами"""
 
  def __init__(self):
- """Инициализация анализатора корреляций"""
+ """Инициализация Analysisтора корреляций"""
  self.correlation_matrices = {}
  self.correlation_history = []
  self.rolling_correlations = []
- self.cluster_analysis = {}
+ self.cluster_Analysis = {}
 
  def calculate_correlation_matrix(self, returns, method='pearson'):
  """
  Расчет матрицы корреляций различными методами
 
  Args:
- returns (pd.DataFrame): Доходности активов
+ returns (pd.dataFrame): Доходности активов
  method (str): Метод корреляции ('pearson', 'spearman', 'kendall')
 
  Returns:
- pd.DataFrame: Матрица корреляций
+ pd.dataFrame: Матрица корреляций
  """
  if method == 'pearson':
  corr_matrix = returns.corr()
@@ -1420,12 +1420,12 @@ class CorrelationAnalyzer:
  Анализ стабильности корреляций во времени
 
  Args:
- returns (pd.DataFrame): Доходности активов
+ returns (pd.dataFrame): Доходности активов
  window (int): Размер окна for скользящих корреляций
  method (str): Метод корреляции
 
  Returns:
- dict: Результаты анализа стабильности
+ dict: Результаты Analysis стабильности
  """
  rolling_correlations = []
  correlation_changes = []
@@ -1445,7 +1445,7 @@ class CorrelationAnalyzer:
  stability_metrics = self._calculate_stability_metrics(correlation_changes)
 
  # Сохранение результатов
- stability_analysis = {
+ stability_Analysis = {
  'rolling_correlations': rolling_correlations,
  'correlation_changes': correlation_changes,
  'stability_metrics': stability_metrics,
@@ -1453,8 +1453,8 @@ class CorrelationAnalyzer:
  'method': method
  }
 
- self.correlation_history.append(stability_analysis)
- return stability_analysis
+ self.correlation_history.append(stability_Analysis)
+ return stability_Analysis
 
  def _calculate_stability_metrics(self, correlation_changes):
  """Расчет метрик стабильности корреляций"""
@@ -1494,7 +1494,7 @@ class CorrelationAnalyzer:
  Идентификация кластеров корреляций
 
  Args:
- correlation_matrix (pd.DataFrame): Матрица корреляций
+ correlation_matrix (pd.dataFrame): Матрица корреляций
  threshold (float): Порог for кластеризации
  method (str): Метод кластеризации
 
@@ -1518,7 +1518,7 @@ class CorrelationAnalyzer:
 
  # Группировка активов on кластерам
  cluster_groups = {}
- asset_names = correlation_matrix.columns.tolist()
+ asset_names = correlation_matrix.columns.toList()
 
  for i, cluster_id in enumerate(clusters):
  if cluster_id not in cluster_groups:
@@ -1537,7 +1537,7 @@ class CorrelationAnalyzer:
  else:
  intra_cluster_correlations[cluster_id] = 1.0
 
- cluster_analysis = {
+ cluster_Analysis = {
  'clusters': cluster_groups,
  'linkage_matrix': linkage_matrix,
  'intra_cluster_correlations': intra_cluster_correlations,
@@ -1545,19 +1545,19 @@ class CorrelationAnalyzer:
  'method': method
  }
 
- self.cluster_analysis = cluster_analysis
- return cluster_analysis
+ self.cluster_Analysis = cluster_Analysis
+ return cluster_Analysis
 
  def calculate_partial_correlations(self, returns, control_variables=None):
  """
  Расчет частичных корреляций
 
  Args:
- returns (pd.DataFrame): Доходности активов
- control_variables (list): Переменные for контроля
+ returns (pd.dataFrame): Доходности активов
+ control_variables (List): Переменные for контроля
 
  Returns:
- pd.DataFrame: Матрица частичных корреляций
+ pd.dataFrame: Матрица частичных корреляций
  """
  from scipy.stats import pearsonr
 
@@ -1578,8 +1578,8 @@ class CorrelationAnalyzer:
  partial_corr_matrix[i, j] = corr
  partial_corr_matrix[j, i] = corr
 
- # create DataFrame
- partial_corr_df = pd.DataFrame(
+ # create dataFrame
+ partial_corr_df = pd.dataFrame(
  partial_corr_matrix,
  index=returns.columns,
  columns=returns.columns
@@ -1592,8 +1592,8 @@ class CorrelationAnalyzer:
  Обнаружение разрывов in корреляциях
 
  Args:
- returns (pd.DataFrame): Доходности активов
- window (int): Размер окна for analysis
+ returns (pd.dataFrame): Доходности активов
+ window (int): Размер окна for Analysis
  threshold (float): Порог for обнаружения разрывов
 
  Returns:
@@ -1634,7 +1634,7 @@ class CorrelationAnalyzer:
  Расчет метрик корреляционной сети
 
  Args:
- correlation_matrix (pd.DataFrame): Матрица корреляций
+ correlation_matrix (pd.dataFrame): Матрица корреляций
  threshold (float): Порог for создания сети
 
  Returns:
@@ -1669,40 +1669,40 @@ class CorrelationAnalyzer:
  'threshold': threshold
  }
 
- def generate_correlation_report(self, returns, window=252):
+ def generate_correlation_Report(self, returns, window=252):
  """
  Генерация комплексного Reportа on корреляциям
 
  Args:
- returns (pd.DataFrame): Доходности активов
- window (int): Размер окна for analysis
+ returns (pd.dataFrame): Доходности активов
+ window (int): Размер окна for Analysis
 
  Returns:
  dict: Комплексный Report
  """
- report = {}
+ Report = {}
 
  # Расчет всех типов корреляций
  correlations = self.calculate_all_correlations(returns)
- report['correlations'] = correlations
+ Report['correlations'] = correlations
 
  # Анализ стабильности
- stability_analysis = self.analyze_correlation_stability(returns, window)
- report['stability'] = stability_analysis
+ stability_Analysis = self.analyze_correlation_stability(returns, window)
+ Report['stability'] = stability_Analysis
 
  # Кластеризация
- cluster_analysis = self.identify_correlation_clusters(correlations['pearson'])
- report['clusters'] = cluster_analysis
+ cluster_Analysis = self.identify_correlation_clusters(correlations['pearson'])
+ Report['clusters'] = cluster_Analysis
 
  # Обнаружение разрывов
  breaks = self.detect_correlation_breaks(returns, window)
- report['breaks'] = breaks
+ Report['breaks'] = breaks
 
  # Метрики сети
  network_metrics = self.calculate_correlation_network_metrics(correlations['pearson'])
- report['network'] = network_metrics
+ Report['network'] = network_metrics
 
- return report
+ return Report
 
 # example использования
 if __name__ == "__main__":
@@ -1721,10 +1721,10 @@ if __name__ == "__main__":
  asset_returns = correlation_strength * base_returns + (1 - correlation_strength) * np.random.normal(0, 0.02, n_days)
  returns_data[f'Asset_{i+1}'] = asset_returns
 
- returns_df = pd.DataFrame(returns_data)
+ returns_df = pd.dataFrame(returns_data)
  returns_df.index = pd.date_range('2020-01-01', periods=n_days, freq='D')
 
- # Инициализация анализатора
+ # Инициализация Analysisтора
  analyzer = CorrelationAnalyzer()
 
  print("=== Анализ корреляций ===")
@@ -1732,42 +1732,42 @@ if __name__ == "__main__":
  print()
 
  # Генерация Reportа
- report = analyzer.generate_correlation_report(returns_df)
+ Report = analyzer.generate_correlation_Report(returns_df)
 
  # Вывод результатов
  print("1. Корреляции Пирсона:")
- print(report['correlations']['pearson'].round(3))
+ print(Report['correlations']['pearson'].round(3))
  print()
 
  print("2. Стабильность корреляций:")
- stability = report['stability']['stability_metrics']
+ stability = Report['stability']['stability_metrics']
  print(f" Оценка стабильности: {stability['stability_score']:.3f}")
  print(f" Среднее изменение: {stability['average_change']:.3f}")
  print(f" Стабильна: {stability['is_stable']}")
  print()
 
  print("3. Кластеры активов:")
- clusters = report['clusters']['clusters']
+ clusters = Report['clusters']['clusters']
  for cluster_id, assets in clusters.items():
  print(f" Кластер {cluster_id}: {assets}")
  print()
 
  print("4. Разрывы корреляций:")
- breaks = report['breaks']['breaks']
+ breaks = Report['breaks']['breaks']
  print(f" Обнаружено разрывов: {len(breaks)}")
  if breaks:
  print(f" Последний разрыв: {breaks[-1]['date']}")
  print()
 
  print("5. Метрики сети:")
- network = report['network']
+ network = Report['network']
  print(f" Средняя степень: {network['average_degree']:.2f}")
  print(f" Плотность сети: {network['network_density']:.3f}")
 ```
 
 ### 2. Анализ волатильности
 
-**Теория:** Анализ волатильности активов критически важен for понимания рисков and создания эффективных портфолио. Волатильность определяет уровень риска and влияет on распределение активов. Современные методы анализа волатильности включают модели GARCH, стохастическую волатильность and машинное обучение.
+**Теория:** Анализ волатильности активов критически важен for понимания рисков and создания эффективных Portfolio. Волатильность определяет уровень риска and влияет on распределение активов. Современные методы Analysis волатильности включают модели GARCH, стохастическую волатильность and машинное обучение.
 
 **Математическая основа:** Волатильность определяется как стандартное отклонение доходностей:
 ```
@@ -1789,26 +1789,26 @@ if __name__ == "__main__":
 
 **Почему анализ волатильности важен:**
 - **Оценка рисков:** Помогает оценить риски активов
-- **Оптимизация портфолио:** Помогает оптимизировать портфолио
-- **Управление рисками:** Критически важен for управления рисками
+- **Оптимизация Portfolio:** Помогает оптимизировать Portfolio
+- **Management рисками:** Критически важен for управления рисками
 - **Прогнозирование:** Помогает прогнозировать будущие риски
 - **Ценообразование опционов:** Критически важен for деривативов
 
 **Плюсы:**
 - Оценка рисков
-- Оптимизация портфолио
-- Управление рисками
+- Оптимизация Portfolio
+- Management рисками
 - Прогнозирование рисков
 
 **Минусы:**
-- Сложность анализа
+- Сложность Analysis
 - Потенциальная нестабильность волатильности
 - Высокие требования к данным
 
 **Практическое применение:** in нашем коде мы реализуем комплексный анализ волатильности, including различные модели GARCH, анализ режимов волатильности and прогнозирование будущей волатильности.
 
 ```python
-# Дополнительные импорты for analysis волатильности
+# Дополнительные импорты for Analysis волатильности
 try:
  from arch import arch_model
  ARCH_available = True
@@ -1825,7 +1825,7 @@ class VolatilityAnalyzer:
  """Комплексный анализ волатильности активов"""
 
  def __init__(self):
- """Инициализация анализатора волатильности"""
+ """Инициализация Analysisтора волатильности"""
  self.volatility_history = []
  self.volatility_forecasts = {}
  self.garch_models = {}
@@ -1850,11 +1850,11 @@ class VolatilityAnalyzer:
  # Экспоненциально взвешенная волатильность
  volatility = returns.ewm(span=window).std() * np.sqrt(252)
  elif method == 'parkinson':
- # Модель Паркинсона (требует данные OHLC)
+ # Модель Паркинсона (требует data OHLC)
  # Упрощенная версия for доходностей
  volatility = returns.rolling(window).std() * np.sqrt(252)
  elif method == 'garman_klass':
- # Модель Гармана-Класса (требует данные OHLC)
+ # Модель Гармана-Класса (требует data OHLC)
  # Упрощенная версия for доходностей
  volatility = returns.rolling(window).std() * np.sqrt(252)
  else:
@@ -1893,13 +1893,13 @@ class VolatilityAnalyzer:
  n_regimes (int): Количество режимов
 
  Returns:
- dict: Результаты анализа режимов
+ dict: Результаты Analysis режимов
  """
  # remove NaN значений
  clean_vol = volatility.dropna()
 
  if len(clean_vol) < n_regimes * 10:
- return {'error': 'Insufficient data for regime analysis'}
+ return {'error': 'Insufficient data for regime Analysis'}
 
  # Подготовка данных
  X = clean_vol.values.reshape(-1, 1)
@@ -2063,10 +2063,10 @@ class VolatilityAnalyzer:
 
  Args:
  returns (pd.Series): Доходности актива
- window (int): Размер окна for analysis
+ window (int): Размер окна for Analysis
 
  Returns:
- dict: Результаты анализа кластеризации
+ dict: Результаты Analysis кластеризации
  """
  # Расчет волатильности
  volatility = self.calculate_volatility(returns, window)
@@ -2131,48 +2131,48 @@ class VolatilityAnalyzer:
 
  return periods
 
- def generate_volatility_report(self, returns, window=252):
+ def generate_volatility_Report(self, returns, window=252):
  """
  Генерация комплексного Reportа on волатильности
 
  Args:
  returns (pd.Series): Доходности актива
- window (int): Размер окна for analysis
+ window (int): Размер окна for Analysis
 
  Returns:
  dict: Комплексный Report on волатильности
  """
- report = {}
+ Report = {}
 
  # Расчет волатильности различными методами
  rolling_vol = self.calculate_volatility(returns, window, 'rolling')
  ewm_vol = self.calculate_volatility(returns, window, 'ewm')
  realized_vol = self.calculate_realized_volatility(returns)
 
- report['volatility_series'] = {
+ Report['volatility_series'] = {
  'rolling': rolling_vol,
  'ewm': ewm_vol,
  'realized': realized_vol
  }
 
  # Анализ режимов волатильности
- regime_analysis = self.analyze_volatility_regimes(rolling_vol)
- report['regime_analysis'] = regime_analysis
+ regime_Analysis = self.analyze_volatility_regimes(rolling_vol)
+ Report['regime_Analysis'] = regime_Analysis
 
  # Прогнозирование волатильности
  if ARCH_available:
  garch_forecast = self.forecast_volatility_garch(returns)
- report['garch_forecast'] = garch_forecast
+ Report['garch_forecast'] = garch_forecast
 
  # Метрики волатильности
  vol_metrics = self.calculate_volatility_metrics(returns, rolling_vol)
- report['metrics'] = vol_metrics
+ Report['metrics'] = vol_metrics
 
  # Анализ кластеризации
- clustering_analysis = self.detect_volatility_clustering(returns)
- report['clustering'] = clustering_analysis
+ clustering_Analysis = self.detect_volatility_clustering(returns)
+ Report['clustering'] = clustering_Analysis
 
- return report
+ return Report
 
 # example использования
 if __name__ == "__main__":
@@ -2196,7 +2196,7 @@ if __name__ == "__main__":
  returns_series = pd.Series(returns)
  returns_series.index = pd.date_range('2020-01-01', periods=n_days, freq='D')
 
- # Инициализация анализатора
+ # Инициализация Analysisтора
  analyzer = VolatilityAnalyzer()
 
  print("=== Анализ волатильности ===")
@@ -2204,11 +2204,11 @@ if __name__ == "__main__":
  print()
 
  # Генерация Reportа
- report = analyzer.generate_volatility_report(returns_series)
+ Report = analyzer.generate_volatility_Report(returns_series)
 
  # Вывод результатов
  print("1. Метрики волатильности:")
- metrics = report['metrics']
+ metrics = Report['metrics']
  print(f" Средняя волатильность: {metrics['mean_volatility']:.4f}")
  print(f" Стандартное отклонение: {metrics['std_volatility']:.4f}")
  print(f" Коэффициент вариации: {metrics['coefficient_of_variation']:.4f}")
@@ -2216,38 +2216,38 @@ if __name__ == "__main__":
  print()
 
  print("2. Анализ режимов волатильности:")
- if 'regime_analysis' in report and 'error' not in report['regime_analysis']:
- regime_stats = report['regime_analysis']['regime_stats']
+ if 'regime_Analysis' in Report and 'error' not in Report['regime_Analysis']:
+ regime_stats = Report['regime_Analysis']['regime_stats']
  for regime, stats in regime_stats.items():
  print(f" {regime}: {stats['count']} дней, средняя волатильность {stats['mean']:.4f}")
  print()
 
  print("3. Кластеризация волатильности:")
- clustering = report['clustering']
+ clustering = Report['clustering']
  print(f" Обнаружена кластеризация: {clustering['volatility_clustering_detected']}")
  print(f" periods высокой волатильности: {len(clustering['high_volatility_periods'])}")
  print()
 
- if ARCH_available and 'garch_forecast' in report and 'error' not in report['garch_forecast']:
+ if ARCH_available and 'garch_forecast' in Report and 'error' not in Report['garch_forecast']:
  print("4. Прогноз GARCH:")
- garch = report['garch_forecast']
+ garch = Report['garch_forecast']
  print(f" Прогнозируемая волатильность: {garch['forecast_volatility']:.4f}")
  print(f" AIC: {garch['aic']:.2f}")
  else:
- print("4. GARCH прогноз неavailable")
+ print("4. GARCH прогноз not available")
 ```
 
 ## Продвинутый риск-менеджмент
 
-**Теория:** Продвинутый риск-менеджмент представляет собой комплексную систему управления рисками портфолио, которая использует современные методы for минимизации потерь and максимизации прибыли. Это критически важно for долгосрочного успеха. Современный риск-менеджмент включает in себя not только количественные методы, но and качественный анализ, стресс-тестирование and сценарное Planирование.
+**Теория:** Продвинутый риск-менеджмент представляет собой комплексную system управления рисками Portfolio, которая использует современные методы for минимизации потерь and максимизации прибыли. Это критически важно for долгосрочного успеха. Современный риск-менеджмент включает in себя not только количественные методы, но and качественный анализ, стресс-тестирование and сценарное Planирование.
 
 **Математическая основа:** Современный риск-менеджмент основан on:
 - **Стохастических процессах:** for моделирования динамики цен
 - **Копулах:** for моделирования зависимостей между активами
-- **Экстремальной теории значений:** for analysis хвостовых рисков
-- **Монте-Карло симуляциям:** for комплексного анализа рисков
+- **Экстремальной теории значений:** for Analysis хвостовых рисков
+- **Монте-Карло симуляциям:** for комплексного Analysis рисков
 
-**Компоненты продвинутого риск-менеджмента:**
+**components продвинутого риск-менеджмента:**
 1. **Value at Risk (VaR):** Количественная оценка максимальных потерь
 2. **Conditional VaR (CVaR):** Ожидаемые потери in экстремальных сценариях
 3. **Stress testing:** Тестирование in экстремальных условиях
@@ -2257,7 +2257,7 @@ if __name__ == "__main__":
 
 **Почему продвинутый риск-менеджмент критичен:**
 - **Защита капитала:** Критически важно for защиты капитала
-- **Стабильность:** Обеспечивает стабильность портфолио
+- **Стабильность:** Обеспечивает стабильность Portfolio
 - **Долгосрочный успех:** Критически важно for долгосрочного успеха
 - **Психологический комфорт:** Снижает стресс and эмоциональные решения
 - **Регуляторное соответствие:** Необходимо for соответствия требованиям
@@ -2265,7 +2265,7 @@ if __name__ == "__main__":
 
 ### 1. Value at Risk (VaR)
 
-**Теория:** Value at Risk (VaR) представляет собой статистическую меру риска, которая определяет максимальные ожидаемые потери портфолио за определенный период времени with заданной вероятностью. Это критически важно for понимания and управления рисками. VaR стал стандартом in индустрии for измерения рыночного риска.
+**Теория:** Value at Risk (VaR) представляет собой статистическую меру риска, которая определяет максимальные ожидаемые потери Portfolio за определенный период времени with заданной вероятностью. Это критически важно for понимания and управления рисками. VaR стал стандартом in индустрии for измерения рыночного риска.
 
 **Математическая основа:** VaR определяется как:
 ```
@@ -2277,12 +2277,12 @@ VaR_α = -F^(-1)(α)
 1. **Исторический VaR:** Основан on исторических данных
 2. **Параметрический VaR:** Предполагает нормальное распределение
 3. **Монте-Карло VaR:** Использует симуляции
-4. **Extreme Value Theory VaR:** for analysis хвостовых рисков
+4. **Extreme Value Theory VaR:** for Analysis хвостовых рисков
 
 **Почему VaR важен:**
 - **Количественная оценка рисков:** Обеспечивает количественную оценку рисков
-- **Сравнение портфолио:** Позволяет сравнивать риски различных портфолио
-- **Управление рисками:** Помогает in управлении рисками
+- **Сравнение Portfolio:** Позволяет сравнивать риски различных Portfolio
+- **Management рисками:** Помогает in управлении рисками
 - **Planирование:** Помогает in Planировании инвестиций
 - **Регуляторное соответствие:** Требуется регуляторами
 
@@ -2298,7 +2298,7 @@ VaR_α = -F^(-1)(α)
 - Необходимость понимания статистики
 - not учитывает форму распределения in хвостах
 
-**Практическое применение:** in нашем коде мы реализуем все основные методы расчета VaR, including исторический, параметрический and Монте-Карло подходы, а также продвинутые методы for analysis хвостовых рисков.
+**Практическое применение:** in нашем коде мы реализуем все основные методы расчета VaR, including исторический, параметрический and Монте-Карло подходы, а также продвинутые методы for Analysis хвостовых рисков.
 
 ```python
 # Дополнительные импорты for VaR расчетов
@@ -2326,7 +2326,7 @@ class VaRCalculator:
  Расчет исторического VaR
 
  Args:
- returns (np.array): Доходности портфолио
+ returns (np.array): Доходности Portfolio
  confidence_level (float): Уровень доверия
 
  Returns:
@@ -2365,7 +2365,7 @@ class VaRCalculator:
  Расчет параметрического VaR
 
  Args:
- returns (np.array): Доходности портфолио
+ returns (np.array): Доходности Portfolio
  confidence_level (float): Уровень доверия
  distribution (str): Тип распределения ('normal', 't', 'skewed')
 
@@ -2436,7 +2436,7 @@ class VaRCalculator:
  Расчет VaR методом Монте-Карло
 
  Args:
- returns (np.array): Доходности портфолио
+ returns (np.array): Доходности Portfolio
  n_simulations (int): Количество симуляций
  confidence_level (float): Уровень доверия
  model (str): Модель for симуляций ('normal', 't', 'garch')
@@ -2504,7 +2504,7 @@ class VaRCalculator:
  Расчет VaR with использованием теории экстремальных значений
 
  Args:
- returns (np.array): Доходности портфолио
+ returns (np.array): Доходности Portfolio
  confidence_level (float): Уровень доверия
  threshold_percentile (float): Процентиль for определения экстремумов
 
@@ -2519,7 +2519,7 @@ class VaRCalculator:
  excesses = returns[returns < threshold] - threshold
 
  if len(excesses) < 10:
- return {'error': 'Insufficient extreme values for EVT analysis'}
+ return {'error': 'Insufficient extreme values for EVT Analysis'}
 
  # Подгонка обобщенного распределения Парето (упрощенная версия)
  # in реальности нужна более сложная реализация
@@ -2550,34 +2550,34 @@ class VaRCalculator:
  self.var_history.append(result)
  return result
 
- def calculate_portfolio_var(self, weights, returns_matrix, confidence_level=None):
+ def calculate_Portfolio_var(self, weights, returns_matrix, confidence_level=None):
  """
- Расчет VaR for портфолио with множественными активами
+ Расчет VaR for Portfolio with множественными активами
 
  Args:
- weights (np.array): Веса активов in портфолио
+ weights (np.array): Веса активов in Portfolio
  returns_matrix (np.array): Матрица доходностей активов
  confidence_level (float): Уровень доверия
 
  Returns:
- dict: Результаты расчета портфолио VaR
+ dict: Результаты расчета Portfolio VaR
  """
  if confidence_level is None:
  confidence_level = self.confidence_level
 
- # Расчет доходностей портфолио
- portfolio_returns = np.dot(returns_matrix, weights)
+ # Расчет доходностей Portfolio
+ Portfolio_returns = np.dot(returns_matrix, weights)
 
- # Расчет VaR for портфолио
- historical_var = self.calculate_historical_var(portfolio_returns, confidence_level)
- parametric_var = self.calculate_parametric_var(portfolio_returns, confidence_level)
+ # Расчет VaR for Portfolio
+ historical_var = self.calculate_historical_var(Portfolio_returns, confidence_level)
+ parametric_var = self.calculate_parametric_var(Portfolio_returns, confidence_level)
 
  # Анализ вклада активов in VaR
  asset_var_contributions = self._calculate_var_contributions(weights, returns_matrix, confidence_level)
 
  result = {
- 'portfolio_var': historical_var['var'],
- 'portfolio_cvar': historical_var['cvar'],
+ 'Portfolio_var': historical_var['var'],
+ 'Portfolio_cvar': historical_var['cvar'],
  'historical_var': historical_var,
  'parametric_var': parametric_var,
  'asset_contributions': asset_var_contributions,
@@ -2616,15 +2616,15 @@ class VaRCalculator:
  return np.array(simulated_returns)
 
  def _calculate_var_contributions(self, weights, returns_matrix, confidence_level):
- """Расчет вклада каждого актива in VaR портфолио"""
+ """Расчет вклада каждого актива in VaR Portfolio"""
  n_assets = len(weights)
  contributions = np.zeros(n_assets)
 
- # Расчет портфолио доходностей
- portfolio_returns = np.dot(returns_matrix, weights)
+ # Расчет Portfolio доходностей
+ Portfolio_returns = np.dot(returns_matrix, weights)
 
- # VaR портфолио
- portfolio_var = self.calculate_historical_var(portfolio_returns, confidence_level)['var']
+ # VaR Portfolio
+ Portfolio_var = self.calculate_historical_var(Portfolio_returns, confidence_level)['var']
 
  # Вклад каждого актива
  for i in range(n_assets):
@@ -2632,12 +2632,12 @@ class VaRCalculator:
  temp_weights = weights.copy()
  temp_weights[i] += 0.001 # Малое изменение
 
- # Новые доходности портфолио
- temp_portfolio_returns = np.dot(returns_matrix, temp_weights)
- temp_var = self.calculate_historical_var(temp_portfolio_returns, confidence_level)['var']
+ # Новые доходности Portfolio
+ temp_Portfolio_returns = np.dot(returns_matrix, temp_weights)
+ temp_var = self.calculate_historical_var(temp_Portfolio_returns, confidence_level)['var']
 
  # Вклад актива
- contributions[i] = (temp_var - portfolio_var) / 0.001
+ contributions[i] = (temp_var - Portfolio_var) / 0.001
 
  return contributions
 
@@ -2682,36 +2682,36 @@ class VaRCalculator:
  'model_adequate': p_value > 0.05
  }
 
- def generate_var_report(self, returns, confidence_levels=[0.01, 0.05, 0.1]):
+ def generate_var_Report(self, returns, confidence_levels=[0.01, 0.05, 0.1]):
  """
  Генерация комплексного Reportа on VaR
 
  Args:
- returns (np.array): Доходности портфолио
- confidence_levels (list): Уровни доверия for analysis
+ returns (np.array): Доходности Portfolio
+ confidence_levels (List): Уровни доверия for Analysis
 
  Returns:
  dict: Комплексный Report on VaR
  """
- report = {}
+ Report = {}
 
  for conf_level in confidence_levels:
- level_report = {}
+ level_Report = {}
 
  # Различные методы расчета
- level_report['historical'] = self.calculate_historical_var(returns, conf_level)
- level_report['parametric_normal'] = self.calculate_parametric_var(returns, conf_level, 'normal')
- level_report['parametric_t'] = self.calculate_parametric_var(returns, conf_level, 't')
- level_report['monte_carlo'] = self.calculate_monte_carlo_var(returns, confidence_level=conf_level)
+ level_Report['historical'] = self.calculate_historical_var(returns, conf_level)
+ level_Report['parametric_normal'] = self.calculate_parametric_var(returns, conf_level, 'normal')
+ level_Report['parametric_t'] = self.calculate_parametric_var(returns, conf_level, 't')
+ level_Report['monte_carlo'] = self.calculate_monte_carlo_var(returns, confidence_level=conf_level)
 
  # Бэктестинг
- historical_var = level_report['historical']['var']
+ historical_var = level_Report['historical']['var']
  var_series = np.full(len(returns), historical_var) # Упрощенная версия
- level_report['backtest'] = self.backtest_var(returns, var_series, conf_level)
+ level_Report['backtest'] = self.backtest_var(returns, var_series, conf_level)
 
- report[f'confidence_{int(conf_level*100)}'] = level_report
+ Report[f'confidence_{int(conf_level*100)}'] = level_Report
 
- return report
+ return Report
 
 # example использования
 if __name__ == "__main__":
@@ -2731,10 +2731,10 @@ if __name__ == "__main__":
  print()
 
  # Генерация Reportа
- report = var_calc.generate_var_report(returns)
+ Report = var_calc.generate_var_Report(returns)
 
  # Вывод результатов for 95% VaR
- var_95 = report['confidence_5']
+ var_95 = Report['confidence_5']
 
  print("1. VaR on уровне 95%:")
  print(f" Исторический VaR: {var_95['historical']['var']:.4f}")
@@ -2756,20 +2756,20 @@ if __name__ == "__main__":
  print(f" Модель адекватна: {backtest['model_adequate']}")
  print()
 
- # Анализ портфолио
- print("4. Анализ портфолио:")
+ # Анализ Portfolio
+ print("4. Анализ Portfolio:")
  n_assets = 5
  weights = np.array([0.2, 0.2, 0.2, 0.2, 0.2])
  returns_matrix = np.random.normal(0.001, 0.02, (n_days, n_assets))
 
- portfolio_var = var_calc.calculate_portfolio_var(weights, returns_matrix)
- print(f" VaR портфолио: {portfolio_var['portfolio_var']:.4f}")
- print(f" Вклады активов: {portfolio_var['asset_contributions']}")
+ Portfolio_var = var_calc.calculate_Portfolio_var(weights, returns_matrix)
+ print(f" VaR Portfolio: {Portfolio_var['Portfolio_var']:.4f}")
+ print(f" Вклады активов: {Portfolio_var['asset_contributions']}")
 ```
 
 ### 2. Stress testing
 
-**Теория:** Stress testing представляет собой метод тестирования портфолио in экстремальных рыночных условиях for оценки его устойчивости. Это критически важно for понимания потенциальных рисков and подготовки к неблагоприятным сценариям. Stress testing является обязательным требованием for многих финансовых институтов.
+**Теория:** Stress testing представляет собой метод тестирования Portfolio in экстремальных рыночных условиях for оценки его устойчивости. Это критически важно for понимания потенциальных рисков and подготовки к неблагоприятным сценариям. Stress testing является обязательным требованием for многих финансовых институтов.
 
 **Математическая основа:** Stress testing основан on:
 - **Сценарном анализе:** Моделирование конкретных рыночных сценариев
@@ -2784,9 +2784,9 @@ if __name__ == "__main__":
 4. **Корреляционные стресс-тесты:** Изменение корреляций между активами
 
 **Почему Stress testing важен:**
-- **Оценка устойчивости:** Помогает оценить устойчивость портфолио
+- **Оценка устойчивости:** Помогает оценить устойчивость Portfolio
 - **Подготовка к кризисам:** Помогает подготовиться к кризисным ситуациям
-- **Управление рисками:** Критически важен for управления рисками
+- **Management рисками:** Критически важен for управления рисками
 - **Planирование:** Помогает in Planировании инвестиций
 - **Регуляторное соответствие:** Требуется регуляторами
 - **Инвесторская уверенность:** Повышает доверие инвесторов
@@ -2794,7 +2794,7 @@ if __name__ == "__main__":
 **Плюсы:**
 - Оценка устойчивости
 - Подготовка к кризисам
-- Управление рисками
+- Management рисками
 - Planирование инвестиций
 
 **Минусы:**
@@ -2803,7 +2803,7 @@ if __name__ == "__main__":
 - Необходимость понимания рыночных условий
 - Субъективность in выборе сценариев
 
-**Практическое применение:** in нашем коде мы реализуем комплексную систему стресс-тестирования, включающую исторические сценарии, гипотетические кризисы and факторные стресс-тесты.
+**Практическое применение:** in нашем коде мы реализуем комплексную system стресс-тестирования, включающую исторические сценарии, гипотетические кризисы and факторные стресс-тесты.
 
 ```python
 # Дополнительные импорты for стресс-тестирования
@@ -2811,7 +2811,7 @@ from datetime import datetime, timedelta
 import json
 
 class StressTester:
- """Комплексная система стресс-тестирования портфолио"""
+ """Комплексная система стресс-тестирования Portfolio"""
 
  def __init__(self):
  """Инициализация системы стресс-тестирования"""
@@ -2967,12 +2967,12 @@ class StressTester:
  }
  }
 
- def run_historical_stress_test(self, portfolio_weights, base_returns=None):
+ def run_historical_stress_test(self, Portfolio_weights, base_returns=None):
  """
  Launch исторических стресс-тестов
 
  Args:
- portfolio_weights (dict): Веса активов in портфолио
+ Portfolio_weights (dict): Веса активов in Portfolio
  base_returns (dict): Базовые доходности активов
 
  Returns:
@@ -2984,16 +2984,16 @@ class StressTester:
  results = {}
 
  for scenario_name, scenario in self.historical_scenarios.items():
- portfolio_return = self._calculate_scenario_return(
- portfolio_weights, scenario['asset_returns']
+ Portfolio_return = self._calculate_scenario_return(
+ Portfolio_weights, scenario['asset_returns']
  )
 
  # Расчет дополнительных метрик
- var_impact = self._calculate_var_impact(portfolio_return, base_returns)
+ var_impact = self._calculate_var_impact(Portfolio_return, base_returns)
  max_drawdown = self._calculate_max_drawdown_impact(scenario['asset_returns'])
 
  results[scenario_name] = {
- 'portfolio_return': portfolio_return,
+ 'Portfolio_return': Portfolio_return,
  'description': scenario['description'],
  'period': scenario['period'],
  'var_impact': var_impact,
@@ -3003,12 +3003,12 @@ class StressTester:
 
  return results
 
- def run_hypothetical_stress_test(self, portfolio_weights, base_returns=None):
+ def run_hypothetical_stress_test(self, Portfolio_weights, base_returns=None):
  """
  Launch гипотетических стресс-тестов
 
  Args:
- portfolio_weights (dict): Веса активов in портфолио
+ Portfolio_weights (dict): Веса активов in Portfolio
  base_returns (dict): Базовые доходности активов
 
  Returns:
@@ -3020,21 +3020,21 @@ class StressTester:
  results = {}
 
  for scenario_name, scenario in self.stress_scenarios.items():
- portfolio_return = self._calculate_scenario_return(
- portfolio_weights, scenario['asset_returns']
+ Portfolio_return = self._calculate_scenario_return(
+ Portfolio_weights, scenario['asset_returns']
  )
 
  # Учет изменений корреляций
  correlation_impact = self._calculate_correlation_impact(
- portfolio_weights, scenario.get('correlation_changes', {})
+ Portfolio_weights, scenario.get('correlation_changes', {})
  )
 
  # Итоговая доходность with учетом корреляций
- total_return = portfolio_return + correlation_impact
+ total_return = Portfolio_return + correlation_impact
 
  results[scenario_name] = {
- 'portfolio_return': total_return,
- 'base_return': portfolio_return,
+ 'Portfolio_return': total_return,
+ 'base_return': Portfolio_return,
  'correlation_impact': correlation_impact,
  'description': scenario['description'],
  'scenario_type': 'hypothetical'
@@ -3042,12 +3042,12 @@ class StressTester:
 
  return results
 
- def run_factor_stress_test(self, portfolio_weights, base_returns, base_volatilities):
+ def run_factor_stress_test(self, Portfolio_weights, base_returns, base_volatilities):
  """
  Launch факторных стресс-тестов
 
  Args:
- portfolio_weights (dict): Веса активов in портфолио
+ Portfolio_weights (dict): Веса активов in Portfolio
  base_returns (dict): Базовые доходности активов
  base_volatilities (dict): Базовые волатильности активов
 
@@ -3070,8 +3070,8 @@ class StressTester:
  base_returns, new_volatilities
  )
 
- portfolio_return = self._calculate_scenario_return(
- portfolio_weights, adjusted_returns
+ Portfolio_return = self._calculate_scenario_return(
+ Portfolio_weights, adjusted_returns
  )
 
  elif scenario_name == 'liquidity_crisis':
@@ -3079,8 +3079,8 @@ class StressTester:
  liquidity_impact = scenario['liquidity_impact']
  adjusted_returns = {k: v - liquidity_impact for k, v in base_returns.items()}
 
- portfolio_return = self._calculate_scenario_return(
- portfolio_weights, adjusted_returns
+ Portfolio_return = self._calculate_scenario_return(
+ Portfolio_weights, adjusted_returns
  )
 
  elif scenario_name == 'currency_crisis':
@@ -3088,25 +3088,25 @@ class StressTester:
  currency_impact = scenario['currency_impact']
  adjusted_returns = {k: v - currency_impact for k, v in base_returns.items()}
 
- portfolio_return = self._calculate_scenario_return(
- portfolio_weights, adjusted_returns
+ Portfolio_return = self._calculate_scenario_return(
+ Portfolio_weights, adjusted_returns
  )
 
  results[scenario_name] = {
- 'portfolio_return': portfolio_return,
+ 'Portfolio_return': Portfolio_return,
  'description': scenario['description'],
  'scenario_type': 'factor'
  }
 
  return results
 
- def run_comprehensive_stress_test(self, portfolio_weights, base_returns=None,
+ def run_comprehensive_stress_test(self, Portfolio_weights, base_returns=None,
  base_volatilities=None):
  """
  Launch комплексного стресс-тестирования
 
  Args:
- portfolio_weights (dict): Веса активов in портфолио
+ Portfolio_weights (dict): Веса активов in Portfolio
  base_returns (dict): Базовые доходности активов
  base_volatilities (dict): Базовые волатильности активов
 
@@ -3116,17 +3116,17 @@ class StressTester:
  comprehensive_results = {}
 
  # Исторические сценарии
- historical_results = self.run_historical_stress_test(portfolio_weights, base_returns)
+ historical_results = self.run_historical_stress_test(Portfolio_weights, base_returns)
  comprehensive_results['historical'] = historical_results
 
  # Гипотетические сценарии
- hypothetical_results = self.run_hypothetical_stress_test(portfolio_weights, base_returns)
+ hypothetical_results = self.run_hypothetical_stress_test(Portfolio_weights, base_returns)
  comprehensive_results['hypothetical'] = hypothetical_results
 
  # Факторные сценарии
  if base_volatilities:
  factor_results = self.run_factor_stress_test(
- portfolio_weights, base_returns, base_volatilities
+ Portfolio_weights, base_returns, base_volatilities
  )
  comprehensive_results['factor'] = factor_results
 
@@ -3134,19 +3134,19 @@ class StressTester:
  all_returns = []
  for category in comprehensive_results.values():
  for scenario in category.values():
- all_returns.append(scenario['portfolio_return'])
+ all_returns.append(scenario['Portfolio_return'])
 
  comprehensive_results['aggregated_metrics'] = self._calculate_aggregated_metrics(all_returns)
 
  return comprehensive_results
 
- def _calculate_scenario_return(self, portfolio_weights, asset_returns):
- """Расчет доходности портфолио in сценарии"""
- portfolio_return = 0
- for asset, weight in portfolio_weights.items():
+ def _calculate_scenario_return(self, Portfolio_weights, asset_returns):
+ """Расчет доходности Portfolio in сценарии"""
+ Portfolio_return = 0
+ for asset, weight in Portfolio_weights.items():
  if asset in asset_returns:
- portfolio_return += weight * asset_returns[asset]
- return portfolio_return
+ Portfolio_return += weight * asset_returns[asset]
+ return Portfolio_return
 
  def _calculate_var_impact(self, scenario_return, base_returns):
  """Расчет влияния on VaR"""
@@ -3154,8 +3154,8 @@ class StressTester:
  return 0
 
  # Упрощенный расчет влияния on VaR
- base_portfolio_return = sum(base_returns.values()) / len(base_returns)
- return scenario_return - base_portfolio_return
+ base_Portfolio_return = sum(base_returns.values()) / len(base_returns)
+ return scenario_return - base_Portfolio_return
 
  def _calculate_max_drawdown_impact(self, asset_returns):
  """Расчет влияния on максимальную просадку"""
@@ -3163,7 +3163,7 @@ class StressTester:
  worst_asset_return = min(asset_returns.values())
  return worst_asset_return
 
- def _calculate_correlation_impact(self, portfolio_weights, correlation_changes):
+ def _calculate_correlation_impact(self, Portfolio_weights, correlation_changes):
  """Расчет влияния изменений корреляций"""
  # Упрощенный расчет влияния корреляций
  total_impact = 0
@@ -3204,13 +3204,13 @@ class StressTester:
  'negative_ratio': sum(1 for r in returns if r < 0) / len(returns)
  }
 
- def generate_stress_report(self, portfolio_weights, base_returns=None,
+ def generate_stress_Report(self, Portfolio_weights, base_returns=None,
  base_volatilities=None, save_to_file=False):
  """
  Генерация Reportа on стресс-testing
 
  Args:
- portfolio_weights (dict): Веса активов in портфолио
+ Portfolio_weights (dict): Веса активов in Portfolio
  base_returns (dict): Базовые доходности активов
  base_volatilities (dict): Базовые волатильности активов
  save_to_file (bool): Сохранить Report in файл
@@ -3220,25 +3220,25 @@ class StressTester:
  """
  # Launch комплексного стресс-тестирования
  results = self.run_comprehensive_stress_test(
- portfolio_weights, base_returns, base_volatilities
+ Portfolio_weights, base_returns, base_volatilities
  )
 
  # create Reportа
- report = {
+ Report = {
  'timestamp': datetime.now().isoformat(),
- 'portfolio_weights': portfolio_weights,
+ 'Portfolio_weights': Portfolio_weights,
  'base_returns': base_returns,
  'stress_results': results,
  'summary': self._generate_summary(results)
  }
 
  if save_to_file:
- filename = f"stress_test_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+ filename = f"stress_test_Report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
  with open(filename, 'w') as f:
- json.dump(report, f, indent=2, default=str)
+ json.dump(Report, f, indent=2, default=str)
  print(f"Report сохранен in файл: {filename}")
 
- return report
+ return Report
 
  def _generate_summary(self, results):
  """Генерация сводки on результатам стресс-тестирования"""
@@ -3259,8 +3259,8 @@ class StressTester:
  for category in results.values():
  if isinstance(category, dict):
  for name, scenario in category.items():
- if isinstance(scenario, dict) and 'portfolio_return' in scenario:
- all_scenarios.append((name, scenario['portfolio_return']))
+ if isinstance(scenario, dict) and 'Portfolio_return' in scenario:
+ all_scenarios.append((name, scenario['Portfolio_return']))
 
  if all_scenarios:
  all_scenarios.sort(key=lambda x: x[1])
@@ -3272,7 +3272,7 @@ class StressTester:
 # example использования
 if __name__ == "__main__":
  # create тестовых данных
- portfolio_weights = {
+ Portfolio_weights = {
  'equity': 0.4,
  'bonds': 0.3,
  'commodities': 0.1,
@@ -3299,28 +3299,28 @@ if __name__ == "__main__":
  # Инициализация системы стресс-тестирования
  stress_tester = StressTester()
 
- print("=== Стресс-тестирование портфолио ===")
- print(f"Портфолио: {portfolio_weights}")
+ print("=== Стресс-тестирование Portfolio ===")
+ print(f"Portfolio: {Portfolio_weights}")
  print()
 
  # Генерация Reportа
- report = stress_tester.generate_stress_report(
- portfolio_weights, base_returns, base_volatilities
+ Report = stress_tester.generate_stress_Report(
+ Portfolio_weights, base_returns, base_volatilities
  )
 
  # Вывод результатов
  print("1. Исторические сценарии:")
- for name, scenario in report['stress_results']['historical'].items():
- print(f" {name}: {scenario['portfolio_return']:.4f} ({scenario['description']})")
+ for name, scenario in Report['stress_results']['historical'].items():
+ print(f" {name}: {scenario['Portfolio_return']:.4f} ({scenario['description']})")
  print()
 
  print("2. Гипотетические сценарии:")
- for name, scenario in report['stress_results']['hypothetical'].items():
- print(f" {name}: {scenario['portfolio_return']:.4f} ({scenario['description']})")
+ for name, scenario in Report['stress_results']['hypothetical'].items():
+ print(f" {name}: {scenario['Portfolio_return']:.4f} ({scenario['description']})")
  print()
 
  print("3. Агрегированные метрики:")
- metrics = report['stress_results']['aggregated_metrics']
+ metrics = Report['stress_results']['aggregated_metrics']
  print(f" Худший случай: {metrics['worst_case_return']:.4f}")
  print(f" Лучший случай: {metrics['best_case_return']:.4f}")
  print(f" Средний результат: {metrics['average_stress_return']:.4f}")
@@ -3328,7 +3328,7 @@ if __name__ == "__main__":
  print()
 
  print("4. Сводка:")
- summary = report['summary']
+ summary = Report['summary']
  if 'overall' in summary:
  overall = summary['overall']
  print(f" Общий худший случай: {overall['worst_case']:.4f}")
@@ -3336,9 +3336,9 @@ if __name__ == "__main__":
  print(f" Доля негативных сценариев: {overall['negative_scenarios_ratio']:.2%}")
 ```
 
-## Блокчейн-integration for портфолио
+## Блокчейн-integration for Portfolio
 
-**Теория:** Блокчейн-integration for портфолио представляет собой использование блокчейн-технологий and DeFi протоколов for увеличения доходности портфолио. Это критически важно for создания инновационных and высокодоходных портфолио. Современные DeFi протоколы предлагают уникальные возможности for получения доходности через yield farming, ликвидность and другие механизмы.
+**Теория:** Блокчейн-integration for Portfolio представляет собой использование блокчейн-технологий and DeFi протоколов for увеличения доходности Portfolio. Это критически важно for создания инновационных and высокодоходных Portfolio. Современные DeFi протоколы предлагают уникальные возможности for получения доходности через yield farming, ликвидность and другие механизмы.
 
 **Математическая основа:** Блокчейн-integration основана on:
 - **Смарт-контрактах:** Автоматизированное выполнение финансовых операций
@@ -3346,7 +3346,7 @@ if __name__ == "__main__":
 - **Алгоритмическом трейдинге:** Автоматизированная торговля on DEX
 - **Yield farming:** Оптимизация доходности через различные протоколы
 
-**Компоненты блокчейн-интеграции:**
+**components блокчейн-интеграции:**
 1. **DeFi активы:** Токены and протоколы децентрализованных финансов
 2. **Yield Farming:** Получение доходности через предоставление ликвидности
 3. **Liquidity Mining:** Добыча токенов за предоставление ликвидности
@@ -3355,20 +3355,20 @@ if __name__ == "__main__":
 
 **Почему блокчейн-integration критична:**
 - **Новые возможности:** Предоставляет новые возможности for заработка
-- **Децентрализация:** Обеспечивает децентрализацию портфолио
+- **Децентрализация:** Обеспечивает децентрализацию Portfolio
 - **Прозрачность:** Обеспечивает прозрачность операций
-- **Автоматизация:** Позволяет полностью автоматизировать управление
+- **Автоматизация:** Позволяет полностью автоматизировать Management
 - **Высокая доходность:** Потенциально более высокая доходность
 - **Инновации:** Доступ к новейшим финансовым инструментам
 
 ### 1. DeFi активы
 
-**Теория:** DeFi активы представляют собой децентрализованные финансовые активы, которые предоставляют новые возможности for инвестирования and получения доходности. Это критически важно for создания диверсифицированных портфолио.
+**Теория:** DeFi активы представляют собой децентрализованные финансовые активы, которые предоставляют новые возможности for инвестирования and получения доходности. Это критически важно for создания диверсифицированных Portfolio.
 
 **Почему DeFi активы важны:**
 - **Новые возможности:** Предоставляют новые возможности for инвестирования
 - **Высокая доходность:** Могут обеспечить высокую доходность
-- **Децентрализация:** Обеспечивают децентрализацию портфолио
+- **Децентрализация:** Обеспечивают децентрализацию Portfolio
 - **Инновации:** Представляют инновационные финансовые инструменты
 
 **Плюсы:**
@@ -3384,7 +3384,7 @@ if __name__ == "__main__":
 
 ```python
 class DeFiPortfolioManager:
- """Менеджер DeFi портфолио"""
+ """Менеджер DeFi Portfolio"""
 
  def __init__(self, web3_provider, private_key):
  self.web3 = Web3(Web3.HTTPProvider(web3_provider))
@@ -3426,7 +3426,7 @@ class DeFiPortfolioManager:
  pool_info = self.defi_assets[asset_name]['contract'].functions.poolInfo(0).call()
 
  # Расчет APR
- total_alloc_point = self.defi_assets[asset_name]['contract'].functions.totalAllocPoint().call()
+ total_alloc_point = self.defi_assets[asset_name]['contract'].functions.totalallocPoint().call()
  reward_per_block = self.defi_assets[asset_name]['contract'].functions.rewardPerBlock().call()
 
  pool_alloc_point = pool_info[1]
@@ -3451,10 +3451,10 @@ class DeFiPortfolioManager:
 
 ### 2. Yield Farming оптимизация
 
-**Теория:** Yield Farming оптимизация представляет собой процесс оптимизации распределения капитала между различными протоколами yield farming for максимизации доходности. Это критически важно for создания высокодоходных портфолио.
+**Теория:** Yield Farming оптимизация представляет собой процесс оптимизации распределения капитала между различными протоколами yield farming for максимизации доходности. Это критически важно for создания высокодоходных Portfolio.
 
 **Почему Yield Farming оптимизация важна:**
-- **Максимизация доходности:** Помогает максимизировать доходность портфолио
+- **Максимизация доходности:** Помогает максимизировать доходность Portfolio
 - **Автоматизация:** Автоматизирует процесс управления
 - **Оптимизация:** Помогает оптимизировать распределение капитала
 - **Диверсификация:** Обеспечивает диверсификацию источников дохода
@@ -3507,7 +3507,7 @@ class YieldFarmingOptimizer:
 
  return optimal_allocation
 
- def rebalance_farming_portfolio(self, current_allocation, target_allocation):
+ def rebalance_farming_Portfolio(self, current_allocation, target_allocation):
  """Перебалансировка фарминга"""
  rebalancing_trades = []
 
@@ -3526,45 +3526,45 @@ class YieldFarmingOptimizer:
  return rebalancing_trades
 ```
 
-## Автоматическое управление портфолио
+## Автоматическое Management Portfolio
 
-**Теория:** Автоматическое управление портфолио представляет собой систему, которая автоматически управляет портфолио без вмешательства человека. Это критически важно for создания эффективных and рентабельных портфолио. Современные системы автоматического управления используют машинное обучение, алгоритмическую торговлю and роботизированные консультанты.
+**Теория:** Автоматическое Management Portfolio представляет собой system, которая автоматически управляет Portfolio без вмешательства человека. Это критически важно for создания эффективных and рентабельных Portfolio. Современные системы автоматического управления используют машинное обучение, алгоритмическую торговлю and роботизированные консультанты.
 
-**Математическая основа:** Автоматическое управление основано on:
+**Математическая основа:** Автоматическое Management основано on:
 - **Алгоритмической торговле:** Автоматизированное выполнение торговых стратегий
 - **Машинном обучении:** Адаптивные модели for принятия решений
-- **Оптимизации:** Непрерывная оптимизация портфолио
-- **Риск-менеджменте:** Автоматическое управление рисками
+- **Оптимизации:** Непрерывная оптимизация Portfolio
+- **Риск-менеджменте:** Автоматическое Management рисками
 
-**Компоненты автоматического управления:**
+**components автоматического управления:**
 1. **Система Monitoringа:** Отслеживание производительности and рисков
 2. **Алгоритмическая торговля:** Автоматическое выполнение сделок
-3. **Риск-менеджмент:** Автоматическое управление рисками
+3. **Риск-менеджмент:** Автоматическое Management рисками
 4. **Перебалансирование:** Автоматическая корректировка весов
 5. **Reportность:** Автоматическая генерация Reportов
 
-**Почему автоматическое управление критично:**
+**Почему автоматическое Management критично:**
 - **Автоматизация:** Полная автоматизация процесса управления
 - **Эффективность:** Обеспечивает высокую эффективность управления
-- **Масштабируемость:** Позволяет масштабировать управление
-- **Рентабельность:** Снижает затраты on управление
+- **Масштабируемость:** Позволяет масштабировать Management
+- **Рентабельность:** Снижает затраты on Management
 - **Скорость:** Мгновенная реакция on изменения рынка
 - **Объективность:** Устранение эмоциональных решений
 
 ### 1. Система Monitoringа
 
-**Теория:** Система Monitoringа портфолио представляет собой комплексную систему отслеживания производительности and рисков портфолио. Это критически важно for своевременного выявления проблем and принятия решений. Современные системы Monitoringа используют машинное обучение for прогнозирования проблем and автоматического реагирования.
+**Теория:** Система Monitoringа Portfolio представляет собой комплексную system отслеживания производительности and рисков Portfolio. Это критически важно for своевременного выявления проблем and принятия решений. Современные системы Monitoringа используют машинное обучение for прогнозирования проблем and автоматического реагирования.
 
 **Математическая основа:** Система Monitoringа основана on:
-- **Временных рядах:** Анализ динамики показателей портфолио
+- **Временных рядах:** Анализ динамики показателей Portfolio
 - **Аномалийном детектировании:** Выявление необычных паттернов
 - **Прогнозировании:** Prediction будущих проблем
 - **Классификации:** Категоризация типов проблем
 
-**Компоненты системы Monitoringа:**
+**components системы Monitoringа:**
 1. **Метрики производительности:** Отслеживание доходности and рисков
 2. **Алерты:** Уведомления о критических событиях
-3. **Дашборды:** Визуализация состояния портфолио
+3. **Дашборды:** Визуализация состояния Portfolio
 4. **Reportы:** Автоматическая генерация Reportов
 5. **Прогнозирование:** Prediction будущих проблем
 
@@ -3588,7 +3588,7 @@ class YieldFarmingOptimizer:
 
 ```python
 class PortfolioMonitor:
- """Monitoring портфолио"""
+ """Monitoring Portfolio"""
 
  def __init__(self):
  self.performance_metrics = {}
@@ -3599,10 +3599,10 @@ class PortfolioMonitor:
  }
  self.alerts = []
 
- def monitor_performance(self, portfolio):
- """Monitoring производительности портфолио"""
+ def monitor_performance(self, Portfolio):
+ """Monitoring производительности Portfolio"""
  # Расчет метрик
- returns = portfolio.get_returns()
+ returns = Portfolio.get_returns()
  metrics = self._calculate_metrics(returns)
 
  # Сохранение метрик
@@ -3660,28 +3660,28 @@ class PortfolioMonitor:
  return alerts
 ```
 
-### 2. Автоматическое управление
+### 2. Автоматическое Management
 
-**Теория:** Автоматическое управление портфолио представляет собой систему, которая автоматически принимает решения and выполняет операции on управлению портфолио. Это критически важно for создания полностью автоматизированных портфолио. Современные системы автоматического управления используют искусственный интеллект for принятия сложных решений.
+**Теория:** Автоматическое Management Portfolio представляет собой system, которая автоматически принимает решения and выполняет операции on управлению Portfolio. Это критически важно for создания полностью автоматизированных Portfolio. Современные системы автоматического управления используют искусственный интеллект for принятия сложных решений.
 
-**Математическая основа:** Автоматическое управление основано on:
+**Математическая основа:** Автоматическое Management основано on:
 - **Алгоритмической торговле:** Автоматизированное выполнение торговых стратегий
 - **Машинном обучении:** Адаптивные модели for принятия решений
-- **Оптимизации:** Непрерывная оптимизация портфолио
-- **Риск-менеджменте:** Автоматическое управление рисками
+- **Оптимизации:** Непрерывная оптимизация Portfolio
+- **Риск-менеджменте:** Автоматическое Management рисками
 
-**Компоненты автоматического управления:**
+**components автоматического управления:**
 1. **Система принятия решений:** Алгоритмы for принятия торговых решений
 2. **Исполнение сделок:** Автоматическое выполнение торговых операций
-3. **Риск-менеджмент:** Автоматическое управление рисками
+3. **Риск-менеджмент:** Автоматическое Management рисками
 4. **Перебалансирование:** Автоматическая корректировка весов
 5. **Reportность:** Автоматическая генерация Reportов
 
-**Почему автоматическое управление важно:**
+**Почему автоматическое Management важно:**
 - **Полная автоматизация:** Обеспечивает полную автоматизацию процесса
 - **Эффективность:** Обеспечивает высокую эффективность управления
-- **Масштабируемость:** Позволяет масштабировать управление
-- **Рентабельность:** Снижает затраты on управление
+- **Масштабируемость:** Позволяет масштабировать Management
+- **Рентабельность:** Снижает затраты on Management
 - **Скорость:** Мгновенная реакция on изменения рынка
 - **Объективность:** Устранение эмоциональных решений
 
@@ -3698,23 +3698,23 @@ class PortfolioMonitor:
 
 ```python
 class AutomatedPortfolioManager:
- """Автоматическое управление портфолио"""
+ """Автоматическое Management Portfolio"""
 
- def __init__(self, portfolio, optimizer, monitor):
- self.portfolio = portfolio
+ def __init__(self, Portfolio, optimizer, monitor):
+ self.Portfolio = Portfolio
  self.optimizer = optimizer
  self.monitor = monitor
  self.rebalancing_schedule = 'weekly'
  self.last_rebalancing = None
 
- def run_automated_management(self):
+ def run_automated_Management(self):
  """Launch автоматического управления"""
  # Monitoring производительности
- performance = self.monitor.monitor_performance(self.portfolio)
+ performance = self.monitor.monitor_performance(self.Portfolio)
 
  # check необходимости перебалансирования
  if self._should_rebalance():
- self._rebalance_portfolio()
+ self._rebalance_Portfolio()
 
  # Обработка алертов
  if performance['alerts']:
@@ -3734,18 +3734,18 @@ class AutomatedPortfolioManager:
 
  return False
 
- def _rebalance_portfolio(self):
- """Перебалансировка портфолио"""
- print("starting portfolio rebalancing...")
+ def _rebalance_Portfolio(self):
+ """Перебалансировка Portfolio"""
+ print("starting Portfolio rebalancing...")
 
  # Получение текущих весов
- current_weights = self.portfolio.get_weights()
+ current_weights = self.Portfolio.get_weights()
 
  # Оптимизация новых весов
  expected_returns = self._get_expected_returns()
  cov_matrix = self._get_covariance_matrix()
 
- target_weights = self.optimizer.optimize_portfolio(
+ target_weights = self.optimizer.optimize_Portfolio(
  expected_returns, cov_matrix
  )
 
@@ -3756,12 +3756,12 @@ class AutomatedPortfolioManager:
 
  # Выполнение сделок
  for trade in rebalancing_trades:
- self.portfolio.execute_trade(trade)
+ self.Portfolio.execute_trade(trade)
 
  # update времени последнего перебалансирования
  self.last_rebalancing = datetime.now()
 
- print("Portfolio rebalancing completed")
+ print("Portfolio rebalancing COMPLETED")
 
  def _handle_alerts(self, alerts):
  """Обработка алертов"""
@@ -3776,26 +3776,26 @@ class AutomatedPortfolioManager:
 
 ## Следующие шаги
 
-После изучения оптимизации портфолио переходите к:
-- **[16_metrics_analysis.md](16_metrics_analysis.md)** - Метрики and анализ
+После изучения оптимизации Portfolio переходите к:
+- **[16_metrics_Analysis.md](16_metrics_Analysis.md)** - Метрики and анализ
 - **[17_examples.md](17_examples.md)** - Практические examples
 
 ## Ключевые выводы
 
-**Теория:** Ключевые выводы суммируют наиболее важные аспекты оптимизации портфолио for создания прибыльных портфолио with доходностью 100%+ in месяц. Эти выводы критически важны for понимания того, как создать эффективные портфолио. Современная оптимизация портфолио требует комплексного подхода, объединяющего передовые технологии and научные методы.
+**Теория:** Ключевые выводы суммируют наиболее важные аспекты оптимизации Portfolio for создания прибыльных Portfolio with доходностью 100%+ in месяц. Эти выводы критически важны for понимания того, как создать эффективные Portfolio. Современная оптимизация Portfolio требует комплексного подхода, объединяющего передовые технологии and научные методы.
 
 **Математическая основа:** Все выводы основаны on строгих математических принципах:
-- **Теория портфолио Марковица:** Классическая основа современной оптимизации
+- **Теория Portfolio Марковица:** Классическая основа современной оптимизации
 - **Стохастические процессы:** Моделирование динамики финансовых рынков
 - **Машинное обучение:** Адаптивные алгоритмы for принятия решений
 - **Оптимизация:** Математические методы поиска оптимальных решений
 
-1. **ML-оптимизация - использование машинного обучения for оптимизации портфолио**
- - **Теория:** ML-оптимизация обеспечивает научно обоснованную оптимизацию портфолио
+1. **ML-оптимизация - использование машинного обучения for оптимизации Portfolio**
+ - **Теория:** ML-оптимизация обеспечивает научно обоснованную оптимизацию Portfolio
  - **Почему важно:** Обеспечивает высокую точность and эффективность
  - **Плюсы:** Высокая точность, научная обоснованность, автоматизация
  - **Минусы:** Сложность реализации, высокие требования к данным
- - **Практическое применение:** Использование XGBoost, нейронных сетей and ансамблей
+ - **Практическое применение:** Использование XGBoost, нейронных networks and ансамблей
 
 2. **Динамическое перебалансирование - автоматическая корректировка весов**
  - **Теория:** Динамическое перебалансирование обеспечивает поддержание оптимальных весов
@@ -3805,10 +3805,10 @@ class AutomatedPortfolioManager:
  - **Практическое применение:** Интеллектуальные системы with учетом транзакционных издержек
 
 3. **Мультиактивный анализ - учет корреляций and волатильности**
- - **Теория:** Мультиактивный анализ обеспечивает комплексное понимание портфолио
+ - **Теория:** Мультиактивный анализ обеспечивает комплексное понимание Portfolio
  - **Почему важно:** Обеспечивает эффективную диверсификацию
  - **Плюсы:** Комплексный анализ, снижение рисков, повышение доходности
- - **Минусы:** Сложность анализа, высокие вычислительные требования
+ - **Минусы:** Сложность Analysis, высокие вычислительные требования
  - **Практическое применение:** Анализ корреляций, волатильности and кластеризация
 
 4. **Продвинутый риск-менеджмент - VaR, стресс-тестирование**
@@ -3825,16 +3825,16 @@ class AutomatedPortfolioManager:
  - **Минусы:** Сложность интеграции, высокие требования к безопасности
  - **Практическое применение:** Yield farming, стейкинг, ликвидность
 
-6. **Автоматическое управление - полная автоматизация процесса**
- - **Теория:** Автоматическое управление критически важно for эффективности
+6. **Автоматическое Management - полная автоматизация процесса**
+ - **Теория:** Автоматическое Management критически важно for эффективности
  - **Почему важно:** Обеспечивает полную автоматизацию and масштабируемость
  - **Плюсы:** Полная автоматизация, масштабируемость, снижение затрат
  - **Минусы:** Сложность реализации, потенциальные ошибки
  - **Практическое применение:** Системы Monitoringа, алгоритмическая торговля
 
-**integration компонентов:** Успешная оптимизация портфолио требует интеграции всех компонентов in единую систему, где каждый элемент дополняет and усиливает другие. Это обеспечивает синергетический эффект and максимальную эффективность.
+**integration компонентов:** Успешная оптимизация Portfolio требует интеграции всех компонентов in единую system, где каждый элемент дополняет and усиливает другие. Это обеспечивает синергетический эффект and максимальную эффективность.
 
-**Будущие направления:** Развитие оптимизации портфолио будет включать:
+**Будущие направления:** Развитие оптимизации Portfolio будет включать:
 - **Квантовые вычисления:** for решения сложных задач оптимизации
 - **ИИ следующего поколения:** Более интеллектуальные системы принятия решений
 - **Блокчейн 3.0:** Новые возможности for децентрализованных финансов
@@ -3842,4 +3842,4 @@ class AutomatedPortfolioManager:
 
 ---
 
-**Важно:** Оптимизация портфолио - это непрерывный процесс, требующий постоянного Monitoringа and корректировки.
+**Важно:** Оптимизация Portfolio - это непрерывный процесс, требующий постоянного Monitoringа and корректировки.

@@ -5,7 +5,7 @@
 
 ## Why интерпретируемость критически важна
 
-**Почему 90% ML-моделей in продакшене not имеют объяснений?** Потому что команды фокусируются on точности, игнорируя необходимость понимания решений модели. Это как использование GPS без карты - вы доедете, но not поймете, как.
+**Почему 90% ML-моделей in продакшене not имеют объяснений?** Потому что team фокусируются on точности, игнорируя необходимость понимания решений модели. Это как использование GPS без карты - вы доедете, но not поймете, как.
 
 ### Катастрофические Consequences необъяснимых моделей
 - **Потеря доверия**: Пользователи not доверяют "черным ящикам"
@@ -21,16 +21,16 @@
 
 ## Введение in интерпретируемость
 
-<img src="images/optimized/interpretability_overview.png" alt="Интерпретируемость ML" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/interpretability_overView.png" alt="Интерпретируемость ML" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 17.1: Обзор методов интерпретируемости and объяснимости ML-моделей - основные категории and методы*
 
 **Почему интерпретируемость - это not роскошь, а необходимость?** Потому что in современном мире ML-модели принимают решения, влияющие on жизни людей, and эти решения должны быть понятными and справедливыми.
 
 **Основные категории интерпретируемости:**
 - **Intrinsic Interpretability**: Модели, которые изначально интерпретируемы (линейные, деревья решений)
-- **Post-hoc Interpretability**: Методы объяснения "черных ящиков" (SHAP, LIME, Integrated Gradients)
+- **Post-hoc Interpretability**: Методы объяснения "черных ящиков" (SHAP, LIME, integrated Gradients)
 - **Global Methods**: Объяснение модели in целом (Feature Importance, PDP, ALE)
-- **Local Methods**: Объяснение конкретных predictions (LIME, SHAP Local, Counterfactuals)
+- **Local Methods**: Объяснение конкретных Predictions (LIME, SHAP Local, Counterfactuals)
 
 Интерпретируемость машинного обучения - это способность понимать and объяснять решения, принимаемые ML-моделями. Это критически важно for:
 - **Доверия к модели** - понимание логики принятия решений
@@ -74,8 +74,8 @@ model.fit(X_train, y_train)
 feature_importance = np.abs(model.coef_)
 feature_names = X_train.columns
 
-# Сортировка on важности - какие признаки важнее всего
-importance_df = pd.DataFrame({
+# Сортировка on важности - What признаки важнее всего
+importance_df = pd.dataFrame({
  'feature': feature_names,
  'importance': feature_importance
 }).sort_values('importance', ascending=False)
@@ -182,7 +182,7 @@ def get_feature_importance(predictor, method='permutation'):
  - `None`: Случайное значение (not воспроизводимо)
  - Применение: обеспечение воспроизводимости результатов
 
-- **`X_test, y_test`**: Тестовые данные for оценки важности
+- **`X_test, y_test`**: Тестовые data for оценки важности
  - `X_test`: Тестовые признаки
  - `y_test`: Тестовые метки
  - Применение: оценка важности on независимых данных
@@ -248,11 +248,11 @@ def plot_pdp(predictor, X, features, model=None):
 
 **Детальные описания параметров Partial Dependence Plots:**
 
-- **`features`**: Список признаков for analysis
+- **`features`**: List признаков for Analysis
  - `['feature1']`: Один признак (1D график)
  - `['feature1', 'feature2']`: Два приsign (2D график)
  - `['feature1', 'feature2', 'feature3']`: Три приsign (3D график)
- - Применение: выбор признаков for analysis dependencies
+ - Применение: выбор признаков for Analysis dependencies
 
 - **`grid_resolution=50`**: Разрешение сетки for 1D PDP
  - `50`: Стандартное разрешение (баланс точности and скорости)
@@ -313,7 +313,7 @@ def plot_ale(predictor, X, features):
  model = predictor.get_model_best()
 
  # create ALE explainer
- ale = ALE(model.predict, feature_names=X.columns.tolist())
+ ale = ALE(model.predict, feature_names=X.columns.toList())
 
  # Вычисление ALE
  ale_exp = ale.explain(X.values, features=features)
@@ -331,17 +331,17 @@ def plot_ale(predictor, X, features):
 ## Методы локальной интерпретируемости
 
 <img src="images/optimized/local_methods.png" alt="Локальные методы интерпретируемости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 17.4: Локальные методы интерпретируемости - объяснение конкретных predictions*
+*Рисунок 17.4: Локальные методы интерпретируемости - объяснение конкретных Predictions*
 
 **Типы локальных методов:**
-- **LIME**: Локальные аппроксимации for объяснения predictions
+- **LIME**: Локальные аппроксимации for объяснения Predictions
 - **SHAP Local**: Локальные SHAP значения for конкретных экземпляров
-- **Integrated Gradients**: Градиентные методы for нейронных сетей
-- **Counterfactual Explanations**: Объяснения через контрфактические examples
+- **integrated Gradients**: Градиентные методы for нейронных networks
+- **Counterfactual ExPlanations**: Объяснения через контрфактические examples
 - **Attention Mechanisms**: Механизмы внимания in нейронных сетях
 - **Saliency Maps**: Карты значимости for визуализации
 
-### 1. LIME (Local Interpretable Model-agnostic Explanations)
+### 1. LIME (Local Interpretable Model-agnostic ExPlanations)
 
 ```python
 import lime
@@ -355,22 +355,22 @@ def explain_with_lime(predictor, X, instance_idx, num_features=5):
  # create LIME explainer
  explainer = lime.lime_tabular.LimeTabularExplainer(
  X.values,
- feature_names=X.columns.tolist(),
+ feature_names=X.columns.toList(),
  class_names=['Class 0', 'Class 1'],
  mode='classification'
  )
 
  # Объяснение конкретного экземпляра
- explanation = explainer.explain_instance(
+ exPlanation = explainer.explain_instance(
  X.iloc[instance_idx].values,
  model.predict_proba,
  num_features=num_features
  )
 
  # Визуализация
- explanation.show_in_notebook(show_table=True)
+ exPlanation.show_in_notebook(show_table=True)
 
- return explanation
+ return exPlanation
 ```
 
 **Детальные описания параметров LIME:**
@@ -379,7 +379,7 @@ def explain_with_lime(predictor, X, instance_idx, num_features=5):
  - `0`: Первый экземпляр in датасете
  - `100`: 101-й экземпляр
  - `len(X)-1`: Последний экземпляр
- - Применение: выбор конкретного образца for analysis
+ - Применение: выбор конкретного образца for Analysis
 
 - **`num_features=5`**: Количество признаков for объяснения
  - `5`: Стандартное количество (баланс детализации and простоты)
@@ -387,13 +387,13 @@ def explain_with_lime(predictor, X, instance_idx, num_features=5):
  - `10`: Большое количество (детальное объяснение)
  - `20`: Очень большое количество (очень детальное)
 
-- **`X.values`**: Данные in формате numpy array
- - `X.values`: Преобразование DataFrame in numpy array
+- **`X.values`**: data in формате numpy array
+ - `X.values`: Преобразование dataFrame in numpy array
  - `X.to_numpy()`: Альтернативный способ
  - Применение: LIME требует numpy array for работы
 
-- **`feature_names=X.columns.tolist()`**: Имена признаков
- - `X.columns.tolist()`: Список имен столбцов
+- **`feature_names=X.columns.toList()`**: Имена признаков
+ - `X.columns.toList()`: List имен столбцов
  - `['feature1', 'feature2', ...]`: Ручное задание имен
  - Применение: читаемые названия in объяснениях
 
@@ -414,12 +414,12 @@ def explain_with_lime(predictor, X, instance_idx, num_features=5):
  - `model.predict`: Метод предсказания классов
  - Применение: LIME использует вероятности for объяснения
 
-- **`explanation.show_in_notebook(show_table=True)`**: Визуализация объяснения
+- **`exPlanation.show_in_notebook(show_table=True)`**: Визуализация объяснения
  - `show_table=True`: Показать таблицу with деталями
  - `show_table=False`: Показать только график
  - Применение: отображение результатов in Jupyter notebook
 
-- **`explanation.score`**: Качество объяснения
+- **`exPlanation.score`**: Качество объяснения
  - Диапазон: from 0 to 1
  - `> 0.8`: Высокое качество (хорошее объяснение)
  - `0.5-0.8`: Среднее качество (приемлемое объяснение)
@@ -467,7 +467,7 @@ def explain_with_shap(predictor, X, instance_idx):
  - `0`: Первый экземпляр in датасете
  - `100`: 101-й экземпляр
  - `len(X)-1`: Последний экземпляр
- - Применение: выбор конкретного образца for analysis
+ - Применение: выбор конкретного образца for Analysis
 
 - **`X.iloc[instance_idx:instance_idx+1]`**: Выборка одного экземпляра
  - `instance_idx:instance_idx+1`: Срез for получения одного образца
@@ -526,14 +526,14 @@ def explain_with_shap(predictor, X, instance_idx):
  - Сортировка on важности
  - Применение: быстрый обзор важности признаков
 
-### 3. Integrated Gradients
+### 3. integrated Gradients
 
 ```python
 import tensorflow as tf
 import numpy as np
 
 def integrated_gradients(model, X, baseline=None, steps=50):
- """Вычисление Integrated Gradients"""
+ """Вычисление integrated Gradients"""
 
  if baseline is None:
  baseline = np.zeros_like(X)
@@ -561,19 +561,19 @@ def integrated_gradients(model, X, baseline=None, steps=50):
  return integrated_grads
 ```
 
-**Детальные описания параметров Integrated Gradients:**
+**Детальные описания параметров integrated Gradients:**
 
-- **`model`**: TensorFlow модель for analysis
+- **`model`**: TensorFlow модель for Analysis
  - Должна быть: TensorFlow/Keras модель
  - not подходит for: sklearn модели, XGBoost
  - Требования: поддержка GradientTape
- - Применение: анализ нейронных сетей
+ - Применение: анализ нейронных networks
 
-- **`X`**: Входные данные for analysis
+- **`X`**: Входные data for Analysis
  - Форма: (batch_size, n_features)
  - Тип: numpy array or TensorFlow tensor
- - Применение: данные for объяснения
- - Рекомендация: нормализованные данные
+ - Применение: data for объяснения
+ - Рекомендация: нормализованные data
 
 - **`baseline=None`**: Базовое значение for интерполяции
  - `None`: Автоматически устанавливается in нули
@@ -594,7 +594,7 @@ def integrated_gradients(model, X, baseline=None, steps=50):
  - `steps`: Количество промежуточных точек
  - Применение: равномерное распределение точек интерполяции
 
-- **`interpolated`**: Интерполированные данные
+- **`interpolated`**: Интерполированные data
  - Форма: (steps, batch_size, n_features)
  - Содержит: промежуточные значения между baseline and X
  - Применение: вычисление градиентов in промежуточных точках
@@ -605,7 +605,7 @@ def integrated_gradients(model, X, baseline=None, steps=50):
  - `gradients = tape.gradient()`: Вычисление градиентов
  - Применение: автоматическое дифференцирование
 
-- **`gradients`**: Градиенты predictions on входным данным
+- **`gradients`**: Градиенты Predictions on входным данным
  - Форма: (steps, batch_size, n_features)
  - Содержит: градиенты for каждого шага интерполяции
  - Применение: анализ чувствительности модели
@@ -626,7 +626,7 @@ def integrated_gradients(model, X, baseline=None, steps=50):
  - Интерпретация: вклад приsign in Prediction
  - Применение: объяснение решений модели
 
-**Дополнительные parameters Integrated Gradients:**
+**Дополнительные parameters integrated Gradients:**
 
 - **`method='riemann'`**: Метод интегрирования
  - `'riemann'`: Метод Римана (стандартный)
@@ -644,30 +644,30 @@ def integrated_gradients(model, X, baseline=None, steps=50):
 ### 1. Model-specific Interpretability
 
 ```python
-def get_model_specific_explanations(predictor):
+def get_model_specific_exPlanations(predictor):
  """Получение объяснений специфичных for конкретной модели"""
 
  model = predictor.get_model_best()
  model_name = predictor.get_model_best().__class__.__name__
 
- explanations = {}
+ exPlanations = {}
 
  if 'XGB' in model_name or 'LGB' in model_name or 'GBM' in model_name:
  # Tree-based модели
- explanations['feature_importance'] = model.feature_importances_
- explanations['tree_structure'] = model.get_booster().get_dump()
+ exPlanations['feature_importance'] = model.feature_importances_
+ exPlanations['tree_Structure'] = model.get_booster().get_dump()
 
  elif 'Neural' in model_name or 'TabNet' in model_name:
  # Нейронные сети
- explanations['attention_weights'] = model.attention_weights
- explanations['feature_embeddings'] = model.feature_embeddings
+ exPlanations['attention_weights'] = model.attention_weights
+ exPlanations['feature_embeddings'] = model.feature_embeddings
 
  elif 'Linear' in model_name or 'Logistic' in model_name:
  # Линейные модели
- explanations['coefficients'] = model.coef_
- explanations['intercept'] = model.intercept_
+ exPlanations['coefficients'] = model.coef_
+ exPlanations['intercept'] = model.intercept_
 
- return explanations
+ return exPlanations
 ```
 
 ### 2. Ensemble Interpretability
@@ -679,7 +679,7 @@ def explain_ensemble(predictor, X, method='weighted'):
  models = predictor.get_model_names()
  weights = predictor.get_model_weights()
 
- explanations = {}
+ exPlanations = {}
 
  for model_name, weight in zip(models, weights):
  model = predictor.get_model(model_name)
@@ -688,43 +688,43 @@ def explain_ensemble(predictor, X, method='weighted'):
  # Взвешенное объяснение
  if hasattr(model, 'feature_importances_'):
  importance = model.feature_importances_ * weight
- explanations[model_name] = importance
+ exPlanations[model_name] = importance
 
  elif method == 'shap':
  # SHAP for каждой модели
  explainer = shap.TreeExplainer(model)
  shap_values = explainer.shap_values(X)
- explanations[model_name] = shap_values * weight
+ exPlanations[model_name] = shap_values * weight
 
  # Агрегация объяснений
  if method == 'weighted':
- ensemble_importance = np.sum(list(explanations.values()), axis=0)
+ ensemble_importance = np.sum(List(exPlanations.values()), axis=0)
  return ensemble_importance
 
  elif method == 'shap':
- ensemble_shap = np.sum(list(explanations.values()), axis=0)
+ ensemble_shap = np.sum(List(exPlanations.values()), axis=0)
  return ensemble_shap
 ```
 
 ## Визуализация объяснений
 
-<img src="images/optimized/explanation_dashboard.png" alt="Дашборд объяснений" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/exPlanation_dashboard.png" alt="Дашборд объяснений" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 17.7: Комплексный дашборд объяснений ML-модели - важность признаков, SHAP, PDP, метрики*
 
-**Компоненты дашборда объяснений:**
+**components дашборда объяснений:**
 - **Feature Importance**: Топ-10 важных признаков
 - **SHAP Summary**: Распределение SHAP значений
 - **Partial Dependence Plot**: dependency from ключевого приsign
 - **Model Performance**: Метрики производительности модели
 
-### 1. Comprehensive Explanation Dashboard
+### 1. Comprehensive ExPlanation Dashboard
 
 ```python
-def create_explanation_dashboard(predictor, X, y, instance_idx=0):
+def create_exPlanation_dashboard(predictor, X, y, instance_idx=0):
  """create комплексной панели объяснений"""
 
  fig, axes = plt.subplots(2, 3, figsize=(18, 12))
- fig.suptitle('Comprehensive Model Explanation Dashboard', fontsize=16)
+ fig.suptitle('Comprehensive Model ExPlanation Dashboard', fontsize=16)
 
  # 1. Feature Importance
  ax1 = axes[0, 0]
@@ -757,12 +757,12 @@ def create_explanation_dashboard(predictor, X, y, instance_idx=0):
  ax3.set_title(f'PDP for {top_feature}')
  ax3.grid(True)
 
- # 4. Local Explanation (LIME)
+ # 4. Local ExPlanation (LIME)
  ax4 = axes[1, 0]
  # Здесь будет LIME объяснение for конкретного экземпляра
- ax4.text(0.5, 0.5, 'LIME Explanation\nfor Instance',
+ ax4.text(0.5, 0.5, 'LIME ExPlanation\nfor Instance',
  ha='center', va='center', transform=ax4.transAxes)
- ax4.set_title('Local Explanation (LIME)')
+ ax4.set_title('Local ExPlanation (LIME)')
 
  # 5. Model Performance
  ax5 = axes[1, 1]
@@ -787,13 +787,13 @@ def create_explanation_dashboard(predictor, X, y, instance_idx=0):
  plt.show()
 ```
 
-### 2. Interactive Explanations
+### 2. Interactive ExPlanations
 
 ```python
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-def create_interactive_explanation(predictor, X, instance_idx=0):
+def create_interactive_exPlanation(predictor, X, instance_idx=0):
  """create интерактивных объяснений"""
 
  model = predictor.get_model_best()
@@ -831,7 +831,7 @@ def create_interactive_explanation(predictor, X, instance_idx=0):
 ### 1. Выбор метода объяснения
 
 ```python
-def choose_explanation_method(model_type, data_size, interpretability_requirement):
+def choose_exPlanation_method(model_type, data_size, interpretability_requirement):
  """Выбор подходящего метода объяснения"""
 
  if interpretability_requirement == 'high':
@@ -855,7 +855,7 @@ def choose_explanation_method(model_type, data_size, interpretability_requiremen
 
 **Детальные описания параметров выбора метода объяснения:**
 
-- **`model_type`**: Тип модели for analysis
+- **`model_type`**: Тип модели for Analysis
  - `'Linear'`: Линейная регрессия
  - `'Logistic'`: Логистическая регрессия
  - `'RandomForest'`: Случайный лес
@@ -909,7 +909,7 @@ def choose_explanation_method(model_type, data_size, interpretability_requiremen
 
 - **for линейных моделей**: `coefficients` (самый точный)
 - **for tree-based моделей**: `feature_importance` (быстрый) or `shap` (точный)
-- **for нейронных сетей**: `shap` or `integrated_gradients`
+- **for нейронных networks**: `shap` or `integrated_gradients`
 - **for больших данных**: `permutation_importance` (масштабируемый)
 - **for детальных объяснений**: `lime` (локальные) or `shap` (глобальные)
 - **for быстрых объяснений**: `feature_importance` (если доступно)
@@ -917,11 +917,11 @@ def choose_explanation_method(model_type, data_size, interpretability_requiremen
 ### 2. Валидация объяснений
 
 ```python
-def validate_explanations(predictor, X, y, explanation_method='shap'):
+def validate_exPlanations(predictor, X, y, exPlanation_method='shap'):
  """Валидация качества объяснений"""
 
  # create объяснений
- if explanation_method == 'shap':
+ if exPlanation_method == 'shap':
  explainer = shap.TreeExplainer(predictor.get_model_best())
  shap_values = explainer.shap_values(X)
 
@@ -930,39 +930,39 @@ def validate_explanations(predictor, X, y, explanation_method='shap'):
 
  return {
  'consistency_score': consistency_score,
- 'explanation_quality': 'high' if consistency_score > 0.8 else 'medium'
+ 'exPlanation_quality': 'high' if consistency_score > 0.8 else 'medium'
  }
 
- elif explanation_method == 'lime':
+ elif exPlanation_method == 'lime':
  # Валидация LIME
  lime_explainer = lime.lime_tabular.LimeTabularExplainer(
- X.values, feature_names=X.columns.tolist()
+ X.values, feature_names=X.columns.toList()
  )
 
  # Тестирование on нескольких экземплярах
  fidelity_scores = []
  for i in range(min(10, len(X))):
- explanation = lime_explainer.explain_instance(
+ exPlanation = lime_explainer.explain_instance(
  X.iloc[i].values, predictor.predict_proba
  )
- fidelity_scores.append(explanation.score)
+ fidelity_scores.append(exPlanation.score)
 
  return {
  'average_fidelity': np.mean(fidelity_scores),
- 'explanation_quality': 'high' if np.mean(fidelity_scores) > 0.8 else 'medium'
+ 'exPlanation_quality': 'high' if np.mean(fidelity_scores) > 0.8 else 'medium'
  }
 ```
 
 **Детальные описания параметров валидации объяснений:**
 
-- **`explanation_method='shap'`**: Метод объяснения for валидации
+- **`exPlanation_method='shap'`**: Метод объяснения for валидации
  - `'shap'`: SHAP объяснения (рекомендуется)
  - `'lime'`: LIME объяснения
  - `'permutation'`: Перестановочная важность
  - `'feature_importance'`: Встроенная важность
 
-- **`X, y`**: Данные for валидации
- - `X`: Признаки for analysis
+- **`X, y`**: data for валидации
+ - `X`: Признаки for Analysis
  - `y`: Целевые переменные
  - Применение: тестирование качества объяснений
  - Рекомендация: использовать holdout set
@@ -986,7 +986,7 @@ def validate_explanations(predictor, X, y, explanation_method='shap'):
  - `20`: Точное тестирование (медленнее)
  - `len(X)`: Все экземпляры (очень медленно)
 
-- **`explanation.score`**: Качество LIME объяснения
+- **`exPlanation.score`**: Качество LIME объяснения
  - Диапазон: from 0 to 1
  - `> 0.8`: Высокое качество (хорошее объяснение)
  - `0.5-0.8`: Среднее качество (приемлемое объяснение)
@@ -998,7 +998,7 @@ def validate_explanations(predictor, X, y, explanation_method='shap'):
  - Интерпретация: средняя точность объяснений
  - Применение: общая оценка качества LIME
 
-- **`explanation_quality`**: Качественная оценка объяснений
+- **`exPlanation_quality`**: Качественная оценка объяснений
  - `'high'`: Высокое качество (надежные объяснения)
  - `'medium'`: Среднее качество (приемлемые объяснения)
  - `'low'`: Низкое качество (ненадежные объяснения)

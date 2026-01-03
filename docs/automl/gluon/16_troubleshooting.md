@@ -5,12 +5,12 @@
 
 ## Why Troubleshooting критически важен
 
-**Почему 80% времени ML-разработки тратится on решение проблем?** Потому что машинное обучение - это сложная система, где множество компонентов должны работать вместе. Это как диагностика автомобиля - нужно знать, где искать проблему.
+**Почему 80% времени ML-разработки тратится on решение проблем?** Потому что машинное обучение - это сложная система, где множество компонентов должны Workingть вместе. Это как диагностика автомобиля - нужно знать, где искать проблему.
 
 ### Катастрофические Consequences нерешенных проблем
 - **Потеря времени**: Дни on решение простых проблем
-- **Фрустрация команды**: Разработчики бросают проект
-- **Плохие результаты**: Модели работают неэффективно
+- **Фрустрация team**: Разработчики бросают проект
+- **Плохие результаты**: Модели Workingют неэффективно
 - **Потеря доверия**: Заказчики теряют веру in ML
 
 ### Преимущества системного Troubleshooting
@@ -31,12 +31,12 @@
 - **Документирование**: Фиксация всех проблем and решений
 - **Тестирование**: check эффективности решений
 - **Профилактика**: Предотвращение повторных проблем
-- **Обучение команды**: Передача знаний and опыта
+- **Обучение team**: Передача знаний and опыта
 
 **Типы проблем in AutoML Gluon:**
 - **Проблемы установки**: Конфликты зависимостей, версии Python
 - **Проблемы данных**: Форматы, размеры, качество
-- **Проблемы производительности**: Медленная работа, нехватка памяти
+- **Проблемы производительности**: Медленная Working, нехватка памяти
 - **Проблемы моделей**: Плохая точность, переобучение
 
 in этом разделе рассмотрим типичные проблемы, возникающие при работе with AutoML Gluon, and способы их решения. Каждая проблема включает description, причины возникновения and пошаговые instructions on устранению.
@@ -82,7 +82,7 @@ This behaviour is the source of the following dependency conflicts.
 conda create -n autogluon python=3.9
 conda activate autogluon
 
-# Installation in правильном порядке - сначала базовые, потом специфичные
+# installation in правильном порядке - сначала базовые, потом специфичные
 pip install --upgrade pip
 pip install autogluon
 
@@ -141,7 +141,7 @@ import torch
 print(f"CUDA available: {torch.cuda.is_available()}")
 print(f"CUDA Version: {torch.version.cuda}")
 
-# Installation совместимой версии PyTorch
+# installation совместимой версии PyTorch
 pip install torch==1.13.1+cu117 torchvision==0.14.1+cu117 --extra-index-url https://download.pytorch.org/whl/cu117
 
 # or отключение CUDA
@@ -152,7 +152,7 @@ os.environ['CUDA_VISIBLE_DEVICES'] = ''
 **Детальные описания параметров решения проблем CUDA:**
 
 - **`torch.cuda.is_available()`**: check доступности CUDA
- - `True`: CUDA доступна and работает
+ - `True`: CUDA доступна and Workingет
  - `False`: CUDA недоступна or not установлена
  - Причины False: неправильная installation, несовместимая версия
 
@@ -241,15 +241,15 @@ train_data = train_data.sample(frac=0.5) # Использовать 50% данн
 - **Slow Training**: Медленное обучение модели
 - **Poor Model Quality**: Низкое качество модели
 - **Validation Errors**: Ошибки валидации
-- **Data Quality Issues**: Issues with качеством данных
+- **data Quality Issues**: Issues with качеством данных
 - **Resource Shortage**: Нехватка вычислительных ресурсов
 - **Configuration Problems**: Issues with конфигурацией
 
 **Ключевые аспекты проблем обучения:**
 - **Медленное обучение**: Неоптимальные settings, нехватка ресурсов
-- **Плохое качество модели**: Неправильные данные, переобучение
+- **Плохое качество модели**: Неправильные data, переобучение
 - **Ошибки валидации**: Неправильное разделение данных
-- **Issues with data**: Некачественные or неподходящие данные
+- **Issues with data**: Некачественные or неподходящие data
 - **Issues with ресурсами**: Нехватка памяти, CPU, GPU
 - **Issues with конфигурацией**: Неправильные parameters обучения
 
@@ -327,9 +327,9 @@ predictor.fit(
 def diagnose_data_quality(data):
  """Диагностика качества данных"""
 
- print("Data shape:", data.shape)
+ print("data shape:", data.shape)
  print("Missing values:", data.isnull().sum().sum())
- print("Data types:", data.dtypes.value_counts())
+ print("data types:", data.dtypes.value_counts())
 
  # check целевой переменной
  if 'target' in data.columns:
@@ -362,10 +362,10 @@ def diagnose_data_quality(data):
  - `> 10%`: Критический уровень пропущенных значений
 
 - **`data.dtypes.value_counts()`**: Распределение типов данных
- - `int64`: Целочисленные данные
- - `float64`: Вещественные данные
- - `object`: Строковые/категориальные данные
- - `datetime64`: Временные данные
+ - `int64`: Целочисленные data
+ - `float64`: Вещественные data
+ - `object`: Строковые/категориальные data
+ - `datetime64`: Временные data
 
 - **`target_counts`**: Распределение целевой переменной
  - `{0: 800, 1: 200}`: Дисбаланс 4:1 (приемлемо)
@@ -423,10 +423,10 @@ def diagnose_validation_issues(predictor, test_data):
  try:
  # check совместимости данных
  print("Test data shape:", test_data.shape)
- print("Test data columns:", test_data.columns.tolist())
+ print("Test data columns:", test_data.columns.toList())
 
  # check типов данных
- print("Data types:")
+ print("data types:")
  print(test_data.dtypes)
 
  # check пропущенных значений
@@ -467,7 +467,7 @@ def fix_validation_issues(test_data):
  # Если not удается, оставляем как есть
  pass
 
- # remove константных колонок
+ # remove константных columns
  constant_columns = test_data.columns[test_data.nunique() <= 1]
  test_data = test_data.drop(columns=constant_columns)
 
@@ -477,26 +477,26 @@ def fix_validation_issues(test_data):
 test_data_fixed = fix_validation_issues(test_data)
 ```
 
-## Проблемы predictions
+## Проблемы Predictions
 
-<img src="images/optimized/Prediction_issues.png" alt="Проблемы predictions" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 16.4: Диагностика and решение проблем predictions AutoML Gluon - типы ошибок and методы исправления*
+<img src="images/optimized/Prediction_issues.png" alt="Проблемы Predictions" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 16.4: Диагностика and решение проблем Predictions AutoML Gluon - типы ошибок and методы исправления*
 
-**Типы проблем predictions:**
-- **Prediction Errors**: Ошибки при выполнении predictions
+**Типы проблем Predictions:**
+- **Prediction Errors**: Ошибки при выполнении Predictions
 - **Unstable Predictions**: Нестабильные результаты
 - **Slow Predictions**: Медленные предсказания
 - **Wrong Format**: Неправильный формат данных
 - **Missing Features**: Отсутствующие признаки
-- **Data Type Mismatch**: Несоответствие типов данных
+- **data Type Mismatch**: Несоответствие типов данных
 
-### 1. Ошибки predictions
+### 1. Ошибки Predictions
 
 #### Проблема: Ошибки при предсказании
 ```python
-# Диагностика predictions
+# Диагностика Predictions
 def diagnose_Prediction_issues(predictor, data):
- """Диагностика проблем predictions"""
+ """Диагностика проблем Predictions"""
 
  try:
  # check входных данных
@@ -504,8 +504,8 @@ def diagnose_Prediction_issues(predictor, data):
  print("Input data types:", data.dtypes)
 
  # check совместимости with моделью
- model_features = predictor.feature_importance().index.tolist()
- data_features = data.columns.tolist()
+ model_features = predictor.feature_importance().index.toList()
+ data_features = data.columns.toList()
 
  missing_features = set(model_features) - set(data_features)
  extra_features = set(data_features) - set(model_features)
@@ -532,12 +532,12 @@ if not diagnose_Prediction_issues(predictor, new_data):
 
 **Решение:**
 ```python
-# fix проблем predictions
+# fix проблем Predictions
 def fix_Prediction_issues(predictor, data):
- """fix проблем predictions"""
+ """fix проблем Predictions"""
 
  # Получение ожидаемых признаков
- expected_features = predictor.feature_importance().index.tolist()
+ expected_features = predictor.feature_importance().index.toList()
 
  # add недостающих признаков
  for feature in expected_features:
@@ -563,7 +563,7 @@ Predictions = predictor.predict(new_data_fixed)
 ```python
 # Диагностика стабильности
 def diagnose_Prediction_stability(predictor, data, n_tests=5):
- """Диагностика стабильности predictions"""
+ """Диагностика стабильности Predictions"""
 
  Predictions = []
 
@@ -588,9 +588,9 @@ consistency = diagnose_Prediction_stability(predictor, test_data)
 
 **Решение:**
 ```python
-# Стабилизация predictions
+# Стабилизация Predictions
 def stabilize_Predictions(predictor, data, n_samples=3):
- """Стабилизация predictions"""
+ """Стабилизация Predictions"""
 
  Predictions = []
 
@@ -605,7 +605,7 @@ def stabilize_Predictions(predictor, data, n_samples=3):
  pred = predictor.predict(noisy_data)
  Predictions.append(pred)
 
- # Усреднение predictions
+ # Усреднение Predictions
  if predictor.problem_type == 'regression':
  stable_Predictions = np.mean(Predictions, axis=0)
  else:
@@ -638,7 +638,7 @@ stable_Predictions = stabilize_Predictions(predictor, test_data)
 
 **Ключевые аспекты проблем производительности:**
 - **Медленные предсказания**: Неоптимизированные модели, неэффективные алгоритмы
-- **Высокое использование памяти**: Утечки памяти, неэффективное управление ресурсами
+- **Высокое использование памяти**: Утечки памяти, неэффективное Management ресурсами
 - **Issues with GPU**: Неправильная configuration GPU, неэффективное использование
 - **Issues with CPU**: Неоптимальная configuration потоков, узкие места
 - **Issues with network**: Медленная передача данных, неэффективные протоколы
@@ -652,7 +652,7 @@ stable_Predictions = stabilize_Predictions(predictor, test_data)
 import time
 
 def diagnose_Prediction_performance(predictor, data):
- """Диагностика производительности predictions"""
+ """Диагностика производительности Predictions"""
 
  # Тест on небольшой выборке
  small_data = data.head(100)
@@ -678,7 +678,7 @@ Prediction_time = diagnose_Prediction_performance(predictor, test_data)
 ```python
 # Оптимизация производительности
 def optimize_Prediction_performance(predictor, data):
- """Оптимизация производительности predictions"""
+ """Оптимизация производительности Predictions"""
 
  # Пакетная обработка
  batch_size = 1000
@@ -710,13 +710,13 @@ def optimize_Prediction_performance(predictor, data):
  - `i`: Начальный индекс пакета
  - `i+batch_size`: Конечный индекс пакета
  - `iloc`: Позиционный доступ к данным
- - Преимущества: эффективная работа with большими датасетами
+ - Преимущества: эффективная Working with большими датасетами
 
 **Дополнительные parameters оптимизации:**
 
 - **`predictor.predict(batch)`**: Prediction for пакета
- - `batch`: Данные пакета
- - Возвращает: массив predictions
+ - `batch`: data пакета
+ - Возвращает: массив Predictions
  - Оптимизация: обработка множественных образцов simultaneously
 
 - **`Predictions.extend(batch_Predictions)`**: Объединение результатов
@@ -860,7 +860,7 @@ data_optimized = optimize_data_types(data)
 **Типы проблем продакшена:**
 - **Model Loading Errors**: Ошибки загрузки модели
 - **API Errors**: Ошибки API
-- **Infrastructure Problems**: Issues with инфраструктурой
+- **InfraStructure Problems**: Issues with инфраструктурой
 - **Monitoring Issues**: Issues with Monitoringом
 - **Security Vulnerabilities**: Уязвимости безопасности
 - **Scaling Problems**: Проблемы масштабирования
@@ -878,7 +878,7 @@ data_optimized = optimize_data_types(data)
 #### Проблема: Ошибки при загрузке модели
 ```python
 # Диагностика загрузки модели
-def diagnose_model_loading(model_path):
+def diagnose_model_Loading(model_path):
  """Диагностика загрузки модели"""
 
  try:
@@ -893,7 +893,7 @@ def diagnose_model_loading(model_path):
  for file in required_files:
  file_path = os.path.join(model_path, file)
  if not os.path.exists(file_path):
- print(f"Required file missing: {file_path}")
+ print(f"required file missing: {file_path}")
  return False
 
  # Попытка загрузки
@@ -902,18 +902,18 @@ def diagnose_model_loading(model_path):
  return True
 
  except Exception as e:
- print(f"Model loading error: {e}")
+ print(f"Model Loading error: {e}")
  return False
 
 # Использование
-if not diagnose_model_loading('./models'):
- print("Model loading issues detected")
+if not diagnose_model_Loading('./models'):
+ print("Model Loading issues detected")
 ```
 
 **Решение:**
 ```python
 # fix проблем загрузки модели
-def fix_model_loading_issues(model_path):
+def fix_model_Loading_issues(model_path):
  """fix проблем загрузки модели"""
 
  try:
@@ -938,7 +938,7 @@ def fix_model_loading_issues(model_path):
  return None
 
 # Использование
-predictor = fix_model_loading_issues('./models')
+predictor = fix_model_Loading_issues('./models')
 ```
 
 ### 2. Ошибки API
@@ -950,10 +950,10 @@ def diagnose_api_issues(api_url, test_data):
  """Диагностика проблем API"""
 
  try:
- # Health check
+ # health check
  response = requests.get(f"{api_url}/health")
  if response.status_code != 200:
- print(f"Health check failed: {response.status_code}")
+ print(f"health check failed: {response.status_code}")
  return False
 
  # Тест предсказания
@@ -963,7 +963,7 @@ def diagnose_api_issues(api_url, test_data):
  print(f"Error: {response.text}")
  return False
 
- print("API working correctly")
+ print("API Working correctly")
  return True
 
  except Exception as e:
@@ -987,7 +987,7 @@ def fix_api_issues(api_url, test_data):
 
  if response.status_code == 200:
  health_data = response.json()
- print(f"API status: {health_data['status']}")
+ print(f"API Status: {health_data['status']}")
 
  # check загруженных моделей
  if 'loaded_models' in health_data:
@@ -1018,16 +1018,16 @@ else:
 ## Полезные инструменты диагностики
 
 <img src="images/optimized/diagnostic_tools.png" alt="Инструменты диагностики" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 16.7: Полезные инструменты диагностики and Monitoringа AutoML Gluon - компоненты and преимущества*
+*Рисунок 16.7: Полезные инструменты диагностики and Monitoringа AutoML Gluon - components and преимущества*
 
 **Почему важны инструменты диагностики?** Потому что они помогают быстро выявить and решить проблемы:
 
 **Типы инструментов диагностики:**
-- **System Monitoring**: Monitoring системы in реальном времени
-- **Logging System**: Система логирования событий
+- **system Monitoring**: Monitoring системы in реальном времени
+- **Logging system**: Система логирования событий
 - **Performance Profiling**: Профилирование производительности
 - **Metrics Collection**: Сбор метрик
-- **Alerting System**: Система уведомлений
+- **Alerting system**: Система уведомлений
 - **Dashboard Visualization**: Визуализация данных
 
 **Ключевые аспекты инструментов диагностики:**
@@ -1048,7 +1048,7 @@ class AutoGluonMonitor:
  self.alerts = []
 
  def check_system_health(self):
- """check здоровья системы"""
+ """health check системы"""
 
  # check памяти
  memory = psutil.virtual_memory()
@@ -1123,22 +1123,22 @@ class AutoGluonMonitor:
  self.alerts.append(f"Model performance error: {e}")
  return False
 
- def generate_report(self):
+ def generate_Report(self):
  """Генерация Reportа"""
 
- report = {
+ Report = {
  'timestamp': datetime.now().isoformat(),
  'system_health': self.check_system_health(),
  'alerts': self.alerts,
  'metrics': self.metrics
  }
 
- return report
+ return Report
 
 # Использование
 monitor = AutoGluonMonitor()
-report = monitor.generate_report()
-print("Monitoring report:", report)
+Report = monitor.generate_Report()
+print("Monitoring Report:", Report)
 ```
 
 ### 2. Система логирования
@@ -1206,7 +1206,7 @@ class AutoGluonLogger:
 
  def log_training_complete(self, results):
  """Логирование завершения обучения"""
- self.logger.info(f"Training completed: {results}")
+ self.logger.info(f"Training COMPLETED: {results}")
 
  def log_Prediction(self, input_data, Prediction, processing_time):
  """Логирование предсказания"""

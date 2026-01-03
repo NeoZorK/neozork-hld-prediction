@@ -1,34 +1,34 @@
-# 📱 Mobile application Pocket Hedge Fund - Report
+# 📱 mobile application Pocket Hedge fund - Report
 
 ## ✅ Status: COMPLETED
 
-Mobile application for Pocket Hedge Fund successfully created and integrated with backend API.
+mobile application for Pocket Hedge fund successfully created and integrated with backend API.
 
 ## 🎯 Implemented functions
 
-### 1. **Application structure**
+### 1. **application Structure**
 - ✅ React Native/Expo application
 - ✅ Navigation with React Navigation
-- ✅ Authentication and state management
+- ✅ Authentication and state Management
 - ✅ API integration with backend
 
 ### 2. **Application screens**
-- ✅ **LoginScreen** - Login to system
-- ✅ **RegisterScreen** - User registration
-- ✅ **DashboardScreen** - Main screen with greeting
-- ✅ **LoadingScreen** - Loading screen
+- ✅ **Loginscreen** - Login to system
+- ✅ **Registerscreen** - User registration
+- ✅ **Dashboardscreen** - main screen with greeting
+- ✅ **Loadingscreen** - Loading screen
 
-### 3. **Сервисы**
-- ✅ **AuthContext** - Управление аутентификацией
-- ✅ **ApiService** - HTTP клиент for API
-- ✅ **Theme** - Константы стилей
+### 3. **Services**
+- ✅ **AuthContext** - Authentication Management
+- ✅ **ApiService** - HTTP client for API
+- ✅ **Theme** - Style constants
 
 ### 4. **Backend API endpoints**
-- ✅ `/mobile/health` - check здоровья мобильного API
-- ✅ `/mobile/dashboard` - Данные for главного экрана
-- ✅ `/mobile/portfolio` - Портфолио пользователя
-- ✅ `/mobile/funds` - Список фондов
-- ✅ `/mobile/investments` - Управление инвестициями
+- ✅ `/mobile/health` - health check mobile API
+- ✅ `/mobile/dashboard` - data for main screen
+- ✅ `/mobile/Portfolio` - User Portfolio
+- ✅ `/mobile/funds` - List of funds
+- ✅ `/mobile/investments` - Investment Management
 - ✅ `/mobile/sync` - Synchronization данных
 - ✅ `/mobile/notifications/push` - Push уведомления
 
@@ -40,14 +40,14 @@ Mobile application for Pocket Hedge Fund successfully created and integrated wit
  "expo": "~49.0.0",
  "react": "18.2.0",
  "react-native": "0.72.6",
- "@react-navigation/native": "^6.1.7",
- "@react-navigation/stack": "^6.3.17",
+ "@react-Navigation/native": "^6.1.7",
+ "@react-Navigation/stack": "^6.3.17",
  "@react-native-async-storage/async-storage": "1.18.2",
  "axios": "^1.5.0"
 }
 ```
 
-### Структура файлов
+### Structure файлов
 ```
 src/mobile_app/
 ├── App.js # Главный файл приложения
@@ -56,20 +56,20 @@ src/mobile_app/
 ├── README.md # documentation
 └── src/
  ├── constants/
- │ └── theme.js # Константы стилей
- ├── services/
+ │ └── theme.js # Style constants
+ ├── Services/
  │ ├── AuthContext.js # Контекст аутентификации
- │ └── ApiService.js # HTTP клиент
- ├── navigation/
+ │ └── ApiService.js # HTTP client
+ ├── Navigation/
  │ └── AppNavigator.js # Navigation
  ├── components/
- │ └── LoadingScreen.js # Компонент загрузки
+ │ └── Loadingscreen.js # Компонент загрузки
  └── screens/
  ├── auth/
- │ ├── LoginScreen.js # Экран входа
- │ └── RegisterScreen.js # Экран регистрации
+ │ ├── Loginscreen.js # Экран входа
+ │ └── Registerscreen.js # Экран регистрации
  └── main/
- └── DashboardScreen.js # Main screen
+ └── Dashboardscreen.js # main screen
 ```
 
 ## 🚀 Launch приложения
@@ -102,10 +102,10 @@ npx expo start --web
 ### API Endpoints
 Все мобильные endpoints доступны on адресу `http://localhost:8080/mobile/`:
 
-- `GET /mobile/health` - check здоровья
-- `GET /mobile/dashboard` - Данные dashboard (требует аутентификации)
-- `GET /mobile/portfolio` - Портфолио (требует аутентификации)
-- `GET /mobile/funds` - Список фондов (требует аутентификации)
+- `GET /mobile/health` - health check
+- `GET /mobile/dashboard` - data dashboard (требует аутентификации)
+- `GET /mobile/Portfolio` - Portfolio (требует аутентификации)
+- `GET /mobile/funds` - List of funds (требует аутентификации)
 - `POST /mobile/investments` - create инвестиции (требует аутентификации)
 - `POST /mobile/sync` - Synchronization (требует аутентификации)
 - `POST /mobile/notifications/push` - Push уведомления (требует аутентификации)
@@ -124,12 +124,12 @@ npx expo start --web
 - Выход из системы
 
 ### 2. **Navigation**
-- Stack Navigation между экранами
+- Stack Navigation между screenми
 - Условная Navigation (auth/main)
 - Защищенные маршруты
 
 ### 3. **API integration**
-- HTTP клиент with axios
+- HTTP client with axios
 - Обработка ошибок
 - Автоматическое add токенов
 - Базовый URL configuration
@@ -144,7 +144,7 @@ npx expo start --web
 
 ### check API endpoints
 ```bash
-# check здоровья
+# health check
 curl -X GET "http://localhost:8080/mobile/health"
 
 # check dashboard (требует аутентификации)
@@ -152,16 +152,16 @@ curl -X GET "http://localhost:8080/mobile/dashboard"
 ```
 
 ### Результаты тестирования
-- ✅ `/mobile/health` - работает корректно
+- ✅ `/mobile/health` - Workingет корректно
 - ✅ `/mobile/dashboard` - требует аутентификации (ожидаемо)
-- ✅ `/mobile/portfolio` - требует аутентификации (ожидаемо)
+- ✅ `/mobile/Portfolio` - требует аутентификации (ожидаемо)
 - ✅ Все endpoints доступны in OpenAPI схеме
 
 ## 📋 Следующие шаги
 
 ### Возможные улучшения:
 1. **Дополнительные экраны**
- - Детальный просмотр фондов
+ - Детальный View funds
  - История транзакций
  - settings профиля
  - Уведомления
@@ -180,7 +180,7 @@ curl -X GET "http://localhost:8080/mobile/dashboard"
 
 ## 🎉 Заключение
 
-Mobile application Pocket Hedge Fund successfully created and integrated with backend API. application готово к использованию and может быть запущено on iOS, Android or in веб-браузере.
+mobile application Pocket Hedge fund successfully created and integrated with backend API. application готово к использованию and может быть запущено on iOS, Android or in веб-браузере.
 
 **Статус**: ✅ **COMPLETED**
 **Дата**: 9 сентября 2025

@@ -1,13 +1,13 @@
-# 09. 🛡️ Управление рисками
+# 09. 🛡️ Management рисками
 
 **Goal:** Научиться эффективно управлять рисками in торговых стратегиях for защиты капитала.
 
 ## Необходимые импорты and configuration
 
-**Теория:** Перед началом работы with управлением рисками необходимо импортировать все необходимые библиотеки and настроить окружение. Это обеспечивает корректную работу всех компонентов системы управления рисками.
+**Теория:** Перед началом работы with Managementм рисками необходимо импортировать все необходимые библиотеки and настроить окружение. Это обеспечивает корректную работу всех компонентов системы управления рисками.
 
 ```python
-# Основные библиотеки for численных вычислений and анализа данных
+# Основные библиотеки for численных вычислений and Analysis данных
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -21,7 +21,7 @@ import time
 warnings.filterwarnings('ignore')
 
 # configuration for красивого отображения графиков
-plt.style.use('seaborn-v0_8')
+plt.style.Use('seaborn-v0_8')
 sns.set_palette("husl")
 
 # configuration for корректного отображения русских символов
@@ -29,24 +29,24 @@ plt.rcParams['font.family'] = 'DejaVu Sans'
 plt.rcParams['axes.unicode_minus'] = False
 
 print("✅ Все библиотеки успешно импортированы")
-print("🔧 Окружение настроено for работы with управлением рисками")
+print("🔧 Окружение настроено for работы with Managementм рисками")
 ```
 
-## Что такое управление рисками?
+## Что такое Management рисками?
 
-**Теория:** Управление рисками - это фундаментальный процесс in финансовой торговле, который включает идентификацию, оценку, контроль and Monitoring рисков for защиты капитала and обеспечения долгосрочной прибыльности. Это критически важный аспект любой торговой системы.
+**Теория:** Management рисками - это фундаментальный процесс in финансовой торговле, который включает идентификацию, оценку, контроль and Monitoring рисков for защиты капитала and обеспечения долгосрочной прибыльности. Это критически важный аспект любой торговой системы.
 
-**Управление рисками** - это процесс идентификации, оценки and контроля рисков for минимизации потерь and максимизации прибыли.
+**Management рисками** - это процесс идентификации, оценки and контроля рисков for минимизации потерь and максимизации прибыли.
 
-**Почему управление рисками критично for финансовых систем:**
+**Почему Management рисками критично for финансовых систем:**
 - **Защита капитала:** Предотвращение катастрофических потерь
 - **Стабильность:** Обеспечение предсказуемых результатов
 - **Выживание:** Критично for долгосрочного успеха
 - **Психологический комфорт:** Снижение стресса and эмоциональных решений
 
-### Зачем нужно управление рисками?
+### Зачем нужно Management рисками?
 
-**Теория:** Управление рисками является основой успешной торговли. Без правильного управления рисками даже самая прибыльная стратегия может привести к катастрофическим потерям.
+**Теория:** Management рисками является основой успешной торговли. Без правильного управления рисками даже самая прибыльная стратегия может привести к катастрофическим потерям.
 
 - **Защита капитала** - предотвращение больших потерь
  - **Почему важно:** Большие потери могут уничтожить торговый счет
@@ -165,7 +165,7 @@ class MarketRiskManager:
  """
 
  # Kelly Criterion for оптимального размера позиции
- # Эти parameters должны быть получены из исторического анализа стратегии
+ # Эти parameters должны быть получены из исторического Analysis стратегии
  win_rate = 0.6 # Предполагаемая вероятность выигрыша (60%)
  avg_win = 0.02 # Средний выигрыш (2% from размера позиции)
  avg_loss = 0.01 # Средний проигрыш (1% from размера позиции)
@@ -328,7 +328,7 @@ if __name__ == "__main__":
 **Почему это важно:**
 - Кредитное плечо увеличивает как прибыль, так and риски
 - Маржин-коллы могут привести к принудительному закрытию всех позиций
-- Правильное управление кредитными рисками позволяет использовать преимущества плеча без катастрофических потерь
+- Правильное Management кредитными рисками позволяет использовать преимущества плеча без катастрофических потерь
 - Динамические маржинальные требования учитывают реальную волатильность активов
 
 ```python
@@ -383,7 +383,7 @@ class CreditRiskManager:
 
  return total_margin
 
- def check_margin_call(self, account_balance, margin_used, position_value):
+ def check_margin_call(self, account_balance, margin_Used, position_value):
  """
  check состояния маржи and предупреждение о маржин-коллах.
 
@@ -393,7 +393,7 @@ class CreditRiskManager:
 
  Args:
  account_balance (float): Текущий баланс счета
- margin_used (float): Использованная маржа
+ margin_Used (float): Использованная маржа
  position_value (float): Общая стоимость позиций
 
  Returns:
@@ -401,7 +401,7 @@ class CreditRiskManager:
  """
 
  # Расчет коэффициента использования маржи
- margin_ratio = margin_used / account_balance if account_balance > 0 else 1.0
+ margin_ratio = margin_Used / account_balance if account_balance > 0 else 1.0
 
  # check различных уровней риска
  if margin_ratio > 0.9: # 90% маржи использовано - КРИТИЧНО
@@ -508,7 +508,7 @@ if __name__ == "__main__":
 **Почему операционные риски важны:**
 - **Технические сбои:** Могут привести к потере контроля над позициями
 - **Человеческие ошибки:** Могут привести к неправильным решениям
-- **Системные риски:** Могут влиять on всю торговую систему
+- **Системные риски:** Могут влиять on всю торговую system
 - **Процессные риски:** Могут нарушать торговые процессы
 
 **Плюсы управления операционными рисками:**
@@ -645,13 +645,13 @@ class OperationalRiskManager:
  check качества рыночных данных.
 
  Качество данных критично for принятия торговых решений.
- Плохие данные могут привести к неправильным сигналам and потерям.
+ Плохие data могут привести к неправильным сигналам and потерям.
 
  Args:
- market_data (dict): Рыночные данные
+ market_data (dict): Рыночные data
 
  Returns:
- tuple: (bool, str) - (данные корректны, description проблем)
+ tuple: (bool, str) - (data корректны, description проблем)
  """
  issues = []
 
@@ -671,7 +671,7 @@ class OperationalRiskManager:
  if volume < 0:
  issues.append("Отрицательный объем")
 
- # check on старые данные
+ # check on старые data
  if 'timestamp' in market_data:
  timestamp = market_data['timestamp']
  if isinstance(timestamp, str):
@@ -679,12 +679,12 @@ class OperationalRiskManager:
 
  time_diff = pd.Timestamp.now() - timestamp
  if time_diff > pd.Timedelta(minutes=5):
- issues.append("Данные устарели")
+ issues.append("data устарели")
 
  if issues:
  return False, f"❌ Issues with data: {'; '.join(issues)}"
  else:
- return True, "✅ Данные корректны"
+ return True, "✅ data корректны"
 
  def get_operational_metrics(self):
  """
@@ -812,7 +812,7 @@ def calculate_var(returns, confidence_level=0.05, time_horizon=1):
  returns = np.array(returns)
 
  # 1. ИСТОРИЧЕСКИЙ VaR
- # Использует исторические данные без предположений о распределении
+ # Использует исторические data без предположений о распределении
  # Простой and интуитивно понятный метод
  historical_var = np.percentile(returns, confidence_level * 100)
 
@@ -844,7 +844,7 @@ def calculate_var(returns, confidence_level=0.05, time_horizon=1):
 
  monte_carlo_var = np.percentile(simulated_returns, confidence_level * 100)
 
- # Дополнительные метрики for analysis
+ # Дополнительные метрики for Analysis
  var_metrics = {
  'historical_var': historical_var,
  'parametric_var': parametric_var,
@@ -886,7 +886,7 @@ def calculate_expected_shortfall(returns, confidence_level=0.05):
  if len(tail_losses) > 0:
  expected_shortfall = np.mean(tail_losses)
  else:
- # Если нет потерь хуже VaR, используем сам VaR
+ # Если нет потерь хуже VaR, Use сам VaR
  expected_shortfall = var_value
 
  return expected_shortfall
@@ -1043,7 +1043,7 @@ class DrawdownController:
  else:
  self.current_drawdown = 0
 
- # Сохранение истории for analysis
+ # Сохранение истории for Analysis
  self.capital_history.append(current_capital)
  self.drawdown_history.append(self.current_drawdown)
 
@@ -1218,7 +1218,7 @@ if __name__ == "__main__":
 - Высокая корреляция снижает эффективность диверсификации
 - in кризисные периоды корреляции между активами часто увеличиваются
 - Неправильная оценка корреляций может привести к концентрации рисков
-- Управление корреляциями - основа современной портфельной теории
+- Management корреляциями - основа современной портфельной теории
 
 ```python
 class CorrelationRiskManager:
@@ -1255,12 +1255,12 @@ class CorrelationRiskManager:
  self._update_correlation_matrix()
 
  def _update_correlation_matrix(self):
- """update матрицы корреляций между всеми активами."""
+ """update матрицы корреляций между allи активами."""
  if len(self.asset_returns) < 2:
  return
 
- # create DataFrame for удобного расчета корреляций
- returns_df = pd.DataFrame(self.asset_returns)
+ # create dataFrame for удобного расчета корреляций
+ returns_df = pd.dataFrame(self.asset_returns)
  self.correlation_matrix = returns_df.corr()
 
  def check_correlation(self, new_asset, existing_positions):
@@ -1334,7 +1334,7 @@ class CorrelationRiskManager:
 
  return correlation
 
- def get_portfolio_correlation_metrics(self, positions):
+ def get_Portfolio_correlation_metrics(self, positions):
  """
  Получение метрик корреляции for всего портфеля.
 
@@ -1354,13 +1354,13 @@ class CorrelationRiskManager:
  }
 
  correlations = []
- asset_names = list(positions.keys())
+ asset_names = List(positions.keys())
 
  # Расчет всех попарных корреляций
  for i in range(len(asset_names)):
  for j in range(i + 1, len(asset_names)):
  corr = self.calculate_correlation(asset_names[i], asset_names[j])
- correlations.append(abs(corr)) # Используем абсолютное значение
+ correlations.append(abs(corr)) # Use абсолютное значение
 
  if not correlations:
  return {
@@ -1386,7 +1386,7 @@ class CorrelationRiskManager:
  'high_correlation_pairs': len([c for c in correlations if c > self.max_correlation])
  }
 
- def optimize_portfolio_weights(self, assets, expected_returns, cov_matrix, risk_tolerance=0.5):
+ def optimize_Portfolio_weights(self, assets, expected_returns, cov_matrix, risk_tolerance=0.5):
  """
  Оптимизация весов портфеля with учетом корреляций.
 
@@ -1395,7 +1395,7 @@ class CorrelationRiskManager:
  доходность/риск with учетом корреляций между активами.
 
  Args:
- assets (list): Список активов
+ assets (List): List активов
  expected_returns (array): Ожидаемые доходности
  cov_matrix (array): Ковариационная матрица
  risk_tolerance (float): Толерантность к риску (0-1)
@@ -1406,24 +1406,24 @@ class CorrelationRiskManager:
 
  n_assets = len(assets)
 
- def portfolio_variance(weights):
+ def Portfolio_variance(weights):
  """function дисперсии портфеля."""
  return np.dot(weights.T, np.dot(cov_matrix, weights))
 
- def portfolio_return(weights):
+ def Portfolio_return(weights):
  """function доходности портфеля."""
  return np.sum(expected_returns * weights)
 
  def objective_function(weights):
  """Целевая function: максимизация отношения доходность/риск."""
- portfolio_ret = portfolio_return(weights)
- portfolio_var = portfolio_variance(weights)
+ Portfolio_ret = Portfolio_return(weights)
+ Portfolio_var = Portfolio_variance(weights)
 
  # Шарп-подобное отношение with учетом толерантности к риску
- if portfolio_var > 0:
- return -(portfolio_ret - risk_tolerance * portfolio_var)
+ if Portfolio_var > 0:
+ return -(Portfolio_ret - risk_tolerance * Portfolio_var)
  else:
- return -portfolio_ret
+ return -Portfolio_ret
 
  # Ограничения
  constraints = ({'type': 'eq', 'fun': lambda x: np.sum(x) - 1}) # Сумма весов = 1
@@ -1459,7 +1459,7 @@ class CorrelationRiskManager:
  dict: Рекомендации on диверсификации
  """
 
- metrics = self.get_portfolio_correlation_metrics(current_positions)
+ metrics = self.get_Portfolio_correlation_metrics(current_positions)
  suggestions = []
 
  if metrics['correlation_risk_score'] > 0.8:
@@ -1470,7 +1470,7 @@ class CorrelationRiskManager:
  suggestions.append(" Рассмотрите возможность диверсификации")
 
  if metrics['high_correlation_pairs'] > 0:
- suggestions.append(f" Найдено {metrics['high_correlation_pairs']} пар with высокой корреляцией")
+ suggestions.append(f" foundо {metrics['high_correlation_pairs']} пар with высокой корреляцией")
 
  if len(current_positions) < 3:
  suggestions.append("💡 Рекомендация: Добавьте больше активов for диверсификации")
@@ -1483,7 +1483,7 @@ class CorrelationRiskManager:
  }
 
 # example использования CorrelationRiskManager
-def demonstrate_correlation_risk_management():
+def demonstrate_correlation_risk_Management():
  """
  Демонстрация работы CorrelationRiskManager with реальными данными.
  """
@@ -1538,12 +1538,12 @@ def demonstrate_correlation_risk_management():
 
  # Анализ портфеля
  print("📈 Анализ текущего портфеля:")
- portfolio_metrics = corr_manager.get_portfolio_correlation_metrics(current_positions)
+ Portfolio_metrics = corr_manager.get_Portfolio_correlation_metrics(current_positions)
 
- print(f" Средняя корреляция: {portfolio_metrics['avg_correlation']:.3f}")
- print(f" Максимальная корреляция: {portfolio_metrics['max_correlation']:.3f}")
- print(f" Оценка риска: {portfolio_metrics['correlation_risk_score']:.3f}")
- print(f" Пар with высокой корреляцией: {portfolio_metrics['high_correlation_pairs']}")
+ print(f" Средняя корреляция: {Portfolio_metrics['avg_correlation']:.3f}")
+ print(f" Максимальная корреляция: {Portfolio_metrics['max_correlation']:.3f}")
+ print(f" Оценка риска: {Portfolio_metrics['correlation_risk_score']:.3f}")
+ print(f" Пар with высокой корреляцией: {Portfolio_metrics['high_correlation_pairs']}")
  print()
 
  # Рекомендации on диверсификации
@@ -1555,18 +1555,18 @@ def demonstrate_correlation_risk_management():
 
  return {
  'current_positions': current_positions,
- 'portfolio_metrics': portfolio_metrics,
+ 'Portfolio_metrics': Portfolio_metrics,
  'diversification_suggestions': diversification
  }
 
 # Launch демонстрации
 if __name__ == "__main__":
- corr_demo_results = demonstrate_correlation_risk_management()
+ corr_demo_results = demonstrate_correlation_risk_Management()
 ```
 
-## Динамическое управление рисками
+## Динамическое Management рисками
 
-**Теория:** Динамическое управление рисками адаптирует parameters риска in dependencies from текущих рыночных условий. in отличие from статических подходов, динамические системы могут изменять свою агрессивность in dependencies from волатильности, трендов and других рыночных факторов.
+**Теория:** Динамическое Management рисками адаптирует parameters риска in dependencies from текущих рыночных условий. in отличие from статических подходов, динамические системы могут изменять свою агрессивность in dependencies from волатильности, трендов and других рыночных факторов.
 
 ### 1. Адаптивные лимиты
 
@@ -1600,7 +1600,7 @@ class AdaptiveRiskManager:
  Args:
  base_risk (float): Базовый уровень риска (on умолчанию 2%)
  volatility_lookback (int): Период for расчета волатильности (on умолчанию 20 дней)
- trend_lookback (int): Период for analysis тренда (on умолчанию 50 дней)
+ trend_lookback (int): Период for Analysis тренда (on умолчанию 50 дней)
  """
  self.base_risk = base_risk
  self.volatility_lookback = volatility_lookback
@@ -1620,7 +1620,7 @@ class AdaptiveRiskManager:
  4. Исторические паттерны (адаптация on basis прошлых результатов)
 
  Args:
- returns (array-like): Массив доходностей for analysis
+ returns (array-like): Массив доходностей for Analysis
 
  Returns:
  float: Адаптивный уровень риска
@@ -1715,7 +1715,7 @@ class AdaptiveRiskManager:
 
  Args:
  returns (array-like): Массив доходностей
- min_periods (int): Минимальное количество periods for analysis
+ min_periods (int): Минимальное количество periods for Analysis
 
  Returns:
  bool: Следует ли увеличить риск
@@ -1769,7 +1769,7 @@ class AdaptiveRiskManager:
  return position_size
 
 # example использования AdaptiveRiskManager
-def demonstrate_adaptive_risk_management():
+def demonstrate_adaptive_risk_Management():
  """
  Демонстрация работы AdaptiveRiskManager with различными рыночными условиями.
  """
@@ -1842,7 +1842,7 @@ def demonstrate_adaptive_risk_management():
 
 # Launch демонстрации
 if __name__ == "__main__":
- adaptive_demo_results = demonstrate_adaptive_risk_management()
+ adaptive_demo_results = demonstrate_adaptive_risk_Management()
 ```
 
 ### 2. Machine Learning Risk Management
@@ -2109,7 +2109,7 @@ class MLRiskManager:
  Prediction риска with помощью ML-модели.
 
  Args:
- market_data (dict): Рыночные данные
+ market_data (dict): Рыночные data
 
  Returns:
  float: Предсказанный уровень риска
@@ -2121,7 +2121,7 @@ class MLRiskManager:
  try:
  # Извлечение признаков
  features = self.extract_risk_features(market_data)
- feature_vector = np.array(list(features.values())).reshape(1, -1)
+ feature_vector = np.array(List(features.values())).reshape(1, -1)
 
  # Нормализация признаков
  if hasattr(self.feature_scaler, 'fit'):
@@ -2142,8 +2142,8 @@ class MLRiskManager:
  Обучение ML-модели for предсказания рисков.
 
  Args:
- historical_data (list): Список исторических рыночных данных
- risk_labels (list): Список соответствующих меток риска
+ historical_data (List): List исторических рыночных данных
+ risk_labels (List): List соответствующих меток риска
  test_size (float): Доля данных for тестирования
 
  Returns:
@@ -2155,17 +2155,17 @@ class MLRiskManager:
  from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 
  # Извлечение признаков
- features_list = []
+ features_List = []
  for data in historical_data:
  features = self.extract_risk_features(data)
- features_list.append(list(features.values()))
+ features_List.append(List(features.values()))
 
- X = np.array(features_list)
+ X = np.array(features_List)
  y = np.array(risk_labels)
 
  # Сохранение названий признаков
- if features_list:
- self.feature_names = list(features.keys())
+ if features_List:
+ self.feature_names = List(features.keys())
 
  # Разделение on обучающую and тестовую выборки
  X_train, X_test, y_train, y_test = train_test_split(
@@ -2231,7 +2231,7 @@ class MLRiskManager:
  return dict(sorted_importance[:top_n])
 
 # example использования MLRiskManager
-def demonstrate_ml_risk_management():
+def demonstrate_ml_risk_Management():
  """
  Демонстрация работы MLRiskManager with синтетическими данными.
  """
@@ -2297,8 +2297,8 @@ def demonstrate_ml_risk_management():
  for feature, importance in feature_importance.items():
  print(f" {feature}: {importance:.3f}")
 
- # Тестирование predictions
- print("\n🎯 Тестирование predictions:")
+ # Тестирование Predictions
+ print("\n🎯 Тестирование Predictions:")
  test_data = historical_data[-10:] # Последние 10 periods
 
  for i, data in enumerate(test_data):
@@ -2318,7 +2318,7 @@ def demonstrate_ml_risk_management():
 
 # Launch демонстрации
 if __name__ == "__main__":
- ml_demo_results = demonstrate_ml_risk_management()
+ ml_demo_results = demonstrate_ml_risk_Management()
 ```
 
 ## Monitoring рисков
@@ -2353,7 +2353,7 @@ class RiskMonitor:
  """
  self.alert_thresholds = alert_thresholds
  self.alerts = []
- self.monitoring_history = []
+ self.Monitoring_history = []
  self.alert_counts = {
  'DRAWDOWN': 0,
  'VOLATILITY': 0,
@@ -2373,7 +2373,7 @@ class RiskMonitor:
  current_state (dict): Текущее состояние портфеля
 
  Returns:
- list: Список сгенерированных предупреждений
+ List: List сгенерированных предупреждений
  """
 
  alerts = []
@@ -2450,15 +2450,15 @@ class RiskMonitor:
  self.alert_counts['MARGIN'] += 1
 
  # Сохранение истории Monitoringа
- self.monitoring_history.append({
+ self.Monitoring_history.append({
  'timestamp': timestamp,
  'state': current_state.copy(),
  'alerts_count': len(alerts)
  })
 
  # Ограничение размера истории
- if len(self.monitoring_history) > 1000:
- self.monitoring_history = self.monitoring_history[-1000:]
+ if len(self.Monitoring_history) > 1000:
+ self.Monitoring_history = self.Monitoring_history[-1000:]
 
  return alerts
 
@@ -2484,10 +2484,10 @@ class RiskMonitor:
 
  def get_alert_summary(self, hours=24):
  """
- Получение сводки предупреждений за указанный период.
+ Получение сводки предупреждений за specifiedный период.
 
  Args:
- hours (int): Количество часов for analysis
+ hours (int): Количество часов for Analysis
 
  Returns:
  dict: Сводка предупреждений
@@ -2528,10 +2528,10 @@ class RiskMonitor:
  dict: Словарь with метриками риска
  """
 
- if not self.monitoring_history:
+ if not self.Monitoring_history:
  return {}
 
- latest_state = self.monitoring_history[-1]['state']
+ latest_state = self.Monitoring_history[-1]['state']
 
  return {
  'current_drawdown': latest_state.get('drawdown', 0),
@@ -2544,7 +2544,7 @@ class RiskMonitor:
  }
 
 # example использования RiskMonitor
-def demonstrate_risk_monitoring():
+def demonstrate_risk_Monitoring():
  """
  Демонстрация работы системы Monitoringа рисков.
  """
@@ -2615,7 +2615,7 @@ def demonstrate_risk_monitoring():
 
 # Launch демонстрации
 if __name__ == "__main__":
- monitoring_demo_results = demonstrate_risk_monitoring()
+ Monitoring_demo_results = demonstrate_risk_Monitoring()
 ```
 
 ### 2. Risk Dashboard
@@ -2662,7 +2662,7 @@ def create_risk_dashboard(risk_metrics):
 ## Практический example
 
 ```python
-def complete_risk_management_system():
+def complete_risk_Management_system():
  """Полная система управления рисками"""
 
  # 1. Инициализация компонентов
@@ -2769,7 +2769,7 @@ def simulate_trade(market_data, position_size):
  Симуляция торговой сделки.
 
  Args:
- market_data (dict): Рыночные данные
+ market_data (dict): Рыночные data
  position_size (float): Размер позиции
 
  Returns:
@@ -2782,7 +2782,7 @@ def simulate_trade(market_data, position_size):
  return position_size * trade_return
 
 # Полная система управления рисками
-def complete_risk_management_system():
+def complete_risk_Management_system():
  """
  Полная интегрированная система управления рисками.
 
@@ -2894,11 +2894,11 @@ def complete_risk_management_system():
 
 После изучения управления рисками переходите к:
 - **[10_blockchain_deployment.md](10_blockchain_deployment.md)** - Блокчейн деплой
-- **[11_wave2_analysis.md](11_wave2_analysis.md)** - Анализ WAVE2
+- **[11_wave2_Analysis.md](11_wave2_Analysis.md)** - Анализ WAVE2
 
 ## Ключевые выводы
 
-1. **Управление рисками** - основа успешной торговли
+1. **Management рисками** - основа успешной торговли
 2. **Диверсификация** снижает риски
 3. **Monitoring** должен быть непрерывным
 4. **Адаптивность** - ключ к выживанию
@@ -2906,4 +2906,4 @@ def complete_risk_management_system():
 
 ---
 
-**Важно:** Лучше заработать меньше, но стабильно, чем много, но with большими рисками!
+**Важно:** Лучше заWorkingть меньше, но стабильно, чем много, но with большими рисками!

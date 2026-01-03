@@ -7,7 +7,7 @@
 
 ## Why правильное использование вероятностей критически важно
 
-**Почему 95% ML-моделей in продакшене неправильно используют вероятности?** Потому что команды фокусируются только on точности predictions, игнорируя уверенность модели. Это как врач, который ставит диагноз, но not говорит, насколько он уверен.
+**Почему 95% ML-моделей in продакшене неправильно используют вероятности?** Потому что team фокусируются только on точности Predictions, игнорируя уверенность модели. Это как врач, который ставит диагноз, но not говорит, насколько он уверен.
 
 ### Проблемы неправильного использования вероятностей
 
@@ -27,7 +27,7 @@
 
 **Почему вероятности - это сердце ML-модели?** Потому что они показывают not только что предсказывает модель, но and насколько она уверена in своем предсказании.
 
-Правильное использование вероятностей - это ключ к созданию робастных and прибыльных ML-моделей. Этот раздел посвящен глубокому пониманию того, как работать with вероятностями in AutoML Gluon and создавать on их basis эффективные торговые системы.
+Правильное использование вероятностей - это ключ к созданию робастных and прибыльных ML-моделей. Этот раздел посвящен глубокому пониманию того, как Workingть with вероятностями in AutoML Gluon and создавать on их basis эффективные торговые системы.
 
 ## Что такое вероятности in ML?
 
@@ -37,7 +37,7 @@
 
 ```mermaid
 graph TD
- A[Входные данные] --> B[ML Модель]
+ A[Входные data] --> B[ML Модель]
  B --> C[Prediction]
  B --> D[Вероятность]
 
@@ -85,7 +85,7 @@ predictor = TabularPredictor(
 
 # Обучение модели with параметрами
 predictor.fit(
- train_data, # Обучающие данные
+ train_data, # Обучающие data
  time_limit=3600, # Лимит времени обучения in секундах
  presets='best_quality', # Предустановки качества
  num_trials=10, # Количество попыток оптимизации
@@ -113,13 +113,13 @@ predictor.fit(
  ag_args_ensemble={} # Дополнительные аргументы for ансамбля
 )
 
-# Получение predictions
+# Получение Predictions
 Predictions = predictor.predict(test_data)
 
 # Получение вероятностей with параметрами
 probabilities = predictor.predict_proba(
- test_data, # Тестовые данные
- as_pandas=True, # Возврат in формате pandas DataFrame
+ test_data, # Тестовые data
+ as_pandas=True, # Возврат in формате pandas dataFrame
  transform_features=True # Применение трансформаций к приsignм
 )
 
@@ -143,13 +143,13 @@ graph TD
 
  C --> C1[Подходит for большинства случаев]
  C --> C2[Быстрая калибровка]
- C --> C3[Хорошо работает with переобучением]
+ C --> C3[Хорошо Workingет with переобучением]
 
  D --> D1[Непараметрический метод]
  D --> D2[Монотонная калибровка]
  D --> D3[Лучше for малых данных]
 
- E --> E1[for нейронных сетей]
+ E --> E1[for нейронных networks]
  E --> E2[Один parameter температуры]
  E --> E3[Быстрая оптимизация]
 
@@ -184,7 +184,7 @@ class ProbabilityCalibration:
 
  Args:
  config (dict): configuration калибровки
- - calibration_methods: Список методов калибровки
+ - calibration_methods: List методов калибровки
  - cv_folds: Количество фолдов for кросс-валидации
  - temperature_init: Начальная температура for temperature scaling
  - isotonic_bounds: Границы for изотонической регрессии
@@ -343,9 +343,9 @@ class ProbabilityCalibration:
  return calibrated_probs.detach().numpy()
 ```
 
-### 2. Адаптивное управление рисками
+### 2. Адаптивное Management рисками
 
-### ⚖️ Управление рисками on basis вероятностей
+### ⚖️ Management рисками on basis вероятностей
 
 ```mermaid
 graph TD
@@ -400,7 +400,7 @@ graph TD
 
 ```python
 class AdaptiveRiskManagement:
- """Адаптивное управление рисками on basis вероятностей"""
+ """Адаптивное Management рисками on basis вероятностей"""
 
  def __init__(self, config=None):
  """
@@ -436,7 +436,7 @@ class AdaptiveRiskManagement:
  'correlation_threshold': 0.7, # Порог корреляции
  'max_correlation': 0.9, # Максимальная корреляция
  'rebalance_frequency': 'daily', # Частота ребалансировки
- 'monitoring_window': 30, # Окно Monitoringа (дни)
+ 'Monitoring_window': 30, # Окно Monitoringа (дни)
  'alert_threshold': 0.05, # Порог for алертов
  'max_drawdown': 0.2, # Максимальная просадка
  'var_confidence': 0.95, # Уровень доверия for VaR
@@ -553,14 +553,14 @@ class AdaptiveRiskManagement:
  return stop_loss_price
 
  def probability_based_hedging(self, probabilities, market_conditions,
- portfolio_state=None, risk_budget=None):
+ Portfolio_state=None, risk_budget=None):
  """
  Хеджирование on basis вероятностей
 
  Args:
  probabilities (array): Массив вероятностей
  market_conditions (dict): Рыночные условия
- portfolio_state (dict): Состояние портфеля
+ Portfolio_state (dict): Состояние портфеля
  risk_budget (float): Бюджет риска
 
  Returns:
@@ -576,7 +576,7 @@ class AdaptiveRiskManagement:
  hedging_needed = self.determine_hedging_need(
  prob_distribution,
  market_conditions,
- portfolio_state
+ Portfolio_state
  )
 
  if hedging_needed:
@@ -589,7 +589,7 @@ class AdaptiveRiskManagement:
  # Выбор инструментов хеджирования
  hedge_instruments = self.select_hedge_instruments(
  market_conditions,
- portfolio_state
+ Portfolio_state
  )
 
  # Расчет стоимости хеджирования
@@ -694,7 +694,7 @@ class ProbabilityEnsemble:
 
  Args:
  config (dict): configuration ансамблирования
- - ensemble_methods: Список методов ансамблирования
+ - ensemble_methods: List методов ансамблирования
  - weight_calculation: Метод расчета весов
  - uncertainty_estimation: Метод оценки неопределенности
  - model_selection: Критерии отбора моделей
@@ -906,7 +906,7 @@ class ProbabilityEnsemble:
  valid_models = model_confidences >= threshold
 
  if not np.any(valid_models):
- # Если нет моделей выше порога, используем все
+ # Если нет моделей выше порога, Use все
  valid_models = np.ones_like(model_confidences, dtype=bool)
 
  # Нормализация весов
@@ -1045,8 +1045,8 @@ class ProbabilityDriftMonitor:
  Args:
  config (dict): configuration Monitoringа
  - drift_threshold: Порог for обнаружения дрифта
- - test_methods: Список методов тестирования
- - window_size: Размер окна for analysis
+ - test_methods: List методов тестирования
+ - window_size: Размер окна for Analysis
  - update_frequency: Частота обновления
  """
  self.config = config or self._get_default_config()
@@ -1060,7 +1060,7 @@ class ProbabilityDriftMonitor:
  return {
  'drift_threshold': 0.05, # Порог for обнаружения дрифта
  'test_methods': ['statistical', 'ks', 'wasserstein', 'psi'],
- 'window_size': 1000, # Размер окна for analysis
+ 'window_size': 1000, # Размер окна for Analysis
  'update_frequency': 'daily', # Частота обновления
  'baseline_period': 30, # Период for базовой линии (дни)
  'min_samples': 100, # Минимальное количество образцов
@@ -1080,7 +1080,7 @@ class ProbabilityDriftMonitor:
  'alert_recipients': [], # Получатели алертов
  'alert_template': 'default' # Шаблон алерта
  },
- 'monitoring_metrics': {
+ 'Monitoring_metrics': {
  'mean_drift': True, # Дрифт среднего
  'variance_drift': True, # Дрифт дисперсии
  'distribution_drift': True, # Дрифт распределения
@@ -1128,7 +1128,7 @@ class ProbabilityDriftMonitor:
  current_probabilities (array): Текущие вероятности
  baseline_probabilities (array): Базовые вероятности (если None, используется сохраненная)
  drift_threshold (float): Порог for обнаружения дрифта
- test_methods (list): Список методов тестирования
+ test_methods (List): List методов тестирования
 
  Returns:
  dict: Результаты обнаружения дрифта
@@ -1449,12 +1449,12 @@ class ProbabilityInterpretation:
  """Правильная интерпретация вероятностей"""
 
  # Анализ контекста
- context_analysis = self.analyze_context(context)
+ context_Analysis = self.analyze_context(context)
 
  # Корректировка интерпретации
  corrected_interpretation = self.correct_interpretation(
  probabilities,
- context_analysis
+ context_Analysis
  )
 
  return corrected_interpretation
@@ -1477,17 +1477,17 @@ class ProbabilityInterpretation:
  'external': external_factors
  }
 
- def correct_interpretation(self, probabilities, context_analysis):
+ def correct_interpretation(self, probabilities, context_Analysis):
  """Корректировка интерпретации"""
 
  # Корректировка on basis рыночных условий
- market_corrected = self.market_correction(probabilities, context_analysis['market'])
+ market_corrected = self.market_correction(probabilities, context_Analysis['market'])
 
  # Корректировка on basis временных факторов
- temporal_corrected = self.temporal_correction(market_corrected, context_analysis['temporal'])
+ temporal_corrected = self.temporal_correction(market_corrected, context_Analysis['temporal'])
 
  # Корректировка on basis внешних факторов
- external_corrected = self.external_correction(temporal_corrected, context_analysis['external'])
+ external_corrected = self.external_correction(temporal_corrected, context_Analysis['external'])
 
  return external_corrected
 ```
@@ -1508,15 +1508,15 @@ class CalibrationIssues:
  calibration_curve = self.analyze_calibration_curve(probabilities, true_labels)
 
  # Анализ надежности
- reliability_analysis = self.analyze_reliability(probabilities, true_labels)
+ reliability_Analysis = self.analyze_reliability(probabilities, true_labels)
 
  # Анализ резолюции
- resolution_analysis = self.analyze_resolution(probabilities, true_labels)
+ resolution_Analysis = self.analyze_resolution(probabilities, true_labels)
 
  return {
  'calibration_curve': calibration_curve,
- 'reliability': reliability_analysis,
- 'resolution': resolution_analysis
+ 'reliability': reliability_Analysis,
+ 'resolution': resolution_Analysis
  }
 
  def analyze_calibration_curve(self, probabilities, true_labels):
@@ -1651,7 +1651,7 @@ class ProbabilityMonitoring:
  """Monitoring производительности вероятностей"""
 
  def __init__(self):
- self.monitoring_metrics = {}
+ self.Monitoring_metrics = {}
 
  def monitor_performance(self, probabilities, true_labels):
  """Monitoring производительности"""
@@ -1700,7 +1700,7 @@ class ProbabilityMonitoring:
 
 ```mermaid
 graph TD
- A[Рыночные данные] --> B[ML Модель]
+ A[Рыночные data] --> B[ML Модель]
  B --> C[Вероятности предсказания]
 
  C --> D{Анализ вероятности}
@@ -1738,7 +1738,7 @@ graph TD
  H2 --> I
  H3 --> I
 
- I --> J[Управление рисками]
+ I --> J[Management рисками]
  J --> K[Исполнение сделки]
  K --> L[Monitoring позиции]
  L --> M{Результат сделки}
@@ -1757,7 +1757,7 @@ graph TD
 ```
 
 ```python
-class ProbabilityTradingSystem:
+class ProbabilityTradingsystem:
  """Торговая система on basis вероятностей"""
 
  def __init__(self, config=None):
@@ -1767,13 +1767,13 @@ class ProbabilityTradingSystem:
  Args:
  config (dict): configuration торговой системы
  - probability_thresholds: Пороги вероятностей for сигналов
- - risk_management: parameters управления рисками
+ - risk_Management: parameters управления рисками
  - signal_generation: parameters генерации сигналов
  - market_conditions: Условия рынка
  """
  self.config = config or self._get_default_config()
  self.probability_thresholds = {}
- self.risk_management = {}
+ self.risk_Management = {}
  self.signal_history = []
  self.performance_metrics = {}
 
@@ -1789,7 +1789,7 @@ class ProbabilityTradingSystem:
  'moderate_sell': 0.2, # Умеренный сигнал продажи
  'strong_sell': 0.1 # Сильный сигнал продажи
  },
- 'risk_management': {
+ 'risk_Management': {
  'max_position_size': 0.2, # Максимальный размер позиции
  'min_position_size': 0.01, # Минимальный размер позиции
  'stop_loss_threshold': 0.05, # Порог стоп-лосса
@@ -1824,14 +1824,14 @@ class ProbabilityTradingSystem:
  'signal_optimization': True # Оптимизация сигналов
  },
  'market_conditions': {
- 'trend_analysis': True, # Анализ тренда
- 'volatility_analysis': True, # Анализ волатильности
- 'liquidity_analysis': True, # Анализ ликвидности
- 'correlation_analysis': True, # Анализ корреляции
- 'momentum_analysis': True, # Анализ моментума
+ 'trend_Analysis': True, # Анализ тренда
+ 'volatility_Analysis': True, # Анализ волатильности
+ 'liquidity_Analysis': True, # Анализ ликвидности
+ 'correlation_Analysis': True, # Анализ корреляции
+ 'momentum_Analysis': True, # Анализ моментума
  'support_resistance': True, # Анализ поддержки/сопротивления
- 'volume_analysis': True, # Анализ объема
- 'market_microstructure': True, # Микроструктура рынка
+ 'volume_Analysis': True, # Анализ объема
+ 'market_microStructure': True, # МикроStructure рынка
  'news_sentiment': True, # Новостной сентимент
  'economic_indicators': True, # Экономические индикаторы
  'central_bank_policy': True, # Политика центрального банка
@@ -1839,17 +1839,17 @@ class ProbabilityTradingSystem:
  'seasonal_patterns': True, # Сезонные паттерны
  'market_regime': 'normal' # Режим рынка
  },
- 'performance_monitoring': {
- 'real_time_monitoring': True, # Monitoring in реальном времени
+ 'performance_Monitoring': {
+ 'real_time_Monitoring': True, # Monitoring in реальном времени
  'performance_metrics': ['sharpe', 'sortino', 'calmar', 'max_drawdown'],
  'benchmark_comparison': True, # Сравнение with бенчмарком
  'risk_adjusted_returns': True, # Риск-скорректированная доходность
- 'attribution_analysis': True, # Анализ атрибуции
+ 'attribution_Analysis': True, # Анализ атрибуции
  'stress_testing': True, # Стресс-тестирование
- 'scenario_analysis': True, # Сценарный анализ
+ 'scenario_Analysis': True, # Сценарный анализ
  'monte_carlo_simulation': True, # Монте-Карло симуляция
  'backtesting': True, # Бэктестинг
- 'walk_forward_analysis': True, # Walk-forward анализ
+ 'walk_forward_Analysis': True, # Walk-forward анализ
  'out_of_sample_testing': True # Вневыборочное тестирование
  },
  'execution': {
@@ -1872,7 +1872,7 @@ class ProbabilityTradingSystem:
  'leverage_limits': True, # Лимиты плеча
  'liquidity_requirements': True, # Требования к ликвидности
  'capital_requirements': True, # Требования к капиталу
- 'reporting_requirements': True, # Требования к Reportности
+ 'Reporting_requirements': True, # Требования к Reportности
  'audit_trail': True, # Аудит-трейл
  'data_retention': 7, # Хранение данных (лет)
  'privacy_protection': True, # Защита конфиденциальности
@@ -1890,25 +1890,25 @@ class ProbabilityTradingSystem:
 
  Args:
  probabilities (array): Вероятности предсказания
- market_data (dict): Рыночные данные
+ market_data (dict): Рыночные data
  signal_config (dict): configuration сигналов
  risk_config (dict): configuration рисков
 
  Returns:
- list: Список торговых сигналов
+ List: List торговых сигналов
  """
  if signal_config is None:
  signal_config = self.config['signal_generation']
  if risk_config is None:
- risk_config = self.config['risk_management']
+ risk_config = self.config['risk_Management']
 
  # Анализ вероятностей
- prob_analysis = self.analyze_probabilities(probabilities)
+ prob_Analysis = self.analyze_probabilities(probabilities)
 
  # Генерация сигналов
- signals = self.generate_signals(prob_analysis, market_data, signal_config)
+ signals = self.generate_signals(prob_Analysis, market_data, signal_config)
 
- # Управление рисками
+ # Management рисками
  risk_adjusted_signals = self.adjust_for_risk(signals, probabilities, risk_config)
 
  # Валидация сигналов
@@ -1949,10 +1949,10 @@ class ProbabilityTradingSystem:
  prob_distribution = self.analyze_distribution(probabilities)
 
  # Анализ уверенности
- confidence_analysis = self.analyze_confidence(probabilities)
+ confidence_Analysis = self.analyze_confidence(probabilities)
 
  # Анализ неопределенности
- uncertainty_analysis = self.analyze_uncertainty(probabilities)
+ uncertainty_Analysis = self.analyze_uncertainty(probabilities)
 
  return {
  'probabilities': probabilities,
@@ -1962,26 +1962,26 @@ class ProbabilityTradingSystem:
  'min': min_prob,
  'median': median_prob,
  'distribution': prob_distribution,
- 'confidence': confidence_analysis,
- 'uncertainty': uncertainty_analysis
+ 'confidence': confidence_Analysis,
+ 'uncertainty': uncertainty_Analysis
  }
 
- def generate_signals(self, prob_analysis, market_data, signal_config):
+ def generate_signals(self, prob_Analysis, market_data, signal_config):
  """
  Генерация сигналов
 
  Args:
- prob_analysis (dict): Анализ вероятностей
- market_data (dict): Рыночные данные
+ prob_Analysis (dict): Анализ вероятностей
+ market_data (dict): Рыночные data
  signal_config (dict): configuration сигналов
 
  Returns:
- list: Список сигналов
+ List: List сигналов
  """
  signals = []
  thresholds = self.config['probability_thresholds']
 
- for i, prob in enumerate(prob_analysis['probabilities']):
+ for i, prob in enumerate(prob_Analysis['probabilities']):
  # Определение типа сигнала
  if prob >= thresholds['strong_buy']:
  signal_type = 'BUY'
@@ -2026,7 +2026,7 @@ class ProbabilityTradingSystem:
  'expiry_time': pd.Timestamp.now() + pd.Timedelta(minutes=signal_config.get('signal_persistence', 5)),
  'priority': self.calculate_signal_priority(signal_type, strength, confidence),
  'metadata': {
- 'prob_analysis': prob_analysis,
+ 'prob_Analysis': prob_Analysis,
  'market_data': market_data,
  'signal_config': signal_config
  }
@@ -2041,12 +2041,12 @@ class ProbabilityTradingSystem:
  Корректировка сигналов on риск
 
  Args:
- signals (list): Список сигналов
+ signals (List): List сигналов
  probabilities (array): Вероятности
  risk_config (dict): configuration рисков
 
  Returns:
- list: Скорректированные сигналы
+ List: Скорректированные сигналы
  """
  adjusted_signals = []
 
@@ -2236,17 +2236,17 @@ class ProbabilityTradingSystem:
  return filtered_signals
 ```
 
-### 2. Портфельное управление
+### 2. Портфельное Management
 
 ```python
 class ProbabilityPortfolioManagement:
- """Управление портфелем on basis вероятностей"""
+ """Management портфелем on basis вероятностей"""
 
  def __init__(self):
- self.portfolio_weights = {}
+ self.Portfolio_weights = {}
  self.risk_budget = {}
 
- def optimize_portfolio(self, asset_probabilities, risk_budget):
+ def optimize_Portfolio(self, asset_probabilities, risk_budget):
  """Оптимизация портфеля"""
 
  # Расчет весов on basis вероятностей
@@ -2275,12 +2275,12 @@ class ProbabilityPortfolioManagement:
  """Корректировка on риск"""
 
  # Расчет риска портфеля
- portfolio_risk = self.calculate_portfolio_risk(weights)
+ Portfolio_risk = self.calculate_Portfolio_risk(weights)
 
  # Корректировка весов
- if portfolio_risk > risk_budget:
+ if Portfolio_risk > risk_budget:
  # Уменьшение весов
- adjustment_factor = risk_budget / portfolio_risk
+ adjustment_factor = risk_budget / Portfolio_risk
  adjusted_weights = weights * adjustment_factor
  else:
  adjusted_weights = weights
@@ -2395,7 +2395,7 @@ graph TD
 | `correlation_threshold` | `0.7` | Порог корреляции | `0.3-0.9` |
 | `max_correlation` | `0.9` | Максимальная корреляция | `0.5-0.95` |
 | `rebalance_frequency` | `'daily'` | Частота ребалансировки | `['hourly', 'daily', 'weekly']` |
-| `monitoring_window` | `30` | Окно Monitoringа (дни) | `7-365` |
+| `Monitoring_window` | `30` | Окно Monitoringа (дни) | `7-365` |
 | `alert_threshold` | `0.05` | Порог for алертов | `0.01-0.2` |
 | `max_drawdown` | `0.2` | Максимальная просадка | `0.05-0.5` |
 | `var_confidence` | `0.95` | Уровень доверия for VaR | `0.9-0.99` |
@@ -2449,7 +2449,7 @@ graph TD
 |----------|----------------------|----------|----------|
 | `drift_threshold` | `0.05` | Порог for обнаружения дрифта | `0.01-0.2` |
 | `test_methods` | `['statistical', 'ks', 'wasserstein', 'psi']` | Методы тестирования | `['statistical', 'ks', 'wasserstein', 'psi']` |
-| `window_size` | `1000` | Размер окна for analysis | `100-10000` |
+| `window_size` | `1000` | Размер окна for Analysis | `100-10000` |
 | `update_frequency` | `'daily'` | Частота обновления | `['hourly', 'daily', 'weekly']` |
 | `baseline_period` | `30` | Период for базовой линии (дни) | `7-365` |
 | `min_samples` | `100` | Минимальное количество образцов | `50-1000` |
@@ -2527,30 +2527,30 @@ graph TD
 | `signal_learning` | `True` | Обучение on сигналах | `True/False` |
 | `signal_adaptation` | `True` | Адаптация сигналов | `True/False` |
 | `signal_optimization` | `True` | Оптимизация сигналов | `True/False` |
-| `trend_analysis` | `True` | Анализ тренда | `True/False` |
-| `volatility_analysis` | `True` | Анализ волатильности | `True/False` |
-| `liquidity_analysis` | `True` | Анализ ликвидности | `True/False` |
-| `correlation_analysis` | `True` | Анализ корреляции | `True/False` |
-| `momentum_analysis` | `True` | Анализ моментума | `True/False` |
+| `trend_Analysis` | `True` | Анализ тренда | `True/False` |
+| `volatility_Analysis` | `True` | Анализ волатильности | `True/False` |
+| `liquidity_Analysis` | `True` | Анализ ликвидности | `True/False` |
+| `correlation_Analysis` | `True` | Анализ корреляции | `True/False` |
+| `momentum_Analysis` | `True` | Анализ моментума | `True/False` |
 | `support_resistance` | `True` | Анализ поддержки/сопротивления | `True/False` |
-| `volume_analysis` | `True` | Анализ объема | `True/False` |
-| `market_microstructure` | `True` | Микроструктура рынка | `True/False` |
+| `volume_Analysis` | `True` | Анализ объема | `True/False` |
+| `market_microStructure` | `True` | МикроStructure рынка | `True/False` |
 | `news_sentiment` | `True` | Новостной сентимент | `True/False` |
 | `economic_indicators` | `True` | Экономические индикаторы | `True/False` |
 | `central_bank_policy` | `True` | Политика центрального банка | `True/False` |
 | `geopolitical_events` | `True` | Геополитические события | `True/False` |
 | `seasonal_patterns` | `True` | Сезонные паттерны | `True/False` |
 | `market_regime` | `'normal'` | Режим рынка | `['normal', 'crisis', 'recovery', 'growth']` |
-| `real_time_monitoring` | `True` | Monitoring in реальном времени | `True/False` |
+| `real_time_Monitoring` | `True` | Monitoring in реальном времени | `True/False` |
 | `performance_metrics` | `['sharpe', 'sortino', 'calmar', 'max_drawdown']` | Метрики производительности | `['sharpe', 'sortino', 'calmar', 'max_drawdown', 'var', 'es']` |
 | `benchmark_comparison` | `True` | Сравнение with бенчмарком | `True/False` |
 | `risk_adjusted_returns` | `True` | Риск-скорректированная доходность | `True/False` |
-| `attribution_analysis` | `True` | Анализ атрибуции | `True/False` |
+| `attribution_Analysis` | `True` | Анализ атрибуции | `True/False` |
 | `stress_testing` | `True` | Стресс-тестирование | `True/False` |
-| `scenario_analysis` | `True` | Сценарный анализ | `True/False` |
+| `scenario_Analysis` | `True` | Сценарный анализ | `True/False` |
 | `monte_carlo_simulation` | `True` | Монте-Карло симуляция | `True/False` |
 | `backtesting` | `True` | Бэктестинг | `True/False` |
-| `walk_forward_analysis` | `True` | Walk-forward анализ | `True/False` |
+| `walk_forward_Analysis` | `True` | Walk-forward анализ | `True/False` |
 | `out_of_sample_testing` | `True` | Вневыборочное тестирование | `True/False` |
 | `execution_algorithm` | `'TWAP'` | Алгоритм исполнения | `['TWAP', 'VWAP', 'POV', 'Implementation Shortfall']` |
 | `execution_priority` | `'price'` | Приоритет исполнения | `['price', 'time', 'volume']` |
@@ -2569,7 +2569,7 @@ graph TD
 | `leverage_limits` | `True` | Лимиты плеча | `True/False` |
 | `liquidity_requirements` | `True` | Требования к ликвидности | `True/False` |
 | `capital_requirements` | `True` | Требования к капиталу | `True/False` |
-| `reporting_requirements` | `True` | Требования к Reportности | `True/False` |
+| `Reporting_requirements` | `True` | Требования к Reportности | `True/False` |
 | `audit_trail` | `True` | Аудит-трейл | `True/False` |
 | `data_retention` | `7` | Хранение данных (лет) | `1-10` |
 | `privacy_protection` | `True` | Защита конфиденциальности | `True/False` |
@@ -2589,7 +2589,7 @@ graph TD
 
 #### for опытных пользователей
 
-- Настройте parameters под ваши данные
+- Настройте parameters под ваши data
 - Use продвинутые методы ансамблирования
 - Активируйте адаптивные алгоритмы
 - Настройте Monitoring дрифта

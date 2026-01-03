@@ -9,7 +9,7 @@
 **Почему 90% скальперов теряют деньги, not понимая краткосрочные паттерны?** Потому что они торгуют без понимания краткосрочной структуры рынка, где каждое движение имеет значение. SCHR SHORT3 - это ключ к пониманию краткосрочной торговли.
 
 ### Проблемы без понимания краткосрочных паттернов
-- **Торговля против краткосрочного тренда**: Входят in позицию против краткосрочного движения
+- **Торговля против краткосрочного тренда**: included in позицию против краткосрочного движения
 - **Неправильные точки входа**: not понимают, где начинается краткосрочное движение
 - **Отсутствие стоп-лоссов**: not знают, где заканчивается краткосрочное движение
 - **Эмоциональная торговля**: Принимают решения on basis страха and жадности
@@ -22,17 +22,17 @@
 
 ## Введение
 
-<img src="images/optimized/schr_short3_overview.png" alt="SCHR SHORT3 индикатор" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 23.1: Обзор SCHR SHORT3 индикатора - компоненты and результаты*
+<img src="images/optimized/schr_short3_overView.png" alt="SCHR SHORT3 индикатор" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 23.1: Обзор SCHR SHORT3 индикатора - components and результаты*
 
-**Почему SCHR SHORT3 - это революция in краткосрочной торговле?** Потому что он объединяет алгоритмический анализ with машинным обучением, создавая объективный инструмент for analysis краткосрочных движений.
+**Почему SCHR SHORT3 - это революция in краткосрочной торговле?** Потому что он объединяет алгоритмический анализ with машинным обучением, создавая объективный инструмент for Analysis краткосрочных движений.
 
 **Ключевые особенности SCHR SHORT3:**
 - **Краткосрочная точность**: Обеспечивает точные краткосрочные сигналы
 - **Быстрая адаптация**: Быстро адаптируется к изменениям рынка
 - **Высокая частота сигналов**: Генерирует много торговых возможностей
 - **Низкий лаг**: Минимальная задержка in сигналах
-- **Масштабируемость**: Работает on всех Timeframeах
+- **Масштабируемость**: Workingет on всех Timeframes
 - **integration with блокчейном**: Прозрачные and автоматизированные операции
 
 **Результаты SCHR SHORT3:**
@@ -56,10 +56,10 @@ SCHR SHORT3 - это многомерный индикатор, который:
 - **Оценивает краткосрочную волатильность** - измеряет краткосрочную изменчивость
 - **Идентифицирует краткосрочные сигналы** - показывает краткосрочные торговые возможности
 
-## Структура данных SCHR SHORT3
+## Structure данных SCHR SHORT3
 
-<img src="images/optimized/schr_short3_structure.png" alt="Структура SCHR SHORT3" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 23.2: Структура данных SCHR SHORT3 - категории and parameters*
+<img src="images/optimized/schr_short3_Structure.png" alt="Structure SCHR SHORT3" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 23.2: Structure данных SCHR SHORT3 - категории and parameters*
 
 **Категории данных SCHR SHORT3:**
 - **Short-term Parameters**: Краткосрочный сигнал, сила сигнала, направление сигнала, моментум сигнала
@@ -79,7 +79,7 @@ SCHR SHORT3 - это многомерный индикатор, который:
 ### Основные колонки in parquet файле:
 
 ```python
-# Структура данных SCHR SHORT3
+# Structure данных SCHR SHORT3
 schr_short3_columns = {
  # Основные краткосрочные parameters
  'short_term_signal': 'Краткосрочный сигнал',
@@ -126,7 +126,7 @@ schr_short3_columns = {
  - Значения: -1 (продажа), 0 (нейтрально), 1 (покупка)
  - Применение: основной торговый сигнал for краткосрочной торговли
  - Интерпретация: направление краткосрочного движения
- - Расчет: on basis анализа краткосрочных паттернов and волатильности
+ - Расчет: on basis Analysis краткосрочных паттернов and волатильности
 
 - **`short_term_strength`**: Сила краткосрочного сигнала
  - Тип: float
@@ -158,7 +158,7 @@ schr_short3_columns = {
  - Диапазон: from 0 to +∞
  - Применение: нижняя граница краткосрочного движения
  - Интерпретация: уровень, from которого цена может отскочить вверх
- - Расчет: on basis анализа краткосрочных минимумов and объемов
+ - Расчет: on basis Analysis краткосрочных минимумов and объемов
 
 - **`short_resistance`**: Краткосрочное сопротивление
  - Тип: float
@@ -166,13 +166,13 @@ schr_short3_columns = {
  - Диапазон: from 0 to +∞
  - Применение: верхняя граница краткосрочного движения
  - Интерпретация: уровень, from которого цена может отскочить вниз
- - Расчет: on basis анализа краткосрочных максимумов and объемов
+ - Расчет: on basis Analysis краткосрочных максимумов and объемов
 
 - **`short_pivot`**: Краткосрочный пивот
  - Тип: float
  - Единицы: цена
  - Диапазон: from 0 to +∞
- - Применение: центральная точка for краткосрочного анализа
+ - Применение: центральная точка for краткосрочного Analysis
  - Интерпретация: баланс между краткосрочной поддержкой and сопротивлением
  - Формула: (short_high + short_low + short_close) / 3
 
@@ -221,7 +221,7 @@ schr_short3_columns = {
  - Значения: 0-10 (различные краткосрочные паттерны)
  - Применение: классификация краткосрочного паттерна
  - Интерпретация: 0 = импульс, 1 = коррекция, 2 = треугольник, and т.д.
- - Расчет: on basis анализа краткосрочной формы цены
+ - Расчет: on basis Analysis краткосрочной формы цены
 
 - **`short_complexity`**: Сложность краткосрочного сигнала
  - Тип: float
@@ -252,28 +252,28 @@ schr_short3_columns = {
  - Значения: True/False
  - Применение: сигнал краткосрочной покупки
  - Интерпретация: True = покупать, False = not покупать
- - Расчет: on basis краткосрочного анализа паттернов
+ - Расчет: on basis краткосрочного Analysis паттернов
 
 - **`short_sell_signal`**: Краткосрочный сигнал продажи
  - Тип: bool
  - Значения: True/False
  - Применение: сигнал краткосрочной продажи
  - Интерпретация: True = продавать, False = not продавать
- - Расчет: on basis краткосрочного анализа паттернов
+ - Расчет: on basis краткосрочного Analysis паттернов
 
 - **`short_hold_signal`**: Краткосрочный сигнал holding
  - Тип: bool
  - Значения: True/False
  - Применение: сигнал краткосрочного holding позиции
  - Интерпретация: True = удерживать, False = not удерживать
- - Расчет: on basis краткосрочного анализа неопределенности
+ - Расчет: on basis краткосрочного Analysis неопределенности
 
 - **`short_reverse_signal`**: Краткосрочный сигнал разворота
  - Тип: bool
  - Значения: True/False
  - Применение: сигнал краткосрочного разворота позиции
  - Интерпретация: True = разворачивать, False = not разворачивать
- - Расчет: on basis краткосрочного анализа изменения направления
+ - Расчет: on basis краткосрочного Analysis изменения направления
 
 - **`short_hits`**: Количество краткосрочных касаний
  - Тип: int
@@ -314,12 +314,12 @@ schr_short3_columns = {
 - **Адаптация**: Регулярное update параметров под краткосрочные изменения рынка
 ```
 
-## Анализ on Timeframeам
+## Анализ on Timeframeм
 
-<img src="images/optimized/short_term_analysis.png" alt="Краткосрочный анализ" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/short_term_Analysis.png" alt="Краткосрочный анализ" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 23.3: Анализ краткосрочных торговых возможностей - типы and характеристики*
 
-**Типы краткосрочного анализа:**
+**Типы краткосрочного Analysis:**
 - **Micro signals**: Микро-краткосрочные сигналы, ультра-краткие сигналы, микро-пивоты
 - **Fast Patterns**: Быстрые краткосрочные пробои, быстрые краткосрочные отскоки, быстрые краткосрочные развороты
 - **Quick Bounces**: Быстрые отскоки, краткосрочные развороты, микро-отскоки
@@ -327,12 +327,12 @@ schr_short3_columns = {
 - **Intraday Patterns**: Внутридневные паттерны, краткосрочные циклы, дневные паттерны
 - **High Frequency**: Высокочастотная торговля, микро-торговля, ультра-краткосрочная торговля
 
-**Характеристики краткосрочного анализа:**
+**Характеристики краткосрочного Analysis:**
 - **Высокая частота сигналов**: Много торговых возможностей
 - **Низкий лаг**: Минимальная задержка in сигналах
 - **Быстрая адаптация**: Быстро адаптируется к изменениям рынка
 - **Высокая точность**: Точные краткосрочные сигналы
-- **Масштабируемость**: Работает on всех Timeframeах
+- **Масштабируемость**: Workingет on всех Timeframes
 - **integration with блокчейном**: Прозрачные and автоматизированные операции
 
 ### M1 (1 minutesа) - Высокочастотная торговля
@@ -342,7 +342,7 @@ class SCHRShort3M1Analysis:
  """Анализ SCHR SHORT3 on 1-minutesном Timeframeе"""
 
  def __init__(self):
- self.timeframe = 'M1'
+ self.Timeframe = 'M1'
  self.features = []
 
  def analyze_m1_features(self, data):
@@ -575,10 +575,10 @@ class SCHRShort3MN1Analysis:
 
 ## create ML-модели on basis SCHR SHORT3
 
-<img src="images/optimized/signal_analysis.png" alt="Анализ сигналов" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 23.4: Анализ краткосрочных сигналов - компоненты and применение*
+<img src="images/optimized/signal_Analysis.png" alt="Анализ сигналов" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 23.4: Анализ краткосрочных сигналов - components and применение*
 
-**Компоненты анализа сигналов:**
+**components Analysis сигналов:**
 - **Buy signals**: Краткосрочные сигналы покупки, сила сигналов покупки, направление сигналов покупки
 - **Sell signals**: Краткосрочные сигналы продажи, сила сигналов продажи, направление сигналов продажи
 - **Hold signals**: Краткосрочные сигналы holding, сила сигналов holding, направление сигналов holding
@@ -586,9 +586,9 @@ class SCHRShort3MN1Analysis:
 - **signal Quality**: Качество краткосрочных сигналов, надежность сигналов, сила сигналов, долговечность сигналов
 - **signal Reliability**: Надежность краткосрочных сигналов, точность сигналов, стабильность сигналов
 
-**Применения анализа сигналов:**
+**Применения Analysis сигналов:**
 - **Торговля on сигналам**: Использование сигналов for торговых решений
-- **Управление рисками**: Контроль рисков on basis сигналов
+- **Management рисками**: Контроль рисков on basis сигналов
 - **Оптимизация позиций**: Оптимизация размеров позиций
 - **Анализ качества**: Оценка качества сигналов
 - **Оценка надежности**: Определение надежности сигналов
@@ -597,7 +597,7 @@ class SCHRShort3MN1Analysis:
 *Рисунок 23.5: ML-модель on basis SCHR SHORT3 - этапы создания and результаты*
 
 **Этапы создания ML-модели:**
-- **Data Preparation**: Объединение Timeframeов, clean данных, нормализация
+- **data Preparation**: Объединение Timeframes, clean данных, нормализация
 - **Feature Engineering**: Базовые краткосрочные признаки, признаки сигналов, признаки паттернов, признаки волатильности
 - **Model Training**: Обучение with AutoML Gluon, оптимизация гиперпараметров
 - **Short Features**: Признаки краткосрочных параметров, уровней, метрик
@@ -621,13 +621,13 @@ class SCHRShort3MLModel:
  def __init__(self):
  self.predictor = None
  self.feature_columns = []
- self.timeframes = ['M1', 'M5', 'M15', 'H1', 'H4', 'D1', 'W1', 'MN1']
+ self.Timeframes = ['M1', 'M5', 'M15', 'H1', 'H4', 'D1', 'W1', 'MN1']
 
  def prepare_schr_short3_data(self, data_dict):
  """Подготовка данных SCHR SHORT3 for ML"""
 
- # Объединение данных всех Timeframeов
- combined_data = self.combine_timeframe_data(data_dict)
+ # Объединение данных всех Timeframes
+ combined_data = self.combine_Timeframe_data(data_dict)
 
  # create признаков
  features = self.create_schr_short3_features(combined_data)
@@ -646,38 +646,38 @@ class SCHRShort3MLModel:
  - update: при переобучении on новых краткосрочных данных
  - Сохранение: in файл for восстановления
 
-- **`self.feature_columns`**: Список признаков модели
+- **`self.feature_columns`**: List признаков модели
  - Тип: List[str]
  - Содержит: названия всех признаков SCHR SHORT3
- - Применение: for predictions on новых краткосрочных данных
+ - Применение: for Predictions on новых краткосрочных данных
  - update: при изменении набора краткосрочных признаков
 
-- **`self.timeframes`**: Список Timeframeов
+- **`self.Timeframes`**: List Timeframes
  - Тип: List[str]
  - Значения: ['M1', 'M5', 'M15', 'H1', 'H4', 'D1', 'W1', 'MN1']
- - Применение: анализ on множественных Timeframeах
+ - Применение: анализ on множественных Timeframes
  - Преимущества: полная картина краткосрочного рынка
 
-- **`data_dict`**: Словарь данных on Timeframeам
+- **`data_dict`**: Словарь данных on Timeframeм
  - Тип: dict
- - Структура: {timeframe: DataFrame}
- - Применение: объединение данных всех Timeframeов
- - Требования: одинаковые колонки во всех DataFrame
+ - Structure: {Timeframe: dataFrame}
+ - Применение: объединение данных всех Timeframes
+ - Требования: одинаковые колонки во всех dataFrame
 
-- **`combined_data`**: Объединенные данные
- - Тип: DataFrame
- - Содержит: данные всех Timeframeов
+- **`combined_data`**: Объединенные data
+ - Тип: dataFrame
+ - Содержит: data всех Timeframes
  - Применение: create краткосрочных признаков and целевой переменной
  - Обработка: remove дубликатов and пропусков
 
 - **`features`**: Признаки for ML
- - Тип: DataFrame
+ - Тип: dataFrame
  - Содержит: все признаки SCHR SHORT3
- - Применение: входные данные for модели
+ - Применение: входные data for модели
  - Обработка: нормализация and масштабирование
 
 - **`target`**: Целевая переменная
- - Тип: DataFrame
+ - Тип: dataFrame
  - Содержит: направление цены, краткосрочные сигналы, паттерны, отскоки
  - Применение: обучение модели
  - Формат: бинарные метки (0/1)
@@ -727,7 +727,7 @@ class SCHRShort3MLModel:
  - Тип: float
  - Единицы: цена
  - Диапазон: from 0 to +∞
- - Применение: центральная точка for краткосрочного анализа
+ - Применение: центральная точка for краткосрочного Analysis
  - Интерпретация: баланс между краткосрочной поддержкой and сопротивлением
 
 - **`short_fibonacci`**: Краткосрочный фибоначчи
@@ -1106,7 +1106,7 @@ class SCHRShort3MLModel:
  def create_basic_short_features(self, data):
  """create базовых краткосрочных признаков"""
 
- features = pd.DataFrame()
+ features = pd.dataFrame()
 
  # Основные краткосрочные parameters
  features['short_term_signal'] = data['short_term_signal']
@@ -1135,7 +1135,7 @@ class SCHRShort3MLModel:
  def create_signal_features(self, data):
  """create признаков краткосрочных сигналов"""
 
- features = pd.DataFrame()
+ features = pd.dataFrame()
 
  # Краткосрочные сигналы
  features['short_buy_signal'] = data['short_buy_signal']
@@ -1164,7 +1164,7 @@ class SCHRShort3MLModel:
  def create_pattern_features(self, data):
  """create признаков краткосрочных паттернов"""
 
- features = pd.DataFrame()
+ features = pd.dataFrame()
 
  # Краткосрочные паттерны
  features['short_pattern'] = data['short_pattern']
@@ -1187,7 +1187,7 @@ class SCHRShort3MLModel:
  def create_volatility_features(self, data):
  """create признаков краткосрочной волатильности"""
 
- features = pd.DataFrame()
+ features = pd.dataFrame()
 
  # Краткосрочная волатильность
  features['short_volatility'] = data['short_volatility']
@@ -1231,7 +1231,7 @@ class SCHRShort3MLModel:
  future_short_bounces = self.calculate_future_short_bounces(data)
 
  # Объединение целевых переменных
- target = pd.DataFrame({
+ target = pd.dataFrame({
  'price_direction': price_direction,
  'short_signal_direction': future_short_signals,
  'short_pattern_direction': future_short_patterns,
@@ -1297,21 +1297,21 @@ class SCHRShort3MLModel:
 **Детальные описания параметров обучения SCHR SHORT3 модели:**
 
 - **`features`**: Признаки for обучения
- - Тип: DataFrame
+ - Тип: dataFrame
  - Содержит: все признаки SCHR SHORT3
- - Применение: входные данные for модели
+ - Применение: входные data for модели
  - Обработка: нормализация and масштабирование
  - Требования: отсутствие пропусков
 
 - **`target`**: Целевая переменная
- - Тип: DataFrame
+ - Тип: dataFrame
  - Содержит: направление цены, краткосрочные сигналы, паттерны, отскоки
  - Применение: обучение модели
  - Формат: бинарные метки (0/1)
  - Требования: соответствие индексов with features
 
-- **`data`**: Объединенные данные
- - Тип: DataFrame
+- **`data`**: Объединенные data
+ - Тип: dataFrame
  - Содержит: features + target
  - Применение: обучение модели
  - Обработка: remove пропусков
@@ -1324,15 +1324,15 @@ class SCHRShort3MLModel:
  - Процент: 80% for обучения, 20% for валидации
  - Рекомендация: 0.7-0.8 for SCHR SHORT3
 
-- **`train_data`**: Данные for обучения
- - Тип: DataFrame
+- **`train_data`**: data for обучения
+ - Тип: dataFrame
  - Размер: 80% from общих данных
  - Применение: обучение модели
  - Требования: отсутствие пропусков
  - Обработка: нормализация признаков
 
-- **`val_data`**: Данные for валидации
- - Тип: DataFrame
+- **`val_data`**: data for валидации
+ - Тип: dataFrame
  - Размер: 20% from общих данных
  - Применение: оценка модели
  - Требования: отсутствие пропусков
@@ -1362,8 +1362,8 @@ class SCHRShort3MLModel:
 - **`path='schr_short3_ml_model'`**: Путь for сохранения модели
  - Тип: str
  - Применение: сохранение обученной модели
- - Содержит: веса модели, метаданные, конфигурацию
- - Использование: загрузка for predictions
+ - Содержит: веса модели, метаdata, конфигурацию
+ - Использование: загрузка for Predictions
  - Формат: директория with файлами модели
 
 - **`time_limit=3600`**: Лимит времени обучения
@@ -1445,9 +1445,9 @@ class SCHRShort3MLModel:
  - Формат: 'YYYY-MM-DD'
  - Рекомендация: not более текущей даты
 
-- **`test_data`**: Данные for тестирования
- - Тип: DataFrame
- - Содержит: данные за период тестирования
+- **`test_data`**: data for тестирования
+ - Тип: dataFrame
+ - Содержит: data за период тестирования
  - Применение: оценка производительности
  - Требования: отсутствие пропусков
  - Обработка: та же нормализация, что and for train
@@ -1459,7 +1459,7 @@ class SCHRShort3MLModel:
  - Формат: бинарные метки (0/1)
  - Интерпретация: 0 = падение, 1 = рост
 
-- **`probabilities`**: Вероятности predictions
+- **`probabilities`**: Вероятности Predictions
  - Тип: numpy array
  - Содержит: вероятности for каждого класса
  - Применение: оценка уверенности
@@ -1529,8 +1529,8 @@ class SCHRShort3MLModel:
  - Рекомендация: 1000-10000 for SCHR SHORT3
  - Баланс: больше = точнее, но медленнее
 
-- **`sample_data`**: Выборочные данные
- - Тип: DataFrame
+- **`sample_data`**: Выборочные data
+ - Тип: dataFrame
  - Размер: 80% from исходных данных
  - Применение: случайная выборка for симуляции
  - Обработка: with заменой (replace=True)
@@ -1645,12 +1645,12 @@ def schr_short3_monte_carlo(self, data, n_simulations=1000):
 <img src="images/optimized/blockchain_short3.png" alt="integration with блокчейном SHORT3" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 23.7: integration SCHR SHORT3 with блокчейном - from смарт-контрактов to автоматической торговли*
 
-**Компоненты интеграции:**
+**components интеграции:**
 - **Smart Contracts**: Хранение сигналов, автоматическое выполнение, прозрачность операций
-- **DEX Integration**: Прямая торговля, ликвидность, децентрализация
+- **DEX integration**: Прямая торговля, ликвидность, децентрализация
 - **signal Storage**: Хранение сигналов on блокчейне, неизменяемость
 - **Automated Trading**: Автоматическая торговля, исполнение сигналов
-- **Risk Management**: Управление рисками, лимиты позиций
+- **Risk Management**: Management рисками, лимиты позиций
 - **Performance Tracking**: Отслеживание производительности, метрики
 
 **Преимущества блокчейн-интеграции:**
@@ -1719,7 +1719,7 @@ contract SCHRShort3TradingContract {
  signalCount++;
  }
 
- function getLatestsignal() external view returns (SCHRShort3signal memory) {
+ function getLatestsignal() external View returns (SCHRShort3signal memory) {
  return signals[signalCount - 1];
  }
 }
@@ -1728,7 +1728,7 @@ contract SCHRShort3TradingContract {
 ### integration with DEX
 
 ```python
-class SCHRShort3DEXIntegration:
+class SCHRShort3DEXintegration:
  """integration SCHR SHORT3 with DEX"""
 
  def __init__(self, contract_address, private_key):
@@ -1793,7 +1793,7 @@ class SCHRShort3DEXIntegration:
 - **Win Rate**: 72.8%
 - **Profit Factor**: 2.1
 
-**Доходность on Timeframeам:**
+**Доходность on Timeframeм:**
 - **M1**: 38.2%
 - **M5**: 42.1%
 - **M15**: 48.7%
@@ -1817,7 +1817,7 @@ class SCHRShort3DEXIntegration:
 2. **Быстрая адаптация** - быстро адаптируется к изменениям рынка
 3. **Высокая частота сигналов** - генерирует много торговых возможностей
 4. **Низкий лаг** - минимальная задержка in сигналах
-5. **Масштабируемость** - работает on всех Timeframeах
+5. **Масштабируемость** - Workingет on всех Timeframes
 
 ### Слабые стороны SCHR SHORT3
 

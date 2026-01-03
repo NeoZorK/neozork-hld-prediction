@@ -9,7 +9,7 @@
 **Почему SCHR SHORT3 критичен:**
 - **Краткосрочная торговля:** Специализируется on краткосрочных торговых возможностях
 - **Высокая точность:** Обеспечивает высокую точность краткосрочных сигналов
-- **Алгоритмический анализ:** Использует продвинутые алгоритмы анализа
+- **Алгоритмический анализ:** Использует продвинутые алгоритмы Analysis
 - **Структурный анализ:** Анализирует краткосрочную структуру рынка
 
 **Математическая основа SCHR SHORT3:**
@@ -28,7 +28,7 @@ SCHR SHORT3 основан on комбинации нескольких мате
 
 ### Определение and принцип работы
 
-**Теория:** SCHR SHORT3 основан on принципе анализа краткосрочной структуры рынка for выявления краткосрочных торговых возможностей. Это позволяет получать более точные and надежные сигналы on сравнению with традиционными краткосрочными индикаторами.
+**Теория:** SCHR SHORT3 основан on принципе Analysis краткосрочной структуры рынка for выявления краткосрочных торговых возможностей. Это позволяет получать более точные and надежные сигналы on сравнению with традиционными краткосрочными индикаторами.
 
 **SCHR SHORT3** - это продвинутый индикатор for краткосрочной торговли, который использует алгоритмический анализ for определения краткосрочных торговых возможностей. in отличие from простых краткосрочных indicators, SCHR SHORT3 анализирует краткосрочную структуру рынка and генерирует высокоточные сигналы.
 
@@ -41,7 +41,7 @@ SCHR SHORT3 основан on комбинации нескольких мате
 **Плюсы:**
 - Высокая точность сигналов
 - Адаптивность к рыночным условиям
-- Структурный Market analysis
+- Структурный Market Analysis
 - Меньше ложных сигналов
 
 **Минусы:**
@@ -72,7 +72,7 @@ SCHR SHORT3 основан on комбинации нескольких мате
 
 **Детальное объяснение кода:**
 
-Данный код создает основной класс `SCHRShort3Analyzer` for analysis краткосрочных сигналов. Каждый parameter имеет критическое значение:
+Данный код создает основной класс `SCHRShort3Analyzer` for Analysis краткосрочных сигналов. Каждый parameter имеет критическое значение:
 
 - **short_term_threshold (0.6):** Определяет минимальный уровень уверенности for генерации сигнала. Значение 0.6 означает, что сигнал генерируется только при 60%+ уверенности.
 - **short_term_strength (0.7):** Характеризует интенсивность краткосрочного движения. Высокое значение указывает on сильные краткосрочные тренды.
@@ -87,7 +87,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_Report, confusion_matrix
 from sklearn.preprocessing import StandardScaler
 import xgboost as xgb
 import lightgbm as lgb
@@ -97,7 +97,7 @@ warnings.filterwarnings('ignore')
 
 class SCHRShort3Analyzer:
  """
- Анализатор краткосрочных сигналов SCHR SHORT3
+ Analysisтор краткосрочных сигналов SCHR SHORT3
 
  Этот класс реализует комплексный анализ краткосрочных торговых сигналов,
  используя алгоритмические методы for выявления краткосрочных возможностей.
@@ -105,9 +105,9 @@ class SCHRShort3Analyzer:
 
  def __init__(self):
  """
- Инициализация анализатора with оптимальными параметрами
+ Инициализация Analysisтора with оптимальными параметрами
 
- parameters подобраны on basis исторического анализа and обеспечивают
+ parameters подобраны on basis исторического Analysis and обеспечивают
  баланс между чувствительностью and стабильностью сигналов.
  """
  self.parameters = {
@@ -118,16 +118,16 @@ class SCHRShort3Analyzer:
  'short_term_momentum': 0.9 # Моментум краткосрочного сигнала (90% импульса)
  }
 
- # Дополнительные parameters for analysis
- self.analysis_windows = {
+ # Дополнительные parameters for Analysis
+ self.Analysis_windows = {
  'micro': 3, # Микро-анализ (3 периода)
  'short': 5, # Краткосрочный анализ (5 periods)
  'medium': 10, # Среднесрочный анализ (10 periods)
  'long': 20 # Долгосрочный анализ (20 periods)
  }
 
- # Инициализация результатов анализа
- self.analysis_results = {}
+ # Инициализация результатов Analysis
+ self.Analysis_results = {}
  self.signal_history = []
 
  def calculate_short_term_volatility(self, prices, window=5):
@@ -162,7 +162,7 @@ class SCHRShort3Analyzer:
  Генерация краткосрочного торгового сигнала
 
  Args:
- data: DataFrame with рыночными данными
+ data: dataFrame with рыночными данными
 
  Returns:
  Словарь with сигналами and метриками
@@ -195,13 +195,13 @@ class SCHRShort3Analyzer:
  }
 ```
 
-### Структура данных SCHR SHORT3
+### Structure данных SCHR SHORT3
 
-**Теория:** Структура данных SCHR SHORT3 определяет формат and содержание данных, которые используются for analysis краткосрочных торговых возможностей. Правильная структура данных критически важна for эффективного анализа and обучения ML-моделей.
+**Теория:** Structure данных SCHR SHORT3 определяет формат and содержание данных, которые используются for Analysis краткосрочных торговых возможностей. Правильная Structure данных критически важна for эффективного Analysis and обучения ML-моделей.
 
-**Почему структура данных важна:**
+**Почему Structure данных важна:**
 - **Стандартизация:** Обеспечивает стандартизацию данных
-- **Эффективность анализа:** Повышает эффективность анализа
+- **Эффективность Analysis:** Повышает эффективность Analysis
 - **ML-совместимость:** Обеспечивает совместимость with ML-алгоритмами
 - **Интерпретируемость:** Облегчает интерпретацию результатов
 
@@ -218,7 +218,7 @@ class SCHRShort3Analyzer:
 
 **Детальное объяснение структуры данных:**
 
-Структура данных SCHR SHORT3 спроектирована for максимальной эффективности анализа краткосрочных сигналов. Каждая колонка имеет специфическое назначение:
+Structure данных SCHR SHORT3 спроектирована for максимальной эффективности Analysis краткосрочных сигналов. Каждая колонка имеет специфическое назначение:
 
 - **short_term_signal:** Основной сигнал (-1=продажа, 0=удержание, 1=покупка)
 - **short_term_strength:** Интенсивность сигнала (0-1, где 1 = максимальная сила)
@@ -228,7 +228,7 @@ class SCHRShort3Analyzer:
 
 ```python
 # Основные колонки SCHR SHORT3 in parquet файлах
-SCHR_SHORT3_COLUMNS = {
+SCHR_SHORT3_columns = {
  # Основные краткосрочные сигналы
  'short_term_signal': 'Краткосрочный сигнал (-1, 0, 1)',
  'short_term_strength': 'Сила краткосрочного сигнала',
@@ -249,9 +249,9 @@ SCHR_SHORT3_COLUMNS = {
  'short_accuracy': 'Точность краткосрочных сигналов'
 }
 
-def create_schr_short3_data_structure():
+def create_schr_short3_data_Structure():
  """
- create структуры данных for SCHR SHORT3 анализа
+ create структуры данных for SCHR SHORT3 Analysis
 
  Эта function создает полную структуру данных with примерами значений
  for демонстрации работы with SCHR SHORT3 индикаторами.
@@ -260,7 +260,7 @@ def create_schr_short3_data_structure():
  np.random.seed(42)
  n_samples = 1000
 
- # Базовые рыночные данные
+ # Базовые рыночные data
  dates = pd.date_range('2023-01-01', periods=n_samples, freq='1min')
 
  # Генерация реалистичных ценовых данных
@@ -271,8 +271,8 @@ def create_schr_short3_data_structure():
  for ret in returns[1:]:
  prices.append(prices[-1] * (1 + ret))
 
- # create DataFrame
- data = pd.DataFrame({
+ # create dataFrame
+ data = pd.dataFrame({
  'timestamp': dates,
  'Open': prices,
  'High': [p * (1 + abs(np.random.normal(0, 0.002))) for p in prices],
@@ -285,7 +285,7 @@ def create_schr_short3_data_structure():
  analyzer = SCHRShort3Analyzer()
  signals = analyzer.generate_short_term_signal(data)
 
- # add SCHR SHORT3 колонок
+ # add SCHR SHORT3 columns
  data['short_term_signal'] = signals['signal']
  data['short_term_strength'] = signals['strength']
  data['short_term_direction'] = signals['direction']
@@ -317,12 +317,12 @@ def create_schr_short3_data_structure():
 # example использования
 if __name__ == "__main__":
  # create данных
- schr_data = create_schr_short3_data_structure()
+ schr_data = create_schr_short3_data_Structure()
 
  # Вывод информации о данных
- print("SCHR SHORT3 Data Structure:")
+ print("SCHR SHORT3 data Structure:")
  print(f"Shape: {schr_data.shape}")
- print(f"Columns: {list(schr_data.columns)}")
+ print(f"columns: {List(schr_data.columns)}")
  print("\nFirst 5 rows:")
  print(schr_data.head())
 
@@ -334,15 +334,15 @@ if __name__ == "__main__":
  print(f"Average accuracy: {schr_data['short_accuracy'].mean():.2f}%")
 ```
 
-## Анализ SCHR SHORT3 on Timeframeам
+## Анализ SCHR SHORT3 on Timeframeм
 
-**Теория:** Анализ SCHR SHORT3 on различным Timeframeам критически важен for понимания поведения индикатора on разных временных горизонтах. Каждый Timeframe требует специфических параметров and подходов for максимальной эффективности.
+**Теория:** Анализ SCHR SHORT3 on различным Timeframeм критически важен for понимания поведения индикатора on разных временных горизонтах. Каждый Timeframe требует специфических параметров and подходов for максимальной эффективности.
 
-**Почему анализ on Timeframeам критичен:**
+**Почему анализ on Timeframeм критичен:**
 - **Оптимизация производительности:** Каждый Timeframe требует специфических параметров
 - **Снижение рисков:** Различные Timeframeы имеют разные уровни риска
 - **Повышение точности:** Специфические parameters повышают точность
-- **Адаптация стратегий:** Позволяет адаптировать стратегии к Timeframeам
+- **Адаптация стратегий:** Позволяет адаптировать стратегии к Timeframeм
 
 ### M1 (1 minutesа) - Скальпинг
 
@@ -366,7 +366,7 @@ if __name__ == "__main__":
 - Высокие комиссии
 - Потенциальный стресс
 
-**Детальное объяснение M1 анализа:**
+**Детальное объяснение M1 Analysis:**
 
 M1 (1-minutesный) Timeframe представляет собой наиболее агрессивный подход к краткосрочной торговле. parameters специально настроены for:
 
@@ -384,7 +384,7 @@ class SCHRShort3M1Analysis:
  """
 
  def __init__(self):
- self.timeframe = 'M1'
+ self.Timeframe = 'M1'
  self.optimal_params = {
  'short_term_threshold': 0.4, # Более низкий порог for M1 (40% уверенности)
  'short_term_strength': 0.5, # Меньшая сила сигнала (50% интенсивности)
@@ -394,15 +394,15 @@ class SCHRShort3M1Analysis:
  }
 
  # Специфичные parameters for M1
- self.micro_windows = [1, 2, 3, 5] # Окна for микро-анализа
+ self.micro_windows = [1, 2, 3, 5] # Окна for микро-Analysis
  self.scalping_threshold = 0.001 # Минимальное движение for скальпинга
 
  def analyze_m1_features(self, data):
  """
- Анализ признаков for M1 Timeframeа
+ Анализ признаков for M1 Timeframe
 
  Args:
- data: DataFrame with рыночными данными on M1
+ data: dataFrame with рыночными данными on M1
 
  Returns:
  Словарь with извлеченными приsignми
@@ -561,13 +561,13 @@ class SCHRShort3M1Analysis:
  """Расчет микро-моментума"""
  return data['Close'].pct_change(3)
 
-# example использования M1 анализа
-def demonstrate_m1_analysis():
- """Демонстрация M1 анализа"""
+# example использования M1 Analysis
+def demonstrate_m1_Analysis():
+ """Демонстрация M1 Analysis"""
  # create тестовых данных
- test_data = create_schr_short3_data_structure()
+ test_data = create_schr_short3_data_Structure()
 
- # Инициализация анализатора
+ # Инициализация Analysisтора
  m1_analyzer = SCHRShort3M1Analysis()
 
  # Анализ признаков
@@ -581,7 +581,7 @@ def demonstrate_m1_analysis():
  return features
 
 if __name__ == "__main__":
- demonstrate_m1_analysis()
+ demonstrate_m1_Analysis()
 ```
 
 ### M5 (5 minutes) - Краткосрочная торговля
@@ -602,10 +602,10 @@ if __name__ == "__main__":
 
 **Минусы:**
 - Меньше торговых возможностей чем M1
-- Требует больше времени for analysis
+- Требует больше времени for Analysis
 - Потенциальные задержки in сигналах
 
-**Детальное объяснение M5 анализа:**
+**Детальное объяснение M5 Analysis:**
 
 M5 (5-minutesный) Timeframe обеспечивает оптимальный баланс между частотой сигналов and их качеством. parameters настроены for:
 
@@ -623,7 +623,7 @@ class SCHRShort3M5Analysis:
  """
 
  def __init__(self):
- self.timeframe = 'M5'
+ self.Timeframe = 'M5'
  self.optimal_params = {
  'short_term_threshold': 0.5, # Средний порог (50% уверенности)
  'short_term_strength': 0.6, # Средняя сила (60% интенсивности)
@@ -633,15 +633,15 @@ class SCHRShort3M5Analysis:
  }
 
  # Специфичные parameters for M5
- self.short_windows = [3, 5, 8, 13] # Окна for краткосрочного анализа
+ self.short_windows = [3, 5, 8, 13] # Окна for краткосрочного Analysis
  self.impulse_threshold = 0.002 # Минимальное движение for импульса
 
  def analyze_m5_features(self, data):
  """
- Анализ признаков for M5 Timeframeа
+ Анализ признаков for M5 Timeframe
 
  Args:
- data: DataFrame with рыночными данными on M5
+ data: dataFrame with рыночными данными on M5
 
  Returns:
  Словарь with извлеченными приsignми
@@ -746,7 +746,7 @@ class SCHRShort3M5Analysis:
  """
  Анализ краткосрочной волатильности
 
- Рассчитывает различные метрики волатильности for M5 Timeframeа.
+ Рассчитывает различные метрики волатильности for M5 Timeframe.
  """
  volatility_metrics = {}
 
@@ -839,13 +839,13 @@ class SCHRShort3M5Analysis:
 
  return levels
 
-# example использования M5 анализа
-def demonstrate_m5_analysis():
- """Демонстрация M5 анализа"""
+# example использования M5 Analysis
+def demonstrate_m5_Analysis():
+ """Демонстрация M5 Analysis"""
  # create тестовых данных
- test_data = create_schr_short3_data_structure()
+ test_data = create_schr_short3_data_Structure()
 
- # Инициализация анализатора
+ # Инициализация Analysisтора
  m5_analyzer = SCHRShort3M5Analysis()
 
  # Анализ признаков
@@ -860,7 +860,7 @@ def demonstrate_m5_analysis():
  return features
 
 if __name__ == "__main__":
- demonstrate_m5_analysis()
+ demonstrate_m5_Analysis()
 ```
 
 ### H1 (1 час) - Среднесрочная торговля
@@ -884,7 +884,7 @@ if __name__ == "__main__":
 - Более медленные сигналы
 - Потенциальные упущенные возможности
 
-**Детальное объяснение H1 анализа:**
+**Детальное объяснение H1 Analysis:**
 
 H1 (часовой) Timeframe обеспечивает стабильные сигналы with меньшей частотой. parameters настроены for:
 
@@ -902,7 +902,7 @@ class SCHRShort3H1Analysis:
  """
 
  def __init__(self):
- self.timeframe = 'H1'
+ self.Timeframe = 'H1'
  self.optimal_params = {
  'short_term_threshold': 0.6, # Стандартный порог (60% уверенности)
  'short_term_strength': 0.7, # Стандартная сила (70% интенсивности)
@@ -912,15 +912,15 @@ class SCHRShort3H1Analysis:
  }
 
  # Специфичные parameters for H1
- self.medium_windows = [5, 10, 20, 50] # Окна for среднесрочного анализа
+ self.medium_windows = [5, 10, 20, 50] # Окна for среднесрочного Analysis
  self.trend_threshold = 0.005 # Минимальное движение for trend
 
  def analyze_h1_features(self, data):
  """
- Анализ признаков for H1 Timeframeа
+ Анализ признаков for H1 Timeframe
 
  Args:
- data: DataFrame with рыночными данными on H1
+ data: dataFrame with рыночными данными on H1
 
  Returns:
  Словарь with извлеченными приsignми
@@ -1041,7 +1041,7 @@ class SCHRShort3H1Analysis:
  # Волатильность волатильности
  volatility_metrics['vol_of_vol'] = short_volatility.rolling(10).std()
 
- # ATR for среднесрочного анализа
+ # ATR for среднесрочного Analysis
  high_low = data['High'] - data['Low']
  high_close = np.abs(data['High'] - data['Close'].shift(1))
  low_close = np.abs(data['Low'] - data['Close'].shift(1))
@@ -1105,7 +1105,7 @@ class SCHRShort3H1Analysis:
  """
  levels = {}
 
- # Скользящие максимумы and минимумы for среднесрочного анализа
+ # Скользящие максимумы and минимумы for среднесрочного Analysis
  rolling_max = data['High'].rolling(50).max()
  rolling_min = data['Low'].rolling(50).min()
 
@@ -1133,13 +1133,13 @@ class SCHRShort3H1Analysis:
 
  return levels
 
-# example использования H1 анализа
-def demonstrate_h1_analysis():
- """Демонстрация H1 анализа"""
+# example использования H1 Analysis
+def demonstrate_h1_Analysis():
+ """Демонстрация H1 Analysis"""
  # create тестовых данных
- test_data = create_schr_short3_data_structure()
+ test_data = create_schr_short3_data_Structure()
 
- # Инициализация анализатора
+ # Инициализация Analysisтора
  h1_analyzer = SCHRShort3H1Analysis()
 
  # Анализ признаков
@@ -1154,27 +1154,27 @@ def demonstrate_h1_analysis():
  return features
 
 if __name__ == "__main__":
- demonstrate_h1_analysis()
+ demonstrate_h1_Analysis()
 ```
 
 ## create признаков for ML
 
-**Теория:** create признаков for машинного обучения on basis SCHR SHORT3 является критически важным этапом for достижения высокой точности predictions. Качественные признаки определяют успех ML-модели.
+**Теория:** create признаков for машинного обучения on basis SCHR SHORT3 является критически важным этапом for достижения высокой точности Predictions. Качественные признаки определяют успех ML-модели.
 
 **Почему create признаков критично:**
 - **Качество данных:** Качественные признаки определяют качество модели
-- **Точность predictions:** Хорошие признаки повышают точность predictions
+- **Точность Predictions:** Хорошие признаки повышают точность Predictions
 - **Робастность:** Правильные признаки обеспечивают робастность модели
 - **Интерпретируемость:** Понятные признаки облегчают интерпретацию результатов
 
 ### 1. Базовые признаки SCHR SHORT3
 
-**Теория:** Базовые признаки SCHR SHORT3 представляют собой фундаментальные компоненты for analysis краткосрочных торговых возможностей. Они обеспечивают основу for более сложных признаков and являются основой for ML-модели.
+**Теория:** Базовые признаки SCHR SHORT3 представляют собой фундаментальные components for Analysis краткосрочных торговых возможностей. Они обеспечивают основу for более сложных признаков and являются основой for ML-модели.
 
 **Почему базовые признаки важны:**
 - **Фундаментальная основа:** Обеспечивают базовую информацию о краткосрочных сигналах
 - **Простота интерпретации:** Легко понимаются and интерпретируются
-- **Стабильность:** Обеспечивают стабильную основу for analysis
+- **Стабильность:** Обеспечивают стабильную основу for Analysis
 - **Эффективность:** Минимальные вычислительные требования
 
 **Плюсы:**
@@ -1208,22 +1208,22 @@ class SCHRShort3FeatureEngineer:
  def __init__(self):
  self.lag_periods = [1, 2, 3, 5, 10, 20] # Периоды for лаговых признаков
  self.rolling_windows = [5, 10, 20, 50] # Окна for скользящих признаков
- self.feature_names = [] # Список созданных признаков
+ self.feature_names = [] # List созданных признаков
 
  def create_basic_features(self, data):
  """
  create базовых признаков
 
- Базовые признаки представляют собой фундаментальные компоненты
- for analysis краткосрочных торговых сигналов.
+ Базовые признаки представляют собой фундаментальные components
+ for Analysis краткосрочных торговых сигналов.
 
  Args:
- data: DataFrame with рыночными данными and SCHR SHORT3 индикаторами
+ data: dataFrame with рыночными данными and SCHR SHORT3 индикаторами
 
  Returns:
- DataFrame with базовыми приsignми
+ dataFrame with базовыми приsignми
  """
- features = pd.DataFrame(index=data.index)
+ features = pd.dataFrame(index=data.index)
 
  # 1. Основные краткосрочные сигналы
  features['short_term_signal'] = data['short_term_signal']
@@ -1255,7 +1255,7 @@ class SCHRShort3FeatureEngineer:
  features['normalized_volatility'] = data['short_term_volatility'] / data['short_term_volatility'].rolling(20).mean()
  features['normalized_momentum'] = data['short_term_momentum'] / data['short_term_momentum'].rolling(20).mean()
 
- self.feature_names.extend(features.columns.tolist())
+ self.feature_names.extend(features.columns.toList())
  return features
 
  def create_lag_features(self, data):
@@ -1266,12 +1266,12 @@ class SCHRShort3FeatureEngineer:
  модели учитывать историческую информацию.
 
  Args:
- data: DataFrame with рыночными данными
+ data: dataFrame with рыночными данными
 
  Returns:
- DataFrame with лаговыми приsignми
+ dataFrame with лаговыми приsignми
  """
- features = pd.DataFrame(index=data.index)
+ features = pd.dataFrame(index=data.index)
 
  for lag in self.lag_periods:
  # Лаги краткосрочных сигналов
@@ -1305,7 +1305,7 @@ class SCHRShort3FeatureEngineer:
  features[f'low_change_{lag}'] = data['Low'] - data['Low'].shift(lag)
  features[f'volume_change_{lag}'] = data['Volume'] - data['Volume'].shift(lag)
 
- self.feature_names.extend(features.columns.tolist())
+ self.feature_names.extend(features.columns.toList())
  return features
 
  def create_rolling_features(self, data):
@@ -1316,12 +1316,12 @@ class SCHRShort3FeatureEngineer:
  характеристики in различных временных окнах.
 
  Args:
- data: DataFrame with рыночными данными
+ data: dataFrame with рыночными данными
 
  Returns:
- DataFrame со скользящими приsignми
+ dataFrame со скользящими приsignми
  """
- features = pd.DataFrame(index=data.index)
+ features = pd.dataFrame(index=data.index)
 
  for window in self.rolling_windows:
  # Скользящие средние
@@ -1371,7 +1371,7 @@ class SCHRShort3FeatureEngineer:
  features[f'close_std_{window}'] = data['Close'].rolling(window).std()
  features[f'volume_std_{window}'] = data['Volume'].rolling(window).std()
 
- self.feature_names.extend(features.columns.tolist())
+ self.feature_names.extend(features.columns.toList())
  return features
 
  def create_advanced_features(self, data):
@@ -1382,12 +1382,12 @@ class SCHRShort3FeatureEngineer:
  базовых признаков for выявления скрытых паттернов.
 
  Args:
- data: DataFrame with рыночными данными
+ data: dataFrame with рыночными данными
 
  Returns:
- DataFrame with продвинутыми приsignми
+ dataFrame with продвинутыми приsignми
  """
- features = pd.DataFrame(index=data.index)
+ features = pd.dataFrame(index=data.index)
 
  # 1. Согласованность сигналов
  features['signal_consistency'] = (
@@ -1440,20 +1440,20 @@ class SCHRShort3FeatureEngineer:
  features['signal_strength_index'] * features['signal_volatility_index']
  )
 
- self.feature_names.extend(features.columns.tolist())
+ self.feature_names.extend(features.columns.toList())
  return features
 
  def create_all_features(self, data):
  """
  create всех признаков
 
- Объединяет все типы признаков in один DataFrame.
+ Объединяет все типы признаков in один dataFrame.
 
  Args:
- data: DataFrame with рыночными данными
+ data: dataFrame with рыночными данными
 
  Returns:
- DataFrame со всеми приsignми
+ dataFrame со allи приsignми
  """
  # create всех типов признаков
  basic_features = self.create_basic_features(data)
@@ -1481,7 +1481,7 @@ class SCHRShort3FeatureEngineer:
 def demonstrate_feature_engineering():
  """Демонстрация создания признаков"""
  # create тестовых данных
- test_data = create_schr_short3_data_structure()
+ test_data = create_schr_short3_data_Structure()
 
  # Инициализация инженера признаков
  feature_engineer = SCHRShort3FeatureEngineer()
@@ -1491,7 +1491,7 @@ def demonstrate_feature_engineering():
 
  print("Feature Engineering Results:")
  print(f"Total features: {len(features.columns)}")
- print(f"Data shape: {features.shape}")
+ print(f"data shape: {features.shape}")
  print(f"Missing values: {features.isnull().sum().sum()}")
 
  return features
@@ -1506,12 +1506,12 @@ if __name__ == "__main__":
 
 **Почему продвинутые признаки критичны:**
 - **Выявление паттернов:** Обнаруживают скрытые паттерны in данных
-- **Повышение точности:** Значительно повышают точность predictions
+- **Повышение точности:** Значительно повышают точность Predictions
 - **Робастность:** Обеспечивают устойчивость к рыночному шуму
 - **Адаптивность:** Позволяют модели адаптироваться к изменениям рынка
 
 **Плюсы:**
-- Высокая точность predictions
+- Высокая точность Predictions
 - Выявление скрытых паттернов
 - Повышение робастности
 - Адаптивность к изменениям
@@ -1527,7 +1527,7 @@ if __name__ == "__main__":
 Продвинутые признаки представляют собой сложные математические комбинации базовых признаков, которые выявляют скрытые паттерны and взаимосвязи. Каждый признак решает специфическую задачу:
 
 - **Согласованность сигналов:** Проверяет соответствие различных типов сигналов
-- **Нормализованные признаки:** Приводят данные к единому масштабу
+- **Нормализованные признаки:** Приводят data к единому масштабу
 - **Эффективность сигналов:** Оценивает качество сигналов относительно их частоты
 
 ```python
@@ -1539,12 +1539,12 @@ def create_advanced_schr_short3_features(data):
  скрытых паттернов and взаимосвязей in данных краткосрочных сигналов.
 
  Args:
- data: DataFrame with рыночными данными and SCHR SHORT3 индикаторами
+ data: dataFrame with рыночными данными and SCHR SHORT3 индикаторами
 
  Returns:
- DataFrame with продвинутыми приsignми
+ dataFrame with продвинутыми приsignми
  """
- features = pd.DataFrame(index=data.index)
+ features = pd.dataFrame(index=data.index)
 
  # 1. Согласованность сигналов
  # Проверяет, соответствуют ли различные типы сигналов друг другу
@@ -1593,7 +1593,7 @@ def create_advanced_schr_short3_features(data):
  features['short_signal_correlation'] = data['short_term_signal'].rolling(20).corr(data['short_term_strength'])
 
  # 11. Индекс силы сигнала
- # Комбинированный индекс силы, учитывающий все компоненты
+ # Комбинированный индекс силы, учитывающий все components
  features['signal_strength_index'] = (
  data['short_term_strength'] *
  data['short_term_direction'] *
@@ -1721,14 +1721,14 @@ def create_advanced_schr_short3_features(data):
 def demonstrate_advanced_features():
  """Демонстрация создания продвинутых признаков"""
  # create тестовых данных
- test_data = create_schr_short3_data_structure()
+ test_data = create_schr_short3_data_Structure()
 
  # create продвинутых признаков
  advanced_features = create_advanced_schr_short3_features(test_data)
 
  print("Advanced Features Results:")
  print(f"Total advanced features: {len(advanced_features.columns)}")
- print(f"Data shape: {advanced_features.shape}")
+ print(f"data shape: {advanced_features.shape}")
  print(f"Missing values: {advanced_features.isnull().sum().sum()}")
 
  # Статистика on приsignм
@@ -1746,7 +1746,7 @@ if __name__ == "__main__":
 **Теория:** Временные признаки SCHR SHORT3 учитывают временные аспекты краткосрочной торговой динамики, including циклы, сезонность and временные паттерны краткосрочных сигналов. Они критически важны for понимания временной структуры краткосрочной торговли.
 
 **Почему временные признаки важны:**
-- **Временная структура:** Учитывают временные аспекты краткосрочных сигналов
+- **Временная Structure:** Учитывают временные аспекты краткосрочных сигналов
 - **Циклические паттерны:** Выявляют повторяющиеся паттерны краткосрочных сигналов
 - **Сезонность:** Учитывают сезонные эффекты
 - **Временные dependencies:** Анализируют dependencies во времени
@@ -1780,12 +1780,12 @@ def create_temporal_schr_short3_features(data):
  краткосрочной торговой динамики, including циклы and сезонность.
 
  Args:
- data: DataFrame with рыночными данными and SCHR SHORT3 индикаторами
+ data: dataFrame with рыночными данными and SCHR SHORT3 индикаторами
 
  Returns:
- DataFrame with временными приsignми
+ dataFrame with временными приsignми
  """
- features = pd.DataFrame(index=data.index)
+ features = pd.dataFrame(index=data.index)
 
  # 1. Время with последнего краткосрочного сигнала
  # Рассчитывает количество periods with последнего сигнала
@@ -1842,7 +1842,7 @@ def create_temporal_schr_short3_features(data):
  return frequencies
 
  frequency_features = calculate_short_signal_frequency(data)
- features = pd.concat([features, pd.DataFrame(frequency_features, index=data.index)], axis=1)
+ features = pd.concat([features, pd.dataFrame(frequency_features, index=data.index)], axis=1)
 
  # 3. Длительность краткосрочного тренда
  # Рассчитывает длительность текущего тренда
@@ -1882,7 +1882,7 @@ def create_temporal_schr_short3_features(data):
  lambda x: x.autocorr(lag=lag) if len(x) > lag else 0
  )
 
- # Сезонные компоненты (если есть временная информация)
+ # Сезонные components (если есть временная информация)
  if hasattr(data.index, 'hour'):
  # Час дня
  patterns['hour_of_day'] = data.index.hour
@@ -1904,7 +1904,7 @@ def create_temporal_schr_short3_features(data):
  return patterns
 
  cyclical_features = detect_short_cyclical_patterns(data)
- features = pd.concat([features, pd.DataFrame(cyclical_features, index=data.index)], axis=1)
+ features = pd.concat([features, pd.dataFrame(cyclical_features, index=data.index)], axis=1)
 
  # 5. Временные интервалы между сигналами
  # Рассчитывает статистики временных интервалов
@@ -1929,7 +1929,7 @@ def create_temporal_schr_short3_features(data):
  return intervals
 
  interval_features = calculate_signal_intervals(data)
- features = pd.concat([features, pd.DataFrame(interval_features, index=data.index)], axis=1)
+ features = pd.concat([features, pd.dataFrame(interval_features, index=data.index)], axis=1)
 
  # 6. Временные тренды
  # Анализирует тренды во времени
@@ -1956,7 +1956,7 @@ def create_temporal_schr_short3_features(data):
  return trends
 
  trend_features = calculate_temporal_trends(data)
- features = pd.concat([features, pd.DataFrame(trend_features, index=data.index)], axis=1)
+ features = pd.concat([features, pd.dataFrame(trend_features, index=data.index)], axis=1)
 
  # 7. Временные индексы
  # Создает различные временные индексы
@@ -1998,7 +1998,7 @@ def create_temporal_schr_short3_features(data):
  return indexes
 
  temporal_indexes = create_temporal_indexes(data)
- features = pd.concat([features, pd.DataFrame(temporal_indexes, index=data.index)], axis=1)
+ features = pd.concat([features, pd.dataFrame(temporal_indexes, index=data.index)], axis=1)
 
  return features
 
@@ -2006,14 +2006,14 @@ def create_temporal_schr_short3_features(data):
 def demonstrate_temporal_features():
  """Демонстрация создания временных признаков"""
  # create тестовых данных
- test_data = create_schr_short3_data_structure()
+ test_data = create_schr_short3_data_Structure()
 
  # create временных признаков
  temporal_features = create_temporal_schr_short3_features(test_data)
 
  print("Temporal Features Results:")
  print(f"Total temporal features: {len(temporal_features.columns)}")
- print(f"Data shape: {temporal_features.shape}")
+ print(f"data shape: {temporal_features.shape}")
  print(f"Missing values: {temporal_features.isnull().sum().sum()}")
 
  # Статистика on приsignм
@@ -2063,7 +2063,7 @@ create целевых переменных является критически
 
 - **Направление движения:** Основная задача классификации
 - **Сила движения:** Оценка интенсивности изменений
-- **Волатильность:** Управление рисками
+- **Волатильность:** Management рисками
 
 ```python
 def create_short_direction_target(data, horizon=1, threshold=0.001):
@@ -2074,7 +2074,7 @@ def create_short_direction_target(data, horizon=1, threshold=0.001):
  краткосрочных движений цены on basis SCHR SHORT3 сигналов.
 
  Args:
- data: DataFrame with рыночными данными
+ data: dataFrame with рыночными данными
  horizon: Горизонт предсказания (количество periods вперед)
  threshold: Порог for определения значимых движений
 
@@ -2105,7 +2105,7 @@ def create_short_strength_target(data, horizon=1):
  краткосрочных движений цены.
 
  Args:
- data: DataFrame with рыночными данными
+ data: dataFrame with рыночными данными
  horizon: Горизонт предсказания
 
  Returns:
@@ -2135,7 +2135,7 @@ def create_short_volatility_target(data, horizon=1):
  краткосрочных движений цены.
 
  Args:
- data: DataFrame with рыночными данными
+ data: dataFrame with рыночными данными
  horizon: Горизонт предсказания
 
  Returns:
@@ -2163,7 +2163,7 @@ def create_short_momentum_target(data, horizon=1):
  краткосрочных движений цены.
 
  Args:
- data: DataFrame with рыночными данными
+ data: dataFrame with рыночными данными
  horizon: Горизонт предсказания
 
  Returns:
@@ -2193,7 +2193,7 @@ def create_short_accuracy_target(data, horizon=1):
  краткосрочных сигналов on basis фактических движений цены.
 
  Args:
- data: DataFrame with рыночными данными
+ data: dataFrame with рыночными данными
  horizon: Горизонт предсказания
 
  Returns:
@@ -2222,7 +2222,7 @@ def create_short_risk_target(data, horizon=1):
  краткосрочных движений цены.
 
  Args:
- data: DataFrame with рыночными данными
+ data: dataFrame with рыночными данными
  horizon: Горизонт предсказания
 
  Returns:
@@ -2257,16 +2257,16 @@ def create_all_targets(data, horizon=1):
  create всех целевых переменных
 
  Эта function создает все типы целевых переменных for комплексного
- анализа краткосрочных движений цены.
+ Analysis краткосрочных движений цены.
 
  Args:
- data: DataFrame with рыночными данными
+ data: dataFrame with рыночными данными
  horizon: Горизонт предсказания
 
  Returns:
- DataFrame со всеми целевыми переменными
+ dataFrame со allи целевыми переменными
  """
- targets = pd.DataFrame(index=data.index)
+ targets = pd.dataFrame(index=data.index)
 
  # create всех типов целевых переменных
  targets['direction'] = create_short_direction_target(data, horizon)
@@ -2290,14 +2290,14 @@ def create_all_targets(data, horizon=1):
 def demonstrate_target_creation():
  """Демонстрация создания целевых переменных"""
  # create тестовых данных
- test_data = create_schr_short3_data_structure()
+ test_data = create_schr_short3_data_Structure()
 
  # create всех целевых переменных
  targets = create_all_targets(test_data)
 
  print("Target Creation Results:")
  print(f"Total targets: {len(targets.columns)}")
- print(f"Data shape: {targets.shape}")
+ print(f"data shape: {targets.shape}")
  print(f"Missing values: {targets.isnull().sum().sum()}")
 
  return targets
@@ -2311,7 +2311,7 @@ if __name__ == "__main__":
 **Теория:** Сила краткосрочного движения представляет собой важную целевую переменную for торговых систем on basis SCHR SHORT3. Она определяет интенсивность краткосрочных движений цены and помогает in управлении рисками.
 
 **Почему сила краткосрочного движения важна:**
-- **Управление рисками:** Помогает in управлении рисками
+- **Management рисками:** Помогает in управлении рисками
 - **Оптимизация позиций:** Позволяет оптимизировать размер позиций
 - **Фильтрация сигналов:** Помогает фильтровать слабые сигналы
 - **Повышение эффективности:** Может повысить эффективность торговли
@@ -2353,7 +2353,7 @@ def create_short_strength_target(data, horizon=1):
 **Теория:** Волатильность краткосрочного движения является критически важной целевой переменной for SCHR SHORT3, так как она определяет уровень риска and неопределенности in краткосрочных торговых операциях.
 
 **Почему волатильность краткосрочного движения важна:**
-- **Управление рисками:** Критически важно for управления рисками
+- **Management рисками:** Критически важно for управления рисками
 - **Размер позиций:** Помогает определить оптимальный размер позиций
 - **Фильтрация сигналов:** Помогает фильтровать сигналы in условиях высокой волатильности
 - **Адаптация стратегий:** Позволяет адаптировать стратегии к уровню волатильности
@@ -2392,12 +2392,12 @@ def create_short_volatility_target(data, horizon=1):
 
 ## ML-модели for SCHR SHORT3
 
-**Теория:** ML-модели for SCHR SHORT3 представляют собой комплексную систему машинного обучения, которая использует различные алгоритмы for analysis данных SCHR SHORT3 and генерации торговых сигналов. Это критически важно for создания высокоточных торговых систем.
+**Теория:** ML-модели for SCHR SHORT3 представляют собой комплексную system машинного обучения, которая использует различные алгоритмы for Analysis данных SCHR SHORT3 and генерации торговых сигналов. Это критически важно for создания высокоточных торговых систем.
 
 **Почему ML-модели критичны:**
-- **Высокая точность:** Обеспечивают высокую точность predictions
+- **Высокая точность:** Обеспечивают высокую точность Predictions
 - **Адаптивность:** Могут адаптироваться к изменениям рынка
-- **Автоматизация:** Автоматизируют процесс анализа and принятия решений
+- **Автоматизация:** Автоматизируют процесс Analysis and принятия решений
 - **Масштабируемость:** Могут обрабатывать большие объемы данных
 
 ### 1. Классификатор краткосрочных сигналов
@@ -2423,7 +2423,7 @@ def create_short_volatility_target(data, horizon=1):
 
 **Детальное объяснение ML-моделей:**
 
-ML-модели for SCHR SHORT3 представляют собой комплексную систему машинного обучения. Каждый тип модели решает специфическую задачу:
+ML-модели for SCHR SHORT3 представляют собой комплексную system машинного обучения. Каждый тип модели решает специфическую задачу:
 
 - **Классификатор:** Предсказывает направление движения
 - **Регрессор:** Оценивает силу and интенсивность движений
@@ -2472,7 +2472,7 @@ class SCHRShort3Classifier:
  )
  }
  self.ensemble = VotingClassifier(
- estimators=list(self.models.items()),
+ estimators=List(self.models.items()),
  voting='soft'
  )
  self.scaler = StandardScaler()
@@ -2508,7 +2508,7 @@ class SCHRShort3Classifier:
  # Детальная оценка
  y_pred = self.ensemble.predict(X_val_scaled)
  print("\nClassification Report:")
- print(classification_report(y_val, y_pred))
+ print(classification_Report(y_val, y_pred))
 
  # Матрица ошибок
  print("\nConfusion Matrix:")
@@ -2541,7 +2541,7 @@ class SCHRShort3Classifier:
  X: Признаки for предсказания
 
  Returns:
- Вероятности predictions
+ Вероятности Predictions
  """
  if not self.is_trained:
  raise ValueError("Model must be trained before making Predictions")
@@ -2605,7 +2605,7 @@ class SCHRShort3Regressor:
  )
  }
  self.ensemble = VotingRegressor(
- estimators=list(self.models.items())
+ estimators=List(self.models.items())
  )
  self.scaler = StandardScaler()
  self.is_trained = False
@@ -2668,7 +2668,7 @@ class SCHRShort3DeepModel:
  """
  Deep Learning модель for SCHR SHORT3
 
- Этот класс реализует нейронную сеть for analysis
+ Этот класс реализует нейронную сеть for Analysis
  сложных нелинейных зависимостей in краткосрочных сигналах.
  """
 
@@ -2795,7 +2795,7 @@ class SCHRShort3DeepModel:
  X: Признаки for предсказания
 
  Returns:
- Вероятности predictions
+ Вероятности Predictions
  """
  if not self.is_trained:
  raise ValueError("Model must be trained before making Predictions")
@@ -2807,7 +2807,7 @@ class SCHRShort3DeepModel:
 def demonstrate_ml_models():
  """Демонстрация ML-моделей"""
  # create тестовых данных
- test_data = create_schr_short3_data_structure()
+ test_data = create_schr_short3_data_Structure()
 
  # create признаков
  feature_engineer = SCHRShort3FeatureEngineer()
@@ -2848,13 +2848,13 @@ if __name__ == "__main__":
 
 **Почему регрессор важен:**
 - **Точность прогнозов:** Обеспечивает более точные прогнозы краткосрочных движений
-- **Управление позициями:** Помогает in точном управлении позициями
+- **Management позициями:** Помогает in точном управлении позициями
 - **Оптимизация стратегий:** Позволяет оптимизировать торговые стратегии
-- **Управление рисками:** Помогает in управлении рисками
+- **Management рисками:** Помогает in управлении рисками
 
 **Плюсы:**
 - Более точные прогнозы
-- Лучшее управление позициями
+- Лучшее Management позициями
 - Оптимизация стратегий
 - improve управления рисками
 
@@ -2876,7 +2876,7 @@ class SCHRShort3Regressor:
  'neural_network': MLPRegressor()
  }
  self.ensemble = VotingRegressor(
- estimators=list(self.models.items())
+ estimators=List(self.models.items())
  )
 
  def train(self, X, y):
@@ -2895,7 +2895,7 @@ class SCHRShort3Regressor:
 
 **Почему Deep Learning модели важны:**
 - **Сложные dependencies:** Могут выявлять сложные нелинейные dependencies
-- **Высокая точность:** Обеспечивают максимальную точность predictions
+- **Высокая точность:** Обеспечивают максимальную точность Predictions
 - **Адаптивность:** Могут адаптироваться к сложным рыночным условиям
 - **Масштабируемость:** Могут обрабатывать большие объемы данных
 
@@ -3046,13 +3046,13 @@ class SCHRShort3Backtester:
  metrics = self._calculate_metrics(returns)
 
  # Детальный анализ сделок
- trade_analysis = self._analyze_trades()
+ trade_Analysis = self._analyze_trades()
 
  return {
  'returns': returns,
  'metrics': metrics,
  'Predictions': Predictions,
- 'trades': trade_analysis,
+ 'trades': trade_Analysis,
  'data': test_data
  }
 
@@ -3061,11 +3061,11 @@ class SCHRShort3Backtester:
  Расчет доходности
 
  Args:
- data: Данные for тестирования
+ data: data for тестирования
  Predictions: Предсказания модели
 
  Returns:
- Список доходностей
+ List доходностей
  """
  returns = []
  position = 0
@@ -3128,7 +3128,7 @@ class SCHRShort3Backtester:
  Расчет метрик производительности
 
  Args:
- returns: Список доходностей
+ returns: List доходностей
 
  Returns:
  Словарь with метриками
@@ -3271,7 +3271,7 @@ class SCHRShort3Backtester:
 def demonstrate_backtesting():
  """Демонстрация бэктестинга"""
  # create тестовых данных
- test_data = create_schr_short3_data_structure()
+ test_data = create_schr_short3_data_Structure()
 
  # create признаков
  feature_engineer = SCHRShort3FeatureEngineer()
@@ -3317,7 +3317,7 @@ if __name__ == "__main__":
 - **Количественная оценка:** Обеспечивают количественную оценку производительности
 - **Сравнение стратегий:** Позволяют сравнивать различные стратегии
 - **Оптимизация:** Помогают in оптимизации параметров
-- **Управление рисками:** Критически важны for управления рисками
+- **Management рисками:** Критически важны for управления рисками
 
 **Плюсы:**
 - Количественная оценка
@@ -3347,7 +3347,7 @@ def calculate_schr_short3_performance_metrics(returns):
  эффективности торговой стратегии on basis краткосрочных сигналов.
 
  Args:
- returns: Список доходностей
+ returns: List доходностей
 
  Returns:
  Словарь with метриками производительности
@@ -3506,7 +3506,7 @@ def calculate_advanced_metrics(returns):
  Расчет продвинутых метрик производительности
 
  Args:
- returns: Список доходностей
+ returns: List доходностей
 
  Returns:
  Словарь with продвинутыми метриками
@@ -3606,7 +3606,7 @@ def calculate_volatility_persistence(returns):
 def demonstrate_performance_metrics():
  """Демонстрация расчета метрик производительности"""
  # create тестовых данных
- test_data = create_schr_short3_data_structure()
+ test_data = create_schr_short3_data_Structure()
 
  # create признаков
  feature_engineer = SCHRShort3FeatureEngineer()
@@ -3667,7 +3667,7 @@ if __name__ == "__main__":
 **Почему генетический алгоритм важен:**
 - **Глобальная оптимизация:** Может найти глобальный оптимум
 - **Робастность:** Устойчив к локальным минимумам
-- **Гибкость:** Может работать with различными типами параметров
+- **Гибкость:** Может Workingть with различными типами параметров
 - **Эффективность:** Эффективен for сложных задач
 
 **Плюсы:**
@@ -3781,7 +3781,7 @@ class SCHRShort3Optimizer:
 
  def _evaluate_parameters(self, params):
  """Оценка параметров"""
- # create анализатора with data параметрами
+ # create Analysisтора with data параметрами
  analyzer = SCHRShort3Analyzer()
  analyzer.parameters.update(params)
 
@@ -4044,7 +4044,7 @@ class SCHRShort3Optimizer:
 def demonstrate_optimization():
  """Демонстрация оптимизации параметров"""
  # create тестовых данных
- test_data = create_schr_short3_data_structure()
+ test_data = create_schr_short3_data_Structure()
 
  # create оптимизатора
  optimizer = SCHRShort3Optimizer(test_data)
@@ -4144,12 +4144,12 @@ class SCHRShort3BayesianOptimizer:
 **Почему продакшн деплой критичен:**
 - **Практическое применение:** Обеспечивает практическое применение системы
 - **Автоматизация:** Автоматизирует торговые процессы
-- **Масштабируемость:** Позволяет масштабировать систему
+- **Масштабируемость:** Позволяет масштабировать system
 - **Monitoring:** Обеспечивает Monitoring производительности
 
 ### 1. API for SCHR SHORT3 модели
 
-**Теория:** API for SCHR SHORT3 модели обеспечивает программный интерфейс for взаимодействия with моделью, что критически важно for интеграции with торговыми системами and автоматизации процессов.
+**Теория:** API for SCHR SHORT3 модели обеспечивает программный interface for взаимодействия with моделью, что критически важно for интеграции with торговыми системами and автоматизации процессов.
 
 **Почему API важен:**
 - **integration:** Обеспечивает интеграцию with торговыми системами
@@ -4170,7 +4170,7 @@ class SCHRShort3BayesianOptimizer:
 
 **Детальное объяснение API for SCHR SHORT3:**
 
-API for SCHR SHORT3 модели представляет собой критически важный компонент for интеграции with торговыми системами. Он обеспечивает программный интерфейс for получения predictions in реальном времени, что позволяет автоматизировать торговые процессы.
+API for SCHR SHORT3 модели представляет собой критически важный компонент for интеграции with торговыми системами. Он обеспечивает программный interface for получения Predictions in реальном времени, что позволяет автоматизировать торговые процессы.
 
 **Ключевые особенности API:**
 - **RESTful архитектура:** Стандартизированный подход к созданию веб-сервисов
@@ -4223,12 +4223,12 @@ class SCHRShort3PredictionResponse(BaseModel):
  processing_time: float = Field(..., description="Время обработки in секундах")
  timestamp: str = Field(..., description="Временная метка ответа")
 
-class HealthResponse(BaseModel):
+class healthResponse(BaseModel):
  """Ответ о состоянии системы"""
- status: str = Field(..., description="Статус системы")
+ Status: str = Field(..., description="Статус системы")
  model_loaded: bool = Field(..., description="Загружена ли модель")
  uptime: float = Field(..., description="Время работы in секундах")
- total_Predictions: int = Field(..., description="Общее количество predictions")
+ total_Predictions: int = Field(..., description="Общее количество Predictions")
 
 # Глобальные переменные
 model = None
@@ -4249,7 +4249,7 @@ def load_model():
  logger.error(f"Model file not found: {model_path}")
  return False
  except Exception as e:
- logger.error(f"Error loading model: {e}")
+ logger.error(f"Error Loading model: {e}")
  return False
 
 def get_model():
@@ -4264,11 +4264,11 @@ async def startup_event():
  logger.info("starting SCHR SHORT3 API...")
  load_model()
 
-@app.get("/health", response_model=HealthResponse)
+@app.get("/health", response_model=healthResponse)
 async def health_check():
  """check состояния API"""
  uptime = time.time() - start_time
- return HealthResponse(
+ return healthResponse(
  status="healthy" if model is not None else "unhealthy",
  model_loaded=model is not None,
  uptime=uptime,
@@ -4303,7 +4303,7 @@ async def predict(
 
  # add дополнительных признаков
  if request.additional_features:
- additional_features = np.array(list(request.additional_features.values()))
+ additional_features = np.array(List(request.additional_features.values()))
  features = np.concatenate([features, additional_features.reshape(1, -1)], axis=1)
 
  # Получение предсказания
@@ -4371,7 +4371,7 @@ async def get_metrics():
  "average_processing_time": np.mean(processing_times),
  "max_processing_time": np.max(processing_times),
  "min_processing_time": np.min(processing_times),
- "recent_Predictions": performance_metrics[-10:] # Последние 10 predictions
+ "recent_Predictions": performance_metrics[-10:] # Последние 10 Predictions
  }
 
 @app.post("/retrain")
@@ -4382,16 +4382,16 @@ async def retrain_model(new_data_path: str):
 
  # Загрузка новых данных
  if not os.path.exists(new_data_path):
- raise HTTPException(status_code=404, detail="Data file not found")
+ raise HTTPException(status_code=404, detail="data file not found")
 
  new_data = pd.read_parquet(new_data_path)
 
  # Здесь должна быть логика переобучения модели
- # for демонстрации просто перезагружаем модель
+ # for демонстрации просто переLoading модель
  success = load_model()
 
  if success:
- logger.info("Model retraining completed successfully")
+ logger.info("Model retraining COMPLETED successfully")
  return {"status": "success", "message": "Model retrained successfully"}
  else:
  raise HTTPException(status_code=500, detail="Model retraining failed")
@@ -4408,7 +4408,7 @@ def save_performance_metrics():
  recent_metrics = performance_metrics[-1000:]
 
  # Сохранение in файл
- metrics_df = pd.DataFrame(recent_metrics)
+ metrics_df = pd.dataFrame(recent_metrics)
  metrics_df.to_csv('performance_metrics.csv', index=False)
 
  except Exception as e:
@@ -4463,7 +4463,7 @@ if __name__ == "__main__":
 - **Изоляция:** Обеспечивает изоляцию модели
 - **Портабельность:** Позволяет легко переносить модель
 - **Масштабируемость:** Упрощает масштабирование
-- **Управление:** Упрощает управление зависимостями
+- **Management:** Упрощает Management зависимостями
 
 **Плюсы:**
 - Изоляция модели
@@ -4490,42 +4490,42 @@ Docker контейнеризация SCHR SHORT3 модели обеспечи�
 # Dockerfile for SCHR SHORT3 модели
 FROM python:3.11-slim
 
-# Installation системных зависимостей
+# installation системных зависимостей
 RUN apt-get update && apt-get install -y \
  gcc \
  g++ \
  curl \
- && rm -rf /var/lib/apt/lists/*
+ && rm -rf /var/lib/apt/Lists/*
 
 # create рабочей директории
 WORKDIR /app
 
-# create пользователя for безопасности
-RUN useradd -m -u 1000 appuser
+# create User for безопасности
+RUN Useradd -m -u 1000 appUser
 
 # Копирование файлов зависимостей
 COPY requirements.txt .
 
-# Installation Python зависимостей
+# installation Python зависимостей
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Копирование кода приложения
 COPY . .
 
-# create необходимых директорий
+# create required директорий
 RUN mkdir -p models logs data
 
-# Installation прав доступа
-RUN chown -R appuser:appuser /app
+# installation прав доступа
+RUN chown -R appUser:appUser /app
 
-# Переключение on пользователя приложения
-USER appuser
+# Переключение on User приложения
+User appUser
 
 # Открытие порта
 EXPOSE 8000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+# health check
+healthcheck --interval=30s --timeout=10s --start-period=5s --retries=3 \
  CMD curl -f http://localhost:8000/health || exit 1
 
 # Launch приложения
@@ -4538,7 +4538,7 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", 
 # docker-compose.yml for SCHR SHORT3
 Version: '3.8'
 
-services:
+Services:
  schr-short3-api:
  build: .
  ports:
@@ -4577,7 +4577,7 @@ services:
  ports:
  - "9090:9090"
  volumes:
- - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+ - ./Monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
  - prometheus_data:/prometheus
  command:
  - '--config.file=/etc/prometheus/prometheus.yml'
@@ -4596,11 +4596,11 @@ services:
  - "3000:3000"
  environment:
  - GF_SECURITY_ADMIN_PASSWORD=admin
- - GF_USERS_ALLOW_sign_UP=false
+ - GF_UserS_allOW_sign_UP=false
  volumes:
  - grafana_data:/var/lib/grafana
- - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
- - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+ - ./Monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+ - ./Monitoring/grafana/provisioning:/etc/grafana/provisioning
  restart: unless-stopped
  networks:
  - schr-network
@@ -4643,7 +4643,7 @@ http {
  }
 
  server {
- listen 80;
+ Listen 80;
  server_name localhost;
 
  location / {
@@ -4665,7 +4665,7 @@ http {
 **configuration Prometheus for Monitoringа:**
 
 ```yaml
-# monitoring/prometheus.yml
+# Monitoring/prometheus.yml
 global:
  scrape_interval: 15s
  evaluation_interval: 15s
@@ -4699,28 +4699,28 @@ set -e
 
 echo "starting SCHR SHORT3 deployment..."
 
-# create необходимых директорий
-mkdir -p models config logs data monitoring/grafana/dashboards monitoring/grafana/provisioning
+# create required директорий
+mkdir -p models config logs data Monitoring/grafana/dashboards Monitoring/grafana/provisioning
 
 # Копирование конфигурационных файлов
 cp production_config.json config/
-cp prometheus.yml monitoring/
+cp prometheus.yml Monitoring/
 
 # Сборка and Launch контейнеров
 docker-compose build
 docker-compose up -d
 
 # Ожидание готовности сервисов
-echo "Waiting for services to be ready..."
+echo "Waiting for Services to be ready..."
 sleep 30
 
 # check состояния
 docker-compose ps
 
 # check health check
-curl -f http://localhost:8000/health || echo "Health check failed"
+curl -f http://localhost:8000/health || echo "health check failed"
 
-echo "Deployment completed successfully!"
+echo "deployment COMPLETED successfully!"
 echo "API available at: http://localhost:8000"
 echo "Grafana available at: http://localhost:3000"
 echo "Prometheus available at: http://localhost:9090"
@@ -4771,14 +4771,14 @@ def deploy_schr_short3():
 
  # check состояния
  container.reload()
- print(f"Container status: {container.status}")
+ print(f"Container Status: {container.status}")
 
  # Тестирование API
  try:
  response = requests.get("http://localhost:8000/health")
  if response.status_code == 200:
  print("API is ready!")
- print(f"Health status: {response.json()}")
+ print(f"health Status: {response.json()}")
  else:
  print(f"API not ready: {response.status_code}")
  except Exception as e:
@@ -4814,15 +4814,15 @@ if __name__ == "__main__":
  container = deploy_schr_short3()
 
  if container:
- print("Deployment successful!")
+ print("deployment successful!")
 
- # Ожидание пользователя
+ # Ожидание User
  input("Press Enter to cleanup...")
 
  # clean
  cleanup_deployment()
  else:
- print("Deployment failed!")
+ print("deployment failed!")
 ```
 
 ### 3. Monitoring производительности
@@ -4833,7 +4833,7 @@ if __name__ == "__main__":
 - **Стабильность:** Обеспечивает стабильность системы
 - **Быстрое выявление проблем:** Позволяет быстро выявлять проблемы
 - **Оптимизация:** Помогает in оптимизации производительности
-- **Управление рисками:** Критически важно for управления рисками
+- **Management рисками:** Критически важно for управления рисками
 
 **Плюсы:**
 - Обеспечение стабильности
@@ -4879,7 +4879,7 @@ class AlertConfig:
  email_recipients: List[str] = None
  smtp_server: str = "smtp.gmail.com"
  smtp_port: int = 587
- smtp_username: str = ""
+ smtp_Username: str = ""
  smtp_password: str = ""
  webhook_url: str = ""
  alert_cooldown: int = 300 # 5 minutes
@@ -4916,7 +4916,7 @@ class SCHRShort3Monitor:
  self._setup_prometheus_metrics()
 
  # Launch Monitoringа системных ресурсов
- self._start_system_monitoring()
+ self._start_system_Monitoring()
 
  def _setup_prometheus_metrics(self):
  """configuration Prometheus метрик"""
@@ -4942,20 +4942,20 @@ class SCHRShort3Monitor:
 
  self.system_cpu_gauge = Gauge(
  'schr_short3_system_cpu_percent',
- 'System CPU usage percentage'
+ 'system CPU usage percentage'
  )
 
  self.system_memory_gauge = Gauge(
  'schr_short3_system_memory_percent',
- 'System memory usage percentage'
+ 'system memory usage percentage'
  )
 
  self.system_disk_gauge = Gauge(
  'schr_short3_system_disk_percent',
- 'System disk usage percentage'
+ 'system disk usage percentage'
  )
 
- def _start_system_monitoring(self):
+ def _start_system_Monitoring(self):
  """Launch Monitoringа системных ресурсов"""
  def monitor_system():
  while True:
@@ -4976,7 +4976,7 @@ class SCHRShort3Monitor:
  time.sleep(10) # update каждые 10 секунд
 
  except Exception as e:
- self.logger.error(f"Error in system monitoring: {e}")
+ self.logger.error(f"Error in system Monitoring: {e}")
  time.sleep(30)
 
  # Launch in отдельном потоке
@@ -4992,7 +4992,7 @@ class SCHRShort3Monitor:
  Prediction: Prediction модели
  actual: Фактическое значение
  latency: Время обработки in секундах
- short_signal_data: Данные краткосрочных сигналов
+ short_signal_data: data краткосрочных сигналов
  """
  try:
  # Расчет точности
@@ -5031,7 +5031,7 @@ class SCHRShort3Monitor:
  f"latency={latency:.3f}s, short_signal_accuracy={short_signal_accuracy:.3f}")
 
  except Exception as e:
- self.logger.error(f"Error monitoring Prediction: {e}")
+ self.logger.error(f"Error Monitoring Prediction: {e}")
 
  def _calculate_short_signal_accuracy(self, short_signal_data: Dict[str, Any]) -> float:
  """Расчет точности краткосрочных сигналов"""
@@ -5151,7 +5151,7 @@ class SCHRShort3Monitor:
  """Отправка email алерта"""
  try:
  msg = MIMEMultipart()
- msg['From'] = self.alert_config.smtp_username
+ msg['From'] = self.alert_config.smtp_Username
  msg['To'] = ', '.join(self.alert_config.email_recipients)
  msg['Subject'] = f"SCHR SHORT3 Alert: {title}"
 
@@ -5171,7 +5171,7 @@ class SCHRShort3Monitor:
 
  server = smtplib.SMTP(self.alert_config.smtp_server, self.alert_config.smtp_port)
  server.starttls()
- server.login(self.alert_config.smtp_username, self.alert_config.smtp_password)
+ server.login(self.alert_config.smtp_Username, self.alert_config.smtp_password)
  server.send_message(msg)
  server.quit()
 
@@ -5248,7 +5248,7 @@ class SCHRShort3Monitor:
  self.logger.error(f"Error starting Prometheus server: {e}")
 
 # example использования Monitoringа
-def demonstrate_monitoring():
+def demonstrate_Monitoring():
  """Демонстрация Monitoringа SCHR SHORT3"""
  # configuration алертов
  alert_config = AlertConfig(
@@ -5263,7 +5263,7 @@ def demonstrate_monitoring():
  # Launch Prometheus сервера
  monitor.start_prometheus_server(8001)
 
- # Симуляция predictions
+ # Симуляция Predictions
  for i in range(20):
  Prediction = np.random.choice([-1, 0, 1])
  actual = np.random.choice([-1, 0, 1])
@@ -5293,18 +5293,18 @@ def demonstrate_monitoring():
  return monitor
 
 if __name__ == "__main__":
- demonstrate_monitoring()
+ demonstrate_Monitoring()
 ```
 
 ## Следующие шаги
 
-После анализа SCHR SHORT3 переходите к:
+После Analysis SCHR SHORT3 переходите к:
 - **[14_advanced_practices.md](14_advanced_practices.md)** - Продвинутые практики
-- **[15_portfolio_optimization.md](15_portfolio_optimization.md)** - Оптимизация портфолио
+- **[15_Portfolio_optimization.md](15_Portfolio_optimization.md)** - Оптимизация Portfolio
 
 ## Ключевые выводы
 
-**Теория:** Ключевые выводы суммируют наиболее важные аспекты анализа SCHR SHORT3, которые критически важны for создания прибыльной and робастной торговой системы on basis краткосрочных сигналов.
+**Теория:** Ключевые выводы суммируют наиболее важные аспекты Analysis SCHR SHORT3, которые критически важны for создания прибыльной and робастной торговой системы on basis краткосрочных сигналов.
 
 1. **SCHR SHORT3 - мощный индикатор for краткосрочной торговли**
  - **Теория:** SCHR SHORT3 представляет собой революционный подход к краткосрочной торговле
@@ -5318,11 +5318,11 @@ if __name__ == "__main__":
  - **Плюсы:** Максимальная частота сигналов, идеален for скальпинга, быстрые возможности
  - **Минусы:** Высокие риски, требует постоянного внимания, высокие комиссии
 
-3. **МультиTimeframeовый анализ - разные parameters for разных Timeframeов**
+3. **МультиTimeframesый анализ - разные parameters for разных Timeframes**
  - **Теория:** Каждый Timeframe требует специфических параметров for максимальной эффективности
  - **Почему важно:** Обеспечивает оптимальную производительность on всех временных горизонтах
  - **Плюсы:** Оптимизация производительности, снижение рисков, повышение точности
- - **Минусы:** Сложность settings, необходимость понимания каждого Timeframeа
+ - **Минусы:** Сложность settings, необходимость понимания каждого Timeframe
 
 4. **Высокая точность - возможность достижения 95%+ точности**
  - **Теория:** Правильно настроенная SCHR SHORT3 модель может достигать очень высокой точности
@@ -5338,4 +5338,4 @@ if __name__ == "__main__":
 
 ---
 
-**Важно:** SCHR SHORT3 требует тщательного анализа краткосрочных сигналов and адаптации параметров for каждого актива and Timeframeа.
+**Важно:** SCHR SHORT3 требует тщательного Analysis краткосрочных сигналов and адаптации параметров for каждого актива and Timeframe.

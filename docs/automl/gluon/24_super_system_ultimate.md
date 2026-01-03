@@ -12,26 +12,26 @@
 ### Issues with одним индикатором
 - **Ограниченность**: Один индикатор not может поймать все паттерны
 - **Ложные сигналы**: Много шума, мало сигналов
-- **Нестабильность**: Работает только in определенных условиях
+- **Нестабильность**: Workingет только in определенных условиях
 - **Эмоциональная торговля**: Принимают решения on basis страха and жадности
 
 ### Преимущества супер-системы
 - **Всесторонний анализ**: Объединяет все лучшие техники
 - **Высокая точность**: Множественная валидация сигналов
-- **Стабильность**: Работает in любых рыночных условиях
+- **Стабильность**: Workingет in любых рыночных условиях
 - **Прибыльность**: Стабильная доходность > 100% in месяц
 
 ## Введение
 
-<img src="images/optimized/super_system_overview.png" alt="Супер-система" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/super_system_overView.png" alt="Супер-система" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 24.1: Супер-система - объединение всех indicators and компонентов*
 
-**Почему супер-система - это будущее торговли?** Потому что она объединяет все лучшие техники and индикаторы, создавая систему, которая работает in любых условиях and приносит стабильную прибыль.
+**Почему супер-система - это будущее торговли?** Потому что она объединяет все лучшие техники and индикаторы, создавая system, которая Workingет in любых условиях and приносит стабильную прибыль.
 
 **Ключевые особенности супер-системы:**
 - **Всесторонний анализ**: Объединяет все лучшие техники
 - **Высокая точность**: Множественная валидация сигналов (97.8%)
-- **Стабильность**: Работает in любых рыночных условиях
+- **Стабильность**: Workingет in любых рыночных условиях
 - **Прибыльность**: Стабильная доходность > 100% in месяц
 - **Робастность**: Устойчивость к рыночным шокам
 - **Непрерывное обучение**: Система постоянно улучшается
@@ -55,13 +55,13 @@
 1. **Синергия indicators** - каждый индикатор дополняет другие, создавая синергетический эффект
 2. **Многоуровневая валидация** - check on всех уровнях for максимальной точности
 3. **Адаптивность** - система адаптируется к изменениям рынка, оставаясь актуальной
-4. **Робастность** - устойчивость к рыночным шокам, работа in любых условиях
+4. **Робастность** - устойчивость к рыночным шокам, Working in любых условиях
 5. **Прибыльность** - стабильная доходность > 100% in месяц with минимальными рисками
 
-### Почему это работает всегда
+### Почему это Workingет всегда
 
 1. **Разнообразие сигналов** - разные индикаторы ловят разные паттерны
-2. **Временная адаптация** - система работает on всех Timeframeах
+2. **Временная адаптация** - система Workingет on всех Timeframes
 3. **Машинное обучение** - автоматическая оптимизация
 4. **Риск-менеджмент** - защита from потерь
 5. **Непрерывное обучение** - система постоянно улучшается
@@ -69,14 +69,14 @@
 ## Архитектура супер-системы
 
 <img src="images/optimized/system_architecture.png" alt="Архитектура супер-системы" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 24.2: Архитектура супер-системы - многоуровневая структура*
+*Рисунок 24.2: Архитектура супер-системы - многоуровневая Structure*
 
 **Уровни системы:**
 - **Level 1 - Base Indicators**: SCHR Levels, WAVE2, SCHR SHORT3
 - **Level 2 - ML Models**: SCHR ML Model, WAVE2 ML Model, SHORT3 ML Model
 - **Level 3 - Meta Model**: Объединение всех моделей
-- **Level 4 - Risk Management**: Управление рисками
-- **Level 5 - Portfolio Manager**: Управление портфелем
+- **Level 4 - Risk Management**: Management рисками
+- **Level 5 - Portfolio Manager**: Management портфелем
 - **Level 6 - Continuous Learning**: Непрерывное обучение
 
 **Принципы объединения:**
@@ -89,11 +89,11 @@
 ### 1. Многоуровневая система
 
 ```python
-class SuperTradingSystem:
+class SuperTradingsystem:
  """Супер-торговая система объединяющая все индикаторы
 
  parameters инициализации:
- - Все компоненты инициализируются with параметрами on умолчанию
+ - Все components инициализируются with параметрами on умолчанию
  - Каждый компонент имеет свои специфические parameters конфигурации
  - Система поддерживает кастомизацию всех параметров через конфигурационные файлы
  """
@@ -104,12 +104,12 @@ class SuperTradingSystem:
 
  Args:
  config (dict, optional): Конфигурационный словарь with параметрами системы
- - schr_levels_config: parameters for SCHR Levels анализатора
- - wave2_config: parameters for WAVE2 анализатора
- - schr_short3_config: parameters for SCHR SHORT3 анализатора
+ - schr_levels_config: parameters for SCHR Levels Analysisтора
+ - wave2_config: parameters for WAVE2 Analysisтора
+ - schr_short3_config: parameters for SCHR SHORT3 Analysisтора
  - ml_models_config: parameters for ML моделей
  - risk_config: parameters риск-менеджмента
- - portfolio_config: parameters портфельного менеджера
+ - Portfolio_config: parameters портфельного менеджера
  - learning_config: parameters системы обучения
  """
  if config is None:
@@ -148,12 +148,12 @@ class SuperTradingSystem:
  )
 
  # Уровень 5: Портфельный менеджер
- self.portfolio_manager = SuperPortfolioManager(
- **config.get('portfolio_config', {})
+ self.Portfolio_manager = SuperPortfolioManager(
+ **config.get('Portfolio_config', {})
  )
 
  # Уровень 6: Monitoring and переобучение
- self.monitoring_system = ContinuousLearningSystem(
+ self.Monitoring_system = ContinuousLearningsystem(
  **config.get('learning_config', {})
  )
 
@@ -161,7 +161,7 @@ class SuperTradingSystem:
  """Возвращает конфигурацию on умолчанию for всех компонентов системы"""
  return {
  'schr_levels_config': {
- 'lookback_period': 50, # Период for analysis уровней (свечей)
+ 'lookback_period': 50, # Период for Analysis уровней (свечей)
  'min_touches': 3, # Минимальное количество касаний уровня
  'tolerance': 0.001, # Допуск for определения уровня (in %)
  'pressure_threshold': 0.7, # Порог давления for сигналов
@@ -207,7 +207,7 @@ class SuperTradingSystem:
  'meta_model_config': {
  'ensemble_methods': ['adaptive', 'context', 'temporal', 'hierarchical'],
  'weight_update_frequency': 100, # Частота обновления весов (свечей)
- 'performance_window': 500, # Окно for analysis производительности
+ 'performance_window': 500, # Окно for Analysis производительности
  'confidence_threshold': 0.7, # Порог уверенности for сигналов
  'min_models_agreement': 2 # Минимальное согласие моделей
  },
@@ -219,7 +219,7 @@ class SuperTradingSystem:
  'correlation_threshold': 0.7, # Порог корреляции между позициями
  'liquidity_threshold': 1000000 # Порог ликвидности (USD)
  },
- 'portfolio_config': {
+ 'Portfolio_config': {
  'max_positions': 10, # Максимальное количество позиций
  'rebalance_frequency': 24, # Частота ребалансировки (часы)
  'diversification_threshold': 0.3, # Порог диверсификации
@@ -254,7 +254,7 @@ class SuperTradingSystem:
 ### 2. integration indicators
 
 ```python
-class IndicatorIntegration:
+class Indicatorintegration:
  """integration всех indicators
 
  parameters интеграции:
@@ -315,7 +315,7 @@ class IndicatorIntegration:
  integration сигналов всех indicators
 
  Args:
- data (pd.DataFrame): Рыночные данные (OHLCV)
+ data (pd.dataFrame): Рыночные data (OHLCV)
  market_context (dict, optional): Контекст рынка
  - trend: Направление тренда ('up', 'down', 'sideways')
  - volatility: Уровень волатильности ('low', 'medium', 'high')
@@ -357,14 +357,14 @@ class IndicatorIntegration:
  Получение сигналов SCHR Levels
 
  Args:
- data (pd.DataFrame): Рыночные данные (OHLCV)
+ data (pd.dataFrame): Рыночные data (OHLCV)
  market_context (dict, optional): Контекст рынка for адаптации параметров
 
  Returns:
  dict: Сигналы SCHR Levels
  - levels: Словарь with уровнями поддержки/сопротивления
- - support_levels: Список уровней поддержки
- - resistance_levels: Список уровней сопротивления
+ - support_levels: List уровней поддержки
+ - resistance_levels: List уровней сопротивления
  - level_strength: Сила каждого уровня (0.0-1.0)
  - level_touches: Количество касаний каждого уровня
  - pressure: Анализ давления on уровни
@@ -412,7 +412,7 @@ class IndicatorIntegration:
  'pressure': pressure,
  'breakout_signals': breakout_signals,
  'confidence': self.schr_levels.calculate_confidence(data),
- 'parameters_used': adaptive_params
+ 'parameters_Used': adaptive_params
  }
 
  def get_wave2_signals(self, data, market_context=None):
@@ -420,12 +420,12 @@ class IndicatorIntegration:
  Получение сигналов WAVE2
 
  Args:
- data (pd.DataFrame): Рыночные данные (OHLCV)
+ data (pd.dataFrame): Рыночные data (OHLCV)
  market_context (dict, optional): Контекст рынка for адаптации параметров
 
  Returns:
  dict: Сигналы WAVE2
- - wave_analysis: Волновой анализ
+ - wave_Analysis: Волновой анализ
  - current_wave: Текущая волна
  - wave_type: Тип волны ('impulse', 'corrective')
  - wave_phase: Фаза волны ('start', 'middle', 'end')
@@ -451,7 +451,7 @@ class IndicatorIntegration:
  adaptive_params = self._adapt_wave2_parameters(market_context)
 
  # Волновой анализ
- wave_analysis = self.wave2.analyze_waves(
+ wave_Analysis = self.wave2.analyze_waves(
  data,
  min_wave_length=adaptive_params['min_wave_length'],
  max_wave_length=adaptive_params['max_wave_length'],
@@ -473,11 +473,11 @@ class IndicatorIntegration:
  )
 
  return {
- 'wave_analysis': wave_analysis,
+ 'wave_Analysis': wave_Analysis,
  'wave_patterns': wave_patterns,
  'wave_signals': wave_signals,
  'confidence': self.wave2.calculate_confidence(data),
- 'parameters_used': adaptive_params
+ 'parameters_Used': adaptive_params
  }
 
  def get_short3_signals(self, data, market_context=None):
@@ -485,7 +485,7 @@ class IndicatorIntegration:
  Получение сигналов SCHR SHORT3
 
  Args:
- data (pd.DataFrame): Рыночные данные (OHLCV)
+ data (pd.dataFrame): Рыночные data (OHLCV)
  market_context (dict, optional): Контекст рынка for адаптации параметров
 
  Returns:
@@ -538,24 +538,24 @@ class IndicatorIntegration:
  'short_patterns': short_patterns,
  'short_volatility': short_volatility,
  'confidence': self.schr_short3.calculate_confidence(data),
- 'parameters_used': adaptive_params
+ 'parameters_Used': adaptive_params
  }
 ```
 
 <img src="images/optimized/meta_model.png" alt="Мета-модель" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 24.4: Мета-модель объединения - from адаптивных весов to финального объединения*
 
-**Компоненты мета-модели:**
+**components мета-модели:**
 - **Adaptive Weights**: Анализ производительности, адаптивные веса, динамическое взвешивание
 - **Context Ensemble**: Рыночный контекст, контекстные модели, контекстные веса
 - **Temporal Ensemble**: Временное объединение, анализ трендов, временные паттерны
-- **Hierarchical Ensemble**: Иерархическое объединение, многоуровневая структура
+- **Hierarchical Ensemble**: Иерархическое объединение, многоуровневая Structure
 - **Final Combination**: Финальное объединение, оптимизация результата
 - **Performance Tracking**: Отслеживание производительности, Monitoring качества
 
 **Методы объединения:**
 - **Временное объединение**: Анализ сигналов во времени
-- **Иерархическое объединение**: Многоуровневая структура объединения
+- **Иерархическое объединение**: Многоуровневая Structure объединения
 - **Финальное объединение**: Оптимальное сочетание всех методов
 - **Отслеживание производительности**: Постоянный Monitoring качества
 
@@ -570,7 +570,7 @@ class MetaEnsembleModel:
  - meta_weights: Адаптивные веса for каждой модели
  - ensemble_methods: Методы объединения моделей
  - performance_tracker: Отслеживание производительности
- - context_analyzer: Анализатор рыночного контекста
+ - context_analyzer: Analysisтор рыночного контекста
  """
 
  def __init__(self, config=None):
@@ -579,9 +579,9 @@ class MetaEnsembleModel:
 
  Args:
  config (dict, optional): configuration мета-модели
- - ensemble_methods: Список методов объединения
+ - ensemble_methods: List методов объединения
  - weight_update_frequency: Частота обновления весов
- - performance_window: Окно for analysis производительности
+ - performance_window: Окно for Analysis производительности
  - confidence_threshold: Порог уверенности
  - min_models_agreement: Минимальное согласие моделей
  - context_sensitivity: Чувствительность к контексту
@@ -619,7 +619,7 @@ class MetaEnsembleModel:
  return {
  'ensemble_methods': ['adaptive', 'context', 'temporal', 'hierarchical'],
  'weight_update_frequency': 100, # Частота обновления весов (свечей)
- 'performance_window': 500, # Окно for analysis производительности
+ 'performance_window': 500, # Окно for Analysis производительности
  'confidence_threshold': 0.7, # Порог уверенности for сигналов
  'min_models_agreement': 2, # Минимальное согласие моделей
  'context_sensitivity': 0.8, # Чувствительность к контексту
@@ -647,14 +647,14 @@ class MetaEnsembleModel:
  - volatility: Уровень волатильности
  - volume: Объем торгов
  - time_of_day: Время дня
- historical_data (pd.DataFrame, optional): Исторические данные for analysis
+ historical_data (pd.dataFrame, optional): Исторические data for Analysis
 
  Returns:
  dict: Мета-Prediction
  - final_Prediction: Финальное Prediction (0.0-1.0)
  - confidence: Общая уверенность (0.0-1.0)
  - ensemble_weights: Использованные веса
- - method_used: Примененный метод объединения
+ - method_Used: Примененный метод объединения
  - reasoning: Обоснование решения
  """
  # Адаптивное взвешивание on basis производительности
@@ -728,10 +728,10 @@ class MetaEnsembleModel:
  return context_weights
 ```
 
-<img src="images/optimized/risk_management.png" alt="Риск-менеджмент" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 24.5: Продвинутый риск-менеджмент - from анализа рисков to стратегий хеджирования*
+<img src="images/optimized/risk_Management.png" alt="Риск-менеджмент" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 24.5: Продвинутый риск-менеджмент - from Analysis рисков to стратегий хеджирования*
 
-**Компоненты риск-менеджмента:**
+**components риск-менеджмента:**
 - **Market Risk**: Анализ рыночного риска, волатильность, тренды
 - **Portfolio Risk**: Анализ портфельного риска, диверсификация, концентрация
 - **Correlation Risk**: Анализ корреляционного риска, взаимосвязи между активами
@@ -826,7 +826,7 @@ class AdvancedRiskManager:
  'correlation_adjustment': True # Корректировка on корреляциям
  }
 
- def calculate_dynamic_risk(self, signals, market_data, portfolio_state, historical_data=None):
+ def calculate_dynamic_risk(self, signals, market_data, Portfolio_state, historical_data=None):
  """
  Расчет динамического риска with учетом всех факторов
 
@@ -836,20 +836,20 @@ class AdvancedRiskManager:
  - wave2_signals: Сигналы WAVE2
  - short3_signals: Сигналы SCHR SHORT3
  - meta_signal: Мета-сигнал
- market_data (pd.DataFrame): Текущие рыночные данные (OHLCV)
- portfolio_state (dict): Состояние портфеля
+ market_data (pd.dataFrame): Текущие рыночные data (OHLCV)
+ Portfolio_state (dict): Состояние портфеля
  - positions: Текущие позиции
  - cash: Доступные средства
  - total_value: Общая стоимость портфеля
  - unrealized_pnl: Нереализованная прибыль/убыток
- historical_data (pd.DataFrame, optional): Исторические данные for analysis
+ historical_data (pd.dataFrame, optional): Исторические data for Analysis
 
  Returns:
  dict: Анализ риска
  - total_risk: Общий уровень риска (0.0-1.0)
- - risk_components: Компоненты риска
+ - risk_components: components риска
  - market_risk: Рыночный риск
- - portfolio_risk: Портфельный риск
+ - Portfolio_risk: Портфельный риск
  - correlation_risk: Корреляционный риск
  - liquidity_risk: Риск ликвидности
  - risk_metrics: Метрики риска
@@ -863,8 +863,8 @@ class AdvancedRiskManager:
  )
 
  # Анализ портфельного риска
- portfolio_risk = self.analyze_portfolio_risk(
- portfolio_state,
+ Portfolio_risk = self.analyze_Portfolio_risk(
+ Portfolio_state,
  max_position_size=self.max_position_size,
  max_drawdown=self.max_drawdown
  )
@@ -884,7 +884,7 @@ class AdvancedRiskManager:
  # Объединение рисков with весами
  risk_components = {
  'market_risk': market_risk,
- 'portfolio_risk': portfolio_risk,
+ 'Portfolio_risk': Portfolio_risk,
  'correlation_risk': correlation_risk,
  'liquidity_risk': liquidity_risk
  }
@@ -895,7 +895,7 @@ class AdvancedRiskManager:
  recommendations = self.generate_risk_recommendations(
  total_risk,
  risk_components,
- portfolio_state
+ Portfolio_state
  )
 
  return {
@@ -905,18 +905,18 @@ class AdvancedRiskManager:
  'recommendations': recommendations
  }
 
- def create_hedging_strategy(self, risk_analysis, signals):
+ def create_hedging_strategy(self, risk_Analysis, signals):
  """create стратегии хеджирования"""
 
  # Определение необходимости хеджирования
- hedging_needed = self.determine_hedging_need(risk_analysis)
+ hedging_needed = self.determine_hedging_need(risk_Analysis)
 
  if hedging_needed:
  # Выбор инструментов хеджирования
- hedging_instruments = self.select_hedging_instruments(risk_analysis)
+ hedging_instruments = self.select_hedging_instruments(risk_Analysis)
 
  # Расчет размера хеджа
- hedge_size = self.calculate_hedge_size(risk_analysis, signals)
+ hedge_size = self.calculate_hedge_size(risk_Analysis, signals)
 
  # create хеджирующих позиций
  hedge_positions = self.create_hedge_positions(hedging_instruments, hedge_size)
@@ -927,9 +927,9 @@ class AdvancedRiskManager:
 ```
 
 <img src="images/optimized/continuous_learning.png" alt="Непрерывное обучение" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 24.6: Система непрерывного обучения - from анализа производительности to адаптации моделей*
+*Рисунок 24.6: Система непрерывного обучения - from Analysis производительности to адаптации моделей*
 
-**Компоненты обучения:**
+**components обучения:**
 - **Performance Analysis**: Анализ производительности, метрики качества, тренды производительности
 - **Drift Detection**: Обнаружение дрифта, анализ точности, анализ распределения
 - **Model Adaptation**: Адаптация моделей, update параметров, оптимизация архитектуры
@@ -947,7 +947,7 @@ class AdvancedRiskManager:
 ### 5. Система непрерывного обучения
 
 ```python
-class ContinuousLearningSystem:
+class ContinuousLearningsystem:
  """Система непрерывного обучения
 
  parameters системы обучения:
@@ -1010,7 +1010,7 @@ class ContinuousLearningSystem:
  'learning_rate': 0.01, # Скорость обучения
  'regularization_strength': 0.001, # Сила регуляризации
  'drift_threshold': 0.1, # Порог дрифта
- 'performance_window': 100, # Окно анализа производительности
+ 'performance_window': 100, # Окно Analysis производительности
  'adaptation_methods': ['online', 'incremental', 'transfer'],
  'model_selection_criteria': ['accuracy', 'stability', 'efficiency'],
  'early_stopping_patience': 50, # Терпение for ранней остановки
@@ -1028,7 +1028,7 @@ class ContinuousLearningSystem:
  Цикл непрерывного обучения with адаптацией
 
  Args:
- new_data (pd.DataFrame): Новые рыночные данные
+ new_data (pd.dataFrame): Новые рыночные data
  market_conditions (dict): Условия рынка
  - trend: Направление тренда
  - volatility: Уровень волатильности
@@ -1148,8 +1148,8 @@ class ContinuousLearningSystem:
 def prepare_super_system_data(self, data_dict):
  """Подготовка данных for супер-системы"""
 
- # Объединение данных всех Timeframeов
- combined_data = self.combine_all_timeframes(data_dict)
+ # Объединение данных всех Timeframes
+ combined_data = self.combine_all_Timeframes(data_dict)
 
  # create признаков всех indicators
  schr_features = self.schr_levels.create_features(combined_data)
@@ -1192,7 +1192,7 @@ def create_meta_features(self, schr_features, wave2_features, short3_features):
 def create_interaction_features(self, features):
  """create признаков взаимодействия"""
 
- interaction_features = pd.DataFrame()
+ interaction_features = pd.dataFrame()
 
  # Взаимодействие SCHR Levels and WAVE2
  interaction_features['schr_wave2_interaction'] = (
@@ -1227,7 +1227,7 @@ def train_super_model(self, features, target, config=None):
  Обучение супер-модели with детальными параметрами
 
  Args:
- features (pd.DataFrame): Признаки for обучения
+ features (pd.dataFrame): Признаки for обучения
  - schr_features: Признаки SCHR Levels
  - wave2_features: Признаки WAVE2
  - short3_features: Признаки SCHR SHORT3
@@ -1321,7 +1321,7 @@ def train_base_models(self, train_data, hyperparameter_tuning=True, cross_valida
  Обучение базовых моделей with детальными параметрами
 
  Args:
- train_data (pd.DataFrame): Обучающие данные
+ train_data (pd.dataFrame): Обучающие data
  hyperparameter_tuning (bool): configuration гиперпараметров
  cross_validation (bool): Кросс-валидация
 
@@ -1433,13 +1433,13 @@ def train_base_models(self, train_data, hyperparameter_tuning=True, cross_valida
 <img src="images/optimized/blockchain_deployment.png" alt="Деплой on блокчейне" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 24.7: Деплой супер-системы on блокчейне - from смарт-контрактов to автоматической торговли*
 
-**Компоненты деплоя:**
+**components деплоя:**
 - **Smart Contracts**: Хранение сигналов, автоматическое выполнение, прозрачность операций
-- **DEX Integration**: Прямая торговля, ликвидность, децентрализация
+- **DEX integration**: Прямая торговля, ликвидность, децентрализация
 - **signal Storage**: Хранение сигналов on блокчейне, неизменяемость
 - **Automated Trading**: Автоматическая торговля, исполнение сигналов
 - **Performance Tracking**: Отслеживание производительности, метрики
-- **Governance System**: Система управления, принятие решений
+- **Governance system**: Система управления, принятие решений
 
 **Преимущества блокчейн-деплоя:**
 - **Прозрачность**: Все операции видны in блокчейне
@@ -1454,23 +1454,23 @@ def train_base_models(self, train_data, hyperparameter_tuning=True, cross_valida
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract SuperTradingSystemContract {
+contract SuperTradingsystemContract {
  struct Supersignal {
  uint256 timestamp;
 
- // SCHR Levels данные
+ // SCHR Levels data
  int256 schrPressure;
  int256 schrSupportLevel;
  int256 schrResistanceLevel;
  bool schrBreakoutsignal;
 
- // WAVE2 данные
+ // WAVE2 data
  int256 wave2Amplitude;
  int256 wave2Frequency;
  int256 wave2Phase;
  bool wave2signal;
 
- // SCHR SHORT3 данные
+ // SCHR SHORT3 data
  int256 short3signal;
  int256 short3Strength;
  int256 short3Volatility;
@@ -1534,11 +1534,11 @@ contract SuperTradingSystemContract {
  signalCount++;
  }
 
- function getLatestsignal() external view returns (Supersignal memory) {
+ function getLatestsignal() external View returns (Supersignal memory) {
  return signals[signalCount - 1];
  }
 
- function getsignalByIndex(uint256 index) external view returns (Supersignal memory) {
+ function getsignalByIndex(uint256 index) external View returns (Supersignal memory) {
  return signals[index];
  }
 }
@@ -1579,7 +1579,7 @@ contract SuperTradingSystemContract {
 - **Декабрь**: 22.4%
 
 **Сравнение with отдельными индикаторами:**
-- **Super System**: 156.7%
+- **Super system**: 156.7%
 - **SCHR Levels**: 76.8%
 - **WAVE2**: 89.3%
 - **SCHR SHORT3**: 68.4%
@@ -1592,7 +1592,7 @@ contract SuperTradingSystemContract {
 2. **Робастность** - устойчивость к рыночным шокам
 3. **Адаптивность** - автоматическая адаптация к изменениям
 4. **Прибыльность** - стабильная высокая доходность
-5. **Надежность** - работа in любых рыночных условиях
+5. **Надежность** - Working in любых рыночных условиях
 
 ## Таблица параметров супер-системы
 
@@ -1600,7 +1600,7 @@ contract SuperTradingSystemContract {
 
 | Компонент | parameter | Значение on умолчанию | description | Диапазон |
 |-----------|----------|----------------------|----------|----------|
-| **SCHR Levels** | lookback_period | 50 | Период for analysis уровней (свечей) | 20-100 |
+| **SCHR Levels** | lookback_period | 50 | Период for Analysis уровней (свечей) | 20-100 |
 | | min_touches | 3 | Минимальное количество касаний уровня | 2-5 |
 | | tolerance | 0.001 | Допуск for определения уровня (in %) | 0.0001-0.01 |
 | | pressure_threshold | 0.7 | Порог давления for сигналов | 0.5-0.9 |
@@ -1633,17 +1633,17 @@ contract SuperTradingSystemContract {
 
 ### parameters мета-модели
 
-| parameter | Значение | description | Влияние on систему |
+| parameter | Значение | description | Влияние on system |
 |----------|----------|----------|-------------------|
 | **ensemble_methods** | ['adaptive', 'context', 'temporal', 'hierarchical'] | Методы объединения | Определяет качество финального сигнала |
 | **weight_update_frequency** | 100 | Частота обновления весов (свечей) | Скорость адаптации к изменениям |
-| **performance_window** | 500 | Окно for analysis производительности | Стабильность оценки качества |
+| **performance_window** | 500 | Окно for Analysis производительности | Стабильность оценки качества |
 | **confidence_threshold** | 0.7 | Порог уверенности for сигналов | Фильтрация слабых сигналов |
 | **min_models_agreement** | 2 | Минимальное согласие моделей | Надежность консенсуса |
 | **context_sensitivity** | 0.8 | Чувствительность к контексту | Адаптивность к рыночным условиям |
 | **adaptive_learning_rate** | 0.01 | Скорость адаптивного обучения | Скорость обновления весов |
 | **temporal_decay_factor** | 0.95 | Фактор временного затухания | Влияние исторических данных |
-| **hierarchical_levels** | 3 | Количество иерархических уровней | Глубина анализа |
+| **hierarchical_levels** | 3 | Количество иерархических уровней | Глубина Analysis |
 | **uncertainty_threshold** | 0.3 | Порог неопределенности | Обработка неопределенных ситуаций |
 
 ### parameters риск-менеджмента
@@ -1668,9 +1668,9 @@ contract SuperTradingSystemContract {
 |----------|----------|----------|-------------|
 | **max_positions** | 10 | Максимальное количество позиций | Баланс диверсификации |
 | **rebalance_frequency** | 24 | Частота ребалансировки (часы) | Баланс стабильности/адаптивности |
-| **diversification_threshold** | 0.3 | Порог диверсификации | Управление рисками |
+| **diversification_threshold** | 0.3 | Порог диверсификации | Management рисками |
 | **concentration_limit** | 0.2 | Лимит концентрации on одном активе | Предотвращение переконцентрации |
-| **volatility_target** | 0.15 | Целевая волатильность портфеля | Управление рисками |
+| **volatility_target** | 0.15 | Целевая волатильность портфеля | Management рисками |
 
 ### parameters системы обучения
 

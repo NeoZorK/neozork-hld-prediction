@@ -1,10 +1,10 @@
-# Рабочий процесс анализа данных: Генерация признаков, корреляционный анализ and анализ важности признаков
+# Рабочий процесс Analysis данных: Генерация признаков, корреляционный анализ and анализ важности признаков
 
 ## Обзор
 
-Этот документ описывает рекомендуемую последовательность проведения комплексного анализа данных in проекте Neozork HLD Prediction, with фокусом on генерацию признаков, корреляционный анализ and анализ важности признаков.
+Этот документ описывает рекомендуемую последовательность проведения комплексного Analysis данных in проекте Neozork HLD Prediction, with фокусом on генерацию признаков, корреляционный анализ and анализ важности признаков.
 
-## Рекомендуемая последовательность анализа
+## Рекомендуемая последовательность Analysis
 
 ### 1. Генерация признаков (Первый этап)
 
@@ -32,9 +32,9 @@ features = feature_engineer.generate_features(
 ### 2. Корреляционный анализ (Второй этап)
 
 **Почему после генерации признаков:**
-- Анализирует взаимосвязи между всеми сгенерированными приsignми
+- Анализирует взаимосвязи между allи сгенерированными приsignми
 - Выявляет мультиколлинеарность (высокую корреляцию между приsignми)
-- Определяет, какие признаки дублируют друг друга
+- Определяет, What признаки дублируют друг друга
 
 **Что включает:**
 - Матрица корреляций Пирсона
@@ -44,8 +44,8 @@ features = feature_engineer.generate_features(
 
 **Реализация:**
 ```python
-# Используя существующие инструменты корреляционного анализа
-correlation_analysis = correlation_analyzer.analyze_correlations(
+# Используя существующие инструменты корреляционного Analysis
+correlation_Analysis = correlation_analyzer.analyze_correlations(
  features,
  methods=['pearson', 'spearman']
 )
@@ -68,7 +68,7 @@ correlation_analysis = correlation_analyzer.analyze_correlations(
 **Реализация:**
 ```python
 # Используя существующий FeatureSelector
-importance_analysis = feature_importance_analyzer.analyze_importance(
+importance_Analysis = feature_importance_analyzer.analyze_importance(
  features,
  target=target_variable,
  methods=['random_forest', 'xgboost', 'mutual_info']
@@ -85,13 +85,13 @@ features = feature_engineer.generate_features(
 )
 
 # 2. Анализ корреляций
-correlation_analysis = correlation_analyzer.analyze_correlations(
+correlation_Analysis = correlation_analyzer.analyze_correlations(
  features,
  methods=['pearson', 'spearman']
 )
 
 # 3. Анализ важности признаков
-importance_analysis = feature_importance_analyzer.analyze_importance(
+importance_Analysis = feature_importance_analyzer.analyze_importance(
  features,
  target=target_variable,
  methods=['random_forest', 'xgboost', 'mutual_info']
@@ -100,14 +100,14 @@ importance_analysis = feature_importance_analyzer.analyze_importance(
 
 ## integration with существующими инструментами
 
-### Доступные компоненты
+### Доступные components
 
 1. **Генерация признаков:**
  - Класс `FeatureEngineer` in `src/pocket_hedge_fund/advanced_analytics/core/feature_engineer.py`
  - `RealMLModels.create_features()` in `src/ml/real_ml_models.py`
 
 2. **Корреляционный анализ:**
- - `MultiMarketManager.get_cross_market_analysis()` in `src/global/multi_market_integration.py`
+ - `MultiMarketManager.get_cross_market_Analysis()` in `src/global/multi_market_integration.py`
  - `QuantitativeResearcher.analyze_correlations()` in `src/research/quantitative_research.py`
 
 3. **Анализ важности признаков:**
@@ -116,28 +116,28 @@ importance_analysis = feature_importance_analyzer.analyze_importance(
 
 ### Точки интеграции
 
-- **Статистический анализ:** `stat_analysis.py`
-- **Анализ временных рядов:** `time_analysis.py`
-- **Финансовый анализ:** `finance_analysis.py`
+- **Статистический анализ:** `stat_Analysis.py`
+- **Анализ временных рядов:** `time_Analysis.py`
+- **Финансовый анализ:** `finance_Analysis.py`
 
-## Структура хранения данных
+## Structure хранения данных
 
 ```
 data/
 ├── fixed/
 │ ├── features/ # Сгенерированные признаки
 │ ├── correlations/ # Матрицы корреляций
-│ └── feature_importance/ # Результаты анализа важности
-├── analysis/
+│ └── feature_importance/ # Результаты Analysis важности
+├── Analysis/
 │ ├── feature_generation/ # Reportы on генерации признаков
-│ ├── correlation_analysis/ # Reportы on корреляционному анализу
-│ └── importance_analysis/ # Reportы on анализу важности
+│ ├── correlation_Analysis/ # Reportы on корреляционному анализу
+│ └── importance_Analysis/ # Reportы on анализу важности
 ```
 
 ## Лучшие практики
 
 1. **Начните with чистых данных:**
- - Use данные из директории `data/fixed/`
+ - Use data из директории `data/fixed/`
  - Обеспечьте качество данных перед генерацией признаков
 
 2. **Итеративный процесс:**
@@ -146,11 +146,11 @@ data/
 
 3. **Документирование:**
  - Сохраняйте все промежуточные результаты
- - Ведите метаданные for воспроизводимости
+ - Ведите метаdata for воспроизводимости
  - Документируйте решения on инженерии признаков
 
 4. **Валидация:**
- - Кросс-валидируйте результаты анализа важности признаков
+ - Кросс-валидируйте результаты Analysis важности признаков
  - Тестируйте стабильность корреляций во времени
  - Мониторьте производительность признаков in моделях
 
@@ -158,7 +158,7 @@ data/
 
 1. **Генерация признаков:**
  - Комплексный набор технических, статистических and моментных признаков
- - Правильно отформатированные and валидированные данные признаков
+ - Правильно отформатированные and валидированные data признаков
 
 2. **Корреляционный анализ:**
  - Выявление избыточных признаков
@@ -166,20 +166,20 @@ data/
  - Понимание взаимосвязей между приsignми
 
 3. **Анализ важности признаков:**
- - Ранжированный список наиболее важных признаков
+ - Ранжированный List наиболее важных признаков
  - Оптимальное подмножество признаков for моделирования
  - Рекомендации on отбору признаков
 
 ## Следующие шаги
 
-1. Реализовать рабочий процесс, используя существующие компоненты проекта
-2. Создать автоматизированные пайплайны for последовательности анализа
-3. Разработать инструменты визуализации for каждого этапа анализа
-4. Интегрировать with существующими инструментами анализа (`stat_analysis.py`, `time_analysis.py`, `finance_analysis.py`)
+1. Реализовать рабочий процесс, используя существующие components проекта
+2. Создать автоматизированные пайплайны for последовательности Analysis
+3. РазWorkingть инструменты визуализации for каждого этапа Analysis
+4. Интегрировать with существующими инструментами Analysis (`stat_Analysis.py`, `time_Analysis.py`, `finance_Analysis.py`)
 
 ## Ссылки
 
-- [documentation on инструментам анализа](analysis-tools.md)
+- [documentation on инструментам Analysis](Analysis-tools.md)
 - [guide on инженерии признаков](feature-engineering.md)
-- [guide on статистическому анализу](statistical-analysis.md)
-- [guide on анализу временных рядов](time-series-analysis.md)
+- [guide on статистическому анализу](statistical-Analysis.md)
+- [guide on анализу временных рядов](time-series-Analysis.md)

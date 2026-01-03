@@ -4,7 +4,7 @@
 
 ## installation зависимостей
 
-**Теория:** Правильная installation зависимостей критически важна for успешного развертывания блокчейн-системы. Все компоненты должны быть совместимы and правильно настроены.
+**Теория:** Правильная installation зависимостей критически важна for успешного развертывания блокчейн-системы. Все components должны быть совместимы and правильно настроены.
 
 **Системные требования:**
 
@@ -38,7 +38,7 @@ talib-binary==0.4.19
 ccxt==4.1.13
 ccxt[async]==4.1.13
 
-# HTTP клиенты
+# HTTP clientы
 aiohttp==3.8.6
 requests==2.31.0
 httpx==0.25.2
@@ -79,10 +79,10 @@ python -m venv blockchain_env
 source blockchain_env/bin/activate # Linux/Mac
 # blockchain_env\Scripts\activate # Windows
 
-# Installation зависимостей
+# installation зависимостей
 pip install -r requirements.txt
 
-# Installation TA-Lib (может потребовать дополнительных системных зависимостей)
+# installation TA-Lib (может потребовать дополнительных системных зависимостей)
 # Ubuntu/Debian:
 sudo apt-get install build-essential
 pip install TA-Lib
@@ -128,10 +128,10 @@ pip install TA_Lib-0.4.28-cp311-cp311-win_amd64.whl
 # Инициализация проекта
 npm init -y
 
-# Installation зависимостей
+# installation зависимостей
 npm install
 
-# Installation Hardhat
+# installation Hardhat
 npm install --save-dev hardhat
 
 # Инициализация Hardhat
@@ -144,35 +144,35 @@ npx hardhat init
 # Dockerfile for блокчейн системы
 FROM python:3.11-slim
 
-# Installation системных зависимостей
+# installation системных зависимостей
 RUN apt-get update && apt-get install -y \
  build-essential \
  curl \
  git \
- && rm -rf /var/lib/apt/lists/*
+ && rm -rf /var/lib/apt/Lists/*
 
-# Installation Node.js
+# installation Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
  && apt-get install -y nodejs
 
-# Installation рабочей директории
+# installation рабочей директории
 WORKDIR /app
 
 # Копирование файлов зависимостей
 COPY requirements.txt package*.json ./
 
-# Installation Python зависимостей
+# installation Python зависимостей
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Installation Node.js зависимостей
+# installation Node.js зависимостей
 RUN npm install
 
 # Копирование исходного кода
 COPY . .
 
-# create пользователя for безопасности
-RUN useradd -m -u 1000 blockchain && chown -R blockchain:blockchain /app
-USER blockchain
+# create User for безопасности
+RUN Useradd -m -u 1000 blockchain && chown -R blockchain:blockchain /app
+User blockchain
 
 # Экспорт портов
 EXPOSE 8000 8545
@@ -211,7 +211,7 @@ TELEGRAM_CHAT_ID=your_telegram_chat_id
 DISCORD_WEBHOOK_URL=your_discord_webhook_url
 
 # База данных
-database_URL=postgresql://user:password@localhost:5432/trading_bot
+database_URL=postgresql://User:password@localhost:5432/trading_bot
 REDIS_URL=redis://localhost:6379
 
 # Логирование
@@ -248,7 +248,7 @@ LOG_FILE=./logs/blockchain_trading.log
  - Соответствие регуляторным требованиям
 - **Минусы:**
  - Потенциальные Issues with конфиденциальностью
- - Возможность анализа стратегий конкурентами
+ - Возможность Analysis стратегий конкурентами
  - Сложность защиты интеллектуальной собственности
 
 **3. Автоматизация**
@@ -265,10 +265,10 @@ LOG_FILE=./logs/blockchain_trading.log
  - Необходимость тщательного тестирования
 
 **4. Доступность**
-- **Теория:** Блокчейн-системы работают 24/7 без перерывов, что критично for глобальных финансовых рынков, где торговля происходит круглосуточно.
-- **Почему важно:** Финансовые рынки работают круглосуточно, and система должна быть доступна постоянно
+- **Теория:** Блокчейн-системы Workingют 24/7 без перерывов, что критично for глобальных финансовых рынков, где торговля происходит круглосуточно.
+- **Почему важно:** Финансовые рынки Workingют круглосуточно, and система должна быть доступна постоянно
 - **Плюсы:**
- - Круглосуточная работа
+ - Круглосуточная Working
  - Отсутствие Planовых простоев
  - Глобальная доступность
  - Непрерывная торговля
@@ -294,7 +294,7 @@ LOG_FILE=./logs/blockchain_trading.log
 
 **Теория:** Наш подход основан on комбинации смарт-контрактов, машинного обучения and DeFi протоколов for создания полностью автоматизированной торговой системы. Это обеспечивает максимальную эффективность and робастность.
 
-**Мы используем:**
+**Мы Use:**
 
 **1. Смарт-контракты for логики**
 - **Теория:** Смарт-контракты обеспечивают автоматическое выполнение торговой логики без человеческого вмешательства
@@ -309,11 +309,11 @@ LOG_FILE=./logs/blockchain_trading.log
  - Необходимость тщательного тестирования
  - Потенциальные Issues with безопасностью
 
-**2. ML-модели for predictions**
+**2. ML-модели for Predictions**
 - **Теория:** Машинное обучение обеспечивает точные предсказания рыночных движений on basis исторических данных
 - **Почему важно:** Точные предсказания критичны for прибыльной торговли
 - **Плюсы:**
- - Высокая точность predictions
+ - Высокая точность Predictions
  - Адаптация к изменениям рынка
  - Обработка больших объемов данных
  - Автоматическое обучение
@@ -335,8 +335,8 @@ LOG_FILE=./logs/blockchain_trading.log
  - Потенциальные Issues with безопасностью
  - Сложность интеграции
 
-**4. Автоматическое управление рисками**
-- **Теория:** Автоматическое управление рисками защищает капитал from значительных потерь
+**4. Автоматическое Management рисками**
+- **Теория:** Автоматическое Management рисками защищает капитал from значительных потерь
 - **Почему важно:** Защита капитала критична for долгосрочного успеха
 - **Плюсы:**
  - Автоматическая защита капитала
@@ -350,12 +350,12 @@ LOG_FILE=./logs/blockchain_trading.log
 
 ## Архитектура блокчейн-системы
 
-### 1. Компоненты системы
+### 1. components системы
 
 **Теория:** Архитектура блокчейн-системы основана on модульном подходе, где каждый компонент выполняет специфическую функцию. Это обеспечивает масштабируемость, надежность and простоту обслуживания.
 
 **Почему модульная архитектура критична:**
-- **Масштабируемость:** Позволяет добавлять новые компоненты без изменения существующих
+- **Масштабируемость:** Позволяет добавлять новые components без изменения существующих
 - **Надежность:** Отказ одного компонента not влияет on работу других
 - **Простота обслуживания:** Каждый компонент можно обновлять независимо
 - **Тестирование:** Каждый компонент можно тестировать отдельно
@@ -366,18 +366,18 @@ LOG_FILE=./logs/blockchain_trading.log
 
 **Основные принципы архитектуры:**
 
-1. **Модульность:** Каждый компонент изолирован and может работать независимо
+1. **Модульность:** Каждый компонент изолирован and может Workingть независимо
 2. **Масштабируемость:** Система может легко масштабироваться добавлением новых компонентов
 3. **Надежность:** Отказ одного компонента not влияет on работу других
 4. **Безопасность:** Каждый компонент имеет свои механизмы безопасности
-5. **Monitoring:** Все компоненты поддерживают Monitoring and логирование
+5. **Monitoring:** Все components поддерживают Monitoring and логирование
 
-**Компоненты системы:**
+**components системы:**
 
 - **Web3 Provider:** Обеспечивает связь with блокчейн-network
-- **Account Management:** Управление криптографическими ключами and адресами
+- **Account Management:** Management криптографическими ключами and адресами
 - **Contract Registry:** Реестр всех смарт-контрактов системы
-- **ML Models:** Машинные модели for predictions
+- **ML Models:** Машинные модели for Predictions
 - **DeFi Protocols:** integration with децентрализованными протоколами
 
 ```python
@@ -428,7 +428,7 @@ class DeFiProtocolConfig:
  factory_address: Optional[str] = None
  token_addresses: Dict[str, str] = None
 
-class BlockchainTradingSystem:
+class BlockchainTradingsystem:
  """
  Полнофункциональная блокчейн торговая система
 
@@ -437,8 +437,8 @@ class BlockchainTradingSystem:
 
  Основные возможности:
  - Автоматическое выполнение торговых операций
- - integration with ML-моделями for predictions
- - Управление рисками in реальном времени
+ - integration with ML-моделями for Predictions
+ - Management рисками in реальном времени
  - integration with множеством DeFi протоколов
  - Monitoring and алертинг
  """
@@ -450,7 +450,7 @@ class BlockchainTradingSystem:
  Args:
  web3_provider: URL провайдера Web3 (например, Infura, Alchemy)
  private_key: Приватный ключ for подписи транзакций
- network_id: ID сети (1 - Mainnet, 3 - Ropsten, 4 - Rinkeby)
+ network_id: ID сети (1 - mainnet, 3 - Ropsten, 4 - Rinkeby)
  """
  try:
  # Инициализация Web3
@@ -524,7 +524,7 @@ class BlockchainTradingSystem:
  self.contracts[name] = {
  'contract': contract,
  'config': config,
- 'last_used': datetime.now()
+ 'last_Used': datetime.now()
  }
 
  logger.info(f"Контракт {name} успешно настроен")
@@ -551,7 +551,7 @@ class BlockchainTradingSystem:
 
  # check существования файла
  if not os.path.exists(config.path):
- raise FileNotFoundError(f"Файл модели not найден: {config.path}")
+ raise FileNotfoundError(f"Файл модели not found: {config.path}")
 
  # Загрузка модели
  model = joblib.load(config.path)
@@ -563,7 +563,7 @@ class BlockchainTradingSystem:
  self.models[name] = {
  'model': model,
  'config': config,
- 'last_used': datetime.now(),
+ 'last_Used': datetime.now(),
  'Predictions_count': 0
  }
 
@@ -602,7 +602,7 @@ class BlockchainTradingSystem:
  self.defi_protocols[name] = {
  'protocol': protocol,
  'config': config,
- 'last_used': datetime.now(),
+ 'last_Used': datetime.now(),
  'transactions_count': 0
  }
 
@@ -703,7 +703,7 @@ class BlockchainTradingSystem:
 **1. Автоматизацию торговых процессов:**
 - **Теория:** Смарт-контракты устраняют необходимость in ручном вмешательстве, обеспечивая автоматическое выполнение торговых операций on basis предопределенных условий
 - **Практическое применение:** Когда ML-модель генерирует сигнал on покупку/продажу, смарт-контракт автоматически выполняет сделку без человеческого участия
-- **Преимущества:** Исключение эмоциональных решений, быстрая реакция on рыночные изменения, работа 24/7
+- **Преимущества:** Исключение эмоциональных решений, быстрая реакция on рыночные изменения, Working 24/7
 
 **2. Неизменяемость торговой логики:**
 - **Теория:** После деплоя код смарт-контракта not может быть изменен, что обеспечивает предсказуемость and надежность системы
@@ -711,22 +711,22 @@ class BlockchainTradingSystem:
 - **Преимущества:** Защита from манипуляций, предсказуемость поведения, повышение доверия
 
 **3. Прозрачность and аудируемость:**
-- **Теория:** Весь код смарт-контракта виден всем участникам сети, что обеспечивает полную прозрачность торговой логики
-- **Практическое применение:** Пользователи могут проверить торговую логику перед инвестированием, регуляторы могут аудировать систему
+- **Теория:** Весь код смарт-контракта виден all участникам сети, что обеспечивает полную прозрачность торговой логики
+- **Практическое применение:** Пользователи могут проверить торговую логику перед инвестированием, регуляторы могут аудировать system
 - **Преимущества:** Повышение доверия, соответствие регуляторным требованиям, возможность аудита
 
 **4. Децентрализованное выполнение:**
 - **Теория:** Смарт-контракты выполняются in децентрализованной сети узлов, что исключает единые точки отказа
-- **Практическое применение:** Торговая система продолжает работать даже при отказе отдельных узлов сети
+- **Практическое применение:** Торговая система продолжает Workingть даже при отказе отдельных узлов сети
 - **Преимущества:** Высокая отказоустойчивость, глобальная доступность, снижение рисков
 
 **Архитектура торгового смарт-контракта:**
 
 Торговый смарт-контракт состоит из нескольких ключевых компонентов:
 
-1. **state management:** Хранение информации о сделках, балансах, настройках
+1. **state Management:** Хранение информации о сделках, балансах, настройках
 2. **Логика торговли:** Алгоритмы принятия решений о покупке/продаже
-3. **Управление рисками:** check лимитов and ограничений
+3. **Management рисками:** check лимитов and ограничений
 4. **integration with DEX:** Взаимодействие with децентрализованными биржами
 5. **События and логирование:** Запись всех операций for Monitoringа
 
@@ -737,9 +737,9 @@ class BlockchainTradingSystem:
 - **Безопасность:** Исключают человеческие ошибки and манипуляции
 
 **Ключевые functions смарт-контракта:**
-- **Управление сделками:** create, выполнение and отслеживание сделок
+- **Management сделками:** create, выполнение and отслеживание сделок
 - **Контроль доступа:** Ограничение доступа к критическим функциям
-- **Управление рисками:** Автоматическая check лимитов риска
+- **Management рисками:** Автоматическая check лимитов риска
 - **Аварийная остановка:** Возможность остановки системы in критических ситуациях
 
 **Полнофункциональный смарт-контракт for ML торгового бота:**
@@ -758,7 +758,7 @@ class BlockchainTradingSystem:
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-// Импорт интерфейсов for интеграции with DEX
+// Импорт interfaceов for интеграции with DEX
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
@@ -767,11 +767,11 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 /**
  * @title MLTradingBot
  * @dev Полнофункциональный смарт-контракт for ML торгового бота
- * @author Neozork Team
+ * @author Neozork team
  *
  * Этот контракт обеспечивает:
- * - Автоматическое выполнение торговых операций on basis ML predictions
- * - Управление рисками and лимитами
+ * - Автоматическое выполнение торговых операций on basis ML Predictions
+ * - Management рисками and лимитами
  * - Интеграцию with DEX протоколами
  * - Monitoring and аудит всех операций
  */
@@ -780,7 +780,7 @@ contract MLTradingBot is ReentrancyGuard, Pausable, Ownable {
  // ============ СТРУКТУРЫ ДАННЫХ ============
 
  /**
- * @dev Структура for хранения информации о сделке
+ * @dev Structure for хранения информации о сделке
  */
  struct Trade {
  address tokenIn; // Входной токен
@@ -797,18 +797,18 @@ contract MLTradingBot is ReentrancyGuard, Pausable, Ownable {
  }
 
  /**
- * @dev Структура for хранения настроек токена
+ * @dev Structure for хранения настроек токена
  */
  struct TokenSettings {
- bool isAllowed; // Разрешен ли токен for trading
+ bool isallowed; // Разрешен ли токен for trading
  uint256 maxTradeAmount; // Максимальная сумма сделки
  uint256 minTradeAmount; // Минимальная сумма сделки
  uint256 maxSlippage; // Максимальное проскальзывание (in базисных пунктах)
- bool isPaused; // Приостановлена ли торговля токеном
+ bool isPaUsed; // Приостановлена ли торговля токеном
  }
 
  /**
- * @dev Структура for хранения статистики
+ * @dev Structure for хранения статистики
  */
  struct TradingStats {
  uint256 totalTrades; // Общее количество сделок
@@ -824,7 +824,7 @@ contract MLTradingBot is ReentrancyGuard, Pausable, Ownable {
  address public riskManager; // Адрес контракта управления рисками
  address public dexRouter; // Адрес DEX роутера (например, Uniswap V2)
 
- mapping(uint256 => Trade) public trades; // Маппинг ID сделки -> данные сделки
+ mapping(uint256 => Trade) public trades; // Маппинг ID сделки -> data сделки
  mapping(address => TokenSettings) public tokenSettings; // settings токенов
  mapping(address => uint256) public tokenBalances; // Балансы токенов in контракте
 
@@ -837,7 +837,7 @@ contract MLTradingBot is ReentrancyGuard, Pausable, Ownable {
 
  // ============ СОБЫТИЯ ============
 
- event TradeExecuted(
+ event Tradeexecuted(
  uint256 indexed tradeId,
  address indexed tokenIn,
  address indexed tokenOut,
@@ -857,7 +857,7 @@ contract MLTradingBot is ReentrancyGuard, Pausable, Ownable {
 
  event TokenSettingsUpdated(
  address indexed token,
- bool isAllowed,
+ bool isallowed,
  uint256 maxTradeAmount,
  uint256 minTradeAmount,
  uint256 maxSlippage
@@ -881,8 +881,8 @@ contract MLTradingBot is ReentrancyGuard, Pausable, Ownable {
 
  modifier validToken(address token) {
  require(token != address(0), "MLTradingBot: Invalid token address");
- require(tokenSettings[token].isAllowed, "MLTradingBot: Token not allowed");
- require(!tokenSettings[token].isPaused, "MLTradingBot: Token trading paused");
+ require(tokenSettings[token].isallowed, "MLTradingBot: Token not allowed");
+ require(!tokenSettings[token].isPaUsed, "MLTradingBot: Token trading paUsed");
  _;
  }
 
@@ -951,7 +951,7 @@ contract MLTradingBot is ReentrancyGuard, Pausable, Ownable {
  )
  external
  onlyMLOracle
- whenNotPaused
+ whenNotPaUsed
  nonReentrant
  validToken(tokenIn)
  validToken(tokenOut)
@@ -992,7 +992,7 @@ contract MLTradingBot is ReentrancyGuard, Pausable, Ownable {
  trades[tradeId].executed = true;
  _updateStats(tradeId);
 
- emit TradeExecuted(
+ emit Tradeexecuted(
  tradeId,
  tokenIn,
  tokenOut,
@@ -1017,7 +1017,7 @@ contract MLTradingBot is ReentrancyGuard, Pausable, Ownable {
 
  try {
  // Здесь будет integration with DEX протоколом
- // for примера используем простую логику
+ // for примера Use простую логику
 
  // check ликвидности (упрощенная версия)
  uint256 expectedAmountOut = _getExpectedAmountOut(
@@ -1055,7 +1055,7 @@ contract MLTradingBot is ReentrancyGuard, Pausable, Ownable {
  address tokenIn,
  address tokenOut,
  uint256 amountIn
- ) internal view returns (uint256 expectedAmountOut) {
+ ) internal View returns (uint256 expectedAmountOut) {
  // Упрощенная логика расчета
  // in реальной реализации здесь будет integration with DEX роутером
  return amountIn * 95 / 100; // 5% комиссия
@@ -1088,14 +1088,14 @@ contract MLTradingBot is ReentrancyGuard, Pausable, Ownable {
  /**
  * @dev configuration параметров токена
  * @param token Адрес токена
- * @param isAllowed Разрешен ли токен
+ * @param isallowed Разрешен ли токен
  * @param maxTradeAmount Максимальная сумма сделки
  * @param minTradeAmount Минимальная сумма сделки
  * @param maxSlippage Максимальное проскальзывание
  */
  function setTokenSettings(
  address token,
- bool isAllowed,
+ bool isallowed,
  uint256 maxTradeAmount,
  uint256 minTradeAmount,
  uint256 maxSlippage
@@ -1105,24 +1105,24 @@ contract MLTradingBot is ReentrancyGuard, Pausable, Ownable {
  require(maxSlippage <= 10000, "MLTradingBot: Invalid slippage"); // Максимум 100%
 
  tokenSettings[token] = TokenSettings({
- isAllowed: isAllowed,
+ isallowed: isallowed,
  maxTradeAmount: maxTradeAmount,
  minTradeAmount: minTradeAmount,
  maxSlippage: maxSlippage,
- isPaused: false
+ isPaUsed: false
  });
 
- emit TokenSettingsUpdated(token, isAllowed, maxTradeAmount, minTradeAmount, maxSlippage);
+ emit TokenSettingsUpdated(token, isallowed, maxTradeAmount, minTradeAmount, maxSlippage);
  }
 
  /**
  * @dev Приостановка торговли токеном
  * @param token Адрес токена
- * @param isPaused Приостановлена ли торговля
+ * @param isPaUsed Приостановлена ли торговля
  */
- function pauseTokenTrading(address token, bool isPaused) external onlyOwner {
- require(tokenSettings[token].isAllowed, "MLTradingBot: Token not configured");
- tokenSettings[token].isPaused = isPaused;
+ function paUseTokenTrading(address token, bool isPaUsed) external onlyOwner {
+ require(tokenSettings[token].isallowed, "MLTradingBot: Token not configured");
+ tokenSettings[token].isPaUsed = isPaUsed;
  }
 
  /**
@@ -1150,7 +1150,7 @@ contract MLTradingBot is ReentrancyGuard, Pausable, Ownable {
  */
  function emergencyStop() external onlyOwner {
  emergencyStopTime = block.timestamp;
- _pause();
+ _paUse();
  emit EmergencyStopActivated(block.timestamp);
  }
 
@@ -1160,7 +1160,7 @@ contract MLTradingBot is ReentrancyGuard, Pausable, Ownable {
  function resumeAfterEmergency() external onlyOwner {
  require(emergencyStopTime > 0, "MLTradingBot: No emergency stop recorded");
  require(block.timestamp > emergencyStopTime + 1 hours, "MLTradingBot: Too soon to resume");
- _unpause();
+ _unpaUse();
  }
 
  // ============ ВСПОМОГАТЕЛЬНЫЕ functions ============
@@ -1210,14 +1210,14 @@ contract MLTradingBot is ReentrancyGuard, Pausable, Ownable {
  IERC20(token).transfer(msg.sender, amount);
  }
 
- // ============ functions ПРОСМОТРА ============
+ // ============ functions ViewА ============
 
  /**
  * @dev Получение информации о сделке
  * @param tradeId ID сделки
- * @return trade Данные сделки
+ * @return trade data сделки
  */
- function getTrade(uint256 tradeId) external view returns (Trade memory trade) {
+ function getTrade(uint256 tradeId) external View returns (Trade memory trade) {
  return trades[tradeId];
  }
 
@@ -1225,7 +1225,7 @@ contract MLTradingBot is ReentrancyGuard, Pausable, Ownable {
  * @dev Получение статистики торговли
  * @return tradingStats Статистика торговли
  */
- function getTradingStats() external view returns (TradingStats memory tradingStats) {
+ function getTradingStats() external View returns (TradingStats memory tradingStats) {
  return stats;
  }
 
@@ -1234,7 +1234,7 @@ contract MLTradingBot is ReentrancyGuard, Pausable, Ownable {
  * @param token Адрес токена
  * @return settings settings токена
  */
- function getTokenSettings(address token) external view returns (TokenSettings memory settings) {
+ function getTokenSettings(address token) external View returns (TokenSettings memory settings) {
  return tokenSettings[token];
  }
 
@@ -1243,64 +1243,64 @@ contract MLTradingBot is ReentrancyGuard, Pausable, Ownable {
  * @param token Адрес токена
  * @return balance Баланс токена
  */
- function getTokenBalance(address token) external view returns (uint256 balance) {
+ function getTokenBalance(address token) external View returns (uint256 balance) {
  return tokenBalances[token];
  }
 }
 ```
 
-### 3. ML Oracle for predictions
+### 3. ML Oracle for Predictions
 
 **Детальная теория ML Oracle in блокчейн-системах:**
 
-ML Oracle представляет собой критически важный компонент, который служит мостом между миром машинного обучения and блокчейн-технологиями. Это сложная система, которая обеспечивает надежную передачу predictions from ML-моделей in смарт-контракты.
+ML Oracle представляет собой критически важный компонент, который служит мостом между миром машинного обучения and блокчейн-технологиями. Это сложная система, которая обеспечивает надежную передачу Predictions from ML-моделей in смарт-контракты.
 
 **Архитектура ML Oracle:**
 
 ML Oracle состоит из нескольких ключевых компонентов, каждый из которых выполняет специфическую функцию:
 
-1. **Data Collection Layer (Слой сбора данных):**
+1. **data Collection Layer (Слой сбора данных):**
  - **Назначение:** Автоматический сбор рыночных данных из множества источников
  - **Источники данных:** Централизованные биржи (Binance, Coinbase), децентрализованные протоколы (Uniswap, SushiSwap), внешние API (CoinGecko, CoinMarketCap)
  - **Частота обновления:** from 1 секунды to 1 minutesы in dependencies from критичности данных
- - **Форматы данных:** OHLCV данные, order book, социальные сети, новости, макроэкономические индикаторы
+ - **Форматы данных:** OHLCV data, order book, социальные сети, новости, макроэкономические индикаторы
 
-2. **Data Processing Layer (Слой обработки данных):**
+2. **data Processing Layer (Слой обработки данных):**
  - **clean данных:** remove выбросов, заполнение пропусков, нормализация
  - **Feature Engineering:** create технических indicators, статистических метрик
  - **Валидация:** check качества and консистентности данных
  - **Агрегация:** Объединение данных из различных источников
 
-3. **ML Prediction Layer (Слой ML predictions):**
+3. **ML Prediction Layer (Слой ML Predictions):**
  - **Модели:** LSTM, Transformer, Random Forest, XGBoost, нейронные сети
- - **Ансамбль:** Объединение predictions from множества моделей
- - **Калибровка:** configuration уверенности predictions
- - **Валидация:** check качества predictions
+ - **Ансамбль:** Объединение Predictions from множества моделей
+ - **Калибровка:** configuration уверенности Predictions
+ - **Валидация:** check качества Predictions
 
-4. **Blockchain Integration Layer (Слой интеграции with блокчейном):**
- - **Web3 Integration:** Подключение к блокчейн-сети
+4. **Blockchain integration Layer (Слой интеграции with блокчейном):**
+ - **Web3 integration:** Подключение к блокчейн-сети
  - **Transaction Management:** create and отправка транзакций
  - **Gas Optimization:** Оптимизация стоимости транзакций
  - **Error Handling:** Обработка ошибок блокчейн-сети
 
 **Почему ML Oracle критичен for системы:**
 - **integration AI and блокчейна:** Обеспечивает связь между ML-моделями and смарт-контрактами
-- **Автоматизация predictions:** Автоматически получает and обрабатывает рыночные данные
+- **Автоматизация Predictions:** Автоматически получает and обрабатывает рыночные data
 - **Ансамблевое Prediction:** Объединяет предсказания from нескольких моделей
-- **Контроль качества:** Проверяет качество predictions перед отправкой
+- **Контроль качества:** Проверяет качество Predictions перед отправкой
 
 **Ключевые functions ML Oracle:**
 - **Сбор данных:** Автоматический сбор рыночных данных из различных источников
-- **Предсказания:** Получение predictions from ML-моделей
-- **Ансамбль:** Объединение predictions from нескольких моделей
-- **Валидация:** check качества and достоверности predictions
-- **Отправка:** Передача predictions in смарт-контракты
+- **Предсказания:** Получение Predictions from ML-моделей
+- **Ансамбль:** Объединение Predictions from нескольких моделей
+- **Валидация:** check качества and достоверности Predictions
+- **Отправка:** Передача Predictions in смарт-контракты
 
 **Технические требования к ML Oracle:**
 
 1. **Производительность:**
  - Время отклика: < 1 секунды
- - Пропускная способность: > 1000 predictions in minutesу
+ - Пропускная способность: > 1000 Predictions in minutesу
  - Доступность: 99.9% uptime
 
 2. **Надежность:**
@@ -1320,11 +1320,11 @@ ML Oracle состоит из нескольких ключевых компон
 
 **Полнофункциональная реализация ML Oracle:**
 
-Этот ML Oracle представляет собой комплексную систему, которая объединяет сбор данных, машинное обучение and блокчейн-интеграцию for создания полностью автоматизированной торговой системы.
+Этот ML Oracle представляет собой комплексную system, которая объединяет сбор данных, машинное обучение and блокчейн-интеграцию for создания полностью автоматизированной торговой системы.
 
 **Ключевые особенности реализации:**
 
-1. **Модульная архитектура:** Каждый компонент может работать независимо
+1. **Модульная архитектура:** Каждый компонент может Workingть независимо
 2. **Отказоустойчивость:** Автоматическое восстановление после сбоев
 3. **Масштабируемость:** Поддержка множественных моделей and источников данных
 4. **Безопасность:** Шифрование and валидация всех данных
@@ -1352,7 +1352,7 @@ from sklearn.preprocessing import StandardScaler
 import talib
 import ccxt
 import requests
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, as_COMPLETED
 import threading
 from queue import Queue
 import signal
@@ -1370,7 +1370,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 @dataclass
-class DataSourceConfig:
+class dataSourceConfig:
  """configuration источника данных"""
  name: str
  type: str # 'exchange', 'api', 'websocket'
@@ -1405,10 +1405,10 @@ class PredictionResult:
  timestamp: datetime
  model_Predictions: Dict[str, Any]
 
-class DataSource:
+class dataSource:
  """Источник данных"""
 
- def __init__(self, config: DataSourceConfig):
+ def __init__(self, config: dataSourceConfig):
  self.config = config
  self.last_update = None
  self.cached_data = None
@@ -1504,7 +1504,7 @@ class MLOracle:
 
  Этот Oracle обеспечивает:
  - Автоматический сбор данных из множества источников
- - Загрузку and управление ML моделями
+ - Загрузку and Management ML моделями
  - Ансамблевое Prediction
  - Интеграцию with блокчейн-network
  - Monitoring and логирование
@@ -1540,7 +1540,7 @@ class MLOracle:
 
  # Инициализация компонентов
  self.models: Dict[str, Any] = {}
- self.data_sources: Dict[str, DataSource] = {}
+ self.data_sources: Dict[str, dataSource] = {}
  self.scalers: Dict[str, StandardScaler] = {}
  self.ensemble_models: Dict[str, Any] = {}
  self.Prediction_queue = Queue()
@@ -1564,12 +1564,12 @@ class MLOracle:
  logger.error(f"Ошибка инициализации ML Oracle: {e}")
  raise
 
- def setup_data_sources(self, data_configs: List[DataSourceConfig]) -> bool:
+ def setup_data_sources(self, data_configs: List[dataSourceConfig]) -> bool:
  """
  configuration источников данных
 
  Args:
- data_configs: Список конфигураций источников данных
+ data_configs: List конфигураций источников данных
 
  Returns:
  bool: True если все источники успешно настроены
@@ -1578,7 +1578,7 @@ class MLOracle:
  for config in data_configs:
  logger.info(f"configuration источника данных: {config.name}")
 
- data_source = DataSource(config)
+ data_source = dataSource(config)
  self.data_sources[config.name] = data_source
 
  logger.info(f"Источник данных {config.name} успешно настроен")
@@ -1594,7 +1594,7 @@ class MLOracle:
  configuration ML моделей
 
  Args:
- model_configs: Список конфигураций моделей
+ model_configs: List конфигураций моделей
 
  Returns:
  bool: True если все модели успешно загружены
@@ -1616,7 +1616,7 @@ class MLOracle:
  self.models[config.name] = {
  'model': model,
  'config': config,
- 'last_used': datetime.now(),
+ 'last_Used': datetime.now(),
  'Predictions_count': 0
  }
 
@@ -1671,7 +1671,7 @@ class MLOracle:
  Получение рыночных данных из всех источников
 
  Returns:
- Dict: Объединенные рыночные данные
+ Dict: Объединенные рыночные data
  """
  try:
  # Параллельное получение данных из всех источников
@@ -1704,10 +1704,10 @@ class MLOracle:
  Обработка and объединение рыночных данных
 
  Args:
- raw_data: Сырые данные из источников
+ raw_data: Сырые data из источников
 
  Returns:
- Dict: Обработанные данные
+ Dict: ОбWorkingнные data
  """
  try:
  processed_data = {
@@ -1723,7 +1723,7 @@ class MLOracle:
  continue
 
  if 'tickers' in data:
- # Данные with биржи
+ # data with биржи
  for symbol, ticker in data['tickers'].items():
  if symbol not in processed_data['prices']:
  processed_data['prices'][symbol] = []
@@ -1786,7 +1786,7 @@ class MLOracle:
  Получение предсказания from всех моделей
 
  Args:
- market_data: Рыночные данные
+ market_data: Рыночные data
 
  Returns:
  PredictionResult: Результат предсказания
@@ -1829,7 +1829,7 @@ class MLOracle:
 
  # update статистики
  model_data['Predictions_count'] += 1
- model_data['last_used'] = datetime.now()
+ model_data['last_Used'] = datetime.now()
 
  except Exception as e:
  logger.error(f"Ошибка предсказания модели {name}: {e}")
@@ -1908,12 +1908,12 @@ class MLOracle:
  def _calculate_confidence(self, model, features: np.ndarray, Prediction: float) -> float:
  """Расчет уверенности предсказания"""
  try:
- # for классификаторов используем predict_proba
+ # for классификаторов Use predict_proba
  if hasattr(model, 'predict_proba'):
  probabilities = model.predict_proba(features)
  confidence = np.max(probabilities)
  else:
- # for регрессоров используем простую эвристику
+ # for регрессоров Use простую эвристику
  confidence = min(1.0, max(0.0, abs(Prediction) / 100))
 
  return float(confidence)
@@ -2040,7 +2040,7 @@ class MLOracle:
  market_data = await self.get_market_data()
 
  if not market_data:
- logger.warning("not удалось получить рыночные данные")
+ logger.warning("not удалось получить рыночные data")
  await asyncio.sleep(Prediction_interval)
  continue
 
@@ -2132,7 +2132,7 @@ async def main():
 
  # configuration источников данных
  data_configs = [
- DataSourceConfig(
+ dataSourceConfig(
  name="binance",
  type="exchange",
  url="",
@@ -2140,7 +2140,7 @@ async def main():
  secret_key="YOUR_SECRET_KEY",
  update_interval=60
  ),
- DataSourceConfig(
+ dataSourceConfig(
  name="coingecko",
  type="api",
  url="https://api.coingecko.com/api/v3/simple/price",
@@ -2213,7 +2213,7 @@ if __name__ == "__main__":
 - Ограниченная функциональность
 
 ```python
-class UniswapV2Integration:
+class UniswapV2integration:
  """integration with Uniswap V2"""
 
  def __init__(self, web3_provider, router_address, factory_address):
@@ -2327,7 +2327,7 @@ class UniswapV2Integration:
 **Плюсы:**
 - Пассивный доход from ликвидности
 - Возможность использования кредитного плеча
-- Автоматическое управление процентами
+- Автоматическое Management процентами
 - Высокая ликвидность
 
 **Минусы:**
@@ -2337,7 +2337,7 @@ class UniswapV2Integration:
 - Потенциальные Issues with безопасностью
 
 ```python
-class CompoundIntegration:
+class Compoundintegration:
  """integration with Compound"""
 
  def __init__(self, web3_provider, comptroller_address):
@@ -2441,7 +2441,7 @@ class CompoundIntegration:
 - Высокие требования к пониманию
 
 ```python
-class AaveIntegration:
+class Aaveintegration:
  """integration with Aave"""
 
  def __init__(self, web3_provider, lending_pool_address):
@@ -2515,15 +2515,15 @@ class AaveIntegration:
  return None
 ```
 
-## Автоматическое управление рисками
+## Автоматическое Management рисками
 
-**Теория:** Автоматическое управление рисками является критически важным компонентом любой торговой системы, особенно in блокчейн-среде, где риски могут быть значительными. Это обеспечивает защиту капитала and долгосрочную стабильность системы.
+**Теория:** Автоматическое Management рисками является критически важным компонентом любой торговой системы, особенно in блокчейн-среде, где риски могут быть значительными. Это обеспечивает защиту капитала and долгосрочную стабильность системы.
 
-**Почему автоматическое управление рисками критично:**
+**Почему автоматическое Management рисками критично:**
 - **Защита капитала:** Предотвращает катастрофические потери
 - **Автоматизация:** Исключает человеческие ошибки in управлении рисками
 - **Скорость:** Обеспечивает быструю реакцию on изменения рисков
-- **Непрерывность:** Работает 24/7 без перерывов
+- **Непрерывность:** Workingет 24/7 без перерывов
 
 ### 1. Смарт-контракт for риск-менеджмента
 
@@ -2583,15 +2583,15 @@ contract RiskManager {
  });
  }
 
- function checkPositionSize(address token, uint256 amount) external view returns (bool) {
+ function checkPositionSize(address token, uint256 amount) external View returns (bool) {
  return amount <= riskLimits.maxPositionSize;
  }
 
- function checkDailyLoss(address token, uint256 loss) external view returns (bool) {
+ function checkDailyLoss(address token, uint256 loss) external View returns (bool) {
  return dailyLosses[token] + loss <= riskLimits.maxDailyLoss;
  }
 
- function checkDrawdown(uint256 newDrawdown) external view returns (bool) {
+ function checkDrawdown(uint256 newDrawdown) external View returns (bool) {
  return newDrawdown <= riskLimits.maxDrawdown;
  }
 
@@ -2623,10 +2623,10 @@ contract RiskManager {
 
 ### 2. Python integration with риск-менеджментом
 
-**Теория:** Python integration with риск-менеджментом обеспечивает связь между ML-системой and блокчейн риск-менеджментом. Это критически важно for автоматического управления рисками on basis ML-predictions.
+**Теория:** Python integration with риск-менеджментом обеспечивает связь между ML-системой and блокчейн риск-менеджментом. Это критически важно for автоматического управления рисками on basis ML-Predictions.
 
 **Почему Python integration with риск-менеджментом важна:**
-- **Автоматизация:** Автоматически управляет рисками on basis ML-predictions
+- **Автоматизация:** Автоматически управляет рисками on basis ML-Predictions
 - **integration:** Обеспечивает связь между ML and блокчейн системами
 - **Гибкость:** Позволяет настраивать parameters риск-менеджмента
 - **Monitoring:** Обеспечивает непрерывный Monitoring рисков
@@ -2697,7 +2697,7 @@ class BlockchainRiskManager:
 
 ## Monitoring and алерты
 
-**Теория:** Monitoring and алерты являются критически важными компонентами блокчейн-системы, обеспечивающими непрерывный контроль состояния системы and быструю реакцию on проблемы. Это критично for обеспечения стабильности and безопасности системы.
+**Теория:** Monitoring and алерты являются критически важными componentsи блокчейн-системы, обеспечивающими непрерывный контроль состояния системы and быструю реакцию on проблемы. Это критично for обеспечения стабильности and безопасности системы.
 
 **Почему Monitoring and алерты критичны:**
 - **Контроль состояния:** Обеспечивает непрерывный контроль состояния системы
@@ -2717,7 +2717,7 @@ class BlockchainRiskManager:
 
 **Ключевые functions:**
 - **Monitoring сделок:** Отслеживание всех торговых операций
-- **Monitoring predictions:** Контроль качества ML-predictions
+- **Monitoring Predictions:** Контроль качества ML-Predictions
 - **Monitoring рисков:** Отслеживание состояния рисков
 - **Алерты:** Автоматические уведомления о проблемах
 
@@ -2728,7 +2728,7 @@ class BlockchainMonitor:
  def __init__(self, web3_provider, contract_addresses):
  self.web3 = Web3(Web3.HTTPProvider(web3_provider))
  self.contracts = {}
- self.monitoring_data = {}
+ self.Monitoring_data = {}
 
  # configuration контрактов
  for name, address in contract_addresses.items():
@@ -2740,7 +2740,7 @@ class BlockchainMonitor:
  """Monitoring сделок"""
  try:
  # Получение событий сделок
- trade_filter = self.contracts['trading_bot'].events.TradeExecuted.createFilter(
+ trade_filter = self.contracts['trading_bot'].events.Tradeexecuted.createFilter(
  fromBlock='latest'
  )
 
@@ -2753,18 +2753,18 @@ class BlockchainMonitor:
  'timestamp': event.args.timestamp
  }
 
- self.monitoring_data['trades'].append(trade_data)
+ self.Monitoring_data['trades'].append(trade_data)
 
  # check алертов
  self._check_trade_alerts(trade_data)
 
  except Exception as e:
- print(f"Error monitoring trades: {e}")
+ print(f"Error Monitoring trades: {e}")
 
  def monitor_ml_Predictions(self):
- """Monitoring ML predictions"""
+ """Monitoring ML Predictions"""
  try:
- # Получение событий predictions
+ # Получение событий Predictions
  Prediction_filter = self.contracts['trading_bot'].events.MLPredictionReceived.createFilter(
  fromBlock='latest'
  )
@@ -2776,13 +2776,13 @@ class BlockchainMonitor:
  'timestamp': event.args.timestamp
  }
 
- self.monitoring_data['Predictions'].append(Prediction_data)
+ self.Monitoring_data['Predictions'].append(Prediction_data)
 
  # check алертов
  self._check_Prediction_alerts(Prediction_data)
 
  except Exception as e:
- print(f"Error monitoring Predictions: {e}")
+ print(f"Error Monitoring Predictions: {e}")
 
  def _check_trade_alerts(self, trade_data):
  """check алертов on сделкам"""
@@ -2791,7 +2791,7 @@ class BlockchainMonitor:
  self._send_alert("Large trade detected", trade_data)
 
  # check частоты сделок
- recent_trades = [t for t in self.monitoring_data['trades']
+ recent_trades = [t for t in self.Monitoring_data['trades']
  if t['timestamp'] > time.time() - 3600] # Последний час
 
  if len(recent_trades) > 10: # Слишком много сделок
@@ -2803,7 +2803,7 @@ class BlockchainMonitor:
  if Prediction_data['confidence'] < 0.5: # Низкая уверенность
  self._send_alert("Low Prediction confidence", Prediction_data)
 
- # check аномальных predictions
+ # check аномальных Predictions
  if Prediction_data['Prediction'] > 1000: # Аномальное Prediction
  self._send_alert("Anomalous Prediction", Prediction_data)
 
@@ -2828,7 +2828,7 @@ class BlockchainMonitor:
  bot_token = "YOUR_BOT_TOKEN"
  chat_id = "YOUR_CHAT_ID"
 
- message = f"🚨 Alert: {alert['message']}\nData: {alert['data']}"
+ message = f"🚨 Alert: {alert['message']}\ndata: {alert['data']}"
 
  url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
  data = {
@@ -2852,7 +2852,7 @@ class BlockchainMonitor:
  'content': f"🚨 Alert: {alert['message']}",
  'embeds': [{
  'title': 'Trading Bot Alert',
- 'description': f"Data: {alert['data']}",
+ 'description': f"data: {alert['data']}",
  'color': 16711680 # Red
  }]
  }
@@ -2873,7 +2873,7 @@ class BlockchainMonitor:
  email = "your_email@gmail.com"
  password = "your_password"
 
- msg = MIMEText(f"Alert: {alert['message']}\nData: {alert['data']}")
+ msg = MIMEText(f"Alert: {alert['message']}\ndata: {alert['data']}")
  msg['Subject'] = "Trading Bot Alert"
  msg['From'] = email
  msg['To'] = email
@@ -2894,9 +2894,9 @@ class BlockchainMonitor:
 
 **Почему правильный деплой критичен:**
 - **Стабильность:** Обеспечивает стабильную работу системы
-- **Безопасность:** Защищает систему from атак and сбоев
+- **Безопасность:** Защищает system from атак and сбоев
 - **Производительность:** Обеспечивает оптимальную производительность
-- **Масштабируемость:** Позволяет масштабировать систему on мере роста
+- **Масштабируемость:** Позволяет масштабировать system on мере роста
 
 ### 1. Docker контейнер for блокчейн системы
 
@@ -2904,9 +2904,9 @@ class BlockchainMonitor:
 
 **Почему Docker контейнеризация важна:**
 - **Изоляция:** Обеспечивает изоляцию компонентов системы
-- **Портабельность:** Позволяет легко переносить систему между средами
+- **Портабельность:** Позволяет легко переносить system между средами
 - **Масштабируемость:** Упрощает масштабирование системы
-- **Управление:** Упрощает управление зависимостями
+- **Management:** Упрощает Management зависимостями
 
 **Плюсы:**
 - Изоляция компонентов
@@ -2925,7 +2925,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Installation зависимостей
+# installation зависимостей
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
@@ -2953,8 +2953,8 @@ CMD ["python", "main.py"]
 
 **Почему Docker Compose важен:**
 - **Оркестрация:** Обеспечивает слаженную работу всех компонентов
-- **Управление:** Упрощает управление сложной системой
-- **Масштабирование:** Позволяет легко масштабировать отдельные компоненты
+- **Management:** Упрощает Management сложной системой
+- **Масштабирование:** Позволяет легко масштабировать отдельные components
 - **Изоляция:** Обеспечивает изоляцию компонентов
 
 **Плюсы:**
@@ -2972,7 +2972,7 @@ CMD ["python", "main.py"]
 # docker-compose.yml
 Version: '3.8'
 
-services:
+Services:
  trading-bot:
  build: .
  environment:
@@ -3025,7 +3025,7 @@ services:
  image: postgres:13
  environment:
  - POSTGRES_DB=trading_bot
- - POSTGRES_USER=postgres
+ - POSTGRES_User=postgres
  - POSTGRES_PASSWORD=password
  volumes:
  - postgres_data:/var/lib/postgresql/data
@@ -3089,14 +3089,14 @@ echo "starting system..."
 docker-compose up -d
 
 # check статуса
-echo "Checking system status..."
+echo "checking system status..."
 docker-compose ps
 
 # check логов
-echo "Checking logs..."
+echo "checking logs..."
 docker-compose logs trading-bot
 
-echo "Deployment completed!"
+echo "deployment COMPLETED!"
 ```
 
 ## Следующие шаги
@@ -3106,7 +3106,7 @@ echo "Deployment completed!"
 После изучения блокчейн-деплоя:
 
 **1. Настройте тестовую сеть for разработки**
-- **Теория:** Тестовая сеть позволяет безопасно разрабатывать and тестировать систему без риска потери реальных средств
+- **Теория:** Тестовая сеть позволяет безопасно разрабатывать and тестировать system без риска потери реальных средств
 - **Почему важно:** Обеспечивает безопасную разработку and тестирование
 - **Плюсы:** Безопасность, возможность экспериментов, отсутствие рисков
 - **Минусы:** Ограниченная функциональность, потенциальные различия with mainnet
@@ -3120,7 +3120,7 @@ echo "Deployment completed!"
 **3. Задеплойте on mainnet после тестирования**
 - **Теория:** Развертывание on mainnet является финальным этапом, требующим максимальной осторожности and подготовки
 - **Почему важно:** Обеспечивает работу системы in реальных условиях
-- **Плюсы:** Реальная работа, доступ к ликвидности, возможность заработка
+- **Плюсы:** Реальная Working, доступ к ликвидности, возможность заработка
 - **Минусы:** Высокие риски, невозможность отката, реальные потери
 
 **4. Настройте Monitoring and алерты**
@@ -3129,7 +3129,7 @@ echo "Deployment completed!"
 - **Плюсы:** Контроль системы, быстрая реакция, предотвращение потерь
 - **Минусы:** Сложность settings, необходимость постоянного внимания
 
-**5. Запустите систему with небольшими суммами**
+**5. Запустите system with небольшими суммами**
 - **Теория:** Launch with небольшими суммами позволяет проверить работу системы in реальных условиях with минимальными рисками
 - **Почему важно:** Обеспечивает проверку системы with минимальными рисками
 - **Плюсы:** Минимальные риски, check работы, накопление опыта
@@ -3147,8 +3147,8 @@ echo "Deployment completed!"
 
 2. **ML Oracle - мост между ML and блокчейном**
  - **Теория:** ML Oracle обеспечивает интеграцию между машинным обучением and блокчейн-технологиями
- - **Почему важно:** Обеспечивает передачу ML-predictions in смарт-контракты
- - **Плюсы:** integration AI and блокчейна, автоматизация predictions, контроль качества
+ - **Почему важно:** Обеспечивает передачу ML-Predictions in смарт-контракты
+ - **Плюсы:** integration AI and блокчейна, автоматизация Predictions, контроль качества
  - **Минусы:** Сложность интеграции, потенциальные Issues with безопасностью
 
 3. **DeFi integration - доступ к множеству протоколов**
@@ -3158,7 +3158,7 @@ echo "Deployment completed!"
  - **Минусы:** Высокая волатильность, потенциальные Issues with безопасностью, сложность интеграции
 
 4. **Риск-менеджмент - защита from потерь**
- - **Теория:** Автоматическое управление рисками защищает капитал from значительных потерь
+ - **Теория:** Автоматическое Management рисками защищает капитал from значительных потерь
  - **Почему важно:** Критически важно for долгосрочного успеха and защиты капитала
  - **Плюсы:** Защита капитала, автоматизация, быстрая реакция, исключение эмоций
  - **Минусы:** Сложность settings, потенциальные ложные срабатывания, необходимость тестирования
@@ -3172,12 +3172,12 @@ echo "Deployment completed!"
 6. **Автоматизация - полная автоматизация процесса**
  - **Теория:** Полная автоматизация обеспечивает максимальную эффективность and исключает человеческие ошибки
  - **Почему важно:** Обеспечивает стабильность, эффективность and исключение человеческих ошибок
- - **Плюсы:** Максимальная эффективность, исключение ошибок, непрерывная работа, масштабируемость
+ - **Плюсы:** Максимальная эффективность, исключение ошибок, непрерывная Working, масштабируемость
  - **Минусы:** Сложность settings, потенциальные Issues with debugging, dependency from автоматизации
 
 ## Тестирование системы
 
-**Теория:** Комплексное тестирование блокчейн-системы критически важно for обеспечения безопасности and стабильности. Тестирование должно покрывать все компоненты системы, including смарт-контракты, ML модели and интеграции.
+**Теория:** Комплексное тестирование блокчейн-системы критически важно for обеспечения безопасности and стабильности. Тестирование должно покрывать все components системы, including смарт-контракты, ML модели and интеграции.
 
 ### 1. Тестирование смарт-контрактов
 
@@ -3212,10 +3212,10 @@ describe("MLTradingBot", function () {
  dexRouter.address
  );
 
- await mlTradingBot.waitForDeployment();
+ await mlTradingBot.waitFordeployment();
  });
 
- describe("Deployment", function () {
+ describe("deployment", function () {
  it("Should set the right owner", async function () {
  expect(await mlTradingBot.owner()).to.equal(owner.address);
  });
@@ -3233,14 +3233,14 @@ describe("MLTradingBot", function () {
  it("Should allow owner to set token settings", async function () {
  await mlTradingBot.setTokenSettings(
  token1.address,
- true, // isAllowed
+ true, // isallowed
  ethers.parseEther("1000"), // maxTradeAmount
  ethers.parseEther("1"), // minTradeAmount
  500 // maxSlippage (5%)
  );
 
  const settings = await mlTradingBot.getTokenSettings(token1.address);
- expect(settings.isAllowed).to.be.true;
+ expect(settings.isallowed).to.be.true;
  expect(settings.maxTradeAmount).to.equal(ethers.parseEther("1000"));
  });
 
@@ -3292,7 +3292,7 @@ describe("MLTradingBot", function () {
  80, // confidence
  "test_strategy"
  )
- ).to.emit(mlTradingBot, "TradeExecuted");
+ ).to.emit(mlTradingBot, "Tradeexecuted");
  });
 
  it("Should not execute trade with low confidence", async function () {
@@ -3329,7 +3329,7 @@ describe("MLTradingBot", function () {
  await expect(mlTradingBot.emergencyStop())
  .to.emit(mlTradingBot, "EmergencyStopActivated");
 
- expect(await mlTradingBot.paused()).to.be.true;
+ expect(await mlTradingBot.paUsed()).to.be.true;
  });
 
  it("Should not allow non-owner to emergency stop", async function () {
@@ -3353,7 +3353,7 @@ import numpy as np
 from unittest.mock import Mock, patch, AsyncMock
 from datetime import datetime
 
-from src.ml_oracle import MLOracle, DataSourceConfig, ModelConfig, PredictionResult
+from src.ml_oracle import MLOracle, dataSourceConfig, ModelConfig, PredictionResult
 
 class TestMLOracle:
  """Тесты for ML Oracle"""
@@ -3403,7 +3403,7 @@ class TestMLOracle:
  def test_setup_data_sources(self, oracle):
  """Тест settings источников данных"""
  data_configs = [
- DataSourceConfig(
+ dataSourceConfig(
  name="test_exchange",
  type="exchange",
  url="https://api.test.com",
@@ -3501,7 +3501,7 @@ class TestMLOracle:
  input_features=["feature1"],
  output_features=["Prediction"]
  ),
- 'last_used': datetime.now(),
+ 'last_Used': datetime.now(),
  'Predictions_count': 0
  }
  }
@@ -3588,7 +3588,7 @@ if __name__ == "__main__":
 
 ### 3. Интеграционные тесты
 
-**Теория:** Интеграционные тесты проверяют взаимодействие между различными компонентами системы.
+**Теория:** Интеграционные тесты проверяют взаимодействие между различными componentsи системы.
 
 ```python
 # tests/test_integration.py
@@ -3596,11 +3596,11 @@ import pytest
 import asyncio
 from unittest.mock import Mock, patch
 
-from src.blockchain_trading_system import BlockchainTradingSystem
+from src.blockchain_trading_system import BlockchainTradingsystem
 from src.ml_oracle import MLOracle
-from src.defi_integration import UniswapV2Integration
+from src.defi_integration import UniswapV2integration
 
-class TestIntegration:
+class Testintegration:
  """Интеграционные тесты"""
 
  @pytest.fixture
@@ -3609,7 +3609,7 @@ class TestIntegration:
  with patch('src.blockchain_trading_system.Web3') as mock_web3:
  mock_web3.return_value.is_connected.return_value = True
 
- system = BlockchainTradingSystem(
+ system = BlockchainTradingsystem(
  web3_provider="https://testnet.infura.io/v3/test",
  private_key="0x123",
  network_id=3
@@ -3695,7 +3695,7 @@ class TestLoad:
 
  @pytest.mark.asyncio
  async def test_concurrent_Predictions(self):
- """Тест одновременных predictions"""
+ """Тест одновременных Predictions"""
  oracle = MLOracle(
  web3_provider="https://testnet.infura.io/v3/test",
  contract_address="0x123",
@@ -3717,7 +3717,7 @@ class TestLoad:
  input_features=["feature1"],
  output_features=["Prediction"]
  ),
- 'last_used': datetime.now(),
+ 'last_Used': datetime.now(),
  'Predictions_count': 0
  }
  }
@@ -3726,7 +3726,7 @@ class TestLoad:
 
  # create задач for параллельного выполнения
  tasks = []
- for i in range(100): # 100 одновременных predictions
+ for i in range(100): # 100 одновременных Predictions
  market_data = {
  'prices': {'ETH/USDT': [{'price': 2000 + i}]},
  'technical_indicators': {'ETH/USDT': {'rsi': 50, 'macd': 0.1}}
@@ -3741,11 +3741,11 @@ class TestLoad:
 
  # check результатов
  successful_Predictions = [r for r in results if isinstance(r, PredictionResult)]
- assert len(successful_Predictions) > 90 # 90% успешных predictions
+ assert len(successful_Predictions) > 90 # 90% успешных Predictions
 
  # check производительности
  execution_time = end_time - start_time
- assert execution_time < 10 # Менее 10 секунд for 100 predictions
+ assert execution_time < 10 # Менее 10 секунд for 100 Predictions
 
  @pytest.mark.asyncio
  async def test_memory_usage(self):
@@ -3792,7 +3792,7 @@ echo "Launch тестов блокчейн системы..."
 python -m venv test_env
 source test_env/bin/activate
 
-# Installation зависимостей
+# installation зависимостей
 pip install -r requirements.txt
 pip install pytest pytest-asyncio pytest-mock
 

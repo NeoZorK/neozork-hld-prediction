@@ -5,7 +5,7 @@
 
 ## Why этика AI критически важна
 
-**Почему 90% ML-моделей in продакшене нарушают этические принципы?** Потому что команды фокусируются on технических метриках, игнорируя этические последствия. Это как create оружия без понимания, как его будут использовать.
+**Почему 90% ML-моделей in продакшене нарушают этические принципы?** Потому что team фокусируются on технических метриках, игнорируя этические последствия. Это как create оружия без понимания, как его будут использовать.
 
 ### Катастрофические Consequences неэтичного AI
 - **Дискриминация**: Модели могут принимать несправедливые решения
@@ -21,7 +21,7 @@
 
 ## Введение in этику AI
 
-<img src="images/optimized/ai_ethics_overview.png" alt="Этика and ответственный AI" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/ai_ethics_overView.png" alt="Этика and ответственный AI" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 19.1: Принципы этичного and ответственного использования искусственного интеллекта - основные категории and принципы*
 
 **Почему этика AI - это not просто "хорошо быть хорошим"?** Потому что неэтичные AI-системы могут причинить реальный вред людям and привести к серьезным юридическим and репутационным проблемам.
@@ -29,7 +29,7 @@
 **Основные принципы этичного AI:**
 - **Fairness & Non-discrimination**: Справедливость and отсутствие дискриминации
 - **Transparency & Explainability**: Прозрачность and объяснимость решений
-- **Privacy & Data Protection**: Приватность and защита персональных данных
+- **Privacy & data Protection**: Приватность and защита персональных данных
 - **Legal Compliance**: Соответствие правовым требованиям (GDPR, AI Act)
 - **Bias Detection & Mitigation**: Обнаружение and снижение смещений
 - **Accountability & Responsibility**: Ответственность and подReportность
@@ -51,12 +51,12 @@
 - **Demographic Parity**: Демографический паритет in предсказаниях
 - **Individual Fairness**: Справедливость on индивидуальном уровне
 - **Counterfactual Fairness**: Контрфактическая справедливость
-- **Calibration**: Калибровка predictions for разных групп
+- **Calibration**: Калибровка Predictions for разных групп
 
 **Почему модели могут быть несправедливыми?**
-- **Предвзятые данные**: Исторические данные содержат дискриминацию
+- **Предвзятые data**: Исторические data содержат дискриминацию
 - **Неправильные признаки**: Использование чувствительных атрибутов
-- **Неравномерное качество**: Модель работает хуже for некоторых групп
+- **Неравномерное качество**: Модель Workingет хуже for некоторых групп
 - **Скрытые смещения**: Неочевидные паттерны дискриминации
 
 ```python
@@ -126,8 +126,8 @@ def calculate_recall(Predictions, actual):
  - Применение: любая модель for классификации or регрессии
  - examples: RandomForest, LogisticRegression, Neural network
 
-- **`X_test`**: Тестовые данные for проверки
- - Тип: pandas DataFrame or numpy array
+- **`X_test`**: Тестовые data for проверки
+ - Тип: pandas dataFrame or numpy array
  - Содержит: признаки for предсказания
  - Требования: должны включать чувствительные атрибуты
  - Размер: обычно 20% from общего датасета
@@ -138,19 +138,19 @@ def calculate_recall(Predictions, actual):
  - Требования: должны соответствовать X_test
  - Формат: бинарные (0/1) or мультиклассовые метки
 
-- **`sensitive_attributes`**: Список чувствительных атрибутов
+- **`sensitive_attributes`**: List чувствительных атрибутов
  - Тип: List[str]
- - Содержит: названия колонок with чувствительными приsignми
+ - Содержит: названия columns with чувствительными приsignми
  - examples: ['gender', 'race', 'age_group', 'religion']
  - Применение: check справедливости on этим атрибутам
 
 - **`Predictions = model.predict(X_test)`**: Предсказания модели
- - Результат: массив predictions for всех тестовых образцов
+ - Результат: массив Predictions for всех тестовых образцов
  - Формат: бинарные (0/1) or вероятности
  - Применение: основа for расчета метрик справедливости
 
 - **`groups = X_test[attr].unique()`**: Уникальные значения атрибута
- - Результат: список уникальных значений чувствительного атрибута
+ - Результат: List уникальных значений чувствительного атрибута
  - examples: ['male', 'female'] for gender
  - Применение: разделение данных on группы for сравнения
 
@@ -173,7 +173,7 @@ def calculate_recall(Predictions, actual):
  - Формула: (правильные предсказания) / (общее количество)
  - Диапазон: from 0 to 1
  - Применение: основная метрика производительности
- - Интерпретация: доля правильных predictions
+ - Интерпретация: доля правильных Predictions
 
 - **`precision = calculate_precision(group_Predictions, group_actual)`**: Точность for группы
  - Формула: TP / (TP + FP)
@@ -185,7 +185,7 @@ def calculate_recall(Predictions, actual):
  - Формула: TP / (TP + FN)
  - Диапазон: from 0 to 1
  - Применение: метрика for положительного класса
- - Интерпретация: доля найденных истинных положительных
+ - Интерпретация: доля foundных истинных положительных
 
 - **`max_diff = max(accuracies) - min(accuracies)`**: Максимальная разность точности
  - Результат: разность между лучшей and худшей точностью
@@ -213,7 +213,7 @@ def calculate_recall(Predictions, actual):
 
 - **Demographic Parity**: Демографический паритет
  - Формула: P(Ŷ=1|A=a) = P(Ŷ=1|A=b)
- - Применение: равное распределение predictions
+ - Применение: равное распределение Predictions
  - Ограничения: может быть несправедливым
 
 - **Individual Fairness**: Справедливость on индивидуальном уровне
@@ -224,11 +224,11 @@ def calculate_recall(Predictions, actual):
 - **Counterfactual Fairness**: Контрфактическая справедливость
  - Принцип: Prediction not должно зависеть from чувствительных атрибутов
  - Применение: check причинной справедливости
- - Сложность: требует контрфактического анализа
+ - Сложность: требует контрфактического Analysis
 
-- **Calibration**: Калибровка predictions
+- **Calibration**: Калибровка Predictions
  - Принцип: предсказанные вероятности должны соответствовать истинным
- - Применение: check надежности predictions
+ - Применение: check надежности Predictions
  - Метрика: Brier Score, Reliability Diagram
 ```
 
@@ -269,25 +269,25 @@ class EthicalModelWrapper:
  shap_values = self.shap_explainer.shap_values(instance)
  return shap_values
  elif method == 'lime':
- explanation = self.lime_explainer.explain_instance(
+ exPlanation = self.lime_explainer.explain_instance(
  instance.values,
  self.model.predict_proba,
  num_features=10
  )
- return explanation
+ return exPlanation
  else:
  raise ValueError("Method must be 'shap' or 'lime'")
 
- def check_bias_in_explanation(self, instance):
+ def check_bias_in_exPlanation(self, instance):
  """check наличия смещений in объяснении"""
 
- explanation = self.explain_Prediction(instance, method='lime')
+ exPlanation = self.explain_Prediction(instance, method='lime')
 
  # check важности чувствительных атрибутов
  sensitive_importance = 0
  for attr in self.sensitive_attributes:
- if attr in explanation.as_list():
- sensitive_importance += abs(explanation.as_list()[attr][1])
+ if attr in exPlanation.as_List():
+ sensitive_importance += abs(exPlanation.as_List()[attr][1])
 
  # Если чувствительные атрибуты имеют высокую важность - возможное смещение
  bias_detected = sensitive_importance > 0.5
@@ -295,7 +295,7 @@ class EthicalModelWrapper:
  return {
  'bias_detected': bias_detected,
  'sensitive_importance': sensitive_importance,
- 'explanation': explanation
+ 'exPlanation': exPlanation
  }
 ```
 
@@ -313,7 +313,7 @@ class EthicalModelWrapper:
  - Требования: должны соответствовать X_train.columns
  - Применение: for интерпретации объяснений
 
-- **`sensitive_attributes`**: Список чувствительных атрибутов
+- **`sensitive_attributes`**: List чувствительных атрибутов
  - Тип: List[str]
  - Содержит: названия чувствительных признаков
  - examples: ['gender', 'race', 'age_group']
@@ -324,9 +324,9 @@ class EthicalModelWrapper:
  - Применение: будет создан in create_explainer()
  - Результат: SHAP or LIME объяснитель
 
-- **`X_train`**: Обучающие данные for создания объяснителя
- - Тип: pandas DataFrame or numpy array
- - Содержит: данные for обучения объяснителя
+- **`X_train`**: Обучающие data for создания объяснителя
+ - Тип: pandas dataFrame or numpy array
+ - Содержит: data for обучения объяснителя
  - Требования: должны включать все признаки
  - Размер: обычно 70% from общего датасета
 
@@ -337,7 +337,7 @@ class EthicalModelWrapper:
  - Результат: объяснитель SHAP
 
 - **`lime.lime_tabular.LimeTabularExplainer(...)`**: LIME объяснитель for табличных данных
- - `X_train.values`: Данные in numpy формате
+ - `X_train.values`: data in numpy формате
  - `feature_names`: Названия признаков
  - `class_names`: Названия классов
  - `mode='classification'`: Режим классификации
@@ -361,8 +361,8 @@ class EthicalModelWrapper:
  - Диапазон: from -∞ to +∞
  - Применение: объяснение важности признаков
 
-- **`explanation = self.lime_explainer.explain_instance(...)`**: LIME объяснение
- - `instance.values`: Данные образца in numpy формате
+- **`exPlanation = self.lime_explainer.explain_instance(...)`**: LIME объяснение
+ - `instance.values`: data образца in numpy формате
  - `self.model.predict_proba`: function предсказания вероятностей
  - `num_features=10`: Количество признаков for объяснения
  - Результат: LIME объяснение
@@ -373,12 +373,12 @@ class EthicalModelWrapper:
  - Применение: ограничение сложности объяснения
  - Баланс: между простотой and полнотой
 
-- **`explanation.as_list()`**: Список важности признаков
- - Результат: список (признак, важность) in порядке убывания
+- **`exPlanation.as_List()`**: List важности признаков
+ - Результат: List (признак, важность) in порядке убывания
  - Формат: [('feature1', 0.3), ('feature2', 0.2), ...]
  - Применение: анализ важности признаков
 
-- **`sensitive_importance += abs(explanation.as_list()[attr][1])`**: Накопление важности чувствительных атрибутов
+- **`sensitive_importance += abs(exPlanation.as_List()[attr][1])`**: Накопление важности чувствительных атрибутов
  - `abs()`: Абсолютное значение важности
  - `[attr][1]`: Важность приsign attr
  - Результат: суммарная важность чувствительных атрибутов
@@ -398,9 +398,9 @@ class EthicalModelWrapper:
  - Ограничения: может быть медленным for больших моделей
  - Применение: глобальные and локальные объяснения
 
-- **LIME (Local Interpretable Model-agnostic Explanations)**:
+- **LIME (Local Interpretable Model-agnostic ExPlanations)**:
  - Принцип: локальная аппроксимация модели
- - Преимущества: работает with любыми моделями, быстрый
+ - Преимущества: Workingет with любыми моделями, быстрый
  - Ограничения: может быть нестабильным
  - Применение: локальные объяснения
 
@@ -426,10 +426,10 @@ class EthicalModelWrapper:
 - **Secure Multi-party**: Безопасные вычисления между сторонами
 
 **Принципы защиты приватности:**
-- **Минимизация данных**: Сбор только необходимых данных
+- **Минимизация данных**: Сбор только required данных
 - **Ограничение цели**: Использование данных только for заявленных целей
 - **Прозрачность**: Информирование о сборе and использовании данных
-- **Контроль**: Право пользователей on свои данные
+- **Контроль**: Право пользователей on свои data
 
 ```python
 from sklearn.preprocessing import StandardScaler
@@ -506,11 +506,11 @@ class PrivacyPreservingML:
  - `1e-3`: Высокая вероятность нарушения
  - Применение: контроль вероятности утечки данных
 
-- **`data`**: Данные for добавления шума
- - Тип: pandas DataFrame or numpy array
- - Содержит: данные for защиты приватности
+- **`data`**: data for добавления шума
+ - Тип: pandas dataFrame or numpy array
+ - Содержит: data for защиты приватности
  - Требования: должны быть числовыми
- - Применение: исходные данные for анонимизации
+ - Применение: исходные data for анонимизации
 
 - **`sensitivity=1.0`**: Чувствительность functions
  - Диапазон: from 0.1 to 10.0
@@ -529,16 +529,16 @@ class PrivacyPreservingML:
  - `0`: Среднее значение (центрированный шум)
  - `sigma`: Стандартное отклонение
  - `data.shape`: Размер данных
- - Результат: массив шума той же формы, что and данные
+ - Результат: массив шума той же формы, что and data
 
 - **`noisy_data = data + noise`**: add шума к данным
- - Результат: данные with добавленным шумом
+ - Результат: data with добавленным шумом
  - Применение: защита приватности
  - Баланс: между приватностью and полезностью данных
 
 - **`quasi_identifiers`**: Квази-идентификаторы for k-анонимности
  - Тип: List[str]
- - Содержит: названия колонок-квази-идентификаторов
+ - Содержит: названия columns-квази-идентификаторов
  - examples: ['age', 'zipcode', 'gender']
  - Применение: группировка for анонимизации
 
@@ -614,8 +614,8 @@ class PrivacyPreservingML:
 **Основные правовые требования:**
 - **GDPR Compliance**: Соответствие Общему регламенту on защите данных ЕС
 - **AI Act Compliance**: Соответствие Закону об искусственном интеллекте ЕС
-- **Data Protection**: Защита персональных данных and приватности
-- **Consent Management**: Управление согласием on обработку данных
+- **data Protection**: Защита персональных данных and приватности
+- **Consent Management**: Management согласием on обработку данных
 - **Right to Erasure**: Право on remove данных (право быть забытым)
 - **Transparency Obligations**: Обязательства on прозрачности
 
@@ -741,15 +741,15 @@ class AIActCompliance:
 
  requirements = {
  'unacceptable': [
- 'System is prohibited under AI Act'
+ 'system is prohibited under AI Act'
  ],
  'high': [
  'Conformity assessment required',
- 'Risk management system',
- 'Data governance',
+ 'Risk Management system',
+ 'data governance',
  'Technical documentation',
  'Record keeping',
- 'Transparency and user information',
+ 'Transparency and User information',
  'Human oversight',
  'Accuracy, robustness and cybersecurity'
  ],
@@ -771,7 +771,7 @@ class AIActCompliance:
 *Рисунок 19.3: Обнаружение and снижение смещений in ML - этапы and методы*
 
 **Этапы обнаружения смещений:**
-- **Data Bias**: Смещения in данных (исторические предрассудки, неравномерное представление)
+- **data Bias**: Смещения in данных (исторические предрассудки, неравномерное представление)
 - **Algorithm Bias**: Смещения in алгоритмах (неправильные признаки, скрытые корреляции)
 - **Evaluation Bias**: Смещения in оценке (неравномерные метрики, предвзятые тесты)
 
@@ -881,7 +881,7 @@ class BiasDetector:
  - Применение: расчет TPR and FPR for equalized odds
 
 - **`groups = sensitive_attribute.unique()`**: Уникальные группы
- - Результат: список уникальных значений чувствительного атрибута
+ - Результат: List уникальных значений чувствительного атрибута
  - examples: ['male', 'female'] for gender
  - Применение: итерация on группам for расчета метрик
 
@@ -891,10 +891,10 @@ class BiasDetector:
  - Размер: соответствует размеру Predictions
 
 - **`group_positive_rate = Predictions[group_mask].mean()`**: Доля положительных исходов for группы
- - Формула: (количество положительных predictions) / (общее количество)
+ - Формула: (количество положительных Predictions) / (общее количество)
  - Диапазон: from 0 to 1
  - Применение: расчет статистического паритета
- - Интерпретация: доля положительных predictions in группе
+ - Интерпретация: доля положительных Predictions in группе
 
 - **`spd = max(spd_values) - min(spd_values)`**: Статистическая разность паритета
  - Результат: разность между максимальной and минимальной долей положительных исходов
@@ -912,7 +912,7 @@ class BiasDetector:
  - Формула: TP / (TP + FN)
  - Диапазон: from 0 to 1
  - Применение: метрика for положительного класса
- - Интерпретация: доля найденных истинных положительных
+ - Интерпретация: доля foundных истинных положительных
 
 - **`fpr = ((group_Predictions == 1) & (group_actual == 0)).sum() / (group_actual == 0).sum()`**: False Positive Rate
  - Формула: FP / (FP + TN)
@@ -954,7 +954,7 @@ class BiasDetector:
 
 - **Demographic Parity Difference (DPD)**:
  - Формула: max(P(Ŷ=1|A=a)) - min(P(Ŷ=1|A=a))
- - Применение: равное распределение predictions
+ - Применение: равное распределение Predictions
  - Ограничения: может быть несправедливым
  - Порог: < 0.1 for справедливости
 
@@ -1042,11 +1042,11 @@ class BiasMitigation:
 
 ## Responsible AI Framework
 
-<img src="images/optimized/ethics_checklist.png" alt="Чеклист этичности" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+<img src="images/optimized/ethics_checkList.png" alt="Чеклист этичности" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 19.6: Чеклист этичности AI системы - категории and критерии оценки*
 
 **Категории чеклиста этичности:**
-- **Data Quality**: Качество данных, отсутствие пропусков, баланс классов
+- **data Quality**: Качество данных, отсутствие пропусков, баланс классов
 - **Bias Assessment**: Оценка смещений, статистический паритет, уравненные шансы
 - **Privacy Protection**: Защита приватности, дифференциальная приватность, анонимизация
 - **Transparency & Explainability**: Прозрачность решений, объяснимость моделей
@@ -1059,16 +1059,16 @@ class BiasMitigation:
 - **Качество данных**: Репрезентативность and актуальность данных
 - **Статистический паритет**: Равные доли положительных исходов
 - **Уравненные шансы**: Равные TPR and FPR for всех групп
-- **Демографический паритет**: Справедливое распределение predictions
+- **Демографический паритет**: Справедливое распределение Predictions
 
-### 1. AI Ethics Checklist
+### 1. AI Ethics checkList
 
 ```python
-class AIEthicsChecklist:
+class AIEthicscheckList:
  """Чеклист этичности AI системы"""
 
  def __init__(self):
- self.checklist = {
+ self.checkList = {
  'data_quality': [],
  'bias_assessment': [],
  'privacy_protection': [],
@@ -1112,7 +1112,7 @@ class AIEthicsChecklist:
  'recommendation': f'Balance {attr} groups' if min_ratio <= 0.1 else None
  })
 
- self.checklist['data_quality'] = checks
+ self.checkList['data_quality'] = checks
  return checks
 
  def assess_bias(self, model, X_test, y_test, sensitive_attributes):
@@ -1144,13 +1144,13 @@ class AIEthicsChecklist:
  'recommendation': f'Address equalized odds for {attr}' if not eod_result['is_fair'] else None
  })
 
- self.checklist['bias_assessment'] = checks
+ self.checkList['bias_assessment'] = checks
  return checks
 
- def generate_ethics_report(self):
+ def generate_ethics_Report(self):
  """Генерация Reportа on этичности"""
 
- report = {
+ Report = {
  'overall_score': 0,
  'category_scores': {},
  'recommendations': [],
@@ -1158,28 +1158,28 @@ class AIEthicsChecklist:
  'total_checks': 0
  }
 
- for category, checks in self.checklist.items():
+ for category, checks in self.checkList.items():
  if checks:
  passed = sum(1 for check in checks if check['passed'])
  total = len(checks)
  score = passed / total if total > 0 else 0
 
- report['category_scores'][category] = score
- report['passed_checks'] += passed
- report['total_checks'] += total
+ Report['category_scores'][category] = score
+ Report['passed_checks'] += passed
+ Report['total_checks'] += total
 
  # Сбор рекомендаций
  for check in checks:
  if check.get('recommendation'):
- report['recommendations'].append({
+ Report['recommendations'].append({
  'category': category,
  'check': check['check'],
  'recommendation': check['recommendation']
  })
 
- report['overall_score'] = report['passed_checks'] / report['total_checks'] if report['total_checks'] > 0 else 0
+ Report['overall_score'] = Report['passed_checks'] / Report['total_checks'] if Report['total_checks'] > 0 else 0
 
- return report
+ return Report
 ```
 
 ## Заключение
@@ -1189,21 +1189,21 @@ class AIEthicsChecklist:
 
 **Этапы внедрения этичности:**
 - **Ethics Planning**: Planирование этических принципов and требований
-- **Data Assessment**: Оценка качества and справедливости данных
+- **data Assessment**: Оценка качества and справедливости данных
 - **Model Development**: Разработка этичных моделей
 - **Bias testing**: Тестирование on смещения and предвзятость
-- **Privacy Review**: check защиты приватности
+- **Privacy ReView**: check защиты приватности
 - **Legal Compliance**: Соответствие правовым требованиям
-- **Deployment Monitoring**: Monitoring этичности in продакшене
+- **deployment Monitoring**: Monitoring этичности in продакшене
 - **Continuous Improvement**: Непрерывное improve этичности
 
 Этика and ответственный AI - это not просто дополнительные требования, а фундаментальные принципы разработки ML-систем. Ключевые аспекты:
 
-1. **Справедливость** - обеспечение равного обращения со всеми группами
+1. **Справедливость** - обеспечение равного обращения со allи группами
 2. **Прозрачность** - возможность объяснения решений модели
 3. **Приватность** - защита персональных данных
 4. **Соответствие правовым требованиям** - GDPR, AI Act and другие
-5. **Обнаружение and снижение смещений** - активная работа with предвзятостью
+5. **Обнаружение and снижение смещений** - активная Working with предвзятостью
 6. **Ответственность** - четкое определение ответственности за решения AI
 
 Внедрение этих принципов not только обеспечивает соответствие правовым требованиям, но and повышает качество, надежность and общественное доверие к AI-системам.

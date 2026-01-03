@@ -15,17 +15,17 @@ from typing import List, Tuple
 # Order matters: longer phrases first
 TRANSLATION_PATTERNS = {
  # Long specific phrases (must come first)
- r'AutoML Gluon Installation': 'AutoML Gluon Installation',
- r'Why Proper Installation is Critical': 'Why Proper Installation is Critical',
- r'Real Consequences of Incorrect Installation': 'Real Consequences of Incorrect Installation',
- r'Что происходит при неправильной установке\?': 'What Happens with Incorrect Installation?',
+ r'AutoML Gluon installation': 'AutoML Gluon installation',
+ r'Why Proper installation is Critical': 'Why Proper installation is Critical',
+ r'Real Consequences of Incorrect installation': 'Real Consequences of Incorrect installation',
+ r'Что происходит при неправильной установке\?': 'What Happens with Incorrect installation?',
  r'Конфликты зависимостей': 'Dependency Conflicts',
  r'Issues with производительностью': 'Performance Issues',
  r'Ошибки компиляции': 'Compilation Errors',
  r'Issues with GPU': 'GPU Issues',
  r'Troubleshooting': 'Troubleshooting',
  r'Common Issues': 'Common Issues',
- r'Installation Issues': 'Installation Issues',
+ r'installation Issues': 'installation Issues',
  r'Launch Issues': 'Launch Issues',
  r'Import Errors': 'Import Errors',
  r'Port Issues': 'Port Issues',
@@ -106,7 +106,7 @@ INCLUDE_EXTENSIONS = {'.py', '.md', '.txt', '.json', '.yaml', '.yml', '.ts', '.t
 
 
 def should_exclude_file(file_path: str) -> bool:
- """Check if file should be excluded from translation."""
+ """check if file should be excluded from translation."""
  for pattern in EXCLUDE_PATTERNS:
  if re.search(pattern, file_path):
  return True
@@ -114,7 +114,7 @@ def should_exclude_file(file_path: str) -> bool:
 
 
 def has_russian_text(text: str) -> bool:
- """Check if text contains Cyrillic characters."""
+ """check if text contains Cyrillic characters."""
  return bool(re.search(r'[А-Яа-яЁё]', text))
 
 
@@ -168,7 +168,7 @@ def translate_text(text: str) -> str:
  lines = translated.split('\n')
  cleaned_lines = []
  for line in lines:
- # Preserve markdown structure
+ # Preserve markdown Structure
  if line.strip().startswith('#') or line.strip().startswith('*') or line.strip().startswith('-'):
  cleaned_lines.append(re.sub(r'[ \t]+', ' ', line))
  else:
@@ -180,7 +180,7 @@ def translate_text(text: str) -> str:
 
 
 def main():
- """Main function."""
+ """main function."""
  parser = argparse.ArgumentParser(description='Translate Russian text in project files to English')
  parser.add_argument('--dry-run', action='store_true', help='Show files that would be translated without making changes')
  parser.add_argument('--file', type=str, help='Translate specific file only')
@@ -200,7 +200,7 @@ def main():
  print("No files with Russian text found (excluding Russian-specific files).")
  return
 
- print(f"Found {len(files_to_process)} files with Russian text:")
+ print(f"found {len(files_to_process)} files with Russian text:")
  print()
 
  total_lines = 0
@@ -227,8 +227,8 @@ def main():
 
  print()
  print("starting translation...")
- print("Note: This script uses pattern-based translation.")
- print("Complex sentences may require manual review.")
+ print("Note: This script Uses pattern-based translation.")
+ print("Complex sentences may require manual reView.")
  print()
 
  translated_count = 0
@@ -265,7 +265,7 @@ def main():
  print(f" Translated: {translated_count} files")
  print(f" Skipped: {skipped_count} files")
  print()
- print("Note: Please review translated files for accuracy.")
+ print("Note: Please reView translated files for accuracy.")
  print("Complex sentences may need manual correction.")
 
 

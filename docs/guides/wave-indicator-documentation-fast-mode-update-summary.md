@@ -3,7 +3,7 @@
 ## 🎯 Задача
 Обновить документацию and туториалы for wave indicator with поддержкой `-d fast` режима, including update индексов and create новых руководств.
 
-## ✅ Выполненная работа
+## ✅ Выполненная Working
 
 ### 1. **update существующих туториалов**
 
@@ -13,17 +13,17 @@
 **Обновления:**
 - ✅ Добавлены examples использования with `-d fast` режимом
 - ✅ Добавлен раздел "Display Modes Support" with описанием всех режимов
-- ✅ Добавлен раздел "Fast Mode Integration Test"
-- ✅ Обновлен раздел "Completed Features" with информацией о fast mode
+- ✅ Добавлен раздел "Fast Mode integration Test"
+- ✅ Обновлен раздел "COMPLETED Features" with информацией о fast mode
 - ✅ Добавлены examples команд for тестирования fast режима
 
 **Новые разделы:**
 ```bash
 # Wave with fast display mode (Bokeh-based)
-uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
+uv run run_Analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
 
 # Wave with real data in fast mode
-uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
+uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
 ```
 
 #### B. documentation Wave Indicator
@@ -43,7 +43,7 @@ uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4
 - **Wave Visualization**: Discontinuous lines (only where signals exist)
 - **signal Display**: Color-coded signals (red=BUY, blue=SELL)
 - **Hover Tooltips**: Detailed information on hover
-- **Best For**: Real-time monitoring and fast analysis
+- **Best For**: Real-time Monitoring and fast Analysis
 ```
 
 ### 2. **create новых документов**
@@ -88,7 +88,7 @@ uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4
 **Обновления:**
 - ✅ Добавлены examples использования fast режима
 - ✅ Обновлено description Wave Indicator with упоминанием fast режима
-- ✅ Добавлены команды for тестирования fast режима
+- ✅ Добавлены team for тестирования fast режима
 
 ### 4. **Ключевые особенности fast режима**
 
@@ -99,33 +99,33 @@ uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4
 - **Hover Tooltips**: Детальная информация при наведении
 
 #### B. Технические особенности
-- **Bokeh-based Interface**: Интерактивный интерфейс with реальным временем
+- **Bokeh-based interface**: Интерактивный interface with реальным временем
 - **Responsive Design**: Адаптивный дизайн for разных экранов
 - **Fast Rendering**: Быстрая отрисовка and обновления
 - **Error Handling**: Обработка ошибок and отсутствующих данных
 
 ### 5. **examples использования**
 
-#### A. Базовые команды
+#### A. Базовые team
 ```bash
 # Wave with fast режимом
-uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
+uv run run_Analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
 
 # Wave with реальными данными in fast режиме
-uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
+uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
 
 # Сравнение fast vs fastest режимов
-uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
-uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fastest
+uv run run_Analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
+uv run run_Analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fastest
 ```
 
 #### B. Тестирование
 ```bash
 # Тест прерывистых линий
-uv run run_analysis.py demo --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,22,open -d fast
+uv run run_Analysis.py demo --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,22,open -d fast
 
 # Тест отображения сигналов
-uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fast,22,11,4,fast,prime,10,close -d fast
+uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fast,22,11,4,fast,prime,10,close -d fast
 ```
 
 ### 6. **Тестирование and валидация**
@@ -145,10 +145,10 @@ uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fast,22,11,4,fast,prime
 ### 7. **documentation on решению проблем**
 
 #### A. Common Issues
-- **Lines Not Displaying**: check наличия колонок `_plot_wave` and `_plot_color`
+- **Lines Not Displaying**: check наличия columns `_plot_wave` and `_plot_color`
 - **signals Not Appearing**: check колонки `_signal` and значений 1/2
 - **Color Issues**: Валидация значений in `_plot_color` (1=red, 2=blue, 0=no line)
-- **Hover Tool Issues**: check совместимости имен колонок
+- **Hover Tool Issues**: check совместимости имен columns
 
 #### B. Лучшие практики
 - **Test Both Modes**: Всегда тестировать fast and fastest режимы
@@ -202,6 +202,6 @@ Wave indicator теперь имеет полную документацию for
 - [Discontinuous Lines](docs/guides/wave-indicator-discontinuous-lines-final-summary.md)
 
 ### Индексы
-- [Main Documentation Index](docs/index.md)
+- [main Documentation Index](docs/index.md)
 - [Guides Index](docs/guides/index.md)
 - [README.md](README.md)

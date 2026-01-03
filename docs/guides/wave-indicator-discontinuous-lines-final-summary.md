@@ -3,7 +3,7 @@
 ## 🎯 Задача
 Реализовать прерывистые линии for wave indicator in `-d fast` режиме, где wave line отображается только там, где есть сигналы (красная for BUY, синяя for SELL), а где нет сигналов - линия должна быть невидимой, точно как in `-d fastest` режиме.
 
-## ✅ Выполненная работа
+## ✅ Выполненная Working
 
 ### 1. **Анализ проблемы**
 - Изучена реализация in `dual_chart_fastest.py`
@@ -27,7 +27,7 @@ def _create_discontinuous_line_segments(x_data, y_data, mask):
  mask: Boolean mask indicating where to draw lines
 
  Returns:
- List of DataFrames, each containing a continuous segment
+ List of dataFrames, each containing a continuous segment
  """
  segments = []
 
@@ -57,8 +57,8 @@ def _create_discontinuous_line_segments(x_data, y_data, mask):
 
  # Only create segment if we have at least one point
  if len(segment_x) > 0:
- # Create DataFrame for this segment
- segment_df = pd.DataFrame({
+ # Create dataFrame for this segment
+ segment_df = pd.dataFrame({
  'index': segment_x,
  y_data.name: segment_y
  })
@@ -89,7 +89,7 @@ if plot_wave_col and plot_color_col:
  red_mask
  )
  for segment_data in red_segments:
- segment_source = ColumnDataSource(segment_data)
+ segment_source = ColumndataSource(segment_data)
  indicator_fig.line(
  'index', plot_wave_col,
  source=segment_source,
@@ -106,7 +106,7 @@ if plot_wave_col and plot_color_col:
  blue_mask
  )
  for segment_data in blue_segments:
- segment_source = ColumnDataSource(segment_data)
+ segment_source = ColumndataSource(segment_data)
  indicator_fig.line(
  'index', plot_wave_col,
  source=segment_source,
@@ -117,7 +117,7 @@ if plot_wave_col and plot_color_col:
 ```
 
 ### 3. **Результат**
-Теперь wave indicator in `-d fast` режиме работает точно так же, как in `-d fastest` режиме:
+Теперь wave indicator in `-d fast` режиме Workingет точно так же, как in `-d fastest` режиме:
 
 - **Wave Line**: Отображается только там, где есть сигналы
  - Красные сегменты for BUY сигналов (1)
@@ -130,7 +130,7 @@ if plot_wave_col and plot_color_col:
 ### 4. **Тестирование**
 - ✅ Создан полный набор тестов in `tests/plotting/test_wave_fast_mode.py`
 - ✅ Все 7 тестов прошли успешно
-- ✅ Протестирована реальная работа with data
+- ✅ Протестирована реальная Working with data
 - ✅ Сравнение with fastest режимом показало идентичность
 
 ### 5. **documentation**
@@ -138,7 +138,7 @@ if plot_wave_col and plot_color_col:
 - Описаны технические детали and examples использования
 
 ## 🎉 Заключение
-Wave indicator теперь полностью работает in `-d fast` режиме with прерывистыми линиями, точно как in `-d fastest` режиме. Линии отображаются только там, где есть сигналы, а промежутки без сигналов остаются невидимыми.
+Wave indicator теперь полностью Workingет in `-d fast` режиме with прерывистыми линиями, точно как in `-d fastest` режиме. Линии отображаются только там, где есть сигналы, а промежутки без сигналов остаются невидимыми.
 
 **Статус**: ✅ **COMPLETED**
 **Дата**: 2025-08-20

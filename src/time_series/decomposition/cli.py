@@ -12,7 +12,7 @@ from tqdm import tqdm
 from .base import get_decomposer, validate_ready_series
 from .export import export_components, export_metadata
 from .io_utils import discover_files, read_timeseries
-from .plotting import plot_and_save, plot_and_save_ceemdan_per_imf, get_ceemdan_explanation
+from .plotting import plot_and_save, plot_and_save_ceemdan_per_imf, get_ceemdan_exPlanation
 
 
 def parse_args() -> argparse.Namespace:
@@ -44,7 +44,7 @@ def parse_args() -> argparse.Namespace:
  parser.add_argument("--split-components", action="store_true")
 
  parser.add_argument("--select", help="Filename mask to filter")
- parser.add_argument("--preview", type=int, help="Use first N points for quick check")
+ parser.add_argument("--preView", type=int, help="Use first N points for quick check")
  parser.add_argument("--dry-run", action="store_true")
  parser.add_argument("--strict", action="store_true", default=True)
  parser.add_argument("--no-progress", action="store_true")
@@ -59,14 +59,14 @@ def main() -> None:
  args = parse_args()
  files = discover_files(args.input, select_mask=args.select)
  if not files:
- raise SystemExit("No input files discovered.")
+ raise systemExit("No input files discovered.")
 
  progress_iter = files if args.no_progress else tqdm(files, desc="Decomposition", unit="file")
  for file_path in progress_iter:
  df, chosen_col = read_timeseries(file_path, datetime_col=args.datetime_col, target_column=args.column)
  series = validate_ready_series(df, chosen_col, datetime_col=None)
- if args.preview:
- series = series.iloc[: args.preview]
+ if args.preView:
+ series = series.iloc[: args.preView]
 
  params: Dict[str, object] = {
  "period": args.period,
@@ -112,7 +112,7 @@ def main() -> None:
  # Сохраняем on одному файлу on IMF and отдельный for остатка
  generated = plot_and_save_ceemdan_per_imf(result, plot_dir, file_stem, locale_ru=bool(args.ru))
  # Выводим пояснение CEEMDAN in консоль
- print(get_ceemdan_explanation(bool(args.ru)))
+ print(get_ceemdan_exPlanation(bool(args.ru)))
  opened_path = generated[0] if generated else None
  else:
  opened_path = plot_and_save(result, plot_dir, file_stem, locale_ru=bool(args.ru))

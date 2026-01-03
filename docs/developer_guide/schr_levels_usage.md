@@ -2,13 +2,13 @@
 
 ## 🎯 Обзор
 
-SCHR Levels AutoML - это автоматизированный пайплайн машинного обучения for analysis данных SCHR Levels indicators. Пайплайн Solves 3 main tasks предсказания:
+SCHR Levels AutoML - это автоматизированный пайплайн машинного обучения for Analysis данных SCHR Levels indicators. Пайплайн Solves 3 main tasks предсказания:
 
 1. **`pressure_vector_sign`** - Prediction sign PRESSURE_VECTOR (положительный/отрицательный)
 2. **`price_direction_5periods`** - Prediction price direction for 5 periods вперед
 3. **`level_breakout`** - Prediction пробоя уровней PREDICTED_HIGH/PREDICTED_LOW
 
-## 🚀 quick start
+## 🚀 Quick start
 
 ### 1. Простой тест
 ```bash
@@ -21,7 +21,7 @@ uv run python test_schr_pipeline.py
 uv run python schr-levels-gluon.py
 ```
 
-## 📊 Результаты последнего анализа
+## 📊 Результаты последнего Analysis
 
 ### Модель 1: pressure_vector_sign
 - **Точность**: 61.76%
@@ -59,7 +59,7 @@ from schr_levels_gluon import SCHRLevelsAutoMLPipeline
 # Создаем пайплайн
 pipeline = SCHRLevelsAutoMLPipeline()
 
-# Загружаем данные
+# Loading data
 data = pipeline.load_schr_data('BTCUSD', 'MN1')
 
 # Создаем целевые переменные
@@ -96,14 +96,14 @@ mc_results = pipeline.monte_carlo_validation(data, 'pressure_vector_sign', n_ite
 print(f"Средняя точность: {mc_results['mean_accuracy']:.2%}")
 ```
 
-## 📁 Структура файлов
+## 📁 Structure файлов
 
 ```
 models/schr_levels_production/
 ├── pressure_vector_sign_model.pkl # Модель for предсказания sign PRESSURE_VECTOR
 ├── price_direction_5periods_model.pkl # Модель for предсказания price direction
 ├── level_breakout_model.pkl # Модель for предсказания пробоя уровней
-└── analysis_results.pkl # Результаты анализа
+└── Analysis_results.pkl # Результаты Analysis
 
 logs/
 └── schr_levels_*.log # Логи работы пайплайна
@@ -112,7 +112,7 @@ results/
 └── plots/ # Графики and визуализации
 ```
 
-## 🎯 Доступные данные
+## 🎯 Доступные data
 
 ### Символы
 - BTCUSD, GBPUSD, EURUSD, and другие
@@ -149,7 +149,7 @@ results = pipeline.train_model(data, 'pressure_vector_sign', time_limit=1800)
 # in файле schr-levels-gluon.py можно настроить:
 fit_args = {
  'excluded_model_types': ['NN_TORCH', 'FASTAI'], # Исключить нейронные сети
- 'use_gpu': False, # Отключить GPU
+ 'Use_gpu': False, # Отключить GPU
  'num_gpus': 0
 }
 ```
@@ -177,7 +177,7 @@ print(feature_importance.head(10))
 
 ### Ошибка "No such file or directory"
 ```bash
-# Проверьте наличие файлов данных
+# Проверьте presence файлов данных
 ls data/cache/csv_converted/
 ```
 
@@ -185,7 +185,7 @@ ls data/cache/csv_converted/
 ```python
 # Проверьте размер данных
 print(f"Размер данных: {len(data)} записей")
-print(f"Колонки: {list(data.columns)}")
+print(f"Колонки: {List(data.columns)}")
 ```
 
 ### Низкая точность модели
@@ -198,7 +198,7 @@ results = pipeline.train_model(data, 'pressure_vector_sign', time_limit=3600) # 
 
 ### Ежедневный анализ
 ```python
-# Загружаем свежие данные
+# Loading свежие data
 data = pipeline.load_schr_data('BTCUSD', 'D1')
 data = pipeline.create_target_variables(data)
 data = pipeline.create_features(data)
@@ -211,11 +211,11 @@ tomorrow_Prediction = pipeline.predict(data.tail(1), 'pressure_vector_sign')
 print(f"Завтра PRESSURE_VECTOR будет: {'положительным' if tomorrow_Prediction.iloc[0] == 1 else 'отрицательным'}")
 ```
 
-### Анализ разных Timeframeов
+### Анализ разных Timeframes
 ```python
-timeframes = ['MN1', 'W1', 'D1', 'H4']
+Timeframes = ['MN1', 'W1', 'D1', 'H4']
 
-for tf in timeframes:
+for tf in Timeframes:
  data = pipeline.load_schr_data('BTCUSD', tf)
  data = pipeline.create_target_variables(data)
  data = pipeline.create_features(data)
@@ -256,8 +256,8 @@ for task in ['pressure_vector_sign', 'price_direction_5periods', 'level_breakout
 
 При возникновении проблем:
 1. Проверьте логи in папке `logs/`
-2. Убедитесь, что данные загружены корректно
-3. Проверьте наличие всех зависимостей: `uv run pip list`
+2. Убедитесь, что data загружены корректно
+3. Проверьте presence всех зависимостей: `uv run pip List`
 
 ---
 
