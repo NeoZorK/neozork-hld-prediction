@@ -1003,7 +1003,7 @@ predictor.fit(
 )
 
 # Оценка модели
-Predictions = predictor.predict(data)
+predictions = predictor.predict(data)
 print(f"Точность: {predictor.evaluate(data)}")
 
 # Дополнительная информация о модели
@@ -1061,7 +1061,7 @@ predictor.fit(
 )
 
 # Валидация on testsых данных
-test_Predictions = predictor.predict(test_data)
+test_predictions = predictor.predict(test_data)
 test_accuracy = predictor.evaluate(test_data, silent=True)
 
 # Детальная оценка производительности
@@ -1093,11 +1093,11 @@ print(f"Средняя точность CV: {np.mean(cv_scores):.4f} (+/- {np.st
 
 # Детальный Report о классификации
 print("\nReport о классификации:")
-print(classification_Report(test_data['target'], test_Predictions))
+print(classification_Report(test_data['target'], test_predictions))
 
 # Матрица ошибок
 print("\nМатрица ошибок:")
-print(confusion_matrix(test_data['target'], test_Predictions))
+print(confusion_matrix(test_data['target'], test_predictions))
 
 # Анализ важности признаков
 feature_importance = predictor.feature_importance(test_data)
@@ -1109,24 +1109,24 @@ class_names = iris.target_names
 for i, class_name in enumerate(class_names):
  class_mask = test_data['target'] == i
  if np.sum(class_mask) > 0:
- class_accuracy = np.mean(test_Predictions[class_mask] == test_data['target'][class_mask])
+ class_accuracy = np.mean(test_predictions[class_mask] == test_data['target'][class_mask])
  print(f"Точность for класса {class_name}: {class_accuracy:.4f}")
 
-# Анализ уверенности Predictions
+# Анализ уверенности predictions
 pred_proba = predictor.predict_proba(test_data)
 confidence = np.max(pred_proba, axis=1)
-print(f"\nСредняя уверенность Predictions: {np.mean(confidence):.4f}")
+print(f"\nСредняя уверенность predictions: {np.mean(confidence):.4f}")
 print(f"Минимальная уверенность: {np.min(confidence):.4f}")
 print(f"Максимальная уверенность: {np.max(confidence):.4f}")
 
 # Анализ ошибок
-errors = test_Predictions != test_data['target']
+errors = test_predictions != test_data['target']
 if np.sum(errors) > 0:
  print(f"\nАнализ ошибок ({np.sum(errors)} из {len(test_data)}):")
  error_indices = np.where(errors)[0]
  for idx in error_indices[:5]: # Показываем первые 5 ошибок
  true_class = class_names[test_data['target'].iloc[idx]]
- pred_class = class_names[test_Predictions[idx]]
+ pred_class = class_names[test_predictions[idx]]
  confidence_error = confidence[idx]
  print(f" index {idx}: Истина={true_class}, Prediction={pred_class}, Уверенность={confidence_error:.4f}")
 ```
@@ -1150,7 +1150,7 @@ import json
 from functools import wraps
 import traceback
 
-# configuration логирования
+# configuration Logsрования
 logging.basicConfig(
  level=logging.INFO,
  format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -1331,7 +1331,7 @@ def health_check():
 @monitor_performance
 @validate_api_key
 def predict():
- """Основной endpoint for Predictions"""
+ """Основной endpoint for predictions"""
  if predictor is None:
  return jsonify({'error': 'Model not loaded'}), 503
 
@@ -1357,12 +1357,12 @@ def predict():
 
  # Предсказания
  try:
- Predictions = predictor.predict(df)
+ predictions = predictor.predict(df)
  probabilities = predictor.predict_proba(df)
 
  # Формирование ответа
  results = []
- for i, (pred, prob) in enumerate(zip(Predictions, probabilities)):
+ for i, (pred, prob) in enumerate(zip(predictions, probabilities)):
  result = {
  'index': i,
  'Prediction': int(pred),
@@ -1377,11 +1377,11 @@ def predict():
  results.append(result)
 
  response = {
- 'Predictions': results,
+ 'predictions': results,
  'metadata': {
  'model_name': predictor.get_model_best(),
  'timestamp': datetime.now().isoformat(),
- 'total_Predictions': len(results)
+ 'total_predictions': len(results)
  }
  }
 
@@ -1481,7 +1481,7 @@ CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--timeout", "30", 
 #### docker-compose.yml
 ```yaml
 Version: '3.8'
-Services:
+services:
  api:
  build: .
  ports:
@@ -1631,7 +1631,7 @@ graph TD
 
 ### parameters for разных уровней подготовки
 
-| parameter | Новичок | Продвинутый | Эксперт | description |
+| parameter | Новичок | Продвинутый | Эксперт | describe |
 |----------|---------|-------------|---------|----------|
 | **time_limit** | 60-300 | 600-1800 | 3600+ | Лимит времени обучения (сек) |
 | **presets** | 'medium_quality' | 'high_quality' | 'best_quality' | Качество моделей |
@@ -1666,7 +1666,7 @@ graph TD
 
 ### parameters производительности
 
-| parameter | Значение | description | Влияние |
+| parameter | Значение | describe | Влияние |
 |----------|----------|----------|---------|
 | **time_limit** | 60-3600 | Лимит времени обучения | Качество vs скорость |
 | **num_trials** | 5-100 | Количество попыток tuning | Качество vs время |

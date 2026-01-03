@@ -1,4 +1,4 @@
-# Углубленное description методик for создания and управления Portfolio, успешные методы диверсификации
+# Углубленное describe методик for создания and управления Portfolio, успешные методы диверсификации
 
 **Author:** Shcherbyna Rostyslav
 **Дата:** 2024
@@ -492,7 +492,7 @@ def risk_parity_optimization(cov_matrix, target_risk=None):
  где wᵢ - вес актива i, σᵢ - волатильность актива i
 
  Преимущества Risk Parity:
- 1. Более стабильные веса on сравнению with Markowitz
+ 1. Более стабильные веса compared to Markowitz
  2. Лучшая диверсификация риска
  3. Меньшая чувствительность к ошибкам in оценке параметров
  4. Более интуитивное распределение риска
@@ -720,7 +720,7 @@ weights = maximum_sharpe_optimization(expected_returns, cov_matrix, risk_free_ra
 
 ### 3. Машинное обучение in управлении Portfolio
 
-### 🤖 integration машинного обучения in Management Portfolio
+### 🤖 integration machine learning in Management Portfolio
 
 ```mermaid
 graph TD
@@ -778,7 +778,7 @@ graph TD
 
  G --> H[Обучение моделей<br/>Train on historical data]
  H --> I[Валидация<br/>Cross-validation, Walk-forward]
- I --> J[Деплой in продакшен<br/>Real-time Predictions]
+ I --> J[Деплой in продакшен<br/>Real-time predictions]
  J --> K[Monitoring производительности<br/>Model performance tracking]
 
  K --> L{Модель эффективна?}
@@ -922,7 +922,7 @@ clustering_Portfolio = clustering_Portfolio_optimization(returns, n_clusters=5, 
 ```python
 def ml_Portfolio_optimization(returns, features, model, n_Portfolios=1000):
  """
- Оптимизация Portfolio with использованием машинного обучения
+ Оптимизация Portfolio with использованием machine learning
 
  Этот метод использует ML-модели for предсказания доходностей активов,
  а затем создает множество Portfolio and выбирает лучший on коэффициенту Шарпа.
@@ -1018,7 +1018,7 @@ def ml_Portfolio_optimization(returns, features, model, n_Portfolios=1000):
  model.fit(X_train, y_train)
 
  # Предсказания
- Predictions = model.predict(X_test)
+ predictions = model.predict(X_test)
 
  # create множества Portfolio
  Portfolios = []
@@ -1028,10 +1028,10 @@ def ml_Portfolio_optimization(returns, features, model, n_Portfolios=1000):
  weights = np.random.dirichlet(np.ones(len(returns.columns)))
 
  # Ожидаемая доходность Portfolio
- Portfolio_return = np.dot(weights, Predictions.mean(axis=0))
+ Portfolio_return = np.dot(weights, predictions.mean(axis=0))
 
  # Риск Portfolio
- Portfolio_variance = np.dot(weights, np.dot(Predictions.cov(), weights))
+ Portfolio_variance = np.dot(weights, np.dot(predictions.cov(), weights))
 
  # Коэффициент Шарпа
  sharpe = Portfolio_return / np.sqrt(Portfolio_variance)
@@ -1486,7 +1486,7 @@ def historical_var(returns, confidence_level=0.95):
  Недостатки:
  1. dependency from исторических данных
  2. not учитывает изменения волатильности
- 3. Может быть неточным for редких событий
+ 3. Может быть неточным for редких events
  4. Требует достаточно длинной истории данных
  """
  # Сортировка доходностей
@@ -1606,7 +1606,7 @@ graph TD
  C --> C1[Volatility-based Rebalancing<br/>Adjust based on market volatility]
  C --> C2[Momentum-based Rebalancing<br/>Follow market momentum]
  C --> C3[Regime-based Rebalancing<br/>Different strategies per market regime]
- C --> C4[ML-based Rebalancing<br/>Machine learning Predictions]
+ C --> C4[ML-based Rebalancing<br/>Machine learning predictions]
 
  D --> D1[Real-time Monitoring<br/>Continuous Portfolio tracking]
  D --> D2[Risk Alerts<br/>VaR, ES, Drawdown warnings]

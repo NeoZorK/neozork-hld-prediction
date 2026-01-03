@@ -94,7 +94,7 @@ uv run pytest tests/plotting/test_wave_fast_mode.py -v
 ## 📊 Статистика исправлений
 
 - **Файлы изменены**: 2
- - `src/plotting/dual_chart_fast.py` - основная логика
+ - `src/plotting/dual_chart_fast.py` - основная Logsка
  - `tests/plotting/test_wave_fast_mode.py` - тесты
 - **Строк кода добавлено**: ~50
 - **tests создано**: 7

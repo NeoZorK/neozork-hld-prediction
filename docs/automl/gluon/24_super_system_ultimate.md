@@ -44,7 +44,7 @@
 - **Sharpe Ratio**: 5.2
 - **Годовая доходность**: 156.7%
 
-Супер-система - это объединение all лучших техник and indicators for создания идеальной торговой системы. Мы объединим SCHR Levels, WAVE2 and SCHR SHORT3 with самыми современными техниками машинного обучения for создания системы мечты.
+Супер-система - это объединение all лучших техник and indicators for создания идеальной торговой системы. Мы объединим SCHR Levels, WAVE2 and SCHR SHORT3 with самыми современными техниками machine learning for создания системы мечты.
 
 ## Философия супер-системы
 
@@ -630,12 +630,12 @@ class MetaEnsembleModel:
  'model_diversity_weight': 0.2 # Вес разнообразия моделей
  }
 
- def create_meta_ensemble(self, base_Predictions, market_context, historical_data=None):
+ def create_meta_ensemble(self, base_predictions, market_context, historical_data=None):
  """
  create мета-ансамбля with адаптивным взвешиванием
 
  Args:
- base_Predictions (dict): Предсказания from базовых моделей
+ base_predictions (dict): Предсказания from базовых моделей
  - schr_ml: Предсказания SCHR ML модели
  - Prediction: Основное Prediction (0.0-1.0)
  - confidence: Уверенность in предсказании (0.0-1.0)
@@ -659,27 +659,27 @@ class MetaEnsembleModel:
  """
  # Адаптивное взвешивание on basis производительности
  adaptive_weights = self.calculate_adaptive_weights(
- base_Predictions,
+ base_predictions,
  market_context,
  historical_data
  )
 
  # Контекстно-зависимое объединение
  context_ensemble = self.create_context_ensemble(
- base_Predictions,
+ base_predictions,
  market_context
  )
 
  # Временное объединение with учетом истории
  temporal_ensemble = self.create_temporal_ensemble(
- base_Predictions,
+ base_predictions,
  market_context,
  historical_data
  )
 
  # Иерархическое объединение
  hierarchical_ensemble = self.create_hierarchical_ensemble(
- base_Predictions,
+ base_predictions,
  market_context
  )
 
@@ -699,12 +699,12 @@ class MetaEnsembleModel:
 
  return final_Prediction
 
- def calculate_adaptive_weights(self, Predictions, context):
+ def calculate_adaptive_weights(self, predictions, context):
  """Адаптивное взвешивание моделей"""
 
  # Анализ производительности каждой модели
  model_performance = {}
- for model_name, Prediction in Predictions.items():
+ for model_name, Prediction in predictions.items():
  performance = self.evaluate_model_performance(Prediction, context)
  model_performance[model_name] = performance
 
@@ -713,14 +713,14 @@ class MetaEnsembleModel:
 
  return adaptive_weights
 
- def create_context_ensemble(self, Predictions, context):
+ def create_context_ensemble(self, predictions, context):
  """Контекстно-зависимое объединение"""
 
  # Определение рыночного контекста
  market_context = self.determine_market_context(context)
 
  # Выбор моделей for контекста
- context_models = self.select_models_for_context(Predictions, market_context)
+ context_models = self.select_models_for_context(predictions, market_context)
 
  # Взвешивание on basis контекста
  context_weights = self.calculate_context_weights(context_models, market_context)
@@ -951,7 +951,7 @@ class ContinuousLearningsystem:
  """Система непрерывного обучения
 
  parameters системы обучения:
- - learning_algorithms: Алгоритмы машинного обучения
+ - learning_algorithms: Алгоритмы machine learning
  - performance_tracker: Отслеживание производительности
  - adaptation_strategies: Стратегии адаптации
  - drift_detector: Детектор дрифта данных
@@ -1291,13 +1291,13 @@ def train_super_model(self, features, target, config=None):
  )
 
  # Финальная оценка
- test_Predictions = meta_model.predict(test_data)
- test_accuracy = accuracy_score(test_data['target'], test_Predictions)
+ test_predictions = meta_model.predict(test_data)
+ test_accuracy = accuracy_score(test_data['target'], test_predictions)
 
  # Дополнительные метрики
  performance_metrics = self._calculate_performance_metrics(
  test_data['target'],
- test_Predictions
+ test_predictions
  )
 
  # Важность признаков
@@ -1598,7 +1598,7 @@ contract SuperTradingsystemContract {
 
 ### Основные parameters системы
 
-| Компонент | parameter | Значение on умолчанию | description | Диапазон |
+| Компонент | parameter | Значение on умолчанию | describe | Диапазон |
 |-----------|----------|----------------------|----------|----------|
 | **SCHR Levels** | lookback_period | 50 | Период for Analysis уровней (свечей) | 20-100 |
 | | min_touches | 3 | Минимальное количество касаний уровня | 2-5 |
@@ -1618,7 +1618,7 @@ contract SuperTradingsystemContract {
 
 ### parameters ML моделей
 
-| parameter | SCHR ML | WAVE2 ML | SHORT3 ML | description |
+| parameter | SCHR ML | WAVE2 ML | SHORT3 ML | describe |
 |----------|---------|----------|-----------|----------|
 | **model_type** | TabularPredictor | TabularPredictor | TabularPredictor | Тип модели |
 | **problem_type** | binary | binary | binary | Тип задачи |
@@ -1633,7 +1633,7 @@ contract SuperTradingsystemContract {
 
 ### parameters мета-модели
 
-| parameter | Значение | description | Влияние on system |
+| parameter | Значение | describe | Влияние on system |
 |----------|----------|----------|-------------------|
 | **ensemble_methods** | ['adaptive', 'context', 'temporal', 'hierarchical'] | Методы объединения | Определяет качество финального сигнала |
 | **weight_update_frequency** | 100 | Частота обновления весов (свечей) | Скорость адаптации к изменениям |
@@ -1648,7 +1648,7 @@ contract SuperTradingsystemContract {
 
 ### parameters риск-менеджмента
 
-| parameter | Значение | description | Критичность |
+| parameter | Значение | describe | Критичность |
 |----------|----------|----------|-------------|
 | **max_position_size** | 0.1 | Максимальный размер позиции (10% капитала) | Высокая |
 | **stop_loss_threshold** | 0.02 | Порог стоп-лосса (2%) | Высокая |
@@ -1664,7 +1664,7 @@ contract SuperTradingsystemContract {
 
 ### parameters портфельного менеджера
 
-| parameter | Значение | description | Оптимизация |
+| parameter | Значение | describe | Оптимизация |
 |----------|----------|----------|-------------|
 | **max_positions** | 10 | Максимальное количество позиций | Баланс диверсификации |
 | **rebalance_frequency** | 24 | Частота ребалансировки (часы) | Баланс стабильности/адаптивности |
@@ -1674,7 +1674,7 @@ contract SuperTradingsystemContract {
 
 ### parameters системы обучения
 
-| parameter | Значение | description | Влияние on производительность |
+| parameter | Значение | describe | Влияние on производительность |
 |----------|----------|----------|------------------------------|
 | **retrain_frequency** | 1000 | Частота переобучения (свечей) | Баланс актуальности/стабильности |
 | **drift_detection_window** | 200 | Окно for обнаружения дрифта | Чувствительность к изменениям |

@@ -64,7 +64,7 @@ Settings находятся in файле `tests/test_execution_order.yaml`:
 ```yaml
 test_folders:
  - name: "common"
- description: "Basic utilities"
+ describe: "Basic utilities"
  timeout: 30
  required: true
 
@@ -87,7 +87,7 @@ global_Settings:
 ```
 ============================================================
 Running folder 1/20: common
-Description: Basic utilities and common functions
+describe: Basic utilities and common functions
 Timeout: 30s
 ============================================================
 2024-01-15 10:30:01 - INFO - Running tests in folder: common (1 files)
@@ -96,7 +96,7 @@ Timeout: 30s
 
 ============================================================
 Running folder 2/20: unit
-Description: Unit tests for individual components
+describe: Unit tests for individual components
 Timeout: 60s
 ============================================================
 2024-01-15 10:30:06 - INFO - Running tests in folder: unit (20 files)

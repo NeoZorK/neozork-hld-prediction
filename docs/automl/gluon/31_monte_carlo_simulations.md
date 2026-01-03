@@ -1,4 +1,4 @@
-# Углубленное description методик Monte Carlo - create робастных and прибыльных стратегий
+# Углубленное describe методик Monte Carlo - create робастных and прибыльных стратегий
 
 **Author:** Shcherbyna Rostyslav
 **Дата:** 2024
@@ -328,7 +328,7 @@ def t_distribution_monte_carlo(returns, n_simulations=10000, time_horizon=252):
  Monte Carlo симуляция with t-распределением Стьюдента
 
  Использует t-распределение for моделирования доходностей with "тяжелыми хвостами",
- что более реалистично for финансовых данных on сравнению with нормальным распределением.
+ что более реалистично for финансовых данных compared to нормальным распределением.
 
  Parameters:
  -----------
@@ -1525,23 +1525,23 @@ def stress_test_monte_carlo(returns, n_simulations=10000, time_horizon=252,
  'market_crash': {
  'volatility_multiplier': 3.0,
  'return_shift': -0.1,
- 'description': 'Обвал рынка: высокая волатильность, негативная доходность'
+ 'describe': 'Обвал рынка: высокая волатильность, негативная доходность'
  },
  'high_volatility': {
  'volatility_multiplier': 2.0,
  'return_shift': 0.0,
- 'description': 'Высокая волатильность: нормальная доходность, повышенный риск'
+ 'describe': 'Высокая волатильность: нормальная доходность, повышенный риск'
  },
  'low_volatility': {
  'volatility_multiplier': 0.5,
  'return_shift': 0.0,
- 'description': 'Низкая волатильность: нормальная доходность, сниженный риск'
+ 'describe': 'Низкая волатильность: нормальная доходность, сниженный риск'
  },
  'extreme_tail': {
  'volatility_multiplier': 4.0,
  'return_shift': -0.15,
  'tail_risk_multiplier': 2.0,
- 'description': 'Экстремальные хвосты: максимальный риск and потери'
+ 'describe': 'Экстремальные хвосты: максимальный риск and потери'
  }
  }
 
@@ -1642,18 +1642,18 @@ custom_scenarios = {
  'volatility_multiplier': 4.0,
  'return_shift': -0.2,
  'tail_risk_multiplier': 2.5,
- 'description': 'Финансовый кризис 2008: экстремальные потери and волатильность'
+ 'describe': 'Финансовый кризис 2008: экстремальные потери and волатильность'
  },
  'covid_crash_2020': {
  'volatility_multiplier': 3.5,
  'return_shift': -0.15,
  'tail_risk_multiplier': 2.0,
- 'description': 'COVID-19 крах 2020: быстрые and глубокие потери'
+ 'describe': 'COVID-19 крах 2020: быстрые and глубокие потери'
  },
  'dotcom_bubble': {
  'volatility_multiplier': 2.5,
  'return_shift': -0.12,
- 'description': 'Крах доткомов: технологический пузырь'
+ 'describe': 'Крах доткомов: техноLogsческий пузырь'
  }
 }
 

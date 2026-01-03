@@ -2,13 +2,13 @@
 
 ## Обзор
 
-Это HTML версия документации Neozork AutoML, созданная with помощью автоматического конвертера Markdown in HTML. documentation содержит Complete guide on созданию робастных ML-систем with использованием AutoML технологий.
+Это HTML версия документации Neozork AutoML, созданная with помощью автоматического конвертера Markdown in HTML. documentation содержит Complete guide on созданию robust ML systems with использованием AutoML техноLogsй.
 
 ## Structure документации
 
 ### 📁 Файлы
 - **index.html** - main page with содержанием and ссылками on все разделы
-- **01_environment_setup.html** - installation окружения on macOS M1 Pro
+- **01_environment_setup.html** - environment installation on macOS M1 Pro
 - **02_robust_systems_fundamentals.html** - Основы робастных систем
 - **03_data_preparation.html** - Подготовка данных
 - **04_feature_engineering.html** - Инженерия признаков

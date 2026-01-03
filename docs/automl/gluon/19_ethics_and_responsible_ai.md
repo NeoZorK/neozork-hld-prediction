@@ -51,7 +51,7 @@
 - **Demographic Parity**: Демографический паритет in предсказаниях
 - **Individual Fairness**: Справедливость on индивидуальном уровне
 - **Counterfactual Fairness**: Контрфактическая справедливость
-- **Calibration**: Калибровка Predictions for разных групп
+- **Calibration**: Калибровка predictions for разных групп
 
 **Почему модели могут быть несправедливыми?**
 - **Предвзятые data**: Исторические data содержат дискриминацию
@@ -68,7 +68,7 @@ import matplotlib.pyplot as plt
 def check_fairness(model, X_test, y_test, sensitive_attributes):
  """check справедливости модели - критически важно for этичного AI"""
 
- Predictions = model.predict(X_test)
+ predictions = model.predict(X_test)
 
  fairness_metrics = {}
 
@@ -79,13 +79,13 @@ def check_fairness(model, X_test, y_test, sensitive_attributes):
  group_metrics = {}
  for group in groups:
  mask = X_test[attr] == group
- group_Predictions = Predictions[mask]
+ group_predictions = predictions[mask]
  group_actual = y_test[mask]
 
  # Метрики for каждой группы - сравнение производительности
- accuracy = (group_Predictions == group_actual).mean()
- precision = calculate_precision(group_Predictions, group_actual)
- recall = calculate_recall(group_Predictions, group_actual)
+ accuracy = (group_predictions == group_actual).mean()
+ precision = calculate_precision(group_predictions, group_actual)
+ recall = calculate_recall(group_predictions, group_actual)
 
  group_metrics[group] = {
  'accuracy': accuracy,
@@ -105,16 +105,16 @@ def check_fairness(model, X_test, y_test, sensitive_attributes):
 
  return fairness_metrics
 
-def calculate_precision(Predictions, actual):
+def calculate_precision(predictions, actual):
  """Расчет точности"""
- tp = ((Predictions == 1) & (actual == 1)).sum()
- fp = ((Predictions == 1) & (actual == 0)).sum()
+ tp = ((predictions == 1) & (actual == 1)).sum()
+ fp = ((predictions == 1) & (actual == 0)).sum()
  return tp / (tp + fp) if (tp + fp) > 0 else 0
 
-def calculate_recall(Predictions, actual):
+def calculate_recall(predictions, actual):
  """Расчет полноты"""
- tp = ((Predictions == 1) & (actual == 1)).sum()
- fn = ((Predictions == 0) & (actual == 1)).sum()
+ tp = ((predictions == 1) & (actual == 1)).sum()
+ fn = ((predictions == 0) & (actual == 1)).sum()
  return tp / (tp + fn) if (tp + fn) > 0 else 0
 ```
 
@@ -144,8 +144,8 @@ def calculate_recall(Predictions, actual):
  - examples: ['gender', 'race', 'age_group', 'religion']
  - Применение: check справедливости on этим атрибутам
 
-- **`Predictions = model.predict(X_test)`**: Предсказания модели
- - Результат: массив Predictions for all testsых образцов
+- **`predictions = model.predict(X_test)`**: Предсказания модели
+ - Результат: массив predictions for all testsых образцов
  - Формат: бинарные (0/1) or вероятности
  - Применение: основа for расчета метрик справедливости
 
@@ -159,7 +159,7 @@ def calculate_recall(Predictions, actual):
  - Применение: фильтрация данных on группе
  - Размер: соответствует размеру X_test
 
-- **`group_Predictions = Predictions[mask]`**: Предсказания for группы
+- **`group_predictions = predictions[mask]`**: Предсказания for группы
  - Результат: предсказания только for образцов данной группы
  - Применение: расчет метрик for группы
  - Размер: количество образцов in группе
@@ -167,21 +167,21 @@ def calculate_recall(Predictions, actual):
 - **`group_actual = y_test[mask]`**: Истинные метки for группы
  - Результат: истинные метки только for образцов данной группы
  - Применение: расчет метрик for группы
- - Размер: соответствует group_Predictions
+ - Размер: соответствует group_predictions
 
-- **`accuracy = (group_Predictions == group_actual).mean()`**: Точность for группы
+- **`accuracy = (group_predictions == group_actual).mean()`**: Точность for группы
  - Формула: (правильные предсказания) / (общее количество)
  - Диапазон: from 0 to 1
  - Применение: основная метрика производительности
- - Интерпретация: доля правильных Predictions
+ - Интерпретация: доля правильных predictions
 
-- **`precision = calculate_precision(group_Predictions, group_actual)`**: Точность for группы
+- **`precision = calculate_precision(group_predictions, group_actual)`**: Точность for группы
  - Формула: TP / (TP + FP)
  - Диапазон: from 0 to 1
  - Применение: метрика for положительного класса
  - Интерпретация: доля истинных положительных среди предсказанных положительных
 
-- **`recall = calculate_recall(group_Predictions, group_actual)`**: Полнота for группы
+- **`recall = calculate_recall(group_predictions, group_actual)`**: Полнота for группы
  - Формула: TP / (TP + FN)
  - Диапазон: from 0 to 1
  - Применение: метрика for положительного класса
@@ -195,7 +195,7 @@ def calculate_recall(Predictions, actual):
 
 - **`is_fair': max_diff < 0.1`**: check справедливости
  - Порог: 0.1 (10% разности)
- - Логика: если разность < 10%, то справедливо
+ - Logsка: если разность < 10%, то справедливо
  - Применение: бинарная оценка справедливости
  - Рекомендация: можно настроить порог
 
@@ -213,7 +213,7 @@ def calculate_recall(Predictions, actual):
 
 - **Demographic Parity**: Демографический паритет
  - Формула: P(Ŷ=1|A=a) = P(Ŷ=1|A=b)
- - Применение: равное распределение Predictions
+ - Применение: равное распределение predictions
  - Ограничения: может быть несправедливым
 
 - **Individual Fairness**: Справедливость on индивидуальном уровне
@@ -226,9 +226,9 @@ def calculate_recall(Predictions, actual):
  - Применение: check причинной справедливости
  - Сложность: требует контрфактического Analysis
 
-- **Calibration**: Калибровка Predictions
+- **Calibration**: Калибровка predictions
  - Принцип: предсказанные вероятности должны соответствовать истинным
- - Применение: check надежности Predictions
+ - Применение: check надежности predictions
  - Метрика: Brier Score, Reliability Diagram
 ```
 
@@ -386,7 +386,7 @@ class EthicalModelWrapper:
 
 - **`bias_detected = sensitive_importance > 0.5`**: check смещений
  - Порог: 0.5 (50% важности)
- - Логика: если чувствительные атрибуты составляют >50% важности
+ - Logsка: если чувствительные атрибуты составляют >50% важности
  - Результат: булево значение наличия смещений
  - Рекомендация: можно настроить порог
 
@@ -395,7 +395,7 @@ class EthicalModelWrapper:
 - **SHAP (SHapley Additive exPlanations)**:
  - Принцип: игровая теория for объяснения
  - Преимущества: теоретически обоснован, согласован
- - Ограничения: может быть медленным for больших моделей
+ - Ограничения: может быть медленным for large models
  - Применение: глобальные and локальные объяснения
 
 - **LIME (Local Interpretable Model-agnostic ExPlanations)**:
@@ -624,7 +624,7 @@ class PrivacyPreservingML:
 - **Право on доступ**: Доступ к своим персональным данным
 - **Право on fix**: fix неточных данных
 - **Право on remove**: remove данных on запросу
-- **Право on портативность**: Перенос данных между сервисами
+- **Право on портативность**: Перенос данных между services
 - **Право on возражение**: Возражение против обработки данных
 
 ### 1. GDPR Compliance
@@ -675,7 +675,7 @@ class GDPRCompliance:
  if subject_id in self.consent_records:
  del self.consent_records[subject_id]
 
- # Здесь должна быть логика удаления данных субъекта
+ # Здесь должна быть Logsка удаления данных субъекта
  return True
 
  def data_portability(self, subject_id):
@@ -705,36 +705,36 @@ class AIActCompliance:
  'minimal': []
  }
 
- def classify_ai_system(self, system_description):
+ def classify_ai_system(self, system_describe):
  """Классификация AI системы on уровню риска"""
 
  # Критерии for классификации
- if self.is_biometric_identification(system_description):
+ if self.is_biometric_identification(system_describe):
  return 'unacceptable'
- elif self.is_high_risk_application(system_description):
+ elif self.is_high_risk_application(system_describe):
  return 'high'
- elif self.is_limited_risk_application(system_description):
+ elif self.is_limited_risk_application(system_describe):
  return 'limited'
  else:
  return 'minimal'
 
- def is_biometric_identification(self, description):
+ def is_biometric_identification(self, describe):
  """check on биометрическую идентификацию"""
  biometric_keywords = ['face recognition', 'fingerprint', 'iris', 'voice']
- return any(keyword in description.lower() for keyword in biometric_keywords)
+ return any(keyword in describe.lower() for keyword in biometric_keywords)
 
- def is_high_risk_application(self, description):
+ def is_high_risk_application(self, describe):
  """check on высокорисковые приложения"""
  high_risk_keywords = [
  'medical diagnosis', 'credit scoring', 'recruitment',
  'law enforcement', 'education', 'transport'
  ]
- return any(keyword in description.lower() for keyword in high_risk_keywords)
+ return any(keyword in describe.lower() for keyword in high_risk_keywords)
 
- def is_limited_risk_application(self, description):
+ def is_limited_risk_application(self, describe):
  """check on ограниченно рисковые приложения"""
  limited_risk_keywords = ['chatbot', 'recommendation', 'content moderation']
- return any(keyword in description.lower() for keyword in limited_risk_keywords)
+ return any(keyword in describe.lower() for keyword in limited_risk_keywords)
 
  def get_compliance_requirements(self, risk_level):
  """Получение требований соответствия for уровня риска"""
@@ -749,13 +749,13 @@ class AIActCompliance:
  'data governance',
  'Technical documentation',
  'Record keeping',
- 'Transparency and user information',
+ 'Transparency and User information',
  'Human oversight',
  'Accuracy, robustness and cybersecurity'
  ],
  'limited': [
  'Transparency obligations',
- 'user information requirements'
+ 'User information requirements'
  ],
  'minimal': [
  'No specific requirements'
@@ -789,7 +789,7 @@ class BiasDetector:
  def __init__(self):
  self.bias_metrics = {}
 
- def statistical_parity_difference(self, Predictions, sensitive_attribute):
+ def statistical_parity_difference(self, predictions, sensitive_attribute):
  """Статистическая разность паритета"""
 
  groups = sensitive_attribute.unique()
@@ -797,7 +797,7 @@ class BiasDetector:
 
  for group in groups:
  group_mask = sensitive_attribute == group
- group_positive_rate = Predictions[group_mask].mean()
+ group_positive_rate = predictions[group_mask].mean()
  spd_values.append(group_positive_rate)
 
  # Разность между максимальной and минимальной долей положительных исходов
@@ -809,7 +809,7 @@ class BiasDetector:
  'group_rates': dict(zip(groups, spd_values))
  }
 
- def equalized_odds_difference(self, Predictions, actual, sensitive_attribute):
+ def equalized_odds_difference(self, predictions, actual, sensitive_attribute):
  """Разность уравненных шансов"""
 
  groups = sensitive_attribute.unique()
@@ -818,15 +818,15 @@ class BiasDetector:
 
  for group in groups:
  group_mask = sensitive_attribute == group
- group_Predictions = Predictions[group_mask]
+ group_predictions = predictions[group_mask]
  group_actual = actual[group_mask]
 
  # True Positive Rate
- tpr = ((group_Predictions == 1) & (group_actual == 1)).sum() / (group_actual == 1).sum()
+ tpr = ((group_predictions == 1) & (group_actual == 1)).sum() / (group_actual == 1).sum()
  tpr_values.append(tpr)
 
  # False Positive Rate
- fpr = ((group_Predictions == 1) & (group_actual == 0)).sum() / (group_actual == 0).sum()
+ fpr = ((group_predictions == 1) & (group_actual == 0)).sum() / (group_actual == 0).sum()
  fpr_values.append(fpr)
 
  # Разности TPR and FPR
@@ -840,7 +840,7 @@ class BiasDetector:
  'is_fair': max(tpr_diff, fpr_diff) < 0.1
  }
 
- def demographic_parity_difference(self, Predictions, sensitive_attribute):
+ def demographic_parity_difference(self, predictions, sensitive_attribute):
  """Разность демографического паритета"""
 
  groups = sensitive_attribute.unique()
@@ -848,7 +848,7 @@ class BiasDetector:
 
  for group in groups:
  group_mask = sensitive_attribute == group
- positive_rate = Predictions[group_mask].mean()
+ positive_rate = predictions[group_mask].mean()
  positive_rates.append(positive_rate)
 
  dpd = max(positive_rates) - min(positive_rates)
@@ -862,7 +862,7 @@ class BiasDetector:
 
 **Детальные описания параметров BiasDetector:**
 
-- **`Predictions`**: Предсказания модели
+- **`predictions`**: Предсказания модели
  - Тип: numpy array or pandas Series
  - Содержит: предсказания модели for all образцов
  - Формат: бинарные (0/1) or вероятности
@@ -888,13 +888,13 @@ class BiasDetector:
 - **`group_mask = sensitive_attribute == group`**: Маска for группы
  - Результат: булевый массив for выбора образцов группы
  - Применение: фильтрация данных on группе
- - Размер: соответствует размеру Predictions
+ - Размер: соответствует размеру predictions
 
-- **`group_positive_rate = Predictions[group_mask].mean()`**: Доля положительных исходов for группы
- - Формула: (количество положительных Predictions) / (общее количество)
+- **`group_positive_rate = predictions[group_mask].mean()`**: Доля положительных исходов for группы
+ - Формула: (количество положительных predictions) / (общее количество)
  - Диапазон: from 0 to 1
  - Применение: расчет статистического паритета
- - Интерпретация: доля положительных Predictions in группе
+ - Интерпретация: доля положительных predictions in группе
 
 - **`spd = max(spd_values) - min(spd_values)`**: Статистическая разность паритета
  - Результат: разность между максимальной and минимальной долей положительных исходов
@@ -904,17 +904,17 @@ class BiasDetector:
 
 - **`is_fair': spd < 0.1`**: check справедливости
  - Порог: 0.1 (10% разности)
- - Логика: если разность < 10%, то справедливо
+ - Logsка: если разность < 10%, то справедливо
  - Применение: бинарная оценка справедливости
  - Рекомендация: можно настроить порог
 
-- **`tpr = ((group_Predictions == 1) & (group_actual == 1)).sum() / (group_actual == 1).sum()`**: True Positive Rate
+- **`tpr = ((group_predictions == 1) & (group_actual == 1)).sum() / (group_actual == 1).sum()`**: True Positive Rate
  - Формула: TP / (TP + FN)
  - Диапазон: from 0 to 1
  - Применение: метрика for положительного класса
  - Интерпретация: доля foundных истинных положительных
 
-- **`fpr = ((group_Predictions == 1) & (group_actual == 0)).sum() / (group_actual == 0).sum()`**: False Positive Rate
+- **`fpr = ((group_predictions == 1) & (group_actual == 0)).sum() / (group_actual == 0).sum()`**: False Positive Rate
  - Формула: FP / (FP + TN)
  - Диапазон: from 0 to 1
  - Применение: метрика for отрицательного класса
@@ -954,7 +954,7 @@ class BiasDetector:
 
 - **Demographic Parity Difference (DPD)**:
  - Формула: max(P(Ŷ=1|A=a)) - min(P(Ŷ=1|A=a))
- - Применение: равное распределение Predictions
+ - Применение: равное распределение predictions
  - Ограничения: может быть несправедливым
  - Порог: < 0.1 for справедливости
 
@@ -1003,37 +1003,37 @@ class BiasMitigation:
 
  for group in groups:
  group_mask = sensitive_attr == group
- group_Predictions = y_pred[group_mask]
- group_positive_rate = group_Predictions.mean()
+ group_predictions = y_pred[group_mask]
+ group_positive_rate = group_predictions.mean()
  fairness_penalty += (group_positive_rate - 0.5) ** 2
 
  return main_loss + 0.1 * fairness_penalty
 
  return fairness_loss
 
- def postprocess_bias_mitigation(self, Predictions, sensitive_attributes, threshold=0.5):
+ def postprocess_bias_mitigation(self, predictions, sensitive_attributes, threshold=0.5):
  """Постобработка for снижения смещений"""
 
  # Калибровка порогов for разных групп
- adjusted_Predictions = Predictions.copy()
+ adjusted_predictions = predictions.copy()
 
  for group in sensitive_attributes.unique():
  group_mask = sensitive_attributes == group
- group_Predictions = Predictions[group_mask]
+ group_predictions = predictions[group_mask]
 
  # Адаптивный порог for группы
  group_threshold = self.calculate_fair_threshold(
- group_Predictions, group
+ group_predictions, group
  )
 
  # Применение адаптивного порога
- adjusted_Predictions[group_mask] = (
- group_Predictions > group_threshold
+ adjusted_predictions[group_mask] = (
+ group_predictions > group_threshold
  ).astype(int)
 
- return adjusted_Predictions
+ return adjusted_predictions
 
- def calculate_fair_threshold(self, Predictions, group):
+ def calculate_fair_threshold(self, predictions, group):
  """Расчет справедливого порога for группы"""
 
  # Простая эвристика - можно заменить on более сложные методы
@@ -1059,7 +1059,7 @@ class BiasMitigation:
 - **Качество данных**: Репрезентативность and актуальность данных
 - **Статистический паритет**: Равные доли положительных исходов
 - **Уравненные шансы**: Равные TPR and FPR for all групп
-- **Демографический паритет**: Справедливое распределение Predictions
+- **Демографический паритет**: Справедливое распределение predictions
 
 ### 1. AI Ethics checkList
 
@@ -1089,7 +1089,7 @@ class AIEthicscheckList:
  'check': 'Missing values ratio',
  'value': Missing_ratio,
  'passed': Missing_ratio < 0.1,
- 'recommendation': 'Clean Missing values' if Missing_ratio >= 0.1 else None
+ 'recommendation': 'clean Missing values' if Missing_ratio >= 0.1 else None
  })
 
  # check on дубликаты

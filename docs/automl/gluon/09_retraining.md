@@ -30,7 +30,7 @@
 - **Концептуальный дрифт**: Реальность меняется быстрее модели
 - **data дрифт**: Новые типы данных, которых not было при обучении
 - **Пользовательские предпочтения**: Люди меняют поведение and вкусы
-- **Технологические изменения**: Новые устройства, платформы, interfaceы
+- **ТехноLogsческие изменения**: Новые устройства, платформы, interfaceы
 
 Переобучение (retraining) - это критически важный процесс for поддержания актуальности ML-моделей in продакшене. in этом разделе рассмотрим все аспекты автоматизированного переобучения моделей.
 
@@ -117,7 +117,7 @@ class PeriodicRetraining:
  """Переобучение модели - основной процесс обновления"""
  try:
  self.logger.info("starting model retraining...")
- # Логирование начала процесса for Monitoringа
+ # Logsрование начала процесса for Monitoringа
 
  # Загрузка новых данных
  new_data = self.load_new_data()
@@ -209,10 +209,10 @@ class AdaptiveRetraining:
  self.performance_history = []
  self.logger = logging.getLogger(__name__)
 
- def monitor_performance(self, Predictions: List, actuals: List):
+ def monitor_performance(self, predictions: List, actuals: List):
  """Monitoring производительности модели"""
  # Расчет текущей производительности
- current_performance = self.calculate_performance(Predictions, actuals)
+ current_performance = self.calculate_performance(predictions, actuals)
 
  # add in историю
  self.performance_history.append({
@@ -237,7 +237,7 @@ class AdaptiveRetraining:
  # check снижения производительности
  # Условия for Launchа переобучения:
  # 1. Текущая производительность ниже порога
- # 2. Производительность ухудшилась on сравнению with началом периода
+ # 2. Производительность ухудшилась compared to началом периода
  if (recent_performance[-1] < self.performance_threshold and
  recent_performance[-1] < recent_performance[0]):
  return True
@@ -346,7 +346,7 @@ class IncrementalRetraining:
 - **Автоматические триггеры**: Launch переобучения on условиям
 - **Пайплайны CI/CD**: integration with процессами разработки
 - **A/B тестирование**: Сравнение старых and новых моделей
-- **Откат изменений**: Возможность быстрого возврата к предыдущей версии
+- **Rollback изменений**: Возможность быстрого возврата к предыдущей версии
 - **Monitoring процесса**: Отслеживание статуса переобучения
 - **notifications**: Алерты о статусе and результатах
 
@@ -546,7 +546,7 @@ class RetrainingValidator:
  - improvement_threshold: float - минимальное improve for принятия модели (0.0-1.0)
  - performance_metrics: List[str] - List метрик for сравнения
  - minimum_requirements: Dict[str, float] - минимальные требования к метрикам
- - stability_threshold: float - порог стабильности Predictions (0.0-1.0)
+ - stability_threshold: float - порог стабильности predictions (0.0-1.0)
  - required_Version: str - требуемая версия AutoGluon
  """
  self.config = validation_config
@@ -559,12 +559,12 @@ class RetrainingValidator:
  test_data = await self.load_test_data()
 
  # Предсказания новой модели
- new_Predictions = new_predictor.predict(test_data)
+ new_predictions = new_predictor.predict(test_data)
  new_performance = new_predictor.evaluate(test_data)
 
  # Сравнение with старой моделью (если доступна)
  if old_predictor is not None:
- old_Predictions = old_predictor.predict(test_data)
+ old_predictions = old_predictor.predict(test_data)
  old_performance = old_predictor.evaluate(test_data)
 
  # check улучшения производительности
@@ -653,7 +653,7 @@ class RetrainingValidator:
 
  Notes:
  ------
- stability_threshold: порог согласованности Predictions (0.0-1.0)
+ stability_threshold: порог согласованности predictions (0.0-1.0)
  - 0.99: Очень высокая стабильность (критически важные системы)
  - 0.95: Высокая стабильность (рекомендуется for продакшена)
  - 0.90: Средняя стабильность (приемлемо for большинства задач)
@@ -661,14 +661,14 @@ class RetrainingValidator:
  """
  # Множественные предсказания on одних and тех же данных
  # 5 итераций for проверки воспроизводимости результатов
- Predictions = []
+ predictions = []
  for _ in range(5):
  pred = predictor.predict(test_data)
- Predictions.append(pred)
+ predictions.append(pred)
 
- # check согласованности Predictions
+ # check согласованности predictions
  # Высокая согласованность = стабильная модель
- consistency = self.calculate_Prediction_consistency(Predictions)
+ consistency = self.calculate_Prediction_consistency(predictions)
  return consistency > self.config.get('stability_threshold', 0.95)
 
  def check_compatibility(self, predictor) -> bool:
@@ -751,7 +751,7 @@ class RetrainingMonitor:
  disk = psutil.disk_usage('/')
  disk_percent = disk.percent
 
- # Логирование метрик
+ # Logsрование метрик
  self.logger.info(f"Resources - CPU: {cpu_percent}%, Memory: {memory_percent}%, Disk: {disk_percent}%")
 
  # check лимитов ресурсов
@@ -794,7 +794,7 @@ class RetrainingMonitor:
  retraining_process.terminate()
  break
 
- # Логирование прогресса
+ # Logsрование прогресса
  self.logger.info(f"Retraining progress: {elapsed_time}")
 
  time.sleep(300) # check каждые 5 minutes
@@ -829,28 +829,28 @@ class RetrainingMonitor:
  time.sleep(300)
 ```
 
-## Откат моделей
+## Rollback моделей
 
-### Система отката
+### Система Rollbackа
 
 ```python
 class ModelRollback:
- """Система отката моделей"""
+ """Система Rollbackа моделей"""
 
- def __init__(self, rollback_config: Dict[str, Any]):
+ def __init__(self, Rollback_config: Dict[str, Any]):
  """
- Инициализация системы отката моделей
+ Инициализация системы Rollbackа моделей
 
  Parameters:
  -----------
- rollback_config : Dict[str, Any]
- configuration отката with параметрами:
+ Rollback_config : Dict[str, Any]
+ configuration Rollbackа with параметрами:
  - current_model_path: str - путь к текущей активной модели
  - backup_model_path: str - путь for хранения резервных копий
  - max_versions: int - максимальное количество версий for хранения
  - backup_retention_days: int - количество дней хранения резервных копий
  """
- self.config = rollback_config
+ self.config = Rollback_config
  self.logger = logging.getLogger(__name__)
  self.model_versions = []
 
@@ -879,18 +879,18 @@ class ModelRollback:
  self.logger.error(f"Backup creation failed: {e}")
  return None
 
- def rollback_model(self, target_Version: str = None):
- """Откат к предыдущей версии модели"""
+ def Rollback_model(self, target_Version: str = None):
+ """Rollback к предыдущей версии модели"""
  try:
  if target_version is None:
- # Откат к последней версии
+ # Rollback к последней версии
  if len(self.model_versions) < 2:
- self.logger.warning("No previous version available for rollback")
+ self.logger.warning("No previous version available for Rollback")
  return False
 
  target_version = self.model_versions[-2]['path']
  else:
- # Откат к specifiedной версии
+ # Rollback к specifiedной версии
  target_version = self.find_version_path(target_version)
  if target_version is None:
  self.logger.error(f"Version {target_version} not found")
@@ -911,7 +911,7 @@ class ModelRollback:
  return True
 
  except Exception as e:
- self.logger.error(f"Model rollback failed: {e}")
+ self.logger.error(f"Model Rollback failed: {e}")
  return False
 
  def find_version_path(self, version_id: str) -> str:
@@ -934,7 +934,7 @@ from datetime import datetime, timedelta
 import logging
 from autogluon.tabular import TabularPredictor
 
-# configuration логирования
+# configuration Logsрования
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -1053,8 +1053,8 @@ class CompleteRetrainingsystem:
 
  self.logger.info("Retraining COMPLETED successfully")
  else:
- # Откат к предыдущей версии
- self.rollback_model(backup_path)
+ # Rollback к предыдущей версии
+ self.Rollback_model(backup_path)
 
  self.retraining_history.append({
  'timestamp': datetime.now().isoformat(),
@@ -1068,9 +1068,9 @@ class CompleteRetrainingsystem:
  except Exception as e:
  self.logger.error(f"Retraining failed: {e}")
 
- # Откат in случае ошибки
+ # Rollback in случае ошибки
  if 'backup_path' in locals():
- self.rollback_model(backup_path)
+ self.Rollback_model(backup_path)
 
  async def validate_new_model(self, new_predictor) -> bool:
  """Валидация новой модели"""
@@ -1079,11 +1079,11 @@ class CompleteRetrainingsystem:
  test_data = await self.load_test_data()
 
  # Предсказания новой модели
- new_Predictions = new_predictor.predict(test_data)
+ new_predictions = new_predictor.predict(test_data)
  new_performance = new_predictor.evaluate(test_data)
 
  # Сравнение with текущей моделью
- current_Predictions = self.current_model.predict(test_data)
+ current_predictions = self.current_model.predict(test_data)
  current_performance = self.current_model.evaluate(test_data)
 
  # check улучшения
@@ -1107,7 +1107,7 @@ class CompleteRetrainingsystem:
  async def deploy_new_model(self, new_predictor):
  """Деплой новой модели"""
  try:
- # Остановка текущего сервиса
+ # Остановка текущего service
  await self.stop_current_service()
 
  # Замена модели
@@ -1117,7 +1117,7 @@ class CompleteRetrainingsystem:
  # update текущей модели
  self.current_model = new_predictor
 
- # Launch обновленного сервиса
+ # Launch обновленного service
  await self.start_updated_service()
 
  self.logger.info("New model deployed successfully")
@@ -1135,8 +1135,8 @@ class CompleteRetrainingsystem:
 
  return backup_path
 
- def rollback_model(self, backup_path: str):
- """Откат к предыдущей версии"""
+ def Rollback_model(self, backup_path: str):
+ """Rollback к предыдущей версии"""
  import shutil
  shutil.copytree(backup_path, self.config['model_path'], dirs_exist_ok=True)
 
@@ -1158,14 +1158,14 @@ config = {
  # Дополнительные parameters Monitoringа
  'data_quality_threshold': 0.8, # Порог качества данных (80%)
  'max_retraining_time': 7200, # Максимальное время переобучения (2 часа)
- 'stability_threshold': 0.95, # Порог стабильности Predictions (95%)
+ 'stability_threshold': 0.95, # Порог стабильности predictions (95%)
 
  # parameters ресурсов
  'cpu_threshold': 0.9, # Порог использования CPU (90%)
  'memory_threshold': 0.9, # Порог использования памяти (90%)
  'disk_threshold': 0.9, # Порог использования диска (90%)
 
- # parameters отката
+ # parameters Rollbackа
  'backup_path': './model_backups', # Путь for резервных копий
  'max_versions': 10, # Максимальное количество версий
  'backup_retention_days': 30 # Дни хранения резервных копий
@@ -1192,7 +1192,7 @@ if __name__ == "__main__":
 - **Валидация**: check качества on независимых данных
 - **documentation**: Подробная documentation процесса
 - **Версионирование**: Контроль версий моделей and данных
-- **Откат**: Возможность быстрого возврата к предыдущей версии
+- **Rollback**: Возможность быстрого возврата к предыдущей версии
 - **Monitoring**: Непрерывное отслеживание качества
 
 ### 🎯 Ключевые принципы успешного переобучения
@@ -1201,7 +1201,7 @@ if __name__ == "__main__":
 
 - **Принцип "Постепенности"**: Постепенное внедрение изменений
 - **Принцип "Валидации"**: Обязательная check качества
-- **Принцип "Отката"**: Возможность быстрого возврата
+- **Принцип "Rollbackа"**: Возможность быстрого возврата
 - **Принцип "Monitoringа"**: Непрерывное наблюдение за процессом
 - **Принцип "Документации"**: Подробная фиксация all изменений
 - **Принцип "Тестирования"**: Комплексная check перед внедрением
@@ -1270,7 +1270,7 @@ if __name__ == "__main__":
 - **0.80**: Средние пороги (баланс между производительностью and стабильностью)
 - **0.70**: Низкие пороги (консервативный подход)
 
-#### parameters отката
+#### parameters Rollbackа
 
 ##### max_versions (количество)
 

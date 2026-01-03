@@ -31,7 +31,7 @@
 <img src="images/optimized/simple_production_flow.png" alt="components TabularPredictor" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 2: Детальная схема компонентов TabularPredictor*
 
-**Почему важно понимать components?** Потому что это помогает понять, как TabularPredictor автоматизирует весь процесс машинного обучения:
+**Почему важно понимать components?** Потому что это помогает понять, как TabularPredictor автоматизирует весь процесс machine learning:
 
 - **data Preprocessing**: Автоматическая clean and предобработка данных
 - **Feature Engineering**: create новых признаков из существующих
@@ -39,7 +39,7 @@
 - **Hyperparameter Tuning**: Оптимизация параметров моделей
 - **Ensemble Creation**: create ансамблей for improving accuracy
 - **Model Evaluation**: Оценка качества and выбор лучшей модели
-- **Prediction**: Генерация Predictions for новых данных
+- **Prediction**: Генерация predictions for новых данных
 
 `TabularPredictor` - это основной класс for работы with табличными данными in AutoGluon. Он автоматически определяет тип задачи (классификация, регрессия) and выбирает лучшие алгоритмы.
 
@@ -82,7 +82,7 @@ predictor = TabularPredictor(
 
 **Почему Use 'auto'?** Потому что AutoML Gluon умнее нас in выборе оптимальных параметров.
 
-#### 🔧 Детальное description параметров TabularPredictor
+#### 🔧 Детальное describe параметров TabularPredictor
 
 **parameter `label`:**
 
@@ -102,7 +102,7 @@ predictor = TabularPredictor(
 
 **parameter `problem_type`:**
 
-- **Что означает**: Тип задачи машинного обучения
+- **Что означает**: Тип задачи machine learning
 - **Зачем нужен**: Определяет, What алгоритмы and метрики использовать
 - **Автоматическое определение**: `'auto'` - AutoML Gluon сам определит тип
 - **Ручное specifiedие**: Можно явно указать тип задачи
@@ -152,8 +152,8 @@ predictor = TabularPredictor(
 
 ## Типы задач
 
-<img src="images/optimized/automl_theory.png" alt="Типы задач машинного обучения" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 3: Обзор типов задач машинного обучения in AutoML Gluon*
+<img src="images/optimized/automl_theory.png" alt="Типы задач machine learning" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 3: Обзор типов задач machine learning in AutoML Gluon*
 
 **Почему важно понимать типы задач?** Потому что разные задачи требуют разных подходов. Это как разница между диагностикой болезни and измерением температуры - методы разные.
 
@@ -248,7 +248,7 @@ test_data = pd.read_csv('test.csv')
 predictor.fit(train_data)
 
 # Предсказания
-Predictions = predictor.predict(test_data)
+predictions = predictor.predict(test_data)
 ```
 
 ### Обучение with ограничением времени
@@ -267,7 +267,7 @@ predictor.fit(
 )
 ```
 
-#### 🔧 Детальное description параметров метода fit()
+#### 🔧 Детальное describe параметров метода fit()
 
 **parameter `time_limit`:**
 
@@ -430,7 +430,7 @@ predictor.fit(
  - **Monitoring прогресса**: Отслеживание времени обучения
  - **Сохранение промежуточных результатов**: Сохранение моделей on каждом этапе
  - **Ранняя остановка**: Остановка при достижении определенного качества
- - **Логирование**: Запись информации in файлы
+ - **Logsрование**: Запись информации in файлы
 - **Практические examples**:
  - **Monitoring**: `callbacks=[progress_callback]`
  - **Сохранение**: `callbacks=[save_callback]`
@@ -460,7 +460,7 @@ predictor.fit(
 )
 ```
 
-#### 🔧 Детальное description параметров пресетов
+#### 🔧 Детальное describe параметров пресетов
 
 **parameter `presets`:**
 
@@ -549,7 +549,7 @@ performance = predictor.evaluate(
 )
 ```
 
-#### 🔧 Детальное description параметров метода evaluate()
+#### 🔧 Детальное describe параметров метода evaluate()
 
 **parameter `Detailed_Report`:**
 
@@ -764,7 +764,7 @@ predictor.fit(
 )
 ```
 
-#### 🔧 Детальное description параметров валидации
+#### 🔧 Детальное describe параметров валидации
 
 **parameter `holdout_frac` - Holdout валидация**
 
@@ -1016,20 +1016,20 @@ print("configuration for больших данных:", large_data_config)
 
 ```python
 # Предсказания классов/значений
-Predictions = predictor.predict(test_data)
+predictions = predictor.predict(test_data)
 
 # Вероятности (for классификации)
 probabilities = predictor.predict_proba(test_data)
 ```
 
-#### 🔧 Детальное description параметров методов предсказания
+#### 🔧 Детальное describe параметров методов предсказания
 
 **Метод `predict()` - Основные предсказания**
 
 **parameter `include_confidence`:**
 
 - **Что означает**: Включать ли доверительные интервалы in результат
-- **Зачем нужен**: Позволяет оценить неопределенность Predictions
+- **Зачем нужен**: Позволяет оценить неопределенность predictions
 - **on умолчанию**: `False` (без доверительных интервалов)
 - **Доступные значения**:
  - **`False`** - Только предсказания
@@ -1038,11 +1038,11 @@ probabilities = predictor.predict_proba(test_data)
  - **Стандартные предсказания**: `include_confidence=False`
  - **Анализ рисков**: `include_confidence=True`
 - **Влияние on результат**:
- - **Без интервалов**: Простой массив Predictions
+ - **Без интервалов**: Простой массив predictions
  - **with интервалами**: dataFrame with колонками Prediction, lower, upper
 - **Когда использовать**:
  - **Быстрые предсказания**: Когда not нужна оценка неопределенности
- - **Анализ рисков**: Когда важно понимать надежность Predictions
+ - **Анализ рисков**: Когда важно понимать надежность predictions
  - **Бизнес-решения**: Когда нужно учитывать неопределенность
 
 **parameter `as_pandas`:**
@@ -1082,7 +1082,7 @@ probabilities = predictor.predict_proba(test_data)
  - **Сырые data**: `transform_features=True`
  - **ПредобWorkingнные data**: `transform_features=False`
 
-**Метод `predict_proba()` - Вероятности Predictions**
+**Метод `predict_proba()` - Вероятности predictions**
 
 **parameter `as_pandas`:**
 
@@ -1118,23 +1118,23 @@ probabilities = predictor.predict_proba(test_data)
 
 ```python
 # Предсказания with доверительными интервалами
-Predictions_with_intervals = predictor.predict(
+predictions_with_intervals = predictor.predict(
  test_data,
  include_confidence=True
 )
 
 # Предсказания from отдельных моделей
-individual_Predictions = predictor.predict_multi(test_data)
+individual_predictions = predictor.predict_multi(test_data)
 ```
 
-#### 🔧 Детальное description дополнительных методов предсказания
+#### 🔧 Детальное describe дополнительных методов предсказания
 
 **Метод `predict_multi()` - Предсказания from отдельных моделей**
 
 **parameter `as_pandas`:**
 
 - **Что означает**: Возвращать результат как pandas dataFrame or numpy array
-- **Зачем нужен**: Контролирует формат возвращаемых Predictions
+- **Зачем нужен**: Контролирует формат возвращаемых predictions
 - **on умолчанию**: `True` (pandas dataFrame)
 - **Доступные значения**:
  - **`True`** - pandas dataFrame with названиями моделей
@@ -1185,17 +1185,17 @@ individual_Predictions = predictor.predict_multi(test_data)
 
 ```python
 # Базовые предсказания
-Predictions = predictor.predict(test_data)
+predictions = predictor.predict(test_data)
 
 # Предсказания with доверительными интервалами
-Predictions_with_confidence = predictor.predict(
+predictions_with_confidence = predictor.predict(
  test_data,
  include_confidence=True,
  as_pandas=True
 )
 
 # Предсказания как numpy array
-Predictions_numpy = predictor.predict(
+predictions_numpy = predictor.predict(
  test_data,
  as_pandas=False
 )
@@ -1210,23 +1210,23 @@ probabilities_numpy = predictor.predict_proba(
 )
 
 # Предсказания from отдельных моделей
-individual_Predictions = predictor.predict_multi(test_data)
+individual_predictions = predictor.predict_multi(test_data)
 
 # Вероятности from отдельных моделей
 individual_probabilities = predictor.predict_proba_multi(test_data)
 
 # Анализ результатов
-print("Predictions shape:", Predictions.shape)
-print("Confidence intervals shape:", Predictions_with_confidence.shape)
-print("Individual Predictions shape:", individual_Predictions.shape)
+print("predictions shape:", predictions.shape)
+print("Confidence intervals shape:", predictions_with_confidence.shape)
+print("Individual predictions shape:", individual_predictions.shape)
 print("Individual probabilities shape:", individual_probabilities.shape)
 ```
 
-**Оптимизация производительности Predictions:**
+**Оптимизация производительности predictions:**
 
 ```python
 # Быстрые предсказания (без доверительных интервалов)
-fast_Predictions = predictor.predict(
+fast_predictions = predictor.predict(
  test_data,
  include_confidence=False,
  as_pandas=False,
@@ -1234,7 +1234,7 @@ fast_Predictions = predictor.predict(
 )
 
 # Детальные предсказания (with полной информацией)
-Detailed_Predictions = predictor.predict(
+Detailed_predictions = predictor.predict(
  test_data,
  include_confidence=True,
  as_pandas=True,
@@ -1321,7 +1321,7 @@ predictor = TabularPredictor.load(
 - **Boosting**: sequential training моделей with фокусом on ошибках
 - **Stacking**: Обучение мета-модели on предсказаниях базовых моделей
 - **Voting**: Простое голосование между моделями
-- **Blending**: Взвешенное объединение Predictions
+- **Blending**: Взвешенное объединение predictions
 - **Diversity**: Разнообразие моделей повышает качество ансамбля
 
 ### configuration ансамбля
@@ -1393,7 +1393,7 @@ predictor.fit(
 )
 ```
 
-#### 🔧 Детальное description структуры hyperparameters
+#### 🔧 Детальное describe структуры hyperparameters
 
 **Общая Structure hyperparameters словаря:**
 
@@ -1745,7 +1745,7 @@ predictor.fit(
 
 ```python
 # for текстовых columns AutoGluon автоматически создает признаки
-text_columns = ['description', 'reView_text']
+text_columns = ['describe', 'reView_text']
 
 predictor.fit(
  train_data,
@@ -1782,18 +1782,18 @@ predictor.fit(
 - **Model Comparison**: Сравнение различных моделей
 - **Early Stopping**: Автоматическая остановка при отсутствии улучшений
 
-### Логирование
+### Logsрование
 
 ```python
 import logging
 
-# configuration логирования
+# configuration Logsрования
 logging.basicConfig(level=logging.INFO)
 
-# Обучение with подробным логированием
+# Обучение with подробным Logsрованием
 predictor.fit(
  train_data,
- verbosity=2 # Detailed логирование
+ verbosity=2 # Detailed Logsрование
 )
 ```
 
@@ -1855,7 +1855,7 @@ predictor.fit(
 )
 
 # Предсказания
-Predictions = predictor.predict(test_data)
+predictions = predictor.predict(test_data)
 probabilities = predictor.predict_proba(test_data)
 
 # Оценка качества
@@ -1907,7 +1907,7 @@ predictor.fit(
 )
 
 # Предсказания
-Predictions = predictor.predict(test_data)
+predictions = predictor.predict(test_data)
 
 # Оценка качества
 performance = predictor.evaluate(test_data)

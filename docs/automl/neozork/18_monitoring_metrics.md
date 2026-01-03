@@ -1,6 +1,6 @@
 # 18.4. Monitoring and метрики for достижения 100% прибыли
 
-**Теория:** Monitoring and метрики for достижения 100% прибыли представляют собой комплексную system отслеживания and Analysis all аспектов производительности торговой системы. Это критически важно for поддержания высокой эффективности and достижения целевой доходности.
+**Theory:** Monitoring and метрики for достижения 100% прибыли представляют собой комплексную system отслеживания and Analysis all аспектов производительности торговой системы. Это критически важно for поддержания высокой эффективности and достижения целевой доходности.
 
 **Почему Monitoring and метрики важны:**
 
@@ -11,9 +11,9 @@
 
 ## 📊 Система Monitoringа производительности
 
-**Теория:** Система Monitoringа производительности представляет собой комплексную system отслеживания all ключевых метрик производительности торговой системы. Это критически важно for поддержания высокой эффективности and своевременного выявления проблем.
+**Theory:** Система Monitoringа производительности представляет собой комплексную system отслеживания all ключевых метрик производительности торговой системы. Это критически важно for поддержания высокой эффективности and своевременного выявления проблем.
 
-**Детальное description концепции:**
+**Детальное describe концепции:**
 Система Monitoringа производительности in контексте достижения 100% прибыли in месяц представляет собой многоуровневую архитектуру, которая включает in себя:
 
 1. **Метрики доходности** - отслеживание различных временных горизонтов доходности (дневная, недельная, месячная, годовая)
@@ -50,7 +50,7 @@
 - Предотвращение значительных потерь
 - Адаптация к рыночным изменениям
 
-**Минусы:**
+**Disadvantages:**
 - Сложность реализации требует высококвалифицированных специалистов
 - Высокие требования к вычислительным ресурсам
 - Потенциальные ложные срабатывания алертов
@@ -114,7 +114,7 @@ class PerformanceMonitor:
 
  Attributes:
  config (Dict): configuration системы Monitoringа
- logger (logging.Logger): Логгер for записи событий
+ logger (logging.Logger): Логгер for записи events
  metrics_history (List[Dict]): История all рассчитанных метрик
  alerts (List[Dict]): История all сгенерированных алертов
  monthly_target (float): Целевая месячная доходность (100%)
@@ -292,7 +292,7 @@ class PerformanceMonitor:
  # Сохранение in историю for Analysis трендов
  self.metrics_history.append(metrics.copy())
 
- # Ограничение истории for предотвращения утечек памяти
+ # Ограничение истории for предотвращения утечеto memory
  if len(self.metrics_history) > 1000:
  self.metrics_history = self.metrics_history[-1000:]
 
@@ -1216,9 +1216,9 @@ if __name__ == "__main__":
 
 ## 🚨 Система алертов
 
-**Теория:** Система алертов представляет собой автоматизированную system уведомлений о критических событиях and проблемах in торговой системе. Это критически важно for своевременного реагирования on проблемы and поддержания стабильной работы системы.
+**Theory:** Система алертов представляет собой автоматизированную system уведомлений о критических событиях and проблемах in торговой системе. Это критически важно for своевременного реагирования on проблемы and поддержания стабильной работы системы.
 
-**Детальное description концепции:**
+**Детальное describe концепции:**
 Система алертов in контексте достижения 100% прибыли in месяц представляет собой многоуровневую system уведомлений, которая включает in себя:
 
 1. **Типы алертов** - различные категории уведомлений (критические, предупреждения, информационные)
@@ -1245,7 +1245,7 @@ if __name__ == "__main__":
 - **Предотвращение:** Обеспечивает предотвращение серьезных потерь and сбоев системы
 - **Стабильность:** Критически важно for поддержания стабильной работы системы
 - **Контроль рисков:** Позволяет контролировать риски in реальном времени
-- **Аудит:** Обеспечивает полный аудит all критических событий
+- **Аудит:** Обеспечивает полный аудит all критических events
 
 **Типы алертов:**
 1. **Критические** - немедленное вмешательство требуется
@@ -1261,9 +1261,9 @@ if __name__ == "__main__":
 - Предотвращение значительных потерь
 - Поддержание стабильности системы
 - Полный контроль над рисками
-- Детальная аналитика событий
+- Детальная аналитика events
 
-**Минусы:**
+**Disadvantages:**
 - Потенциальные ложные срабатывания требуют тонкой Settings
 - Сложность Settings множественных каналов
 - Требует постоянного внимания and Monitoringа
@@ -1352,7 +1352,7 @@ class AlertManager:
 
  Attributes:
  config (Dict): configuration системы алертов
- logger (logging.Logger): Логгер for записи событий
+ logger (logging.Logger): Логгер for записи events
  alert_history (List[Alert]): История all алертов
  escalation_thread (threading.Thread): Поток for эскалации алертов
  rate_limits (Dict): Ограничения частоты отправки алертов
@@ -1707,7 +1707,7 @@ class AlertManager:
  "content": f"🚨 **NeoZorK 100% system Alert**",
  "embeds": [{
  "title": f"Alert Type: {alert['type'].upper()}",
- "description": alert['message'],
+ "describe": alert['message'],
  "color": 0xff0000 if alert['type'] == 'error' else 0xffa500,
  "timestamp": alert['timestamp'].isoformat(),
  "fields": [
@@ -1778,7 +1778,7 @@ class AlertManager:
  return False
 
  # Здесь должна быть integration with SMS-провайдером
- # for демонстрации Use логирование
+ # for демонстрации Use Logsрование
  self.logger.info(f"SMS Alert: {alert.message}")
  return True
 
@@ -1960,24 +1960,24 @@ if __name__ == "__main__":
 
 ```
 
-## 📈 Система логирования
+## 📈 Система Logsрования
 
-**Теория:** Система логирования представляет собой комплексную system записи and хранения all событий, операций and метрик торговой системы. Это критически важно for Analysis производительности, отладки проблем and аудита операций.
+**Theory:** Система Logsрования представляет собой комплексную system записи and хранения all events, операций and метрик торговой системы. Это критически важно for Analysis производительности, отладки проблем and аудита операций.
 
-**Детальное description концепции:**
-Система логирования in контексте достижения 100% прибыли in месяц представляет собой многоуровневую архитектуру, которая включает in себя:
+**Детальное describe концепции:**
+Система Logsрования in контексте достижения 100% прибыли in месяц представляет собой многоуровневую архитектуру, которая включает in себя:
 
 1. **Типы логов** - различные категории записей (торговые операции, производительность, ошибки, системные события)
-2. **Уровни логирования** - detailsзация записей (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+2. **Уровни Logsрования** - detailsзация записей (DEBUG, INFO, WARNING, ERROR, CRITICAL)
 3. **Форматы данных** - структурированные форматы for легкого Analysis (JSON, CSV, Parquet)
 4. **Ротация логов** - автоматическое Management размером files логов
 5. **Аналитика** - инструменты for Analysis and поиска in логах
 6. **Архивирование** - долгосрочное хранение исторических данных
 
 **Архитектурные принципы:**
-- **Структурированность** - все логи имеют единую структуру for легкого Analysis
+- **Структурированность** - все Logs имеют единую структуру for легкого Analysis
 - **Производительность** - минимальное влияние on производительность торговой системы
-- **Надежность** - логирование продолжается даже при сбоях системы
+- **Надежность** - Logsрование продолжается даже при сбоях системы
 - **Масштабируемость** - возможность обработки больших объемов данных
 - **Безопасность** - защита конфиденциальной информации in логах
 
@@ -1986,7 +1986,7 @@ if __name__ == "__main__":
 - **Сжатие данных**: `Compression_Ratio = Original_Size / Compressed_Size`
 - **index производительности**: `Log_Performance = Logs_Per_Second / CPU_Usage`
 
-**Почему система логирования критически важна:**
+**Почему система Logsрования критически важна:**
 - **Анализ:** Обеспечивает глубокий анализ производительности and выявление паттернов
 - **Отладка:** Обеспечивает быстрое выявление and fix проблем
 - **Аудит:** Обеспечивает полный аудит all операций for соответствия требованиям
@@ -1995,12 +1995,12 @@ if __name__ == "__main__":
 - **Monitoring:** Обеспечивает непрерывный Monitoring состояния системы
 
 **Типы логов:**
-1. **Торговые логи** - все торговые операции and их результаты
-2. **Логи производительности** - метрики and показатели системы
-3. **Логи ошибок** - все ошибки and исключения
-4. **Системные логи** - события системы and инфраструктуры
-5. **Аудит логи** - действия пользователей and администраторов
-6. **Аналитические логи** - data for Analysis and Reportности
+1. **Торговые Logs** - все торговые операции and их результаты
+2. **Logs производительности** - метрики and показатели системы
+3. **Logs ошибок** - все ошибки and исключения
+4. **Системные Logs** - события системы and инфраструктуры
+5. **Аудит Logs** - действия пользователей and администраторов
+6. **Аналитические Logs** - data for Analysis and Reportности
 
 **Уровни detailsзации:**
 - **DEBUG** - детальная информация for отладки
@@ -2010,17 +2010,17 @@ if __name__ == "__main__":
 - **CRITICAL** - критические ошибки, требующие немедленного вмешательства
 
 **Плюсы:**
-- Полная история all операций with detailsзацией
+- Полная история all operations with detailsзацией
 - Возможность глубокого Analysis and выявления паттернов
 - Быстрая отладка проблем and их fix
 - Полный аудит операций for соответствия требованиям
 - Возможность обучения on исторических данных
 - Непрерывный Monitoring состояния системы
 
-**Минусы:**
+**Disadvantages:**
 - Высокие требования к дисковому пространству
 - Сложность поиска and Analysis больших объемов данных
-- Потенциальные Issues with производительностью при интенсивном логировании
+- Потенциальные Issues with производительностью при интенсивном Logsровании
 - Необходимость управления ротацией and архивированием логов
 - Потенциальные Issues with безопасностью конфиденциальных данных
 
@@ -2029,12 +2029,12 @@ if __name__ == "__main__":
 """
 NeoZorK 100% Logging system
 
-Этот module реализует комплексную system логирования for Monitoringа торговой системы
-and достижения 100% прибыли in месяц. Система включает in себя структурированное логирование,
+Этот module реализует комплексную system Logsрования for Monitoringа торговой системы
+and достижения 100% прибыли in месяц. Система включает in себя структурированное Logsрование,
 ротацию files, аналитику and архивирование.
 
 Основные components:
-- Loggingsystem: Основной класс for управления логированием
+- Loggingsystem: Основной класс for управления Logsрованием
 - Типы логов: Торговые операции, производительность, ошибки, системные события
 - Форматы: JSON, CSV, Parquet for различных типов Analysis
 - Ротация: Автоматическое Management размером files логов
@@ -2043,7 +2043,7 @@ and достижения 100% прибыли in месяц. Система вк�
 Использование:
  config = {
  'logging': {
- 'log_dir': 'logs',
+ 'log_dir': 'Logs',
  'max_file_size': 10485760, # 10MB
  'backup_count': 5,
  'formats': ['json', 'csv']
@@ -2070,7 +2070,7 @@ import hashlib
 import os
 
 class LogLevel(Enum):
- """Уровни логирования"""
+ """Уровни Logsрования"""
  DEBUG = "DEBUG"
  INFO = "INFO"
  WARNING = "WARNING"
@@ -2096,36 +2096,36 @@ class LogEntry:
  data: Optional[Dict] = None
  source: str = "neozork_100_percent"
  session_id: Optional[str] = None
- user_id: Optional[str] = None
+ User_id: Optional[str] = None
  correlation_id: Optional[str] = None
 
 class Loggingsystem:
  """
- Система логирования for NeoZorK 100% system
+ Система Logsрования for NeoZorK 100% system
 
- Этот класс реализует комплексную system логирования, которая обеспечивает
- структурированную запись all событий, операций and метрик торговой системы.
+ Этот класс реализует комплексную system Logsрования, которая обеспечивает
+ структурированную запись all events, операций and метрик торговой системы.
  Система поддерживает множественные форматы, ротацию files and аналитику.
 
  Attributes:
- config (Dict): configuration системы логирования
+ config (Dict): configuration системы Logsрования
  logger (logging.Logger): Основной логгер системы
  log_dir (Path): Директория for хранения логов
  loggers (Dict): Специализированные логгеры for разных типов
  rotation_thread (threading.Thread): Поток for ротации логов
 
  Methods:
- log_trade: Логирование торговых операций
- log_performance: Логирование метрик производительности
- log_error: Логирование ошибок and исключений
- log_system_event: Логирование системных событий
- get_logs: Получение and фильтрация логов
- export_logs: Экспорт логов in различных форматах
+ log_trade: Logsрование торговых операций
+ log_performance: Logsрование метрик производительности
+ log_error: Logsрование ошибок and исключений
+ log_system_event: Logsрование системных events
+ get_Logs: Получение and фильтрация логов
+ export_Logs: Экспорт логов in различных форматах
  """
 
  def __init__(self, config: Dict):
  """
- Инициализация системы логирования
+ Инициализация системы Logsрования
 
  Args:
  config (Dict): configuration системы, включающая:
@@ -2140,7 +2140,7 @@ class Loggingsystem:
 
  # configuration директории логов
  logging_config = config.get('logging', {})
- self.log_dir = Path(logging_config.get('log_dir', 'logs'))
+ self.log_dir = Path(logging_config.get('log_dir', 'Logs'))
  self.log_dir.mkdir(exist_ok=True)
 
  # parameters ротации
@@ -2152,7 +2152,7 @@ class Loggingsystem:
  # Специализированные логгеры
  self.loggers = {}
 
- # configuration логирования
+ # configuration Logsрования
  self._setup_logging()
 
  # Launch потока ротации
@@ -2162,7 +2162,7 @@ class Loggingsystem:
  self.logger.info("Loggingsystem initialized successfully")
 
  def _setup_logging(self):
- """configuration системы логирования"""
+ """configuration системы Logsрования"""
  try:
  # Основной логгер
  main_logger = logging.getLogger('neozork_100_percent')
@@ -2223,7 +2223,7 @@ class Loggingsystem:
  error_logger.addHandler(error_handler)
  self.loggers['error'] = error_logger
 
- # Логгер for системных событий
+ # Логгер for системных events
  system_logger = logging.getLogger('neozork_system')
  system_logger.setLevel(logging.INFO)
  system_handler = logging.FileHandler(self.log_dir / 'system.log')
@@ -2245,7 +2245,7 @@ class Loggingsystem:
  self.logger.error(f"Error Setting up specialized loggers: {e}")
 
  def log_trade(self, trade: Dict):
- """Логирование торговой операции"""
+ """Logsрование торговой операции"""
  try:
  trade_logger = self.loggers.get('trade')
  if not trade_logger:
@@ -2259,11 +2259,11 @@ class Loggingsystem:
  message=f"Trade executed: {trade.get('action', 'unknown')} {trade.get('amount', 0)} at {trade.get('price', 0)}",
  data=trade,
  session_id=trade.get('session_id'),
- user_id=trade.get('user_id'),
+ User_id=trade.get('User_id'),
  correlation_id=trade.get('correlation_id')
  )
 
- # Логирование in JSON формате
+ # Logsрование in JSON формате
  log_data = asdict(log_entry)
  log_data['timestamp'] = log_entry.timestamp.isoformat()
  log_data['level'] = log_entry.level.value
@@ -2275,7 +2275,7 @@ class Loggingsystem:
  self.logger.error(f"Error logging trade: {e}")
 
  def log_performance(self, performance: Dict):
- """Логирование производительности"""
+ """Logsрование производительности"""
  try:
  perf_logger = self.loggers.get('performance')
  if not perf_logger:
@@ -2289,11 +2289,11 @@ class Loggingsystem:
  message=f"Performance metrics calculated: score={performance.get('performance_score', 0):.2f}",
  data=performance,
  session_id=performance.get('session_id'),
- user_id=performance.get('user_id'),
+ User_id=performance.get('User_id'),
  correlation_id=performance.get('correlation_id')
  )
 
- # Логирование in JSON формате
+ # Logsрование in JSON формате
  log_data = asdict(log_entry)
  log_data['timestamp'] = log_entry.timestamp.isoformat()
  log_data['level'] = log_entry.level.value
@@ -2305,7 +2305,7 @@ class Loggingsystem:
  self.logger.error(f"Error logging performance: {e}")
 
  def log_error(self, error: Exception, context: str = "", additional_data: Dict = None):
- """Логирование ошибок"""
+ """Logsрование ошибок"""
  try:
  error_logger = self.loggers.get('error')
  if not error_logger:
@@ -2326,7 +2326,7 @@ class Loggingsystem:
  }
  )
 
- # Логирование in JSON формате
+ # Logsрование in JSON формате
  log_data = asdict(log_entry)
  log_data['timestamp'] = log_entry.timestamp.isoformat()
  log_data['level'] = log_entry.level.value
@@ -2338,7 +2338,7 @@ class Loggingsystem:
  self.logger.error(f"Error logging error: {e}")
 
  def log_system_event(self, event: str, data: Dict = None, level: LogLevel = LogLevel.INFO):
- """Логирование системных событий"""
+ """Logsрование системных events"""
  try:
  system_logger = self.loggers.get('system')
  if not system_logger:
@@ -2352,11 +2352,11 @@ class Loggingsystem:
  message=f"system event: {event}",
  data=data or {},
  session_id=data.get('session_id') if data else None,
- user_id=data.get('user_id') if data else None,
+ User_id=data.get('User_id') if data else None,
  correlation_id=data.get('correlation_id') if data else None
  )
 
- # Логирование in JSON формате
+ # Logsрование in JSON формате
  log_data = asdict(log_entry)
  log_data['timestamp'] = log_entry.timestamp.isoformat()
  log_data['level'] = log_entry.level.value
@@ -2370,8 +2370,8 @@ class Loggingsystem:
  except Exception as e:
  self.logger.error(f"Error logging system event: {e}")
 
- def log_audit(self, action: str, user_id: str, data: Dict = None):
- """Логирование аудита"""
+ def log_audit(self, action: str, User_id: str, data: Dict = None):
+ """Logsрование аудита"""
  try:
  audit_logger = self.loggers.get('audit')
  if not audit_logger:
@@ -2382,14 +2382,14 @@ class Loggingsystem:
  timestamp=datetime.now(),
  level=LogLevel.INFO,
  log_type=LogType.AUDIT,
- message=f"Audit: {action} by user {user_id}",
+ message=f"Audit: {action} by User {User_id}",
  data=data or {},
- user_id=user_id,
+ User_id=User_id,
  session_id=data.get('session_id') if data else None,
  correlation_id=data.get('correlation_id') if data else None
  )
 
- # Логирование in JSON формате
+ # Logsрование in JSON формате
  log_data = asdict(log_entry)
  log_data['timestamp'] = log_entry.timestamp.isoformat()
  log_data['level'] = log_entry.level.value
@@ -2400,11 +2400,11 @@ class Loggingsystem:
  except Exception as e:
  self.logger.error(f"Error logging audit: {e}")
 
- def get_logs(self, log_type: str = None, start_date: datetime = None, end_date: datetime = None,
+ def get_Logs(self, log_type: str = None, start_date: datetime = None, end_date: datetime = None,
  level: LogLevel = None, limit: int = 1000) -> List[Dict]:
  """Получение логов with фильтрацией"""
  try:
- logs = []
+ Logs = []
 
  # Определение файла лога
  if log_type and log_type in self.loggers:
@@ -2413,7 +2413,7 @@ class Loggingsystem:
  log_file = self.log_dir / 'neozork_100_percent.log'
 
  if not log_file.exists():
- return logs
+ return Logs
 
  # Чтение логов
  with open(log_file, 'r') as f:
@@ -2434,57 +2434,57 @@ class Loggingsystem:
  if level and log_entry.get('level') != level.value:
  continue
 
- logs.append(log_entry)
+ Logs.append(log_entry)
 
  # Ограничение количества записей
- if len(logs) >= limit:
+ if len(Logs) >= limit:
  break
 
  except json.JSONDecodeError:
  continue
 
- return logs
+ return Logs
 
  except Exception as e:
- self.logger.error(f"Error getting logs: {e}")
+ self.logger.error(f"Error getting Logs: {e}")
  return []
 
- def export_logs(self, log_type: str = None, start_date: datetime = None, end_date: datetime = None,
+ def export_Logs(self, log_type: str = None, start_date: datetime = None, end_date: datetime = None,
  format: str = 'json') -> str:
  """Экспорт логов in различных форматах"""
  try:
- logs = self.get_logs(log_type, start_date, end_date)
+ Logs = self.get_Logs(log_type, start_date, end_date)
 
  if format == 'json':
- return json.dumps(logs, indent=2, default=str)
+ return json.dumps(Logs, indent=2, default=str)
  elif format == 'csv':
- if not logs:
+ if not Logs:
  return ""
- df = pd.dataFrame(logs)
+ df = pd.dataFrame(Logs)
  return df.to_csv(index=False)
  elif format == 'parquet':
- if not logs:
+ if not Logs:
  return ""
- df = pd.dataFrame(logs)
+ df = pd.dataFrame(Logs)
  return df.to_parquet(index=False)
  else:
- return str(logs)
+ return str(Logs)
 
  except Exception as e:
- self.logger.error(f"Error exporting logs: {e}")
+ self.logger.error(f"Error exporting Logs: {e}")
  return ""
 
  def _rotation_worker(self):
  """Поток for ротации логов"""
  while True:
  try:
- self._rotate_logs()
+ self._rotate_Logs()
  time.sleep(3600) # check каждый час
  except Exception as e:
  self.logger.error(f"Error in rotation worker: {e}")
  time.sleep(3600)
 
- def _rotate_logs(self):
+ def _rotate_Logs(self):
  """Ротация files логов"""
  try:
  for log_file in self.log_dir.glob('*.log'):
@@ -2492,7 +2492,7 @@ class Loggingsystem:
  self._rotate_file(log_file)
 
  except Exception as e:
- self.logger.error(f"Error rotating logs: {e}")
+ self.logger.error(f"Error rotating Logs: {e}")
 
  def _rotate_file(self, log_file: Path):
  """Ротация конкретного файла лога"""
@@ -2529,10 +2529,10 @@ class Loggingsystem:
  """Получение статистики on логам"""
  try:
  cutoff_time = datetime.now() - timedelta(hours=hours)
- logs = self.get_logs(start_date=cutoff_time, limit=10000)
+ Logs = self.get_Logs(start_date=cutoff_time, limit=10000)
 
  stats = {
- 'total_logs': len(logs),
+ 'total_Logs': len(Logs),
  'by_type': {},
  'by_level': {},
  'error_rate': 0.0,
@@ -2542,7 +2542,7 @@ class Loggingsystem:
  error_count = 0
  error_messages = {}
 
- for log in logs:
+ for log in Logs:
  # Статистика on типам
  log_type = log.get('log_type', 'unknown')
  stats['by_type'][log_type] = stats['by_type'].get(log_type, 0) + 1
@@ -2558,8 +2558,8 @@ class Loggingsystem:
  error_messages[error_msg] = error_messages.get(error_msg, 0) + 1
 
  # Расчет процента ошибок
- if logs:
- stats['error_rate'] = (error_count / len(logs)) * 100
+ if Logs:
+ stats['error_rate'] = (error_count / len(Logs)) * 100
 
  # Самые частые ошибки
  stats['most_common_errors'] = sorted(
@@ -2575,17 +2575,17 @@ class Loggingsystem:
  return {}
 
 
-# example использования системы логирования
+# example использования системы Logsрования
 if __name__ == "__main__":
  """
- Демонстрация использования системы логирования for Monitoringа
+ Демонстрация использования системы Logsрования for Monitoringа
  торговой системы and достижения 100% прибыли in месяц
  """
 
- # configuration системы логирования
+ # configuration системы Logsрования
  config = {
  'logging': {
- 'log_dir': 'logs',
+ 'log_dir': 'Logs',
  'max_file_size': 1024 * 1024, # 1MB for демонстрации
  'backup_count': 3,
  'compression': True,
@@ -2593,24 +2593,24 @@ if __name__ == "__main__":
  }
  }
 
- # create системы логирования
+ # create системы Logsрования
  logging_system = Loggingsystem(config)
 
  print("=== NeoZorK 100% Logging system ===")
  print("testing logging system...")
  print()
 
- # Тестирование различных типов логирования
+ # Тестирование различных типов Logsрования
  print("📝 testing LOG TYPES:")
 
- # Логирование торговых операций
+ # Logsрование торговых операций
  for i in range(5):
  trade_data = {
  'action': 'buy' if i % 2 == 0 else 'sell',
  'amount': 1000 + i * 100,
  'price': 1.2345 + i * 0.001,
  'session_id': f'session_{i}',
- 'user_id': f'user_{i % 3}',
+ 'User_id': f'User_{i % 3}',
  'correlation_id': f'corr_{i}'
  }
  logging_system.log_trade(trade_data)
@@ -2618,21 +2618,21 @@ if __name__ == "__main__":
 
  print()
 
- # Логирование производительности
+ # Logsрование производительности
  for i in range(3):
  performance_data = {
  'performance_score': 0.7 + i * 0.1,
  'total_return': 0.15 + i * 0.05,
  'sharpe_ratio': 1.5 + i * 0.2,
  'session_id': f'perf_session_{i}',
- 'user_id': f'user_{i % 3}'
+ 'User_id': f'User_{i % 3}'
  }
  logging_system.log_performance(performance_data)
  print(f" Performance logged: score={performance_data['performance_score']:.2f}")
 
  print()
 
- # Логирование ошибок
+ # Logsрование ошибок
  try:
  raise ValueError("Test error for logging demonstration")
  except Exception as e:
@@ -2641,7 +2641,7 @@ if __name__ == "__main__":
 
  print()
 
- # Логирование системных событий
+ # Logsрование системных events
  system_events = [
  ("system startup", {"version": "1.0.0", "environment": "production"}),
  ("database connection established", {"host": "localhost", "port": 5432}),
@@ -2654,16 +2654,16 @@ if __name__ == "__main__":
 
  print()
 
- # Логирование аудита
+ # Logsрование аудита
  audit_actions = [
- ("user login", "user_1", {"ip": "192.168.1.100", "user_agent": "Mozilla/5.0"}),
+ ("User login", "User_1", {"ip": "192.168.1.100", "User_agent": "Mozilla/5.0"}),
  ("Configuration change", "admin_1", {"Setting": "max_drawdown", "old_value": 0.2, "new_value": 0.15}),
- ("Trade execution", "user_2", {"trade_id": "trade_123", "amount": 5000})
+ ("Trade execution", "User_2", {"trade_id": "trade_123", "amount": 5000})
  ]
 
- for action, user_id, data in audit_actions:
- logging_system.log_audit(action, user_id, data)
- print(f" Audit logged: {action} by {user_id}")
+ for action, User_id, data in audit_actions:
+ logging_system.log_audit(action, User_id, data)
+ print(f" Audit logged: {action} by {User_id}")
 
  print()
 
@@ -2671,25 +2671,25 @@ if __name__ == "__main__":
  print("📊 LOG Analysis:")
 
  # Получение all логов за последний час
- all_logs = logging_system.get_logs(limit=100)
- print(f"Total logs retrieved: {len(all_logs)}")
+ all_Logs = logging_system.get_Logs(limit=100)
+ print(f"Total Logs retrieved: {len(all_Logs)}")
 
  # Получение логов on типам
- trade_logs = logging_system.get_logs(log_type='trade', limit=50)
- print(f"Trade logs: {len(trade_logs)}")
+ trade_Logs = logging_system.get_Logs(log_type='trade', limit=50)
+ print(f"Trade Logs: {len(trade_Logs)}")
 
- performance_logs = logging_system.get_logs(log_type='performance', limit=50)
- print(f"Performance logs: {len(performance_logs)}")
+ performance_Logs = logging_system.get_Logs(log_type='performance', limit=50)
+ print(f"Performance Logs: {len(performance_Logs)}")
 
- error_logs = logging_system.get_logs(log_type='error', limit=50)
- print(f"Error logs: {len(error_logs)}")
+ error_Logs = logging_system.get_Logs(log_type='error', limit=50)
+ print(f"Error Logs: {len(error_Logs)}")
 
  print()
 
  # Статистика логов
  print("📈 LOG STATISTICS:")
  stats = logging_system.get_log_statistics(hours=1)
- print(f"Total logs: {stats.get('total_logs', 0)}")
+ print(f"Total Logs: {stats.get('total_Logs', 0)}")
  print(f"By type: {stats.get('by_type', {})}")
  print(f"By level: {stats.get('by_level', {})}")
  print(f"Error rate: {stats.get('error_rate', 0):.1f}%")
@@ -2698,14 +2698,14 @@ if __name__ == "__main__":
  print()
 
  # Экспорт логов
- print("📋 EXPORTING LOGS:")
+ print("📋 EXPORTING Logs:")
 
  # Экспорт in JSON
- json_export = logging_system.export_logs(format='json')
+ json_export = logging_system.export_Logs(format='json')
  print(f"JSON export: {len(json_export)} characters")
 
  # Экспорт in CSV
- csv_export = logging_system.export_logs(format='csv')
+ csv_export = logging_system.export_Logs(format='csv')
  print(f"CSV export: {len(csv_export)} characters")
 
  print()
@@ -2716,9 +2716,9 @@ if __name__ == "__main__":
 
 ## 🎯 integration all компонентов системы Monitoringа
 
-**Теория:** Полная integration all компонентов системы Monitoringа представляет собой комплексную system, которая объединяет Monitoring производительности, system алертов and логирование in единую архитектуру for достижения 100% прибыли in месяц.
+**Theory:** Полная integration all компонентов системы Monitoringа представляет собой комплексную system, которая объединяет Monitoring производительности, system алертов and Logsрование in единую архитектуру for достижения 100% прибыли in месяц.
 
-**Детальное description интеграции:**
+**Детальное describe интеграции:**
 Интегрированная система Monitoringа включает in себя:
 
 1. **Единая configuration** - централизованная configuration all компонентов
@@ -2741,13 +2741,13 @@ NeoZorK 100% integrated Monitoring system
 
 Этот module реализует полную интеграцию all компонентов системы Monitoringа
 for достижения 100% прибыли in месяц. Система объединяет Monitoring производительности,
-system алертов and логирование in единую архитектуру.
+system алертов and Logsрование in единую архитектуру.
 
 Основные components:
 - integratedMonitoringsystem: Основной класс for управления всей системой
 - PerformanceMonitor: Monitoring производительности
 - AlertManager: Management алертами
-- Loggingsystem: Система логирования
+- Loggingsystem: Система Logsрования
 - Dashboard: Визуализация данных
 
 Использование:
@@ -2779,13 +2779,13 @@ class integratedMonitoringsystem:
  Интегрированная система Monitoringа for достижения 100% прибыли in месяц
 
  Этот класс объединяет все components системы Monitoringа in единую архитектуру,
- обеспечивая комплексный Monitoring, алертинг and логирование торговой системы.
+ обеспечивая комплексный Monitoring, алертинг and Logsрование торговой системы.
 
  Attributes:
  config (Dict): configuration всей системы Monitoringа
  performance_monitor (PerformanceMonitor): Монитор производительности
  alert_manager (AlertManager): Менеджер алертов
- logging_system (Loggingsystem): Система логирования
+ logging_system (Loggingsystem): Система Logsрования
  is_running (bool): Статус работы системы
  Monitoring_thread (threading.Thread): Поток Monitoringа
 
@@ -2805,7 +2805,7 @@ class integratedMonitoringsystem:
  config (Dict): configuration системы, включающая:
  - Monitoring: Settings Monitoringа производительности
  - alerts: Settings системы алертов
- - logging: Settings системы логирования
+ - logging: Settings системы Logsрования
  """
  self.config = config
  self.logger = logging.getLogger(__name__)
@@ -2837,7 +2837,7 @@ class integratedMonitoringsystem:
  self.Monitoring_thread = threading.Thread(target=self._Monitoring_loop, daemon=True)
  self.Monitoring_thread.start()
 
- # Логирование Launchа
+ # Logsрование Launchа
  self.logging_system.log_system_event(
  "integrated Monitoring system started",
  {"config": self.config},
@@ -2865,7 +2865,7 @@ class integratedMonitoringsystem:
  # Остановка компонентов
  self.alert_manager.stop_escalation()
 
- # Логирование остановки
+ # Logsрование остановки
  self.logging_system.log_system_event(
  "integrated Monitoring system stopped",
  {},
@@ -2906,7 +2906,7 @@ class integratedMonitoringsystem:
  self.initial_balance
  )
 
- # Логирование метрик
+ # Logsрование метрик
  self.logging_system.log_performance(metrics)
 
  # check алертов
@@ -2924,7 +2924,7 @@ class integratedMonitoringsystem:
  # Получение статистики алертов
  alert_stats = self.alert_manager.get_alert_statistics(hours=1)
 
- # Логирование статистики алертов
+ # Logsрование статистики алертов
  self.logging_system.log_system_event(
  "Alert statistics updated",
  alert_stats,
@@ -2948,7 +2948,7 @@ class integratedMonitoringsystem:
  pnl = trade.get('pnl', 0)
  self.current_balance += pnl
 
- # Логирование торговой операции
+ # Logsрование торговой операции
  self.logging_system.log_trade(trade)
 
  # Отправка алерта о торговой операции
@@ -3081,7 +3081,7 @@ if __name__ == "__main__":
  'discord': {'enabled': False}
  },
  'logging': {
- 'log_dir': 'logs',
+ 'log_dir': 'Logs',
  'max_file_size': 1024 * 1024,
  'backup_count': 3,
  'compression': True
@@ -3110,7 +3110,7 @@ if __name__ == "__main__":
  'price': random.uniform(1.2, 1.3),
  'pnl': random.gauss(50, 30), # Случайный PnL
  'session_id': f'session_{i}',
- 'user_id': f'user_{i % 3}'
+ 'User_id': f'User_{i % 3}'
  }
 
  Monitoring_system.add_trade(trade)
@@ -3162,7 +3162,7 @@ if __name__ == "__main__":
 
 1. **Monitoring производительности** - расчет all ключевых метрик
 2. **system алертов** - автоматические notifications о проблемах
-3. **system логирования** - структурированная запись all событий
+3. **system Logsрования** - структурированная запись all events
 4. **Интеграцию компонентов** - единая архитектура for all систем
 
 Все components полностью функциональны and готовы к использованию in реальной торговой системе for достижения целевой доходности.

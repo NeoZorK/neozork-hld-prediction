@@ -163,27 +163,27 @@ class CreditScoringsystem:
  """Оценка модели"""
 
  # Предсказания
- Predictions = self.predictor.predict(test_data)
+ predictions = self.predictor.predict(test_data)
  probabilities = self.predictor.predict_proba(test_data)
 
  # Метрики
  from sklearn.metrics import classification_Report, confusion_matrix, roc_auc_score
 
- accuracy = (Predictions == test_data['default']).mean()
+ accuracy = (predictions == test_data['default']).mean()
  auc_score = roc_auc_score(test_data['default'], probabilities[1])
 
  # Report on классификации
- Report = classification_Report(test_data['default'], Predictions)
+ Report = classification_Report(test_data['default'], predictions)
 
  # Матрица ошибок
- cm = confusion_matrix(test_data['default'], Predictions)
+ cm = confusion_matrix(test_data['default'], predictions)
 
  return {
  'accuracy': accuracy,
  'auc_score': auc_score,
  'classification_Report': Report,
  'confusion_matrix': cm,
- 'Predictions': Predictions,
+ 'predictions': predictions,
  'probabilities': probabilities
  }
 
@@ -194,7 +194,7 @@ class CreditScoringsystem:
  default_prob = probabilities[1]
 
  # Преобразование вероятности in кредитный рейтинг
- # Логика: чем выше вероятность дефолта, тем ниже рейтинг
+ # Logsка: чем выше вероятность дефолта, тем ниже рейтинг
  scores = score_range[1] - (default_prob * (score_range[1] - score_range[0]))
  scores = np.clip(scores, score_range[0], score_range[1])
 
@@ -292,7 +292,7 @@ scores = credit_system.create_scorecard(test_data)
  - Тип: str
  - Применение: сохранение обученной модели
  - Содержит: веса модели, метаdata, конфигурацию
- - Использование: загрузка for Predictions
+ - Использование: загрузка for predictions
 
 - **`time_limit=3600`**: Лимит времени обучения
  - Единицы: секунды
@@ -340,7 +340,7 @@ scores = credit_system.create_scorecard(test_data)
 - **`score_range=(300, 850)`**: Диапазон кредитного рейтинга
  - Значения: (300, 850) - стандартный диапазон FICO
  - Применение: преобразование вероятностей in рейтинги
- - Логика: чем выше вероятность дефолта, тем ниже рейтинг
+ - Logsка: чем выше вероятность дефолта, тем ниже рейтинг
  - Формула: max_score - (prob * (max_score - min_score))
 
 - **`np.clip(scores, score_range[0], score_range[1])`**: Ограничение рейтингов
@@ -589,7 +589,7 @@ print(f"Medical Model AUC: {results['auc_score']:.3f}")
 *Рисунок 20.4: Система рекомендаций for e-commerce - components and результаты*
 
 **components рекомендательной системы:**
-- **user Profiling**: create профилей пользователей
+- **User Profiling**: create профилей пользователей
 - **Item Features**: Анализ характеристик товаров
 - **Collaborative Filtering**: Коллаборативная фильтрация
 - **Content-Based Filtering**: Контентная фильтрация
@@ -620,19 +620,19 @@ class EcommerceRecommendationsystem:
  """Система рекомендаций for e-commerce"""
 
  def __init__(self):
- self.user_predictor = None
+ self.User_predictor = None
  self.item_predictor = None
  self.collaborative_filter = None
 
- def prepare_recommendation_data(self, transactions_df, users_df, items_df):
+ def prepare_recommendation_data(self, transactions_df, Users_df, items_df):
  """Подготовка данных for рекомендаций"""
 
  # Объединение данных
- df = transactions_df.merge(users_df, on='user_id')
+ df = transactions_df.merge(Users_df, on='User_id')
  df = df.merge(items_df, on='item_id')
 
- # create признаков user
- user_features = self.create_user_features(df)
+ # create признаков User
+ User_features = self.create_User_features(df)
 
  # create признаков товара
  item_features = self.create_item_features(df)
@@ -640,31 +640,31 @@ class EcommerceRecommendationsystem:
  # create целевой переменной (рейтинг/покупка)
  df['rating'] = self.calculate_implicit_rating(df)
 
- return df, user_features, item_features
+ return df, User_features, item_features
 
- def create_user_features(self, df):
- """create признаков user"""
+ def create_User_features(self, df):
+ """create признаков User"""
 
- user_features = df.groupby('user_id').agg({
+ User_features = df.groupby('User_id').agg({
  'item_id': 'count', # Количество покупок
  'price': ['sum', 'mean'], # Общая and средняя стоимость
  'category': lambda x: x.mode().iloc[0] if len(x.mode()) > 0 else 'Unknown', # Любимая категория
  'brand': lambda x: x.mode().iloc[0] if len(x.mode()) > 0 else 'Unknown' # Любимый бренд
  }).reset_index()
 
- user_features.columns = ['user_id', 'total_purchases', 'total_spent', 'avg_purchase', 'favorite_category', 'favorite_brand']
+ User_features.columns = ['User_id', 'total_purchases', 'total_spent', 'avg_purchase', 'favorite_category', 'favorite_brand']
 
  # Дополнительные признаки
- user_features['purchase_frequency'] = user_features['total_purchases'] / 365 # Покупок in день
- user_features['avg_spent_per_purchase'] = user_features['total_spent'] / user_features['total_purchases']
+ User_features['purchase_frequency'] = User_features['total_purchases'] / 365 # Покупок in день
+ User_features['avg_spent_per_purchase'] = User_features['total_spent'] / User_features['total_purchases']
 
- return user_features
+ return User_features
 
  def create_item_features(self, df):
  """create признаков товара"""
 
  item_features = df.groupby('item_id').agg({
- 'user_id': 'count', # Количество покупателей
+ 'User_id': 'count', # Количество покупателей
  'price': 'mean', # Средняя цена
  'category': lambda x: x.mode().iloc[0] if len(x.mode()) > 0 else 'Unknown',
  'brand': lambda x: x.mode().iloc[0] if len(x.mode()) > 0 else 'Unknown'
@@ -681,23 +681,23 @@ class EcommerceRecommendationsystem:
  """Расчет неявного рейтинга"""
 
  # Простая эвристика: чем больше покупок, тем выше рейтинг
- user_purchase_counts = df.groupby('user_id')['item_id'].count()
- item_purchase_counts = df.groupby('item_id')['user_id'].count()
+ User_purchase_counts = df.groupby('User_id')['item_id'].count()
+ item_purchase_counts = df.groupby('item_id')['User_id'].count()
 
- df['user_activity'] = df['user_id'].map(user_purchase_counts)
+ df['User_activity'] = df['User_id'].map(User_purchase_counts)
  df['item_popularity'] = df['item_id'].map(item_purchase_counts)
 
  # Нормализация рейтинга
- rating = (df['user_activity'] / df['user_activity'].max() +
+ rating = (df['User_activity'] / df['User_activity'].max() +
  df['item_popularity'] / df['item_popularity'].max()) / 2
 
  return rating
 
- def train_collaborative_filtering(self, df, user_features, item_features):
+ def train_collaborative_filtering(self, df, User_features, item_features):
  """Обучение коллаборативной фильтрации"""
 
  # Подготовка данных for AutoML
- recommendation_data = df.merge(user_features, on='user_id')
+ recommendation_data = df.merge(User_features, on='User_id')
  recommendation_data = recommendation_data.merge(item_features, on='item_id')
 
  # create предиктора
@@ -717,32 +717,32 @@ class EcommerceRecommendationsystem:
 
  return self.collaborative_filter
 
- def generate_recommendations(self, user_id, n_recommendations=10):
- """Генерация рекомендаций for user"""
+ def generate_recommendations(self, User_id, n_recommendations=10):
+ """Генерация рекомендаций for User"""
 
- # Получение признаков user
- user_data = self.get_user_features(user_id)
+ # Получение признаков User
+ User_data = self.get_User_features(User_id)
 
  # Получение all товаров
  all_items = self.get_all_items()
 
  # Prediction рейтингов for all товаров
- Predictions = []
+ predictions = []
  for item_id in all_items:
  item_data = self.get_item_features(item_id)
 
- # Объединение данных user and товара
- combined_data = pd.dataFrame([{**user_data, **item_data}])
+ # Объединение данных User and товара
+ combined_data = pd.dataFrame([{**User_data, **item_data}])
 
  # Prediction рейтинга
  rating = self.collaborative_filter.predict(combined_data)[0]
- Predictions.append((item_id, rating))
+ predictions.append((item_id, rating))
 
  # Сортировка on рейтингу
- Predictions.sort(key=lambda x: x[1], reverse=True)
+ predictions.sort(key=lambda x: x[1], reverse=True)
 
  # Возврат топ-N рекомендаций
- return Predictions[:n_recommendations]
+ return predictions[:n_recommendations]
 
  def evaluate_recommendations(self, test_data, n_recommendations=10):
  """Оценка качества рекомендаций"""
@@ -752,12 +752,12 @@ class EcommerceRecommendationsystem:
  recall_scores = []
  ndcg_scores = []
 
- for user_id in test_data['user_id'].unique():
- # Получение реальных покупок user
- actual_items = set(test_data[test_data['user_id'] == user_id]['item_id'])
+ for User_id in test_data['User_id'].unique():
+ # Получение реальных покупок User
+ actual_items = set(test_data[test_data['User_id'] == User_id]['item_id'])
 
  # Генерация рекомендаций
- recommendations = self.generate_recommendations(user_id, n_recommendations)
+ recommendations = self.generate_recommendations(User_id, n_recommendations)
  recommended_items = set([item_id for item_id, _ in recommendations])
 
  # Precision@K
@@ -782,16 +782,16 @@ recommendation_system = EcommerceRecommendationsystem()
 
 # Loading data
 transactions = pd.read_csv('transactions.csv')
-users = pd.read_csv('users.csv')
+Users = pd.read_csv('Users.csv')
 items = pd.read_csv('items.csv')
 
 # Подготовка данных
-df, user_features, item_features = recommendation_system.prepare_recommendation_data(
- transactions, users, items
+df, User_features, item_features = recommendation_system.prepare_recommendation_data(
+ transactions, Users, items
 )
 
 # Обучение модели
-model = recommendation_system.train_collaborative_filtering(df, user_features, item_features)
+model = recommendation_system.train_collaborative_filtering(df, User_features, item_features)
 
 # Оценка
 results = recommendation_system.evaluate_recommendations(df)
@@ -879,11 +879,11 @@ class Predictivemaintenancesystem:
 
  return all_features
 
- def create_maintenance_target(self, sensor_data, maintenance_logs):
+ def create_maintenance_target(self, sensor_data, maintenance_Logs):
  """create целевой переменной for обслуживания"""
 
  # Объединение данных сенсоров and логов обслуживания
- maintenance_data = sensor_data.merge(maintenance_logs, on='equipment_id', how='left')
+ maintenance_data = sensor_data.merge(maintenance_Logs, on='equipment_id', how='left')
 
  # create целевой переменной
  # 1 = требуется обслуживание in ближайшие 7 дней
@@ -988,11 +988,11 @@ maintenance_system = Predictivemaintenancesystem()
 
 # Loading data
 sensor_data = pd.read_csv('sensor_data.csv')
-maintenance_logs = pd.read_csv('maintenance_logs.csv')
+maintenance_Logs = pd.read_csv('maintenance_Logs.csv')
 
 # Подготовка данных
 sensor_features = maintenance_system.prepare_sensor_data(sensor_data)
-maintenance_data = maintenance_system.create_maintenance_target(sensor_data, maintenance_logs)
+maintenance_data = maintenance_system.create_maintenance_target(sensor_data, maintenance_Logs)
 
 # Обучение модели
 model = maintenance_system.train_maintenance_model(maintenance_data)
@@ -1082,7 +1082,7 @@ class BTCUSDTTradingsystem:
 - **`self.feature_columns`**: List признаков модели
  - Тип: List[str]
  - Содержит: названия all технических indicators
- - Применение: for Predictions on новых данных
+ - Применение: for predictions on новых данных
  - update: при изменении набора признаков
 
 - **`self.model_performance`**: Метрики производительности модели
@@ -1137,7 +1137,7 @@ class BTCUSDTTradingsystem:
  - Тип: bool
  - Значения: True (тестирование), False (реальная торговля)
  - Применение: безопасное тестирование стратегий
- - Рекомендация: True for разработки, False for продакшена
+ - Рекомендация: True for development, False for продакшена
 
 - **`since`**: Временная метка начала данных
  - Тип: int (миллисекунды)
@@ -1225,28 +1225,28 @@ class BTCUSDTTradingsystem:
  - Диапазон: from 0.5 to 0.8
  - Значение: 0.6 (60% уверенности)
  - Применение: обнаружение дрифта модели
- - Логика: низкая уверенность = возможный дрифт
+ - Logsка: низкая уверенность = возможный дрифт
  - Рекомендация: 0.5-0.7 for криптотрейдинга
 
 - **`Prediction_consistency > 0.9`**: Порог консистентности
  - Диапазон: from 0.8 to 0.95
  - Значение: 0.9 (90% консистентности)
  - Применение: обнаружение дрифта модели
- - Логика: слишком консистентные предсказания = возможный дрифт
+ - Logsка: слишком консистентные предсказания = возможный дрифт
  - Рекомендация: 0.85-0.95 for криптотрейдинга
 
 - **`accuracy < 0.55`**: Порог точности for дрифта
  - Диапазон: from 0.5 to 0.6
  - Значение: 0.55 (55% точности)
  - Применение: обнаружение дрифта модели
- - Логика: низкая точность = возможный дрифт
+ - Logsка: низкая точность = возможный дрифт
  - Рекомендация: 0.5-0.6 for криптотрейдинга
 
 - **`signal['confidence'] > 0.7`**: Порог уверенности for trading
  - Диапазон: from 0.6 to 0.9
  - Значение: 0.7 (70% уверенности)
  - Применение: фильтрация торговых сигналов
- - Логика: высокая уверенность = качественный сигнал
+ - Logsка: высокая уверенность = качественный сигнал
  - Рекомендация: 0.6-0.8 for криптотрейдинга
 
 - **`schedule.every().day.at("02:00")`**: Время переобучения
@@ -1447,15 +1447,15 @@ class BTCUSDTTradingsystem:
  )
 
  # Оценка on валидации
- val_Predictions = self.predictor.predict(val_data[feature_columns])
- val_accuracy = accuracy_score(val_data['price_direction'], val_Predictions)
+ val_predictions = self.predictor.predict(val_data[feature_columns])
+ val_accuracy = accuracy_score(val_data['price_direction'], val_predictions)
 
  self.feature_columns = feature_columns
  self.model_performance = {
  'accuracy': val_accuracy,
- 'precision': precision_score(val_data['price_direction'], val_Predictions),
- 'recall': recall_score(val_data['price_direction'], val_Predictions),
- 'f1': f1_score(val_data['price_direction'], val_Predictions)
+ 'precision': precision_score(val_data['price_direction'], val_predictions),
+ 'recall': recall_score(val_data['price_direction'], val_predictions),
+ 'f1': f1_score(val_data['price_direction'], val_predictions)
  }
 
  return self.predictor
@@ -1467,12 +1467,12 @@ class BTCUSDTTradingsystem:
  return True
 
  # Предсказания on новых данных
- Predictions = self.predictor.predict(new_data[self.feature_columns])
+ predictions = self.predictor.predict(new_data[self.feature_columns])
  probabilities = self.predictor.predict_proba(new_data[self.feature_columns])
 
  # Метрики дрифта
  confidence = np.max(probabilities, axis=1).mean()
- Prediction_consistency = (Predictions == Predictions[0]).mean()
+ Prediction_consistency = (predictions == predictions[0]).mean()
 
  # check on дрифт
  drift_detected = (
@@ -1551,7 +1551,7 @@ class BTCUSDTTradingsystem:
 
  if signal and signal['confidence'] > 0.7:
  print(f"📈 Торговый сигнал: {signal['direction']} with уверенностью {signal['confidence']:.3f}")
- # Здесь будет логика выполнения торговых операций
+ # Здесь будет Logsка выполнения торговых операций
 
  # Сохранение модели
  joblib.dump(self.predictor, 'btcusdt_model.pkl')
@@ -1776,8 +1776,8 @@ class HedgeFundTradingsystem:
  )
 
  # Оценка ансамбля
- val_Predictions = self.ensemble_model.predict(val_data.drop(columns=['target_class']))
- val_accuracy = accuracy_score(val_data['target_class'], val_Predictions)
+ val_predictions = self.ensemble_model.predict(val_data.drop(columns=['target_class']))
+ val_accuracy = accuracy_score(val_data['target_class'], val_predictions)
 
  print(f"🎯 Точность ансамблевой модели: {val_accuracy:.3f}")
 
@@ -2041,7 +2041,7 @@ class SecretFeatureEngineering:
 
  features = {}
 
- for tf in Timeframes:
+ for tf in timeframes:
  # Агрегация данных on Timeframeу
  tf_data = self.aggregate_to_Timeframe(data, tf)
 

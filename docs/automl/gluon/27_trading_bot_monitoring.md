@@ -158,7 +158,7 @@ class TradingBotMonitoringsystem:
  'host': 'localhost', # Хост базы данных
  'port': 8086, # Порт базы данных
  'database': 'trading_metrics', # Имя базы данных
- 'username': 'admin', # Имя user
+ 'Username': 'admin', # Имя User
  'password': 'password', # Пароль
  'retention_policy': '30d' # Политика хранения
  },
@@ -373,7 +373,7 @@ graph TD
  D --> D1[Точность модели]
  D --> D2[Дрифт модели]
  D --> D3[Качество данных]
- D --> D4[Уверенность Predictions]
+ D --> D4[Уверенность predictions]
 
  E --> E1[Волатильность]
  E --> E2[Тренд рынка]
@@ -428,7 +428,7 @@ class MetricsCollector:
  - host: Хост базы данных
  - port: Порт базы данных
  - database: Имя базы данных
- - username: Имя user
+ - Username: Имя User
  - password: Пароль
  - retention_policy: Политика хранения
  """
@@ -490,7 +490,7 @@ class MetricsCollector:
  'host': 'localhost', # Хост базы данных
  'port': 8086, # Порт базы данных
  'database': 'trading_metrics', # Имя базы данных
- 'username': 'admin', # Имя user
+ 'Username': 'admin', # Имя User
  'password': 'password', # Пароль
  'retention_policy': '30d', # Политика хранения
  'batch_size': 1000, # Размер батча for записи
@@ -629,7 +629,7 @@ class MetricsCollector:
  'Prediction_confidence': model_state.get('Prediction_confidence', 0),
  'Prediction_uncertainty': model_state.get('Prediction_uncertainty', 0),
  'last_Prediction_time': model_state.get('last_Prediction_time'),
- 'Predictions_per_hour': model_state.get('Predictions_per_hour', 0),
+ 'predictions_per_hour': model_state.get('predictions_per_hour', 0),
 
  # Дрифт модели
  'model_drift_detected': model_state.get('drift_detected', False),
@@ -798,7 +798,7 @@ class AlertManager:
  'memory_usage': 0.8, # Использование памяти
  'cpu_usage': 0.8, # Использование CPU
  'trades_per_hour': 0.1, # Минимальное количество сделок in час
- 'Prediction_confidence': 0.6, # Уверенность Predictions
+ 'Prediction_confidence': 0.6, # Уверенность predictions
  'data_quality_score': 0.7 # Качество данных
  },
  'info_thresholds': { # Информационные пороги
@@ -844,7 +844,7 @@ class AlertManager:
 🚨 *КРИТИЧЕСКАЯ ОШИБКА*
 Торговый бот: {bot_name}
 Время: {timestamp}
-Проблема: {issue_description}
+Проблема: {issue_describe}
 
 Метрики:
 - P&L: {profit_loss:.2f}
@@ -866,7 +866,7 @@ class AlertManager:
 ⚠️ *ПРЕДУПРЕЖДЕНИЕ*
 Торговый бот: {bot_name}
 Время: {timestamp}
-Проблема: {issue_description}
+Проблема: {issue_describe}
 
 Метрики:
 - P&L: {profit_loss:.2f}
@@ -905,7 +905,7 @@ Status: {status}
  'email': { # Email
  'smtp_server': 'smtp.gmail.com',
  'smtp_port': 587,
- 'username': 'bot@example.com',
+ 'Username': 'bot@example.com',
  'password': 'password',
  'from_email': 'bot@example.com',
  'to_emails': ['admin@example.com', 'manager@example.com'],
@@ -928,9 +928,9 @@ Status: {status}
  'timeout': 30
  },
  'slack': { # Slack
- 'webhook_url': 'https://hooks.slack.com/Services/...',
+ 'webhook_url': 'https://hooks.slack.com/services/...',
  'channel': '#trading-alerts',
- 'username': 'Trading Bot',
+ 'Username': 'Trading Bot',
  'icon_emoji': ':robot_face:',
  'timeout': 30
  }
@@ -1213,7 +1213,7 @@ graph TD
  G --> G1[Точность модели]
  G --> G2[Дрифт модели]
  G --> G3[Качество данных]
- G --> G4[Уверенность Predictions]
+ G --> G4[Уверенность predictions]
 
  H --> H1[Волатильность]
  H --> H2[Тренд рынка]
@@ -1639,7 +1639,7 @@ class LogAnalyzer:
  self.error_patterns = {}
  self.performance_patterns = {}
 
- def analyze_logs(self, log_file):
+ def analyze_Logs(self, log_file):
  """Анализ логов"""
 
  Analysis_results = {
@@ -1819,7 +1819,7 @@ class PerformanceTracker:
  'category': 'system_stability',
  'priority': 'medium',
  'suggestion': 'Высокий уровень ошибок. Проверьте стабильность системы.',
- 'action': 'reView_error_logs'
+ 'action': 'reView_error_Logs'
  })
 
  # Анализ производительности
@@ -2066,7 +2066,7 @@ class LogRotation:
  'retention_days': 30
  }
 
- def rotate_logs(self, log_file):
+ def rotate_Logs(self, log_file):
  """Ротация логов"""
 
  import shutil
@@ -2091,11 +2091,11 @@ class LogRotation:
  f.write('')
 
  # remove старых логов
- self.cleanup_old_logs(log_file)
+ self.cleanup_old_Logs(log_file)
 
  return backup_file
 
- def cleanup_old_logs(self, log_file):
+ def cleanup_old_Logs(self, log_file):
  """clean старых логов"""
 
  import glob
@@ -2140,7 +2140,7 @@ graph TD
 
  D --> D1[Goal: < 0.1%]
  D --> D2[Расчет: errors / total_requests]
- D --> D3[Типы ошибок: API, сеть, логика]
+ D --> D3[Типы ошибок: API, сеть, Logsка]
 
  E --> E1[Goal: 100 RPS]
  E --> E2[Расчет: requests_per_second]
@@ -2151,7 +2151,7 @@ graph TD
  F --> F3[Критично for trading]
 
  G --> G1[Goal: > 80%]
- G --> G2[Расчет: correct_Predictions / total]
+ G --> G2[Расчет: correct_predictions / total]
  G --> G3[Monitoring дрифта]
 
  B1 --> H[Соответствие SLA]
@@ -2202,25 +2202,25 @@ class PerformanceMetrics:
 
  self.metrics_definitions = {
  'availability': {
- 'description': 'Доступность системы',
+ 'describe': 'Доступность системы',
  'calculation': 'uptime / total_time',
  'target': 0.999, # 99.9%
  'unit': 'percentage'
  },
  'response_time': {
- 'description': 'Время отклика',
+ 'describe': 'Время отклика',
  'calculation': 'average_response_time',
  'target': 1000, # 1 секунда
  'unit': 'milliseconds'
  },
  'error_rate': {
- 'description': 'Частота ошибок',
+ 'describe': 'Частота ошибок',
  'calculation': 'errors / total_requests',
  'target': 0.001, # 0.1%
  'unit': 'percentage'
  },
  'throughput': {
- 'description': 'Пропускная способность',
+ 'describe': 'Пропускная способность',
  'calculation': 'requests_per_second',
  'target': 100, # 100 RPS
  'unit': 'requests_per_second'
@@ -2478,9 +2478,9 @@ graph TD
  D --> D4[Источники данных: Prometheus]
 
  E --> E1[APM Monitoring]
- E --> E2[Логи and трейсинг]
+ E --> E2[Logs and трейсинг]
  E --> E3[Инфраструктурные метрики]
- E --> E4[Корреляция событий]
+ E --> E4[Корреляция events]
 
  F --> F1[application Performance]
  F --> F2[InfraStructure Monitoring]
@@ -2622,7 +2622,7 @@ class Externalintegrations:
 
 ### 📊 Основные parameters системы Monitoringа
 
-| Категория | parameter | Значение on умолчанию | description | Диапазон/Влияние |
+| Категория | parameter | Значение on умолчанию | describe | Диапазон/Влияние |
 |-----------|----------|----------------------|----------|------------------|
 | **Общие Settings** | | | | |
 | | `metrics_interval` | 60 сек | Интервал сбора метрик | 30-300 сек |
@@ -2651,7 +2651,7 @@ class Externalintegrations:
 | | `win_rate` | 0.4 | Процент выигрышных сделок | 0.3-0.6 |
 | | `model_drift` | 0.1 | Дрифт модели | 0.05-0.2 |
 | | `trades_per_hour` | 0.1 | Минимальное количество сделок in час | 0.01-1.0 |
-| | `Prediction_confidence` | 0.6 | Уверенность Predictions | 0.4-0.8 |
+| | `Prediction_confidence` | 0.6 | Уверенность predictions | 0.4-0.8 |
 | | `data_quality_score` | 0.7 | Качество данных | 0.5-0.9 |
 | **Информационные пороги** | | | | |
 | | `daily_pnl` | 1000 | Дневная прибыль | 100-10000 |

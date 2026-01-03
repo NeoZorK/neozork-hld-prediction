@@ -24,7 +24,7 @@
 <img src="images/optimized/metrics_comparison_Detailed.png" alt="Сравнение метрик and задач" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 1: Сравнение метрик for классификации and регрессии - ROC Curve, Precision-Recall, Confusion Matrix, метрики регрессии*
 
-**Почему examples - это язык машинного обучения?** Потому что они переводят сложные алгоритмы in понятные числа. Это как переводчик между техническими деталями and бизнес-результатами.
+**Почему examples - это язык machine learning?** Потому что они переводят сложные алгоритмы in понятные числа. Это как переводчик между техническими деталями and бизнес-результатами.
 
 **Типы примеров in AutoML Gluon:**
 - **Базовые examples**: Простые задачи for понимания основ
@@ -32,7 +32,7 @@
 - **Реальные проекты**: Полные решения реальных бизнес-задач
 - **Специализированные examples**: for конкретных доменов (медицина, финансы)
 
-in этом разделе представлены практические examples использования AutoML Gluon for различных задач машинного обучения. Каждый example включает полный код, объяснения and лучшие практики.
+in этом разделе представлены практические examples использования AutoML Gluon for различных задач machine learning. Каждый example включает полный код, объяснения and лучшие практики.
 
 ## example 1: Классификация клиентов банка
 
@@ -151,7 +151,7 @@ print("Default rate:", bank_data['default_risk'].mean())
 ```python
 def prepare_bank_data(data):
  """
- Подготовка банковских данных for машинного обучения
+ Подготовка банковских данных for machine learning
 
  Parameters:
  -----------
@@ -347,26 +347,26 @@ def evaluate_bank_model(predictor, test_data):
  - performance: метрики качества (accuracy, roc_auc, precision, recall)
  - feature_importance: важность признаков for предсказания
  - leaderboard: сравнение различных моделей
- - Predictions: предсказания классов (0/1)
+ - predictions: предсказания классов (0/1)
  - probabilities: вероятности классов
 
  Notes:
  ------
  Метрики оценки for банковской задачи:
  - ROC-AUC: основная метрика for несбалансированных данных
- - Precision: доля правильных Predictions дефолта
+ - Precision: доля правильных predictions дефолта
  - Recall: доля foundных дефолтов
  - F1-score: гармоническое среднее precision and recall
  - Accuracy: общая точность классификации
 
  Анализ важности признаков:
  - Показывает What факторы важны for предсказания дефолта
- - Помогает понять логику модели
+ - Помогает понять Logsку модели
  - Используется for feature selection
  """
 
  # Предсказания классов (0 - нет дефолта, 1 - дефолт)
- Predictions = predictor.predict(test_data)
+ predictions = predictor.predict(test_data)
 
  # Вероятности классов (for Analysis уверенности модели)
  probabilities = predictor.predict_proba(test_data)
@@ -387,7 +387,7 @@ def evaluate_bank_model(predictor, test_data):
  'performance': performance, # Метрики качества
  'feature_importance': feature_importance, # Важность признаков
  'leaderboard': leaderboard, # Сравнение моделей
- 'Predictions': Predictions, # Предсказания классов
+ 'predictions': predictions, # Предсказания классов
  'probabilities': probabilities # Вероятности классов
  }
 
@@ -504,7 +504,7 @@ def create_real_estate_data(n_samples=5000):
  - 3 категориальных приsign (район, тип, состояние)
  - Целевая переменная: price (непрерывная)
 
- Бизнес-логика ценообразования:
+ Бизнес-Logsка ценообразования:
  - Базовая цена: 100,000 рублей
  - Площадь: +1,000 руб/м²
  - Спальни: +10,000 руб за спальню
@@ -647,7 +647,7 @@ def evaluate_real_estate_model(predictor, test_data):
  """Оценка качества модели недвижимости"""
 
  # Предсказания
- Predictions = predictor.predict(test_data)
+ predictions = predictor.predict(test_data)
 
  # Оценка качества
  performance = predictor.evaluate(test_data)
@@ -659,7 +659,7 @@ def evaluate_real_estate_model(predictor, test_data):
  leaderboard = predictor.leaderboard(test_data)
 
  # Анализ ошибок
- errors = test_data['price'] - Predictions
+ errors = test_data['price'] - predictions
  mae = np.mean(np.abs(errors))
  mape = np.mean(np.abs(errors / test_data['price'])) * 100
 
@@ -667,7 +667,7 @@ def evaluate_real_estate_model(predictor, test_data):
  'performance': performance,
  'feature_importance': feature_importance,
  'leaderboard': leaderboard,
- 'Predictions': Predictions,
+ 'predictions': predictions,
  'mae': mae,
  'mape': mape,
  'errors': errors
@@ -700,12 +700,12 @@ def visualize_real_estate_results(results, test_data):
  fig, axes = plt.subplots(2, 2, figsize=(15, 12))
 
  # Предсказания vs Фактические значения
- axes[0, 0].scatter(test_data['price'], results['Predictions'], alpha=0.6)
+ axes[0, 0].scatter(test_data['price'], results['predictions'], alpha=0.6)
  axes[0, 0].plot([test_data['price'].min(), test_data['price'].max()],
  [test_data['price'].min(), test_data['price'].max()], 'r--')
  axes[0, 0].set_xlabel('Actual Price')
  axes[0, 0].set_ylabel('Predicted Price')
- axes[0, 0].set_title('Predictions vs Actual')
+ axes[0, 0].set_title('predictions vs Actual')
 
  # Распределение ошибок
  axes[0, 1].hist(results['errors'], bins=50, alpha=0.7)
@@ -965,7 +965,7 @@ def evaluate_sales_model(predictor, test_data):
  """Оценка качества модели продаж"""
 
  # Предсказания
- Predictions = predictor.predict(test_data)
+ predictions = predictor.predict(test_data)
 
  # Оценка качества
  performance = predictor.evaluate(test_data)
@@ -977,10 +977,10 @@ def evaluate_sales_model(predictor, test_data):
  product_performance = {}
  for product_id in test_data['product_id'].unique():
  product_data = test_data[test_data['product_id'] == product_id]
- product_Predictions = Predictions[test_data['product_id'] == product_id]
+ product_predictions = predictions[test_data['product_id'] == product_id]
 
- mae = np.mean(np.abs(product_data['sales'] - product_Predictions))
- mape = np.mean(np.abs((product_data['sales'] - product_Predictions) / product_data['sales'])) * 100
+ mae = np.mean(np.abs(product_data['sales'] - product_predictions))
+ mape = np.mean(np.abs((product_data['sales'] - product_predictions) / product_data['sales'])) * 100
 
  product_performance[product_id] = {
  'mae': mae,
@@ -991,7 +991,7 @@ def evaluate_sales_model(predictor, test_data):
  'performance': performance,
  'feature_importance': feature_importance,
  'product_performance': product_performance,
- 'Predictions': Predictions
+ 'predictions': predictions
  }
 
 # Оценка модели
@@ -1024,17 +1024,17 @@ def visualize_sales_results(results, test_data):
  # temporary ряд for одного продукта
  product_id = test_data['product_id'].iloc[0]
  product_data = test_data[test_data['product_id'] == product_id]
- product_Predictions = results['Predictions'][test_data['product_id'] == product_id]
+ product_predictions = results['predictions'][test_data['product_id'] == product_id]
 
  axes[0, 0].plot(product_data['date'], product_data['sales'], label='Actual', alpha=0.7)
- axes[0, 0].plot(product_data['date'], product_Predictions, label='Predicted', alpha=0.7)
+ axes[0, 0].plot(product_data['date'], product_predictions, label='Predicted', alpha=0.7)
  axes[0, 0].set_title(f'Sales Forecast for {product_id}')
  axes[0, 0].set_xlabel('Date')
  axes[0, 0].set_ylabel('Sales')
  axes[0, 0].legend()
 
  # Распределение ошибок
- errors = test_data['sales'] - results['Predictions']
+ errors = test_data['sales'] - results['predictions']
  axes[0, 1].hist(errors, bins=30, alpha=0.7)
  axes[0, 1].set_xlabel('Prediction Error')
  axes[0, 1].set_ylabel('Frequency')
@@ -1064,7 +1064,7 @@ visualize_sales_results(sales_results, sales_test_data)
 ## example 4: Многоклассовая классификация
 
 <img src="images/optimized/multiclass_classification_Analysis.png" alt="example многоклассовой классификации" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 5: example многоклассовой классификации - Confusion Matrix, точность on классам, распределение Predictions, метрики качества*
+*Рисунок 5: example многоклассовой классификации - Confusion Matrix, точность on классам, распределение predictions, метрики качества*
 
 **Почему многоклассовая классификация сложнее бинарной?** Потому что нужно различать множество классов simultaneously:
 
@@ -1281,7 +1281,7 @@ def evaluate_image_model(predictor, test_data):
  """Оценка качества модели классификации изображений"""
 
  # Предсказания
- Predictions = predictor.predict(test_data)
+ predictions = predictor.predict(test_data)
  probabilities = predictor.predict_proba(test_data)
 
  # Оценка качества
@@ -1296,14 +1296,14 @@ def evaluate_image_model(predictor, test_data):
  # Анализ on классам
  from sklearn.metrics import classification_Report, confusion_matrix
 
- class_Report = classification_Report(test_data['class'], Predictions, output_dict=True)
- conf_matrix = confusion_matrix(test_data['class'], Predictions)
+ class_Report = classification_Report(test_data['class'], predictions, output_dict=True)
+ conf_matrix = confusion_matrix(test_data['class'], predictions)
 
  return {
  'performance': performance,
  'feature_importance': feature_importance,
  'leaderboard': leaderboard,
- 'Predictions': Predictions,
+ 'predictions': predictions,
  'probabilities': probabilities,
  'classification_Report': class_Report,
  'confusion_matrix': conf_matrix
@@ -1348,10 +1348,10 @@ def visualize_image_results(results, test_data):
  results['feature_importance'].head(15).plot(kind='barh', ax=axes[0, 1])
  axes[0, 1].set_title('Top 15 Feature importance')
 
- # Распределение Predictions
- Prediction_counts = pd.Series(results['Predictions']).value_counts()
+ # Распределение predictions
+ Prediction_counts = pd.Series(results['predictions']).value_counts()
  Prediction_counts.plot(kind='bar', ax=axes[1, 0])
- axes[1, 0].set_title('Distribution of Predictions')
+ axes[1, 0].set_title('Distribution of predictions')
  axes[1, 0].set_xlabel('Class')
  axes[1, 0].set_ylabel('Count')
  axes[1, 0].tick_params(axis='x', rotation=45)
@@ -1360,8 +1360,8 @@ def visualize_image_results(results, test_data):
  class_accuracy = []
  for class_name in test_data['class'].unique():
  class_data = test_data[test_data['class'] == class_name]
- class_Predictions = results['Predictions'][test_data['class'] == class_name]
- accuracy = (class_data['class'] == class_Predictions).mean()
+ class_predictions = results['predictions'][test_data['class'] == class_name]
+ accuracy = (class_data['class'] == class_predictions).mean()
  class_accuracy.append(accuracy)
 
  axes[1, 1].bar(test_data['class'].unique(), class_accuracy)
@@ -1395,7 +1395,7 @@ from typing import Dict, List, Any
 import asyncio
 import aiohttp
 
-# configuration логирования
+# configuration Logsрования
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -1433,7 +1433,7 @@ class PredictionResponse(BaseModel):
 
  Parameters:
  -----------
- Predictions : List[Any]
+ predictions : List[Any]
  Предсказания модели:
  - for классификации: классы (0/1, 'cat'/'dog' and т.д.)
  - for регрессии: числовые значения (цены, продажи)
@@ -1453,7 +1453,7 @@ class PredictionResponse(BaseModel):
  timestamp : str
  Время выполнения предсказания (ISO формат)
  """
- Predictions: List[Any]
+ predictions: List[Any]
  probabilities: List[Dict[str, float]] = None
  model_info: Dict[str, Any]
  timestamp: str
@@ -1501,7 +1501,7 @@ async def load_models():
  1. Загрузка банковской модели (классификация дефолта)
  2. Загрузка модели недвижимости (регрессия цен)
  3. create метаданных for каждой модели
- 4. Логирование результатов загрузки
+ 4. Logsрование результатов загрузки
 
  Метаdata модели:
  - model_type: тип задачи (binary_classification, regression)
@@ -1509,7 +1509,7 @@ async def load_models():
  - features: List признаков модели
 
  Обработка ошибок:
- - Логирование ошибок загрузки
+ - Logsрование ошибок загрузки
  - Продолжение работы при частичной загрузке
  - Возврат ошибок через health check
  """
@@ -1570,7 +1570,7 @@ async def health_check():
 @app.post("/predict", response_model=PredictionResponse)
 async def predict(request: PredictionRequest):
  """
- Endpoint for Predictions with использованием обученных моделей
+ Endpoint for predictions with использованием обученных моделей
 
  Parameters:
  -----------
@@ -1583,7 +1583,7 @@ async def predict(request: PredictionRequest):
  --------
  PredictionResponse
  Результаты предсказания:
- - Predictions: предсказания модели
+ - predictions: предсказания модели
  - probabilities: вероятности классов (for классификации)
  - model_info: информация о модели
  - timestamp: время выполнения
@@ -1604,7 +1604,7 @@ async def predict(request: PredictionRequest):
  5. Формирование ответа
 
  Обработка ошибок:
- - Логирование ошибок предсказания
+ - Logsрование ошибок предсказания
  - Возврат HTTP ошибок with описанием
  - Graceful handling исключений
  """
@@ -1620,7 +1620,7 @@ async def predict(request: PredictionRequest):
  df = pd.dataFrame(request.data)
 
  # Предсказания модели
- Predictions = model.predict(df)
+ predictions = model.predict(df)
 
  # Вероятности классов (только for классификации)
  probabilities = None
@@ -1629,7 +1629,7 @@ async def predict(request: PredictionRequest):
  probabilities = proba.to_dict('records') # Преобразование in List словарей
 
  return PredictionResponse(
- Predictions=Predictions.toList(), # Преобразование in List
+ predictions=predictions.toList(), # Преобразование in List
  probabilities=probabilities, # Вероятности классов
  model_info={
  "model_name": request.model_name, # Название модели
@@ -1641,7 +1641,7 @@ async def predict(request: PredictionRequest):
  )
 
  except Exception as e:
- logger.error(f"Prediction error: {e}") # Логирование ошибки
+ logger.error(f"Prediction error: {e}") # Logsрование ошибки
  raise HTTPException(status_code=500, detail=str(e)) # Возврат HTTP ошибки
 
 @app.get("/models")

@@ -63,7 +63,7 @@
 
 **Типы проблем with data:**
 - **Структурные проблемы**: Неправильные типы данных, форматы
-- **Семантические проблемы**: Некорректные значения, логические ошибки
+- **Семантические проблемы**: Некорректные значения, Logsческие ошибки
 - **Статистические проблемы**: Смещения, корреляции, выбросы
 - **Этические проблемы**: Дискриминация, предвзятость
 
@@ -524,7 +524,7 @@ def create_hyperparameter_strategy(data_size: int, problem_type: str) -> Dict[st
  - > 10000: Большой датасет - сложные модели, высокое качество
 
  problem_type : str
- Тип задачи машинного обучения:
+ Тип задачи machine learning:
  - 'binary': Бинарная классификация
  - 'multiclass': Многоклассовая классификация
  - 'regression': Регрессия
@@ -774,7 +774,7 @@ def select_validation_strategy(data_size: int, problem_type: str,
  - > 10000: Большой датасет - k-fold валидация (10 фолдов)
 
  problem_type : str
- Тип задачи машинного обучения:
+ Тип задачи machine learning:
  - 'binary': Бинарная классификация
  - 'multiclass': Многоклассовая классификация
  - 'regression': Регрессия
@@ -916,7 +916,7 @@ def perform_cross_validation(predictor, data: pd.dataFrame,
  fold_predictor.fit(train_fold, time_limit=300)
 
  # Предсказания
- Predictions = fold_predictor.predict(val_fold)
+ predictions = fold_predictor.predict(val_fold)
 
  # Оценка качества
  performance = fold_predictor.evaluate(val_fold)
@@ -1078,7 +1078,7 @@ def optimize_resources(data_size: int, available_resources: Dict[str, int]) -> D
  Количество GPU for обучения (0-8):
  - 0: CPU-only обучение (универсально)
  - 1: Один GPU for acceleration (рекомендуется)
- - 2-4: Множественные GPU for больших моделей
+ - 2-4: Множественные GPU for large models
  - >4: Экстремально большие модели
 
  memory_limit : int
@@ -1149,7 +1149,7 @@ def optimize_resources(data_size: int, available_resources: Dict[str, int]) -> D
  parallel_folds = False
  parallel_models = False
  elif available_resources.get('memory', 0) < 8:
- # Ограниченная память - уменьшаем лимиты
+ # Limited memory - уменьшаем лимиты
  memory_limit = min(memory_limit, 4)
  parallel_models = False
 
@@ -1199,21 +1199,21 @@ parallel_config = configure_parallelization(len(train_data), 'binary')
 # Применение конфигурации через ag_args_fit
 ```
 
-## Monitoring and логирование
+## Monitoring and Logsрование
 
-<img src="images/optimized/production_architecture.png" alt="Monitoring and логирование" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 6: Лучшие практики Monitoringа and логирования ML-систем*
+<img src="images/optimized/production_architecture.png" alt="Monitoring and Logsрование" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 6: Лучшие практики Monitoringа and Logsрования ML-систем*
 
 **Почему критически важен Monitoring ML-систем?** Потому что модели могут деградировать and Workingть некорректно:
 
-- **Система логирования**: Детальная фиксация all событий
+- **Система Logsрования**: Детальная фиксация all events
 - **Monitoring качества**: Отслеживание метрик производительности
 - **Детекция дрейфа**: Обнаружение изменений in данных
 - **Алертинг**: notifications о проблемах in реальном времени
 - **Дашборды**: Визуализация состояния системы
 - **Анализ логов**: Поиск причин проблем and оптимизация
 
-### 1. Система логирования
+### 1. Система Logsрования
 
 ```python
 import logging
@@ -1221,14 +1221,14 @@ from datetime import datetime
 import json
 
 class AutoGluonLogger:
- """Система логирования for AutoGluon"""
+ """Система Logsрования for AutoGluon"""
 
  def __init__(self, log_file: str = 'autogluon.log'):
  self.log_file = log_file
  self.setup_logging()
 
  def setup_logging(self):
- """configuration логирования"""
+ """configuration Logsрования"""
  logging.basicConfig(
  level=logging.INFO,
  format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -1240,20 +1240,20 @@ class AutoGluonLogger:
  self.logger = logging.getLogger(__name__)
 
  def log_training_start(self, data_info: Dict[str, Any]):
- """Логирование начала обучения"""
+ """Logsрование начала обучения"""
  self.logger.info(f"Training started: {data_info}")
 
  def log_training_progress(self, progress: Dict[str, Any]):
- """Логирование прогресса обучения"""
+ """Logsрование прогресса обучения"""
  self.logger.info(f"Training progress: {progress}")
 
  def log_training_complete(self, results: Dict[str, Any]):
- """Логирование завершения обучения"""
+ """Logsрование завершения обучения"""
  self.logger.info(f"Training COMPLETED: {results}")
 
  def log_Prediction(self, input_data: Dict, Prediction: Any,
  processing_time: float):
- """Логирование предсказания"""
+ """Logsрование предсказания"""
  log_entry = {
  'timestamp': datetime.now().isoformat(),
  'input_data': input_data,
@@ -1263,7 +1263,7 @@ class AutoGluonLogger:
  self.logger.info(f"Prediction: {log_entry}")
 
  def log_error(self, error: Exception, context: Dict[str, Any]):
- """Логирование ошибок"""
+ """Logsрование ошибок"""
  error_entry = {
  'timestamp': datetime.now().isoformat(),
  'error': str(error),
@@ -1529,21 +1529,21 @@ optimization_result = optimize_for_production(predictor, target_size_mb=50)
 print(f"Optimization result: {optimization_result}")
 ```
 
-### 2. Кэширование Predictions
+### 2. Кэширование predictions
 
 ```python
 import hashlib
 import json
 from typing import Optional
 
-class PredictionCache:
+class Predictioncache:
  """
- Система кэширования Predictions for acceleration инференса
+ Система кэширования predictions for acceleration инференса
 
  Parameters:
  -----------
  cache_size : int, default=1000
- Максимальный размер cache (количество Predictions):
+ Максимальный размер cache (количество predictions):
  - 100-500: Маленький кэш for простых систем
  - 500-1000: Стандартный кэш for большинства задач
  - 1000-5000: Большой кэш for высоконагруженных систем
@@ -1552,7 +1552,7 @@ class PredictionCache:
  Attributes:
  -----------
  cache : Dict[str, Any]
- Словарь кэшированных Predictions
+ Словарь кэшированных predictions
  Ключ: MD5 хеш входных данных
  Значение: Результат предсказания
 
@@ -1755,7 +1755,7 @@ class PredictionCache:
  return (total_items * estimated_size_per_item) / (1024 * 1024) # MB
 
 # Использование
-cache = PredictionCache(cache_size=1000)
+cache = Predictioncache(cache_size=1000)
 
 def cached_predict(predictor, data: Dict) -> Any:
  """Кэшированное Prediction"""

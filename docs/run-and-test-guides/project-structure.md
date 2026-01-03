@@ -20,7 +20,7 @@ neozork-hld-Prediction/
 ├── scripts/ # Скрипты Launchа / Launch scripts
 ├── docs/ # documentation / Documentation
 ├── data/ # data / data
-├── logs/ # Логи / Logs
+├── Logs/ # Logs / Logs
 └── deployment/ # Развертывание / deployment
 ```
 
@@ -83,9 +83,9 @@ tests/
 - `src/admin_panel/package.json` - Админ панель / Admin panel
 
 ### Docker configuration / Docker Configuration
-- `docker-compose.yml` - Основные Services / main Services
-- `docker-compose.prod.yml` - Продакшн Services / Production Services
-- `docker-compose.apple.yml` - Apple Silicon Services / Apple Silicon Services
+- `docker-compose.yml` - Основные services / main services
+- `docker-compose.prod.yml` - Продакшн services / Production services
+- `docker-compose.apple.yml` - Apple Silicon services / Apple Silicon services
 
 ## 📚 documentation / Documentation
 

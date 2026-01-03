@@ -16,7 +16,7 @@ This section contains comprehensive documentation for deploying and managing the
 - [Начало работы with Kubernetes](./russian/getting-started-ru.md) - Базовая configuration and развертывание
 - [guide on deployment](./russian/deployment-guide-ru.md) - Полные instructions on deployment
 - [Справочник конфигурации](./russian/configuration-reference-ru.md) - Все parameters конфигурации
-- [Monitoring and логирование](./russian/Monitoring-logging-ru.md) - configuration наблюдаемости
+- [Monitoring and Logsрование](./russian/Monitoring-logging-ru.md) - configuration наблюдаемости
 - [Troubleshooting](./russian/Troubleshooting-ru.md) - Common Issues and решения
 - [Продвинутые темы](./russian/advanced-topics-ru.md) - Масштабирование, безопасность and оптимизация
 
@@ -50,10 +50,10 @@ The project supports multiple deployment strategies:
 ## Key Features
 
 - **Multi-platform Support**: ARM64 and AMD64 architectures
-- **Persistent Storage**: data, logs, plots, and results volumes
+- **Persistent Storage**: data, Logs, plots, and results volumes
 - **health checks**: Liveness and readiness probes
 - **Resource Management**: CPU and memory limits/requests
-- **Service Discovery**: LoadBalancer and ClusterIP Services
+- **service Discovery**: LoadBalancer and ClusterIP services
 - **Monitoring integration**: Prometheus and Grafana support
 
 ## Support

@@ -90,7 +90,7 @@ uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fast,22,11,4,fast,prime
 ### 3. `docs/guides/wave-indicator-fast-mode-support.md` (новый файл)
 - Подробная техническая documentation
 - examples использования
-- description визуальных элементов
+- describe визуальных элементов
 
 ## 🎉 Результат
 

@@ -20,17 +20,17 @@ The NeoZork HLD Prediction project is a comprehensive financial Analysis and Pre
 
 ### ❌ **Not Implemented (Stubs Only)**
 - **Real database integration** (0%): No persistent data storage
-- **Real Authentication** (0%): No user Authentication system
+- **Real Authentication** (0%): No User Authentication system
 - **Real Trading Execution** (0%): No actual trade execution
-- **Investor Portal** (0%): No user interface
+- **Investor Portal** (0%): No User interface
 
 ## 🚨 Critical Issues
 
 ### High Priority
 1. **database integration** - No data persistence
-2. **Authentication system** - No user security
+2. **Authentication system** - No User security
 3. **Real Trading Execution** - No actual trading
-4. **Investor Portal** - No user interface
+4. **Investor Portal** - No User interface
 
 ### Medium Priority
 1. **Blockchain integration** - No DeFi features
@@ -85,7 +85,7 @@ The NeoZork HLD Prediction project is a comprehensive financial Analysis and Pre
 ### Native Apple Silicon Container (macOS 26+)
 ```bash
 # Clone and run interactive container manager
-git clone https://github.com/username/neozork-hld-Prediction.git
+git clone https://github.com/Username/neozork-hld-Prediction.git
 cd neozork-hld-Prediction
 ./scripts/native-container/native-container.sh
 ```
@@ -274,7 +274,7 @@ python run_Analysis.py demo --rule PHLD
 - **Visualization**: Interactive charts and plots
 
 ### Interactive ML Trading system
-- **Interactive Menu system**: Modern, colorful user interface with progress indicators
+- **Interactive Menu system**: Modern, colorful User interface with progress indicators
 - **Advanced ML/DL**: Apple MLX integration, Deep Reinforcement Learning, Ensemble methods
 - **Risk Management**: Monte Carlo simulations, VaR/CVaR, Dynamic position sizing
 - **Multi-Exchange Trading**: CEX and DEX integration with Web3 support

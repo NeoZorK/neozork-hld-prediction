@@ -80,10 +80,10 @@ uv run pytest tests/calculation/test_indicators.py::test_rsi -v
 ### Q: Как Launch the system in Docker? / How to run system in Docker?
 **A:** Use Docker Compose:
 ```bash
-# Launch all сервисов / Launch all Services
+# Launch all services / Launch all services
 docker-compose up -d
 
-# Launch with логированием / Launch with logging
+# Launch with Logsрованием / Launch with logging
 docker-compose up
 
 # Остановка / Stop
@@ -106,7 +106,7 @@ docker-compose exec neozork-hld uv run pytest tests/calculation/ -v
 # Rebuild containers / Rebuild containers
 docker-compose build --no-cache
 
-# clean Docker / Clean Docker
+# clean Docker / clean Docker
 docker system prune -a
 
 # Restart Docker / Restart Docker
@@ -137,7 +137,7 @@ sudo systemctl Restart Docker
 # ПереLaunch / Restart
 ./scripts/native-container/force_restart.sh
 
-# clean / Cleanup
+# clean / cleanup
 ./scripts/native-container/cleanup.sh --all --force
 ```
 
@@ -149,7 +149,7 @@ sudo systemctl Restart Docker
 # configuration продакшна / Setup production
 python deploy/production_setup.py
 
-# Launch продакшн сервисов / Launch production Services
+# Launch продакшн services / Launch production services
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
@@ -161,7 +161,7 @@ kubectl apply -f k8s/
 
 # check статуса / check status
 kubectl get pods
-kubectl get Services
+kubectl get services
 ```
 
 ## 🔧 Вопросы on настройке / Configuration Questions
@@ -185,23 +185,23 @@ sudo apt-get install postgresql postgresql-contrib
 # create базы данных / Create database
 createdb neozork_fund
 
-# configuration user / Configure user
-createuser neozork_user
+# configuration User / Configure User
+createUser neozork_User
 ```
 
 ## 📊 Вопросы on Monitoringу / Monitoring Questions
 
-### Q: Как Viewеть логи? / How to View logs?
+### Q: Как Viewеть Logs? / How to View Logs?
 **A:** Use team Viewа логов:
 ```bash
-# Логи приложения / application logs
-tail -f logs/pocket_hedge_fund.log
+# Logs приложения / application Logs
+tail -f Logs/pocket_hedge_fund.log
 
-# Docker логи / Docker logs
-docker-compose logs -f neozork-hld
+# Docker Logs / Docker Logs
+docker-compose Logs -f neozork-hld
 
-# Все логи / all logs
-tail -f logs/*.log
+# Все Logs / all Logs
+tail -f Logs/*.log
 ```
 
 ### Q: Как проверить статус системы? / How to check system status?
@@ -225,7 +225,7 @@ docker-compose ps
 # installation PYTHONPATH / Set PYTHONPATH
 export PYTHONPATH="${PWD}:${PYTHONPATH}"
 
-# check installation / check installation
+# installation check / installation check
 uv pip List | grep neozork
 ```
 
@@ -245,7 +245,7 @@ uv run pytest tests/calculation/ -v
 ### Q: Как получить помощь? / How to get help?
 **A:** Use доступные ресурсы:
 - **documentation / Documentation**: [docs/run-and-test-guides/](.)
-- **GitHub Issues**: https://github.com/username/neozork-hld-Prediction/issues
+- **GitHub Issues**: https://github.com/Username/neozork-hld-Prediction/issues
 - **Discord**: https://discord.gg/neozork
 - **Telegram**: https://t.me/neozork_hld
 

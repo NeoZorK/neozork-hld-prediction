@@ -2,7 +2,7 @@
 
 ## 🎯 Обзор
 
-SCHR Levels AutoML - это автоматизированный пайплайн машинного обучения for Analysis данных SCHR Levels indicators. Пайплайн Solves 3 main tasks предсказания:
+SCHR Levels AutoML - это автоматизированный пайплайн machine learning for Analysis данных SCHR Levels indicators. Пайплайн Solves 3 main tasks предсказания:
 
 1. **`pressure_vector_sign`** - Prediction sign PRESSURE_VECTOR (положительный/отрицательный)
 2. **`price_direction_5periods`** - Prediction price direction for 5 periods вперед
@@ -12,7 +12,7 @@ SCHR Levels AutoML - это автоматизированный пайплай�
 
 ### 1. Простой тест
 ```bash
-cd /users/rostsh/Documents/DIS/REPO/neozork-hld-Prediction
+cd /Users/rostsh/Documents/DIS/REPO/neozork-hld-Prediction
 uv run python test_schr_pipeline.py
 ```
 
@@ -81,7 +81,7 @@ print(f"Prediction: {Prediction.iloc[0]}")
 ```python
 # Детальные предсказания with вероятностями
 trading_pred = pipeline.predict_for_trading(data.tail(1), 'pressure_vector_sign')
-print(f"Prediction: {trading_pred['Predictions'].iloc[0]}")
+print(f"Prediction: {trading_pred['predictions'].iloc[0]}")
 print(f"Вероятности: {trading_pred['probabilities'].iloc[0].to_dict()}")
 ```
 
@@ -105,8 +105,8 @@ models/schr_levels_production/
 ├── level_breakout_model.pkl # Модель for предсказания пробоя уровней
 └── Analysis_results.pkl # Результаты Analysis
 
-logs/
-└── schr_levels_*.log # Логи работы пайплайна
+Logs/
+└── schr_levels_*.log # Logs работы пайплайна
 
 results/
 └── plots/ # Графики and визуализации
@@ -215,7 +215,7 @@ print(f"Завтра PRESSURE_VECTOR будет: {'положительным' i
 ```python
 Timeframes = ['MN1', 'W1', 'D1', 'H4']
 
-for tf in Timeframes:
+for tf in timeframes:
  data = pipeline.load_schr_data('BTCUSD', tf)
  data = pipeline.create_target_variables(data)
  data = pipeline.create_features(data)
@@ -255,7 +255,7 @@ for task in ['pressure_vector_sign', 'price_direction_5periods', 'level_breakout
 ## 📞 Поддержка
 
 При возникновении проблем:
-1. Проверьте логи in папке `logs/`
+1. Проверьте Logs in папке `Logs/`
 2. Убедитесь, что data загружены корректно
 3. Проверьте presence all dependencies: `uv run pip List`
 

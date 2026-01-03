@@ -89,7 +89,7 @@ uv run pytest tests/ --cov=src -n auto
 
 ### Docker / Docker
 ```bash
-# Launch сервисов / Launch Services
+# Launch services / Launch services
 docker-compose up -d
 
 # Остановка / Stop

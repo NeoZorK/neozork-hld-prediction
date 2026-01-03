@@ -32,7 +32,7 @@ uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4
 **Обновления:**
 - ✅ Добавлен раздел "Display Modes" with подробным описанием all режимов
 - ✅ Добавлены examples использования fast режима
-- ✅ Добавлено description особенностей fast режима
+- ✅ Добавлено describe особенностей fast режима
 - ✅ Обновлены examples CLI команд
 
 **Новый раздел Display Modes:**
@@ -53,7 +53,7 @@ uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4
 
 **Содержание:**
 - ✅ Полный пошаговый туториал on реализации fast режима
-- ✅ Детальное description функций for прерывистых линий
+- ✅ Детальное describe функций for прерывистых линий
 - ✅ examples кода for all компонентов
 - ✅ Тестирование and отладка
 - ✅ Лучшие практики and решения проблем
@@ -77,7 +77,7 @@ uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4
 **Файл:** `docs/guides/index.md`
 
 **Обновления:**
-- ✅ Обновлено description основного туториала Wave Indicator
+- ✅ Обновлено describe основного туториала Wave Indicator
 - ✅ Добавлен новый туториал "Adding Wave Indicator with Fast Mode"
 - ✅ Добавлены документы on fast mode support and parity
 - ✅ Обновлены highlights with информацией о fast режиме
@@ -87,7 +87,7 @@ uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4
 
 **Обновления:**
 - ✅ Добавлены examples использования fast режима
-- ✅ Обновлено description Wave Indicator with упоминанием fast режима
+- ✅ Обновлено describe Wave Indicator with упоминанием fast режима
 - ✅ Добавлены team for тестирования fast режима
 
 ### 4. **Ключевые особенности fast режима**
@@ -166,9 +166,9 @@ uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fast,22,11,4,fast,prime
 
 ### ✅ **Покрытие функциональности**
 - **Fast Mode Support**: Полная documentation реализации
-- **Discontinuous Lines**: Детальное description логики
+- **Discontinuous Lines**: Детальное describe Logsки
 - **Color-Coded signals**: Объяснение цветового кодирования
-- **Hover Tooltips**: description информационных подсказок
+- **Hover Tooltips**: describe информационных подсказок
 - **signal Markers**: documentation отображения сигналов
 
 ### ✅ **examples and тестирование**

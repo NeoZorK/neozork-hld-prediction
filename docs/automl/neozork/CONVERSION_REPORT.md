@@ -42,7 +42,7 @@
 ```
 docs/automl/neozork/html/
 ├── index.html # main page with навигацией
-├── 01_environment_setup.html # installation окружения
+├── 01_environment_setup.html # environment installation
 ├── 02_robust_systems_fundamentals.html
 ├── 03_data_preparation.html
 ├── 04_feature_engineering.html
@@ -71,7 +71,7 @@ docs/automl/neozork/html/
 
 ## Technical details
 
-### 🛠️ Useые технологии
+### 🛠️ Useые техноLogsи
 - **Python 3.12** - основной язык
 - **markdown 3.9** - конвертация Markdown
 - **Prism.js 1.29.0** - подсветка синтаксиса

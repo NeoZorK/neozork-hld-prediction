@@ -7,7 +7,7 @@
 
 ## Why правильное использование вероятностей критически важно
 
-**Почему 95% ML-моделей in продакшене неправильно используют вероятности?** Потому что team фокусируются только on точности Predictions, игнорируя уверенность модели. Это как врач, который ставит диагноз, но not говорит, насколько он уверен.
+**Почему 95% ML-моделей in продакшене неправильно используют вероятности?** Потому что team фокусируются только on точности predictions, игнорируя уверенность модели. Это как врач, который ставит диагноз, но not говорит, насколько он уверен.
 
 ### Проблемы неправильного использования вероятностей
 
@@ -113,8 +113,8 @@ predictor.fit(
  ag_args_ensemble={} # Дополнительные аргументы for ансамбля
 )
 
-# Получение Predictions
-Predictions = predictor.predict(test_data)
+# Получение predictions
+predictions = predictor.predict(test_data)
 
 # Получение вероятностей with параметрами
 probabilities = predictor.predict_proba(
@@ -123,7 +123,7 @@ probabilities = predictor.predict_proba(
  transform_features=True # Применение трансформаций к приsignм
 )
 
-print("Предсказания:", Predictions)
+print("Предсказания:", predictions)
 print("Вероятности:", probabilities)
 ```
 
@@ -1093,7 +1093,7 @@ class ProbabilityDriftMonitor:
  'adaptation_method': 'retrain', # Метод адаптации
  'adaptation_frequency': 'weekly', # Частота адаптации
  'model_backup': True, # Резервное копирование модели
- 'rollback_threshold': 0.2 # Порог for отката
+ 'Rollback_threshold': 0.2 # Порог for Rollbackа
  },
  'visualization': {
  'enable_plots': True, # Включение графиков
@@ -2366,7 +2366,7 @@ graph TD
 
 ### parameters калибровки вероятностей
 
-| parameter | Значение on умолчанию | description | Диапазон |
+| parameter | Значение on умолчанию | describe | Диапазон |
 |----------|----------------------|----------|----------|
 | `calibration_methods` | `['platt', 'isotonic', 'temperature']` | Методы калибровки | `['platt', 'isotonic', 'temperature']` |
 | `cv_folds` | `5` | Количество фолдов for кросс-валидации | `3-10` |
@@ -2380,7 +2380,7 @@ graph TD
 
 ### parameters управления рисками
 
-| parameter | Значение on умолчанию | description | Диапазон |
+| parameter | Значение on умолчанию | describe | Диапазон |
 |----------|----------------------|----------|----------|
 | `base_position_size` | `0.1` | Базовый размер позиции | `0.01-0.5` |
 | `max_position_size` | `0.2` | Максимальный размер позиции | `0.05-0.5` |
@@ -2408,7 +2408,7 @@ graph TD
 
 ### parameters ансамблирования
 
-| parameter | Значение on умолчанию | description | Диапазон |
+| parameter | Значение on умолчанию | describe | Диапазон |
 |----------|----------------------|----------|----------|
 | `ensemble_methods` | `['weighted', 'confidence_weighted', 'bayesian']` | Методы ансамблирования | `['weighted', 'confidence_weighted', 'bayesian']` |
 | `weight_calculation` | `'performance_based'` | Метод расчета весов | `['performance_based', 'confidence_based', 'uncertainty_based']` |
@@ -2445,7 +2445,7 @@ graph TD
 
 ### parameters Monitoringа дрифта
 
-| parameter | Значение on умолчанию | description | Диапазон |
+| parameter | Значение on умолчанию | describe | Диапазон |
 |----------|----------------------|----------|----------|
 | `drift_threshold` | `0.05` | Порог for обнаружения дрифта | `0.01-0.2` |
 | `test_methods` | `['statistical', 'ks', 'wasserstein', 'psi']` | Методы тестирования | `['statistical', 'ks', 'wasserstein', 'psi']` |
@@ -2473,7 +2473,7 @@ graph TD
 | `adaptation_method` | `'retrain'` | Метод адаптации | `['retrain', 'fine_tune', 'transfer']` |
 | `adaptation_frequency` | `'weekly'` | Частота адаптации | `['daily', 'weekly', 'monthly']` |
 | `model_backup` | `True` | Резервное копирование модели | `True/False` |
-| `rollback_threshold` | `0.2` | Порог for отката | `0.1-0.5` |
+| `Rollback_threshold` | `0.2` | Порог for Rollbackа | `0.1-0.5` |
 | `enable_plots` | `True` | Включение графиков | `True/False` |
 | `plot_frequency` | `'daily'` | Частота построения графиков | `['hourly', 'daily', 'weekly']` |
 | `save_plots` | `True` | Сохранение графиков | `True/False` |
@@ -2493,7 +2493,7 @@ graph TD
 
 ### parameters торговой системы
 
-| parameter | Значение on умолчанию | description | Диапазон |
+| parameter | Значение on умолчанию | describe | Диапазон |
 |----------|----------------------|----------|----------|
 | `strong_buy` | `0.8` | Сильный сигнал покупки | `0.7-0.9` |
 | `moderate_buy` | `0.6` | Умеренный сигнал покупки | `0.5-0.8` |

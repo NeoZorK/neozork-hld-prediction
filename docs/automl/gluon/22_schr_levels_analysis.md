@@ -18,7 +18,7 @@
 - **Точные уровни**: Показывает ключевые ценовые зоны
 - **Риск-менеджмент**: Четкие уровни стоп-лосса and целей
 - **Прибыльные сделки**: Торговля from важных уровней
-- **Психологическая стабильность**: Объективные сигналы вместо эмоций
+- **ПсихоLogsческая стабильность**: Объективные сигналы вместо эмоций
 
 ## Введение
 
@@ -67,7 +67,7 @@ SCHR Levels - это многомерный индикатор, который:
 - **Level Analysis**: Качество, надежность, сила, долговечность уровней
 - **signals**: Сигналы пробоев, отскоков, разворотов, продолжения
 - **Statistics**: Количество касаний, пробоев, отскоков, точность
-- **Predictions**: Предсказанные максимумы and минимумы
+- **predictions**: Предсказанные максимумы and минимумы
 
 **Применения SCHR Levels:**
 - **Определение ключевых уровней**: Находит важные ценовые зоны
@@ -181,7 +181,7 @@ schr_columns = {
  - Тип: float
  - Единицы: цена
  - Диапазон: from 0 to +∞
- - Применение: уровни отката/расширения
+ - Применение: уровни Rollbackа/расширения
  - Интерпретация: ключевые уровни on basis золотого сечения
  - Расчет: on basis 0.236, 0.382, 0.5, 0.618, 0.786
 
@@ -651,7 +651,7 @@ class SCHRLevelsMLModel:
 - **`self.feature_columns`**: List признаков модели
  - Тип: List[str]
  - Содержит: названия all признаков SCHR Levels
- - Применение: for Predictions on новых данных
+ - Применение: for predictions on новых данных
  - update: при изменении набора признаков
 
 - **`self.Timeframes`**: List Timeframes
@@ -709,7 +709,7 @@ class SCHRLevelsMLModel:
  - Тип: float
  - Единицы: цена
  - Диапазон: from 0 to +∞
- - Применение: уровни отката/расширения
+ - Применение: уровни Rollbackа/расширения
  - Интерпретация: ключевые уровни on basis золотого сечения
 
 - **`distance_to_support`**: Расстояние to поддержки
@@ -987,7 +987,7 @@ class SCHRLevelsMLModel:
  - Диапазон: from 0 to 1
  - Применение: оценка точности предсказания максимума
  - Интерпретация: 1 = очень точное, 0 = неточное
- - Расчет: on basis исторической точности Predictions
+ - Расчет: on basis исторической точности predictions
 
 - **`Prediction_accuracy_low`**: Точность предсказания минимума
  - Тип: float
@@ -995,7 +995,7 @@ class SCHRLevelsMLModel:
  - Диапазон: from 0 to 1
  - Применение: оценка точности предсказания минимума
  - Интерпретация: 1 = очень точное, 0 = неточное
- - Расчет: on basis исторической точности Predictions
+ - Расчет: on basis исторической точности predictions
 
 **Практические рекомендации:**
 
@@ -1124,7 +1124,7 @@ class SCHRLevelsMLModel:
  features['relative_distance_predicted_high'] = features['distance_to_predicted_high'] / data['close']
  features['relative_distance_predicted_low'] = features['distance_to_predicted_low'] / data['close']
 
- # Точность Predictions
+ # Точность predictions
  features['Prediction_accuracy_high'] = self.calculate_Prediction_accuracy(data, 'predicted_high')
  features['Prediction_accuracy_low'] = self.calculate_Prediction_accuracy(data, 'predicted_low')
 
@@ -1202,8 +1202,8 @@ class SCHRLevelsMLModel:
  )
 
  # Оценка модели
- val_Predictions = self.predictor.predict(val_data.drop(columns=['price_direction', 'breakout_direction', 'bounce_direction', 'reversal_direction']))
- val_accuracy = accuracy_score(val_data['price_direction'], val_Predictions)
+ val_predictions = self.predictor.predict(val_data.drop(columns=['price_direction', 'breakout_direction', 'bounce_direction', 'reversal_direction']))
+ val_accuracy = accuracy_score(val_data['price_direction'], val_predictions)
 
  print(f"Точность модели SCHR Levels: {val_accuracy:.3f}")
 
@@ -1279,7 +1279,7 @@ class SCHRLevelsMLModel:
  - Тип: str
  - Применение: сохранение обученной модели
  - Содержит: веса модели, метаdata, конфигурацию
- - Использование: загрузка for Predictions
+ - Использование: загрузка for predictions
  - Формат: директория with файлами модели
 
 - **`time_limit=3600`**: Лимит времени обучения
@@ -1333,7 +1333,7 @@ class SCHRLevelsMLModel:
  - Баланс: больше глубина = лучше качество, но переобучение
  - Рекомендация: 10-12 for SCHR Levels
 
-- **`val_Predictions`**: Предсказания on валидации
+- **`val_predictions`**: Предсказания on валидации
  - Тип: numpy array
  - Содержит: предсказания модели
  - Применение: оценка производительности
@@ -1345,7 +1345,7 @@ class SCHRLevelsMLModel:
  - Диапазон: from 0 to 1
  - Применение: оценка качества модели
  - Интерпретация: 0.5 = случайно, 0.7-0.8 = хорошо, 0.8-0.9 = отлично, > 0.9 = превосходно
- - Формула: accuracy_score(val_data['price_direction'], val_Predictions)
+ - Формула: accuracy_score(val_data['price_direction'], val_predictions)
 
 **parameters валидации:**
 
@@ -1368,14 +1368,14 @@ class SCHRLevelsMLModel:
  - Требования: отсутствие пропусков
  - Обработка: та же нормализация, что and for train
 
-- **`Predictions`**: Предсказания модели
+- **`predictions`**: Предсказания модели
  - Тип: numpy array
  - Содержит: предсказания for all testsых данных
  - Применение: расчет доходности
  - Формат: бинарные метки (0/1)
  - Интерпретация: 0 = падение, 1 = рост
 
-- **`probabilities`**: Вероятности Predictions
+- **`probabilities`**: Вероятности predictions
  - Тип: numpy array
  - Содержит: вероятности for каждого класса
  - Применение: оценка уверенности
@@ -1391,7 +1391,7 @@ class SCHRLevelsMLModel:
 
 - **`strategy_returns`**: Доходность стратегии
  - Тип: pandas Series
- - Формула: Predictions * returns
+ - Формула: predictions * returns
  - Применение: расчет доходности стратегии
  - Единицы: безразмерная величина
  - Интерпретация: положительная = прибыль, отрицательная = убыток
@@ -1492,12 +1492,12 @@ def schr_backtest(self, data, start_date, end_date):
  test_data = data[(data.index >= start_date) & (data.index <= end_date)]
 
  # Предсказания
- Predictions = self.predictor.predict(test_data)
+ predictions = self.predictor.predict(test_data)
  probabilities = self.predictor.predict_proba(test_data)
 
  # Расчет доходности
  returns = test_data['close'].pct_change()
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  # Метрики backtest
  total_return = strategy_returns.sum()

@@ -14,19 +14,19 @@ mobile application for Pocket Hedge fund successfully created and integrated wit
 
 ### 2. **Application screens**
 - ✅ **Loginscreen** - Login to system
-- ✅ **Registerscreen** - user registration
+- ✅ **Registerscreen** - User registration
 - ✅ **Dashboardscreen** - main screen with greeting
 - ✅ **Loadingscreen** - Loading screen
 
-### 3. **Services**
+### 3. **services**
 - ✅ **AuthContext** - Authentication Management
-- ✅ **ApiService** - HTTP client for API
+- ✅ **Apiservice** - HTTP client for API
 - ✅ **Theme** - Style constants
 
 ### 4. **Backend API endpoints**
 - ✅ `/mobile/health` - health check mobile API
 - ✅ `/mobile/dashboard` - Data for main screen
-- ✅ `/mobile/Portfolio` - user Portfolio
+- ✅ `/mobile/Portfolio` - User Portfolio
 - ✅ `/mobile/funds` - List of funds
 - ✅ `/mobile/investments` - Investment Management
 - ✅ `/mobile/sync` - Data Synchronization
@@ -57,9 +57,9 @@ src/mobile_app/
 └── src/
  ├── constants/
  │ └── theme.js # Style constants
- ├── Services/
+ ├── services/
  │ ├── AuthContext.js # Контекст аутентификации
- │ └── ApiService.js # HTTP client
+ │ └── Apiservice.js # HTTP client
  ├── Navigation/
  │ └── AppNavigator.js # Navigation
  ├── components/

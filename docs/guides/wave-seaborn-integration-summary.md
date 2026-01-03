@@ -28,7 +28,7 @@ def _create_wave_line_segments(index, values, mask):
  """
 ```
 - Создает прерывистые сегменты линий for разных сигналов
-- Аналогично реализации in mpl режиме
+- АнаLogsчно реализации in mpl режиме
 - Обеспечивает четкое визуальное разделение BUY/SELL сигналов
 
 #### B. **Добавлены сигналы on главный график**
@@ -171,7 +171,7 @@ elif indicator_name == 'wave':
 
 #### Создана полная documentation `docs/guides/wave-indicator-seaborn-mode.md`
 - **guide on использованию** with примерами команд
-- **description параметров** and торговых правил
+- **describe параметров** and торговых правил
 - **Визуальные особенности** and техническая реализация
 - **Сравнение with другими режимами** отображения
 - **Лучшие практики** and Troubleshooting

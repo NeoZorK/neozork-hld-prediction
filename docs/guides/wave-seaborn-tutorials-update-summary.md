@@ -13,7 +13,7 @@
 
 #### Обновлен раздел Features:
 - Добавлена информация о полной поддержке seaborn режима for wave indicator
-- Обновлено description технических indicators
+- Обновлено describe технических indicators
 
 #### Обновлен раздел Quick Examples:
 - Добавлен example использования wave indicator in seaborn режиме:
@@ -23,8 +23,8 @@
 
 ### 2. **Обновлен README.md**
 
-#### Обновлено description Wave Indicator:
-- Добавлена информация о поддержке seaborn режима in description
+#### Обновлено describe Wave Indicator:
+- Добавлена информация о поддержке seaborn режима in describe
 - Обновлены CLI examples with добавлением seaborn режима:
  ```bash
  # Wave with seaborn mode (NEW!) - Scientific presentation style
@@ -55,7 +55,7 @@ uv run run_Analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast
 ```
 
 #### Добавлен новый раздел Seaborn Mode Support ⭐ **NEW**:
-- **Visual Features**: description научного стиля отображения
+- **Visual Features**: describe научного стиля отображения
 - **Usage Example**: example использования
 - **Technical Implementation**: Technical details реализации
 - **Documentation**: Ссылки on документацию
@@ -90,7 +90,7 @@ uv run run_Analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast
 
 #### Обновлено Summary:
 - Добавлена информация о научном стиле презентации
-- Обновлено description полного опыта визуализации
+- Обновлено describe полного опыта визуализации
 
 ## 🎨 Ключевые особенности seaborn режима
 

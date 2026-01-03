@@ -1,11 +1,11 @@
-# AutoML Gluon - Complete guide user
+# AutoML Gluon - Complete guide User
 
 **Author:** NeoZorK (Shcherbyna Rostyslav)
 **Дата:** 2025
 **Местоположение:** Ukraine, Zaporizhzhya
 **Version:** 1.0
 
-Добро пожаловать in исчерпывающее guide on AutoML Gluon - мощному инструменту автоматизированного машинного обучения from Amazon.
+Добро пожаловать in исчерпывающее guide on AutoML Gluon - мощному инструменту автоматизированного machine learning from Amazon.
 
 ## Содержание
 
@@ -34,17 +34,17 @@
 23. [guide on изучению учебника](./23_reading_guide.md)
 24. [Правильное использование вероятностей](./24_probability_usage_guide.md)
 25. [Monitoring торгового бота - Лучшие практики](./25_trading_bot_Monitoring.md)
-26. [Углубленное description feature generation and apply](./26_feature_generation_advanced.md)
-27. [Углубленное description методик бэктестинга](./27_backtesting_methods.md)
-28. [Углубленное description методик walk-forward](./28_walk_forward_Analysis.md)
-29. [Углубленное description методик Monte Carlo for создания робастных стратегий](./29_monte_carlo_simulations.md)
-30. [Углубленное description методик создания and управления Portfolio](./30_Portfolio_Management.md)
+26. [Углубленное describe feature generation and apply](./26_feature_generation_advanced.md)
+27. [Углубленное describe методик бэктестинга](./27_backtesting_methods.md)
+28. [Углубленное describe методик walk-forward](./28_walk_forward_Analysis.md)
+29. [Углубленное describe методик Monte Carlo for создания робастных стратегий](./29_monte_carlo_simulations.md)
+30. [Углубленное describe методик создания and управления Portfolio](./30_Portfolio_Management.md)
 
 ## Что такое AutoML Gluon?
 
-AutoML Gluon - это библиотека from Amazon Web Services for автоматизированного машинного обучения, которая позволяет:
+AutoML Gluon - это библиотека from Amazon Web services for автоматизированного machine learning, которая позволяет:
 
-- Автоматически выбирать лучшие алгоритмы машинного обучения
+- Автоматически выбирать лучшие алгоритмы machine learning
 - Настраивать гиперпараметры без ручного вмешательства
 - Создавать ансамбли моделей
 - Обрабатывать различные типы данных (табличные, временные ряды, изображения, текст)
@@ -57,7 +57,7 @@ AutoML Gluon - это библиотека from Amazon Web Services for авто
 - **Ансамблирование**: Автоматически создает and комбинирует несколько моделей
 - **Обработка различных типов данных**: Поддержка табличных данных, временных рядов, изображений
 - **Масштабируемость**: Workingет как on CPU, так and on GPU
-- **integration with AWS**: Легкая integration with облачными сервисами Amazon
+- **integration with AWS**: Легкая integration with облачными services Amazon
 
 ## for кого этот мануал?
 
@@ -70,7 +70,7 @@ AutoML Gluon - это библиотека from Amazon Web Services for авто
 ## Предварительные требования
 
 - Python 3.7+
-- Базовые знания машинного обучения
+- Базовые знания machine learning
 - Понимание концепций валидации and метрик
 - Опыт работы with pandas and numpy (рекомендуется)
 
@@ -96,7 +96,7 @@ AutoML Gluon - это библиотека from Amazon Web Services for авто
 - **Результат**: 72.3% точность, 1.45 Sharpe, 23.7% доходность
 
 #### Сложный example (Раздел 13):
-- **Продвинутая архитектура** - микроServices, ансамбли, риск-менеджмент
+- **Продвинутая архитектура** - микроservices, ансамбли, риск-менеджмент
 - **Множественные модели** - направление цены, волатильность, объем, настроения
 - **Продвинутая валидация** - комплексный backtest, advanced walk-forward
 - **Kubernetes деплой** - масштабируемая система
@@ -111,7 +111,7 @@ AutoML Gluon - это библиотека from Amazon Web Services for авто
 
 ### Интерпретируемость (Раздел 15):
 - **Глобальная интерпретируемость** - понимание модели in целом
-- **Локальная интерпретируемость** - объяснение конкретных Predictions
+- **Локальная интерпретируемость** - объяснение конкретных predictions
 - **SHAP and LIME** - современные методы объяснения
 - **Feature importance** - важность признаков
 - **Model-specific Interpretability** - специфичные for AutoML Gluon методы
@@ -499,7 +499,7 @@ pip install -e .
 pip install -e ./tabular
 ```
 
-## check installation
+## installation check
 
 ### Базовый тест
 ```python
@@ -598,7 +598,7 @@ default:
 # Settings for different tasks
 ```
 
-#### 🔧 Детальное description параметров конфигурации
+#### 🔧 Детальное describe параметров конфигурации
 
 **parameter `time_limit`:**
 - **Что означает**: Максимальное время обучения in секундах
@@ -703,10 +703,10 @@ default:
  - **RTX 3070 8GB**: `num_gpus: 1` - хорошая производительность
  - **RTX 4080 16GB**: `num_gpus: 1` - высокая производительность
  - **A100 40GB**: `num_gpus: 1` - профессиональная Working
- - **Несколько GPU**: `num_gpus: 2+` - for больших моделей
+ - **Несколько GPU**: `num_gpus: 2+` - for large models
 - **Влияние on скорость обучения**:
  - **CPU только**: Базовая скорость (100%)
- - **GTX 1060**: Ускорение in 3-5 раз
+ - **GTX 1060**: Ускорение by 3-5 times
  - **RTX 3070**: Ускорение in 8-15 раз
  - **RTX 4080**: Ускорение in 15-25 раз
  - **A100**: Ускорение in 25-50 раз
@@ -716,7 +716,7 @@ default:
  - **Временные ряды**: GPU ускоряет in 2-5 раз
  - **Изображения**: GPU критична, ускорение in 10-50 раз
  - **Текст**: GPU ускоряет in 5-20 раз
-- **Требования к памяти GPU**:
+- **Требования to memory GPU**:
  - **Малые модели (< 1M параметров)**: 2-4 GB VRAM
  - **Средние модели (1-10M параметров)**: 4-8 GB VRAM
  - **Большие модели (10-100M параметров)**: 8-16 GB VRAM
@@ -738,12 +738,12 @@ timeseries:
  target_column: 'target'
 ```
 
-#### 🎯 Детальное description параметров for табличных данных
+#### 🎯 Детальное describe параметров for табличных данных
 
 **parameter `presets`:**
 - **Что означает**: Предустановленные конфигурации качества модели
 - **Зачем нужен**: Упрощает выбор между скоростью and качеством
-- **Детальное description каждого preset**:
+- **Детальное describe каждого preset**:
 
  **`best_quality`:**
  - **Что делает**: Максимальное качество модели
@@ -799,7 +799,7 @@ timeseries:
  - `'dask'` - распределенное выполнение через Dask
 - **Практический example**: for одного компьютера Use `'local'`
 
-#### ⏰ Детальное description параметров for временных рядов
+#### ⏰ Детальное describe параметров for временных рядов
 
 **parameter `Prediction_length`:**
 - **Что означает**: Количество будущих точек for прогнозирования
@@ -900,7 +900,7 @@ def test_installation():
  )
 
  # Предсказания
- Predictions = predictor.predict(test_data)
+ predictions = predictor.predict(test_data)
 
  # Оценка качества
  performance = predictor.evaluate(test_data)
@@ -1000,7 +1000,7 @@ predictor = TabularPredictor(
 
 **Почему Use 'auto'?** Потому что AutoML Gluon умнее нас in выборе оптимальных параметров.
 
-#### 🔧 Детальное description параметров TabularPredictor
+#### 🔧 Детальное describe параметров TabularPredictor
 
 **parameter `label`:**
 - **Что означает**: Название столбца with целевой переменной (что мы предсказываем)
@@ -1018,7 +1018,7 @@ predictor = TabularPredictor(
 - **Обработка ошибок**: Если столбец not found, AutoML Gluon выдаст понятную ошибку
 
 **parameter `problem_type`:**
-- **Что означает**: Тип задачи машинного обучения
+- **Что означает**: Тип задачи machine learning
 - **Зачем нужен**: Определяет, What алгоритмы and метрики использовать
 - **Автоматическое определение**: `'auto'` - AutoML Gluon сам определит тип
 - **Ручное specifiedие**: Можно явно указать тип задачи
@@ -1132,7 +1132,7 @@ test_data = pd.read_csv('test.csv')
 predictor.fit(train_data)
 
 # Предсказания
-Predictions = predictor.predict(test_data)
+predictions = predictor.predict(test_data)
 ```
 
 ### Обучение with ограничением времени
@@ -1151,7 +1151,7 @@ predictor.fit(
 )
 ```
 
-#### 🔧 Детальное description параметров метода fit()
+#### 🔧 Детальное describe параметров метода fit()
 
 **parameter `time_limit`:**
 - **Что означает**: Максимальное время обучения in секундах
@@ -1216,7 +1216,7 @@ predictor.fit(
 )
 ```
 
-#### 🔧 Детальное description параметров пресетов
+#### 🔧 Детальное describe параметров пресетов
 
 **parameter `presets`:**
 - **Что означает**: Предустановленные конфигурации качества модели
@@ -1314,7 +1314,7 @@ predictor.fit(
 
 ```python
 # Предсказания классов/значений
-Predictions = predictor.predict(test_data)
+predictions = predictor.predict(test_data)
 
 # Вероятности (for классификации)
 probabilities = predictor.predict_proba(test_data)
@@ -1324,13 +1324,13 @@ probabilities = predictor.predict_proba(test_data)
 
 ```python
 # Предсказания with доверительными интервалами
-Predictions_with_intervals = predictor.predict(
+predictions_with_intervals = predictor.predict(
  test_data,
  include_confidence=True
 )
 
 # Предсказания from отдельных моделей
-individual_Predictions = predictor.predict_multi(test_data)
+individual_predictions = predictor.predict_multi(test_data)
 ```
 
 ## Working with приsignми
@@ -1496,7 +1496,7 @@ predictor.fit(
 
 ```python
 # for текстовых columns AutoGluon автоматически создает признаки
-text_columns = ['description', 'reView_text']
+text_columns = ['describe', 'reView_text']
 
 predictor.fit(
  train_data,
@@ -1518,18 +1518,18 @@ predictor.fit(
 
 ## Monitoring обучения
 
-### Логирование
+### Logsрование
 
 ```python
 import logging
 
-# configuration логирования
+# configuration Logsрования
 logging.basicConfig(level=logging.INFO)
 
-# Обучение with подробным логированием
+# Обучение with подробным Logsрованием
 predictor.fit(
  train_data,
- verbosity=2 # Detailed логирование
+ verbosity=2 # Detailed Logsрование
 )
 ```
 
@@ -1591,7 +1591,7 @@ predictor.fit(
 )
 
 # Предсказания
-Predictions = predictor.predict(test_data)
+predictions = predictor.predict(test_data)
 probabilities = predictor.predict_proba(test_data)
 
 # Оценка качества
@@ -1643,7 +1643,7 @@ predictor.fit(
 )
 
 # Предсказания
-Predictions = predictor.predict(test_data)
+predictions = predictor.predict(test_data)
 
 # Оценка качества
 performance = predictor.evaluate(test_data)
@@ -1870,7 +1870,7 @@ hyperparameters = {
 predictor.fit(train_data, hyperparameters=hyperparameters)
 ```
 
-#### 🔧 Детальное description параметров гиперпараметров
+#### 🔧 Детальное describe параметров гиперпараметров
 
 **parameters LightGBM (GBM):**
 
@@ -2024,11 +2024,11 @@ class CustomEnsembleModel(AbstractModel):
  self.models = []
 
  def _fit(self, X, y, **kwargs):
- # Логика обучения кастомного ансамбля
+ # Logsка обучения кастомного ансамбля
  pass
 
  def _predict(self, X, **kwargs):
- # Логика предсказания кастомного ансамбля
+ # Logsка предсказания кастомного ансамбля
  pass
 
 # Использование кастомного ансамбля
@@ -2200,7 +2200,7 @@ from autogluon.core import Scorer
 # create кастомной метрики
 def custom_metric(y_true, y_pred):
  """Кастомная метрика for оценки качества"""
- # Ваша логика расчета метрики
+ # Ваша Logsка расчета метрики
  return score
 
 custom_scorer = Scorer(
@@ -2225,14 +2225,14 @@ predictor.fit(
 )
 ```
 
-## configuration логирования
+## configuration Logsрования
 
-### Детальное логирование
+### Детальное Logsрование
 
 ```python
 import logging
 
-# configuration логирования
+# configuration Logsрования
 logging.basicConfig(
  level=logging.INFO,
  format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -2242,10 +2242,10 @@ logging.basicConfig(
  ]
 )
 
-# Обучение with подробным логированием
+# Обучение with подробным Logsрованием
 predictor.fit(
  train_data,
- verbosity=3, # Максимальное логирование
+ verbosity=3, # Максимальное Logsрование
  log_to_file=True
 )
 ```
@@ -2254,8 +2254,8 @@ predictor.fit(
 
 ```python
 # Callback for Monitoringа
-def training_monitor(epoch, logs):
- print(f"Epoch {epoch}: {logs}")
+def training_monitor(epoch, Logs):
+ print(f"Epoch {epoch}: {Logs}")
 
 predictor.fit(
  train_data,
@@ -2429,7 +2429,7 @@ predictor.fit(
 ![Детальная визуализация метрик](images/metrics_Detailed.png)
 *Рисунок 3.1: Детальная визуализация метрик - ROC Curve, Precision-Recall, Confusion Matrix, Accuracy vs Threshold, F1 Score vs Threshold*
 
-**Почему метрики - это язык машинного обучения?** Потому что они переводят сложные алгоритмы in понятные числа. Это как переводчик между техническими деталями and бизнес-результатами.
+**Почему метрики - это язык machine learning?** Потому что они переводят сложные алгоритмы in понятные числа. Это как переводчик между техническими деталями and бизнес-результатами.
 
 Метрики in AutoML Gluon используются for:
 - **Оценки качества моделей**: Понимание того, насколько хорошо Workingет модель
@@ -2452,7 +2452,7 @@ predictor.fit(
 - При небольшом количестве данных
 
 ```python
-# Процент правильных Predictions
+# Процент правильных predictions
 from sklearn.metrics import accuracy_score
 
 accuracy = accuracy_score(y_true, y_pred)
@@ -2464,10 +2464,10 @@ print(f"Accuracy: {accuracy:.4f}")
 - not показывает, What ошибки делает модель
 - not учитывает важность разных типов ошибок
 
-#### 🔧 Детальное description параметров метрик классификации
+#### 🔧 Детальное describe параметров метрик классификации
 
 **Метрика Accuracy:**
-- **Что означает**: Процент правильных Predictions from общего количества
+- **Что означает**: Процент правильных predictions from общего количества
 - **Формула**: `(TP + TN) / (TP + TN + FP + FN)`
 - **Диапазон значений**: `[0, 1]` (0% - 100%)
 - **Когда использовать**:
@@ -2770,7 +2770,7 @@ from autogluon.core import Scorer
 # create кастомной метрики
 def custom_metric(y_true, y_pred):
  """Кастомная метрика for оценки качества"""
- # Ваша логика расчета
+ # Ваша Logsка расчета
  return score
 
 custom_scorer = Scorer(
@@ -2899,7 +2899,7 @@ class MetricsLogger:
  self.metrics_history = []
 
  def log_metrics(self, metrics_dict):
- """Логирование метрик"""
+ """Logsрование метрик"""
  timestamp = datetime.now()
  metrics_dict['timestamp'] = timestamp
  self.metrics_history.append(metrics_dict)
@@ -2915,7 +2915,7 @@ class MetricsLogger:
 # Использование
 metrics_logger = MetricsLogger()
 
-# Логирование метрик
+# Logsрование метрик
 metrics = {
  'accuracy': 0.85,
  'f1_score': 0.82,
@@ -2985,7 +2985,7 @@ predictor = TabularPredictor(
 predictor.fit(train_data, time_limit=300)
 
 # Предсказания
-Predictions = predictor.predict(test_data)
+predictions = predictor.predict(test_data)
 probabilities = predictor.predict_proba(test_data)
 
 # Оценка качества
@@ -3028,7 +3028,7 @@ axes[0, 1].set_title('Precision-Recall Curve')
 
 # Матрица ошибок
 from sklearn.metrics import confusion_matrix
-cm = confusion_matrix(test_data['target'], Predictions)
+cm = confusion_matrix(test_data['target'], predictions)
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=axes[1, 0])
 axes[1, 0].set_title('Confusion Matrix')
 
@@ -3214,7 +3214,7 @@ def time_series_backtest(data, target_col, n_splits=5):
  predictor.fit(train_fold, time_limit=300)
 
  # Предсказания
- Predictions = predictor.predict(val_fold)
+ predictions = predictor.predict(val_fold)
 
  # Оценка качества
  performance = predictor.evaluate(val_fold)
@@ -3222,7 +3222,7 @@ def time_series_backtest(data, target_col, n_splits=5):
  results.append({
  'fold': fold + 1,
  'performance': performance,
- 'Predictions': Predictions
+ 'predictions': predictions
  })
 
  return results
@@ -3252,7 +3252,7 @@ def advanced_backtest(data, target_col, window_size=1000, step_size=100):
  predictor.fit(train_data, time_limit=300)
 
  # Предсказания
- Predictions = predictor.predict(val_data)
+ predictions = predictor.predict(val_data)
 
  # Оценка качества
  performance = predictor.evaluate(val_data)
@@ -3261,7 +3261,7 @@ def advanced_backtest(data, target_col, window_size=1000, step_size=100):
  'start': start,
  'end': end,
  'performance': performance,
- 'Predictions': Predictions
+ 'predictions': predictions
  })
 
  return results
@@ -3290,7 +3290,7 @@ def walk_forward_validation(data, target_col, train_size=1000, test_size=100):
  predictor.fit(train_data, time_limit=300)
 
  # Предсказания
- Predictions = predictor.predict(test_data)
+ predictions = predictor.predict(test_data)
 
  # Оценка качества
  performance = predictor.evaluate(test_data)
@@ -3301,7 +3301,7 @@ def walk_forward_validation(data, target_col, train_size=1000, test_size=100):
  'test_start': i,
  'test_end': i+test_size,
  'performance': performance,
- 'Predictions': Predictions
+ 'predictions': predictions
  })
 
  return results
@@ -3336,7 +3336,7 @@ def adaptive_walk_forward(data, target_col, min_train_size=500, max_train_size=2
  predictor.fit(train_data, time_limit=300)
 
  # Предсказания
- Predictions = predictor.predict(test_data)
+ predictions = predictor.predict(test_data)
 
  # Оценка качества
  performance = predictor.evaluate(test_data)
@@ -3344,7 +3344,7 @@ def adaptive_walk_forward(data, target_col, min_train_size=500, max_train_size=2
  results.append({
  'train_size': current_train_size,
  'performance': performance,
- 'Predictions': Predictions
+ 'predictions': predictions
  })
 
  return results
@@ -3370,7 +3370,7 @@ def monte_carlo_validation(data, target_col, n_iterations=100, train_frac=0.8):
  predictor.fit(train_data, time_limit=300)
 
  # Предсказания
- Predictions = predictor.predict(test_data)
+ predictions = predictor.predict(test_data)
 
  # Оценка качества
  performance = predictor.evaluate(test_data)
@@ -3378,7 +3378,7 @@ def monte_carlo_validation(data, target_col, n_iterations=100, train_frac=0.8):
  results.append({
  'iteration': iteration,
  'performance': performance,
- 'Predictions': Predictions
+ 'predictions': predictions
  })
 
  return results
@@ -3413,7 +3413,7 @@ def bootstrap_validation(data, target_col, n_bootstrap=100):
  predictor.fit(bootstrap_data, time_limit=300)
 
  # Предсказания on OOB данных
- Predictions = predictor.predict(oob_data)
+ predictions = predictor.predict(oob_data)
 
  # Оценка качества
  performance = predictor.evaluate(oob_data)
@@ -3421,7 +3421,7 @@ def bootstrap_validation(data, target_col, n_bootstrap=100):
  results.append({
  'bootstrap': i,
  'performance': performance,
- 'Predictions': Predictions
+ 'predictions': predictions
  })
 
  return results
@@ -3480,11 +3480,11 @@ def financial_validation(data, target_col, lookback_window=252, forward_window=2
  predictor.fit(train_data, time_limit=300)
 
  # Предсказания
- Predictions = predictor.predict(test_data)
+ predictions = predictor.predict(test_data)
 
  # Финансовые метрики
  returns = test_data[target_col].pct_change().dropna()
- predicted_returns = Predictions.pct_change().dropna()
+ predicted_returns = predictions.pct_change().dropna()
 
  # Sharpe Ratio
  sharpe_ratio = returns.mean() / returns.std() * np.sqrt(252)
@@ -3500,7 +3500,7 @@ def financial_validation(data, target_col, lookback_window=252, forward_window=2
  'end_date': test_data.index[-1],
  'sharpe_ratio': sharpe_ratio,
  'max_drawdown': max_drawdown,
- 'Predictions': Predictions
+ 'predictions': predictions
  })
 
  return results
@@ -3730,7 +3730,7 @@ def optimize_validation_params(data, target_col):
 ### Преимущества правильного продакшена
 - **Масштабируемость**: Модель Workingет with любым объемом данных
 - **Надежность**: 99.9% uptime, автоматическое восстановление
-- **Monitoring**: Постоянный контроль качества Predictions
+- **Monitoring**: Постоянный контроль качества predictions
 - **Бизнес-ценность**: Реальная польза for компании and пользователей
 
 ## Введение in продакшен
@@ -3743,7 +3743,7 @@ def optimize_validation_params(data, target_col):
 **Уникальные особенности ML продакшена:**
 - **data меняются**: Модель может "забыть" то, что знала
 - **Концептуальный дрифт**: Реальность изменяется быстрее модели
-- **dependency from данных**: Нет данных = нет Predictions
+- **dependency from данных**: Нет данных = нет predictions
 - **Черный ящик**: Сложно понять, почему модель приняла решение
 
 Продакшен деплой ML-моделей - это критически важный этап, который требует тщательного Planирования, Monitoringа and поддержки. in этом разделе рассмотрим все аспекты деплоя AutoML Gluon моделей in продакшен.
@@ -3830,7 +3830,7 @@ def validate_production_model(predictor, test_data, performance_thresholds):
  """Валидация модели for продакшена"""
 
  # Предсказания
- Predictions = predictor.predict(test_data)
+ predictions = predictor.predict(test_data)
 
  # Оценка качества
  performance = predictor.evaluate(test_data)
@@ -3843,7 +3843,7 @@ def validate_production_model(predictor, test_data, performance_thresholds):
  else:
  validation_results[metric] = False
 
- # check стабильности Predictions
+ # check стабильности predictions
  if hasattr(predictor, 'predict_proba'):
  probabilities = predictor.predict_proba(test_data)
  prob_std = probabilities.std().mean()
@@ -3867,7 +3867,7 @@ from typing import Dict, List, Any
 import asyncio
 from datetime import datetime
 
-# configuration логирования
+# configuration Logsрования
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -3883,7 +3883,7 @@ class PredictionRequest(BaseModel):
 
 class PredictionResponse(BaseModel):
  """Схема ответа with предсказаниями"""
- Predictions: List[Any]
+ predictions: List[Any]
  probabilities: List[Dict[str, float]] = None
  model_info: Dict[str, Any]
  timestamp: str
@@ -3926,7 +3926,7 @@ async def health_check():
 
 @app.post("/predict", response_model=PredictionResponse)
 async def predict(request: PredictionRequest):
- """Endpoint for Predictions"""
+ """Endpoint for predictions"""
  if model is None:
  raise HTTPException(status_code=503, detail="Model not loaded")
 
@@ -3935,7 +3935,7 @@ async def predict(request: PredictionRequest):
  df = pd.dataFrame(request.data)
 
  # Предсказания
- Predictions = model.predict(df)
+ predictions = model.predict(df)
 
  # Вероятности (если доступны)
  probabilities = None
@@ -3952,7 +3952,7 @@ async def predict(request: PredictionRequest):
  }
 
  return PredictionResponse(
- Predictions=Predictions.toList(),
+ predictions=predictions.toList(),
  probabilities=probabilities,
  model_info=model_info,
  timestamp=datetime.now().isoformat()
@@ -3991,7 +3991,7 @@ import logging
 from datetime import datetime
 import traceback
 
-# configuration логирования
+# configuration Logsрования
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -4033,7 +4033,7 @@ def health_check():
 
 @app.route('/predict', methods=['POST'])
 def predict():
- """Endpoint for Predictions"""
+ """Endpoint for predictions"""
  if model is None:
  return jsonify({"error": "Model not loaded"}), 503
 
@@ -4048,7 +4048,7 @@ def predict():
  df = pd.dataFrame(data['data'])
 
  # Предсказания
- Predictions = model.predict(df)
+ predictions = model.predict(df)
 
  # Вероятности (если доступны)
  probabilities = None
@@ -4057,7 +4057,7 @@ def predict():
  probabilities = proba.to_dict('records')
 
  return jsonify({
- "Predictions": Predictions.toList(),
+ "predictions": predictions.toList(),
  "probabilities": probabilities,
  "model_info": {
  "model_path": model.path,
@@ -4118,9 +4118,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копирование кода приложения
 COPY . .
 
-# create user for безопасности
-RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
-user appuser
+# create User for безопасности
+RUN Useradd -m -u 1000 appUser && chown -R appUser:appUser /app
+User appUser
 
 # Открытие порта
 EXPOSE 8000
@@ -4135,7 +4135,7 @@ CMD ["python", "app.py"]
 # docker-compose.prod.yml
 Version: '3.8'
 
-Services:
+services:
  autogluon-api:
  build: .
  ports:
@@ -4145,7 +4145,7 @@ Services:
  - LOG_LEVEL=INFO
  volumes:
  - ./models:/app/models
- - ./logs:/app/logs
+ - ./Logs:/app/Logs
  restart: unless-stopped
  healthcheck:
  test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
@@ -4233,7 +4233,7 @@ spec:
  - name: model-storage
  mountPath: /app/models
  - name: log-storage
- mountPath: /app/logs
+ mountPath: /app/Logs
  volumes:
  - name: model-storage
  persistentVolumeClaim:
@@ -4243,7 +4243,7 @@ spec:
  claimName: log-pvc
 ---
 apiVersion: v1
-kind: Service
+kind: service
 metadata:
  name: autogluon-api-service
 spec:
@@ -4278,7 +4278,7 @@ spec:
  storage: 5Gi
 ```
 
-## Monitoring and логирование
+## Monitoring and Logsрование
 
 ### Система Monitoringа
 
@@ -4299,7 +4299,7 @@ class ProductionMonitor:
  self.metrics = {}
 
  def setup_logging(self):
- """configuration логирования"""
+ """configuration Logsрования"""
  logging.basicConfig(
  level=logging.INFO,
  format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -4312,7 +4312,7 @@ class ProductionMonitor:
 
  def log_Prediction(self, input_data: Dict, Prediction: Any,
  processing_time: float, model_info: Dict):
- """Логирование предсказания"""
+ """Logsрование предсказания"""
  log_entry = {
  'timestamp': datetime.now().isoformat(),
  'input_data': input_data,
@@ -4323,7 +4323,7 @@ class ProductionMonitor:
  self.logger.info(f"Prediction: {log_entry}")
 
  def log_error(self, error: Exception, context: Dict):
- """Логирование ошибок"""
+ """Logsрование ошибок"""
  error_entry = {
  'timestamp': datetime.now().isoformat(),
  'error': str(error),
@@ -4405,7 +4405,7 @@ class Alertsystem:
  try:
  payload = {
  "text": message,
- "username": "AutoML Gluon Monitor",
+ "Username": "AutoML Gluon Monitor",
  "icon_emoji": ":robot_face:"
  }
 
@@ -4439,8 +4439,8 @@ from concurrent.futures import ThreadPoolExecutor
 import queue
 import threading
 
-class ScalablePredictionservice:
- """Масштабируемый сервис Predictions"""
+class Scalablepredictionservice:
+ """Масштабируемый сервис predictions"""
 
  def __init__(self, max_workers=4):
  self.max_workers = max_workers
@@ -4463,11 +4463,11 @@ class ScalablePredictionservice:
 
  def _predict_sync(self, data: Dict) -> Dict:
  """Синхронное Prediction"""
- # Ваша логика предсказания
+ # Ваша Logsка предсказания
  pass
 
  def batch_predict(self, batch_data: List[Dict]) -> List[Dict]:
- """Пакетная обработка Predictions"""
+ """Пакетная обработка predictions"""
  results = []
 
  # Разделение on батчи
@@ -4492,8 +4492,8 @@ import json
 import hashlib
 from typing import Any, Optional
 
-class PredictionCache:
- """Кэш for Predictions"""
+class Predictioncache:
+ """Кэш for predictions"""
 
  def __init__(self, redis_host='localhost', redis_port=6379, ttl=3600):
  self.redis_client = redis.Redis(host=redis_host, port=redis_port, decode_responses=True)
@@ -4547,11 +4547,11 @@ class SecurityManager:
  self.secret_key = secret_key
  self.api_keys = {}
 
- def generate_api_key(self, user_id: str) -> str:
+ def generate_api_key(self, User_id: str) -> str:
  """Генерация API ключа"""
  api_key = secrets.token_urlsafe(32)
  self.api_keys[api_key] = {
- 'user_id': user_id,
+ 'User_id': User_id,
  'created_at': datetime.now(),
  'permissions': ['predict', 'model_info']
  }
@@ -4561,8 +4561,8 @@ class SecurityManager:
  """Валидация API ключа"""
  return api_key in self.api_keys
 
- def get_user_permissions(self, api_key: str) -> List:
- """Получение разрешений user"""
+ def get_User_permissions(self, api_key: str) -> List:
+ """Получение разрешений User"""
  if api_key in self.api_keys:
  return self.api_keys[api_key]['permissions']
  return []
@@ -4579,8 +4579,8 @@ class SecurityManager:
 
  # check разрешений
  if permissions:
- user_permissions = self.get_user_permissions(api_key)
- if not any(perm in user_permissions for perm in permissions):
+ User_permissions = self.get_User_permissions(api_key)
+ if not any(perm in User_permissions for perm in permissions):
  return jsonify({'error': 'Insufficient permissions'}), 403
 
  return f(*args, **kwargs)
@@ -4689,15 +4689,15 @@ class LoadTester:
  'error': str(e)
  }
 
- async def load_test(self, concurrent_users: int,
- requests_per_user: int,
+ async def load_test(self, concurrent_Users: int,
+ requests_per_User: int,
  test_data: List[Dict[str, Any]]) -> Dict[str, Any]:
  """Нагрузочное тестирование"""
  async with aiohttp.ClientSession() as session:
  tasks = []
 
- for user in range(concurrent_users):
- for request in range(requests_per_user):
+ for User in range(concurrent_Users):
+ for request in range(requests_per_User):
  data = test_data[request % len(test_data)]
  task = self.single_request(session, data)
  tasks.append(task)
@@ -4764,7 +4764,7 @@ class LoadTester:
 - **Концептуальный дрифт**: Реальность меняется быстрее модели
 - **data дрифт**: Новые типы данных, которых not было при обучении
 - **Пользовательские предпочтения**: Люди меняют поведение and вкусы
-- **Технологические изменения**: Новые устройства, платформы, interfaceы
+- **ТехноLogsческие изменения**: Новые устройства, платформы, interfaceы
 
 Переобучение (retraining) - это критически важный процесс for поддержания актуальности ML-моделей in продакшене. in этом разделе рассмотрим все аспекты автоматизированного переобучения моделей.
 
@@ -4819,7 +4819,7 @@ class PeriodicRetraining:
  """Переобучение модели - основной процесс обновления"""
  try:
  self.logger.info("starting model retraining...")
- # Логирование начала процесса for Monitoringа
+ # Logsрование начала процесса for Monitoringа
 
  # Загрузка новых данных
  new_data = self.load_new_data()
@@ -4876,10 +4876,10 @@ class AdaptiveRetraining:
  self.performance_history = []
  self.logger = logging.getLogger(__name__)
 
- def monitor_performance(self, Predictions: List, actuals: List):
+ def monitor_performance(self, predictions: List, actuals: List):
  """Monitoring производительности модели"""
  # Расчет текущей производительности
- current_performance = self.calculate_performance(Predictions, actuals)
+ current_performance = self.calculate_performance(predictions, actuals)
 
  # add in историю
  self.performance_history.append({
@@ -5145,12 +5145,12 @@ class RetrainingValidator:
  test_data = await self.load_test_data()
 
  # Предсказания новой модели
- new_Predictions = new_predictor.predict(test_data)
+ new_predictions = new_predictor.predict(test_data)
  new_performance = new_predictor.evaluate(test_data)
 
  # Сравнение with старой моделью (если доступна)
  if old_predictor is not None:
- old_Predictions = old_predictor.predict(test_data)
+ old_predictions = old_predictor.predict(test_data)
  old_performance = old_predictor.evaluate(test_data)
 
  # check улучшения производительности
@@ -5202,13 +5202,13 @@ class RetrainingValidator:
  def check_model_stability(self, predictor, test_data: pd.dataFrame) -> bool:
  """check стабильности модели"""
  # Множественные предсказания on одних and тех же данных
- Predictions = []
+ predictions = []
  for _ in range(5):
  pred = predictor.predict(test_data)
- Predictions.append(pred)
+ predictions.append(pred)
 
  # check согласованности
- consistency = self.calculate_Prediction_consistency(Predictions)
+ consistency = self.calculate_Prediction_consistency(predictions)
  return consistency > self.config.get('stability_threshold', 0.95)
 
  def check_compatibility(self, predictor) -> bool:
@@ -5266,7 +5266,7 @@ class RetrainingMonitor:
  disk = psutil.disk_usage('/')
  disk_percent = disk.percent
 
- # Логирование метрик
+ # Logsрование метрик
  self.logger.info(f"Resources - CPU: {cpu_percent}%, Memory: {memory_percent}%, Disk: {disk_percent}%")
 
  # check лимитов
@@ -5298,7 +5298,7 @@ class RetrainingMonitor:
  retraining_process.terminate()
  break
 
- # Логирование прогресса
+ # Logsрование прогресса
  self.logger.info(f"Retraining progress: {elapsed_time}")
 
  time.sleep(300) # check каждые 5 minutes
@@ -5333,16 +5333,16 @@ class RetrainingMonitor:
  time.sleep(300)
 ```
 
-## Откат моделей
+## Rollback моделей
 
-### Система отката
+### Система Rollbackа
 
 ```python
 class ModelRollback:
- """Система отката моделей"""
+ """Система Rollbackа моделей"""
 
- def __init__(self, rollback_config: Dict[str, Any]):
- self.config = rollback_config
+ def __init__(self, Rollback_config: Dict[str, Any]):
+ self.config = Rollback_config
  self.logger = logging.getLogger(__name__)
  self.model_versions = []
 
@@ -5371,18 +5371,18 @@ class ModelRollback:
  self.logger.error(f"Backup creation failed: {e}")
  return None
 
- def rollback_model(self, target_Version: str = None):
- """Откат к предыдущей версии модели"""
+ def Rollback_model(self, target_Version: str = None):
+ """Rollback к предыдущей версии модели"""
  try:
  if target_version is None:
- # Откат к последней версии
+ # Rollback к последней версии
  if len(self.model_versions) < 2:
- self.logger.warning("No previous version available for rollback")
+ self.logger.warning("No previous version available for Rollback")
  return False
 
  target_version = self.model_versions[-2]['path']
  else:
- # Откат к specifiedной версии
+ # Rollback к specifiedной версии
  target_version = self.find_version_path(target_version)
  if target_version is None:
  self.logger.error(f"Version {target_version} not found")
@@ -5403,7 +5403,7 @@ class ModelRollback:
  return True
 
  except Exception as e:
- self.logger.error(f"Model rollback failed: {e}")
+ self.logger.error(f"Model Rollback failed: {e}")
  return False
 
  def find_version_path(self, version_id: str) -> str:
@@ -5426,7 +5426,7 @@ from datetime import datetime, timedelta
 import logging
 from autogluon.tabular import TabularPredictor
 
-# configuration логирования
+# configuration Logsрования
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -5545,8 +5545,8 @@ class CompleteRetrainingsystem:
 
  self.logger.info("Retraining COMPLETED successfully")
  else:
- # Откат к предыдущей версии
- self.rollback_model(backup_path)
+ # Rollback к предыдущей версии
+ self.Rollback_model(backup_path)
 
  self.retraining_history.append({
  'timestamp': datetime.now().isoformat(),
@@ -5560,9 +5560,9 @@ class CompleteRetrainingsystem:
  except Exception as e:
  self.logger.error(f"Retraining failed: {e}")
 
- # Откат in случае ошибки
+ # Rollback in случае ошибки
  if 'backup_path' in locals():
- self.rollback_model(backup_path)
+ self.Rollback_model(backup_path)
 
  async def validate_new_model(self, new_predictor) -> bool:
  """Валидация новой модели"""
@@ -5571,11 +5571,11 @@ class CompleteRetrainingsystem:
  test_data = await self.load_test_data()
 
  # Предсказания новой модели
- new_Predictions = new_predictor.predict(test_data)
+ new_predictions = new_predictor.predict(test_data)
  new_performance = new_predictor.evaluate(test_data)
 
  # Сравнение with текущей моделью
- current_Predictions = self.current_model.predict(test_data)
+ current_predictions = self.current_model.predict(test_data)
  current_performance = self.current_model.evaluate(test_data)
 
  # check улучшения
@@ -5599,7 +5599,7 @@ class CompleteRetrainingsystem:
  async def deploy_new_model(self, new_predictor):
  """Деплой новой модели"""
  try:
- # Остановка текущего сервиса
+ # Остановка текущего service
  await self.stop_current_service()
 
  # Замена модели
@@ -5609,7 +5609,7 @@ class CompleteRetrainingsystem:
  # update текущей модели
  self.current_model = new_predictor
 
- # Launch обновленного сервиса
+ # Launch обновленного service
  await self.start_updated_service()
 
  self.logger.info("New model deployed successfully")
@@ -5627,8 +5627,8 @@ class CompleteRetrainingsystem:
 
  return backup_path
 
- def rollback_model(self, backup_path: str):
- """Откат к предыдущей версии"""
+ def Rollback_model(self, backup_path: str):
+ """Rollback к предыдущей версии"""
  import shutil
  shutil.copytree(backup_path, self.config['model_path'], dirs_exist_ok=True)
 
@@ -5720,7 +5720,7 @@ if __name__ == "__main__":
 
 **Типы проблем with data:**
 - **Структурные проблемы**: Неправильные типы данных, форматы
-- **Семантические проблемы**: Некорректные значения, логические ошибки
+- **Семантические проблемы**: Некорректные значения, Logsческие ошибки
 - **Статистические проблемы**: Смещения, корреляции, выбросы
 - **Этические проблемы**: Дискриминация, предвзятость
 
@@ -6071,7 +6071,7 @@ def perform_cross_validation(predictor, data: pd.dataFrame,
  fold_predictor.fit(train_fold, time_limit=300)
 
  # Предсказания
- Predictions = fold_predictor.predict(val_fold)
+ predictions = fold_predictor.predict(val_fold)
 
  # Оценка качества
  performance = fold_predictor.evaluate(val_fold)
@@ -6243,9 +6243,9 @@ parallel_config = configure_parallelization(len(train_data), 'binary')
 # Применение конфигурации через ag_args_fit
 ```
 
-## Monitoring and логирование
+## Monitoring and Logsрование
 
-### 1. Система логирования
+### 1. Система Logsрования
 
 ```python
 import logging
@@ -6253,14 +6253,14 @@ from datetime import datetime
 import json
 
 class AutoGluonLogger:
- """Система логирования for AutoGluon"""
+ """Система Logsрования for AutoGluon"""
 
  def __init__(self, log_file: str = 'autogluon.log'):
  self.log_file = log_file
  self.setup_logging()
 
  def setup_logging(self):
- """configuration логирования"""
+ """configuration Logsрования"""
  logging.basicConfig(
  level=logging.INFO,
  format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -6272,20 +6272,20 @@ class AutoGluonLogger:
  self.logger = logging.getLogger(__name__)
 
  def log_training_start(self, data_info: Dict[str, Any]):
- """Логирование начала обучения"""
+ """Logsрование начала обучения"""
  self.logger.info(f"Training started: {data_info}")
 
  def log_training_progress(self, progress: Dict[str, Any]):
- """Логирование прогресса обучения"""
+ """Logsрование прогресса обучения"""
  self.logger.info(f"Training progress: {progress}")
 
  def log_training_complete(self, results: Dict[str, Any]):
- """Логирование завершения обучения"""
+ """Logsрование завершения обучения"""
  self.logger.info(f"Training COMPLETED: {results}")
 
  def log_Prediction(self, input_data: Dict, Prediction: Any,
  processing_time: float):
- """Логирование предсказания"""
+ """Logsрование предсказания"""
  log_entry = {
  'timestamp': datetime.now().isoformat(),
  'input_data': input_data,
@@ -6295,7 +6295,7 @@ class AutoGluonLogger:
  self.logger.info(f"Prediction: {log_entry}")
 
  def log_error(self, error: Exception, context: Dict[str, Any]):
- """Логирование ошибок"""
+ """Logsрование ошибок"""
  error_entry = {
  'timestamp': datetime.now().isoformat(),
  'error': str(error),
@@ -6561,15 +6561,15 @@ optimization_result = optimize_for_production(predictor, target_size_mb=50)
 print(f"Optimization result: {optimization_result}")
 ```
 
-### 2. Кэширование Predictions
+### 2. Кэширование predictions
 
 ```python
 import hashlib
 import json
 from typing import Optional
 
-class PredictionCache:
- """Кэш for Predictions"""
+class Predictioncache:
+ """Кэш for predictions"""
 
  def __init__(self, cache_size: int = 1000):
  self.cache_size = cache_size
@@ -6626,7 +6626,7 @@ class PredictionCache:
  return cache_hits / total_accesses if total_accesses > 0 else 0.0
 
 # Использование
-cache = PredictionCache(cache_size=1000)
+cache = Predictioncache(cache_size=1000)
 
 def cached_predict(predictor, data: Dict) -> Any:
  """Кэшированное Prediction"""
@@ -6679,7 +6679,7 @@ def cached_predict(predictor, data: Dict) -> Any:
 ![Monte Carlo анализ](images/monte_carlo_Analysis.png)
 *Рисунок 8.1: Monte Carlo анализ - робастные vs переобученные системы, распределение прибыли, risk-return профиль*
 
-**Почему examples - это язык машинного обучения?** Потому что они переводят сложные алгоритмы in понятные числа. Это как переводчик между техническими деталями and бизнес-результатами.
+**Почему examples - это язык machine learning?** Потому что они переводят сложные алгоритмы in понятные числа. Это как переводчик между техническими деталями and бизнес-результатами.
 
 **Типы примеров in AutoML Gluon:**
 - **Базовые examples**: Простые задачи for понимания основ
@@ -6687,7 +6687,7 @@ def cached_predict(predictor, data: Dict) -> Any:
 - **Реальные проекты**: Полные решения реальных бизнес-задач
 - **Специализированные examples**: for конкретных доменов (медицина, финансы)
 
-in этом разделе представлены практические examples использования AutoML Gluon for различных задач машинного обучения. Каждый example включает полный код, объяснения and лучшие практики.
+in этом разделе представлены практические examples использования AutoML Gluon for различных задач machine learning. Каждый example включает полный код, объяснения and лучшие практики.
 
 ## example 1: Классификация клиентов банка
 
@@ -6856,7 +6856,7 @@ def evaluate_bank_model(predictor, test_data):
  """Оценка качества банковской модели"""
 
  # Предсказания
- Predictions = predictor.predict(test_data)
+ predictions = predictor.predict(test_data)
  probabilities = predictor.predict_proba(test_data)
 
  # Оценка качества
@@ -6872,7 +6872,7 @@ def evaluate_bank_model(predictor, test_data):
  'performance': performance,
  'feature_importance': feature_importance,
  'leaderboard': leaderboard,
- 'Predictions': Predictions,
+ 'predictions': predictions,
  'probabilities': probabilities
  }
 
@@ -7073,7 +7073,7 @@ def evaluate_real_estate_model(predictor, test_data):
  """Оценка качества модели недвижимости"""
 
  # Предсказания
- Predictions = predictor.predict(test_data)
+ predictions = predictor.predict(test_data)
 
  # Оценка качества
  performance = predictor.evaluate(test_data)
@@ -7085,7 +7085,7 @@ def evaluate_real_estate_model(predictor, test_data):
  leaderboard = predictor.leaderboard(test_data)
 
  # Анализ ошибок
- errors = test_data['price'] - Predictions
+ errors = test_data['price'] - predictions
  mae = np.mean(np.abs(errors))
  mape = np.mean(np.abs(errors / test_data['price'])) * 100
 
@@ -7093,7 +7093,7 @@ def evaluate_real_estate_model(predictor, test_data):
  'performance': performance,
  'feature_importance': feature_importance,
  'leaderboard': leaderboard,
- 'Predictions': Predictions,
+ 'predictions': predictions,
  'mae': mae,
  'mape': mape,
  'errors': errors
@@ -7118,12 +7118,12 @@ def visualize_real_estate_results(results, test_data):
  fig, axes = plt.subplots(2, 2, figsize=(15, 12))
 
  # Предсказания vs Фактические значения
- axes[0, 0].scatter(test_data['price'], results['Predictions'], alpha=0.6)
+ axes[0, 0].scatter(test_data['price'], results['predictions'], alpha=0.6)
  axes[0, 0].plot([test_data['price'].min(), test_data['price'].max()],
  [test_data['price'].min(), test_data['price'].max()], 'r--')
  axes[0, 0].set_xlabel('Actual Price')
  axes[0, 0].set_ylabel('Predicted Price')
- axes[0, 0].set_title('Predictions vs Actual')
+ axes[0, 0].set_title('predictions vs Actual')
 
  # Распределение ошибок
  axes[0, 1].hist(results['errors'], bins=50, alpha=0.7)
@@ -7291,7 +7291,7 @@ def evaluate_sales_model(predictor, test_data):
  """Оценка качества модели продаж"""
 
  # Предсказания
- Predictions = predictor.predict(test_data)
+ predictions = predictor.predict(test_data)
 
  # Оценка качества
  performance = predictor.evaluate(test_data)
@@ -7303,10 +7303,10 @@ def evaluate_sales_model(predictor, test_data):
  product_performance = {}
  for product_id in test_data['product_id'].unique():
  product_data = test_data[test_data['product_id'] == product_id]
- product_Predictions = Predictions[test_data['product_id'] == product_id]
+ product_predictions = predictions[test_data['product_id'] == product_id]
 
- mae = np.mean(np.abs(product_data['sales'] - product_Predictions))
- mape = np.mean(np.abs((product_data['sales'] - product_Predictions) / product_data['sales'])) * 100
+ mae = np.mean(np.abs(product_data['sales'] - product_predictions))
+ mape = np.mean(np.abs((product_data['sales'] - product_predictions) / product_data['sales'])) * 100
 
  product_performance[product_id] = {
  'mae': mae,
@@ -7317,7 +7317,7 @@ def evaluate_sales_model(predictor, test_data):
  'performance': performance,
  'feature_importance': feature_importance,
  'product_performance': product_performance,
- 'Predictions': Predictions
+ 'predictions': predictions
  }
 
 # Оценка модели
@@ -7342,17 +7342,17 @@ def visualize_sales_results(results, test_data):
  # temporary ряд for одного продукта
  product_id = test_data['product_id'].iloc[0]
  product_data = test_data[test_data['product_id'] == product_id]
- product_Predictions = results['Predictions'][test_data['product_id'] == product_id]
+ product_predictions = results['predictions'][test_data['product_id'] == product_id]
 
  axes[0, 0].plot(product_data['date'], product_data['sales'], label='Actual', alpha=0.7)
- axes[0, 0].plot(product_data['date'], product_Predictions, label='Predicted', alpha=0.7)
+ axes[0, 0].plot(product_data['date'], product_predictions, label='Predicted', alpha=0.7)
  axes[0, 0].set_title(f'Sales Forecast for {product_id}')
  axes[0, 0].set_xlabel('Date')
  axes[0, 0].set_ylabel('Sales')
  axes[0, 0].legend()
 
  # Распределение ошибок
- errors = test_data['sales'] - results['Predictions']
+ errors = test_data['sales'] - results['predictions']
  axes[0, 1].hist(errors, bins=30, alpha=0.7)
  axes[0, 1].set_xlabel('Prediction Error')
  axes[0, 1].set_ylabel('Frequency')
@@ -7509,7 +7509,7 @@ def evaluate_image_model(predictor, test_data):
  """Оценка качества модели классификации изображений"""
 
  # Предсказания
- Predictions = predictor.predict(test_data)
+ predictions = predictor.predict(test_data)
  probabilities = predictor.predict_proba(test_data)
 
  # Оценка качества
@@ -7524,14 +7524,14 @@ def evaluate_image_model(predictor, test_data):
  # Анализ on классам
  from sklearn.metrics import classification_Report, confusion_matrix
 
- class_Report = classification_Report(test_data['class'], Predictions, output_dict=True)
- conf_matrix = confusion_matrix(test_data['class'], Predictions)
+ class_Report = classification_Report(test_data['class'], predictions, output_dict=True)
+ conf_matrix = confusion_matrix(test_data['class'], predictions)
 
  return {
  'performance': performance,
  'feature_importance': feature_importance,
  'leaderboard': leaderboard,
- 'Predictions': Predictions,
+ 'predictions': predictions,
  'probabilities': probabilities,
  'classification_Report': class_Report,
  'confusion_matrix': conf_matrix
@@ -7568,10 +7568,10 @@ def visualize_image_results(results, test_data):
  results['feature_importance'].head(15).plot(kind='barh', ax=axes[0, 1])
  axes[0, 1].set_title('Top 15 Feature importance')
 
- # Распределение Predictions
- Prediction_counts = pd.Series(results['Predictions']).value_counts()
+ # Распределение predictions
+ Prediction_counts = pd.Series(results['predictions']).value_counts()
  Prediction_counts.plot(kind='bar', ax=axes[1, 0])
- axes[1, 0].set_title('Distribution of Predictions')
+ axes[1, 0].set_title('Distribution of predictions')
  axes[1, 0].set_xlabel('Class')
  axes[1, 0].set_ylabel('Count')
  axes[1, 0].tick_params(axis='x', rotation=45)
@@ -7580,8 +7580,8 @@ def visualize_image_results(results, test_data):
  class_accuracy = []
  for class_name in test_data['class'].unique():
  class_data = test_data[test_data['class'] == class_name]
- class_Predictions = results['Predictions'][test_data['class'] == class_name]
- accuracy = (class_data['class'] == class_Predictions).mean()
+ class_predictions = results['predictions'][test_data['class'] == class_name]
+ accuracy = (class_data['class'] == class_predictions).mean()
  class_accuracy.append(accuracy)
 
  axes[1, 1].bar(test_data['class'].unique(), class_accuracy)
@@ -7612,7 +7612,7 @@ from typing import Dict, List, Any
 import asyncio
 import aiohttp
 
-# configuration логирования
+# configuration Logsрования
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -7628,7 +7628,7 @@ class PredictionRequest(BaseModel):
  data: List[Dict[str, Any]]
 
 class PredictionResponse(BaseModel):
- Predictions: List[Any]
+ predictions: List[Any]
  probabilities: List[Dict[str, float]] = None
  model_info: Dict[str, Any]
  timestamp: str
@@ -7681,7 +7681,7 @@ async def health_check():
 
 @app.post("/predict", response_model=PredictionResponse)
 async def predict(request: PredictionRequest):
- """Endpoint for Predictions"""
+ """Endpoint for predictions"""
 
  if request.model_name not in models:
  raise HTTPException(status_code=404, detail=f"Model {request.model_name} not found")
@@ -7694,7 +7694,7 @@ async def predict(request: PredictionRequest):
  df = pd.dataFrame(request.data)
 
  # Предсказания
- Predictions = model.predict(df)
+ predictions = model.predict(df)
 
  # Вероятности (если доступны)
  probabilities = None
@@ -7703,7 +7703,7 @@ async def predict(request: PredictionRequest):
  probabilities = proba.to_dict('records')
 
  return PredictionResponse(
- Predictions=Predictions.toList(),
+ predictions=predictions.toList(),
  probabilities=probabilities,
  model_info={
  "model_name": request.model_name,
@@ -7848,7 +7848,7 @@ if __name__ == "__main__":
 - **Проблемы производительности**: Медленная Working, нехватка памяти
 - **Проблемы моделей**: Плохая точность, переобучение
 
-in этом разделе рассмотрим типичные проблемы, возникающие при работе with AutoML Gluon, and способы их решения. Каждая проблема включает description, причины возникновения and пошаговые instructions on устранению.
+in этом разделе рассмотрим типичные проблемы, возникающие при работе with AutoML Gluon, and способы их решения. Каждая проблема включает describe, причины возникновения and пошаговые instructions on устранению.
 
 ## Проблемы installation
 
@@ -8038,8 +8038,8 @@ def diagnose_validation_issues(predictor, test_data):
  print(test_data.isnull().sum())
 
  # Попытка предсказания
- Predictions = predictor.predict(test_data)
- print("Predictions shape:", Predictions.shape)
+ predictions = predictor.predict(test_data)
+ print("predictions shape:", predictions.shape)
 
  return True
 
@@ -8081,15 +8081,15 @@ def fix_validation_issues(test_data):
 test_data_fixed = fix_validation_issues(test_data)
 ```
 
-## Проблемы Predictions
+## Проблемы predictions
 
-### 1. Ошибки Predictions
+### 1. Ошибки predictions
 
 #### Проблема: Ошибки при предсказании
 ```python
-# Диагностика Predictions
+# Диагностика predictions
 def diagnose_Prediction_issues(predictor, data):
- """Диагностика проблем Predictions"""
+ """Диагностика проблем predictions"""
 
  try:
  # check входных данных
@@ -8109,8 +8109,8 @@ def diagnose_Prediction_issues(predictor, data):
  print(f"Extra features: {extra_features}")
 
  # Попытка предсказания
- Predictions = predictor.predict(data)
- print("Predictions successful")
+ predictions = predictor.predict(data)
+ print("predictions successful")
 
  return True
 
@@ -8125,9 +8125,9 @@ if not diagnose_Prediction_issues(predictor, new_data):
 
 **Решение:**
 ```python
-# fix проблем Predictions
+# fix проблем predictions
 def fix_Prediction_issues(predictor, data):
- """fix проблем Predictions"""
+ """fix проблем predictions"""
 
  # Получение ожидаемых признаков
  expected_features = predictor.feature_importance().index.toList()
@@ -8147,7 +8147,7 @@ def fix_Prediction_issues(predictor, data):
 
 # Использование
 new_data_fixed = fix_Prediction_issues(predictor, new_data)
-Predictions = predictor.predict(new_data_fixed)
+predictions = predictor.predict(new_data_fixed)
 ```
 
 ### 2. Нестабильные предсказания
@@ -8156,22 +8156,22 @@ Predictions = predictor.predict(new_data_fixed)
 ```python
 # Диагностика стабильности
 def diagnose_Prediction_stability(predictor, data, n_tests=5):
- """Диагностика стабильности Predictions"""
+ """Диагностика стабильности predictions"""
 
- Predictions = []
+ predictions = []
 
  for i in range(n_tests):
  pred = predictor.predict(data)
- Predictions.append(pred)
+ predictions.append(pred)
 
  # check согласованности
- Predictions_array = np.array(Predictions)
- consistency = np.mean(Predictions_array == Predictions_array[0])
+ predictions_array = np.array(predictions)
+ consistency = np.mean(predictions_array == predictions_array[0])
 
  print(f"Prediction consistency: {consistency:.4f}")
 
  if consistency < 0.95:
- print("WARNING: Unstable Predictions detected")
+ print("WARNING: Unstable predictions detected")
 
  return consistency
 
@@ -8181,11 +8181,11 @@ consistency = diagnose_Prediction_stability(predictor, test_data)
 
 **Решение:**
 ```python
-# Стабилизация Predictions
-def stabilize_Predictions(predictor, data, n_samples=3):
- """Стабилизация Predictions"""
+# Стабилизация predictions
+def stabilize_predictions(predictor, data, n_samples=3):
+ """Стабилизация predictions"""
 
- Predictions = []
+ predictions = []
 
  for _ in range(n_samples):
  # add небольшого шума for стабилизации
@@ -8196,22 +8196,22 @@ def stabilize_Predictions(predictor, data, n_samples=3):
  noisy_data[col] += noise
 
  pred = predictor.predict(noisy_data)
- Predictions.append(pred)
+ predictions.append(pred)
 
- # Усреднение Predictions
+ # Усреднение predictions
  if predictor.problem_type == 'regression':
- stable_Predictions = np.mean(Predictions, axis=0)
+ stable_predictions = np.mean(predictions, axis=0)
  else:
  # for классификации - голосование
- stable_Predictions = []
- for i in range(len(Predictions[0])):
- votes = [pred[i] for pred in Predictions]
- stable_Predictions.append(max(set(votes), key=votes.count))
+ stable_predictions = []
+ for i in range(len(predictions[0])):
+ votes = [pred[i] for pred in predictions]
+ stable_predictions.append(max(set(votes), key=votes.count))
 
- return stable_Predictions
+ return stable_predictions
 
 # Использование
-stable_Predictions = stabilize_Predictions(predictor, test_data)
+stable_predictions = stabilize_predictions(predictor, test_data)
 ```
 
 ## Проблемы производительности
@@ -8224,13 +8224,13 @@ stable_Predictions = stabilize_Predictions(predictor, test_data)
 import time
 
 def diagnose_Prediction_performance(predictor, data):
- """Диагностика производительности Predictions"""
+ """Диагностика производительности predictions"""
 
  # Тест on небольшой выборке
  small_data = data.head(100)
 
  start_time = time.time()
- Predictions = predictor.predict(small_data)
+ predictions = predictor.predict(small_data)
  Prediction_time = time.time() - start_time
 
  print(f"Prediction time for 100 samples: {Prediction_time:.4f} seconds")
@@ -8250,18 +8250,18 @@ Prediction_time = diagnose_Prediction_performance(predictor, test_data)
 ```python
 # Оптимизация производительности
 def optimize_Prediction_performance(predictor, data):
- """Оптимизация производительности Predictions"""
+ """Оптимизация производительности predictions"""
 
  # Пакетная обработка
  batch_size = 1000
- Predictions = []
+ predictions = []
 
  for i in range(0, len(data), batch_size):
  batch = data.iloc[i:i+batch_size]
- batch_Predictions = predictor.predict(batch)
- Predictions.extend(batch_Predictions)
+ batch_predictions = predictor.predict(batch)
+ predictions.extend(batch_predictions)
 
- return Predictions
+ return predictions
 
 # or использование более простой модели
 def create_fast_model(predictor, data):
@@ -8288,7 +8288,7 @@ def create_fast_model(predictor, data):
 
 # Использование
 fast_predictor = create_fast_model(predictor, train_data)
-fast_Predictions = fast_predictor.predict(test_data)
+fast_predictions = fast_predictor.predict(test_data)
 ```
 
 ### 2. Высокое использование памяти
@@ -8322,18 +8322,18 @@ def optimize_memory_usage(predictor, data):
 
  # Обработка данных on частям
  chunk_size = 1000
- Predictions = []
+ predictions = []
 
  for i in range(0, len(data), chunk_size):
  chunk = data.iloc[i:i+chunk_size]
- chunk_Predictions = predictor.predict(chunk)
- Predictions.extend(chunk_Predictions)
+ chunk_predictions = predictor.predict(chunk)
+ predictions.extend(chunk_predictions)
 
  # clean памяти
  del chunk
  gc.collect()
 
- return Predictions
+ return predictions
 
 # or использование более эффективных типов данных
 def optimize_data_types(data):
@@ -8414,7 +8414,7 @@ def fix_model_Loading_issues(model_path):
 
  # Попытка пересоздания модели
  print("Attempting to recreate model...")
- # Здесь должна быть логика пересоздания модели
+ # Здесь должна быть Logsка пересоздания модели
  return None
 
 # Использование
@@ -8532,7 +8532,7 @@ class AutoGluonMonitor:
  try:
  # Тест предсказания
  start_time = time.time()
- Predictions = predictor.predict(test_data.head(100))
+ predictions = predictor.predict(test_data.head(100))
  Prediction_time = time.time() - start_time
 
  # check времени
@@ -8568,20 +8568,20 @@ Report = monitor.generate_Report()
 print("Monitoring Report:", Report)
 ```
 
-### 2. Система логирования
+### 2. Система Logsрования
 ```python
 import logging
 from datetime import datetime
 
 class AutoGluonLogger:
- """Система логирования for AutoGluon"""
+ """Система Logsрования for AutoGluon"""
 
  def __init__(self, log_file='autogluon.log'):
  self.log_file = log_file
  self.setup_logging()
 
  def setup_logging(self):
- """configuration логирования"""
+ """configuration Logsрования"""
 
  logging.basicConfig(
  level=logging.INFO,
@@ -8595,19 +8595,19 @@ class AutoGluonLogger:
  self.logger = logging.getLogger(__name__)
 
  def log_training_start(self, data_info):
- """Логирование начала обучения"""
+ """Logsрование начала обучения"""
  self.logger.info(f"Training started: {data_info}")
 
  def log_training_complete(self, results):
- """Логирование завершения обучения"""
+ """Logsрование завершения обучения"""
  self.logger.info(f"Training COMPLETED: {results}")
 
  def log_Prediction(self, input_data, Prediction, processing_time):
- """Логирование предсказания"""
+ """Logsрование предсказания"""
  self.logger.info(f"Prediction: input={input_data}, Prediction={Prediction}, time={processing_time}")
 
  def log_error(self, error, context):
- """Логирование ошибок"""
+ """Logsрование ошибок"""
  self.logger.error(f"Error: {error}, context: {context}")
 
 # Использование
@@ -8631,7 +8631,7 @@ logger.log_training_start({'data_size': len(train_data)})
 
 ## Why оптимизация for Apple Silicon критически важна
 
-**Почему Apple Silicon - это революция in машинном обучении?** Потому что эти чипы специально разWorkingны for ML-задач, обеспечивая in 3-5 раз лучшую производительность при меньшем энергопотреблении.
+**Почему Apple Silicon - это революция in машинном обучении?** Потому что эти чипы специально разWorkingны for ML-задач, обеспечивая by 3-5 times лучшую производительность при меньшем энергопотреблении.
 
 ### Преимущества Apple Silicon for ML
 - **Унифицированная память**: CPU and GPU используют общую память (to 128GB)
@@ -8640,7 +8640,7 @@ logger.log_training_start({'data_size': len(train_data)})
 - **Metal Performance Shaders**: GPU ускорение for матричных операций
 
 ### Проблемы без оптимизации
-- **Медленная Working**: in 3-5 раз медленнее, чем могло бы быть
+- **Медленная Working**: by 3-5 times медленнее, чем могло бы быть
 - **Высокое энергопотребление**: Батарея разряжается за часы
 - **Перегрев**: Система тормозит из-за теплового дросселирования
 - **Неэффективное использование ресурсов**: Только CPU, игнорирование GPU
@@ -8652,8 +8652,8 @@ logger.log_training_start({'data_size': len(train_data)})
 
 **Почему Apple Silicon требует специального подхода?** Потому что это архитектура ARM, а not x86, and требует специальных оптимизаций for максимальной производительности.
 
-Apple Silicon MacBook with чипами M1, M2, M3 предоставляют уникальные возможности for acceleration машинного обучения через:
-- **MLX** - фреймворк Apple for машинного обучения on Apple Silicon
+Apple Silicon MacBook with чипами M1, M2, M3 предоставляют уникальные возможности for acceleration machine learning через:
+- **MLX** - фреймворк Apple for machine learning on Apple Silicon
 - **Ray** - распределенные вычисления with поддержкой Apple Silicon
 - **OpenMP** - параллельные вычисления
 - **Metal Performance Shaders (MPS)** - GPU ускорение
@@ -8851,9 +8851,9 @@ class MLXOptimizedPredictor:
 
  # Prediction
  with mx.eval():
- Predictions = self.mlx_model(mlx_data)
+ predictions = self.mlx_model(mlx_data)
 
- return np.array(Predictions)
+ return np.array(predictions)
 
 # Использование MLX предиктора
 def create_mlx_predictor(model_path: str):
@@ -9246,9 +9246,9 @@ def run_optimized_training():
 
  # Тестирование
  test_data = data.sample(1000)
- Predictions = predictor.predict(test_data)
+ predictions = predictor.predict(test_data)
 
- print(f"Обучение COMPLETED, предсказания: {len(Predictions)}")
+ print(f"Обучение COMPLETED, предсказания: {len(predictions)}")
 
  return predictor
 
@@ -9430,7 +9430,7 @@ def complete_apple_silicon_example():
 
  # 5. Тестирование
  test_data = data.sample(1000)
- Predictions = predictor.predict(test_data)
+ predictions = predictor.predict(test_data)
 
  # 6. Оценка качества
  performance = predictor.evaluate(test_data)
@@ -9664,7 +9664,7 @@ def train_with_optimal_config(data: pd.dataFrame, target_col: str):
 
 ### Преимущества простого подхода
 - **Быстрый результат**: Workingющая система за дни, а not месяцы
-- **Понятность**: Каждый шаг логичен and объясним
+- **Понятность**: Каждый шаг Logsчен and объясним
 - **Итеративность**: Можно улучшать постепенно
 - **Мотивация**: Видимый прогресс вдохновляет команду
 
@@ -9695,7 +9695,7 @@ def train_with_optimal_config(data: pd.dataFrame, target_col: str):
 ### Goal
 **Почему 70% точности достаточно?** Потому что in трейдинге даже небольшое преимущество дает прибыль, а 70% - это уже статистически значимое преимущество.
 
-- **Точность**: >70% правильных Predictions направления движения цены
+- **Точность**: >70% правильных predictions направления движения цены
 - **Робастность**: Стабильная Working in различных рыночных условиях
 - **Прибыльность**: Положительный ROI on testsых данных
 
@@ -9787,14 +9787,14 @@ def simple_backtest(predictor, test_data, features):
  """Простой backtest"""
 
  # Предсказания
- Predictions = predictor.predict(test_data[features])
+ predictions = predictor.predict(test_data[features])
  probabilities = predictor.predict_proba(test_data[features])
 
  # Расчет метрик
- accuracy = (Predictions == test_data['target']).mean()
+ accuracy = (predictions == test_data['target']).mean()
 
  # Расчет прибыли
- test_data['Prediction'] = Predictions
+ test_data['Prediction'] = predictions
  test_data['probability'] = probabilities[1] if len(probabilities.shape) > 1 else probabilities
 
  # Простая стратегия: покупаем если Prediction > 0.6
@@ -9809,7 +9809,7 @@ def simple_backtest(predictor, test_data, features):
  'accuracy': accuracy,
  'total_return': total_return,
  'sharpe_ratio': sharpe_ratio,
- 'Predictions': Predictions,
+ 'predictions': predictions,
  'probabilities': probabilities
  }
 
@@ -9848,8 +9848,8 @@ def simple_walk_forward(data, features, window_size=252, step_size=30):
  )
 
  # Предсказания
- Predictions = predictor.predict(test_data[features])
- accuracy = (Predictions == test_data['target']).mean()
+ predictions = predictor.predict(test_data[features])
+ accuracy = (predictions == test_data['target']).mean()
 
  results.append({
  'period': i,
@@ -9897,8 +9897,8 @@ def simple_monte_carlo(data, features, n_simulations=100):
  )
 
  # Предсказания
- Predictions = predictor.predict(test_data[features])
- accuracy = (Predictions == test_data['target']).mean()
+ predictions = predictor.predict(test_data[features])
+ accuracy = (predictions == test_data['target']).mean()
 
  results.append(accuracy)
 
@@ -9977,9 +9977,9 @@ RUN pip install -r requirements.txt
 # Копирование кода
 COPY . .
 
-# create user
-RUN useradd -m -u 1000 appuser
-user appuser
+# create User
+RUN Useradd -m -u 1000 appUser
+User appUser
 
 # Launch приложения
 CMD ["python", "app.py"]
@@ -9989,7 +9989,7 @@ CMD ["python", "app.py"]
 # docker-compose.yml
 Version: '3.8'
 
-Services:
+services:
  ml-api:
  build: .
  ports:
@@ -10101,7 +10101,7 @@ import logging
 def main():
  """Главная function системы"""
 
- # configuration логирования
+ # configuration Logsрования
  logging.basicConfig(level=logging.INFO)
 
  # Инициализация компонентов
@@ -10118,7 +10118,7 @@ def main():
  # Выполнение торговой операции
  trade_result = blockchain_contract.execute_trade(Prediction)
 
- # Логирование
+ # Logsрование
  logging.info(f"Trade executed: {trade_result}")
 
  # Monitoring производительности
@@ -10149,7 +10149,7 @@ if __name__ == '__main__':
 4. **Быстрый деплой** - стандартные инструменты
 
 ### Ограничения
-1. **Простота стратегии** - базовая логика торговли
+1. **Простота стратегии** - базовая Logsка торговли
 2. **Ограниченная адаптивность** - фиксированные parameters
 3. **Базовый риск-менеджмент** - простые правила
 
@@ -10214,7 +10214,7 @@ class AdvancedMLsystem:
  'macro': None # Макроэкономические факторы - внешние события
  }
 
- # Ансамбль for объединения Predictions
+ # Ансамбль for объединения predictions
  self.ensemble = None
  # Риск-менеджмент for защиты from потерь
  self.risk_manager = RiskManager()
@@ -10348,7 +10348,7 @@ class AdvanceddataProcessor:
 
  for article in news['articles']:
  # Анализ тональности
- blob = TextBlob(article['title'] + ' ' + article['description'])
+ blob = TextBlob(article['title'] + ' ' + article['describe'])
  sentiment_score = blob.sentiment.polarity
 
  sentiment_data.append({
@@ -10490,14 +10490,14 @@ class MultiModelsystem:
  def create_ensemble_model(self, models, data):
  """create ансамблевой модели"""
 
- # Получение Predictions from all моделей
- Predictions = {}
+ # Получение predictions from all моделей
+ predictions = {}
  probabilities = {}
 
  for name, model in models.items():
  if model is not None:
  features = self._prepare_features_for_model(name, data)
- Predictions[name] = model.predict(features)
+ predictions[name] = model.predict(features)
  probabilities[name] = model.predict_proba(features)
 
  # create мета-модели
@@ -10541,15 +10541,15 @@ class AdvancedValidation:
  if model is not None:
  # Предсказания
  features = self._prepare_features_for_model(name, test_data)
- Predictions = model.predict(features)
+ predictions = model.predict(features)
  probabilities = model.predict_proba(features)
 
  # Расчет метрик
- accuracy = (Predictions == test_data['target']).mean()
+ accuracy = (predictions == test_data['target']).mean()
 
  # Торговая стратегия
  strategy_returns = self._calculate_strategy_returns(
- test_data, Predictions, probabilities
+ test_data, predictions, probabilities
  )
 
  # Риск-метрики
@@ -10681,12 +10681,12 @@ class AdvancedRiskManager:
 
  return stop_loss
 
- def Portfolio_optimization(self, Predictions, correlations, expected_returns):
+ def Portfolio_optimization(self, predictions, correlations, expected_returns):
  """Оптимизация портфеля"""
 
  from scipy.optimize import minimize
 
- n_assets = len(Predictions)
+ n_assets = len(predictions)
 
  # Ограничения
  constraints = [
@@ -10728,7 +10728,7 @@ class APIGateway:
  """API Gateway for ML системы"""
 
  def __init__(self):
- self.Services = {
+ self.services = {
  'data_service': 'http://data-service:5001',
  'model_service': 'http://model-service:5002',
  'risk_service': 'http://risk-service:5003',
@@ -10741,7 +10741,7 @@ class APIGateway:
 
  # Получение данных
  data_response = requests.get(
- f"{self.Services['data_service']}/data/{symbol}/{Timeframe}"
+ f"{self.services['data_service']}/data/{symbol}/{Timeframe}"
  )
 
  if data_response.status_code != 200:
@@ -10751,7 +10751,7 @@ class APIGateway:
 
  # Получение предсказания
  Prediction_response = requests.post(
- f"{self.Services['model_service']}/predict",
+ f"{self.services['model_service']}/predict",
  json=data
  )
 
@@ -10762,7 +10762,7 @@ class APIGateway:
 
  # Расчет риска
  risk_response = requests.post(
- f"{self.Services['risk_service']}/calculate_risk",
+ f"{self.services['risk_service']}/calculate_risk",
  json={**data, **Prediction}
  )
 
@@ -10778,7 +10778,7 @@ class APIGateway:
  }
 
 # data_service.py
-class dataService:
+class dataservice:
  """Сервис данных"""
 
  def __init__(self):
@@ -10796,7 +10796,7 @@ class dataService:
  return processed_data
 
 # model_service.py
-class ModelService:
+class Modelservice:
  """Сервис моделей"""
 
  def __init__(self):
@@ -10806,23 +10806,23 @@ class ModelService:
  def predict(self, data):
  """Получение предсказания from all моделей"""
 
- Predictions = {}
+ predictions = {}
 
  for name, model in self.models.items():
  if model is not None:
  features = self.prepare_features(data, name)
- Predictions[name] = {
+ predictions[name] = {
  'Prediction': model.predict(features),
  'probability': model.predict_proba(features)
  }
 
  # Ансамблевое Prediction
- ensemble_Prediction = self.ensemble_predict(Predictions)
+ ensemble_Prediction = self.ensemble_predict(predictions)
 
  return ensemble_Prediction
 
 # risk_service.py
-class RiskService:
+class Riskservice:
  """Сервис риск-менеджмента"""
 
  def __init__(self):
@@ -10884,7 +10884,7 @@ spec:
  - name: REDIS_URL
  value: "redis://redis-service:6379"
  - name: database_URL
- value: "postgresql://user:pass@postgres-service:5432/mldb"
+ value: "postgresql://User:pass@postgres-service:5432/mldb"
 
  - name: data-service
  image: ml-system/data-service:latest
@@ -10922,7 +10922,7 @@ spec:
  key: private-key
 ---
 apiVersion: v1
-kind: Service
+kind: service
 metadata:
  name: ml-system-service
 spec:
@@ -10957,11 +10957,11 @@ class AdvancedMonitoring:
  self.alerts = []
  self.performance_history = []
 
- def monitor_model_performance(self, model_name, Predictions, actuals):
+ def monitor_model_performance(self, model_name, predictions, actuals):
  """Monitoring производительности модели"""
 
  # Расчет метрик
- accuracy = (Predictions == actuals).mean()
+ accuracy = (predictions == actuals).mean()
 
  # update истории
  self.performance_history.append({
@@ -10981,14 +10981,14 @@ class AdvancedMonitoring:
  def monitor_system_health(self):
  """Monitoring health системы"""
 
- # check доступности сервисов
- for service_name, service_url in self.Services.items():
+ # check доступности services
+ for service_name, service_url in self.services.items():
  try:
  response = requests.get(f"{service_url}/health", timeout=5)
  if response.status_code != 200:
- self.trigger_alert(f"Service {service_name} is unhealthy")
+ self.trigger_alert(f"service {service_name} is unhealthy")
  except:
- self.trigger_alert(f"Service {service_name} is unreachable")
+ self.trigger_alert(f"service {service_name} is unreachable")
 
  # check использования ресурсов
  self.check_resource_usage()
@@ -11048,15 +11048,15 @@ class AdvancedMLsystem:
  # 1. Сбор данных
  data = self.data_processor.collect_multi_source_data(['BTC-USD', 'ETH-USD'])
 
- # 2. Получение Predictions
- Predictions = self.model_system.get_Predictions(data)
+ # 2. Получение predictions
+ predictions = self.model_system.get_predictions(data)
 
  # 3. Расчет рисков
- risk_assessment = self.risk_manager.assess_risks(Predictions, data)
+ risk_assessment = self.risk_manager.assess_risks(predictions, data)
 
  # 4. Выполнение торговых операций
  if risk_assessment['risk_score'] < 0.7: # Низкий риск
- trade_results = self.execute_trades(Predictions, risk_assessment)
+ trade_results = self.execute_trades(predictions, risk_assessment)
 
  # 5. Monitoring
  self.Monitoring.monitor_trades(trade_results)
@@ -11101,7 +11101,7 @@ if __name__ == '__main__':
 
 ## Заключение
 
-Продвинутый example показывает, как создать высокопроизводительную ML-system for trading on DEX blockchain with использованием современных практик and технологий. Хотя система сложная, она обеспечивает максимальную производительность and робастность.
+Продвинутый example показывает, как создать высокопроизводительную ML-system for trading on DEX blockchain with использованием современных практик and техноLogsй. Хотя система сложная, она обеспечивает максимальную производительность and робастность.
 
 
 ---
@@ -11130,11 +11130,11 @@ if __name__ == '__main__':
 ## Введение in теорию AutoML
 
 ![Теория AutoML](images/automl_theory.png)
-*Рисунок 14.1: Теоретические основы автоматизированного машинного обучения*
+*Рисунок 14.1: Теоретические основы автоматизированного machine learning*
 
 **Почему AutoML - это not просто "нажать кнопку"?** Потому что это сложная система алгоритмов, которая автоматизирует процесс Creating ML models, но требует понимания принципов for эффективного использования.
 
-AutoML (Automated Machine Learning) - это область машинного обучения, которая автоматизирует процесс Creating ML models. Понимание теоретических основ критически важно for эффективного использования AutoML Gluon.
+AutoML (Automated Machine Learning) - это область machine learning, которая автоматизирует процесс Creating ML models. Понимание теоретических основ критически важно for эффективного использования AutoML Gluon.
 
 ## Основные концепции AutoML
 
@@ -11586,10 +11586,10 @@ def time_series_automl(data, Prediction_length):
 - **Потеря доверия**: Пользователи not доверяют "черным ящикам"
 - **Регулятивные штрафы**: GDPR штрафы to 4% from оборота компании
 - **Дискриминация**: Модели могут принимать несправедливые решения
-- **Невозможность отладки**: Нельзя исправить ошибки без понимания логики
+- **Невозможность отладки**: Нельзя исправить ошибки без понимания Logsки
 
 ### Преимущества интерпретируемых моделей
-- **Доверие пользователей**: Понимание логики принятия решений
+- **Доверие пользователей**: Понимание Logsки принятия решений
 - **Соответствие законам**: GDPR, AI Act, другие регулятивные требования
 - **Лучшая отладка**: Можно найти and исправить ошибки
 - **improve модели**: Понимание важности признаков
@@ -11601,8 +11601,8 @@ def time_series_automl(data, Prediction_length):
 
 **Почему интерпретируемость - это not роскошь, а необходимость?** Потому что in современном мире ML-модели принимают решения, влияющие on жизни людей, and эти решения должны быть понятными and справедливыми.
 
-Интерпретируемость машинного обучения - это способность понимать and объяснять решения, принимаемые ML-моделями. Это критически важно for:
-- **Доверия к модели** - понимание логики принятия решений
+Интерпретируемость machine learning - это способность понимать and объяснять решения, принимаемые ML-моделями. Это критически важно for:
+- **Доверия к модели** - понимание Logsки принятия решений
 - **Соответствие регулятивным требованиям** - GDPR, AI Act
 - **Отладка моделей** - выявление ошибок and смещений
 - **improve моделей** - понимание важности признаков
@@ -11616,10 +11616,10 @@ def time_series_automl(data, Prediction_length):
 Модели, которые изначально интерпретируемы:
 
 **Преимущества внутренней интерпретируемости:**
-- **Точность**: Интерпретации точно отражают логику модели
+- **Точность**: Интерпретации точно отражают Logsку модели
 - **Простота**: not нужны дополнительные методы объяснения
 - **Надежность**: Интерпретации всегда доступны
-- **Понятность**: Логика модели прозрачна
+- **Понятность**: Logsка модели прозрачна
 
 ```python
 # Линейная регрессия - внутренне интерпретируема
@@ -11855,9 +11855,9 @@ def integrated_gradients(model, X, baseline=None, steps=50):
  # Вычисление градиентов
  with tf.GradientTape() as tape:
  tape.watch(interpolated)
- Predictions = model(interpolated)
+ predictions = model(interpolated)
 
- gradients = tape.gradient(Predictions, interpolated)
+ gradients = tape.gradient(predictions, interpolated)
 
  # Интегрирование градиентов
  integrated_grads = np.mean(gradients, axis=0) * (X - baseline)
@@ -11983,8 +11983,8 @@ def create_exPlanation_dashboard(predictor, X, y, instance_idx=0):
 
  # 5. Model Performance
  ax5 = axes[1, 1]
- Predictions = predictor.predict(X)
- accuracy = (Predictions == y).mean()
+ predictions = predictor.predict(X)
+ accuracy = (predictions == y).mean()
 
  ax5.bar(['Accuracy'], [accuracy])
  ax5.set_ylim(0, 1)
@@ -12113,7 +12113,7 @@ def validate_exPlanations(predictor, X, y, exPlanation_method='shap'):
 
 Интерпретируемость and объяснимость критически важны for:
 
-1. **Доверия к модели** - понимание логики принятия решений
+1. **Доверия к модели** - понимание Logsки принятия решений
 2. **Соответствия требованиям** - GDPR, AI Act, регулятивные требования
 3. **Отладки and улучшения** - выявление проблем and возможностей оптимизации
 4. **Бизнес-ценности** - понимание факторов, влияющих on результат
@@ -12151,7 +12151,7 @@ def validate_exPlanations(predictor, X, y, exPlanation_method='shap'):
 
 **Почему продвинутые темы - это будущее ML?** Потому что они решают проблемы, которые невозможно решить традиционными методами: автоматический дизайн архитектур, обучение on малых данных, мультимодальное понимание.
 
-Этот раздел охватывает передовые темы and современные направления in области автоматизированного машинного обучения, including нейроархитектурный поиск, мета-обучение, мультимодальное обучение and другие cutting-edge технологии.
+Этот раздел охватывает передовые темы and современные направления in области автоматизированного machine learning, including нейроархитектурный поиск, мета-обучение, мультимодальное обучение and другие cutting-edge техноLogsи.
 
 ## Neural Architecture Search (NAS)
 
@@ -12373,9 +12373,9 @@ class Prototypicalnetworks(nn.Module):
  distances = torch.cdist(query_embeddings, prototypes)
 
  # Предсказания (ближайший прототип)
- Predictions = torch.argmin(distances, dim=1)
+ predictions = torch.argmin(distances, dim=1)
 
- return Predictions, distances
+ return predictions, distances
 ```
 
 ## Multi-Modal Learning
@@ -12733,7 +12733,7 @@ def train_quantum_model(X, y, num_layers=3):
 5. **Continual Learning** - непрерывное обучение без забывания
 6. **Quantum Machine Learning** - использование квантовых вычислений
 
-Эти технологии открывают новые возможности for создания более эффективных, адаптивных and мощных ML-систем, но требуют глубокого понимания как теоретических основ, так and практических аспектов их применения.
+Эти техноLogsи открывают новые возможности for создания более эффективных, адаптивных and мощных ML-систем, но требуют глубокого понимания как теоретических основ, так and практических аспектов их применения.
 
 
 ---
@@ -12789,7 +12789,7 @@ import matplotlib.pyplot as plt
 def check_fairness(model, X_test, y_test, sensitive_attributes):
  """check справедливости модели - критически важно for этичного AI"""
 
- Predictions = model.predict(X_test)
+ predictions = model.predict(X_test)
 
  fairness_metrics = {}
 
@@ -12800,13 +12800,13 @@ def check_fairness(model, X_test, y_test, sensitive_attributes):
  group_metrics = {}
  for group in groups:
  mask = X_test[attr] == group
- group_Predictions = Predictions[mask]
+ group_predictions = predictions[mask]
  group_actual = y_test[mask]
 
  # Метрики for каждой группы - сравнение производительности
- accuracy = (group_Predictions == group_actual).mean()
- precision = calculate_precision(group_Predictions, group_actual)
- recall = calculate_recall(group_Predictions, group_actual)
+ accuracy = (group_predictions == group_actual).mean()
+ precision = calculate_precision(group_predictions, group_actual)
+ recall = calculate_recall(group_predictions, group_actual)
 
  group_metrics[group] = {
  'accuracy': accuracy,
@@ -12826,16 +12826,16 @@ def check_fairness(model, X_test, y_test, sensitive_attributes):
 
  return fairness_metrics
 
-def calculate_precision(Predictions, actual):
+def calculate_precision(predictions, actual):
  """Расчет точности"""
- tp = ((Predictions == 1) & (actual == 1)).sum()
- fp = ((Predictions == 1) & (actual == 0)).sum()
+ tp = ((predictions == 1) & (actual == 1)).sum()
+ fp = ((predictions == 1) & (actual == 0)).sum()
  return tp / (tp + fp) if (tp + fp) > 0 else 0
 
-def calculate_recall(Predictions, actual):
+def calculate_recall(predictions, actual):
  """Расчет полноты"""
- tp = ((Predictions == 1) & (actual == 1)).sum()
- fn = ((Predictions == 0) & (actual == 1)).sum()
+ tp = ((predictions == 1) & (actual == 1)).sum()
+ fn = ((predictions == 0) & (actual == 1)).sum()
  return tp / (tp + fn) if (tp + fn) > 0 else 0
 ```
 
@@ -13017,7 +13017,7 @@ class GDPRCompliance:
  if subject_id in self.consent_records:
  del self.consent_records[subject_id]
 
- # Здесь должна быть логика удаления данных субъекта
+ # Здесь должна быть Logsка удаления данных субъекта
  return True
 
  def data_portability(self, subject_id):
@@ -13047,36 +13047,36 @@ class AIActCompliance:
  'minimal': []
  }
 
- def classify_ai_system(self, system_description):
+ def classify_ai_system(self, system_describe):
  """Классификация AI системы on уровню риска"""
 
  # Критерии for классификации
- if self.is_biometric_identification(system_description):
+ if self.is_biometric_identification(system_describe):
  return 'unacceptable'
- elif self.is_high_risk_application(system_description):
+ elif self.is_high_risk_application(system_describe):
  return 'high'
- elif self.is_limited_risk_application(system_description):
+ elif self.is_limited_risk_application(system_describe):
  return 'limited'
  else:
  return 'minimal'
 
- def is_biometric_identification(self, description):
+ def is_biometric_identification(self, describe):
  """check on биометрическую идентификацию"""
  biometric_keywords = ['face recognition', 'fingerprint', 'iris', 'voice']
- return any(keyword in description.lower() for keyword in biometric_keywords)
+ return any(keyword in describe.lower() for keyword in biometric_keywords)
 
- def is_high_risk_application(self, description):
+ def is_high_risk_application(self, describe):
  """check on высокорисковые приложения"""
  high_risk_keywords = [
  'medical diagnosis', 'credit scoring', 'recruitment',
  'law enforcement', 'education', 'transport'
  ]
- return any(keyword in description.lower() for keyword in high_risk_keywords)
+ return any(keyword in describe.lower() for keyword in high_risk_keywords)
 
- def is_limited_risk_application(self, description):
+ def is_limited_risk_application(self, describe):
  """check on ограниченно рисковые приложения"""
  limited_risk_keywords = ['chatbot', 'recommendation', 'content moderation']
- return any(keyword in description.lower() for keyword in limited_risk_keywords)
+ return any(keyword in describe.lower() for keyword in limited_risk_keywords)
 
  def get_compliance_requirements(self, risk_level):
  """Получение требований соответствия for уровня риска"""
@@ -13091,13 +13091,13 @@ class AIActCompliance:
  'data governance',
  'Technical documentation',
  'Record keeping',
- 'Transparency and user information',
+ 'Transparency and User information',
  'Human oversight',
  'Accuracy, robustness and cybersecurity'
  ],
  'limited': [
  'Transparency obligations',
- 'user information requirements'
+ 'User information requirements'
  ],
  'minimal': [
  'No specific requirements'
@@ -13118,7 +13118,7 @@ class BiasDetector:
  def __init__(self):
  self.bias_metrics = {}
 
- def statistical_parity_difference(self, Predictions, sensitive_attribute):
+ def statistical_parity_difference(self, predictions, sensitive_attribute):
  """Статистическая разность паритета"""
 
  groups = sensitive_attribute.unique()
@@ -13126,7 +13126,7 @@ class BiasDetector:
 
  for group in groups:
  group_mask = sensitive_attribute == group
- group_positive_rate = Predictions[group_mask].mean()
+ group_positive_rate = predictions[group_mask].mean()
  spd_values.append(group_positive_rate)
 
  # Разность между максимальной and минимальной долей положительных исходов
@@ -13138,7 +13138,7 @@ class BiasDetector:
  'group_rates': dict(zip(groups, spd_values))
  }
 
- def equalized_odds_difference(self, Predictions, actual, sensitive_attribute):
+ def equalized_odds_difference(self, predictions, actual, sensitive_attribute):
  """Разность уравненных шансов"""
 
  groups = sensitive_attribute.unique()
@@ -13147,15 +13147,15 @@ class BiasDetector:
 
  for group in groups:
  group_mask = sensitive_attribute == group
- group_Predictions = Predictions[group_mask]
+ group_predictions = predictions[group_mask]
  group_actual = actual[group_mask]
 
  # True Positive Rate
- tpr = ((group_Predictions == 1) & (group_actual == 1)).sum() / (group_actual == 1).sum()
+ tpr = ((group_predictions == 1) & (group_actual == 1)).sum() / (group_actual == 1).sum()
  tpr_values.append(tpr)
 
  # False Positive Rate
- fpr = ((group_Predictions == 1) & (group_actual == 0)).sum() / (group_actual == 0).sum()
+ fpr = ((group_predictions == 1) & (group_actual == 0)).sum() / (group_actual == 0).sum()
  fpr_values.append(fpr)
 
  # Разности TPR and FPR
@@ -13169,7 +13169,7 @@ class BiasDetector:
  'is_fair': max(tpr_diff, fpr_diff) < 0.1
  }
 
- def demographic_parity_difference(self, Predictions, sensitive_attribute):
+ def demographic_parity_difference(self, predictions, sensitive_attribute):
  """Разность демографического паритета"""
 
  groups = sensitive_attribute.unique()
@@ -13177,7 +13177,7 @@ class BiasDetector:
 
  for group in groups:
  group_mask = sensitive_attribute == group
- positive_rate = Predictions[group_mask].mean()
+ positive_rate = predictions[group_mask].mean()
  positive_rates.append(positive_rate)
 
  dpd = max(positive_rates) - min(positive_rates)
@@ -13225,37 +13225,37 @@ class BiasMitigation:
 
  for group in groups:
  group_mask = sensitive_attr == group
- group_Predictions = y_pred[group_mask]
- group_positive_rate = group_Predictions.mean()
+ group_predictions = y_pred[group_mask]
+ group_positive_rate = group_predictions.mean()
  fairness_penalty += (group_positive_rate - 0.5) ** 2
 
  return main_loss + 0.1 * fairness_penalty
 
  return fairness_loss
 
- def postprocess_bias_mitigation(self, Predictions, sensitive_attributes, threshold=0.5):
+ def postprocess_bias_mitigation(self, predictions, sensitive_attributes, threshold=0.5):
  """Постобработка for снижения смещений"""
 
  # Калибровка порогов for разных групп
- adjusted_Predictions = Predictions.copy()
+ adjusted_predictions = predictions.copy()
 
  for group in sensitive_attributes.unique():
  group_mask = sensitive_attributes == group
- group_Predictions = Predictions[group_mask]
+ group_predictions = predictions[group_mask]
 
  # Адаптивный порог for группы
  group_threshold = self.calculate_fair_threshold(
- group_Predictions, group
+ group_predictions, group
  )
 
  # Применение адаптивного порога
- adjusted_Predictions[group_mask] = (
- group_Predictions > group_threshold
+ adjusted_predictions[group_mask] = (
+ group_predictions > group_threshold
  ).astype(int)
 
- return adjusted_Predictions
+ return adjusted_predictions
 
- def calculate_fair_threshold(self, Predictions, group):
+ def calculate_fair_threshold(self, predictions, group):
  """Расчет справедливого порога for группы"""
 
  # Простая эвристика - можно заменить on более сложные методы
@@ -13292,7 +13292,7 @@ class AIEthicscheckList:
  'check': 'Missing values ratio',
  'value': Missing_ratio,
  'passed': Missing_ratio < 0.1,
- 'recommendation': 'Clean Missing values' if Missing_ratio >= 0.1 else None
+ 'recommendation': 'clean Missing values' if Missing_ratio >= 0.1 else None
  })
 
  # check on дубликаты
@@ -13534,27 +13534,27 @@ class CreditScoringsystem:
  """Оценка модели"""
 
  # Предсказания
- Predictions = self.predictor.predict(test_data)
+ predictions = self.predictor.predict(test_data)
  probabilities = self.predictor.predict_proba(test_data)
 
  # Метрики
  from sklearn.metrics import classification_Report, confusion_matrix, roc_auc_score
 
- accuracy = (Predictions == test_data['default']).mean()
+ accuracy = (predictions == test_data['default']).mean()
  auc_score = roc_auc_score(test_data['default'], probabilities[1])
 
  # Report on классификации
- Report = classification_Report(test_data['default'], Predictions)
+ Report = classification_Report(test_data['default'], predictions)
 
  # Матрица ошибок
- cm = confusion_matrix(test_data['default'], Predictions)
+ cm = confusion_matrix(test_data['default'], predictions)
 
  return {
  'accuracy': accuracy,
  'auc_score': auc_score,
  'classification_Report': Report,
  'confusion_matrix': cm,
- 'Predictions': Predictions,
+ 'predictions': predictions,
  'probabilities': probabilities
  }
 
@@ -13565,7 +13565,7 @@ class CreditScoringsystem:
  default_prob = probabilities[1]
 
  # Преобразование вероятности in кредитный рейтинг
- # Логика: чем выше вероятность дефолта, тем ниже рейтинг
+ # Logsка: чем выше вероятность дефолта, тем ниже рейтинг
  scores = score_range[1] - (default_prob * (score_range[1] - score_range[0]))
  scores = np.clip(scores, score_range[0], score_range[1])
 
@@ -13791,19 +13791,19 @@ class EcommerceRecommendationsystem:
  """Система рекомендаций for e-commerce"""
 
  def __init__(self):
- self.user_predictor = None
+ self.User_predictor = None
  self.item_predictor = None
  self.collaborative_filter = None
 
- def prepare_recommendation_data(self, transactions_df, users_df, items_df):
+ def prepare_recommendation_data(self, transactions_df, Users_df, items_df):
  """Подготовка данных for рекомендаций"""
 
  # Объединение данных
- df = transactions_df.merge(users_df, on='user_id')
+ df = transactions_df.merge(Users_df, on='User_id')
  df = df.merge(items_df, on='item_id')
 
- # create признаков user
- user_features = self.create_user_features(df)
+ # create признаков User
+ User_features = self.create_User_features(df)
 
  # create признаков товара
  item_features = self.create_item_features(df)
@@ -13811,31 +13811,31 @@ class EcommerceRecommendationsystem:
  # create целевой переменной (рейтинг/покупка)
  df['rating'] = self.calculate_implicit_rating(df)
 
- return df, user_features, item_features
+ return df, User_features, item_features
 
- def create_user_features(self, df):
- """create признаков user"""
+ def create_User_features(self, df):
+ """create признаков User"""
 
- user_features = df.groupby('user_id').agg({
+ User_features = df.groupby('User_id').agg({
  'item_id': 'count', # Количество покупок
  'price': ['sum', 'mean'], # Общая and средняя стоимость
  'category': lambda x: x.mode().iloc[0] if len(x.mode()) > 0 else 'Unknown', # Любимая категория
  'brand': lambda x: x.mode().iloc[0] if len(x.mode()) > 0 else 'Unknown' # Любимый бренд
  }).reset_index()
 
- user_features.columns = ['user_id', 'total_purchases', 'total_spent', 'avg_purchase', 'favorite_category', 'favorite_brand']
+ User_features.columns = ['User_id', 'total_purchases', 'total_spent', 'avg_purchase', 'favorite_category', 'favorite_brand']
 
  # Дополнительные признаки
- user_features['purchase_frequency'] = user_features['total_purchases'] / 365 # Покупок in день
- user_features['avg_spent_per_purchase'] = user_features['total_spent'] / user_features['total_purchases']
+ User_features['purchase_frequency'] = User_features['total_purchases'] / 365 # Покупок in день
+ User_features['avg_spent_per_purchase'] = User_features['total_spent'] / User_features['total_purchases']
 
- return user_features
+ return User_features
 
  def create_item_features(self, df):
  """create признаков товара"""
 
  item_features = df.groupby('item_id').agg({
- 'user_id': 'count', # Количество покупателей
+ 'User_id': 'count', # Количество покупателей
  'price': 'mean', # Средняя цена
  'category': lambda x: x.mode().iloc[0] if len(x.mode()) > 0 else 'Unknown',
  'brand': lambda x: x.mode().iloc[0] if len(x.mode()) > 0 else 'Unknown'
@@ -13852,23 +13852,23 @@ class EcommerceRecommendationsystem:
  """Расчет неявного рейтинга"""
 
  # Простая эвристика: чем больше покупок, тем выше рейтинг
- user_purchase_counts = df.groupby('user_id')['item_id'].count()
- item_purchase_counts = df.groupby('item_id')['user_id'].count()
+ User_purchase_counts = df.groupby('User_id')['item_id'].count()
+ item_purchase_counts = df.groupby('item_id')['User_id'].count()
 
- df['user_activity'] = df['user_id'].map(user_purchase_counts)
+ df['User_activity'] = df['User_id'].map(User_purchase_counts)
  df['item_popularity'] = df['item_id'].map(item_purchase_counts)
 
  # Нормализация рейтинга
- rating = (df['user_activity'] / df['user_activity'].max() +
+ rating = (df['User_activity'] / df['User_activity'].max() +
  df['item_popularity'] / df['item_popularity'].max()) / 2
 
  return rating
 
- def train_collaborative_filtering(self, df, user_features, item_features):
+ def train_collaborative_filtering(self, df, User_features, item_features):
  """Обучение коллаборативной фильтрации"""
 
  # Подготовка данных for AutoML
- recommendation_data = df.merge(user_features, on='user_id')
+ recommendation_data = df.merge(User_features, on='User_id')
  recommendation_data = recommendation_data.merge(item_features, on='item_id')
 
  # create предиктора
@@ -13888,32 +13888,32 @@ class EcommerceRecommendationsystem:
 
  return self.collaborative_filter
 
- def generate_recommendations(self, user_id, n_recommendations=10):
- """Генерация рекомендаций for user"""
+ def generate_recommendations(self, User_id, n_recommendations=10):
+ """Генерация рекомендаций for User"""
 
- # Получение признаков user
- user_data = self.get_user_features(user_id)
+ # Получение признаков User
+ User_data = self.get_User_features(User_id)
 
  # Получение all товаров
  all_items = self.get_all_items()
 
  # Prediction рейтингов for all товаров
- Predictions = []
+ predictions = []
  for item_id in all_items:
  item_data = self.get_item_features(item_id)
 
- # Объединение данных user and товара
- combined_data = pd.dataFrame([{**user_data, **item_data}])
+ # Объединение данных User and товара
+ combined_data = pd.dataFrame([{**User_data, **item_data}])
 
  # Prediction рейтинга
  rating = self.collaborative_filter.predict(combined_data)[0]
- Predictions.append((item_id, rating))
+ predictions.append((item_id, rating))
 
  # Сортировка on рейтингу
- Predictions.sort(key=lambda x: x[1], reverse=True)
+ predictions.sort(key=lambda x: x[1], reverse=True)
 
  # Возврат топ-N рекомендаций
- return Predictions[:n_recommendations]
+ return predictions[:n_recommendations]
 
  def evaluate_recommendations(self, test_data, n_recommendations=10):
  """Оценка качества рекомендаций"""
@@ -13923,12 +13923,12 @@ class EcommerceRecommendationsystem:
  recall_scores = []
  ndcg_scores = []
 
- for user_id in test_data['user_id'].unique():
- # Получение реальных покупок user
- actual_items = set(test_data[test_data['user_id'] == user_id]['item_id'])
+ for User_id in test_data['User_id'].unique():
+ # Получение реальных покупок User
+ actual_items = set(test_data[test_data['User_id'] == User_id]['item_id'])
 
  # Генерация рекомендаций
- recommendations = self.generate_recommendations(user_id, n_recommendations)
+ recommendations = self.generate_recommendations(User_id, n_recommendations)
  recommended_items = set([item_id for item_id, _ in recommendations])
 
  # Precision@K
@@ -13953,16 +13953,16 @@ recommendation_system = EcommerceRecommendationsystem()
 
 # Loading data
 transactions = pd.read_csv('transactions.csv')
-users = pd.read_csv('users.csv')
+Users = pd.read_csv('Users.csv')
 items = pd.read_csv('items.csv')
 
 # Подготовка данных
-df, user_features, item_features = recommendation_system.prepare_recommendation_data(
- transactions, users, items
+df, User_features, item_features = recommendation_system.prepare_recommendation_data(
+ transactions, Users, items
 )
 
 # Обучение модели
-model = recommendation_system.train_collaborative_filtering(df, user_features, item_features)
+model = recommendation_system.train_collaborative_filtering(df, User_features, item_features)
 
 # Оценка
 results = recommendation_system.evaluate_recommendations(df)
@@ -14032,11 +14032,11 @@ class Predictivemaintenancesystem:
 
  return all_features
 
- def create_maintenance_target(self, sensor_data, maintenance_logs):
+ def create_maintenance_target(self, sensor_data, maintenance_Logs):
  """create целевой переменной for обслуживания"""
 
  # Объединение данных сенсоров and логов обслуживания
- maintenance_data = sensor_data.merge(maintenance_logs, on='equipment_id', how='left')
+ maintenance_data = sensor_data.merge(maintenance_Logs, on='equipment_id', how='left')
 
  # create целевой переменной
  # 1 = требуется обслуживание in ближайшие 7 дней
@@ -14141,11 +14141,11 @@ maintenance_system = Predictivemaintenancesystem()
 
 # Loading data
 sensor_data = pd.read_csv('sensor_data.csv')
-maintenance_logs = pd.read_csv('maintenance_logs.csv')
+maintenance_Logs = pd.read_csv('maintenance_Logs.csv')
 
 # Подготовка данных
 sensor_features = maintenance_system.prepare_sensor_data(sensor_data)
-maintenance_data = maintenance_system.create_maintenance_target(sensor_data, maintenance_logs)
+maintenance_data = maintenance_system.create_maintenance_target(sensor_data, maintenance_Logs)
 
 # Обучение модели
 model = maintenance_system.train_maintenance_model(maintenance_data)
@@ -14351,15 +14351,15 @@ class BTCUSDTTradingsystem:
  )
 
  # Оценка on валидации
- val_Predictions = self.predictor.predict(val_data[feature_columns])
- val_accuracy = accuracy_score(val_data['price_direction'], val_Predictions)
+ val_predictions = self.predictor.predict(val_data[feature_columns])
+ val_accuracy = accuracy_score(val_data['price_direction'], val_predictions)
 
  self.feature_columns = feature_columns
  self.model_performance = {
  'accuracy': val_accuracy,
- 'precision': precision_score(val_data['price_direction'], val_Predictions),
- 'recall': recall_score(val_data['price_direction'], val_Predictions),
- 'f1': f1_score(val_data['price_direction'], val_Predictions)
+ 'precision': precision_score(val_data['price_direction'], val_predictions),
+ 'recall': recall_score(val_data['price_direction'], val_predictions),
+ 'f1': f1_score(val_data['price_direction'], val_predictions)
  }
 
  return self.predictor
@@ -14371,12 +14371,12 @@ class BTCUSDTTradingsystem:
  return True
 
  # Предсказания on новых данных
- Predictions = self.predictor.predict(new_data[self.feature_columns])
+ predictions = self.predictor.predict(new_data[self.feature_columns])
  probabilities = self.predictor.predict_proba(new_data[self.feature_columns])
 
  # Метрики дрифта
  confidence = np.max(probabilities, axis=1).mean()
- Prediction_consistency = (Predictions == Predictions[0]).mean()
+ Prediction_consistency = (predictions == predictions[0]).mean()
 
  # check on дрифт
  drift_detected = (
@@ -14455,7 +14455,7 @@ class BTCUSDTTradingsystem:
 
  if signal and signal['confidence'] > 0.7:
  print(f"📈 Торговый сигнал: {signal['direction']} with уверенностью {signal['confidence']:.3f}")
- # Здесь будет логика выполнения торговых операций
+ # Здесь будет Logsка выполнения торговых операций
 
  # Сохранение модели
  joblib.dump(self.predictor, 'btcusdt_model.pkl')
@@ -14661,8 +14661,8 @@ class HedgeFundTradingsystem:
  )
 
  # Оценка ансамбля
- val_Predictions = self.ensemble_model.predict(val_data.drop(columns=['target_class']))
- val_accuracy = accuracy_score(val_data['target_class'], val_Predictions)
+ val_predictions = self.ensemble_model.predict(val_data.drop(columns=['target_class']))
+ val_accuracy = accuracy_score(val_data['target_class'], val_predictions)
 
  print(f"🎯 Точность ансамблевой модели: {val_accuracy:.3f}")
 
@@ -14917,7 +14917,7 @@ class SecretFeatureEngineering:
 
  features = {}
 
- for tf in Timeframes:
+ for tf in timeframes:
  # Агрегация данных on Timeframeу
  tf_data = self.aggregate_to_Timeframe(data, tf)
 
@@ -15320,7 +15320,7 @@ class SecretRiskManagement:
 - **Точные сигналы**: Показывает начало and конец волн
 - **Риск-менеджмент**: Четкие уровни стоп-лосса
 - **Прибыльные сделки**: Торговля on направлению волны
-- **Психологическая стабильность**: Объективные сигналы вместо эмоций
+- **ПсихоLogsческая стабильность**: Объективные сигналы вместо эмоций
 
 ## Введение
 
@@ -15362,7 +15362,7 @@ wave2_columns = {
  # Волновые отношения
  'wave_ratio': 'Отношение волн',
  'wave_fibonacci': 'Фибоначчи уровни',
- 'wave_retracement': 'Откат волны',
+ 'wave_retracement': 'Rollback волны',
  'wave_extension': 'Расширение волны',
 
  # Волновые паттерны
@@ -15420,7 +15420,7 @@ class Wave2M1Analysis:
  # Анализ краткосрочных волн
  short_waves = self.identify_short_waves(data, period=5)
 
- # Анализ микро-откатов
+ # Анализ микро-Rollbackов
  micro_retracements = self.calculate_micro_retracements(data)
 
  # Анализ микро-расширений
@@ -15853,8 +15853,8 @@ class Wave2MLModel:
  )
 
  # Оценка модели
- val_Predictions = self.predictor.predict(val_data.drop(columns=['price_direction', 'volatility_direction', 'trend_direction']))
- val_accuracy = accuracy_score(val_data['price_direction'], val_Predictions)
+ val_predictions = self.predictor.predict(val_data.drop(columns=['price_direction', 'volatility_direction', 'trend_direction']))
+ val_accuracy = accuracy_score(val_data['price_direction'], val_predictions)
 
  print(f"Точность модели WAVE2: {val_accuracy:.3f}")
 
@@ -15873,12 +15873,12 @@ def wave2_backtest(self, data, start_date, end_date):
  test_data = data[(data.index >= start_date) & (data.index <= end_date)]
 
  # Предсказания
- Predictions = self.predictor.predict(test_data)
+ predictions = self.predictor.predict(test_data)
  probabilities = self.predictor.predict_proba(test_data)
 
  # Расчет доходности
  returns = test_data['close'].pct_change()
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  # Метрики backtest
  total_return = strategy_returns.sum()
@@ -16079,7 +16079,7 @@ WAVE2 - это мощный индикатор for создания высоко
 - **Точные уровни**: Показывает ключевые ценовые зоны
 - **Риск-менеджмент**: Четкие уровни стоп-лосса and целей
 - **Прибыльные сделки**: Торговля from важных уровней
-- **Психологическая стабильность**: Объективные сигналы вместо эмоций
+- **ПсихоLogsческая стабильность**: Объективные сигналы вместо эмоций
 
 ## Введение
 
@@ -16528,7 +16528,7 @@ class SCHRLevelsMLModel:
  features['relative_distance_predicted_high'] = features['distance_to_predicted_high'] / data['close']
  features['relative_distance_predicted_low'] = features['distance_to_predicted_low'] / data['close']
 
- # Точность Predictions
+ # Точность predictions
  features['Prediction_accuracy_high'] = self.calculate_Prediction_accuracy(data, 'predicted_high')
  features['Prediction_accuracy_low'] = self.calculate_Prediction_accuracy(data, 'predicted_low')
 
@@ -16606,8 +16606,8 @@ class SCHRLevelsMLModel:
  )
 
  # Оценка модели
- val_Predictions = self.predictor.predict(val_data.drop(columns=['price_direction', 'breakout_direction', 'bounce_direction', 'reversal_direction']))
- val_accuracy = accuracy_score(val_data['price_direction'], val_Predictions)
+ val_predictions = self.predictor.predict(val_data.drop(columns=['price_direction', 'breakout_direction', 'bounce_direction', 'reversal_direction']))
+ val_accuracy = accuracy_score(val_data['price_direction'], val_predictions)
 
  print(f"Точность модели SCHR Levels: {val_accuracy:.3f}")
 
@@ -16626,12 +16626,12 @@ def schr_backtest(self, data, start_date, end_date):
  test_data = data[(data.index >= start_date) & (data.index <= end_date)]
 
  # Предсказания
- Predictions = self.predictor.predict(test_data)
+ predictions = self.predictor.predict(test_data)
  probabilities = self.predictor.predict_proba(test_data)
 
  # Расчет доходности
  returns = test_data['close'].pct_change()
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  # Метрики backtest
  total_return = strategy_returns.sum()
@@ -16843,7 +16843,7 @@ SCHR Levels - это мощный индикатор for создания выс
 - **Точные краткосрочные сигналы**: Показывает начало and конец краткосрочных движений
 - **Риск-менеджмент**: Четкие уровни стоп-лосса for краткосрочной торговли
 - **Прибыльные сделки**: Торговля on направлению краткосрочного движения
-- **Психологическая стабильность**: Объективные сигналы вместо эмоций
+- **ПсихоLogsческая стабильность**: Объективные сигналы вместо эмоций
 
 ## Введение
 
@@ -17382,8 +17382,8 @@ class SCHRShort3MLModel:
  )
 
  # Оценка модели
- val_Predictions = self.predictor.predict(val_data.drop(columns=['price_direction', 'short_signal_direction', 'short_pattern_direction', 'short_bounce_direction']))
- val_accuracy = accuracy_score(val_data['price_direction'], val_Predictions)
+ val_predictions = self.predictor.predict(val_data.drop(columns=['price_direction', 'short_signal_direction', 'short_pattern_direction', 'short_bounce_direction']))
+ val_accuracy = accuracy_score(val_data['price_direction'], val_predictions)
 
  print(f"Точность модели SCHR SHORT3: {val_accuracy:.3f}")
 
@@ -17402,12 +17402,12 @@ def schr_short3_backtest(self, data, start_date, end_date):
  test_data = data[(data.index >= start_date) & (data.index <= end_date)]
 
  # Предсказания
- Predictions = self.predictor.predict(test_data)
+ predictions = self.predictor.predict(test_data)
  probabilities = self.predictor.predict_proba(test_data)
 
  # Расчет доходности
  returns = test_data['close'].pct_change()
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  # Метрики backtest
  total_return = strategy_returns.sum()
@@ -17643,7 +17643,7 @@ SCHR SHORT3 - это мощный индикатор for создания выс
 
 **Почему супер-система - это будущее торговли?** Потому что она объединяет все лучшие техники and индикаторы, создавая system, которая Workingет in любых условиях and приносит стабильную прибыль.
 
-Супер-система - это объединение all лучших техник and indicators for создания идеальной торговой системы. Мы объединим SCHR Levels, WAVE2 and SCHR SHORT3 with самыми современными техниками машинного обучения for создания системы мечты.
+Супер-система - это объединение all лучших техник and indicators for создания идеальной торговой системы. Мы объединим SCHR Levels, WAVE2 and SCHR SHORT3 with самыми современными техниками machine learning for создания системы мечты.
 
 ## Философия супер-системы
 
@@ -17796,20 +17796,20 @@ class MetaEnsembleModel:
  self.meta_weights = {}
  self.ensemble_methods = {}
 
- def create_meta_ensemble(self, base_Predictions, market_context):
+ def create_meta_ensemble(self, base_predictions, market_context):
  """create мета-ансамбля"""
 
  # Адаптивное взвешивание
- adaptive_weights = self.calculate_adaptive_weights(base_Predictions, market_context)
+ adaptive_weights = self.calculate_adaptive_weights(base_predictions, market_context)
 
  # Контекстно-зависимое объединение
- context_ensemble = self.create_context_ensemble(base_Predictions, market_context)
+ context_ensemble = self.create_context_ensemble(base_predictions, market_context)
 
  # Временное объединение
- temporal_ensemble = self.create_temporal_ensemble(base_Predictions, market_context)
+ temporal_ensemble = self.create_temporal_ensemble(base_predictions, market_context)
 
  # Иерархическое объединение
- hierarchical_ensemble = self.create_hierarchical_ensemble(base_Predictions, market_context)
+ hierarchical_ensemble = self.create_hierarchical_ensemble(base_predictions, market_context)
 
  # Финальное объединение
  final_Prediction = self.combine_ensembles([
@@ -17821,12 +17821,12 @@ class MetaEnsembleModel:
 
  return final_Prediction
 
- def calculate_adaptive_weights(self, Predictions, context):
+ def calculate_adaptive_weights(self, predictions, context):
  """Адаптивное взвешивание моделей"""
 
  # Анализ производительности каждой модели
  model_performance = {}
- for model_name, Prediction in Predictions.items():
+ for model_name, Prediction in predictions.items():
  performance = self.evaluate_model_performance(Prediction, context)
  model_performance[model_name] = performance
 
@@ -17835,14 +17835,14 @@ class MetaEnsembleModel:
 
  return adaptive_weights
 
- def create_context_ensemble(self, Predictions, context):
+ def create_context_ensemble(self, predictions, context):
  """Контекстно-зависимое объединение"""
 
  # Определение рыночного контекста
  market_context = self.determine_market_context(context)
 
  # Выбор моделей for контекста
- context_models = self.select_models_for_context(Predictions, market_context)
+ context_models = self.select_models_for_context(predictions, market_context)
 
  # Взвешивание on basis контекста
  context_weights = self.calculate_context_weights(context_models, market_context)
@@ -18074,8 +18074,8 @@ def train_super_model(self, features, target):
  meta_model = self.train_meta_model(base_models, val_data)
 
  # Финальная оценка
- test_Predictions = meta_model.predict(test_data)
- test_accuracy = accuracy_score(test_data['target'], test_Predictions)
+ test_predictions = meta_model.predict(test_data)
+ test_accuracy = accuracy_score(test_data['target'], test_predictions)
 
  print(f"Точность супер-модели: {test_accuracy:.3f}")
 
@@ -18482,7 +18482,7 @@ predictor = TabularPredictor(label='target', problem_type='multiclass')
 predictor.fit(data, time_limit=60)
 
 # Оценка
-Predictions = predictor.predict(data)
+predictions = predictor.predict(data)
 print(f"Точность: {predictor.evaluate(data)}")
 ```
 
@@ -18498,7 +18498,7 @@ train_data, test_data = train_test_split(data, test_size=0.2, random_state=42)
 predictor.fit(train_data, time_limit=120)
 
 # Валидация
-test_Predictions = predictor.predict(test_data)
+test_predictions = predictor.predict(test_data)
 test_accuracy = predictor.evaluate(test_data)
 print(f"Точность on тесте: {test_accuracy}")
 ```
@@ -18582,7 +18582,7 @@ if __name__ == '__main__':
 
 ## Why правильное использование вероятностей критически важно
 
-**Почему 95% ML-моделей in продакшене неправильно используют вероятности?** Потому что team фокусируются только on точности Predictions, игнорируя уверенность модели. Это как врач, который ставит диагноз, но not говорит, насколько он уверен.
+**Почему 95% ML-моделей in продакшене неправильно используют вероятности?** Потому что team фокусируются только on точности predictions, игнорируя уверенность модели. Это как врач, который ставит диагноз, но not говорит, насколько он уверен.
 
 ### Проблемы неправильного использования вероятностей
 - **Ложная уверенность**: Модель говорит "да" with вероятностью 99%, но ошибается
@@ -18624,13 +18624,13 @@ predictor = TabularPredictor(label='target', problem_type='binary')
 # Обучение модели
 predictor.fit(train_data)
 
-# Получение Predictions
-Predictions = predictor.predict(test_data)
+# Получение predictions
+predictions = predictor.predict(test_data)
 
 # Получение вероятностей
 probabilities = predictor.predict_proba(test_data)
 
-print("Предсказания:", Predictions)
+print("Предсказания:", predictions)
 print("Вероятности:", probabilities)
 ```
 
@@ -19500,7 +19500,7 @@ class MetricsCollector:
  'Prediction_confidence': model_state.get('Prediction_confidence', 0),
  'Prediction_uncertainty': model_state.get('Prediction_uncertainty', 0),
  'last_Prediction_time': model_state.get('last_Prediction_time'),
- 'Predictions_per_hour': model_state.get('Predictions_per_hour', 0),
+ 'predictions_per_hour': model_state.get('predictions_per_hour', 0),
 
  # Дрифт модели
  'model_drift_detected': model_state.get('drift_detected', False),
@@ -19842,7 +19842,7 @@ class LogAnalyzer:
  self.error_patterns = {}
  self.performance_patterns = {}
 
- def analyze_logs(self, log_file):
+ def analyze_Logs(self, log_file):
  """Анализ логов"""
 
  Analysis_results = {
@@ -20022,7 +20022,7 @@ class PerformanceTracker:
  'category': 'system_stability',
  'priority': 'medium',
  'suggestion': 'Высокий уровень ошибок. Проверьте стабильность системы.',
- 'action': 'reView_error_logs'
+ 'action': 'reView_error_Logs'
  })
 
  # Анализ производительности
@@ -20204,7 +20204,7 @@ class LogRotation:
  'retention_days': 30
  }
 
- def rotate_logs(self, log_file):
+ def rotate_Logs(self, log_file):
  """Ротация логов"""
 
  import shutil
@@ -20229,11 +20229,11 @@ class LogRotation:
  f.write('')
 
  # remove старых логов
- self.cleanup_old_logs(log_file)
+ self.cleanup_old_Logs(log_file)
 
  return backup_file
 
- def cleanup_old_logs(self, log_file):
+ def cleanup_old_Logs(self, log_file):
  """clean старых логов"""
 
  import glob
@@ -20271,25 +20271,25 @@ class PerformanceMetrics:
 
  self.metrics_definitions = {
  'availability': {
- 'description': 'Доступность системы',
+ 'describe': 'Доступность системы',
  'calculation': 'uptime / total_time',
  'target': 0.999, # 99.9%
  'unit': 'percentage'
  },
  'response_time': {
- 'description': 'Время отклика',
+ 'describe': 'Время отклика',
  'calculation': 'average_response_time',
  'target': 1000, # 1 секунда
  'unit': 'milliseconds'
  },
  'error_rate': {
- 'description': 'Частота ошибок',
+ 'describe': 'Частота ошибок',
  'calculation': 'errors / total_requests',
  'target': 0.001, # 0.1%
  'unit': 'percentage'
  },
  'throughput': {
- 'description': 'Пропускная способность',
+ 'describe': 'Пропускная способность',
  'calculation': 'requests_per_second',
  'target': 100, # 100 RPS
  'unit': 'requests_per_second'

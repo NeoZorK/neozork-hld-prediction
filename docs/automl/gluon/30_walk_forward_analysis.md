@@ -1,4 +1,4 @@
-# Углубленное description методик Walk-Forward Analysis
+# Углубленное describe методик Walk-Forward Analysis
 
 **Author:** Shcherbyna Rostyslav
 **Дата:** 2024
@@ -77,9 +77,9 @@ For t = train_window to T - test_window:
  test_data = data[t:t+test_window]
 
  model.fit(train_data)
- Predictions = model.predict(test_data)
+ predictions = model.predict(test_data)
 
- performance[t] = evaluate(Predictions, test_data)
+ performance[t] = evaluate(predictions, test_data)
 ```
 
 Где:
@@ -183,7 +183,7 @@ graph TD
  G --> I[Предсказания<br/>model.predict(test_data)]
 
  H --> I
- I --> J[Расчет доходности стратегии<br/>Predictions * returns]
+ I --> J[Расчет доходности стратегии<br/>predictions * returns]
 
  J --> K[Метрики качества]
  K --> L[Коэффициент Шарпа]
@@ -239,7 +239,7 @@ def walk_forward_Analysis(data, model, train_window=252, test_window=30, step=30
  - index: временные метки (datetime)
 
  model : sklearn-compatible model
- Объект модели машинного обучения with методами:
+ Объект модели machine learning with методами:
  - fit(X, y): обучение модели
  - predict(X): предсказания
  Должен быть совместим with sklearn API
@@ -279,7 +279,7 @@ def walk_forward_Analysis(data, model, train_window=252, test_window=30, step=30
  - 'sharpe': коэффициент Шарпа за период (float)
  - 'max_drawdown': максимальная просадка за период (float)
  - 'total_return': общая доходность за период (float)
- - 'Predictions': предсказания модели (array)
+ - 'predictions': предсказания модели (array)
 
  Raises:
  -------
@@ -308,11 +308,11 @@ def walk_forward_Analysis(data, model, train_window=252, test_window=30, step=30
  model.fit(train_data)
 
  # Предсказания
- Predictions = model.predict(test_data)
+ predictions = model.predict(test_data)
 
  # Оценка качества
  returns = test_data['returns']
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  # Метрики
  sharpe = strategy_returns.mean() / strategy_returns.std() * np.sqrt(252)
@@ -327,7 +327,7 @@ def walk_forward_Analysis(data, model, train_window=252, test_window=30, step=30
  'sharpe': sharpe,
  'max_drawdown': max_drawdown,
  'total_return': total_return,
- 'Predictions': Predictions
+ 'predictions': predictions
  })
 
  return pd.dataFrame(results)
@@ -355,7 +355,7 @@ def expanding_window_Analysis(data, model, initial_train_window=252, test_window
  - index: временные метки (datetime)
 
  model : sklearn-compatible model
- Объект модели машинного обучения with методами:
+ Объект модели machine learning with методами:
  - fit(X, y): обучение модели
  - predict(X): предсказания
  Должен быть совместим with sklearn API
@@ -431,11 +431,11 @@ def expanding_window_Analysis(data, model, initial_train_window=252, test_window
  model.fit(train_data)
 
  # Предсказания
- Predictions = model.predict(test_data)
+ predictions = model.predict(test_data)
 
  # Оценка качества
  returns = test_data['returns']
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  # Метрики
  sharpe = strategy_returns.mean() / strategy_returns.std() * np.sqrt(252)
@@ -533,7 +533,7 @@ def adaptive_window_Analysis(data, model, min_window=100, max_window=500,
  - index: временные метки (datetime)
 
  model : sklearn-compatible model
- Объект модели машинного обучения with методами:
+ Объект модели machine learning with методами:
  - fit(X, y): обучение модели
  - predict(X): предсказания
  Должен быть совместим with sklearn API
@@ -626,11 +626,11 @@ def adaptive_window_Analysis(data, model, min_window=100, max_window=500,
  model.fit(train_data)
 
  # Предсказания
- Predictions = model.predict(test_data)
+ predictions = model.predict(test_data)
 
  # Оценка качества
  returns = test_data['returns']
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  # Метрики
  sharpe = strategy_returns.mean() / strategy_returns.std() * np.sqrt(252)
@@ -687,7 +687,7 @@ def volatility_adaptive_Analysis(data, model, base_window=252, test_window=30,
  - index: временные метки (datetime)
 
  model : sklearn-compatible model
- Объект модели машинного обучения with методами:
+ Объект модели machine learning with методами:
  - fit(X, y): обучение модели
  - predict(X): предсказания
  Должен быть совместим with sklearn API
@@ -786,11 +786,11 @@ def volatility_adaptive_Analysis(data, model, base_window=252, test_window=30,
  model.fit(train_data)
 
  # Предсказания
- Predictions = model.predict(test_data)
+ predictions = model.predict(test_data)
 
  # Оценка качества
  returns = test_data['returns']
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  # Метрики
  sharpe = strategy_returns.mean() / strategy_returns.std() * np.sqrt(252)
@@ -892,17 +892,17 @@ def hierarchical_walk_forward(data, models, train_window=252, test_window=30, st
  test_data = data[i:i+test_window]
 
  # Обучение all моделей
- model_Predictions = {}
+ model_predictions = {}
  for name, model in models.items():
  model.fit(train_data)
- model_Predictions[name] = model.predict(test_data)
+ model_predictions[name] = model.predict(test_data)
 
- # Комбинирование Predictions
- combined_Predictions = np.mean(List(model_Predictions.values()), axis=0)
+ # Комбинирование predictions
+ combined_predictions = np.mean(List(model_predictions.values()), axis=0)
 
  # Оценка качества
  returns = test_data['returns']
- strategy_returns = combined_Predictions * returns
+ strategy_returns = combined_predictions * returns
 
  # Метрики
  sharpe = strategy_returns.mean() / strategy_returns.std() * np.sqrt(252)
@@ -911,8 +911,8 @@ def hierarchical_walk_forward(data, models, train_window=252, test_window=30, st
 
  # Индивидуальные метрики моделей
  individual_metrics = {}
- for name, Predictions in model_Predictions.items():
- individual_returns = Predictions * returns
+ for name, predictions in model_predictions.items():
+ individual_returns = predictions * returns
  individual_metrics[name] = {
  'sharpe': individual_returns.mean() / individual_returns.std() * np.sqrt(252),
  'max_drawdown': calculate_max_drawdown(individual_returns),
@@ -957,24 +957,24 @@ def ensemble_walk_forward(data, base_models, ensemble_model, train_window=252,
  test_data = data[i:i+test_window]
 
  # Обучение базовых моделей
- base_Predictions = []
+ base_predictions = []
  for name, model in base_models.items():
  model.fit(train_data)
- Predictions = model.predict(test_data)
- base_Predictions.append(Predictions)
+ predictions = model.predict(test_data)
+ base_predictions.append(predictions)
 
  # create мета-признаков
- meta_features = np.column_stack(base_Predictions)
+ meta_features = np.column_stack(base_predictions)
 
  # Обучение ансамблевой модели
  ensemble_model.fit(meta_features, test_data['returns'])
 
  # Предсказания ансамбля
- ensemble_Predictions = ensemble_model.predict(meta_features)
+ ensemble_predictions = ensemble_model.predict(meta_features)
 
  # Оценка качества
  returns = test_data['returns']
- strategy_returns = ensemble_Predictions * returns
+ strategy_returns = ensemble_predictions * returns
 
  # Метрики
  sharpe = strategy_returns.mean() / strategy_returns.std() * np.sqrt(252)
@@ -989,8 +989,8 @@ def ensemble_walk_forward(data, base_models, ensemble_model, train_window=252,
  'sharpe': sharpe,
  'max_drawdown': max_drawdown,
  'total_return': total_return,
- 'base_Predictions': base_Predictions,
- 'ensemble_Predictions': ensemble_Predictions
+ 'base_predictions': base_predictions,
+ 'ensemble_predictions': ensemble_predictions
  })
 
  return pd.dataFrame(results)
@@ -1935,7 +1935,7 @@ class WalkForwardPipeline:
  - index: временные метки (datetime)
 
  model : sklearn-compatible model
- Объект модели машинного обучения with методами:
+ Объект модели machine learning with методами:
  - fit(X, y): обучение модели
  - predict(X): предсказания
  Должен быть совместим with sklearn API
@@ -1951,7 +1951,7 @@ class WalkForwardPipeline:
  Исходные data for Analysis
 
  model : sklearn-compatible model
- Модель машинного обучения
+ Модель machine learning
 
  metrics_calculator : object
  Калькулятор метрик качества
@@ -2011,7 +2011,7 @@ class WalkForwardPipeline:
  Временные ряды данных with колонками 'returns' and 'features'
 
  model : sklearn-compatible model
- Модель машинного обучения with методами fit and predict
+ Модель machine learning with методами fit and predict
 
  metrics_calculator : object
  Калькулятор метрик with методом calculate
@@ -2090,11 +2090,11 @@ class WalkForwardPipeline:
  self.model.fit(train_data)
 
  # Предсказания
- Predictions = self.model.predict(test_data)
+ predictions = self.model.predict(test_data)
 
  # Расчет метрик
  returns = test_data['returns']
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  metrics = self.metrics_calculator.calculate(strategy_returns)
  metrics.update({
@@ -2180,11 +2180,11 @@ class WalkForwardPipeline:
  self.model.fit(train_data)
 
  # Предсказания
- Predictions = self.model.predict(test_data)
+ predictions = self.model.predict(test_data)
 
  # Расчет метрик
  returns = test_data['returns']
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  metrics = self.metrics_calculator.calculate(strategy_returns)
  metrics.update({
@@ -2281,11 +2281,11 @@ class WalkForwardPipeline:
  self.model.fit(train_data)
 
  # Предсказания
- Predictions = self.model.predict(test_data)
+ predictions = self.model.predict(test_data)
 
  # Расчет метрик
  returns = test_data['returns']
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  metrics = self.metrics_calculator.calculate(strategy_returns)
  metrics.update({

@@ -18,7 +18,7 @@
 - **Точные краткосрочные сигналы**: Показывает начало and конец краткосрочных движений
 - **Риск-менеджмент**: Четкие уровни стоп-лосса for краткосрочной торговли
 - **Прибыльные сделки**: Торговля on направлению краткосрочного движения
-- **Психологическая стабильность**: Объективные сигналы вместо эмоций
+- **ПсихоLogsческая стабильность**: Объективные сигналы вместо эмоций
 
 ## Введение
 
@@ -180,7 +180,7 @@ schr_short3_columns = {
  - Тип: float
  - Единицы: цена
  - Диапазон: from 0 to +∞
- - Применение: краткосрочные уровни отката/расширения
+ - Применение: краткосрочные уровни Rollbackа/расширения
  - Интерпретация: ключевые уровни on basis золотого сечения
  - Расчет: on basis краткосрочных 0.236, 0.382, 0.5, 0.618, 0.786
 
@@ -649,7 +649,7 @@ class SCHRShort3MLModel:
 - **`self.feature_columns`**: List признаков модели
  - Тип: List[str]
  - Содержит: названия all признаков SCHR SHORT3
- - Применение: for Predictions on новых краткосрочных данных
+ - Применение: for predictions on новых краткосрочных данных
  - update: при изменении набора краткосрочных признаков
 
 - **`self.Timeframes`**: List Timeframes
@@ -734,7 +734,7 @@ class SCHRShort3MLModel:
  - Тип: float
  - Единицы: цена
  - Диапазон: from 0 to +∞
- - Применение: краткосрочные уровни отката/расширения
+ - Применение: краткосрочные уровни Rollbackа/расширения
  - Интерпретация: ключевые уровни on basis золотого сечения
 
 - **`distance_to_short_support`**: Расстояние to краткосрочной поддержки
@@ -1286,8 +1286,8 @@ class SCHRShort3MLModel:
  )
 
  # Оценка модели
- val_Predictions = self.predictor.predict(val_data.drop(columns=['price_direction', 'short_signal_direction', 'short_pattern_direction', 'short_bounce_direction']))
- val_accuracy = accuracy_score(val_data['price_direction'], val_Predictions)
+ val_predictions = self.predictor.predict(val_data.drop(columns=['price_direction', 'short_signal_direction', 'short_pattern_direction', 'short_bounce_direction']))
+ val_accuracy = accuracy_score(val_data['price_direction'], val_predictions)
 
  print(f"Точность модели SCHR SHORT3: {val_accuracy:.3f}")
 
@@ -1363,7 +1363,7 @@ class SCHRShort3MLModel:
  - Тип: str
  - Применение: сохранение обученной модели
  - Содержит: веса модели, метаdata, конфигурацию
- - Использование: загрузка for Predictions
+ - Использование: загрузка for predictions
  - Формат: директория with файлами модели
 
 - **`time_limit=3600`**: Лимит времени обучения
@@ -1417,7 +1417,7 @@ class SCHRShort3MLModel:
  - Баланс: больше глубина = лучше качество, но переобучение
  - Рекомендация: 10-12 for SCHR SHORT3
 
-- **`val_Predictions`**: Предсказания on валидации
+- **`val_predictions`**: Предсказания on валидации
  - Тип: numpy array
  - Содержит: предсказания модели
  - Применение: оценка производительности
@@ -1429,7 +1429,7 @@ class SCHRShort3MLModel:
  - Диапазон: from 0 to 1
  - Применение: оценка качества модели
  - Интерпретация: 0.5 = случайно, 0.7-0.8 = хорошо, 0.8-0.9 = отлично, > 0.9 = превосходно
- - Формула: accuracy_score(val_data['price_direction'], val_Predictions)
+ - Формула: accuracy_score(val_data['price_direction'], val_predictions)
 
 **parameters валидации:**
 
@@ -1452,14 +1452,14 @@ class SCHRShort3MLModel:
  - Требования: отсутствие пропусков
  - Обработка: та же нормализация, что and for train
 
-- **`Predictions`**: Предсказания модели
+- **`predictions`**: Предсказания модели
  - Тип: numpy array
  - Содержит: предсказания for all testsых данных
  - Применение: расчет доходности
  - Формат: бинарные метки (0/1)
  - Интерпретация: 0 = падение, 1 = рост
 
-- **`probabilities`**: Вероятности Predictions
+- **`probabilities`**: Вероятности predictions
  - Тип: numpy array
  - Содержит: вероятности for каждого класса
  - Применение: оценка уверенности
@@ -1475,7 +1475,7 @@ class SCHRShort3MLModel:
 
 - **`strategy_returns`**: Доходность стратегии
  - Тип: pandas Series
- - Формула: Predictions * returns
+ - Формула: predictions * returns
  - Применение: расчет доходности стратегии
  - Единицы: безразмерная величина
  - Интерпретация: положительная = прибыль, отрицательная = убыток
@@ -1576,12 +1576,12 @@ def schr_short3_backtest(self, data, start_date, end_date):
  test_data = data[(data.index >= start_date) & (data.index <= end_date)]
 
  # Предсказания
- Predictions = self.predictor.predict(test_data)
+ predictions = self.predictor.predict(test_data)
  probabilities = self.predictor.predict_proba(test_data)
 
  # Расчет доходности
  returns = test_data['close'].pct_change()
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  # Метрики backtest
  total_return = strategy_returns.sum()

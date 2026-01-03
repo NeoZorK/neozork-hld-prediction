@@ -1,7 +1,7 @@
 # Plan Multi MTF (Multi-Timeframe) Analysis for SCHR Levels
 
 ## 🎯 Goal
-Create system Analysis SCHR Levels on multiple Timeframes simultaneously for improving accuracy Predictions.
+Create system Analysis SCHR Levels on multiple Timeframes simultaneously for improving accuracy predictions.
 
 ## 📊 Concept Multi MTF
 
@@ -112,9 +112,9 @@ def predict_multi_mtf(self, data: MultiMTFdata) -> Dict[str, Any]:
 
  Returns:
  {
- 'single_tf_Predictions': {...}, # Предсказания on каждому TF
- 'cross_tf_Predictions': {...}, # Cross-Timeframe предсказания
- 'ensemble_Predictions': {...}, # Ensemble предсказания
+ 'single_tf_predictions': {...}, # Предсказания on каждому TF
+ 'cross_tf_predictions': {...}, # Cross-Timeframe предсказания
+ 'ensemble_predictions': {...}, # Ensemble предсказания
  'consensus': {...}, # Консенсус all моделей
  'confidence': {...} # Уверенность in предсказаниях
  }
@@ -178,16 +178,16 @@ def select_optimal_Timeframes(market_conditions: Dict) -> List[str]:
 
 ### 2. Dynamic Weighting
 ```python
-def calculate_dynamic_weights(Predictions: Dict, market_volatility: float) -> Dict[str, float]:
+def calculate_dynamic_weights(predictions: Dict, market_volatility: float) -> Dict[str, float]:
  """
- Динамическое взвешивание Predictions
+ Динамическое взвешивание predictions
  in dependencies from волатильности рынка
  """
 ```
 
 ### 3. Conflict resolution
 ```python
-def resolve_Timeframe_conflicts(Predictions: Dict) -> Dict[str, Any]:
+def resolve_Timeframe_conflicts(predictions: Dict) -> Dict[str, Any]:
  """
  Разрешение конфликтов между Timeframeми
  with использованием правил приоритета
@@ -197,7 +197,7 @@ def resolve_Timeframe_conflicts(Predictions: Dict) -> Dict[str, Any]:
 ## 📊 Ожидаемые результаты
 
 ### Улучшения точности
-- **+15-25%** точность Predictions
+- **+15-25%** точность predictions
 - **+30-40%** снижение ложных сигналов
 - **+20-30%** improve risk-adjusted returns
 
@@ -215,18 +215,18 @@ def resolve_Timeframe_conflicts(Predictions: Dict) -> Dict[str, Any]:
 - Performance метрики
 - Alert система
 
-### 2. Логирование
-- Детальные логи on каждому TF
+### 2. Logsрование
+- Детальные Logs on каждому TF
 - Трассировка решений
 - Performance метрики
 - Error tracking
 
 ## 🎯 Заключение
 
-Multi MTF анализ значительно повысит качество Predictions SCHR Levels за счет:
+Multi MTF анализ значительно повысит качество predictions SCHR Levels за счет:
 - Учета иерархии Timeframes
 - Снижения ложных сигналов
 - Повышения уверенности in предсказаниях
 - Адаптации к рыночным условиям
 
-Это следующий логический шаг in развитии системы после успешной реализации single-Timeframe Analysis.
+Это следующий Logsческий шаг in развитии системы после успешной реализации single-Timeframe Analysis.

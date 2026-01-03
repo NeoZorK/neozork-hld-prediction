@@ -5,7 +5,7 @@
 
 ## Why оптимизация for Apple Silicon критически важна
 
-**Почему Apple Silicon - это революция in машинном обучении?** Потому что эти чипы специально разWorkingны for ML-задач, обеспечивая in 3-5 раз лучшую производительность при меньшем энергопотреблении.
+**Почему Apple Silicon - это революция in машинном обучении?** Потому что эти чипы специально разWorkingны for ML-задач, обеспечивая by 3-5 times лучшую производительность при меньшем энергопотреблении.
 
 ### Преимущества Apple Silicon for ML
 
@@ -16,7 +16,7 @@
 
 ### Проблемы без оптимизации
 
-- **Медленная Working**: in 3-5 раз медленнее, чем могло бы быть
+- **Медленная Working**: by 3-5 times медленнее, чем могло бы быть
 - **Высокое энергопотребление**: Батарея разряжается за часы
 - **Перегрев**: Система тормозит из-за теплового дросселирования
 - **Неэффективное использование ресурсов**: Только CPU, игнорирование GPU
@@ -28,9 +28,9 @@
 
 **Почему Apple Silicon требует специального подхода?** Потому что это архитектура ARM, а not x86, and требует специальных оптимизаций for максимальной производительности.
 
-Apple Silicon MacBook with чипами M1, M2, M3 предоставляют уникальные возможности for acceleration машинного обучения через:
+Apple Silicon MacBook with чипами M1, M2, M3 предоставляют уникальные возможности for acceleration machine learning через:
 
-- **MLX** - фреймворк Apple for машинного обучения on Apple Silicon
+- **MLX** - фреймворк Apple for machine learning on Apple Silicon
 - **Ray** - распределенные вычисления with поддержкой Apple Silicon
 - **OpenMP** - параллельные вычисления
 - **Metal Performance Shaders (MPS)** - GPU ускорение
@@ -48,7 +48,7 @@ Apple Silicon MacBook with чипами M1, M2, M3 предоставляют у
 - **Оптимизированные библиотеки**: NumPy, SciPy with поддержкой Accelerate
 - **Metal Performance Shaders**: GPU ускорение for матричных операций
 - **OpenMP**: Параллельные вычисления on CPU
-- **MLX**: Специализированный фреймворк Apple for ML
+- **MLX**: Specialized фреймворк Apple for ML
 - **Ray**: Распределенные вычисления with поддержкой Apple Silicon
 
 ### 1. Базовая installation with оптимизацией
@@ -437,10 +437,10 @@ class MLXOptimizedPredictor:
  # Prediction with MLX
  # mx.eval() обеспечивает ленивое выполнение and оптимизацию
  with mx.eval():
- Predictions = self.mlx_model(mlx_data)
+ predictions = self.mlx_model(mlx_data)
 
  # Преобразование обратно in NumPy for совместимости
- return np.array(Predictions)
+ return np.array(predictions)
 
 # Использование MLX предиктора
 def create_mlx_predictor(model_path: str):
@@ -540,7 +540,7 @@ def train_with_mlx_optimization(train_data: pd.dataFrame):
  """
 
  # Оптимизация данных for MLX
- # Преобразование in формат, оптимизированный for Apple Silicon
+ # Преобразование in формат, optimized for Apple Silicon
  optimized_data = optimize_data_for_mlx(train_data)
 
  # create предиктора with оптимизацией for Apple Silicon
@@ -1178,9 +1178,9 @@ def run_optimized_training():
 
  # Тестирование
  test_data = data.sample(1000)
- Predictions = predictor.predict(test_data)
+ predictions = predictor.predict(test_data)
 
- print(f"Обучение COMPLETED, предсказания: {len(Predictions)}")
+ print(f"Обучение COMPLETED, предсказания: {len(predictions)}")
 
  return predictor
 
@@ -1450,7 +1450,7 @@ def complete_apple_silicon_example():
 
  # 5. Тестирование
  test_data = data.sample(1000)
- Predictions = predictor.predict(test_data)
+ predictions = predictor.predict(test_data)
 
  # 6. Оценка качества
  performance = predictor.evaluate(test_data)
@@ -1705,7 +1705,7 @@ def train_with_optimal_config(data: pd.dataFrame, target_col: str):
 
 - **Metal Performance Shaders**: Специализированные GPU операции
 - **MPS Backend**: PyTorch with поддержкой Apple GPU
-- **MLX**: Специализированный фреймворк Apple for ML
+- **MLX**: Specialized фреймворк Apple for ML
 - **Унифицированная память**: Эффективный обмен данными между CPU and GPU
 - **Neural Engine**: Специализированные ядра for ML операций
 - **Оптимизация памяти**: Минимизация копирования данных

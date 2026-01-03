@@ -1,11 +1,11 @@
-# Углубленное description Feature Generation and Apply
+# Углубленное describe Feature Generation and Apply
 
 **Author:** Shcherbyna Rostyslav
 **Дата:** 2024
 
 ## Why Feature Generation - это ключ к успеху in ML
 
-**Почему 80% успеха машинного обучения зависит from качества признаков?** Потому что даже самый лучший алгоритм not сможет найти паттерны in плохих данных. Feature Generation - это искусство превращения сырых данных in золото for машинного обучения.
+**Почему 80% успеха machine learning зависит from качества признаков?** Потому что даже самый лучший алгоритм not сможет найти паттерны in плохих данных. Feature Generation - это искусство превращения сырых данных in золото for machine learning.
 
 ### Что дает правильная генерация признаков?
 
@@ -121,7 +121,7 @@ graph TD
 
  D --> D1[Комбинации признаков]
  D --> D2[Полиномиальные признаки]
- D --> D3[Логические операции]
+ D --> D3[Logsческие операции]
 
  E --> E1[Зависят from времени]
  E --> E2[Лаговые признаки]
@@ -181,7 +181,7 @@ graph TD
 
 - Комбинации нескольких признаков
 - Полиномиальные признаки
-- Логические операции
+- Logsческие операции
 
 ### 4. Временные признаки (Temporal Features)
 
@@ -1346,7 +1346,7 @@ def create_text_features(df, text_col):
  return df
 
 # example использования
-df = create_text_features(df, 'description')
+df = create_text_features(df, 'describe')
 ```
 
 **TF-IDF признаки:**
@@ -1380,7 +1380,7 @@ def create_tfidf_features(df, text_col, max_features=1000):
  return df
 
 # example использования
-df = create_tfidf_features(df, 'description', max_features=1000)
+df = create_tfidf_features(df, 'describe', max_features=1000)
 ```
 
 **Word2Vec признаки:**
@@ -1428,7 +1428,7 @@ def create_word2vec_features(df, text_col, vector_size=100):
  return df
 
 # example использования
-df = create_word2vec_features(df, 'description', vector_size=100)
+df = create_word2vec_features(df, 'describe', vector_size=100)
 ```
 
 ## Автоматическая генерация признаков
@@ -1456,7 +1456,7 @@ graph TD
  E --> E1[Бинарные взаимодействия]
  E --> E2[Тройные взаимодействия]
  E --> E3[Математические операции]
- E --> E4[Логические комбинации]
+ E --> E4[Logsческие комбинации]
 
  C1 --> F[Автоматически сгенерированные признаки]
  C2 --> F
@@ -1985,16 +1985,16 @@ def apply_features_to_autogluon(df, target_col, feature_cols, test_size=0.2):
  )
 
  # Prediction
- Predictions = predictor.predict(X_test)
+ predictions = predictor.predict(X_test)
 
  # Оценка качества
  from sklearn.metrics import mean_squared_error, r2_score
- mse = mean_squared_error(y_test, Predictions)
- r2 = r2_score(y_test, Predictions)
+ mse = mean_squared_error(y_test, predictions)
+ r2 = r2_score(y_test, predictions)
 
  return {
  'predictor': predictor,
- 'Predictions': Predictions,
+ 'predictions': predictions,
  'mse': mse,
  'r2': r2,
  'feature_importance': predictor.feature_importance()
@@ -2262,7 +2262,7 @@ validation_results = validate_features(df, 'target', feature_cols, validation_me
 
 ### 📊 Основные parameters функций генерации признаков
 
-| function | parameter | Значение on умолчанию | description | Диапазон/Влияние |
+| function | parameter | Значение on умолчанию | describe | Диапазон/Влияние |
 |---------|----------|----------------------|----------|------------------|
 | **create_lag_features** | | | | |
 | | `lags` | [1, 2, 3, 7, 14, 30] | List лагов for создания | 1-365 дней |
@@ -2379,7 +2379,7 @@ validation_results = validate_features(df, 'target', feature_cols, validation_me
 
 ## Заключение
 
-Feature Generation - это основа успешного машинного обучения. Правильная генерация признаков может:
+Feature Generation - это основа успешного machine learning. Правильная генерация признаков может:
 
 1. **Увеличить точность** моделей on 20-50%
 2. **Улучшить интерпретируемость** результатов

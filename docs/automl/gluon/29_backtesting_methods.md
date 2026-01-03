@@ -1,4 +1,4 @@
-# Углубленное description методик бэктестинга
+# Углубленное describe методик бэктестинга
 
 **Author:** Shcherbyna Rostyslav
 **Дата:** 2024
@@ -199,7 +199,7 @@ def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
  model : object
  Обученная ML модель with методами fit() and predict()
  - Должен поддерживать fit(X, y) for обучения
- - Должен поддерживать predict(X) for Predictions
+ - Должен поддерживать predict(X) for predictions
  - Рекомендуется использовать TabularPredictor из AutoGluon
 
  train_size : float, default=0.7
@@ -221,7 +221,7 @@ def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
  - 'min_test_samples': int, default=50 - минимальное количество testsых образцов
  - 'shuffle': bool, default=False - перемешивать ли data (not рекомендуется for временных рядов)
  - 'stratify': bool, default=False - стратифицированное разделение
- - 'return_Predictions': bool, default=True - возвращать предсказания
+ - 'return_predictions': bool, default=True - возвращать предсказания
  - 'return_metrics': bool, default=True - возвращать метрики
  - 'verbose': bool, default=False - выводить подробную информацию
 
@@ -245,7 +245,7 @@ def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
  - 'total_return': float - общая доходность стратегии
  - 'annual_return': float - годовая доходность
  - 'volatility': float - волатильность стратегии
- - 'Predictions': np.array - предсказания модели (если return_Predictions=True)
+ - 'predictions': np.array - предсказания модели (если return_predictions=True)
  - 'train_metrics': dict - метрики on обучающих данных
  - 'test_metrics': dict - метрики on testsых данных
  - 'config_Used': dict - использованная configuration
@@ -280,7 +280,7 @@ def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
  'min_test_samples': 50,
  'shuffle': False,
  'stratify': False,
- 'return_Predictions': True,
+ 'return_predictions': True,
  'return_metrics': True,
  'verbose': False
  }
@@ -324,13 +324,13 @@ def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
 
  # Предсказания
  try:
- Predictions = model.predict(test_data)
+ predictions = model.predict(test_data)
  except Exception as e:
  raise TypeError(f"Ошибка предсказания модели: {e}")
 
  # Оценка качества
  returns = test_data['returns']
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  # Базовые метрики
  sharpe = strategy_returns.mean() / strategy_returns.std() * np.sqrt(252) if strategy_returns.std() > 0 else 0
@@ -350,14 +350,14 @@ def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
  }
 
  # Дополнительные результаты
- if config['return_Predictions']:
- results['Predictions'] = Predictions
+ if config['return_predictions']:
+ results['predictions'] = predictions
 
  if config['return_metrics']:
  # Метрики on обучающих данных
  train_returns = train_data['returns']
- train_Predictions = model.predict(train_data)
- train_strategy_returns = train_Predictions * train_returns
+ train_predictions = model.predict(train_data)
+ train_strategy_returns = train_predictions * train_returns
 
  results['train_metrics'] = {
  'sharpe': train_strategy_returns.mean() / train_strategy_returns.std() * np.sqrt(252) if train_strategy_returns.std() > 0 else 0,
@@ -401,7 +401,7 @@ def temporal_dependency_backtest(data, model, lookback=30, step=1,
  model : object
  Обученная ML модель with методами fit() and predict()
  - Должен поддерживать fit(X, y) for обучения
- - Должен поддерживать predict(X) for Predictions
+ - Должен поддерживать predict(X) for predictions
  - Рекомендуется использовать TabularPredictor из AutoGluon
 
  lookback : int, default=30
@@ -424,7 +424,7 @@ def temporal_dependency_backtest(data, model, lookback=30, step=1,
  - 'max_lookback': int, default=100 - максимальный размер окна обучения
  - 'min_step': int, default=1 - минимальный шаг
  - 'max_step': int, default=10 - максимальный шаг
- - 'return_Predictions': bool, default=False - возвращать предсказания
+ - 'return_predictions': bool, default=False - возвращать предсказания
  - 'return_metrics': bool, default=True - возвращать метрики
  - 'verbose': bool, default=False - выводить подробную информацию
  - 'parallel': bool, default=False - использовать параллельные вычисления
@@ -450,7 +450,7 @@ def temporal_dependency_backtest(data, model, lookback=30, step=1,
  - 'return': float - доходность стратегии
  - 'volatility': float - волатильность стратегии
  - 'max_drawdown': float - максимальная просадка
- - 'Predictions': np.array - предсказания модели (если return_Predictions=True)
+ - 'predictions': np.array - предсказания модели (если return_predictions=True)
  - 'train_size': int - размер обучающей выборки
  - 'test_size': int - размер testsой выборки
 
@@ -486,7 +486,7 @@ def temporal_dependency_backtest(data, model, lookback=30, step=1,
  'max_lookback': 100,
  'min_step': 1,
  'max_step': 10,
- 'return_Predictions': False,
+ 'return_predictions': False,
  'return_metrics': True,
  'verbose': False,
  'parallel': False,
@@ -529,11 +529,11 @@ def temporal_dependency_backtest(data, model, lookback=30, step=1,
  model.fit(train_data)
 
  # Предсказания
- Predictions = model.predict(test_data)
+ predictions = model.predict(test_data)
 
  # Оценка качества
  returns = test_data['returns']
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  # Базовые метрики
  sharpe = strategy_returns.mean() / strategy_returns.std() * np.sqrt(252) if strategy_returns.std() > 0 else 0
@@ -553,8 +553,8 @@ def temporal_dependency_backtest(data, model, lookback=30, step=1,
  }
 
  # Дополнительные результаты
- if config['return_Predictions']:
- result['Predictions'] = Predictions
+ if config['return_predictions']:
+ result['predictions'] = predictions
 
  results.append(result)
 
@@ -654,7 +654,7 @@ def monte_carlo_backtest(data, model, n_simulations=1000, confidence_level=0.95,
  model : object
  Обученная ML модель with методами fit() and predict()
  - Должен поддерживать fit(X, y) for обучения
- - Должен поддерживать predict(X) for Predictions
+ - Должен поддерживать predict(X) for predictions
  - Рекомендуется использовать TabularPredictor из AutoGluon
 
  n_simulations : int, default=1000
@@ -678,7 +678,7 @@ def monte_carlo_backtest(data, model, n_simulations=1000, confidence_level=0.95,
  - 'test_frac': float, default=0.3 - доля данных for тестирования (0.0 < test_frac < 1.0)
  - 'min_samples': int, default=100 - минимальное количество образцов in выборке
  - 'max_samples': int, default=10000 - максимальное количество образцов in выборке
- - 'return_Predictions': bool, default=False - возвращать предсказания
+ - 'return_predictions': bool, default=False - возвращать предсказания
  - 'return_metrics': bool, default=True - возвращать метрики
  - 'verbose': bool, default=False - выводить подробную информацию
  - 'parallel': bool, default=False - использовать параллельные вычисления
@@ -747,7 +747,7 @@ def monte_carlo_backtest(data, model, n_simulations=1000, confidence_level=0.95,
  'test_frac': 0.3,
  'min_samples': 100,
  'max_samples': 10000,
- 'return_Predictions': False,
+ 'return_predictions': False,
  'return_metrics': True,
  'verbose': False,
  'parallel': False,
@@ -813,11 +813,11 @@ def monte_carlo_backtest(data, model, n_simulations=1000, confidence_level=0.95,
  model.fit(train_data)
 
  # Предсказания
- Predictions = model.predict(test_data)
+ predictions = model.predict(test_data)
 
  # Оценка качества
  returns = test_data['returns']
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  # Базовые метрики
  sharpe = strategy_returns.mean() / strategy_returns.std() * np.sqrt(252) if strategy_returns.std() > 0 else 0
@@ -839,8 +839,8 @@ def monte_carlo_backtest(data, model, n_simulations=1000, confidence_level=0.95,
  }
 
  # Дополнительные результаты
- if config['return_Predictions']:
- result['Predictions'] = Predictions
+ if config['return_predictions']:
+ result['predictions'] = predictions
 
  results.append(result)
  successful_simulations += 1
@@ -938,7 +938,7 @@ def bootstrap_backtest(data, model, n_bootstrap=1000, block_size=10,
  model : object
  Обученная ML модель with методами fit() and predict()
  - Должен поддерживать fit(X, y) for обучения
- - Должен поддерживать predict(X) for Predictions
+ - Должен поддерживать predict(X) for predictions
  - Рекомендуется использовать TabularPredictor из AutoGluon
 
  n_bootstrap : int, default=1000
@@ -963,7 +963,7 @@ def bootstrap_backtest(data, model, n_bootstrap=1000, block_size=10,
  - 'max_blocks': int, default=1000 - максимальное количество блоков
  - 'min_samples': int, default=100 - минимальное количество образцов in выборке
  - 'max_samples': int, default=10000 - максимальное количество образцов in выборке
- - 'return_Predictions': bool, default=False - возвращать предсказания
+ - 'return_predictions': bool, default=False - возвращать предсказания
  - 'return_metrics': bool, default=True - возвращать метрики
  - 'verbose': bool, default=False - выводить подробную информацию
  - 'parallel': bool, default=False - использовать параллельные вычисления
@@ -995,7 +995,7 @@ def bootstrap_backtest(data, model, n_bootstrap=1000, block_size=10,
  - 'train_size': int - размер обучающей выборки
  - 'test_size': int - размер testsой выборки
  - 'n_blocks': int - количество блоков in выборке
- - 'Predictions': np.array - предсказания модели (если return_Predictions=True)
+ - 'predictions': np.array - предсказания модели (если return_predictions=True)
 
  Raises:
  -------
@@ -1032,7 +1032,7 @@ def bootstrap_backtest(data, model, n_bootstrap=1000, block_size=10,
  'max_blocks': 1000,
  'min_samples': 100,
  'max_samples': 10000,
- 'return_Predictions': False,
+ 'return_predictions': False,
  'return_metrics': True,
  'verbose': False,
  'parallel': False,
@@ -1114,11 +1114,11 @@ def bootstrap_backtest(data, model, n_bootstrap=1000, block_size=10,
  model.fit(train_data)
 
  # Предсказания
- Predictions = model.predict(test_data)
+ predictions = model.predict(test_data)
 
  # Оценка качества
  returns = test_data['returns']
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  # Базовые метрики
  sharpe = strategy_returns.mean() / strategy_returns.std() * np.sqrt(252) if strategy_returns.std() > 0 else 0
@@ -1141,8 +1141,8 @@ def bootstrap_backtest(data, model, n_bootstrap=1000, block_size=10,
  }
 
  # Дополнительные результаты
- if config['return_Predictions']:
- result['Predictions'] = Predictions
+ if config['return_predictions']:
+ result['predictions'] = predictions
 
  results.append(result)
  successful_bootstraps += 1
@@ -1252,7 +1252,7 @@ def stress_test_backtest(data, model, stress_scenarios, config=None, validation=
  model : object
  Обученная ML модель with методами fit() and predict()
  - Должен поддерживать fit(X, y) for обучения
- - Должен поддерживать predict(X) for Predictions
+ - Должен поддерживать predict(X) for predictions
  - Рекомендуется использовать TabularPredictor из AutoGluon
 
  stress_scenarios : dict
@@ -1272,7 +1272,7 @@ def stress_test_backtest(data, model, stress_scenarios, config=None, validation=
  - 'test_frac': float, default=0.3 - доля данных for тестирования (0.0 < test_frac < 1.0)
  - 'min_samples': int, default=100 - минимальное количество образцов
  - 'max_samples': int, default=10000 - максимальное количество образцов
- - 'return_Predictions': bool, default=False - возвращать предсказания
+ - 'return_predictions': bool, default=False - возвращать предсказания
  - 'return_metrics': bool, default=True - возвращать метрики
  - 'verbose': bool, default=False - выводить подробную информацию
  - 'parallel': bool, default=False - использовать параллельные вычисления
@@ -1339,7 +1339,7 @@ def stress_test_backtest(data, model, stress_scenarios, config=None, validation=
  'test_frac': 0.3,
  'min_samples': 100,
  'max_samples': 10000,
- 'return_Predictions': False,
+ 'return_predictions': False,
  'return_metrics': True,
  'verbose': False,
  'parallel': False,
@@ -1407,11 +1407,11 @@ def stress_test_backtest(data, model, stress_scenarios, config=None, validation=
  model.fit(train_data)
 
  # Предсказания
- Predictions = model.predict(test_data)
+ predictions = model.predict(test_data)
 
  # Оценка качества
  returns = test_data['returns']
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  # Базовые метрики
  sharpe = strategy_returns.mean() / strategy_returns.std() * np.sqrt(252) if strategy_returns.std() > 0 else 0
@@ -1433,8 +1433,8 @@ def stress_test_backtest(data, model, stress_scenarios, config=None, validation=
  }
 
  # Дополнительные результаты
- if config['return_Predictions']:
- scenario_result['Predictions'] = Predictions
+ if config['return_predictions']:
+ scenario_result['predictions'] = predictions
 
  scenario_results[scenario_name] = scenario_result
 
@@ -1526,14 +1526,14 @@ def regime_based_backtest(data, model, regime_detector, config=None, validation=
  model : object
  Обученная ML модель with методами fit() and predict()
  - Должен поддерживать fit(X, y) for обучения
- - Должен поддерживать predict(X) for Predictions
+ - Должен поддерживать predict(X) for predictions
  - Рекомендуется использовать TabularPredictor из AutoGluon
 
  regime_detector : object
  Детектор рыночных режимов with методом detect_regimes()
  - Должен поддерживать detect_regimes(data) -> pd.Series
  - Возвращает Series with режимами for каждого наблюдения
- - Рекомендуется использовать Hidden Markov Model or аналогичные методы
+ - Рекомендуется использовать Hidden Markov Model or анаLogsчные методы
 
  config : dict, optional
  Дополнительная configuration for бэктестинга
@@ -1541,7 +1541,7 @@ def regime_based_backtest(data, model, regime_detector, config=None, validation=
  - 'test_frac': float, default=0.3 - доля данных for тестирования (0.0 < test_frac < 1.0)
  - 'min_samples_per_regime': int, default=50 - минимальное количество образцов on режим
  - 'max_regimes': int, default=10 - максимальное количество режимов
- - 'return_Predictions': bool, default=False - возвращать предсказания
+ - 'return_predictions': bool, default=False - возвращать предсказания
  - 'return_metrics': bool, default=True - возвращать метрики
  - 'verbose': bool, default=False - выводить подробную информацию
  - 'parallel': bool, default=False - использовать параллельные вычисления
@@ -1604,7 +1604,7 @@ def regime_based_backtest(data, model, regime_detector, config=None, validation=
  'test_frac': 0.3,
  'min_samples_per_regime': 50,
  'max_regimes': 10,
- 'return_Predictions': False,
+ 'return_predictions': False,
  'return_metrics': True,
  'verbose': False,
  'parallel': False,
@@ -1679,11 +1679,11 @@ def regime_based_backtest(data, model, regime_detector, config=None, validation=
  model.fit(train_data)
 
  # Предсказания
- Predictions = model.predict(test_data)
+ predictions = model.predict(test_data)
 
  # Оценка качества
  returns = test_data['returns']
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  # Базовые метрики
  sharpe = strategy_returns.mean() / strategy_returns.std() * np.sqrt(252) if strategy_returns.std() > 0 else 0
@@ -1706,8 +1706,8 @@ def regime_based_backtest(data, model, regime_detector, config=None, validation=
  }
 
  # Дополнительные результаты
- if config['return_Predictions']:
- regime_result['Predictions'] = Predictions
+ if config['return_predictions']:
+ regime_result['predictions'] = predictions
 
  regime_results[regime] = regime_result
 
@@ -1804,14 +1804,14 @@ graph TD
  C --> F[Предсказания стратегии 2]
  D --> G[Предсказания стратегии 3]
 
- E --> H[Взвешивание Predictions]
+ E --> H[Взвешивание predictions]
  F --> H
  G --> H
 
  H --> I[Взвешенные предсказания<br/>w1*p1 + w2*p2 + w3*p3]
 
  I --> J[Рыночные доходности]
- J --> K[Портфельные доходности<br/>weighted_Predictions * returns]
+ J --> K[Портфельные доходности<br/>weighted_predictions * returns]
 
  K --> L[Метрики портфеля]
  L --> M[Коэффициент Шарпа портфеля]
@@ -1886,7 +1886,7 @@ def Portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
  - 'test_frac': float, default=0.3 - доля данных for тестирования (0.0 < test_frac < 1.0)
  - 'min_samples': int, default=100 - минимальное количество образцов
  - 'max_samples': int, default=10000 - максимальное количество образцов
- - 'return_Predictions': bool, default=False - возвращать предсказания
+ - 'return_predictions': bool, default=False - возвращать предсказания
  - 'return_metrics': bool, default=True - возвращать метрики
  - 'verbose': bool, default=False - выводить подробную информацию
  - 'parallel': bool, default=False - использовать параллельные вычисления
@@ -1953,7 +1953,7 @@ def Portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
  'test_frac': 0.3,
  'min_samples': 100,
  'max_samples': 10000,
- 'return_Predictions': False,
+ 'return_predictions': False,
  'return_metrics': True,
  'verbose': False,
  'parallel': False,
@@ -2033,32 +2033,32 @@ def Portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
  print(f"Ошибка обучения стратегии {i+1}: {e}")
  continue
 
- # Получение Predictions from all стратегий
- Predictions = {}
+ # Получение predictions from all стратегий
+ predictions = {}
  individual_returns = {}
 
  for i, strategy in enumerate(strategies):
  try:
  pred = strategy.predict(test_data)
- Predictions[f'strategy_{i}'] = pred
+ predictions[f'strategy_{i}'] = pred
  individual_returns[f'strategy_{i}'] = pred * test_data['returns']
  except Exception as e:
  if config['verbose']:
  print(f"Ошибка предсказания стратегии {i+1}: {e}")
  continue
 
- if not Predictions:
+ if not predictions:
  raise ValueError("not удалось получить предсказания ни from одной стратегии")
 
  # create dataFrame with предсказаниями
- Predictions_df = pd.dataFrame(Predictions)
+ predictions_df = pd.dataFrame(predictions)
 
- # Взвешивание Predictions
- weighted_Predictions = (Predictions_df * weights).sum(axis=1)
+ # Взвешивание predictions
+ weighted_predictions = (predictions_df * weights).sum(axis=1)
 
  # Расчет доходности портфеля
  returns = test_data['returns']
- Portfolio_returns = weighted_Predictions * returns
+ Portfolio_returns = weighted_predictions * returns
 
  # Применение транзакционных издержек and проскальзывания
  if config['transaction_costs'] > 0 or config['slippage'] > 0:
@@ -2132,9 +2132,9 @@ def Portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
  }
 
  # Дополнительные результаты
- if config['return_Predictions']:
- final_results['Predictions'] = Predictions_df
- final_results['weighted_Predictions'] = weighted_Predictions
+ if config['return_predictions']:
+ final_results['predictions'] = predictions_df
+ final_results['weighted_predictions'] = weighted_predictions
 
  if config['return_metrics']:
  final_results['Portfolio_returns'] = Portfolio_returns
@@ -2196,7 +2196,7 @@ def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
  - 'test_window': int, default=30 - окно for тестирования (in днях)
  - 'min_samples': int, default=100 - минимальное количество образцов
  - 'max_samples': int, default=10000 - максимальное количество образцов
- - 'return_Predictions': bool, default=False - возвращать предсказания
+ - 'return_predictions': bool, default=False - возвращать предсказания
  - 'return_metrics': bool, default=True - возвращать метрики
  - 'verbose': bool, default=False - выводить подробную информацию
  - 'parallel': bool, default=False - использовать параллельные вычисления
@@ -2234,7 +2234,7 @@ def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
  - 'weights': List - веса стратегий
  - 'rebalance_cost': float - стоимость перебалансировки
  - 'strategy_returns': dict - доходности отдельных стратегий
- - 'Predictions': dict - предсказания стратегий (если return_Predictions=True)
+ - 'predictions': dict - предсказания стратегий (если return_predictions=True)
 
  Raises:
  -------
@@ -2268,7 +2268,7 @@ def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
  'test_window': 30,
  'min_samples': 100,
  'max_samples': 10000,
- 'return_Predictions': False,
+ 'return_predictions': False,
  'return_metrics': True,
  'verbose': False,
  'parallel': False,
@@ -2324,21 +2324,21 @@ def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
  test_data = data[i:i+config['test_window']]
 
  # Обучение all стратегий
- strategy_Predictions = {}
+ strategy_predictions = {}
  strategy_returns = {}
 
  for j, strategy in enumerate(strategies):
  try:
  strategy.fit(train_data)
  pred = strategy.predict(test_data)
- strategy_Predictions[f'strategy_{j}'] = pred
+ strategy_predictions[f'strategy_{j}'] = pred
  strategy_returns[f'strategy_{j}'] = pred * test_data['returns']
  except Exception as e:
  if config['verbose']:
  print(f"Ошибка стратегии {j+1} on итерации {i}: {e}")
  continue
 
- if not strategy_Predictions:
+ if not strategy_predictions:
  if config['verbose']:
  print(f"Пропускаем итерацию {i}: нет успешных стратегий")
  continue
@@ -2354,7 +2354,7 @@ def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
  weights = calculate_adaptive_weights(strategy_returns, train_data, config)
  else:
  # Равномерное распределение
- weights = np.ones(len(strategy_Predictions)) / len(strategy_Predictions)
+ weights = np.ones(len(strategy_predictions)) / len(strategy_predictions)
 
  # Применение ограничений on веса
  weights = np.clip(weights, config['min_weight'], config['max_weight'])
@@ -2364,12 +2364,12 @@ def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
  if previous_weights is not None and config['weight_smoothing'] > 0:
  weights = (1 - config['weight_smoothing']) * weights + config['weight_smoothing'] * previous_weights
 
- # Взвешивание Predictions
- weighted_Predictions = sum(w * p for w, p in zip(weights, strategy_Predictions.values()))
+ # Взвешивание predictions
+ weighted_predictions = sum(w * p for w, p in zip(weights, strategy_predictions.values()))
 
  # Расчет доходности портфеля
  returns = test_data['returns']
- Portfolio_returns = weighted_Predictions * returns
+ Portfolio_returns = weighted_predictions * returns
 
  # Применение транзакционных издержек and проскальзывания
  rebalance_cost = 0.0
@@ -2397,8 +2397,8 @@ def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
  }
 
  # Дополнительные результаты
- if config['return_Predictions']:
- result['Predictions'] = strategy_Predictions
+ if config['return_predictions']:
+ result['predictions'] = strategy_predictions
 
  results.append(result)
  previous_weights = weights.copy()
@@ -2495,7 +2495,7 @@ def calculate_basic_metrics(returns, config=None, validation=True):
  - 'trading_days': int, default=252 - количество торговых дней in году
  - 'risk_free_rate': float, default=0.0 - безрисковая ставка (0.0-0.1)
  - 'min_periods': int, default=30 - минимальное количество periods for расчета
- - 'return_Predictions': bool, default=False - возвращать предсказания
+ - 'return_predictions': bool, default=False - возвращать предсказания
  - 'return_metrics': bool, default=True - возвращать метрики
  - 'verbose': bool, default=False - выводить подробную информацию
  - 'include_skewness': bool, default=True - включать асимметрию
@@ -2558,7 +2558,7 @@ def calculate_basic_metrics(returns, config=None, validation=True):
  'trading_days': 252,
  'risk_free_rate': 0.0,
  'min_periods': 30,
- 'return_Predictions': False,
+ 'return_predictions': False,
  'return_metrics': True,
  'verbose': False,
  'include_skewness': True,
@@ -2705,7 +2705,7 @@ def calculate_max_drawdown(returns, config=None, validation=True):
  - 'method': str, default='cumulative' - метод расчета ('cumulative', 'rolling', 'peak')
  - 'window': int, default=None - окно for rolling метода (если None, используется весь период)
  - 'min_periods': int, default=30 - минимальное количество periods for расчета
- - 'return_Predictions': bool, default=False - возвращать предсказания
+ - 'return_predictions': bool, default=False - возвращать предсказания
  - 'return_metrics': bool, default=True - возвращать метрики
  - 'verbose': bool, default=False - выводить подробную информацию
  - 'include_drawdown_series': bool, default=False - включать серию просадок
@@ -2760,7 +2760,7 @@ def calculate_max_drawdown(returns, config=None, validation=True):
  'method': 'cumulative',
  'window': None,
  'min_periods': 30,
- 'return_Predictions': False,
+ 'return_predictions': False,
  'return_metrics': True,
  'verbose': False,
  'include_drawdown_series': False,
@@ -2936,7 +2936,7 @@ def calculate_stability_metrics(returns, window=252, config=None, validation=Tru
  - 'trading_days': int, default=252 - количество торговых дней in году
  - 'risk_free_rate': float, default=0.0 - безрисковая ставка (0.0-0.1)
  - 'min_periods': int, default=30 - минимальное количество periods for расчета
- - 'return_Predictions': bool, default=False - возвращать предсказания
+ - 'return_predictions': bool, default=False - возвращать предсказания
  - 'return_metrics': bool, default=True - возвращать метрики
  - 'verbose': bool, default=False - выводить подробную информацию
  - 'include_rolling_metrics': bool, default=True - включать скользящие метрики
@@ -2996,7 +2996,7 @@ def calculate_stability_metrics(returns, window=252, config=None, validation=Tru
  'trading_days': 252,
  'risk_free_rate': 0.0,
  'min_periods': 30,
- 'return_Predictions': False,
+ 'return_predictions': False,
  'return_metrics': True,
  'verbose': False,
  'include_rolling_metrics': True,
@@ -3472,11 +3472,11 @@ class BacktestingPipeline:
  self.model.fit(train_data)
 
  # Предсказания
- Predictions = self.model.predict(test_data)
+ predictions = self.model.predict(test_data)
 
  # Расчет метрик
  returns = test_data['returns']
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  self.results['simple'] = self.metrics_calculator.calculate(strategy_returns)
  return self.results['simple']
@@ -3496,11 +3496,11 @@ class BacktestingPipeline:
  self.model.fit(train_data)
 
  # Предсказания
- Predictions = self.model.predict(test_data)
+ predictions = self.model.predict(test_data)
 
  # Расчет метрик
  returns = test_data['returns']
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  metrics = self.metrics_calculator.calculate(strategy_returns)
  metrics['date'] = test_data.index[0]
@@ -3526,11 +3526,11 @@ class BacktestingPipeline:
  self.model.fit(train_data)
 
  # Предсказания
- Predictions = self.model.predict(test_data)
+ predictions = self.model.predict(test_data)
 
  # Расчет метрик
  returns = test_data['returns']
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  metrics = self.metrics_calculator.calculate(strategy_returns)
  results.append(metrics)
@@ -3634,7 +3634,7 @@ visualize_backtest_results(results, save_path='backtest_results.png')
 
 ### 📊 Основные parameters функций бэктестинга
 
-| function | Основные parameters | description | Диапазон значений | Рекомендации |
+| function | Основные parameters | describe | Диапазон значений | Рекомендации |
 |---------|-------------------|----------|-------------------|--------------|
 | **time_series_backtest** | `train_size`, `test_size`, `config`, `validation` | Простой бэктестинг временных рядов | train_size: 0.6-0.8, test_size: 0.2-0.4 | 70/30 for большинства случаев |
 | **temporal_dependency_backtest** | `lookback`, `step`, `config`, `validation` | Бэктестинг with временными зависимостями | lookback: 20-50, step: 1-10 | lookback=30, step=1 for точности |
@@ -3647,7 +3647,7 @@ visualize_backtest_results(results, save_path='backtest_results.png')
 
 ### 🔧 Конфигурационные parameters
 
-| parameter | description | Значение on умолчанию | Диапазон | Влияние on производительность |
+| parameter | describe | Значение on умолчанию | Диапазон | Влияние on производительность |
 |----------|----------|----------------------|----------|-------------------------------|
 | **train_frac** | Доля данных for обучения | 0.7 | 0.6-0.8 | Больше = лучше обучение, меньше тестирования |
 | **test_frac** | Доля данных for тестирования | 0.3 | 0.2-0.4 | Больше = надежнее тестирование |
@@ -3660,7 +3660,7 @@ visualize_backtest_results(results, save_path='backtest_results.png')
 
 ### 📈 Метрики качества
 
-| Метрика | description | Хорошие значения | Плохие значения | Как улучшить |
+| Метрика | describe | Хорошие значения | Плохие значения | Как улучшить |
 |---------|----------|------------------|-----------------|---------------|
 | **Sharpe Ratio** | Отношение доходности к риску | > 1.0 | < 0.5 | Улучшить модель, снизить волатильность |
 | **Max Drawdown** | Максимальная просадка | < 20% | > 50% | Улучшить риск-менеджмент |

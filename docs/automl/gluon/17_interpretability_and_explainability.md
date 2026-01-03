@@ -11,10 +11,10 @@
 - **Потеря доверия**: Пользователи not доверяют "черным ящикам"
 - **Регулятивные штрафы**: GDPR штрафы to 4% from оборота компании
 - **Дискриминация**: Модели могут принимать несправедливые решения
-- **Невозможность отладки**: Нельзя исправить ошибки без понимания логики
+- **Невозможность отладки**: Нельзя исправить ошибки без понимания Logsки
 
 ### Преимущества интерпретируемых моделей
-- **Доверие пользователей**: Понимание логики принятия решений
+- **Доверие пользователей**: Понимание Logsки принятия решений
 - **Соответствие законам**: GDPR, AI Act, другие регулятивные требования
 - **Лучшая отладка**: Можно найти and исправить ошибки
 - **improve модели**: Понимание важности признаков
@@ -30,10 +30,10 @@
 - **Intrinsic Interpretability**: Модели, которые изначально интерпретируемы (линейные, деревья решений)
 - **Post-hoc Interpretability**: Методы объяснения "черных ящиков" (SHAP, LIME, integrated Gradients)
 - **Global Methods**: Объяснение модели in целом (Feature importance, PDP, ALE)
-- **Local Methods**: Объяснение конкретных Predictions (LIME, SHAP Local, Counterfactuals)
+- **Local Methods**: Объяснение конкретных predictions (LIME, SHAP Local, Counterfactuals)
 
-Интерпретируемость машинного обучения - это способность понимать and объяснять решения, принимаемые ML-моделями. Это критически важно for:
-- **Доверия к модели** - понимание логики принятия решений
+Интерпретируемость machine learning - это способность понимать and объяснять решения, принимаемые ML-моделями. Это критически важно for:
+- **Доверия к модели** - понимание Logsки принятия решений
 - **Соответствие регулятивным требованиям** - GDPR, AI Act
 - **Отладка моделей** - выявление ошибок and смещений
 - **improve моделей** - понимание важности признаков
@@ -51,15 +51,15 @@
 - **Linear Regression**: Коэффициенты показывают влияние признаков
 - **Decision Tree**: Правила принятия решений видны in структуре дерева
 - **Logistic Regression**: Вероятности and коэффициенты интерпретируемы
-- **Rule-based**: Логические правила понятны человеку
+- **Rule-based**: Logsческие правила понятны человеку
 
 Модели, которые изначально интерпретируемы:
 
 **Преимущества внутренней интерпретируемости:**
-- **Точность**: Интерпретации точно отражают логику модели
+- **Точность**: Интерпретации точно отражают Logsку модели
 - **Простота**: not нужны дополнительные методы объяснения
 - **Надежность**: Интерпретации всегда доступны
-- **Понятность**: Логика модели прозрачна
+- **Понятность**: Logsка модели прозрачна
 
 ```python
 # Линейная регрессия - внутренне интерпретируема
@@ -331,10 +331,10 @@ def plot_ale(predictor, X, features):
 ## Методы локальной интерпретируемости
 
 <img src="images/optimized/local_methods.png" alt="Локальные методы интерпретируемости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 17.4: Локальные методы интерпретируемости - объяснение конкретных Predictions*
+*Рисунок 17.4: Локальные методы интерпретируемости - объяснение конкретных predictions*
 
 **Типы локальных методов:**
-- **LIME**: Локальные аппроксимации for объяснения Predictions
+- **LIME**: Локальные аппроксимации for объяснения predictions
 - **SHAP Local**: Локальные SHAP значения for конкретных экземпляров
 - **integrated Gradients**: Градиентные методы for нейронных networks
 - **Counterfactual ExPlanations**: Объяснения через контрфактические examples
@@ -551,9 +551,9 @@ def integrated_gradients(model, X, baseline=None, steps=50):
  # Вычисление градиентов
  with tf.GradientTape() as tape:
  tape.watch(interpolated)
- Predictions = model(interpolated)
+ predictions = model(interpolated)
 
- gradients = tape.gradient(Predictions, interpolated)
+ gradients = tape.gradient(predictions, interpolated)
 
  # Интегрирование градиентов
  integrated_grads = np.mean(gradients, axis=0) * (X - baseline)
@@ -601,11 +601,11 @@ def integrated_gradients(model, X, baseline=None, steps=50):
 
 - **`tf.GradientTape()`**: Контекст for вычисления градиентов
  - `tape.watch(interpolated)`: Отслеживание переменных
- - `Predictions = model(interpolated)`: Предсказания модели
+ - `predictions = model(interpolated)`: Предсказания модели
  - `gradients = tape.gradient()`: Вычисление градиентов
  - Применение: автоматическое дифференцирование
 
-- **`gradients`**: Градиенты Predictions on входным данным
+- **`gradients`**: Градиенты predictions on входным данным
  - Форма: (steps, batch_size, n_features)
  - Содержит: градиенты for каждого шага интерполяции
  - Применение: анализ чувствительности модели
@@ -766,8 +766,8 @@ def create_exPlanation_dashboard(predictor, X, y, instance_idx=0):
 
  # 5. Model Performance
  ax5 = axes[1, 1]
- Predictions = predictor.predict(X)
- accuracy = (Predictions == y).mean()
+ predictions = predictor.predict(X)
+ accuracy = (predictions == y).mean()
 
  ax5.bar(['Accuracy'], [accuracy])
  ax5.set_ylim(0, 1)
@@ -857,7 +857,7 @@ def choose_exPlanation_method(model_type, data_size, interpretability_requiremen
 
 - **`model_type`**: Тип модели for Analysis
  - `'Linear'`: Линейная регрессия
- - `'Logistic'`: Логистическая регрессия
+ - `'Logistic'`: Logsстическая регрессия
  - `'RandomForest'`: Случайный лес
  - `'XGBoost'`: XGBoost
  - `'Neuralnetwork'`: Нейронная сеть
@@ -1025,7 +1025,7 @@ def validate_exPlanations(predictor, X, y, exPlanation_method='shap'):
 
 Интерпретируемость and объяснимость критически важны for:
 
-1. **Доверия к модели** - понимание логики принятия решений
+1. **Доверия к модели** - понимание Logsки принятия решений
 2. **Соответствия требованиям** - GDPR, AI Act, регулятивные требования
 3. **Отладки and улучшения** - выявление проблем and возможностей оптимизации
 4. **Бизнес-ценности** - понимание факторов, влияющих on результат

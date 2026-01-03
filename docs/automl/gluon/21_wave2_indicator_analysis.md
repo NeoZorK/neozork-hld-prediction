@@ -18,7 +18,7 @@
 - **Точные сигналы**: Показывает начало and конец волн
 - **Риск-менеджмент**: Четкие уровни стоп-лосса
 - **Прибыльные сделки**: Торговля on направлению волны
-- **Психологическая стабильность**: Объективные сигналы вместо эмоций
+- **ПсихоLogsческая стабильность**: Объективные сигналы вместо эмоций
 
 ## Введение
 
@@ -30,7 +30,7 @@
 **Ключевые особенности WAVE2:**
 - **Многомерный анализ волн**: Учитывает множество параметров волны
 - **Временная адаптивность**: Адаптируется к изменениям рынка
-- **Высокая точность**: 94.7% точность Predictions
+- **Высокая точность**: 94.7% точность predictions
 - **Робастность**: Устойчив к рыночным шокам
 - **Масштабируемость**: Workingет on all Timeframes
 - **integration with блокчейном**: Прозрачные and автоматизированные операции
@@ -64,7 +64,7 @@ WAVE2 - это многомерный индикатор, который:
 **Категории данных WAVE2:**
 - **Basic Wave Parameters**: Амплитуда, частота, фаза, скорость, ускорение волны
 - **Wave Levels**: Максимум, минимум, центр, диапазон волны
-- **Wave Relations**: Отношения, Фибоначчи, откаты, расширения
+- **Wave Relations**: Отношения, Фибоначчи, Rollbackы, расширения
 - **Wave Patterns**: Паттерны, сложность, симметрия, гармония
 - **Wave signals**: Сигналы, сила, качество, надежность
 - **Wave Metrics**: Энергия, моментум, мощность, сила
@@ -97,7 +97,7 @@ wave2_columns = {
  # Волновые отношения
  'wave_ratio': 'Отношение волн',
  'wave_fibonacci': 'Фибоначчи уровни',
- 'wave_retracement': 'Откат волны',
+ 'wave_retracement': 'Rollback волны',
  'wave_extension': 'Расширение волны',
 
  # Волновые паттерны
@@ -206,16 +206,16 @@ wave2_columns = {
  - Тип: float
  - Единицы: безразмерная величина
  - Диапазон: from 0 to 1
- - Применение: уровни отката/расширения
+ - Применение: уровни Rollbackа/расширения
  - Интерпретация: 0.236, 0.382, 0.5, 0.618, 0.786
  - Расчет: on basis золотого сечения
 
-- **`wave_retracement`**: Откат волны
+- **`wave_retracement`**: Rollback волны
  - Тип: float
  - Единицы: процент
  - Диапазон: from 0 to 100
- - Применение: глубина отката
- - Интерпретация: чем больше, тем глубже откат
+ - Применение: глубина Rollbackа
+ - Интерпретация: чем больше, тем глубже Rollback
  - Формула: (wave_low - wave_high) / (previous_wave_high - previous_wave_low) * 100
 
 - **`wave_extension`**: Расширение волны
@@ -385,7 +385,7 @@ class Wave2M1Analysis:
  # Анализ краткосрочных волн
  short_waves = self.identify_short_waves(data, period=5)
 
- # Анализ микро-откатов
+ # Анализ микро-Rollbackов
  micro_retracements = self.calculate_micro_retracements(data)
 
  # Анализ микро-расширений
@@ -648,7 +648,7 @@ class Wave2MLModel:
 - **`self.feature_columns`**: List признаков модели
  - Тип: List[str]
  - Содержит: названия all признаков WAVE2
- - Применение: for Predictions on новых данных
+ - Применение: for predictions on новых данных
  - update: при изменении набора признаков
 
 - **`self.Timeframes`**: List Timeframes
@@ -797,15 +797,15 @@ class Wave2MLModel:
  - Тип: float
  - Единицы: безразмерная величина
  - Диапазон: from 0 to 1
- - Применение: уровни отката/расширения
+ - Применение: уровни Rollbackа/расширения
  - Интерпретация: 0.236, 0.382, 0.5, 0.618, 0.786
 
-- **`wave_retracement`**: Откат волны
+- **`wave_retracement`**: Rollback волны
  - Тип: float
  - Единицы: процент
  - Диапазон: from 0 to 100
- - Применение: глубина отката
- - Интерпретация: чем больше, тем глубже откат
+ - Применение: глубина Rollbackа
+ - Интерпретация: чем больше, тем глубже Rollback
 
 - **`wave_extension`**: Расширение волны
  - Тип: float
@@ -1252,8 +1252,8 @@ class Wave2MLModel:
  )
 
  # Оценка модели
- val_Predictions = self.predictor.predict(val_data.drop(columns=['price_direction', 'volatility_direction', 'trend_direction']))
- val_accuracy = accuracy_score(val_data['price_direction'], val_Predictions)
+ val_predictions = self.predictor.predict(val_data.drop(columns=['price_direction', 'volatility_direction', 'trend_direction']))
+ val_accuracy = accuracy_score(val_data['price_direction'], val_predictions)
 
  print(f"Точность модели WAVE2: {val_accuracy:.3f}")
 
@@ -1329,7 +1329,7 @@ class Wave2MLModel:
  - Тип: str
  - Применение: сохранение обученной модели
  - Содержит: веса модели, метаdata, конфигурацию
- - Использование: загрузка for Predictions
+ - Использование: загрузка for predictions
  - Формат: директория with файлами модели
 
 - **`time_limit=3600`**: Лимит времени обучения
@@ -1383,7 +1383,7 @@ class Wave2MLModel:
  - Баланс: больше глубина = лучше качество, но переобучение
  - Рекомендация: 10-12 for WAVE2
 
-- **`val_Predictions`**: Предсказания on валидации
+- **`val_predictions`**: Предсказания on валидации
  - Тип: numpy array
  - Содержит: предсказания модели
  - Применение: оценка производительности
@@ -1395,7 +1395,7 @@ class Wave2MLModel:
  - Диапазон: from 0 to 1
  - Применение: оценка качества модели
  - Интерпретация: 0.5 = случайно, 0.7-0.8 = хорошо, 0.8-0.9 = отлично, > 0.9 = превосходно
- - Формула: accuracy_score(val_data['price_direction'], val_Predictions)
+ - Формула: accuracy_score(val_data['price_direction'], val_predictions)
 
 **parameters валидации:**
 
@@ -1418,14 +1418,14 @@ class Wave2MLModel:
  - Требования: отсутствие пропусков
  - Обработка: та же нормализация, что and for train
 
-- **`Predictions`**: Предсказания модели
+- **`predictions`**: Предсказания модели
  - Тип: numpy array
  - Содержит: предсказания for all testsых данных
  - Применение: расчет доходности
  - Формат: бинарные метки (0/1)
  - Интерпретация: 0 = падение, 1 = рост
 
-- **`probabilities`**: Вероятности Predictions
+- **`probabilities`**: Вероятности predictions
  - Тип: numpy array
  - Содержит: вероятности for каждого класса
  - Применение: оценка уверенности
@@ -1441,7 +1441,7 @@ class Wave2MLModel:
 
 - **`strategy_returns`**: Доходность стратегии
  - Тип: pandas Series
- - Формула: Predictions * returns
+ - Формула: predictions * returns
  - Применение: расчет доходности стратегии
  - Единицы: безразмерная величина
  - Интерпретация: положительная = прибыль, отрицательная = убыток
@@ -1542,12 +1542,12 @@ def wave2_backtest(self, data, start_date, end_date):
  test_data = data[(data.index >= start_date) & (data.index <= end_date)]
 
  # Предсказания
- Predictions = self.predictor.predict(test_data)
+ predictions = self.predictor.predict(test_data)
  probabilities = self.predictor.predict_proba(test_data)
 
  # Расчет доходности
  returns = test_data['close'].pct_change()
- strategy_returns = Predictions * returns
+ strategy_returns = predictions * returns
 
  # Метрики backtest
  total_return = strategy_returns.sum()

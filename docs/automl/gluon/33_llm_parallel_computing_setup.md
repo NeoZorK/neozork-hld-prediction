@@ -122,7 +122,7 @@ open /applications/Docker.app
 ```yaml
 # docker-compose.yml
 Version: '3.8'
-Services:
+services:
  vllm-server:
  image: vllm/vllm-openai:latest # Официальный образ vLLM with поддержкой OpenAI API
  platform: linux/arm64 # platform for Apple Silicon (M1/M2/M3)
@@ -144,7 +144,7 @@ Services:
  --trust-remote-code # Разрешить выполнение пользовательского кода
 ```
 
-### Детальное description параметров Docker конфигурации
+### Детальное describe параметров Docker конфигурации
 
 #### Основные parameters контейнера:
 - **`image`**: `vllm/vllm-openai:latest` - официальный образ vLLM with поддержкой OpenAI-совместимого API
@@ -226,7 +226,7 @@ class MLXvLLMAdapter:
  return response
 ```
 
-### Детальное description параметров MLX конфигурации
+### Детальное describe параметров MLX конфигурации
 
 #### Основные components MLX:
 - **`mlx.core`**: Основной module MLX for работы with тензорами and операциями
@@ -303,7 +303,7 @@ from vllm.engine.async_llm_engine import AsyncLLMEngine
 import asyncio
 
 async def main():
- parser = argparse.ArgumentParser(description="vLLM сервер for MacBook M3 Pro")
+ parser = argparse.ArgumentParser(describe="vLLM сервер for MacBook M3 Pro")
 
  # Основные parameters модели
  parser.add_argument("--model", type=str, default="codellama-7b-instruct",
@@ -347,7 +347,7 @@ if __name__ == "__main__":
  asyncio.run(main())
 ```
 
-### Детальное description параметров vLLM сервера
+### Детальное describe параметров vLLM сервера
 
 #### Основные parameters модели:
 
@@ -401,7 +401,7 @@ if __name__ == "__main__":
 - **Рекомендации**:
  - `8000` - стандартный порт for vLLM
  - `8080` - альтернативный порт
- - `3000` - порт for разработки
+ - `3000` - порт for development
 - **check доступности**: `lsof -i :8000`
 
 #### parameters оптимизации for Apple Silicon:
@@ -540,7 +540,7 @@ config = MacBookM3ProConfig()
 config.print_system_info()
 ```
 
-### Детальное description параметров оптимизации for MacBook M3 Pro
+### Детальное describe параметров оптимизации for MacBook M3 Pro
 
 #### parameters параллелизма:
 
@@ -924,7 +924,7 @@ Monitoring_thread = threading.Thread(target=Monitoring_loop, daemon=True)
 Monitoring_thread.start()
 ```
 
-### Детальное description параметров Monitoringа
+### Детальное describe параметров Monitoringа
 
 #### parameters инициализации:
 
@@ -1171,7 +1171,7 @@ optimizer = MacBookM3ProOptimizer()
 config = optimizer.run_full_optimization()
 ```
 
-### Детальное description параметров оптимизации
+### Детальное describe параметров оптимизации
 
 #### parameters Docker оптимизации:
 
@@ -1348,7 +1348,7 @@ class LLMBenchmark:
  "Напиши тест for functions валидации email",
  "Создай REST API endpoint for получения пользователей",
  "Напиши функцию for парсинга JSON файла",
- "Создай декоратор for логирования функций",
+ "Создай декоратор for Logsрования функций",
  "Напиши функцию for работы with файлами",
  "Создай класс for работы with network",
  "Напиши функцию for шифрования данных",
@@ -1501,7 +1501,7 @@ if __name__ == "__main__":
  asyncio.run(main())
 ```
 
-### Детальное description параметров бенчмарка
+### Детальное describe параметров бенчмарка
 
 #### parameters инициализации:
 
@@ -1664,7 +1664,7 @@ graph TD
 
  E --> E1[Проверить Docker статус]
  E --> E2[Проверить порты]
- E --> E3[Проверить логи контейнера]
+ E --> E3[Проверить Logs контейнера]
 
  F --> F1[Настроить temperature]
  F --> F2[Изменить top_p]
@@ -1831,7 +1831,7 @@ class LLMDiagnostics:
  if all_good:
  print("\n🎉 Все системы Workingют нормально!")
  else:
- print("\n⚠️ Обнаружены проблемы. Проверьте логи выше.")
+ print("\n⚠️ Обнаружены проблемы. Проверьте Logs выше.")
 
  return results
 

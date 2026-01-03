@@ -4,68 +4,68 @@
 
 ## Выбор алгоритмов for trading
 
-**Теория:** Выбор алгоритмов for финансовых данных критически важен for успеха ML-систем. Финансовые data имеют уникальные характеристики, которые требуют специальных подходов к обучению моделей.
+**Theory:** Выбор алгоритмов for финансовых данных критически важен for успеха ML-систем. Финансовые data имеют уникальные характеристики, которые требуют специальных подходов к обучению моделей.
 
 ### Почему not все алгоритмы подходят?
 
-**Теория:** Финансовые data имеют специфические характеристики, которые делают многие стандартные ML-алгоритмы неэффективными or даже опасными. Понимание этих особенностей критично for выбора правильных алгоритмов.
+**Theory:** Финансовые data имеют специфические характеристики, которые делают многие стандартные ML-алгоритмы неэффективными or даже опасными. Понимание этих особенностей критично for выбора правильных алгоритмов.
 
 **Финансовые data имеют особенности:**
 
 **1. Нестационарность**
-- **Теория:** Распределения данных меняются во времени из-за изменения рыночных условий
+- **Theory:** Распределения данных меняются во времени из-за изменения рыночных условий
 - **Почему проблематично:** Стандартные алгоритмы предполагают стационарность
 - **Последствия:** Модели быстро устаревают, снижается производительность
 - **Плюсы:** Возможность адаптации к изменениям
-- **Минусы:** Сложность обучения, необходимость регулярного обновления
+- **Disadvantages:** Сложность обучения, необходимость регулярного обновления
 
 **2. Высокая волатильность**
-- **Теория:** Финансовые data содержат много шума and случайных колебаний
+- **Theory:** Финансовые data содержат много шума and случайных колебаний
 - **Почему проблематично:** Шум может переобучить модель on случайных паттернах
 - **Последствия:** Ложные сигналы, переобучение, нестабильность
 - **Плюсы:** Возможность выявления реальных паттернов
-- **Минусы:** Сложность фильтрации шума, риск переобучения
+- **Disadvantages:** Сложность фильтрации шума, риск переобучения
 
 **3. Неравномерность**
-- **Теория:** Редкие, но важные события (кризисы, крахи) имеют непропорционально большое влияние
+- **Theory:** Редкие, но важные события (кризисы, крахи) имеют непропорционально большое влияние
 - **Почему проблематично:** Стандартные алгоритмы могут игнорировать редкие события
 - **Последствия:** Модели могут not учитывать критические события
 - **Плюсы:** Возможность выявления аномалий
-- **Минусы:** Сложность балансировки классов, риск игнорирования важных событий
+- **Disadvantages:** Сложность балансировки классов, риск игнорирования важных events
 
 **4. Корреляции**
-- **Теория:** Признаки часто сильно коррелированы, что может привести к мультиколлинеарности
+- **Theory:** Признаки часто сильно коррелированы, что может привести к мультиколлинеарности
 - **Почему проблематично:** Коррелированные признаки могут искажать результаты
 - **Последствия:** Нестабильность модели, сложность интерпретации
 - **Плюсы:** Возможность выявления dependencies
-- **Минусы:** Сложность обработки, риск переобучения
+- **Disadvantages:** Сложность обработки, риск переобучения
 
 ### Лучшие алгоритмы for финансов
 
-**Теория:** Выбор алгоритмов for финансовых данных должен основываться on их способности Workingть with нестационарными, зашумленными and коррелированными данными. Некоторые алгоритмы показали особую эффективность in финансовой сфере.
+**Theory:** Выбор алгоритмов for финансовых данных должен основываться on их способности Workingть with нестационарными, зашумленными and коррелированными данными. Некоторые алгоритмы показали особую эффективность in финансовой сфере.
 
 **1. Ансамблевые методы**
 - **Почему эффективны:** Комбинируют множество моделей, снижая риск переобучения
 - **Плюсы:** Высокая точность, устойчивость к выбросам, интерпретируемость
-- **Минусы:** Высокие вычислительные затраты, сложность Settings
+- **Disadvantages:** Высокие вычислительные затраты, сложность Settings
 - **Применение:** Random Forest, XGBoost, LightGBM for классификации and регрессии
 
 **2. Нейронные сети**
 - **Почему эффективны:** Могут моделировать сложные нелинейные dependencies
 - **Плюсы:** Высокая гибкость, способность к обучению сложным паттернам
-- **Минусы:** Требуют много данных, сложность интерпретации, риск переобучения
+- **Disadvantages:** Требуют много данных, сложность интерпретации, риск переобучения
 - **Применение:** LSTM, GRU for временных рядов, Transformer for последовательностей
 
 **3. SVM (Support Vector Machine)**
 - **Почему эффективны:** Хорошо Workingют with нелинейными зависимостями
 - **Плюсы:** Эффективны on малых данных, устойчивы к выбросам
-- **Минусы:** Медленное обучение on больших данных, сложность Settings
+- **Disadvantages:** Медленное обучение on больших данных, сложность Settings
 - **Применение:** Классификация направлений движения цен
 
 **4. Logistic Regression**
 - **Почему эффективны:** Простые, интерпретируемые, быстрые
 - **Плюсы:** Легкая интерпретация, быстрая Working, стабильность
-- **Минусы:** Ограниченная способность к моделированию сложных dependencies
+- **Disadvantages:** Ограниченная способность к моделированию сложных dependencies
 - **Применение:** Базовые модели, интерпретируемые системы
 
 **Дополнительные соображения:**
@@ -76,7 +76,7 @@
 
 ## Ансамблевые методы
 
-**Теория:** Ансамблевые методы комбинируют множество моделей for улучшения производительности. Они особенно эффективны for финансовых данных, так как снижают риск переобучения and повышают стабильность Predictions.
+**Theory:** Ансамблевые методы комбинируют множество моделей for улучшения производительности. Они особенно эффективны for финансовых данных, так как снижают риск переобучения and повышают стабильность predictions.
 
 **Почему ансамблевые методы эффективны for финансов:**
 - **Снижение риска:** Комбинация моделей снижает риск ошибок
@@ -86,7 +86,7 @@
 
 ### 1. Random Forest
 
-**Теория:** Random Forest - это ансамбль решающих деревьев, который использует бутстрап агрегацию (bagging) for создания множества моделей. Каждое дерево обучается on случайной подвыборке данных and признаков.
+**Theory:** Random Forest - это ансамбль решающих деревьев, который использует бутстрап агрегацию (bagging) for создания множества моделей. Каждое дерево обучается on случайной подвыборке данных and признаков.
 
 **Детальная теория Random Forest:**
 
@@ -260,7 +260,7 @@ def example_random_forest_usage():
  # Генерация признаков
  X = np.random.randn(n_samples, n_features)
 
- # create целевой переменной with некоторой логикой
+ # create целевой переменной with некоторой Logsкой
  y = np.zeros(n_samples)
  for i in range(n_samples):
  if X[i, 0] > 0.5 and X[i, 1] < -0.3:
@@ -286,7 +286,7 @@ def example_random_forest_usage():
 
 ### 2. XGBoost
 
-**Теория:** XGBoost (eXtreme Gradient Boosting) - это продвинутая реализация градиентного бустинга, которая особенно эффективна for финансовых данных благодаря своей способности обрабатывать нелинейные dependencies and выбросы.
+**Theory:** XGBoost (eXtreme Gradient Boosting) - это продвинутая реализация градиентного бустинга, которая особенно эффективна for финансовых данных благодаря своей способности обрабатывать нелинейные dependencies and выбросы.
 
 **Детальная теория XGBoost:**
 
@@ -431,7 +431,7 @@ def train_xgboost(X, y, test_size=0.2, random_state=42, early_stopping_rounds=10
  'best_score': xgb_model.best_score,
  'feature_importance': importance_df,
  'confusion_matrix': confusion_matrix(y_test, y_test_pred),
- 'Predictions': y_test_pred,
+ 'predictions': y_test_pred,
  'probabilities': y_test_proba
  }
 
@@ -524,7 +524,7 @@ def example_xgboost_usage():
 
 ### 3. LightGBM
 
-**Теория:** LightGBM (Light Gradient Boosting Machine) - это быстрая and эффективная реализация градиентного бустинга, разWorkingнная Microsoft. Особенно эффективна for больших датасетов and финансовых данных благодаря оптимизированному алгоритму построения деревьев.
+**Theory:** LightGBM (Light Gradient Boosting Machine) - это быстрая and эффективная реализация градиентного бустинга, разWorkingнная Microsoft. Особенно эффективна for больших датасетов and финансовых данных благодаря оптимизированному алгоритму построения деревьев.
 
 **Детальная теория LightGBM:**
 
@@ -535,7 +535,7 @@ def example_xgboost_usage():
 4. **Categorical Feature Support:** Автоматически обрабатывает категориальные признаки
 
 **Почему LightGBM эффективен for финансов:**
-- **Скорость:** in 10-100 раз быстрее XGBoost on больших данных
+- **Speed:** in 10-100 раз быстрее XGBoost on больших данных
 - **Память:** Использует меньше памяти благодаря оптимизациям
 - **Точность:** Часто показывает лучшие результаты
 - **Категориальные признаки:** Отлично Workingет with финансовыми категориями
@@ -685,7 +685,7 @@ def train_lightgbm(X, y, test_size=0.2, random_state=42, early_stopping_rounds=1
  'best_iteration': model.best_iteration,
  'feature_importance': importance_df,
  'confusion_matrix': confusion_matrix(y_test, y_test_pred_class),
- 'Predictions': y_test_pred_class,
+ 'predictions': y_test_pred_class,
  'probabilities': y_test_pred
  }
 
@@ -785,17 +785,17 @@ def example_lightgbm_usage():
 
 ## Нейронные сети
 
-**Теория:** Нейронные сети - это мощный инструмент for моделирования сложных нелинейных dependencies in финансовых данных. Они особенно эффективны for выявления скрытых паттернов and взаимодействий между приsignми.
+**Theory:** Нейронные сети - это мощный инструмент for моделирования сложных нелинейных dependencies in финансовых данных. Они особенно эффективны for выявления скрытых паттернов and взаимодействий между приsignми.
 
 **Почему нейронные сети эффективны for финансов:**
 - **Нелинейность:** Могут моделировать сложные нелинейные dependencies
 - **Взаимодействия:** Автоматически выявляют взаимодействия между приsignми
 - **Адаптивность:** Могут адаптироваться к изменяющимся рыночным условиям
-- **Масштабируемость:** Хорошо Workingют with большими объемами данных
+- **Scalability:** Хорошо Workingют with большими объемами данных
 
 ### 1. Простая нейронная сеть
 
-**Теория:** Полносвязная нейронная сеть (Multi-Layer Perceptron) состоит из нескольких слоев нейронов, соединенных весами. Каждый нейрон применяет нелинейную функцию активации к взвешенной сумме входов.
+**Theory:** Полносвязная нейронная сеть (Multi-Layer Perceptron) состоит из нескольких слоев нейронов, соединенных весами. Каждый нейрон применяет нелинейную функцию активации к взвешенной сумме входов.
 
 **Архитектура сети:**
 - **Входной слой:** Количество нейронов = количество признаков
@@ -824,7 +824,7 @@ from sklearn.model_selection import train_test_split
 
 class TradingNN(nn.Module):
  """
- Нейронная сеть for торговых Predictions
+ Нейронная сеть for торговых predictions
 
  Архитектура:
  - Входной слой: input_size нейронов
@@ -881,7 +881,7 @@ class TradingNN(nn.Module):
 def train_neural_network(X, y, epochs=100, batch_size=32, learning_rate=0.001,
  test_size=0.2, random_state=42):
  """
- Обучение нейронной сети for торговых Predictions
+ Обучение нейронной сети for торговых predictions
 
  Args:
  X (array-like): Матрица признаков
@@ -991,18 +991,18 @@ def train_neural_network(X, y, epochs=100, batch_size=32, learning_rate=0.001,
  with torch.no_grad():
  test_outputs = model(X_test_tensor)
  _, test_predicted = torch.max(test_outputs.data, 1)
- test_Predictions = test_predicted.numpy()
+ test_predictions = test_predicted.numpy()
  test_probabilities = torch.softmax(test_outputs, dim=1).numpy()
 
  # Метрики
- final_accuracy = accuracy_score(y_test, test_Predictions)
+ final_accuracy = accuracy_score(y_test, test_predictions)
 
  print(f"\n=== Финальные результаты ===")
  print(f"Test accuracy: {final_accuracy:.4f}")
 
  # Детальный Report
  print(f"\n=== Classification Report ===")
- print(classification_Report(y_test, test_Predictions))
+ print(classification_Report(y_test, test_predictions))
 
  # История обучения
  history = {
@@ -1014,8 +1014,8 @@ def train_neural_network(X, y, epochs=100, batch_size=32, learning_rate=0.001,
  # Метрики for возврата
  metrics = {
  'test_accuracy': final_accuracy,
- 'confusion_matrix': confusion_matrix(y_test, test_Predictions),
- 'Predictions': test_Predictions,
+ 'confusion_matrix': confusion_matrix(y_test, test_predictions),
+ 'predictions': test_predictions,
  'probabilities': test_probabilities,
  'history': history
  }
@@ -1088,7 +1088,7 @@ def example_neural_network_usage():
 
 ### 2. LSTM for временных рядов
 
-**Теория:** LSTM (Long Short-Term Memory) - это специальный тип рекуррентной нейронной сети, разWorkingнный for работы with временными последовательностями. LSTM особенно эффективен for финансовых данных, так как может запоминать долгосрочные dependencies and паттерны.
+**Theory:** LSTM (Long Short-Term Memory) - это специальный тип рекуррентной нейронной сети, разWorkingнный for работы with временными последовательностями. LSTM особенно эффективен for финансовых данных, так как может запоминать долгосрочные dependencies and паттерны.
 
 **Детальная теория LSTM:**
 
@@ -1132,7 +1132,7 @@ from sklearn.model_selection import train_test_split
 
 class LSTMTradingModel(nn.Module):
  """
- LSTM модель for торговых Predictions on временных рядах
+ LSTM модель for торговых predictions on временных рядах
 
  Архитектура:
  - LSTM слои: for обработки временных последовательностей
@@ -1232,7 +1232,7 @@ def create_sequences(X, y, sequence_length):
 def train_lstm_model(X, y, sequence_length=10, epochs=100, batch_size=32,
  learning_rate=0.001, test_size=0.2, random_state=42):
  """
- Обучение LSTM модели for торговых Predictions
+ Обучение LSTM модели for торговых predictions
 
  Args:
  X: Матрица признаков
@@ -1358,18 +1358,18 @@ def train_lstm_model(X, y, sequence_length=10, epochs=100, batch_size=32,
  with torch.no_grad():
  test_outputs = model(X_test_tensor)
  _, test_predicted = torch.max(test_outputs.data, 1)
- test_Predictions = test_predicted.numpy()
+ test_predictions = test_predicted.numpy()
  test_probabilities = torch.softmax(test_outputs, dim=1).numpy()
 
  # Метрики
- final_accuracy = accuracy_score(y_test, test_Predictions)
+ final_accuracy = accuracy_score(y_test, test_predictions)
 
  print(f"\n=== Финальные результаты ===")
  print(f"Test accuracy: {final_accuracy:.4f}")
 
  # Детальный Report
  print(f"\n=== Classification Report ===")
- print(classification_Report(y_test, test_Predictions))
+ print(classification_Report(y_test, test_predictions))
 
  # История обучения
  history = {
@@ -1381,8 +1381,8 @@ def train_lstm_model(X, y, sequence_length=10, epochs=100, batch_size=32,
  # Метрики for возврата
  metrics = {
  'test_accuracy': final_accuracy,
- 'confusion_matrix': confusion_matrix(y_test, test_Predictions),
- 'Predictions': test_Predictions,
+ 'confusion_matrix': confusion_matrix(y_test, test_predictions),
+ 'predictions': test_predictions,
  'probabilities': test_probabilities,
  'history': history
  }
@@ -1464,7 +1464,7 @@ def example_lstm_usage():
 
 ## Валидация моделей
 
-**Теория:** Валидация моделей for финансовых данных критически важна, так как стандартные методы кросс-валидации могут привести к data leakage (утечке данных) из-за temporary природы финансовых данных.
+**Theory:** Валидация моделей for финансовых данных критически важна, так как стандартные методы кросс-валидации могут привести к data leakage (утечке данных) из-за temporary природы финансовых данных.
 
 **Почему стандартная кросс-валидация not подходит:**
 - **data Leakage:** Будущие data могут "протекать" in обучающую выборку
@@ -1474,7 +1474,7 @@ def example_lstm_usage():
 
 ### 1. Time Series Cross Validation
 
-**Теория:** Time Series Cross Validation (TSCV) - это специальный метод валидации for временных рядов, который предотвращает data leakage, используя только прошлые data for предсказания будущих.
+**Theory:** Time Series Cross Validation (TSCV) - это специальный метод валидации for временных рядов, который предотвращает data leakage, используя только прошлые data for предсказания будущих.
 
 **Принцип работы TSCV:**
 1. **Временное разделение:** data разделяются in time, а not случайно
@@ -1526,7 +1526,7 @@ def time_series_cv(model, X, y, n_splits=5, test_size=None, random_state=42):
 
  # Списки for хранения результатов
  fold_scores = []
- fold_Predictions = []
+ fold_predictions = []
  fold_confusion_matrices = []
 
  print(f"\nНачало валидации...")
@@ -1575,7 +1575,7 @@ def time_series_cv(model, X, y, n_splits=5, test_size=None, random_state=42):
  }
 
  fold_scores.append(fold_score)
- fold_Predictions.append({
+ fold_predictions.append({
  'y_true': y_test,
  'y_pred': y_pred,
  'y_pred_proba': y_pred_proba
@@ -1590,7 +1590,7 @@ def time_series_cv(model, X, y, n_splits=5, test_size=None, random_state=42):
  # Агрегированные результаты
  results = {
  'fold_scores': fold_scores,
- 'fold_Predictions': fold_Predictions,
+ 'fold_predictions': fold_predictions,
  'fold_confusion_matrices': fold_confusion_matrices,
  'mean_accuracy': np.mean([s['accuracy'] for s in fold_scores]),
  'std_accuracy': np.std([s['accuracy'] for s in fold_scores]),
@@ -1743,7 +1743,7 @@ def example_tscv_usage():
 
 ### 2. Walk-Forward Validation
 
-**Теория:** Walk-Forward Validation (WFV) - это метод валидации, который имитирует реальные торговые условия, где модель постоянно переобучается on новых данных and делает предсказания on следующий период.
+**Theory:** Walk-Forward Validation (WFV) - это метод валидации, который имитирует реальные торговые условия, где модель постоянно переобучается on новых данных and делает предсказания on следующий период.
 
 **Принцип работы WFV:**
 1. **Скользящее окно:** Обучающая выборка имеет фиксированный размер
@@ -1804,7 +1804,7 @@ def walk_forward_validation(model, X, y, train_size=1000, step_size=100,
 
  # Списки for хранения результатов
  iteration_results = []
- all_Predictions = []
+ all_predictions = []
  all_true_labels = []
 
  print(f"\nНачало walk-forward валидации...")
@@ -1870,7 +1870,7 @@ def walk_forward_validation(model, X, y, train_size=1000, step_size=100,
  }
 
  iteration_results.append(iteration_result)
- all_Predictions.extend(y_pred)
+ all_predictions.extend(y_pred)
  all_true_labels.extend(y_test)
 
  print(f"Accuracy: {accuracy:.4f}")
@@ -1887,7 +1887,7 @@ def walk_forward_validation(model, X, y, train_size=1000, step_size=100,
 
  results = {
  'iteration_results': iteration_results,
- 'all_Predictions': np.array(all_Predictions),
+ 'all_predictions': np.array(all_predictions),
  'all_true_labels': np.array(all_true_labels),
  'mean_accuracy': np.mean(accuracies),
  'std_accuracy': np.std(accuracies),
@@ -1906,7 +1906,7 @@ def walk_forward_validation(model, X, y, train_size=1000, step_size=100,
  print(f"Mean F1: {results['mean_f1']:.4f}")
 
  # Общая точность on all предсказаниям
- overall_accuracy = accuracy_score(all_true_labels, all_Predictions)
+ overall_accuracy = accuracy_score(all_true_labels, all_predictions)
  print(f"Overall Accuracy: {overall_accuracy:.4f}")
 
  else:
@@ -1974,7 +1974,7 @@ def plot_walk_forward_results(results, figsize=(15, 12)):
 
  # Общая матрица ошибок
  if len(results['all_true_labels']) > 0:
- overall_cm = confusion_matrix(results['all_true_labels'], results['all_Predictions'])
+ overall_cm = confusion_matrix(results['all_true_labels'], results['all_predictions'])
  overall_cm_norm = overall_cm.astype('float') / overall_cm.sum(axis=1)[:, np.newaxis]
 
  sns.heatmap(overall_cm_norm, annot=True, fmt='.2f', cmap='Blues', ax=axes[1, 1])
@@ -2098,7 +2098,7 @@ def example_walk_forward_usage():
 
 ## Гиперпараметрическая оптимизация
 
-**Теория:** Гиперпараметрическая оптимизация - это процесс поиска наилучших параметров модели for достижения максимальной производительности. for финансовых данных это критически важно, так как неправильные parameters могут привести к переобучению or недообучению.
+**Theory:** Гиперпараметрическая оптимизация - это процесс поиска наилучших параметров модели for достижения максимальной производительности. for финансовых данных это критически важно, так как неправильные parameters могут привести к переобучению or недообучению.
 
 **Почему оптимизация важна for финансов:**
 - **Переобучение:** Финансовые data склонны к переобучению
@@ -2114,7 +2114,7 @@ def example_walk_forward_usage():
 
 ### 1. Grid Search
 
-**Теория:** Grid Search - это метод полного перебора, который тестирует все возможные комбинации параметров из заданной сетки. Хотя он может быть вычислительно дорогим, он гарантирует нахождение оптимальных параметров in заданном пространстве.
+**Theory:** Grid Search - это метод полного перебора, который тестирует все возможные комбинации параметров из заданной сетки. Хотя он может быть вычислительно дорогим, он гарантирует нахождение оптимальных параметров in заданном пространстве.
 
 **Принцип работы Grid Search:**
 1. **Определение сетки:** Задается диапазон значений for каждого параметра
@@ -2363,7 +2363,7 @@ def example_grid_search_usage():
 
 ### 2. Optuna оптимизация
 
-**Теория:** Optuna - это современная библиотека for гиперпараметрической оптимизации, которая использует Bayesian Optimization and другие продвинутые методы for эффективного поиска оптимальных параметров.
+**Theory:** Optuna - это современная библиотека for гиперпараметрической оптимизации, которая использует Bayesian Optimization and другие продвинутые методы for эффективного поиска оптимальных параметров.
 
 **Принцип работы Optuna:**
 1. **Bayesian Optimization:** Использует предыдущие результаты for выбора следующих параметров
@@ -2373,7 +2373,7 @@ def example_grid_search_usage():
 
 **Почему Optuna эффективен for финансов:**
 - **Эффективность:** Находит хорошие parameters быстрее Grid Search
-- **Масштабируемость:** Workingет with большими пространствами параметров
+- **Scalability:** Workingет with большими пространствами параметров
 - **Pruning:** Экономит вычислительные ресурсы
 - **Гибкость:** Легко настраивается под конкретные задачи
 
@@ -2649,7 +2649,7 @@ def example_optuna_usage():
 
 ## Реализация ансамблевых методов
 
-**Теория:** Ансамблевые методы комбинируют несколько моделей for улучшения производительности. in финансовой сфере это особенно важно, так как разные модели могут выявлять разные паттерны in данных.
+**Theory:** Ансамблевые методы комбинируют несколько моделей for улучшения производительности. in финансовой сфере это особенно важно, так как разные модели могут выявлять разные паттерны in данных.
 
 **Почему ансамбли эффективны for финансов:**
 - **Снижение риска:** Комбинация моделей снижает риск ошибок
@@ -2660,12 +2660,12 @@ def example_optuna_usage():
 **Типы ансамблей:**
 1. **Voting:** Простое голосование моделей
 2. **Stacking:** Мета-модель обучается on предсказаниях базовых моделей
-3. **Blending:** Взвешенная комбинация Predictions
+3. **Blending:** Взвешенная комбинация predictions
 4. **Bagging:** Обучение on разных подвыборках данных
 
 ### 1. Voting Classifier
 
-**Теория:** Voting Classifier - это простой метод ансамблирования, который комбинирует предсказания нескольких моделей через голосование. Может быть hard voting (голосование on классам) or soft voting (голосование on вероятностям).
+**Theory:** Voting Classifier - это простой метод ансамблирования, который комбинирует предсказания нескольких моделей через голосование. Может быть hard voting (голосование on классам) or soft voting (голосование on вероятностям).
 
 **Принцип работы Voting:**
 1. **Hard Voting:** Каждая модель голосует за класс, выбирается класс with большинством голосов
@@ -2782,7 +2782,7 @@ def create_ensemble_model(X, y, voting='soft', test_size=0.2, random_state=42):
 
  # Оценка индивидуальных моделей
  individual_scores = {}
- individual_Predictions = {}
+ individual_predictions = {}
 
  print(f"\n=== Результаты индивидуальных моделей ===")
  for name, model in models.items():
@@ -2796,7 +2796,7 @@ def create_ensemble_model(X, y, voting='soft', test_size=0.2, random_state=42):
  # Оценка
  accuracy = accuracy_score(y_test, y_pred)
  individual_scores[name] = accuracy
- individual_Predictions[name] = y_pred
+ individual_predictions[name] = y_pred
 
  print(f"{name}: {accuracy:.4f}")
 
@@ -2820,7 +2820,7 @@ def create_ensemble_model(X, y, voting='soft', test_size=0.2, random_state=42):
  'best_individual': best_individual,
  'improvement': ensemble_accuracy - best_individual_score,
  'confusion_matrix': confusion_matrix(y_test, y_pred_ensemble),
- 'Predictions': y_pred_ensemble,
+ 'predictions': y_pred_ensemble,
  'probabilities': y_pred_proba_ensemble
  }
 
@@ -2864,13 +2864,13 @@ def plot_ensemble_comparison(metrics, figsize=(12, 8)):
  plt.tight_layout()
  plt.show()
 
-def analyze_ensemble_diversity(individual_Predictions, y_test):
+def analyze_ensemble_diversity(individual_predictions, y_test):
  """Анализ разнообразия ансамбля"""
 
  print("=== Анализ разнообразия ансамбля ===")
 
  # Вычисление согласованности между моделями
- model_names = List(individual_Predictions.keys())
+ model_names = List(individual_predictions.keys())
  n_models = len(model_names)
 
  # Матрица согласованности
@@ -2879,7 +2879,7 @@ def analyze_ensemble_diversity(individual_Predictions, y_test):
  for i, model1 in enumerate(model_names):
  for j, model2 in enumerate(model_names):
  if i != j:
- agreement = np.mean(individual_Predictions[model1] == individual_Predictions[model2])
+ agreement = np.mean(individual_predictions[model1] == individual_predictions[model2])
  agreement_matrix[i, j] = agreement
 
  print(f"Матрица согласованности:")
@@ -2888,16 +2888,16 @@ def analyze_ensemble_diversity(individual_Predictions, y_test):
  print(f"Максимальная согласованность: {np.max(agreement_matrix):.4f}")
 
  # Анализ ошибок
- correct_Predictions = {}
- for name, pred in individual_Predictions.items():
- correct_Predictions[name] = (pred == y_test)
+ correct_predictions = {}
+ for name, pred in individual_predictions.items():
+ correct_predictions[name] = (pred == y_test)
 
  # Случаи, где все модели ошиблись
- all_wrong = np.all([~correct_Predictions[name] for name in model_names], axis=0)
+ all_wrong = np.all([~correct_predictions[name] for name in model_names], axis=0)
  all_wrong_count = np.sum(all_wrong)
 
  # Случаи, где все модели были правы
- all_correct = np.all([correct_Predictions[name] for name in model_names], axis=0)
+ all_correct = np.all([correct_predictions[name] for name in model_names], axis=0)
  all_correct_count = np.sum(all_correct)
 
  print(f"\nАнализ ошибок:")
@@ -2938,11 +2938,11 @@ def example_voting_ensemble_usage():
  plot_ensemble_comparison(metrics)
 
  # Анализ разнообразия
- individual_Predictions = {}
+ individual_predictions = {}
  for name, model in models.items():
- individual_Predictions[name] = model.predict(X)
+ individual_predictions[name] = model.predict(X)
 
- analyze_ensemble_diversity(individual_Predictions, y)
+ analyze_ensemble_diversity(individual_predictions, y)
 
  return ensemble, metrics, models
 
@@ -2952,7 +2952,7 @@ def example_voting_ensemble_usage():
 
 ### 2. Stacking
 
-**Теория:** Stacking (Stacked Generalization) - это продвинутый метод ансамблирования, который использует мета-модель for комбинирования Predictions базовых моделей. Мета-модель обучается on предсказаниях базовых моделей, что позволяет ей находить оптимальные способы их комбинирования.
+**Theory:** Stacking (Stacked Generalization) - это продвинутый метод ансамблирования, который использует мета-модель for комбинирования predictions базовых моделей. Мета-модель обучается on предсказаниях базовых моделей, что позволяет ей находить оптимальные способы их комбинирования.
 
 **Принцип работы Stacking:**
 1. **Базовые модели:** Обучаются on исходных данных
@@ -2974,7 +2974,7 @@ def example_voting_ensemble_usage():
 
 **Что делает этот код:**
 1. **Базовые модели:** Определяет набор разнообразных моделей
-2. **Мета-модель:** Выбирает модель for комбинирования Predictions
+2. **Мета-модель:** Выбирает модель for комбинирования predictions
 3. **Кросс-валидация:** Использует CV for предотвращения переобучения
 4. **Обучение:** Обучает весь стек моделей
 
@@ -3128,7 +3128,7 @@ def create_stacking_model(X, y, test_size=0.2, cv_folds=5, random_state=42):
 
  # Оценка базовых моделей
  base_scores = {}
- base_Predictions = {}
+ base_predictions = {}
 
  print(f"\n=== Результаты базовых моделей ===")
  for name, model in base_models:
@@ -3142,7 +3142,7 @@ def create_stacking_model(X, y, test_size=0.2, cv_folds=5, random_state=42):
  # Оценка
  accuracy = accuracy_score(y_test, y_pred)
  base_scores[name] = accuracy
- base_Predictions[name] = y_pred
+ base_predictions[name] = y_pred
 
  print(f"{name}: {accuracy:.4f}")
 
@@ -3168,7 +3168,7 @@ def create_stacking_model(X, y, test_size=0.2, cv_folds=5, random_state=42):
  'best_meta': max(meta_scores, key=meta_scores.get),
  'improvement': stacking_accuracy - best_base_score,
  'confusion_matrix': confusion_matrix(y_test, y_pred_stacking),
- 'Predictions': y_pred_stacking,
+ 'predictions': y_pred_stacking,
  'probabilities': y_pred_proba_stacking
  }
 
@@ -3241,8 +3241,8 @@ def analyze_stacking_contribution(stacking_model, X_test, y_test):
 
  print("=== Анализ вклада базовых моделей ===")
 
- # Получение Predictions базовых моделей
- base_Predictions = stacking_model.transform(X_test)
+ # Получение predictions базовых моделей
+ base_predictions = stacking_model.transform(X_test)
 
  # Получение весов мета-модели
  if hasattr(stacking_model.final_estimator_, 'coef_'):
@@ -3256,12 +3256,12 @@ def analyze_stacking_contribution(stacking_model, X_test, y_test):
  print(f" {name}: {weight:.4f}")
 
  # Анализ корреляций между базовыми моделями
- base_Predictions_df = pd.dataFrame(
- base_Predictions,
+ base_predictions_df = pd.dataFrame(
+ base_predictions,
  columns=[name for name, _ in stacking_model.estimators]
  )
 
- correlation_matrix = base_Predictions_df.corr()
+ correlation_matrix = base_predictions_df.corr()
 
  print(f"\nКорреляционная матрица базовых моделей:")
  print(correlation_matrix.round(3))
@@ -3317,12 +3317,12 @@ def example_stacking_usage():
 
 ## Оценка производительности
 
-**Теория:** Оценка производительности моделей for финансовых данных требует особого подхода, так как стандартные метрики могут not отражать реальную эффективность торговой стратегии.
+**Theory:** Оценка производительности моделей for финансовых данных требует особого подхода, так как стандартные метрики могут not отражать реальную эффективность торговой стратегии.
 
 **Почему стандартные метрики недостаточны:**
 - **Точность not равна прибыльности:** Высокая точность может not означать прибыльность
 - **Классовый дисбаланс:** Финансовые data часто имеют дисбаланс классов
-- **Временная dependency:** Важна последовательность Predictions
+- **Временная dependency:** Важна последовательность predictions
 - **Риск-доходность:** Нужно учитывать риск, а not только доходность
 
 **Типы метрик:**
@@ -3333,7 +3333,7 @@ def example_stacking_usage():
 
 ### 1. Метрики классификации
 
-**Теория:** Классификационные метрики измеряют качество Predictions модели on basis правильности классификации образцов on классам.
+**Theory:** Классификационные метрики измеряют качество predictions модели on basis правильности классификации образцов on классам.
 
 **Основные метрики:**
 - **Accuracy:** Доля правильно классифицированных образцов
@@ -3412,7 +3412,7 @@ def evaluate_model(model, X_test, y_test, model_name="Model"):
  'f1_per_class': f1_per_class,
  'confusion_matrix': cm,
  'roc_auc': roc_auc,
- 'Predictions': y_pred,
+ 'predictions': y_pred,
  'probabilities': y_pred_proba
  }
 
@@ -3513,10 +3513,10 @@ def analyze_class_balance(y_test, y_pred):
  percentage = count / total_samples * 100
  print(f" Класс {class_label}: {count} ({percentage:.1f}%)")
 
- # Анализ Predictions
+ # Анализ predictions
  pred_unique, pred_counts = np.unique(y_pred, return_counts=True)
 
- print(f"\nРаспределение Predictions:")
+ print(f"\nРаспределение predictions:")
  for class_label, count in zip(pred_unique, pred_counts):
  percentage = count / total_samples * 100
  print(f" Класс {class_label}: {count} ({percentage:.1f}%)")
@@ -3568,7 +3568,7 @@ def example_classification_metrics_usage():
  plot_classification_metrics(results)
 
  # Анализ баланса классов
- analyze_class_balance(y_test, results['Predictions'])
+ analyze_class_balance(y_test, results['predictions'])
 
  return results
 
@@ -3578,7 +3578,7 @@ def example_classification_metrics_usage():
 
 ### 2. Торговые метрики
 
-**Теория:** Торговые метрики измеряют реальную эффективность торговой стратегии, учитывая not только точность Predictions, но and финансовые результаты.
+**Theory:** Торговые метрики измеряют реальную эффективность торговой стратегии, учитывая not только точность predictions, но and финансовые результаты.
 
 **Основные торговые метрики:**
 - **Sharpe Ratio:** Отношение доходности к риску
@@ -3857,7 +3857,7 @@ def example_trading_metrics_usage():
  # create истинных классов (стратегия)
  y_true = np.random.choice([0, 1, 2], n_samples, p=[0.3, 0.4, 0.3])
 
- # create Predictions (with некоторой точностью)
+ # create predictions (with некоторой точностью)
  y_pred = y_true.copy()
  # Добавляем ошибки
  error_indices = np.random.choice(n_samples, size=int(n_samples * 0.3), replace=False)
@@ -3882,7 +3882,7 @@ def example_trading_metrics_usage():
 
 ## Практический example
 
-**Теория:** Полный процесс обучения торговой модели включает in себя все этапы: from подготовки данных to оценки производительности. Этот example демонстрирует комплексный подход к созданию ML-модели for финансовых данных.
+**Theory:** Полный процесс обучения торговой модели включает in себя все этапы: from подготовки данных to оценки производительности. Этот example демонстрирует комплексный подход к созданию ML-модели for финансовых данных.
 
 **Этапы полного процесса:**
 1. **Подготовка данных:** Загрузка and предобработка
@@ -4050,20 +4050,20 @@ def train_complete_trading_model(X, y, returns=None, test_size=0.2,
  print(f"\n5. Оценка on testsых данных...")
 
  # Предсказания all моделей
- test_Predictions = {}
+ test_predictions = {}
  test_scores = {}
 
  for name, model in models.items():
  pred = model.predict(X_test)
  score = accuracy_score(y_test, pred)
- test_Predictions[name] = pred
+ test_predictions[name] = pred
  test_scores[name] = score
  print(f" {name}: {score:.4f}")
 
  # Ансамбль
  ensemble_pred = ensemble.predict(X_test)
  ensemble_score = accuracy_score(y_test, ensemble_pred)
- test_Predictions['ensemble'] = ensemble_pred
+ test_predictions['ensemble'] = ensemble_pred
  test_scores['ensemble'] = ensemble_score
  print(f" Ensemble: {ensemble_score:.4f}")
 
@@ -4105,7 +4105,7 @@ def train_complete_trading_model(X, y, returns=None, test_size=0.2,
  'cv_scores': cv_scores,
  'cv_mean': cv_mean,
  'cv_std': cv_std,
- 'test_Predictions': test_Predictions,
+ 'test_predictions': test_predictions,
  'trading_metrics': trading_metrics,
  'best_model': best_model_name,
  'ensemble_score': ensemble_score
@@ -4241,7 +4241,7 @@ def example_complete_training_usage():
 
 ## Следующие шаги
 
-**Теория:** После успешного обучения модели наступает этап валидации and тестирования. Следующие шаги критически важны for обеспечения надежности торговой стратегии.
+**Theory:** После успешного обучения модели наступает этап валидации and тестирования. Следующие шаги критически важны for обеспечения надежности торговой стратегии.
 
 **Почему важен каждый этап:**
 
@@ -4291,7 +4291,7 @@ def example_complete_training_usage():
 
 ## Ключевые выводы
 
-**Теория:** Обучение ML-моделей for финансовых данных имеет свои особенности and требует специального подхода. Понимание этих принципов критически важно for создания успешных торговых стратегий.
+**Theory:** Обучение ML-моделей for финансовых данных имеет свои особенности and требует специального подхода. Понимание этих принципов критически важно for создания успешных торговых стратегий.
 
 **Основные принципы успешного обучения:**
 
@@ -4364,7 +4364,7 @@ def example_complete_training_usage():
 
 **Заключение:**
 
-Обучение ML-моделей for финансов - это итеративный процесс, требующий глубокого понимания как машинного обучения, так and финансовых рынков. Успех приходит к тем, кто правильно валидирует модели, использует подходящие метрики and постоянно адаптируется к изменениям рынка.
+Обучение ML-моделей for финансов - это итеративный процесс, требующий глубокого понимания как machine learning, так and финансовых рынков. Успех приходит к тем, кто правильно валидирует модели, использует подходящие метрики and постоянно адаптируется к изменениям рынка.
 
 ---
 

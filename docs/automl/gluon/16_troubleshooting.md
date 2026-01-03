@@ -39,7 +39,7 @@
 - **Проблемы производительности**: Медленная Working, нехватка памяти
 - **Проблемы моделей**: Плохая точность, переобучение
 
-in этом разделе рассмотрим типичные проблемы, возникающие при работе with AutoML Gluon, and способы их решения. Каждая проблема включает description, причины возникновения and пошаговые instructions on устранению.
+in этом разделе рассмотрим типичные проблемы, возникающие при работе with AutoML Gluon, and способы их решения. Каждая проблема включает describe, причины возникновения and пошаговые instructions on устранению.
 
 ## Проблемы installation
 
@@ -434,8 +434,8 @@ def diagnose_validation_issues(predictor, test_data):
  print(test_data.isnull().sum())
 
  # Попытка предсказания
- Predictions = predictor.predict(test_data)
- print("Predictions shape:", Predictions.shape)
+ predictions = predictor.predict(test_data)
+ print("predictions shape:", predictions.shape)
 
  return True
 
@@ -477,26 +477,26 @@ def fix_validation_issues(test_data):
 test_data_fixed = fix_validation_issues(test_data)
 ```
 
-## Проблемы Predictions
+## Проблемы predictions
 
-<img src="images/optimized/Prediction_issues.png" alt="Проблемы Predictions" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 16.4: Диагностика and решение проблем Predictions AutoML Gluon - типы ошибок and методы исправления*
+<img src="images/optimized/Prediction_issues.png" alt="Проблемы predictions" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 16.4: Диагностика and решение проблем predictions AutoML Gluon - типы ошибок and методы исправления*
 
-**Типы проблем Predictions:**
-- **Prediction Errors**: Ошибки при выполнении Predictions
-- **Unstable Predictions**: Нестабильные результаты
-- **Slow Predictions**: Медленные предсказания
+**Типы проблем predictions:**
+- **Prediction Errors**: Ошибки при выполнении predictions
+- **Unstable predictions**: Нестабильные результаты
+- **Slow predictions**: Медленные предсказания
 - **Wrong Format**: Неправильный формат данных
 - **Missing Features**: Отсутствующие признаки
 - **data Type Mismatch**: Несоответствие типов данных
 
-### 1. Ошибки Predictions
+### 1. Ошибки predictions
 
 #### Проблема: Ошибки при предсказании
 ```python
-# Диагностика Predictions
+# Диагностика predictions
 def diagnose_Prediction_issues(predictor, data):
- """Диагностика проблем Predictions"""
+ """Диагностика проблем predictions"""
 
  try:
  # check входных данных
@@ -516,8 +516,8 @@ def diagnose_Prediction_issues(predictor, data):
  print(f"Extra features: {extra_features}")
 
  # Попытка предсказания
- Predictions = predictor.predict(data)
- print("Predictions successful")
+ predictions = predictor.predict(data)
+ print("predictions successful")
 
  return True
 
@@ -532,9 +532,9 @@ if not diagnose_Prediction_issues(predictor, new_data):
 
 **Решение:**
 ```python
-# fix проблем Predictions
+# fix проблем predictions
 def fix_Prediction_issues(predictor, data):
- """fix проблем Predictions"""
+ """fix проблем predictions"""
 
  # Получение ожидаемых признаков
  expected_features = predictor.feature_importance().index.toList()
@@ -554,7 +554,7 @@ def fix_Prediction_issues(predictor, data):
 
 # Использование
 new_data_fixed = fix_Prediction_issues(predictor, new_data)
-Predictions = predictor.predict(new_data_fixed)
+predictions = predictor.predict(new_data_fixed)
 ```
 
 ### 2. Нестабильные предсказания
@@ -563,22 +563,22 @@ Predictions = predictor.predict(new_data_fixed)
 ```python
 # Диагностика стабильности
 def diagnose_Prediction_stability(predictor, data, n_tests=5):
- """Диагностика стабильности Predictions"""
+ """Диагностика стабильности predictions"""
 
- Predictions = []
+ predictions = []
 
  for i in range(n_tests):
  pred = predictor.predict(data)
- Predictions.append(pred)
+ predictions.append(pred)
 
  # check согласованности
- Predictions_array = np.array(Predictions)
- consistency = np.mean(Predictions_array == Predictions_array[0])
+ predictions_array = np.array(predictions)
+ consistency = np.mean(predictions_array == predictions_array[0])
 
  print(f"Prediction consistency: {consistency:.4f}")
 
  if consistency < 0.95:
- print("WARNING: Unstable Predictions detected")
+ print("WARNING: Unstable predictions detected")
 
  return consistency
 
@@ -588,11 +588,11 @@ consistency = diagnose_Prediction_stability(predictor, test_data)
 
 **Решение:**
 ```python
-# Стабилизация Predictions
-def stabilize_Predictions(predictor, data, n_samples=3):
- """Стабилизация Predictions"""
+# Стабилизация predictions
+def stabilize_predictions(predictor, data, n_samples=3):
+ """Стабилизация predictions"""
 
- Predictions = []
+ predictions = []
 
  for _ in range(n_samples):
  # add небольшого шума for стабилизации
@@ -603,22 +603,22 @@ def stabilize_Predictions(predictor, data, n_samples=3):
  noisy_data[col] += noise
 
  pred = predictor.predict(noisy_data)
- Predictions.append(pred)
+ predictions.append(pred)
 
- # Усреднение Predictions
+ # Усреднение predictions
  if predictor.problem_type == 'regression':
- stable_Predictions = np.mean(Predictions, axis=0)
+ stable_predictions = np.mean(predictions, axis=0)
  else:
  # for классификации - голосование
- stable_Predictions = []
- for i in range(len(Predictions[0])):
- votes = [pred[i] for pred in Predictions]
- stable_Predictions.append(max(set(votes), key=votes.count))
+ stable_predictions = []
+ for i in range(len(predictions[0])):
+ votes = [pred[i] for pred in predictions]
+ stable_predictions.append(max(set(votes), key=votes.count))
 
- return stable_Predictions
+ return stable_predictions
 
 # Использование
-stable_Predictions = stabilize_Predictions(predictor, test_data)
+stable_predictions = stabilize_predictions(predictor, test_data)
 ```
 
 ## Проблемы производительности
@@ -629,7 +629,7 @@ stable_Predictions = stabilize_Predictions(predictor, test_data)
 **Почему проблемы производительности критичны for продакшена?** Потому что медленные системы неэффективны and дороги:
 
 **Типы проблем производительности:**
-- **Slow Predictions**: Медленные предсказания
+- **Slow predictions**: Медленные предсказания
 - **High Memory Usage**: Высокое использование памяти
 - **GPU Problems**: Issues with GPU
 - **CPU Bottlenecks**: Узкие места CPU
@@ -652,13 +652,13 @@ stable_Predictions = stabilize_Predictions(predictor, test_data)
 import time
 
 def diagnose_Prediction_performance(predictor, data):
- """Диагностика производительности Predictions"""
+ """Диагностика производительности predictions"""
 
  # Тест on небольшой выборке
  small_data = data.head(100)
 
  start_time = time.time()
- Predictions = predictor.predict(small_data)
+ predictions = predictor.predict(small_data)
  Prediction_time = time.time() - start_time
 
  print(f"Prediction time for 100 samples: {Prediction_time:.4f} seconds")
@@ -678,18 +678,18 @@ Prediction_time = diagnose_Prediction_performance(predictor, test_data)
 ```python
 # Оптимизация производительности
 def optimize_Prediction_performance(predictor, data):
- """Оптимизация производительности Predictions"""
+ """Оптимизация производительности predictions"""
 
  # Пакетная обработка
  batch_size = 1000
- Predictions = []
+ predictions = []
 
  for i in range(0, len(data), batch_size):
  batch = data.iloc[i:i+batch_size]
- batch_Predictions = predictor.predict(batch)
- Predictions.extend(batch_Predictions)
+ batch_predictions = predictor.predict(batch)
+ predictions.extend(batch_predictions)
 
- return Predictions
+ return predictions
 ```
 
 **Детальные описания параметров оптимизации производительности:**
@@ -716,10 +716,10 @@ def optimize_Prediction_performance(predictor, data):
 
 - **`predictor.predict(batch)`**: Prediction for пакета
  - `batch`: data пакета
- - Возвращает: массив Predictions
+ - Возвращает: массив predictions
  - Оптимизация: обработка множественных образцов simultaneously
 
-- **`Predictions.extend(batch_Predictions)`**: Объединение результатов
+- **`predictions.extend(batch_predictions)`**: Объединение результатов
  - `extend()`: Добавляет все элементы списка
  - `append()`: Добавляет один элемент
  - Преимущества: эффективное объединение массивов
@@ -787,7 +787,7 @@ def create_fast_model(predictor, data):
 
 # Использование
 fast_predictor = create_fast_model(predictor, train_data)
-fast_Predictions = fast_predictor.predict(test_data)
+fast_predictions = fast_predictor.predict(test_data)
 ```
 
 ### 2. Высокое использование памяти
@@ -821,18 +821,18 @@ def optimize_memory_usage(predictor, data):
 
  # Обработка данных on частям
  chunk_size = 1000
- Predictions = []
+ predictions = []
 
  for i in range(0, len(data), chunk_size):
  chunk = data.iloc[i:i+chunk_size]
- chunk_Predictions = predictor.predict(chunk)
- Predictions.extend(chunk_Predictions)
+ chunk_predictions = predictor.predict(chunk)
+ predictions.extend(chunk_predictions)
 
  # clean памяти
  del chunk
  gc.collect()
 
- return Predictions
+ return predictions
 
 # or использование более эффективных типов данных
 def optimize_data_types(data):
@@ -934,7 +934,7 @@ def fix_model_Loading_issues(model_path):
 
  # Попытка пересоздания модели
  print("Attempting to recreate model...")
- # Здесь должна быть логика пересоздания модели
+ # Здесь должна быть Logsка пересоздания модели
  return None
 
 # Использование
@@ -1024,7 +1024,7 @@ else:
 
 **Типы инструментов диагностики:**
 - **system Monitoring**: Monitoring системы in реальном времени
-- **Logging system**: Система логирования событий
+- **Logging system**: Система Logsрования events
 - **Performance Profiling**: Профилирование производительности
 - **Metrics Collection**: Сбор метрик
 - **Alerting system**: Система уведомлений
@@ -1032,7 +1032,7 @@ else:
 
 **Ключевые аспекты инструментов диагностики:**
 - **Система Monitoringа**: Отслеживание производительности in реальном времени
-- **Система логирования**: Детальная фиксация all событий and ошибок
+- **Система Logsрования**: Детальная фиксация all events and ошибок
 - **Профилирование**: Выявление узких мест in производительности
 - **Метрики**: Количественные показатели качества системы
 - **Алертинг**: notifications о проблемах in реальном времени
@@ -1105,7 +1105,7 @@ class AutoGluonMonitor:
  try:
  # Тест предсказания
  start_time = time.time()
- Predictions = predictor.predict(test_data.head(100))
+ predictions = predictor.predict(test_data.head(100))
  Prediction_time = time.time() - start_time
 
  # check времени
@@ -1141,20 +1141,20 @@ Report = monitor.generate_Report()
 print("Monitoring Report:", Report)
 ```
 
-### 2. Система логирования
+### 2. Система Logsрования
 ```python
 import logging
 from datetime import datetime
 
 class AutoGluonLogger:
- """Система логирования for AutoGluon"""
+ """Система Logsрования for AutoGluon"""
 
  def __init__(self, log_file='autogluon.log'):
  self.log_file = log_file
  self.setup_logging()
 
  def setup_logging(self):
- """configuration логирования"""
+ """configuration Logsрования"""
 
  logging.basicConfig(
  level=logging.INFO,
@@ -1168,9 +1168,9 @@ class AutoGluonLogger:
  self.logger = logging.getLogger(__name__)
 ```
 
-**Детальные описания параметров системы логирования:**
+**Детальные описания параметров системы Logsрования:**
 
-- **`level=logging.INFO`**: Уровень логирования
+- **`level=logging.INFO`**: Уровень Logsрования
  - `logging.DEBUG`: Отладочная информация (все messages)
  - `logging.INFO`: Информационные messages (рекомендуется)
  - `logging.WARNING`: Предупреждения and ошибки
@@ -1180,18 +1180,18 @@ class AutoGluonLogger:
 - **`format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'`**: Формат логов
  - `%(asctime)s`: Время события
  - `%(name)s`: Имя логгера
- - `%(levelname)s`: Уровень логирования
+ - `%(levelname)s`: Уровень Logsрования
  - `%(message)s`: Сообщение
- - Применение: структурированное логирование
+ - Применение: структурированное Logsрование
 
 - **`logging.FileHandler(self.log_file)`**: Обработчик файла
  - `self.log_file`: Путь к файлу лога
  - `'autogluon.log'`: Стандартное имя файла
- - `'./logs/autogluon.log'`: Вложенная папка
+ - `'./Logs/autogluon.log'`: Вложенная папка
  - Применение: сохранение логов in файл
 
 - **`logging.StreamHandler()`**: Обработчик консоли
- - Выводит логи in консоль
+ - Выводит Logs in консоль
  - Полезно for отладки
  - Применение: Monitoring in реальном времени
 
@@ -1201,19 +1201,19 @@ class AutoGluonLogger:
  - Применение: идентификация источника логов
 
  def log_training_start(self, data_info):
- """Логирование начала обучения"""
+ """Logsрование начала обучения"""
  self.logger.info(f"Training started: {data_info}")
 
  def log_training_complete(self, results):
- """Логирование завершения обучения"""
+ """Logsрование завершения обучения"""
  self.logger.info(f"Training COMPLETED: {results}")
 
  def log_Prediction(self, input_data, Prediction, processing_time):
- """Логирование предсказания"""
+ """Logsрование предсказания"""
  self.logger.info(f"Prediction: input={input_data}, Prediction={Prediction}, time={processing_time}")
 
  def log_error(self, error, context):
- """Логирование ошибок"""
+ """Logsрование ошибок"""
  self.logger.error(f"Error: {error}, context: {context}")
 
 # Использование

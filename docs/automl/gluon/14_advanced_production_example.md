@@ -28,9 +28,9 @@
 
 **Ключевые принципы продвинутого подхода:**
 - **Множественные модели**: Каждая модель решает свою специфическую задачу
-- **Ансамбли**: Объединение Predictions for improving accuracy
+- **Ансамбли**: Объединение predictions for improving accuracy
 - **Риск-менеджмент**: Защита from больших потерь and оптимизация доходности
-- **МикроServices**: Масштабируемая and надежная архитектура
+- **Микроservices**: Масштабируемая and надежная архитектура
 - **Monitoring**: Отслеживание производительности in реальном времени
 
 Этот раздел показывает **продвинутый подход** к созданию робастной прибыльной ML-системы with использованием AutoML Gluon - from сложной архитектуры to полного продакшен деплоя with продвинутыми техниками.
@@ -59,7 +59,7 @@ class AdvancedMLsystem:
  - 'macro': модель макроэкономических факторов (внешние события)
 
  ensemble : TabularPredictor or None
- Ансамблевая модель for объединения Predictions:
+ Ансамблевая модель for объединения predictions:
  - Объединяет предсказания all специализированных моделей
  - Использует мета-обучение for оптимального взвешивания
  - Обеспечивает финальное решение системы
@@ -105,7 +105,7 @@ class AdvancedMLsystem:
  'macro': None # Макроэкономические факторы - внешние события
  }
 
- # Ансамбль for объединения Predictions
+ # Ансамбль for объединения predictions
  self.ensemble = None
  # Риск-менеджмент for защиты from потерь
  self.risk_manager = RiskManager()
@@ -130,7 +130,7 @@ class AdvancedMLsystem:
  Требования к инициализации:
  - Все модели должны быть предобучены
  - configuration риск-менеджмента должна быть задана
- - Подключения к внешним сервисам должны быть установлены
+ - Подключения к внешним serviceм должны быть установлены
  - Система Monitoringа должна быть настроена
  """
  pass
@@ -443,7 +443,7 @@ class AdvanceddataProcessor:
  # Анализ тональности каждой статьи
  for article in news['articles']:
  # Объединение заголовка and описания for Analysis
- text = article['title'] + ' ' + article['description']
+ text = article['title'] + ' ' + article['describe']
 
  # Анализ тональности with помощью TextBlob
  blob = TextBlob(text)
@@ -599,7 +599,7 @@ class MultiModelsystem:
  Принципы работы системы:
  1. Специализация: каждая модель решает свою задачу
  2. Независимость: модели обучаются отдельно
- 3. Ансамбль: объединение Predictions for финального решения
+ 3. Ансамбль: объединение predictions for финального решения
  4. Адаптивность: веса обновляются on basis производительности
  """
 
@@ -823,7 +823,7 @@ class MultiModelsystem:
 
  def create_ensemble_model(self, models, data):
  """
- create ансамблевой модели for объединения Predictions all специализированных моделей
+ create ансамблевой модели for объединения predictions all специализированных моделей
 
  Parameters:
  -----------
@@ -836,7 +836,7 @@ class MultiModelsystem:
  - 'macro': модель макроэкономических факторов
 
  data : pd.dataFrame
- data for получения Predictions from all моделей
+ data for получения predictions from all моделей
 
  Returns:
  --------
@@ -849,9 +849,9 @@ class MultiModelsystem:
  Notes:
  ------
  Процесс создания ансамбля:
- 1. Получение Predictions from all специализированных моделей
- 2. create мета-признаков из вероятностей Predictions
- 3. Обучение мета-модели on комбинации Predictions
+ 1. Получение predictions from all специализированных моделей
+ 2. create мета-признаков из вероятностей predictions
+ 3. Обучение мета-модели on комбинации predictions
  4. Оптимизация весов for максимальной точности
 
  Преимущества ансамбля:
@@ -864,11 +864,11 @@ class MultiModelsystem:
  - Voting: простое голосование
  - Weighted Voting: взвешенное голосование
  - Stacking: многоуровневое обучение
- - Blending: усреднение Predictions
+ - Blending: усреднение predictions
  """
 
- # Получение Predictions from all специализированных моделей
- Predictions = {}
+ # Получение predictions from all специализированных моделей
+ predictions = {}
  probabilities = {}
 
  for name, model in models.items():
@@ -876,11 +876,11 @@ class MultiModelsystem:
  # Подготовка признаков for конкретной модели
  features = self._prepare_features_for_model(name, data)
 
- # Получение Predictions and вероятностей
- Predictions[name] = model.predict(features)
+ # Получение predictions and вероятностей
+ predictions[name] = model.predict(features)
  probabilities[name] = model.predict_proba(features)
 
- # create мета-признаков из вероятностей Predictions
+ # create мета-признаков из вероятностей predictions
  meta_features = pd.dataFrame(probabilities)
 
  # Целевая переменная for мета-модели
@@ -893,7 +893,7 @@ class MultiModelsystem:
  eval_metric='accuracy' # Метрика оценки
  )
 
- # Обучение мета-модели on комбинации Predictions
+ # Обучение мета-модели on комбинации predictions
  ensemble_predictor.fit(
  meta_features, # Мета-признаки (вероятности from all моделей)
  time_limit=300, # Время обучения in секундах (5 minutes)
@@ -904,7 +904,7 @@ class MultiModelsystem:
 ```
 
 <img src="images/optimized/ensemble_model_visualization.png" alt="Ансамблевая модель" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 14.3: Ансамблевая модель - объединение Predictions from множественных моделей for improving accuracy*
+*Рисунок 14.3: Ансамблевая модель - объединение predictions from множественных моделей for improving accuracy*
 
 **Как Workingет ансамбль:**
 - **Взвешенное голосование**: Каждая модель имеет свой вес
@@ -934,15 +934,15 @@ class AdvancedValidation:
  if model is not None:
  # Предсказания
  features = self._prepare_features_for_model(name, test_data)
- Predictions = model.predict(features)
+ predictions = model.predict(features)
  probabilities = model.predict_proba(features)
 
  # Расчет метрик
- accuracy = (Predictions == test_data['target']).mean()
+ accuracy = (predictions == test_data['target']).mean()
 
  # Торговая стратегия
  strategy_returns = self._calculate_strategy_returns(
- test_data, Predictions, probabilities
+ test_data, predictions, probabilities
  )
 
  # Риск-метрики
@@ -1181,12 +1181,12 @@ class AdvancedRiskManager:
 
  return stop_loss
 
- def Portfolio_optimization(self, Predictions, correlations, expected_returns):
+ def Portfolio_optimization(self, predictions, correlations, expected_returns):
  """Оптимизация портфеля"""
 
  from scipy.optimize import minimize
 
- n_assets = len(Predictions)
+ n_assets = len(predictions)
 
  # Ограничения
  constraints = [
@@ -1215,13 +1215,13 @@ class AdvancedRiskManager:
 
 ## Шаг 6: Микросервисная архитектура
 
-<img src="images/optimized/microServices_architecture.png" alt="Микросервисная архитектура" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 14.5: Микросервисная архитектура ML-системы - независимые Services for масштабируемости and надежности*
+<img src="images/optimized/microservices_architecture.png" alt="Микросервисная архитектура" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
+*Рисунок 14.5: Микросервисная архитектура ML-системы - независимые services for масштабируемости and надежности*
 
-**Преимущества микросервисов:**
+**Преимущества микроservices:**
 - **Независимое масштабирование**: Каждый сервис масштабируется отдельно
-- **Изоляция отказов**: Отказ одного сервиса not влияет on другие
-- **Технологическое разнообразие**: Разные технологии for different tasks
+- **Изоляция отказов**: Отказ одного service not влияет on другие
+- **ТехноLogsческое разнообразие**: Разные техноLogsи for different tasks
 - **Независимое развертывание**: Обновления без остановки всей системы
 - **Легкость тестирования**: Каждый сервис тестируется отдельно
 
@@ -1238,7 +1238,7 @@ class APIGateway:
  """API Gateway for ML системы"""
 
  def __init__(self):
- self.Services = {
+ self.services = {
  'data_service': 'http://data-service:5001',
  'model_service': 'http://model-service:5002',
  'risk_service': 'http://risk-service:5003',
@@ -1251,7 +1251,7 @@ class APIGateway:
 
  # Получение данных
  data_response = requests.get(
- f"{self.Services['data_service']}/data/{symbol}/{Timeframe}"
+ f"{self.services['data_service']}/data/{symbol}/{Timeframe}"
  )
 
  if data_response.status_code != 200:
@@ -1261,7 +1261,7 @@ class APIGateway:
 
  # Получение предсказания
  Prediction_response = requests.post(
- f"{self.Services['model_service']}/predict",
+ f"{self.services['model_service']}/predict",
  json=data
  )
 
@@ -1272,7 +1272,7 @@ class APIGateway:
 
  # Расчет риска
  risk_response = requests.post(
- f"{self.Services['risk_service']}/calculate_risk",
+ f"{self.services['risk_service']}/calculate_risk",
  json={**data, **Prediction}
  )
 
@@ -1288,7 +1288,7 @@ class APIGateway:
  }
 
 # data_service.py
-class dataService:
+class dataservice:
  """Сервис данных"""
 
  def __init__(self):
@@ -1306,7 +1306,7 @@ class dataService:
  return processed_data
 
 # model_service.py
-class ModelService:
+class Modelservice:
  """Сервис моделей"""
 
  def __init__(self):
@@ -1316,23 +1316,23 @@ class ModelService:
  def predict(self, data):
  """Получение предсказания from all моделей"""
 
- Predictions = {}
+ predictions = {}
 
  for name, model in self.models.items():
  if model is not None:
  features = self.prepare_features(data, name)
- Predictions[name] = {
+ predictions[name] = {
  'Prediction': model.predict(features),
  'probability': model.predict_proba(features)
  }
 
  # Ансамблевое Prediction
- ensemble_Prediction = self.ensemble_predict(Predictions)
+ ensemble_Prediction = self.ensemble_predict(predictions)
 
  return ensemble_Prediction
 
 # risk_service.py
-class RiskService:
+class Riskservice:
  """Сервис риск-менеджмента"""
 
  def __init__(self):
@@ -1377,7 +1377,7 @@ class RiskService:
 - **Self-healing**: Автоматическое восстановление после отказов
 - **Rolling updates**: Обновления без простоя системы
 - **Resource limits**: Контроль использования ресурсов
-- **health checks**: Автоматическая health check сервисов
+- **health checks**: Автоматическая health check services
 - **Load balancing**: Распределение нагрузки между инстансами
 
 ```yaml
@@ -1405,7 +1405,7 @@ spec:
  - name: REDIS_URL
  value: "redis://redis-service:6379"
  - name: database_URL
- value: "postgresql://user:pass@postgres-service:5432/mldb"
+ value: "postgresql://User:pass@postgres-service:5432/mldb"
 
  - name: data-service
  image: ml-system/data-service:latest
@@ -1443,7 +1443,7 @@ spec:
  key: private-key
 ---
 apiVersion: v1
-kind: Service
+kind: service
 metadata:
  name: ml-system-service
 spec:
@@ -1489,11 +1489,11 @@ class AdvancedMonitoring:
  self.alerts = []
  self.performance_history = []
 
- def monitor_model_performance(self, model_name, Predictions, actuals):
+ def monitor_model_performance(self, model_name, predictions, actuals):
  """Monitoring производительности модели"""
 
  # Расчет метрик
- accuracy = (Predictions == actuals).mean()
+ accuracy = (predictions == actuals).mean()
 
  # update истории
  self.performance_history.append({
@@ -1513,14 +1513,14 @@ class AdvancedMonitoring:
  def monitor_system_health(self):
  """Monitoring health системы"""
 
- # check доступности сервисов
- for service_name, service_url in self.Services.items():
+ # check доступности services
+ for service_name, service_url in self.services.items():
  try:
  response = requests.get(f"{service_url}/health", timeout=5)
  if response.status_code != 200:
- self.trigger_alert(f"Service {service_name} is unhealthy")
+ self.trigger_alert(f"service {service_name} is unhealthy")
  except:
- self.trigger_alert(f"Service {service_name} is unreachable")
+ self.trigger_alert(f"service {service_name} is unreachable")
 
  # check использования ресурсов
  self.check_resource_usage()
@@ -1580,15 +1580,15 @@ class AdvancedMLsystem:
  # 1. Сбор данных
  data = self.data_processor.collect_multi_source_data(['BTC-USD', 'ETH-USD'])
 
- # 2. Получение Predictions
- Predictions = self.model_system.get_Predictions(data)
+ # 2. Получение predictions
+ predictions = self.model_system.get_predictions(data)
 
  # 3. Расчет рисков
- risk_assessment = self.risk_manager.assess_risks(Predictions, data)
+ risk_assessment = self.risk_manager.assess_risks(predictions, data)
 
  # 4. Выполнение торговых операций
  if risk_assessment['risk_score'] < 0.7: # Низкий риск
- trade_results = self.execute_trades(Predictions, risk_assessment)
+ trade_results = self.execute_trades(predictions, risk_assessment)
 
  # 5. Monitoring
  self.Monitoring.monitor_trades(trade_results)
@@ -1636,4 +1636,4 @@ if __name__ == '__main__':
 
 ## Заключение
 
-Продвинутый example показывает, как создать высокопроизводительную ML-system for trading on DEX blockchain with использованием современных практик and технологий. Хотя система сложная, она обеспечивает максимальную производительность and робастность.
+Продвинутый example показывает, как создать высокопроизводительную ML-system for trading on DEX blockchain with использованием современных практик and техноLogsй. Хотя система сложная, она обеспечивает максимальную производительность and робастность.

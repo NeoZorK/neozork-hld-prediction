@@ -9,13 +9,13 @@
 # installation UV / install UV
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# check installation / check installation
+# installation check / installation check
 uv --version
 ```
 
 #### dependencies / Dependency errors Errors
 ```bash
-# clean cache UV / Clean UV cache
+# clean cache UV / clean UV cache
 uv cache clean
 
 # reinstall dependencies / reinstall dependencies
@@ -24,7 +24,7 @@ uv pip install -r requirements.txt --force-reinstall
 
 #### with Node.js / Node.js issues Issues
 ```bash
-# clean cache npm / Clean npm cache
+# clean cache npm / clean npm cache
 npm cache clean --force
 
 # reinstall dependencies / reinstall dependencies
@@ -57,7 +57,7 @@ kill -9 $(lsof -t -i:8080)
 #### with database / database issues Issues
 ```bash
 # check PostgreSQL connection / check PostgreSQL connection
-psql -h localhost -U neozork_user -d neozork_fund
+psql -h localhost -U neozork_User -d neozork_fund
 
 # Restart PostgreSQL / Restart PostgreSQL
 sudo systemctl Restart PostgreSQL
@@ -79,7 +79,7 @@ uv run pytest tests/calculation/test_indicators.py::test_rsi -v
 
 #### with coverage / coverage issues Issues
 ```bash
-# clean coverage cache / Clean coverage cache
+# clean coverage cache / clean coverage cache
 rm -rf .coverage htmlcov/
 
 # Launch with coverage / Run with coverage
@@ -102,7 +102,7 @@ uv run pytest tests/ -n 2
 # Rebuild containers / Rebuild containers
 docker-compose build --no-cache
 
-# clean Docker / Clean Docker
+# clean Docker / clean Docker
 docker system prune -a
 
 # Restart Docker / Restart Docker
@@ -114,7 +114,7 @@ sudo systemctl Restart Docker
 # View volumes / View volumes
 docker volume ls
 
-# clean volumes / Clean volumes
+# clean volumes / clean volumes
 docker volume prune
 
 # create volumes / Create volumes
@@ -135,39 +135,39 @@ docker network create neozork_network
 
 ### Issues with Kubernetes / Kubernetes Issues
 
-#### Pods not start / Pods don't start
+#### pods not start / pods don't start
 ```bash
-# View событий / View events
+# View events / View events
 kubectl get events
 
-# description pod / Describe pod
+# describe pod / describe pod
 kubectl describe pod <pod-name>
 
-# Логи pod / Pod logs
-kubectl logs <pod-name>
+# pod Logs / pod Logs
+kubectl Logs <pod-name>
 ```
 
-#### with сервисами / Service issues Issues
+#### with services / service issues Issues
 ```bash
-# View сервисов / View Services
-kubectl get Services
+# View services / View services
+kubectl get services
 
-# description сервиса / Describe service
+# describe service / describe service
 kubectl describe service <service-name>
 
 # check endpoints / check endpoints
 kubectl get endpoints
 ```
 
-#### with развертыванием / deployment issues Issues
+#### with deployment / deployment issues Issues
 ```bash
-# View развертываний / View deployments
+# View deployments / View deployments
 kubectl get deployments
 
-# description развертывания / Describe deployment
+# describe deployment / describe deployment
 kubectl describe deployment <deployment-name>
 
-# Откат развертывания / Rollback deployment
+# Rollback deployment / Rollback deployment
 kubectl rollout undo deployment/<deployment-name>
 ```
 
@@ -189,17 +189,17 @@ docker volume ls
 
 ### Анализ логов / Log Analysis
 ```bash
-# View all логов / View all logs
-find logs/ -name "*.log" -exec tail -f {} \;
+# View all логов / View all Logs
+find Logs/ -name "*.log" -exec tail -f {} \;
 
 # Поиск ошибок / Search for errors
-grep -r "ERROR" logs/
+grep -r "ERROR" Logs/
 
 # Поиск предупреждений / Search for warnings
-grep -r "WARNING" logs/
+grep -r "WARNING" Logs/
 
 # Анализ производительности / Performance Analysis
-grep -r "performance" logs/
+grep -r "performance" Logs/
 ```
 
 ### Отладочные скрипты / Debug Scripts
@@ -222,11 +222,11 @@ python scripts/mcp/debug_mcp_detection.py
 
 ### Полное восстановление / Full Recovery
 ```bash
-# Остановка all сервисов / Stop all Services
+# Остановка all services / Stop all services
 docker-compose down
 ./scripts/native-container/stop.sh
 
-# clean системы / Clean system
+# clean системы / clean system
 uv cache clean
 docker system prune -a
 ./scripts/native-container/cleanup.sh --all --force
@@ -236,17 +236,17 @@ uv pip install -r requirements.txt --force-reinstall
 cd src/mobile_app && npm install && cd ../..
 cd src/admin_panel && npm install && cd ../..
 
-# Launch сервисов / start Services
+# Launch services / start services
 docker-compose up -d
 ```
 
 ### Восстановление данных / data Recovery
 ```bash
 # Резервное копирование / Backup
-docker-compose exec neozork-hld pg_dump -U neozork_user neozork_fund > backup.sql
+docker-compose exec neozork-hld pg_dump -U neozork_User neozork_fund > backup.sql
 
 # Восстановление / Restore
-docker-compose exec neozork-hld psql -U neozork_user neozork_fund < backup.sql
+docker-compose exec neozork-hld psql -U neozork_User neozork_fund < backup.sql
 ```
 
 ### Восстановление конфигурации / Configuration Recovery
@@ -260,17 +260,17 @@ tar -xzf config-backup.tar.gz
 
 ## 📞 Получение помощи / Getting Help
 
-### Логи and диагностика / Logs and Diagnostics
+### Logs and диагностика / Logs and Diagnostics
 ```bash
 # Сбор диагностической информации / Collect diagnostic information
 ./scripts/utilities/collect_diagnostics.sh
 
-# Отправка логов / Send logs
-./scripts/utilities/send_logs.sh
+# Отправка логов / Send Logs
+./scripts/utilities/send_Logs.sh
 ```
 
 ### Сообщество / Community
-- **GitHub Issues**: https://github.com/username/neozork-hld-Prediction/issues
+- **GitHub Issues**: https://github.com/Username/neozork-hld-Prediction/issues
 - **Discord**: https://discord.gg/neozork
 - **Telegram**: https://t.me/neozork_hld
 

@@ -15,7 +15,7 @@
 
 ### Преимущества простого подхода
 - **Быстрый результат**: Workingющая система за дни, а not месяцы
-- **Понятность**: Каждый шаг логичен and объясним
+- **Понятность**: Каждый шаг Logsчен and объясним
 - **Итеративность**: Можно улучшать постепенно
 - **Мотивация**: Видимый прогресс вдохновляет команду
 
@@ -52,7 +52,7 @@
 ### Goal
 **Почему 70% точности достаточно?** Потому что in трейдинге даже небольшое преимущество дает прибыль, а 70% - это уже статистически значимое преимущество.
 
-- **Точность**: >70% правильных Predictions направления движения цены
+- **Точность**: >70% правильных predictions направления движения цены
 - **Робастность**: Стабильная Working in различных рыночных условиях
 - **Прибыльность**: Положительный ROI on testsых данных
 
@@ -154,7 +154,7 @@ print(f"data подготовлены: {crypto_data.shape}")
 
 ## Шаг 3: create модели with AutoML Gluon
 
-**Почему AutoML Gluon идеален for быстрого прототипирования?** Потому что он автоматически выбирает лучшие алгоритмы, настраивает гиперпараметры and создает ансамбли моделей, экономя месяцы ручной работы.
+**Почему AutoML Gluon ideal for быстрого прототипирования?** Потому что он автоматически выбирает лучшие алгоритмы, настраивает гиперпараметры and создает ансамбли моделей, экономя месяцы ручной работы.
 
 **Преимущества AutoML Gluon:**
 - **Автоматический выбор алгоритмов**: not нужно знать, какой алгоритм лучше
@@ -288,10 +288,10 @@ def simple_backtest(predictor, test_data, features):
  --------
  Dict[str, Any]
  Результаты backtest:
- - accuracy: точность Predictions (0-1)
+ - accuracy: точность predictions (0-1)
  - total_return: общая доходность стратегии
  - sharpe_ratio: коэффициент Шарпа (риск-скорректированная доходность)
- - Predictions: предсказания модели (0/1)
+ - predictions: предсказания модели (0/1)
  - probabilities: вероятности классов
 
  Notes:
@@ -302,7 +302,7 @@ def simple_backtest(predictor, test_data, features):
  - Удержание: если уверенность < 0.6
 
  Метрики оценки:
- - Accuracy: доля правильных Predictions направления
+ - Accuracy: доля правильных predictions направления
  - Total Return: суммарная доходность стратегии
  - Sharpe Ratio: доходность on единицу риска (стандартизированная)
 
@@ -313,15 +313,15 @@ def simple_backtest(predictor, test_data, features):
  """
 
  # Предсказания модели on testsых данных
- Predictions = predictor.predict(test_data[features])
+ predictions = predictor.predict(test_data[features])
  probabilities = predictor.predict_proba(test_data[features])
 
  # Расчет метрики точности
- accuracy = (Predictions == test_data['target']).mean()
+ accuracy = (predictions == test_data['target']).mean()
 
  # Подготовка данных for расчета прибыли
  test_data = test_data.copy() # Копия for избежания изменения исходных данных
- test_data['Prediction'] = Predictions
+ test_data['Prediction'] = predictions
  test_data['probability'] = probabilities[1] if len(probabilities.shape) > 1 else probabilities
 
  # Простая торговая стратегия: покупаем если уверенность > 60%
@@ -334,10 +334,10 @@ def simple_backtest(predictor, test_data, features):
  sharpe_ratio = test_data['strategy_returns'].mean() / test_data['strategy_returns'].std() * np.sqrt(252) # Коэффициент Шарпа (годовой)
 
  return {
- 'accuracy': accuracy, # Точность Predictions
+ 'accuracy': accuracy, # Точность predictions
  'total_return': total_return, # Общая доходность
  'sharpe_ratio': sharpe_ratio, # Коэффициент Шарпа
- 'Predictions': Predictions, # Предсказания модели
+ 'predictions': predictions, # Предсказания модели
  'probabilities': probabilities # Вероятности классов
  }
 
@@ -360,7 +360,7 @@ def simple_walk_forward(data, features, window_size=252, step_size=30):
  Полные исторические data:
  - Содержит OHLCV data and Technical индикаторы
  - Включает целевую переменную 'target'
- - Отсортированы in time (хронологический порядок)
+ - Отсортированы in time (хроноLogsческий порядок)
 
  features : List[str]
  List признаков for обучения:
@@ -433,8 +433,8 @@ def simple_walk_forward(data, features, window_size=252, step_size=30):
  )
 
  # Предсказания on testsых данных
- Predictions = predictor.predict(test_data[features])
- accuracy = (Predictions == test_data['target']).mean() # Точность on testsом периоде
+ predictions = predictor.predict(test_data[features])
+ accuracy = (predictions == test_data['target']).mean() # Точность on testsом периоде
 
  # Сохранение результатов for текущего периода
  results.append({
@@ -535,8 +535,8 @@ def simple_monte_carlo(data, features, n_simulations=100):
  )
 
  # Предсказания on testsых данных
- Predictions = predictor.predict(test_data[features])
- accuracy = (Predictions == test_data['target']).mean() # Точность текущей симуляции
+ predictions = predictor.predict(test_data[features])
+ accuracy = (predictions == test_data['target']).mean() # Точность текущей симуляции
 
  results.append(accuracy) # Сохранение результата
 
@@ -687,10 +687,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копирование кода приложения
 COPY . .
 
-# create user for безопасности
-RUN useradd -m -u 1000 appuser && \
- chown -R appuser:appuser /app
-user appuser
+# create User for безопасности
+RUN Useradd -m -u 1000 appUser && \
+ chown -R appUser:appUser /app
+User appUser
 
 # Открытие порта for API
 EXPOSE 5000
@@ -703,7 +703,7 @@ CMD ["python", "app.py"]
 # docker-compose.yml for ML системы
 Version: '3.8'
 
-Services:
+services:
  ml-api:
  build: . # Сборка из Dockerfile
  ports:
@@ -713,7 +713,7 @@ Services:
  - FLASK_DEBUG=False # Отключение отладки
  volumes:
  - ./models:/app/models # Монтирование моделей
- - ./logs:/app/logs # Монтирование логов
+ - ./Logs:/app/Logs # Монтирование логов
  restart: unless-stopped # Автоматический переLaunch
  depends_on:
  - redis # dependency from Redis
@@ -741,7 +741,7 @@ volumes:
 <img src="images/optimized/blockchain_integration_flow.png" alt="integration ML-системы with DEX Blockchain" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
 *Рисунок 13.4: integration ML-системы with DEX Blockchain - потоки данных, components, example торговой операции*
 
-**Почему blockchain integration революционна?** Потому что она позволяет автоматизировать торговые решения on basis ML-Predictions, устраняя человеческий фактор and обеспечивая прозрачность операций.
+**Почему blockchain integration революционна?** Потому что она позволяет автоматизировать торговые решения on basis ML-predictions, устраняя человеческий фактор and обеспечивая прозрачность операций.
 
 ```python
 # smart_contract.py
@@ -751,14 +751,14 @@ import json
 
 class MLPredictionContract:
  """
- Smart contract for автоматической торговли on basis ML Predictions
+ Smart contract for автоматической торговли on basis ML predictions
 
  Parameters:
  -----------
  contract_address : str
  Адрес smart contract on blockchain:
  - Должен быть развернут on Ethereum mainnet
- - Содержит логику торговых операций
+ - Содержит Logsку торговых операций
  - Имеет functions buy_token() and sell_token()
 
  private_key : str
@@ -863,7 +863,7 @@ class MLPredictionContract:
  - reason: str - причина действия
  """
 
- # Торговая логика on basis ML предсказания
+ # Торговая Logsка on basis ML предсказания
  if Prediction['confidence'] == 'high' and Prediction['Prediction'] == 1:
  # Покупка при высокой уверенности in росте
  return self.buy_token(amount)
@@ -911,11 +911,11 @@ def monitor_and_retrain():
  - Изменение рыночных условий
  - Появление новых паттернов in данных
 
- Процесс развертывания:
+ Процесс deployment:
  - Сохранение новой модели
  - Валидация on testsых данных
  - Постепенное переключение трафика
- - Откат при проблемах
+ - Rollback при проблемах
  """
 
  # check текущей производительности модели
@@ -957,7 +957,7 @@ def main():
  Notes:
  ------
  Архитектура системы:
- - ML API: получение Predictions from модели
+ - ML API: получение predictions from модели
  - Blockchain Contract: выполнение торговых операций
  - Monitoring: Monitoring производительности
  - Logging: запись all операций
@@ -966,12 +966,12 @@ def main():
  1. Инициализация all компонентов
  2. Получение предсказания from ML модели
  3. Выполнение торговой операции on blockchain
- 4. Логирование результата
+ 4. Logsрование результата
  5. Monitoring производительности
  6. Пауза to следующего цикла
 
  Обработка ошибок:
- - Логирование all ошибок
+ - Logsрование all ошибок
  - Пауза при критических ошибках
  - Продолжение работы при некритических ошибках
  - Автоматический переLaunch при сбоях
@@ -979,10 +979,10 @@ def main():
  Settings:
  - Интервал обновления: 1 час (3600 секунд)
  - Пауза при ошибке: 1 minutesа (60 секунд)
- - Уровень логирования: INFO
+ - Уровень Logsрования: INFO
  """
 
- # configuration логирования for отслеживания работы системы
+ # configuration Logsрования for отслеживания работы системы
  logging.basicConfig(
  level=logging.INFO,
  format='%(asctime)s - %(levelname)s - %(message)s',
@@ -993,7 +993,7 @@ def main():
  )
 
  # Инициализация компонентов системы
- ml_api = MLPredictionAPI() # API for получения Predictions
+ ml_api = MLPredictionAPI() # API for получения predictions
  blockchain_contract = MLPredictionContract() # Smart contract for trading
  Monitoring = ModelMonitoring() # Monitoring производительности
 
@@ -1006,7 +1006,7 @@ def main():
  # Выполнение торговой операции on blockchain
  trade_result = blockchain_contract.execute_trade(Prediction)
 
- # Логирование результата операции
+ # Logsрование результата операции
  logging.info(f"Trade executed: {trade_result}")
 
  # Monitoring производительности модели
@@ -1016,7 +1016,7 @@ def main():
  time.sleep(3600)
 
  except Exception as e:
- # Обработка ошибок with логированием
+ # Обработка ошибок with Logsрованием
  logging.error(f"system error: {e}")
  time.sleep(60) # Пауза при ошибке (1 minutesа)
 
@@ -1044,7 +1044,7 @@ if __name__ == '__main__':
 4. **Быстрый деплой** - стандартные инструменты
 
 ### Ограничения
-1. **Простота стратегии** - базовая логика торговли
+1. **Простота стратегии** - базовая Logsка торговли
 2. **Ограниченная адаптивность** - фиксированные parameters
 3. **Базовый риск-менеджмент** - простые правила
 

@@ -130,9 +130,9 @@ Compare Performance
 
 **Why is it important to understand metrics?** BecaUse different tasks require different metrics for quality assessment:
 
-- **Accuracy**: Percentage of correct Predictions (for balanced data)
-- **Precision**: Accuracy of positive Predictions (important at high cost of errors)
-- **Recall**: Completeness of positive Predictions (important not to miss important cases)
+- **Accuracy**: Percentage of correct predictions (for balanced data)
+- **Precision**: Accuracy of positive predictions (important at high cost of errors)
+- **Recall**: Completeness of positive predictions (important not to miss important cases)
 - **F1-Score**: Harmonic mean of precision and recall (balanced metric)
 - **AUC-ROC**: Area under the ROC curve (quality of class separation)
 - **RMSE**: Root of RMSE (for regression)
@@ -435,7 +435,7 @@ pip install -e ./tabular
 - **Issues with GPU**: Incorrect configuration CUDA
 - **Issues with performance**: Suboptimal Settings
 
-## check installations
+## installation checks
 
 Baseline test
 ```python
@@ -495,7 +495,7 @@ pip install ray[default]
 pip install modin[all]
 ```
 
-#### 📊 Detailed description of libraries for large datasets
+#### 📊 Detailed describe of libraries for large datasets
 
 **Dask - Distributed Computing for Big data**
 
@@ -574,10 +574,10 @@ futures = [train_model.remote(chunk) for chunk in data_chunks]
 models = ray.get(futures)
 
 # Model Ensemble
-ensemble_Predictions = []
+ensemble_predictions = []
 for model in models:
  pred = model.predict(test_data)
- ensemble_Predictions.append(pred)
+ ensemble_predictions.append(pred)
 ```
 
 **Modin - Accelerated Pandas**
@@ -651,7 +651,7 @@ pip install mxnet
 pip install statsmodels
 ```
 
-#### # Detailed description of libraries for time series
+#### # Detailed describe of libraries for time series
 
 **GluonTS - Specialized Library for Time Series**
 
@@ -665,7 +665,7 @@ Intended purpose
 - **Finished models**: DeepAR, Transformer, WaveNet, MQ-CNN
 - **Automatic processing**: Determination of seasonality, trends, anomalies
 - **Multidimensional series**: Working with multiple linked time series
-- **Uncertainty**: Quantile Predictions and confidence intervals
+- **Uncertainty**: Quantile predictions and confidence intervals
 - **Scalability**: Processing thousands of time series simultaneously
 
 **Practical examples of Use:**
@@ -856,8 +856,8 @@ predictor.fit(
 )
 
 # Прогнозирование
-Predictions = predictor.predict(train_data)
-print(f"Predictions shape: {Predictions.shape}")
+predictions = predictor.predict(train_data)
+print(f"predictions shape: {predictions.shape}")
 
 # Оценка качества
 performance = predictor.evaluate(train_data)
@@ -880,7 +880,7 @@ export CUDA_VISIBLE_DEVICES=0
 export AUTOGLUON_DEBUG=1
 ```
 
-#### 🔧 Детальное description переменных окружения
+#### 🔧 Детальное describe переменных окружения
 
 **OMP_NUM_THREADS - Контроль OpenMP потоков**
 
@@ -1118,14 +1118,14 @@ test_gpu_performance()
 **AUTOGLUON_DEBUG - Режим отладки**
 
 **Назначение:**
-- Включает детальное логирование AutoML Gluon
+- Включает детальное Logsрование AutoML Gluon
 - Помогает диагностировать проблемы
 - Показывает внутренние процессы обучения
 
 **Рекомендуемые значения:**
 - **for отладки**: `AUTOGLUON_DEBUG=1`
 - **for продакшена**: not устанавливать (on умолчанию выключен)
-- **for разработки**: `AUTOGLUON_DEBUG=1`
+- **for development**: `AUTOGLUON_DEBUG=1`
 
 **Практические examples:**
 ```bash
@@ -1158,7 +1158,7 @@ data = pd.dataFrame({
 # create предиктора with debugging
 predictor = TabularPredictor(label='target')
 
-# Обучение with детальным логированием
+# Обучение with детальным Logsрованием
 predictor.fit(data, time_limit=60)
 # Выведет детальную информацию о:
 # - Выборе алгоритмов
@@ -1266,7 +1266,7 @@ default:
 # Settings for different tasks
 ```
 
-#### 🔧 Детальное description параметров конфигурации
+#### 🔧 Детальное describe параметров конфигурации
 
 **parameter `time_limit`:**
 
@@ -1375,10 +1375,10 @@ default:
 - **RTX 3070 8GB**: `num_gpus: 1` - хорошая производительность
 - **RTX 4080 16GB**: `num_gpus: 1` - высокая производительность
 - **A100 40GB**: `num_gpus: 1` - профессиональная Working
-- **Несколько GPU**: `num_gpus: 2+` - for больших моделей
+- **Несколько GPU**: `num_gpus: 2+` - for large models
 - **Влияние on скорость обучения**:
  - **CPU только**: Базовая скорость (100%)
-- **GTX 1060**: Ускорение in 3-5 раз
+- **GTX 1060**: Ускорение by 3-5 times
 - **RTX 3070**: Ускорение in 8-15 раз
 - **RTX 4080**: Ускорение in 15-25 раз
 - **A100**: Ускорение in 25-50 раз
@@ -1388,7 +1388,7 @@ default:
 - **Временные ряды**: GPU ускоряет in 2-5 раз
 - **Изображения**: GPU критична, ускорение in 10-50 раз
 - **Текст**: GPU ускоряет in 5-20 раз
-- **Требования к памяти GPU**:
+- **Требования to memory GPU**:
  - **Малые модели (< 1M параметров)**: 2-4 GB VRAM
 - **Средние модели (1-10M параметров)**: 4-8 GB VRAM
 - **Большие модели (10-100M параметров)**: 8-16 GB VRAM
@@ -1410,13 +1410,13 @@ timeseries:
  target_column: 'target'
 ```
 
-#### 🎯 Детальное description параметров for табличных данных
+#### 🎯 Детальное describe параметров for табличных данных
 
 **parameter `presets`:**
 
 - **Что означает**: Предустановленные конфигурации качества модели
 - **Зачем нужен**: Упрощает выбор между скоростью and качеством
-- **Детальное description каждого preset**: **`best_quality`:**
+- **Детальное describe каждого preset**: **`best_quality`:**
 - **Что делает**: Максимальное качество модели
 - **Время обучения**: 4-8 часов
 - **Использует**: Все доступные алгоритмы, ансамбли, тюнинг гиперпараметров
@@ -1472,7 +1472,7 @@ timeseries:
  - `'dask'` - распределенное выполнение через Dask
 - **Практический example**: for одного компьютера Use `'local'`
 
-#### ⏰ Детальное description параметров for временных рядов
+#### ⏰ Детальное describe параметров for временных рядов
 
 **parameter `Prediction_length`:**
 
@@ -1576,7 +1576,7 @@ def test_installation():
  )
 
  # Предсказания
- Predictions = predictor.predict(test_data)
+ predictions = predictor.predict(test_data)
 
  # Оценка качества
  performance = predictor.evaluate(test_data)
@@ -1593,7 +1593,7 @@ if __name__ == "__main__":
 ## 🚀 Архитектура продакшена
 
 <img src="images/optimized/production_architecture.png" alt="Архитектура продакшена" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 8: Архитектура развертывания AutoML Gluon in продакшене*
+*Рисунок 8: Архитектура deployment AutoML Gluon in продакшене*
 
 **Почему важно понимать архитектуру продакшена?** Потому что это помогает правильно сPlanировать развертывание:
 
