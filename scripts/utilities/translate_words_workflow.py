@@ -132,7 +132,7 @@ def save_translation_cache(cache: Dict[str, str], cache_file: str) -> None:
         print(f"Warning: Could not save cache: {e}", file=sys.stderr)
 
 
-def replace_words_in_text(text: str, word_map: Dict[str, str], context_check: bool = True) -> Tuple[str, int]:
+def replace_words_in_text(text: str, word_map: Dict[str, str], context_check: bool = True, show_progress: bool = False) -> Tuple[str, int]:
     """
     Replace Russian words with English translations in text.
     Returns (translated_text, replacement_count)
@@ -145,8 +145,12 @@ def replace_words_in_text(text: str, word_map: Dict[str, str], context_check: bo
     
     # Sort words by length (longest first) to avoid partial replacements
     sorted_words = sorted(word_map.keys(), key=len, reverse=True)
+    total_words = len(sorted_words)
     
-    for russian_word in sorted_words:
+    for idx, russian_word in enumerate(sorted_words, 1):
+        if show_progress and total_words > 10 and idx % max(1, total_words // 10) == 0:
+            progress_percent = (idx / total_words) * 100
+            print(f"      Replacing words: {progress_percent:.0f}% ({idx}/{total_words})", end='\r', file=sys.stderr)
         english_word = word_map[russian_word]
         
         # Use word boundaries to avoid partial matches
@@ -169,6 +173,9 @@ def replace_words_in_text(text: str, word_map: Dict[str, str], context_check: bo
             
             translated = re.sub(pattern, replace_func, translated, flags=re.IGNORECASE)
             replacement_count += matches
+    
+    if show_progress and total_words > 10:
+        print("", file=sys.stderr)  # New line after progress
     
     return translated, replacement_count
 
@@ -193,7 +200,7 @@ def process_file_with_translations(
             return True, 0
         
         translated_content, replacement_count = replace_words_in_text(
-            original_content, word_map, context_check
+            original_content, word_map, context_check, show_progress=True
         )
         
         if replacement_count > 0:
@@ -367,7 +374,8 @@ def main():
     failed_files = 0
     
     for i, file_path in enumerate(files_to_process, 1):
-        print(f"  [{i}/{len(files_to_process)}] Processing {file_path}...")
+        progress_percent = (i / len(files_to_process)) * 100
+        print(f"  [{i}/{len(files_to_process)}] ({progress_percent:.1f}%) Processing {file_path}...")
         
         if args.dry_run:
             # Count potential replacements
