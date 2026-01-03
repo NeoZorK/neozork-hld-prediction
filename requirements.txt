@@ -27,7 +27,7 @@ textblob>=0.17.1
 # Utilities
 python-dotenv==1.0.0
 pydantic==2.5.0
-python-multipart==0.0.6
+python-multipart>=0.0.18
 psutil>=5.9.0
 watchdog>=3.0.0
 email-validator>=2.0.0
