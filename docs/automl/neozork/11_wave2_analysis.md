@@ -258,7 +258,7 @@ class WAVE2dataLoader:
  # check наличия columns
  missing_columns = [col for col in self.required_columns if col not in data.columns]
  if missing_columns:
- print(f"❌ Отсутствуют колонки: {missing_columns}")
+ print(f"❌ Missing columns: {missing_columns}")
  return False
 
  # check on NaN значения

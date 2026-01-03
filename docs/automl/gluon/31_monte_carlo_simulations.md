@@ -2722,7 +2722,7 @@ def calculate_success_probability(simulations, min_sharpe=1.0, max_drawdown=-0.2
  required_columns = ['sharpe', 'max_drawdown', 'cumulative_return']
  missing_columns = [col for col in required_columns if col not in simulations.columns]
  if missing_columns:
- raise ValueError(f"Отсутствуют колонки: {missing_columns}")
+ raise ValueError(f"Missing columns: {missing_columns}")
 
  # Валидация параметров условий
  if max_drawdown > 0:

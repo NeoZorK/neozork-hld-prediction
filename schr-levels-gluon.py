@@ -222,14 +222,14 @@ class SCHRLevelsAutoMLPipeline:
  missing_cols = [col for col in required_cols if col not in df.columns]
 
  if missing_cols:
- logger.warning(f"Отсутствуют колонки: {missing_cols}")
+ logger.warning(f"Missing columns: {missing_cols}")
 
- # Устанавливаем индекс как datetime если есть
+ # Setting index как datetime если есть
  if 'Date' in df.columns:
  df['Date'] = pd.to_datetime(df['Date'])
  df.set_index('Date', inplace=True)
  elif df.index.name != 'Date' and not isinstance(df.index, pd.DatetimeIndex):
- # Создаем временной индекс если его нет
+ # Creating temporary index если его нет
  df.index = pd.date_range(start='2020-01-01', periods=len(df), freq='MS' if Timeframe == 'MN1' else 'D')
 
  console.print(f"📊 Загружено {len(df)} записей with {len(df.columns)} колонками", style="green")

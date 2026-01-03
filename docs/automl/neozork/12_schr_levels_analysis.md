@@ -122,7 +122,7 @@ class SCHRLevelsAnalyzer:
  required_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
  missing_columns = [col for col in required_columns if col not in data.columns]
  if missing_columns:
- raise ValueError(f"Отсутствуют колонки: {missing_columns}")
+ raise ValueError(f"Missing columns: {missing_columns}")
 
  # Расчет уровней
  levels = self._calculate_levels(data)
@@ -421,7 +421,7 @@ class SCHRLevelsdataStructure:
  # Валидация перед экспортом
  validation = self.validate_dataframe(df)
  if not validation['has_required_columns']:
- print(f"Ошибка: отсутствуют колонки {validation['missing_columns']}")
+ print(f"Ошибка: Missing columns {validation['missing_columns']}")
  return False
 
  # Экспорт
@@ -449,7 +449,7 @@ class SCHRLevelsdataStructure:
  # Валидация загруженных данных
  validation = self.validate_dataframe(df)
  if not validation['has_required_columns']:
- print(f"Предупреждение: отсутствуют колонки {validation['missing_columns']}")
+ print(f"Предупреждение: Missing columns {validation['missing_columns']}")
 
  print(f"data успешно загружены из {filepath}")
  print(f"Размер данных: {df.shape}")

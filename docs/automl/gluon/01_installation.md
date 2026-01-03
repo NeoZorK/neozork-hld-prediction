@@ -1,378 +1,378 @@
 # installation AutoML Gluon
 
 **Author:** NeoZorK (Shcherbyna Rostyslav)
-**Дата:** 2025
-**Местоположение:** Ukraine, Zaporizhzhya
+**Date:** 2025
+**Location:** Ukraine, Zaporizhzhya
 **Version:** 1.0
 
-## Why правильная installation критически важна
+## Why proper installation is critical
 
-**Почему 70% проблем with AutoML Gluon связаны with неправильной установкой?** Потому что машинное обучение требует точной settings окружения. Неправильная installation может привести к нестабильной работе, ошибкам and потере времени.
+**Why is it that 70% of AutoML Gluon issues are related to improper installation?** Because machine learning requires precise environment settings. Incorrect installation can lead to unstable operation, errors and loss of time.
 
-### 🚨 Реальные Consequences неправильной установки
+### 🚨 Real Consequences of Incorrect Installation
 
-**Случай 1: Конфликт версий NumPy**
+**Case 1: NumPy Version Conflict **
 ```python
-# Что происходит при конфликте версий
+# What happens when there is a version conflict
 import numpy as np
-# Ошибка: "numpy.core.multiarray failed to import"
-# Результат: AutoML Gluon not Launchается
+# Error: "numpy.core.multiarray failed to import"
+# Result: AutoML Gluon not Launching
 ```
 
-**Случай 2: Issues with CUDA**
+**Case 2: Issues with CUDA**
 ```python
-# Что происходит без правильной CUDA
+# What happens without the right CUDA
 import torch
 print(torch.cuda.is_available()) # False
-# Результат: Обучение in 100 раз медленнее
+# Result: Learning 100x slower
 ```
 
-**Случай 3: Нехватка памяти**
+**Case 3: Out of memory**
 ```python
-# Что происходит при нехватке RAM
+# What happens when there is a shortage of RAM
 import pandas as pd
 df = pd.read_csv('large_dataset.csv') # MemoryError
-# Результат: Невозможно обWorkingть большие data
+# Result: Impossible to work with big data
 ```
 
 ### What Happens with Incorrect installation?
-- **Конфликты зависимостей**: Разные версии библиотек вызывают ошибки
- - *example*: NumPy 1.19 vs 1.21 - разные API, код ломается
- - *Решение*: Использовать виртуальные окружения
-- **Issues with производительностью**: Модели Workingют медленно or not Workingют вообще
- - *example*: Обучение 1 час вместо 5 minutes
- - *Причина*: Неоптимальные версии библиотек
-- **Ошибки компиляции**: Некоторые алгоритмы not могут быть скомпилированы
- - *example*: XGBoost not компилируется on старых системах
- - *Решение*: Обновить компилятор and dependencies
-- **Issues with GPU**: CUDA not Workingет, обучение идет только on CPU
- - *example*: Обучение 10 часов вместо 1 часа
- - *Решение*: Правильная installation CUDA and cuDNN
+- ** Dependency conflicts **: Different versions of libraries cause errors
+- *example*: NumPy 1.19 vs 1.21 - different APIs, code breaks
+- *Solution*: Use virtual environments
+- **Issues with performance**: Models Working Slowly or Not Working at All
+- *example*: Training 1 hour instead of 5 minutes
+- *Reason*: Suboptimal versions of libraries
+- ** Compilation errors **: Some algorithms cannot be compiled
+- *example*: XGBoost is not compiled on older systems
+- *Solution*: Update compiler and dependencies
+- **Issues with GPU**: CUDA not Working, training is only on CPU
+- *example*: Training 10 hours instead of 1 hour
+- *Solution*: Correct installation of CUDA and cuDNN
 
-### Что дает правильная installation?
-- **Стабильная Working**: Все components Workingют без ошибок
- - *Результат*: 99.9% времени без сбоев
- - *Экономия*: not тратите время on отладку
-- **Оптимальная производительность**: Максимальная скорость обучения
- - *Результат*: Обучение in 10-100 раз быстрее
- - *Экономия*: Часы вместо дней
-- **Простота использования**: Все functions доступны из коробки
- - *Результат*: Сразу можно начинать ML-проекты
- - *Экономия*: not нужно изучать настройку
-- **Легкость обновления**: Простое update to новых версий
- - *Результат*: Всегда актуальные возможности
- - *Экономия*: not нужно переустанавливать все
+### What does the right installation do?
+- **Stable Working**: All components work without errors
+- *Result*: 99.9% failure-free time
+- *Save*: Don't waste time on debugging
+- **Optimal performance**: Maximum learning speed
+- *Result*: Learning 10-100 times faster
+- *savings*: Hours instead of days
+- **Ease of use**: All functions are available out of the box
+- *Result*: You can start ML projects right away
+- *Savings*: Don't learn the setup
+- **Easy to update**: Easy to update to new versions
+- *Result*: Always up-to-date opportunities
+- *Savings*: You don't have to reinstall everything
 
-## Системные требования
+System requirements
 
 <img src="images/optimized/installation_flowchart.png" alt="AutoML Gluon installation" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 1: Блок-схема процесса установки AutoML Gluon*
+*Figure 1: AutoML Gluon Installation Flowchart *
 
-### 🏗️ Архитектура AutoML Gluon
+### AutoML Gluon 🏗️ Architecture
 
 <img src="images/optimized/architecture_diagram.png" alt="Архитектура AutoML Gluon" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 2: Архитектурная схема AutoML Gluon*
+*Figure 2: AutoML Gluon Architectural Diagram *
 
-**Почему важно понимать архитектуру?** Потому что это помогает понять, как AutoML Gluon Workingет внутри and почему он так эффективен:
+**Why is it important to understand architecture?** Because it helps to understand how AutoML Gluon works inside and why it is so effective:
 
-- **TabularPredictor**: Основной компонент for работы with табличными данными
-- **TimeSeriesPredictor**: Специализированный компонент for временных рядов
-- **ImagePredictor**: Компонент for работы with изображениями
-- **TextPredictor**: Компонент for обработки текста
-- **Ensemble Methods**: Методы объединения моделей for improving accuracy
-- **Feature Engineering**: Автоматическое create новых признаков
-- **Hyperparameter Tuning**: Автоматическая configuration параметров моделей
+- **TabularPredictor**: The main component for working with tabular data
+- **TimeSeriesPredictor**: Specialized component for time series
+- **ImagePredictor**: Component for working with images
+- **TextPredictor**: A component for word processing
+- **Ensemble Methods**: Methods of combining models for improving accuracy
+- **Feature Engineering**: Automatically create new features
+- **Hyperparameter Tuning**: Automatic configuration of model parameters
 
-### Минимальные требования
-**Почему минимальные требования важны?** Потому что они определяют, сможете ли вы вообще запустить AutoML Gluon:
+Minimum requirements
+**Why are minimum requirements important?** Because they determine if you can run AutoML Gluon at all:
 
 - **Python**: 3.7, 3.8, 3.9, 3.10, 3.11
- - *Почему именно эти версии?* Потому что AutoML Gluon использует современные возможности Python
- - *Что происходит with Python 3.6?* Ошибки компиляции, несовместимость библиотек
- - *Что происходит with Python 3.12?* Некоторые dependencies еще not поддерживают
- - *Рекомендация*: Use Python 3.9 or 3.10 for стабильности
-- **ОС**: Linux, macOS, Windows
- - *Почему все ОС поддерживаются?* Потому что ML-разработка ведется on разных platformх
- - *Linux*: Лучшая производительность, больше возможностей
- - *macOS*: Удобство разработки, хорошая производительность
- - *Windows*: Простота использования, но возможны Issues with некоторыми библиотеками
-- **RAM**: 4GB (рекомендуется 8GB+)
- - *Почему нужно много памяти?* Потому что ML-модели загружают большие датасеты in память
- - *Что происходит with 2GB RAM?* Система зависает, обучение прерывается
- - *Что происходит with 16GB+ RAM?* Можно обрабатывать датасеты in 10 раз больше
- - *Практический example*: Датасет 1GB требует 4GB RAM for обработки
-- **CPU**: 2 ядра (рекомендуется 4+ ядра)
- - *Почему важны ядра?* Потому что AutoML Gluon использует параллельные вычисления
- - *Что происходит with 1 ядром?* Обучение in 4 раза медленнее
- - *Что происходит with 8+ ядрами?* Обучение in 4-8 раз быстрее
- - *Практический example*: Обучение 1 час on 2 ядрах = 15 minutes on 8 ядрах
-- **Диск**: 2GB свободного места
- - *Почему нужно место?* Потому что модели and data занимают много места
- - *Что занимает место?* Модели (500MB-2GB), кэш (1-5GB), data (зависит from размера)
- - *Практический example*: Проект with 10 моделями занимает 5-10GB
+- *Why these versions?* Because AutoML Gluon uses modern Python capabilities
+- *What happens with Python 3.6?* Compilation errors, library incompatibilities
+- *What's going on with Python 3.12?* Some dependencies are not yet supported
+- *Recommendation*: Use Python 3.9 or 3.10 for stability
+- **OS**: Linux, macOS, Windows
+- *Why are all OS supported?* Because ML development is carried out on different platforms
+- *Linux*: Better performance, more features
+- *macOS*: Ease of development, good performance
+- *Windows*: Easy to use but possible Issues with some libraries
+- **RAM**: 4GB (8GB+ recommended)
+- *Why do you need a lot of memory?* Because ML models load large datasets in memory
+- *What happens to 2GB RAM?* System freezes, training is interrupted
+- *What happens to 16GB+ RAM?* You can process datasets in 10 times more
+- *Practical example*: 1GB dataset requires 4GB RAM for processing
+- **CPU**: 2 cores (4+ cores recommended)
+- *Why are kernels important?* Because AutoML Gluon uses parallel computing
+- *What happens to 1 core?* Training is 4 times slower
+- *What happens to 8+ cores?* Training 4-8 times faster
+- *Practical example*: Training 1 hour on 2 cores = 15 minutes on 8 cores
+- **Disk**: 2GB free space
+- *Why do we need space?* Because models and data take up a lot of space
+- *What takes up space?* Models (500MB-2GB), cache (1-5GB), data (depends on size)
+- *Practical example*: A project with 10 models takes 5-10GB
 
-### 📊 Сравнение производительности
+Compare Performance
 
 <img src="images/optimized/performance_comparison.png" alt="Сравнение производительности" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 3: Сравнение производительности AutoML Gluon on разных конфигурациях*
+*Figure 3: Comparison of AutoML Gluon performance on different configurations*
 
-**Почему важно понимать производительность?** Потому что это помогает выбрать оптимальную конфигурацию for ваших задач:
+**Why is it important to understand performance?** Because it helps to choose the optimal configuration for your tasks:
 
-- **CPU vs GPU**: GPU ускоряет обучение in 10-100 раз for нейронных networks
-- **Память**: Больше RAM = возможность обрабатывать большие датасеты
-- **Ядра**: Больше ядер = parallel training нескольких моделей
-- **Время обучения**: from 10 minutes to нескольких часов in dependencies from конфигурации
+- **CPU vs GPU**: GPU speeds up learning in 10-100 times for neural networks
+- **Memory**: More RAM = ability to handle large datasets
+- **Cores**: More cores = parallel training of several models
+- ** Training time **: from 10 minutes to several hours in dependencies from configuration
 
-### 🎯 Метрики качества моделей
+### Model Quality 🎯 Metrics
 
 <img src="images/optimized/metrics_comparison.png" alt="Сравнение метрик" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 4: Сравнение различных метрик качества моделей*
+*Figure 4: Comparison of different model quality metrics *
 
-**Почему важно понимать метрики?** Потому что разные задачи требуют разных метрик for оценки качества:
+**Why is it important to understand metrics?** Because different tasks require different metrics for quality assessment:
 
-- **Accuracy**: Процент правильных Predictions (for сбалансированных данных)
-- **Precision**: Точность положительных Predictions (важно при высокой стоимости ошибок)
-- **Recall**: Полнота положительных Predictions (важно not пропустить важные случаи)
-- **F1-Score**: Гармоническое среднее precision and recall (сбалансированная метрика)
-- **AUC-ROC**: Площадь под ROC кривой (качество разделения классов)
-- **RMSE**: Корень из среднеквадратичной ошибки (for регрессии)
+- **Accuracy**: Percentage of correct Predictions (for balanced data)
+- **Precision**: Accuracy of positive Predictions (important at high cost of errors)
+- **Recall**: Completeness of positive predictions (important not to miss important cases)
+- **F1-Score**: Harmonic mean of precision and recall (balanced metric)
+- **AUC-ROC**: Area under the ROC curve (quality of class separation)
+- **RMSE**: Root of RMSE (for regression)
 
-### Рекомендуемые требования
-**Почему рекомендуемые требования дают лучший опыт?** Потому что они обеспечивают оптимальную производительность:
+### Recommended requirements
+**Why do the recommended requirements provide the best experience?** Because they provide optimal performance:
 
 - **Python**: 3.9 or 3.10
- - *Почему именно эти версии?* Потому что они наиболее стабильны and быстры
- - *Преимущества*: Лучшая производительность, стабильность, совместимость
- - *Практический example*: Обучение on Python 3.10 on 15% быстрее чем on 3.8
+- *Why these versions?* Because they are the most stable and fast
+- *Benefits*: Better performance, stability, compatibility
+- *Practical example*: Learning Python 3.10 on 15% faster than on 3.8
 - **RAM**: 16GB+
- - *Почему много памяти?* Потому что большие датасеты требуют много RAM
- - *Что можно with 16GB?* Обрабатывать датасеты to 10GB, обучать сложные модели
- - *Что можно with 32GB+?* Обрабатывать датасеты to 50GB, обучать ансамбли моделей
- - *Практический example*: Датасет 5GB требует 20GB RAM for комфортной работы
-- **CPU**: 8+ ядер
- - *Почему много ядер?* Потому что AutoML Gluon использует все доступные ядра
- - *Что происходит with 8 ядрами?* Обучение in 4-8 раз быстрее чем with 2 ядрами
- - *Что происходит with 16+ ядрами?* Обучение in 8-16 раз быстрее
- - *Практический example*: Обучение 1 час on 2 ядрах = 7 minutes on 16 ядрах
-- **GPU**: NVIDIA GPU with CUDA поддержкой (опционально)
- - *Почему GPU важен?* Потому что он ускоряет обучение in 10-100 раз
- - *Минимальные требования GPU*: GTX 1060 6GB or лучше
- - *Рекомендуемые GPU*: RTX 3070, RTX 4080, A100 for профессиональной работы
- - *Практический example*: Обучение 10 часов on CPU = 1 час on RTX 3070
-- **Диск**: 10GB+ свободного места
- - *Почему много места?* Потому что модели and кэш занимают много места
- - *SSD vs HDD*: SSD in 5-10 раз быстрее for загрузки данных
- - *Практический example*: Проект with 50 моделями занимает 20-50GB
+- *Why a lot of memory?* Because large datasets require a lot of RAM
+- *What can I do with 16GB?* Process datasets up to 10GB, train complex models
+- *What can I do with 32GB+?* Process datasets up to 50GB, train model ensembles
+- *Practical example*: 5GB dataset requires 20GB RAM for comfortable operation
+- **CPU**: 8+ cores
+- *Why so many cores?* Because AutoML Gluon uses all available cores
+- *What happens to the 8 cores?* Training 4-8 times faster than with 2 cores
+- *What happens to 16+ cores?* Training is 8-16 times faster
+- *Practical example*: Training 1 hour on 2 cores = 7 minutes on 16 cores
+- **GPU**: NVIDIA GPU with CUDA support (optional)
+- *Why is the GPU important?* Because it speeds up learning in 10-100 times
+- *Minimum GPU requirements *: GTX 1060 6GB or better
+- *Recommended GPUs*: RTX 3070, RTX 4080, A100 for professional operation
+- *Practical example*: Training 10 hours on CPU = 1 hour on RTX 3070
+- **Disk**: 10GB+ free space
+- *Why so much space?* Because models and cache take up so much space
+- *SSD vs HDD*: SSD in 5-10 times faster for data loading
+- *Practical example*: A project with 50 models takes 20-50GB
 
-## 🔄 Рабочие процессы AutoML Gluon
+## AutoML Gluon 🔄 Workflows
 
 <img src="images/optimized/retraining_workflow.png" alt="Рабочий процесс переобучения" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 5: Диаграмма рабочего процесса переобучения моделей*
+*Figure 5: Model retraining workflow diagram *
 
-**Почему важно понимать рабочие процессы?** Потому что это помогает понять, как AutoML Gluon автоматизирует весь процесс машинного обучения:
+**Why is it important to understand workflows?** Because it helps to understand how AutoML Gluon automates the entire machine learning process:
 
-- **Подготовка данных**: Автоматическая clean and предобработка
-- **Feature Engineering**: create новых признаков из существующих
-- **Выбор алгоритмов**: Автоматический выбор лучших алгоритмов for задачи
-- **Обучение моделей**: parallel training множества моделей
-- **Валидация**: Автоматическая оценка качества моделей
-- **Ансамблирование**: Объединение лучших моделей for improving accuracy
-- **Деплой**: Готовые модели for продакшена
+- ** Data preparation **: Automatic clean and preprocessing
+- **Feature Engineering**: create new features from existing ones
+- **Selection of algorithms**: Automatic selection of the best algorithms for the problem
+- **Training models**: parallel training of multiple models
+- **Validation**: Automatic model quality assessment
+- **Ensemble**: Combining the best models for improving accuracy
+- **Deploy**: Ready-made models for production
 
-## installation через pip
+## installation via pip
 
-**Почему pip - самый популярный способ установки?** Потому что он простой, надежный and автоматически решает dependencies.
+**Why is pip the most popular installation method?** Because it is simple, reliable and automatically solves dependencies.
 
-## 🚀 installation через uv (Рекомендуется)
+## 🚀 installation via uv (Recommended)
 
-**Почему uv лучше pip?** Потому что uv in 10-100 раз быстрее, более надежен and лучше управляет зависимостями.
+**Why is uv better than pip?** Because uv is 10-100 times faster, more reliable, and better at managing addictions.
 
-### Что такое uv?
-**uv** - это современный менеджер пакетов Python, написанный on Rust. Он решает все проблемы pip:
+### What is uv?
+**uv** is a modern Python package manager written on Rust. It solves all pip problems:
 
-- **Скорость**: in 10-100 раз быстрее pip
-- **Надежность**: Лучше разрешает конфликты зависимостей
-- **Безопасность**: Проверяет целостность пакетов
-- **Совместимость**: Полная совместимость with pip
+- **Speed**: in 10-100 times faster than pip
+- **Reliability**: Better resolves dependency conflicts
+- **Security**: Checks package integrity
+- **Compatibility**: Full compatibility with pip
 
 ### installation uv
 ```bash
-# installation uv через pip (если у вас уже есть Python)
+# installation uv via pip (if you already have Python)
 pip install uv
 
-# or через curl (рекомендуется)
+# or via curl (recommended)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# or через homebrew on macOS
+# or via homebrew on macOS
 brew install uv
 ```
 
-**Что происходит при установке uv?**
-- Скачивается бинарный файл uv (5-10MB)
-- Устанавливается in системный PATH
-- Создается конфигурационный файл
-- Настраивается кэш for пакетов
+**What happens when uv is installed?**
+- Downloading binary file uv (5-10MB)
+- Installed in system PATH
+- Configuration file is created
+- Configures the package cache
 
-### AutoML Gluon installation через uv
+### AutoML Gluon installation via uv
 ```bash
-# Базовая installation
+# Basic installation
 uv add autogluon
 
-# installation with дополнительными componentsи
+# installation with additional components
 uv add autogluon.tabular
 uv add autogluon.timeseries
 uv add autogluon.vision
 
-# installation in виртуальное окружение
+# installation in virtual environment
 uv venv
 uv pip install autogluon
 ```
 
-**Преимущества uv над pip:**
-- **Скорость**: installation in 10 раз быстрее
-- **Надежность**: Меньше конфликтов зависимостей
-- **Кэширование**: Умное кэширование пакетов
-- **Параллелизм**: installation нескольких пакетов simultaneously
+**Advantages of uv over pip:**
+- **Speed**: installation in 10 times faster
+- **Reliability**: Fewer dependency conflicts
+- **Caching**: Smart Packet Caching
+- **Parallelism**: installation of multiple packages simultaneously
 
-### 🚀 Базовая installation
-**Почему начинаем with базовой установки?** Потому что она дает все необходимое for начала работы:
+### 🚀 Basic installation
+**Why start with a basic setup?** Because it gives you everything you need to get started:
 
 ```bash
 pip install autogluon
 ```
 
-**Что происходит при этой команде?**
-- Устанавливается основной пакет AutoML Gluon
-- Автоматически устанавливаются все необходимые dependencies
-- Создается окружение for работы with табличными данными
-- Настраивается базовая configuration
+**What happens with this team?**
+- Main AutoML Gluon package is installed
+- All necessary dependencies are automatically set
+- An environment for working with tabular data is created
+- Basic configuration is configured
 
-**Детальный процесс установки:**
+**Detailed installation process:**
 ```python
-# Что происходит внутри pip install autogluon
-# 1. Скачивание пакета (50-100MB)
-# 2. installation зависимостей:
+# What happens inside pip install autogluon
+# 1 - Package Download (50-100MB)
+# 2. installation of dependencies:
 # - numpy, pandas, scikit-learn
 # - xgboost, lightgbm, catboost
 # - torch, torchvision
 # - matplotlib, seaborn
-# 3. check совместимости версий
-# 4. create конфигурационных файлов
-# 5. Тестирование установки
+# 3. check version compatibility
+# 4. create configuration files
+# 5. Unit Testing
 ```
 
-**Время установки:**
-- Быстрый интернет: 5-10 minutes
-- Медленный интернет: 30-60 minutes
-- Первая installation: Дольше из-за компиляции
-- Последующие обновления: Быстрее
+Set-up time
+- Fast internet: 5-10 minutes
+- Slow internet: 30-60 minutes
+- First installation: Longer due to compilation
+- Subsequent updates: Faster
 
-### 🎯 installation with дополнительными зависимостями
-**Почему нужны дополнительные components?** Потому что разные задачи требуют разных инструментов:
+### 🎯 installation with additional dependencies
+**Why do I need additional components?** Because different tasks require different tools:
 
-#### 📊 for работы with табличными данными
+#### 📊 for working with tabular data
 ```bash
 pip install autogluon.tabular
 ```
 
-**Что дает autogluon.tabular?**
-- Оптимизированные алгоритмы for табличных данных
-- Автоматическая обработка категориальных переменных
-- Встроенная валидация and метрики
-- Поддержка больших датасетов
+**What is autogluon.tabular?**
+- Optimized algorithms for tabular data
+- Automatic processing of categorical variables
+- Built-in validation and metrics
+- Support for large datasets
 
-**Детальные возможности:**
+**Detailed Opportunities:**
 ```python
-# Что включает autogluon.tabular
+# What autogluon.tabular includes
 from autogluon.tabular import TabularPredictor
 
-# Алгоритмы:
+algos
 # - XGBoost, LightGBM, CatBoost
 # - Random Forest, Extra Trees
 # - Neural networks
 # - Linear Models
 # - Ensemble Methods
 
-# Автоматические возможности:
+# Automatic Capabilities:
 # - Feature Engineering
 # - Hyperparameter Tuning
 # - Model Selection
 # - Cross-Validation
 ```
 
-**Когда использовать:**
-- Классификация and регрессия
-- Табличные data (CSV, Excel, SQL)
-- Структурированные data
-- Бизнес-аналитика
+WHEN TO USE IT
+- Classification and regression
+- Tabular data (CSV, Excel, SQL)
+- Structured data
+Business <ph type="structure-only" x="0"/>Analytics
 
-#### ⏰ for работы with временными рядами
+#### ᐈ for working with time series
 ```bash
 pip install autogluon.timeseries
 ```
 
-**Что дает autogluon.timeseries?**
-- Специальные алгоритмы for временных рядов
-- Автоматическое определение сезонности
-- Поддержка многомерных временных рядов
-- Встроенное прогнозирование
+**What is autogluon.timeseries?**
+- Special algorithms for time series
+- Automatic determination of seasonality
+- Multidimensional time series support
+- Built-in prediction
 
-**Детальные возможности:**
+**Detailed Opportunities:**
 ```python
-# Что включает autogluon.timeseries
+# What autogluon.timeseries includes
 from autogluon.timeseries import TimeSeriesPredictor
 
-# Алгоритмы:
+algos
 # - ARIMA, SARIMA
 # - Prophet, ETS
 # - Deep Learning (LSTM, Transformer)
 # - Ensemble Methods
 
-# Автоматические возможности:
+# Automatic Capabilities:
 # - Seasonality Detection
 # - Trend Analysis
 # - Anomaly Detection
 # - Multi-step Forecasting
 ```
 
-**Когда использовать:**
-- Прогнозирование продаж
-- Анализ временных рядов
-- Финансовые data
+WHEN TO USE IT
+Sales forecasting
+time series analysi
+- Financial data
 - IoT data
 
-#### 🖼️ for работы with изображениями
+#### 🖼️ for working with images
 ```bash
 pip install autogluon.vision
 ```
 
-**Что дает autogluon.vision?**
-- Готовые CNN архитектуры
-- Автоматическое увеличение данных
-- Предобученные модели
-- Поддержка GPU acceleration
+**What is autogluon.vision?**
+- Ready-made CNN architectures
+- Automatic data enlargement
+- Prebuilt models
+- GPU acceleration support
 
 ```bash
-# for работы with текстом
+# for working with text
 pip install autogluon.text
 ```
-**Что дает autogluon.text?**
-- Современные NLP модели
-- Автоматическая токенизация
-- Предобученные эмбеддинги
-- Поддержка трансформеров
+**What is autogluon.text?**
+- Modern NLP models
+- Automatic tokenization
+- Pre-purchased embeddings
+- Support for Transformers
 
 ```bash
-# Полная installation всех компонентов
+# Complete installation of all components
 pip install autogluon[all]
 ```
-**Почему полная installation удобна?** Потому что вы получаете все возможности сразу, но это занимает больше места and времени.
+**Why is full installation convenient?** Because you get all the opportunities at once, but it takes more space and time.
 
-## installation через conda
+## installation via conda
 
-### create нового окружения
+### create new environment
 ```bash
-# create окружения with Python 3.9
+# create environments with Python 3.9
 conda create -n autogluon python=3.9
 conda activate autogluon
 
@@ -380,9 +380,9 @@ conda activate autogluon
 conda install -c conda-forge autogluon
 ```
 
-### installation with GPU поддержкой
+### installation with GPU support
 ```bash
-# create окружения with CUDA
+# create environments with CUDA
 conda create -n autogluon-gpu python=3.9
 conda activate autogluon-gpu
 
@@ -393,56 +393,56 @@ conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvi
 pip install autogluon
 ```
 
-## installation из исходного кода
+## installation from source code
 
-### Клонирование репозитория
+### Repository Cloning
 ```bash
 git clone https://github.com/autogluon/autogluon.git
 cd autogluon
 ```
 
-### installation in режиме разработки
+### installation in development mode
 ```bash
-# installation зависимостей
+# installation of dependencies
 pip install -e .
 
-# or for конкретного модуля
+# or for a specific module
 pip install -e ./tabular
 ```
 
-## 📋 Методы валидации and тестирования
+## Validation and Testing 📋 Methods
 
 <img src="images/optimized/validation_methods.png" alt="Методы валидации" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 6: Различные методы валидации моделей*
+*Figure 6: Various model validation methods *
 
-**Почему важна валидация?** Потому что она обеспечивает надежность and качество моделей:
+**Why is validation important?** Because it ensures the reliability and quality of models:
 
-- **Holdout Validation**: Простое разделение on train/test (70/30)
-- **Cross-Validation**: K-fold кросс-валидация for более надежной оценки
-- **Time Series Split**: Специальная валидация for временных рядов
-- **Stratified Split**: Сохранение пропорций классов при разделении
-- **Walk-Forward Analysis**: Скользящее окно for временных рядов
+- **Holdout Validation**: Simple separation on train/test (70/30)
+- **Cross-Validation**: K-fold cross-validation for more reliable evaluation
+- **Time Series Split**: Special validation for time series
+- **Stratified Split**: Saving class proportions when splitting
+- **Walk-Forward Analysis**: Sliding window for time series
 
-### 🔧 Диаграмма устранения проблем
+### Troubleshooting 🔧 Diagram
 
 <img src="images/optimized/Troubleshooting_flowchart.png" alt="Диаграмма устранения проблем" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 7: Пошаговая диаграмма устранения проблем при установке*
+*Figure 7: Installation troubleshooting step-by-step diagram *
 
-**Почему нужна диаграмма устранения проблем?** Потому что она помогает быстро решить 90% проблем:
+**Why do I need a troubleshooting chart?** Because it helps solve 90% of problems quickly:
 
-- **Issues with зависимостями**: Конфликты версий библиотек
-- **Issues with памятью**: Недостаток RAM for больших датасетов
-- **Issues with GPU**: Неправильная configuration CUDA
-- **Issues with производительностью**: Неоптимальные settings
+- **Issues with dependencies**: Library version conflicts
+- **Issues with memory**: Lack of RAM for large datasets
+- **Issues with GPU**: Incorrect configuration CUDA
+- **Issues with performance**: Suboptimal settings
 
-## check установки
+## check installations
 
-### Базовый тест
+Baseline test 
 ```python
 import autogluon as ag
 print(f"AutoGluon Version: {ag.__version__}")
 
-# Тест импорта основных модулей
+# Core Module Import Test
 from autogluon.tabular import TabularPredictor
 from autogluon.timeseries import TimeSeriesPredictor
 from autogluon.vision import ImagePredictor
@@ -451,28 +451,28 @@ from autogluon.text import TextPredictor
 print("all modules imported successfully!")
 ```
 
-### Тест with простым примером
+### Test with a simple example
 ```python
 from autogluon.tabular import TabularPredictor
 import pandas as pd
 import numpy as np
 
-# create тестовых данных
+# create test data
 data = pd.dataFrame({
  'feature1': np.random.randn(100),
  'feature2': np.random.randn(100),
  'target': np.random.randint(0, 2, 100)
 })
 
-# Тест обучения
+# Training Test
 predictor = TabularPredictor(label='target')
-predictor.fit(data, time_limit=10) # 10 секунд for быстрого теста
+predictor.fit(data, time_limit=10) # 10 seconds for a quick test
 print("installation test passed!")
 ```
 
-## installation дополнительных зависимостей
+## installation of additional dependencies
 
-### for работы with GPU
+### for working with GPUs
 ```bash
 # installation CUDA toolkit (Ubuntu/Debian)
 wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
@@ -487,34 +487,34 @@ sudo apt-get -y install cuda
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
 
-### for работы with большими датасетами
+### for working with large datasets
 ```bash
-# installation дополнительных библиотек for обработки больших данных
+# installation of additional libraries for big data processing
 pip install dask[complete]
 pip install ray[default]
 pip install modin[all]
 ```
 
-#### 📊 Детальное description библиотек for больших датасетов
+#### 📊 Detailed description of libraries for large datasets
 
-**Dask - Распределенные вычисления for больших данных**
+**Dask - Distributed Computing for Big Data**
 
-**Назначение:**
-- Параллельная обработка данных, которые not помещаются in память
-- Распределенные вычисления on нескольких ядрах/узлах
+Intended purpose
+- Parallel processing of data that is not stored in memory
+- Distributed computing across multiple cores/nodes
 - integration with pandas, numpy, scikit-learn
 
-**Преимущества:**
-- **Масштабируемость**: Обработка данных in 10-100 раз больше доступной памяти
-- **Совместимость**: API похож on pandas/numpy, легко мигрировать код
-- **Гибкость**: Workingет on одном компьютере or кластере
-- **integration**: Хорошо интегрируется with AutoML Gluon
-- **Отказоустойчивость**: Автоматическое восстановление после сбоев
+ADVANTAGES
+- **Scalability**: Data processing in 10-100 times more available memory
+- **Compatibility**: API similar to on pandas/numpy, easy to migrate code
+- **Flexibility**: Works on a single computer or cluster
+- **integration**: Integrates well with AutoML Gluon
+- **Failover**: Automatic disaster recovery
 
-**Недостатки:**
-- **Сложность settings**: Требует понимания распределенных систем
-- **Накладные расходы**: for малых данных может быть медленнее pandas
-- **Отладка**: Сложнее отлаживать распределенный код
+Deficiencies
+- **Complexity of settings**: Requires understanding of distributed systems
+- **Overhead**: for small data may be slower than pandas
+- **Debugging * *: It's harder to debug distributed code
 - **dependencies**: Много дополнительных пакетов
 
 **Практические examples использования:**
@@ -1188,7 +1188,7 @@ if command -v nvidia-smi &> /dev/null; then
  echo "GPU detected, CUDA_VISIBLE_DEVICES=0"
 else
  export CUDA_VISIBLE_DEVICES=""
- echo "No GPU detected, using CPU only"
+ echo "No GPU detected, Using CPU only"
 fi
 
 # Отладочный режим (включить при необходимости)

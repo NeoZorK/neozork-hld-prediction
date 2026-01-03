@@ -488,7 +488,7 @@ uv run pytest tests -n auto # ~30-60 seconds
 ### 🚀 Interactive ML Trading system (NEW!)
 - **[Interactive ML Trading system](docs/interactive/)** - **NEW**: Comprehensive interactive system for ML trading strategy development
 - **[Strategic Plan (English)](docs/interactive/INTERACTIVE_ML_TRADING_STRATEGY_Plan_EN.md)** - **NEW**: Complete strategic Plan for robust profitable ML trading strategies
-- **[Стратегический Plan (Русский)](docs/interactive/INTERACTIVE_ML_TRADING_STRATEGY_Plan_RU.md)** - **NEW**: Полный стратегический Plan for робастных прибыльных ML торговых стратегий
+- **[Strategic Plan (Russian)](docs/interactive/INTERACTIVE_ML_TRADING_STRATEGY_Plan_EN.md)** - **NEW**: Complete Strategic Plan for Robust Profitable ML Trading Strategies
 - **[Next Steps Plan](docs/interactive/next-steps-Plan.md)** - **NEW**: Production development Roadmap and implementation Plan
 - **[Phase 1 Completion Report](docs/interactive/phase1-completion-Report.md)** - **NEW**: Real API integrations and ML models implementation Report
 - **[Phase 1 Final Completion Report](docs/interactive/phase1-final-completion-Report.md)** - **NEW**: Complete Phase 1 implementation with web interface and CI/CD
@@ -539,4 +539,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Built with ❤️ using UV package manager for lightning-fast performance**
+**Built with ❤️ Using UV package manager for lightning-fast performance**
