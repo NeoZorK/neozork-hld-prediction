@@ -1,184 +1,184 @@
-# Продакшен and деплой AutoML Gluon моделей
+# Sold and failed AutoML Gluon models
 
 **Author:** Shcherbyna Rostyslav
-**Дата:** 2024
+**Date:** 2024
 
-## Why продакшен критически важен
+## Who's sold critical
 
-**Почему 87% ML-моделей никогда not попадают in продакшен?** Потому что их создатели not понимают, что обучение модели - это только 20% работы. Остальные 80% - это подготовка к продакшену, Monitoring and поддержка.
+**Why does 87% of ML models never get in sales?** Because their creators don't understand that model learning is only 20% of the work. The remaining 80% are product preparation, Monitoring and support.
 
-### Катастрофические Consequences плохого продакшена
-- **Microsoft Tay**: AI-чатбот стал расистом за 24 часа in продакшене
-- **Amazon HR**: AI-система дискриминировала женщин при найме
-- **Uber самоуправляемые авто**: Смерть пешехода из-за неправильной работы модели
-- **Facebook алгоритм**: Распространение фейковых новостей из-за плохой validation
+### Catastrophic Consequences bad sales
+- **Microsoft Tay**: AI chatbot became racist in 24 hours in sales.
+- **Amazon HR**: AI-system discriminated against women in recruitment
+- **Uber self-directed car**: pedestrian death due to model malfunction
+- **Facebook algorithm**: Dissemination of fairy news due to poor validation
 
-### Преимущества правильного продакшена
-- **Масштабируемость**: Модель Workingет with любым объемом данных
-- **Надежность**: 99.9% uptime, автоматическое восстановление
-- **Monitoring**: Постоянный контроль качества predictions
-- **Бизнес-ценность**: Реальная польза for компании and пользователей
+### The benefits of the right product
+- **Stability**: The Workinget model with any data volume
+- ** Reliability**: 99.9% uptime, automatic recovery
+- **Monitoring**: Ongoing quality control of preferences
+- ** Business value**: Real benefits for company and users
 
-## Введение in продакшен
+## Introduction in sales
 
-<img src="images/optimized/production_architecture.png" alt="Продакшен architecture" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 1: architecture продакшен системы AutoML Gluon*
+<img src="images/optimized/production_architecture.png" alt="Style"="max-width: 100 per cent; light: auto; display: block; marguin: 20px auto;">
+*Picture 1: Architecture sold by AutoML Gluon*
 
-**Почему продакшен in ML кардинально отличается from обычной разработки?** Потому что ML-модели - это not просто код, а живые системы, которые учатся and изменяются. Это как разница между заводом and садом - завод Workingет on Planу, а сад требует постоянного ухода.
+Because the ML models are not just code, and the living systems that learn and change. It's like the difference between the plant and the garden is the Workinget on Plan, and the garden requires constant care.
 
-**Уникальные особенности ML продакшена:**
-- **data меняются**: Модель может "забыть" то, что знала
-- **Концептуальный дрифт**: Реальность изменяется быстрее модели
-- **dependency from данных**: Нет данных = нет predictions
-- **Черный ящик**: Сложно понять, почему модель приняла решение
+**Unique features of ML sold:**
+- **data changes**: The model can forget what it knew.
+- ** Conceptual drift**: Reality changes faster than model
+- **dependency from data**: No data = no preferences
+- It's hard to understand why the model made the decision.
 
-Продакшен деплой ML-моделей - это критически важный этап, который требует тщательного Planирования, Monitoringа and поддержки. in этом разделе рассмотрим все аспекты деплоя AutoML Gluon моделей in продакшен.
+The sale of ML models is a critical step that requires careful Planning, Monitoring and Support. In this section, we will look at all aspects of AutoML Gloon models in sales.
 
-## Подготовка модели к продакшену
+## Preparation of the model for sale
 
-<img src="images/optimized/performance_comparison.png" alt="Оптимизация моделей" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 2: Оптимизация моделей for продакшена*
+<img src="images/optimized/performance_comparison.png" alt="Optimization of models" style="max-width: 100 per cent; exercise: auto; display: block; marguin: 20px auto;">
+♪ Figure 2: Optimization of models for sales ♪
 
-**Почему важна оптимизация моделей for продакшена?** Потому что продакшен предъявляет совершенно другие требования к performance, памяти and скорости.
+** Why is optimization of models for sales important?** Because the sales are completely different in terms of performance, memory and speed.
 
-### 🚀 Ключевые аспекты оптимизации
+### ♪ Qualitative aspects of optimization
 
-**Почему модель, которая отлично Workingет in Jupyter, может провалиться in продакшене?** Потому что продакшен предъявляет совершенно другие требования:
+Why would a model that's great at Working in Jupyter fail in a sale?
 
-- **performance**: Скорость predictions критически важна
-- **Память**: Ограниченные ресурсы сервера
-- **Размер модели**: Должна помещаться in контейнер
-- **Стабильность**: Working on разных серверах and окружениях
-- **Масштабируемость**: Обработка больших объемов запросов
-- **Надежность**: Отказоустойчивость and восстановление
+- **Performance**: Speed of productions is critical
+- ** Memory**: Limited server resources
+- ** Model size**: To be placed in a container
+- **Stability**: Working on different servers and environments
+- ** Capacity**: Processing of large volumes of requests
+- ** Reliability**: failure and recovery
 
-### Оптимизация модели
+### Model optimization
 
-**Проблемы неоптимизированных моделей in продакшене:**
-- **Медленные предсказания**: 5 секунд вместо 50мс - пользователи уйдут
-- **Высокое потребление памяти**: Сервер падает под нагрузкой
-- **Большой размер модели**: not помещается in контейнер
-- **Нестабильность**: Модель Workingет нестабильно on разных серверах
+** Problems of non-optimized models in sales:**
+- ** Slow predictions**: 5 seconds instead of 50ms - users will leave
+- ** High memory consumption**: server drops under load
+- ** Large model size**: not placed in container
+- ** Instability**: The Workinget model is unstable on different servers
 
-**methods оптимизации моделей:**
-- **Квантизация**: Уменьшение точности весов (float32 → float16)
-- **Прунинг**: remove неважных нейронов
-- **Дистилляция**: Обучение маленькой модели on большой
-- **Оптимизация архитектуры**: Выбор более эффективных алгоритмов
+**methods model optimization:**
+- **Quantification**: Reduction in balance accuracy (float32 \float16)
+- **Pruning**: remove unimportant neurons
+- **Distillation**: Learning a small model on a large
+- **Optimization of architecture**: Selection of more effective algorithms
 
 ```python
 from autogluon.tabular import TabularPredictor
 import pandas as pd
 import numpy as np
 
-# create оптимизированной модели for продакшена
+# rent optimized model for sale
 def create_production_model(train_data, target_col):
-"""create модели, оптимизированной for продакшена"""
+""create model optimized for sale""
 
  predictor = TabularPredictor(
  label=target_col,
  problem_type='auto',
  eval_metric='auto',
-path='./production_models' # Отдельная папка for продакшен моделей
+path='./production_models' # Separate folder for model sales
  )
 
-# Обучение with оптимизацией for деплоя
+# Learning with Optimization for Action
  predictor.fit(
  train_data,
-presets='optimize_for_deployment', # Специальные Settings for продакшена
-time_limit=3600, # 1 час - ограничение времени обучения
-num_bag_folds=3, # Меньше фолдов for скорости
+== sync, corrected by elderman == @elder_man
+Time_limit=3600, #1 hour - limitation of time of study
+num_bag_folds=3, # Less folds for speed
  num_bag_sets=1,
  ag_args_fit={
-'num_cpus': 4, # Ограничение CPU for стабильности
-'num_gpus': 0, # Отключение GPU for совместимости
-'memory_limit': 8 # Ограничение памяти in GB
+'num_cpus': 4, #CPU restriction for stability
+'num_gpus': 0, # Disable GPU for compatibility
+'Memory_limit': 8 #Restriction of memory in GB
  }
  )
 
  return predictor
 ```
 
-**🔧 Детальное describe параметров оптимизации моделей for продакшена:**
+**/ Detailed descrie parameters for optimization of models for sale:**
 
 **function create_production_model:**
-- **Назначение**: create модели, оптимизированной for продакшен деплоя
+- ** Designation**: creative model optimized for sale
 - **parameters**:
-- **`train_data`**: data for обучения
-- **Тип**: dataFrame
-- **describe**: Таблица with обучающими данными
-- **Требования**: Должна содержать целевую переменную
-- **`target_col`**: Название целевой переменной
-- **Тип**: str
-- **describe**: Название столбца with целевой переменной
-- **Возвращаемое значение**: TabularPredictor - оптимизированная модель
+- **'training_data'**: data for learning
+-** Type**: DataFrame
+- **describe**: Table with learning data
+** Requirements**: Must contain a target variable
+- **'target_col'**: Name of target variable
+- **Typ**: str
+- **describe**: Name of column with target variable
+- **Return value**: TabularPredictor - Optimized Model
 
 **parameters TabularPredictor:**
-- **`label`**: Название целевой переменной
-- **Тип**: str
-- **describe**: Столбец with целевой переменной for предсказания
-- **`problem_type`**: Тип задачи machine learning
-- **Тип**: str
-- **Значения**: 'auto', 'binary', 'multiclass', 'regression'
-- **on умолчанию**: 'auto'
-- **describe**: AutoGluon автоматически определяет тип задачи
-- **`eval_metric`**: Метрика for оценки качества
-- **Тип**: str
-- **Значения**: 'auto', 'accuracy', 'f1', 'roc_auc', 'rmse', 'mae'
-- **on умолчанию**: 'auto'
-- **describe**: Автоматический выбор metrics on типу задачи
-- **`path`**: Путь for сохранения модели
-- **Тип**: str
-- **describe**: Директория for сохранения files модели
-- **Рекомендации**: Use отдельную папку for продакшен моделей
+- **'label'**: Name of target variable
+- **Typ**: str
+- **describe**: Column with target variable for prediction
+- **'problem_type'**: Type of task
+- **Typ**: str
+- ** Value**: 'auto', 'binary', 'multiclass', 'regression'
+- **on default**: 'auto'
+- **describe**: AutoGluon automatically determines the type of task
+- ** `eval_metric'**: Meteric for quality assessment
+- **Typ**: str
+- ** Value**: 'auto', 'accuracy', 'f1', 'roc_auc', 'rmse', 'mae'
+- **on default**: 'auto'
+- **describe**: Automatic choice of methods on the type of task
+- **'path'**: Path for model preservation
+- **Typ**: str
+- **describe**: Directorate for the preservation of model profiles
+- ** Recommendations**: Use separate folder for model sales
 
 **parameters predictor.fit():**
-- **`presets`**: Предустановленные Settings
-- **Тип**: str
-- **Значения**: 'optimize_for_deployment', 'best_quality', 'high_quality', 'good_quality', 'medium_quality', 'optimize_for_size'
-- **describe**: 'optimize_for_deployment' оптимизирует модель for продакшена
-- **`time_limit`**: Ограничение времени обучения
-- **Тип**: int
-- **Диапазон значений**: `[60, 86400]` (1 minutesа - 24 часа)
-- **on умолчанию**: 3600 (1 час)
-- **Рекомендации**: for продакшена Use 1-2 часа
-- **`num_bag_folds`**: Количество фолдов for validation
-- **Тип**: int
-- **Диапазон значений**: `[2, 10]` (рекомендуется 3-5)
-- **on умолчанию**: 8
-- **Рекомендации**: for продакшена Use 3-5 фолдов
-- **`num_bag_sets`**: Количество наборов фолдов
-- **Тип**: int
-- **Диапазон значений**: `[1, 5]` (рекомендуется 1-2)
-- **on умолчанию**: 1
-- **Рекомендации**: for продакшена Use 1 набор
+- **'presets'**: Pre-established Settings
+- **Typ**: str
+- ** Value**: 'optimize_for_development', 'best_quality', 'high_quality', 'good_quality', 'media_quality', 'optimise_for_sise'
+- **describe**: 'optimise_for_development' optimizes the model for sale
+- **'time_limit'**: Limiting time of study
+- **Typ**:int
+- ** Value range**: `[60, 86400] ` (1 minutes - 24 hours)
+- **on default**: 3600 (1 hour)
+- ** Recommendations**: For sale of Use 1-2 hours
+- **'num_bag_folds'**: Number of folds for validation
+- **Typ**:int
+- ** Value range**: `[2, 10]' (recommended 3-5)
+- **on default**: 8
+- ** Recommendations**: for the sale of Use 3-5 folds
+- **'num_bag_sets'**: Number of sets of folds
+- **Typ**:int
+- ** Value range**: `[1, 5] ` (recommended 1-2)
+- **on default**: 1
+- ** Recommendations**: for sale of Use 1 set
 
 **parameters ag_args_fit:**
-- **`num_cpus`**: Количество CPU for обучения
-- **Тип**: int
-- **Диапазон значений**: `[1, 32]` (рекомендуется 2-8)
-- **on умолчанию**: 4
-- **Рекомендации**: for продакшена Use 2-4 CPU
-- **`num_gpus`**: Количество GPU for обучения
-- **Тип**: int
-- **Диапазон значений**: `[0, 8]` (рекомендуется 0-2)
-- **on умолчанию**: 0
-- **Рекомендации**: for продакшена отключите GPU for совместимости
-- **`memory_limit`**: Ограничение памяти in GB
-- **Тип**: int
-- **Диапазон значений**: `[1, 64]` (рекомендуется 4-16)
-- **on умолчанию**: 8
-- **Рекомендации**: for продакшена Use 4-8 GB
+**'num_cpus'**: Number of KPU for training
+- **Typ**:int
+- ** Value range**: `[1, 32] ` (recommended 2-8)
+- **on default**: 4
+- ** Recommendations**: for sale to Us 2-4 CPU
+- **'num_gpus'**: Number of GPUs for learning
+- **Typ**:int
+- ** Value range**: `[0,8]' (recommended 0-2)
+- **on default**: 0
+- ** Recommendations**: for sale turn off the GPU for compatibility
+- **/memory_limit'**: Memory Restriction in GB
+- **Typ**:int
+- ** Value range**: `[1, 64] ` (recommended 4-16)
+- **on default**: 8
+- ** Recommendations**: for sale of Use 4-8 GB
 
-**Почему важны ограничения ресурсов?** Потому что продакшен серверы имеют ограниченные ресурсы, and модель должна Workingть in этих рамках.
+**Why are resource constraints important?** Because servers are sold with limited resources, and the model has to Work in this framework.
 
-### Сжатие модели
+♪ ♪ Model compression ♪
 
 ```python
 def compress_model(predictor, model_name):
-"""Сжатие модели for продакшена"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-# Сохранение сжатой модели
+# Maintaining a compressed model
  predictor.save(
  model_name,
  save_space=True,
@@ -186,7 +186,7 @@ def compress_model(predictor, model_name):
  save_info=True
  )
 
-# Получение размера модели
+# Getting model size
  import os
  model_size = os.path.getsize(f"{model_name}/predictor.pkl") / (1024 * 1024) # MB
  print(f"Model size: {model_size:.2f} MB")
@@ -194,59 +194,59 @@ def compress_model(predictor, model_name):
  return model_size
 ```
 
-**🔧 Детальное describe параметров сжатия модели:**
+**/ Detailed descrie of model compression parameters: **/
 
 **function compress_model:**
-- **Назначение**: Сжатие модели for уменьшения размера files
+- ** Designation**: Compression of the model for reducing the size of the fillets
 - **parameters**:
-- **`predictor`**: Обученная модель
-- **Тип**: TabularPredictor
-- **describe**: Обученная модель AutoGluon
-- **`model_name`**: Имя for сохранения модели
-- **Тип**: str
-- **describe**: Путь and имя for сохранения сжатой модели
-- **Возвращаемое значение**: float - размер модели in MB
+- ** `predicator'**: Trained model
+- ** Type**: TabularPredictor
+- **describe**: AutoGluon model trained
+- **'model_name'**: Name for model retention
+- **Typ**: str
+- **describe**: Path and name for maintaining a compressed model
+- **Return value**: float - model size in MB
 
 **parameters predictor.save():**
-- **`model_name`**: Имя модели
-- **Тип**: str
-- **describe**: Путь for сохранения модели
-- **Рекомендации**: Use описательные имена with версиями
-- **`save_space`**: Оптимизация размера
-- **Тип**: bool
-- **on умолчанию**: True
-- **describe**: Удаляет временные файлы for экономии места
-- **Влияние**: Уменьшает размер модели on 20-30%
-- **`compress`**: Сжатие files
-- **Тип**: bool
-- **on умолчанию**: True
-- **describe**: Использует gzip сжатие for files модели
-- **Влияние**: Уменьшает размер модели on 40-60%
-- **`save_info`**: Сохранение информации о модели
-- **Тип**: bool
-- **on умолчанию**: True
-- **describe**: Сохраняет метаdata о модели
-- **Использование**: Нужно for загрузки and отладки модели
+- **'model_name'**: Model name
+- **Typ**: str
+- **describe**: Way to preserve the model
+- ** Recommendations**: Use descriptive names with versions
+- **'save_space'**: Size optimization
+-**Teep**: bool
+- **on default**: True
+- **describe**: Removes temporary files for space saving
+- **Effluence**: Decreases model size on 20-30%
+- **/ `comppress'**: Files compression
+-**Teep**: bool
+- **on default**: True
+- **describe**: uses gzip compression for file models
+- **Effluence**: Decreases model size on 40-60%
+- **'save_info'**: Retention of model information
+-**Teep**: bool
+- **on default**: True
+- **describe**: Maintains metadata on the model
+- ** Use**: Need for model loading and debugging
 
-**methods сжатия:**
-- **remove временных files**: clean промежуточных результатов
-- **Gzip сжатие**: Сжатие files модели
-- **Оптимизация весов**: remove неUseых параметров
-- **Квантизация**: Уменьшение точности весов (float32 → float16)
+**methods compression:**
+- **remove time files**: cross intermediate results
+- **Gzip compression**: Model Files compression
+- **Optimization of weights**: remove non-Use parameters
+- **Quantification**: Reduction in balance accuracy (float32 \float16)
 
-### validation модели
+♪## Validation of the model
 
 ```python
 def validate_production_model(predictor, test_data, performance_thresholds):
-"""validation модели for продакшена"""
+"Validation Model for Sale"
 
-# Предсказания
+# Premonition
  predictions = predictor.predict(test_data)
 
-# Оценка качества
+# Quality assessment
  performance = predictor.evaluate(test_data)
 
-# check пороговых значений
+# check threshold values
  validation_results = {}
  for metric, threshold in performance_thresholds.items():
  if metric in performance:
@@ -254,58 +254,58 @@ def validate_production_model(predictor, test_data, performance_thresholds):
  else:
  validation_results[metric] = False
 
-# check стабильности predictions
+# Check stability preferences
  if hasattr(predictor, 'predict_proba'):
  probabilities = predictor.predict_proba(test_data)
  prob_std = probabilities.std().mean()
-validation_results['stability'] = prob_std < 0.1 # Стабильность вероятностей
+validation_results['stability'] = prob_std < 0.1 # Stability of probabilities
 
  return validation_results, performance
 ```
 
-**🔧 Детальное describe параметров validation модели for продакшена:**
+**/ Detailed describe parameters of validation model for sale:**
 
 **function validate_production_model:**
-- **Назначение**: validation модели перед деплоем in продакшен
+- ** Designation**: Validation of the model prior to the performance in sales
 - **parameters**:
-- **`predictor`**: Обученная модель
-- **Тип**: TabularPredictor
-- **describe**: Модель for validation
-- **`test_data`**: testsые data
-- **Тип**: dataFrame
-- **describe**: data for тестирования модели
-- **Требования**: Должны содержать целевую переменную
-- **`performance_thresholds`**: Пороговые значения метрик
-- **Тип**: dict
-- **describe**: Словарь with минимальными значениями метрик
+- ** `predicator'**: Trained model
+- ** Type**: TabularPredictor
+- **describe**: Model for validation
+- ** `test_data'**: test data
+-** Type**: DataFrame
+- **describe**: data for model testing
+** Requirements**: Should contain a target variable
+- ** `Performance_thresholds'**: Metric threshold values
+- ** Type**: dict
+- **describe**: dictionary with minimum metric values
  - **example**: {'accuracy': 0.85, 'f1': 0.80, 'roc_auc': 0.90}
-- **Возвращаемое значение**: tuple - (validation_results, performance)
-- **`validation_results`**: dict - результаты validation
+- **Return value**: tuple - (validation_effects, performance)
+- **/ `validation_results'**: dict - results of validation
 - **`performance`**: dict - Metrics performance
 
 **Structure validation_results:**
-- **`metric_name`**: bool - результат проверки metrics
-- **True**: Метрика превышает пороговое значение
-- **False**: Метрика ниже порогового значения
-- **`stability`**: bool - стабильность predictions
-- **True**: Стандартное отклонение вероятностей < 0.1
-- **False**: Высокая нестабильность predictions
+- **'metric_name'**: bool - results of the metrics test
+- **True**: Meteric exceeds the threshold
+- **False**: Metrique below threshold
+- ** `Stability'**: bool - stability of preferences
+- **True**: Standard probability deviation < 0.1
+- **False**: High instability of preferences
 
 **Structure performance:**
-- **metrics классификации**: accuracy, precision, recall, f1, roc_auc
-- **metrics регрессии**: rmse, mae, r2, mape
-- **Кастомные metrics**: Любые metrics, определенные при обучении
+- **metrics classification**: accuracy, precion, recall, f1, roc_auc
+- **metrics regression**: rmse, mae, r2, mape
+- **Castom metrics**: Any metrics defined in training
 
-**Проверки validation:**
-- **Пороговые значения**: comparison метрик with минимальными требованиями
-- **Стабильность**: Анализ разброса вероятностей predictions
-- **performance**: Оценка скорости predictions
-- **Память**: check использования памяти
-- **Совместимость**: Тестирование on разных platformх
+**Validation checks:**
+- ** Thresholds**: comparison metric with minimum requirements
+- **Stability**: Analysis of the spread of probabilities
+- **formance**: Speed evaluation of productions
+- ** Memory**: heck of memory use
+- **Compatibility**: Testing on different platforms
 
-## API сервер for продакшена
+## API server for sale
 
-### FastAPI сервер
+###FastAPI server
 
 ```python
 from fastapi import FastAPI, HTTPException
@@ -318,82 +318,82 @@ from typing import Dict, List, Any
 import asyncio
 from datetime import datetime
 
-# configuration Logsрования
+# configuring Logs
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# create FastAPI приложения
+# Create FastAPI applications
 app = FastAPI(title="AutoML Gluon Production API", version="1.0.0")
 
-# Глобальная переменная for модели
+# Global variable for the model
 model = None
 
 class PredictionRequest(BaseModel):
-"""Схема запроса for предсказания"""
+"The Request Scheme for Prophecy."
  data: List[Dict[str, Any]]
 
 class PredictionResponse(BaseModel):
-"""Схема ответа with предсказаниями"""
+""Scheme of response with predictions."
  predictions: List[Any]
  probabilities: List[Dict[str, float]] = None
  model_info: Dict[str, Any]
  timestamp: str
 
 class healthResponse(BaseModel):
-"""Схема ответа for health check"""
+"""""""""""""""""""
  Status: str
  model_loaded: bool
  model_info: Dict[str, Any] = None
 
-**🔧 Детальное describe параметров FastAPI сервера:**
+** Detailed describe of FastAPI server parameters:**
 
 **FastAPI application:**
-- **`title`**: Название API
-- **Тип**: str
-- **describe**: Отображается in документации Swagger
-- **Рекомендации**: Use описательное название
-- **`version`**: Версия API
-- **Тип**: str
-- **describe**: Версия API for отслеживания изменений
-- **Рекомендации**: Use семантическое версионирование (1.0.0)
+- ** `title'**: Name of API
+- **Typ**: str
+- **describe**: Imaged in Swagger documentation
+- ** Recommendations**: Use descriptive name
+- ** `version'**: API version
+- **Typ**: str
+- **describe**: API version for tracking change
+- ** Recommendations**: Us semantic versioning (1.0.0)
 
-**Класс PredictionRequest:**
-- **`data`**: data for предсказания
-- **Тип**: List[Dict[str, Any]]
-- **describe**: List записей for предсказания
-- **Structure**: Каждая запись - словарь with приsignми
+**Class PromotionRequest:**
+- **'data'**: data for prediction
+== sync, corrected by elderman == @elder_man
+- **describe**: List of fortunes
+- **Structure**: Every entry is a dictionary with signature
  - **example**: [{"feature1": 1.0, "feature2": 2.0}, {"feature1": 3.0, "feature2": 4.0}]
 
-**Класс PredictionResponse:**
-- **`predictions`**: Предсказания модели
-- **Тип**: List[Any]
-- **describe**: List predictions for каждой записи
-- **`probabilities`**: Вероятности predictions
-- **Тип**: List[Dict[str, float]] = None
-- **describe**: Вероятности for каждого класса (только for классификации)
+**Class PradicationResponse:**
+- **'predications'**: Model predictions
+- ** Type**: List[Any]
+- **describe**: List instructions for each record
+- **'probabyties'**: Probability of preferences
+== sync, corrected by elderman == @elder_man
+**describe**: Probability for each class (for classification only)
  - **Structure**: [{"class1": 0.8, "class2": 0.2}, ...]
-- **`model_info`**: Информация о модели
-- **Тип**: Dict[str, Any]
-- **describe**: Метаdata о модели
-- **`timestamp`**: Время предсказания
-- **Тип**: str
-- **describe**: ISO формат времени предсказания
+- **'model_info'**: Model Information
+- ** Type**: Dict[str, Any]
+- **describe**: Metadata on the model
+- **'timestamp'**: Time of prediction
+- **Typ**: str
+- **describe**: ISO prediction time format
 
-**Класс healthResponse:**
-- **`status`**: Статус API
-- **Тип**: str
-- **Значения**: "healthy", "unhealthy"
-- **describe**: Общий статус API
-- **`model_loaded`**: Статус загрузки модели
-- **Тип**: bool
-- **describe**: Загружена ли модель
-- **`model_info`**: Информация о модели
-- **Тип**: Dict[str, Any] = None
-- **describe**: Метаdata о модели (только если модель загружена)
+**Class healthResponse:**
+- ** `status'**: Status of API
+- **Typ**: str
+- ** Values**: "healthy", "unhealthy"
+- **describe**: General status of API
+- **'model_loaded'**: model loading status
+-**Teep**: bool
+- **describe**: Are the model loaded
+- **'model_info'**: Model Information
+== sync, corrected by elderman == @elder_man
+- **describe**: Metadata on the model (only if the model is loaded)
 
 @app.on_event("startup")
 async def load_model():
-"""Загрузка модели при Launchе сервера"""
+"""""""""""""""""""""
  global model
  try:
  model = TabularPredictor.load('./production_models')
@@ -428,19 +428,19 @@ async def predict(request: PredictionRequest):
  raise HTTPException(status_code=503, detail="Model not loaded")
 
  try:
-# Преобразование данных in dataFrame
+# Data conversion in dataFrame
  df = pd.dataFrame(request.data)
 
-# Предсказания
+# Premonition
  predictions = model.predict(df)
 
-# Вероятности (если доступны)
+# Probabilities (if available)
  probabilities = None
  if hasattr(model, 'predict_proba'):
  proba = model.predict_proba(df)
  probabilities = proba.to_dict('records')
 
-# Информация о модели
+# Model information
  model_info = {
  "model_path": model.path,
  "problem_type": model.problem_type,
@@ -461,7 +461,7 @@ async def predict(request: PredictionRequest):
 
 @app.get("/model/info")
 async def model_info():
-"""Информация о модели"""
+""""""""" "model information"""
  if model is None:
  raise HTTPException(status_code=503, detail="Model not loaded")
 
@@ -477,7 +477,7 @@ if __name__ == "__main__":
  uvicorn.run(app, host="0.0.0.0", port=8000)
 ```
 
-### Flask сервер
+### Flask server
 
 ```python
 from flask import Flask, request, jsonify
@@ -488,18 +488,18 @@ import logging
 from datetime import datetime
 import traceback
 
-# configuration Logsрования
+# configuring Logs
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# create Flask приложения
+# Create Flask application
 app = Flask(__name__)
 
-# Глобальная переменная for модели
+# Global variable for the model
 model = None
 
 def load_model():
-"""Загрузка модели"""
+"""""""""""""
  global model
  try:
  model = TabularPredictor.load('./production_models')
@@ -535,19 +535,19 @@ def predict():
  return jsonify({"error": "Model not loaded"}), 503
 
  try:
-# Получение данных
+# Data acquisition
  data = request.get_json()
 
  if 'data' not in data:
  return jsonify({"error": "No data provided"}), 400
 
-# Преобразование in dataFrame
+# Transforming in dataFrame
  df = pd.dataFrame(data['data'])
 
-# Предсказания
+# Premonition
  predictions = model.predict(df)
 
-# Вероятности (если доступны)
+# Probabilities (if available)
  probabilities = None
  if hasattr(model, 'predict_proba'):
  proba = model.predict_proba(df)
@@ -571,7 +571,7 @@ def predict():
 
 @app.route('/model/info', methods=['GET'])
 def model_info():
-"""Информация о модели"""
+""""""""" "model information"""
  if model is None:
  return jsonify({"error": "Model not loaded"}), 503
 
@@ -589,94 +589,94 @@ if __name__ == "__main__":
  logger.error("Failed to start server - model not loaded")
 ```
 
-## Docker контейнеризация
+## Docker containerization
 
-<img src="images/optimized/simple_production_flow.png" alt="Контейнеризация and деплой" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 3: Контейнеризация and стратегии деплоя ML-моделей*
+<img src="images/optimized/simple_production_flow.png" alt="Containment and deplete" style="max-width: 100 per cent; light: auto; display: block; marguin: 20px auto;">
+*Picture 3: Containerization and strategies for ML models*
 
-**Почему важна контейнеризация for ML-моделей?** Потому что она обеспечивает консистентность and изоляцию:
+**Why is containerization for ML models important?** Because it ensures consistency and isolation:
 
-- **Консистентность**: Одинаковая среда on all серверах
-- **Изоляция**: Модель not влияет on другие приложения
-- **Портативность**: Легко переносить между серверами
-- **Масштабируемость**: Простое горизонтальное масштабирование
-- **Версионирование**: Контроль версий моделей and dependencies
-- **Безопасность**: Изолированная среда выполнения
+- **Consistence**: Same environment on all servers
+- **Isolation**: Model nnot affects other applications
+- ** Portability**: It's easy to move between servers
+- ** Capacity**: Simple horizontal scale
+- **Version**: Model version control and dependencies
+- ** Safety**: Isolated implementation environment
 
-### Dockerfile for продакшена
+### Dockerfile for sale
 
 ```dockerfile
-# Dockerfile for продакшена
+# Dockerfile for sale
 FROM python:3.9-slim
 
-# installation системных dependencies
+♪ system systems installation ♪
 RUN apt-get update && apt-get install -y \
  gcc \
  g++ \
  && rm -rf /var/lib/apt/Lists/*
 
-# create рабочей директории
+# Create Work Directorate
 WORKDIR /app
 
-# Копирование requirements
+# Copying copies
 COPY requirements.txt .
 
 # installation Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Копирование кода приложения
+# Copy application code
 COPY . .
 
-# create User for безопасности
+# creative User for security
 RUN Useradd -m -u 1000 appUser && chown -R appUser:appUser /app
 User appUser
 
-# Открытие порта
+# Opening the port
 EXPOSE 8000
 
-# Команда Launchа
+# Launch team
 CMD ["python", "app.py"]
 ```
 
-**🔧 Детальное describe параметров Docker контейнеризации:**
+** Detailed describe of Docker containerization parameters:**
 
 **Dockerfile instructions:**
-- **`FROM python:3.9-slim`**: Базовый образ
-- **describe**: Использует Python 3.9 on базе Debian slim
-- **Размер**: ~150MB (компактный образ)
-- **Преимущества**: Быстрая загрузка, минимальная поверхность атаки
-- **`RUN apt-get update && apt-get install -y`**: installation системных dependencies
-- **`gcc`**: Компилятор C for сборки Python пакетов
-- **`g++`**: Компилятор C++ for сборки Python пакетов
-- **`&& rm -rf /var/lib/apt/Lists/*`**: clean cache apt for уменьшения размера
-- **`WORKDIR /app`**: Рабочая директория
-- **describe**: Устанавливает /app как рабочую директорию
-- **Преимущества**: Изолирует файлы приложения
-- **`COPY requirements.txt .`**: Копирование файла dependencies
-- **describe**: Копирует requirements.txt in контейнер
-- **Преимущества**: Кэширование слоев Docker
+- **'FROM python: 3.9-slim'**: Basic image
+- **describe**: Using Python 3.9 on Debian slim
+**Measurement**: ~150MB (compact image)
+- ** Benefits**: Rapid loading, minimum surface attack
+**/ `RUN apt-get update &&apt-get install -y'**: installation of system dependencies
+- **'gcc'**: Compier C for Python Package Assembly
+- **'g++'**: Compier C++ for Python Package Assembly
+- **'&& rm -rf /var/lib/apt/Lists/***: clean cache apt for size reduction
+- **/WORKDIR /app'**: Work Directorate
+- **describe**: Sets /app as the work directorate
+- ** Benefits**: Isolates application files
+- **/COPY compilations.txt.'**: Copying file dependencies
+- **describe**: Copys corrections.txt in container
+- ** Benefits**: Cashing the Docker layers
 - **`RUN pip install --no-cache-dir -r requirements.txt`**: installation Python dependencies
-- **`--no-cache-dir`**: Отключает кэш pip for уменьшения размера
-- **Преимущества**: Уменьшает размер образа on 50-100MB
-- **`COPY . .`**: Копирование кода приложения
-- **describe**: Копирует весь код приложения in контейнер
-- **Рекомендации**: Use .dockerignore for исключения ненужных files
+- **'--no-cache-dir'**: Disables cache pip for size reduction
+- ** Benefits**: Decreases the size of the image on 50-100MB
+- **'COPY ..'**: Copying the application code
+- **describe**: Copys the entire application code in container
+- ** Recommendations**: Use .dockerignore for the elimination of unnecessary files
 - **`RUN Useradd -m -u 1000 appUser && chown -R appUser:appUser /app`**: create User
-- **`-m`**: Создает домашнюю директорию
-- **`-u 1000`**: Устанавливает UID 1000
-- **`chown -R`**: Изменяет владельца all files
-- **Безопасность**: Launch not from root User
-- **`User appUser`**: Переключение on User
-- **describe**: Переключается on созданного User
-- **Безопасность**: Ограничивает права доступа
-- **`EXPOSE 8000`**: Открытие порта
-- **describe**: Документирует, что application использует порт 8000
-- **Примечание**: not открывает порт автоматически
-- **`CMD ["python", "app.py"]`**: Команда Launchа
-- **describe**: Launchает application при старте контейнера
-- **Формат**: JSON массив for избежания shell интерпретации
+- **'-m'**: Creates a household directory
+- ** `-u 1000'**: Sets UID 1000
+- **///////: Changed owner of all files
+- ** Safety**: Launch not from root User
+- **'User appUser'**: Switch on User
+- **describe**: Switched to created User
+- ** Safety**: restricts access rights
+- **'EXPOSE 8000'**: Opening port
+- **describe**: Documents that port 8,000 uses application
+- **Note**: not automatically opens port
+- **/CMD ["python", "app.py"]**: Team Launch
+- **describe**: Launch application when the container starts
+- **Format**: JSON Set for Avoiding Shell Interpretation
 
-### Docker Compose for продакшена
+### Docker Composition for sale
 
 ```yaml
 # docker-compose.prod.yml
@@ -725,64 +725,64 @@ volumes:
  redis_data:
 ```
 
-**🔧 Детальное describe параметров Docker Compose:**
+** Detailed describe parameters Docker Compose:**
 
-**Версия Docker Compose:**
-- **`Version: '3.8'`**: Версия формата файла
-- **describe**: Использует формат Docker Compose версии 3.8
-- **Преимущества**: Поддержка новых функций and улучшенная совместимость
+**Docker Compose version:**
+- ** 'Version: `3.8''**: File format version
+- **describe**: Uses the Docker Composition version 3.8 format
+- ** Benefits**: Support for new functions and improved compatibility
 
-**Сервис autogluon-api:**
-- **`build: .`**: Сборка образа
-- **describe**: Собирает образ из Dockerfile in текущей директории
-- **Альтернативы**: Можно использовать `image: имя_образа` for готового образа
-- **`ports`**: Проброс портов
-- **`"8000:8000"`**: Пробрасывает порт 8000 контейнера on порт 8000 хоста
-- **Формат**: "хост:контейнер"
-- **`environment`**: Переменные окружения
-- **`MODEL_PATH=/app/models`**: Путь к моделям in контейнере
-- **`LOG_LEVEL=INFO`**: Уровень Logsрования
-- **`volumes`**: Монтирование томов
-- **`./models:/app/models`**: Монтирует локальную папку models in контейнер
-- **`./Logs:/app/Logs`**: Монтирует локальную папку Logs in контейнер
-- **`restart: unless-stopped`**: Политика переLaunchа
-- **describe**: ПереLaunchает контейнер при сбое, кроме ручной остановки
-- **Альтернативы**: always, on-failure, no
+** Services autogluon-api:**
+- **'bueld: ..'**: Image collection
+- **describe**: Collects an image from Dockerfile in the current directory.
+- ** Alternatives**: Can use `image: name_form' for ready image
+- **'ports'**: Ports
+- ** `"8000:8000'"**: Throws through port 8,000 containers on port 8,000
+- **Format**: Host: Container.
+- ** `environment'**: Changing environment
+- ** `MODEL_PATH=/app/models'**: Path to models in container
+- **'LOG_LEVEL=INFO'**: Logs level
+- **'volumes'**: To complete volumes
+- ** `./models:/app/models'**: Mounts a local folder of models in container
+- ** `./Logs:/app/Logs'**: Mounts a local Logs folder in a container
+- **/restart: unless-stepped'**: OverLaunch policy
+- **describe**: OverLaunch container in failure other than manual stop
+- ** Alternatives**: allways, on-failure, no
 - **`healthcheck`**: health check
-- **`test`**: Команда for проверки health
-- **`interval: 30s`**: Интервал проверки
-- **`timeout: 10s`**: Таймаут team
-- **`retries: 3`**: Количество попыток
-- **`start_period: 40s`**: Время ожидания перед первой проверкой
+- ** `test'**: Health Check Team
+- **'interval: 30s'**: Verification interval
+- **'timeout: 10s'**: Timeout team
+- **'retries: 3'**: Number of attempts
+- **'start_period: 40s'**: waiting time before first check
 
-**Сервис nginx:**
-- **`image: nginx:alpine`**: Готовый образ Nginx
-- **describe**: Использует Alpine Linux версию Nginx
-- **Размер**: ~15MB (компактный образ)
-- **`ports`**: Проброс портов
-- **`"80:80"`**: HTTP порт
-- **`"443:443"`**: HTTPS порт
-- **`volumes`**: Монтирование конфигурации
+** Service nginx:**
+- **'image: nginx:alpine'**: Ready image of Nginx
+- **describe**: Using Alpine Linux version of Nginx
+- ** Measure**: ~15MB (compact image)
+- **'ports'**: Ports
+- **'80:80'**: HTTP port
+- **'443:443'**: HTTPS port
+- **/volumes'**: configuration
  - **`./nginx.conf:/etc/nginx/nginx.conf`**: configuration Nginx
-- **`./ssl:/etc/nginx/ssl`**: SSL сертификаты
+- **/ssl:/etc/nginx/ssl'**: SSL certificates
 - **`depends_on`**: dependencies
-- **`autogluon-api`**: Nginx Launchается после API service
+- **'autogluon-api'**: Nginx Launch after API service
 
-**Сервис redis:**
-- **`image: redis:alpine`**: Готовый образ Redis
-- **describe**: Использует Alpine Linux версию Redis
-- **Размер**: ~7MB (компактный образ)
-- **`volumes`**: Постоянное хранение
-- **`redis_data:/data`**: Именованный том for данных Redis
+** Service redis:**
+- **'image: redis:alpine'**: Ready image of Redis
+- **describe**: uses the Alpine Linux version of Redis
+- **Measure**: ~7MB (compact image)
+- ** `volumes'**: Permanent storage
+**'redis_data:/data'**: Named volume for data Redis
 
-**Тома:**
-- **`redis_data`**: Именованный том
-- **describe**: Создает постоянный том for данных Redis
-- **Преимущества**: data сохраняются при переLaunchе контейнеров
+**Toma:**
+**'redis_data'**: Named volume
+- **describe**: Creates a permanent volume for Redis data
+- ** Benefits**: data retained by overLaunch containers
 
-## Kubernetes деплой
+## Kubernetes is good
 
-### deployment манифест
+###Deployment manifesto
 
 ```yaml
 # k8s-deployment.yaml
@@ -880,96 +880,96 @@ spec:
  storage: 5Gi
 ```
 
-**🔧 Детальное describe параметров Kubernetes деплоя:**
+**/ Detailed describe of the Kubernetes parameters:**
 
-**deployment манифест:**
-- **`apiVersion: apps/v1`**: Версия API
-- **describe**: Использует стабильную версию API for deployment
-- **`kind: deployment`**: Тип ресурса
-- **describe**: Создает deployment for управления подами
-- **`metadata.name`**: Имя deployment
-- **describe**: Уникальное имя for идентификации
-- **`spec.replicas: 3`**: Количество реплик
-- **describe**: Создает 3 копии приложения
-- **Преимущества**: Высокая доступность and нагрузочная способность
-- **`spec.selector.matchLabels`**: Селектор подов
-- **describe**: Выбирает поды with соответствующими метками
-- **`spec.template`**: Шаблон пода
-- **describe**: Определяет конфигурацию подов
+**deployment manifesto:**
+- **'apiVersion: Apps/v1'**: API version
+- **describe**: Uses a stable version of API for release
+- **'kind: release'**: Resource type
+- **describe**: Creates a déployment for the management of subs.
+- **'metadata.name'**: Name
+- **describe**: Unique name for identification
+- **'spec.replicas: 3'**: Number of replicas
+- **describe**: Creates 3 copies of the application
+- ** Benefits**: High accessibility and load capacity
+- **'spec.selector.matchLabels'**: Substrate Selector
+- **describe**: Selects sub-marks with appropriate labels
+- **'spec.template'**: Shablon pump
+- **describe**: Determines the configuration of the substrates
 
-**Контейнер:**
-- **`name: autogluon-api`**: Имя контейнера
-- **describe**: Уникальное имя контейнера in поде
-- **`image: autogluon-api:latest`**: Образ контейнера
-- **describe**: Docker образ for Launchа
-- **Рекомендации**: Use конкретные теги версий вместо latest
-- **`ports.containerPort: 8000`**: Порт контейнера
-- **describe**: Порт, который слушает application
-- **`env`**: Переменные окружения
-- **`MODEL_PATH`**: Путь к моделям in контейнере
-- **`LOG_LEVEL`**: Уровень Logsрования
+**Container:**
+- **'name: autogluon-api'**: Name of container
+- **describe**: Unique name of the container in subpoena
+- **'image: autogluon-api:latest'**: Image of container
+- **describe**:Docker image for Launch
+- ** Recommendations**: Use specific tags of versions instead of latest
+- **'ports.containerPort: 8,000'**: Port container
+- **describe**: Port that listens to application
+- ** `env'**: Changing environment
+- **'MODEL_PATH'**: Path to models in container
+- **'LOG_LEVEL'**: Logs level
 
-**Ресурсы:**
-- **`resources.requests`**: Минимальные ресурсы
-- **`memory: "1Gi"`**: Минимум 1GB RAM
-- **`cpu: "500m"`**: Минимум 0.5 CPU
-- **`resources.limits`**: Максимальные ресурсы
-- **`memory: "2Gi"`**: Максимум 2GB RAM
-- **`cpu: "1000m"`**: Максимум 1 CPU
+** Resources:**
+- **/resources.requests'**: Minimum resources
+- **/memory: "1Gi"'**: Minimum 1GB RAM
+- **'cpu: "500m"'**: Minimum 0.5 CPU
+- **/resources.limits'**: Maximum resources
+- **/memory: "2Gi"'**: Maximum 2GB RAM
+- **'cpu: "1000m"'**: Maximum 1 CPU
 
-**Проверки health:**
-- **`livenessProbe`**: check жизнеспособности
-- **`httpGet`**: HTTP запрос for проверки
-- **`path: /health`**: Путь for проверки
-- **`port: 8000`**: Порт for проверки
-- **`initialDelaySeconds: 30`**: Задержка перед первой проверкой
-- **`periodseconds: 10`**: Интервал проверки
-- **`readinessProbe`**: check готовности
-- **describe**: Проверяет, готов ли контейнер принимать трафик
-- **`initialDelaySeconds: 5`**: Быстрая check готовности
+** Checks health:**
+- ** 'LifeProbe'**: check viability
+- ** `httpGet'**: HTTP request for verification
+- **/path: /health'**: Path for verification
+- **'port: 8,000'**: Port for inspection
+- **'InitialDelaySeends: 30'**: Delay before first check
+- **'periodseconds: 10'**: Verification interval
+- **/'re-businessProbe'**: check ready
+- **describe**: Checks whether the container is ready to accept traffic
+- **'InitialDelaySeends: 5'**: Rapid check readiness
 
-**Тома:**
-- **`volumeMounts`**: Монтирование томов in контейнер
-- **`model-storage`**: Том for моделей
-- **`log-storage`**: Том for логов
-- **`volumes`**: Определение томов
-- **`persistentVolumeClaim`**: Использование PVC for постоянного хранения
+**Toma:**
+- **'volumeMounts'**: In-containers booking
+- **'model-storage'**: Tom for models
+- **'log-storage'**: Tom for logs
+- **/volumes'**: Definition of volumes
+**/ `Persistent VolumeClaim'**: Use of PVC for permanent storage
 
 **service:**
-- **`kind: service`**: Тип ресурса
-- **describe**: Создает сервис for доступа к подам
-- **`spec.selector`**: Селектор подов
-- **describe**: Выбирает поды for балансировки нагрузки
-- **`spec.ports`**: Проброс портов
-- **`port: 80`**: Внешний порт
-- **`targetPort: 8000`**: Порт контейнера
-- **`type: LoadBalancer`**: Тип service
-- **describe**: Создает внешний LoadBalancer
+- **'kind: service'**: Resource type
+- **describe**: Creates a service for access to the pens
+- **'spec.selector'**: Substrate Selector
+- **describe**: Picks for load balancing
+- **'spec.ports'**: Ports Probe
+- **'port: 80'**: External port
+- **'targetPort: 8,000'**: Port container
+- **'type: LoadBalencer'**: Type of service
+- **describe**: Creates external LoadBalencer
 
 **PersistentVolumeClaim:**
-- **`kind: PersistentVolumeClaim`**: Тип ресурса
-- **describe**: Запрос on постоянное хранилище
-- **`spec.accessModes`**: Режимы доступа
-- **`ReadWriteOnce`**: Чтение/запись одним узлом
-- **`spec.resources.requests.storage`**: Размер хранилища
-- **`10Gi`**: 10GB for моделей
-- **`5Gi`**: 5GB for логов
+- **'kind: Personal VolumeClaim'**: Resource type
+- **describe**: Request for permanent storage
+- **'spec.accessModes'**: Access modes
+- **'ReadWriteOnce'**: Reading/recording by one node
+- **'spec.resources.requests.storage'**: Warehouse size
+- **'10Gi'**: 10GB for models
+- **'5Gi'**: 5GB for logs
 
-## Monitoring and Logsрование
+♪ Monitoring and Logsting
 
-<img src="images/optimized/advanced_production_flow.png" alt="Monitoring and Logsрование" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 4: Система Monitoringа and Logsрования in продакшене*
+<img src="images/optimized/addianced_production_flow.png" alt="Monitoring and Logsrration" style="max-width: 100 per cent; height: auto; display: block; marguin: 20px auto;">
+*Picture 4: Monitoring and Logs in Production*
 
-**Почему критически важен Monitoring ML-моделей?** Потому что модели могут деградировать со временем:
+Because models can degenerate over time:
 
-- **Детекция дрейфа**: Изменение распределения входных данных
-- **Monitoring performance**: Отслеживание скорости and точности
-- **Алертинг**: notifications о проблемах in реальном времени
-- **Logsрование**: Детальная информация for отладки
-- **metrics бизнеса**: Связь технических метрик with бизнес-результатами
-- **Автоматическое восстановление**: Реагирование on проблемы без вмешательства человека
+** Drift Detective**: Change in input data distribution
+- **Monitoring performance**: Speed and accuracy tracking
+**Alerting**: notes on real-time problems
+- **Logstration**: Detailed information for debugging
+- **metrics business**: Technical metrics with business outcomes
+- **Automatic recovery**: Response on the problem without human intervention
 
-### Система Monitoringа
+### The Monitoring System
 
 ```python
 import logging
@@ -980,7 +980,7 @@ import requests
 from typing import Dict, Any
 
 class ProductionMonitor:
-"""Monitoring продакшен системы"""
+"Monitoring the system sold."
 
  def __init__(self, log_file='production.log'):
  self.log_file = log_file
@@ -988,7 +988,7 @@ class ProductionMonitor:
  self.metrics = {}
 
  def setup_logging(self):
-"""configuration Logsрования"""
+""Conference Logs""
  logging.basicConfig(
  level=logging.INFO,
  format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -1001,7 +1001,7 @@ class ProductionMonitor:
 
  def log_Prediction(self, input_data: Dict, Prediction: Any,
  processing_time: float, model_info: Dict):
-"""Logsрование предсказания"""
+""Logsrance of Promise""
  log_entry = {
  'timestamp': datetime.now().isoformat(),
  'input_data': input_data,
@@ -1012,7 +1012,7 @@ class ProductionMonitor:
  self.logger.info(f"Prediction: {log_entry}")
 
  def log_error(self, error: Exception, context: Dict):
-"""Logsрование ошибок"""
+""Logsir of Mistakes""
  error_entry = {
  'timestamp': datetime.now().isoformat(),
  'error': str(error),
@@ -1022,7 +1022,7 @@ class ProductionMonitor:
  self.logger.error(f"Error: {error_entry}")
 
  def get_system_metrics(self) -> Dict[str, Any]:
-"""Получение системных метрик"""
+"Getting System Metericks."
  return {
  'cpu_percent': psutil.cpu_percent(),
  'memory_percent': psutil.virtual_memory().percent,
@@ -1031,9 +1031,9 @@ class ProductionMonitor:
  }
 
  def check_model_health(self, model) -> Dict[str, Any]:
-"""health check модели"""
+""Health check model""
  try:
-# testsое Prediction
+# Testsy Pradition
  test_data = pd.dataFrame({'feature1': [1.0], 'feature2': [2.0]})
  start_time = time.time()
  Prediction = model.predict(test_data)
@@ -1052,96 +1052,96 @@ class ProductionMonitor:
  }
 ```
 
-**🔧 Детальное describe параметров системы Monitoringа:**
+**/ Detailed describe parameters of Monitoring system:**
 
-**Класс ProductionMonitor:**
-- **Назначение**: Monitoring продакшен системы AutoML Gluon
-- **parameters конструктора**:
-- **`log_file`**: Путь к файлу логов
-- **Тип**: str
-- **on умолчанию**: 'production.log'
-- **describe**: Файл for записи логов Monitoringа
+**Class ProductionMonitor:**
+- ** Designation**: Monitoring sold by AutoML Gluon
+- **parameters of design**:
+- **'log_file'**: Path to log file
+- **Typ**: str
+- **on default**: 'production.log'
+- **describe**: File for recording Monitoring's logs
 
-**Метод setup_logging():**
-- **Назначение**: configuration системы Logsрования
+** Method setup_logging():**
+- ** Designation**: configuring Logs
 - **parameters logging.basicConfig():**
-- **`level=logging.INFO`**: Уровень Logsрования
-- **Тип**: int
-- **Значения**: DEBUG(10), INFO(20), WARNING(30), ERROR(40), CRITICAL(50)
-- **describe**: Logsрует messages уровня INFO and выше
-- **`format`**: Формат логов
-- **Тип**: str
-- **describe**: Шаблон for форматирования логов
-- **components**: время, имя логгера, уровень, сообщение
-- **`handlers`**: Обработчики логов
-- **`FileHandler`**: Запись in файл
-- **`StreamHandler`**: Вывод in консоль
+- **'level=logging.INFO'**: Logs level
+- **Typ**:int
+- ** Values**: DEBUG(10), INFO(20), WARNING(30), EROR(40), CRITICAL(50)
+- **describe**: Logs messages at INFO level and above
+- ** `format'**: Log format
+- **Typ**: str
+- **describe**: Log formatting template
+- **components**: Time, logger name, level, message
+- ** `handlers'**: Lair processors
+- **'FileHandler'**: Record in file
+- **'StreamHandler'**: Conclusion in console
 
-**Метод log_Prediction():**
-- **Назначение**: Logsрование predictions модели
+** Method log_Predication():**
+- ** Designation**: Logs of model preferences
 - **parameters**:
-- **`input_data`**: Входные data
-- **Тип**: Dict
-- **describe**: data, поdata on вход модели
-- **`Prediction`**: Prediction модели
-- **Тип**: Any
-- **describe**: Результат предсказания
-- **`processing_time`**: Время обработки
-- **Тип**: float
-- **describe**: Время выполнения предсказания in секундах
-- **`model_info`**: Информация о модели
-- **Тип**: Dict
-- **describe**: Метаdata о модели
+- **/input_data'**: input data
+- ** Type**: Dict
+- **describe**: Data, popata on model input
+- **'Predition'**:Pedication model
+-** Type**: Any
+- **describe**: The result of the prediction
+- ** `Processing_time'**: Processing time
+- **Typ**: float
+- **describe**: Time to execute prediction in seconds
+- **'model_info'**: Model Information
+- ** Type**: Dict
+- **describe**: Metadata on the model
 
-**Метод log_error():**
-- **Назначение**: Logsрование ошибок системы
+** Method log_error():**
+- ** Designation**: System error logs
 - **parameters**:
-- **`error`**: Исключение
-- **Тип**: Exception
-- **describe**: Ошибка, которая произошла
-- **`context`**: Контекст ошибки
-- **Тип**: Dict
-- **describe**: Дополнительная информация об ошибке
+- ** `error'**: exclusion
+- ** Type**: Exception
+- **describe**: Error that occurred
+- ** `contect'**: Context of error
+- ** Type**: Dict
+- **describe**: Additional information on error
 
-**Метод get_system_metrics():**
-- **Назначение**: Получение системных метрик
-- **Возвращаемое значение**: Dict[str, Any] - системные metrics
+** Get_system_metrics method():**
+- ** Designation**: Acquisition of system metrics
+- **Return value**: Dict[str, Any] - System metrics
 - **metrics**:
-- **`cpu_percent`**: Загрузка CPU
-- **Тип**: float
-- **Диапазон**: 0.0-100.0
-- **describe**: Процент использования CPU
-- **`memory_percent`**: Использование памяти
-- **Тип**: float
-- **Диапазон**: 0.0-100.0
-- **describe**: Процент использования RAM
-- **`disk_percent`**: Использование диска
-- **Тип**: float
-- **Диапазон**: 0.0-100.0
-- **describe**: Процент использования диска
-- **`timestamp`**: Время измерения
-- **Тип**: str
-- **describe**: ISO формат времени
+- **'cpu_percent'**: Loading CPU
+- **Typ**: float
+- **band**: 0.0-100.0
+- **describe**: Percentage of use of CPU
+- **/memory_percent'**: Use of memory
+- **Typ**: float
+- **band**: 0.0-100.0
+- **describe**: Percentage use of RAM
+- **'disk_percent'**: Use of disc
+- **Typ**: float
+- **band**: 0.0-100.0
+- **describe**: Percentage use of disk
+- ** `timestamp'**: Time of measurement
+- **Typ**: str
+- **describe**: ISO time format
 
-**Метод check_model_health():**
-- **Назначение**: health check модели
+**Heck_model_health():**
+- ** Designation**: health check model
 - **parameters**:
-- **`model`**: Модель for проверки
-- **Тип**: TabularPredictor
-- **describe**: Модель AutoGluon for тестирования
-- **Возвращаемое значение**: Dict[str, Any] - статус health
-- **Structure результата**:
-- **`status`**: Статус модели
-- **Тип**: str
-- **Значения**: 'healthy', 'unhealthy'
-- **`processing_time`**: Время обработки testsого запроса
-- **Тип**: float
-- **describe**: Время выполнения testsого предсказания
-- **`error`**: describe ошибки (if present)
-- **Тип**: str
-- **describe**: Текст ошибки при неудачной проверке
+- **'model'**: Model for verification
+- ** Type**: TabularPredictor
+- **describe**: AutoGluon for testing
+- **Return value**: Dict[str, Any] - health status
+- **Structure result**:
+- ** `status'**: Model status
+- **Typ**: str
+- ** Values**: 'healthy', 'unhealthy'
+- ** `Processing_time'**: Time to process test request
+- **Typ**: float
+- **describe**: Time to perform testis prophecy
+- **'error'**: describe errors (if present)
+- **Typ**: str
+- **describe**: Mischecked error text
 
-### Алерты and notifications
+♪ ♪ Alerts and notes ♪
 
 ```python
 import smtplib
@@ -1150,7 +1150,7 @@ from email.mime.multipart import MIMEMultipart
 import requests
 
 class Alertsystem:
-"""Система алертов for продакшена"""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""Alerts for sales"""""""" """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
  def __init__(self, smtp_server, smtp_port, email, password):
  self.smtp_server = smtp_server
@@ -1159,7 +1159,7 @@ class Alertsystem:
  self.password = password
 
  def send_email_alert(self, subject: str, message: str, recipients: List):
-"""Отправка email алерта"""
+""Send e-mail allergic."
  try:
  msg = MIMEMultipart()
  msg['From'] = self.email
@@ -1179,7 +1179,7 @@ class Alertsystem:
  print(f"Failed to send email alert: {e}")
 
  def send_slack_alert(self, webhook_url: str, message: str):
-"""Отправка Slack алерта"""
+"Sent Sluck Alert."
  try:
  payload = {
  "text": message,
@@ -1196,7 +1196,7 @@ class Alertsystem:
 
  def check_performance_thresholds(self, metrics: Dict[str, float],
  thresholds: Dict[str, float]):
-"""check пороговых значений performance"""
+"Check threshold values performance""
  alerts = []
 
  for metric, threshold in thresholds.items():
@@ -1206,98 +1206,98 @@ class Alertsystem:
  return alerts
 ```
 
-**🔧 Детальное describe параметров системы алертов:**
+**/ Detailed descrie parameters of the allernet system: **/
 
-**Класс Alertsystem:**
-- **Назначение**: Система уведомлений for продакшен Monitoringа
-- **parameters конструктора**:
-- **`smtp_server`**: SMTP сервер
-- **Тип**: str
-- **describe**: Адрес SMTP сервера for отправки email
+** Class Alertsysystem:**
+- ** Designation**: Notification system for sales of Monitoringa
+- **parameters of design**:
+- **'smtp_server'**: SMTP server
+- **Typ**: str
+- **describe**: SMTP server address for email
  - **examples**: 'smtp.gmail.com', 'smtp.yandex.ru'
-- **`smtp_port`**: Порт SMTP сервера
-- **Тип**: int
-- **on умолчанию**: 587 (TLS), 465 (SSL)
-- **describe**: Порт for подключения к SMTP серверу
-- **`email`**: Email отправителя
-- **Тип**: str
-- **describe**: Email адрес for отправки уведомлений
-- **`password`**: Пароль email
-- **Тип**: str
-- **describe**: Пароль for аутентификации on SMTP сервере
+- **'smtp_port'**: SMTP server port
+- **Typ**:int
+- **on default**: 587 (TLS), 465 (SSL)
+- **describe**: Port for SMTP server
+- ** `email'**: Email sender
+- **Typ**: str
+- **describe**: Email address for sending notifications
+- **'password'**: e-mail password
+- **Typ**: str
+- **describe**: Password for authentication on SMTP server
 
-**Метод send_email_alert():**
-- **Назначение**: Отправка email уведомлений
+** Method send_email_alert():**
+- ** Designation**: Send e-mail notifications
 - **parameters**:
-- **`subject`**: Тема письма
-- **Тип**: str
-- **describe**: Заголовок email notifications
+- **/ `subproject'**: Subject of the letter
+- **Typ**: str
+- **describe**: Email notes
  - **examples**: "Model Performance Alert", "system health Warning"
-- **`message`**: Текст messages
-- **Тип**: str
-- **describe**: Содержимое email notifications
-- **`recipients`**: List получателей
-- **Тип**: List
-- **describe**: List email адресов получателей
+- ** `message'**: Text messages
+- **Typ**: str
+- **describe**: Content of e-mail notes
+- **/recipients'**: List of recipients
+- ** Type**: List
+- **describe**: List email addresses of recipients
  - **example**: ['admin@company.com', 'devops@company.com']
 
-**Метод send_slack_alert():**
-- **Назначение**: Отправка уведомлений in Slack
+** Method send_slack_alert():**
+- ** Designation**: Sending notifications in Slack
 - **parameters**:
  - **`webhook_url`**: URL webhook
-- **Тип**: str
-- **describe**: URL Slack webhook for отправки сообщений
-- **Формат**: https://hooks.slack.com/services/...
-- **`message`**: Текст messages
-- **Тип**: str
-- **describe**: Содержимое Slack notifications
+- **Typ**: str
+- **describe**: UrL Slack webhook for sending messages
+- **Format**: https://hawks.slack.com/services/...
+- ** `message'**: Text messages
+- **Typ**: str
+- **describe**: Content of Slack notes
 - **Structure payload**:
-- **`text`**: Текст messages
-- **`Username`**: Имя отправителя
-- **`icon_emoji`**: Иконка отправителя
+- ** `text'**: Text messages
+- ** `Username'**: Name of sender
+- **'icon_emoj'**: sender's icon
 
-**Метод check_performance_thresholds():**
-- **Назначение**: check пороговых значений метрик
+**Check_performance_thresholds():**
+- ** Designation**: check metric thresholds
 - **parameters**:
-- **`metrics`**: Текущие metrics
-- **Тип**: Dict[str, float]
-- **describe**: Словарь with текущими значениями метрик
+- **'metrics'**: Current metrics
+- ** Type**: Dict[str, float]
+- **describe**: dictionary with current metric values
  - **example**: {'accuracy': 0.85, 'response_time': 0.5}
-- **`thresholds`**: Пороговые значения
-- **Тип**: Dict[str, float]
-- **describe**: Словарь with минимальными значениями метрик
+- ** `thresholds'**: Thresholds
+- ** Type**: Dict[str, float]
+- **describe**: dictionary with minimum metric values
  - **example**: {'accuracy': 0.90, 'response_time': 1.0}
-- **Возвращаемое значение**: List - List алертов
-- **Logsка проверки**:
-- Сравнивает текущие metrics with пороговыми значениями
-- Создает алерт, если метрика ниже порога
-- Возвращает List строк with описанием проблем
+- **Return value**: List - List allerts
+- **Logs check**:
+- Compares current metrics with thresholds
+- Creates allerte if the metric is below the threshold.
+- Returns the List line with the description of the problems
 
-## Масштабирование
+## Scale
 
-<img src="images/optimized/production_comparison.png" alt="Масштабирование ML-систем" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 5: Стратегии масштабирования ML-систем*
+<img src="images/optimized/producation_comparison.png" alt="ML systems scale" style="max-width: 100 per cent; light: auto; display: lock; marguin: 20px auto;">
+♪ Figure 5: ML scaling strategies ♪
 
-**Почему важно правильное масштабирование ML-систем?** Потому что ML-модели имеют уникальные требования к ресурсам:
+**Why is it important to scale ML systems correctly?** Because ML models have unique resource requirements:
 
-- **Горизонтальное масштабирование**: add новых серверов for обработки нагрузки
-- **Вертикальное масштабирование**: Увеличение ресурсов существующих серверов
-- **Автоматическое масштабирование**: Динамическое изменение ресурсов on нагрузке
-- **Балансировка нагрузки**: Равномерное распределение запросов между серверами
-- **Кэширование**: Сохранение результатов for acceleration ответов
-- **Асинхронная обработка**: Неблокирующая обработка запросов
+- ** Horizontal scale**: add new servers for load processing
+- ** Vertical scaling**: Increased resources of existing servers
+- ** Automatic scaling**: Dynamic resource change on load
+- ** Load budgeting**: Equitable distribution of queries between servers
+- **Cashing**: Retaining results for validation of responses
+- ** Asynchronous treatment**: Non-locking request processing
 
-### Горизонтальное масштабирование
+### Horizontal scale
 
 ```python
-# configuration for горизонтального масштабирования
+#configuring for horizontal scaling
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 import queue
 import threading
 
 class Scalablepredictionservice:
-"""Масштабируемый сервис predictions"""
+"""""""" "Stop-up "predations""""
 
  def __init__(self, max_workers=4):
  self.max_workers = max_workers
@@ -1306,10 +1306,10 @@ class Scalablepredictionservice:
  self.result_queue = queue.Queue()
 
  async def process_Prediction(self, data: Dict) -> Dict:
-"""Асинхронная обработка предсказания"""
+"The Asynchronous Prophecy Processing."
  loop = asyncio.get_event_loop()
 
-# Выполнение предсказания in отдельном потоке
+# The fulfillment of the prediction in a separate stream
  result = await loop.run_in_executor(
  self.executor,
  self._predict_sync,
@@ -1319,20 +1319,20 @@ class Scalablepredictionservice:
  return result
 
  def _predict_sync(self, data: Dict) -> Dict:
-"""Синхронное Prediction"""
-# Ваша Logsка предсказания
+"Synchronous Pride."
+# Your Logs of Prophecy
  pass
 
  def batch_predict(self, batch_data: List[Dict]) -> List[Dict]:
-"""Пакетная обработка predictions"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  results = []
 
-# Разделение on батчи
+# Division on Batch
  batch_size = 100
  for i in range(0, len(batch_data), batch_size):
  batch = batch_data[i:i+batch_size]
 
-# Параллельная обработка батча
+# Side treatment of the batch
  with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
  futures = [executor.submit(self._predict_sync, data) for data in batch]
  batch_results = [future.result() for future in futures]
@@ -1341,61 +1341,61 @@ class Scalablepredictionservice:
  return results
 ```
 
-**🔧 Детальное describe параметров масштабирования:**
+**/ Detailed describe scale parameters:**
 
-**Класс Scalablepredictionservice:**
-- **Назначение**: Масштабируемый сервис for обработки predictions
-- **parameters конструктора**:
-- **`max_workers`**: Максимальное количество потоков
-- **Тип**: int
-- **on умолчанию**: 4
-- **Диапазон значений**: `[1, 32]` (рекомендуется 2-16)
-- **describe**: Количество параллельных потоков for обработки
-- **Рекомендации**: Use количество CPU ядер × 2
+** Class Scalablepredationservice:**
+- ** Designation**: Large-scale service for processing preferences
+- **parameters of design**:
+- ** `max_workers'**: Maximum flow
+- **Typ**:int
+- **on default**: 4
+- ** Value range**: `[1, 32] ` (recommended 2-16)
+- **describe**: Number of parallel flows for processing
+- ** Recommendations**: Use number of CPU kernels x 2
 
-**Метод process_Prediction():**
-- **Назначение**: Асинхронная обработка предсказания
+** Method of process_Predication():**
+- ** Designation**: Asynchronous processing of prediction
 - **parameters**:
-- **`data`**: data for предсказания
-- **Тип**: Dict
-- **describe**: Входные data for модели
-- **Возвращаемое значение**: Dict - результат предсказания
-- **Особенности**:
-- **Асинхронность**: not блокирует основной поток
-- **Параллельность**: Использует отдельный поток for вычислений
-- **Масштабируемость**: Поддерживает множественные запросы
+- **'data'**: data for prediction
+- ** Type**: Dict
+- **describe**: input data for the model
+- **Return value**: Dict - prediction result
+- ** Specialities**:
+- **Asynchronity**: not blocking the main flow
+- ** Parallarity**: Using a separate flow for calculations
+- ** Capacity**: Supports multiple requests
 
-**Метод _predict_sync():**
-- **Назначение**: Синхронное выполнение предсказания
+** Method _predict_sync():**
+- ** Designation**: Synchronization of the prophecy
 - **parameters**:
-- **`data`**: data for предсказания
-- **Тип**: Dict
-- **describe**: Входные data for модели
-- **Возвращаемое значение**: Dict - результат предсказания
-- **Особенности**:
-- **Синхронность**: Блокирующее выполнение
-- **Потокобезопасность**: Может выполняться in разных потоках
-- **performance**: Оптимизирован for быстрого выполнения
+- **'data'**: data for prediction
+- ** Type**: Dict
+- **describe**: input data for the model
+- **Return value**: Dict - prediction result
+- ** Specialities**:
+- ** Synchronity**: Blocking performance
+- ** Flow safety**: May be performed in different flows
+- ** Performance**: Optimized for rapid implementation
 
-**Метод batch_predict():**
-- **Назначение**: Пакетная обработка множественных predictions
+**Batch_predict():**
+- ** Designation**: Multiplies package processing
 - **parameters**:
-- **`batch_data`**: List данных for предсказания
-- **Тип**: List[Dict]
-- **describe**: List входных данных
-- **Возвращаемое значение**: List[Dict] - List результатов
-- **parameters обработки**:
-- **`batch_size`**: Размер батча
-- **Тип**: int
-- **on умолчанию**: 100
-- **Диапазон значений**: `[10, 1000]` (рекомендуется 50-200)
-- **describe**: Количество запросов in одном батче
-- **Особенности**:
-- **Пакетная обработка**: Группирует запросы for эффективности
-- **Параллельность**: Обрабатывает батчи параллельно
-- **Память**: Контролирует использование памяти через размер батча
+- **'batch_data'**: List of data for prediction
+- ** Type**: List[Dict]
+- **describe**: List of input data
+- **Return value**: List[Dict] - List of results
+- **parameters processing**:
+- **'batch_size'**: The dimensions of the batch
+- **Typ**:int
+- **on default**: 100
+- ** Value range**: ` [10, 1000] ` (recommended 50-200)
+- **describe**: Number of requests in one booth
+- ** Specialities**:
+- **Package**: Groupes requests for efficiency
+- **Parallarity**: Processing boots in parallel
+- ** Memory**: Controls the use of memory through the size of the batch
 
-### Кэширование
+### Cashing
 
 ```python
 import redis
@@ -1404,19 +1404,19 @@ import hashlib
 from typing import Any, Optional
 
 class Predictioncache:
-"""Кэш for predictions"""
+"Cash for Preventions."
 
  def __init__(self, redis_host='localhost', redis_port=6379, ttl=3600):
  self.redis_client = redis.Redis(host=redis_host, port=redis_port, decode_responses=True)
  self.ttl = ttl
 
  def _generate_cache_key(self, data: Dict) -> str:
-"""Генерация ключа cache"""
+""""""""""" "Cache key genetics""""
  data_str = json.dumps(data, sort_keys=True)
  return hashlib.md5(data_str.encode()).hexdigest()
 
  def get_Prediction(self, data: Dict) -> Optional[Dict]:
-"""Получение предсказания из cache"""
+"To receive a prediction from cache."
  cache_key = self._generate_cache_key(data)
  cached_result = self.redis_client.get(cache_key)
 
@@ -1426,7 +1426,7 @@ class Predictioncache:
  return None
 
  def set_Prediction(self, data: Dict, Prediction: Dict):
-"""Сохранение предсказания in кэш"""
+"The preservation of the prediction in Cash."
  cache_key = self._generate_cache_key(data)
  self.redis_client.setex(
  cache_key,
@@ -1441,80 +1441,80 @@ class Predictioncache:
  self.redis_client.delete(*keys)
 ```
 
-**🔧 Детальное describe параметров кэширования:**
+**/ Detailed describe cache parameters: **/
 
-**Класс Predictioncache:**
-- **Назначение**: Кэширование predictions for acceleration ответов
-- **parameters конструктора**:
-- **`redis_host`**: Хост Redis сервера
-- **Тип**: str
-- **on умолчанию**: 'localhost'
-- **describe**: Адрес Redis сервера for кэширования
-- **`redis_port`**: Порт Redis сервера
-- **Тип**: int
-- **on умолчанию**: 6379
-- **describe**: Порт for подключения к Redis
-- **`ttl`**: Время жизни cache
-- **Тип**: int
-- **on умолчанию**: 3600 (1 час)
-- **Диапазон значений**: `[60, 86400]` (1 minutesа - 24 часа)
-- **describe**: Время in секундах, через которое кэш истекает
+**Class Praditioncache:**
+- ** Designation**: Cashing preferences for the collection of responses
+- **parameters of design**:
+- **'redis_host'**: Host Redis server
+- **Typ**: str
+- **on default**: 'localhost'
+- **describe**: Redis server address for cache
+- **'redis_port'**: Port Redis server
+- **Typ**:int
+- **on default**: 6379
+- **describe**: Port for Redis connection
+- ** `ttl'**: Lifetime cache
+- **Typ**:int
+- **on default**: 3600 (1 hour)
+- ** Value range**: `[60, 86400] ` (1 minutes - 24 hours)
+- **describe**: Time in seconds when the cache runs out
 
-**Метод _generate_cache_key():**
-- **Назначение**: Генерация уникального ключа for cache
+** Method _generate_cache_key():**
+- ** Designation**: Generation of a unique key for cache
 - **parameters**:
-- **`data`**: data for предсказания
-- **Тип**: Dict
-- **describe**: Входные data for генерации ключа
-- **Возвращаемое значение**: str - MD5 хеш ключа
-- **Алгоритм**:
-- Сериализует data in JSON with сортировкой ключей
-- Создает MD5 хеш from строки данных
-- Возвращает 32-символьный хеш
+- **'data'**: data for prediction
+- ** Type**: Dict
+- **describe**: Entry data for key generation
+- **Return value**: str - MD5 hash key
+- **Algorithm**:
+- Serializes data in JSON with key sorting
+- Creates MD5 hash from data lines
+- Returns 32-symbol hash.
 
-**Метод get_Prediction():**
-- **Назначение**: Получение предсказания из cache
+** Get_Predication method():**
+- ** Designation**: Retrieving a prediction from cache
 - **parameters**:
-- **`data`**: data for поиска
-- **Тип**: Dict
-- **describe**: Входные data for поиска in кэше
-- **Возвращаемое значение**: Optional[Dict] - результат из cache or None
-- **Logsка работы**:
-- Генерирует ключ cache из данных
-- Ищет значение in Redis
-- Десериализует JSON in словарь
-- Возвращает None, если ключ not found
+- **'data'**: data for searching
+- ** Type**: Dict
+- **describe**: Incoming data for cache searches
+- **Return value**: Operational[Dict] - result from cache or None
+- **Logsty work**:
+- Generates the cache key from the data.
+- Looking for a value in Redis
+- Deserializes JSON in dictionary
+- Returns None if the key is not present.
 
-**Метод set_Prediction():**
-- **Назначение**: Сохранение предсказания in кэш
+** Method set_Predication():**
+- ** Designation**: Retaining prediction in Cash
 - **parameters**:
-- **`data`**: Входные data
-- **Тип**: Dict
-- **describe**: data for генерации ключа
-- **`Prediction`**: Результат предсказания
-- **Тип**: Dict
-- **describe**: Prediction for сохранения
-- **Особенности**:
-- Использует `setex` to install TTL
-- Сериализует Prediction in JSON
-- Автоматически истекает через TTL
+- **'data'**: input data
+- ** Type**: Dict
+- **describe**: data for key generation
+- **'Predication'**: The result of the prediction
+- ** Type**: Dict
+- **describe**: Implementation for preservation
+- ** Specialities**:
+- Uses `setex' to install TTL
+- Serialized Selection in JSON
+- Automatically expires via TTL
 
-**Метод invalidate_cache():**
-- **Назначение**: clean cache
+** Method of invalidate_cache():**
+- ** Designation**: clean cache
 - **parameters**:
-- **`pattern`**: Паттерн for поиска ключей
-- **Тип**: str
-- **on умолчанию**: "*" (все ключи)
-- **describe**: Паттерн for поиска ключей in Redis
+- **'pattern'**: Pattern for key search
+- **Typ**: str
+- **on default**: "*" (all keys)
+- **describe**: Pattern for key search in Redis
  - **examples**: "*", "Prediction:*", "model_v1:*"
-- **Особенности**:
-- Использует `keys()` for поиска ключей
-- Удаляет все foundные ключи
-- Поддерживает wildcard паттерны
+- ** Specialities**:
+- Using `keys()' for key search
+- Removes all forward keys.
+- Supports Wildcard Pathers
 
-## Безопасность
+## Safety
 
-### Authentication and авторизация
+###Authentication and authorisation
 
 ```python
 from functools import wraps
@@ -1523,14 +1523,14 @@ from datetime import datetime, timedelta
 import secrets
 
 class SecurityManager:
-"""Менеджер безопасности"""
+"The Safety Manager."
 
  def __init__(self, secret_key: str):
  self.secret_key = secret_key
  self.api_keys = {}
 
  def generate_api_key(self, User_id: str) -> str:
-"""Генерация API ключа"""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  api_key = secrets.token_urlsafe(32)
  self.api_keys[api_key] = {
  'User_id': User_id,
@@ -1540,26 +1540,26 @@ class SecurityManager:
  return api_key
 
  def validate_api_key(self, api_key: str) -> bool:
-"""validation API ключа"""
+"Validation API Key"
  return api_key in self.api_keys
 
  def get_User_permissions(self, api_key: str) -> List:
-"""Получение разрешений User"""
+"Acquiring User Permits""
  if api_key in self.api_keys:
  return self.api_keys[api_key]['permissions']
  return []
 
  def require_auth(self, permissions: List = None):
-"""Декоратор for проверки аутентификации"""
+""Dorator for authentication checks""
  def decorator(f):
  @wraps(f)
  def decorated_function(*args, **kwargs):
-# check API ключа
+# Check API key
  api_key = request.headers.get('X-API-Key')
  if not api_key or not self.validate_api_key(api_key):
  return jsonify({'error': 'Invalid API key'}), 401
 
-# check разрешений
+# Check permits
  if permissions:
  User_permissions = self.get_User_permissions(api_key)
  if not any(perm in User_permissions for perm in permissions):
@@ -1570,7 +1570,7 @@ class SecurityManager:
  return decorator
 ```
 
-### validation входных данных
+### falseization of input data
 
 ```python
 from pydantic import BaseModel, validator
@@ -1578,25 +1578,25 @@ from typing import List, Dict, Any, Union
 import numpy as np
 
 class InputValidator:
-"""Валидатор входных данных"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""Ink""""""""""""""""""""""""")""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
  def __init__(self, feature_schema: Dict[str, Any]):
  self.feature_schema = feature_schema
 
  def validate_input(self, data: List[Dict[str, Any]]) -> bool:
-"""validation входных данных"""
+"Validation of input data."
  try:
  for record in data:
-# check наличия all обязательных признаков
+# check all mandatory features
  for feature, schema in self.feature_schema.items():
  if feature not in record:
  raise ValueError(f"Missing required feature: {feature}")
 
-# check типа данных
+# Check data type
  if not isinstance(record[feature], schema['type']):
  raise ValueError(f"Invalid type for feature {feature}")
 
-# check диапазона значений
+# sheck range
  if 'min' in schema and record[feature] < schema['min']:
  raise ValueError(f"Value too small for feature {feature}")
 
@@ -1609,13 +1609,13 @@ class InputValidator:
  return False
 
  def sanitize_input(self, data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-"""clean входных данных"""
+""Clean input data."
  sanitized_data = []
 
  for record in data:
  sanitized_record = {}
  for feature, value in record.items():
-# clean from потенциально опасных символов
+# Clear from potentially dangerous symbols
  if isinstance(value, str):
  sanitized_record[feature] = value.strip()
  else:
@@ -1626,9 +1626,9 @@ class InputValidator:
  return sanitized_data
 ```
 
-## Тестирование продакшен системы
+♪ ♪ System sales test ♪
 
-### Нагрузочное тестирование
+### Load test
 
 ```python
 import asyncio
@@ -1638,7 +1638,7 @@ from typing import List, Dict, Any
 import statistics
 
 class LoadTester:
-"""Нагрузочное тестирование API"""
+""API Load Test""
 
  def __init__(self, base_url: str):
  self.base_url = base_url
@@ -1646,7 +1646,7 @@ class LoadTester:
 
  async def single_request(self, session: aiohttp.ClientSession,
  data: Dict[str, Any]) -> Dict[str, Any]:
-"""Одиночный запрос"""
+"One Request."
  start_time = time.time()
 
  try:
@@ -1674,7 +1674,7 @@ class LoadTester:
  async def load_test(self, concurrent_Users: int,
  requests_per_User: int,
  test_data: List[Dict[str, Any]]) -> Dict[str, Any]:
-"""Нагрузочное тестирование"""
+"The Load Test""
  async with aiohttp.ClientSession() as session:
  tasks = []
 
@@ -1686,7 +1686,7 @@ class LoadTester:
 
  results = await asyncio.gather(*tasks)
 
-# Анализ результатов
+# Analysis of results
  successful_requests = [r for r in results if r['success']]
  failed_requests = [r for r in results if not r['success']]
 
@@ -1704,35 +1704,35 @@ class LoadTester:
  }
 ```
 
-## Лучшие практики продакшена
+♪ Best practices sold
 
-<img src="images/optimized/retraining_workflow.png" alt="Лучшие практики продакшена" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 6: Лучшие практики and рекомендации for продакшена ML-моделей*
+<img src="images/optimized/retraining_workflow.png" alt="Best practices sold" style="max-width: 100 per cent; light: auto; display: block; marguin: 20px auto;">
+*Figure 6: Best practices and recommendations for the sale of ML models*
 
-**Почему важны лучшие практики продакшена?** Потому что они помогают избежать типичных ошибок and обеспечить надежность:
+**Why are best practices sold important?** Because they help avoid typical mistakes and ensure reliability:
 
-- **Planирование**: Тщательное Planирование архитектуры and ресурсов
-- **Тестирование**: Комплексное тестирование перед деплоем
-- **Monitoring**: Непрерывный Monitoring качества and performance
-- **documentation**: Подробная documentation for team
-- **Безопасность**: Защита данных and моделей
-- **Версионирование**: Контроль версий моделей and кода
-- **Rollback**: Возможность быстрого Rollbackа при проблемах
+- **Planning**: Careful Planning of Architecture and Resources
+- ** Test**: Integrated pre-depletion testing
+- **Monitoring**: Continuous Monitoring Quality and Performance
+- **documentation**: Detailed documentation for team
+- ** Safety**: Data and model protection
+- **Version**: Control of model versions and code
+- **Rollback**: Rapid Rollback for problems
 
-### 🎯 Ключевые принципы успешного продакшена
+### ♪ The key principles of successful sales
 
-**Почему следуют лучшим практикам?** Потому что они проверены временем and помогают избежать проблем:
+Because they're time-tested and help avoid problems:
 
-- **Принцип "Fail Fast"**: Быстрое обнаружение and fix проблем
-- **Принцип "Graceful Degradation"**: Плавное снижение функциональности при сбоях
-- **Принцип "Observability"**: Полная видимость состояния системы
-- **Принцип "Automation"**: Автоматизация рутинных процессов
-- **Принцип "Security by Design"**: Безопасность with самого начала
-- **Принцип "Continuous Improvement"**: Постоянное improve системы
+- ** "Fail Fast" principle**: Rapid detection and fix problems
+- ** Graceful Degration principle**: Floating functional loss due to malfunctions
+- ** "Observability" principle**: Full visibility of the system state
+- ** Automation principle**: Automation of routine processes
+- ** Principle "Security by Design"**: Safety with the beginning
+- **Continuous Implementation principle**: Permanent improve system
 
-## Следующие шаги
+## Next steps
 
-После освоения продакшен деплоя переходите к:
-- [Переобучению моделей](./07_retraining.md)
-- [Лучшим практикам](./08_best_practices.md)
-- [Примерам использования](./09_examples.md)
+Once you've mastered it, you'll have to go to:
+- [model re-training](./07_retraining.md)
+- [best practice](.08_best_practices.md)
+- [Examples of use](./09_examples.md)

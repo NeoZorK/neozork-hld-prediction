@@ -1,142 +1,142 @@
-# validation моделей in AutoML Gluon
+# Calibration of models in AutoML Gluon
 
 **Author:** Shcherbyna Rostyslav
-**Дата:** 2024
+**Date:** 2024
 
-## Why validation критически важна
+## Who is critical
 
-**Почему 70% ML-проектов терпят неудачу in продакшене из-за плохой validation?** Потому что validation - это единственный способ убедиться, что ваша модель действительно Workingет. Это как тест-драйв автомобиля перед покупкой.
+Why is 70% of the ML projects failing in sales because of bad validation? Because validation is the only way to make sure that your model really works.
 
-### Что происходит без правильной validation?
-- **Ложная уверенность**: Модель кажется хорошей, но проваливается on новых данных
-- **retraining**: Модель запоминает тренировочные data вместо изучения паттернов
-- **Неправильные решения**: Выбираете плохую модель вместо хорошей
-- **Бизнес-провалы**: Модель not Workingет in реальных условиях
+### What's going on without the correct validation?
+- ♪ Fake confidence ♪ ♪ The model seems good, but it's failing on new data ♪
+- **retraining**: The model memorizes training data instead of learning pathers
+- ** Wrong decisions**: Choose a bad model instead of a good one.
+- ** Business failures**: Model not Working in real terms
 
-### Что дает правильная validation?
-- **Реальная оценка**: Вы точно знаете, как модель поведет себя on новых данных
-- **Предотвращение retraining**: Модель учится обобщать, а not запоминать
-- **Правильный выбор**: Выбираете лучшую модель for задачи
-- **Уверенность in продакшене**: Модель действительно будет Workingть
+### What gives you the right thing to do?
+- ** Final assessment**: You know exactly how the model will behave on new data
+- ** Prevention of retraining**: Model learning to generalize and not to remember
+- **The right choice**: Choose the best model for the task
+- **Authority in sales**: The model will really be Working
 
-## Введение in валидацию
+## Introduction in validation
 
 <img src="images/optimized/validation_methods.png" alt="Methods validation" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 1: Methods validation in AutoML Gluon*
+*Picture 1: Methods appreciation in AutoML Gluon*
 
-<img src="images/optimized/walk_forward_Analysis.png" alt="Walk-Forward анализ" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 2: Walk-Forward validation - схема, performance, выбор параметров*
+<img src="images/optimized/walk_forward_Analesis.png" alt="Walk-Forward Analysis" style="max-width: 100 per cent; height: auto; display: block; marguin: 20px auto;">
+*Picture 2: Walk-Forward validation - diagram, performance, choice of parameters*
 
-**Почему validation - это not просто "check модели"?** Это process, который определяет, готова ли ваша модель к реальному миру. Представьте, что вы готовите пилота к полету - validation это симулятор, который показывает, как он поведет себя in реальных условиях.
+*Why is validation not just "check model"?** It's a process that determines whether your model is ready for the real world. Imagine that you're preparing a pilot for flight - validation is a simulation that shows how it will behave in real terms.
 
-validation - это критически важный process for оценки качества ML-моделей and предотвращения retraining. in AutoML Gluon доступны различные Methods validation for разных типов задач.
+validation is a critical process for assessing the quality of ML models and preventing re-training. In AutoML Gluon, various Methods validation for different types of tasks are available.
 
-## Типы validation
+♪ ♪ Type of validation ♪
 
-<img src="images/optimized/robustness_Analysis.png" alt="Типы validation" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 3: Различные типы validation and их применение*
+<img src="images/optimized/robustness_Analesis.png" alt="Tips validation" style="max-width: 100 per cent; light: auto; display: block; marguin: 20px auto;">
+*Picture 3: Different types of validation and their application*
 
-**Почему AutoML Gluon предлагает разные типы validation?** Потому что разные задачи требуют разных подходов. Это как разные виды экзаменов for разных предметов.
+**Why does AutoML Gluon offer different types of validation?** Because different tasks require different approaches. It's like different types of examinations for different subjects.
 
-### 🎯 Ключевые принципы validation
+### ♪ key principles of appreciation
 
-**Почему важно понимать принципы validation?** Потому что правильная validation - это основа надежных ML-моделей:
+** Why is it important to understand the principles of validation?** Because the correct vilification is the basis of reliable ML models:
 
-- **Holdout Validation**: Простое разделение on train/test (70/30)
-- **Cross-Validation**: K-fold кросс-validation for более надежной оценки
-- **Time Series Split**: Специальная validation for временных рядов
-- **Stratified Split**: Сохранение пропорций классов при разделении
-- **Walk-Forward Analysis**: Скользящее окно for временных рядов
-- **Bootstrap Validation**: Случайная выборка with возвращением
-- **Monte Carlo Validation**: Множественные случайные разделения
+- **Holdout Planning**: Simple division on train/test (70/30)
+- **Cross-Validation**: K-fold cross-evaluation for a more reliable assessment
+**Time Series Split**: Special validation for time series
+**Stratefied Split**: Maintaining the proportion of classes divided
+**Walk-Forward Analysis**: Rolling window for time series
+- **Bootstrap Planning**: Random sample with return
+- **Monte Carlo Planning**: Multiple random divisions
 
 ### 1. Holdout validation
 
-**Почему Holdout validation - самый простой and популярный метод?** Потому что она интуитивно понятна: вы просто разделяете data on две части - одну for обучения, другую for проверки. Это как экзамен in школе - вы учитесь on учебнику, а экзамен сдаете on новым задачам.
+Because it's intuitively understandable: you just divide data on two parts - one for learning, the other for testing. It's like a test in school - you study on a textbook and you take a test on new tasks.
 
-**Преимущества Holdout validation:**
-- **Простота**: Легко понять and реализовать
-- **Скорость**: Быстро выполняется
-- **Эффективность**: Подходит for больших датасетов
-- **Интуитивность**: Понятно заинтересованным сторонам
+** Benefits of Goldout validation:**
+- **Simple**: Easy to understand and implement
+- **Speed**: Rapidly implemented
+- ** Effectiveness**: Suitable for large datasets
+- **Intuitivity**: It is clear to interested parties
 
-**Недостатки Holdout validation:**
-- **Нестабильность**: Результат зависит from случайного разделения
-- **Неэффективность**: 20% данных not участвуют in обучении
-- **Случайность**: Плохое разделение может исказить результаты
+** Deficiencies of Holdout validation:**
+- ** Instability**: The result depends on from random separation
+- ** Inefficiency**: 20% of data not participate in training
+- ** Accident**: Bad separation can distort results
 
 ```python
 from autogluon.tabular import TabularPredictor
 
-# Простая holdout validation
+# A simple holdout validation
 predictor = TabularPredictor(label='target')
 predictor.fit(
  train_data,
-holdout_frac=0.2 # 20% данных for validation
+Holdout_frac=0.2 # 20% data for validation
 )
 ```
 
-**🔧 Детальное describe параметров Holdout validation:**
+**/ Detailed describe parameters Holdout validation:**
 
 **parameter holdout_frac:**
-- **Назначение**: Доля данных, выделяемых for validation
-- **Тип**: float
-- **Диапазон значений**: `[0.0, 1.0)` (0% - 100%)
-- **on умолчанию**: 0.1 (10%)
-- **Рекомендуемые значения**:
-- **Малые датасеты (< 1000 примеров)**: 0.2-0.3 (20-30%)
-- **Средние датасеты (1000-10000 примеров)**: 0.15-0.25 (15-25%)
-- **Большие датасеты (> 10000 примеров)**: 0.1-0.2 (10-20%)
-- **Влияние on обучение**:
-- **Больше holdout_frac**: Меньше данных for обучения, но более надежная validation
-- **Меньше holdout_frac**: Больше данных for обучения, но менее надежная validation
-- **Выбор оптимального значения**:
-- **Анализ размера данных**: Убедитесь, что валидационная выборка достаточно большая
-- **Стабильность результатов**: Проверьте стабильность метрик on validation
-- **Баланс**: Достаточно данных for обучения and validation
-- **Особенности**:
-- **Случайное разделение**: data разделяются случайным образом
-- **Стратификация**: При необходимости сохраняется пропорция классов
-- **Временные data**: for временных рядов используется временное разделение
+- ** Designation**: Percentage of data allocated for validation
+- **Typ**: float
+- ** Value range**: `[0.0, 1.0)' (0% - 100%)
+**on default**: 0.1 (10%)
+- ** Recommended values**:
+- ** Small datasets (< 1000 examples)**: 0.2-0.3 (20-30%)
+- ** Average datasets (1000 to 10,000 examples)**: 0.15 to 0.25 (15-25 per cent)
+- ** Large datasets (> 10,000 examples)**: 0.1-0.2 (10-20%)
+- **Effects on learning**:
+- **Big goldout_frac**: Less data for learning, but more reliable validation
+- ** Less goldout_frac**: More data for learning, but less reliable validation
+- ** Selection of optimal value**:
+- ** Data size analysis**: Make sure the validation sample is large enough
+- **Stability of results**: Check the stability of the metric on validation
+- **Balance**: Enough data for training and validation
+- ** Specialities**:
+- ** Accidental separation**: data divided randomly
+- **Stratification**: Proportion of classes retained if necessary
+** Temporary data**: Time series use temporary separation
 
-**Почему 20% for validation?** Это компромисс между достаточным количеством данных for обучения and достаточным количеством for validation.
+**Why 20 per cent for validation?** It's a compromise between sufficient data for learning and enough for validation.
 
-### 2. K-Fold кросс-validation
+###2. K-Fold cross-validation
 
-<img src="images/optimized/metrics_comparison.png" alt="K-Fold кросс-validation" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 4: K-Fold кросс-validation - схема работы and преимущества*
+<img src="images/optimized/metrics_comparison.png" alt="K-Fold cross-validation" style="max-width: 100 per cent; light: auto; display: block; marguin: 20px auto;">
+*Picture 4: K-Fold Cross-Validation - Scheme of Work and Benefits*
 
-**Почему K-Fold кросс-validation более надежна, чем Holdout?** Потому что она использует ВСЕ data and for обучения, and for validation. Это как сдать 5 экзаменов вместо одного - результат будет более точным.
+**Why is K-Fold cross-validation more reliable than Goldout?** Because it uses all data and for learning, and for satisfaction. It's like taking five exams instead of one - the result will be more accurate.
 
-### 🔄 Принципы работы K-Fold
+### ♪ K-Fold working principles
 
-**Почему K-Fold дает более стабильные результаты?** Потому что каждая точка данных участвует and in обучении, and in validation:
+**Why does K-Fold produce more stable results?** Because each data point is involved in both learning and development:
 
-- **Полное использование данных**: Все data участвуют in обучении and validation
-- **Статистическая стабильность**: Результат not зависит from случайного разделения
-- **Оценка дисперсии**: Можно оценить стабильность модели
-- **Лучшая оценка обобщения**: Более точная оценка качества on новых данных
+- ** Full use of data**: All data are involved in training and validation
+- **Statistical stability**: result n depends on from random separation
+- ** variance assessment**: Model stability can be assessed
+- ** Best assessment of synthesis**: Better assessment of quality on new data
 
-**Как Workingет K-Fold кросс-validation:**
-1. **Разделение on K частей**: data делятся on K равных частей (обычно K=5 or K=10)
-2. **K итераций**: in каждой итерации одна часть используется for validation, остальные K-1 for обучения
-3. **Обучение модели**: Модель обучается on K-1 частях
-4. **Тестирование**: Модель тестируется on оставшейся части
-5. **Усреднение результатов**: Итоговая оценка - среднее on all K итерациям
+** Like Worknet K-Fold Cross-Validation:**
+1. ** Division on K Parts:** Data divided on K equal parts (usually K=5 or K=10)
+2. **K iterations**: in each iteration one part is used for validation, the remaining K-1 for learning
+3. ** Model learning**: Model learning on K-1 parts
+** Test**: Model to be tested on the remaining part
+5. **Averaging results**: Final evaluation - average on all K iterations
 
-**Преимущества K-Fold validation:**
-- **Использование all данных**: Каждая точка данных участвует and in обучении, and in validation
-- **Стабильность**: Результат not зависит from случайного разделения
-- **Оценка дисперсии**: Показывает, насколько стабильна модель
-- **Надежность**: Более точная оценка качества модели
+** Benefits K-Fold validation:**
+- ** Use all data**: Each data point participates in both learning and in validation
+- **Stability**: result n depends on from random separation
+- ** variance assessment**: Shows how stable the model is
+- ** Reliability**: More accurate assessment of model quality
 
-**Недостатки K-Fold validation:**
-- **Время**: Выполняется in K раз дольше
-- **Сложность**: Требует больше вычислительных ресурсов
-- **Память**: Нужно хранить K моделей
+** Shortcomings K-Fold validation:**
+- **Time**: Implemented in K times longer
+- **Complicity**: requires more computing resources
+- ** Memory**: K models to be stored
 
 ```python
-# K-fold кросс-validation
+# K-fold cross-validation
 predictor.fit(
  train_data,
  num_bag_folds=5, # 5-fold CV
@@ -144,119 +144,119 @@ predictor.fit(
 )
 ```
 
-**🔧 Детальное describe параметров K-Fold validation:**
+**/ Detailed describe parameters K-Fold validation:**
 
 **parameter num_bag_folds:**
-- **Назначение**: Количество фолдов for кросс-validation
-- **Тип**: int
-- **Диапазон значений**: `[2, 20]` (рекомендуется 3-10)
-- **on умолчанию**: 8
-- **Рекомендуемые значения**:
-- **Малые датасеты (< 1000 примеров)**: 3-5 фолдов
-- **Средние датасеты (1000-10000 примеров)**: 5-7 фолдов
-- **Большие датасеты (> 10000 примеров)**: 7-10 фолдов
-- **Влияние on обучение**:
-- **Больше фолдов**: Более стабильная оценка, но больше времени обучения
-- **Меньше фолдов**: Быстрее обучение, но менее стабильная оценка
-- **Выбор оптимального значения**:
-- **Размер данных**: Убедитесь, что каждый фолд достаточно большой
-- **Время обучения**: Учитывайте ограничения in time
-- **Стабильность**: Больше фолдов = более стабильные результаты
-- **Особенности**:
-- **Стратификация**: При необходимости сохраняется пропорция классов
-- **Временные data**: for временных рядов используется временное разделение
-- **Память**: Требует больше памяти for хранения моделей
+- ** Designation**: Number of Folds for Cross-Validation
+- **Typ**:int
+- ** Value range**: `[2, 20]' (recommended 3-10)
+- **on default**: 8
+- ** Recommended values**:
+- ** Small datasets (< 1000 examples)**: 3-5 folds
+- ** Average datasets (1000 to 10,000 examples)**: 5-7 folds
+- **Big datasets (> 10,000 examples)**: 7-10 folds
+- **Effects on learning**:
+- **Big Folds**: A more stable rating, but more learning time
+- ** Less folds**: Faster education, but less stable rating
+- ** Selection of optimal value**:
+- ** Data measurement**: Make sure every fold is large enough
+- **Learning time**: Take into account restrictions in time
+- **Stability**: More folds = more stable results
+- ** Specialities**:
+- **Stratification**: Proportion of classes retained if necessary
+** Temporary data**: Time series use temporary separation
+- ** Memory**: Needs more memory for model storage
 
 **parameter num_bag_sets:**
-- **Назначение**: Количество наборов фолдов for дополнительной стабильности
-- **Тип**: int
-- **Диапазон значений**: `[1, 10]` (рекомендуется 1-3)
-- **on умолчанию**: 1
-- **Рекомендуемые значения**:
-- **Быстрая validation**: 1 набор
-- **Стабильная validation**: 2-3 набора
-- **Максимальная стабильность**: 3-5 наборов
-- **Влияние on обучение**:
-- **Больше наборов**: Более стабильная оценка, но значительно больше времени
-- **Меньше наборов**: Быстрее обучение, но менее стабильная оценка
-- **Использование**:
-- **Исследовательская фаза**: 1 набор for быстрого тестирования
-- **Финальная validation**: 2-3 набора for надежной оценки
-- **Критичные проекты**: 3-5 наборов for максимальной стабильности
+- ** Designation**: Number of sets of folks for additional stability
+- **Typ**:int
+- ** Value range**: `[1, 10] ` (recommended 1-3)
+- **on default**: 1
+- ** Recommended values**:
+- ** Rapid validation**: 1 set
+- ** Stabilisation**: 2-3 sets
+- ** Maximum stability**: 3-5 sets
+- **Effects on learning**:
+- **Big sets**: A more stable assessment, but much more time
+- ** Less sets**: Faster learning, but less stable rating
+- ** Use**:
+- ** Research phase**: 1 set for rapid testing
+- ** Final validation**: 2-3 sets for reliable evaluation
+- ** Critical projects**: 3-5 sets for maximum stability
 
-**Почему обычно используют 5 or 10 фолдов?** Потому что это оптимальный баланс между точностью and скоростью.
+Because it's the best balance between accuracy and speed.
 
-### 3. Стратифицированная validation
+###3: Strategized validation
 
-**Почему стратифицированная validation критически важна for несбалансированных данных?** Потому что обычная validation может дать искаженные результаты, когда один класс представлен in 100 раз больше другого. Это как оценивать качество врача только on здоровым пациентам.
+**Why is stratification critical for unbalanced data?** Because conventional calidization can produce distorted results when one class is in 100 times larger than the other; it's how to measure the quality of a doctor only on healthy patients.
 
-**Проблема несбалансированных данных:**
-- **Медицинская диагностика**: 99% здоровых, 1% больных
-- **Обнаружение мошенничества**: 99.9% легальных транзакций, 0.1% мошеннических
-- **Спам-фильтры**: 90% обычных писем, 10% спама
+** Unbalanced data problem:**
+- **Medical diagnosis**: 99 per cent healthy, 1 per cent ill
+- ** Fraud detection**: 99.9 per cent legal transactions, 0.1 per cent fraud
+- **Spam filters**: 90% regular letters, 10% spam
 
-**Как Workingет стратификация:**
-1. **Анализ распределения**: AutoML Gluon анализирует пропорции классов
-2. **Сохранение пропорций**: in каждом фолде сохраняется исходное распределение
-3. **Сбалансированная оценка**: Модель оценивается on репрезентативных данных
-4. **Корректные metrics**: Получаем точные оценки for all классов
+** Like Working Stratification:**
+1. ** Distribution analysis**: AutoML Gluon analyses class proportions
+2. **Save ratio**: in each folda the reference distribution is maintained
+3. ** Balanced assessment**: Model evaluated on representative data
+4. **Correctic metrics**: Receive accurate estimates for all classes
 
-**Когда использовать стратификацию:**
-- **Использовать**: Когда классы несбалансированы (соотношение > 10:1)
-- **Использовать**: Когда важны все классы (медицина, безопасность)
-- **not использовать**: Когда data сбалансированы
-- **not использовать**: Когда важны только мажоритарные классы
+** When to use stratification:**
+- ** Use**: When classes are unbalanced (ratio > 10:1)
+- ** Use**: When all classes are important (health, safety)
+- **not use**: When data are balanced
+- **not use**: When only majoritarian classes are important
 
 ```python
-# Стратифицированная validation for несбалансированных данных
+# Stylized validation for unbalanced data
 predictor.fit(
  train_data,
  num_bag_folds=5,
  num_bag_sets=1,
-stratify=True # Сохранять пропорции классов in каждом фолде
+stratehy=True # Maintain class proportions in each fold
 )
 ```
 
-**🔧 Детальное describe параметров стратифицированной validation:**
+**/ Detailed describe parameters of stabilised validation:**
 
 **parameter stratify:**
-- **Назначение**: Сохранение пропорций классов in каждом фолде validation
-- **Тип**: bool
-- **on умолчанию**: False
-- **Когда использовать**:
-- **Несбалансированные data**: Соотношение классов > 10:1
-- **Критичные классы**: Когда важны все классы (медицина, безопасность)
-- **Малые классы**: Когда минорные классы имеют < 100 примеров
-- **comparison моделей**: for справедливого сравнения алгоритмов
-- **Когда not использовать**:
-- **Сбалансированные data**: Соотношение классов < 3:1
-- **Только мажоритарные классы**: Когда важны только основные классы
-- **Регрессия**: Стратификация not применима к задачам регрессии
-- **Влияние on валидацию**:
-- **Справедливая оценка**: Каждый класс представлен in каждом фолде
-- **Стабильность метрик**: Более стабильные результаты for минорных классов
-- **Корректные metrics**: Точные оценки precision, recall, F1-score
-- **Особенности реализации**:
-- **Автоматическое определение**: AutoGluon автоматически определяет необходимость стратификации
-- **Минимальный размер**: Каждый класс должен иметь минимум 2 примера on фолд
-- **Обработка ошибок**: При невозможности стратификации используется обычная validation
+- ** Designation**: Maintaining the proportion of classes in each fold of validation
+-**Teep**: bool
+- **on default**: False
+- ** When to use**:
+- ** Unbalanced data**: Ratio of classes > 10:1
+- ** Critical classes**: When all classes are important (health, safety)
+- ** Small classes**: When minority classes have < 100 examples
+**comparison of models**: for fair comparison of algorithms
+- ** When not used**:
+- ** Balanced data**: Ratio of classes < 3:1
+- ** Majoritarian classes only**: When only basic classes are important
+- **Regression**: Stratification not applicable to regression tasks
+- ** Impact on validation**:
+- **Equitable assessment**: Each class is represented in each fold
+- **Metric stability**: More stable results for minority classes
+- **Correctic metrics**: Precise estimates of precision, recall, F1-score
+- ** Particulars of implementation**:
+- ** Automatic definition**: AutoGluon automatically determines the need for stratification
+- ** Minimum size**: Each class shall have a minimum of 2 examples on bear
+- ** Error processing**: Where stratification is not possible, normal vilification is used
 
-**Почему стратификация нужна not всегда?** Потому что она добавляет сложность, но not всегда необходима.
+**Why does stratification always need a note?** Because it adds complexity, but it's always necessary.
 ```
 
 ## Backtest validation
 
-<img src="images/optimized/monte_carlo_Analysis.png" alt="validation временных рядов" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 5: validation временных рядов and backtest анализ*
+<img src="images/optimized/monte_carlo_Analesis.png" alt="validation of time series" style="max-width: 100 per cent; light: auto; display: lock; marguin: 20px auto;">
+*Picture 5: time series development and backtest analysis*
 
-**Почему validation временных рядов требует особого подхода?** Потому что временные data имеют структуру, которую нельзя нарушать:
+**Why should the timing of time series require a special approach?** Because time data have a structure that cannot be broken:
 
-- **Временная последовательность**: data должны оставаться in хроноLogsческом порядке
-- **Предотвращение утечки данных**: Будущие data not должны влиять on прошлые предсказания
-- **Реалистичная оценка**: validation должна имитировать реальные условия использования
-- **Сезонность and тренды**: Учет временных паттернов in данных
+- ** Time sequence**: data should remain in chronoLogsch order
+- ** Prevention of data leakage**: Future data not should influence past predictions
+- ** Realistic evaluation**: validation should simulate actual conditions of use
+- ** Seasonality and trends**: Accounting for time variables in data
 
-### Временная validation for временных рядов
+### Temporary validation for time series
 
 ```python
 from sklearn.model_selection import TimeSeriesSplit
@@ -264,12 +264,12 @@ import pandas as pd
 import numpy as np
 
 def time_series_backtest(data, target_col, n_splits=5):
-"""Backtest validation for временных рядов"""
+"Backtest validation for time series"
 
-# Сортировка in time
+# Sorting in time
  data = data.sort_values('timestamp')
 
-# create временных фолдов
+♪ Time-folds-create
  tscv = TimeSeriesSplit(n_splits=n_splits)
 
  results = []
@@ -277,18 +277,18 @@ def time_series_backtest(data, target_col, n_splits=5):
  for fold, (train_idx, val_idx) in enumerate(tscv.split(data)):
  print(f"Fold {fold + 1}/{n_splits}")
 
-# Разделение данных
+# Data sharing
  train_fold = data.iloc[train_idx]
  val_fold = data.iloc[val_idx]
 
-# Обучение модели
+# Model learning
  predictor = TabularPredictor(label=target_col)
  predictor.fit(train_fold, time_limit=300)
 
-# Предсказания
+# Premonition
  predictions = predictor.predict(val_fold)
 
-# Оценка качества
+# Quality assessment
  performance = predictor.evaluate(val_fold)
 
  results.append({
@@ -299,59 +299,59 @@ def time_series_backtest(data, target_col, n_splits=5):
 
  return results
 
-# Использование
+# Use
 backtest_results = time_series_backtest(data, 'target', n_splits=5)
 ```
 
-**🔧 Детальное describe параметров temporary validation:**
+**/ Detailed describe parameters temporial validation:**
 
 **function time_series_backtest:**
-- **Назначение**: Backtest validation for временных рядов with сохранением temporary последовательности
+- ** Designation**: Backtest validation for time series with maintenance of time sequence
 - **parameters**:
-- **`data`**: temporary ряд данных
-- **Тип**: dataFrame
-- **describe**: Таблица with временными данными
-- **Требования**: Должен содержать столбец 'timestamp' or temporary index
-- **`target_col`**: Название целевой переменной
-- **Тип**: str
-- **describe**: Название столбца with целевой переменной
+- **'data'**: time series
+-** Type**: DataFrame
+- **describe**: Table with provisional data
+- ** Demands**: Must contain the column 'timestamp' or temporary index
+- **'target_col'**: Name of target variable
+- **Typ**: str
+- **describe**: Name of column with target variable
  - **examples**: 'price', 'return', 'target'
-- **`n_splits`**: Количество временных фолдов
-- **Тип**: int
-- **Диапазон значений**: `[2, 20]` (рекомендуется 3-10)
-- **on умолчанию**: 5
-- **Рекомендуемые значения**:
-- **Короткие ряды (< 1000 точек)**: 3-5 фолдов
-- **Средние ряды (1000-10000 точек)**: 5-7 фолдов
-- **Длинные ряды (> 10000 точек)**: 7-10 фолдов
-- **Возвращаемое значение**: List - List результатов for каждого фолда
-- **Structure результатов**:
-- **`fold`**: Номер фолда (int)
-- **`performance`**: Словарь with метриками качества (dict)
-- **`predictions`**: Предсказания модели (array)
-- **Особенности temporary validation**:
-- **Сохранение порядка**: data остаются in хроноLogsческом порядке
-- **Предотвращение утечки**: Будущие data not influence прошлые предсказания
-- **Реалистичная оценка**: Имитирует реальные условия использования
-- **Сезонность**: Учитывает временные паттерны in данных
+- ** `n_splits'**: Number of temporary folds
+- **Typ**:int
+- ** Value range**: `[2, 20]' (recommended 3-10)
+- **on default**: 5
+- ** Recommended values**:
+- ** Short rows (< 1,000 points)**: 3-5 folds
+- ** Average rows (1000 to 10,000 points)**: 5-7 folds
+- ** Long rows (> 10,000 points)**: 7-10 folds
+- **Return value**: List - List of results for each fold
+- **Structure of results**:
+- **'fold'**: Fold number (int)
+**/ `Performance'**: Vocabulary with quality metrics (dict)
+- **'predications'**: Model fortunes (array)
+- ** Specialities of temporary validation**:
+- ** Order preservation**: data remain in chronoLogsch order
+- ** Prevention of leakage**: Future data not influence past predictions
+- ** Realistic evaluation**: Simulates the actual conditions of use
+- ** Seasonality**: Take into account time-frames in data
 
 **parameter n_splits (TimeSeriesSplit):**
-- **Назначение**: Количество временных фолдов for validation
-- **Тип**: int
-- **Диапазон значений**: `[2, 20]` (рекомендуется 3-10)
-- **Влияние on валидацию**:
-- **Больше фолдов**: Более детальная оценка, но меньше данных on фолд
-- **Меньше фолдов**: Больше данных on фолд, но менее детальная оценка
-- **Выбор оптимального значения**:
-- **Размер данных**: Убедитесь, что каждый фолд достаточно большой
-- **temporary период**: Учитывайте сезонность and тренды
-- **Вычислительные ресурсы**: Больше фолдов = больше времени обучения
+- ** Designation**: Number of temporary folds for validation
+- **Typ**:int
+- ** Value range**: `[2, 20]' (recommended 3-10)
+- ** Impact on validation**:
+- **Big Folds**: More detailed assessment, but less data on Fold
+- ** Less fold**: More data on fold, but less detailed evaluation
+- ** Selection of optimal value**:
+- ** Data measurement**: Make sure every fold is large enough
+- **temporary period**: Take into account seasonality and trends
+- ** Computation resources**: More folds = more time of study
 
-### Расширенный backtest
+### Extended backtest
 
 ```python
 def advanced_backtest(data, target_col, window_size=1000, step_size=100):
-"""Расширенный backtest with скользящим окном"""
+""The Extended Backtest with a sliding window""
 
  results = []
  n_samples = len(data)
@@ -359,18 +359,18 @@ def advanced_backtest(data, target_col, window_size=1000, step_size=100):
  for start in range(0, n_samples - window_size, step_size):
  end = start + window_size
 
-# Разделение on train/validation
+# Separation on train/validation
  train_data = data.iloc[start:end-100]
  val_data = data.iloc[end-100:end]
 
-# Обучение модели
+# Model learning
  predictor = TabularPredictor(label=target_col)
  predictor.fit(train_data, time_limit=300)
 
-# Предсказания
+# Premonition
  predictions = predictor.predict(val_data)
 
-# Оценка качества
+# Quality assessment
  performance = predictor.evaluate(val_data)
 
  results.append({
@@ -383,69 +383,69 @@ def advanced_backtest(data, target_col, window_size=1000, step_size=100):
  return results
 ```
 
-**🔧 Детальное describe параметров расширенного backtest:**
+**/ Detailed describe parameters extended backtest:**
 
 **function advanced_backtest:**
-- **Назначение**: Расширенный backtest with скользящим окном for более детального Analysis
+- ** Designation**: Extended backtest with sliding window for a more detailed Analysis
 - **parameters**:
-- **`data`**: temporary ряд данных
-- **Тип**: dataFrame
-- **describe**: Таблица with временными данными
-- **Требования**: Должен быть отсортирован in time
-- **`target_col`**: Название целевой переменной
-- **Тип**: str
-- **describe**: Название столбца with целевой переменной
-- **`window_size`**: Размер скользящего окна
-- **Тип**: int
-- **Диапазон значений**: `[100, 10000]` (рекомендуется 500-2000)
-- **on умолчанию**: 1000
-- **Рекомендуемые значения**:
-- **Короткие ряды**: 200-500 точек
-- **Средние ряды**: 500-1000 точек
-- **Длинные ряды**: 1000-2000 точек
-- **`step_size`**: Шаг перемещения окна
-- **Тип**: int
-- **Диапазон значений**: `[10, window_size//2]` (рекомендуется 50-200)
-- **on умолчанию**: 100
-- **Рекомендуемые значения**:
-- **Детальный анализ**: 50-100 точек
-- **Быстрый анализ**: 100-200 точек
-- **Общий анализ**: 200-500 точек
-- **Возвращаемое значение**: List - List результатов for каждого окна
-- **Structure результатов**:
-- **`start`**: Начальный index окна (int)
-- **`end`**: Конечный index окна (int)
-- **`performance`**: Словарь with метриками качества (dict)
-- **`predictions`**: Предсказания модели (array)
-- **Преимущества скользящего окна**:
-- **Детальный анализ**: Больше точек validation
-- **Адаптивность**: Модель адаптируется к изменениям in данных
-- **Стабильность**: Более стабильная оценка качества
-- **Тренды**: Выявление изменений in performance модели
+- **'data'**: time series
+-** Type**: DataFrame
+- **describe**: Table with provisional data
+- ** Requirements**: To be sorted in time
+- **'target_col'**: Name of target variable
+- **Typ**: str
+- **describe**: Name of column with target variable
+** `Window_size'**: Size of sliding window
+- **Typ**:int
+- ** Value range**: `[100, 10,000] ` (recommended 500-2000)
+- **on default**: 1000
+- ** Recommended values**:
+- **Short rows**: 200-500 points
+- **Medial rows**: 500-1000 points
+- ** Long rows**: 1000-2000 points
+- **'step_size'**: Step of the window
+- **Typ**:int
+- ** Value range**: `[10, Windows_size//2] ` (recommended 50-200)
+- **on default**: 100
+- ** Recommended values**:
+- ** Detailed analysis**: 50-100 points
+- ** Rapid analysis**: 100-200 points
+- ** General analysis**: 200-500 points
+- **Return value**: List - List of results for each window
+- **Structure of results**:
+** `start'**: Initial Index of Windows (int)
+- **'end'**: Final index of windows (int)
+**/ `Performance'**: Vocabulary with quality metrics (dict)
+- **'predications'**: Model fortunes (array)
+- ** The benefits of sliding windows**:
+- ** Detailed analysis**: More points of validation
+- ** Adaptation**: The model adapts to changes in data
+- **Stability**: More stable quality assessment
+- **Trends**: Identification of changes in model performance
 
 **parameter window_size:**
-- **Назначение**: Размер окна for обучения модели
-- **Влияние on валидацию**:
-- **Больше окно**: Больше данных for обучения, но менее адаптивная модель
-- **Меньше окно**: Меньше данных for обучения, но более адаптивная модель
-- **Выбор оптимального значения**:
-- **Стабильность данных**: for стабильных данных Use большие окна
-- **Изменчивость данных**: for изменчивых данных Use меньшие окна
-- **Сезонность**: Учитывайте периоды сезонности in данных
+- ** Designation**: Size of the model training window
+- ** Impact on validation**:
+- **Big window**: More data for learning, but less adaptive model
+Less window**: Less data for learning, but more adaptive model
+- ** Selection of optimal value**:
+- ** Data stability**: for stable data Use large windows
+- ** Data variability**: for variable Us data, smaller windows
+- ** Seasonality**: Take into account seasonal periods in data
 
 **parameter step_size:**
-- **Назначение**: Шаг перемещения окна for создания новых точек validation
-- **Влияние on валидацию**:
-- **Меньше шаг**: Больше точек validation, но больше времени вычислений
-- **Больше шаг**: Меньше точек validation, но быстрее вычисления
-- **Выбор оптимального значения**:
-- **Детальность**: for детального Analysis Use меньшие шаги
-- **Скорость**: for быстрого Analysis Use большие шаги
-- **Перекрытие**: Учитывайте перекрытие между окнами
+- ** Designation**: Step of the window to create new points of validation
+- ** Impact on validation**:
+- ** Less step**: More points of validation, but more time of calculation
+- **Big step**: Less points of validation but faster of calculation
+- ** Selection of optimal value**:
+- **detail**: for a detailed Analysis Use, smaller steps
+- **Speed**: for rapid Analysis Use, big steps
+- ** Cover**: Take into account the closure between windows
 
 ## Walk-Forward validation
 
-### Базовая Walk-Forward validation
+### Basic Walk-Forward appreciation
 
 ```python
 def walk_forward_validation(data, target_col, train_size=1000, test_size=100):
@@ -455,20 +455,20 @@ def walk_forward_validation(data, target_col, train_size=1000, test_size=100):
  n_samples = len(data)
 
  for i in range(train_size, n_samples - test_size, test_size):
-# Обучающая выборка
+# Teaching sample
  train_data = data.iloc[i-train_size:i]
 
-# testsая выборка
+# Testsy sample
  test_data = data.iloc[i:i+test_size]
 
-# Обучение модели
+# Model learning
  predictor = TabularPredictor(label=target_col)
  predictor.fit(train_data, time_limit=300)
 
-# Предсказания
+# Premonition
  predictions = predictor.predict(test_data)
 
-# Оценка качества
+# Quality assessment
  performance = predictor.evaluate(test_data)
 
  results.append({
@@ -482,101 +482,101 @@ def walk_forward_validation(data, target_col, train_size=1000, test_size=100):
 
  return results
 
-# Использование
+# Use
 wf_results = walk_forward_validation(data, 'target', train_size=1000, test_size=100)
 ```
 
-**🔧 Детальное describe параметров Walk-Forward validation:**
+**/ Detailed describe of Walk-Forward parameters:**
 
 **function walk_forward_validation:**
-- **Назначение**: Walk-Forward validation with фиксированными размерами обучающей and testsой выборок
+- ** Designation**: Walk-Forward satisfaction with fixed size of instruction and tests sample
 - **parameters**:
-- **`data`**: temporary ряд данных
-- **Тип**: dataFrame
-- **describe**: Таблица with временными данными
-- **Требования**: Должен быть отсортирован in time
-- **`target_col`**: Название целевой переменной
-- **Тип**: str
-- **describe**: Название столбца with целевой переменной
-- **`train_size`**: Размер обучающей выборки
-- **Тип**: int
-- **Диапазон значений**: `[100, 10000]` (рекомендуется 500-2000)
-- **on умолчанию**: 1000
-- **Рекомендуемые значения**:
-- **Короткие ряды**: 200-500 точек
-- **Средние ряды**: 500-1000 точек
-- **Длинные ряды**: 1000-2000 точек
-- **`test_size`**: Размер testsой выборки
-- **Тип**: int
-- **Диапазон значений**: `[10, train_size//2]` (рекомендуется 50-200)
-- **on умолчанию**: 100
-- **Рекомендуемые значения**:
-- **Детальная оценка**: 50-100 точек
-- **Быстрая оценка**: 100-200 точек
-- **Общая оценка**: 200-500 точек
-- **Возвращаемое значение**: List - List результатов for каждого шага
-- **Structure результатов**:
-- **`train_start`**: Начальный index обучающей выборки (int)
-- **`train_end`**: Конечный index обучающей выборки (int)
-- **`test_start`**: Начальный index testsой выборки (int)
-- **`test_end`**: Конечный index testsой выборки (int)
-- **`performance`**: Словарь with метриками качества (dict)
-- **`predictions`**: Предсказания модели (array)
-- **Преимущества Walk-Forward validation**:
-- **Реалистичность**: Имитирует реальные условия использования
-- **Адаптивность**: Модель адаптируется к изменениям in данных
-- **Стабильность**: Более стабильная оценка качества
-- **Тренды**: Выявление изменений in performance модели
+- **'data'**: time series
+-** Type**: DataFrame
+- **describe**: Table with provisional data
+- ** Requirements**: To be sorted in time
+- **'target_col'**: Name of target variable
+- **Typ**: str
+- **describe**: Name of column with target variable
+**'training_size'**: The size of the training sample
+- **Typ**:int
+- ** Value range**: `[100, 10,000] ` (recommended 500-2000)
+- **on default**: 1000
+- ** Recommended values**:
+- **Short rows**: 200-500 points
+- **Medial rows**: 500-1000 points
+- ** Long rows**: 1000-2000 points
+- ** `test_size'**: Tests sample size
+- **Typ**:int
+- ** Value range**: `[10, tran_size//2] ` (recommended 50-200)
+- **on default**: 100
+- ** Recommended values**:
+- ** Detailed assessment**: 50-100 points
+- ** Rapid assessment**: 100-200 points
+- ** Overall assessment**: 200-500 points
+- **Return value**: List - List of results for each step
+- **Structure of results**:
+**'training_start'**: Initial training sample index (int)
+- **'training_end'**: Final training sample index (int)
+- ** `test_start'**: Initial index testsy sample (int)
+** `test_end'**: Final index tests sample (int)
+**/ `Performance'**: Vocabulary with quality metrics (dict)
+- **'predications'**: Model fortunes (array)
+- ** Benefits of Walk-Forward validation**:
+- ** Reality**: Simulates actual conditions of use
+- ** Adaptation**: The model adapts to changes in data
+- **Stability**: More stable quality assessment
+- **Trends**: Identification of changes in model performance
 
 **parameter train_size:**
-- **Назначение**: Размер обучающей выборки for каждой итерации
-- **Влияние on валидацию**:
-- **Больше размер**: Больше данных for обучения, но менее адаптивная модель
-- **Меньше размер**: Меньше данных for обучения, но более адаптивная модель
-- **Выбор оптимального значения**:
-- **Стабильность данных**: for стабильных данных Use большие размеры
-- **Изменчивость данных**: for изменчивых данных Use меньшие размеры
-- **Сезонность**: Учитывайте периоды сезонности in данных
+** Designation**: Size of the training sample for each iteration
+- ** Impact on validation**:
+- **Big size**: More data for learning but less adaptive model
+- ** Less size**: Less data for learning but more adaptive model
+- ** Selection of optimal value**:
+- ** Data stability**: large dimensions for stable Use data
+- ** Data variability**: for variable Use data, smaller dimensions
+- ** Seasonality**: Take into account seasonal periods in data
 
 **parameter test_size:**
-- **Назначение**: Размер testsой выборки for каждой итерации
-- **Влияние on валидацию**:
-- **Больше размер**: Более надежная оценка, но меньше итераций
-- **Меньше размер**: Больше итераций, но менее надежная оценка
-- **Выбор оптимального значения**:
-- **Надежность**: for надежной оценки Use большие размеры
-- **Детальность**: for детального Analysis Use меньшие размеры
-- **Баланс**: Учитывайте баланс между надежностью and детальностью
+- ** Designation**: Testsample size for each iteration
+- ** Impact on validation**:
+- ** Large**: A more reliable estimate, but less iteration
+- ** Less size**: More iterations but less reliable rating
+- ** Selection of optimal value**:
+- ** Reliability**: for a reliable evaluation of Use large dimensions
+- **detail**: for detailed Analysis Use smaller dimensions
+- **Balance**: Take into account the balance between reliability and detail
 
-### Адаптивная Walk-Forward validation
+### Adaptive Walk-Forward appreciation
 
 ```python
 def adaptive_walk_forward(data, target_col, min_train_size=500, max_train_size=2000):
-"""Адаптивная Walk-Forward validation with изменяющимся размером окна"""
+""Aptative Walk-Forward representation with variable window size""
 
  results = []
  n_samples = len(data)
  current_train_size = min_train_size
 
  for i in range(min_train_size, n_samples - 100, 100):
-# Адаптация размера обучающей выборки
+# Adaptation of the teaching sample size
  if i > n_samples // 2:
  current_train_size = min(max_train_size, current_train_size + 100)
 
-# Обучающая выборка
+# Teaching sample
  train_data = data.iloc[i-current_train_size:i]
 
-# testsая выборка
+# Testsy sample
  test_data = data.iloc[i:i+100]
 
-# Обучение модели
+# Model learning
  predictor = TabularPredictor(label=target_col)
  predictor.fit(train_data, time_limit=300)
 
-# Предсказания
+# Premonition
  predictions = predictor.predict(test_data)
 
-# Оценка качества
+# Quality assessment
  performance = predictor.evaluate(test_data)
 
  results.append({
@@ -588,88 +588,88 @@ def adaptive_walk_forward(data, target_col, min_train_size=500, max_train_size=2
  return results
 ```
 
-**🔧 Детальное describe параметров адаптивной Walk-Forward validation:**
+**/ Detailed descrie parameters of adaptive Walk-Forward validation:**
 
 **function adaptive_walk_forward:**
-- **Назначение**: Адаптивная Walk-Forward validation with изменяющимся размером обучающей выборки
+- ** Designation**: Adaptive Walk-Forward validation with variable learning size
 - **parameters**:
-- **`data`**: temporary ряд данных
-- **Тип**: dataFrame
-- **describe**: Таблица with временными данными
-- **Требования**: Должен быть отсортирован in time
-- **`target_col`**: Название целевой переменной
-- **Тип**: str
-- **describe**: Название столбца with целевой переменной
-- **`min_train_size`**: Минимальный размер обучающей выборки
-- **Тип**: int
-- **Диапазон значений**: `[100, 1000]` (рекомендуется 200-500)
-- **on умолчанию**: 500
-- **Рекомендуемые значения**:
-- **Короткие ряды**: 100-200 точек
-- **Средние ряды**: 200-500 точек
-- **Длинные ряды**: 500-1000 точек
-- **`max_train_size`**: Максимальный размер обучающей выборки
-- **Тип**: int
-- **Диапазон значений**: `[min_train_size, 10000]` (рекомендуется 1000-5000)
-- **on умолчанию**: 2000
-- **Рекомендуемые значения**:
-- **Короткие ряды**: 500-1000 точек
-- **Средние ряды**: 1000-2000 точек
-- **Длинные ряды**: 2000-5000 точек
-- **Возвращаемое значение**: List - List результатов for каждого шага
-- **Structure результатов**:
-- **`train_size`**: Текущий размер обучающей выборки (int)
-- **`performance`**: Словарь with метриками качества (dict)
-- **`predictions`**: Предсказания модели (array)
-- **Преимущества адаптивной validation**:
-- **Адаптивность**: Размер окна адаптируется к данным
-- **Эффективность**: Использует больше данных on мере их накопления
-- **Стабильность**: Более стабильная оценка качества
-- **Реалистичность**: Имитирует реальные условия использования
+- **'data'**: time series
+-** Type**: DataFrame
+- **describe**: Table with provisional data
+- ** Requirements**: To be sorted in time
+- **'target_col'**: Name of target variable
+- **Typ**: str
+- **describe**: Name of column with target variable
+**'min_training_size'**: Minimum sample size
+- **Typ**:int
+- ** Value range**: `[100, 1000] ` (recommended 200-500)
+- **on default**: 500
+- ** Recommended values**:
+- **Short rows**: 100-200 points
+- **Medial rows**: 200-500 points
+- ** Long row**: 500-1000 points
+- **'max_training_size'**: Maximum sample size
+- **Typ**:int
+- ** Value range**: `[min_training_size, 10,000] ` (recommended 1000-5000)
+- **on default**: 2000
+- ** Recommended values**:
+- **Short rows**: 500-1000 points
+- **Medial rows**: 1000-2000 points
+- ** Long rows**: 2,000 to 5,000 points
+- **Return value**: List - List of results for each step
+- **Structure of results**:
+**'training_size'**: Current teaching sample size (int)
+**/ `Performance'**: Vocabulary with quality metrics (dict)
+- **'predications'**: Model fortunes (array)
+- ** The benefits of adaptive validation**:
+** Adaptation**: Window size adapts to data
+- ** Effectiveness**: Uses more data on the extent to which they are stored
+- **Stability**: More stable quality assessment
+- ** Reality**: Simulates actual conditions of use
 
 **parameter min_train_size:**
-- **Назначение**: Минимальный размер обучающей выборки in начале validation
-- **Влияние on валидацию**:
-- **Больше размер**: Более стабильная начальная оценка, но меньше адаптивности
-- **Меньше размер**: Более адаптивная оценка, но менее стабильная in начале
-- **Выбор оптимального значения**:
-- **Стабильность**: for стабильной начальной оценки Use большие размеры
-- **Адаптивность**: for адаптивной оценки Use меньшие размеры
-- **Баланс**: Учитывайте баланс между стабильностью and адаптивностью
+- ** Designation**: Minimum sample size in beginning of validation
+- ** Impact on validation**:
+- ** Large**: A more stable initial assessment, but less adaptive
+- ** Less size**: More adaptive but less stable in the beginning
+- ** Selection of optimal value**:
+- **Stability**: for stable initial evaluation of the Use large size
+- ** Adaptation**: for adaptive evaluation of the Use, smaller size
+- **Balance**: Consider the balance between stability and adaptation
 
 **parameter max_train_size:**
-- **Назначение**: Максимальный размер обучающей выборки in конце validation
-- **Влияние on валидацию**:
-- **Больше размер**: Более стабильная конечная оценка, но больше времени обучения
-- **Меньше размер**: Быстрее обучение, но менее стабильная конечная оценка
-- **Выбор оптимального значения**:
-- **Стабильность**: for стабильной конечной оценки Use большие размеры
-- **Скорость**: for быстрого обучения Use меньшие размеры
-- **Ресурсы**: Учитывайте доступные вычислительные ресурсы
+- ** Designation**: Maximum sample size at end of validation
+- ** Impact on validation**:
+- **Big size**: More stable final evaluation, but more learning time
+- ** Less size**: Faster learning but less stable final evaluation
+- ** Selection of optimal value**:
+- **Stability**: For a stable final evaluation of Use large dimensions
+- **Speed**: for rapid learning of Use, smaller
+- ** Resources**: Please consider available computing resources
 
 ## Monte Carlo validation
 
-### Базовый Monte Carlo
+### Basic Monte Carlo
 
 ```python
 def monte_carlo_validation(data, target_col, n_iterations=100, train_frac=0.8):
-"""Monte Carlo validation with случайным разделением данных"""
+"Monte Carlo falseisation with random data separation."
 
  results = []
 
  for iteration in range(n_iterations):
-# Случайное разделение данных
+# Random data separation
  train_data = data.sample(frac=train_frac, random_state=iteration)
  test_data = data.drop(train_data.index)
 
-# Обучение модели
+# Model learning
  predictor = TabularPredictor(label=target_col)
  predictor.fit(train_data, time_limit=300)
 
-# Предсказания
+# Premonition
  predictions = predictor.predict(test_data)
 
-# Оценка качества
+# Quality assessment
  performance = predictor.evaluate(test_data)
 
  results.append({
@@ -680,68 +680,68 @@ def monte_carlo_validation(data, target_col, n_iterations=100, train_frac=0.8):
 
  return results
 
-# Использование
+# Use
 mc_results = monte_carlo_validation(data, 'target', n_iterations=100)
 ```
 
-**🔧 Детальное describe параметров Monte Carlo validation:**
+** Detailed describe parameters Monte Carlo validation:**
 
 **function monte_carlo_validation:**
-- **Назначение**: Monte Carlo validation with множественными случайными разделениями данных
+- ** Designation**: Monte Carlo representation with multiple random data divides
 - **parameters**:
 - **`data`**: data for validation
-- **Тип**: dataFrame
-- **describe**: Таблица with data for validation
-- **Требования**: Должна содержать целевую переменную
-- **`target_col`**: Название целевой переменной
-- **Тип**: str
-- **describe**: Название столбца with целевой переменной
-- **`n_iterations`**: Количество итераций validation
-- **Тип**: int
-- **Диапазон значений**: `[10, 1000]` (рекомендуется 50-200)
-- **on умолчанию**: 100
-- **Рекомендуемые значения**:
-- **Быстрая validation**: 20-50 итераций
-- **Стандартная validation**: 50-100 итераций
-- **Тщательная validation**: 100-200 итераций
-- **`train_frac`**: Доля данных for обучения
-- **Тип**: float
-- **Диапазон значений**: `[0.5, 0.9]` (рекомендуется 0.7-0.8)
-- **on умолчанию**: 0.8
-- **Рекомендуемые значения**:
-- **Малые датасеты**: 0.7-0.8 (70-80%)
-- **Средние датасеты**: 0.8-0.85 (80-85%)
-- **Большие датасеты**: 0.85-0.9 (85-90%)
-- **Возвращаемое значение**: List - List результатов for каждой итерации
-- **Structure результатов**:
-- **`iteration`**: Номер итерации (int)
-- **`performance`**: Словарь with метриками качества (dict)
-- **`predictions`**: Предсказания модели (array)
-- **Преимущества Monte Carlo validation**:
-- **Статистическая надежность**: Множественные случайные разделения
-- **Оценка дисперсии**: Показывает стабильность модели
-- **Уверенность**: Более уверенная оценка качества
-- **Робастность**: Устойчивость к случайным флуктуациям
+-** Type**: DataFrame
+- **describe**: Table with data for validation
+** Requirements**: Must contain a target variable
+- **'target_col'**: Name of target variable
+- **Typ**: str
+- **describe**: Name of column with target variable
+- ** `n_eaters'**: Number of iterations validation
+- **Typ**:int
+- ** Value range**: ` [10, 1000] ` (recommended 50-200)
+- **on default**: 100
+- ** Recommended values**:
+- ** Rapid recovery**: 20-50 iterations
+- ** Standard valuation**: 50-100 iterations
+- **Footening**: 100-200 iterations
+**'training_frac'**: Percentage of data for training
+- **Typ**: float
+- ** Value range**: `[0.5, 0.9] ` (recommended 0.7-0.8)
+- **on default**: 0.8
+- ** Recommended values**:
+- **Lowered dataset**: 0.7-0.8 (70-80 per cent)
+- **Medical dataset**: 0.8-0.85 (80-85 per cent)
+- **Big dataset**: 0.85-0.9 (85-90 per cent)
+- **Return value**: List - List of results for each iteration
+- **Structure of results**:
+- ** `acteration'**: Iteration number (int)
+**/ `Performance'**: Vocabulary with quality metrics (dict)
+- **'predications'**: Model fortunes (array)
+- ** Benefits of Monte Carlo validation**:
+- **Statistical reliability**: Multiple random divisions
+- ** variance assessment**: Shows model stability
+- ** Confidence**: Better quality assessment
+- ** Robinity**: Resistance to accidental fluctuations
 
 **parameter n_iterations:**
-- **Назначение**: Количество итераций for Monte Carlo validation
-- **Влияние on валидацию**:
-- **Больше итераций**: Более надежная оценка, но больше времени
-- **Меньше итераций**: Быстрее validation, но менее надежная оценка
-- **Выбор оптимального значения**:
-- **Статистическая значимость**: for значимых результатов Use 100+ итераций
-- **Время**: for быстрой validation Use 20-50 итераций
-- **Ресурсы**: Учитывайте доступные вычислительные ресурсы
+- ** Designation**: Number of iterations for Monte Carlo validation
+- ** Impact on validation**:
+- ** More iteration**: A more reliable estimate, but more time
+- ** Less iteration**: Faster appreciation but less reliable evaluation
+- ** Selection of optimal value**:
+- **Statistical significance**: For significant results of Use 100+ iterations
+- **Time**: for rapid recovery Use 20-50 iterations
+- ** Resources**: Please consider available computing resources
 
 **parameter train_frac:**
-- **Назначение**: Доля данных, Useых for обучения in каждой итерации
-- **Влияние on валидацию**:
-- **Больше доля**: Больше данных for обучения, но меньше for тестирования
-- **Меньше доля**: Меньше данных for обучения, но больше for тестирования
-- **Выбор оптимального значения**:
-- **Размер данных**: Убедитесь, что testsая выборка достаточно большая
-- **Стабильность**: for стабильной оценки Use 0.8-0.85
-- **Баланс**: Учитывайте баланс между обучением and testing
+- ** Designation**: Percentage of data for learning in each iteration
+- ** Impact on validation**:
+- **Big share**: More data for learning but less for testing
+- ** Less**: Less data for learning but more for testing
+- ** Selection of optimal value**:
+- ** Data measurement**: Make sure the test sample is large enough
+- **Stability**: For a stable evaluation of Use 0.8-0.85
+- **Balance**: Take into account the balance between learning and testing
 
 ### Bootstrap validation
 
@@ -753,25 +753,25 @@ def bootstrap_validation(data, target_col, n_bootstrap=100):
  n_samples = len(data)
 
  for i in range(n_bootstrap):
-# Bootstrap выборка
+# Bootstrap sample
  bootstrap_indices = np.random.choice(n_samples, size=n_samples, replace=True)
  bootstrap_data = data.iloc[bootstrap_indices]
 
-# Out-of-bag выборка
+# Out-of-bag sample
  oob_indices = np.setdiff1d(np.arange(n_samples), np.unique(bootstrap_indices))
  oob_data = data.iloc[oob_indices]
 
  if len(oob_data) == 0:
  continue
 
-# Обучение модели
+# Model learning
  predictor = TabularPredictor(label=target_col)
  predictor.fit(bootstrap_data, time_limit=300)
 
-# Предсказания on OOB данных
+# Data forecasts on OOB
  predictions = predictor.predict(oob_data)
 
-# Оценка качества
+# Quality assessment
  performance = predictor.evaluate(oob_data)
 
  results.append({
@@ -783,58 +783,58 @@ def bootstrap_validation(data, target_col, n_bootstrap=100):
  return results
 ```
 
-**🔧 Детальное describe параметров Bootstrap validation:**
+**/ Detailed describe of Bootstrap parameters:**
 
 **function bootstrap_validation:**
-- **Назначение**: Bootstrap validation with случайной выборкой with возвращением
+- ** Designation**: Bootstrap satisfaction with random sample with return
 - **parameters**:
 - **`data`**: data for validation
-- **Тип**: dataFrame
-- **describe**: Таблица with data for validation
-- **Требования**: Должна содержать целевую переменную
-- **`target_col`**: Название целевой переменной
-- **Тип**: str
-- **describe**: Название столбца with целевой переменной
-- **`n_bootstrap`**: Количество bootstrap итераций
-- **Тип**: int
-- **Диапазон значений**: `[10, 1000]` (рекомендуется 50-200)
-- **on умолчанию**: 100
-- **Рекомендуемые значения**:
-- **Быстрая validation**: 20-50 итераций
-- **Стандартная validation**: 50-100 итераций
-- **Тщательная validation**: 100-200 итераций
-- **Возвращаемое значение**: List - List результатов for каждой bootstrap итерации
-- **Structure результатов**:
-- **`bootstrap`**: Номер bootstrap итерации (int)
-- **`performance`**: Словарь with метриками качества (dict)
-- **`predictions`**: Предсказания модели (array)
-- **Особенности Bootstrap validation**:
-- **Случайная выборка with возвращением**: Каждая bootstrap выборка создается случайно
-- **Out-of-bag оценка**: Модель тестируется on данных, not участвовавших in обучении
-- **Статистическая надежность**: Показывает стабильность модели
-- **Оценка дисперсии**: Позволяет оценить неопределенность predictions
+-** Type**: DataFrame
+- **describe**: Table with data for validation
+** Requirements**: Must contain a target variable
+- **'target_col'**: Name of target variable
+- **Typ**: str
+- **describe**: Name of column with target variable
+- ** `n_bootstrap'**: Quantity of bootstrap iterations
+- **Typ**:int
+- ** Value range**: ` [10, 1000] ` (recommended 50-200)
+- **on default**: 100
+- ** Recommended values**:
+- ** Rapid recovery**: 20-50 iterations
+- ** Standard valuation**: 50-100 iterations
+- **Footening**: 100-200 iterations
+- **Return value**: List - List of results for each Bootstrap iteration
+- **Structure of results**:
+- **'bootstrap'**: Bootstrap number iteration (int)
+**/ `Performance'**: Vocabulary with quality metrics (dict)
+- **'predications'**: Model fortunes (array)
+- **Bootstrap features:**
+- **A random sample with return**: Each bootstrap sample is created randomly
+- **Out-of-bag evaluation**: Model tested on data not involved in training
+- **Statistical reliability**: Shows model stability
+- ** variance assessment**: Allows assessment of uncertainty of preferences
 
 **parameter n_bootstrap:**
-- **Назначение**: Количество bootstrap итераций for validation
-- **Влияние on валидацию**:
-- **Больше итераций**: Более надежная оценка, но больше времени
-- **Меньше итераций**: Быстрее validation, но менее надежная оценка
-- **Выбор оптимального значения**:
-- **Статистическая значимость**: for значимых результатов Use 100+ итераций
-- **Время**: for быстрой validation Use 20-50 итераций
-- **Ресурсы**: Учитывайте доступные вычислительные ресурсы
-- **Особенности Bootstrap**:
-- **Случайность**: Каждая итерация использует случайную выборку
-- **Перекрытие**: Некоторые data могут участвовать in нескольких итерациях
-- **Out-of-bag**: data, not попавшие in bootstrap выборку, используются for тестирования
+- ** Designation**: Number of Bootstrap iterations for validation
+- ** Impact on validation**:
+- ** More iteration**: A more reliable estimate, but more time
+- ** Less iteration**: Faster appreciation but less reliable evaluation
+- ** Selection of optimal value**:
+- **Statistical significance**: For significant results of Use 100+ iterations
+- **Time**: for rapid recovery Use 20-50 iterations
+- ** Resources**: Please consider available computing resources
+- **Bootstrap features**:
+- ** Accident**: Each iteration uses random sampling
+- ** Cover**: Some data may be involved in several iterations
+- **Out-of-bag**: data not in bootstrap sample used for testing
 
-## Комбинированная validation
+♪ ♪ Combined validation ♪
 
 ### Ensemble validation
 
 ```python
 def ensemble_validation(data, target_col, validation_methods=['holdout', 'kfold', 'monte_carlo']):
-"""Комбинированная validation with несколькими методами"""
+"Compiled validation with several methods."
 
  results = {}
 
@@ -858,32 +858,32 @@ def ensemble_validation(data, target_col, validation_methods=['holdout', 'kfold'
  return results
 ```
 
-## validation for финансовых данных
+## financial disclosure
 
-### Финансовая validation
+### Financial appreciation
 
 ```python
 def financial_validation(data, target_col, lookback_window=252, forward_window=21):
-"""Специализированная validation for финансовых данных"""
+"Specialized appreciation for financial data"
 
  results = []
  n_samples = len(data)
 
  for i in range(lookback_window, n_samples - forward_window, forward_window):
-# Обучающая выборка (lookback_window дней)
+# Learning sample (lookback_wind days)
  train_data = data.iloc[i-lookback_window:i]
 
-# testsая выборка (forward_window дней)
+# Testsample (forward_window days)
  test_data = data.iloc[i:i+forward_window]
 
-# Обучение модели
+# Model learning
  predictor = TabularPredictor(label=target_col)
  predictor.fit(train_data, time_limit=300)
 
-# Предсказания
+# Premonition
  predictions = predictor.predict(test_data)
 
-# Финансовые metrics
+# Financial metrics
  returns = test_data[target_col].pct_change().dropna()
  predicted_returns = predictions.pct_change().dropna()
 
@@ -907,21 +907,21 @@ def financial_validation(data, target_col, lookback_window=252, forward_window=2
  return results
 ```
 
-## Анализ результатов validation
+## Analysis of results of validation
 
-### Статистический анализ
+### Statistical analysis
 
 ```python
 def analyze_validation_results(results):
-"""Анализ результатов validation"""
+"Analysis of the results of validation."
 
-# Извлечение метрик
+# The extraction of metrics
  metrics = []
  for result in results:
  if 'performance' in result:
  metrics.append(result['performance'])
 
-# Статистический анализ
+# Statistical analysis
  Analysis = {}
 
  for metric in metrics[0].keys():
@@ -938,80 +938,80 @@ def analyze_validation_results(results):
 
  return Analysis
 
-# Использование
+# Use
 Analysis = analyze_validation_results(backtest_results)
 print("Validation Analysis:")
 for metric, stats in Analysis.items():
  print(f"{metric}: {stats['mean']:.4f} ± {stats['std']:.4f}")
 ```
 
-**🔧 Детальное describe параметров Analysis результатов validation:**
+**/ Detailed describe parameters Analysis of validation results:**
 
 **function analyze_validation_results:**
-- **Назначение**: Статистический анализ результатов validation
+- ** Designation**: Statistical analysis of results of validation
 - **parameters**:
-- **`results`**: Результаты validation
-- **Тип**: List
-- **describe**: List результатов validation
-- **Structure**: Каждый элемент должен содержать 'performance' with метриками
-- **Возвращаемое значение**: dict - словарь со статистическим анализом
+- **/ `Results'**: Results of validation
+- ** Type**: List
+- **describe**: List of results
+- **Structure**: Each element must contain 'performance' with metrics
+- **Return value**: dict - statistical analysis dictionary
 - **Structure Analysis**:
-- **`mean`**: Среднее значение metrics (float)
-- **`std`**: Стандартное отклонение metrics (float)
-- **`min`**: Минимальное значение metrics (float)
-- **`max`**: Максимальное значение metrics (float)
-- **`median`**: Медиана metrics (float)
-- **`q25`**: 25-й процентиль metrics (float)
-- **`q75`**: 75-й процентиль metrics (float)
-- **Использование**:
-- **Оценка стабильности**: Анализ дисперсии метрик
-- **comparison методов**: comparison разных методов validation
-- **Выявление проблем**: Поиск аномальных значений
-- **Reportность**: create Reportов о качестве модели
+- **'mean'**: Average metrics (float)
+- **'std'**: Standard deviation metrics (float)
+- **'min'**: Minimum value of metrics (float)
+- ** `max'**: Maximum value of metrics (float)
+- **'median'**: Median metrics (float)
+- **'q25'**: 25th percentile metrics (float)
+- ** `q75'**: 75th percentile metrics (float)
+- ** Use**:
+- ** Stability assessment**: Meteric dispersion analysis
+- **comparison of methods**: comparison of different methods of validation
+- ** Identification of problems**: Search for abnormal values
+- **Reportability**: quality review reports
 
-**Статистические metrics:**
-- **`mean`**: Среднее значение metrics
-- **Интерпретация**: Центральная тенденция качества модели
-- **Использование**: Основная оценка качества
-- **`std`**: Стандартное отклонение metrics
-- **Интерпретация**: Стабильность качества модели
-- **Использование**: Оценка надежности модели
-- **`min`/`max`**: Минимальное/максимальное значение
-- **Интерпретация**: Диапазон качества модели
-- **Использование**: Оценка экстремальных значений
-- **`median`**: Медиана metrics
-- **Интерпретация**: Устойчивая оценка качества
-- **Использование**: Альтернатива среднему значению
-- **`q25`/`q75`**: 25-й/75-й процентиль
-- **Интерпретация**: Распределение качества модели
-- **Использование**: Оценка разброса значений
+**Statistics:**
+- ** `mean'**: Average metrics
+** Interpretation**: Central model quality trend
+- ** Use**: Basic quality assessment
+- **'std'**: Standard deviation metrics
+** Interpretation**: model stability
+- ** Use**: Evaluation of model reliability
+- ** `min'/ `max'**: Minimum/maximum value
+** Interpretation**: Model quality range
+- ** Use**: Assessment of extreme values
+- **'median'**: Median metrics
+** Interpretation**: Sustainable quality assessment
+- ** Use**: Alternative to average
+- ** `q25'/ `q75'**: 25th/75th percentile
+** Interpretation**: model quality distribution
+- ** Use**: Assessment of the variation of values
 
-### Визуализация результатов
+### Visualization of results
 
 ```python
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 def plot_validation_results(results, metric='accuracy'):
-"""Визуализация результатов validation"""
+"""""""""""""""""""""""""""""""""""""Visualization of results of validation"""""""
 
-# Извлечение метрик
+# The extraction of metrics
  values = []
  for result in results:
  if 'performance' in result and metric in result['performance']:
  values.append(result['performance'][metric])
 
-# График
+# Graph
  plt.figure(figsize=(12, 8))
 
-# temporary ряд metrics
+# temporary row metrics
  plt.subplot(2, 2, 1)
  plt.plot(values)
  plt.title(f'{metric} over time')
  plt.xlabel('Fold/Iteration')
  plt.ylabel(metric)
 
-# Распределение metrics
+# Distribution of metrics
  plt.subplot(2, 2, 2)
  plt.hist(values, bins=20, alpha=0.7)
  plt.title(f'Distribution of {metric}')
@@ -1024,7 +1024,7 @@ def plot_validation_results(results, metric='accuracy'):
  plt.title(f'Box plot of {metric}')
  plt.ylabel(metric)
 
-# Статистики
+# Statistics
  plt.subplot(2, 2, 4)
  stats_text = f"""
  Mean: {np.mean(values):.4f}
@@ -1038,50 +1038,50 @@ def plot_validation_results(results, metric='accuracy'):
  plt.tight_layout()
  plt.show()
 
-# Использование
+# Use
 plot_validation_results(backtest_results, metric='accuracy')
 ```
 
-**🔧 Детальное describe параметров визуализации результатов validation:**
+** Detailed descrie parameters for visualization of validation results:**
 
 **function plot_validation_results:**
-- **Назначение**: Визуализация результатов validation with различными типами графиков
+- ** Designation**: Visualization of performance with different types of graphs
 - **parameters**:
-- **`results`**: Результаты validation
-- **Тип**: List
-- **describe**: List результатов validation
-- **Structure**: Каждый элемент должен содержать 'performance' with метриками
-- **`metric`**: Название metrics for визуализации
-- **Тип**: str
-- **describe**: Название metrics for отображения
+- **/ `Results'**: Results of validation
+- ** Type**: List
+- **describe**: List of results
+- **Structure**: Each element must contain 'performance' with metrics
+- ** `metric'**: Name of devices for visualization
+- **Typ**: str
+- **describe**: Name of display metrics
  - **examples**: 'accuracy', 'f1', 'roc_auc', 'rmse', 'mae'
-- **on умолчанию**: 'accuracy'
-- **Возвращаемое значение**: None (отображает график)
-- **Типы графиков**:
-- **temporary ряд**: Показывает изменение metrics in time
-- **Гистограмма**: Показывает распределение значений metrics
-- **Box plot**: Показывает статистики metrics (медиана, квартили, выбросы)
-- **Статистики**: Текстовое представление основных статистик
-- **Использование**:
-- **Анализ трендов**: Выявление изменений in качестве модели
-- **Оценка стабильности**: Анализ разброса значений metrics
-- **Выявление выбросов**: Поиск аномальных значений
-- **Reportность**: create визуальных Reportов
+- **on default**: 'accuracy'
+- **Return value**: None (shows graph)
+- ** Graphic charts**:
+- **temporary row**: Shows change in metrics in time
+** Histogram**: Shows distribution of metrics
+- **Box Platform**: Shows metrics statistics (media, quarts, emissions)
+- **Statisticians**: Textual presentation of key statisticians
+- ** Use**:
+- ** Trends Analysis**: Identification of changes in model quality
+- ** Stability assessment**: Analysis of the dispersion of metrics values
+- ** Emission identification**: Search for abnormal values
+- **Reportability**: review of visual reports
 
 **parameter metric:**
-- **Назначение**: Выбор metrics for визуализации
-- **Доступные metrics**:
-- **Классификация**: 'accuracy', 'f1', 'precision', 'recall', 'roc_auc'
-- **Регрессия**: 'rmse', 'mae', 'r2', 'mse'
-- **Кастомные**: Любые metrics, присутствующие in результатах
-- **Выбор оптимальной metrics**:
-- **Основная метрика**: Use основную метрику validation
-- **comparison**: for сравнения Use одинаковые metrics
-- **Анализ**: Выбирайте metrics, важные for вашей задачи
+- ** Designation**: Choice of devices for visualization
+- ** Accessible metrics**:
+- ** Classification**: 'accuracy', 'f1', 'precision', 'recall', 'roc_auc'
+== sync, corrected by elderman == @elder_man
+- **Castom**: Any metrics present in the results
+- ** Selection of optimum metrics**:
+- ** Basic metric**: Use main metric of wallidation
+- **comparison**: For comparison Use are the same metrics
+- **Analysis**: Choose metrics important for your task
 
-## Практические examples
+## Practical examples
 
-### Полный example validation
+### Full example validation
 
 ```python
 from autogluon.tabular import TabularPredictor
@@ -1091,7 +1091,7 @@ import matplotlib.pyplot as plt
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
 
-# create данных
+# data quality
 X, y = make_classification(
  n_samples=10000,
  n_features=20,
@@ -1104,11 +1104,11 @@ X, y = make_classification(
 data = pd.dataFrame(X, columns=[f'feature_{i}' for i in range(20)])
 data['target'] = y
 
-# add temporary метки
+# add temporary tags
 data['timestamp'] = pd.date_range('2020-01-01', periods=len(data), freq='D')
 data = data.set_index('timestamp')
 
-# Различные Methods validation
+# Various Methods appreciation
 print("=== Holdout Validation ===")
 predictor_holdout = TabularPredictor(label='target')
 predictor_holdout.fit(data, holdout_frac=0.2, time_limit=300)
@@ -1131,29 +1131,29 @@ mc_results = monte_carlo_validation(data, 'target', n_iterations=50)
 mc_Analysis = analyze_validation_results(mc_results)
 print(f"Monte Carlo Analysis: {mc_Analysis}")
 
-# Визуализация результатов
+# Visualization of results
 plot_validation_results(backtest_results, metric='accuracy')
 ```
 
-## Лучшие практики validation
+## Best practices of vilification
 
-<img src="images/optimized/advanced_topics_overView.png" alt="Лучшие практики validation" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 6: Лучшие практики and рекомендации on validation*
+<img src="images/optimized/advanced_topics_overView.png" alt="Best practices of recovery" style="max-width: 100 per cent; light: auto; display: lock; marguin: 20px auto;">
+*Picture 6: Best practices and recommendations on validation*
 
-**Почему важны лучшие практики validation?** Потому что правильная validation - это основа надежных ML-моделей:
+# Why are best practices of validation important? # 'Cause the right thing to do is the foundation of reliable ML models:
 
-- **Выбор метода validation**: Правильный метод for типа данных and задачи
-- **Обработка несбалансированных данных**: Специальные техники for неравномерных классов
-- **validation ансамблей**: Особенности validation сложных моделей
-- **Monitoring validation**: Отслеживание качества in процессе обучения
-- **Интерпретация результатов**: Правильное понимание метрик validation
-- **Избежание ошибок**: Типичные ошибки and способы их предотвращения
+- ** Selection of method of validation**: Correct method for data type and task
+- ** Unbalanced data processing**: Special equipment for uneven classes
+- **validation ensemble**: Features of calidization of complex models
+- **Monitoring validation**: Quality tracking in learning
+- ** Interpretation of results**: Correct understanding of metric validation
+- ** Avoiding errors**: Typical errors and ways to prevent them
 
-### Выбор метода validation
+### Choice of the method of validation
 
 ```python
 def choose_validation_method(data_type, problem_type, data_size):
-"""Выбор оптимального метода validation"""
+"Selection of the best method of validation""
 
  if data_type == 'time_series':
  return 'time_series_backtest'
@@ -1165,13 +1165,13 @@ def choose_validation_method(data_type, problem_type, data_size):
  return 'monte_carlo'
 ```
 
-### configuration параметров validation
+## configurization parameters halidation
 
 ```python
 def optimize_validation_params(data, target_col):
-"""Оптимизация параметров validation"""
+"Optimization of Validation Parameters"
 
-# Определение оптимального количества фолдов
+# Determination of the optimum number of folds
  n_samples = len(data)
  if n_samples < 100:
  n_folds = 3
@@ -1180,7 +1180,7 @@ def optimize_validation_params(data, target_col):
  else:
  n_folds = 10
 
-# Определение размера holdout
+# The definition of the size of the goldout
  if n_samples < 1000:
  holdout_frac = 0.3
  else:
@@ -1193,33 +1193,33 @@ def optimize_validation_params(data, target_col):
  }
 ```
 
-## Устранение проблем validation
+## Overcoming problems of validation
 
-<img src="images/optimized/Troubleshooting_flowchart.png" alt="Устранение проблем validation" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 7: Диаграмма устранения проблем validation*
+<img src="images/optimized/Troubleshooting_flowchart.png" alt="Valification problems" style="max-width: 100 per cent; height: auto; display: block; marguin: 20px auto;">
+*Picture 7: Problem-solving diagram*
 
-**Почему важно знать, как устранять проблемы validation?** Потому что validation - это сложный process, and проблемы возникают часто:
+** Why is it important to know how to solve problems of validation?** Because validation is a complex process, and problems arise often:
 
-- **retraining (Overfitting)**: Модель запоминает тренировочные data
-- **Недообучение (Underfitting)**: Модель слишком простая for данных
-- **Нестабильные результаты**: Большая дисперсия между фолдами
-- **Утечка данных (data Leakage)**: Будущие data influence прошлые предсказания
-- **Неправильный выбор метрик**: metrics not соответствуют бизнес-целям
-- **Issues with data**: Некачественные or несбалансированные data
+- **retraining**: The model memorizes training data
+- ** Lack of education**: too easy for data
+- ** Unstable results**: Large dispersion between folds
+- ** Data leak (data Leakage)**: Future data influence past predictions
+- ** Wrong choice of metric**: metrics not match business objectives
+- **Issues with data**: Qualitative or unbalanced data
 
-### 🔧 Типичные проблемы and решения
+### ♪ Typical problems and solutions
 
-**Почему возникают проблемы validation?** Потому что validation - это сложный process with множеством подводных камней:
+# Why are there problems of validation? # 'Cause validation is a complex process with lots of underwater stones:
 
-- **Проблема**: retraining → **Решение**: Регуляризация, больше данных, проще модель
-- **Проблема**: Недообучение → **Решение**: Сложнее модель, больше признаков, больше данных
-- **Проблема**: Нестабильность → **Решение**: Больше фолдов, стратификация, больше данных
-- **Проблема**: Утечка данных → **Решение**: Правильное разделение, временная validation
-- **Проблема**: Неправильные metrics → **Решение**: Выбор метрик on бизнес-целям
+- **Problem**: Retraining ♪ ** Decision**: Regularization, more data, easier model
+- **Challenge**: Lack of education ♪** Decision**: More complex model, more signs, more data
+- **Problem**: Instability ♪ ** Decision**: More folds, stratification, more data
+- **The problem**: Data leak * ***: Correct separation, temporary validation
+- **Challenge**: Wrong metrics * ** Decision**: Selecting a metric on business objectives
 
-## Следующие шаги
+## Next steps
 
-После освоения методов validation переходите к:
-- [Продакшен деплою](./06_production.md)
-- [Переобучению моделей](./07_retraining.md)
-- [Лучшим практикам](./08_best_practices.md)
+Once applied, go to:
+- [Selled by default](./06_production.md)
+- [model re-training](./07_retraining.md)
+- [best practice](.08_best_practices.md)

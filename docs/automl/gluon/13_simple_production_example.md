@@ -1,70 +1,70 @@
-# Простой example: from идеи to продакшен деплоя
+# Simple example: From ideas to deeds sold
 
 **Author:** Shcherbyna Rostyslav
-**Дата:** 2024
+**Date:** 2024
 
-## Why простой example критически важен
+## Who just example is critical
 
-**Почему 90% ML-проектов not доходят to продакшена?** Потому что team усложняют process, пытаясь решить все проблемы сразу. Простой example показывает, как сделать Workingющую system за минимальное время.
+**Why 90 percent of the ML projects not go to sale?** Because team complicates the process by trying to solve all the problems at once. A simple example shows how to make the Working System in minimum time.
 
-### Проблемы сложных подходов
-- **Переусложнение**: Попытка решить все проблемы сразу
-- **Долгая разработка**: Месяцы on Planирование, дни on реализацию
-- **Технический долг**: Сложная architecture, которую сложно поддерживать
-- **Разочарование**: Команда теряет мотивацию из-за сложности
+### Problems of complex approaches
+- ** Re-complication**: Trying to solve all problems at once
+- ** Long development**: Months on Planning, Days on Implementation
+- ** Technical debt**: Complex architecture that is difficult to sustain
+- ** Disappointing**: Command loses motivation due to difficulty
 
-### Преимущества простого подхода
-- **Быстрый результат**: Workingющая система за дни, а not месяцы
-- **Понятность**: Каждый шаг Logsчен and объясним
-- **Итеративность**: Можно улучшать постепенно
-- **Мотивация**: Видимый прогресс вдохновляет команду
+### The benefits of a simple approach
+- ** Rapid result**: Working system in days and no months
+- **Explanatory**: Every step Logs is explained.
+- ** Inertia**: It is possible to improve gradually
+- **Motive**: Visible progress inspires the team
 
-## Введение
+## Introduction
 
-<img src="images/optimized/ml_workflow_process.png" alt="Workflow процесса создания ML-системы" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 13.1: Workflow процесса создания ML-системы - 8 этапов from идеи to продакшен деплоя with временными рамками*
+<img src="images/optimized/ml_workflow_process.png" alt="Workflow process for the creation of the ML system" style="max-width: 100 per cent; light: auto; display: lock; marguin: 20px auto;">
+*Picture 13.1: Workflow of the ML system development process - 8 steps from idea to sale with time frame*
 
-**Почему начинаем with простого примера?** Потому что он показывает весь цикл разработки ML-системы from начала to конца, not отвлекаясь on сложные details.
+**Why start with a simple example?** Because it shows the entire ML development cycle from beginning to end, not distracting on complex datails.
 
-Этот раздел показывает **самый простой путь** создания робастной прибыльной ML-модели with использованием AutoML Gluon - from первоначальной идеи to полного продакшен деплоя on DEX blockchain.
+This section shows ** the easiest way** to create a robotic profitable ML model with the AutoML Gloon - from the original idea to the full sale of the DEX blackchin.
 
-## Шаг 1: Определение задачи
+## Step 1: Defining the task
 
-**Почему определение задачи - самый важный шаг?** Потому что неправильно определенная задача приводит к неправильному решению. Это как постройка дома - если фундамент кривой, весь дом будет кривым.
+It's like building a house-- if the foundation of the curve, the whole house would be a curve.
 
-**Ключевые принципы определения задачи:**
-- **Четкая Goal**: Что именно мы хотим предсказать?
-- **Измеримые metrics**: Как мы будем оценивать успех?
-- **Доступные data**: Есть ли достаточно данных for обучения?
-- **Практическая применимость**: Будет ли решение полезным in реальности?
+** Key principles for target-setting:**
+- What exactly do we want to predict?
+- ** Measured metrics**: How are we going to measure success?
+- ** Accessible data**: Is there enough data for training?
+- ** Practical applicability**: Will the solution be useful in reality?
 
-### Идея
-**Почему выбираем Prediction цены токена?** Потому что это понятная задача with четкими метриками успеха and доступными данными.
+### The idea
+Because it's an understandable task with clear success metrics and available data.
 
-Создать модель for предсказания цены токена on basis исторических данных and технических indicators.
+Create a model for predicting the price of the current on historical data base and technical indicators.
 
-**Почему именно криптовалюты?**
-- **Доступность данных**: Бесплатные исторические data
-- **Волатильность**: Высокая изменчивость цены for обучения
-- **Прозрачность**: Все транзакции публичны
-- **Актуальность**: Быстро меняющийся рынок
+♪ Why the crypts? ♪
+- ** Data availability**: Free historical data
+- ** Volatility**: High price volatility for training
+- ** Transparency**: All transactions are public
+- **Actuality**: Rapidly changing market
 
 ### Goal
-**Почему 70% точности достаточно?** Потому что in трейдинге даже небольшое преимущество дает прибыль, а 70% - это уже статистически значимое преимущество.
+Because in trade, even a small advantage gives profits, and 70 percent is already statistically significant.
 
-- **Точность**: >70% правильных predictions направления движения цены
-- **Робастность**: Стабильная Working in различных рыночных условиях
-- **Прибыльность**: Положительный ROI on testsых данных
+- **Definity**: >70 per cent correct price directions
+- **Platitude**: Stable Working in different market conditions
+- ** profit**: Positive ROI on test data
 
-## Шаг 2: Подготовка данных
+## Step 2: Data production
 
-**Почему подготовка данных занимает 80% времени ML-проекта?** Потому что качество данных напрямую влияет on качество модели. Плохие data = плохая модель, независимо from сложности алгоритма.
+**Why does it take 80 percent of the time of the ML project to produce the data?** Because the quality of the data directly affects the quality of the model. Bad data = bad model, independently from the complexity of the algorithm.
 
-**Ключевые этапы подготовки данных:**
-- **Загрузка**: Получение данных из надежных источников
-- **clean**: remove выбросов and пропущенных значений
-- **Feature Engineering**: create новых признаков из существующих
-- **validation**: check качества and консистентности данных
+** Key steps in data production:**
+- ** Loading**: Obtaining data from reliable sources
+- **clean**: remove of emissions and missing values
+- **Feature Engineering**: new features from existing
+- **validation**: quality and consistency of data
 
 ```python
 import pandas as pd
@@ -76,372 +76,372 @@ from datetime import datetime, timedelta
 
 def prepare_crypto_data(symbol='BTC-USD', period='2y'):
  """
-Подготовка данных for криптовалютной модели with техническими индикаторами
+Preparation of data for the cryptative model with technical indicators
 
  Parameters:
  -----------
  symbol : str, default='BTC-USD'
-Символ криптовалюты for загрузки:
-- 'BTC-USD': Bitcoin к USD (наиболее ликвидный)
-- 'ETH-USD': Ethereum к USD
-- 'ADA-USD': Cardano к USD
-- 'SOL-USD': Solana к USD
-- Другие доступные символы on Yahoo Finance
+Symbol for downloads:
+- 'BTC-USD': Bitcoin to USD (most liquid)
+ETH-USD: Ethereum to USD
+- 'ADA-USD': Cardano to USD
+- 'SOL-USD': Solana to USD
+- Other available characters on Yahoo Finance
 
  period : str, default='2y'
-Период исторических данных:
-- '1d': 1 день
-- '5d': 5 дней
-- '1mo': 1 месяц
-- '3mo': 3 месяца
-- '6mo': 6 месяцев
-- '1y': 1 год
-- '2y': 2 года (рекомендуется for обучения)
-- '5y': 5 лет
-- '10y': 10 лет
-- 'max': максимальный доступный период
+Historical data period:
+- '1d': 1 day
+- '5d': 5 days
+- '1mo': 1 month
+- '3mo': 3 months
+- '6mo': 6 months
+- '1y': 1 year
+- '2y': 2 years (recommended for training)
+- '5y': 5 years
+- '10y': 10 years
+- 'max': maximum available period
 
  Returns:
  --------
  pd.dataFrame
-Подготовленные data with техническими индикаторами:
+Data with technical indicators:
  - OHLCV data: Open, High, Low, Close, Volume
-- SMA индикаторы: SMA_20, SMA_50 (скользящие средние)
-- RSI индикатор: RSI (index относительной силы)
-- MACD индикатор: MACD, MACD_signal, MACD_hist
+- SMA indicators: SMA_20, SMA_50 (rolling average)
+RSI indicator: RSI (index relative force)
+- MACD indicator: MACD, MACD_signal, MACD_hist
  - Bollinger Bands: BB_upper, BB_middle, BB_lower
-- Целевая переменная: target (0/1 for price direction)
+- Target variable: Target (0/1 for language direction)
 
  Notes:
  ------
-Technical индикаторы:
-- SMA_20: 20-периодная скользящая средняя (краткосрочный тренд)
-- SMA_50: 50-периодная скользящая средняя (среднесрочный тренд)
-- RSI: index относительной силы (0-100, перекупленность/перепроданность)
-- MACD: схождение-расхождение скользящих средних (трендовый индикатор)
-- Bollinger Bands: полосы Боллинджера (волатильность and уровни поддержки/сопротивления)
+Technical indicators:
+- SMA_20: 20-period moving average (short-term trend)
+- SMA_50: 50-period moving average (average trend)
+- RSI: index of relative strength (0-100, oversell/resold)
+- MACD: convergence-dispersion of sliding averages (trend indicator)
+- Bollinger Bands: Bollinger stripes (volatility and support/resistance levels)
 
-Целевая переменная:
-- target = 1: цена выросла (покупка)
-- target = 0: цена упала (продажа)
-- Основана on процентном изменении цены закрытия
+Target variable:
+- Target = 1: The price has risen (buying)
+- Target = 0: price down (sales)
+- Based on percentage change in closing price
  """
 
-# Загрузка исторических данных with Yahoo Finance
+# Uploading historical data with Yahoo Finance
  ticker = yf.Ticker(symbol)
  data = ticker.history(period=period)
 
-# Technical индикаторы for Analysis трендов and волатильности
-data['SMA_20'] = talib.SMA(data['Close'], timeperiod=20) # 20-периодная скользящая средняя
-data['SMA_50'] = talib.SMA(data['Close'], timeperiod=50) # 50-периодная скользящая средняя
-data['RSI'] = talib.RSI(data['Close'], timeperiod=14) # index относительной силы (14 periods)
-data['MACD'], data['MACD_signal'], data['MACD_hist'] = talib.MACD(data['Close']) # MACD индикатор
-data['BB_upper'], data['BB_middle'], data['BB_lower'] = talib.BBANDS(data['Close']) # Полосы Боллинджера
+#Technical indicators for Trends and Volatility
+Data['SMA_20'] = Talib.SMA(data['Close'], timeperiod=20) # 20-year rolling average
+Data['SMA_50'] = Talib.SMA(data['Close'], timeperiod=50) # 50-period rolling average
+Data['RSI'] = Talib.RSI(data['Close'], timeperiod=14) # index relative force (14 periods)
+Data['MACD'], data['MACD_signal'], data['MACD_hist'] = talib.MACD(data['Close']) # MACD indicator
+Data['BB_upper'], data['BB_midle'], data['BB_lower'] = Talib.BBANDS(data['Close']) # Bollinger hairs
 
-# Целевая переменная - направление движения цены
-data['price_change'] = data['Close'].pct_change() # Процентное изменение цены
-data['target'] = (data['price_change'] > 0).astype(int) # Бинарная целевая переменная
+# Target variable - direction of price
+Data['price_change'] = data['Close']. pct_change() # Percentage price change
+Data['target'] = (data['price_change'] > 0°astype(int) # Binary target variable
 
-# Удаляем NaN значения (появляются из-за технических indicators)
+# Remove NaN values (produced from technical indicators)
  data = data.dropna()
 
  return data
 
-# Подготовка данных
+# Data production
 crypto_data = prepare_crypto_data('BTC-USD', '2y')
-print(f"data подготовлены: {crypto_data.shape}")
+print(f"data ready: {crypto_data.chape}})
 ```
 
-## Шаг 3: create модели with AutoML Gluon
+## Step 3: Create Model with AutoML Gluon
 
-**Почему AutoML Gluon ideal for быстрого прототипирования?** Потому что он автоматически выбирает лучшие алгоритмы, настраивает гиперпараметры and создает ансамбли моделей, экономя месяцы ручной работы.
+Because it automatically selects the best algorithms, adjusts hyperparameters, and creates model ensembles, saving months of manual work.
 
-**Преимущества AutoML Gluon:**
-- **Автоматический выбор алгоритмов**: not нужно знать, какой алгоритм лучше
-- **Оптимизация гиперпараметров**: Автоматический поиск лучших настроек
-- **create ансамблей**: Комбинирование нескольких моделей for лучшего результата
-- **Быстрое обучение**: Эффективные алгоритмы and параллелизация
+** Benefits of AutoML Gluon:**
+- **Automatic choice of algorithms**:not need to know which algorithm is better
+- **Optimization of hyperparameters**: Automatic search for the best settings
+- **create ensemble**: Combining several models for a better result
+- ** Rapid learning**: Effective algorithms and parallelization
 
 ```python
 def create_simple_model(data, test_size=0.2):
  """
-create простой модели with AutoML Gluon for предсказания price direction
+a simple model with AutoML Gloon for predicting Price direction
 
  Parameters:
  -----------
  data : pd.dataFrame
-Подготовленные data with техническими индикаторами:
-- Содержит OHLCV data and Technical индикаторы
-- Должны быть обWorkingны (удалены NaN)
-- temporary ряд with историческими данными
+Data with technical indicators:
+- Contains OHLCV data and technical indicators
+- There must be a Warkingn (NaN removed)
+- the time series with historical data
 
  test_size : float, default=0.2
-Доля данных for тестирования:
-- 0.1: 10% for теста (быстрое тестирование)
-- 0.2: 20% for теста (стандартное разделение)
-- 0.3: 30% for теста (больше данных for validation)
+Proportion of data for testing:
+0.1: 10% for test (rapid test)
+0.2: 20% for test (standard separation)
+0.3: 30% for test (more data for validation)
 
  Returns:
  --------
  tuple
  (predictor, test_data, feature_columns):
-- predictor: обученная модель TabularPredictor
-- test_data: testsые data for оценки
-- feature_columns: List признаков модели
+- Predicator: TabularPredicator model trained
+- test_data: test data for evaluation
+- body_columns: List of model features
 
  Notes:
  ------
-process создания модели:
-1. Подготовка признаков (OHLCV + Technical индикаторы)
-2. create целевой переменной (направление цены)
-3. Разделение on train/test (временное разделение)
-4. create предиктора with настройками for бинарной классификации
-5. Обучение with быстрыми предустановками
+Model development process:
+1. Preparation of indicators (OHLCV + Technical indicators)
+2. target variable (price direction)
+3. Division on Train/test (temporal separation)
+4. Reactor pre-indicator with settings for binary classification
+5. Training with rapid installations
 
-Признаки модели:
+Model signs:
  - OHLCV: Open, High, Low, Close, Volume
-- SMA: SMA_20, SMA_50 (скользящие средние)
-- RSI: index относительной силы
+- SMA: SMA_20, SMA_50 (slipping medium)
+RSI: index relative strength
  - MACD: MACD, MACD_signal, MACD_hist
  - Bollinger Bands: BB_upper, BB_middle, BB_lower
 
-Settings обучения:
-- problem_type: 'binary' (бинарная классификация)
-- eval_metric: 'accuracy' (точность)
+Settings of learning:
+- Problem_type: 'binary'
+Eval_metric: 'accuracy' (accuracy)
  - time_limit: 300s (5 minutes)
-- presets: 'medium_quality_faster_train' (баланс качества and скорости)
+- presets: 'medium_quality_faster_training'
  """
 
-# Подготовка признаков for модели
-# Включаем OHLCV data and все Technical индикаторы
+# Preparation of indicators for the model
+# Including OHLCV data and all technical indicators
  feature_columns = [
  'Open', 'High', 'Low', 'Close', 'Volume', # OHLCV data
-'SMA_20', 'SMA_50', # Скользящие средние
-'RSI', # index относительной силы
-'MACD', 'MACD_signal', 'MACD_hist', # MACD индикатор
-'BB_upper', 'BB_middle', 'BB_lower' # Полосы Боллинджера
+'SMA_20', 'SMA_50', #Slipping Medium
+'RSI', #index relative strength
+'MACD', 'MACD_signal', 'MACD_hist', #MACD indicator
+'BB_upper', 'BB_midle', 'BB_lower' # Bollinger Poles
  ]
 
-# create целевой переменной
-# Предсказываем направление цены on следующий день
+# the target variable
+# We predict the direction of the price on the next day
  data['target'] = (data['Close'].shift(-1) > data['Close']).astype(int)
-data = data.dropna() # Удаляем NaN после сдвига
+Data = Data.dropna() # Remove NaN after shift
 
-# Разделение on train/test (временное разделение for временных рядов)
+# Division on time/test
  split_idx = int(len(data) * (1 - test_size))
-train_data = data.iloc[:split_idx] # Обучающие data (первые 80%)
-test_data = data.iloc[split_idx:] # testsые data (последние 20%)
+train_data = data.iloc[:split_idx] # Training data (first 80%)
+test_data = data.iloc[split_idx:] #testsy data (last 20 per cent)
 
-# create предиктора with настройками for бинарной классификации
+# the pre-indexor with settings for binary classification
  predictor = TabularPredictor(
-label='target', # Целевая переменная
-problem_type='binary', # Бинарная классификация
-eval_metric='accuracy' # Метрика оценки (точность)
+Label='target', #Target
+Problem_type='binary', #binary classification
+Eval_metric='accuracy' #Metric assessment (accuracy)
  )
 
-# Обучение модели with быстрыми настройками
+# Training the model with fast settings
  predictor.fit(
-train_data[feature_columns + ['target']], # data for обучения
-time_limit=300, # Время обучения in секундах (5 minutes)
-presets='medium_quality_faster_train' # Быстрые предinstallation
+train_data[feature_columns + ['target']], #data for learning
+Time_limit=300, #Learning time in seconds (5 minutes)
+"Presets"="media_quality_faster_training" # Rapid pre-installation
  )
 
  return predictor, test_data, feature_columns
 
-# create модели
+♪ Create Model
 model, test_data, features = create_simple_model(crypto_data)
 ```
 
-## Шаг 4: validation модели
+## Step 4: Validation model
 
-<img src="images/optimized/validation_methods_comparison.png" alt="Methods validation ML-моделей" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 13.2: Methods validation ML-моделей - Backtest, Walk-Forward, Monte Carlo with примерами and сравнением*
+<img src="images/optimized/validation_methods_comparison.png" alt="Methods appreciation ML models" style="max-width: 100 per cent; light: auto; display: block; marguin: 20px auto;">
+*Picture 13.2: Methods satisfaction ML models - Backtest, Walk-Forward, Monte Carlo with examples and comparisons*
 
-**Почему validation критически важна?** Потому что без правильной validation невозможно понять, будет ли модель Workingть in реальных условиях. Это как тестирование самолета перед полетом.
+Because without the correct validation, it's impossible to understand whether the Working model will be in real life. It's like testing an airplane before it flies.
 
 ### Backtest
 ```python
 def simple_backtest(predictor, test_data, features):
  """
-Простой backtest for оценки торговой стратегии on basis ML-модели
+Simple backtest for evaluation of trade strategy on base ML model
 
  Parameters:
  -----------
  predictor : TabularPredictor
-Обученная модель for предсказания:
-- Должна быть обучена on исторических данных
-- Поддерживает predict() and predict_proba()
-- Готова for предсказания on новых данных
+Trained model for prediction:
+- Should be trained on historical data.
+- Supports predict() and predict_proba()
+- Ready for predicting new data.
 
  test_data : pd.dataFrame
-testsые data for backtest:
-- Содержит исторические data (OHLCV + индикаторы)
-- Включает целевую переменную 'target'
-- not участвовали in обучении модели
+Testsy data for backtest:
+- Contains historical data (OHLCV + indicators)
+- Including target variable 'target'
+- not involved in model training
 
  features : List[str]
-List признаков for предсказания:
-- Должны соответствовать приsignм обучения
-- Включают OHLCV data and Technical индикаторы
+List of signs for prediction:
+- They must be in line with the sign learning.
+- Includes OHLCV data and technical indicators
 
  Returns:
  --------
  Dict[str, Any]
-Результаты backtest:
-- accuracy: точность predictions (0-1)
-- total_return: общая доходность стратегии
-- sharpe_ratio: коэффициент Шарпа (риск-скорректированная доходность)
-- predictions: предсказания модели (0/1)
-- probabilities: вероятности классов
+Backtest results:
+- accuracy: accuracy of instructions (0-1)
+- total_return: total strategy return
+- sharpe_ratio: Sharpe coefficient (risk-adjusted return)
+- Preventions: model predictions (0/1)
+- probabilities: Class probability
 
  Notes:
  ------
-Торговая стратегия:
-- Покупка: если вероятность роста > 0.6
-- Продажа: если вероятность падения > 0.6
-- Удержание: если уверенность < 0.6
+Trade strategy:
+- Purchase: if the probability of growth > 0.6
+- Sale: if probability of fall > 0.6
+- Retention: if confidence < 0.6
 
-metrics оценки:
-- Accuracy: доля правильных predictions направления
-- Total Return: суммарная доходность стратегии
-- Sharpe Ratio: доходность on единицу риска (стандартизированная)
+metrics assessment:
+- Accuracy: percentage of correct preferences
+- Total Return: the total return of the strategy
+- Sharpe Ratio: return on risk unit (standardized)
 
-Ограничения простого backtest:
-- not учитывает комиссии and спреды
-- Идеальное исполнение сделок
-- Отсутствие slippage
+Limitations of simple backtest:
+-not takes into account commissions and spreads
+- Perfect execution of transactions
+- No slippage
  """
 
-# Предсказания модели on testsых данных
+# Prefeasibility of the model on test data
  predictions = predictor.predict(test_data[features])
  probabilities = predictor.predict_proba(test_data[features])
 
-# Расчет metrics точности
+# Calculation of accuracy
  accuracy = (predictions == test_data['target']).mean()
 
-# Подготовка данных for расчета прибыли
-test_data = test_data.copy() # Копия for избежания изменения исходных данных
+# Preparation of data for profit calculation
+test_data = test_data.copy() # Copy for avoiding change in source data
  test_data['Prediction'] = predictions
  test_data['probability'] = probabilities[1] if len(probabilities.shape) > 1 else probabilities
 
-# Простая торговая стратегия: покупаем если уверенность > 60%
+# Simple trade strategy: buy if confidence > 60%
  test_data['signal'] = (test_data['probability'] > 0.6).astype(int)
-test_data['returns'] = test_data['Close'].pct_change() # Дневные доходности
-test_data['strategy_returns'] = test_data['signal'] * test_data['returns'] # Доходности стратегии
+test_data['returns'] = test_data['Close'] pct_change() # Daily returns
+test_data['strategy_returns'] = test_data['signal'] * test_data['returns'] # Policy return
 
-# Расчет метрик performance
-total_return = test_data['strategy_returns'].sum() # Общая доходность
-sharpe_ratio = test_data['strategy_returns'].mean() / test_data['strategy_returns'].std() * np.sqrt(252) # Коэффициент Шарпа (годовой)
+# Calculation of metric performance
+total_return = test_data['Strategy_returns'].sum() # Total return
+sharpe_ratio = test_data['Strategy_returns'].mean() / test_data['Strategy_returns'].std() * np.sqrt(252) # Sharp coefficient (annual)
 
  return {
-'accuracy': accuracy, # Точность predictions
-'total_return': total_return, # Общая доходность
-'sharpe_ratio': sharpe_ratio, # Коэффициент Шарпа
-'predictions': predictions, # Предсказания модели
-'probabilities': probabilities # Вероятности классов
+'accuracy': accuracy, #precision accuracy
+'Total_return':total_return, # Total return
+'sharpe_ratio': Sharpe_ratio, # Sharpe coefficient
+'predictations': preferences, #model predictions
+'Probabilities': Probabilities # Class Probabilities
  }
 
 # Launch backtest
 backtest_results = simple_backtest(model, test_data, features)
-print(f"Точность: {backtest_results['accuracy']:.3f}")
-print(f"Общая доходность: {backtest_results['total_return']:.3f}")
-print(f"Коэффициент Шарпа: {backtest_results['sharpe_ratio']:.3f}")
+Print(f "Totality: {backtest_results['accuracy']:.3f}")
+total return: {backtest_effects['total_return']:3f})
+(f "Sharp coefficient: {backtest_effects['sharpe_ratio']:3f}")
 ```
 
 ### Walk-Forward validation
 ```python
 def simple_walk_forward(data, features, window_size=252, step_size=30):
  """
-Простая walk-forward validation for оценки стабильности модели во времени
+Simple Walk-forward validation for assessing model stability over time
 
  Parameters:
  -----------
  data : pd.dataFrame
-Полные исторические data:
-- Содержит OHLCV data and Technical индикаторы
-- Включает целевую переменную 'target'
-- Отсортированы in time (хроноLogsческий порядок)
+Complete historical data:
+- Contains OHLCV data and technical indicators
+- Including target variable 'target'
+- Classified in time (chronoLogsic order)
 
  features : List[str]
-List признаков for обучения:
-- Должны быть доступны во all временных периодах
-- Включают OHLCV data and Technical индикаторы
+List of indicators for learning:
+- Should be available in all time periods
+- Includes OHLCV data and technical indicators
 
  window_size : int, default=252
-Размер обучающего окна (количество дней):
-- 126: 6 месяцев (краткосрочные паттерны)
-- 252: 1 год (стандартное окно)
-- 504: 2 года (долгосрочные паттерны)
-- 756: 3 года (максимальное окно)
+The size of the training window (days):
+126: 6 months (short term)
+252: 1 year (standard window)
+- 504: 2 years (long term)
+- 756: 3 years (maximum window)
 
  step_size : int, default=30
-Шаг перемещения окна (количество дней):
-- 7: еженедельное update (частое retraining)
-- 30: ежемесячное update (стандартный шаг)
-- 90: ежеквартальное update (редкое retraining)
+Step of the window (number of days):
+- 7: weekly update (private retraining)
+- 30: monthly update (standard step)
+- 90: quarterly updating
 
  Returns:
  --------
  List[Dict[str, Any]]
-Результаты walk-forward validation:
-- period: index начала testsого периода
-- accuracy: точность модели on testsом периоде
-- train_size: размер обучающей выборки
-- test_size: размер testsой выборки
+Walk-forward validation results:
+- period: index beginning of test period
+- accuracy: accuracy of the model on test period
+- train_size: sample size
+- test_size: tests sample size
 
  Notes:
  ------
 Walk-forward validation:
-- Обучаем модель on исторических данных
-- Тестируем on следующих данных
-- Перемещаем окно on step_size дней
-- Повторяем to конца данных
+- Training a model on historical data.
+- Testing on the following data:
+- Move window on step_size days
+- Repeat to the end of data
 
-Преимущества:
-- Реалистичная оценка performance
-- Учет temporary dependencies данных
-- Оценка стабильности модели
+Benefits:
+- Realistic evaluation of performance
+- Taking into account data demand
+- Evaluation of model stability
 
-Ограничения:
-- Высокая вычислительная сложность
-- Требует много времени on выполнение
-- Может быть нестабильной on малых данных
+Limitations:
+- High computing complexity
+- It takes a lot of time to do it.
+- Could be unstable on small data.
  """
 
  results = []
 
-# Walk-forward validation: скользящее окно in time
+# Walk-forward recognition: sliding window in time
  for i in range(window_size, len(data) - step_size, step_size):
-# Обучающие data (исторические data)
+# Training data (historical data)
  train_data = data.iloc[i-window_size:i]
 
-# testsые data (будущие data)
+# Testsy data
  test_data = data.iloc[i:i+step_size]
 
-# create and обучение модели for текущего периода
+# Creation and training of the model for the current period
  predictor = TabularPredictor(
-label='target', # Целевая переменная
-problem_type='binary', # Бинарная классификация
-eval_metric='accuracy' # Метрика оценки
+Label='target', #Target
+Problem_type='binary', #binary classification
+Eval_metric='accuracy' #Metric evaluation
  )
 
-# Обучение модели on исторических данных
+# Training a model on historical data
  predictor.fit(
-train_data[features + ['target']], # Обучающие data
-time_limit=60, # Время обучения in секундах (1 minutesа)
-presets='medium_quality_faster_train' # Быстрые предinstallation
+train_data[features + ['target']], #learning data
+Time_limit=60, # Learning time in seconds (1 minutes)
+"Presets"="media_quality_faster_training" # Rapid pre-installation
  )
 
-# Предсказания on testsых данных
+# Premonitions on test data
  predictions = predictor.predict(test_data[features])
-accuracy = (predictions == test_data['target']).mean() # Точность on testsом периоде
+accuracy = (predictations = = test_data['target']).mean() # Accuracy on test period
 
-# Сохранение результатов for текущего периода
+# Maintaining results for the current period
  results.append({
-'period': i, # index начала testsого периода
-'accuracy': accuracy, # Точность модели
-'train_size': len(train_data), # Размер обучающей выборки
-'test_size': len(test_data) # Размер testsой выборки
+'period':i, #index beginning of test period
+'accuracy': accuracy, #Accuracy of the model
+'Train_size': Len(training_data), #Sample size
+'test_size': Len(test_data) # Testsamp size
  })
 
  return results
@@ -449,118 +449,118 @@ accuracy = (predictions == test_data['target']).mean() # Точность on tes
 # Launch walk-forward validation
 wf_results = simple_walk_forward(crypto_data, features)
 avg_accuracy = np.mean([r['accuracy'] for r in wf_results])
-print(f"Средняя точность walk-forward: {avg_accuracy:.3f}")
+(f) Average accuracy of walk-forward: {avg_accuracy:.3f})
 ```
 
 ### Monte Carlo validation
 ```python
 def simple_monte_carlo(data, features, n_simulations=100):
  """
-Простая Monte Carlo validation for оценки стабильности модели
+Simple Monte Carlo validation for model stability assessment
 
  Parameters:
  -----------
  data : pd.dataFrame
-Полные исторические data:
-- Содержит OHLCV data and Technical индикаторы
-- Включает целевую переменную 'target'
-- Достаточный размер for случайной выборки
+Complete historical data:
+- Contains OHLCV data and technical indicators
+- Including target variable 'target'
+- Sufficient size for random sampling
 
  features : List[str]
-List признаков for обучения:
-- Должны быть доступны во all выборках
-- Включают OHLCV data and Technical индикаторы
+List of indicators for learning:
+- Should be available in all samples.
+- Includes OHLCV data and technical indicators
 
  n_simulations : int, default=100
-Количество симуляций Monte Carlo:
-- 50: быстрая оценка (низкая точность)
-- 100: стандартная оценка (баланс скорости and точности)
-- 500: точная оценка (высокая точность)
-- 1000: максимальная точность (медленно)
+Number of Monte carlo simulations:
+- 50: rapid assessment (low accuracy)
+- 100: Standard evaluation (speed and accuracy balance)
+- 500: accurate assessment (high accuracy)
+- 1000: maximum accuracy (slow)
 
  Returns:
  --------
  Dict[str, Any]
-Результаты Monte Carlo validation:
-- mean_accuracy: средняя точность on all симуляциям
-- std_accuracy: стандартное отклонение точности
-- min_accuracy: минимальная точность
-- max_accuracy: максимальная точность
-- results: List all результатов точности
+Monte Carlo validation results:
+- mean_accuracy: mean accuracy on all simulations
+- std_accuracy: standard accuracy deviation
+- min_accuracy: minimum accuracy
+- max_accuracy: maximum accuracy
+- results: List all results of accuracy
 
  Notes:
  ------
 Monte Carlo validation:
-- Случайная выборка данных for каждой симуляции
-- Обучение модели on случайной выборке
-- Тестирование on оставшихся данных
-- Анализ распределения результатов
+- Random sampling for each simulation
+- Training on random sampling
+- Testing on remaining data
+- Analysis of the distribution of results
 
-Преимущества:
-- Оценка стабильности модели
-- Учет вариативности данных
-- Статистическая значимость результатов
+Benefits:
+- Evaluation of model stability
+- Taking into account data variability
+- Statistical significance of results
 
-Ограничения:
-- not учитывает временную dependency
-- Может быть нереалистичной for временных рядов
-- Высокая вычислительная сложность
+Limitations:
+-not takes into account temporary dependency
+- Maybe unrealistic for time series.
+- High computing complexity
  """
 
  results = []
 
-# Monte Carlo симуляции: случайные выборки данных
+# Monte Carlo simulations: random data samples
  for i in range(n_simulations):
-# Случайная выборка 80% данных
+# A random sample of 80% of the data
  sample_size = int(len(data) * 0.8)
-sample_data = data.sample(n=sample_size, random_state=i) # Воспроизводимая случайность
+sample_data = data.sample(n=sample_size, random_state=i) # Reproducible accident
 
-# Разделение on train/test (80/20)
+# Separation on train/test (80/20)
  split_idx = int(len(sample_data) * 0.8)
-train_data = sample_data.iloc[:split_idx] # Обучающие data
-test_data = sample_data.iloc[split_idx:] # testsые data
+Train_data = sample_data.iloc[:split_idx] # Educating data
+test_data = sample_data.iloc[split_idx:] #testsy data
 
-# create модели for текущей симуляции
+# of the model for the current simulation
  predictor = TabularPredictor(
-label='target', # Целевая переменная
-problem_type='binary', # Бинарная классификация
-eval_metric='accuracy' # Метрика оценки
+Label='target', #Target
+Problem_type='binary', #binary classification
+Eval_metric='accuracy' #Metric evaluation
  )
 
-# Обучение модели on случайной выборке
+# Training a model on random sampling
  predictor.fit(
-train_data[features + ['target']], # Обучающие data
-time_limit=30, # Время обучения in секундах (30 секунд)
-presets='medium_quality_faster_train' # Быстрые предinstallation
+train_data[features + ['target']], #learning data
+Time_limit=30, #Learning time in seconds (30 seconds)
+"Presets"="media_quality_faster_training" # Rapid pre-installation
  )
 
-# Предсказания on testsых данных
+# Premonitions on test data
  predictions = predictor.predict(test_data[features])
-accuracy = (predictions == test_data['target']).mean() # Точность текущей симуляции
+accuracy = (predications = = test_data['target']).mean() # Accuracy of the current simulation
 
-results.append(accuracy) # Сохранение результата
+results.append(accuracy) # Retaining result
 
-# Анализ результатов Monte Carlo
+# Analysis of the Monte Carlo results
  return {
-'mean_accuracy': np.mean(results), # Средняя точность
-'std_accuracy': np.std(results), # Стандартное отклонение
-'min_accuracy': np.min(results), # Минимальная точность
-'max_accuracy': np.max(results), # Максимальная точность
-'results': results # Все результаты for детального Analysis
+'mean_accuracy': np.mean(s), #average accuracy
+'std_accuracy': np.std(results), # Standard deviation
+'min_accuracy': np.min(s), #minimum accuracy
+'max_accuracy': np.max(s), #maximum accuracy
+'Results': results # All results for detailed Analysis
  }
 
 # Launch Monte Carlo
 mc_results = simple_monte_carlo(crypto_data, features)
-print(f"Monte Carlo - Средняя точность: {mc_results['mean_accuracy']:.3f}")
-print(f"Monte Carlo - Стандартное отклонение: {mc_results['std_accuracy']:.3f}")
+pint(f"Monte carlo - Average accuracy: {mc_results['mean_accuracy']:3f})
+print(f"Monte carlo - Standard deviation: {mc_results['std_accuracy']:3f}})
 ```
 
-## Шаг 5: create API for продакшена
+## Step 5: Create API for Sales
 
-<img src="images/optimized/production_architecture_Detailed.png" alt="architecture продакшен ML-системы" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 13.3: architecture продакшен ML-системы - components, потоки данных, слои обработки*
+<img src="images/optimized/production_architecture_Detailed.png" alt="architecture produced by ML-system" style="max-width: 100 per cent; exercise: auto; display: block; marguin: 20px auto;">
+*Picture 13.3: Architecture produced by ML systems - components, data flows, processing layers*
 
-**Почему API - ключевой компонент продакшен системы?** Потому что он обеспечивает interface между ML-моделью and внешними системами, позволяя использовать предсказания in реальном времени.
+**Why is API a key component of the system sold?** Because it provides interface between the ML model and external systems, allowing the use of real-time predictions.
 
 ```python
 from flask import Flask, request, jsonify
@@ -570,82 +570,82 @@ import numpy as np
 
 app = Flask(__name__)
 
-# Загрузка модели
+# Uploading the model
 model = joblib.load('crypto_model.pkl')
 
 @app.route('/predict', methods=['POST'])
 def predict():
  """
-API endpoint for предсказания price direction криптовалюты
+API endpoint for predicting Price direction cryptals
 
  Parameters:
  -----------
  request.json : Dict[str, Any]
-JSON запрос with data for предсказания:
-- symbol: str - символ криптовалюты (например, 'BTC-USD')
-- Timeframe: str - temporary интервал (например, '1h', '1d')
-- timestamp: int - временная метка запроса
-- features: Dict[str, float] - Technical индикаторы (опционально)
+JSON request with data for prediction:
+- symbol: STR is a symbol of crypthalates (e.g. 'BTC-USD')
+- Timeframe: str - time interval (e.g. '1h', '1d')
+- timestamp:int is the time mark of the request
+- Features: Dict[str, float] - Technical indicators (optional)
 
  Returns:
  --------
  JSON Response
-Результат предсказания:
-- Prediction: int - Prediction (0 - падение, 1 - рост)
-- probability: float - вероятность роста (0-1)
-- confidence: str - уровень уверенности ('low', 'medium', 'high')
+The result of the prediction:
+- Pride: in - Predation (0 - fall, 1 - growth)
+- Probability: float is the probability of growth (0-1)
+- confidence: STR is the level of confidence ('low', 'mediam', 'high')
 
  Raises:
  -------
  HTTPException
-- 400: ошибка in данных запроса
-- 500: внутренняя ошибка сервера
+- 400: error in the request
+- 500: server internal error
 
  Notes:
  ------
-process предсказания:
-1. Получение данных из JSON запроса
-2. Подготовка признаков for модели
-3. Выполнение предсказания
-4. Расчет уровня уверенности
-5. Возврат результата in JSON формате
+Prognosis process:
+1. Collection of data from JSON request
+2. Preparation of indicators for the model
+3. The fulfillment of the prophecy
+4. Calculation of confidence level
+5. Returning the result in JSON
 
-Уровни уверенности:
-- high: вероятность > 0.7 (высокая уверенность)
-- medium: вероятность 0.5-0.7 (средняя уверенность)
-- low: вероятность < 0.5 (низкая уверенность)
+Confidence levels:
+- high: probability > 0.7 (high confidence)
+- medium: probability 0.5-0.7 (average confidence)
+- low: probability < 0.5 (low confidence)
  """
 
  try:
-# Получение данных из JSON запроса
+# Collection of data from JSON request
  data = request.json
 
-# Подготовка признаков for модели
-# Преобразование JSON in dataFrame for совместимости with моделью
+# Preparation of indicators for the model
+# Transforming JSON in DataFrame for compatibility with the model
  features = pd.dataFrame([data])
 
-# Prediction with использованием обученной модели
-Prediction = model.predict(features) # Prediction класса (0/1)
-probability = model.predict_proba(features) # Вероятности классов
+#Pradition with the use of a trained model
+Pradition = model.prededict(features) #Pediction class (0/1)
+Probability = model.predict_proba(features) # Class Probabilities
 
-# Расчет уровня уверенности on basis вероятности
-prob_rise = float(probability[0][1]) # Вероятность роста
+# Calculation of the level of confidence on base probability
+Prob_rise = float(probability[0][1]] # Probability of growth
  if prob_rise > 0.7:
-confidence = 'high' # Высокая уверенность
+confidence = 'high' # High confidence
  elif prob_rise > 0.5:
-confidence = 'medium' # Средняя уверенность
+confidence = 'mediam' #Medium confidence
  else:
-confidence = 'low' # Низкая уверенность
+confidence = 'low' # Low confidence
 
-# Возврат результата in JSON формате
+# Returning the result in JSON
  return jsonify({
  'Prediction': int(Prediction[0]), # Prediction (0/1)
-'probability': prob_rise, # Вероятность роста
-'confidence': confidence # Уровень уверенности
+'Probability': prob_rise, # Probity of growth
+'confidence': conference # Confidence level
  })
 
  except Exception as e:
-# Обработка ошибок with возвратом HTTP 400
+# Processing error with return HTTP 400
  return jsonify({'error': str(e)}), 400
 
 @app.route('/health', methods=['GET'])
@@ -657,24 +657,24 @@ if __name__ == '__main__':
  app.run(host='0.0.0.0', port=5000)
 ```
 
-## Шаг 6: Docker контейнеризация
+## Step 6: Docker containerization
 
-**Почему Docker критически важен for продакшен деплоя?** Потому что он обеспечивает консистентность среды выполнения, упрощает развертывание and масштабирование, а также изолирует application from системных dependencies.
+**Why is Docker critical for the sale of mist?** Because it ensures the consistency of the implementation environment, facilitates deployment and scaling, and isolates application from system dependencies.
 
-**Преимущества Docker for ML-систем:**
-- **Консистентность**: Одинаковая среда on all серверах
-- **Портабельность**: Легкое перемещение между серверами
-- **Изоляция**: application not влияет on system
-- **Масштабирование**: Простое горизонтальное масштабирование
+**Docker's benefits for ML systems:**
+- **Consistence**: Same environment on all servers
+- ** Portability**: Easy movement between servers
+- **Isolation**: application not affected on system
+- ** Scale**: Simple horizontal scale
 
 ```dockerfile
-# Dockerfile for ML API приложения
+# Dockerfile for ML APl application
 FROM python:3.9-slim
 
-# installation рабочей директории
+# Installation of the Work Directorate
 WORKDIR /app
 
-# installation системных dependencies
+♪ system systems installation ♪
 RUN apt-get update && apt-get install -y \
  gcc \
  g++ \
@@ -684,37 +684,37 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Копирование кода приложения
+# Copy application code
 COPY . .
 
-# create User for безопасности
+# creative User for security
 RUN Useradd -m -u 1000 appUser && \
  chown -R appUser:appUser /app
 User appUser
 
-# Открытие порта for API
+# Opening Port for API
 EXPOSE 5000
 
-# Launch приложения
+# Launch applications
 CMD ["python", "app.py"]
 ```
 
 ```yaml
-# docker-compose.yml for ML системы
+# Docker-composition.yml for ML system
 Version: '3.8'
 
 services:
  ml-api:
-build: . # Сборка из Dockerfile
+Build: . #Dockerfile assembly
  ports:
-- "5000:5000" # Проброс порта API
+- "5,000:5000" # API Port Discharge
  environment:
-- FLASK_ENV=production # Режим продакшена
-- FLASK_DEBUG=False # Отключение отладки
+- FLASK_ENV=production # Production mode
+- FLASK_DEBUG=False # Disconnecting debugging
  volumes:
-- ./models:/app/models # Монтирование моделей
-- ./Logs:/app/Logs # Монтирование логов
-restart: unless-stopped # Автоматический переLaunch
+- ./models:/app/models # Modelling
+- ./Logs:/app/Logs # Latching
+Restart: unless-stepped #Automated overLaunch
  depends_on:
  - redis # dependency from Redis
  healthcheck:
@@ -724,24 +724,24 @@ restart: unless-stopped # Автоматический переLaunch
  retries: 3
 
  redis:
-image: redis:alpine # Легкий Redis образ
+Image: redis:alpine # Light Redis image
  ports:
-- "6379:6379" # Проброс порта Redis
-restart: unless-stopped # Автоматический переLaunch
+- "6379:6379" # The Port of Redis Probrosis
+Restart: unless-stepped #Automated overLaunch
  volumes:
-- redis_data:/data # Постоянное хранение данных
-command: redis-server --appendonly yes # Включение AOF
+- redis_data:/data # Permanent data storage
+command: redis-server --appendonly yes # AOF activation
 
 volumes:
-redis_data: # Именованный том for Redis
+Redis_data: #Named volume for Redis
 ```
 
-## Шаг 7: Деплой on DEX blockchain
+## Step 7: Declo on DEX blockchain
 
-<img src="images/optimized/blockchain_integration_flow.png" alt="integration ML-системы with DEX Blockchain" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 13.4: integration ML-системы with DEX Blockchain - потоки данных, components, example торговой операции*
+<img src="images/optimized/blockchain_integration_flow.png" alt="integration of ML-system with DEX Blackchain" style"="max-width: 100 per cent; height: auto; display: block; marguin: 20px auto;">
+*Picture 13.4: integration of ML systems with DEX Blockchain - data flows, components, example trade*
 
-**Почему blockchain integration революционна?** Потому что она позволяет автоматизировать торговые решения on basis ML-predictions, устраняя человеческий фактор and обеспечивая прозрачность операций.
+Because it allows you to automate trade decisions on base ML-predations by removing the human factor and ensuring transparency of operations.
 
 ```python
 # smart_contract.py
@@ -751,39 +751,39 @@ import json
 
 class MLPredictionContract:
  """
-Smart contract for автоматической торговли on basis ML predictions
+Smart contract for automatic trade on base ML preferences
 
  Parameters:
  -----------
  contract_address : str
-Адрес smart contract on blockchain:
-- Должен быть развернут on Ethereum mainnet
-- Содержит Logsку торговых операций
-- Имеет functions buy_token() and sell_token()
+Smart contract on lockchin:
+- Should be deployed on Etherum Mainnet.
+- Contains Logs of trade transactions
+- Has functions buy_token() and sell_token()
 
  private_key : str
-Приватный ключ for подписи транзакций:
-- Должен соответствовать адресу with достаточным балансом
-- Используется for авторизации операций
-- Должен храниться in безопасности
+Private key for signature transactions:
+- Should match the address with sufficient balance.
+- Used for the authorization of transactions
+- Must be stored in safety.
 
  Attributes:
  -----------
  w3 : Web3
-Web3 подключение к Ethereum blockchain
+Web3 Ethereum blockchain connection
 
  contract_address : str
-Адрес smart contract
+Smart contract address
 
  private_key : str
-Приватный ключ for подписи
+Private key for signature
 
  account : Account
-Ethereum аккаунт for операций
+Ethereum account for operations
  """
 
  def __init__(self, contract_address, private_key):
-# Подключение к Ethereum mainnet через Infura
+# Connect to Ethereum Mainnet via Infura
  self.w3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/YOUR_PROJECT_ID'))
  self.contract_address = contract_address
  self.private_key = private_key
@@ -791,90 +791,90 @@ Ethereum аккаунт for операций
 
  def get_Prediction(self, symbol, Timeframe):
  """
-Получение предсказания from ML API
+Getting a prediction from ML API
 
  Parameters:
  -----------
  symbol : str
-Символ криптовалюты for предсказания:
+The symbol is cryptified for prediction:
  - 'BTC-USD': Bitcoin
  - 'ETH-USD': Ethereum
  - 'ADA-USD': Cardano
-- Другие доступные символы
+- Other symbols available
 
  Timeframe : str
-temporary интервал for предсказания:
-- '1h': 1 час
-- '4h': 4 часа
-- '1d': 1 день
-- '1w': 1 неделя
+time interval for prediction:
+- '1h': 1 hour
+- '4h': 4 hours
+- '1d': 1 day
+- '1w': 1 week
 
  Returns:
  --------
  Dict[str, Any]
-Результат предсказания from ML API:
+The result of the prediction from ML API:
  - Prediction: int - Prediction (0/1)
-- probability: float - вероятность роста
-- confidence: str - уровень уверенности
+- Probability: flat is the probability of growth
+- confidence: STR is the level of confidence
 
  Raises:
  -------
  Exception
-Ошибка при вызове ML API
+Error in calling ML API
  """
 
-# Вызов ML API for получения предсказания
+# Call ML API for the Prophecy
  response = requests.post('http://ml-api:5000/predict', json={
-'symbol': symbol, # Символ криптовалюты
-'Timeframe': Timeframe, # temporary интервал
-'timestamp': int(time.time()) # Временная метка
+'Symbol': symbol, # Symbol crypts
+'Timeframe': Timeframe, #temporary interval
+'timestamp': int(time.time() # Time mark
  })
 
  if response.status_code == 200:
-return response.json() # Успешный ответ
+Return response.json() # Successful response
  else:
  raise Exception(f"ML API error: {response.status_code}")
 
  def execute_trade(self, Prediction, amount):
  """
-Выполнение торговой операции on DEX on basis ML предсказания
+Conducting a trade transaction on DEX on Base ML prediction
 
  Parameters:
  -----------
  Prediction : Dict[str, Any]
-Результат ML предсказания:
+The result of the ML prediction:
  - Prediction: int - Prediction (0/1)
-- confidence: str - уровень уверенности
-- probability: float - вероятность
+- confidence: STR is the level of confidence
+- Probability: float - probability
 
  amount : float
-Сумма for торговой операции:
+Amount for trade:
  - in USD or ETH
-- Должна быть доступна on балансе
-- Учитывает комиссии and slippage
+- Should be available on balance sheet
+- Taking into account commissions and slippage
 
  Returns:
  --------
  Dict[str, Any]
-Результат торговой операции:
-- action: str - выполненное действие ('buy', 'sell', 'hold')
-- amount: float - сумма операции
-- tx_hash: str - хеш транзакции (если выполнена)
-- reason: str - причина действия
+Trade result:
+-act: "str" - act performed ('buy', 'sell', 'hold')
+- amount: float - transaction amount
+- tx_hash: STR - hash transactions (if implemented)
+- reason: str - cause of action
  """
 
-# Торговая Logsка on basis ML предсказания
+# Trade Logs on Bases ML prediction
  if Prediction['confidence'] == 'high' and Prediction['Prediction'] == 1:
-# Покупка при высокой уверенности in росте
+# Buying with high confidence in growth
  return self.buy_token(amount)
  elif Prediction['confidence'] == 'high' and Prediction['Prediction'] == 0:
-# Продажа при высокой уверенности in падении
+# Sell with high confidence in fall
  return self.sell_token(amount)
  else:
-# Удержание при низкой уверенности
+# Retention with low confidence
  return {'action': 'hold', 'reason': 'low_confidence'}
 
-# Использование
+# Use
 contract = MLPredictionContract(
  contract_address='0x...',
  private_key='your_private_key'
@@ -884,105 +884,105 @@ Prediction = contract.get_Prediction('BTC-USD', '1h')
 trade_result = contract.execute_trade(Prediction, 1000)
 ```
 
-## Шаг 8: Monitoring and retraining
+## Step 8: Monitoring and retraining
 
-<img src="images/optimized/Monitoring_dashboard.png" alt="Дашборд Monitoringа ML-системы" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 13.5: Дашборд Monitoringа ML-системы - статус компонентов, metrics in реальном времени, алерты*
+<img src="images/optimized/Monitoring_dashboard.png" alt="Dashbord Monitoring ML system" style"="max-width: 100 per cent; height: auto; display: block; marguin: 20px auto;">
+*Picture 13.5: Dashbord Monitoringa ML system - status of components, metrics in real time, allers*
 
-**Почему Monitoring критически важен?** Потому что ML-модели могут деградировать со временем, and без постоянного Monitoringа система может начать принимать неправильные решения, что приведет к финансовым потерям.
+Because ML models can degenerate over time, and without permanent Monitoring, the system can start making wrong decisions, leading to financial losses.
 
 ```python
 def monitor_and_retrain():
  """
-Monitoring performance модели and автоматическое retraining
+Monitoring performance model and automatic retraining
 
  Notes:
  ------
-process Monitoringа and retraining:
-1. check текущей performance модели
-2. comparison with пороговым значением
-3. Загрузка новых данных при необходимости
-4. retraining модели on новых данных
-5. Сохранение and развертывание новой модели
+Progress Monitoring and Retraining:
+1. Check current model performance
+2. Comparson with threshold value
+3. Loading of new data if necessary
+4. Retraining the model on new data
+5. Maintenance and deployment of the new model
 
-Критерии retraining:
-- Точность < 60% (значительное снижение)
-- Время with последнего retraining > 30 дней
-- Изменение рыночных условий
-- Появление новых паттернов in данных
+Retraining criteria:
+- Accuracy < 60% (significant decrease)
+- Time with last retraining > 30 days
+- Change in market conditions
+- New in-data patterns are emerging
 
 process deployment:
-- Сохранение новой модели
-- validation on testsых данных
-- Постепенное переключение трафика
-- Rollback при проблемах
+- Maintaining the new model
+- validation on test data
+- Gradual shift of traffic
+- Rollback in trouble.
  """
 
-# check текущей performance модели
+# Check current performance model
  current_accuracy = check_model_performance()
 
-if current_accuracy < 0.6: # Порог for retraining (60%)
-print("performance упала, Launchаем retraining...")
+if Current_accuracy < 0.6: # Threshold for retraining (60%)
+"performance's down, Launchae retraining..."
 
-# Загрузка новых данных for retraining
-new_data = prepare_crypto_data('BTC-USD', '1y') # Последний год данных
+# Uploading new data for retraining
+New_data = prepare_crypto_data('BTC-USD', '1y') # Last data year
 
-# retraining модели on новых данных
+# Retraining models on new data
  new_model, _, _ = create_simple_model(new_data)
 
-# Сохранение новой модели
+# Maintaining the new model
  joblib.dump(new_model, 'crypto_model_new.pkl')
 
-# Замена модели in продакшене
+# Replacement of the model in sales
  replace_model_in_production('crypto_model_new.pkl')
 
-print("Модель успешно переобучена and развернута")
+Print("The model has been successfully retrained and deployed")
 
-# Launch Monitoringа
+# Launch Monitoring
 schedule.every().day.at("02:00").do(monitor_and_retrain)
 ```
 
-## Шаг 9: Полная система
+## Step 9: Full system
 
 ```python
-# main.py - Полная система
+# Main.py - Full system
 import schedule
 import time
 import logging
 
 def main():
  """
-Главная function системы автоматической торговли on basis ML
+Main function automatic trading system on base ML
 
  Notes:
  ------
-architecture системы:
-- ML API: получение predictions from модели
-- Blockchain Contract: выполнение торговых операций
+Architecture system:
+- ML API: receive preferences from the model
+- Blockchain Contract: Trade performance
 - Monitoring: Monitoring performance
-- Logging: запись all операций
+- Logging: recording all transactions
 
-process работы:
-1. Инициализация all компонентов
-2. Получение предсказания from ML модели
-3. Выполнение торговой операции on blockchain
-4. Logsрование результата
+Work progress:
+1. Initiating all components
+2. Obtaining prediction from ML model
+3. Implementation of the trade transaction on blackchin
+4. Logs of result
 5. Monitoring performance
-6. Пауза to следующего цикла
+6. Pause to next cycle
 
-Обработка ошибок:
-- Logsрование all ошибок
-- Пауза при критических ошибках
-- Продолжение работы при некритических ошибках
-- Автоматический переLaunch при сбоях
+Error management:
+- Logging all errors.
+- Pause for critical errors
+- Continuation of work with non-critical errors
+Automatic overLaunch for malfunctions
 
  Settings:
-- Интервал обновления: 1 час (3600 секунд)
-- Пауза при ошибке: 1 minutesа (60 секунд)
-- Уровень Logsрования: INFO
+- Update interval: 1 hour (3,600 seconds)
+- Pause at error: 1 minutesa (60 seconds)
+- Logs level: INFO
  """
 
-# configuration Logsрования for отслеживания работы системы
+#configuring Logs for system tracking
  logging.basicConfig(
  level=logging.INFO,
  format='%(asctime)s - %(levelname)s - %(message)s',
@@ -992,64 +992,64 @@ process работы:
  ]
  )
 
-# Инициализация компонентов системы
-ml_api = MLPredictionAPI() # API for получения predictions
+# Initiating components of the system
+ml_api = MLPredicationAPI() #API for productions
  blockchain_contract = MLPredictionContract() # Smart contract for trading
 Monitoring = ModelMonitoring() # Monitoring performance
 
-# Основной цикл работы системы
+# Basic system cycle
  while True:
  try:
-# Получение предсказания from ML модели
+# Getting a prediction from ML model
  Prediction = ml_api.get_Prediction()
 
-# Выполнение торговой операции on blockchain
+# Conducting trade on blackchin
  trade_result = blockchain_contract.execute_trade(Prediction)
 
-# Logsрование результата операции
+# Logging the result of the operation
  logging.info(f"Trade executed: {trade_result}")
 
-# Monitoring performance модели
+# Monitoring performance model
  Monitoring.check_performance()
 
-# Пауза to следующего цикла (1 час)
+# Pause to next cycle (1 hour)
  time.sleep(3600)
 
  except Exception as e:
-# Обработка ошибок with Logsрованием
+# Making mistakes with Logsing
  logging.error(f"system error: {e}")
-time.sleep(60) # Пауза при ошибке (1 minutesа)
+time.sleep(60) # Pause in error (1 minutes)
 
 if __name__ == '__main__':
  main()
 ```
 
-## Результаты
+## Results
 
-<img src="images/optimized/performance_metrics_Analysis.png" alt="Metrics performance ML-системы" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 13.6: Metrics performance ML-системы - точность in time, доходность, коэффициент Шарпа, распределение ошибок*
+<img src="images/optimized/performance_metrics_Analesis.png" alt="Metrics performance ML-system" style="max-width: 100 per cent; height: auto; display: block; marguin: 20px auto;">
+*Picture 13.6: Metrics performance ML systems - accuracy in time, return, Sharp coefficient, error distribution*
 
-**Почему важно анализировать результаты?** Потому что только через детальный анализ метрик можно понять, Workingет ли система эффективно and приносит ли она реальную пользу.
+** Why is it important to analyse the results? ** Because it is only through a detailed analysis of the metric that you can understand whether the system works effectively and whether it actually works.
 
 ### Metrics performance
-- **Точность модели**: 72.3%
-- **Коэффициент Шарпа**: 1.45
-- **Максимальная просадка**: 8.2%
-- **Общая доходность**: 23.7% за год
+** Model accuracy**: 72.3 per cent
+- ** Sharpe Coefficient**: 1.45
+- ** Maximum draught**: 8.2%
+- ** Total return**: 23.7 per cent per year
 
-### Преимущества простого подхода
-1. **Быстрая разработка** - from идеи to продакшена за 1-2 недели
-2. **Низкая сложность** - минимум компонентов
-3. **Легкое тестирование** - простые metrics
-4. **Быстрый деплой** - стандартные инструменты
+### The benefits of a simple approach
+1. ** Rapid development** - from idea to sale in 1-2 weeks
+2. ** Low complexity** - minimum components
+3. ** Easy testing** - simple metrics
+4. **Speed tools** - Standard tools
 
-### Ограничения
-1. **Простота стратегии** - базовая Logsка торговли
-2. **Ограниченная адаптивность** - фиксированные parameters
-3. **Базовый риск-менеджмент** - простые правила
+### Limitations
+1. **Simple strategy** - basic trade logs
+2. **Restricted adaptive **/ - fixed parameters
+3. ** Basic risk management** - simple rules
 
-## Заключение
+## Conclusion
 
-Этот простой example показывает, как можно быстро создать and развернуть робастную ML-модель for trading on DEX blockchain. Хотя подход простой, он обеспечивает стабильную работу and положительную доходность.
+This simple example shows how quickly to create and deploy a robotic ML model for trading on DEX blackchain. Although simple, it provides stable work and positive returns.
 
-**Следующий раздел** покажет более сложный example with продвинутыми техниками and лучшими практиками.
+** The next section** will show more complex example with advanced techniques and best practices.
