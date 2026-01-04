@@ -162,3 +162,5 @@ Requires-Dist: markdown>=3.9
 Requires-Dist: EMD-signal>=0.6.0
 Requires-Dist: translate>=3.8.0
 Requires-Dist: deep-translator>=1.11.4
+Requires-Dist: argostranslate>=1.10.0
+Requires-Dist: transformers>=4.57.3

@@ -163,6 +163,8 @@ dependencies = [
     "EMD-signal>=0.6.0",
     "translate>=3.8.0",
     "deep-translator>=1.11.4",
+    "argostranslate>=1.10.0",
+    "transformers>=4.57.3",
 ]
 
 [build-system]
