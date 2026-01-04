@@ -160,3 +160,5 @@ Requires-Dist: xgboost>=3.0.5
 Requires-Dist: click>=8.0.0
 Requires-Dist: markdown>=3.9
 Requires-Dist: EMD-signal>=0.6.0
+Requires-Dist: translate>=3.8.0
+Requires-Dist: deep-translator>=1.11.4
