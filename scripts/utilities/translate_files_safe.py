@@ -147,10 +147,11 @@ def process_file(file_path: str, root_dir: str = '.', cache: Dict[str, str] = No
             else:
                 translated_lines.append(line)
             
-            # Progress indicator for large files
-            if total_lines > 100 and i % max(1, total_lines // 10) == 0:
-                progress = (i * 100) // total_lines
-                print(f"      Progress: {progress}% ({i}/{total_lines} lines)", file=sys.stderr, flush=True)
+            # Progress indicator for files
+            if total_lines > 50:
+                if i % max(1, total_lines // 20) == 0 or i == total_lines:
+                    progress = (i * 100) // total_lines
+                    print(f"      [{progress}%] {i}/{total_lines} lines processed", flush=True)
         
         if lines_translated > 0 and not dry_run:
             # Create backup
@@ -266,6 +267,12 @@ def main():
         help='Maximum number of files to process (default: all)'
     )
     parser.add_argument(
+        '--batch-size',
+        type=int,
+        default=3,
+        help='Number of files to process in one batch (default: 3)'
+    )
+    parser.add_argument(
         '--dry-run',
         action='store_true',
         help='Show what would be translated without making changes'
@@ -324,33 +331,47 @@ def main():
             print("Aborted.")
             return
     
-    print(f"\nProcessing {len(files_to_process)} files sequentially...\n")
+    batch_size = args.batch_size if hasattr(args, 'batch_size') else 3
+    total_batches = (len(files_to_process) + batch_size - 1) // batch_size
+    
+    print(f"\nProcessing {len(files_to_process)} files in batches of {batch_size}...\n")
     
     total_lines_translated = 0
     successful_files = 0
     failed_files = 0
     
-    for i, (file_path, line_count) in enumerate(files_to_process, 1):
-        progress_percent = (i * 100) / len(files_to_process)
-        print(f"[{i}/{len(files_to_process)}] ({progress_percent:.1f}%) {file_path}...", flush=True)
+    # Process in batches
+    for batch_num in range(total_batches):
+        batch_start = batch_num * batch_size
+        batch_end = min(batch_start + batch_size, len(files_to_process))
+        batch = files_to_process[batch_start:batch_end]
         
-        success, lines_count, _ = process_file(file_path, args.root, cache, args.dry_run)
+        print(f"{'='*80}")
+        print(f"BATCH {batch_num + 1}/{total_batches} ({len(batch)} files)")
+        print(f"{'='*80}\n")
         
-        if success:
-            if lines_count > 0:
-                print(f"  ✓ {lines_count} lines translated\n", flush=True)
-                total_lines_translated += lines_count
+        for i, (file_path, line_count) in enumerate(batch, 1):
+            file_num = batch_start + i
+            progress_percent = (file_num * 100) / len(files_to_process)
+            print(f"[{file_num}/{len(files_to_process)}] ({progress_percent:.1f}%) {file_path}", flush=True)
+            print(f"  Processing...", flush=True)
+            
+            success, lines_count, _ = process_file(file_path, args.root, cache, args.dry_run)
+            
+            if success:
+                if lines_count > 0:
+                    print(f"  ✓ {lines_count} lines translated\n", flush=True)
+                    total_lines_translated += lines_count
+                else:
+                    print(f"  ✓ (no changes needed)\n", flush=True)
+                successful_files += 1
             else:
-                print(f"  ✓ (no changes needed)\n", flush=True)
-            successful_files += 1
-        else:
-            print(f"  ✗ failed\n", flush=True)
-            failed_files += 1
+                print(f"  ✗ failed\n", flush=True)
+                failed_files += 1
         
-        # Save cache every 5 files
-        if i % 5 == 0:
-            save_translation_cache(cache, args.cache_file)
-            print(f"  💾 Cache saved ({len(cache)} translations)\n", flush=True)
+        # Save cache after each batch
+        save_translation_cache(cache, args.cache_file)
+        print(f"💾 Batch {batch_num + 1} completed. Cache saved ({len(cache)} translations)\n", flush=True)
     
     # Final save
     save_translation_cache(cache, args.cache_file)
