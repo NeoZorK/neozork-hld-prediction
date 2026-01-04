@@ -1,25 +1,25 @@
 {
-  "## 🚀 Launch приложения": "## 🚀 Launch apps",
-  "### 2. Launch in режиме разработки": "### 2. Launch in development mode",
-  "### 3. Launch on устройстве": "### 3. Launch on the device",
-  "Все мобильные endpoints доступны on адресу `http://localhost:8080/mobile/`:": "All mobile endpoints are available at 'http://localhost:8080/mobile/`:",
-  "- `GET /mobile/dashboard` - data dashboard (требует аутентификации)\n- `GET /mobile/Portfolio` - Portfolio (требует аутентификации)\n- `GET /mobile/funds` - List of funds (требует аутентификации)\n- `POST /mobile/investments` - create инвестиции (требует аутентификации)\n- `POST /mobile/sync` - Synchronization (требует аутентификации)\n- `POST /mobile/notifications/Push` - Push notifications (требует аутентификации)": "- `GET /mobile/dashboard` - data dashboard (requires authentication)\n- `GET /mobile/Portfolio` - Portfolio (requires authentication)\n- `GET /mobile/funds` - List of funds (requires authentication)\n- `post /mobile/investments` - create investments (requires authentication)\n- `post /mobile/sync` - Synchronization (requires authentication)\n- `post /mobile/notifications/push` - Push notifications (requires authentication)",
-  "- JWT токены for аутентификации\n- AsyncStorage for хранения токенов\n- Автоматическое update токенов": "- JWT tokens for authentication\n- AsyncStorage for storing tokens\n- Automatic token update",
-  "## 📱 Функциональность": "Functionality",
-  "- Регистрация новых пользователей": "New registration",
-  "- Автоматическое сохранение сессии\n- Выход из системы": "- Automatically save session\n- Logout",
-  "- Stack Navigation между screenми\n- Условная Navigation (auth/main)\n- Защищенные маршруты": "- Stack Navigation between screens\n- Conditional Navigation (auth/main)\n- Protected routes",
-  "- Обработка ошибок\n- Автоматическое add токенов\n- Базовый URL configuration": "- Error handling\n- Automatic add tokens\n- Basic URL configuration",
-  "- Современный дизайн\n- Консистентные стили\n- Адаптивная верстка\n- Индикаторы загрузки": "- Modern design\n- Consistent styles\n- Adaptive layout\n- Loading indicators",
-  "## 🧪 Тестирование": "Testing",
-  "# check dashboard (требует аутентификации)": "# check dashboard (requires authentication)",
-  "### Результаты тестирования\n- ✅ `/mobile/health` - Workingет корректно\n- ✅ `/mobile/dashboard` - требует аутентификации (ожидаемо)\n- ✅ `/mobile/Portfolio` - требует аутентификации (ожидаемо)\n- ✅ Все endpoints доступны in OpenAPI схеме": "### Test results\n- ✅ `/mobile/health` - Works correctly\n- ✅ `/mobile/dashboard` - requires authentication (expected)\n- ✅ `/mobile/Portfolio` - requires authentication (expected)\n- ✅ All endpoints are available in OpenAPI schema",
-  "## 📋 Следующие шаги": "Next steps",
-  "### Возможные улучшения:\n1. **Дополнительные экраны**\n - Детальный View funds\n - История транзакций\n - Settings профиля": "### Possible improvements:\n1. **Additional screens**\n - Detailed View funds\n - Transaction history\n - Profile Settings",
-  "2. **Расширенная функциональность**": "2. **Advanced functionality**",
-  " - Офлайн режим\n - Биометрическая Authentication\n - Графики and аналитика": "- Offline mode\n - Biometric Authentication\n - Charts and analytics",
-  "3. **UI/UX улучшения**\n - Анимации\n - Темная тема\n - Локализация": "3. **UI/UX improvements**\n - Animations\n - Dark theme\n - Localization",
-  "## 🎉 Заключение": "CONCLUSION",
-  "mobile application Pocket Hedge fund successfully created and integrated with backend API. application готово к использованию and может быть запущено on iOS, Android or in веб-браузере.": "mobile application Pocket Hedge fund successfully created and integrated with backend API. application is ready to use and can be run on iOS, Android or in a web browser.",
-  "**Статус**: ✅ **COMPLETED**\n**Дата**: 9 сентября 2025\n**Версия**: 1.0.0": "**Status**: ✅ **COMPLETED**\n**Date**: September 9, 2025\n**Version**: 1.0.0"
+"## ~ Launch apps": "## ~ Launch apps,"
+"###2.Launch in development mode": "####2.Launch in development mode",
+"###3. Launch on the device": "####3.Launch on the development,"
+"All mobile endpoints are available at `http://localhost:8080/mobile/':': "All mobile endpoints are available at `http://localhost:8080/mobile/':",
+"- `GT / mobile/dashboard' - Data dashboard (requires authentication)\n-`GET / mobile/Porthfolio' - Pretfolio (requires authentication)\n-`GET / mobile/funds' - List (requires authentication)\n-`POST/mobile/notifications/-Push-notifications (requires authentication)": `- `GET / mobile/sync' - Synchronization (denominates) \n- `POST'/postition/posts/-posts/-notifications' -Push-notifications (denominated)" (- `GET/mute/syp/synopor/synopaurethor/dials)
+"-JWT currents for authentication \n-asyncStorage for storage of currents \n-Automatic predate currents":- JWT tools for automation \n-asyncStorage for storing tokens\n-Automatic token update"
+"##♪ Functionality": "Functionality,"
+"- Registration of new users": "New registration",
+"- Automatic retention of session \n- Exit:-Automatically save session\n-Logout",
+"-Stack Navigation between screenms\n-Conditional Navigation (auth/main)\n-Protective Routes" - "-Stack Navigation between screens\n-Conditional Navigation (auth/main)\n-Protected routes",
+"- Error processing \n-Automated adjectives \n-Base URL conference:-Error handling\n-Automatic add tokens\n-Basic URL conference,
+"- Modern design \n-Consistent styles \n-Adaptive hardware \n- upload indicators": "-Modern design\n-Consistent styles\n-Adaptive layout\n-Loding indicators",
+"## * Testing": "Testing,"
+"# check dashboard (requires authentication)": "# check dashboard (requires authentification)",
+"### Test results\n-\\ /mobile/health' - Workinget correct_n/mobile/dashboard ` - require authentication (expected) /n-n-\\\\ /mobile/Porthfolio / - requires authentication (expected)\n-\\\\\\\\\\\\\\\\\\ \ \ all enpoints are available in OpenAPI scheme:###Test results\n- /mobile/health /-Works coordination_n- /mobile/dashboard / - verification (exspected)\n-\\\\\ /mobile/Porthfolio' - verification (exposed)
+"## * next steps": "Next steps",
+"### Possible improvements:\n1. ** Additional screens**\n - Detailed View funds\n - History of transactions\n - Settings profile":##### Possible features:\n1. **Additional screens**\n - Detailed View funds\n - Transaction history\n - Profile Settings,
+"2. ** Enhanced functionality**": "2. **Advanced functionality**",
+"Ofline Mode \n - Biometric Authentication\n - Graphics and Analysts" - "-Offline Mode\n - Biometric Authentication\n - Charts and Analytics",
+"3. **UI/UX improvements**n - Animations\n - Dark theme \n - Localization: "3. **UI/UX developments**n - Animations\n - Dark theme\n - Localization"
+"##\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}}}}}}}}}}}}}}}}}}}}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+"mobile application Pocket or in a web browser.": "Mobile application Pocket Hedge has access to and is integrated with Backend API. application is relevant to use and can be run on iOS, Android or in a webbrowser."
+"**Stattoo**:*COMPLETED******Date**: 9 September 2025\n**Version**: 1.0.0":**Status**: *COMPLETED********Date**: September 9, 2025\n**Version**: 1.0.0"
 }
