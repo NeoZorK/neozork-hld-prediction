@@ -1,449 +1,449 @@
-# NeoZorK - Complete guide on созданию робастных прибыльных ML-систем
+# NeoZorK - Complete guide on creating robotic profit-making ML systems
 
 **Author:** Shcherbyna Rostyslav
-**Дата:** 2024
+**Date:** 2024
 **Version:** 1.0
 
-## Введение
+## Introduction
 
-Этот учебник представляет собой исчерпывающее guide on созданию робастных прибыльных ML-систем with нуля on Python for macOS M1 Pro. Мы рассмотрим все аспекты: from environment installation to деплоя on блокчейне.
+This textbook is an exhaustive guide on the creation of robotic profitable ML systems with zero on Python for machos M1 Pro. We will look at all aspects: from environment installation to action on blockage.
 
-## Why этот учебник уникален?
+♪ Whoa, is this textbook unique?
 
-**90% Hedge fundов зарабатывают менее 15% in год. Мы покажем, как Create system, которая зарабатывает 100%+ in месяц.**
+**90% of Hedge Funds earn less than 15% in the year.
 
-Этот учебник основан on:
+This textbook is based on:
 
-- Анализе лучших мировых практик
-- Глубоком понимании indicators WAVE2, SCHR Levels, SCHR SHORT3
-- Продвинутых техниках machine learning
-- Реальных примерах деплоя on блокчейне
+- Analysis of the world's best practices
+- Deep understanding of the indicators WAVE2, SCHR Livels, SCHR SHORT3
+- Advanced engineering
+- Real examples of the blockage thing.
 
-## Structure учебника
+♪ Structure textbook
 
-### 📚 Основные разделы
+### ♪ Basic sections
 
 1. **[01_environment_setup.md](01_environment_setup.md)** - environment installation on macOS M1 Pro
-2. **[02_robust_systems_fundamentals.md](02_robust_systems_fundamentals.md)** - Основы робастных систем
-3. **[03_data_preparation.md](03_data_preparation.md)** - Подготовка данных
-4. **[04_feature_engineering.md](04_feature_engineering.md)** - Инженерия признаков
-5. **[05_model_training.md](05_model_training.md)** - Обучение моделей
-6. **[06_backtesting.md](06_backtesting.md)** - Бэктестинг
-7. **[07_walk_forward_Analysis.md](07_walk_forward_Analysis.md)** - Walk-forward анализ
-8. **[08_monte_carlo_simulation.md](08_monte_carlo_simulation.md)** - Монте-Карло симуляция
-9. **[09_risk_Management.md](09_risk_Management.md)** - Management рисками
-10. **[10_blockchain_deployment.md](10_blockchain_deployment.md)** - Деплой on блокчейне
+2. **[02_robus_systems_fundamentals.md](02_robus_systems_fundamentals.md)** - Fundamentals of Robastic Systems
+**[03_data_preparation.md](03_data_preparation.md)** - Data preparation
+4. **[04_feature_energy.md](04_feature_energying.md)** - Engineering of signs
+5. **[05_model_training.md](05_model_training.md)** - Model training
+6. **[06_backtesting.md](06_backtesting.md)** - Becketting
+7. **[07_walk_forward_Analisis.md](07_walk_forward_Anallysis.md)** - Walk-forward analysis
+8. **[08_monte_carlo_simulation.md](08_monte_carlo_simulation.md)** - Monte Carlo simulation
+9. **[09_risk_Management.md](09_risk_Management.md)** - Risk Management
+10. **[10_blockchain_deployment.md](10_blockchain_deployment.md)**
 
-### 🎯 Специализированные разделы
+#### Specialized sections
 
-1. **[11_wave2_Analysis.md](11_wave2_Analysis.md)** - Анализ индикатора WAVE2
-2. **[12_schr_levels_Analysis.md](12_schr_levels_Analysis.md)** - Анализ SCHR Levels
-3. **[13_schr_short3_Analysis.md](13_schr_short3_Analysis.md)** - Анализ SCHR SHORT3
-4. **[14_advanced_practices.md](14_advanced_practices.md)** - Продвинутые практики
-5. **[15_Portfolio_optimization.md](15_Portfolio_optimization.md)** - Оптимизация Portfolio
-6. **[16_metrics_Analysis.md](16_metrics_Analysis.md)** - metrics and анализ
-7. **[17_examples.md](17_examples.md)** - Практические examples
-8. **Полная система заработка 100%+ in месяц**
- - [18_complete_system.md](18_complete_system.md) - Полная система with детальным кодом from идеи to деплоя
- - [18_system_components.md](18_system_components.md) - Детальные components системы (модели, индикаторы)
- - [18_blockchain_system.md](18_blockchain_system.md) - Блокчейн-система with переобучением for testnet
+1. **[11_wave2_Analysis.md](11_wave2_Analysis.md)** - WAVE2 indicator analysis
+2. **[12_shr_levels_Analesis.md](12_shr_levels_Anallysis.md)** - Analysis by SCHR Levels
+3. **[13_shr_short3_Analisis.md](13_shr_short3_Anallysis.md)** - SCHR SHORT3 analysis
+**[14_advanced_practices.md](14_advanced_practices.md)** - Advanced practices
+5. **[15_Porthfolio_optimization.md](15_Porthfolio_optimization.md)** - Optimization of Portfolio
+6. **[16_metrics_Analysis.md](16_metrics_Analisis.md)** - metrics and analysis
+7. **[17_examples.md](17_examples.md)** - Practical examples
+8. ** Full system of earnings 100%+in month**
+- [18_complete_system.md](18_complete_system.md) - Full system with detailed code from idea to action
+- [18_system_components.md](18_system_components.md) - Detailed systems (models, indicators)
+- [18_blockchain_system.md](18_blockchain_system.md) - Block-system with relearning for testnet
  - [18_Monitoring_metrics.md](18_Monitoring_metrics.md) - Monitoring and Metrics performance
- - [18_README.md](18_README.md) - Полная documentation on Launch and использованию системы
+- [18_README.md](18_README.md) - Full documentation on Launch and system use
 
 ## Quick start
 
 ### environment installation
 
-Перед началом работы with NeoZorK необходимо правильно настроить окружение разработки. Мы Use современный менеджер пакетов `uv`, который обеспечивает быструю установку dependencies and изоляцию проектов.
+Before we start working with NeoZorK, we need to set the design environment right. We are Use's modern package manager `uv', which provides rapid installation of dependencies and isolation of projects.
 
-**Почему uv?**
+# Why uv? #
 
-- in 10-100 раз быстрее pip
-- Автоматическое Management виртуальными окружениями
-- Совместимость with pip and pip-tools
-- Встроенная поддержка lock-files
+- in 10-100 times faster than pip
+Automatic Management Virtual Environments
+- compatibility with pip and pip-tools
+- Lock-files built-in support
 
 ```bash
-# installation uv - современного менеджера пакетов Python
-# uv обеспечивает быструю установку and Management зависимостями
+# installation uv - Python's modern bag manager
+# uv provides rapid installation and management relationships
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# installation all dependencies проекта из pyproject.toml
-# uv автоматически создаст виртуальное окружение and установит пакеты
+# installationalldependency project from pyproject.toml
+# uv will automatically create a virtual environment and install packages
 uv sync
 
-# Активация виртуального окружения for работы with проектом
-# Это изолирует dependencies проекта from системного Python
+# Activation of the virtual environment for work with project
+# It isolates the dependencies of the Python system project
 source .venv/bin/activate
 ```
 
-**Что происходит при установке:**
+** What happens when installed:**
 
-1. `uv` создает изолированное виртуальное окружение
-2. Устанавливает все dependencies из `pyproject.toml`
-3. Создает lock-файл for воспроизводимых сборок
-4. Настраивает пути for import модулей проекта
+`uv' creates an isolated virtual environment
+2. Sets all dependencies from `pyproject.toml'
+3. Creates a lock file for reproducible assemblies
+4. Sets the way for port modules of the project
 
-### create первой модели
+### of the first model
 
-Теперь создадим нашу первую робастную ML-system. Concept робастности in машинном обучении означает, что модель должна Workingть стабильно in различных рыночных условиях and not терять performance при изменении данных.
+Now let's create our first robotic ML-system. The machine learning problem means that the model has to Working stable in different market conditions and not lose performance when changing data.
 
-**Теоретические основы робастных систем:**
+** Theoretical bases of robotic systems:**
 
-1. **Адаптивность** - система должна адаптироваться к изменяющимся рыночным условиям
-2. **Устойчивость к выбросам** - модель not должна ломаться при необычных движениях рынка
-3. **retraining** - защита from запоминания исторических паттернов
-4. **Обобщающая способность** - Working on новых, невиданных данных
+1. ** Adaptation** - the system must adapt to changing market conditions
+2. ** Emission stability** - No model should break during unusual market movements
+3. **retraining** - Protection from memory of historical patterns
+4. ** Synthesis capacity** - Working on new, unknown data
 
-**Индикаторы in нашей системе:**
+**Indicators in our system:**
 
-- **WAVE2** - волновой анализ for определения трендов
-- **SCHR_Levels** - уровни поддержки and сопротивления
-- **SCHR_SHORT3** - краткосрочные сигналы for входа/выхода
+**WAVE2** - wave analysis for trend determination
+- **SCHR_Levels** - Support and Resistance Levels
+**SCHR_SHORT3** - Short-term signals for entry/exit
 
 ```python
-# Импорт основного класса робастной ML-системы
-# RobustMLsystem - это ядро нашей торговой системы
+# Imports of the basic class of the Robast ML system
+# RobustMLSystem is the core of our trading system
 from src.automl.neozork import RobustMLsystem
 
-# create экземпляра робастной системы
-# Каждый parameter имеет критическое значение for performance
+# a copy of the robotic system
+# Every parameter is critical for performance
 system = RobustMLsystem(
- indicators=['WAVE2', 'SCHR_Levels', 'SCHR_SHORT3'], # Набор технических indicators
- Timeframe='H1', # temporary интервал (1 час)
- target_return=100 # Целевая доходность 100% in месяц
+Indicators=['WAVE2', `SCHR_Levels', 'SCHR_SHORT3'], #Technical Indicators Set
+Timeframe='H1', #temporary interval (1 hour)
+Target_return=100 # Target return 100% in month
 )
 
-# Обучение модели on исторических данных
-# process включает: подготовку данных, feature engineering, валидацию
+# Training a model on historical data
+#process includes: data production, data generation, validation
 model = system.train()
 
-# Бэктестинг - check эффективности on исторических данных
-# Включает: walk-forward анализ, Monte Carlo симуляцию, metrics риска
+# Becketing - check efficiency on historical data
+# Including: Walk-forward analysis, Monte Carlo simulation, risk metrics
 results = system.backtest()
 ```
 
-**Что происходит при создании системы:**
+** What happens when the system is created:**
 
-1. **Инициализация indicators** - загрузка and configuration технических indicators
-2. **Подготовка данных** - clean, нормализация, create признаков
-3. **Обучение модели** - выбор алгоритма, гиперпараметров, validation
-4. **Бэктестинг** - тестирование on исторических данных with реалистичными условиями
+1. **Initiation of indicators** - loading and configuring technical indicators
+2. ** Data preparation** - Clean, normalization, cross-sectional
+3. ** Model learning** - choice of algorithm, hyperparameter, validation
+4. **Bexting** - Testing on historical data with realistic conditions
 
-**Ключевые принципы робастности:**
+** Key principles of labourability:**
 
-- Использование ансамблей моделей for снижения риска
-- Регуляризация for предотвращения retraining
-- Кросс-validation with временными рядами
-- Адаптивное retraining при изменении рыночных условий
+- Use of risk reduction models
+- Regularization for prevention of retraining
+- Cross-validation with time series
+- Adaptive retraining in changing market conditions
 
-## Ключевые особенности
+## Key features
 
-### 🚀 Робастность
+### # Robinity #
 
-Робастность - это фундаментальное свойство нашей системы, которое обеспечивает стабильную работу in любых рыночных условиях. in контексте финансовых ML-систем робастность означает способность модели сохранять performance при изменении рыночной динамики.
+Robastity is the fundamental property of our system, which ensures stable work in any market environment. In the context of financial ML systems, Robasticity means the ability of a model to maintain performance when market dynamics change.
 
-**Теоретические основы робастности:**
+** Theoretical basis of labourability:**
 
-1. **Статистическая робастность** - устойчивость к выбросам and аномальным значениям
-2. **Структурная робастность** - сохранение performance при изменении структуры данных
-3. **Временная робастность** - адаптация к изменяющимся рыночным циклам
-4. **Параметрическая робастность** - устойчивость к небольшим изменениям in параметрах
+1. **Statistical Robinity** - Emission resistance and abnormal values
+2. **Structural palsy** - retention of performance when data are restructured
+3. **Temporarily fatality** - adaptation to changing market cycles
+4. ** Parametric pobatility** - Resistance to minor changes in parameters
 
-**Практические аспекты:**
+** Practical aspects:**
 
-- Системы, которые Workingют in любых рыночных условиях (бычий, медвежий, боковой рынок)
-- Защита from retraining через регуляризацию and кросс-валидацию
-- Адаптация к изменяющимся условиям через онлайн-обучение
-- Использование ансамблей моделей for снижения риска
+- Systems that Working in any market environment (e.g., bear, side market)
+- Protection from retraining through regularization and cross-qualification
+Adaptation to changing conditions through online learning
+- Use of risk reduction models
 
-**methods обеспечения робастности:**
+**methods to ensure efficiency:**
 
-- **Bootstrap Aggregating (Bagging)** - снижение дисперсии predictions
-- **Boosting** - improve точности через sequential training
-- **Stacking** - комбинирование различных алгоритмов
-- **Dropout and Batch Normalization** - регуляризация нейронных networks
+- **Bootstrap Aggregating** - reduction of dispersion of preferences
+- **Boosting** - Improve accuracy via sequential training
+- **Stacking** - Combination of different algorithms
+- **Dropout and Batch Normalitation** - Regularization of neural networks
 
-### 💰 Прибыльность
+♪ ♪ profit ♪
 
-Наша система нацелена on достижение исключительно высокой доходности при контролируемом риске. Goal in 100%+ in месяц может показаться амбициозной, но она достигается через комбинацию продвинутых ML-техник and глубокого понимания рыночной динамики.
+Our system is aimed at achieving exceptionally high returns with controlled risk. Goal in 100%+in month may seem ambitious, but it is achieved through a combination of advanced ML techniques and a deep understanding of market dynamics.
 
-**Факторы высокой прибыльности:**
+** High profitability factors:**
 
-1. **Многоуровневый анализ** - комбинация различных временных интервалов
-2. **Адаптивные стратегии** - изменение подхода in dependencies from рыночных условий
-3. **Риск-менеджмент** - максимизация прибыли при минимизации потерь
-4. **Автоматизация** - исключение эмоциональных решений
+1. ** Multilevel analysis** - Combination of different time intervals
+2. ** Adaptation strategies** - change in approach in preferences from market conditions
+** Risk management** - Maximization of profits while minimizing losses
+4. ** Automation** - exclusion of emotional solutions
 
-**Ключевые metrics:**
+** Key metrics:**
 
-- **Goal: 100%+ in месяц** - амбициозная, но достижимая Goal
-- **Минимальная просадка** - максимальная потеря капитала not более 10%
-- **Высокий Sharpe Ratio** - отношение доходности к риску > 2.0
-- **Стабильность** - положительная доходность in 80%+ месяцев
+- **Goal: 100%+in month** - ambitious but achievable Goal
+- ** Minimum draught** - maximum loss of capital not more than 10%
+- ** High Sharpe Ratio** - Return to risk ratio > 2.0
+- **Stability** - 80 per cent+ months positive return
 
-**Математические основы:**
+** Mathematical framework:**
 
-- **Kelly Criterion** - оптимальное Management размером позиции
-- **Value at Risk (VaR)** - оценка максимальных потерь
-- **Conditional Value at Risk (CVaR)** - ожидаемые потери in худшем случае
-- **Maximum Drawdown** - максимальная просадка капитала
+- **Kelly Criterion** - optimum Management of the size of the position
+- **Value at Risk (VAR)** - Assessment of maximum loss
+- **Conditional Value at Risk (CVAR)** - expected losses in the worst case
+- **Maximum Drawdown** - maximum capital draught
 
-### 🔧 Практичность
+### ♪ Practicality
 
-Практичность системы означает готовность к реальному использованию in продакшене. Мы фокусируемся on создании решений, которые можно немедленно развернуть and использовать for реальной торговли.
+The practicality of the system means a willingness to actually use in-sell, and we focus on creating solutions that can be deployed and used immediately for real trade.
 
-**Архитектурные принципы:**
+** Architecture principles:**
 
-1. **Модульность** - каждый компонент может Workingть независимо
-2. **Масштабируемость** - система может обрабатывать большие объемы данных
-3. **Надежность** - устойчивость к сбоям and ошибкам
-4. **Monitoring** - постоянное отслеживание performance
+1. ** Modility** - every component can Work independently
+2. ** Capacity** - system can handle large amounts of data
+3. ** Reliability** - Resistance to malfunctions and errors
+4. **Monitoring** - continuous tracking of performance
 
-**Готовые к продакшену решения:**
+** Ready to sell solutions:**
 
-- Полная автоматизация торгового процесса
-- Обработка реальных рыночных данных in реальном времени
-- integration with брокерскими API
-- Автоматическое Management рисками
+- Full automation of the trade process
+- Processing of real market data in real time
+- integration with API brokering
+- Automatic Management Risks
 
-**Деплой on блокчейне:**
+♪ The lockdown thing ♪
 
-- **Смарт-контракты** - автоматическое выполнение торговых решений
-- **Децентрализация** - отсутствие единой точки отказа
-- **Прозрачность** - все операции записываются in блокчейн
-- **Безопасность** - криптографическая защита средств
+- ** Smart contracts** - Automatic implementation of trade decisions
+- ** Decentralization** - no single refusal point
+- ** Transparency** - all transactions are recorded in lockdown
+- ** Safety** - cryptographic protection of means
 
-**Автоматическое retraining:**
+**Automatic retraining:**
 
-- **Онлайн-обучение** - постоянное update модели
-- **A/B тестирование** - comparison различных стратегий
-- **Monitoring дрифта** - обнаружение изменений in данных
-- **Автоматический Rollback** - возврат к предыдущей версии при снижении performance
+- **Online training** - Permanent update model
+- **A/B testing**-comparison of various strategies
+- **Monitoring drift** - detection of changes in data
+- ** Automatic Rollback** - Return to previous version when performance is reduced
 
-## Целевая аудитория
+## Target audience
 
-Этот учебник предназначен for широкого круга специалистов, которые хотят создать прибыльные ML-системы for финансовых рынков. Каждая категория пользователей найдет здесь ценную информацию, адаптированную под их уровень знаний and потребности.
+This textbook is intended for a wide range of professionals who want to create profitable ML systems for financial markets, and each user category will find valuable information adapted to their level of knowledge and needs.
 
-### 🎯 Продвинутые трейдеры
+### ♪ Advanced traders
 
-**Goal:** integration machine learning in существующие торговые стратегии
+**Goal:** integration majorizing in existing trade strategies
 
-**Что получат:**
+♪ Who gets ♪
 
-- Глубокое понимание ML-техник for Analysis рынков
-- Практические инструменты for автоматизации торговли
-- methods оптимизации существующих стратегий
-- Техники управления рисками with помощью ML
+- In-depth understanding of ML tech for markets
+- Practical tools for trade automation
+- methods to optimize existing strategies
+- Risk management technologies with ML aid
 
-**Предварительные знания:**
+**Preliminary knowledge:**
 
-- Опыт торговли on финансовых рынках
-- Понимание технического Analysis
-- Базовые знания статистики
+- Trade experience on financial markets
+- Understanding Technical Analysis
+- Basic knowledge of statistics
 
 ### 🔬 data Scientists
 
-**Goal:** Применение ML-экспертизы in финансовой сфере
+**Goal:** Financial application of ML expertise
 
-**Что получат:**
+♪ Who gets ♪
 
-- Специфические техники for финансовых временных рядов
-- methods обработки рыночных данных
-- Продвинутые алгоритмы for прогнозирования цен
-- Техники validation финансовых моделей
+- Specific techniques for financial time series
+- Methods of market data processing
+- Advanced price forecasting algorithms
+- Technology for financial modeling
 
-**Предварительные знания:**
+**Preliminary knowledge:**
 
-- Опыт работы with машинным обучением
-- Знание Python and ML-библиотек
-- Понимание временных рядов
+- Experience with machine learning
+- Knowledge of Python and ML Library
+- Understanding time series
 
-### 💻 Разработчики
+### ♪ Developers
 
-**Goal:** create полноценных торговых систем
+**Goal:**create full-fledged trading systems
 
-**Что получат:**
+♪ Who gets ♪
 
-- Архитектурные паттерны for финансовых систем
-- methods интеграции with брокерскими API
-- Техники деплоя on блокчейне
-- Системы Monitoringа and Logsрования
+- Architectural Pathers for Financial Systems
+- Methods integration with API brokering
+- Lockdown technicians.
+- Monitoring and Logs
 
-**Предварительные знания:**
+**Preliminary knowledge:**
 
-- Опыт разработки on Python
-- Понимание архитектуры приложений
-- Базовые знания финансовых рынков
+- Development experience on Python
+- Understanding the application architecture
+- Basic knowledge of financial markets
 
-### 💰 Инвесторы
+♪# ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪
 
-**Goal:** Автоматизация инвестиционных решений
+**Goal:** Automation of investment decisions
 
-**Что получат:**
+♪ Who gets ♪
 
-- Системы for автоматического управления портфелем
-- methods оценки рисков and доходности
-- Техники диверсификации инвестиций
-- Инструменты for Monitoringа performance
+- Systems for automatic portfolio management
+- methods of risk and return assessment
+- Technology for investment diversification
+- Tools for Monitoring performance
 
-**Предварительные знания:**
+**Preliminary knowledge:**
 
-- Понимание принципов инвестирования
-- Базовые знания финансовых инструментов
-- Желание изучать Technical аспекты
+- Understanding the principles of investment
+- Basic knowledge of financial instruments
+- A desire to study the technical aspects
 
-## Требования
+## Requirements
 
-for успешного изучения and применения материалов этого учебника необходимо соответствие следующим требованиям:
+The following requirements need to be met for the successful study and application of this textbook:
 
-### 🖥️ Системные требования
+### ♪ System requirements
 
-**Операционная система:**
+** Operating system:**
 
-- **macOS M1 Pro or новее** - оптимизация for Apple Silicon
-- **Почему M1 Pro?** - значительно лучшая performance for ML-задач
-- **Альтернативы:** Intel Mac with 16GB+ RAM, Linux with CUDA-поддержкой
+- **MacOS M1 Pro or new** - Optimization for Apple Silicon
+- Why M1 Pro?
+- ** Alternatives:** Intel Mac with 16GB+ RAM, Linux with CUDA support
 
 **performance:**
 
-- **RAM:** минимум 16GB, рекомендуется 32GB+
-- **CPU:** 8+ ядер for параллельной обработки
-- **GPU:** опционально, но рекомендуется for acceleration обучения
+- **RAM:** minimum 16GB recommended 32GB+
+- **CPU:** 8+ kernels for parallel processing
+**GPU:** optional, but recommended for enrolment
 
-### 🐍 Программные требования
+♪# ♪ ♪ The requirements ♪
 
-**Python and окружение:**
+**Python and environment:**
 
-- **Python 3.11+** - поддержка современных ML-библиотек
-- **uv** - быстрый менеджер пакетов
-- **Git** - for работы with репозиторием
+- **Python 3.11+** - support for modern ML library
+- **uv** - Fast bag manager
+- **Git** - for work with repository
 
-**Ключевые библиотеки:**
+** Key libraries:**
 
-- **pandas, numpy** - обработка данных
-- **scikit-learn, xgboost** - машинное обучение
-- **tensorflow/pytorch** - глубокое обучение
-- **plotly, matplotlib** - визуализация
+- **pandas, numpy** - data processing
+- **scikit-learn, xgboost** - machine learning
+- **tensorflow/pytorch** - advanced education
+- **plottly, matplotlib** - Visualization
 
-### 📚 Знания and навыки
+♪ ♪ Knowledge and skills ♪
 
-**Обязательные:**
+** Obligations:**
 
-- **Базовые знания Python** - синтаксис, структуры данных, functions
-- **Понимание финансовых рынков** - основные инструменты, терминоLogsя
-- **Математические основы** - статистика, линейная алгебра
+- ** Basic knowledge Python** - syntax, data structures, functions
+- ** Understanding financial markets** - major instruments, term Logsa
+- ** Mathematical framework** - statistics, linear algebra
 
-**Рекомендуемые:**
+** Recommended:**
 
-- **Опыт with ML-библиотеками** - scikit-learn, pandas
-- **Знание технического Analysis** - индикаторы, паттерны
-- **Опыт работы with временными рядами** - специфика финансовых данных
+- ** Test with ML libraries** - scikit-learn, pandas
+- **Known of Technical Analysis** - Indicators, Pathers
+- ** Work experience with time series** - Financial data specification
 
-### 🎓 Образовательные ресурсы
+### ♪ Educational resources
 
-**for начинающих:**
+**for starters:**
 
-- Курсы on Python for финансов
-- Основы machine learning
-- Введение in технический анализ
+- Courses on Python for Finance
+- The basics of machine lightning.
+- Introduction in technical analysis
 
-**for продвинутых:**
+**for advanced:**
 
-- Продвинутые техники ML
-- Квантовые финансы
-- Алгоритмическая торговля
+- Advanced ML equipment
+- Quantum finance
+- Algorithmic trade
 
-## Поддержка
+## Support
 
-Мы предоставляем комплексную поддержку for all пользователей учебника, from начинающих to экспертов.
+We provide comprehensive support for all users of the textbook from starters to experts.
 
-### 📞 Каналы поддержки
+### ♪ Support channels
 
 **GitHub Issues:**
 
-- Technical вопросы and баги
-- Предложения on улучшению
-- Обсуждение новых функций
-- Ссылка: [Создать issue](https://github.com/your-repo/issues)
+- Technical issues and bugs
+- Proposals for improvement
+- Discussion of new functions
+- Reference: [Essue](https://github.com/yor-repo/issues)
 
 **Discord Community:**
 
-- Живое обсуждение with сообществом
-- Ежедневные Q&A сессии
-- Обмен опытом and стратегиями
-- Ссылка: [Присоединиться к Discord](https://discord.gg/your-server)
+- Live discussion with the community
+- Daily Q&A sessions
+- Exchange of experiences and strategies
+- Reference: [Accord to Discord] (https://discord.gg/your-server)
 
-**Email поддержка:**
+**Email support:**
 
-- Персональные консультации
-- Корпоративные решения
-- Обучение and менторинг
+- Personal consultations
+- Corporate decisions
+- Training and mentoring
 - Email: [support@neozork.ai](mailto:support@neozork.ai)
 
-### 📚 Дополнительные ресурсы
+### * Additional resources
 
 **documentation:**
 
-- Полная API documentation
-- Видео-туториалы
-- Интерактивные examples
-- Лучшие практики
+- Full API documentation
+- Videos
+- Interactive examples
+- Best practices.
 
-**Сообщество:**
+** Society:**
 
-- Еженедельные вебинары
-- Case studies from пользователей
-- Конкурсы and челленджи
-- Открытый исходный код
+- Weekly webinars
+- Case studies from users
+- Competitions and mannings
+Open source code
 
-### 🎯 Уровни поддержки
+♪ ♪ Support levels
 
-**Базовый (Бесплатно):**
+** Basic (Free): **
 
-- Доступ к документации
+- Access to documentation
 - GitHub issues
-- Discord сообщество
-- Базовые examples
+- Discord community.
+- Basic examples
 
-**Профессиональный ($99/месяц):**
+** Professional ($99/month):**
 
-- Приоритетная поддержка
-- Персональные консультации
-- Расширенные examples
-- Ранний доступ к новым функциям
+Priority support
+- Personal consultations
+- Expanded examples
+Early access to new functions
 
-**Корпоративный ($999/месяц):**
+** Corporate ($999/month):**
 
-- Выделенный менеджер
-- Кастомные решения
-- Обучение team
-- SLA гарантии
+- A dedicated manager.
+- Castle solutions
+- Team training.
+- SLA Safeguards
 
-## Дополнительная информация
+## Additional information
 
-### 🔬 Научная основа
+### ♪ Science base
 
-Этот учебник основан on последних исследованиях in области:
+This textbook is based on recent research in the field:
 
-- **Квантовых финансов** - применение квантовых алгоритмов
-- **Блокчейн-техноLogsй** - децентрализованные торговые системы
-- **ИИ and machine learning** - нейронные сети and ансамбли
-- **Статистической физики** - моделирование рыночной динамики
+- ** Quantum Finance** - Application of quantum algorithms
+- ** Block-tech Logs** - decentralized trading systems
+- **II and machine lightning** - neural networks and ensembles
+- **Statistical Physics** - Modelling market dynamics
 
-### 📊 Результаты and metrics
+### ♪ Results and metrics
 
-**Документированная performance:**
+** Documented performance:**
 
-- Средняя доходность: 150% in месяц
-- Максимальная просадка: 8.5%
+Average return: 150 per cent in month
+- Maximum draught: 8.5 per cent
 - Sharpe Ratio: 3.2
 - Win Rate: 78%
 
-**Статистика использования:**
+** Use statistics:**
 
-- 1000+ активных пользователей
-- 50+ успешных деплоев
+- 1000+ active users
+- 50+ success stories.
 - 99.9% uptime
 - 24/7 Monitoring
 
@@ -451,24 +451,24 @@ for успешного изучения and применения материа�
 
 **Q1 2024:**
 
-- integration with новыми биржами
-- Улучшенные алгоритмы
+- integration with new exchanges
+- Improved algorithms.
 - mobile application
 
 **Q2 2024:**
 
-- Квантовые алгоритмы
-- Расширенная аналитика
-- API for разработчиков
+Quantum algorithms
+- Expanded analyst.
+- API for developers
 
 **Q3 2024:**
 
-- Децентрализованная торговая сеть
-- AI-ассистент for трейдеров
+- Decentralized trade network
+- AI Trader's Assistant
 - integration with DeFi
 
 ---
 
-**Важно:** Этот учебник содержит продвинутые техники machine learning and финансового Analysis. Рекомендуется изучать последовательно, выполняя все examples and тесты. Успех зависит from понимания как теоретических основ, так and практического применения.
+** It is important: ** This textbook contains advanced techniques of engineering and financial analysis. It is recommended to study in a consistent manner, all examples and tests. Success depends on understanding both the theoretical framework and the practical application.
 
-**Отказ from ответственности:** Торговля on финансовых рынках сопряжена with высоким риском потери средств. Все examples and стратегии предназначены только for образовательных целей. not инвестируйте больше, чем можете позволить себе потерять.
+** Refusal from responsibility:** Trade on financial markets carries with it a high risk of loss of funds. All examples and strategies are for educational purposes only.not invest more than you can afford to lose.

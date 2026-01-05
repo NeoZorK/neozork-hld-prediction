@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
 """
-Финальный скрипт for конвертации AutoML Gluon мануала
-Launchает оба конвертера: HTML and PDF (with Reportlab)
+Final script for AutoML Gloon Manual conversion
+Launch both converters: HTML and PDF (with Reportlab)
 
 Author: Shcherbyna Rostyslav
-Дата: 2024
+Date: 2024
 """
 
 import sys
 import os
 from pathlib import Path
 
-# Добавляем текущую директорию in путь for import модулей
+# Add the current directory in the path for Import modules
 sys.path.append(str(Path(__file__).parent))
 
 from simple_html_converter import SimpleAutoMLGluonHTMLConverter
 from Reportlab_pdf_converter import ReportLabPDFConverter
 
 def check_dependencies():
- """Проверяет presence required dependencies"""
+"Corresponds to "presence requerd dependencies""
  print("🔍 checking dependencies...")
 
  # checking markdown
@@ -29,7 +29,7 @@ def check_dependencies():
  print("❌ markdown not installed. install: pip install markdown")
  return False
 
- # checking Pygments for подсветки синтаксиса
+# Sheking Pygments for Syntax Illumination
  try:
  import pygments
  print("✅ pygments installed")
@@ -47,8 +47,8 @@ def check_dependencies():
  return True
 
 def create_directories():
- """Создает необходимые директории"""
- print("📁 Creating директории...")
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"preint("\\Creating Directory...")
 
  directories = [
  "src/automl/gluon",
@@ -57,94 +57,94 @@ def create_directories():
 
  for directory in directories:
  Path(directory).mkdir(parents=True, exist_ok=True)
- print(f"✅ Создана директория: {directory}")
+Prent(f) is created by the directory: {directory})
 
 def convert_to_html():
- """Конвертирует in HTML"""
+""Converted in TML""
  print("\n" + "="*50)
- print("🔄 КОНВЕРТАЦИЯ in HTML")
+"Prent("\CONVERTATION IN HTML")
  print("="*50)
 
  try:
  converter = SimpleAutoMLGluonHTMLConverter()
  converter.run()
- print("✅ HTML конвертация завершена успешно!")
+Print("\HTML conversion successfully completed!')
  return True
  except Exception as e:
- print(f"❌ Ошибка HTML конвертации: {e}")
+Print(f"\\HTML conversion: {e}})
  return False
 
 def convert_to_pdf():
- """Конвертирует in PDF"""
+""Converted in PDF""
  print("\n" + "="*50)
- print("🔄 КОНВЕРТАЦИЯ in PDF")
+"In PDF CONVERTATION"
  print("="*50)
 
  try:
  converter = ReportLabPDFConverter()
  converter.run()
- print("✅ PDF конвертация завершена успешно!")
+The conversion has been successfully completed!
  return True
  except Exception as e:
- print(f"❌ Ошибка PDF конвертации: {e}")
+pint(f"\pDF conversion request: {e}})
  return False
 
 def main():
- """Главная function"""
+""The Main Function""
  print("🚀 AutoML Gluon Manual Converter (Final)")
  print("=" * 50)
- print("Конвертирует 33 главы Markdown in HTML and PDF мануалы")
+Print("Converts 33 chapters of Markdown in TML and PDF manuals")
  print("Author: Shcherbyna Rostyslav")
  print("=" * 50)
 
- # Creating директории
+# Creating Directorates
  create_directories()
 
  # checking dependencies
  deps_ok = check_dependencies()
 
  if not deps_ok:
- print("\n❌ not все dependencies установлены. install их and попробуйте снова.")
+Install them and try again.
  return
 
- # Конвертируем in HTML
+# Converging in HTML
  html_success = convert_to_html()
 
- # Конвертируем in PDF
+# Converging in PDF
  pdf_success = convert_to_pdf()
 
- # Итоговый Report
+# Final Report
  print("\n" + "="*50)
- print("📊 ИТОГОВЫЙ Report")
+Prent((("Total Report")
  print("="*50)
 
  if html_success:
- print("✅ HTML мануал: docs/automl/gluon/AutoML_Gluon_Complete_Manual.html")
+Print("\HTML manual: docs/automl/gluon/AutuML_Gluon_Complete_Manual.html")
  else:
- print("❌ HTML мануал: Ошибка конвертации")
+Print("\HTML manual: conversion error")
 
  if pdf_success:
- print("✅ PDF мануал: docs/automl/gluon/AutoML_Gluon_Complete_Manual.pdf")
+pint("\PDF manual: docs/automl/gluon/AutuML_Gluon_Complete_Manual.pdf")
  else:
- print("❌ PDF мануал: Ошибка конвертации")
+Print("\PDF manual: conversion error")
 
- print("\n🎉 Конвертация завершена!")
+Print("\n\\\\\\\\\\\}Convergence complete!}
 
  if html_success and pdf_success:
- print("🎊 Все мануалы созданы успешно!")
- print("\n📋 Созdata файлы:")
+"All manuals have been successfully created!"
+Print('n'\\\\\\\\\\\\\\\\Prodata files:}
  print(" 📄 HTML: AutoML_Gluon_Complete_Manual.html (7.5 MB)")
  print(" 📄 PDF: AutoML_Gluon_Complete_Manual.pdf (2.0 MB)")
  print(" 📄 HTML for PDF: AutoML_Gluon_Complete_Manual_ForPDF.html (7.4 MB)")
  elif html_success:
- print("📄 HTML мануал готов к использованию!")
+Print("\HTML manual ready for use!")
  else:
- print("😞 Произошли ошибки при конвертации")
+Print(''\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\((((((((\((((((\(\
 
- print("\n💡 Дополнительные instructions:")
- print(" - HTML мануал можно открыть in любом браузере")
- print(" - PDF мануал готов к использованию and печати")
- print(" - Все 33 главы включены in оба формата")
+print('\n\\\\\\ additional instruments: )
+Print("-HTML Manual can be opened in any browser)
+print(" - PDF manual ready for use and printing)
+"-All 33 chapters are included in both formats")
 
 if __name__ == "__main__":
  main()

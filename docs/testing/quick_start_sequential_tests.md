@@ -1,65 +1,65 @@
 # Quick start: Sequential Test Runner
 
-## Что это такое?
+♪ What's that?
 
-Последовательный тест-раннер - это решение for Launchа tests in Docker контейнере папка за папкой, что предотвращает сбои воркеров and Issues with ресурсами при параллельном выполнении.
+A consistent test runner is the solution for Launch testes in Docker to a folder-by- folder container, which prevents vorkers and Issues from failing with resources in parallel execution.
 
 ## Quick start
 
-### 1. Launch in Docker контейнере
+###1.Launch in Docker container
 
 ```bash
-# При Launchе контейнера выберите 'y' for Launchа tests
+# At Launch, select 'y' for Launch testes
 docker run -it your-container
-# Ответьте 'y' on вопрос о Launchе tests
+# Answer 'y' on the question about Launche testes
 ```
 
-### 2. Ручной Launch
+###2. # Launch's hand
 
 ```bash
-# Run all tests последовательно
+# Run all testes sequence
 python scripts/run_sequential_tests_docker.py
 
-# Тестирование функциональности раннера
+# Testing the function of the ranner
 python scripts/test_sequential_runner.py
 ```
 
-### 3. Использование in интерактивной оболочке
+♪## 3. Use in interactive shell
 
 ```bash
-# in Docker контейнере доступны team:
+# in Docker container available team:
 python scripts/run_sequential_tests_docker.py
-uv run pytest tests -n auto # Старый способ (может вызывать проблемы)
+uv run pytest tests -n auto # Old way (may cause problems)
 ```
 
-## Порядок выполнения tests
+## The order of the tests
 
-Тесты выполняются in следующем порядке:
+The tests shall be performed in the following order:
 
-1. **common** - Базовые утилиты (7 tests, ~2s)
-2. **unit** - Юнит-тесты (335 tests, ~7s)
-3. **utils** - Утилиты (30 tests, ~2s)
-4. **data** - Обработка данных
-5. **calculation** - Математические Calculations
-6. **cli** - Командная строка
-7. **plotting** - Графики
-8. **export** - Экспорт данных
-9. **eda** - Анализ данных
-10. **interactive** - Интерактивный режим
-11. **integration** - Интеграционные тесты
-12. **ml** - Машинное обучение
-13. **mcp** - MCP сервер
-14. **docker** - Docker тесты
-15. **native-container** - Нативные контейнеры
+1. **con** - Basic Utilities (7 testes, ~2s)
+2. **unit**-Unit tests (335 tests, ~7s)
+3. **utils** - Utilities (30 tests, ~2s)
+4. **data** - Data processing
+5. **calculation** - Mathematical Calculations
+6. **click** - Command line
+7. **plotting** - Schedules
+8. **export** - Data export
+9. **eda** - Data analysis
+10. **interactive** - Interactive
+11. **integration** - Integration tests
+12. **ml** - Machine training
+13. **mcp** - MCP server
+14. **Docker** - Docker tests
+15. **native-container** - Intact containers
 16. **pocket_hedge_fund** - application
 17. **saas** - SaaS application
-18. **scripts** - Скрипты
-19. **workflow** - Рабочие процессы
-20. **e2e** - End-to-end тесты
+18. **scripts** - Scripts
+19. **workflow** - Business processes
+20. **e2e** - End-to-end tests
 
 ## configuration
 
-Settings находятся in файле `tests/test_execution_order.yaml`:
+Settings are in the `tests/test_execution_order.yaml' file:
 
 ```yaml
 test_folders:
@@ -69,20 +69,20 @@ test_folders:
  required: true
 
 global_Settings:
- max_total_time: 3600 # 1 час
+max_total_time: 3600 #1 hour
  stop_on_failure: true
  skip_empty_folders: true
 ```
 
-## Преимущества
+♪ Benefits
 
-✅ **Стабильность**: Нет сбоев воркеров
-✅ **Предсказуемость**: Постоянный порядок выполнения
-✅ **Management ресурсами**: Контроль памяти and CPU
-✅ **Легкая отладка**: Понятно, какая папка вызвала проблему
-✅ **Гибкость**: Настраиваемые таймауты and parameters
+*Stability**: No malfunctioning of vorkers
+* Predictability**: Ongoing implementation
+*Manage of resources**: Memory control and CPU
+Easy debugging**: I see which folder caused the problem.
+*Flexibility**: Adjustable timeout and parameters
 
-## example вывода
+# # Example output
 
 ```
 ============================================================
@@ -104,36 +104,36 @@ Timeout: 60s
 2024-01-15 10:30:15 - INFO - Passed: 335, Failed: 0, Skipped: 53
 ```
 
-## Решение проблем
+## Resolution of problems
 
 ### tests do not start
-- Проверьте, что вы in Docker контейнере
-- Убедитесь, что файл `tests/test_execution_order.yaml` существует
+- Check that you're in the Docker container.
+- Make sure the file `tests/test_execution_order.yaml' exists
 
-### Таймаут папки
-- Увеличьте `timeout` in конфигурации for медленных папок
-- Проверьте on presence бесконечных циклов in тестах
+### Timeout folders
+- Increase `timeout' in configuration for slow folders
+- Check on the presentation of endless cycles in tests
 
-### Ошибки конфигурации
-- Запустите `python scripts/test_sequential_runner.py` for диагностики
-- Проверьте синтаксис YAML файла
+### configuration errors
+- Run `python scripts/test_sequential_runner.py' for diagnostics
+- Check the YAML file syntax
 
 ## integration with CI/CD
 
 ```bash
-# in CI/CD пайплайне
+# in CI/CD pipline
 docker run --rm your-container python scripts/run_sequential_tests_docker.py
 ```
 
-## comparison with параллельным выполнением
+## Comparrison with parallel performance
 
-| Параллельное (`-n auto`) | Последовательное |
+( &lt;-n auto &gt; ) Consequent
 |---------------------------|------------------|
-| ❌ Сбои воркеров | ✅ Стабильная Working |
-| ❌ Непредсказуемый порядок | ✅ Контролируемый порядок |
-| ❌ Issues with ресурсами | ✅ Management ресурсами |
-| ✅ Быстрее | ⚠️ Медленнее, но надежнее |
+♪ Vorcier malfunctions ♪ ♪ Stable Working ♪
+* Unpredictable order * * Controlled order *
+♪ Issues with resources ♪ ♪ Management resources ♪
+♪ Faster ♪ ♪ Slower but more reliable ♪
 
-## Заключение
+## Conclusion
 
-Последовательный тест-раннер - это надежное решение for Docker окружений, которое обеспечивает стабильное выполнение tests без сбоев воркеров and проблем with ресурсами.
+A consistent test-runner is a reliable solution for Docker environments that ensures that testes are consistently performed without malfunctioning the vorkers and with the resources.

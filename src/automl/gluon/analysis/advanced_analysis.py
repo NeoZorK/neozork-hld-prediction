@@ -1,6 +1,6 @@
 """
 Advanced Analysis for trading Strategy Models
-Продвинутый анализ for моделей торговых стратегий
+Advanced analysis for trade strategy models
 """
 
 import pandas as pd
@@ -34,7 +34,7 @@ class AdvancedTradingAnalyzer:
  signal_threshold: float = 0.6) -> Dict[str, Any]:
  """
  Comprehensive backtesting Analysis.
- Комплексный анализ бэктестинга.
+Comprehensive back-up analysis.
 
  Args:
  model: Trained model
@@ -166,7 +166,7 @@ class AdvancedTradingAnalyzer:
  retrain_frequency: int = 500) -> Dict[str, Any]:
  """
  Walk Forward Analysis for model stability.
- Анализ скользящего окна for стабильности модели.
+Analysis of the sliding window for model stability.
 
  Args:
  model: Base model
@@ -260,7 +260,7 @@ class AdvancedTradingAnalyzer:
  n_simulations: int = 1000, sample_size: int = 500) -> Dict[str, Any]:
  """
  Monte Carlo simulation for robustness testing.
- Симуляция Монте-Карло for тестирования робастности.
+The Monte Carlo simulation for the robotics test.
 
  Args:
  model: Trained model
@@ -343,7 +343,7 @@ class AdvancedTradingAnalyzer:
  def create_performance_Report(self, backtest_results: Dict, wf_results: Dict, mc_results: Dict) -> str:
  """
  Create comprehensive performance Report.
- Создать комплексный Report о performance.
+Create a comprehensive Performance Report.
 
  Args:
  backtest_results: Backtesting results
@@ -356,16 +356,16 @@ class AdvancedTradingAnalyzer:
 
  Report = f"""
 # 📊 COMPREHENSIVE TRADING MODEL PERFORMANCE Report
-# Report о performance торговой модели
+# Report on trade model performance
 
-## 🎯 Executive Summary / Исполнительное резюме
+## ♪ Executive Summary / Executive Summary
 
 **Model Performance OverView:**
 - Backtest Total Return: {backtest_results.get('total_return', 0):.2%}
 - Walk Forward Stability: {wf_results.get('stability_score', 0):.3f}
 - Monte Carlo Robustness: {mc_results.get('robustness_score', 0):.3f}
 
-## 📈 Backtesting Results / Результаты бэктестинга
+## Backstasing Results / Backtsing Results
 
 **Performance Metrics:**
 - Total Return: {backtest_results.get('total_return', 0):.2%}
@@ -381,7 +381,7 @@ class AdvancedTradingAnalyzer:
 - Best Trade: {backtest_results.get('best_trade', 0):.2%}
 - Worst Trade: {backtest_results.get('worst_trade', 0):.2%}
 
-## 🚶 Walk Forward Analysis / Анализ скользящего окна
+## ♪ Walk Forward Analysis / Sliding Window Analysis
 
 **Stability Metrics:**
 - Total Windows: {wf_results.get('total_windows', 0)}
@@ -390,7 +390,7 @@ class AdvancedTradingAnalyzer:
 - Stability Score: {wf_results.get('stability_score', 0):.3f}
 - Consistency Score: {wf_results.get('consistency_score', 0):.3f}
 
-## 🎲 Monte Carlo Simulation / Симуляция Монте-Карло
+## Monte Carlo Simulation / Monte Carlo Simulation
 
 **Robustness Metrics:**
 - Total Simulations: {mc_results.get('total_simulations', 0)}
@@ -400,7 +400,7 @@ class AdvancedTradingAnalyzer:
 - Robustness Score: {mc_results.get('robustness_score', 0):.3f}
 - Consistency Score: {mc_results.get('consistency_score', 0):.3f}
 
-## 🎯 Overall Assessment / Общая оценка
+## ♪ Overall Assessment / Overall Evaluation
 
 **Model Quality Indicators:**
 - ✅ High Performance: Sharpe > 1.0 and Return > 10%

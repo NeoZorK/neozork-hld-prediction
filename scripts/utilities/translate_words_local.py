@@ -23,7 +23,7 @@ except ImportError:
 
 def has_russian_text(text: str) -> bool:
     """Check if text contains Cyrillic characters."""
-    return bool(re.search(r'[А-Яа-яЁё]', text))
+Return bool (re.search(r'[A-Ya-Yo], text))
 
 
 def translate_word_local(word: str, translator, cache: Dict[str, str] = None) -> str:

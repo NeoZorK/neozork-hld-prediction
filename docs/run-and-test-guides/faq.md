@@ -16,30 +16,30 @@ uv run pytest tests -n auto
 ```
 
 ### Q: What components are included in the system? / What components are included in the system?
-**A:** Система включает:
-- **Основной анализ** (`run_Analysis.py`) - Ручное построение графиков / Manual charting
-- **Интерактивная система** (`interactive/`) - ML торговые стратегии / ML trading strategies
-- **SaaS platform** (`src/saas/`) - Облачная platform / Cloud platform
+**A:** System consists of:
+- ** Basic analysis** ( `run_Analis.py') - Manual graphics/Manual charting
+- ** Interactive system** (`interactive/') - ML trade strategies / ML trading strategies
+- **SaaaS platform** (`src/sas/') - Cloud tableform / Cloud tableform
 - **Pocket Hedge fund** (`src/pocket_hedge_fund/`) - Hedge fund / Hedge fund
 - **mobile application** (`src/mobile_app/`) - React Native application / React Native app
-- **Админ панель** (`src/admin_panel/`) - Vue.js админка / Vue.js admin panel
-- **Monitoring** (`src/Monitoring/`) - Система Monitoringа / Monitoring system
+- **Admin panel** ('src/admin_panel/') - Vue.js admin / Vue.js admin penel
+- **Monitoring** (`src/Monitoring/') - Monitoring system
 
-### Q: What требования к системе? / What are the system requirements?
-**A:** Минимальные требования:
+## Q: What system requirements?
+**A:** Minimum requirements:
 - **Python**: 3.11+
 - **Node.js**: 18+
-- **Docker**: 20.10+ (опционально / optional)
-- **UV**: Последняя версия / Latest version
-- **Память / Memory**: 4GB RAM
-- **Диск / Disk**: 10GB свободного места / free space
+- **Docker**: 20.10+
+- **UV**: Last version / Latest version
+- ** Memory/Memorial**: 4GB RAM
+- ** Disk / Disk**: 10GB available space / free space
 
-## 🧪 Вопросы on testing / testing Questions
+## ♪ Questions on testing / testing Quests
 
-### Q: Как запустить все тесты? / How to Run all tests?
-**A:** Use многопоточное тестирование:
+### Q: How do you run all the tests?
+**A:** Use multi-track test:
 ```bash
-# Все тесты / all tests
+# All tests / all tests
 uv run pytest tests -n auto
 
 # Safe mode / Safe mode
@@ -49,21 +49,21 @@ uv run pytest tests -n auto
 uv run pytest tests/ --cov=src -n auto
 ```
 
-### Q: Как запустить тесты конкретного компонента? / How to run tests for specific component?
-**A:** Запустите тесты on категориям:
+### Q: How to run tests on a specific component?
+**A:** Start tests on categories:
 ```bash
-# Тесты расчетов / Calculation tests
+# Calculation tests / Calculation tests
 uv run pytest tests/calculation/ -n auto
 
-# Тесты SaaS / SaaS tests
+# SaaS / SaaS tests
 uv run pytest tests/saas/ -n auto
 
-# Тесты Pocket Hedge fund / Pocket Hedge fund tests
+# Pocket Hedge fund / Pocket Hedge fund test
 uv run pytest tests/pocket_hedge_fund/ -n auto
 ```
 
-### Q: Что делать, если tests do not start? / What to do if tests don't run?
-**A:** Попробуйте Safe mode:
+### Q: What if tests do not stand?
+**A:** Try Safe Mode:
 ```bash
 # Safe mode / Safe mode
 ./scripts/run_tests_safe.sh
@@ -71,37 +71,37 @@ uv run pytest tests/pocket_hedge_fund/ -n auto
 # with debugging / with debugging
 uv run pytest tests/ -v -s
 
-# Конкретный тест / specific test
+# Specific test / special test
 uv run pytest tests/calculation/test_indicators.py::test_rsi -v
 ```
 
-## 🐳 Вопросы on Docker / Docker Questions
+## ♪ Questions on Docker / Docker Quests
 
-### Q: Как Launch the system in Docker? / How to run system in Docker?
+## Q: How is Launch the system in Docker?
 **A:** Use Docker Compose:
 ```bash
 # Launch all services / Launch all services
 docker-compose up -d
 
-# Launch with Logsрованием / Launch with logging
+# Launch with Logsting / Launch with Logging
 docker-compose up
 
-# Остановка / Stop
+# Stop / Stop
 docker-compose down
 ```
 
-### Q: Как запустить тесты in Docker? / How to run tests in Docker?
-**A:** execute team in контейнере:
+## Q: How to run tests in Docker?
+**A:** execute team in container:
 ```bash
-# Тесты in контейнере / tests in container
+# Test in container / test in container
 docker-compose exec neozork-hld uv run pytest tests/ -n auto
 
-# Конкретные тесты / specific tests
+# Specific tests / special tests
 docker-compose exec neozork-hld uv run pytest tests/calculation/ -v
 ```
 
-### Q: Что делать, если Docker not Launchается? / What to do if Docker doesn't start?
-**A:** Попробуйте пересборку:
+### Q: What if Docker not Launch?
+**A:** Try the bulkhead:
 ```bash
 # Rebuild containers / Rebuild containers
 docker-compose build --no-cache
@@ -113,99 +113,99 @@ docker system prune -a
 sudo systemctl Restart Docker
 ```
 
-## 🍎 Вопросы on Apple Silicon / Apple Silicon Questions
+## ♪ Questions on Apple Silicon / Apple Silicon Quests
 
-### Q: Как запустить нативный контейнер? / How to run native container?
-**A:** Use скрипты нативного контейнера:
+### Q: How do you start a portable container?
+**A:** Use scripts of a nick container:
 ```bash
-# Интерактивный Launch / Interactive Launch
+# Interactive Launch / Interactive Launch
 ./scripts/native-container/native-container.sh
 
-# Быстрый Launch / Quick Launch
+# Fast Launch / Quick Launch
 ./scripts/native-container/setup.sh && ./scripts/native-container/run.sh
 
-# check статуса / check status
+# Check status / sheck status
 ./scripts/native-container/run.sh --status
 ```
 
-### Q: Как управлять нативным контейнером? / How to manage native container?
-**A:** Use team управления:
+### Q: How do you control a native container?
+**A:** Use team control:
 ```bash
-# Остановка / Stop
+# Stop / Stop
 ./scripts/native-container/stop.sh
 
-# ПереLaunch / Restart
+# OverLaunch / Restart
 ./scripts/native-container/force_restart.sh
 
 # clean / cleanup
 ./scripts/native-container/cleanup.sh --all --force
 ```
 
-## 🚀 Вопросы on deployment / deployment Questions
+## ♪ Questions on development / development regulations
 
-### Q: Как развернуть system in продакшне? / How to deploy system in production?
-**A:** Use продакшн конфигурацию:
+### Q: How do you turn a system into a product?
+**A:** Use production configuration:
 ```bash
-# configuration продакшна / Setup production
+# Configuring Production / Setup Production
 python deploy/production_setup.py
 
-# Launch продакшн services / Launch production services
+# Launch production services / Launch production services
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
-### Q: Как развернуть in Kubernetes? / How to deploy in Kubernetes?
-**A:** Примените манифесты:
+### Q: How to open in Kubernets?
+**A:** Apply manifestos:
 ```bash
-# Применение манифестов / Apply manifests
+# Application of manifestos / Apply manifests
 kubectl apply -f k8s/
 
-# check статуса / check status
+# Check status / sheck status
 kubectl get pods
 kubectl get services
 ```
 
-## 🔧 Вопросы on настройке / Configuration Questions
+## ♪ Questions on setting / configuring Quesions
 
-### Q: Как настроить переменные окружения? / How to configure environment variables?
-**A:** Отредактируйте файл .env:
+### Q: How do you set the variables of the environment?
+**A:** Edit file .env:
 ```bash
-# Копирование примера / Copy example
+# Copying an example / Copy example
 cp env.example .env
 
-# Редактирование / Edit
+# Editing / Edition
 nano .env
 ```
 
-### Q: Как настроить базу данных? / How to configure database?
-**A:** install PostgreSQL and настройте переменные:
+### Q: How do you set up the database?
+**A:** install PostgreSQL and set the variables:
 ```bash
 # installation PostgreSQL / install PostgreSQL
 sudo apt-get install postgresql postgresql-contrib
 
-# create базы данных / Create database
+# of the database/Create database
 createdb neozork_fund
 
 # configuration User / Configure User
 createUser neozork_User
 ```
 
-## 📊 Вопросы on Monitoringу / Monitoring Questions
+## ♪ Questions on Monitoring ♪
 
-### Q: Как Viewеть Logs? / How to View Logs?
-**A:** Use team Viewа логов:
+## Q: How to View Logs?
+**A:** Use Team View log:
 ```bash
-# Logs приложения / application Logs
+# Logs application / application Logs
 tail -f Logs/pocket_hedge_fund.log
 
 # Docker Logs / Docker Logs
 docker-compose Logs -f neozork-hld
 
-# Все Logs / all Logs
+# All Logs / All Logs
 tail -f Logs/*.log
 ```
 
-### Q: Как проверить статус системы? / How to check system status?
-**A:** Use team проверки:
+### Q: How do you check the status of the system?
+**A:** Use team check:
 ```bash
 # health check / health check
 curl http://localhost:8080/health
@@ -213,14 +213,14 @@ curl http://localhost:8080/health
 # Prometheus metrics / Prometheus metrics
 curl http://localhost:9090/metrics
 
-# Статус Docker / Docker status
+# Docker status / Docker status
 docker-compose ps
 ```
 
-## 🆘 Вопросы on устранению неполадок / Troubleshooting Questions
+## ♪ Questions on how to fix troubles / Troubleshooting Quesions
 
-### Q: Что делать, если возникают import Errors? / What to do if import Errors occur?
-**A:** Проверьте PYTHONPATH:
+### Q: What if Import Errors arise?
+**A:** Check PYTHONPATH:
 ```bash
 # installation PYTHONPATH / Set PYTHONPATH
 export PYTHONPATH="${PWD}:${PYTHONPATH}"
@@ -229,27 +229,27 @@ export PYTHONPATH="${PWD}:${PYTHONPATH}"
 uv pip List | grep neozork
 ```
 
-### Q: Что делать, если тесты медленно Workingют? / What to do if tests run slowly?
-**A:** Use оптимизированные team:
+### Q: What if the tests are slowly Working?
+**A:** Use optimized team:
 ```bash
 # Safe mode / Safe mode
 ./scripts/run_tests_safe.sh
 
-# Ограниченные потоки / Limited threads
+# Limited flows / Limited outs
 uv run pytest tests/ -n 2
 
-# Конкретные тесты / specific tests
+# Specific tests / special tests
 uv run pytest tests/calculation/ -v
 ```
 
-### Q: Как получить помощь? / How to get help?
-**A:** Use доступные ресурсы:
+### Q: How do you get help?
+**A:** Use available resources:
 - **documentation / Documentation**: [docs/run-and-test-guides/](.)
 - **GitHub Issues**: https://github.com/Username/neozork-hld-Prediction/issues
 - **Discord**: https://discord.gg/neozork
 - **Telegram**: https://t.me/neozork_hld
 
-## 📚 Дополнительные ресурсы / Additional Resources
+## * Additional resources/Additional resources
 
 - [Complete guide / Complete Manual](russian/complete-manual-ru.md)
 - [Quick start / Quick start](russian/quick-start-ru.md)

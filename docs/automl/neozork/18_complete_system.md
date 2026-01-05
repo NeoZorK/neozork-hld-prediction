@@ -1,140 +1,140 @@
-# 18. Полная система заработка 100%+ in месяц - from идеи to деплоя
+# 18. Full system of earnings 100%+in month - from ideas to deeds
 
-**Theory:** Полная система заработка 100%+ in месяц представляет собой комплексную реализацию высокодоходной торговой системы, объединяющую все современные техноLogsи and methods for достижения целевой доходности. Это критически важно for создания максимально эффективных торговых систем.
+**Theory:** A full system of earnings of 100%+in month is a comprehensive implementation of a high-income trading system that brings together all modern technoLogs and methhods for achieving targeted returns. This is critical for the creation of the most efficient trading systems.
 
-**Почему полная система важна:**
-- **Комплексность:** Обеспечивает комплексный подход к торговле
-- **Эффективность:** Обеспечивает максимальную эффективность
-- **Доходность:** Критически важно for достижения высокой доходности
-- **Практичность:** Обеспечивает практическое применение знаний
+# Why a complete system matters #
+- ** Integration:** Provides an integrated approach to trade
+- ** Effectiveness:** Ensures maximum efficiency
+- ** Income:** Critical for high returns
+- ** Practice: ** Provides practical application of knowledge
 
-**Goal:** Создать полностью рабочую system with доходностью более 100% in месяц with детальным кодом and инструкциями.
+**Goal:** Create a fully operational system with returns of more than 100 per cent in month with detailed code and instructions.
 
-## 🎯 Concept системы
+♪ ♪ ♪ Connect system
 
-**Theory:** Concept системы представляет собой фундаментальный подход к созданию высокодоходных торговых систем, основанный on анализе проблем традиционных подходов and применении революционных решений. Это критически важно for понимания основ создания прибыльных систем.
+**Theory:**Concept system is a fundamental approach to building high-income trading systems based on the analysis of traditional approaches and revolutionary solutions, which is critical for understanding the foundations of profitable systems.
 
-**Почему Concept системы важна:**
-- **Понимание основ:** Обеспечивает понимание основ создания систем
-- **Революционные решения:** Предоставляет революционные решения
-- **Практическое применение:** Обеспечивает практическое применение
-- **Высокая доходность:** Критически важно for достижения высокой доходности
+**Why the Concept System is important:**
+- ** Understanding the Framework:** Provides an understanding of the framework for building systems
+- ** Revolutionary solutions:** Provides revolutionary solutions
+- ** Practical application:** Provides practical application
+- ** High return:** Critically important for high returns
 
-### Почему 90% Hedge fundов зарабатывают менее 15% in год?
+### Why 90 percent of Hedge Funds earn less than 15% in a year?
 
-**Theory:** Анализ проблем Hedge fundов критически важен for понимания ограничений традиционных подходов and разработки революционных решений. Это основа for создания высокоэффективных систем.
+**Theory:** The Hedge Fund analysis is critical for understanding the limitations of traditional approaches and for developing revolutionary solutions, which is the basis for building high-impact systems.
 
-**Почему анализ проблем важен:**
-- **Понимание ограничений:** Обеспечивает понимание ограничений традиционных подходов
-- **Выявление возможностей:** Помогает выявить возможности for улучшения
-- **Разработка решений:** Критически важно for development эффективных решений
-- **Избежание ошибок:** Помогает избежать типичных ошибок
+** Why analysis of problems is important:**
+- ** Understanding the limitations:** Provides an understanding of the limitations of traditional approaches
+- ** Identification of opportunities:** Helps identify opportunities for improvement
+- ** Decision-making: ** Critical for development of effective solutions
+- ** Avoiding mistakes:** Helps avoid typical mistakes
 
-**Основные проблемы:**
+** Key issues:**
 
-1. **retraining - Workingют только on исторических данных**
- - **Theory:** retraining представляет собой критическую проблему, когда модели Workingют только on исторических данных and not могут адаптироваться к новым условиям
- - **Почему это проблема:** Обеспечивает нестабильность and низкую эффективность
- - **Плюсы:** Может обеспечить высокую точность on исторических данных
- - **Disadvantages:** Нестабильность, низкая адаптивность, непредсказуемость
+1. **retraining - Working only on historical data**
+- **Theory:** retraining is a critical problem when the Working models only on historical data and not can adapt to new conditions
+- **Why is the problem:** Provides instability and low efficiency
+- **plus:** Can provide high accuracy on historical data
+- **Disadvantages:** Instability, low adaptive, unpredictable
 
-2. **Отсутствие адаптации - not адаптируются к изменениям**
- - **Theory:** Отсутствие адаптации критически ограничивает эффективность систем in изменяющихся рыночных условиях
- - **Почему это проблема:** Обеспечивает нестабильность and низкую эффективность
- - **Плюсы:** Простота реализации
- - **Disadvantages:** Нестабильность, низкая адаптивность, устаревание
+2. ** Lack of adaptation - not adapted to changes**
+- **Theory:** Lack of adaptation severely limits the effectiveness of systems in changing market conditions
+- **Why is the problem:** Provides instability and low efficiency
+- ** Plus:** Simplicity of implementation
+- **Disadvantages:** Instability, low adaptation, obsolescence
 
-3. **Неправильный риск-менеджмент - игнорируют риски**
- - **Theory:** Неправильный риск-менеджмент критически увеличивает риски потерь and снижает долгосрочную эффективность
- - **Почему это проблема:** Обеспечивает высокие риски and потенциальные потери
- - **Плюсы:** Может обеспечить высокую доходность in краткосрочной перспективе
- - **Disadvantages:** Высокие риски, потенциальные большие потери, нестабильность
+3. ** Wrong risk management - ignore risks**
+- **Theory:** Wrong risk management critically increases risk of loss and reduces long-term effectiveness
+- **Why the problem:** Ensure high risks and potential losses
+- **plus:** May provide high returns in the short term
+- **Disadvantages:** High risks, potential high losses, instability
 
-4. **Упущение краткосрочных возможностей - фокус только on долгосрочных трендах**
- - **Theory:** Упущение краткосрочных возможностей критически снижает потенциальную доходность системы
- - **Почему это проблема:** Ограничивает возможности for заработка
- - **Плюсы:** Стабильность, предсказуемость
- - **Disadvantages:** Ограниченная доходность, упущенные возможности
+4. ** Loss of short-term opportunities - focus only on long-term trends**
+- **Theory:** Loss of short-term opportunities critically reduces the potential returns of the system
+- What's the problem?
+- ** Plus:** Stability, predictability
+- **Disadvantages:** Limited returns, missed opportunities
 
-5. **Отсутствие комбинации - используют только один подход**
- - **Theory:** Отсутствие комбинации критически ограничивает эффективность and робастность системы
- - **Почему это проблема:** Обеспечивает ограниченную эффективность and низкую робастность
- - **Плюсы:** Простота реализации
- - **Disadvantages:** Ограниченная эффективность, низкая робастность, уязвимость к изменениям
+5. ** Lack of combination - only one approach is used**
+- **Theory:** The absence of a combination severely limits the effectiveness and efficiency of the system
+- **Why is the problem:** Provides limited efficiency and low efficiency
+- ** Plus:** Simplicity of implementation
+- **Disadvantages:** Limited efficiency, low efficiency, vulnerability to change
 
-### Наша революционная стратегия
+### Our revolutionary strategy
 
-**Theory:** Революционная стратегия представляет собой комплексный подход к созданию высокодоходных торговых систем, объединяющий все современные техноLogsи and methods. Это критически важно for достижения доходности 100%+ in месяц.
+**Theory:** The Revolutionary Strategy is an integrated approach to building high-income trading systems that integrates all modern technoLogs and methhods. This is critical to achieving a 100 per cent+-in-month return.
 
-**Почему революционная стратегия важна:**
-- **Комплексность:** Обеспечивает комплексный подход к торговле
-- **Инновации:** Использует самые современные техноLogsи
-- **Эффективность:** Обеспечивает максимальную эффективность
-- **Доходность:** Критически важно for достижения высокой доходности
+**Why a revolutionary strategy matters:**
+- ** Integration:** Provides an integrated approach to trade
+- **Innovations:** Uses state-of-the-art technoLogsy
+- ** Effectiveness:** Ensures maximum efficiency
+- ** Income:** Critical for high returns
 
-**Ключевые принципы:**
+**key principles:**
 
-- **Мультиактивный подход - торговля on all активах simultaneously**
- - **Theory:** Мультиактивный подход критически важен for диверсификации рисков and максимизации возможностей
- - **Почему важно:** Обеспечивает диверсификацию and максимизацию возможностей
- - **Плюсы:** Диверсификация рисков, максимизация возможностей, стабильность
- - **Disadvantages:** Сложность управления, высокие требования к ресурсам
+- ** Multi-stakeholder approach - trade on all assets simultaneous**
+- **Theory:** Multi-stakeholder approach is critical for diversifying risks and maximizing opportunities
+- ** Why is it important:** Ensure diversification and maximization of opportunities
+- **plus:** Diversification of risks, maximization of opportunities, stability
+- **Disadvantages:** Management complexity, high resource requirements
 
-- **МультиTimeframesый анализ - from M1 to D1**
- - **Theory:** МультиTimeframesый анализ критически важен for полного понимания рыночной динамики
- - **Почему важно:** Обеспечивает полное понимание рыночной динамики
- - **Плюсы:** Полное понимание, точность сигналов, адаптивность
- - **Disadvantages:** Сложность Analysis, высокие требования к данным
+- ** MultiTimeframe analysis - from M1 to D1**
+- **Theory:** MultiTimeframe analysis is critical for a full understanding of market dynamics
+- ** Why is it important:** Provides a full understanding of market dynamics
+- ** Plus: ** Full understanding, accuracy of signals, adaptiveness
+- **Disadvantages:** Anallysis complexity, high data requirements
 
-- **Комбинирование indicators - WAVE2 + SCHR Levels + SCHR SHORT3**
- - **Theory:** Комбинирование indicators критически важно for improving accuracy and робастности сигналов
- - **Почему важно:** Обеспечивает высокую точность and робастность
- - **Плюсы:** Высокая точность, робастность, надежность
- - **Disadvantages:** Сложность реализации, потенциальные конфликты
+== sync, corrected by elderman == @elder_man
+- **Theory:** Combination of indicators is critical for improving signals and signal efficiency.
+- What's important is:** Ensures a high degree of accuracy and efficiency?
+- ** Plus:** High accuracy, fatality, reliability
+- **Disadvantages:** Feasibility, potential conflicts
 
-- **Адаптивная система - самообучение and адаптация**
- - **Theory:** Адаптивная система критически важна for поддержания эффективности in изменяющихся условиях
- - **Почему важно:** Обеспечивает поддержание эффективности
- - **Плюсы:** Адаптивность, долгосрочная эффективность, самообучение
- - **Disadvantages:** Сложность реализации, потенциальная нестабильность
+- ** Adaptation system - self-learning and adaptation**
+- **Theory:** Adaptation system is critical for maintaining efficiency in changing circumstances
+- ** Why is it important:** Ensures that effectiveness is maintained
+- ** Plus:** Adaptation, long-term effectiveness, self-learning
+- **Disadvantages:** Implementation complexity, potential instability
 
-- **Продвинутый риск-менеджмент - защита from потерь**
- - **Theory:** Продвинутый риск-менеджмент критически важен for защиты капитала and долгосрочного успеха
- - **Почему важно:** Обеспечивает защиту капитала and долгосрочный успех
- - **Плюсы:** Защита капитала, долгосрочный успех, стабильность
- - **Disadvantages:** Потенциальные ограничения доходности
+- ** Advanced risk management - protection from loss**
+- **Theory:** Advanced risk management is critical for protecting capital and long-term success
+- ** Why is it important:** Provides capital protection and long-term success
+- **plus:** Capital protection, long-term success, stability
+- **Disadvantages:** Potential income limitations
 
-- **Блокчейн-integration - DeFi for увеличения доходности**
- - **Theory:** Блокчейн-integration критически важна for создания дополнительных источников дохода
- - **Почему важно:** Обеспечивает дополнительные источники дохода
- - **Плюсы:** Дополнительные источники дохода, инновации, автоматизация
- - **Disadvantages:** Высокие риски, сложность интеграции
+- ** Block-integration - DeFi for increased returns**
+- **Theory:** Blocking-integration is critical for creating additional sources of income
+- ** Why is it important:** Provides additional sources of income
+- **plus:** Additional sources of income, innovation, automation
+- **Disadvantages:** High risks, complexity of integration
 
-- **Автоматическое retraining - еженедельное update моделей**
- - **Theory:** Автоматическое retraining критически важно for поддержания актуальности моделей
- - **Почему важно:** Обеспечивает поддержание актуальности моделей
- - **Плюсы:** Актуальность моделей, автоматизация, эффективность
- - **Disadvantages:** Сложность реализации, потенциальные сбои
+- ** automatic retraining - weekly update models**
+- **Theory:** Automatic retraining is critical for maintaining model relevance
+- ** Why is it important:** Maintains the validity of models
+- ** Plus: ** model relevance, automation, efficiency
+- **Disadvantages:** Implementation complexity, potential failures
 
-## 🏗️ architecture системы
+## ♪ Architecture system
 
-**Theory:** architecture системы представляет собой структурированный подход к organization компонентов системы for обеспечения эффективной работы, масштабируемости and поддерживаемости. Это критически важно for создания надежных and эффективных систем.
+**Theory:**architecture system is a structured approach to the organization of components of the system for efficient operation, scaling up and maintenance, which is critical for the establishment of reliable and efficient systems.
 
-**Почему architecture системы важна:**
-- **Структурированность:** Обеспечивает структурированный подход
-- **Эффективность:** Обеспечивает эффективную работу
-- **Scalability:** Обеспечивает масштабируемость
-- **Поддерживаемость:** Критически важно for поддерживаемости
+♪ Why anarchitecture systems matter ♪
+- **Structurality:** Provides a structured approach
+- ** Effectiveness:** Ensures effective performance
+- **Scalability:** Ensures scalability
+- ** Supportability:** Critically important for maintaining
 
-### components системы
+♪## ♪ System components ♪
 
-**Theory:** components системы представляют собой отдельные modules, каждый из которых отвечает за определенную функциональность. Это критически важно for создания модульной and масштабируемой системы.
+**Theory:** systems are separate modules, each responsible for a certain functionality, which is critical for creating a modular and scalable system.
 
-**Почему components системы важны:**
-- **Модульность:** Обеспечивает модульность системы
-- **Scalability:** Обеспечивает масштабируемость
-- **Поддерживаемость:** Обеспечивает поддерживаемость
-- **Эффективность:** Критически важно for эффективной работы
+# Why systems are important #
+- ** Modularity:** Provides modularity of the system
+- **Scalability:** Ensures scalability
+- ** Supportability: ** Supportability
+- ** Effectiveness:** Critical for effective work
 
 ```
 ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
@@ -167,44 +167,44 @@
 
 ## 📦 installation and configuration
 
-**Theory:** installation and configuration представляют собой process подготовки системы к работе, включающий установку dependencies, настройку конфигурации and create структуры проекта. Это критически важно for успешного Launchа системы.
+**Theory:** installation and conference are a process of preparing the system for work, including dependencies, configuration and design of the project. This is critical for a successful Launch system.
 
-**Почему installation and configuration важны:**
-- **Подготовка:** Обеспечивает подготовку системы к работе
-- **dependencies:** Обеспечивает установку all required dependencies
-- **configuration:** Обеспечивает правильную настройку
-- **Structure:** Критически важно for создания правильной структуры
+**Why installation and configration matter:**
+- ** Training:** Provides the system with preparation for work
+- **dependencies:** Provides all required dependencies
+- **configuring:** Provides the correct settings
+- **Structure:** Critically important for creating the right structure
 
-### 1. Требования системы
+♪##1 ♪ System requirements
 
-**Theory:** Требования системы представляют собой минимальные and рекомендуемые характеристики оборудования and программного обеспечения, необходимые for эффективной работы системы. Это критически важно for обеспечения performance and стабильности.
+**Theory:** System requirements are the minimum and recommended features of the equipment and software required for the effective operation of the system; this is critical for ensuring performance and stability.
 
-**Почему требования системы важны:**
-- **performance:** Обеспечивает необходимую performance
-- **Стабильность:** Обеспечивает стабильность работы
-- **Совместимость:** Обеспечивает совместимость компонентов
-- **Эффективность:** Критически важно for эффективной работы
+**Why the system requirements are important:**
+- **Performance:** Provides the necessary performance
+- **Stability:** Ensures stability of work
+- **Compatibility:** Ensures compatibility of components
+- ** Effectiveness:** Critical for effective work
 
 ```bash
-# Системные требования
-- macOS M1 Pro or новее
-- 32GB RAM (рекомендуется)
+# System requirements
+- MacOS M1 Pro or newer
+- 32GB RAM (recommended)
 - 500GB SSD
-- Стабильное интернет-соединение
+- A stable Internet connection.
 - Python 3.11+
 ```
 
 ### 2. installation dependencies
 
 ```bash
-# create проекта
+# the project's creation
 mkdir neozork-100-percent-system
 cd neozork-100-percent-system
 
-# Инициализация uv
+# Initiating uv
 uv init --python 3.11
 
-# installation основных dependencies
+# installation of basic dependencies
 uv add numpy pandas scikit-learn matplotlib seaborn plotly
 uv add yfinance pandas-datareader ta-lib vectorbt
 uv add xgboost lightgbm catboost optuna
@@ -214,7 +214,7 @@ uv add fastapi uvicorn
 uv add jupyter notebook ipykernel
 uv add mlx mlx-lm
 
-# installation дополнительных dependencies
+# installation of additional dependencies
 uv add psycopg2-binary redis
 uv add python-telegram-bot discord.py
 uv add smtplib email-validator
@@ -283,47 +283,47 @@ neozork-100-percent-system/
 └── README.md
 ```
 
-## 🔧 main code системы
+## ♪ Main code system
 
-**Theory:** main code системы представляет собой реализацию all компонентов системы in виде программного кода, обеспечивающего их взаимодействие and функциональность. Это критически важно for создания работоспособной системы.
+**Theory:**main code system is the realization of all components of the system in the form of a programme code that ensures their interaction and functionality. This is critical for the creation of a functioning system.
 
-**Почему main code системы важен:**
-- **Реализация:** Обеспечивает реализацию all компонентов
-- **Взаимодействие:** Обеспечивает взаимодействие компонентов
-- **Функциональность:** Обеспечивает необходимую функциональность
-- **Работоспособность:** Критически важно for работоспособности системы
+# Why a Main code system matters #
+- ** Implementation:** Ensures implementation of all components
+- ** Interaction:** Provides interaction between components
+- **Functionability:** Provides the necessary functionality
+- ** Workability:** Critically important for system performance
 
-### 1. configuration системы
+###1. configuring system
 
-**Theory:** configuration системы представляет собой централизованную system настроек and параметров, определяющих поведение and характеристики всей торговой системы. Это критически важно for адаптации системы под конкретные требования, обеспечения гибкости and возможности быстрого изменения стратегий без переписывания кода.
+**Theory:** configuring system is a centralized system of settings and parameters that define the behaviour and characteristics of the entire trading system; this is critical for adapting the system to specific requirements, for flexibility and for rapid change of strategies without code rewriting.
 
-**Почему configuration системы важна:**
-- **Централизованное Management:** Все Settings системы находятся in одном месте, что упрощает Management and отладку
-- **Адаптивность:** Позволяет быстро адаптировать system под различные рыночные условия and стратегии
-- **Гибкость:** Обеспечивает возможность изменения параметров без остановки системы
-- **Scalability:** Критически важно for масштабирования системы and добавления новых активов
+**Why configuring systems matter:**
+- ** Centralized Management:** All Settings of the system are in the same place, which makes Management and debugging easier
+- ** Adaptation:** Allows rapid adaptation of system to different market conditions and policies
+- ** Flexibility: ** Makes it possible to change the parameters without stopping the system.
+- **Scalability:** Critical for scaling up the system and adding new assets
 
-**Детальное объяснение конфигурации системы:**
+** Detailed explanation of the system configuration:**
 
-configuration системы является фундаментальным компонентом, который определяет все аспекты работы торговой системы. Она включает in себя:
+configuring the system is a fundamental component that defines all aspects of the trading system.
 
-1. **Источники данных** - определение all активов for trading with их весами
-2. **Timeframeы** - временные интервалы for Analysis
-3. **Лимиты риска** - parameters управления рисками
-4. **DeFi протоколы** - Settings for блокчейн-интеграции
-5. **Monitoring** - parameters системы уведомлений
+1. ** Data sources** - definition of all assets for trading with their weights
+2. **Timeframe** - Time interval for Analysis
+3. ** Risk limits** - risk management parameters
+4. **DeFi protocols** - Settings for block integration
+5. **Monitoring** - parameters of the notification system
 
-**Преимущества централизованной конфигурации:**
-- **Простота управления:** Все Settings in одном файле
-- **Быстрое изменение стратегий:** Изменение конфигурации без переLaunchа кода
-- **Версионирование:** Возможность отслеживания изменений конфигурации
-- **Тестирование:** Легкое переключение между различными настройками
+** Benefits of centralized configuration:**
+- **Simple control:** All Settings in the same file
+- ** Rapid change of strategy:** Reconfiguration without code overLaunch
+- **Version:** Traceability of configuration changes
+- ** Test:** Easy switch between different settings
 
-**Практическое применение:**
-- configuration под различные рынки (криптовалюты, валюты, акции)
-- Адаптация под различные стили торговли (скальпинг, свинг-трейдинг)
-- Изменение параметров риска in dependencies from рыночных условий
-- configuration уведомлений and Monitoringа
+** Practical application:**
+- configurization for different markets (cripples, currencies, shares)
+- Adaptation to different trade styles (scalping, swing-trade)
+- Changes in risk parameters in preferences from market conditions
+- configuring notifications and monitoring
 
 ```python
 # config/config.yaml
@@ -407,59 +407,59 @@ Monitoring:
  password: "your_password"
 ```
 
-### 2. Основной класс системы
+♪##2 ♪ Basic system class ♪
 
-**Theory:** Основной класс системы представляет собой центральный оркестратор всей торговой системы, который координирует работу all подсистем, управляет их жизненным циклом and обеспечивает бесшовную интеграцию между ML-моделями, блокчейн-componentsи and системой управления рисками. Это критически важно for создания единой, эффективной and надежной торговой системы.
+**Theory:** The main class of the system is the central orchestra of the entire trading system, which coordinates all subsystems, manages their life cycle and ensures seamless integration between ML models, block-components and risk management, which is critical for the creation of a single, efficient and reliable trading system.
 
-**Почему основной класс системы важен:**
-- **Централизованная координация:** Обеспечивает слаженную работу all компонентов системы
-- **Management жизненным циклом:** Контролирует Launch, работу and остановку all подсистем
-- **integration компонентов:** Обеспечивает бесшовную интеграцию между различными модулями
-- **Обработка ошибок:** Критически важно for централизованной обработки ошибок and восстановления
+**Why the main class of the system is important:**
+- ** Central coordination:** Ensures coherent operation of all components of the system
+- **Management life cycle:** Controls Launch, work and all subsystems stop.
+- **integration of components:** Ensures seamless integration between different modules
+- ** Error management:** Critical for central error processing and recovery
 
-**Детальное объяснение архитектуры основного класса:**
+** Detailed explanation of the main class architecture:**
 
-Основной класс `NeoZorK100Percentsystem` является сердцем всей системы and выполняет следующие ключевые functions:
+The main class `NeoZorK100Percentsystem' is the heart of the whole system and performs the following key Foundations:
 
-1. **Инициализация компонентов** - create and configuration all подсистем
-2. **Management данными** - координация сбора and обработки рыночных данных
-3. **Обучение моделей** - Management процессом обучения ML-моделей
-4. **Торговый цикл** - основной цикл генерации сигналов and выполнения сделок
-5. **Management рисками** - Monitoring and контроль рисков
-6. **DeFi операции** - integration with блокчейн-протоколами
-7. **Monitoring performance** - отслеживание эффективности системы
+1. **Initiation of components** - creation and conference all subsystems
+2. **Manage** - Coordination of market data collection and processing
+3. ** Model training** - Management of ML models
+4. ** Trading cycle** - main signal generation and transaction cycle
+5. **Manage risk** - Monitoring and risk control
+6. **DeFi operations** - integration with block charges
+7. **Monitoring performance** - System performance tracking
 
-**Ключевые принципы архитектуры:**
+** Architecture key principles:**
 
-- **Модульность:** Каждый компонент является независимым модулем
-- **Асинхронность:** Поддержка параллельного выполнения операций
-- **Отказоустойчивость:** Автоматическое восстановление после сбоев
-- **Scalability:** Возможность добавления новых компонентов
-- **Monitoring:** Полное отслеживание состояния системы
+- ** Modularity: ** Each component is an independent module
+- **Asynchronousity:** Support for parallel operations
+- ** Failure:** Automatic recovery from malfunctions
+- **Scalability:** Possible addition of new components
+- **Monitoring:** Full tracking of system status
 
-**Преимущества централизованного управления:**
-- **Единая точка контроля:** Все операции проходят через главный класс
-- **Упрощенная отладка:** Легче найти and исправить проблемы
-- **Консистентность:** Обеспечение согласованности между componentsи
-- **Безопасность:** Централизованное Management доступом and правами
+** Benefits of central management:**
+- **One control point:** All operations pass through the main class
+- **Simplified debugging:** Easier to find and fix problems
+- **Consistence:** Ensure coherence between componentsi
+- ** Security:** Central Management access and rights
 
-**Практическое применение:**
-- Launch системы одной командой
-- Monitoring состояния all компонентов
-- Автоматическое переключение между стратегиями
-- Централизованное Logsрование and Reportность
+** Practical application:**
+- Launch system with one team.
+- Monitoring the state of all components
+- Automatic shift between strategies
+- Central Logs and Reporting
 
 ```python
 # src/main.py
 """
-NeoZorK 100% system - Главный module системы
-Центральный оркестратор for достижения 100% прибыли in месяц
+NeoZorK 100% system - Main model system
+Central orchestra for achievement 100% profit in month
 
-Этот module координирует работу all компонентов системы:
-- ML-модели for генерации торговых сигналов
-- Блокчейн-integration for децентрализованной торговли
-- Система управления рисками
-- Monitoring and алерты
+This module coordinates all components of the system:
+- ML models for trade signal generation
+- Blocking-integration for decentralized trade
+- Risk management system
+- Monitoring and allergics
 """
 
 import yaml
@@ -473,10 +473,10 @@ import numpy as np
 from pathlib import Path
 import warnings
 
-# Подавление предупреждений
+♪ Warnings under control ♪
 warnings.filterwarnings('ignore')
 
-# Импорт компонентов системы
+# Imports of system components
 try:
  from src.data.collectors import dataCollector
  from src.indicators.wave2 import Wave2Indicator
@@ -494,7 +494,7 @@ try:
  from src.Monitoring.alerts import AlertManager
 except importError as e:
  print(f"Warning: Some modules not available: {e}")
- # create заглушек for отсутствующих модулей
+# creative plugs for missing modules
  class MockModule:
  def __init__(self, *args, **kwargs):
  pass
@@ -517,13 +517,13 @@ except importError as e:
  AlertManager = MockModule
 
 class NeoZorK100Percentsystem:
- """Главный класс системы заработка 100%+ in месяц"""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" Main""""""""""""""""""""""""""""""""""" Main"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
  def __init__(self, config_path: str = "config/config.yaml"):
  self.config = self._load_config(config_path)
  self.logger = self._setup_logging()
 
- # Инициализация компонентов
+# Initiating components
  self.data_collector = dataCollector(self.config)
  self.wave2_indicator = Wave2Indicator()
  self.schr_levels_indicator = SCHRLevelsIndicator()
@@ -539,7 +539,7 @@ class NeoZorK100Percentsystem:
  self.performance_monitor = PerformanceMonitor(self.config)
  self.alert_manager = AlertManager(self.config)
 
- # Состояние системы
+# System status
  self.is_running = False
  self.current_positions = {}
  self.performance_history = []
@@ -547,12 +547,12 @@ class NeoZorK100Percentsystem:
  self.logger.info("NeoZorK 100% system initialized successfully")
 
  def _load_config(self, config_path: str) -> Dict:
- """Загрузка конфигурации"""
+"""""""""""
  with open(config_path, 'r') as file:
  return yaml.safe_load(file)
 
  def _setup_logging(self) -> logging.Logger:
- """configuration Logsрования"""
+""Conference Logs""
  logging.basicConfig(
  level=logging.INFO,
  format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -564,17 +564,17 @@ class NeoZorK100Percentsystem:
  return logging.getLogger(__name__)
 
  def start_system(self):
- """Launch системы"""
+""Launch System""
  try:
  self.logger.info("starting NeoZorK 100% system...")
 
- # Инициализация данных
+# Initiating data
  self._initialize_data()
 
- # Обучение моделей
+# Model training
  self._train_models()
 
- # Launch основных циклов
+# Launch main cycles
  self._start_main_loop()
 
  except Exception as e:
@@ -582,16 +582,16 @@ class NeoZorK100Percentsystem:
  raise
 
  def _initialize_data(self):
- """Инициализация данных"""
+""Initiating Data""
  self.logger.info("Initializing data...")
 
- # Сбор исторических данных
+# Historical data collection
  for asset_type, assets in self.config['data_sources'].items():
  for asset in assets:
  symbol = asset['symbol']
  self.logger.info(f"Collecting data for {symbol}")
 
- # Сбор данных for all Timeframes
+# Data collection for all Times
  for Timeframe in self.config['Timeframes']:
  data = self.data_collector.collect_data(symbol, Timeframe)
  self.data_collector.save_data(data, symbol, Timeframe)
@@ -599,19 +599,19 @@ class NeoZorK100Percentsystem:
  self.logger.info("data initialization COMPLETED")
 
  def _train_models(self):
- """Обучение моделей"""
+"Teaching the Models."
  self.logger.info("training models...")
 
- # Обучение WAVE2 модели
+# WAVE2 model training
  self.wave2_indicator.train(self.data_collector.get_all_data())
 
- # Обучение SCHR Levels модели
+# Training SCHR Livels model
  self.schr_levels_indicator.train(self.data_collector.get_all_data())
 
- # Обучение SCHR SHORT3 модели
+# Training SCHR SHORT3 model
  self.schr_short3_indicator.train(self.data_collector.get_all_data())
 
- # Обучение ансамблевой модели
+# Training the ensemble model
  self.ensemble_model.train(
  wave2_data=self.wave2_indicator.get_features(),
  schr_levels_data=self.schr_levels_indicator.get_features(),
@@ -621,26 +621,26 @@ class NeoZorK100Percentsystem:
  self.logger.info("Models training COMPLETED")
 
  def _start_main_loop(self):
- """Launch основного цикла"""
+""Launch Main Cycle""
  self.is_running = True
  self.logger.info("starting main trading loop...")
 
  while self.is_running:
  try:
- # Основной торговый цикл
+# Main trade cycle
  self._trading_cycle()
 
  # check performance
  self._performance_check()
 
- # Management рисками
+# Management risks
  self._risk_check()
 
- # DeFi операции
+# DeFi operations
  self._defi_operations()
 
- # Пауза между циклами
- time.sleep(60) # 1 minutesа
+# Pause between cycles
+Time.sleep(60) #1 minutesa
 
  except KeyboardInterrupt:
  self.logger.info("system stopped by User")
@@ -650,37 +650,37 @@ class NeoZorK100Percentsystem:
  time.sleep(60)
 
  def _trading_cycle(self):
- """Основной торговый цикл"""
+"The Basic Trade Cycle"
  try:
- # Получение текущих данных
+# Collection of current data
  current_data = self.data_collector.get_current_data()
 
- # Генерация сигналов
+# Signal generation
  signals = self.signal_engine.generate_signals(current_data)
 
- # Анализ сигналов
+# Signal analysis
  signal_Analysis = self._analyze_signals(signals)
 
- # Принятие торговых решений
+# Trade decision-making
  if signal_Analysis['confidence'] > 0.7:
  self._execute_trades(signal_Analysis)
 
- # update позиций
+# Update positions
  self._update_positions()
 
  except Exception as e:
  self.logger.error(f"Error in trading cycle: {e}")
 
  def _analyze_signals(self, signals: Dict) -> Dict:
- """Анализ торговых сигналов"""
- # Согласованность сигналов
+"Analysis of Trade Signs."
+# Signal consistency
  signal_values = List(signals.values())
  agreement = 1 - np.std(signal_values)
 
- # Уверенность in сигнале
+# Confidence in the signal
  confidence = np.mean(signal_values)
 
- # Направление сигнала
+# Signal direction
  direction = 1 if confidence > 0.5 else -1 if confidence < -0.5 else 0
 
  return {
@@ -692,26 +692,26 @@ class NeoZorK100Percentsystem:
  }
 
  def _execute_trades(self, signal_Analysis: Dict):
- """Выполнение торговых операций"""
+"""""""""""
  try:
- # check рисков
+# Check risks
  if not self.risk_manager.check_risk_limits(signal_Analysis):
  self.logger.warning("Trade rejected due to risk limits")
  return
 
- # Расчет размера позиции
+# Calculation of the size of the position
  position_size = self.risk_manager.calculate_position_size(signal_Analysis)
 
- # Выполнение сделки
+# The execution of the deal
  if signal_Analysis['direction'] > 0:
- # Покупка
+# Buying
  trade_result = self.Portfolio_manager.buy(
  symbol=signal_Analysis['symbol'],
  amount=position_size,
  price=signal_Analysis['price']
  )
  elif signal_Analysis['direction'] < 0:
- # Продажа
+# Sell
  trade_result = self.Portfolio_manager.sell(
  symbol=signal_Analysis['symbol'],
  amount=position_size,
@@ -730,33 +730,33 @@ class NeoZorK100Percentsystem:
  def _performance_check(self):
  """check performance"""
  try:
- # Получение метрик
+# Getting a metric
  metrics = self.performance_monitor.get_current_metrics()
 
- # check алертов
+# Check allergic
  alerts = self.performance_monitor.check_alerts(metrics)
 
  if alerts:
  for alert in alerts:
  self.alert_manager.send_alert(alert)
 
- # Сохранение истории
+# Maintaining history
  self.performance_history.append(metrics)
 
  except Exception as e:
  self.logger.error(f"Error in performance check: {e}")
 
  def _risk_check(self):
- """check рисков"""
+"Check Risks."
  try:
- # check лимитов риска
+# Check risk limits
  risk_status = self.risk_manager.check_all_limits()
 
  if not risk_status['acceptable']:
  self.logger.warning(f"Risk limits exceeded: {risk_status}")
  self.alert_manager.send_risk_alert(risk_status)
 
- # Автоматические действия
+# Automatic action
  if risk_status['action'] == 'reduce_positions':
  self.Portfolio_manager.reduce_positions()
  elif risk_status['action'] == 'stop_trading':
@@ -766,7 +766,7 @@ class NeoZorK100Percentsystem:
  self.logger.error(f"Error in risk check: {e}")
 
  def _defi_operations(self):
- """DeFi операции"""
+"DeFi Operation."
  try:
  # Yield farming
  self._yield_farming_cycle()
@@ -781,49 +781,49 @@ class NeoZorK100Percentsystem:
  self.logger.error(f"Error in DeFi operations: {e}")
 
  def _yield_farming_cycle(self):
- """Цикл yield farming"""
- # Получение лучших пулов
+"Cycle Yield Farming."
+# Getting the best bullets
  best_pools = self._get_best_yield_pools()
 
- # Оптимизация распределения
+# Optimization of distribution
  optimal_allocation = self._optimize_yield_allocation(best_pools)
 
- # Выполнение операций
+# Operations
  for pool, allocation in optimal_allocation.items():
  if allocation > 0:
  self._execute_yield_farming(pool, allocation)
 
  def _liquidity_provision_cycle(self):
- """Цикл предоставления ликвидности"""
- # Анализ пулов ликвидности
+"The Liquidity Cycle"
+# Liquidity pool analysis
  liquidity_Analysis = self._analyze_liquidity_pools()
 
- # Оптимальное распределение
+# Optimal distribution
  optimal_liquidity = self._optimize_liquidity_allocation(liquidity_Analysis)
 
- # Выполнение операций
+# Operations
  for pool, allocation in optimal_liquidity.items():
  if allocation > 0:
  self._execute_liquidity_provision(pool, allocation)
 
  def _staking_cycle(self):
- """Цикл стейкинга"""
- # Анализ стейкинг возможностей
+"Steaking Cycle."
+# The steaking of opportunities
  staking_opportunities = self._analyze_staking_opportunities()
 
- # Оптимальное распределение
+# Optimal distribution
  optimal_staking = self._optimize_staking_allocation(staking_opportunities)
 
- # Выполнение операций
+# Operations
  for asset, allocation in optimal_staking.items():
  if allocation > 0:
  self._execute_staking(asset, allocation)
 
  def _get_best_yield_pools(self) -> Dict:
- """Получение лучших пулов for yield farming"""
+"To get the best pools for yield farming."
  try:
- # Здесь должна быть Logsка поиска лучших пулов
- # for примера возвращаем заглушку
+# There's gotta be a Logsk looking for the best pool
+# for example, return the plug
  return {
  'pool1': {'apy': 0.15, 'tvl': 1000000},
  'pool2': {'apy': 0.12, 'tvl': 500000},
@@ -834,14 +834,14 @@ class NeoZorK100Percentsystem:
  return {}
 
  def _optimize_yield_allocation(self, pools: Dict) -> Dict:
- """Оптимизация распределения for yield farming"""
+"Optimization of Distribution for Yield Farming""
  try:
- # Простая Logsка оптимизации
+# Simple Logs of Optimization
  total_capital = 1000.0
  allocation = {}
 
  for pool, data in pools.items():
- # Распределение пропорционально APY
+# Distribution proportional to APY
  allocation[pool] = total_capital * data['apy'] / sum(p['apy'] for p in pools.values())
 
  return allocation
@@ -850,17 +850,17 @@ class NeoZorK100Percentsystem:
  return {}
 
  def _execute_yield_farming(self, pool: str, allocation: float):
- """Выполнение yield farming"""
+"""""""""""
  try:
  self.logger.info(f"Executing yield farming: {pool} with {allocation}")
- # Здесь должна быть Logsка выполнения yield farming
+# There's gotta be a Logsk doing yield farming
  except Exception as e:
  self.logger.error(f"Error executing yield farming: {e}")
 
  def _analyze_liquidity_pools(self) -> Dict:
- """Анализ пулов ликвидности"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  try:
- # Здесь должна быть Logsка Analysis пулов
+# There's got to be a Logsca Analysis pool
  return {
  'pool1': {'volume': 100000, 'fees': 0.003},
  'pool2': {'volume': 50000, 'fees': 0.002}
@@ -870,14 +870,14 @@ class NeoZorK100Percentsystem:
  return {}
 
  def _optimize_liquidity_allocation(self, pools: Dict) -> Dict:
- """Оптимизация распределения ликвидности"""
+"Optimization of liquidity distribution""
  try:
- # Простая Logsка оптимизации
+# Simple Logs of Optimization
  total_capital = 500.0
  allocation = {}
 
  for pool, data in pools.items():
- # Распределение пропорционально объему
+# Distribution proportional to volume
  allocation[pool] = total_capital * data['volume'] / sum(p['volume'] for p in pools.values())
 
  return allocation
@@ -886,17 +886,17 @@ class NeoZorK100Percentsystem:
  return {}
 
  def _execute_liquidity_provision(self, pool: str, allocation: float):
- """Выполнение предоставления ликвидности"""
+""Footline liquidity"""
  try:
  self.logger.info(f"Providing liquidity: {pool} with {allocation}")
- # Здесь должна быть Logsка предоставления ликвидности
+# There's gotta be a liquidity log in here
  except Exception as e:
  self.logger.error(f"Error providing liquidity: {e}")
 
  def _analyze_staking_opportunities(self) -> Dict:
- """Анализ возможностей стейкинга"""
+"Analysis of steaking possibilities."
  try:
- # Здесь должна быть Logsка Analysis стейкинга
+# There's got to be Logska Analysis steaking
  return {
  'asset1': {'apy': 0.08, 'lock_period': 30},
  'asset2': {'apy': 0.12, 'lock_period': 90}
@@ -906,14 +906,14 @@ class NeoZorK100Percentsystem:
  return {}
 
  def _optimize_staking_allocation(self, opportunities: Dict) -> Dict:
- """Оптимизация распределения for стейкинга"""
+"Optimization of distribution for steaking""
  try:
- # Простая Logsка оптимизации
+# Simple Logs of Optimization
  total_capital = 300.0
  allocation = {}
 
  for asset, data in opportunities.items():
- # Распределение пропорционально APY
+# Distribution proportional to APY
  allocation[asset] = total_capital * data['apy'] / sum(p['apy'] for p in opportunities.values())
 
  return allocation
@@ -922,17 +922,17 @@ class NeoZorK100Percentsystem:
  return {}
 
  def _execute_staking(self, asset: str, allocation: float):
- """Выполнение стейкинга"""
+""Steaking Implementation"""
  try:
  self.logger.info(f"Staking {asset} with {allocation}")
- # Здесь должна быть Logsка стейкинга
+# There's gotta be a steak logsk
  except Exception as e:
  self.logger.error(f"Error staking {asset}: {e}")
 
  def _update_positions(self):
- """update позиций"""
+""update entries""
  try:
- # update текущих позиций
+# Update current positions
  for position_id, position in self.current_positions.items():
  # update P&L
  current_price = self._get_current_price(position['symbol'])
@@ -947,10 +947,10 @@ class NeoZorK100Percentsystem:
  self.logger.error(f"Error updating positions: {e}")
 
  def _get_current_price(self, symbol: str) -> Optional[float]:
- """Получение текущей цены актива"""
+"To obtain the current asset price."
  try:
- # Здесь должна быть Logsка получения текущей цены
- # for примера возвращаем случайную цену
+# There's gotta be a Logsk getting the current price
+# for example return random price
  import random
  return random.uniform(100, 200)
  except Exception as e:
@@ -958,7 +958,7 @@ class NeoZorK100Percentsystem:
  return None
 
  def _save_system_state(self):
- """Сохранение состояния системы"""
+"Save System Status""
  try:
  state = {
  'timestamp': datetime.now().isoformat(),
@@ -967,7 +967,7 @@ class NeoZorK100Percentsystem:
  'is_running': self.is_running
  }
 
- # Сохранение in файл
+# Save in file
  state_path = Path("Logs/system_state.json")
  import json
  with open(state_path, 'w') as f:
@@ -979,21 +979,21 @@ class NeoZorK100Percentsystem:
  self.logger.error(f"Error saving system state: {e}")
 
  def stop_system(self):
- """Остановка системы"""
+"Stop the system."
  self.logger.info("Stopping NeoZorK 100% system...")
  self.is_running = False
 
- # Закрытие all позиций
+# Closing all positions
  if hasattr(self.Portfolio_manager, 'close_all_positions'):
  self.Portfolio_manager.close_all_positions()
 
- # Сохранение состояния
+# Maintaining state
  self._save_system_state()
 
  self.logger.info("system stopped successfully")
 
 if __name__ == "__main__":
- # Launch системы
+# Launch system
  system = NeoZorK100Percentsystem()
 
  try:
@@ -1005,52 +1005,52 @@ if __name__ == "__main__":
  system.stop_system()
 ```
 
-**Theory:** Первая часть детального кода представляет собой фундаментальную реализацию основных компонентов системы, обеспечивающую базовую функциональность and интеграцию. Это критически важно for создания работоспособной системы.
+**Theory:** The first part of the detailed code is the fundamental realization of the main components of the system, ensuring basic functionality and integration, which is critical for the creation of a functioning system.
 
-**Почему первая часть кода важна:**
-- **Фундаментальность:** Обеспечивает фундаментальную основу
-- **Базовая функциональность:** Обеспечивает базовую функциональность
-- **integration:** Обеспечивает интеграцию компонентов
-- **Работоспособность:** Критически важно for работоспособности системы
+**Why does the first part of the code matter:**
+- **Fundamentality:** Provides a fundamental basis
+- ** Basic functionality:** Provides basic functionality
+- **integration:** Integration of components
+- ** Workability:** Critically important for system performance
 
-**Плюсы:**
-- Фундаментальная основа
-- Базовая функциональность
-- integration компонентов
-- Работоспособность системы
+** Plus:**
+- Basic framework
+- Basic functionality
+- integration components
+- System performance
 
 **Disadvantages:**
-- Ограниченная функциональность
-- Требует дополнительной разработки
-- Потенциальные Issues with масштабированием
+- Limited functionality
+- Needs further development
+- Potential Issues with scaling
 
-## 🚀 Полная система for достижения 100% прибыли in месяц
+## ♪ Full system to achieve 100% profit in month
 
-### 3. Система управления рисками
+♪## 3: Risk management system
 
-**Theory:** Система управления рисками представляет собой критически важный компонент, который обеспечивает защиту капитала and долгосрочную стабильность торговой системы. Это основа for создания робастной and прибыльной системы.
+**Theory:** Risk management system is a critical component that protects capital and long-term stability of the trading system; it is the basis for a smooth and profitable system.
 
-**Почему система управления рисками важна:**
-- **Защита капитала:** Обеспечивает защиту from больших потерь
-- **Стабильность:** Обеспечивает стабильность доходности
-- **Долгосрочный успех:** Критически важно for долгосрочного успеха
-- **ПсихоLogsческий комфорт:** Обеспечивает уверенность in системе
+**Why risk management is important:**
+- ** Capital protection:** Provides protection from large losses
+- **Stability:** Ensures income stability
+- ** Long-term success:** Critical for long-term success
+- **PsychoLogsy comfort:** Provides confidence in the system
 
-**Детальное объяснение системы управления рисками:**
+** Detailed explanation of the risk management system:**
 
-Система управления рисками включает in себя:
+The risk management framework includes in-house:
 
-1. **Позиционный риск** - контроль размера позиций
-2. **Рыночный риск** - защита from рыночных движений
-3. **Кредитный риск** - Management кредитным плечом
-4. **Операционный риск** - защита from технических сбоев
-5. **Ликвидный риск** - Management ликвидностью
+1. ** Positional risk** - weight control
+2. ** Market risk** - protection from market movements
+3. ** Credit risk** - Management credit shoulder
+4. ** Operating risk** - protection from technical failures
+5. ** Liquidity risk** - Management liquidity
 
 ```python
 # src/trading/risk_manager.py
 """
-Система управления рисками for NeoZorK 100% system
-Обеспечивает защиту капитала and долгосрочную стабильность
+Risk management system for NeoZorK 100% system
+Provides capital protection and long-term stability
 """
 
 import pandas as pd
@@ -1060,36 +1060,36 @@ import logging
 from datetime import datetime, timedelta
 
 class RiskManager:
- """Система управления рисками"""
+"The Risk Management System"
 
  def __init__(self, config: Dict):
  self.config = config
  self.logger = logging.getLogger(__name__)
 
- # Лимиты риска
+# Risk limits
  self.max_position_size = config.get('max_position_size', 0.1)
  self.max_daily_loss = config.get('max_daily_loss', 0.05)
  self.max_drawdown = config.get('max_drawdown', 0.15)
  self.max_var = config.get('max_var', 0.05)
  self.max_correlation = config.get('max_correlation', 0.7)
 
- # Текущие metrics
+# Current metrics
  self.daily_pnl = 0.0
  self.max_drawdown_current = 0.0
  self.peak_balance = 1000.0
 
  def check_risk_limits(self, signal_Analysis: Dict) -> bool:
- """check лимитов риска"""
+"Check the risk limits."
  try:
- # check размера позиции
+# Sheck the size of the position
  if not self._check_position_size(signal_Analysis):
  return False
 
- # check дневных потерь
+# Check day losses
  if not self._check_daily_loss():
  return False
 
- # check просадки
+# Check prosperity
  if not self._check_drawdown():
  return False
 
@@ -1104,7 +1104,7 @@ class RiskManager:
  return False
 
  def _check_position_size(self, signal_Analysis: Dict) -> bool:
- """check размера позиции"""
+""Check the size of the position."
  try:
  position_size = signal_Analysis.get('position_size', 0)
  return position_size <= self.max_position_size
@@ -1113,7 +1113,7 @@ class RiskManager:
  return False
 
  def _check_daily_loss(self) -> bool:
- """check дневных потерь"""
+"Check day losses."
  try:
  return abs(self.daily_pnl) <= self.max_daily_loss
  except Exception as e:
@@ -1121,7 +1121,7 @@ class RiskManager:
  return False
 
  def _check_drawdown(self) -> bool:
- """check просадки"""
+"Check prosperity."
  try:
  return self.max_drawdown_current <= self.max_drawdown
  except Exception as e:
@@ -1131,23 +1131,23 @@ class RiskManager:
  def _check_var(self) -> bool:
  """check VaR"""
  try:
- # Упрощенная check VaR
+# Simplified Check VaR
  return True
  except Exception as e:
  self.logger.error(f"Error checking VaR: {e}")
  return False
 
  def calculate_position_size(self, signal_Analysis: Dict) -> float:
- """Расчет размера позиции"""
+""""""""""""""""
  try:
- # Базовый размер позиции
+# Basic position size
  base_size = self.max_position_size
 
- # Корректировка on basis уверенности
+# Adjustment on basis of confidence
  confidence = signal_Analysis.get('confidence', 0.5)
  adjusted_size = base_size * confidence
 
- # Корректировка on basis волатильности
+# Adjustment on baseline volatility
  volatility = signal_Analysis.get('volatility', 0.02)
  if volatility > 0.05:
  adjusted_size *= 0.5
@@ -1159,7 +1159,7 @@ class RiskManager:
  return 0.0
 
  def check_all_limits(self) -> Dict:
- """check all лимитов"""
+"Check all limits."
  try:
  status = {
  'acceptable': True,
@@ -1167,13 +1167,13 @@ class RiskManager:
  'action': 'continue'
  }
 
- # check дневных потерь
+# Check day losses
  if not self._check_daily_loss():
  status['acceptable'] = False
  status['violations'].append('daily_loss')
  status['action'] = 'reduce_positions'
 
- # check просадки
+# Check prosperity
  if not self._check_drawdown():
  status['acceptable'] = False
  status['violations'].append('drawdown')
@@ -1186,21 +1186,21 @@ class RiskManager:
  return {'acceptable': False, 'violations': ['error'], 'action': 'stop_trading'}
 ```
 
-### 4. Система Monitoringа and алертов
+♪##4 ♪ Monitoring and Alert System ♪
 
-**Theory:** Система Monitoringа and алертов представляет собой критически важный компонент for отслеживания performance системы and своевременного реагирования on проблемы. Это основа for поддержания эффективности системы.
+**Theory:** The Monitoring and Alert System is a critical component for tracking the performance of the system and timely response on the issue; it is the basis for maintaining the effectiveness of the system.
 
-**Почему система Monitoringа важна:**
-- **Отслеживание performance:** Обеспечивает постоянный Monitoring эффективности
-- **Своевременное реагирование:** Позволяет быстро реагировать on проблемы
-- **Предотвращение потерь:** Помогает предотвратить большие потери
-- **Оптимизация:** Критически важно for оптимизации системы
+♪ Why Monitoring is important ♪
+- ** Tracking performance:** Provides permanent monitoring effectiveness
+- ** Time-bound response:** Allows rapid response on issues
+- ** Prevention of loss:** Helps prevent large losses
+- **Optimization:** Critically important for system optimization
 
 ```python
 # src/Monitoring/performance.py
 """
-Система Monitoringа performance for NeoZorK 100% system
-Отслеживает эффективность and генерирует алерты
+Monitoring system performance for NeoZorK 100% system
+Traces efficiency and generates allertes
 """
 
 import pandas as pd
@@ -1210,7 +1210,7 @@ import logging
 from datetime import datetime, timedelta
 
 class PerformanceMonitor:
- """Система Monitoringа performance"""
+""Monitoring System of Performance""
 
  def __init__(self, config: Dict):
  self.config = config
@@ -1225,13 +1225,13 @@ class PerformanceMonitor:
  'profit_factor': 0.0
  }
 
- # История performance
+# History of life
  self.performance_history = []
 
  def get_current_metrics(self) -> Dict:
- """Получение текущих метрик"""
+"To receive current metrics."
  try:
- # Расчет метрик
+# The calculation of the metric
  self._calculate_metrics()
  return self.metrics.copy()
 
@@ -1240,30 +1240,30 @@ class PerformanceMonitor:
  return {}
 
  def _calculate_metrics(self):
- """Расчет метрик performance"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  try:
  if len(self.performance_history) < 2:
  return
 
- # Расчет общей доходности
+# Calculation of total return
  returns = [p['return'] for p in self.performance_history]
  self.metrics['total_return'] = np.sum(returns)
 
- # Расчет Sharpe ratio
+# Sharpe ratio calculation
  if np.std(returns) > 0:
  self.metrics['sharpe_ratio'] = np.mean(returns) / np.std(returns)
 
- # Расчет максимальной просадки
+# Calculation of maximum tarmac
  cumulative_returns = np.cumsum(returns)
  running_max = np.maximum.accumulate(cumulative_returns)
  drawdowns = (cumulative_returns - running_max) / running_max
  self.metrics['max_drawdown'] = np.min(drawdowns)
 
- # Расчет win rate
+# Calculation of Win Rate
  winning_trades = sum(1 for r in returns if r > 0)
  self.metrics['win_rate'] = winning_trades / len(returns) if returns else 0
 
- # Расчет profit factor
+# Calculation of profit factor
  gross_profit = sum(r for r in returns if r > 0)
  gross_loss = abs(sum(r for r in returns if r < 0))
  self.metrics['profit_factor'] = gross_profit / gross_loss if gross_loss > 0 else 0
@@ -1272,11 +1272,11 @@ class PerformanceMonitor:
  self.logger.error(f"Error calculating metrics: {e}")
 
  def check_alerts(self, metrics: Dict) -> List[Dict]:
- """check алертов"""
+"Check Alerts."
  try:
  alerts = []
 
- # Алерт on просадке
+# Alert on the landing
  if metrics.get('max_drawdown', 0) < -0.1:
  alerts.append({
  'type': 'drawdown',
@@ -1284,7 +1284,7 @@ class PerformanceMonitor:
  'severity': 'high'
  })
 
- # Алерт on Sharpe ratio
+# Alert on Sharpe ratio
  if metrics.get('sharpe_ratio', 0) < 1.0:
  alerts.append({
  'type': 'sharpe_ratio',
@@ -1292,7 +1292,7 @@ class PerformanceMonitor:
  'severity': 'medium'
  })
 
- # Алерт on win rate
+# Alert on Win Rate
  if metrics.get('win_rate', 0) < 0.5:
  alerts.append({
  'type': 'win_rate',
@@ -1309,18 +1309,18 @@ class PerformanceMonitor:
 
 ### 5. instructions on Launch and testing
 
-**Theory:** instructions on Launch and testing представляют собой критически важный компонент for успешного deployment and использования системы. Это основа for практического применения системы.
+**Theory:** tools on Launch and testing are a critical component for successful implementation and use of the system.
 
-**Почему instructions on Launch важны:**
-- **Практическое применение:** Обеспечивает возможность Launchа системы
-- **Тестирование:** Позволяет проверить работоспособность
-- **Отладка:** Помогает найти and исправить проблемы
-- **documentation:** Критически важно for понимания системы
+**Why the instruments on Launch matter:**
+- ** Practical application:** Provides Launch system capability
+- ** Testing:** Allows performance testing
+- ** Debugging:** Helps find and fix problems.
+- **documentation:** Critical for understanding the system
 
-#### Шаг 1: installation dependencies
+#### Step 1: installation dependencies
 
 ```bash
-# create виртуального окружения
+# creative virtual environment
 python -m venv neozork-100-percent
 source neozork-100-percent/bin/activate # Linux/Mac
 # or
@@ -1329,113 +1329,113 @@ neozork-100-percent\Scripts\activate # Windows
 # installation dependencies
 pip install -r requirements.txt
 
-# or with использованием uv
+# Or with the use of uv
 uv pip install -r requirements.txt
 ```
 
-#### Шаг 2: configuration конфигурации
+#### Step 2: configuring configuration
 
 ```bash
-# Копирование конфигурации
+# Copy configuration
 cp config/config.example.yaml config/config.yaml
 
-# Редактирование конфигурации
+# Edit configuration
 nano config/config.yaml
 ```
 
-#### Шаг 3: Launch системы
+#### Step 3: Launch System
 
 ```bash
-# Launch основной системы
+# Launch basic system
 python src/main.py
 
 # or Launch in Docker
 docker-compose up -d
 ```
 
-#### Шаг 4: Monitoring
+#### Step 4: Monitoring
 
 ```bash
-# View логов
+# View logs
 tail -f Logs/neozork_100_percent.log
 
 # Monitoring performance
 python scripts/monitor_performance.py
 ```
 
-### 6. Ожидаемые результаты
+###6: Expected results
 
-**Theory:** Ожидаемые результаты представляют собой конкретные metrics and показатели, которые должна достигать система при правильной настройке and работе. Это основа for оценки эффективности системы.
+**Theory:** Expected results are specific indicators and indicators to be achieved by the system in proper alignment and performance.
 
-**Почему ожидаемые результаты важны:**
-- **Целеполагание:** Обеспечивает четкие цели for системы
-- **Оценка эффективности:** Позволяет оценить работу системы
-- **Мотивация:** Критически важно for мотивации пользователей
-- **Planирование:** Помогает in Planировании ресурсов
+** Why the expected results are important:**
+- **Concentration:** Provides clear objectives for the system
+- ** Performance evaluation:** Allows system performance to be evaluated
+- **Motive:** Critically important for motivation of users
+- **Planning:** Helps in Resource Planning
 
-#### Краткосрочные результаты (1-3 месяца)
+#### Short-term results (1-3 months)
 
-- **Доходность:** 50-100% in месяц
+- ** Income:** 50-100 per cent in month
 - **Sharpe Ratio:** 2.0+
-- **Максимальная просадка:** <10%
-- **Точность сигналов:** 70%+
-- **Количество сделок:** 100-500 in месяц
+- ** Maximum draught:** < 10%
+- ** Signal accuracy:** 70%+
+- ** Number of transactions:** 100-500 in month
 
-#### Среднесрочные результаты (3-6 месяцев)
+#### Medium-term results (3-6 months)
 
-- **Доходность:** 100-200% in месяц
+- ** Income:** 100-200 per cent in month
 - **Sharpe Ratio:** 2.5+
-- **Максимальная просадка:** <15%
-- **Точность сигналов:** 75%+
-- **Количество сделок:** 200-800 in месяц
+- ** Maximum draught:** < 15 per cent
+- ** Signal accuracy:** 75%+
+- ** Number of transactions:** 200-800 in month
 
-#### Долгосрочные результаты (6+ месяцев)
+#### Long-term results (6+ months)
 
-- **Доходность:** 200%+ in месяц
+- ** Income:** 200 per cent+in month
 - **Sharpe Ratio:** 3.0+
-- **Максимальная просадка:** <20%
-- **Точность сигналов:** 80%+
-- **Количество сделок:** 300-1000 in месяц
+- ** Maximum draught:** < 20 per cent
+- ** Signal accuracy:** 80%+
+- ** Number of transactions:** 300-1000 in month
 
-## 📊 Заключение
+♪ ♪ The ending ♪
 
-**Theory:** Полная система заработка 100%+ in месяц представляет собой комплексную реализацию высокодоходной торговой системы, объединяющую все современные техноLogsи and methods for достижения целевой доходности. Это критически важно for создания максимально эффективных торговых систем.
+**Theory:** A full system of earnings of 100%+in month is a comprehensive implementation of a high-income trading system that brings together all modern technoLogs and methhods for achieving targeted returns. This is critical for the creation of the most efficient trading systems.
 
-**Почему полная система важна:**
-- **Комплексность:** Обеспечивает комплексный подход к торговле
-- **Эффективность:** Обеспечивает максимальную эффективность
-- **Доходность:** Критически важно for достижения высокой доходности
-- **Практичность:** Обеспечивает практическое применение знаний
+# Why a complete system matters #
+- ** Integration:** Provides an integrated approach to trade
+- ** Effectiveness:** Ensures maximum efficiency
+- ** Income:** Critical for high returns
+- ** Practice: ** Provides practical application of knowledge
 
-**Ключевые преимущества системы:**
+** Key benefits of the system:**
 
-1. **Мультиактивный подход** - торговля on all активах simultaneously
-2. **МультиTimeframesый анализ** - from M1 to D1
-3. **Комбинирование indicators** - WAVE2 + SCHR Levels + SCHR SHORT3
-4. **Адаптивная система** - самообучение and адаптация
-5. **Продвинутый риск-менеджмент** - защита from потерь
-6. **Блокчейн-integration** - DeFi for увеличения доходности
-7. **Автоматическое retraining** - еженедельное update моделей
+1. ** Multiplier approach** - Trade on all assets simultaneously
+2. ** MultiTimeframe analysis** - from M1 to D1
+3. ** Combination of indicators** - WAVE2 + SCHR Livels + SCHR SHORT3
+4. ** Adaptation system** - self-learning and adaptation
+5. ** Advance risk management** - protection from loss
+6. ** Block-integration** - DeFi for increased returns
+7. **Automatic retraining** - weekly up-date models
 
-**Практическое применение:**
+** Practical application:**
 
-- **for трейдеров:** Готовая система for высокодоходной торговли
-- **for разработчиков:** Полный исходный код for изучения and модификации
-- **for исследователей:** Основа for дальнейших исследований in области ML-торговли
-- **for инвесторов:** Инструмент for создания пассивного дохода
+- **for traders:** Complete system for high-income trade
+- **for developers:** Full source code for study and modification
+- **for researchers:** Basis for further research in ML trade
+- **for investors:** Instrument for creating passive income
 
-**Важные замечания:**
+** Significant remarks:**
 
-1. **Тестирование:** Всегда тестируйте system on исторических данных перед использованием реальных средств
-2. **Риски:** Высокая доходность всегда связана with высокими рисками
-3. **Monitoring:** Постоянно отслеживайте performance системы
-4. **Обновления:** Регулярно обновляйте модели and стратегии
-5. **Безопасность:** Use надежные methods хранения ключей and паролей
+1. **Texting:** Always test the system on historical data before using real means
+2. ** Risks:** High returns are always associated with high risks
+3. **Monitoring:** continuously monitor the performance of the system
+4. **Renewed:** Regularly update models and strategies
+5. ** Safety:** Use reliable key storage methods and passwords
 
-**Помните:** Успех in торговле требует дисциплины, терпения and постоянного обучения. Эта система предоставляет мощные инструменты, но их эффективное использование зависит from правильного понимания and применения.
+**Remember: ** Success in trade requires discipline, patience and continuous learning. This system provides powerful tools, but its effective use depends on the right understanding and application.
 
 ---
 
-**Удачи in создании прибыльной системы! 🚀**
+♪ Good luck in creating a profitable system! ♪
 
-*NeoZorK 100% system - Ваш путь к финансовой свободе через техноLogsи machine learning and блокчейн.*
+♪ NeoZorK 100% system ♪ ♪ Your way to financial freedom through technoLogs and machinin ♪

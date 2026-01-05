@@ -11,90 +11,90 @@ neozork-hld-Prediction/
 │ ├── calculation/ # Calculations / Calculations
 │ ├── cli/ # CLI interface / CLI interface
 │ ├── data/ # Working with data / data handling
-│ ├── plotting/ # Построение графиков / Plotting
+* Graphics/Plotting
 │ └── ...
-├── src/interactive/ # Интерактивная система / Interactive system
+== sync, corrected by elderman ==
 ├── src/mobile_app/ # mobile application / mobile application
-├── src/admin_panel/ # Админ панель / Admin panel
-├── tests/ # Тесты / tests
-├── scripts/ # Скрипты Launchа / Launch scripts
+# Admin panel / Admin panel
+* Test/tests
+# Launch/Launch scripts
 ├── docs/ # documentation / Documentation
 ├── data/ # data / data
 ├── Logs/ # Logs / Logs
-└── deployment/ # Развертывание / deployment
+# Deployment/deployment
 ```
 
-## 🚀 Основные скрипты Launchа / main Launch Scripts
+## ♪ Main scripts of Launch / Main Launch Scripts
 
-### Python скрипты / Python Scripts
-- `run_Analysis.py` - Основной анализ / main Analysis
+### Python scripts / Python Scripts
+- `run_Analisis.py' - Basic analysis / Main Analysis
 - `run_saas.py` - SaaS platform / SaaS platform
 - `run_pocket_hedge_fund.py` - Hedge fund / Hedge fund
-- `start_mcp_server.py` - MCP сервер / MCP server
+== sync, corrected by elderman == @elder_man
 
-### Bash скрипты / Bash Scripts
-- `nz` - Универсальный скрипт / Universal script
-- `eda` - EDA анализ / EDA Analysis
+## Bash scripts / Bash Scripts
+- `nz' - Universal script / Universal script
+- `eda' - EDA analysis / EDA Analysis
 - `scripts/run_all_tests.sh` - Run all tests / Run all tests
-- `scripts/run_tests_safe.sh` - Безопасное тестирование / Safe testing
+- `scripts/run_tests_safe.sh' - Safe testing / Safe testing
 
 ## 🧪 Structure tests / Test Structure
 
 ```
 tests/
-├── calculation/ # Тесты расчетов / Calculation tests
-├── cli/ # Тесты CLI / CLI tests
-├── data/ # Тесты данных / data tests
-├── saas/ # Тесты SaaS / SaaS tests
-├── pocket_hedge_fund/ # Тесты Hedge fundа / Hedge fund tests
-├── interactive/ # Тесты интерактивной системы / Interactive system tests
-├── Monitoring/ # Тесты Monitoringа / Monitoring tests
-├── docker/ # Тесты Docker / Docker tests
-├── native-container/ # Тесты нативного контейнера / Native container tests
-└── integration/ # Интеграционные тесты / integration tests
+*Calculation tests / Calculation tests
+# CLI / CLI tests
+# Data tests / data tests
+* Saas/ # SaaS / SaaS tests
+== sync, corrected by elderman == @elder_man
+Interactive/ # Interactive system tests / Interactive system tests
+*Monitoring / #Monitoring / Monitoring tests
+* Docker tests / Docker tests
+♪ Native-container/ # Native container tests / Native container testes
+* Integration tests / integration tests
 ```
 
-## 📊 components системы / system components
+## ♪ components of the system / system components
 
 ### Backend components / Backend components
-- **SaaS platform** (`src/saas/`) - Облачная platform / Cloud platform
+- **SaaaS platform** (`src/sas/') - Cloud tableform / Cloud tableform
 - **Pocket Hedge fund** (`src/pocket_hedge_fund/`) - Hedge fund / Hedge fund
-- **Monitoring** (`src/Monitoring/`) - Система Monitoringа / Monitoring system
-- **Interactive system** (`src/interactive/`) - Интерактивная система / Interactive system
+- **Monitoring** (`src/Monitoring/') - Monitoring system
+- **Interactive system** (`src/interactive/') - Interactive system / Interactive system
 
 ### Frontend components / Frontend components
 - **mobile App** (`src/mobile_app/`) - React Native application / React Native app
-- **Admin Panel** (`src/admin_panel/`) - Vue.js админка / Vue.js admin panel
+- **Admin Panel** ('src/admin_panel/') - Vue.js admin / Vue.js admin penel
 
-### ИнфраStructure / InfraStructure
-- **Docker** (`docker-compose.yml`) - Контейнеризация / Containerization
-- **Kubernetes** (`k8s/`) - Оркестрация / Orchestration
-- **deployment** (`deployment/`) - Развертывание / deployment
+InfraStructure / InfraStructure
+- **Docker** ('docker-composition.yml') - Containerization / Containerization
+- **Kubernetes** (`k8s/') - Orchestra / Orchestra
+- **deployment** (`deployment/') - Deployment/deployment
 
-## 🔧 Конфигурационные файлы / Configuration files
+## ♪ Figuring files ♪ ♪ Figuring files
 
 ### Python configuration / Python Configuration
-- `pyproject.toml` - configuration проекта / Project configuration
+- `pyproject.toml' - configuration of project / Project configration
 - `requirements.txt` - dependencies / dependencies
 - `pytest.ini` - configuration tests / Test configuration
 
 ### Node.js configuration / Node.js Configuration
 - `src/mobile_app/package.json` - mobile application / mobile app
-- `src/admin_panel/package.json` - Админ панель / Admin panel
+- `src/admin_panel/package.json' - Admin panel / Admin panel
 
 ### Docker configuration / Docker Configuration
-- `docker-compose.yml` - Основные services / main services
-- `docker-compose.prod.yml` - Продакшн services / Production services
+- `docker-composition.yml' - Basic services / Main services
+- `Docker-composition.prod.yml' - Production services / Production services
 - `docker-compose.apple.yml` - Apple Silicon services / Apple Silicon services
 
 ## 📚 documentation / Documentation
 
 ### Run and Test Guides / Run and Test Guides
-- `docs/run-and-test-guides/` - Полные руководства / Complete guides
+- `docs/run-and-test-goods/' - Full manuals /Complete guides
 - `docs/run-and-test-guides/russian/` - Russian Version / Russian Version
 - `docs/run-and-test-guides/english/` - English Version / English Version
 
-### Другие руководства / Other Guides
-- `docs/guides/` - Пошаговые руководства / Step-by-step guides
-- `docs/examples/` - examples использования / Usage examples
-- `docs/reference/` - Справочная documentation / Reference documentation
+### Other manuals / Other Guides
+- `docs/guards/' - Walking guides / Step-by-step guides
+- `docs/examples/' - uses / Use examples
+- `docs/reference/' - Reference document/Reference documentation

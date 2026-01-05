@@ -13,21 +13,21 @@ from .base import DecompositionResult
 def _localized_texts(locale_ru: bool) -> Dict[str, str]:
  if locale_ru:
  return {
- "original": "Оригинальный ряд",
- "trend": "Тренд",
- "seasonal": "Сезонность",
- "residual": "Остаток",
+Original: Original row,
+"Trend": "Trend,"
+Seasonal: Seasonality,
+Residual: Residual,
  "imf": "IMF",
- "title_classical": "Классическая декомпозиция",
- "title_stl": "STL декомпозиция",
+"Tile_classical": "Nice depositivity,"
+"Title_stl": "STL decomposition",
  "title_imf": "CEEMDAN — IMF {n}",
- "title_residual": "CEEMDAN — Остаток",
+"Title_residual": "CEEMDAN - Balance",
  "desc_imf": (
- "IMF-компонента {n}. Высокие номера обычно низкочастотные (тренд), "
- "низкие — высокочастотные (шум/микроStructure)."
+"IMF component {n}. High numbers are usually low frequency (trend),"
+"low are high frequency (noise/microStructure)."
  ),
  "desc_res": (
- "Остаток после вычитания all IMF. Часто интерпретируется как медленная часть/тренд."
+"The balance after subtracting all IMF. Often interpreted as a slow part/trend."
  ),
  }
  return {
@@ -67,11 +67,11 @@ def plot_and_save(result: DecompositionResult, plots_dir: str, file_stem: str, l
  result.components["residual"].plot(ax=axes[3], color="tab:green", lw=1)
  axes[3].set_title(texts["residual"]) # noqa: E265
  axes[3].set_xlim(result.original.index.min(), result.original.index.max())
- # Заголовок без описательных блоков
+# Heading without descriptive blocks
  title = texts["title_classical"] if result.method == "classical" else texts["title_stl"]
  fig.suptitle(title, fontsize=12)
  else:
- # for CEEMDAN Use функцию ниже plot_and_save_ceemdan_per_imf
+# for CEEMDAN Use function below plot_and_save_cemdan_per_imf
  raise RuntimeError("Use plot_and_save_ceemdan_per_imf for CEEMDAN method")
 
  fig.tight_layout(rect=[0, 0.03, 1, 0.95])
@@ -84,12 +84,12 @@ def plot_and_save(result: DecompositionResult, plots_dir: str, file_stem: str, l
 def get_ceemdan_exPlanation(locale_ru: bool) -> str:
  if locale_ru:
  return (
- "Пояснение результатов CEEMDAN:\n"
- "- IMF1 — высокочастотные колебания (шум/микроStructure).\n"
- "- IMF2..IMFk — промежуточные частоты (циклы/реакции рынка).\n"
- "- Остаток — медленная часть/тренд после вычитания IMF.\n"
- "Use энергию IMF как признаки, моделируйте трендовую часть отдельно,\n"
- "and применяйте walk-forward/учёт комиссий при проверке стратегий."
+"Explanation of the results of CEMEDAN:\n"
+"-IMF1 is a high-frequency variation (noise/microStructure).
+"-IMF2..IMFk is the intermediate frequencies (cycles/market reactions).
+"-The balance is a slow part/trend after subtracting IMF.\n"
+"Use energy IF as signs, model the trend part separately, \n"
+"and apply walk-forward/commission records when testing strategies."
  )
  return (
  "CEEMDAN results exPlanation:\n"
@@ -107,7 +107,7 @@ def plot_and_save_ceemdan_per_imf(
  texts = _localized_texts(locale_ru)
  paths: List[str] = []
 
- # Собираем and сортируем IMF
+# Collect and sort the IMF
  imf_names = [k for k in result.components.keys() if k.startswith("IMF")]
  imf_names_sorted = sorted(imf_names, key=lambda x: int(x.replace("IMF", "")))
 
@@ -118,7 +118,7 @@ def plot_and_save_ceemdan_per_imf(
  comp.plot(ax=ax, lw=1)
  ax.set_xlim(result.original.index.min(), result.original.index.max())
  ax.set_title(texts["title_imf"].format(n=n))
- # Вставляем detailsзированное describe on сам рисунок
+# Add detailssed describe on the drawing
  fig.text(
  0.01,
  0.01,

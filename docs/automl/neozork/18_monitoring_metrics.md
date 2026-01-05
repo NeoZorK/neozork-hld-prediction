@@ -1,79 +1,79 @@
-# 18.4. Monitoring and metrics for достижения 100% прибыли
+# 18.4 Monitoring and metrics for 100% profit
 
-**Theory:** Monitoring and metrics for достижения 100% прибыли представляют собой комплексную system отслеживания and Analysis all аспектов performance торговой системы. Это критически важно for поддержания высокой эффективности and достижения целевой доходности.
+**Theory:** Monitoring and measures for achieving 100 per cent profits are an integrated system of tracking and analysis all aspects of trade performance, which is critical for maintaining high efficiency and achieving targeted returns.
 
-**Почему Monitoring and metrics важны:**
+# Why Monitoring and metrics matter #
 
-- **Контроль:** Обеспечивает контроль над производительностью
-- **Анализ:** Обеспечивает анализ эффективности
-- **Оптимизация:** Обеспечивает оптимизацию системы
-- **Достижение целей:** Критически важно for достижения целевой доходности
+- ** Control:** Provides performance control
+- **Analysis:** Provides performance analysis
+- **Optimization:** Provides system optimization
+- **Achieved objectives:** Critical for achieving target returns
 
-## 📊 Система Monitoringа performance
+♪ ♪ Monitoring system performance
 
-**Theory:** Система Monitoringа performance представляет собой комплексную system отслеживания all ключевых метрик performance торговой системы. Это критически важно for поддержания высокой эффективности and своевременного выявления проблем.
+**Theory:** The Monitoring Performance system is an integrated system for tracking all key metrics of trade performance, which is critical for maintaining high efficiency and timely problem identification.
 
-**Детальное describe концепции:**
-Система Monitoringа performance in контексте достижения 100% прибыли in месяц представляет собой многоуровневую архитектуру, которая включает in себя:
+**Detail descrie concepts:**
+Monitoringa performance in the context of achieving 100 per cent profit in month is a multilevel architecture that includes:
 
-1. **metrics доходности** - отслеживание различных временных горизонтов доходности (дневная, недельная, месячная, годовая)
-2. **Риск-metrics** - контроль рисков через коэффициент Шарпа, максимальную просадку, Value at Risk
-3. **Торговые metrics** - анализ эффективности торговых операций через процент выигрышных сделок, фактор прибыли
-4. **metrics робастности** - оценка стабильности and адаптивности системы
-5. **Целевые metrics** - отслеживание прогресса к достижению 100% месячной прибыли
+1. **Metrics of return** - Monitoring of different time horizons of return (daily, weekly, monthly, annual)
+2. ** Risk-metrics** - risk control via Sharp coefficient, maximum draught, Value at Risk
+3. **Trade metrics** - Analysis of trade efficiency through the percentage of winning transactions, profit factor
+4. **Metrics of Robustness** - Assessment of System Stability and Adaptation
+5. ** Targeted metrics** - tracking progress towards 100 per cent monthly profit
 
-**Математические основы:**
-- **Коэффициент Шарпа**: `Sharpe = (μ - rf) / σ`, где μ - средняя доходность, rf - безрисковая ставка, σ - стандартное отклонение
-- **Максимальная просадка**: `MaxDD = max(Peak - Trough)`, где Peak - пиковые значения, Trough - минимальные значения
-- **Value at Risk**: `VaR = μ - zα * σ`, где zα - квантиль нормального распределения
+** Mathematical framework:**
+- ** Sharp coefficient**: `Sharp = ( μ - rf) / , where μ is the average return, rf is the risk-free rate, , standard deviation
+- ** Maximum draught**: `MaxDD = max(Peak - Troug)' where Peak is the peak, Troug is the minimum
+- **Value at Risk**: `VaR = μ - zα* , where zα is the quintile of normal distribution
 
-**Почему система Monitoringа performance критически важна:**
-- **Отслеживание:** Обеспечивает непрерывное отслеживание all ключевых метрик in реальном времени
-- **Анализ:** Обеспечивает глубокий анализ performance with использованием статистических методов
-- **Выявление проблем:** Обеспечивает своевременное выявление проблем to их критического воздействия
-- **Оптимизация:** Критически важно for непрерывной оптимизации системы and достижения целевой доходности
-- **Контроль рисков:** Позволяет контролировать риски and предотвращать значительные потери
-- **Адаптация:** Обеспечивает адаптацию системы к изменяющимся рыночным условиям
+**Why Monitoring system is critical:**
+- ** Traceability:** Provides continuous tracking of all key metrics in real time
+- **Analysis:** Provides in-depth analysis of performance with statistical methods
+- ** Identification of problems: ** Provides timely identification of problems to their critical impact
+- **Optimization:** Critically important for continuous optimization of the system and achievement of target returns
+- ** Risk control:** Allows risk control and prevention of significant losses
+- ** Adaptation:** Provides system adaptation to changing market conditions
 
-**Архитектурные принципы:**
-1. **Модульность** - каждый компонент системы независим and может быть заменен
-2. **Масштабируемость** - система может обрабатывать растущие объемы данных
-3. **Надежность** - система продолжает Workingть даже при сбоях отдельных компонентов
-4. **performance** - минимальная задержка in расчете метрик
-5. **Точность** - высокая точность расчетов for принятия решений
+** Architecture principles:**
+1. ** Modility** - each component of the system is independent and can be replaced
+2. ** Capacity** - The system can handle increasing data volumes
+3. ** Reliability** - the system continues to Working even when individual components fail
+4. ** Performance** = minimum delay in calculation of metric
+5. ** The accuracy** - High accuracy of calculations for decision-making
 
-**Плюсы:**
-- Полное отслеживание метрик with высокой точностью
-- Своевременное выявление проблем через автоматические алерты
-- Возможность оптимизации on basis данных
-- Поддержание высокой эффективности системы
-- Предотвращение значительных потерь
-- Адаптация к рыночным изменениям
+** Plus:**
+- Full tracking of the metric with high accuracy
+- Timely identification of problems through automatic dealers
+- Optimization on database
+- Maintaining the high efficiency of the system
+- Prevention of significant losses
+Adaptation to market changes
 
 **Disadvantages:**
-- Сложность реализации требует высококвалифицированных специалистов
-- Высокие требования к вычислительным ресурсам
-- Потенциальные ложные срабатывания алертов
-- Необходимость постоянного обслуживания and обновления
-- Сложность интерпретации большого количества метрик
+- The complexity of implementation requires highly skilled professionals
+- High requirements for computing resources
+- Potential false reaction of allers
+- Need for continuous maintenance and updating
+- The difficulty of interpreting a large number of metrics
 
 ```python
 # src/Monitoring/performance.py
 """
 NeoZorK 100% Performance Monitoring system
 
-Этот module реализует комплексную system Monitoringа performance for достижения
-100% прибыли in месяц. Система включает in себя расчет all ключевых метрик,
-автоматические алерты and визуализацию данных.
+This model implements the integrated system Monitoring performance for achievement
+100% profit in month. The system includes all key metrics,
+Automatic allertes and visualization of data.
 
-Основные components:
-- PerformanceMonitor: Основной класс for расчета and отслеживания метрик
-- metrics доходности: дневная, недельная, месячная, годовая доходность
-- Риск-metrics: коэффициент Шарпа, максимальная просадка, VaR
-- Торговые metrics: процент выигрышных сделок, фактор прибыли
-- metrics робастности: консистентность, стабильность, адаптивность
+Main components:
+- PerformanceMonitor: Basic class for the calculation and tracking of metrics
+- Return rates: daily, weekly, monthly, annual
+- Risk-metrics: Sharp coefficient, maximum draught, VaR
+- Trade metrics: percentage of winning transactions, profit factor
+- robotics: conspicuity, stability, adaptation
 
-Использование:
+Use of:
  config = {
  'Monitoring': {
  'monthly_target': 1.0,
@@ -106,55 +106,55 @@ warnings.filterwarnings('ignore')
 
 class PerformanceMonitor:
  """
- Monitoring performance системы for достижения 100% прибыли in месяц
+Monitoring system to achieve 100 per cent profit in month
 
- Этот класс реализует комплексную system Monitoringа, которая отслеживает
- все ключевые Metrics performance торговой системы and обеспечивает
- автоматическое выявление проблем and возможностей for оптимизации.
+This class runs an integrated system Monitoring that tracks
+all key metrics performance of the trading system and
+Automatic identification of problems and opportunities for optimization.
 
  Attributes:
- config (Dict): configuration системы Monitoringа
- logger (logging.Logger): Логгер for записи events
- metrics_history (List[Dict]): История all рассчитанных метрик
- alerts (List[Dict]): История all сгенерированных алертов
- monthly_target (float): Целевая месячная доходность (100%)
- daily_target (float): Целевая дневная доходность (~3.3%)
+config (Dict): configuring system
+Logger (logging.Logger): Logger for recording events
+metrics_history (List[Dict]): History of all calculated metrics
+Alerts (List[Dict]): History of all of the all-created allers
+Monthly_target (float): Target monthly rate of return (100 per cent)
+Daily_target (float): Target daily yield (~3.3 per cent)
 
  Methods:
- calculate_metrics: Расчет all метрик performance
- check_alerts: check условий for генерации алертов
- generate_Report: Генерация детального Reportа о performance
- create_dashboard: create интерактивного дашборда
+Calculate_metrics: Calculation of all metric performance
+== sync, corrected by elderman == @elder_man
+General_Report: Generation of detailed Performance Report
+kreate_dashboard: kreate interactive dashboard
  """
 
  def __init__(self, config: Dict):
  """
- Инициализация системы Monitoringа performance
+Initiating Monitoring system
 
  Args:
- config (Dict): configuration системы, включающая:
- - Monitoring.monthly_target: Целевая месячная доходность
- - Monitoring.daily_target: Целевая дневная доходность
- - Monitoring.risk_limits: Лимиты рисков
- - Monitoring.alert_thresholds: Пороги for алертов
+config (Dict): configurization of the system, including:
+- Monitoring.monthly_barget: Target monthly return
+- Monitoring.daily_barget: Target daily return
+- Monitoring.risk_limites: Risk Limites
+- Monitoring.alert_thresholds: Thresholds for Alerts
  """
  self.config = config
  self.logger = logging.getLogger(__name__)
  self.metrics_history = []
  self.alerts = []
 
- # Извлечение конфигурации
+# Grading configuration
  Monitoring_config = config.get('Monitoring', {})
- self.monthly_target = Monitoring_config.get('monthly_target', 1.0) # 100% in месяц
- self.daily_target = Monitoring_config.get('daily_target', 0.033) # ~3.3% in день
+Self.monthly_target = Monitoring_config.get('monthly_barget', 1.0) #100% in month
+Self.daily_target = Monitoring_config.get('daily_target', 0.033) # ~3.3 per cent in day
 
- # Лимиты рисков
+# Risk limits
  risk_limits = Monitoring_config.get('risk_limits', {})
  self.max_drawdown_limit = risk_limits.get('max_drawdown', 0.2) # 20%
  self.min_sharpe_limit = risk_limits.get('min_sharpe', 1.0)
  self.min_win_rate_limit = risk_limits.get('min_win_rate', 0.5) # 50%
 
- # Пороги for алертов
+# Thresholds for Allers
  alert_thresholds = Monitoring_config.get('alert_thresholds', {})
  self.performance_warning_threshold = alert_thresholds.get('performance_warning', 0.4)
  self.performance_critical_threshold = alert_thresholds.get('performance_critical', 0.2)
@@ -163,54 +163,54 @@ class PerformanceMonitor:
 
  def calculate_metrics(self, positions: List[Dict], current_balance: float, initial_balance: float) -> Dict:
  """
- Расчет all метрик performance системы
+Calculation of all metric performance system
 
- Этот метод является центральным компонентом системы Monitoringа and выполняет
- комплексный расчет all ключевых метрик performance. Метод обрабатывает
- data о торговых позициях and рассчитывает metrics on следующим категориям:
+This method is the central component of the Monitoring system and implements
+Integrated calculation all key metrics performance.
+Data on trade items and calculates indicators on the following categories:
 
- 1. Базовые metrics - общая доходность and баланс
- 2. Временные metrics - доходность on различным периодам
- 3. Риск-metrics - оценка рисков and волатильности
- 4. Торговые metrics - эффективность торговых операций
- 5. metrics робастности - стабильность and адаптивность системы
- 6. Целевые metrics - прогресс к достижению 100% месячной прибыли
+1. Basic metrics - total return and balance sheet
+2. Temporary rates of return on different periods
+3. Risk-metrics - risk and volatility assessment
+4. Trade metrics - Trade efficiency
+5. robotics: stability and adaptive system
+6. Target metrics - progress towards 100 per cent monthly profit
 
  Args:
- positions (List[Dict]): List торговых позиций with полями:
- - timestamp: Время открытия/закрытия позиции
- - pnl: Прибыль/убыток on позиции
- - type: Тип позиции (buy/sell)
- - amount: Размер позиции
- - price: Цена открытия/закрытия
- current_balance (float): Текущий баланс счета
- initial_balance (float): Начальный баланс счета
+Positions (List[Dict]): List of trade positions with fields:
+- timestamp: Opening/closing time
+- pnl: Gain/loss on position
+Type of entry (buy/sell)
+- amount: Size of entry
+- Price: Opening/closed price
+Current_base (float): Current account balance
+initial_base (float): account opening balance
 
  Returns:
- Dict: Словарь with рассчитанными метриками, включающий:
- - total_return: Общая доходность
- - daily_return: Дневная доходность
- - weekly_return: Недельная доходность
- - monthly_return: Месячная доходность
- - annualized_return: Годовая доходность
- - sharpe_ratio: Коэффициент Шарпа
- - max_drawdown: Максимальная просадка
+Dict: Vocabulary with calculated metrics, including:
+- Total_return: Total return
+- Daily_return: Daily return
+- Weekly_return: Weekly return
+- Monthly_return: Monthly return
+- Annualized_return: annual return
+- Sharpe_ratio: Sharpe coefficient
+- max_drawdown: Maximum draught
  - var_95: Value at Risk 95%
  - var_99: Value at Risk 99%
- - win_rate: Процент выигрышных сделок
- - profit_factor: Фактор прибыли
- - avg_win: Средняя прибыль
- - avg_loss: Средний убыток
- - consistency: Консистентность
- - stability: Стабильность
- - adaptability: Адаптивность
- - target_achievement: Достижение целей
- - performance_score: Общий балл performance
- - timestamp: Время расчета
+- Win_rate: Percentage of winning transactions
+- profit_factor: Factor arrived
+- avg_win: Average profit
+- avg_loss: Average loss
+:: Consistency
+- stability:
+- adaptation: Adaptation
+- Target_achivement: Achieving the Goals
+- Performance_score: Total performance
+- timestamp: Calculation time
 
  Raises:
- ValueError: Если входные data некорректны
- Exception: При ошибках in расчетах
+ValueError: If input data are incorrect
+Exception: When errors in calculations
 
  Example:
  >>> positions = [
@@ -222,7 +222,7 @@ class PerformanceMonitor:
  Total return: 5.26%
  """
  try:
- # validation входных данных
+# Validation of input data
  if not isinstance(positions, List):
  raise ValueError("Positions must be a List")
  if not isinstance(current_balance, (int, float)) or current_balance < 0:
@@ -234,29 +234,29 @@ class PerformanceMonitor:
 
  metrics = {}
 
- # Базовые metrics - основа for all остальных расчетов
+# Basic metrics is the basis for all other calculations
  metrics['total_return'] = (current_balance - initial_balance) / initial_balance
  metrics['current_balance'] = current_balance
  metrics['initial_balance'] = initial_balance
  metrics['profit_loss'] = current_balance - initial_balance
 
- # Временные metrics - анализ performance on периодам
- # Эти metrics критически важны for достижения 100% месячной прибыли
+# Temporary metrics - analysis performance on periods
+# These metrics are critical to achieving 100% monthly profits
  metrics['daily_return'] = self._calculate_daily_return(positions)
  metrics['weekly_return'] = self._calculate_weekly_return(positions)
  metrics['monthly_return'] = self._calculate_monthly_return(positions)
  metrics['annualized_return'] = self._calculate_annualized_return(positions)
 
- # Риск-metrics - контроль рисков for предотвращения потерь
- # Эти metrics обеспечивают стабильность системы
+# Risk-metrics - Risk control for prevention
+# These metrics ensure system stability
  metrics['sharpe_ratio'] = self._calculate_sharpe_ratio(positions)
  metrics['max_drawdown'] = self._calculate_max_drawdown(positions)
  metrics['var_95'] = self._calculate_var(positions, 0.95)
  metrics['var_99'] = self._calculate_var(positions, 0.99)
  metrics['volatility'] = self._calculate_volatility(positions)
 
- # Торговые metrics - эффективность торговых операций
- # Эти metrics показывают качество торговых решений
+# Trade metrics - Trade efficiency
+# These metrics show the quality of trade decisions
  metrics['win_rate'] = self._calculate_win_rate(positions)
  metrics['profit_factor'] = self._calculate_profit_factor(positions)
  metrics['avg_win'] = self._calculate_avg_win(positions)
@@ -265,34 +265,34 @@ class PerformanceMonitor:
  metrics['winning_trades'] = len([p for p in positions if p.get('pnl', 0) > 0])
  metrics['losing_trades'] = len([p for p in positions if p.get('pnl', 0) < 0])
 
- # metrics робастности - стабильность and адаптивность системы
- # Эти metrics показывают надежность системы in различных условиях
+# Labourisms - stability and adaptive system
+# These metrics show the reliability of the system in different settings
  metrics['consistency'] = self._calculate_consistency(positions)
  metrics['stability'] = self._calculate_stability(positions)
  metrics['adaptability'] = self._calculate_adaptability(positions)
  metrics['recovery_factor'] = self._calculate_recovery_factor(positions)
 
- # Целевые metrics - прогресс к достижению 100% месячной прибыли
- # Эти metrics показывают, насколько близко система к достижению цели
+# Targeted metrics - progress towards 100% monthly profit
+# These metrics show how close the system is to achieving the goal
  metrics['target_achievement'] = self._calculate_target_achievement(metrics)
  metrics['performance_score'] = self._calculate_performance_score(metrics)
  metrics['monthly_progress'] = self._calculate_monthly_progress(positions)
  metrics['daily_progress'] = self._calculate_daily_progress(positions)
 
- # Дополнительные аналитические metrics
+# Additional analytical metrics
  metrics['calmar_ratio'] = self._calculate_calmar_ratio(metrics)
  metrics['sortino_ratio'] = self._calculate_sortino_ratio(positions)
  metrics['treynor_ratio'] = self._calculate_treynor_ratio(positions)
 
- # Временные метки for отслеживания
+# Time tags for tracing
  metrics['timestamp'] = datetime.now()
  metrics['calculation_time'] = datetime.now()
  metrics['data_quality_score'] = self._calculate_data_quality_score(positions)
 
- # Сохранение in историю for Analysis трендов
+# Maintaining in History for Trends
  self.metrics_history.append(metrics.copy())
 
- # Ограничение истории for предотвращения утечеto memory
+# Limiting history to prevent leaks
  if len(self.metrics_history) > 1000:
  self.metrics_history = self.metrics_history[-1000:]
 
@@ -304,7 +304,7 @@ class PerformanceMonitor:
  raise
  except Exception as e:
  self.logger.error(f"Error calculating metrics: {e}")
- # Возвращаем базовые metrics даже при ошибке
+# Return basic metrics even when it's wrong
  return {
  'total_return': (current_balance - initial_balance) / initial_balance if initial_balance > 0 else 0,
  'current_balance': current_balance,
@@ -314,19 +314,19 @@ class PerformanceMonitor:
  }
 
  def _calculate_daily_return(self, positions: List[Dict]) -> float:
- """Расчет дневной доходности"""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  try:
  if not positions:
  return 0.0
 
- # Получение позиций за последний день
+# Getting positions in the last day
  yesterday = datetime.now() - timedelta(days=1)
  daily_positions = [p for p in positions if p['timestamp'] >= yesterday]
 
  if not daily_positions:
  return 0.0
 
- # Расчет доходности
+# Calculation of return
  total_pnl = sum(p['pnl'] for p in daily_positions if 'pnl' in p)
  return total_pnl
 
@@ -335,19 +335,19 @@ class PerformanceMonitor:
  return 0.0
 
  def _calculate_weekly_return(self, positions: List[Dict]) -> float:
- """Расчет недельной доходности"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  try:
  if not positions:
  return 0.0
 
- # Получение позиций за последнюю неделю
+# Getting positions in the last week
  week_ago = datetime.now() - timedelta(weeks=1)
  weekly_positions = [p for p in positions if p['timestamp'] >= week_ago]
 
  if not weekly_positions:
  return 0.0
 
- # Расчет доходности
+# Calculation of return
  total_pnl = sum(p['pnl'] for p in weekly_positions if 'pnl' in p)
  return total_pnl
 
@@ -356,19 +356,19 @@ class PerformanceMonitor:
  return 0.0
 
  def _calculate_monthly_return(self, positions: List[Dict]) -> float:
- """Расчет месячной доходности"""
+"The monthly return calculation."
  try:
  if not positions:
  return 0.0
 
- # Получение позиций за последний месяц
+# Getting positions in the last month
  month_ago = datetime.now() - timedelta(days=30)
  monthly_positions = [p for p in positions if p['timestamp'] >= month_ago]
 
  if not monthly_positions:
  return 0.0
 
- # Расчет доходности
+# Calculation of return
  total_pnl = sum(p['pnl'] for p in monthly_positions if 'pnl' in p)
  return total_pnl
 
@@ -377,21 +377,21 @@ class PerformanceMonitor:
  return 0.0
 
  def _calculate_annualized_return(self, positions: List[Dict]) -> float:
- """Расчет годовой доходности"""
+"The annual rate of return."
  try:
  if not positions:
  return 0.0
 
- # Получение all позиций
+# Getting all positions
  all_positions = [p for p in positions if 'pnl' in p]
 
  if not all_positions:
  return 0.0
 
- # Расчет общего PnL
+# Calculation of total PnL
  total_pnl = sum(p['pnl'] for p in all_positions)
 
- # Расчет времени
+# Calculation of time
  if len(all_positions) > 1:
  start_time = min(p['timestamp'] for p in all_positions)
  end_time = max(p['timestamp'] for p in all_positions)
@@ -408,25 +408,25 @@ class PerformanceMonitor:
  return 0.0
 
  def _calculate_sharpe_ratio(self, positions: List[Dict]) -> float:
- """Расчет коэффициента Шарпа"""
+""Sharp coefficient calculation."
  try:
  if not positions:
  return 0.0
 
- # Получение доходностей
+# Income generation
  returns = [p['pnl'] for p in positions if 'pnl' in p]
 
  if len(returns) < 2:
  return 0.0
 
- # Расчет среднего and стандартного отклонения
+# Calculation of average and standard deviation
  mean_return = np.mean(returns)
  std_return = np.std(returns)
 
  if std_return == 0:
  return 0.0
 
- # Коэффициент Шарпа (предполагаем безрисковую ставку = 0)
+# Sharpe coefficient (intensifies risk-free rate = 0)
  sharpe_ratio = mean_return / std_return
  return sharpe_ratio
 
@@ -435,21 +435,21 @@ class PerformanceMonitor:
  return 0.0
 
  def _calculate_max_drawdown(self, positions: List[Dict]) -> float:
- """Расчет максимальной просадки"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  try:
  if not positions:
  return 0.0
 
- # Получение кумулятивных доходностей
+# Collecting cumulative returns
  returns = [p['pnl'] for p in positions if 'pnl' in p]
 
  if not returns:
  return 0.0
 
- # Расчет кумулятивных доходностей
+# Calculation of cumulative returns
  cumulative_returns = np.cumsum(returns)
 
- # Расчет максимальной просадки
+# Calculation of maximum tarmac
  running_max = np.maximum.accumulate(cumulative_returns)
  drawdowns = cumulative_returns - running_max
  max_drawdown = np.min(drawdowns)
@@ -461,18 +461,18 @@ class PerformanceMonitor:
  return 0.0
 
  def _calculate_var(self, positions: List[Dict], confidence_level: float) -> float:
- """Расчет Value at Risk"""
+""" "Value at Risk"""
  try:
  if not positions:
  return 0.0
 
- # Получение доходностей
+# Income generation
  returns = [p['pnl'] for p in positions if 'pnl' in p]
 
  if not returns:
  return 0.0
 
- # Расчет VaR
+# Calculation of VaR
  var = np.percentile(returns, (1 - confidence_level) * 100)
  return abs(var)
 
@@ -481,18 +481,18 @@ class PerformanceMonitor:
  return 0.0
 
  def _calculate_win_rate(self, positions: List[Dict]) -> float:
- """Расчет процента выигрышных сделок"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  try:
  if not positions:
  return 0.0
 
- # Получение PnL
+# Getting PnL
  pnls = [p['pnl'] for p in positions if 'pnl' in p]
 
  if not pnls:
  return 0.0
 
- # Подсчет выигрышных сделок
+# Counting of winning deals
  winning_trades = sum(1 for pnl in pnls if pnl > 0)
  total_trades = len(pnls)
 
@@ -504,18 +504,18 @@ class PerformanceMonitor:
  return 0.0
 
  def _calculate_profit_factor(self, positions: List[Dict]) -> float:
- """Расчет фактора прибыли"""
+"The profit factor calculation."
  try:
  if not positions:
  return 0.0
 
- # Получение PnL
+# Getting PnL
  pnls = [p['pnl'] for p in positions if 'pnl' in p]
 
  if not pnls:
  return 0.0
 
- # Разделение on прибыльные and убыточные
+# Division on profit and loss
  profits = [pnl for pnl in pnls if pnl > 0]
  losses = [abs(pnl) for pnl in pnls if pnl < 0]
 
@@ -533,12 +533,12 @@ class PerformanceMonitor:
  return 0.0
 
  def _calculate_avg_win(self, positions: List[Dict]) -> float:
- """Расчет средней прибыли"""
+"The calculation of average profits."
  try:
  if not positions:
  return 0.0
 
- # Получение прибыльных PnL
+# Getting profitable PnL
  profits = [p['pnl'] for p in positions if 'pnl' in p and p['pnl'] > 0]
 
  if not profits:
@@ -552,12 +552,12 @@ class PerformanceMonitor:
  return 0.0
 
  def _calculate_avg_loss(self, positions: List[Dict]) -> float:
- """Расчет среднего убытка"""
+"The calculation of average loss."
  try:
  if not positions:
  return 0.0
 
- # Получение убыточных PnL
+# Getting lost PnL
  losses = [p['pnl'] for p in positions if 'pnl' in p and p['pnl'] < 0]
 
  if not losses:
@@ -571,18 +571,18 @@ class PerformanceMonitor:
  return 0.0
 
  def _calculate_consistency(self, positions: List[Dict]) -> float:
- """Расчет консистентности"""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  try:
  if not positions:
  return 0.0
 
- # Получение доходностей
+# Income generation
  returns = [p['pnl'] for p in positions if 'pnl' in p]
 
  if len(returns) < 2:
  return 0.0
 
- # Расчет коэффициента вариации
+# Calculation of the coefficient of variation
  mean_return = np.mean(returns)
  std_return = np.std(returns)
 
@@ -597,18 +597,18 @@ class PerformanceMonitor:
  return 0.0
 
  def _calculate_stability(self, positions: List[Dict]) -> float:
- """Расчет стабильности"""
+"The "Sustainability Assessment""
  try:
  if not positions:
  return 0.0
 
- # Получение доходностей
+# Income generation
  returns = [p['pnl'] for p in positions if 'pnl' in p]
 
  if len(returns) < 2:
  return 0.0
 
- # Расчет стабильности как обратная величина волатильности
+# Calculating stability as the reverse of volatility
  volatility = np.std(returns)
  stability = 1 / (1 + volatility)
 
@@ -619,19 +619,19 @@ class PerformanceMonitor:
  return 0.0
 
  def _calculate_adaptability(self, positions: List[Dict]) -> float:
- """Расчет адаптивности"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  try:
  if not positions:
  return 0.0
 
- # Получение доходностей
+# Income generation
  returns = [p['pnl'] for p in positions if 'pnl' in p]
 
  if len(returns) < 10:
  return 0.0
 
- # Расчет адаптивности как способность к обучению
- # Use корреляцию между последовательными периодами
+# Calculation of adaptation as learning ability
+# Use correlation between consecutive periods
  half_len = len(returns) // 2
  first_half = returns[:half_len]
  second_half = returns[half_len:]
@@ -649,7 +649,7 @@ class PerformanceMonitor:
  return 0.0
 
  def _calculate_volatility(self, positions: List[Dict]) -> float:
- """Расчет волатильности доходности"""
+"""""""" "The calculation of the volatility of returns."
  try:
  if not positions:
  return 0.0
@@ -667,7 +667,7 @@ class PerformanceMonitor:
  return 0.0
 
  def _calculate_recovery_factor(self, positions: List[Dict]) -> float:
- """Расчет фактора восстановления"""
+"The calculation of the recovery factor."
  try:
  if not positions:
  return 0.0
@@ -677,10 +677,10 @@ class PerformanceMonitor:
  if not returns:
  return 0.0
 
- # Расчет общего PnL
+# Calculation of total PnL
  total_pnl = sum(returns)
 
- # Расчет максимальной просадки
+# Calculation of maximum tarmac
  max_drawdown = self._calculate_max_drawdown(positions)
 
  if max_drawdown == 0:
@@ -694,12 +694,12 @@ class PerformanceMonitor:
  return 0.0
 
  def _calculate_monthly_progress(self, positions: List[Dict]) -> float:
- """Расчет месячного прогресса к цели"""
+"The calculation of the monthly progress towards the target."
  try:
  if not positions:
  return 0.0
 
- # Получение позиций за текущий месяц
+# Collection of items for the current month
  now = datetime.now()
  month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
  monthly_positions = [p for p in positions if p.get('timestamp', now) >= month_start]
@@ -707,41 +707,41 @@ class PerformanceMonitor:
  if not monthly_positions:
  return 0.0
 
- # Расчет месячной доходности
+# Calculation of monthly return
  monthly_pnl = sum(p['pnl'] for p in monthly_positions if 'pnl' in p)
- monthly_progress = monthly_pnl / (self.monthly_target * 10000) # Предполагаем начальный баланс 10000
+== sync, corrected by elderman == @elder_man
 
- return min(monthly_progress, 1.0) # Ограничиваем 100%
+Return min(monthly_progress, 1.0) #Restricted 100%
 
  except Exception as e:
  self.logger.error(f"Error calculating monthly progress: {e}")
  return 0.0
 
  def _calculate_daily_progress(self, positions: List[Dict]) -> float:
- """Расчет дневного прогресса к цели"""
+"The calculation of the day's progress towards the target."
  try:
  if not positions:
  return 0.0
 
- # Получение позиций за сегодня
+# Getting positions for today
  today = datetime.now().date()
  daily_positions = [p for p in positions if p.get('timestamp', datetime.now()).date() == today]
 
  if not daily_positions:
  return 0.0
 
- # Расчет дневной доходности
+# Calculation of the daily return
  daily_pnl = sum(p['pnl'] for p in daily_positions if 'pnl' in p)
- daily_progress = daily_pnl / (self.daily_target * 10000) # Предполагаем начальный баланс 10000
+Daily_progress = Daily_pnl / (self.daily_target * 10000) # We assume the initial balance is 10,000
 
- return min(daily_progress, 1.0) # Ограничиваем 100%
+Return min(daily_progress, 1.0) # Limit 100%
 
  except Exception as e:
  self.logger.error(f"Error calculating daily progress: {e}")
  return 0.0
 
  def _calculate_calmar_ratio(self, metrics: Dict) -> float:
- """Расчет коэффициента Калмара"""
+""Calmar coefficient calculation."
  try:
  annualized_return = metrics.get('annualized_return', 0)
  max_drawdown = metrics.get('max_drawdown', 0)
@@ -757,7 +757,7 @@ class PerformanceMonitor:
  return 0.0
 
  def _calculate_sortino_ratio(self, positions: List[Dict]) -> float:
- """Расчет коэффициента Сортино"""
+""Sortino coefficient calculation."
  try:
  if not positions:
  return 0.0
@@ -769,7 +769,7 @@ class PerformanceMonitor:
 
  mean_return = np.mean(returns)
 
- # Расчет downside deviation (стандартное отклонение отрицательных доходностей)
+# Calculation of the negative returns standard deviation
  negative_returns = [r for r in returns if r < 0]
  if not negative_returns:
  return float('inf') if mean_return > 0 else 0.0
@@ -787,7 +787,7 @@ class PerformanceMonitor:
  return 0.0
 
  def _calculate_treynor_ratio(self, positions: List[Dict]) -> float:
- """Расчет коэффициента Трейнора"""
+""Trinor coefficient calculation."
  try:
  if not positions:
  return 0.0
@@ -799,9 +799,9 @@ class PerformanceMonitor:
 
  mean_return = np.mean(returns)
 
- # Упрощенный расчет бета (корреляция with рыночным indexом)
- # in реальной системе здесь должна быть корреляция with рыночным indexом
- beta = 1.0 # Предполагаем бета = 1 for упрощения
+# Simplified calculation of beta (coordination with market index)
+# in the real system there has to be a correlation with market index
+Beta = 1.0 # We assume beta = 1 for simplification
 
  if beta == 0:
  return float('inf') if mean_return > 0 else 0.0
@@ -814,7 +814,7 @@ class PerformanceMonitor:
  return 0.0
 
  def _calculate_data_quality_score(self, positions: List[Dict]) -> float:
- """Расчет оценки качества данных"""
+""The calculation of the assessment of data quality""
  try:
  if not positions:
  return 0.0
@@ -823,9 +823,9 @@ class PerformanceMonitor:
  valid_positions = 0
 
  for position in positions:
- # checking presence обязательных полей
+# Checking priority mandatory fields
  if all(key in position for key in ['timestamp', 'pnl', 'type']):
- # checking корректность типов данных
+# Checking correct data types
  if (isinstance(position['pnl'], (int, float)) and
  isinstance(position['timestamp'], datetime) and
  position['type'] in ['buy', 'sell']):
@@ -839,17 +839,17 @@ class PerformanceMonitor:
  return 0.0
 
  def _calculate_target_achievement(self, metrics: Dict) -> float:
- """Расчет достижения целей"""
+"The goal goal."
  try:
- # check месячной цели
+# Check monthly target
  monthly_return = metrics.get('monthly_return', 0)
  monthly_achievement = min(monthly_return / self.monthly_target, 1.0)
 
- # check дневной цели
+# Check day target
  daily_return = metrics.get('daily_return', 0)
  daily_achievement = min(daily_return / self.daily_target, 1.0)
 
- # Общее достижение целей
+# Overall achievement of the goals
  target_achievement = (monthly_achievement + daily_achievement) / 2
 
  return target_achievement
@@ -859,9 +859,9 @@ class PerformanceMonitor:
  return 0.0
 
  def _calculate_performance_score(self, metrics: Dict) -> float:
- """Расчет общего балла performance"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  try:
- # Веса for разных метрик
+# Weights for different metrics
  weights = {
  'total_return': 0.3,
  'sharpe_ratio': 0.2,
@@ -871,34 +871,34 @@ class PerformanceMonitor:
  'stability': 0.1
  }
 
- # Нормализация метрик
+# Normalization of metrics
  normalized_metrics = {}
 
- # Общая доходность (0-1)
+# Total return (0-1)
  total_return = metrics.get('total_return', 0)
  normalized_metrics['total_return'] = min(total_return / 2.0, 1.0) # 200% = 1.0
 
- # Коэффициент Шарпа (0-1)
+# Sharp coefficient (0-1)
  sharpe_ratio = metrics.get('sharpe_ratio', 0)
  normalized_metrics['sharpe_ratio'] = min(sharpe_ratio / 3.0, 1.0) # 3.0 = 1.0
 
- # Процент выигрышных сделок (0-1)
+# Percentage of winning transactions (0-1)
  win_rate = metrics.get('win_rate', 0)
  normalized_metrics['win_rate'] = win_rate
 
- # Фактор прибыли (0-1)
+# The profit factor (0-1)
  profit_factor = metrics.get('profit_factor', 0)
  normalized_metrics['profit_factor'] = min(profit_factor / 3.0, 1.0) # 3.0 = 1.0
 
- # Консистентность (0-1)
+# Consistence (0-1)
  consistency = metrics.get('consistency', 0)
  normalized_metrics['consistency'] = consistency
 
- # Стабильность (0-1)
+# Stability (0-1)
  stability = metrics.get('stability', 0)
  normalized_metrics['stability'] = stability
 
- # Расчет взвешенного балла
+# Calculation of weighted score
  performance_score = sum(
  weights[metric] * normalized_metrics[metric]
  for metric in weights
@@ -911,11 +911,11 @@ class PerformanceMonitor:
  return 0.0
 
  def check_alerts(self, metrics: Dict) -> List[Dict]:
- """check алертов"""
+"Check Alerts."
  alerts = []
 
  try:
- # Алерт on достижению месячной цели
+# An allergic to a monthly goal
  monthly_return = metrics.get('monthly_return', 0)
  if monthly_return >= self.monthly_target:
  alerts.append({
@@ -924,7 +924,7 @@ class PerformanceMonitor:
  'timestamp': datetime.now()
  })
 
- # Алерт on превышению максимальной просадки
+# Alert on exceeding maximum tarmac
  max_drawdown = metrics.get('max_drawdown', 0)
  if max_drawdown > 0.2: # 20%
  alerts.append({
@@ -933,7 +933,7 @@ class PerformanceMonitor:
  'timestamp': datetime.now()
  })
 
- # Алерт on низкому коэффициенту Шарпа
+# Alert on the low Sharpe coefficient
  sharpe_ratio = metrics.get('sharpe_ratio', 0)
  if sharpe_ratio < 1.0:
  alerts.append({
@@ -942,7 +942,7 @@ class PerformanceMonitor:
  'timestamp': datetime.now()
  })
 
- # Алерт on низкому проценту выигрышных сделок
+# Alert on low interest in winning deals
  win_rate = metrics.get('win_rate', 0)
  if win_rate < 0.5:
  alerts.append({
@@ -958,7 +958,7 @@ class PerformanceMonitor:
  return []
 
  def generate_Report(self, metrics: Dict) -> str:
- """Генерация Reportа"""
+""""""" "Generation Report"""
  try:
  Report = f"""
 # NeoZorK 100% system Performance Report
@@ -997,7 +997,7 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 ## 🎯 Status
 """
 
- # add статуса
+# add status
  performance_score = metrics.get('performance_score', 0)
  if performance_score >= 0.8:
  Report += "🟢 **EXCELLENT** - system performing above expectations\n"
@@ -1015,9 +1015,9 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
  return "Error generating Report"
 
  def create_dashboard(self, metrics: Dict) -> go.Figure:
- """create дашборда"""
+""create dashboard."
  try:
- # create субплотов
+# Create subplots
  fig = make_subplots(
  rows=3, cols=2,
  subplot_titles=('Returns Over Time', 'Risk Metrics', 'Trading Performance', 'Robustness Metrics', 'Target Achievement', 'Performance Score'),
@@ -1026,7 +1026,7 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
  [{"type": "bar"}, {"type": "indicator"}]]
  )
 
- # График доходности
+# Return schedule
  if self.metrics_history:
  timestamps = [m['timestamp'] for m in self.metrics_history]
  returns = [m['total_return'] for m in self.metrics_history]
@@ -1036,7 +1036,7 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
  row=1, col=1
  )
 
- # metrics риска
+# risk metrics
  risk_metrics = ['sharpe_ratio', 'max_drawdown', 'var_95', 'var_99']
  risk_values = [metrics.get(m, 0) for m in risk_metrics]
 
@@ -1045,7 +1045,7 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
  row=1, col=2
  )
 
- # Торговые metrics
+# Trade metrics
  trading_metrics = ['win_rate', 'profit_factor', 'avg_win', 'avg_loss']
  trading_values = [metrics.get(m, 0) for m in trading_metrics]
 
@@ -1054,7 +1054,7 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
  row=2, col=1
  )
 
- # metrics робастности
+# Matrices of roboticity
  robustness_metrics = ['consistency', 'stability', 'adaptability']
  robustness_values = [metrics.get(m, 0) for m in robustness_metrics]
 
@@ -1063,7 +1063,7 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
  row=2, col=2
  )
 
- # Достижение целей
+# Achieving the Goals
  target_metrics = ['monthly_target', 'daily_target']
  target_values = [self.monthly_target, self.daily_target]
  achievement_values = [metrics.get('monthly_return', 0), metrics.get('daily_return', 0)]
@@ -1078,7 +1078,7 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
  row=3, col=1
  )
 
- # Индикатор performance
+# Performance indicator
  performance_score = metrics.get('performance_score', 0)
 
  fig.add_trace(
@@ -1099,7 +1099,7 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
  row=3, col=2
  )
 
- # update макета
+# Update Model
  fig.update_layout(
  title_text="NeoZorK 100% system Dashboard",
  showlegend=True,
@@ -1113,47 +1113,47 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
  return go.Figure()
 
 
-# example использования системы Monitoringа performance
+# Example of Monitoring system use
 if __name__ == "__main__":
  """
- Демонстрация использования системы Monitoringа performance
- for достижения 100% прибыли in месяц
+Demonstration of the use of Monitoring system
+to achieve 100 per cent in-month
  """
 
- # configuration системы
+# configuring system
  config = {
  'Monitoring': {
- 'monthly_target': 1.0, # 100% in месяц
- 'daily_target': 0.033, # ~3.3% in день
+'Monthly_target': 1.0, #100% in month
+'Daily_target':0.033, # ~3.3 per cent in day
  'risk_limits': {
- 'max_drawdown': 0.2, # Максимальная просадка 20%
- 'min_sharpe': 1.0, # Минимальный коэффициент Шарпа
- 'min_win_rate': 0.5 # Минимальный процент выигрышных сделок
+'max_drawdown': 0.2, # Maximum 20 per cent draught
+'min_sharpe': 1.0, #Minimum Sharp coefficient
+'min_win_rate': 0.5 # Minimum percentage of winning transactions
  },
  'alert_thresholds': {
- 'performance_warning': 0.4, # Порог предупреждения
- 'performance_critical': 0.2 # Критический порог
+'Performance_warning': 0.4, # Warning threshold
+'Performance_critical': 0.2 # Critical threshold
  }
  }
  }
 
- # create экземпляра монитора
+♪ a copy of the monitor ♪
  monitor = PerformanceMonitor(config)
 
- # example торговых позиций
+# Example trade positions
  from datetime import datetime, timedelta
  import random
 
- # Генерация testsых данных
+# Testsy Data Generation
  positions = []
  base_time = datetime.now() - timedelta(days=30)
 
  for i in range(100):
- # Генерация случайных позиций with трендом к прибыли
- pnl = random.gauss(50, 30) # Средняя прибыль 50, стандартное отклонение 30
- if i < 20: # Первые 20 сделок - убыточные
+# Generating random items with profit trend
+pnl = random.gas(50, 30) # Average profit 50, standard deviation 30
+if i < 20: # First 20 deals - loss
  pnl = random.gauss(-30, 20)
- elif i > 80: # Последние 20 сделок - очень прибыльные
+elif i > 80: #The last 20 deals are very profitable
  pnl = random.gauss(100, 40)
 
  position = {
@@ -1165,7 +1165,7 @@ if __name__ == "__main__":
  }
  positions.append(position)
 
- # Расчет метрик
+# The calculation of the metric
  initial_balance = 10000
  current_balance = initial_balance + sum(p['pnl'] for p in positions)
 
@@ -1175,10 +1175,10 @@ if __name__ == "__main__":
  print(f"Total Positions: {len(positions)}")
  print()
 
- # Расчет all метрик
+# Calculation of all metric
  metrics = monitor.calculate_metrics(positions, current_balance, initial_balance)
 
- # Вывод ключевых метрик
+# Conclusion of key metrics
  print("📊 KEY PERFORMANCE METRICS:")
  print(f"Total Return: {metrics['total_return']:.2%}")
  print(f"Monthly Return: {metrics['monthly_return']:.2%}")
@@ -1190,7 +1190,7 @@ if __name__ == "__main__":
  print(f"Performance Score: {metrics['performance_score']:.2f}")
  print()
 
- # check алертов
+# Check allergic
  alerts = monitor.check_alerts(metrics)
  if alerts:
  print("🚨 ALERTS:")
@@ -1198,12 +1198,12 @@ if __name__ == "__main__":
  print(f"- {alert['type'].upper()}: {alert['message']}")
  print()
 
- # Генерация Reportа
+#Report generation
  Report = monitor.generate_Report(metrics)
  print("📋 PERFORMANCE Report:")
  print(Report)
 
- # create дашборда (опционально)
+# Create Dashboard (optimal)
  try:
  dashboard = monitor.create_dashboard(metrics)
  dashboard.show()
@@ -1214,78 +1214,78 @@ if __name__ == "__main__":
 
 ```
 
-## 🚨 Система алертов
+♪ ♪ The allergy system ♪
 
-**Theory:** Система алертов представляет собой автоматизированную system уведомлений о критических событиях and проблемах in торговой системе. Это критически важно for своевременного реагирования on проблемы and поддержания стабильной работы системы.
+**Theory:** The Alert System is an automated system of notification of critical events and problems in the trading system, which is critical for a timely response on the problem and for maintaining the stability of the system.
 
-**Детальное describe концепции:**
-Система алертов in контексте достижения 100% прибыли in месяц представляет собой многоуровневую system уведомлений, которая включает in себя:
+**Detail descrie concepts:**
+An allergic system in the context of achieving 100 per cent profit in month is a multilevel system of notifications, which includes in-house:
 
-1. **Типы алертов** - различные категории уведомлений (критические, предупреждения, информационные)
-2. **Каналы доставки** - множественные способы отправки уведомлений (email, Telegram, Discord, SMS)
-3. **Пороги срабатывания** - настраиваемые уровни for различных метрик
-4. **Эскалация** - автоматическое повышение приоритета при отсутствии реакции
-5. **История and аналитика** - отслеживание all алертов for Analysis эффективности
+1. **Tips of allerates** - different categories of notifications (critical, warnings, information)
+2. ** Delivery channels** - Multiple means of sending notifications (email, Telegram, Discord, SMS)
+3. ** Response thresholds** - adjusted levels for different metrics
+4. ** Escalation** - Automatic priority raising in the absence of a reaction
+5. **Story and Analyst** - Tracking All Alerts for Efficiency
 
-**Архитектурные принципы:**
-- **Надежность** - система должна Workingть даже при сбоях отдельных компонентов
-- **Масштабируемость** - возможность добавления новых каналов and типов алертов
-- **Гибкость** - настраиваемые пороги and условия срабатывания
-- **performance** - минимальная задержка in доставке критических уведомлений
-- **Аналитика** - детальное отслеживание and анализ all алертов
+** Architecture principles:**
+- ** Reliability** - The system has to Working even when individual components fail
+- ** capacity** - possibility of adding new channels and types of Alerts
+- ** Flexibility** - setting thresholds and response conditions
+**Performance** - Minimum delay in delivery of critical notifications
+- ** Analytics** - Detailed tracking and analysis of all all dealers
 
-**Математические основы:**
-- **Пороги срабатывания**: `Alert = Metric > Threshold`, где Metric - значение metrics, Threshold - порог
-- **Эскалация**: `Escalation = f(Time, Priority, Response_Status)`
-- **Приоритизация**: `Priority = Weight × Severity × Urgency`
+** Mathematical framework:**
+- ** Response thresholds**: `Alert = Métric > Threshold' where Métric is the value of metrics, Threshold is the threshold
+== sync, corrected by elderman == @elder_man
+- **Priority**: `Priority = White × Security × Urban'
 
-**Почему система алертов критически важна:**
-- **Своевременность:** Обеспечивает мгновенное уведомление о критических проблемах
-- **Реагирование:** Обеспечивает быстрое реагирование on проблемы to их эскалации
-- **Предотвращение:** Обеспечивает предотвращение серьезных потерь and сбоев системы
-- **Стабильность:** Критически важно for поддержания стабильной работы системы
-- **Контроль рисков:** Позволяет контролировать риски in реальном времени
-- **Аудит:** Обеспечивает полный аудит all критических events
+**Why the allergic system is critical:**
+- ** Timeline:** Provides instant notification of critical issues
+- ** Response:** Ensures a rapid response to the problem of escalation
+- **Prevention:** Ensures the prevention of serious system losses and malfunctions
+- **Stability:** Critical to maintaining a stable system
+- ** Risk control:** Allows risk control in real time
+- **Audit:** Provides full audit of all critical events
 
-**Типы алертов:**
-1. **Критические** - немедленное вмешательство требуется
-2. **Предупреждения** - внимание требуется in ближайшее время
-3. **Информационные** - for отслеживания and Analysis
-4. **Торговые** - notifications о торговых операциях
-5. **Рисковые** - превышение лимитов рисков
-6. **performance** - Issues with производительностью системы
+**Tips of dealers:**
+1. ** Critical** - immediate intervention required
+2. ** Warnings** - attention required in the near future
+3. ** Information** - for tracing and analysis
+4. ** Trading** - Trade transaction notes
+5. ** Risk** - excess of risk limits
+6. ** Performance** - Issues with system performance
 
-**Плюсы:**
-- Мгновенные notifications о критических событиях
-- Быстрое реагирование on проблемы
-- Предотвращение значительных потерь
-- Поддержание стабильности системы
-- Полный контроль над рисками
-- Детальная аналитика events
+** Plus:**
+- Instant notes on critical events
+- Rapid response on the problem.
+- Prevention of significant losses
+- Maintaining the stability of the system
+- Full control of risks
+- Detailed analysis of events
 
 **Disadvantages:**
-- Потенциальные ложные срабатывания требуют тонкой Settings
-- Сложность Settings множественных каналов
-- Требует постоянного внимания and Monitoringа
-- Может привести к "усталости from алертов" при неправильной настройке
+- Potential false responses require fine Settings
+- The complexity of Settings multiple channels
+- It requires constant attention and monitoring.
+- Could lead to "fatigue from allers" in the wrong setting.
 
 ```python
 # src/Monitoring/alerts.py
 """
 NeoZorK 100% Alert Management system
 
-Этот module реализует комплексную system алертов for Monitoringа торговой системы
-and достижения 100% прибыли in месяц. Система включает in себя множественные каналы
-доставки, настраиваемые пороги and автоматическую эскалацию.
+This model implements an integrated system of dealers for Monitoring the trading system
+The system includes multiple channels.
+(b) Transfers adjusted by thresholds and automatic escalation.
 
-Основные components:
-- AlertManager: Основной класс for управления алертами
-- Каналы доставки: Email, Telegram, Discord, SMS
-- Типы алертов: Критические, предупреждения, информационные
-- Эскалация: Автоматическое повышение приоритета
-- Аналитика: Отслеживание and анализ алертов
+Main components:
+- AlertManager: Basic Class for Alert Management
+- Delivery channels: Email, Telegram, Discord, SMS
+- Types of Alerts: Critical, Warnings, Information
+- Escalation: Automatic priority raising
+- Analytics: Traceability and analysis of allers
 
-Использование:
+Use of:
  config = {
  'Monitoring': {
  'email': {'enabled': True, 'smtp_server': 'smtp.gmail.com'},
@@ -1313,7 +1313,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 class AlertType(Enum):
- """Типы алертов"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  CRITICAL = "critical"
  WARNING = "warning"
  INFO = "info"
@@ -1323,7 +1323,7 @@ class AlertType(Enum):
  system = "system"
 
 class AlertPriority(Enum):
- """Приоритеты алертов"""
+""Priorities of Alerts""
  LOW = 1
  MEDIUM = 2
  HIGH = 3
@@ -1331,7 +1331,7 @@ class AlertPriority(Enum):
 
 @dataclass
 class Alert:
- """Structure алерта"""
+"Structure Alert."
  type: AlertType
  priority: AlertPriority
  message: str
@@ -1343,38 +1343,38 @@ class Alert:
 
 class AlertManager:
  """
- Менеджер алертов for системы Monitoringа
+Allergic Manager for Monitoring
 
- Этот класс реализует комплексную system управления алертами, которая обеспечивает
- своевременное уведомление о критических событиях in торговой системе. Система
- поддерживает множественные каналы доставки, автоматическую эскалацию and
- детальную аналитику.
+This class performs an integrated system of allergic control that provides
+Timely notification of critical developments in the trading system.
+Supports multiple delivery channels, automatic escalation
+a detailed analyst.
 
  Attributes:
- config (Dict): configuration системы алертов
- logger (logging.Logger): Логгер for записи events
- alert_history (List[Alert]): История all алертов
- escalation_thread (threading.Thread): Поток for эскалации алертов
- rate_limits (Dict): Ограничения частоты отправки алертов
+config (Dict): configurization of allergic systems
+Logger (logging.Logger): Logger for recording events
+Alert_history (List[Alert]): All Alert History
+escalation_thread (threading.Thread): Flow for allerrate escalation
+rate_limits (Dict): Restrictions on the frequency of dispatch of allerates
 
  Methods:
- send_alert: Отправка алерта через все настроенные каналы
- check_escalation: check алертов on необходимость эскалации
- get_alert_statistics: Получение статистики on алертам
- configure_channel: configuration канала доставки
+send_alert: Sending all fixed channels
+kheck_escalation: check allerators on the need for escalation
+Get_alert_statistics: Getting statistics on allers
+configure_channel: configuring delivery channel
  """
 
  def __init__(self, config: Dict):
  """
- Инициализация системы алертов
+Initiating the allergic system
 
  Args:
- config (Dict): configuration системы, включающая:
- - Monitoring.email: Settings email уведомлений
- - Monitoring.telegram: Settings Telegram уведомлений
- - Monitoring.discord: Settings Discord уведомлений
- - Monitoring.sms: Settings SMS уведомлений
- - Monitoring.escalation: Settings эскалации
+config (Dict): configurization of the system, including:
+- Monitoring.email: Settings email notifications
+- Monitoring.telegram: Settings Telegram notifications
+- Monitoring.discord: Settings Notifications
+- Monitoring.sms: Settings SMS notifications
+- Monitoring.escalation: Settings escalation
  """
  self.config = config
  self.logger = logging.getLogger(__name__)
@@ -1382,33 +1382,33 @@ class AlertManager:
  self.rate_limits = {}
  self.escalation_enabled = True
 
- # configuration каналов доставки
+# configuring delivery channels
  self.channels = self._setup_channels()
 
- # Launch потока эскалации
+# Launch flood of escalation
  self.escalation_thread = threading.Thread(target=self._escalation_worker, daemon=True)
  self.escalation_thread.start()
 
  self.logger.info("AlertManager initialized successfully")
 
  def _setup_channels(self) -> Dict[str, bool]:
- """configuration каналов доставки"""
+""configuring delivery channels"""
  channels = {}
  Monitoring_config = self.config.get('Monitoring', {})
 
- # Email канал
+# Email channel
  email_config = Monitoring_config.get('email', {})
  channels['email'] = email_config.get('enabled', False)
 
- # Telegram канал
+# Telegram channel
  telegram_config = Monitoring_config.get('telegram', {})
  channels['telegram'] = telegram_config.get('enabled', False)
 
- # Discord канал
+# Discord channel
  discord_config = Monitoring_config.get('discord', {})
  channels['discord'] = discord_config.get('enabled', False)
 
- # SMS канал
+# SMS channel
  sms_config = Monitoring_config.get('sms', {})
  channels['sms'] = sms_config.get('enabled', False)
 
@@ -1417,17 +1417,17 @@ class AlertManager:
 
  def send_alert(self, alert_data: Union[Dict, Alert]) -> bool:
  """
- Отправка алерта через все настроенные каналы
+Sending the alleys through all set channels
 
- Этот метод является центральным компонентом системы алертов and обеспечивает
- доставку уведомлений через все настроенные каналы with учетом ограничений
- частоты and приоритетов.
+This method is the central component of the allergic system and provides
+Delivery of notifications through all fixed channels with restrictions
+frequency and priorities.
 
  Args:
- alert_data (Union[Dict, Alert]): data алерта or объект Alert
+alert_data (Union[Dict, Alert]): data allert or object
 
  Returns:
- bool: True если алерт успешно отправлен, False in противном случае
+Bool: True if the allert is successfully sent, False in otherwise
 
  Example:
  >>> alert_manager.send_alert({
@@ -1438,21 +1438,21 @@ class AlertManager:
  True
  """
  try:
- # Преобразование in объект Alert если необходимо
+# Transforming into Alert if necessary
  if isinstance(alert_data, dict):
  alert = self._create_alert_from_dict(alert_data)
  else:
  alert = alert_data
 
- # check ограничений частоты
+# Check frequency limits
  if not self._check_rate_limit(alert):
  self.logger.warning(f"Rate limit exceeded for alert: {alert.message}")
  return False
 
- # add in историю
+# add in history
  self.alert_history.append(alert)
 
- # Отправка через все активные каналы
+# Sending through all active channels
  success_count = 0
  total_channels = 0
 
@@ -1476,7 +1476,7 @@ class AlertManager:
  if self._send_sms_alert(alert):
  success_count += 1
 
- # update статистики
+# Update statistics
  self._update_rate_limit(alert)
 
  success = success_count > 0
@@ -1489,7 +1489,7 @@ class AlertManager:
  return False
 
  def _create_alert_from_dict(self, alert_data: Dict) -> Alert:
- """create объекта Alert из словаря"""
+""create object Alert from the dictionary."
  alert_type = AlertType(alert_data.get('type', 'info'))
  priority = AlertPriority(alert_data.get('priority', 'medium'))
 
@@ -1504,7 +1504,7 @@ class AlertManager:
  )
 
  def _check_rate_limit(self, alert: Alert) -> bool:
- """check ограничений частоты отправки"""
+"Check of frequency limits."
  try:
  alert_key = f"{alert.type.value}_{alert.priority.value}"
  now = datetime.now()
@@ -1512,14 +1512,14 @@ class AlertManager:
  if alert_key not in self.rate_limits:
  self.rate_limits[alert_key] = []
 
- # remove старых записей (старше 1 часа)
+# remove old records (over 1 hour)
  cutoff_time = now - timedelta(hours=1)
  self.rate_limits[alert_key] = [
  timestamp for timestamp in self.rate_limits[alert_key]
  if timestamp > cutoff_time
  ]
 
- # check лимитов in dependencies from приоритета
+# heck limits in preferences from priority
  max_per_hour = {
  AlertPriority.LOW: 10,
  AlertPriority.MEDIUM: 20,
@@ -1536,10 +1536,10 @@ class AlertManager:
 
  except Exception as e:
  self.logger.error(f"Error checking rate limit: {e}")
- return True # Разрешаем отправку при ошибке
+Return True # Allows to be sent in error
 
  def _update_rate_limit(self, alert: Alert):
- """update статистики частоты отправки"""
+"update of dispatch frequency statistics"
  try:
  alert_key = f"{alert.type.value}_{alert.priority.value}"
  if alert_key not in self.rate_limits:
@@ -1551,31 +1551,31 @@ class AlertManager:
  self.logger.error(f"Error updating rate limit: {e}")
 
  def _escalation_worker(self):
- """Поток for обработки эскалации алертов"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""","""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  while self.escalation_enabled:
  try:
  self._check_escalation()
- time.sleep(60) # check каждую minutesу
+Time.sleep(60) # check every minutes
  except Exception as e:
  self.logger.error(f"Error in escalation worker: {e}")
  time.sleep(60)
 
  def _check_escalation(self):
- """check алертов on необходимость эскалации"""
+"Check Alerts on the Need for Excess."
  try:
  now = datetime.now()
- escalation_timeout = timedelta(minutes=15) # 15 minutes for эскалации
+escalation_timeout = timelta(minutes=15) # 15 minutes for escalation
 
  for alert in self.alert_history:
  if (alert.response_required and
  alert.escalation_count < 3 and
  now - alert.timestamp > escalation_timeout):
 
- # Эскалация алерта
+♪ Alert escalation
  alert.escalation_count += 1
  alert.priority = AlertPriority(min(alert.priority.value + 1, 4))
 
- # Повторная отправка with повышенным приоритетом
+# Redistribution with high priority
  self.send_alert(alert)
 
  self.logger.warning(f"Alert escalated: {alert.message} (count: {alert.escalation_count})")
@@ -1584,7 +1584,7 @@ class AlertManager:
  self.logger.error(f"Error checking escalation: {e}")
 
  def get_alert_statistics(self, hours: int = 24) -> Dict:
- """Получение статистики on алертам"""
+"Acquiring Statistics on Alerts""
  try:
  cutoff_time = datetime.now() - timedelta(hours=hours)
  recent_alerts = [a for a in self.alert_history if a.timestamp > cutoff_time]
@@ -1597,7 +1597,7 @@ class AlertManager:
  'response_time_avg': self._calculate_avg_response_time(recent_alerts)
  }
 
- # Статистика on типам
+# Statistics on types
  for alert in recent_alerts:
  alert_type = alert.type.value
  stats['by_type'][alert_type] = stats['by_type'].get(alert_type, 0) + 1
@@ -1612,12 +1612,12 @@ class AlertManager:
  return {}
 
  def _calculate_avg_response_time(self, alerts: List[Alert]) -> float:
- """Расчет среднего времени отклика on алерты"""
+""""""""A calculation of the average response time on the allergics."
  try:
  response_times = []
  for alert in alerts:
- if alert.escalation_count == 0: # Алерт был обWorkingн без эскалации
- # Упрощенный расчет - предполагаем, что алерты обрабатываются за 5 minutes
+if allrt.escalation_account = 0: #Alert was aboutWorkingn without escalation
+# Simplified calculation - Assuming that allers are processed for 5 minutes
  response_times.append(5.0)
 
  return sum(response_times) / len(response_times) if response_times else 0.0
@@ -1627,7 +1627,7 @@ class AlertManager:
  return 0.0
 
  def _send_email_alert(self, alert: Dict):
- """Отправка email алерта"""
+""Send e-mail allergic."
  try:
  email_config = self.config.get('Monitoring', {}).get('email', {})
 
@@ -1640,7 +1640,7 @@ class AlertManager:
  msg['To'] = email_config['email']
  msg['Subject'] = f"NeoZorK 100% system Alert - {alert['type'].upper()}"
 
- # Тело messages
+# Body messages
  body = f"""
  Alert Type: {alert['type']}
  Message: {alert['message']}
@@ -1651,7 +1651,7 @@ class AlertManager:
 
  msg.attach(MIMEText(body, 'plain'))
 
- # Отправка
+# Sending
  server = smtplib.SMTP(email_config['smtp_server'], email_config['smtp_port'])
  server.starttls()
  server.login(email_config['email'], email_config['password'])
@@ -1662,14 +1662,14 @@ class AlertManager:
  self.logger.error(f"Error sending email alert: {e}")
 
  def _send_telegram_alert(self, alert: Dict):
- """Отправка Telegram алерта"""
+"Send Telegram Alert."
  try:
  telegram_config = self.config.get('Monitoring', {}).get('telegram', {})
 
  if not telegram_config.get('enabled', False):
  return
 
- # Формирование messages
+# Forming messages
  message = f"""
  🚨 **NeoZorK 100% system Alert**
 
@@ -1680,7 +1680,7 @@ class AlertManager:
  Please check the system immediately.
  """
 
- # Отправка
+# Sending
  url = f"https://api.telegram.org/bot{telegram_config['bot_token']}/sendMessage"
  data = {
  'chat_id': telegram_config['chat_id'],
@@ -1695,14 +1695,14 @@ class AlertManager:
  self.logger.error(f"Error sending Telegram alert: {e}")
 
  def _send_discord_alert(self, alert: Dict):
- """Отправка Discord алерта"""
+"Sent Discord Alert."
  try:
  discord_config = self.config.get('Monitoring', {}).get('discord', {})
 
  if not discord_config.get('enabled', False):
  return
 
- # Формирование messages
+# Forming messages
  message = {
  "content": f"🚨 **NeoZorK 100% system Alert**",
  "embeds": [{
@@ -1717,7 +1717,7 @@ class AlertManager:
  }]
  }
 
- # Отправка
+# Sending
  response = requests.post(discord_config['webhook_url'], json=message)
  response.raise_for_status()
 
@@ -1725,7 +1725,7 @@ class AlertManager:
  self.logger.error(f"Error sending Discord alert: {e}")
 
  def send_trade_alert(self, trade: Dict):
- """Отправка алерта о сделке"""
+"Sent an allergic deal."
  try:
  alert = {
  'type': 'trade',
@@ -1739,7 +1739,7 @@ class AlertManager:
  self.logger.error(f"Error sending trade alert: {e}")
 
  def send_risk_alert(self, risk_Status: Dict):
- """Отправка алерта о рисках"""
+"Sent an allergic risk note."
  try:
  alert = {
  'type': 'risk',
@@ -1753,7 +1753,7 @@ class AlertManager:
  self.logger.error(f"Error sending risk alert: {e}")
 
  def send_performance_alert(self, performance: Dict):
- """Отправка алерта о performance"""
+"Sent an allert of performance."
  try:
  performance_score = performance.get('performance_score', 0)
 
@@ -1770,15 +1770,15 @@ class AlertManager:
  self.logger.error(f"Error sending performance alert: {e}")
 
  def _send_sms_alert(self, alert: Alert) -> bool:
- """Отправка SMS алерта"""
+"Sent SMS Alert."
  try:
  sms_config = self.config.get('Monitoring', {}).get('sms', {})
 
  if not sms_config.get('enabled', False):
  return False
 
- # Здесь должна быть integration with SMS-провайдером
- # for демонстрации Use Logsрование
+# There should be an integration with SMS provider
+# for a demonstration of Use Logsrance
  self.logger.info(f"SMS Alert: {alert.message}")
  return True
 
@@ -1787,7 +1787,7 @@ class AlertManager:
  return False
 
  def configure_channel(self, channel: str, enabled: bool, config: Dict = None):
- """configuration канала доставки"""
+""configuration of the delivery channel."
  try:
  if channel in self.channels:
  self.channels[channel] = enabled
@@ -1808,12 +1808,12 @@ class AlertManager:
  return False
 
  def stop_escalation(self):
- """Остановка системы эскалации"""
+"Stop the escalation system."
  self.escalation_enabled = False
  self.logger.info("Escalation system stopped")
 
  def export_alert_history(self, format: str = 'json') -> str:
- """Экспорт истории алертов"""
+"Export of Alert History."
  try:
  if format == 'json':
  alerts_data = []
@@ -1839,14 +1839,14 @@ class AlertManager:
  return ""
 
 
-# example использования системы алертов
+# Example of allergic system
 if __name__ == "__main__":
  """
- Демонстрация использования системы алертов for Monitoringа
- торговой системы and достижения 100% прибыли in месяц
+Demonstration of the use of the allergic system for Monitoring
+and the achievement of 100 per cent in-month profits
  """
 
- # configuration системы алертов
+# configurization of allergic systems
  config = {
  'Monitoring': {
  'email': {
@@ -1866,19 +1866,19 @@ if __name__ == "__main__":
  'webhook_url': 'your_webhook_url'
  },
  'sms': {
- 'enabled': False # Отключено for демонстрации
+'Enabled': False # Disabled for demonstration
  }
  }
  }
 
- # create менеджера алертов
+# Create allergic manager
  alert_manager = AlertManager(config)
 
  print("=== NeoZorK 100% Alert Management system ===")
  print("testing alert system...")
  print()
 
- # Тестирование различных типов алертов
+# Testing different types of allergics
  test_alerts = [
  {
  'type': 'critical',
@@ -1912,7 +1912,7 @@ if __name__ == "__main__":
  }
  ]
 
- # Отправка testsых алертов
+# Sending test allergets
  for i, alert_data in enumerate(test_alerts, 1):
  print(f"🚨 Sending Alert {i}: {alert_data['type'].upper()}")
  success = alert_manager.send_alert(alert_data)
@@ -1920,7 +1920,7 @@ if __name__ == "__main__":
  print(f" Message: {alert_data['message']}")
  print()
 
- # Получение статистики
+# Getting statistics
  print("📊 ALERT STATISTICS:")
  stats = alert_manager.get_alert_statistics(hours=1)
  print(f"Total Alerts: {stats.get('total_alerts', 0)}")
@@ -1930,9 +1930,9 @@ if __name__ == "__main__":
  print(f"Avg Response Time: {stats.get('response_time_avg', 0):.1f} minutes")
  print()
 
- # Тестирование ограничений частоты
+# Testing frequency limits
  print("🔄 testing RATE LIMITS:")
- for i in range(15): # Попытка отправить 15 алертов подряд
+For i in log(15): #An attempt to send 15 dealers in a row
  alert_data = {
  'type': 'info',
  'priority': 'low',
@@ -1945,14 +1945,14 @@ if __name__ == "__main__":
  break
  print()
 
- # Экспорт истории алертов
+# Exporting allergic history
  print("📋 EXPORTING ALERT HISTORY:")
  history_json = alert_manager.export_alert_history('json')
  print(f"Exported {len(alert_manager.alert_history)} alerts to JSON format")
  print(f"JSON length: {len(history_json)} characters")
  print()
 
- # Остановка системы эскалации
+# Stopping the escalation system
  alert_manager.stop_escalation()
 
  print("✅ Alert system testing COMPLETED successfully!")
@@ -1960,87 +1960,87 @@ if __name__ == "__main__":
 
 ```
 
-## 📈 Система Logsрования
+## The Logs system
 
-**Theory:** Система Logsрования представляет собой комплексную system записи and хранения all events, операций and метрик торговой системы. Это критически важно for Analysis performance, отладки проблем and аудита операций.
+**Theory:** The Logs system is an integrated system for recording and storing all events, trading system transactions and metrics, and this is critical for Analysis performance, debriefing and auditing operations.
 
-**Детальное describe концепции:**
-Система Logsрования in контексте достижения 100% прибыли in месяц представляет собой многоуровневую архитектуру, которая включает in себя:
+**Detail descrie concepts:**
+The Logsrization system in the context of achieving 100 per cent profit in month is a multilevel architecture that includes:
 
-1. **Типы логов** - различные категории записей (торговые операции, performance, ошибки, системные события)
-2. **Уровни Logsрования** - detailsзация записей (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-3. **Форматы данных** - структурированные форматы for легкого Analysis (JSON, CSV, Parquet)
-4. **Ротация логов** - автоматическое Management размером files логов
-5. **Аналитика** - инструменты for Analysis and поиска in логах
-6. **Архивирование** - долгосрочное хранение исторических данных
+1. **Logs** - different categories of records (trade transactions, error, system events)
+2. ** Logs levels** - Details of records (DEBUG, INFO, WARNING, EROR, CRITICAL)
+3. ** Data sources** - structured formats for light Analisis (JSON, CSV, Parquet)
+4. **Logation** - Automatic Management of the size of logs
+5. ** Analytics** - Tools for Analysis and In-log Search
+6. ** Archiving** - Long-term historical data storage
 
-**Архитектурные принципы:**
-- **Структурированность** - все Logs имеют единую структуру for легкого Analysis
-- **performance** - минимальное влияние on performance торговой системы
-- **Надежность** - Logsрование продолжается даже при сбоях системы
-- **Масштабируемость** - возможность обработки больших объемов данных
-- **Безопасность** - защита конфиденциальной информации in логах
+** Architecture principles:**
+- **Structuration** - all Logs have a single structure for light Analisis
+- ** Performance** - Minimum impact on performance of the trading system
+- ** Reliability** - Logs continue even when the system malfunctions
+- ** capacity** - large volume processing capability
+- ** Safety** - protection of confidential information in logs
 
-**Математические основы:**
-- **Энтропия логов**: `H = -Σ p(x) * log2(p(x))`, где p(x) - вероятность события x
-- **Сжатие данных**: `Compression_Ratio = Original_Size / Compressed_Size`
+** Mathematical framework:**
+- **Entropy of logs**: `H = -p(x) * log2(p(x)' where p(x) is the probability of an event x
+- ** Data compression**: `Compression_Ratio = Original_Size / Compressed_Size'
 - **index performance**: `Log_Performance = Logs_Per_Second / CPU_Usage`
 
-**Почему система Logsрования критически важна:**
-- **Анализ:** Обеспечивает глубокий анализ performance and выявление паттернов
-- **Отладка:** Обеспечивает быстрое выявление and fix проблем
-- **Аудит:** Обеспечивает полный аудит all операций for соответствия требованиям
-- **История:** Критически важно for ведения детальной истории операций
-- **Обучение:** Позволяет анализировать прошлые решения for улучшения системы
-- **Monitoring:** Обеспечивает непрерывный Monitoring состояния системы
+**Why Logs are critical:**
+- **Analysis:** Provides in-depth analysis of performance and identification of patterns
+- ** Debugging:** Ensures the rapid identification and fix of problems
+- ** Audit: ** Provides a full audit of all transactions for compliance
+- **Story:** Critical for a detailed history of operations
+- ** Training:** Allows analysis of past decisions for system improvement
+- **Monitoring:** Provides continuous monitoring of the system
 
-**Типы логов:**
-1. **Торговые Logs** - все торговые операции and их результаты
-2. **Logs performance** - metrics and показатели системы
-3. **Logs ошибок** - все ошибки and исключения
-4. **Системные Logs** - события системы and инфраструктуры
-5. **Аудит Logs** - действия пользователей and администраторов
-6. **Аналитические Logs** - data for Analysis and Reportности
+**Logs:**
+1. ** Trade Logs** - all trade transactions and their results
+2. **Logs performance** - metrics and system indicators
+3. **Logs errors** - all errors and exceptions
+4. **Logs systems** - System and infrastructure developments
+5. ** Audit Logs** - actions by users and administrators
+6. ** Analytic Logs** - Data for Analysis and Reporting
 
-**Уровни detailsзации:**
-- **DEBUG** - детальная информация for отладки
-- **INFO** - общая информация о работе системы
-- **WARNING** - предупреждения о потенциальных проблемах
-- **ERROR** - ошибки, которые not останавливают работу
-- **CRITICAL** - критические ошибки, требующие немедленного вмешательства
+** Detailsazation levels:**
+**DEBUG** - Detailed information for debugging
+- **INFO** - General information on the operation of the system
+**WARNING** - Warnings of potential problems
+- **EROR** - errors that not stop work
+- **CRITICAL** - critical errors requiring immediate intervention
 
-**Плюсы:**
-- Полная история all operations with detailsзацией
-- Возможность глубокого Analysis and выявления паттернов
-- Быстрая отладка проблем and их fix
-- Полный аудит операций for соответствия требованиям
-- Возможность обучения on исторических данных
-- Непрерывный Monitoring состояния системы
+** Plus:**
+- Full history of all operations with details.
+- Deep Analysis and pathogen detection
+- Quick debriefing and fix
+- Full audit of compliance operations
+The possibility of training on historical data
+- Continuous Monitoring System Status
 
 **Disadvantages:**
-- Высокие требования к дисковому пространству
-- Сложность поиска and Analysis больших объемов данных
-- Потенциальные Issues with производительностью при интенсивном Logsровании
-- Необходимость управления ротацией and архивированием логов
-- Потенциальные Issues with безопасностью конфиденциальных данных
+- High requirements for disc space
+- Searchability and Analysis of large data volumes
+- Potential Issues with productivity with intensive Logspration
+- The need to manage the rotation and archiving of lairs
+- Potential Issues with security of confidential data
 
 ```python
 # src/Monitoring/logging_system.py
 """
 NeoZorK 100% Logging system
 
-Этот module реализует комплексную system Logsрования for Monitoringа торговой системы
-and достижения 100% прибыли in месяц. Система включает in себя структурированное Logsрование,
-ротацию files, аналитику and архивирование.
+This model implements an integrated system of Logs for Monitoring the Trade System
+The system includes structured Logs,
+Files rotation, analyst and archiving.
 
-Основные components:
-- Loggingsystem: Основной класс for управления Logsрованием
-- Типы логов: Торговые операции, performance, ошибки, системные события
-- Форматы: JSON, CSV, Parquet for различных типов Analysis
-- Ротация: Автоматическое Management размером files логов
-- Аналитика: Поиск, фильтрация and анализ логов
+Main components:
+- Loggingsystem: Logs management class
+- Types of logs: trade transactions, performance, errors, systemic events
+- Formats: JSON, CSV, Parquet for various types of Analysis
+- Rotation: Automatic Management is the size of the fillets lair.
+- Analysis: Search, filtering and analysis of lairs
 
-Использование:
+Use of:
  config = {
  'logging': {
  'log_dir': 'Logs',
@@ -2070,7 +2070,7 @@ import hashlib
 import os
 
 class LogLevel(Enum):
- """Уровни Logsрования"""
+"Logstration levels."
  DEBUG = "DEBUG"
  INFO = "INFO"
  WARNING = "WARNING"
@@ -2078,7 +2078,7 @@ class LogLevel(Enum):
  CRITICAL = "CRITICAL"
 
 class LogType(Enum):
- """Типы логов"""
+""Tips of logs""
  TRADE = "trade"
  PERFORMANCE = "performance"
  ERROR = "error"
@@ -2088,7 +2088,7 @@ class LogType(Enum):
 
 @dataclass
 class LogEntry:
- """Structure записи лога"""
+"Structure Log Records."
  timestamp: datetime
  level: LogLevel
  log_type: LogType
@@ -2101,102 +2101,102 @@ class LogEntry:
 
 class Loggingsystem:
  """
- Система Logsрования for NeoZorK 100% system
+Logs system for NeoZorK 100% system
 
- Этот класс реализует комплексную system Logsрования, которая обеспечивает
- структурированную запись all events, операций and метрик торговой системы.
- Система поддерживает множественные форматы, ротацию files and аналитику.
+This class runs an integrated system of Logs, which provides
+a structured recording of all events, transactions and metrics of the trading system.
+The system supports multiple formats, file rotation and analyst.
 
  Attributes:
- config (Dict): configuration системы Logsрования
- logger (logging.Logger): Основной логгер системы
- log_dir (Path): Директория for хранения логов
- loggers (Dict): Специализированные логгеры for разных типов
- rotation_thread (threading.Thread): Поток for ротации логов
+config (Dict): Logsorization
+Logger (logging.Logger): The main logger of the system
+log_dir (Path): Directorate for Logging
+Logers (Dict): Specialized loggers for different types
+Rotation_thread (threading.Thread): Flow for log rotation
 
  Methods:
- log_trade: Logsрование торговых операций
- log_performance: Logsрование метрик performance
- log_error: Logsрование ошибок and исключений
- log_system_event: Logsрование системных events
- get_Logs: Получение and фильтрация логов
- export_Logs: Экспорт логов in различных форматах
+log_trade: Trade logs
+log_performance: Logsting metric performance
+log_error: Logs of errors and exceptions
+log_system_event: Logs
+Get_Logs: Catching and filtering of lairs
+Export_Logs: Exporting logs in different formats
  """
 
  def __init__(self, config: Dict):
  """
- Инициализация системы Logsрования
+Initiating Logs
 
  Args:
- config (Dict): configuration системы, включающая:
- - logging.log_dir: Директория for логов
- - logging.max_file_size: Максимальный размер файла лога
- - logging.backup_count: Количество резервных копий
- - logging.formats: Поддерживаемые форматы экспорта
- - logging.compression: Включение сжатия старых логов
+config (Dict): configurization of the system, including:
+- Logging.log_dir: Directorate for Logging
+- logging.max_file_size: Maximum log file size
+- Logging.backup_account: Number of backup copies
+- Logging.formats: Supported export formats
+- Logging.compression: Compressing old lairs
  """
  self.config = config
  self.logger = logging.getLogger(__name__)
 
- # configuration директории логов
+# Configuration of the log directory
  logging_config = config.get('logging', {})
  self.log_dir = Path(logging_config.get('log_dir', 'Logs'))
  self.log_dir.mkdir(exist_ok=True)
 
- # parameters ротации
+# Parameters rotation
  self.max_file_size = logging_config.get('max_file_size', 10 * 1024 * 1024) # 10MB
  self.backup_count = logging_config.get('backup_count', 5)
  self.compression_enabled = logging_config.get('compression', True)
  self.formats = logging_config.get('formats', ['json', 'csv'])
 
- # Специализированные логгеры
+# Specialized loggers
  self.loggers = {}
 
- # configuration Logsрования
+# configuring Logs
  self._setup_logging()
 
- # Launch потока ротации
+# Launch rotation flow
  self.rotation_thread = threading.Thread(target=self._rotation_worker, daemon=True)
  self.rotation_thread.start()
 
  self.logger.info("Loggingsystem initialized successfully")
 
  def _setup_logging(self):
- """configuration системы Logsрования"""
+""" "configuration of the Logsoring System""
  try:
- # Основной логгер
+# The main logger
  main_logger = logging.getLogger('neozork_100_percent')
  main_logger.setLevel(logging.INFO)
 
- # Обработчик файла
+# File handler
  main_file_handler = logging.FileHandler(self.log_dir / 'neozork_100_percent.log')
  main_file_handler.setLevel(logging.INFO)
 
- # Обработчик консоли
+# The console handler
  console_handler = logging.StreamHandler()
  console_handler.setLevel(logging.INFO)
 
- # Форматтер
+# Formatter
  formatter = logging.Formatter(
  '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
  )
  main_file_handler.setFormatter(formatter)
  console_handler.setFormatter(formatter)
 
- # add обработчиков
+# add processors
  main_logger.addHandler(main_file_handler)
  main_logger.addHandler(console_handler)
 
- # Специализированные логгеры
+# Specialized loggers
  self._setup_specialized_loggers()
 
  except Exception as e:
  print(f"Error Setting up logging: {e}")
 
  def _setup_specialized_loggers(self):
- """configuration специализированных логгеров"""
+""configuration of specialized loggers."
  try:
- # Логгер for торговых операций
+# Logger for trade
  trade_logger = logging.getLogger('neozork_trades')
  trade_logger.setLevel(logging.INFO)
  trade_handler = logging.FileHandler(self.log_dir / 'trades.log')
@@ -2205,7 +2205,7 @@ class Loggingsystem:
  trade_logger.addHandler(trade_handler)
  self.loggers['trade'] = trade_logger
 
- # Логгер for performance
+# Logger for performance
  perf_logger = logging.getLogger('neozork_performance')
  perf_logger.setLevel(logging.INFO)
  perf_handler = logging.FileHandler(self.log_dir / 'performance.log')
@@ -2214,7 +2214,7 @@ class Loggingsystem:
  perf_logger.addHandler(perf_handler)
  self.loggers['performance'] = perf_logger
 
- # Логгер for ошибок
+# Logger for mistakes
  error_logger = logging.getLogger('neozork_errors')
  error_logger.setLevel(logging.ERROR)
  error_handler = logging.FileHandler(self.log_dir / 'errors.log')
@@ -2223,7 +2223,7 @@ class Loggingsystem:
  error_logger.addHandler(error_handler)
  self.loggers['error'] = error_logger
 
- # Логгер for системных events
+# Logger for system events
  system_logger = logging.getLogger('neozork_system')
  system_logger.setLevel(logging.INFO)
  system_handler = logging.FileHandler(self.log_dir / 'system.log')
@@ -2232,7 +2232,7 @@ class Loggingsystem:
  system_logger.addHandler(system_handler)
  self.loggers['system'] = system_logger
 
- # Логгер for аудита
+# Logger for audit
  audit_logger = logging.getLogger('neozork_audit')
  audit_logger.setLevel(logging.INFO)
  audit_handler = logging.FileHandler(self.log_dir / 'audit.log')
@@ -2245,13 +2245,13 @@ class Loggingsystem:
  self.logger.error(f"Error Setting up specialized loggers: {e}")
 
  def log_trade(self, trade: Dict):
- """Logsрование торговой операции"""
+"Logs trading."
  try:
  trade_logger = self.loggers.get('trade')
  if not trade_logger:
  return
 
- # create структурированной записи
+# creatively structured record
  log_entry = LogEntry(
  timestamp=datetime.now(),
  level=LogLevel.INFO,
@@ -2263,7 +2263,7 @@ class Loggingsystem:
  correlation_id=trade.get('correlation_id')
  )
 
- # Logsрование in JSON формате
+# Logs in JSON format
  log_data = asdict(log_entry)
  log_data['timestamp'] = log_entry.timestamp.isoformat()
  log_data['level'] = log_entry.level.value
@@ -2275,13 +2275,13 @@ class Loggingsystem:
  self.logger.error(f"Error logging trade: {e}")
 
  def log_performance(self, performance: Dict):
- """Logsрование performance"""
+"Logsrrance performance."
  try:
  perf_logger = self.loggers.get('performance')
  if not perf_logger:
  return
 
- # create структурированной записи
+# creatively structured record
  log_entry = LogEntry(
  timestamp=datetime.now(),
  level=LogLevel.INFO,
@@ -2293,7 +2293,7 @@ class Loggingsystem:
  correlation_id=performance.get('correlation_id')
  )
 
- # Logsрование in JSON формате
+# Logs in JSON format
  log_data = asdict(log_entry)
  log_data['timestamp'] = log_entry.timestamp.isoformat()
  log_data['level'] = log_entry.level.value
@@ -2305,13 +2305,13 @@ class Loggingsystem:
  self.logger.error(f"Error logging performance: {e}")
 
  def log_error(self, error: Exception, context: str = "", additional_data: Dict = None):
- """Logsрование ошибок"""
+""Logsir of Mistakes""
  try:
  error_logger = self.loggers.get('error')
  if not error_logger:
  return
 
- # create структурированной записи
+# creatively structured record
  log_entry = LogEntry(
  timestamp=datetime.now(),
  level=LogLevel.ERROR,
@@ -2326,7 +2326,7 @@ class Loggingsystem:
  }
  )
 
- # Logsрование in JSON формате
+# Logs in JSON format
  log_data = asdict(log_entry)
  log_data['timestamp'] = log_entry.timestamp.isoformat()
  log_data['level'] = log_entry.level.value
@@ -2338,13 +2338,13 @@ class Loggingsystem:
  self.logger.error(f"Error logging error: {e}")
 
  def log_system_event(self, event: str, data: Dict = None, level: LogLevel = LogLevel.INFO):
- """Logsрование системных events"""
+""Logsrance of System Events""
  try:
  system_logger = self.loggers.get('system')
  if not system_logger:
  return
 
- # create структурированной записи
+# creatively structured record
  log_entry = LogEntry(
  timestamp=datetime.now(),
  level=level,
@@ -2356,7 +2356,7 @@ class Loggingsystem:
  correlation_id=data.get('correlation_id') if data else None
  )
 
- # Logsрование in JSON формате
+# Logs in JSON format
  log_data = asdict(log_entry)
  log_data['timestamp'] = log_entry.timestamp.isoformat()
  log_data['level'] = log_entry.level.value
@@ -2371,13 +2371,13 @@ class Loggingsystem:
  self.logger.error(f"Error logging system event: {e}")
 
  def log_audit(self, action: str, User_id: str, data: Dict = None):
- """Logsрование аудита"""
+"The Audit Logs."
  try:
  audit_logger = self.loggers.get('audit')
  if not audit_logger:
  return
 
- # create структурированной записи
+# creatively structured record
  log_entry = LogEntry(
  timestamp=datetime.now(),
  level=LogLevel.INFO,
@@ -2389,7 +2389,7 @@ class Loggingsystem:
  correlation_id=data.get('correlation_id') if data else None
  )
 
- # Logsрование in JSON формате
+# Logs in JSON format
  log_data = asdict(log_entry)
  log_data['timestamp'] = log_entry.timestamp.isoformat()
  log_data['level'] = log_entry.level.value
@@ -2402,11 +2402,11 @@ class Loggingsystem:
 
  def get_Logs(self, log_type: str = None, start_date: datetime = None, end_date: datetime = None,
  level: LogLevel = None, limit: int = 1000) -> List[Dict]:
- """Получение логов with фильтрацией"""
+"To receive logs with filtering."
  try:
  Logs = []
 
- # Определение файла лога
+# Definition of log file
  if log_type and log_type in self.loggers:
  log_file = self.log_dir / f'{log_type}.log'
  else:
@@ -2415,13 +2415,13 @@ class Loggingsystem:
  if not log_file.exists():
  return Logs
 
- # Чтение логов
+# Reading the logs
  with open(log_file, 'r') as f:
  for line in f:
  try:
  log_entry = json.loads(line.strip())
 
- # Фильтрация on дате
+# Filtering on Date
  if start_date or end_date:
  log_timestamp = datetime.fromisoformat(log_entry['timestamp'])
 
@@ -2430,13 +2430,13 @@ class Loggingsystem:
  if end_date and log_timestamp > end_date:
  continue
 
- # Фильтрация on уровню
+# Filtering on Level
  if level and log_entry.get('level') != level.value:
  continue
 
  Logs.append(log_entry)
 
- # Ограничение количества записей
+# Limiting the number of entries
  if len(Logs) >= limit:
  break
 
@@ -2451,7 +2451,7 @@ class Loggingsystem:
 
  def export_Logs(self, log_type: str = None, start_date: datetime = None, end_date: datetime = None,
  format: str = 'json') -> str:
- """Экспорт логов in различных форматах"""
+"Export logs in different formats."
  try:
  Logs = self.get_Logs(log_type, start_date, end_date)
 
@@ -2475,17 +2475,17 @@ class Loggingsystem:
  return ""
 
  def _rotation_worker(self):
- """Поток for ротации логов"""
+"The flow for the rotation of lairs."
  while True:
  try:
  self._rotate_Logs()
- time.sleep(3600) # check каждый час
+Time.sleep(3600) # check every hour
  except Exception as e:
  self.logger.error(f"Error in rotation worker: {e}")
  time.sleep(3600)
 
  def _rotate_Logs(self):
- """Ротация files логов"""
+"Rooting Files Lairs."
  try:
  for log_file in self.log_dir.glob('*.log'):
  if log_file.stat().st_size > self.max_file_size:
@@ -2495,24 +2495,24 @@ class Loggingsystem:
  self.logger.error(f"Error rotating Logs: {e}")
 
  def _rotate_file(self, log_file: Path):
- """Ротация конкретного файла лога"""
+""Rotation of a specific log file."
  try:
- # create резервных копий
+# Create stand-by copies
  for i in range(self.backup_count - 1, 0, -1):
  old_file = log_file.with_suffix(f'.log.{i}')
  new_file = log_file.with_suffix(f'.log.{i + 1}')
 
  if old_file.exists():
  if i == self.backup_count - 1:
- old_file.unlink() # Удаляем самую старую копию
+Old_file.unlink() # Remove the oldest copy
  else:
  old_file.rename(new_file)
 
- # Переименование текущего файла
+# Rename the current file
  backup_file = log_file.with_suffix('.log.1')
  log_file.rename(backup_file)
 
- # Сжатие старого файла если включено
+# Compressing an old file if enabled
  if self.compression_enabled:
  compressed_file = backup_file.with_suffix('.log.1.gz')
  with open(backup_file, 'rb') as f_in:
@@ -2526,7 +2526,7 @@ class Loggingsystem:
  self.logger.error(f"Error rotating file {log_file}: {e}")
 
  def get_log_statistics(self, hours: int = 24) -> Dict:
- """Получение статистики on логам"""
+"Acquiring statistics on logs"
  try:
  cutoff_time = datetime.now() - timedelta(hours=hours)
  Logs = self.get_Logs(start_date=cutoff_time, limit=10000)
@@ -2543,25 +2543,25 @@ class Loggingsystem:
  error_messages = {}
 
  for log in Logs:
- # Статистика on типам
+# Statistics on types
  log_type = log.get('log_type', 'unknown')
  stats['by_type'][log_type] = stats['by_type'].get(log_type, 0) + 1
 
- # Статистика on уровням
+# Statistics on levels
  level = log.get('level', 'unknown')
  stats['by_level'][level] = stats['by_level'].get(level, 0) + 1
 
- # Подсчет ошибок
+# Counting mistakes
  if level in ['ERROR', 'CRITICAL']:
  error_count += 1
  error_msg = log.get('message', 'Unknown error')
  error_messages[error_msg] = error_messages.get(error_msg, 0) + 1
 
- # Расчет процента ошибок
+# Calculation of the percentage of errors
  if Logs:
  stats['error_rate'] = (error_count / len(Logs)) * 100
 
- # Самые частые ошибки
+# The most frequent mistakes
  stats['most_common_errors'] = sorted(
  error_messages.items(),
  key=lambda x: x[1],
@@ -2575,35 +2575,35 @@ class Loggingsystem:
  return {}
 
 
-# example использования системы Logsрования
+# Example of Logsoring
 if __name__ == "__main__":
  """
- Демонстрация использования системы Logsрования for Monitoringа
- торговой системы and достижения 100% прибыли in месяц
+Demonstration of Logs for Monitoring
+and the achievement of 100 per cent in-month profits
  """
 
- # configuration системы Logsрования
+# Logstration system configuration
  config = {
  'logging': {
  'log_dir': 'Logs',
- 'max_file_size': 1024 * 1024, # 1MB for демонстрации
+'max_file_size': 1024 * 1024, #1MB for demonstration
  'backup_count': 3,
  'compression': True,
  'formats': ['json', 'csv', 'parquet']
  }
  }
 
- # create системы Logsрования
+# the Logsoring system
  logging_system = Loggingsystem(config)
 
  print("=== NeoZorK 100% Logging system ===")
  print("testing logging system...")
  print()
 
- # Тестирование различных типов Logsрования
+# Testing of different types of Logs
  print("📝 testing LOG TYPES:")
 
- # Logsрование торговых операций
+# Trade logs
  for i in range(5):
  trade_data = {
  'action': 'buy' if i % 2 == 0 else 'sell',
@@ -2618,7 +2618,7 @@ if __name__ == "__main__":
 
  print()
 
- # Logsрование performance
+# Logslation performance
  for i in range(3):
  performance_data = {
  'performance_score': 0.7 + i * 0.1,
@@ -2632,7 +2632,7 @@ if __name__ == "__main__":
 
  print()
 
- # Logsрование ошибок
+# Logging mistakes
  try:
  raise ValueError("Test error for logging demonstration")
  except Exception as e:
@@ -2641,7 +2641,7 @@ if __name__ == "__main__":
 
  print()
 
- # Logsрование системных events
+# Logs for system events
  system_events = [
  ("system startup", {"version": "1.0.0", "environment": "production"}),
  ("database connection established", {"host": "localhost", "port": 5432}),
@@ -2654,7 +2654,7 @@ if __name__ == "__main__":
 
  print()
 
- # Logsрование аудита
+# Audit logs
  audit_actions = [
  ("User login", "User_1", {"ip": "192.168.1.100", "User_agent": "Mozilla/5.0"}),
  ("Configuration change", "admin_1", {"Setting": "max_drawdown", "old_value": 0.2, "new_value": 0.15}),
@@ -2667,14 +2667,14 @@ if __name__ == "__main__":
 
  print()
 
- # Получение and анализ логов
+# The receipt and analysis of lairs
  print("📊 LOG Analysis:")
 
- # Получение all логов за последний час
+# Getting all the lairs in the last hour
  all_Logs = logging_system.get_Logs(limit=100)
  print(f"Total Logs retrieved: {len(all_Logs)}")
 
- # Получение логов on типам
+# Getting logs on types
  trade_Logs = logging_system.get_Logs(log_type='trade', limit=50)
  print(f"Trade Logs: {len(trade_Logs)}")
 
@@ -2686,7 +2686,7 @@ if __name__ == "__main__":
 
  print()
 
- # Статистика логов
+# Laundry statistics
  print("📈 LOG STATISTICS:")
  stats = logging_system.get_log_statistics(hours=1)
  print(f"Total Logs: {stats.get('total_Logs', 0)}")
@@ -2697,14 +2697,14 @@ if __name__ == "__main__":
 
  print()
 
- # Экспорт логов
+# Exporting lairs
  print("📋 EXPORTING Logs:")
 
- # Экспорт in JSON
+# Exports in JSON
  json_export = logging_system.export_Logs(format='json')
  print(f"JSON export: {len(json_export)} characters")
 
- # Экспорт in CSV
+# Exports in CSV
  csv_export = logging_system.export_Logs(format='csv')
  print(f"CSV export: {len(csv_export)} characters")
 
@@ -2714,43 +2714,43 @@ if __name__ == "__main__":
 
 ```
 
-## 🎯 integration all компонентов системы Monitoringа
+## ♪ integration all components of the Monitoring system
 
-**Theory:** Полная integration all компонентов системы Monitoringа представляет собой комплексную system, которая объединяет Monitoring performance, system алертов and Logsрование in единую архитектуру for достижения 100% прибыли in месяц.
+**Theory:** The complete integration all components of the Monitoring system are an integrated system that brings together Monitoring performance, a system of Alerts and Logs in a single architecture to achieve 100% profit per month.
 
-**Детальное describe интеграции:**
-Интегрированная система Monitoringа включает in себя:
+**Detail descrie integration:**
+The Integrated Monitoring System consists of:
 
-1. **Единая configuration** - централизованная configuration all компонентов
-2. **Общие interfaceы** - стандартизированные API for взаимодействия
-3. **Data Synchronization** - согласованная Working all компонентов
-4. **Централизованное Management** - единая точка контроля системы
-5. **Автоматизация** - автоматическое взаимодействие между componentsи
+1. **One conference** - centralized conference all components
+2. ** General interface** - standardized API for interaction
+3. **Data Synchronization** - Harmonized Working all components
+4. ** Central Management** - Single Control Point of the System
+5. ** Automation** - Automatic interaction between componentsi
 
-**Архитектурные принципы интеграции:**
-- **Модульность** - каждый компонент может Workingть независимо
-- **Слабая связанность** - минимальные dependencies между componentsи
-- **Высокая связность** - тесная integration функциональности
-- **Масштабируемость** - возможность добавления новых компонентов
-- **Отказоустойчивость** - система продолжает Workingть при сбоях отдельных компонентов
+** Architecture of integration:**
+- ** Modular** - every component can Work independently
+- ** Weak connection** - minimum dependencies between components and
+- ** High connectivity** - close integration of functionality
+- ** capacity** - possibility of adding new components
+- ** Failure** - the system continues to Working when individual components fail
 
 ```python
 # src/Monitoring/integrated_Monitoring.py
 """
 NeoZorK 100% integrated Monitoring system
 
-Этот module реализует полную интеграцию all компонентов системы Monitoringа
-for достижения 100% прибыли in месяц. Система объединяет Monitoring performance,
-system алертов and Logsрование in единую архитектуру.
+This module fully integrates all components of the Monitoring system
+to achieve 100% profit in month.
+System of allers and Logs in a single architecture.
 
-Основные components:
-- integratedMonitoringsystem: Основной класс for управления всей системой
+Main components:
+- IntegratedMonitoringsystem: Basic class for system management
 - PerformanceMonitor: Monitoring performance
-- AlertManager: Management алертами
-- Loggingsystem: Система Logsрования
-- Dashboard: Визуализация данных
+- AlertManager: Management allerants
+Loggingsystem: Logsoring system
+- Dashboard: Visualization of data
 
-Использование:
+Use of:
  config = {
  'Monitoring': {...},
  'alerts': {...},
@@ -2769,57 +2769,57 @@ from typing import Dict, List, Optional, Any
 import logging
 from pathlib import Path
 
-# Импорт компонентов системы Monitoringа
+# Import components of Monitoring System
 from .performance import PerformanceMonitor
 from .alerts import AlertManager
 from .logging_system import Loggingsystem
 
 class integratedMonitoringsystem:
  """
- Интегрированная система Monitoringа for достижения 100% прибыли in месяц
+Integrated Monitoring for Achieving 100% profit in month
 
- Этот класс объединяет все components системы Monitoringа in единую архитектуру,
- обеспечивая комплексный Monitoring, алертинг and Logsрование торговой системы.
+This class connects all components of Monitoring in a single architecture,
+By providing integrated Monitoring, Altering and Logsting of the trading system.
 
  Attributes:
- config (Dict): configuration всей системы Monitoringа
- performance_monitor (PerformanceMonitor): Монитор performance
- alert_manager (AlertManager): Менеджер алертов
- logging_system (Loggingsystem): Система Logsрования
- is_running (bool): Статус работы системы
- Monitoring_thread (threading.Thread): Поток Monitoringа
+config (Dict): configuring the entire Monitoring system
+Performance_monitoring (PerformanceMonitor): Monitor performance
+Alert_manager (AlertManager): allerger
+Logging_system (Loggingsystem): Logser system
+is_running (bool): System status
+Monitoring_thread (threading.Thread): The flow of Monitoring
 
  Methods:
- start_Monitoring: Launch системы Monitoringа
- stop_Monitoring: Остановка системы Monitoringа
- update_metrics: update метрик performance
- process_alerts: Обработка алертов
- generate_dashboard: Генерация дашборда
+Start_Monitoring: Launch Monitoring
+Stop_Monitoring: Stopping Monitoring System
+update_metrics: update metric performance
+process_alerts: Alerate processing
+General_dashboard: Dashboard generator
  """
 
  def __init__(self, config: Dict):
  """
- Инициализация интегрированной системы Monitoringа
+Initiating the Integrated Monitoring System
 
  Args:
- config (Dict): configuration системы, включающая:
- - Monitoring: Settings Monitoringа performance
- - alerts: Settings системы алертов
- - logging: Settings системы Logsрования
+config (Dict): configurization of the system, including:
+- Monitoring: Settings Monitoring performance
+- alerts: Settings of allernets
+- Logging: Settings Logs
  """
  self.config = config
  self.logger = logging.getLogger(__name__)
 
- # Инициализация компонентов
+# Initiating components
  self.performance_monitor = PerformanceMonitor(config)
  self.alert_manager = AlertManager(config)
  self.logging_system = Loggingsystem(config)
 
- # Статус системы
+# System status
  self.is_running = False
  self.Monitoring_thread = None
 
- # data for Monitoringа
+# Data for Monitoring
  self.current_positions = []
  self.current_balance = 10000.0
  self.initial_balance = 10000.0
@@ -2827,7 +2827,7 @@ class integratedMonitoringsystem:
  self.logger.info("integratedMonitoringsystem initialized successfully")
 
  def start_Monitoring(self):
- """Launch системы Monitoringа"""
+"""""""""""" "Launch "Monitoring System"""
  try:
  if self.is_running:
  self.logger.warning("Monitoring system is already running")
@@ -2837,7 +2837,7 @@ class integratedMonitoringsystem:
  self.Monitoring_thread = threading.Thread(target=self._Monitoring_loop, daemon=True)
  self.Monitoring_thread.start()
 
- # Logsрование Launchа
+# Launch Logs
  self.logging_system.log_system_event(
  "integrated Monitoring system started",
  {"config": self.config},
@@ -2851,7 +2851,7 @@ class integratedMonitoringsystem:
  self.logging_system.log_error(e, "Failed to start Monitoring system")
 
  def stop_Monitoring(self):
- """Остановка системы Monitoringа"""
+"Stop Monitoring System""
  try:
  if not self.is_running:
  self.logger.warning("Monitoring system is not running")
@@ -2862,10 +2862,10 @@ class integratedMonitoringsystem:
  if self.Monitoring_thread:
  self.Monitoring_thread.join(timeout=5)
 
- # Остановка компонентов
+# Stopping components
  self.alert_manager.stop_escalation()
 
- # Logsрование остановки
+# Stopping logs
  self.logging_system.log_system_event(
  "integrated Monitoring system stopped",
  {},
@@ -2879,17 +2879,17 @@ class integratedMonitoringsystem:
  self.logging_system.log_error(e, "Failed to stop Monitoring system")
 
  def _Monitoring_loop(self):
- """Основной цикл Monitoringа"""
+"The fundamental cycle of Monitoring."
  while self.is_running:
  try:
- # update метрик performance
+# Update metric performance
  self.update_metrics()
 
- # Обработка алертов
+♪ Alerate processing
  self.process_alerts()
 
- # Пауза между циклами
- time.sleep(60) # update каждую minutesу
+# Pause between cycles
+time.sleep(60) # update every minutes
 
  except Exception as e:
  self.logger.error(f"Error in Monitoring loop: {e}")
@@ -2897,19 +2897,19 @@ class integratedMonitoringsystem:
  time.sleep(60)
 
  def update_metrics(self):
- """update метрик performance"""
+""update metric performance""
  try:
- # Расчет метрик
+# The calculation of the metric
  metrics = self.performance_monitor.calculate_metrics(
  self.current_positions,
  self.current_balance,
  self.initial_balance
  )
 
- # Logsрование метрик
+# Logslation of metric
  self.logging_system.log_performance(metrics)
 
- # check алертов
+# Check allergic
  alerts = self.performance_monitor.check_alerts(metrics)
  for alert in alerts:
  self.alert_manager.send_alert(alert)
@@ -2919,12 +2919,12 @@ class integratedMonitoringsystem:
  self.logging_system.log_error(e, "Failed to update metrics")
 
  def process_alerts(self):
- """Обработка алертов"""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  try:
- # Получение статистики алертов
+# Getting Alerate Statistics
  alert_stats = self.alert_manager.get_alert_statistics(hours=1)
 
- # Logsрование статистики алертов
+# Logs of allergic statistics
  self.logging_system.log_system_event(
  "Alert statistics updated",
  alert_stats,
@@ -2936,23 +2936,23 @@ class integratedMonitoringsystem:
  self.logging_system.log_error(e, "Failed to process alerts")
 
  def add_trade(self, trade: Dict):
- """add торговой операции"""
+"""add trade""
  try:
- # add temporary метки
+# add temporary tags
  trade['timestamp'] = datetime.now()
 
- # add in List позиций
+# add in List positions
  self.current_positions.append(trade)
 
- # update баланса
+# extradate balance
  pnl = trade.get('pnl', 0)
  self.current_balance += pnl
 
- # Logsрование торговой операции
+# Trade logs
  self.logging_system.log_trade(trade)
 
- # Отправка алерта о торговой операции
- if abs(pnl) > 1000: # Большие сделки
+# Sending a trade dealer
+if abs(pnl) > 1000: # Big deals
  self.alert_manager.send_trade_alert(trade)
 
  except Exception as e:
@@ -2960,22 +2960,22 @@ class integratedMonitoringsystem:
  self.logging_system.log_error(e, "Failed to add trade")
 
  def generate_dashboard(self) -> Dict:
- """Генерация дашборда системы Monitoringа"""
+""""" "Monitoring Dashbord Generation"""
  try:
- # Получение текущих метрик
+# Getting current metrics
  metrics = self.performance_monitor.calculate_metrics(
  self.current_positions,
  self.current_balance,
  self.initial_balance
  )
 
- # Получение статистики алертов
+# Getting Alerate Statistics
  alert_stats = self.alert_manager.get_alert_statistics(hours=24)
 
- # Получение статистики логов
+# Getting Laundry Statistics
  log_stats = self.logging_system.get_log_statistics(hours=24)
 
- # create дашборда
+# Create Dashboard
  dashboard = {
  'timestamp': datetime.now().isoformat(),
  'system_status': 'running' if self.is_running else 'stopped',
@@ -2998,7 +2998,7 @@ class integratedMonitoringsystem:
  return {}
 
  def get_system_health(self) -> Dict:
- """Получение состояния health системы"""
+"Getting the health system status."
  try:
  health = {
  'timestamp': datetime.now().isoformat(),
@@ -3015,7 +3015,7 @@ class integratedMonitoringsystem:
  }
  }
 
- # check состояния компонентов
+# Check status of components
  if not self.performance_monitor:
  health['components']['performance_monitor'] = 'unhealthy'
  health['overall_status'] = 'degraded'
@@ -3035,12 +3035,12 @@ class integratedMonitoringsystem:
  return {'overall_status': 'unhealthy', 'error': str(e)}
 
  def _calculate_uptime(self) -> float:
- """Расчет времени работы системы"""
- # Упрощенный расчет - in реальной системе нужно отслеживать время Launchа
+"The time frame of the system."
+# Simplified calculation - in a real system you need to track Launcha time
  return 99.9
 
  def _calculate_error_rate(self) -> float:
- """Расчет процента ошибок"""
+""""""" "The calculation of the percentage of errors."
  try:
  log_stats = self.logging_system.get_log_statistics(hours=1)
  return log_stats.get('error_rate', 0.0)
@@ -3048,23 +3048,23 @@ class integratedMonitoringsystem:
  return 0.0
 
  def _calculate_alert_rate(self) -> float:
- """Расчет частоты алертов"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  try:
  alert_stats = self.alert_manager.get_alert_statistics(hours=1)
  total_alerts = alert_stats.get('total_alerts', 0)
- return total_alerts / 60.0 # Алертов in minutesу
+Return total_alerts / 60.0 #Alerates in minutes
  except:
  return 0.0
 
 
-# example использования интегрированной системы Monitoringа
+# Example using the integrated Monitoring system
 if __name__ == "__main__":
  """
- Демонстрация использования интегрированной системы Monitoringа
- for достижения 100% прибыли in месяц
+Demonstration of the use of the Integrated Monitoring System
+to achieve 100 per cent in-month
  """
 
- # configuration всей системы
+# configuring the whole system
  config = {
  'Monitoring': {
  'monthly_target': 1.0,
@@ -3088,27 +3088,27 @@ if __name__ == "__main__":
  }
  }
 
- # create интегрированной системы Monitoringа
+# Create of the integrated Monitoring system
  Monitoring_system = integratedMonitoringsystem(config)
 
  print("=== NeoZorK 100% integrated Monitoring system ===")
  print("starting integrated Monitoring system...")
  print()
 
- # Launch системы Monitoringа
+# Launch Monitoring System
  Monitoring_system.start_Monitoring()
 
- # Симуляция торговых операций
+# Simulation of trade transactions
  print("📈 SIMULATING TRADING OPERATIONS:")
  import random
 
  for i in range(10):
- # Генерация случайной торговой операции
+# Accidental trade generation
  trade = {
  'action': 'buy' if i % 2 == 0 else 'sell',
  'amount': random.uniform(100, 1000),
  'price': random.uniform(1.2, 1.3),
- 'pnl': random.gauss(50, 30), # Случайный PnL
+'pnl': Random.gauss(50, 30), #Runny PnL
  'session_id': f'session_{i}',
  'User_id': f'User_{i % 3}'
  }
@@ -3118,11 +3118,11 @@ if __name__ == "__main__":
 
  print()
 
- # Ожидание for накопления данных
+# Waiting for data accumulation
  print("⏳ Waiting for data accumulation...")
  time.sleep(5)
 
- # Генерация дашборда
+# Dashboard generator
  print("📊 GENERATING DASHBOARD:")
  dashboard = Monitoring_system.generate_dashboard()
 
@@ -3138,7 +3138,7 @@ if __name__ == "__main__":
 
  print()
 
- # check состояния health системы
+# Check state of the health system
  print("🏥 system health check:")
  health = Monitoring_system.get_system_health()
  print(f"Overall Status: {health.get('overall_status', 'unknown')}")
@@ -3148,7 +3148,7 @@ if __name__ == "__main__":
 
  print()
 
- # Остановка системы Monitoringа
+# Stopping Monitoring System
  print("🛑 STOPPING Monitoring system:")
  Monitoring_system.stop_Monitoring()
 
@@ -3157,12 +3157,12 @@ if __name__ == "__main__":
 
 ```
 
-**Заключение:**
-Полная система Monitoringа and метрик for достижения 100% прибыли in месяц представляет собой комплексную реализацию all компонентов Monitoringа, обеспечивающую полное отслеживание and анализ performance торговой системы. Система включает in себя:
+** Conclusion:**
+The complete Monitoringa system and the metric for achieving 100 per cent profit in month is an integrated implementation of all components of Monitoring, ensuring full monitoring and analysis of the performance of the trading system.
 
-1. **Monitoring performance** - расчет all ключевых метрик
-2. **system алертов** - автоматические notifications о проблемах
-3. **system Logsрования** - структурированная запись all events
-4. **Интеграцию компонентов** - единая architecture for all систем
+1. **Monitoring performance** - Calculation of all key metrics
+2. **system of dealers** - automatic references to problems
+3. **system Logs** - structured all events
+4. ** Component integration** - unified architecture for all systems
 
-Все components полностью функциональны and готовы к использованию in реальной торговой системе for достижения целевой доходности.
+All components are fully functional and ready to be used in the real trading system to achieve targeted returns.

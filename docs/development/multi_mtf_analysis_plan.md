@@ -7,172 +7,172 @@ Create system Analysis SCHR Levels on multiple Timeframes simultaneously for imp
 
 ### 1. Timeframe hierarchy
 ```
-H1 (1 час) ← Base Timeframe for trading
-H4 (4 часа) ← Medium Timeframe for trend
-D1 (1 день) ← Long-term trend
-W1 (1 неделя) ← Macro trend
-MN1 (1 месяц) ← Fundamental trend
+H1 (1 hour) ♪ Base Timeframe for trade
+H4 (4 hours)
+D1 (1 day)
+W1 (1 week)
+MN1 (1 month)
 ```
 
 ### 2. Analysis principles
-- **Synchronization**: Все Timeframeы must be synchronized in time
+- **Synchronisation**: All Timeframes must be synchronized in time
 - **influence hierarchy**: higher Timeframes influence lower
 - **Conflict resolution**: In case of conflict priority to higher Timeframe
 
-## 🏗️ architecture системы
+## ♪ Architecture system
 
-### 1. Structure данных
+###1.Stucture data
 ```python
 class MultiMTFdata:
- Timeframes: Dict[str, pd.dataFrame] # data on Timeframeм
- sync_points: List[datetime] # Точки синхронизации
- hierarchy: List[str] # Порядок Timeframes (from высшего к низшему)
+Timeframes: Dict[str, pd.dataFrame] # Data on Timeframe
+sync_points: List[datetime] # Synchronization points
+hierarchy: List[str] # Timeframes order (from top to bottom)
 ```
 
-### 2. Признаки Multi MTF
+♪##2 ♪ Multi-mark MTF ♪
 ```python
-# for каждого Timeframe Creating:
-- SCHR Levels признаки (как сейчас)
-- Cross-Timeframe признаки:
- - Тренд on высшем Timeframeе
- - Конфликт между Timeframeми
- - Сила сигнала on разных Timeframes
- - Synchronization уровней поддержки/сопротивления
+# for every Timeframe Creating:
+- SCHR Livels signs (as now)
+- Cross-Timeframe features:
+- Trent on the High Timeframe.
+- Conflict between Timeframes
+- The power of the signal on different Times
+- Synchronization of support/resistance levels
 ```
 
-### 3. Модели
+♪##3 ♪ Models
 ```python
-# Три типа моделей:
-1. Single TF модели (как сейчас) - for каждого Timeframe отдельно
-2. Cross TF модели - учитывают взаимодействие Timeframes
-3. Ensemble модели - комбинируют предсказания all Timeframes
+# Three types of models:
+1. Single TF Model (as now) - for each Timeframe separately
+2. Cross TF models - take into account Timeframes interactions
+3. Ensemble Models - Combines Al Timeframes
 ```
 
-## 🔧 Реализация
+♪ ♪ ♪ To reach out ♪
 
-### Этап 1: Подготовка данных
+### Step 1: Data Preparation
 ```python
 def prepare_multi_mtf_data(symbol: str, Timeframes: List[str]) -> MultiMTFdata:
  """
- Подготовка данных for multi MTF Analysis
+Preparation of data for multiple MTF Analysis
 
  Args:
  symbol: Trading symbol
  Timeframes: List Timeframes ['H1', 'H4', 'D1', 'W1', 'MN1']
 
  Returns:
- MultiMTFdata with синхронизированными данными
+MultiMTFdata with synchronised data
  """
- # 1. Loading data on all Timeframeм
+# 1. Loading data on all Timeframe
  # 2. Synchronization in time
- # 3. create cross-Timeframe признаков
- # 4. validation качества данных
+# 3. Create cross-timeframe features
+# 4. Data quality appreciation
 ```
 
-### Этап 2: create признаков
+### Step 2: creative features
 ```python
 def create_multi_mtf_features(data: MultiMTFdata) -> pd.dataFrame:
  """
- create признаков for multi MTF Analysis
+criteria for multiple MTF Analysis
 
  Features:
- - Базовые SCHR признаки for каждого TF
- - Cross-Timeframe признаки:
- * trend_alignment: Выравнивание трендов
- * level_conflicts: Конфликты уровней
- * signal_strength: Сила сигнала
- * Timeframe_consensus: Консенсус Timeframes
+- Basic SCHR indicators for each TF
+- Cross-Timeframe features:
+*trind_alignment: Equalization of trends
+*level_conflicts: Level conflicts
+*signal_strength: Signal force
+* Timeframe_consensus: Timeframes Consensus
  """
 ```
 
-### Этап 3: Обучение моделей
+### Step 3: Model training
 ```python
 class MultiMTFPipeline:
  def __init__(self, Timeframes: List[str]):
  self.Timeframes = Timeframes
- self.single_tf_models = {} # Модели for каждого TF
- self.cross_tf_models = {} # Cross-Timeframe модели
- self.ensemble_models = {} # Ensemble модели
+Self.single_tf_models = {} # Models for each TF
+Self.cross_tf_models = {} # Cross-Time
+Self.ensemble_models = {} #Ensemble model
 
  def train_single_tf_models(self, data: MultiMTFdata):
- """Обучение моделей for каждого Timeframe отдельно"""
+"Telegram for each Timeframe separately"
 
  def train_cross_tf_models(self, data: MultiMTFdata):
- """Обучение моделей with учетом взаимодействия Timeframes"""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
  def train_ensemble_models(self, data: MultiMTFdata):
- """Обучение ensemble моделей"""
+"Teaching ensemble models."
 ```
 
-### Этап 4: Предсказания
+### Step 4: Forecasts
 ```python
 def predict_multi_mtf(self, data: MultiMTFdata) -> Dict[str, Any]:
  """
- Предсказания with учетом all Timeframes
+Forecasts with account for all Timeframes
 
  Returns:
  {
- 'single_tf_predictions': {...}, # Предсказания on каждому TF
- 'cross_tf_predictions': {...}, # Cross-Timeframe предсказания
- 'ensemble_predictions': {...}, # Ensemble предсказания
- 'consensus': {...}, # Консенсус all моделей
- 'confidence': {...} # Уверенность in предсказаниях
+'single_tf_predations': {...}, #Treaties on each TF
+'Cross_tf_predictations': {...}, #Cross-Timeframe predictions
+'ensemble_predations': {...}, #Ensemble prediction
+'Consensus': {...}, # Consensus all models
+'confidence': {...} # Confidence in predictions
  }
  """
 ```
 
-## 📈 metrics качества
+## ♪ quality metrics
 
-### 1. Точность on Timeframeм
-- Accuracy for каждого TF отдельно
-- Cross-TF accuracy (согласованность)
-- Ensemble accuracy (общая точность)
+*## 1. Accuracy on Timeframe
+- Accuracy for each TF separately
+- Cross-TF accuracy (coherence)
+- Ensemble accuracy (total accuracy)
 
-### 2. Временные metrics
-- Latency: Время from сигнала to исполнения
-- Persistence: Длительность сигнала
-- Decay: Затухание сигнала во времени
+♪##2. ♪ Temporary metrics ♪
+- Latincy: Time from signal to execution
+- Persistence: Signal duration
+- Decay: Time-deployed signal
 
-### 3. Торговые metrics
-- Sharpe ratio on Timeframeм
+♪##3 ♪ Trade metrics
+- Sharpe ratio on Timeframe
 - Maximum drawdown
 - Win rate
 - Profit factor
 
-## 🚀 Plan внедрения
+## ♪ Plan implementation
 
-### Фаза 1: Подготовка (1-2 недели)
-- [ ] create MultiMTFdata класса
-- [ ] Реализация синхронизации данных
-- [ ] create базовых cross-Timeframe признаков
-- [ ] Тестирование on исторических данных
+### Phase 1: Training (1-2 weeks)
+- [ ] creative MultiMTFdata class
+- [ ] Implementation of data sync
+- [ ] the core cross-border-Timeframe
+- [ ] Testing on historical data
 
-### Фаза 2: Модели (2-3 недели)
-- [ ] Реализация single TF моделей
-- [ ] create cross TF моделей
-- [ ] Разработка ensemble подходов
-- [ ] validation and тестирование
+### Phase 2: Models (2-3 weeks)
+- [ ] Implementation of single TF models
+- [ ] Create cross TF models
+- [ ] Development of ensemble approaches
+- [ ] validation and testing
 
-### Фаза 3: integration (1 неделя)
-- [ ] integration in существующий пайплайн
-- [ ] CLI поддержка multi MTF
+### Phase 3: integration (1 week)
+- [ ] integration into existing pipline
+- [ ] CLI support multi MTF
 - [ ] documentation and examples
-- [ ] Performance оптимизация
+- [ ] Performance Optimization
 
-### Фаза 4: Продакшн (1 неделя)
-- [ ] Тестирование on реальных данных
+### Phase 4: Production (1 week)
+- [ ] Testing on real data
 - [ ] Monitoring performance
-- [ ] A/B тестирование with single TF
-- [ ] documentation for пользователей
+- [ ] A/B testing with single TF
+- [ ] documentation for users
 
-## 💡 Инновационные идеи
+♪ ♪ Innovative ideas
 
 ### 1. Adaptive Timeframe Selection
 ```python
 def select_optimal_Timeframes(market_conditions: Dict) -> List[str]:
  """
- Автоматический выбор оптимальных Timeframes
- in dependencies from рыночных условий
+Automatic choice of optimal Timeframes
+in terms of market conditions
  """
 ```
 
@@ -180,8 +180,8 @@ def select_optimal_Timeframes(market_conditions: Dict) -> List[str]:
 ```python
 def calculate_dynamic_weights(predictions: Dict, market_volatility: float) -> Dict[str, float]:
  """
- Динамическое взвешивание predictions
- in dependencies from волатильности рынка
+Dynamic weighing of preferences
+in preferences from market volatility
  """
 ```
 
@@ -189,44 +189,44 @@ def calculate_dynamic_weights(predictions: Dict, market_volatility: float) -> Di
 ```python
 def resolve_Timeframe_conflicts(predictions: Dict) -> Dict[str, Any]:
  """
- Разрешение конфликтов между Timeframeми
- with использованием правил приоритета
+Conflict resolution between the Timeframes
+with the use of priority rules
  """
 ```
 
-## 📊 Ожидаемые результаты
+## ♪ Expected results
 
-### Улучшения точности
-- **+15-25%** точность predictions
-- **+30-40%** снижение ложных сигналов
+♪ ♪ Better accuracy ♪
+- **+15-25%** Precision accuracy
+- **+30-40%** reduction of false signals
 - **+20-30%** improve risk-adjusted returns
 
-### Новые возможности
-- Анализ рыночных режимов
-- Автоматическое определение трендов
-- Prediction разворотов трендов
-- Оптимизация точек входа/выхода
+### New opportunities
+- Analysis of market regimes
+Automatic trend determination
+- Predication of trend turns
+- Optimization of entry/exit points
 
-## 🔍 Monitoring and аналитика
+## Monitoring and analyst
 
-### 1. Дашборд Multi MTF
-- Визуализация сигналов on Timeframeм
-- Heatmap согласованности
+### 1. Dashbord Multi MTF
+- Visualization of signals on Timeframe
+- Heatmap Coherence
 - Performance metrics
-- Alert система
+- Alert system
 
-### 2. Logsрование
-- Детальные Logs on каждому TF
-- Трассировка решений
+### 2. Logs
+- Detailed Logs on each TF
+- Trace of decisions
 - Performance metrics
 - Error tracking
 
-## 🎯 Заключение
+♪ ♪ The ending ♪
 
-Multi MTF анализ значительно повысит качество predictions SCHR Levels за счет:
-- Учета иерархии Timeframes
-- Снижения ложных сигналов
-- Повышения уверенности in предсказаниях
-- Адаптации к рыночным условиям
+Multi MTF analysis will significantly improve the quality of SCHR Levels by:
+- Taking into account the Timeframes hierarchy
+- Diversions of false signals
+- Building confidence in predictions
+- Market adaptations
 
-Это следующий Logsческий шаг in развитии системы после успешной реализации single-Timeframe Analysis.
+This is the next Logsian step in the development of the system after the success of the Single-Timeframe Analisis.

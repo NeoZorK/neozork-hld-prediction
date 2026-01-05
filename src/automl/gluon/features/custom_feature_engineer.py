@@ -1,6 +1,6 @@
 """
 Custom Feature Engineer for trading Strategy Features
-create 13 пользовательских признаков for торговой стратегии
+13 user features for a trade strategy
 """
 
 import pandas as pd

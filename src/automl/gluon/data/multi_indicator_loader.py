@@ -1,6 +1,6 @@
 """
 Multi-Indicator data Loader for trading Strategy
-Загрузчик данных for множественных indicators торговой стратегии
+Data uploader for multiple indicators of trade strategy
 """
 
 import pandas as pd
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 class MultiIndicatorLoader:
  """
  Loads and combines data from multiple trading indicators (CSVExport, WAVE2, SHORT3).
- Загружает and объединяет data из множественных торговых indicators.
+Uploads and connects data from multiple trade indicators.
  """
 
  def __init__(self, base_path: str = "data/cache/csv_converted/"):
@@ -35,7 +35,7 @@ class MultiIndicatorLoader:
  def load_basic_data(self, symbol: str, Timeframe: str) -> pd.dataFrame:
  """
  Load basic OHLCV data for automatic feature generation.
- Загрузить базовые OHLCV data for автоматической генерации признаков.
+Load the basic OHLCV data for automatic character generation.
 
  Args:
  symbol: Trading symbol (e.g., 'BTCUSD')
@@ -68,7 +68,7 @@ class MultiIndicatorLoader:
  def _create_synthetic_data(self, symbol: str, Timeframe: str) -> pd.dataFrame:
  """
  Create synthetic OHLCV data for demonstration.
- Создать синтетические OHLCV data for демонстрации.
+Create synthetic OHLCV data for demonstration.
  """
  import numpy as np
  from datetime import datetime, timedelta
@@ -104,7 +104,7 @@ class MultiIndicatorLoader:
  def load_symbol_data(self, symbol: str, Timeframe: str, indicator: str = None) -> Dict[str, pd.dataFrame]:
  """
  Load all indicator data for a specific symbol and Timeframe.
- Загрузить все data indicators for конкретного symbol and Timeframe.
+Load all data indicators for a specific symbol and Timeframe.
 
  Args:
  symbol: Trading symbol (e.g., 'BTCUSD')
@@ -146,7 +146,7 @@ class MultiIndicatorLoader:
  def load_multiple_symbols(self, symbols: List[str], Timeframes: List[str]) -> Dict[str, Dict[str, pd.dataFrame]]:
  """
  Load data for multiple symbols and Timeframes.
- Загрузить data for множественных символов and Timeframes.
+Load data for multiple characters and Times.
 
  Args:
  symbols: List of Trading symbols
@@ -184,7 +184,7 @@ class MultiIndicatorLoader:
  def combine_indicators(self, data_sources: Dict[str, pd.dataFrame]) -> pd.dataFrame:
  """
  Combine data from multiple indicators into a single dataframe.
- Объединить data из множественных indicators in один датафрейм.
+Merge data from multiple indicators into one date frame.
 
  Args:
  data_sources: Dictionary with indicator data
@@ -241,7 +241,7 @@ class MultiIndicatorLoader:
  def create_target_variable(self, data: pd.dataFrame, method: str = 'price_direction', problem_type: str = 'regression') -> pd.dataFrame:
  """
  Create target variable for machine learning.
- Создать целевую переменную for machine learning.
+Create a target variable for machine lightning.
 
  Args:
  data: Input dataframe
@@ -298,7 +298,7 @@ class MultiIndicatorLoader:
  def add_Technical_indicators(self, data: pd.dataFrame) -> pd.dataFrame:
  """
  Add common Technical indicators to the data.
- Добавить общие Technical индикаторы к данным.
+Add general technical indicators to the data.
 
  Args:
  data: Input dataframe
@@ -363,7 +363,7 @@ class MultiIndicatorLoader:
  def get_data_summary(self, data: pd.dataFrame) -> Dict[str, Any]:
  """
  Get comprehensive summary of the data.
- Получить комплексную сводку данных.
+Get a comprehensive set of data.
 
  Args:
  data: Input dataframe
@@ -406,7 +406,7 @@ class MultiIndicatorLoader:
  def auto_scan_and_select(self, interactive: bool = True) -> Dict[str, Any]:
  """
  Automatically scan directory and select data interactively.
- Автоматически сканировать директорию and интерактивно выбрать data.
+Automatically scan the directory and interactively select the data.
 
  Args:
  interactive: Whether to Use interactive selection
@@ -469,7 +469,7 @@ class MultiIndicatorLoader:
  def load_selected_data(self, selection: Dict[str, Any]) -> pd.dataFrame:
  """
  Load data based on selection results.
- Загрузить data on basis результатов выбора.
+Load the data on base of the selection results.
 
  Args:
  selection: Selection results from auto_scan_and_select
@@ -534,7 +534,7 @@ class MultiIndicatorLoader:
  def load_multi_indicator_data(self, symbol: str, Timeframes: List[str]) -> pd.dataFrame:
  """
  Load data from multiple indicators (CSVExport/SCHR, WAVE2, SHORT3) for a symbol.
- Загрузить data из множественных indicators for symbol.
+Load data from multiple indicators for symbol.
 
  Args:
  symbol: Trading symbol
@@ -593,7 +593,7 @@ class MultiIndicatorLoader:
  def auto_load_data(self, interactive: bool = True) -> pd.dataFrame:
  """
  Complete auto-Loading process: scan, select, and load data.
- Полный process автоматической загрузки: сканирование, выбор and Loading data.
+Full process of automatic download: scanning, selecting and Loading data.
 
  Args:
  interactive: Whether to Use interactive selection

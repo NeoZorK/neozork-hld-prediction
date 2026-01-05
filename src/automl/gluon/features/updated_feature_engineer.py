@@ -1,6 +1,6 @@
 """
 Updated Custom Feature Engineer for trading Strategy Features
-Обновленный инженер признаков with правильными именами columns for SCHR, WAVE2, SHORT3
+Updated sign engineer with correct names for SCHR, WAVE2, SHORT3
 """
 
 import pandas as pd
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 class UpdatedCustomFeatureEngineer:
  """
  Creates custom features for trading strategy based on actual column names from data files.
- Создает пользовательские признаки on basis реальных имен columns из files данных.
+Creates user signs on bases real names of columns from data files.
  """
 
  def __init__(self, config_path: Optional[str] = None):
@@ -53,7 +53,7 @@ class UpdatedCustomFeatureEngineer:
  def create_schr_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
  Create SCHR Levels features (4 features) based on actual CSVExport data.
- Создать признаки SCHR уровней (4 приsign) on basis реальных данных CSVExport.
+Create signs of SCHR levels (4 signature) on base of real CSVExport data.
 
  CSVExport columns: ['Close', 'High', 'Open', 'Low', 'Volume', 'predicted_low', 'predicted_high', 'pressure', 'pressure_vector']
  """
@@ -66,7 +66,7 @@ class UpdatedCustomFeatureEngineer:
  position=0, leave=True) as pbar:
 
  # Feature 1: Trend Direction Probability
- # Вероятность направления тренда on basis pressure and pressure_vector
+# Probability of direction of trend on base presure and presure_vector
  if 'pressure' in df.columns and 'pressure_vector' in df.columns:
  pbar.set_describe("🔧 SCHR: Trend direction")
  df['trend_direction_probability'] = self._calculate_trend_direction_probability(
@@ -75,7 +75,7 @@ class UpdatedCustomFeatureEngineer:
  pbar.update(1)
 
  # Feature 2: Yellow Line Breakout Probability
- # Вероятность breakthrough желтой линии (predicted_high) вверх
+# Probability of breakthrowh yellow line (predicted_high) upwards
  if 'predicted_high' in df.columns and 'Close' in df.columns:
  pbar.set_describe("🔧 SCHR: Yellow line breakout")
  df['yellow_line_breakout_probability'] = self._calculate_yellow_breakout_probability(
@@ -84,7 +84,7 @@ class UpdatedCustomFeatureEngineer:
  pbar.update(1)
 
  # Feature 3: Blue Line Breakdown Probability
- # Вероятность breakthrough синей линии (predicted_low) вниз
+# Probability of breakthrowh blue line (predicted_low) down
  if 'predicted_low' in df.columns and 'Close' in df.columns:
  pbar.set_describe("🔧 SCHR: Blue line breakdown")
  df['blue_line_breakdown_probability'] = self._calculate_blue_breakdown_probability(
@@ -93,7 +93,7 @@ class UpdatedCustomFeatureEngineer:
  pbar.update(1)
 
  # Feature 4: Pressure Vector sign Probability
- # Вероятность sign Pressure Vector
+# Probability of Sign Pressure Vector
  if 'pressure_vector' in df.columns:
  pbar.set_describe("🔧 SCHR: Pressure vector")
  df['pv_sign_probability'] = self._calculate_pv_sign_probability(df['pressure_vector'])
@@ -105,7 +105,7 @@ class UpdatedCustomFeatureEngineer:
  def create_wave2_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
  Create WAVE2 features (6 features) based on actual WAVE2 data.
- Создать признаки WAVE2 (6 признаков) on basis реальных данных WAVE2.
+Create signs of WAVE2 (6 topics) on basis of real WAVE2 data.
 
  WAVE2 columns: ['Close', 'High', 'Open', 'Low', 'Volume', 'wave', 'fast_line', 'ma_line', 'direction', 'signal']
  """
@@ -118,7 +118,7 @@ class UpdatedCustomFeatureEngineer:
  position=1, leave=True) as pbar:
 
  # Feature 5: Wave signal Up 5 Candles Probability
- # Если signal=1, вероятность движения вверх 5 свечей
+# If signal=1, probability of moving up five candles
  if 'signal' in df.columns and 'Close' in df.columns:
  pbar.set_describe("🌊 WAVE2: signal up 5 candles")
  df['wave_signal_up_5_candles_probability'] = self._calculate_wave_signal_up_5_candles(
@@ -127,7 +127,7 @@ class UpdatedCustomFeatureEngineer:
  pbar.update(1)
 
  # Feature 6: Wave signal Continue 5% Probability
- # Вероятность продолжения движения on 5%
+# Probability of continuing on 5%
  if 'signal' in df.columns and 'Close' in df.columns:
  pbar.set_describe("🌊 WAVE2: signal continue 5%")
  df['wave_signal_continue_5_percent_probability'] = self._calculate_wave_continue_5_percent(
@@ -136,7 +136,7 @@ class UpdatedCustomFeatureEngineer:
  pbar.update(1)
 
  # Feature 7: Wave signal MA Below Open Up 5 Candles Probability
- # При MA < Open, вероятность движения вверх 5 свечей
+# At MA < Open, probability of moving up 5 candles
  if all(col in df.columns for col in ['signal', 'ma_line', 'Open', 'Close']):
  pbar.set_describe("🌊 WAVE2: MA below open up 5 candles")
  condition = (df['signal'] == 1) & (df['ma_line'] < df['Open'])
@@ -146,7 +146,7 @@ class UpdatedCustomFeatureEngineer:
  pbar.update(1)
 
  # Feature 8: Wave signal MA Below Open Continue 5% Probability
- # При MA < Open, вероятность продолжения on 5%
+# At MA < Open, probability of going on on 5%
  if all(col in df.columns for col in ['signal', 'ma_line', 'Open', 'Close']):
  pbar.set_describe("🌊 WAVE2: MA below open continue 5%")
  condition = (df['signal'] == 1) & (df['ma_line'] < df['Open'])
@@ -156,7 +156,7 @@ class UpdatedCustomFeatureEngineer:
  pbar.update(1)
 
  # Feature 9: Wave Reverse Peak sign Probability
- # Вероятность sign следующего пика разворота
+# Probability of sign next turn peak
  if 'direction' in df.columns and 'Close' in df.columns:
  pbar.set_describe("🌊 WAVE2: Reverse peak sign")
  df['wave_reverse_peak_sign_probability'] = self._calculate_wave_reverse_peak_sign(
@@ -165,7 +165,7 @@ class UpdatedCustomFeatureEngineer:
  pbar.update(1)
 
  # Feature 10: Wave Reverse Peak 10 Candles Probability
- # Вероятность пика разворота in течение 10 свечей
+# Probability of turning peak in ten candles
  if 'direction' in df.columns and 'Close' in df.columns:
  pbar.set_describe("🌊 WAVE2: Reverse peak 10 candles")
  df['wave_reverse_peak_10_candles_probability'] = self._calculate_wave_reverse_peak_10_candles(
@@ -179,7 +179,7 @@ class UpdatedCustomFeatureEngineer:
  def create_short3_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
  Create SHORT3 features (3 features) based on actual SHORT3 data.
- Создать признаки SHORT3 (3 приsign) on basis реальных данных SHORT3.
+Create signs of SHORT3 (3 sign) on base real SHORT3.
 
  SHORT3 columns: ['Close', 'High', 'Open', 'Low', 'Volume', 'short_trend', 'r_trend', 'global', 'direction', 'r_direction', 'signal', 'r_signal', 'g_direction', 'g_signal']
  """
@@ -192,7 +192,7 @@ class UpdatedCustomFeatureEngineer:
  position=2, leave=True) as pbar:
 
  # Feature 11: Short3 signal 1 Up 5% Probability
- # Если signal=1, вероятность роста on 5%
+# If signal=1, probability of growth on 5%
  if 'signal' in df.columns and 'Close' in df.columns:
  pbar.set_describe("⚡ SHORT3: signal 1 up 5%")
  df['short3_signal_1_up_5_percent_probability'] = self._calculate_short3_signal_1_up_5_percent(
@@ -201,7 +201,7 @@ class UpdatedCustomFeatureEngineer:
  pbar.update(1)
 
  # Feature 12: Short3 signal 4 Down 10% Probability
- # Если signal=4, вероятность падения on 10%
+# If signal=4, probability of falling on 10%
  if 'signal' in df.columns and 'Close' in df.columns:
  pbar.set_describe("⚡ SHORT3: signal 4 down 10%")
  df['short3_signal_4_down_10_percent_probability'] = self._calculate_short3_signal_4_down_10_percent(
@@ -210,7 +210,7 @@ class UpdatedCustomFeatureEngineer:
  pbar.update(1)
 
  # Feature 13: Short3 Direction Change 10 Candles Probability
- # Вероятность смены направления in течение 10 свечей
+# Probability of changing direction in 10 candles
  if 'direction' in df.columns and 'Close' in df.columns:
  pbar.set_describe("⚡ SHORT3: Direction change 10 candles")
  df['short3_direction_change_10_candles_probability'] = self._calculate_short3_direction_change_10_candles(
@@ -224,7 +224,7 @@ class UpdatedCustomFeatureEngineer:
  def create_all_features(self, csv_export_data: pd.dataFrame, wave2_data: pd.dataFrame, short3_data: pd.dataFrame) -> pd.dataFrame:
  """
  Create all 13 custom features by combining all three data sources.
- Создать все 13 пользовательских признаков, объединив все три источника данных.
+Create all 13 user features by combining all three data sources.
  """
  logger.info("Creating all 13 custom features from combined data sources...")
 

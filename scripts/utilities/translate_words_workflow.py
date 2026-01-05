@@ -38,12 +38,12 @@ except ImportError:
 
 def has_russian_text(text: str) -> bool:
     """Check if text contains Cyrillic characters."""
-    return bool(re.search(r'[А-Яа-яЁё]', text))
+Return bool (re.search(r'[A-Ya-Yo], text))
 
 
 def extract_russian_words(text: str) -> Set[str]:
     """Extract unique Russian words from text."""
-    words = re.findall(r'\b[А-Яа-яЁё]+\b', text)
+Words = re.findall(r'\b[A-Ya-Yo]+\b',text)
     return set(words)
 
 

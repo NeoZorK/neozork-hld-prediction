@@ -1,99 +1,99 @@
-# Интерпретируемость and объяснимость моделей
+# Models &apos; imperceptibility and explanation
 
 **Author:** Shcherbyna Rostyslav
-**Дата:** 2024
+**Date:** 2024
 
-## Why интерпретируемость критически важна
+## Whoy interpretation is critical
 
-**Почему 90% ML-моделей in продакшене not имеют объяснений?** Потому что team фокусируются on точности, игнорируя необходимость понимания решений модели. Это как использование GPS без карты - вы доедете, но not поймете, как.
+**Why 90 percent of the ML models in sales n has an explanation?** Because team is focused on accuracy, ignoring the need to understand model solutions. It's like using GPS without a map - you'll get there, but not understand how.
 
-### Катастрофические Consequences необъяснимых моделей
-- **Потеря доверия**: Пользователи not доверяют "черным ящикам"
-- **Регулятивные штрафы**: GDPR штрафы to 4% from оборота компании
-- **Дискриминация**: Модели могут принимать несправедливые решения
-- **Невозможность отладки**: Нельзя исправить ошибки без понимания Logsки
+### Catastrophic Consequences unexplained models
+- ** Loss of trust**: Users not trust "black boxes"
+- ** Regulatory fines**: GDPR fines to 4% from company turnover
+- ** Discrimination**: Models can make unfair decisions
+- ** Unable to detach**: Errors cannot be corrected without understanding Logski
 
-### Преимущества интерпретируемых моделей
-- **Доверие пользователей**: Понимание Logsки принятия решений
-- **Соответствие законам**: GDPR, AI Act, другие регулятивные требования
-- **Лучшая отладка**: Можно найти and исправить ошибки
-- **improve модели**: Понимание важности признаков
+♪## The benefits of interpreted models
+- ** User confidence**: Understanding Logs for Decision Making
+- ** Compliance with laws**: GDPR, AI Act, other regulatory requirements
+- **Best debugging**: You can find and fix mistakes.
+- **improve models**: Understanding the importance of topics
 
-## Введение in интерпретируемость
+## Introduction in interpretation
 
-<img src="images/optimized/interpretability_overView.png" alt="Интерпретируемость ML" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 17.1: Обзор методов интерпретируемости and объяснимости ML-моделей - основные категории and methods*
+<img src="images/optimized/interpretability_overView.png" alt="Interpretability of ML" style="max-width: 100 per cent; light: auto; display: block; marguin: 20px auto;">
+*Figure 17.1: Review of methods of interpretation and explanation of ML models - main categories and methods*
 
-**Почему интерпретируемость - это not роскошь, а необходимость?** Потому что in современном мире ML-модели принимают решения, влияющие on жизни людей, and эти решения должны быть понятными and справедливыми.
+Because in today's world, ML models make decisions that affect people's lives, and these decisions have to be clear and just.
 
-**Основные категории интерпретируемости:**
-- **Intrinsic Interpretability**: Модели, которые изначально интерпретируемы (линейные, деревья решений)
-- **Post-hoc Interpretability**: methods объяснения "черных ящиков" (SHAP, LIME, integrated Gradients)
-- **Global Methods**: Объяснение модели in целом (Feature importance, PDP, ALE)
-- **Local Methods**: Объяснение конкретных predictions (LIME, SHAP Local, Counterfactuals)
+** Main categories of interpretation:**
+**International Interpretability**: Models that are originally interpreted (lines, decision trees)
+- **Post-hoc Interpretability**: methhods explanation of "black boxes" (SHAP, LIME, integrated Gradiants)
+- **Global Methods**: Explanation of the model in general (Feature import, PDP, ALE)
+- **Local Methods**: Explanation of specific regulations (LIME, SHAP Local, Counterfactuals)
 
-Интерпретируемость machine learning - это способность понимать and объяснять решения, принимаемые ML-моделями. Это критически важно for:
-- **Доверия к модели** - понимание Logsки принятия решений
-- **Соответствие регулятивным требованиям** - GDPR, AI Act
-- **Отладка моделей** - выявление ошибок and смещений
-- **improve моделей** - понимание важности признаков
+The imperceptibility of machinin lightning is the ability to understand and explain decisions made by ML models. This is critical for:
+- ** Model Trust** - Understanding Logs of Decision Making
+- ** Regulatory compliance** - GDPR, AI Act
+- ** Model decoupling** - detection of errors and shifts
+- **improve models** - understanding the importance of topics
 
-## Типы интерпретируемости
+## Types of interpretation
 
-<img src="images/optimized/intrinsic_vs_posthoc.png" alt="comparison типов интерпретируемости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 17.2: comparison внутренней and пост-хок интерпретируемости - преимущества and характеристики*
+<img src="images/optimized/internic_vs_posthoc.png" alt="comparison of types of interpretation" style="max-width: 100 per cent; light: auto; display: block; marguin: 20px auto;">
+*Picture 17.2: Comparson of internal and post-interpretability - advantages and characteristics*
 
-### 1. Внутренняя интерпретируемость (Intrinsic Interpretability)
+*## 1. Internal Interpretability
 
-**Почему внутренняя интерпретируемость - это золотой стандарт?** Потому что модель сама on себе понятна, not требует дополнительных методов объяснения and дает точные интерпретации.
+**Why is internal interpretation a gold standard?** Because the model is self-explanatory, no requires additional methods of explanation and gives precise interpretations.
 
-**Характеристики внутренней интерпретируемости:**
-- **Linear Regression**: Коэффициенты показывают влияние признаков
-- **Decision Tree**: Правила принятия решений видны in структуре дерева
-- **Logistic Regression**: Вероятности and коэффициенты интерпретируемы
-- **Rule-based**: Logsческие правила понятны человеку
+** Internal interpretation chemists:**
+**Linear Regulation**: Coefficients show the effect of the signs
+- **Decision Tree**: The rules of decision-making can be seen in the tree structure
+- **Logistic Regulation**: Probabilities and factors to be interpreted
+- **Rule-based**: Logistic rules are understood by man.
 
-Модели, которые изначально интерпретируемы:
+Models that are originally interpreted:
 
-**Преимущества внутренней интерпретируемости:**
-- **Точность**: Интерпретации точно отражают Logsку модели
-- **Простота**: not нужны дополнительные methods объяснения
-- **Надежность**: Интерпретации всегда доступны
-- **Понятность**: Logsка модели прозрачна
+** Benefits of internal interpretation:**
+- **Definity**: Interpretations accurately reflect the Logsk model
+- **Simple**: no need for additional meths explanations
+- ** Reliability**: Interpretations are always available
+- **Explanatory**: Logsque of the model transparent
 
 ```python
-# Линейная регрессия - внутренне интерпретируема
+# Linear regression - Internally interpreted
 from sklearn.linear_model import LinearRegression
 import numpy as np
 
-# create интерпретируемой модели - простая and понятная
+# the interpretation model is simple and understandable
 model = LinearRegression()
 model.fit(X_train, y_train)
 
-# Коэффициенты показывают важность признаков - прямое понимание
+# The coefficients show the importance of the signs - direct understanding
 feature_importance = np.abs(model.coef_)
 feature_names = X_train.columns
 
-# Сортировка on важности - What признаки важнее всего
+# Sorting on importance - What signs are most important
 importance_df = pd.dataFrame({
  'feature': feature_names,
  'importance': feature_importance
 }).sort_values('importance', ascending=False)
 
-print("Важность признаков:")
+"The importance of the signs:")
 print(importance_df)
 ```
 
-### 2. Пост-хок интерпретируемость (Post-hoc Interpretability)
+###2. Post-hawk interpretability
 
-Объяснение уже обученных "черных ящиков":
+Explanation of the "black boxes" already trained:
 
 ```python
-# SHAP for объяснения любых моделей
+# SHAP for explaining any models
 import shap
 from autogluon.tabular import TabularPredictor
 
-# Обучение модели
+# Model learning
 predictor = TabularPredictor(label='target')
 predictor.fit(train_data)
 
@@ -101,37 +101,37 @@ predictor.fit(train_data)
 explainer = shap.TreeExplainer(predictor.get_model_best())
 shap_values = explainer.shap_values(X_test)
 
-# Визуализация важности признаков
+# Visualizing the importance of signs
 shap.summary_plot(shap_values, X_test)
 ```
 
-## methods глобальной интерпретируемости
+## methhods global interpretation
 
-<img src="images/optimized/global_methods.png" alt="Глобальные methods интерпретируемости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 17.3: Глобальные methods интерпретируемости - объяснение модели in целом*
+<img src="images/optimized/global_methods.png" alt="Global methods of interpretation" style="max-width: 100 per cent; light: auto; display: block; marguin: 20px auto;">
+*Picture 17.3: Global methods of interpretation - explanation of model in general*
 
-**Типы глобальных методов:**
-- **Feature importance**: Важность признаков for модели
-- **Partial Dependence Plots (PDP)**: dependency предсказания from приsign
-- **Accumulated Local Effects (ALE)**: Локальные эффекты with учетом корреляций
-- **Permutation importance**: Важность через перестановку признаков
-- **SHAP Global**: Глобальные SHAP значения
-- **Surrogate Models**: Простые модели-аппроксиматоры
+** Rounds of global methods:**
+- **Feature import**: Importance of signs for the model
+- **Partial Defendence Plots (PDP)**: Despendency of prediction from signature
+- **Accumulated Local Effects (ALE)**: Local effects with correlations
+- **Permutation import**: Importance through sign conversion
+- **SHAP Global**: Global SHAP values
+- **Surrogate Models**: Simple Approcsimators
 
 ### 1. Feature importance
 
-<img src="images/optimized/feature_importance_methods.png" alt="methods важности признаков" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 17.5: methods определения важности признаков - comparison различных подходов*
+<img src="images/optimized/feature_importation_methods.png" alt="methods the importance of signs" style="max-width: 100 per cent; light: auto; display: block; marguin: 20px auto;">
+*Picture 17.5: methhods determining the importance of the topics - comparison of different approaches*
 
-**methods определения важности признаков:**
-- **Built-in importance**: Встроенная важность (for tree-based моделей)
-- **Permutation importance**: Важность через перестановку признаков
-- **SHAP Values**: SHAP значения for объяснения вклада признаков
-- **comparison методов**: Анализ согласованности различных подходов
+**methods to determine the importance of the signs:**
+- **Built-in import**: built-in importance (for free-based models)
+- **Permutation import**: Importance through sign conversion
+**SHAP Values**: SHAP values for explaining the contribution of topics
+**comparison of methods**: Analysis of consistency of different approaches
 
 ```python
 def get_feature_importance(predictor, method='permutation'):
-"""Получение важности признаков различными методами"""
+"The importance of signs in different ways."
 
  if method == 'permutation':
  # Permutation importance
@@ -154,7 +154,7 @@ def get_feature_importance(predictor, method='permutation'):
  return np.abs(shap_values).mean(0)
 
  elif method == 'builtin':
-# Встроенная важность (for tree-based моделей)
+# The built-in importance (for free-based models)
  model = predictor.get_model_best()
  if hasattr(model, 'feature_importances_'):
  return model.feature_importances_
@@ -162,48 +162,48 @@ def get_feature_importance(predictor, method='permutation'):
  raise ValueError("Model doesn't support built-in feature importance")
 ```
 
-**Детальные описания параметров методов важности признаков:**
+** Detailed descriptions of the parameters of the methods of importance of the signs:**
 
-- **`method='permutation'`**: Метод определения важности признаков
-- `'permutation'`: Перестановочная важность (рекомендуется)
-- `'shap'`: SHAP важность (теоретически обоснованная)
-- `'builtin'`: Встроенная важность (только for tree-based моделей)
-- `'correlation'`: Корреляционная важность (простая)
+- **'method='permutation'**: Method of determining the importance of topics
+- ``permutation'': Reshift importance (recommended)
+- ``scap'': SHAP importance (theoretically sound)
+- `'bualtin': In-house importance (only for free-based models)
+- `'correllation': Correlation importance (simple)
 
-- **`n_repeats=10`**: Количество повторений for перестановочной важности
-- `10`: Стандартное значение (баланс точности and скорости)
-- `5`: Быстрое вычисление (менее точно)
-- `20`: Точное вычисление (медленнее)
-- `50`: Очень точное вычисление (очень медленно)
+- **'n_repeats=10'**: Number of repetitions for reset importance
+`10': Standard value (accuracy and speed balance)
+- `5': Quicker calculation (less accurate)
+- `20': Exact calculation (slow)
+- `50': Very accurate calculation (very slow)
 
-- **`random_state=42`**: Семя for воспроизводимости
-- `42`: Стандартное значение (любое число)
-- `0`: Альтернативное значение
-- `None`: Случайное значение (not воспроизводимо)
-- Применение: обеспечение воспроизводимости результатов
+- **'random_state=42'**: Seed for reproduction
+- `42': Standard value (any number)
+- `0': Alternative value
+- `Nene': Random value (not reproducible)
+- Application: Reproducibility of results
 
-- **`X_test, y_test`**: testsые data for оценки важности
-- `X_test`: testsые признаки
-- `y_test`: testsые метки
-- Применение: оценка важности on независимых данных
-- Рекомендация: использовать holdout set
+- **'X_test, y_test'**: test data for evaluation of importance
+- `X_test': test signs
+- `y_test': testes tags
+- Application: assessment of the importance of independent data
+- Recommendation: Use goldout set
 
-- **`perm_importance.importances_mean`**: Средняя важность признаков
-- Возвращает: массив важности for каждого приsign
-- Диапазон: from 0 to бесконечности
-- Интерпретация: чем больше, тем важнее признак
+- **'perm_importance.importances_mean'**: Average importance of topics
+- Returns: A range of importance for each sign.
+- Range: from 0 to infinity
+- Interpretation: the more the sign matters.
 
-- **`shap_values.mean(0)`**: Средние SHAP значения
-- `shap_values`: SHAP значения for all образцов
-- `mean(0)`: Среднее on образцам (ось 0)
-- `np.abs()`: Абсолютные значения (важность без sign)
-- Применение: глобальная важность признаков
+- ** `schap_valutes.mean(0)'**: Average SHAP values
+- `shap_valutes': SHAP values for all samples
+- `mean(0)': Medium on samples (axis 0)
+- `np.abs()': Absolute values (value without sign)
+- Application: global importance of topics
 
-- **`model.feature_importances_`**: Встроенная важность модели
-- Доступно for: Random Forest, XGBoost, LightGBM, CatBoost
-- Недоступно for: Linear Regression, Neural networks
-- Диапазон: from 0 to 1 (сумма = 1)
-- Интерпретация: доля важности приsign
+- **'model.feature_importances_'**: built-in importance of the model
+- Available for: Random Forest, XGBost, LightGBM, CatBoost
+- Not available for: Linear Regulation, Neural Networks
+- Range: from 0 to 1 (sum = 1)
+- Interpretation: percentage of importance
 
 ### 2. Partial Dependence Plots (PDP)
 
@@ -212,12 +212,12 @@ from sklearn.inspection import partial_dependence, plot_partial_dependence
 import matplotlib.pyplot as plt
 
 def plot_pdp(predictor, X, features, model=None):
-"""Построение графиков частичной dependencies"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")")")")")")")")")")""""""""""""""""""""""""""""""""""""""""""""""""""
 
  if model is None:
  model = predictor.get_model_best()
 
-# PDP for одного приsign
+# PDP for one sign
  if len(features) == 1:
  pdp, axes = partial_dependence(
  model, X, features, grid_resolution=50
@@ -231,7 +231,7 @@ def plot_pdp(predictor, X, features, model=None):
  plt.grid(True)
  plt.show()
 
-# PDP for двух признаков
+# PDP for two features
  elif len(features) == 2:
  pdp, axes = partial_dependence(
  model, X, features, grid_resolution=20
@@ -246,60 +246,60 @@ def plot_pdp(predictor, X, features, model=None):
  plt.show()
 ```
 
-**Детальные описания параметров Partial Dependence Plots:**
+** Detailed description of the parameters of Partial Designation Plots:**
 
-- **`features`**: List признаков for Analysis
-- `['feature1']`: Один признак (1D график)
-- `['feature1', 'feature2']`: Два приsign (2D график)
-- `['feature1', 'feature2', 'feature3']`: Три приsign (3D график)
-- Применение: выбор признаков for Analysis dependencies
+- **'features'**: List of topics for Analysis
+- `['feature1'] `: One topic (1D graph)
+- `['feature1', 'feature2'] `: Two grand (2D graph)
+- `['feature1', `feature2', `feature3'] `: Three grand (3D graph)
+Application: Selection of topics for Analysis dependencies
 
-- **`grid_resolution=50`**: Разрешение сетки for 1D PDP
-- `50`: Стандартное разрешение (баланс точности and скорости)
-- `20`: Низкое разрешение (быстро, менее точно)
-- `100`: Высокое разрешение (медленно, более точно)
-- `200`: Очень высокое разрешение (очень медленно)
+- **'grid_resolution=50'**: Grid resolution for 1D PDP
+- `50': Standard resolution (accuracy and speed balance)
+- `20': Low resolution (rapid, less accurate)
+`100': High resolution (slowly, more precise)
+- `200': Very high resolution (very slow)
 
-- **`grid_resolution=20`**: Разрешение сетки for 2D PDP
-- `20`: Стандартное разрешение for 2D (400 точек)
-- `10`: Низкое разрешение (100 точек)
-- `30`: Высокое разрешение (900 точек)
-- `50`: Очень высокое разрешение (2500 точек)
+- **'grid_resolution=20'**: Grid resolution for 2D PDP
+- `20': Standard Resolution for 2D (400 points)
+`10': Low resolution (100 points)
+`30': High resolution (9000 points)
+- `50': Very high resolution (2,500 points)
 
-- **`figsize=(10, 6)`**: Размер фигуры for 1D PDP
-- `(10, 6)`: Стандартный размер (ширина x высота)
-- `(8, 5)`: Компактный размер
-- `(12, 8)`: Большой размер
-- `(15, 10)`: Очень большой размер
+**'figsise=(10, 6)'**: Size of the figure for 1D PDP
+- `(10, 6)': Standard size (wide x height)
+- `(8, 5)': Compact size
+- `(12, 8)': Large size
+- `(15, 10)': Very large
 
-- **`figsize=(10, 8)`**: Размер фигуры for 2D PDP
-- `(10, 8)`: Стандартный размер for 2D
-- `(8, 6)`: Компактный размер
-- `(12, 10)`: Большой размер
-- `(15, 12)`: Очень большой размер
+**'figsise=(10, 8)'**: Size of the figure for 2D PDP
+`(10, 8)': Standard size for 2D
+- `(8, 6)': Compact size
+- `(12, 10)': Large size
+- `(15, 12)': Very large
 
-- **`levels=20`**: Количество уровней контура
-- `20`: Стандартное количество уровней
-- `10`: Меньше уровней (менее детально)
-- `30`: Больше уровней (более детально)
-- `50`: Очень много уровней (очень детально)
+- **'levels=20'**: Number of contour levels
+- `20': Standard number of levels
+- `10': Less levels (less detailed)
+- `30': More levels (more detailed)
+- `50': Very many levels (very detailed)
 
-- **`cmap='viridis'`**: Цветовая карта
-- `'viridis'`: Стандартная карта (зелено-желтая)
-- `'plasma'`: Пурпурно-желтая карта
-- `'inferno'`: Красно-желтая карта
-- `'magma'`: Пурпурно-белая карта
-- `'coolwarm'`: Сине-красная карта
+- **'cmap='viridis'**: Color map
+- ``viridis': Standard map (green-Yellow)
+- `'plasma'': Purple yellow card
+- `'inferno': Red-Yellow Card
+- `'magma': Purple-white map
+- `'coolwarm': Blue-red map
 
-- **`plt.grid(True)`**: Включение сетки
-- `True`: Показать сетку (рекомендуется)
-- `False`: Скрыть сетку
-- Применение: improve читаемости графика
+- **'plt.grid(True)'**: Network activation
+- `True': Show grid (recommended)
+- `False': Hide Grid
+Application: improve readability of graph
 
-- **`plt.colorbar()`**: Цветовая шкала
-- Показывает соответствие цветов and значений
-- Обязательно for 2D графиков
-- Применение: интерпретация значений
+- **'plt.colorbar()'**: Color scale
+- Shows conformity of colors and values.
+- Mandatory for 2D graphs
+Application: Interpretation of values
 
 ### 3. Accumulated Local Effects (ALE)
 
@@ -308,17 +308,17 @@ import alibi
 from alibi.explainers import ALE
 
 def plot_ale(predictor, X, features):
-"""Построение ALE графиков"""
+"Building ALE Graphics."
 
  model = predictor.get_model_best()
 
  # create ALE explainer
  ale = ALE(model.predict, feature_names=X.columns.toList())
 
-# Вычисление ALE
+# Calculation of ALE
  ale_exp = ale.explain(X.values, features=features)
 
-# Визуализация
+# Visualization
  fig, ax = plt.subplots(figsize=(10, 6))
  ax.plot(ale_exp.feature_values[0], ale_exp.ale_values[0])
  ax.set_xlabel(features[0])
@@ -328,18 +328,18 @@ def plot_ale(predictor, X, features):
  plt.show()
 ```
 
-## methods локальной интерпретируемости
+## methhods local interpretation
 
-<img src="images/optimized/local_methods.png" alt="Локальные methods интерпретируемости" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 17.4: Локальные methods интерпретируемости - объяснение конкретных predictions*
+<img src="images/optimized/local_methods.png" alt="Local methods of interpretation" style="max-width: 100 per cent; light: auto; display: block; marguin: 20px auto;">
+*Picture 17.4: Local methods of interpretation - explanation of specific preferences*
 
-**Типы локальных методов:**
-- **LIME**: Локальные аппроксимации for объяснения predictions
-- **SHAP Local**: Локальные SHAP значения for конкретных экземпляров
-- **integrated Gradients**: Градиентные methods for нейронных networks
-- **Counterfactual ExPlanations**: Объяснения через контрфактические examples
-- **Attention Mechanisms**: Механизмы внимания in нейронных сетях
-- **Saliency Maps**: Карты значимости for визуализации
+**Tips of local methods:**
+- **LIME**: Local annexes for explanations of preferences
+- **SHAP Local**: Local SHAP values for specific copies
+- **integrate Gradients**: Gradient methods for neural networks
+- **Counterfactual EXPLANATIONS**: Explanations through Counterfactive examples
+- **AttentionMechanisms**: Focus mechanisms in neural networks
+**Saliency Maps**: Cards of significance for visualization
 
 ### 1. LIME (Local Interpretable Model-agnostic ExPlanations)
 
@@ -348,7 +348,7 @@ import lime
 import lime.lime_tabular
 
 def explain_with_lime(predictor, X, instance_idx, num_features=5):
-"""Объяснение конкретного предсказания with помощью LIME"""
+"Explanation of a specific prediction with the help of LIME."
 
  model = predictor.get_model_best()
 
@@ -360,171 +360,171 @@ def explain_with_lime(predictor, X, instance_idx, num_features=5):
  mode='classification'
  )
 
-# Объяснение конкретного экземпляра
+# Explanation of the specific copy
  exPlanation = explainer.explain_instance(
  X.iloc[instance_idx].values,
  model.predict_proba,
  num_features=num_features
  )
 
-# Визуализация
+# Visualization
  exPlanation.show_in_notebook(show_table=True)
 
  return exPlanation
 ```
 
-**Детальные описания параметров LIME:**
+** Detailed descriptions of LIME parameters:**
 
-- **`instance_idx`**: index экземпляра for объяснения
-- `0`: Первый экземпляр in датасете
-- `100`: 101-й экземпляр
-- `len(X)-1`: Последний экземпляр
-- Применение: выбор конкретного образца for Analysis
+- **'instance_idx'**: index copy for explanation
+`0': First copy in the dataset
+- `100': 101st copy
+- `len(X)-1': Last copy
+- Application: Selection of a specific sample for Analysis
 
-- **`num_features=5`**: Количество признаков for объяснения
-- `5`: Стандартное количество (баланс detailsзации and простоты)
-- `3`: Минимальное количество (очень простое объяснение)
-- `10`: Большое количество (детальное объяснение)
-- `20`: Очень большое количество (очень детальное)
+- **'num_features=5'**: Number of topics for explanation
+- `5': Standard quantity (balance of details and simplicity)
+`3': Minimum quantity (very simple explanation)
+`10': High quantity (detail explanation)
+- `20': Very large quantity (very detailed)
 
-- **`X.values`**: data in формате numpy array
-- `X.values`: Преобразование dataFrame in numpy array
-- `X.to_numpy()`: Альтернативный способ
-- Применение: LIME требует numpy array for работы
+- **'X.valules'**: data in numpy array format
+- `X.valutes': Transforming dataFrame in numpy array
+- `X.to_numpy()': Alternative
+Application: LIME requires numpy weapons for work
 
-- **`feature_names=X.columns.toList()`**: Имена признаков
-- `X.columns.toList()`: List имен столбцов
-- `['feature1', 'feature2', ...]`: Ручное задание имен
-- Применение: читаемые названия in объяснениях
+- **'feature_names=X.columns.toList()'**: Names of topics
+- `X.columns.toList()': List column names
+- `['feature1', 'feature2', ...] `: Manual task of names
+- Application: In-explanation titles read
 
-- **`class_names=['Class 0', 'Class 1']`**: Имена классов
-- `['Class 0', 'Class 1']`: Стандартные имена for бинарной классификации
-- `['Negative', 'Positive']`: Семантические имена
-- `['No', 'Yes']`: Простые имена
-- Применение: понятные названия классов in объяснениях
+- **'class_names=['Class 0', 'Class 1'] `**: Class names
+`['Class 0', 'Class 1'] `: Standard names for binary classification
+- ``Negative', 'Positative'':
+- `['No', 'Yes'] `: Simple names
+- Application: understandable class names in explanations
 
-- **`mode='classification'`**: Режим работы LIME
-- `'classification'`: Классификация (рекомендуется)
-- `'regression'`: Регрессия
-- `'multiclass'`: Многоклассовая классификация
-- Применение: выбор алгоритма объяснения
+- **'mode='Classification'**: LIME mode of operation
+- `'classification': Classification (recommended)
+- ``regression':
+``multi-class': Multi-class classification
+Application: choice of explanation algorithm
 
-- **`model.predict_proba`**: function предсказания вероятностей
-- `model.predict_proba`: Метод предсказания вероятностей
-- `model.predict`: Метод предсказания классов
-- Применение: LIME использует вероятности for объяснения
+- **'model.predict_proba'**: function prognosis
+- `model.predict_proba': Probability prediction method
+- `model.predict': Class prediction method
+Application: LIME uses probabilities for explanation
 
-- **`exPlanation.show_in_notebook(show_table=True)`**: Визуализация объяснения
-- `show_table=True`: Показать таблицу with деталями
-- `show_table=False`: Показать только график
-- Применение: отображение результатов in Jupyter notebook
+- **/explanation.show_in_notebook(show_table=True)'**: Visualization of explanation
+- `shaw_table=True': Show table with details
+== sync, corrected by elderman == @elder_man
+Application: Presentation of results in Jupyter Notebook
 
-- **`exPlanation.score`**: Качество объяснения
-- Диапазон: from 0 to 1
-- `> 0.8`: Высокое качество (хорошее объяснение)
-- `0.5-0.8`: Среднее качество (приемлемое объяснение)
-- `< 0.5`: Низкое качество (плохое объяснение)
-- Применение: оценка надежности объяснения
+- ** `explanation.score'**: Quality of explanation
+- Range: from 0 to 1
+- `> 0.8': High quality (good explanation)
+`0.5-0.8': Average quality (acceptable explanation)
+- `< 0.5': Poor quality (bad explanation)
+Application: assessment of the reliability of the explanation
 
 ### 2. SHAP (SHapley Additive exPlanations)
 
 <img src="images/optimized/shap_lime_comparison.png" alt="comparison SHAP and LIME" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 17.6: comparison SHAP and LIME методов объяснения - характеристики and применение*
+*Figure 17.6: Comparson SHAP and LIME explanation methods - characteristics and application*
 
 **comparison SHAP and LIME:**
-- **SHAP**: Теоретически обоснованный, согласованный, универсальный
-- **LIME**: Локальные аппроксимации, простота понимания, быстрота вычислений
-- **Корреляция**: Анализ согласованности между методами
-- **Применение**: Выбор подходящего метода for конкретной задачи
+**SHAP**: Theoretically sound, consistent, universal
+- **LIME**: Local approximations, simplicity of understanding, speed of calculation
+** Correlation**: Analysis of consistency between methods
+- ** Application**: Selection of the appropriate method for a specific task
 
 ```python
 import shap
 
 def explain_with_shap(predictor, X, instance_idx):
-"""Объяснение with помощью SHAP"""
+"Explanation with SHAP help""
 
  model = predictor.get_model_best()
 
  # create SHAP explainer
  if hasattr(model, 'predict_proba'):
-# for tree-based моделей
+# fortree-based models
  explainer = shap.TreeExplainer(model)
  shap_values = explainer.shap_values(X.iloc[instance_idx:instance_idx+1])
  else:
-# for других моделей
+# for other models
  explainer = shap.Explainer(model)
  shap_values = explainer(X.iloc[instance_idx:instance_idx+1])
 
-# Водопадный график for конкретного предсказания
+# Waterfall schedule for a specific prediction
  shap.waterfall_plot(explainer.expected_value, shap_values[0], X.iloc[instance_idx])
 
  return shap_values
 ```
 
-**Детальные описания параметров SHAP:**
+** Detailed descriptions of SHAP parameters:**
 
-- **`instance_idx`**: index экземпляра for объяснения
-- `0`: Первый экземпляр in датасете
-- `100`: 101-й экземпляр
-- `len(X)-1`: Последний экземпляр
-- Применение: выбор конкретного образца for Analysis
+- **'instance_idx'**: index copy for explanation
+`0': First copy in the dataset
+- `100': 101st copy
+- `len(X)-1': Last copy
+- Application: Selection of a specific sample for Analysis
 
-- **`X.iloc[instance_idx:instance_idx+1]`**: Выборка одного экземпляра
-- `instance_idx:instance_idx+1`: Срез for получения одного образца
-- `X.iloc[instance_idx]`: Альтернативный способ (но может вызвать ошибки)
-- Применение: SHAP требует 2D массив даже for одного образца
+- **'X.iloc[instance_idx:instance_idx+1] `**: Sample of one copy
+- `instance_idx:instance_idx+1': Cut for one sample
+- `X.iloc[instance_idx] `: Alternative (but may cause errors)
+Application: SHAP requires 2D array even for one sample
 
-- **`shap.TreeExplainer(model)`**: Explainer for tree-based моделей
-- Подходит for: Random Forest, XGBoost, LightGBM, CatBoost
-- not подходит for: Linear Regression, Neural networks
-- Преимущества: быстрые вычисления, точные результаты
-- Применение: оптимальный выбор for tree-based моделей
+- ** `schap.TreeExplaner(model)'**: Explaner for free-based models
+- Suitable for: Random Forest, XGBost, LightGBM, CatBoost
+-not suitable for: Linear Regulation, Neural Networks
+- Benefits: rapid calculations, accurate results
+- Application: best choice for free-based models
 
-- **`shap.Explainer(model)`**: Универсальный explainer
-- Подходит for: любых моделей
-- Медленнее: чем TreeExplainer
-- Точность: зависит from модели
-- Применение: когда TreeExplainer not подходит
+- ** `schap.Explaner(model)'**: Universal explaner
+- Suitable for: any models
+- Slower than TreExplaner.
+- Accuracy: Depends from the model
+- Application: When a TreeExplaner not fits
 
-- **`explainer.expected_value`**: Ожидаемое значение модели
-- Диапазон: зависит from задачи
-- Классификация: средняя вероятность класса
-- Регрессия: среднее Prediction
-- Применение: базовая линия for объяснения
+**/explainer.exspected_value'**: Model expected value
+- Range: Depends from task
+- Classification: average probability of class
+- Regression: average Pradition
+Application: basic line for explanation
 
-- **`shap_values[0]`**: SHAP значения for первого образца
-- Форма: (n_features,) for одного образца
-- Значения: могут быть положительными or отрицательными
-- Интерпретация: вклад каждого приsign in Prediction
-- Применение: анализ важности признаков
+- ** `schap_valutes[0]'**: SHAP values for the first sample
+- Form: (n_features,) for one sample
+- Values: may be positive or negative
+- Interpretation: the contribution of each input in Prevention
+Application: analysis of the importance of the topics
 
-- **`shap.waterfall_plot()`**: Водопадный график
-- `explainer.expected_value`: Базовая линия
-- `shap_values[0]`: SHAP значения
-- `X.iloc[instance_idx]`: Значения признаков
-- Применение: визуализация вклада каждого приsign
+- **'shap.waterfall_plot()'**: Waterfall schedule
+- `explaner.exspected_value': Baseline
+- `scap_valutes[0]': SHAP values
+- `X.iloc[instance_idx] `: Signal values
+Application: Visualization of each contribution
 
-- **`hasattr(model, 'predict_proba')`**: check поддержки вероятностей
-- `True`: Модель поддерживает predict_proba
-- `False`: Модель not поддерживает predict_proba
-- Применение: выбор подходящего explainer
+- **'hasattr(model, 'predict_proba')'**: check probabilities support
+- `True': Model supports predict_proba
+- `False': Model not supports predict_proba
+- Application: choice of suitable explaner
 
-**Дополнительные parameters SHAP:**
+** Additional parasmeters SHAP:**
 
-- **`shap.summary_plot(shap_values, X)`**: Сводный график
-- Показывает важность all признаков
-- Цвета показывают значения признаков
-- Применение: общий обзор важности признаков
+- ** `scap.summary_plot(scap_valutes, X)'**: Consolidated schedule
+- Shows the importance of all signs.
+- Colors show the values of the signs
+Application: an overview of the importance of the topics
 
-- **`shap.force_plot()`**: Силовой график
-- Показывает влияние каждого приsign
-- Интерактивная визуализация
-- Применение: детальный анализ одного предсказания
+- **/scap.force_plot()'**: Force schedule
+- Shows the influence of each of them.
+- Interactive visualization
+- Application: detailed analysis of one prediction
 
-- **`shap.bar_plot()`**: Столбчатый график
-- Простая визуализация важности
-- Сортировка on важности
-- Применение: быстрый обзор важности признаков
+- **'sap.bar_plot()'**: Table graph
+- Simple visualization of importance
+- Sorting on importance
+- Application: quick review of the importance of the topics
 
 ### 3. integrated Gradients
 
@@ -533,119 +533,119 @@ import tensorflow as tf
 import numpy as np
 
 def integrated_gradients(model, X, baseline=None, steps=50):
-"""Вычисление integrated Gradients"""
+"Accumulation of Integrated Gradients"
 
  if baseline is None:
  baseline = np.zeros_like(X)
 
-# create альфа значений
+# creative alpha values
  alphas = np.linspace(0, 1, steps)
 
-# Интерполяция между baseline and X
+# Interpolation between baseline and X
  interpolated = []
  for alpha in alphas:
  interpolated.append(baseline + alpha * (X - baseline))
 
  interpolated = np.array(interpolated)
 
-# Вычисление градиентов
+# Calculation of gradients
  with tf.GradientTape() as tape:
  tape.watch(interpolated)
  predictions = model(interpolated)
 
  gradients = tape.gradient(predictions, interpolated)
 
-# Интегрирование градиентов
+# Integration of gradients
  integrated_grads = np.mean(gradients, axis=0) * (X - baseline)
 
  return integrated_grads
 ```
 
-**Детальные описания параметров integrated Gradients:**
+** Detailed descriptions of parameters integrated Gradients:**
 
-- **`model`**: TensorFlow модель for Analysis
-- Должна быть: TensorFlow/Keras модель
-- not подходит for: sklearn модели, XGBoost
-- Требования: поддержка GradientTape
-- Применение: анализ нейронных networks
+- **'model'**: TensorFlow model for Analysis
+- Must be: TensorFlow/Keras model
+- not suitable for: sclearn model, XGBoost
+Requirements: Support to GradientTape
+Application: analysis of neural networks
 
-- **`X`**: Входные data for Analysis
-- Форма: (batch_size, n_features)
-- Тип: numpy array or TensorFlow tensor
-- Применение: data for объяснения
-- Рекомендация: нормализованные data
+- ** `X'**: Incoming data for Analysis
+- Form: (batch_sise, n_featurs)
+- Type: numpy array or TensorFlow sensor
+- Application: data for explanation
+- Recommendation: normalized data
 
-- **`baseline=None`**: Базовое значение for интерполяции
-- `None`: Автоматически устанавливается in нули
-- `np.zeros_like(X)`: Явное задание нулей
-- `np.mean(X, axis=0)`: Среднее значение on приsignм
-- `np.median(X, axis=0)`: Медианное значение
-- Применение: точка отсчета for объяснения
+- **'baseline= None'**: Base value for interpolation
+- `Nene': Automatically installed in zeros
+- `np.zeros_lake(X)': A clear zero task
+- `np.mean(X, axis=0)': Average on signature
+- `np.median(X, axis=0)': Median value
+- Application: Reference point for explanation
 
-- **`steps=50`**: Количество шагов интерполяции
-- `50`: Стандартное значение (баланс точности and скорости)
-- `20`: Быстрое вычисление (менее точно)
-- `100`: Точное вычисление (медленнее)
-- `200`: Очень точное вычисление (очень медленно)
+- **'steps=50'**: Number of interpolation steps
+- `50': Standard value (accuracy and speed balance)
+- `20': Quicker calculation (less accurate)
+`100': Exact calculation (slow)
+- `200': Very accurate calculation (very slow)
 
-- **`alphas = np.linspace(0, 1, steps)`**: Коэффициенты интерполяции
-- `0`: Начальная точка (baseline)
-- `1`: Конечная точка (X)
-- `steps`: Количество промежуточных точек
-- Применение: равномерное распределение точек интерполяции
+- **'alphas = np.linspace(0, 1, steps)'**: Interpolation coefficients
+`0': Initial point (baseline)
+`1': Endpoint (X)
+- `steps': Number of intermediate points
+Application: even distribution of interpolation points
 
-- **`interpolated`**: Интерполированные data
-- Форма: (steps, batch_size, n_features)
-- Содержит: промежуточные значения между baseline and X
-- Применение: вычисление градиентов in промежуточных точках
+- ** `interpolated'**: Interpolated data
+- Form: (steps, batch_size, n_featurs)
+- Contains: intermediate values between baseline and X
+- Application: Calculation of gradients in intermediate points
 
-- **`tf.GradientTape()`**: Контекст for вычисления градиентов
-- `tape.watch(interpolated)`: Отслеживание переменных
-- `predictions = model(interpolated)`: Предсказания модели
-- `gradients = tape.gradient()`: Вычисление градиентов
-- Применение: автоматическое дифференцирование
+- **'tf.GradientTape()'**: Context for calculating gradients
+`tape.watch(interpolated)': Traceability of variables
+- `predications = model(interpolated)': Model predictions
+- `gradiants = tape.gradient()': Calculation of gradients
+- Application: Automatic differentiation
 
-- **`gradients`**: Градиенты predictions on входным данным
-- Форма: (steps, batch_size, n_features)
-- Содержит: градиенты for каждого шага интерполяции
-- Применение: анализ чувствительности модели
+- **'gradients'**: Gradients preferences on input data
+- Form: (steps, batch_size, n_featurs)
+- Contains: gradients for each interpolation step
+- Application: model sensitivity analysis
 
-- **`np.mean(gradients, axis=0)`**: Средние градиенты
-- `axis=0`: Среднее on шагам интерполяции
-- Результат: (batch_size, n_features)
-- Применение: усреднение градиентов
+- **'np.mean(gradiants, axis=0)'**: Medium gradients
+- `axis=0': Medium on steps interpolation
+- Result: (batch_sise, n_features)
+Application: average gradients
 
-- **`(X - baseline)`**: Разность между данными and базовой линией
-- Форма: (batch_size, n_features)
-- Содержит: изменение каждого приsign
-- Применение: масштабирование градиентов
+- **(X-baseline) `**: The difference between the data and the base line
+- Form: (batch_sise, n_featurs)
+- Contains: modification of each signature
+Application: scaling gradients
 
-- **`integrated_grads`**: Интегрированные градиенты
-- Форма: (batch_size, n_features)
-- Содержит: важность каждого приsign
-- Интерпретация: вклад приsign in Prediction
-- Применение: объяснение решений модели
+- **/integrate_grads'**: Integrated gradients
+- Form: (batch_sise, n_featurs)
+- Contains: the importance of each sign.
+- Interpretation: the contribution of an input in Prevention
+- Application: explanation of model decisions
 
-**Дополнительные parameters integrated Gradients:**
+** Additional parasmeters integrated Gradients:**
 
-- **`method='riemann'`**: Метод интегрирования
-- `'riemann'`: Метод Римана (стандартный)
-- `'gausslegendre'`: Метод Гаусса-Лежандра (более точный)
-- `'trapezoidal'`: Трапециевидный метод (простой)
+- **'method='riemann'**: Integration method
+- `'ryemann': Riman method (standard)
+- `'gausslegendre': Gaussa-Legendra method (more precise)
+- `'trapezoidal': Trapecy (simple)
 
-- **`target_class=None`**: Целевой класс for многоклассовой классификации
-- `None`: Автоматический выбор
-- `0`: Первый класс
-- `1`: Второй класс
-- Применение: объяснение конкретного класса
+- **'target_class= None'**: Task Force for Multiclass Classification
+- `Nene': Automatic choice
+- `0': First grade
+`1': Second grade
+Application: Class-specific explanation
 
-## Специфичные methods for AutoML Gluon
+## Specific methhods for AutoML Gluon
 
 ### 1. Model-specific Interpretability
 
 ```python
 def get_model_specific_exPlanations(predictor):
-"""Получение объяснений специфичных for конкретной модели"""
+"To obtain explanations of specific for a particular model."
 
  model = predictor.get_model_best()
  model_name = predictor.get_model_best().__class__.__name__
@@ -653,17 +653,17 @@ def get_model_specific_exPlanations(predictor):
  exPlanations = {}
 
  if 'XGB' in model_name or 'LGB' in model_name or 'GBM' in model_name:
-# Tree-based модели
+# Three-based model
  exPlanations['feature_importance'] = model.feature_importances_
  exPlanations['tree_Structure'] = model.get_booster().get_dump()
 
  elif 'Neural' in model_name or 'TabNet' in model_name:
-# Нейронные сети
+# Neuronets
  exPlanations['attention_weights'] = model.attention_weights
  exPlanations['feature_embeddings'] = model.feature_embeddings
 
  elif 'Linear' in model_name or 'Logistic' in model_name:
-# Линейные модели
+# Linear models
  exPlanations['coefficients'] = model.coef_
  exPlanations['intercept'] = model.intercept_
 
@@ -674,7 +674,7 @@ def get_model_specific_exPlanations(predictor):
 
 ```python
 def explain_ensemble(predictor, X, method='weighted'):
-"""Объяснение ансамбля моделей"""
+"Explanation of the Models Ensemble."
 
  models = predictor.get_model_names()
  weights = predictor.get_model_weights()
@@ -685,18 +685,18 @@ def explain_ensemble(predictor, X, method='weighted'):
  model = predictor.get_model(model_name)
 
  if method == 'weighted':
-# Взвешенное объяснение
+# Weighted explanation
  if hasattr(model, 'feature_importances_'):
  importance = model.feature_importances_ * weight
  exPlanations[model_name] = importance
 
  elif method == 'shap':
-# SHAP for каждой модели
+# SHAP for each model
  explainer = shap.TreeExplainer(model)
  shap_values = explainer.shap_values(X)
  exPlanations[model_name] = shap_values * weight
 
-# Агрегация объяснений
+# Aggregation of explanations
  if method == 'weighted':
  ensemble_importance = np.sum(List(exPlanations.values()), axis=0)
  return ensemble_importance
@@ -706,22 +706,22 @@ def explain_ensemble(predictor, X, method='weighted'):
  return ensemble_shap
 ```
 
-## Визуализация объяснений
+♪ Visualization of explanations
 
-<img src="images/optimized/exPlanation_dashboard.png" alt="Дашборд объяснений" style="max-width: 100%; height: auto; display: block; margin: 20px auto;">
-*Рисунок 17.7: Комплексный дашборд объяснений ML-модели - важность признаков, SHAP, PDP, metrics*
+<img src="images/optimized/exPlannation_dashboard.png" alt="Explanatory Dashboard" style="max-width: 100 per cent; light: auto; display: block; marguin: 20px auto;">
+*Picture 17.7: ML Model's comprehensive explanation dashboard - importance of topics, SHAP, PDP, metrics*
 
-**components дашборда объяснений:**
-- **Feature importance**: Топ-10 важных признаков
-- **SHAP Summary**: Распределение SHAP значений
-- **Partial Dependence Plot**: dependency from ключевого приsign
-- **Model Performance**: Metrics performance модели
+**components dashboard explanation:**
+- **Feature importation**: Top-10 important features
+**SHAP Summary**: SHAP distribution of values
+- **Partial Rependence Plot**: dependency from key signature
+- **Model Performance**:Metrics performance model
 
 ### 1. Comprehensive ExPlanation Dashboard
 
 ```python
 def create_exPlanation_dashboard(predictor, X, y, instance_idx=0):
-"""create комплексной панели объяснений"""
+""create integrated explanation panel."
 
  fig, axes = plt.subplots(2, 3, figsize=(18, 12))
  fig.suptitle('Comprehensive Model ExPlanation Dashboard', fontsize=16)
@@ -742,7 +742,7 @@ def create_exPlanation_dashboard(predictor, X, y, instance_idx=0):
  ax2 = axes[0, 1]
  model = predictor.get_model_best()
  explainer = shap.TreeExplainer(model)
-shap_values = explainer.shap_values(X.iloc[:100]) # Первые 100 образцов
+Shap_valutes = explaner.scap_valutes(X.iloc[:100]) #First 100 samples
 
  shap.summary_plot(shap_values, X.iloc[:100], show=False, ax=ax2)
  ax2.set_title('SHAP Summary Plot')
@@ -759,7 +759,7 @@ shap_values = explainer.shap_values(X.iloc[:100]) # Первые 100 образ�
 
  # 4. Local ExPlanation (LIME)
  ax4 = axes[1, 0]
-# Здесь будет LIME объяснение for конкретного экземпляра
+# Here's a LIME explanation for a particular copy
  ax4.text(0.5, 0.5, 'LIME ExPlanation\nfor Instance',
  ha='center', va='center', transform=ax4.transAxes)
  ax4.set_title('Local ExPlanation (LIME)')
@@ -794,15 +794,15 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 def create_interactive_exPlanation(predictor, X, instance_idx=0):
-"""create интерактивных объяснений"""
+""create interactive explanations."
 
  model = predictor.get_model_best()
 
-# SHAP значения
+# SHAP values
  explainer = shap.TreeExplainer(model)
  shap_values = explainer.shap_values(X.iloc[instance_idx:instance_idx+1])
 
-# create интерактивного графика
+# creative interactive graphics
  fig = go.Figure()
 
  # Waterfall plot
@@ -826,106 +826,106 @@ def create_interactive_exPlanation(predictor, X, instance_idx=0):
  return fig
 ```
 
-## Практические рекомендации
+## Practical recommendations
 
-### 1. Выбор метода объяснения
+♪##1, choice of explanation method
 
 ```python
 def choose_exPlanation_method(model_type, data_size, interpretability_requirement):
-"""Выбор подходящего метода объяснения"""
+"The choice of the appropriate method of explanation."
 
  if interpretability_requirement == 'high':
-# Высокие требования к интерпретируемости
+# High requirements for interpretation
  if model_type in ['Linear', 'Logistic']:
  return 'coefficients'
  else:
  return 'lime'
 
  elif interpretability_requirement == 'medium':
-# Средние требования
+# Average requirements
  if data_size < 10000:
  return 'shap'
  else:
  return 'permutation_importance'
 
  else:
-# Низкие требования
+# Low requirements
  return 'feature_importance'
 ```
 
-**Детальные описания параметров выбора метода объяснения:**
+** Detailed description of the parameters for the choice of explanation method:**
 
-- **`model_type`**: Тип модели for Analysis
-- `'Linear'`: Линейная регрессия
-- `'Logistic'`: Logsстическая регрессия
-- `'RandomForest'`: Случайный лес
+- **'model_type'**: Type of model for Analysis
+- `'Linear': Linear regression
+- `'Logistic': Logsstic regression
+- `'RandomForest': Random Forest
  - `'XGBoost'`: XGBoost
-- `'Neuralnetwork'`: Нейронная сеть
+- `'Neuralnetwork': neural network
  - `'SVM'`: Support Vector Machine
 
-- **`data_size`**: Размер датасета
-- `< 1000`: Малый датасет (быстрые methods)
-- `1000-10000`: Средний датасет (баланс скорости and точности)
-- `10000-100000`: Большой датасет (эффективные methods)
-- `> 100000`: Очень большой датасет (масштабируемые methods)
+- **'data_size'**: Dateset Size
+- `< 1000': Small dataset (rapid methhods)
+- `1000-10000': Medium dataset (speed and accuracy balance)
+- `10000-100,000': Large dataset (effective methhods)
+- `> 100,000': Very large dateset (scaled methhods)
 
-- **`interpretability_requirement`**: Требования к интерпретируемости
-- `'high'`: Высокие требования (детальные объяснения)
-- `'medium'`: Средние требования (баланс detailsзации and скорости)
-- `'low'`: Низкие требования (быстрые объяснения)
+- ** `interpretability_requirement'**: Interpretation requirements
+- `'high'': High requirements (detail explanations)
+- `'mediam': Average requirements (balance of details and speed)
+- `'low': Low requirements (rapid explanations)
 
-- **`'coefficients'`**: Коэффициенты линейных моделей
-- Подходит for: Linear Regression, Logistic Regression
-- not подходит for: Tree-based, Neural networks
-- Преимущества: точные, быстрые, понятные
-- Применение: когда модель линейная
+- **'co-officents''**: Linear model coefficients
+- Suitable for: Linear Regulation, Logistic Regulation
+-not suitable for: Tree-based, Neural Networks
+- Benefits: precise, quick, understandable
+- Application: when linear
 
-- **`'lime'`**: LIME объяснения
-- Подходит for: любых моделей
-- Преимущества: локальные объяснения, понятность
-- Недостатки: медленные for больших данных
-- Применение: когда нужны детальные локальные объяснения
+- **'lime'**: LIME explanations
+- Suitable for: any models
+- Benefits: local explanations, clarity
+- Disadvantages: Slow for Big Data
+- Application: where detailed local explanations are needed
 
-- **`'shap'`**: SHAP объяснения
-- Подходит for: любых моделей
-- Преимущества: теоретически обоснованные, согласованные
-- Недостатки: медленные for больших данных
-- Применение: когда нужны точные глобальные объяснения
+- **'sap'**: SHAP explanations
+- Suitable for: any models
+- Benefits: theoretically sound, agreed
+- Disadvantages: Slow for Big Data
+- Application: When accurate global explanations are needed
 
-- **`'permutation_importance'`**: Перестановочная важность
-- Подходит for: любых моделей
-- Преимущества: быстрые, масштабируемые
-- Недостатки: менее точные чем SHAP
-- Применение: for больших датасетов
+- **'permutation_importance'**: Reshuffling importance
+- Suitable for: any models
+- Benefits: rapid, scalable
+- Disadvantages: less precise than SHAP
+- Application: for large datasets
 
-- **`'feature_importance'`**: Встроенная важность
-- Подходит for: Tree-based модели
-- not подходит for: Linear, Neural networks
-- Преимущества: очень быстрые, встроенные
-- Недостатки: только for tree-based моделей
-- Применение: когда модель tree-based
+- **'feature_importance'**: built-in importance
+- Suitable for: Tree-based models
+-not suitable for: Linear, Neural Networks
+- Benefits: Very fast, built-in
+- Deficiencies: only for free-based models
+- Application: when the model is free-based
 
-**Рекомендации on выбору метода:**
+** Recommendations on choice of method:**
 
-- **for линейных моделей**: `coefficients` (самый точный)
-- **for tree-based моделей**: `feature_importance` (быстрый) or `shap` (точный)
-- **for нейронных networks**: `shap` or `integrated_gradients`
-- **for больших данных**: `permutation_importance` (масштабируемый)
-- **for детальных объяснений**: `lime` (локальные) or `shap` (глобальные)
-- **for быстрых объяснений**: `feature_importance` (если доступно)
+- **for linear models**: `co-officents' (most accurate)
+- **for free-based models**: `feature_importance' (rapid) or `scap' (exact)
+- **for neural networks**: `scap' or `integrated_gradiants'
+- **for big data**: `permutation_importance'
+- **for detailed explanations**: `lime' (local) or `scap' (global)
+- **for quick explanations**: `feature_importance' (if available)
 
-### 2. validation объяснений
+♪##2. ♪ Validation of explanations ♪
 
 ```python
 def validate_exPlanations(predictor, X, y, exPlanation_method='shap'):
-"""validation качества объяснений"""
+"Validation of the quality of explanations."
 
-# create объяснений
+# creative explanations
  if exPlanation_method == 'shap':
  explainer = shap.TreeExplainer(predictor.get_model_best())
  shap_values = explainer.shap_values(X)
 
-# check согласованности
+# Check coherence
  consistency_score = shap.utils.consistency_score(shap_values)
 
  return {
@@ -939,7 +939,7 @@ def validate_exPlanations(predictor, X, y, exPlanation_method='shap'):
  X.values, feature_names=X.columns.toList()
  )
 
-# Тестирование on нескольких экземплярах
+# Testing on multiple copies
  fidelity_scores = []
  for i in range(min(10, len(X))):
  exPlanation = lime_explainer.explain_instance(
@@ -953,81 +953,81 @@ def validate_exPlanations(predictor, X, y, exPlanation_method='shap'):
  }
 ```
 
-**Детальные описания параметров validation объяснений:**
+** Detailed descriptions of the parameters of validation explanations:**
 
-- **`exPlanation_method='shap'`**: Метод объяснения for validation
-- `'shap'`: SHAP объяснения (рекомендуется)
-- `'lime'`: LIME объяснения
-- `'permutation'`: Перестановочная важность
-- `'feature_importance'`: Встроенная важность
+- ** `explanation_method='**: Method of explanation for validation
+- ``scap'': SHAP explanations (recommended)
+- ``lime'': LIME explanations
+- ``permutation'':
+- `'feature_importance': built-in importance
 
 - **`X, y`**: data for validation
-- `X`: Признаки for Analysis
-- `y`: Целевые переменные
-- Применение: тестирование качества объяснений
-- Рекомендация: использовать holdout set
+- `X': Signs for Analysis
+- `y': Target variables
+Application: Test of the quality of explanations
+- Recommendation: Use goldout set
 
-- **`shap.utils.consistency_score(shap_values)`**: Оценка согласованности SHAP
-- Диапазон: from 0 to 1
-- `> 0.8`: Высокая согласованность (хорошие объяснения)
-- `0.5-0.8`: Средняя согласованность (приемлемые объяснения)
-- `< 0.5`: Низкая согласованность (плохие объяснения)
-- Применение: check стабильности SHAP значений
+- **'sap.utils.consistency_score(scap_valutes)'**: SHAP Coherence Assessment
+- Range: from 0 to 1
+- `> 0.8': High coherence (good explanations)
+`0.5-0.8': Average consistency (acceptable explanations)
+- `< 0.5': Low coherence (bad explanations)
+- Application: check SHAP stability values
 
-- **`consistency_score > 0.8`**: Порог for высокого качества
-- `0.8`: Стандартный порог (рекомендуется)
-- `0.7`: Более мягкий порог
-- `0.9`: Более строгий порог
-- Применение: классификация качества объяснений
+- **'consistency_score > 0.8'**: High quality threshold
+`0.8': Standard threshold (recommended)
+- `0.7': Lower threshold
+- `0.9': More stringent threshold
+Application: Classification of the quality of explanations
 
-- **`min(10, len(X))`**: Количество экземпляров for тестирования LIME
-- `10`: Стандартное количество (баланс скорости and точности)
-- `5`: Быстрое тестирование (менее точно)
-- `20`: Точное тестирование (медленнее)
-- `len(X)`: Все экземпляры (очень медленно)
+**'min(10, Len(X)'**: Number of copies for LIME testing
+`10': Standard quantity (speed and accuracy balance)
+`5': Rapidly tested (less accurate)
+- `20': Precise testing (slow)
+- `len(X)': All copies (very slow)
 
-- **`exPlanation.score`**: Качество LIME объяснения
-- Диапазон: from 0 to 1
-- `> 0.8`: Высокое качество (хорошее объяснение)
-- `0.5-0.8`: Среднее качество (приемлемое объяснение)
-- `< 0.5`: Низкое качество (плохое объяснение)
-- Применение: оценка надежности LIME объяснения
+- **'explanation.score'**: Quality of Lime explanation
+- Range: from 0 to 1
+- `> 0.8': High quality (good explanation)
+`0.5-0.8': Average quality (acceptable explanation)
+- `< 0.5': Poor quality (bad explanation)
+- Application: assessment of the reliability of LIME explanations
 
-- **`np.mean(fidelity_scores)`**: Среднее качество LIME объяснений
-- Диапазон: from 0 to 1
-- Интерпретация: средняя точность объяснений
-- Применение: общая оценка качества LIME
+- **'np.mean(fieldity_scores)'**: Average quality of LIME explanations
+- Range: from 0 to 1
+- Interpretation: average accuracy of explanations
+- Application: general quality assessment of LIME
 
-- **`exPlanation_quality`**: Качественная оценка объяснений
-- `'high'`: Высокое качество (надежные объяснения)
-- `'medium'`: Среднее качество (приемлемые объяснения)
-- `'low'`: Низкое качество (ненадежные объяснения)
-- Применение: классификация качества объяснений
+** `explanation_quality'**: Qualitative assessment of explanations
+- `'high'': High quality (reliable explanations)
+- `'mediam': Average quality (acceptable explanations)
+- `'low'': Poor quality (unreliable explanations)
+Application: Classification of the quality of explanations
 
-**Дополнительные Metrics validation:**
+** Additional Metrics validation:**
 
-- **`stability_score`**: Стабильность объяснений
-- Тестирование on похожих экземплярах
-- Диапазон: from 0 to 1
-- Применение: check согласованности
+- ** `Stability_score'**: Stability of explanations
+- Testing on similar copies
+- Range: from 0 to 1
+- Application: check coherence
 
-- **`completeness_score`**: Полнота объяснений
-- Покрытие all важных признаков
-- Диапазон: from 0 to 1
-- Применение: check полноты
+- **'completence_score'**: Full explanation
+- Covering all important features
+- Range: from 0 to 1
+Application: check completeness
 
-- **`accuracy_score`**: Точность объяснений
-- Соответствие реальному поведению модели
-- Диапазон: from 0 to 1
-- Применение: check корректности
+- **'accuracy_score'**: Accuracy of explanations
+- Coherence with actual model behaviour
+- Range: from 0 to 1
+Application: heck of correctness
 
-## Заключение
+## Conclusion
 
-Интерпретируемость and объяснимость критически важны for:
+Inspirability and explanation are critical for:
 
-1. **Доверия к модели** - понимание Logsки принятия решений
-2. **Соответствия требованиям** - GDPR, AI Act, регулятивные требования
-3. **Отладки and улучшения** - выявление проблем and возможностей оптимизации
-4. **Бизнес-ценности** - понимание факторов, влияющих on результат
+1. ** Model Trust** - Understanding Logs of Decision Making
+2. ** Compliance** - GDPR, AI Act, regulatory requirements
+3. ** Debugs and improvements** - identification of problems and opportunities for optimization
+4. ** Business values** - understanding of the factors influencing the outcome
 
-Правильное использование методов интерпретируемости позволяет создавать not только точные, но and понятные and надежные ML-модели.
+The correct use of interpretation techniques allows the creation of nots only accurate but also understandable and reliable ML models.

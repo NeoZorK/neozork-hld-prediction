@@ -139,13 +139,13 @@ python run_Analysis.py demo --rule PHLD
 
 ### 🚀 Run and Test Guides / Run and Test Guides
 - [Complete Manual (English)](run-and-test-guides/english/complete-manual-en.md) - **NEW**: Complete run and test manual
-- [Complete Manual (Русский)](run-and-test-guides/russian/complete-manual-ru.md) - **NEW**: Complete guide on Launch and testing
+- [Complete Manual (Russian)](run-and-test-goods/russian/complete-manual-ru.md) - **NEW**:Complete Guide on Launch and testing
 - [Quick start (English)](run-and-test-guides/english/quick-start-en.md) - **NEW**: Quick start guide
-- [Quick start (Русский)](run-and-test-guides/russian/quick-start-ru.md) - **NEW**: Quick start
+- [Quick Start (Russian)](run-and-test-guards/russian/Quick-start-ru.md) - **NEW**:Quick Start
 - [testing Guide (English)](run-and-test-guides/english/testing-guide-en.md) - **NEW**: Comprehensive testing guide
-- [testing Guide (Русский)](run-and-test-guides/russian/testing-guide-ru.md) - **NEW**: guide on testing
+- [Testing Guide (Russian)](run-and-test-guides/russian/testing-guide-ru.md) - **NEW**: guide on testing
 - [deployment Guide (English)](run-and-test-guides/english/deployment-guide-en.md) - **NEW**: deployment guide
-- [deployment Guide (Русский)](run-and-test-guides/russian/deployment-guide-ru.md) - **NEW**: guide on deployment
+- [Deployment Guide (Russian)](run-and-test-guids/russian/deployment-guid-ru.md) - **NEW**: guide on diversion
 - [Troubleshooting](run-and-test-guides/Troubleshooting.md) - **NEW**: Common Issues and solutions
 - [FAQ](run-and-test-guides/faq.md) - **NEW**: Frequently Asked Questions
 
@@ -222,7 +222,7 @@ python run_Analysis.py demo --rule PHLD
 - [Interactive system README](interactive/README.md) - Complete system overView and Quick start guide
 - [Interactive system README Complete](interactive/README_COMPLETE.md) - Comprehensive implementation Plan and architecture details
 - [Strategic Plan (English)](interactive/INTERACTIVE_ML_TRADING_STRATEGY_Plan_EN.md) - Complete strategic Plan for robust profitable ML trading strategies
-- [Стратегический Plan (Русский)](interactive/INTERACTIVE_ML_TRADING_STRATEGY_Plan_RU.md) - Полный стратегический Plan for робастных прибыльных ML торговых стратегий
+- [Strategy Plan (Russian)](interactive/INTERACTIVE_ML_TRADING_STRATENY_Plan_RU.md) - Full Strategic Plan for Robust profit-making ML trade strategies
 - [Next Steps Plan](interactive/next-steps-Plan.md) - Production development Roadmap and implementation Plan
 - [Phase 4 Completion Summary](interactive/PHASE4_COMPLETION_SUMMARY.md) - Final completion summary for Phase 4 Advanced Features
 
@@ -242,7 +242,7 @@ python run_Analysis.py demo --rule PHLD
 
 ### Business Plans
 - [commercialization Plan (English)](business/commercialization-Plan-en.md) - Comprehensive commercialization strategy for SaaS platform
-- [Plan commercialization (Русский)](business/commercialization-Plan-ru.md) - Comprehensive strategy commercialization for SaaS platform
+- [Plan communication (Russian)] (business/creditation-Plan-ru.md) - Competing strategic communication for SaaS platform
 - [Pocket Hedge fund Launch Guide](business/POCKET_HEDGE_FUND_Launch.md) - **80% Functional**: Complete Launch instructions and implementation guide
 ### SaaS platform (100% Functional) ⭐ **COMPLETE**
 - [SaaS platform OverView](saas/index.md) - **NEW**: Complete Technical platform overView

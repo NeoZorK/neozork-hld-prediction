@@ -171,9 +171,9 @@ kubectl describe deployment <deployment-name>
 kubectl rollout undo deployment/<deployment-name>
 ```
 
-## 🔧 Отладочные team / Debug Commands
+## ♪ Debug Commands
 
-### check статуса системы / system Status check
+### check system status / system Status check
 ```bash
 # check UV / check UV
 python scripts/utilities/check_uv_mode.py --verbose
@@ -187,46 +187,46 @@ docker images
 docker volume ls
 ```
 
-### Анализ логов / Log Analysis
+### Laundry analysis / Log Analysis
 ```bash
-# View all логов / View all Logs
+# View all logs
 find Logs/ -name "*.log" -exec tail -f {} \;
 
-# Поиск ошибок / Search for errors
+# Searching for Errors
 grep -r "ERROR" Logs/
 
-# Поиск предупреждений / Search for warnings
+# Searching for Warnings / Search for Warnings
 grep -r "WARNING" Logs/
 
-# Анализ performance / Performance Analysis
+# Performance analysis / Performance Analysis
 grep -r "performance" Logs/
 ```
 
-### Отладочные скрипты / Debug Scripts
+### Debug Scripts
 ```bash
-# Отладка данных / Debug data
+# Data debug data
 python scripts/debug/debug_yfinance.py
 python scripts/debug/debug_binance.py
 python scripts/debug/debug_polygon.py
 
-# Отладка indicators / Debug indicators
+# Debug indicators
 python scripts/debug/debug_rsi_signals.py
 python scripts/debug/debug_wave_indicator.py
 
-# Отладка системы / Debug system
+# Debug system debug system
 python scripts/debug_docker_processes.py
 python scripts/mcp/debug_mcp_detection.py
 ```
 
-## 🛠️ Восстановление системы / system Recovery
+## ♪ Recovery system / system Recovery
 
-### Полное восстановление / Full Recovery
+### Full recovery / Full Recovery
 ```bash
-# Остановка all services / Stop all services
+# Stopping all services
 docker-compose down
 ./scripts/native-container/stop.sh
 
-# clean системы / clean system
+# Clear System / Clear System
 uv cache clean
 docker system prune -a
 ./scripts/native-container/cleanup.sh --all --force
@@ -240,36 +240,36 @@ cd src/admin_panel && npm install && cd ../..
 docker-compose up -d
 ```
 
-### Восстановление данных / data Recovery
+### Data recovery / data Recovery
 ```bash
-# Резервное копирование / Backup
+# Backup / Backup
 docker-compose exec neozork-hld pg_dump -U neozork_User neozork_fund > backup.sql
 
-# Восстановление / Restore
+# Recovery / Restore
 docker-compose exec neozork-hld psql -U neozork_User neozork_fund < backup.sql
 ```
 
-### Восстановление конфигурации / Configuration Recovery
+### Reconfiguring configuration / Configuring Recovery
 ```bash
-# Резервное копирование конфигурации / Backup configuration
+# Backup configration backup
 tar -czf config-backup.tar.gz .env docker-compose.yml k8s/
 
-# Восстановление конфигурации / Restore configuration
+# Restore configuration / Restore conference
 tar -xzf config-backup.tar.gz
 ```
 
-## 📞 Получение помощи / Getting Help
+## * Get help / Getting Help
 
-### Logs and диагностика / Logs and Diagnostics
+### Logs and diagnostics / Logs and Diagnostics
 ```bash
-# Сбор диагностической информации / Collect diagnostic information
+# Collection of diagnostic information / Collection Diagnostic information
 ./scripts/utilities/collect_diagnostics.sh
 
-# Отправка логов / Send Logs
+# Sending logs / Sand Logs
 ./scripts/utilities/send_Logs.sh
 ```
 
-### Сообщество / Community
+### Community / Community
 - **GitHub Issues**: https://github.com/Username/neozork-hld-Prediction/issues
 - **Discord**: https://discord.gg/neozork
 - **Telegram**: https://t.me/neozork_hld

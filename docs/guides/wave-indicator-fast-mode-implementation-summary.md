@@ -1,66 +1,66 @@
 # Wave Indicator Fast Mode Implementation Summary
 
-## 🎯 Задача
-Добавить поддержку wave indicator for работы with методом `-d fast`, основываясь on существующей функциональности for `-d fastest` режима.
+## ♪ Task
+Add a wave indicator for work with `-d fast' based on the existing functionality for `-d present' mode.
 
-## ✅ Выполненная Working
+♪ ♪ Worked out
 
-### 1. **Анализ существующей функциональности**
-- Изучена Working wave indicator in `-d fastest` режиме
-- Проанализирована Structure `dual_chart_fastest.py`
-- Исследована architecture `dual_chart_fast.py`
+###1. ** Analysis of existing functionality**
+- Researched by Working wave indexer in `-d present' mode
+- Analysis Structure `dual_chart_fast.py'
+- Researched anarchitecture `dual_chart_fast.py'
 
-### 2. **Реализация функциональности**
-- ✅ Добавлена function `_plot_wave_indicator` in `src/plotting/dual_chart_fast.py`
-- ✅ Добавлен hover tool for wave indicator
-- ✅ Зарегистрирована function in словаре `indicator_plot_functions`
-- ✅ Исправлена ошибка with `line_dash='dot'` → `line_dash='dotted'`
+###2. ** Functionality**
+- Added function `_plot_wave_indicator' in `src/plotting/dual_chart_fast.py'
+- Added Hoover tool for wave indicator
+- Registered in dictionary `indicator_plot_functions'
+- Corrected error with `line_dash='dot' `\line_dash='dotted' '
 
-### 3. **Тестирование**
-- ✅ Создан полный набор tests in `tests/plotting/test_wave_fast_mode.py`
-- ✅ 7 tests покрывают все аспекты функциональности
-- ✅ 100% покрытие тестами новой функциональности
-- ✅ Все тесты проходят успешно
+### 3. ** Test**
+== sync, corrected by elderman == @elder_man
+- 7 tests cover all aspects of functionality
+- 100 per cent test coverage for new functionality
+- All tests are successful
 
 ### 4. **documentation**
-- ✅ Создана подробная documentation in `docs/guides/wave-indicator-fast-mode-support.md`
-- ✅ Создано краткое резюме in `docs/guides/wave-indicator-fast-mode-implementation-summary.md`
+- Detailed documentation in `docs/guids/wave-indicator-fast-mode-support.md'
+- A short summary in `docs/guids/wave-indicator-fast-mode-implementation-summary.md' was created
 
 ## 🔧 Technical details
 
-### Добавленная функциональность
+### Added functionality
 ```python
 def _plot_wave_indicator(indicator_fig, source, display_df):
  """Plot Wave indicator on the given figure."""
- # Поддержка различных вариантов названий columns
- # Фильтрация сигналов (BUY/SELL/No Trade)
- # Отображение Wave, Fast Line, MA Line with правильными цветами
- # Обработка ошибок for отсутствующих данных
+# Support for different versions of names
+# Signal filtering (BUY/SELL/No Trade)
+# Wave, Fast Line, MA Line with correct colors
+# Processing errors for missing data
 ```
 
-### Визуальные элементы
-- **Wave Line (BUY)**: Красная линия (ширина: 2) for сигналов покупки
-- **Wave Line (SELL)**: Синяя линия (ширина: 2) for сигналов продажи
-- **Fast Line**: Красная пунктирная линия (ширина: 1)
-- **MA Line**: Светло-синяя линия (ширина: 1)
+### Visual elements
+- **Wave Line (BUY)**: Red Line (wide: 2) for purchase signals
+- **Wave Line (SELL)**: Blue Line (wide: 2) for sales signals
+- **Fast Line**: Red dotted line (wide: 1)
+- **MA Line**: Light blue line (width: 1)
 
-### Hover информация
-- Дата in формате datetime
-- Значения Wave, Fast Line, MA Line (6 знаков после запятой)
-- Тип сигнала (0=NOTRADE, 1=BUY, 2=SELL)
+### Home information
+- Date in Datame format
+- Wave, Fast Line, MA Line (6 decimal places)
+- Signal type (0=NOTRADE, 1=BUY, 2=SELL)
 
-## 🧪 Результаты тестирования
+♪ ♪ Test results
 
-### team for тестирования
+### Team for testing
 ```bash
-# Демо data
+# Demo data
 uv run run_Analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
 
-# Реальные data
+# Real data
 uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
 ```
 
-### Результаты tests
+### Test results
 ```
 ============================================ 7 passed in 0.42s =============================================
 ✅ Basic Wave indicator fast mode test passed
@@ -74,47 +74,47 @@ uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fast,22,11,4,fast,prime
 🎉 all Wave Fast Mode tests passed successfully!
 ```
 
-## 📁 Измененные файлы
+## ♪ Changed files
 
 ### 1. `src/plotting/dual_chart_fast.py`
-- Добавлена function `_plot_wave_indicator`
-- Добавлен hover tool for wave indicator
-- Зарегистрирована function in словаре indicators
-- Исправлена ошибка with line_dash параметром
+- Added function `_plot_wave_indicator'
+- Added house tool for wave indicator
+- Registered function in the indicators dictionary
+- Corrected error with line_dash parameter
 
-### 2. `tests/plotting/test_wave_fast_mode.py` (новый файл)
-- 7 tests for полного покрытия функциональности
-- Тестирование различных сценариев использования
-- check обработки ошибок
+###2. `tests/plotting/test_wave_fast_mode.py' (new file)
+- 7 tests for full functional coverage
+- Testing of different use scenarios
+- check error processing
 
-### 3. `docs/guides/wave-indicator-fast-mode-support.md` (новый файл)
-- Подробная техническая documentation
-- examples использования
-- describe визуальных элементов
+###3. `docs/guids/wave-indicator-fast-mode-support.md' (new file)
+- Detailed technical documentation
+- Examples of use
+- describe visual elements
 
-## 🎉 Результат
+## ♪ The result
 
-### ✅ Успешно выполнено
-- Wave indicator теперь Workingет with `-d fast` режимом
-- Полная совместимость with существующей функциональностью
-- Интерактивные Bokeh-чарты with hover информацией
-- Правильная фильтрация and отображение сигналов
-- 100% покрытие тестами
+### ♪ Successfully delivered
+- Wave indexer now Workinget with `-d fast' mode
+- Full compatibility with existing functionality
+- Interactive Bokeh charters with information
+- Correct filtering and display of signals
+- 100% test coverage
 
-### 🚀 Преимущества
-- **Полная поддержка режимов**: Wave indicator Workingет со allи режимами отображения
-- **Интерактивность**: Bokeh-чарты with zoom, pan, hover
-- **performance**: Быстрый рендеринг for больших наборов данных
-- **Консистентность**: Одинаковый внешний вид with fastest режимом
+♪ ♪ Benefits ♪
+- ** Full mode support**: Wave indexer Workinget with alli display modes
+- ** Interactive**: Bokeh charters with Zoom, Pan, Hover
+- **Performance**: Rapid negotiation for large data sets
+- **Consistence**: Same appearance with present mode
 
-## 📋 Статус проекта
+## ♪ Status of the project
 
-**Статус**: ✅ **COMPLETED**
-**Дата завершения**: 2025-08-20
-**Покрытие тестами**: 100%
-**documentation**: Полная
-**Готово к использованию**: Да
+** Status**: * * COMPLETED**
+** Completion date**: 2025-08-20
+** Test coverage**: 100%
+**documentation**: Full
+** Ready for use**: Yes
 
 ---
 
-**Wave indicator теперь полностью поддерживает `-d fast` метод and готов к использованию!** 🎯
+**Wave indexer now fully supports `-d fast' method and is ready for use!

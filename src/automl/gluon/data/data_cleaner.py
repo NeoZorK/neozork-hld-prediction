@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 data cleaner for AutoGluon Pipeline
-clean данных for пайплайна AutoGluon
+Free Data for the AutoGluon Pipline
 
 This module handles data cleaning and preprocessing to ensure
 high-quality data for AutoGluon training.
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 class datacleaner:
  """
  data cleaner for AutoGluon pipeline.
- clean данных for пайплайна AutoGluon.
+Free data for the AutoGluon Pipline.
  """
 
  def __init__(self):
@@ -27,7 +27,7 @@ class datacleaner:
  def clean_data(self, data: pd.dataFrame, target_column: str = None) -> Tuple[pd.dataFrame, Dict[str, Any]]:
  """
  clean data by removing infinity, NaN values, and other issues.
- Очистить data, удалив бесконечные значения, NaN and другие проблемы.
+Clear the data by removing endless values, NaN and other problems.
 
  Args:
  data: Input dataframe
@@ -143,7 +143,7 @@ class datacleaner:
  def validate_data(self, data: pd.dataFrame, target_column: str = None) -> Dict[str, Any]:
  """
  Validate data quality after cleaning.
- Проверить качество данных после очистки.
+Check data quality after cleaning.
 
  Args:
  data: dataframe to validate

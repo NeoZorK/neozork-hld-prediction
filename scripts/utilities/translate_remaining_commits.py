@@ -56,13 +56,13 @@ def create_msg_filter_script():
  message_translations = {
  'chore: update dependencies h11 and httpcore to new versions':
  'chore: update dependencies h11 and httpcore to new versions',
- 'feat: add new dependencies in проект':
+'feat: add new preferences in project':
  'feat: add new dependencies to project',
- 'fix: update .dockerignore and .gitignore files for исключения and включения документации':
+'fix: update .dockerignore and .gitignore profiles for deletion and inclusion of documentation':
  'fix: update .dockerignore and .gitignore files for exclusion and inclusion of documentation',
- 'feat: update documentation on концепции and стратегии высокодоходных ML systems':
+'feat: up-date documentation on the ML systems' concept and strategy:
  'feat: update documentation on Concepts and strategies of high-yield ML systems',
- 'feat: update documentation on примерам trading systems on basis WAVE2, SCHR Levels and blockchain integration':
+'feat: up-date documentation on examples of trafficking systems on basic WAVE2, SCHR Movements and blockchain integration':
  'feat: update documentation on examples of trading systems based on WAVE2, SCHR Levels and blockchain integration',
  }
 
@@ -109,55 +109,55 @@ def translate_message(message):
  # Replace common Russian words
  replacements = [
  (r'\\bdependencies\\b', 'dependencies'),
- (r'\\bдо new versions\\b', 'to new versions'),
- (r'\\bв проект\\b', 'to project'),
- (r'\\bисключения\\b', 'exclusion'),
- (r'\\bвключения\\b', 'inclusion'),
- (r'\\bконцепции\\b', 'Concepts'),
- (r'\\bстратегии\\b', 'strategies'),
- (r'\\bвысокодоходных\\b', 'high-yield'),
- (r'\\bпримерам\\b', 'examples'),
+(r'bto new versionsb', 'to new versions'),
+(r'b by project b', 'to project'),
+(r'b `b', 'exclusion'),
+(r'bclusion,b', 'inclusion'),
+(r'b Concepts `b', 'Concepts'),
+(r'b strategy `b', 'Strategies'),
+(r' high-income, b', 'high-yeld'),
+(r'b's examples `b', 'examples'),
  (r'\\bbased on\\b', 'based on'),
- (r'\\bтеоретических обоснований\\b', 'theoretical foundations'),
+(r'btheoretical justifications `b', 'theoretical foundations'),
  (r'\\bAnalysis\\b', 'Analysis'),
- (r'\\bуровней поддержки\\b', 'support levels'),
- (r'\\bсопротивления\\b', 'resistance'),
- (r'\\bструктуры документации\\b', 'documentation Structure'),
- (r'\\bдобавлены новые разделы\\b', 'add new sections'),
- (r'\\bбэктестингу\\b', 'backtesting'),
- (r'\\bруководства\\b', 'guide'),
- (r'\\bс установкой\\b', 'with installation'),
- (r'\\bокружения\\b', 'environment'),
- (r'\\bдобавлен HTML-interface\\b', 'add HTML interface'),
- (r'\\bдля учебника\\b', 'for tutorial'),
- (r'\\bдобавлена полная система заработка\\b', 'add complete earning system'),
- (r'\\bв месяц\\b', 'per month'),
- (r'\\bСоздана детальная система\\b', 'Created Detailed system'),
- (r'\\bс рабочим кодом from идеи to деплоя\\b', 'with Working code from idea to deployment'),
- (r'\\bДобавлены все components\\b', 'Added all components'),
- (r'\\bмодели\\b', 'models'),
- (r'\\bиндикаторы\\b', 'indicators'),
- (r'\\bблокчейн-integration\\b', 'blockchain integration'),
- (r'\\bРеализована система автоматического retraining\\b', 'Implemented automatic retraining system'),
- (r'\\bДобавлен полный Monitoring\\b', 'Added full Monitoring'),
- (r'\\bсистема алертов\\b', 'alert system'),
- (r'\\bСоздана documentation\\b', 'Created documentation'),
- (r'\\bна Launch\\b', 'on Launch'),
- (r'\\bиспользованию\\b', 'usage'),
- (r'\\bСистема готова\\b', 'system ready'),
- (r'\\bтестирования\\b', 'testing'),
- (r'\\bблокчейн testnet\\b', 'blockchain testnet'),
- (r'\\bсоздан полный учебник\\b', 'created complete tutorial'),
- (r'\\bна созданию\\b', 'on Creating'),
- (r'\\bробастных прибыльных\\b', 'robust profitable'),
- (r'\\bПростой example\\b', 'Simple example'),
- (r'\\bСложный example\\b', 'Advanced example'),
- (r'\\bMACD ок\\b', 'MACD OK'),
- (r'\\bУлучшить фильтрацию данных\\b', 'Improve data filtering'),
- (r'\\bна дате\\b', 'by date'),
- (r'\\bв CSV\\b', 'in CSV'),
- (r'\\bJSON файлах\\b', 'JSON files'),
- (r'\\bв requirments\\b', 'to requirements'),
+(r'by-level support `b', 'support relief'),
+(r'b Resistance',b', 'resistance'),
+(r'bstructure of documentation `b', 'documentation Structure'),
+(r'b' adds new sections `b', 'add new sections'),
+(r'backtesting, b', 'backtesting'),
+(r'brotherbook'b', 'guid'),
+(r'`b with installation `b', 'with installation'),
+(r'conditions `b', 'environment'),
+(r'branded HTML-interface'b, 'add HTML interface'),
+(r'b for textbook `b', 'for tutorial'),
+(r'b' complete system of earnings added,b','add complete development system'),
+(r'b in month `b', 'per month'),
+(r'b The detailed system `b', 'Created Detailed System')
+(r'`b with working code from ideas to deb', 'with Working code from idea to definition'),
+(r'b Added all components b', 'Added all components'),
+(r'b models `b', 'models'),
+(r'bindicators `b', 'indicators'),
+(r'blockchin-integration'b', 'blockchain integration'),
+(r'`b Automatic retraining system implemented,b', 'implemented automatic retraining system'),
+(r'b Added full Monitoringb', 'Added Full Monitoring'),
+(r'b's allernet of `b', 'alert system'),
+(r'b Created document'b', 'Created document'),
+(r'bna Launch'b', 'on Launch'),
+(r'buse,b', 'usage'),
+(r'b System ready `b', 'system ready'),
+(r'btest 'b', 'testing'),
+(r'r'blockchin testnet'b', 'blockchain testnet'),
+(r'b's created the full textbook `b', 'created complete tutorial'),
+(r'bna create 'b', 'on Creation'),
+(r'brobrobatic profit-making,b', 'robus profitable'),
+(r'b Simple exampleb', 'Simple example'),
+(r'b Complex exampleb', 'Advanced example'),
+(r'bMACD okay,b', 'MACD OK'),
+(r'b Improve data filtering `b', 'Improve data filtering'),
+(r'b', 'by date'),
+(r'b of CSV'b', 'in CSV'),
+(r'bJSON files `b', 'JSON files'),
+(r'b'b' notes'b', 'to requests'),
  ]
 
  for pattern, replacement in replacements:
@@ -239,7 +239,7 @@ def main():
  print("\n✓ Successfully translated all remaining commit messages!")
  print("\nNext steps:")
  print("1. ReView the changes: git log --oneline -20")
- print("2. check for remaining Russian text: git log --format='%s' | grep -E '[А-Яа-яЁё]'")
+print("2. check for remating Russian text: git log --format='%s' grep-E'[A-Ya-Yo]')
  print("3. If everything looks good, Push: git Push --force origin v0.5.8")
  else:
  print(f"\n✗ Error during filter-branch:", file=sys.stderr)

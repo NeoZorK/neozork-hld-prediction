@@ -1,73 +1,73 @@
-# workflow process Analysis данных: Генерация признаков, корреляционный анализ and анализ важности признаков
+#workflow process Analysis data: Signal generation, correlation analysis and importance analysis
 
-## Обзор
+## Overview
 
-Этот документ описывает рекомендуемую последовательность проведения комплексного Analysis данных in проекте Neozork HLD Prediction, with фокусом on генерацию признаков, корреляционный анализ and анализ важности признаков.
+This document describes the recommended sequence of integrated Analysis data in the Neozork HLD Preparation project, with the focus on the generation of topics, correlation analysis and the importance of the topics.
 
-## Рекомендуемая последовательность Analysis
+## Recommended sequence of Analysis
 
-### 1. Генерация признаков (Первый этап)
+*## 1. Signal generation (First phase)
 
-**Почему первым:**
-- Создает основу for all последующих анализов
-- Генерирует "сырье" из исходных данных
-- Без признаков невозможно провести корреляционный анализ or анализ важности
+♪ Why first ♪
+- Creates the basis for all subsequent analyses
+- Generates raw material from the raw data
+- Without signs, it is impossible to perform correlation or importance analysis.
 
-**Что включает:**
-- Technical индикаторы (SMA, EMA, RSI, MACD, Bollinger Bands)
-- Статистические признаки (волатильность, скос, эксцесс)
-- Моментные признаки (ROC, Momentum)
-- Ценовые признаки (доходность, изменения цен)
-- Объемные признаки
+** Includes:**
+- Technical indicators (SMA, EMA, RSI, MACD, Ballinger Bands)
+- Statistical indicators (volatility, scalp, excession)
+- Momentum (ROC, Momentum)
+Price indicators (income, price changes)
+- Cumulative characteristics
 
-**Реализация:**
+** Implementation:**
 ```python
-# Используя существующий FeatureEngineer
+# Using existing FeatureEngineer
 features = feature_engineer.generate_features(
  market_data,
  feature_types=['Technical', 'statistical', 'momentum', 'price', 'volume']
 )
 ```
 
-### 2. Корреляционный анализ (Второй этап)
+♪##2 ♪ Correlation analysis (second stage)
 
-**Почему после генерации признаков:**
-- Анализирует взаимосвязи между allи сгенерированными приsignми
-- Выявляет мультиколлинеарность (высокую корреляцию между приsignми)
-- Определяет, What признаки дублируют друг друга
+**Why after the signs are generated:**
+- Analyses the relationships between alli of the generated pigs.
+- Finds multicollinearity (high correlation between the mounds)
+- Defines what signs duplicate each other.
 
-**Что включает:**
-- Матрица корреляций Пирсона
-- Анализ мультиколлинеарности
-- Выявление сильно коррелированных пар признаков
-- Рекомендации on удалению избыточных признаков
+** Includes:**
+Pearson Correlation Matrix
+- Multicollinearity analysis
+- Identification of highly correlate pairs of topics
+- Recommendations on the removal of excess signs
 
-**Реализация:**
+** Implementation:**
 ```python
-# Используя существующие инструменты корреляционного Analysis
+# Using existing correlation tools
 correlation_Analysis = correlation_analyzer.analyze_correlations(
  features,
  methods=['pearson', 'spearman']
 )
 ```
 
-### 3. Анализ важности признаков (Третий этап)
+♪##3 ♪ Signal importance analysis (third stage)
 
-**Почему in конце:**
-- Оценивает вклад каждого приsign in целевую переменную
-- Выявляет наиболее информативные признаки
-- Выбирает оптимальный набор признаков for моделирования
+**Why at the end:**
+- Assesses the contribution of each input into the target variable
+- Identifys the most informative signs.
+- Selects the best set of indicators for modelling
 
-**Что включает:**
-- Важность признаков Random Forest
-- Важность признаков XGBoost
-- Анализ взаимной информации
-- Статистические тесты значимости
-- Отбор признаков
+** Includes:**
+- Importance of Random Forest signs
+- Importance of XGBost signs
+- Analysis of mutual information
+- Statistical relevance tests
+- Selection of features
 
-**Реализация:**
+** Implementation:**
 ```python
-# Используя существующий FeatureSelector
+# Using the existing FeatureSelector
 importance_Analysis = feature_importance_analyzer.analyze_importance(
  features,
  target=target_variable,
@@ -75,22 +75,22 @@ importance_Analysis = feature_importance_analyzer.analyze_importance(
 )
 ```
 
-## Полный workflow process
+# Full workflow process
 
 ```python
-# 1. Генерация признаков
+# 1. Signal generation
 features = feature_engineer.generate_features(
  market_data,
  feature_types=['Technical', 'statistical', 'momentum', 'price', 'volume']
 )
 
-# 2. Анализ корреляций
+♪ 2. Correlation analysis
 correlation_Analysis = correlation_analyzer.analyze_correlations(
  features,
  methods=['pearson', 'spearman']
 )
 
-# 3. Анализ важности признаков
+# 3. Analysis of the importance of the topics
 importance_Analysis = feature_importance_analyzer.analyze_importance(
  features,
  target=target_variable,
@@ -98,88 +98,88 @@ importance_Analysis = feature_importance_analyzer.analyze_importance(
 )
 ```
 
-## integration with существующими инструментами
+## integration with existing tools
 
-### Доступные components
+### Available components
 
-1. **Генерация признаков:**
- - Класс `FeatureEngineer` in `src/pocket_hedge_fund/advanced_analytics/core/feature_engineer.py`
+1. **Generation of the topics:**
+- Class `FeatureEngineer' in `src/pocket_hedge_fund/advanced_analytics/core/feature_englisher.py'
  - `RealMLModels.create_features()` in `src/ml/real_ml_models.py`
 
-2. **Корреляционный анализ:**
+2. **Coordination analysis:**
  - `MultiMarketManager.get_cross_market_Analysis()` in `src/global/multi_market_integration.py`
  - `QuantitativeResearcher.analyze_correlations()` in `src/research/quantitative_research.py`
 
-3. **Анализ важности признаков:**
- - Класс `FeatureSelector` in `src/pocket_hedge_fund/advanced_analytics/ml/feature_selector.py`
+3. **Analysis of the importance of the signs:**
+- Class `FeatureSelector' in `src/pocket_hedge_fund/advanced_analytics/ml/feature_selector.py'
  - `PricePredictor._get_feature_importance()` in `src/pocket_hedge_fund/ml/price_predictor.py`
 
-### Точки интеграции
+### Integration points
 
-- **Статистический анализ:** `stat_Analysis.py`
-- **Анализ временных рядов:** `time_Analysis.py`
-- **Финансовый анализ:** `finance_Analysis.py`
+- **Statistical analysis:** `stat_analysis.py'
+- **Analysis of time series:** `time_Anallysis.py'
+- ** Financial analysis:** `finance_Anallysis.py'
 
-## Structure хранения данных
+##Structure data storage
 
 ```
 data/
 ├── fixed/
-│ ├── features/ # Сгенерированные признаки
-│ ├── correlations/ # Матрицы корреляций
-│ └── feature_importance/ # Результаты Analysis важности
+\\\\\features/ #Functioned indicators
+* Correlation matrices
+* Results of Analysis of importance
 ├── Analysis/
-│ ├── feature_generation/ # Reportы on генерации признаков
-│ ├── correlation_Analysis/ # Reportы on корреляционному анализу
-│ └── importance_Analysis/ # Reportы on анализу важности
+* Reports on the generation of signs
+* Reports on correlation analysis
+\\\\importance_Anallysis/ # Reports on the analysis of importance
 ```
 
-## Лучшие практики
+## Best practices
 
-1. **Начните with чистых данных:**
- - Use data из директории `data/fixed/`
- - Обеспечьте качество данных перед генерацией признаков
+1. ** Start with clean data:**
+- Use data from the directory `data/fixed/'
+- Ensure the quality of the data before producing the signs
 
-2. **Итеративный process:**
- - Генерация признаков → Анализ корреляций → remove избыточных признаков
- - Повторяйте to достижения оптимального набора признаков
+2. **Inertial process:**
+- Generation of the indicators ♪ Analysis of correlations ♪ remove excess signs ♪
+- Repeat to achieve the optimum set of indicators
 
-3. **Документирование:**
- - Сохраняйте все промежуточные результаты
- - Ведите метаdata for воспроизводимости
- - Документируйте решения on инженерии признаков
+3. **Documentation:**
+- Save all intermediate results.
+- Lead the metadata for reproducibility
+Document the decisions on the engineering of the signs.
 
 4. **validation:**
- - Кросс-валидируйте результаты Analysis важности признаков
- - Тестируйте стабильность корреляций во времени
- - Мониторьте performance признаков in моделях
+- Cross-calibre the results of Analysis of the importance of the signs.
+Test the stability of correlations over time.
+- Monitor the performance of signs in models
 
-## Ожидаемые результаты
+## Expected results
 
-1. **Генерация признаков:**
- - Комплексный набор технических, статистических and моментных признаков
- - Правильно отформатированные and валидированные data признаков
+1. **Generation of the topics:**
+- Integrated set of technical, statistical and instant indicators
+- Correctly shaped and validated data indicators
 
-2. **Корреляционный анализ:**
- - Выявление избыточных признаков
- - Рекомендации on сокращению признаков
- - Понимание взаимосвязей между приsignми
+2. **Coordination analysis:**
+- Identification of excess features
+- Recommendations on the reduction of indicators
+- Understanding the interrelationships between the primates
 
-3. **Анализ важности признаков:**
- - Ранжированный List наиболее важных признаков
- - Оптимальное подмножество признаков for моделирования
- - Рекомендации on отбору признаков
+3. **Analysis of the importance of the signs:**
+- The injured List is the most important features.
+- Optimal set of indicators for modelling
+- Recommendations on the selection of topics
 
-## Следующие шаги
+## Next steps
 
-1. Реализовать workflow process, используя существующие components проекта
-2. Создать автоматизированные пайплайны for последовательности Analysis
-3. РазWorkingть инструменты визуализации for каждого этапа Analysis
-4. Интегрировать with существующими инструментами Analysis (`stat_Analysis.py`, `time_Analysis.py`, `finance_Analysis.py`)
+1. Implement workflow process using existing project partners
+2. Create automated pypples for the Analysis sequence
+3. Distorting visualization tools for each phase of Analysis
+4. Integrate with existing tools Analysis (`stat_Analisis.py', `time_Analisis.py', `finance_Anallysis.py')
 
-## Ссылки
+## References
 
-- [documentation on инструментам Analysis](Analysis-tools.md)
-- [guide on инженерии признаков](feature-engineering.md)
-- [guide on статистическому анализу](statistical-Analysis.md)
-- [guide on анализу временных рядов](time-series-Analysis.md)
+- [documentation on tools Analysis] (Analysis-tools.md)
+- [Guide on Signs Engineering] (feature-englishing.md)
+- [Guide on statistical analysis] (statistical-analysis.md)
+- [on time series analysis] (time-series-analysis.md)

@@ -109,9 +109,9 @@ def main() -> None:
  opened_path = None
  if args.save_plots:
  if result.method == "ceemdan":
- # Сохраняем on одному файлу on IMF and отдельный for остатка
+# Save on one file on IMF and separate for the balance
  generated = plot_and_save_ceemdan_per_imf(result, plot_dir, file_stem, locale_ru=bool(args.ru))
- # Выводим пояснение CEEMDAN in консоль
+# We conclude the CEEMDAN explanation in the console
  print(get_ceemdan_exPlanation(bool(args.ru)))
  opened_path = generated[0] if generated else None
  else:

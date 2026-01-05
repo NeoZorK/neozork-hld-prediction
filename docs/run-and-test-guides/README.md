@@ -20,13 +20,13 @@ docs/run-and-test-guides/
  └── deployment-guide-en.md # deployment guide
 ```
 
-## 🚀 Быстрый доступ / Quick Access
+## ♪ Quick access / Quick Access
 
 ### Russian Version / Russian Version
 - [Complete guide](russian/complete-manual-ru.md) - Detailed guide on all components
-- [Quick start](russian/quick-start-ru.md) - Launch за 5 minutes
-- [guide on testing](russian/testing-guide-ru.md) - Все о тестировании
-- [guide on deployment](russian/deployment-guide-ru.md) - Развертывание in продакшне
+- [Quick Start] (Russian/Quick-start-ru.md) - Launch for 5 minutes
+- [Guide on test] (russian/testing-guide-ru.md) - All about testing
+- [Guide on release] (russian/development-guid-ru.md) - Deployment in sales
 
 ### English Version
 - [Complete Manual](english/complete-manual-en.md) - Comprehensive guide for all components
@@ -34,38 +34,38 @@ docs/run-and-test-guides/
 - [testing Guide](english/testing-guide-en.md) - Everything about testing
 - [deployment Guide](english/deployment-guide-en.md) - Production deployment
 
-## 📋 components системы / system components
+## ♪ components of the system / system components
 
-### Основные components / main components
-1. **Основной анализ** (`run_Analysis.py`) - Ручное построение графиков / Manual charting
-2. **Интерактивная система** (`interactive/`) - ML торговые стратегии / ML trading strategies
-3. **SaaS platform** (`src/saas/`) - Облачная platform / Cloud platform
+### Basic components / Main components
+1. ** Basic analysis** ( `run_Analis.py') - Manual charting / Manual charting
+2. ** Interactive system** (`interactive/') - ML trade strategies / ML trading strategies
+3. **Saaas platform** (`src/saas/') - Cloud tableform / Cloud tableform
 4. **Pocket Hedge fund** (`src/pocket_hedge_fund/`) - Hedge fund / Hedge fund
 5. **mobile application** (`src/mobile_app/`) - React Native application / React Native app
-6. **Админ панель** (`src/admin_panel/`) - Vue.js админка / Vue.js admin panel
-7. **Monitoring** (`src/Monitoring/`) - Система Monitoringа / Monitoring system
+6. **Admin panel** (`src/admin_panel/') - Vue.js admin / Vue.js admin penel
+7. **Monitoring** (`src/Monitoring/') - Monitoring system
 
-### Тестирование / testing
-- **Многопоточное тестирование** / Multithreaded testing
-- **Автоматическое определение окружения** / Automatic environment detection
-- **Покрытие кода** / Code coverage
-- **Специализированные тесты** / Specialized tests
+### Test / Testing
+- ** Multiple test** / Multihreaded test
+- **Automatic environmental definition**/Automatic environmental release
+- ** Code cover**/ Code control
+- **Specialized tests** / Specialized tests
 
-### Развертывание / deployment
-- **Локальное развертывание** / Local deployment
-- **Docker контейнеры** / Docker containers
-- **Apple Silicon нативные контейнеры** / Apple Silicon native containers
-- **Kubernetes кластеры** / Kubernetes clusters
-- **Продакшн развертывание** / Production deployment
+### Deploy/deployment
+- ** Local deployment**/ Local release
+- **Docker containers**
+- **Apple Silicon fixed containers** / Apple Silicon native containers
+- **Kubernetes clusters** / Kubernetes clusters
+- ** Production deployment**/ Production release
 
-## 🛠️ Полезные team / Useful Commands
+## ♪ Useful team / Useful Commands
 
 ### Launch / Launch
 ```bash
-# Основной анализ / main Analysis
+# Basic analysis / Main Analysis
 uv run run_Analysis.py demo --rule PHLD
 
-# Интерактивная система / Interactive system
+# Interactive system / Interactive system
 uv run python interactive/neozork.py
 
 # SaaS platform / SaaS platform
@@ -75,9 +75,9 @@ uv run python run_saas.py
 uv run python run_pocket_hedge_fund.py
 ```
 
-### Тестирование / testing
+### Test / Testing
 ```bash
-# Все тесты / all tests
+# All tests / all tests
 uv run pytest tests -n auto
 
 # Safe mode / Safe mode
@@ -92,25 +92,25 @@ uv run pytest tests/ --cov=src -n auto
 # Launch services / Launch services
 docker-compose up -d
 
-# Остановка / Stop
+# Stop / Stop
 docker-compose down
 
-# Тесты in Docker / tests in Docker
+# Tests in Docker / tests in Docker
 docker-compose exec neozork-hld uv run pytest tests/ -n auto
 ```
 
-## 🆘 Поддержка / Support
+## Support / Support
 
 ### Troubleshooting / Troubleshooting
-- [Troubleshooting](Troubleshooting.md) - Common Issues and решения
+- [Troubleshooting] (Troubleshooting.md) - Common Issues and Decisions
 - [FAQ](faq.md) - Frequently Asked Questions
 
-### Дополнительные ресурсы / Additional Resources
-- [Project Structure](project-Structure.md) - Подробная Project Structure
-- [Основная documentation](../index.md) - main page документации
+### Additional resources / Additional Resources
+- [Project Structure] (project-Structure.md) - Detailed Project Structure
+- [Main documentation](../index.md) - main page documentation
 
 ---
 
-**Версия / Version**: 1.0.0
-**Последнее update / Last Updated**: $(date)
-**Автор / Author**: NeoZork Development team
+** Version / Version**: 1.0.
+** Last update / Last Update**: $(data)
+**Author**: NeoZork Development Team

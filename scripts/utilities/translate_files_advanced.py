@@ -17,17 +17,17 @@ from collections import OrderedDict
 TRANSLATIONS = OrderedDict([
  # Documentation headers and titles
  (r'^# installation (.+)$', r'# installation \1'),
- (r'^## Почему (.+)$', r'## Why \1'),
- (r'^### (.+) последствия (.+)$', r'### \1 Consequences \2'),
- (r'^#### (.+) проблемы (.+)$', r'#### \1 Issues \2'),
- (r'^#### Ошибки (.+)$', r'#### \1 Errors'),
- (r'^#### Проблемы (.+)$', r'#### \1 Issues'),
+(r'### Why $(.+)', r'## Who \1'),
+(r'###(.+) consequences (.+) $', r'## \1 Consequences \2'),
+(r'####(.+) problems (.+) $, r'### \1 Issues \2,
+(r'##### Mistakes (.+) $', r'### \1 Erors'),
+(r'##### Problems(.+)$, r'### \1 Issues'),
 
  # Common documentation phrases
  (r'AutoML Gluon installation', 'AutoML Gluon installation'),
  (r'Why Proper installation is Critical', 'Why Proper installation is Critical'),
  (r'Real Consequences of Incorrect installation', 'Real Consequences of Incorrect installation'),
- (r'Что происходит при неправильной установке\?', 'What Happens with Incorrect installation?'),
+(r'What happens when the installation is wrong?', 'What Happens with Incorporct installation?'),
  (r'Troubleshooting', 'Troubleshooting'),
  (r'Common Issues', 'Common Issues'),
  (r'installation Issues', 'installation Issues'),
@@ -43,7 +43,7 @@ TRANSLATIONS = OrderedDict([
 
  # Code comments
  (r'Comprehensive solution for', 'Comprehensive solution for'),
- (r'Решает (\d+) основные задачи', r'Solves \1 main tasks'),
+(r'solution of main tasks', r'solves \1 Main tasks'),
  (r'Prediction', 'Prediction'),
  (r'Author:', 'Author:'),
  (r'Version:', 'Version:'),
@@ -58,49 +58,49 @@ TRANSLATIONS = OrderedDict([
  (r'between them', 'between them'),
 
  # Technical terms
- (r'\bобновление\b', 'update'),
- (r'\bдобавление\b', 'add'),
- (r'\bудаление\b', 'remove'),
- (r'\bисправление\b', 'fix'),
- (r'\bулучшение\b', 'improve'),
- (r'\bсоздание\b', 'create'),
- (r'\bнастройка\b', 'configuration'),
- (r'\bустановка\b', 'installation'),
- (r'\bруководство\b', 'guide'),
- (r'\bдокументация\b', 'documentation'),
- (r'\bпример\b', 'example'),
- (r'\bпримеры\b', 'examples'),
- (r'\bописание\b', 'describe'),
- (r'\bинструкция\b', 'instruction'),
- (r'\bинструкции\b', 'instructions'),
- (r'\bзависимость\b', 'dependency'),
- (r'\bзависимости\b', 'dependencies'),
- (r'\bмодуль\b', 'module'),
- (r'\bмодули\b', 'modules'),
- (r'\bфункция\b', 'function'),
- (r'\bфункции\b', 'functions'),
- (r'\bпараметр\b', 'parameter'),
- (r'\bпараметры\b', 'parameters'),
- (r'\bконфигурация\b', 'configuration'),
- (r'\bнастройки\b', 'Settings'),
- (r'\bиндикаторов\b', 'indicators'),
+(r'\update 'b', 'update'),
+(r'\bb', 'add'),
+(r'\b', 'remove'),
+(r'\bc,b',fix'),
+(r'\b', 'improve'),
+(r'\bform 'b', 'create'),
+(r'\bd', 'configuration'),
+(r'\b', 'installation'),
+(r'\bd 'b', 'guid'),
+(r'\bdocumentation_b', 'documentation'),
+(r'`b', 'example'),
+(r'\bexamples')
+(r'\b', 'describe'),
+(r'\b', 'instruction'),
+(r'\b instruction 'b', 'instructions'),
+(r'\b', 'dependency'),
+(r'\b', 'dependency'),
+(r'\bmodule\b', 'module'),
+(r'\bmoduli\b', 'modules'),
+(r'\bfunction\b', 'function'),
+(r'\bfunctions\b', 'functions'),
+(r'\bparameter 'b', 'parameter'),
+(r'\bparameter_b', 'parameters'),
+(r'\bconfiguration 'b', 'configration'),
+(r'\b', 'Settings'),
+(r'\indicators `b', 'indicators'),
  (r'\bcheck\b', 'check'),
  (r'\bclean\b', 'clean'),
  (r'\bcache\b', 'cache'),
  (r'\breinstall\b', 'reinstall'),
 
  # Common words (lower priority)
- (r'\bдля\b', 'for'),
- (r'\bпо\b', 'on'),
- (r'\bс\b', 'with'),
- (r'\bи\b', 'and'),
- (r'\bили\b', 'or'),
- (r'\bв\b', 'in'),
- (r'\bна\b', 'on'),
- (r'\bот\b', 'from'),
- (r'\bдо\b', 'to'),
- (r'\bне\b', 'not'),
- (r'\bустановлен\b', 'installed'),
+(r'\b for `b', 'for'),
+(r'\bpo\b', 'on'),
+(r'\bs\b', 'with'),
+(r'bi 'b', 'and'),
+(r'\bili\b', 'or'),
+(r'\bw\b', 'in'),
+(r'\bna\b', 'on'),
+(r'\bot 'b', 'from'),
+(r'\bdo\b', 'to'),
+(r'\bne\b', 'not'),
+(r'\b', 'installed'),
 
  # Additional phrases for mixed text
  (r'basis', 'basis'),
@@ -358,7 +358,7 @@ def should_exclude_file(file_path: str) -> bool:
 
 def has_russian_text(text: str) -> bool:
  """check if text contains Cyrillic characters."""
- return bool(re.search(r'[А-Яа-яЁё]', text))
+Return bool (re.search(r'[A-Ya-Yo], text))
 
 
 def find_files_with_russian(root_dir: str = '.') -> List[Tuple[str, int]]:

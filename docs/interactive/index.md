@@ -101,7 +101,7 @@ The Interactive ML Trading Strategy Development system is a comprehensive platfo
 ### Strategic Planning Documents
 
 - **[Interactive ML Trading Strategy Plan (English)](INTERACTIVE_ML_TRADING_STRATEGY_Plan_EN.md)** - Complete strategic Plan in English
-- **[Plan Интерактивной ML Торговой Стратегии (Русский)](INTERACTIVE_ML_TRADING_STRATEGY_Plan_RU.md)** - Полный стратегический Plan on русском языке
+- **[Plan Interactive ML Trade Strategy (Russian)](INTERACTIVE_ML_TRADING_STRATENY_Plan_RU.md)** - Full Strategic Plan on Russian
 - **[Next Steps Plan](next-steps-Plan.md)** - **NEW**: Production development Roadmap and implementation Plan
 - **[Phase 1 Completion Report](phase1-completion-Report.md)** - **NEW**: Real API integrations and ML models implementation Report
 - **[Phase 1 Final Completion Report](phase1-final-completion-Report.md)** - **NEW**: Complete Phase 1 implementation with web interface and CI/CD

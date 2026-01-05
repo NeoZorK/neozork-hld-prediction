@@ -1,158 +1,158 @@
-# 18. Полная система заработка 100%+ in месяц - from идеи to деплоя
+# 18. Full system of earnings 100%+in month - from ideas to deeds
 
-**Goal:** Создать полностью рабочую system with доходностью более 100% in месяц with детальным кодом and инструкциями.
+**Goal:** Create a fully operational system with returns of more than 100 per cent in month with detailed code and instructions.
 
-## 🎯 Concept системы
+♪ ♪ ♪ Connect system
 
-**Theory:** Concept системы представляет собой фундаментальный подход к созданию высокодоходных ML-систем, основанный on анализе проблем традиционных Hedge fundов and применении революционных решений. Это критически важно for понимания основ создания прибыльных систем.
+**Theory:**Concept system is a fundamental approach to the development of high-income ML systems based on the analysis of the problems of traditional Hedge Foundations and the application of revolutionary solutions, which is critical for understanding the foundations of profitable systems.
 
-**Почему Concept системы важна:**
-- **Понимание проблем:** Обеспечивает понимание проблем традиционных подходов
-- **Революционные решения:** Предоставляет революционные решения
-- **Практическое применение:** Обеспечивает практическое применение знаний
-- **Высокая доходность:** Критически важно for достижения высокой доходности
+**Why the Concept System is important:**
+- ** Understanding the issues:** Understanding traditional approaches
+- ** Revolutionary solutions:** Provides revolutionary solutions
+- ** Practical application:** Practical application of knowledge
+- ** High return:** Critically important for high returns
 
-### Почему 90% Hedge fundов зарабатывают менее 15% in год?
+### Why 90 percent of Hedge Funds earn less than 15% in a year?
 
-**Theory:** Анализ проблем Hedge fundов критически важен for понимания ограничений традиционных подходов and разработки революционных решений. Это основа for создания высокоэффективных систем.
+**Theory:** The Hedge Fund analysis is critical for understanding the limitations of traditional approaches and for developing revolutionary solutions, which is the basis for building high-impact systems.
 
-**Почему анализ проблем важен:**
-- **Понимание ограничений:** Обеспечивает понимание ограничений традиционных подходов
-- **Выявление возможностей:** Помогает выявить возможности for улучшения
-- **Разработка решений:** Критически важно for development эффективных решений
-- **Избежание ошибок:** Помогает избежать типичных ошибок
+** Why analysis of problems is important:**
+- ** Understanding the limitations:** Provides an understanding of the limitations of traditional approaches
+- ** Identification of opportunities:** Helps identify opportunities for improvement
+- ** Decision-making: ** Critical for development of effective solutions
+- ** Avoiding mistakes:** Helps avoid typical mistakes
 
-**Основные проблемы:**
+** Key issues:**
 
-1. **retraining - Workingют только on исторических данных**
- - **Theory:** retraining представляет собой критическую проблему, когда модели Workingют только on исторических данных and not могут адаптироваться к новым условиям
- - **Почему это проблема:** Обеспечивает нестабильность and низкую эффективность
- - **Плюсы:** Может обеспечить высокую точность on исторических данных
- - **Disadvantages:** Нестабильность, низкая адаптивность, непредсказуемость
+1. **retraining - Working only on historical data**
+- **Theory:** retraining is a critical problem when the Working models only on historical data and not can adapt to new conditions
+- **Why is the problem:** Provides instability and low efficiency
+- **plus:** Can provide high accuracy on historical data
+- **Disadvantages:** Instability, low adaptive, unpredictable
 
-2. **Отсутствие адаптации - not адаптируются к изменениям**
- - **Theory:** Отсутствие адаптации критически ограничивает эффективность систем in изменяющихся рыночных условиях
- - **Почему это проблема:** Обеспечивает нестабильность and низкую эффективность
- - **Плюсы:** Простота реализации
- - **Disadvantages:** Нестабильность, низкая адаптивность, устаревание
+2. ** Lack of adaptation - not adapted to changes**
+- **Theory:** Lack of adaptation severely limits the effectiveness of systems in changing market conditions
+- **Why is the problem:** Provides instability and low efficiency
+- ** Plus:** Simplicity of implementation
+- **Disadvantages:** Instability, low adaptation, obsolescence
 
-3. **Неправильный риск-менеджмент - игнорируют риски**
- - **Theory:** Неправильный риск-менеджмент критически увеличивает риски потерь and снижает долгосрочную эффективность
- - **Почему это проблема:** Обеспечивает высокие риски and потенциальные потери
- - **Плюсы:** Может обеспечить высокую доходность in краткосрочной перспективе
- - **Disadvantages:** Высокие риски, потенциальные большие потери, нестабильность
+3. ** Wrong risk management - ignore risks**
+- **Theory:** Wrong risk management critically increases risk of loss and reduces long-term effectiveness
+- **Why the problem:** Ensure high risks and potential losses
+- **plus:** May provide high returns in the short term
+- **Disadvantages:** High risks, potential high losses, instability
 
-4. **Упущение краткосрочных возможностей - фокус только on долгосрочных трендах**
- - **Theory:** Упущение краткосрочных возможностей критически снижает потенциальную доходность системы
- - **Почему это проблема:** Ограничивает возможности for заработка
- - **Плюсы:** Стабильность, предсказуемость
- - **Disadvantages:** Ограниченная доходность, упущенные возможности
+4. ** Loss of short-term opportunities - focus only on long-term trends**
+- **Theory:** Loss of short-term opportunities critically reduces the potential returns of the system
+- What's the problem?
+- ** Plus:** Stability, predictability
+- **Disadvantages:** Limited returns, missed opportunities
 
-5. **Отсутствие комбинации - используют только один подход**
- - **Theory:** Отсутствие комбинации критически ограничивает эффективность and робастность системы
- - **Почему это проблема:** Обеспечивает ограниченную эффективность and низкую робастность
- - **Плюсы:** Простота реализации
- - **Disadvantages:** Ограниченная эффективность, низкая робастность, уязвимость к изменениям
+5. ** Lack of combination - only one approach is used**
+- **Theory:** The absence of a combination severely limits the effectiveness and efficiency of the system
+- **Why is the problem:** Provides limited efficiency and low efficiency
+- ** Plus:** Simplicity of implementation
+- **Disadvantages:** Limited efficiency, low efficiency, vulnerability to change
 
-### Наша революционная стратегия
+### Our revolutionary strategy
 
-**Theory:** Революционная стратегия представляет собой комплексный подход к созданию высокодоходных ML-систем, объединяющий все современные техноLogsи and methods. Это критически важно for достижения доходности 100%+ in месяц.
+**Theory:** The Revolutionary Strategy is an integrated approach to the development of high-income ML systems that integrates all modern technoLogs and methhods. This is critical for achieving a 100 per cent+-in-month return.
 
-**Почему революционная стратегия важна:**
-- **Комплексность:** Обеспечивает комплексный подход к торговле
-- **Инновации:** Использует самые современные техноLogsи
-- **Эффективность:** Обеспечивает максимальную эффективность
-- **Доходность:** Критически важно for достижения высокой доходности
+**Why a revolutionary strategy matters:**
+- ** Integration:** Provides an integrated approach to trade
+- **Innovations:** Uses state-of-the-art technoLogsy
+- ** Effectiveness:** Ensures maximum efficiency
+- ** Income:** Critical for high returns
 
-**Ключевые принципы:**
+**key principles:**
 
-- **Мультиактивный подход - торговля on all активах simultaneously**
- - **Theory:** Мультиактивный подход критически важен for диверсификации рисков and максимизации возможностей
- - **Почему важно:** Обеспечивает диверсификацию and максимизацию возможностей
- - **Плюсы:** Диверсификация рисков, максимизация возможностей, стабильность
- - **Disadvantages:** Сложность управления, высокие требования к ресурсам
+- ** Multi-stakeholder approach - trade on all assets simultaneous**
+- **Theory:** Multi-stakeholder approach is critical for diversifying risks and maximizing opportunities
+- ** Why is it important:** Ensure diversification and maximization of opportunities
+- **plus:** Diversification of risks, maximization of opportunities, stability
+- **Disadvantages:** Management complexity, high resource requirements
 
-- **МультиTimeframesый анализ - from M1 to D1**
- - **Theory:** МультиTimeframesый анализ критически важен for полного понимания рыночной динамики
- - **Почему важно:** Обеспечивает полное понимание рыночной динамики
- - **Плюсы:** Полное понимание, точность сигналов, адаптивность
- - **Disadvantages:** Сложность Analysis, высокие требования к данным
+- ** MultiTimeframe analysis - from M1 to D1**
+- **Theory:** MultiTimeframe analysis is critical for a full understanding of market dynamics
+- ** Why is it important:** Provides a full understanding of market dynamics
+- ** Plus: ** Full understanding, accuracy of signals, adaptiveness
+- **Disadvantages:** Anallysis complexity, high data requirements
 
-- **Комбинирование indicators - WAVE2 + SCHR Levels + SCHR SHORT3**
- - **Theory:** Комбинирование indicators критически важно for improving accuracy and робастности сигналов
- - **Почему важно:** Обеспечивает высокую точность and робастность
- - **Плюсы:** Высокая точность, робастность, надежность
- - **Disadvantages:** Сложность реализации, потенциальные конфликты
+== sync, corrected by elderman == @elder_man
+- **Theory:** Combination of indicators is critical for improving signals and signal efficiency.
+- What's important is:** Ensures a high degree of accuracy and efficiency?
+- ** Plus:** High accuracy, fatality, reliability
+- **Disadvantages:** Feasibility, potential conflicts
 
-- **Адаптивная система - самообучение and адаптация**
- - **Theory:** Адаптивная система критически важна for поддержания эффективности in изменяющихся условиях
- - **Почему важно:** Обеспечивает поддержание эффективности
- - **Плюсы:** Адаптивность, долгосрочная эффективность, самообучение
- - **Disadvantages:** Сложность реализации, потенциальная нестабильность
+- ** Adaptation system - self-learning and adaptation**
+- **Theory:** Adaptation system is critical for maintaining efficiency in changing circumstances
+- ** Why is it important:** Ensures that effectiveness is maintained
+- ** Plus:** Adaptation, long-term effectiveness, self-learning
+- **Disadvantages:** Implementation complexity, potential instability
 
-- **Продвинутый риск-менеджмент - защита from потерь**
- - **Theory:** Продвинутый риск-менеджмент критически важен for защиты капитала and долгосрочного успеха
- - **Почему важно:** Обеспечивает защиту капитала and долгосрочный успех
- - **Плюсы:** Защита капитала, долгосрочный успех, стабильность
- - **Disadvantages:** Потенциальные ограничения доходности
+- ** Advanced risk management - protection from loss**
+- **Theory:** Advanced risk management is critical for protecting capital and long-term success
+- ** Why is it important:** Provides capital protection and long-term success
+- **plus:** Capital protection, long-term success, stability
+- **Disadvantages:** Potential income limitations
 
-- **Блокчейн-integration - DeFi for увеличения доходности**
- - **Theory:** Блокчейн-integration критически важна for создания дополнительных источников дохода
- - **Почему важно:** Обеспечивает дополнительные источники дохода
- - **Плюсы:** Дополнительные источники дохода, инновации, автоматизация
- - **Disadvantages:** Высокие риски, сложность интеграции
+- ** Block-integration - DeFi for increased returns**
+- **Theory:** Blocking-integration is critical for creating additional sources of income
+- ** Why is it important:** Provides additional sources of income
+- **plus:** Additional sources of income, innovation, automation
+- **Disadvantages:** High risks, complexity of integration
 
-- **Автоматическое retraining - еженедельное update моделей**
- - **Theory:** Автоматическое retraining критически важно for поддержания актуальности моделей
- - **Почему важно:** Обеспечивает поддержание актуальности моделей
- - **Плюсы:** Актуальность моделей, автоматизация, эффективность
- - **Disadvantages:** Сложность реализации, потенциальные сбои
+- ** automatic retraining - weekly update models**
+- **Theory:** Automatic retraining is critical for maintaining model relevance
+- ** Why is it important:** Maintains the validity of models
+- ** Plus: ** model relevance, automation, efficiency
+- **Disadvantages:** Implementation complexity, potential failures
 
-## Стратегия достижения 100%+ доходности
+## Strategy to achieve 100%+return
 
-**Theory:** Стратегия достижения 100%+ доходности представляет собой комплексный подход к созданию высокодоходных ML-систем, основанный on комбинации множественных активов, Timeframes and indicators. Это критически важно for достижения целевой доходности.
+**Theory:** The 100%+return strategy is an integrated approach to high-income ML systems based on a combination of multiple assets, Times and indicators. This is critical to achieving target returns.
 
-**Почему стратегия достижения доходности важна:**
-- **Целевая доходность:** Обеспечивает достижение целевой доходности
-- **Комплексность:** Обеспечивает комплексный подход
-- **Эффективность:** Обеспечивает максимальную эффективность
-- **Робастность:** Критически важно for создания робастных систем
+**Why the return strategy is important:**
+- ** Target return:** Achieves target returns
+- ** Integration:** Provides an integrated approach
+- ** Effectiveness:** Ensures maximum efficiency
+- ** Robinity:** Critically important for the creation of robotic systems
 
-### 1. Мультиактивный подход
+♪##1 ♪ Multiactive approach
 
-**Theory:** Мультиактивный подход представляет собой стратегию торговли on множественных активах simultaneously for диверсификации рисков and максимизации возможностей. Это критически важно for создания стабильных and высокодоходных систем.
+**Theory:** Multiplier approach is a trading strategy on multiple assets simultaneously for diversifying risks and maximizing opportunities; this is critical for creating stable and high-income systems.
 
-**Почему мультиактивный подход важен:**
-- **Диверсификация рисков:** Обеспечивает диверсификацию рисков
-- **Максимизация возможностей:** Обеспечивает максимизацию возможностей
-- **Стабильность:** Обеспечивает стабильность доходности
-- **Scalability:** Критически важно for масштабирования системы
+**Why a multi-active approach is important:**
+- ** Risk diversification:** Provides risk diversification
+- ** Maximization of opportunities:** Ensures maximization of opportunities
+- **Stability:** Ensures income stability
+- **Scalability:** Critically important for scaling the system
 
-**Плюсы:**
-- Диверсификация рисков
-- Максимизация возможностей
-- Стабильность доходности
-- Масштабируемость
+** Plus:**
+- Diversification of risks
+- Maximization of opportunities
+- Steady returns
+- Scale
 
 **Disadvantages:**
-- Сложность управления
-- Высокие требования к ресурсам
-- Потенциальные конфликты
+- Management difficulty
+- High resource requirements
+- Potential conflicts
 
-**Детальное объяснение реализации мультиактивного подхода:**
+** Detailed explanation of the implementation of the multi-active approach:**
 
-Мультиактивный подход основан on принципе диверсификации, который является фундаментальным in современном портфельном управлении. Вместо концентрации on одном активе or классе активов, мы Creating system, которая simultaneously торгует on различных рынках: криптовалютном, валютном, fundsом and товарном. Это позволяет нам:
+The multi-pronged approach is based on the principle of diversification, which is fundamental in modern portfolio management. Instead of concentrating on one asset or asset class, we create a system that sells on multiple markets: cryptoval, currency, funds and commodities.
 
-1. **Снизить общий риск портфеля** - когда один актив падает, другие могут расти
-2. **Максимизировать возможности** - мы not упускаем прибыльные движения on любом рынке
-3. **Создать стабильный доход** - диверсификация обеспечивает более предсказуемую доходность
-4. **Масштабировать system** - можем добавлять новые активы без кардинального изменения архитектуры
+1. ** Reduce overall portfolio risk** - When one asset falls, others may increase
+2. ** Maximize opportunities** - We are missing profit-making movements on any market
+3. ** Build stable income** - Diversification provides more predictable returns
+4. ** Scale system** - can add new assets without a fundamental change in architecture
 
-**Практическая реализация включает:**
-- create отдельных стратегий for каждого актива and Timeframe
-- Management корреляциями между активами
-- Динамическое перераспределение капитала между активами
-- Monitoring performance каждого актива
+** Practical implementation includes:**
+- specific strategies for each asset and Timeframe
+- Management correlations between assets
+- Dynamic transfer of capital between assets
+- Monitoring performance of each asset
 
 ```python
 import numpy as np
@@ -165,31 +165,31 @@ warnings.filterwarnings('ignore')
 
 class MultiAssetStrategy:
  """
- Comprehensive strategy торговли on множественных активах
+Commercial strategy for trade on multiple assets
 
- Эта стратегия реализует мультиактивный подход, позволяющий торговать
- simultaneously on различных рынках for диверсификации рисков and
- максимизации возможностей получения прибыли.
+This strategy implements a multi-pronged approach to trade
+Simultaneous on different markets for risk diversification
+Maximizing profit opportunities.
 
- Ключевые особенности:
- - Поддержка 4 классов активов: криптовалюты, валюты, акции, товары
+Key features:
+- Support for 4 asset classes: crypts, currencies, shares, goods
  - Working on 6 Timeframes: M1, M5, M15, H1, H4, D1
- - Автоматическое create стратегий for каждой комбинации
- - Интегрированное Management рисками
- - Адаптивное перераспределение капитала
+- Automatic review of strategies for each combination
+- Integrated Management Risks
+- Adaptation of capital transfers
  """
 
  def __init__(self, initial_capital: float = 100000):
  """
- Инициализация мультиактивной стратегии
+Initiating a multi-pronged strategy
 
  Args:
- initial_capital: Начальный капитал for trading
+institutional_capital: seed capital for trading
  """
  self.initial_capital = initial_capital
  self.current_capital = initial_capital
 
- # Определение активов on классам
+# Definition of assets on classes
  self.assets = {
  'crypto': ['BTC-USD', 'ETH-USD', 'BNB-USD', 'ADA-USD', 'SOL-USD'],
  'forex': ['EURUSD=X', 'GBPUSD=X', 'USDJPY=X', 'AUDUSD=X', 'USDCAD=X'],
@@ -197,36 +197,36 @@ class MultiAssetStrategy:
  'commodities': ['GC=F', 'SI=F', 'CL=F', 'NG=F', 'PL=F'] # Gold, Silver, Oil, Gas, Platinum
  }
 
- # Timeframeы for Analysis
+# Timeframes for Analysis
  self.Timeframes = ['1m', '5m', '15m', '1h', '4h', '1d']
 
- # Словарь for хранения стратегий
+# A dictionary for storing strategies
  self.strategies = {}
 
- # Management рисками
+# Management risks
  self.risk_Management = {
- 'max_position_size': 0.1, # Максимум 10% капитала on одну позицию
- 'max_drawdown': 0.15, # Максимальная просадка 15%
- 'stop_loss': 0.02, # Стоп-лосс 2%
- 'take_profit': 0.06 # Тейк-профит 6%
+'max_position_size': 0.1 # Maximum 10% capital on one item
+'max_drawdown': 0.15, # Maximum 15% draught
+'stop_loss': 0.02, # Stop-loss 2%
+'take_profit': 0.06 #Take profile 6%
  }
 
- # История торговли
+# Trade history
  self.trade_history = []
  self.performance_metrics = {}
 
  def create_asset_strategies(self) -> None:
  """
- create стратегий for каждого актива and Timeframe
+strategy for each asset and Timeframe
 
- Этот метод создает индивидуальную стратегию for каждой комбинации
- актива and Timeframe. Каждая стратегия включает:
- - Модель machine learning
- - Набор признаков
- - parameters управления рисками
- - Историю performance
+This method creates an individual strategy for each combination
+Each strategy includes:
+- Machine lightning model
+- Set of indicators
+- Risk management alternatives
+- History of performance
  """
- print("create стратегий for all активов and Timeframes...")
+"preint strategies for all assets and Times..."
 
  total_strategies = 0
  for asset_type, symbols in self.assets.items():
@@ -237,36 +237,36 @@ class MultiAssetStrategy:
  self.strategies[strategy_name] = self._create_strategy(symbol, Timeframe, asset_type)
  total_strategies += 1
  except Exception as e:
- print(f"Ошибка создания стратегии {strategy_name}: {e}")
+Print(f) Error in creating strategy {strategic_name}: {e})
  continue
 
- print(f"Создано {total_strategies} стратегий")
+"Prent(f)" Created by [Total_Strategies]
 
  def _create_strategy(self, symbol: str, Timeframe: str, asset_type: str) -> Dict:
  """
- create индивидуальной стратегии for актива and Timeframe
+specific individual strategy for an asset and Timeframe
 
  Args:
- symbol: Символ актива
+Symbol: A symbol of an asset
  Timeframe: Timeframe
- asset_type: Тип актива (crypto, forex, stocks, commodities)
+Asset_type: Type of asset (crypto, forex, stocks, communities)
 
  Returns:
- Словарь with параметрами стратегии
+The dictionary with the parameters of the strategy
  """
- # Загрузка исторических данных
+# Uploading historical data
  data = self._load_historical_data(symbol, Timeframe)
 
  if data is None or len(data) < 100:
- raise ValueError(f"Недостаточно данных for {symbol} {Timeframe}")
+Raise ValueError(f "Insufficient data for {symbol} {Timeframe}")
 
- # create модели machine learning
+# Create model machine lightning
  model = self._create_ml_model(symbol, Timeframe, data)
 
- # create признаков
+♪ Create signs
  features = self._create_features(data)
 
- # parameters управления рисками for данного типа актива
+# Risk management parameters for the asset type
  risk_limits = self._create_risk_limits(asset_type, Timeframe)
 
  return {
@@ -290,15 +290,15 @@ class MultiAssetStrategy:
 
  def _load_historical_data(self, symbol: str, Timeframe: str, period: str = "1y") -> Optional[pd.dataFrame]:
  """
- Загрузка исторических данных for актива
+Uploading historical data for an asset
 
  Args:
- symbol: Символ актива
+Symbol: A symbol of an asset
  Timeframe: Timeframe
- period: Период данных
+period: Data period
 
  Returns:
- dataFrame with историческими данными
+DataFrame with historical data
  """
  try:
  ticker = yf.Ticker(symbol)
@@ -307,50 +307,50 @@ class MultiAssetStrategy:
  if data.empty:
  return None
 
- # clean данных
+# Clear data
  data = data.dropna()
  data.columns = [col.lower() for col in data.columns]
 
  return data
 
  except Exception as e:
- print(f"Ошибка загрузки данных for {symbol}: {e}")
+print(f" Data upload error for {symbol}: {e})
  return None
 
  def _create_ml_model(self, symbol: str, Timeframe: str, data: pd.dataFrame):
  """
- create модели machine learning for стратегии
+of the model machine learning for strategy
 
  Args:
- symbol: Символ актива
+Symbol: A symbol of an asset
  Timeframe: Timeframe
- data: Исторические data
+Data: Historical data
 
  Returns:
- Обученная модель
+Trained model
  """
  from sklearn.ensemble import RandomForestClassifier
  from sklearn.model_selection import train_test_split
  from sklearn.preprocessing import StandardScaler
 
- # Подготовка данных for обучения
+# Preparation of data for training
  features = self._prepare_features(data)
  target = self._create_target(data)
 
  if len(features) < 50:
  return None
 
- # Разделение on обучающую and testsую выборки
+# Separation on learning and test sample
  X_train, X_test, y_train, y_test = train_test_split(
  features, target, test_size=0.2, random_state=42
  )
 
- # Масштабирование признаков
+# The magnitude of the signs
  scaler = StandardScaler()
  X_train_scaled = scaler.fit_transform(X_train)
  X_test_scaled = scaler.transform(X_test)
 
- # create and обучение модели
+# creative and model learning
  model = RandomForestClassifier(
  n_estimators=100,
  max_depth=10,
@@ -368,37 +368,37 @@ class MultiAssetStrategy:
 
  def _prepare_features(self, data: pd.dataFrame) -> np.ndarray:
  """
- Подготовка признаков for модели
+Preparation of indicators for the model
 
  Args:
- data: Исторические data
+Data: Historical data
 
  Returns:
- Массив признаков
+Signal mass
  """
  features = []
 
- # Technical индикаторы
+# Technical indicators
  data['sma_20'] = data['close'].rolling(20).mean()
  data['sma_50'] = data['close'].rolling(50).mean()
  data['rsi'] = self._calculate_rsi(data['close'])
  data['macd'] = self._calculate_macd(data['close'])
  data['bb_upper'], data['bb_lower'] = self._calculate_bollinger_bands(data['close'])
 
- # Волатильность
+# Volatility
  data['volatility'] = data['close'].rolling(20).std()
 
- # Объем
+# Volume
  data['volume_sma'] = data['volume'].rolling(20).mean()
 
- # Ценовые паттерны
+# Price tablets
  data['price_change'] = data['close'].pct_change()
  data['high_low_ratio'] = data['high'] / data['low']
 
- # remove NaN значений
+# remove NaN values
  data = data.dropna()
 
- # Выбор признаков for модели
+# Selection of indicators for the model
  feature_columns = [
  'sma_20', 'sma_50', 'rsi', 'macd', 'bb_upper', 'bb_lower',
  'volatility', 'volume_sma', 'price_change', 'high_low_ratio'
@@ -408,21 +408,21 @@ class MultiAssetStrategy:
 
  def _create_target(self, data: pd.dataFrame, threshold: float = 0.02) -> np.ndarray:
  """
- create целевой переменной for классификации
+target variable for classification
 
  Args:
- data: Исторические data
- threshold: Порог for определения направления движения
+Data: Historical data
+otherhold: threshold for direction of traffic
 
  Returns:
- Массив целевых значений (1 - покупка, 0 - продажа)
+Mass of target values (1 purchase, 0 sales)
  """
  future_returns = data['close'].shift(-1) / data['close'] - 1
  target = (future_returns > threshold).astype(int)
- return target[:-1] # Убираем последний NaN
+Return Target[:1] # Remove the last NaN
 
  def _calculate_rsi(self, prices: pd.Series, period: int = 14) -> pd.Series:
- """Расчет RSI индикатора"""
+""""""" "The RSI indicator calculation."
  delta = prices.diff()
  gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
  loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
@@ -431,14 +431,14 @@ class MultiAssetStrategy:
  return rsi
 
  def _calculate_macd(self, prices: pd.Series, fast: int = 12, slow: int = 26, signal: int = 9) -> pd.Series:
- """Расчет MACD индикатора"""
+""""" "MACD indicator calculation"""
  ema_fast = prices.ewm(span=fast).mean()
  ema_slow = prices.ewm(span=slow).mean()
  macd = ema_fast - ema_slow
  return macd
 
  def _calculate_bollinger_bands(self, prices: pd.Series, period: int = 20, std_dev: int = 2) -> Tuple[pd.Series, pd.Series]:
- """Расчет полос Боллинджера"""
+"Bollinger stripes."
  sma = prices.rolling(period).mean()
  std = prices.rolling(period).std()
  upper_band = sma + (std * std_dev)
@@ -447,13 +447,13 @@ class MultiAssetStrategy:
 
  def _create_features(self, data: pd.dataFrame) -> Dict:
  """
- create набора признаков for стратегии
+set set of indicators for the strategy
 
  Args:
- data: Исторические data
+Data: Historical data
 
  Returns:
- Словарь with приsignми
+Vocabulary with signature
  """
  return {
  'Technical_indicators': True,
@@ -465,16 +465,16 @@ class MultiAssetStrategy:
 
  def _create_risk_limits(self, asset_type: str, Timeframe: str) -> Dict:
  """
- create лимитов риска for типа актива and Timeframe
+risk limits for the type of asset and Timeframe
 
  Args:
- asset_type: Тип актива
+Asset_type: Type of asset
  Timeframe: Timeframe
 
  Returns:
- Словарь with лимитами риска
+Vocabulary with risk limits
  """
- # Базовые лимиты in dependencies from типа актива
+# Basic limits in preferences from the type of asset
  base_limits = {
  'crypto': {'max_position': 0.15, 'stop_loss': 0.03, 'take_profit': 0.08},
  'forex': {'max_position': 0.20, 'stop_loss': 0.015, 'take_profit': 0.04},
@@ -482,14 +482,14 @@ class MultiAssetStrategy:
  'commodities': {'max_position': 0.12, 'stop_loss': 0.025, 'take_profit': 0.07}
  }
 
- # Корректировка in dependencies from Timeframe
+# Adjustment in preferences from Timeframe
  Timeframe_multiplier = {
- '1m': 0.5, # Более агрессивные Settings for коротких Timeframes
+'1m': 0.5, # More aggressive Settings for Short Times
  '5m': 0.7,
  '15m': 0.8,
  '1h': 1.0,
  '4h': 1.2,
- '1d': 1.5 # Более консервативные Settings for длинных Timeframes
+'1d': 1.5 # More conservative Settings for Long Times
  }
 
  multiplier = Timeframe_multiplier.get(Timeframe, 1.0)
@@ -505,10 +505,10 @@ class MultiAssetStrategy:
 
  def get_strategy_performance(self) -> pd.dataFrame:
  """
- Получение performance all стратегий
+Getting Performance All Strategies
 
  Returns:
- dataFrame with метриками performance
+DataFrame with metrics performance
  """
  performance_data = []
 
@@ -528,51 +528,51 @@ class MultiAssetStrategy:
 
  return pd.dataFrame(performance_data)
 
-# example использования мультиактивной стратегии
+# example of the use of a multi-active strategy
 if __name__ == "__main__":
- # create стратегии with начальным капиталом $100,000
+# creative strategy with seed capital $100,000
  strategy = MultiAssetStrategy(initial_capital=100000)
 
- # create стратегий for all активов
+# a strategy for all assets
  strategy.create_asset_strategies()
 
- # Вывод информации о созданных стратегиях
- print(f"Создано стратегий: {len(strategy.strategies)}")
- print(f"Начальный капитал: ${strategy.initial_capital:,.2f}")
+# Conclusion of policies
+prent(f) "Priorities: {len(strategic.strategies)}")
+start(f) "Structural capital: {Strategy.initial_capital:,2f}")
 
- # Получение performance стратегий
+# Getting strategies
  performance = strategy.get_strategy_performance()
- print("\nПроизводительность стратегий:")
+Print("n Production strategies:")
  print(performance.head(10))
 ```
 
-### 2. Комбинирование indicators
+###2: Combination of indicators
 
-**Theory:** Комбинирование indicators представляет собой критически важную технику for improving accuracy and робастности торговых сигналов. Вместо использования одного индикатора, мы объединяем несколько indicators with разными характеристиками for создания более надежной системы принятия решений.
+**Theory:** Combining indicators is a critical technique for improving accuracy and opacity of trade signals. Instead of using one indicator, we combine several indicators with different characteristics for a more reliable decision-making system.
 
-**Почему комбинирование indicators важно:**
-- **Повышение точности:** Различные индикаторы компенсируют недостатки друг друга
-- **Снижение ложных сигналов:** Согласованность нескольких indicators снижает вероятность ошибок
-- **Адаптивность:** Система может адаптироваться к различным рыночным условиям
-- **Робастность:** Система остается эффективной даже при изменении рыночных условий
+# Why a combination of indicators is important #
+- ** Improved accuracy: ** Various indicators compensate for each other's shortcomings
+- ** Reduction of false signals:** Coherence of multiple indicators reduces the probability of errors
+- ** Adaptation: ** System can adapt to different market conditions
+- **Pity: ** System remains effective even when market conditions change.
 
-**Детальное объяснение комбинирования indicators:**
+** Detailed explanation for the combination of indicators:**
 
-Комбинирование indicators основано on принципе ансамблевого обучения, где мы объединяем "мнения" различных indicators for принятия более точного решения. Каждый индикатор имеет свои сильные and слабые стороны:
+The combination of indicators is based on the principle of ensemble learning, where we combine the "views" of different indicators for making a more accurate decision. Each indicator has its own strengths and weaknesses:
 
-1. **WAVE2 (30% веса)** - Основной трендовый индикатор, отлично Workingет in трендовых рынках
-2. **SCHR Levels (25% веса)** - Уровни поддержки and сопротивления, критически важны for определения точек входа
-3. **SCHR SHORT3 (25% веса)** - Краткосрочный индикатор for точного определения моментов входа
-4. **RSI (10% веса)** - Индикатор перекупленности/перепроданности
-5. **MACD (5% веса)** - Подтверждение тренда and моментов разворота
-6. **Bollinger Bands (5% веса)** - Индикатор волатильности and экстремальных ценовых движений
+1. **WAVE2 (30 per cent weight)** - Principal trend indicator, excellent Workinget in trend markets
+2. **SCHR Livels (25 per cent weight)** - Support and Resistance Levels, critical for determining entry points
+3. **SCHR SHORT3 (25% wt.)** - Short-term indicator for the precise determination of input points
+4. **RSI (10 per cent weight)** - Oversizing/reselling Indicator
+5. **MACD (5 per cent weight)** - Confirmation of trend and turning points
+6. **Bollinger Bands (5 per cent weight)** - Volatility and extreme price movements indicator
 
-**Алгоритм комбинирования включает:**
-- Расчет индивидуальных сигналов каждого индикатора
-- Нормализация сигналов in единый диапазон
-- Взвешенное усреднение with учетом важности каждого индикатора
-- Расчет уверенности in сигнале on basis согласованности indicators
-- Фильтрация слабых сигналов
+**The combination algorithm includes:**
+- Calculation of the individual signals of each indicator
+- Normalization of signals in a single range
+- Weighted average with consideration of the importance of each indicator
+- Calculation of confidence in signal on base consistency indicators
+- Weak signal filtering
 
 ```python
 import numpy as np
@@ -583,26 +583,26 @@ import talib
 
 @dataclass
 class signalResult:
- """Результат расчета сигнала индикатора"""
+"The result of the indicator signal calculation."
  value: float
  strength: float
- direction: int # 1 - покупка, -1 - продажа, 0 - нейтрально
+direction: int #1 - purchase, -1 - sale, 0 - neutral
  confidence: float
 
 class TechnicalIndicator:
- """Базовый класс for технических indicators"""
+"Base Class for Technical Indicators"
 
  def calculate(self, data: pd.dataFrame) -> signalResult:
- """Расчет сигнала индикатора"""
+"The indicator signal calculation."
  raise NotImplementedError
 
 class Wave2Indicator(TechnicalIndicator):
  """
- WAVE2 - Продвинутый трендовый индикатор
+WAVE2 - Advanced trend indicator
 
- WAVE2 представляет собой модифицированную версию волнового Analysis Эллиотта,
- адаптированную for алгоритмической торговли. Индикатор анализирует ценовые
- волны and определяет фазы тренда with высокой точностью.
+WAVE2 is a modified version of Elliott's wave anallysis,
+adapted for algorithmic trade.
+The waves and the phases of the trend with high accuracy.
  """
 
  def __init__(self, period: int = 20, sensitivity: float = 0.5):
@@ -610,20 +610,20 @@ class Wave2Indicator(TechnicalIndicator):
  self.sensitivity = sensitivity
 
  def calculate(self, data: pd.dataFrame) -> signalResult:
- """Расчет WAVE2 сигнала"""
+""""" "WAVE2 signal calculation"""
  if len(data) < self.period * 2:
  return signalResult(0, 0, 0, 0)
 
- # Расчет ценовых волн
+# Calculation of price waves
  waves = self._calculate_waves(data['close'])
 
- # Анализ тренда
+# Trends analysis
  trend_strength = self._analyze_trend_strength(waves)
 
- # Определение направления
+# Orientation
  direction = self._determine_direction(waves, trend_strength)
 
- # Расчет уверенности
+# Calculation of confidence
  confidence = self._calculate_confidence(waves, trend_strength)
 
  return signalResult(
@@ -634,16 +634,16 @@ class Wave2Indicator(TechnicalIndicator):
  )
 
  def _calculate_waves(self, prices: pd.Series) -> np.ndarray:
- """Расчет ценовых волн"""
- # Упрощенная версия волнового Analysis
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""","""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+# Simplified version of wave Analisis
  highs = prices.rolling(self.period).max()
  lows = prices.rolling(self.period).min()
 
- # Определение пиков and впадин
+# Definition of peaks and falls
  peaks = (prices == highs) & (prices.shift(1) < prices) & (prices.shift(-1) < prices)
  troughs = (prices == lows) & (prices.shift(1) > prices) & (prices.shift(-1) > prices)
 
- # Расчет волн
+# Wave calculation
  waves = []
  last_peak = None
  last_trough = None
@@ -663,56 +663,56 @@ class Wave2Indicator(TechnicalIndicator):
  return np.array(waves[-10:]) if len(waves) >= 10 else np.array(waves)
 
  def _analyze_trend_strength(self, waves: np.ndarray) -> float:
- """Анализ силы тренда"""
+"Analysis of trend strength."
  if len(waves) < 3:
  return 0
 
- # Анализ последовательности волн
+# Wave sequence analysis
  positive_waves = np.sum(waves > 0)
  negative_waves = np.sum(waves < 0)
 
- # Расчет силы тренда
+# Calculation of trend force
  total_waves = len(waves)
  trend_ratio = (positive_waves - negative_waves) / total_waves
 
- # Учет амплитуды волн
+# Accounting for wave amplitude
  avg_amplitude = np.mean(np.abs(waves))
- normalized_strength = trend_ratio * (avg_amplitude / 100) # Нормализация
+normalized_strength = trend_ratio * (avg_amplitude / 100) # Normalization
 
  return np.clip(normalized_strength, -1, 1)
 
  def _determine_direction(self, waves: np.ndarray, trend_strength: float) -> int:
- """Определение направления тренда"""
+""""""""""""""
  if trend_strength > self.sensitivity:
- return 1 # Восходящий тренд
+Return 1 # Upward trend
  elif trend_strength < -self.sensitivity:
- return -1 # Нисходящий тренд
+Return -1 # Downward trend
  else:
- return 0 # Боковой тренд
+Return 0 # Side trend
 
  def _calculate_confidence(self, waves: np.ndarray, trend_strength: float) -> float:
- """Расчет уверенности in сигнале"""
+"The calculation of confidence in the signal."
  if len(waves) < 3:
  return 0
 
- # Согласованность волн
+# Wave coherence
  wave_consistency = 1 - np.std(waves) / (np.mean(np.abs(waves)) + 1e-8)
 
- # Сила тренда
+# The strength of the trend
  trend_confidence = abs(trend_strength)
 
- # Общая уверенность
+# General confidence
  confidence = (wave_consistency + trend_confidence) / 2
 
  return np.clip(confidence, 0, 1)
 
 class SCHRLevelsIndicator(TechnicalIndicator):
  """
- SCHR Levels - Индикатор уровней поддержки and сопротивления
+SCHR Livels - Support and Resistance Level Indicator
 
- SCHR Levels использует алгоритм кластеризации for автоматического
- определения значимых уровней поддержки and сопротивления on basis
- исторических данных о ценах.
+SCHR Livels uses the clustering algorithm for automatic
+Identification of significant levels of support and resistance on basis
+Historical data on prices.
  """
 
  def __init__(self, lookback: int = 50, min_touches: int = 3):
@@ -720,15 +720,15 @@ class SCHRLevelsIndicator(TechnicalIndicator):
  self.min_touches = min_touches
 
  def calculate(self, data: pd.dataFrame) -> signalResult:
- """Расчет SCHR Levels сигнала"""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  if len(data) < self.lookback:
  return signalResult(0, 0, 0, 0)
 
- # Определение уровней поддержки and сопротивления
+# Determination of levels of support and resistance
  support_levels = self._find_support_levels(data)
  resistance_levels = self._find_resistance_levels(data)
 
- # Анализ текущей цены относительно уровней
+# Analysis of current price relative to levels
  current_price = data['close'].iloc[-1]
  signal = self._analyze_price_vs_levels(
  current_price, support_levels, resistance_levels
@@ -737,7 +737,7 @@ class SCHRLevelsIndicator(TechnicalIndicator):
  return signal
 
  def _find_support_levels(self, data: pd.dataFrame) -> List[float]:
- """Поиск уровней поддержки"""
+"A search for levels of support."
  lows = data['low'].rolling(5).min()
  support_candidates = []
 
@@ -748,10 +748,10 @@ class SCHRLevelsIndicator(TechnicalIndicator):
  if touches >= self.min_touches:
  support_candidates.append(level)
 
- return sorted(support_candidates, reverse=True)[:5] # Топ-5 уровней
+Return sorted(support_candidates, review=True)[:5] # Top-5
 
  def _find_resistance_levels(self, data: pd.dataFrame) -> List[float]:
- """Поиск уровней сопротивления"""
+"A search for resistance levels."
  highs = data['high'].rolling(5).max()
  resistance_candidates = []
 
@@ -762,11 +762,11 @@ class SCHRLevelsIndicator(TechnicalIndicator):
  if touches >= self.min_touches:
  resistance_candidates.append(level)
 
- return sorted(resistance_candidates)[:5] # Топ-5 уровней
+Return sort(resistance_candidates)[:5] # Top-5 levels
 
  def _count_touches(self, data: pd.dataFrame, level: float, level_type: str) -> int:
- """Подсчет касаний уровня"""
- tolerance = 0.001 # 0.1% толерантность
+""""""""""""""""""""
+tolerance = 0.001 # 0.1% Tolerance
  touches = 0
 
  if level_type == 'support':
@@ -783,28 +783,28 @@ class SCHRLevelsIndicator(TechnicalIndicator):
  def _analyze_price_vs_levels(self, current_price: float,
  support_levels: List[float],
  resistance_levels: List[float]) -> signalResult:
- """Анализ текущей цены относительно уровней"""
- # Поиск ближайших уровней
+"Analysis of current price relative to levels"
+# Searching for the nearest levels
  nearest_support = max([s for s in support_levels if s < current_price], default=0)
  nearest_resistance = min([r for r in resistance_levels if r > current_price], default=float('inf'))
 
- # Расчет расстояния to уровней
+# Calculation of distance to levels
  support_distance = (current_price - nearest_support) / current_price if nearest_support > 0 else 1
  resistance_distance = (nearest_resistance - current_price) / current_price if nearest_resistance != float('inf') else 1
 
- # Определение сигнала
- if support_distance < 0.02: # Близко к поддержке
- direction = 1 # Покупка
+# Definition of signal
+if support_distance < 0.02: # Close to support
+direction = 1 # Purchase
  strength = 1 - support_distance / 0.02
- elif resistance_distance < 0.02: # Близко к сопротивлению
- direction = -1 # Продажа
+elif resistance_distance < 0.02: # Close to resistance
+direction = -1 # Sale
  strength = 1 - resistance_distance / 0.02
  else:
- direction = 0 # Нейтрально
+direction = 0 #neutral
  strength = 0
 
- # Расчет уверенности
- confidence = strength * 0.8 # Уровни менее надежны чем тренды
+# Calculation of confidence
+confidence = strangth * 0.8 # Levels are less reliable than trends
 
  return signalResult(
  value=strength * direction,
@@ -815,10 +815,10 @@ class SCHRLevelsIndicator(TechnicalIndicator):
 
 class SCHRShort3Indicator(TechnicalIndicator):
  """
- SCHR SHORT3 - Краткосрочный индикатор for точного входа
+SCHR SHORT3 - Short-term indicator for accurate entry
 
- SCHR SHORT3 предназначен for определения оптимальных моментов входа
- in позицию on basis краткосрочных ценовых паттернов and микротрендов.
+SCHR SHORT3 is designed to determine the optimal input points
+In position on base short-term price patches and microtrends.
  """
 
  def __init__(self, short_period: int = 3, medium_period: int = 8):
@@ -826,40 +826,40 @@ class SCHRShort3Indicator(TechnicalIndicator):
  self.medium_period = medium_period
 
  def calculate(self, data: pd.dataFrame) -> signalResult:
- """Расчет SCHR SHORT3 сигнала"""
+"The SCHR SHORT3 signal calculation."
  if len(data) < self.medium_period:
  return signalResult(0, 0, 0, 0)
 
- # Краткосрочные and среднесрочные скользящие средние
+# Short-term and medium-term rolling average
  short_ma = data['close'].rolling(self.short_period).mean()
  medium_ma = data['close'].rolling(self.medium_period).mean()
 
- # Анализ пересечений
+# Analysis of intersections
  crossover_signal = self._analyze_crossovers(short_ma, medium_ma)
 
- # Анализ acceleration
+# Analysis of attribution
  acceleration_signal = self._analyze_acceleration(data['close'])
 
- # Комбинирование сигналов
+# Combination of signals
  combined_signal = self._combine_signals(crossover_signal, acceleration_signal)
 
  return combined_signal
 
  def _analyze_crossovers(self, short_ma: pd.Series, medium_ma: pd.Series) -> Tuple[float, int]:
- """Анализ пересечений скользящих средних"""
+"Analysis of the intersections of sliding averages."
  if len(short_ma) < 2 or len(medium_ma) < 2:
  return 0, 0
 
- # Текущее and предыдущее пересечение
+# Current and previous intersection
  current_diff = short_ma.iloc[-1] - medium_ma.iloc[-1]
  previous_diff = short_ma.iloc[-2] - medium_ma.iloc[-2]
 
- # Определение направления пересечения
+# Determination of the direction of intersection
  if current_diff > 0 and previous_diff <= 0:
- direction = 1 # Бычье пересечение
+direction = 1 # Bull crossing
  strength = min(abs(current_diff) / medium_ma.iloc[-1], 1)
  elif current_diff < 0 and previous_diff >= 0:
- direction = -1 # Медвежье пересечение
+direction = -1 # Bear crossing
  strength = min(abs(current_diff) / medium_ma.iloc[-1], 1)
  else:
  direction = 0
@@ -868,26 +868,26 @@ class SCHRShort3Indicator(TechnicalIndicator):
  return strength, direction
 
  def _analyze_acceleration(self, prices: pd.Series) -> Tuple[float, int]:
- """Анализ acceleration цены"""
+""Analysis of the price."
  if len(prices) < 3:
  return 0, 0
 
- # Расчет второй производной (ускорение)
+# Calculation of the second derivative (acceleration)
  first_derivative = prices.diff()
  second_derivative = first_derivative.diff()
 
  current_acceleration = second_derivative.iloc[-1]
  avg_acceleration = second_derivative.rolling(5).mean().iloc[-1]
 
- # Нормализация acceleration
- normalized_acceleration = current_acceleration / (prices.iloc[-1] * 0.01) # 1% нормализация
+# Normalization
+normalized_acceleration = Current_acceleration / (priices.iloc[-1] * 0.01) # 1% normalization
 
- # Определение направления
+# Orientation
  if normalized_acceleration > 0.5:
- direction = 1 # Ускорение вверх
+direction = 1 # Acceleration upwards
  strength = min(normalized_acceleration / 2, 1)
  elif normalized_acceleration < -0.5:
- direction = -1 # Ускорение вниз
+direction = -1 # Acceleration downwards
  strength = min(abs(normalized_acceleration) / 2, 1)
  else:
  direction = 0
@@ -897,14 +897,14 @@ class SCHRShort3Indicator(TechnicalIndicator):
 
  def _combine_signals(self, crossover_signal: Tuple[float, int],
  acceleration_signal: Tuple[float, int]) -> signalResult:
- """Комбинирование сигналов"""
+"""""""""""""""
  crossover_strength, crossover_direction = crossover_signal
  acceleration_strength, acceleration_direction = acceleration_signal
 
- # Взвешенное комбинирование
+# Weighted combination
  total_strength = (crossover_strength * 0.6 + acceleration_strength * 0.4)
 
- # Определение направления
+# Orientation
  if crossover_direction == acceleration_direction:
  direction = crossover_direction
  confidence = 0.9
@@ -912,7 +912,7 @@ class SCHRShort3Indicator(TechnicalIndicator):
  direction = crossover_direction if crossover_direction != 0 else acceleration_direction
  confidence = 0.6
  else:
- direction = 0 # Противоречивые сигналы
+direction = 0 # Counteractive signals
  confidence = 0.3
 
  return signalResult(
@@ -923,7 +923,7 @@ class SCHRShort3Indicator(TechnicalIndicator):
  )
 
 class RSIIndicator(TechnicalIndicator):
- """RSI - Индикатор относительной силы"""
+""RSI - Relative Power Indicator""
 
  def __init__(self, period: int = 14, overbought: float = 70, oversold: float = 30):
  self.period = period
@@ -931,7 +931,7 @@ class RSIIndicator(TechnicalIndicator):
  self.oversold = oversold
 
  def calculate(self, data: pd.dataFrame) -> signalResult:
- """Расчет RSI сигнала"""
+"The RSI signal calculation."
  if len(data) < self.period + 1:
  return signalResult(0, 0, 0, 0)
 
@@ -941,29 +941,29 @@ class RSIIndicator(TechnicalIndicator):
  if np.isnan(current_rsi):
  return signalResult(0, 0, 0, 0)
 
- # Определение сигнала
+# Definition of signal
  if current_rsi < self.oversold:
- direction = 1 # Покупка
+direction = 1 # Purchase
  strength = (self.oversold - current_rsi) / self.oversold
  elif current_rsi > self.overbought:
- direction = -1 # Продажа
+direction = -1 # Sale
  strength = (current_rsi - self.overbought) / (100 - self.overbought)
  else:
  direction = 0
  strength = 0
 
- # Уверенность зависит from экстремальности RSI
+# Confidence depends from the extreme of RSI
  confidence = min(strength * 1.5, 1)
 
  return signalResult(
- value=current_rsi / 100 - 0.5, # Нормализация in диапазон [-0.5, 0.5]
+value=surrent_rsi / 100 - 0.5, # Normalization in range [-0.5, 0.5]
  strength=strength,
  direction=direction,
  confidence=confidence
  )
 
 class MACDIndicator(TechnicalIndicator):
- """MACD - Индикатор схождения-расхождения скользящих средних"""
+"MACD - Coherence-distinction indicator of sliding averages."
 
  def __init__(self, fast: int = 12, slow: int = 26, signal: int = 9):
  self.fast = fast
@@ -971,7 +971,7 @@ class MACDIndicator(TechnicalIndicator):
  self.signal = signal
 
  def calculate(self, data: pd.dataFrame) -> signalResult:
- """Расчет MACD сигнала"""
+"The MACD signal calculation."
  if len(data) < self.slow + self.signal:
  return signalResult(0, 0, 0, 0)
 
@@ -989,18 +989,18 @@ class MACDIndicator(TechnicalIndicator):
  if np.isnan(current_macd) or np.isnan(current_signal):
  return signalResult(0, 0, 0, 0)
 
- # Анализ пересечения MACD and сигнальной линии
+# Analysis of MACD intersection and signal line
  if current_macd > current_signal and macd[-2] <= macd_signal[-2]:
- direction = 1 # Бычье пересечение
+direction = 1 # Bull crossing
  strength = min(abs(current_hist) * 100, 1)
  elif current_macd < current_signal and macd[-2] >= macd_signal[-2]:
- direction = -1 # Медвежье пересечение
+direction = -1 # Bear crossing
  strength = min(abs(current_hist) * 100, 1)
  else:
  direction = 0
  strength = 0
 
- # Уверенность зависит from силы гистограммы
+# Confidence depends from histogram power
  confidence = min(strength * 0.8, 1)
 
  return signalResult(
@@ -1011,14 +1011,14 @@ class MACDIndicator(TechnicalIndicator):
  )
 
 class BollingerBandsIndicator(TechnicalIndicator):
- """Полосы Боллинджера - Индикатор волатильности"""
+"Bollinger Poles - Velocity Indicator."
 
  def __init__(self, period: int = 20, std_dev: float = 2):
  self.period = period
  self.std_dev = std_dev
 
  def calculate(self, data: pd.dataFrame) -> signalResult:
- """Расчет Bollinger Bands сигнала"""
+""Bollinger Bands signal calculation."
  if len(data) < self.period:
  return signalResult(0, 0, 0, 0)
 
@@ -1037,20 +1037,20 @@ class BollingerBandsIndicator(TechnicalIndicator):
  if np.isnan(current_upper) or np.isnan(current_lower):
  return signalResult(0, 0, 0, 0)
 
- # Анализ позиции цены относительно полос
+# Analysis of price position relative to stripes
  band_width = (current_upper - current_lower) / current_middle
 
  if current_price <= current_lower:
- direction = 1 # Покупка (цена у нижней полосы)
+direction = 1 # Purchasing
  strength = (current_lower - current_price) / (current_upper - current_lower)
  elif current_price >= current_upper:
- direction = -1 # Продажа (цена у верхней полосы)
+direction = -1 #Sales
  strength = (current_price - current_upper) / (current_upper - current_lower)
  else:
  direction = 0
  strength = 0
 
- # Уверенность зависит from ширины полос (волатильности)
+# Confidence depends on the width of the strips (volatile)
  confidence = min(strength * band_width * 10, 1)
 
  return signalResult(
@@ -1062,15 +1062,15 @@ class BollingerBandsIndicator(TechnicalIndicator):
 
 class IndicatorCombination:
  """
- Система комбинирования технических indicators
+Technical Indicators Combination System
 
- Эта система объединяет сигналы from различных технических indicators
- for создания более надежных торговых сигналов. Каждый индикатор имеет
- свой вес in dependencies from его важности and надежности.
+This system combines signals from different technical indicators
+Each indicator has
+its weight in dependencies from its importance and reliability.
  """
 
  def __init__(self):
- """Инициализация системы комбинирования indicators"""
+"Initiating a combination of indicators"
  self.indicators = {
  'WAVE2': Wave2Indicator(),
  'SCHR_Levels': SCHRLevelsIndicator(),
@@ -1080,41 +1080,41 @@ class IndicatorCombination:
  'Bollinger': BollingerBandsIndicator()
  }
 
- # Веса indicators (сумма должна быть равна 1.0)
+# Index weights (amount should be 1.0)
  self.combination_weights = {
- 'WAVE2': 0.30, # Основной трендовый индикатор
- 'SCHR_Levels': 0.25, # Уровни поддержки/сопротивления
- 'SCHR_SHORT3': 0.25, # Краткосрочные сигналы
- 'RSI': 0.10, # Перекупленность/перепроданность
- 'MACD': 0.05, # Подтверждение тренда
- 'Bollinger': 0.05 # Волатильность
+'WAVE2': 0.30, #Main trend indicator
+`SCHR_Levels': 0.25, # Support/Resistance Levels
+'SCHR_SHORT3': 0.25, # Short-term signals
+'RSI': 0.10, #Smuggling/reselling
+'MACD': 0.05, # Confirmation of trend
+'Bollinger': 0.05 # Volatility
  }
 
- # Минимальная уверенность for принятия сигнала
+# Minimum confidence for signal acceptance
  self.min_confidence = 0.6
 
- # История сигналов for Analysis
+# Signal history for Analysis
  self.signal_history = []
 
  def combine_signals(self, data: pd.dataFrame) -> Dict:
  """
- Комбинирование сигналов all indicators
+Combination of all indicators signals
 
  Args:
- data: dataFrame with ценовыми данными (OHLCV)
+Data: DataFrame with price data (OHLCV)
 
  Returns:
- Словарь with результатами комбинирования:
- - combined_signal: Объединенный сигнал
- - individual_signals: Индивидуальные сигналы
- - confidence: Общая уверенность
- - recommendation: Рекомендация (BUY/SELL/HOLD)
+Vocabulary with combination results:
+- combined_signal: Combined signal
+- Individual_signals: Individual signals
+- Conference: General confidence
+- Recommendation (BUY/SELL/HOLD)
  """
  signals = {}
  weights = {}
  confidences = {}
 
- # Расчет сигналов for каждого индикатора
+# Calculation of signals for each indicator
  for name, indicator in self.indicators.items():
  try:
  signal_result = indicator.calculate(data)
@@ -1122,22 +1122,22 @@ class IndicatorCombination:
  weights[name] = self.combination_weights[name]
  confidences[name] = signal_result.confidence
  except Exception as e:
- print(f"Ошибка расчета индикатора {name}: {e}")
- # Use нейтральный сигнал при ошибке
+Print(f" Miscalculation error of indicator {name}: {e}")
+# Use neutral error signal
  signals[name] = signalResult(0, 0, 0, 0)
  weights[name] = self.combination_weights[name]
  confidences[name] = 0
 
- # Взвешенное комбинирование сигналов
+# Weighted signal combination
  combined_signal = self._weighted_average(signals, weights)
 
- # Расчет общей уверенности
+# Calculation of general confidence
  overall_confidence = self._calculate_overall_confidence(confidences, weights)
 
- # Определение рекомендации
+# Definition of the Recommendation
  recommendation = self._determine_recommendation(combined_signal, overall_confidence)
 
- # Сохранение in историю
+# Maintaining in History
  self.signal_history.append({
  'timestamp': pd.Timestamp.now(),
  'combined_signal': combined_signal,
@@ -1161,13 +1161,13 @@ class IndicatorCombination:
 
  def _weighted_average(self, signals: Dict[str, signalResult],
  weights: Dict[str, float]) -> float:
- """Взвешенное усреднение сигналов"""
+"Handled averaging signals."
  weighted_sum = 0
  total_weight = 0
 
  for name, signal in signals.items():
  weight = weights[name]
- # Учитываем уверенность индикатора in весе
+# Take into account the confidence of the indicator in weight
  adjusted_weight = weight * signal.confidence
  weighted_sum += signal.value * adjusted_weight
  total_weight += adjusted_weight
@@ -1179,25 +1179,25 @@ class IndicatorCombination:
 
  def _calculate_overall_confidence(self, confidences: Dict[str, float],
  weights: Dict[str, float]) -> float:
- """Расчет общей уверенности in сигнале"""
- # Взвешенная уверенность
+"The calculation of general confidence in the signal."
+# Weighted confidence
  weighted_confidence = sum(
  confidences[name] * weights[name]
  for name in confidences.keys()
  )
 
- # Согласованность сигналов
+# Signal consistency
  signal_values = [signals[name].value for name in signals.keys()]
  agreement = 1 - np.std(signal_values) / (np.mean(np.abs(signal_values)) + 1e-8)
 
- # Общая уверенность
+# General confidence
  overall_confidence = (weighted_confidence * 0.7 + agreement * 0.3)
 
  return np.clip(overall_confidence, 0, 1)
 
  def _determine_recommendation(self, combined_signal: float,
  confidence: float) -> str:
- """Определение торговой рекомендации"""
+"The definition of a trade recommendation"
  if confidence < self.min_confidence:
  return 'HOLD'
 
@@ -1210,22 +1210,22 @@ class IndicatorCombination:
 
  def _assess_signal_quality(self, signals: Dict[str, signalResult],
  overall_confidence: float) -> Dict:
- """Оценка качества сигнала"""
- # Анализ согласованности
+"""""""""""
+# Coherence analysis
  signal_values = [sig.value for sig in signals.values()]
  signal_directions = [sig.direction for sig in signals.values()]
 
- # Подсчет согласованных сигналов
+# Calculation of agreed signals
  positive_signals = sum(1 for d in signal_directions if d > 0)
  negative_signals = sum(1 for d in signal_directions if d < 0)
  neutral_signals = sum(1 for d in signal_directions if d == 0)
 
- # Качество согласованности
+# Quality of consistency
  total_signals = len(signal_directions)
  max_agreement = max(positive_signals, negative_signals, neutral_signals)
  agreement_quality = max_agreement / total_signals if total_signals > 0 else 0
 
- # Сила сигнала
+# Signal strength
  avg_strength = np.mean([sig.strength for sig in signals.values()])
 
  return {
@@ -1240,7 +1240,7 @@ class IndicatorCombination:
  }
 
  def get_signal_statistics(self, lookback: int = 100) -> Dict:
- """Получение статистики сигналов за последний период"""
+"Acquiring Last Period Signal Statistics"
  if len(self.signal_history) < 2:
  return {}
 
@@ -1259,65 +1259,65 @@ class IndicatorCombination:
  'signal_frequency': len(recent_signals) / lookback if lookback > 0 else 0
  }
 
-# example использования системы комбинирования indicators
+# example using the indexor combination system
 if __name__ == "__main__":
  import yfinance as yf
 
- # Загрузка testsых данных
+# Loading test data
  ticker = yf.Ticker("AAPL")
  data = ticker.history(period="6mo", interval="1d")
 
- # create системы комбинирования
+♪ Create Combination System
  indicator_system = IndicatorCombination()
 
- # Расчет комбинированного сигнала
+# Calculation of the combined signal
  result = indicator_system.combine_signals(data)
 
- print("Результаты комбинирования indicators:")
- print(f"Объединенный сигнал: {result['combined_signal']:.4f}")
- print(f"Уверенность: {result['confidence']:.4f}")
- print(f"Рекомендация: {result['recommendation']}")
+print("Indicators combination results:")
+"Universal signal: {result['combined_signal']:4f}")
+Print(f) "Surety: {result['confidentence']:4f}")
+Recommendation: {result['recommendation'}})
 
- print("\nИндивидуальные сигналы:")
+Print("nIndividual signals:")
  for name, signal in result['individual_signals'].items():
- print(f"{name}: {signal['value']:.4f} (направление: {signal['direction']}, уверенность: {signal['confidence']:.4f})")
+print(f){name}: {signal['value']:4f} (direction: {signal['direction']}, confidence: {signal['confidence']:4f}))
 
- # Статистика сигналов
+# Signal statistics
  stats = indicator_system.get_signal_statistics()
- print(f"\nСтатистика сигналов:")
- print(f"Всего сигналов: {stats.get('total_signals', 0)}")
- print(f"Покупки: {stats.get('buy_signals', 0)}")
- print(f"Продажи: {stats.get('sell_signals', 0)}")
- print(f"Удержание: {stats.get('hold_signals', 0)}")
- print(f"Средняя уверенность: {stats.get('average_confidence', 0):.4f}")
+pprint(f"\nStatistics of signals:")
+all signals: {stats.get('total_signals', 0)}}
+Print(f) Purchases: {stats.get('buy_signals', 0)})
+"Sales: {stats.get('sell_signals', 0)})
+(f) Retention: {stats.get('hold_signals', 0)}}
+average confidence: {stats.get('overage_confidence', 0):4f})
 ```
 
-### 3. Адаптивная система
+♪## 3. Adaptation system
 
-**Theory:** Адаптивная система представляет собой критически важный компонент for поддержания эффективности ML-систем in изменяющихся рыночных условиях. Система автоматически анализирует свою performance and рыночные условия, затем адаптирует свои parameters and стратегии for поддержания оптимальной эффективности.
+**Theory:** The adaptive system is a critical component for maintaining the effectiveness of ML systems in changing market conditions; the system automatically analyses its performance and market conditions, then adapts its options and strategies for maintaining optimum efficiency.
 
-**Почему адаптивная система важна:**
-- **Поддержание эффективности:** Обеспечивает поддержание эффективности in изменяющихся условиях
-- **Автоматическая оптимизация:** Автоматически оптимизирует parameters без вмешательства человека
-- **Реакция on изменения:** Быстро реагирует on изменения рыночных условий
-- **Долгосрочная стабильность:** Обеспечивает долгосрочную стабильность системы
+** Why an adaptive system matters:**
+- ** Maintains effectiveness:** Maintains efficiency in changing circumstances
+- ** Automatic optimization:** Automatically optimizes parameters without human interference
+- ** Reaction on change: ** Rapid response on market developments
+- ** Long-term stability:** Ensures long-term stability of the system
 
-**Детальное объяснение адаптивной системы:**
+** Detailed explanation of adaptive system:**
 
-Адаптивная система основана on принципах machine learning with подкреплением and онлайн-обучения. Система постоянно мониторит свою performance and рыночные условия, затем принимает решения о том, как адаптироваться:
+The adaptive system is based on the principles of machine learning with reinforcement and online learning. The system continuously monitors its performance and market conditions, then decides how to adapt:
 
-1. **Анализ рыночных условий** - определение текущего состояния рынка (тренд, волатильность, объем)
-2. **Анализ performance** - оценка эффективности текущих стратегий
-3. **Принятие решений об адаптации** - выбор типа адаптации on basis Analysis
-4. **Применение адаптации** - реализация выбранных изменений
-5. **Monitoring результатов** - отслеживание эффективности адаптации
+1. ** Market Analysis** - Determination of the current state of the market (trend, volatility, volume)
+2. ** Performance Analysis** - Evaluation of the effectiveness of current strategies
+** Adaptation decision-making** - choice of type of adaptation on base Analysis
+4. ** Application of adaptation** - implementation of selected changes
+** Monitoring results** - Monitoring the effectiveness of adaptation
 
-**Типы адаптации:**
-- **Retrain** - полное retraining моделей on новых данных
-- **Recalibrate** - корректировка параметров существующих моделей
-- **Ensemble Update** - update весов ансамблевых моделей
-- **Feature Selection** - изменение набора признаков
-- **Strategy Switch** - переключение между различными стратегиями
+**Tips of adaptation:**
+**Retraining** - Full retraining of models on new data
+**Recalibrate** - Adjustment of existing models
+- **Ensemble Update** - extradate weight of ensemble models
+- **Feature Selection** - modification of the set of topics
+- **Strategy Switch** - Switch between different strategies
 
 ```python
 import numpy as np
@@ -1330,7 +1330,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 class MarketCondition(Enum):
- """Типы рыночных условий"""
+"Tips of Market Conditions"
  TRENDING_UP = "trending_up"
  TRENDING_DOWN = "trending_down"
  RANGING = "ranging"
@@ -1339,7 +1339,7 @@ class MarketCondition(Enum):
  REVERSAL = "reversal"
 
 class AdaptationType(Enum):
- """Типы адаптации"""
+"Tips of adaptation."
  NONE = "none"
  RETRAIN = "retrain"
  RECALIBRATE = "recalibrate"
@@ -1350,7 +1350,7 @@ class AdaptationType(Enum):
 
 @dataclass
 class PerformanceMetrics:
- """Metrics performance системы"""
+"Metrics performance system"
  accuracy: float
  profit_factor: float
  sharpe_ratio: float
@@ -1358,11 +1358,11 @@ class PerformanceMetrics:
  win_rate: float
  avg_trade_duration: float
  total_trades: int
- recent_performance: float # performance за последний период
+review_performance: flat # performance over the last period
 
 @dataclass
 class MarketAnalysis:
- """Анализ рыночных условий"""
+"Analysis of Market Conditions"
  condition: MarketCondition
  volatility: float
  trend_strength: float
@@ -1373,29 +1373,29 @@ class MarketAnalysis:
 
 @dataclass
 class AdaptationDecision:
- """Решение об адаптации"""
+"A decision on adaptation."
  adaptation_type: AdaptationType
  confidence: float
  expected_improvement: float
  risk_level: str
- implementation_time: int # Время реализации in minutesах
+Implementation_time: int # Implementation time in minutes
 
 class Adaptivesystem:
  """
- Адаптивная система for автоматической оптимизации торговых стратегий
+Adaptation system for automatic optimization of trade policies
 
- Эта система постоянно мониторит performance and рыночные условия,
- автоматически адаптируя parameters and стратегии for поддержания оптимальной
- эффективности in изменяющихся условиях.
+This system continuously monitors performance and market conditions,
+by automatically adapting paragraphs and strategies for maintaining the optimum
+Efficiency in changing circumstances.
  """
 
  def __init__(self, adaptation_rate: float = 0.01, performance_threshold: float = 0.6):
  """
- Инициализация адаптивной системы
+Initiating an adaptive system
 
  Args:
- adaptation_rate: Скорость адаптации (0-1)
- performance_threshold: Порог performance for Launchа адаптации
+adaptation_rate: Adaptation speed (0-1)
+performance_threshold: The threshold of performance for adaptation
  """
  self.adaptation_rate = adaptation_rate
  self.performance_threshold = performance_threshold
@@ -1403,21 +1403,21 @@ class Adaptivesystem:
  self.performance_history = []
  self.market_Analysis_history = []
 
- # Settings адаптации
+# Settings adaptation
  self.adaptation_Settings = {
- 'min_performance_drop': 0.05, # Минимальное падение performance for адаптации
- 'max_adaptation_frequency': 24, # Максимальная частота адаптации (часы)
- 'adaptation_cooldown': 4, # Время ожидания между адаптациями (часы)
- 'performance_lookback': 100, # Период Analysis performance
- 'market_Analysis_lookback': 50 # Период Analysis рынка
+'min_formance_drop': 0.05, #minimum drop performance for adaptation
+'max_adaptation_frequancy':24, # Maximum frequency of adaptation (hours)
+'adaptation_cooldown': 4, #waiting time between adaptations (hours)
+'Performance_lookback':100, #Analysis period
+'Market_Analysis_lookback': 50 # Market Anallysis Period
  }
 
- # Модели and стратегии
+# Models and strategies
  self.models = {}
  self.strategies = {}
  self.ensemble_weights = {}
 
- # Состояние системы
+# System status
  self.last_adaptation = None
  self.current_market_regime = None
  self.adaptation_in_progress = False
@@ -1425,16 +1425,16 @@ class Adaptivesystem:
  def adapt_to_market_conditions(self, market_data: pd.dataFrame,
  performance: Dict[str, float]) -> AdaptationDecision:
  """
- Адаптация к текущим рыночным условиям
+Adaptation to current market conditions
 
  Args:
- market_data: data о рынке (OHLCV)
+Market_data: Market data (OHLCV)
  performance: Metrics performance
 
  Returns:
- Решение об адаптации
+Decision on adaptation
  """
- # check возможности адаптации
+# Check adaptation opportunities
  if not self._can_adapt():
  return AdaptationDecision(
  adaptation_type=AdaptationType.NONE,
@@ -1444,22 +1444,22 @@ class Adaptivesystem:
  implementation_time=0
  )
 
- # Анализ рыночных условий
+# Market analysis
  market_Analysis = self._analyze_market_condition(market_data)
  self.market_Analysis_history.append(market_Analysis)
 
- # Анализ performance
+# Performance analysis
  performance_metrics = self._analyze_performance(performance)
  self.performance_history.append(performance_metrics)
 
- # Определение типа адаптации
+# Definition of type of adaptation
  adaptation_decision = self._determine_adaptation_type(market_Analysis, performance_metrics)
 
- # Применение адаптации
+# Application of adaptation
  if adaptation_decision.adaptation_type != AdaptationType.NONE:
  self._apply_adaptation(adaptation_decision, market_data, performance_metrics)
 
- # Запись in историю
+# Recording in history
  self.adaptation_history.append({
  'timestamp': datetime.now(),
  'type': adaptation_decision.adaptation_type.value,
@@ -1474,14 +1474,14 @@ class Adaptivesystem:
  return adaptation_decision
 
  def _can_adapt(self) -> bool:
- """check возможности адаптации"""
+"Check Adaptation""
  if self.adaptation_in_progress:
  return False
 
  if self.last_adaptation is None:
  return True
 
- # check времени with последней адаптации
+# Check time with last adaptation
  time_since_last = datetime.now() - self.last_adaptation
  if time_since_last.total_seconds() < self.adaptation_Settings['adaptation_cooldown'] * 3600:
  return False
@@ -1490,13 +1490,13 @@ class Adaptivesystem:
 
  def _analyze_market_condition(self, market_data: pd.dataFrame) -> MarketAnalysis:
  """
- Анализ текущих рыночных условий
+Analysis of current market conditions
 
  Args:
- market_data: data о рынке
+Market_data: market data
 
  Returns:
- Анализ рыночных условий
+Market analysis
  """
  if len(market_data) < 20:
  return MarketAnalysis(
@@ -1509,16 +1509,16 @@ class Adaptivesystem:
  market_regime="unknown"
  )
 
- # Расчет волатильности
+# Calculation of volatility
  returns = market_data['close'].pct_change().dropna()
  volatility = returns.rolling(20).std().iloc[-1]
 
- # Анализ тренда
+# Trends analysis
  sma_20 = market_data['close'].rolling(20).mean()
  sma_50 = market_data['close'].rolling(50).mean() if len(market_data) >= 50 else sma_20
  trend_strength = (sma_20.iloc[-1] - sma_20.iloc[-20]) / sma_20.iloc[-20]
 
- # Анализ объема
+# Volume analysis
  volume_sma = market_data['volume'].rolling(20).mean()
  current_volume = market_data['volume'].iloc[-1]
  volume_ratio = current_volume / volume_sma.iloc[-1] if volume_sma.iloc[-1] > 0 else 1
@@ -1530,16 +1530,16 @@ class Adaptivesystem:
  else:
  volume_profile = "normal"
 
- # Расчет моментума
+# Calculation of momentum
  momentum = self._calculate_momentum(market_data['close'])
 
- # Анализ силы поддержки/сопротивления
+# Analysis of support/resistance forces
  support_resistance_strength = self._calculate_support_resistance_strength(market_data)
 
- # Определение рыночного режима
+# Definition of market regime
  market_regime = self._determine_market_regime(volatility, trend_strength, volume_ratio)
 
- # Классификация условий
+# Classification of conditions
  condition = self._classify_market_condition(
  volatility, trend_strength, momentum, volume_ratio
  )
@@ -1555,33 +1555,33 @@ class Adaptivesystem:
  )
 
  def _calculate_momentum(self, prices: pd.Series) -> float:
- """Расчет моментума"""
+""""""" "The momentum"""
  if len(prices) < 10:
  return 0.0
 
- # RSI for измерения моментума
+# RSI for measuring the moment
  delta = prices.diff()
  gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
  loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
  rs = gain / loss
  rsi = 100 - (100 / (1 + rs))
 
- # Нормализация RSI in диапазон [-1, 1]
+# Normalization of RSI in range [-1, 1]
  momentum = (rsi.iloc[-1] - 50) / 50 if not pd.isna(rsi.iloc[-1]) else 0.0
  return np.clip(momentum, -1, 1)
 
  def _calculate_support_resistance_strength(self, market_data: pd.dataFrame) -> float:
- """Расчет силы уровней поддержки/сопротивления"""
+"The calculation of the force of the support/resistance levels."
  if len(market_data) < 20:
  return 0.0
 
- # Поиск локальных максимумов and минимумов
+# Search for local maximums and minimums
  highs = market_data['high'].rolling(5, center=True).max()
  lows = market_data['low'].rolling(5, center=True).min()
 
- # Подсчет касаний уровней
+# Calculation of levels
  current_price = market_data['close'].iloc[-1]
- tolerance = current_price * 0.01 # 1% толерантность
+tolerance = Current_price * 0.01 # 1% tolerance
 
  resistance_touches = 0
  support_touches = 0
@@ -1592,15 +1592,15 @@ class Adaptivesystem:
  if abs(market_data['low'].iloc[i] - current_price) <= tolerance:
  support_touches += 1
 
- # Нормализация силы
+# Normalization of power
  total_touches = resistance_touches + support_touches
- strength = min(total_touches / 10, 1.0) # Максимум 1.0
+strangth = min(total_touches / 10, 1.0) # Maximum 1.0
 
  return strength
 
  def _determine_market_regime(self, volatility: float, trend_strength: float,
  volume_ratio: float) -> str:
- """Определение рыночного режима"""
+"The definition of market regime"
  if volatility > 0.03 and abs(trend_strength) > 0.05:
  return "trending_volatile"
  elif volatility < 0.01 and abs(trend_strength) < 0.02:
@@ -1614,28 +1614,28 @@ class Adaptivesystem:
 
  def _classify_market_condition(self, volatility: float, trend_strength: float,
  momentum: float, volume_ratio: float) -> MarketCondition:
- """Классификация рыночных условий"""
- # Высокая волатильность + восходящий тренд
+""The Classification of Market Conditions""
+# High volatility + upward trend
  if volatility > 0.02 and trend_strength > 0.05 and momentum > 0.3:
  return MarketCondition.TRENDING_UP
 
- # Высокая волатильность + нисходящий тренд
+# High volatility + downward trend
  elif volatility > 0.02 and trend_strength < -0.05 and momentum < -0.3:
  return MarketCondition.TRENDING_DOWN
 
- # Низкая волатильность + боковое движение
+# Low volatility + lateral movement
  elif volatility < 0.01 and abs(trend_strength) < 0.02:
  return MarketCondition.RANGING
 
- # Очень высокая волатильность
+# Very high volatility
  elif volatility > 0.04:
  return MarketCondition.VOLATILE
 
- # Высокий объем + сильный тренд
+# High volume + strong trend
  elif volume_ratio > 1.5 and abs(trend_strength) > 0.03:
  return MarketCondition.BREAKOUT
 
- # Смена тренда
+# Changing trend
  elif abs(momentum) > 0.5 and trend_strength * momentum < 0:
  return MarketCondition.REVERSAL
 
@@ -1643,8 +1643,8 @@ class Adaptivesystem:
  return MarketCondition.RANGING
 
  def _analyze_performance(self, performance: Dict[str, float]) -> PerformanceMetrics:
- """Анализ performance системы"""
- # Расчет недавней performance
+""Analysis performance system."
+# Calculation of recent performance
  recent_performance = self._calculate_recent_performance()
 
  return PerformanceMetrics(
@@ -1659,25 +1659,25 @@ class Adaptivesystem:
  )
 
  def _calculate_recent_performance(self) -> float:
- """Расчет недавней performance"""
+"""""""""""""""""""""""
  if len(self.performance_history) < 5:
  return 0.0
 
- # Анализ последних 5 periods
+# Analysis of the last 5 periods
  recent_metrics = self.performance_history[-5:]
  avg_accuracy = np.mean([p.accuracy for p in recent_metrics])
  avg_profit_factor = np.mean([p.profit_factor for p in recent_metrics])
  avg_sharpe = np.mean([p.sharpe_ratio for p in recent_metrics])
 
- # Взвешенная оценка performance
+# Weighted assessment of performance
  recent_performance = (avg_accuracy * 0.4 + avg_profit_factor * 0.3 + avg_sharpe * 0.3)
 
  return recent_performance
 
  def _determine_adaptation_type(self, market_Analysis: MarketAnalysis,
  performance: PerformanceMetrics) -> AdaptationDecision:
- """Определение типа адаптации"""
- # Анализ необходимости адаптации
+"The definition of the type of adaptation."
+# Analysis of adaptation needs
  needs_adaptation = self._needs_adaptation(market_Analysis, performance)
 
  if not needs_adaptation:
@@ -1689,17 +1689,17 @@ class Adaptivesystem:
  implementation_time=0
  )
 
- # Определение типа адаптации on basis условий
+# Determination of the type of adaptation on background
  adaptation_type = self._select_adaptation_type(market_Analysis, performance)
 
- # Расчет уверенности and ожидаемого улучшения
+# Calculation of confidence and expected improvement
  confidence = self._calculate_adaptation_confidence(market_Analysis, performance, adaptation_type)
  expected_improvement = self._estimate_improvement(market_Analysis, performance, adaptation_type)
 
- # Определение уровня риска
+# Determination of risk level
  risk_level = self._assess_adaptation_risk(adaptation_type, market_Analysis)
 
- # Время реализации
+# Time of implementation
  implementation_time = self._estimate_implementation_time(adaptation_type)
 
  return AdaptationDecision(
@@ -1712,18 +1712,18 @@ class Adaptivesystem:
 
  def _needs_adaptation(self, market_Analysis: MarketAnalysis,
  performance: PerformanceMetrics) -> bool:
- """Определение необходимости адаптации"""
- # check падения performance
+"The identification of the need for adaptation""
+# Check fall performance
  if performance.recent_performance < self.performance_threshold:
  return True
 
- # check изменения рыночных условий
+# Check changes in market conditions
  if len(self.market_Analysis_history) > 1:
  prev_condition = self.market_Analysis_history[-2].condition
  if market_Analysis.condition != prev_condition:
  return True
 
- # check экстремальных рыночных условий
+# Check extreme market conditions
  if market_Analysis.condition in [MarketCondition.VOLATILE, MarketCondition.BREAKOUT]:
  return True
 
@@ -1731,37 +1731,37 @@ class Adaptivesystem:
 
  def _select_adaptation_type(self, market_Analysis: MarketAnalysis,
  performance: PerformanceMetrics) -> AdaptationType:
- """Выбор типа адаптации"""
- # Критическое падение performance - полное retraining
+"The choice of the type of adaptation."
+# Critical fall performance - total retraining
  if performance.accuracy < 0.5 or performance.profit_factor < 1.0:
  return AdaptationType.RETRAIN
 
- # Изменение рыночного режима - update ансамбля
+# Market Mode Change - Update Ensemble
  if market_Analysis.condition in [MarketCondition.TRENDING_UP, MarketCondition.TRENDING_DOWN]:
  return AdaptationType.ENSEMBLE_UPDATE
 
- # Высокая волатильность - калибровка параметров
+# High volatility - calibration of parameters
  if market_Analysis.condition == MarketCondition.VOLATILE:
  return AdaptationType.PARAMETER_TUNING
 
- # Боковое движение - переключение стратегии
+# Side-to-side movement - changing strategy
  if market_Analysis.condition == MarketCondition.RANGING:
  return AdaptationType.STRATEGY_SWITCH
 
- # Смена тренда - update признаков
+# Changing trend - extradate signs
  if market_Analysis.condition == MarketCondition.REVERSAL:
  return AdaptationType.FEATURE_SELECTION
 
- # on умолчанию - калибровка
+# on default - calibration
  return AdaptationType.RECALIBRATE
 
  def _calculate_adaptation_confidence(self, market_Analysis: MarketAnalysis,
  performance: PerformanceMetrics,
  adaptation_type: AdaptationType) -> float:
- """Расчет уверенности in адаптации"""
+"The calculation of confidence in adaptation."
  base_confidence = 0.5
 
- # Увеличение уверенности при четких сигналах
+# Increased confidence with clear signals
  if market_Analysis.volatility > 0.03:
  base_confidence += 0.2
 
@@ -1771,7 +1771,7 @@ class Adaptivesystem:
  if market_Analysis.condition in [MarketCondition.TRENDING_UP, MarketCondition.TRENDING_DOWN]:
  base_confidence += 0.1
 
- # Уменьшение уверенности при неопределенности
+# Reduced confidence with uncertainty
  if market_Analysis.condition == MarketCondition.RANGING:
  base_confidence -= 0.1
 
@@ -1780,27 +1780,27 @@ class Adaptivesystem:
  def _estimate_improvement(self, market_Analysis: MarketAnalysis,
  performance: PerformanceMetrics,
  adaptation_type: AdaptationType) -> float:
- """Оценка ожидаемого улучшения"""
- base_improvement = 0.05 # 5% базовое improve
+"""""""""""""""
+base_improvement = 0.05 # 5% basic improve
 
- # Увеличение ожидаемого улучшения при плохой performance
+# Increase in expected improvement in poor performance
  if performance.accuracy < 0.6:
  base_improvement += 0.1
 
  if performance.profit_factor < 1.2:
  base_improvement += 0.05
 
- # Корректировка in dependencies from типа адаптации
+# Adjustment in preferences from type of adaptation
  if adaptation_type == AdaptationType.RETRAIN:
  base_improvement += 0.1
  elif adaptation_type == AdaptationType.ENSEMBLE_UPDATE:
  base_improvement += 0.05
 
- return min(base_improvement, 0.3) # Максимум 30% improve
+Return min(base_improvement, 0.3) # Maximum 30% improve
 
  def _assess_adaptation_risk(self, adaptation_type: AdaptationType,
  market_Analysis: MarketAnalysis) -> str:
- """Оценка риска адаптации"""
+"""""""""""""""""
  if adaptation_type == AdaptationType.RETRAIN:
  return "high"
  elif adaptation_type in [AdaptationType.ENSEMBLE_UPDATE, AdaptationType.STRATEGY_SWITCH]:
@@ -1809,7 +1809,7 @@ class Adaptivesystem:
  return "low"
 
  def _estimate_implementation_time(self, adaptation_type: AdaptationType) -> int:
- """Оценка времени реализации адаптации"""
+"""""""""""""""""""
  time_estimates = {
  AdaptationType.NONE: 0,
  AdaptationType.RECALIBRATE: 30,
@@ -1825,7 +1825,7 @@ class Adaptivesystem:
  def _apply_adaptation(self, decision: AdaptationDecision,
  market_data: pd.dataFrame,
  performance: PerformanceMetrics) -> None:
- """Применение адаптации"""
+"The Application of Adaptation""
  self.adaptation_in_progress = True
 
  try:
@@ -1843,63 +1843,63 @@ class Adaptivesystem:
  self._tune_parameters(market_data)
 
  except Exception as e:
- print(f"Ошибка применения адаптации: {e}")
+"Approved application of adaptation: {e}")
  finally:
  self.adaptation_in_progress = False
 
  def _retrain_models(self, market_data: pd.dataFrame) -> None:
- """Полное retraining моделей"""
- print("Выполняется полное retraining моделей...")
- # Здесь должна быть реализация retraining
- # for примера просто обновляем timestamp
+"The Full Retraining Models."
+"To complete retraining of models..."
+# There's gotta be retraining
+# for example just update timetamp
  pass
 
  def _recalibrate_parameters(self, market_data: pd.dataFrame) -> None:
- """Калибровка параметров"""
- print("Выполняется калибровка параметров...")
- # Здесь должна быть реализация калибровки
+""Calibration of parameters""
+Print("Sizing parameters shall be performed...")
+# There must be a calibration application
  pass
 
  def _update_ensemble_weights(self, market_data: pd.dataFrame) -> None:
- """update весов ансамбля"""
- print("Обновляются веса ансамблевых моделей...")
- # Здесь должна быть реализация обновления весов
+""update balance of the band""
+"Renewed weights of ensemble models..."
+# There's got to be an implementation of the balance update
  pass
 
  def _update_feature_selection(self, market_data: pd.dataFrame) -> None:
- """update выбора признаков"""
- print("Обновляется выбор признаков...")
- # Здесь должна быть реализация обновления признаков
+""update of the sign selection""
+"Renewed selection of topics..."
+# There's got to be an implementation of the update
  pass
 
  def _switch_strategy(self, market_data: pd.dataFrame) -> None:
- """Переключение стратегии"""
- print("Выполняется переключение стратегии...")
- # Здесь должна быть реализация переключения стратегии
+"""""""""""""""
+Print("The strategy shift is being implemented...")
+# There's got to be a strategy shift
  pass
 
  def _tune_parameters(self, market_data: pd.dataFrame) -> None:
- """configuration параметров"""
- print("Выполняется configuration параметров...")
- # Здесь должна быть реализация Settings параметров
+""configuration of parameters""
+Print("Consign parameters...")
+# There's got to be a Settings implementation
  pass
 
  def get_adaptation_statistics(self) -> Dict[str, Any]:
- """Получение статистики адаптации"""
+"Proceeding adaptation statistics"
  if not self.adaptation_history:
  return {}
 
- # Статистика on типам адаптации
+# Statistics on types of adaptation
  adaptation_types = [a['type'] for a in self.adaptation_history]
  type_counts = {t: adaptation_types.count(t) for t in set(adaptation_types)}
 
- # Средняя уверенность
+# Average confidence
  avg_confidence = np.mean([a['confidence'] for a in self.adaptation_history])
 
- # Среднее ожидаемое improve
+# Average expected improve
  avg_improvement = np.mean([a['expected_improvement'] for a in self.adaptation_history])
 
- # Частота адаптации
+# The frequency of adaptation
  if len(self.adaptation_history) > 1:
  time_span = (self.adaptation_history[-1]['timestamp'] -
  self.adaptation_history[0]['timestamp']).total_seconds() / 3600
@@ -1916,18 +1916,18 @@ class Adaptivesystem:
  'last_adaptation': self.adaptation_history[-1]['timestamp'] if self.adaptation_history else None
  }
 
-# example использования адаптивной системы
+# example use of adaptive system
 if __name__ == "__main__":
  import yfinance as yf
 
- # Загрузка testsых данных
+# Loading test data
  ticker = yf.Ticker("AAPL")
  data = ticker.history(period="6mo", interval="1d")
 
- # create адаптивной системы
+# creative adaptive system
  adaptive_system = Adaptivesystem()
 
- # Симуляция performance
+# Simulation of performance
  performance = {
  'accuracy': 0.65,
  'profit_factor': 1.8,
@@ -1938,67 +1938,67 @@ if __name__ == "__main__":
  'total_trades': 150
  }
 
- # Адаптация к рыночным условиям
+# Adaptation to market conditions
  decision = adaptive_system.adapt_to_market_conditions(data, performance)
 
- print("Результат адаптации:")
- print(f"Тип адаптации: {decision.adaptation_type.value}")
- print(f"Уверенность: {decision.confidence:.2f}")
- print(f"Ожидаемое improve: {decision.expected_improvement:.2%}")
- print(f"Уровень риска: {decision.risk_level}")
- print(f"Время реализации: {decision.implementation_time} minutes")
+"Result of adaptation:")
+(f "Alternative type: {decision.adaptation_type.value}")
+Print(f) "Surety: {decision.confidence:2f}")
+(f "Expected improvee: {decision.spected_improvement: 2 per cent}")
+(f "Risk level: {decision.risk_level}")
+Print(f) Implementation time: {deposition.implementation_time}minutes}
 
- # Статистика адаптации
+# Adaptation statistics
  stats = adaptive_system.get_adaptation_statistics()
- print(f"\nСтатистика адаптации:")
- print(f"Всего адаптаций: {stats.get('total_adaptations', 0)}")
- print(f"Средняя уверенность: {stats.get('average_confidence', 0):.2f}")
- print(f"Частота адаптации: {stats.get('adaptation_frequency_per_hour', 0):.2f} in час")
+Print(f"\nStatistics of adaptation:")
+(f) All adaptations: {stats.get('total_adaptations', 0)})
+average confidence: {stats.get('overage_confidence', 0):2f})
+Print(f) "The adaptation rate: {stats.get('adaptation_frequancy_per_hour', 0:2f} in hour")
 ```
 
-## Plan реализации
+## Plan Implementation
 
-**Theory:** Plan реализации представляет собой структурированный подход к созданию высокодоходных ML-систем, разбитый on этапы for обеспечения систематического and эффективного развития. Это критически важно for успешной реализации проекта.
+**Theory:** Implementation Plan is a structured approach to high-income ML systems, broken down on stages for systematic and effective development, which is critical for the success of the project.
 
-**Почему Plan реализации важен:**
-- **Структурированность:** Обеспечивает структурированный подход
-- **Эффективность:** Обеспечивает эффективное развитие
-- **Контроль:** Обеспечивает контроль над процессом
-- **Успех:** Критически важно for успешной реализации
+**Why Plan implementation is important:**
+- **Structurality:** Provides a structured approach
+- ** Effectiveness:** Ensures effective development
+- ** Control:** Ensures process control
+- ** Success: ** Critical for success
 
-### Этап 1: Подготовка (1-2 недели)
+### Step 1: Preparation (1-2 weeks)
 
-**Theory:** Этап подготовки критически важен for создания фундамента for всей системы. Это основа for all последующих этапов.
+**Theory:** The preparatory phase is critical for building the foundation for the entire system.
 
-**Почему этап подготовки важен:**
-- **Фундамент:** Создает фундамент for всей системы
-- **Подготовка:** Обеспечивает подготовку all required компонентов
-- **Эффективность:** Обеспечивает эффективность последующих этапов
-- **Успех:** Критически важно for успеха всего проекта
+** Why the preparatory phase is important:**
+- ** Foundation:** Creates the foundation for the whole system
+- ** Preparation:** Provides all components
+- ** Effectiveness:** Ensures the effectiveness of subsequent phases
+- ** Success:** Critical to the success of the entire project
 
-**Детальное объяснение этапа подготовки:**
+** Detailed explanation of the preparation phase:**
 
-Этап подготовки является критически важным фундаментом for всей системы. on этом этапе мы Creating все необходимые components инфраструктуры, которые будут использоваться on протяжении всего жизненного цикла проекта. Правильная подготовка обеспечивает стабильность, масштабируемость and эффективность всей системы.
+The preparation phase is a critical foundation for the entire system. On this stage, we are Creation of all the necessary infrastructure requirements that will be used throughout the life cycle of the project; proper preparation ensures the stability, scalability and efficiency of the entire system.
 
 1. **environment installation**
- - **Theory:** environment installation критически важна for создания рабочей среды
- - **Почему важно:** Обеспечивает рабочую среду
- - **Плюсы:** Рабочая среда, совместимость, performance
- - **Disadvantages:** Требует времени and ресурсов
+- **Theory:**environment installation is critical for creating a working environment
+- What's important is:** Provides a working environment
+- ** Plus:** Working environment, compatibility, performance
+- **Disadvantages:** Needs time and resources
 
- **Детальное describe environment installation:**
+**Detail describe environment institution:**
 
- environment installation включает настройку all required инструментов and библиотек for development and Launchа ML-систем. Это критически важно for обеспечения совместимости and performance.
+Environment installation includes setting up all-required tools and libraries for development and launch ML systems. This is critical for compatibility and performance.
 
  ```bash
- # installation uv for управления зависимостями
+# installation uv for addiction management
  curl -LsSf https://astral.sh/uv/install.sh | sh
 
- # create виртуального окружения
+# creative virtual environment
  uv venv neozork-trading
  source neozork-trading/bin/activate
 
- # installation основных dependencies
+# installation of basic dependencies
  uv add numpy pandas scikit-learn matplotlib seaborn
  uv add yfinance talib-binary plotly dash
  uv add jupyter notebook ipykernel
@@ -2007,20 +2007,20 @@ if __name__ == "__main__":
  # installation MLX for Apple Silicon
  uv add mlx
 
- # installation дополнительных библиотек
+# installation of additional libraries
  uv add web3 requests aiohttp
  uv add redis sqlalchemy psycopg2-binary
  ```
 
 2. **Loading data**
- - **Theory:** Loading data критически важна for обеспечения качественными данными
- - **Почему важно:** Обеспечивает качественными данными
- - **Плюсы:** Качественные data, полнота, актуальность
- - **Disadvantages:** Требует времени and ресурсов
+- **Theory:** Loading data is critical for quality data
+- What's important is:** Provides quality data
+- ** Plus:** Qualitative data, completeness, relevance
+- **Disadvantages:** Needs time and resources
 
- **Детальное describe загрузки данных:**
+** Detailed describe data download:**
 
- Loading data включает получение исторических данных on all активам and Timeframeм, их очистку and подготовку for Analysis. Качественные data являются основой for эффективных ML-моделей.
+Loading data includes historical data on all assets and Timeframes, their clean-up and preparation for Analysis. Qualitative data are the basis for effective ML models.
 
  ```python
  import yfinance as yf
@@ -2029,7 +2029,7 @@ if __name__ == "__main__":
  import os
 
  class dataLoader:
- """Класс for загрузки and подготовки данных"""
+"Class for data loading and production"
 
  def __init__(self, data_dir: str = "data"):
  self.data_dir = data_dir
@@ -2042,8 +2042,8 @@ if __name__ == "__main__":
  self.Timeframes = ['1m', '5m', '15m', '1h', '4h', '1d']
 
  def download_all_data(self, period: str = "2y"):
- """Загрузка all данных"""
- print("Начинаем загрузку данных...")
+"Arrange All Data""
+"Start data download..."
 
  for asset_type, symbols in self.assets.items():
  for symbol in symbols:
@@ -2055,32 +2055,32 @@ if __name__ == "__main__":
  print(f"✗ {symbol} {Timeframe}: {e}")
 
  def _download_asset_data(self, symbol: str, Timeframe: str, period: str):
- """Loading data for конкретного актива"""
+"Loding data for a specific asset"
  ticker = yf.Ticker(symbol)
  data = ticker.history(period=period, interval=Timeframe)
 
  if data.empty:
- raise ValueError(f"Нет данных for {symbol}")
+Raise ValueError(f "No data for {symbol}")
 
- # Сохранение данных
+# Data preservation
  filename = f"{symbol}_{Timeframe}_{period}.parquet"
  filepath = os.path.join(self.data_dir, filename)
  data.to_parquet(filepath)
 
- # Использование
+# Use
  loader = dataLoader()
  loader.download_all_data()
  ```
 
-3. **create базовой структуры**
- - **Theory:** create базовой структуры критически важно for organization проекта
- - **Почему важно:** Обеспечивает организацию проекта
- - **Плюсы:** Организация, масштабируемость, поддерживаемость
- - **Disadvantages:** Требует Planирования
+3. **create basic structure**
+- **Theory:** the basic structure is critical for project organization
+- ** Why is it important:** Ensures the organization of the project
+- ** Plus:** Organization, scalability, support
+- **Disadvantages:**
 
- **Детальное describe создания структуры:**
+**Detail describe structure:**
 
- create базовой структуры включает организацию files, create основных классов and настройку системы Logsрования. Это обеспечивает масштабируемость and поддерживаемость проекта.
+The basic structure includes the organization of files, the creation of major classes and the setting up of the Logsoring system. This ensures that the project is scalable and supportive.
 
  ```python
  import logging
@@ -2088,13 +2088,13 @@ if __name__ == "__main__":
  from datetime import datetime
 
  class ProjectStructure:
- """create структуры проекта"""
+""create project structure""
 
  def __init__(self, project_root: str = "."):
  self.project_root = Path(project_root)
 
  def create_Structure(self):
- """create структуры проекта"""
+""create project structure""
  directories = [
  "src",
  "src/models",
@@ -2114,12 +2114,12 @@ if __name__ == "__main__":
  for directory in directories:
  (self.project_root / directory).mkdir(parents=True, exist_ok=True)
 
- # create основных files
+# the key files
  self._create_main_files()
 
  def _create_main_files(self):
- """create основных files"""
- # __init__.py файлы
+""create basic files""
+#_init_.py files
  init_files = [
  "src/__init__.py",
  "src/models/__init__.py",
@@ -2133,11 +2133,11 @@ if __name__ == "__main__":
  for file_path in init_files:
  (self.project_root / file_path).touch()
 
- # configuration Logsрования
+# configuring Logs
  self._setup_logging()
 
  def _setup_logging(self):
- """configuration системы Logsрования"""
+""" "configuration of the Logsoring System""
  logging.basicConfig(
  level=logging.INFO,
  format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -2147,34 +2147,34 @@ if __name__ == "__main__":
  ]
  )
 
- # Использование
+# Use
  Structure = ProjectStructure()
  Structure.create_Structure()
  ```
 
-### Этап 2: Разработка моделей (2-3 недели)
+### Phase 2: Modelling (2-3 weeks)
 
-**Theory:** Этап разработки моделей является сердцем всей системы, где создаются and оптимизируются ML-модели for прогнозирования рыночных движений. Этот этап критически важен for достижения высокой точности and доходности.
+**Theory:** The modelling phase is the heart of the entire system where ML models for forecasting market movements are created and optimized. This phase is critical for achieving high accuracy and profitability.
 
-**Почему этап разработки моделей важен:**
-- **Точность прогнозов:** Обеспечивает высокую точность прогнозирования
-- **Адаптивность:** Создает модели, способные адаптироваться к изменениям
-- **Робастность:** Обеспечивает стабильность работы in различных условиях
-- **Доходность:** Критически важно for достижения целевой доходности
+** Why the modelling phase is important:**
+- ** The accuracy of the projections:** Ensures high accuracy of the projections
+- ** Adaptation:** Creates models that can adapt to changes
+- **Purity:** Ensures stability of work in different settings
+- ** Income:** Critical to achieving target returns
 
-**Детальное объяснение этапа разработки моделей:**
+** Detailed explanation of the modelling phase:**
 
-on этом этапе мы Creating and оптимизируем все components ML-системы, including индикаторы, признаки and модели. Каждый компонент тщательно анализируется and оптимизируется for максимальной эффективности.
+On this stage, we create and optimize all components of ML systems, including indicators, indicators and models. Each component is carefully analysed and optimized for maximum efficiency.
 
-1. **Анализ indicators**
- - **Theory:** Анализ indicators критически важен for понимания их эффективности and оптимизации параметров
- - **Почему важно:** Обеспечивает максимальную эффективность indicators
- - **Плюсы:** Высокая точность, оптимизированные parameters, понимание поведения
- - **Disadvantages:** Требует времени and вычислительных ресурсов
+1. **Indicators Analysis**
+- **Theory:** Indicators analysis is critical for understanding their effectiveness and optimizing parameters
+- What's important is:** Provides maximum efficiency indicators?
+- ** Plus:** High accuracy, optimized parameters, understanding behaviour
+- **Disadvantages:** Needs time and computing resources
 
- **Детальное describe Analysis indicators:**
+**Detail describe Analysis indicators:**
 
- Анализ indicators включает тестирование их эффективности on исторических данных, оптимизацию параметров and определение лучших комбинаций. Это критически важно for создания эффективной системы.
+Indicator analysis includes testing their effectiveness on historical data, optimizing parameters and defining the best combinations, which is critical for creating an effective system.
 
  ```python
  import numpy as np
@@ -2184,18 +2184,18 @@ on этом этапе мы Creating and оптимизируем все compone
  import matplotlib.pyplot as plt
 
  class IndicatorAnalyzer:
- """Analysisтор эффективности indicators"""
+""Analysistor of Performance Indicators""
 
  def __init__(self):
  self.results = {}
 
  def analyze_indicator(self, indicator_class, data, param_ranges):
- """Анализ эффективности индикатора with различными параметрами"""
+""Analysis of indicator performance with different parameters""
  best_params = None
  best_score = 0
  results = []
 
- # Перебор параметров
+# A cross-section of parameters
  for params in self._generate_param_combinations(param_ranges):
  try:
  indicator = indicator_class(**params)
@@ -2214,7 +2214,7 @@ on этом этапе мы Creating and оптимизируем все compone
  best_params = params
 
  except Exception as e:
- print(f"Ошибка with параметрами {params}: {e}")
+print(f) Error with parameters {params}: {e})
 
  return {
  'best_params': best_params,
@@ -2223,7 +2223,7 @@ on этом этапе мы Creating and оптимизируем все compone
  }
 
  def _generate_param_combinations(self, param_ranges):
- """Генерация комбинаций параметров"""
+""""""""""""""""""""""""""
  from itertools import product
 
  keys = List(param_ranges.keys())
@@ -2233,8 +2233,8 @@ on этом этапе мы Creating and оптимизируем все compone
  yield dict(zip(keys, combination))
 
  def _evaluate_indicator(self, indicator, data):
- """Оценка эффективности индикатора"""
- # Разделение данных on обучающую and testsую выборки
+""" Indicator Performance Assessment""
+# Segregation of data on training and test sample
  tscv = TimeSeriesSplit(n_splits=5)
 
  scores = []
@@ -2242,10 +2242,10 @@ on этом этапе мы Creating and оптимизируем все compone
  train_data = data.iloc[train_idx]
  test_data = data.iloc[test_idx]
 
- # Обучение индикатора
+# Training the indicator
  indicator.fit(train_data)
 
- # Предсказания
+# Premonition
  predictions = indicator.predict(test_data)
  actual = indicator.get_target(test_data)
 
@@ -2260,17 +2260,17 @@ on этом этапе мы Creating and оптимизируем все compone
  'recall': recall
  })
 
- # Средние metrics
+# Middle metrics
  return {
  'accuracy': np.mean([s['accuracy'] for s in scores]),
  'precision': np.mean([s['precision'] for s in scores]),
  'recall': np.mean([s['recall'] for s in scores])
  }
 
- # Использование
+# Use
  analyzer = IndicatorAnalyzer()
 
- # Анализ WAVE2 индикатора
+# Indicator WAVE2 analysis
  wave2_params = {
  'period': [10, 15, 20, 25, 30],
  'sensitivity': [0.3, 0.4, 0.5, 0.6, 0.7]
@@ -2279,37 +2279,37 @@ on этом этапе мы Creating and оптимизируем все compone
  # wave2_results = analyzer.analyze_indicator(Wave2Indicator, data, wave2_params)
  ```
 
-2. **create признаков**
- - **Theory:** create признаков критически важно for качества ML-моделей
- - **Почему важно:** Обеспечивает качественные признаки for обучения
- - **Плюсы:** Высокая информативность, стабильность, релевантность
- - **Disadvantages:** Требует Analysis and оптимизации
+2. **create features**
+- **Theory:**key signs are critical for the quality of ML models
+- What's important is:** Provides quality signs for learning?
+- ** Plus:** High informativeity, stability, relevance
+- **Disadvantages:** Requires Analysis and Optimization
 
- **Детальное describe создания признаков:**
+**Detail describe characterization:**
 
- create признаков включает разработку базовых, продвинутых and временных признаков, которые будут использоваться for обучения моделей. Качество признаков напрямую влияет on качество прогнозов.
+the criteria include the development of baseline, advanced and time-bound indicators that will be used for model learning; the quality of the topics directly affects the quality of projections.
 
  ```python
  class FeatureEngineer:
- """Инженер признаков for торговых данных"""
+"Engineer for Trade Data"
 
  def __init__(self):
  self.feature_names = []
 
  def create_basic_features(self, data):
- """create базовых признаков"""
+""create basic features."
  features = pd.dataFrame(index=data.index)
 
- # Ценовые признаки
+# Price signs
  features['price_change'] = data['close'].pct_change()
  features['high_low_ratio'] = data['high'] / data['low']
  features['close_open_ratio'] = data['close'] / data['open']
 
- # Объемные признаки
+# The volume of signs
  features['volume_change'] = data['volume'].pct_change()
  features['volume_price_ratio'] = data['volume'] / data['close']
 
- # Волатильность
+# Volatility
  features['volatility_5'] = data['close'].rolling(5).std()
  features['volatility_20'] = data['close'].rolling(20).std()
 
@@ -2317,10 +2317,10 @@ on этом этапе мы Creating and оптимизируем все compone
  return features
 
  def create_Technical_features(self, data):
- """create технических признаков"""
+""create technical features""
  features = pd.dataFrame(index=data.index)
 
- # Скользящие средние
+# Sliding average
  for period in [5, 10, 20, 50]:
  features[f'sma_{period}'] = data['close'].rolling(period).mean()
  features[f'sma_ratio_{period}'] = data['close'] / features[f'sma_{period}']
@@ -2347,22 +2347,22 @@ on этом этапе мы Creating and оптимизируем все compone
  return features
 
  def create_advanced_features(self, data):
- """create продвинутых признаков"""
+""create advanced signs."
  features = pd.dataFrame(index=data.index)
 
- # Волновые признаки
+# Wave signs
  features['wave_amplitude'] = self._calculate_wave_amplitude(data['close'])
  features['wave_frequency'] = self._calculate_wave_frequency(data['close'])
 
- # Паттерны
+# Patterns
  features['doji'] = self._detect_doji(data)
  features['hammer'] = self._detect_hammer(data)
  features['engulfing'] = self._detect_engulfing(data)
 
- # Корреляции
+# Correlations
  features['price_volume_corr'] = data['close'].rolling(20).corr(data['volume'])
 
- # Моментум
+# Momentum
  features['momentum_5'] = data['close'] / data['close'].shift(5) - 1
  features['momentum_10'] = data['close'] / data['close'].shift(10) - 1
 
@@ -2370,22 +2370,22 @@ on этом этапе мы Creating and оптимизируем все compone
  return features
 
  def create_time_features(self, data):
- """create временных признаков"""
+""create time signs."
  features = pd.dataFrame(index=data.index)
 
- # Временные components
+# Temporary components
  features['hour'] = data.index.hour
  features['day_of_week'] = data.index.dayofweek
  features['day_of_month'] = data.index.day
  features['month'] = data.index.month
 
- # Циклические признаки
+# Cyclic signs
  features['hour_sin'] = np.sin(2 * np.pi * features['hour'] / 24)
  features['hour_cos'] = np.cos(2 * np.pi * features['hour'] / 24)
  features['day_sin'] = np.sin(2 * np.pi * features['day_of_week'] / 7)
  features['day_cos'] = np.cos(2 * np.pi * features['day_of_week'] / 7)
 
- # Праздничные дни and выходные
+# Celebrating days and weekends
  features['is_weekend'] = (features['day_of_week'] >= 5).astype(int)
  features['is_market_open'] = ((features['hour'] >= 9) & (features['hour'] <= 16)).astype(int)
 
@@ -2393,7 +2393,7 @@ on этом этапе мы Creating and оптимизируем все compone
  return features
 
  def _calculate_rsi(self, prices, period=14):
- """Расчет RSI"""
+"""""""""" "RSI"""
  delta = prices.diff()
  gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
  loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
@@ -2401,7 +2401,7 @@ on этом этапе мы Creating and оптимизируем все compone
  return 100 - (100 / (1 + rs))
 
  def _calculate_macd(self, prices, fast=12, slow=26, signal=9):
- """Расчет MACD"""
+"""""" "MACD"""
  ema_fast = prices.ewm(span=fast).mean()
  ema_slow = prices.ewm(span=slow).mean()
  macd_line = ema_fast - ema_slow
@@ -2410,21 +2410,21 @@ on этом этапе мы Creating and оптимизируем все compone
  return macd_line, signal_line, histogram
 
  def _calculate_bollinger_bands(self, prices, period=20, std_dev=2):
- """Расчет полос Боллинджера"""
+"Bollinger stripes."
  sma = prices.rolling(period).mean()
  std = prices.rolling(period).std()
  upper = sma + (std * std_dev)
  lower = sma - (std * std_dev)
  return upper, sma, lower
 
- # Использование
+# Use
  engineer = FeatureEngineer()
  basic_features = engineer.create_basic_features(data)
  Technical_features = engineer.create_Technical_features(data)
  advanced_features = engineer.create_advanced_features(data)
  time_features = engineer.create_time_features(data)
 
- # Объединение all признаков
+# Merging all the signs
  all_features = pd.concat([
  basic_features,
  Technical_features,
@@ -2433,15 +2433,15 @@ on этом этапе мы Creating and оптимизируем все compone
  ], axis=1)
  ```
 
-3. **Обучение моделей**
- - **Theory:** Обучение моделей критически важно for создания эффективных прогнозирующих систем
- - **Почему важно:** Обеспечивает способность системы к прогнозированию
- - **Плюсы:** Высокая точность, адаптивность, автоматизация
- - **Disadvantages:** Требует времени and вычислительных ресурсов
+3. ** Model training**
+- **Theory:** Model training is critical for effective forecasting systems
+- What's important is:** Ensures the system's ability to predict?
+- ** Plus:** High accuracy, adaptive, automation
+- **Disadvantages:** Needs time and computing resources
 
- **Детальное describe обучения моделей:**
+** Detailed describe model learning:**
 
- Обучение моделей включает create индивидуальных моделей, ансамблевых моделей and deep learning моделей. Каждый тип модели имеет свои преимущества and используется for различных задач.
+The training of models includes the creation of individual models, ensemble models and deep modeling; each model type has its advantages and is used for different tasks.
 
  ```python
  from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
@@ -2453,14 +2453,14 @@ on этом этапе мы Creating and оптимизируем все compone
  import xgboost as xgb
 
  class ModelTrainer:
- """Тренер моделей machine learning"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
  def __init__(self):
  self.models = {}
  self.ensemble_weights = {}
 
  def train_individual_models(self, X, y):
- """Обучение индивидуальных моделей"""
+"The Learning of Individual Models""
  models_config = {
  'random_forest': {
  'model': RandomForestClassifier(random_state=42),
@@ -2503,9 +2503,9 @@ on этом этапе мы Creating and оптимизируем все compone
  }
 
  for name, config in models_config.items():
- print(f"Обучение модели {name}...")
+Print(f) Model training {name}...)
 
- # Поиск лучших параметров
+# Searching for better parameters
  grid_search = GridSearchCV(
  config['model'],
  config['params'],
@@ -2516,18 +2516,18 @@ on этом этапе мы Creating and оптимизируем все compone
 
  grid_search.fit(X, y)
 
- # Сохранение лучшей модели
+# Maintaining a Better Model
  self.models[name] = grid_search.best_estimator_
 
- # Оценка performance
+# Performance evaluation
  scores = cross_val_score(grid_search.best_estimator_, X, y, cv=5)
  print(f"{name}: {scores.mean():.4f} (+/- {scores.std() * 2:.4f})")
 
  def train_ensemble_model(self, X, y):
- """Обучение ансамблевой модели"""
+"The Ensemble Model Training."
  from sklearn.ensemble import VotingClassifier
 
- # create ансамбля
+# Create ensemble
  ensemble = VotingClassifier(
  estimators=[
  ('rf', self.models['random_forest']),
@@ -2537,22 +2537,22 @@ on этом этапе мы Creating and оптимизируем все compone
  voting='soft'
  )
 
- # Обучение ансамбля
+# Ensemble education
  ensemble.fit(X, y)
  self.models['ensemble'] = ensemble
 
- # Оценка performance
+# Performance evaluation
  scores = cross_val_score(ensemble, X, y, cv=5)
  print(f"Ensemble: {scores.mean():.4f} (+/- {scores.std() * 2:.4f})")
 
  def train_deep_learning_model(self, X, y):
- """Обучение deep learning модели"""
+""""""""" "Learning Model"""
  from tensorflow.keras.models import Sequential
  from tensorflow.keras.layers import Dense, Dropout, BatchNormalization
  from tensorflow.keras.optimizers import Adam
  from tensorflow.keras.callbacks import EarlyStopping
 
- # create модели
+♪ Create Model
  model = Sequential([
  Dense(128, activation='relu', input_shape=(X.shape[1],)),
  BatchNormalization(),
@@ -2569,14 +2569,14 @@ on этом этапе мы Creating and оптимизируем все compone
  Dense(1, activation='sigmoid')
  ])
 
- # Компиляция модели
+# Model compilation
  model.compile(
  optimizer=Adam(learning_rate=0.001),
  loss='binary_crossentropy',
  metrics=['accuracy']
  )
 
- # Обучение модели
+# Model learning
  early_stopping = EarlyStopping(
  monitor='val_loss',
  patience=10,
@@ -2596,36 +2596,36 @@ on этом этапе мы Creating and оптимизируем все compone
 
  return history
 
- # Использование
+# Use
  trainer = ModelTrainer()
  trainer.train_individual_models(X, y)
  trainer.train_ensemble_model(X, y)
- # trainer.train_deep_learning_model(X, y) # Требует TensorFlow
+# Trainer.train_deep_learning_model(X,y) # Demands TensorFlow
  ```
 
-### Этап 3: Бэктестинг (1-2 недели)
+### Step 3: Backting (1-2 weeks)
 
-**Theory:** Этап бэктестинга критически важен for validation эффективности торговых стратегий on исторических данных. Это позволяет оценить реальную performance системы to внедрения in продакшн.
+**Theory:** The back-up phase is critical for the validation of the effectiveness of trade policies on historical data, thus assessing the real performance of the system to be implemented in production.
 
-**Почему этап бэктестинга важен:**
-- **validation стратегий:** Обеспечивает проверку эффективности стратегий
-- **Оценка рисков:** Позволяет оценить потенциальные риски
-- **Оптимизация параметров:** Обеспечивает настройку оптимальных параметров
-- **Уверенность:** Дает уверенность in эффективности системы
+** Why the Baektsing phase is important:**
+- **validation strategies:** Ensures the effectiveness of policies
+- ** Risk assessment:** Allows assessment of potential risks
+- **Optimization of parameters:** Provides settings for optimal parameters
+- **Accuracy:** Provides in-house assurance of the system's effectiveness
 
-**Детальное объяснение этапа бэктестинга:**
+** Detailed explanation of the buffer phase:**
 
-Бэктестинг включает комплексное тестирование стратегий on исторических данных with использованием различных методов validation. Это критически важно for понимания реальной performance системы.
+Becketting includes comprehensive testing of strategies on historical data with different methods of validation, which is critical for understanding the real performance of the system.
 
-1. **Историческое тестирование**
- - **Theory:** Историческое тестирование критически важно for оценки performance on исторических данных
- - **Почему важно:** Обеспечивает понимание исторической эффективности
- - **Плюсы:** Объективная оценка, понимание поведения, выявление паттернов
- - **Disadvantages:** Прошлые результаты not гарантируют будущие
+1. ** Historical testing**
+- **Theory:** Historical testing is critical for assessing performance on historical data
+- ** Why is it important:** Provides an understanding of historical effectiveness
+- ** Plus:** Objective assessment, understanding of behaviour, identification of patterns
+- **Disadvantages:** Past results not guarantee future
 
- **Детальное describe исторического тестирования:**
+**Detail describe historical testing:**
 
- Историческое тестирование включает Launch стратегий on исторических данных with анализом performance, рисков and стабильности. Это основа for принятия решений о внедрении стратегий.
+Historical testing includes Launch strategies on historical data with analysis of performance, risks and stability, which is the basis for decision-making on policy implementation.
 
  ```python
  import numpy as np
@@ -2635,7 +2635,7 @@ on этом этапе мы Creating and оптимизируем все compone
  import seaborn as sns
 
  class Backtester:
- """Система бэктестинга торговых стратегий"""
+"The trade strategybacking system"
 
  def __init__(self, initial_capital=100000, commission=0.001):
  self.initial_capital = initial_capital
@@ -2643,55 +2643,55 @@ on этом этапе мы Creating and оптимизируем все compone
  self.results = {}
 
  def run_backtest(self, strategy, data, start_date=None, end_date=None):
- """Launch бэктестинга стратегии"""
- # Фильтрация данных on датам
+""Launch Baptizing Strategy."
+# Data filtering on dates
  if start_date:
  data = data[data.index >= start_date]
  if end_date:
  data = data[data.index <= end_date]
 
- # Инициализация
+# Initiating
  capital = self.initial_capital
  position = 0
  trades = []
  equity_curve = []
 
- # Симуляция торговли
+# Simulation of trade
  for i in range(len(data)):
  current_data = data.iloc[:i+1]
 
  if len(current_data) < strategy.min_period:
  continue
 
- # Получение сигнала
+# To receive the signal
  signal = strategy.get_signal(current_data)
 
- # Обработка сигнала
- if signal == 1 and position <= 0: # Покупка
- if position < 0: # Закрытие короткой позиции
+# Signal processing
+if signal = = 1 and position < = 0: # Purchase
+if position < 0: # Closing short entry
  self._close_position(trades, data.iloc[i], 'short')
 
- # Открытие длинной позиции
+# Opening a long position
  trade = self._open_position(data.iloc[i], 'long', capital)
  if trade:
  trades.append(trade)
  position = 1
 
- elif signal == -1 and position >= 0: # Продажа
- if position > 0: # Закрытие длинной позиции
+elif signal = = -1 and position >=0: #Sales
+if position > 0: # Closing long position
  self._close_position(trades, data.iloc[i], 'long')
 
- # Открытие короткой позиции
+# Opening of short position
  trade = self._open_position(data.iloc[i], 'short', capital)
  if trade:
  trades.append(trade)
  position = -1
 
- # Расчет текущего капитала
+# Calculation of current capital
  current_price = data.iloc[i]['close']
- if position > 0: # Длинная позиция
+if position > 0: # Long position
  capital = trades[-1]['quantity'] * current_price
- elif position < 0: # Короткая позиция
+elif position < 0: # Short position
  capital = trades[-1]['quantity'] * (2 * trades[-1]['price'] - current_price)
 
  equity_curve.append({
@@ -2701,7 +2701,7 @@ on этом этапе мы Creating and оптимизируем все compone
  'price': current_price
  })
 
- # Расчет метрик
+# The calculation of the metric
  results = self._calculate_metrics(trades, equity_curve)
  results['trades'] = trades
  results['equity_curve'] = pd.dataFrame(equity_curve)
@@ -2709,9 +2709,9 @@ on этом этапе мы Creating and оптимизируем все compone
  return results
 
  def _open_position(self, data_point, direction, capital):
- """Открытие позиции"""
+""""""""""""""""""
  price = data_point['close']
- quantity = capital * 0.95 / price # 95% капитала, 5% резерв
+Quantity = capital * 0.95 / price #95% capital, 5% reserve
 
  return {
  'date': data_point.name,
@@ -2722,7 +2722,7 @@ on этом этапе мы Creating and оптимизируем все compone
  }
 
  def _close_position(self, trades, data_point, direction):
- """Закрытие позиции"""
+"Close position."
  if not trades:
  return
 
@@ -2738,24 +2738,24 @@ on этом этапе мы Creating and оптимизируем все compone
  else: # short
  pnl = (last_trade['price'] - price) * last_trade['quantity']
 
- # update последней сделки
+# Update the latest deal
  last_trade['close_date'] = data_point.name
  last_trade['close_price'] = price
  last_trade['pnl'] = pnl - last_trade['commission']
  last_trade['commission'] += last_trade['quantity'] * price * self.commission
 
  def _calculate_metrics(self, trades, equity_curve):
- """Расчет метрик performance"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  if not trades:
  return {}
 
- # Фильтрация завершенных сделок
+# Filtering closed transactions
  COMPLETED_trades = [t for t in trades if 'pnl' in t]
 
  if not COMPLETED_trades:
  return {}
 
- # Базовые metrics
+# Basic metrics
  total_trades = len(COMPLETED_trades)
  winning_trades = len([t for t in COMPLETED_trades if t['pnl'] > 0])
  losing_trades = len([t for t in COMPLETED_trades if t['pnl'] < 0])
@@ -2775,12 +2775,12 @@ on этом этапе мы Creating and оптимизируем все compone
 
  sharpe_ratio = returns.mean() / returns.std() * np.sqrt(252) if returns.std() > 0 else 0
 
- # Максимальная просадка
+# Maximum tarmac
  running_max = equity_df['capital'].expanding().max()
  drawdown = (equity_df['capital'] - running_max) / running_max
  max_drawdown = drawdown.min()
 
- # Общая доходность
+# Total return
  total_return = (equity_df['capital'].iloc[-1] - self.initial_capital) / self.initial_capital
 
  return {
@@ -2798,51 +2798,51 @@ on этом этапе мы Creating and оптимизируем все compone
  'final_capital': equity_df['capital'].iloc[-1]
  }
 
- # Использование
+# Use
  backtester = Backtester()
  results = backtester.run_backtest(strategy, data)
- print(f"Общая доходность: {results['total_return']:.2%}")
+total return:(['total_return']: 2%})
  print(f"Sharpe Ratio: {results['sharpe_ratio']:.2f}")
- print(f"Максимальная просадка: {results['max_drawdown']:.2%}")
+(pint(f "Maximal prosperity: {results['max_drawdown']: 2 per cent}")
  ```
 
-2. **Walk-forward анализ**
- - **Theory:** Walk-forward анализ критически важен for оценки стабильности стратегий во времени
- - **Почему важно:** Обеспечивает понимание стабильности performance
- - **Плюсы:** Реалистичная оценка, выявление дрейфа, адаптивность
- - **Disadvantages:** Требует больше времени and ресурсов
+2. **Walk-forward analysis**
+- **Theory:** Walk-forward analysis is critical for assessing the stability of policies over time
+- What's important is:** Provides an understanding of sustainability
+- ** Plus:** Realistic assessment, drift detection, adaptiveness
+- **Disadvantages:** Requires more time and resources
 
- **Детальное describe walk-forward Analysis:**
+**Detail describe Walk-forward Analysis:**
 
- Walk-forward анализ включает тестирование стратегий on скользящих окнах данных for оценки их стабильности and адаптивности во времени. Это критически важно for понимания долгосрочной эффективности.
+Walk-forward analysis includes testing strategies on sliding data windows for assessing their stability and adaptation over time, which is critical for understanding long-term effectiveness.
 
  ```python
  class WalkForwardAnalyzer:
- """Analysisтор walk-forward тестирования"""
+""Anallysistor Walk-forward testing""
 
  def __init__(self, train_period=252, test_period=63, step=21):
- self.train_period = train_period # Период обучения (дни)
- self.test_period = test_period # Период тестирования (дни)
- self.step = step # Шаг сдвига (дни)
+Self.train_period = tran_period # Period of study (days)
+Self.test_period = test_period # Test period (days)
+Self.step = step # Step of shift (days)
 
  def run_walk_forward(self, strategy, data):
  """Launch walk-forward Analysis"""
  results = []
 
- # Определение periods
+# Definition of periods
  periods = self._generate_periods(len(data))
 
  for i, (train_start, train_end, test_start, test_end) in enumerate(periods):
- print(f"Период {i+1}/{len(periods)}: {data.index[train_start].date()} - {data.index[test_end-1].date()}")
+print(f"Period {i+1}/{len(periods)}: {data.index[training_start].data()} - {data.index[test_end-1].data()})
 
- # Разделение данных
+# Data sharing
  train_data = data.iloc[train_start:train_end]
  test_data = data.iloc[test_start:test_end]
 
- # Обучение стратегии
+# Training the strategy
  strategy.fit(train_data)
 
- # Тестирование
+# Testing
  test_results = self._test_period(strategy, test_data)
  test_results['period'] = i + 1
  test_results['train_start'] = data.index[train_start]
@@ -2855,7 +2855,7 @@ on этом этапе мы Creating and оптимизируем все compone
  return results
 
  def _generate_periods(self, data_length):
- """Генерация periods for walk-forward"""
+""Generation periodes for Walk-forward""
  periods = []
  start = 0
 
@@ -2871,8 +2871,8 @@ on этом этапе мы Creating and оптимизируем все compone
  return periods
 
  def _test_period(self, strategy, test_data):
- """Тестирование on одном периоде"""
- # Симуляция торговли (упрощенная версия)
+"Text on One Period"
+# Trade simulation (simplified version)
  trades = []
  capital = 100000
  position = 0
@@ -2881,24 +2881,24 @@ on этом этапе мы Creating and оптимизируем все compone
  current_data = test_data.iloc[:i+1]
  signal = strategy.get_signal(current_data)
 
- # Простая Logsка торговли
+# Simple Logs of Trade
  if signal == 1 and position <= 0:
  if position < 0:
- # Закрытие короткой позиции
+# Closure of short position
  pass
- # Открытие длинной позиции
+# Opening a long position
  position = 1
  trades.append({'type': 'buy', 'price': test_data.iloc[i]['close']})
 
  elif signal == -1 and position >= 0:
  if position > 0:
- # Закрытие длинной позиции
+# Closure of long position
  pass
- # Открытие короткой позиции
+# Opening of short position
  position = -1
  trades.append({'type': 'sell', 'price': test_data.iloc[i]['close']})
 
- # Расчет метрик
+# The calculation of the metric
  returns = test_data['close'].pct_change().dropna()
 
  return {
@@ -2910,29 +2910,29 @@ on этом этапе мы Creating and оптимизируем все compone
  }
 
  def _calculate_max_drawdown(self, prices):
- """Расчет максимальной просадки"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  running_max = prices.expanding().max()
  drawdown = (prices - running_max) / running_max
  return drawdown.min()
 
- # Использование
+# Use
  wf_analyzer = WalkForwardAnalyzer()
  wf_results = wf_analyzer.run_walk_forward(strategy, data)
  ```
 
-3. **Monte Carlo анализ**
- - **Theory:** Monte Carlo анализ критически важен for оценки рисков and неопределенности
- - **Почему важно:** Обеспечивает понимание распределения результатов
- - **Плюсы:** Оценка рисков, понимание неопределенности, стресс-тестирование
- - **Disadvantages:** Требует вычислительных ресурсов
+3. **Monte carlo analysis**
+- **Theory:** Monte Carlo analysis is critical for risk and uncertainty assessment
+- ** Why is it important:** Provides an understanding of the distribution of results
+- ** Plus: ** Risk assessment, uncertainty understanding, stress testing
+- **Disadvantages:**Requires computing resources
 
- **Детальное describe Monte Carlo Analysis:**
+**Detail describe Monte Carlo Analysis:**
 
- Monte Carlo анализ включает симуляцию множественных сценариев for оценки распределения результатов and рисков. Это критически важно for понимания неопределенности and Planирования рисков.
+Monte Carlo analysis includes a simulation of multiple scenarios for assessing the distribution of results and risks; this is critical for understanding uncertainty and risk planning.
 
  ```python
  class MonteCarloAnalyzer:
- """Analysisтор Monte Carlo симуляций"""
+""Anallysistor Monte Carlo simulations""
 
  def __init__(self, n_simulations=1000):
  self.n_simulations = n_simulations
@@ -2946,27 +2946,27 @@ on этом этапе мы Creating and оптимизируем все compone
 
  for i in range(n_simulations):
  if i % 100 == 0:
- print(f"Симуляция {i}/{n_simulations}")
+(f "Simulation {i}/{n_simulations}")
 
- # Генерация случайного сценария
+# Accidental scenario generation
  scenario_data = self._generate_scenario(data)
 
- # Тестирование стратегии
+# Strategy testing
  scenario_results = self._test_scenario(strategy, scenario_data)
  results.append(scenario_results)
 
  return self._analyze_results(results)
 
  def _generate_scenario(self, data):
- """Генерация случайного сценария"""
- # Бутстрап выборка with заменой
+""""""""""" "Generation of the random scenario."
+# Butstrap sample with replacement
  n_samples = len(data)
  indices = np.random.choice(n_samples, size=n_samples, replace=True)
  return data.iloc[indices].reset_index(drop=True)
 
  def _test_scenario(self, strategy, data):
- """Тестирование on одном сценарии"""
- # Упрощенная симуляция
+"Texting on One Scenario""
+# Simplified simulation
  returns = data['close'].pct_change().dropna()
 
  return {
@@ -2977,13 +2977,13 @@ on этом этапе мы Creating and оптимизируем все compone
  }
 
  def _calculate_max_drawdown(self, prices):
- """Расчет максимальной просадки"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  running_max = prices.expanding().max()
  drawdown = (prices - running_max) / running_max
  return drawdown.min()
 
  def _analyze_results(self, results):
- """Анализ результатов Monte Carlo"""
+"Analysis of the Monte Carlo Results."
  df = pd.dataFrame(results)
 
  return {
@@ -2998,265 +2998,265 @@ on этом этапе мы Creating and оптимизируем все compone
  'results': df
  }
 
- # Использование
+# Use
  mc_analyzer = MonteCarloAnalyzer()
  mc_results = mc_analyzer.run_monte_carlo(strategy, data)
- print(f"Средняя доходность: {mc_results['mean_return']:.2%}")
- print(f"Вероятность убытка: {mc_results['probability_of_loss']:.2%}")
- print(f"5-й перцентиль: {mc_results['percentile_5']:.2%}")
- print(f"95-й перцентиль: {mc_results['percentile_95']:.2%}")
+average return: {mc_results['mean_return']:2%})
+nint(f "The probability of loss: {mc_results['perability_of_loss']:2%}")
+(pint(f'5th percentile: {mc_results['percentile_5']:2%})
+(pint(f"95th percentile: {mc_results['percentile_95']:2%})
  ```
 
-### Этап 4: Продакшн деплой (1-2 недели)
+### Step 4: Production of Depletion (1-2 weeks)
 
-1. **configuration инфраструктуры**
- - Docker контейнеры
- - База данных
- - Система Monitoringа
+1. **configuring infrastructure**
+- Docker containers
+- Database
+- Monitoring system
 
-2. **Блокчейн integration**
+2. ** Blocking integration**
  - configuration Web3
- - DeFi протоколы
- - Смарт-контракты
+- DeFi protocols
+- Smart contracts
 
-3. **Автоматизация**
- - Автоматическое retraining
- - Автоматическое Management рисками
- - Автоматические алерты
+3. ** Automation**
+- Automatic retraining
+- Automatic Management Risks
+- Automatic Alerts
 
-### Этап 5: Оптимизация (непрерывно)
+### Step 5: Optimization (continuous)
 
 1. **Monitoring performance**
- - Ежедневный Monitoring
- - Еженедельный анализ
- - Ежемесячная оптимизация
+- Daily Monitoring
+- Weekly analysis
+- Monthly optimization
 
-2. **Адаптация к рынку**
- - Анализ рыночных условий
- - Корректировка стратегий
- - update моделей
+2. ** Market adaptation**
+- Market analysis
+- Adjustment of strategies
+- Advanced models
 
-3. **Масштабирование**
- - Увеличение капитала
- - add новых активов
- - Расширение стратегий
+3. ** Scale**
+- Increase in capital
+- Add new assets
+- Extension of strategies
 
-## Ключевые факторы успеха
+## Key success factors
 
-**Theory:** Ключевые факторы успеха представляют собой комплекс факторов, критически важных for создания высокодоходных ML-систем. Эти факторы охватывают Technical, управленческие and психоLogsческие аспекты.
+**Theory:** Key success factors are a set of critical factors for the creation of high-income ML systems. These include technical, managerial and psychoLogsical aspects.
 
-**Почему ключевые факторы успеха важны:**
-- **Комплексность:** Обеспечивает комплексный подход к успеху
-- **Критичность:** Критически важны for успеха
-- **Практичность:** Обеспечивают практическое применение
-- **Эффективность:** Критически важны for эффективности
+**Why key success factors are important:**
+- ** Integration:** Provides an integrated approach to success
+- ** Criticality:** Critical for success
+- ** Practicality:** Ensure practical application
+- ** Effectiveness:** Critical for effectiveness
 
-### 1. Technical факторы
+♪## 1. Technical factors
 
-**Theory:** Technical факторы представляют собой фундаментальные Technical аспекты, критически важные for создания эффективных ML-систем.
+**Theory:** Technological factors are fundamental technical aspects critical for effective ML systems.
 
-**Почему Technical факторы важны:**
-- **Фундаментальность:** Обеспечивают фундаментальную основу
-- **Эффективность:** Критически важны for эффективности
-- **Качество:** Обеспечивают качество системы
-- **Надежность:** Критически важны for надежности
+**Why Technical factors are important:**
+- **Fundamentality:** Provide a fundamental basis
+- ** Effectiveness:** Critical for effectiveness
+- **quality:** Ensure quality of the system
+- ** Reliability:** Critical for reliability
 
-- **Качество данных - точные and актуальные data**
- - **Theory:** Качество данных критически важно for эффективности ML-моделей
- - **Почему важно:** Обеспечивает эффективность моделей
- - **Плюсы:** Высокая эффективность, точность, надежность
- - **Disadvantages:** Требует времени and ресурсов
+- ** Quality of data - accurate and up-to-date data**
+- **Theory:** Data quality is critical for ML performance
+- ** Why is it important:** Provides model effectiveness
+- ** Plus:** High performance, accuracy, reliability
+- **Disadvantages:** Needs time and resources
 
-- **Правильные признаки - релевантные and стабильные**
- - **Theory:** Правильные признаки критически важны for качества predictions
- - **Почему важно:** Обеспечивает качество predictions
- - **Плюсы:** Качество predictions, стабильность, релевантность
- - **Disadvantages:** Требует Analysis and оптимизации
+- ** Regulatory signs - relevant and stable**
+- **Theory:** The correct signs are critical for the quality of products
+- Why does it matter?
+- ** Plus:** Quality of productions, stability, relevance
+- **Disadvantages:** Requires Analysis and Optimization
 
-- **Робастные модели - устойчивые к изменениям**
- - **Theory:** Робастные модели критически важны for долгосрочной эффективности
- - **Почему важно:** Обеспечивает долгосрочную эффективность
- - **Плюсы:** Долгосрочная эффективность, устойчивость, адаптивность
- - **Disadvantages:** Сложность создания
+- **Physical models - change-resistant**
+- **Theory:** Laborative models are critical for long-term effectiveness
+- ** Why is it important:** Provides long-term effectiveness
+- ** Plus:** Long-term effectiveness, sustainability, adaptiveness
+- **Disadvantages:** Complexity of creation
 
-- **Эффективная architecture - масштабируемая система**
- - **Theory:** Эффективная architecture критически важна for масштабируемости
- - **Почему важно:** Обеспечивает масштабируемость
- - **Плюсы:** Масштабируемость, эффективность, поддерживаемость
- - **Disadvantages:** Требует Planирования
+- ** Effective architecture - scaled system**
+- **Theory:** Effective architecture is critical for scaling.
+- What's important is:** Ensures scalability
+- ** Plus:** Scale, efficiency, support
+- **Disadvantages:**
 
-### 2. Управленческие факторы
+###2 Management factors
 
-**Theory:** Управленческие факторы представляют собой аспекты управления, критически важные for успешного применения ML-систем.
+**Theory:** Management factors are management aspects critical for the successful implementation of ML systems.
 
-**Почему управленческие факторы важны:**
-- **Management:** Обеспечивают эффективное Management
-- **Контроль:** Обеспечивают контроль над системой
-- **Адаптивность:** Критически важны for адаптивности
-- **Успех:** Критически важны for успеха
+** Why management factors are important:**
+- **Management:** Provide effective Management
+- ** Control: ** Control the system
+- ** Adaptation:** Critically important for adaptation
+- ** Success:** Critical for success
 
-- **Правильный риск-менеджмент - защита from потерь**
- - **Theory:** Правильный риск-менеджмент критически важен for защиты капитала
- - **Почему важно:** Обеспечивает защиту капитала
- - **Плюсы:** Защита капитала, стабильность, долгосрочный успех
- - **Disadvantages:** Потенциальные ограничения доходности
+- ** Correct risk management - protection from loss**
+- **Theory:** Correct risk management is critical for protecting capital
+- What's important is:** Protects capital
+- ** Plus:** Protection of capital, stability, long-term success
+- **Disadvantages:** Potential income limitations
 
-- **Дисциплина - следование стратегии**
- - **Theory:** Дисциплина критически важна for последовательного применения стратегии
- - **Почему важно:** Обеспечивает последовательное применение
- - **Плюсы:** Последовательность, стабильность, эффективность
- - **Disadvantages:** Требует самоконтроля
+- **Disciplination - follow the strategy**
+- **Theory:** Discipline is critical for the consistent application of the strategy
+- ** Why is it important:** Provides consistent application
+- ** Plus:** consistency, stability, efficiency
+- **Disadvantages:** Demands self-control
 
-- **Адаптивность - изменение под условия рынка**
- - **Theory:** Адаптивность критически важна for поддержания эффективности
- - **Почему важно:** Обеспечивает поддержание эффективности
- - **Плюсы:** Адаптивность, эффективность, долгосрочный успех
- - **Disadvantages:** Требует постоянного внимания
+- ** Adaptation - market change**
+- **Theory:** Adaptation is critical for maintaining effectiveness
+- ** Why is it important:** Ensures that effectiveness is maintained
+- ** Plus:** Adaptation, effectiveness, long-term success
+- **Disadvantages:** Demands constant attention
 
-- **Monitoring - постоянный контроль**
- - **Theory:** Monitoring критически важен for поддержания эффективности
- - **Почему важно:** Обеспечивает поддержание эффективности
- - **Плюсы:** Контроль, эффективность, своевременное выявление проблем
- - **Disadvantages:** Требует постоянного внимания
+- **Monitoring - permanent control**
+- **Theory:** Monitoring is critical for maintaining effectiveness
+- ** Why is it important:** Ensures that effectiveness is maintained
+- ** Plus:** Monitoring, effectiveness, timely problem identification
+- **Disadvantages:** Demands constant attention
 
-### 3. ПсихоLogsческие факторы
+♪## 3. ♪ PsychoLogs
 
-**Theory:** ПсихоLogsческие факторы представляют собой аспекты психоLogsи, критически важные for успешного применения ML-систем.
+**Theory:** PsychoLogs are aspects of psychoLogs that are critical for the successful application of ML systems.
 
-**Почему психоLogsческие факторы важны:**
-- **ПсихоLogsя:** Критически важны for психоLogsческого комфорта
-- **Принятие решений:** influence принятие решений
-- **Устойчивость:** Критически важны for устойчивости
-- **Успех:** Критически важны for успеха
+**Why psychologic factors matter:**
+- **PsychoLogsa:** Critically important for psychoLogsy comfort
+- ** Decision-making: ** decision-making
+- **Stability:** Critical for sustainability
+- ** Success:** Critical for success
 
-- **Терпение - not торопиться with решениями**
- - **Theory:** Терпение критически важно for принятия правильных решений
- - **Почему важно:** Обеспечивает принятие правильных решений
- - **Плюсы:** Правильные решения, стабильность, эффективность
- - **Disadvantages:** Требует самоконтроля
+- **Patience - no rush with decisions**
+- **Theory:** Patience is critical for making the right decisions.
+- What's important is:** Makes the right decisions.
+- ** Plus:** Good solutions, stability, efficiency
+- **Disadvantages:** Demands self-control
 
-- **Объективность - принятие решений on basis данных**
- - **Theory:** Объективность критически важна for принятия правильных решений
- - **Почему важно:** Обеспечивает принятие правильных решений
- - **Плюсы:** Правильные решения, эффективность, стабильность
- - **Disadvantages:** Требует самоконтроля
+- **Activity - decision-making on data base**
+- **Theory:**Aimability is critical for making the right decisions.
+- What's important is:** Makes the right decisions.
+- ** Plus:** Good solutions, efficiency, stability
+- **Disadvantages:** Demands self-control
 
-- **Уверенность - вера in system**
- - **Theory:** Уверенность критически важна for последовательного применения системы
- - **Почему важно:** Обеспечивает последовательное применение
- - **Плюсы:** Последовательность, стабильность, эффективность
- - **Disadvantages:** Может привести к игнорированию проблем
+- ** Confidence - Faith in System**
+- **Theory:** Confidence is critical for the consistent application of the system
+- ** Why is it important:** Provides consistent application
+- ** Plus:** consistency, stability, efficiency
+- **Disadvantages:** May lead to neglect of problems
 
-- **Гибкость - готовность к изменениям**
- - **Theory:** Гибкость критически важна for адаптации к изменениям
- - **Почему важно:** Обеспечивает адаптацию к изменениям
- - **Плюсы:** Адаптивность, эффективность, долгосрочный успех
- - **Disadvantages:** Может привести к нестабильности
+- ** Flexibility - preparedness for change**
+- **Theory:** Flexibility is critical for adaptation to change
+- What's important is:** Provides adaptation to change
+- ** Plus:** Adaptation, effectiveness, long-term success
+- **Disadvantages:** May lead to instability
 
-## Ожидаемые результаты
+## Expected results
 
-### Краткосрочные (1-3 месяца)
+*## Short-term (1-3 months)
 
-- **Доходность**: 50-100% in месяц
+- ** Income**: 50-100 per cent in month
 - **Sharpe Ratio**: 2.0+
-- **Максимальная просадка**: <10%
-- **Точность**: 70%+
+- ** Maximum draught**: < 10%
+- **Definity**: 70 per cent+
 
-### Среднесрочные (3-6 месяцев)
+### Medium-term (3-6 months)
 
-- **Доходность**: 100-200% in месяц
+- ** Income**: 100-200 per cent in month
 - **Sharpe Ratio**: 2.5+
-- **Максимальная просадка**: <15%
-- **Точность**: 75%+
+- ** Maximum draught**: <15 per cent
+- **Definity**: 75 per cent+
 
-### Долгосрочные (6+ месяцев)
+### Long-term (6+ months)
 
-- **Доходность**: 200%+ in месяц
+- ** Income**: 200 per cent+in month
 - **Sharpe Ratio**: 3.0+
-- **Максимальная просадка**: <20%
-- **Точность**: 80%+
+- ** Maximum draught**: < 20 per cent
+- **Definity**: 80 per cent+
 
-## Риски and их минимизация
+## Risks and their minimization
 
-### 1. Technical риски
+♪##1 ♪ Technical risks
 
-- **retraining** - использование кросс-validation
-- **Нестабильность** - регулярное retraining
-- **Ошибки in коде** - тщательное тестирование
-- **Сбои системы** - резервное копирование
+- **retraining** - cross-validation
+- ** Instability** - regular retraining
+- ** In-code errors** - thorough testing
+- ** System malfunctions** - backup
 
-### 2. Рыночные риски
+♪##2 ♪ Market risks
 
-- **Волатильность** - диверсификация активов
-- **Корреляции** - анализ корреляций
-- **Ликвидность** - выбор ликвидных активов
-- **Регулирование** - соблюдение правил
+- ** Volatility** - diversification of assets
+- ** Correlations** - correlation analysis
+- ** Liquidity** - selection of liquid assets
+- ** Regulation** - compliance
 
-### 3. Операционные риски
+♪##3 ♪ Operational risk
 
-- **Человеческий фактор** - автоматизация
-- **Technical сбои** - Monitoring
-- **Безопасность** - защита данных
-- **Масштабирование** - Planирование роста
+- ** Human factor** - Automation
+- **Technical malfunctions** - Monitoring
+- ** Safety** - Data protection
+- ** Scale** - Growth Plan
 
-## Заключение
+## Conclusion
 
-**Theory:** Заключение суммирует ключевые принципы достижения доходности 100%+ in месяц and подчеркивает важность ответственного подхода к созданию высокодоходных ML-систем.
+**Theory:** Conclusion summarizes key principles for achieving 100 per cent+in-month returns and stresses the importance of responsible approach to high-income ML systems.
 
-**Почему заключение важно:**
-- **Суммирование:** Суммирует ключевые принципы
-- **Практичность:** Обеспечивает практическое применение
-- **Ответственность:** Подчеркивает важность ответственности
-- **Успех:** Критически важно for успеха
+** Why the conclusion matters:**
+- **Summation:** Summary of key principles
+- ** Practice: ** Provides practical application
+- ** Responsibility:** underlines the importance of liability
+- ** Success:** Critically important for success
 
-Достижение доходности 100%+ in месяц возможно при правильном подходе:
+A 100%+in month return is possible with the right approach:
 
-1. **Использование продвинутых ML-техник**
- - **Theory:** Использование продвинутых ML-техник критически важно for достижения высокой эффективности
- - **Почему важно:** Обеспечивает высокую эффективность
- - **Плюсы:** Высокая эффективность, точность, адаптивность
- - **Disadvantages:** Сложность реализации
+1. ** Use of advanced ML technology**
+- **Theory:** Use of advanced ML technology is critical for achieving high efficiency
+- What's important is:** Provides high efficiency
+- ** Plus:** High efficiency, accuracy, adaptive
+- **Disadvantages:** Implementation difficulty
 
-2. **Комбинирование множественных indicators**
- - **Theory:** Комбинирование множественных indicators критически важно for improving accuracy and робастности
- - **Почему важно:** Обеспечивает высокую точность and робастность
- - **Плюсы:** Высокая точность, робастность, надежность
- - **Disadvantages:** Сложность реализации, потенциальные конфликты
+2. ** Combination of multiple indicators**
+- **Theory:** Combining multiple indicators is critical for improving accuracy and platitude.
+- What's important is:** Ensures a high degree of accuracy and efficiency?
+- ** Plus:** High accuracy, fatality, reliability
+- **Disadvantages:** Feasibility, potential conflicts
 
-3. **Адаптация к изменяющимся условиям**
- - **Theory:** Адаптация к изменяющимся условиям критически важна for долгосрочной эффективности
- - **Почему важно:** Обеспечивает долгосрочную эффективность
- - **Плюсы:** Адаптивность, долгосрочная эффективность, устойчивость
- - **Disadvantages:** Сложность реализации, потенциальная нестабильность
+3. ** Adaptation to changing conditions**
+- **Theory:** Adaptation to changing conditions is critical for long-term effectiveness
+- ** Why is it important:** Provides long-term effectiveness
+- ** Plus:** Adaptation, long-term effectiveness, sustainability
+- **Disadvantages:** Implementation complexity, potential instability
 
-4. **Правильное Management рисками**
- - **Theory:** Правильное Management рисками критически важно for защиты капитала
- - **Почему важно:** Обеспечивает защиту капитала
- - **Плюсы:** Защита капитала, стабильность, долгосрочный успех
- - **Disadvantages:** Потенциальные ограничения доходности
+4. ** Correct Management Risks**
+- **Theory:** Correct Management Risks are critical for protecting capital
+- What's important is:** Protects capital
+- ** Plus:** Protection of capital, stability, long-term success
+- **Disadvantages:** Potential income limitations
 
-5. **Автоматизация all процессов**
- - **Theory:** Автоматизация all процессов критически важна for эффективности and масштабируемости
- - **Почему важно:** Обеспечивает эффективность and масштабируемость
- - **Плюсы:** Эффективность, масштабируемость, автоматизация
- - **Disadvantages:** Сложность реализации, потенциальные сбои
+5. ** Automation of all processes**
+- **Theory:** Automation of all processes is critical for efficiency and scalability
+- ** Why is it important:** Ensures efficiency and scalability
+- ** Plus:** Efficiency, scalability, automation
+- **Disadvantages:** Implementation complexity, potential failures
 
-6. **Постоянный Monitoring and оптимизация**
- - **Theory:** Постоянный Monitoring and оптимизация критически важны for поддержания эффективности
- - **Почему важно:** Обеспечивает поддержание эффективности
- - **Плюсы:** Поддержание эффективности, оптимизация, контроль
- - **Disadvantages:** Требует постоянного внимания
+6. **Continuing Monitoring and Optimization**
+- **Theory:** Permanent Monitoring and Optimization are critical for maintaining effectiveness
+- ** Why is it important:** Ensures that effectiveness is maintained
+- ** Plus: ** Efficiency maintenance, optimization, monitoring
+- **Disadvantages:** Demands constant attention
 
-**Помните:** Высокая доходность требует высокой ответственности. Всегда тестируйте системы on исторических данных and начинайте with малых сумм.
+**Remember:** High returns require high responsibility, always test systems on historical data and start with small amounts.
 
-**Theory:** Ответственный подход критически важен for успешного применения высокодоходных ML-систем. Это основа for долгосрочного успеха and минимизации рисков.
+**Theory:** Responsible approach is critical for the successful application of high-end ML systems; this is the basis for long-term success and risk minimization.
 
-**Почему ответственный подход важен:**
-- **Безопасность:** Обеспечивает безопасность применения
-- **Успех:** Критически важен for долгосрочного успеха
-- **Минимизация рисков:** Помогает минимизировать риски
-- **Устойчивость:** Обеспечивает устойчивость системы
+** Why a responsible approach is important:**
+- ** Safety:** Ensures safety of use
+- ** Success:** Critical for long-term success
+- ** Risk minimization:** Helps minimize risks
+- ** Stability:** Ensures system stability
 
 ---
 
-**Удачи in создании прибыльной системы! 🚀**
+♪ Good luck in creating a profitable system! ♪

@@ -1,53 +1,53 @@
-# 12. Анализ SCHR Levels - create высокоточной ML-модели
+#12. SCHR Livels analysis - high precision ML model
 
-**Goal:** Максимально использовать индикатор SCHR Levels for создания робастной and прибыльной ML-модели with точностью более 95%.
+**Goal:** Maximum use of the SCHR Livels indicator for the creation of a robotic and profitable ML model with more than 95% accuracy.
 
-## Что такое SCHR Levels?
+## What is SCHR Lovels?
 
-**Theory:** SCHR Levels представляет собой революционный подход к анализу уровней поддержки and сопротивления, основанный on алгоритмическом анализе рыночного давления and предсказании будущих ценовых уровней. Это not просто статичные уровни, а динамическая система, которая адаптируется к изменениям рыночных условий.
+**Theory:** SCHR Livels is a revolutionary approach to analysing levels of support and resistance based on algorithmic analysis of market pressure and forecasting of future price levels.
 
-### Определение and принцип работы
+### Definition and working principle
 
-**Theory:** SCHR Levels основан on принципе Analysis рыночного давления and его влияния on ценовые уровни. Это позволяет not только определять текущие уровни поддержки and сопротивления, но and предсказывать будущие максимумы and минимумы with высокой точностью.
+**Theory:** SCHR Levels is based on the principle of market pressure Analis and its impact on price levels, which allows only a footnote to determine current levels of support and resistance, but also to predict future maximums and minimums with high accuracy.
 
-**SCHR Levels** - это продвинутый индикатор уровней поддержки and сопротивления, который использует алгоритмический анализ for определения ключевых ценовых уровней. in отличие from простых уровней, SCHR Levels учитывает давление on уровни and предсказывает будущие максимумы and минимумы.
+**SCHR Livels** is an advanced indicator of levels of support and resistance that uses algorithmic analysis for determining key price levels. In contrast from simple levels, SCHR Livels takes into account pressure on levels and predicts future maximums and minimums.
 
-**Почему SCHR Levels превосходит традиционные уровни:**
-- **Алгоритмический анализ:** Использует сложные алгоритмы for Analysis уровней
-- **Учет давления:** Анализирует давление on уровни for предсказания пробоев
-- **Prediction будущего:** Предсказывает будущие максимумы and минимумы
-- **Адаптивность:** Адаптируется к изменениям рыночных условий
+**Why SCHR Levels exceeds traditional levels:**
+- **Algorithmic analysis:** uses complex algorithms for levels
+- **Pressing:** Analyzes pressure on levels for prognosis.
+- **Predication of the future:** Projected future maximums and minimums
+- ** Adaptation: ** Adapted to changes in market conditions
 
-**Плюсы:**
-- Высокая точность predictions
-- Учет рыночного давления
-- Prediction будущих уровней
-- Адаптивность к изменениям
+** Plus:**
+- High accuracy preferences
+- Market pressure accounting
+- Promotion of future levels
+- Adaptation to change
 
 **Disadvantages:**
-- Сложность Settings параметров
-- Высокие требования к вычислительным ресурсам
-- Необходимость глубокого понимания теории
+- The complexity of Settings
+- High requirements for computing resources
+- Need for a deeper understanding of theory
 
-### Ключевые особенности SCHR Levels
+### Key features of SCHR Livels
 
-**Theory:** Ключевые особенности SCHR Levels определяют его уникальные возможности for Analysis рыночных уровней. Каждый parameter имеет теоретическое обоснование and практическое применение for различных рыночных условий.
+**Theory:** Key features of SCHR Livels determine its unique possibilities for market-level Analysis, each parameter has a theoretical rationale and practical application for different market conditions.
 
-**Почему эти особенности критичны:**
-- **Анализ давления:** Критически важно for предсказания пробоев уровней
-- **Сила уровней:** Определяет надежность уровней поддержки and сопротивления
-- **Горизонт предсказания:** Влияет on точность predictions
-- **Фактор волатильности:** Учитывает волатильность рынка
-- **Вес тренда:** Балансирует влияние тренда on уровни
+** Why these features are critical:**
+- ** Pressure analysis:** Critically important for predicting levels
+- **Level strength:** Determines the reliability of levels of support and resistance
+- ** The Prophecy Horizon:** The effect on accuracy of preferences
+- ** Volatility factor:** takes into account market volatility
+- ** Trends weight:** Balances the effect of the trend on levels
 
-**Практическая реализация:** Класс `SCHRLevelsAnalyzer` представляет собой основу for Analysis SCHR Levels with настраиваемыми параметрами. Каждый parameter имеет специфическое назначение and влияет on точность Analysis уровней.
+** Practical implementation: ** `SCHRLevels Analyzer' is the basis for Analysis SCHR Livels with generic parameters. Each parameter has a specific purpose and affects the accuracy of Analysis levels.
 
-**Детальное объяснение параметров:**
-- **pressure_threshold (0.7):** Минимальное значение давления, при котором уровень считается значимым. Более высокие значения дают более консервативные сигналы, но могут пропустить слабые, но важные уровни.
-- **level_strength (0.8):** Минимальная сила уровня for его validation. Определяет, насколько сильным должен быть уровень, чтобы считаться надежным.
-- **Prediction_horizon (20):** Количество periods вперед for предсказания. Большие значения дают более долгосрочные прогнозы, но with меньшей точностью.
-- **volatility_factor (1.5):** Множитель волатильности for адаптации к рыночным условиям. Высокие значения лучше подходят for волатильных рынков.
-- **trend_weight (0.6):** Вес трендового компонента in анализе. Балансирует влияние тренда and уровней on финальное решение.
+** Detailed explanation of parameters:**
+- **pressure_threshold (0.7):** Minimum pressure value at which the level is considered relevant. Higher values give more conservative signals but may miss weak but important levels.
+**level_strength (0.8):** Minimum force of level for its validation. Determines how strong a level should be to be considered reliable.
+- **Predication_horizon (20):** Quantity periods forward for prediction. Large values give longer-term projections but with less accuracy.
+**volatility_factor (1.5):** Multiplicative volatility factor for market adaptation. High values are better suited for volatile markets.
+**trend_light (0.6):** Weight of trend component in analysis: Balances the effect of trend and levels on final decision.
 
 ```python
 import numpy as np
@@ -58,10 +58,10 @@ warnings.filterwarnings('ignore')
 
 class SCHRLevelsAnalyzer:
  """
- Analysisтор SCHR Levels for определения уровней поддержки and сопротивления.
+Analysist SCHR Livels for the determination of levels of support and resistance.
 
- Этот класс реализует алгоритмический анализ рыночного давления for создания
- высокоточных predictions уровней поддержки and сопротивления.
+This class performs algorithmic analysis of market pressure for creation
+High precision support and resistance levels.
  """
 
  def __init__(self,
@@ -71,14 +71,14 @@ class SCHRLevelsAnalyzer:
  volatility_factor: float = 1.5,
  trend_weight: float = 0.6):
  """
- Инициализация Analysisтора SCHR Levels.
+Initialization of the SCHR Lovels Analysistor.
 
  Args:
- pressure_threshold: Минимальное давление for validation уровня (0.0-1.0)
- level_strength: Минимальная сила уровня (0.0-1.0)
- Prediction_horizon: Горизонт предсказания in периодах
- volatility_factor: Фактор адаптации к волатильности
- trend_weight: Вес трендового компонента (0.0-1.0)
+priority_threshold: Minimum pressure for calibration level (0.0-1.0)
+lion_strength: Minimum force at level (0.0-1.0)
+Pradition_horizon: The horizon of prediction in periods
+volatility_factor: Adaptation factor to volatility
+trend_light: Weight of trend component (0.0-1.0)
  """
  self.parameters = {
  'pressure_threshold': pressure_threshold,
@@ -88,52 +88,52 @@ class SCHRLevelsAnalyzer:
  'trend_weight': trend_weight
  }
 
- # validation параметров
+# Validation of parameters
  self._validate_parameters()
 
- # История расчетов for Analysis
+# History of calculations for Analysis
  self.calculation_history = []
 
  def _validate_parameters(self):
- """validation входных параметров"""
+"Validation of input parameters"
  if not 0.0 <= self.parameters['pressure_threshold'] <= 1.0:
- raise ValueError("pressure_threshold должен быть между 0.0 and 1.0")
+Raise ValueError("pressure_threshold should be between 0.0 and 1.0")
  if not 0.0 <= self.parameters['level_strength'] <= 1.0:
- raise ValueError("level_strength должен быть между 0.0 and 1.0")
+Raise ValueError("level_strength should be between 0.0 and 1.0")
  if self.parameters['Prediction_horizon'] <= 0:
- raise ValueError("Prediction_horizon должен быть положительным")
+Raise ValueError("Predition_horizon must be positive")
  if self.parameters['volatility_factor'] <= 0:
- raise ValueError("volatility_factor должен быть положительным")
+Raise ValueError("volatility_factor must be positive")
  if not 0.0 <= self.parameters['trend_weight'] <= 1.0:
- raise ValueError("trend_weight должен быть между 0.0 and 1.0")
+Raise ValueError("trend_light should be between 0.0 and 1.0")
 
  def analyze_levels(self, data: pd.dataFrame) -> Dict:
  """
- Основной метод Analysis SCHR Levels.
+The main method is Analysis SCHR Levels.
 
  Args:
- data: dataFrame with OHLCV данными and SCHR колонками
+Data: dataFrame with OHLCV data and SCHR columns
 
  Returns:
- Dict with результатами Analysis уровней
+Dict with the results of the Analysis levels
  """
  try:
- # check наличия required columns
+# Check availability of requered columns
  required_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
  Missing_columns = [col for col in required_columns if col not in data.columns]
  if Missing_columns:
  raise ValueError(f"Missing columns: {Missing_columns}")
 
- # Расчет уровней
+# Calculation of levels
  levels = self._calculate_levels(data)
 
- # Анализ давления
+# Pressure analysis
  pressure_Analysis = self._analyze_pressure(data, levels)
 
- # Prediction будущих уровней
+#Pedication of future levels
  predictions = self._predict_future_levels(data, levels)
 
- # Сохранение результатов
+# Retaining results
  result = {
  'levels': levels,
  'pressure_Analysis': pressure_Analysis,
@@ -146,12 +146,12 @@ class SCHRLevelsAnalyzer:
  return result
 
  except Exception as e:
- print(f"Ошибка in анализе SCHR Levels: {e}")
+Print(f "Different in the analysis of SCHR Livels: {e}")
  return None
 
  def _calculate_levels(self, data: pd.dataFrame) -> Dict:
- """Расчет базовых уровней поддержки and сопротивления"""
- # Простой расчет уровней on basis максимумов and минимумов
+"The calculation of basic levels of support and resistance"
+# Simple calculation of levels on basis of maximums and minimums
  high_levels = data['High'].rolling(window=20).max()
  low_levels = data['Low'].rolling(window=20).min()
 
@@ -162,8 +162,8 @@ class SCHRLevelsAnalyzer:
  }
 
  def _analyze_pressure(self, data: pd.dataFrame, levels: Dict) -> Dict:
- """Анализ давления on уровни"""
- # Расчет давления on basis объема and волатильности
+"Pressive Analysis on Levels"
+# Calculation of pressure on gas volume and volatility
  volume_pressure = data['Volume'] / data['Volume'].rolling(20).mean()
  volatility = data['Close'].rolling(20).std()
 
@@ -176,10 +176,10 @@ class SCHRLevelsAnalyzer:
  }
 
  def _predict_future_levels(self, data: pd.dataFrame, levels: Dict) -> Dict:
- """Prediction будущих уровней"""
+"Predication of future levels""
  horizon = self.parameters['Prediction_horizon']
 
- # Простое Prediction on basis тренда
+# A simple move on basic trend
  trend = data['Close'].diff(20) / data['Close'].shift(20)
  trend_factor = 1 + trend * self.parameters['trend_weight']
 
@@ -193,11 +193,11 @@ class SCHRLevelsAnalyzer:
  }
 
  def get_performance_metrics(self) -> Dict:
- """Получение метрик performance Analysisтора"""
+"To receive the metric performance analisistor."
  if not self.calculation_history:
- return {"error": "Нет данных for Analysis"}
+Retorn {"error": "No data for Analysis"}
 
- # Простые metrics on basis истории расчетов
+# Simple metrics on basis of the history of calculations
  total_Calculations = len(self.calculation_history)
  avg_pressure = np.mean([calc['pressure_Analysis']['pressure'].mean()
  for calc in self.calculation_history])
@@ -209,28 +209,28 @@ class SCHRLevelsAnalyzer:
  }
 ```
 
-### Structure данных SCHR Levels
+###Structure data SCHR Livels
 
-**Theory:** Structure данных SCHR Levels представляет собой комплексную system признаков, которая обеспечивает полный анализ рыночных уровней and давления. Каждый компонент имеет специфическое назначение and вносит вклад in общую точность predictions.
+**Theory:**Structure data SCHR Livels is an integrated system of indicators that provides a complete analysis of market levels and pressures; each component has a specific purpose and contributes to the overall accuracy of productions.
 
-**Почему Structure данных критична:**
-- **Полнота Analysis:** Обеспечивает всесторонний анализ рыночных уровней
-- **Точность predictions:** Каждый компонент повышает точность predictions
-- **Анализ давления:** Критически важно for предсказания пробоев
-- **integration with ML:** Оптимизирована for machine learning
+**Why Structuring data is critical:**
+- ** Full of Analysis:** Provides a comprehensive analysis of market levels
+- **Predications accuracy:** Each component improves accuracy of productions
+- ** Pressure analysis:** Critically important for prognosis.
+- **integration with ML:** Optimized for machine lightning
 
-**Практическая реализация:** Structure данных SCHR Levels представляет собой стандартизированный формат for хранения and обработки all компонентов Analysis уровней. Эта Structure оптимизирована for machine learning and обеспечивает максимальную эффективность обработки.
+** Practical implementation: **Structure data SCHR Livels is a standardized format for storing and processing all components of Analysis levels. This Structure is optimized for machining and maximizes processing efficiency.
 
-**Детальное объяснение структуры данных:**
-- **Основные уровни:** Содержат предсказанные and текущие уровни поддержки and сопротивления
-- **Давление on уровни:** Количественные metrics рыночного давления and его направления
-- **Дополнительные components:** Вероятностные and уверенностные metrics for принятия решений
+** Detailed explanation of the data structure:**
+- ** Core levels:** Contain predicted and current levels of support and resistance
+- ** Pressure on levels:** Quantitative metrics of market pressure and its direction
+- ** Additional components:** Probable and confident metrics for decision-making
 
-**Почему эта Structure критична:**
-- **Стандартизация:** Обеспечивает единообразную обработку данных
-- **Эффективность:** Оптимизирована for быстрой обработки
-- **Полнота:** Содержит все необходимые components for Analysis
-- **Совместимость:** Совместима with различными ML-фреймворками
+♪ Why is Structure critical ♪
+- ** Standardization:** Provides uniform data processing
+- ** Performance:** Optimized for rapid processing
+- ** Full:** Contains all necessary components for Analysis
+- **Compatibility:** Combinable with different ML-frames
 
 ```python
 import pandas as pd
@@ -240,21 +240,21 @@ from dataclasses import dataclass
 from enum import Enum
 
 class SCHRLevelType(Enum):
- """Типы уровней SCHR"""
+"Steps of SCHR levels"
  SUPPORT = "support"
  RESISTANCE = "resistance"
  PREDICTED_HIGH = "predicted_high"
  PREDICTED_LOW = "predicted_low"
 
 class PressureDirection(Enum):
- """Направления давления"""
+"Pressure Directions."
  UP = 1
  DOWN = -1
  NEUTRAL = 0
 
 @dataclass
 class SCHRLeveldata:
- """Structure данных for одного уровня SCHR"""
+"Structuring data for one level of SCHR"
  level_value: float
  level_type: SCHRLevelType
  pressure: float
@@ -266,35 +266,35 @@ class SCHRLeveldata:
 
 class SCHRLevelsdataStructure:
  """
- Класс for работы со структурой данных SCHR Levels.
+Class for working with the SCHR data structure.
 
- Обеспечивает стандартизированную работу with data уровней,
- including валидацию, преобразования and экспорт.
+Provides standardized work with data levels,
+Including validation, transformation and export.
  """
 
  def __init__(self):
- """Инициализация структуры данных"""
+"Initiating the Data Structure"
  self.schr_columns = {
- # Основные уровни
- 'predicted_high': 'Предсказанный максимум',
- 'predicted_low': 'Предсказанный минимум',
- 'support_level': 'Уровень поддержки',
- 'resistance_level': 'Уровень сопротивления',
+# Basic levels
+'Predicted_hygh': 'Suggested maximum',
+'Predicted_low': 'Suggested minimum'
+'Support_level': 'Support level',
+'Resistance_level': 'Resistance level',
 
- # Давление on уровни
- 'pressure': 'Давление on уровень',
- 'pressure_vector': 'Вектор давления',
- 'pressure_strength': 'Сила давления',
- 'pressure_direction': 'Направление давления',
+# Pressure on levels
+'pressure': 'Pressure on level',
+'Pressure_vector': 'Push vector',
+'Pressure_strength': 'Power of pressure',
+'Pressure_direction': 'Pressure direction',
 
- # Дополнительные components
- 'level_confidence': 'Уверенность in уровне',
- 'level_breakout_probability': 'Вероятность пробоя уровня',
- 'level_bounce_probability': 'Вероятность отскока from уровня',
+# Additional components
+'Level_confidence': 'Surety in Level',
+'Level_breakout_probability': 'Probability of a level leak',
+'Level_bounce_probability': 'The probability of rebound from level',
 
- # Метаdata
- 'timestamp': 'Временная метка',
- 'asset': 'Актив',
+# Metadata
+'timestamp': 'Temporary mark',
+'Axet': 'Active',
  'Timeframe': 'Timeframe'
  }
 
@@ -303,57 +303,57 @@ class SCHRLevelsdataStructure:
 
  def validate_dataframe(self, df: pd.dataFrame) -> Dict[str, bool]:
  """
- validation dataFrame on соответствие структуре SCHR Levels.
+:: validation dataFrame on compliance with the structure of SCHR Levels.
 
  Args:
  df: dataFrame for validation
 
  Returns:
- Dict with результатами validation
+Dict with results
  """
  validation_results = {}
 
- # check наличия обязательных columns
+# Check mandatory columns
  Missing_columns = [col for col in self.required_columns if col not in df.columns]
  validation_results['has_required_columns'] = len(Missing_columns) == 0
  validation_results['Missing_columns'] = Missing_columns
 
- # check типов данных
+# Check data types
  numeric_columns = [col for col in self.schr_columns.keys()
  if col not in ['timestamp', 'asset', 'Timeframe']]
  type_validation = all(pd.api.types.is_numeric_dtype(df[col]) for col in numeric_columns
  if col in df.columns)
  validation_results['correct_data_types'] = type_validation
 
- # check on пропущенные значения
+# check on missing values
  null_counts = df.isnull().sum()
  validation_results['has_nulls'] = null_counts.sum() > 0
  validation_results['null_counts'] = null_counts.to_dict()
 
- # check диапазонов значений
+# sheck range
  range_validation = self._validate_value_ranges(df)
  validation_results['valid_ranges'] = range_validation
 
  return validation_results
 
  def _validate_value_ranges(self, df: pd.dataFrame) -> bool:
- """validation диапазонов значений"""
+""validation range""
  try:
- # check вероятностей (должны быть 0-1)
+# check probability (to be 0-1)
  prob_columns = ['level_confidence', 'level_breakout_probability', 'level_bounce_probability']
  for col in prob_columns:
  if col in df.columns:
  if not ((df[col] >= 0) & (df[col] <= 1)).all():
  return False
 
- # check давления (должно быть положительным)
+# check pressure (should be positive)
  pressure_columns = ['pressure', 'pressure_strength']
  for col in pressure_columns:
  if col in df.columns:
  if not (df[col] >= 0).all():
  return False
 
- # check направления давления (-1, 0, 1)
+# heck pressure direction (-1, 0, 1)
  if 'pressure_direction' in df.columns:
  if not df['pressure_direction'].isin([-1, 0, 1]).all():
  return False
@@ -364,35 +364,35 @@ class SCHRLevelsdataStructure:
 
  def create_sample_data(self, n_samples: int = 1000) -> pd.dataFrame:
  """
- create образца данных for тестирования.
+a data model for testing.
 
  Args:
- n_samples: Количество образцов
+n_samples: Number of samples
 
  Returns:
- dataFrame with образцом данных SCHR Levels
+DataFrame with SCHR Livels data model
  """
  np.random.seed(42)
 
- # create базовых данных
+# square basic data
  data = {
  'timestamp': pd.date_range('2023-01-01', periods=n_samples, freq='1H'),
  'asset': 'GBPUSD',
  'Timeframe': 'H1',
 
- # Основные уровни (симулируем реалистичные значения)
+# Basic levels (simulating realistic values)
  'predicted_high': np.random.uniform(1.25, 1.35, n_samples),
  'predicted_low': np.random.uniform(1.20, 1.30, n_samples),
  'support_level': np.random.uniform(1.21, 1.29, n_samples),
  'resistance_level': np.random.uniform(1.26, 1.34, n_samples),
 
- # Давление on уровни
+# Pressure on levels
  'pressure': np.random.uniform(0.1, 2.0, n_samples),
  'pressure_vector': np.random.uniform(-1.0, 1.0, n_samples),
  'pressure_strength': np.random.uniform(0.0, 1.0, n_samples),
  'pressure_direction': np.random.choice([-1, 0, 1], n_samples),
 
- # Дополнительные components
+# Additional components
  'level_confidence': np.random.uniform(0.0, 1.0, n_samples),
  'level_breakout_probability': np.random.uniform(0.0, 1.0, n_samples),
  'level_bounce_probability': np.random.uniform(0.0, 1.0, n_samples)
@@ -400,7 +400,7 @@ class SCHRLevelsdataStructure:
 
  df = pd.dataFrame(data)
 
- # Обеспечиваем Logsческую согласованность
+# Ensure Logsic consistency
  df['predicted_high'] = np.maximum(df['predicted_high'], df['resistance_level'])
  df['predicted_low'] = np.minimum(df['predicted_low'], df['support_level'])
 
@@ -408,67 +408,67 @@ class SCHRLevelsdataStructure:
 
  def export_to_parquet(self, df: pd.dataFrame, filepath: str) -> bool:
  """
- Экспорт данных in Parquet формат.
+Export data in Parquet format.
 
  Args:
- df: dataFrame for экспорта
- filepath: Путь к файлу
+df: DataFrame for export
+Filepath: Path to file
 
  Returns:
- True если экспорт успешен
+True if export is successful
  """
  try:
- # validation перед экспортом
+# advance-export validation
  validation = self.validate_dataframe(df)
  if not validation['has_required_columns']:
- print(f"Ошибка: Missing columns {validation['Missing_columns']}")
+(f "Missing columns ["Missing_columns']})
  return False
 
- # Экспорт
+# Export
  df.to_parquet(filepath, index=False)
- print(f"data успешно экспортированы in {filepath}")
+print(f"data successfully exported in {filepath}")
  return True
 
  except Exception as e:
- print(f"Ошибка при экспорте: {e}")
+Print(f "Operate error: {e}")
  return False
 
  def load_from_parquet(self, filepath: str) -> Optional[pd.dataFrame]:
  """
- Loading data из Parquet файла.
+Loading data from Parquet file.
 
  Args:
- filepath: Путь к файлу
+Filepath: Path to file
 
  Returns:
- dataFrame with data or None при ошибке
+DataFrame with data or None error
  """
  try:
  df = pd.read_parquet(filepath)
 
- # validation загруженных данных
+# Validation of downloaded data
  validation = self.validate_dataframe(df)
  if not validation['has_required_columns']:
- print(f"Предупреждение: Missing columns {validation['Missing_columns']}")
+pint(f"Prevention: Missing columns})
 
- print(f"data успешно загружены из {filepath}")
- print(f"Размер данных: {df.shape}")
+print(f"data successfully downloaded from {filepath}")
+"data measurement: {df.scape}")
 
  return df
 
  except Exception as e:
- print(f"Ошибка при загрузке: {e}")
+Print(f" upload error: {e}")
  return None
 
  def get_data_summary(self, df: pd.dataFrame) -> Dict:
  """
- Получение сводки on данным.
+Get a report on the data.
 
  Args:
  df: dataFrame for Analysis
 
  Returns:
- Dict with сводкой данных
+Dict with summary
  """
  summary = {
  'shape': df.shape,
@@ -480,68 +480,68 @@ class SCHRLevelsdataStructure:
 
  return summary
 
-# example использования
+# Example of use
 if __name__ == "__main__":
- # create структуры данных
+# data structure code
  schr_Structure = SCHRLevelsdataStructure()
 
- # create образца данных
+# a data sample
  sample_data = schr_Structure.create_sample_data(100)
 
- # validation данных
+# validation of data
  validation_results = schr_Structure.validate_dataframe(sample_data)
- print("Результаты validation:", validation_results)
+"Results of validation:", validation_results)
 
- # Получение сводки
+# Getting a report
  summary = schr_Structure.get_data_summary(sample_data)
- print("Сводка данных:", summary)
+"Report:", summary)
 ```
 
-## Анализ SCHR Levels on Timeframeм
+## Analysis of SCHR Livels on Timeframe
 
-**Theory:** Анализ SCHR Levels on различным Timeframeм является критически важным for создания робастной торговой системы. Каждый Timeframe имеет свои особенности and требует специфических параметров for достижения максимальной эффективности.
+**Theory:** The analysis of SCHR Movements on various Timeframes is critical for the creation of a labour-intensive trading system. Each Timeframe has its own characteristics and requires specific parameters for achieving maximum efficiency.
 
-**Почему мультиTimeframesый анализ критичен:**
-- **Различные рыночные циклы:** Каждый Timeframe отражает разные рыночные циклы
-- **Оптимизация параметров:** Разные parameters for разных временных горизонтов
-- **Снижение рисков:** Диверсификация on Timeframeм снижает общие риски
-- **Повышение точности:** Комбинирование сигналов with разных Timeframes
+**Why the multi-timeframe analysis is critical:**
+- ** Different market cycles:** Each Timeframe reflects different market cycles
+- **Optimization of parameters:** Different parameters for different time horizons
+- ** Risk reduction:** Diversification on Timeframe reduces overall risks
+- ** Improved accuracy:** Combination of signals with different Times
 
-### M1 (1 minutesа) - Микро-уровни
+## M1 (1 minutes) - Micro-levels
 
-**Theory:** M1 Timeframe предназначен for Analysis микро-уровней and требует максимально быстрой реакции on изменения рыночного давления. parameters SCHR Levels for M1 оптимизированы for выявления краткосрочных возможностей.
+**Theory:** M1 Timeframe is designed for Analysis microlevels and requires the fastest possible reaction on market pressure changes. parameters SCHR Leavels for M1 are optimized for identifying short-term opportunities.
 
-**Почему M1 анализ важен:**
-- **Высокая частота сигналов:** Обеспечивает множество торговых возможностей
-- **Быстрая реакция:** Позволяет быстро реагировать on изменения давления
-- **Микро-уровни:** Выявляет краткосрочные уровни поддержки and сопротивления
-- **Скальпинг:** Подходит for скальпинговых стратегий
+**Why M1 analysis is important:**
+- ** High frequency of signals:** Provides many trading opportunities
+- ** Rapid reaction:** Allows rapid reaction on pressure change
+- **Micro levels:** identifies short-term levels of support and resistance
+- **Scaling:** suited for scalping strategies
 
-**Плюсы:**
-- Высокая частота торговых возможностей
-- Быстрая реакция on изменения
-- Выявление микро-уровней
-- Подходит for скальпинга
+** Plus:**
+- High frequency of trading opportunities
+- Rapid reaction on change.
+- Microlevel identification
+- Good for scalping.
 
 **Disadvantages:**
-- Высокие требования к точности
-- Большое количество ложных сигналов
-- Высокие транзакционные издержки
-- ПсихоLogsческое напряжение
+- High accuracy requirements
+- A lot of false signals.
+- High transaction costs
+- PsychoLogsy voltage
 
-**Практическая реализация:** Класс `SCHRLevelsM1Analysis` специально оптимизирован for работы with 1-minutesными данными, где скорость реакции and точность детекции микро-уровней критически важны. parameters настроены for максимальной чувствительности к краткосрочным изменениям.
+** Practical implementation: ** Class `SCHRLevelsM1Analysis' is specially optimized for work with 1-minutes data, where the response rate and accuracy of microlevel detectives are critical.
 
-**Детальное объяснение M1 Analysis:**
-- **Микро-уровни:** Обнаруживает очень близкие к текущей цене уровни (in пределах 0.1%)
-- **Быстрые пробои:** Детектирует пробои, которые происходят in течение 1-5 minutes
-- **Микро-давление:** Анализирует давление on очень коротких временных интервалах
-- **Скальпинг уровни:** Специальные уровни for скальпинговых стратегий
+** Detailed explanation M1 Analysis:**
+- **Micro-levels:** Detects very close to current prices (in within 0.1%)
+- ** Rapid sampling:** Detects samples that occur during 1-5 minutes
+- **Micro-pressure:** Analyses pressure on very short time intervals
+- **Scaling levels:** Special levels for scalping strategies
 
-**Почему M1 анализ критичен:**
-- **Высокая частота сигналов:** Обеспечивает множество торговых возможностей
-- **Быстрая реакция:** Позволяет быстро реагировать on изменения рынка
-- **Микро-анализ:** Выявляет details, недоступные on больших Timeframes
-- **Скальпинг:** Подходит for высокочастотных торговых стратегий
+**Why is M1 critical:**
+- ** High frequency of signals:** Provides many trading opportunities
+- ** Rapid reaction:** Allows a quick reaction to market change
+- **Micro-analyzing:** Identify details that are not available on the big Times
+- **Scaling:** suited for high-frequency trade strategies
 
 ```python
 import numpy as np
@@ -554,10 +554,10 @@ warnings.filterwarnings('ignore')
 
 class SCHRLevelsM1Analysis:
  """
- Анализ SCHR Levels on 1-minutesном Timeframeе.
+Analysis by SCHR Livels on 1-minutes Timeframe.
 
- Specialized класс for Analysis микро-уровней and быстрых изменений
- рыночного давления on самом коротком Timeframeе.
+Specialized class for Analysis micro-levels and rapid changes
+The market pressure on the shortest Timeframe.
  """
 
  def __init__(self,
@@ -567,14 +567,14 @@ class SCHRLevelsM1Analysis:
  volatility_factor: float = 2.0,
  micro_threshold: float = 0.001):
  """
- Инициализация Analysisтора M1.
+Initiating Analysistor M1.
 
  Args:
- pressure_threshold: Порог давления for M1 (более чувствительный)
- level_strength: Минимальная сила уровня for M1
- Prediction_horizon: Горизонт предсказания (короткий for M1)
- volatility_factor: Фактор волатильности (высокий for M1)
- micro_threshold: Порог for детекции микро-уровней (0.1%)
+presure_threshold: Pressure threshold for M1 (more sensitive)
+lion_strength: Minimum force of level for M1
+Predation_horizon: Forecast horizon (short for M1)
+Volatility_factor: Velocity factor (high for M1)
+Microsoft_threshold: threshold for micro-level detectives (0.1 per cent)
  """
  self.Timeframe = 'M1'
  self.optimal_params = {
@@ -585,60 +585,60 @@ class SCHRLevelsM1Analysis:
  'micro_threshold': micro_threshold
  }
 
- # Инициализация компонентов
+# Initiating components
  self.scaler = StandardScaler()
  self.feature_history = []
 
- # validation параметров
+# Validation of parameters
  self._validate_parameters()
 
  def _validate_parameters(self):
- """validation параметров for M1"""
+"Validation of parameters for M1"
  if not 0.0 <= self.optimal_params['pressure_threshold'] <= 1.0:
- raise ValueError("pressure_threshold должен быть между 0.0 and 1.0")
+Raise ValueError("pressure_threshold should be between 0.0 and 1.0")
  if not 0.0 <= self.optimal_params['level_strength'] <= 1.0:
- raise ValueError("level_strength должен быть между 0.0 and 1.0")
+Raise ValueError("level_strength should be between 0.0 and 1.0")
  if self.optimal_params['Prediction_horizon'] <= 0:
- raise ValueError("Prediction_horizon должен быть положительным")
+Raise ValueError("Predition_horizon must be positive")
  if self.optimal_params['micro_threshold'] <= 0:
- raise ValueError("micro_threshold должен быть положительным")
+Raise ValueError("micro_threshold should be positive")
 
  def analyze_m1_features(self, data: pd.dataFrame) -> Dict:
  """
- Комплексный анализ признаков for M1 Timeframe.
+Integrated analysis of signs for M1 Timeframe.
 
  Args:
- data: dataFrame with OHLCV данными and SCHR колонками
+Data: dataFrame with OHLCV data and SCHR columns
 
  Returns:
- Dict with результатами Analysis M1 признаков
+Dict with results of Analysis M1 topics
  """
  try:
- # check данных
+# Check data
  if len(data) < 10:
- raise ValueError("Недостаточно данных for Analysis M1")
+Raise ValueError ("Insufficient data for Analysis M1)")
 
  features = {}
 
- # 1. Микро-уровни
+# 1. Micro-levels
  features['micro_levels'] = self._detect_micro_levels(data)
 
- # 2. Быстрые пробои
+♪ Two, quick cuts ♪
  features['quick_breakouts'] = self._detect_quick_breakouts(data)
 
- # 3. Микро-давление
+# 3. Micro-pressure
  features['micro_pressure'] = self._analyze_micro_pressure(data)
 
- # 4. Скальпинг уровни
+# 4. Scaling levels
  features['scalping_levels'] = self._detect_scalping_levels(data)
 
- # 5. Временные паттерны
+♪ 5. Temporary Paterns
  features['temporal_patterns'] = self._analyze_temporal_patterns(data)
 
- # 6. Волатильность анализ
+# 6. Volatility of analysis
  features['volatility_Analysis'] = self._analyze_volatility(data)
 
- # Сохранение истории
+# Maintaining history
  self.feature_history.append({
  'timestamp': pd.Timestamp.now(),
  'features': features,
@@ -648,30 +648,30 @@ class SCHRLevelsM1Analysis:
  return features
 
  except Exception as e:
- print(f"Ошибка in анализе M1 признаков: {e}")
+Print(f) Error in the analysis of M1 topics: {e})
  return {}
 
  def _detect_micro_levels(self, data: pd.dataFrame) -> Dict:
  """
- Детекция микро-уровней for M1.
+Micro-level detective for M1.
 
- Микро-уровни - это уровни, которые находятся очень близко к текущей цене
- and могут быть использованы for скальпинговых стратегий.
+Microlevels are levels that are very close to the current price.
+and can be used for scalping strategies.
  """
- # Анализ близости к уровням
+# Closeness to levels analysis
  distance_to_high = (data['predicted_high'] - data['Close']) / data['Close']
  distance_to_low = (data['Close'] - data['predicted_low']) / data['Close']
  distance_to_support = (data['Close'] - data['support_level']) / data['Close']
  distance_to_resistance = (data['resistance_level'] - data['Close']) / data['Close']
 
- # Микро-уровни (близко к предсказанным уровням)
+# Micro levels (near predicted levels)
  micro_threshold = self.optimal_params['micro_threshold']
  micro_high = distance_to_high < micro_threshold
  micro_low = distance_to_low < micro_threshold
  micro_support = distance_to_support < micro_threshold
  micro_resistance = distance_to_resistance < micro_threshold
 
- # Сила микро-уровней
+# The strength of the micro level
  micro_strength = np.where(
  micro_high | micro_low | micro_support | micro_resistance,
  np.maximum(
@@ -696,23 +696,23 @@ class SCHRLevelsM1Analysis:
 
  def _detect_quick_breakouts(self, data: pd.dataFrame) -> Dict:
  """
- Детекция быстрых пробоев for M1.
+Quick test detective for M1.
 
- Быстрые пробои - это пробои уровней, которые происходят in течение
- короткого времени (1-5 minutes) and могут быть использованы for быстрых сделок.
+Rapid probes are those of levels that occur in the current.
+Short time (1-5 minutes) and can be used for fast transactions.
  """
- # Расчет пробоев
+# Calculation of the test
  breakout_high = data['Close'] > data['predicted_high']
  breakout_low = data['Close'] < data['predicted_low']
  breakout_support = data['Close'] < data['support_level']
  breakout_resistance = data['Close'] > data['resistance_level']
 
- # Быстрые пробои (in течение 5 periods)
+# Rapid sampling (in 5 periods)
  quick_window = min(5, len(data))
  quick_breakout_high = breakout_high.rolling(window=quick_window).sum() > 0
  quick_breakout_low = breakout_low.rolling(window=quick_window).sum() > 0
 
- # Сила пробоев
+# The strength of the test
  breakout_strength_high = np.where(
  breakout_high,
  (data['Close'] - data['predicted_high']) / data['predicted_high'],
@@ -724,7 +724,7 @@ class SCHRLevelsM1Analysis:
  0
  )
 
- # Частота пробоев
+# The frequency of the test
  breakout_frequency = (breakout_high | breakout_low).rolling(window=20).sum() / 20
 
  return {
@@ -741,28 +741,28 @@ class SCHRLevelsM1Analysis:
 
  def _analyze_micro_pressure(self, data: pd.dataFrame) -> Dict:
  """
- Анализ микро-давления for M1.
+Micro-pressure analysis for M1.
 
- Микро-давление - это давление on уровни in очень коротких временных интервалах,
- которое может указывать on скорые изменения price direction.
+Micro-pressure is pressure on levels in very short time intervals,
+which can indicate on rapid changes to the language direction.
  """
- # Базовое давление
+# Basic pressure
  base_pressure = data['pressure'] if 'pressure' in data.columns else np.ones(len(data))
 
- # Микро-давление (изменения за 1-3 периода)
+# Micro-pressure (changes from 1 to 3 periods)
  micro_pressure_1 = base_pressure.diff(1).abs()
  micro_pressure_3 = base_pressure.diff(3).abs()
 
- # Направление микро-давления
+# Micro-pressure direction
  pressure_direction = np.sign(base_pressure.diff(1))
 
- # Ускорение давления
+# Pressure acceleration
  pressure_acceleration = base_pressure.diff(1).diff(1)
 
- # Волатильность давления
+# Pressure volatility
  pressure_volatility = base_pressure.rolling(window=5).std()
 
- # Пороги for M1
+# Thresholds for M1
  pressure_threshold = self.optimal_params['pressure_threshold']
  high_pressure = base_pressure > pressure_threshold
  extreme_pressure = base_pressure > pressure_threshold * 1.5
@@ -781,33 +781,33 @@ class SCHRLevelsM1Analysis:
 
  def _detect_scalping_levels(self, data: pd.dataFrame) -> Dict:
  """
- Детекция скальпинг уровней for M1.
+Level scalping detective for M1.
 
- Скальпинг уровни - это специальные уровни, которые подходят for
- высокочастотных торговых стратегий with быстрым входом and выходом.
+Scaling levels are special levels that fit for
+High-frequency trade strategies with rapid entry and exit.
  """
- # Базовые уровни
+# Baseline levels
  high_levels = data['predicted_high']
  low_levels = data['predicted_low']
  support_levels = data['support_level']
  resistance_levels = data['resistance_level']
 
- # Скальпинг диапазон (узкий диапазон for скальпинга)
+# Scaling range (narrow range for scalping)
  scalping_range = (high_levels - low_levels) / data['Close']
- narrow_range = scalping_range < 0.002 # 0.2% for скальпинга
+narrow_range = scalping_range < 0.002 # 0.2% for scalping
 
- # Скальпинг уровни (уровни in узком диапазоне)
+# Scaling levels (levels in narrow range)
  scalping_high = high_levels[narrow_range]
  scalping_low = low_levels[narrow_range]
 
- # Сила скальпинг уровней
+# The force of scalping levels
  scalping_strength = np.where(
  narrow_range,
- scalping_range * 1000, # Нормализация for скальпинга
+Scalping_range * 1000, # Normalization for scalping
  0
  )
 
- # Частота касаний скальпинг уровней
+# Frequency of scalping levels
  touch_frequency = (data['Close'] <= high_levels * 1.001) & (data['Close'] >= low_levels * 0.999)
  touch_frequency = touch_frequency.rolling(window=10).sum() / 10
 
@@ -823,18 +823,18 @@ class SCHRLevelsM1Analysis:
 
  def _analyze_temporal_patterns(self, data: pd.dataFrame) -> Dict:
  """
- Анализ временных паттернов for M1.
+Analysis of temporal patterns for M1.
 
- Временные паттерны - это повторяющиеся паттерны in поведении уровней
- in dependencies from времени дня, дня недели and других временных факторов.
+Time pathites are repeatable pathites in levels of behavior
+in terms of time of day, day of the week and other time factors.
  """
- # Временные components
+# Temporary components
  timestamps = pd.to_datetime(data.index) if hasattr(data.index, 'to_datetime') else data.index
  hour = timestamps.hour if hasattr(timestamps, 'hour') else np.zeros(len(data))
  minute = timestamps.minute if hasattr(timestamps, 'minute') else np.zeros(len(data))
  day_of_week = timestamps.dayofweek if hasattr(timestamps, 'dayofweek') else np.zeros(len(data))
 
- # Паттерны on часам
+# Patterns on the watch
  hourly_patterns = {}
  for h in range(24):
  hour_mask = hour == h
@@ -845,7 +845,7 @@ class SCHRLevelsM1Analysis:
  'avg_volatility': data['Close'][hour_mask].std() if len(data[hour_mask]) > 1 else 0
  }
 
- # Паттерны on дням недели
+# Patterns on Days of the Week
  daily_patterns = {}
  for d in range(7):
  day_mask = day_of_week == d
@@ -866,27 +866,27 @@ class SCHRLevelsM1Analysis:
 
  def _analyze_volatility(self, data: pd.dataFrame) -> Dict:
  """
- Анализ волатильности for M1.
+Volatility analysis for M1.
 
- Волатильность критически важна for M1 Analysis, так как она определяет
- эффективность скальпинговых стратегий and риск быстрых движений.
+Volatility is critical for M1 Analysis because it defines
+The effectiveness of scalping strategies and the risk of rapid movements.
  """
- # Базовые metrics волатильности
+# Basic metrics of volatility
  returns = data['Close'].pct_change()
  volatility_1min = returns.rolling(window=5).std()
  volatility_5min = returns.rolling(window=25).std()
  volatility_15min = returns.rolling(window=75).std()
 
- # Относительная волатильность
+# Relative volatility
  relative_volatility = volatility_1min / volatility_15min
 
- # Волатильность уровней
+# Volatility of levels
  level_volatility = (data['predicted_high'] - data['predicted_low']).rolling(window=10).std()
 
- # Волатильность давления
+# Pressure volatility
  pressure_volatility = data['pressure'].rolling(window=10).std() if 'pressure' in data.columns else np.zeros(len(data))
 
- # Классификация волатильности
+# Classification of volatility
  low_vol = volatility_1min < volatility_1min.quantile(0.33)
  medium_vol = (volatility_1min >= volatility_1min.quantile(0.33)) & (volatility_1min < volatility_1min.quantile(0.67))
  high_vol = volatility_1min >= volatility_1min.quantile(0.67)
@@ -906,13 +906,13 @@ class SCHRLevelsM1Analysis:
 
  def get_m1_summary(self, features: Dict) -> Dict:
  """
- Получение сводки on M1 анализу.
+Get a report on M1 analysis.
 
  Args:
- features: Результаты Analysis M1 признаков
+Features: Results of Analysis M1
 
  Returns:
- Dict with сводкой M1 Analysis
+Dict with summary M1 Analysis
  """
  summary = {
  'Timeframe': self.Timeframe,
@@ -921,7 +921,7 @@ class SCHRLevelsM1Analysis:
  'feature_count': len(features)
  }
 
- # Сводка on микро-уровням
+# Microlevel summary
  if 'micro_levels' in features:
  micro = features['micro_levels']
  summary['micro_levels'] = {
@@ -930,7 +930,7 @@ class SCHRLevelsM1Analysis:
  'avg_distance_to_low': micro.get('distance_to_low', pd.Series()).mean()
  }
 
- # Сводка on пробоям
+# Synthetics
  if 'quick_breakouts' in features:
  breakouts = features['quick_breakouts']
  summary['breakouts'] = {
@@ -940,12 +940,12 @@ class SCHRLevelsM1Analysis:
 
  return summary
 
-# example использования
+# Example of use
 if __name__ == "__main__":
- # create Analysisтора M1
+# Create Analysistor M1
  m1_analyzer = SCHRLevelsM1Analysis()
 
- # create testsых данных
+# Create testy data
  dates = pd.date_range('2023-01-01', periods=100, freq='1min')
  test_data = pd.dataFrame({
  'Open': np.random.uniform(1.25, 1.35, 100),
@@ -960,48 +960,48 @@ if __name__ == "__main__":
  'pressure': np.random.uniform(0.1, 2.0, 100)
  }, index=dates)
 
- # Анализ M1 признаков
+# Analysis of M1 topics
  features = m1_analyzer.analyze_m1_features(test_data)
 
- # Получение сводки
+# Getting a report
  summary = m1_analyzer.get_m1_summary(features)
- print("Сводка M1 Analysis:", summary)
+"M1 Analysis:", summary)
 ```
 
-### M5 (5 minutes) - Краткосрочные уровни
+### M5 (5 minutes) - Short-term levels
 
-**Theory:** M5 Timeframe представляет собой оптимальный баланс между частотой сигналов and их качеством for Analysis краткосрочных уровней. Это наиболее популярный Timeframe for краткосрочной торговли on basis уровней.
+**Theory:** M5 Timeframe is the optimal balance between the frequency of signals and their quality for Analysis short-term levels. This is the most popular Timeframe for short-term trade on base levels.
 
-**Почему M5 анализ важен:**
-- **Оптимальный баланс:** Хорошее соотношение частоты and качества сигналов
-- **Снижение шума:** Меньше рыночного шума compared to M1
-- **Краткосрочные уровни:** Выявляет краткосрочные уровни поддержки and сопротивления
-- **Стабильность:** Более стабильные сигналы
+**Why M5 analysis is important:**
+- ** Optimal balance:** Good ratio of frequency to signal quality
+- ** Noise reduction:** Less market noise combined to M1
+- **Scratcosmic levels:** Identify short-term levels of support and resistance
+- **Stability:** More stable signals
 
-**Плюсы:**
-- Оптимальный баланс частоты and качества
-- Меньше рыночного шума
-- Стабильные сигналы
-- Подходит for большинства стратегий
+** Plus:**
+- Optimal balance of frequency and quality
+Less market noise.
+- Stable signals.
+- Suitable for most strategies
 
 **Disadvantages:**
-- Меньше торговых возможностей чем M1
-- Требует больше времени for Analysis
-- Потенциальные задержки in сигналах
+- Less trading opportunities than M1
+- It takes more time for Analysis.
+- Potential delays in signals
 
-**Практическая реализация:** Класс `SCHRLevelsM5Analysis` оптимизирован for 5-minutesного Timeframe, который представляет собой идеальный баланс между частотой сигналов and их качеством. M5 обеспечивает достаточно данных for Analysis, но not перегружен рыночным шумом.
+** Practical implementation: ** `SCHRLevelsM5Analysis' is optimized for 5-minutes Timeframe, which represents an ideal balance between signal frequency and quality. M5 provides sufficient data for Analysis but not overloaded with market noise.
 
-**Детальное объяснение M5 Analysis:**
-- **Краткосрочные уровни:** Обнаруживает уровни, действующие in течение 5-30 minutes
-- **Быстрые отскоки:** Детектирует отскоки from уровней in течение короткого времени
-- **Краткосрочное давление:** Анализирует давление on промежуточных временных интервалах
-- **Среднесрочные паттерны:** Выявляет паттерны, которые not видны on M1, но важны for краткосрочной торговли
+** Detailed explanation for M5 Analysis:**
+- **cratcosonic levels:** Identify levels operating in 5-30 minutes
+- **Swift rebounds:** Detects leaps from levels in short time
+- ** Short-term pressure:** Analyses pressure on intermediate time intervals
+- ** Medium-term pathers:** Identify pathites that are not visible on M1, but important for short-term trade
 
-**Почему M5 анализ важен:**
-- **Оптимальный баланс:** Лучшее соотношение частоты and качества сигналов
-- **Снижение шума:** Меньше рыночного шума compared to M1
-- **Практичность:** Подходит for большинства торговых стратегий
-- **Стабильность:** Более стабильные and надежные сигналы
+**Why M5 analysis is important:**
+- ** Optimal balance:** Better ratio of frequency to signal quality
+- ** Noise reduction:** Less market noise combined to M1
+- **Practice: ** suited for most trade policies
+- **Stability:** More stable and reliable signals
 
 ```python
 import numpy as np
@@ -1015,11 +1015,11 @@ warnings.filterwarnings('ignore')
 
 class SCHRLevelsM5Analysis:
  """
- Анализ SCHR Levels on 5-minutesном Timeframeе.
+Analysis by SCHR Livels on 5-minutes Timeframe.
 
- Specialized класс for Analysis краткосрочных уровней and паттернов
- on 5-minutesном Timeframeе, обеспечивающий оптимальный баланс между
- частотой сигналов and их качеством.
+Specialized class for Analysis of short-term levels and patterns
+on 5-minutes Timeframe, which provides an optimal balance between
+frequency and quality of signals.
  """
 
  def __init__(self,
@@ -1029,14 +1029,14 @@ class SCHRLevelsM5Analysis:
  volatility_factor: float = 1.8,
  bounce_threshold: float = 0.002):
  """
- Инициализация Analysisтора M5.
+Initiating Analysistor M5.
 
  Args:
- pressure_threshold: Порог давления for M5 (средний)
- level_strength: Минимальная сила уровня for M5
- Prediction_horizon: Горизонт предсказания (средний for M5)
- volatility_factor: Фактор волатильности (средний for M5)
- bounce_threshold: Порог for детекции отскоков (0.2%)
+presure_threshold: Pressure threshold for M5 (average)
+lion_strength: Minimum force of level for M5
+Predation_horizon: Forecast horizon (average for M5)
+volatility_factor: Velocity factor (average for M5)
+Bone_threshold: Threshold for bounce detectives (0.2 per cent)
  """
  self.Timeframe = 'M5'
  self.optimal_params = {
@@ -1047,61 +1047,61 @@ class SCHRLevelsM5Analysis:
  'bounce_threshold': bounce_threshold
  }
 
- # Инициализация компонентов
+# Initiating components
  self.scaler = StandardScaler()
  self.feature_history = []
  self.level_clusters = None
 
- # validation параметров
+# Validation of parameters
  self._validate_parameters()
 
  def _validate_parameters(self):
- """validation параметров for M5"""
+"Validation of parameters for M5"
  if not 0.0 <= self.optimal_params['pressure_threshold'] <= 1.0:
- raise ValueError("pressure_threshold должен быть между 0.0 and 1.0")
+Raise ValueError("pressure_threshold should be between 0.0 and 1.0")
  if not 0.0 <= self.optimal_params['level_strength'] <= 1.0:
- raise ValueError("level_strength должен быть между 0.0 and 1.0")
+Raise ValueError("level_strength should be between 0.0 and 1.0")
  if self.optimal_params['Prediction_horizon'] <= 0:
- raise ValueError("Prediction_horizon должен быть положительным")
+Raise ValueError("Predition_horizon must be positive")
  if self.optimal_params['bounce_threshold'] <= 0:
- raise ValueError("bounce_threshold должен быть положительным")
+Raise ValueError("bounce_threshold should be positive")
 
  def analyze_m5_features(self, data: pd.dataFrame) -> Dict:
  """
- Комплексный анализ признаков for M5 Timeframe.
+Integrated analysis of signs for M5 Timeframe.
 
  Args:
- data: dataFrame with OHLCV данными and SCHR колонками
+Data: dataFrame with OHLCV data and SCHR columns
 
  Returns:
- Dict with результатами Analysis M5 признаков
+Dict with results of Analysis M5 topics
  """
  try:
- # check данных
+# Check data
  if len(data) < 20:
- raise ValueError("Недостаточно данных for Analysis M5")
+Raise ValueError ("Insufficient data for Analysis M5")
 
  features = {}
 
- # 1. Краткосрочные уровни
+1. Short-term levels
  features['short_levels'] = self._detect_short_levels(data)
 
- # 2. Быстрые отскоки
+♪ 2. ♪ Quick jumps ♪
  features['quick_bounces'] = self._detect_quick_bounces(data)
 
- # 3. Краткосрочное давление
+# 3. Short-term pressure
  features['short_pressure'] = self._analyze_short_pressure(data)
 
- # 4. Среднесрочные паттерны
+# 4. Medium-term pathites
  features['medium_patterns'] = self._detect_medium_patterns(data)
 
- # 5. Кластеризация уровней
+#5: Clustering levels
  features['level_clusters'] = self._cluster_levels(data)
 
- # 6. Трендовый анализ
+# 6. Trent analysis
  features['trend_Analysis'] = self._analyze_trends(data)
 
- # Сохранение истории
+# Maintaining history
  self.feature_history.append({
  'timestamp': pd.Timestamp.now(),
  'features': features,
@@ -1111,36 +1111,36 @@ class SCHRLevelsM5Analysis:
  return features
 
  except Exception as e:
- print(f"Ошибка in анализе M5 признаков: {e}")
+Print(f) Error in the analysis of M5 topics: {e})
  return {}
 
  def _detect_short_levels(self, data: pd.dataFrame) -> Dict:
  """
- Детекция краткосрочных уровней for M5.
+Short-term level detective for M5.
 
- Краткосрочные уровни - это уровни поддержки and сопротивления,
- которые действуют in течение 5-30 minutes and подходят for краткосрочной торговли.
+Short-term levels are levels of support and resistance,
+which operate within 5-30 minutes and are suitable for short-term trade.
  """
- # Базовые уровни
+# Baseline levels
  high_levels = data['predicted_high']
  low_levels = data['predicted_low']
  support_levels = data['support_level']
  resistance_levels = data['resistance_level']
 
- # Расстояния to уровней
+# Distances to levels
  distance_to_high = (high_levels - data['Close']) / data['Close']
  distance_to_low = (data['Close'] - low_levels) / data['Close']
  distance_to_support = (data['Close'] - support_levels) / data['Close']
  distance_to_resistance = (resistance_levels - data['Close']) / data['Close']
 
- # Краткосрочные уровни (близко к цене)
+# Short-term levels (near price)
  short_threshold = 0.005 # 0.5% for M5
  short_high = distance_to_high < short_threshold
  short_low = distance_to_low < short_threshold
  short_support = distance_to_support < short_threshold
  short_resistance = distance_to_resistance < short_threshold
 
- # Сила краткосрочных уровней
+# The strength of short-term levels
  short_strength = np.where(
  short_high | short_low | short_support | short_resistance,
  np.maximum(
@@ -1150,7 +1150,7 @@ class SCHRLevelsM5Analysis:
  0
  )
 
- # Стабильность уровней (как долго уровень держится)
+# Stability of levels (how long the level holds)
  level_stability = self._calculate_level_stability(data)
 
  return {
@@ -1169,31 +1169,31 @@ class SCHRLevelsM5Analysis:
 
  def _detect_quick_bounces(self, data: pd.dataFrame) -> Dict:
  """
- Детекция быстрых отскоков for M5.
+Quick-rebound detective for M5.
 
- Быстрые отскоки - это отскоки from уровней, которые происходят
- in течение 5-15 minutes and могут быть использованы for быстрых сделок.
+Rapid rebounds are leaps from levels that happen.
+In 5-15 minutes and can be used for rapid transactions.
  """
- # Базовые уровни
+# Baseline levels
  high_levels = data['predicted_high']
  low_levels = data['predicted_low']
  support_levels = data['support_level']
  resistance_levels = data['resistance_level']
 
- # Детекция касаний уровней
+# Level-to-level detective
  touch_high = (data['Close'] <= high_levels * 1.001) & (data['Close'] >= high_levels * 0.999)
  touch_low = (data['Close'] >= low_levels * 0.999) & (data['Close'] <= low_levels * 1.001)
  touch_support = (data['Close'] <= support_levels * 1.001) & (data['Close'] >= support_levels * 0.999)
  touch_resistance = (data['Close'] >= resistance_levels * 0.999) & (data['Close'] <= resistance_levels * 1.001)
 
- # Быстрые отскоки (in течение 3 periods)
+# Rapid rebound (in 3 periods)
  bounce_window = min(3, len(data))
  quick_bounce_high = touch_high.rolling(window=bounce_window).sum() > 0
  quick_bounce_low = touch_low.rolling(window=bounce_window).sum() > 0
  quick_bounce_support = touch_support.rolling(window=bounce_window).sum() > 0
  quick_bounce_resistance = touch_resistance.rolling(window=bounce_window).sum() > 0
 
- # Сила отскоков
+# Power of rebounds
  bounce_strength_high = np.where(
  touch_high,
  (high_levels - data['Close']) / high_levels,
@@ -1205,10 +1205,10 @@ class SCHRLevelsM5Analysis:
  0
  )
 
- # Частота отскоков
+# Frequency of rebounds
  bounce_frequency = (touch_high | touch_low | touch_support | touch_resistance).rolling(window=20).sum() / 20
 
- # Успешность отскоков (приводит ли к развороту)
+# The success of leaps (if it leads to a turnover)
  bounce_success = self._calculate_bounce_success(data, touch_high, touch_low)
 
  return {
@@ -1228,37 +1228,37 @@ class SCHRLevelsM5Analysis:
 
  def _analyze_short_pressure(self, data: pd.dataFrame) -> Dict:
  """
- Анализ краткосрочного давления for M5.
+Short-term pressure analysis for M5.
 
- Краткосрочное давление - это давление on уровни in промежуточных
- временных интервалах, которое может указывать on направление движения.
+Short-term pressure is pressure on levels in intermediate
+a time interval which may indicate on the direction of traffic.
  """
- # Базовое давление
+# Basic pressure
  base_pressure = data['pressure'] if 'pressure' in data.columns else np.ones(len(data))
 
- # Краткосрочное давление (изменения за 5-15 periods)
+# Short term pressure (changes for 5-15 periods)
  short_pressure_5 = base_pressure.rolling(window=5).mean()
  short_pressure_15 = base_pressure.rolling(window=15).mean()
 
- # Изменение давления
+# Pressure change
  pressure_change_5 = base_pressure.diff(5)
  pressure_change_15 = base_pressure.diff(15)
 
- # Направление давления
+# Pressure direction
  pressure_direction = np.sign(pressure_change_5)
 
- # Ускорение давления
+# Pressure acceleration
  pressure_acceleration = pressure_change_5.diff(5)
 
- # Волатильность давления
+# Pressure volatility
  pressure_volatility = base_pressure.rolling(window=10).std()
 
- # Пороги for M5
+# Thresholds for M5
  pressure_threshold = self.optimal_params['pressure_threshold']
  high_pressure = base_pressure > pressure_threshold
  extreme_pressure = base_pressure > pressure_threshold * 1.3
 
- # Тренд давления
+# The pressure wave
  pressure_trend = base_pressure.rolling(window=20).apply(lambda x: np.polyfit(range(len(x)), x, 1)[0])
 
  return {
@@ -1277,30 +1277,30 @@ class SCHRLevelsM5Analysis:
 
  def _detect_medium_patterns(self, data: pd.dataFrame) -> Dict:
  """
- Детекция среднесрочных паттернов for M5.
+Detective of Medium-Term Pathers for M5.
 
- Среднесрочные паттерны - это паттерны, которые формируются
- in течение 15-60 minutes and могут указывать on более значимые движения.
+Medium-term pathites are the patharies that form
+In 15-60 minutes and may indicate on more significant movements.
  """
- # Базовые data
+# Basic data
  high = data['High']
  low = data['Low']
  close = data['Close']
  volume = data['Volume'] if 'Volume' in data.columns else np.ones(len(data))
 
- # Паттерн "Двойная вершина/дно"
+# Pattern "Double top/deck"
  double_top = self._detect_double_top_bottom(high, low, close)
 
- # Паттерн "Треугольник"
+# Pattern Triangle
  triangle = self._detect_triangle_pattern(high, low, close)
 
- # Паттерн "Флаг/Вымпел"
+# Pattern "Flag/Vimpel"
  flag_pennant = self._detect_flag_pennant(high, low, close, volume)
 
- # Паттерн "Клин"
+# Pattern "Klin"
  wedge = self._detect_wedge_pattern(high, low, close)
 
- # Общая сила паттернов
+# The overall strength of the Pathers
  pattern_strength = np.maximum(
  np.maximum(double_top['strength'], triangle['strength']),
  np.maximum(flag_pennant['strength'], wedge['strength'])
@@ -1317,12 +1317,12 @@ class SCHRLevelsM5Analysis:
 
  def _cluster_levels(self, data: pd.dataFrame) -> Dict:
  """
- Кластеризация уровней for M5.
+Classification of levels for M5.
 
- Кластеризация уровней помогает выявить группы похожих уровней
- and определить наиболее значимые области поддержки and сопротивления.
+Clustering levels helps identify groups of similar levels
+and identify the most relevant areas of support and resistance.
  """
- # Подготовка данных for кластеризации
+# Preparation of data for clustering
  levels_data = np.column_stack([
  data['predicted_high'].values,
  data['predicted_low'].values,
@@ -1330,14 +1330,14 @@ class SCHRLevelsM5Analysis:
  data['resistance_level'].values
  ])
 
- # remove NaN значений
+# remove NaN values
  valid_mask = ~np.isnan(levels_data).any(axis=1)
  levels_data_clean = levels_data[valid_mask]
 
  if len(levels_data_clean) < 10:
  return {'clusters': None, 'cluster_labels': None, 'cluster_centers': None}
 
- # Кластеризация K-means
+# K-means classification
  n_clusters = min(5, len(levels_data_clean) // 10)
  if n_clusters < 2:
  n_clusters = 2
@@ -1345,11 +1345,11 @@ class SCHRLevelsM5Analysis:
  kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
  cluster_labels = kmeans.fit_predict(levels_data_clean)
 
- # create полных меток (including NaN)
+# Create full tags (including NaN)
  full_labels = np.full(len(data), -1)
  full_labels[valid_mask] = cluster_labels
 
- # Анализ кластеров
+# Cluster analysis
  cluster_Analysis = {}
  for i in range(n_clusters):
  cluster_mask = cluster_labels == i
@@ -1374,44 +1374,44 @@ class SCHRLevelsM5Analysis:
 
  def _analyze_trends(self, data: pd.dataFrame) -> Dict:
  """
- Анализ трендов for M5.
+Analysis of trends for M5.
 
- Анализ трендов помогает определить общее направление движения
- and его силу on 5-minutesном Timeframeе.
+Trends analysis helps to determine the overall direction of traffic
+and its strength on the 5-minutes Timeframe.
  """
- # Базовые data
+# Basic data
  close = data['Close']
  high = data['High']
  low = data['Low']
 
- # Простые скользящие средние
+# Simple sliding average
  sma_5 = close.rolling(window=5).mean()
  sma_10 = close.rolling(window=10).mean()
  sma_20 = close.rolling(window=20).mean()
 
- # Экспоненциальные скользящие средние
+# Exponsive sliding medium
  ema_5 = close.ewm(span=5).mean()
  ema_10 = close.ewm(span=10).mean()
  ema_20 = close.ewm(span=20).mean()
 
- # Направление тренда
+# Direction of trend
  trend_direction = np.where(
- close > sma_20, 1, # Восходящий
- np.where(close < sma_20, -1, 0) # Нисходящий, боковой
+close > sma_20, 1, # Upcoming
+np.where(close < sma_20, -1, 0) # Downward, side
  )
 
- # Сила тренда
+# The strength of the trend
  trend_strength = abs(close - sma_20) / sma_20
 
- # Ускорение тренда
+# Accelerating trend
  trend_acceleration = sma_5.diff(5)
 
- # Конвергенция/дивергенция скользящих средних
+# Convergence/divergence of sliding averages
  macd = ema_5 - ema_20
  macd_signal = macd.ewm(span=3).mean()
  macd_histogram = macd - macd_signal
 
- # RSI for определения перекупленности/перепроданности
+# RSI for the determination of merchanting/reselling
  rsi = self._calculate_rsi(close, 14)
 
  return {
@@ -1431,26 +1431,26 @@ class SCHRLevelsM5Analysis:
  }
 
  def _calculate_level_stability(self, data: pd.dataFrame) -> pd.Series:
- """Расчет стабильности уровней"""
- # Простой расчет стабильности on basis изменчивости уровней
+"""""""" "The stability of levels."
+# Simple calculation of stability on basis of variability of levels
  level_changes = data['predicted_high'].diff().abs() + data['predicted_low'].diff().abs()
  stability = 1 / (1 + level_changes.rolling(window=10).mean())
  return stability.fillna(0)
 
  def _calculate_bounce_success(self, data: pd.dataFrame, touch_high: pd.Series, touch_low: pd.Series) -> pd.Series:
- """Расчет успешности отскоков"""
- # Простой расчет: отскок успешен, если после касания цена движется in противоположном направлении
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+# Simple calculation: Rebound is successful if the price moves in the opposite direction after touching
  future_returns = data['Close'].shift(-5) / data['Close'] - 1
  bounce_success = np.where(
  touch_high,
- future_returns < -0.001, # Цена падает после касания максимума
- np.where(touch_low, future_returns > 0.001, False) # Цена растет после касания минимума
+Future_returns < -0.001 # Price drops after touch maximum
+np.where(touch_low, future_returns > 0.001, False) # Price rises after touch of minimum
  )
  return pd.Series(bounce_success, index=data.index)
 
  def _detect_double_top_bottom(self, high: pd.Series, low: pd.Series, close: pd.Series) -> Dict:
- """Детекция паттерна двойная вершина/дно"""
- # Упрощенная детекция двойной вершины
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+# Simplified double-top detective
  peaks = high.rolling(window=5, center=True).max() == high
  valleys = low.rolling(window=5, center=True).min() == low
 
@@ -1461,12 +1461,12 @@ class SCHRLevelsM5Analysis:
  }
 
  def _detect_triangle_pattern(self, high: pd.Series, low: pd.Series, close: pd.Series) -> Dict:
- """Детекция треугольных паттернов"""
- # Упрощенная детекция треугольника
+""""""""""""""""""""
+# Simplified triangle detective
  high_trend = high.rolling(window=10).apply(lambda x: np.polyfit(range(len(x)), x, 1)[0])
  low_trend = low.rolling(window=10).apply(lambda x: np.polyfit(range(len(x)), x, 1)[0])
 
- triangle = (high_trend < 0) & (low_trend > 0) # Сходящийся треугольник
+Triangle = (high_trend < 0) & (low_trend > 0) # Continuing triangle
 
  return {
  'triangle': triangle,
@@ -1474,11 +1474,11 @@ class SCHRLevelsM5Analysis:
  }
 
  def _detect_flag_pennant(self, high: pd.Series, low: pd.Series, close: pd.Series, volume: pd.Series) -> Dict:
- """Детекция паттернов флаг/вымпел"""
- # Упрощенная детекция флага
+"""""""""" "Pattern Detectives flag/explosion""""
+# Simplified flag detective
  price_range = high - low
  avg_range = price_range.rolling(window=10).mean()
- flag = price_range < avg_range * 0.5 # Узкий диапазон
+flag = Price_range < avg_range * 0.5 #
 
  return {
  'flag': flag,
@@ -1486,12 +1486,12 @@ class SCHRLevelsM5Analysis:
  }
 
  def _detect_wedge_pattern(self, high: pd.Series, low: pd.Series, close: pd.Series) -> Dict:
- """Детекция клиновых паттернов"""
- # Упрощенная детекция клина
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+# Simplified clay detective
  high_trend = high.rolling(window=10).apply(lambda x: np.polyfit(range(len(x)), x, 1)[0])
  low_trend = low.rolling(window=10).apply(lambda x: np.polyfit(range(len(x)), x, 1)[0])
 
- wedge = (high_trend < 0) & (low_trend < 0) # Нисходящий клин
+wedge = (high_trend < 0) & (low_trend < 0) # Downcoming wedge
 
  return {
  'wedge': wedge,
@@ -1499,7 +1499,7 @@ class SCHRLevelsM5Analysis:
  }
 
  def _calculate_rsi(self, close: pd.Series, period: int = 14) -> pd.Series:
- """Расчет RSI"""
+"""""""""" "RSI"""
  delta = close.diff()
  gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
  loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
@@ -1509,13 +1509,13 @@ class SCHRLevelsM5Analysis:
 
  def get_m5_summary(self, features: Dict) -> Dict:
  """
- Получение сводки on M5 анализу.
+Get a report on M5 analysis.
 
  Args:
- features: Результаты Analysis M5 признаков
+Features: Results of Analysis M5 topics
 
  Returns:
- Dict with сводкой M5 Analysis
+Dict with summary M5 Analysis
  """
  summary = {
  'Timeframe': self.Timeframe,
@@ -1524,7 +1524,7 @@ class SCHRLevelsM5Analysis:
  'feature_count': len(features)
  }
 
- # Сводка on краткосрочным уровням
+# Short-term summary
  if 'short_levels' in features:
  short = features['short_levels']
  summary['short_levels'] = {
@@ -1532,7 +1532,7 @@ class SCHRLevelsM5Analysis:
  'avg_stability': short.get('level_stability', pd.Series()).mean()
  }
 
- # Сводка on отскокам
+# The bouncing report
  if 'quick_bounces' in features:
  bounces = features['quick_bounces']
  summary['bounces'] = {
@@ -1540,7 +1540,7 @@ class SCHRLevelsM5Analysis:
  'bounce_success_rate': bounces.get('bounce_success', pd.Series()).mean()
  }
 
- # Сводка on паттернам
+# Report on the Pathers
  if 'medium_patterns' in features:
  patterns = features['medium_patterns']
  summary['patterns'] = {
@@ -1550,12 +1550,12 @@ class SCHRLevelsM5Analysis:
 
  return summary
 
-# example использования
+# Example of use
 if __name__ == "__main__":
- # create Analysisтора M5
+# Create Analysistor M5
  m5_analyzer = SCHRLevelsM5Analysis()
 
- # create testsых данных
+# Create testy data
  dates = pd.date_range('2023-01-01', periods=200, freq='5min')
  test_data = pd.dataFrame({
  'Open': np.random.uniform(1.25, 1.35, 200),
@@ -1570,49 +1570,49 @@ if __name__ == "__main__":
  'pressure': np.random.uniform(0.1, 2.0, 200)
  }, index=dates)
 
- # Анализ M5 признаков
+# Analysis of M5 topics
  features = m5_analyzer.analyze_m5_features(test_data)
 
- # Получение сводки
+# Getting a report
  summary = m5_analyzer.get_m5_summary(features)
- print("Сводка M5 Analysis:", summary)
+"Background M5 Analysis:", summary
 ```
 
-### H1 (1 час) - Среднесрочные уровни
+### H1 (1 hour) - Medium-term levels
 
-**Theory:** H1 Timeframe предназначен for Analysis среднесрочных уровней and Analysis основных трендов. Это критически важный Timeframe for понимания общей рыночной динамики and принятия стратегических решений.
+**Theory:** H1 Timeframe is for mid-term analysis and major trends, which is a critical timeframe for understanding overall market dynamics and strategic decision-making.
 
-**Почему H1 анализ важен:**
-- **Анализ трендов:** Обеспечивает анализ основных рыночных трендов
-- **Среднесрочные уровни:** Выявляет среднесрочные уровни поддержки and сопротивления
-- **Стратегические решения:** Подходит for принятия стратегических торговых решений
-- **Стабильность:** Наиболее стабильные and надежные сигналы
+**Why H1 analysis is important:**
+- ** Trends Analysis:** Provides analysis of major market trends
+- ** Medium-term levels:** identifies medium-term levels of support and resistance
+- ** Strategic decisions: ** suited for strategic trade decision-making
+- **Stability:** Most stable and reliable signals
 
-**Плюсы:**
-- Анализ основных трендов
-- Стабильные сигналы
-- Подходит for стратегических решений
-- Минимальное влияние шума
+** Plus:**
+- Analysis of main trends
+- Stable signals.
+- Good for strategic decisions
+- Minimum effect of noise
 
 **Disadvantages:**
-- Меньше торговых возможностей
-- Медленная реакция on изменения
-- Требует больше времени for Analysis
-- Потенциальные упущенные возможности
+- Less trading opportunities.
+- Slow reaction on change
+- It takes more time for Analysis.
+- Potential missed opportunities
 
-**Практическая реализация:** Класс `SCHRLevelsH1Analysis` оптимизирован for часового Timeframe, который является критически важным for понимания общей рыночной динамики and принятия стратегических торговых решений. H1 обеспечивает стабильные сигналы with минимальным влиянием рыночного шума.
+** Practical implementation: ** `SCHRLevelsH1Analysis' is optimized for clock timeframe, which is critical for understanding overall market dynamics and strategic trade decisions. H1 provides stable signals with minimal market noise effects.
 
-**Детальное объяснение H1 Analysis:**
-- **Среднесрочные уровни:** Обнаруживает уровни, действующие in течение 1-4 часов
-- **Трендовые пробои:** Детектирует пробои, которые могут изменить общий тренд
-- **Среднесрочное давление:** Анализирует давление on более длительных временных интервалах
-- **Стратегические решения:** Подходит for принятия стратегических торговых решений
+** Detailed explanation H1 Analysis:**
+- ** Medium-term levels:** Detects levels in effect for 1-4 hours
+- **Trend samples:** Detects samples that can change the overall trend
+- ** Average pressure: ** Analyses pressure on longer time intervals
+- ** Strategic decisions: ** suited for strategic trade decision-making
 
-**Почему H1 анализ критичен:**
-- **Стратегическая важность:** Обеспечивает понимание общей рыночной динамики
-- **Стабильность сигналов:** Наиболее стабильные and надежные сигналы
-- **Минимальный шум:** Минимальное влияние рыночного шума
-- **Трендовый анализ:** Лучший Timeframe for Analysis трендов
+**Why H1 analysis is critical:**
+- ** Strategic importance:** Provides an understanding of overall market dynamics
+- **Stability of signals:** Most stable and reliable signals
+- ** Minimum noise:** Minimum influence of market noise
+- **Trend analysis:** Best Timeframe for Trends
 
 ```python
 import numpy as np
@@ -1627,11 +1627,11 @@ warnings.filterwarnings('ignore')
 
 class SCHRLevelsH1Analysis:
  """
- Анализ SCHR Levels on часовом Timeframeе.
+Analysis by SCHR Livels on Timeframe.
 
- Specialized класс for Analysis среднесрочных уровней and трендов
- on часовом Timeframeе, обеспечивающий стратегическое понимание
- рыночной динамики and принятие долгосрочных торговых решений.
+Specialized class for Analysis of medium-term levels and trends
+on Timeframe that provides strategic understanding
+Market dynamics and durable trade solutions.
  """
 
  def __init__(self,
@@ -1641,14 +1641,14 @@ class SCHRLevelsH1Analysis:
  volatility_factor: float = 1.5,
  trend_threshold: float = 0.01):
  """
- Инициализация Analysisтора H1.
+Initiating Analysistor H1.
 
  Args:
- pressure_threshold: Порог давления for H1 (стандартный)
- level_strength: Минимальная сила уровня for H1
- Prediction_horizon: Горизонт предсказания (стандартный for H1)
- volatility_factor: Фактор волатильности (стандартный for H1)
- trend_threshold: Порог for определения тренда (1%)
+pressure_threshold: Pressure threshold for H1 (standard)
+lion_strength: Minimum force of level for H1
+Predation_horizon: Forecast horizon (standard for H1)
+Volatility_factor: Volatility factor (standard for H1)
+trend_threshold: trend threshold (1 per cent)
  """
  self.Timeframe = 'H1'
  self.optimal_params = {
@@ -1659,64 +1659,64 @@ class SCHRLevelsH1Analysis:
  'trend_threshold': trend_threshold
  }
 
- # Инициализация компонентов
+# Initiating components
  self.scaler = StandardScaler()
  self.feature_history = []
  self.trend_models = {}
 
- # validation параметров
+# Validation of parameters
  self._validate_parameters()
 
  def _validate_parameters(self):
- """validation параметров for H1"""
+"Validation of parameters for H1"
  if not 0.0 <= self.optimal_params['pressure_threshold'] <= 1.0:
- raise ValueError("pressure_threshold должен быть между 0.0 and 1.0")
+Raise ValueError("pressure_threshold should be between 0.0 and 1.0")
  if not 0.0 <= self.optimal_params['level_strength'] <= 1.0:
- raise ValueError("level_strength должен быть между 0.0 and 1.0")
+Raise ValueError("level_strength should be between 0.0 and 1.0")
  if self.optimal_params['Prediction_horizon'] <= 0:
- raise ValueError("Prediction_horizon должен быть положительным")
+Raise ValueError("Predition_horizon must be positive")
  if self.optimal_params['trend_threshold'] <= 0:
- raise ValueError("trend_threshold должен быть положительным")
+Raise ValueError("trend_threshold should be positive")
 
  def analyze_h1_features(self, data: pd.dataFrame) -> Dict:
  """
- Комплексный анализ признаков for H1 Timeframe.
+Integrated analysis of signs for H1 Timeframe.
 
  Args:
- data: dataFrame with OHLCV данными and SCHR колонками
+Data: dataFrame with OHLCV data and SCHR columns
 
  Returns:
- Dict with результатами Analysis H1 признаков
+Dict with results of Analysis H1 characteristics
  """
  try:
- # check данных
+# Check data
  if len(data) < 50:
- raise ValueError("Недостаточно данных for Analysis H1")
+Raise ValueError("Insufficient data for Analysis H1)"
 
  features = {}
 
- # 1. Среднесрочные уровни
+1. Medium-term levels
  features['medium_levels'] = self._detect_medium_levels(data)
 
- # 2. Трендовые пробои
+♪ 2. Tread samples
  features['trend_breakouts'] = self._detect_trend_breakouts(data)
 
- # 3. Среднесрочное давление
+# 3. Medium-term pressure
  features['medium_pressure'] = self._analyze_medium_pressure(data)
 
- # 4. Трендовый анализ
+# 4. Tradition analysis
  features['trend_Analysis'] = self._analyze_trends(data)
 
- # 5. Аномалии and выбросы
+#5: Anomalias and emissions
  features['anomalies'] = self._detect_anomalies(data)
 
- # 6. Сезонность and циклы
+♪ 6. Seasonality and cycles
  features['seasonality'] = self._analyze_seasonality(data)
 
- # 7. Корреляционный анализ
+# 7. Correlative analysis
  features['correlations'] = self._analyze_correlations(data)
 
- # Сохранение истории
+# Maintaining history
  self.feature_history.append({
  'timestamp': pd.Timestamp.now(),
  'features': features,
@@ -1726,36 +1726,36 @@ class SCHRLevelsH1Analysis:
  return features
 
  except Exception as e:
- print(f"Ошибка in анализе H1 признаков: {e}")
+Print(f) Error in the analysis of H1 topics: {e})
  return {}
 
  def _detect_medium_levels(self, data: pd.dataFrame) -> Dict:
  """
- Детекция среднесрочных уровней for H1.
+Detection of medium-term levels for H1.
 
- Среднесрочные уровни - это уровни поддержки and сопротивления,
- которые действуют in течение 1-4 часов and подходят for среднесрочной торговли.
+Medium-term levels are levels of support and resistance,
+They operate within 1 to 4 hours and are suitable for medium-term trade.
  """
- # Базовые уровни
+# Baseline levels
  high_levels = data['predicted_high']
  low_levels = data['predicted_low']
  support_levels = data['support_level']
  resistance_levels = data['resistance_level']
 
- # Расстояния to уровней
+# Distances to levels
  distance_to_high = (high_levels - data['Close']) / data['Close']
  distance_to_low = (data['Close'] - low_levels) / data['Close']
  distance_to_support = (data['Close'] - support_levels) / data['Close']
  distance_to_resistance = (resistance_levels - data['Close']) / data['Close']
 
- # Среднесрочные уровни (близко к цене)
+# Medium-term levels (nearly price)
  medium_threshold = 0.01 # 1% for H1
  medium_high = distance_to_high < medium_threshold
  medium_low = distance_to_low < medium_threshold
  medium_support = distance_to_support < medium_threshold
  medium_resistance = distance_to_resistance < medium_threshold
 
- # Сила среднесрочных уровней
+# Medium-term strength
  medium_strength = np.where(
  medium_high | medium_low | medium_support | medium_resistance,
  np.maximum(
@@ -1765,13 +1765,13 @@ class SCHRLevelsH1Analysis:
  0
  )
 
- # Длительность уровней (как долго уровень держится)
+# Length of levels (how long the level holds)
  level_duration = self._calculate_level_duration(data)
 
- # Стабильность уровней
+# Stability of levels
  level_stability = self._calculate_level_stability(data)
 
- # Значимость уровней (on basis объема and волатильности)
+# Significance of levels (on basis volume and volatility)
  level_significance = self._calculate_level_significance(data)
 
  return {
@@ -1792,29 +1792,29 @@ class SCHRLevelsH1Analysis:
 
  def _detect_trend_breakouts(self, data: pd.dataFrame) -> Dict:
  """
- Детекция трендовых пробоев for H1.
+Detective trend test for H1.
 
- Трендовые пробои - это пробои уровней, которые могут изменить
- общий тренд and привести к значительным движениям цены.
+Trend samples are levels that can change
+a general trend and lead to significant price movements.
  """
- # Базовые уровни
+# Baseline levels
  high_levels = data['predicted_high']
  low_levels = data['predicted_low']
  support_levels = data['support_level']
  resistance_levels = data['resistance_level']
 
- # Детекция пробоев
+# Test detective
  breakout_high = data['Close'] > high_levels
  breakout_low = data['Close'] < low_levels
  breakout_support = data['Close'] < support_levels
  breakout_resistance = data['Close'] > resistance_levels
 
- # Трендовые пробои (with подтверждением)
- trend_confirmation_window = 4 # 4 часа for подтверждения
+# Tread samples (with confirmation)
+trend_confirmation_window = 4 #4 hours for confirmation
  trend_breakout_high = breakout_high.rolling(window=trend_confirmation_window).sum() >= 2
  trend_breakout_low = breakout_low.rolling(window=trend_confirmation_window).sum() >= 2
 
- # Сила трендовых пробоев
+# The strength of the trend test
  breakout_strength_high = np.where(
  trend_breakout_high,
  (data['Close'] - high_levels) / high_levels,
@@ -1826,13 +1826,13 @@ class SCHRLevelsH1Analysis:
  0
  )
 
- # Объем при пробоях
+# Volume in the holes
  volume_confirmation = self._analyze_volume_at_breakouts(data, breakout_high, breakout_low)
 
- # Волатильность при пробоях
+# Volatility in the holes
  volatility_confirmation = self._analyze_volatility_at_breakouts(data, breakout_high, breakout_low)
 
- # Частота трендовых пробоев
+# Frequency of trend test
  trend_breakout_frequency = (trend_breakout_high | trend_breakout_low).rolling(window=24).sum() / 24
 
  return {
@@ -1851,42 +1851,42 @@ class SCHRLevelsH1Analysis:
 
  def _analyze_medium_pressure(self, data: pd.dataFrame) -> Dict:
  """
- Анализ среднесрочного давления for H1.
+Mid-term pressure analysis for H1.
 
- Среднесрочное давление - это давление on уровни in более длительных
- временных интервалах, которое может указывать on направление тренда.
+Medium-term pressure is pressure on levels in longer periods
+a time interval that can indicate on the direction of the trend.
  """
- # Базовое давление
+# Basic pressure
  base_pressure = data['pressure'] if 'pressure' in data.columns else np.ones(len(data))
 
- # Среднесрочное давление (изменения за 4-12 часов)
+# Medium term pressure (changes 4 to 12 hours)
  medium_pressure_4 = base_pressure.rolling(window=4).mean()
  medium_pressure_12 = base_pressure.rolling(window=12).mean()
  medium_pressure_24 = base_pressure.rolling(window=24).mean()
 
- # Изменение давления
+# Pressure change
  pressure_change_4 = base_pressure.diff(4)
  pressure_change_12 = base_pressure.diff(12)
  pressure_change_24 = base_pressure.diff(24)
 
- # Направление давления
+# Pressure direction
  pressure_direction = np.sign(pressure_change_4)
 
- # Ускорение давления
+# Pressure acceleration
  pressure_acceleration = pressure_change_4.diff(4)
 
- # Волатильность давления
+# Pressure volatility
  pressure_volatility = base_pressure.rolling(window=12).std()
 
- # Пороги for H1
+# Thresholds for H1
  pressure_threshold = self.optimal_params['pressure_threshold']
  high_pressure = base_pressure > pressure_threshold
  extreme_pressure = base_pressure > pressure_threshold * 1.2
 
- # Тренд давления
+# The pressure wave
  pressure_trend = base_pressure.rolling(window=24).apply(lambda x: np.polyfit(range(len(x)), x, 1)[0])
 
- # Циклические паттерны давления
+# Cyclic pressure pathers
  pressure_cycles = self._detect_pressure_cycles(base_pressure)
 
  return {
@@ -1908,37 +1908,37 @@ class SCHRLevelsH1Analysis:
 
  def _analyze_trends(self, data: pd.dataFrame) -> Dict:
  """
- Анализ трендов for H1.
+Analysis of trends for H1.
 
- Анализ трендов помогает определить общее направление движения
- and его силу on часовом Timeframeе.
+Trends analysis helps to determine the overall direction of traffic
+and its power on the clocktimeframe.
  """
- # Базовые data
+# Basic data
  close = data['Close']
  high = data['High']
  low = data['Low']
  volume = data['Volume'] if 'Volume' in data.columns else np.ones(len(data))
 
- # Простые скользящие средние
+# Simple sliding average
  sma_12 = close.rolling(window=12).mean()
  sma_24 = close.rolling(window=24).mean()
  sma_48 = close.rolling(window=48).mean()
 
- # Экспоненциальные скользящие средние
+# Exponsive sliding medium
  ema_12 = close.ewm(span=12).mean()
  ema_24 = close.ewm(span=24).mean()
  ema_48 = close.ewm(span=48).mean()
 
- # Направление тренда
+# Direction of trend
  trend_direction = np.where(
- close > sma_24, 1, # Восходящий
- np.where(close < sma_24, -1, 0) # Нисходящий, боковой
+cloce > sma_24, 1, # Upcoming
+np.where(close < sma_24, -1, 0) # Downward, side
  )
 
- # Сила тренда
+# The strength of the trend
  trend_strength = abs(close - sma_24) / sma_24
 
- # Ускорение тренда
+# Accelerating trend
  trend_acceleration = sma_12.diff(4)
 
  # MACD
@@ -1985,12 +1985,12 @@ class SCHRLevelsH1Analysis:
 
  def _detect_anomalies(self, data: pd.dataFrame) -> Dict:
  """
- Детекция аномалий and выбросов for H1.
+Detection of anomalies and emissions for H1.
 
- Аномалии могут указывать on необычные рыночные условия
- or потенциальные возможности for trading.
+Unusual market conditions may be indicated by anomalies
+or potential for trading.
  """
- # Подготовка данных for детекции аномалий
+# Preparation of data for an anomaly detective
  features = np.column_stack([
  data['Close'].values,
  data['High'].values,
@@ -1999,25 +1999,25 @@ class SCHRLevelsH1Analysis:
  data['pressure'].values if 'pressure' in data.columns else np.ones(len(data))
  ])
 
- # remove NaN значений
+# remove NaN values
  valid_mask = ~np.isnan(features).any(axis=1)
  features_clean = features[valid_mask]
 
  if len(features_clean) < 10:
  return {'anomalies': None, 'anomaly_scores': None}
 
- # Isolation Forest for детекции аномалий
+# Isolation Forest for an anomaly detective
  iso_forest = IsolationForest(contamination=0.1, random_state=42)
  anomaly_labels = iso_forest.fit_predict(features_clean)
  anomaly_scores = iso_forest.decision_function(features_clean)
 
- # create полных меток
- full_labels = np.full(len(data), 1) # 1 = нормальный
+♪ ♪ Create full tag ♪
+Full_labels = np.ful(len(data), 1) #1 = normal
  full_scores = np.full(len(data), 0.0)
  full_labels[valid_mask] = anomaly_labels
  full_scores[valid_mask] = anomaly_scores
 
- # Аномалии (метка -1)
+# Anomalies (mark -1)
  anomalies = full_labels == -1
 
  return {
@@ -2028,18 +2028,18 @@ class SCHRLevelsH1Analysis:
 
  def _analyze_seasonality(self, data: pd.dataFrame) -> Dict:
  """
- Анализ сезонности and циклов for H1.
+Analysis of seasonality and cycles for H1.
 
- Сезонность может влиять on поведение уровней and давления
- in dependencies from времени дня, дня недели and других факторов.
+Seasonality can influence levels and pressure behaviour
+in terms of time of day, day of week and other factors.
  """
- # Временные components
+# Temporary components
  timestamps = pd.to_datetime(data.index) if hasattr(data.index, 'to_datetime') else data.index
  hour = timestamps.hour if hasattr(timestamps, 'hour') else np.zeros(len(data))
  day_of_week = timestamps.dayofweek if hasattr(timestamps, 'dayofweek') else np.zeros(len(data))
  day_of_month = timestamps.day if hasattr(timestamps, 'day') else np.zeros(len(data))
 
- # Анализ on часам
+# Analysis on watches
  hourly_Analysis = {}
  for h in range(24):
  hour_mask = hour == h
@@ -2051,7 +2051,7 @@ class SCHRLevelsH1Analysis:
  'avg_volume': data['Volume'][hour_mask].mean() if 'Volume' in data.columns else 0
  }
 
- # Анализ on дням недели
+# Analysis on Days of the Week
  daily_Analysis = {}
  for d in range(7):
  day_mask = day_of_week == d
@@ -2063,7 +2063,7 @@ class SCHRLevelsH1Analysis:
  'avg_volume': data['Volume'][day_mask].mean() if 'Volume' in data.columns else 0
  }
 
- # Циклические паттерны
+# Cyclic pathites
  cycles = self._detect_cyclical_patterns(data)
 
  return {
@@ -2077,23 +2077,23 @@ class SCHRLevelsH1Analysis:
 
  def _analyze_correlations(self, data: pd.dataFrame) -> Dict:
  """
- Анализ корреляций между различными приsignми for H1.
+Analysis of the correlations between the different signs for H1.
 
- Корреляционный анализ помогает понять взаимосвязи между
- различными componentsи SCHR Levels.
+Correlative analysis helps to understand the relationship between
+It is also the case that SCHR has a number of different coponents.
  """
- # Подготовка данных for корреляционного Analysis
+# Preparation of data for correlation Analisis
  numeric_columns = ['Close', 'High', 'Low', 'Volume', 'pressure',
  'predicted_high', 'predicted_low', 'support_level', 'resistance_level']
 
- # Фильтрация существующих columns
+# Filtering existing columns
  available_columns = [col for col in numeric_columns if col in data.columns]
  correlation_data = data[available_columns]
 
- # Расчет корреляций
+# Calculation of correlations
  correlations = correlation_data.corr()
 
- # Наиболее коррелированные пары
+# Most corroded pairs
  corr_pairs = []
  for i in range(len(correlations.columns)):
  for j in range(i+1, len(correlations.columns)):
@@ -2106,49 +2106,49 @@ class SCHRLevelsH1Analysis:
  'abs_correlation': abs(corr_value)
  })
 
- # Сортировка on абсолютной корреляции
+# Sorting on Total Correlation
  corr_pairs.sort(key=lambda x: x['abs_correlation'], reverse=True)
 
  return {
  'correlation_matrix': correlations,
- 'top_correlations': corr_pairs[:10], # Топ-10 корреляций
+'top_controls': corr_pirs[:10], # Top-10 correlations
  'high_correlations': [pair for pair in corr_pairs if pair['abs_correlation'] > 0.7]
  }
 
  def _calculate_level_duration(self, data: pd.dataFrame) -> pd.Series:
- """Расчет длительности уровней"""
- # Простой расчет длительности on basis стабильности уровней
+"The calculation of the length of the levels."
+# Simple calculation of the length of time on base stability levels
  level_changes = data['predicted_high'].diff().abs() + data['predicted_low'].diff().abs()
  duration = level_changes.rolling(window=12).apply(lambda x: len(x) - np.sum(x > 0.001))
  return duration.fillna(0)
 
  def _calculate_level_stability(self, data: pd.dataFrame) -> pd.Series:
- """Расчет стабильности уровней"""
+"""""""" "The stability of levels."
  level_changes = data['predicted_high'].diff().abs() + data['predicted_low'].diff().abs()
  stability = 1 / (1 + level_changes.rolling(window=12).mean())
  return stability.fillna(0)
 
  def _calculate_level_significance(self, data: pd.dataFrame) -> pd.Series:
- """Расчет значимости уровней"""
- # Комбинация объема and волатильности
+"The significance of levels"
+# Combination of volume and volatility
  volume_factor = data['Volume'] / data['Volume'].rolling(24).mean() if 'Volume' in data.columns else np.ones(len(data))
  volatility_factor = data['Close'].rolling(12).std() / data['Close'].rolling(24).std()
  significance = volume_factor * volatility_factor
  return significance.fillna(1)
 
  def _analyze_volume_at_breakouts(self, data: pd.dataFrame, breakout_high: pd.Series, breakout_low: pd.Series) -> Dict:
- """Анализ объема при пробоях"""
+"The volume analysis of the holes""
  if 'Volume' not in data.columns:
  return {'volume_confirmation': np.zeros(len(data))}
 
- # Средний объем
+# Average volume
  avg_volume = data['Volume'].rolling(24).mean()
 
- # Объем при пробоях
+# Volume in the holes
  volume_at_breakout_high = np.where(breakout_high, data['Volume'] / avg_volume, 1)
  volume_at_breakout_low = np.where(breakout_low, data['Volume'] / avg_volume, 1)
 
- # Подтверждение пробоя объемом
+# Confirmation of sample volume
  volume_confirmation = (volume_at_breakout_high > 1.2) | (volume_at_breakout_low > 1.2)
 
  return {
@@ -2158,16 +2158,16 @@ class SCHRLevelsH1Analysis:
  }
 
  def _analyze_volatility_at_breakouts(self, data: pd.dataFrame, breakout_high: pd.Series, breakout_low: pd.Series) -> Dict:
- """Анализ волатильности при пробоях"""
- # Волатильность
+""Analysis of Volatility in Punctures""
+# Volatility
  volatility = data['Close'].rolling(12).std()
  avg_volatility = volatility.rolling(24).mean()
 
- # Волатильность при пробоях
+# Volatility in the holes
  vol_at_breakout_high = np.where(breakout_high, volatility / avg_volatility, 1)
  vol_at_breakout_low = np.where(breakout_low, volatility / avg_volatility, 1)
 
- # Подтверждение пробоя волатильностью
+# Confirmation of the valvation
  volatility_confirmation = (vol_at_breakout_high > 1.1) | (vol_at_breakout_low > 1.1)
 
  return {
@@ -2177,11 +2177,11 @@ class SCHRLevelsH1Analysis:
  }
 
  def _detect_pressure_cycles(self, pressure: pd.Series) -> Dict:
- """Детекция циклических паттернов давления"""
- # Простой анализ циклов with помощью автокорреляции
+"" "Detection of Cyclic Pressure Pathers"""
+# Easy analysis of cycles with autocorration
  autocorr = pressure.autocorr(lag=12)
 
- # Детекция циклов
+# Cycle Detection
  cycles = pressure.rolling(window=24).apply(lambda x: len(np.where(np.diff(np.sign(x.diff())))[0]))
 
  return {
@@ -2191,11 +2191,11 @@ class SCHRLevelsH1Analysis:
  }
 
  def _detect_cyclical_patterns(self, data: pd.dataFrame) -> Dict:
- """Детекция циклических паттернов"""
- # Анализ циклов in цене
+"" "Cyclic Pathtern Detection"""
+# Analysis of cycles in price
  price_cycles = data['Close'].rolling(window=24).apply(lambda x: len(np.where(np.diff(np.sign(x.diff())))[0]))
 
- # Анализ циклов in объеме
+# Analysis of in-volume cycles
  volume_cycles = data['Volume'].rolling(window=24).apply(lambda x: len(np.where(np.diff(np.sign(x.diff())))[0])) if 'Volume' in data.columns else pd.Series(0, index=data.index)
 
  return {
@@ -2205,7 +2205,7 @@ class SCHRLevelsH1Analysis:
  }
 
  def _calculate_rsi(self, close: pd.Series, period: int = 14) -> pd.Series:
- """Расчет RSI"""
+"""""""""" "RSI"""
  delta = close.diff()
  gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
  loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
@@ -2214,7 +2214,7 @@ class SCHRLevelsH1Analysis:
  return rsi.fillna(50)
 
  def _calculate_adx(self, high: pd.Series, low: pd.Series, close: pd.Series, period: int = 14) -> pd.Series:
- """Расчет ADX"""
+""""""""" "AdX"""
  # True Range
  tr1 = high - low
  tr2 = abs(high - close.shift(1))
@@ -2237,7 +2237,7 @@ class SCHRLevelsH1Analysis:
  return adx.fillna(25)
 
  def _calculate_stochastic(self, high: pd.Series, low: pd.Series, close: pd.Series, k_period: int = 14, d_period: int = 3) -> Tuple[pd.Series, pd.Series]:
- """Расчет Stochastic Oscillator"""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  lowest_low = low.rolling(window=k_period).min()
  highest_high = high.rolling(window=k_period).max()
 
@@ -2248,13 +2248,13 @@ class SCHRLevelsH1Analysis:
 
  def get_h1_summary(self, features: Dict) -> Dict:
  """
- Получение сводки on H1 анализу.
+To receive a report on H1 analysis.
 
  Args:
- features: Результаты Analysis H1 признаков
+Features: Results of Analysis H1
 
  Returns:
- Dict with сводкой H1 Analysis
+Dict with summary H1 Analysis
  """
  summary = {
  'Timeframe': self.Timeframe,
@@ -2263,7 +2263,7 @@ class SCHRLevelsH1Analysis:
  'feature_count': len(features)
  }
 
- # Сводка on среднесрочным уровням
+# Summary on mid-term levels
  if 'medium_levels' in features:
  medium = features['medium_levels']
  summary['medium_levels'] = {
@@ -2273,7 +2273,7 @@ class SCHRLevelsH1Analysis:
  'avg_significance': medium.get('level_significance', pd.Series()).mean()
  }
 
- # Сводка on трендовым пробоям
+# Report on trend samples
  if 'trend_breakouts' in features:
  breakouts = features['trend_breakouts']
  summary['trend_breakouts'] = {
@@ -2282,7 +2282,7 @@ class SCHRLevelsH1Analysis:
  'volatility_confirmation_rate': breakouts.get('volatility_confirmation', pd.Series()).mean()
  }
 
- # Сводка on аномалиям
+# Anomalous Report
  if 'anomalies' in features:
  anomalies = features['anomalies']
  summary['anomalies'] = {
@@ -2292,12 +2292,12 @@ class SCHRLevelsH1Analysis:
 
  return summary
 
-# example использования
+# Example of use
 if __name__ == "__main__":
- # create Analysisтора H1
+# Create Analysistor H1
  h1_analyzer = SCHRLevelsH1Analysis()
 
- # create testsых данных
+# Create testy data
  dates = pd.date_range('2023-01-01', periods=500, freq='1H')
  test_data = pd.dataFrame({
  'Open': np.random.uniform(1.25, 1.35, 500),
@@ -2312,47 +2312,47 @@ if __name__ == "__main__":
  'pressure': np.random.uniform(0.1, 2.0, 500)
  }, index=dates)
 
- # Анализ H1 признаков
+# Analysis of H1 topics
  features = h1_analyzer.analyze_h1_features(test_data)
 
- # Получение сводки
+# Getting a report
  summary = h1_analyzer.get_h1_summary(features)
- print("Сводка H1 Analysis:", summary)
+"Background H1 Analysis:", summary
 ```
 
-## create признаков for ML
+## of the signs for ML
 
-**Theory:** create признаков for machine learning on basis SCHR Levels является критически важным этапом for достижения высокой точности predictions. Качественные признаки определяют успех ML-модели.
+**Theory:**create signs for machining on base SCHR Livels is a critical stage for achieving high accuracy preferences. Qualitative features determine the success of the ML model.
 
-**Почему create признаков критично:**
-- **Качество данных:** Качественные признаки определяют качество модели
-- **Точность predictions:** Хорошие признаки повышают точность predictions
-- **Робастность:** Правильные признаки обеспечивают робастность модели
-- **Интерпретируемость:** Понятные признаки облегчают интерпретацию результатов
+**Why the critical element is:**
+- ** Data quality: ** Qualitative characteristics determine model quality
+- ** The accuracy of preferences:** Good signs improve accuracy of preferences
+- ** Robinity:** The correct signs ensure a model's smoothness.
+- ** Interpretation: ** Understandable signs facilitate interpretation of results
 
-### 1. Базовые признаки SCHR Levels
+*##1. Basic features of SCHR Livels
 
-**Theory:** Базовые признаки SCHR Levels представляют собой фундаментальные components for Analysis рыночных уровней. Они обеспечивают основу for более сложных признаков and являются основой for ML-модели.
+**Theory:** The basic features of SCHR Livels are fundamental characteristics for market levels; they provide the basis for more complex features and form the basis for the ML model.
 
-**Почему базовые признаки важны:**
-- **Фундаментальная основа:** Обеспечивают базовую информацию о рыночных уровнях
-- **Простота интерпретации:** Легко понимаются and интерпретируются
-- **Стабильность:** Обеспечивают стабильную основу for Analysis
-- **Эффективность:** Минимальные вычислительные требования
+**Why the basic signs are important:**
+- ** Basic framework: ** Provide basic information on market levels
+- **Simple interpretation:** Easy to understand and interpret
+- **Stability:** Provide a stable basis for Analysis
+- ** Effectiveness:** Minimum Computing Requirements
 
-**Практическая реализация:** Класс `SCHRLevelsFeatureEngineer` представляет собой комплексную system создания признаков for machine learning on basis SCHR Levels. Этот класс обеспечивает create all required признаков for достижения высокой точности ML-моделей.
+** Practical implementation: ** `SCHRLevelsFeatureEngineer' is an integrated system for creating signs for machininizing on base SCHR Models. This class provides a creative all-required indication for achieving high accuracy of ML models.
 
-**Детальное объяснение создания признаков:**
-- **Базовые признаки:** Фундаментальные components SCHR Levels for Analysis уровней
-- **Признаки давления:** Количественные metrics рыночного давления and его динамики
-- **Временные признаки:** Анализ временных аспектов and паттернов
-- **Статистические признаки:** Статистические metrics for улучшения качества модели
+** Detailed explanation for the creation of the signs:**
+- ** Basic features:** Fundamental components SCHR Livels for Analysis levels
+- ** Pressure signs:** Quantitative metrics of market pressure and its dynamics
+- ** Temporary indicators: ** Analysis of temporal aspects and patterns
+- **Statistical indicators:** Statistical indicators for model improvement
 
-**Почему create признаков критично:**
-- **Качество данных:** Качественные признаки определяют качество ML-модели
-- **Точность predictions:** Хорошие признаки значительно повышают точность
-- **Робастность:** Правильные признаки обеспечивают устойчивость модели
-- **Интерпретируемость:** Понятные признаки облегчают интерпретацию результатов
+**Why the critical element is:**
+- ** Data quality:** Qualitative characteristics determine the quality of the ML model
+- ** The accuracy of preferences:** Good signs greatly improve accuracy
+- **Physicity:** Correct signs ensure model stability
+- ** Interpretation: ** Understandable signs facilitate interpretation of results
 
 ```python
 import numpy as np
@@ -2367,11 +2367,11 @@ warnings.filterwarnings('ignore')
 
 class SCHRLevelsFeatureEngineer:
  """
- create признаков on basis SCHR Levels for machine learning.
+a list of features on base SCHR Livels for machine lightning.
 
- Комплексная система создания признаков, которая преобразует сырые data
- SCHR Levels in качественные признаки for ML-моделей, обеспечивая высокую
- точность predictions and робастность системы.
+A complex sign-making system that converts raw data
+SCHR Livels in qualitative signs for ML models, ensuring high
+Accuracy of productions and efficiency of the system.
  """
 
  def __init__(self,
@@ -2380,19 +2380,19 @@ class SCHRLevelsFeatureEngineer:
  feature_selection_k: int = 50,
  scaler_type: str = 'standard'):
  """
- Инициализация инженера признаков.
+Initialization of the sign engineer.
 
  Args:
- lag_periods: Периоды for создания лаговых признаков
- rolling_windows: Окна for скользящих статистик
- feature_selection_k: Количество лучших признаков for отбора
- scaler_type: Тип нормализации ('standard', 'minmax', 'robust')
+lag_periods: Periods for creating lug signs
+Rolling_windows: Windows for sliding statisticians
+Feature_selection_k: Number of best features for selection
+Scaler_type: Type of normalization ('standard', 'minmax', 'robust')
  """
  self.lag_periods = lag_periods
  self.rolling_windows = rolling_windows
  self.feature_selection_k = feature_selection_k
 
- # Инициализация скейлеров
+# Initiating skaters
  if scaler_type == 'standard':
  self.scaler = StandardScaler()
  elif scaler_type == 'minmax':
@@ -2400,48 +2400,48 @@ class SCHRLevelsFeatureEngineer:
  elif scaler_type == 'robust':
  self.scaler = RobustScaler()
  else:
- raise ValueError("scaler_type должен быть 'standard', 'minmax' or 'robust'")
+Raise ValueError("scaler_type should be 'standard', 'minmax' or 'robust')
 
- # Инициализация селекторов признаков
+# Initiating indicators selections
  self.feature_selector = SelectKBest(score_func=f_classif, k=feature_selection_k)
  self.mutual_info_selector = SelectKBest(score_func=mutual_info_classif, k=feature_selection_k)
 
- # История созданных признаков
+# History of the signs created
  self.feature_history = []
  self.feature_importance = {}
 
  def create_basic_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
- create базовых признаков SCHR Levels.
+Create of basic features of SCHR Levels.
 
- Базовые признаки представляют собой фундаментальные components
- for Analysis уровней поддержки and сопротивления.
+Basic characteristics are fundamental characteristics
+for Support and Resistance Levels.
 
  Args:
- data: dataFrame with OHLCV данными and SCHR колонками
+Data: dataFrame with OHLCV data and SCHR columns
 
  Returns:
- dataFrame with базовыми приsignми
+DataFrame with basic signature
  """
  features = pd.dataFrame(index=data.index)
 
- # 1. Основные уровни
+1. Main levels
  features['predicted_high'] = data['predicted_high']
  features['predicted_low'] = data['predicted_low']
  features['support_level'] = data['support_level']
  features['resistance_level'] = data['resistance_level']
 
- # 2. Расстояния to уровней (нормализованные)
+2. Distances to levels (normalized)
  features['distance_to_high'] = (data['predicted_high'] - data['Close']) / data['Close']
  features['distance_to_low'] = (data['Close'] - data['predicted_low']) / data['Close']
  features['distance_to_support'] = (data['Close'] - data['support_level']) / data['Close']
  features['distance_to_resistance'] = (data['resistance_level'] - data['Close']) / data['Close']
 
- # 3. Диапазон уровней
+# 3. Level range
  features['level_range'] = (data['predicted_high'] - data['predicted_low']) / data['Close']
  features['support_resistance_range'] = (data['resistance_level'] - data['support_level']) / data['Close']
 
- # 4. Позиция относительно уровней
+# 4. Position on levels
  level_range = data['predicted_high'] - data['predicted_low']
  features['position_in_range'] = np.where(
  level_range > 0,
@@ -2449,11 +2449,11 @@ class SCHRLevelsFeatureEngineer:
  0.5
  )
 
- # 5. Относительные уровни
+# 5. Relative levels
  features['high_low_ratio'] = data['predicted_high'] / data['predicted_low']
  features['support_resistance_ratio'] = data['resistance_level'] / data['support_level']
 
- # 6. Близость к уровням
+# 6. Closeness to levels
  features['closest_level_distance'] = np.minimum(
  features['distance_to_high'],
  features['distance_to_low']
@@ -2466,50 +2466,50 @@ class SCHRLevelsFeatureEngineer:
 
  def create_pressure_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
- create признаков давления on basis SCHR Levels.
+:: Create of signs of pressure on base SCHR Levels.
 
- Признаки давления анализируют рыночное давление and его влияние
- on уровни поддержки and сопротивления.
+Pressure signs analyse market pressure and its influence
+On levels of support and resistance.
 
  Args:
- data: dataFrame with OHLCV данными and SCHR колонками
+Data: dataFrame with OHLCV data and SCHR columns
 
  Returns:
- dataFrame with приsignми давления
+DataFrame with high pressure
  """
  features = pd.dataFrame(index=data.index)
 
- # 1. Основные признаки давления
+1. Main signs of pressure
  features['pressure'] = data['pressure']
  features['pressure_vector'] = data['pressure_vector']
  features['pressure_strength'] = data['pressure_strength']
  features['pressure_direction'] = data['pressure_direction']
 
- # 2. Нормализованное давление
+# 2. Normalized pressure
  features['pressure_normalized'] = data['pressure'] / data['Close']
  features['pressure_vector_normalized'] = data['pressure_vector'] / data['Close']
 
- # 3. Изменения давления
+# 3. Pressure changes
  features['pressure_change'] = data['pressure'].diff()
  features['pressure_vector_change'] = data['pressure_vector'].diff()
  features['pressure_strength_change'] = data['pressure_strength'].diff()
 
- # 4. Ускорение давления
+# 4. Pressure acceleration
  features['pressure_acceleration'] = data['pressure'].diff().diff()
  features['pressure_vector_acceleration'] = data['pressure_vector'].diff().diff()
 
- # 5. Волатильность давления
+♪ 5. Pressure volatility
  for window in self.rolling_windows:
  features[f'pressure_volatility_{window}'] = data['pressure'].rolling(window).std()
  features[f'pressure_vector_volatility_{window}'] = data['pressure_vector'].rolling(window).std()
 
- # 6. Тренд давления
+♪ 6. ♪ Tread pressure ♪
  for window in self.rolling_windows:
  features[f'pressure_trend_{window}'] = data['pressure'].rolling(window).apply(
  lambda x: np.polyfit(range(len(x)), x, 1)[0] if len(x) > 1 else 0
  )
 
- # 7. Экстремальные значения давления
+♪ 7. Extreme pressure
  for window in self.rolling_windows:
  features[f'pressure_max_{window}'] = data['pressure'].rolling(window).max()
  features[f'pressure_min_{window}'] = data['pressure'].rolling(window).min()
@@ -2520,63 +2520,63 @@ class SCHRLevelsFeatureEngineer:
 
  def create_temporal_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
- create временных признаков SCHR Levels.
+Create of temporal features of SCHR Levels.
 
- Временные признаки учитывают временные аспекты рыночной динамики,
- including циклы, сезонность and временные паттерны.
+Time signs take into account the temporal aspects of market dynamics,
+Including cycles, seasonality and temporary patterns.
 
  Args:
- data: dataFrame with OHLCV данными and SCHR колонками
+Data: dataFrame with OHLCV data and SCHR columns
 
  Returns:
- dataFrame with временными приsignми
+DataFrame with temporary subscriptions
  """
  features = pd.dataFrame(index=data.index)
 
- # 1. Временные components
+# 1. Temporary components
  timestamps = pd.to_datetime(data.index) if hasattr(data.index, 'to_datetime') else data.index
 
- # Часы дня
+# Hour of the day
  features['hour'] = timestamps.hour if hasattr(timestamps, 'hour') else 0
  features['hour_sin'] = np.sin(2 * np.pi * features['hour'] / 24)
  features['hour_cos'] = np.cos(2 * np.pi * features['hour'] / 24)
 
- # Дни недели
+# Days of the Week
  features['day_of_week'] = timestamps.dayofweek if hasattr(timestamps, 'dayofweek') else 0
  features['day_sin'] = np.sin(2 * np.pi * features['day_of_week'] / 7)
  features['day_cos'] = np.cos(2 * np.pi * features['day_of_week'] / 7)
 
- # Дни месяца
+# Days of the month
  features['day_of_month'] = timestamps.day if hasattr(timestamps, 'day') else 1
  features['month'] = timestamps.month if hasattr(timestamps, 'month') else 1
 
- # 2. Лаговые признаки
+# 2. Lug signs
  for lag in self.lag_periods:
  features[f'pressure_lag_{lag}'] = data['pressure'].shift(lag)
  features[f'close_lag_{lag}'] = data['Close'].shift(lag)
  features[f'volume_lag_{lag}'] = data['Volume'].shift(lag) if 'Volume' in data.columns else 0
 
- # 3. Скользящие статистики
+# 3. Rolling statistics
  for window in self.rolling_windows:
- # Средние значения
+# Averages
  features[f'pressure_mean_{window}'] = data['pressure'].rolling(window).mean()
  features[f'close_mean_{window}'] = data['Close'].rolling(window).mean()
 
- # Стандартные отклонения
+# Standard deviations
  features[f'pressure_std_{window}'] = data['pressure'].rolling(window).std()
  features[f'close_std_{window}'] = data['Close'].rolling(window).std()
 
- # Минимумы and максимумы
+# Minimums and maximums
  features[f'pressure_min_{window}'] = data['pressure'].rolling(window).min()
  features[f'pressure_max_{window}'] = data['pressure'].rolling(window).max()
  features[f'close_min_{window}'] = data['Close'].rolling(window).min()
  features[f'close_max_{window}'] = data['Close'].rolling(window).max()
 
- # Квантили
+# Quantile
  features[f'pressure_q25_{window}'] = data['pressure'].rolling(window).quantile(0.25)
  features[f'pressure_q75_{window}'] = data['pressure'].rolling(window).quantile(0.75)
 
- # 4. Временные паттерны
+# 4. Temporary Paterns
  features['is_weekend'] = features['day_of_week'].isin([5, 6]).astype(int)
  features['is_market_open'] = ((features['hour'] >= 9) & (features['hour'] <= 17)).astype(int)
 
@@ -2584,44 +2584,44 @@ class SCHRLevelsFeatureEngineer:
 
  def create_interaction_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
- create признаков взаимодействия между различными componentsи.
+it's very important to know how to interact between different componentsies.
 
- Признаки взаимодействия выявляют нелинейные dependencies между
- различными componentsи SCHR Levels.
+Synergy signs identify non-linear dependencies between
+It is also the case that SCHR has a number of different coponents.
 
  Args:
- data: dataFrame with OHLCV данными and SCHR колонками
+Data: dataFrame with OHLCV data and SCHR columns
 
  Returns:
- dataFrame with приsignми взаимодействия
+DataFrame with signature interactions
  """
  features = pd.dataFrame(index=data.index)
 
- # 1. Взаимодействие давления and уровней
+# 1. Pressure and level interaction
  features['pressure_level_interaction'] = data['pressure'] * data['predicted_high'] / data['Close']
  features['pressure_support_interaction'] = data['pressure'] * data['support_level'] / data['Close']
  features['pressure_resistance_interaction'] = data['pressure'] * data['resistance_level'] / data['Close']
 
- # 2. Взаимодействие давления and волатильности
+♪ 2. Pressure and volatility interactions
  volatility = data['Close'].rolling(20).std()
  features['pressure_volatility_interaction'] = data['pressure'] * volatility
 
- # 3. Взаимодействие уровней and объема
+# 3. Interactions between levels and volume
  if 'Volume' in data.columns:
  features['level_volume_interaction'] = (data['predicted_high'] - data['predicted_low']) * data['Volume']
  features['support_volume_interaction'] = data['support_level'] * data['Volume']
  features['resistance_volume_interaction'] = data['resistance_level'] * data['Volume']
 
- # 4. Полиномиальные признаки
+# 4. Polynomial signs
  features['pressure_squared'] = data['pressure'] ** 2
  features['pressure_cubed'] = data['pressure'] ** 3
  features['level_range_squared'] = ((data['predicted_high'] - data['predicted_low']) / data['Close']) ** 2
 
- # 5. Логарифмические признаки
+# 5. Logarithmic signs
  features['log_pressure'] = np.log1p(data['pressure'])
  features['log_level_range'] = np.log1p((data['predicted_high'] - data['predicted_low']) / data['Close'])
 
- # 6. Признаки отношений
+# 6. Signs of a relationship
  features['pressure_volume_ratio'] = data['pressure'] / data['Volume'] if 'Volume' in data.columns else 0
  features['level_volatility_ratio'] = (data['predicted_high'] - data['predicted_low']) / volatility
 
@@ -2629,20 +2629,20 @@ class SCHRLevelsFeatureEngineer:
 
  def create_statistical_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
- create статистических признаков SCHR Levels.
+Create statistical features of SCHR Levels.
 
- Статистические признаки предоставляют дополнительную информацию
- о распределении and характеристиках данных.
+Statistical indicators provide additional information
+on data distribution and characteristics.
 
  Args:
- data: dataFrame with OHLCV данными and SCHR колонками
+Data: dataFrame with OHLCV data and SCHR columns
 
  Returns:
- dataFrame со статистическими приsignми
+DataFrame with statistical signature
  """
  features = pd.dataFrame(index=data.index)
 
- # 1. Z-скоры
+# 1. Z-speeds
  for window in self.rolling_windows:
  rolling_mean = data['pressure'].rolling(window).mean()
  rolling_std = data['pressure'].rolling(window).std()
@@ -2652,25 +2652,25 @@ class SCHRLevelsFeatureEngineer:
  rolling_std_close = data['Close'].rolling(window).std()
  features[f'close_zscore_{window}'] = (data['Close'] - rolling_mean_close) / rolling_std_close
 
- # 2. Процентили
+# 2. Percentage
  for window in self.rolling_windows:
  features[f'pressure_percentile_{window}'] = data['pressure'].rolling(window).rank(pct=True)
  features[f'close_percentile_{window}'] = data['Close'].rolling(window).rank(pct=True)
 
- # 3. Асимметрия and эксцесс
+# 3. Asymmetry and Excess
  for window in self.rolling_windows:
  features[f'pressure_skew_{window}'] = data['pressure'].rolling(window).skew()
  features[f'pressure_kurt_{window}'] = data['pressure'].rolling(window).kurt()
  features[f'close_skew_{window}'] = data['Close'].rolling(window).skew()
  features[f'close_kurt_{window}'] = data['Close'].rolling(window).kurt()
 
- # 4. Автокорреляция
+♪ 4. Auto-corroration
  for lag in [1, 2, 3, 5, 10]:
  features[f'pressure_autocorr_{lag}'] = data['pressure'].rolling(20).apply(
  lambda x: x.autocorr(lag=lag) if len(x) > lag else 0
  )
 
- # 5. Энтропия (приблизительная)
+♪ 5. Entropy (preliminary)
  for window in self.rolling_windows:
  features[f'pressure_entropy_{window}'] = data['pressure'].rolling(window).apply(
  lambda x: self._calculate_entropy(x) if len(x) > 1 else 0
@@ -2680,32 +2680,32 @@ class SCHRLevelsFeatureEngineer:
 
  def create_all_features(self, data: pd.dataFrame) -> pd.dataFrame:
  """
- create all признаков SCHR Levels.
+Create all features of SCHR Levels.
 
- Объединяет все типы признаков in единый dataFrame for обучения ML-модели.
+Combines all types of features in a single dataFrame for the ML model.
 
  Args:
- data: dataFrame with OHLCV данными and SCHR колонками
+Data: dataFrame with OHLCV data and SCHR columns
 
  Returns:
- dataFrame со allи приsignми
+DataFrame with alli signature
  """
- print("create базовых признаков...")
+("create basic features...")
  basic_features = self.create_basic_features(data)
 
- print("create признаков давления...")
+print("create signs of pressure...")
  pressure_features = self.create_pressure_features(data)
 
- print("create временных признаков...")
+print("create time signs...")
  temporal_features = self.create_temporal_features(data)
 
- print("create признаков взаимодействия...")
+print("create signs of interaction...")
  interaction_features = self.create_interaction_features(data)
 
- print("create статистических признаков...")
+("create statistics...")
  statistical_features = self.create_statistical_features(data)
 
- # Объединение all признаков
+# Merging all the signs
  all_features = pd.concat([
  basic_features,
  pressure_features,
@@ -2714,43 +2714,43 @@ class SCHRLevelsFeatureEngineer:
  statistical_features
  ], axis=1)
 
- # remove columns with NaN значениями
+# remove columns with NaN values
  all_features = all_features.dropna()
 
- # Сохранение истории
+# Maintaining history
  self.feature_history.append({
  'timestamp': pd.Timestamp.now(),
  'feature_count': len(all_features.columns),
  'data_shape': all_features.shape
  })
 
- print(f"Создано {len(all_features.columns)} признаков")
+print(f) Created {len(all_features.columns}}
  return all_features
 
  def select_features(self, X: pd.dataFrame, y: pd.Series, method: str = 'f_classif') -> pd.dataFrame:
  """
- Отбор лучших признаков for ML-модели.
+Selecting the best signs for the ML model.
 
  Args:
- X: dataFrame with приsignми
- y: Series with целевой переменной
- method: Метод отбора признаков ('f_classif', 'mutual_info')
+X: DataFrame with signature
+y: Series with target variable
+Method: Method of selecting the topics ('f_classif', 'mutual_info')
 
  Returns:
- dataFrame with отобранными приsignми
+DataFrame with selected pigs
  """
  if method == 'f_classif':
  selector = self.feature_selector
  elif method == 'mutual_info':
  selector = self.mutual_info_selector
  else:
- raise ValueError("method должен быть 'f_classif' or 'mutual_info'")
+Raise ValueError("method should be 'f_classif' or 'mutual_info')
 
- # Отбор признаков
+# Selection of signs
  X_selected = selector.fit_transform(X, y)
  selected_features = X.columns[selector.get_support()]
 
- # Сохранение важности признаков
+# Maintaining the importance of signs
  self.feature_importance[method] = {
  'scores': selector.scores_,
  'selected_features': selected_features.toList()
@@ -2760,14 +2760,14 @@ class SCHRLevelsFeatureEngineer:
 
  def scale_features(self, X: pd.dataFrame, fit: bool = True) -> pd.dataFrame:
  """
- Нормализация признаков.
+Normalization of the signs.
 
  Args:
- X: dataFrame with приsignми
- fit: Обучать скейлер on данных
+X: DataFrame with signature
+Fit: Train a skater on data
 
  Returns:
- dataFrame with нормализованными приsignми
+DataFrame with normalized signature
  """
  if fit:
  X_scaled = self.scaler.fit_transform(X)
@@ -2777,9 +2777,9 @@ class SCHRLevelsFeatureEngineer:
  return pd.dataFrame(X_scaled, columns=X.columns, index=X.index)
 
  def _calculate_entropy(self, series: pd.Series) -> float:
- """Расчет энтропии for серии"""
+"The Entropy for the Series."
  try:
- # Дискретизация for расчета энтропии
+# Discretion for calculation of entropy
  bins = pd.cut(series, bins=10, labels=False, include_lowest=True)
  value_counts = bins.value_counts()
  probabilities = value_counts / len(bins)
@@ -2790,10 +2790,10 @@ class SCHRLevelsFeatureEngineer:
 
  def get_feature_summary(self) -> Dict:
  """
- Получение сводки on созданным приsignм.
+To receive a report on the created sign.
 
  Returns:
- Dict with сводкой on приsignм
+Dict with summary on sign
  """
  summary = {
  'total_features_created': len(self.feature_history),
@@ -2805,12 +2805,12 @@ class SCHRLevelsFeatureEngineer:
 
  return summary
 
-# example использования
+# Example of use
 if __name__ == "__main__":
- # create инженера признаков
+# Create character engineer
  feature_engineer = SCHRLevelsFeatureEngineer()
 
- # create testsых данных
+# Create testy data
  dates = pd.date_range('2023-01-01', periods=1000, freq='1H')
  test_data = pd.dataFrame({
  'Open': np.random.uniform(1.25, 1.35, 1000),
@@ -2828,62 +2828,62 @@ if __name__ == "__main__":
  'pressure_direction': np.random.choice([-1, 0, 1], 1000)
  }, index=dates)
 
- # create all признаков
+# creative all the signs
  features = feature_engineer.create_all_features(test_data)
 
- # create целевой переменной for демонстрации
+# a target variable for demonstration
  target = (test_data['Close'].shift(-1) > test_data['Close']).astype(int)
  target = target[features.index]
 
- # Отбор признаков
+# Selection of signs
  selected_features = feature_engineer.select_features(features, target)
 
- # Нормализация признаков
+# Normalization of signs
  scaled_features = feature_engineer.scale_features(selected_features)
 
- print("Сводка on приsignм:", feature_engineer.get_feature_summary())
- print(f"Исходное количество признаков: {len(features.columns)}")
- print(f"Отобранное количество признаков: {len(selected_features.columns)}")
- print(f"Форма нормализованных признаков: {scaled_features.shape}")
+print("Back on signature:", environment_english.get_feature_summary())
+pprint(f) "Operate number of topics: {len(features.columns)}")
+pprint(f) "Selected number of topics: {len(selected_features.columns)}")
+spring(f" Form of normalized signs: {scaled_features.chape})
 ```
 
-### 2. Продвинутые признаки
+###2, advanced signs
 
-**Theory:** Продвинутые признаки SCHR Levels представляют собой сложные комбинации базовых признаков, которые выявляют скрытые паттерны and взаимосвязи in данных уровней. Они критически важны for достижения высокой точности ML-модели.
+**Theory:** The advanced signs of SCHR Livels are complex combinations of basic topics that identify hidden pathns and interrelationships in these levels. They are critical to achieving high accuracy of the ML model.
 
-**Почему продвинутые признаки критичны:**
-- **Выявление паттернов:** Обнаруживают скрытые паттерны in данных
-- **Повышение точности:** Значительно повышают точность predictions
-- **Робастность:** Обеспечивают устойчивость к рыночному шуму
-- **Адаптивность:** Позволяют модели адаптироваться к изменениям рынка
+**Why the advanced signs are critical:**
+- **Patternament identification:** Hidden in data pathometers are detected.
+- ** Improvement of accuracy:** Accuracy of preferences significantly improves
+- ** Robinity:** Ensure resistance to market noise
+- ** Adaptation:** Allow models to adapt to market changes
 
-**Плюсы:**
-- Высокая точность predictions
-- Выявление скрытых паттернов
-- Повышение робастности
-- Адаптивность к изменениям
+** Plus:**
+- High accuracy preferences
+- Identification of hidden pathers
+- Increasing the efficiency of the work
+- Adaptation to change
 
 **Disadvantages:**
-- Сложность вычислений
-- Потенциальное retraining
-- Сложность интерпретации
-- Высокие требования к данным
+- Computation difficulty
+- Potential retraining
+- Complexity of interpretation
+- High data requirements
 
-**Практическая реализация:** function `create_advanced_schr_features` создает сложные признаки, которые выявляют скрытые паттерны and взаимосвязи in данных SCHR Levels. Эти признаки критически важны for достижения высокой точности ML-модели.
+** Practical implementation: ** function `create_advanced_shr_features' creates complex signs that detect hidden pathites and relationships in SCHR Livels data. These are critical to achieving high accuracy of the ML model.
 
-**Детальное объяснение продвинутых признаков:**
-- **Пробитие уровней:** Детектирует моменты, когда цена пробивает ключевые уровни
-- **Отскоки from уровней:** Выявляет отскоки from уровней поддержки and сопротивления
-- **Сила уровней:** Количественно оценивает силу различных уровней
-- **Конвергенция уровней:** Анализирует сближение различных типов уровней
-- **Волатильность относительно уровней:** Сравнивает волатильность with силой уровней
-- **Тренд относительно уровней:** Анализирует тренд относительно динамики уровней
+** Detailed explanation of the advanced signs:**
+- ** Level Crush:** Detects the moments when price breaks key levels
+- ** Rebounds from levels:** Shows rebounds from levels of support and resistance
+- **Level strength:** Quantify strength of different levels
+** Level convergence: ** Analyses convergence of different types of levels
+- ** Volatility relative to levels:** Compares volatility with force of levels
+**Trend relative to levels:** Analyses the trend in levels
 
-**Почему продвинутые признаки критичны:**
-- **Выявление паттернов:** Обнаруживают скрытые паттерны in данных
-- **Повышение точности:** Значительно повышают точность predictions
-- **Робастность:** Обеспечивают устойчивость к рыночному шуму
-- **Адаптивность:** Позволяют модели адаптироваться к изменениям рынка
+**Why the advanced signs are critical:**
+- **Patternament identification:** Hidden in data pathometers are detected.
+- ** Improvement of accuracy:** Accuracy of preferences significantly improves
+- ** Robinity:** Ensure resistance to market noise
+- ** Adaptation:** Allow models to adapt to market changes
 
 ```python
 import numpy as np
@@ -2897,28 +2897,28 @@ warnings.filterwarnings('ignore')
 
 def create_advanced_schr_features(data: pd.dataFrame) -> pd.dataFrame:
  """
- create продвинутых признаков SCHR Levels.
+Create of advanced features of SCHR Levels.
 
- Продвинутые признаки представляют собой сложные комбинации базовых
- признаков, которые выявляют скрытые паттерны and взаимосвязи in данных
- уровней for достижения высокой точности ML-модели.
+The advanced indicators are complex combinations of basic indicators.
+indicators that detect hidden patterns and in-data relationships
+Levels for achieving high accuracy of the ML model.
 
  Args:
- data: dataFrame with OHLCV данными and SCHR колонками
+Data: dataFrame with OHLCV data and SCHR columns
 
  Returns:
- dataFrame with продвинутыми приsignми
+DataFrame with advanced signature
  """
  features = pd.dataFrame(index=data.index)
 
- # 1. Пробитие уровней
- print("create признаков breakthrough уровней...")
+# 1. Level penetration
+("create of breakthrowh levels...")
  features['breakout_high'] = (data['Close'] > data['predicted_high']).astype(int)
  features['breakout_low'] = (data['Close'] < data['predicted_low']).astype(int)
  features['breakout_support'] = (data['Close'] < data['support_level']).astype(int)
  features['breakout_resistance'] = (data['Close'] > data['resistance_level']).astype(int)
 
- # Сила пробитий
+# Power of the punches
  features['breakout_strength_high'] = np.where(
  features['breakout_high'],
  (data['Close'] - data['predicted_high']) / data['predicted_high'],
@@ -2930,8 +2930,8 @@ def create_advanced_schr_features(data: pd.dataFrame) -> pd.dataFrame:
  0
  )
 
- # 2. Отскоки from уровней
- print("create признаков отскоков...")
+# 2. Upwards from levels
+print("create signs of rebounds...")
  features['bounce_from_high'] = ((data['Close'] < data['predicted_high']) &
  (data['Close'].shift(1) >= data['predicted_high'])).astype(int)
  features['bounce_from_low'] = ((data['Close'] > data['predicted_low']) &
@@ -2941,7 +2941,7 @@ def create_advanced_schr_features(data: pd.dataFrame) -> pd.dataFrame:
  features['bounce_from_resistance'] = ((data['Close'] < data['resistance_level']) &
  (data['Close'].shift(1) >= data['resistance_level'])).astype(int)
 
- # Сила отскоков
+# Power of rebounds
  features['bounce_strength_high'] = np.where(
  features['bounce_from_high'],
  (data['predicted_high'] - data['Close']) / data['predicted_high'],
@@ -2953,35 +2953,35 @@ def create_advanced_schr_features(data: pd.dataFrame) -> pd.dataFrame:
  0
  )
 
- # 3. Сила уровней
- print("create признаков силы уровней...")
+# 3. The strength of levels
+print("create signs of force of levels...)
  features['level_strength'] = abs(data['predicted_high'] - data['predicted_low']) / data['Close']
  features['support_strength'] = abs(data['Close'] - data['support_level']) / data['Close']
  features['resistance_strength'] = abs(data['resistance_level'] - data['Close']) / data['Close']
 
- # Относительная сила уровней
+# Relative strength of levels
  features['relative_level_strength'] = features['level_strength'] / data['Close'].rolling(20).std()
  features['relative_support_strength'] = features['support_strength'] / data['Close'].rolling(20).std()
  features['relative_resistance_strength'] = features['resistance_strength'] / data['Close'].rolling(20).std()
 
- # 4. Конвергенция уровней
- print("create признаков конвергенции...")
+# 4. Level convergence
+("create signs of convergence...")
  features['level_convergence'] = abs(data['predicted_high'] - data['resistance_level']) / data['Close']
  features['support_convergence'] = abs(data['predicted_low'] - data['support_level']) / data['Close']
 
- # Степень конвергенции
+# The degree of convergence
  features['convergence_ratio'] = features['level_convergence'] / (features['level_strength'] + 1e-10)
  features['support_convergence_ratio'] = features['support_convergence'] / (features['support_strength'] + 1e-10)
 
- # 5. Волатильность относительно уровней
- print("create признаков волатильности...")
+# 5. Volatility relative to levels
+print("create signs of volatility...")
  volatility = data['Close'].rolling(20).std()
  features['volatility_vs_levels'] = volatility / (features['level_strength'] + 1e-10)
  features['volatility_vs_support'] = volatility / (features['support_strength'] + 1e-10)
  features['volatility_vs_resistance'] = volatility / (features['resistance_strength'] + 1e-10)
 
- # 6. Тренд относительно уровней
- print("create признаков тренда...")
+# 6. Tread relative to levels
+print("create signs of trend...")
  price_change_20 = data['Close'] - data['Close'].shift(20)
  high_change_20 = data['predicted_high'] - data['predicted_high'].shift(20)
  low_change_20 = data['predicted_low'] - data['predicted_low'].shift(20)
@@ -2997,90 +2997,90 @@ def create_advanced_schr_features(data: pd.dataFrame) -> pd.dataFrame:
  0
  )
 
- # 7. Паттерны уровней
- print("create признаков паттернов...")
+# 7. Level patters
+print("create signs of pathers...")
  features['level_pattern_triangle'] = _detect_triangle_pattern(data)
  features['level_pattern_wedge'] = _detect_wedge_pattern(data)
  features['level_pattern_channel'] = _detect_channel_pattern(data)
 
- # 8. Моментные признаки
- print("create моментных признаков...")
+# 8. Momental signs
+print("create flash signs...")
  features['momentum_levels'] = _calculate_level_momentum(data)
  features['momentum_pressure'] = _calculate_pressure_momentum(data)
 
- # 9. Фрактальные признаки
- print("create фрактальных признаков...")
+# 9. Fractal signs
+("create fractal signs...")
  features['fractal_dimension'] = _calculate_fractal_dimension(data)
  features['hurst_exponent'] = _calculate_hurst_exponent(data)
 
- # 10. Волновые признаки
- print("create волновых признаков...")
+♪ 10 ♪ Wave signs
+("create wave signs...")
  features['wave_pattern'] = _detect_wave_patterns(data)
  features['wave_amplitude'] = _calculate_wave_amplitude(data)
  features['wave_frequency'] = _calculate_wave_frequency(data)
 
- # 11. Корреляционные признаки
- print("create корреляционных признаков...")
+♪ 11 ♪ Correlation signs
+print("create correlation signs...")
  features['price_pressure_correlation'] = _calculate_price_pressure_correlation(data)
  features['level_volume_correlation'] = _calculate_level_volume_correlation(data)
 
- # 12. Энтропийные признаки
- print("create энтропийных признаков...")
+♪ 12 ♪ Entropy signs
+("create entropy signs...")
  features['price_entropy'] = _calculate_price_entropy(data)
  features['pressure_entropy'] = _calculate_pressure_entropy(data)
 
- # 13. Сезонные признаки
- print("create сезонных признаков...")
+♪ 13. Seasonal signs
+("create seasonal signs...")
  features['seasonal_level_pattern'] = _detect_seasonal_level_patterns(data)
  features['seasonal_pressure_pattern'] = _detect_seasonal_pressure_patterns(data)
 
- # 14. Аномалии уровней
- print("create признаков аномалий...")
+#14 Level anomalies
+("create signs of anomalies...")
  features['level_anomaly'] = _detect_level_anomalies(data)
  features['pressure_anomaly'] = _detect_pressure_anomalies(data)
 
- # 15. Комбинированные признаки
- print("create комбинированных признаков...")
+# 15. Combined characteristics
+print("create combined signs...")
  features['breakout_bounce_ratio'] = _calculate_breakout_bounce_ratio(features)
  features['level_pressure_interaction'] = _calculate_level_pressure_interaction(data)
  features['multi_Timeframe_strength'] = _calculate_multi_Timeframe_strength(data)
 
- print(f"Создано {len(features.columns)} продвинутых признаков")
+prent(f"Cancen {len(features.columns)} advanced signs")
  return features
 
 def _detect_triangle_pattern(data: pd.dataFrame) -> pd.Series:
- """Детекция треугольных паттернов"""
+""""""""""""""""""""
  high = data['High']
  low = data['Low']
 
- # Простая детекция треугольника
+# Simple triangle detective
  high_trend = high.rolling(window=10).apply(lambda x: np.polyfit(range(len(x)), x, 1)[0] if len(x) > 1 else 0)
  low_trend = low.rolling(window=10).apply(lambda x: np.polyfit(range(len(x)), x, 1)[0] if len(x) > 1 else 0)
 
- # Сходящийся треугольник
+♪ A triangle coming up
  triangle = (high_trend < 0) & (low_trend > 0)
 
  return triangle.astype(int)
 
 def _detect_wedge_pattern(data: pd.dataFrame) -> pd.Series:
- """Детекция клиновых паттернов"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  high = data['High']
  low = data['Low']
 
  high_trend = high.rolling(window=10).apply(lambda x: np.polyfit(range(len(x)), x, 1)[0] if len(x) > 1 else 0)
  low_trend = low.rolling(window=10).apply(lambda x: np.polyfit(range(len(x)), x, 1)[0] if len(x) > 1 else 0)
 
- # Нисходящий клин
+# Downward wedge
  wedge = (high_trend < 0) & (low_trend < 0) & (abs(high_trend) > abs(low_trend))
 
  return wedge.astype(int)
 
 def _detect_channel_pattern(data: pd.dataFrame) -> pd.Series:
- """Детекция канальных паттернов"""
+""""""""""""""""""""""""""""""""""""
  high = data['High']
  low = data['Low']
 
- # Простая детекция канала
+# A simple canal detective
  high_ma = high.rolling(window=20).mean()
  low_ma = low.rolling(window=20).mean()
 
@@ -3089,28 +3089,28 @@ def _detect_channel_pattern(data: pd.dataFrame) -> pd.Series:
  return channel.astype(int)
 
 def _calculate_level_momentum(data: pd.dataFrame) -> pd.Series:
- """Расчет моментных признаков уровней"""
+"The calculation of the instant signs of levels."
  level_range = data['predicted_high'] - data['predicted_low']
  momentum = level_range.diff(5)
 
  return momentum.fillna(0)
 
 def _calculate_pressure_momentum(data: pd.dataFrame) -> pd.Series:
- """Расчет моментных признаков давления"""
+"The calculation of the instant signs of pressure."
  pressure = data['pressure']
  momentum = pressure.diff(5)
 
  return momentum.fillna(0)
 
 def _calculate_fractal_dimension(data: pd.dataFrame) -> pd.Series:
- """Расчет фрактальной размерности"""
+""" "Fractal dimension calculation."
  close = data['Close']
 
  def fractal_dim(series):
  if len(series) < 10:
  return 1.0
 
- # Упрощенный расчет фрактальной размерности
+# Simplified calculation of fractal dimension
  n = len(series)
  L = np.sum(np.abs(np.diff(series)))
  return np.log(n) / (np.log(n) + np.log(L / (series.max() - series.min() + 1e-10)))
@@ -3119,14 +3119,14 @@ def _calculate_fractal_dimension(data: pd.dataFrame) -> pd.Series:
  return fractal_dim_series.fillna(1.0)
 
 def _calculate_hurst_exponent(data: pd.dataFrame) -> pd.Series:
- """Расчет экспоненты Херста"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  close = data['Close']
 
  def hurst(series):
  if len(series) < 10:
  return 0.5
 
- # Упрощенный расчет экспоненты Херста
+# Simplified calculation of Herst exhibit
  lags = range(2, min(20, len(series)))
  tau = [np.sqrt(np.std(np.subtract(series[lag:], series[:-lag]))) for lag in lags]
  poly = np.polyfit(np.log(lags), np.log(tau), 1)
@@ -3136,22 +3136,22 @@ def _calculate_hurst_exponent(data: pd.dataFrame) -> pd.Series:
  return hurst_series.fillna(0.5)
 
 def _detect_wave_patterns(data: pd.dataFrame) -> pd.Series:
- """Детекция волновых паттернов"""
+"The Wave Pattern Detection."
  close = data['Close']
 
- # Поиск пиков and впадин
+# Search for spades and falls
  peaks, _ = find_peaks(close, distance=5)
  valleys, _ = find_peaks(-close, distance=5)
 
- # create серии with волновыми паттернами
+# Create series with wavepaths
  wave_pattern = pd.Series(0, index=close.index)
 
- # Отметка пиков
+# Mark of peaks
  for peak in peaks:
  if peak < len(wave_pattern):
  wave_pattern.iloc[peak] = 1
 
- # Отметка впадин
+# The mark of the falls
  for valley in valleys:
  if valley < len(wave_pattern):
  wave_pattern.iloc[valley] = -1
@@ -3159,19 +3159,19 @@ def _detect_wave_patterns(data: pd.dataFrame) -> pd.Series:
  return wave_pattern
 
 def _calculate_wave_amplitude(data: pd.dataFrame) -> pd.Series:
- """Расчет амплитуды волн"""
+""""" "The calculation of the wave amplitude."
  close = data['Close']
 
- # Скользящая амплитуда
+# Slipping amplitude
  amplitude = close.rolling(window=10).max() - close.rolling(window=10).min()
 
  return amplitude.fillna(0)
 
 def _calculate_wave_frequency(data: pd.dataFrame) -> pd.Series:
- """Расчет частоты волн"""
+"""""" "Wave frequency"""
  close = data['Close']
 
- # Подсчет пересечений средней линии
+# Calculation of the intersections of the middle line
  mean_line = close.rolling(window=20).mean()
  crossings = (close > mean_line).astype(int).diff().abs()
  frequency = crossings.rolling(window=20).sum()
@@ -3179,7 +3179,7 @@ def _calculate_wave_frequency(data: pd.dataFrame) -> pd.Series:
  return frequency.fillna(0)
 
 def _calculate_price_pressure_correlation(data: pd.dataFrame) -> pd.Series:
- """Расчет корреляции цены and давления"""
+"The calculation of price correlation and pressure."
  close = data['Close']
  pressure = data['pressure']
 
@@ -3188,7 +3188,7 @@ def _calculate_price_pressure_correlation(data: pd.dataFrame) -> pd.Series:
  return correlation.fillna(0)
 
 def _calculate_level_volume_correlation(data: pd.dataFrame) -> pd.Series:
- """Расчет корреляции уровней and объема"""
+"The calculation of the correlation between levels and volume"
  if 'Volume' not in data.columns:
  return pd.Series(0, index=data.index)
 
@@ -3200,14 +3200,14 @@ def _calculate_level_volume_correlation(data: pd.dataFrame) -> pd.Series:
  return correlation.fillna(0)
 
 def _calculate_price_entropy(data: pd.dataFrame) -> pd.Series:
- """Расчет энтропии цены"""
+"The Entropy of Price."
  close = data['Close']
 
  def entropy(series):
  if len(series) < 5:
  return 0.0
 
- # Дискретизация
+# Discretion
  bins = pd.cut(series, bins=5, labels=False, include_lowest=True)
  value_counts = bins.value_counts()
  probabilities = value_counts / len(bins)
@@ -3218,7 +3218,7 @@ def _calculate_price_entropy(data: pd.dataFrame) -> pd.Series:
  return entropy_series.fillna(0)
 
 def _calculate_pressure_entropy(data: pd.dataFrame) -> pd.Series:
- """Расчет энтропии давления"""
+"The entropy of pressure."
  pressure = data['pressure']
 
  def entropy(series):
@@ -3235,30 +3235,30 @@ def _calculate_pressure_entropy(data: pd.dataFrame) -> pd.Series:
  return entropy_series.fillna(0)
 
 def _detect_seasonal_level_patterns(data: pd.dataFrame) -> pd.Series:
- """Детекция сезонных паттернов уровней"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  timestamps = pd.to_datetime(data.index) if hasattr(data.index, 'to_datetime') else data.index
  hour = timestamps.hour if hasattr(timestamps, 'hour') else 0
 
- # Простая сезонность on часам
+# Simple seasonality on watches
  seasonal_pattern = np.sin(2 * np.pi * hour / 24)
 
  return pd.Series(seasonal_pattern, index=data.index)
 
 def _detect_seasonal_pressure_patterns(data: pd.dataFrame) -> pd.Series:
- """Детекция сезонных паттернов давления"""
+♪ Seasonal pressure pathers detect ♪
  timestamps = pd.to_datetime(data.index) if hasattr(data.index, 'to_datetime') else data.index
  hour = timestamps.hour if hasattr(timestamps, 'hour') else 0
 
- # Сезонность давления
+# Pressure season
  pressure_seasonal = np.cos(2 * np.pi * hour / 24)
 
  return pd.Series(pressure_seasonal, index=data.index)
 
 def _detect_level_anomalies(data: pd.dataFrame) -> pd.Series:
- """Детекция аномалий уровней"""
+""""""""""""""""""
  level_range = data['predicted_high'] - data['predicted_low']
 
- # Z-score for детекции аномалий
+# Z-score for an anomaly detective
  mean_range = level_range.rolling(window=50).mean()
  std_range = level_range.rolling(window=50).std()
  z_score = (level_range - mean_range) / (std_range + 1e-10)
@@ -3267,10 +3267,10 @@ def _detect_level_anomalies(data: pd.dataFrame) -> pd.Series:
  return anomalies.fillna(0)
 
 def _detect_pressure_anomalies(data: pd.dataFrame) -> pd.Series:
- """Детекция аномалий давления"""
+"" "Pressure anomaly detective"""
  pressure = data['pressure']
 
- # Z-score for детекции аномалий
+# Z-score for an anomaly detective
  mean_pressure = pressure.rolling(window=50).mean()
  std_pressure = pressure.rolling(window=50).std()
  z_score = (pressure - mean_pressure) / (std_pressure + 1e-10)
@@ -3279,7 +3279,7 @@ def _detect_pressure_anomalies(data: pd.dataFrame) -> pd.Series:
  return anomalies.fillna(0)
 
 def _calculate_breakout_bounce_ratio(features: pd.dataFrame) -> pd.Series:
- """Расчет соотношения пробоев and отскоков"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  total_breakouts = features['breakout_high'] + features['breakout_low']
  total_bounces = features['bounce_from_high'] + features['bounce_from_low']
 
@@ -3292,7 +3292,7 @@ def _calculate_breakout_bounce_ratio(features: pd.dataFrame) -> pd.Series:
  return pd.Series(ratio, index=features.index)
 
 def _calculate_level_pressure_interaction(data: pd.dataFrame) -> pd.Series:
- """Расчет взаимодействия уровней and давления"""
+"The calculation of the interaction between levels and pressures."
  level_range = data['predicted_high'] - data['predicted_low']
  pressure = data['pressure']
 
@@ -3301,10 +3301,10 @@ def _calculate_level_pressure_interaction(data: pd.dataFrame) -> pd.Series:
  return interaction
 
 def _calculate_multi_Timeframe_strength(data: pd.dataFrame) -> pd.Series:
- """Расчет силы on multiple Timeframes"""
+""""""""""""""" "The Force on Multiple Times""""
  close = data['Close']
 
- # Различные периоды for мультиTimeframesого Analysis
+# Different periods for multi-Timeframe Analiasis
  periods = [5, 10, 20, 50]
  strength_components = []
 
@@ -3313,14 +3313,14 @@ def _calculate_multi_Timeframe_strength(data: pd.dataFrame) -> pd.Series:
  strength = abs(close - sma) / sma
  strength_components.append(strength)
 
- # Комбинированная сила
+# Combined force
  multi_strength = np.mean(strength_components, axis=0)
 
  return pd.Series(multi_strength, index=data.index)
 
-# example использования
+# Example of use
 if __name__ == "__main__":
- # create testsых данных
+# Create testy data
  dates = pd.date_range('2023-01-01', periods=1000, freq='1H')
  test_data = pd.dataFrame({
  'Open': np.random.uniform(1.25, 1.35, 1000),
@@ -3335,178 +3335,178 @@ if __name__ == "__main__":
  'pressure': np.random.uniform(0.1, 2.0, 1000)
  }, index=dates)
 
- # create продвинутых признаков
+# creative advanced features
  advanced_features = create_advanced_schr_features(test_data)
 
- print(f"Создано {len(advanced_features.columns)} продвинутых признаков")
- print("Колонки:", List(advanced_features.columns))
+== sync, corrected by elderman == @elder_man
+"Calls:", List(advanced_features.columns)
 ```
 
-### 3. Временные признаки
+♪##3 ♪ Time signs ♪
 
-**Theory:** Временные признаки SCHR Levels учитывают временные аспекты рыночной динамики, including циклы, сезонность and временные паттерны уровней. Они критически важны for понимания temporary структуры рынка.
+**Theory:** The temporal features of SCHR Levels take into account the temporal aspects of market dynamics, including cycles, seasonality and temporal patharies of levels, which are critical for understanding the temporary structure of the market.
 
-**Почему временные признаки важны:**
-- **Временная Structure:** Учитывают временные аспекты рыночных уровней
-- **Циклические паттерны:** Выявляют повторяющиеся паттерны уровней
-- **Сезонность:** Учитывают сезонные эффекты
-- **Временные dependencies:** Анализируют dependencies во времени
+** Why the time signs matter:**
+** Temporary Structure: ** Consider the temporal aspects of market levels
+- **Cyclic pathites:** Recurring level pathites
+- ** Seasonality: ** Seasonal effects are taken into account
+- ** Temporary dependencies:** Analyse dependencies over time
 
-**Плюсы:**
-- Учет temporary структуры
-- Выявление циклов
-- Учет сезонности
-- Анализ временных dependencies
+** Plus:**
+- Accounting for the temporary structure
+- Identification of cycles
+- Recording seasonality
+- Time-dependency analysis
 
 **Disadvantages:**
-- Сложность вычислений
-- Потенциальная нестационарность
-- Сложность интерпретации
-- Высокие требования к данным
+- Computation difficulty
+- Potential non-residentiality
+- Complexity of interpretation
+- High data requirements
 
 ```python
 def create_temporal_schr_features(data):
- """create временных признаков SCHR Levels"""
+""create of the time signs of SCHR Livels""
  features = pd.dataFrame(index=data.index)
 
- # 1. Время with последнего пробоя
+# 1. Time with last sample
  features['time_since_breakout'] = self._calculate_time_since_breakout(data)
 
- # 2. Частота пробоев
+# 2. Test frequency
  features['breakout_frequency'] = self._calculate_breakout_frequency(data)
 
- # 3. Длительность нахождения in диапазоне
+# 3. Length in range
  features['time_in_range'] = self._calculate_time_in_range(data)
 
- # 4. Циклические паттерны уровней
+# 4. Cyclical patharies at levels
  features['level_cyclical_pattern'] = self._detect_level_cyclical_pattern(data)
 
  return features
 ```
 
-## create целевых переменных
+## of target variables
 
-**Theory:** create целевых переменных является критически важным этапом for обучения ML-модели on basis SCHR Levels. Правильно определенные целевые переменные определяют успех всей системы machine learning.
+**Theory:** the target variable's creation is a critical stage for learning the ML model on base SCHR Livels. The right target variables determine the success of the whole system of machinine lightning.
 
-**Почему create целевых переменных критично:**
-- **Определение задачи:** Четко определяет задачу machine learning
-- **Качество обучения:** Качественные целевые переменные улучшают обучение
-- **Интерпретируемость:** Понятные целевые переменные облегчают интерпретацию
-- **Практическая применимость:** Обеспечивают практическую применимость результатов
+** Why target variables are critical:**
+- ** Problem definition:** clearly defines the task of machinin lyrning
+- ** Quality of learning: ** Qualitative target variables improve learning
+- ** Interpretation:** Understandable target variables facilitate interpretation
+- ** Practical applicability: ** Make the results practical
 
-### 1. Пробитие уровней
+♪##1 ♪ Level penetration ♪
 
-**Theory:** Пробитие уровней является наиболее важной целевой переменной for торговых систем on basis SCHR Levels. Она определяет основную задачу - Prediction пробоев уровней поддержки and сопротивления.
+**Theory:** Level penetration is the most important target variable for trade systems on base SCHR Leavels. It defines the main task - Pricing support and resistance levels.
 
-**Почему пробитие уровней важно:**
-- **Основная задача:** Основная задача торговых систем on basis уровней
-- **Практическая применимость:** Непосредственно применимо in торговле
-- **Простота интерпретации:** Легко понимается and интерпретируется
-- **Универсальность:** Подходит for различных торговых стратегий
+** Why the level penetration is important:**
+- ** Main objective: ** Main objective of trading systems on basic levels
+- ** Practical applicability:** Directly applicable in trade
+- ** A simple interpretation: ** Easily understood and interpreted
+- ** Universality: ** suited for different trade strategies
 
-**Плюсы:**
-- Простота понимания
-- Прямая применимость
-- Универсальность
-- Легкость интерпретации
+** Plus:**
+Simplicity of understanding
+Direct applicability
+Universality
+- Easy to interpret
 
 **Disadvantages:**
-- Упрощение сложности рынка
-- Игнорирование силы движения
-- Потенциальная потеря информации
+- Simplifying market complexity
+- Ignoring traffic force
+- Potential loss of information
 
 ```python
 def create_level_breakout_target(data, horizon=1):
- """create целевой переменной - пробитие уровней"""
+""create target variable-level penetration""
  future_high = data['predicted_high'].shift(-horizon)
  future_low = data['predicted_low'].shift(-horizon)
  future_close = data['Close'].shift(-horizon)
 
- # Классификация пробоев
+# Classification of test pieces
  breakout_high = (future_close > future_high).astype(int)
  breakout_low = (future_close < future_low).astype(int)
 
- # Комбинированная целевая переменная
- target = np.where(breakout_high, 2, # Пробой вверх
- np.where(breakout_low, 0, 1)) # Пробой вниз, без пробоя
+# Combined target variable
+Target = np.where(breakout_high, 2, #Base Up
+np.where(breakout_low, 0, 1)) #Delete, no leak
 
  return target
 ```
 
-### 2. Отскоки from уровней
+###2 # Backwards from levels
 
-**Theory:** Отскоки from уровней представляют собой важную целевую переменную for торговых систем on basis SCHR Levels. Они определяют способность уровней поддержки and сопротивления удерживать цену.
+**Theory:** Rebounds from levels are an important target variable for trade systems on base SCHR Livels. They determine the ability of levels of support and resistance to price retention.
 
-**Почему отскоки from уровней важны:**
-- **Сила уровней:** Определяют силу уровней поддержки and сопротивления
-- **Торговые возможности:** Предоставляют торговые возможности
-- **Management рисками:** Помогают in управлении рисками
-- **Оптимизация стратегий:** Позволяют оптимизировать торговые стратегии
+** Why backwards from levels matter:**
+- ** Levels strength:** specify levels of support and resistance
+- **Trade opportunities:** Trade opportunities
+- **Manage Risks:** Helped in Risk Management
+- ** Optimization of strategies:** Optimize trade strategies
 
-**Плюсы:**
-- Определение силы уровней
-- Торговые возможности
-- improve управления рисками
-- Оптимизация стратегий
+** Plus:**
+- Determination of the force of levels
+Trade opportunities
+- improve risk management
+- Optimizing strategies
 
 **Disadvantages:**
-- Сложность определения
-- Потенциальная нестабильность
-- Сложность интерпретации
-- Высокие требования к данным
+- Complexity of definition
+- Potential instability
+- Complexity of interpretation
+- High data requirements
 
 ```python
 def create_level_bounce_target(data, horizon=1):
- """create целевой переменной - отскоки from уровней"""
+""create target variable - leaps from levels""
  future_high = data['predicted_high'].shift(-horizon)
  future_low = data['predicted_low'].shift(-horizon)
  future_close = data['Close'].shift(-horizon)
 
- # Детекция отскоков
+# The bouncing detective
  bounce_from_high = ((future_close < future_high) &
  (data['Close'] >= data['predicted_high'])).astype(int)
  bounce_from_low = ((future_close > future_low) &
  (data['Close'] <= data['predicted_low'])).astype(int)
 
- # Комбинированная целевая переменная
- target = np.where(bounce_from_high, 2, # Отскок from максимума
- np.where(bounce_from_low, 0, 1)) # Отскок from минимума, без отскока
+# Combined target variable
+Target = np.where(bounce_from_high, 2, #Rise from maximum
+np.where(bounce_from_low, 0, 1)) # Step from minimum, no rebound
 
  return target
 ```
 
-### 3. Направление давления
+♪## 3, pressure direction
 
-**Theory:** Направление давления является критически важной целевой переменной for SCHR Levels, так как оно определяет направление рыночного давления and его влияние on ценовые уровни.
+**Theory:** Pressure direction is a critical target variable for SCHR Livels because it determines the direction of market pressure and its impact on price levels.
 
-**Почему направление давления важно:**
-- **Prediction пробоев:** Помогает предсказывать пробои уровней
-- **Анализ рыночного давления:** Анализирует рыночное давление
-- **Management рисками:** Помогает in управлении рисками
-- **Оптимизация стратегий:** Позволяет оптимизировать торговые стратегии
+** Why pressure direction matters:**
+- **Predication of sample:** Helps predict the level samples
+- ** Market pressure analysis:** Analysis of market pressure
+- **Manage Risks:** Helps in Risk Management
+- ** Optimization of strategies:** Optimizes trade strategies
 
-**Плюсы:**
-- Prediction пробоев
-- Анализ рыночного давления
-- improve управления рисками
-- Оптимизация стратегий
+** Plus:**
+- Predication of test runs
+- Market pressure analysis
+- improve risk management
+- Optimizing strategies
 
 **Disadvantages:**
-- Сложность измерения
-- Потенциальная нестабильность
-- Сложность интерпретации
-- Высокие требования к данным
+- The difficulty of measuring
+- Potential instability
+- Complexity of interpretation
+- High data requirements
 
 ```python
 def create_pressure_direction_target(data, horizon=1):
- """create целевой переменной - направление давления"""
+""create target variable - pressure direction""
  future_pressure = data['pressure'].shift(-horizon)
  current_pressure = data['pressure']
 
- # Изменение давления
+# Pressure change
  pressure_change = future_pressure - current_pressure
 
- # Классификация направления
+# Classification of direction
  target = pd.cut(
  pressure_change,
  bins=[-np.inf, -0.1, 0.1, np.inf],
@@ -3517,40 +3517,40 @@ def create_pressure_direction_target(data, horizon=1):
  return target.astype(int)
 ```
 
-## ML-модели for SCHR Levels
+# ML Models for SCHR Livels
 
-**Theory:** ML-модели for SCHR Levels представляют собой комплексную system machine learning, которая использует различные алгоритмы for Analysis данных SCHR Levels and генерации торговых сигналов. Это критически важно for создания высокоточных торговых систем.
+**Theory:** ML models for SCHR Livels are an integrated system of machining that uses different algorithms for Analysis data of SCHR Livels and trade signal generation. This is critical for the creation of high-quality trading systems.
 
-**Почему ML-модели критичны:**
-- **Высокая точность:** Обеспечивают высокую точность predictions
-- **Адаптивность:** Могут адаптироваться к изменениям рынка
-- **Автоматизация:** Автоматизируют process Analysis and принятия решений
-- **Scalability:** Могут обрабатывать большие объемы данных
+**Why ML models are critical:**
+- ** High accuracy: ** High accuracy is ensured
+- ** Adaptation: ** Can adapt to market changes
+- ** Automation:** Automated process Analysis and decision-making
+- **Scalability:** May process large amounts of data
 
-### 1. Классификатор пробоев
+♪##1 ♪ Test code ♪
 
-**Theory:** Классификатор пробоев является основной задачей for торговых систем on basis SCHR Levels, где модель должна предсказать пробои уровней поддержки and сопротивления. Это критически важно for принятия торговых решений.
+**Theory:** The trial classification is the main task for trade systems on base SCHR Levels, where the model should predict samples of support and resistance levels; this is critical for trade decision-making.
 
-**Почему классификатор пробоев важен:**
-- **Основная задача:** Основная задача торговых систем on basis уровней
-- **Практическая применимость:** Непосредственно применимо in торговле
-- **Простота интерпретации:** Легко интерпретируется
-- **Универсальность:** Подходит for различных стратегий
+**Why is the trial classification important:**
+- ** Main objective: ** Main objective of trading systems on basic levels
+- ** Practical applicability:** Directly applicable in trade
+- **Simple interpretation:** Easy to interpret
+- ** Universality: ** suited for different strategies
 
-**Плюсы:**
-- Прямая применимость
-- Простота интерпретации
-- Универсальность
-- Высокая точность
+** Plus:**
+Direct applicability
+- Simple interpretation
+Universality
+- High accuracy
 
 **Disadvantages:**
-- Упрощение сложности
-- Потенциальная потеря информации
-- Ограниченная гибкость
+- Facilitation of complexity
+- Potential loss of information
+- Limited flexibility
 
 ```python
 class SCHRLevelsClassifier:
- """Классификатор on basis SCHR Levels"""
+""Cluster on Basis SCHR Livels""
 
  def __init__(self):
  self.models = {
@@ -3566,13 +3566,13 @@ class SCHRLevelsClassifier:
  )
 
  def train(self, X, y):
- """Обучение модели"""
- # Разделение on train/validation
+"Teaching the Model."
+# Separation on train/validation
  X_train, X_val, y_train, y_val = train_test_split(
  X, y, test_size=0.2, random_state=42
  )
 
- # Обучение ансамбля
+# Ensemble education
  self.ensemble.fit(X_train, y_train)
 
  # validation
@@ -3586,35 +3586,35 @@ class SCHRLevelsClassifier:
  return self.ensemble.predict(X)
 
  def predict_proba(self, X):
- """Prediction вероятностей"""
+"Predication of Probabilities."
  return self.ensemble.predict_proba(X)
 ```
 
-### 2. Регрессор for прогнозирования уровней
+###2: Regressor for forecasting levels
 
-**Theory:** Регрессор for прогнозирования уровней представляет собой более сложную задачу, где модель должна предсказать конкретные значения уровней поддержки and сопротивления. Это критически важно for точного управления позициями.
+**Theory:** The Regressor for predicting levels is a more complex task, where the model should predict the specific values of levels of support and resistance. This is critical for accurate position management.
 
-**Почему регрессор важен:**
-- **Точность прогнозов:** Обеспечивает более точные прогнозы уровней
-- **Management позициями:** Помогает in точном управлении позициями
-- **Оптимизация стратегий:** Позволяет оптимизировать торговые стратегии
-- **Management рисками:** Помогает in управлении рисками
+**Why is the regressionr important:**
+- ** Existence of projections:** Provides more accurate projections of levels
+- **Management positions:** Helps in accurate position management
+- ** Optimization of strategies:** Optimizes trade strategies
+- **Manage Risks:** Helps in Risk Management
 
-**Плюсы:**
-- Более точные прогнозы
-- Лучшее Management позициями
-- Оптимизация стратегий
-- improve управления рисками
+** Plus:**
+- More accurate forecasts
+- Best Management Positions
+- Optimizing strategies
+- improve risk management
 
 **Disadvantages:**
-- Сложность обучения
-- Потенциальная нестабильность
-- Сложность интерпретации
-- Высокие требования к данным
+Complicity of learning
+- Potential instability
+- Complexity of interpretation
+- High data requirements
 
 ```python
 class SCHRLevelsRegressor:
- """Регрессор for прогнозирования уровней"""
+"Regressor for forecasting levels"
 
  def __init__(self):
  self.models = {
@@ -3628,47 +3628,47 @@ class SCHRLevelsRegressor:
  )
 
  def train(self, X, y):
- """Обучение регрессора"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  self.ensemble.fit(X, y)
  return self.ensemble
 
  def predict(self, X):
- """Prediction уровней"""
+"Predication levels""
  return self.ensemble.predict(X)
 ```
 
-### 3. Deep Learning модель
+### 3. Deep Learning Model
 
-**Theory:** Deep Learning модели представляют собой наиболее сложные and мощные алгоритмы machine learning, которые могут выявлять сложные нелинейные dependencies in данных SCHR Levels. Это критически важно for достижения максимальной точности.
+**Theory:**Deep Learning models are the most complex and powerful engineering algorithms that can detect complex non-liner dependencies in SCHR Livels data. This is critical to achieving maximum accuracy.
 
-**Почему Deep Learning модели важны:**
-- **Сложные dependencies:** Могут выявлять сложные нелинейные dependencies
-- **Высокая точность:** Обеспечивают максимальную точность predictions
-- **Адаптивность:** Могут адаптироваться к сложным рыночным условиям
-- **Scalability:** Могут обрабатывать большие объемы данных
+♪ Why Deep Learning models matter ♪
+- ** Complex dependencies:** Can detect complex non-linear dependencies
+- ** High accuracy:** Ensure maximum accuracy of preferences
+- ** Adaptation: ** May be adapted to complex market conditions
+- **Scalability:** May process large amounts of data
 
-**Плюсы:**
-- Высокая точность
-- Выявление сложных dependencies
-- Адаптивность к сложным условиям
-- Масштабируемость
+** Plus:**
+- High accuracy
+- Identification of complex dependencies
+- Adaptation to difficult circumstances
+- Scale
 
 **Disadvantages:**
-- Сложность обучения
-- Высокие требования к данным
-- Потенциальное retraining
-- Сложность интерпретации
+Complicity of learning
+- High data requirements
+- Potential retraining
+- Complexity of interpretation
 
 ```python
 class SCHRLevelsDeepModel:
- """Deep Learning модель for SCHR Levels"""
+"Deep Learning Model for SCHR Livels"
 
  def __init__(self, input_dim, output_dim):
  self.model = self._build_model(input_dim, output_dim)
  self.scaler = StandardScaler()
 
  def _build_model(self, input_dim, output_dim):
- """Построение нейронной сети"""
+"Building a neural network."
  model = Sequential([
  Dense(512, activation='relu', input_dim=input_dim),
  Dropout(0.3),
@@ -3691,14 +3691,14 @@ class SCHRLevelsDeepModel:
  return model
 
  def train(self, X, y):
- """Обучение модели"""
- # Нормализация данных
+"Teaching the Model."
+# Data normalization
  X_scaled = self.scaler.fit_transform(X)
 
  # One-hot encoding for y
  y_encoded = to_categorical(y)
 
- # Обучение
+# Training
  history = self.model.fit(
  X_scaled, y_encoded,
  epochs=100,
@@ -3710,40 +3710,40 @@ class SCHRLevelsDeepModel:
  return history
 ```
 
-## Бэктестинг SCHR Levels модели
+## Becketting SCHR Livels Model
 
-**Theory:** Бэктестинг SCHR Levels модели является критически важным этапом for validation эффективности торговой стратегии on basis уровней. Это позволяет оценить performance модели on исторических данных перед реальным использованием.
+**Theory:** The SCHR Models is a critical stage for the validation of the effectiveness of trade strategy on basic levels, thus assessing the performance of the historical data model before actual use.
 
-**Почему бэктестинг критичен:**
-- **validation стратегии:** Позволяет проверить эффективность стратегии
-- **Оценка рисков:** Помогает оценить потенциальные риски
-- **Оптимизация параметров:** Позволяет оптимизировать parameters стратегии
-- **Уверенность:** Повышает уверенность in стратегии
+♪ Why is the bactering critical ♪
+- **validation strategy:** Allows the effectiveness of the strategy to be tested
+- ** Risk assessment:** Helps assess potential risks
+- **Optimization of parameters:** Allows optimization of strategy parameters
+- **Sureness:** Increases confidence in strategy
 
-### 1. Стратегия бэктестинга
+♪##1 ♪ Baptizing strategy ♪
 
-**Theory:** Стратегия бэктестинга определяет методоLogsю тестирования SCHR Levels модели on исторических данных. Правильная стратегия критически важна for получения достоверных результатов.
+**Theory:** The Baactering Strategy defines the method of testing SCHR Livels of the historical data model. The correct strategy is critical for obtaining reliable results.
 
-**Почему стратегия бэктестинга важна:**
-- **Достоверность результатов:** Обеспечивает достоверность результатов
-- **Избежание retraining:** Помогает избежать retraining
-- **Реалистичность:** Обеспечивает реалистичность тестирования
-- **validation:** Позволяет валидировать стратегию
+* Why the Baactism strategy is important:**
+- ** Validity of results:** Ensures reliability of results
+- ** Avoiding retraining:** Helps avoid retraining
+- ** Reality:** Ensures that testing is realistic
+- **validation:** Allows the strategy to be validated
 
-**Плюсы:**
-- Достоверность результатов
-- Избежание retraining
-- Реалистичность тестирования
-- validation стратегии
+** Plus:**
+- Reliability of results
+- Avoiding retraining
+- Realistic testing
+- development strategy
 
 **Disadvantages:**
-- Сложность Settings
-- Потенциальные Issues with data
-- Время on тестирование
+- Settings' complexity
+- Potential Issues with data
+- Time on testing
 
 ```python
 class SCHRLevelsBacktester:
- """Бэктестер for SCHR Levels модели"""
+"Bactester for SCHR Livels Model."
 
  def __init__(self, model, data):
  self.model = model
@@ -3751,15 +3751,15 @@ class SCHRLevelsBacktester:
  self.results = {}
 
  def backtest(self, start_date, end_date):
- """Бэктестинг стратегии"""
- # Фильтрация данных on датам
+"The Strategy Becketting."
+# Data filtering on dates
  mask = (self.data.index >= start_date) & (self.data.index <= end_date)
  test_data = self.data[mask]
 
- # Предсказания модели
+# Model predictions
  predictions = self.model.predict(test_data)
 
- # Расчет доходности
+# Calculation of return
  returns = self._calculate_returns(test_data, predictions)
 
  # Metrics performance
@@ -3772,7 +3772,7 @@ class SCHRLevelsBacktester:
  }
 
  def _calculate_returns(self, data, predictions):
- """Расчет доходности"""
+"""""""""""""""
  returns = []
  position = 0
 
@@ -3780,18 +3780,18 @@ class SCHRLevelsBacktester:
  if i == 0:
  continue
 
- # Сигнал модели
+# Model signal
  signal = predictions[i]
 
- # Logsка торговли on basis уровней
- if signal == 2 and position <= 0: # Пробой вверх
+# Trade logs on levels
+if signal = = 2 and position < = 0: # Upset
  position = 1
- elif signal == 0 and position >= 0: # Пробой вниз
+elif signal = = 0 and position > = 0: #Base down
  position = -1
- elif signal == 1: # Без пробоя
+elif signal = 1: # Without a puncture
  position = 0
 
- # Расчет доходности
+# Calculation of return
  if position != 0:
  current_return = (row['Close'] - data.iloc[i-1]['Close']) / data.iloc[i-1]['Close']
  returns.append(current_return * position)
@@ -3803,42 +3803,42 @@ class SCHRLevelsBacktester:
 
 ### 2. Metrics performance
 
-**Theory:** Metrics performance являются критически важными for оценки эффективности SCHR Levels модели. Они обеспечивают количественную оценку различных аспектов performance торговой стратегии on basis уровней.
+**Theory:**Metrics performance is critical for assessing the effectiveness of the SCHR Models model and provides quantitative assessment of various aspects of performance of trade strategy on basic levels.
 
-**Почему Metrics performance важны:**
-- **Количественная оценка:** Обеспечивают количественную оценку performance
-- **comparison стратегий:** Позволяют сравнивать различные стратегии
-- **Оптимизация:** Помогают in оптимизации параметров
-- **Management рисками:** Критически важны for управления рисками
+# Why Metrics performance matters #
+- ** Qualitative assessment:** Quantify performance
+- **comparison strategies:** allows comparison of different strategies
+- **Optimization:** Helps in optimizing parameters
+- **Manage risk:** Critical for risk management
 
-**Плюсы:**
-- Количественная оценка
-- Возможность сравнения
-- Помощь in оптимизации
-- Критически важно for управления рисками
+** Plus:**
+- Quantification
+- Comparability
+- Assistance in optimization
+- Critically important for risk management
 
 **Disadvantages:**
-- Сложность интерпретации
-- Потенциальные Issues with data
-- Необходимость понимания метрик
+- Complexity of interpretation
+- Potential Issues with data
+- Need to understand metrics
 
 ```python
 def calculate_schr_performance_metrics(returns):
- """Расчет метрик performance for SCHR Levels"""
+""The calculation of metric performance for SCHR Livels""
  returns = np.array(returns)
 
- # Базовая статистика
+# Basic statistics
  total_return = np.sum(returns)
  annualized_return = total_return * 252
 
- # Волатильность
+# Volatility
  volatility = np.std(returns) * np.sqrt(252)
 
  # Sharpe Ratio
  risk_free_rate = 0.02
  sharpe_ratio = (annualized_return - risk_free_rate) / volatility
 
- # Максимальная просадка
+# Maximum tarmac
  cumulative_returns = np.cumsum(returns)
  running_max = np.maximum.accumulate(cumulative_returns)
  drawdown = cumulative_returns - running_max
@@ -3852,7 +3852,7 @@ def calculate_schr_performance_metrics(returns):
  gross_loss = abs(np.sum(returns[returns < 0]))
  profit_factor = gross_profit / gross_loss if gross_loss > 0 else np.inf
 
- # Специфичные metrics for уровней
+# Specific metrics for levels
  level_hit_rate = self._calculate_level_hit_rate(returns)
  breakout_accuracy = self._calculate_breakout_accuracy(returns)
 
@@ -3869,40 +3869,40 @@ def calculate_schr_performance_metrics(returns):
  }
 ```
 
-## Оптимизация параметров SCHR Levels
+## Optimization of SCHR Livels parameters
 
-**Theory:** Оптимизация параметров SCHR Levels является критически важным этапом for достижения максимальной эффективности торговой стратегии on basis уровней. Правильно оптимизированные parameters могут значительно повысить performance системы.
+**Theory:** The optimization of SCHR Livels parameters is a critical step towards maximizing the effectiveness of trade strategy on basic levels. Properly optimized parameters can significantly improve the performance of the system.
 
-**Почему оптимизация параметров критична:**
-- **Максимизация performance:** Позволяет достичь максимальной performance
-- **Адаптация к рынку:** Помогает адаптироваться к различным рыночным условиям
-- **Снижение рисков:** Может снизить риски стратегии
-- **Повышение прибыльности:** Может значительно повысить прибыльность
+**Why optimization of parameters is critical:**
+- **Maximization performance:** Allows maximum performance
+- ** Market adaptation:** Helps adapt to different market conditions
+- ** Risk reduction:** May reduce policy risks
+- ** Increased profitability:** May significantly increase profitability
 
-### 1. Генетический алгоритм
+*## 1. Genetic algorithm
 
-**Theory:** Генетический алгоритм представляет собой эволюционный метод оптимизации, который имитирует process естественного отбора for поиска оптимальных параметров SCHR Levels. Это особенно эффективно for сложных многомерных задач оптимизации.
+**Theory:** Genetic algorithm is an evolutionary optimization technique that simulates the process of natural selection for the search for optimal parameters of SCHR Livels. This is particularly effective for complex multidimensional optimization tasks.
 
-**Почему генетический алгоритм важен:**
-- **Глобальная оптимизация:** Может найти глобальный оптимум
-- **Робастность:** Устойчив к локальным минимумам
-- **Гибкость:** Может Workingть with различными типами параметров
-- **Эффективность:** Эффективен for сложных задач
+** Why genetic algorithm matters:**
+- ** Global optimization:** Can find a global optimum
+- **Purity:** Resistance to local minimums
+- ** Flexibility:** May Working with different types of parameters
+- ** Effectiveness:** Effective for complex tasks
 
-**Плюсы:**
-- Глобальная оптимизация
-- Робастность
-- Гибкость
-- Эффективность
+** Plus:**
+- Global optimization
+- Obsceneness.
+Flexibility
+- Efficiency
 
 **Disadvantages:**
-- Сложность Settings
-- Время выполнения
-- Потенциальная нестабильность
+- Settings' complexity
+- Time of execution
+- Potential instability
 
 ```python
 class SCHRLevelsOptimizer:
- """Оптимизатор параметров SCHR Levels"""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
  def __init__(self, data):
  self.data = data
@@ -3910,24 +3910,24 @@ class SCHRLevelsOptimizer:
  self.best_score = -np.inf
 
  def optimize_genetic(self, n_generations=50, population_size=100):
- """Оптимизация with помощью генетического алгоритма"""
- # Инициализация популяции
+"Optimization with the help of genetic algorithm."
+# Initiating population
  population = self._initialize_population(population_size)
 
  for generation in range(n_generations):
- # Оценка популяции
+# Population estimate
  scores = self._evaluate_population(population)
 
- # Отбор лучших особей
+# Selection of the best
  elite = self._select_elite(population, scores, top_k=10)
 
- # Скрещивание and мутация
+# Crossing and mutation
  new_population = self._crossover_and_mutate(elite, population_size)
 
- # update популяции
+# Update population
  population = new_population
 
- # Сохранение лучшего результата
+# Maintaining a Better Result
  best_idx = np.argmax(scores)
  if scores[best_idx] > self.best_score:
  self.best_score = scores[best_idx]
@@ -3938,7 +3938,7 @@ class SCHRLevelsOptimizer:
  return self.best_params, self.best_score
 
  def _initialize_population(self, size):
- """Инициализация популяции"""
+"The Initiation of the Population."
  population = []
 
  for _ in range(size):
@@ -3956,31 +3956,31 @@ class SCHRLevelsOptimizer:
 
 ### 2. Bayesian Optimization
 
-**Theory:** Bayesian Optimization представляет собой интеллектуальный метод оптимизации, который использует байесовскую статистику for эффективного поиска оптимальных параметров SCHR Levels. Это особенно эффективно for дорогих in вычислении функций.
+**Theory:** Bayesian Optimization is an intellectual optimization technique that uses Bayesian statistics for effective search for optimal SCHR parameters. This is particularly effective for expensive in computing functions.
 
-**Почему Bayesian Optimization важен:**
-- **Эффективность:** Очень эффективен for дорогих функций
-- **Интеллектуальный поиск:** Использует информацию о предыдущих оценках
-- **Быстрая сходимость:** Быстро сходится к оптимуму
-- **Учет неопределенности:** Учитывает неопределенность in оценках
+**Why Bayesian Optimization is important:**
+- ** Effectiveness:** Very effective for expensive functions
+- ** Intellectual search:** uses information on previous evaluations
+- ♪ Quick match ♪ ♪ Quick match to optimum ♪
+- **Exploitation of uncertainty: ** Reflects uncertainty in estimates
 
-**Плюсы:**
-- Высокая эффективность
-- Интеллектуальный поиск
-- Быстрая сходимость
-- Учет неопределенности
+** Plus:**
+- High efficiency
+- Intellectual search.
+- Rapid convergence.
+- Treatment of uncertainty
 
 **Disadvantages:**
-- Сложность реализации
-- Требования к данным
-- Потенциальные Issues with масштабированием
+- The difficulty of implementation
+Data requirements
+- Potential Issues with scaling
 
 ```python
 from skopt import gp_minimize
 from skopt.space import Real, Integer
 
 class SCHRLevelsBayesianOptimizer:
- """Bayesian оптимизация параметров SCHR Levels"""
+"Bayesian Optimization of SCHR Livels"
 
  def __init__(self, data):
  self.data = data
@@ -3993,7 +3993,7 @@ class SCHRLevelsBayesianOptimizer:
  ]
 
  def optimize(self, n_calls=100):
- """Bayesian оптимизация"""
+"Bayesian Optimization."
  result = gp_minimize(
  func=self._objective_function,
  dimensions=self.space,
@@ -4004,50 +4004,50 @@ class SCHRLevelsBayesianOptimizer:
  return result.x, -result.fun
 
  def _objective_function(self, params):
- """Целевая function for оптимизации"""
+"Aimed Function for Optimization""
  pressure_threshold, level_strength, Prediction_horizon, volatility_factor, trend_weight = params
 
- # Расчет SCHR Levels with data параметрами
+# Calculation of SCHR Livels with data parameters
  schr_data = self._calculate_schr_levels(pressure_threshold, level_strength,
  Prediction_horizon, volatility_factor, trend_weight)
 
- # Расчет performance
+# Calculation of performance
  performance = self._calculate_performance(schr_data)
 
- # Возвращаем отрицательное значение for минимизации
+# Return negative value for minimization
  return -performance
 ```
 
-## Продакшн деплой SCHR Levels модели
+## SKHR Livels model sales
 
-**Theory:** Продакшн деплой SCHR Levels модели является финальным этапом создания торговой системы on basis уровней, который обеспечивает развертывание модели in реальной торговой среде. Это критически важно for практического применения системы.
+**Theory:** The model &apos; s sale of the SCHR Models is the final stage of the development of the trading system on basic levels, which ensures the deployment of the model in the real trading environment. This is critical for the practical application of the system.
 
-**Почему продакшн деплой критичен:**
-- **Практическое применение:** Обеспечивает практическое применение системы
-- **Автоматизация:** Автоматизирует торговые процессы
-- **Scalability:** Позволяет масштабировать system
-- **Monitoring:** Обеспечивает Monitoring performance
+♪ Why is production good critical ♪
+- ** Practical application:** Practical application of the system
+- ** Automation:** Automated trade processes
+- **Scalability:** Allows the system to scale
+- **Monitoring:** Provides Monitoring performance
 
-### 1. API for SCHR Levels модели
+###1. API for SCHR Livels Model
 
-**Theory:** API for SCHR Levels модели обеспечивает программный interface for взаимодействия with моделью, что критически важно for интеграции with торговыми системами and автоматизации процессов.
+**Theory:**API for SCHR Models provides software interface for interaction with the model, which is critical for integrating with trading systems and automating processes.
 
-**Почему API важен:**
-- **integration:** Обеспечивает интеграцию with торговыми системами
-- **Автоматизация:** Позволяет автоматизировать процессы
-- **Scalability:** Обеспечивает масштабируемость системы
-- **Гибкость:** Обеспечивает гибкость in использовании
+# Why API matters #
+- **integration:** Ensures integration with trading systems
+- ** Automation:** Automation of processes
+- **Scalability:** Ensures system scalability
+- ** Flexibility:** Provides flexibility in use
 
-**Плюсы:**
-- integration with системами
-- Автоматизация процессов
-- Масштабируемость
-- Гибкость использования
+** Plus:**
+- integration with systems
+- Automation of processes
+- Scale
+- Flexible use
 
 **Disadvantages:**
-- Сложность разработки
-- Требования к безопасности
-- Необходимость Monitoringа
+- The difficulty of developing
+- Safety requirements
+- Need for Monitoring
 
 ```python
 from fastapi import FastAPI, HTTPException
@@ -4073,10 +4073,10 @@ class SCHRPredictionResponse(BaseModel):
 async def predict(request: SCHRPredictionRequest):
  """Prediction on basis SCHR Levels"""
  try:
- # Загрузка модели
+# Uploading the model
  model = joblib.load('models/schr_levels_model.pkl')
 
- # Подготовка данных
+# Data production
  features = np.array([
  request.predicted_high,
  request.predicted_low,
@@ -4088,7 +4088,7 @@ async def predict(request: SCHRPredictionRequest):
  Prediction = model.predict([features])[0]
  probability = model.predict_proba([features])[0].max()
 
- # Определение уверенности
+# Definition of confidence
  if probability > 0.8:
  confidence = "high"
  elif probability > 0.6:
@@ -4096,7 +4096,7 @@ async def predict(request: SCHRPredictionRequest):
  else:
  confidence = "low"
 
- # Расчет силы уровня
+# Calculation of force level
  level_strength = abs(request.predicted_high - request.predicted_low) / request.predicted_high
 
  return SCHRPredictionResponse(
@@ -4110,29 +4110,29 @@ async def predict(request: SCHRPredictionRequest):
  raise HTTPException(status_code=500, detail=str(e))
 ```
 
-### 2. Docker контейнер
+###2. Docker container
 
-**Theory:** Docker контейнеризация обеспечивает изоляцию, портабельность and масштабируемость SCHR Levels модели in продакшн среде. Это критически важно for обеспечения стабильности and простоты deployment.
+**Theory:**Docker containerization ensures the isolation, portability and scalability of the SCHR Levels model in the sales environment, which is critical for stability and simplicity.
 
-**Почему Docker контейнер важен:**
-- **Изоляция:** Обеспечивает изоляцию модели
-- **Портабельность:** Позволяет легко переносить модель
-- **Scalability:** Упрощает масштабирование
-- **Management:** Упрощает Management зависимостями
+# Why is the Docker container important #
+- **Isolation:** Provides model insulation
+- ** Portability:** Allows the model to move easily
+- **Scalability:**Simplifies scaling
+- **Management:**Simplifies Management Depends
 
-**Плюсы:**
-- Изоляция модели
-- Портабельность
-- Масштабируемость
-- Упрощение управления
+** Plus:**
+- Model isolation
+- Portability
+- Scale
+- Facilitation of management
 
 **Disadvantages:**
-- Дополнительная сложность
-- Потенциальные Issues with производительностью
-- Необходимость управления контейнерами
+- Additional complexity
+- Potential Issues with Productivity
+- The need to manage containers
 
 ```dockerfile
-# Dockerfile for SCHR Levels модели
+# Dockerfile for SCHR Livels Model
 FROM python:3.11-slim
 
 WORKDIR /app
@@ -4141,42 +4141,42 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-# Копирование модели and кода
+# Copying the model and code
 COPY models/ ./models/
 COPY src/ ./src/
 COPY main.py .
 
-# Экспорт порта
+# Port exports
 EXPOSE 8000
 
-# Launch приложения
+# Launch applications
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
 ### 3. Monitoring performance
 
-**Theory:** Monitoring performance SCHR Levels модели является критически важным for обеспечения стабильности and эффективности торговой системы in продакшн среде. Это позволяет быстро выявлять and устранять проблемы.
+**Theory:** Monitoring performance of SCHR Models is critical for the stability and efficiency of the trading system in a production environment, which allows for the rapid identification and resolution of problems.
 
-**Почему Monitoring performance важен:**
-- **Стабильность:** Обеспечивает стабильность системы
-- **Быстрое выявление проблем:** Позволяет быстро выявлять проблемы
-- **Оптимизация:** Помогает in оптимизации performance
-- **Management рисками:** Критически важно for управления рисками
+♪ Why Monitoring performance matters ♪
+- **Stability:** Ensures stability of the system
+- ** Rapid identification of problems:** Allows rapid identification of problems
+- **Optimization:** Helps in optimizing performance
+- **Manage risk:** Critically important for risk management
 
-**Плюсы:**
-- Обеспечение стабильности
-- Быстрое выявление проблем
-- Помощь in оптимизации
-- Критически важно for управления рисками
+** Plus:**
+- Ensuring stability
+- Quick identification of problems
+- Assistance in optimization
+- Critically important for risk management
 
 **Disadvantages:**
-- Сложность Settings
-- Необходимость постоянного внимания
-- Потенциальные ложные срабатывания
+- Settings' complexity
+- The need for constant attention
+- Potential false responses
 
 ```python
 class SCHRLevelsMonitor:
- """Monitoring SCHR Levels модели"""
+"Monitoring SCHR Livels Model""
 
  def __init__(self):
  self.performance_history = []
@@ -4188,15 +4188,15 @@ class SCHRLevelsMonitor:
  }
 
  def monitor_Prediction(self, Prediction, actual, latency, level_data):
- """Monitoring предсказания"""
- # Расчет точности
+"Monitoring Prophecies."
+# Calculation of accuracy
  accuracy = 1 if Prediction == actual else 0
 
- # Расчет метрик уровней
+# Calculation of level metric
  level_hit_rate = self._calculate_level_hit_rate(level_data)
  breakout_accuracy = self._calculate_breakout_accuracy(level_data)
 
- # Сохранение метрик
+# Maintaining the metric
  self.performance_history.append({
  'timestamp': datetime.now(),
  'accuracy': accuracy,
@@ -4207,72 +4207,72 @@ class SCHRLevelsMonitor:
  'actual': actual
  })
 
- # check алертов
+# Check allergic
  self._check_alerts()
 
  def _check_alerts(self):
- """check алертов"""
+"Check Alerts."
  if len(self.performance_history) < 10:
  return
 
  recent_performance = self.performance_history[-10:]
 
- # check точности
+# Check accuracy
  avg_accuracy = np.mean([p['accuracy'] for p in recent_performance])
  if avg_accuracy < self.alert_thresholds['accuracy']:
  self._send_alert("Low accuracy detected")
 
- # check точности уровней
+# check level accuracy
  avg_level_hit_rate = np.mean([p['level_hit_rate'] for p in recent_performance])
  if avg_level_hit_rate < self.alert_thresholds['level_hit_rate']:
  self._send_alert("Low level hit rate detected")
 
- # check точности пробоев
+# Check accuracy of probes
  avg_breakout_accuracy = np.mean([p['breakout_accuracy'] for p in recent_performance])
  if avg_breakout_accuracy < self.alert_thresholds['breakout_accuracy']:
  self._send_alert("Low breakout accuracy detected")
 ```
 
-## Следующие шаги
+## Next steps
 
-После Analysis SCHR Levels переходите к:
-- **[13_schr_short3_Analysis.md](13_schr_short3_Analysis.md)** - Анализ SCHR SHORT3
-- **[14_advanced_practices.md](14_advanced_practices.md)** - Продвинутые практики
+After Analysis SCHR Livels, go to:
+- **[13_shr_short3_Analisis.md](13_shr_short3_Anallysis.md)** - SCHR SHORT3 analysis
+- **[14_advanced_practices.md](14_advanced_practices.md)** - Advanced practices
 
-## Ключевые выводы
+## Key findings
 
-**Theory:** Ключевые выводы суммируют наиболее важные аспекты Analysis SCHR Levels, которые критически важны for создания прибыльной and робастной торговой системы on basis уровней.
+**Theory:** Key findings summarize the most important aspects of Analysis SCHR Livels, which are critical for creating a profitable and labour-intensive trading system on basic levels.
 
-1. **SCHR Levels - мощный индикатор for Analysis уровней поддержки and сопротивления**
- - **Theory:** SCHR Levels представляет собой революционный подход к анализу уровней поддержки and сопротивления
- - **Почему важно:** Обеспечивает высокую точность Analysis уровней
- - **Плюсы:** Высокая точность, учет давления, Prediction будущего, адаптивность
- - **Disadvantages:** Сложность Settings, высокие требования к ресурсам
+1. **SCHR Livels is a powerful indicator for support and resistance levels**
+**Theory:** SCHR Livels is a revolutionary approach to analysing levels of support and resistance
+- What's important is:** Ensures high accuracy of Analysis levels
+- ** Plus:** High accuracy, pressure accounting, future prioritization, adaptation
+- **Disadvantages:**Complicity Settings, high resource requirements
 
-2. **Давление on уровни - ключевой фактор for предсказания пробоев**
- - **Theory:** Анализ давления on уровни критически важен for предсказания пробоев
- - **Почему важно:** Позволяет предсказывать пробои уровней with высокой точностью
- - **Плюсы:** Prediction пробоев, анализ рыночного давления, improve управления рисками
- - **Disadvantages:** Сложность измерения, потенциальная нестабильность
+2. ** Pressure on levels - key factor for predicting gaps**
+- **Theory:** Pressure analysis on levels is critical for predicting probes
+- What's important is:** Allows you to predict levels with high accuracy
+- ** Plus:**Pedication, market pressure analysis, improv risk management
+- **Disadvantages:** Measurement complexity, potential instability
 
-3. **МультиTimeframesый анализ - разные parameters for разных Timeframes**
- - **Theory:** Каждый Timeframe требует специфических параметров for максимальной эффективности
- - **Почему важно:** Обеспечивает оптимальную performance on all временных горизонтах
- - **Плюсы:** Оптимизация performance, снижение рисков, повышение точности
- - **Disadvantages:** Сложность Settings, необходимость понимания каждого Timeframe
+3. ** MultiTimeframe analysis - different variables for different Times**
+- **Theory:** Each Timeframe requires specific parameters for maximum efficiency
+- What's important is:** Provides optimal performance on all time horizons
+- ** Plus:** Optimizing performance, reducing risks, improving accuracy
+- **Disadvantages:**Settings difficulty, need to understand each Timeframe
 
-4. **Высокая точность - возможность достижения 95%+ точности**
- - **Theory:** Правильно настроенная SCHR Levels модель может достигать очень высокой точности
- - **Почему важно:** Высокая точность критична for прибыльной торговли
- - **Плюсы:** Высокая прибыльность, снижение рисков, уверенность in стратегии
- - **Disadvantages:** Высокие требования к настройке, потенциальное retraining
+4. ** High accuracy - possibility of 95 per cent + accuracy**
+- **Theory:** The correct SCHR Levels model can reach very high accuracy
+- What's important is:** High accuracy is critical for profitable trade
+- **plus:** High profitability, risk reduction, confidence in strategy
+- **Disadvantages:** High set-up requirements, potential retraining
 
-5. **Продакшн готовность - полная integration with продакшн системами**
- - **Theory:** SCHR Levels модель может быть полностью интегрирована in продакшн системы
- - **Почему важно:** Обеспечивает практическое применение системы
- - **Плюсы:** Автоматизация, масштабируемость, Monitoring
- - **Disadvantages:** Сложность разработки, требования к безопасности
+5. ** Production readiness - full integration with production systems**
+- **Theory:** SCHR Livels model can be fully integrated in the production system
+- ** Why is it important:** Ensures the practical application of the system
+- ** Plus:** Automation, scalability, Monitoring
+- **Disadvantages:** Design difficulty, safety requirements
 
 ---
 
-**Важно:** SCHR Levels требует тщательного Analysis давления on уровни and адаптации параметров for каждого актива and Timeframe.
+**Priority:** SCHR Livels requires a careful Analysis of pressure on levels and customization of parameters for each asset and Timeframe.

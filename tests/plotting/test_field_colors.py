@@ -108,7 +108,7 @@ class TestFieldColorAssignment:
 
  def test_get_field_color_unicode(self):
  """Test that unicode field names work correctly."""
- field = "давление_вектор"
+Field = "pressure_vector"
  color = _get_field_color(field)
 
  assert isinstance(color, str)

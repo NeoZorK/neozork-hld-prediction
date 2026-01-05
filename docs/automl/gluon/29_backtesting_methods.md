@@ -1,29 +1,29 @@
-# Углубленное describe методик бэктестинга
+# In-depth describe of betting techniques
 
 **Author:** Shcherbyna Rostyslav
-**Дата:** 2024
+**Date:** 2024
 
-## Why бэктестинг критически важен for ML-стратегий
+## Who backtting is critical for ML strategies
 
-### 🎯 Важность бэктестинга for успеха ML-стратегий
+### ♪ The need to stab for ML strategies to succeed
 
 ```mermaid
 graph TD
-A[ML-стратегия] --> B{Прошел ли бэктестинг?}
+A[ML-Strategy] -- > B {Has the backting been done?}
 
-B -->|Нет| C[90% стратегий терпят неудачу]
-C --> D[❌ retraining on исторических данных]
-C --> E[❌ Неожиdata потери in реальной торговле]
-C --> F[❌ Нестабильная performance]
-C --> G[❌ Потеря времени and денег]
+B-~ ~ No ~ C[90 per cent of strategies fail]
+C -> D[~ retraining on historical data]
+C --> E[~ Unexpected loss in real trade]
+C --> F[~ Instable performance]
+C --> G[~ time and money]
 
-B -->|Да| H[10% успешных стратегий]
-H --> I[✅ Реалистичная оценка performance]
-H --> J[✅ Понимание рисков and просадок]
-H --> K[✅ Стабильная Working on разных условиях]
-H --> L[✅ Оптимизированные parameters]
+B -->\\\\H[10% successful strategies]
+H-> I[♪ Realistic evaluation of performance]
+H -> J[~ risk understanding and prosedience]
+H --> K[~ Stable Working on Different Conditions]
+H -> L[~ Optimized parameters]
 
-I --> M[Успешная торговля]
+I -> M [Sustained trade]
  J --> M
  K --> M
  L --> M
@@ -34,78 +34,78 @@ I --> M[Успешная торговля]
  style M fill:#4caf50
 ```
 
-**Почему 90% ML-стратегий терпят неудачу in реальной торговле?** Потому что они not прошли правильный бэктестинг. Бэктестинг - это единственный способ проверить, будет ли ваша стратегия Workingть in реальных условиях.
+Why is 90% of the ML strategy failing in real trade?
 
-### Что дает правильный бэктестинг?
+♪ ♪ ♪ What gives you the right backup?
 
-- **Реалистичность**: Понимание реальной performance стратегии
-- **Робастность**: check стабильности on разных рыночных условиях
-- **Риск-менеджмент**: Оценка максимальных потерь and просадок
-- **Оптимизация**: configuration параметров for максимальной эффективности
+- ** Reality**: Understanding real performance strategy
+- **Platitude**: check stability on different market conditions
+- **Risk Management**: Assessment of maximum loss and delay
+** Optimization**: configurization of parameters for maximum efficiency
 
-### Что происходит без правильного бэктестинга?
+♪ ♪ What's going on without the right backup?
 
-- **retraining**: Стратегия Workingет только on исторических данных
-- **Неожиdata потери**: Реальные результаты хуже ожидаемых
-- **Нестабильность**: Стратегия Workingет нестабильно
-- **Разочарование**: Потеря времени and денег
+- **retraining**: Workinget strategy only on historical data
+- ** Surprising loss**: Real results are worse than expected
+- ** Instability**: The Workinget Strategy is unstable
+- ** Disappointing**: Loss of time and money
 
-## Теоретические основы бэктестинга
+## Theoretical foundations of betting
 
-### Математические принципы
+### Mathematical principles
 
-**Бэктестинг как статистическая задача:**
+**Bextering as a statistical task:**
 
 ```math
 P(Strategy|Historical_data) = P(Returns|Parameters, Market_Conditions)
 ```
 
-Где:
+Where:
 
-- `P(Strategy|Historical_data)` - вероятность успеха стратегии on исторических данных
-- `P(Returns|Parameters, Market_Conditions)` - распределение доходности при заданных параметрах and рыночных условиях
+- `P(Strategy\historical_data)' is the probability of success of a strategy on historical data
+- `P(Returns, Parameters, Market_Conditions)' - distribution of returns under specified parameters and market conditions
 
-**Критерии качества бэктестинга:**
+** Becketting quality criteria:**
 
-1. **Статистическая значимость**: p-value < 0.05
-2. **Экономическая значимость**: Sharpe > 1.0
-3. **Стабильность**: Максимальная просадка < 20%
-4. **Робастность**: Результаты стабильны on разных периодах
+1. **Statistical significance**: p-value < 0.05
+2. ** Economic significance**: Sharpe > 1.0
+3. ** Stability**: Maximum draught < 20 per cent
+4. **Purity**: Results stable on different periods
 
-### Типы бэктестинга
+### Bactering types
 
-### 📊 comparison типов бэктестинга
+*# * * comparison of types of betting
 
 ```mermaid
 graph TB
-A[Типы бэктестинга] --> B[Простой бэктестинг]
-A --> C[Out-of-sample бэктестинг]
-A --> D[Walk-forward бэктестинг]
-A --> E[Cross-validation бэктестинг]
+A[Tips of buffering] - • B [Simple buffering]
+A-> C[Out-of-sample buffering]
+A --> D [Walk-forward buffering]
+A-> E[Cross-validation buffering]
 
-B --> B1[Обучение on исторических данных]
-B --> B2[Тестирование on том же периоде]
-B --> B3[⚡ Быстрый]
-B --> B4[❌ Ненадежный]
+B -> B1 [Learning on historical data]
+B --> B2 [Text on the same period]
+B --> B3[~ Speed]
+B -> B4[~ Insecure]
 B --> B5[❌ retraining]
 
-C --> C1[Обучение on части данных]
-C --> C2[Тестирование on оставшейся части]
-C --> C3[✅ Более реалистичный]
-C --> C4[⚠️ Один разбиение]
-C --> C5[📈 Лучше простого]
+C --> C1 [Learning on part of the data]
+C --> C2 [Texting on the rest]
+C --> C3[~ More realistic]
+C --> C4[~ One break-up]
+C --> C5[~ Better common]
 
-D --> D1[Скользящее окно обучения]
-D --> D2[Постоянное update модели]
-D --> D3[✅ Самый реалистичный]
-D --> D4[✅ Множественные тесты]
-D --> D5[🎯 Имитация реальной торговли]
+D -> D1 [Slipping Learning Window]
+D --> D2 [Continuing update model]
+D -> D3[~ The most realistic]
+D -> D4[~ Multiple tests]
+D -> D5[~ Real Trade Simulation]
 
-E --> E1[Множественные разбиения данных]
-E --> E2[Статистическая validation]
-E --> E3[✅ Наиболее надежный]
-E --> E4[✅ Статистическая значимость]
-E --> E5[🔬 Научный подход]
+E --> E1 [multiple data breakdowns]
+E --> E2 [Statistical validation]
+E --> E3[~ Most reliable]
+E -> E4[~ Statistical significance]
+E -> E5[~ approach]
 
  style B fill:#ffcdd2
  style C fill:#fff3e0
@@ -113,64 +113,64 @@ E --> E5[🔬 Научный подход]
  style E fill:#4caf50
 ```
 
-### 1. Простой бэктестинг (Simple Backtesting)
+### 1. Simple Backting
 
-- Обучение on исторических данных
-- Тестирование on том же периоде
-- Быстрый, но ненадежный
+- Training on historical data
+- Testing on the same period
+Quick but unreliable.
 
-### 2. Out-of-sample бэктестинг
+###2. Out-of-sample buffering
 
-- Обучение on части данных
-- Тестирование on оставшейся части
-- Более реалистичный
+- Training on part of the data
+- Testing on the rest
+- More realistic.
 
-### 3. Walk-forward бэктестинг
+### 3. Walk-forward buffering
 
-- Скользящее окно обучения
-- Постоянное update модели
-- Самый реалистичный
+- Slipping Learning Window
+- Permanent update model
+- The most realistic.
 
-### 4. Cross-validation бэктестинг
+###4. Cross-validation buffering
 
-- Множественные разбиения данных
-- Статистическая validation
-- Наиболее надежный
+- Multiple breakdowns
+- Statistical validation
+- Most reliable.
 
-## Продвинутые методики бэктестинга
+♪ ♪ Advances in bactering techniques
 
-### 1. Временные ряды бэктестинг
+♪##1 ♪ Becketting time series ♪
 
-### ⏰ process временного ряда бэктестинга
+### ♪ process of the time series of bettings
 
 ```mermaid
 graph TD
-A[Исходные временные data] --> B[Разделение in time]
+A [Reference temporary data] --> B [Section in time]
 
-B --> C[Обучающие data<br/>70% from начала]
-B --> D[testsые data<br/>30% from конца]
+B --> C[Learning data<br/>70% from beginning]
+B --> D[tests data<br/> 30% from end]
 
-C --> E[Обучение модели]
-E --> F[Предсказания on testsых данных]
+C -> E [model training]
+E --> F [Treaties on test data]
 
-D --> G[Реальные доходности]
-F --> H[Стратегические доходности]
+D -> G [Real returns]
+F --> H [strategic returns]
  G --> H
 
-H --> I[Расчет метрик качества]
-I --> J[Коэффициент Шарпа]
-I --> K[Максимальная просадка]
-I --> L[Общая доходность]
+H -> I [Quality metric calculation]
+I-> J [Sharp coefficient]
+I -> K [Maximum draught]
+I-> L [Total return]
 
-J --> M[Оценка стратегии]
+J -> M [Strategy assessment]
  K --> M
  L --> M
 
-M --> N{Стратегия успешна?}
-N -->|Да| O[✅ Деплой in продакшен]
-N -->|Нет| P[❌ Оптимизация параметров]
+M --> N{Strategy successful?}
+N--♪ ♪ Yeah ♪ O[♪ Depla in sales]
+N--~ ~ No~ P[~ Optimization of parameters]
 
-P --> Q[configuration модели]
+P --> Q [configration model]
  Q --> E
 
  style A fill:#e3f2fd
@@ -180,89 +180,89 @@ P --> Q[configuration модели]
  style P fill:#ff9800
 ```
 
-**Особенности временных рядов:**
+** Specialities of time series:**
 
 ```python
 def time_series_backtest(data, model, train_size=0.7, test_size=0.3,
  config=None, validation=True, random_state=None):
  """
-Бэктестинг for временных рядов with детальными параметрами
+Becketting for time series with detailed parameters
 
  Parameters:
  -----------
  data : pd.dataFrame
-temporary ряд данных with колонками 'returns' and другими приsignми
-- Должен быть отсортирован in time
-- Должен содержать колонку 'returns' with доходностями
-- Рекомендуется минимум 1000 наблюдений for надежности
+temporary data series with columns 'returns' and other signature
+- Should be sorted in time
+- Shall contain a column "returns" with returns
+- A minimum of 1,000 observations are recommended for reliability
 
  model : object
-Обученная ML модель with методами fit() and predict()
-- Должен поддерживать fit(X, y) for обучения
-- Должен поддерживать predict(X) for predictions
-- Рекомендуется использовать TabularPredictor из AutoGluon
+ML model with Fit() and predict()
+- Should support fit(X, y) for learning.
+- Should support predict(X) for preferences
+- It is recommended to use TabularPredictor from AutoGluon
 
  train_size : float, default=0.7
-Доля данных for обучения (0.0 < train_size < 1.0)
-- 0.7 означает 70% данных for обучения
-- Рекомендуется 0.6-0.8 for большинства случаев
-- Меньше 0.6 может привести к переобучению
-- Больше 0.8 может привести к недообучению
+Percentage of data for training (0.0 < tran_size < 1.0)
+- 0.7 means 70 per cent of the data for training
+- Recommended 0.6-0.8 for most cases
+- Less than 0.6 can lead to retraining.
+- More than 0.8 may lead to a lack of education
 
  test_size : float, default=0.3
-Доля данных for тестирования (0.0 < test_size < 1.0)
-- 0.3 означает 30% данных for тестирования
-- Должно быть равно 1.0 - train_size
-- Рекомендуется минимум 0.2 for надежности
+Proportion of data for testing (0.0 < test_size < 1.0)
+- 0.3 means 30 per cent of test data
+- Must be 1.0 - train_size.
+- A minimum of 0.2 for reliability is recommended
 
  config : dict, optional
-Дополнительная configuration for бэктестинга
-- 'min_train_samples': int, default=100 - минимальное количество обучающих образцов
-- 'min_test_samples': int, default=50 - минимальное количество testsых образцов
-- 'shuffle': bool, default=False - перемешивать ли data (not рекомендуется for временных рядов)
-- 'stratify': bool, default=False - стратифицированное разделение
-- 'return_predictions': bool, default=True - возвращать предсказания
-- 'return_metrics': bool, default=True - возвращать metrics
-- 'verbose': bool, default=False - выводить подробную информацию
+Additional configuring for betting
+- 'min_training_samples':int, default=100 - minimum number of teaching samples
+- 'min_test_samples':int, default=50 = minimum number of testes
+- 'shuffle': bell, default=False - whether to mix data (not recommended for time series)
+- 'Strategy': bool, default=False - stratified separation
+- 'return_predations': bool, default=True - return predictions
+- 'return_metrics': bool, default=True - return metrics
+- 'verbose': bool, default=False - output details
 
  validation : bool, default=True
-Выполнять ли валидацию входных данных
-- Проверяет presence колонки 'returns'
-- Проверяет достаточность данных
-- Проверяет корректность train_size and test_size
+Whether to validate input data
+- Checks out the 'returns' column.
+- Checks data adequacy
+- Checks the correctness of train_size and test_size
 
  random_state : int, optional
-Seed for воспроизводимости результатов
-- Используется только если shuffle=True
-- Рекомендуется задавать for воспроизводимости
+Seed for reproducible results
+- Only used if shuffle=True
+- It is recommended to ask for reproduction
 
  Returns:
  --------
  dict
-Словарь with результатами бэктестинга:
-- 'sharpe': float - коэффициент Шарпа стратегии
-- 'max_drawdown': float - максимальная просадка (отрицательное значение)
-- 'total_return': float - общая доходность стратегии
-- 'annual_return': float - годовая доходность
-- 'volatility': float - волатильность стратегии
-- 'predictions': np.array - предсказания модели (если return_predictions=True)
-- 'train_metrics': dict - metrics on обучающих данных
-- 'test_metrics': dict - metrics on testsых данных
-- 'config_Used': dict - использованная configuration
+Vocabulary withbacking results:
+- 'sharpe': float - Sharp factor of strategy
+- 'max_drawdown': float = maximum draught (negative)
+- 'Total_return': float - total strategy return
+- 'annual_return': float - annual return
+- 'volatility': float - strategy volatility
+- 'predications': np.array - model predictions (if return_predictations=True)
+- 'training_metrics':dict - metrics on learning data
+- 'test_metrics':dict - metrics on test data
+- 'config_Used':dict - used configuration
 
  Raises:
  -------
  ValueError
-Если data недостаточны or parameters некорректны
+If data are insufficient or parameters incorrect
  TypeError
-Если модель not поддерживает необходимые methods
+If the no model supports the necessary methhods
 
  Examples:
  ---------
->>> # Базовое использование
+>># Basic use
  >>> results = time_series_backtest(data, model)
  >>>
->>> # with кастомной конфигурацией
+>> # with caste configuration
  >>> config = {
  ... 'min_train_samples': 200,
  ... 'min_test_samples': 100,
@@ -270,10 +270,10 @@ Seed for воспроизводимости результатов
  ... }
  >>> results = time_series_backtest(data, model, train_size=0.8, config=config)
  >>>
->>> # Без validation (быстрее, но менее безопасно)
+>> # Without vilification (rapid but less secure)
  >>> results = time_series_backtest(data, model, validation=False)
  """
-# configuration on умолчанию
+# configuring on default
  if config is None:
  config = {
  'min_train_samples': 100,
@@ -285,61 +285,61 @@ Seed for воспроизводимости результатов
  'verbose': False
  }
 
-# validation входных данных
+# Validation of input data
  if validation:
  if 'returns' not in data.columns:
-raise ValueError("Колонка 'returns' not foundа in данных")
+Raise ValueError
 
  if len(data) < config['min_train_samples'] + config['min_test_samples']:
-raise ValueError(f"Недостаточно данных. Минимум: {config['min_train_samples'] + config['min_test_samples']}")
+Minimum: {config['min_training_samples'] + config['min_test_samples']}}
 
  if not (0 < train_size < 1) or not (0 < test_size < 1):
-raise ValueError("train_size and test_size должны быть между 0 and 1")
+Raise ValueError("training_size and test_size should be between 0 and 1)
 
  if abs(train_size + test_size - 1.0) > 1e-6:
-raise ValueError("train_size + test_size должно равняться 1.0")
+Raise ValueError("training_size + test_size shall be 1.0")
 
-# Разделение данных in time
+# Data sharing in time
  split_point = int(len(data) * train_size)
 
  train_data = data[:split_point]
  test_data = data[split_point:]
 
-# check минимального количества образцов
+# check minimum number of samples
  if len(train_data) < config['min_train_samples']:
-raise ValueError(f"Недостаточно обучающих данных: {len(train_data)} < {config['min_train_samples']}")
+raise ValueError(f "Insufficient learning data: {len(training_data)} < {config['min_training_samples]}})
 
  if len(test_data) < config['min_test_samples']:
-raise ValueError(f"Недостаточно testsых данных: {len(test_data)} < {config['min_test_samples']}")
+raise ValueError(f "Insufficient test data: {len(test_data)} < {config['min_test_samples]}})
 
  if config['verbose']:
-print(f"Обучающих образцов: {len(train_data)}")
-print(f"testsых образцов: {len(test_data)}")
+Print(f "Learning samples: {len(training_data)}})
+(f"tests samples: {len(test_data}})
 
-# Обучение модели
+# Model learning
  try:
  model.fit(train_data)
  except Exception as e:
-raise TypeError(f"Ошибка обучения модели: {e}")
+Raise TypeError(f) Model Training Error: {e})
 
-# Предсказания
+# Premonition
  try:
  predictions = model.predict(test_data)
  except Exception as e:
-raise TypeError(f"Ошибка предсказания модели: {e}")
+Raise TypeError(f) "The model prediction error: {e}")
 
-# Оценка качества
+# Quality assessment
  returns = test_data['returns']
  strategy_returns = predictions * returns
 
-# Базовые metrics
+# Basic metrics
  sharpe = strategy_returns.mean() / strategy_returns.std() * np.sqrt(252) if strategy_returns.std() > 0 else 0
  max_drawdown = calculate_max_drawdown(strategy_returns)
  total_return = strategy_returns.sum()
  annual_return = strategy_returns.mean() * 252
  volatility = strategy_returns.std() * np.sqrt(252)
 
-# Результаты
+# Results
  results = {
  'sharpe': sharpe,
  'max_drawdown': max_drawdown,
@@ -349,12 +349,12 @@ raise TypeError(f"Ошибка предсказания модели: {e}")
  'config_Used': config.copy()
  }
 
-# Дополнительные результаты
+# Additional results
  if config['return_predictions']:
  results['predictions'] = predictions
 
  if config['return_metrics']:
-# metrics on обучающих данных
+# metrics on learning data
  train_returns = train_data['returns']
  train_predictions = model.predict(train_data)
  train_strategy_returns = train_predictions * train_returns
@@ -367,7 +367,7 @@ raise TypeError(f"Ошибка предсказания модели: {e}")
  'volatility': train_strategy_returns.std() * np.sqrt(252)
  }
 
-# metrics on testsых данных
+# metrics on test data
  results['test_metrics'] = {
  'sharpe': sharpe,
  'max_drawdown': max_drawdown,
@@ -378,95 +378,95 @@ raise TypeError(f"Ошибка предсказания модели: {e}")
 
  return results
 
-# example использования
+# Example of use
 results = time_series_backtest(data, model, train_size=0.7, test_size=0.3)
 ```
 
-**Учет временных dependencies:**
+**To account for time dependencies:**
 
 ```python
 def temporal_dependency_backtest(data, model, lookback=30, step=1,
  config=None, validation=True, random_state=None):
  """
-Бэктестинг with учетом временных dependencies and детальными параметрами
+Becketting with timing and detailed parameters
 
  Parameters:
  -----------
  data : pd.dataFrame
-temporary ряд данных with колонками 'returns' and другими приsignми
-- Должен быть отсортирован in time
-- Должен содержать колонку 'returns' with доходностями
-- Рекомендуется минимум 1000 наблюдений for надежности
+temporary data series with columns 'returns' and other signature
+- Should be sorted in time
+- Shall contain a column "returns" with returns
+- A minimum of 1,000 observations are recommended for reliability
 
  model : object
-Обученная ML модель with методами fit() and predict()
-- Должен поддерживать fit(X, y) for обучения
-- Должен поддерживать predict(X) for predictions
-- Рекомендуется использовать TabularPredictor из AutoGluon
+ML model with Fit() and predict()
+- Should support fit(X, y) for learning.
+- Should support predict(X) for preferences
+- It is recommended to use TabularPredictor from AutoGluon
 
  lookback : int, default=30
-Количество periods for обучения (lookback window)
-- 30 означает обучение on последних 30 периодах
-- Рекомендуется 20-50 for большинства случаев
-- Меньше 20 может привести к переобучению
-- Больше 50 может привести к недообучению
+Number of periods for learning (lookback Windows)
+- 30 means training on the last 30 periods
+- Recommended 20-50 for most cases
+- Less than 20 could lead to retraining.
+- More than 50 could lead to a lack of education.
 
  step : int, default=1
-Шаг между итерациями бэктестинга
-- 1 означает тестирование каждого периода
-- Больше 1 означает пропуск periods
-- Рекомендуется 1 for максимальной точности
-- Больше 1 for acceleration (но менее точно)
+Step between the iterations of the bactering
+- 1 means testing each period
+- More than 1 means pass periods
+- Recommended 1 for maximum accuracy
+- More than 1 for accreditation (but less accurate)
 
  config : dict, optional
-Дополнительная configuration for бэктестинга
-- 'min_lookback': int, default=20 - минимальный размер окна обучения
-- 'max_lookback': int, default=100 - максимальный размер окна обучения
-- 'min_step': int, default=1 - минимальный шаг
-- 'max_step': int, default=10 - максимальный шаг
-- 'return_predictions': bool, default=False - возвращать предсказания
-- 'return_metrics': bool, default=True - возвращать metrics
-- 'verbose': bool, default=False - выводить подробную информацию
-- 'parallel': bool, default=False - использовать параллельные вычисления
-- 'n_jobs': int, default=1 - количество процессов for параллельных вычислений
+Additional configuring for betting
+- 'min_lookback':int, default=20 - minimum size of the learning window
+- 'max_lookback':int, default=100 is the maximum size of the learning window
+- 'min_step':int, default=1 - minimum step
+- 'max_step':int, default=10 - maximum step
+- 'return_predations': bool, default=False - return predictions
+- 'return_metrics': bool, default=True - return metrics
+- 'verbose': bool, default=False - output details
+- 'parallel': bool, default=False - use parallel calculations
+- 'n_jobs':int, default=1 - number of processes for parallel calculations
 
  validation : bool, default=True
-Выполнять ли валидацию входных данных
-- Проверяет presence колонки 'returns'
-- Проверяет достаточность данных
-- Проверяет корректность lookback and step
+Whether to validate input data
+- Checks out the 'returns' column.
+- Checks data adequacy
+- Checks the correct trackback and step.
 
  random_state : int, optional
-Seed for воспроизводимости результатов
-- Используется for инициализации модели
-- Рекомендуется задавать for воспроизводимости
+Seed for reproducible results
+- Used for initialization of the model
+- It is recommended to ask for reproduction
 
  Returns:
  --------
  pd.dataFrame
-dataFrame with результатами бэктестинга:
-- 'date': datetime - дата тестирования
-- 'sharpe': float - коэффициент Шарпа стратегии
-- 'return': float - доходность стратегии
-- 'volatility': float - волатильность стратегии
-- 'max_drawdown': float - максимальная просадка
-- 'predictions': np.array - предсказания модели (если return_predictions=True)
-- 'train_size': int - размер обучающей выборки
-- 'test_size': int - размер testsой выборки
+DataFrame with the backtting results:
+- 'data': datame - test date
+- 'sharpe': float - Sharp factor of strategy
+- 'return': flat - strategy return
+- 'volatility': float - strategy volatility
+- 'max_drawdown': float = maximum draught
+- 'predications': np.array - model predictions (if return_predictations=True)
+- 'training_size':int is the size of the learning sample
+- 'test_size':int is the tests sample size
 
  Raises:
  -------
  ValueError
-Если data недостаточны or parameters некорректны
+If data are insufficient or parameters incorrect
  TypeError
-Если модель not поддерживает необходимые methods
+If the no model supports the necessary methhods
 
  Examples:
  ---------
->>> # Базовое использование
+>># Basic use
  >>> results = temporal_dependency_backtest(data, model)
  >>>
->>> # with кастомной конфигурацией
+>> # with caste configuration
  >>> config = {
  ... 'min_lookback': 50,
  ... 'max_lookback': 200,
@@ -476,10 +476,10 @@ dataFrame with результатами бэктестинга:
  ... }
  >>> results = temporal_dependency_backtest(data, model, lookback=50, step=5, config=config)
  >>>
->>> # Без validation (быстрее, но менее безопасно)
+>> # Without vilification (rapid but less secure)
  >>> results = temporal_dependency_backtest(data, model, validation=False)
  """
-# configuration on умолчанию
+# configuring on default
  if config is None:
  config = {
  'min_lookback': 20,
@@ -493,55 +493,55 @@ dataFrame with результатами бэктестинга:
  'n_jobs': 1
  }
 
-# validation входных данных
+# Validation of input data
  if validation:
  if 'returns' not in data.columns:
-raise ValueError("Колонка 'returns' not foundа in данных")
+Raise ValueError
 
  if len(data) < lookback + step:
-raise ValueError(f"Недостаточно данных. Минимум: {lookback + step}")
+Raise ValueError(f "Insufficient data. Minimum: {lookback + step}")
 
  if not (config['min_lookback'] <= lookback <= config['max_lookback']):
-raise ValueError(f"lookback должен быть между {config['min_lookback']} and {config['max_lookback']}")
+Raise ValueError(f'lookback should be between {config['min_lookback']} and {config['max_lookback']})
 
  if not (config['min_step'] <= step <= config['max_step']):
-raise ValueError(f"step должен быть между {config['min_step']} and {config['max_step']}")
+raise ValueError(f'step should be between {config['min_step']} and {config['max_step']}})
 
-# Подготовка данных
+# Data production
  results = []
  total_iterations = (len(data) - lookback) // step
 
  if config['verbose']:
-print(f"Начинаем бэктестинг with {total_iterations} итерациями")
-print(f"Окно обучения: {lookback} periods")
-print(f"Шаг: {step} periods")
+(f) "Starting back-up with ith {total_iterations} iterations")
+Print(f) Learning Window: {lookback}periods}
+prent(f"Shag: {step}periods")
 
-# Основной цикл бэктестинга
+# Basic Baactering Cycle
  for i in range(lookback, len(data) - step + 1, step):
  try:
-# Обучающие data
+# Training data
  train_data = data[i-lookback:i]
 
-# testsые data
+# Testsy data
  test_data = data[i:i+step]
 
-# Обучение модели
+# Model learning
  model.fit(train_data)
 
-# Предсказания
+# Premonition
  predictions = model.predict(test_data)
 
-# Оценка качества
+# Quality assessment
  returns = test_data['returns']
  strategy_returns = predictions * returns
 
-# Базовые metrics
+# Basic metrics
  sharpe = strategy_returns.mean() / strategy_returns.std() * np.sqrt(252) if strategy_returns.std() > 0 else 0
  total_return = strategy_returns.sum()
  volatility = strategy_returns.std() * np.sqrt(252)
  max_drawdown = calculate_max_drawdown(strategy_returns)
 
-# Результат итерации
+# The result of iteration
  result = {
  'date': test_data.index[0],
  'sharpe': sharpe,
@@ -552,81 +552,81 @@ print(f"Шаг: {step} periods")
  'test_size': len(test_data)
  }
 
-# Дополнительные результаты
+# Additional results
  if config['return_predictions']:
  result['predictions'] = predictions
 
  results.append(result)
 
  if config['verbose'] and (i - lookback) % (step * 10) == 0:
-print(f"COMPLETED: {i - lookback + 1} из {total_iterations} итераций")
+spring(f"COMPLETED: {i - lookback + 1} from {total_iterations} iterations")
 
  except Exception as e:
  if config['verbose']:
-print(f"Ошибка on итерации {i}: {e}")
+Print(f) Mistake on iteration {i}: {e})
  continue
 
  if not results:
-raise ValueError("not удалось выполнить ни одной итерации бэктестинга")
+Raise ValueError("not has been able to perform no camouflage).
 
  # create dataFrame
  results_df = pd.dataFrame(results)
 
  if config['verbose']:
-print(f"Бэктестинг завершен. Успешных итераций: {len(results_df)}")
-print(f"Средний коэффициент Шарпа: {results_df['sharpe'].mean():.4f}")
-print(f"Средняя доходность: {results_df['return'].mean():.4f}")
+(pint(f"Backetting complete. Successful iterations: {len(effects_df)})
+pint(f"Medial Sharp coefficient: {results_df['sharpe']mean(:4f}")
+pint(f" Average return: {results_df['return']mean(:4f}")
 
  return results_df
 
-# example использования
+# Example of use
 results = temporal_dependency_backtest(data, model, lookback=30, step=1)
 ```
 
-### 2. Монте-Карло бэктестинг
+♪##2 ♪ Monte Carlo Baektsing ♪
 
-### 🎲 process Монте-Карло бэктестинга
+### The Monte-Carlo Becketting process
 
 ```mermaid
 graph TD
-A[Исходные data] --> B[configuration параметров]
+A [Reference data] -> B [configration of parameters]
  B --> C[n_simulations = 1000]
  B --> D[confidence_level = 0.95]
 
-C --> E[Цикл симуляций]
+C --> E [Simulation cycle]
  D --> E
 
-E --> F[Случайная выборка данных<br/>80% with заменой]
-F --> G[Разделение on train/test<br/>70% / 30%]
+E --> F[Incident data sampling<br/>80 per cent with replacement]
+F --> G [Section on train/test<br/> 70 per cent / 30 per cent]
 
-G --> H[Обучение модели]
-H --> I[Предсказания]
-I --> J[Расчет доходности стратегии]
+G -> H [model training]
+H -> I [Treaties]
+I -> J [Strategy return calculation]
 
-J --> K[metrics симуляции]
-K --> L[Коэффициент Шарпа]
-K --> M[Максимальная просадка]
-K --> N[Общая доходность]
+J --> K[metrics simulations]
+K-> L [Sharp coefficient]
+K-> M[maximum draught]
+K-> N [Total return]
 
-L --> O[Сбор результатов]
+L -> O [Compilation of results]
  M --> O
  N --> O
 
-O --> P{Все симуляции<br/>завершены?}
-P -->|Нет| E
-P -->|Да| Q[Статистический анализ]
+O --> P {All simulations<br/> are complete?}
+P -->\\\\\E
+P -->\\\Q[Statistical analysis]
 
-Q --> R[Средний коэффициент Шарпа]
-Q --> S[Стандартное отклонение]
-Q --> T[Доверительный интервал]
+Q -> R [Medical Sharpe coefficient]
+Q -> S [standard deviation]
+Q -> T [Confidence interval]
 
-R --> U[Финальная оценка стратегии]
+R -> U [Financial evaluation of the strategy]
  S --> U
  T --> U
 
-U --> V{Стратегия стабильна?}
-V -->|Да| W[✅ Высокая надежность]
-V -->|Нет| X[❌ Нестабильная стратегия]
+U --> V {The Strategy is stable?}
+V -->\\\\W[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\t\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\///\\\\\\\\\\////\///\/\/\/\/\/\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}}}
+V-~ ~ No~ X[~ Instable strategy]
 
  style A fill:#e3f2fd
  style E fill:#fff3e0
@@ -635,97 +635,97 @@ V -->|Нет| X[❌ Нестабильная стратегия]
  style X fill:#ffcdd2
 ```
 
-**Симуляция множественных сценариев:**
+** Simulation of multiple scenarios:**
 
 ```python
 def monte_carlo_backtest(data, model, n_simulations=1000, confidence_level=0.95,
  config=None, validation=True, random_state=None):
  """
-Монте-Карло бэктестинг with детальными параметрами
+Monte Carlo Becketting with detailed parameters
 
  Parameters:
  -----------
  data : pd.dataFrame
-temporary ряд данных with колонками 'returns' and другими приsignми
-- Должен быть отсортирован in time
-- Должен содержать колонку 'returns' with доходностями
-- Рекомендуется минимум 1000 наблюдений for надежности
+temporary data series with columns 'returns' and other signature
+- Should be sorted in time
+- Shall contain a column "returns" with returns
+- A minimum of 1,000 observations are recommended for reliability
 
  model : object
-Обученная ML модель with методами fit() and predict()
-- Должен поддерживать fit(X, y) for обучения
-- Должен поддерживать predict(X) for predictions
-- Рекомендуется использовать TabularPredictor из AutoGluon
+ML model with Fit() and predict()
+- Should support fit(X, y) for learning.
+- Should support predict(X) for preferences
+- It is recommended to use TabularPredictor from AutoGluon
 
  n_simulations : int, default=1000
-Количество симуляций Монте-Карло
-- 1000 означает 1000 случайных выборок
-- Рекомендуется 500-2000 for большинства случаев
-- Меньше 500 может дать неточные результаты
-- Больше 2000 может быть избыточно медленным
+Number of simulations by Monte Carlo
+- 1000 means 1,000 random samples
+- Recommended 500-2000 for most cases
+- Less than 500 can give inaccurate results.
+- More than 2,000 may be too slow.
 
  confidence_level : float, default=0.95
-Уровень доверия for доверительного интервала (0.0 < confidence_level < 1.0)
-- 0.95 означает 95% доверительный интервал
-- Рекомендуется 0.90-0.99 for большинства случаев
-- 0.90 дает более узкий интервал
-- 0.99 дает более широкий интервал
+Confidence level for confidence interval (0.0 < conference_level < 1.0)
+- 0.95 means 95% confidence interval
+Recommended 0.90-0.99 for most cases
+- 0.90 gives a narrower interval
+- 0.99 gives a wider interval
 
  config : dict, optional
-Дополнительная configuration for бэктестинга
-- 'sample_frac': float, default=0.8 - доля данных for выборки (0.0 < sample_frac < 1.0)
-- 'train_frac': float, default=0.7 - доля данных for обучения (0.0 < train_frac < 1.0)
-- 'test_frac': float, default=0.3 - доля данных for тестирования (0.0 < test_frac < 1.0)
-- 'min_samples': int, default=100 - минимальное количество образцов in выборке
-- 'max_samples': int, default=10000 - максимальное количество образцов in выборке
-- 'return_predictions': bool, default=False - возвращать предсказания
-- 'return_metrics': bool, default=True - возвращать metrics
-- 'verbose': bool, default=False - выводить подробную информацию
-- 'parallel': bool, default=False - использовать параллельные вычисления
-- 'n_jobs': int, default=1 - количество процессов for параллельных вычислений
-- 'early_stopping': bool, default=False - остановка при достижении критерия
-- 'convergence_threshold': float, default=0.01 - порог сходимости for early_stopping
+Additional configuring for betting
+- 'sample_frac': flat, default=0.8 is the percentage of data for the sample (0.0 < sample_frac < 1.0)
+==Trin_frac==Float, default=0.7 is the share of data for learning (0.0 < tran_frac < 1.0)
+- 'test_frac': flat, default=0.3 is the share of data for testing (0.0 < test_frac < 1.0)
+- 'min_samples':int, default=100 = minimum number of samples in the sample
+- 'max_samples':int, default=1000 = maximum number of samples in the sample
+- 'return_predations': bool, default=False - return predictions
+- 'return_metrics': bool, default=True - return metrics
+- 'verbose': bool, default=False - output details
+- 'parallel': bool, default=False - use parallel calculations
+- 'n_jobs':int, default=1 - number of processes for parallel calculations
+- 'early_stopping': bell, default=False - stop when the criterion is reached
+- 'Convergence_threshold': flat, default=0.01 - convergence threshold for life_stopping
 
  validation : bool, default=True
-Выполнять ли валидацию входных данных
-- Проверяет presence колонки 'returns'
-- Проверяет достаточность данных
-- Проверяет корректность параметров
+Whether to validate input data
+- Checks out the 'returns' column.
+- Checks data adequacy
+- Checks the correct parameters.
 
  random_state : int, optional
-Seed for воспроизводимости результатов
-- Используется for инициализации генератора случайных чисел
-- Рекомендуется задавать for воспроизводимости
+Seed for reproducible results
+- Used for initialization of random number generator
+- It is recommended to ask for reproduction
 
  Returns:
  --------
  dict
-Словарь with результатами Монте-Карло бэктестинга:
-- 'mean_sharpe': float - средний коэффициент Шарпа
-- 'std_sharpe': float - стандартное отклонение коэффициента Шарпа
-- 'mean_max_drawdown': float - средняя максимальная просадка
-- 'std_max_drawdown': float - стандартное отклонение максимальной просадки
-- 'mean_total_return': float - средняя общая доходность
-- 'std_total_return': float - стандартное отклонение общей доходности
-- 'confidence_interval': List - доверительный интервал for коэффициента Шарпа
-- 'percentiles': dict - перцентили for all метрик
-- 'success_rate': float - доля успешных симуляций (sharpe > 1.0)
-- 'results': pd.dataFrame - детальные результаты all симуляций
-- 'config_Used': dict - использованная configuration
+The dictionary with the results of Monte Carlo betting:
+- 'mean_sharpe': float = average Sharpe coefficient
+- 'std_sharpe': float = standard deviation of Sharp coefficient
+== sync, corrected by elderman == @elder_man
+== sync, corrected by elderman == @elder_man
+- 'mean_total_return': flat = average total return
+- 'std_total_return': flat = standard deviation of total return
+- 'confidence_interval':List is the confidence interval for Sharp coefficient
+- 'Percentiles': dict - percentiles for all metrics
+- 'access_rate': flat = percentage of successful simulations (sharpe > 1.0)
+- 'Results': pd.dataFrame - detailed results of all simulations
+- 'config_Used':dict - used configuration
 
  Raises:
  -------
  ValueError
-Если data недостаточны or parameters некорректны
+If data are insufficient or parameters incorrect
  TypeError
-Если модель not поддерживает необходимые methods
+If the no model supports the necessary methhods
 
  Examples:
  ---------
->>> # Базовое использование
+>># Basic use
  >>> results = monte_carlo_backtest(data, model)
  >>>
->>> # with кастомной конфигурацией
+>> # with caste configuration
  >>> config = {
  ... 'sample_frac': 0.9,
  ... 'train_frac': 0.8,
@@ -736,10 +736,10 @@ Seed for воспроизводимости результатов
  ... }
  >>> results = monte_carlo_backtest(data, model, n_simulations=500, config=config)
  >>>
->>> # Без validation (быстрее, но менее безопасно)
+>> # Without vilification (rapid but less secure)
  >>> results = monte_carlo_backtest(data, model, validation=False)
  """
-# configuration on умолчанию
+# configuring on default
  if config is None:
  config = {
  'sample_frac': 0.8,
@@ -756,77 +756,77 @@ Seed for воспроизводимости результатов
  'convergence_threshold': 0.01
  }
 
-# validation входных данных
+# Validation of input data
  if validation:
  if 'returns' not in data.columns:
-raise ValueError("Колонка 'returns' not foundа in данных")
+Raise ValueError
 
  if len(data) < config['min_samples']:
-raise ValueError(f"Недостаточно данных. Минимум: {config['min_samples']}")
+raise ValueError(f"Insufficient data. Minimum: {config['min_samples']})
 
  if not (0 < n_simulations <= 10000):
-raise ValueError("n_simulations должно быть между 1 and 10000")
+Raise ValueError("n_simulations should be between 1 and 10,000")
 
  if not (0 < confidence_level < 1):
-raise ValueError("confidence_level должно быть между 0 and 1")
+Raise ValueError("confidence_level should be between 0 and 1)
 
  if not (0 < config['sample_frac'] < 1):
-raise ValueError("sample_frac должно быть между 0 and 1")
+Raise ValueError("sample_frac should be between 0 and 1)
 
  if not (0 < config['train_frac'] < 1) or not (0 < config['test_frac'] < 1):
-raise ValueError("train_frac and test_frac должны быть между 0 and 1")
+Raise ValueError("training_frac and test_frac should be between 0 and 1)
 
  if abs(config['train_frac'] + config['test_frac'] - 1.0) > 1e-6:
-raise ValueError("train_frac + test_frac должно равняться 1.0")
+Raise ValueError("training_frac + test_frac shall be 1.0")
 
  # installation random_state
  if random_state is not None:
  np.random.seed(random_state)
 
-# Подготовка данных
+# Data production
  results = []
  successful_simulations = 0
 
  if config['verbose']:
-print(f"Начинаем Монте-Карло бэктестинг with {n_simulations} симуляциями")
-print(f"Доля выборки: {config['sample_frac']}")
-print(f"Доля обучения: {config['train_frac']}")
-print(f"Доля тестирования: {config['test_frac']}")
+(f) Start Monte Carlo bactering with simulations)
+(pint(f"Sample share: {config['ssample_frac']})
+(pint(f "Learning rate: {config['training_frac']}})
+(pint(f" Test rate: {config['test_frac']}})
 
-# Основной цикл симуляций
+# Basic simulation cycle
  for i in range(n_simulations):
  try:
-# Случайная выборка данных
+# Random data sample
  sample_size = min(int(len(data) * config['sample_frac']), config['max_samples'])
  sample_data = data.sample(n=sample_size, replace=True)
 
-# Разделение on train/test
+# Separation on train/test
  split_point = int(len(sample_data) * config['train_frac'])
  train_data = sample_data[:split_point]
  test_data = sample_data[split_point:]
 
-# check минимального количества образцов
+# check minimum number of samples
  if len(train_data) < config['min_samples'] or len(test_data) < config['min_samples']:
  continue
 
-# Обучение модели
+# Model learning
  model.fit(train_data)
 
-# Предсказания
+# Premonition
  predictions = model.predict(test_data)
 
-# Оценка качества
+# Quality assessment
  returns = test_data['returns']
  strategy_returns = predictions * returns
 
-# Базовые metrics
+# Basic metrics
  sharpe = strategy_returns.mean() / strategy_returns.std() * np.sqrt(252) if strategy_returns.std() > 0 else 0
  max_drawdown = calculate_max_drawdown(strategy_returns)
  total_return = strategy_returns.sum()
  volatility = strategy_returns.std() * np.sqrt(252)
  annual_return = strategy_returns.mean() * 252
 
-# Результат симуляции
+# The result of simulation
  result = {
  'simulation': i + 1,
  'sharpe': sharpe,
@@ -838,7 +838,7 @@ print(f"Доля тестирования: {config['test_frac']}")
  'test_size': len(test_data)
  }
 
-# Дополнительные результаты
+# Additional results
  if config['return_predictions']:
  result['predictions'] = predictions
 
@@ -851,24 +851,24 @@ print(f"Доля тестирования: {config['test_frac']}")
  recent_sharpe = np.mean([r['sharpe'] for r in results[-50:]])
  if abs(recent_sharpe - np.mean([r['sharpe'] for r in results[-100:-50]])) < config['convergence_threshold']:
  if config['verbose']:
-print(f"Ранняя остановка on итерации {i+1} из-за сходимости")
+(f) Early stop on iteration {i+1} due to convergence)
  break
 
  if config['verbose'] and (i + 1) % 100 == 0:
-print(f"COMPLETED: {i + 1} из {n_simulations} симуляций")
+(f"COMPLETED: {i + 1} from {n_simulations} simulations")
 
  except Exception as e:
  if config['verbose']:
-print(f"Ошибка on симуляции {i+1}: {e}")
+Print(f) Error on simulation {i+1}: {e})
  continue
 
  if not results:
-raise ValueError("not удалось выполнить ни одной успешной симуляции")
+Raise ValueError("not has been able to perform no successful simulations")
 
  # create dataFrame
  results_df = pd.dataFrame(results)
 
-# Статистический анализ
+# Statistical analysis
  mean_sharpe = results_df['sharpe'].mean()
  std_sharpe = results_df['sharpe'].std()
  mean_max_drawdown = results_df['max_drawdown'].mean()
@@ -876,22 +876,22 @@ raise ValueError("not удалось выполнить ни одной успе
  mean_total_return = results_df['total_return'].mean()
  std_total_return = results_df['total_return'].std()
 
-# Доверительный интервал
+# Confidence interval
  confidence_interval = np.percentile(results_df['sharpe'],
  [100*(1-confidence_level)/2,
  100*(1+confidence_level)/2])
 
-# Перцентили
+# Percentile
  percentiles = {
  'sharpe': np.percentile(results_df['sharpe'], [5, 25, 50, 75, 95]),
  'max_drawdown': np.percentile(results_df['max_drawdown'], [5, 25, 50, 75, 95]),
  'total_return': np.percentile(results_df['total_return'], [5, 25, 50, 75, 95])
  }
 
-# Доля успешных симуляций
+# Share of successful simulations
  success_rate = (results_df['sharpe'] > 1.0).mean()
 
-# Финальные результаты
+# Final results
  final_results = {
  'mean_sharpe': mean_sharpe,
  'std_sharpe': std_sharpe,
@@ -908,108 +908,108 @@ raise ValueError("not удалось выполнить ни одной успе
  }
 
  if config['verbose']:
-print(f"Монте-Карло бэктестинг завершен. Успешных симуляций: {successful_simulations}")
-print(f"Средний коэффициент Шарпа: {mean_sharpe:.4f} ± {std_sharpe:.4f}")
-print(f"Доверительный интервал (95%): [{confidence_interval[0]:.4f}, {confidence_interval[1]:.4f}]")
-print(f"Доля успешных симуляций: {success_rate:.2%}")
+== sync, corrected by elderman == @elder_man
+(f) Average Sharp coefficient: {mean_sharpe:.4f} ± {std_sharpe:.4f})
+Print(f"Confidence interval (95 per cent): [{confidence_interval[0]:4f}, {conference_interval[1]:4f}]])
+pprint(f) "Failure of successful simulations: {access_rate:2%}")
 
  return final_results
 
-# example использования
+# Example of use
 mc_results = monte_carlo_backtest(data, model, n_simulations=1000, confidence_level=0.95)
 ```
 
-**Бутстрап бэктестинг:**
+**Boutstrap Baektsing:**
 
 ```python
 def bootstrap_backtest(data, model, n_bootstrap=1000, block_size=10,
  config=None, validation=True, random_state=None):
  """
-Бутстрап бэктестинг with блоками and детальными параметрами
+Bottrap Backting with blocks and detailed parameters
 
  Parameters:
  -----------
  data : pd.dataFrame
-temporary ряд данных with колонками 'returns' and другими приsignми
-- Должен быть отсортирован in time
-- Должен содержать колонку 'returns' with доходностями
-- Рекомендуется минимум 1000 наблюдений for надежности
+temporary data series with columns 'returns' and other signature
+- Should be sorted in time
+- Shall contain a column "returns" with returns
+- A minimum of 1,000 observations are recommended for reliability
 
  model : object
-Обученная ML модель with методами fit() and predict()
-- Должен поддерживать fit(X, y) for обучения
-- Должен поддерживать predict(X) for predictions
-- Рекомендуется использовать TabularPredictor из AutoGluon
+ML model with Fit() and predict()
+- Should support fit(X, y) for learning.
+- Should support predict(X) for preferences
+- It is recommended to use TabularPredictor from AutoGluon
 
  n_bootstrap : int, default=1000
-Количество бутстрап итераций
-- 1000 означает 1000 бутстрап выборок
-- Рекомендуется 500-2000 for большинства случаев
-- Меньше 500 может дать неточные результаты
-- Больше 2000 может быть избыточно медленным
+Number of iteration boots
+- 1000 means 1,000 butstrap samples
+- Recommended 500-2000 for most cases
+- Less than 500 can give inaccurate results.
+- More than 2,000 may be too slow.
 
  block_size : int, default=10
-Размер блока for бутстрапа
-- 10 означает блоки on 10 наблюдений
-- Рекомендуется 5-20 for большинства случаев
-- Меньше 5 может нарушить временную структуру
-- Больше 20 может дать менее точные результаты
+Size of block for butstrap
+- 10 means blocks on 10 observations
+- Recommended 5-20 for most cases
+- Less than 5 could disrupt the time structure.
+- More than 20 can produce less accurate results.
 
  config : dict, optional
-Дополнительная configuration for бэктестинга
-- 'train_frac': float, default=0.7 - доля данных for обучения (0.0 < train_frac < 1.0)
-- 'test_frac': float, default=0.3 - доля данных for тестирования (0.0 < test_frac < 1.0)
-- 'min_blocks': int, default=10 - минимальное количество блоков
-- 'max_blocks': int, default=1000 - максимальное количество блоков
-- 'min_samples': int, default=100 - минимальное количество образцов in выборке
-- 'max_samples': int, default=10000 - максимальное количество образцов in выборке
-- 'return_predictions': bool, default=False - возвращать предсказания
-- 'return_metrics': bool, default=True - возвращать metrics
-- 'verbose': bool, default=False - выводить подробную информацию
-- 'parallel': bool, default=False - использовать параллельные вычисления
-- 'n_jobs': int, default=1 - количество процессов for параллельных вычислений
-- 'early_stopping': bool, default=False - остановка при достижении критерия
-- 'convergence_threshold': float, default=0.01 - порог сходимости for early_stopping
+Additional configuring for betting
+==Trin_frac==Float, default=0.7 is the share of data for learning (0.0 < tran_frac < 1.0)
+- 'test_frac': flat, default=0.3 is the share of data for testing (0.0 < test_frac < 1.0)
+== sync, corrected by elderman == @elder_man
+- 'max_locks':int, default=1000 - maximum number of blocks
+- 'min_samples':int, default=100 = minimum number of samples in the sample
+- 'max_samples':int, default=1000 = maximum number of samples in the sample
+- 'return_predations': bool, default=False - return predictions
+- 'return_metrics': bool, default=True - return metrics
+- 'verbose': bool, default=False - output details
+- 'parallel': bool, default=False - use parallel calculations
+- 'n_jobs':int, default=1 - number of processes for parallel calculations
+- 'early_stopping': bell, default=False - stop when the criterion is reached
+- 'Convergence_threshold': flat, default=0.01 - convergence threshold for life_stopping
 
  validation : bool, default=True
-Выполнять ли валидацию входных данных
-- Проверяет presence колонки 'returns'
-- Проверяет достаточность данных
-- Проверяет корректность параметров
+Whether to validate input data
+- Checks out the 'returns' column.
+- Checks data adequacy
+- Checks the correct parameters.
 
  random_state : int, optional
-Seed for воспроизводимости результатов
-- Используется for инициализации генератора случайных чисел
-- Рекомендуется задавать for воспроизводимости
+Seed for reproducible results
+- Used for initialization of random number generator
+- It is recommended to ask for reproduction
 
  Returns:
  --------
  pd.dataFrame
-dataFrame with результатами бутстрап бэктестинга:
-- 'bootstrap': int - номер бутстрап итерации
-- 'sharpe': float - коэффициент Шарпа стратегии
-- 'max_drawdown': float - максимальная просадка
-- 'total_return': float - общая доходность стратегии
-- 'volatility': float - волатильность стратегии
-- 'annual_return': float - годовая доходность
-- 'train_size': int - размер обучающей выборки
-- 'test_size': int - размер testsой выборки
-- 'n_blocks': int - количество блоков in выборке
-- 'predictions': np.array - предсказания модели (если return_predictions=True)
+DataFrame with the results of the battering boots:
+- 'bootstrap':int is the number of the iteration booth.
+- 'sharpe': float - Sharp factor of strategy
+- 'max_drawdown': float = maximum draught
+- 'Total_return': float - total strategy return
+- 'volatility': float - strategy volatility
+- 'annual_return': float - annual return
+- 'training_size':int is the size of the learning sample
+- 'test_size':int is the tests sample size
+- 'n_locks':int is the number of blocks in the sample
+- 'predications': np.array - model predictions (if return_predictations=True)
 
  Raises:
  -------
  ValueError
-Если data недостаточны or parameters некорректны
+If data are insufficient or parameters incorrect
  TypeError
-Если модель not поддерживает необходимые methods
+If the no model supports the necessary methhods
 
  Examples:
  ---------
->>> # Базовое использование
+>># Basic use
  >>> results = bootstrap_backtest(data, model)
  >>>
->>> # with кастомной конфигурацией
+>> # with caste configuration
  >>> config = {
  ... 'train_frac': 0.8,
  ... 'test_frac': 0.2,
@@ -1020,10 +1020,10 @@ dataFrame with результатами бутстрап бэктестинга:
  ... }
  >>> results = bootstrap_backtest(data, model, n_bootstrap=500, config=config)
  >>>
->>> # Без validation (быстрее, но менее безопасно)
+>> # Without vilification (rapid but less secure)
  >>> results = bootstrap_backtest(data, model, validation=False)
  """
-# configuration on умолчанию
+# configuring on default
  if config is None:
  config = {
  'train_frac': 0.7,
@@ -1041,50 +1041,50 @@ dataFrame with результатами бутстрап бэктестинга:
  'convergence_threshold': 0.01
  }
 
-# validation входных данных
+# Validation of input data
  if validation:
  if 'returns' not in data.columns:
-raise ValueError("Колонка 'returns' not foundа in данных")
+Raise ValueError
 
  if len(data) < config['min_samples']:
-raise ValueError(f"Недостаточно данных. Минимум: {config['min_samples']}")
+raise ValueError(f"Insufficient data. Minimum: {config['min_samples']})
 
  if not (0 < n_bootstrap <= 10000):
-raise ValueError("n_bootstrap должно быть между 1 and 10000")
+Raise ValueError("n_bootstrap should be between 1 and 10,000")
 
  if not (1 <= block_size <= 100):
-raise ValueError("block_size должно быть между 1 and 100")
+Raise ValueError("block_size should be between 1 and 100")
 
  if not (0 < config['train_frac'] < 1) or not (0 < config['test_frac'] < 1):
-raise ValueError("train_frac and test_frac должны быть между 0 and 1")
+Raise ValueError("training_frac and test_frac should be between 0 and 1)
 
  if abs(config['train_frac'] + config['test_frac'] - 1.0) > 1e-6:
-raise ValueError("train_frac + test_frac должно равняться 1.0")
+Raise ValueError("training_frac + test_frac shall be 1.0")
 
  # installation random_state
  if random_state is not None:
  np.random.seed(random_state)
 
-# Подготовка данных
+# Data production
  results = []
  successful_bootstraps = 0
 
  if config['verbose']:
-print(f"Начинаем бутстрап бэктестинг with {n_bootstrap} итерациями")
-print(f"Размер блока: {block_size}")
-print(f"Доля обучения: {config['train_frac']}")
-print(f"Доля тестирования: {config['test_frac']}")
+(f) "Start battering with {n_bootstrap} iterations")
+print(f) Unit measurement: {lock_size})
+(pint(f "Learning rate: {config['training_frac']}})
+(pint(f" Test rate: {config['test_frac']}})
 
-# Основной цикл бутстрапа
+# Basic Butstrap Cycle
  for i in range(n_bootstrap):
  try:
-# create бутстрап выборки with блоками
+♪ the sample booth with blocks ♪
  bootstrap_data = []
  n_blocks = 0
 
-# Случайный выбор блоков
+# Random block selection
  while len(bootstrap_data) < config['min_samples'] and n_blocks < config['max_blocks']:
-# Случайный выбор начального indexа блока
+# Random selection of the initial index of the block
  start_idx = np.random.randint(0, len(data) - block_size + 1)
  block = data[start_idx:start_idx + block_size]
 
@@ -1097,37 +1097,37 @@ print(f"Доля тестирования: {config['test_frac']}")
 
  bootstrap_data = pd.concat(bootstrap_data)
 
-# check минимального количества образцов
+# check minimum number of samples
  if len(bootstrap_data) < config['min_samples']:
  continue
 
-# Разделение on train/test
+# Separation on train/test
  split_point = int(len(bootstrap_data) * config['train_frac'])
  train_data = bootstrap_data[:split_point]
  test_data = bootstrap_data[split_point:]
 
-# check минимального количества образцов
+# check minimum number of samples
  if len(train_data) < config['min_samples'] or len(test_data) < config['min_samples']:
  continue
 
-# Обучение модели
+# Model learning
  model.fit(train_data)
 
-# Предсказания
+# Premonition
  predictions = model.predict(test_data)
 
-# Оценка качества
+# Quality assessment
  returns = test_data['returns']
  strategy_returns = predictions * returns
 
-# Базовые metrics
+# Basic metrics
  sharpe = strategy_returns.mean() / strategy_returns.std() * np.sqrt(252) if strategy_returns.std() > 0 else 0
  max_drawdown = calculate_max_drawdown(strategy_returns)
  total_return = strategy_returns.sum()
  volatility = strategy_returns.std() * np.sqrt(252)
  annual_return = strategy_returns.mean() * 252
 
-# Результат бутстрапа
+# The result of the boutstrap
  result = {
  'bootstrap': i + 1,
  'sharpe': sharpe,
@@ -1140,7 +1140,7 @@ print(f"Доля тестирования: {config['test_frac']}")
  'n_blocks': n_blocks
  }
 
-# Дополнительные результаты
+# Additional results
  if config['return_predictions']:
  result['predictions'] = predictions
 
@@ -1153,76 +1153,76 @@ print(f"Доля тестирования: {config['test_frac']}")
  recent_sharpe = np.mean([r['sharpe'] for r in results[-50:]])
  if abs(recent_sharpe - np.mean([r['sharpe'] for r in results[-100:-50]])) < config['convergence_threshold']:
  if config['verbose']:
-print(f"Ранняя остановка on итерации {i+1} из-за сходимости")
+(f) Early stop on iteration {i+1} due to convergence)
  break
 
  if config['verbose'] and (i + 1) % 100 == 0:
-print(f"COMPLETED: {i + 1} из {n_bootstrap} бутстрап итераций")
+spring(f"COMPLETED: {i + 1} from {n_bootstrap} iterations)
 
  except Exception as e:
  if config['verbose']:
-print(f"Ошибка on бутстрап итерации {i+1}: {e}")
+Print(f) Mistake on iteration boot {i+1}: {e})
  continue
 
  if not results:
-raise ValueError("not удалось выполнить ни одной успешной бутстрап итерации")
+Raise ValueError("not has been able to perform any successful iteration booths")
 
  # create dataFrame
  results_df = pd.dataFrame(results)
 
  if config['verbose']:
-print(f"Бутстрап бэктестинг завершен. Успешных итераций: {successful_bootstraps}")
-print(f"Средний коэффициент Шарпа: {results_df['sharpe'].mean():.4f}")
-print(f"Средняя доходность: {results_df['total_return'].mean():.4f}")
-print(f"Среднее количество блоков: {results_df['n_blocks'].mean():.1f}")
+(f "Butstrap Baektezting Completed. Successful iterations: {accessfulful_botstraps}")
+pint(f"Medial Sharp coefficient: {results_df['sharpe']mean(:4f}")
+average return: {results_df['total_return'].mean(:4f})
+pprint(f" Average number of blocks: {results_df['n_locks'].mean(:1f})
 
  return results_df
 
-# example использования
+# Example of use
 bootstrap_results = bootstrap_backtest(data, model, n_bootstrap=1000, block_size=10)
 ```
 
-### 3. Стресс-тестинг
+♪##3 ♪ Stressing ♪
 
-### ⚡ Сценарии стресс-тестинга
+♪# ♪ Stress-restraint scripts
 
 ```mermaid
 graph TD
-A[Исходные data] --> B[Применение стрессовых сценариев]
+A[Reference data] -> B [Use of stress scenarios]
 
-B --> C[Обвал рынка<br/>volatility_multiplier: 3.0<br/>return_shift: -0.1]
-B --> D[Высокая волатильность<br/>volatility_multiplier: 2.0<br/>return_shift: 0.0]
-B --> E[Низкая волатильность<br/>volatility_multiplier: 0.5<br/>return_shift: 0.0]
-B --> F[Рыночные режимы<br/>Regime Detection]
+B --> C[market collapse<br/>volatility_multiplier: 3.0<br/>return_shift: -0.1]
+B -> D[High volatility<br/>volatility_multiplier: 2.0<br/>return_shift: 0.0]
+B --> E[Low volatility<br/>volatility_multiplier: 0.5<br/>return_shift: 0.0]
+B --> F[market modes<br/>Regime Design]
 
-C --> G[Обучение on стрессовых данных]
+C --> G [Learning on stress data]
  D --> G
  E --> G
  F --> G
 
-G --> H[Предсказания]
-H --> I[Расчет доходности стратегии]
+G -> H [Treaties]
+H -> I [Strategy return calculation]
 
-I --> J[metrics стресс-теста]
-J --> K[Коэффициент Шарпа]
-J --> L[Максимальная просадка]
-J --> M[Общая доходность]
+I --> J[metrics stress test]
+J --> K [Sharp coefficient]
+J --> L [Maximum draught]
+J-> M [Total return]
 
-K --> N[comparison сценариев]
+K --> N[comparison scenarios]
  L --> N
  M --> N
 
-N --> O[Оценка устойчивости]
-O --> P[Стратегия выдерживает<br/>экстремальные условия?]
+N -> O [Sustainability assessment]
+O -> P[The Strategy is able to withstand the extreme conditions?]
 
-P -->|Да| Q[✅ Робастная стратегия]
-P -->|Нет| R[❌ Требует доработки]
+P -->\\\\Q[\\\Robast Strategy]
+P-~ ~ No~ R[~ Need to be improved]
 
-Q --> S[Деплой in продакшен]
-R --> T[Оптимизация параметров]
+Q -> S [Sixture in sales]
+R -> T [Optimization of parameters]
 
-T --> U[configuration риск-менеджмента]
-U --> V[Повторное тестирование]
+T --> U [configuring risk-management]
+U -> V [Re-testing]
  V --> B
 
  style A fill:#e3f2fd
@@ -1234,83 +1234,83 @@ U --> V[Повторное тестирование]
  style R fill:#ff9800
 ```
 
-**Тестирование on экстремальных условиях:**
+** Test on extreme conditions:**
 
 ```python
 def stress_test_backtest(data, model, stress_scenarios, config=None, validation=True, random_state=None):
  """
-Стресс-тестинг стратегии with детальными параметрами
+Stressing strategy with detailed parameters
 
  Parameters:
  -----------
  data : pd.dataFrame
-temporary ряд данных with колонками 'returns' and другими приsignми
-- Должен быть отсортирован in time
-- Должен содержать колонку 'returns' with доходностями
-- Рекомендуется минимум 1000 наблюдений for надежности
+temporary data series with columns 'returns' and other signature
+- Should be sorted in time
+- Shall contain a column "returns" with returns
+- A minimum of 1,000 observations are recommended for reliability
 
  model : object
-Обученная ML модель with методами fit() and predict()
-- Должен поддерживать fit(X, y) for обучения
-- Должен поддерживать predict(X) for predictions
-- Рекомендуется использовать TabularPredictor из AutoGluon
+ML model with Fit() and predict()
+- Should support fit(X, y) for learning.
+- Should support predict(X) for preferences
+- It is recommended to use TabularPredictor from AutoGluon
 
  stress_scenarios : dict
-Словарь with сценариями стресс-тестинга
-- Ключи: названия сценариев (str)
-- Значения: parameters сценария (dict)
-- examples параметров:
-- 'volatility_multiplier': float - множитель волатильности (1.0 = нормальная)
-- 'return_shift': float - сдвиг доходности (0.0 = нормальная)
-- 'correlation_multiplier': float - множитель корреляции (1.0 = нормальная)
-- 'liquidity_multiplier': float - множитель ликвидности (1.0 = нормальная)
-- 'regime_shift': str - сдвиг рыночного режима ('bull', 'bear', 'sideways')
+Vocabulary with stress-compressing scenarios
+- Keys: scenario names (str)
+- Values: script parameters (dict)
+- examples of parameters:
+- 'volatility_multiplier': float is a factor of volatility (1.0 = normal)
+- 'return_shift': float = profit shift (0.0 = normal)
+- 'correllation_multiplier': float is the correlation factor (1.0 = normal)
+- 'liquidity_multiplier': flot = liquidity multiplier (1.0 = normal)
+- 'regime_shift': str - market mode shift ('bull', 'bear', 'sideways')
 
  config : dict, optional
-Дополнительная configuration for стресс-тестинга
-- 'train_frac': float, default=0.7 - доля данных for обучения (0.0 < train_frac < 1.0)
-- 'test_frac': float, default=0.3 - доля данных for тестирования (0.0 < test_frac < 1.0)
-- 'min_samples': int, default=100 - минимальное количество образцов
-- 'max_samples': int, default=10000 - максимальное количество образцов
-- 'return_predictions': bool, default=False - возвращать предсказания
-- 'return_metrics': bool, default=True - возвращать metrics
-- 'verbose': bool, default=False - выводить подробную информацию
-- 'parallel': bool, default=False - использовать параллельные вычисления
-- 'n_jobs': int, default=1 - количество процессов for параллельных вычислений
-- 'scenario_weights': dict, default=None - веса for сценариев
-- 'baseline_scenario': str, default='normal' - базовый сценарий for сравнения
+Additional configurization for Stress-Cancelling
+==Trin_frac==Float, default=0.7 is the share of data for learning (0.0 < tran_frac < 1.0)
+- 'test_frac': flat, default=0.3 is the share of data for testing (0.0 < test_frac < 1.0)
+- 'min_samples':int, default=100 - minimum number of samples
+- 'max_samples':int, default=1000 = maximum number of samples
+- 'return_predations': bool, default=False - return predictions
+- 'return_metrics': bool, default=True - return metrics
+- 'verbose': bool, default=False - output details
+- 'parallel': bool, default=False - use parallel calculations
+- 'n_jobs':int, default=1 - number of processes for parallel calculations
+- 'Scenario_whites': dict, default= None - Weights for scenarios
+- 'baseline_scenario':str, default='normaal' - Baseline scenario for comparison
 
  validation : bool, default=True
-Выполнять ли валидацию входных данных
-- Проверяет presence колонки 'returns'
-- Проверяет достаточность данных
-- Проверяет корректность сценариев
+Whether to validate input data
+- Checks out the 'returns' column.
+- Checks data adequacy
+- Checks scenarios.
 
  random_state : int, optional
-Seed for воспроизводимости результатов
-- Используется for инициализации генератора случайных чисел
-- Рекомендуется задавать for воспроизводимости
+Seed for reproducible results
+- Used for initialization of random number generator
+- It is recommended to ask for reproduction
 
  Returns:
  --------
  dict
-Словарь with результатами стресс-тестинга:
-- 'scenario_results': dict - результаты on каждому сценарию
-- 'comparison_metrics': dict - сравнительные metrics
-- 'scenario_rankings': dict - ранжирование сценариев
-- 'overall_assessment': dict - общая оценка устойчивости
-- 'config_Used': dict - использованная configuration
+Vocabulary with stress tweaking results:
+- 'scenario_results':dict - results on each scenario
+- 'Comparison_metrics':dict - Comparative metrics
+- 'scenario_rankings': dict - ranking scenarios
+- 'overall_assessment':dict - overall sustainability evaluation
+- 'config_Used':dict - used configuration
 
  Raises:
  -------
  ValueError
-Если data недостаточны or parameters некорректны
+If data are insufficient or parameters incorrect
  TypeError
-Если модель not поддерживает необходимые methods
+If the no model supports the necessary methhods
 
  Examples:
  ---------
->>> # Базовое использование
+>># Basic use
  >>> stress_scenarios = {
  ... 'market_crash': {'volatility_multiplier': 3.0, 'return_shift': -0.1},
  ... 'high_volatility': {'volatility_multiplier': 2.0, 'return_shift': 0.0},
@@ -1318,7 +1318,7 @@ Seed for воспроизводимости результатов
  ... }
  >>> results = stress_test_backtest(data, model, stress_scenarios)
  >>>
->>> # with кастомной конфигурацией
+>> # with caste configuration
  >>> config = {
  ... 'train_frac': 0.8,
  ... 'test_frac': 0.2,
@@ -1329,10 +1329,10 @@ Seed for воспроизводимости результатов
  ... }
  >>> results = stress_test_backtest(data, model, stress_scenarios, config=config)
  >>>
->>> # Без validation (быстрее, но менее безопасно)
+>> # Without vilification (rapid but less secure)
  >>> results = stress_test_backtest(data, model, stress_scenarios, validation=False)
  """
-# configuration on умолчанию
+# configuring on default
  if config is None:
  config = {
  'train_frac': 0.7,
@@ -1348,79 +1348,79 @@ Seed for воспроизводимости результатов
  'baseline_scenario': 'normal'
  }
 
-# validation входных данных
+# Validation of input data
  if validation:
  if 'returns' not in data.columns:
-raise ValueError("Колонка 'returns' not foundа in данных")
+Raise ValueError
 
  if len(data) < config['min_samples']:
-raise ValueError(f"Недостаточно данных. Минимум: {config['min_samples']}")
+raise ValueError(f"Insufficient data. Minimum: {config['min_samples']})
 
  if not stress_scenarios:
-raise ValueError("Сценарии стресс-тестинга not заданы")
+Raise ValueError(" Stress-Cancelling scripts not specified")
 
  for scenario_name, scenario_params in stress_scenarios.items():
  if not isinstance(scenario_params, dict):
-raise ValueError(f"parameters сценария '{scenario_name}' должны быть словарем")
+raise ValueError(f"parameters script '{scenario_name}' should be a dictionary")
 
  # installation random_state
  if random_state is not None:
  np.random.seed(random_state)
 
-# Подготовка данных
+# Data production
  scenario_results = {}
  comparison_metrics = {}
  scenario_rankings = {}
 
  if config['verbose']:
-print(f"Начинаем стресс-тестинг with {len(stress_scenarios)} сценариями")
-print(f"Доля обучения: {config['train_frac']}")
-print(f"Доля тестирования: {config['test_frac']}")
+prent(f) "Starting stress-disturbing with scenarios")
+(pint(f "Learning rate: {config['training_frac']}})
+(pint(f" Test rate: {config['test_frac']}})
 
-# Основной цикл стресс-тестинга
+# The main stress-compressing cycle
  for scenario_name, scenario_params in stress_scenarios.items():
  try:
  if config['verbose']:
-print(f"Тестируем сценарий: {scenario_name}")
+print(f) "Try script: {scenario_name}")
 
-# Применение стрессового сценария
+# Stress scenario application
  stressed_data = apply_stress_scenario(data, scenario_params)
 
-# check минимального количества образцов
+# check minimum number of samples
  if len(stressed_data) < config['min_samples']:
  if config['verbose']:
-print(f"Пропускаем сценарий '{scenario_name}': недостаточно данных")
+print(f"Slip the script '{scenario_name}': not enough data")
  continue
 
-# Разделение on train/test
+# Separation on train/test
  split_point = int(len(stressed_data) * config['train_frac'])
  train_data = stressed_data[:split_point]
  test_data = stressed_data[split_point:]
 
-# check минимального количества образцов
+# check minimum number of samples
  if len(train_data) < config['min_samples'] or len(test_data) < config['min_samples']:
  if config['verbose']:
-print(f"Пропускаем сценарий '{scenario_name}': недостаточно данных for обучения/тестирования")
+print(f"Skip the script '{scenario_name}': insufficient data for learning/testing")
  continue
 
-# Обучение модели
+# Model learning
  model.fit(train_data)
 
-# Предсказания
+# Premonition
  predictions = model.predict(test_data)
 
-# Оценка качества
+# Quality assessment
  returns = test_data['returns']
  strategy_returns = predictions * returns
 
-# Базовые metrics
+# Basic metrics
  sharpe = strategy_returns.mean() / strategy_returns.std() * np.sqrt(252) if strategy_returns.std() > 0 else 0
  max_drawdown = calculate_max_drawdown(strategy_returns)
  total_return = strategy_returns.sum()
  volatility = strategy_returns.std() * np.sqrt(252)
  annual_return = strategy_returns.mean() * 252
 
-# Результат сценария
+# The result of the script
  scenario_result = {
  'sharpe': sharpe,
  'max_drawdown': max_drawdown,
@@ -1432,24 +1432,24 @@ print(f"Пропускаем сценарий '{scenario_name}': недоста�
  'scenario_params': scenario_params.copy()
  }
 
-# Дополнительные результаты
+# Additional results
  if config['return_predictions']:
  scenario_result['predictions'] = predictions
 
  scenario_results[scenario_name] = scenario_result
 
  if config['verbose']:
-print(f"Сценарий '{scenario_name}' завершен. Sharpe: {sharpe:.4f}, Max DD: {max_drawdown:.4f}")
+"Sharpe: {sharpe:.4f}, Max DD: {max_drawdown:.4f})
 
  except Exception as e:
  if config['verbose']:
-print(f"Ошибка in сценарии '{scenario_name}': {e}")
+Print(f) Error in scenario '{scenario_name}': {e}}
  continue
 
  if not scenario_results:
-raise ValueError("not удалось выполнить ни одного успешного сценария стресс-тестинга")
+Raise ValueError("not has been able to perform no successful stress-restraint scenario")
 
-# Сравнительный анализ
+# Comparative analysis
  sharpe_values = [result['sharpe'] for result in scenario_results.values()]
  max_drawdown_values = [result['max_drawdown'] for result in scenario_results.values()]
  total_return_values = [result['total_return'] for result in scenario_results.values()]
@@ -1463,14 +1463,14 @@ raise ValueError("not удалось выполнить ни одного усп
  'total_return_std': np.std(total_return_values)
  }
 
-# Ранжирование сценариев
+# Earning scenarios
  scenario_rankings = {
  'by_sharpe': sorted(scenario_results.items(), key=lambda x: x[1]['sharpe'], reverse=True),
  'by_max_drawdown': sorted(scenario_results.items(), key=lambda x: x[1]['max_drawdown']),
  'by_total_return': sorted(scenario_results.items(), key=lambda x: x[1]['total_return'], reverse=True)
  }
 
-# Общая оценка устойчивости
+# Overall sustainability assessment
  overall_assessment = {
  'is_robust': all(result['sharpe'] > 0.5 for result in scenario_results.values()),
  'is_stable': np.std(sharpe_values) < 1.0,
@@ -1481,7 +1481,7 @@ raise ValueError("not удалось выполнить ни одного усп
  'scenarios_tested': len(scenario_results)
  }
 
-# Финальные результаты
+# Final results
  final_results = {
  'scenario_results': scenario_results,
  'comparison_metrics': comparison_metrics,
@@ -1491,14 +1491,14 @@ raise ValueError("not удалось выполнить ни одного усп
  }
 
  if config['verbose']:
-print(f"Стресс-тестинг завершен. Протестировано сценариев: {len(scenario_results)}")
-print(f"Средний коэффициент Шарпа: {overall_assessment['average_sharpe']:.4f}")
-print(f"Стратегия робастна: {overall_assessment['is_robust']}")
-print(f"Стратегия стабильна: {overall_assessment['is_stable']}")
+Print(f"Stress-Certification complete. Scenarios challenged: {len(scenario_results)})
+(f) Average Sharp coefficient: {overall_assessment['overage_sharpe']:4f})
+(f "Strategy of Robast: {overall_assessment['is_robus']}")
+(f "Strategy stable: {overall_assessment['is_stable']}})
 
  return final_results
 
-# example использования
+# Example of use
 stress_scenarios = {
  'market_crash': {'volatility_multiplier': 3.0, 'return_shift': -0.1},
  'high_volatility': {'volatility_multiplier': 2.0, 'return_shift': 0.0},
@@ -1508,82 +1508,82 @@ stress_scenarios = {
 stress_results = stress_test_backtest(data, model, stress_scenarios)
 ```
 
-**Тестирование on разных рыночных режимах:**
+** Test on different market regimes:**
 
 ```python
 def regime_based_backtest(data, model, regime_detector, config=None, validation=True, random_state=None):
  """
-Бэктестинг on разных рыночных режимах with детальными параметрами
+Becketting on different market regimes with detailed parameters
 
  Parameters:
  -----------
  data : pd.dataFrame
-temporary ряд данных with колонками 'returns' and другими приsignми
-- Должен быть отсортирован in time
-- Должен содержать колонку 'returns' with доходностями
-- Рекомендуется минимум 1000 наблюдений for надежности
+temporary data series with columns 'returns' and other signature
+- Should be sorted in time
+- Shall contain a column "returns" with returns
+- A minimum of 1,000 observations are recommended for reliability
 
  model : object
-Обученная ML модель with методами fit() and predict()
-- Должен поддерживать fit(X, y) for обучения
-- Должен поддерживать predict(X) for predictions
-- Рекомендуется использовать TabularPredictor из AutoGluon
+ML model with Fit() and predict()
+- Should support fit(X, y) for learning.
+- Should support predict(X) for preferences
+- It is recommended to use TabularPredictor from AutoGluon
 
  regime_detector : object
-Детектор рыночных режимов with методом detect_regimes()
-- Должен поддерживать detect_regimes(data) -> pd.Series
-- Возвращает Series with режимами for каждого наблюдения
-- Рекомендуется использовать Hidden Markov Model or анаLogsчные methods
+Market Modes Detector with Detect_Regimes()
+- Should support protection_regimes(data) -> pd.Series
+- Returns Series with regimes for each observation
+- It is recommended to use Hidden Markov Model or an an Logsic methhods
 
  config : dict, optional
-Дополнительная configuration for бэктестинга
-- 'train_frac': float, default=0.7 - доля данных for обучения (0.0 < train_frac < 1.0)
-- 'test_frac': float, default=0.3 - доля данных for тестирования (0.0 < test_frac < 1.0)
-- 'min_samples_per_regime': int, default=50 - минимальное количество образцов on режим
-- 'max_regimes': int, default=10 - максимальное количество режимов
-- 'return_predictions': bool, default=False - возвращать предсказания
-- 'return_metrics': bool, default=True - возвращать metrics
-- 'verbose': bool, default=False - выводить подробную информацию
-- 'parallel': bool, default=False - использовать параллельные вычисления
-- 'n_jobs': int, default=1 - количество процессов for параллельных вычислений
-- 'regime_weights': dict, default=None - веса for режимов
-- 'baseline_regime': str, default=None - базовый режим for сравнения
+Additional configuring for betting
+==Trin_frac==Float, default=0.7 is the share of data for learning (0.0 < tran_frac < 1.0)
+- 'test_frac': flat, default=0.3 is the share of data for testing (0.0 < test_frac < 1.0)
+== sync, corrected by elderman == @elder_man
+- 'max_regimes':int, default=10 - maximum number of modes
+- 'return_predations': bool, default=False - return predictions
+- 'return_metrics': bool, default=True - return metrics
+- 'verbose': bool, default=False - output details
+- 'parallel': bool, default=False - use parallel calculations
+- 'n_jobs':int, default=1 - number of processes for parallel calculations
+- 'regime_whites': dict, default= None - Weights for Modes
+- 'baseline_regime': str, default= None - basic mode for comparison
 
  validation : bool, default=True
-Выполнять ли валидацию входных данных
-- Проверяет presence колонки 'returns'
-- Проверяет достаточность данных
-- Проверяет корректность детектора режимов
+Whether to validate input data
+- Checks out the 'returns' column.
+- Checks data adequacy
+- Checks the correct mode detector
 
  random_state : int, optional
-Seed for воспроизводимости результатов
-- Используется for инициализации генератора случайных чисел
-- Рекомендуется задавать for воспроизводимости
+Seed for reproducible results
+- Used for initialization of random number generator
+- It is recommended to ask for reproduction
 
  Returns:
  --------
  dict
-Словарь with результатами бэктестинга on режимам:
-- 'regime_results': dict - результаты on каждому режиму
-- 'comparison_metrics': dict - сравнительные metrics
-- 'regime_rankings': dict - ранжирование режимов
-- 'overall_assessment': dict - общая оценка on режимам
-- 'regime_transitions': dict - анализ переходов между режимами
-- 'config_Used': dict - использованная configuration
+Vocabulary with back-up results on modes:
+- 'regime_results':dict - results on each mode
+- 'Comparison_metrics':dict - Comparative metrics
+- 'regime_rankings': dict - mode ranking
+- 'overall_assessment':dict - general estimate on modes
+- 'regime_transitions':dict - inter-mode transition analysis
+- 'config_Used':dict - used configuration
 
  Raises:
  -------
  ValueError
-Если data недостаточны or parameters некорректны
+If data are insufficient or parameters incorrect
  TypeError
-Если модель or детектор режимов not поддерживают необходимые methods
+If the mode detector model not supports the necessary methhods
 
  Examples:
  ---------
->>> # Базовое использование
+>># Basic use
  >>> results = regime_based_backtest(data, model, regime_detector)
  >>>
->>> # with кастомной конфигурацией
+>> # with caste configuration
  >>> config = {
  ... 'train_frac': 0.8,
  ... 'test_frac': 0.2,
@@ -1594,10 +1594,10 @@ Seed for воспроизводимости результатов
  ... }
  >>> results = regime_based_backtest(data, model, regime_detector, config=config)
  >>>
->>> # Без validation (быстрее, но менее безопасно)
+>> # Without vilification (rapid but less secure)
  >>> results = regime_based_backtest(data, model, regime_detector, validation=False)
  """
-# configuration on умолчанию
+# configuring on default
  if config is None:
  config = {
  'train_frac': 0.7,
@@ -1613,86 +1613,86 @@ Seed for воспроизводимости результатов
  'baseline_regime': None
  }
 
-# validation входных данных
+# Validation of input data
  if validation:
  if 'returns' not in data.columns:
-raise ValueError("Колонка 'returns' not foundа in данных")
+Raise ValueError
 
  if len(data) < config['min_samples_per_regime'] * 2:
-raise ValueError(f"Недостаточно данных. Минимум: {config['min_samples_per_regime'] * 2}")
+Minimum: {config['min_samples_per_regime'] *2})
 
  if not hasattr(regime_detector, 'detect_regimes'):
-raise TypeError("Детектор режимов должен иметь метод detect_regimes()")
+raise TypeError("The mode detector shall have a protective_regimes() method")
 
  # installation random_state
  if random_state is not None:
  np.random.seed(random_state)
 
-# Определение режимов
+# Definition of regimes
  try:
  regimes = regime_detector.detect_regimes(data)
  except Exception as e:
-raise TypeError(f"Ошибка детектора режимов: {e}")
+Raise TypeError(f" Mode detector error: {e}")
 
  if len(regimes) != len(data):
-raise ValueError("Длина режимов not соответствует длине данных")
+Raise ValueError("The length of modes n corresponds to the length of data")
 
-# Подготовка данных
+# Data production
  regime_results = {}
  comparison_metrics = {}
  regime_rankings = {}
  regime_transitions = {}
 
  if config['verbose']:
-print(f"Начинаем бэктестинг on режимам")
-print(f"Обнаружено режимов: {len(regimes.unique())}")
-print(f"Доля обучения: {config['train_frac']}")
-print(f"Доля тестирования: {config['test_frac']}")
+Print(f) "Backing on Modes")
+Print(f"Provided modes: {len(regimes.unique()}})
+(pint(f "Learning rate: {config['training_frac']}})
+(pint(f" Test rate: {config['test_frac']}})
 
-# Основной цикл бэктестинга on режимам
+# The main round of back-up on modes
  for regime in regimes.unique():
  try:
  if config['verbose']:
-print(f"Тестируем режим: {regime}")
+print(f) "Try mode: {regime}")
 
-# data for режима
+# Data for Mode
  regime_data = data[regimes == regime]
 
-# check минимального количества образцов
+# check minimum number of samples
  if len(regime_data) < config['min_samples_per_regime']:
  if config['verbose']:
-print(f"Пропускаем режим '{regime}': недостаточно данных ({len(regime_data)} < {config['min_samples_per_regime']})")
+print(f"Slip '{regime}': insufficient data ({len(regime_data)} < {config['min_samples_per_regime']}))
  continue
 
-# Разделение on train/test
+# Separation on train/test
  split_point = int(len(regime_data) * config['train_frac'])
  train_data = regime_data[:split_point]
  test_data = regime_data[split_point:]
 
-# check минимального количества образцов
+# check minimum number of samples
  if len(train_data) < config['min_samples_per_regime'] // 2 or len(test_data) < config['min_samples_per_regime'] // 2:
  if config['verbose']:
-print(f"Пропускаем режим '{regime}': недостаточно данных for обучения/тестирования")
+print(f"Slip the mode `{regime}': insufficient data for learning/testing")
  continue
 
-# Обучение модели
+# Model learning
  model.fit(train_data)
 
-# Предсказания
+# Premonition
  predictions = model.predict(test_data)
 
-# Оценка качества
+# Quality assessment
  returns = test_data['returns']
  strategy_returns = predictions * returns
 
-# Базовые metrics
+# Basic metrics
  sharpe = strategy_returns.mean() / strategy_returns.std() * np.sqrt(252) if strategy_returns.std() > 0 else 0
  max_drawdown = calculate_max_drawdown(strategy_returns)
  total_return = strategy_returns.sum()
  volatility = strategy_returns.std() * np.sqrt(252)
  annual_return = strategy_returns.mean() * 252
 
-# Результат режима
+# The result of the regime
  regime_result = {
  'sharpe': sharpe,
  'max_drawdown': max_drawdown,
@@ -1705,24 +1705,24 @@ print(f"Пропускаем режим '{regime}': недостаточно д�
  'regime_frequency': len(regime_data) / len(data)
  }
 
-# Дополнительные результаты
+# Additional results
  if config['return_predictions']:
  regime_result['predictions'] = predictions
 
  regime_results[regime] = regime_result
 
  if config['verbose']:
-print(f"Режим '{regime}' завершен. Sharpe: {sharpe:.4f}, Max DD: {max_drawdown:.4f}")
+"Sharpe: {sharpe:.4f}, Max DD: {max_drawdown:.4f}")
 
  except Exception as e:
  if config['verbose']:
-print(f"Ошибка in режиме '{regime}': {e}")
+print(f) Error in mode '{regime}': {e}}
  continue
 
  if not regime_results:
-raise ValueError("not удалось выполнить ни одного успешного режима бэктестинга")
+Raise ValueError("not has been able to perform no successful betting mode")
 
-# Сравнительный анализ
+# Comparative analysis
  sharpe_values = [result['sharpe'] for result in regime_results.values()]
  max_drawdown_values = [result['max_drawdown'] for result in regime_results.values()]
  total_return_values = [result['total_return'] for result in regime_results.values()]
@@ -1739,7 +1739,7 @@ raise ValueError("not удалось выполнить ни одного усп
  'regime_frequency_std': np.std(regime_frequencies)
  }
 
-# Ранжирование режимов
+# Absorbing regimes
  regime_rankings = {
  'by_sharpe': sorted(regime_results.items(), key=lambda x: x[1]['sharpe'], reverse=True),
  'by_max_drawdown': sorted(regime_results.items(), key=lambda x: x[1]['max_drawdown']),
@@ -1747,7 +1747,7 @@ raise ValueError("not удалось выполнить ни одного усп
  'by_frequency': sorted(regime_results.items(), key=lambda x: x[1]['regime_frequency'], reverse=True)
  }
 
-# Анализ переходов между режимами
+# Analysis of inter-mode crossings
  regime_transitions = {
  'transition_matrix': calculate_transition_matrix(regimes),
  'transition_probabilities': calculate_transition_probabilities(regimes),
@@ -1755,7 +1755,7 @@ raise ValueError("not удалось выполнить ни одного усп
  'regime_stability': calculate_regime_stability(regimes)
  }
 
-# Общая оценка on режимам
+# General assessment on regimes
  overall_assessment = {
  'is_robust': all(result['sharpe'] > 0.5 for result in regime_results.values()),
  'is_stable': np.std(sharpe_values) < 1.0,
@@ -1767,7 +1767,7 @@ raise ValueError("not удалось выполнить ни одного усп
  'regime_diversity': len(regime_results) / len(regimes.unique())
  }
 
-# Финальные результаты
+# Final results
  final_results = {
  'regime_results': regime_results,
  'comparison_metrics': comparison_metrics,
@@ -1778,62 +1778,62 @@ raise ValueError("not удалось выполнить ни одного усп
  }
 
  if config['verbose']:
-print(f"Бэктестинг on режимам завершен. Протестировано режимов: {len(regime_results)}")
-print(f"Средний коэффициент Шарпа: {overall_assessment['average_sharpe']:.4f}")
-print(f"Стратегия робастна: {overall_assessment['is_robust']}")
-print(f"Стратегия стабильна: {overall_assessment['is_stable']}")
-print(f"Разнообразие режимов: {overall_assessment['regime_diversity']:.2%}")
+pint(f"Backetting on Modes completed. Objection to Modes: {len(regime_results)})
+(f) Average Sharp coefficient: {overall_assessment['overage_sharpe']:4f})
+(f "Strategy of Robast: {overall_assessment['is_robus']}")
+(f "Strategy stable: {overall_assessment['is_stable']}})
+(f "Diversity of modes: {overall_assessment['regime_diversity']:2%}")
 
  return final_results
 
-# example использования
+# Example of use
 regime_results = regime_based_backtest(data, model, regime_detector)
 ```
 
-### 4. Портфельный бэктестинг
+♪##4 ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪
 
-### 📈 architecture портфельного бэктестинга
+### Architecture of portfolio buffering
 
 ```mermaid
 graph TD
-A[Портфель стратегий] --> B[Стратегия 1<br/>40% веса]
-A --> C[Стратегия 2<br/>30% веса]
-A --> D[Стратегия 3<br/>30% веса]
+A[Postfel strategy] --> B [Strategy 1<br/>40% weight]
+A -> C[Strategy 2<br/> 30 per cent weight]
+A -> D[Strategy 3<br/> 30 per cent weight]
 
-B --> E[Предсказания стратегии 1]
-C --> F[Предсказания стратегии 2]
-D --> G[Предсказания стратегии 3]
+B -> E [Strategy 1 projection]
+C -> F [Strategy 2 projection]
+D -> G [Strategy 3 prognosis]
 
-E --> H[Взвешивание predictions]
+E --> H [Reweighting preferences]
  F --> H
  G --> H
 
-H --> I[Взвешенные предсказания<br/>w1*p1 + w2*p2 + w3*p3]
+H --> I [weighted predictions<br/>w1*p1 + w2*p2 + w3*p3]
 
-I --> J[Рыночные доходности]
-J --> K[Портфельные доходности<br/>weighted_predictions * returns]
+I -> J [market returns]
+J --> K[Portle returns<br/>weated_predations * returns]
 
-K --> L[metrics портфеля]
-L --> M[Коэффициент Шарпа портфеля]
-L --> N[Максимальная просадка портфеля]
-L --> O[Общая доходность портфеля]
+K --> L[metrics portfolio]
+L-> M[Sharp portfolio ratio]
+L --> N [Maximum portfolio spread]
+L -> O [Total return on portfolio]
 
-M --> P[Оценка портфеля]
+M --> P [Portfolio evaluation]
  N --> P
  O --> P
 
-P --> Q[Динамическое перебалансирование]
-Q --> R[Расчет новых весов<br/>on basis performance]
+P --> Q [Dynamic rebalancing]
+Q -> R [Calculation of new weights<br/>on base performance]
 
-R --> S[update весов]
-S --> T[Новая итерация бэктестинга]
+R --> S[update balance]
+S --> T [New iteration of the bactering]
  T --> H
 
-P --> U[comparison with бенчмарком]
-U --> V[Альфа and Бета коэффициенты]
-U --> W[Коэффициент информации]
+P --> U[comparison with benchmarking]
+U-> V[Alpha and Beta coefficients]
+U -> W [Information ratio]
 
-V --> X[Финальная оценка портфеля]
+V -> X [Financial evaluation of the portfolio]
  W --> X
 
  style A fill:#e3f2fd
@@ -1843,95 +1843,95 @@ V --> X[Финальная оценка портфеля]
  style X fill:#4caf50
 ```
 
-**Тестирование портфеля стратегий:**
+** Policy portfolio audit:**
 
 ```python
 def Portfolio_backtest(strategies, data, weights=None, rebalance_freq='M',
  config=None, validation=True, random_state=None):
  """
-Бэктестинг портфеля стратегий with детальными параметрами
+Becketting the strategy portfolio with detailed parameters
 
  Parameters:
  -----------
  strategies : List
-List стратегий for портфеля
-- Каждая стратегия должна иметь methods fit() and predict()
-- Рекомендуется использовать TabularPredictor из AutoGluon
-- Минимум 2 стратегии for диверсификации
+List of strategies for the portfolio
+- Each strategy has to have methods fit() and predict()
+- It is recommended to use TabularPredictor from AutoGluon
+- Minimum 2 strategies for diversification
 
  data : pd.dataFrame
-temporary ряд данных with колонками 'returns' and другими приsignми
-- Должен быть отсортирован in time
-- Должен содержать колонку 'returns' with доходностями
-- Рекомендуется минимум 1000 наблюдений for надежности
+temporary data series with columns 'returns' and other signature
+- Should be sorted in time
+- Shall contain a column "returns" with returns
+- A minimum of 1,000 observations are recommended for reliability
 
  weights : array-like, optional
-Веса for стратегий in портфеле
-- Если None, используется равномерное распределение
-- Должны суммироваться к 1.0
-- Рекомендуется использовать оптимизацию весов
+Weights for strategies in the portfolio
+- If None, even distribution is used
+- To be added to 1.0
+- Balance optimization recommended
 
  rebalance_freq : str, default='M'
-Частота перебалансировки портфеля
-- 'D' - ежедневно
-- 'W' - еженедельно
-- 'M' - ежемесячно
-- 'Q' - ежеквартально
-- 'Y' - ежегодно
-- Рекомендуется 'M' for большинства случаев
+Portfolio rebalancing frequency
+- 'D' - daily.
+- 'W' - weekly
+- 'M' - monthly
+- 'Q' - quarterly
+- 'Y' - every year.
+- Recommended 'M' for most cases
 
  config : dict, optional
-Дополнительная configuration for портфельного бэктестинга
-- 'train_frac': float, default=0.7 - доля данных for обучения (0.0 < train_frac < 1.0)
-- 'test_frac': float, default=0.3 - доля данных for тестирования (0.0 < test_frac < 1.0)
-- 'min_samples': int, default=100 - минимальное количество образцов
-- 'max_samples': int, default=10000 - максимальное количество образцов
-- 'return_predictions': bool, default=False - возвращать предсказания
-- 'return_metrics': bool, default=True - возвращать metrics
-- 'verbose': bool, default=False - выводить подробную информацию
-- 'parallel': bool, default=False - использовать параллельные вычисления
-- 'n_jobs': int, default=1 - количество процессов for параллельных вычислений
-- 'rebalance_method': str, default='fixed' - метод перебалансировки ('fixed', 'dynamic', 'adaptive')
-- 'transaction_costs': float, default=0.001 - транзакционные издержки (0.0-0.01)
-- 'slippage': float, default=0.0005 - проскальзывание (0.0-0.005)
-- 'max_weight': float, default=0.5 - максимальный вес одной стратегии
-- 'min_weight': float, default=0.05 - минимальный вес одной стратегии
+Additional configuring for portfolio buffering
+==Trin_frac==Float, default=0.7 is the share of data for learning (0.0 < tran_frac < 1.0)
+- 'test_frac': flat, default=0.3 is the share of data for testing (0.0 < test_frac < 1.0)
+- 'min_samples':int, default=100 - minimum number of samples
+- 'max_samples':int, default=1000 = maximum number of samples
+- 'return_predations': bool, default=False - return predictions
+- 'return_metrics': bool, default=True - return metrics
+- 'verbose': bool, default=False - output details
+- 'parallel': bool, default=False - use parallel calculations
+- 'n_jobs':int, default=1 - number of processes for parallel calculations
+- 'rebalance_method': str, default='fixed' - rebalancing method ('fixed', 'dynamic', 'adaptive')
+- 'transaction_costs': flat, default=0.001 - transaction costs (0.0-0.01)
+- 'slippage': flat, default=0.005 - slip (0.0-0.005)
+- 'max_white': flat, default=0.5 - maximum weight of one strategy
+- 'min_white': flat, default=0.05 - minimum weight of one strategy
 
  validation : bool, default=True
-Выполнять ли валидацию входных данных
-- Проверяет presence колонки 'returns'
-- Проверяет достаточность данных
-- Проверяет корректность стратегий and весов
+Whether to validate input data
+- Checks out the 'returns' column.
+- Checks data adequacy
+- Checks the correct policies and weights.
 
  random_state : int, optional
-Seed for воспроизводимости результатов
-- Используется for инициализации генератора случайных чисел
-- Рекомендуется задавать for воспроизводимости
+Seed for reproducible results
+- Used for initialization of random number generator
+- It is recommended to ask for reproduction
 
  Returns:
  --------
  dict
-Словарь with результатами портфельного бэктестинга:
-- 'Portfolio_metrics': dict - metrics портфеля
-- 'individual_metrics': dict - metrics отдельных стратегий
-- 'rebalancing_info': dict - информация о перебалансировке
-- 'risk_metrics': dict - metrics риска портфеля
-- 'diversification_metrics': dict - metrics диверсификации
-- 'config_Used': dict - использованная configuration
+Vocabulary with portfoliobacking results:
+- 'Porthfolio_metrics': dict - metrics portfolio
+- 'Individual_metrics': dict - metrics of selected strategies
+- 'rebalancing_info':dict - rebalancing information
+- 'risk_metrics': dict - risk metrics portfolio
+- 'diversification_metrics': dict - metrics diversification
+- 'config_Used':dict - used configuration
 
  Raises:
  -------
  ValueError
-Если data недостаточны or parameters некорректны
+If data are insufficient or parameters incorrect
  TypeError
-Если стратегии not поддерживают необходимые methods
+If no strategies support the necessary methhods
 
  Examples:
  ---------
->>> # Базовое использование
+>># Basic use
  >>> results = Portfolio_backtest(strategies, data)
  >>>
->>> # with кастомной конфигурацией
+>> # with caste configuration
  >>> config = {
  ... 'train_frac': 0.8,
  ... 'test_frac': 0.2,
@@ -1943,10 +1943,10 @@ Seed for воспроизводимости результатов
  ... }
  >>> results = Portfolio_backtest(strategies, data, weights=[0.4, 0.3, 0.3], config=config)
  >>>
->>> # Без validation (быстрее, но менее безопасно)
+>> # Without vilification (rapid but less secure)
  >>> results = Portfolio_backtest(strategies, data, validation=False)
  """
-# configuration on умолчанию
+# configuring on default
  if config is None:
  config = {
  'train_frac': 0.7,
@@ -1965,75 +1965,75 @@ Seed for воспроизводимости результатов
  'min_weight': 0.05
  }
 
-# validation входных данных
+# Validation of input data
  if validation:
  if 'returns' not in data.columns:
-raise ValueError("Колонка 'returns' not foundа in данных")
+Raise ValueError
 
  if len(data) < config['min_samples']:
-raise ValueError(f"Недостаточно данных. Минимум: {config['min_samples']}")
+raise ValueError(f"Insufficient data. Minimum: {config['min_samples']})
 
  if len(strategies) < 2:
-raise ValueError("Необходимо минимум 2 стратегии for портфеля")
+Raise ValueError
 
  for i, strategy in enumerate(strategies):
  if not hasattr(strategy, 'fit') or not hasattr(strategy, 'predict'):
-raise TypeError(f"Стратегия {i} должна иметь methods fit() and predict()")
+Raise TypeError(f"The strategy {i} shall have methods fat() and predict()")
 
  if weights is not None:
  if len(weights) != len(strategies):
-raise ValueError("Количество весов должно соответствовать количеству стратегий")
+Raise ValueError("Number of weights should correspond to number of strategies")
 
  if abs(sum(weights) - 1.0) > 1e-6:
-raise ValueError("Веса должны суммироваться к 1.0")
+Raise ValueError("The weights shall be added to 1.0")
 
  if any(w < 0 for w in weights):
-raise ValueError("Веса not могут быть отрицательными")
+Raise ValueError ("No weights may be negative")
 
  # installation random_state
  if random_state is not None:
  np.random.seed(random_state)
 
-# Подготовка весов
+# Weight preparation
  if weights is None:
  weights = np.ones(len(strategies)) / len(strategies)
 
  weights = np.array(weights)
 
-# Нормализация весов
+# Normalization of weights
  weights = weights / weights.sum()
 
-# Применение ограничений on веса
+# Application of weight limits
  weights = np.clip(weights, config['min_weight'], config['max_weight'])
  weights = weights / weights.sum()
 
  if config['verbose']:
-print(f"Начинаем портфельный бэктестинг with {len(strategies)} стратегиями")
-print(f"Веса стратегий: {weights}")
-print(f"Частота перебалансировки: {rebalance_freq}")
-print(f"Доля обучения: {config['train_frac']}")
-print(f"Доля тестирования: {config['test_frac']}")
+(f) Start portfolio buffering with strategies)
+(f "Strategy Weights: {weights}")
+Print(f "Rebalancing rate: {reballance_freq}")
+(pint(f "Learning rate: {config['training_frac']}})
+(pint(f" Test rate: {config['test_frac']}})
 
-# Разделение данных
+# Data sharing
  split_point = int(len(data) * config['train_frac'])
  train_data = data[:split_point]
  test_data = data[split_point:]
 
-# Обучение стратегий
+# Training strategies
  if config['verbose']:
-print("Обучение стратегий...")
+Print("Strategy training...")
 
  for i, strategy in enumerate(strategies):
  try:
  strategy.fit(train_data)
  if config['verbose']:
-print(f"Стратегия {i+1} обучена")
+(f "Strategy {i+1} trained")
  except Exception as e:
  if config['verbose']:
-print(f"Ошибка обучения стратегии {i+1}: {e}")
+Print(f) "A mistake in learning strategy {i+1}: {e}")
  continue
 
-# Получение predictions from all стратегий
+# Getting Preventions from All Strategies
  predictions = {}
  individual_returns = {}
 
@@ -2044,35 +2044,35 @@ print(f"Ошибка обучения стратегии {i+1}: {e}")
  individual_returns[f'strategy_{i}'] = pred * test_data['returns']
  except Exception as e:
  if config['verbose']:
-print(f"Ошибка предсказания стратегии {i+1}: {e}")
+Print(f) "The error in the prediction of strategy {i+1}: {e}")
  continue
 
  if not predictions:
-raise ValueError("not удалось получить предсказания ни from одной стратегии")
+Raise ValueError("not has been able to obtain predictions from no one strategy")
 
-# create dataFrame with предсказаниями
+# Create dataFrame with predictions
  predictions_df = pd.dataFrame(predictions)
 
-# Взвешивание predictions
+# Weighting preferences
  weighted_predictions = (predictions_df * weights).sum(axis=1)
 
-# Расчет доходности портфеля
+# Calculation of portfolio returns
  returns = test_data['returns']
  Portfolio_returns = weighted_predictions * returns
 
-# Применение транзакционных издержек and проскальзывания
+# Applying transaction costs and slipping
  if config['transaction_costs'] > 0 or config['slippage'] > 0:
  total_costs = config['transaction_costs'] + config['slippage']
  Portfolio_returns = Portfolio_returns - total_costs
 
-# Базовые metrics портфеля
+# Basic metrics portfolio
  sharpe = Portfolio_returns.mean() / Portfolio_returns.std() * np.sqrt(252) if Portfolio_returns.std() > 0 else 0
  max_drawdown = calculate_max_drawdown(Portfolio_returns)
  total_return = Portfolio_returns.sum()
  volatility = Portfolio_returns.std() * np.sqrt(252)
  annual_return = Portfolio_returns.mean() * 252
 
-# metrics портфеля
+# metrics portfolio
  Portfolio_metrics = {
  'sharpe': sharpe,
  'max_drawdown': max_drawdown,
@@ -2082,7 +2082,7 @@ raise ValueError("not удалось получить предсказания �
  'weights': weights.toList()
  }
 
-# metrics отдельных стратегий
+# Metrics selected strategies
  individual_metrics = {}
  for strategy_name, strategy_returns in individual_returns.items():
  individual_metrics[strategy_name] = {
@@ -2093,7 +2093,7 @@ raise ValueError("not удалось получить предсказания �
  'annual_return': strategy_returns.mean() * 252
  }
 
-# Информация о перебалансировке
+# Information on rebalancing
  rebalancing_info = {
  'frequency': rebalance_freq,
  'method': config['rebalance_method'],
@@ -2102,7 +2102,7 @@ raise ValueError("not удалось получить предсказания �
  'total_costs': config['transaction_costs'] + config['slippage']
  }
 
-# metrics риска портфеля
+♪ risk packages ♪
  risk_metrics = {
  'var_95': np.percentile(Portfolio_returns, 5),
  'var_99': np.percentile(Portfolio_returns, 1),
@@ -2112,7 +2112,7 @@ raise ValueError("not удалось получить предсказания �
  'kurtosis': Portfolio_returns.kurtosis()
  }
 
-# metrics диверсификации
+# metrics diversification
  diversification_metrics = {
  'effective_n': 1 / (weights ** 2).sum(),
  'concentration_index': (weights ** 2).sum(),
@@ -2121,7 +2121,7 @@ raise ValueError("not удалось получить предсказания �
  'entropy': -np.sum(weights * np.log(weights + 1e-10))
  }
 
-# Финальные результаты
+# Final results
  final_results = {
  'Portfolio_metrics': Portfolio_metrics,
  'individual_metrics': individual_metrics,
@@ -2131,7 +2131,7 @@ raise ValueError("not удалось получить предсказания �
  'config_Used': config.copy()
  }
 
-# Дополнительные результаты
+# Additional results
  if config['return_predictions']:
  final_results['predictions'] = predictions_df
  final_results['weighted_predictions'] = weighted_predictions
@@ -2141,114 +2141,114 @@ raise ValueError("not удалось получить предсказания �
  final_results['individual_returns'] = individual_returns
 
  if config['verbose']:
-print(f"Портфельный бэктестинг завершен")
-print(f"Коэффициент Шарпа портфеля: {sharpe:.4f}")
-print(f"Максимальная просадка: {max_drawdown:.4f}")
-print(f"Общая доходность: {total_return:.4f}")
-print(f"Эффективное количество стратегий: {diversification_metrics['effective_n']:.2f}")
+prent(f "Portphel Baactering Completed")
+(f "Sharp portfolio: {sharpe:.4f}")
+print(f "Maximal prosperity: {max_drawdown:.4f}")
+"Total_return:.4f}")
+(f "Efficient number of strategies: {diveration_metrics['effective_n']:2f}")
 
  return final_results
 
-# example использования
+# Example of use
 Portfolio_results = Portfolio_backtest(strategies, data, weights=[0.4, 0.3, 0.3])
 ```
 
-**Динамическое перебалансирование:**
+** Dynamic rebalancing:**
 
 ```python
 def dynamic_rebalance_backtest(strategies, data, rebalance_freq='M',
  lookback_window=252, config=None, validation=True, random_state=None):
  """
-Бэктестинг with динамическим перебалансированием and детальными параметрами
+Battering with dynamic rebalancing and detailed parameters
 
  Parameters:
  -----------
  strategies : List
-List стратегий for портфеля
-- Каждая стратегия должна иметь methods fit() and predict()
-- Рекомендуется использовать TabularPredictor из AutoGluon
-- Минимум 2 стратегии for диверсификации
+List of strategies for the portfolio
+- Each strategy has to have methods fit() and predict()
+- It is recommended to use TabularPredictor from AutoGluon
+- Minimum 2 strategies for diversification
 
  data : pd.dataFrame
-temporary ряд данных with колонками 'returns' and другими приsignми
-- Должен быть отсортирован in time
-- Должен содержать колонку 'returns' with доходностями
-- Рекомендуется минимум 1000 наблюдений for надежности
+temporary data series with columns 'returns' and other signature
+- Should be sorted in time
+- Shall contain a column "returns" with returns
+- A minimum of 1,000 observations are recommended for reliability
 
  rebalance_freq : str, default='M'
-Частота перебалансировки портфеля
-- 'D' - ежедневно
-- 'W' - еженедельно
-- 'M' - ежемесячно
-- 'Q' - ежеквартально
-- 'Y' - ежегодно
-- Рекомендуется 'M' for большинства случаев
+Portfolio rebalancing frequency
+- 'D' - daily.
+- 'W' - weekly
+- 'M' - monthly
+- 'Q' - quarterly
+- 'Y' - every year.
+- Recommended 'M' for most cases
 
  lookback_window : int, default=252
-Окно for обучения стратегий (in днях)
-- 252 означает обучение on последних 252 днях
-- Рекомендуется 100-500 for большинства случаев
-- Меньше 100 может привести к переобучению
-- Больше 500 может привести к недообучению
+Window for learning strategies (in days)
+- 252 means learning on the last 252 days
+- Recommended 100-500 for most cases
+- Less than 100 could lead to retraining.
+- More than 500 could lead to a lack of education.
 
  config : dict, optional
-Дополнительная configuration for динамического бэктестинга
-- 'test_window': int, default=30 - окно for тестирования (in днях)
-- 'min_samples': int, default=100 - минимальное количество образцов
-- 'max_samples': int, default=10000 - максимальное количество образцов
-- 'return_predictions': bool, default=False - возвращать предсказания
-- 'return_metrics': bool, default=True - возвращать metrics
-- 'verbose': bool, default=False - выводить подробную информацию
-- 'parallel': bool, default=False - использовать параллельные вычисления
-- 'n_jobs': int, default=1 - количество процессов for параллельных вычислений
-- 'rebalance_method': str, default='performance' - метод перебалансировки ('performance', 'volatility', 'momentum', 'adaptive')
-- 'transaction_costs': float, default=0.001 - транзакционные издержки (0.0-0.01)
-- 'slippage': float, default=0.0005 - проскальзывание (0.0-0.005)
-- 'max_weight': float, default=0.5 - максимальный вес одной стратегии
-- 'min_weight': float, default=0.05 - минимальный вес одной стратегии
-- 'weight_smoothing': float, default=0.1 - сглаживание весов (0.0-1.0)
-- 'performance_lookback': int, default=30 - окно for расчета performance (in днях)
-- 'volatility_lookback': int, default=30 - окно for расчета волатильности (in днях)
-- 'momentum_lookback': int, default=30 - окно for расчета моментума (in днях)
+Additional configuring for dynamic buffering
+- 'test_window':int, default=30 - test window (in days)
+- 'min_samples':int, default=100 - minimum number of samples
+- 'max_samples':int, default=1000 = maximum number of samples
+- 'return_predations': bool, default=False - return predictions
+- 'return_metrics': bool, default=True - return metrics
+- 'verbose': bool, default=False - output details
+- 'parallel': bool, default=False - use parallel calculations
+- 'n_jobs':int, default=1 - number of processes for parallel calculations
+- 'rebalance_method': str, default='performance' - rebalancing method ('performance', 'volatility', 'momentum', 'adaptive')
+- 'transaction_costs': flat, default=0.001 - transaction costs (0.0-0.01)
+- 'slippage': flat, default=0.005 - slip (0.0-0.005)
+- 'max_white': flat, default=0.5 - maximum weight of one strategy
+- 'min_white': flat, default=0.05 - minimum weight of one strategy
+- 'weight_smoothing': flat, default=0.1 - balance smoothing (0.0-1.0)
+- 'Performance_lookback':int, default=30 - window for calculating performance (in days)
+- 'volatility_lookback':int, default=30 - window for calculating volatility (in days)
+- 'momentum_lookback':int, default=30 - window for calculating momentum (in days)
 
  validation : bool, default=True
-Выполнять ли валидацию входных данных
-- Проверяет presence колонки 'returns'
-- Проверяет достаточность данных
-- Проверяет корректность стратегий
+Whether to validate input data
+- Checks out the 'returns' column.
+- Checks data adequacy
+- Checks the strategies.
 
  random_state : int, optional
-Seed for воспроизводимости результатов
-- Используется for инициализации генератора случайных чисел
-- Рекомендуется задавать for воспроизводимости
+Seed for reproducible results
+- Used for initialization of random number generator
+- It is recommended to ask for reproduction
 
  Returns:
  --------
  pd.dataFrame
-dataFrame with результатами динамического бэктестинга:
-- 'date': datetime - дата перебалансировки
-- 'sharpe': float - коэффициент Шарпа портфеля
-- 'return': float - доходность портфеля
-- 'volatility': float - волатильность портфеля
-- 'max_drawdown': float - максимальная просадка
-- 'weights': List - веса стратегий
-- 'rebalance_cost': float - стоимость перебалансировки
-- 'strategy_returns': dict - доходности отдельных стратегий
-- 'predictions': dict - предсказания стратегий (если return_predictions=True)
+DataFrame with dynamic buffering results:
+- 'data': datatime - rebalancing date
+- 'sharpe': float - Sharp index of the portfolio
+- 'return': float - portfolio return
+- 'volatility': float - portfolio volatility
+- 'max_drawdown': float = maximum draught
+- 'weights': List - the weight of strategies
+- 'rebalance_cost': float - rebalancing cost
+- 'Strategy_returns': dict - returns of selected strategies
+- 'predications':dict - strategy predictions (if return_predictations=True)
 
  Raises:
  -------
  ValueError
-Если data недостаточны or parameters некорректны
+If data are insufficient or parameters incorrect
  TypeError
-Если стратегии not поддерживают необходимые methods
+If no strategies support the necessary methhods
 
  Examples:
  ---------
->>> # Базовое использование
+>># Basic use
  >>> results = dynamic_rebalance_backtest(strategies, data)
  >>>
->>> # with кастомной конфигурацией
+>> # with caste configuration
  >>> config = {
  ... 'test_window': 60,
  ... 'rebalance_method': 'adaptive',
@@ -2259,10 +2259,10 @@ dataFrame with результатами динамического бэктес�
  ... }
  >>> results = dynamic_rebalance_backtest(strategies, data, lookback_window=500, config=config)
  >>>
->>> # Без validation (быстрее, но менее безопасно)
+>> # Without vilification (rapid but less secure)
  >>> results = dynamic_rebalance_backtest(strategies, data, validation=False)
  """
-# configuration on умолчанию
+# configuring on default
  if config is None:
  config = {
  'test_window': 30,
@@ -2284,46 +2284,46 @@ dataFrame with результатами динамического бэктес�
  'momentum_lookback': 30
  }
 
-# validation входных данных
+# Validation of input data
  if validation:
  if 'returns' not in data.columns:
-raise ValueError("Колонка 'returns' not foundа in данных")
+Raise ValueError
 
  if len(data) < config['min_samples']:
-raise ValueError(f"Недостаточно данных. Минимум: {config['min_samples']}")
+raise ValueError(f"Insufficient data. Minimum: {config['min_samples']})
 
  if len(strategies) < 2:
-raise ValueError("Необходимо минимум 2 стратегии for портфеля")
+Raise ValueError
 
  for i, strategy in enumerate(strategies):
  if not hasattr(strategy, 'fit') or not hasattr(strategy, 'predict'):
-raise TypeError(f"Стратегия {i} должна иметь methods fit() and predict()")
+Raise TypeError(f"The strategy {i} shall have methods fat() and predict()")
 
  # installation random_state
  if random_state is not None:
  np.random.seed(random_state)
 
-# Подготовка данных
+# Data production
  results = []
  previous_weights = None
 
  if config['verbose']:
-print(f"Начинаем динамический бэктестинг with {len(strategies)} стратегиями")
-print(f"Окно обучения: {lookback_window} дней")
-print(f"Окно тестирования: {config['test_window']} дней")
-print(f"Частота перебалансировки: {rebalance_freq}")
-print(f"Метод перебалансировки: {config['rebalance_method']}")
+(f) Start dynamic buffering with strategies)
+Print(f) Learning window: {lookback_wind}days}
+pprint(f) Test window: {config['test_window']} days")
+Print(f "Rebalancing rate: {reballance_freq}")
+(f "Rebalancing method: {config['rebalance_method']}})
 
-# Основной цикл динамического бэктестинга
+# Basic dynamic buffering cycle
  for i in range(lookback_window, len(data) - config['test_window'] + 1, config['test_window']):
  try:
-# Обучающие data
+# Training data
  train_data = data[i-lookback_window:i]
 
-# testsые data
+# Testsy data
  test_data = data[i:i+config['test_window']]
 
-# Обучение all стратегий
+# Learning all strategies
  strategy_predictions = {}
  strategy_returns = {}
 
@@ -2335,15 +2335,15 @@ print(f"Метод перебалансировки: {config['rebalance_method']
  strategy_returns[f'strategy_{j}'] = pred * test_data['returns']
  except Exception as e:
  if config['verbose']:
-print(f"Ошибка стратегии {j+1} on итерации {i}: {e}")
+(f) Strategy error {j+1} on iteration {i}: {e})
  continue
 
  if not strategy_predictions:
  if config['verbose']:
-print(f"Пропускаем итерацию {i}: нет успешных стратегий")
+Print(f"Skip iteration {i}: no successful strategies")
  continue
 
-# Расчет весов on basis выбранного метода
+# Calculation of weights on basis of the chosen method
  if config['rebalance_method'] == 'performance':
  weights = calculate_performance_weights(strategy_returns, train_data, config)
  elif config['rebalance_method'] == 'volatility':
@@ -2353,38 +2353,38 @@ print(f"Пропускаем итерацию {i}: нет успешных ст�
  elif config['rebalance_method'] == 'adaptive':
  weights = calculate_adaptive_weights(strategy_returns, train_data, config)
  else:
-# Равномерное распределение
+# Equitable distribution
  weights = np.ones(len(strategy_predictions)) / len(strategy_predictions)
 
-# Применение ограничений on веса
+# Application of weight limits
  weights = np.clip(weights, config['min_weight'], config['max_weight'])
  weights = weights / weights.sum()
 
-# Сглаживание весов
+# Balance smoothing
  if previous_weights is not None and config['weight_smoothing'] > 0:
  weights = (1 - config['weight_smoothing']) * weights + config['weight_smoothing'] * previous_weights
 
-# Взвешивание predictions
+# Weighting preferences
  weighted_predictions = sum(w * p for w, p in zip(weights, strategy_predictions.values()))
 
-# Расчет доходности портфеля
+# Calculation of portfolio returns
  returns = test_data['returns']
  Portfolio_returns = weighted_predictions * returns
 
-# Применение транзакционных издержек and проскальзывания
+# Applying transaction costs and slipping
  rebalance_cost = 0.0
  if previous_weights is not None:
  weight_change = np.abs(weights - previous_weights).sum()
  rebalance_cost = weight_change * (config['transaction_costs'] + config['slippage'])
  Portfolio_returns = Portfolio_returns - rebalance_cost
 
-# Базовые metrics
+# Basic metrics
  sharpe = Portfolio_returns.mean() / Portfolio_returns.std() * np.sqrt(252) if Portfolio_returns.std() > 0 else 0
  max_drawdown = calculate_max_drawdown(Portfolio_returns)
  total_return = Portfolio_returns.sum()
  volatility = Portfolio_returns.std() * np.sqrt(252)
 
-# Результат итерации
+# The result of iteration
  result = {
  'date': test_data.index[0],
  'sharpe': sharpe,
@@ -2396,7 +2396,7 @@ print(f"Пропускаем итерацию {i}: нет успешных ст�
  'strategy_returns': {k: v.sum() for k, v in strategy_returns.items()}
  }
 
-# Дополнительные результаты
+# Additional results
  if config['return_predictions']:
  result['predictions'] = strategy_predictions
 
@@ -2404,68 +2404,68 @@ print(f"Пропускаем итерацию {i}: нет успешных ст�
  previous_weights = weights.copy()
 
  if config['verbose'] and len(results) % 10 == 0:
-print(f"COMPLETED итераций: {len(results)}")
+(f"COMPLETED Iterations: {len(results)})
 
  except Exception as e:
  if config['verbose']:
-print(f"Ошибка on итерации {i}: {e}")
+Print(f) Mistake on iteration {i}: {e})
  continue
 
  if not results:
-raise ValueError("not удалось выполнить ни одной успешной итерации динамического бэктестинга")
+raise ValueError("not has been able to perform no successful iteration of dynamic buffering")
 
  # create dataFrame
  results_df = pd.dataFrame(results)
 
  if config['verbose']:
-print(f"Динамический бэктестинг завершен. Успешных итераций: {len(results_df)}")
-print(f"Средний коэффициент Шарпа: {results_df['sharpe'].mean():.4f}")
-print(f"Средняя доходность: {results_df['return'].mean():.4f}")
-print(f"Общая стоимость перебалансировки: {results_df['rebalance_cost'].sum():.4f}")
+(pint(f) "Dynamic backup complete. Successful iterations: {len(results_df)}")
+pint(f"Medial Sharp coefficient: {results_df['sharpe']mean(:4f}")
+pint(f" Average return: {results_df['return']mean(:4f}")
+"Total cost of rebalancing: {results_df['rebalance_cost'].sum(:4f}")
 
  return results_df
 
-# example использования
+# Example of use
 dynamic_results = dynamic_rebalance_backtest(strategies, data, rebalance_freq='M')
 ```
 
-## metrics качества бэктестинга
+## metrics quality bactering
 
-### 📊 Классификация метрик качества бэктестинга
+### ♪ Becketting quality metric classification
 
 ```mermaid
 graph TD
-A[metrics качества бэктестинга] --> B[Базовые metrics]
-A --> C[Продвинутые metrics]
+A[metrics of betting quality] -> B [Base-based metrics]
+A-> C [Processed metrics]
 A --> D[Metrics performance]
 
-B --> B1[Доходность and риск]
-B1 --> B11[Общая доходность]
-B1 --> B12[Годовая доходность]
-B1 --> B13[Волатильность]
-B1 --> B14[Коэффициент Шарпа]
-B1 --> B15[Максимальная просадка]
-B1 --> B16[Коэффициент Сортино]
+B -> B1 [income and risk]
+B1-> B11 [Total return]
+B1 -> B12 [annual return]
+B1-> B13 [Volatility]
+B1-> B14 [Sharp coefficient]
+B1-> B15 [Maximum draught]
+B1-> B16 [Sortino Coefficient]
 
-C --> C1[metrics стабильности]
-C1 --> C11[Скользящий коэффициент Шарпа]
-C1 --> C12[Стабильность коэффициента Шарпа]
-C1 --> C13[Коэффициент вариации]
-C1 --> C14[Коэффициент стабильности]
+C --> C1 [Metrics stability]
+C1-> C11 [Slip factor Sharp]
+C1-> C12 [Stable of Sharp coefficient]
+C1-> C13 [Optional factor]
+C1-> C14 [Stable factor]
 
-C --> C2[metrics риска]
+C --> C2 [risk metrics]
  C2 --> C21[Value at Risk - VaR]
  C2 --> C22[Conditional VaR - CVaR]
  C2 --> C23[Expected Shortfall]
-C2 --> C24[Коэффициент Кальмара]
-C2 --> C25[Коэффициент Стерлинга]
+C2-> C24 [Calmar coefficient]
+C2-> C25 [Sterling coefficient]
 
-D --> D1[metrics эффективности]
-D1 --> D11[Коэффициент бета]
-D1 --> D12[Коэффициент альфа]
-D1 --> D13[Коэффициент информации]
-D1 --> D14[Коэффициент Трейнора]
-D1 --> D15[Коэффициент Дженсена]
+D --> D1[metrics effectiveness]
+D1-> D11 [Beta coefficient]
+D1-> D12 [Alpha index]
+D1-> D13 [Information ratio]
+D1-> D14 [Trenor coefficient]
+D1-> D15 [Gensen coefficient]
 
  style A fill:#e3f2fd
  style B fill:#c8e6c9
@@ -2473,74 +2473,74 @@ D1 --> D15[Коэффициент Дженсена]
  style D fill:#f3e5f5
 ```
 
-### 1. Базовые metrics
+*## 1. Basic metrics
 
-**Доходность and риск:**
+** Income and risk:**
 
 ```python
 def calculate_basic_metrics(returns, config=None, validation=True):
  """
-Расчет базовых метрик with детальными параметрами
+Calculation of the basic metric with detailed parameters
 
  Parameters:
  -----------
  returns : pd.Series or np.array
-temporary ряд доходностей стратегии
-- Должен содержать числовые значения
-- Рекомендуется минимум 100 наблюдений for надежности
-- Может содержать NaN, которые будут проигнорированы
+temporary number of strategy returns
+- Shall contain numerical values
+- A minimum of 100 observations for reliability are recommended
+- May contain NaN, which will be ignored
 
  config : dict, optional
-Дополнительная configuration for расчета метрик
-- 'trading_days': int, default=252 - количество торговых дней in году
-- 'risk_free_rate': float, default=0.0 - безрисковая ставка (0.0-0.1)
-- 'min_periods': int, default=30 - минимальное количество periods for расчета
-- 'return_predictions': bool, default=False - возвращать предсказания
-- 'return_metrics': bool, default=True - возвращать metrics
-- 'verbose': bool, default=False - выводить подробную информацию
-- 'include_skewness': bool, default=True - включать асимметрию
-- 'include_kurtosis': bool, default=True - включать эксцесс
-- 'include_jarque_bera': bool, default=True - включать тест Жарка-Бера
-- 'include_autocorr': bool, default=True - включать автокорреляцию
-- 'include_stationarity': bool, default=True - включать тест стационарности
+Additional conference for the calculation of metrics
+- 'trade_days':int, default=252 - number of trade days in year
+- 'risk_free_rate': flat, default=0.0 - risk-free rate (0.0-0.1)
+- 'min_periods':int, default=30 = minimum number periods for calculation
+- 'return_predations': bool, default=False - return predictions
+- 'return_metrics': bool, default=True - return metrics
+- 'verbose': bool, default=False - output details
+- 'Include_skeewness': bool, default=True - include asymmetries
+- 'Include_curtosis': bool, default=True - include excess
+- 'Include_jarque_bera': bool, default=True - turn on the test of Hark-Bera
+- 'Include_autocorr': bool, default=True - turn on autocorration
+- 'Include_state': bool, default=True - turn on the stability test
 
  validation : bool, default=True
-Выполнять ли валидацию входных данных
-- Проверяет presence данных
-- Проверяет достаточность данных
-- Проверяет корректность параметров
+Whether to validate input data
+- Checks the data availability.
+- Checks data adequacy
+- Checks the correct parameters.
 
  Returns:
  --------
  dict
-Словарь with базовыми метриками:
-- 'total_return': float - общая доходность
-- 'annual_return': float - годовая доходность
-- 'volatility': float - волатильность (годовая)
-- 'sharpe': float - коэффициент Шарпа
-- 'max_drawdown': float - максимальная просадка
-- 'sortino': float - коэффициент Сортино
-- 'calmar': float - коэффициент Кальмара
-- 'sterling': float - коэффициент Стерлинга
-- 'skewness': float - асимметрия (если include_skewness=True)
-- 'kurtosis': float - эксцесс (если include_kurtosis=True)
-- 'jarque_bera': dict - тест Жарка-Бера (если include_jarque_bera=True)
-- 'autocorr': dict - автокорреляция (если include_autocorr=True)
-- 'stationarity': dict - тест стационарности (если include_stationarity=True)
+The dictionary with basic metrics:
+- 'Total_return': float - total return
+- 'annual_return': float - annual return
+- 'volatility': float - volatility (annual)
+- 'sharpe': float - Sharpe coefficient
+- 'max_drawdown': float = maximum draught
+- 'sortino': float - Sortino coefficient
+- 'calmar': float - Calmar coefficient
+- 'Sterling': float - Sterling coefficient
+- 'skewness': float is asymmetrical (if include_skewness=True)
+- 'curtosis': float is an excession (if include_curtosis=True)
+- 'jarque_bera': dict - Test of Hark-Bera (if include_jarque_bera=True)
+- 'autocorr': dict - autocorration (if include_autocorr=True)
+- 'Stationarity': dict - stability test (if include_state=True)
 
  Raises:
  -------
  ValueError
-Если data недостаточны or parameters некорректны
+If data are insufficient or parameters incorrect
  TypeError
-Если data not являются числовыми
+If data not are numerical
 
  Examples:
  ---------
->>> # Базовое использование
+>># Basic use
  >>> metrics = calculate_basic_metrics(strategy_returns)
  >>>
->>> # with кастомной конфигурацией
+>> # with caste configuration
  >>> config = {
  ... 'trading_days': 365,
  ... 'risk_free_rate': 0.02,
@@ -2549,10 +2549,10 @@ temporary ряд доходностей стратегии
  ... }
  >>> metrics = calculate_basic_metrics(strategy_returns, config=config)
  >>>
->>> # Без validation (быстрее, но менее безопасно)
+>> # Without vilification (rapid but less secure)
  >>> metrics = calculate_basic_metrics(strategy_returns, validation=False)
  """
-# configuration on умолчанию
+# configuring on default
  if config is None:
  config = {
  'trading_days': 252,
@@ -2568,55 +2568,55 @@ temporary ряд доходностей стратегии
  'include_stationarity': True
  }
 
-# validation входных данных
+# Validation of input data
  if validation:
  if len(returns) < config['min_periods']:
-raise ValueError(f"Недостаточно данных. Минимум: {config['min_periods']}")
+raise ValueError(f"Insufficient data. Minimum: {config['min_periods']})
 
  if not np.isfinite(returns).any():
-raise ValueError("data not содержат конечных значений")
+Raise ValueError("data nt contains final values")
 
  if not (0 < config['trading_days'] <= 365):
-raise ValueError("trading_days должно быть между 1 and 365")
+Raise ValueError("trading_days should be between 1 and 365)
 
  if not (0 <= config['risk_free_rate'] <= 1):
-raise ValueError("risk_free_rate должно быть между 0 and 1")
+Raise ValueError("risk_free_rate should be between 0 and 1)
 
-# clean данных
+# Clear data
  returns_clean = returns.dropna() if hasattr(returns, 'dropna') else returns[~np.isnan(returns)]
 
  if len(returns_clean) < config['min_periods']:
-raise ValueError(f"После очистки недостаточно данных. Минимум: {config['min_periods']}")
+raise ValueError(f"After cleaning insufficient data.
 
  if config['verbose']:
-print(f"Расчет базовых метрик for {len(returns_clean)} наблюдений")
-print(f"Торговых дней in году: {config['trading_days']}")
-print(f"Безрисковая ставка: {config['risk_free_rate']:.2%}")
+pprint(f) "Calculation of basic metrics for {len(returns_clean}}observations")
+(f "Trade days in year: {`trade_days'}")
+pprint(f"Risk rate: {config['risk_free_rate']:2%}})
 
-# Базовые metrics
+# Basic metrics
  total_return = returns_clean.sum()
  annual_return = returns_clean.mean() * config['trading_days']
  volatility = returns_clean.std() * np.sqrt(config['trading_days'])
 
-# Коэффициент Шарпа
+# Sharpe coefficient
  excess_return = annual_return - config['risk_free_rate']
  sharpe = excess_return / volatility if volatility > 0 else 0
 
-# Максимальная просадка
+# Maximum tarmac
  max_drawdown = calculate_max_drawdown(returns_clean)
 
-# Коэффициент Сортино
+# The Sortino coefficient
  downside_returns = returns_clean[returns_clean < 0]
  downside_volatility = downside_returns.std() * np.sqrt(config['trading_days']) if len(downside_returns) > 0 else 0
  sortino = excess_return / downside_volatility if downside_volatility > 0 else 0
 
-# Коэффициент Кальмара
+# Calmar coefficient
  calmar = annual_return / abs(max_drawdown) if max_drawdown != 0 else 0
 
-# Коэффициент Стерлинга
+# Sterling coefficient
  sterling = annual_return / abs(returns_clean.min()) if returns_clean.min() != 0 else 0
 
-# Результаты
+# Results
  results = {
  'total_return': total_return,
  'annual_return': annual_return,
@@ -2628,7 +2628,7 @@ print(f"Безрисковая ставка: {config['risk_free_rate']:.2%}")
  'sterling': sterling
  }
 
-# Дополнительные metrics
+# Additional metrics
  if config['include_skewness']:
  results['skewness'] = returns_clean.skew() if hasattr(returns_clean, 'skew') else scipy.stats.skew(returns_clean)
 
@@ -2646,7 +2646,7 @@ print(f"Безрисковая ставка: {config['risk_free_rate']:.2%}")
  }
  except importError:
  if config['verbose']:
-print("scipy not installed, пропускаем тест Жарка-Бера")
+"scipy not installed, miss the Hot-Ber test"
 
  if config['include_autocorr']:
  try:
@@ -2660,7 +2660,7 @@ print("scipy not installed, пропускаем тест Жарка-Бера")
  }
  except importError:
  if config['verbose']:
-print("statsmodels not installed, пропускаем автокорреляцию")
+"statsmodels not installed, let's skip autocorporation"
 
  if config['include_stationarity']:
  try:
@@ -2674,74 +2674,74 @@ print("statsmodels not installed, пропускаем автокорреляц�
  }
  except importError:
  if config['verbose']:
-print("statsmodels not installed, пропускаем тест стационарности")
+"statsmodels not installed, missing the stationary test"
 
  if config['verbose']:
-print(f"Расчет завершен. Sharpe: {sharpe:.4f}, Max DD: {max_drawdown:.4f}")
+(f) The calculation is complete. Sharpe: {sharpe:.4f}, Max DD: {max_drawdown:.4f})
 
  return results
 
-# example использования
+# Example of use
 metrics = calculate_basic_metrics(strategy_returns)
 ```
 
-**Расчет максимальной просадки:**
+** Calculation of maximum draught:**
 
 ```python
 def calculate_max_drawdown(returns, config=None, validation=True):
  """
-Расчет максимальной просадки with детальными параметрами
+Calculation of maximum draught with detailed parameters
 
  Parameters:
  -----------
  returns : pd.Series or np.array
-temporary ряд доходностей стратегии
-- Должен содержать числовые значения
-- Рекомендуется минимум 100 наблюдений for надежности
-- Может содержать NaN, которые будут проигнорированы
+temporary number of strategy returns
+- Shall contain numerical values
+- A minimum of 100 observations for reliability are recommended
+- May contain NaN, which will be ignored
 
  config : dict, optional
-Дополнительная configuration for расчета просадки
-- 'method': str, default='cumulative' - метод расчета ('cumulative', 'rolling', 'peak')
-- 'window': int, default=None - окно for rolling метода (если None, используется весь период)
-- 'min_periods': int, default=30 - минимальное количество periods for расчета
-- 'return_predictions': bool, default=False - возвращать предсказания
-- 'return_metrics': bool, default=True - возвращать metrics
-- 'verbose': bool, default=False - выводить подробную информацию
-- 'include_drawdown_series': bool, default=False - включать серию просадок
-- 'include_drawdown_dates': bool, default=False - включать даты просадок
-- 'include_recovery_time': bool, default=False - включать время восстановления
-- 'include_underwater_periods': bool, default=False - включать периоды под водой
+Additional configuration for sediment calculation
+- 'method': str, default='cumulative' is the calculation method ('cumulative', 'rolling', 'peak')
+- 'Window': in, default= None - window for rolling method (if None, all period used)
+- 'min_periods':int, default=30 = minimum number periods for calculation
+- 'return_predations': bool, default=False - return predictions
+- 'return_metrics': bool, default=True - return metrics
+- 'verbose': bool, default=False - output details
+- 'Include_drawdown_series': bool, default=False - include a series of prostheses
+- 'Include_drawdown_dates': bell, default=False - include the date of the pronoun
+- 'include_recovery_time': bool, default=False - include recovery time
+- 'include_underwater_periods': bool, default=False - include periods underwater
 
  validation : bool, default=True
-Выполнять ли валидацию входных данных
-- Проверяет presence данных
-- Проверяет достаточность данных
-- Проверяет корректность параметров
+Whether to validate input data
+- Checks the data availability.
+- Checks data adequacy
+- Checks the correct parameters.
 
  Returns:
  --------
  float or dict
-Максимальная просадка or словарь with детальными результатами:
-- 'max_drawdown': float - максимальная просадка
-- 'drawdown_series': pd.Series - серия просадок (если include_drawdown_series=True)
-- 'drawdown_dates': dict - даты просадок (если include_drawdown_dates=True)
-- 'recovery_time': int - время восстановления in днях (если include_recovery_time=True)
-- 'underwater_periods': List - периоды под водой (если include_underwater_periods=True)
+Maximum length or dictionary with detailed results:
+- 'max_drawdown': float = maximum draught
+- 'drawdown_series': pd.Serys is a series of prostheses (if include_drawdown_series=True)
+- 'drawdown_dates': dict - date of prolitude (if include_drawdown_dates=True)
+- 'recovery_time':int is the time of recovery in days (if include_recovery_time=True)
+- 'underwater_periods':List - Underwater periods (if include_underwater_periods=True)
 
  Raises:
  -------
  ValueError
-Если data недостаточны or parameters некорректны
+If data are insufficient or parameters incorrect
  TypeError
-Если data not являются числовыми
+If data not are numerical
 
  Examples:
  ---------
->>> # Базовое использование
+>># Basic use
  >>> max_dd = calculate_max_drawdown(strategy_returns)
  >>>
->>> # with кастомной конфигурацией
+>> # with caste configuration
  >>> config = {
  ... 'method': 'rolling',
  ... 'window': 252,
@@ -2751,10 +2751,10 @@ temporary ряд доходностей стратегии
  ... }
  >>> results = calculate_max_drawdown(strategy_returns, config=config)
  >>>
->>> # Без validation (быстрее, но менее безопасно)
+>> # Without vilification (rapid but less secure)
  >>> max_dd = calculate_max_drawdown(strategy_returns, validation=False)
  """
-# configuration on умолчанию
+# configuring on default
  if config is None:
  config = {
  'method': 'cumulative',
@@ -2769,41 +2769,41 @@ temporary ряд доходностей стратегии
  'include_underwater_periods': False
  }
 
-# validation входных данных
+# Validation of input data
  if validation:
  if len(returns) < config['min_periods']:
-raise ValueError(f"Недостаточно данных. Минимум: {config['min_periods']}")
+raise ValueError(f"Insufficient data. Minimum: {config['min_periods']})
 
  if not np.isfinite(returns).any():
-raise ValueError("data not содержат конечных значений")
+Raise ValueError("data nt contains final values")
 
  if config['method'] not in ['cumulative', 'rolling', 'peak']:
-raise ValueError("method должен быть 'cumulative', 'rolling' or 'peak'")
+Raise ValueError ("method should be 'cumulative', 'rolling' or 'peak'")
 
  if config['window'] is not None and config['window'] < 2:
-raise ValueError("window должно быть больше 1")
+Raise ValueError("window must be more than 1")
 
-# clean данных
+# Clear data
  returns_clean = returns.dropna() if hasattr(returns, 'dropna') else returns[~np.isnan(returns)]
 
  if len(returns_clean) < config['min_periods']:
-raise ValueError(f"После очистки недостаточно данных. Минимум: {config['min_periods']}")
+raise ValueError(f"After cleaning insufficient data.
 
  if config['verbose']:
-print(f"Расчет максимальной просадки for {len(returns_clean)} наблюдений")
-print(f"Метод: {config['method']}")
+pprint(f) "Calculation of maximum tare for {len(returns_clean)} observation")
+(pint(f" Method: {config['method']}})
  if config['window']:
-print(f"Окно: {config['window']}")
+(pint(f" Window: {config['window']}})
 
-# Расчет просадки in dependencies from метода
+# Calculation of the margin in dependencies from the method
  if config['method'] == 'cumulative':
-# Кумулятивный метод
+# Cumulative method
  cumulative = (1 + returns_clean).cumprod()
  running_max = cumulative.expanding().max()
  drawdown = (cumulative - running_max) / running_max
 
  elif config['method'] == 'rolling':
-# Rolling метод
+# Rolling method
  if config['window'] is None:
  config['window'] = len(returns_clean)
 
@@ -2812,25 +2812,25 @@ print(f"Окно: {config['window']}")
  drawdown = (cumulative - running_max) / running_max
 
  elif config['method'] == 'peak':
-# Peak метод
+# Peak method
  cumulative = (1 + returns_clean).cumprod()
  running_max = cumulative.expanding().max()
  drawdown = (cumulative - running_max) / running_max
 
-# Максимальная просадка
+# Maximum tarmac
  max_drawdown = drawdown.min()
 
-# Результаты
+# Results
  results = {
  'max_drawdown': max_drawdown
  }
 
-# Дополнительные результаты
+# Additional results
  if config['include_drawdown_series']:
  results['drawdown_series'] = drawdown
 
  if config['include_drawdown_dates']:
-# Найти даты максимальной просадки
+# Find the maximum planting dates
  max_dd_idx = drawdown.idxmin() if hasattr(drawdown, 'idxmin') else np.argmin(drawdown)
  peak_idx = drawdown[:max_dd_idx].idxmax() if hasattr(drawdown, 'idxmax') else np.argmax(drawdown[:max_dd_idx])
 
@@ -2841,11 +2841,11 @@ print(f"Окно: {config['window']}")
  }
 
  if config['include_recovery_time']:
-# Время восстановления
+# Time of recovery
  max_dd_idx = drawdown.idxmin() if hasattr(drawdown, 'idxmin') else np.argmin(drawdown)
  peak_idx = drawdown[:max_dd_idx].idxmax() if hasattr(drawdown, 'idxmax') else np.argmax(drawdown[:max_dd_idx])
 
-# Найти когда просадка вернулась к нулю
+# Find out when the tarmac went back to zero
  recovery_idx = None
  for i in range(max_dd_idx, len(drawdown)):
  if drawdown.iloc[i] >= 0 if hasattr(drawdown, 'iloc') else drawdown[i] >= 0:
@@ -2856,7 +2856,7 @@ print(f"Окно: {config['window']}")
  results['recovery_time'] = recovery_time
 
  if config['include_underwater_periods']:
-# Периоды под водой (просадка > 0)
+# Underwater periods (sprout > 0)
  underwater = drawdown > 0
  underwater_periods = []
 
@@ -2865,11 +2865,11 @@ print(f"Окно: {config['window']}")
 
  for i, is_underwater in enumerate(underwater):
  if is_underwater and not in_underwater:
-# Начало периода под водой
+# The beginning of the underwater period
  in_underwater = True
  start_idx = i
  elif not is_underwater and in_underwater:
-# Конец периода под водой
+# End of period underwater
  in_underwater = False
  underwater_periods.append({
  'start': start_idx,
@@ -2878,7 +2878,7 @@ print(f"Окно: {config['window']}")
  'max_drawdown': drawdown.iloc[start_idx:i].min() if hasattr(drawdown, 'iloc') else drawdown[start_idx:i].min()
  })
 
-# Если период под водой not закончился
+# If the period under water is over #
  if in_underwater:
  underwater_periods.append({
  'start': start_idx,
@@ -2890,95 +2890,95 @@ print(f"Окно: {config['window']}")
  results['underwater_periods'] = underwater_periods
 
  if config['verbose']:
-print(f"Максимальная просадка: {max_drawdown:.4f}")
+print(f "Maximal prosperity: {max_drawdown:.4f}")
  if config['include_recovery_time'] and 'recovery_time' in results:
-print(f"Время восстановления: {results['recovery_time']} дней")
+Print(f"Recovery time: {`recovery_time'} days")
  if config['include_underwater_periods'] and 'underwater_periods' in results:
-print(f"periods под водой: {len(results['underwater_periods'])}")
+prent(f"periods underwater: {len(s['underwater_periods']}})
 
-# Возвращаем только максимальную просадку, если not запрошены дополнительные результаты
+# We only return the maximum delay if not requested additional results
  if not any([config['include_drawdown_series'], config['include_drawdown_dates'],
  config['include_recovery_time'], config['include_underwater_periods']]):
  return max_drawdown
 
  return results
 
-# example использования
+# Example of use
 max_dd = calculate_max_drawdown(strategy_returns)
 ```
 
-### 2. Продвинутые metrics
+♪##2 ♪ Advanced metrics
 
-**metrics стабильности:**
+**Metrics stability:**
 
 ```python
 def calculate_stability_metrics(returns, window=252, config=None, validation=True):
  """
-Расчет метрик стабильности with детальными параметрами
+Calculation of stability metric with detailed parameters
 
  Parameters:
  -----------
  returns : pd.Series or np.array
-temporary ряд доходностей стратегии
-- Должен содержать числовые значения
-- Рекомендуется минимум 100 наблюдений for надежности
-- Может содержать NaN, которые будут проигнорированы
+temporary number of strategy returns
+- Shall contain numerical values
+- A minimum of 100 observations for reliability are recommended
+- May contain NaN, which will be ignored
 
  window : int, default=252
-Окно for расчета скользящих метрик
-- 252 означает окно in 252 дня (год)
-- Рекомендуется 50-500 for большинства случаев
-- Меньше 50 может дать неточные результаты
-- Больше 500 может быть избыточно медленным
+Window for calculation of sliding metrics
+- 252 means window in 252 days (year)
+- Recommended 50-500 for most cases
+- Less than 50 can give inaccurate results.
+- More than 500 can be too slow.
 
  config : dict, optional
-Дополнительная configuration for расчета метрик стабильности
-- 'trading_days': int, default=252 - количество торговых дней in году
-- 'risk_free_rate': float, default=0.0 - безрисковая ставка (0.0-0.1)
-- 'min_periods': int, default=30 - минимальное количество periods for расчета
-- 'return_predictions': bool, default=False - возвращать предсказания
-- 'return_metrics': bool, default=True - возвращать metrics
-- 'verbose': bool, default=False - выводить подробную информацию
-- 'include_rolling_metrics': bool, default=True - включать скользящие metrics
-- 'include_volatility_metrics': bool, default=True - включать metrics волатильности
-- 'include_correlation_metrics': bool, default=True - включать metrics корреляции
-- 'include_regime_metrics': bool, default=True - включать metrics режимов
-- 'include_trend_metrics': bool, default=True - включать metrics тренда
-- 'include_cyclical_metrics': bool, default=True - включать metrics циклов
+Additional conference for the calculation of the stability metric
+- 'trade_days':int, default=252 - number of trade days in year
+- 'risk_free_rate': flat, default=0.0 - risk-free rate (0.0-0.1)
+- 'min_periods':int, default=30 = minimum number periods for calculation
+- 'return_predations': bool, default=False - return predictions
+- 'return_metrics': bool, default=True - return metrics
+- 'verbose': bool, default=False - output details
+- 'Include_rolling_metrics': bool, default=True - include sliding metrics
+- 'Include_volatility_metrics': bool, default=True - include metrics volatility
+- 'include_control_metrics': bool, default=True - include metrics correlations
+- 'include_regime_metrics': bool, default=True - include metrics modes
+- 'Include_trend_metrics': bool, default=True - include metrics trend
+- 'Include_cyclic_metrics': bool, default=True - include cycles
 
  validation : bool, default=True
-Выполнять ли валидацию входных данных
-- Проверяет presence данных
-- Проверяет достаточность данных
-- Проверяет корректность параметров
+Whether to validate input data
+- Checks the data availability.
+- Checks data adequacy
+- Checks the correct parameters.
 
  Returns:
  --------
  dict
-Словарь with метриками стабильности:
-- 'sharpe_stability': float - стабильность коэффициента Шарпа
-- 'coefficient_of_variation': float - коэффициент вариации
-- 'stability': float - общий коэффициент стабильности
-- 'rolling_sharpe': pd.Series - скользящий коэффициент Шарпа (если include_rolling_metrics=True)
-- 'volatility_metrics': dict - metrics волатильности (если include_volatility_metrics=True)
-- 'correlation_metrics': dict - metrics корреляции (если include_correlation_metrics=True)
-- 'regime_metrics': dict - metrics режимов (если include_regime_metrics=True)
-- 'trend_metrics': dict - metrics тренда (если include_trend_metrics=True)
-- 'cyclical_metrics': dict - metrics циклов (если include_cyclical_metrics=True)
+Vocabulary with meters of stability:
+- 'sharpe_state': float - Sharpe coefficient stability
+- 'co-officent_of_variation': float = coefficient of variation
+- 'Stability': float - total stability coefficient
+- 'rolling_sharpe': pd.Serys is the sliding coefficient of Sharpe (if include_rolling_metrics=True)
+- 'volatility_metrics': dict - metrics volatility (if include_volatility_metrics=True)
+- 'correllation_metrics': dict - metrics correlations (if include_control_metrics=True)
+- 'regime_metrics':dict - metrics modes (if include_regime_metrics=True)
+- 'trend_metrics': dict - metrics trend (if include_trind_metrics=True)
+- 'cyclic_metrics': dict - metrics cycles (if include_cyclic_metrics=True)
 
  Raises:
  -------
  ValueError
-Если data недостаточны or parameters некорректны
+If data are insufficient or parameters incorrect
  TypeError
-Если data not являются числовыми
+If data not are numerical
 
  Examples:
  ---------
->>> # Базовое использование
+>># Basic use
  >>> metrics = calculate_stability_metrics(strategy_returns)
  >>>
->>> # with кастомной конфигурацией
+>> # with caste configuration
  >>> config = {
  ... 'trading_days': 365,
  ... 'risk_free_rate': 0.02,
@@ -2987,10 +2987,10 @@ temporary ряд доходностей стратегии
  ... }
  >>> metrics = calculate_stability_metrics(strategy_returns, window=500, config=config)
  >>>
->>> # Без validation (быстрее, но менее безопасно)
+>> # Without vilification (rapid but less secure)
  >>> metrics = calculate_stability_metrics(strategy_returns, validation=False)
  """
-# configuration on умолчанию
+# configuring on default
  if config is None:
  config = {
  'trading_days': 252,
@@ -3007,58 +3007,58 @@ temporary ряд доходностей стратегии
  'include_cyclical_metrics': True
  }
 
-# validation входных данных
+# Validation of input data
  if validation:
  if len(returns) < config['min_periods']:
-raise ValueError(f"Недостаточно данных. Минимум: {config['min_periods']}")
+raise ValueError(f"Insufficient data. Minimum: {config['min_periods']})
 
  if not np.isfinite(returns).any():
-raise ValueError("data not содержат конечных значений")
+Raise ValueError("data nt contains final values")
 
  if not (2 <= window <= len(returns)):
-raise ValueError(f"window должно быть между 2 and {len(returns)}")
+raise ValueError(f"window should be between 2 and {len(returns)}})
 
  if not (0 < config['trading_days'] <= 365):
-raise ValueError("trading_days должно быть между 1 and 365")
+Raise ValueError("trading_days should be between 1 and 365)
 
  if not (0 <= config['risk_free_rate'] <= 1):
-raise ValueError("risk_free_rate должно быть между 0 and 1")
+Raise ValueError("risk_free_rate should be between 0 and 1)
 
-# clean данных
+# Clear data
  returns_clean = returns.dropna() if hasattr(returns, 'dropna') else returns[~np.isnan(returns)]
 
  if len(returns_clean) < config['min_periods']:
-raise ValueError(f"После очистки недостаточно данных. Минимум: {config['min_periods']}")
+raise ValueError(f"After cleaning insufficient data.
 
  if config['verbose']:
-print(f"Расчет метрик стабильности for {len(returns_clean)} наблюдений")
-print(f"Окно: {window}")
-print(f"Торговых дней in году: {config['trading_days']}")
-print(f"Безрисковая ставка: {config['risk_free_rate']:.2%}")
+prent(f) "Calculating the stability metric for {len(returns_clean}}observations")
+print(f) Window: {Window})
+(f "Trade days in year: {`trade_days'}")
+pprint(f"Risk rate: {config['risk_free_rate']:2%}})
 
-# Базовые metrics стабильности
-# Скользящий коэффициент Шарпа
+# Basic metrics stability
+# Sharpe rolling coefficient
  rolling_mean = returns_clean.rolling(window=window, min_periods=1).mean()
  rolling_std = returns_clean.rolling(window=window, min_periods=1).std()
  rolling_sharpe = (rolling_mean - config['risk_free_rate']) / rolling_std * np.sqrt(config['trading_days'])
 
-# Стабильность коэффициента Шарпа
+# Stable Sharpe coefficient
  sharpe_stability = 1 / rolling_sharpe.std() if rolling_sharpe.std() > 0 else 0
 
-# Коэффициент вариации
+# The coefficient of variation
  cv = returns_clean.std() / abs(returns_clean.mean()) if returns_clean.mean() != 0 else 0
 
-# Коэффициент стабильности
+# Stability factor
  stability = 1 / cv if cv > 0 else 0
 
-# Результаты
+# Results
  results = {
  'sharpe_stability': sharpe_stability,
  'coefficient_of_variation': cv,
  'stability': stability
  }
 
-# Дополнительные metrics
+# Additional metrics
  if config['include_rolling_metrics']:
  results['rolling_sharpe'] = rolling_sharpe
  results['rolling_mean'] = rolling_mean
@@ -3066,7 +3066,7 @@ print(f"Безрисковая ставка: {config['risk_free_rate']:.2%}")
  results['rolling_volatility'] = rolling_std * np.sqrt(config['trading_days'])
 
  if config['include_volatility_metrics']:
-# metrics волатильности
+# metrics volatility
  volatility = returns_clean.std() * np.sqrt(config['trading_days'])
  rolling_volatility = rolling_std * np.sqrt(config['trading_days'])
 
@@ -3079,7 +3079,7 @@ print(f"Безрисковая ставка: {config['risk_free_rate']:.2%}")
  }
 
  if config['include_correlation_metrics']:
-# metrics корреляции
+# metrics correlations
  autocorr = returns_clean.autocorr(lag=1) if hasattr(returns_clean, 'autocorr') else np.corrcoef(returns_clean[:-1], returns_clean[1:])[0, 1]
 
  results['correlation_metrics'] = {
@@ -3090,11 +3090,11 @@ print(f"Безрисковая ставка: {config['risk_free_rate']:.2%}")
  }
 
  if config['include_regime_metrics']:
-# metrics режимов
+# metrics modes
  rolling_mean = returns_clean.rolling(window=window, min_periods=1).mean()
  rolling_std = returns_clean.rolling(window=window, min_periods=1).std()
 
-# Определение режимов (высокая/низкая волатильность)
+# Definition of regimes (high/low volatility)
  high_vol_threshold = rolling_std.quantile(0.75)
  low_vol_threshold = rolling_std.quantile(0.25)
 
@@ -3109,7 +3109,7 @@ print(f"Безрисковая ставка: {config['risk_free_rate']:.2%}")
  }
 
  if config['include_trend_metrics']:
-# metrics тренда
+# metrics trend
  trend_slope = np.polyfit(range(len(returns_clean)), returns_clean, 1)[0]
  trend_r2 = np.corrcoef(range(len(returns_clean)), returns_clean)[0, 1] ** 2
 
@@ -3121,10 +3121,10 @@ print(f"Безрисковая ставка: {config['risk_free_rate']:.2%}")
  }
 
  if config['include_cyclical_metrics']:
-# metrics циклов
+# metrics cycles
  try:
  from scipy import signal
-# Поиск циклов in данных
+# Searching for in-data cycles
  freqs, psd = signal.periodogram(returns_clean, fs=1.0)
  dominant_freq = freqs[np.argmax(psd)]
  cycle_length = 1 / dominant_freq if dominant_freq > 0 else 0
@@ -3137,24 +3137,24 @@ print(f"Безрисковая ставка: {config['risk_free_rate']:.2%}")
  }
  except importError:
  if config['verbose']:
-print("scipy not installed, пропускаем metrics циклов")
+"spipy not installed, skip cycles")
 
  if config['verbose']:
-print(f"Расчет завершен. Стабильность Шарпа: {sharpe_stability:.4f}")
-print(f"Коэффициент вариации: {cv:.4f}")
-print(f"Общая стабильность: {stability:.4f}")
+prent(f) "The calculation is complete. Sharp stability: {sharpe_state:.4f}")
+(f "Variation factor: {cv:.4f}")
+(f "General stability: {stable: 4f}")
 
  return results
 
-# example использования
+# Example of use
 stability_metrics = calculate_stability_metrics(strategy_returns, window=252)
 ```
 
-**metrics риска:**
+**Metrics risk:**
 
 ```python
 def calculate_risk_metrics(returns, confidence_level=0.95):
-"""Расчет метрик риска"""
+""""""" "The calculation of the risk metric."
  # Value at Risk (VaR)
  var = np.percentile(returns, 100 * (1 - confidence_level))
 
@@ -3164,10 +3164,10 @@ def calculate_risk_metrics(returns, confidence_level=0.95):
  # Expected Shortfall
  es = returns[returns <= var].mean()
 
-# Коэффициент Кальмара
+# Calmar coefficient
  calmar = returns.mean() * 252 / abs(calculate_max_drawdown(returns))
 
-# Коэффициент Стерлинга
+# Sterling coefficient
  sterling = returns.mean() * 252 / abs(returns.min())
 
  return {
@@ -3178,31 +3178,31 @@ def calculate_risk_metrics(returns, confidence_level=0.95):
  'sterling': sterling
  }
 
-# example использования
+# Example of use
 risk_metrics = calculate_risk_metrics(strategy_returns, confidence_level=0.95)
 ```
 
 ### 3. Metrics performance
 
-**metrics эффективности:**
+**Metrics efficiency:**
 
 ```python
 def calculate_efficiency_metrics(returns, benchmark_returns):
-"""Расчет метрик эффективности"""
-# Коэффициент бета
+"The calculation of the performance metric."
+# Beta coefficient
  beta = np.cov(returns, benchmark_returns)[0, 1] / np.var(benchmark_returns)
 
-# Коэффициент альфа
+# Alpha coefficient
  alpha = returns.mean() - beta * benchmark_returns.mean()
 
-# Коэффициент информации
+# Information ratio
  excess_returns = returns - benchmark_returns
  information_ratio = excess_returns.mean() / excess_returns.std()
 
-# Коэффициент Трейнора
+# Trainor coefficient
  treynor = returns.mean() / beta if beta != 0 else 0
 
-# Коэффициент Дженсена
+# The Jensen coefficient
  jensen = alpha
 
  return {
@@ -3213,38 +3213,38 @@ def calculate_efficiency_metrics(returns, benchmark_returns):
  'jensen': jensen
  }
 
-# example использования
+# Example of use
 efficiency_metrics = calculate_efficiency_metrics(strategy_returns, benchmark_returns)
 ```
 
-## validation результатов бэктестинга
+## Validation of thebacking results
 
-### 🔍 process validation результатов бэктестинга
+### \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\t\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\############## \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#################################################### \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 ```mermaid
 graph TD
-A[Результаты бэктестинга] --> B[Статистическая validation]
-A --> C[Экономическая validation]
+A [Becketting results] -> B [Statistical appreciation]
+A-> C [Economic recovery]
 
-B --> B1[Тест on стационарность]
-B1 --> B11[Тест Дики-Фуллера<br/>p-value < 0.05]
-B1 --> B12[Тест КПСС<br/>p-value > 0.05]
+B --> B1 [Text on stability]
+B1 --> B11 [Text Dickie-Fuller<br/>p-value < 0.05]
+B1 --> B12 [Test KPC<br/>p-value > 0.05]
 
-B --> B2[Тест on автокорреляцию]
-B2 --> B21[Тест Льюнга-Бокса<br/>p-value > 0.05]
-B2 --> B22[Тест Дарбина-Уотсона<br/>1.5 < DW < 2.5]
+B --> B2 [Text on autocorration]
+B2 --> B21 [Text Leunga-Box<br/>p-value > 0.05]
+B2 --> B22 [Test of Darbin-Watson<br/>1.5 < DW < 2.5]
 
-C --> C1[Тест on экономическую значимость]
-C1 --> C11[Учет транзакционных издержек<br/>0.1% за сделку]
-C1 --> C12[Минимальный коэффициент Шарпа<br/>≥ 1.0]
-C1 --> C13[Максимальная просадка<br/>≤ 20%]
+C --> C1 [Text on economic significance]
+C1 -> C11 [To account for transaction costs<br/>0.1 per cent per transaction]
+C1-> C12 [Minimum Sharp coefficient<br/>≥ 1.0]
+C1 -> C13 [Maximum draught <br/> < 20 per cent]
 
-C --> C2[Тест on retraining]
+C --> C2 [Text on retraining]
 C2 --> C21[comparison train/test performance]
-C2 --> C22[Статистический тест<br/>t-test]
-C2 --> C23[check деградации<br/>train_sharpe > test_sharpe * 1.5]
+C2 --> C22 [Statistical test<br/>t-test]
+C2 --> C23[check degradation<br/>training_sharpe > test_sharpe * 1.5]
 
-B11 --> D[Оценка валидности]
+B11 -> D [Valitability assessment]
  B12 --> D
  B21 --> D
  B22 --> D
@@ -3255,13 +3255,13 @@ B11 --> D[Оценка валидности]
  C22 --> D
  C23 --> D
 
-D --> E{Результаты валидны?}
-E -->|Да| F[✅ Стратегия готова к деплою]
-E -->|Нет| G[❌ Требует доработки]
+D --> E {Results of valid?}
+E --\\\\\\\F[\\The Strategy is ready for action]
+E --\\\\\\G[\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/E/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\E\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/ } } } } } } } } } } } } }     } } }   }        }  }        } } }
 
-F --> H[Деплой in продакшен]
-G --> I[Оптимизация параметров]
-I --> J[Повторное тестирование]
+F --> H [Business in sales]
+G -> I [Optimization of parameters]
+I -> J [Return testing]
  J --> A
 
  style A fill:#e3f2fd
@@ -3271,19 +3271,19 @@ I --> J[Повторное тестирование]
  style G fill:#ff9800
 ```
 
-### 1. Статистическая validation
+###1. Statistical validation
 
-**Тест on стационарность:**
+**Stability test:**
 
 ```python
 def test_stationarity(returns, significance_level=0.05):
-"""Тест on стационарность временного ряда"""
+"Text on fixed time-series"
  from statsmodels.tsa.stattools import adfuller
 
-# Тест Дики-Фуллера
+# Dickie Fuller test
  adf_result = adfuller(returns)
 
-# Тест КПСС
+# KPSS test
  from statsmodels.tsa.stattools import kpss
  kpss_result = kpss(returns)
 
@@ -3296,21 +3296,21 @@ def test_stationarity(returns, significance_level=0.05):
  'kpss_stationary': kpss_result[1] > significance_level
  }
 
-# example использования
+# Example of use
 stationarity_test = test_stationarity(strategy_returns, significance_level=0.05)
 ```
 
-**Тест on автокорреляцию:**
+**Authorization test:**
 
 ```python
 def test_autocorrelation(returns, lags=20, significance_level=0.05):
-"""Тест on автокорреляцию"""
+"The Test on AutoCorroration."
  from statsmodels.stats.diagnostic import acorr_ljungbox
 
-# Тест Льюнга-Бокса
+# Leunga-Box test
  ljung_box = acorr_ljungbox(returns, lags=lags, return_df=True)
 
-# Тест Дарбина-Уотсона
+# Darbin-Watson test
  from statsmodels.stats.diagnostic import durbin_watson
  dw_statistic = durbin_watson(returns)
 
@@ -3321,26 +3321,26 @@ def test_autocorrelation(returns, lags=20, significance_level=0.05):
  'durbin_watson_autocorr': dw_statistic < 1.5 or dw_statistic > 2.5
  }
 
-# example использования
+# Example of use
 autocorr_test = test_autocorrelation(strategy_returns, lags=20)
 ```
 
-### 2. Экономическая validation
+♪##2 ♪ Economic appreciation
 
-**Тест on экономическую значимость:**
+** Issue on economic significance:**
 
 ```python
 def test_economic_significance(returns, transaction_costs=0.001,
  min_sharpe=1.0, max_drawdown=0.2):
-"""Тест on экономическую значимость"""
-# Учет транзакционных издержек
+"The Issue on Economic Importance"
+# Accounting for transaction costs
  net_returns = returns - transaction_costs
 
-# Расчет метрик
+# The calculation of the metric
  sharpe = net_returns.mean() / net_returns.std() * np.sqrt(252)
  max_dd = calculate_max_drawdown(net_returns)
 
-# check критериев
+# check criteria
  sharpe_significant = sharpe >= min_sharpe
  drawdown_acceptable = abs(max_dd) <= max_drawdown
 
@@ -3352,22 +3352,22 @@ def test_economic_significance(returns, transaction_costs=0.001,
  'economically_significant': sharpe_significant and drawdown_acceptable
  }
 
-# example использования
+# Example of use
 economic_test = test_economic_significance(strategy_returns, transaction_costs=0.001)
 ```
 
-**Тест on retraining:**
+**Text on retraining:**
 
 ```python
 def test_overfitting(train_returns, test_returns, significance_level=0.05):
-"""Тест on retraining"""
+"The Test on Retraining"
  from scipy import stats
 
 # Comparison performance
  train_sharpe = train_returns.mean() / train_returns.std() * np.sqrt(252)
  test_sharpe = test_returns.mean() / test_returns.std() * np.sqrt(252)
 
-# Статистический тест
+# Statistical test
  t_stat, p_value = stats.ttest_ind(train_returns, test_returns)
 
 # check on retraining
@@ -3382,64 +3382,64 @@ def test_overfitting(train_returns, test_returns, significance_level=0.05):
  'overfitting': overfitting
  }
 
-# example использования
+# Example of use
 overfitting_test = test_overfitting(train_returns, test_returns)
 ```
 
-## Автоматизация бэктестинга
+## Becketting automation
 
-### 🤖 Пайплайн автоматизации бэктестинга
+### ♪ Pypline automating the backtting
 
 ```mermaid
 graph TD
-A[Исходные data] --> B[BacktestingPipeline]
-B --> C[configuration параметров]
+A [Reference data] --> B [BacktestingPipeline]
+B -> C [configration of parameters]
 
-C --> D[Простой бэктестинг<br/>train_size: 70%<br/>test_size: 30%]
-C --> E[Walk-forward бэктестинг<br/>train_window: 252<br/>test_window: 30]
-C --> F[Монте-Карло бэктестинг<br/>n_simulations: 1000<br/>confidence: 95%]
+C --> D [Simple buffering<br/>training_size: 70%<br/>test_size: 30%]
+C --> E[Walk-forward buffering<br/>training_window: 252<br/>test_window: 30]
+C --> F[Monte-Carlo batting<br/>n_simulations: 1000<br/>confidence: 95%]
 
-D --> G[Обучение модели]
+D -> G [model training]
  E --> G
  F --> G
 
-G --> H[Предсказания]
-H --> I[Расчет метрик]
+G -> H [Treaties]
+H -> I [Metrics calculation]
 
-I --> J[Коэффициент Шарпа]
-I --> K[Максимальная просадка]
-I --> L[Общая доходность]
+I-> J [Sharp coefficient]
+I -> K [Maximum draught]
+I-> L [Total return]
 
-J --> M[Сбор результатов]
+J-> M[Collection of results]
  K --> M
  L --> M
 
-M --> N[Генерация Reportа]
-N --> O[Сводка on методам]
-N --> P[Детальные результаты]
+M --> N[Generation Reporta]
+N -> O[Report on methods]
+N -> P [Detail results]
 
-O --> Q[Средний коэффициент Шарпа]
-O --> R[Стандартное отклонение]
-O --> S[Процент успешных стратегий]
+O -> Q [Medical Sharpe coefficient]
+O -> R [standard deviation]
+O-> S[All successful strategies]
 
-P --> T[Визуализация результатов]
-T --> U[Кумулятивная доходность]
-T --> V[Распределение метрик]
-T --> W[comparison методов]
+P -> T [Visualization of results]
+T --> U [cumulative return]
+T -> V [Metric distribution]
+T --> W[comparison of methods]
 
-Q --> X[Финальная оценка]
+Q -> X [Final evaluation]
  R --> X
  S --> X
  U --> X
  V --> X
  W --> X
 
-X --> Y{Стратегия готова?}
-Y -->|Да| Z[✅ Деплой in продакшен]
-Y -->|Нет| AA[❌ Оптимизация параметров]
+X --> Y {The Strategy is ready?}
+Y-~ ♪ Yeah ♪ Z[~ Deploy in sales]
+Y --\\\\\\\A[\\\\imtimation of parameters]
 
-AA --> BB[configuration модели]
-BB --> CC[Повторное тестирование]
+AA --> BB [configration model]
+BB --> CC[Return testing]
  CC --> B
 
  style A fill:#e3f2fd
@@ -3449,11 +3449,11 @@ BB --> CC[Повторное тестирование]
  style AA fill:#ff9800
 ```
 
-### 1. Пайплайн бэктестинга
+♪##1 ♪ Pipline backtting ♪
 
 ```python
 class BacktestingPipeline:
-"""Пайплайн for автоматизации бэктестинга"""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""Pipline""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
  def __init__(self, data, model, metrics_calculator):
  self.data = data
@@ -3462,19 +3462,19 @@ class BacktestingPipeline:
  self.results = {}
 
  def run_simple_backtest(self, train_size=0.7, test_size=0.3):
-"""Простой бэктестинг"""
-# Разделение данных
+"Simple Baactering."
+# Data sharing
  split_point = int(len(self.data) * train_size)
  train_data = self.data[:split_point]
  test_data = self.data[split_point:]
 
-# Обучение модели
+# Model learning
  self.model.fit(train_data)
 
-# Предсказания
+# Premonition
  predictions = self.model.predict(test_data)
 
-# Расчет метрик
+# The calculation of the metric
  returns = test_data['returns']
  strategy_returns = predictions * returns
 
@@ -3482,23 +3482,23 @@ class BacktestingPipeline:
  return self.results['simple']
 
  def run_walk_forward_backtest(self, train_window=252, test_window=30, step=30):
-"""Walk-forward бэктестинг"""
+"Walk-forward buffering."
  results = []
 
  for i in range(train_window, len(self.data) - test_window, step):
-# Обучающие data
+# Training data
  train_data = self.data[i-train_window:i]
 
-# testsые data
+# Testsy data
  test_data = self.data[i:i+test_window]
 
-# Обучение модели
+# Model learning
  self.model.fit(train_data)
 
-# Предсказания
+# Premonition
  predictions = self.model.predict(test_data)
 
-# Расчет метрик
+# The calculation of the metric
  returns = test_data['returns']
  strategy_returns = predictions * returns
 
@@ -3510,25 +3510,25 @@ class BacktestingPipeline:
  return self.results['walk_forward']
 
  def run_monte_carlo_backtest(self, n_simulations=1000, confidence_level=0.95):
-"""Монте-Карло бэктестинг"""
+"Monte-Carlo Becketting."
  results = []
 
  for i in range(n_simulations):
-# Случайная выборка данных
+# Random data sample
  sample_data = self.data.sample(frac=0.8, replace=True)
 
-# Разделение on train/test
+# Separation on train/test
  split_point = int(len(sample_data) * 0.7)
  train_data = sample_data[:split_point]
  test_data = sample_data[split_point:]
 
-# Обучение модели
+# Model learning
  self.model.fit(train_data)
 
-# Предсказания
+# Premonition
  predictions = self.model.predict(test_data)
 
-# Расчет метрик
+# The calculation of the metric
  returns = test_data['returns']
  strategy_returns = predictions * returns
 
@@ -3539,13 +3539,13 @@ class BacktestingPipeline:
  return self.results['monte_carlo']
 
  def generate_Report(self):
-"""Генерация Reportа"""
+""""""" "Generation Report"""
  Report = {
  'summary': {},
  'Detailed_results': self.results
  }
 
-# Сводка on all методам
+# A summary on all methods
  for method, results in self.results.items():
  if isinstance(results, pd.dataFrame):
  Report['summary'][method] = {
@@ -3559,7 +3559,7 @@ class BacktestingPipeline:
 
  return Report
 
-# example использования
+# Example of use
 pipeline = BacktestingPipeline(data, model, metrics_calculator)
 pipeline.run_simple_backtest()
 pipeline.run_walk_forward_backtest()
@@ -3567,48 +3567,48 @@ pipeline.run_monte_carlo_backtest()
 Report = pipeline.generate_Report()
 ```
 
-### 2. Визуализация результатов
+###2: Visualization of results
 
 ```python
 def visualize_backtest_results(results, save_path=None):
-"""Визуализация результатов бэктестинга"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  import matplotlib.pyplot as plt
  import seaborn as sns
 
-# configuration стиля
+# configuring style
  plt.style.Use('seaborn-v0_8')
  sns.set_palette("husl")
 
-# create фигуры
+# Create figures
  fig, axes = plt.subplots(2, 2, figsize=(15, 10))
 
-# 1. Кумулятивная доходность
+# 1. Cumulative returns
  if 'walk_forward' in results:
  cumulative_returns = (1 + results['walk_forward']['return']).cumprod()
  axes[0, 0].plot(cumulative_returns.index, cumulative_returns.values)
-axes[0, 0].set_title('Кумулятивная доходность')
-axes[0, 0].set_xlabel('Дата')
-axes[0, 0].set_ylabel('Кумулятивная доходность')
+axes[0,0].set_tile('cumulative return')
+axes[0,0].set_xlabel('Data')
+axes[0,0].set_ylabel('cumulative return')
 
-# 2. Распределение коэффициента Шарпа
+♪ 2. Sharpe coefficient distribution
  if 'monte_carlo' in results:
  axes[0, 1].hist(results['monte_carlo']['sharpe'], bins=50, alpha=0.7)
  axes[0, 1].axvline(results['monte_carlo']['sharpe'].mean(),
-color='red', linestyle='--', label='Среднее')
-axes[0, 1].set_title('Распределение коэффициента Шарпа')
-axes[0, 1].set_xlabel('Коэффициент Шарпа')
-axes[0, 1].set_ylabel('Частота')
+color='red', lineyle='--', label='average')
+axes[0,1].set_title('Sharp coefficient distribution')
+axes[0,1].set_xlabel('Sharp's coefficient')
+axes[0,1].set_ylabel('Part')
  axes[0, 1].legend()
 
-# 3. Максимальная просадка
+# 3. Maximum tarmac
  if 'walk_forward' in results:
  axes[1, 0].plot(results['walk_forward']['date'],
  results['walk_forward']['max_drawdown'])
-axes[1, 0].set_title('Максимальная просадка')
-axes[1, 0].set_xlabel('Дата')
-axes[1, 0].set_ylabel('Максимальная просадка')
+axes[1, 0].set_title('Maximal prosperity')
+axes[1, 0].set_xlabel('Data')
+axes[1, 0].set_ylabel('Maximal prosin')
 
-# 4. comparison методов
+# 4. Comparson of methods
  if 'simple' in results and 'walk_forward' in results:
  methods = ['Simple', 'Walk Forward']
  sharpe_values = [
@@ -3616,8 +3616,8 @@ axes[1, 0].set_ylabel('Максимальная просадка')
  results['walk_forward']['sharpe'].mean()
  ]
  axes[1, 1].bar(methods, sharpe_values)
-axes[1, 1].set_title('comparison методов')
-axes[1, 1].set_ylabel('Коэффициент Шарпа')
+axes[1, 1].set_title('comparison methods')
+axes[1, 1].set_ylabel('Sharpa's co-factor')
 
  plt.tight_layout()
 
@@ -3626,103 +3626,103 @@ axes[1, 1].set_ylabel('Коэффициент Шарпа')
 
  plt.show()
 
-# example использования
+# Example of use
 visualize_backtest_results(results, save_path='backtest_results.png')
 ```
 
-## Сводная таблица параметров бэктестинга
+## Summary table of betting parameters
 
-### 📊 Основные parameters функций бэктестинга
+### ♪ Basic {meters of the backting function
 
-| function | Основные parameters | describe | Диапазон значений | Рекомендации |
+♪ function ♪ Basic factor ♪ describe ♪ The range of values ♪ Recommendations ♪
 |---------|-------------------|----------|-------------------|--------------|
-| **time_series_backtest** | `train_size`, `test_size`, `config`, `validation` | Простой бэктестинг временных рядов | train_size: 0.6-0.8, test_size: 0.2-0.4 | 70/30 for большинства случаев |
-| **temporal_dependency_backtest** | `lookback`, `step`, `config`, `validation` | Бэктестинг with временными зависимостями | lookback: 20-50, step: 1-10 | lookback=30, step=1 for точности |
-| **monte_carlo_backtest** | `n_simulations`, `confidence_level`, `config` | Монте-Карло бэктестинг | n_simulations: 500-2000, confidence: 0.90-0.99 | 1000 симуляций, 95% доверие |
-| **bootstrap_backtest** | `n_bootstrap`, `block_size`, `config` | Бутстрап бэктестинг | n_bootstrap: 500-2000, block_size: 5-20 | 1000 итераций, block_size=10 |
-| **stress_test_backtest** | `stress_scenarios`, `config`, `validation` | Стресс-тестинг стратегии | scenarios: 3-10, volatility_multiplier: 0.5-3.0 | 5-7 сценариев, including экстремальные |
-| **regime_based_backtest** | `regime_detector`, `config`, `validation` | Бэктестинг on рыночным режимам | min_samples_per_regime: 50-100 | 50 образцов on режим минимум |
-| **Portfolio_backtest** | `strategies`, `weights`, `rebalance_freq`, `config` | Портфельный бэктестинг | strategies: 2-10, rebalance_freq: 'M' | 3-5 стратегий, ежемесячная перебалансировка |
-| **dynamic_rebalance_backtest** | `rebalance_freq`, `lookback_window`, `config` | Динамическое перебалансирование | lookback_window: 100-500, test_window: 30-60 | 252 дня обучения, 30 дней тестирования |
+♪ Time_series_backtest** ♪ tran_size', `test_size', `config', `vacation' ♪ simple time-series buffering ♪ tran_sise: 0.6-0.8, test_sise: 0.2-0.4 ♪ 70/30 for most cases ♪
+== sync, corrected by elderman == @elder_man
+*monte_carlo_backtest** ♪ n_simulations, `confidence_level', `config' ♪ Monte-Carlo batting ♪ n_simulations: 500-2000, conference: 0.90-0.99 ~ 1,000 simulations, 95% trust ♪
+== sync, corrected by elderman == @elder_man
+*Structure_test_backtest**** [Structure_scenarios', `config', `validation'] [Scenarios strategy: 3-10, volatility_multiplier: 0.5-3.0] scenarios, including extreme scenarios
+== sync, corrected by elderman == @elder_man
+*Porthfolio_backtest** \\`Strategies', `whites', `rebalance_freq', `config' \\ \ \ \ \ \ \ portfolio buffering \ strategies: 2-10, reballance_freq: 'M' \5 strategies, monthly rebalancing \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\, `/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\, `///////////////////////////////////////// \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/////////////// \/ \/ \/////////////////////// \/ \/ \/ \/ \/ \/ \/ \/ \////////////// \/// \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \////// \////
+♪ dynamic_rebalance_backtest** ♪ "rebalance_freq", `lookback_window', `config' ♪ Dynamic rebalancing ♪ lowback_window: 100-500, test_widow: 30-60 ♪ 252 days of learning, 30 days of testing ♪
 
-### 🔧 Конфигурационные parameters
+### ♪ The configuration parameters
 
-| parameter | describe | Значение on умолчанию | Диапазон | Влияние on performance |
+================================================================================================================= )====== )===== ) )=========== )======== ) )============================)============================================================ ========================================================================================================================================================================================================================================================================
 |----------|----------|----------------------|----------|-------------------------------|
-| **train_frac** | Доля данных for обучения | 0.7 | 0.6-0.8 | Больше = лучше обучение, меньше тестирования |
-| **test_frac** | Доля данных for тестирования | 0.3 | 0.2-0.4 | Больше = надежнее тестирование |
-| **min_samples** | Минимальное количество образцов | 100 | 50-200 | Больше = надежнее результаты |
-| **validation** | validation входных данных | True | True/False | True = безопаснее, False = быстрее |
-| **verbose** | Подробный вывод | False | True/False | True = больше информации, False = тише |
-| **parallel** | Параллельные вычисления | False | True/False | True = быстрее, требует больше ресурсов |
-| **n_jobs** | Количество процессов | 1 | 1-8 | Больше = быстрее, требует больше CPU |
-| **random_state** | Seed for воспроизводимости | None | 0-2^32 | Задает for воспроизводимых результатов |
+♪ ♪ ♪ Train_frac** ♪ the share of data for learning ♪ 0.7 ♪ 0.6-0.8 ♪ More = better learning, less testing ♪
+♪ ♪ test_frac** ♪ data share for testing ♪ 0.3 ♪ 0.2-0.4 ♪ More = reliable testing ♪
+*min_samples** * Minimum number of samples * 100 * 50-200 * More = reliable results *
+*Validation** \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+== sync, corrected by elderman == @elder_man
+== sync, corrected by elderman == @elder_man
+♪ ♪ ♪ ♪ n_jobs** ♪ Number of processes ♪ 1 ♪ 1 ♪ 8 ♪ More ♪ ♪ Faster, more CPU ♪
+== sync, corrected by elderman == @elder_man
 
-### 📈 metrics качества
+### ♪ quality metrics
 
-| Метрика | describe | Хорошие значения | Плохие значения | Как улучшить |
+♪ Meter ♪ descube ♪ Good values ♪ Bad values ♪ How to improve ♪
 |---------|----------|------------------|-----------------|---------------|
-| **Sharpe Ratio** | Отношение доходности к риску | > 1.0 | < 0.5 | Улучшить модель, снизить волатильность |
-| **Max Drawdown** | Максимальная просадка | < 20% | > 50% | Улучшить риск-менеджмент |
-| **Sortino Ratio** | Отношение к downside риску | > 1.5 | < 0.8 | Снизить downside волатильность |
-| **Calmar Ratio** | Отношение доходности к просадке | > 0.5 | < 0.2 | Улучшить модель, снизить просадки |
-| **Stability** | Стабильность результатов | > 0.8 | < 0.5 | Улучшить модель, стабилизировать parameters |
-| **Success Rate** | Доля успешных симуляций | > 60% | < 40% | Улучшить модель, оптимизировать parameters |
+*Sharpe Radio** * The ratio of return to risk * 1.0 * 0.5 * to improve the model, reduce volatility *
+*Max Drawdown** * Maximum draught * 20 per cent * 50 per cent * Improve risk management *
+*Sortino Ratio** * Relationship to duenside risk *
+*Calmar Ratio** * The ratio of income to rainfall ~ 0.5 ~ 0.2 ~ Improve the model, reduce the prostheses
+*Stability** * Stability of results * 0.8 * 0.5 * Improve model, stabilize parameters *
+*Success Rate** * Percentage of successful simulations * 60% * 40% * Improve model, optimize parameters *
 
-### ⚙️ Рекомендации on настройке
+### ♪ Recommendations on setting up
 
-#### for начинающих
+##### For starters
 
 - Use `time_series_backtest` with `train_size=0.7`, `test_size=0.3`
-- install `validation=True`, `verbose=True` for понимания процесса
-- Начните with `min_samples=100`, `n_simulations=500`
-- Use базовые metrics: Sharpe, Max Drawdown, Total Return
+- install `validation=True', `verbose'=True' for understanding the process
+- Start with `min_samples=100', `n_simulations=500'
+- Use basic metrics: Sharpe, Max Drawdown, Total Return
 
-#### for опытных пользователей
+##### for experienced users
 
 - Use `monte_carlo_backtest` with `n_simulations=1000`
-- Добавьте `stress_test_backtest` with 5-7 сценариями
-- Use `Portfolio_backtest` with 3-5 стратегиями
-- Включите продвинутые metrics: Sortino, Calmar, Stability
+- Add 'stress_test_backtest' with 5-7 scripts
+- Use `Porthfolio_backtest' with 3-5 strategies
+- Turn on advanced metrics: Sortino, Kalmar, Stability
 
-#### for продакшена
+#### # For sale
 
 - Use `dynamic_rebalance_backtest` with `rebalance_freq='M'`
 - install `parallel=True`, `n_jobs=4-8`
-- Добавьте `transaction_costs=0.001`, `slippage=0.0005`
-- Use все metrics качества and валидацию
+- Add `transaction_costs=0.001', `slippage=0.005'
+- Use all quality and validation
 
-### 🚨 Частые ошибки and решения
+♪ ♪ Frequent mistakes and decisions
 
-| Ошибка | Причина | Решение |
+♪ The reason ♪ ♪ The solution ♪
 |--------|---------|---------|
-| "Недостаточно данных" | Слишком мало образцов | Увеличить `min_samples` or собрать больше данных |
-| "retraining" | train_sharpe >> test_sharpe | Уменьшить `train_size`, добавить регуляризацию |
-| "Нестабильные результаты" | Высокая волатильность метрик | Увеличить `n_simulations`, улучшить модель |
-| "Медленная Working" | Слишком много симуляций | Уменьшить `n_simulations`, использовать `parallel=True` |
-| "Неточные результаты" | Неправильные parameters | Проверить `validation=True`, настроить `config` |
+There are too few samples of "min_samples" or collect more data.
+* "retraining" * tran_sharpe >> test_sharpe * reduce `train_size', add regularization
+♪ Unstable results ♪ ♪ the relative volatility of the metric ♪ ♪ put 'n_simulations' in place, improve the model ♪
+♪ Slow Working too many simulations ♪ Reduce 'n_simulations', use 'parallel'=True' ♪
+♪ "Faulty results" ♪ Wrong parameters ♪ Check 'validation=True', set 'config' ♪
 
-## Заключение
+## Conclusion
 
-Правильный бэктестинг - это основа успешной ML-стратегии. Он позволяет:
+The right backup is the basis of a successful ML strategy.
 
-1. **Проверить реалистичность** стратегии
-2. **Оценить риски** and потенциальные потери
-3. **Оптимизировать parameters** for максимальной эффективности
-4. **Валидировать стабильность** on разных рыночных условиях
+1. ** Checking whether the strategy is realistic**
+2. ** Assess risks** and potential losses
+3. **Optify parameters** for maximum efficiency
+**To assess stability** on different market conditions
 
-### Ключевые принципы
+### Key principles
 
-1. **Реалистичность** - Use реалистичные data and условия
-2. **Статистическая значимость** - проверяйте значимость результатов
-3. **Экономическая значимость** - учитывайте транзакционные издержки
-4. **Робастность** - тестируйте on разных рыночных условиях
-5. **validation** - проверяйте результаты on out-of-sample данных
+1. ** Reality** - Use realistic data and conditions
+2. ** Statistical significance** - check the relevance of the results
+3. ** Economic significance** - account for transaction costs
+4. **Plativity** - Test on different market conditions
+5. **validation** - check the results on outof-sample data
 
-### Следующие шаги
+### Next steps
 
-После освоения бэктестинга переходите к:
+Once you have mastered the bactering, go to:
 
-- [Walk-forward анализу](./28_walk_forward_Analysis.md)
-- [Monte Carlo симуляциям](./29_monte_carlo_simulations.md)
-- [Управлению Portfolio](./30_Portfolio_Management.md)
+- [Walk-forward analysis](./28_walk_forward_Anallysis.md)
+- [Monte Carlo simulation](./29_monte_carlo_simulations.md)
+- [Porthfolio Administration](./30_Porthfolio_Management.md)

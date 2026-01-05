@@ -1,127 +1,127 @@
-# 07. 🔄 Walk-Forward анализ
+# 07. ♪ Walk-Forward analysis
 
-**Goal:** Научиться проводить Walk-Forward анализ for проверки стабильности торговых стратегий.
+**Goal:** Learn to conduct a Walk-Forward analysis for verifying the stability of trade policies.
 
-## Что такое Walk-Forward анализ?
+♪ What's a Walk-Forward analysis?
 
-**Theory:** Walk-Forward анализ - это продвинутый метод тестирования торговых стратегий, который имитирует реальные условия торговли. in отличие from простого бэктестинга, он учитывает необходимость retraining модели on новых данных, что делает его более реалистичным and надежным.
+**Theory:** Walk-Forward analysis is an advanced method of testing trade strategies that simulates real terms of trade. In contrast to a simple back-up, it takes into account the need to retrain the model on new data, making it more realistic and reliable.
 
-**Walk-Forward анализ** - это метод тестирования торговых стратегий, который имитирует реальную торговлю, где модель переобучается on новых данных on мере их поступления.
+**Walk-Forward Analysis** is a method of testing trade strategies that simulates real trade, where the model is re-trained on new data as they become available.
 
-### Математическая основа Walk-Forward Analysis
+### The mathematical basis of Walk-Forward Anallysis
 
-**Theory:** Walk-Forward анализ основан on принципе временного разделения данных, где каждый testsый период использует только предшествующие data for обучения. Это предотвращает "утечку будущего" (look-ahead bias) and обеспечивает реалистичную оценку performance.
+**Theory:** Walk-Forward analysis is based on the principle of temporal data separation, where each test period uses only previous data for learning. This prevents "look-ahead bis" and provides a realistic assessment of performance.
 
-**Математическая формула:**
-
-```
-for периода t:
-- Обучающие data: D[train_start : train_end]
-- testsые data: D[test_start : test_end]
-- Условие: test_start = train_end (строгое временное разделение)
-```
-
-**Ключевые принципы:**
-1. **Временная последовательность:** data обрабатываются in хроноLogsческом порядке
-2. **retraining:** Модель переобучается on каждом новом периоде
-3. **Реалистичность:** Имитирует реальные условия торговли
-4. **Стабильность:** Проверяет устойчивость стратегии к изменениям
-
-**Почему Walk-Forward анализ критичен for финансовых систем:**
-- **Реалистичность:** Имитирует реальные условия торговли
-- **Стабильность:** Проверяет, как стратегия Workingет on новых данных
-- **Адаптивность:** Оценивает способность модели адаптироваться к изменениям
-- **Робастность:** Выявляет проблемы, которые not видны in простом бэктестинге
-
-### Зачем нужен Walk-Forward анализ?
-
-**Theory:** Walk-Forward анализ решает фундаментальные проблемы традиционного бэктестинга, связанные with переобучением and нереалистичностью. Он обеспечивает более честную оценку performance стратегии.
-
-- **Реалистичность** - имитирует реальную торговлю
- - **Почему важно:** in реальной торговле модель должна переобучаться on новых данных
- - **Плюсы:** Более честная оценка performance, реалистичные результаты
- - **Disadvantages:** Более сложная реализация, требует больше вычислительных ресурсов
-
-- **check стабильности** - как стратегия Workingет on новых данных
- - **Почему важно:** Стратегия должна Workingть стабильно on новых данных
- - **Плюсы:** Выявление проблем стабильности, оценка долгосрочной performance
- - **Disadvantages:** Может показать худшие результаты, чем простой бэктестинг
-
-- **Избежание retraining** - предотвращает оптимизацию on исторических данных
- - **Почему важно:** retraining приводит к нереалистичным результатам
- - **Плюсы:** Более честная оценка, снижение рисков
- - **Disadvantages:** Может показать худшие результаты, требует больше данных
-
-- **Оценка адаптивности** - как модель адаптируется к изменениям
- - **Почему важно:** Рынки постоянно меняются, модель должна адаптироваться
- - **Плюсы:** Оценка способности к адаптации, выявление проблем адаптации
- - **Disadvantages:** Сложность оценки адаптивности, необходимость метрик адаптивности
-
-**Дополнительные преимущества Walk-Forward Analysis:**
-- **Временная Structure:** Учитывает временную структуру данных
-- **Деградация:** Выявляет деградацию performance со временем
-- **Рыночные условия:** Позволяет анализировать performance in разных рыночных условиях
-- **Параметрическая стабильность:** Оценивает стабильность параметров стратегии
-
-## Принципы Walk-Forward Analysis
-
-**Theory:** Walk-Forward анализ основан on нескольких ключевых принципах, которые обеспечивают его эффективность and реалистичность. Понимание этих принципов критично for правильного проведения Analysis.
-
-### 1. Разделение данных
-
-**Theory:** Правильное разделение данных является основой Walk-Forward Analysis. data должны быть разделены on обучающие and testsые периоды таким образом, чтобы имитировать реальные условия торговли.
-
-**Почему правильное разделение данных критично:**
-- **Временная Structure:** Финансовые data имеют временную dependency, and нарушение хроноLogsи может привести к нереалистичным результатам
-- **Реалистичность:** in реальной торговле мы not можем использовать будущую информацию for принятия текущих решений
-- **Предотвращение утечек:** Строгое временное разделение предотвращает использование информации из будущего
-- **Стабильность:** Обеспечивает честную оценку способности стратегии Workingть on новых данных
-
-**Математическое обоснование разделения:**
+** Mathematic formula:**
 
 ```
-Пусть T = {t1, t2, ..., tn} - временные метки данных
-for каждого testsого периода i:
-- Обучающий период: [t_start_i, t_train_end_i]
-- testsый период: [t_test_start_i, t_test_end_i]
-- Условие: t_test_start_i = t_train_end_i + 1 (строгое разделение)
+for period t:
+- Training data: D[training_start : train_end]
+- testes data: D[test_start : test_end]
+- Condition: test_start = train_end
 ```
 
-**Плюсы правильного разделения:**
-- Реалистичная оценка performance стратегии
-- Предотвращение утечек данных (look-ahead bias)
-- Учет temporary структуры финансовых данных
-- Стабильные and воспроизводимые результаты
-- Соответствие реальным условиям торговли
+**key principles:**
+1. ** Time sequence:** data processed in chronoLogsch order
+2. **retraining:** The model is re-trained for each new period
+3. ** Reality:** Simulates real terms of trade
+4. **Stability:** Checks the strategy &apos; s resilience to change
 
-**Минусы правильного разделения:**
-- Сложность реализации алгоритма
-- Необходимость большего объема исторических данных
-- Возможное снижение performance compared to нереалистичными методами
-- Сложность Settings параметров (размеры окон, шаги)
-- Более высокие вычислительные требования
-**Теория functions создания разделов:**
-Эта function реализует алгоритм создания временных разделов for Walk-Forward Analysis. Она создает последовательность обучающих and testsых periods, где каждый testsый период следует сразу после соответствующего обучающего периода.
+**Why Walk-Forward analysis is critical for financial systems:**
+- ** Reality:** Simulates real terms of trade
+- **Stability:** Checks out how the Workinget strategy is on new data.
+- ** Adaptation:** Assesses the ability of the model to adapt to changes
+- **Robity:** Identify problems not visible in simple buffering.
+
+### Why do you need a Walk-Forward analysis?
+
+**Theory:** Walk-Forward analysis addresses the fundamental problems of traditional bactering associated with re-education and unrealisticity. It provides a more honest assessment of performance strategy.
+
+- ** Reality** - mimics real trade
+- What's important is:** in real trade, the model should be retrained on new data
+- ** Plus:** More honest assessment of performance, realistic results
+- **Disadvantages:** More complex implementation requires more computing resources
+
+- **check stability** - like the Workinget strategy on new data
+- What's important is:** The strategy has to be stable on new data
+- ** Plus:** Identification of stability issues, assessment of long-term performance
+- **Disadvantages:** May show worse results than simple bactering
+
+- ** Avoiding retraining** - prevents optimization on historical data
+- # Why does it matter? # Retraining leads to unrealistic results?
+- ** Plus:** Fairer assessment, risk reduction
+- **Disadvantages:** May show worse results, requires more data
+
+- ** Adaptation assessment** - how the model adapts to changes
+- What's important is that markets are constantly changing, the model has to adapt.
+- **plus: ** Assessment of adaptive capacity, identification of adaptation problems
+- **Disadvantages:**Complicity of assessment of adaptiveness, need for an adaptive metric
+
+** Additional benefits of Walk-Forward Analysis:**
+** Time Structure: ** Reflects the time structure of the data
+- ** Degradation:** Degradation performance over time
+- ** Market conditions:** Allows analysis of performance in different market conditions
+- ** Parametric stability:** Assesss the stability of the strategy parameters
+
+## The Walk-Forward Anallysis Principles
+
+**Theory:** Walk-Forward analysis is based on several key principles that make it effective and realistic.
+
+♪##1 ♪ Data sharing
+
+**Theory:** The correct data separation is the basis of Walk-Forward Analysis. data should be divided into learning and test periods in such a way as to simulate the real terms of trade.
+
+**Why the correct division of data is critical:**
+- ** TimeStructure:** Financial data have a temporary dependency, and breaking timeLogsy can lead to unrealistic results
+- ** Reality: ** in real trade we can use future information for current decision-making
+- ** Prevention of leaks:** Strict temporary separation prevents the use of information from the future
+- **Stability:** Provides an honest assessment of the ability of the Working on New Data strategy
+
+** Mathematical rationale for separation:**
+
+```
+Let T = {t1, t2, ..., tn} - time tags
+for each test period i:
+- Learning period: [t_start_i, t_training_end_i]
+- test period: [t_test_start_i, t_test_end_i]
+- Condition: t_test_start_i = t_training_end_i + 1 (strict separation)
+```
+
+** Plus the right split:**
+- Realistic evaluation of performance strategy
+- Prevention of data leaks (look-ahead bis)
+- Accounting for the statistical structure of financial data
+- Stable and reproducible results
+- Meeting the realities of trade
+
+**Minuses of correct separation:**
+- The difficulty of implementing the algorithm
+- Need for more historical data
+Possible reduction performance compared to unrealistic methods
+- Complexity of Settings (window dimensions, steps)
+- Higher computing requirements
+**Functions of section creation:**
+This function provides an algorithm for creating temporary sections for Walk-Forward Analysis. It creates a sequence of learning and testes periods where each test period follows immediately after the respective learning period.
 
 **parameters functions:**
-- `train_size=252`: Размер обучающего окна (252 торговых дня ≈ 1 год)
-- `test_size=63`: Размер testsого окна (63 торговых дня ≈ 3 месяца)
-- `step_size=21`: Шаг сдвига окна (21 торговый день ≈ 1 месяц)
+- `training_size=252': The size of the training window (252 trade days ~ 1 year)
+- `test_size=63': Size of test window (63 trade days ~ 3 months)
+- `step_size=21': Step of the window shift (21 trade day ~ 1 month)
 
-**Алгоритм работы:**
-1. Начинаем with первого indexа данных
-2. Creating обучающий период фиксированной длины
-3. Creating testsый период сразу после обучающего
-4. Сдвигаемся on step_size and повторяем process
-5. Продолжаем to тех пор, пока not исчерпаем data
+**Algorithm:**
+1. Start with the first data index
+2. Creating a fixed-length learning period
+3. Creating test period immediately after the training period
+4. Move on step_size and repeat process
+5. Continue until we have exhausted the data
 
-**Почему именно такие parameters:**
-- **252 дня обучения:** Достаточно for обучения модели, но not слишком много for устаревания
-- **63 дня тестирования:** Достаточно for статистически значимых результатов
-- **21 день шага:** Баланс между частотой retraining and стабильностью
+♪ Why exactly are these parameters: ♪
+- **252 learning days:** sufficient for model learning, but not too much for obsolescence
+**63 days of testing:** Enough for statistically significant results
+- **21 days step:** Balance between retraining and stability
 
 ```python
-# Необходимые импорты for Walk-Forward Analysis
+# Necessary imports for Walk-Forward Analysis
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -130,9 +130,9 @@ from typing import List, Dict, Any, Optional, Tuple
 from abc import ABC, abstractmethod
 import warnings
 from scipy import stats
-import yfinance as yf # for загрузки реальных данных
+Import yfinance as yf # for downloading real data
 
-# configuration matplotlib for лучшего отображения
+# Configuring matplotlib for better display
 plt.style.Use('default')
 plt.rcParams['figure.figsize'] = (12, 8)
 plt.rcParams['font.size'] = 10
@@ -142,50 +142,50 @@ def create_walk_forward_splits(data: pd.dataFrame,
  test_size: int = 63,
  step_size: int = 21) -> List[Dict[str, Any]]:
  """
- create Walk-Forward разделов for Analysis временных рядов.
+"Create Walk-Forward" sections for Time Series Analysis.
 
- Эта function создает последовательность обучающих and testsых periods
- for проведения Walk-Forward Analysis. Каждый testsый период следует
- сразу после соответствующего обучающего периода, что имитирует
- реальные условия торговли.
+This function creates a sequence of learning and testes perios
+Each test period should be followed by:
+immediately after the relevant learning period, which simulates
+Real terms of trade.
 
  Args:
- data (pd.dataFrame): temporary ряд данных with indexом datetime
- train_size (int): Размер обучающего окна in днях (on умолчанию 252)
- test_size (int): Размер testsого окна in днях (on умолчанию 63)
- step_size (int): Шаг сдвига окна in днях (on умолчанию 21)
+Data (pd.dataFrame): time series with index data
+Train_size (int): The size of the learning window in days (on default 252)
+test_size (int): Test window size in days (on default 63)
+step_size (int): Step of window shift in days (on default 21)
 
  Returns:
- List[Dict]: List словарей with информацией о каждом разделе
+List[Dict]: List dictionaries with information on each section
 
  Raises:
- ValueError: Если data недостаточны for создания хотя бы одного раздела
+ValueError: If data are not sufficient to create at least one section
 
  Example:
  >>> data = pd.read_csv('financial_data.csv', index_col=0, parse_dates=True)
  >>> splits = create_walk_forward_splits(data, train_size=100, test_size=20)
- >>> print(f"Создано {len(splits)} разделов")
+>> prent(f) Created {len(splits)} sections")
  """
 
- # checking достаточность данных
+# Checking data adequacy
  min_required = train_size + test_size
  if len(data) < min_required:
- raise ValueError(f"Недостаточно данных. Требуется минимум {min_required} записей, получено {len(data)}")
+Raise ValueError(f"Insufficient data. Minimum {min_required} records required, received {len(data)})
 
  splits = []
  start_idx = 0
 
- # Creating разделы to исчерпания данных
+# Creating sections to exhaust
  while start_idx + train_size + test_size <= len(data):
- # Обучающий период (строго to testsого)
+# Learning period (strength to test)
  train_start = start_idx
  train_end = start_idx + train_size
 
- # testsый период (сразу после обучающего)
- test_start = train_end # Критично: никакого разрыва!
+# Testsy period (after the trainer)
+test_start = train_end # Critical: no break!
  test_end = train_end + test_size
 
- # Creating словарь with информацией о разделе
+# Creating dictionary with section information
  split_info = {
  'train_start': train_start,
  'train_end': train_end,
@@ -199,33 +199,33 @@ def create_walk_forward_splits(data: pd.dataFrame,
 
  splits.append(split_info)
 
- # Сдвигаемся on step_size for следующего раздела
+# Move on step_size for next section
  start_idx += step_size
 
- print(f"Создано {len(splits)} Walk-Forward разделов")
- print(f"Первый раздел: обучение {splits[0]['train_dates'][0]} - {splits[0]['train_dates'][1]}, "
- f"тест {splits[0]['test_dates'][0]} - {splits[0]['test_dates'][1]}")
- print(f"Последний раздел: обучение {splits[-1]['train_dates'][0]} - {splits[-1]['train_dates'][1]}, "
- f"тест {splits[-1]['test_dates'][0]} - {splits[-1]['test_dates'][1]}")
+(f) Created {len(splits}Walk-Forward sections")
+"print(f" First section: education {splits[0]['training_data' [0]} - {splits[0]['training_data'][1]},"
+f "test {splits[0]['test_data' [0]} - {splits[0]['test_data'[1]}}")
+"Print(f)" Final section: education {splits[1]['training_data'[0]} - {splits[1]['training_data'][1]},"
+f "test {splits[1]['test_data' [0]} - {splits[1]['test_data'[1]}}")
 
  return splits
 ```
 
 ### 2. Structure Analysis
 
-**Теория класса WalkForwardAnalyzer:**
-Этот класс является центральным компонентом Walk-Forward Analysis. Он инкапсулирует всю Logsку проведения Analysis, including create разделов, обучение моделей, тестирование and анализ результатов.
+**WalkForward Analizer:**
+This class is the central component of the Walk-Forward Anallysis. It encapsulates the entire Logs of Analysis, including creation sections, model training, testing and results analysis.
 
-**architecture класса:**
-1. **Инициализация:** installation параметров Analysis
-2. **Launch Analysis:** Основной метод for проведения Walk-Forward тестирования
-3. **Анализ результатов:** Статистический анализ полученных результатов
+**architecture class:**
+1. **Initiation:** installation of Analysis parameters
+2. **Launch Analysis:** Basic method for conducting Walk-Forward testing
+3. ** Analysis of results:** Statistical analysis of results
 
-**Ключевые принципы реализации:**
-- **Инкапсуляция:** Вся Logsка Analysis инкапсулирована in одном классе
-- **Переиспользование:** Класс может Workingть with любыми стратегиями
-- **Расширяемость:** Легко добавлять новые metrics and methods Analysis
-- **Отслеживание:** Полное отслеживание all этапов Analysis
+** Key principles of implementation:**
+- **Incapsulation:** All Logsca Analysis is encapsulated in one class
+- ** Reuse:** Class can Work with any strategy
+- ** Extension:** It's easy to add new metrics and meths Analisis
+- ** Traceability:** Full tracking of all phases of Analysis
 
 ```python
 import numpy as np
@@ -235,25 +235,25 @@ from abc import ABC, abstractmethod
 import warnings
 
 class TradingStrategy(ABC):
- """Абстрактный базовый класс for торговых стратегий"""
+"Abstruction Basic Class for Trade Strategies"
 
  @abstractmethod
  def train(self, data: pd.dataFrame) -> None:
- """Обучение стратегии on исторических данных"""
+"Learning Strategy on Historical Data"
  pass
 
  @abstractmethod
  def predict(self, data: pd.dataFrame) -> pd.Series:
- """Генерация торговых сигналов"""
+"Generation of Trade Signs."
  pass
 
  @abstractmethod
  def get_name(self) -> str:
- """Возвращает название стратегии"""
+"Returns the name of the strategy."
  pass
 
 class SimpleMovingAverageStrategy(TradingStrategy):
- """Простая стратегия on basis скользящих средних"""
+"Simple strategy on bases moving medium."
 
  def __init__(self, short_window: int = 20, long_window: int = 50):
  self.short_window = short_window
@@ -263,33 +263,33 @@ class SimpleMovingAverageStrategy(TradingStrategy):
  self.is_trained = False
 
  def train(self, data: pd.dataFrame) -> None:
- """Обучение стратегии (in данном случае просто расчет параметров)"""
+"""""" (in this case, simply calculation of parameters)""
  if 'close' not in data.columns:
- raise ValueError("data должны содержать колонку 'close'")
+Raise ValueError("data shall contain a column 'close'")
 
  self.short_ma = data['close'].rolling(window=self.short_window).mean()
  self.long_ma = data['close'].rolling(window=self.long_window).mean()
  self.is_trained = True
 
  def predict(self, data: pd.dataFrame) -> pd.Series:
- """Генерация торговых сигналов"""
+"Generation of Trade Signs."
  if not self.is_trained:
- raise ValueError("Стратегия not обучена. Вызовите train() сначала.")
+Raise ValueError.
 
  if 'close' not in data.columns:
- raise ValueError("data должны содержать колонку 'close'")
+Raise ValueError("data shall contain a column 'close'")
 
- # Рассчитываем скользящие средние for новых данных
+# We're counting moving averages for new data
  short_ma = data['close'].rolling(window=self.short_window).mean()
  long_ma = data['close'].rolling(window=self.long_window).mean()
 
- # Генерируем сигналы: 1 = покупка, -1 = продажа, 0 = удержание
+# Generate signals: 1 = purchase, -1 = sale, 0 = retention
  signals = pd.Series(0, index=data.index)
 
- # Сигнал покупки: короткая MA пересекает длинную MA снизу вверх
+# Buying signal: Short MA crosses long MA from the bottom up
  buy_signal = (short_ma > long_ma) & (short_ma.shift(1) <= long_ma.shift(1))
 
- # Сигнал продажи: короткая MA пересекает длинную MA сверху вниз
+# Sales signal: Short MA crosses long MA from top down
  sell_signal = (short_ma < long_ma) & (short_ma.shift(1) >= long_ma.shift(1))
 
  signals[buy_signal] = 1
@@ -301,7 +301,7 @@ class SimpleMovingAverageStrategy(TradingStrategy):
  return f"SMA_{self.short_window}_{self.long_window}"
 
 class Backtester:
- """Класс for проведения бэктестинга торговых стратегий"""
+"Class for Trade Strategy Beckets."
 
  def __init__(self, initial_capital: float = 100000.0, commission: float = 0.001):
  self.initial_capital = initial_capital
@@ -309,32 +309,32 @@ class Backtester:
 
  def run_backtest(self, data: pd.dataFrame, strategy: TradingStrategy) -> Dict[str, float]:
  """
- Launch бэктестинга стратегии
+Launchbacking strategy
 
  Args:
- data: data for тестирования
- strategy: Обученная торговая стратегия
+Data: data for testing
+strategy: Trade strategy trained
 
  Returns:
- Словарь with метриками performance
+Vocabulary with metrics
  """
  if 'close' not in data.columns:
- raise ValueError("data должны содержать колонку 'close'")
+Raise ValueError("data shall contain a column 'close'")
 
- # Генерируем торговые сигналы
+# Generate trade signals
  signals = strategy.predict(data)
 
- # Рассчитываем доходность
+# We're calculating returns
  returns = data['close'].pct_change()
 
- # Рассчитываем стратегическую доходность
- strategy_returns = signals.shift(1) * returns # Сдвигаем сигналы on 1 период
+# Calculate strategic returns
+strategy_returns = signals.shift(1) * returns # Move signals on 1 period
 
- # Учитываем комиссию
+# Take into account the commission
  position_changes = signals.diff().abs()
  strategy_returns -= position_changes * self.commission
 
- # Удаляем NaN значения
+# Remove NaN values
  strategy_returns = strategy_returns.dropna()
 
  if len(strategy_returns) == 0:
@@ -346,21 +346,21 @@ class Backtester:
  'total_trades': 0
  }
 
- # Рассчитываем кумулятивную доходность
+# Computing cumulative returns
  cumulative_returns = (1 + strategy_returns).cumprod()
 
- # Основные metrics
+# Basic metrics
  total_return = cumulative_returns.iloc[-1] - 1
 
- # Sharpe Ratio (предполагаем безрисковую ставку = 0)
+# Sharpe Ratio
  sharpe_ratio = strategy_returns.mean() / strategy_returns.std() * np.sqrt(252) if strategy_returns.std() > 0 else 0
 
- # Максимальная просадка
+# Maximum tarmac
  rolling_max = cumulative_returns.expanding().max()
  drawdowns = (cumulative_returns - rolling_max) / rolling_max
  max_drawdown = drawdowns.min()
 
- # Процент выигрышных сделок
+# Percentage of winning transactions
  winning_trades = strategy_returns[strategy_returns > 0]
  total_trades = len(strategy_returns[strategy_returns != 0])
  win_rate = len(winning_trades) / total_trades if total_trades > 0 else 0
@@ -377,22 +377,22 @@ class Backtester:
 
 class WalkForwardAnalyzer:
  """
- Класс for проведения Walk-Forward Analysis торговых стратегий.
+The class for Walk-Forward Analysis Trade Strategies.
 
- Walk-Forward анализ - это метод тестирования, который имитирует реальные
- условия торговли, где модель переобучается on новых данных on мере их
- поступления. Это обеспечивает более реалистичную оценку performance
- стратегии.
+Walk-Forward analysis is a test method that simulates real
+in which the model is re-trained on new data on the extent to which they
+This provides a more realistic assessment of performance.
+Strategies.
  """
 
  def __init__(self, train_size: int = 252, test_size: int = 63, step_size: int = 21):
  """
- Инициализация Analysisтора Walk-Forward.
+Initiating the Analysistor Walk-Forward.
 
  Args:
- train_size: Размер обучающего окна in днях (on умолчанию 252)
- test_size: Размер testsого окна in днях (on умолчанию 63)
- step_size: Шаг сдвига окна in днях (on умолчанию 21)
+Train_size: The size of the learning window in days (on default 252)
+test_size: Test window size in days (on default 63)
+step_size: Step of window shift in days (on default 21)
  """
  self.train_size = train_size
  self.test_size = test_size
@@ -402,59 +402,59 @@ class WalkForwardAnalyzer:
 
  def run_Analysis(self, data: pd.dataFrame, strategy: TradingStrategy) -> Dict[str, Any]:
  """
- Launch полного Walk-Forward Analysis.
+Launch is full of Walk-Forward Analysis.
 
- Этот метод является сердцем Walk-Forward Analysis. Он:
- 1. Создает временные разделы данных
- 2. for каждого раздела обучает стратегию on обучающих данных
- 3. Тестирует стратегию on testsых данных
- 4. Собирает and анализирует результаты
+This method is the heart of Walk-Forward Analysis.
+1. Creates temporary data sections
+2. Trains the strategy on learning data for each section
+3. Testing strategy on test data
+4. Collects and analyses results
 
  Args:
- data: temporary ряд финансовых данных
- strategy: Торговая стратегия for тестирования
+Data: financial series
+strategy: Trade strategy for testing
 
  Returns:
- Словарь with результатами Analysis
+The dictionary with results Analysis
 
  Raises:
- ValueError: Если data недостаточны for Analysis
+ValueError: If data are not sufficient for Analysis
  """
  print(f"Launch Walk-Forward Analysis...")
- print(f"parameters: обучение={self.train_size} дней, тест={self.test_size} дней, шаг={self.step_size} дней")
+pint(f"parameters: training={self.train_size} days, test={self.test_size} days, step={self.step_size} days})
 
- # Очищаем предыдущие результаты
+# Cleaning the previous results
  self.results = []
 
- # create временных разделов
+# time sections
  try:
  splits = create_walk_forward_splits(
  data, self.train_size, self.test_size, self.step_size
  )
  except ValueError as e:
- raise ValueError(f"Ошибка создания разделов: {e}")
+Raise ValueError(f "Different of sections: {e}")
 
  if len(splits) == 0:
- raise ValueError("not удалось создать ни одного раздела for Analysis")
+Raise ValueError("not has been able to create a single section for Analysis")
 
- print(f"Создано {len(splits)} разделов for Analysis")
+prent(f) Created {len(splits)} sections for Analysis)
 
- # Обработка каждого раздела
+# Processing each section
  for i, split in enumerate(splits):
- print(f"Обработка периода {i+1}/{len(splits)}: "
- f"обучение {split['train_dates'][0].strftime('%Y-%m-%d')} - "
+Print(f" Processing period {i+1}/{len(splits)}:"
+f "training {'training_data'[0].strftime('%Y-%m-%d']} - "
  f"{split['train_dates'][1].strftime('%Y-%m-%d')}, "
- f"тест {split['test_dates'][0].strftime('%Y-%m-%d')} - "
+f "test {'test_data'][0].strftime('%Y-%m-%d']} - "
  f"{split['test_dates'][1].strftime('%Y-%m-%d')}")
 
  try:
- # Обучение стратегии on обучающих данных
+# Training strategy on learning data
  strategy.train(split['train_data'])
 
- # Тестирование on testsых данных
+# Testing on test data
  metrics = self.backtester.run_backtest(split['test_data'], strategy)
 
- # Сохранение результатов
+# Retaining results
  result = {
  'period': i + 1,
  'train_start': split['train_start'],
@@ -468,90 +468,90 @@ class WalkForwardAnalyzer:
 
  self.results.append(result)
 
- print(f" Результат: доходность={metrics['total_return']:.2%}, "
+result: rate of return={metrics['total_return']:2%},"
  f"Sharpe={metrics['sharpe_ratio']:.2f}, "
- f"просадка={metrics['max_drawdown']:.2%}")
+f "delay={metrics['max_drawdown']:2%}}
 
  except Exception as e:
- print(f" Ошибка in периоде {i+1}: {e}")
- # Продолжаем with следующим периодом
+Print(f" Error in period {i+1}: {e})
+# Continue with the next period
  continue
 
  if len(self.results) == 0:
- raise ValueError("not удалось успешно обWorkingть ни одного периода")
+Raise ValueError("not has been successful on Working for no period")
 
- print(f"Анализ завершен. Успешно обWorkingно {len(self.results)} periods")
+Print(f)"Analysis completed. Successfully on Workingno(len(self.results)} periods)
 
  return self.analyze_results()
 
  def analyze_results(self) -> Dict[str, Any]:
  """
- Анализ результатов Walk-Forward тестирования.
+Analysis of Walk-Forward test results.
 
- Этот метод проводит статистический анализ all результатов
- тестирования, вычисляя ключевые Metrics performance
- and стабильности стратегии.
+This method provides statistical analysis of all results
+testing by calculating key metrics performance
+and the stability of the strategy.
 
  Returns:
- Словарь with результатами Analysis
+The dictionary with results Analysis
  """
  if not self.results:
- raise ValueError("Нет результатов for Analysis. Сначала запустите run_Analysis()")
+Raise ValueError("No results for Analysis. Start run_Anallysis()")
 
- # Извлечение метрик из all periods
+# Extracting metrics from all periods
  returns = [r['metrics']['total_return'] for r in self.results]
  sharpe_ratios = [r['metrics']['sharpe_ratio'] for r in self.results]
  max_drawdowns = [r['metrics']['max_drawdown'] for r in self.results]
  win_rates = [r['metrics']['win_rate'] for r in self.results]
  total_trades = [r['metrics']['total_trades'] for r in self.results]
 
- # Конвертируем in numpy массивы for удобства вычислений
+# Convergence in numpy arrays for convenience of computation
  returns = np.array(returns)
  sharpe_ratios = np.array(sharpe_ratios)
  max_drawdowns = np.array(max_drawdowns)
  win_rates = np.array(win_rates)
  total_trades = np.array(total_trades)
 
- # Основная статистика
+# Basic statistics
  Analysis = {
- # Общая информация
+# General
  'total_periods': len(self.results),
  'successful_periods': len([r for r in returns if not np.isnan(r)]),
 
- # Статистика доходности
+# Interest statistics
  'mean_return': np.nanmean(returns),
  'std_return': np.nanstd(returns),
  'min_return': np.nanmin(returns),
  'max_return': np.nanmax(returns),
  'median_return': np.nanmedian(returns),
 
- # Статистика Sharpe Ratio
+# Sharpe Rato statistics
  'mean_sharpe': np.nanmean(sharpe_ratios),
  'std_sharpe': np.nanstd(sharpe_ratios),
  'min_sharpe': np.nanmin(sharpe_ratios),
  'max_sharpe': np.nanmax(sharpe_ratios),
 
- # Статистика просадок
+# Slow down statistics
  'mean_drawdown': np.nanmean(max_drawdowns),
  'worst_drawdown': np.nanmin(max_drawdowns),
  'std_drawdown': np.nanstd(max_drawdowns),
 
- # Статистика торговли
+# Trade statistics
  'mean_win_rate': np.nanmean(win_rates),
  'mean_trades_per_period': np.nanmean(total_trades),
  'total_trades': np.nansum(total_trades),
 
- # Консистентность
+# Consistence
  'positive_periods': np.sum(returns > 0),
  'negative_periods': np.sum(returns < 0),
  'consistency': np.sum(returns > 0) / len(returns) if len(returns) > 0 else 0,
 
- # Дополнительные metrics
+# Additional metrics
  'coefficient_of_variation': np.nanstd(returns) / np.abs(np.nanmean(returns)) if np.nanmean(returns) != 0 else np.inf,
  'skewness': self._calculate_skewness(returns),
  'kurtosis': self._calculate_kurtosis(returns),
 
- # Детальные результаты
+# Detailed results
  'period_returns': returns.toList(),
  'period_sharpe_ratios': sharpe_ratios.toList(),
  'period_drawdowns': max_drawdowns.toList()
@@ -560,7 +560,7 @@ class WalkForwardAnalyzer:
  return Analysis
 
  def _calculate_skewness(self, data: np.ndarray) -> float:
- """Расчет асимметрии распределения"""
+"""""" "The calculation of distribution asymmetries"""
  data_clean = data[~np.isnan(data)]
  if len(data_clean) < 3:
  return 0.0
@@ -573,7 +573,7 @@ class WalkForwardAnalyzer:
  return np.mean(((data_clean - mean) / std) ** 3)
 
  def _calculate_kurtosis(self, data: np.ndarray) -> float:
- """Расчет эксцесса распределения"""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  data_clean = data[~np.isnan(data)]
  if len(data_clean) < 4:
  return 0.0
@@ -586,37 +586,37 @@ class WalkForwardAnalyzer:
  return np.mean(((data_clean - mean) / std) ** 4) - 3
 ```
 
-## Продвинутые техники Walk-Forward
+## Advanced Walk-Forward
 
-**Теория продвинутых техник:**
-Стандартный Walk-Forward анализ использует фиксированные размеры окон, но in реальной торговле может быть полезно адаптировать parameters Analysis on basis performance стратегии. Продвинутые техники позволяют сделать анализ более гибким and реалистичным.
+** Advanced Engineering Theory:**
+The standard Walk-Forward analysis uses fixed window sizes, but in real trade, it can be useful to adapt paragraphs Analysis on basic strategy. Advanced technologies make the analysis more flexible and realistic.
 
-### 1. Адаптивный размер окон
+### 1. Adaptive window size
 
-**Теория адаптивных окон:**
-Адаптивный размер окон - это техника, где размер обучающего окна динамически изменяется on basis performance стратегии. Если стратегия показывает хорошие результаты, мы увеличиваем окно обучения for большей стабильности. Если результаты плохие, мы уменьшаем окно for более быстрой адаптации к изменениям рынка.
+** Adaptation window theory:**
+Adaptive window size is a technique where the size of the learning window is dynamically changing on base performance strategy. If the strategy shows good results, we increase the learning window for greater stability. If the results are poor, we reduce the window for faster adjustment to market change.
 
-**Преимущества адаптивных окон:**
-- **Адаптивность:** Размер окна подстраивается под рыночные условия
-- **Стабильность:** Увеличение окна при хорошей performance
-- **Чувствительность:** Уменьшение окна при плохой performance
-- **Реалистичность:** Более точно имитирует реальную торговлю
+** The benefits of adaptive windows:**
+- ** Adaptation: ** Window size adjusted to market conditions
+- **Stability:** Increased window with good performance
+- ** Sensitivity:** Reduction of window with poor performance
+- ** Reality:** More accurately simulates real trade
 
-**Недостатки адаптивных окон:**
-- **Сложность:** Более сложная реализация and configuration
-- **retraining:** Риск retraining on адаптивных параметрах
-- **Нестабильность:** Частые изменения размера окна могут снизить стабильность
+** Deficiencies of adaptive windows:**
+- **Complicity:** More complex implementation and configration
+- **retraining:** Risk retraining on adaptive parameters
+- ** Instability:** Frequent changes in window size can reduce stability
 
-**Математическое обоснование:**
+** Mathematical rationale:**
 
 ```
-Пусть W(t) - размер окна in момент времени t
+Let W(t) = window size in time t
 W(t+1) = {
- W(t) + ΔW, если R(t) > θ_high
- W(t) - ΔW, если R(t) < θ_low
- W(t), иначе
+W(t) + ΔW, if R(t) >
+W(t) - ΔW, if R(t) < α_low
+W(t), otherwise
 }
-где R(t) - доходность in периоде t, θ_high and θ_low - пороговые значения
+where R(t) is the return in period t, Δ_high and_________________low = threshold values
 ```
 
 ```python
@@ -629,25 +629,25 @@ def adaptive_walk_forward(data: pd.dataFrame,
  performance_threshold_low: float = -0.05,
  window_adjustment: int = 21) -> List[Dict[str, Any]]:
  """
- Walk-Forward анализ with адаптивным размером окон.
+Walk-Forward analysis with adaptive window size.
 
- Эта function реализует адаптивный Walk-Forward анализ, где размер
- обучающего окна динамически изменяется on basis performance
- стратегии. Это позволяет стратегии лучше адаптироваться к изменениям
- рыночных условий.
+This function performs adaptive Walk-Forward analysis where size
+the learning window is dynamically changing on base performance
+This allows strategies to better adapt to changes
+Market conditions.
 
  Args:
- data: temporary ряд финансовых данных
- strategy: Торговая стратегия for тестирования
- min_train: Минимальный размер обучающего окна
- max_train: Максимальный размер обучающего окна
- test_size: Размер testsого окна
- performance_threshold_high: Порог for увеличения окна
- performance_threshold_low: Порог for уменьшения окна
- window_adjustment: Размер корректировки окна
+Data: financial series
+strategy: Trade strategy for testing
+min_training: Minimum size of the training window
+max_training: Maximum size of the training window
+test_size: Size of test window
+Performance_threshold_high: Window extension threshold
+Performance_threshold_low: Window reduction threshold
+Windows_adjustment: Window Adjustment Size
 
  Returns:
- List результатов with информацией о размерах окон
+List of results with information on window sizes
  """
 
  results = []
@@ -657,42 +657,42 @@ def adaptive_walk_forward(data: pd.dataFrame,
  start_idx = 0
  period = 1
 
- print(f"Launch адаптивного Walk-Forward Analysis...")
- print(f"Начальный размер окна: {current_train_size} дней")
- print(f"Диапазон окна: {min_train} - {max_train} дней")
+(f "Launch adaptive Walk-Forward Analysis...")
+prent(f) "Initiative window size: {surrent_training_size} days")
+Spring(f" Window range: {min_training} - {max_training}days)
 
  while start_idx + current_train_size + test_size <= len(data):
- # Обучающий период with текущим размером окна
+# Learning period with current window size
  train_data = data.iloc[start_idx:start_idx + current_train_size]
 
- # testsый период
+# Testsy period
  test_data = data.iloc[start_idx + current_train_size:start_idx + current_train_size + test_size]
 
- print(f"Период {period}: размер окна={current_train_size} дней, "
- f"тест {test_data.index[0].strftime('%Y-%m-%d')} - "
+prent(f)"Period {period}: the size of the window= {surrent_training_size} days,"
+f "test {test_data.index[0].strftime('%Y-%m-%d')}"
  f"{test_data.index[-1].strftime('%Y-%m-%d')}")
 
  try:
- # Обучение and тестирование
+# Training and testing
  strategy.train(train_data)
  metrics = backtester.run_backtest(test_data, strategy)
 
- # Адаптация размера окна on basis performance
+# Adapting the size of the window on base form
  total_return = metrics['total_return']
  old_train_size = current_train_size
 
  if total_return > performance_threshold_high:
- # Хорошая performance - увеличиваем окно
+# Good performance - increasing the window
  current_train_size = min(current_train_size + window_adjustment, max_train)
- adjustment_reason = "увеличение (хорошая performance)"
+extension_reason = "increase (good performance)"
  elif total_return < performance_threshold_low:
- # Плохая performance - уменьшаем окно
+# Bad performance - reduce window
  current_train_size = max(current_train_size - window_adjustment, min_train)
- adjustment_reason = "уменьшение (плохая performance)"
+extension_reason = "Decrease (bad performance)"
  else:
- adjustment_reason = "без изменений (средняя performance)"
+extension_reason = "without change (average performance)"
 
- # Сохраняем результат
+# Save the result
  result = {
  'period': period,
  'train_size': old_train_size,
@@ -705,41 +705,41 @@ def adaptive_walk_forward(data: pd.dataFrame,
 
  results.append(result)
 
- print(f" Результат: доходность={total_return:.2%}, "
+result: return= {total_return: 2%},"
  f"Sharpe={metrics['sharpe_ratio']:.2f}, "
- f"окно: {old_train_size} → {current_train_size} ({adjustment_reason})")
+f Window: {old_training_size}
 
  except Exception as e:
- print(f" Ошибка in периоде {period}: {e}")
- # Продолжаем with текущим размером окна
+Print(f) Error in period {period}: {e})
+# Continue with the current window size
  pass
 
- # Переходим к следующему периоду
+# Moving on to the next period
  start_idx += test_size
  period += 1
 
- print(f"Адаптивный анализ завершен. ОбWorkingно {len(results)} periods")
- print(f"Финальный размер окна: {current_train_size} дней")
+Print(f"Adjustative analysis completed.
+(f) Final window size: {surrent_training_size} days)
 
  return results
 ```
 
-### 2. Множественные стратегии
+♪##2 ♪ Multiple strategies ♪
 
-**Теория множественных стратегий:**
-comparison нескольких стратегий in рамках Walk-Forward Analysis позволяет выявить наиболее стабильные and эффективные подходы. Это особенно важно for портфельного управления, где можно комбинировать лучшие стратегии.
+** Multi-pronged strategy theory:**
+This is particularly important for portfolio management, where better strategies can be combined.
 
-**Преимущества сравнения стратегий:**
-- **Относительная оценка:** Comparison performance in одинаковых условиях
-- **Выявление лидеров:** Определение наиболее эффективных стратегий
-- **Диверсификация:** Возможность комбинирования лучших стратегий
-- **Робастность:** check стабильности различных подходов
+** Benefits of comparing strategies:**
+- ** Relative estimate:** Comparative performance in the same conditions
+- ** Identification of leaders:** Identification of best strategies
+- **Diversification:** The possibility of combining the best strategies
+- **Pativity:** heck stability of different approaches
 
-**Критерии сравнения:**
-- **Средняя доходность:** Общая прибыльность стратегии
-- **Консистентность:** Стабильность положительных результатов
-- **Sharpe Ratio:** Риск-скорректированная доходность
-- **Максимальная просадка:** Максимальные потери
+** Criteria for comparison:**
+- ** Average return:** Overall return on strategy
+- **Consistence:** Stability of positive results
+- **Sharpe Rato:** Risk-adjusted return
+- ** Maximum draught:** Maximum loss
 
 ```python
 def multi_strategy_walk_forward(data: pd.dataFrame,
@@ -747,77 +747,77 @@ def multi_strategy_walk_forward(data: pd.dataFrame,
  train_size: int = 252,
  test_size: int = 63) -> Tuple[Dict[str, Dict[str, Any]], List[Tuple[str, Dict[str, float]]]]:
  """
- Walk-Forward анализ with множественными стратегиями.
+Walk-Forward analysis with multiple strategies.
 
- Эта function проводит Walk-Forward анализ for нескольких стратегий
- simultaneously, что позволяет сравнивать их performance
- in одинаковых рыночных условиях.
+This function conducts a Walk-Forward analysis for several strategies
+Simultaneously, which allows them to compare their performance
+In the same market conditions.
 
  Args:
- data: temporary ряд финансовых данных
- strategies: Словарь стратегий {название: стратегия}
- train_size: Размер обучающего окна
- test_size: Размер testsого окна
+Data: financial series
+strategies: Strategy dictionary
+Train_size: The size of the learning window
+test_size: Size of test window
 
  Returns:
- Кортеж (результаты_Analysis, сравнение_стратегий)
+Courtage (deliverable_Analisis, comparison_Strategy)
  """
 
  results = {}
 
- print(f"Launch Walk-Forward Analysis for {len(strategies)} стратегий...")
- print(f"Стратегии: {List(strategies.keys())}")
+(f "Launch Walk-Forward Analysis for {len(Strategies)} Strategies...")
+(f "Strategy: {List(Strategies.keys()}}")
 
  for strategy_name, strategy in strategies.items():
  print(f"\n{'='*50}")
- print(f"Анализ стратегии: {strategy_name}")
+(f "Strategy Analysis: {strategic_name}")
  print(f"{'='*50}")
 
  try:
- # Creating новый экземпляр Analysisтора for каждой стратегии
+# Creating a new copy of the Analysistor for each strategy
  analyzer = WalkForwardAnalyzer(train_size, test_size)
  Analysis = analyzer.run_Analysis(data, strategy)
 
  results[strategy_name] = Analysis
 
- print(f"Стратегия {strategy_name} завершена:")
- print(f" Средняя доходность: {Analysis['mean_return']:.2%}")
- print(f" Консистентность: {Analysis['consistency']:.2%}")
- print(f" Средний Sharpe: {Analysis['mean_sharpe']:.2f}")
- print(f" Худшая просадка: {Analysis['worst_drawdown']:.2%}")
+"Strategy {Strategy_name} is completed:")
+average return: {Analysis['mean_return']:2%}}
+Print(f"Consistence: {Analysis['consistency']: 2%}})
+Middle Sharpe:(Analysis['mean_sharpe']:2f})
+(f" Worst draught: {Anallysis['worth_drawdown']: 2 per cent}})
 
  except Exception as e:
- print(f"Ошибка при анализе стратегии {strategy_name}: {e}")
+Print(f) Mistake in strategy analysis {strategic_name}: {e})
  results[strategy_name] = None
 
- # comparison стратегий
+# Comparison strategies
  comparison = compare_strategies(results)
 
  print(f"\n{'='*50}")
- print("comparison СТРАТЕГИЙ")
+("comparison STRATEGIES")
  print(f"{'='*50}")
 
  for i, (strategy_name, metrics) in enumerate(comparison, 1):
  print(f"{i}. {strategy_name}:")
- print(f" Доходность: {metrics['mean_return']:.2%}")
- print(f" Консистентность: {metrics['consistency']:.2%}")
+Print(f) Income: {métrics['mean_return']:2%}})
+Print(f"Consistence: {metrics['consistency']: 2%}})
  print(f" Sharpe: {metrics['mean_sharpe']:.2f}")
- print(f" Просадка: {metrics['worst_drawdown']:.2%}")
+Print(f" Slide: {metrics['worth_drawdown']:2%}})
 
  return results, comparison
 
 def compare_strategies(results: Dict[str, Dict[str, Any]]) -> List[Tuple[str, Dict[str, float]]]:
  """
- comparison результатов множественных стратегий.
+a comparison of the results of multiple strategies.
 
- Эта function сравнивает результаты Walk-Forward Analysis
- for разных стратегий and ранжирует их on ключевым метрикам.
+This function compares the results of Walk-Forward Analysis
+for different strategies and ranking them on key metrics.
 
  Args:
- results: Словарь результатов Analysis стратегий
+Results: Results dictionary of Analysis strategies
 
  Returns:
- Отсортированный List стратегий with метриками
+Sorted strategy list with metrics
  """
 
  comparison = {}
@@ -835,7 +835,7 @@ def compare_strategies(results: Dict[str, Dict[str, Any]]) -> List[Tuple[str, Di
  'total_periods': Analysis['total_periods']
  }
 
- # Сортировка on средней доходности (on убыванию)
+# Sorting on average return (on loss)
  sorted_strategies = sorted(
  comparison.items(),
  key=lambda x: x[1]['mean_return'],
@@ -845,7 +845,7 @@ def compare_strategies(results: Dict[str, Dict[str, Any]]) -> List[Tuple[str, Di
  return sorted_strategies
 
 class RSIStrategy(TradingStrategy):
- """Стратегия on basis RSI индикатора"""
+"The Strategy on Basic RSI Indicator"
 
  def __init__(self, rsi_period: int = 14, oversold: float = 30, overbought: float = 70):
  self.rsi_period = rsi_period
@@ -854,33 +854,33 @@ class RSIStrategy(TradingStrategy):
  self.is_trained = False
 
  def train(self, data: pd.dataFrame) -> None:
- """Обучение стратегии"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  if 'close' not in data.columns:
- raise ValueError("data должны содержать колонку 'close'")
+Raise ValueError("data shall contain a column 'close'")
  self.is_trained = True
 
  def predict(self, data: pd.dataFrame) -> pd.Series:
- """Генерация сигналов on basis RSI"""
+""""""""" "Generation of signals on base RSI"""
  if not self.is_trained:
- raise ValueError("Стратегия not обучена")
+Raise ValueError
 
  if 'close' not in data.columns:
- raise ValueError("data должны содержать колонку 'close'")
+Raise ValueError("data shall contain a column 'close'")
 
- # Рассчитываем RSI
+# Counting RSI
  delta = data['close'].diff()
  gain = (delta.where(delta > 0, 0)).rolling(window=self.rsi_period).mean()
  loss = (-delta.where(delta < 0, 0)).rolling(window=self.rsi_period).mean()
  rs = gain / loss
  rsi = 100 - (100 / (1 + rs))
 
- # Генерируем сигналы
+# Generate signals
  signals = pd.Series(0, index=data.index)
 
- # Сигнал покупки: RSI выходит из зоны перепроданности
+# Buying signal: RSI leaves the resell area
  buy_signal = (rsi > self.oversold) & (rsi.shift(1) <= self.oversold)
 
- # Сигнал продажи: RSI выходит из зоны перекупленности
+# The sale signal: RSI is leaving the shopping area
  sell_signal = (rsi < self.overbought) & (rsi.shift(1) >= self.overbought)
 
  signals[buy_signal] = 1
@@ -892,7 +892,7 @@ class RSIStrategy(TradingStrategy):
  return f"RSI_{self.rsi_period}_{self.oversold}_{self.overbought}"
 
 class BollingerBandsStrategy(TradingStrategy):
- """Стратегия on basis полос Боллинджера"""
+"Strategy on Ballinger stripes."
 
  def __init__(self, period: int = 20, std_dev: float = 2.0):
  self.period = period
@@ -900,32 +900,32 @@ class BollingerBandsStrategy(TradingStrategy):
  self.is_trained = False
 
  def train(self, data: pd.dataFrame) -> None:
- """Обучение стратегии"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  if 'close' not in data.columns:
- raise ValueError("data должны содержать колонку 'close'")
+Raise ValueError("data shall contain a column 'close'")
  self.is_trained = True
 
  def predict(self, data: pd.dataFrame) -> pd.Series:
- """Генерация сигналов on basis полос Боллинджера"""
+"""""" "Generation of the signals on the base of the Bollinger strips."
  if not self.is_trained:
- raise ValueError("Стратегия not обучена")
+Raise ValueError
 
  if 'close' not in data.columns:
- raise ValueError("data должны содержать колонку 'close'")
+Raise ValueError("data shall contain a column 'close'")
 
- # Рассчитываем полосы Боллинджера
+# Counting Bollinger strips
  sma = data['close'].rolling(window=self.period).mean()
  std = data['close'].rolling(window=self.period).std()
  upper_band = sma + (std * self.std_dev)
  lower_band = sma - (std * self.std_dev)
 
- # Генерируем сигналы
+# Generate signals
  signals = pd.Series(0, index=data.index)
 
- # Сигнал покупки: цена касается нижней полосы
+# Buying signal: price refers to bottom line
  buy_signal = (data['close'] <= lower_band) & (data['close'].shift(1) > lower_band.shift(1))
 
- # Сигнал продажи: цена касается верхней полосы
+# The sale signal: price refers to the top page
  sell_signal = (data['close'] >= upper_band) & (data['close'].shift(1) < upper_band.shift(1))
 
  signals[buy_signal] = 1
@@ -947,13 +947,13 @@ def rolling_walk_forward(data, strategy, window_size=252, test_size=63):
  start_idx = 0
 
  while start_idx + window_size + test_size <= len(data):
- # Обучающий период (фиксированное окно)
+# Learning period (fixed window)
  train_data = data.iloc[start_idx:start_idx + window_size]
 
- # testsый период
+# Testsy period
  test_data = data.iloc[start_idx + window_size:start_idx + window_size + test_size]
 
- # Обучение and тестирование
+# Training and testing
  strategy.train(train_data)
  backtester = Backtester()
  metrics = backtester.run_backtest(test_data, strategy)
@@ -971,42 +971,42 @@ def expanding_walk_forward(data, strategy, min_train=126, test_size=63):
  train_size = min_train
 
  while start_idx + train_size + test_size <= len(data):
- # Обучающий период (расширяющееся окно)
+# Learning period (expanding window)
  train_data = data.iloc[:start_idx + train_size]
 
- # testsый период
+# Testsy period
  test_data = data.iloc[start_idx + train_size:start_idx + train_size + test_size]
 
- # Обучение and тестирование
+# Training and testing
  strategy.train(train_data)
  backtester = Backtester()
  metrics = backtester.run_backtest(test_data, strategy)
 
  results.append(metrics)
  start_idx += test_size
- train_size += test_size # Расширяем окно
+train_size +=test_size # Extend window
 
  return results
 ```
 
-## Анализ стабильности
+## Analysis of stability
 
-### 1. Стабильность performance
+###1. Stability performance
 
 ```python
 def analyze_stability(results):
- """Анализ стабильности результатов"""
+"Analysis of Stability of Results."
 
  returns = [r['metrics']['total_return'] for r in results]
 
- # Коэффициент вариации
+# The coefficient of variation
  cv = np.std(returns) / np.abs(np.mean(returns))
 
- # Тренд performance
+# Tread performance
  x = np.arange(len(returns))
  slope, intercept, r_value, p_value, std_err = stats.linregress(x, returns)
 
- # Стабильность Sharpe Ratio
+# Sharpe Ratio stability
  sharpe_ratios = [r['metrics']['sharpe_ratio'] for r in results]
  sharpe_stability = 1 - np.std(sharpe_ratios) / np.abs(np.mean(sharpe_ratios))
 
@@ -1019,15 +1019,15 @@ def analyze_stability(results):
  }
 ```
 
-### 2. Анализ деградации
+♪##2 ♪ Degradation analysis
 
 ```python
 def analyze_degradation(results):
- """Анализ деградации performance"""
+"Analysis of degradation performance."
 
  returns = [r['metrics']['total_return'] for r in results]
 
- # Разделение on периоды
+# Separation on Periods
  n_periods = len(returns)
  first_half = returns[:n_periods//2]
  second_half = returns[n_periods//2:]
@@ -1038,7 +1038,7 @@ def analyze_degradation(results):
 
  degradation = (second_half_mean - first_half_mean) / abs(first_half_mean)
 
- # Статистический тест
+# Statistical test
  t_stat, p_value = stats.ttest_ind(first_half, second_half)
 
  return {
@@ -1051,30 +1051,30 @@ def analyze_degradation(results):
  }
 ```
 
-### 3. Анализ адаптивности
+###3: Adaptation analysis
 
 ```python
 def analyze_adaptability(results, market_conditions):
- """Анализ адаптивности к рыночным условиям"""
+"Analysis of market adaptation"
 
  adaptability_scores = []
 
  for i, result in enumerate(results):
- # Получаем рыночные условия for периода
+# Getting market conditions for the period
  period_conditions = market_conditions[i]
 
- # Анализируем performance in разных условиях
- if period_conditions['volatility'] > 0.3: # Высокая волатильность
+# Analysis of performance in different settings
+if period_conditions['volatility'] > 0.3: # High volatility
  volatility_performance = result['metrics']['total_return']
  else:
  volatility_performance = result['metrics']['total_return']
 
- if period_conditions['trend'] == 'bull': # Бычий рынок
+if period_conditions['trend'] == 'bull': #Living market
  trend_performance = result['metrics']['total_return']
- else: # Медвежий рынок
+Else: # Bear market
  trend_performance = result['metrics']['total_return']
 
- # Оценка адаптивности
+# Adaptation evaluation
  adaptability = (volatility_performance + trend_performance) / 2
  adaptability_scores.append(adaptability)
 
@@ -1085,13 +1085,13 @@ def analyze_adaptability(results, market_conditions):
  }
 ```
 
-## Визуализация результатов
+♪ Visualization of results
 
-### 1. График performance on периодам
+###1: Timetable on Periods
 
 ```python
 def plot_performance_by_period(results):
- """График performance on периодам"""
+"Graphic performance on periods."
 
  periods = [r['period'] for r in results]
  returns = [r['metrics']['total_return'] for r in results]
@@ -1099,18 +1099,18 @@ def plot_performance_by_period(results):
 
  fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8))
 
- # Доходность
+# Income
  ax1.plot(periods, returns, marker='o', linewidth=2)
  ax1.axhline(y=0, color='r', linestyle='--', alpha=0.5)
- ax1.set_title('Доходность on периодам')
- ax1.set_ylabel('Доходность')
+ax1.set_title('income on periods')
+ax1.set_ylabel('income')
  ax1.grid(True, alpha=0.3)
 
  # Sharpe Ratio
  ax2.plot(periods, sharpe_ratios, marker='s', color='green', linewidth=2)
  ax2.axhline(y=1, color='r', linestyle='--', alpha=0.5)
- ax2.set_title('Sharpe Ratio on периодам')
- ax2.set_xlabel('Период')
+ax2.set_title('Sharp Radio on Periods')
+ax2.set_xlabel('Period')
  ax2.set_ylabel('Sharpe Ratio')
  ax2.grid(True, alpha=0.3)
 
@@ -1118,206 +1118,206 @@ def plot_performance_by_period(results):
  plt.show()
 ```
 
-### 2. Распределение результатов
+♪##2, distribution of results
 
-**Теория Analysis распределения:**
-Анализ распределения результатов помогает понять статистические характеристики performance стратегии. This is critical for оценки рисков and понимания поведения стратегии.
+** Analysis distribution:**
+The analysis of the distribution of results helps to understand the statistical characteristics of the strategy &apos; s performance.
 
-**Ключевые аспекты распределения:**
-- **Нормальность:** check соответствия нормальному распределению
-- **Асимметрия:** Оценка перекоса результатов
-- **Эксцесс:** Оценка "тяжести хвостов" распределения
-- **Выбросы:** Выявление аномальных результатов
+** Key aspects of distribution:**
+- **Normality:** heck conformity to normal distribution
+- **Asymmetry: ** Assessment of the distortion of results
+- **Excess: ** Assessment of tail load
+- ** Emissions:** Identification of abnormal results
 
 ```python
 def plot_results_distribution(results: List[Dict[str, Any]]) -> None:
  """
- Визуализация распределения результатов Walk-Forward Analysis.
+Visualize the distribution of the results of the Walk-Forward Analysis.
 
- Эта function создает детальную визуализацию распределения
- ключевых метрик performance стратегии.
+This function creates a detailed visualization of distribution
+Key metric performance strategy.
 
  Args:
- results: List результатов Walk-Forward Analysis
+results: List of results Walk-Forward Analysis
  """
 
  if not results:
- print("Нет данных for визуализации")
+"No data for visualization"
  return
 
- # Извлекаем metrics
+# Retrieving metrics
  returns = [r['metrics']['total_return'] for r in results]
  sharpe_ratios = [r['metrics']['sharpe_ratio'] for r in results]
  max_drawdowns = [r['metrics']['max_drawdown'] for r in results]
 
- # Creating фигуру with подграфиками
+# Creating the figure with sub-graphs
  fig, axes = plt.subplots(2, 3, figsize=(18, 12))
- fig.suptitle('Распределение результатов Walk-Forward Analysis', fontsize=16, fontweight='bold')
+fig.suptitle('Walk-Forward Analysis results distribution', fontsize=16, fonweight='bold')
 
- # 1. Распределение доходности
+* 1. Income distribution
  ax1 = axes[0, 0]
  ax1.hist(returns, bins=20, alpha=0.7, edgecolor='black', color='skyblue')
  ax1.axvline(np.mean(returns), color='red', linestyle='--', linewidth=2,
- label=f'Среднее: {np.mean(returns):.3f}')
+Label=f'average: {np.mean(returns):3f}'
  ax1.axvline(np.median(returns), color='green', linestyle='--', linewidth=2,
- label=f'Медиана: {np.median(returns):.3f}')
- ax1.set_title('Распределение доходности', fontweight='bold')
- ax1.set_xlabel('Доходность')
- ax1.set_ylabel('Частота')
+Label=f'Media: {np.median(returns):3f}'
+ax1.set_title.
+ax1.set_xlabel('income')
+ax1.set_ylabel('Part')
  ax1.legend()
  ax1.grid(True, alpha=0.3)
 
- # 2. Распределение Sharpe Ratio
+# 2. Share Rato
  ax2 = axes[0, 1]
  ax2.hist(sharpe_ratios, bins=20, alpha=0.7, edgecolor='black', color='lightgreen')
  ax2.axvline(np.mean(sharpe_ratios), color='red', linestyle='--', linewidth=2,
- label=f'Среднее: {np.mean(sharpe_ratios):.3f}')
+Label=f'Medium: {np.mean(sharpe_ratios):3f}'
  ax2.axvline(1.0, color='orange', linestyle='-', linewidth=2, alpha=0.7,
  label='Sharpe = 1.0')
- ax2.set_title('Распределение Sharpe Ratio', fontweight='bold')
+ax2.set_title.
  ax2.set_xlabel('Sharpe Ratio')
- ax2.set_ylabel('Частота')
+ax2.set_ylabel('Part')
  ax2.legend()
  ax2.grid(True, alpha=0.3)
 
- # 3. Распределение просадок
+# 3. Distribution of the proscessaries
  ax3 = axes[0, 2]
  ax3.hist(max_drawdowns, bins=20, alpha=0.7, edgecolor='black', color='lightcoral')
  ax3.axvline(np.mean(max_drawdowns), color='red', linestyle='--', linewidth=2,
- label=f'Среднее: {np.mean(max_drawdowns):.3f}')
+Label=f'Medium: {np.mean(max_drawdowns):3f}'
  ax3.axvline(-0.1, color='orange', linestyle='-', linewidth=2, alpha=0.7,
- label='-10% просадка')
- ax3.set_title('Распределение максимальных просадок', fontweight='bold')
- ax3.set_xlabel('Максимальная просадка')
- ax3.set_ylabel('Частота')
+Label='-10% prosedition')
+ax3.set_title
+ax3.set_xlabel.
+ax3.set_ylabel('Part')
  ax3.legend()
  ax3.grid(True, alpha=0.3)
 
- # 4. Q-Q plot for доходности
+# 4. Q-Q table for return
  ax4 = axes[1, 0]
  from scipy import stats
  stats.probplot(returns, dist="norm", plot=ax4)
- ax4.set_title('Q-Q Plot доходности', fontweight='bold')
+ax4.set_title('Q-Q Plot Interest', fontweight='bold')
  ax4.grid(True, alpha=0.3)
 
- # 5. Box plot for all метрик
+# 5. Box table for all metrics
  ax5 = axes[1, 1]
- data_for_box = [returns, sharpe_ratios, [abs(x) for x in max_drawdowns]] # Абсолютные значения просадок
- box_plot = ax5.boxplot(data_for_box, labels=['Доходность', 'Sharpe Ratio', '|Просадка|'],
+Data_for_box = [returns, sharpe_ratios, [abs(x) for x in max_drawdowns]] # Absolute values of sediment
+Box_plot = ax5.boxplot(data_for_box, labels=['income', 'Sharp Ratio', '\\\\\\\\']
  patch_artist=True)
 
- # Раскрашиваем box plots
+# Painting box bits
  colors = ['lightblue', 'lightgreen', 'lightcoral']
  for patch, color in zip(box_plot['boxes'], colors):
  patch.set_facecolor(color)
 
- ax5.set_title('Box Plot метрик', fontweight='bold')
- ax5.set_ylabel('Значение')
+ax5.set_title('Box Plot metric',fonweight='bold')
+ax5.set_ylabel('value')
  ax5.grid(True, alpha=0.3)
 
- # 6. Кумулятивная доходность on периодам
+# 6. Cumulative returns on periods
  ax6 = axes[1, 2]
  cumulative_returns = np.cumprod([1 + r for r in returns])
  periods = range(1, len(cumulative_returns) + 1)
  ax6.plot(periods, cumulative_returns, marker='o', linewidth=2, markersize=4)
- ax6.axhline(y=1.0, color='red', linestyle='--', alpha=0.7, label='Начальный капитал')
- ax6.set_title('Кумулятивная доходность', fontweight='bold')
- ax6.set_xlabel('Период')
- ax6.set_ylabel('Кумулятивная доходность')
+ax6.axhline(y=1.0, color='red', lineyle='--', alpha=0.7, label='Initiative capital')
+ax6.set_title('cumulative return',fonweight='bold')
+ax6.set_xlabel('Period')
+ax6.set_ylabel('cumulative return')
  ax6.legend()
  ax6.grid(True, alpha=0.3)
 
  plt.tight_layout()
  plt.show()
 
- # Выводим статистики
- print("\n📊 СТАТИСТИКИ РАСПРЕДЕЛЕНИЯ:")
- print(f"Доходность:")
- print(f" Среднее: {np.mean(returns):.4f}")
- print(f" Медиана: {np.median(returns):.4f}")
- print(f" Стандартное отклонение: {np.std(returns):.4f}")
- print(f" Асимметрия: {stats.skew(returns):.4f}")
- print(f" Эксцесс: {stats.kurtosis(returns):.4f}")
+# Bringing statistics out
+PRIint("\n\\\\\\cH00FFFF}SYMBOLS:")
+pprint(f "Property:")
+Middle: {np.mean(returns): 4f})
+(pint(f" Median: {np.median(returns): 4f})
+standard deviation: {np.std(returns): 4f})
+asymmetry: {stats.skew(returns): 4f})
+Print(f"Excess: {stats.curtosis(returns):4f}})
 
  print(f"\nSharpe Ratio:")
- print(f" Среднее: {np.mean(sharpe_ratios):.4f}")
- print(f" Медиана: {np.median(sharpe_ratios):.4f}")
- print(f" Стандартное отклонение: {np.std(sharpe_ratios):.4f}")
- print(f" Асимметрия: {stats.skew(sharpe_ratios):.4f}")
- print(f" Эксцесс: {stats.kurtosis(sharpe_ratios):.4f}")
+Middle: {np.mean(sharpe_ratios): 4f})
+(pint(f" Median: {np.median(sharpe_ratios): 4f})
+standard deviation: {np.std(sharpe_ratios): 4f})
+Asymmetry: {stats.skew(sharpe_ratios): 4f})
+Print(f"Excess: {stats.curtosis(sharpe_ratios):4f}})
 
 def plot_cumulative_performance(results: List[Dict[str, Any]]) -> None:
  """
- Визуализация кумулятивной performance стратегии.
+Visualization of cumulative strategy.
 
- Эта function создает график кумулятивной доходности and других
- ключевых метрик on периодам Walk-Forward Analysis.
+This function creates a schedule of cumulative returns and others
+Key metrics on Walk-Forward Anallysis periods.
 
  Args:
- results: List результатов Walk-Forward Analysis
+results: List of results Walk-Forward Analysis
  """
 
  if not results:
- print("Нет данных for визуализации")
+"No data for visualization"
  return
 
- # Извлекаем data
+# Extracting data
  periods = [r['period'] for r in results]
  returns = [r['metrics']['total_return'] for r in results]
  sharpe_ratios = [r['metrics']['sharpe_ratio'] for r in results]
  max_drawdowns = [r['metrics']['max_drawdown'] for r in results]
 
- # Рассчитываем кумулятивную доходность
+# Computing cumulative returns
  cumulative_returns = np.cumprod([1 + r for r in returns])
 
- # Creating фигуру
+# Creating the figure
  fig, axes = plt.subplots(2, 2, figsize=(15, 10))
- fig.suptitle('Кумулятивная performance стратегии', fontsize=16, fontweight='bold')
+"fig.sumptile" ('Collective strategy', fontsize=16, fontweight='bold')
 
- # 1. Кумулятивная доходность
+# 1. Cumulative returns
  ax1 = axes[0, 0]
  ax1.plot(periods, cumulative_returns, marker='o', linewidth=2, markersize=4, color='blue')
- ax1.axhline(y=1.0, color='red', linestyle='--', alpha=0.7, label='Начальный капитал')
+ax1.axhline(y=1.0, color='red', lineyle='--', alpha=0.7, label='Initiative capital')
  ax1.fill_between(periods, cumulative_returns, 1.0, alpha=0.3, color='blue')
- ax1.set_title('Кумулятивная доходность', fontweight='bold')
- ax1.set_xlabel('Период')
- ax1.set_ylabel('Кумулятивная доходность')
+ax1.set_title('cumulative return',fonweight='bold')
+ax1.set_xlabel('Period')
+ax1.set_ylabel('cumulative return')
  ax1.legend()
  ax1.grid(True, alpha=0.3)
 
- # 2. Доходность on периодам
+#2 Income on Periods
  ax2 = axes[0, 1]
  colors = ['green' if r > 0 else 'red' for r in returns]
  bars = ax2.bar(periods, returns, color=colors, alpha=0.7)
  ax2.axhline(y=0, color='black', linestyle='-', alpha=0.5)
  ax2.axhline(y=np.mean(returns), color='blue', linestyle='--', alpha=0.7,
- label=f'Среднее: {np.mean(returns):.3f}')
- ax2.set_title('Доходность on периодам', fontweight='bold')
- ax2.set_xlabel('Период')
- ax2.set_ylabel('Доходность')
+Label=f'average: {np.mean(returns):3f}'
+ax2.set_title.
+ax2.set_xlabel('Period')
+ax2.set_ylabel('income')
  ax2.legend()
  ax2.grid(True, alpha=0.3)
 
- # 3. Sharpe Ratio on периодам
+# 3. Sharpe Ratio on Periods
  ax3 = axes[1, 0]
  ax3.plot(periods, sharpe_ratios, marker='s', linewidth=2, markersize=4, color='green')
  ax3.axhline(y=1.0, color='red', linestyle='--', alpha=0.7, label='Sharpe = 1.0')
  ax3.axhline(y=0.5, color='orange', linestyle='--', alpha=0.7, label='Sharpe = 0.5')
  ax3.fill_between(periods, sharpe_ratios, 0, alpha=0.3, color='green')
- ax3.set_title('Sharpe Ratio on периодам', fontweight='bold')
- ax3.set_xlabel('Период')
+ax3.set_title('Sharp Ratio on Periods',fonweight='bold')
+ax3.set_xlabel('Period')
  ax3.set_ylabel('Sharpe Ratio')
  ax3.legend()
  ax3.grid(True, alpha=0.3)
 
- # 4. Просадки on периодам
+# 4. Delays on periods
  ax4 = axes[1, 1]
  ax4.bar(periods, max_drawdowns, color='red', alpha=0.7)
- ax4.axhline(y=-0.1, color='orange', linestyle='--', alpha=0.7, label='-10% просадка')
- ax4.axhline(y=-0.2, color='red', linestyle='--', alpha=0.7, label='-20% просадка')
- ax4.set_title('Максимальные просадки on периодам', fontweight='bold')
- ax4.set_xlabel('Период')
- ax4.set_ylabel('Максимальная просадка')
+ax4.axhline(y=-0.1 color='range', linely='--', alpha=0.7, label='-10% prosa')
+ax4.axhline(y=-0.2, color='red', lineyle='--', alpha=0.7, label='-20% landing')
+ax4.set_title
+ax4.set_xlabel('Period')
+ax4.set_ylabel.
  ax4.legend()
  ax4.grid(True, alpha=0.3)
 
@@ -1325,12 +1325,12 @@ def plot_cumulative_performance(results: List[Dict[str, Any]]) -> None:
  plt.show()
 ```
 
-## Полный workflow example
+# Full workflow example
 
-**Теория практического примера:**
-Этот раздел демонстрирует полный цикл Walk-Forward Analysis from загрузки данных to интерпретации результатов. example включает все необходимые components for самостоятельного Launchа Analysis.
+** Case study: **
+This section shows the full Walk-Forward Analysis from downloading data to interpretation of results. Example includes all necessary components for an independent Launch Analysis.
 
-### create testsых данных
+### square testy data
 
 ```python
 import numpy as np
@@ -1342,33 +1342,33 @@ from scipy import stats
 
 def create_sample_data(symbol: str = "AAPL", period: str = "2y") -> pd.dataFrame:
  """
- create testsых данных for Walk-Forward Analysis.
+Create test data for Walk-Forward Analysis.
 
- Эта function загружает реальные финансовые data and подготавливает их
- for проведения Walk-Forward Analysis. Используются data Yahoo Finance.
+This function downloads real financial data and prepares them
+For Walk-Forward Analysis, data Yahoo Finance is used.
 
  Args:
- symbol: Символ акции (on умолчанию AAPL)
- period: Период данных (on умолчанию 2 года)
+symbol: Share symbol (on AAPL default)
+period: Data period (on default 2 years)
 
  Returns:
- dataFrame with подготовленными данными
+DataFrame with prepared data
  """
 
- print(f"Loading data for {symbol} за период {period}...")
+spring(f"Loding data for {symbol} for the period {period}...)
 
  try:
- # Loading data через yfinance
+# Loading data through yfinance
  ticker = yf.Ticker(symbol)
  data = ticker.history(period=period)
 
  if data.empty:
- raise ValueError(f"not удалось загрузить data for {symbol}")
+raise ValueError(f"not has been able to download data for {symbol})
 
- # Переименовываем колонки for совместимости
+# Rename columns for compatibility
  data.columns = [col.lower() for col in data.columns]
 
- # Удаляем колонки, которые not нужны
+# Remove columns that are not needed
  if 'adj close' in data.columns:
  data = data.drop('adj close', axis=1)
 
@@ -1377,27 +1377,27 @@ def create_sample_data(symbol: str = "AAPL", period: str = "2y") -> pd.dataFrame
  Missing_columns = [col for col in required_columns if col not in data.columns]
 
  if Missing_columns:
- raise ValueError(f"Missing необходимые колонки: {Missing_columns}")
+Raise ValueError(f"Missing the necessary columns: {Missing_columns})
 
- # Удаляем строки with NaN значениями
+# Remove lines with NaN values
  data = data.dropna()
 
- print(f"Загружено {len(data)} записей")
- print(f"Период: {data.index[0].strftime('%Y-%m-%d')} - {data.index[-1].strftime('%Y-%m-%d')}")
- print(f"Колонки: {List(data.columns)}")
+Print(f" Upload {len(data)} records")
+prent(f"Period: {data.index[0].strftime('%Y-%m-%d')} - {data.index[-1].strftime('%Y-%m-%d'}}
+(pint(f"Calls: {List(data.columns)})
 
  return data
 
  except Exception as e:
- print(f"Ошибка загрузки данных: {e}")
- print("Creating синтетические data...")
+print(f" Data upload error: {e}")
+"Creating synthetic data..."
 
- # Creating синтетические data in случае ошибки
+# Creating synthetic data in case of error
  dates = pd.date_range(start='2022-01-01', end='2024-01-01', freq='D')
  np.random.seed(42)
 
- # Генерируем случайное блуждание with трендом
- returns = np.random.normal(0.0005, 0.02, len(dates)) # Средняя доходность 0.05% in день
+# Generate random wandering with trend
+returns = np.random.normal(0.005, 0.02, Len(data)) # Average return 0.05% in day
  prices = 100 * np.exp(np.cumsum(returns))
 
  # Creating OHLC data
@@ -1408,7 +1408,7 @@ def create_sample_data(symbol: str = "AAPL", period: str = "2y") -> pd.dataFrame
  data['low'] = data[['open', 'close']].min(axis=1) * (1 - np.abs(np.random.normal(0, 0.01, len(dates))))
  data['volume'] = np.random.randint(1000000, 10000000, len(dates))
 
- print(f"Создано {len(data)} синтетических записей")
+Print(f) Created {len(data)} synthetic records")
  return data
 
 def complete_walk_forward_Analysis(data: pd.dataFrame,
@@ -1417,174 +1417,174 @@ def complete_walk_forward_Analysis(data: pd.dataFrame,
  test_size: int = 63,
  step_size: int = 21) -> Dict[str, Any]:
  """
- Полный Walk-Forward анализ with детальной Reportностью.
+Full Walk-Forward analysis with detailed Reporting.
 
- Эта function выполняет полный цикл Walk-Forward Analysis, including:
- 1. create Analysisтора
+This function runs the full Walk-Forward Analysis, including:
+1. Create Analysistor
  2. Launch Analysis
- 3. Анализ стабильности
- 4. Анализ деградации
- 5. Визуализацию результатов
- 6. Генерацию Reportа
+3. Stability analysis
+4. Analysis of degradation
+5. Visualization of results
+6. Report generationa
 
  Args:
- data: temporary ряд финансовых данных
- strategy: Торговая стратегия for тестирования
- train_size: Размер обучающего окна
- test_size: Размер testsого окна
- step_size: Шаг сдвига окна
+Data: financial series
+strategy: Trade strategy for testing
+Train_size: The size of the learning window
+test_size: Size of test window
+step_size: Step of the window shift
 
  Returns:
- Словарь with полными результатами Analysis
+The dictionary with full results of Analysis
  """
 
  print("="*60)
- print("ПОЛНЫЙ WALK-FORWARD АНАЛИЗ")
+Prent("full WALK-FORWARD ANALYSIS")
  print("="*60)
- print(f"Стратегия: {strategy.get_name()}")
- print(f"parameters: обучение={train_size} дней, тест={test_size} дней, шаг={step_size} дней")
- print(f"data: {len(data)} записей with {data.index[0].strftime('%Y-%m-%d')} on {data.index[-1].strftime('%Y-%m-%d')}")
+"Strategy: {strategic.get_name()}")
+prent(f"parameters: training={training_size} days, test=(test_size} days, step={step_size} days)
+prent(f"data: {len(data)} notes with {data.index[0].strftime('%Y-%m-%d')} on {data.index[-1].strftime('%Y-%m-%d'}})
 
- # 1. create Analysisтора
- print("\n1. create Analysisтора Walk-Forward...")
+♪ 1 ♪ Create Analysistor
+Print('n1.'create Analysistor Walk-Forward...')
  analyzer = WalkForwardAnalyzer(train_size=train_size, test_size=test_size, step_size=step_size)
 
  # 2. Launch Analysis
  print("\n2. Launch Walk-Forward Analysis...")
  Analysis = analyzer.run_Analysis(data, strategy)
 
- # 3. Анализ стабильности
- print("\n3. Анализ стабильности...")
+# 3. Analysis of stability
+Print("\n3. Analysis of stability...")
  stability = analyze_stability(analyzer.results)
 
- # 4. Анализ деградации
- print("\n4. Анализ деградации...")
+#4 Analysis of degradation
+Print("\n4. Degradation analysis...")
  degradation = analyze_degradation(analyzer.results)
 
- # 5. Визуализация
- print("\n5. create визуализаций...")
+# 5. Visualization
+Print("\n5.
  try:
  plot_performance_by_period(analyzer.results)
  plot_results_distribution(analyzer.results)
  plot_cumulative_performance(analyzer.results)
  except Exception as e:
- print(f"Ошибка при создании графиков: {e}")
+Print(f) Error in scheduling: {e})
 
- # 6. Детальный Report
+♪ 6. Detailed Report
  print("\n" + "="*60)
- print("РЕЗУЛЬТАТЫ WALK-FORWARD Analysis")
+"WALK-FORWARD Anallysis"
  print("="*60)
 
- print(f"\n📊 ОСНОВНЫЕ metrics:")
- print(f" Всего periods: {Analysis['total_periods']}")
- print(f" Успешных periods: {Analysis['successful_periods']}")
- print(f" Средняя доходность: {Analysis['mean_return']:.2%}")
- print(f" Стандартное отклонение: {Analysis['std_return']:.2%}")
- print(f" Медианная доходность: {Analysis['median_return']:.2%}")
- print(f" Минимальная доходность: {Analysis['min_return']:.2%}")
- print(f" Максимальная доходность: {Analysis['max_return']:.2%}")
+prent(f"\n
+(f) Total periods: {Analysis['total_periods']}}
+(f" Successful periods: {Analysis['accessfulful_periods']})
+average return: {Analysis['mean_return']:2%}}
+standard deviation: {Analysis['std_return':2%}})
+(f" Median return:(Analysis['median_return']: 2 per cent})
+minimum return: {Analysis['min_return':2%}})
+peak(f" Maximum return: {Analysis['max_return']:2%}})
 
- print(f"\n📈 РИСК-СКОРРЕКТИРОВАННЫЕ metrics:")
- print(f" Средний Sharpe Ratio: {Analysis['mean_sharpe']:.2f}")
- print(f" Стандартное отклонение Sharpe: {Analysis['std_sharpe']:.2f}")
- print(f" Минимальный Sharpe: {Analysis['min_sharpe']:.2f}")
- print(f" Максимальный Sharpe: {Analysis['max_sharpe']:.2f}")
+(f'n'\\\\ \RIS-SCORRECTED METHicS:")
+Middle Sharpe Rato:(Analysis['mean_sharpe']:2f})
+standard deviation Sharpe: {Analysis['std_sharpe']:2f}})
+(f" Minimum Sharpe: {Analysis['min_sharpe':.2f}})
+peak(f" Maximum Sharpe:(Analysis['max_sharpe':2f}})
 
- print(f"\n📉 metrics РИСКА:")
- print(f" Средняя просадка: {Analysis['mean_drawdown']:.2%}")
- print(f" Худшая просадка: {Analysis['worst_drawdown']:.2%}")
- print(f" Стандартное отклонение просадок: {Analysis['std_drawdown']:.2%}")
+(f)
+average draught: {Analysis['mean_drawdown']:2%}}
+(f" Worst draught: {Anallysis['worth_drawdown']: 2 per cent}})
+pprint(f" Standard seed deviation: {Analysis['std_drawdown']:2%}})
 
- print(f"\n🎯 КОНСИСТЕНТНОСТЬ:")
- print(f" Положительных periods: {Analysis['positive_periods']}")
- print(f" Отрицательных periods: {Analysis['negative_periods']}")
- print(f" Консистентность: {Analysis['consistency']:.2%}")
- print(f" Коэффициент вариации: {Analysis['coefficient_of_variation']:.3f}")
+Print(f'n'int'S CONSISTENCE:")
+(f" Positive periods: {Analysis['positive_periods']}})
+(f" Negative periods: {Analysis['negative_periods']})
+Print(f"Consistence: {Analysis['consistency']: 2%}})
+print(f "Variance coefficient: {Analysis['co-officent_of_variation']:3f}})
 
- print(f"\n📊 СТАТИСТИЧЕСКИЕ ХАРАКТЕРИСТИКИ:")
- print(f" Асимметрия: {Analysis['skewness']:.3f}")
- print(f" Эксцесс: {Analysis['kurtosis']:.3f}")
- print(f" Средний процент выигрышных сделок: {Analysis['mean_win_rate']:.2%}")
- print(f" Среднее количество сделок за период: {Analysis['mean_trades_per_period']:.1f}")
- print(f" Общее количество сделок: {Analysis['total_trades']}")
+PRIint(f"\n\\\\n\ STATISTICAL CHARACTERISTICS:")
+Asymmetry: {Analysis['skewness':.3f}})
+Print(f"Excess: {Analysis['curtosis']:.3f}})
+(f) Average percentage of winning transactions: {Analysis['mean_win_rate']:2%}}
+(f" Average number of transactions over the period: {Analesis['mean_trades_per_per_period']:.1f})
+(f" Total number of transactions: {Analysis['total_trades'}})
 
- print(f"\n🔍 АНАЛИЗ СТАБИЛЬНОСТИ:")
- print(f" Коэффициент вариации доходности: {stability['coefficient_of_variation']:.3f}")
- print(f" Тренд performance: {stability['performance_trend']:.4f}")
- print(f" Значимость тренда (p-value): {stability['trend_significance']:.4f}")
- print(f" Стабильность Sharpe Ratio: {stability['sharpe_stability']:.3f}")
- print(f" Консистентность доходности: {stability['return_consistency']:.3f}")
+Print(f"\n\\\\\n\ANALYSIS OF STABILITY:")
+Print(f" Rate of profit variation: {`co-officent_of_variation']:3f})
+(f) Tread performance:(`security_trend':.4f})
+pprint(f" Significance of trend (p-value): {`trend_significance']:4f})
+(f"Stable Sharpe Ratio: {sharpe_state']:.3f})
+Print(f" Return-rate consistency: {'return_consistency']:.3f})
 
- print(f"\n📉 АНАЛИЗ ДЕГРАДАЦИИ:")
- print(f" Доходность первой половины: {degradation['first_half_mean']:.2%}")
- print(f" Доходность второй половины: {degradation['second_half_mean']:.2%}")
- print(f" Деградация: {degradation['degradation']:.2%}")
- print(f" t-статистика: {degradation['t_statistic']:.3f}")
+Print(f)(n\n\\\} ANALYSIS OF DEGRADATION:)
+first half income: {degration['first_half_mean']:2%})
+prent(f" Income of the second half: {degradation['second_half_mean']:2%})
+(f "Degradation: {degration['degration']: 2%}")
+pprint(f" t-statistics: {degration['t_statistic']:.3f}})
  print(f" p-value: {degradation['p_value']:.4f}")
- print(f" Значимая деградация: {'Да' if degradation['significant_degradation'] else 'Нет'}")
+significant degradation: {'Yes' if demobilization['significant_degration'] else 'No'}})
 
- # Оценка качества стратегии
- print(f"\n🏆 ОЦЕНКА КАЧЕСТВА СТРАТЕГИИ:")
+# Assessment of the quality of strategy
+PRINT(f)\n\\\\\\\\\\EVALUATION OF THE QUALITY OF THE STRATEGY:}
 
  quality_score = 0
  quality_factors = []
 
- # checking доходность
+# Checking returns
  if Analysis['mean_return'] > 0.05:
  quality_score += 2
- quality_factors.append("✅ Высокая доходность")
+Quality_factors.append("\\\$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
  elif Analysis['mean_return'] > 0:
  quality_score += 1
- quality_factors.append("⚠️ Положительная доходность")
+Quality_factors.append("
  else:
- quality_factors.append("❌ Отрицательная доходность")
+Qualitity_factors.append("
 
  # checking Sharpe Ratio
  if Analysis['mean_sharpe'] > 1.0:
  quality_score += 2
- quality_factors.append("✅ Отличный Sharpe Ratio")
+Quality_factors.append("
  elif Analysis['mean_sharpe'] > 0.5:
  quality_score += 1
- quality_factors.append("⚠️ Удовлетворительный Sharpe Ratio")
+Qualitity_factors.append("
  else:
- quality_factors.append("❌ Низкий Sharpe Ratio")
+Quality_factors.append("
 
- # checking консистентность
+# Checking conspiracies
  if Analysis['consistency'] > 0.6:
  quality_score += 2
- quality_factors.append("✅ Высокая консистентность")
+Quality_factors.append("
  elif Analysis['consistency'] > 0.4:
  quality_score += 1
- quality_factors.append("⚠️ Умеренная консистентность")
+Qualitity_factors.append("
  else:
- quality_factors.append("❌ Низкая консистентность")
+Quality_factors.append("
 
- # checking просадки
+# Checking proslands
  if Analysis['worst_drawdown'] > -0.1:
  quality_score += 1
- quality_factors.append("✅ Приемлемые просадки")
+Quality_factors.append("
  else:
- quality_factors.append("❌ Высокие просадки")
+Quality_factors.append("
 
- # checking деградацию
+# Checking degradation
  if not degradation['significant_degradation']:
  quality_score += 1
- quality_factors.append("✅ Стабильная performance")
+Quality_factors.append("
  else:
- quality_factors.append("❌ Значимая деградация")
+Quality_factors.append("
 
- print(f" Общий балл: {quality_score}/8")
+(f" Total score: {Quality_score}/8)
  for factor in quality_factors:
  print(f" {factor}")
 
  if quality_score >= 6:
- print(" 🎉 ОТЛИЧНАЯ СТРАТЕГИЯ!")
+Print(" * relevant strategy!")
  elif quality_score >= 4:
- print(" 👍 ХОРОШАЯ СТРАТЕГИЯ")
+"Prent(" * Good Strategy")
  elif quality_score >= 2:
- print(" ⚠️ ТРЕБУЕТ УЛУЧШЕНИЯ")
+Prent(("HOCK FOR IMPROVEMENT")
  else:
- print(" ❌ not РЕКОМЕНДУЕТСЯ")
+Prent(("not RECOMMENDED")
 
  print("\n" + "="*60)
 
@@ -1597,12 +1597,12 @@ def complete_walk_forward_Analysis(data: pd.dataFrame,
  'quality_factors': quality_factors
  }
 
-# example использования
+# Example of use
 if __name__ == "__main__":
  # Loading data
  data = create_sample_data("AAPL", "2y")
 
- # Creating стратегии
+# Creating strategy
  strategies = {
  'SMA_20_50': SimpleMovingAverageStrategy(20, 50),
  'SMA_10_30': SimpleMovingAverageStrategy(10, 30),
@@ -1610,42 +1610,42 @@ if __name__ == "__main__":
  'BB_20': BollingerBandsStrategy(20, 2.0)
  }
 
- # Анализируем каждую стратегию
+# We analyze every strategy
  for strategy_name, strategy in strategies.items():
  print(f"\n{'='*80}")
- print(f"АНАЛИЗ СТРАТЕГИИ: {strategy_name}")
+(f) STRATEGIC ANALYSIS: {strategic_name})
  print(f"{'='*80}")
 
  try:
  results = complete_walk_forward_Analysis(data, strategy)
  except Exception as e:
- print(f"Ошибка при анализе стратегии {strategy_name}: {e}")
+Print(f) Mistake in strategy analysis {strategic_name}: {e})
 
- # Сравниваем все стратегии
+# Compare all strategies
  print(f"\n{'='*80}")
- print("СРАВНИТЕЛЬНЫЙ АНАЛИЗ all СТРАТЕГИЙ")
+PRINT( "ANALYSIS ALL STRATEGY")
  print(f"{'='*80}")
 
  try:
  multi_results, comparison = multi_strategy_walk_forward(data, strategies)
  except Exception as e:
- print(f"Ошибка при сравнительном анализе: {e}")
+Print(f) Error in comparative analysis: {e})
 ```
 
-## Следующие шаги
+## Next steps
 
-После Walk-Forward Analysis переходите к:
-- **[08_monte_carlo_simulation.md](08_monte_carlo_simulation.md)** - Монте-Карло симуляция
-- **[09_risk_Management.md](09_risk_Management.md)** - Management рисками
+After Walk-Forward Analysis go to:
+- **[08_monte_carlo_simulation.md](08_monte_carlo_simulation.md)** - Monte Carlo simulation
+- **[09_risk_Management.md](09_risk_Management.md)** - Risk Management
 
-## Ключевые выводы
+## Key findings
 
-1. **Walk-Forward** - самый реалистичный метод тестирования
-2. **Стабильность** важнее максимальной доходности
-3. **Адаптивность** - ключ к долгосрочному успеху
-4. **Деградация** - нормальное явление, нужно учитывать
-5. **Визуализация** помогает понять поведение стратегии
+1. **Walk-Forward** is the most realistic test method
+2. ** Stability** is more important than maximum return
+3. ** Adaptation** - key to long-term success
+4. ** Degradation** - normal, to be taken into account
+5. ** Visualization** helps understand the behaviour of the strategy
 
 ---
 
-**Важно:** Хорошая стратегия должна Workingть стабильно on новых данных, а not только on исторических!
+♪ It's important ♪ ♪ A good strategy has to be stable on new data and not just on historical data ♪

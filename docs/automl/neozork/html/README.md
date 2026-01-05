@@ -1,89 +1,89 @@
 # Neozork AutoML HTML Documentation
 
-## Обзор
+## Overview
 
-Это HTML версия документации Neozork AutoML, созданная with помощью автоматического конвертера Markdown in HTML. documentation содержит Complete guide on созданию robust ML systems with использованием AutoML техноLogsй.
+This is a TML version of Neozork AutoML, created with an automatic Markdown in TML converter. Documentation contains a Compate Guide on the creation of a robot ML systems with the use of AutoML technoLogs.
 
-## Structure документации
+##Structuring documentation
 
-### 📁 Файлы
-- **index.html** - main page with содержанием and ссылками on все разделы
+### ♪ Files
+**index.html** - Main page with content and references on all sections
 - **01_environment_setup.html** - environment installation on macOS M1 Pro
-- **02_robust_systems_fundamentals.html** - Основы робастных систем
-- **03_data_preparation.html** - Подготовка данных
-- **04_feature_engineering.html** - Инженерия признаков
-- **05_model_training.html** - Обучение моделей
-- **06_backtesting.html** - Бэктестинг
-- **07_walk_forward_Analysis.html** - Walk-forward анализ
-- **08_monte_carlo_simulation.html** - Монте-Карло симуляция
-- **09_risk_Management.html** - Management рисками
-- **10_blockchain_deployment.html** - Развертывание in блокчейне
-- **11_wave2_Analysis.html** - Wave2 анализ
-- **12_schr_levels_Analysis.html** - Анализ уровней Schr
-- **13_schr_short3_Analysis.html** - Schr Short3 анализ
-- **14_advanced_practices.html** - Продвинутые практики
-- **15_Portfolio_optimization.html** - Оптимизация портфеля
-- **16_metrics_Analysis.html** - Анализ метрик
-- **17_examples.html** - examples использования
-- **18_***.html** - Различные системные components
+- **02_robus_systems_fundamentals.html**
+- **03_data_preparation.html** - Data preparation
+- **04_feature_englishing.html** - Signs engineering
+- **05_model_training.html** - Model training
+- **06_backtesting.html** - Becketting
+- **07_walk_forward_Anallysis.html** - Walk-forward analysis
+- **08_monte_carlo_stimulation.html** - Monte Carlo simulation
+- **09_risk_Management.html** - Management risk
+- **10_blockchain_deployment.html** - In-block deployment
+- **11_wave2_Anallysis.html** - Wave2 analysis
+- **12_shr_levels_Anallysis.html** - Analysis of Schr levels
+- **13_shr_short3_Anallysis.html** - Schr Short3 analysis
+- **14_advanced_practices.html** - Advanced practices
+- **15_Porthfolio_optimization.html** - Portfolio optimization
+- **16_metrics_Anallysis.html** - Meteric analysis
+- **17_examples.html** - examples of use
+- **18_****.html** - Different systems components
 
-## Особенности форматирования
+## Formatting features
 
-### 🎨 Стилизация
-- **Современный дизайн** with использованием Apple system Fonts
-- **Адаптивная верстка** for all устройств
-- **Темная тема** for блоков кода
-- **Цветовое выделение** синтаксиса Python, Bash, JSON, YAML, SQL
+### ♪ Stylishing
+- ** Modern design** with the use of Apple System Fons
+- ** Adaptive tie** for all devices
+- ** Dark topic** for code blocks
+- **Cluster release** Python syntax, Bash, JSON, YAML, SQL
 
-### 💻 Подсветка кода
-- **Python** - полная поддержка with цветовым выделением
-- **Bash/Shell** - team терминала
-- **JSON** - конфигурационные файлы
-- **YAML** - файлы конфигурации
-- **SQL** - запросы к базе данных
+### ♪ Code lighting
+- **Python** - full support with color selection
+- **Bash/Shell** - team terminal
+- **JSON** - configuration files
+- **YAML** - configuration files
+- **SQL** - database queries
 
-### 📊 Элементы
-- **Таблицы** with hover эффектами
-- **Блоки кода** with языковыми метками
-- **Цитаты** with выделением
-- **Navigation** между разделами
-- **Responsive** дизайн
+## # # ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪ The place ♪
+- ** Tables** with hoover effects
+- ** Code blocks** with language tags
+- ** Quotations** with selection
+- **Navigation** between sections
+- **Responsive**
 
-## Использование
+## Use
 
-### 🌐 View in браузере
-1. Откройте `index.html` in любом современном браузере
-2. Use навигацию for перехода между разделами
-3. Все ссылки Workingют локально
+### ♪ View in browser
+1. Open `index.html' in any modern browser
+2. Use navigation for cross-sections
+3. All links Working locally
 
-### 🔄 update документации
-for обновления HTML версии при изменении .md files:
+### \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#####\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#############\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+to update the XML version when changing .md files:
 
 ```bash
-# Перейти in корень проекта
+# Go into the root of the project
 cd /path/to/neozork-hld-Prediction
 
-# Запустить конвертер
+# Start the converter
 uv run python scripts/convert_md_to_html.py
 ```
 
-### 🛠️ configuration конвертера
-Конвертер можно настроить через parameters командной строки:
+### \configuration of the converter
+The converter can be set up using the command lines:
 
 ```bash
-# Указать другие директории
+# To indicate other directorates
 uv run python scripts/convert_md_to_html.py --input-dir /path/to/md --output-dir /path/to/html
 ```
 
 ## Technical details
 
 ### 📦 dependencies
-- **markdown** - конвертация Markdown in HTML
-- **Prism.js** - подсветка синтаксиса
-- **Custom CSS** - стилизация in стиле Python_Formatting_Example.html
+- **markdown** - Markdown in TML conversion
+- **Prism.js** - Syntax lighting
+- **Custom CSS** - Python_Formatting_Example.html style
 
-### 🧪 Тестирование
-Все functions конвертера покрыты unit тестами:
+♪# ♪ Testing
+All functions of the converter are covered by unit tests:
 
 ```bash
 # Launch tests
@@ -93,23 +93,23 @@ uv run pytest tests/test_md_to_html_converter.py -v
 ### 📁 File Structure
 ```
 docs/automl/neozork/
-├── *.md # Исходные Markdown файлы
-├── html/ # Сгенерированные HTML файлы
+*.md # Markdown Reference Files
+== sync, corrected by elderman ==
 │ ├── index.html # main page
-│ ├── *.html # Конвертированные файлы
-│ └── README.md # Этот файл
-└── Python_Formatting_Example.html # example стилизации
+== sync, corrected by elderman == @elder_man
+♪ ♪ ♪ ♪ README.md # This file
+== sync, corrected by elderman == @elder_man
 ```
 
-## Поддержка
+## Support
 
-При возникновении проблем with конвертацией or отображением документации:
+In case of problems with the conversion or display of documentation:
 
-1. Проверьте, что все dependencies установлены
-2. Убедитесь, что .md файлы корректны
-3. Запустите тесты for диагностики
-4. Проверьте консоль браузера on ошибки JavaScript
+1. Check that all dependencies are installed
+2. Make sure .md files are correct
+3. Start diagnostic tests
+4. Check the browser console for JavaScript error
 
 ---
 
-*documentation сгенерирована автоматически with помощью Neozork MD to HTML Converter*
+*documentation generated automatically with Neozork MD to HTML Converter*

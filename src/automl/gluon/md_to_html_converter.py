@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Конвертер Markdown in HTML Manual for AutoML Gluon
-Преобразует 33 главы из .md files in единый HTML мануал in стиле Python_Formatting_Example.html
+Markdown in TML Manual for AutoML Gluon
+Transforms 33 chapters from .md files into a single TML masterpiece in Python_Formatting_Example.html
 
 Author: Shcherbyna Rostyslav
-Дата: 2024
+Date: 2024
 """
 
 import os
@@ -17,7 +17,7 @@ import markdown
 from markdown.extensions import codehilite, tables, toc
 
 class AutoMLGluonHTMLConverter:
- """Конвертер Markdown files in HTML мануал for AutoML Gluon"""
+""Markdown Files in HTML Manual for AutoML Gluon""
 
  def __init__(self, source_dir: str = "docs/automl/gluon", output_dir: str = "docs/automl/gluon"):
  self.source_dir = Path(source_dir)
@@ -45,13 +45,13 @@ class AutoMLGluonHTMLConverter:
  },
  'toc': {
  'permalink': True,
- 'permalink_title': 'Ссылка on этот раздел'
+'Permalink_tile': 'Reference on this section'
  }
  }
  )
 
  def get_chapter_order(self) -> List[str]:
- """Получает порядок глав in правильной последовательности"""
+"Gets the order of the chapters in the correct sequence."
  return [
  "01_installation.md",
  "02_basic_usage.md",
@@ -89,45 +89,45 @@ class AutoMLGluonHTMLConverter:
  ]
 
  def get_chapter_info(self, filename: str) -> Dict[str, str]:
- """Извлекает информацию о главе из имени файла"""
+""Strikes the information about the chapter from the file name."
  chapter_num = filename.split('_')[0]
  chapter_name = filename.replace('.md', '').replace(f"{chapter_num}_", "").replace('_', ' ').title()
 
- # Специальные названия for некоторых глав
+# Special titles for certain chapters
  special_names = {
  "01_installation": "installation and configuration",
- "02_basic_usage": "Базовое использование",
- "03_advanced_configuration": "Продвинутая configuration",
- "04_risk_Analysis": "Анализ рисков",
- "05_low_risk_systems": "Низкорисковые системы",
- "06_metrics": "metrics and оценка",
- "07_validation": "validation моделей",
- "08_production": "Продакшен развертывание",
- "09_retraining": "retraining моделей",
- "10_best_practices": "Лучшие практики",
- "11_apple_silicon_optimization": "Apple Silicon оптимизация",
- "12_examples": "Практические examples",
- "13_simple_production_example": "Простой продакшен example",
- "14_advanced_production_example": "Продвинутый продакшен",
- "15_theory_and_fundamentals": "Теория and основы",
+"02_Basic_use": "Base use",
+"03_advanced_configration": "Advanced configration",
+"04_risk_Anallysis": "Risk Analysis",
+"05_low_risk_systems": Low-risk systems,
+"06_metrics": "metrics and evaluation",
+"07_validation": "validation of models",
+"08_production": "Sold deployment",
+"09_retraining": "retraining models",
+"10_best_practices": "Best practices",
+"11_apple_silicon_optimization": "Apple Silicon Optimization",
+"12_examples": Practical examples,
+"13_simple_production_example": "Simple sold example",
+"14_advanced_production_example": "Proceeded sales",
+"15_theory_and_fundamentals": "Theory and framework",
  "16_Troubleshooting": "Troubleshooting",
- "17_interpretability_and_explainability": "Интерпретируемость",
- "18_advanced_topics": "Продвинутые темы",
- "19_ethics_and_responsible_ai": "Этика and ответственный AI",
- "20_case_studies": "Кейс-стади",
- "21_wave2_indicator_Analysis": "Wave2 индикатор анализ",
- "22_schr_levels_Analysis": "SCHR уровни анализ",
- "23_schr_short3_Analysis": "SCHR short3 анализ",
- "24_super_system_ultimate": "Супер система Ultimate",
- "25_reading_guide": "guide on чтению",
- "26_probability_usage_guide": "guide on вероятностям",
- "27_trading_bot_Monitoring": "Monitoring торгового бота",
- "28_feature_generation_advanced": "Продвинутая генерация признаков",
- "29_backtesting_methods": "methods бэктестинга",
- "30_walk_forward_Analysis": "Walk-forward анализ",
- "31_monte_carlo_simulations": "Монте-Карло симуляции",
- "32_Portfolio_Management": "Management портфелем",
- "33_llm_parallel_computing_setup": "configuration параллельных вычислений"
+"17_interpretability_and_explainability": "Interpretability",
+18_advanced_topics: advanced topics,
+"19_ethics_and_responsible_ai": "Ethics and Responsible AI",
+"20_case_studies": "case-studies",
+"21_wave2_indicator_analysis": "Wave2 analysis indicator",
+"22_shr_levels_Anallysis": "SCHR levels of analysis",
+"23_shr_short3_Anallysis": "SCHR Short3 Analysis",
+"24_super_system_optimate": "Super Ultimate",
+"25_reading_guid": "Guide on reading",
+"26_probability_use_guid": "Guide on Probabilities",
+"27_trading_bot_Monitoring": "Monitoring commercial bota",
+"28_feature_energy_advanced": advanced indicator generation,
+"29_backtesting_methods": "methods bactering",
+"30_walk_forward_analysis": "Walk-forward analysis",
+"31_monte_carlo_simulations": "Monte-Carlo simulations",
+"32_Porthfolio_Management": "Management portfolio",
+"33_lm_parallel_computing_setup": "configration of parallel calculations"
  }
 
  return {
@@ -137,23 +137,23 @@ class AutoMLGluonHTMLConverter:
  }
 
  def process_markdown_file(self, filepath: Path) -> Dict[str, Any]:
- """Обрабатывает один Markdown файл"""
+""""""""" "Checks one Markdown file."
  try:
  with open(filepath, 'r', encoding='utf-8') as f:
  content = f.read()
 
- # Извлекаем метаdata
+# We're extracting metadata
  title_match = re.search(r'^# (.+)$', content, re.MULTILINE)
  author_match = re.search(r'\*\*Author:\*\* (.+)$', content, re.MULTILINE)
- date_match = re.search(r'\*\*Дата:\*\* (.+)$', content, re.MULTILINE)
+Data_match = re.search(r'\\\*Date:\\*(.+)$,content, re.MULTILINE)
 
- # Обрабатываем изображения
+# Processing images
  content = self.process_images(content)
 
- # Конвертируем in HTML
+# Converging in HTML
  html_content = self.md.convert(content)
 
- # Сбрасываем состояние markdown for следующего файла
+# Let's drop the Markdown status for the next file
  self.md.reset()
 
  return {
@@ -165,19 +165,19 @@ class AutoMLGluonHTMLConverter:
  }
 
  except Exception as e:
- print(f"Ошибка обработки файла {filepath}: {e}")
+print(f) File processing error {filepath}: {e})
  return None
 
  def process_images(self, content: str) -> str:
- """Обрабатывает изображения in контенте"""
- # Заменяем относительные пути on абсолютные
+"""""""""""""""""
+# Replace the relative paths on absolute
  content = re.sub(
  r'<img src="images/',
  '<img src="images/',
  content
  )
 
- # Добавляем стили for изображений
+# Adding styles for images
  content = re.sub(
  r'<img src="([^"]+)" alt="([^"]*)"',
  r'<img src="\1" alt="\2" style="max-width: 100%; height: auto; display: block; margin: 20px auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"',
@@ -187,9 +187,9 @@ class AutoMLGluonHTMLConverter:
  return content
 
  def generate_toc(self) -> str:
- """Генерирует оглавление"""
+"""""""" "Generate the content."
  toc_html = '<div class="toc">\n'
- toc_html += '<h2>📚 Содержание (33 главы)</h2>\n'
+toc_html += `<h2>>the content (33 chapters)</h2>\n'
  toc_html += '<div class="toc-grid">\n'
 
  for i, chapter in enumerate(self.chapters, 1):
@@ -206,52 +206,52 @@ class AutoMLGluonHTMLConverter:
  return toc_html
 
  def get_chapter_describe(self, chapter_name: str) -> str:
- """Возвращает describe главы"""
+"Returns describe chapter."
  describes = {
- "installation and configuration": "Пошаговая installation, системные требования, configuration",
- "Базовое использование": "Основы работы with TabularPredictor, обучение моделей",
- "Продвинутая configuration": "Гиперпараметры, ансамбли, validation, feature engineering",
- "Анализ рисков": "Technical, бизнес and операционные риски ML-систем",
- "Низкорисковые системы": "create надежных and устойчивых ML-систем",
- "metrics and оценка": "Классификация, регрессия, временные ряды, финансовые metrics",
- "validation моделей": "Cross-validation, временные ряды, walk-forward анализ",
- "Продакшен развертывание": "API серверы, Docker, Kubernetes, Monitoring",
- "retraining моделей": "Автоматическое retraining, Monitoring дрейфа",
- "Лучшие практики": "Подготовка данных, выбор метрик, оптимизация",
- "Apple Silicon оптимизация": "M1/M2/M3, MLX, Metal Performance Shaders",
- "Практические examples": "Банк, недвижимость, временные ряды, классификация",
- "Простой продакшен example": "from идеи to продакшен деплоя за 8 шагов",
- "Продвинутый продакшен": "Микроservices, масштабирование, Monitoring",
- "Теория and основы": "Математические основы, алгоритмы, принципы",
- "Troubleshooting": "Решение проблем, отладка, оптимизация",
- "Интерпретируемость": "Объяснимость моделей, SHAP, LIME",
- "Продвинутые темы": "Ансамбли, feature engineering, оптимизация",
- "Этика and ответственный AI": "Справедливость, прозрачность, безопасность",
- "Кейс-стади": "Реальные проекты and их решения",
- "Wave2 индикатор анализ": "Технический анализ and индикаторы",
- "SCHR уровни анализ": "Анализ уровней поддержки and сопротивления",
- "SCHR short3 анализ": "Краткосрочный анализ торговых сигналов",
- "Супер система Ultimate": "Комплексная торговая система",
- "guide on чтению": "Как эффективно изучать материал",
- "guide on вероятностям": "Working with вероятностями in ML",
- "Monitoring торгового бота": "Отслеживание and Management ботом",
- "Продвинутая генерация признаков": "Feature engineering for сложных задач",
- "methods бэктестинга": "Тестирование стратегий on исторических данных",
- "Walk-forward анализ": "Скользящее тестирование стратегий",
- "Монте-Карло симуляции": "Стохастическое моделирование рисков",
- "Management портфелем": "Оптимизация and диверсификация портфеля",
- "configuration параллельных вычислений": "LLM and параллельные вычисления"
+"Installation and configuration": "Strolling installation, system requirements, configration",
+"Base Use": "Fundamentals of work with TabularPredictor, model training",
+"Proved configuration": "Hyperparameters, ensembles, validation, feature engineering",
+Risk Analysis: "Technical, Business and Operational Risks of ML Systems",
+Low-risk systems: "create reliable and sustainable ML systems",
+"Metrics and valuation": Classifications, regressions, time series, financial metrics,
+"Validation of models": "Cross-validation, time series, Walk-forward analysis",
+"Sold deployment": "API servers, Docker, Kubernetes, Monitoring",
+"Retraining Models": "Automatic Retraining, Monitoring Drift",
+"Best practices": "Preparation, choice of metric, optimization",
+"Apple Silicon Optimization": "M1/M2/M3, MLX, Metal Performance Shaders",
+Practical examples: "Bank, real estate, time series, classification",
+"Simple sold example": "from ideas to deeds sold in eight steps,"
+"The advanced product": "Microservices, scale, Monitoring",
+"Theory and framework": "Mathematical framework, algorithms, principles",
+"Troubleshooting": "Troubleshooting, decoupling, optimization",
+"Interpretability": "Explanatoryness of Models, SHAP, LIME",
+"Advanced themes": "Ansambles, feature engineering, optimization",
+Ethic and Responsible AI: Justice, Transparency, Security,
+Case Studies: Real projects and their solutions,
+"Wave2 Analysis Indicator": "Technical Analysis and Indicators",
+"SCHR levels of analysis": "Analysis of support and resistance levels",
+"SCHR Short3 Analysis": "Scratcosm analysis of trade signals",
+Super System Ultimate: Integrated Trading System,
+"Guide on reading": "How to study material effectively",
+"Guide on probability": "Working with probability in ML",
+"Monitoring Commercial Bot": "Tracing and Management Bot",
+"Advanced indicator generation": "Feature engineering for complex problems",
+"Methods Becketting": "Trying strategies on historical data",
+"Walk-forward analysis": "The rolling testing of strategies",
+"Monte-Carlo Simulations": "Stochastic Risk Modelling",
+Management Portfolio: Optimization and Diversification of the Portfolio,
+"configuration of parallel calculations": "LLM and parallel calculations"
  }
- return describes.get(chapter_name, "Detailed describe темы")
+Return describes.get(chapter_name, "Detained describe topics")
 
  def generate_html_template(self) -> str:
- """Генерирует HTML шаблон in стиле Python_Formatting_Example.html"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  return '''<!DOCTYPE html>
 <html lang="ru">
 <head>
  <meta charset="UTF-8">
  <meta name="Viewport" content="width=device-width, initial-scale=1.0">
- <title>AutoML Gluon - Complete guide (33 главы)</title>
+<title>AutuML Gluon - Complete guide (33 chapters)</title>
  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
@@ -364,7 +364,7 @@ class AutoMLGluonHTMLConverter:
  margin-top: 20px;
  }
 
- /* Улучшенные стили for Python кода */
+* Improved styles for Python code*
  pre {
  background: #1e1e1e;
  color: #d4d4d4;
@@ -393,7 +393,7 @@ class AutoMLGluonHTMLConverter:
  font-weight: 600;
  }
 
- /* Цветовое выделение for Python синтаксиса */
+* Color Selection for Python syntax*/
  .token.comment {
  color: #6a9955;
  font-style: italic;
@@ -569,8 +569,8 @@ class AutoMLGluonHTMLConverter:
  <div class="container">
  <div class="header">
  <h1>AutoML Gluon</h1>
- <p>Complete guide on автоматизированному машинному обучению</p>
- <p><strong>33 главы</strong> | <strong>Author:</strong> Shcherbyna Rostyslav | <strong>Дата:</strong> 2024</p>
+<p>Complete guide on automated machine learning</p>
+<p><strong>33 chapters</strong> ¡strong>Author:</strong> Schherbyna Rostyslav ¡strong> Date:</strong> 2024</p>
  </div>
 
  {toc}
@@ -578,15 +578,15 @@ class AutoMLGluonHTMLConverter:
  {content}
  </div>
 
- <a href="#" class="back-to-top">↑ Наверх</a>
+<a href="#"class="back-to-top">
 
  <script>
- // Инициализация Prism.js for синтаксического выделения
+// Initiating Prism.js for syntax Selection
  if (typeof Prism !== 'undefined') {
  Prism.highlightall();
  }
 
- // Плавная прокрутка к якорям
+/ / / Floating to anchors
  document.addEventListener('DOMContentLoaded', function() {
  const links = document.querySelectorall('a[href^="#"]');
  links.forEach(link => {
@@ -602,7 +602,7 @@ class AutoMLGluonHTMLConverter:
  });
  });
 
- // Кнопка "Наверх"
+♪ Up ♪
  const backToTop = document.querySelector('.back-to-top');
  backToTop.addEventListener('click', function(e) {
  e.preventDefault();
@@ -612,7 +612,7 @@ class AutoMLGluonHTMLConverter:
  });
  });
 
- // Показ/скрытие кнопки "Наверх"
+Show/open the "Upstairs" button
  window.addEventListener('scroll', function() {
  if (window.scrollY > 300) {
  backToTop.style.display = 'block';
@@ -626,31 +626,31 @@ class AutoMLGluonHTMLConverter:
 </html>'''
 
  def convert_chapters(self) -> None:
- """Конвертирует все главы"""
- print("🔄 Начинаем конвертацию глав...")
+""Covers all chapters."
+"Prent("♪ ♪ Start converting chapters... ♪
 
  chapter_order = self.get_chapter_order()
 
  for filename in chapter_order:
  filepath = self.source_dir / filename
  if filepath.exists():
- print(f"📖 Обрабатываем: {filename}")
+(pint(f) processing: {filename})
  chapter_data = self.process_markdown_file(filepath)
  if chapter_data:
  self.chapters.append(chapter_data)
  else:
  print(f"⚠️ File not found: {filename}")
 
- print(f"✅ ОбWorkingно {len(self.chapters)} глав")
+(f) oOWorkingno {len(self.chapters)} chapters)
 
  def generate_html(self) -> str:
- """Генерирует полный HTML мануал"""
- print("🔨 Генерируем HTML мануал...")
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"Print("♪ ♪ HTML's powered manual... ♪
 
- # Генерируем оглавление
+# Generate the table of contents
  toc_html = self.generate_toc()
 
- # Генерируем контент глав
+# Generate the content of chapters
  content_html = ""
  for i, chapter in enumerate(self.chapters, 1):
  if chapter:
@@ -662,7 +662,7 @@ class AutoMLGluonHTMLConverter:
  </div>
  '''
 
- # Собираем полный HTML
+# Pick up a full TML
  html_template = self.generate_html_template()
  full_html = html_template.format(
  toc=toc_html,
@@ -672,33 +672,33 @@ class AutoMLGluonHTMLConverter:
  return full_html
 
  def save_html(self, html_content: str) -> None:
- """Сохраняет HTML in файл"""
+""Saves XML in file""
  output_file = self.output_dir / "AutoML_Gluon_Complete_Manual.html"
 
  with open(output_file, 'w', encoding='utf-8') as f:
  f.write(html_content)
 
- print(f"💾 HTML мануал сохранен: {output_file}")
+Print(f"\HTML Manual retained: {output_file})
 
  def run(self) -> None:
- """Launchает полный process конвертации"""
- print("🚀 Launch конвертера Markdown → HTML")
- print(f"📁 Исходная директория: {self.source_dir}")
- print(f"📁 Выходная директория: {self.output_dir}")
+"Launch the complete process of conversion."
+"Prent("♪ Launch Markdown ♪ HTML) converter"
+prent(f"\end directory: {self.source_dir}})
+(pint(f)(end directory: {self.output_dir}})
 
- # Конвертируем главы
+# Converting chapters
  self.convert_chapters()
 
- # Генерируем HTML
+# Generate HTML
  html_content = self.generate_html()
 
- # Сохраняем HTML
+# Save the TML
  self.save_html(html_content)
 
- print("🎉 Конвертация завершена успешно!")
+Print("
 
 def main():
- """Главная function"""
+""The Main Function""
  converter = AutoMLGluonHTMLConverter()
  converter.run()
 

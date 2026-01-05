@@ -1,19 +1,19 @@
 # Wave Indicator Discontinuous Lines - Final Implementation Summary
 
-## 🎯 Задача
-Реализовать прерывистые линии for wave indicator in `-d fast` режиме, где wave line отображается только там, где есть сигналы (красная for BUY, синяя for SELL), а где нет сигналов - линия должна быть невидимой, точно как in `-d fastest` режиме.
+## ♪ Task
+Implement breakable lines for wave indicator in `-d fast' mode, where wave line is displayed only where there are signals (red for BUY, blue for SELL) and where there are no signals, the line should be invisible, just like in `-d present' mode.
 
-## ✅ Выполненная Working
+♪ ♪ Worked out
 
-### 1. **Анализ проблемы**
-- Изучена реализация in `dual_chart_fastest.py`
-- Проанализирована function `create_discontinuous_line_traces`
-- Выявлена необходимость создания прерывистых сегментов
+### 1. ** Analysis of the problem**
+- Studyed implementation in `dual_chart_cast.py'
+- Analysis `create_discontinuous_line_traces'
+- The need for break-in segments has been identified
 
-### 2. **Основные исправления**
+###2. ** Main corrections**
 
-#### A. **create functions for прерывистых сегментов**
-Добавлена function `_create_discontinuous_line_segments` in `src/plotting/dual_chart_fast.py`:
+#### A. **create functions for breakable segments**
+Added function `_create_discontinuous_line_segments' in `src/plotting/dual_chart_fast.py':
 
 ```python
 def _create_discontinuous_line_segments(x_data, y_data, mask):
@@ -67,8 +67,8 @@ def _create_discontinuous_line_segments(x_data, y_data, mask):
  return segments
 ```
 
-#### B. **update functions отображения wave indicator**
-Исправлена function `_plot_wave_indicator` for использования прерывистых сегментов:
+### B. **update functions display wave index**
+Corrected function `_plot_wave_indicator' for the use of intermittent segments:
 
 ```python
 if plot_wave_col and plot_color_col:
@@ -116,30 +116,30 @@ if plot_wave_col and plot_color_col:
  )
 ```
 
-### 3. **Результат**
-Теперь wave indicator in `-d fast` режиме Workingет точно так же, как in `-d fastest` режиме:
+### 3. ** Resultation**
+Now wave indicator in `-d fast' mode Workinget is just like in `-d fastest' mode:
 
-- **Wave Line**: Отображается только там, где есть сигналы
- - Красные сегменты for BUY сигналов (1)
- - Синие сегменты for SELL сигналов (2)
- - Невидимые промежутки там, где нет сигналов (0)
-- **Fast Line**: Красная пунктирная линия
-- **MA Line**: Светло-синяя сплошная линия
-- **Сигналы**: Отображаются on верхнем графике как зеленые/красные треугольники
+- **Wave Line**: Only displayed where there are signals.
+- Red segments for BUY signals (1)
+- Blue segments for SELL signals (2)
+- Invisible intervals where there are no signals (0)
+- **Fast Line**: Red dot line
+- **MA Line**: Light blue continuous line
+- ** Signal**: Represented on top graph as green/red triangles
 
-### 4. **Тестирование**
-- ✅ Создан полный набор tests in `tests/plotting/test_wave_fast_mode.py`
-- ✅ Все 7 tests прошли успешно
-- ✅ Протестирована реальная Working with data
-- ✅ comparison with fastest режимом показало идентичность
+###4. ** Test**
+== sync, corrected by elderman == @elder_man
+- All 7 testes were successful
+- The real Work with data was challenged
+== sync, corrected by elderman == @elder_man
 
 ### 5. **documentation**
-- Создана подробная documentation all исправлений
-- Описаны Technical details and examples использования
+- Detailed documentation all corrections established
+- Described Technical data and usage
 
-## 🎉 Заключение
-Wave indicator теперь полностью Workingет in `-d fast` режиме with прерывистыми линиями, точно как in `-d fastest` режиме. Линии отображаются только там, где есть сигналы, а промежутки без сигналов остаются невидимыми.
+♪ ♪ The ending ♪
+Wave indexer is now fully Working in `-d fast' mode with breakable lines, just like in `-d fastest' mode. Lines are only displayed where there are signals, and intervals without signals remain invisible.
 
-**Статус**: ✅ **COMPLETED**
-**Дата**: 2025-08-20
-**Время выполнения**: ~1 час
+** Status**: * * COMPLETED**
+**Date**: 2025-08-20
+** Implementation time**: ~ 1 hour

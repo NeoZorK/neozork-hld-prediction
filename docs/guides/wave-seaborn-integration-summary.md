@@ -1,18 +1,18 @@
 # Wave Indicator Seaborn integration Summary
 
-## 🎯 Задача
-Добавить поддержку wave indicator in режим `-d sb` (seaborn backend) так же, как он Workingет in режиме `-d mpl`.
+## ♪ Task
+Add a wave indicator in mode `-d sb' (seaborn backend) as it does Working in mode `-d mpl'.
 
-## ✅ Выполненная Working
+♪ ♪ Worked out
 
-### 1. **Анализ существующей реализации**
-- Изучена реализация wave indicator in `dual_chart_mpl.py`
-- Проанализирована Structure `dual_chart_seaborn.py`
-- Определены ключевые components for интеграции
+###1. ** Analysis of existing implementation**
+- Studyed implementation of wave index in `dual_chart_mpl.py'
+- Analysis of Structure `dual_chart_seaborn.py'
+- Key players for integration identified
 
-### 2. **Основные изменения**
+###2. ** Major changes**
 
-#### A. **Добавлена function `_create_wave_line_segments`**
+#### A. ** Added function `_create_wave_line_segments'**
 ```python
 def _create_wave_line_segments(index, values, mask):
  """
@@ -27,11 +27,11 @@ def _create_wave_line_segments(index, values, mask):
  List: List of (x, y) segment tuples
  """
 ```
-- Создает прерывистые сегменты линий for разных сигналов
-- АнаLogsчно реализации in mpl режиме
-- Обеспечивает четкое визуальное разделение BUY/SELL сигналов
+- Creates intermittent segments of lines for different signals
+- AnaLogs in mpl mode
+- Provides clear visual separation of the BUY/SELL signals
 
-#### B. **Добавлены сигналы on главный график**
+#### B. ** Added signals on the main chart**
 ```python
 # Add Wave indicator signals to main chart if available
 plot_color_col = None
@@ -68,7 +68,7 @@ if plot_color_col:
  color='#FF4444', marker='v', s=100, label='Wave SELL', zorder=5, alpha=0.9)
 ```
 
-#### C. **Добавлена обработка wave indicator on нижний график**
+#### C. ** Added vave indexor on lower graph**
 ```python
 elif indicator_name == 'wave':
  # Add Plot Wave (main indicator, single line with dynamic colors) - as per MQ5
@@ -146,97 +146,97 @@ elif indicator_name == 'wave':
  ax2.axhline(y=0, color='#95A5A6', linestyle='--', linewidth=0.8, alpha=0.6)
 ```
 
-### 3. **Комплексное тестирование**
+### 3. ** Integrated testing**
 
-#### Создан testsый файл `tests/plotting/test_wave_seaborn_mode.py`
-- **10 testsых случаев** for полного покрытия функциональности
-- **Тестирование functions сегментации** линий
-- **check обработки ошибок** and граничных случаев
-- **Тестирование различных параметров** and торговых правил
-- **Интеграционное тестирование** полного цикла
+#### Test file `tests/plotting/test_wave_seaborn_mode.py'
+- **10 test cases** for full functional coverage
+- **Functions segmentation** lines
+- **check error processing** and boundary cases
+- ** Testing of various parameters** and trade rules
+- ** Integration testing** full cycle
 
-#### testsые сценарии:
-1. `test_create_wave_line_segments` - Тест functions создания сегментов
-2. `test_create_wave_line_segments_empty_mask` - Тест with пустой маской
-3. `test_wave_indicator_basic_plotting` - Базовое тестирование отрисовки
-4. `test_wave_indicator_columns_detection` - check обнаружения columns
-5. `test_wave_indicator_signal_values` - check значений сигналов
-6. `test_wave_indicator_data_quality` - check качества данных
-7. `test_wave_indicator_different_parameters` - Тест разных параметров
-8. `test_wave_indicator_global_rules` - Тест глобальных правил
-9. `test_wave_indicator_error_handling` - Обработка ошибок
-10. `test_wave_indicator_integration` - Интеграционное тестирование
+#### test scripts:
+1. `test_create_wave_line_segments' - Segment creation test
+2. `test_create_wave_line_segments_empty_msk' - Test with empty mask
+3. `test_wave_indicator_basic_plotting' - Basic drawing test
+4. `test_wave_indicator_columns_detection' - check detection
+5. `test_wave_indicator_signal_valutes' - check signal values
+6. `test_wave_indicator_data_quality' - check of data quality
+7. `test_wave_indicator_deliverent_papers' - Test of different parameters
+8. `test_wave_indicator_global_rules' - Global Rule Test
+9. `test_wave_indicator_error_handling' - Error processing
+10. `test_wave_indicator_integration' - Integration testing
 
 ### 4. **documentation**
 
-#### Создана полная documentation `docs/guides/wave-indicator-seaborn-mode.md`
-- **guide on использованию** with примерами команд
-- **describe параметров** and торговых правил
-- **Визуальные особенности** and техническая реализация
-- **comparison with другими режимами** отображения
-- **Лучшие практики** and Troubleshooting
-- **examples использования** for различных сценариев
+#### Full documentation `docs/guids/wave-indicator-seaborn-mode.md' has been created
+- ** Guide on use** with examples of commands
+- **describe parameters** and trade rules
+- **Visual features** and technical implementation
+- **comparison with other modes**
+- ** Best practices** and Troubleshooting
+- **examples of use** for different scenarios
 
-## 🎨 Визуальные особенности
+♪ ♪ Visual features
 
-### Главный график (OHLC)
-- **Свечи**: Современная зелено-красная цветовая схема
-- **Сигналы Wave**: Синие треугольники вверх (^) for BUY, красные треугольники вниз (v) for SELL
-- **Поддержка/Сопротивление**: Синие/оранжевые пунктирные линии
-- **Профессиональная легенда**: Чистый стиль with тенями and скругленными углами
+### Main Schedule (OHLC)
+- ** Candles**: Modern green-red colour scheme
+- **Wave**: Blue triangles up for BUY, red triangles down (v) for SELL
+- ** Support/Resistance**: Blue/Orange dots
+- ** Professional legend**: Clean style with shadows and rounded corners
 
-### График индикатора
-- **Wave Line**: Динамические цветные сегменты линий
- - Красные сегменты for BUY сигналов (`_Plot_Color == 1`)
- - Синие сегменты for SELL сигналов (`_Plot_Color == 2`)
- - Прерывистые сегменты for четкой визуализации сигналов
-- **Fast Line**: Красная пунктирная линия for индикатора импульса
-- **MA Line**: Светло-синяя линия for скользящего среднего
-- **Zero Line**: Серая пунктирная линия for справки
+*## Indicator schedule
+- **Wave Line**: Dynamic colour segments of lines
+- Red segments for BUY signals (`_Plot_Color ==1')
+- Blue segments for SELL signals (`_Plot_Color ==2')
+- Interrupt segments for clear visualization of signals
+- **Fast Line**: Red dot line for pulse indicator
+- **MA Line**: Light blue line for sliding average
+- **Zero Line**: Gray dotted line for reference
 
-### Отображение сигналов
-- **Умная фильтрация сигналов**: Использует колонку `_signal` for фактических торговых сигналов
-- **Правильное позиционирование**: BUY сигналы ниже минимумов свечей, SELL сигналы выше максимумов
-- **Цветовая согласованность**: Соответствует цветам графика индикатора
-- **Высокая видимость**: Правильный z-order and прозрачность
+### Signal display
+- ** Smart signal filtering**: uses column `_signal' for actual trade signals
+- ** Correct positioning**: BUY signals below minimum candles, SELL signals above maximums
+**Target consistency**: corresponding to the colours of the indicator graph
+- ** High visibility**: Correct z-order and transparency
 
-## 🔧 Техническая реализация
+## Technical implementation
 
-### Ключевые особенности
-- **Гибкость имен columns**: Поддержка как верхнего, так and нижнего регистра
-- **Умная фильтрация сигналов**: Использование `_signal` вместо `_Plot_Color` for уменьшения шума
-- **Прерывистые сегменты**: Четкое визуальное разделение разных типов сигналов
-- **Обработка ошибок**: Грациозная обработка отсутствующих данных and columns
-- **Оптимизация performance**: Эффективная отрисовка for больших наборов данных
+### Key features
+- ** Flexibility of names columns**: Support for both the top and bottom register
+- ** Smart signal filtering**: Use `_signal' instead of `_Plot_Color' for noise reduction
+** Periodical segments**: clear visual separation of different types of signals
+- ** Error management**: Gratious processing of missing data and columns
+- **Optification of performance**: Effective drawing for large data sets
 
-### Совместимость
-- **Полная совместимость** with существующими параметрами wave indicator
-- **Идентичная функциональность** with режимом `-d mpl`
-- **Поддержка all торговых правил** and глобальных правил
-- **Сохранение all визуальных элементов** and стилей
+###Compatibility
+- ** Full compatibility** with existing wave indicators
+- **Identical functionality** with `-d mpl' mode
+- ** All trade rules** and global rules
+- **Save all visual elements** and styles
 
-## 📊 Результаты тестирования
+♪ ♪ Test results
 
-### Статистика tests
-- **✅ Все тесты прошли успешно**: 10/10
-- **📈 Покрытие кода**: 100% for новой функциональности
-- **⚡ performance**: Быстрая отрисовка for наборов данных to 10,000+ точек
-- **🎯 Точность**: Идентичные результаты with режимом `-d mpl`
+### Test statistics
+All tests have been successful**: 10/10
+- *** Code cover**: 100% for new functionality
+- **\\formance**: Rapid diagram for data sets to 10,000+ dots
+- *** accuracy**: identical results with `-d mpl' mode
 
-### check работоспособности
+### check workability
 ```bash
-# Успешное выполнение team
+# Successful implementation of team
 uv run python -m src.cli.cli csv --csv-file data/mn1.csv --point 50 --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d sb
 ```
 
-## 🎉 Заключение
+♪ ♪ The ending ♪
 
-Wave indicator теперь **полностью поддерживается** in режиме `-d sb` (seaborn) with:
+Wave indexer now ** fully maintained** in mode `-d sb' (seaborn) with:
 
-- ✅ **Идентичной функциональностью** with режимом `-d mpl`
-- ✅ **Полным набором визуальных элементов** (сигналы, линии, цвета)
-- ✅ **Умной фильтрацией сигналов** for уменьшения шума
-- ✅ **Комплексным testing** and документацией
-- ✅ **Высокой производительностью** and качеством отображения
+- * Identical functionality** with `-d mpl' mode
+- * Full set of visual elements** (signals, lines, colours)
+- * Smart signal filter** for noise reduction
+- ♪ ♪ ♪ test** and documentation ♪
+High performance** and display quality
 
-Пользователи теперь могут использовать wave indicator in seaborn режиме for научно-презентационного стиля визуализации with тем же уровнем функциональности, что and in других режимах отображения.
+Users can now use a wave indexor in seaborn mode for the science-presentation style of visualization with the same level of functionality as in other display modes.

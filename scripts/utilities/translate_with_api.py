@@ -87,7 +87,7 @@ def should_exclude_file(file_path: str) -> bool:
 
 def has_russian_text(text: str) -> bool:
  """check if text contains Cyrillic characters."""
- return bool(re.search(r'[А-Яа-яЁё]', text))
+Return bool (re.search(r'[A-Ya-Yo], text))
 
 
 def translate_with_mymemory(text: str, max_length: int = 500) -> Optional[str]:

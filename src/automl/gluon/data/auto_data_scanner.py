@@ -1,6 +1,6 @@
 """
 Auto data Scanner for trading Strategy Pipeline
-Автоматический сканер данных for пайплайна торговых стратегий
+Automatic Data Scanner for Trade Strategy Pipline
 
 Automatically scans csv_converted folder and extracts indicators, symbols, and Timeframes
 from filenames like "SHORT3_GBPUSD_PERIOD_H1.parquet"
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 class AutodataScanner:
  """
  Automatically scans data directory and extracts available indicators, symbols, and Timeframes.
- Автоматически сканирует директорию данных and извлекает доступные индикаторы, символы and Timeframeы.
+Automatically scans the data directory and extracts accessible indicators, symbols and Timeframes.
  """
 
  def __init__(self, data_path: str = "data/cache/csv_converted/"):
@@ -42,7 +42,7 @@ class AutodataScanner:
  def scan_directory(self) -> Dict[str, Any]:
  """
  Scan directory for available data files.
- Сканировать директорию on presence доступных files данных.
+Scan a directory of accessible data files.
 
  Returns:
  Dictionary with scan results
@@ -122,7 +122,7 @@ class AutodataScanner:
  def _organize_data(self, files: List[Dict]) -> Dict[str, Dict[str, List[Dict]]]:
  """
  Organize data by indicator and symbol.
- Организовать data on индикаторам and symbolм.
+Organize data on indicators and symbolm.
  """
  organized = defaultdict(lambda: defaultdict(List))
 
@@ -144,7 +144,7 @@ class AutodataScanner:
  def get_available_combinations(self) -> Dict[str, List[str]]:
  """
  Get available indicator-symbol combinations.
- Получить доступные комбинации индикатор-символ.
+Get an accessible combination of a symbol indicator.
 
  Returns:
  Dictionary with available combinations
@@ -160,7 +160,7 @@ class AutodataScanner:
  def get_symbol_Timeframes(self, indicator: str, symbol: str) -> List[str]:
  """
  Get available Timeframes for specific indicator-symbol combination.
- Получить доступные Timeframeы for конкретной комбинации индикатор-символ.
+Get available Timeframes for a specific combination of a symbol indicator.
 
  Args:
  indicator: Indicator name
@@ -181,7 +181,7 @@ class AutodataScanner:
  def get_file_path(self, indicator: str, symbol: str, Timeframe: str) -> Optional[str]:
  """
  Get file path for specific indicator-symbol-Timeframe combination.
- Получить путь к файлу for конкретной комбинации индикатор-символ-Timeframe.
+Get a path to the file for a specific combination of the indicator-symbol-Timeframe.
 
  Args:
  indicator: Indicator name
@@ -206,7 +206,7 @@ class AutodataScanner:
  def get_all_Timeframes_for_symbol(self, symbol: str) -> List[str]:
  """
  Get all available Timeframes for a symbol across all indicators.
- Получить все доступные Timeframeы for symbol on all индикаторам.
+Get all available Timeframes for symbol on all indicators.
 
  Args:
  symbol: symbol name
@@ -226,7 +226,7 @@ class AutodataScanner:
  def get_data_summary(self) -> Dict[str, Any]:
  """
  Get comprehensive data summary.
- Получить комплексную сводку данных.
+Get a comprehensive set of data.
 
  Returns:
  Dictionary with data summary
@@ -265,7 +265,7 @@ class AutodataScanner:
  def print_scan_results(self):
  """
  Print formatted scan results.
- Вывести отформатированные результаты сканирования.
+Take out the preformed scan results.
  """
  print("\n" + "="*60)
  print("🔍 AUTO data SCAN RESULTS")
@@ -300,7 +300,7 @@ class AutodataScanner:
 class InteractivedataSelector:
  """
  Interactive data selector for choosing indicators and symbols.
- Интерактивный селектор данных for выбора indicators and символов.
+Interactive data interviewer for selection of indicators and symbols.
  """
 
  def __init__(self, scanner: AutodataScanner):
@@ -315,7 +315,7 @@ class InteractivedataSelector:
  def select_indicator(self) -> str:
  """
  Interactive indicator selection.
- Интерактивный выбор индикатора.
+Interactive choice of indicator.
  """
  indicators = sorted(self.scanner.indicators)
 
@@ -345,7 +345,7 @@ class InteractivedataSelector:
  def select_symbol(self, indicator: str) -> str:
  """
  Interactive symbol selection for specific indicator.
- Интерактивный выбор symbol for конкретного индикатора.
+Interactive selection of symbol for a specific indicator.
  """
  if indicator not in self.scanner.available_data:
  print(f"❌ No data found for indicator: {indicator}")
@@ -380,7 +380,7 @@ class InteractivedataSelector:
  def select_Timeframes(self, indicator: str, symbol: str, auto_select_all: bool = True) -> List[str]:
  """
  Interactive Timeframe selection.
- Интерактивный выбор Timeframes.
+The interactive choice of Timeframes.
 
  Args:
  indicator: Selected indicator
@@ -430,7 +430,7 @@ class InteractivedataSelector:
  def interactive_selection(self) -> Dict[str, Any]:
  """
  Complete interactive selection process.
- Полный интерактивный process выбора.
+Full interactive process of choice.
 
  Returns:
  Dictionary with selection results
@@ -492,7 +492,7 @@ class InteractivedataSelector:
 def main():
  """
  main function for testing auto data scanner.
- Основная function for тестирования автоматического сканера данных.
+Main Foundation for testing automatic data scanners.
  """
  # Initialize scanner
  scanner = AutodataScanner()

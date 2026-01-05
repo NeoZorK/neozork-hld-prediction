@@ -50,7 +50,7 @@ mobile application for Pocket Hedge fund successfully created and integrated wit
 ### File Structure
 ```
 src/mobile_app/
-├── App.js # Главный файл приложения
+* App.js # Main application file
 ├── app.json # configuration Expo
 ├── package.json # dependencies
 ├── README.md # documentation
@@ -58,16 +58,16 @@ src/mobile_app/
  ├── constants/
  │ └── theme.js # Style constants
  ├── services/
- │ ├── AuthContext.js # Контекст аутентификации
+AuthContext.js # Context of authentication
  │ └── Apiservice.js # HTTP client
  ├── Navigation/
  │ └── AppNavigator.js # Navigation
  ├── components/
- │ └── Loadingscreen.js # Компонент загрузки
+♪ ♪ ♪ Loadingscreen.js # upload component
  └── screens/
  ├── auth/
- │ ├── Loginscreen.js # Экран входа
- │ └── Registerscreen.js # Экран регистрации
+♪ ♪ Loginscreen.js # Entry screen
+*Registerscreen.js #Registration screen
  └── main/
  └── Dashboardscreen.js # main screen
 ```

@@ -1,15 +1,15 @@
 # Wave Indicator Fast Mode Fixes Summary
 
-## 🐛 Проблемы, которые были исправлены
+## ♪ Problems that have been corrected
 
-### 1. **Отсутствие сигналов покупки/продажи on верхнем графике**
-**Проблема**: Сигналы not отображались on candlestick chart in `-d fast` режиме.
+###1. ** No purchase/sale signals on top chart**
+**Challenge**: No signals were displayed on candelick chart in `-d fast' mode.
 
-**Причина**: Код искал сигналы только in колонке `'Direction'`, но wave indicator использует колонку `'_signal'`.
+** Reason**: The code only looked for signals in the column `'direction'', but the wave indexor uses the column `'_signal'.
 
 **fix**:
 ```python
-# Добавлена поддержка обеих columns
+# Added support to both columns
 signal_col = None
 if '_signal' in display_df.columns:
  signal_col = '_signal'
@@ -17,15 +17,15 @@ elif 'Direction' in display_df.columns:
  signal_col = 'Direction'
 ```
 
-### 2. **Неправильное отображение линий индикатора**
-**Проблема**:
-- "Wave (BUY)" and "MA Line" были идентичны (обе красные)
-- "Wave (SELL)" and "Fast Line" были идентичны (синие)
-- Цвета and стили линий not соответствовали спецификации
+###2. ** Wrong display of indicator lines**
+** Problem**:
+- "Wave (BUY)" and "MA Line" were identical (both red)
+- "Wave (SELL)" and "Fast Line" were identical (blue)
+- Line colours and styles not conformed to specifications
 
-**Исправления**:
+**/ Corrections**:
 
-#### A. Добавлена основная Wave Line
+### A. Added main Wave Line
 ```python
 # Add main wave line (black) for all valid data points
 if valid_data_mask.any():
@@ -41,36 +41,36 @@ if valid_data_mask.any():
  )
 ```
 
-#### B. Исправлены цвета and стили линий
-- **Wave Line (BUY)**: Красная линия (ширина: 2) for сигналов покупки
-- **Wave Line (SELL)**: Синяя линия (ширина: 2) for сигналов продажи
-- **Fast Line**: Красная пунктирная линия (ширина: 1)
-- **MA Line**: Светло-синяя линия (ширина: 1)
+### B. Colors and line styles corrected
+- **Wave Line (BUY)**: Red Line (wide: 2) for purchase signals
+- **Wave Line (SELL)**: Blue Line (wide: 2) for sales signals
+- **Fast Line**: Red dotted line (wide: 1)
+- **MA Line**: Light blue line (width: 1)
 
-## ✅ Результат после исправлений
+## ♪ The result after the corrections
 
-### Визуальные улучшения:
-1. **Сигналы on верхнем графике**: Теперь отображаются зеленые треугольники (покупка) and красные перевернутые треугольники (продажа)
-2. **Правильные цвета линий**: Каждая линия имеет свой уникальный цвет and стиль
-3. **Четкая легенда**: Все линии правильно подписаны in легенде
+### Visual improvements:
+1. ** Signs on upper graph**: Green triangles (purchases) and red inverted triangles (sales) are now displayed
+2. ** Routine colours of lines**: Each line has its own unique colour and style
+3. **Clear legend**: All lines correctly signed in legend
 
-### Technical улучшения:
-1. **Гибкость columns**: Поддержка как `_signal` так and `Direction` columns
-2. **Обработка ошибок**: Graceful handling отсутствующих данных
-3. **performance**: Оптимизированное отображение только валидных данных
+♪ ♪ Technical improvements:
+1. **columns flexibility**: Support both `_signal' and `direction' columns
+2. ** Error management**: Graceful handling missing data
+3. **Performance**: Optimized display of valed data only
 
-## 🧪 Тестирование
+♪ ♪ Testing ♪
 
-### Созданы тесты:
-- ✅ `test_wave_indicator_fast_mode_basic` - базовая функциональность
-- ✅ `test_wave_indicator_fast_mode_columns` - поддержка разных названий columns
-- ✅ `test_wave_indicator_fast_mode_signals` - отображение сигналов
+### The tests have been created:
+== sync, corrected by elderman ==
+== sync, corrected by elderman == @elder_man
+== sync, corrected by elderman == @elder_man
 - ✅ `test_wave_indicator_fast_mode_hover_tool` - hover tooltips
-- ✅ `test_wave_indicator_fast_mode_empty_data` - обработка пустых данных
-- ✅ `test_wave_indicator_fast_mode_Missing_columns` - отсутствующие колонки
-- ✅ `test_wave_indicator_fast_mode_integration` - интеграционное тестирование
+== sync, corrected by elderman == @elder_man
+== sync, corrected by elderman == @elder_man
+== sync, corrected by elderman == @elder_man
 
-### Результаты тестирования:
+### Test results:
 ```
 ✅ Passed: 7
 ❌ Failed: 0
@@ -79,9 +79,9 @@ if valid_data_mask.any():
 📈 Total: 7
 ```
 
-## 🎯 team for тестирования
+## ♪ Team for testing
 
-### Базовое тестирование:
+### Basic testing:
 ```bash
 uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
 ```
@@ -91,22 +91,22 @@ uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4
 uv run pytest tests/plotting/test_wave_fast_mode.py -v
 ```
 
-## 📊 Статистика исправлений
+## ♪ The correct statistics
 
-- **Файлы изменены**: 2
- - `src/plotting/dual_chart_fast.py` - основная Logsка
- - `tests/plotting/test_wave_fast_mode.py` - тесты
-- **Строк кода добавлено**: ~50
-- **tests создано**: 7
-- **Время разработки**: ~2 часа
+- ** Files changed**: 2
+== sync, corrected by elderman == @elder_man
+- `tests/plotting/test_wave_fast_mode.py' - tests
+Code line added**: ~50
+- **tests created**: 7
+- ** Development time**: ~ 2 hours
 
-## 🎉 Заключение
+♪ ♪ The ending ♪
 
-Wave indicator теперь полностью Workingет with `-d fast` режимом:
-- ✅ Сигналы отображаются on верхнем графике
-- ✅ Линии индикатора отображаются with правильными цветами and стилями
-- ✅ Hover tooltips Workingют корректно
-- ✅ Все тесты проходят успешно
-- ✅ Код покрыт тестами on 100%
+Wave indexer is now fully Workinget with `-d fast' mode:
+The signals are displayed on the top graph.
+- The indicator lines are displayed with correct colors and styles
+- Hover tooltips Working correctly
+- All tests are successful
+- Code covered with tests on 100%
 
-**Wave indicator готов к использованию in fast режиме!** 🚀
+**Wave indicator ready to be used in front mode!**

@@ -1,114 +1,114 @@
-# 🚀 NeoZorK 100% system - Полная система заработка 100%+ in месяц
+# NeoZorK 100% system - Full system of earnings 100%+in month
 
-**Theory:** NeoZorK 100% system представляет собой революционную system machine learning, объединяющую передовые ML-алгоритмы with блокчейн-техноLogsями for достижения стабильной прибыли 100%+ in месяц. Это критически важно for создания высокодоходных and робастных торговых систем.
+**Theory:** NeoZorK 100% of the system is a revolutionary system of machining that brings together advanced ML-algorithms with block-tech Logs to achieve a stable profit of 100 per cent+ per month. This is critical for building high-income and labour-intensive trading systems.
 
-**Почему NeoZorK 100% system важна:**
-- **Революционность:** Представляет революционный подход к торговле
-- **Доходность:** Обеспечивает высокую доходность
-- **Робастность:** Обеспечивает робастность системы
-- **Инновации:** Критически важно for инноваций in торговле
+# Why NeoZorK 100% system matters #
+- ** Revolution:** Represents a revolutionary approach to trade
+- ** Income:** Provides high returns
+- **Physicality:** Ensures the integrity of the system
+- **Innovations:** Critically important for in-trade innovation
 
-## 📋 Обзор системы
+♪ ♪ System overview ♪
 
-**Theory:** Обзор системы представляет собой комплексное describe all компонентов and возможностей системы. Это критически важно for понимания архитектуры and функциональности системы.
+**Theory:** System overview is an integrated describe all components and capabilities of the system; this is critical for understanding the architecture and functionality of the system.
 
-**Почему обзор системы важен:**
-- **Понимание:** Обеспечивает понимание системы
-- **architecture:** Обеспечивает понимание архитектуры
-- **Функциональность:** Обеспечивает понимание функциональности
-- **Использование:** Критически важно for эффективного использования
+**Why the review of the system is important:**
+- ** Understanding:** Provides an understanding of the system
+- **architecture:** Provides an understanding of architecture
+- **Functionability:** Provides an understanding of functionality
+- ** Use:** Critical for effective use
 
-**NeoZorK 100% system** - это революционная система machine learning for достижения стабильной прибыли 100%+ in месяц on блокчейн testnet. Система использует комбинацию трех мощных indicators (WAVE2, SCHR Levels, SCHR SHORT3) and продвинутые ML-алгоритмы for создания робастной торговой системы.
+**NeoZorK 100% system** is a revolutionary system of machining for stable profits 100%+in month on blockback testnet. The system uses a combination of three powerful indicators (WAVE2, SCHR Livels, SCHR SHORT3) and advanced ML-algorithms for the creation of a robot trading system.
 
-**Плюсы:**
-- Революционный подход
-- Высокая доходность
-- Робастность
-- Инновации
-
-**Disadvantages:**
-- Высокая сложность
-- Требует глубоких знаний
-- Потенциальные риски
-
-### 🎯 Ключевые особенности
-
-**Theory:** Ключевые особенности представляют собой основные характеристики системы, определяющие ее уникальность and эффективность. Это критически важно for понимания преимуществ системы.
-
-**Почему ключевые особенности важны:**
-- **Уникальность:** Обеспечивает уникальность системы
-- **Эффективность:** Обеспечивает высокую эффективность
-- **Преимущества:** Обеспечивает понимание преимуществ
-- **Конкурентность:** Критически важно for конкурентности
-
-- **100%+ месячная прибыль on блокчейн testnet**
- - **Theory:** Целевая доходность 100%+ in месяц критически важна for создания высокодоходной системы
- - **Почему важно:** Обеспечивает высокую доходность
- - **Плюсы:** Высокая доходность, привлекательность
- - **Disadvantages:** Высокие риски, сложность достижения
-
-- **Автоматическое retraining каждый день/неделю/при дрифте**
- - **Theory:** Автоматическое retraining критически важно for поддержания актуальности моделей
- - **Почему важно:** Обеспечивает актуальность моделей
- - **Плюсы:** Актуальность, автоматизация, адаптивность
- - **Disadvantages:** Сложность реализации, потенциальные сбои
-
-- **Робастная architecture with защитой from retraining**
- - **Theory:** Робастная architecture критически важна for создания устойчивых систем
- - **Почему важно:** Обеспечивает устойчивость системы
- - **Плюсы:** Устойчивость, надежность, защита
- - **Disadvantages:** Сложность реализации, высокие требования
-
-- **Мультиактивный подход - торговля on all активах**
- - **Theory:** Мультиактивный подход критически важен for диверсификации рисков
- - **Почему важно:** Обеспечивает диверсификацию рисков
- - **Плюсы:** Диверсификация, максимизация возможностей
- - **Disadvantages:** Сложность управления, высокие требования
-
-- **МультиTimeframesый анализ - from M1 to D1**
- - **Theory:** МультиTimeframesый анализ критически важен for полного понимания рынка
- - **Почему важно:** Обеспечивает полное понимание рынка
- - **Плюсы:** Полное понимание, точность сигналов
- - **Disadvantages:** Сложность Analysis, высокие требования
-
-- **Блокчейн-integration with DeFi протоколами**
- - **Theory:** Блокчейн-integration критически важна for создания дополнительных источников дохода
- - **Почему важно:** Обеспечивает дополнительные источники дохода
- - **Плюсы:** Дополнительные источники, инновации
- - **Disadvantages:** Высокие риски, сложность интеграции
-
-- **Продвинутый риск-менеджмент**
- - **Theory:** Продвинутый риск-менеджмент критически важен for защиты капитала
- - **Почему важно:** Обеспечивает защиту капитала
- - **Плюсы:** Защита капитала, стабильность
- - **Disadvantages:** Потенциальные ограничения доходности
-
-- **Реальное время Monitoringа**
- - **Theory:** Monitoring in реальном времени критически важен for своевременного реагирования
- - **Почему важно:** Обеспечивает своевременное реагирование
- - **Плюсы:** Своевременность, контроль, реактивность
- - **Disadvantages:** Высокие требования к ресурсам, сложность
-
-## 🏗️ architecture системы
-
-**Theory:** architecture системы представляет собой структурированную организацию all компонентов системы for обеспечения эффективной работы, масштабируемости and поддерживаемости. Это критически важно for создания надежных and эффективных систем.
-
-**Почему architecture системы важна:**
-- **Структурированность:** Обеспечивает структурированный подход
-- **Эффективность:** Обеспечивает эффективную работу
-- **Scalability:** Обеспечивает масштабируемость
-- **Поддерживаемость:** Критически важно for поддерживаемости
-
-**Плюсы:**
-- Структурированный подход
-- Эффективная Working
-- Масштабируемость
-- Поддерживаемость
+** Plus:**
+- A revolutionary approach
+- High return
+- Obsceneness.
+- Innovation
 
 **Disadvantages:**
-- Сложность проектирования
-- Высокие требования к знаниям
-- Потенциальные Issues with интеграцией
+- High complexity
+- It requires deep knowledge.
+- Potential risks
+
+### ♪ Qualitative features
+
+**Theory:** Key features are the main features of the system that determine its uniqueness and effectiveness; this is critical for understanding the benefits of the system.
+
+**Why key features are important:**
+- **Unique:** Ensures uniqueness of the system
+- ** Effectiveness:** Provides high efficiency
+- ** Benefits:** Provides an understanding of benefits
+- ** Competition:** Critical for competitiveness
+
+- **100%+month profit on lock-in testnet**
+- **Theory:** Target return 100%+in month is critical for creating a high-income system
+- What's important is:** Ensures high returns
+- ** Plus:** High return, attractiveness
+- **Disadvantages:** High risks, difficulty in achieving
+
+- ** Automatic retraining every day/week/drift**
+- **Theory:** Automatic retraining is critical for maintaining model relevance
+- ** Why is it important:** Ensures models are relevant
+- ** Plus:** Relevant, automated, adaptive
+- **Disadvantages:** Implementation complexity, potential failures
+
+- ** Robbery architecture with protection from retraining**
+- **Theory:** Robast architecture is critical for building sustainable systems
+- What's important is:** Ensures system sustainability
+- ** Plus:** Sustainability, reliability, protection
+- **Disadvantages:** Implementation difficulty, high requirements
+
+- ** Multi-stakeholder approach - trade on all assets**
+- **Theory:** Multi-stakeholder approach is critical for risk diversification
+- ** Why is it important:** Ensures the diversification of risks
+- **plus:** Diversification, maximization of opportunities
+- **Disadvantages:** Management difficulty, high requirements
+
+- ** MultiTimeframe analysis - from M1 to D1**
+- **Theory:** MultiTimeframe analysis is critical for a full market understanding
+- Why is it important:** Provides a full understanding of the market
+- ** Plus: ** Full understanding, accuracy of signals
+- **Disadvantages:** The complexity of Analysis, high standards
+
+- ** Block-integration with DeFi protocols**
+- **Theory:** Blocking-integration is critical for creating additional sources of income
+- ** Why is it important:** Provides additional sources of income
+- ** Plus:** Additional sources, innovations
+- **Disadvantages:** High risks, complexity of integration
+
+- ** Advanced risk management**
+- **Theory:** Advanced risk management is critical for protecting capital
+- What's important is:** Protects capital
+- ** Plus:** Protection of capital, stability
+- **Disadvantages:** Potential income limitations
+
+- **Real time Monitoringa**
+- **Theory:** Monitoring in real time is critical for a timely response
+- What's important is:** Ensures timely response
+- ** Plus:** Timeliness, control, reactivity
+- **Disadvantages:** High resource requirements, complexity
+
+## ♪ Architecture system
+
+**Theory:**architecture system is a structured organization of all components of the system for effective performance, scalability and maintenance, which is critical for the establishment of reliable and efficient systems.
+
+♪ Why anarchitecture systems matter ♪
+- **Structurality:** Provides a structured approach
+- ** Effectiveness:** Ensures effective performance
+- **Scalability:** Ensures scalability
+- ** Supportability:** Critically important for maintaining
+
+** Plus:**
+Structured approach
+- Effective Working
+- Scale
+- Supportability
+
+**Disadvantages:**
+- Design difficulty
+- High knowledge requirements
+- Potential Issues with Integration
 
 ```
 ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
@@ -141,79 +141,79 @@
 
 ## 🚀 Quick start
 
-**Theory:** Quick start представляет собой пошаговое guide on установке and настройке системы for быстрого начала работы. Это критически важно for эффективного внедрения системы.
+**Theory:**Quick Start is a step-by-step guide on the installation and alignment of the system for rapid start-up, which is critical for effective implementation.
 
-**Почему Quick start важен:**
-- **Быстрота:** Обеспечивает быстрое начало работы
-- **Простота:** Обеспечивает простоту installation
-- **Эффективность:** Обеспечивает эффективное внедрение
-- **Доступность:** Критически важно for доступности системы
+** Why Quick Start Matters:**
+- **Instrument:** Ensures rapid start of work
+- **Simple:** Provides simplicity installation
+- ** Effectiveness:** Ensures effective implementation
+- ** Accessibility:** Critically important for accessibility
 
-**Плюсы:**
-- Быстрое начало работы
-- Простота installation
-- Эффективное внедрение
-- Доступность
+** Plus:**
+- Quick start.
+Simplicity installation
+- Effective implementation
+Accessibility
 
 **Disadvantages:**
-- Потенциальные Issues with настройкой
-- Требует базовых знаний
-- Возможные ошибки при установке
+- Potential Issues with settings
+- It requires basic knowledge
+- Possible installation errors
 
 ### 1. installation dependencies
 
-**Theory:** installation dependencies критически важна for обеспечения работоспособности системы. Это основа for all последующих шагов.
+**Theory:** installation considerations are critical for the system's performance.
 
-**Почему installation dependencies важна:**
-- **Работоспособность:** Обеспечивает работоспособность системы
-- **dependencies:** Обеспечивает установку all required компонентов
-- **Совместимость:** Обеспечивает совместимость компонентов
-- **Функциональность:** Критически важно for функциональности системы
+**Why installationdependencies matter:**
+- ** Workability:** Makes the system operational
+- **dependencies:** Provides all components installation
+- **Compatibility:** Ensures compatibility of components
+- ** Functionality:** Critically important for the functionality of the system
 
 ```bash
-# Клонирование репозитория
+# The cloning of the repository
 git clone https://github.com/your-repo/neozork-100-percent-system.git
 cd neozork-100-percent-system
 
-# installation uv (если not installed)
+# installation uv (if not installed)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # installation dependencies
 uv sync
 
-# Активация виртуального окружения
+# Activation of virtual environment
 source .venv/bin/activate
 ```
 
-### 2. configuration конфигурации
+###2. configuring configuration
 
-**Theory:** configuration системы является критически важным компонентом, который определяет все parameters работы торговой системы. Правильная configuration конфигурации обеспечивает оптимальную performance, Management рисками and адаптацию к различным рыночным условиям.
+**Theory:**configuring system is a critical component that defines all aspects of the trading system. The correct configuration provides optimal performance, risk management and adaptation to different market conditions.
 
-**Почему configuration конфигурации критически важна:**
-- **Параметризация системы:** Позволяет точно настроить все аспекты работы системы под конкретные требования
-- **Management рисками:** Определяет лимиты потерь, размеры позиций and другие критически важные parameters безопасности
-- **Адаптивность:** Позволяет легко изменять стратегии без переписывания кода
-- **Monitoring:** Обеспечивает возможность отслеживания and Analysis performance системы
+**Why configurization configuration is critical:**
+- ** Parametricization of the system:** Allows for the exact alignment of all aspects of the system to specific requirements.
+- **Manage Risks:** Establishes loss limits, size of items and other critical safety parameters
+- ** Adaptivity:** Makes it easy to change strategies without rewriting the code
+- **Monitoring:** Provides the ability to track and Analysis performance of the system
 
-**Structure конфигурации включает:**
-- **Системные parameters:** Название, версия, окружение
-- **Цели performance:** Целевая доходность, максимальная просадка, коэффициент Шарпа
-- **Торговые parameters:** List активов, веса, Timeframeы
-- **Риск-менеджмент:** Лимиты позиций, стоп-лоссы, корреляционные ограничения
-- **ML-модели:** parameters обучения, validation, retraining
-- **Блокчейн:** Settings подключения, контракты, газовые лимиты
+**Structure configuration includes:**
+- ** System parameters:** Name, version, environment
+- **Performance objectives:** Target return, maximum draught, Sharp coefficient
+- **Trade variables:** List of assets, weights, Timeframes
+- **Risk Management:** Limits of positions, freezes, correlation restrictions
+- **ML models:** curriculaters of study, validation, retraining
+- **Checken: **Settings connection, contracts, gas limits
 
 ```bash
-# create директории for конфигурации
+# creative directory for configuration
 mkdir -p config
 
-# Копирование примера конфигурации
+# Copy configuration example
 cp config/config.example.yaml config/config.yaml
 
-# create полной конфигурации with детальными комментариями
+# dream full configuration with detailed comments
 cat > config/config.yaml << 'EOF'
 # NeoZorK 100% system Configuration
-# Этот файл содержит все критические parameters системы
+# This file contains all critical features of the system
 
 system:
  name: "NeoZorK 100% system"
@@ -222,16 +222,16 @@ system:
  debug: false
  log_level: "INFO" # DEBUG, INFO, WARNING, ERROR
 
-# Цели performance - критически важные metrics
+# Performance goals are critical metrics
 targets:
- monthly_return: 1.0 # 100% in месяц (целевая доходность)
- daily_return: 0.033 # ~3.3% in день (распределение месячной цели)
- max_drawdown: 0.15 # 15% максимальная просадка
- sharpe_ratio: 2.0 # Минимальный коэффициент Шарпа
- win_rate: 0.65 # 65% выигрышных сделок
- profit_factor: 2.0 # Фактор прибыли (отношение прибыли к убыткам)
+Monthly_return: 1.0 #100 per cent in month (target return)
+Daily_return: 0.033 # ~3.3 per cent in day (allocation of monthly target)
+max_drawdown: 0.15 # 15% maximum draught
+sharpe_ratio: 2.0 # Minimum Sharp coefficient
+Win_rate: 0.65 # 65% winning transactions
+profit_factor: 2.0 # Profit factor (profit to loss ratio)
 
-# Активы for trading with весами and параметрами
+# Assets for trading with weights and parameters
 data_sources:
  crypto:
  - symbol: "BTC-USD"
@@ -255,26 +255,26 @@ data_sources:
  min_volume: 100000
  max_spread: 0.005
 
-# Timeframeы for мультиTimeframesого Analysis
+# Timeframes for multi-Timeframe Analisis
 Timeframes:
- - "M1" # 1 minutesа - for скальпинга
- - "M5" # 5 minutes - for краткосрочной торговли
- - "M15" # 15 minutes - for внутридневной торговли
- - "H1" # 1 час - for среднесрочной торговли
- - "H4" # 4 часа - for позиционной торговли
- - "D1" # 1 день - for долгосрочного Analysis
+- M1 #1 minutes - for scalping
+- M5 #5 minutes - for short-term trade
+- "M15" # 15 minutes - for intra-day trade
+- "H1" #1 hour - for medium-term trade
+- "H4" #4 hours - for position trade
+- D1 #1 day - for long-term Analysis
 
-# Риск-менеджмент - критически важные ограничения
+# Risk management - critical constraints
 risk_limits:
- max_position_size: 0.1 # 10% from капитала on одну позицию
- max_daily_loss: 0.05 # 5% максимальная дневная потеря
- max_drawdown: 0.15 # 15% максимальная просадка
+max_position_size: 0.1 # 10% from capital on one item
+max_daily_loss: 0.05 # 5% maximum day loss
+max_drawdown: 0.15 # 15% maximum draught
  max_var: 0.05 # 5% Value at Risk
- max_correlation: 0.7 # 70% максимальная корреляция между позициями
- stop_loss_pct: 0.02 # 2% стоп-лосс
- take_profit_pct: 0.06 # 6% тейк-профит (соотношение 1:3)
+max_control: 0.7 # 70% maximum correlation between positions
+step_loss_pct: 0.02 # 2% stop-loss
+Take_profit_pct: 0.06 # 6% teak prophyte (ratio 1:3)
 
-# ML модели and их parameters
+# ML models and their parameters
 ml_models:
  wave2:
  type: "RandomForestClassifier"
@@ -304,18 +304,18 @@ ml_models:
  random_state: 42
  retrain_frequency: "daily"
 
-# Блокчейн Settings
+# Blocking Settings
 blockchain:
  network: "sepolia" # sepolia, mainnet, polygon
  gas_limit: 500000
  gas_price_gwei: 20
- max_slippage: 0.01 # 1% максимальный слиппаж
+max_slippage: 0.01 # 1% maximum slipping
  contract_addresses:
  trading: "0x..."
  staking: "0x..."
  yield_farming: "0x..."
 
-# Monitoring and алерты
+# Monitoring and allering
 Monitoring:
  dashboard_port: 8000
  metrics_retention_days: 365
@@ -339,7 +339,7 @@ Monitoring:
  enabled: true
  webhook_url: "your_webhook_url"
 
-# База данных
+# Database
 database:
  type: "postgresql" # postgresql, sqlite, mysql
  host: "localhost"
@@ -351,105 +351,105 @@ database:
  max_overflow: 20
 EOF
 
-# installation правильных прав доступа for безопасности
+# installation of right access rights for security
 chmod 600 config/config.yaml
 
-# check синтаксиса YAML
-python -c "import yaml; yaml.safe_load(open('config/config.yaml'))" && echo "✅ configuration валидна"
+# Check syntax YAML
+Python - c "import yaml; yaml.safe_load(open('config/config.yaml'))" &&echo "
 ```
 
-### 3. configuration переменных окружения
+♪## 3. configuring the variable environments
 
-**Theory:** Переменные окружения являются критически важным компонентом безопасности системы, позволяя хранить конфиденциальные data (API ключи, приватные ключи, пароли) отдельно from кода. Это обеспечивает безопасность, гибкость конфигурации and возможность deployment in различных окружениях без изменения кода.
+**Theory:** The changing environment is a critical component of system security, allowing confidential data (API keys, private keys, passwords) to be kept separate from the code. This ensures safety, configuration flexibility and ability to deployment in different environments without changing the code.
 
-**Почему переменные окружения критически важны:**
-- **Безопасность:** Защищают конфиденциальные data from попадания in репозиторий
-- **Гибкость:** Позволяют легко изменять Settings for разных окружений
-- **Scalability:** Упрощают развертывание in различных средах
-- **Соответствие стандартам:** Следуют лучшим практикам DevOps and безопасности
+**Why environmental variables are critical:**
+- ** Safety:** Protect confidential data from entry into a repository
+- ** Flexibility: ** It's easy to change Settings for different environments.
+- **Scalability:**Simplifies deployment in different media
+- ** Compliance with standards:** Best Practice Devops and Safety
 
-**Категории переменных окружения:**
-- **Блокчейн:** Web3 провайдеры, приватные ключи, адреса контрактов
-- **API ключи:** Торговые платформы, data, Monitoring
+**Categories of variable environments:**
+- **Blockchen:** Web3 providers, private keys, contract addresses
+- **API Keys:** Trading Platforms, Data, Monitoring
 - **notifications:** Telegram, Discord, Email Settings
-- **База данных:** Подключения, пароли, Settings пулов
-- **Monitoring:** Logsрование, metrics, алерты
+- ** Database:** Connects, passwords, Settings pools
+- **Monitoring:** Logs, metrics, allers.
 
 ```bash
-# create .env файла with полным набором переменных
+.env file with complete set of variables
 cat > .env << 'EOF'
 # ===========================================
 # NeoZorK 100% system Environment Variables
 # ===========================================
-# ВАЖНО: Никогда not коммитьте этот файл in репозиторий!
-# Добавьте .env in .gitignore
+# IMPORTANT: Never compose this file in a repository!
+# Add .env in .gitignore
 
 # ===========================================
-# БЛОКЧЕЙН Settings
+# BLOCKINGS
 # ===========================================
-# Web3 провайдеры for подключения к блокчейну
+# Web3 Providers for Blocking
 WEB3_PROVIDER_mainNET=https://mainnet.infura.io/v3/YOUR_PROJECT_ID
 WEB3_PROVIDER_SEPOLIA=https://sepolia.infura.io/v3/YOUR_PROJECT_ID
 WEB3_PROVIDER_POLYGON=https://polygon-mainnet.infura.io/v3/YOUR_PROJECT_ID
 
-# Приватные ключи (ОЧЕНЬ ВАЖНО: Use только testnet ключи!)
+# Private keys (REALLY: Use only testnet keys!)
 PRIVATE_KEY_mainNET=your_mainnet_private_key_here
 PRIVATE_KEY_SEPOLIA=your_sepolia_private_key_here
 PRIVATE_KEY_POLYGON=your_polygon_private_key_here
 
-# Адреса смарт-контрактов
+# Address of smart contracts
 TRADING_CONTRACT_ADDRESS=0x1234567890abcdef1234567890abcdef12345678
 STAKING_CONTRACT_ADDRESS=0xabcdef1234567890abcdef1234567890abcdef12
 YIELD_FARMING_CONTRACT_ADDRESS=0x9876543210fedcba9876543210fedcba98765432
 
-# Settings газа
+# Settings gas
 GAS_LIMIT=500000
 GAS_PRICE_GWEI=20
 MAX_SLIPPAGE=0.01
 
 # ===========================================
-# ТОРГОВЫЕ ПЛАТФОРМЫ API
+# TRADE PLATFORMS API
 # ===========================================
-# Binance API (основная торговая platform)
+# Binance API
 BINANCE_API_KEY=your_binance_api_key
 BINANCE_SECRET_KEY=your_binance_secret_key
 BINANCE_TESTNET=true
 
-# Coinbase Pro API (резервная platform)
+# Coinbase Pro API
 COINBASE_API_KEY=your_coinbase_api_key
 COINBASE_SECRET_KEY=your_coinbase_secret_key
 COINBASE_PASSPHRASE=your_coinbase_passphrase
 COINBASE_SANDBOX=true
 
-# Kraken API (дополнительная platform)
+# Kraken API
 KRAKEN_API_KEY=your_kraken_api_key
 KRAKEN_SECRET_KEY=your_kraken_secret_key
 
 # ===========================================
 # data and Monitoring
 # ===========================================
-# Alpha Vantage API for дополнительных данных
+# Alpha Vantage API for Additional Data
 ALPHA_VANTAGE_API_KEY=your_alpha_vantage_key
 
-# Quandl API for экономических данных
+#Quandl API for Economic Data
 QUANDL_API_KEY=your_quandl_api_key
 
-# FRED API for макроэкономических данных
+# FRED API for macroeconomic data
 FRED_API_KEY=your_fred_api_key
 
 # ===========================================
 # notifications
 # ===========================================
-# Telegram Bot for уведомлений
+# Telegram Bot for notifications
 TELEGRAM_BOT_TOKEN=1234567890:ABCDEFghijklmnopQRSTUVwxyz
 TELEGRAM_CHAT_ID=-1001234567890
 TELEGRAM_ENABLED=true
 
-# Discord Webhook for командных уведомлений
+# Discord Webhook for Command Notices
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/1234567890/abcdefghijklmnop
 DISCORD_ENABLED=true
 
-# Email Settings for детальных Reportов
+# Email Settings for Detailed Reports
 EMAIL_SMTP_SERVER=smtp.gmail.com
 EMAIL_SMTP_PORT=587
 EMAIL_User=your_email@gmail.com
@@ -458,7 +458,7 @@ EMAIL_RECIPIENTS=admin@neozork.com,alerts@neozork.com
 EMAIL_ENABLED=true
 
 # ===========================================
-# БАЗА ДАННЫХ
+# DATABASE
 # ===========================================
 # PostgreSQL Settings
 database_URL=postgresql://neozork_User:secure_password@localhost:5432/neozork_100_percent
@@ -470,99 +470,99 @@ DB_PASSWORD=secure_password
 DB_POOL_SIZE=10
 DB_MAX_OVERFLOW=20
 
-# Redis for кэширования
+# Redis for Cashing
 REDIS_URL=redis://localhost:6379/0
 REDIS_HOST=localhost
 REDIS_PORT=6379
 REDIS_DB=0
 
 # ===========================================
-# Monitoring and LogsРОВАНИЕ
+# Monitoring and Logging
 # ===========================================
-# Sentry for отслеживания ошибок
+# Sentry for tracking errors
 SENTRY_DSN=https://your_sentry_dsn@sentry.io/project_id
 
-# Prometheus for метрик
+# Prometheus for metric
 PROMETHEUS_PORT=9090
 PROMETHEUS_ENABLED=true
 
-# Grafana for визуализации
+# Grafana for Visualization
 GRAFANA_URL=http://localhost:3000
 GRAFANA_User=admin
 GRAFANA_PASSWORD=admin_password
 
 # ===========================================
-# СИСТЕМНЫЕ Settings
+# Systemic Settings
 # ===========================================
-# Окружение and режим работы
+# Environment and mode of operation
 ENVIRONMENT=production
 DEBUG=false
 LOG_LEVEL=INFO
 
-# Порт for веб-дашборда
+# Port for web-dashboard
 DASHBOARD_PORT=8000
 
-# Максимальное количество потоков
+# Maximum flow
 MAX_WORKERS=4
 
-# Таймауты
+# Times
 API_TIMEOUT=30
 TRADE_TIMEOUT=60
 RETRY_ATTEMPTS=3
 
 # ===========================================
-# БЕЗОПАСНОСТЬ
+# SECURITY
 # ===========================================
-# JWT секретный ключ for аутентификации
+# JWT secret key for authentication
 JWT_SECRET_KEY=your_super_secret_jwt_key_here
 
-# Шифрование данных
+# Data encryption
 ENCRYPTION_KEY=your_32_character_encryption_key
 
 # CORS Settings
 CORS_ORIGINS=http://localhost:3000,http://localhost:8000
 
 # ===========================================
-# РЕЗЕРВНОЕ КОПИРОВАНИЕ
+# RESERVATION
 # ===========================================
-# AWS S3 for резервного копирования
+# AWS S3 for backup
 AWS_ACCESS_KEY_ID=your_aws_access_key
 AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 AWS_S3_BUCKET=neozork-backups
 AWS_REGION=us-east-1
 
 # ===========================================
-# ДОПОЛНИТЕЛЬНЫЕ ИНТЕГРАЦИИ
+# Further INTEGRATION
 # ===========================================
-# Slack for командных уведомлений
+# Slack for command notices
 SLACK_WEBHOOK_URL=https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
 SLACK_ENABLED=false
 
-# PagerDuty for критических алертов
+# PagerDuty for Critical Alerts
 PAGERDUTY_integration_KEY=your_pagerduty_key
 PAGERDUTY_ENABLED=false
 
-# Zapier for автоматизации
+# Zapier for Automation
 ZAPIER_WEBHOOK_URL=https://hooks.zapier.com/hooks/catch/your_webhook_id
 ZAPIER_ENABLED=false
 EOF
 
-# installation правильных прав доступа for безопасности
+# installation of right access rights for security
 chmod 600 .env
 
-# create .env.example for других разработчиков
+# creative .env.example for other developers
 cat > .env.example << 'EOF'
 # ===========================================
 # NeoZorK 100% system Environment Variables Example
 # ===========================================
-# Скопируйте этот файл in .env and заполните реальными значениями
+# Copy this file in .env and fill in real values
 
-# Блокчейн Settings
+# Blocking Settings
 WEB3_PROVIDER_SEPOLIA=https://sepolia.infura.io/v3/YOUR_PROJECT_ID
 PRIVATE_KEY_SEPOLIA=your_sepolia_private_key_here
 TRADING_CONTRACT_ADDRESS=0x...
 
-# Торговые платформы
+# Trade platforms
 BINANCE_API_KEY=your_binance_api_key
 BINANCE_SECRET_KEY=your_binance_secret_key
 
@@ -571,74 +571,74 @@ TELEGRAM_BOT_TOKEN=your_bot_token
 TELEGRAM_CHAT_ID=your_chat_id
 DISCORD_WEBHOOK_URL=your_webhook_url
 
-# База данных
+# Database
 database_URL=postgresql://User:password@localhost:5432/database
 
-# Системные Settings
+# System Settings
 ENVIRONMENT=development
 DEBUG=true
 LOG_LEVEL=DEBUG
 EOF
 
-# check, что .env добавлен in .gitignore
+# check that .env added in .gitignore
 if ! grep -q "\.env" .gitignore; then
  echo ".env" >> .gitignore
  echo ".env.local" >> .gitignore
  echo ".env.*.local" >> .gitignore
- echo "✅ Добавлен .env in .gitignore"
+echo added .env in .gitignore
 fi
 
-echo "✅ Переменные окружения настроены"
-echo "⚠️ ВАЖНО: Заполните все необходимые значения in .env файле перед Launchом системы"
+echo "the changing environment is set"
+echo " * APPLAUSE: Fill in all necessary values in .env file before Launch system"
 ```
 
-### 4. Launch системы
+###4. Launch system
 
-**Theory:** Launch системы представляет собой критически важный process инициализации all компонентов торговой системы. Правильный Launch обеспечивает корректную работу all модулей, подключение к внешним serviceм and начало торговых операций. Это основа for стабильной работы всей системы.
+**Theory:**Launch system is a critical process for initializing all components of the trading system. The right Launch ensures that all modules work correctly, connect to external services, and start trading; it is the basis for a stable system.
 
-**Почему правильный Launch критически важен:**
-- **Инициализация компонентов:** Обеспечивает корректную инициализацию all модулей системы
-- **check dependencies:** Валидирует доступность all внешних services and API
-- **Безопасность:** Проверяет корректность конфигурации and переменных окружения
-- **Monitoring:** Launchает системы Monitoringа and Logsрования
+# Why the right Launch is critical #
+- **Initiation of components:** Provides correct initialization of all system modules
+- **check dependencies:** Validates access to all external services and API
+- ** Safety:** Checks the correct configuration and variable environments
+- **Monitoring:**Launch Monitoring and Logs
 
-**Этапы Launchа системы:**
-1. **Предварительные проверки:** validation конфигурации, переменных окружения, подключений
-2. **Инициализация базы данных:** create таблиц, indexов, начальных данных
-3. **Загрузка ML моделей:** Восстановление обученных моделей из files
-4. **Подключение к API:** installation соединений with торговыми platformми
-5. **Launch Monitoringа:** Инициализация систем отслеживания and алертов
-6. **Начало торговли:** Launch торговых алгоритмов and стратегий
+**Launch systems:**
+1. ** Prefeasibility checks:** validation of configuration, environment variables, connections
+2. **Initiation of the database:** review tables, indices, initial data
+3. ** upload of ML models:** Recovery of trained models from files
+4. ** Access to API:** installation of connections with trade platforms
+5. **Launch Monitoring:** Initiating tracking and allergic systems
+6. ** Trade started:**Launch trade algorithms and strategies
 
-#### 4.1 Предварительные проверки
+#### 4.1 Pre-checks
 
 ```bash
-# create скрипта предварительных проверок
+# a pre-check script
 cat > scripts/pre_startup_checks.sh << 'EOF'
 #!/bin/bash
 
-echo "🔍 Выполнение предварительных проверок NeoZorK 100% system..."
+echo "\ Performing pre-checks NeoZorK 100% system..."
 
 # check Python and dependencies
-echo "📦 check Python окружения..."
+"Check Python environment..."
 python --version || { echo "❌ Python not found"; exit 1; }
 uv --version || { echo "❌ uv not found"; exit 1; }
 
-# check конфигурации
-echo "⚙️ check конфигурации..."
+# sheck configuration
+echo "the check configuration..."
 if [ ! -f "config/config.yaml" ]; then
- echo "❌ Файл config/config.yaml not found"
+echo "\ file config/config.yaml not foundation"
  exit 1
 fi
 
-# check переменных окружения
-echo "🔐 check переменных окружения..."
+# Check variable environments
+echo, "xheck variable environment..."
 if [ ! -f ".env" ]; then
- echo "❌ Файл .env not found"
+echo "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
  exit 1
 fi
 
-# check критических переменных
+# Check critical variables
 source .env
 if [ -z "$WEB3_PROVIDER_SEPOLIA" ]; then
  echo "❌ WEB3_PROVIDER_SEPOLIA not installed"
@@ -650,8 +650,8 @@ if [ -z "$BINANCE_API_KEY" ]; then
  exit 1
 fi
 
-# check подключения к базе данных
-echo "🗄️ check подключения к базе данных..."
+# check database connection
+echo "the check connection to the database..."
 python -c "
 import psycopg2
 import os
@@ -671,14 +671,14 @@ try:
  password=result.password
  )
  conn.close()
- print('✅ Подключение к базе данных успешно')
+Print('\\\\\\\ \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\))))))
 except Exception as e:
- print(f'❌ Ошибка подключения к базе данных: {e}')
+Print(f'~ database connection error: {e}')
  exit(1)
 "
 
-# check подключения к блокчейну
-echo "⛓️ check подключения к блокчейну..."
+# Check connection to the locker
+echo "the check connection to the locker..."
 python -c "
 from web3 import Web3
 import os
@@ -690,17 +690,17 @@ try:
 
  w3 = Web3(Web3.HTTPProvider(provider_url))
  if not w3.is_connected():
- raise Exception('not удалось подключиться к блокчейну')
+Raise Exception('not was able to connect to the locker')
 
  latest_block = w3.eth.block_number
- print(f'✅ Подключение к блокчейну успешно. Последний блок: {latest_block}')
+The last block is: {latest_lock}')
 except Exception as e:
- print(f'❌ Ошибка подключения к блокчейну: {e}')
+Print(f'~ locker connection error: {e}')
  exit(1)
 "
 
-# check API ключей
-echo "🔑 check API ключей..."
+# Check API keys
+echo "the check API keys..."
 python -c "
 import requests
 import os
@@ -717,7 +717,7 @@ try:
  else:
  print('⚠️ BINANCE_API_KEY not installed')
 except Exception as e:
- print(f'⚠️ Ошибка проверки Binance API: {e}')
+(f'\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\)checkcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckchecking check checking checking check
 
 # check Telegram Bot
 try:
@@ -731,27 +731,27 @@ try:
  else:
  print('⚠️ TELEGRAM_BOT_TOKEN not installed')
 except Exception as e:
- print(f'⚠️ Ошибка проверки Telegram Bot: {e}')
+print(f'\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\check check check check check check check check checkT\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\check check check check check check check check check check check check check check check check check check check check check check check check check check check check check check check check check check check check check check check checkT}T\\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}}}}}}}}}}}}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 "
 
-echo "✅ Все предварительные проверки завершены успешно!"
+echo, all pre-tests have been successfully completed!
 EOF
 
 chmod +x scripts/pre_startup_checks.sh
 
-# Launch предварительных проверок
+# Launch preliminary checks
 ./scripts/pre_startup_checks.sh
 ```
 
-#### 4.2 Инициализация базы данных
+#### 4.2 Initiating the database
 
 ```bash
-# create скрипта инициализации базы данных
+# square script of database initialization
 cat > scripts/init_database.py << 'EOF'
 #!/usr/bin/env python3
 """
-Инициализация базы данных for NeoZorK 100% system
-Создает все необходимые таблицы, indexы and начальные data
+Initiating database for NeoZorK 100% system
+Creates all necessary tables, indices and initial data
 """
 
 import os
@@ -761,24 +761,24 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from urllib.parse import urlparse
 import logging
 
-# configuration Logsрования
+# configuring Logs
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def init_database():
- """Инициализация базы данных"""
+"Initiation of the database"
 
- # Получение URL базы данных
+# Obtaining a URL database
  db_url = os.getenv('database_URL')
  if not db_url:
  logger.error("database_URL not installed")
  sys.exit(1)
 
- # Парсинг URL
+# Parsing URL
  result = urlparse(db_url)
 
  try:
- # Подключение к PostgreSQL
+# PostgreSQL connection
  conn = psycopg2.connect(
  host=result.hostname,
  port=result.port,
@@ -789,28 +789,28 @@ def init_database():
  conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
  cursor = conn.cursor()
 
- logger.info("✅ Подключение к базе данных успешно")
+logger.info("
 
- # create таблиц
+# creative tables
  create_tables(cursor)
 
- # create indexов
+# Create index
  create_indexes(cursor)
 
- # Вставка начальных данных
+# Box of initial data
  insert_initial_data(cursor)
 
  cursor.close()
  conn.close()
 
- logger.info("✅ Инициализация базы данных завершена успешно")
+logger.info('
 
  except Exception as e:
- logger.error(f"❌ Ошибка инициализации базы данных: {e}")
+logger.error(f) database initialization error: {e})
  sys.exit(1)
 
 def create_tables(cursor):
- """create таблиц"""
+""create tables."
 
  tables = {
  'trading_signals': '''
@@ -925,13 +925,13 @@ def create_tables(cursor):
  for table_name, create_sql in tables.items():
  try:
  cursor.execute(create_sql)
- logger.info(f"✅ Таблица {table_name} создана/проверена")
+logger.info(f)\\\table {table_name} created/checked}
  except Exception as e:
- logger.error(f"❌ Ошибка создания таблицы {table_name}: {e}")
+logger.error(f'\\\\\\t\t\t\t\t\t\t\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\name}}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}}}}\\\\\\\\\\\\\\}}}}}})
  raise
 
 def create_indexes(cursor):
- """create indexов for оптимизации performance"""
+""create indices for optimizing performance""
 
  indexes = [
  "CREATE index IF NOT EXISTS idx_trading_signals_timestamp ON trading_signals(timestamp)",
@@ -953,15 +953,15 @@ def create_indexes(cursor):
  for index_sql in indexes:
  try:
  cursor.execute(index_sql)
- logger.info(f"✅ index создан/проверен")
+logger.info(f)index created/verified)
  except Exception as e:
- logger.error(f"❌ Ошибка создания indexа: {e}")
+logger.error(f'\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}})
  raise
 
 def insert_initial_data(cursor):
- """Вставка начальных данных"""
+""""""""" "Background data""""
 
- # Вставка начальных записей ML моделей
+# Box of ML models &apos; initial entries
  initial_models = [
  ('WAVE2', '1.0.0', 'RandomForestClassifier', 0.0, 0.0, 0.0, 0.0, '/models/wave2_v1.pkl', 0, None, False),
  ('SCHR_Levels', '1.0.0', 'GradientBoostingClassifier', 0.0, 0.0, 0.0, 0.0, '/models/schr_levels_v1.pkl', 0, None, False),
@@ -977,9 +977,9 @@ def insert_initial_data(cursor):
  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
  ON CONFLICT DO NOTHING
  """, model_data)
- logger.info(f"✅ Начальные data for модели {model_data[0]} добавлены")
+logger.info(f"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}}}}\\\\\\\\\\\\\\\}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
  except Exception as e:
- logger.error(f"❌ Ошибка добавления начальных данных: {e}")
+logger.error(f"
  raise
 
 if __name__ == "__main__":
@@ -988,19 +988,19 @@ EOF
 
 chmod +x scripts/init_database.py
 
-# Launch инициализации базы данных
+# Launch initialization of database
 python scripts/init_database.py
 ```
 
-#### 4.3 Launch системы
+#### 4.3 Launch system
 
 ```bash
-# create основного скрипта Launchа
+# the key script of Launch
 cat > main.py << 'EOF'
 #!/usr/bin/env python3
 """
-NeoZorK 100% system - Главный module Launchа
-Объединяет все components системы for достижения 100%+ месячной прибыли
+NeoZorK 100% system - Main model Launcha
+Brings together all components of the system to achieve 100%+ monthly profit
 """
 
 import os
@@ -1011,7 +1011,7 @@ import signal
 from datetime import datetime
 from pathlib import Path
 
-# add src in путь for импортов
+# add src in the way for imports
 sys.path.append(str(Path(__file__).parent / "src"))
 
 from src.common.config import Config
@@ -1024,15 +1024,15 @@ from src.Monitoring.Monitoring_system import Monitoringsystem
 from src.blockchain.blockchain_manager import BlockchainManager
 
 class NeoZorKsystem:
- """Главный класс системы NeoZorK 100%"""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
 
  def __init__(self):
- """Инициализация системы"""
+"Initiating the system."
  self.config = Config()
  self.logger = setup_logging()
  self.running = False
 
- # components системы
+# System components
  self.data_manager = None
  self.model_manager = None
  self.trading_engine = None
@@ -1040,32 +1040,32 @@ class NeoZorKsystem:
  self.Monitoring_system = None
  self.blockchain_manager = None
 
- # configuration обработчиков сигналов
+# configurization of signal handlers
  signal.signal(signal.SIGINT, self._signal_handler)
  signal.signal(signal.SIGTERM, self._signal_handler)
 
  async def initialize(self):
- """Инициализация all компонентов системы"""
+"Initiating all components of the system."
  try:
- self.logger.info("🚀 Инициализация NeoZorK 100% system...")
+Self.logger.info("
 
- # Инициализация менеджера данных
- self.logger.info("📊 Инициализация менеджера данных...")
+# Initiating a data manager
+Self.logger.info("
  self.data_manager = dataManager(self.config)
  await self.data_manager.initialize()
 
- # Инициализация менеджера ML моделей
- self.logger.info("🧠 Инициализация менеджера ML моделей...")
+# Initiating ML Model Manager
+Self.logger.info("
  self.model_manager = ModelManager(self.config)
  await self.model_manager.initialize()
 
- # Инициализация риск-менеджера
- self.logger.info("⚠️ Инициализация риск-менеджера...")
+# Initiating risk manager
+Self.logger.info("
  self.risk_manager = RiskManager(self.config)
  await self.risk_manager.initialize()
 
- # Инициализация торгового движка
- self.logger.info("💹 Инициализация торгового движка...")
+# Initiating a trade engine
+Self.logger.info("
  self.trading_engine = TradingEngine(
  self.config,
  self.data_manager,
@@ -1074,13 +1074,13 @@ class NeoZorKsystem:
  )
  await self.trading_engine.initialize()
 
- # Инициализация блокчейн менеджера
- self.logger.info("⛓️ Инициализация блокчейн менеджера...")
+# Initiating the manager's lockdown
+Self.logger.info("
  self.blockchain_manager = BlockchainManager(self.config)
  await self.blockchain_manager.initialize()
 
- # Инициализация системы Monitoringа
- self.logger.info("📈 Инициализация системы Monitoringа...")
+# Initiating Monitoring System
+Self.logger.info("
  self.Monitoring_system = Monitoringsystem(
  self.config,
  self.trading_engine,
@@ -1089,19 +1089,19 @@ class NeoZorKsystem:
  )
  await self.Monitoring_system.initialize()
 
- self.logger.info("✅ Все components системы initializedы успешно")
+Self.logger.info('\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\(\)}(\(\\\\\\\\\)))(\(\\\(\\\\\\\\\))}(\(\(\\\))}(\(\(\))}((\\\\\\\\\\\\)}(\\\\\)}(\\\(\\\\\\\(\(\\\\\\\\\\(\\\\\(\\\\\\\\\\)}}}}}}}}}}}}}}}}}(\(\(\(\(\(\\(\(\)}}}}}}}}}}}}}}}}(\(\(\(\(\(\(\(\(\(\(\(\)}}}}}}(\(\(\(\(\(\(\(\(\(\(\(\(\(\(\(\)}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}(((((((((((((((((((((\(\(\(\(\}}}}}}}}}}}}}}}}}}}}}}}}}}((((((((((((((((((\
 
  except Exception as e:
- self.logger.error(f"❌ Ошибка инициализации системы: {e}")
+Self.logger.error(f"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}})
  raise
 
  async def start(self):
- """Launch системы"""
+""Launch System""
  try:
  self.logger.info("🎯 Launch NeoZorK 100% system...")
  self.running = True
 
- # Launch all компонентов
+# Launch all components
  tasks = [
  self.data_manager.start(),
  self.model_manager.start(),
@@ -1111,20 +1111,20 @@ class NeoZorKsystem:
  self.Monitoring_system.start()
  ]
 
- # Launch all задач параллельно
+# Launch all tasks in parallel
  await asyncio.gather(*tasks)
 
  except Exception as e:
- self.logger.error(f"❌ Ошибка Launchа системы: {e}")
+Self.logger.error(f"
  raise
 
  async def stop(self):
- """Остановка системы"""
+"Stop the system."
  try:
- self.logger.info("🛑 Остановка NeoZorK 100% system...")
+Self.logger.info(('\'NeoZorK Stop 100% system...")
  self.running = False
 
- # Остановка all компонентов
+# Stopping all components
  if self.Monitoring_system:
  await self.Monitoring_system.stop()
  if self.blockchain_manager:
@@ -1138,53 +1138,53 @@ class NeoZorKsystem:
  if self.data_manager:
  await self.data_manager.stop()
 
- self.logger.info("✅ Система остановлена успешно")
+Self.logger.info("
 
  except Exception as e:
- self.logger.error(f"❌ Ошибка остановки системы: {e}")
+Self.logger.error(f"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}})
 
  def _signal_handler(self, signum, frame):
- """Обработчик сигналов for graceful shutdown"""
- self.logger.info(f"📡 Получен сигнал {signum}, инициирование остановки...")
+"""""""""""""""
+Self.logger.info(f"\\\\signum}, initiation of stop...)
  self.running = False
 
 async def main():
- """Главная function"""
+""The Main Function""
  system = NeoZorKsystem()
 
  try:
- # Инициализация системы
+# Initiating the system
  await system.initialize()
 
- # Launch системы
+# Launch system
  await system.start()
 
- # Ожидание сигнала остановки
+# Waiting for the stop signal
  while system.running:
  await asyncio.sleep(1)
 
  except KeyboardInterrupt:
- system.logger.info("⌨️ Получен сигнал прерывания from клавиатуры")
+System.logger.info("
  except Exception as e:
- system.logger.error(f"💥 Критическая ошибка: {e}")
+system.logger.error(f"
  sys.exit(1)
  finally:
- # Остановка системы
+# System stop
  await system.stop()
 
 if __name__ == "__main__":
- # Launch системы
+# Launch system
  asyncio.run(main())
 EOF
 
 chmod +x main.py
 
-# create Docker Compose файла for полного deployment
+# Create Docker Composition File for Full Deployment
 cat > docker-compose.full.yml << 'EOF'
 Version: '3.8'
 
 services:
- # PostgreSQL база данных
+# PostgreSQL Database
  postgres:
  image: postgres:15
  container_name: neozork_postgres
@@ -1200,7 +1200,7 @@ services:
  networks:
  - neozork_network
 
- # Redis for кэширования
+# Redis for Cashing
  redis:
  image: redis:7-alpine
  container_name: neozork_redis
@@ -1233,7 +1233,7 @@ services:
  - neozork_network
  restart: unless-stopped
 
- # Prometheus for метрик
+# Prometheus for metric
  prometheus:
  image: prom/prometheus:latest
  container_name: neozork_prometheus
@@ -1250,7 +1250,7 @@ services:
  networks:
  - neozork_network
 
- # Grafana for визуализации
+# Grafana for Visualization
  grafana:
  image: grafana/grafana:latest
  container_name: neozork_grafana
@@ -1280,7 +1280,7 @@ EOF
 cat > Dockerfile << 'EOF'
 FROM python:3.11-slim
 
-# installation системных dependencies
+♪ system systems installation ♪
 RUN apt-get update && apt-get install -y \
  gcc \
  g++ \
@@ -1292,110 +1292,110 @@ RUN apt-get update && apt-get install -y \
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/root/.cargo/bin:$PATH"
 
-# create рабочей директории
+# Create Work Directorate
 WORKDIR /app
 
-# Копирование files dependencies
+# Copying files dependencies
 COPY pyproject.toml uv.lock ./
 
 # installation dependencies
 RUN uv sync --frozen
 
-# Копирование исходного кода
+# Copy source code
 COPY . .
 
-# create required директорий
+♪ Create required directorates
 RUN mkdir -p Logs models data/cache
 
-# installation прав доступа
+# Installation of access rights
 RUN chmod +x main.py
 
-# Переменные окружения
+# Changing environment
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
 
-# Порт for дашборда
+# Port for Dashboard
 EXPOSE 8000
 
-# Команда Launchа
+# Launch team
 CMD ["python", "main.py"]
 EOF
 
-echo "✅ Система готова к Launch!"
+"The system is ready for Launch!"
 echo ""
-echo "🚀 Варианты Launchа:"
-echo "1. Прямой Launch: python main.py"
+echo "the Launch Options:"
+echo "1. Direct Launch: python Main.py"
 echo "2. Docker Compose: docker-compose -f docker-compose.full.yml up -d"
-echo "3. Только база данных: docker-compose -f docker-compose.db.yml up -d"
+== sync, corrected by elderman == @elder_man
 echo ""
-echo "📊 После Launchа доступны:"
-echo "- Дашборд: http://localhost:8000"
+echo "\ After Launch, available:
+echo "- Dashbord: http://localhost:8000"
 echo "- Grafana: http://localhost:3000 (admin/admin_password)"
 echo "- Prometheus: http://localhost:9090"
 ```
 
 ## 📊 Monitoring performance
 
-**Theory:** Monitoring performance представляет собой комплексную system отслеживания and Analysis all аспектов работы системы. Это критически важно for поддержания высокой эффективности and своевременного выявления проблем.
+**Theory:** Monitoring performance is an integrated system of tracking and analysis all aspects of the system &apos; s work; this is critical for maintaining high efficiency and timely problem identification.
 
-**Почему Monitoring performance важен:**
-- **Отслеживание:** Обеспечивает отслеживание all аспектов
-- **Анализ:** Обеспечивает анализ performance
-- **Выявление проблем:** Обеспечивает своевременное выявление проблем
-- **Оптимизация:** Критически важно for оптимизации системы
+♪ Why Monitoring performance matters ♪
+- ** Traceability:** Ensures tracking of all aspects
+- **Analysis:** Provides analysis of performance
+- ** Identification of problems:** Provides timely identification of problems
+- **Optimization:** Critically important for system optimization
 
-**Плюсы:**
-- Полное отслеживание
-- Анализ performance
-- Своевременное выявление проблем
-- Возможность оптимизации
+** Plus:**
+- Full tracking
+- Analysis of performance
+- Timely identification of problems
+- Optimization possibility
 
 **Disadvantages:**
-- Сложность реализации
-- Высокие требования к ресурсам
-- Потенциальные ложные срабатывания
+- The difficulty of implementation
+- High resource requirements
+- Potential false responses
 
-### Веб-дашборд
+### Web-dashboard
 
-**Theory:** Веб-дашборд представляет собой интерактивный interface for визуализации and Analysis данных системы. Это критически важно for удобного Monitoringа and Analysis.
+**Theory:** Web-dashboard is an interactive interface for visualization and analysis of the system. This is critical for a convenient Monitoring and Analysis.
 
-**Почему веб-дашборд важен:**
-- **Визуализация:** Обеспечивает визуализацию данных
-- **Интерактивность:** Обеспечивает интерактивность
-- **Удобство:** Обеспечивает удобство использования
-- **Анализ:** Критически важно for Analysis данных
+♪ Why is a web-dashboard important ♪
+- ** Visualization:** Provides visualization of data
+- ** Interactive:** Ensures interactivity
+- ** Pleasure:** Provides usability
+- **Analysis:** Critical for Data Analysis
 
 ```bash
-# Launch дашборда
+# Launch Dashboard
 python -m src.Monitoring.dashboard
 
-# Открыть in браузере
+# Open in browser
 open http://localhost:8000
 ```
 
 ### Logs
 
 ```bash
-# View логов
+# View logs
 tail -f Logs/neozork_100_percent.log
 
-# Logs торговых операций
+# Logs trading
 tail -f Logs/trades.log
 
 # Logs performance
 tail -f Logs/performance.log
 ```
 
-### Алерты
+♪ ♪ Alerts ♪
 
-Система отправляет алерты через:
+The system sends allertes through:
 - 📧 Email
 - 📱 Telegram
 - 💬 Discord
 
 ## 🔧 configuration
 
-### Основные parameters
+### Main variables
 
 ```yaml
 # config/config.yaml
@@ -1404,23 +1404,23 @@ system:
  Version: "1.0.0"
  environment: "production"
 
-# Цели performance
+# Purposes of performance
 targets:
- monthly_return: 1.0 # 100% in месяц
- daily_return: 0.033 # ~3.3% in день
- max_drawdown: 0.15 # 15% максимальная просадка
- sharpe_ratio: 2.0 # Минимальный коэффициент Шарпа
+Monthly_return: 1.0 #100% in month
+Daily_return: 0.033 # ~3.3 per cent in day
+max_drawdown: 0.15 # 15% maximum draught
+sharpe_ratio: 2.0 # Minimum Sharp coefficient
 
-# Активы for trading
+# Assets for trading
 data_sources:
  crypto:
  - symbol: "BTC-USD"
  weight: 0.3
  - symbol: "ETH-USD"
  weight: 0.25
- # ... другие активы
+# Other assets
 
-# Timeframeы
+# Timeframes
 Timeframes:
  - "M1"
  - "M5"
@@ -1429,7 +1429,7 @@ Timeframes:
  - "H4"
  - "D1"
 
-# Риск-менеджмент
+# Risk management
 risk_limits:
  max_position_size: 0.1
  max_daily_loss: 0.05
@@ -1438,36 +1438,36 @@ risk_limits:
  max_correlation: 0.7
 ```
 
-## 🧠 ML Модели
+♪ ♪ ML Models
 
-**Theory:** Машинное обучение является основой системы NeoZorK 100%, обеспечивая интеллектуальный анализ рыночных данных and генерацию торговых сигналов. Система использует ансамбль из трех специализированных моделей, каждая из которых оптимизирована for конкретных аспектов торговли.
+**Theory:** Machine learning is the foundation of NeoZorK 100 per cent, providing intellectual market data analysis and trade signal generation.The system uses an ensemble of three specialized models, each optimized for specific aspects of trade.
 
-**Почему ML модели критически важны:**
-- **Паттерн-распознавание:** Выявляют сложные паттерны in рыночных данных, недоступные человеческому анализу
-- **Адаптивность:** Автоматически адаптируются к изменяющимся рыночным условиям
-- **Speed:** Обрабатывают огромные объемы данных in реальном времени
-- **Объективность:** Исключают эмоциональные факторы из торговых решений
+**Why ML models are critical:**
+- **Paternal recognition:** Identify complex pathologists in market data that are not available for human analysis
+- ** Adaptation: ** Automatically adapted to changing market conditions
+- **Speed:** Process large amounts of data in real time
+- **Purity: **Excuse emotional factors from trade decisions
 
-### WAVE2 Model - Детектор трендовых волн
+### WAVE2 Model - trend wave detector
 
-**Theory:** WAVE2 модель основана on теории волнового Analysis Эллиотта and использует Random Forest for классификации трендовых паттернов. Модель анализирует волновые структуры ценовых движений and предсказывает направление следующей волны.
+**Theory:** WAVE2 The model is based on the theory of wave Analisis Elliott and uses Random Forest for classifying trend pathers. The model analyses the wave structures of price movements and predicts the direction of the next wave.
 
-**Почему WAVE2 критически важен:**
-- **Трендовая идентификация:** Точно определяет начало and конец трендовых движений
-- **Волновой анализ:** Использует проверенную временем теорию волн Эллиотта
-- **Высокая точность:** Достигает >95% точности on исторических данных
-- **Робастность:** Устойчив к рыночному шуму and ложным сигналам
+**Why WAVE2 is critical:**
+- **Trend identification:** Exactly determine the beginning and end of the trend movements
+Wave analysis:** uses Elliott's time-tested wave theory.
+- ** High accuracy:** Achieves >95% accuracy on historical data
+- ** Robinity:** Resistance to market noise and false signals
 
-**Technical характеристики:**
-- **Тип**: Random Forest Classifier with 100 деревьями
-- **Признаки**: 50+ технических indicators (RSI, MACD, Bollinger Bands, ATR, ADX, Stochastic, Williams %R, CCI, ROC, Momentum)
-- **Goal**: Prediction направления тренда (up/down/SIDEWAYS)
-- **Точность**: >95% on валидационных данных
-- **Время обучения**: ~15 minutes on 100,000 свечей
-- **Время предсказания**: <10ms on сигнал
+**Technical characteristics:**
+- ** Type**: Random Forest Classifier with 100 trees
+- ** Signs**: 50+ technical indicators (RSI, MACD, Bollinger Bands, ATR, ADX, Stochastic, Williams %R, CCI, ROC, Momentum)
+- **Goal**: Promotion of trend direction (up/down/SIDEWAYS)
+- **Definity**: >95% on validation data
+~ 15 minutes on 100,000 candles
+- **Treathing time**: <10ms on signal
 
 ```python
-# Полнофункциональная реализация WAVE2 модели
+# Fully functional implementation of WAVE2
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
@@ -1477,7 +1477,7 @@ import joblib
 from pathlib import Path
 
 class WAVE2Model:
- """WAVE2 модель for детекции трендовых волн"""
+""WAVE2 Model for trend wave detectives."
 
  def __init__(self, config):
  self.config = config
@@ -1493,27 +1493,27 @@ class WAVE2Model:
  self.is_trained = False
 
  def create_features(self, df):
- """create признаков for WAVE2 модели"""
+""create signs for the WAVE2 model""
  features = pd.dataFrame(index=df.index)
 
- # Базовые ценовые признаки
+# Basic price indicators
  features['open'] = df['open']
  features['high'] = df['high']
  features['low'] = df['low']
  features['close'] = df['close']
  features['volume'] = df['volume']
 
- # Ценовые изменения
+# Price changes
  features['price_change'] = df['close'].pct_change()
  features['high_low_ratio'] = df['high'] / df['low']
  features['close_open_ratio'] = df['close'] / df['open']
 
- # Скользящие средние
+# Sliding average
  for period in [5, 10, 20, 50, 100]:
  features[f'sma_{period}'] = df['close'].rolling(period).mean()
  features[f'price_sma_{period}_ratio'] = df['close'] / features[f'sma_{period}']
 
- # Экспоненциальные скользящие средние
+# Exponsive sliding medium
  for period in [12, 26, 50]:
  features[f'ema_{period}'] = df['close'].ewm(span=period).mean()
  features[f'price_ema_{period}_ratio'] = df['close'] / features[f'ema_{period}']
@@ -1585,83 +1585,83 @@ class WAVE2Model:
  # Momentum
  features['momentum'] = df['close'] - df['close'].shift(10)
 
- # Объемные индикаторы
+# Volume indicators
  features['volume_sma'] = df['volume'].rolling(20).mean()
  features['volume_ratio'] = df['volume'] / features['volume_sma']
 
- # Временные признаки
+# Temporary signs
  features['hour'] = df.index.hour
  features['day_of_week'] = df.index.dayofweek
  features['month'] = df.index.month
 
- # Волновые признаки (упрощенная версия)
+# Wave signs (simplified version)
  features['wave_1'] = df['close'].rolling(5).max() / df['close'].rolling(5).min()
  features['wave_2'] = df['close'].rolling(10).max() / df['close'].rolling(10).min()
  features['wave_3'] = df['close'].rolling(20).max() / df['close'].rolling(20).min()
 
- # remove NaN значений
+# remove NaN values
  features = features.dropna()
 
  return features
 
  def create_target(self, df, lookforward=5):
- """create целевой переменной for классификации тренда"""
+""create target variable for trend classification."
  future_prices = df['close'].shift(-lookforward)
  current_price = df['close']
 
- # Классификация: 1 - восходящий тренд, 0 - нисходящий тренд
- target = (future_prices > current_price * 1.02).astype(int) # 2% рост
+# Classification: 1 - upward trend, 0 - downward trend
+Target = (future_prices > Current_price * 1.02).astype(int) #2% growth
 
  return target.dropna()
 
  def train(self, df):
- """Обучение WAVE2 модели"""
- print("🧠 Обучение WAVE2 модели...")
+"""""""""" "WAVE2 Model Learning""""
+print("\\WAVE2 model training ...")
 
- # create признаков and целевой переменной
+# of the sign and target variable
  features = self.create_features(df)
  target = self.create_target(df)
 
- # Выравнивание indexов
+# The equalization of index
  common_index = features.index.intersection(target.index)
  features = features.loc[common_index]
  target = target.loc[common_index]
 
- # Разделение on обучающую and testsую выборки
+# Separation on learning and test sample
  X_train, X_test, y_train, y_test = train_test_split(
  features, target, test_size=0.2, random_state=42, stratify=target
  )
 
- # Обучение модели
+# Model learning
  self.model.fit(X_train, y_train)
 
- # Сохранение имен признаков
+# Maintaining the names of the signs
  self.feature_names = List(features.columns)
 
- # Оценка качества
+# Quality assessment
  train_score = self.model.score(X_train, y_train)
  test_score = self.model.score(X_test, y_test)
 
- print(f"✅ WAVE2 модель обучена:")
- print(f" - Точность on обучающей выборке: {train_score:.4f}")
- print(f" - Точность on testsой выборке: {test_score:.4f}")
+The model is trained in:)
+Print(f" - Accuracy on the training sample: {training_score:.4f})
+print(f" - Accuracy on tests sample: {test_score:.4f})
 
- # Кросс-validation
+# Cross-validation
  cv_scores = cross_val_score(self.model, X_train, y_train, cv=5)
- print(f" - Кросс-validation (5-fold): {cv_scores.mean():.4f} ± {cv_scores.std():.4f}")
+print(f" - Cross-validation (5-fold): {cv_scores.mean(:4f} ± {cv_scores.std(:4f}})
 
- # Детальный Report
+# Detailed Report
  y_pred = self.model.predict(X_test)
- print("\n📊 Report on классификации:")
+"Print("\n~ Report on classification:")
  print(classification_Report(y_test, y_pred))
 
  self.is_trained = True
  return test_score
 
  def predict(self, df):
- """Prediction тренда"""
+"Predication trend."
  if not self.is_trained:
- raise ValueError("Модель not обучена!")
+Raise ValueError!
 
  features = self.create_features(df)
  features = features.dropna()
@@ -1673,7 +1673,7 @@ class WAVE2Model:
  predictions = self.model.predict(features)
  probabilities = self.model.predict_proba(features)
 
- # create результата
+# the result
  result = pd.dataFrame({
  'timestamp': features.index,
  'Prediction': predictions,
@@ -1685,115 +1685,115 @@ class WAVE2Model:
  return result
 
  def save_model(self, path):
- """Сохранение модели"""
+"Save Model."
  model_data = {
  'model': self.model,
  'feature_names': self.feature_names,
  'is_trained': self.is_trained
  }
  joblib.dump(model_data, path)
- print(f"✅ WAVE2 модель сохранена in {path}")
+wave2 model saved in {path})
 
  def load_model(self, path):
- """Загрузка модели"""
+"""""""""""""
  model_data = joblib.load(path)
  self.model = model_data['model']
  self.feature_names = model_data['feature_names']
  self.is_trained = model_data['is_trained']
- print(f"✅ WAVE2 модель загружена из {path}")
+print(f"\WAVE2 model downloaded from {path}}
 
-# example использования
+# Example of use
 if __name__ == "__main__":
  # Loading data (example)
  df = pd.read_csv('data/btc_usd_1h.csv', index_col=0, parse_dates=True)
 
- # create and обучение модели
+# creative and model learning
  wave2_model = WAVE2Model({})
  accuracy = wave2_model.train(df)
 
- # Сохранение модели
+# Maintaining the model
  wave2_model.save_model('models/wave2_model.pkl')
 
  # Prediction
  predictions = wave2_model.predict(df.tail(100))
- print("\n🎯 Последние предсказания:")
+"Prent("\n\\\\\\\\\\\\\\\\\\\\\(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\(\\\\\\\\\\\\\\\\\\\\\)/()/()/()/()/()/()/()/()/()/((\\\\\\\\\\\\\\\\\\\\\\)/)/((\\\\\\\\\\)/)/((\\\\\\\\\\\\\\\\\\\\\\\)/)/)/)/)/(((\\\\\\\\\\\)/)/)/)/)/)/)/(()/)/(((((\\\\\\\\\\\\\(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\)})})})/)/)/)/)/)/)/)/)/)/(\(\(((((\)/)/)/)/)/((((((((\)/)})}((((((\\\\\\\\\\((((\\\\)})})})})})})})})}((((((((((((((((((\\)})})})})})})})}((((((((((((\)})})})})})})})})}(((((((((((((((((((((((((((((((\
  print(predictions.tail())
 ```
 
-### SCHR Levels Model - Детектор уровней поддержки/сопротивления
+### SCHR Livels Model - Support/Resistance Level Detector
 
-**Theory:** SCHR Levels модель использует Gradient Boosting for идентификации and предсказания пробоев ключевых уровней поддержки and сопротивления. Модель анализирует исторические data о том, как цена взаимодействует with важными уровнями.
+**Theory:** SCHR Livels uses the Model to use Gradient Bosting for identifying and predicting key levels of support and resistance.The Model analyses historical data on how price interacts with important levels.
 
-**Почему SCHR Levels критически важен:**
-- **Уровневая торговля:** Основа большинства прибыльных торговых стратегий
-- **Точность входа:** Обеспечивает точные точки входа in позиции
-- **Риск-менеджмент:** Позволяет устанавливать стоп-лоссы on basis уровней
-- **ПсихоLogsя рынка:** Учитывает поведение трейдеров on ключевых уровнях
+**Why SCHR Levels is critical:**
+- **Level trade:** The basis of most profitable trade policies
+- ** Entry accuracy:** Provides the exact entry points in the position
+- **Risk Management:** Allows the installation of stop-losses on base levels
+- **PsychoLogsa market:** Taking into account the behaviour of traders on key levels
 
-**Technical характеристики:**
-- **Тип**: Gradient Boosting Classifier with 200 деревьями
-- **Признаки**: Уровни поддержки/сопротивления, объемы, волатильность
-- **Goal**: Prediction пробоев уровней (BREAKOUT/HOLD/REJECTION)
-- **Точность**: >90% on валидационных данных
-- **Время обучения**: ~25 minutes on 100,000 свечей
-- **Время предсказания**: <15ms on сигнал
+**Technical characteristics:**
+== sync, corrected by elderman == @elder_man
+- ** Signs**: Support/resistance levels, volumes, volatility
+- **Goal**: Predication of level samples (BREAKOUT/HOLD/REJECTION)
+- ** Existence**: >90 per cent on validation data
+~ 25 minutes on 100,000 candles
+- **Treathing time**: <15ms on signal
 
-### SCHR SHORT3 Model - Скальпинг система
+### SCHR SHORT3 Model - Scaling System
 
-**Theory:** SCHR SHORT3 модель оптимизирована for краткосрочной торговли and скальпинга. Использует Extra Trees for быстрого Analysis микро-паттернов and генерации высокочастотных торговых сигналов.
+**Theory:** SCHR SHORT3 is optimized for short-term trade and scalping, using Extra Trees for rapid Analysis micro-patterns and high-frequency trade signals.
 
-**Почему SCHR SHORT3 критически важен:**
-- **Высокая частота:** Генерирует множество торговых возможностей
-- **Быстрая реакция:** Мгновенно реагирует on изменения рынка
-- **Микро-паттерны:** Выявляет паттерны, незаметные for других моделей
-- **Скальпинг:** Обеспечивает прибыль on малых движениях цены
+**Why SCHR SHORT3 is critical:**
+- ** High frequency:** Generates many trading opportunities
+- ** Rapid reaction:** Urgent response to market change
+- **Micro-pattern:** identifies pathites that are not visible for other models
+- **Scalping:** Provides profits on small price movements
 
-**Technical характеристики:**
-- **Тип**: Extra Trees Classifier with 150 деревьями
-- **Признаки**: Краткосрочные паттерны, микро-волатильность, ордер-бук
-- **Goal**: Скальпинг сигналы (BUY/SELL/HOLD)
-- **Точность**: >85% on валидационных данных
-- **Время обучения**: ~10 minutes on 100,000 свечей
-- **Время предсказания**: <5ms on сигнал
+**Technical characteristics:**
+- ** Type**: Extra Tree Classifier with 150 trees
+- ** Signs**: Short-term pathers, micro-fiber, warrant book
+- **Goal**: Scaling signals (BUY/SELL/HOLD)
+- ** Existence**: >85 per cent on validation data
+~ 10 minutes on 100,000 candles
+- **Treathing time**: <5ms on signal
 
-### Ensemble Model - Ансамбль моделей
+### Ensemble Model - Model Ensemble
 
-**Theory:** Ensemble модель объединяет предсказания all трех специализированных моделей, используя взвешенное голосование for получения финального торгового сигнала. Это обеспечивает максимальную точность and робастность.
+**Theory:**The Ensemble model combines the predictions of all three specialized models by using a balanced vote to obtain the final trade signal. This ensures maximum accuracy and efficiency.
 
-**Почему Ensemble критически важен:**
-- **Диверсификация:** Снижает риск ошибок отдельных моделей
-- **Максимальная точность:** Достигает >97% точности
-- **Робастность:** Устойчив к переобучению and рыночным аномалиям
-- **Адаптивность:** Автоматически адаптируется к различным рыночным условиям
+**Why Ensemble is critical:**
+- **Diversification:** Reduces the risk of error of individual models
+- ** Maximum accuracy:** Achieves >97 per cent accuracy
+- **Platitude:** Sustainability to re-education and market anomalies
+- ** Adaptation: ** Automatically adapted to different market conditions
 
-**Technical характеристики:**
-- **Тип**: Voting Classifier with soft voting
-- **Комбинация**: WAVE2 (40%) + SCHR Levels (35%) + SCHR SHORT3 (25%)
-- **Метод**: Soft voting with весовыми коэффициентами
-- **Точность**: >97% on валидационных данных
-- **Время предсказания**: <20ms on сигнал
+**Technical characteristics:**
+- ** Type**: Voting Classifier with soft voting
+** Combination**: WAVE2 (40 per cent) + SCHR Levels (35 per cent) + SCHR SHORT3 (25 per cent)
+- ** Method**: Soft Voting with weighting factors
+- **Definity**: >97% on validation data
+- **Treathing time**: <20ms on signal
 
-## 🔄 Система retraining
+♪ ♪ Retraining system
 
-**Theory:** Система retraining является критически важным компонентом for поддержания актуальности ML моделей in постоянно изменяющихся рыночных условиях. Автоматическое retraining обеспечивает адаптацию моделей к новым рыночным паттернам, дрифту данных and изменению волатильности.
+**Theory:** Retraining system is a critical component for maintaining the relevance of ML models in constantly changing market conditions. Automatic retraining ensures that models adapt to new market patterns, data drifts and changes in volatility.
 
-**Почему система retraining критически важна:**
-- **Адаптивность:** Модели автоматически адаптируются к новым рыночным условиям
-- **performance:** Поддерживает высокую точность predictions
-- **Робастность:** Предотвращает деградацию качества моделей со временем
-- **Автоматизация:** Исключает необходимость ручного вмешательства
+**Why the retraining system is critical:**
+- ** Adaptation: ** Models are automatically adapted to new market conditions
+- **Performance:** Supports high accuracy preferences
+- ** Robinity:** Prevents model quality degradation over time
+- ** Automation:**Excludes manual intervention
 
-**Типы retraining:**
-- **Planовое:** Регулярное retraining on расписанию
-- **Адаптивное:** retraining при обнаружении дрифта данных
-- **Экстренное:** retraining при критическом снижении performance
+**Tip retraining:**
+- **Plann:** Regular retraining on schedule
+- ** Adaptive: ** Retraining when a drift is detected
+- **Extrend: ** Retraining with a critical decline in performance
 
-### Автоматическое retraining
+### Automatic retraining
 
-**Theory:** Автоматическое retraining использует интеллектуальные триггеры for определения оптимального времени retraining моделей. Система анализирует performance, дрифт данных and рыночные условия for принятия решений о переобучении.
+**Theory:** Automatic retraining uses smart triggers to determine optimal time to retrain models.The system analyses performance, data drift and market conditions for learning decisions.
 
 ```python
-# Полнофункциональная система автоматического retraining
+# A fully functional automatic retraining system
 import schedule
 import time
 import asyncio
@@ -1807,7 +1807,7 @@ import joblib
 from pathlib import Path
 
 class Retrainingsystem:
- """Система автоматического retraining ML моделей"""
+""Automated Retraining ML Models""
 
  def __init__(self, config, model_manager, data_manager):
  self.config = config
@@ -1815,87 +1815,87 @@ class Retrainingsystem:
  self.data_manager = data_manager
  self.logger = logging.getLogger(__name__)
 
- # Пороговые значения for триггеров
+# Thresholds for Triggers
  self.accuracy_threshold = 0.90
  self.performance_drop_threshold = 0.20
  self.data_drift_threshold = 0.10
  self.profitability_threshold = 0.50
 
- # История performance
+# History of life
  self.performance_history = []
  self.last_retraining = None
 
  def setup_schedule(self):
- """configuration расписания retraining"""
- # Ежедневное retraining in 02:00
+♪ "configuring schedule retraining" ♪
+# Daily retraining in 02:00
  schedule.every().day.at("02:00").do(self.daily_retraining)
 
- # Еженедельное retraining in воскресенье in 03:00
+# Weekly retraining in Sunday in 03:00
  schedule.every().sunday.at("03:00").do(self.weekly_retraining)
 
- # check дрифта каждый час
+# Check drift every hour
  schedule.every().hour.do(self.drift_check)
 
- # check performance каждые 30 minutes
+# Check performance every 30 minutes
  schedule.every(30).minutes.do(self.performance_check)
 
- self.logger.info("✅ Расписание retraining настроено")
+Self.logger.info("
 
  async def daily_retraining(self):
- """Ежедневное retraining моделей"""
- self.logger.info("🔄 Launch ежедневного retraining...")
+"The Daily Retraining Models""
+Self.logger.info.
 
  try:
- # Получение свежих данных
+# Getting up to date
  fresh_data = await self.data_manager.get_latest_data(
  symbols=self.config.data_sources.crypto,
  Timeframes=['M1', 'M5', 'M15', 'H1'],
  hours=24
  )
 
- # retraining каждой модели
+# Retraining each model
  for model_name in ['WAVE2', 'SCHR_Levels', 'SCHR_Short3']:
  await self.retrain_model(model_name, fresh_data)
 
  self.last_retraining = datetime.now()
- self.logger.info("✅ Ежедневное retraining COMPLETED")
+Self.logger.info('\ \ Daily retraining COMPLETED')
 
  except Exception as e:
- self.logger.error(f"❌ Ошибка ежедневного retraining: {e}")
+Self.logger.error(f"\\\\day-end retraining: {e}})
 
  async def weekly_retraining(self):
- """Еженедельное полное retraining"""
- self.logger.info("🔄 Launch еженедельного retraining...")
+"A week's full retraining."
+Self.logger.info.
 
  try:
- # Получение расширенного набора данных
+# Obtaining an extended data set
  extended_data = await self.data_manager.get_latest_data(
  symbols=self.config.data_sources.crypto,
  Timeframes=['M1', 'M5', 'M15', 'H1', 'H4', 'D1'],
- hours=168 # 7 дней
+Hours = 168 # 7 days
  )
 
- # Полное retraining with валидацией
+# Full retraining with validation
  for model_name in ['WAVE2', 'SCHR_Levels', 'SCHR_Short3']:
  await self.full_retrain_model(model_name, extended_data)
 
- # update ансамбля
+# Update ensemble
  await self.update_ensemble()
 
  self.last_retraining = datetime.now()
- self.logger.info("✅ Еженедельное retraining COMPLETED")
+elf.logger.info('\\ once a week COMPLETED')
 
  except Exception as e:
- self.logger.error(f"❌ Ошибка еженедельного retraining: {e}")
+Self.logger.error(f"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}}})
 
  async def drift_check(self):
- """check дрифта данных"""
- self.logger.info("🔍 check дрифта данных...")
+"Check Drift Data."
+Self.logger.info.
 
  try:
- # Получение текущих and исторических данных
+# Obtaining current and historical data
  current_data = await self.data_manager.get_latest_data(
- symbols=['BTC-USD'], # checking on основном активе
+symbols=['BTC-USD'], #checking on main asset
  Timeframes=['H1'],
  hours=24
  )
@@ -1906,103 +1906,103 @@ class Retrainingsystem:
  days=7
  )
 
- # Анализ дрифта
+# Drift analysis
  drift_detected = await self.analyze_data_drift(current_data, historical_data)
 
  if drift_detected:
- self.logger.warning("⚠️ Обнаружен дрифт данных, Launch retraining...")
+Self.logger.warning.
  await self.adaptive_retraining()
 
  except Exception as e:
- self.logger.error(f"❌ Ошибка проверки дрифта: {e}")
+Self.logger.error(f"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}}})
 
  async def performance_check(self):
- """check performance моделей"""
+"Check performance models."
  self.logger.info("📊 check performance...")
 
  try:
- # Получение текущих метрик
+# Getting current metrics
  current_metrics = await self.get_current_performance()
 
- # Анализ performance
+# Performance analysis
  performance_issues = await self.analyze_performance(current_metrics)
 
  if performance_issues:
- self.logger.warning("⚠️ Обнаружены Issues with производительностью, Launch retraining...")
+Self.logger.warning.
  await self.emergency_retraining()
 
- # Сохранение истории
+# Maintaining history
  self.performance_history.append({
  'timestamp': datetime.now(),
  'metrics': current_metrics
  })
 
  except Exception as e:
- self.logger.error(f"❌ Ошибка проверки performance: {e}")
+Self.logger.error(f"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}}})
 
  async def analyze_data_drift(self, current_data, historical_data):
- """Анализ дрифта данных"""
+"Analysis of Data Drift."
  try:
- # Извлечение признаков for сравнения
+# Extracting signs for comparison
  current_features = self.extract_statistical_features(current_data)
  historical_features = self.extract_statistical_features(historical_data)
 
- # Статистические тесты
+# Statistical tests
  drift_scores = []
 
  for feature in current_features.columns:
  if feature in historical_features.columns:
- # Kolmogorov-Smirnov тест
+# Kolmogorov-Smirnov test
  ks_stat, ks_pvalue = stats.ks_2samp(
  current_features[feature].dropna(),
  historical_features[feature].dropna()
  )
 
- # Если p-value < 0.05, есть значительная разница
+# If p-value < 0.05, there is a significant difference
  if ks_pvalue < 0.05:
  drift_scores.append(ks_stat)
 
- # Если средний дрифт превышает порог
+# If the average drift is above the threshold
  avg_drift = np.mean(drift_scores) if drift_scores else 0
  return avg_drift > self.data_drift_threshold
 
  except Exception as e:
- self.logger.error(f"❌ Ошибка Analysis дрифта: {e}")
+elf.logger.error(f'\\test Analysis drift: {e}})
  return False
 
  def extract_statistical_features(self, data):
- """Извлечение статистических признаков for Analysis дрифта"""
+"Extracting statistical signs for Analysis drift."
  features = pd.dataFrame()
 
  for symbol in data.columns.get_level_values(0).unique():
  symbol_data = data[symbol]
 
- # Базовые статистики
+# Basic statistics
  features[f'{symbol}_mean'] = symbol_data['close'].rolling(24).mean()
  features[f'{symbol}_std'] = symbol_data['close'].rolling(24).std()
  features[f'{symbol}_skew'] = symbol_data['close'].rolling(24).skew()
  features[f'{symbol}_kurt'] = symbol_data['close'].rolling(24).kurt()
 
- # Изменения
+# Change
  features[f'{symbol}_returns'] = symbol_data['close'].pct_change()
  features[f'{symbol}_volatility'] = features[f'{symbol}_returns'].rolling(24).std()
 
  return features.dropna()
 
  async def analyze_performance(self, current_metrics):
- """Анализ performance моделей"""
+"Analysis performance models."
  try:
  issues = []
 
- # check точности
+# Check accuracy
  if current_metrics.get('accuracy', 0) < self.accuracy_threshold:
- issues.append(f"Низкая точность: {current_metrics.get('accuracy', 0):.3f}")
+== sync, corrected by elderman == @elder_man
 
- # check прибыльности
+# Check of profitability
  if current_metrics.get('profitability', 0) < self.profitability_threshold:
- issues.append(f"Низкая прибыльность: {current_metrics.get('profitability', 0):.3f}")
+issues.append(f "Low profitability: {surrent_metrics.get('profitiability', 0):3f}")
 
- # check снижения performance
+# Check reduction performance
  if len(self.performance_history) > 1:
  prev_metrics = self.performance_history[-2]['metrics']
  performance_drop = (
@@ -2010,23 +2010,23 @@ class Retrainingsystem:
  ) / prev_metrics.get('accuracy', 1)
 
  if performance_drop > self.performance_drop_threshold:
- issues.append(f"Снижение performance: {performance_drop:.3f}")
+Issues.append(f "Decrease performance: {operation_drop:.3f}")
 
  return len(issues) > 0, issues
 
  except Exception as e:
- self.logger.error(f"❌ Ошибка Analysis performance: {e}")
+elf.logger.error(f'\test Analisis performance: {e}})
  return False, []
 
  async def retrain_model(self, model_name, data):
- """retraining конкретной модели"""
+""retraining a particular model""
  try:
- self.logger.info(f"🔄 retraining модели {model_name}...")
+Self.logger.info(f) retraining model {model_name}...)
 
- # Получение модели
+# Getting a model
  model = self.model_manager.get_model(model_name)
 
- # Обучение on новых данных
+# Training on new data
  if model_name == 'WAVE2':
  accuracy = model.train(data)
  elif model_name == 'SCHR_Levels':
@@ -2034,110 +2034,110 @@ class Retrainingsystem:
  elif model_name == 'SCHR_Short3':
  accuracy = model.train(data)
 
- # Сохранение модели
+# Maintaining the model
  model_path = f"models/{model_name.lower()}_model.pkl"
  model.save_model(model_path)
 
- self.logger.info(f"✅ Модель {model_name} переобучена, точность: {accuracy:.3f}")
+Self.logger.info(f"\\\model_name} retrained, accuracy: {accuracy:.3f})
 
  except Exception as e:
- self.logger.error(f"❌ Ошибка retraining модели {model_name}: {e}")
+Self.logger.error(f"
 
  async def full_retrain_model(self, model_name, data):
- """Полное retraining модели with валидацией"""
+"To fully retrain the model with validation."
  try:
- self.logger.info(f"🔄 Полное retraining модели {model_name}...")
+Self.logger.info(f) full retraining model {model_name}...)
 
- # Получение модели
+# Getting a model
  model = self.model_manager.get_model(model_name)
 
- # Разделение данных on обучающую and валидационную выборки
+# Segregation of data on training and validation sample
  train_data = data.iloc[:int(len(data) * 0.8)]
  val_data = data.iloc[int(len(data) * 0.8):]
 
- # Обучение
+# Training
  train_accuracy = model.train(train_data)
 
  # validation
  val_predictions = model.predict(val_data)
  val_accuracy = accuracy_score(
  val_predictions['Prediction'],
- val_predictions['actual'] # Предполагаем, что есть actual
+val_predictations['actual'] # Presumably there is an actual
  )
 
- # Сохранение только если валидационная точность приемлема
+# Saved only if validation accuracy is acceptable
  if val_accuracy > self.accuracy_threshold:
  model_path = f"models/{model_name.lower()}_model.pkl"
  model.save_model(model_path)
- self.logger.info(f"✅ Модель {model_name} успешно переобучена")
+Self.logger.info(f"\\model_name} successfully retrained)
  else:
- self.logger.warning(f"⚠️ Модель {model_name} not прошла валидацию")
+Self.logger.warning(f) model {model_name}not validated)
 
  except Exception as e:
- self.logger.error(f"❌ Ошибка полного retraining модели {model_name}: {e}")
+Self.logger.error(f"\\\\\[model_name}: {e}})
 
  async def adaptive_retraining(self):
- """Адаптивное retraining при дрифте"""
- self.logger.info("🔄 Адаптивное retraining...")
+"Aptative retraining with drift."
+Self.logger.info.
 
- # Получение последних данных
+# Getting the latest data
  recent_data = await self.data_manager.get_latest_data(
  symbols=self.config.data_sources.crypto,
  Timeframes=['M1', 'M5', 'M15', 'H1'],
  hours=48
  )
 
- # retraining только наиболее пострадавших моделей
+# Retraining only the most affected models
  for model_name in ['WAVE2', 'SCHR_Levels', 'SCHR_Short3']:
  await self.retrain_model(model_name, recent_data)
 
  async def emergency_retraining(self):
- """Экстренное retraining при критических проблемах"""
- self.logger.info("🚨 Экстренное retraining...")
+"Extraordinary retraining in critical issues."
+Self.logger.info.
 
- # Получение максимального набора данных
+# Getting the maximum data set
  emergency_data = await self.data_manager.get_latest_data(
  symbols=self.config.data_sources.crypto,
  Timeframes=['M1', 'M5', 'M15', 'H1', 'H4'],
  hours=72
  )
 
- # Полное retraining all моделей
+# Full retraining all models
  for model_name in ['WAVE2', 'SCHR_Levels', 'SCHR_Short3']:
  await self.full_retrain_model(model_name, emergency_data)
 
- # update ансамбля
+# Update ensemble
  await self.update_ensemble()
 
  async def update_ensemble(self):
- """update ансамбля моделей"""
+""update model band""
  try:
- self.logger.info("🔄 update ансамбля моделей...")
+Self.logger.info.
 
- # Загрузка all моделей
+# Uploading all models
  models = {}
  for model_name in ['WAVE2', 'SCHR_Levels', 'SCHR_Short3']:
  model_path = f"models/{model_name.lower()}_model.pkl"
  if Path(model_path).exists():
  models[model_name] = joblib.load(model_path)
 
- # create нового ансамбля
+# a new ensemble
  ensemble = self.model_manager.create_ensemble(models)
 
- # Сохранение ансамбля
+# Keeping the ensemble
  ensemble_path = "models/ensemble_model.pkl"
  joblib.dump(ensemble, ensemble_path)
 
- self.logger.info("✅ Ансамбль моделей обновлен")
+Self.logger.info("
 
  except Exception as e:
- self.logger.error(f"❌ Ошибка обновления ансамбля: {e}")
+Self.logger.error(f"\\\\\\\\\\\t\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}}}})
 
  async def get_current_performance(self):
- """Получение текущих метрик performance"""
+"To receive the current metric performance."
  try:
- # Здесь должна быть Logsка получения реальных метрик
- # for примера возвращаем случайные значения
+# There's gotta be a Logsk getting real metrics
+# for example return random values
  return {
  'accuracy': np.random.uniform(0.85, 0.98),
  'precision': np.random.uniform(0.80, 0.95),
@@ -2146,157 +2146,157 @@ class Retrainingsystem:
  'profitability': np.random.uniform(0.30, 0.80)
  }
  except Exception as e:
- self.logger.error(f"❌ Ошибка получения метрик: {e}")
+Self.logger.error(f"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}}})
  return {}
 
  def run_scheduler(self):
- """Launch Planировщика retraining"""
- self.logger.info("🚀 Launch Planировщика retraining...")
+"Launch Planner Retraining"
+Self.logger.info.
 
  while True:
  schedule.run_pending()
- time.sleep(60) # check каждую minutesу
+Time.sleep(60) # check every minutes
 
-# example использования
+# Example of use
 if __name__ == "__main__":
- # Инициализация системы retraining
+# Initiating the retraining system
  retraining_system = Retrainingsystem(config, model_manager, data_manager)
  retraining_system.setup_schedule()
 
- # Launch Planировщика
+# Launch Planner
  retraining_system.run_scheduler()
 ```
 
-### Триггеры retraining
+### Triggers retraining
 
-**Theory:** Триггеры retraining определяют условия, при которых система должна инициировать process retraining моделей. Интеллектуальная система триггеров обеспечивает оптимальный баланс между актуальностью моделей and ресурсозатратами.
+**Theory:** Triggers re-training define the conditions under which the system should initiate process re-training of models. The smart Trigger system provides an optimal balance between model relevance and resource costs.
 
-#### 1. Временные триггеры
+♪###1 ♪ Time triggers ♪
 
-**Theory:** Временные триггеры обеспечивают регулярное update моделей независимо from их текущей performance. Это гарантирует, что модели not устаревают and адаптируются к долгосрочным изменениям рынка.
+**Theory:** Temporary triggers provide regular update models independently from their current performance. This ensures that models not become obsolete and adapt to long-term market changes.
 
-- **Ежедневное retraining (02:00):** update моделей свежими данными за последние 24 часа
-- **Еженедельное retraining (воскресенье 03:00):** Полное retraining with расширенным набором данных
-- **Преимущества:** Предсказуемость, регулярность, адаптация к трендам
-- **Недостатки:** Может быть избыточным при стабильных условиях
+- ** Daily retraining (02:00):** up-date models with up-to-date data for the last 24 hours
+- ** Weekly retraining (Sunday 03:00):** Full retraining with expanded data set
+- ** Benefits:** Predictability, regularity, adaptation to trends
+- ** Disadvantages:** May be excessive under stable conditions
 
-#### 2. Дрифт-триггеры
+♪###2 ♪ Drift-triggers ♪
 
-**Theory:** Дрифт-триггеры реагируют on изменения in распределении входных данных, что является критически важным for поддержания актуальности моделей. Дрифт данных может происходить из-за изменения рыночных условий, волатильности or поведения участников рынка.
+**Theory:** Drift-triggers respond to changes in the distribution of input data, which is critical for maintaining model relevance. Data drifts can occur due to changes in market conditions, volatility or behaviour of market participants.
 
-- **Статистический дрифт:** Изменение распределения данных >10% (KS-тест, Chi-square тест)
-- **Концептуальный дрифт:** Изменение взаимосвязей между приsignми and целевой переменной
-- **Преимущества:** Реагирует on реальные изменения, эффективное использование ресурсов
-- **Недостатки:** Сложность детекции, возможные ложные срабатывания
+**Statistical drift:** Change in data distribution >10% (KS test, Chi-square test)
+- ** Conceptual drift: ** Change in relationships between the signature and target variable
+- ** Benefits:** Response to real change, efficient use of resources
+- ** Disadvantages:** Detective complexity, possible false response
 
-#### 3. performance-триггеры
+#### 3. Performance-triggers
 
-**Theory:** performance-триггеры мониторят качество predictions моделей and инициируют retraining при критическом снижении точности or прибыльности.
+**Theory:** Performance-triggers monitor model preferences quality and initiate retraining with a critical decline in accuracy or profitability.
 
-- **Точность:** Снижение точности <90% on валидационных данных
-- **Прибыльность:** Снижение прибыльности <50% from целевого уровня
-- **Коэффициент Шарпа:** Падение коэффициента Шарпа <1.5
-- **Максимальная просадка:** Превышение максимальной просадки >15%
+- **Depreciation: ** Depreciation of accuracy <90 per cent on validation data
+- ** Profit: ** Decrease in profitability <50% from target level
+- ** Sharp coefficient:** Sharp coefficient drop <1.5
+- ** Maximum draught:** Excess of maximum draught > 15 per cent
 
-#### 4. Адаптивные триггеры
+♪###4. ♪ Adaptation triggers ♪
 
-**Theory:** Адаптивные триггеры используют машинное обучение for оптимизации времени retraining on basis исторических данных о performance and рыночных условиях.
+**Theory:** Adaptive Triggers use machine learning for optimizing time retraining on background historical data on performance and market conditions.
 
-- **ML-детектор дрифта:** Обученная модель for предсказания оптимального времени retraining
-- **Рыночные условия:** Учет волатильности, объема торгов, макроэкономических факторов
-- **Историческая performance:** Анализ эффективности предыдущих переобучений
+- **ML drift detector:** Trained model for predicting optimum time retraining
+- ** Market conditions: ** Treatment of volatility, volume of trade, macroeconomic factors
+- ** Historical performance: ** Analysis of the effectiveness of previous retrainings
 
 ## 📈 Metrics performance
 
-**Theory:** Metrics performance являются критически важным инструментом for оценки эффективности торговой системы and принятия решений об оптимизации. Комплексная система метрик позволяет объективно оценить как финансовые результаты, так and качество работы ML моделей.
+**Theory:**Metrics performance is a critical tool for assessing the efficiency of the trading system and making optimum decisions.The integrated metric system provides an objective assessment of both the financial performance and the quality of the ML models.
 
-**Почему Metrics performance критически важны:**
-- **Объективная оценка:** Обеспечивают количественную оценку эффективности системы
-- **Контроль рисков:** Позволяют отслеживать and контролировать риски
-- **Оптимизация:** Выявляют области for улучшения performance
-- **comparison:** Обеспечивают возможность сравнения различных стратегий
+# Why Metrics performance is critical #
+- ** Objective assessment:** Quantify the effectiveness of the system
+- ** Risk control:** Allows risk monitoring and control
+- **Optimization:** Identify areas for improving performance
+- **comparison:** Make it possible to compare different strategies
 
-### Основные финансовые metrics
+### Main financial metrics
 
-**Theory:** Основные финансовые metrics измеряют ключевые аспекты доходности and риска торговой системы. Эти metrics критически важны for понимания финансовой эффективности системы.
+**Theory:** Main financial metrics measure key aspects of the performance and risk of the trading system. These metrics are critical for understanding the financial effectiveness of the system.
 
-#### Total Return (Общая доходность)
-- **Определение:** Общий процентный прирост капитала за весь период
-- **Формула:** (Конечная стоимость - Начальная стоимость) / Начальная стоимость × 100%
-- **Целевое значение:** >100% in месяц
-- **Важность:** Основной показатель успешности системы
+#### Total Return
+- ** Definition: ** Total percentage increase in capital over the period
+- **Formoule:** (End value - Start value) / Initial value × 100 per cent
+** Target value:** > 100 per cent in month
+- ** Importance:** Main success indicator of the system
 
-#### Monthly Return (Месячная доходность)
-- **Определение:** Доходность за календарный месяц
-- **Формула:** (Стоимость on конец месяца - Стоимость on начало месяца) / Стоимость on начало месяца × 100%
-- **Целевое значение:** >100%
-- **Важность:** Ключевая метрика for достижения цели системы
+#### Monthly Return
+- ** Definition:** Income per calendar month
+- **Formoule:** (Amount on end of month - Cost on beginning of month) / Cost on beginning of month x 100%
+** Target value:** > 100 per cent
+- ** Importance:** Key metric for achieving the purpose of the system
 
-#### Daily Return (Дневная доходность)
-- **Определение:** Средняя дневная доходность
-- **Формула:** (1 + Monthly Return)^(1/30) - 1
-- **Целевое значение:** >3.3% in день
-- **Важность:** Позволяет отслеживать ежедневную эффективность
+### Daily Return
+- ** Definition:** Average daily return
+- **Formoule:** (1 + Monthly Return)(1/30) - 1
+** Target value:** >3.3 per cent in day
+- ** Importance:** Allows monitoring of daily effectiveness
 
-#### Sharpe Ratio (Коэффициент Шарпа)
-- **Определение:** Отношение избыточной доходности к волатильности
-- **Формула:** (Средняя доходность - Безрисковая ставка) / Стандартное отклонение доходности
-- **Целевое значение:** >2.0
-- **Важность:** Измеряет риск-скорректированную доходность
+### Sharpe Ratoo
+- ** Definition: ** Ratio of excess return to volatility
+- **Formula:** (Average rate of return - Riskless rate) / Standard deviation of return
+- ** Objective value:** >2.0
+- ** Importance:** Measures risk-corrected returns
 
-#### Max Drawdown (Максимальная просадка)
-- **Определение:** Максимальное падение from пика to минимума
-- **Формула:** (Пиковая стоимость - Минимальная стоимость) / Пиковая стоимость × 100%
-- **Целевое значение:** <15%
-- **Важность:** Критически важно for управления рисками
+### Max Drawdown
+- ** Definition:** Maximum drop from peak to minimum
+- **Formula:** (Piccal value - Minimum value) / Pic value × 100 per cent
+** Target value:** < 15 per cent
+- ** Importance:** Critical for risk management
 
-#### Win Rate (Процент выигрышных сделок)
-- **Определение:** Доля прибыльных сделок from общего количества
-- **Формула:** Количество прибыльных сделок / Общее количество сделок × 100%
-- **Целевое значение:** >65%
-- **Важность:** Показывает консистентность системы
+#### Win Rate
+- ** Definition: ** Share of profit-making transactions from total
+- **Formoule:** Number of profit-making transactions / Total number of transactions x 100 per cent
+** Target value:** > 65%
+- ** Significance:** Shows system conspicuity
 
-#### Profit Factor (Фактор прибыли)
-- **Определение:** Отношение общей прибыли к общим убыткам
-- **Формула:** Общая прибыль / Общие убытки
-- **Целевое значение:** >2.0
-- **Важность:** Показывает эффективность риск-менеджмента
+###Profit Factor
+- ** Definition: ** Ratio of total profits to total losses
+- **Formoule:** Total profit / Total loss
+- ** Objective value:** >2.0
+- ** Importance:** Shows risk-management effectiveness
 
 ```python
-# Полнофункциональная система расчета метрик performance
+# A fully functional metric calculation system
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 import logging
 
 class PerformanceMetrics:
- """Система расчета метрик performance"""
+""The metric calculation system performance""
 
  def __init__(self):
  self.logger = logging.getLogger(__name__)
  self.metrics_history = []
 
  def calculate_basic_metrics(self, Portfolio_values, trades_df):
- """Расчет основных финансовых метрик"""
+"The main financial metric."
 
- # Общая доходность
+# Total return
  total_return = (Portfolio_values.iloc[-1] - Portfolio_values.iloc[0]) / Portfolio_values.iloc[0]
 
- # Месячная доходность
+# Monthly return
  monthly_returns = self.calculate_monthly_returns(Portfolio_values)
  avg_monthly_return = monthly_returns.mean()
 
- # Дневная доходность
+# Day's return
  daily_returns = Portfolio_values.pct_change().dropna()
  avg_daily_return = daily_returns.mean()
 
- # Коэффициент Шарпа (предполагаем безрисковую ставку 0%)
+# Sharpe coefficient (assumed risk-free rate of 0 per cent)
  sharpe_ratio = daily_returns.mean() / daily_returns.std() * np.sqrt(252)
 
- # Максимальная просадка
+# Maximum tarmac
  max_drawdown = self.calculate_max_drawdown(Portfolio_values)
 
- # metrics on сделкам
+# meetings on transactions
  if not trades_df.empty:
  win_rate = (trades_df['pnl'] > 0).mean()
  profit_factor = self.calculate_profit_factor(trades_df)
@@ -2317,20 +2317,20 @@ class PerformanceMetrics:
  return metrics
 
  def calculate_monthly_returns(self, Portfolio_values):
- """Расчет месячных доходностей"""
+"The monthly return calculation."
  monthly_values = Portfolio_values.resample('M').last()
  monthly_returns = monthly_values.pct_change().dropna()
  return monthly_returns
 
  def calculate_max_drawdown(self, Portfolio_values):
- """Расчет максимальной просадки"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  peak = Portfolio_values.expanding().max()
  drawdown = (Portfolio_values - peak) / peak
  max_drawdown = drawdown.min()
  return abs(max_drawdown)
 
  def calculate_profit_factor(self, trades_df):
- """Расчет фактора прибыли"""
+"The profit factor calculation."
  profits = trades_df[trades_df['pnl'] > 0]['pnl'].sum()
  losses = abs(trades_df[trades_df['pnl'] < 0]['pnl'].sum())
 
@@ -2340,19 +2340,19 @@ class PerformanceMetrics:
  return profits / losses
 
  def calculate_robustness_metrics(self, Portfolio_values, trades_df):
- """Расчет метрик робастности"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
- # Консистентность (стабильность доходности)
+# Consistence (return stability)
  daily_returns = Portfolio_values.pct_change().dropna()
  consistency = 1 - daily_returns.std() / abs(daily_returns.mean()) if daily_returns.mean() != 0 else 0
 
- # Стабильность (низкая волатильность)
+# Stability (low volatility)
  stability = 1 / (1 + daily_returns.std())
 
- # Адаптивность (способность к восстановлению после просадок)
+# Adaptability (rehabilitation capacity after tarmacs)
  adaptability = self.calculate_adaptability(Portfolio_values)
 
- # Устойчивость к стрессу
+# Stress tolerance
  stress_resistance = self.calculate_stress_resistance(trades_df)
 
  robustness_metrics = {
@@ -2365,13 +2365,13 @@ class PerformanceMetrics:
  return robustness_metrics
 
  def calculate_adaptability(self, Portfolio_values):
- """Расчет адаптивности системы"""
- # Анализ времени восстановления после просадок
+""""""" "The adaptation of the system."
+# Analysis of the time of recovery from the fallout
  peak = Portfolio_values.expanding().max()
  drawdown = (Portfolio_values - peak) / peak
 
- # Находим периоды просадок
- in_drawdown = drawdown < -0.01 # Просадка больше 1%
+# We find periods of tardiness
+in_drawdown = drawdown < -0.01 # Slide over 1%
  drawdown_periods = []
 
  start = None
@@ -2384,7 +2384,7 @@ class PerformanceMetrics:
 
  if drawdown_periods:
  avg_recovery_time = np.mean(drawdown_periods)
- # Адаптивность обратно пропорциональна времени восстановления
+# Adaptation is inversely proportional to the time of recovery
  adaptability = 1 / (1 + avg_recovery_time / 100)
  else:
  adaptability = 1.0
@@ -2392,11 +2392,11 @@ class PerformanceMetrics:
  return adaptability
 
  def calculate_stress_resistance(self, trades_df):
- """Расчет устойчивости к стрессу"""
+"The stress resistance calculation."
  if trades_df.empty:
  return 0
 
- # Анализ performance in периоды высокой волатильности
+# Analysis of performance in periods of high volatility
  trades_df['volatility'] = trades_df['pnl'].rolling(10).std()
  high_vol_trades = trades_df[trades_df['volatility'] > trades_df['volatility'].quantile(0.8)]
 
@@ -2414,17 +2414,17 @@ class PerformanceMetrics:
  return max(0, min(1, stress_resistance))
 
  def calculate_ml_metrics(self, predictions_df, actual_df):
- """Расчет метрик качества ML моделей"""
+"The calculation of the quality metric of ML models."
 
  if predictions_df.empty or actual_df.empty:
  return {}
 
- # Выравнивание данных
+# Data leveling
  common_index = predictions_df.index.intersection(actual_df.index)
  pred = predictions_df.loc[common_index]
  actual = actual_df.loc[common_index]
 
- # Точность
+# Accuracy
  accuracy = (pred['Prediction'] == actual['direction']).mean()
 
  # Precision, Recall, F1-Score
@@ -2434,7 +2434,7 @@ class PerformanceMetrics:
  recall = recall_score(actual['direction'], pred['Prediction'], average='weighted')
  f1 = f1_score(actual['direction'], pred['Prediction'], average='weighted')
 
- # Конфиденс (средняя уверенность in предсказаниях)
+# Confidential (average confidence in predictions)
  confidence = pred['confidence'].mean()
 
  ml_metrics = {
@@ -2448,15 +2448,15 @@ class PerformanceMetrics:
  return ml_metrics
 
  def calculate_target_metrics(self, metrics):
- """Расчет целевых метрик достижения целей"""
+"The calculation of target metrics for achieving goals."
 
- # Достижение месячной цели (100%)
+# Achieving the monthly goal (100 per cent)
  target_achievement = min(1.0, metrics.get('monthly_return', 0) / 1.0)
 
- # Общий балл performance
+# Total performance
  performance_score = self.calculate_performance_score(metrics)
 
- # Статус системы
+# System status
  system_status = self.determine_system_status(metrics)
 
  target_metrics = {
@@ -2468,9 +2468,9 @@ class PerformanceMetrics:
  return target_metrics
 
  def calculate_performance_score(self, metrics):
- """Расчет общего балла performance (0-100)"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
- # Весовые коэффициенты for разных метрик
+# Weight factors for different metrics
  weights = {
  'monthly_return': 0.25,
  'sharpe_ratio': 0.20,
@@ -2480,28 +2480,28 @@ class PerformanceMetrics:
  'consistency': 0.10
  }
 
- # Нормализация метрик (0-1)
+# Normalization of metric (0-1)
  normalized_metrics = {}
 
- # Месячная доходность (Goal 100%)
+# Monthly return (Goal 100%)
  normalized_metrics['monthly_return'] = min(1.0, metrics.get('monthly_return', 0) / 1.0)
 
- # Коэффициент Шарпа (Goal >2.0)
+# Sharp coefficient (Goal >2.0)
  normalized_metrics['sharpe_ratio'] = min(1.0, metrics.get('sharpe_ratio', 0) / 2.0)
 
- # Максимальная просадка (Goal <15%, инвертируем)
+# Maximum draught (Goal <15%, invert)
  normalized_metrics['max_drawdown'] = max(0, 1 - metrics.get('max_drawdown', 1) / 0.15)
 
- # Процент выигрышных сделок (Goal >65%)
+# Percentage of winning transactions (Goal >65%)
  normalized_metrics['win_rate'] = min(1.0, metrics.get('win_rate', 0) / 0.65)
 
- # Фактор прибыли (Goal >2.0)
+# The profit factor (Goal >2.0)
  normalized_metrics['profit_factor'] = min(1.0, metrics.get('profit_factor', 0) / 2.0)
 
- # Консистентность
+# Consistence
  normalized_metrics['consistency'] = min(1.0, metrics.get('consistency', 0))
 
- # Взвешенная сумма
+# Weighted amount
  performance_score = sum(
  normalized_metrics.get(metric, 0) * weight
  for metric, weight in weights.items()
@@ -2510,7 +2510,7 @@ class PerformanceMetrics:
  return performance_score
 
  def determine_system_status(self, metrics):
- """Определение статуса системы"""
+"The system status determination"
 
  performance_score = self.calculate_performance_score(metrics)
 
@@ -2526,14 +2526,14 @@ class PerformanceMetrics:
  return "CRITICAL"
 
  def generate_performance_Report(self, Portfolio_values, trades_df, predictions_df=None, actual_df=None):
- """Генерация полного Reportа о performance"""
+""Generation of the Full Report on Performance""
 
- self.logger.info("📊 Генерация Reportа о performance...")
+Self.logger.info('\\\ 'Report on performance...')
 
- # Основные metrics
+# Basic metrics
  basic_metrics = self.calculate_basic_metrics(Portfolio_values, trades_df)
 
- # metrics робастности
+# Matrices of roboticity
  robustness_metrics = self.calculate_robustness_metrics(Portfolio_values, trades_df)
 
  # ML metrics
@@ -2541,64 +2541,64 @@ class PerformanceMetrics:
  if predictions_df is not None and actual_df is not None:
  ml_metrics = self.calculate_ml_metrics(predictions_df, actual_df)
 
- # Объединение all метрик
+# Allied all metric
  all_metrics = {**basic_metrics, **robustness_metrics, **ml_metrics}
 
- # Целевые metrics
+# Targeted metrics
  target_metrics = self.calculate_target_metrics(all_metrics)
  all_metrics.update(target_metrics)
 
- # Сохранение in историю
+# Maintaining in History
  all_metrics['timestamp'] = datetime.now()
  self.metrics_history.append(all_metrics)
 
- # Генерация Reportа
+#Report generation
  Report = self.format_performance_Report(all_metrics)
 
  return all_metrics, Report
 
  def format_performance_Report(self, metrics):
- """Форматирование Reportа о performance"""
+"The Formation of the Performance Report."
 
  Report = f"""
-📈 Report О performance NEOZORK 100% system
+♪ On performance NEOZORK 100% system
 {'='*60}
 
-💰 ФИНАНСОВЫЕ metrics:
- • Общая доходность: {metrics.get('total_return', 0):.2%}
- • Месячная доходность: {metrics.get('monthly_return', 0):.2%}
- • Дневная доходность: {metrics.get('daily_return', 0):.2%}
- • Коэффициент Шарпа: {metrics.get('sharpe_ratio', 0):.2f}
- • Максимальная просадка: {metrics.get('max_drawdown', 0):.2%}
- • Процент выигрышных сделок: {metrics.get('win_rate', 0):.2%}
- • Фактор прибыли: {metrics.get('profit_factor', 0):.2f}
+♪ Financial instruments:
+• Total return: {metrics.get('total_return', 0): 2%}
+• Monthly rate of return: {metrics.get('monthly_return', 0): 2%}
+• Daily rate of return: {metrics.get('daily_return', 0): 2%}
+• Sharp coefficient: {metrics.get('sharpe_ratio', 0):2f}
+• Maximum draught: {metrics.get('max_drawdown', 0):2%}
+• Percentage of winning transactions: {metrics.get('win_rate', 0): 2%}
+• Factor arrived: {metrics.get('profit_factor', 0):2f}
 
-🛡️ metrics РОБАСТНОСТИ:
- • Консистентность: {metrics.get('consistency', 0):.2f}
- • Стабильность: {metrics.get('stability', 0):.2f}
- • Адаптивность: {metrics.get('adaptability', 0):.2f}
- • Устойчивость к стрессу: {metrics.get('stress_resistance', 0):.2f}
+♪ metrics of FAILITY:
+• Consistency: {metrics.get('consistency', 0):2f}
+• Stability: {metrics.get('stability', 0):2f}
+• Adaptation: {metrics.get('adaptability', 0):2f}
+• Stress resistance: {metrics.get('stress_resistance', 0):2f}
 
 🤖 ML metrics:
- • Точность: {metrics.get('accuracy', 0):.2%}
+• Accuracy: {metrics.get('accuracy', 0): 2%}
  • Precision: {metrics.get('precision', 0):.2%}
  • Recall: {metrics.get('recall', 0):.2%}
  • F1-Score: {metrics.get('f1_score', 0):.2%}
- • Конфиденс: {metrics.get('confidence', 0):.2f}
+• Confidential: {metrics.get('confidence', 0):2f}
 
-🎯 ЦЕЛЕВЫЕ metrics:
- • Достижение цели: {metrics.get('target_achievement', 0):.2%}
- • Общий балл: {metrics.get('performance_score', 0):.1f}/100
- • Статус системы: {metrics.get('system_status', 'UNKNOWN')}
+♪ TARGET METHICS:
+• Achieving the goal: {metrics.get('target_achivement', 0:2%}
+• Total score: {metrics.get('performance_score', 0):1f}/100
+• System status: {metrics.get('system_status', `UNKNOWN')}
 
 {'='*60}
  """
 
  return Report
 
-# example использования
+# Example of use
 if __name__ == "__main__":
- # create testsых данных
+# Create testy data
  dates = pd.date_range('2024-01-01', periods=100, freq='D')
  Portfolio_values = pd.Series(
  np.cumsum(np.random.normal(0.01, 0.02, 100)) + 1000,
@@ -2610,124 +2610,124 @@ if __name__ == "__main__":
  'timestamp': dates[:50]
  })
 
- # Расчет метрик
+# The calculation of the metric
  metrics_calculator = PerformanceMetrics()
  metrics, Report = metrics_calculator.generate_performance_Report(Portfolio_values, trades_df)
 
  print(Report)
 ```
 
-### metrics робастности
+### metrics of roboticity
 
-**Theory:** metrics робастности оценивают устойчивость системы к различным рыночным условиям and способность поддерживать стабильную performance. Эти metrics критически важны for долгосрочного успеха системы.
+**Theory:** robotics of platitude assess the system's resilience to different market conditions and the ability to maintain stable performance. These metrics are critical for the long-term success of the system.
 
-#### Consistency (Консистентность)
-- **Определение:** Стабильность доходности во времени
-- **Формула:** 1 - (Стандартное отклонение доходности / Средняя доходность)
-- **Целевое значение:** >0.8
-- **Важность:** Показывает предсказуемость результатов
+####Consistency
+- ** Definition:** Stability in time return
+- **Formula:**1 - (standard deviation of return / average return)
+- ** Target value:** >0.8
+- ** Importance:** Shows predictability of results
 
-#### Stability (Стабильность)
-- **Определение:** Обратная dependency from волатильности
-- **Формула:** 1 / (1 + Стандартное отклонение доходности)
-- **Целевое значение:** >0.5
-- **Важность:** Измеряет устойчивость к рыночным колебаниям
+#### Stability
+- ** Definition:** Reverse dependency from volatility
+- **Formoule:** 1 / (1 + Standard Deviation of Interest)
+- ** Objective value:** >0.5
+- ** Importance:** Measures market resistance
 
-#### Adaptability (Адаптивность)
-- **Определение:** Способность быстро восстанавливаться после просадок
-- **Формула:** 1 / (1 + Среднее время восстановления / 100)
-- **Целевое значение:** >0.7
-- **Важность:** Критически важно for долгосрочной устойчивости
+#### Adaptation
+- ** Definition:** Ability to recover quickly after a delay
+- **Formoule:** 1 / (1 + average rise time / 100)
+- ** Target value:** >0.7
+- ** Importance:** Critical for long-term sustainability
 
-#### Stress Resistance (Устойчивость к стрессу)
-- **Определение:** performance in периоды высокой волатильности
-- **Формула:** performance in стрессовых условиях / Нормальная performance
-- **Целевое значение:** >0.8
-- **Важность:** Показывает надежность in кризисных ситуациях
+### Struss Resistance
+- ** Definition:** performance in periods of high volatility
+- ** Formula:** performance in stress conditions / Normal performance
+- ** Target value:** >0.8
+- ** Importance:** Shows reliability in crisis situations
 
-### Целевые metrics
+### Target metrics
 
-**Theory:** Целевые metrics оценивают степень достижения поставленных целей системы and общую эффективность. Эти metrics критически важны for принятия решений об оптимизации and развитии системы.
+**Theory:** Target metrics assess the extent to which the system &apos; s objectives have been achieved and the overall effectiveness; these metrics are critical for decision-making on system optimization and development.
 
-#### Target Achievement (Достижение целей)
-- **Определение:** Процент достижения месячной цели in 100%
-- **Формула:** Фактическая месячная доходность / 100% × 100%
-- **Целевое значение:** >100%
-- **Важность:** Основной показатель успешности системы
+####Target Achievement
+** Definition: ** Percentage of achievement of monthly target in 100%
+- **Formoule:** Actual monthly rate of return / 100 per cent x 100 per cent
+** Target value:** > 100 per cent
+- ** Importance:** Main success indicator of the system
 
-#### Performance Score (Общий балл performance)
-- **Определение:** Взвешенная оценка all метрик (0-100)
-- **Формула:** Сумма нормализованных метрик × весовые коэффициенты
-- **Целевое значение:** >90
-- **Важность:** Комплексная оценка эффективности системы
+### Performance Score
+- ** Definition:** Weighted estimate of all metric (0-100)
+- **formula:** Amount of normalized metrics x weighting factors
+- ** Objective value:** >90
+- ** Importance:** Integrated evaluation of the system &apos; s effectiveness
 
-#### system Status (Статус системы)
-- **Определение:** Качественная оценка состояния системы
-- **Значения:** EXCELLENT (90+), GOOD (75-89), FAIR (60-74), POOR (40-59), CRITICAL (<40)
-- **Важность:** Быстрая оценка необходимости вмешательства
+#### System Status
+- ** Definition: ** Qualitative assessment of the system
+- ** Values:** EXCELLENT (90+), GOOD (75-89), FAIR (60-74), POOR (40-59), CRITICAL (<40)
+- ** Importance:** Rapid assessment of intervention
 
-## 🚨 Система алертов
+♪ ♪ The allergy system ♪
 
-**Theory:** Система алертов является критически важным компонентом for обеспечения непрерывного Monitoringа and быстрого реагирования on изменения in работе торговой системы. Интеллектуальная система алертов позволяет своевременно выявлять проблемы, достижения and аномалии.
+**Theory:** The Alert System is a critical component for ensuring continuous monitoring and rapid response to changes in the trading system.The Intelligent Alert System allows timely identification of problems, achievements and anomalies.
 
-**Почему система алертов критически важна:**
-- **Раннее предупреждение:** Позволяет быстро реагировать on проблемы to их эскалации
-- **Автоматизация Monitoringа:** Исключает необходимость постоянного ручного контроля
-- **Многоуровневая система:** Обеспечивает различные уровни уведомлений in dependencies from критичности
-- **integration:** Позволяет получать notifications через различные каналы связи
+**Why the allergic system is critical:**
+- ** Early warning:** Allows a quick response to problems to escalate them
+- **Monitoring automation:**Excludes the need for constant manual control
+- ** Multi-level system:** Provides different levels of notification in dependencies from criticality
+- **integration:** Allows to receive notes through various channels of communication
 
-### Типы алертов
+♪ ## Type of allergic
 
-**Theory:** Система алертов использует многоуровневую классификацию for обеспечения правильного приоритизирования and маршрутизации уведомлений. Каждый тип алерта имеет свои характеристики, пороговые значения and каналы доставки.
+**Theory:** The Alert System uses a multi-level classification to ensure that notifications are correctly prioritized and routed. Each type of allertar has its own characteristics, thresholds and delivery channels.
 
-#### 1. Success Alerts (Успешные алерты)
+####1.Success Alerts
 
-**Theory:** Success алерты уведомляют о достижении положительных результатов and важных вех in работе системы. Эти алерты критически важны for мотивации and подтверждения эффективности системы.
+**Theory:**Success allerants report positive results and important milestones in the system, which are critical to motivate and confirm the effectiveness of the system.
 
-- **Достижение месячной цели (100%):** Уведомление о достижении целевой доходности
-- **Высокая performance:** Превышение ожидаемых показателей
-- **Новые рекорды:** Установление новых максимумов on различным метрикам
-- **Успешное retraining:** Завершение успешного обновления моделей
-- **Приоритет:** НИЗКИЙ
-- **Каналы:** Email, Telegram, Discord
+- **Minimum achievement (100 per cent):** Notification of achievement of target return
+- ** High performance:** Exceedance
+New records:** Establishment of new maximums on different metrics
+- ** Successful retraining:** Completion of successful model updates
+- **Priority:** NICKY
+- ** Channels:** Email, Telegram, Discord
 
-#### 2. Warning Alerts (Предупреждающие алерты)
+####2. Warning Alerts
 
-**Theory:** Warning алерты сигнализируют о потенциальных проблемах, которые требуют внимания, но not являются критическими. Эти алерты позволяют принимать превентивные меры.
+**Theory:** Warning Alerts signal potential problems that need attention, but not critical.
 
-- **Превышение максимальной просадки (>15%):** Критическое снижение капитала
-- **Низкий коэффициент Шарпа (<1.5):** Снижение риск-скорректированной доходности
-- **Низкий процент выигрышных сделок (<60%):** Ухудшение качества сигналов
-- **Высокая волатильность:** Необычно высокие колебания цен
-- **Дрифт данных:** Обнаружение изменений in распределении данных
-- **Приоритет:** СРЕДНИЙ
-- **Каналы:** Email, Telegram, Discord
+- ** Excess of maximum draught (>15%):** Critical capital decline
+- ** Low Sharp coefficient (<1.5):** Reduction in risk-adjusted return
+- ** Low percentage of winning transactions (<60%):** Deterioration of signal quality
+- ** High volatility:** Unusually high price fluctuations
+- ** Data Drift:** Detection of changes in data distribution
+- **Priority:**Medium
+- ** Channels:** Email, Telegram, Discord
 
-#### 3. Error Alerts (Алерты об ошибках)
+#### 3. Error Alerts
 
-**Theory:** Error алерты уведомляют о критических ошибках and сбоях in работе системы. Эти алерты требуют немедленного вмешательства for восстановления нормальной работы.
+**Theory:**Error Alerts notify critical errors and malfunctions in the system, which require immediate intervention to restore normal operation.
 
-- **Ошибки системы:** Критические сбои in работе компонентов
-- **Issues with подключением:** Потеря связи with внешними services
-- **Ошибки торговых операций:** Сбои in исполнении сделок
-- **Ошибки ML моделей:** Issues with предсказаниями
-- **Ошибки базы данных:** Issues with хранением данных
-- **Приоритет:** ВЫСОКИЙ
-- **Каналы:** Email, Telegram, Discord, SMS (for критических)
+- ** System errors:** Critical component malfunctions
+- **Issues with connection:** Loss of communication with external services
+- ** Trade errors:** Failures in execution of transactions
+- ** Model ML errors:** Issues with predictions
+- ** Database errors:** Issues with data storage
+- **Priority:** Higher
+- ** Channels:** Email, Telegram, Discord, SMS (for critical)
 
-#### 4. Critical Alerts (Критические алерты)
+♪###4. ♪ Critical Alerts ♪
 
-**Theory:** Critical алерты сигнализируют о ситуациях, которые могут привести к значительным потерям or полной остановке системы. Эти алерты требуют немедленного реагирования.
+**Theory:**Critic Alerts signal situations that could cause significant loss or complete system stoppage. These allerts require immediate response.
 
-- **Критическая просадка (>25%):** Опасное снижение капитала
-- **Полная остановка системы:** Система перестала Workingть
-- **Критические ошибки безопасности:** Подозрительная активность
-- **Потеря данных:** Критическая потеря важной информации
-- **Приоритет:** КРИТИЧЕСКИЙ
-- **Каналы:** Все доступные каналы + SMS + Звонки
+- ** Critical fallout (>25%):** Dangerous capital decline
+- ** Full system stop:** System stopped Working
+- ** Critical safety errors:** Suspicious activity
+- ** Loss of data:** Critical loss of important information
+- **Priority:** CRITICAL
+- ** Channels:** All available channels + SMS + Calls
 
 ```python
-# Полнофункциональная система алертов
+# A fully functional allergic system
 import asyncio
 import logging
 import smtplib
@@ -2739,13 +2739,13 @@ from typing import Dict, List, Optional
 import json
 
 class Alertsystem:
- """Система алертов for NeoZorK 100% system"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
  def __init__(self, config):
  self.config = config
  self.logger = logging.getLogger(__name__)
 
- # Пороговые значения for алертов
+# Thresholds for allers
  self.thresholds = {
  'monthly_return_target': 1.0, # 100%
  'max_drawdown_warning': 0.15, # 15%
@@ -2756,138 +2756,138 @@ class Alertsystem:
  'profitability_min': 0.50
  }
 
- # История алертов for предотвращения спама
+# The story of allers for the prevention of spam
  self.alert_history = {}
  self.cooldown_periods = {
- 'SUCCESS': 3600, # 1 час
+'SUCESS': 3600, #1 hour
  'WARNING': 1800, # 30 minutes
  'ERROR': 300, # 5 minutes
- 'CRITICAL': 60 # 1 minutesа
+'CRITICAL': 60 #1 minutesa
  }
 
  async def check_performance_alerts(self, metrics: Dict):
- """check алертов on performance"""
+"Check Alerts on Performance."
 
  alerts = []
 
- # check достижения месячной цели
+# Check achieving the monthly goal
  monthly_return = metrics.get('monthly_return', 0)
  if monthly_return >= self.thresholds['monthly_return_target']:
  alerts.append({
  'type': 'SUCCESS',
- 'title': '🎯 Достигнута месячная Goal!',
- 'message': f'Месячная доходность: {monthly_return:.2%}',
+'Title': '\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\=====================================The===========================================================================================================================================================================================================================================================
+'message': f'monthly yield: {monthly_return: 2%},
  'priority': 'LOW'
  })
 
- # check максимальной просадки
+# Check maximum tarpaulin
  max_drawdown = metrics.get('max_drawdown', 0)
  if max_drawdown >= self.thresholds['max_drawdown_critical']:
  alerts.append({
  'type': 'CRITICAL',
- 'title': '🚨 КРИТИЧЕСКАЯ ПРОСАДКА!',
- 'message': f'Максимальная просадка: {max_drawdown:.2%}',
+'Title': 'The CRITICAL PROGRESS! '
+'message': f'Maximal draught: {max_drawdown:2%},
  'priority': 'CRITICAL'
  })
  elif max_drawdown >= self.thresholds['max_drawdown_warning']:
  alerts.append({
  'type': 'WARNING',
- 'title': '⚠️ Превышена максимальная просадка',
- 'message': f'Максимальная просадка: {max_drawdown:.2%}',
+'Title': `\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}}}}}}=================================================
+'message': f'Maximal draught: {max_drawdown:2%},
  'priority': 'MEDIUM'
  })
 
- # check коэффициента Шарпа
+# Check Sharpe coefficient
  sharpe_ratio = metrics.get('sharpe_ratio', 0)
  if sharpe_ratio < self.thresholds['sharpe_ratio_min']:
  alerts.append({
  'type': 'WARNING',
- 'title': '⚠️ Низкий коэффициент Шарпа',
- 'message': f'Коэффициент Шарпа: {sharpe_ratio:.2f}',
+'title': 'the low Sharpe coefficient,'
+'message': f' Sharpe Coefficient: {sharpe_ratio:.2f},
  'priority': 'MEDIUM'
  })
 
- # check процента выигрышных сделок
+# Check percent of winning deals
  win_rate = metrics.get('win_rate', 0)
  if win_rate < self.thresholds['win_rate_min']:
  alerts.append({
  'type': 'WARNING',
- 'title': '⚠️ Низкий процент выигрышных сделок',
- 'message': f'Процент выигрышных сделок: {win_rate:.2%}',
+'title': `\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+'message': f' Percentage of winning transactions: {win_rate: 2%},
  'priority': 'MEDIUM'
  })
 
- # check точности ML моделей
+# Check accuracy ML models
  accuracy = metrics.get('accuracy', 0)
  if accuracy < self.thresholds['accuracy_min']:
  alerts.append({
  'type': 'ERROR',
- 'title': '❌ Низкая точность ML моделей',
- 'message': f'Точность: {accuracy:.2%}',
+'title': '\\\ low accuracy ML models',
+'message': f'Totality: {accuracy: 2%},
  'priority': 'HIGH'
  })
 
- # check прибыльности
+# Check of profitability
  profitability = metrics.get('profitability', 0)
  if profitability < self.thresholds['profitability_min']:
  alerts.append({
  'type': 'ERROR',
- 'title': '❌ Низкая прибыльность',
- 'message': f'Прибыльность: {profitability:.2%}',
+'title': '.. Low profitability',
+'message': f 'Profitness: {profitiability: 2%},
  'priority': 'HIGH'
  })
 
  return alerts
 
  async def check_system_alerts(self, system_Status: Dict):
- """check системных алертов"""
+"Check System Alerts."
 
  alerts = []
 
- # check статуса системы
+# check system status
  if system_status.get('status') == 'CRITICAL':
  alerts.append({
  'type': 'CRITICAL',
- 'title': '🚨 КРИТИЧЕСКИЙ СТАТУС СИСТЕМЫ!',
- 'message': 'Система находится in критическом состоянии',
+'Title': 'The CRITICAL STATUS OF THE SYSTEM! '
+'message': 'The system is in critical state',
  'priority': 'CRITICAL'
  })
 
- # check подключений
+# Check connections
  if not system_status.get('database_connected', True):
  alerts.append({
  'type': 'ERROR',
- 'title': '❌ Ошибка подключения к базе данных',
- 'message': 'Потеряно подключение к базе данных',
+'Title': '\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+'message': 'Lost connection to the database',
  'priority': 'HIGH'
  })
 
  if not system_status.get('api_connected', True):
  alerts.append({
  'type': 'ERROR',
- 'title': '❌ Ошибка подключения к API',
- 'message': 'Потеряно подключение к торговым API',
+'Title': '\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+'message': 'Lost connection to trade API',
  'priority': 'HIGH'
  })
 
  if not system_status.get('blockchain_connected', True):
  alerts.append({
  'type': 'ERROR',
- 'title': '❌ Ошибка подключения к блокчейну',
- 'message': 'Потеряно подключение к блокчейну',
+'Title': '\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\(\\\\\\\\\(\\\\\\\\\\\\\\\\\\\\\\\\\\(\\\\\\\\\\\\\\\\\\\\\\\(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\(((((((\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+'message': 'Lost connection to the locker,'
  'priority': 'HIGH'
  })
 
  return alerts
 
  async def send_alert(self, alert: Dict):
- """Отправка алерта через все настроенные каналы"""
+""Sending the allert through all the established channels."
 
- # check cooldown периода
+# Check cooldown period
  if self._is_in_cooldown(alert):
  return
 
- # Отправка через все каналы
+# Sending through all channels
  tasks = []
 
  if self.config.alerts.email.enabled:
@@ -2899,15 +2899,15 @@ class Alertsystem:
  if self.config.alerts.discord.enabled:
  tasks.append(self._send_discord_alert(alert))
 
- # Выполнение all задач параллельно
+# Meeting all tasks in parallel
  if tasks:
  await asyncio.gather(*tasks, return_exceptions=True)
 
- # Запись in историю
+# Recording in history
  self._record_alert(alert)
 
  async def _send_email_alert(self, alert: Dict):
- """Отправка алерта on email"""
+"Sent an aller on email."
  try:
  msg = MIMEMultipart()
  msg['From'] = self.config.alerts.email.Username
@@ -2917,9 +2917,9 @@ class Alertsystem:
  body = f"""
 {alert['message']}
 
-Время: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-Приоритет: {alert['priority']}
-Тип: {alert['type']}
+Time: {datetime.now(.strftime('%Y-%m-%d%H:%M:%S')}
+Priority: {alert['priority']}
+Type: {alert['type']}
 
 ---
 NeoZorK 100% system Alert system
@@ -2933,13 +2933,13 @@ NeoZorK 100% system Alert system
  server.send_message(msg)
  server.quit()
 
- self.logger.info(f"✅ Email алерт отправлен: {alert['title']}")
+Self.logger.info(f"\Email allert sent: {alert['title']}})
 
  except Exception as e:
- self.logger.error(f"❌ Ошибка отправки email алерта: {e}")
+Self.logger.error(f"
 
  async def _send_telegram_alert(self, alert: Dict):
- """Отправка алерта in Telegram"""
+"Sent an allert in Telegram."
  try:
  bot_token = self.config.alerts.telegram.bot_token
  chat_id = self.config.alerts.telegram.chat_id
@@ -2949,9 +2949,9 @@ NeoZorK 100% system Alert system
 
 {alert['message']}
 
-⏰ Время: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-🔔 Приоритет: {alert['priority']}
-📊 Тип: {alert['type']}
+♪ Time: {datetime.now().strftime('%Y-%m-%d%H:%M:%S')}
+priority: {alert['priority']}
+Type: {alert['type']}
  """
 
  url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
@@ -2964,22 +2964,22 @@ NeoZorK 100% system Alert system
  response = requests.post(url, data=data, timeout=10)
  response.raise_for_status()
 
- self.logger.info(f"✅ Telegram алерт отправлен: {alert['title']}")
+== sync, corrected by elderman == @elder_man
 
  except Exception as e:
- self.logger.error(f"❌ Ошибка отправки Telegram алерта: {e}")
+Self.logger.error(f"
 
  async def _send_discord_alert(self, alert: Dict):
- """Отправка алерта in Discord"""
+"Sent an allerte in Discord."
  try:
  webhook_url = self.config.alerts.discord.webhook_url
 
- # Выбор цвета in dependencies from типа алерта
+# The color in dependencies from the type of allert
  color_map = {
- 'SUCCESS': 0x00ff00, # Зеленый
- 'WARNING': 0xffff00, # Желтый
- 'ERROR': 0xff0000, # Красный
- 'CRITICAL': 0x8b0000 # Темно-красный
+'SUCESS': 0x00ff00, #Green
+'WARNING': 0xffd00, #Yellow
+'ERROR': 0xffd00, #Red
+'CRITICAL': 0x8b0000 #dark red
  }
 
  embed = {
@@ -2989,12 +2989,12 @@ NeoZorK 100% system Alert system
  "timestamp": datetime.now().isoformat(),
  "fields": [
  {
- "name": "Приоритет",
+"name": "Priority,"
  "value": alert['priority'],
  "inline": True
  },
  {
- "name": "Тип",
+"Name": "Tip,"
  "value": alert['type'],
  "inline": True
  }
@@ -3011,13 +3011,13 @@ NeoZorK 100% system Alert system
  response = requests.post(webhook_url, json=data, timeout=10)
  response.raise_for_status()
 
- self.logger.info(f"✅ Discord алерт отправлен: {alert['title']}")
+== sync, corrected by elderman == @elder_man
 
  except Exception as e:
- self.logger.error(f"❌ Ошибка отправки Discord алерта: {e}")
+Self.logger.error(f"
 
  def _is_in_cooldown(self, alert: Dict) -> bool:
- """check, находится ли алерт in периоде cooldown"""
+""Check, is the allerte in the cooldown period""
  alert_key = f"{alert['type']}_{alert['title']}"
  cooldown_period = self.cooldown_periods.get(alert['type'], 3600)
 
@@ -3029,28 +3029,28 @@ NeoZorK 100% system Alert system
  return False
 
  def _record_alert(self, alert: Dict):
- """Запись алерта in историю"""
+"""""""""""""""""""""""""
  alert_key = f"{alert['type']}_{alert['title']}"
  self.alert_history[alert_key] = datetime.now()
 
  async def process_alerts(self, metrics: Dict, system_Status: Dict):
- """Обработка all алертов"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
- # Получение all алертов
+# Getting allergic
  performance_alerts = await self.check_performance_alerts(metrics)
  system_alerts = await self.check_system_alerts(system_status)
 
  all_alerts = performance_alerts + system_alerts
 
- # Отправка алертов
+# Sending allers
  for alert in all_alerts:
  await self.send_alert(alert)
 
  return len(all_alerts)
 
-# example использования
+# Example of use
 if __name__ == "__main__":
- # create testsых метрик
+# Create test meths
  test_metrics = {
  'monthly_return': 1.2, # 120%
  'max_drawdown': 0.05, # 5%
@@ -3067,194 +3067,194 @@ if __name__ == "__main__":
  'blockchain_connected': True
  }
 
- # create and Launch системы алертов
+# rent and launch aller system
  alert_system = Alertsystem(config)
  asyncio.run(alert_system.process_alerts(test_metrics, test_system_status))
 ```
 
-### Каналы уведомлений
+### Notification channels
 
-**Theory:** Система использует множественные каналы уведомлений for обеспечения надежной доставки алертов. Каждый канал имеет свои преимущества and используется for различных типов уведомлений.
+**Theory:** The system uses multiple channels of notification to ensure the reliable delivery of allers. Each channel has its advantages and is used for different types of notifications.
 
-#### Email (Электронная почта)
-- **Назначение:** Детальные Reportы and documentation
-- **Преимущества:** Форматирование, вложения, архивирование
-- **Использование:** Ежедневные Reportы, детальные алерты
-- **configuration:** SMTP сервер, учетные data, получатели
+### Email (e-mail)
+- ** Designation:** Detailed Reports and Documentation
+- ** Benefits:** Formatting, deposits, archiving
+- ** Use:** Daily Reports, Detailed Alerts
+- **configuring:** SMTP server, account data, recipients
 
-#### Telegram (Мессенджер)
-- **Назначение:** Быстрые notifications and мобильные алерты
-- **Преимущества:** Мгновенная доставка, мобильные notifications
-- **Использование:** Критические алерты, быстрые notifications
-- **configuration:** Bot Token, Chat ID, форматирование
+### Telegram (Messinger)
+- ** Designation:** Rapid references and mobile allerates
+- ** Benefits:** Instant delivery, mobile notes
+- ** Use:** Critical Alerts, Rapid Notes
+- **configuring:** Bot Token, Chat ID, formatting
 
-#### Discord (Командная platform)
-- **Назначение:** integration with командой разработки
-- **Преимущества:** Rich embeds, integration with рабочими процессами
-- **Использование:** Командные notifications, Monitoring
-- **configuration:** Webhook URL, каналы, роли
+#### Discord
+- ** Designation:** integration with development team
+- ** Benefits:** Rich embeds, integration with business processes
+- ** Use:** Command notes, Monitoring
+- **configuring:** Webhook UrL, channels, roles
 
-#### SMS (Сотовые messages)
-- **Назначение:** Критические алерты in любое время
-- **Преимущества:** Высокая надежность доставки
-- **Использование:** Только критические ситуации
-- **configuration:** SMS API, номера телефонов, лимиты
+#### SMS
+- ** Designation:** Critical allers at any time
+- ** Benefits:** High reliability of delivery
+- ** Use:** Only critical situations
+- **configuring:** SMS API, telephone numbers, limits
 
-#### Push notifications (Мобильные notifications)
-- **Назначение:** Мобильные notifications in приложении
-- **Преимущества:** integration with мобильным applicationм
-- **Использование:** Персональные notifications
-- **configuration:** Push services, токены устройств
+#### Push notes
+- ** Designation:** Mobile references in the annex
+- ** Benefits:** integration with mobile application
+- ** Use:** Personal references
+- **configuring:** Pusch services, devices currents
 
-## 🔒 Безопасность
+♪ ♪ Safety ♪
 
-**Theory:** Безопасность представляет собой комплекс мер on защите системы, данных and операций from несанкционированного доступа and злоупотреблений. Это критически важно for надежной работы системы.
+**Theory:** Security is a set of measures to protect the system, data and operations from unauthorized access and abuse, which is critical for a reliable system.
 
-**Почему безопасность важна:**
-- **Защита:** Обеспечивает защиту системы and данных
-- **Надежность:** Обеспечивает надежность работы
-- **Конфиденциальность:** Обеспечивает конфиденциальность
-- **Целостность:** Критически важно for целостности данных
+** Why security matters:**
+- ** Protection:** Provides system and data protection
+- ** Reliability:** Ensures reliability of work
+- ** Confidentiality:** Ensures confidentiality
+- ** Cyclability:** Critical for data integrity
 
-**Плюсы:**
-- Защита системы and данных
-- Надежность работы
-- Конфиденциальность
-- Целостность данных
+** Plus:**
+- System and data protection
+Reliability of work
+Confidentiality
+- Data integrity
 
 **Disadvantages:**
-- Сложность реализации
-- Высокие требования к знаниям
-- Потенциальные ограничения функциональности
+- The difficulty of implementation
+- High knowledge requirements
+- Potential functional limitations
 
-### Management ключами
+## Management with keys
 
-**Theory:** Management ключами критически важно for обеспечения безопасности доступа к системе and защиты конфиденциальных данных. Это основа for безопасной работы системы.
+**Theory:** Management keys are critical for security of access to the system and protection of confidential data.
 
-**Почему Management ключами важно:**
-- **Безопасность доступа:** Обеспечивает безопасность доступа
-- **Защита данных:** Обеспечивает защиту конфиденциальных данных
-- **Контроль:** Обеспечивает контроль доступа
-- **Аудит:** Критически важно for аудита доступа
+# Why Management's Keys Matters #
+- ** Security of access:** Provides security of access
+- ** Data protection:** Provides protection of confidential data
+- ** Control:** Ensures access control
+- **Audit:** Critically important for audit of access
 
 ```bash
-# Генерация нового приватного ключа
+# New private key generator
 openssl rand -hex 32
 
-# Шифрование конфигурации
+# Scaling configuration
 gpg --symmetric --cipher-algo AES256 config/config.yaml
 ```
 
-### Ограничения доступа
+### Access restrictions
 
-- Все API ключи in переменных окружения
-- Шифрование чувствительных данных
-- Ограничение доступа к логам
-- Регулярная ротация ключей
+- All API keys in a variable environment
+- Identification of sensitive data
+- Restriction of access to logs
+- Regular key rotation
 
 ## 📚 documentation
 
-### Structure документации
+###Structuring documentation
 
 ```
 docs/automl/neozork/
-├── 01_environment_setup.md # configuration окружения
-├── 02_robust_systems_fundamentals.md # Основы робастных систем
-├── 03_data_preparation.md # Подготовка данных
-├── 04_feature_engineering.md # Инженерия признаков
-├── 05_model_training.md # Обучение моделей
-├── 06_backtesting.md # Бэктестинг
-├── 07_walk_forward_Analysis.md # Walk-forward анализ
-├── 08_monte_carlo_simulation.md # Монте-Карло симуляция
-├── 09_risk_Management.md # Management рисками
-├── 10_blockchain_deployment.md # Блокчейн деплой
-├── 11_wave2_Analysis.md # Анализ WAVE2
-├── 12_schr_levels_Analysis.md # Анализ SCHR Levels
-├── 13_schr_short3_Analysis.md # Анализ SCHR SHORT3
-├── 14_advanced_practices.md # Продвинутые практики
-├── 15_Portfolio_optimization.md # Оптимизация Portfolio
-├── 16_metrics_Analysis.md # Анализ метрик
+♪ ♪ 01_environment_setup.md #conference environment
+♪ ♪ 02_robust_systems_fundamentals.md # Basics of Robastic Systems
+== sync, corrected by elderman == @elder_man
+E4_feature_energying.md #Engineering
+== sync, corrected by elderman == @elder_man
+06_backtesting.md #Backetsting
+== sync, corrected by elderman == @elder_man
+== sync, corrected by elderman == @elder_man
+09_risk_Management.md #Management Risks
+10_blockchain_deployment.md # Blockchen
+== sync, corrected by elderman == @elder_man
+12_shr_levels_Analisis.md # Analysis of SCHR Livels
+13_shr_short3_Analisis.md # SCHR SHORT3 analysis
+14_advanced_practices.md # Advanced practices
+15_Porthfolio_optimization.md # Optimizing Portfolio
+16_metrics_Analysis.md #Metric analysis
 ├── 17_examples.md # examples
-├── 18_complete_system.md # Полная система
-├── 18_system_components.md # components системы
-├── 18_blockchain_system.md # Блокчейн система
+18_complete_system.md # Complete system
+== sync, corrected by elderman == @elder_man
+18_blockchain_system.md # Blockchen system
 ├── 18_Monitoring_metrics.md # Monitoring and metrics
-└── 18_README.md # Этот файл
+18_README.md #This file
 ```
 
-## 🤝 Поддержка
+## ♪ Support
 
-### Сообщество
+### Community
 
-- **GitHub Issues**: [Создать issue](https://github.com/your-repo/neozork-100-percent-system/issues)
-- **Discord**: [Присоединиться](https://discord.gg/your-server)
+- **GitHub Issues**: [Construct the issue] (https://github.com/yor-repo/neozork-100-percent-system/issues)
+- **Discord**: [According] (https://discord.gg/your-server)
 - **Telegram**: [@neozork_support](https://t.me/neozork_support)
 
-### Коммерческая поддержка
+### Commercial support
 
 - **Email**: support@neozork.com
 - **Telegram**: @neozork_commercial
 - **Discord**: Commercial Support Channel
 
-## 📄 Лицензия
+♪ ♪ License
 
-MIT License - см. [LICENSE](LICENSE) файл for деталей.
+MIT Library - see [LICENSE](LICENSE) file for details.
 
-## ⚠️ Отказ from ответственности
+## ♪ Refuse from responsibility
 
-**ВАЖНО**: Эта система предназначена for образовательных and исследовательских целей. Торговля on финансовых рынках сопряжена with высокими рисками. Авторы not несут ответственности за любые потери, возникшие in результате использования данной системы. Всегда тестируйте system on testnet перед использованием реальных средств.
+**VER**: This system is intended for educational and research purposes. Trade on financial markets carries high risks. The authors of the note are responsible for any losses caused by the use of the system. Always test the system on testnet before using real means.
 
 ## 🎯 Roadmap
 
-### v1.0.0 (Текущая версия)
-- ✅ Базовая система ML
-- ✅ Три основных индикатора
-- ✅ Блокчейн integration
-- ✅ Система Monitoringа
+### v1.0.0 (current version)
+- ML Basic System
+- Three main indicators
+- ♪ Blockchen integration ♪
+- The Monitoring System
 
-### v1.1.0 (Planируется)
-- 🔄 Дополнительные индикаторы
-- 🔄 Улучшенная система рисков
+### v1.0 (Planned)
+- Additional indicators
+- Improved risk system
 - 🔄 mobile application
 
-### v1.2.0 (Planируется)
-- 🔄 AI-ассистент
-- 🔄 Автоматическая оптимизация
-- 🔄 Расширенная аналитика
+### v1.2.0 (Planned)
+- A.I. Assistant
+- Automatic optimization
+- Expanded Analyst
 
 ---
 
-**Theory:** Заключительная часть представляет собой итоговое describe системы and призыв к действию. Это критически важно for мотивации пользователей and подчеркивания важности системы.
+**Theory:** The final part is a final describe system and a call for action, which is critical to motivate users and emphasize the importance of the system.
 
-**Почему заключительная часть важна:**
-- **Мотивация:** Обеспечивает мотивацию пользователей
-- **Подведение итогов:** Обеспечивает подведение итогов
-- **Призыв к действию:** Обеспечивает призыв к действию
-- **Важность:** Критически важно for подчеркивания важности системы
+**Why is the final part important:**
+- **motivation:** Provides motivation to users
+- ** Summarization:** Provides a summary
+- ** Call to Action:** Provides a call to action
+- ** Importance: ** Critical for emphasizing the importance of the system
 
-**Плюсы:**
-- Мотивация пользователей
-- Подведение итогов
-- Призыв к действию
-- Подчеркивание важности
+** Plus:**
+- User motivation
+- Summarization
+- Call for action
+- Stressing the importance
 
 **Disadvantages:**
-- Потенциальная избыточность
-- Возможные завышенные ожидания
+- Potential excess
+- Possible high expectations
 
-## 🚀 Практические examples использования
+## ♪ Practical uses
 
-**Theory:** Практические examples демонстрируют реальные сценарии использования системы NeoZorK 100% and помогают Userм быстро начать работу. Эти examples критически важны for понимания возможностей системы and быстрого внедрения.
+**Theory:** Practical examples show real scenarios of the NeoZorK 100 per cent system and help Userm get started quickly. These examples are critical for understanding the system and rapid deployment.
 
-### example 1: Quick start with минимальной конфигурацией
+### example 1: Quick Start with minimum configuration
 
 ```python
-# Минимальная configuration for тестирования
+# Minimum configuring for testing
 from src.common.config import Config
 from src.ml.model_manager import ModelManager
 from src.trading.trading_engine import TradingEngine
 
-# create конфигурации
+# creative configuration
 config = Config({
  'data_sources': {
  'crypto': [{'symbol': 'BTC-USD', 'weight': 1.0}]
@@ -3266,32 +3266,32 @@ config = Config({
  }
 })
 
-# Инициализация системы
+# Initiating the system
 model_manager = ModelManager(config)
 trading_engine = TradingEngine(config, None, model_manager, None)
 
-# Launch торговли
+# Launch trade
 await trading_engine.start()
 ```
 
-### example 2: Полная configuration for продакшена
+### example 2: Full configuring for sale
 
 ```python
-# Полная configuration for продакшена
+# Full configuring for sale
 import asyncio
 from src.main import NeoZorKsystem
 
 async def main():
- # create системы
+# creative system
  system = NeoZorKsystem()
 
- # Инициализация
+# Initiating
  await system.initialize()
 
  # Launch
  await system.start()
 
- # Ожидание
+# Waiting
  while system.running:
  await asyncio.sleep(1)
 
@@ -3303,87 +3303,87 @@ if __name__ == "__main__":
 ### example 3: Monitoring performance
 
 ```python
-# create Reportа о performance
+# Create Performance Report
 from src.Monitoring.performance_metrics import PerformanceMetrics
 
 # Loading data
 Portfolio_values = pd.read_csv('data/Portfolio_values.csv', index_col=0, parse_dates=True)
 trades_df = pd.read_csv('data/trades.csv', parse_dates=True)
 
-# Расчет метрик
+# The calculation of the metric
 metrics_calculator = PerformanceMetrics()
 metrics, Report = metrics_calculator.generate_performance_Report(Portfolio_values, trades_df)
 
-# Вывод Reportа
+# Conclusion of the Report
 print(Report)
 ```
 
-### example 4: configuration алертов
+### example 4: configuring allers
 
 ```python
-# configuration системы алертов
+# configurization of allergic systems
 from src.Monitoring.alert_system import Alertsystem
 
-# create системы алертов
+♪ Create Alert System
 alert_system = Alertsystem(config)
 
-# testsые metrics
+# Testsy metrics
 test_metrics = {
  'monthly_return': 1.2,
  'max_drawdown': 0.05,
  'sharpe_ratio': 2.5
 }
 
-# Обработка алертов
+♪ Alerate processing
 await alert_system.process_alerts(test_metrics, {'status': 'GOOD'})
 ```
 
-## 📚 Дополнительные ресурсы
+## * Additional resources
 
-### Официальная documentation
+### Official documentation
 - **API Reference:** [docs/api/](docs/api/)
 - **Configuration Guide:** [docs/configuration/](docs/configuration/)
 - **deployment Guide:** [docs/deployment/](docs/deployment/)
 
-### Сообщество
-- **GitHub Discussions:** [Обсуждения](https://github.com/your-repo/discussions)
-- **Discord Server:** [Присоединиться](https://discord.gg/your-server)
+### Community
+- **GitHub Discussions:** [Discussions] (https://github.com/your-repo/discussions)
+- **Discord Surver:** [According] (https://discord.gg/your-server)
 - **Telegram Channel:** [@neozork_updates](https://t.me/neozork_updates)
 
-### Обучение
+### Training
 - **Tutorials:** [docs/tutorials/](docs/tutorials/)
 - **Video Guides:** [YouTube Channel](https://youtube.com/neozork)
-- **Webinars:** [Расписание](https://neozork.com/webinars)
+- **Webinars:** [Schedule] (https://neozork.com/webinars)
 
-## 🎯 Заключение
+♪ ♪ The ending ♪
 
-**Theory:** NeoZorK 100% system представляет собой революционную платформу for автоматизированной торговли, объединяющую передовые техноLogsи machine learning with блокчейн-интеграцией. Система спроектирована for достижения стабильной прибыли 100%+ in месяц при минимальных рисках.
+**Theory:** NeoZorK 100% system is a revolutionary platform for automated commerce that combines advanced technoLogs and machining with block-integration. The system is designed to achieve a stable profit of 100%+ per month with minimal risks.
 
-**Ключевые достижения системы:**
-- **Высокая доходность:** Стабильное достижение 100%+ месячной прибыли
-- **Робастность:** Устойчивость к различным рыночным условиям
-- **Автоматизация:** Полностью автоматизированный process торговли
-- **Scalability:** Возможность работы with любыми активами and объемами
-- **Безопасность:** Комплексная защита данных and операций
+** Key achievements of the system:**
+- ** High return:** Steady achievement of 100%+month return
+- **Purity:** Resistance to different market conditions
+- ** Automation:** Fully automated trade process
+- **Scalability:** Opportunity to work with any assets and volumes
+- ** Safety:** Integrated data and transaction security
 
-**Почему NeoZorK 100% system - это будущее торговли:**
-- **Искусственный интеллект:** Использует самые современные ML-алгоритмы
-- **Блокчейн-integration:** Полная integration with DeFi экосистемой
-- **Риск-менеджмент:** Продвинутые системы управления рисками
-- **Monitoring:** Комплексная система отслеживания and алертов
-- **Открытость:** Полностью открытый исходный код
+♪ Why NeoZorK 100% system is the future of trade ♪
+- ** Artificial intelligence:** uses state-of-the-art ML algoritms
+- ** Block-integration:** Full integration with DeFi ecosystem
+- ** Risk management:** Advanced risk management systems
+- **Monitoring:** Integrated Tracking and Alert System
+- **Openness:** Fully open source code
 
-**Следующие шаги:**
-1. **Изучите документацию:** Ознакомьтесь with полной документацией системы
-2. **Настройте окружение:** Следуйте инструкциям on установке
-3. **Начните with tests:** Use testnet for первых экспериментов
-4. **Присоединяйтесь к сообществу:** Получайте поддержку and делитесь опытом
-5. **Достигайте целей:** Use system for достижения финансовых целей
+** Next steps:**
+1. ** Look at the documentation:** See with full documentation of the system
+2. ** Adjust the environment:** Follow the instructions on installation
+3. ** Start with tests:** Use testnet for first experiments
+4. ** Join the community:** Get support and share experiences
+5. ** Achieve objectives:** Use system for achieving financial objectives
 
 ---
 
-**Создано with ❤️ командой NeoZorK**
+** Created by NeoZorK**
 
-*Достигайте 100%+ прибыли in месяц with помощью robust ML systems!*
+♪ Get 100% plus profit in month with Robst ML systems! ♪
 
-**⚠️ Важное напоминание:** Торговля on финансовых рынках сопряжена with высокими рисками. Всегда тестируйте system on testnet перед использованием реальных средств. Авторы not несут ответственности за любые потери, возникшие in результате использования данной системы.
+** * relevant reminder: ** Trade on financial markets carries high risks. Always test the system on testnet before using real means.

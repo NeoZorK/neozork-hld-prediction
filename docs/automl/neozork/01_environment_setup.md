@@ -38,7 +38,7 @@ Performance Comparison (Relative to Intel i9):
 ```
 
 ### Unified Memory Architecture (UMA)
-**Theory:** UMA allows CPU and GPU use shared memory without copying data between devices. This is critical for ML work, where large datasets and модели require fast access to memory.
+**Theory:** UMA allows CPU and GPU use used well-owned memory with out-of-date data from between products.This is critical for ML work, what large datasets and require fast access to memory models.
 
 ```
 Traditional Architecture (x86 + Discrete GPU):
@@ -76,7 +76,7 @@ M1 Pro Unified Memory:
 ```
 
 **Practical advantages:**
-- **Speed:** data are not copied между CPU and GPU, which speeds up processing by 3-5 times
+- **Speed:** Data are not copied between CPU and GPU, which speds up by 3-5 times
 - **Memory efficiency:** One dataset is used by both CPU and GPU simultaneously
 - **Scalability:** up to 32GB shared memory for large models
 - **Programming simplicity:** no need to manage data transfer between devices
@@ -86,7 +86,7 @@ M1 Pro Unified Memory:
 - Lower performance for very large models
 
 ### Neural Engine
-**Theory:** Specialized 16-ядерный processor for machine learning, optimized for operations with matrices and neural networks.
+**Theory:**Specialized 16-nuclear processor for machine lightning, optimized for operations with frameworks and neural networks.
 
 ```
 Neural Engine Performance:
@@ -126,19 +126,19 @@ Performance Comparison (TOPS - Trillions of Operations per Second):
 └─────────────────┴──────────┴──────────┴──────────┘
 ```
 
-**Преимущества:**
-- **Специализация:** Оптимизирован именно for ML-операций
-- **Энергоэффективность:** Потребляет in 10 раз меньше энергии чем GPU
-- **Speed:** to 11 TOPS (триллионов операций in секунду)
-- **Автоматическая оптимизация:** Apple автоматически использует Neural Engine for подходящих операций
+** Benefits:**
+- **Specialization:** Optimized for ML operations
+- ** Energy efficiency:** Consumption in 10 times less energy than GPU
+- **Speed:** to 11 TOPS.
+- **Automatic optimization:** Apple automatically uses Neural Energy for suitable operations
 
-**Ограничения:**
-- Workingет только with определенными типами операций
-- Меньшая гибкость compared to CUDA
-- Ограниченная поддержка пользовательских операций
+**Restrictions:**
+- Working only with certain types of operations
+- Less flexibility matched to CUDA
+- Limited support for user operations
 
 ### MLX Framework
-**Theory:** Apple-специфичный фреймворк, разWorkingнный for максимального использования возможностей M1/M2/M3 чипов.
+**Theory:** Apple-specific frame, unWorking for maximum use of M1/M2/M3 chips.
 
 ```
 MLX Framework Architecture:
@@ -181,24 +181,24 @@ Performance vs Other Frameworks:
 └─────────────────┴──────────┴──────────┴──────────┘
 ```
 
-**Ключевые особенности:**
-- **Нативная integration:** Прямой доступ к Neural Engine and GPU
-- **PyTorch-совместимость:** Легкая миграция существующего кода
-- **Автоматическая оптимизация:** Автоматический выбор лучшего устройства for каждой операции
-- **Unified API:** Единый interface for CPU, GPU and Neural Engine
+** Key features:**
+- **Indirect integration:** Direct access to Neural Engineering and GPU
+- **PyTorch compatibility:** Easy migration of existing code
+- ** Automatic optimization:** Automatic choice of the best device for each operation
+- **Unified API:** Unified Interface for CPU, GPU and National Energy
 
-**Плюсы:**
-- Максимальная performance on Apple Silicon
-- Простота использования
-- Энергоэффективность
-- Автоматическая оптимизация
+** Plus:**
+- Maximum performance on Apple Silicon
+- Easy use
+- Energy efficiency
+- Automatic optimization
 
 **Disadvantages:**
-- Привязка к экосистеме Apple
-- Меньшее сообщество compared to PyTorch/TensorFlow
-- Ограниченная поддержка некоторых операций
+- Reference to Apple ecosystem
+- Smaller community competing to PyTorch/TensorFlow
+- Limited support to some operations
 
-## Системные требования
+## System requirements
 
 ```
 system Requirements Visualization:
@@ -232,62 +232,62 @@ system Requirements Visualization:
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Минимальные требования
-**Theory:** Минимальные требования определяют базовую функциональность системы. for robust ML systems критично иметь достаточные ресурсы for обработки данных and обучения моделей.
+### Minimum requirements
+**Theory:**The minimum requirements determine the basic functionality of the system. for Robst ML systems is critical to have sufficient resources for data processing and model learning.
 
 - **macOS:** 12.0+ (Monterey)
- - **Почему:** Поддержка MLX Framework and оптимизаций for M1
- - **Плюсы:** Стабильность, совместимость with ML-библиотеками
- - **Disadvantages:** Ограниченные возможности compared to новыми версиями
+- **Why:** Support for MLX Framework and Optimisms for M1
+- ** Plus:** Stability, compatibility with ML libraries
+- **Disadvantages:** Limited opportunities to compete for new versions
 
-- **RAM:** 16GB (рекомендуется 32GB)
- - **Theory:** ML-модели требуют значительной памяти for хранения данных and промежуточных вычислений
- - **16GB:** Минимум for небольших моделей and датасетов
- - **32GB:** Оптимально for большинства ML-задач, позволяет Workingть with большими датасетами
- - **Плюсы:** Быстрая обработка, возможность работы with большими моделями
- - **Disadvantages:** Высокая стоимость, ограниченная доступность
+- **RAM:** 16GB (recommended 32GB)
+- **Theory:** ML models require significant memory for data storage and intermediate calculations
+- **16GB:** Minimum for Small Models and Datasets
+- **32GB:** Optimally for most ML objectives, allows Working with larger datasets
+- ** Plus:** Rapid processing, with large models
+- **Disadvantages:** High cost, limited availability
 
-- **Storage:** 100GB свободного места
- - **Theory:** ML-проекты требуют много места for данных, моделей and cache
- - **Плюсы:** Достаточно for небольших проектов
- - **Disadvantages:** Может быть недостаточно for больших датасетов
+- **Storage:** 100GB available
+- **Theory:** ML projects require a lot of space for data, models and cache.
+- ** Plus:** Enough for small projects
+- **Disadvantages:** may not be enough for big datasets
 
-- **Internet:** Стабильное соединение
- - **Почему:** Загрузка больших датасетов, update библиотек, доступ к облачным serviceм
- - **Плюсы:** Возможность работы with внешними данными
- - **Disadvantages:** dependency from интернет-соединения
+- **Internet:** Stable connection
+- ♪ Why: ♪ Loading big datasets, extradate libraries, accessing cloud services ♪
+- ** Plus:** Workability with external data
+- **Disadvantages:**dependency from Internet connection
 
-### Рекомендуемые требования
-**Theory:** Рекомендуемые требования обеспечивают оптимальную performance and комфортную работу with большими ML-проектами.
+### Recommended claims
+**Theory: ** Recommended requirements ensure optimal performance and comfort with large ML projects.
 
 - **macOS:** 14.0+ (Sonoma)
- - **Почему:** Новейшие оптимизации for M1, улучшенная поддержка ML-фреймворков
- - **Плюсы:** Максимальная performance, новые возможности
- - **Disadvantages:** Может быть менее стабильной on ранних этапах
+- **Why:** Newest optimization for M1, improved ML-frame support
+- ** Plus:** Maximum performance, new opportunities
+- **Disadvantages:** May be less stable on early stages
 
 - **RAM:** 32GB+
- - **Theory:** Большие ML-модели and датасеты требуют значительной памяти
- - **Плюсы:** Working with большими моделями, параллельная обработка
- - **Disadvantages:** Высокая стоимость, избыточность for простых задач
+- **Theory:** Big ML models and datesets require a lot of memory.
+- ** Plus:** Working with big models, parallel processing
+- **Disadvantages:** High cost, surplus for simple tasks
 
 - **Storage:** 500GB+ SSD
- - **Theory:** SSD обеспечивает быстрый доступ к данным, критично for ML work
- - **Плюсы:** Быстрая Loading data, быстрый доступ к моделям
- - **Disadvantages:** Высокая стоимость compared to HDD
+- **Theory:** SSD provides quick access to data, critical for ML work
+- ** Plus:** Rapid Loading Data, quick access to models
+- **Disadvantages:** High cost compared to HDD
 
 - **GPU:** M1 Pro/Max/Ultra
- - **Theory:** Более мощные чипы обеспечивают лучшую performance for ML
- - **M1 Pro:** Хороший баланс performance and стоимости
- - **M1 Max:** Максимальная performance for профессиональных задач
- - **M1 Ultra:** Экстремальная performance for исследовательских задач
- - **Плюсы:** Высокая performance, энергоэффективность
- - **Disadvantages:** Высокая стоимость, ограниченная доступность
+- **Theory:** More powerful chips provide better performance for ML
+- **M1 Pro:** Good balance between performance and value
+- **M1 Max:** Maximum performance for professional tasks
+- **M1 Ultra:** Extreme performance for research tasks
+- ** Plus:** High performance, energy efficiency
+- **Disadvantages:** High cost, limited availability
 
-## installation базового окружения
+## installation of the basic environment
 
 ### 1. installation Homebrew
 
-**Theory:** Homebrew - это пакетный менеджер for macOS, который упрощает установку and Management программным обеспечением. for ML-проектов критично иметь централизованное Management зависимостями.
+**Theory:** Homebrew is a package manager for machos that facilitates installation and management software. For ML projects, it is critical to have centralized management relationships.
 
 ```
 Homebrew Package Management:
@@ -338,22 +338,22 @@ installation Process:
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Почему Homebrew for ML:**
-- **Централизованное Management:** Все dependencies in одном месте
-- **Автоматическое разрешение конфликтов:** Умное Management версиями
-- **Оптимизация for M1:** Нативная поддержка Apple Silicon
-- **Богатая экосистема:** Тысячи пакетов for ML and научных вычислений
+**Why Homebrew for ML:**
+- ** Centralized Management:** All dependencies in one place
+- **Automatic conflict resolution:** Smart Management versions
+- **Optimization for M1:**Apple Silicon's Positive Support
+- ** Rich ecosystem:** Thousands of packages for ML and scientific calculations
 
-**Плюсы:**
-- Простота installation and обновления
-- Автоматическое разрешение dependencies
-- Оптимизация for M1
-- Большое сообщество and поддержка
+** Plus:**
+- Simplicity installation and updating
+- Automatic resolution dependencies
+- Optimization for M1
+- Large community and support
 
 **Disadvantages:**
-- Может конфликтовать with системными пакетами
-- Требует регулярного обновления
-- Некоторые пакеты могут быть устаревшими
+- Could conflict with systems packages.
+- Requires regular updating
+- Some bags may be obsolete.
 
 ```bash
 # installation Homebrew
@@ -364,14 +364,14 @@ echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
-**Важные моменты for M1:**
-- **Путь installation:** `/opt/homebrew/` вместо `/usr/local/`
-- **architecture:** Автоматическая installation ARM64 версий
-- **Совместимость:** Поддержка как ARM64, так and x86_64 пакетов через Rosetta
+** Important points for M1:**
+- **Stallation:** `/opt/homebrew/' instead of `/usr/local/'
+- **architecture:** Automatic installation ARM64 versions
+- **Compatibility:** Support for both ARM64 and x86_64 packages via Rosetta
 
 ### 2. installation uv (Ultra-fast Python package manager)
 
-**Theory:** uv - это современный менеджер пакетов Python, написанный on Rust, который обеспечивает максимальную скорость and надежность installation dependencies. for robust ML systems критично иметь быстрый and надежный менеджер пакетов.
+**Theory:** uv is a modern Python package manager, written on Rust, which provides maximum speed and reliability of installation preferences. for robust ML systems is critical to have a fast and reliable bag manager.
 
 ```
 uv vs pip Performance Comparison:
@@ -421,25 +421,25 @@ uv Architecture:
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Почему uv вместо pip?**
-- **Speed:** in 10-100 раз быстрее pip благодаря Rust and параллельной обработке
-- **Надежность:** Детерминированные сборки обеспечивают воспроизводимость
-- **Совместимость:** Полная совместимость with pip and существующими проектами
-- **Кэширование:** Умное кэширование dependencies ускоряет повторные installation
-- **Безопасность:** Автоматическая check целостности пакетов
-- **Management версиями:** Продвинутое разрешение конфликтов версий
+# Why uv instead of pip? #
+- **Speed:** in 10-100 times faster than pip due to Rust and parallel processing
+- ** Reliability: ** Determinated assemblies ensure reproducibility
+- **Compatibility:** Full compatibility with the pip and existing projects
+- **Cashing:** Smart caches dependencies accelerates reinstallation
+- ** Safety:** Automatic heck integrity of packages
+- **Management versions:** Advanced version conflict resolution
 
-**Плюсы uv:**
-- Экстремальная скорость installation
-- Надежность and воспроизводимость
-- Современный подход к управлению зависимостями
-- Отличная integration with существующими проектами
-- Автоматическое Management виртуальными окружениями
+** Plus uv:**
+- Extreme speed installation
+- Reliability and reproducibility
+- Modern approach to the management of addictions
+- Excellent integration with existing projects
+Automatic Management Virtual Environments
 
-**Минусы uv:**
-- Относительно новый инструмент (меньше сообщества)
-- Некоторые пакеты могут требовать дополнительной Settings
-- dependency from Rust (больший размер installation)
+**Minuses uv:**
+- Relatively new instrument (less community)
+- Some packages may require additional Settings
+- Dependency from Rust (larger installation)
 
 ```bash
 # installation uv
@@ -453,157 +453,157 @@ source ~/.zshrc
 uv --version
 ```
 
-**Критически важно for ML-проектов:**
-- **Воспроизводимость:** Детерминированные сборки обеспечивают одинаковые результаты on разных машинах
-- **Speed:** Быстрая installation критична for CI/CD and разработки
-- **Надежность:** Минимизация ошибок installation dependencies
-- **Management версиями:** Точное Management версиями ML-библиотек
+** Critical for ML projects:**
+- **Preducibility:** Determinated assemblies provide the same results on different machines
+- **Speed:** Rapid installation critical for CI/CD and development
+- ** Reliability:** Minimization of installation errors
+- **Management versions:** Exact Management versions of the ML library
 
-### 3. installation Python через uv
+### 3. Installation Python through uv
 
-**Theory:** Выбор версии Python критичен for ML-проектов. Python 3.11 обеспечивает оптимальный баланс между производительностью, стабильностью and поддержкой ML-библиотек on M1.
+**Theory:** Python's choice is critical for ML projects. Python 3.11 provides an optimal balance between productivity, stability and support for the ML library on M1.
 
-**Почему Python 3.11 for M1:**
-- **performance:** to 25% быстрее Python 3.10 благодаря оптимизациям
-- **Совместимость:** Полная поддержка all ML-библиотек
-- **Стабильность:** Зрелая версия with исправленными багами
-- **Оптимизация for M1:** Лучшая поддержка ARM64 архитектуры
-- **Память:** Более эффективное использование памяти
+**Why Python 3.11 for M1:**
+- **Performance:** to 25% faster than Python 3.10 due to optimization
+- **Compatibility:** Full support for all ML libraries
+- **Stability:**Mature version with corrected bugs
+- **Optification for M1:**ARM64 architecture best support
+- ** Memory:** Better use of memory
 
-**Плюсы Python 3.11:**
-- Высокая performance
-- Отличная совместимость with ML-библиотеками
-- Стабильность and надежность
-- Оптимизация for M1
-- Поддержка современных возможностей Python
+** Plus Python 3.11:**
+- High performance
+- Excellent compatibility with ML libraries
+- Stability and reliability
+- Optimization for M1
+- Supporting Python &apos; s Modern Opportunities
 
-**Минусы Python 3.11:**
-- Некоторые старые библиотеки могут not поддерживаться
-- Требует обновления существующего кода
-- Больший размер compared to более старыми версиями
+**Mine Python 3.11:**
+- Some old libraries can be supported.
+- Requires an update of the existing code
+- Larger size matched to older versions
 
 ```bash
-# installation Python 3.11 (оптимальная версия for M1)
+# installation Python 3.11
 uv python install 3.11
 
 # installation check
 uv python List
 ```
 
-**Альтернативные версии:**
-- **Python 3.10:** Более стабильная, но медленнее
-- **Python 3.12:** Новейшая, но может быть менее стабильной
-- **Python 3.9:** Устаревшая, not рекомендуется for новых проектов
+** Alternative versions:**
+- **Python 3.10:** More stable but slower
+- **Python 3.12:** Newest but may be less stable
+- **Python 3.9:** Obsolete, not recommended for new projects
 
-**Критически важно for ML:**
-- **Воспроизводимость:** Одинаковая версия Python on all машинах
-- **performance:** Быстрое выполнение ML-алгоритмов
-- **Совместимость:** Поддержка all required ML-библиотек
-- **Стабильность:** Минимизация ошибок во время обучения моделей
+** Critical for ML:**
+- **Reproduction:** Same version of Python on all machines
+- **Performance:** Rapid execution of ML-algorithms
+- **Compatibility:** Support for all read ML library
+- **Stability:** Minimalization of errors during model training
 
 ## installation MLX Framework
 
-### Что такое MLX?
+### What is MLX?
 
-**Theory:** MLX (Machine Learning eXtended) - это Specialized фреймворк Apple for machine learning, разWorkingнный for максимального использования возможностей Apple Silicon чипов. This is critical for robust ML systems, так как обеспечивает оптимальную performance on M1/M2/M3.
+**Theory:** MLX (Machine Learning eXtended) is the Specialized Framework of Apple for Machine Learning, which is designed to maximize the use of Apple Silicon chips. This is critical for Robst ML systems because it provides optimal performance on M1/M2/M3.
 
-**MLX - это Apple-специфичный фреймворк for ML:**
+**MLX is an Apple-specific frame for ML:**
 
-**Нативная поддержка M1/M2/M3:**
-- **Theory:** MLX использует все возможности Apple Silicon чипов, including CPU, GPU and Neural Engine
-- **Practical advantages:** to 10x ускорение compared to PyTorch on M1
-- **Автоматическая оптимизация:** Автоматический выбор лучшего устройства for каждой операции
-- **Энергоэффективность:** Потребляет in 5-10 раз меньше энергии чем CUDA
+**Intentional support M1/M2/M3:**
+- **Theory:** MLX uses all of Apple Silicon chips, including CPU, GPU and Neural Engineering
+- **Practical promotions:** to 10x acceleration combined to PyTorch on M1
+- ** Automatic optimization:** Automatic choice of the best device for each operation
+- ** Energy efficiency:** Consumption in 5-10 times less energy than CUDA
 
 **Unified Memory:**
-- **Theory:** MLX использует единую память for CPU and GPU, что устраняет необходимость копирования данных
-- **Practical advantages:** Working with большими моделями без ограничений памяти GPU
-- **Speed:** data доступны мгновенно for all устройств
-- **Простота:** no need to manage data transfer between devices
+- **Theory:** MLX uses a single memory for CPU and GPU, which eliminates the need to copy data
+- **Practical promotions:**Working with big models without GPU memory limitations
+- **Speed:** Data available instantly for all devices
+- **Simple:**no lost to manage data transfer between declarations
 
 **Neural Engine:**
-- **Theory:** Автоматическое использование Neural Engine for подходящих операций
-- **Practical advantages:** to 20x ускорение for определенных ML-операций
-- **Энергоэффективность:** Neural Engine потребляет минимум энергии
-- **Специализация:** Оптимизирован for operations with matrices and neural networks
+- **Theory:** Automatic use of Neural Engineering for suitable operations
+- **Practical promotions:** to 20x acceleration for certain ML operations
+- ** Energy efficiency:**Neural Energy consumes minimum energy
+- **Specialization:** Optimized for operations with frameworks and non-ural networks
 
-**PyTorch совместимость:**
-- **Theory:** MLX предоставляет API, похожий on PyTorch, что упрощает миграцию
-- **Practical advantages:** Легкая миграция существующего кода
-- **Обратная совместимость:** Поддержка большинства PyTorch операций
-- **Обучение:** Минимальное время on изучение нового API
+**PyTorch compatibility:**
+- **Theory:** MLX provides an API similar to PyTorch, which makes migration easier
+- **Practical promotions:** Easy migration of the existing code
+- **Reverse compatibility:** Support for most PyTorch operations
+- **Learning:** Minimum time on new API
 
-**Плюсы MLX:**
-- Максимальная performance on Apple Silicon
-- Энергоэффективность
-- Простота использования
-- Автоматическая оптимизация
-- Отличная integration with Apple экосистемой
+** Plus MLX:**
+- Maximum performance on Apple Silicon
+- Energy efficiency
+- Easy use
+- Automatic optimization
+- Excellent integration with Apple ecosystem
 
-**Минусы MLX:**
-- Привязка к Apple Silicon (нет поддержки других платформ)
-- Меньшее сообщество compared to PyTorch/TensorFlow
-- Ограниченная поддержка некоторых операций
-- Меньше готовых моделей and примеров
+**Minuses MLX:**
+- A link to Apple Silicon (no support for other platforms)
+- Smaller community competing to PyTorch/TensorFlow
+- Limited support to some operations
+- Fewer models and examples produced
 
 ### installation MLX
 
-**Theory:** installation MLX Framework требует правильной Settings проекта and понимания архитектуры Apple Silicon. for robust ML systems критично правильно настроить окружение with самого начала.
+**Theory:** installation MLX Framework requires a correct Settings project and understanding of the Apple Silicon architecture. for robot ML systems is critical to fine-tune the environment with the very beginning.
 
-**Почему правильная installation критична:**
-- **Архитектурная совместимость:** MLX Workingет только on Apple Silicon and требует правильной Settings
-- **dependencies:** MLX имеет специфические dependencies, которые должны быть установлены in правильном порядке
-- **performance:** Неправильная installation может привести к значительной потере performance
-- **Стабильность:** Правильная configuration обеспечивает стабильную работу системы
+**Why the right installation is critical:**
+- ** Architectural compatibility:** MLX Working only on Apple Silicon and requires correct Settings
+- **dependencies:** MLX has specific dependencies to be installed in the correct order.
+- **Performance:** Wrong installation can lead to significant loss of performance
+- **Stability:** Correct configurization ensures system stability
 
-**Этапы installation MLX:**
+**Taps installation MLX:**
 
-**1. create проекта:**
-- **Theory:** create отдельного проекта обеспечивает изоляцию dependencies and воспроизводимость
-- **Практика:** Использование uv for управления проектом обеспечивает детерминированные сборки
+**1. project activity:**
+- **Theory:** the creation of a separate project provides isolation and reproducibility
+- ** Practice: ** Use of uv for project management provides determinable assemblies
 
-**2. Инициализация uv проекта:**
-- **Theory:** uv init создает структуру проекта with правильными настройками for Python 3.11
-- **Практика:** Это обеспечивает правильное Management зависимостями and виртуальными окружениями
+**2. Initiating uv project:**
+- **Theory:** uv init creates project structure with correct settings for Python 3.11
+- ** Practice:** This ensures correct management relationships and virtual environments
 
 **3. installation MLX:**
-- **Theory:** MLX - это основной фреймворк for работы with Apple Silicon
-- **Практика:** installation через uv обеспечивает правильную версию and совместимость
+- **Theory:** MLX is the main frame for work with Apple Silicon.
+- ** Practice:** installation through uv ensures correct version and compatibility
 
-**4. Дополнительные dependencies:**
-- **mlx-lm:** Специализированные инструменты for языковых моделей
-- **mlx-examples:** Готовые examples and шаблоны for быстрого старта
+**4. Additional preferences:**
+- **mlx-lm:** Specialized tools for language models
+- **mlx-examples:**Prepared examples and templates for quick start
 
 ```bash
-# create проекта
+# the project's creation
 mkdir neozork-ml-system
 cd neozork-ml-system
 
-# Инициализация uv проекта
+# Initiating uv project
 uv init --python 3.11
 
 # installation MLX
 uv add mlx
 
-# installation дополнительных dependencies
-uv add mlx-lm # for языковых моделей
-uv add mlx-examples # examples использования
+# installation of additional dependencies
+uv ad mlx-lm # for language models
+uv add mlx-examples # examples use
 ```
 
-**Критически важно for ML-проектов:**
-- **Воспроизводимость:** Правильная configuration обеспечивает одинаковые результаты on разных машинах
-- **performance:** Оптимальная configuration MLX обеспечивает максимальную performance
-- **Совместимость:** Правильная installation обеспечивает совместимость with другими ML-библиотеками
-- **Scalability:** Правильная configuration позволяет легко масштабировать проект
+** Critical for ML projects:**
+- **Reproducibility:** Correct configuration gives the same results on different machines.
+- **Performance:** Optimal configuring MLX provides maximum performance
+- **Compatibility:** Correct institutionalization ensures compatibility with other ML libraries
+- **Scalability:** Correct configuration allows easy project scale
 
 ### check MLX
 
-**Полный тест MLX Framework:**
+** Full test MLX Framework:**
 
 ```python
 # test_mlx_complete.py
 """
-Полный тест MLX Framework for M1 Pro
+Full MLX Framework for M1 Pro
 Launch: uv run python test_mlx_complete.py
 """
 
@@ -613,14 +613,14 @@ import time
 import numpy as np
 
 def test_mlx_basic_operations():
- """Тест базовых операций MLX"""
- print("=== Тест базовых операций MLX ===")
+"The MLX Basic Operations Test"
+"print("===MLX basic operations test===)
 
- # create массивов
+# Create arrays
  a = mx.array([1, 2, 3, 4, 5])
  b = mx.array([5, 4, 3, 2, 1])
 
- # Базовые операции
+# Basic operations
  c = a + b
  d = a * b
  e = mx.sum(a)
@@ -631,19 +631,19 @@ def test_mlx_basic_operations():
  print(f"a * b: {d}")
  print(f"sum(a): {e}")
 
- # check результатов
+# Check results
  assert c.toList() == [6, 6, 6, 6, 6]
  assert d.toList() == [5, 8, 9, 8, 5]
  assert e.item() == 15
 
- print("✅ Базовые операции Workingют корректно")
+"Working operations are correct"
  return True
 
 def test_mlx_neural_network():
- """Тест нейронной сети on MLX"""
- print("\n=== Тест нейронной сети MLX ===")
+""Neron Network Test on MLX""
+Prent("\n===MLX neural network test===)
 
- # create простой нейронной сети
+# creative simple neural network
  class SimpleNet(nn.Module):
  def __init__(self):
  super().__init__()
@@ -656,76 +656,76 @@ def test_mlx_neural_network():
  x = self.dropout(x)
  return self.linear2(x)
 
- # create testsых данных
+# Create testy data
  x = mx.random.normal((100, 10))
  model = SimpleNet()
 
- # Прямой проход
+# Straight through
  output = model(x)
 
- print(f"Входные data shape: {x.shape}")
- print(f"Выходные data shape: {output.shape}")
- print(f"Среднее значение выхода: {mx.mean(output).item():.4f}")
- print(f"Стандартное отклонение выхода: {mx.std(output).item():.4f}")
+pprint(f) "Incoming data shupe: {x.chape}")
+print(f) "Exit data shupe: {output.chape}")
+Print(f" Average output value: {mx.mean(output).item(:4f}})
+spring(f" Standard exit deviation: {mx.std(output).item():4f})
 
- # check формы выхода
+# Check form of exit
  assert output.shape == (100, 1)
 
- print("✅ Нейронная сеть Workingет корректно")
+"Pint("♪ Neural Workinget Network Correct")
  return True
 
 def test_mlx_performance():
- """Тест performance MLX"""
- print("\n=== Тест performance MLX ===")
+"Test performance MLX."
+("\n=== Test performance MLX===)
 
- # Тест матричных операций
+# A matrix operation test
  sizes = [1000, 2000, 5000]
 
  for size in sizes:
- print(f"\nТест матрицы {size}x{size}:")
+prent(f)(ntest matrix(size) x(size}:)
 
- # create больших матриц
+# creative large matrices
  a = mx.random.normal((size, size))
  b = mx.random.normal((size, size))
 
- # Тест умножения матриц
+# A matrix multiplication test
  start_time = time.time()
  c = mx.matmul(a, b)
  end_time = time.time()
 
  duration = end_time - start_time
- print(f" Время умножения: {duration:.3f} секунд")
+Print(f" Multiplicity time: {duration:.3f}seconds")
  print(f" performance: {size**3 / duration / 1e9:.2f} GFLOPS")
 
- # check результата
+# Check result
  assert c.shape == (size, size)
 
- print("✅ Тесты performance завершены")
+"Print("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\(\\\\\\\\\\\\\))(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\))))((\(\\\\\\\\\\(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\)})})})})}((((\\\\\\\\\\\\\\\\\\\\\\\)})})})})})}(((((((((((((((\\\\\\\\\\\\\\\\\\\\\\\\\\\\)}})})}}(((((((((((((((((((\)})})})}}}})}))}(((((((((((((((((\\\\\\\\\)))))))})))))))))(((((((((((((((((((
  return True
 
 def test_mlx_device_info():
- """Тест информации об устройствах"""
- print("\n=== Информация об устройствах MLX ===")
+"Text of Information on Devices."
+=== Information on the MLX devices========================MLX======)======The MLX devices
 
- # Информация о доступных устройствах
- print(f"Доступные устройства: {mx.devices()}")
- print(f"Текущее устройство: {mx.default_device()}")
+# Information on accessible devices
+(pint(f) Accessable devices: {mx.devises()})
+pprint(f) "Device: {mx.default_device()}")
 
- # Тест работы on разных устройствах
+# Test of work on different devices
  for device in mx.devices():
- print(f"\nТест on устройстве: {device}")
+Print(f)\ntest on device: {device})
  with mx.device(device):
  a = mx.array([1, 2, 3, 4, 5])
  b = mx.array([5, 4, 3, 2, 1])
  c = a + b
- print(f" Результат: {c}")
+result: {c})
 
- print("✅ Информация об устройствах получена")
+print("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\)})}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}}}}}}}}}}}}}}}}}}}}}}}}\\\\\\\\\(((((((\\\\\\\\\\\\\\\}}}}}}}}}}}}}}}}}}}}}}}}}}}(((((((((((((((((((((((((((((\\\\\\\\\\\\\\\\\}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}((((((((((((((((((
  return True
 
 def main():
- """Главная function тестирования"""
- print("🚀 Launch полного теста MLX Framework")
+"Principal function testing."
+"Prent("♪ Launch Full Test MLX Framework")
  print("=" * 50)
 
  try:
@@ -736,12 +736,12 @@ def main():
  test_mlx_device_info()
 
  print("\n" + "=" * 50)
- print("🎉 Все тесты MLX прошли успешно!")
- print("MLX Framework готов к использованию on M1 Pro")
+all MLX tests have been successful!
+"MLX Framework is ready for use on M1 Pro"
 
  except Exception as e:
- print(f"\n❌ Ошибка при тестировании MLX: {e}")
- print("Проверьте установку MLX Framework")
+Print(f)\n\\\\\\\\\\\\\\\\\\\\\\\\\n\\\\\\\\\\\\\\\\\\\\\\\\\\\\n\\\\\\\\\\\\\\\\\\\\}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\)/)/)/)/)/)/)/)/)/)/)/)/)/)/)/)/)/)/)/)/)/)/)/) as-) as-) as-) as-) as-) as the as the as the as the as the as the as the as the as the as the as a]) as the as the as of as of as of as of as of as of as of as of as
+"Do check the MLX Framework"
  return False
 
  return True
@@ -750,15 +750,15 @@ if __name__ == "__main__":
  main()
 ```
 
-**Launch теста MLX:**
+**Launch MLX test:**
 ```bash
-# Сохранение and Launch теста
+# Conservation and Launch Test
 uv run python test_mlx_complete.py
 ```
 
-## installation основных ML библиотек
+## installation of main ML libraries
 
-**Theory:** Выбор and installation ML-библиотек критически важен for создания robust ML systems. Каждая библиотека решает специфические задачи and должна быть правильно интегрирована in экоsystem проекта.
+**Theory:** Selection and institutionalization of the ML library is critical for the creation of a Robst ML systems. Each library will solve specific problems and should be properly integrated into the ecosystem of the project.
 
 ```
 ML Libraries Ecosystem:
@@ -819,60 +819,60 @@ Library dependencies Graph:
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Принципы выбора ML-библиотек:**
-- **Специализация:** Каждая библиотека решает конкретные задачи
-- **Совместимость:** Библиотеки должны Workingть вместе без конфликтов
-- **performance:** Оптимизация for M1 архитектуры
-- **Активное развитие:** Регулярные обновления and поддержка сообщества
-- **documentation:** Хорошая documentation for быстрого освоения
+** ML library selection principles:**
+- ** Specialization: ** Each library has specific objectives
+- **Compatibility: ** Library should work together without conflict
+- **Performance:** Optimization for M1 architecture
+- **Active development:** Regular updates and community support
+- **documentation:** Good documentation for rapid development
 
-### 1. Основные dependencies
+♪##1 ♪ Basic dependencies ♪
 
-**Theory:** Основные библиотеки формируют фундамент ML-системы. Они обеспечивают базовую функциональность for работы with data, визуализации and интерактивной разработки.
+**Theory:** Basic libraries form the foundation of the ML system; they provide basic functionality for work with data, visualization and interactive development.
 
-**NumPy - основа численных вычислений:**
-- **Theory:** NumPy обеспечивает эффективные операции with многомерными массивами
-- **Практика:** Основа for all ML-библиотек, оптимизирован for M1
-- **Критичность:** Без NumPy невозможна Working with ML-алгоритмами
+**NumPy is the basis of the numerical calculations:**
+- **Theory:**NumPy provides effective operations with multidimensional arrays
+- **Practice:** Basis for all ML library, optimized for M1
+- ** Criticality:** Without NumPy, no Work with ML-algorithms is possible
 
 **Pandas - Working with data:**
-- **Theory:** Pandas предоставляет мощные инструменты for Analysis and обработки данных
-- **Практика:** dataFrame - основной формат данных for ML-проектов
-- **Критичность:** Необходим for загрузки, очистки and предобработки данных
+- **Theory:**Pandas provides powerful tools for Analysis and Data Processing
+- **Practice:** DataFrame - basic data format for ML projects
+- ** Criticality: ** needed for data loading, cleaning and pre-processing
 
-**Scikit-learn - классические ML алгоритмы:**
-- **Theory:** Scikit-learn предоставляет готовые реализации ML-алгоритмов
-- **Практика:** from простых линейных моделей to сложных ансамблей
-- **Критичность:** Основа for большинства ML-задач
+**Scikit-learn - Classical ML algorithms:**
+- **Theory:** Scikit-learn provides ready implementation of ML-algorithms
+- ** Practice:** from simple linear models to complex ensembles
+- ** Criticality:** Basis for most ML objectives
 
-**Matplotlib and Seaborn - визуализация:**
-- **Theory:** Визуализация критична for понимания данных and результатов
-- **Практика:** Matplotlib - базовые графики, Seaborn - статистические графики
-- **Критичность:** Необходимы for EDA and презентации результатов
+**Matplotlib and Seaborn - Visualization:**
+- **Theory:** Visualization is critical for understanding data and results
+- **Practice:** Matplotlib - basic graphs, Seaborn - statistical graphs
+- ** Criticality: ** required for EDA and presentation of results
 
-**Jupyter Notebook - интерактивная разработка:**
-- **Theory:** Jupyter обеспечивает интерактивную среду for экспериментов
-- **Практика:** ideal for EDA, прототипирования and демонстрации
-- **Критичность:** Стандарт for ML-разработки
+**Jupyter Notebook - Interactive Development:**
+- **Theory:** Jupyter provides an interactive environment for experiments
+- **Practice:**ideal for EDI, prototypes and demonstrations
+- ** Criticality: ** Standard for ML-development
 
-**Plotly and Dash - интерактивные графики:**
-- **Theory:** Интерактивные графики улучшают понимание данных
-- **Практика:** Plotly - интерактивные графики, Dash - веб-приложения
-- **Критичность:** Необходимы for создания интерактивных дашбордов
+**Plotly and Dash - Interactive Graphics:**
+- **Theory:** Interactive graphs improve understanding of data
+- **Practice:**Plotly - interactive graphics, Dash - web applications
+- ** Criticality: ** necessary for creating interactive dashboards
 
 ```bash
-# installation основных библиотек
+# installation of major libraries
 uv add numpy pandas scikit-learn matplotlib seaborn
 uv add jupyter notebook ipykernel
-uv add plotly dash # for интерактивных графиков
+uv ad tabled dash # for interactive graphics
 ```
 
-**Полный тест основных библиотек:**
+** Full test of main libraries:**
 
 ```python
 # test_core_libraries.py
 """
-Полный тест основных ML библиотек for M1 Pro
+Full test of core ML libraries for M1 Pro
 Launch: uv run python test_core_libraries.py
 """
 
@@ -890,32 +890,32 @@ import warnings
 warnings.filterwarnings('ignore')
 
 def test_numpy():
- """Тест NumPy"""
- print("=== Тест NumPy ===")
+"Test NumPy."
+"print("===NumPy Test===)
 
- # create массивов
+# Create arrays
  a = np.random.rand(1000, 1000)
  b = np.random.rand(1000, 1000)
 
- # Тест performance
+# Test performance
  start_time = time.time()
  c = np.dot(a, b)
  end_time = time.time()
 
  print(f"NumPy Version: {np.__version__}")
- print(f"Время умножения матриц 1000x1000: {end_time - start_time:.3f} секунд")
- print(f"Форма результата: {c.shape}")
- print(f"Тип данных: {c.dtype}")
+Print(f"Matrix times 1000x1000:(end_time-start_time:.3f} seconds")
+(pint(f" Outcome Form: {c.scape}")
+"data type: {c.dtype}")
 
  # check BLAS
- print(f"BLAS информация: {np.show_config()}")
+print(f"BLAS information: {np.show_config()}})
 
- print("✅ NumPy Workingет корректно")
+"Print" ("NumPy Works correctly")
  return True
 
 def test_pandas():
- """Тест Pandas"""
- print("\n=== Тест Pandas ===")
+"Test Pandas."
+Print("\n===Pandas Test ===)
 
  # create dataFrame
  n_rows = 100000
@@ -928,9 +928,9 @@ def test_pandas():
 
  print(f"Pandas Version: {pd.__version__}")
  print(f"dataFrame shape: {df.shape}")
- print(f"Память dataFrame: {df.memory_usage(deep=True).sum() / 1024**2:.2f} MB")
+print(f) "DataFrame Memory: {df.memory_use(deep=True).sum() / 1024**2:.2f} MB")
 
- # Тест группировки
+# Group test
  start_time = time.time()
  grouped = df.groupby('category').agg({
  'A': ['mean', 'std'],
@@ -939,21 +939,21 @@ def test_pandas():
  })
  end_time = time.time()
 
- print(f"Время группировки: {end_time - start_time:.3f} секунд")
- print(f"Результат группировки:\n{grouped.head()}")
+spring(f) Group time: {end_time-start_time:.3f}seconds}
+(f "Result of the group: \n\grouped.head()}")
 
- print("✅ Pandas Workingет корректно")
+"Prente Pandas Works correctly"
  return True
 
 def test_matplotlib_seaborn():
- """Тест Matplotlib and Seaborn"""
- print("\n=== Тест Matplotlib and Seaborn ===")
+"Text Matplotlib and Seaborn."
+"print("\n===Matplotlib and Seaborn test===)
 
- # create testsых данных
+# Create testy data
  x = np.random.randn(1000)
  y = 2 * x + np.random.randn(1000) * 0.5
 
- # Тест Matplotlib
+# Matplotlib Test
  plt.figure(figsize=(10, 6))
  plt.subplot(1, 2, 1)
  plt.scatter(x, y, alpha=0.6)
@@ -961,7 +961,7 @@ def test_matplotlib_seaborn():
  plt.xlabel('X')
  plt.ylabel('Y')
 
- # Тест Seaborn
+# Seaborn test
  plt.subplot(1, 2, 2)
  sns.scatterplot(x=x, y=y, alpha=0.6)
  plt.title('Seaborn Scatter Plot')
@@ -972,46 +972,46 @@ def test_matplotlib_seaborn():
 
  print(f"Matplotlib Version: {plt.matplotlib.__version__}")
  print(f"Seaborn Version: {sns.__version__}")
- print("График сохранен как test_plot.png")
+Print("Grafik retained as test_plot.png")
 
- print("✅ Matplotlib and Seaborn Workingют корректно")
+"Matplotlib and Seaborn Working correctly"
  return True
 
 def test_sklearn():
- """Тест Scikit-learn"""
- print("\n=== Тест Scikit-learn ===")
+"Test Scikit-learn."
+Print("\n===Scikit-learn test====)
 
- # create testsых данных
+# Create testy data
  X = np.random.randn(1000, 10)
  y = (X[:, 0] + X[:, 1] + np.random.randn(1000) * 0.1 > 0).astype(int)
 
- # Разделение данных
+# Data sharing
  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
- # Обучение модели
+# Model learning
  model = RandomForestClassifier(n_estimators=100, random_state=42)
 
  start_time = time.time()
  model.fit(X_train, y_train)
  end_time = time.time()
 
- # Предсказания
+# Premonition
  y_pred = model.predict(X_test)
  accuracy = accuracy_score(y_test, y_pred)
 
  print(f"Scikit-learn Version: {sklearn.__version__}")
- print(f"Время обучения: {end_time - start_time:.3f} секунд")
- print(f"Точность модели: {accuracy:.3f}")
- print(f"Важность признаков: {model.feature_importances_[:5]}")
+Print(f) "Learning time: {end_time-start_time:.3f}seconds")
+print(f "model accuracy: {accuracy:.3f}")
+pprint(f) "The importance of the signs: {model.feature_importances_[:5]}}")
 
- print("✅ Scikit-learn Workingет корректно")
+"spint" is correct.
  return True
 
 def test_plotly():
- """Тест Plotly"""
- print("\n=== Тест Plotly ===")
+"Text Plotly."
+Print("\n===Plotly Test====)
 
- # create интерактивного графика
+# creative interactive graphics
  x = np.linspace(0, 10, 100)
  y1 = np.sin(x)
  y2 = np.cos(x)
@@ -1021,24 +1021,24 @@ def test_plotly():
  fig.add_trace(go.Scatter(x=x, y=y2, mode='lines', name='cos(x)'))
 
  fig.update_layout(
- title='Интерактивный график Plotly',
+"Title"="Online Plotly',
  xaxis_title='X',
  yaxis_title='Y',
  hovermode='x unified'
  )
 
- # Сохранение графика
+# Maintaining the schedule
  fig.write_html('test_plotly.html')
 
  print(f"Plotly Version: {plotly.__version__}")
- print("Интерактивный график сохранен как test_plotly.html")
+print("Interactive schedule maintained as test_plottly.html")
 
- print("✅ Plotly Workingет корректно")
+"Plotly Works correctly"
  return True
 
 def main():
- """Главная function тестирования"""
- print("🚀 Launch полного теста основных ML библиотек")
+"Principal function testing."
+"Prent("♪ Launch full test of the main ML libraries")
  print("=" * 60)
 
  try:
@@ -1050,12 +1050,12 @@ def main():
  test_plotly()
 
  print("\n" + "=" * 60)
- print("🎉 Все основные библиотеки Workingют корректно!")
- print("Основные ML библиотеки готовы к использованию on M1 Pro")
+all the main libraries of Working are correct!
+"Main ML libraries ready for use on M1 Pro")
 
  except Exception as e:
- print(f"\n❌ Ошибка при тестировании библиотек: {e}")
- print("Проверьте установку библиотек")
+Print(f)\n\\\\\\\\\\\\\\\\\\\\\\\\\n\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}\\\\\\\\\}\\\\\\\\\\\\\\\\\\\\\\\}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}\\\\\\\\})
+prent("check the installation of libraries")
  return False
 
  return True
@@ -1064,195 +1064,195 @@ if __name__ == "__main__":
  main()
 ```
 
-**Launch теста основных библиотек:**
+**Launch tests of major libraries:**
 ```bash
-# Сохранение and Launch теста
+# Conservation and Launch Test
 uv run python test_core_libraries.py
 ```
 
-### 2. Финансовые библиотеки
+♪##2 ♪ Financial libraries
 
-**Theory:** Финансовые библиотеки специализированы for работы with финансовыми данными and алгоритмами. Они обеспечивают специфическую функциональность for финтех-проектов.
+**Theory:** Financial libraries are specialized for work with financial data and algorithms; they provide specific functionality for financial projects.
 
-**YFinance - загрузка финансовых данных:**
-- **Theory:** YFinance предоставляет доступ к историческим данным Yahoo Finance
-- **Практика:** Простая Loading data on акциям, валютам, indexам
-- **Критичность:** Основной источник данных for финансовых ML-проектов
+**YFinance - Financial Data uploading:**
+- **Theory:** YFinance provides access to historical data from Yahoo Finance
+- **Practice:** Simple Loading Data on Stock, Currency, Indexes
+- ** Criticality:** Main source of data for financial ML projects
 
-**Pandas-datareader - альтернативные источники данных:**
-- **Theory:** Дополнительные источники данных for диверсификации
-- **Практика:** FRED, Alpha Vantage, Quandl and другие источники
-- **Критичность:** Резервные источники данных
+**Pandas-datareader - Alternative data sources:**
+- **Theory:** Additional data sources for diversification
+- **Practice:** FRED, Alpha Vantage, Quandl and other sources
+- ** Criticality:** Reserve data sources
 
-**TA-Lib - Technical индикаторы:**
-- **Theory:** Technical индикаторы - основа технического Analysis
-- **Практика:** RSI, MACD, Bollinger Bands and сотни других indicators
-- **Критичность:** Необходимы for создания торговых стратегий
+**TA-Lib - Technical indicators:**
+- **Theory:**Technical indicators - the basis of technical Analisis
+- **Practice:** RSI, MACD, Bollinger Bands and hundreds of other indicators
+- ** Criticality: ** needed for trade strategies
 
-**VectorBT - векторизованный бэктестинг:**
-- **Theory:** Векторизованный бэктестинг обеспечивает высокую performance
-- **Практика:** Быстрое тестирование стратегий on исторических данных
-- **Критичность:** Необходим for validation торговых стратегий
+**VectorBT - Vectorized Backtting:**
+- **Theory:** Vectorized bactering provides high performance
+- **Practice: ** Rapid testing of strategies on historical data
+- ** Criticality: ** needed for the promotion of trade policies
 
-**Backtrader - альтернативный бэктестер:**
-- **Theory:** Более гибкий подход к бэктестингу
-- **Практика:** Поддержка различных типов данных and стратегий
-- **Критичность:** Альтернатива for сложных стратегий
+**Backtrader - Alternative Baxter:**
+- **Theory:** A more flexible approach to betting
+- **Practice: ** Support for different types of data and strategies
+- ** Criticality:** Alternative for complex strategies
 
 ```bash
-# Финансовые data and анализ
+# Financial data and analysis
 uv add yfinance pandas-datareader
-uv add ta-lib # Technical индикаторы
-uv add vectorbt # Векторизованный бэктестинг
-uv add backtrader # Альтернативный бэктестер
+uv add ta-lib #Technical indicators
+uv ad vectorbt # Vectorized backtting
+uv ad backtrader # Alternative backtexter
 ```
 
-### 3. Продвинутые ML библиотеки
+♪## 3, advanced ML libraries
 
-**Theory:** Продвинутые ML-библиотеки обеспечивают современные алгоритмы and инструменты for создания robust ML systems.
+**Theory:** The advanced ML libraries provide modern algorithms and tools for building robst ML systems.
 
-**XGBoost, LightGBM, CatBoost - градиентный бустинг:**
-- **Theory:** Градиентный бустинг - один из самых эффективных методов ML
-- **Практика:** Каждая библиотека имеет свои преимущества and оптимизации
-- **Критичность:** Основа for большинства конкурсов ML
+**XGBost, LightGBM, CatBoost - gradient bushing:**
+- **Theory:** Gradient Busting is one of the most effective ML methods.
+- **Practice: ** Each library has its advantages and optimization
+- ** Criticality:** Basis for most ML competitions
 
-**Optuna - гиперпараметрическая оптимизация:**
-- **Theory:** Автоматический поиск оптимальных гиперпараметров
-- **Практика:** Bayesian optimization for эффективного поиска
-- **Критичность:** Необходима for достижения максимальной performance
+**Optuna - hyperparametric optimization:**
+- **Theory:** Automatic search for optimal hyperparameters
+- **Practice:** Bayesian acceptance for effective search
+- ** Criticality: ** needed to achieve maximum performance
 
 **MLflow - MLOps:**
-- **Theory:** MLOps обеспечивает воспроизводимость and Management ML-моделями
-- **Практика:** Отслеживание экспериментов, версионирование моделей
-- **Критичность:** Необходима for production-ready систем
+- **Theory:** MLOps ensures reproducibility and Management ML models
+- **Practice:** Experimental tracking, model versioning
+- ** Criticality: ** needed for production-ready systems
 
-**Weights & Biases - эксперименты:**
-- **Theory:** Продвинутое отслеживание экспериментов and визуализация
-- **Практика:** integration with различными ML-фреймворками
-- **Критичность:** Улучшает process разработки ML-моделей
+**Weights & Biases - Experiments:**
+- **Theory:** Advanced tracking of experiments and visualization
+- **Practice:** integration with different MLs
+- ** Criticality:** Improves the process of developing ML models
 
 ```bash
-# Продвинутые ML библиотеки
+# Advanced ML libraries
 uv add xgboost lightgbm catboost
-uv add optuna # Гиперпараметрическая оптимизация
+uv add optuna # Hyperparametric optimization
 uv add mlflow # MLOps
-uv add wandb # Эксперименты
+uv ad wandb # Experiments
 ```
 
 ### 4. Deep Learning
 
-**Theory:** Deep Learning библиотеки обеспечивают работу with neural networks and современными ML-алгоритмами. on M1 критично использовать оптимизированные версии.
+**Theory:**Deep Learning libraries provide work with neural networks and modern ML-algorithms. on M1 is critical to use optimized versions.
 
-**PyTorch - основной фреймворк:**
-- **Theory:** PyTorch - наиболее гибкий and популярный фреймворк for DL
-- **Практика:** Динамические графы, простота отладки
-- **Критичность:** Стандарт for исследовательских проектов
+**PyTorch - main frame:**
+- **Theory:** PyTorch is the most flexible and popular frame for DL
+- ** Practice:** Dynamic graphs, easy debugging
+- ** Criticality: ** Standard for Research Projects
 
-**TensorFlow - альтернативный фреймворк:**
-- **Theory:** TensorFlow обеспечивает статическую оптимизацию
-- **Практика:** Лучше for production deployment
-- **Критичность:** Необходим for совместимости with существующими моделями
+**TensorFlow - Alternative Framework:**
+- **Theory:** TensorFlow provides static optimization
+- ** Practice:** Better for production release
+- ** Criticality: ** needed for compatibility with existing models
 
-**Transformers - предобученные модели:**
-- **Theory:** Hugging Face Transformers предоставляет доступ к SOTA моделям
-- **Практика:** BERT, GPT, T5 and сотни других моделей
-- **Критичность:** Основа for NLP and мультимодальных задач
+**Transformers - pre-trained models:**
+- **Theory:** Hugging Face Transformers provides access to SOTA models
+Practice:** BERT, GPT, T5 and hundreds of other models
+- ** Criticality:** Basis for NLP and multimodal tasks
 
-**Оптимизация for M1:**
-- **Theory:** M1 требует специальных версий библиотек
-- **Практика:** Использование Metal Performance Shaders
-- **Критичность:** Необходима for максимальной performance
+**Optification for M1:**
+- **Theory:** M1 requires special versions of libraries
+- **Practice:** Use of Metal Performance Shaders
+- ** Criticality: ** needed for maximum performance
 
 ```bash
-# Deep Learning (совместимость with M1)
+# Deep Learning (compatibility with M1)
 uv add torch torchvision torchaudio
 uv add tensorflow-macos tensorflow-metal # for M1
 uv add transformers # Hugging Face
 ```
 
-**Критически важно for robust ML systems:**
-- **Совместимость:** Все библиотеки должны Workingть вместе
-- **performance:** Оптимизация for M1 архитектуры
-- **Воспроизводимость:** Детерминированные версии all библиотек
-- **Scalability:** Возможность работы with большими данными
+** Critically important for Robst ML systems:**
+- **Compatibility:** All libraries should Work together
+- **Performance:** Optimization for M1 architecture
+- **Pressability:** Determinated versions of all libraries
+- **Scalability:** Opportunity to work with big data
 
 ## configuration Jupyter Notebook
 
-**Theory:** Jupyter Notebook - это критически важный инструмент for ML-разработки, который обеспечивает интерактивную среду for экспериментов, Analysis данных and прототипирования. Правильная configuration Jupyter критична for эффективной работы with ML-проектами.
+**Theory:**Jupyter Notebook is a critical tool for ML development that provides an interactive environment for experiments, Data Analysis and prototypes.
 
-**Почему Jupyter критичен for ML:**
-- **Интерактивность:** Позволяет экспериментировать with data in реальном времени
-- **Визуализация:** Встроенная поддержка графиков and интерактивных виджетов
-- **documentation:** Возможность комбинировать код, текст and результаты
-- **Отладка:** Пошаговое выполнение кода for понимания алгоритмов
-- **Презентация:** ideal for демонстрации результатов and методоLogsй
+**Why Jupyter is critical for ML:**
+- ** Interactive:** Allows to experiment with data in real time
+- **Visualization:** In-house support for graphics and interactive widgets
+- **documentation:** Combination of code, text and results
+- ** Debugging:** Step-by-step execution of code for understanding algorithms
+- **presentation:**ideal for demonstration of results and method Logsy
 
-**Преимущества Jupyter for ML:**
-- Быстрое прототипирование алгоритмов
-- Интерактивная визуализация данных
-- Документирование процесса разработки
-- Совместная Working над проектами
-- Легкое воспроизведение экспериментов
+** The benefits of Jupiter for ML:**
+- Rapid algorithm prototype.
+- Interactive visualization of data
+- Documentation of the development process
+- Joint Working on projects
+- Easy replicating experiments
 
-**Недостатки Jupyter:**
-- Может быть медленным for больших вычислений
-- Сложность управления зависимостями
-- Issues with версионированием кода
-- not подходит for production deployment
+**Jupyter's shortcomings:**
+- Could be slow for big calculations.
+- The difficulty of managing addictions
+- Issues with versioning the code
+-not suitable for production release
 
-### create ядра for проекта
+### square core for project
 
-**Theory:** create отдельного ядра Jupyter for проекта обеспечивает изоляцию dependencies and воспроизводимость результатов. This is critical for ML-проектов, где точность воспроизведения экспериментов критична.
+**Theory:** the separate Jupyter core for the project provides isolation dependency and reproducibility of results. This is critical for ML projects where the accuracy of the experiments is critical.
 
-**Почему отдельное ядро критично:**
-- **Изоляция dependencies:** Предотвращает конфликты между проектами
-- **Воспроизводимость:** Одинаковые результаты on разных машинах
-- **Management версиями:** Контроль версий all библиотек
-- **Безопасность:** Изоляция from системных пакетов
-- **performance:** Оптимизация for конкретного проекта
+**Why is the individual kernel critical:**
+- **Dependencies isolation:** Prevents conflicts between projects
+- **Reproducibility:** Same results on different machines
+- **Management versions:** Control of all libraries versions
+- ** Safety:** Isolation from System Packages
+- **Performance:** Optimization for a specific project
 
-**process создания ядра:**
-1. **Инициализация ядра:** create нового ядра with уникальным именем
-2. **installation dependencies:** installation all required библиотек
-3. **configuration:** configuration параметров for оптимальной работы
-4. **Тестирование:** check работоспособности ядра
+**the production process:**
+1. **Initiation of the kernel:** creation of the new kernel with unique name
+2. **installationdependencies:** installation all libraries
+3. **configuring:**configuring parameters for best work
+4. ** Testing:** heck of core performance
 
 ```bash
-# create ядра Jupyter
+# Create Jupyter core
 uv run python -m ipykernel install --User --name neozork-ml --display-name "NeoZorK ML"
 
 # Launch Jupyter
 uv run jupyter notebook
 ```
 
-**Критически важно for ML-проектов:**
-- **Воспроизводимость:** Одинаковые результаты on all машинах
-- **Изоляция:** Предотвращение конфликтов dependencies
-- **performance:** Оптимизация for конкретных задач
-- **Management:** Легкое переключение между проектами
+** Critical for ML projects:**
+- **Reproducibility:** Same results on all machines
+- **Isolation:** Conflict prevention dependencies
+- **Performance:** Optimization for specific tasks
+- **Management:** Easy switch between projects
 
 ### configuration Jupyter
 
-**Theory:** Правильная configuration Jupyter критична for оптимальной работы on M1. Settings должны учитывать особенности архитектуры Apple Silicon and требования ML-проектов.
+**Theory:** The correct conference Jupyter is critical for optimal work on M1. Settings should take into account the features of the Apple Silicon architecture and the requirements of the ML projects.
 
-**Ключевые Settings for M1:**
-- **performance:** Оптимизация for M1 архитектуры
-- **Память:** configuration лимитов памяти for больших датасетов
-- **Сеть:** configuration for удаленного доступа
-- **Безопасность:** configuration прав доступа
-- **Стабильность:** Предотвращение сбоев при больших вычислениях
+** Key Settings for M1:**
+- **Performance:** Optimization for M1 architecture
+- **Remark:**configuration of memory limits for large datasets
+- **Network:**configuring for remote access
+- ** Security:** configuring access rights
+- **Stability: ** Prevention of large-calculations failures
 
 **Settings performance:**
-- **iopub_data_rate_limit:** Увеличение лимита передачи данных
-- **rate_limit_window:** configuration окна ограничения скорости
-- **memory_limit:** Ограничение использования памяти
-- **timeout:** configuration таймаутов for операций
+- **iopub_data_rate_limit:** Increased data transfer limit
+- **rate_limit_window:** configurization of the speed limitation window
+- **memory_limit:**Restriction on the use of memory
+- **timeout:**configuring timeouts for operations
 
-**Settings безопасности:**
-- **allow_root:** Разрешение Launchа from root (for Docker)
-- **ip:** configuration IP адреса for доступа
-- **port:** configuration порта for подключения
-- **open_browser:** Отключение автоматического открытия браузера
+**Settings safety:**
+- **allow_root:**Launch permission from root (for Docker)
+- **ip:**configuring IP addresses for access
+- **port:**configuring port for connection
+- **open_browser:** Disable automatically opening the browser
 
 ```python
 # jupyter_config.py
@@ -1264,17 +1264,17 @@ c.NotebookApp.ip = '0.0.0.0'
 c.NotebookApp.port = 8888
 c.NotebookApp.open_browser = False
 
-# Оптимизация for M1
+# Optimization for M1
 c.NotebookApp.iopub_data_rate_limit = 1000000000
 c.NotebookApp.rate_limit_window = 3.0
 ```
 
-**Полный тест Jupyter конфигурации:**
+** Full Jupyter configuration test:**
 
 ```python
 # test_jupyter_config.py
 """
-Полный тест Jupyter конфигурации for M1 Pro
+Full Jupyter configuration test for M1 Pro
 Launch: uv run python test_jupyter_config.py
 """
 
@@ -1285,8 +1285,8 @@ import json
 from pathlib import Path
 
 def test_jupyter_installation():
- """Тест installation Jupyter"""
- print("=== Тест installation Jupyter ===")
+"Test installation Jupyter."
+"print("===A test of installation Jupyter====)
 
  try:
  import jupyter
@@ -1298,7 +1298,7 @@ def test_jupyter_installation():
  import ipykernel
  print(f"IPython Kernel Version: {ipykernel.__version__}")
 
- print("✅ Jupyter installed корректно")
+"Jupyter installed correctly"
  return True
 
  except importError as e:
@@ -1306,37 +1306,37 @@ def test_jupyter_installation():
  return False
 
 def test_jupyter_kernels():
- """Тест доступных ядер Jupyter"""
- print("\n=== Тест ядер Jupyter ===")
+"The Test of Accessible Jupyter Cores."
+Print("\n===Jupyter core test===)
 
  try:
- # Получение списка ядер
+# Getting a list of the kernels
  result = subprocess.run(['jupyter', 'kernelspec', 'List'],
  capture_output=True, text=True)
 
  if result.returncode == 0:
- print("Доступные ядра:")
+pprint("Endable kernels:")
  print(result.stdout)
 
- # check наличия neozork-ml ядра
+# Check of neozork-ml core
  if 'neozork-ml' in result.stdout:
- print("✅ Ядро neozork-ml foundо")
+"Prind("\\\\\\\\\\\\\\\\\\\\nozork-ml forward)}
  else:
- print("⚠️ Ядро neozork-ml not foundо")
- print("Создайте ядро: uv run python -m ipykernel install --User --name neozork-ml")
+"Prind("♪ Neozork-ml nofundo core")
+"Bring the core: uv run python -m ipykernel install --User --name neozork-ml")
  else:
- print(f"❌ Ошибка получения списка ядер: {result.stderr}")
+Print(f"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\s\\\\\\\\\\\\\\\\\\\\\\\\\\}}}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}}}}}\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}}}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}}}}}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}}}}}}}}}}}}}}}}}}}}}}\\\\\\\\\\\\\\\\\\\\\}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
 
  except Exception as e:
- print(f"❌ Ошибка при тестировании ядер: {e}")
+Print(f"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}}}}}}}}}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}})
 
  return True
 
 def test_jupyter_config():
- """Тест конфигурации Jupyter"""
- print("\n=== Тест конфигурации Jupyter ===")
+"Jupyter configuration test"
+Print("\n===Jupyter configuration test===)
 
- # Пути к конфигурации
+# Paths to configuration
  config_paths = [
  Path.home() / '.jupyter' / 'jupyter_notebook_config.py',
  Path.home() / '.jupyter' / 'jupyter_notebook_config.json',
@@ -1344,21 +1344,21 @@ def test_jupyter_config():
  Path.home() / '.jupyter' / 'jupyter_lab_config.json'
  ]
 
- print("Поиск конфигурационных files:")
+"Looking for configuration files:")
  for path in config_paths:
  if path.exists():
  print(f" ✅ found: {path}")
  else:
  print(f" ⚠️ not found: {path}")
 
- # create базовой конфигурации
+#free basic configuration
  jupyter_dir = Path.home() / '.jupyter'
  jupyter_dir.mkdir(exist_ok=True)
 
  config_file = jupyter_dir / 'jupyter_notebook_config.py'
 
  if not config_file.exists():
- print("\nСоздание базовой конфигурации...")
+Print("n Formation of basic configuration...")
  config_content = '''# Jupyter Notebook Configuration for M1 Pro
 c = get_config()
 
@@ -1368,11 +1368,11 @@ c.NotebookApp.ip = '0.0.0.0'
 c.NotebookApp.port = 8888
 c.NotebookApp.open_browser = False
 
-# Оптимизация for M1
+# Optimization for M1
 c.NotebookApp.iopub_data_rate_limit = 1000000000
 c.NotebookApp.rate_limit_window = 3.0
 
-# Дополнительные Settings
+# Additional Settings
 c.NotebookApp.notebook_dir = '.'
 c.NotebookApp.allow_origin = '*'
 c.NotebookApp.disable_check_xsrf = True
@@ -1381,17 +1381,17 @@ c.NotebookApp.disable_check_xsrf = True
  with open(config_file, 'w') as f:
  f.write(config_content)
 
- print(f"✅ configuration создана: {config_file}")
+print(f"\configuration created: {config_file}}
  else:
- print(f"✅ configuration уже существует: {config_file}")
+Print(f) already exists: {config_file})
 
  return True
 
 def test_jupyter_performance():
- """Тест performance Jupyter"""
- print("\n=== Тест performance Jupyter ===")
+"Test performance Jupyter."
+"print("\n=== Test performance Jupyter====)
 
- # create testsого notebook
+# Create test notebook
  test_notebook = {
  "cells": [
  {
@@ -1403,7 +1403,7 @@ def test_jupyter_performance():
  "import numpy as np\n",
  "import time\n",
  "\n",
- "# Тест performance\n",
+"# Test performance\n"
  "size = 5000\n",
  "a = np.random.rand(size, size)\n",
  "b = np.random.rand(size, size)\n",
@@ -1412,7 +1412,7 @@ def test_jupyter_performance():
  "c = np.dot(a, b)\n",
  "end = time.time()\n",
  "\n",
- "print(f'Время умножения матриц {size}x{size}: {end - start:.3f} секунд')\n",
+"print(f'Reason of matrix times x(size)}: {end-start:.3f}seconds')\n",
  "print(f'performance: {size**3 / (end - start) / 1e9:.2f} GFLOPS')"
  ]
  }
@@ -1428,46 +1428,46 @@ def test_jupyter_performance():
  "nbformat_minor": 4
  }
 
- # Сохранение testsого notebook
+# Maintaining the test notebook
  test_file = Path('test_performance.ipynb')
  with open(test_file, 'w') as f:
  json.dump(test_notebook, f, indent=2)
 
- print(f"✅ testsый notebook создан: {test_file}")
- print("Запустите Jupyter and откройте этот файл for тестирования")
+pprint(f"\tests notebook created: {test_file})
+print("Stop Jupyter and open this file for testing")
 
  return True
 
 def test_jupyter_startup():
- """Тест Launchа Jupyter"""
- print("\n=== Тест Launchа Jupyter ===")
+"The Launcha Jupyter Test."
+"print("\n===Launcha Jupyter Test=========================================)=======Lunch Jupyter test======)
 
- print("team for Launchа Jupyter:")
+"team for Launch Jupyter:")
  print("1. Jupyter Notebook:")
  print(" uv run jupyter notebook")
  print("2. Jupyter Lab:")
  print(" uv run jupyter lab")
- print("3. with конкретным ядром:")
+"spint("3. with specific kernel:")
  print(" uv run jupyter notebook --kernel=neozork-ml")
 
- print("\ncheck доступности портов:")
+port accessibility:)
  try:
  import socket
  sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
  result = sock.connect_ex(('localhost', 8888))
  if result == 0:
- print("⚠️ Порт 8888 уже занят")
+"Prent("~ Port 8888 already occupied")
  else:
- print("✅ Порт 8888 свободен")
+port 8888 is free)
  sock.close()
  except Exception as e:
- print(f"Ошибка проверки порта: {e}")
+port inspection error: {e})
 
  return True
 
 def main():
- """Главная function тестирования"""
- print("🚀 Launch полного теста Jupyter конфигурации")
+"Principal function testing."
+print("\"Launch full Jupyter configuration test")
  print("=" * 60)
 
  try:
@@ -1479,11 +1479,11 @@ def main():
  test_jupyter_startup()
 
  print("\n" + "=" * 60)
- print("🎉 Тест Jupyter конфигурации завершен!")
- print("Jupyter готов к использованию on M1 Pro")
+Print("
+"Jupyter is ready for use on M1 Pro"
 
  except Exception as e:
- print(f"\n❌ Ошибка при тестировании Jupyter: {e}")
+Print(f)\n\\\\\\\\\\\\\\\n\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}\\\\\\\\\}\\\\\\\\\\\\\\\}\\\\\\\\\\\\}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}\\\\\\\\\\\\\}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}}}}}}}}}}}}\\\\\\\\\\\\\\\\\\\\\\\}}}}}}}}}}}}}}}}\\\\\\\\\\\\\\\\\\for for-for for-
  return False
 
  return True
@@ -1492,80 +1492,80 @@ if __name__ == "__main__":
  main()
 ```
 
-**Launch теста Jupyter:**
+**Launch Jupyter test:**
 ```bash
-# Сохранение and Launch теста
+# Conservation and Launch Test
 uv run python test_jupyter_config.py
 ```
 
-**Дополнительные Settings for ML-проектов:**
-- **Кэширование:** configuration кэширования for acceleration работы
-- **Параллелизм:** configuration многопоточности for M1
-- **Визуализация:** configuration for интерактивных графиков
-- **Расширения:** installation полезных расширений
+** Additional Settings for ML projects:**
+- **Cashing:**configuring caches for processing work
+- ** Parallelism:** configuring multi-accuracy for M1
+- **Visualization:**configuring for interactive graphics
+- ** Extensions:** installation of useful extensions
 
-**Критически важно for robust ML systems:**
-- **Стабильность:** Предотвращение сбоев при больших вычислениях
-- **performance:** Максимальное использование возможностей M1
-- **Scalability:** Возможность работы with большими данными
-- **Воспроизводимость:** Одинаковые результаты on all машинах
+** Critically important for Robst ML systems:**
+- **Stability: ** Prevention of large-calculations failures
+- **Performance:** Maximum use of M1
+- **Scalability:** Opportunity to work with big data
+- **Reproducibility:** Same results on all machines
 
-## Оптимизация for M1 Pro
+## Optimization for M1 Pro
 
-**Theory:** Оптимизация for M1 Pro критична for достижения максимальной performance ML-систем. M1 Pro имеет уникальную архитектуру, которая требует специальной Settings for оптимальной работы.
+**Theory:** Optimization for M1 Pro is critical for achieving maximum performance ML systems. M1 Pro has a unique architecture that requires special Settings for optimal work.
 
-**Почему оптимизация критична:**
-- **Архитектурные особенности:** M1 Pro имеет специфическую архитектуру, требующую специальной Settings
-- **performance:** Правильная оптимизация может увеличить performance by 3-5 times
-- **Энергоэффективность:** Оптимизация снижает потребление энергии and нагрев
-- **Стабильность:** Правильная configuration предотвращает сбои при больших вычислениях
-- **Scalability:** Оптимизация позволяет Workingть with большими данными
+**Why optimization is critical:**
+- ** Architecture:** M1 Pro has a specific architecture requiring special Settings
+- **Performance:** Correct optimization can increase performance by 3-5 times
+- ** Energy efficiency:** Optimization reduces energy consumption and heat
+- **Stability:** Correct configuration prevents malfunctions with large calculations
+- **Scalability:** Optimization allows Working with big data
 
-**Ключевые области оптимизации:**
-- **Переменные окружения:** configuration for оптимального использования ресурсов
-- **NumPy:** Оптимизация for M1 архитектуры
-- **PyTorch:** Использование Metal Performance Shaders
-- **Память:** Оптимизация использования Unified Memory
-- **Параллелизм:** configuration многопоточности
+** Key optimization areas:**
+- **changed environment:** conference for optimum use of resources
+- **NumPy:** Optimization for M1 architecture
+- **PyTorch:** Use of Metal Performance Shaders
+- ** Memory:** Optimization of the use of Unified Memorial
+- ** Parallelism:** configurization of multi-accuracy
 
-### 1. configuration переменных окружения
+♪##1. configuration of the variable environments
 
-**Theory:** Переменные окружения контролируют поведение ML-библиотек and операционной системы. Правильная configuration критична for оптимальной работы on M1 Pro.
+**Theory:** The changing environment controls the behaviour of the ML library and operating system.
 
-**Ключевые переменные for M1 Pro:**
-- **PYTHONUNBUFFERED:** Обеспечивает немедленный вывод результатов
-- **OMP_NUM_THREADS:** Контролирует количество потоков OpenMP
-- **MKL_NUM_THREADS:** configuration Intel MKL (если используется)
-- **NUMEXPR_NUM_THREADS:** configuration NumExpr for параллельных вычислений
+** Key variables for M1 Pro:**
+- **PYTHONUNBUFFERED:** Provides immediate output
+- **OMP_NUM_THIREDS:** Controls OpenMP flow rates
+- **MKL_NUM_THIREDS:**configuring Intel MKL (if used)
+- **NUMEXPR_NUM_THIREADS:**configuring NumberExpr for parallel calculations
 
-**MLX-специфичные переменные:**
-- **MLX_Use_METAL:** Включение Metal Performance Shaders
-- **MLX_Use_NEURAL_ENGINE:** Использование Neural Engine
-- **MLX_Use_CPU:** Fallback on CPU при необходимости
+**MLX specific variables:**
+- **MLX_USE_METAL:** Inclusion of Metal Performance Shaders
+- **MLX_Use_NEURAL_ENGINE:** Use of National Engineering
+- **MLX_Use_CPU:** Fallback on CPU if necessary
 
-**Оптимальные значения for M1 Pro:**
-- **8 потоков:** Оптимально for M1 Pro (8 производительных ядер)
-- **Metal:** Включен for GPU acceleration
-- **Neural Engine:** Включен for специализированных операций
+** Optimal values for M1 Pro:**
+- **8 streams:** Optimally for M1 Pro (8 production kernels)
+- **Metal:** Included for GPU assessment
+- **Neural Engineering:** Including for specialized operations
 
 ```bash
 # ~/.zshrc
 export PYTHONUNBUFFERED=1
-export OMP_NUM_THREADS=8 # Оптимально for M1 Pro
+OMP_NUM_THIREDS=8 # Optimal for M1 Pro
 export MKL_NUM_THREADS=8
 export NUMEXPR_NUM_THREADS=8
 
-# MLX оптимизации
+# MLX Optimization
 export MLX_Use_METAL=1
 export MLX_Use_NEURAL_ENGINE=1
 ```
 
-**Полный тест переменных окружения:**
+** Full test of variable environments:**
 
 ```python
 # test_environment.py
 """
-Полный тест переменных окружения for M1 Pro
+Full test of environmental variables for M1 Pro
 Launch: uv run python test_environment.py
 """
 
@@ -1577,28 +1577,28 @@ import numpy as np
 import torch
 
 def test_system_info():
- """Тест системной информации"""
- print("=== Системная информация ===")
+"The System Information Test."
+"print("=== System information===)
 
- print(f"Операционная система: {platform.system()} {platform.release()}")
+(f "Operational system: {platform.system()} {platform.release()}")
  print(f"architecture: {platform.machine()}")
- print(f"Процессор: {platform.processor()}")
+(f "Processor: {platform.processor()}")
  print(f"Python Version: {sys.version}")
- print(f"Python путь: {sys.executable}")
+(f"Python route: {sys.executable})
 
  # check M1 Pro
  if platform.machine() == 'arm64':
- print("✅ Обнаружен Apple Silicon (M1/M2/M3)")
+"Print(" ♪ Found by Apple Silicon (M1/M2/M3)")
  else:
- print("⚠️ not Apple Silicon - некоторые оптимизации могут not Workingть")
+("\ not Apple Silicon - some optimizations can not Working)
 
  return True
 
 def test_environment_variables():
- """Тест переменных окружения"""
- print("\n=== Переменные окружения ===")
+"Text of the variable environment."
+"Prent("\n===Switched environment===)
 
- # Ключевые переменные
+# Key variables
  env_vars = {
  'PYTHONUNBUFFERED': '1',
  'OMP_NUM_THREADS': '8',
@@ -1608,28 +1608,28 @@ def test_environment_variables():
  'MLX_Use_NEURAL_ENGINE': '1'
  }
 
- print("check переменных окружения:")
+Print("check variable environment:")
  for var, expected in env_vars.items():
- value = os.environ.get(var, 'not УСТАНОВЛЕНА')
+value = os.environ.get(var, 'not 'A')
  status = "✅" if value == expected else "⚠️"
  print(f" {status} {var}: {value}")
 
  # check PATH
- print(f"\nPATH содержит uv: {'uv' in os.environ.get('PATH', '')}")
- print(f"PATH содержит homebrew: {'homebrew' in os.environ.get('PATH', '')}")
+(f'nPATH contains uv: {'uv' in os.environ.get('PATH', '')})
+(f"PATH contains homebrew: {'homebrew' in os.environ.get('PATH', '')})
 
  return True
 
 def test_numpy_optimization():
- """Тест оптимизации NumPy"""
- print("\n=== Оптимизация NumPy ===")
+"The NumPy Optimisation Test."
+== sync, corrected by elderman == @elder_man
 
- # Информация о BLAS
- print("BLAS информация:")
+# Information about BLAS
+"BLAS Information:")
  np.show_config()
 
- # Тест performance
- print("\nТест performance NumPy:")
+# Test performance
+"print("nTest performance NumPy:")
  sizes = [1000, 2000, 5000]
 
  for size in sizes:
@@ -1643,23 +1643,23 @@ def test_numpy_optimization():
 
  duration = end - start
  gflops = size**3 / duration / 1e9
- print(f" Матрица {size}x{size}: {duration:.3f}s, {gflops:.2f} GFLOPS")
+Print(f) Matrix {size}x {size}: {security:.3f}s, {gflops:.2f}GFLOPS}
 
  return True
 
 def test_pytorch_mps():
- """Тест PyTorch MPS"""
+"Test PyTorch MPS."
  print("\n=== PyTorch MPS ===")
 
  print(f"PyTorch Version: {torch.__version__}")
  print(f"MPS available: {torch.backends.mps.is_available()}")
- print(f"MPS построен: {torch.backends.mps.is_built()}")
+Print(f"MPS built: {torch.backends.mps.is_bult()}})
 
  if torch.backends.mps.is_available():
  device = torch.device("mps")
- print("✅ MPS available - тестирование...")
+"print("\mps avalable-test...")
 
- # Тест on MPS
+# Test on MPS
  x = torch.randn(1000, 1000, device=device)
  y = torch.randn(1000, 1000, device=device)
 
@@ -1668,30 +1668,30 @@ def test_pytorch_mps():
  z = torch.mm(x, y)
  end = time.time()
 
- print(f" MPS матричное умножение: {end - start:.3f} секунд")
- print(f" Результат on устройстве: {z.device}")
+Print(f" MPS matrix multiplication: {end-start:.3f}seconds}
+print(f) result on device: {z.device})
  else:
  print("⚠️ MPS not available - Use CPU")
 
  return True
 
 def test_mlx_availability():
- """Тест доступности MLX"""
+""MLX Accessibility Test""
  print("\n=== MLX Framework ===")
 
  try:
  import mlx.core as mx
  print(f"MLX Version: {mx.__version__}")
- print(f"Доступные устройства: {mx.devices()}")
- print(f"Текущее устройство: {mx.default_device()}")
+(pint(f) Accessable devices: {mx.devises()})
+pprint(f) "Device: {mx.default_device()}")
 
- # Простой тест
+# A simple test
  a = mx.array([1, 2, 3, 4, 5])
  b = mx.array([5, 4, 3, 2, 1])
  c = a + b
- print(f" Тест операций: {c}")
+Print(f" Transaction test: {c})
 
- print("✅ MLX Workingет корректно")
+"MLX Works correctly"
  return True
 
  except importError:
@@ -1699,22 +1699,22 @@ def test_mlx_availability():
  return False
 
 def test_memory_usage():
- """Тест использования памяти"""
- print("\n=== Использование памяти ===")
+"The "Memorial Use Test""
+Print("\n===Memorial use===)
 
  try:
  import psutil
  process = psutil.Process()
  memory_info = process.memory_info()
 
- print(f"Использование памяти процессом: {memory_info.rss / 1024**2:.2f} MB")
- print(f"Виртуальная память: {memory_info.vms / 1024**2:.2f} MB")
+Print(f" Use of memory by process: {memory_info.rss / 1024**2:.2f} MB")
+"Virtual memory: {memory_info.vms / 1024**2:.2f} MB")
 
- # Системная память
+# System memory
  system_memory = psutil.virtual_memory()
- print(f"Общая память системы: {system_memory.total / 1024**3:.2f} GB")
- print(f"Доступная память: {system_memory.available / 1024**3:.2f} GB")
- print(f"Использование памяти: {system_memory.percent:.1f}%")
+(f) "General memory of the system: {system_memory.total / 1024**3:.2f}GB")
+print(f) "Accepted memory: {system_memory.available / 1024**3:.2f}GB")
+pprint(f" Use of memory: {system_memory.percent:.1f}%")
 
  except importError:
  print("psutil not installed - install: uv add psutil")
@@ -1722,8 +1722,8 @@ def test_memory_usage():
  return True
 
 def main():
- """Главная function тестирования"""
- print("🚀 Launch полного теста окружения M1 Pro")
+"Principal function testing."
+"prent("\\Launch full test environment M1Pro")
  print("=" * 60)
 
  try:
@@ -1736,11 +1736,11 @@ def main():
  test_memory_usage()
 
  print("\n" + "=" * 60)
- print("🎉 Тест окружения завершен!")
- print("Проверьте результаты выше for диагностики проблем")
+Print('\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\)))
+print("check the results above for diagnostic problems")
 
  except Exception as e:
- print(f"\n❌ Ошибка при тестировании окружения: {e}")
+Print(f)\n\\\\\\\\\\\\\\\\\\\\\\\\\n\\\\\\\\\\\\\\\\\\\\\\\\\\\n\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}\\\\}\\\\\\\\\})
  return False
 
  return True
@@ -1749,52 +1749,52 @@ if __name__ == "__main__":
  main()
 ```
 
-**Launch теста окружения:**
+**Launch test environment:**
 ```bash
-# Сохранение and Launch теста
+# Conservation and Launch Test
 uv run python test_environment.py
 ```
 
-**Критически важно for ML-проектов:**
-- **Воспроизводимость:** Одинаковые Settings on all машинах
-- **performance:** Максимальное использование ресурсов M1 Pro
-- **Стабильность:** Предотвращение сбоев при больших вычислениях
-- **Энергоэффективность:** Оптимальное потребление энергии
+** Critical for ML projects:**
+- **Reproducibility:** Same Settings on all machines
+- **Performance:** Maximum use of M1 Pro resources
+- **Stability: ** Prevention of large-calculations failures
+- ** Energy efficiency:** Optimal energy consumption
 
 ### 2. configuration NumPy for M1
 
-**Theory:** NumPy - основа all ML-библиотек, поэтому его оптимизация критична for performance всей системы. M1 Pro требует специальной Settings for оптимальной работы.
+**Theory:**NumPy is the foundation of all ML library, so its optimization is critical for the performance of the entire system. M1 Pro requires special Settings for optimal work.
 
-**Ключевые аспекты оптимизации NumPy:**
-- **BLAS библиотеки:** Использование оптимизированных BLAS for M1
-- **Память:** Оптимизация использования Unified Memory
-- **Параллелизм:** configuration многопоточности
-- **Кэширование:** Оптимизация кэширования данных
+**NumPy key optimization:**
+- **BLAS libraries:** Use of optimized BLAS for M1
+- ** Memory:** Optimization of the use of Unified Memorial
+- ** Parallelism:** configurization of multi-accuracy
+- **Cashing:**Cash optimization
 
-**check оптимизации:**
-- **Version:** Убедиться in использовании правильной версии
-- **BLAS:** Проверить использование оптимизированных BLAS
-- **architecture:** Убедиться in поддержке ARM64
-- **performance:** Тестирование on реальных задачах
+**check optimization:**
+- **Version:** Make sure the correct version is used
+- **BLAS:** Check the use of optimized BLAS
+- **architecture:**confirm in support of ARM64
+- **Performance:** Testing on Real Tasks
 
-**Тестирование performance:**
-- **Матричные операции:** Тест базовых операций
-- **Память:** Тест работы with большими массивами
-- **Параллелизм:** Тест многопоточности
-- **comparison:** comparison with эталонными значениями
+** Testing performance:**
+- ** Matrix operations:** Basic operations test
+- ** Memory:** Test of work with large arrays
+- ** Parallelism:** Multi-accuracy test
+- **comparison:**comparison with reference values
 
 ```python
 # numpy_config.py
 import numpy as np
 
-# check оптимизации
+# Check Optimization
 print(f"NumPy Version: {np.__version__}")
 print(f"BLAS info: {np.show_config()}")
 
-# Тест performance
+# Test performance
 import time
 
-# Тест матричных операций
+# A matrix operation test
 size = 5000
 a = np.random.rand(size, size)
 b = np.random.rand(size, size)
@@ -1806,33 +1806,33 @@ end = time.time()
 print(f"Matrix multiplication time: {end - start:.2f} seconds")
 ```
 
-**Критически важно for ML-проектов:**
-- **performance:** NumPy - основа all вычислений
-- **Совместимость:** Правильная Working with другими библиотеками
-- **Стабильность:** Предотвращение ошибок вычислений
-- **Scalability:** Working with большими данными
+** Critical for ML projects:**
+- **Performance:**NumPy - the basis of all calculations
+- **Compatibility:** Correct Working with other libraries
+- **Stability:** Prevention of computational errors
+- **Scalability:**Working with big data
 
 ### 3. configuration PyTorch for M1
 
-**Theory:** PyTorch on M1 Pro может использовать Metal Performance Shaders (MPS) for GPU acceleration. Правильная configuration критична for максимальной performance.
+**Theory:** PyTorch on M1 Pro can use Metal Performance Shaders (MPS) for GPU accreditation. The correct conference is critical for maximum performance.
 
 **MPS (Metal Performance Shaders):**
-- **Theory:** MPS обеспечивает GPU ускорение on Apple Silicon
-- **Практика:** Автоматическое использование GPU for подходящих операций
-- **Преимущества:** to 10x ускорение for определенных операций
-- **Ограничения:** not все операции поддерживаются
+- **Theory:** MPS provides a GPU acceleration on Apple Silicon
+- ** Practice:** Automatic use of GPU for suitable operations
+- ** Benefits:** to 10x acceleration for certain operations
+- **Restrictions:**not all operations are supported
 
 **check MPS:**
-- **Доступность:** check поддержки MPS
-- **Устройство:** Выбор правильного устройства
-- **performance:** Тестирование acceleration
-- **Совместимость:** check работы with моделями
+- **capability:** heck of an MPS support
+- **Device: ** Selection of the correct device
+- **Performance:** Testing ancceleration
+- **Compatibility:** sheck work with models
 
-**Оптимизация for M1 Pro:**
-- **Память:** Использование Unified Memory
-- **Параллелизм:** configuration многопоточности
-- **Кэширование:** Оптимизация кэширования
-- **Операции:** Выбор оптимальных операций
+**Optification for M1 Pro:**
+- ** Memory:** Use of Universaled Memorial
+- ** Parallelism:** configurization of multi-accuracy
+- **Cashing:** Cache optimization
+- **Operations:** Choice of optimal operations
 
 ```python
 # pytorch_m1_config.py
@@ -1846,7 +1846,7 @@ else:
  device = torch.device("cpu")
  print("MPS not available, Use CPU")
 
-# Тест performance
+# Test performance
 x = torch.randn(1000, 1000, device=device)
 y = torch.randn(1000, 1000, device=device)
 
@@ -1857,21 +1857,21 @@ end = time.time()
 print(f"PyTorch MPS time: {end - start:.2f} seconds")
 ```
 
-**Критически важно for ML-проектов:**
-- **performance:** GPU ускорение критично for large models
-- **Совместимость:** Правильная Working with существующим кодом
-- **Стабильность:** Предотвращение сбоев при обучении
-- **Scalability:** Возможность работы with большими данными
+** Critical for ML projects:**
+- **Performance:** GPU acceleration critical for large models
+- **Compatibility:** Correct Working with existing code
+- **Stability:** Prevention of learning failures
+- **Scalability:** Opportunity to work with big data
 
-**Дополнительные оптимизации:**
-- **Смешанная точность:** Использование float16 for acceleration
-- **Градиентные чеки:** Оптимизация памяти при обучении
-- **Параллелизм:** configuration dataLoader for многопоточности
-- **Кэширование:** Оптимизация кэширования данных
+** Additional optimization:**
+- ** Mixed accuracy:** Use of float16 for calculation
+- ** Gradient checks:** Optimization of memory during training
+- ** Parallelism:**configuring dataLoader for multi-accuracy
+- **Cashing:**Cash optimization
 
-## create проекта
+## the project's creation
 
-**Theory:** create правильной структуры проекта критично for robust ML systems. Хорошо организованная Structure обеспечивает масштабируемость, поддерживаемость and воспроизводимость проекта.
+**Theory:** the correct structure of the project is critical for Robst ML systems. A well-organized Structure ensures that the project is scalable, supportive and reproducible.
 
 ```
 Project Structure Visualization:
@@ -1944,60 +1944,60 @@ ML Pipeline Flow:
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Почему Project Structure критична:**
-- **Scalability:** Позволяет легко добавлять новые components
-- **Поддерживаемость:** Упрощает понимание and модификацию кода
-- **Воспроизводимость:** Обеспечивает одинаковую структуру on all машинах
-- **Совместная Working:** Упрощает работу in команде
-- **Деплой:** Упрощает развертывание in production
+**Why Project Structure is critical:**
+- **Scalability:** Makes it easy to add new components
+- ** Maintenance:** Simplifies understanding and modification of the code
+- **Reproducibility:** Provides the same structure on all machines
+- ** Joint Working:**Simplifies work in team
+- ** Business: ** Simplifies deployment in production
 
-**Принципы organization ML-проектов:**
-- **Модульность:** Разделение on Logsческие modules
-- **Разделение ответственности:** Каждый module решает конкретные задачи
-- **Инкапсуляция:** Скрытие внутренней реализации модулей
-- **Расширяемость:** Возможность добавления новых модулей
-- **Тестируемость:** Легкое тестирование каждого модуля
+** Principles for the organization of ML projects:**
+- ** Modularity:** Division on Logs
+- ** Division of responsibility: ** Each moduule solves specific tasks
+- **Incapsulation:** Internal implementation cover
+- ** Extension: ** Possible addition of new modules
+- ** Testability:** Easy testing of each module
 
 ### Project Structure
 
-**Theory:** Project Structure должна отражать этапы ML-пайплайна and обеспечивать Logsческую организацию кода. Каждая папка имеет специфическое назначение and содержит связанные components.
+**Theory:** Project Structure should reflect the phases of the ML-pipline and provide the Logsche code organization. Each folder has a specific purpose and contains linked components.
 
-**Основные components структуры:**
+** Main structures:**
 
-**src/ - исходный код:**
-- **Theory:** Содержит весь исходный код проекта
-- **Практика:** Разделен on modules on функциональности
-- **Критичность:** Основа всей системы
+**src/ - source code:**
+- **Theory:** Contains the entire project source code
+- ** Practice:** Separated on methods on functionality
+- ** Criticality:** Foundation of the whole system
 
 **data/ - data:**
-- **Theory:** Хранение all данных проекта
-- **Практика:** Разделение on raw, processed, features
-- **Критичность:** Необходимо for воспроизводимости
+- **Theory:** Storage all project data
+- **Practice:** Division on rave, processed, features
+- ** Criticality: ** Need for reproducibility
 
-**models/ - модели:**
-- **Theory:** Хранение обученных моделей and артефактов
-- **Практика:** Разделение on trained and artifacts
-- **Критичность:** Необходимо for воспроизведения результатов
+**models/-models:**
+- **Theory:** Storage of trained models and artifacts
+- **Practice:** Separation on trade and artifacts
+- ** Criticality: ** Need for replication
 
-**notebooks/ - эксперименты:**
-- **Theory:** Jupyter notebooks for экспериментов and Analysis
-- **Практика:** Нумерация and описательные имена
-- **Критичность:** Документирование процесса разработки
+**Notebooks/ - Experiments:**
+- **Theory:**Jupyter notes for experiments and Analysis
+- ** Practice:** Numbering and descriptive names
+- ** Criticality: ** Documentation of the development process
 
-**tests/ - тесты:**
-- **Theory:** Unit тесты for all компонентов
-- **Практика:** Соответствие структуре src/
-- **Критичность:** Обеспечение качества кода
+**tests/ - tests:**
+- **Theory:**Unt tests for all components
+- ** Practice:** Conformity of structure src/
+- ** Criticality: ** Code quality assurance
 
 **config/ - configuration:**
-- **Theory:** Конфигурационные файлы проекта
-- **Практика:** YAML файлы for настроек
-- **Критичность:** Management параметрами системы
+- **Theory:** Project configuration files
+- **Practice:** YAML files for settings
+- ** Criticality:** Management system parameters
 
-**scripts/ - скрипты:**
-- **Theory:** Исполняемые скрипты for автоматизации
-- **Практика:** Отдельные скрипты for different tasks
-- **Критичность:** Автоматизация рутинных операций
+**scripts/ - scripts:**
+- **Theory:** Playable scripts for automation
+- **Practice:** Selected scripts for disferent taxes
+- ** Criticality:** Automation of routine operations
 
 ```
 neozork-ml-system/
@@ -2054,59 +2054,59 @@ neozork-ml-system/
 └── .gitignore
 ```
 
-**Детальное describe модулей:**
+**Detail describe modules:**
 
 **src/data/ - Working with data:**
-- **loaders.py:** Loading data из различных источников
-- **preprocessors.py:** Предобработка and clean данных
-- **Критичность:** Основа for all ML-операций
+- **loaders.py:** Loading data from various sources
+- **Preprocessors.py:** Pre-processed and clear data
+- ** Criticality:** Basis for all ML operations
 
-**src/features/ - инженерия признаков:**
-- **engineering.py:** create новых признаков
-- **indicators.py:** Technical индикаторы
-- **Критичность:** Качество признаков определяет качество модели
+**src/features/ - Signs engineering:**
+- **englishing.py:**create new features
+- **indicators.py:** Technical indicators
+- ** Criticality: ** The quality of the indicators determines the quality of the model
 
-**src/models/ - ML модели:**
-- **base.py:** Базовые классы for моделей
-- **ml.py:** Классические ML алгоритмы
-- **deep.py:** Нейронные сети
-- **Критичность:** Сердце ML-системы
+**src/models/ - ML models:**
+- **base.py:** Basic classes for models
+- **ml.py:** Classical ML algorithms
+- **deep.py:** Neuronets
+- ** Criticality:**heart of the ML system
 
-**src/backtesting/ - бэктестинг:**
-- **engine.py:** Движок бэктестинга
+**src/backtesting/-backing:**
+- **engine.py:**backsing engine
 - **metrics.py:** Metrics performance
-- **Критичность:** validation торговых стратегий
+- ** Criticality:** evaluation of trade policies
 
-**src/deployment/ - развертывание:**
-- **api.py:** REST API for модели
-- **blockchain.py:** integration with блокчейном
-- **Критичность:** Production-ready система
+**src/deployment/-deployment:**
+- **api.py:**REST API for the model
+- **blockchain.py:** integration with blocker
+- ** Criticality:** Production-ready system
 
-### Инициализация проекта
+♪## Initiating the project
 
-**Theory:** Инициализация проекта включает create структуры папок, настройку dependencies and конфигурацию окружения. This is critical for воспроизводимости and масштабируемости проекта.
+**Theory:** Project initiation consists of a core folder structure, dependency settings and environmental configuration.
 
-**Этапы инициализации:**
-1. **create структуры:** create all required папок
-2. **Инициализация uv:** configuration менеджера пакетов
-3. **installation dependencies:** installation all required библиотек
-4. **configuration:** configuration параметров проекта
-5. **Тестирование:** check работоспособности
+** Initialization units:**
+1. **create structure:**free all reference folders
+2. **Initiating uv:**configuring bag manager
+3. **installationdependencies:** installation all libraries
+4. **configuring:**configuring project parameters
+5. **Texting:** sheck workability
 
-**Критически важно for ML-проектов:**
-- **Воспроизводимость:** Одинаковая Structure on all машинах
-- **Scalability:** Возможность добавления новых компонентов
-- **Поддерживаемость:** Легкое понимание and модификация
-- **Тестируемость:** Возможность тестирования каждого компонента
+** Critical for ML projects:**
+- **Reproduction:** Same Structure on All Machines
+- **Scalability:** Possible addition of new components
+- ** Supportability:** Easy understanding and modification
+- ** Testability: ** Testability of each component
 
 ```bash
-# create структуры
+# creative structure
 mkdir -p neozork-ml-system/{src/{data,features,models,backtesting,deployment},data/{raw,processed,features},models/{trained,artifacts},notebooks,tests,config,scripts}
 
-# Переход in проект
+# Transition in project
 cd neozork-ml-system
 
-# Инициализация uv
+# Initiating uv
 uv init --python 3.11
 
 # installation dependencies
@@ -2119,12 +2119,12 @@ uv add mlx
 uv add optuna mlflow wandb
 ```
 
-**Дополнительные шаги инициализации:**
-- **create .gitignore:** Исключение ненужных files из Git
-- **configuration pre-commit:** Автоматическая check кода
-- **create README:** documentation проекта
-- **configuration CI/CD:** Автоматизация тестирования and деплоя
-- **create конфигурации:** configuration параметров системы
+** Further initialization steps:**
+- **create .gitignore:** Deletion of unnecessary files from Git
+- **configuring pre-committee:** Automatic heck code
+- **create README:** documentation project
+- **configuring CI/CD:** Automation of testing and guitar
+- **create configuration:**configuring system parameters
 
 ## installation check
 
@@ -2172,12 +2172,12 @@ Expected Performance Benchmarks:
 └─────────────────┴──────────┴──────────┴──────────┘
 ```
 
-**Полный тест all библиотек:**
+** Full test of all libraries:**
 
 ```python
 # test_all_libraries.py
 """
-Полный тест all ML библиотек for M1 Pro
+Full test all ML libraries for M1 Pro
 Launch: uv run python test_all_libraries.py
 """
 
@@ -2187,33 +2187,33 @@ import warnings
 warnings.filterwarnings('ignore')
 
 def test_system_requirements():
- """Тест системных требований"""
- print("=== Тест системных требований ===")
+"The System Requirements Test"
+"print("== System requirements test==)
 
  import platform
  import psutil
 
- # Системная информация
- print(f"ОС: {platform.system()} {platform.release()}")
+# System information
+{platform.system()} {platform.release()}})
  print(f"architecture: {platform.machine()}")
- print(f"Процессор: {platform.processor()}")
+(f "Processor: {platform.processor()}")
 
- # Память
+# Memory
  memory = psutil.virtual_memory()
- print(f"Общая память: {memory.total / 1024**3:.1f} GB")
- print(f"Доступная память: {memory.available / 1024**3:.1f} GB")
+(f) General memory: {mory.total / 1024**3:.1f}GB)
+print(f) "Accepted memory: {memory.available / 1024**3:.1f}GB")
 
  # check M1
  if platform.machine() == 'arm64':
- print("✅ Apple Silicon обнаружен")
+"Apple Silicon detected"
  else:
  print("⚠️ not Apple Silicon")
 
  return True
 
 def test_core_libraries():
- """Тест основных библиотек"""
- print("\n=== Тест основных библиотек ===")
+"Text of the main libraries."
+Print("\n===Main libraries test===)
 
  libraries = [
  ('numpy', 'np'),
@@ -2244,8 +2244,8 @@ def test_core_libraries():
  return True
 
 def test_financial_libraries():
- """Тест финансовых библиотек"""
- print("\n=== Тест финансовых библиотек ===")
+"Text of financial libraries."
+Prent("\n=== Financial library test===)
 
  financial_libs = [
  'yfinance',
@@ -2272,8 +2272,8 @@ def test_financial_libraries():
  return True
 
 def test_advanced_ml_libraries():
- """Тест продвинутых ML библиотек"""
- print("\n=== Тест продвинутых ML библиотек ===")
+"Text of Advanced ML libraries."
+Prent("\n===A test of advanced ML libraries===)
 
  advanced_libs = [
  'xgboost',
@@ -2294,15 +2294,15 @@ def test_advanced_ml_libraries():
  return True
 
 def test_deep_learning_libraries():
- """Тест Deep Learning библиотек"""
- print("\n=== Тест Deep Learning библиотек ===")
+"Test Deep Learning libraries."
+\n===Deep Learning Library Test===)
 
  # PyTorch
  try:
  import torch
  print(f"✅ PyTorch: {torch.__version__}")
  print(f" MPS available: {torch.backends.mps.is_available()}")
- print(f" MPS построен: {torch.backends.mps.is_built()}")
+== sync, corrected by elderman == @elder_man
  except importError:
  print("❌ PyTorch: not installed")
 
@@ -2318,7 +2318,7 @@ def test_deep_learning_libraries():
  try:
  import mlx.core as mx
  print(f"✅ MLX: {mx.__version__}")
- print(f" Устройства: {mx.devices()}")
+(pint(f) Devices: {mx.devises()})
  except importError:
  print("❌ MLX: not installed")
 
@@ -2332,8 +2332,8 @@ def test_deep_learning_libraries():
  return True
 
 def test_jupyter_setup():
- """Тест Settings Jupyter"""
- print("\n=== Тест Settings Jupyter ===")
+"Text Settings Jupiter."
+\n===Settings Jupyter Test==============Settings Jupyter test============Settings test====================Settings Jupyter test==============Settings test=========================================Settings test======================Settingings test=====
 
  try:
  import jupyter
@@ -2343,15 +2343,15 @@ def test_jupyter_setup():
  print(f"✅ Notebook: {notebook.__version__}")
  print(f"✅ IPython Kernel: {ipykernel.__version__}")
 
- # check ядер
+# Check cores
  import subprocess
  result = subprocess.run(['jupyter', 'kernelspec', 'List'],
  capture_output=True, text=True)
  if result.returncode == 0:
- print("Доступные ядра:")
+pprint("Endable kernels:")
  print(result.stdout)
  else:
- print("⚠️ not удалось получить List ядер")
+print("\\not has been able to get the list of kernels")
 
  except importError as e:
  print(f"❌ Jupyter: {e}")
@@ -2359,10 +2359,10 @@ def test_jupyter_setup():
  return True
 
 def test_performance_benchmarks():
- """Тест performance"""
- print("\n=== Тест performance ===")
+"The Test Performance."
+Print("\n=== Test performance===)
 
- # NumPy тест
+# NumPy Test
  try:
  import numpy as np
  print("NumPy performance:")
@@ -2376,12 +2376,12 @@ def test_performance_benchmarks():
 
  duration = end - start
  gflops = size**3 / duration / 1e9
- print(f" Матрица {size}x{size}: {duration:.3f}s, {gflops:.2f} GFLOPS")
+Print(f) Matrix {size}x {size}: {security:.3f}s, {gflops:.2f}GFLOPS}
 
  except Exception as e:
- print(f"❌ NumPy тест: {e}")
+prent(f"♪ NumPy Test: {e}})
 
- # PyTorch MPS тест
+# PyTorch MPS Test
  try:
  import torch
  if torch.backends.mps.is_available():
@@ -2397,14 +2397,14 @@ def test_performance_benchmarks():
 
  duration = end - start
  gflops = size**3 / duration / 1e9
- print(f" MPS матрица {size}x{size}: {duration:.3f}s, {gflops:.2f} GFLOPS")
+(f) MPS matrix {size}x {size}: {security:.3f}s, {gflops:.2f}GFLOPS}
  else:
  print("⚠️ MPS not available")
 
  except Exception as e:
- print(f"❌ PyTorch тест: {e}")
+print(f"♪ PyTorch Test: {e}})
 
- # MLX тест
+# MLX Test
  try:
  import mlx.core as mx
  print("MLX performance:")
@@ -2418,16 +2418,16 @@ def test_performance_benchmarks():
 
  duration = end - start
  gflops = size**3 / duration / 1e9
- print(f" MLX матрица {size}x{size}: {duration:.3f}s, {gflops:.2f} GFLOPS")
+== sync, corrected by elderman == @elder_man
 
  except Exception as e:
- print(f"❌ MLX тест: {e}")
+Print(f"\MLX test: {e}})
 
  return True
 
 def test_environment_variables():
- """Тест переменных окружения"""
- print("\n=== Тест переменных окружения ===")
+"Text of the variable environment."
+Print("\n===A variable environment test===)
 
  import os
 
@@ -2441,15 +2441,15 @@ def test_environment_variables():
  }
 
  for var, expected in env_vars.items():
- value = os.environ.get(var, 'not УСТАНОВЛЕНА')
+value = os.environ.get(var, 'not 'A')
  status = "✅" if value == expected else "⚠️"
  print(f" {status} {var}: {value}")
 
  return True
 
 def main():
- """Главная function тестирования"""
- print("🚀 Launch полного теста all библиотек M1 Pro")
+"Principal function testing."
+"Print("♪ Launch full test all libraries M1Pro")
  print("=" * 70)
 
  try:
@@ -2464,16 +2464,16 @@ def main():
  test_environment_variables()
 
  print("\n" + "=" * 70)
- print("🎉 Полный тест завершен!")
- print("Проверьте результаты выше for диагностики проблем")
- print("\nСледующие шаги:")
- print("1. Исправьте все ошибки (❌)")
- print("2. Проверьте предупреждения (⚠️)")
- print("3. Запустите тесты performance")
- print("4. Переходите к следующему разделу")
+The full test has been completed!
+print("check the results above for diagnostic problems")
+Prent("n Next Steps:")
+"pint("1. Correct all errors ()")
+print("2. Please check the warnings (.)")
+print("3... run the performance tests)
+"print("4. Move to the next section")
 
  except Exception as e:
- print(f"\n❌ Критическая ошибка: {e}")
+Print(f)(\n\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\}}}}})
  return False
 
  return True
@@ -2482,13 +2482,13 @@ if __name__ == "__main__":
  main()
 ```
 
-**Launch полного теста:**
+**Launch full test:**
 ```bash
-# Сохранение and Launch полного теста
+# Saving and Launch Full Test
 uv run python test_all_libraries.py
 ```
 
-### Тест performance
+### Test performance
 
 ```python
 # performance_test.py
@@ -2499,10 +2499,10 @@ from sklearn.ensemble import RandomForestRegressor
 import torch
 
 def test_numpy_performance():
- """Тест performance NumPy on M1"""
+"Test performance NumPy on M1"
  print("testing NumPy performance...")
 
- # Большая матрица
+# Big matrix
  size = 10000
  a = np.random.rand(size, size)
  b = np.random.rand(size, size)
@@ -2515,10 +2515,10 @@ def test_numpy_performance():
  return end - start
 
 def test_pandas_performance():
- """Тест performance Pandas on M1"""
+"The Test of Performance Pandas on M1"
  print("testing Pandas performance...")
 
- # Большой dataFrame
+# Big dataFrame
  n_rows = 1000000
  df = pd.dataFrame({
  'A': np.random.randn(n_rows),
@@ -2534,10 +2534,10 @@ def test_pandas_performance():
  return end - start
 
 def test_sklearn_performance():
- """Тест performance scikit-learn on M1"""
+"Test performance scikit-learn on M1"
  print("testing scikit-learn performance...")
 
- # Большой датасет
+# Big dateset
  n_samples = 100000
  n_features = 100
 
@@ -2554,7 +2554,7 @@ def test_sklearn_performance():
  return end - start
 
 def test_pytorch_performance():
- """Тест performance PyTorch on M1"""
+"Test performance PyTorch on M1"
  print("testing PyTorch performance...")
 
  if torch.backends.mps.is_available():
@@ -2564,7 +2564,7 @@ def test_pytorch_performance():
  device = torch.device("cpu")
  print("Using CPU")
 
- # Большие тензоры
+# Big tensor
  size = 5000
  a = torch.randn(size, size, device=device)
  b = torch.randn(size, size, device=device)
@@ -2597,9 +2597,9 @@ if __name__ == "__main__":
  print(f"Total time: {total_time:.2f}s")
 ```
 
-## Устранение проблем
+♪ Solving the problems
 
-**Theory:** Устранение проблем при установке ML-окружения критично for успешной работы системы. M1 Pro имеет специфические требования and ограничения, которые могут вызывать различные проблемы.
+**Theory:** The resolution of problems when setting up an ML environment is critical for the success of the system. M1 Pro has specific requirements and limitations that may cause various problems.
 
 ```
 Common Problems & Solutions:
@@ -2650,232 +2650,232 @@ Problem Resolution Flow:
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Почему проблемы возникают:**
-- **Архитектурные различия:** M1 Pro использует ARM64 архитектуру, отличную from x86_64
-- **Совместимость:** not все библиотеки изначально поддерживают Apple Silicon
-- **dependencies:** Сложные цепочки dependencies могут вызывать конфликты
-- **Версии:** Несовместимость версий библиотек
-- **Окружение:** Неправильная configuration переменных окружения
+* Why the problems arise:**
+- ** Architectural differences:** M1 Pro uses ARM64 architecture that's different from x86_64
+- **Compatibility:**not all libraries initially support Apple Silicon
+- **dependencies:** Complex chains of dependencies can cause conflicts
+- ** Versions:** Incompatibility of library versions
+- ** Environment:** Wrong configration of variable environments
 
-**Общие принципы решения проблем:**
-- **Диагностика:** Правильная идентификация проблемы
-- **Поиск решений:** Использование официальной документации and сообщества
-- **Тестирование:** check решений on testsых задачах
-- **Документирование:** Запись решений for будущего использования
-- **Профилактика:** Предотвращение повторных проблем
+** General principles for solving problems:**
+- ** Diagnostics:** Correct identification of the problem
+- **Seek for solutions:** Use of official documentation and the community
+- **Teching:** check decisions on test tasks
+- ** Documentation: ** Recorded decisions for future use
+- **Prevention:** Prevention of recurring problems
 
-### Проблема 1: Ошибки компиляции
+### Problem 1: Compilation errors
 
-**Theory:** Ошибки компиляции часто возникают из-за отсутствия required инструментов разработки. M1 Pro требует специальных инструментов for компиляции C/C++ кода.
+**Theory:** Compilation errors are often due to lack of required development tools. M1Pro requires specific compilation tools for C/C++ code.
 
-**Причины ошибок компиляции:**
-- **Отсутствие Xcode Command Line Tools:** Необходимы for компиляции C/C++ кода
-- **Отсутствие CMake:** Требуется for сборки многих библиотек
-- **Отсутствие pkg-config:** Необходим for поиска библиотек
-- **Неправильная architecture:** Компиляция for x86_64 вместо ARM64
-- **Устаревшие инструменты:** Старые версии инструментов разработки
+** Causes of compilation errors:**
+- ** Absence of Xcode Common Line Tools:** required for compilation of C/C++ code
+- ** Lack of CMake: ** Required for many libraries to be assembled
+- ** No pkg-config:** necessary for library searches
+- ** Wrong architecture:** Compilation for x86_64 instead of ARM64
+- **Older tools:** Old versions of development tools
 
-**Симптомы ошибок компиляции:**
-- Ошибки "command not found" при установке пакетов
-- Ошибки линковки при сборке библиотек
-- Предупреждения о несовместимости архитектуры
-- Ошибки компиляции C/C++ кода
-- Таймауты при установке пакетов
+** Compilation error symptoms:**
+- "command not foundation" errors in the installation of packages
+- Lync errors in library assembly
+- Warnings about architecture incompatibility
+- Code compilation errors C/C++
+- Timeouts when the bags are installed
 
-**Решение:**
-1. **installation Xcode Command Line Tools:** Основные инструменты разработки
-2. **installation CMake:** Система сборки for C/C++ проектов
-3. **installation pkg-config:** Утилита for поиска библиотек
-4. **check архитектуры:** Убедиться in правильной архитектуре
-5. **update инструментов:** installation последних версий
+**Decision:**
+1. **installation Xcode Common Line Tools:** Main development tools
+2. **installation CMake:** Compilation system for C/C++ projects
+3. **installation pkg-config:**
+4. **check architecture:**confirm in correct architecture
+5. **update tools:** latest versions
 
 ```bash
 # installation Xcode Command Line Tools
 xcode-select --install
 
-# installation дополнительных инструментов
+# installation of additional tools
 brew install cmake pkg-config
 ```
 
-**Критически важно for ML-проектов:**
-- **Воспроизводимость:** Одинаковые инструменты on all машинах
-- **performance:** Правильная компиляция for M1 архитектуры
-- **Стабильность:** Предотвращение ошибок сборки
-- **Совместимость:** Совместимость with ML-библиотеками
+** Critical for ML projects:**
+- **Reproduction:** Same tools on all machines
+- **Performance:** The right compilation for M1 architecture
+- **Stability:** Prevention of assembly errors
+- **Compatibility:** compatibility with ML libraries
 
-### Проблема 2: Issues with ta-lib
+### Problem 2: Issues with ta-lib
 
-**Theory:** TA-Lib (Technical Analysis Library) - это C-библиотека for технического Analysis, которая требует компиляции for M1. Проблемы часто возникают из-за отсутствия системной библиотеки.
+**Theory:** TA-Lib (Technical Analysis Library) is a C-library for Technical Analysis, which requires compilation for M1. Problems often arise from the lack of a system library.
 
-**Причины проблем with ta-lib:**
-- **Отсутствие системной библиотеки:** TA-Lib должна быть установлена on системном уровне
-- **Неправильная architecture:** Компиляция for x86_64 вместо ARM64
-- **Конфликт версий:** Несовместимость версий системной and Python библиотек
-- **Issues with путями:** Неправильные пути к библиотекам
-- **Отсутствие dependencies:** Недостающие системные dependencies
+** Causes of problems with ta-lib:**
+- ** Lack of a system library:** TA-Lib to be installed on system level
+- ** Wrong architecture:** Compilation for x86_64 instead of ARM64
+- ** Conflict of versions:** Incompatibility of versions of system and Python libraries
+- **Issues with routes:** Wrong ways to libraries
+- ** Lack of dependencies:** Missing systems dependencies
 
-**Симптомы проблем with ta-lib:**
+**Symptoms with ta-lib:**
 - import Errors "No module named 'talib'"
-- Ошибки линковки при установке Python пакета
-- Ошибки "library not found" при импорте
-- Предупреждения о несовместимости архитектуры
-- Таймауты при установке
+- Lync errors in the Python package installation
+- Mistakes "library not foundation" at import
+- Warnings about architecture incompatibility
+- Timeout on installation
 
-**Решение:**
-1. **installation системной библиотеки:** Через Homebrew for M1
-2. **installation Python binding:** Через uv with правильными путями
-3. **check архитектуры:** Убедиться in ARM64 версии
-4. **configuration путей:** Правильные пути к библиотекам
-5. **Тестирование:** check работоспособности
+**Decision:**
+1. **installation of the System Library:** Through Homebrew for M1
+2. **installation Python bending:** Through uv with the right ways
+3. **check architecture:**confirm in ARM64 versions
+4. **configuring routes:** The right path to libraries
+5. **Texting:** sheck workability
 
 ```bash
-# installation ta-lib через Homebrew
+# Installation ta-lib through Homebrew
 brew install ta-lib
 
 # installation Python binding
 uv add TA-Lib
 ```
 
-**Критически важно for финансовых ML-проектов:**
-- **Технический анализ:** TA-Lib - основа for технических indicators
-- **performance:** Оптимизированная C-реализация
-- **Точность:** Проверенные алгоритмы технического Analysis
-- **Совместимость:** integration with pandas and numpy
+** Critical for financial ML projects:**
+- **Technical analysis:** TA-Lib - framework for technical indicators
+- **Performance:** Optimized C-realization
+- **Definity:** Tested algorithms for technical Analisis
+- **Compatibility:** integration with pandas and numpy
 
-### Проблема 3: Issues with PyTorch
+### Problem 3: Issues with PyTorch
 
-**Theory:** PyTorch on M1 Pro требует специальных версий, оптимизированных for Apple Silicon. Проблемы часто возникают из-за использования неправильных версий or источников installation.
+**Theory:** PyTorch on M1 Pro requires special versions optimized for Apple Silicon. Problems often arise from the use of incorrect versions or sources of installation.
 
-**Причины проблем with PyTorch:**
-- **Неправильная Version:** Использование версий for x86_64
-- **Неправильный источник:** installation with PyPI вместо специального indexа
-- **Отсутствие MPS:** Неправильная configuration Metal Performance Shaders
-- **Конфликт dependencies:** Несовместимость with другими библиотеками
-- **Issues with CUDA:** Попытка использования CUDA on M1
+**Cause of problems with PyTorch:**
+- ** Wrong Version:** Use of versions for x86_64
+- ** Wrong source:** installation with PyPI instead of a special index
+- ** Absence of MPS:** Wrong configuring Metal Performance Shaders
+- ** Conflict dependencies:** Incompatibility with other libraries
+- **Issues with CUDA:** Attempted use of CUDA on M1
 
-**Симптомы проблем with PyTorch:**
+** Symptoms of problems with PyTorch:**
 - import Errors "No module named 'torch'"
-- Ошибки "CUDA not available" on M1
-- Медленная Working on CPU вместо GPU
-- Ошибки линковки при установке
-- Предупреждения о несовместимости
+- Mistakes "CUDA not approved" on M1
+- Slow Working on CPU instead of GPU
+- Linger errors on installation
+- Warnings of incompatibility
 
-**Решение:**
-1. **Использование правильного indexа:** Специальный index for M1
-2. **installation MPS версии:** Версии with поддержкой Metal Performance Shaders
-3. **check совместимости:** Убедиться in совместимости версий
-4. **configuration MPS:** Правильная configuration for использования GPU
-5. **Тестирование:** check работы on M1
+**Decision:**
+1. ** Use the correct index:** Special index for M1
+2. **installation MPS version:** Versions with support for Metal Performance Shaders
+3. **check compatibility:** Make sure in compatibility versions
+4. **configuring MPS:** Correct Conference for use of GPU
+5. **Texting:** sheck work on M1
 
 ```bash
-# installation правильной версии PyTorch for M1
+# Installation of the correct version of PyTorch for M1
 uv add torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 ```
 
-**Критически важно for ML-проектов:**
-- **performance:** GPU ускорение on M1
-- **Совместимость:** Working with существующим кодом
-- **Стабильность:** Предотвращение сбоев при обучении
-- **Scalability:** Возможность работы with большими моделями
+** Critical for ML projects:**
+- **Performance:** GPU acceleration on M1
+- **Compatibility:** Working with existing code
+- **Stability:** Prevention of learning failures
+- **Scalability:** Opportunity to work with big models
 
-**Дополнительные проблемы and решения:**
+** Further challenges and solutions:**
 
-**Проблема 4: Issues with памятью**
-- **Причина:** Недостаток Unified Memory for large models
-- **Решение:** Оптимизация использования памяти, использование float16
+** Problem 4: Issues with memory**
+- ** Cause:** Deficiencies of Unified Memory for large models
+- ** Decision:** Memory Optimization, Float16
 
-**Проблема 5: Issues with производительностью**
-- **Причина:** Неправильная configuration переменных окружения
-- **Решение:** Оптимизация настроек for M1 Pro
+** Problem 5: Issues with productivity**
+- ** Cause:** Wrong configration of variable environments
+- ** Decision:** Optimization of settings for M1 Pro
 
-**Проблема 6: Issues with зависимостями**
-- **Причина:** Конфликты между версиями библиотек
-- **Решение:** Использование виртуальных окружений and точных версий
+** Problem 6: Issues with relationships**
+- ** Cause:** Conflicts between library versions
+- ** Decision: ** Use of virtual environments and exact versions
 
-**Критически важно for robust ML systems:**
-- **Диагностика:** Быстрая идентификация проблем
-- **Решение:** Эффективные methods устранения проблем
-- **Профилактика:** Предотвращение повторных проблем
-- **Документирование:** Запись решений for team
+** Critically important for Robst ML systems:**
+- ** Diagnostics:** Rapid identification of problems
+- ** Resolution: ** Effective methods to solve problems
+- **Prevention:** Prevention of recurring problems
+- **Documentation:** Recorded decisions for team
 
-## Полная installation check
+# # Full installation check
 
-**Пошаговая instruction for полной проверки:**
+** Step-by-step introduction for full verification:**
 
-### Шаг 1: create testsых files
+### Step 1: Create test files
 ```bash
-# create all testsых files
+# Create all testy files
 cat > test_mlx_complete.py << 'EOF'
-# [Содержимое test_mlx_complete.py из раздела выше]
+# [The content of test_mlx_complete.py in the section above]
 EOF
 
 cat > test_core_libraries.py << 'EOF'
-# [Содержимое test_core_libraries.py из раздела выше]
+# [The content of test_core_libraries.py from the section above]
 EOF
 
 cat > test_environment.py << 'EOF'
-# [Содержимое test_environment.py из раздела выше]
+# [The content of test_environment.py in the section above]
 EOF
 
 cat > test_jupyter_config.py << 'EOF'
-# [Содержимое test_jupyter_config.py из раздела выше]
+# [The content of test_jupyter_config.py from the section above]
 EOF
 
 cat > test_all_libraries.py << 'EOF'
-# [Содержимое test_all_libraries.py из раздела выше]
+# [The contents of test_all_libraries.py from the section above]
 EOF
 ```
 
-### Шаг 2: Run all tests
+### Step 2: Run all testes
 ```bash
-# 1. Тест MLX Framework
-echo "=== Тест MLX Framework ==="
+# 1. MLX Framework Test
+echo "==MLX Framework Test=="
 uv run python test_mlx_complete.py
 
-# 2. Тест основных библиотек
-echo "=== Тест основных библиотек ==="
+♪ 2. Test of the main libraries
+echo "== Test of main libraries=="
 uv run python test_core_libraries.py
 
-# 3. Тест окружения
-echo "=== Тест окружения ==="
+♪ 3. Test environment
+echo "== Environment test==="
 uv run python test_environment.py
 
-# 4. Тест Jupyter
-echo "=== Тест Jupyter ==="
+# 4. Jupyter Test
+echo "==Jupyter test=="
 uv run python test_jupyter_config.py
 
-# 5. Полный тест all библиотек
-echo "=== Полный тест all библиотек ==="
+# 5. Full test all libraries
+echo "=== Full test of all libraries==="
 uv run python test_all_libraries.py
 ```
 
-### Шаг 3: check результатов
+### Step 3: check results
 ```bash
-# check созданных files
-ls -la *.png *.html *.ipynb 2>/dev/null || echo "Файлы результатов not foundы"
+# Check created files
+ls -la *.png *.html *.ipynb 2>/dev/null
 
-# check логов
-echo "check последних Launchов tests..."
+# Check logs
+"Check of the last Launch testes..."
 ```
 
-### Шаг 4: Дополнительные проверки
+### Step 4: Additional checks
 ```bash
-# check версий ключевых компонентов
-echo "=== check версий ==="
+# Check versions of key components
+echo "=== Check versions==="
 uv run python --version
 uv --version
 brew --version
 
-# check переменных окружения
-echo "=== Переменные окружения ==="
+# Check variable environments
+echo "===changed environment==="
 env | grep -E "(PYTHON|OMP|MKL|NUMEXPR|MLX)" | sort
 
-# check доступных ядер Jupyter
-echo "=== Ядра Jupyter ==="
+# Check available Jupyter core
+== sync, corrected by elderman ==
 uv run jupyter kernelspec List
 
 # check performance
-echo "=== Быстрый тест performance ==="
+echo "== Rapid test performance=="
 uv run python -c "
 import numpy as np
 import time
@@ -2889,15 +2889,15 @@ print(f'NumPy {size}x{size}: {end-start:.3f}s')
 "
 ```
 
-## Следующие шаги
+## Next steps
 
-После успешной environment installation переходите к разделу:
-- **[02_robust_systems_fundamentals.md](02_robust_systems_fundamentals.md)** - Основы робастных систем
+After successful environmental development, go to the section:
+- **[02_robus_systems_fundamentals.md](02_robus_systems_fundamentals.md)** - Fundamentals of Robastic Systems
 
-## Полезные team
+# Useful team
 
 ```bash
-# check версий
+# Check versions
 uv run python --version
 uv run python -c "import numpy; print(numpy.__version__)"
 uv run python -c "import torch; print(torch.__version__)"
@@ -2908,45 +2908,45 @@ uv run jupyter notebook
 # Launch tests
 uv run python -m pytest tests/
 
-# installation новых dependencies
+# Installation of New Dependencies
 uv add package_name
 
 # update dependencies
 uv sync --upgrade
 
-# Полная check системы
+# Full check system
 uv run python test_all_libraries.py
 ```
 
-## Устранение проблем
+♪ Solving the problems
 
-**Если tests do not проходят:**
+** If tests do not pass:**
 
-1. **Проверьте установку Homebrew:**
+1. ** Check Homebrew installation:**
  ```bash
  brew --version
  brew doctor
  ```
 
-2. **Проверьте установку uv:**
+2. ** Check the installation uv:**
  ```bash
  uv --version
  uv python List
  ```
 
-3. **Проверьте переменные окружения:**
+** Check the variable environments:**
  ```bash
  source ~/.zshrc
  env | grep -E "(PYTHON|OMP|MKL|NUMEXPR|MLX)"
  ```
 
-4. **Переinstall проблемные библиотеки:**
+4. **Preinstall problem libraries:**
  ```bash
  uv remove package_name
  uv add package_name
  ```
 
-5. **Очистите кэш uv:**
+5. ** Clear the cache uv:**
  ```bash
  uv cache clean
  uv sync --reinstall
@@ -2954,4 +2954,4 @@ uv run python test_all_libraries.py
 
 ---
 
-**Важно:** Убедитесь, что все тесты performance проходят успешно перед переходом к следующему разделу. Все тесты должны показывать ✅ for успешной installation.
+** It's important:** Make sure that all the performance tests are performed successfully before moving to the next section. All tests must be shown to be successful installation.

@@ -1,69 +1,69 @@
-# instructions on синхронизации Git после перевода коммитов
+# instructions on git sync after commite translation
 
-## Проблема
-После использования `git filter-branch` for перевода коммитов, GitHub not может обWorkingть такой большой Push (153MB, 18714 объектов) за один раз из-за таймаута HTTP 408.
+## Problem
+After the use of `git filter-branch' for the translation of comms, GitHub not can aboutWorking such a large Push (153MB, 18714) at one time because of the timeout of HTTP 408.
 
-## Текущее состояние
-- ✅ Локально переведено: **2271 из 2289 коммитов (99.2%)**
-- ✅ Создан скрипт: `scripts/utilities/translate_commits.py`
-- ✅ Создан bundle: `/tmp/repo-bundle.bundle` (151MB)
-- ❌ Push not проходит из-за ограничений GitHub
+## Current state
+- Locally translated: **2271 out of 2,289 Committs (99.2%)**
+- Script created: `scripts/utilities/translate_committees.py'
+== sync, corrected by elderman == @elder_man
+- Push not due to GitHub restrictions
 
-## Решения
+## Solutions
 
-### Вариант 1: Попробовать позже (рекомендуется)
-GitHub может иметь временные ограничения. Попробуйте через несколько часов:
+### Option 1: Try later (recommended)
+GitHub may have time limits. Try in a few hours:
 
 ```bash
 ./scripts/utilities/Push_with_retry.sh v0.5.8 origin
 ```
 
-### Вариант 2: Использовать GitHub CLI for создания нового репозитория
+### Option 2: Use GitHub CLI for a new repository
 ```bash
-# Создать новый репозиторий with переведенными коммитами
+# Create a new repository with translated commands
 gh repo create neozork-hld-Prediction-translated --public --source=. --remote=origin-new
 git Push origin-new v0.5.8
 ```
 
-### Вариант 3: Использовать git bundle через веб-interface
-1. Bundle уже создан: `/tmp/repo-bundle.bundle`
-2. Загрузите его через GitHub веб-interface (требует специальных инструментов)
+### Option 3: Use git bindle via web-interface
+1. The Bundle has already been created: `/tmp/repo-bundle.bundle'
+2. Upload it via GitHub web-interface (requires special tools)
 
-### Вариант 4: Связаться with поддержкой GitHub
-Обратитесь in GitHub Support for временного увеличения лимитов for вашего аккаунта.
+### Option 4: Connect with GitHub support
+Please contact GitHub Support for a temporary increase in the limits for your account.
 
-### Вариант 5: Использовать частичный Push (экспериментально)
+### Option 5: Use partial Push (experimental)
 ```bash
 ./scripts/utilities/smart_sync.sh v0.5.8 origin 200
 ```
 
-## Альтернативный подход: Создать новую ветку with последними изменениями
+## Alternative approach: Create a new branch with recent changes
 
-Если нужно срочно синхронизировать только последние изменения:
+If only the latest changes need to be synchronized urgently:
 
 ```bash
-# Создать ветку только with последними 100 коммитами
+# Create a branch only with the last 100 commands
 git checkout -b v0.5.8-recent-translated
 git reset --soft HEAD~100
 git commit -m "chore: batch update - translated commit messages (last 100 commits)"
 git Push origin v0.5.8-recent-translated
 ```
 
-## check статуса
+## Check status
 
 ```bash
-# Проверить количество непереведенных коммитов
-git log --format="%s" | grep -E "[А-Яа-яЁё]" | wc -l
+# Check the number of untransmitted commies
+git log --format="%s" ♪ grep-E "[A-Ya-Yo]" ♪ wc-l
 
-# Проверить статус синхронизации
+# Check the sync status
 git status
 
-# Посмотреть различия
+# See the differences
 git log --oneline v0.5.8 ^origin/v0.5.8 | wc -l
 ```
 
-## Рекомендация
-**Лучший вариант**: Попробовать позже (через несколько часов) with помощью `Push_with_retry.sh`. GitHub может иметь временные ограничения, которые снимаются через некоторое время.
+## Recommendation
+**Best version**: Try later (in a few hours) with `Push_with_retry.sh'. GitHub may have time limits that are removed after some time.
 
-Если это not сWorkingет, Use **Вариант 2** (create нового репозитория через GitHub CLI) or **Вариант 4** (обращение in поддержку).
+If this is not withWorkinget, Use **Option 2** (create new repository through GitHub CLI) or **Option 4** (transmission in support).
 

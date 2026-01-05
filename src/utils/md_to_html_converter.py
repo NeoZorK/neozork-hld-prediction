@@ -411,10 +411,10 @@ class MarkdownToHTMLConverter:
 
  <div class="exPlanation">
  <strong>📚 Complete guide on Neozork AutoML:</strong><br>
- Комплексная documentation on созданию robust ML systems with использованием AutoML техноLogsй.
+Integrated documentation on the creation of robus ML systems with the use of AutoML technoLogs.
  </div>
 
- <h2>Содержание</h2>
+<h2> Content</h2>
  <div class="nav-links">
  """
 
@@ -466,21 +466,21 @@ class MarkdownToHTMLConverter:
  index_content += """
  </div>
 
- <h2>О проекте</h2>
- <p>Neozork AutoML - это комплексная система for создания робастных machine learning решений with использованием современных AutoML техноLogsй. documentation охватывает все аспекты from environment installation to deployment in production.</p>
+<h2> Project</h2>
+<p>Neozork AutoML is an integrated system for creating robotic machining solutions with the use of modern AutoML technoLLogs. Documentation covers all aspects from environmental integration to development in production.</p>
 
- <h2>Основные разделы</h2>
+<h2> Main sections</h2>
  <ul>
- <li><strong>installation and configuration:</strong> Полная configuration окружения for development</li>
- <li><strong>Подготовка данных:</strong> methods очистки and подготовки данных</li>
- <li><strong>Обучение моделей:</strong> AutoML подходы and best practices</li>
- <li><strong>Тестирование:</strong> Backtesting and validation моделей</li>
- <li><strong>Риск-менеджмент:</strong> Management рисками in ML системах</li>
- <li><strong>Развертывание:</strong> Production deployment and Monitoring</li>
+<li><strong>installation and conference:</strong> Complete integration for development</li>
+<li><strong> Data preparation:</strong> data cleaning and production</li>
+<li><strong> Model education:</strong> AutoML approaches and best practices</li>
+<li><strong> Testing:</strong> Backting and validation of models</li>
+<li><strong> Risk management:</strong> Risk management in ML systems</li>
+<li><strong> Deployment:</strong> Production development and Monitoring</li>
  </ul>
 
  <div class="exPlanation">
- <strong>💡 Совет:</strong> Начните with раздела "environment installation" and следуйте документации on порядку for лучшего понимания материала.
+Start with the section "environment installation" and follow the documentation on the order for a better understanding of the material.
  </div>
  """
 

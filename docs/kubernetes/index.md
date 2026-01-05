@@ -12,13 +12,13 @@ This section contains comprehensive documentation for deploying and managing the
 - [Troubleshooting](./english/Troubleshooting-en.md) - Common Issues and solutions
 - [Advanced Topics](./english/advanced-topics-en.md) - Scaling, security, and optimization
 
-### Russian Documentation (Русская documentation)
-- [Начало работы with Kubernetes](./russian/getting-started-ru.md) - Базовая configuration and развертывание
-- [guide on deployment](./russian/deployment-guide-ru.md) - Полные instructions on deployment
-- [Справочник конфигурации](./russian/configuration-reference-ru.md) - Все parameters конфигурации
-- [Monitoring and Logsрование](./russian/Monitoring-logging-ru.md) - configuration наблюдаемости
-- [Troubleshooting](./russian/Troubleshooting-ru.md) - Common Issues and решения
-- [Продвинутые темы](./russian/advanced-topics-ru.md) - Масштабирование, безопасность and оптимизация
+### Russian Documentation
+- [Initiating work with Kubernets](./russian/getting-started-ru.md) - Basic conference and deployment
+- [Guide on release](./russian/deployment-guid-ru.md) - Complete instruments on withdrawal
+- [Framework Handbook](./russian/configuring-reference-en.md) - All parameters of configuration
+- [Monitoring and Logsoring](/russian/Monitoring-logging-ru.md) - configuring observation
+- [Troubleshooting](./russian/Troubleshooting-ru.md) - Common Issues and Decisions
+- [Advanced themes](./russian/advanced-topics-ru.md) - Scale, security and optimization
 
 ## Quick start
 

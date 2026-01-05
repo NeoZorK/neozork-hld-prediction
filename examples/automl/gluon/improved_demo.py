@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Improved AutoGluon Demo with CLI flags
-Улучшенное демо AutoGluon with CLI флагами
+Improved AutoGluon demo with CLI flags
 
 This demo allows you to specify symbols and indicators via command line flags
 to work with fewer files and avoid the CSVExport scanning issues.

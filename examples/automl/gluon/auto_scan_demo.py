@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Auto Scan Demo - Interactive data selection and pipeline execution
-Демо автоматического сканирования - Интерактивный выбор данных and выполнение пайплайна
+Automatic scanning demo - Interactive data selection and implementation of the pipline
 
 This script demonstrates the new auto-scanning functionality that automatically
 discovers available indicators, symbols, and Timeframes from filenames.

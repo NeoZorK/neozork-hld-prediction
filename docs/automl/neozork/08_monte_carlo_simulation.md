@@ -1,93 +1,93 @@
-# 08. 🎲 Монте-Карло симуляция
+# 08. ♪ Monte Carlo simulation
 
-**Goal:** Научиться использовать Монте-Карло симуляцию for оценки рисков and неопределенности торговых стратегий.
+**Goal:** Learn to use Monte Carlo simulation for risk assessment and uncertainty of trade policies.
 
-## Что такое Монте-Карло симуляция?
+♪ What's Monte Carlo simulation?
 
-**Theory:** Монте-Карло симуляция - это мощный статистический метод, который использует случайные выборки for моделирования сложных систем and оценки неопределенности. in финансовой сфере она особенно ценна for оценки рисков and Planирования капитала.
+**Theory:** Monte Carlo simulation is a powerful statistical method that uses random samples to model complex systems and assess uncertainty. In the financial sphere, it is particularly valuable for risk assessment and capital planning.
 
-**Монте-Карло симуляция** - это метод моделирования, который использует случайные выборки for получения численных результатов and оценки неопределенности.
+** Monte-Carlo simulation** is a modelling method that uses random samples to produce quantitative results and assess uncertainty.
 
-**Почему Монте-Карло симуляция критична for финансовых систем:**
-- **Оценка рисков:** Позволяет количественно оценить различные типы рисков
-- **Planирование капитала:** Помогает определить оптимальный размер позиций
-- **Стресс-тестирование:** Проверяет устойчивость стратегии in экстремальных условиях
-- **validation стратегии:** Оценивает робастность торговых стратегий
+**Why Monte Carlo simulation is critical for financial systems:**
+- ** Risk assessment:** Allows the quantification of different types of risk
+- ** Capital Planning:** Helps determine the optimal size of positions
+- **Secure testing:** Checks the sustainability of the strategy in extreme circumstances
+- **validation strategies:** Assesses the relevance of trade policies
 
-### Зачем нужна Монте-Карло симуляция?
+## # Why would Monte Carlo need a simulation?
 
-**Theory:** Монте-Карло симуляция решает фундаментальные проблемы финансового моделирования, связанные with неопределенностью and сложностью рыночных процессов. Она обеспечивает более полное понимание рисков and возможностей.
+**Theory:** Monte Carlo simulation addresses the fundamental financial modelling problems associated with uncertainty and complexity of market processes; it provides a better understanding of risks and opportunities.
 
-- **Оценка рисков** - понимание возможных потерь
- - **Почему важно:** Финансовые рынки полны неопределенности, необходимо понимать возможные потери
- - **Плюсы:** Количественная оценка рисков, Planирование управления рисками
- - **Disadvantages:** Требует много вычислительных ресурсов, может быть сложной in интерпретации
+- ** Risk assessment** - An understanding of possible losses
+- What's important is:** Financial markets are full of uncertainty, there's a need to understand possible losses.
+- **plus:** Risk assessment, Risk management planning
+- **Disadvantages:** Demands multiple computing resources, may be difficult in interpretation
 
-- **Planирование капитала** - определение размера позиций
- - **Почему важно:** Правильное Management капиталом критично for выживания on рынке
- - **Плюсы:** Оптимизация размера позиций, снижение рисков
- - **Disadvantages:** Сложность расчета, необходимость точных данных
+- ** Capital Planning** - Positioning determination
+- What's important is:** The right Management Capital is critical for survival on the market?
+- ** Plus:** Optimization of the size of the items, risk reduction
+- **Disadvantages:**Complicity of calculation, need for accurate data
 
-- **Стресс-тестирование** - check in экстремальных условиях
- - **Почему важно:** Рынки могут испытывать экстремальные события
- - **Плюсы:** Выявление уязвимостей, подготовка к кризисам
- - **Disadvantages:** Может показать худшие результаты, сложность Settings сценариев
+- **Spect testing** - check in extreme conditions
+- What's important is:** Markets can experience extreme events
+- ** Plus:** Identification of vulnerabilities, crisis preparedness
+- **Disadvantages:** May show worse results, complexity of Settings scenarios
 
-- **validation стратегии** - check робастности
- - **Почему важно:** Стратегия должна Workingть in различных условиях
- - **Плюсы:** Оценка стабильности, выявление проблем
- - **Disadvantages:** Требует много времени, сложность интерпретации результатов
+- **validation strategy** - check platitude
+- What's important is:** The Strategy has to Work in different settings.
+- ** Plus: ** Assessment of stability, identification of problems
+- **Disadvantages:** Takes a lot of time, complexity of interpretation of results
 
-**Дополнительные преимущества Монте-Карло симуляции:**
-- **Гибкость:** Можно моделировать различные сценарии
-- **Реалистичность:** Учитывает сложность реальных рынков
-- **Количественность:** Дает точные численные оценки
-- **Визуализация:** Позволяет наглядно представить риски
+** Additional benefits of Monte Carlo simulations:**
+- ** Flexibility: ** You can model different scenarios.
+- ** Reality: ** Taking into account the complexity of real markets
+- **quantity:** Provides accurate numerical estimates
+- ** Visualization:** Allows a visual presentation of the risks
 
-## Основы Монте-Карло симуляции
+♪ The foundations of Monte Carlo simulations
 
-**Theory:** Монте-Карло симуляция основана on принципе генерации множества случайных сценариев for оценки неопределенности. in финансовой сфере это особенно важно for понимания рисков and возможностей.
+**Theory:** Monte Carlo simulation is based on the principle of generating multiple random scenarios for assessing uncertainty. In the financial sphere, this is particularly important for understanding risks and opportunities.
 
-### 1. Простая симуляция
+### 1. Simple simulation
 
-**Theory:** Простая Монте-Карло симуляция использует нормальное распределение for моделирования доходностей. Это базовый подход, который может быть расширен for учета более сложных dependencies.
+**Theory:** A simple Monte Carlo simulation uses a normal distribution for income modelling, a basic approach that can be expanded to take into account more complex preferences.
 
-**Математические основы простой симуляции:**
-- **Нормальное распределение:** R ~ N(μ, σ²), где μ - средняя доходность, σ - стандартное отклонение
-- **Кумулятивная доходность:** C = ∏(1 + R_i) - 1, где R_i - доходность за период i
-- **Центральная предельная теорема:** При большом количестве наблюдений распределение доходностей стремится к нормальному
-- **Закон больших чисел:** Среднее значение симуляций сходится к математическому ожиданию
+** Mathematical framework of simple simulation:**
+- **Normal distribution:** R ~ N( μ, ~2) where μ is the average return, ~ is the standard deviation
+- ** Cumulative return:** C = \(1 + R_i) - 1, where R_i is the return over period i
+- ** Central limit Theorem:** With a large number of observations, income distribution tends to be normal
+- ** Law of large numbers:** Average of simulations corresponds to mathematical expectation
 
-**Почему простая симуляция важна:**
-- **Базовый подход:** Служит основой for более сложных методов
-- **Понятность:** Легко понять and интерпретировать результаты
-- **Быстрота:** Быстро выполняется даже on больших данных
-- **validation:** Позволяет проверить правильность реализации
-- **Параметрическая гибкость:** Легко настраивать parameters распределения
+# Why a simple simulation is important #
+- ** Basic approach:** Provides the basis for more sophisticated methods
+- ** Clarity:** Easy to understand and interpret results
+- ♪ Quick: ♪ Quickly even on big data ♪
+- **validation:** Lets check the correct implementation.
+- ** Parametric flexibility:** Easy to adjust parameters distribution
 
-**Алгоритм простой симуляции:**
-1. **Оценка параметров:** Вычисляем μ and σ из исторических данных
-2. **Генерация случайных чисел:** Creating n_simulations наборов случайных доходностей
-3. **Расчет путей:** for каждого набора вычисляем кумулятивную доходность
-4. **Анализ результатов:** Статистический анализ полученных результатов
+**Alternative simulation algorithm:**
+1. ** Parameters assessment:** Compute μ and . from historical data
+2. **Generation of random numbers:**Creating n_simulations of random return sets
+3. **Calculation of routes: ** for each set, compute cumulative returns
+4. ** Analysis of results:** Statistical analysis of results
 
-**Плюсы простой симуляции:**
-- Простота реализации and понимания
-- Быстрота выполнения даже on больших данных
-- Легкая интерпретация результатов
-- Хорошая база for расширения and модификации
-- Параметрическая гибкость
-- Статистическая обоснованность
+** Plus simple simulation:**
+- Easy implementation and understanding
+- Speed of implementation even on big data
+- Easy interpretation of results
+- Good basis for expansion and modification
+- Parametric flexibility
+- Statistical justification
 
-**Минусы простой симуляции:**
-- Может not учитывать сложные dependencies между периодами
-- Предполагает нормальное распределение доходностей
-- Может быть менее реалистичной for финансовых данных
-- Ограниченная гибкость in моделировании экстремальных events
-- not учитывает кластеризацию волатильности
-**Детальное describe кода простой симуляции:**
+**Minuses of simple simulation:**
+- Might not take into account complex dependencies between periods.
+- Presumes a normal distribution of income
+- Could be less realistic for financial data
+- Limited flexibility in the modelling of extreme events
+-not takes into account the clustering of volatility
+** Detailed describe of simple simulation code:**
 
-Код реализует классическую Монте-Карло симуляцию for финансовых данных. Каждая function имеет четкое назначение and может быть использована независимо.
+The code performs a classic Monte Carlo simulation for financial data, each function has a clear purpose and can be used independently.
 
 ```python
 import numpy as np
@@ -99,117 +99,117 @@ warnings.filterwarnings('ignore')
 
 def monte_carlo_simulation(returns, n_simulations=10000, time_horizon=252):
  """
- Простая Монте-Карло симуляция доходностей
+Simple Monte Carlo profit simulation
 
- Эта function реализует базовую Монте-Карло симуляцию, используя нормальное распределение
- for генерации случайных доходностей. Она является основой for более сложных методов.
+This function performs the basic Monte Carlo simulation using normal distribution
+It is the basis for more complex methods.
 
- Математическая основа:
- - Генерирует n_simulations путей доходности
- - Каждый путь состоит из time_horizon periods
- - Доходности генерируются как R ~ N(μ, σ²)
- - Кумулятивная доходность: C = ∏(1 + R_i) - 1
+Mathematical framework:
+- Generates n_simulations of yield paths
+- Every path consists of time_horizon periods
+- Income is generated as R ~ N( μ, ~2)
+- Cumulative return: C = 1 + R_i - 1
 
  parameters:
- - returns: исторические доходности (pandas Series or numpy array)
- - n_simulations: количество симуляций (on умолчанию 10000)
- - time_horizon: горизонт Planирования in днях (on умолчанию 252 - торговый год)
+- returns: historical returns (pandas Series or numpy array)
+- n_simulations: number of simulations (on default 10,000)
+- Time_horizon: Planning horizon in days (on default 252 - Trade year)
 
- Возвращает:
- - numpy array with результатами симуляций
+Returns:
+- numpy array with simulation results
  """
 
- # Шаг 1: Оценка параметров распределения из исторических данных
- # Это критически важно - мы Use реальные data for калибровки модели
+# Step 1: Assessment of distribution parameters from historical data
+# It's critical we're Us real data for calibrating the model
  mean_return = returns.mean()
  std_return = returns.std()
 
- print(f"parameters симуляции:")
- print(f" Средняя доходность: {mean_return:.4f} ({mean_return*100:.2f}%)")
- print(f" Стандартное отклонение: {std_return:.4f} ({std_return*100:.2f}%)")
- print(f" Количество симуляций: {n_simulations:,}")
- print(f" Горизонт Planирования: {time_horizon} дней")
+"print(f"parameters simulation:")
+average return: {mean_return:4f}(mean_return*100:.2f}%)
+standard deviation: {std_return:.4f}({std_return*100:.2f}%})
+number(f" Number of simulations: {n_simulations:,})
+"Plancing horizon: {time_horizon}days")
 
- # Шаг 2: Инициализация массива for хранения результатов
- # Use List for эффективного добавления элементов
+# Step 2: Initiating an array for storing results
+# Use List for the effective addition of elements
  simulation_results = []
 
- # Шаг 3: Основной цикл симуляции
+# Step 3: Basic simulation cycle
  for i in range(n_simulations):
- # Генерация случайных доходностей for одного пути
- # np.random.normal генерирует нормально распределенные случайные числа
+# Generating random returns for the same path
+# np.random.normal generates normally distributed random numbers
  random_returns = np.random.normal(mean_return, std_return, time_horizon)
 
- # Расчет кумулятивной доходности for данного пути
- # Use формулу: (1 + r1) * (1 + r2) * ... * (1 + rn) - 1
+# Calculation of cumulative returns for this path
+# Use formula: (1 + r1) * (1 + r2) * * (1 + rn) - 1
  cumulative_return = np.prod(1 + random_returns) - 1
 
- # Сохранение результата
+# Maintaining the result
  simulation_results.append(cumulative_return)
 
- # Прогресс-бар for больших симуляций
+# Progress bar for big simulations
  if (i + 1) % 1000 == 0:
- print(f" Выполнено симуляций: {i + 1:,}/{n_simulations:,}")
+Print(f" Implemented by simulations: {i + 1:}/{n_simulations:})
 
- print(f"Симуляция завершена! ОбWorkingно {len(simulation_results):,} сценариев.")
+Print(f) Simulation complete! OverWorkingno {len(simulation_results):,} scenarios.)
 
  return np.array(simulation_results)
 
 def analyze_simulation_results(results):
  """
- Комплексный анализ результатов Монте-Карло симуляции
+Integrated analysis of Monte Carlo simulation results
 
- Эта function вычисляет ключевые статистические metrics for Analysis
- распределения результатов симуляции. Она помогает понять риски and возможности.
+This function calculates key statistical metrics for Analysis
+It helps to understand the risks and opportunities.
 
- Вычисляемые metrics:
- - Описательная статистика (среднее, стандартное отклонение)
- - Квантили распределения (5%, 25%, 50%, 75%, 95%)
- - Вероятности положительных and отрицательных результатов
- - Экстремальные значения (максимальная прибыль/убыток)
+Computed metrics:
+- Description statistics (average, standard deviation)
+- Quantiles of distribution (5%, 25%, 50%, 75%, 95%)
+- Probability of positive and negative results
+Extreme values (maximum profit/loss)
 
  parameters:
- - results: массив результатов симуляции
+- results: simulation array
 
- Возвращает:
- - словарь with ключевыми метриками
+Returns:
+- dictionary with key metrics
  """
 
- print("Анализ результатов симуляции:")
- print(f" Общее количество сценариев: {len(results):,}")
+"Analysis of simulation results:")
+total number of scenarios: {len(s):}})
 
- # Базовые статистические metrics
+# Basic statistical statistics
  mean_return = np.mean(results)
  std_return = np.std(results)
 
- # Квантили распределения - критически важны for оценки рисков
+# Distribution Quantiles - Critical for risk assessment
  percentiles = [5, 25, 50, 75, 95]
  percentile_values = {f'percentile_{p}': np.percentile(results, p) for p in percentiles}
 
- # Вероятностные metrics
+# Probable metrics
  probability_positive = np.mean(results > 0)
  probability_loss = np.mean(results < 0)
 
- # Экстремальные значения
+# Extreme values
  max_loss = np.min(results)
  max_gain = np.max(results)
 
- # Дополнительные metrics for лучшего понимания
- skewness = stats.skew(results) # Асимметрия распределения
- kurtosis = stats.kurtosis(results) # Эксцесс (островершинность)
+# Additional metrics for better understanding
+skewness = states.skew(s) # Distribution asymmetry
+kurtosis = states.curtosis(s) #Excess (accuracy)
 
- # Коэффициент вариации (относительная волатильность)
+# The coefficient of variation (ratio volatility)
  coefficient_of_variation = std_return / abs(mean_return) if mean_return != 0 else np.inf
 
- print(f" Средняя доходность: {mean_return:.4f} ({mean_return*100:.2f}%)")
- print(f" Стандартное отклонение: {std_return:.4f} ({std_return*100:.2f}%)")
- print(f" Коэффициент вариации: {coefficient_of_variation:.2f}")
- print(f" Асимметрия: {skewness:.4f}")
- print(f" Эксцесс: {kurtosis:.4f}")
- print(f" Вероятность прибыли: {probability_positive:.2%}")
- print(f" Вероятность убытка: {probability_loss:.2%}")
- print(f" Максимальная прибыль: {max_gain:.4f} ({max_gain*100:.2f}%)")
- print(f" Максимальный убыток: {max_loss:.4f} ({max_loss*100:.2f}%)")
+average return: {mean_return:4f}(mean_return*100:.2f}%)
+standard deviation: {std_return:.4f}({std_return*100:.2f}%})
+Print(f "Variance coefficient: {co-officent_of_variation:.2f}")
+Asymmetry: {skewness:4f})
+Print(f"Excess: {curtosis:4f})
+Print(f) Probability of profits: {probability_positive:.2%})
+"Priint(f" Probability of loss: {probability_loss:2%}")
+maximum profit: {max_ain:4f}({max_ain*100:.2f}%)
+maximum loss: {max_loss:4f}({max_loss*100:.2f}}}
 
  return {
  'mean_return': mean_return,
@@ -225,159 +225,159 @@ def analyze_simulation_results(results):
  }
 ```
 
-### 2. Bootstrap симуляция
+###2. Bootstrap simulation
 
-**Theory:** Bootstrap симуляция использует исторические data for создания новых сценариев путем случайной выборки with возвращением. Это более реалистичный подход, который сохраняет структуру исторических данных.
+**Theory:** Bootstrap simulation uses historical data for creating new scenarios by random sample with return. This is a more realistic approach that preserves the structure of historical data.
 
-**Математические основы Bootstrap:**
-- **Эмпирическое распределение:** F̂(x) = (1/n)∑I(X_i ≤ x), где I - индикаторная function
-- **Bootstrap выборка:** X* = {X*_1, X*_2, ..., X*_n} ~ F̂ (выборка with возвращением)
-- **Bootstrap оценка:** θ̂* = T(X*) - статистика, вычисленная on bootstrap выборке
-- **Bootstrap распределение:** Распределение θ̂* при повторных bootstrap выборках
+** Bootstrap mathematical framework:**
+- **Empirical distribution:** F\(x) = (1/n)\I(X_i ≤ x) where I is indicator function
+- **Bootstrap sample:** X* = {X*_1, X*_2, ..., X*_n} ~ F\ (sample with return)
+- **Bootstrap estimate:** * * * * = T(X*) - statistics calculated on bootstrap sample
+- **Bootstrap distribution:** Distribution of ≤* on repeated Bootstrap samples
 
-**Почему Bootstrap симуляция важна:**
-- **Реалистичность:** Использует реальные исторические data без параметрических предположений
-- **Сохранение структуры:** Сохраняет dependencies and особенности in данных
-- **Непараметричность:** not требует предположений о распределении доходностей
-- **Гибкость:** Может Workingть with любыми типами данных and распределений
-- **Робастность:** Менее чувствительна к выбросам and аномалиям
+# Why Bootstrap Simulation is important #
+- ** Reality:** uses real historical data without parameter assumptions.
+- **Contain structure:** Maintains dependencies and features in data
+- ** Non-parametricity:**not requires assumptions about income distribution
+- ** Flexibility:** May Work with any type of data and distribution
+- **Pity:** Less sensitive to emissions and anomalies
 
-**Алгоритм Bootstrap симуляции:**
-1. **Подготовка данных:** clean and подготовка исторических доходностей
-2. **Bootstrap выборка:** Случайная выборка with возвращением из исторических данных
-3. **Генерация пути:** create временного ряда из bootstrap выборки
-4. **Расчет метрик:** Вычисление кумулятивной доходности and других показателей
-5. **Повторение:** Многократное повторение for получения распределения
+**Bootstrap simulation algorithm:**
+1. ** Preparation of data: ** Clear and historical returns
+2. **Bootstrap sample:** Random sample with historical returns
+3. ** Route Generation: ** time series of BOOTstrap sample
+4. **Metric calculation: ** Computation of cumulative returns and other indicators
+5. **Reconciliation:** Repeated for distribution
 
-**Плюсы Bootstrap симуляции:**
-- Более реалистичные результаты, основанные on реальных данных
-- Сохранение структуры and dependencies in данных
-- Непараметрический подход - not требует предположений о распределении
-- Гибкость применения к различным типам активов
-- Учет реальных рыночных условий and паттернов
-- Меньше чувствительности к выбросам
+** Plus Bootstrap simulations:**
+- More realistic results based on real data
+- Maintenance of structure and preferences in data
+- Non-parametric approach - not requires distribution assumptions
+- Flexible application to different types of asset
+- Taking into account real market conditions and patterns
+- Less emission sensitivity
 
-**Минусы Bootstrap симуляции:**
-- Может быть менее стабильной при малом объеме данных
-- Требует больше вычислительных ресурсов
-- Сложность интерпретации результатов
-- Возможные Issues with временными зависимостями
-- Может not учитывать структурные изменения in рынке
-**Детальное describe кода Bootstrap симуляции:**
+**Mouses of Bootstrap simulations:**
+- Could be less stable with little data
+- Requires more computing resources
+- The difficulty of interpreting the results
+Possible Issues with Time Dependences
+- May not take account of structural changes in the market
+**Detail describe of Bootstrap simulation code:**
 
-Bootstrap симуляция использует исторические data for создания новых сценариев, сохраняя реальную структуру рынка.
+Bootstrap simulation uses historical data to create new scenarios, while maintaining a real market structure.
 
 ```python
 def bootstrap_monte_carlo(returns, n_simulations=10000, time_horizon=252):
  """
- Bootstrap Монте-Карло симуляция доходностей
+Bootstrap Monte Carlo Income Simulation
 
- Эта function реализует bootstrap подход к Монте-Карло симуляции, используя
- исторические data for генерации новых сценариев. in отличие from параметрического
- подхода, bootstrap сохраняет реальную структуру and распределение данных.
+This function is implementing a Bootstrap approach to Monte Carlo simulations using
+historical data for generating new scenarios.
+The approach, Bootstrap retains the real structure and distribution of the data.
 
- Математическая основа:
- - Использует эмпирическое распределение F̂ вместо параметрического
- - Генерирует bootstrap выборки: X* ~ F̂ (выборка with возвращением)
- - Сохраняет все dependencies and особенности исторических данных
- - not требует предположений о типе распределения
+Mathematical framework:
+- Uses empirical distribution of F\ instead of parameter
+- Generates a bootstrap sample: X* ~ F~ (sample with return)
+- Maintains all historical data and features.
+- not requires assumptions about the type of distribution
 
- Преимущества Bootstrap:
- - Реалистичность: использует реальные рыночные data
- - Непараметричность: not требует предположений о распределении
- - Сохранение структуры: учитывает реальные dependencies
- - Робастность: менее чувствителен к выбросам
+Benefits of Bootstrap:
+- Reality: Using real market data
+- Non-parametricity:not requires distribution assumptions
+- Maintaining structure: takes into account actual dependencies
+- Obsceneness: less sensitive to emissions
 
  parameters:
- - returns: исторические доходности (pandas Series or numpy array)
- - n_simulations: количество симуляций (on умолчанию 10000)
- - time_horizon: горизонт Planирования in днях (on умолчанию 252)
+- returns: historical returns (pandas Series or numpy array)
+- n_simulations: number of simulations (on default 10,000)
+- time_horizon: Planning horizon in days (on default 252)
 
- Возвращает:
- - numpy array with результатами bootstrap симуляций
+Returns:
+- numpy array with bootstrap simulation results
  """
 
- # check входных данных
+# Check input data
  if len(returns) == 0:
- raise ValueError("Массив доходностей not может быть пустым")
+Raise ValueError.
 
  if len(returns) < time_horizon:
- print(f"Предупреждение: Длина данных ({len(returns)}) меньше горизонта Planирования ({time_horizon})")
- print("Будет использована вся доступная длина данных")
+prent(f"Prevention: Data length({len(returns)}) below Planning horizon(({time_horizon})})
+"All available data length will be used")
  time_horizon = len(returns)
 
- print(f"Bootstrap симуляция:")
- print(f" Размер исторических данных: {len(returns):,}")
- print(f" Количество симуляций: {n_simulations:,}")
- print(f" Горизонт Planирования: {time_horizon} дней")
- print(f" Размер bootstrap выборки: {time_horizon}")
+print(f"Bootstrap simulation:")
+prent(f"Size of historical data: {len(returns):})
+number(f" Number of simulations: {n_simulations:,})
+"Plancing horizon: {time_horizon}days")
+print(f" Bootstrap sample size: {time_horizon})
 
- # Инициализация массива результатов
+# Initiating a range of results
  simulation_results = []
 
- # Основной цикл bootstrap симуляции
+# Basic Bootstrap Simulation Cycle
  for i in range(n_simulations):
- # Шаг 1: Bootstrap выборка with возвращением
- # np.random.choice with replace=True создает выборку with возвращением
- # Это позволяет одному and тому же наблюдению появиться несколько раз
+# Step 1: Bootstrap sample with return
+# np.random.choice with return=True creates a sample with return
+# This allows one and the same observation to appear several times
  bootstrap_returns = np.random.choice(returns, size=time_horizon, replace=True)
 
- # Шаг 2: Расчет кумулятивной доходности for bootstrap пути
- # Use ту же формулу: (1 + r1) * (1 + r2) * ... * (1 + rn) - 1
+# Step 2: Calculation of cumulative returns for the Bootstrap route
+# Use the same formula: (1 + r1) * (1 + r2) * * (1 + rn) - 1
  cumulative_return = np.prod(1 + bootstrap_returns) - 1
 
- # Шаг 3: Сохранение результата
+# Step 3: Retain the result
  simulation_results.append(cumulative_return)
 
- # Прогресс-бар for отслеживания выполнения
+# Progress bar for monitoring implementation
  if (i + 1) % 1000 == 0:
- print(f" Выполнено bootstrap симуляций: {i + 1:,}/{n_simulations:,}")
+prent(f" Achieved Bootstrap simulations: {i + 1,}/{n_simulations:,})
 
- print(f"Bootstrap симуляция завершена! ОбWorkingно {len(simulation_results):,} сценариев.")
+default(f"Bootstrap simulation complete! OnWorkingno {len(simulation_effects):,} scenarios.)
 
- # Дополнительная статистика for понимания bootstrap процесса
+# Additional statistics for the understanding of the Bootstrap process
  bootstrap_results = np.array(simulation_results)
- print(f" Статистика bootstrap результатов:")
- print(f" Средняя доходность: {np.mean(bootstrap_results):.4f} ({np.mean(bootstrap_results)*100:.2f}%)")
- print(f" Стандартное отклонение: {np.std(bootstrap_results):.4f} ({np.std(bootstrap_results)*100:.2f}%)")
- print(f" Минимальная доходность: {np.min(bootstrap_results):.4f} ({np.min(bootstrap_results)*100:.2f}%)")
- print(f" Максимальная доходность: {np.max(bootstrap_results):.4f} ({np.max(bootstrap_results)*100:.2f}%)")
+(f "Bootstrap statistics:")
+average return: {np.mean(bootstrap_effects): 4f}({np.mean(bootstrap_results)*100:.2f}%)
+default(f" Standard deviation: {np.std(bootstrap_effects): 4f}({np.std(botstrap_results)*100:.2f}%)
+minimum return: {np.min(bootstrap_results): 4f}({np.min(bootstrap_results)*100:.2f}%)
+pint(f" Maximum return: {np.max(botstrap_results): 4f}({np.max(botstrap_results)*100:.2f}%")
 
  return bootstrap_results
 
 def compare_simulation_methods(returns, n_simulations=5000):
  """
- comparison различных методов Монте-Карло симуляции
+Comparison of various Monte Carlo simulation techniques
 
- Эта function сравнивает простую параметрическую симуляцию with bootstrap методом,
- показывая различия in результатах and их интерпретацию.
+This function compares the simple parameter simulation with the bootstrap method,
+Show differences in results and interpret them.
 
  parameters:
- - returns: исторические доходности
- - n_simulations: количество симуляций for сравнения
+- Returns: historical returns
+- n_simulations: number of simulations for comparison
 
- Возвращает:
- - словарь with результатами обоих методов
+Returns:
+- dictionary with results of both methods
  """
 
- print("=== comparison методов Монте-Карло симуляции ===")
+== sync, corrected by elderman == @elder_man
 
- # Простая параметрическая симуляция
- print("\n1. Параметрическая симуляция (нормальное распределение):")
+# A simple parameter simulation
+print("\n1. Parametric simulation (normal distribution):")
  parametric_results = monte_carlo_simulation(returns, n_simulations)
  parametric_Analysis = analyze_simulation_results(parametric_results)
 
- # Bootstrap симуляция
- print("\n2. Bootstrap симуляция (эмпирическое распределение):")
+# Bootstrap simulation
+"print("\n2. Bootstrap simulation (empirical distribution):")
  bootstrap_results = bootstrap_monte_carlo(returns, n_simulations)
  bootstrap_Analysis = analyze_simulation_results(bootstrap_results)
 
- # Сравнительный анализ
- print("\n=== Сравнительный анализ ===")
- print(f"Разница in средней доходности: {bootstrap_Analysis['mean_return'] - parametric_Analysis['mean_return']:.4f}")
- print(f"Разница in стандартном отклонении: {bootstrap_Analysis['std_return'] - parametric_Analysis['std_return']:.4f}")
- print(f"Разница in 5% квантиле: {bootstrap_Analysis['percentile_5'] - parametric_Analysis['percentile_5']:.4f}")
- print(f"Разница in 95% квантиле: {bootstrap_Analysis['percentile_95'] - parametric_Analysis['percentile_95']:.4f}")
+# Comparative analysis
+== sync, corrected by elderman == @elder_man
+Spring(f" The difference in average return: {bootstrap_Analesis['mean_return'] - parametric_Analysis['mean_return']:4f})
+print(f" The difference in standard deviation: {bootstrap_Analesis['std_return'] - parametric_Analysis['std_return']:4f})
+print(f" The difference in 5% quintile: {bootstrap_Analesis['percentile_5'] - parametric_Analisis['percentile_5']:4f})
+print(f" The difference in 95% quintile: {bootstrap_Analesis['percentile_95'] - parametric_Analesis['percentile_95']:4f})
 
  return {
  'parametric': {
@@ -391,128 +391,128 @@ def compare_simulation_methods(returns, n_simulations=5000):
  }
 ```
 
-### 3. Block Bootstrap симуляция
+### 3. Box Bootstrap simulation
 
-**Theory:** Block Bootstrap симуляция расширяет обычный Bootstrap, учитывая временные dependencies in данных. Она использует блоки данных вместо отдельных наблюдений, что более реалистично for финансовых временных рядов.
+**Theory:** Block Bootstrap simulation expands the usual Bootstrap, given the time-dependences in the data; it uses data blocks instead of individual observations, which is more realistic for financial time series.
 
-**Математические основы Block Bootstrap:**
-- **Блоки данных:** B_i = {X_{i}, X_{i+1}, ..., X_{i+l-1}} где l - размер блока
-- **Block Bootstrap выборка:** Выборка блоков with возвращением
-- **Сохранение dependencies:** Внутри блоков сохраняются временные dependencies
-- **Автокорреляция:** ρ(k) = E[(X_t - μ)(X_{t+k} - μ)] / σ²
+**Block Bootstrap mathematical framework:**
+- ** Data sets:** B_i = {X_{i}, X_{i+1}, ..., X_{i+l-1)} where l is the size of the block
+- **Block Bootstrap sample:** Sample of blocks with return
+- **Dependencies preservation:** Time dependencies retained inside blocks
+- **According to:**(k) = E[((X_t-t))(X_{t+k} - μ)] / .
 
-**Почему Block Bootstrap симуляция важна:**
-- **Временные dependencies:** Учитывает автокорреляцию and кластеризацию волатильности
-- **Реалистичность:** Более точно моделирует финансовые временные ряды
-- **Сохранение структуры:** Сохраняет временную структуру and паттерны данных
-- **Гибкость:** Может настраиваться под различные типы данных and dependencies
-- **Учет кластеризации:** Сохраняет кластеризацию волатильности (GARCH эффекты)
+♪ Why is the Block Bootstrap simulation important ♪
+- ** Temporary dependencies:** Reflects autocoupling and clustering of volatility
+- ** Reality:** More accurately modelled financial time series
+- **Continuing structure:** Maintains temporal structure and data pathologies
+- ** Flexibility: ** May be adapted to different types of data and dependencies
+- ** Clustering:** Maintains the clustering of volatility (GARCH effects)
 
-**Алгоритм Block Bootstrap симуляции:**
-1. **Определение размера блока:** Оптимальный размер блока for сохранения dependencies
-2. **create блоков:** Разделение данных on перекрывающиеся блоки
-3. **Bootstrap выборка блоков:** Случайная выборка блоков with возвращением
-4. **Сборка временного ряда:** Объединение выбранных блоков in новый ряд
-5. **Расчет метрик:** Вычисление показателей for полученного ряда
+**Block Bootstrap Algorithm simulations:**
+1. ** Group size determination:** Optimal size of unit for preservation
+2. **create blocks:** Data separation on overlapping blocks
+3. **Bootstrap sample of blocks:** Random sample of blocks with return
+4. ** Time-series assembly:** Merge selected blocks into a new series
+5. **Metric calculation:** Calculation of indicators for the series
 
-**Плюсы Block Bootstrap симуляции:**
-- Учет временных dependencies and автокорреляции
-- Более реалистичные результаты for финансовых данных
-- Сохранение temporary структуры and паттернов
-- Гибкость Settings размера блоков
-- Учет кластеризации волатильности
-- Более точная оценка рисков
+** Plus Block Bootstrap simulations:**
+- Accounting for temporary dependencies and autocorns
+- More realistic results for financial data
+- Maintaining the temporary structure and patterns
+- Settings size flexibility
+- Consideration of the clustering of volatility
+- More accurate risk assessment
 
-**Минусы Block Bootstrap симуляции:**
-- Сложность реализации and Settings
-- Требует выбора оптимального размера блоков
-- Может быть менее стабильной при неправильной настройке
-- Высокие вычислительные затраты
-- Сложность интерпретации результатов
-- Возможные артефакты on границах блоков
-**Детальное describe кода Block Bootstrap симуляции:**
+**Minuses of Block Bootstrap simulations:**
+- Implementation difficulty and Settings
+- Requires choice of optimum block size
+- Could be less stable with the wrong settings.
+- High computing costs
+- The difficulty of interpreting the results
+- Possible artifacts on block boundaries
+**Detail describe of the Black Bootstrap simulation code:**
 
-Block Bootstrap симуляция учитывает временные dependencies in данных, используя блоки вместо отдельных наблюдений.
+The Block Bootstrap simulation takes into account time dependencies in data using blocks instead of separate observations.
 
 ```python
 def block_bootstrap_monte_carlo(returns, n_simulations=10000, time_horizon=252, block_size=5):
  """
- Block Bootstrap Монте-Карло симуляция доходностей
+Box Bootstrap Monte Carlo Income Simulation
 
- Эта function реализует Block Bootstrap подход, который учитывает временные
- dependencies in финансовых данных. Вместо выборки отдельных наблюдений,
- метод выбирает блоки данных, сохраняя автокорреляцию and структуру временных рядов.
+This function implements the Block Bootstrap approach, which takes into account the time-frame
+In financial data, instead of a sample of individual observations,
+The method selects the data blocks while maintaining autocoordination and time series structure.
 
- Математическая основа:
- - Блоки: B_i = {X_i, X_{i+1}, ..., X_{i+l-1}} где l = block_size
- - Block Bootstrap: Выборка блоков with возвращением
- - Сохранение dependencies: Внутри блоков сохраняются временные dependencies
- - Автокорреляция: ρ(k) = E[(X_t - μ)(X_{t+k} - μ)] / σ²
+Mathematical framework:
+- Blocks: B_i = {X_i, X_{i+1}, ..., X_{i+l-1)} where l = block_size
+- Box Bootstrap: Sample of blocks with return
+- Maintenance of dependencies: Time dependencies retained inside blocks
+Auto-coordination: (k) = E[(X_t-)(X_{t+k} - μ)] /
 
- Преимущества Block Bootstrap:
- - Учет временных dependencies and автокорреляции
- - Сохранение кластеризации волатильности
- - Более реалистичное моделирование финансовых данных
- - Учет GARCH эффектов and других временных паттернов
+Benefits of Block Bootstrap:
+- Accounting for temporary dependencies and autocorns
+- Maintaining the clustering of volatility
+- More realistic modelling of financial data
+- Account for GARCH effects and other time patterns
 
  parameters:
- - returns: исторические доходности (pandas Series or numpy array)
- - n_simulations: количество симуляций (on умолчанию 10000)
- - time_horizon: горизонт Planирования in днях (on умолчанию 252)
- - block_size: размер блока for сохранения dependencies (on умолчанию 5)
+- returns: historical returns (pandas Series or numpy array)
+- n_simulations: number of simulations (on default 10,000)
+- time_horizon: Planning horizon in days (on default 252)
+- lock_size: size of the unit for retention (on default 5)
 
- Возвращает:
- - numpy array with результатами block bootstrap симуляций
+Returns:
+- numpy array with the results of block bootstrap simulations
  """
 
- # check входных данных
+# Check input data
  if len(returns) == 0:
- raise ValueError("Массив доходностей not может быть пустым")
+Raise ValueError.
 
  if len(returns) < block_size:
- print(f"Предупреждение: Размер данных ({len(returns)}) меньше размера блока ({block_size})")
- print("Будет использован размер блока равный размеру данных")
+prent(f"Prevention: The size of the data ({len(returns)}) is smaller than the size of the block ({block_size})).
+Print("The size of the block equal to the size of the data will be used")
  block_size = len(returns)
 
- # Автоматический выбор размера блока on basis автокорреляции
+# Automatic choice of the size of the block on base autocorration
  if block_size is None or block_size <= 0:
- # Анализ автокорреляции for выбора оптимального размера блока
+# Autocoordination analysis for the choice of the optimal size of the block
  autocorr = pd.Series(returns).autocorr(lag=1)
  if not np.isnan(autocorr):
- # Эмпирическое правило: размер блока = 1 / (1 - автокорреляция)
+# Empirical rule: block size = 1 / (1 - autocorration)
  suggested_block_size = max(1, int(1 / (1 - abs(autocorr))))
  block_size = min(suggested_block_size, len(returns) // 4)
  else:
  block_size = 5
 
- print(f"Block Bootstrap симуляция:")
- print(f" Размер исторических данных: {len(returns):,}")
- print(f" Размер блока: {block_size}")
- print(f" Количество симуляций: {n_simulations:,}")
- print(f" Горизонт Planирования: {time_horizon} дней")
+print(f"Block Bootstrap simulation:")
+prent(f"Size of historical data: {len(returns):})
+pprint(f) Size of block: {lock_size})
+number(f" Number of simulations: {n_simulations:,})
+"Plancing horizon: {time_horizon}days")
 
- # Анализ автокорреляции for понимания временных dependencies
+# Autocognition analysis for Time Dependencies
  autocorr_1 = pd.Series(returns).autocorr(lag=1)
  autocorr_5 = pd.Series(returns).autocorr(lag=5)
- print(f" Автокорреляция (lag=1): {autocorr_1:.4f}")
- print(f" Автокорреляция (lag=5): {autocorr_5:.4f}")
+(pint(f" Autococration (lag=1): {autocorr_1:4f})
+(pint(f" Autococration (lag=5): {autocorr_5:4f})
 
- # Инициализация массива результатов
+# Initiating a range of results
  simulation_results = []
 
- # Основной цикл Block Bootstrap симуляции
+# Block Bootstrap main cycle simulation
  for i in range(n_simulations):
- # Шаг 1: create блоков and bootstrap выборка
+# Step 1: rent blocks and bootstrap sample
  n_blocks = time_horizon // block_size
  bootstrap_returns = []
 
- # Шаг 2: Выборка блоков with возвращением
+# Step 2: Sample of blocks with return
  for _ in range(n_blocks):
- # Случайный выбор начального indexа блока
- # Убеждаемся, что блок not выходит за границы данных
+# Random selection of the initial index of the block
+# Make sure the no block goes beyond the data
  max_start_idx = len(returns) - block_size
  if max_start_idx < 0:
- # Если данных недостаточно, Use все доступные data
+# If there's not enough data, Use all available data
  start_idx = 0
  block = returns[start_idx:]
  else:
@@ -521,7 +521,7 @@ def block_bootstrap_monte_carlo(returns, n_simulations=10000, time_horizon=252, 
 
  bootstrap_returns.extend(block)
 
- # Шаг 3: Дополнение to нужной длины
+# Step 3: Supplement to appropriate length
  while len(bootstrap_returns) < time_horizon:
  max_start_idx = len(returns) - block_size
  if max_start_idx < 0:
@@ -533,73 +533,73 @@ def block_bootstrap_monte_carlo(returns, n_simulations=10000, time_horizon=252, 
 
  bootstrap_returns.extend(block)
 
- # Шаг 4: Обрезка to нужной длины
+# Step 4: Cut to appropriate length
  bootstrap_returns = np.array(bootstrap_returns[:time_horizon])
 
- # Шаг 5: Расчет кумулятивной доходности
+# Step 5: Calculation of cumulative returns
  cumulative_return = np.prod(1 + bootstrap_returns) - 1
 
- # Шаг 6: Сохранение результата
+# Step 6: Retain the result
  simulation_results.append(cumulative_return)
 
- # Прогресс-бар for отслеживания выполнения
+# Progress bar for monitoring implementation
  if (i + 1) % 1000 == 0:
- print(f" Выполнено block bootstrap симуляций: {i + 1:,}/{n_simulations:,}")
+Print(f) Implemented by block bootstrap simulations: {i + 1,}/{n_simulations:,})
 
- print(f"Block Bootstrap симуляция завершена! ОбWorkingно {len(simulation_results):,} сценариев.")
+default(f"Block Bootstrap simulation complete! ObWorkingno {len(simulation_effects):,} scenarios.)
 
- # Дополнительная статистика
+# Additional statistics
  block_bootstrap_results = np.array(simulation_results)
- print(f" Статистика block bootstrap результатов:")
- print(f" Средняя доходность: {np.mean(block_bootstrap_results):.4f} ({np.mean(block_bootstrap_results)*100:.2f}%)")
- print(f" Стандартное отклонение: {np.std(block_bootstrap_results):.4f} ({np.std(block_bootstrap_results)*100:.2f}%)")
- print(f" Минимальная доходность: {np.min(block_bootstrap_results):.4f} ({np.min(block_bootstrap_results)*100:.2f}%)")
- print(f" Максимальная доходность: {np.max(block_bootstrap_results):.4f} ({np.max(block_bootstrap_results)*100:.2f}%)")
+pprint(f) "Statistics block bootstrap results:")
+average return: {np.mean(block_bootstrap_results): 4f} ({np.mean(block_bootstrap_effects)*100:.2f}%)
+default(f" Standard deviation: {np.std(block_bootstrap_results): 4f} ({np.std(block_bootstrap_effects)*100:.2f}%)
+minimum return: {np.min(block_bootstrap_results): 4f} ({np.min(block_bootstrap_effects)*100:.2f}%)
+peak(f" Maximum return: {np.max(block_bootstrap_results): 4f} ({np.max(block_bootstrap_effects)*100:.2f}%)
 
  return block_bootstrap_results
 
 def optimize_block_size(returns, max_block_size=20, n_simulations=1000):
  """
- Оптимизация размера блока for Block Bootstrap симуляции
+Optimizing the size of the block for Block Bootstrap simulation
 
- Эта function находит оптимальный размер блока, анализируя автокорреляцию
- and стабильность результатов при различных размерах блоков.
+This function finds the optimum size of the block by analysing autocorn.
+and stability of results with different block sizes.
 
  parameters:
- - returns: исторические доходности
- - max_block_size: максимальный размер блока for тестирования
- - n_simulations: количество симуляций for каждого размера блока
+- Returns: historical returns
+- max_lock_size: maximum size of test block
+- n_simulations: number of simulations for each block size
 
- Возвращает:
- - оптимальный размер блока
+Returns:
+- optimum block size
  """
 
- print("=== Оптимизация размера блока ===")
+"print("===Budget of block size===)
 
- # Анализ автокорреляции
+# Autocorrosion analysis
  autocorr_values = []
  for lag in range(1, min(20, len(returns) // 4)):
  autocorr = pd.Series(returns).autocorr(lag=lag)
  if not np.isnan(autocorr):
  autocorr_values.append((lag, autocorr))
 
- print("Автокорреляция on лагам:")
- for lag, autocorr in autocorr_values[:10]: # Показываем первые 10
+Print("Authorization on lags:")
+for lag, autocorr in autocorr_valutes[:10]: # Show the first 10
  print(f" Lag {lag}: {autocorr:.4f}")
 
- # Тестирование различных размеров блоков
+# Testing of different block sizes
  block_sizes = range(1, min(max_block_size + 1, len(returns) // 4))
  results_by_block_size = {}
 
  for block_size in block_sizes:
- print(f"\nТестирование размера блока: {block_size}")
+print(f"\nTtesting block size: {lock_size})
 
- # Выполнение симуляции with текущим размером блока
+# Performing a simulation with the current size of the block
  results = block_bootstrap_monte_carlo(returns, n_simulations,
  time_horizon=min(252, len(returns)),
  block_size=block_size)
 
- # Анализ стабильности результатов
+# Analysis of stability of results
  mean_return = np.mean(results)
  std_return = np.std(results)
  coefficient_of_variation = std_return / abs(mean_return) if mean_return != 0 else np.inf
@@ -611,189 +611,189 @@ def optimize_block_size(returns, max_block_size=20, n_simulations=1000):
  'results': results
  }
 
- print(f" Средняя доходность: {mean_return:.4f}")
- print(f" Стандартное отклонение: {std_return:.4f}")
- print(f" Коэффициент вариации: {coefficient_of_variation:.2f}")
+average return: {mean_return:.4f})
+standard deviation: {std_return:.4f})
+Print(f "Variance coefficient: {co-officent_of_variation:.2f}")
 
- # Выбор оптимального размера блока
- # Критерий: минимальный коэффициент вариации при разумной стабильности
+# Choice of optimum block size
+# Criterion: minimum coefficient of variation with reasonable stability
  optimal_block_size = min(block_sizes,
  key=lambda x: results_by_block_size[x]['cv'])
 
- print(f"\n=== Результаты оптимизации ===")
- print(f"Оптимальный размер блока: {optimal_block_size}")
- print(f"Коэффициент вариации: {results_by_block_size[optimal_block_size]['cv']:.4f}")
+pprint(f'\n===Rumping results===)
+(f "Optimal block size: {optimal_block_size}")
+default(f "Variance factor: {results_by_block_size[optimal_lock_size]['cv':4f}")
 
  return optimal_block_size, results_by_block_size
 ```
 
-## Продвинутые техники
+## Advanced technology
 
-**Theory:** Продвинутые техники Монте-Карло симуляции учитывают сложные dependencies and структуры in финансовых данных, обеспечивая более точное моделирование реальных рыночных условий.
+**Theory:** The advanced Monte Carlo simulations take into account complex dependencies and structures in financial data, providing more accurate modelling of real market conditions.
 
-### 1. Учет автокорреляции
+###1: Recording autocorration
 
-**Theory:** Автокорреляция in финансовых данных означает, что доходности in соседних периодах коррелируют между собой. Это критически важно for точного моделирования, так как игнорирование автокорреляции может привести к недооценке рисков.
+**Theory:** Auto-corrigation in financial data means that returns in neighbouring periods are correlated; this is critical for accurate modelling, as ignoring auto-corrosion can lead to underestimation of risks.
 
-**Математические основы автокорреляции:**
-- **AR(1) process:** X_t = φX_{t-1} + ε_t, где φ - коэффициент автокорреляции
-- **Автокорреляционная function:** ρ(k) = E[(X_t - μ)(X_{t+k} - μ)] / σ²
-- **Условная дисперсия:** Var(X_t | X_{t-1}) = σ²(1 - φ²)
-- **Стационарность:** |φ| < 1 for стационарности процесса
+** Mathematical basis of autocorration:**
+- **AR(1) process:** X_t = X_{t-1} +
+- **According function:**(k) = E[((X_t-l)(X_{t+k} - μ)] / /
+- ** Conditional variance:**Var(X_t \X {t-1}) =
+- **Stationality:** * * * * * * 1 for the stability of the process
 
-**Почему учет автокорреляции важен:**
-- **Реалистичность:** Финансовые data часто показывают автокорреляцию
-- **Точность рисков:** Правильная оценка рисков требует учета dependencies
-- **Кластеризация волатильности:** Автокорреляция связана with GARCH эффектами
-- **Стресс-тестирование:** Более точное моделирование экстремальных events
+**Why autocorration accounting is important:**
+- ** Reality:** Financial data often show autocratulation
+- ** Risk accuracy:** Correct risk assessment requires consideration of dependencies
+- ** Volatility classification:** Autocorrhealation is bound with GarCH effects.
+- **Spect testing:** More accurate modelling of extreme events
 
-**Детальное describe кода учета автокорреляции:**
+**Detail descrie of autocribation code:**
 
 ```python
 def autocorrelated_monte_carlo(returns, n_simulations=10000, time_horizon=252):
  """
- Монте-Карло симуляция with учетом автокорреляции
+Monte Carlo simulation with autocorration
 
- Эта function реализует AR(1) process for моделирования автокорреляции
- in финансовых данных. Она использует авторегрессионную модель первого порядка
- for генерации реалистичных временных рядов доходностей.
+This function performs AR(1) process for autocorration modelling
+In financial data, she uses the first-order autogressive model.
+to generate realistic time series of returns.
 
- Математическая основа:
+Mathematical framework:
  - AR(1) process: X_t = φX_{t-1} + ε_t
- - φ - коэффициент автокорреляции (оценивается из данных)
- - ε_t ~ N(0, σ²(1 - φ²)) - белый шум
- - Условная дисперсия: Var(X_t | X_{t-1}) = σ²(1 - φ²)
+autocorration factor (measured from data)
+== sync, corrected by elderman == @elder_man
+- Conditional dispersion: Var(X_t \ X_{t-1}) = \\2(1 - \2)
 
- Преимущества учета автокорреляции:
- - Более реалистичное моделирование финансовых данных
- - Правильная оценка рисков and волатильности
- - Учет кластеризации волатильности
- - Более точное стресс-тестирование
+Benefits of accounting for autocorration:
+- More realistic modelling of financial data
+- Correct risk and volatility assessment
+- Consideration of the clustering of volatility
+- More precise stress testing.
 
  parameters:
- - returns: исторические доходности (pandas Series or numpy array)
- - n_simulations: количество симуляций (on умолчанию 10000)
- - time_horizon: горизонт Planирования in днях (on умолчанию 252)
+- returns: historical returns (pandas Series or numpy array)
+- n_simulations: number of simulations (on default 10,000)
+- time_horizon: Planning horizon in days (on default 252)
 
- Возвращает:
- - numpy array with результатами симуляций with автокорреляцией
+Returns:
+- numpy array with simulations with autocognition
  """
 
- # Шаг 1: Оценка параметров AR(1) процесса
+# Step 1: Evaluation of AR(1) process parameters
  returns_series = pd.Series(returns)
 
- # Расчет автокорреляции первого порядка
+# Calculation of first order autocratulation
  autocorr = returns_series.autocorr(lag=1)
 
- # check on стационарность
+# Check on stationary
  if abs(autocorr) >= 1:
- print(f"Предупреждение: Коэффициент автокорреляции ({autocorr:.4f}) >= 1")
- print("process может быть нестационарным. Используется значение 0.9")
+pint(f"Prevention: Autococorration coefficient ({autocorr:.4f}) >=1)
+"process may be non-permanent. The value 0.9 shall be used")
  autocorr = 0.9 if autocorr > 0 else -0.9
 
- # Оценка параметров распределения
+# Assessment of distribution parameters
  mean_return = returns.mean()
  std_return = returns.std()
 
- # Условная дисперсия for AR(1) процесса
+# Conditional variance for AR(1) process
  conditional_std = std_return * np.sqrt(1 - autocorr**2)
 
- print(f"Автокоррелированная симуляция:")
- print(f" Коэффициент автокорреляции (φ): {autocorr:.4f}")
- print(f" Средняя доходность: {mean_return:.4f} ({mean_return*100:.2f}%)")
- print(f" Безусловное стандартное отклонение: {std_return:.4f} ({std_return*100:.2f}%)")
- print(f" Условное стандартное отклонение: {conditional_std:.4f} ({conditional_std*100:.2f}%)")
- print(f" Количество симуляций: {n_simulations:,}")
- print(f" Горизонт Planирования: {time_horizon} дней")
+print(f "Autocorred simulation:")
+Print(f" Autocorration coefficient ( &lt; = {autocorr: 4f}})
+average return: {mean_return:4f}(mean_return*100:.2f}%)
+Print(f" Unconditional standard deviation: {std_return:.4f}({std_return*100:.2f}}})
+pint(f" Contingent standard deviation: {conditional_std:.4f}({conditional_std*100:.2f}}%")
+number(f" Number of simulations: {n_simulations:,})
+"Plancing horizon: {time_horizon}days")
 
- # Инициализация массива результатов
+# Initiating a range of results
  simulation_results = []
 
- # Основной цикл симуляции with автокорреляцией
+# Basic simulation cycle with autocognition
  for i in range(n_simulations):
- # Шаг 2: Генерация временного ряда with автокорреляцией
+# Step 2: Time-series generation with auto-coordination
  simulated_returns = []
 
- # Шаг 3: Первое значение (безусловное распределение)
+# Step 3: First value (unconditional distribution)
  first_return = np.random.normal(mean_return, std_return)
  simulated_returns.append(first_return)
 
- # Шаг 4: Последующие значения with учетом автокорреляции
+# Step 4: Follow-up values with autocoordination
  for t in range(1, time_horizon):
  # AR(1) process: X_t = φX_{t-1} + ε_t
- # где ε_t ~ N(0, σ²(1 - φ²))
+# where ~_t ~ N(0,2(1 - )2)
  error_term = np.random.normal(0, conditional_std)
  next_return = mean_return + autocorr * (simulated_returns[-1] - mean_return) + error_term
  simulated_returns.append(next_return)
 
- # Шаг 5: Расчет кумулятивной доходности
+# Step 5: Calculation of cumulative returns
  cumulative_return = np.prod(1 + simulated_returns) - 1
  simulation_results.append(cumulative_return)
 
- # Прогресс-бар for отслеживания выполнения
+# Progress bar for monitoring implementation
  if (i + 1) % 1000 == 0:
- print(f" Выполнено автокоррелированных симуляций: {i + 1:,}/{n_simulations:,}")
+Print(f"Authorized simulations: {i + 1,}/{n_simulations:,})
 
- print(f"Автокоррелированная симуляция завершена! ОбWorkingно {len(simulation_results):,} сценариев.")
+print(f) "Autocorred simulation complete! ObWorkingno {len(simulation_results):,} scenarios.")
 
- # Дополнительная статистика
+# Additional statistics
  autocorr_results = np.array(simulation_results)
- print(f" Статистика автокоррелированных результатов:")
- print(f" Средняя доходность: {np.mean(autocorr_results):.4f} ({np.mean(autocorr_results)*100:.2f}%)")
- print(f" Стандартное отклонение: {np.std(autocorr_results):.4f} ({np.std(autocorr_results)*100:.2f}%)")
- print(f" Минимальная доходность: {np.min(autocorr_results):.4f} ({np.min(autocorr_results)*100:.2f}%)")
- print(f" Максимальная доходность: {np.max(autocorr_results):.4f} ({np.max(autocorr_results)*100:.2f}%)")
+(f) Auto-corrupted outcome statistics:)
+pint(f" Average yield: {np.mean(autocorr_results): 4f}({np.mean(autocorr_results)*100:.2f}%)
+default(f" Standard deviation: {np.std(autocorr_results): 4f}({np.std(autocorr_results)*100:.2f}%)
+minimum return: {np.min(autocorr_results): 4f}({np.min(autocorr_results)*100:.2f}%)
+pint(f" Maximum return: {np.max(autocorr_results): 4f}({np.max(autocorr_results)*100:.2f}%2)
 
  return autocorr_results
 
 def analyze_autocorrelation(returns, max_lags=20):
  """
- Анализ автокорреляции in исторических данных
+Autocorrosion in historical data analysis
 
- Эта function анализирует автокорреляцию in исторических данных,
- помогая понять временные dependencies and выбрать подходящую модель.
+This function analyzes autocratulation in historical data,
+Helping you understand the time dependencies and choose a suitable model.
 
  parameters:
- - returns: исторические доходности
- - max_lags: максимальное количество лагов for Analysis
+- Returns: historical returns
+- max_lags: maximum number of lags for Analysis
 
- Возвращает:
- - словарь with результатами Analysis автокорреляции
+Returns:
+- Vocabulary with results of the Analysis autocornation
  """
 
- print("=== Анализ автокорреляции ===")
+"print("=== Autocorration analysis===)
 
  returns_series = pd.Series(returns)
 
- # Расчет автокорреляционной functions
+# Calculation of auto-coordination functions
  autocorr_values = []
  for lag in range(1, min(max_lags + 1, len(returns) // 4)):
  autocorr = returns_series.autocorr(lag=lag)
  if not np.isnan(autocorr):
  autocorr_values.append((lag, autocorr))
 
- print("Автокорреляция on лагам:")
+Print("Authorization on lags:")
  for lag, autocorr in autocorr_values:
  significance = "***" if abs(autocorr) > 2/np.sqrt(len(returns)) else ""
  print(f" Lag {lag:2d}: {autocorr:7.4f} {significance}")
 
- # Тест on значимость автокорреляции
+# A test on the significance of autocorrhaging
  significant_lags = [lag for lag, autocorr in autocorr_values
  if abs(autocorr) > 2/np.sqrt(len(returns))]
 
- print(f"\nЗначимые лаги (|ρ| > 2/√n): {significant_lags}")
+prent(f"\nnot significant lags ()
 
- # Рекомендации on моделированию
+# Recommendations on modelling
  if significant_lags:
- print(f"\nРекомендации:")
- print(f" - Обнаружена значимая автокорреляция")
- print(f" - Рекомендуется использовать AR(1) or более сложные модели")
- print(f" - Block Bootstrap может быть более подходящим методом")
+(f'n Recommendations:)
+Print(f" - Significant autocorration detected)
+"print(f" - It is recommended to use AR(1) or more complex models")
+"print(f" - Block Bootstrap may be a more appropriate method")
  else:
- print(f"\nРекомендации:")
- print(f" - Автокорреляция незначима")
- print(f" - Можно использовать простую параметрическую симуляцию")
- print(f" - Bootstrap methods также подходят")
+(f'n Recommendations:)
+(pint(f" - auto-cortulation negligible))
+pprint(f" - Simple parameter simulation can be used)
+"spint(f" - Bootstrap methods is also suitable")
 
  return {
  'autocorr_values': autocorr_values,
@@ -802,193 +802,193 @@ def analyze_autocorrelation(returns, max_lags=20):
  }
 ```
 
-### 2. Учет волатильности (GARCH модели)
+###2: Vulnerability accounting (GARCH models)
 
-**Theory:** GARCH (Generalized Autoregressive Conditional Heteroskedasticity) модели учитывают кластеризацию волатильности - явление, когда периоды высокой волатильности сменяются периодами низкой волатильности. Это критически важно for точного моделирования финансовых данных.
+**Theory:** GARCH (Generalized Autorized Codification Heteroskedasticity) models take into account the clustering of volatility, a phenomenon where periods of high volatility change with periods of low volatility; this is critical for accurate modelling of financial data.
 
-**Математические основы GARCH:**
-- **GARCH(1,1) модель:** σ²_t = ω + αε²_{t-1} + βσ²_{t-1}
-- **Условная волатильность:** σ_t = √(σ²_t)
-- **Условное распределение:** r_t | F_{t-1} ~ N(μ, σ²_t)
-- **Стандартизированные остатки:** z_t = (r_t - μ) / σ_t
+** GARCH mathematical framework:**
+- **GARCH(1.1) model:**
+- ** Conditional volatility:** *_t = G(*_t)
+- ** Conditional distribution:** r_t ~ F_{t-1} ~ N( μ, ~2_t)
+- ** Standardized residues:** z_t = (r_t - μ) / .t
 
-**Почему GARCH модели важны:**
-- **Кластеризация волатильности:** Учет реального поведения финансовых рынков
-- **Точность рисков:** Более точная оценка VaR and других метрик риска
-- **Стресс-тестирование:** Реалистичное моделирование экстремальных events
-- **Оптимизация портфеля:** Учет изменяющейся волатильности
+** Why models are important:**
+- ** Volatility factoring:** Accounting for the real behaviour of financial markets
+- ** Risk accuracy:** More accurate evaluation of VaR and other risk metrics
+- **Secure testing:** Realistic modelling of extreme events
+- **Optimization of portfolio:** Accounting for changing volatility
 
-**Детальное describe кода GARCH моделирования:**
+** Detailed describe of the GARCH modeling code:**
 
 ```python
 def garch_monte_carlo(returns, n_simulations=10000, time_horizon=252, garch_order=(1, 1)):
  """
- Монте-Карло симуляция with GARCH моделью волатильности
+Monte Carlo simulation with HARCH
 
- Эта function реализует GARCH моделирование for учета кластеризации волатильности
- in финансовых данных. GARCH модели позволяют более точно моделировать
- изменяющуюся во времени волатильность.
+This function carries out HARCH simulations for clustering volatility
+GARCH models allow for more accurate modelling
+Time-changing volatility.
 
- Математическая основа:
- - GARCH(p,q) модель: σ²_t = ω + Σ(α_i * ε²_{t-i}) + Σ(β_j * σ²_{t-j})
- - Условная волатильность: σ_t = √(σ²_t)
- - Условное распределение: r_t | F_{t-1} ~ N(μ, σ²_t)
- - Стандартизированные остатки: z_t = (r_t - μ) / σ_t
+Mathematical framework:
+- GARCH(p,q) model:
+- Conditional volatility: \\t = G(\2_t)
+- Conditional distribution: r_t * F_{t-1} ~ N(\, \2_t)
+- Standardized residues: z_t = (r_t - μ) / \\t
 
- Преимущества GARCH моделирования:
- - Учет кластеризации волатильности
- - Более точная оценка рисков
- - Реалистичное моделирование экстремальных events
- - Учет изменяющейся во времени волатильности
+The benefits of GARCH modelling:
+- Consideration of the clustering of volatility
+- More accurate risk assessment
+- Realistic modelling of extreme events
+- Consideration of time-changing volatility
 
  parameters:
- - returns: исторические доходности (pandas Series or numpy array)
- - n_simulations: количество симуляций (on умолчанию 10000)
- - time_horizon: горизонт Planирования in днях (on умолчанию 252)
- - garch_order: порядок GARCH модели (p, q) (on умолчанию (1, 1))
+- returns: historical returns (pandas Series or numpy array)
+- n_simulations: number of simulations (on default 10,000)
+- time_horizon: Planning horizon in days (on default 252)
+- garch_order: model order HARCH (p,q) (on default (1, 1))
 
- Возвращает:
- - numpy array with результатами GARCH симуляций
+Returns:
+- numpy array with the results of the GARCH simulations
  """
 
  try:
  from arch import arch_model
  except importError:
- print("Ошибка: Необходимо установить библиотеку arch")
+"Apparent: An arch library needs to be installed"
  print("execute: pip install arch")
  return None
 
- print(f"GARCH симуляция:")
- print(f" Порядок GARCH модели: {garch_order}")
- print(f" Количество симуляций: {n_simulations:,}")
- print(f" Горизонт Planирования: {time_horizon} дней")
+print(f"GARCH simulation:")
+print(f) "GARCH model order: {garch_order}")
+number(f" Number of simulations: {n_simulations:,})
+"Plancing horizon: {time_horizon}days")
 
- # Шаг 1: Подготовка данных
+# Step 1: Data production
  returns_series = pd.Series(returns).dropna()
 
  if len(returns_series) < 50:
- print("Предупреждение: Недостаточно данных for GARCH моделирования")
- print("Используется простая симуляция")
+"Prevention: insufficient data for GARCH modelling")
+print("Simple simulation used")
  return monte_carlo_simulation(returns, n_simulations, time_horizon)
 
- # Шаг 2: Обучение GARCH модели
- print("Обучение GARCH модели...")
+# Step 2: GARCH model training
+"GARCH model training..."
 
  try:
- # create GARCH модели
+# creative HARCH model
  model = arch_model(returns_series, vol='Garch', p=garch_order[0], q=garch_order[1])
 
- # Обучение модели
+# Model learning
  fitted_model = model.fit(disp='off')
 
- print(f"GARCH модель обучена успешно:")
- print(f" parameters модели:")
+(f"GARCH model successfully trained:")
+print(f" parameters model:)
  for param, value in fitted_model.params.items():
  print(f" {param}: {value:.6f}")
 
- # check стационарности
+# Heck of a stable
  if garch_order == (1, 1):
  alpha = fitted_model.params.get('alpha[1]', 0)
  beta = fitted_model.params.get('beta[1]', 0)
  if alpha + beta >= 1:
- print(f"Предупреждение: GARCH модель может быть нестационарной (α + β = {alpha + beta:.4f})")
+print(f"Prevention: GARCH may be non-permanent (α + β = {alpha + beta:.4f})
 
  except Exception as e:
- print(f"Ошибка при обучении GARCH модели: {e}")
- print("Используется простая симуляция")
+print(f) Error in GARCH modeling: {e})
+print("Simple simulation used")
  return monte_carlo_simulation(returns, n_simulations, time_horizon)
 
- # Шаг 3: Симуляция with GARCH волатильностью
+# Step 3: Simulation with HARCH volatility
  simulation_results = []
 
- print("Выполнение GARCH симуляций...")
+Print("GARCH simulations execution...")
 
  for i in range(n_simulations):
  try:
- # Генерация симуляции with GARCH волатильностью
+# Smoke generation with HARCH volatility
  simulated_returns = fitted_model.forecast(horizon=time_horizon, method='simulation')
 
- # Извлечение доходностей из результатов симуляции
+# Extracting profits from simulation results
  if hasattr(simulated_returns, 'values'):
  returns_values = simulated_returns.values.flatten()
  else:
  returns_values = simulated_returns
 
- # Расчет кумулятивной доходности
+# Calculation of cumulative returns
  cumulative_return = np.prod(1 + returns_values) - 1
  simulation_results.append(cumulative_return)
 
  except Exception as e:
- print(f"Ошибка in симуляции {i}: {e}")
- # Use простую симуляцию in случае ошибки
+Print(f) Error in simulation {i}: {e})
+# Use simple simulation in case of error
  simple_return = np.random.normal(returns.mean(), returns.std(), time_horizon)
  cumulative_return = np.prod(1 + simple_return) - 1
  simulation_results.append(cumulative_return)
 
- # Прогресс-бар
+# Progress bar
  if (i + 1) % 1000 == 0:
- print(f" Выполнено GARCH симуляций: {i + 1:,}/{n_simulations:,}")
+Print(f" Implemented by GARCH simulations: {i + 1,}/{n_simulations:,})
 
- print(f"GARCH симуляция завершена! ОбWorkingно {len(simulation_results):,} сценариев.")
+The simulation is complete!
 
- # Дополнительная статистика
+# Additional statistics
  garch_results = np.array(simulation_results)
- print(f" Статистика GARCH результатов:")
- print(f" Средняя доходность: {np.mean(garch_results):.4f} ({np.mean(garch_results)*100:.2f}%)")
- print(f" Стандартное отклонение: {np.std(garch_results):.4f} ({np.std(garch_results)*100:.2f}%)")
- print(f" Минимальная доходность: {np.min(garch_results):.4f} ({np.min(garch_results)*100:.2f}%)")
- print(f" Максимальная доходность: {np.max(garch_results):.4f} ({np.max(garch_results)*100:.2f}%)")
+(f "GARCH Statistics of Results:")
+average return: {np.mean(garch_results): 4f}({np.mean(garch_results)*100:.2f}%)
+default(f" Standard deviation: {np.std(garch_results): 4f}({np.std(garch_results)*100:.2f}%)
+minimum return: {np.min(garch_results): 4f}({np.min(garch_results)*100:.2f}%)
+pint(f" Maximum return: {np.max(garch_results): 4f}({np.max(garch_results)*100:.2f}%")
 
  return garch_results
 
 def analyze_volatility_clustering(returns, window=30):
  """
- Анализ кластеризации волатильности in исторических данных
+Analysis of the clustering of volatility in historical data
 
- Эта function анализирует кластеризацию волатильности in исторических данных,
- помогая понять, нужна ли GARCH модель for симуляции.
+This function analyses the clustering of volatility in historical data,
+Helping you understand if HARCH needs a simulation model.
 
  parameters:
- - returns: исторические доходности
- - window: размер окна for расчета волатильности
+- Returns: historical returns
+- Windows: size of window for calculating volatility
 
- Возвращает:
- - словарь with результатами Analysis кластеризации
+Returns:
+- dictionary with results of Analysis clustering
  """
 
- print("=== Анализ кластеризации волатильности ===")
+"print("===The clustering analysis of volatility====)
 
  returns_series = pd.Series(returns)
 
- # Расчет скользящей волатильности
+# Calculation of sliding volatility
  rolling_vol = returns_series.rolling(window=window).std()
 
- # Анализ автокорреляции волатильности
+# Autocorrosion analysis of volatility
  vol_autocorr = rolling_vol.autocorr(lag=1)
 
- print(f"Автокорреляция волатильности (lag=1): {vol_autocorr:.4f}")
+Print(f"Vulture autocorration (lag=1): {vol_autocorr:.4f}})
 
- # Тест on кластеризацию (Ljung-Box тест for квадратов доходностей)
+# Test on clustering (Ljung-Box test for income squares)
  from scipy import stats
 
  squared_returns = returns_series ** 2
  lb_stat, lb_pvalue = stats.jarque_bera(squared_returns.dropna())
 
- print(f"Тест on кластеризацию (Jarque-Bera for квадратов доходностей):")
- print(f" Статистика: {lb_stat:.4f}")
+(f "Text on clustering (Jarque-Bera for income squares):")
+(f "Statistics: {lb_stat:.4f}")
  print(f" p-value: {lb_pvalue:.4f}")
 
- # Рекомендации
+# Recommendations
  if vol_autocorr > 0.1 or lb_pvalue < 0.05:
- print(f"\nРекомендации:")
- print(f" - Обнаружена кластеризация волатильности")
- print(f" - Рекомендуется использовать GARCH модели")
- print(f" - Block Bootstrap также может быть подходящим")
+(f'n Recommendations:)
+Print(f" - Clustering of volatility detected)
+(print(f" - GARCH models recommended)
+"print(f"-Block Bootstrap may also be appropriate")
  else:
- print(f"\nРекомендации:")
- print(f" - Кластеризация волатильности незначима")
- print(f" - Можно использовать простые модели")
- print(f" - Bootstrap methods подходят")
+(f'n Recommendations:)
+Print(f" - Dedicated volatility classification")
+"print(f" - Simple models can be used")
+"spint(f" - Bootstrap methods fit")
 
  return {
  'vol_autocorr': vol_autocorr,
@@ -998,88 +998,88 @@ def analyze_volatility_clustering(returns, window=30):
  }
 ```
 
-### 3. Многомерная симуляция
+###3 # Multidimensional simulation
 
-**Theory:** Многомерная Монте-Карло симуляция учитывает корреляции между различными активами, что критически важно for портфельного Analysis and управления рисками. Она позволяет моделировать совместное поведение множества активов.
+**Theory:** The multidimensional Monte Carlo simulation takes into account the correlations between different assets, which is critical for portfolio Analisis and risk management, and allows for the modelling of multi-asset behaviour.
 
-**Математические основы многомерной симуляции:**
-- **Корреляционная матрица:** Σ = E[(R - μ)(R - μ)ᵀ]
-- **Cholesky разложение:** Σ = LLᵀ, где L - нижняя треугольная матрица
-- **Преобразование:** Z = Lε, где ε ~ N(0, I)
-- **Многомерное нормальное распределение:** R ~ N(μ, Σ)
+** Mathematical framework of multidimensional simulation:**
+== sync, corrected by elderman == @elder_man
+- **Cholesky degradation:** ~ = LLT where L is the lower triangular matrix
+- ** Conversion:** Z = L~ where ~ N(0, I)
+- ** Multidimensional normal distribution:** R ~ N(um, ~)
 
-**Почему многомерная симуляция важна:**
-- **Портфельный анализ:** Учет корреляций между активами
-- **Диверсификация:** Правильная оценка эффектов диверсификации
-- **Management рисками:** Точная оценка портфельных рисков
-- **Стресс-тестирование:** Моделирование системных рисков
+** Why is a multidimensional simulation important:**
+- ** Portfel analysis:** Inventory of asset-to-asset relationships
+- **Diversification:** Correct assessment of diversification effects
+- **Manage of risk:** Precise portfolio risk assessment
+- **Secure testing:** System risk modelling
 
-**Детальное describe кода многомерной симуляции:**
+**Detail describe multidimensional simulation code:**
 
 ```python
 def multivariate_monte_carlo(returns_dict, n_simulations=10000, time_horizon=252):
  """
- Многомерная Монте-Карло симуляция доходностей
+Monte Carlo Multidimensional Income Simulation
 
- Эта function реализует многомерную симуляцию, учитывающую корреляции
- между различными активами. Она использует Cholesky разложение
- for генерации коррелированных случайных величин.
+This function performs a multidimensional simulation that takes into account correlations.
+She's using Cholesky degradation.
+for generating correlate random values.
 
- Математическая основа:
- - Корреляционная матрица: Σ = E[(R - μ)(R - μ)ᵀ]
- - Cholesky разложение: Σ = LLᵀ
- - Преобразование: Z = Lε, где ε ~ N(0, I)
- - Многомерное нормальное: R ~ N(μ, Σ)
+Mathematical framework:
+- Correlation matrix: × = E[(R - μ)(R - μ)T]
+- Cholesky decompression: ♪ = LLT
+- Conversion: Z = L &apos; where ~ N(0, I)
+- Multidimensional normal: R ~ N( μ, )
 
- Преимущества многомерной симуляции:
- - Учет корреляций между активами
- - Реалистичное моделирование портфелей
- - Правильная оценка диверсификации
- - Точная оценка портфельных рисков
+Benefits of a multidimensional simulation:
+- Accounting for correlations between assets
+- Realistic portfolio modelling
+- Good assessment of diversification
+- Exact portfolio risk assessment
 
  parameters:
- - returns_dict: словарь with доходностями активов {asset_name: returns_array}
- - n_simulations: количество симуляций (on умолчанию 10000)
- - time_horizon: горизонт Planирования in днях (on умолчанию 252)
+- returns_dict: dictionary with asset returns {asset_name: returns_array}
+- n_simulations: number of simulations (on default 10,000)
+- time_horizon: Planning horizon in days (on default 252)
 
- Возвращает:
- - словарь with результатами симуляций for каждого актива
+Returns:
+- dictionary with simulation results for each asset
  """
 
- print(f"Многомерная симуляция:")
- print(f" Количество активов: {len(returns_dict)}")
- print(f" Количество симуляций: {n_simulations:,}")
- print(f" Горизонт Planирования: {time_horizon} дней")
+pprint(f "Pluridimensional simulation:")
+aprint(f" Amount of assets: {len(returns_dict)})
+number(f" Number of simulations: {n_simulations:,})
+"Plancing horizon: {time_horizon}days")
 
- # Шаг 1: Подготовка данных
+# Step 1: Data production
  asset_names = List(returns_dict.keys())
  returns_df = pd.dataFrame(returns_dict)
 
- # check on достаточность данных
+# check on data sufficiency
  if len(returns_df) < 30:
- print("Предупреждение: Недостаточно данных for многомерной симуляции")
- print("Используется независимая симуляция for каждого актива")
+"Prevention: insufficient data for multidimensional simulation")
+print("Use independent simulation for each asset")
  return independent_multivariate_simulation(returns_dict, n_simulations, time_horizon)
 
- # Шаг 2: Расчет корреляционной матрицы
+# Step 2: Calculation of correlation matrix
  correlation_matrix = returns_df.corr()
 
- print(f"Корреляционная матрица:")
+Print(f "Coordination matrix:")
  print(correlation_matrix.round(3))
 
- # check on положительную определенность
+# Check on positive certainty
  try:
- # Cholesky разложение
+# Cholesky degradation
  chol_matrix = np.linalg.cholesky(correlation_matrix)
- print("Корреляционная матрица положительно определена")
+Print("Coordination matrix positively defined")
  except np.linalg.LinAlgError:
- print("Предупреждение: Корреляционная матрица not положительно определена")
- print("Применяется регуляризация")
- # Регуляризация: add малого значения к диагонали
+"Prevention: Correlation matrix not positively defined")
+Print("Regularization applies")
+#Regularization: add small to diagonal
  regularized_corr = correlation_matrix + 0.01 * np.eye(len(correlation_matrix))
  chol_matrix = np.linalg.cholesky(regularized_corr)
 
- # Шаг 3: Оценка параметров for каждого актива
+# Step 3: Evaluation of parameters for each asset
  asset_params = {}
  for asset in asset_names:
  asset_returns = returns_dict[asset]
@@ -1088,81 +1088,81 @@ def multivariate_monte_carlo(returns_dict, n_simulations=10000, time_horizon=252
  'std': asset_returns.std()
  }
 
- print(f"parameters активов:")
+print(f"framers assets:")
  for asset, params in asset_params.items():
  print(f" {asset}: μ={params['mean']:.4f}, σ={params['std']:.4f}")
 
- # Шаг 4: Многомерная симуляция
+# Step 4: Multidimensional simulation
  simulation_results = {}
 
- print("Выполнение многомерных симуляций...")
+Print("To perform multidimensional simulations...")
 
  for i in range(n_simulations):
- # Генерация независимых стандартных нормальных случайных чисел
- # Размер: (time_horizon, n_assets)
+# Generation of independent standard random numbers
+# Size: (time_horizon, n_assets)
  independent_random = np.random.normal(0, 1, (time_horizon, len(asset_names)))
 
- # Преобразование with учетом корреляций
- # Z = L * ε, где L - Cholesky матрица
+# Transforming with correlations
+# Z = L * * where L - Cholesky matrix
  correlated_random = independent_random @ chol_matrix.T
 
- # Генерация доходностей for каждого актива
+# Income generation for each asset
  for j, asset in enumerate(asset_names):
  params = asset_params[asset]
 
- # Преобразование in доходности: R = μ + σ * Z
+# In return conversion: R = μ + * Z
  simulated_returns = params['mean'] + params['std'] * correlated_random[:, j]
 
- # Расчет кумулятивной доходности
+# Calculation of cumulative returns
  cumulative_return = np.prod(1 + simulated_returns) - 1
 
- # Сохранение результата
+# Maintaining the result
  if asset not in simulation_results:
  simulation_results[asset] = []
  simulation_results[asset].append(cumulative_return)
 
- # Прогресс-бар
+# Progress bar
  if (i + 1) % 1000 == 0:
- print(f" Выполнено многомерных симуляций: {i + 1:,}/{n_simulations:,}")
+Print(f) Implemented multidimensional simulations: {i + 1,}/{n_simulations:,}})
 
- # Преобразование in numpy массивы
+# Conversion in numpy arrays
  for asset in simulation_results:
  simulation_results[asset] = np.array(simulation_results[asset])
 
- print(f"Многомерная симуляция завершена! ОбWorkingно {n_simulations:,} сценариев.")
+"Prent(f)" Multidimensional simulation complete! OverWorkingno {n_simulations:,} scenarios.")
 
- # Дополнительная статистика
- print(f"Статистика многомерных результатов:")
+# Additional statistics
+Print(f "Statistics of multidimensional results:")
  for asset, results in simulation_results.items():
  print(f" {asset}:")
- print(f" Средняя доходность: {np.mean(results):.4f} ({np.mean(results)*100:.2f}%)")
- print(f" Стандартное отклонение: {np.std(results):.4f} ({np.std(results)*100:.2f}%)")
+average return: {np.mean(s):4f}({np.mean(effects)*100:.2f}%)
+standard deviation: {np.std(s):4f}({np.std(s)*100:.2f}%)
 
  return simulation_results
 
 def independent_multivariate_simulation(returns_dict, n_simulations=10000, time_horizon=252):
  """
- Независимая многомерная симуляция (без учета корреляций)
+Independent multidimensional simulation (excluding correlations)
 
- Эта function выполняет симуляцию for каждого актива независимо,
- not учитывая корреляции between them. Используется как fallback
- когда данных недостаточно for многомерной симуляции.
+This function performs a simulation for each asset independently,
+Not considering the correlation between between them. used as fallsback
+When data are not enough for multidimensional simulation.
 
  parameters:
- - returns_dict: словарь with доходностями активов
- - n_simulations: количество симуляций
- - time_horizon: горизонт Planирования
+- returns_dict: dictionary with asset returns
+- n_simulations: number of simulations
+- time_horizon: Planning horizon
 
- Возвращает:
- - словарь with результатами независимых симуляций
+Returns:
+- dictionary with results of independent simulations
  """
 
- print("Выполнение независимых симуляций (без учета корреляций)...")
+Print("Securing independent simulations (not including correlations"...)
 
  simulation_results = {}
 
  for asset, returns in returns_dict.items():
- print(f"Симуляция for актива: {asset}")
+"Simulation for an asset: {asset}")
  results = monte_carlo_simulation(returns, n_simulations, time_horizon)
  simulation_results[asset] = results
 
@@ -1170,40 +1170,40 @@ def independent_multivariate_simulation(returns_dict, n_simulations=10000, time_
 
 def analyze_Portfolio_correlations(simulation_results):
  """
- Анализ корреляций in результатах многомерной симуляции
+Analysis of correlations in multidimensional simulation results
 
- Эта function анализирует корреляции между результатами симуляций
- различных активов, помогая понять эффекты диверсификации.
+This function analyses correlations between simulation results
+Various assets, helping to understand the effects of diversification.
 
  parameters:
- - simulation_results: результаты многомерной симуляции
+- simulation_results: results of multidimensional simulation
 
- Возвращает:
- - словарь with анализом корреляций
+Returns:
+- dictionary with correlation analysis
  """
 
- print("=== Анализ корреляций портфеля ===")
+"print("===A portfolio correlation analysis===)
 
- # create dataFrame with результатами симуляций
+# creative dataFrame with simulation results
  results_df = pd.dataFrame(simulation_results)
 
- # Расчет корреляционной матрицы результатов
+# Calculation of correlation matrix of results
  correlation_matrix = results_df.corr()
 
- print("Корреляционная матрица результатов симуляций:")
+Print("Correlation matrix of simulation results:")
  print(correlation_matrix.round(3))
 
- # Анализ диверсификации
+# Analysis of diversification
  avg_correlation = correlation_matrix.values[np.triu_indices_from(correlation_matrix.values, k=1)].mean()
 
- print(f"Средняя корреляция между активами: {avg_correlation:.4f}")
+(f "Medial correlation between assets: {avg_control:.4f}")
 
  if avg_correlation < 0.3:
- print("Рекомендация: Низкая корреляция - хорошие возможности for диверсификации")
+"Recommendation: Low correlation - good opportunities for diversification")
  elif avg_correlation < 0.7:
- print("Рекомендация: Умеренная корреляция - диверсификация частично эффективна")
+"Recommendation: Moderate correlation - diversification is partially effective")
  else:
- print("Рекомендация: Высокая корреляция - ограниченные возможности диверсификации")
+"Recommendation: High correlation - limited possibilities for diversification")
 
  return {
  'correlation_matrix': correlation_matrix,
@@ -1212,18 +1212,18 @@ def analyze_Portfolio_correlations(simulation_results):
  }
 ```
 
-## Анализ рисков
+## Risk analysis
 
 ### 1. Value at Risk (VaR)
 ```python
 def calculate_var(simulation_results, confidence_level=0.05):
- """Расчет Value at Risk"""
+""" "Value at Risk"""
 
  var = np.percentile(simulation_results, confidence_level * 100)
  return var
 
 def calculate_expected_shortfall(simulation_results, confidence_level=0.05):
- """Расчет Expected Shortfall (Conditional VaR)"""
+""Exploited Shortfall""
 
  var = calculate_var(simulation_results, confidence_level)
  tail_losses = simulation_results[simulation_results <= var]
@@ -1235,15 +1235,15 @@ def calculate_expected_shortfall(simulation_results, confidence_level=0.05):
 ### 2. Maximum Drawdown
 ```python
 def calculate_max_drawdown_distribution(simulation_results, time_horizon=252):
- """Распределение максимальной просадки"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""The distribution of the maximum draught"" """"""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
  max_drawdowns = []
 
  for result in simulation_results:
- # Симуляция пути капитала
+# Simulation of the path of capital
  cumulative_returns = np.cumprod(1 + np.random.normal(0, 0.02, time_horizon))
 
- # Расчет максимальной просадки
+# Calculation of maximum tarmac
  running_max = np.maximum.accumulate(cumulative_returns)
  drawdown = (cumulative_returns - running_max) / running_max
  max_drawdown = np.min(drawdown)
@@ -1256,12 +1256,12 @@ def calculate_max_drawdown_distribution(simulation_results, time_horizon=252):
 ### 3. Stress testing
 ```python
 def stress_testing_monte_carlo(returns, stress_scenarios, n_simulations=10000):
- """Стресс-тестирование with Монте-Карло"""
+"Stress test with Monte Carlo."
 
  stress_results = {}
 
  for scenario_name, stress_params in stress_scenarios.items():
- # parameters стресса
+# Parameters Stress
  stress_mean = stress_params.get('mean', returns.mean())
  stress_std = stress_params.get('std', returns.std() * stress_params.get('volatility_multiplier', 1))
  stress_correlation = stress_params.get('correlation', 1)
@@ -1269,14 +1269,14 @@ def stress_testing_monte_carlo(returns, stress_scenarios, n_simulations=10000):
  scenario_results = []
 
  for _ in range(n_simulations):
- # Генерация with стрессовыми параметрами
+# Generation with stress parameters
  stress_returns = np.random.normal(stress_mean, stress_std, len(returns))
 
- # Применение корреляции
+# Application of correlation
  if stress_correlation != 1:
  stress_returns = stress_correlation * returns + np.sqrt(1 - stress_correlation**2) * stress_returns
 
- # Расчет результата
+# Calculation of result
  cumulative_return = np.prod(1 + stress_returns) - 1
  scenario_results.append(cumulative_return)
 
@@ -1285,43 +1285,43 @@ def stress_testing_monte_carlo(returns, stress_scenarios, n_simulations=10000):
  return stress_results
 ```
 
-## Визуализация результатов
+♪ Visualization of results
 
-### 1. Распределение результатов
+♪##1, distribution of results
 ```python
 import matplotlib.pyplot as plt
 
-def plot_simulation_distribution(simulation_results, title="Монте-Карло симуляция"):
- """График распределения результатов симуляции"""
+def table_stimulation_distribution(simulation_results, title="Monte-Carlo simulation":
+"Simulation Results Distribution Graphics""
 
  plt.figure(figsize=(12, 8))
 
- # Гистограмма
+# Histogram
  plt.hist(simulation_results, bins=50, alpha=0.7, density=True, edgecolor='black')
 
- # Нормальное распределение for сравнения
+# Normal distribution for comparison
  mu, sigma = np.mean(simulation_results), np.std(simulation_results)
  x = np.linspace(simulation_results.min(), simulation_results.max(), 100)
- plt.plot(x, stats.norm.pdf(x, mu, sigma), 'r-', linewidth=2, label='Нормальное распределение')
+plt.plot(x, states.norma.pdf(x, mu, sigma), 'r-', linewidth=2, label='Normal distribution')
 
- # Квантили
+# Quantile
  percentiles = [5, 25, 50, 75, 95]
  for p in percentiles:
  value = np.percentile(simulation_results, p)
  plt.axvline(value, color='red', linestyle='--', alpha=0.7, label=f'{p}%: {value:.3f}')
 
  plt.title(title)
- plt.xlabel('Доходность')
- plt.ylabel('Плотность')
+plt.xlabel('income')
+plt.ylabel('Purity')
  plt.legend()
  plt.grid(True, alpha=0.3)
  plt.show()
 ```
 
-### 2. Кривая риска
+♪##2 ♪ Risk curve
 ```python
 def plot_risk_curve(simulation_results, confidence_levels):
- """Кривая риска (VaR)"""
+""" "The Risk Curve (VAR)"""
 
  var_values = []
 
@@ -1331,17 +1331,17 @@ def plot_risk_curve(simulation_results, confidence_levels):
 
  plt.figure(figsize=(10, 6))
  plt.plot(confidence_levels, var_values, marker='o', linewidth=2)
- plt.title('Кривая риска (VaR)')
- plt.xlabel('Уровень доверия')
+plt.title('The Risk Curve (VAR)')
+plt.xlabel('Confidence level')
  plt.ylabel('VaR')
  plt.grid(True, alpha=0.3)
  plt.show()
 ```
 
-### 3. comparison сценариев
+### 3. Comparison of scenarios
 ```python
 def plot_scenario_comparison(stress_results):
- """comparison стрессовых сценариев"""
+""comparison of stress scenarios."
 
  fig, axes = plt.subplots(2, 2, figsize=(15, 10))
  axes = axes.flatten()
@@ -1349,40 +1349,40 @@ def plot_scenario_comparison(stress_results):
  for i, (scenario_name, results) in enumerate(stress_results.items()):
  if i < len(axes):
  axes[i].hist(results, bins=30, alpha=0.7, edgecolor='black')
- axes[i].set_title(f'Сценарий: {scenario_name}')
- axes[i].set_xlabel('Доходность')
- axes[i].set_ylabel('Частота')
+axes[i].set_title(f'S script: {scenario_name}'
+axes[i].set_xlabel('income')
+axes[i].set_ylabel('Part')
  axes[i].grid(True, alpha=0.3)
 
  plt.tight_layout()
  plt.show()
 ```
 
-## Полный workflow example with testsыми данными
+# Full workflow example with test data
 
-**Theory:** Этот раздел содержит полный workflow example, который демонстрирует все methods Монте-Карло симуляции on реальных testsых данных. Вы можете скопировать and запустить этот код for изучения all техник.
+**Theory:** This section contains a complete workflow example that shows all of Monte Carlo's methods simulations on real test data. You can copy and run this code for learning all techniques.
 
-**Детальное describe полного примера:**
+** Detailed describe full example:**
 
 ```python
 def generate_test_data(n_days=1000, assets=['AAPL', 'GOOGL', 'MSFT', 'TSLA']):
  """
- Генерация testsых данных for демонстрации Монте-Карло симуляции
+Tests data generation for Monte Carlo simulation demonstration
 
- Эта function создает реалистичные testsые data, имитирующие
- поведение реальных финансовых активов with корреляциями and волатильностью.
+This function creates realistic test data simulating
+The behaviour of real financial assets with correlations and volatility.
 
  parameters:
- - n_days: количество дней данных (on умолчанию 1000)
- - assets: List названий активов (on умолчанию ['AAPL', 'GOOGL', 'MSFT', 'TSLA'])
+- n_days: number of data days (on default 1000)
+- Assets: List of asset names (on default ['AAPL', `GOOGL', 'MSFT', 'TSLA'])
 
- Возвращает:
- - словарь with доходностями активов
+Returns:
+- Vocabulary with asset returns
  """
 
- print(f"Генерация testsых данных for {len(assets)} активов on {n_days} дней...")
+print(f) "Generation of test data for {len(assets)}assets on {n_days} days..."
 
- # parameters for каждого актива (средняя доходность, волатильность)
+# Parameters for each asset (average return, volatility)
  asset_params = {
  'AAPL': {'mean': 0.0008, 'std': 0.02},
  'GOOGL': {'mean': 0.001, 'std': 0.025},
@@ -1390,7 +1390,7 @@ def generate_test_data(n_days=1000, assets=['AAPL', 'GOOGL', 'MSFT', 'TSLA']):
  'TSLA': {'mean': 0.0015, 'std': 0.04}
  }
 
- # Корреляционная матрица между активами
+# Asset correlation matrix
  correlation_matrix = np.array([
  [1.0, 0.7, 0.8, 0.6], # AAPL
  [0.7, 1.0, 0.6, 0.5], # GOOGL
@@ -1398,40 +1398,40 @@ def generate_test_data(n_days=1000, assets=['AAPL', 'GOOGL', 'MSFT', 'TSLA']):
  [0.6, 0.5, 0.4, 1.0] # TSLA
  ])
 
- # Cholesky разложение for генерации коррелированных данных
+# Cholesky degradation for correlate data generation
  chol_matrix = np.linalg.cholesky(correlation_matrix)
 
- # Генерация независимых случайных чисел
+# Generation of independent random numbers
  independent_random = np.random.normal(0, 1, (n_days, len(assets)))
 
- # Преобразование in коррелированные data
+# Transforming into correlated data
  correlated_random = independent_random @ chol_matrix.T
 
- # Генерация доходностей for каждого актива
+# Income generation for each asset
  returns_data = {}
  for i, asset in enumerate(assets):
  if asset in asset_params:
  params = asset_params[asset]
- # Добавляем автокорреляцию and кластеризацию волатильности
+# Add autocognition and clustering of volatility
  returns = []
  vol = params['std']
 
  for t in range(n_days):
- # Простая GARCH-подобная модель for волатильности
+# A simple HARCH model for volatility
  if t > 0:
  vol = 0.95 * vol + 0.05 * params['std'] + 0.1 * abs(returns[-1])
 
- # Генерация доходности with учетом корреляций
+# Income generation with correlations
  return_t = params['mean'] + vol * correlated_random[t, i]
  returns.append(return_t)
 
  returns_data[asset] = np.array(returns)
  else:
- # Простая генерация for неизвестных активов
+# Simple generation for unknown assets
  returns_data[asset] = np.random.normal(0.001, 0.02, n_days)
 
- print("testsые data сгенерированы успешно!")
- print("Статистика on активам:")
+Print("tests data generated successfully!")
+"Statistics on Assets:")
  for asset, returns in returns_data.items():
  print(f" {asset}: μ={np.mean(returns):.4f}, σ={np.std(returns):.4f}")
 
@@ -1439,68 +1439,68 @@ def generate_test_data(n_days=1000, assets=['AAPL', 'GOOGL', 'MSFT', 'TSLA']):
 
 def complete_monte_carlo_Analysis(returns, n_simulations=5000):
  """
- Полный комплексный Монте-Карло анализ
+Full integrated Monte Carlo analysis
 
- Эта function выполняет полный анализ all методов Монте-Карло симуляции,
- including comparison методов, анализ рисков and визуализацию результатов.
+This function is doing a full analysis of all Monte Carlo simulation techniques,
+including comparative methods, risk analysis and visualization of results.
 
  parameters:
- - returns: исторические доходности (pandas Series or numpy array)
- - n_simulations: количество симуляций (on умолчанию 5000)
+- returns: historical returns (pandas Series or numpy array)
+- n_simulations: number of simulations (on default 5000)
 
- Возвращает:
- - словарь with результатами all анализов
+Returns:
+- dictionary with all test results
  """
 
  print("=" * 60)
- print("ПОЛНЫЙ МОНТЕ-КАРЛО АНАЛИЗ")
+Prent( "FULL MONTEE-CARLO ANALYSIS")
  print("=" * 60)
 
- # 1. Анализ данных
- print("\n1. АНАЛИЗ ИСХОДНЫХ ДАННЫХ")
+* 1. Data analysis
+("\n1. ANALYSIS OF REFERENCE DATA")
  print("-" * 30)
 
  returns_series = pd.Series(returns)
- print(f"Размер данных: {len(returns_series):,} наблюдений")
- print(f"Средняя доходность: {returns_series.mean():.4f} ({returns_series.mean()*100:.2f}%)")
- print(f"Стандартное отклонение: {returns_series.std():.4f} ({returns_series.std()*100:.2f}%)")
- print(f"Минимальная доходность: {returns_series.min():.4f} ({returns_series.min()*100:.2f}%)")
- print(f"Максимальная доходность: {returns_series.max():.4f} ({returns_series.max()*100:.2f}%)")
+(f) Data measurement: {len(returns_series):,} observations}
+(f) Average return: {returns_series.mean(:4f}({returns_series.mean(*100:.2f}%))
+standard deviation: {returns_series.std(:4f}({returns_series.std(*100:.2f}%))
+nint(f) "Minimum return: {returns_series.min(:4f}({returns_series.min(*100:.2f}%))"
+((returns_series.max(*100:.2f}%))
 
- # Анализ автокорреляции
+# Autocorrosion analysis
  autocorr_Analysis = analyze_autocorrelation(returns)
 
- # Анализ кластеризации волатильности
+# Analysis of the clustering of volatility
  vol_clustering = analyze_volatility_clustering(returns)
 
- # 2. Простая параметрическая симуляция
- print("\n2. ПРОСТАЯ ПАРАМЕТРИЧЕСКАЯ СИМУЛЯЦИЯ")
+# 2. Simple parameter simulation
+Prent("\n2... . . . . .
  print("-" * 40)
  simple_results = monte_carlo_simulation(returns, n_simulations)
  simple_Analysis = analyze_simulation_results(simple_results)
 
- # 3. Bootstrap симуляция
- print("\n3. BOOTSTRAP СИМУЛЯЦИЯ")
+# 3. Bootstrap simulation
+("\n3. BOOTSTRAP SYMULATION")
  print("-" * 25)
  bootstrap_results = bootstrap_monte_carlo(returns, n_simulations)
  bootstrap_Analysis = analyze_simulation_results(bootstrap_results)
 
- # 4. Block Bootstrap симуляция
- print("\n4. BLOCK BOOTSTRAP СИМУЛЯЦИЯ")
+# 4. Box Bootstrap simulation
+("\n4. BLOCK BOOTSTRAP COMPILATION")
  print("-" * 30)
- # Оптимизация размера блока
+# Optimization of block size
  optimal_block_size, block_optimization = optimize_block_size(returns, max_block_size=10, n_simulations=1000)
  block_bootstrap_results = block_bootstrap_monte_carlo(returns, n_simulations, block_size=optimal_block_size)
  block_Analysis = analyze_simulation_results(block_bootstrap_results)
 
- # 5. Автокоррелированная симуляция
- print("\n5. АВТОКОРРЕЛИРОВАННАЯ СИМУЛЯЦИЯ")
+♪ 5. Auto-corrided simulation
+PRIint("\n5. AVCORRECTED SIMULATION")
  print("-" * 35)
  autocorr_results = autocorrelated_monte_carlo(returns, n_simulations)
  autocorr_Analysis_results = analyze_simulation_results(autocorr_results)
 
- # 6. GARCH симуляция (если доступна библиотека)
- print("\n6. GARCH СИМУЛЯЦИЯ")
+# 6. GARCH simulation (if library available)
+Prent("\n6.GARCH SIMULATION")
  print("-" * 20)
  garch_results = garch_monte_carlo(returns, n_simulations)
  if garch_results is not None:
@@ -1509,8 +1509,8 @@ def complete_monte_carlo_Analysis(returns, n_simulations=5000):
  garch_results = None
  garch_Analysis = None
 
- # 7. Анализ рисков
- print("\n7. АНАЛИЗ РИСКОВ")
+#7. Risk analysis
+Print("\n7. RISK ANALYSIS")
  print("-" * 20)
 
  # VaR and Expected Shortfall
@@ -1524,70 +1524,70 @@ def complete_monte_carlo_Analysis(returns, n_simulations=5000):
  print(f"Expected Shortfall (95%): {es_95:.4f} ({es_95*100:.2f}%)")
  print(f"Expected Shortfall (99%): {es_99:.4f} ({es_99*100:.2f}%)")
 
- # 8. Стресс-тестирование
- print("\n8. СТРЕСС-ТЕСТИРОВАНИЕ")
+# 8. Stress testing
+Print("\n8. STRENGTHENING")
  print("-" * 25)
 
  stress_scenarios = {
- 'Кризис 2008': {'volatility_multiplier': 2.5, 'mean': -0.02},
- 'Высокая волатильность': {'volatility_multiplier': 1.8},
- 'Низкая доходность': {'mean': 0.0005},
- 'Экстремальный кризис': {'volatility_multiplier': 3.0, 'mean': -0.05}
+'Crysis 2008': {'volatility_multiplier': 2.5, 'mean': -0.02}
+'High volatility': {'volatility_multiplier': 1.8},
+'Low yield': {'mean': 0.0005},
+'Extraordinary crisis': {'volatility_multiplier': 3.0, 'mean': -0.05}
  }
 
  stress_results = stress_testing_monte_carlo(returns, stress_scenarios, n_simulations=2000)
 
- # 9. Сравнительный анализ методов
- print("\n9. СРАВНИТЕЛЬНЫЙ АНАЛИЗ МЕТОДОВ")
+# 9. Comparative analysis of methods
+Print("\n9 )
  print("-" * 35)
 
  methods_comparison = {
- 'Простая параметрическая': simple_Analysis,
+'Simple parameter': simple_analysis,
  'Bootstrap': bootstrap_Analysis,
  'Block Bootstrap': block_Analysis,
- 'Автокоррелированная': autocorr_Analysis_results
+'Authorized': autocorr_Analesis_results
  }
 
  if garch_Analysis is not None:
  methods_comparison['GARCH'] = garch_Analysis
 
- print("comparison методов on ключевым метрикам:")
- print(f"{'Метод':<25} {'Средняя':<10} {'Стд.откл.':<10} {'5% VaR':<10} {'95% VaR':<10}")
+"comparison of methods on key metrics:")
+Print(f){'Method':<25} {'Medical':<10}{'Std.Oct':<10} {'5% VaR':<10}{'95% VaR':<10}}
  print("-" * 70)
 
  for method, Analysis in methods_comparison.items():
  print(f"{method:<25} {Analysis['mean_return']:<10.4f} {Analysis['std_return']:<10.4f} "
  f"{Analysis['percentile_5']:<10.4f} {Analysis['percentile_95']:<10.4f}")
 
- # 10. Визуализация результатов
- print("\n10. ВИЗУАЛИЗАЦИЯ РЕЗУЛЬТАТОВ")
+#10 Visualization of results
+Print("\n10.VISUALIZATION OF RESULTS")
  print("-" * 30)
 
- # create графиков
+# Create graphs
  fig, axes = plt.subplots(2, 3, figsize=(18, 12))
- fig.suptitle('Монте-Карло симуляция - comparison методов', fontsize=16)
+fig.supittle('Monte-Carlo simulation - comparson of methods', fonsise=16)
 
- # График 1: Распределения результатов
- axes[0, 0].hist(simple_results, bins=50, alpha=0.7, density=True, label='Простая', color='blue')
+# Graph 1: Results distribution
+axes[0,0]. Hist(simple_results, bins=50, alpha=0.7, density=True, label='Easy', color='blee')
  axes[0, 0].hist(bootstrap_results, bins=50, alpha=0.7, density=True, label='Bootstrap', color='red')
- axes[0, 0].set_title('Распределения результатов')
- axes[0, 0].set_xlabel('Доходность')
- axes[0, 0].set_ylabel('Плотность')
+axes[0,0].set_title('Distributions of results')
+axes[0,0].set_xlabel('income')
+axes[0,0].set_ylabel('Purity')
  axes[0, 0].legend()
  axes[0, 0].grid(True, alpha=0.3)
 
- # График 2: Кривая риска (VaR)
+# Graph 2: Risk curve (VaR)
  confidence_levels = np.linspace(0.01, 0.5, 50)
  var_values = [np.percentile(simple_results, cl * 100) for cl in confidence_levels]
  axes[0, 1].plot(confidence_levels, var_values, 'b-', linewidth=2, label='VaR')
  axes[0, 1].axhline(y=0, color='r', linestyle='--', alpha=0.7)
- axes[0, 1].set_title('Кривая риска (VaR)')
- axes[0, 1].set_xlabel('Уровень доверия')
+axes[0,1].set_title('The Risk Curve (VaR)')
+axes[0, 1].set_xlabel('Confidence level')
  axes[0, 1].set_ylabel('VaR')
  axes[0, 1].grid(True, alpha=0.3)
  axes[0, 1].legend()
 
- # График 3: comparison квантилей
+# Graph 3: Comparison Quantile
  percentiles = [5, 10, 25, 50, 75, 90, 95]
  simple_quantiles = [np.percentile(simple_results, p) for p in percentiles]
  bootstrap_quantiles = [np.percentile(bootstrap_results, p) for p in percentiles]
@@ -1595,70 +1595,70 @@ def complete_monte_carlo_Analysis(returns, n_simulations=5000):
  x = np.arange(len(percentiles))
  width = 0.35
 
- axes[0, 2].bar(x - width/2, simple_quantiles, width, label='Простая', alpha=0.7)
+axes[0,2]. bar(x-width/2, simple_quantiles, width, label='Easy', alpha=0.7)
  axes[0, 2].bar(x + width/2, bootstrap_quantiles, width, label='Bootstrap', alpha=0.7)
- axes[0, 2].set_title('comparison квантилей')
- axes[0, 2].set_xlabel('Квантиль (%)')
- axes[0, 2].set_ylabel('Доходность')
+axes[0,2].set_title('comparison Quantile')
+axes[0,2].set_xlabel('Quantile (%)')
+axes[0,2].set_ylabel('income')
  axes[0, 2].set_xticks(x)
  axes[0, 2].set_xticklabels(percentiles)
  axes[0, 2].legend()
  axes[0, 2].grid(True, alpha=0.3)
 
- # График 4: Стресс-тестирование
+# Graph 4: Stress testing
  stress_names = List(stress_results.keys())
  stress_means = [np.mean(stress_results[name]) for name in stress_names]
  stress_stds = [np.std(stress_results[name]) for name in stress_names]
 
  axes[1, 0].bar(stress_names, stress_means, yerr=stress_stds, capsize=5, alpha=0.7)
- axes[1, 0].set_title('Стресс-тестирование')
- axes[1, 0].set_ylabel('Средняя доходность')
+axes[1, 0].set_title('Stress test')
+axes[1, 0].set_ylabel('average return')
  axes[1, 0].tick_params(axis='x', rotation=45)
  axes[1, 0].grid(True, alpha=0.3)
 
- # График 5: QQ-plot for проверки нормальности
+# Graph 5: QQ-plot for normality check
  from scipy import stats
  stats.probplot(simple_results, dist="norm", plot=axes[1, 1])
- axes[1, 1].set_title('Q-Q Plot (Простая симуляция)')
+axes[1, 1].set_title('Q-Q Plot (Simple simulation)')
  axes[1, 1].grid(True, alpha=0.3)
 
- # График 6: temporary ряд исторических данных
+# Graph 6: time series of historical data
  axes[1, 2].plot(returns_series.index, returns_series.values, alpha=0.7)
- axes[1, 2].set_title('Исторические доходности')
- axes[1, 2].set_xlabel('Время')
- axes[1, 2].set_ylabel('Доходность')
+axes[1, 2].set_title('historical returns')
+axes[1, 2].set_xlabel('Time')
+axes[1, 2].set_ylabel('income')
  axes[1, 2].grid(True, alpha=0.3)
 
  plt.tight_layout()
  plt.show()
 
- # 11. Итоговый Report
- print("\n11. ИТОГОВЫЙ Report")
+#11. Final Report
+("\n11.total Report")
  print("-" * 20)
 
- print("Ключевые выводы:")
- print(f"• Средняя доходность: {simple_Analysis['mean_return']:.2%}")
- print(f"• Волатильность: {simple_Analysis['std_return']:.2%}")
+"Prente Conclusions:")
+pint(f"> average return: {simple_analysis['mean_return']:2%}}
+Print(f"> Volatility: {simple_analysis['std_return']:2%}}
  print(f"• 5% VaR: {var_95:.2%}")
  print(f"• 1% VaR: {var_99:.2%}")
- print(f"• Вероятность прибыли: {simple_Analysis['probability_positive']:.1%}")
- print(f"• Вероятность убытка: {simple_Analysis['probability_loss']:.1%}")
+(f) Probability of profits: {simple_analysis['probability_positive']:.1 %}}
+(f) Probability of loss: {simple_Analysis['probability_loss']:.1 %}}
 
  if autocorr_Analysis['max_autocorr'] > 0.1:
- print("• Обнаружена значимая автокорреляция - рекомендуется Block Bootstrap")
+pint("> Significant autocorrigation detected - Recommended Block Bootstrap")
 
  if vol_clustering['has_clustering']:
- print("• Обнаружена кластеризация волатильности - рекомендуется GARCH")
+Print("> Clustering of volatility detected - recommended by HARCH")
 
- print("\nРекомендации on выбору метода:")
+\n Recommendations on the choice of method: )
  if autocorr_Analysis['max_autocorr'] > 0.1 and vol_clustering['has_clustering']:
- print("• Рекомендуется: Block Bootstrap + GARCH модели")
+prent("> Recommended: Block Bootstrap + GARCH models")
  elif autocorr_Analysis['max_autocorr'] > 0.1:
- print("• Рекомендуется: Block Bootstrap симуляция")
+prent("> Recommended: Block Bootstrap simulation")
  elif vol_clustering['has_clustering']:
- print("• Рекомендуется: GARCH симуляция")
+pint("> Recommended: GARCH simulation")
  else:
- print("• Рекомендуется: Простая параметрическая or Bootstrap симуляция")
+prent("> Recommended: Simple parameter or Bootstrap simulation")
 
  return {
  'data_Analysis': {
@@ -1688,49 +1688,49 @@ def complete_monte_carlo_Analysis(returns, n_simulations=5000):
  }
  }
 
-# ПОЛНЫЙ example ИСПОЛЬЗОВАНИЯ
+# Full example
 def run_complete_example():
  """
- Launch полного примера Монте-Карло симуляции
+Launch full example of Monte Carlo simulation
 
- Эта function демонстрирует полный workflow example использования
- all методов Монte-Карло симуляции on testsых данных.
+This function shows complete workflow example use
+All Monte-Carlo's methods are simulations on testy data.
  """
 
  print("=" * 80)
- print("ПОЛНЫЙ example МОНТЕ-КАРЛО СИМУЛЯЦИИ")
+Prent("full example MONTA-CARLE SIMULATION")
  print("=" * 80)
- print("Этот example демонстрирует все methods Монte-Карло симуляции")
- print("on реалистичных testsых данных.")
+"This example shows all the methhods Monte-Carlo simulations"
+"on realistic test data."
  print("=" * 80)
 
- # Генерация testsых данных
+# Testsy Data Generation
  test_data = generate_test_data(n_days=1000, assets=['AAPL', 'GOOGL', 'MSFT', 'TSLA'])
 
- # Выбор одного актива for демонстрации
+# Choosing one asset for demonstration
  asset_name = 'AAPL'
  returns = test_data[asset_name]
 
- print(f"\nВыбран актив: {asset_name}")
- print(f"Размер данных: {len(returns):,} дней")
+print(f'n selected asset: {asset_name})
+pint(f"data measurement: {len(returns):,}days")
 
- # Выполнение полного Analysis
+# The execution of a complete Analysis
  results = complete_monte_carlo_Analysis(returns, n_simulations=5000)
 
- # Демонстрация многомерной симуляции
+# Demonstration of multidimensional simulation
  print("\n" + "=" * 60)
- print("МНОГОМЕРНАЯ СИМУЛЯЦИЯ ПОРТФЕЛЯ")
+Prent( "MULTILATERAL PORTHELE SYMPILATION")
  print("=" * 60)
 
- # Многомерная симуляция for all активов
+# Multidimensional simulation for all assets
  Portfolio_results = multivariate_monte_carlo(test_data, n_simulations=3000)
 
- # Анализ корреляций портфеля
+# Analysis of portfolio correlations
  correlation_Analysis = analyze_Portfolio_correlations(Portfolio_results)
 
- print("\nАнализ портфеля завершен!")
- print(f"Средняя корреляция между активами: {correlation_Analysis['avg_correlation']:.3f}")
- print(f"Потенциал диверсификации: {correlation_Analysis['diversification_potential']}")
+Print('nanalysis of portfolio complete!'
+average correlation between assets: {control_Anallysis['avg_regulation']:3f}})
+Spring(f" Diversification potential: {regulation_Analisis['diversification_potential'}})
 
  return {
  'single_asset_Analysis': results,
@@ -1740,74 +1740,74 @@ def run_complete_example():
  }
  }
 
-# Launch примера (раскомментируйте for выполнения)
+# Launch examples (climb for implementation)
 if __name__ == "__main__":
- # Launch полного примера
+# Launch full example
  example_results = run_complete_example()
 
  print("\n" + "=" * 80)
- print("example ЗАВЕРШЕН УСПЕШНО!")
+"example COMPLETELY!"
  print("=" * 80)
- print("Все methods Монte-Карло симуляции продемонстрированы.")
- print("Вы можете использовать этот код как основу for своих анализов.")
+"All methhods Monte-Carlo simulations are shown."
+"You can use this code as the basis for your analysis."
  print("=" * 80)
 ```
 
-**instructions on Launch полного примера:**
+**instructions on Launch full example:**
 
-1. **install необходимые библиотеки:**
+1. **install necessary libraries:**
 ```bash
 pip install numpy pandas matplotlib scipy arch
 ```
 
-2. **Скопируйте and запустите код:**
+2. ** Copy and run the code:**
 ```python
-# Launch полного примера
+# Launch full example
 results = run_complete_example()
 ```
 
-3. **Использование with вашими данными:**
+3. ** Use with your data:**
 ```python
-# Загрузка ваших данных
+# Uploading your data
 import pandas as pd
 your_data = pd.read_csv('your_data.csv')
 your_returns = your_data['returns_column']
 
-# Выполнение Analysis
+# Implementation of Analysis
 results = complete_monte_carlo_Analysis(your_returns, n_simulations=10000)
 ```
 
-**Что включает полный example:**
-- ✅ Генерация реалистичных testsых данных
-- ✅ Все methods Монte-Карло симуляции
-- ✅ Анализ автокорреляции and кластеризации волатильности
-- ✅ comparison различных методов
-- ✅ Анализ рисков (VaR, Expected Shortfall)
-- ✅ Стресс-тестирование
-- ✅ Многомерная симуляция портфеля
-- ✅ Визуализация результатов
-- ✅ Автоматические рекомендации on выбору метода
+** Which includes total example:**
+- Production of realistic test data
+- All methhods Monte-Carlo simulations
+- Analysis of autocorration and clustering of volatility
+- Comparson of various methods
+- Risk analysis (VaR, Exacted Shortfall)
+- Stress testing
+- Multidimensional portfolio simulation
+- Visualization of results
+- Automatic recommendations on choice of method
 
-## Дополнительные инструменты and утилиты
+♪ Additional tools and utilities
 
-**Theory:** Этот раздел содержит дополнительные инструменты and утилиты for работы with Монте-Карло симуляцией, которые помогут in практическом применении.
+**Theory:** This section contains additional tools and tools for working with Monte Carlo simulations that will help in practical application.
 
-### 1. Генератор Reportов
+♪##1 ♪ Report generator
 
 ```python
-def generate_monte_carlo_Report(results, title="Монте-Карло анализ"):
+def geneate_monte_carlo_Report(s, title="Monte-Carlo Analysis":
  """
- Генерация детального Reportа on результатам Монте-Карло симуляции
+Generation of a detailed Monte Carlo Simulation Report
 
- Эта function создает структурированный Report with ключевыми метриками,
- графиками and рекомендациями on результатам симуляции.
+This Foundation creates a structured Report with key metrics,
+The results of the simulation are summarized in tables and recommendations.
 
  parameters:
- - results: результаты полного Analysis Монte-Карло
- - title: заголовок Reportа
+- results: results of the complete Analisis Monte-Carlo
+- title: title of the Report
 
- Возвращает:
- - HTML Report (строка)
+Returns:
+- TML Report (line)
  """
 
  Report = f"""
@@ -1830,18 +1830,18 @@ def generate_monte_carlo_Report(results, title="Монте-Карло анали
  <body>
  <div class="header">
  <h1>{title}</h1>
- <p>Дата генерации: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+<p> Generation date: {pd.Timemp.now().strftime('%Y-%m-%d%H:%M:%S'}</p>
  </div>
 
  <div class="section">
- <h2>Ключевые metrics</h2>
+<h2> Key metrics</h2>
  <div class="metric">
- <strong>Средняя доходность:</strong><br>
- {results['Analysis_results']['Простая параметрическая']['mean_return']:.2%}
+<strong> Average return:</strong><br>
+{Results['Anallysis_results']['Just parameter']['mean_return']:2%}
  </div>
  <div class="metric">
- <strong>Волатильность:</strong><br>
- {results['Analysis_results']['Простая параметрическая']['std_return']:.2%}
+<strong> Volatility:</strong><br>
+{Results['Anallysis_results']['Just parameter']['std_return']:2%}
  </div>
  <div class="metric">
  <strong>5% VaR:</strong><br>
@@ -1854,19 +1854,19 @@ def generate_monte_carlo_Report(results, title="Монте-Карло анали
  </div>
 
  <div class="section">
- <h2>Рекомендации</h2>
+<h2> Recommendations</h2>
  <div class="success">
- <strong>Рекомендуемый метод:</strong> {results['recommendations']['optimal_method']}
+Recommended method:</strong> {results['recommendations']['optimal_method']}
  </div>
  </div>
 
  <div class="section">
- <h2>comparison методов</h2>
+<h2>comparison of methods</h2>
  <table>
  <tr>
- <th>Метод</th>
- <th>Средняя доходность</th>
- <th>Стандартное отклонение</th>
+<th> Method</th>
+<th> Average return</th>
+<th> Standard deviation</th>
  <th>5% VaR</th>
  <th>95% VaR</th>
  </tr>
@@ -1894,11 +1894,11 @@ def generate_monte_carlo_Report(results, title="Монте-Карло анали
 
 def save_Report_to_file(results, filename="monte_carlo_Report.html"):
  """
- Сохранение Reportа in файл
+Save Report in File
 
  parameters:
- - results: результаты Analysis
- - filename: имя файла for сохранения
+- results: results of Analysis
+- filename: file name for preservation
  """
 
  Report = generate_monte_carlo_Report(results)
@@ -1906,24 +1906,24 @@ def save_Report_to_file(results, filename="monte_carlo_Report.html"):
  with open(filename, 'w', encoding='utf-8') as f:
  f.write(Report)
 
- print(f"Report сохранен in файл: {filename}")
+print(f"Report stored in file: {filename}")
 ```
 
-### 2. Интерактивная визуализация
+###2: Interactive visualization
 
 ```python
 def create_interactive_dashboard(results):
  """
- create интерактивной панели управления for Монte-Карло симуляции
+version of the interactive control panel for Monte-Carlo simulations
 
- Эта function создает интерактивную панель with использованием Plotly
- for детального Analysis результатов симуляции.
+This function creates an interactive panel with the use of Plotly
+for a detailed Analysis of simulation results.
 
  parameters:
- - results: результаты полного Analysis
+- results: results of the full Analisis
 
- Возвращает:
- - объект Plotly dashboard
+Returns:
+- Plotly dashboard
  """
 
  try:
@@ -1931,26 +1931,26 @@ def create_interactive_dashboard(results):
  from plotly.subplots import make_subplots
  import plotly.express as px
  except importError:
- print("for интерактивной визуализации install plotly: pip install plotly")
+"for interactive visualization install platform: pip install tablely")
  return None
 
- # create подграфиков
+# Create subgraphs
  fig = make_subplots(
  rows=3, cols=2,
- subplot_titles=('Распределения результатов', 'Кривая риска (VaR)',
- 'comparison методов', 'Стресс-тестирование',
- 'Q-Q Plot', 'temporary ряд'),
+subplot_tites=('Distribution of results', 'The Risk Curve (VAR)'),
+'Comparison of methods', 'Stress test',
+'Q-Q Plot', 'Temporary row',
  specs=[[{"secondary_y": False}, {"secondary_y": False}],
  [{"secondary_y": False}, {"secondary_y": False}],
  [{"secondary_y": False}, {"secondary_y": False}]]
  )
 
- # График 1: Распределения
+# Graph 1: Distributions
  simple_results = results['simulation_results']['simple']
  bootstrap_results = results['simulation_results']['bootstrap']
 
  fig.add_trace(
- go.Histogram(x=simple_results, name='Простая', opacity=0.7, nbinsx=50),
+Go.Histogram(x=simple_effects, name='Easy', opacity=0.7, nbinsx=50)
  row=1, col=1
  )
  fig.add_trace(
@@ -1958,7 +1958,7 @@ def create_interactive_dashboard(results):
  row=1, col=1
  )
 
- # График 2: Кривая риска
+# Graph 2: Risk curve
  confidence_levels = np.linspace(0.01, 0.5, 50)
  var_values = [np.percentile(simple_results, cl * 100) for cl in confidence_levels]
 
@@ -1967,26 +1967,26 @@ def create_interactive_dashboard(results):
  row=1, col=2
  )
 
- # График 3: comparison методов
+# Graph 3: Comparson of Methods
  methods = List(results['Analysis_results'].keys())
  means = [results['Analysis_results'][method]['mean_return'] for method in methods]
  stds = [results['Analysis_results'][method]['std_return'] for method in methods]
 
  fig.add_trace(
- go.Bar(x=methods, y=means, name='Средняя доходность', error_y=dict(type='data', array=stds)),
+Go.Bar(x=methods, y=means, name='Means=', error_y=dict(type='data',array=stds)),
  row=2, col=1
  )
 
- # График 4: Стресс-тестирование
+# Graph 4: Stress testing
  stress_names = List(results['stress_results'].keys())
  stress_means = [np.mean(results['stress_results'][name]) for name in stress_names]
 
  fig.add_trace(
- go.Bar(x=stress_names, y=stress_means, name='Стресс-тестирование'),
+Go.Bar(x=stress_names, y=stress_means, name='Stress test'),
  row=2, col=2
  )
 
- # График 5: Q-Q Plot
+# Graph 5: Q-Q Plot
  from scipy import stats
  qq_data = stats.probplot(simple_results, dist="norm")
 
@@ -1995,9 +1995,9 @@ def create_interactive_dashboard(results):
  row=3, col=1
  )
 
- # update макета
+# Update Model
  fig.update_layout(
- title_text="Интерактивная панель Монte-Карло симуляции",
+"Title_text"= "Monte-Carlo Interactive Simulation Panel",
  showlegend=True,
  height=1200
  )
@@ -2006,46 +2006,46 @@ def create_interactive_dashboard(results):
 
 def export_results_to_excel(results, filename="monte_carlo_results.xlsx"):
  """
- Экспорт результатов in Excel файл
+Export results in Excel file
 
  parameters:
- - results: результаты Analysis
- - filename: имя файла for экспорта
+- results: results of Analysis
+- Filename: file name for export
  """
 
  try:
  import openpyxl
  except importError:
- print("for экспорта in Excel install openpyxl: pip install openpyxl")
+For exports in Excel in openpyxl: pip install openpyxl)
  return
 
  with pd.ExcelWriter(filename, engine='openpyxl') as writer:
- # Лист with основными результатами
+# List with key results
  summary_data = []
  for method, Analysis in results['Analysis_results'].items():
  summary_data.append({
- 'Метод': method,
- 'Средняя доходность': Analysis['mean_return'],
- 'Стандартное отклонение': Analysis['std_return'],
+'Method': Method,
+'Mean return': Analysis['mean_return']
+'The standard deviation': Analysis['std_return']
  '5% VaR': Analysis['percentile_5'],
  '95% VaR': Analysis['percentile_95'],
- 'Вероятность прибыли': Analysis['probability_positive'],
- 'Вероятность убытка': Analysis['probability_loss']
+'Probability of profits': Analysis['probability_positive']
+'The probability of loss': Analysis ['probability_loss']
  })
 
  summary_df = pd.dataFrame(summary_data)
- summary_df.to_excel(writer, sheet_name='Сводка', index=False)
+Summary_df.to_excel(writer, sheet_name='Background', index=False)
 
- # Лист with детальными результатами симуляций
+# List with detailed simulation results
  for method, sim_results in results['simulation_results'].items():
  if sim_results is not None:
  sim_df = pd.dataFrame({method: sim_results})
- sim_df.to_excel(writer, sheet_name=f'{method}_результаты', index=False)
+sim_df.to_excel(writer, sheet_name=f'{method}_outputs, index=False)
 
- # Лист with метриками риска
+# A leaf with metrics of risk
  risk_data = {
- 'Метрика': ['5% VaR', '1% VaR', 'Expected Shortfall 95%', 'Expected Shortfall 99%'],
- 'Значение': [
+'Metrick': ['5 % VaR', '1 % VaR', 'Expected Shortfall 95 %', 'Exspected Shortfall 99 %']
+'Purpose':
  results['risk_metrics']['var_95'],
  results['risk_metrics']['var_99'],
  results['risk_metrics']['es_95'],
@@ -2053,152 +2053,152 @@ def export_results_to_excel(results, filename="monte_carlo_results.xlsx"):
  ]
  }
  risk_df = pd.dataFrame(risk_data)
- risk_df.to_excel(writer, sheet_name='metrics риска', index=False)
+Rick_df.to_excel(writer, sheet_name='metrics risk', index=False)
 
- print(f"Результаты экспортированы in файл: {filename}")
+print(f "Results exported in file: {filename}")
 ```
 
-### 3. Автоматическое тестирование
+*## 3. Automatic testing
 
 ```python
 def run_monte_carlo_tests():
  """
- Автоматическое тестирование all методов Монte-Карло симуляции
+Automatic testing all Monte-Carlo simulation methods
 
- Эта function выполняет автоматические тесты for проверки
- корректности работы all методов симуляции.
+This function performs automatic tests for checking
+The correctness of all simulation methods.
  """
 
- print("Launch автоматических tests Монte-Карло симуляции...")
+"Launch automatic tests Monte-Carlo simulations..."
 
- # Генерация testsых данных
+# Testsy Data Generation
  test_returns = np.random.normal(0.001, 0.02, 1000)
 
  tests_passed = 0
  total_tests = 0
 
- # Тест 1: Простая симуляция
+# Test 1: Simple simulation
  total_tests += 1
  try:
  results = monte_carlo_simulation(test_returns, n_simulations=1000)
  assert len(results) == 1000
  assert not np.isnan(results).any()
- print("✅ Простая симуляция: ПРОЙДЕН")
+"Prent("♪ Simple Simulation: PROIDEN")
  tests_passed += 1
  except Exception as e:
- print(f"❌ Простая симуляция: ОШИБКА - {e}")
+(f) Simple simulation: OSHIBKA - {e}}
 
- # Тест 2: Bootstrap симуляция
+# Test 2: Bootstrap simulation
  total_tests += 1
  try:
  results = bootstrap_monte_carlo(test_returns, n_simulations=1000)
  assert len(results) == 1000
  assert not np.isnan(results).any()
- print("✅ Bootstrap симуляция: ПРОЙДЕН")
+Print("\"Bootstrap simulation: PROIDEN")
  tests_passed += 1
  except Exception as e:
- print(f"❌ Bootstrap симуляция: ОШИБКА - {e}")
+Print(f)' Bootstrap simulation: OSHIBKA - {e}}
 
- # Тест 3: Block Bootstrap симуляция
+# Test 3: Box Bootstrap simulation
  total_tests += 1
  try:
  results = block_bootstrap_monte_carlo(test_returns, n_simulations=1000)
  assert len(results) == 1000
  assert not np.isnan(results).any()
- print("✅ Block Bootstrap симуляция: ПРОЙДЕН")
+"Block Bootstrap simulation: PROIDEN"
  tests_passed += 1
  except Exception as e:
- print(f"❌ Block Bootstrap симуляция: ОШИБКА - {e}")
+Print(f" \Block Bootstrap simulation: OSHIBK - {e}})
 
- # Тест 4: Автокоррелированная симуляция
+# Test 4: Auto-corruptled simulation
  total_tests += 1
  try:
  results = autocorrelated_monte_carlo(test_returns, n_simulations=1000)
  assert len(results) == 1000
  assert not np.isnan(results).any()
- print("✅ Автокоррелированная симуляция: ПРОЙДЕН")
+"Auto-coorled simulation: PROIDEN"
  tests_passed += 1
  except Exception as e:
- print(f"❌ Автокоррелированная симуляция: ОШИБКА - {e}")
+(f) Auto-coorled simulation: OSHIBKA - {e})
 
- # Тест 5: Анализ результатов
+# Test 5: Analysis of results
  total_tests += 1
  try:
  results = monte_carlo_simulation(test_returns, n_simulations=1000)
  Analysis = analyze_simulation_results(results)
  assert 'mean_return' in Analysis
  assert 'std_return' in Analysis
- print("✅ Анализ результатов: ПРОЙДЕН")
+Print("- Analysis of results: PROIDEN")
  tests_passed += 1
  except Exception as e:
- print(f"❌ Анализ результатов: ОШИБКА - {e}")
+Print(f) Analysis of results: OSHIBKA - {e}}
 
- # Тест 6: VaR расчет
+# Test 6: VaR calculation
  total_tests += 1
  try:
  results = monte_carlo_simulation(test_returns, n_simulations=1000)
  var_95 = calculate_var(results, 0.05)
  var_99 = calculate_var(results, 0.01)
- assert var_95 < 0 # VaR должен быть отрицательным
- assert var_99 < var_95 # 99% VaR должен быть хуже 95% VaR
- print("✅ VaR расчет: ПРОЙДЕН")
+Assert var_95 < 0 #VaR must be negative
+Assert var_99 < var_95 # 99% VaR must be worse than 95% VaR
+Print("\Var Calculation: PROIDEN")
  tests_passed += 1
  except Exception as e:
- print(f"❌ VaR расчет: ОШИБКА - {e}")
+print(f"\VaR calculation: OSHIBK - {e}")
 
- # Итоговый Report
+# Final Report
  print(f"\n{'='*50}")
- print(f"РЕЗУЛЬТАТЫ ТЕСТИРОВАНИЯ")
+(f "TESTRUCTURING RELEVANTS")
  print(f"{'='*50}")
- print(f"Пройдено tests: {tests_passed}/{total_tests}")
- print(f"Процент успеха: {tests_passed/total_tests*100:.1f}%")
+Print(f) "Tests passed: {tests_passed}/ {total_tests}")
+print(f) Success rate: {tests_passed/total_tests*100:.1f}%}
 
  if tests_passed == total_tests:
- print("🎉 ВСЕ ТЕСТЫ ПРОЙДЕНЫ УСПЕШНО!")
+♪ all the places are gone ♪
  else:
- print("⚠️ НЕКОТОРЫЕ tests do not ПРОЙДЕНЫ")
+"Some tests do not exist"
 
  return tests_passed == total_tests
 ```
 
-## Следующие шаги
+## Next steps
 
-После изучения Монte-Карло симуляции переходите к:
-- **[09_risk_Management.md](09_risk_Management.md)** - Management рисками
-- **[10_blockchain_deployment.md](10_blockchain_deployment.md)** - Блокчейн деплой
+After studying Monte-Carlo simulations, go to:
+- **[09_risk_Management.md](09_risk_Management.md)** - Risk Management
+- **[10_blockchain_deployment.md](10_blockchain_deployment.md)**
 
-## Ключевые выводы
+## Key findings
 
-1. **Монte-Карло симуляция** - мощный инструмент оценки рисков and неопределенности
-2. **Bootstrap methods** сохраняют структуру исторических данных
-3. **Block Bootstrap** учитывает временные dependencies
-4. **GARCH модели** учитывают кластеризацию волатильности
-5. **Многомерная симуляция** необходима for портфельного Analysis
-6. **Стресс-тестирование** проверяет устойчивость стратегий
-7. **VaR and Expected Shortfall** - ключевые metrics риска
-8. **Визуализация** критически важна for понимания результатов
-9. **Автоматическое тестирование** обеспечивает надежность кода
-10. **Выбор метода** зависит from характеристик данных
+1. **Monte-Carlo simulation** - a powerful tool for risk and uncertainty assessment
+2. **Bootstrap methhods** maintain historical data structure
+3. **Block Bootstrap** takes into account temporary dependencies
+4. **GARCH models** take into account the clustering of volatility
+5. ** Multidimensional simulation** required for portfolio Analysis
+6. **Sertificate** check the sustainability of strategies
+**VAR and Exploited Shortfall** - Key risk indicators
+8. ** Visualization** critical for understanding results
+9. **Automatic testing** ensures the reliability of the code
+10. ** The choice of method** depends on from the data characteristics
 
-## Практические рекомендации
+## Practical recommendations
 
-**for начинающих:**
-- Начните with простой параметрической симуляции
-- Use Bootstrap for более реалистичных результатов
-- Всегда визуализируйте результаты
+**for starters:**
+Start with a simple parameter simulation.
+- Use Bootstrap for more realistic results
+- Always visualize the results.
 
-**for продвинутых пользователей:**
-- Анализируйте автокорреляцию and кластеризацию волатильности
-- Use Block Bootstrap or GARCH модели при необходимости
-- Применяйте многомерную симуляцию for портфелей
-- Регулярно выполняйте стресс-тестирование
+**for advanced users:**
+- Analyze autocratulation and clustering of volatility
+- Use Block Bootstrap or GarCH models, if necessary
+- Apply a multidimensional simulation for portfolios.
+- Do stress tests regularly.
 
-**for продакшена:**
-- Всегда тестируйте код перед использованием
-- Документируйте выбор методов and параметров
-- Мониторьте performance симуляций
-- Создавайте автоматические Reportы
+**for sold:**
+- Always test the code before using it.
+- Document the choice of methods and parameters
+- Monitor performance simulations
+- Create automatic Reports
 
 ---
 
-**Важно:** Монte-Карло симуляция показывает not только возможную прибыль, но and риски потерь! Use полученные знания ответственно and всегда учитывайте ограничения моделей.
+** It's important:** Monte-Carlo simulation shows not only the possible profits but also the risks of loss! Use learning is responsible and always consider model limitations.

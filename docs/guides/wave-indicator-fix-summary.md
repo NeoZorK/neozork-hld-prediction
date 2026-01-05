@@ -1,34 +1,34 @@
 # Wave Indicator Fix Summary
 
 ## 🎯 Problem Solved
-**Issue**: Индикатор WAVE показывал "not calculated" in выводе CLI, хотя on самом деле рассчитывался and генерировал сигналы.
+**Issue**: The WAVE indicator showed "not Calculated" in CLI output, although it was actually calculated and generated signals.
 
 **Command**: `uv run run_Analysis.py show csv mn1 -d fastest --rule wave:339,10,2,fast,22,11,4,fast,prime,55,open`
 
 ## 🔍 Root CaUse Analysis
 
-### Проблема
-Universal Trading metrics искал колонку `Direction` on умолчанию for Analysis сигналов, но индикатор WAVE создает колонку `_signal`. Это приводило к тому, что:
+### Problem
+Universal Trading metrics looked for the column `direction' on default for Analisis signals, but the WAVE indicator created the column `_signal'. This led to:
 
-1. **Индикатор рассчитывался правильно** - генерировал 48 non-zero сигналов
-2. **Universal Trading Metrics not находил сигналы** - искал in колонке `Direction` вместо `_signal`
-3. **Вывод показывал "not calculated"** - хотя индикатор Workingл корректно
+1. **Indicator was correctly calculated** - generated 48 non-zero signals
+2. **Universal Trading Metrics not found signals** - looking in column `Direction' instead of `_signal'
+3. ** The conclusion showed "not calculated"** - although the indicator of Workingle is correct
 
-### Техническая причина
+### Technical reason
 ```python
 # in universal_trading_metrics.py
 def calculate_and_display_metrics(self, df, rule,
- price_col='Close', signal_col='Direction', # ← Проблема здесь
+Price_col='Close', signal_col='Direction', #\\\\\\\\\\\t\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\,sign,sign_\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\=================================================\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\======================\\\\\\\\\\\\\\\\\
  volume_col='Volume'):
- if signal_col not in df.columns: # ← not находил '_signal'
+if signal_col not in df.columns: # \\t found '_signal'
  self._display_error(f"signal column '{signal_col}' not found in data")
  return {}
 ```
 
 ## ✅ Solution Implemented
 
-### Автоматическое определение колонки сигналов
-Добавлена Logsка автоматического поиска правильной колонки сигналов:
+### Automatic definition of signal column
+Added Logs to automatically search the correct signal column:
 
 ```python
 # Auto-detect signal column for Wave indicator
@@ -44,105 +44,105 @@ if signal_col not in df.columns:
  return {}
 ```
 
-### Приоритет поиска columns
-1. `_signal` - используется индикатором WAVE
-2. `_Direction` - альтернативная колонка
-3. `Direction` - стандартная колонка
-4. `signal` - резервная колонка
+### The priority of looking for columns
+1. `_signal' - used by the WAVE indicator
+2. `_direction' is an alternative column
+3. `Direction' is the standard column
+4. `signal' is the backup column
 
 ## 🧪 testing Results
 
-### Команда to исправления
+## # Command to correction #
 ```bash
 uv run run_Analysis.py show csv mn1 -d fastest --rule wave:339,10,2,fast,22,11,4,fast,prime,55,open
 ```
 
-**Результат**: Показывал "not calculated" in Universal Trading Metrics
+**Result**: Showed "not Calculated" in Universal Trading Metrics
 
-### Команда после исправления
+## # Team after correction #
 ```bash
 uv run run_Analysis.py show csv mn1 -d fastest --rule wave:339,10,2,fast,22,11,4,fast,prime,55,open
 ```
 
-**Результат**:
-- ✅ Индикатор рассчитывается успешно
-- ✅ Генерирует 48 non-zero сигналов
-- ✅ Universal Trading Metrics Workingет корректно
-- ✅ Показывает полный анализ торговых метрик
+** Results**:
+The indicator shall be calculated successfully
+- Generates 48 non-zero signals
+- ♪ Universal Trading Metrics Working ♪
+- Shows complete trade metric analysis
 
-### Тесты
-Создан комплексный тест `tests/calculation/test_wave_indicator_fix.py` with 7 тестами:
+♪ ♪ Tests
+An integrated test `tests/calculation/test_wave_indicator_fix.py' with 7 tests was created:
 
-1. **test_wave_indicator_generates_signals** - проверяет генерацию сигналов
-2. **test_wave_indicator_signal_distribution** - проверяет распределение сигналов
-3. **test_wave_indicator_wave_values** - проверяет значения волн
-4. **test_wave_indicator_individual_signals** - проверяет индивидуальные сигналы волн
-5. **test_wave_indicator_global_signals** - проверяет глобальные сигналы
-6. **test_wave_indicator_signal_consistency** - проверяет консистентность
-7. **test_wave_indicator_with_different_parameters** - проверяет разные parameters
+1. **test_wave_indicator_generates_signals** - check signal generation
+2. **test_wave_indicator_signal_distribution** - check signal distribution
+3. **test_wave_indicator_wave_values** - check wave values
+4. **test_wave_indicator_individual_signals** - check individual wave signals
+5. **test_wave_indicator_global_signals** - check global signals
+6. **test_wave_indicator_signal_consistency** - check consistence
+7. **test_wave_indicator_with_deferent_parameters** - Checks different parameters
 
-**Результат tests**: ✅ Все 7 tests прошли успешно
+** Test results**: ♪ All 7 testes were successful
 
 ## 📁 files Modified
 
 ### 1. `src/calculation/universal_trading_metrics.py`
-- Добавлена Logsка автоматического определения колонки сигналов
-- Улучшена обработка ошибок with показом доступных columns
-- Добавлена documentation functions
+- Added Logs to automatically define the signal column
+- Improved error processing with the display of available columns
+- Added documentation funds
 
-### 2. `tests/calculation/test_wave_indicator_fix.py` (новый файл)
-- Комплексные тесты for индикатора WAVE
-- check all аспектов работы индикатора
-- Тестирование with разными параметрами
+###2. `tests/calculation/test_wave_indicator_fix.py' (new file)
+- Integrated tests for the WAVE indicator
+- check all aspects of indicator operation
+- Testing with different parameters
 
 ## 🚀 Impact
 
-### to исправления
-- ❌ Universal Trading metrics показывал "not calculated"
-- ❌ Пользователи думали, что индикатор not Workingет
-- ❌ not было возможности анализировать торговые metrics
+### To fix
+- Universal Trading metrics showed "not Calculated"
+- users thought the indicator not Workinget
+- It was possible to analyse trade metrics.
 
-### После исправления
-- ✅ Universal Trading Metrics Workingет корректно
-- ✅ Показывает полный анализ торговых метрик
-- ✅ Индикатор WAVE полностью функционален
-- ✅ Автоматическое определение columns сигналов for all indicators
+### After the correction
+- ♪ Universal Trading Metrics Working ♪
+- Shows complete trade metric analysis
+- WAVE indicator fully operational
+- Automatic definition of columns signals for all indicators
 
 ## 📋 Usage
 
-### Базовое использование
+### Basic use
 ```bash
-# Индикатор WAVE теперь Workingет корректно
+# WAVE indicator now Working correctly
 uv run run_Analysis.py show csv mn1 -d fastest --rule wave:339,10,2,fast,22,11,4,fast,prime,55,open
 ```
 
-### Другие индикаторы
-fix также улучшило работу других indicators, которые могут использовать разные колонки сигналов.
+### Other indicators
+fix has also improved the performance of other indicators that can use different signal columns.
 
 ## 🔧 Technical details
 
-### Автоматическое определение columns
-Система теперь автоматически ищет колонки сигналов in следующем порядке:
-1. `_signal` - for indicators типа WAVE
-2. `_Direction` - альтернативная колонка
-3. `Direction` - стандартная колонка
-4. `signal` - резервная колонка
+### Automatic definition of columns
+The system now automatically looks for the in sequence columns:
+1. `_signal' - for indicators of type WAVE
+2. `_direction' is an alternative column
+3. `Direction' is the standard column
+4. `signal' is the backup column
 
-### Обработка ошибок
-Если ни одна из columns not foundа, система показывает:
-- List доступных columns
-- Detailed сообщение об ошибке
-- Продолжает работу без сбоя
+♪# ♪ Mistake processing ♪
+If none of the columns not front, the system shows:
+- List accessible columns
+- Detained error message
+- Keeps working without a malfunction.
 
 ## 📈 Performance
 
-- **Время выполнения**: not изменилось
-- **Память**: not изменилось
-- **Функциональность**: Значительно улучшена
-- **Надежность**: Повышена
+- ** Implementation time**: not changed
+- ** Memory**: not changed
+- **Functionality**: Significant improvement
+- ** Reliability**: Enhanced
 
 ## 🎯 Status
 
-**✅ COMPLETED** - Проблема полностью решена!
+The problem is completely solved!
 
-Индикатор WAVE теперь Workingет корректно and показывает полный анализ торговых метрик in режиме fastest.
+The WAVE indicator now Works correctly and shows a complete analysis of trade metrics in fastest mode.

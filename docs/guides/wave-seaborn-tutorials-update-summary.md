@@ -1,164 +1,164 @@
 # Wave Indicator Seaborn Tutorials Update Summary
 
-## 🎯 Задача
-Обновить учебные пособия for wave indicator, добавив информацию о поддержке режима `-d sb` (seaborn backend) and обновить indexы документации and README.md.
+## ♪ Task
+Update the training manuals for wave indexer by adding information on support for `-d sb' (seaborn backend) and update the documentation index and README.md.
 
-## ✅ Выполненные обновления
+♪ ♪ Updates implemented
 
-### 1. **Обновлен главный index документации** (`docs/index.md`)
+###1. ** Main index of documentation updated** ( `docs/index.md')
 
-#### Добавлены новые ссылки in раздел Wave Indicator Tutorials:
+#### New links have been added to the Wave Indexer Tutorals:
 - [Wave Seaborn Mode](docs/guides/wave-indicator-seaborn-mode.md) - ⭐ **NEW** Complete Wave indicator support for seaborn mode (-d sb)
 - [Wave Seaborn integration Summary](docs/guides/wave-seaborn-integration-summary.md) - ⭐ **NEW** Technical implementation summary for seaborn mode
 
-#### Обновлен раздел Features:
-- Добавлена информация о полной поддержке seaborn режима for wave indicator
-- Обновлено describe технических indicators
+#### The Features section is updated:
+- Added information on full support for the mode for wave indexer
+- Updateed describe technical indicators
 
-#### Обновлен раздел Quick Examples:
-- Добавлен example использования wave indicator in seaborn режиме:
+#### The Quick Examples section is updated:
+- Added example to use wave indicator in seaborn mode:
  ```bash
  nz csv --csv-file data/mn1.csv --point 50 --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d sb
  ```
 
-### 2. **Обновлен README.md**
+###2. ** Updated README.md**
 
-#### Обновлено describe Wave Indicator:
-- Добавлена информация о поддержке seaborn режима in describe
-- Обновлены CLI examples with добавлением seaborn режима:
+#### Updated describe Wave Index:
+- Added information on in describe support
+- Updated CLI examples with the addition of seaborn mode:
  ```bash
  # Wave with seaborn mode (NEW!) - Scientific presentation style
  uv run run_Analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
  ```
 
-#### Добавлены новые functions in раздел New Features:
+#### New Foundations added to the section of the New Futures:
 - [Seaborn Mode Support](docs/guides/wave-indicator-seaborn-mode.md) - ⭐ **NEW** Complete seaborn mode support
 - [Seaborn integration Summary](docs/guides/wave-seaborn-integration-summary.md) - ⭐ **NEW** Technical implementation details
 
-#### Обновлен раздел Wave Indicator Tutorials:
-- Добавлены ссылки on новые документы on seaborn режиму
-- Обновлены examples использования
+#### The Wave Indexer Tutorals section is updated:
+- Added links to new documents on mode
+- Examples of use updated
 
-#### Обновлен раздел Advanced Analysis:
-- Добавлен example wave indicator in seaborn режиме
+♪### Up-to-date Advanced Analysis:
+- Added example wave indicator in seaborn mode
 
-### 3. **Обновлено основное учебное пособие** (`docs/guides/adding-wave-indicator-tutorial.md`)
+### 3. ** Basic training manual updated** ( `docs/guids/adding-wave-indicator-tutoral.md')
 
-#### Обновлен раздел Display Modes Support:
-- Изменено `-d seaborn` on `-d sb` for консистентности
-- Добавлена пометка ⭐ **NEW** for seaborn режима
+#### The Display Modes Support section is updated:
+- Changed `-d seaborn' on `-d sb' for consistence
+- Added an entry ♪#NEW** for mode
 
-#### Добавлены новые CLI examples:
+#### New CLI examples added:
 ```bash
 # Wave with seaborn mode (NEW!) - Scientific presentation style
 uv run run_Analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
 ```
 
-#### Добавлен новый раздел Seaborn Mode Support ⭐ **NEW**:
-- **Visual Features**: describe научного стиля отображения
-- **Usage Example**: example использования
-- **Technical Implementation**: Technical details реализации
-- **Documentation**: Ссылки on документацию
+♪### New section of Seaborn Mode Support ♪#NEW**:
+- **Visual Features**: describe scientific display style
+- **Usage Example**: example of use
+- **Technical Implementation**: Technical Implementations
+- **Documentation**: References to documentation
 
-#### Обновлен раздел Documentation:
-- Добавлены ссылки on новые документы on seaborn режиму
+#### The document section is updated:
+- Added links to new documents on mode
 
-### 4. **Обновлено учебное пособие for fast mode** (`docs/guides/adding-wave-indicator-fast-mode-tutorial.md`)
+###4. ** Training manual for fast mode** (`docs/guids/adding-wave-indicator-fast-mode-tutoreal.md')
 
-#### Обновлены CLI examples:
-- Добавлен example seaborn режима
+#### Updated CLI examples:
+- Added example mode
 
-#### Обновлен раздел COMPLETED Features:
-- Добавлена поддержка Seaborn Mode Support
+#### The CMPLETED Features section is updated:
+- Support for Seaborn Mode Support added
 
-#### Обновлен раздел Key Features:
-- Добавлена Seaborn Mode Visualization
+#### The Key Features section is updated:
+- Added Seaborn Mode Visualization
 
-#### Обновлен раздел Documentation:
-- Добавлены ссылки on новые документы
+#### The document section is updated:
+- Reference to new documents added
 
-#### Обновлен раздел testing:
-- Добавлен тест for seaborn режима:
+#### The testing section is updated:
+- Added a test for seaborn mode:
  ```bash
  # Test seaborn mode functionality
  uv run run_Analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
  ```
 
-#### Обновлены Best Practices:
-- Добавлена рекомендация on testing all режимов
-- Добавлена рекомендация on использованию seaborn режима for профессиональных Reportов
+#### The Best Practices are updated:
+- Added recommendation on testing all regimes
+- Added a recommendation on the use of peer-to-peer reporting
 
-#### Обновлено Summary:
-- Добавлена информация о научном стиле презентации
-- Обновлено describe полного опыта визуализации
+#### The Summary is updated:
+- Added information on the scientific presentation style
+- Updateed describe full visualization experience
 
-## 🎨 Ключевые особенности seaborn режима
+♪ ♪ The key features of the mode ♪
 
-### Визуальные особенности
-- **Научный стиль**: Современная эстетика seaborn with улучшенной сеткой and типографикой
-- **Динамические цветные сегменты**: Красные сегменты for BUY сигналов, синие for SELL сигналов
-- **Умная фильтрация сигналов**: Использование колонки `_signal` for фактических торговых сигналов
-- **Профессиональная легенда**: Чистый стиль with тенями and скругленными углами
-- **Высокое качество вывода**: PNG формат with разрешением 300 DPI
+### Visual features
+- **Scientific style**: Modern aesthetics seaborn with improved grid and printing
+- **Dinamic colour segments**: Red segments for BUY signals, blue for SELL signals
+- ** Smart signal filtering**: use of column `_signal' for actual trade signals
+- ** Professional legend**: Clean style with shadows and rounded corners
+- ** High quality output**: PNG format with 300 DPI resolution
 
-### Техническая реализация
-- **Прерывистые сегменты линий**: Четкое визуальное разделение разных типов сигналов
-- **Поддержка Fast Line**: Красная пунктирная линия for индикатора импульса
-- **Поддержка MA Line**: Светло-синяя линия for скользящего среднего
-- **Линия нуля**: Серая пунктирная линия for справки
-- **Позиционирование сигналов**: BUY сигналы ниже Low цены, SELL сигналы выше High цены
+### Technical implementation
+** Periodical segments of lines**: clear visual separation of different types of signals
+- **Fost Line**: Red dot line for pulse indicator
+- ** SUPPORT MA Line**: Light blue line for sliding average
+- ** Line of zero**: Gray dotted line for reference
+- ** Signal Positioning**: BUY signals below Low Price, SELL signals above High Price
 
-## 📊 examples использования
+## * * examples of use
 
-### Базовый анализ
+### Basic analysis
 ```bash
-# Wave indicator with seaborn режимом - научный стиль презентации
+# Wave indexor with seaborn mode - scientific style of presentation
 uv run run_Analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
 ```
 
-### Продвинутый анализ
+### Advanced analysis
 ```bash
-# Wave with пользовательскими торговыми правилами in seaborn режиме
+# Wave with user trade rules in seaborn mode
 uv run run_Analysis.py show csv mn1 -d sb --rule wave:100,20,5,strongtrend,50,15,3,zone,primezone,30,close
 ```
 
-### Консервативная стратегия
+♪ ♪ ♪ Conservative strategy
 ```bash
-# Консервативная wave стратегия for стабильных рынков in seaborn режиме
+# Conservative strategy for stable markets in seaborn mode
 uv run run_Analysis.py show csv mn1 -d sb --rule wave:500,50,10,bettertrend,200,25,8,bettertrend,prime,50,open
 ```
 
-## 📚 Обновленная documentation
+## ♪ Updated documentation
 
-### Новые документы
-- [Wave Seaborn Mode](docs/guides/wave-indicator-seaborn-mode.md) - Complete guide on seaborn режиму
-- [Wave Seaborn integration Summary](docs/guides/wave-seaborn-integration-summary.md) - Техническое резюме реализации
+### New documents
+- [Wave Seaborn Mode] (docs/guids/wave-indicator-seaborn-mode.md) -Complete guide on seaborn mode
+- [Wave Seaborn integration Summary](docs/guids/wave-seaborn-integration-summary.md) - Technical summary of implementation
 
-### Обновленные документы
-- [docs/index.md](docs/index.md) - Главный index документации
-- [README.md](README.md) - Основной README файл
-- [adding-wave-indicator-tutorial.md](docs/guides/adding-wave-indicator-tutorial.md) - Основное учебное пособие
-- [adding-wave-indicator-fast-mode-tutorial.md](docs/guides/adding-wave-indicator-fast-mode-tutorial.md) - Учебное пособие for fast mode
+### Updated documents
+- [docs/index.md](docs/index.md) - Main index documentation
+- [README.md](README.md) - Core README file
+- [adding-wave-indicator-tutoreal.md](docs/guids/adding-wave-indicator-tutorial.md) - Basic training manual
+- [adding-wave-indicator-fast-mode-tutoral.md] (docs/guids/adding-wave-indicator-fast-mode-tutoreal.md) - Training manual for fast mode
 
-## 🎯 Результаты
+## ♪ Results
 
-### ✅ Полная integration
-- Wave indicator теперь полностью поддерживается in seaborn режиме
-- Идентичная функциональность with режимом `-d mpl`
-- Полный набор визуальных элементов and сигналов
-- Умная фильтрация сигналов for уменьшения шума
+### ♪ Full integration
+- Wave indexer now fully supported in seaborn mode
+- Identification functionality with `-d mpl' mode
+- Full set of visual elements and signals
+- Smart filtering of noise reduction signals
 
-### ✅ Обновленная documentation
-- Все учебные пособия обновлены with информацией о seaborn режиме
-- Добавлены examples использования and лучшие практики
-- Обновлены indexы and README.md
-- Создана полная documentation on seaborn режиму
+### * updated documentation
+- All training manuals updated with information on seaborn mode
+- Examples of use and best practices added
+- Indexes and README.md updated
+- Full documentation on peer mode established
 
-### ✅ Готовность к использованию
-Пользователи теперь могут использовать wave indicator in seaborn режиме for:
-- **Научных презентаций** with профессиональным стилем
-- **Публикаций** with высоким качеством изображений
-- **Analysis данных** with четкой визуализацией сигналов
-- **Профессиональных Reportов** with соtemporary эстетикой
+### ♪ Ready to use
+Users can now use a wave indicator in seaborn mode for:
+- ** Scientific presentations** with professional style
+- ** Publications** with high image quality
+- **Analysis data** with clear visualization of signals
+- ** Professional Reports** with technical aesthetics
 
-Wave indicator in режиме `-d sb` теперь предоставляет научно-презентационный стиль визуализации with полным набором функций and возможностей, идентичным другим режимам отображения.
+Wave indexer in mode `-d sb' now provides a scientific presentation style of visualization with a full set of functions and capabilities identical to other display modes.

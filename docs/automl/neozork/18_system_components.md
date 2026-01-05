@@ -1,62 +1,62 @@
-# 18.2. Детальные components системы
+♪ 18.2 Detailed components of the system
 
-**Theory:** Детальные components системы представляют собой Detailed describe all ключевых компонентов системы, их функций and взаимодействий. Это критически важно for понимания архитектуры and реализации системы.
+**Theory:** Detailed components of the system are Detailed describe all key components of the system, their functions and interactions, which is critical for understanding the architecture and implementing the system.
 
-**Почему детальные components системы важны:**
-- **Понимание:** Обеспечивает глубокое понимание системы
-- **architecture:** Обеспечивает понимание архитектуры
-- **Реализация:** Обеспечивает понимание реализации
-- **integration:** Критически важно for интеграции компонентов
+**Why detailed systems are important:**
+- ** Understanding:** Provides a thorough understanding of the system
+- **architecture:** Provides an understanding of architecture
+- ** Implementation: ** Provides an understanding of implementation
+- **integration:** Critically important for integration of components
 
-**Плюсы:**
-- Глубокое понимание
-- Четкая architecture
-- Детальная реализация
-- Эффективная integration
-
-**Disadvantages:**
-- Высокая сложность
-- Требует глубоких знаний
-- Потенциальные Issues with интеграцией
-
-## 📊 Сборщик данных
-
-**Theory:** Сборщик данных представляет собой критически важный компонент системы, отвечающий за сбор, очистку and подготовку данных for дальнейшего Analysis. Это основа for all ML-моделей and торговых решений.
-
-**Почему сборщик данных важен:**
-- **Качество данных:** Обеспечивает качество данных
-- **Полнота:** Обеспечивает полноту данных
-- **Актуальность:** Обеспечивает актуальность данных
-- **Надежность:** Критически важно for надежности системы
-
-**Плюсы:**
-- Высокое качество данных
-- Полнота данных
-- Актуальность данных
-- Надежность системы
+** Plus:**
+- Deep understanding.
+- Clear architecture
+- Detailed implementation
+- Effective integration
 
 **Disadvantages:**
-- Сложность реализации
-- Высокие требования к ресурсам
-- Потенциальные Issues with источниками данных
+- High complexity
+- It requires deep knowledge.
+- Potential Issues with Integration
 
-**Детальная реализация сборщика данных:**
+## ♪ Data collector
 
-Сборщик данных является фундаментальным компонентом системы, который обеспечивает получение, очистку and подготовку рыночных данных for all последующих аналитических процессов. Этот компонент критически важен for работы всей системы, поскольку качество данных напрямую влияет on точность all ML-моделей and торговых решений.
+**Theory:** Data collector is a critical component of the system responsible for collecting, cleaning and preparing data for further Analysis. This is the basis for all ML models and trade solutions.
 
-**Архитектурные принципы:**
-- **Модульность**: Каждый источник данных обрабатывается независимо
-- **Кэширование**: data сохраняются in памяти for быстрого доступа
-- **clean**: Автоматическое remove аномалий and некорректных данных
-- **Масштабируемость**: Поддержка множественных активов and Timeframes
-- **Надежность**: Обработка ошибок and восстановление после сбоев
+** Why a data collector matters:**
+- ** Data quality:** Ensures data quality
+- ** Complete:** Ensure complete data
+- **Activity:** Ensures the relevance of the data
+- ** Reliability:** Critical for the reliability of the system
 
-**Ключевые functions:**
-1. **Сбор данных**: Получение исторических and реальных данных with различных источников
-2. **clean данных**: remove аномалий, дубликатов and некорректных записей
-3. **Нормализация**: Приведение данных к единому формату
-4. **Кэширование**: Оптимизация performance через локальное хранение
-5. **Экспорт**: Сохранение данных in различных форматах
+** Plus:**
+- High data quality
+- Completeness of data
+- Data relevance
+- System reliability
+
+**Disadvantages:**
+- The difficulty of implementation
+- High resource requirements
+- Potential Issues with data sources
+
+** Detailed implementation of the data collector:**
+
+The data collector is a fundamental component of the system that generates, cleans and prepares market data for all subsequent analytical processes; this component is critical for the work of the system as the quality of the data directly affects the accuracy of all ML models and trade solutions.
+
+** Architecture principles:**
+- ** Modular**: Each data source is processed independently
+- **Cashing**: data stored in memory for quick access
+- **clean**: Automatic removing anomalies and incorrect data
+- **Stability**: Support for multiple assets and Times
+- ** Reliability**: Error management and recovery
+
+** Key functions:**
+1. ** Data collection**: Collection of historical and real data with different sources
+2. **clear data**: remove anomalies, duplicates and incorrect records
+3. **Normization**: Bringing data to the same format
+4. ** Cashing**: Optimizing performance through local storage
+5. **Export**: Maintenance of data in different formats
 
 ```python
 # src/data/collectors.py
@@ -74,46 +74,46 @@ import time
 
 class dataCollector:
  """
- Продвинутый сборщик данных for all активов and Timeframes
+Advanced data collector for all assets and Times
 
- Этот класс обеспечивает:
- - Многопоточный сбор данных
- - Автоматическую очистку and валидацию
- - Интеллектуальное кэширование
- - Обработку ошибок and восстановление
- - Поддержку различных источников данных
+This class shall provide:
+- Multidirected data collection
+- Automatic cleaning and validation
+- Intelligent Cashing
+- Error management and recovery
+- Support for different data sources
  """
 
  def __init__(self, config: Dict):
  """
- Инициализация сборщика данных
+Initiating a data collector
 
  Args:
- config: configuration системы with настройками источников данных
+config: configration system with settings of data sources
  """
  self.config = config
  self.logger = logging.getLogger(__name__)
  self.data_cache = {}
  self.last_update = {}
  self.max_workers = config.get('max_workers', 5)
- self.cache_ttl = config.get('cache_ttl', 3600) # 1 час
+Self.cache_ttl = config.get('cache_ttl', 3600) #1 hour
  self.retry_attempts = config.get('retry_attempts', 3)
  self.retry_delay = config.get('retry_delay', 1)
 
- # configuration Logsрования
+# configuring Logs
  logging.basicConfig(level=logging.INFO)
 
  def collect_data(self, symbol: str, Timeframe: str, period: str = "2y") -> pd.dataFrame:
  """
- Сбор данных for symbol and Timeframe with расширенной функциональностью
+Data collection for Symbol and Timeframe with enhanced functionality
 
  Args:
- symbol: Символ актива (например, 'AAPL', 'EURUSD')
+Symbol: A symbol of an asset (e.g. 'AAPL', `EURUSD')
  Timeframe: Timeframe ('M1', 'M5', 'H1', 'D1', etc.)
- period: Период данных ('1d', '5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max')
+period: Data period ('1d', '5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max')
 
  Returns:
- pd.dataFrame: Очищенные data with метаданными
+pd.dataFrame: Cleared data with metadata
  """
  try:
  self.logger.info(f"starting data collection for {symbol} {Timeframe}")
@@ -124,7 +124,7 @@ class dataCollector:
  self.logger.info(f"Using cached data for {symbol} {Timeframe}")
  return self.data_cache[cache_key]
 
- # Преобразование Timeframe for yfinance
+# Timeframe conversion for youth
  interval_map = {
  'M1': '1m',
  'M5': '5m',
@@ -143,26 +143,26 @@ class dataCollector:
 
  interval = interval_map.get(Timeframe, '1h')
 
- # Сбор данных with повторными попытками
+# Data collection with repeated attempts
  data = self._collect_with_retry(symbol, interval, period)
 
  if data.empty:
  self.logger.warning(f"No data found for {symbol} {Timeframe}")
  return pd.dataFrame()
 
- # Расширенная clean данных
+# Widening data
  data = self._clean_data(data)
 
- # add метаданных and технических indicators
+#Add metadata and technical indicators
  data = self._add_metadata(data, symbol, Timeframe)
  data = self._add_Technical_indicators(data)
 
- # validation качества данных
+# Data quality validation
  if not self._validate_data_quality(data):
  self.logger.error(f"data quality validation failed for {symbol} {Timeframe}")
  return pd.dataFrame()
 
- # Кэширование with temporary меткой
+# Cashing with temporary tag
  self.data_cache[cache_key] = data
  self.last_update[cache_key] = time.time()
 
@@ -174,7 +174,7 @@ class dataCollector:
  return pd.dataFrame()
 
  def _collect_with_retry(self, symbol: str, interval: str, period: str) -> pd.dataFrame:
- """Сбор данных with повторными попытками"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  for attempt in range(self.retry_attempts):
  try:
  ticker = yf.Ticker(symbol)
@@ -192,32 +192,32 @@ class dataCollector:
 
  def _clean_data(self, data: pd.dataFrame) -> pd.dataFrame:
  """
- Расширенная clean данных with детальным анализом
+Extended clearance with detailed analysis
 
- Включает:
- - remove NaN and дубликатов
- - Обнаружение and remove аномалий
- - Восстановление пропущенных данных
- - Валидацию временных рядов
+Includes:
+- Remove NaN and duplicates
+- Detection and remove anomalies
+- Recovery of missing data
+- Validation of time series
  """
  original_length = len(data)
 
  # remove NaN
  data = data.dropna()
 
- # remove дубликатов on indexу
+# Remove duplicates on the index
  data = data[~data.index.duplicated(keep='first')]
 
- # Сортировка in time
+# Sorting in time
  data = data.sort_index()
 
- # remove аномалий
+# Remove anomaly
  data = self._remove_anomalies(data)
 
- # Восстановление пропущенных данных
+# Recovery of missing data
  data = self._fill_Missing_data(data)
 
- # validation OHLC данных
+# validation OHLC data
  data = self._validate_ohlc_data(data)
 
  cleaned_length = len(data)
@@ -228,23 +228,23 @@ class dataCollector:
 
  def _remove_anomalies(self, data: pd.dataFrame) -> pd.dataFrame:
  """
- Интеллектуальное remove аномалий
+Intellectual remove anomalies
 
- Использует статистические methods for обнаружения:
- - Экстремальных ценовых движений
- - Нереалистичных объемов торгов
- - Временных аномалий
+Using statistical methods for detection:
+- Extreme price movements
+- Unrealistic trading volumes
+- Temporary anomalies
  """
  if data.empty:
  return data
 
- # remove нулевых or отрицательных цен
+# Remove zero or negative prices
  price_columns = ['Open', 'High', 'Low', 'Close']
  for col in price_columns:
  if col in data.columns:
  data = data[data[col] > 0]
 
- # remove экстремальных значений (более 5 стандартных отклонений)
+# remove extreme values (more than 5 standard deviations)
  for col in price_columns:
  if col in data.columns and len(data) > 10:
  mean_val = data[col].mean()
@@ -253,7 +253,7 @@ class dataCollector:
  z_scores = np.abs((data[col] - mean_val) / std_val)
  data = data[z_scores < 5]
 
- # remove аномальных объемов
+# Remove anomalous volumes
  if 'Volume' in data.columns and len(data) > 10:
  volume_mean = data['Volume'].mean()
  volume_std = data['Volume'].std()
@@ -261,7 +261,7 @@ class dataCollector:
  volume_z_scores = np.abs((data['Volume'] - volume_mean) / volume_std)
  data = data[volume_z_scores < 4]
 
- # check Logsки OHLC
+# Check Logski OHLC
  data = data[data['High'] >= data['Low']]
  data = data[data['High'] >= data['Open']]
  data = data[data['High'] >= data['Close']]
@@ -271,43 +271,43 @@ class dataCollector:
  return data
 
  def _fill_Missing_data(self, data: pd.dataFrame) -> pd.dataFrame:
- """Восстановление пропущенных данных методом интерполяции"""
+""Recovering missing data by interpolation""
  if data.empty:
  return data
 
- # Интерполяция for ценовых данных
+# Interpolation for Price Data
  price_columns = ['Open', 'High', 'Low', 'Close']
  for col in price_columns:
  if col in data.columns:
  data[col] = data[col].interpolate(method='linear')
 
- # for объемов Use forward fill
+# for volumes of Use for Ward Fill
  if 'Volume' in data.columns:
  data['Volume'] = data['Volume'].fillna(method='ffill')
 
  return data
 
  def _validate_ohlc_data(self, data: pd.dataFrame) -> pd.dataFrame:
- """validation корректности OHLC данных"""
+""Validation of OHLC data accuracy""
  if data.empty:
  return data
 
- # check, что High >= Low
+# check that High >=Low
  valid_ohlc = data['High'] >= data['Low']
  data = data[valid_ohlc]
 
- # check, что High >= Open and High >= Close
+# check that High >=Open and High >=Close
  valid_high = (data['High'] >= data['Open']) & (data['High'] >= data['Close'])
  data = data[valid_high]
 
- # check, что Low <= Open and Low <= Close
+# check that Low <= Open and Low <=Close
  valid_low = (data['Low'] <= data['Open']) & (data['Low'] <= data['Close'])
  data = data[valid_low]
 
  return data
 
  def _add_metadata(self, data: pd.dataFrame, symbol: str, Timeframe: str) -> pd.dataFrame:
- """add метаданных к данным"""
+"""add metadata to data""
  data = data.copy()
  data['symbol'] = symbol
  data['Timeframe'] = Timeframe
@@ -321,17 +321,17 @@ class dataCollector:
  return data
 
  def _add_Technical_indicators(self, data: pd.dataFrame) -> pd.dataFrame:
- """add базовых технических indicators"""
+""add basic technical indicators""
  if data.empty or len(data) < 20:
  return data
 
  data = data.copy()
 
- # Простые скользящие средние
+# Simple sliding average
  for window in [5, 10, 20, 50]:
  data[f'sma_{window}'] = data['Close'].rolling(window=window).mean()
 
- # Экспоненциальные скользящие средние
+# Exponsive sliding medium
  for span in [12, 26]:
  data[f'ema_{span}'] = data['Close'].ewm(span=span).mean()
 
@@ -349,13 +349,13 @@ class dataCollector:
  # MACD
  data['macd'] = self._calculate_macd(data['Close'])
 
- # Волатильность
+# Volatility
  data['volatility'] = data['Close'].rolling(20).std()
 
  return data
 
  def _calculate_rsi(self, prices: pd.Series, window: int = 14) -> pd.Series:
- """Расчет RSI (Relative Strength index)"""
+""""" "The RSI (Relative Strange index)"""
  delta = prices.diff()
  gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
  loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
@@ -364,7 +364,7 @@ class dataCollector:
  return rsi
 
  def _calculate_macd(self, prices: pd.Series, fast: int = 12, slow: int = 26, signal: int = 9) -> pd.Series:
- """Расчет MACD (Moving Average Convergence Divergence)"""
+""""""" "MACD (Moving Overage Convergence Divergence)".
  ema_fast = prices.ewm(span=fast).mean()
  ema_slow = prices.ewm(span=slow).mean()
  macd = ema_fast - ema_slow
@@ -372,11 +372,11 @@ class dataCollector:
  return macd - signal_line
 
  def _validate_data_quality(self, data: pd.dataFrame) -> bool:
- """validation качества данных"""
+"""""""""""
  if data.empty:
  return False
 
- # check минимального количества записей
+# Check minimum number of entries
  if len(data) < 10:
  return False
 
@@ -384,7 +384,7 @@ class dataCollector:
  if data.isnull().any().any():
  return False
 
- # check корректности цен
+# Check of price accuracy
  price_columns = ['Open', 'High', 'Low', 'Close']
  for col in price_columns:
  if col in data.columns:
@@ -394,7 +394,7 @@ class dataCollector:
  return True
 
  def _is_cache_valid(self, cache_key: str) -> bool:
- """check валидности cache"""
+"Cache's check of valivarity."
  if cache_key not in self.data_cache:
  return False
 
@@ -405,15 +405,15 @@ class dataCollector:
 
  def collect_multiple_assets(self, symbols: List[str], Timeframes: List[str], period: str = "2y") -> Dict[str, pd.dataFrame]:
  """
- Многопоточный сбор данных for нескольких активов
+Multi-asset multi-directional data collection
 
  Args:
- symbols: List символов активов
+Symbols: List of asset symbols
  Timeframes: List Timeframes
- period: Период данных
+period: Data period
 
  Returns:
- Dict with data for каждого symbol and Timeframe
+Dict with data for each symbol and Timeframe
  """
  results = {}
 
@@ -427,7 +427,7 @@ class dataCollector:
 
  for future, symbol, Timeframe in futures:
  try:
- data = future.result(timeout=300) # 5 minutes таймаут
+Data = future.result(timeout=300) # 5 minutes timeout
  key = f"{symbol}_{Timeframe}"
  results[key] = data
  except Exception as e:
@@ -436,7 +436,7 @@ class dataCollector:
  return results
 
  def get_current_data(self) -> Dict[str, pd.dataFrame]:
- """Получение текущих кэшированных данных"""
+"Get current cached data."
  current_data = {}
 
  for asset_type, assets in self.config.get('data_sources', {}).items():
@@ -450,29 +450,29 @@ class dataCollector:
  return current_data
 
  def get_all_data(self) -> Dict[str, pd.dataFrame]:
- """Получение all кэшированных данных"""
+"To get all cached data."
  return self.data_cache.copy()
 
  def save_data(self, data: pd.dataFrame, symbol: str, Timeframe: str, format: str = 'parquet'):
  """
- Сохранение данных in различных форматах
+Maintenance of data in different formats
 
  Args:
- data: data for сохранения
- symbol: Символ актива
+data: data for preservation
+Symbol: A symbol of an asset
  Timeframe: Timeframe
- format: Формат файла ('parquet', 'csv', 'json')
+Form: File Format ('parquet', 'csv', 'json')
  """
  if data.empty:
  self.logger.warning(f"No data to save for {symbol} {Timeframe}")
  return
 
  try:
- # create директории
+# Create directory
  data_dir = Path(f"data/raw/{symbol}")
  data_dir.mkdir(parents=True, exist_ok=True)
 
- # Сохранение in выбранном формате
+# Saved in the selected format
  if format == 'parquet':
  file_path = data_dir / f"{Timeframe}.parquet"
  data.to_parquet(file_path, compression='snappy')
@@ -492,15 +492,15 @@ class dataCollector:
 
  def load_data(self, symbol: str, Timeframe: str, format: str = 'parquet') -> pd.dataFrame:
  """
- Loading data из файла
+Loading Data from File
 
  Args:
- symbol: Символ актива
+Symbol: A symbol of an asset
  Timeframe: Timeframe
- format: Формат файла
+format: File Format
 
  Returns:
- pd.dataFrame: Загруженные data
+pd.dataFrame: Upload data
  """
  try:
  data_dir = Path(f"data/raw/{symbol}")
@@ -526,7 +526,7 @@ class dataCollector:
  return pd.dataFrame()
 
  def get_data_statistics(self) -> Dict:
- """Получение статистики on собранным данным"""
+"Proceeding statistics on collected data"
  stats = {
  'total_datasets': len(self.data_cache),
  'total_records': sum(len(df) for df in self.data_cache.values()),
@@ -538,9 +538,9 @@ class dataCollector:
 
  return stats
 
-# example использования and конфигурации
+# example of use and configuration
 def create_data_collector_config():
- """create конфигурации for сборщика данных"""
+""create configuration for a data collector""
  return {
  'data_sources': {
  'forex': [
@@ -572,90 +572,90 @@ def create_data_collector_config():
  'retry_delay': 1
  }
 
-# example использования
+# Example of use
 if __name__ == "__main__":
- # create конфигурации
+# creative configuration
  config = create_data_collector_config()
 
- # Инициализация сборщика
+# Initiating a assembler
  collector = dataCollector(config)
 
- # Сбор данных for одного актива
+# Data collection for one asset
  eurusd_data = collector.collect_data('EURUSD', 'H1', '1y')
  print(f"Collected {len(eurusd_data)} records for EURUSD")
 
- # Многопоточный сбор данных
+# Multidirected data collection
  symbols = ['EURUSD', 'GBPUSD', 'USDJPY']
  Timeframes = ['H1', 'H4']
  all_data = collector.collect_multiple_assets(symbols, Timeframes, '6mo')
 
- # Статистика
+# Statistics
  stats = collector.get_data_statistics()
  print(f"Total datasets: {stats['total_datasets']}")
  print(f"Total records: {stats['total_records']}")
  print(f"Memory usage: {stats['memory_usage_mb']:.2f} MB")
 ```
 
-## 🎯 Индикатор WAVE2
+## ♪ WAVE2 indicator
 
-**Theory:** Индикатор WAVE2 представляет собой революционный ML-индикатор for Analysis трендов and предсказания направлений движения цен, основанный on комбинации волнового Analysis Эллиотта and machine learning. Этот компонент является сердцем системы торговых сигналов, обеспечивая высокую точность predictions через анализ сложных паттернов in ценовых данных.
+**Theory:** WAVE2 is a revolutionary ML indicator for price trends and forecasts based on a combination of wave Analisis Elliott and machining. This component is the heart of the trade signal system, ensuring high accuracy of preferences through the analysis of complex variables in price data.
 
-**Математические основы WAVE2:**
-- **Волновой анализ**: Использует принципы волн Эллиотта for идентификации трендовых паттернов
-- **Машинное обучение**: Применяет ансамблевые methods for классификации рыночных состояний
-- **Technical индикаторы**: Интегрирует RSI, MACD, Bollinger Bands and другие индикаторы
-- **Временные ряды**: Анализирует лаговые dependencies and сезонные паттерны
-- **Статистический анализ**: Использует корреляционный анализ and регрессионные модели
+** WAVE2 mathematical framework:**
+- ** Wave analysis**: uses Elliott wave principles for identifying trend pathers
+- ** Machine training**: Applys ansemble methhods for classification of market conditions
+- **Technical indicators**: Integration of RSI, MACD, Bollinger Bands and other indicators
+**Temporary series**: Analyses lagoon dependencies and seasonal pathers
+- **Statistical analysis**: Using correlation analysis and regression models
 
-**Архитектурные принципы:**
-- **Модульность**: Независимые components for разных типов Analysis
-- **Адаптивность**: Автоматическая configuration параметров под рыночные условия
-- **Робастность**: Устойчивость к шуму and аномалиям in данных
-- **Интерпретируемость**: Понятные сигналы and объяснения решений
-- **Масштабируемость**: Эффективная Working with большими объемами данных
+** Architecture principles:**
+- **Modility**: Independent components for different types of Analysis
+- ** Adaptation**: Automatic configuring of parameters under market conditions
+- **Pativity**: Resistance to noise and anomalies in data
+- ** Interpretation**: Clear signals and explanations of decisions
+- ** capacity**: Effective Working with large volumes of data
 
-**Ключевые functions:**
-1. **Анализ трендов**: Определение направления and силы тренда
-2. **Prediction разворотов**: Выявление точек смены тренда
-3. **Оценка волатильности**: Анализ рыночной нестабильности
-4. **Генерация сигналов**: create торговых рекомендаций
-5. **Management рисками**: Оценка потенциальных потерь
+** Key functions:**
+1. **Analysis of trends**: Determination of direction and force of trend
+2. **Predication of turns**: Identification of trend change points
+3. ** Volatility assessment**: Analysis of market instability
+4. ** Signal Generation**: Trade recommendations
+**Manage of risks**: Assessment of potential losses
 
-**Почему индикатор WAVE2 критически важен:**
-- **Точность predictions**: Обеспечивает точность to 85-90% on исторических данных
-- **Анализ трендов**: Выявляет долгосрочные and краткосрочные тренды
-- **Качественные сигналы**: Генерирует высококачественные торговые сигналы
-- **Робастность системы**: Обеспечивает стабильную работу in различных рыночных условиях
-- **Адаптивность**: Автоматически адаптируется к изменяющимся рыночным условиям
+**Why WAVE2 is critical:**
+- **Predication accuracy**: Ensures accuracy to 85-90 per cent on historical data
+- ** Trends Analysis**: Identify long-term and short-term trends
+- ** Qualitative signals**: Generates high quality trade signals
+- ** System integrity**: Ensures stable work in different market conditions
+- ** Adaptation**: Automatically adapted to changing market conditions
 
-**Преимущества WAVE2:**
-- Высокая точность predictions (85-90%)
-- Комплексный анализ трендов and паттернов
-- Качественные торговые сигналы with низким уровнем ложных срабатываний
-- Робастность к рыночным шокам and аномалиям
-- Интерпретируемые результаты and объяснения
-- Адаптивность к различным рыночным условиям
-- Эффективная Working with различными Timeframeми
+** Benefits of WAVE2:**
+- High accuracy (85-90 per cent)
+Integrated analysis of trends and patterns
+- Qualitative trade signals with low level of false operation
+- Obsceneness to market shocks and anomalies
+- Inspired results and explanations
+- Adaptation to different market conditions
+- Effective Working with different Times
 
-**Ограничения and риски:**
-- Высокая вычислительная сложность
-- Требует значительных вычислительных ресурсов
-- Потенциальные Issues with переобучением on исторических данных
-- dependency from качества входных данных
-- Необходимость регулярного retraining модели
-- Сложность интерпретации for начинающих трейдеров
+**Restrictions and risks:**
+- High computing complexity
+- Requires significant computing resources
+- Potential Issues with re-learning on historical data
+- dependency from input data quality
+- Need for regular re-training of the model
+- The difficulty of interpreting for start-up traders
 
-**Детальная реализация индикатора WAVE2:**
+** Detailed implementation of indicator WAVE2:**
 
-Индикатор WAVE2 представляет собой сложную system machine learning, которая объединяет волновой анализ Эллиотта with современными методами ML for создания высокоточных торговых сигналов. Система использует ансамбль различных алгоритмов for Analysis множественных аспектов рыночного поведения.
+The WAVE2 indicator is a complex system of machine lightning that combines a wave analysis of Elliott with modern ML methods for creating high-quality trade signals. The system uses an ensemble of different algorithms for Analysis of multiple aspects of market behaviour.
 
-**architecture системы:**
-- **Предобработка данных**: Нормализация and clean входных данных
-- **Извлечение признаков**: create комплексных признаков из ценовых данных
-- **Волновой анализ**: Идентификация волновых паттернов Эллиотта
-- **ML-модели**: Ансамбль классификаторов for предсказания направлений
-- **Постобработка**: Фильтрация and validation сигналов
-- **Оценка качества**: metrics точности and надежности
+**architecture system:**
+- ** Data pre-processing**: Normalization and clear input data
+- ** Identification**: cut from price data
+- ** Wave analysis**: Identification of Elliott's wave pathers
+- **ML models**: Classifiers' ensemble for predicting directions
+- ** Post-treatment**: Filtering and validation of signals
+- ** Quality assessment**: metrics of accuracy and reliability
 
 ```python
 # src/indicators/wave2.py
@@ -673,27 +673,27 @@ warnings.filterwarnings('ignore')
 
 class Wave2Indicator:
  """
- Продвинутый индикатор WAVE2 for Analysis трендов and генерации торговых сигналов
+Advanced indicator WAVE2 for Trade Sign Trends and Generations
 
- Этот класс реализует:
- - Волновой анализ Эллиотта
- - Ансамбль ML-моделей
- - Комплексное извлечение признаков
- - Адаптивную настройку параметров
- - Валидацию and фильтрацию сигналов
+This class implements:
+- Elliott's wave analysis.
+- ML models ensemble
+- Integrated recovery of topics
+- Adaptation settings
+- Signal validation and filtering
  """
 
  def __init__(self, config: Optional[Dict] = None):
  """
- Инициализация индикатора WAVE2
+Initialization of the WAVE2 indicator
 
  Args:
- config: configuration with параметрами модели
+config: configuring with model parameters
  """
  self.config = config or self._get_default_config()
  self.logger = logging.getLogger(__name__)
 
- # Инициализация моделей
+# Initiating models
  self.models = {
  'random_forest': RandomForestClassifier(
  n_estimators=self.config['rf_estimators'],
@@ -715,7 +715,7 @@ class Wave2Indicator:
  )
  }
 
- # components системы
+# System components
  self.scaler = RobustScaler()
  self.feature_selector = SelectKBest(f_classif, k=self.config['n_features'])
  self.ensemble_weights = None
@@ -723,12 +723,12 @@ class Wave2Indicator:
  self.is_trained = False
  self.training_stats = {}
 
- # Кэш for оптимизации
+# Cash for optimization
  self.feature_cache = {}
  self.Prediction_cache = {}
 
  def _get_default_config(self) -> Dict:
- """Получение конфигурации on умолчанию"""
+"""""""" "Receive the default configuration"""
  return {
  'rf_estimators': 200,
  'rf_max_depth': 15,
@@ -757,26 +757,26 @@ class Wave2Indicator:
 
  def train(self, data: Dict[str, pd.dataFrame], validation_split: float = 0.2) -> Dict:
  """
- Обучение модели WAVE2 with расширенной валидацией
+WAVE2 with expanded validation
 
  Args:
- data: Словарь with data for обучения
- validation_split: Доля данных for validation
+Data: dictionary with data for learning
+validation_split: Percentage of data for validation
 
  Returns:
- Dict: Статистика обучения
+Dict: Education statistics
  """
  try:
  self.logger.info("starting WAVE2 model training...")
 
- # Подготовка данных
+# Data production
  X, y = self._prepare_training_data(data)
 
  if X.empty or y.empty:
  self.logger.warning("No data available for training WAVE2")
  return {}
 
- # Разделение on train/validation/test
+# Separation on train/validation/test
  X_temp, X_test, y_temp, y_test = train_test_split(
  X, y, test_size=0.2, random_state=42, stratify=y
  )
@@ -784,25 +784,25 @@ class Wave2Indicator:
  X_temp, y_temp, test_size=validation_split, random_state=42, stratify=y_temp
  )
 
- # Нормализация признаков
+# Normalization of signs
  X_train_scaled = self.scaler.fit_transform(X_train)
  X_val_scaled = self.scaler.transform(X_val)
  X_test_scaled = self.scaler.transform(X_test)
 
- # Отбор признаков
+# Selection of signs
  X_train_selected = self.feature_selector.fit_transform(X_train_scaled, y_train)
  X_val_selected = self.feature_selector.transform(X_val_scaled)
  X_test_selected = self.feature_selector.transform(X_test_scaled)
 
- # Сохранение имен признаков
+# Maintaining the names of the signs
  self.feature_names = [f"feature_{i}" for i in range(X_train_selected.shape[1])]
 
- # Обучение ансамбля моделей
+# Training a model ensemble
  model_scores = {}
  for name, model in self.models.items():
  self.logger.info(f"Training {name}...")
 
- # Обучение модели
+# Model learning
  model.fit(X_train_selected, y_train)
 
  # validation
@@ -812,14 +812,14 @@ class Wave2Indicator:
 
  self.logger.info(f"{name} validation accuracy: {val_accuracy:.4f}")
 
- # Определение весов ансамбля
+# Determination of the weight of the ensemble
  self.ensemble_weights = self._calculate_ensemble_weights(model_scores)
 
- # Финальная оценка on testsых данных
+# Final estimate on test data
  test_predictions = self._ensemble_predict(X_test_selected)
  test_accuracy = accuracy_score(y_test, test_predictions)
 
- # Сохранение статистики
+# Maintenance of statistics
  self.training_stats = {
  'model_scores': model_scores,
  'ensemble_weights': self.ensemble_weights,
@@ -840,13 +840,13 @@ class Wave2Indicator:
 
  def _prepare_training_data(self, data: Dict[str, pd.dataFrame]) -> Tuple[pd.dataFrame, pd.Series]:
  """
- Подготовка данных for обучения with расширенной обработкой
+Preparation of data for learning with expanded processing
 
  Args:
- data: Словарь with data
+Data: dictionary with data
 
  Returns:
- Tuple: Признаки and целевые переменные
+Tuple: Signs and target variables
  """
  features_List = []
  targets_List = []
@@ -856,13 +856,13 @@ class Wave2Indicator:
  continue
 
  try:
- # create признаков WAVE2
+# of the signs of WAVE2
  features = self._create_wave2_features(df)
 
- # create целевой переменной
+# the target variable
  target = self._create_target(df)
 
- # Объединение and clean
+# Merge and clean
  combined = pd.concat([features, target], axis=1)
  combined = combined.dropna()
 
@@ -878,7 +878,7 @@ class Wave2Indicator:
  X = pd.concat(features_List, ignore_index=True)
  y = pd.concat(targets_List, ignore_index=True)
 
- # remove коррелированных признаков
+# remove correlate features
  X = self._remove_correlated_features(X)
 
  return X, y
@@ -887,113 +887,113 @@ class Wave2Indicator:
 
  def _create_wave2_features(self, df: pd.dataFrame) -> pd.dataFrame:
  """
- create комплексных признаков WAVE2
+of the WAVE2 complex features
 
- Включает:
- - Волновые паттерны Эллиотта
- - Technical индикаторы
- - Статистические признаки
- - Временные паттерны
- - Объемные индикаторы
+Includes:
+Elliott's Wave Pathers
+- Technical indicators
+- Statistical indicators
+- Temporary Paterns
+- Volume indicators
  """
  features = pd.dataFrame(index=df.index)
 
- # Базовые цены
+# Basic prices
  features['close'] = df['Close']
  features['high'] = df['High']
  features['low'] = df['Low']
  features['open'] = df['Open']
  features['volume'] = df['Volume']
 
- # Волновые признаки Эллиотта
+# Elliott's wave signs
  features.update(self._calculate_elliott_waves(df))
 
- # Technical индикаторы
+# Technical indicators
  features.update(self._calculate_Technical_indicators(df))
 
- # Статистические признаки
+# Statistical indicators
  features.update(self._calculate_statistical_features(df))
 
- # Временные признаки
+# Temporary signs
  features.update(self._calculate_temporal_features(df))
 
- # Объемные индикаторы
+# Volume indicators
  features.update(self._calculate_volume_indicators(df))
 
- # Моментум and волатильность
+# Momentum and volatility
  features.update(self._calculate_momentum_features(df))
 
- # Лаговые признаки
+# Lug signs
  features.update(self._calculate_lag_features(df))
 
- # Взаимодействия между приsignми
+# Relationships between primaries
  features.update(self._calculate_interaction_features(features))
 
  return features
 
  def _calculate_elliott_waves(self, df: pd.dataFrame) -> Dict[str, pd.Series]:
- """Расчет волновых паттернов Эллиотта"""
+""The Elliott Wave Pathers"""
  waves = {}
 
- # Идентификация пиков and впадин
+# Identification of peaks and falls
  highs = df['High'].rolling(window=5, center=True).max() == df['High']
  lows = df['Low'].rolling(window=5, center=True).min() == df['Low']
 
- # Волновые уровни
+# Wave levels
  for period in self.config['wave_periods']:
- # Волна 1 (импульс)
+# Wave 1 (pulse)
  wave1 = df['Close'].rolling(period).apply(
  lambda x: self._identify_wave1(x), raw=False
  )
  waves[f'wave1_{period}'] = wave1
 
- # Волна 2 (коррекция)
+# Wave 2 (Amendment)
  wave2 = df['Close'].rolling(period).apply(
  lambda x: self._identify_wave2(x), raw=False
  )
  waves[f'wave2_{period}'] = wave2
 
- # Волна 3 (импульс)
+# Wave 3 (pulse)
  wave3 = df['Close'].rolling(period).apply(
  lambda x: self._identify_wave3(x), raw=False
  )
  waves[f'wave3_{period}'] = wave3
 
- # Волновые отношения
+# Wave relationships
  waves['wave_ratio_21'] = waves.get('wave2_21', pd.Series()) / (waves.get('wave1_21', pd.Series()) + 1e-8)
  waves['wave_ratio_32'] = waves.get('wave3_21', pd.Series()) / (waves.get('wave2_21', pd.Series()) + 1e-8)
 
  return waves
 
  def _identify_wave1(self, prices: pd.Series) -> float:
- """Идентификация волны 1 (импульс)"""
+""Identification of wave 1 (impulsive)""
  if len(prices) < 3:
  return 0.0
 
- # Простая эвристика for волны 1
+# Simple heuristics for wave 1
  price_change = (prices.iloc[-1] - prices.iloc[0]) / prices.iloc[0]
  return 1.0 if price_change > 0.02 else 0.0
 
  def _identify_wave2(self, prices: pd.Series) -> float:
- """Идентификация волны 2 (коррекция)"""
+""Identification of wave 2 (correction)""
  if len(prices) < 3:
  return 0.0
 
- # Простая эвристика for волны 2
+# Simple Heuristics for Wave 2
  price_change = (prices.iloc[-1] - prices.iloc[0]) / prices.iloc[0]
  return 1.0 if -0.01 < price_change < 0.01 else 0.0
 
  def _identify_wave3(self, prices: pd.Series) -> float:
- """Идентификация волны 3 (импульс)"""
+""Identification of wave 3 (impulsive)""
  if len(prices) < 3:
  return 0.0
 
- # Простая эвристика for волны 3
+# Simple Heuristics for Wave 3
  price_change = (prices.iloc[-1] - prices.iloc[0]) / prices.iloc[0]
  return 1.0 if price_change > 0.03 else 0.0
 
  def _calculate_Technical_indicators(self, df: pd.dataFrame) -> Dict[str, pd.Series]:
- """Расчет технических indicators"""
+""""""" "The Technical Indicators"""
  indicators = {}
 
  # RSI
@@ -1022,7 +1022,7 @@ class Wave2Indicator:
  indicators['bb_width'] = (bb_upper - bb_lower) / bb_middle
  indicators['bb_position'] = (df['Close'] - bb_lower) / (bb_upper - bb_lower)
 
- # Скользящие средние
+# Sliding average
  for period in [5, 10, 20, 50, 100, 200]:
  sma = df['Close'].rolling(period).mean()
  indicators[f'sma_{period}'] = sma
@@ -1040,7 +1040,7 @@ class Wave2Indicator:
  return indicators
 
  def _calculate_rsi(self, prices: pd.Series, window: int = 14) -> pd.Series:
- """Расчет RSI (Relative Strength index)"""
+""""" "The RSI (Relative Strange index)"""
  delta = prices.diff()
  gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
  loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
@@ -1049,7 +1049,7 @@ class Wave2Indicator:
  return rsi
 
  def _calculate_macd(self, prices: pd.Series, fast: int = 12, slow: int = 26, signal: int = 9) -> Tuple[pd.Series, pd.Series, pd.Series]:
- """Расчет MACD"""
+"""""" "MACD"""
  ema_fast = prices.ewm(span=fast).mean()
  ema_slow = prices.ewm(span=slow).mean()
  macd_line = ema_fast - ema_slow
@@ -1058,7 +1058,7 @@ class Wave2Indicator:
  return macd_line, signal_line, histogram
 
  def _calculate_bollinger_bands(self, prices: pd.Series, period: int = 20, std_dev: float = 2) -> Tuple[pd.Series, pd.Series, pd.Series]:
- """Расчет полос Боллинджера"""
+"Bollinger stripes."
  middle = prices.rolling(period).mean()
  std = prices.rolling(period).std()
  upper = middle + (std * std_dev)
@@ -1066,7 +1066,7 @@ class Wave2Indicator:
  return upper, middle, lower
 
  def _calculate_stochastic(self, df: pd.dataFrame, k_period: int = 14, d_period: int = 3) -> Tuple[pd.Series, pd.Series]:
- """Расчет стохастического осциллятора"""
+"The Stochastic Oscillator Calculation."
  lowest_low = df['Low'].rolling(k_period).min()
  highest_high = df['High'].rolling(k_period).max()
  k_percent = 100 * (df['Close'] - lowest_low) / (highest_high - lowest_low)
@@ -1074,16 +1074,16 @@ class Wave2Indicator:
  return k_percent, d_percent
 
  def _calculate_statistical_features(self, df: pd.dataFrame) -> Dict[str, pd.Series]:
- """Расчет статистических признаков"""
+"""""""""" "The calculation of statistical indicators"""
  stats = {}
 
- # Волатильность
+# Volatility
  for window in [5, 10, 20, 50]:
  returns = df['Close'].pct_change()
  stats[f'volatility_{window}'] = returns.rolling(window).std()
  stats[f'volatility_{window}_normalized'] = stats[f'volatility_{window}'] / df['Close']
 
- # Скользящие статистики
+# Sliding statistics
  for window in [5, 10, 20]:
  stats[f'skewness_{window}'] = df['Close'].rolling(window).skew()
  stats[f'kurtosis_{window}'] = df['Close'].rolling(window).kurt()
@@ -1099,33 +1099,33 @@ class Wave2Indicator:
  return stats
 
  def _calculate_temporal_features(self, df: pd.dataFrame) -> Dict[str, pd.Series]:
- """Расчет временных признаков"""
+""""""""" "Temporary signs""""
  temporal = {}
 
- # Временные components
+# Temporary components
  temporal['hour'] = df.index.hour
  temporal['day_of_week'] = df.index.dayofweek
  temporal['day_of_month'] = df.index.day
  temporal['month'] = df.index.month
  temporal['quarter'] = df.index.quarter
 
- # Циклические признаки
+# Cyclic signs
  temporal['hour_sin'] = np.sin(2 * np.pi * temporal['hour'] / 24)
  temporal['hour_cos'] = np.cos(2 * np.pi * temporal['hour'] / 24)
  temporal['day_sin'] = np.sin(2 * np.pi * temporal['day_of_week'] / 7)
  temporal['day_cos'] = np.cos(2 * np.pi * temporal['day_of_week'] / 7)
 
- # Временные паттерны
+# Temporary Pathers
  temporal['is_market_open'] = ((temporal['hour'] >= 9) & (temporal['hour'] <= 16)).astype(int)
  temporal['is_weekend'] = (temporal['day_of_week'] >= 5).astype(int)
 
  return temporal
 
  def _calculate_volume_indicators(self, df: pd.dataFrame) -> Dict[str, pd.Series]:
- """Расчет объемных indicators"""
+"""""""""""""""""""
  volume = {}
 
- # Объемные средние
+# Volume-sized average
  for window in [5, 10, 20, 50]:
  volume[f'volume_sma_{window}'] = df['Volume'].rolling(window).mean()
  volume[f'volume_ratio_{window}'] = df['Volume'] / volume[f'volume_sma_{window}']
@@ -1157,10 +1157,10 @@ class Wave2Indicator:
  return volume
 
  def _calculate_momentum_features(self, df: pd.dataFrame) -> Dict[str, pd.Series]:
- """Расчет моментум признаков"""
+"""""""""""""""""""""
  momentum = {}
 
- # Процентные изменения
+# Percentage change
  for period in self.config['momentum_periods']:
  momentum[f'pct_change_{period}'] = df['Close'].pct_change(period)
  momentum[f'log_return_{period}'] = np.log(df['Close'] / df['Close'].shift(period))
@@ -1183,7 +1183,7 @@ class Wave2Indicator:
  return momentum
 
  def _calculate_lag_features(self, df: pd.dataFrame) -> Dict[str, pd.Series]:
- """Расчет лаговых признаков"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  lags = {}
 
  for lag in self.config['lag_periods']:
@@ -1192,52 +1192,52 @@ class Wave2Indicator:
  lags[f'low_lag_{lag}'] = df['Low'].shift(lag)
  lags[f'volume_lag_{lag}'] = df['Volume'].shift(lag)
 
- # Отношения with лагами
+# Relations with lagoons
  lags[f'close_ratio_lag_{lag}'] = df['Close'] / lags[f'close_lag_{lag}']
  lags[f'volume_ratio_lag_{lag}'] = df['Volume'] / lags[f'volume_lag_{lag}']
 
  return lags
 
  def _calculate_interaction_features(self, features: pd.dataFrame) -> Dict[str, pd.Series]:
- """Расчет взаимодействий между приsignми"""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")"""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  interactions = {}
 
- # Взаимодействия RSI and MACD
+# RSI and MACD interactions
  if 'rsi' in features.columns and 'macd' in features.columns:
  interactions['rsi_macd'] = features['rsi'] * features['macd']
  interactions['rsi_macd_divergence'] = features['rsi'] - features['macd']
 
- # Взаимодействия цен and объемов
+# Price and volume interactions
  if 'close' in features.columns and 'volume' in features.columns:
  interactions['price_volume'] = features['close'] * features['volume']
  interactions['price_volume_ratio'] = features['close'] / (features['volume'] + 1e-8)
 
- # Взаимодействия волатильности and моментума
+# The interactions of volatility and momentum
  volatility_cols = [col for col in features.columns if 'volatility' in col]
  momentum_cols = [col for col in features.columns if 'momentum' in col]
 
- for vol_col in volatility_cols[:2]: # Ограничиваем количество
+for vol_col in volitility_cols[:2]: # Limiting quantity
  for mom_col in momentum_cols[:2]:
  interactions[f'{vol_col}_{mom_col}'] = features[vol_col] * features[mom_col]
 
  return interactions
 
  def _create_target(self, df: pd.dataFrame, horizon: int = None) -> pd.Series:
- """create целевой переменной with расширенной Logsкой"""
+""create target variable with expanded Logska""
  if horizon is None:
  horizon = self.config['target_horizon']
 
  future_price = df['Close'].shift(-horizon)
  current_price = df['Close']
 
- # Процентное изменение
+# Percentage change
  price_change = (future_price - current_price) / current_price
 
- # Адаптивные пороги on basis волатильности
+# Adaptive thresholds on baseline volatility
  volatility = df['Close'].rolling(20).std() / df['Close'].rolling(20).mean()
- threshold = volatility * 0.5 # Адаптивный порог
+thishold = volatility * 0.5 # Adaptive threshold
 
- # Классификация with адаптивными порогами
+# Classification with adaptive thresholds
  target = pd.Series(index=df.index, dtype=int)
  target[price_change > threshold] = 2 # Up
  target[price_change < -threshold] = 0 # Down
@@ -1246,25 +1246,25 @@ class Wave2Indicator:
  return target
 
  def _remove_correlated_features(self, X: pd.dataFrame, threshold: float = None) -> pd.dataFrame:
- """remove коррелированных признаков"""
+""remove correlate features""
  if threshold is None:
  threshold = self.config['max_correlation']
 
- # Вычисление корреляционной матрицы
+# Calculation of correlation matrix
  corr_matrix = X.corr().abs()
 
- # Нахождение пар with высокой корреляцией
+# Finding steam with high correlation
  upper_tri = corr_matrix.where(
  np.triu(np.ones(corr_matrix.shape), k=1).astype(bool)
  )
 
- # Нахождение признаков for удаления
+# Finding signs for disposal
  to_drop = [column for column in upper_tri.columns if any(upper_tri[column] > threshold)]
 
  return X.drop(columns=to_drop)
 
  def _calculate_ensemble_weights(self, model_scores: Dict[str, float]) -> Dict[str, float]:
- """Расчет весов for ансамбля моделей"""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  total_score = sum(model_scores.values())
  if total_score == 0:
  return {name: 1.0 / len(model_scores) for name in model_scores.keys()}
@@ -1273,7 +1273,7 @@ class Wave2Indicator:
  return weights
 
  def _ensemble_predict(self, X: np.ndarray) -> np.ndarray:
- """Prediction ансамбля моделей"""
+"Predition ensemble of models."
  predictions = []
 
  for name, model in self.models.items():
@@ -1281,7 +1281,7 @@ class Wave2Indicator:
  weight = self.ensemble_weights.get(name, 0)
  predictions.append(pred * weight)
 
- # Взвешенное голосование
+# Weighted vote
  ensemble_pred = np.sum(predictions, axis=0)
  return np.round(ensemble_pred).astype(int)
 
@@ -1292,13 +1292,13 @@ class Wave2Indicator:
  return np.zeros(len(data))
 
  try:
- # create признаков
+♪ Create signs
  features = self._create_wave2_features(data)
 
- # Нормализация
+# Normalization
  features_scaled = self.scaler.transform(features)
 
- # Отбор признаков
+# Selection of signs
  features_selected = self.feature_selector.transform(features_scaled)
 
  # Prediction
@@ -1311,7 +1311,7 @@ class Wave2Indicator:
  return np.zeros(len(data))
 
  def predict_proba(self, data: pd.dataFrame) -> np.ndarray:
- """Prediction вероятностей"""
+"Predication of Probabilities."
  if not self.is_trained:
  return np.zeros((len(data), 3))
 
@@ -1320,14 +1320,14 @@ class Wave2Indicator:
  features_scaled = self.scaler.transform(features)
  features_selected = self.feature_selector.transform(features_scaled)
 
- # Получение вероятностей from каждой модели
+# Getting the probability from each model
  probas = []
  for name, model in self.models.items():
  proba = model.predict_proba(features_selected)
  weight = self.ensemble_weights.get(name, 0)
  probas.append(proba * weight)
 
- # Взвешенное усреднение вероятностей
+# Weighted average probability
  ensemble_proba = np.sum(probas, axis=0)
  return ensemble_proba
 
@@ -1336,7 +1336,7 @@ class Wave2Indicator:
  return np.zeros((len(data), 3))
 
  def get_feature_importance(self) -> pd.dataFrame:
- """Получение важности признаков"""
+"To get the importance of the signs."
  if not self.is_trained:
  return pd.dataFrame()
 
@@ -1353,11 +1353,11 @@ class Wave2Indicator:
  return pd.dataFrame(importance_data)
 
  def get_training_stats(self) -> Dict:
- """Получение статистики обучения"""
+"Proceeding Education Statistics"
  return self.training_stats.copy()
 
  def save_model(self, filepath: str):
- """Сохранение модели"""
+"Save Model."
  import joblib
 
  model_data = {
@@ -1375,7 +1375,7 @@ class Wave2Indicator:
  self.logger.info(f"Model saved to {filepath}")
 
  def load_model(self, filepath: str):
- """Загрузка модели"""
+"""""""""""""
  import joblib
 
  model_data = joblib.load(filepath)
@@ -1391,14 +1391,14 @@ class Wave2Indicator:
 
  self.logger.info(f"Model loaded from {filepath}")
 
-# example использования and тестирования
+# Example of use and testing
 def create_wave2_example():
- """create примера использования WAVE2"""
- # Генерация testsых данных
+""create example of the use of WAVE2""
+# Testsy Data Generation
  np.random.seed(42)
  dates = pd.date_range('2020-01-01', periods=1000, freq='H')
 
- # Симуляция ценовых данных
+# Simulation of price data
  price = 100
  prices = []
  for i in range(1000):
@@ -1414,7 +1414,7 @@ def create_wave2_example():
  'Volume': np.random.randint(1000, 10000, 1000)
  }, index=dates)
 
- # Нормализация OHLC
+# Normalization of OHLC
  for i in range(len(data)):
  high = max(data.iloc[i]['Open'], data.iloc[i]['Close'])
  low = min(data.iloc[i]['Open'], data.iloc[i]['Close'])
@@ -1424,16 +1424,16 @@ def create_wave2_example():
  return data
 
 if __name__ == "__main__":
- # create testsых данных
+# Create testy data
  test_data = create_wave2_example()
 
- # Инициализация индикатора
+# Initiating indicator
  wave2 = Wave2Indicator()
 
- # Подготовка данных for обучения
+# Preparation of data for training
  training_data = {'test_H1': test_data}
 
- # Обучение модели
+# Model learning
  stats = wave2.train(training_data)
  print(f"Training COMPLETED. Test accuracy: {stats.get('test_accuracy', 0):.4f}")
 
@@ -1441,7 +1441,7 @@ if __name__ == "__main__":
  predictions = wave2.predict(test_data.tail(100))
  print(f"predictions: {np.bincount(predictions)}")
 
- # Важность признаков
+# The importance of signs
  importance = wave2.get_feature_importance()
  if not importance.empty:
  top_features = importance.groupby('feature')['importance'].mean().sort_values(ascending=False).head(10)
@@ -1449,65 +1449,65 @@ if __name__ == "__main__":
  print(top_features)
 ```
 
-## 📈 Индикатор SCHR Levels
+## ♪ SCHR Lovels indicator
 
-**Theory:** Индикатор SCHR Levels представляет собой революционный ML-индикатор for Analysis уровней поддержки and сопротивления, основанный on комбинации классического технического Analysis and современных методов machine learning. Этот компонент является ключевым for точного определения критических ценовых уровней, предсказания пробоев and отскоков, что критически важно for максимизации прибыли and минимизации рисков.
+**Theory:** The SCHR Levels indicator is a revolutionary ML indicator for support and resistance levels based on a combination of classical technical Analysis and modern methods of machining. This component is key for the precise definition of critical price levels, predicting samples and leaps, which is critical for maximizing profits and minimizing risks.
 
-**Математические основы SCHR Levels:**
-- **Кластерный анализ**: Группировка схожих ценовых уровней for выявления значимых зон
-- **Машинное обучение**: Использование алгоритмов классификации for предсказания поведения цен
-- **Статистический анализ**: Анализ частоты касаний and силы уровней
-- **temporary анализ**: Учет временных паттернов in формировании уровней
-- **Объемный анализ**: integration данных об объемах for подтверждения значимости уровней
+**The SCHR Leavels mathematical framework:**
+- ** Cluster analysis**: Group of similar price levels for the identification of significant areas
+- ** Machine training**: Use of classification algorithms for predicting price behaviour
+- **Statistical analysis**: Analysis of the frequency and force of levels
+- **termorial analysis**: Accounting for time-frames in level-setting
+- ** On-site analysis**: integration of data on volumes for validation of levels
 
-**Архитектурные принципы:**
-- **Адаптивность**: Автоматическая адаптация к изменяющимся рыночным условиям
-- **Точность**: Высокая точность определения значимых уровней
-- **Робастность**: Устойчивость к рыночному шуму and аномалиям
-- **Интерпретируемость**: Понятные сигналы and объяснения
-- **Масштабируемость**: Эффективная Working with различными Timeframeми
+** Architecture principles:**
+- ** Adaptation**: Automatic adaptation to changing market conditions
+- ** Existence**: High accuracy in determining significant levels
+- **Platitude**: Resistance to market noise and anomalies
+- ** Interpretation**: Understandable signals and explanations
+- ** Capacity**: Effective Working with different Timeframes
 
-**Ключевые functions:**
-1. **Идентификация уровней**: Автоматическое обнаружение уровней поддержки and сопротивления
-2. **Оценка силы**: Определение значимости and силы каждого уровня
-3. **Prediction пробоев**: Прогнозирование вероятности пробоя уровней
-4. **Prediction отскоков**: Оценка вероятности отскока from уровней
-5. **Management рисками**: Определение стоп-лоссов and тейк-профитов
+** Key functions:**
+1. **Identification of levels**: Automatic detection of support and resistance levels
+2. ** Force assessment**: Determination of the significance and force of each level
+3. **Predication of sample**: Projection of probability of sample levels
+4. **Predication of rebounds**: Assessment of the probability of rebound from levels
+5. **Manage risk**: Definition of freezes and teak products
 
-**Почему индикатор SCHR Levels критически важен:**
-- **Точность уровней**: Обеспечивает точность определения уровней to 90-95%
-- **Prediction пробоев**: Высокая точность предсказания пробоев (85-90%)
-- **Prediction отскоков**: Эффективное выявление точек отскока (80-85%)
-- **Management рисками**: Критически важно for определения точек входа and выхода
-- **Максимизация прибыли**: Позволяет максимизировать прибыль при минимизации рисков
+**Why the SCHR Levels indicator is critical:**
+** The accuracy of levels**: Ensures the accuracy of the determination of levels to 90-95 per cent
+**Predication of samples**: High accuracy of prediction of samples (85-90 per cent)
+**Predication of bouncing**: Effective identification of rebound points (80-85 per cent)
+- **Manage risk**: Critically important for determining entry and exit points
+- ** Maximization of profits**: Allows maximization of profits while minimizing risks
 
-**Преимущества SCHR Levels:**
-- Высокая точность определения уровней (90-95%)
-- Эффективное Prediction пробоев and отскоков
-- Адаптивность к различным рыночным условиям
-- integration множественных источников данных
-- Интерпретируемые результаты and сигналы
-- Автоматическая configuration параметров
-- Поддержка различных Timeframes and активов
+** Benefits of SCHR Livels:**
+- High accuracy of determination of levels (90-95 per cent)
+- Effective Pricing and Reclining
+- Adaptation to different market conditions
+- integration of multiple data sources
+- Inspired results and signals
+- Automatic configurization of parameters
+- Support for various Times and Assets
 
-**Ограничения and риски:**
-- Сложность алгоритма and высокая вычислительная нагрузка
-- Требует качественных исторических данных
-- Потенциальные ложные сигналы in нестабильных рыночных условиях
-- dependency from настроек параметров
-- Необходимость регулярного retraining модели
-- Сложность интерпретации for начинающих трейдеров
+**Restrictions and risks:**
+- Algorithm complexity and high computing load
+- Needs quality historical data
+- Potential false signals in unstable market conditions
+- dependency from settings
+- Need for regular re-training of the model
+- The difficulty of interpreting for start-up traders
 
-**Детальная реализация индикатора SCHR Levels:**
+** Detailed implementation of the SCHR Levels indicator:**
 
-Индикатор SCHR Levels представляет собой сложную system machine learning, которая объединяет классические methods технического Analysis with современными ML-алгоритмами for точного определения уровней поддержки and сопротивления. Система использует кластерный анализ, статистические methods and ансамбль ML-моделей for создания высокоточных торговых сигналов.
+The SCHR Levels indicator is a complex system of machine lightning, which combines classic methhods with modern ML-algorithms for exact determination of levels of support and resistance. The system uses cluster analysis, statistical methhods and ML models for high-quality trade signals.
 
-**architecture системы:**
-- **Детекция уровней**: Автоматическое обнаружение значимых ценовых уровней
-- **Кластерный анализ**: Группировка схожих уровней for выявления зон
-- **ML-модели**: Ансамбль классификаторов for предсказания поведения
-- **Статистический анализ**: Оценка силы and значимости уровней
-- **validation**: check and фильтрация сигналов
+**architecture system:**
+** Level detection**: Automatic detection of significant price levels
+- ** Cluster analysis**: Group of similar levels for the identification of zones
+- **ML models**: Classifiers' ensemble for predicting behaviour
+- **Statistical analysis**: Assessment of force and significance of levels
+- **validation**: check and signal filtering
 
 ```python
 # src/indicators/schr_levels.py
@@ -1528,27 +1528,27 @@ warnings.filterwarnings('ignore')
 
 class SCHRLevelsIndicator:
  """
- Продвинутый индикатор SCHR Levels for Analysis уровней поддержки and сопротивления
+Advanced indicator of SCHR Movements for Support and Resistance Levels
 
- Этот класс реализует:
- - Автоматическое обнаружение уровней
- - Кластерный анализ for группировки уровней
- - ML-модели for предсказания пробоев/отскоков
- - Статистический анализ силы уровней
- - Валидацию and фильтрацию сигналов
+This class implements:
+Automatic detection of levels
+- Cluster analysis for level grouping
+- ML models for predicting probes/drops
+- Statistical analysis of the force of levels
+- Signal validation and filtering
  """
 
  def __init__(self, config: Optional[Dict] = None):
  """
- Инициализация индикатора SCHR Levels
+Initialization of the SCHR Levels indicator
 
  Args:
- config: configuration with параметрами модели
+config: configuring with model parameters
  """
  self.config = config or self._get_default_config()
  self.logger = logging.getLogger(__name__)
 
- # Инициализация моделей
+# Initiating models
  self.models = {
  'gradient_boosting': GradientBoostingClassifier(
  n_estimators=self.config['gb_estimators'],
@@ -1570,7 +1570,7 @@ class SCHRLevelsIndicator:
  )
  }
 
- # components системы
+# System components
  self.scaler = RobustScaler()
  self.feature_selector = SelectKBest(f_classif, k=self.config['n_features'])
  self.ensemble_weights = None
@@ -1578,12 +1578,12 @@ class SCHRLevelsIndicator:
  self.is_trained = False
  self.training_stats = {}
 
- # Кэш for уровней
+# Cash for levels
  self.levels_cache = {}
  self.clusters_cache = {}
 
  def _get_default_config(self) -> Dict:
- """Получение конфигурации on умолчанию"""
+"""""""" "Receive the default configuration"""
  return {
  'gb_estimators': 200,
  'gb_learning_rate': 0.1,
@@ -1606,26 +1606,26 @@ class SCHRLevelsIndicator:
 
  def train(self, data: Dict[str, pd.dataFrame], validation_split: float = 0.2) -> Dict:
  """
- Обучение модели SCHR Levels with расширенной валидацией
+Training of the SCHR Models with expanded validation
 
  Args:
- data: Словарь with data for обучения
- validation_split: Доля данных for validation
+Data: dictionary with data for learning
+validation_split: Percentage of data for validation
 
  Returns:
- Dict: Статистика обучения
+Dict: Education statistics
  """
  try:
  self.logger.info("starting SCHR Levels model training...")
 
- # Подготовка данных
+# Data production
  X, y = self._prepare_training_data(data)
 
  if X.empty or y.empty:
  self.logger.warning("No data available for training SCHR Levels")
  return {}
 
- # Разделение on train/validation/test
+# Separation on train/validation/test
  X_temp, X_test, y_temp, y_test = train_test_split(
  X, y, test_size=0.2, random_state=42, stratify=y
  )
@@ -1633,25 +1633,25 @@ class SCHRLevelsIndicator:
  X_temp, y_temp, test_size=validation_split, random_state=42, stratify=y_temp
  )
 
- # Нормализация признаков
+# Normalization of signs
  X_train_scaled = self.scaler.fit_transform(X_train)
  X_val_scaled = self.scaler.transform(X_val)
  X_test_scaled = self.scaler.transform(X_test)
 
- # Отбор признаков
+# Selection of signs
  X_train_selected = self.feature_selector.fit_transform(X_train_scaled, y_train)
  X_val_selected = self.feature_selector.transform(X_val_scaled)
  X_test_selected = self.feature_selector.transform(X_test_scaled)
 
- # Сохранение имен признаков
+# Maintaining the names of the signs
  self.feature_names = [f"feature_{i}" for i in range(X_train_selected.shape[1])]
 
- # Обучение ансамбля моделей
+# Training a model ensemble
  model_scores = {}
  for name, model in self.models.items():
  self.logger.info(f"Training {name}...")
 
- # Обучение модели
+# Model learning
  model.fit(X_train_selected, y_train)
 
  # validation
@@ -1661,14 +1661,14 @@ class SCHRLevelsIndicator:
 
  self.logger.info(f"{name} validation accuracy: {val_accuracy:.4f}")
 
- # Определение весов ансамбля
+# Determination of the weight of the ensemble
  self.ensemble_weights = self._calculate_ensemble_weights(model_scores)
 
- # Финальная оценка on testsых данных
+# Final estimate on test data
  test_predictions = self._ensemble_predict(X_test_selected)
  test_accuracy = accuracy_score(y_test, test_predictions)
 
- # Сохранение статистики
+# Maintenance of statistics
  self.training_stats = {
  'model_scores': model_scores,
  'ensemble_weights': self.ensemble_weights,
@@ -1689,13 +1689,13 @@ class SCHRLevelsIndicator:
 
  def _prepare_training_data(self, data: Dict[str, pd.dataFrame]) -> Tuple[pd.dataFrame, pd.Series]:
  """
- Подготовка данных for обучения with расширенной обработкой
+Preparation of data for learning with expanded processing
 
  Args:
- data: Словарь with data
+Data: dictionary with data
 
  Returns:
- Tuple: Признаки and целевые переменные
+Tuple: Signs and target variables
  """
  features_List = []
  targets_List = []
@@ -1705,13 +1705,13 @@ class SCHRLevelsIndicator:
  continue
 
  try:
- # create признаков SCHR Levels
+# Create of the signs of SCHR Livels
  features = self._create_schr_levels_features(df)
 
- # create целевой переменной
+# the target variable
  target = self._create_target(df)
 
- # Объединение and clean
+# Merge and clean
  combined = pd.concat([features, target], axis=1)
  combined = combined.dropna()
 
@@ -1727,7 +1727,7 @@ class SCHRLevelsIndicator:
  X = pd.concat(features_List, ignore_index=True)
  y = pd.concat(targets_List, ignore_index=True)
 
- # remove коррелированных признаков
+# remove correlate features
  X = self._remove_correlated_features(X)
 
  return X, y
@@ -1736,77 +1736,77 @@ class SCHRLevelsIndicator:
 
  def _create_schr_levels_features(self, df: pd.dataFrame) -> pd.dataFrame:
  """
- create комплексных признаков SCHR Levels
+SCHR Livels cross-cutting features
 
- Включает:
- - Обнаружение уровней поддержки and сопротивления
- - Кластерный анализ уровней
- - Статистические признаки
- - Объемные индикаторы
- - Временные паттерны
+Includes:
+- Identification of levels of support and resistance
+- Cluster analysis of levels
+- Statistical indicators
+- Volume indicators
+- Temporary Paterns
  """
  features = pd.dataFrame(index=df.index)
 
- # Базовые цены
+# Basic prices
  features['close'] = df['Close']
  features['high'] = df['High']
  features['low'] = df['Low']
  features['open'] = df['Open']
  features['volume'] = df['Volume']
 
- # Обнаружение уровней
+# Detection of levels
  levels = self._detect_levels(df)
  features.update(self._calculate_level_features(df, levels))
 
- # Кластерный анализ уровней
+# Cluster analysis of levels
  features.update(self._calculate_cluster_features(df, levels))
 
- # Статистические признаки уровней
+# Statistical indicators of levels
  features.update(self._calculate_level_statistics(df, levels))
 
- # Объемные индикаторы
+# Volume indicators
  features.update(self._calculate_volume_indicators(df))
 
- # Временные паттерны
+# Temporary Pathers
  features.update(self._calculate_temporal_patterns(df))
 
- # Давление on уровни
+# Pressure on levels
  features.update(self._calculate_pressure_features(df, levels))
 
- # Лаговые признаки
+# Lug signs
  features.update(self._calculate_lag_features(df))
 
  return features
 
  def _detect_levels(self, df: pd.dataFrame) -> Dict[str, List[float]]:
  """
- Обнаружение уровней поддержки and сопротивления
+Detection of levels of support and resistance
 
- Использует:
- - Пики and впадины for определения уровней
- - Кластерный анализ for группировки схожих уровней
- - Статистический анализ for фильтрации значимых уровней
+Uses:
+- Peaks and falls for level determination
+- Cluster analysis for grouping of similar levels
+- Statistical analysis for filtering significant levels
  """
  levels = {'support': [], 'resistance': []}
 
- # Обнаружение пиков and впадин
+# The discovery of peaks and falls
  highs = df['High'].values
  lows = df['Low'].values
 
- # Нахождение пиков (сопротивление)
+# Finding the peaks (resistance)
  peaks, _ = find_peaks(highs, distance=self.config['level_detection_window'])
  resistance_levels = highs[peaks]
 
- # Нахождение впадин (поддержка)
+# Failing (support)
  valleys, _ = find_peaks(-lows, distance=self.config['level_detection_window'])
  support_levels = lows[valleys]
 
- # Кластеризация уровней сопротивления
+# Clasterization of resistance levels
  if len(resistance_levels) > 1:
  resistance_clusters = self._cluster_levels(resistance_levels)
  levels['resistance'] = resistance_clusters
 
- # Кластеризация уровней поддержки
+# Clasterization of support levels
  if len(support_levels) > 1:
  support_clusters = self._cluster_levels(support_levels)
  levels['support'] = support_clusters
@@ -1815,30 +1815,30 @@ class SCHRLevelsIndicator:
 
  def _cluster_levels(self, levels: np.ndarray) -> List[float]:
  """
- Кластеризация уровней for группировки схожих значений
+Clustering levels for grouping similar values
 
  Args:
- levels: Массив ценовых уровней
+Lovels: Massive price levels
 
  Returns:
- List: Центроиды кластеров
+List: Cluster centroids
  """
  if len(levels) < 2:
  return levels.toList()
 
- # Нормализация for кластеризации
+# Normalization for clustering
  levels_normalized = levels.reshape(-1, 1)
 
- # DBSCAN кластеризация
+#DBSCAN Clustering
  clustering = DBSCAN(
  eps=self.config['cluster_eps'],
  min_samples=self.config['min_cluster_size']
  ).fit(levels_normalized)
 
- # Получение центроидов кластеров
+# Receive cluster centroids
  cluster_centers = []
  for cluster_id in set(clustering.labels_):
- if cluster_id == -1: # Шум
+if cluster_id = = -1: # Noise
  continue
  cluster_points = levels[clustering.labels_ == cluster_id]
  cluster_centers.append(np.mean(cluster_points))
@@ -1846,29 +1846,29 @@ class SCHRLevelsIndicator:
  return cluster_centers
 
  def _calculate_level_features(self, df: pd.dataFrame, levels: Dict[str, List[float]]) -> Dict[str, pd.Series]:
- """Расчет признаков on basis обнаруженных уровней"""
+"The calculation of the signs on the basis of detected levels."
  features = {}
 
- # Ближайшие уровни
+# Nearest levels
  features['nearest_resistance'] = self._find_nearest_level(df['Close'], levels['resistance'])
  features['nearest_support'] = self._find_nearest_level(df['Close'], levels['support'])
 
- # Расстояния to уровней
+# Distances to levels
  features['distance_to_resistance'] = (features['nearest_resistance'] - df['Close']) / df['Close']
  features['distance_to_support'] = (df['Close'] - features['nearest_support']) / df['Close']
 
- # Позиция между уровнями
+# Position between levels
  level_range = features['nearest_resistance'] - features['nearest_support']
  features['position_in_range'] = (df['Close'] - features['nearest_support']) / (level_range + 1e-8)
 
- # Сила ближайших уровней
+# The force of the nearest levels
  features['resistance_strength'] = self._calculate_level_strength(df, levels['resistance'])
  features['support_strength'] = self._calculate_level_strength(df, levels['support'])
 
  return features
 
  def _find_nearest_level(self, prices: pd.Series, levels: List[float]) -> pd.Series:
- """Поиск ближайшего уровня for каждой цены"""
+"A search for the nearest level for each price."
  if not levels:
  return pd.Series(index=prices.index, data=prices.values)
 
@@ -1881,21 +1881,21 @@ class SCHRLevelsIndicator:
  return pd.Series(nearest_levels, index=prices.index)
 
  def _calculate_level_strength(self, df: pd.dataFrame, levels: List[float]) -> pd.Series:
- """Расчет силы уровней on basis количества касаний"""
+""The calculation of the force of levels on basis of the number of contacts""
  strength = pd.Series(index=df.index, data=0.0)
 
  for level in levels:
- # Поиск касаний уровня
+# Search for level contact
  touches = self._count_level_touches(df, level)
  strength += touches
 
  return strength
 
  def _count_level_touches(self, df: pd.dataFrame, level: float) -> pd.Series:
- """Подсчет количества касаний уровня"""
+" """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""",""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  tolerance = self.config['touch_tolerance']
 
- # check касаний High and Low
+# Check touching High and Low
  high_touches = (df['High'] >= level * (1 - tolerance)) & (df['High'] <= level * (1 + tolerance))
  low_touches = (df['Low'] >= level * (1 - tolerance)) & (df['Low'] <= level * (1 + tolerance))
 
@@ -1903,14 +1903,14 @@ class SCHRLevelsIndicator:
  return touches.rolling(20).sum()
 
  def _calculate_cluster_features(self, df: pd.dataFrame, levels: Dict[str, List[float]]) -> Dict[str, pd.Series]:
- """Расчет признаков on basis кластеров уровней"""
+"""""""""""""""""""""
  features = {}
 
- # Количество кластеров
+# Number of clusters
  features['n_resistance_clusters'] = len(levels['resistance'])
  features['n_support_clusters'] = len(levels['support'])
 
- # Плотность кластеров
+# Cluster density
  if levels['resistance']:
  resistance_std = np.std(levels['resistance'])
  features['resistance_cluster_density'] = 1.0 / (resistance_std + 1e-8)
@@ -1926,10 +1926,10 @@ class SCHRLevelsIndicator:
  return features
 
  def _calculate_level_statistics(self, df: pd.dataFrame, levels: Dict[str, List[float]]) -> Dict[str, pd.Series]:
- """Расчет статистических признаков уровней"""
+"The calculation of statistical indicators of levels"
  features = {}
 
- # Статистики уровней сопротивления
+# Resistance level statistics
  if levels['resistance']:
  resistance_levels = np.array(levels['resistance'])
  features['resistance_mean'] = np.mean(resistance_levels)
@@ -1942,7 +1942,7 @@ class SCHRLevelsIndicator:
  features['resistance_skewness'] = 0.0
  features['resistance_kurtosis'] = 0.0
 
- # Статистики уровней поддержки
+# Support level statistics
  if levels['support']:
  support_levels = np.array(levels['support'])
  features['support_mean'] = np.mean(support_levels)
@@ -1958,10 +1958,10 @@ class SCHRLevelsIndicator:
  return features
 
  def _calculate_volume_indicators(self, df: pd.dataFrame) -> Dict[str, pd.Series]:
- """Расчет объемных indicators"""
+"""""""""""""""""""
  features = {}
 
- # Объемные средние
+# Volume-sized average
  for window in [5, 10, 20, 50]:
  features[f'volume_sma_{window}'] = df['Volume'].rolling(window).mean()
  features[f'volume_ratio_{window}'] = df['Volume'] / features[f'volume_sma_{window}']
@@ -1985,16 +1985,16 @@ class SCHRLevelsIndicator:
  return features
 
  def _calculate_temporal_patterns(self, df: pd.dataFrame) -> Dict[str, pd.Series]:
- """Расчет временных паттернов"""
+"""" "Temporary Pathers""""
  features = {}
 
- # Временные components
+# Temporary components
  features['hour'] = df.index.hour
  features['day_of_week'] = df.index.dayofweek
  features['day_of_month'] = df.index.day
  features['month'] = df.index.month
 
- # Циклические признаки
+# Cyclic signs
  features['hour_sin'] = np.sin(2 * np.pi * features['hour'] / 24)
  features['hour_cos'] = np.cos(2 * np.pi * features['hour'] / 24)
  features['day_sin'] = np.sin(2 * np.pi * features['day_of_week'] / 7)
@@ -2003,28 +2003,28 @@ class SCHRLevelsIndicator:
  return features
 
  def _calculate_pressure_features(self, df: pd.dataFrame, levels: Dict[str, List[float]]) -> Dict[str, pd.Series]:
- """Расчет признаков давления on уровни"""
+"The calculation of the signs of pressure on levels."
  features = {}
 
- # Давление on ближайшие уровни
+# Pressure on nearest levels
  nearest_resistance = self._find_nearest_level(df['Close'], levels['resistance'])
  nearest_support = self._find_nearest_level(df['Close'], levels['support'])
 
- # Давление on сопротивление
+# Pressure on Resistance
  resistance_pressure = (df['Close'] - nearest_resistance) * df['Volume']
  features['resistance_pressure'] = resistance_pressure.rolling(20).mean()
 
- # Давление on поддержку
+# Pressure on support
  support_pressure = (nearest_support - df['Close']) * df['Volume']
  features['support_pressure'] = support_pressure.rolling(20).mean()
 
- # Вектор давления
+# Pressure vector
  features['pressure_vector'] = features['resistance_pressure'] - features['support_pressure']
 
  return features
 
  def _calculate_lag_features(self, df: pd.dataFrame) -> Dict[str, pd.Series]:
- """Расчет лаговых признаков"""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  features = {}
 
  for lag in [1, 2, 3, 5, 10, 20]:
@@ -2033,28 +2033,28 @@ class SCHRLevelsIndicator:
  features[f'low_lag_{lag}'] = df['Low'].shift(lag)
  features[f'volume_lag_{lag}'] = df['Volume'].shift(lag)
 
- # Отношения with лагами
+# Relations with lagoons
  features[f'close_ratio_lag_{lag}'] = df['Close'] / features[f'close_lag_{lag}']
  features[f'volume_ratio_lag_{lag}'] = df['Volume'] / features[f'volume_lag_{lag}']
 
  return features
 
  def _create_target(self, df: pd.dataFrame, horizon: int = None) -> pd.Series:
- """create целевой переменной for SCHR Levels"""
+""create target variable for SCHR Livels""
  if horizon is None:
  horizon = self.config['target_horizon']
 
  future_price = df['Close'].shift(-horizon)
  current_price = df['Close']
 
- # Процентное изменение
+# Percentage change
  price_change = (future_price - current_price) / current_price
 
- # Адаптивные пороги on basis волатильности
+# Adaptive thresholds on baseline volatility
  volatility = df['Close'].rolling(20).std() / df['Close'].rolling(20).mean()
  threshold = volatility * 0.5
 
- # Классификация with адаптивными порогами
+# Classification with adaptive thresholds
  target = pd.Series(index=df.index, dtype=int)
  target[price_change > threshold] = 2 # Up
  target[price_change < -threshold] = 0 # Down
@@ -2063,7 +2063,7 @@ class SCHRLevelsIndicator:
  return target
 
  def _remove_correlated_features(self, X: pd.dataFrame, threshold: float = 0.95) -> pd.dataFrame:
- """remove коррелированных признаков"""
+""remove correlate features""
  corr_matrix = X.corr().abs()
  upper_tri = corr_matrix.where(
  np.triu(np.ones(corr_matrix.shape), k=1).astype(bool)
@@ -2072,14 +2072,14 @@ class SCHRLevelsIndicator:
  return X.drop(columns=to_drop)
 
  def _calculate_ensemble_weights(self, model_scores: Dict[str, float]) -> Dict[str, float]:
- """Расчет весов for ансамбля моделей"""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""")""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  total_score = sum(model_scores.values())
  if total_score == 0:
  return {name: 1.0 / len(model_scores) for name in model_scores.keys()}
  return {name: score / total_score for name, score in model_scores.items()}
 
  def _ensemble_predict(self, X: np.ndarray) -> np.ndarray:
- """Prediction ансамбля моделей"""
+"Predition ensemble of models."
  predictions = []
  for name, model in self.models.items():
  pred = model.predict(X)
@@ -2095,13 +2095,13 @@ class SCHRLevelsIndicator:
  return np.zeros(len(data))
 
  try:
- # create признаков
+♪ Create signs
  features = self._create_schr_levels_features(data)
 
- # Нормализация
+# Normalization
  features_scaled = self.scaler.transform(features)
 
- # Отбор признаков
+# Selection of signs
  features_selected = self.feature_selector.transform(features_scaled)
 
  # Prediction
@@ -2114,27 +2114,27 @@ class SCHRLevelsIndicator:
  return np.zeros(len(data))
 
  def get_levels(self, data: pd.dataFrame) -> Dict[str, List[float]]:
- """Получение обнаруженных уровней"""
+"Recovering detected levels"
  return self._detect_levels(data)
 
  def get_training_stats(self) -> Dict:
- """Получение статистики обучения"""
+"Proceeding Education Statistics"
  return self.training_stats.copy()
 
-# example использования
+# Example of use
 if __name__ == "__main__":
- # create testsых данных
+# Create testy data
  np.random.seed(42)
  dates = pd.date_range('2020-01-01', periods=1000, freq='H')
 
- # Симуляция ценовых данных with уровнями
+# Simulation of price data with levels
  price = 100
  prices = []
  for i in range(1000):
- # create искусственных уровней
- if i % 100 < 20: # Уровень сопротивления
+# creative levels
+if i % 100 < 20: # Resistance level
  change = np.random.normal(0, 0.005)
- elif i % 100 > 80: # Уровень поддержки
+elif i%100 > 80: # Support level
  change = np.random.normal(0, 0.005)
  else:
  change = np.random.normal(0, 0.01)
@@ -2150,20 +2150,20 @@ if __name__ == "__main__":
  'Volume': np.random.randint(1000, 10000, 1000)
  }, index=dates)
 
- # Нормализация OHLC
+# Normalization of OHLC
  for i in range(len(data)):
  high = max(data.iloc[i]['Open'], data.iloc[i]['Close'])
  low = min(data.iloc[i]['Open'], data.iloc[i]['Close'])
  data.iloc[i, data.columns.get_loc('High')] = high
  data.iloc[i, data.columns.get_loc('Low')] = low
 
- # Инициализация индикатора
+# Initiating indicator
  schr_levels = SCHRLevelsIndicator()
 
- # Подготовка данных for обучения
+# Preparation of data for training
  training_data = {'test_H1': data}
 
- # Обучение модели
+# Model learning
  stats = schr_levels.train(training_data)
  print(f"Training COMPLETED. Test accuracy: {stats.get('test_accuracy', 0):.4f}")
 
@@ -2171,32 +2171,32 @@ if __name__ == "__main__":
  predictions = schr_levels.predict(data.tail(100))
  print(f"predictions: {np.bincount(predictions)}")
 
- # Обнаружение уровней
+# Detection of levels
  levels = schr_levels.get_levels(data)
  print(f"Detected resistance levels: {len(levels['resistance'])}")
  print(f"Detected support levels: {len(levels['support'])}")
 ```
 
-## ⚡ Индикатор SCHR SHORT3
+♪ ♪ SKHR SHORT3 indicator
 
-**Theory:** Индикатор SCHR SHORT3 представляет собой Specialized ML-индикатор for краткосрочной торговли and скальпинга, обеспечивающий высокочастотные торговые сигналы with высокой точностью. Это критически важный компонент for максимизации прибыли.
+**Theory:** The SCHR SHORT3 indicator is a Specialized ML indicator for short-term trade and scalping that provides high-frequency trade signals with high accuracy. This is a critical component for maximizing profits.
 
-**Почему индикатор SCHR SHORT3 важен:**
-- **Краткосрочность:** Обеспечивает краткосрочные торговые сигналы
-- **Скальпинг:** Обеспечивает возможности for скальпинга
-- **Частота:** Обеспечивает высокую частоту сигналов
-- **Прибыльность:** Критически важно for максимизации прибыли
+**Why SCHR SHORT3 indicator is important:**
+- ** Short-term:** Provides short-term trade signals
+- **Scaling:** Provides opportunities for scalping
+- **Number:** Provides a high frequency of signals
+- ** profit:** Critical for maximizing profits
 
-**Плюсы:**
-- Краткосрочные сигналы
-- Возможности скальпинга
-- Высокая частота сигналов
-- Максимизация прибыли
+** Plus:**
+- Short-term signals
+- Scaling opportunities.
+High frequency of signals
+- Maximization of profits
 
 **Disadvantages:**
-- Высокие требования к скорости
-- Потенциальные высокие комиссии
-- Требует постоянного Monitoringа
+- High speed requirements
+- Potential High Commissions
+- Demands permanent Monitoring.
 
 ```python
 # src/indicators/schr_short3.py
@@ -2209,7 +2209,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 class SCHRShort3Indicator:
- """Индикатор SCHR SHORT3 for краткосрочной торговли"""
+"SCHR SHORT3 Index for Short-Term Trade"
 
  def __init__(self):
  self.logger = logging.getLogger(__name__)
@@ -2218,26 +2218,26 @@ class SCHRShort3Indicator:
  self.is_trained = False
 
  def train(self, data: Dict[str, pd.dataFrame]):
- """Обучение модели SCHR SHORT3"""
+"Learning the SCHR SHORT3 model."
  try:
  self.logger.info("Training SCHR SHORT3 model...")
 
- # Подготовка данных
+# Data production
  X, y = self._prepare_training_data(data)
 
  if X.empty or y.empty:
  self.logger.warning("No data available for training SCHR SHORT3")
  return
 
- # Разделение on train/test
+# Separation on train/test
  X_train, X_test, y_train, y_test = train_test_split(
  X, y, test_size=0.2, random_state=42
  )
 
- # Обучение модели
+# Model learning
  self.model.fit(X_train, y_train)
 
- # Оценка
+# Evaluation
  y_pred = self.model.predict(X_test)
  accuracy = accuracy_score(y_test, y_pred)
 
@@ -2248,7 +2248,7 @@ class SCHRShort3Indicator:
  self.logger.error(f"Error training SCHR SHORT3 model: {e}")
 
  def _prepare_training_data(self, data: Dict[str, pd.dataFrame]) -> tuple:
- """Подготовка данных for обучения"""
+""""" "Preparation of data for training"""
  features_List = []
  targets_List = []
 
@@ -2256,13 +2256,13 @@ class SCHRShort3Indicator:
  if df.empty:
  continue
 
- # create признаков SCHR SHORT3
+# Create of SCHR SHORT3
  features = self._create_schr_short3_features(df)
 
- # create целевой переменной
+# the target variable
  target = self._create_target(df)
 
- # Объединение
+# Uniting
  combined = pd.concat([features, target], axis=1)
  combined = combined.dropna()
 
@@ -2278,38 +2278,38 @@ class SCHRShort3Indicator:
  return pd.dataFrame(), pd.Series()
 
  def _create_schr_short3_features(self, df: pd.dataFrame) -> pd.dataFrame:
- """create признаков SCHR SHORT3"""
+""create of the signs of SCHR SHORT3""
  features = pd.dataFrame(index=df.index)
 
- # Базовые цены
+# Basic prices
  features['close'] = df['Close']
  features['high'] = df['High']
  features['low'] = df['Low']
  features['volume'] = df['Volume']
 
- # SCHR SHORT3 признаки
+# SCHR SHORT3 Signs
  features['short_term_signal'] = self._calculate_short_term_signal(df)
  features['short_term_strength'] = self._calculate_short_term_strength(df)
  features['short_term_direction'] = self._calculate_short_term_direction(df)
  features['short_term_volatility'] = self._calculate_short_term_volatility(df)
  features['short_term_momentum'] = self._calculate_short_term_momentum(df)
 
- # Дополнительные сигналы
+# Additional signals
  features['short_buy_signal'] = (features['short_term_signal'] > 0.5).astype(int)
  features['short_sell_signal'] = (features['short_term_signal'] < -0.5).astype(int)
  features['short_hold_signal'] = (abs(features['short_term_signal']) <= 0.5).astype(int)
 
- # Статистика
+# Statistics
  features['short_hits'] = self._calculate_short_hits(df)
  features['short_breaks'] = self._calculate_short_breaks(df)
  features['short_bounces'] = self._calculate_short_bounces(df)
  features['short_accuracy'] = self._calculate_short_accuracy(df)
 
- # Нормализованные признаки
+# Normalized signs
  features['short_volatility_normalized'] = features['short_term_volatility'] / features['close']
  features['short_momentum_normalized'] = features['short_term_momentum'] / features['close']
 
- # Лаговые признаки
+# Lug signs
  for lag in [1, 2, 3, 5, 10]:
  features[f'short_signal_lag_{lag}'] = features['short_term_signal'].shift(lag)
  features[f'short_strength_lag_{lag}'] = features['short_term_strength'].shift(lag)
@@ -2317,43 +2317,43 @@ class SCHRShort3Indicator:
  return features
 
  def _calculate_short_term_signal(self, df: pd.dataFrame) -> pd.Series:
- """Расчет краткосрочного сигнала"""
- # Комбинация RSI and MACD for краткосрочных сигналов
+""""""" "The short-term signal."
+# RSI and MACD combination for short-term signals
  rsi = self._calculate_rsi(df['Close'])
  macd = self._calculate_macd(df['Close'])
 
- # Нормализация
+# Normalization
  rsi_norm = (rsi - 50) / 50
  macd_norm = macd / df['Close']
 
- # Краткосрочный сигнал
+# Short-term signal
  signal = (rsi_norm + macd_norm) / 2
  return signal.rolling(5).mean()
 
  def _calculate_short_term_strength(self, df: pd.dataFrame) -> pd.Series:
- """Расчет силы краткосрочного сигнала"""
+""""" "The force of the short-term signal."
  volatility = df['Close'].rolling(20).std()
  volume = df['Volume'].rolling(20).mean()
 
- # Сила = волатильность * объем
+# Power = volatility * volume
  strength = volatility * volume
  return strength / strength.rolling(50).max()
 
  def _calculate_short_term_direction(self, df: pd.dataFrame) -> pd.Series:
- """Расчет направления краткосрочного сигнала"""
+""""""" "The short-term signal""""
  price_change = df['Close'].pct_change(5)
  return np.sign(price_change)
 
  def _calculate_short_term_volatility(self, df: pd.dataFrame) -> pd.Series:
- """Расчет краткосрочной волатильности"""
+"The calculation of short-term volatility."
  return df['Close'].rolling(10).std()
 
  def _calculate_short_term_momentum(self, df: pd.dataFrame) -> pd.Series:
- """Расчет краткосрочного моментума"""
+"The Short-term Momentum""
  return df['Close'].pct_change(3)
 
  def _calculate_short_hits(self, df: pd.dataFrame) -> pd.Series:
- """Расчет количества краткосрочных касаний"""
+"The calculation of the number of short-term touches."
  high_20 = df['High'].rolling(20).max()
  low_20 = df['Low'].rolling(20).min()
 
@@ -2361,7 +2361,7 @@ class SCHRShort3Indicator:
  return hits.rolling(20).sum()
 
  def _calculate_short_breaks(self, df: pd.dataFrame) -> pd.Series:
- """Расчет количества краткосрочных пробоев"""
+"The calculation of the number of short-term samples."
  high_20 = df['High'].rolling(20).max()
  low_20 = df['Low'].rolling(20).min()
 
@@ -2369,20 +2369,20 @@ class SCHRShort3Indicator:
  return breaks.rolling(20).sum()
 
  def _calculate_short_bounces(self, df: pd.dataFrame) -> pd.Series:
- """Расчет количества краткосрочных отскоков"""
+"The calculation of the number of short-term rebounds."
  price_change = df['Close'].pct_change()
  bounces = ((price_change > 0.01) | (price_change < -0.01)).astype(int)
  return bounces.rolling(20).sum()
 
  def _calculate_short_accuracy(self, df: pd.dataFrame) -> pd.Series:
- """Расчет точности краткосрочных сигналов"""
- # Упрощенный расчет точности
+"The calculation of the accuracy of short-term signals."
+# Simplified calculation of accuracy
  price_change = df['Close'].pct_change()
  correct_predictions = (abs(price_change) > 0.005).astype(int)
  return correct_predictions.rolling(20).mean()
 
  def _calculate_rsi(self, prices: pd.Series, window: int = 14) -> pd.Series:
- """Расчет RSI"""
+"""""""""" "RSI"""
  delta = prices.diff()
  gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
  loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
@@ -2391,7 +2391,7 @@ class SCHRShort3Indicator:
  return rsi
 
  def _calculate_macd(self, prices: pd.Series, fast: int = 12, slow: int = 26, signal: int = 9) -> pd.Series:
- """Расчет MACD"""
+"""""" "MACD"""
  ema_fast = prices.ewm(span=fast).mean()
  ema_slow = prices.ewm(span=slow).mean()
  macd = ema_fast - ema_slow
@@ -2399,14 +2399,14 @@ class SCHRShort3Indicator:
  return macd - signal_line
 
  def _create_target(self, df: pd.dataFrame, horizon: int = 1) -> pd.Series:
- """create целевой переменной"""
+""create target variable."
  future_price = df['Close'].shift(-horizon)
  current_price = df['Close']
 
- # Процентное изменение
+# Percentage change
  price_change = (future_price - current_price) / current_price
 
- # Классификация направления
+# Classification of direction
  target = pd.cut(
  price_change,
  bins=[-np.inf, -0.001, 0.001, np.inf],
@@ -2423,7 +2423,7 @@ class SCHRShort3Indicator:
  return np.zeros(len(data))
 
  try:
- # create признаков
+♪ Create signs
  features = self._create_schr_short3_features(data)
 
  # Prediction
@@ -2436,26 +2436,26 @@ class SCHRShort3Indicator:
  return np.zeros(len(data))
 
  def get_features(self) -> pd.dataFrame:
- """Получение признаков"""
+""""""""""""""""
  return self.features
 ```
 
-**Theory:** Заключительная часть представляет собой describe структуры and продолжения разработки компонентов системы. Это критически важно for понимания полной архитектуры and дальнейшего развития системы.
+**Theory:** The final part is a describe structure and further development of the components of the system, which is critical for understanding the full architecture and further development of the system.
 
-**Почему заключительная часть важна:**
-- **Structure:** Обеспечивает понимание структуры
-- **Продолжение:** Обеспечивает понимание продолжения разработки
-- **architecture:** Обеспечивает понимание полной архитектуры
-- **Развитие:** Критически важно for дальнейшего развития
+**Why is the final part important:**
+- **Structure:** Provides an understanding of the structure
+- ** Continuing:** Provides an understanding of further development
+- **architecture:** Provides an understanding of the complete architecture
+- ** Development:** Critical for further development
 
-**Плюсы:**
-- Понимание структуры
-- Plan продолжения
-- Полная architecture
-- Возможности развития
+** Plus:**
+- Understanding the structure
+- Plan continuation
+- Full architecture.
+- Development opportunities
 
 **Disadvantages:**
-- Потенциальная неполнота
-- Требует дополнительной разработки
+- Potential incompleteness
+- Needs further development
 
-Это вторая часть детального кода. Продолжу with остальными componentsи in следующих частях.
+This is the second part of the detailed code. I'll continue with the rest of the componentsy in the following parts.

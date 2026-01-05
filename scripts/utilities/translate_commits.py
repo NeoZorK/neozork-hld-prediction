@@ -16,111 +16,111 @@ from pathlib import Path
 # Order matters: longer, more specific phrases should come first
 TRANSLATIONS = {
  # Long specific phrases (must come first)
- r'\bобновление документации on полной системе заработка 100%\+ in месяц\b': 'update documentation on complete earning system 100%+ per month',
- r'\bобновление документации on системе Monitoringа and метрик for достижения 100% прибыли\b': 'update documentation on Monitoring system and metrics for achieving 100% profit',
- r'\bобновление документации on метрикам and Monitoringу for достижения 100% прибыли\b': 'update documentation on metrics and Monitoring for achieving 100% profit',
- r'\bобновление документации on детальным components системы NeoZorK\b': 'update documentation on Detailed components of NeoZorK system',
- r'\bобновление документации on установке and настройке MLX and Jupyter for Apple Silicon\b': 'update documentation on installation and configuration of MLX and Jupyter for Apple Silicon',
- r'\bобновление документации on основам робастных систем in ML\b': 'update documentation on basics of robust systems in ML',
- r'\bобновление документации on подготовке данных and созданию признаков for ML-систем\b': 'update documentation on data preparation and feature creation for ML systems',
- r'\bобновление документации on инженерии признаков and обучению моделей for финансовых данных\b': 'update documentation on feature engineering and model training for financial data',
- r'\bобновление документации on Монте-Карло симуляции and управлению рисками\b': 'update documentation on Monte Carlo simulation and risk Management',
- r'\bобновление документации on анализу SCHR Levels and SCHR SHORT3\b': 'update documentation on SCHR Levels and SCHR SHORT3 Analysis',
- r'\bобновление files \.dockerignore and \.gitignore for\b': 'update .dockerignore and .gitignore files for',
- r'\bобновление files \.dockerignore and \.gitignore for исключения and включения документации\b': 'update .dockerignore and .gitignore files for exclusion and inclusion of documentation',
- r'\bобновление files \.dockerignore and \.gitignore for декомпозиции\b': 'update .dockerignore and .gitignore files for decomposition',
- r'\bобновление functions экспорта метаданных in декомпозиции временных рядов\b': 'update metadata export function in time series decomposition',
- r'\bдобавление новых функций for визуализации результатов CEEMDAN\b': 'add new functions for CEEMDAN visualization results',
- r'\bдобавление новых функций for декомпозиции временных рядов\b': 'add new functions for time series decomposition',
- r'\bдобавление модуля декомпозиции временных рядов\b': 'add time series decomposition module',
- r'\bдобавление патча for исправления уязвимости SSRF in пакете ip\b': 'add patch to fix SSRF vulnerability in ip package',
- r'\bдобавление руководства on безопасности for уязвимости API отправки заданий Ray\b': 'add security guide for Ray job submission API vulnerability',
- r'\bдобавление документации on уязвимости CVE-2025-53000 in nbconvert\b': 'add documentation on CVE-2025-53000 vulnerability in nbconvert',
- r'\bуточнение спецификатора dependencies urllib3\b': 'clarify urllib3 dependency specifier',
- r'\bобновление временных меток in документации and скриптах\b': 'update timestamps in documentation and scripts',
+r'\updating documentation on the full pay system 100%\+in month\b': 'update documentation on completing system 100%+ per month',
+r' re-update documentation on Monitoring system and metrics for achieving 100% profit `b': 'update documentation on Monitoring system and metrics for Achieving 100% profit',
+r'update documentation on metrics and monitoring for achievement 100% profit/b': 'update documentation on metrics and Monitoring for processing 100% benefit',
+r'update documentation on detailed components of NeoZorK\b': 'update documentation on Detailed components of NeoZorK system',
+r'\update documentation on installation and installation of MLX and Jupiter for Apple Silicon\b': 'update documentation on installation and negotiation of MLX and Jupiter for Apple Silicon',
+r'\update documentation on basic robotic systems in ML\b': 'update documentation on basics of Robst systems in ML',
+r' `update documentation on data production and data creation for ML systems',
+r'update documentation on evidence engineering and training models for financial data_b': 'update documentation on finance engineering and method training for financial data',
+r'\update documentation on Monte Carlo simulation and risk management /b': 'update documentation on Monte Carlo simulation and Risk Management',
+r'\update of SCHR Analysis Documents and SCHR SHORT3\b': `update documentation on SCHR Movements and SCHR SHORT3 Analysis',
+r' rejuvenation of files ..dockerignore and ..gitignore for\b': 'update .dockerignore and .gitignore profiles for',
+r'update files ..dockerignore and ..gitignore for deletion and inclusion of documentation .b': 'update .dockerignore and .gitignore profiles for graduation and incorporation of documentation',
+r' rejuvenation of files ..dockerignore and ..gitignore for statement .b': 'update .dockerignore and .gitignore profiles for decomposition',
+r'\renewal of data exports of metadata in the time series decomposite \b': 'update metadata export finance in time series decomposition',
+r'\baddition of new functions for visualizing the results of CEMEDAN\b': 'add new findings for CEEMDAN visualization results',
+r'\bbaddition of new functions for decomposition of time series \b': 'add new findings for time series decomposition',
+r'baddition of the time-series decomposite module 'b': 'add time series decomposition modeule',
+r'\baddition of the SSRF vulnerability correction patch in the ip\b' package: 'add patch to fix SSRF vulnerability in ip package',
+r'\addition of the security manual for API vulnerability sending Ray\b': 'add security guide for Ray jab submission API vulnerability',
+r'\addition of documentation on vulnerability CVE 2025-53000 in nbconvert\b': 'add documentation on CVE 2025-53000 vulnerability in nbconvert',
+r'=Background specification of dependencies urllib3\b': 'clarify urllib3 dependency specifier',
+r'\update time tags in documentation and scripts 'b': 'update timeamps in documentation and scripts',
 
  # Common phrases
- r'\bдобавление dependencies\b': 'add dependency',
- r'\bобновление dependencies\b': 'update dependency',
- r'\bдобавление документации\b': 'add documentation',
- r'\bобновление документации\b': 'update documentation',
- r'\bдобавление патча\b': 'add patch',
- r'\bдобавление новых функций\b': 'add new functions',
- r'\bобновление functions\b': 'update function',
- r'\bдобавление модуля\b': 'add module',
- r'\bобновление files\b': 'update files',
- r'\bдобавление новых dependencies\b': 'add new dependencies',
+r'badditiondependencies 'b': 'add dependency',
+r' rejuvenation dependencies 'b': 'update dependency',
+r'\baddition of documentation_b': 'add documentation',
+r'\updating documentation_b': 'update documentation',
+r''baddition of patch 'b': 'add patch',
+r'\bbaddition of new functions_b': 'add new functions',
+r'\renewal functions\b': 'update function',
+r'\baddition module 'b': 'add module',
+r'_update file sheets',
+r'\baddition of new dependencies\b': 'add new dependencies',
 
  # Common verbs
- r'\bобновление\b': 'update',
- r'\bдобавление\b': 'add',
- r'\bуточнение\b': 'clarify',
- r'\bисправление\b': 'fix',
- r'\bудаление\b': 'remove',
- r'\bулучшение\b': 'improve',
- r'\bрефакторинг\b': 'refactor',
- r'\bизменение\b': 'change',
- r'\bсоздание\b': 'create',
- r'\bнастройка\b': 'configure',
+r'\update 'b': 'update',
+r'\bbb': 'add',
+r'\b': 'clarify',
+r'·b' correction /b': 'fix',
+r'b': 'remove',
+r'\b': 'improve',
+r'\brefector',
+r'·b' change 'b': 'change',
+r'`b' creation 'b': 'create',
+r'\bd': 'configure',
 
  # Specific phrases
- r'\bдо версии\b': 'to version',
- r'\bв package\.json\b': 'to package.json',
- r'\bв pyproject\.toml\b': 'to pyproject.toml',
- r'\bв requirements\.txt\b': 'to requirements.txt',
- r'\bв документации\b': 'in documentation',
- r'\bв скриптах\b': 'in scripts',
- r'\bдля\b': 'for',
- r'\bпо\b': 'on',
- r'\bс добавлением\b': 'with addition of',
- r'\bи\b': 'and',
+r'\b before version `b': 'to version',
+r'b in paperage\.json\b': 'to package.json',
+r'b in pyproject /.toml\b': 'to pyproject.toml',
+r'\b in statements\.txt\b': 'to requests.txt',
+r'\b in documentation_b': 'in documentation',
+r'\b in scripts 'b': 'in scripts',
+r'\b for\b': 'for',
+r'\bpo\b': 'on',
+r'\b with the addition 'b': 'with extension of',
+r'bi'b': 'and',
 
  # Documentation specific
- r'\bруководства on\b': 'guide on',
- r'\bруководство on\b': 'guide on',
- r'\bуязвимости\b': 'vulnerability',
- r'\bуязвимость\b': 'vulnerability',
- r'\bбезопасности\b': 'security',
- r'\bвременных меток\b': 'timestamps',
- r'\bвременных рядов\b': 'time series',
- r'\bдекомпозиции\b': 'decomposition',
- r'\bэкспорта метаданных\b': 'metadata export',
- r'\bвизуализации результатов\b': 'visualization results',
- r'\bметрикам and Monitoringу\b': 'metrics and Monitoring',
- r'\bдля достижения 100% прибыли\b': 'for achieving 100% profit',
- r'\bанализу\b': 'Analysis',
- r'\bМонте-Карло симуляции\b': 'Monte Carlo simulation',
- r'\bуправлению рисками\b': 'risk Management',
- r'\bинженерии признаков\b': 'feature engineering',
- r'\bобучению моделей\b': 'model training',
- r'\bфинансовых данных\b': 'financial data',
- r'\bподготовке данных\b': 'data preparation',
- r'\bсозданию признаков\b': 'feature creation',
- r'\bML-систем\b': 'ML systems',
- r'\bосновам робастных систем\b': 'basics of robust systems',
- r'\bустановке and настройке\b': 'installation and configuration',
- r'\bдетальным components\b': 'Detailed components',
- r'\bсистеме Monitoringа\b': 'Monitoring system',
- r'\bполной системе заработка\b': 'complete earning system',
- r'\bблокчейн-системам\b': 'blockchain systems',
- r'\bавтоматическому переобучению\b': 'automatic retraining',
- r'\bконцепции and стратегии\b': 'Concepts and strategies',
- r'\bвысокодоходных ML-систем\b': 'high-yield ML systems',
- r'\bторговых систем\b': 'trading systems',
- r'\bблокчейн-интеграции\b': 'blockchain integration',
- r'\bметрикам Analysis performance\b': 'performance Analysis metrics',
- r'\bпродвинутым практикам\b': 'advanced practices',
- r'\bоптимизации Portfolio\b': 'Portfolio optimization',
- r'\bтеоретическим обоснованиям\b': 'theoretical foundations',
- r'\bуровней поддержки and сопротивления\b': 'support and resistance levels',
- r'\bмашинному обучению\b': 'machine learning',
- r'\bструктуре документации\b': 'documentation Structure',
- r'\bновых разделов\b': 'new sections',
- r'\bисключения and включения\b': 'exclusion and inclusion',
+r'\b manuals on /b': 'guid on',
+r'\bmouse on\b': 'guid on',
+r' `vulnerability',
+r'vulnerability 'b': 'vulnerability'
+r'\b security_b': 'security',
+r'time tags 'b': 'timestamps',
+r'time rows 'b': 'time series',
+r'\bdecomposite_b': 'decomposition',
+r'\bexport metadata_b': 'metadata export',
+r'\bvising results_b': 'visualization results',
+r'\bmetricks and Monitoring_b': 'metrics and Monitoring',
+r'\b to achieve 100% profit \b': 'for achieving 100% profit',
+r'\banalysis',
+r'\bMonte-Carlo simulations 'b': 'Monte carlo simulation',
+r' risk management_b': 'risk Management',
+r'·b': 'feature engineering',
+r'\model learning \b': 'model training',
+r'\bfinancial data_b': 'financial data',
+r'\b data training \b': 'data preparation',
+r'\bformation of signs 'b': 'feature creation',
+r'\bML systems_b': 'ML systems',
+r'brands of robotic systems 'b': 'baseics of Robist systems',
+r'_place and setup 'b': 'installation and configration',
+"R" is a "detained components",
+r'\bsystem Monitoring_b': 'Monitoring system',
+r' full system of earnings \b': 'complete development system',
+r'\blockchin systems_b': 'lockchain systems',
+r'\bautomatic retraining',
+r'``b Concepts and strategies 'b': 'Concepts and strategies',
+r' high-income ML systems 'b': 'high-yeld ML systems',
+r'\btrade systems 'b': 'trading systems',
+r'\blockchen integration_b': 'lockchain integration',
+r'\bmetricks Analysis performance\b': 'Performance Analysis metrics',
+r'&b advanced practitioners `b': 'advanced practices',
+r'&boptimization of Portfolio\b': 'Porthfolio optimization',
+r'`btheoretical justifications 'b': 'theoretical foundations',
+r'&b levels of support and resistance `b': 'support and resistance movements',
+r'\b' machine learning 'b': 'Machine learning'
+r'\bstructural structure `b': 'documentation Structure',
+r'\b': 'new sections',
+r' `exclusion and inclusion',
 
  # More specific translations
- r'\bспецификатора dependencies\b': 'dependency specifier',
- r'\bновых версий\b': 'new versions',
+r'\b of the Dependencies 'b': 'dependency specifier',
+r'=new versions 'b': 'new versions',
  r'\bSSRF\b': 'SSRF', # Keep acronyms
  r'\bCEEMDAN\b': 'CEEMDAN', # Keep acronyms
  r'\bSCHR\b': 'SCHR', # Keep acronyms
@@ -135,37 +135,37 @@ TRANSLATIONS = {
 DIRECT_TRANSLATIONS = {
  'chore: update dependencies h11 and httpcore to new versions':
  'chore: update dependencies h11 and httpcore to new versions',
- 'feat: add new dependencies in проект':
+'feat: add new preferences in project':
  'feat: add new dependencies to project',
- 'fix: update .dockerignore and .gitignore files for исключения and включения документации':
+'fix: update .dockerignore and .gitignore profiles for deletion and inclusion of documentation':
  'fix: update .dockerignore and .gitignore files for exclusion and inclusion of documentation',
- 'feat: update documentation on концепции and стратегии высокодоходных ML systems':
+'feat: up-date documentation on the ML systems' concept and strategy:
  'feat: update documentation on Concepts and strategies of high-yield ML systems',
- 'feat: update documentation on примерам trading systems on basis WAVE2, SCHR Levels and blockchain integration':
+'feat: up-date documentation on examples of trafficking systems on basic WAVE2, SCHR Movements and blockchain integration':
  'feat: update documentation on examples of trading systems based on WAVE2, SCHR Levels and blockchain integration',
- 'feat: update documentation SCHR SHORT3 with addition of теоретических обоснований and Analysis':
+'feat: up-to-date documentation SCHR SHORT3 with extension of theoretical reasoning and Analysis':
  'feat: update documentation SCHR SHORT3 with addition of theoretical foundations and Analysis',
- 'feat: update documentation SCHR Levels with addition of new sections on Analysis уровней поддержки and сопротивления':
+'feat: up-to-date documentation SCHR Movements with extension of new sections on support and resistance levels':
  'feat: update documentation SCHR Levels with addition of new sections on Analysis of support and resistance levels',
- 'feat: update структуры документации NeoZorK with addition of new sections':
+'feat: predated documentation structure NeoZorK with extension of new sections':
  'feat: update NeoZorK documentation Structure with addition of new sections',
- 'feat: добавлены новые разделы on data preparation, feature engineering, model training, бэктестингу and risk Management':
+'feat: Added new sections on data prevention, management, model training, backtting and Risk Management':
  'feat: add new sections on data preparation, feature engineering, model training, backtesting and risk Management',
- 'feat: update руководства NeoZorK with установкой окружения for macOS M1 Pro':
+'feat: extradate of NeoZorK with setting environment for machos M1 Pro':
  'feat: update NeoZorK guide with installation of environment for macOS M1 Pro',
- 'feat: добавлен HTML-interface for учебника':
+'feat: Added HTML-interface for textbook':
  'feat: add HTML interface for tutorial',
- 'feat: добавлена полная система заработка 100%+ in месяц - Создана детальная система with рабочим кодом from идеи to деплоя - Добавлены все components: модели, индикаторы, блокчейн-integration - Реализована система автоматического retraining - Добавлен полный Monitoring and система алертов - Создана documentation on Launch and использованию - Система готова for тестирования on блокчейн testnet':
+'feat: a complete system of earnings 100%+in month has been added - a detailed system with working code from ideas to fault has been created - all components added: models, indicators, block-integration - Automatic retraining has been implemented - A complete Monitoring and Alert System has been added - Documentation on Launch and use - System ready for testing on blocks testnet:
  'feat: add complete earning system 100%+ per month - Created Detailed system with Working code from idea to deployment - Added all components: models, indicators, blockchain integration - Implemented automatic retraining system - Added full Monitoring and alert system - Created documentation on Launch and usage - system ready for testing on blockchain testnet',
- 'feat: создан полный учебник on созданию робастных прибыльных ML systems':
+'feat: A complete textbook has been created on creating robotic profitable ML systems':
  'feat: create complete tutorial on Creating robust profitable ML systems',
- 'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Простой example" and "Сложный example" showcasing the development and deployment of robust ML models Using AutoML Gluon. - included Detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide Users with practical insights into building and deploying ML models, catering to both novice and advanced Users.':
+"Add simplification and promotional activities to AutoML Gluon presentation - Introduced two new sections: "Simple example" and "Challenged exemplification" involving the development and development of the robin ML methodsUSING AutoML Gluon. - Including Detailed codes, architecture diagrams, and performance methods for other applications. - Update the AutoML Gluon manial and README to refuse the new experiences, reflecting the communication\'s compliance and enforcement.- Added a script for generating graphics related to the production examples, improving visual representation. These additions provide Users with practical insights into building and deploying ML models, catering to both novice and advanced Users.':
  'Add simple and advanced production examples to AutoML Gluon documentation - Introduced two new sections: "Simple Example" and "Advanced Example" showcasing the development and deployment of robust ML models Using AutoML Gluon. - included Detailed code examples, architecture diagrams, and performance metrics for both approaches. - Updated the AutoML Gluon manual and README to reference the new examples, enhancing the documentation\'s comprehensiveness and usability. - Added a script for generating graphics related to the production examples, improving visual representation. These additions provide Users with practical insights into building and deploying ML models, catering to both novice and advanced Users.',
- 'fix dual charts for -d fastest and MACD ок with scale date':
+'fix dual charters for -d present and MACD ok with scal data':
  'fix dual charts for -d fastest and MACD OK with scale date',
- 'fix dual charts for -d fastest and MACD ок':
+'fix dual charters for -d present and MACD ok':
  'fix dual charts for -d fastest and MACD OK',
- 'feat: Улучшить фильтрацию данных on дате in CSV and JSON файлах':
+'feat: Improve data filtering on date in CSV and JSON files ':
  'feat: improve data filtering by date in CSV and JSON files',
  'add dask datashader bokeh in requirments':
  'add dask datashader bokeh to requirements',
@@ -225,7 +225,7 @@ def get_all_commits():
 
 def has_russian_text(text: str) -> bool:
  """check if text contains Cyrillic characters."""
- return bool(re.search(r'[А-Яа-яЁё]', text))
+Return bool (re.search(r'[A-Ya-Yo], text))
 
 
 def main():

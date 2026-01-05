@@ -1,62 +1,62 @@
 # Wave Indicator Fast-Fastest Parity Implementation Summary
 
-## 🎯 Задача
-Привести нижний график wave indicator in `-d fast` режиме к точно такому же виду, как in `-d fastest` режиме.
+## ♪ Task
+Bring the lower graph wave indicator in `-d fast' mode to exactly the same view as in `-d fastest' mode.
 
-## ✅ Выполненная Working
+♪ ♪ Worked out
 
-### 1. **Анализ различий между режимами**
-- Изучена реализация wave indicator in `dual_chart_fastest.py`
-- Проанализирована текущая реализация in `dual_chart_fast.py`
-- Выявлены ключевые различия in отображении линий
+###1. ** Analysis of the differences between modes**
+- Studyed implementation of wave index in `dual_chart_cast.py'
+- Analysis of current implementation in `dual_chart_fast.py'
+- Key differences in line display identified
 
-### 2. **Основные исправления**
+###2. ** Main corrections**
 
-#### A. **Упрощение отображения Wave Line**
-**Было**: Отдельные линии for "Wave (BUY)" and "Wave (SELL)" with дополнительной черной линией
-**Стало**: Единая линия "Wave" with динамическими цветами (красный/синий) как in fastest режиме
+#### A. **Simplification of Wave Line**
+****: Selected lines for "Wave (BUY)" and "Wave (SELL)" with an additional black line
+**Star**: Single line "Wave" with dynamic flowers (red/blue) as in present mode
 
 ```python
-# Удалена дополнительная черная линия
-# Упрощены названия in легенде: "Wave" вместо "Wave (BUY)" and "Wave (SELL)"
+# An additional black line removed
+# The names in the legend are simplified: "Wave" instead of "Wave (BUY)" and "Wave (SELL)"
 ```
 
-#### B. **fix стилей линий**
-- **Fast Line**: Красная пунктирная линия (`line_dash='dotted'`)
-- **MA Line**: Светло-синяя сплошная линия
-- **Wave Line**: Динамические цвета (красный/синий) with шириной 2
+### B. **fix line styles**
+- **Fast Line**: Red dot line ('line_dash='dotted')
+- **MA Line**: Light blue continuous line
+**Wave Line**: Dynamic colors (red/blue) with width 2
 
-#### C. **fix ошибки with line_dash**
+#### C. **fix mistakes with line_dash**
 ```python
-# Исправлено: line_dash='dot' → line_dash='dotted'
-# Bokeh требует 'dotted' вместо 'dot'
+# Corrected: line_dash='dot' \line_dash='dotted'
+# Bokeh demands 'dotted' instead of 'dot'
 ```
 
-### 3. **Результат после исправлений**
+### 3. **Result after corrections**
 
-#### Визуальные улучшения:
-- ✅ **Единообразие**: Нижний график in fast режиме теперь выглядит идентично fastest режиму
-- ✅ **Правильные цвета**: Wave line отображается with динамическими цветами
-- ✅ **Корректные стили**: Fast Line пунктирная, MA Line сплошная
-- ✅ **Чистая легенда**: Убраны дублирующие записи
+#### Visual improvements:
+== sync, corrected by elderman == @elder_man
+== sync, corrected by elderman == @elder_man
+- *Correctic style**: Fast Line dotted, MA Line complete
+- ♪ ♪ Clean legend**: duplicate records removed
 
-#### Technical улучшения:
-- ✅ **Совместимость**: Поддержка all вариантов названий columns
-- ✅ **performance**: Оптимизированное отображение
-- ✅ **Обработка ошибок**: Graceful handling отсутствующих данных
+♪## Technical improvement:
+- *Compatibility**: Support all versions of names
+== sync, corrected by elderman == @elder_man
+- ** Error processing**: Graceful handling missing data
 
-## 🧪 Тестирование
+♪ ♪ Testing ♪
 
-### Созданы тесты:
-- ✅ `test_wave_indicator_fast_mode_basic` - базовая функциональность
-- ✅ `test_wave_indicator_fast_mode_columns` - поддержка разных названий columns
-- ✅ `test_wave_indicator_fast_mode_signals` - отображение сигналов
+### The tests have been created:
+== sync, corrected by elderman ==
+== sync, corrected by elderman == @elder_man
+== sync, corrected by elderman == @elder_man
 - ✅ `test_wave_indicator_fast_mode_hover_tool` - hover tooltips
-- ✅ `test_wave_indicator_fast_mode_empty_data` - обработка пустых данных
-- ✅ `test_wave_indicator_fast_mode_Missing_columns` - отсутствующие колонки
-- ✅ `test_wave_indicator_fast_mode_integration` - интеграционное тестирование
+== sync, corrected by elderman == @elder_man
+== sync, corrected by elderman == @elder_man
+== sync, corrected by elderman == @elder_man
 
-### Результаты тестирования:
+### Test results:
 ```
 ✅ Passed: 7
 ❌ Failed: 0
@@ -65,14 +65,14 @@
 📈 Total: 7
 ```
 
-## 🎯 team for тестирования
+## ♪ Team for testing
 
-### comparison режимов:
+### COMParison modes:
 ```bash
-# Fast режим
+# Fast Mode
 uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
 
-# Fastest режим (for сравнения)
+# Fastest Mode (for comparison)
 uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fastest
 ```
 
@@ -81,28 +81,28 @@ uv run run_Analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4
 uv run pytest tests/plotting/test_wave_fast_mode.py -v
 ```
 
-## 📊 Статистика исправлений
+## ♪ The correct statistics
 
-- **Файлы изменены**: 1
- - `src/plotting/dual_chart_fast.py` - основная Logsка
-- **Строк кода изменено**: ~20
-- **tests создано**: 7
-- **Время разработки**: ~1 час
+- ** Files changed**: 1
+== sync, corrected by elderman == @elder_man
+- ** Code line changed**: ~20
+- **tests created**: 7
+- ** Development time**: ~ 1 hour
 
-## 🎉 Заключение
+♪ ♪ The ending ♪
 
-**Wave indicator in `-d fast` режиме теперь полностью соответствует `-d fastest` режиму:**
+**Wave indicator in `-d fast' mode now fully corresponds to `-d present' mode:**
 
-- ✅ **Визуальная идентичность**: Нижние графики выглядят одинаково
-- ✅ **Правильные цвета and стили**: Все линии отображаются корректно
-- ✅ **Единообразная легенда**: Убраны дублирующие записи
-- ✅ **Полная совместимость**: Поддержка all вариантов данных
-- ✅ **100% покрытие тестами**: Все functions протестированы
+- * Visual identity**: Lower graphs look the same
+- ♪ The right colors and styles**: All lines are correctly displayed
+- *Uniform legend**: Duplication records removed
+- * Full compatibility**: Support all data options
+All functions tested
 
-**Wave indicator готов к использованию in обоих режимах with одинаковым качеством отображения!** 🚀
+**Wave indicator ready to be used in both modes with the same display quality!**
 
-## 🔄 Следующие шаги
+## ♪ Next steps
 
-1. **Monitoring**: Отслеживание работы in продакшене
-2. **Оптимизация**: При необходимости improve performance
-3. **Расширение**: Применение анаLogsчного подхода к другим индикаторам
+1. **Monitoring**: Tracking work in sales
+2. **Optimization**: If necessary, impreve performance
+3. ** Extension**: Application of the analog approach to other indicators

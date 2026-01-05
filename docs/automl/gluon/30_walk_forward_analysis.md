@@ -1,43 +1,43 @@
-# Углубленное describe методик Walk-Forward Analysis
+# In-depth describe of Walk-Forward Analysis
 
 **Author:** Shcherbyna Rostyslav
-**Дата:** 2024
+**Date:** 2024
 
-## Why Walk-Forward анализ - золотой стандарт validation
+## Who Walk-Forward Analysis - Gold Standard of Validation
 
-### 🏆 Walk-Forward анализ как золотой стандарт validation
+### ♪ Walk-Forward analysis as a gold standard of validation
 
 ```mermaid
 graph TD
-A[ML-стратегия] --> B{Метод validation}
+A[ML-Strategy] -> B {Method of validation}
 
-B -->|Простой бэктестинг| C[❌ retraining on исторических данных]
-B -->|Out-of-sample| D[⚠️ Один разбиение данных]
-B -->|Cross-validation| E[⚠️ Нарушение temporary структуры]
-B -->|Walk-Forward анализ| F[✅ Золотой стандарт validation]
+B--~ ~ Simple back-up ~ C[~ re-training on historical data]
+B -->Out-of-sample
+B--~♪ Cross-validation♪ E[~ queu tremporial structure]
+B--~♪ Walk-Forward analysis ~ F[~ Gold Standard Validation]
 
-C --> G[Нестабильная performance]
-C --> H[Ложная уверенность]
-C --> I[Реальные потери in торговле]
+C --> G [Instable performance]
+C --> H [Position confidence]
+C -> I [Real losses in trade]
 
-D --> J[Ограниченная validation]
-E --> K[Утечка данных из будущего]
+D --> J [Restricted appreciation]
+E --> K [The future data leak]
 
-F --> L[Имитация реальной торговли]
-F --> M[Постоянное retraining]
-F --> N[Предсказания on будущее]
-F --> O[Избежание утечки данных]
+F --> L [Real trade simulation]
+F --> M [Continuing retraining]
+F --> N [Treaties on the future]
+F --> O [Prevention of data leakage]
 
-L --> P[Реалистичная оценка]
+L -> P [Realistic evaluation]
  M --> P
  N --> P
  O --> P
 
-P --> Q[Адаптивность к изменениям]
-P --> R[Стабильность во времени]
-P --> S[Робастность стратегии]
+P --> Q [Aptitude to change]
+P --> R [Stability over time]
+P -> S [Pativity of strategy]
 
-Q --> T[✅ Успешная торговля]
+Q -> T[~ good trade]
  R --> T
  S --> T
 
@@ -49,27 +49,27 @@ Q --> T[✅ Успешная торговля]
  style T fill:#2e7d32
 ```
 
-**Почему Walk-Forward анализ считается самым реалистичным методом validation?** Потому что он имитирует реальную торговлю - модель постоянно переобучается on новых данных and делает предсказания on будущее. Это единственный способ избежать "утечки данных из будущего".
+**Why is Walk-Forward analysis considered to be the most realistic method of validation?** Because it mimics real trade - the model is constantly re-learning on new data and making predictions on the future.
 
-### Что дает Walk-Forward анализ?
+### What gives Walk-Forward analysis?
 
-- **Реалистичность**: Имитирует реальную торговлю
-- **Адаптивность**: Модель адаптируется к изменяющимся условиям
-- **Стабильность**: Проверяет стабильность стратегии во времени
-- **Робастность**: Выявляет слабые места стратегии
+- ** Reality**: Simulates real trade
+- ** Adaptation**: Model adapts to changing conditions
+- **Stability**: Checks strategy stability over time
+- **Platitude**: Identifys the weaknesses of strategy
 
-### Что происходит без Walk-Forward Analysis?
+### What's going on without Walk-Forward Anallysis?
 
-- **retraining**: Модель запоминает исторические data
-- **Нестабильность**: Стратегия Workingет нестабильно во времени
-- **Ложная уверенность**: Завышенные ожидания from стратегии
-- **Реальные потери**: Стратегия not Workingет in реальной торговле
+- **retraining**: The model memorizes historical data
+- ** Instability**: The Workinget Strategy is unstable over time
+- ** false confidence**: Excess expectations from strategy
+- ** Real losses**: Strategy not Workinget in Real Trade
 
-## Теоретические основы Walk-Forward Analysis
+## Theoretical foundations of Walk-Forward Analysis
 
-### Математические принципы
+### Mathematical principles
 
-**Walk-Forward как скользящее окно:**
+**Walk-Forward as a sliding window:**
 
 ```python
 For t = train_window to T - test_window:
@@ -82,54 +82,54 @@ For t = train_window to T - test_window:
  performance[t] = evaluate(predictions, test_data)
 ```
 
-Где:
+Where:
 
-- `train_window` - размер окна обучения
-- `test_window` - размер окна тестирования
-- `T` - общая длина данных
-- `performance[t]` - performance on периоде t
+`training_window' is the size of the learning window
+`test_window' is the size of the test window
+`T' is the total data length
+- `performance[t] ` - performance on period t
 
-**Критерии качества Walk-Forward:**
+**Walk-Forward quality criteria:**
 
-1. **Стабильность**: Var(performance) < threshold
-2. **Тренд**: performance not ухудшается со временем
-3. **Адаптивность**: модель адаптируется к новым условиям
-4. **Робастность**: результаты стабильны on разных периодах
+1. **Stability**: Var(performance) < threshold
+2. **Trend**: performance no deteriorates over time
+** Adaptation**: The model adapts to the new environment
+4. **Purity**: results stable on different periods
 
-### Типы Walk-Forward Analysis
+### Types of Walk-Forward Analysis
 
-### 📊 comparison типов Walk-Forward Analysis
+### ♪ a partnership of the Walk-Forward Anallysis
 
 ```mermaid
 graph TB
-A[Типы Walk-Forward Analysis] --> B[Фиксированное окно]
-A --> C[Расширяющееся окно]
-A --> D[Скользящее окно]
-A --> E[Адаптивное окно]
+A[Walk-Forward Analysis] --> B [Fixed Window]
+A -> C [Expansing window]
+A --> D [Slipping Window]
+A --> E [Adaptive window]
 
-B --> B1[Постоянный размер окна]
-B --> B2[Простой in реализации]
-B --> B3[❌ Может устаревать]
-B --> B4[⚡ Быстрое выполнение]
-B --> B5[📊 Фиксированные parameters]
+B --> B1 [Continuing window size]
+B -> B2 [Simple in implementation]
+B -> B3[ may become obsolete]
+B -> B4[~ Rapid implementation]
+B --> B5[~ Fixed parameters]
 
-C --> C1[Окно постоянно растет]
-C --> C2[Использует всю историю]
-C --> C3[⚠️ Может быть медленным]
-C --> C4[📈 Больше данных со временем]
-C --> C5[🔄 Накопление знаний]
+C --> C1 [The window is constantly growing]
+C --> C2 [Uses the whole story]
+C --> C3[ may be slow]
+C --> C4[~ More data over time]
+C -> C5[~ Knowledge-building]
 
-D --> D1[Окно сдвигается]
-D --> D2[Баланс истории and актуальности]
-D --> D3[✅ Наиболее популярный]
-D --> D4[⚖️ Оптимальный баланс]
-D --> D5[🎯 Стабильная performance]
+D -> D1 [The window is shifting]
+D -> D2 [Balance of history and relevance]
+D --> D3[~ Most popular]
+D -> D4[~ Optimal balance]
+D --> D5[ ♪ Stable performance]
 
-E --> E1[Размер адаптируется к условиям]
-E --> E2[Сложный in реализации]
-E --> E3[✅ Наиболее гибкий]
-E --> E4[🧠 Интеллектуальная адаптация]
-E --> E5[📊 Динамические parameters]
+E -> E1 [The measurement adapts to the conditions]
+E --> E2 [Complicated in implementation]
+E --> E3[: Most flexible]
+E -> E4[~ Intellectual adaptation]
+E --> E5[~ Dynamic parameters]
 
  style A fill:#e3f2fd
  style B fill:#ffcdd2
@@ -138,82 +138,82 @@ E --> E5[📊 Динамические parameters]
  style E fill:#4caf50
 ```
 
-#### 1. Фиксированное окно (Fixed Window)
+####1. Fixed Windows
 
-- Постоянный размер окна обучения
-- Простой in реализации
-- Может устаревать
+- Permanent size of the training window
+- Simple in implementation
+- It might get old.
 
-#### 2. Расширяющееся окно (Expanding Window)
+####2. Expanding Windows
 
-- Окно обучения постоянно растет
-- Использует всю доступную историю
-- Может быть медленным
+- The learning window is constantly growing.
+- Uses all available history.
+- Could be slow.
 
-#### 3. Скользящее окно (Rolling Window)
+#### 3. Rolling Windows window
 
-- Окно обучения сдвигается
-- Баланс между историей and актуальностью
-- Наиболее популярный
+- The learning window is shifting.
+- Balance between history and relevance
+- Most popular.
 
-#### 4. Адаптивное окно (Adaptive Window)
+####4. Adaptation Windows
 
-- Размер окна адаптируется к условиям
-- Сложный in реализации
-- Наиболее гибкий
+- Window size adapts to conditions
+- Complex in implementation
+- Most flexible
 
-## Продвинутые методики Walk-Forward Analysis
+## Advanced Walk-Forward Analysis
 
-### 1. Базовый Walk-Forward анализ
+###1. Basic Walk-Forward analysis
 
 ### 🔄 process Walk-Forward Analysis
 
 ```mermaid
 graph TD
-A[Исходные временные data] --> B[configuration параметров]
+A [Reference time data] -> B [configration of parameters]
  B --> C[train_window = 252<br/>test_window = 30<br/>step = 30]
 
-C --> D[Инициализация цикла]
+C -> D [Initiation of the cycle]
  D --> E[i = train_window]
 
-E --> F[Обучающие data<br/>data[i-train_window:i]]
-E --> G[testsые data<br/>data[i:i+test_window]]
+E --> F [Learning data<br/>data[i-training_window:i]]]
+E --> G[tests data<br/>data[i:i+test_window]]
 
-F --> H[Обучение модели<br/>model.fit(train_data)]
-G --> I[Предсказания<br/>model.predict(test_data)]
+F --> H [Learning the model<br/>model.fit(training_data)]
+G --> I [Tracks<br/>model.predict(test_data)]
 
  H --> I
-I --> J[Расчет доходности стратегии<br/>predictions * returns]
+I -> J [Staff return calculation<br/>predations * returns]
 
-J --> K[metrics качества]
-K --> L[Коэффициент Шарпа]
-K --> M[Максимальная просадка]
-K --> N[Общая доходность]
+J --> K[quality metrics]
+K-> L [Sharp coefficient]
+K-> M[maximum draught]
+K-> N [Total return]
 
-L --> O[Сохранение результатов]
+L -> O [Conservation of results]
  M --> O
  N --> O
 
-O --> P[update indexа<br/>i += step]
+O --> P[update index<br/>i += step]
  P --> Q{i < len(data) - test_window?}
 
-Q -->|Да| F
-Q -->|Нет| R[Анализ результатов]
+Q --\\\\\\\\\F
+Q --\\\\\\R[Analysis of results]
 
-R --> S[Стабильность во времени]
-R --> T[Адаптивность модели]
-R --> U[Робастность стратегии]
+R --> S [Stability over time]
+R --> T[Aptitude of the model]
+R --> U [Purity of strategy]
 
-S --> V[Оценка качества стратегии]
+S -> V [Strategy quality assessment]
  T --> V
  U --> V
 
-V --> W{Стратегия успешна?}
-W -->|Да| X[✅ Деплой in продакшен]
-W -->|Нет| Y[❌ Оптимизация параметров]
+V --> W {The Strategy is successful?}
+W--~♪ Yeah ♪ X[~ Deploy in sales]
+W--~ ~ No\\Y[~ Optimization of parameters]
 
-Y --> Z[configuration окна обучения]
-Z --> AA[Повторное тестирование]
+Y -> Z [configuring learning window]
+Z -> AA [Re-testing]
  AA --> B
 
  style A fill:#e3f2fd
@@ -223,94 +223,94 @@ Z --> AA[Повторное тестирование]
  style Y fill:#ff9800
 ```
 
-**Простая реализация:**
+** Simple implementation:**
 
 ```python
 def walk_forward_Analysis(data, model, train_window=252, test_window=30, step=30):
  """
-Базовый Walk-Forward анализ for validation ML-стратегий
+Basic Walk-Forward Analysis for validation ML strategies
 
  Parameters:
  -----------
  data : pandas.dataFrame
-Временные ряды данных with колонками:
-- 'returns': доходность актива (float)
-- 'features': признаки for модели (array-like)
-- index: временные метки (datetime)
+Time series with columns:
+- 'returns': asset return (float)
+- 'features': signs for the model (array-lake)
+- Index: Time tags (datetime)
 
  model : sklearn-compatible model
-Объект модели machine learning with методами:
-- fit(X, y): обучение модели
-- predict(X): предсказания
-Должен быть совместим with sklearn API
+The object of the model machine lightning with methods is:
+- Fit(X, y): Model training
+- predict(X): predictions
+Should be compatible with sclearn API
 
  train_window : int, default=252
-Размер окна обучения in днях:
-- 252: один торговый год (рекомендуется)
-- 126: полгода (for быстрого тестирования)
-- 504: два года (for долгосрочных стратегий)
-- Минимум: 50 дней for стабильности
-- Максимум: 1000 дней for избежания retraining
+Size of learning window in days:
+- 252: one trade year (recommended)
+126: Six months (for rapid testing)
+- 504: two years (for long-term strategies)
+- Minimum: 50 days for stability
+- Maximum: 1,000 days for avoidance of retraining
 
  test_window : int, default=30
-Размер окна тестирования in днях:
-- 30: один месяц (рекомендуется)
-- 7: одна неделя (for высокочастотных стратегий)
-- 90: квартал (for долгосрочных стратегий)
-- Минимум: 5 дней for статистической значимости
-- Максимум: 180 дней for избежания устаревания
+Size of test window in days:
+- 30: one month (recommended)
+- 7: One week (for high frequency strategies)
+90: quarter (for long-term strategies)
+- Minimum: 5 days for statistical significance
+- Maximum: 180 days for avoidance of obsolescence
 
  step : int, default=30
-Шаг сдвига окна in днях:
-- 30: ежемесячное retraining (рекомендуется)
-- 7: еженедельное retraining (for активных стратегий)
-- 1: ежедневное retraining (for высокочастотных стратегий)
-- 90: квартальное retraining (for консервативных стратегий)
-- step <= test_window for избежания пропусков данных
+Step of window shift in days:
+- 30: monthly retraining (recommended)
+- 7: weekly retraining (for active strategies)
+- 1: Daily retraining (for high frequency strategies)
+90: quarterly retraining (for conservative strategies)
+- step <=test_widow for missing data
 
  Returns:
  --------
  pd.dataFrame
-Результаты Analysis with колонками:
-- 'start_date': начало периода обучения (datetime)
-- 'end_date': конец периода обучения (datetime)
-- 'test_start': начало периода тестирования (datetime)
-- 'test_end': конец периода тестирования (datetime)
-- 'sharpe': коэффициент Шарпа за период (float)
-- 'max_drawdown': максимальная просадка за период (float)
-- 'total_return': общая доходность за период (float)
-- 'predictions': предсказания модели (array)
+Results of Analysis with columns:
+- 'start_date': Start of the learning period (datetime)
+- 'end_date': end of study period (datetime)
+- 'test_start': Start of the test period (datetime)
+- 'test_end': end of test period (datetime)
+- 'sharpe': Sharp coefficient over the period float
+- 'max_drawdown': maximum tare period (float)
+- 'Total_return': total return over period (float)
+- 'predications': model predictions (array)
 
  Raises:
  -------
  ValueError
-Если train_window < 50 or test_window < 5
-Если step > test_window
-Если len(data) < train_window + test_window
+If train_window < 50 or test_widow < 5
+If step > test_wind
+If Len(data) < train_widow + test_window
 
  Examples:
  ---------
  >>> data = pd.read_csv('financial_data.csv', index_col=0, parse_dates=True)
  >>> model = RandomForestRegressor(n_estimators=100)
  >>> results = walk_forward_Analysis(data, model, train_window=252, test_window=30)
->>> print(f"Средний коэффициент Шарпа: {results['sharpe'].mean():.2f}")
+>>print(f) Average Sharp coefficient: {results['sharpe']mean(: 2f}})
  """
  results = []
 
  for i in range(train_window, len(data) - test_window, step):
-# Обучающие data
+# Training data
  train_data = data[i-train_window:i]
 
-# testsые data
+# Testsy data
  test_data = data[i:i+test_window]
 
-# Обучение модели
+# Model learning
  model.fit(train_data)
 
-# Предсказания
+# Premonition
  predictions = model.predict(test_data)
 
-# Оценка качества
+# Quality assessment
  returns = test_data['returns']
  strategy_returns = predictions * returns
 
@@ -332,108 +332,108 @@ def walk_forward_Analysis(data, model, train_window=252, test_window=30, step=30
 
  return pd.dataFrame(results)
 
-# example использования
+# Example of use
 wf_results = walk_forward_Analysis(data, model, train_window=252, test_window=30, step=30)
 ```
 
-**Расширяющееся окно:**
+** Extended window:**
 
 ```python
 def expanding_window_Analysis(data, model, initial_train_window=252, test_window=30, step=30):
  """
-Walk-Forward анализ with расширяющимся окном обучения
+Walk-Forward analysis with expanding learning window
 
-in отличие from фиксированного окна, расширяющееся окно использует всю доступную
-историю данных for обучения, что позволяет модели накапливать знания со временем.
+In contrast from a fixed window, the expanding window uses all available windows
+The history of data for learning, which allows models to accumulate knowledge over time.
 
  Parameters:
  -----------
  data : pandas.dataFrame
-Временные ряды данных with колонками:
-- 'returns': доходность актива (float)
-- 'features': признаки for модели (array-like)
-- index: временные метки (datetime)
+Time series with columns:
+- 'returns': asset return (float)
+- 'features': signs for the model (array-lake)
+- Index: Time tags (datetime)
 
  model : sklearn-compatible model
-Объект модели machine learning with методами:
-- fit(X, y): обучение модели
-- predict(X): предсказания
-Должен быть совместим with sklearn API
+The object of the model machine lightning with methods is:
+- Fit(X, y): Model training
+- predict(X): predictions
+Should be compatible with sclearn API
 
  initial_train_window : int, default=252
-Начальный размер окна обучения in днях:
-- 252: один торговый год (рекомендуется)
-- 126: полгода (for быстрого тестирования)
-- 504: два года (for долгосрочных стратегий)
-- Минимум: 50 дней for стабильности
-- После этого окно будет расширяться on step дней каждую итерацию
+Initial size of the learning window in days:
+- 252: one trade year (recommended)
+126: Six months (for rapid testing)
+- 504: two years (for long-term strategies)
+- Minimum: 50 days for stability
+After that, the window will expand on step days every iteration.
 
  test_window : int, default=30
-Размер окна тестирования in днях:
-- 30: один месяц (рекомендуется)
-- 7: одна неделя (for высокочастотных стратегий)
-- 90: квартал (for долгосрочных стратегий)
-- Минимум: 5 дней for статистической значимости
-- Максимум: 180 дней for избежания устаревания
+Size of test window in days:
+- 30: one month (recommended)
+- 7: One week (for high frequency strategies)
+90: quarter (for long-term strategies)
+- Minimum: 5 days for statistical significance
+- Maximum: 180 days for avoidance of obsolescence
 
  step : int, default=30
-Шаг сдвига окна in днях:
-- 30: ежемесячное retraining (рекомендуется)
-- 7: еженедельное retraining (for активных стратегий)
-- 1: ежедневное retraining (for высокочастотных стратегий)
-- 90: квартальное retraining (for консервативных стратегий)
-- step <= test_window for избежания пропусков данных
+Step of window shift in days:
+- 30: monthly retraining (recommended)
+- 7: weekly retraining (for active strategies)
+- 1: Daily retraining (for high frequency strategies)
+90: quarterly retraining (for conservative strategies)
+- step <=test_widow for missing data
 
  Returns:
  --------
  pd.dataFrame
-Результаты Analysis with колонками:
-- 'train_start': начало периода обучения (datetime)
-- 'train_end': конец периода обучения (datetime)
-- 'test_start': начало периода тестирования (datetime)
-- 'test_end': конец периода тестирования (datetime)
-- 'train_size': размер окна обучения (int) - увеличивается со временем
-- 'sharpe': коэффициент Шарпа за период (float)
-- 'max_drawdown': максимальная просадка за период (float)
-- 'total_return': общая доходность за период (float)
+Results of Analysis with columns:
+- 'training_start': Start of study period (datetime)
+- 'training_end': end of period of study (datetime)
+- 'test_start': Start of the test period (datetime)
+- 'test_end': end of test period (datetime)
+- 'training_size': the size of the learning window (int) - increases over time
+- 'sharpe': Sharp coefficient over the period float
+- 'max_drawdown': maximum tare period (float)
+- 'Total_return': total return over period (float)
 
  Raises:
  -------
  ValueError
-Если initial_train_window < 50 or test_window < 5
-Если step > test_window
-Если len(data) < initial_train_window + test_window
+If initial_training_window < 50 or test_window < 5
+If step > test_wind
+If Len(data) < initial_training_window + test_window
 
  Notes:
  ------
-- Расширяющееся окно может быть медленнее фиксированного из-за увеличения
-размера данных for обучения
-- Подходит for стратегий, где исторические data остаются релевантными
-- Может привести к переобучению on старых данных
+- The extended window may be slower than the fixed window due to the increase
+data for training
+- It is appropriate for strategies where historical data remain relevant
+- Could lead to re-learning on old data.
 
  Examples:
  ---------
  >>> data = pd.read_csv('financial_data.csv', index_col=0, parse_dates=True)
  >>> model = RandomForestRegressor(n_estimators=100)
  >>> results = expanding_window_Analysis(data, model, initial_train_window=252)
->>> print(f"Финальный размер окна: {results['train_size'].iloc[-1]}")
+>>print(f" Final window size: {['train_size'].iloc[-1]})
  """
  results = []
 
  for i in range(initial_train_window, len(data) - test_window, step):
-# Обучающие data (расширяющееся окно)
+# Learning data (expanding window)
  train_data = data[:i]
 
-# testsые data
+# Testsy data
  test_data = data[i:i+test_window]
 
-# Обучение модели
+# Model learning
  model.fit(train_data)
 
-# Предсказания
+# Premonition
  predictions = model.predict(test_data)
 
-# Оценка качества
+# Quality assessment
  returns = test_data['returns']
  strategy_returns = predictions * returns
 
@@ -455,54 +455,54 @@ in отличие from фиксированного окна, расширяющ
 
  return pd.dataFrame(results)
 
-# example использования
+# Example of use
 expanding_results = expanding_window_Analysis(data, model, initial_train_window=252, test_window=30)
 ```
 
-### 2. Адаптивный Walk-Forward анализ
+♪##2, adaptive Walk-Forward analysis
 
-### 🧠 Механизм адаптивного окна
+### ♪ Adaptation window mechanism
 
 ```mermaid
 graph TD
-A[Исходные data] --> B[Инициализация параметров]
+A [Reference data] -> B [Initiation of parameters]
  B --> C[min_window = 100<br/>max_window = 500<br/>current_window = min_window]
 
-C --> D[Цикл Walk-Forward]
-D --> E[Обучающие data<br/>data[i-current_window:i]]
-E --> F[Обучение модели]
-F --> G[Предсказания and metrics]
+C --> D [Walk-Forward Cycle]
+D --> E [Learning data<br/>data[i-surrent_window:i]]
+E -> F [model training]
+F --> G [Treaties and metrics]
 
-G --> H[Расчет performance<br/>current_sharpe]
-H --> I{Есть предыдущие результаты?}
+G --> H [Calculation performance<br/>current_sharpe]
+H --> I {Are there any previous results?}
 
-I -->|Нет| J[Сохранение результатов<br/>current_window остается]
-I -->|Да| K[comparison with предыдущей производительностью<br/>recent_sharpe]
+I --\\\\\\J[Conservation of results\br/>surrent_Window remains]
+I -->\\\\K[comparison with previous output <br/>recent_sharpe]
 
-K --> L{performance ухудшилась?<br/>current_sharpe < recent_sharpe * 0.9}
-L -->|Да| M[Увеличение окна<br/>current_window += 50]
-L -->|Нет| N{performance улучшилась?<br/>current_sharpe > recent_sharpe * 1.1}
+K --> L{operation has deteriorated?<br/>current_sharpe < recent_sharpe * 0.9}
+L -->\\\\\M[Elevation of window\br/>current_window +=50]
+L -->\\\\\\\\\\\\\\\\\\\\\\br/>current_sharpe > recent_sharpe * 1.1}
 
-N -->|Да| O[Уменьшение окна<br/>current_window -= 50]
-N -->|Нет| P[Окно остается без изменений]
+N -->\\\\\\O[Lower window\br/>current_window = 50]
+N-~ ~ No~ P[The window remains unchanged]
 
-M --> Q[check границ<br/>current_window = min(current_window, max_window)]
-O --> R[check границ<br/>current_window = max(current_window, min_window)]
-P --> S[Сохранение результатов]
+M --> Q[check boundaries<br/>current_window = min(current_window, max_window)]
+O --> R[check boundaries<br/>current_window = max(current_window, min_window)]
+P -> S [Conservation of results]
  Q --> S
  R --> S
  J --> S
 
-S --> T[update indexа<br/>i += step]
-T --> U{Продолжить цикл?}
-U -->|Да| E
-U -->|Нет| V[Анализ адаптивности]
+S --> T[update index<br/>i += step]
+T --> U { Continue the cycle?}
+U - ♪ Yes ♪ E
+U-~\\\\V[Analysis of adaptiveness]
 
-V --> W[Статистика изменения окна]
-V --> X[Корреляция окна and performance]
-V --> Y[Оценка эффективности адаптации]
+V -> W [Statistics of window change]
+V --> X [Wing window and performance]
+V -> Y [Evaluating the effectiveness of adaptation]
 
-W --> Z[Финальная оценка стратегии]
+W -> Z [Final evaluation of the strategy]
  X --> Z
  Y --> Z
 
@@ -513,122 +513,122 @@ W --> Z[Финальная оценка стратегии]
  style Z fill:#2e7d32
 ```
 
-**Адаптация размера окна:**
+** Window size adaptation:**
 
 ```python
 def adaptive_window_Analysis(data, model, min_window=100, max_window=500,
  test_window=30, step=30, stability_threshold=0.1):
  """
-Walk-Forward анализ with адаптивным окном обучения
+Walk-Forward analysis with adaptive learning window
 
-Размер окна обучения автоматически адаптируется on basis performance
-модели. При ухудшении performance окно увеличивается, при улучшении - уменьшается.
+The size of the learning window is automatically adapted on base performance
+The window increases when performance deteriorates, and the window decreases when it improves.
 
  Parameters:
  -----------
  data : pandas.dataFrame
-Временные ряды данных with колонками:
-- 'returns': доходность актива (float)
-- 'features': признаки for модели (array-like)
-- index: временные метки (datetime)
+Time series with columns:
+- 'returns': asset return (float)
+- 'features': signs for the model (array-lake)
+- Index: Time tags (datetime)
 
  model : sklearn-compatible model
-Объект модели machine learning with методами:
-- fit(X, y): обучение модели
-- predict(X): предсказания
-Должен быть совместим with sklearn API
+The object of the model machine lightning with methods is:
+- Fit(X, y): Model training
+- predict(X): predictions
+Should be compatible with sclearn API
 
  min_window : int, default=100
-Минимальный размер окна обучения in днях:
-- 100: минимум for стабильности (рекомендуется)
-- 50: for быстрого тестирования
-- 200: for консервативных стратегий
-- Минимум: 30 дней for статистической значимости
-- Максимум: 300 дней for избежания retraining
+Minimum size of teaching window in days:
+100: minimum for stability (recommended)
+- 50: for rapid testing
+- 200: for conservative strategies
+- Minimum: 30 days for statistical significance
+- Maximum: 300 days for avoidance of retraining
 
  max_window : int, default=500
-Максимальный размер окна обучения in днях:
-- 500: два года торговых дней (рекомендуется)
-- 252: один год (for быстрых стратегий)
-- 1000: четыре года (for долгосрочных стратегий)
-- Минимум: min_window + 100
-- Максимум: 2000 дней for избежания retraining
+Maximum size of learning window in days:
+- 500: two years of trade days (recommended)
+- 252: one year (for rapid strategies)
+- 1000: four years (for long-term strategies)
+- Minimum: min_Window + 100
+- Maximum: 2,000 days for avoidance of retraining
 
  test_window : int, default=30
-Размер окна тестирования in днях:
-- 30: один месяц (рекомендуется)
-- 7: одна неделя (for высокочастотных стратегий)
-- 90: квартал (for долгосрочных стратегий)
-- Минимум: 5 дней for статистической значимости
-- Максимум: 180 дней for избежания устаревания
+Size of test window in days:
+- 30: one month (recommended)
+- 7: One week (for high frequency strategies)
+90: quarter (for long-term strategies)
+- Minimum: 5 days for statistical significance
+- Maximum: 180 days for avoidance of obsolescence
 
  step : int, default=30
-Шаг сдвига окна in днях:
-- 30: ежемесячное retraining (рекомендуется)
-- 7: еженедельное retraining (for активных стратегий)
-- 1: ежедневное retraining (for высокочастотных стратегий)
-- 90: квартальное retraining (for консервативных стратегий)
-- step <= test_window for избежания пропусков данных
+Step of window shift in days:
+- 30: monthly retraining (recommended)
+- 7: weekly retraining (for active strategies)
+- 1: Daily retraining (for high frequency strategies)
+90: quarterly retraining (for conservative strategies)
+- step <=test_widow for missing data
 
  stability_threshold : float, default=0.1
-Порог for определения значимого изменения performance:
-- 0.1: 10% изменение (рекомендуется)
-- 0.05: 5% изменение (for чувствительных стратегий)
-- 0.2: 20% изменение (for стабильных стратегий)
-- Минимум: 0.01 (1% изменение)
-- Максимум: 0.5 (50% изменение)
+The threshold for determining a significant change in performance:
+0.1: 10% change (recommended)
+- 0.05: 5% change (for sensitive strategies)
+0.2: 20% change (for stable strategies)
+- Minimum: 0.01 (1 per cent change)
+- Maximum: 0.5 (50% change)
 
  Returns:
  --------
  pd.dataFrame
-Результаты Analysis with колонками:
-- 'train_start': начало периода обучения (datetime)
-- 'train_end': конец периода обучения (datetime)
-- 'test_start': начало периода тестирования (datetime)
-- 'test_end': конец периода тестирования (datetime)
-- 'window_size': текущий размер окна обучения (int)
-- 'sharpe': коэффициент Шарпа за период (float)
-- 'max_drawdown': максимальная просадка за период (float)
-- 'total_return': общая доходность за период (float)
+Results of Analysis with columns:
+- 'training_start': Start of study period (datetime)
+- 'training_end': end of period of study (datetime)
+- 'test_start': Start of the test period (datetime)
+- 'test_end': end of test period (datetime)
+'Window_size': the current size of the learning window (int)
+- 'sharpe': Sharp coefficient over the period float
+- 'max_drawdown': maximum tare period (float)
+- 'Total_return': total return over period (float)
 
  Raises:
  -------
  ValueError
-Если min_window < 30 or max_window < min_window + 100
-Если test_window < 5 or step > test_window
-Если stability_threshold < 0.01 or stability_threshold > 0.5
-Если len(data) < min_window + test_window
+If min_window < 30 or max_widow < min_widow + 100
+If test_window < 5 or step > test_window
+If stability_threshold < 0.01 or stability_threshold > 0.5
+If Len(data) < min_window + test_window
 
  Notes:
  ------
-- Адаптивное окно может быть нестабильным in начале из-за недостатка данных
-- Рекомендуется использовать минимум 10 итераций for стабилизации
-- Подходит for стратегий with изменяющимися рыночными условиями
+- The adaptive window can be unstable in the beginning due to lack of data
+- It is recommended to use a minimum of 10 iterations for stabilization
+- Suitable for strategies with changing market conditions
 
  Examples:
  ---------
  >>> data = pd.read_csv('financial_data.csv', index_col=0, parse_dates=True)
  >>> model = RandomForestRegressor(n_estimators=100)
  >>> results = adaptive_window_Analysis(data, model, min_window=100, max_window=500)
->>> print(f"Средний размер окна: {results['window_size'].mean():.0f}")
+>>print(f) Average window size: {results['window_size']mean(:.0f}})
  """
  results = []
  current_window = min_window
 
  for i in range(min_window, len(data) - test_window, step):
-# Обучающие data
+# Training data
  train_data = data[i-current_window:i]
 
-# testsые data
+# Testsy data
  test_data = data[i:i+test_window]
 
-# Обучение модели
+# Model learning
  model.fit(train_data)
 
-# Предсказания
+# Premonition
  predictions = model.predict(test_data)
 
-# Оценка качества
+# Quality assessment
  returns = test_data['returns']
  strategy_returns = predictions * returns
 
@@ -637,15 +637,15 @@ Walk-Forward анализ with адаптивным окном обучения
  max_drawdown = calculate_max_drawdown(strategy_returns)
  total_return = strategy_returns.sum()
 
-# Адаптация размера окна
+# Adaptation of the size of the window
  if len(results) > 0:
  recent_sharpe = results[-1]['sharpe']
  current_sharpe = sharpe
 
-# Если performance ухудшается, увеличиваем окно
+# If performance gets worse, expand the window
  if current_sharpe < recent_sharpe * (1 - stability_threshold):
  current_window = min(current_window + 50, max_window)
-# Если performance улучшается, уменьшаем окно
+# If performance improves, let's reduce the window
  elif current_sharpe > recent_sharpe * (1 + stability_threshold):
  current_window = max(current_window - 50, min_window)
 
@@ -662,133 +662,133 @@ Walk-Forward анализ with адаптивным окном обучения
 
  return pd.dataFrame(results)
 
-# example использования
+# Example of use
 adaptive_results = adaptive_window_Analysis(data, model, min_window=100, max_window=500)
 ```
 
-**Адаптация on basis волатильности:**
+** Adaptation on baseline volatility:**
 
 ```python
 def volatility_adaptive_Analysis(data, model, base_window=252, test_window=30,
  step=30, volatility_lookback=50):
  """
-Walk-Forward анализ with адаптацией размера окна к волатильности рынка
+Walk-Forward analysis with adaptation of window size to market volatility
 
-Размер окна обучения адаптируется on basis текущей волатильности рынка:
-- Высокая волатильность: меньше окно (быстрая адаптация)
-- Низкая волатильность: больше окно (стабильность)
+The size of the training window adapts to the current market volatility:
+High volatility: less window (rapid adaptation)
+Low volatility: more window (stability)
 
  Parameters:
  -----------
  data : pandas.dataFrame
-Временные ряды данных with колонками:
-- 'returns': доходность актива (float) - используется for расчета волатильности
-- 'features': признаки for модели (array-like)
-- index: временные метки (datetime)
+Time series with columns:
+- 'returns': asset return (float) - used for the calculation of volatility
+- 'features': signs for the model (array-lake)
+- Index: Time tags (datetime)
 
  model : sklearn-compatible model
-Объект модели machine learning with методами:
-- fit(X, y): обучение модели
-- predict(X): предсказания
-Должен быть совместим with sklearn API
+The object of the model machine lightning with methods is:
+- Fit(X, y): Model training
+- predict(X): predictions
+Should be compatible with sclearn API
 
  base_window : int, default=252
-Базовый размер окна обучения in днях:
-- 252: один торговый год (рекомендуется)
-- 126: полгода (for быстрого тестирования)
-- 504: два года (for долгосрочных стратегий)
-- Минимум: 50 дней for стабильности
-- Максимум: 1000 дней for избежания retraining
+Basic size of the learning window in days:
+- 252: one trade year (recommended)
+126: Six months (for rapid testing)
+- 504: two years (for long-term strategies)
+- Minimum: 50 days for stability
+- Maximum: 1,000 days for avoidance of retraining
 
  test_window : int, default=30
-Размер окна тестирования in днях:
-- 30: один месяц (рекомендуется)
-- 7: одна неделя (for высокочастотных стратегий)
-- 90: квартал (for долгосрочных стратегий)
-- Минимум: 5 дней for статистической значимости
-- Максимум: 180 дней for избежания устаревания
+Size of test window in days:
+- 30: one month (recommended)
+- 7: One week (for high frequency strategies)
+90: quarter (for long-term strategies)
+- Minimum: 5 days for statistical significance
+- Maximum: 180 days for avoidance of obsolescence
 
  step : int, default=30
-Шаг сдвига окна in днях:
-- 30: ежемесячное retraining (рекомендуется)
-- 7: еженедельное retraining (for активных стратегий)
-- 1: ежедневное retraining (for высокочастотных стратегий)
-- 90: квартальное retraining (for консервативных стратегий)
-- step <= test_window for избежания пропусков данных
+Step of window shift in days:
+- 30: monthly retraining (recommended)
+- 7: weekly retraining (for active strategies)
+- 1: Daily retraining (for high frequency strategies)
+90: quarterly retraining (for conservative strategies)
+- step <=test_widow for missing data
 
  volatility_lookback : int, default=50
-Период for расчета текущей волатильности in днях:
-- 50: два месяца (рекомендуется)
-- 30: один месяц (for быстрой адаптации)
-- 100: четыре месяца (for стабильной оценки)
-- Минимум: 10 дней for статистической значимости
-- Максимум: 200 дней for избежания устаревания
+Period for calculation of current volatility in days:
+- 50: two months (recommended)
+- 30: one month (for rapid adaptation)
+- 100: four months (for stable estimates)
+- Minimum: 10 days for statistical significance
+- Maximum 200 days for avoidance of obsolescence
 
  Returns:
  --------
  pd.dataFrame
-Результаты Analysis with колонками:
-- 'train_start': начало периода обучения (datetime)
-- 'train_end': конец периода обучения (datetime)
-- 'test_start': начало периода тестирования (datetime)
-- 'test_end': конец периода тестирования (datetime)
-- 'window_size': адаптированный размер окна обучения (int)
-- 'volatility_ratio': отношение текущей к долгосрочной волатильности (float)
-- 'sharpe': коэффициент Шарпа за период (float)
-- 'max_drawdown': максимальная просадка за период (float)
-- 'total_return': общая доходность за период (float)
+Results of Analysis with columns:
+- 'training_start': Start of study period (datetime)
+- 'training_end': end of period of study (datetime)
+- 'test_start': Start of the test period (datetime)
+- 'test_end': end of test period (datetime)
+- 'Window_size': adapted learning window size (int)
+- 'volatility_ratio': the ratio of current to long-term volatility (float)
+- 'sharpe': Sharp coefficient over the period float
+- 'max_drawdown': maximum tare period (float)
+- 'Total_return': total return over period (float)
 
  Raises:
  -------
  ValueError
-Если base_window < 50 or test_window < 5
-Если step > test_window or volatility_lookback < 10
-Если len(data) < base_window + test_window + volatility_lookback
+If base_widow < 50 or test_widow < 5
+If step > test_window or volatility_lookback < 10
+If Len(data) < base_widow + test_widow + volatility_lookback
 
  Notes:
  ------
-- Адаптация основана on сравнении текущей and долгосрочной волатильности
-- При volatility_ratio > 1.5: окно уменьшается to 70% from базового
-- При volatility_ratio < 0.7: окно увеличивается to 130% from базового
-- Подходит for стратегий, чувствительных к волатильности рынка
+Adaptation is based on the comparison of current and long-term volatility
+- With volatility_ratio > 1.5: window reduced to 70% from base
+- When volatility_ratio < 0.7: window increases to 130% from base
+- Suitable for strategies sensitive to market volatility
 
  Examples:
  ---------
  >>> data = pd.read_csv('financial_data.csv', index_col=0, parse_dates=True)
  >>> model = RandomForestRegressor(n_estimators=100)
  >>> results = volatility_adaptive_Analysis(data, model, base_window=252)
->>> print(f"Средний коэффициент волатильности: {results['volatility_ratio'].mean():.2f}")
+>>print(f) Average coefficient of volatility: {results['volatility_ratio']mean(: 2f}})
  """
  results = []
 
  for i in range(base_window, len(data) - test_window, step):
-# Расчет волатильности
+# Calculation of volatility
  recent_volatility = data['returns'].iloc[i-volatility_lookback:i].std()
  long_term_volatility = data['returns'].iloc[:i].std()
 
-# Адаптация размера окна on basis волатильности
+# Adaptation of the size of the window on basis of volatility
  volatility_ratio = recent_volatility / long_term_volatility
 
-if volatility_ratio > 1.5: # Высокая волатильность
-window_size = int(base_window * 0.7) # Меньше окно
-elif volatility_ratio < 0.7: # Низкая волатильность
-window_size = int(base_window * 1.3) # Больше окно
+if volatility_ratio > 1.5: # High volatility
+Windows_size = int(base_window * 0.7) # Less window
+elif volatility_ratio < 0.7: # Low volatility
+Windows_size = int(base_window * 1.3) # More window
  else:
  window_size = base_window
 
-# Обучающие data
+# Training data
  train_data = data[i-window_size:i]
 
-# testsые data
+# Testsy data
  test_data = data[i:i+test_window]
 
-# Обучение модели
+# Model learning
  model.fit(train_data)
 
-# Предсказания
+# Premonition
  predictions = model.predict(test_data)
 
-# Оценка качества
+# Quality assessment
  returns = test_data['returns']
  strategy_returns = predictions * returns
 
@@ -811,63 +811,63 @@ window_size = int(base_window * 1.3) # Больше окно
 
  return pd.dataFrame(results)
 
-# example использования
+# Example of use
 vol_adaptive_results = volatility_adaptive_Analysis(data, model, base_window=252)
 ```
 
-### 3. Многоуровневый Walk-Forward анализ
+### 3. Multilevel Walk-Forward analysis
 
-### 🏗️ architecture многоуровневого Analysis
+## ♪ Architecture multilevel Analisis
 
 ```mermaid
 graph TD
-A[Исходные data] --> B[Многоуровневый Walk-Forward анализ]
+A [Reference data] --> B [Plough-level Walk-Forward analysis]
 
-B --> C[Уровень 1: Базовые модели]
+B -> C[Level 1: Basic models]
  C --> D[Random Forest]
  C --> E[XGBoost]
  C --> F[LightGBM]
 
-B --> G[Уровень 2: Ансамблевая модель]
+B -> G[Level 2: Ansemble Model]
  G --> H[Linear Regression]
  G --> I[Neural network]
  G --> J[Stacking]
 
-D --> K[Предсказания базовых моделей]
+D -> K [Base models projection]
  E --> K
  F --> K
 
-K --> L[Мета-признаки<br/>Meta-features]
-L --> M[Обучение ансамблевой модели]
+K --> L[Metha signs<br/>Meta-features]
+L -> M [Learning the ensemble model]
 
-M --> N[Ансамблевые предсказания]
-N --> O[Расчет доходности стратегии]
+M --> N[Ansambal predictions]
+N -> O [Strategy return calculation]
 
-O --> P[metrics качества]
-P --> Q[Коэффициент Шарпа]
-P --> R[Максимальная просадка]
-P --> S[Общая доходность]
+O-> P[quality metrics]
+P --> Q [Sharp coefficient]
+P --> R [Maximum draught]
+P-> S [Total return]
 
-Q --> T[Индивидуальные metrics моделей]
+Q -> T [Individual models]
  R --> T
  S --> T
 
 T --> U[Comparison performance]
-U --> V[Лучшая модель]
-U --> W[Средняя performance]
-U --> X[Ансамблевая performance]
+U -> V [Best Model]
+U --> W [Medical performance]
+U --> X [Ansemble performance]
 
-V --> Y[Анализ стабильности]
+V -> Y[Stability Analysis]
  W --> Y
  X --> Y
 
-Y --> Z[Оценка робастности стратегии]
-Z --> AA{Стратегия готова?}
-AA -->|Да| BB[✅ Деплой in продакшен]
-AA -->|Нет| CC[❌ Оптимизация ансамбля]
+Y -> Z [Effect assessment of strategy]
+Z --> AA {The Strategy is ready?}
+AA --\\\\\b[\\\Deploy in sales]
+AA --\\\\\\\C[\\\ensemble optimization]
 
-CC --> DD[configuration весов моделей]
-DD --> EE[Повторное тестирование]
+CC --> DD[configration of model weights]
+DD --> EE[Re-test]
  EE --> B
 
  style A fill:#e3f2fd
@@ -877,30 +877,30 @@ DD --> EE[Повторное тестирование]
  style CC fill:#ff9800
 ```
 
-**Иерархический анализ:**
+**Herarchical analysis:**
 
 ```python
 def hierarchical_walk_forward(data, models, train_window=252, test_window=30, step=30):
-"""Многоуровневый Walk-Forward анализ"""
+""""""""""""""""""""""""
  results = []
 
  for i in range(train_window, len(data) - test_window, step):
-# Обучающие data
+# Training data
  train_data = data[i-train_window:i]
 
-# testsые data
+# Testsy data
  test_data = data[i:i+test_window]
 
-# Обучение all моделей
+# Training all models
  model_predictions = {}
  for name, model in models.items():
  model.fit(train_data)
  model_predictions[name] = model.predict(test_data)
 
-# Комбинирование predictions
+# Combination of preferences
  combined_predictions = np.mean(List(model_predictions.values()), axis=0)
 
-# Оценка качества
+# Quality assessment
  returns = test_data['returns']
  strategy_returns = combined_predictions * returns
 
@@ -909,7 +909,7 @@ def hierarchical_walk_forward(data, models, train_window=252, test_window=30, st
  max_drawdown = calculate_max_drawdown(strategy_returns)
  total_return = strategy_returns.sum()
 
-# Индивидуальные metrics моделей
+# Individual models
  individual_metrics = {}
  for name, predictions in model_predictions.items():
  individual_returns = predictions * returns
@@ -932,7 +932,7 @@ def hierarchical_walk_forward(data, models, train_window=252, test_window=30, st
 
  return pd.dataFrame(results)
 
-# example использования
+# Example of use
 models = {
  'model1': RandomForestRegressor(),
  'model2': XGBRegressor(),
@@ -941,38 +941,38 @@ models = {
 hierarchical_results = hierarchical_walk_forward(data, models, train_window=252)
 ```
 
-**Ансамблевый анализ:**
+** Ansemble analysis:**
 
 ```python
 def ensemble_walk_forward(data, base_models, ensemble_model, train_window=252,
  test_window=30, step=30):
-"""Walk-Forward анализ with ансамблем"""
+""Walk-Forward analysis with an ensemble."
  results = []
 
  for i in range(train_window, len(data) - test_window, step):
-# Обучающие data
+# Training data
  train_data = data[i-train_window:i]
 
-# testsые data
+# Testsy data
  test_data = data[i:i+test_window]
 
-# Обучение базовых моделей
+# Training basic models
  base_predictions = []
  for name, model in base_models.items():
  model.fit(train_data)
  predictions = model.predict(test_data)
  base_predictions.append(predictions)
 
-# create мета-признаков
+# creative meta-signs
  meta_features = np.column_stack(base_predictions)
 
-# Обучение ансамблевой модели
+# Training the ensemble model
  ensemble_model.fit(meta_features, test_data['returns'])
 
-# Предсказания ансамбля
+# The ensemble's predictions
  ensemble_predictions = ensemble_model.predict(meta_features)
 
-# Оценка качества
+# Quality assessment
  returns = test_data['returns']
  strategy_returns = ensemble_predictions * returns
 
@@ -995,7 +995,7 @@ def ensemble_walk_forward(data, base_models, ensemble_model, train_window=252,
 
  return pd.dataFrame(results)
 
-# example использования
+# Example of use
 base_models = {
  'rf': RandomForestRegressor(),
  'xgb': XGBRegressor(),
@@ -1005,49 +1005,49 @@ ensemble_model = LinearRegression()
 ensemble_results = ensemble_walk_forward(data, base_models, ensemble_model)
 ```
 
-## metrics качества Walk-Forward Analysis
+## quality metrics Walk-Forward Analysis
 
-### 📊 Классификация метрик качества Walk-Forward Analysis
+### ♪ a quality list of Walk-Forward Analysis
 
 ```mermaid
 graph TD
-A[metrics качества Walk-Forward] --> B[Временные metrics]
-A --> C[Статистические metrics]
-A --> D[Экономические metrics]
+A[Metrics of quality Walk-Forward] --> B [Temporary metrics]
+A -> C [Statistical metrics]
+A --> D [Economic metrics]
 
-B --> B1[Стабильность во времени]
-B1 --> B11[Стабильность коэффициента Шарпа<br/>1 / (std / mean)]
-B1 --> B12[Тренд performance<br/>polyfit slope]
-B1 --> B13[Волатильность performance<br/>rolling std]
-B1 --> B14[Коэффициент стабильности<br/>1 / volatility]
+B -> B1 [Stability over time]
+B1-> B11[Stable Sharp coefficient <br/>1 / (std / mean)]
+B1 --> B12 [Trend performance<br/>polyfit slope]
+B1 --> B13 [Vulnerability performance<br/>rolling std]
+B1 -> B14 [Stand stability factor<br/>1 / volatility]
 
-B --> B2[Адаптивность]
-B2 --> B21[Скорость адаптации<br/>abs(current - recent) / recent]
-B2 --> B22[Волатильность адаптации<br/>std adaptation_speed]
-B2 --> B23[Коэффициент адаптивности<br/>mean_speed / volatility]
+B --> B2 [Aptitude]
+B2 --> B21 [Accordance speed<br/>abs(current-recent) / recent]
+B2 --> B22 [Acadaptive volatility<br/>std adaptation_speed]
+B2 --> B23 [Aptitude factor<br/>mean_speed / volatility]
 
-C --> C1[Статистическая значимость]
-C1 --> C11[Тест on нормальность<br/>Shapiro-Wilk p-value > 0.05]
-C1 --> C12[Тест on стационарность<br/>ADF p-value < 0.05]
-C1 --> C13[Доверительный интервал<br/>t-distribution 95%]
-C1 --> C14[Статистическая значимость<br/>ADF < 0.05 AND Shapiro > 0.05]
+C --> C1 [Statistical significance]
+C1 --> C11 [Text on normality<br/>Shapiro-Wilk p-value > 0.05]
+C1 --> C12 [Text on stationary <br/>ADF p-value < 0.05]
+C1 --> C13 [Confidence interval<br/>t-distribution 95 per cent]
+C1 --> C14 [Statistical significance<br/>ADF < 0.05 AND Shapiro > 0.05]
 
-C --> C2[Корреляция with рынком]
-C2 --> C21[Корреляция with волатильностью<br/>corr(sharpe, volatility)]
-C2 --> C22[Корреляция with доходностью<br/>corr(sharpe, returns)]
-C2 --> C23[Корреляция with трендом<br/>corr(sharpe, trend)]
+C --> C2 [Correlation with market]
+C2 --> C21 [Correlation with volatility<br/>corr(sharpe, volatility)]
+C2 --> C22 [Correlation with profitability<br/>corr(sharpe, returns)]
+C2 --> C23 [Collection with trend<br/>corr(sharpe, trend)]
 
-D --> D1[Экономическая значимость]
-D1 --> D11[Учет транзакционных издержек<br/>net_returns = returns - costs]
-D1 --> D12[Минимальный коэффициент Шарпа<br/>≥ 1.0]
-D1 --> D13[Максимальная просадка<br/>≤ 20%]
-D1 --> D14[Процент успешных periods<br/>≥ 60%]
+D -> D1 [Economic significance]
+D1 -> D11 [Clustering transaction costs<br/>net_returns = returns - costs]
+D1 -> D12 [Minimum Sharp coefficient<br/>≥ 1.0]
+D1 -> D13 [Maximum draught <br/> < 20 per cent]
+D1-> D14[% successful periods<br/> > 60%]
 
-D --> D2[Рентабельность]
-D2 --> D21[Кумулятивная доходность<br/>cumprod(1 + returns)]
-D2 --> D22[Финальная стоимость портфеля<br/>initial * cumulative]
-D2 --> D23[Годовая доходность<br/>annualized return]
-D2 --> D24[Максимальная просадка<br/>min drawdown]
+D -> D2 [Recentness]
+D2 --> D21 [cumulative return<br/>cumprod(1 + returns)]
+D2-> D22[The actual value of the portfolio<br/>initial *cumulative]
+D2 --> D23 [annual return<br/>annuated return]
+D2 --> D24 [Maximum draught <br/>min drawdown]
 
  style A fill:#e3f2fd
  style B fill:#c8e6c9
@@ -1055,81 +1055,81 @@ D2 --> D24[Максимальная просадка<br/>min drawdown]
  style D fill:#f3e5f5
 ```
 
-### 1. Временные metrics
+### 1. Temporary metrics
 
-**Стабильность во времени:**
+**Stability over time:**
 
 ```python
 def calculate_temporal_stability(results):
  """
-Расчет стабильности performance во времени
+Calculation of time stability
 
-Анализирует стабильность коэффициента Шарпа and других метрик во времени,
-что является ключевым показателем качества Walk-Forward Analysis.
+Analyses the stability of the Sharpe coefficient and other metrics over time,
+which is a key quality indicator of Walk-Forward Anallysis.
 
  Parameters:
  -----------
  results : pd.dataFrame
-Результаты Walk-Forward Analysis with колонками:
-- 'sharpe': коэффициент Шарпа за каждый период (float)
-- 'max_drawdown': максимальная просадка за каждый период (float)
-- 'total_return': общая доходность за каждый период (float)
-- index: временные метки periods (datetime)
+The results of Walk-Forward Analysis with columns:
+- 'sharpe': Sharpe coefficient for each period (float)
+- 'max_drawdown': maximum draught for each period (float)
+- 'Total_return': total return for each period (float)
+- index: Time tags periods (datetime)
 
  Returns:
  --------
  dict
-Словарь with метриками стабильности:
-- 'sharpe_stability': стабильность коэффициента Шарпа (float)
-- > 2.0: отличная стабильность
-- 1.0-2.0: хорошая стабильность
-- 0.5-1.0: умеренная стабильность
-- < 0.5: низкая стабильность
-- 'sharpe_trend': тренд коэффициента Шарпа (float)
-- > 0: improve со временем
-- = 0: стабильная performance
-- < 0: ухудшение со временем
-- 'performance_volatility': волатильность performance (float)
-- < 0.1: низкая волатильность
-- 0.1-0.3: умеренная волатильность
-- > 0.3: высокая волатильность
-- 'stability_coefficient': общий коэффициент стабильности (float)
-- > 10: отличная стабильность
-- 5-10: хорошая стабильность
-- 2-5: умеренная стабильность
-- < 2: низкая стабильность
+Vocabulary with meters of stability:
+- 'sharpe_state': stability of Sharp coefficient (float)
+- > 2.0: Excellent stability
+- 1.0-2.0: good stability
+- 0.5-1.0: Moderate stability
+< 0.5: Low stability
+- 'sharpe_trend': trend of Sharp coefficient (float)
+- > 0: improve with time
+- = 0: stable performance
+< 0: deterioration over time
+- 'Performance_volatility': volatility performance (float)
+< 0.1: Low volatility
+0.1-0.3: Moderate volatility
+- > 0.3: High volatility
+- 'Stability_co-officer': total stability coefficient (float)
+- > 10: Excellent stability
+- 5-10: good stability
+- 2-5: Moderate stability
+- < 2: Low stability
 
  Raises:
  -------
  ValueError
-Если results not содержит колонку 'sharpe'
-Если results пустой or содержит NaN значения
+If results note contains column 'sharpe'
+If the results are empty or contains NaN values
 
  Notes:
  ------
-- Стабильность рассчитывается как обратная величина к коэффициенту вариации
-- Тренд рассчитывается with помощью линейной регрессии
-- Волатильность рассчитывается как скользящее стандартное отклонение
-- Рекомендуется минимум 10 periods for надежной оценки
+- Stability is calculated as the return value to the coefficient of variation
+- Tread is calculated with linear regression
+- Volatility is calculated as a sliding standard deviation
+- A minimum of 10 periods for reliable evaluation is recommended
 
  Examples:
  ---------
  >>> results = walk_forward_Analysis(data, model)
  >>> stability = calculate_temporal_stability(results)
->>> print(f"Стабильность Шарпа: {stability['sharpe_stability']:.2f}")
+>>print(f) "Stability of Sharp:['sharpe_state']:2f}")
  """
-# Стабильность коэффициента Шарпа
+# Stable Sharpe coefficient
  sharpe_std = results['sharpe'].std()
  sharpe_mean = results['sharpe'].mean()
  sharpe_stability = 1 / (sharpe_std / sharpe_mean) if sharpe_mean != 0 else 0
 
-# Тренд performance
+# Tread performance
  sharpe_trend = np.polyfit(range(len(results)), results['sharpe'], 1)[0]
 
-# Волатильность performance
+# Volatility performance
  performance_volatility = results['sharpe'].rolling(5).std().mean()
 
-# Коэффициент стабильности
+# Stability factor
  stability_coefficient = 1 / performance_volatility if performance_volatility > 0 else 0
 
  return {
@@ -1139,78 +1139,78 @@ def calculate_temporal_stability(results):
  'stability_coefficient': stability_coefficient
  }
 
-# example использования
+# Example of use
 temporal_metrics = calculate_temporal_stability(wf_results)
 ```
 
-**Адаптивность:**
+** Adaptation:**
 
 ```python
 def calculate_adaptability(results, lookback=5):
  """
-Расчет адаптивности модели к изменяющимся условиям
+Calculation of the model &apos; s adaptation to changing conditions
 
-Анализирует способность модели адаптироваться к новым рыночным условиям
-on basis изменений in performance во времени.
+Analyses the model &apos; s ability to adapt to new market conditions
+on baseline changes in time.
 
  Parameters:
  -----------
  results : pd.dataFrame
-Результаты Walk-Forward Analysis with колонками:
-- 'sharpe': коэффициент Шарпа за каждый период (float)
-- 'max_drawdown': максимальная просадка за каждый период (float)
-- 'total_return': общая доходность за каждый период (float)
-- index: временные метки periods (datetime)
+The results of Walk-Forward Analysis with columns:
+- 'sharpe': Sharpe coefficient for each period (float)
+- 'max_drawdown': maximum draught for each period (float)
+- 'Total_return': total return for each period (float)
+- index: Time tags periods (datetime)
 
  lookback : int, default=5
-Количество periods for расчета адаптивности:
-- 5: пять periods (рекомендуется)
-- 3: три периода (for быстрой адаптации)
-- 10: десять periods (for стабильной оценки)
-- Минимум: 2 периода for расчета
-- Максимум: 20 periods for избежания устаревания
+Number of periods for the calculation of adaptiveity:
+- 5: five periods (recommended)
+- 3: three periods (for rapid adaptation)
+- 10: 10 periods (for stable estimates)
+- Minimum: 2 periods for calculation
+- Maximum: 20 periods for avoidance of obsolescence
 
  Returns:
  --------
  dict
-Словарь with метриками адаптивности:
-- 'mean_adaptation_speed': средняя скорость адаптации (float)
-- > 0.2: высокая адаптивность
-- 0.1-0.2: умеренная адаптивность
-- 0.05-0.1: низкая адаптивность
-- < 0.05: очень низкая адаптивность
-- 'adaptation_volatility': волатильность адаптации (float)
-- < 0.1: стабильная адаптация
-- 0.1-0.3: умеренная волатильность
-- > 0.3: нестабильная адаптация
-- 'adaptability_coefficient': коэффициент адаптивности (float)
-- > 2.0: отличная адаптивность
-- 1.0-2.0: хорошая адаптивность
-- 0.5-1.0: умеренная адаптивность
-- < 0.5: низкая адаптивность
+The dictionary with metrics of adaptiveity:
+- 'mean_adaptation_speed': average adaptation speed (float)
+- > 0.2: High adaptive
+0.1-0.2: Moderate adaptation
+- 0.05-0.1: Low adaptiveity
+< 0.05: Very low adaptive
+- 'adaptation_volatility': float variability
+< 0.1: Stable adaptation
+0.1-0.3: Moderate volatility
+> 0.3: Unstable adaptation
+- 'adaptability_co-officer': adaptive factor (float)
+- > 2.0: Excellent adaptation
+- 1.0-2.0: good adaptation
+- 0.5-1.0: Moderate adaptation
+< 0.5: Low adaptiveity
 
  Raises:
  -------
  ValueError
-Если results not содержит колонку 'sharpe'
-Если lookback < 2 or lookback > len(results) - 1
-Если results пустой or содержит NaN значения
+If results note contains column 'sharpe'
+If lookback < 2 or lookback > Len(results) - 1
+If the results are empty or contains NaN values
 
  Notes:
  ------
-- Скорость адаптации рассчитывается как абсолютное изменение
-performance относительно предыдущих periods
-- Волатильность адаптации показывает стабильность процесса адаптации
-- Коэффициент адаптивности - отношение скорости к волатильности
-- Рекомендуется минимум 10 periods for надежной оценки
+- The rate of adaptation is calculated as absolute change
+previous performances
+- The volatility of adaptation demonstrates the stability of the adaptation process
+- Adaptation factor - ratio of speed to volatility
+- A minimum of 10 periods for reliable evaluation is recommended
 
  Examples:
  ---------
  >>> results = walk_forward_Analysis(data, model)
  >>> adaptability = calculate_adaptability(results, lookback=5)
->>> print(f"Скорость адаптации: {adaptability['mean_adaptation_speed']:.3f}")
+>>print(f) "Acceleration speed: {'mean_adaptation_speed']:3f}")
  """
-# Скорость адаптации
+# The speed of adaptation
  adaptation_speed = []
  for i in range(lookback, len(results)):
  recent_performance = results['sharpe'].iloc[i-lookback:i].mean()
@@ -1218,13 +1218,13 @@ performance относительно предыдущих periods
  adaptation = abs(current_performance - recent_performance) / recent_performance
  adaptation_speed.append(adaptation)
 
-# Средняя скорость адаптации
+# Average rate of adaptation
  mean_adaptation_speed = np.mean(adaptation_speed)
 
-# Волатильность адаптации
+# The volatility of adaptation
  adaptation_volatility = np.std(adaptation_speed)
 
-# Коэффициент адаптивности
+# Adaptation factor
  adaptability_coefficient = mean_adaptation_speed / adaptation_volatility if adaptation_volatility > 0 else 0
 
  return {
@@ -1233,88 +1233,88 @@ performance относительно предыдущих periods
  'adaptability_coefficient': adaptability_coefficient
  }
 
-# example использования
+# Example of use
 adaptability_metrics = calculate_adaptability(wf_results, lookback=5)
 ```
 
-### 2. Статистические metrics
+###2: Statistical metrics
 
-**Статистическая значимость:**
+**Statistical significance:**
 
 ```python
 def calculate_statistical_significance(results, confidence_level=0.95):
  """
-Расчет статистической значимости результатов Walk-Forward Analysis
+Calculation of the statistical significance of the results of the Walk-Forward Analysis
 
-Проводит статистические тесты for оценки значимости результатов:
-- Тест on нормальность (Shapiro-Wilk)
-- Тест on стационарность (Augmented Dickey-Fuller)
-- Расчет доверительных интервалов
+Conducts statistical tests for assessing the relevance of results:
+- Test on normality (Shapiro-Wilk)
+- Augmented Dickey-Fuller test
+- Calculation of confidence intervals
 
  Parameters:
  -----------
  results : pd.dataFrame
-Результаты Walk-Forward Analysis with колонками:
-- 'sharpe': коэффициент Шарпа за каждый период (float)
-- 'max_drawdown': максимальная просадка за каждый период (float)
-- 'total_return': общая доходность за каждый период (float)
-- index: временные метки periods (datetime)
+The results of Walk-Forward Analysis with columns:
+- 'sharpe': Sharpe coefficient for each period (float)
+- 'max_drawdown': maximum draught for each period (float)
+- 'Total_return': total return for each period (float)
+- index: Time tags periods (datetime)
 
  confidence_level : float, default=0.95
-Уровень доверия for доверительных интервалов:
-- 0.95: 95% доверительный интервал (рекомендуется)
-- 0.99: 99% доверительный интервал (for консервативных оценок)
-- 0.90: 90% доверительный интервал (for менее строгих оценок)
-- Минимум: 0.80 (80% доверительный интервал)
-- Максимум: 0.999 (99.9% доверительный интервал)
+Trust level for confidence intervals:
+0.95: 95% confidence interval (recommended)
+0.99: 99% confidence interval (for conservative estimates)
+0.90: 90% confidence interval (for less stringent estimates)
+- Minimum: 0.80 (80% confidence interval)
+- Maximum: 0.999 (99.9% confidence interval)
 
  Returns:
  --------
  dict
-Словарь with результатами статистических tests:
-- 'shapiro_statistic': статистика теста Шапиро-Уилка (float)
-- 'shapiro_pvalue': p-value теста on нормальность (float)
-- > 0.05: data нормально распределены
-- <= 0.05: data not нормально распределены
-- 'adf_statistic': статистика теста ADF (float)
-- 'adf_pvalue': p-value теста on стационарность (float)
-- < 0.05: data стационарны
-- >= 0.05: data not стационарны
-- 'confidence_interval': доверительный интервал (tuple)
-- (lower_bound, upper_bound) for среднего коэффициента Шарпа
-- 'is_significant': общая статистическая значимость (bool)
-- True: результаты статистически значимы
-- False: результаты not статистически значимы
+The dictionary with the results of statistical tests:
+- 'Shapiro_statistical': Shapiro-Wilke test statistics (float)
+- 'schapiro_pvalue': p-value test on normality (float)
+- > 0.05: data is normally distributed
+- <= 0.05: data not normally distributed
+- 'adf_statistical': ADF test statistics (float)
+- 'adf_value': p-value test on stability (float)
+< 0.05: data are stationary
+- > = 0.05: data not fixed
+- 'confidence_interval': confidence interval (tuple)
+- (lower_bound, super_bound) for the average Sharpe coefficient
+- 'is_significant': general statistical significance (boool)
+- True: the results are statistically significant
+- False: results not statistically significant
 
  Raises:
  -------
  ValueError
-Если results not содержит колонку 'sharpe'
-Если confidence_level < 0.80 or confidence_level > 0.999
-Если results пустой or содержит NaN значения
+If results note contains column 'sharpe'
+If confidence_level < 0.80 or conference_level > 0.999
+If the results are empty or contains NaN values
 
  Notes:
  ------
-- Тест on нормальность проверяет, что коэффициенты Шарпа нормально распределены
-- Тест on стационарность проверяет, что performance стабильна во времени
-- Доверительный интервал рассчитывается with использованием t-распределения
-- Рекомендуется минимум 30 periods for надежных статистических tests
+- The normality test checks that Sharp coefficients are normally distributed.
+- Instability test checks that performance is stable over time.
+- The confidence interval is calculated with t-distribution
+- A minimum of 30 periods for reliable statistical tests is recommended
 
  Examples:
  ---------
  >>> results = walk_forward_Analysis(data, model)
  >>> significance = calculate_statistical_significance(results, confidence_level=0.95)
->>> print(f"Статистически значимо: {significance['is_significant']}")
+>>print(f"Statistically significant: {significance['is_significant']}})
  """
  from scipy import stats
 
-# Тест on нормальность
+# Test on normality
  shapiro_stat, shapiro_pvalue = stats.shapiro(results['sharpe'])
 
-# Тест on стационарность
+# A test on parking
  adf_stat, adf_pvalue = stats.adfuller(results['sharpe'])
 
-# Доверительный интервал
+# Confidence interval
  mean_sharpe = results['sharpe'].mean()
  std_sharpe = results['sharpe'].std()
  n = len(results)
@@ -1324,7 +1324,7 @@ def calculate_statistical_significance(results, confidence_level=0.95):
 
  confidence_interval = (mean_sharpe - margin_error, mean_sharpe + margin_error)
 
-# Статистическая значимость
+# Statistical significance
  is_significant = adf_pvalue < 0.05 and shapiro_pvalue > 0.05
 
  return {
@@ -1336,24 +1336,24 @@ def calculate_statistical_significance(results, confidence_level=0.95):
  'is_significant': is_significant
  }
 
-# example использования
+# Example of use
 statistical_metrics = calculate_statistical_significance(wf_results)
 ```
 
-**Корреляция with рыночными условиями:**
+**Correlation with market conditions:**
 
 ```python
 def calculate_market_correlation(results, market_data):
-"""Расчет корреляции with рыночными условиями"""
-# Корреляция with волатильностью рынка
+"The calculation of the correlation with market conditions."
+# Correlation with market volatility
  market_volatility = market_data['returns'].rolling(30).std()
  volatility_correlation = results['sharpe'].corr(market_volatility.iloc[results.index])
 
-# Корреляция with доходностью рынка
+# The correlation with market returns
  market_returns = market_data['returns'].rolling(30).mean()
  returns_correlation = results['sharpe'].corr(market_returns.iloc[results.index])
 
-# Корреляция with трендом рынка
+# Correlation with market trend
  market_trend = market_data['price'].rolling(30).apply(lambda x: np.polyfit(range(len(x)), x, 1)[0])
  trend_correlation = results['sharpe'].corr(market_trend.iloc[results.index])
 
@@ -1363,96 +1363,96 @@ def calculate_market_correlation(results, market_data):
  'trend_correlation': trend_correlation
  }
 
-# example использования
+# Example of use
 market_correlation = calculate_market_correlation(wf_results, market_data)
 ```
 
-### 3. Экономические metrics
+♪## 3. Economic metrics
 
-**Экономическая значимость:**
+** Economic significance:**
 
 ```python
 def calculate_economic_significance(results, transaction_costs=0.001,
  min_sharpe=1.0, max_drawdown=0.2):
  """
-Расчет экономической значимости результатов Walk-Forward Analysis
+Calculation of the economic significance of the results of the Walk-Forward Analysis
 
-Оценивает экономическую целесообразность стратегии with учетом
-транзакционных издержек and практических ограничений.
+Assesses the economic viability of the strategy with accounting
+transaction costs and practical constraints.
 
  Parameters:
  -----------
  results : pd.dataFrame
-Результаты Walk-Forward Analysis with колонками:
-- 'sharpe': коэффициент Шарпа за каждый период (float)
-- 'max_drawdown': максимальная просадка за каждый период (float)
-- 'total_return': общая доходность за каждый период (float)
-- index: временные метки periods (datetime)
+The results of Walk-Forward Analysis with columns:
+- 'sharpe': Sharpe coefficient for each period (float)
+- 'max_drawdown': maximum draught for each period (float)
+- 'Total_return': total return for each period (float)
+- index: Time tags periods (datetime)
 
  transaction_costs : float, default=0.001
-Транзакционные издержки on одну сделку (in долях from капитала):
-- 0.001: 0.1% (рекомендуется for акций)
-- 0.0005: 0.05% (for ETF and indexов)
-- 0.002: 0.2% (for форекса and криптовалют)
-- 0.005: 0.5% (for экзотических активов)
-- Минимум: 0.0001 (0.01%)
-- Максимум: 0.01 (1%)
+The transaction costs on one transaction (in shares from capital):
+- 0.001: 0.1 per cent (recommended for shares)
+- 0.0005: 0.05 per cent (for ETF and index)
+- 0.002: 0.2 per cent (forforforx and cryptically)
+- 0.005: 0.5 per cent (for exotic assets)
+- Minimum: 0.0001 (0.01%)
+- Maximum: 0.01 (1 per cent)
 
  min_sharpe : float, default=1.0
-Минимальный приемлемый коэффициент Шарпа:
-- 1.0: базовый уровень (рекомендуется)
-- 1.5: хороший уровень for профессиональных стратегий
-- 2.0: отличный уровень for институциональных стратегий
-- 0.5: минимальный уровень for консервативных стратегий
-- Минимум: 0.1
-- Максимум: 5.0
+Minimum acceptable Sharpe coefficient:
+- 1.0: Baseline (recommended)
+- 1.5: Good level for professional strategies
+- 2.0: Excellent level for institutional strategies
+- 0.5: Minimum level for conservative strategies
+- Minimum: 0.1
+- Maximum: 5.0
 
  max_drawdown : float, default=0.2
-Максимально допустимая просадка (in долях from капитала):
-- 0.2: 20% (рекомендуется for большинства стратегий)
-- 0.1: 10% (for консервативных стратегий)
-- 0.3: 30% (for агрессивных стратегий)
-- 0.05: 5% (for очень консервативных стратегий)
-- Минимум: 0.01 (1%)
-- Максимум: 0.5 (50%)
+Maximum permissible draught (in shares from capital):
+0.2: 20% (recommended for most strategies)
+0.1: 10% (for conservative strategies)
+0.3: 30% (for aggressive strategies)
+- 0.05: 5% (for very conservative strategies)
+- Minimum: 0.01 (1 per cent)
+- Maximum: 0.5 (50%)
 
  Returns:
  --------
  dict
-Словарь with метриками экономической значимости:
-- 'mean_sharpe': средний коэффициент Шарпа (float)
-- 'mean_max_drawdown': средняя максимальная просадка (float)
-- 'success_rate': процент успешных periods (float)
-- >= 0.7: отличная стратегия
-- 0.5-0.7: хорошая стратегия
-- 0.3-0.5: умеренная стратегия
-- < 0.3: слабая стратегия
-- 'economically_significant': общая экономическая значимость (bool)
-- True: стратегия экономически значима
-- False: стратегия not экономически значима
+The dictionary with metrics of economic significance:
+- 'mean_sharpe': average Sharp coefficient (float)
+- 'mean_max_drawdown': average maximum draught (float)
+- 'access_rate': % of successful periods (float)
+- >=0.7: Excellent strategy
+- 0.5-0.7: Good strategy
+0.3-0.5: Moderate strategy
+< 0.3: weak strategy
+- 'economically_significant': overall economic significance (boool)
+- True: The strategy is economically meaningful.
+- False: strategy not economically significant
 
  Raises:
  -------
  ValueError
-Если results not содержит колонки 'sharpe', 'max_drawdown', 'total_return'
-Если transaction_costs < 0 or transaction_costs > 0.01
-Если min_sharpe < 0.1 or min_sharpe > 5.0
-Если max_drawdown < 0.01 or max_drawdown > 0.5
+If results note contain columns 'sharpe', 'max_drawdown', 'total_return'
+If transfer_costs < 0 or transfer_costs > 0.01
+If min_sharpe < 0.1 or min_sharpe > 5.0
+If max_drawdown < 0.01 or max_drawdown > 0.5
 
  Notes:
  ------
-- Транзакционные издержки вычитаются из общей доходности
-- Успешным считается период with коэффициентом Шарпа >= min_sharpe
-- Экономическая значимость требует выполнения all критериев simultaneously
-- Рекомендуется минимум 20 periods for надежной оценки
+- The transaction costs are deducted from the total return
+- A successful period with Sharp coefficient >=min_sharpe
+- Economic significance requires compliance with all criteria simultaneously
+- A minimum of 20 periods for reliable evaluation is recommended
 
  Examples:
  ---------
  >>> results = walk_forward_Analysis(data, model)
  >>> economic = calculate_economic_significance(results, transaction_costs=0.001)
->>> print(f"Экономически значима: {economic['economically_significant']}")
+>>print(f" Economically significant: {economic['economically_significant']}})
  """
-# Учет транзакционных издержек
+# Accounting for transaction costs
  net_returns = results['total_return'] - transaction_costs
 
 # metrics
@@ -1460,7 +1460,7 @@ def calculate_economic_significance(results, transaction_costs=0.001,
  mean_max_drawdown = results['max_drawdown'].mean()
  success_rate = (results['sharpe'] > min_sharpe).mean()
 
-# Экономическая значимость
+# Economic significance
  economically_significant = (
  mean_sharpe >= min_sharpe and
  abs(mean_max_drawdown) <= max_drawdown and
@@ -1474,92 +1474,92 @@ def calculate_economic_significance(results, transaction_costs=0.001,
  'economically_significant': economically_significant
  }
 
-# example использования
+# Example of use
 economic_metrics = calculate_economic_significance(wf_results, transaction_costs=0.001)
 ```
 
-**Рентабельность:**
+**Purity:**
 
 ```python
 def calculate_profitability(results, initial_capital=100000):
  """
-Расчет рентабельности стратегии on basis результатов Walk-Forward Analysis
+Calculation of the cost-effectiveness of the strategy on baseline results
 
-Анализирует финансовую эффективность стратегии with учетом
-начального капитала and кумулятивной доходности.
+Reviews the cost-effectiveness of the strategy with accounting
+Capital formation and cumulative returns.
 
  Parameters:
  -----------
  results : pd.dataFrame
-Результаты Walk-Forward Analysis with колонками:
-- 'total_return': общая доходность за каждый период (float)
-- 'max_drawdown': максимальная просадка за каждый период (float)
-- index: временные метки periods (datetime)
+The results of Walk-Forward Analysis with columns:
+- 'Total_return': total return for each period (float)
+- 'max_drawdown': maximum draught for each period (float)
+- index: Time tags periods (datetime)
 
  initial_capital : float, default=100000
-Начальный капитал for расчета рентабельности:
-- 100000: $100,000 (рекомендуется for тестирования)
-- 10000: $10,000 (for малых счетов)
-- 1000000: $1,000,000 (for институциональных стратегий)
-- 1000: $1,000 (for демо-счетов)
-- Минимум: 100 (for минимального тестирования)
-- Максимум: 10000000 (for крупных портфелей)
+Initial capital for calculation of profitability:
+- 100,000: $100,000 (recommended for testing)
+- 10,000: $10,000.
+- 1000000: $1,000.000 (for institutional strategies)
+- 1000: $1,000 (for demo accounts)
+- Minimum: 100 (for minimum test)
+- Maximum: 100,000 (for large portfolios)
 
  Returns:
  --------
  dict
-Словарь with метриками рентабельности:
-- 'final_value': финальная стоимость портфеля (float)
-- 'total_return': общая доходность за весь период (float)
-- > 0.5: отличная доходность (50%+)
-- 0.2-0.5: хорошая доходность (20-50%)
-- 0.1-0.2: умеренная доходность (10-20%)
-- < 0.1: низкая доходность (<10%)
-- 'annual_return': годовая доходность (float)
-- > 0.2: отличная годовая доходность (20%+)
-- 0.1-0.2: хорошая годовая доходность (10-20%)
-- 0.05-0.1: умеренная годовая доходность (5-10%)
-- < 0.05: низкая годовая доходность (<5%)
-- 'max_drawdown': максимальная просадка за весь период (float)
-- < 0.1: отличная стабильность (<10%)
-- 0.1-0.2: хорошая стабильность (10-20%)
-- 0.2-0.3: умеренная стабильность (20-30%)
-- > 0.3: низкая стабильность (>30%)
+Vocabulary with metrics of profitability:
+- 'final_value': final value of portfolio (float)
+- 'Total_return': total return for the whole period (float)
+- > 0.5: Excellent return (50 per cent+)
+- 0.2-0.5: good return (20-50 per cent)
+0.1-0.2: Moderate return (10-20%)
+< 0.1: Low return (<10 per cent)
+- 'annual_return': annual return (float)
+> 0.2: Excellent annual rate of return (20 per cent+)
+0.1-0.2: good annual rate of return (10-20%)
+- 0.05-0.1: Moderate annual rate (5-10 per cent)
+< 0.05: low annual rate of return (<5%)
+- 'max_drawdown': maximum draught over the whole period (float)
+< 0.1: excellent stability (<10 per cent)
+0.1-0.2: good stability (10-20%)
+0.2-0.3: Moderate stability (20-30 per cent)
+- > 0.3: Low stability (> 30 per cent)
 
  Raises:
  -------
  ValueError
-Если results not содержит колонки 'total_return', 'max_drawdown'
-Если initial_capital <= 0 or initial_capital > 10000000
-Если results пустой or содержит NaN значения
+If results note contains columns 'total_return', 'max_drawdown'
+If initial_capital <=0 or initial_capital > 10,000000
+If the results are empty or contains NaN values
 
  Notes:
  ------
-- Кумулятивная доходность рассчитывается как произведение (1 + returns)
-- Годовая доходность рассчитывается with учетом количества лет
-- Максимальная просадка берется как минимум из all periods
-- Рекомендуется минимум 12 periods for расчета годовой доходности
+- Cumulative yield is calculated as a product (1 + returns)
+- Annual rate of return is calculated with the number of years
+- The maximum draught is taken from at least all periods.
+- A minimum of 12 periods for calculation of annual return is recommended
 
  Examples:
  ---------
  >>> results = walk_forward_Analysis(data, model)
  >>> profitability = calculate_profitability(results, initial_capital=100000)
->>> print(f"Финальная стоимость: ${profitability['final_value']:,.2f}")
+>>print(f) "Final value: {profitiability['final_value']:,2f}")
  """
-# Кумулятивная доходность
+# Cumulative returns
  cumulative_returns = (1 + results['total_return']).cumprod()
 
-# Финальная стоимость портфеля
+# Final value of portfolio
  final_value = initial_capital * cumulative_returns.iloc[-1]
 
-# Общая доходность
+# Total return
  total_return = (final_value - initial_capital) / initial_capital
 
-# Годовая доходность
-years = len(results) / 12 # Предполагаем месячные результаты
+# Annual return
+Years = Len(s) / 12 # We estimate monthly results
  annual_return = (final_value / initial_capital) ** (1 / years) - 1
 
-# Максимальная просадка
+# Maximum tarmac
  max_drawdown = results['max_drawdown'].min()
 
  return {
@@ -1569,39 +1569,39 @@ years = len(results) / 12 # Предполагаем месячные резул
  'max_drawdown': max_drawdown
  }
 
-# example использования
+# Example of use
 profitability_metrics = calculate_profitability(wf_results, initial_capital=100000)
 ```
 
-## Визуализация Walk-Forward Analysis
+## Visualization of Walk-Forward Analysis
 
-### 📈 Дашборд визуализации результатов Walk-Forward Analysis
+## # Dashbord visualization of Walk-Forward Analysis results
 
 ```mermaid
 graph TD
-A[Результаты Walk-Forward Analysis] --> B[Дашборд визуализации]
+A [Walk-Forward Analysis] - • B [Dashboard Visualization]
 
-B --> C[Временные графики]
-C --> C1[Коэффициент Шарпа во времени<br/>with линией минимума 1.0]
-C --> C2[Максимальная просадка во времени<br/>with линией максимума -20%]
-C --> C3[Кумулятивная доходность<br/>with маркерами periods]
+B -> C [Temporary graphs]
+C --> C1 [Sharp coefficient over time<br/>with minimum 1.0 line]
+C --> C2 [Maximum time lag<br/>with the maximum - 20 per cent line]
+C --> C3 [Cumulative return<br/>with markers periods]
 
-B --> D[Распределительные графики]
-D --> D1[Гистограмма коэффициента Шарпа<br/>with линией среднего значения]
-D --> D2[Box plot метрик<br/>with выбросами and квантилями]
-D --> D3[Q-Q plot нормальности<br/>for статистических tests]
+B -> D [Distribution schedules]
+D -> D1[Sharp coefficient histogram<br/>with middle line]
+D --> D2[Box flat metric<br/>with emissions and quintiles]
+D --> D3[Q-Q table normality<br/>for statistical tests]
 
-B --> E[Тепловые карты]
-E --> E1[Корреляционная матрица<br/>метрик между собой]
-E --> E2[performance on периодам<br/>годы × месяцы]
-E --> E3[Тепловая карта волатильности<br/>in time and метрикам]
+B --> E [Technal maps]
+E --> E1 [Coordination matrix<br/> metric among themselves]
+E --> E2 [performance on periods<br/>years × months]
+E --> E3 [Telephone map of volatility<br/>in time and metrics]
 
-B --> F[Сравнительные графики]
-F --> F1[comparison методов<br/>Fixed vs Expanding vs Adaptive]
-F --> F2[comparison моделей<br/>Individual vs Ensemble]
+B -> F [Comparative graphs]
+F --> F1[comparson of methods<br/>Fixed vs Expanding vs Adaptation]
+F --> F2[comparison of models<br/>Individual vs Ensemble]
 F --> F3[comparison periods<br/>Bull vs Bear markets]
 
-C1 --> G[Интерактивные элементы]
+C1-> G[Interactive elements]
  C2 --> G
  C3 --> G
  D1 --> G
@@ -1615,20 +1615,20 @@ C1 --> G[Интерактивные элементы]
  F3 --> G
 
  G --> H[Zoom and Pan functions]
-G --> I[Фильтрация on периодам]
-G --> J[Экспорт in различные форматы]
-G --> K[configuration цветовых схем]
+G --> I [Filter on Periods]
+G --> J [Export in different formats]
+G --> K[configuration of colour patterns]
 
-H --> L[Финальный дашборд]
+H --> L [Final Dashboard]
  I --> L
  J --> L
  K --> L
 
-L --> M[Анализ трендов]
-L --> N[Выявление аномалий]
-L --> O[Оценка стабильности]
+L -> M[Analysis of trends]
+L -> N [Identifying anomalies]
+L -> O [Stability assessment]
 
-M --> P[Рекомендации on стратегии]
+M -> P [Recommendations on strategy]
  N --> P
  O --> P
 
@@ -1638,57 +1638,57 @@ M --> P[Рекомендации on стратегии]
  style P fill:#4caf50
 ```
 
-### 1. Временные графики
+♪##1 ♪ Timetables
 
 ```python
 def visualize_walk_forward_results(results, save_path=None):
  """
-Визуализация результатов Walk-Forward Analysis
+Visualization of Walk-Forward Analysis results
 
-Создает комплексный дашборд with графиками for Analysis performance
-стратегии во времени, including временные ряды and распределения метрик.
+Creates an integrated dashboard with graphics for Analysis performance
+Time use strategies, including time series and metric distribution.
 
  Parameters:
  -----------
  results : pd.dataFrame
-Результаты Walk-Forward Analysis with колонками:
-- 'sharpe': коэффициент Шарпа за каждый период (float)
-- 'max_drawdown': максимальная просадка за каждый период (float)
-- 'total_return': общая доходность за каждый период (float)
-- index: временные метки periods (datetime)
+The results of Walk-Forward Analysis with columns:
+- 'sharpe': Sharpe coefficient for each period (float)
+- 'max_drawdown': maximum draught for each period (float)
+- 'Total_return': total return for each period (float)
+- index: Time tags periods (datetime)
 
  save_path : str, optional
-Путь for сохранения графика:
-- None: график отображается on экране (on умолчанию)
-- 'path/to/file.png': сохранение in PNG формате
-- 'path/to/file.pdf': сохранение in PDF формате
-- 'path/to/file.svg': сохранение in SVG формате
-- Поддерживаемые форматы: .png, .pdf, .svg, .jpg, .jpeg
+Way to keep the schedule:
+- None: the graph is displayed on the screen (on default)
+- 'path/to/file.png': Save in PNG format
+- 'path/to/file.pdf': Save in PDF format
+- 'path/to/file.svg': Save in SVG format
+Supported formats: .png, .pdf, .svg, .jpg, .jpeg
 
  Returns:
  --------
  None
-График отображается on экране or сохраняется in файл
+Graph is displayed on screen or stored in file
 
  Raises:
  -------
  ValueError
-Если results not содержит колонки 'sharpe', 'max_drawdown', 'total_return'
-Если results пустой or содержит NaN значения
+If results note contain columns 'sharpe', 'max_drawdown', 'total_return'
+If the results are empty or contains NaN values
 
  importError
-Если not установлены matplotlib or seaborn
+If not installed matplotlib or seaborn
 
  Notes:
  ------
-- Создается фигура 2x2 with четырьмя графиками:
-1. Коэффициент Шарпа во времени with линией минимума 1.0
-2. Максимальная просадка во времени with линией максимума -20%
-3. Распределение коэффициента Шарпа with линией среднего
-4. Кумулятивная доходность во времени
-- Используется стиль 'seaborn-v0_8' for профессионального вида
-- Графики автоматически масштабируются and форматируются
-- Рекомендуется минимум 10 periods for информативных графиков
+The figure 2x2 is created with four graphs:
+1. Sharp coefficient in time with minimum 1.0 line
+2. Maximum delay in time with maximum -20 per cent line
+3. Sharp coefficient distribution with the average
+4. Cumulative yield over time
+- Style 'seaborn-v0_8' for professional type
+- Graphs automatically scale and format
+- A minimum of 10 periods for informative graphs is recommended
 
  Examples:
  ---------
@@ -1699,47 +1699,47 @@ def visualize_walk_forward_results(results, save_path=None):
  import matplotlib.pyplot as plt
  import seaborn as sns
 
-# configuration стиля
+# configuring style
  plt.style.Use('seaborn-v0_8')
  sns.set_palette("husl")
 
-# create фигуры
+# Create figures
  fig, axes = plt.subplots(2, 2, figsize=(15, 10))
 
-# 1. Коэффициент Шарпа во времени
+# 1. Sharp coefficient over time
  axes[0, 0].plot(results.index, results['sharpe'], marker='o')
-axes[0, 0].axhline(y=1.0, color='red', linestyle='--', label='Минимальный Sharpe')
-axes[0, 0].set_title('Коэффициент Шарпа во времени')
-axes[0, 0].set_xlabel('Период')
-axes[0, 0].set_ylabel('Коэффициент Шарпа')
+axes[0,0]. axhline(y=1.0, color='red', line='--', label='Minimal Sharpe')
+axes[0,0].set_title('Sharp in time')
+axes[0,0].set_xlabel('Period')
+axes[0,0].set_ylabel('Sharpa's coefficient')
  axes[0, 0].legend()
  axes[0, 0].grid(True)
 
-# 2. Максимальная просадка во времени
+# 2. Maximum time lag
  axes[0, 1].plot(results.index, results['max_drawdown'], marker='o', color='red')
-axes[0, 1].axhline(y=-0.2, color='red', linestyle='--', label='Максимальная просадка 20%')
-axes[0, 1].set_title('Максимальная просадка во времени')
-axes[0, 1].set_xlabel('Период')
-axes[0, 1].set_ylabel('Максимальная просадка')
+axes[0, 1]. axhline(y=-0.2, color='red', line='--', label='Maximal 20 per cent')
+axes[0,1].set_title('Maximal time gap')
+axes[0, 1].set_xlabel('Period')
+axes[0, 1].set_ylabel('Maximal prosperity')
  axes[0, 1].legend()
  axes[0, 1].grid(True)
 
-# 3. Распределение коэффициента Шарпа
+# 3. Sharpe coefficient distribution
  axes[1, 0].hist(results['sharpe'], bins=20, alpha=0.7, edgecolor='black')
  axes[1, 0].axvline(results['sharpe'].mean(), color='red', linestyle='--',
-label=f'Среднее: {results["sharpe"].mean():.2f}')
-axes[1, 0].set_title('Распределение коэффициента Шарпа')
-axes[1, 0].set_xlabel('Коэффициент Шарпа')
-axes[1, 0].set_ylabel('Частота')
+Label=f'Medial: {results}mean(:2f}'
+axes[1, 0].set_title('Sharp coefficient distribution')
+axes[1, 0].set_xlabel('Sharpa's coefficient')
+axes[1, 0].set_ylabel('Part')
  axes[1, 0].legend()
  axes[1, 0].grid(True)
 
-# 4. Кумулятивная доходность
+# 4. Cumulative returns
  cumulative_returns = (1 + results['total_return']).cumprod()
  axes[1, 1].plot(results.index, cumulative_returns, marker='o')
-axes[1, 1].set_title('Кумулятивная доходность')
-axes[1, 1].set_xlabel('Период')
-axes[1, 1].set_ylabel('Кумулятивная доходность')
+axes[1, 1].set_title('cumulative return')
+axes[1, 1].set_xlabel('Period')
+axes[1, 1].set_ylabel('cumulative return')
  axes[1, 1].grid(True)
 
  plt.tight_layout()
@@ -1749,61 +1749,61 @@ axes[1, 1].set_ylabel('Кумулятивная доходность')
 
  plt.show()
 
-# example использования
+# Example of use
 visualize_walk_forward_results(wf_results, save_path='walk_forward_results.png')
 ```
 
-### 2. Тепловые карты
+♪##2 ♪ Warm cards
 
 ```python
 def create_heatmap_Analysis(results, save_path=None):
  """
-create тепловых карт for Analysis результатов Walk-Forward
+code heat maps for Analysis of Walk-Forward Results
 
-Создает тепловые карты for визуализации корреляций между метриками
-and performance on различным временным периодам.
+Creates heat maps for visualizing correlations between metrics
+and performance on different time periods.
 
  Parameters:
  -----------
  results : pd.dataFrame
-Результаты Walk-Forward Analysis with колонками:
-- 'sharpe': коэффициент Шарпа за каждый период (float)
-- 'max_drawdown': максимальная просадка за каждый период (float)
-- 'total_return': общая доходность за каждый период (float)
-- 'window_size': размер окна обучения (int, опционально)
-- index: временные метки periods (datetime)
+The results of Walk-Forward Analysis with columns:
+- 'sharpe': Sharpe coefficient for each period (float)
+- 'max_drawdown': maximum draught for each period (float)
+- 'Total_return': total return for each period (float)
+- 'Window_size': the size of the learning window (int, option)
+- index: Time tags periods (datetime)
 
  save_path : str, optional
-Путь for сохранения графика:
-- None: график отображается on экране (on умолчанию)
-- 'path/to/file.png': сохранение in PNG формате
-- 'path/to/file.pdf': сохранение in PDF формате
-- 'path/to/file.svg': сохранение in SVG формате
-- Поддерживаемые форматы: .png, .pdf, .svg, .jpg, .jpeg
+Way to keep the schedule:
+- None: the graph is displayed on the screen (on default)
+- 'path/to/file.png': Save in PNG format
+- 'path/to/file.pdf': Save in PDF format
+- 'path/to/file.svg': Save in SVG format
+Supported formats: .png, .pdf, .svg, .jpg, .jpeg
 
  Returns:
  --------
  None
-График отображается on экране or сохраняется in файл
+Graph is displayed on screen or stored in file
 
  Raises:
  -------
  ValueError
-Если results not содержит колонки 'sharpe', 'max_drawdown', 'total_return'
-Если results пустой or содержит NaN значения
+If results note contain columns 'sharpe', 'max_drawdown', 'total_return'
+If the results are empty or contains NaN values
 
  importError
-Если not установлены matplotlib or seaborn
+If not installed matplotlib or seaborn
 
  Notes:
  ------
-- Создается фигура 1x2 with двумя тепловыми картами:
-1. Корреляционная матрица между метриками (sharpe, max_drawdown, total_return)
-2. performance on периодам (годы × месяцы) - if present window_size
-- Корреляционная матрица использует цветовую схему 'coolwarm' with центром in 0
-- Тепловая карта performance использует цветовую схему 'RdYlGn' with центром in 1.0
-- Автоматически обрабатывает отсутствие колонки window_size
-- Рекомендуется минимум 12 periods for информативных тепловых карт
+The figure 1x2 is created with two heat maps:
+1. Correlation matrix between metrics (sharpe, max_drawdown, total_return)
+2. Performance on Periods (years x months) - if present Windows_size
+- The correlation matrix uses the color scheme 'coolwarm' with centre in 0
+- The warm card performance uses the color scheme 'RdYlGn' with centre in 1.0
+- Automatically handles the absence of a Windows_size column
+- A minimum of 12 periods for informative heat cards is recommended
 
  Examples:
  ---------
@@ -1814,28 +1814,28 @@ and performance on различным временным периодам.
  import matplotlib.pyplot as plt
  import seaborn as sns
 
-# create матрицы корреляций
+# creative correlation matrix
  correlation_matrix = results[['sharpe', 'max_drawdown', 'total_return']].corr()
 
-# create фигуры
+# Create figures
  fig, axes = plt.subplots(1, 2, figsize=(15, 6))
 
-# 1. Тепловая карта корреляций
+♪ 1 ♪ Warm map of correlations
  sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0,
  square=True, ax=axes[0])
-axes[0].set_title('Корреляционная матрица метрик')
+axes[0].set_title('Correlation matrix metric')
 
-# 2. Тепловая карта performance on периодам
+# 2. Warm Card Performance on Periods
  if 'window_size' in results.columns:
  pivot_table = results.pivot_table(values='sharpe',
-index=results.index // 12, # Годы
-columns=results.index % 12, # Месяцы
+* Years
+Columns = results.index%12, # Months
  fill_value=0)
  sns.heatmap(pivot_table, annot=True, cmap='RdYlGn', center=1.0,
  ax=axes[1])
-axes[1].set_title('performance on периодам')
-axes[1].set_xlabel('Месяц')
-axes[1].set_ylabel('Год')
+axes[1].set_title('performance on periods')
+axes[1].set_xlabel('Menice')
+axes[1].set_ylabel('Year')
 
  plt.tight_layout()
 
@@ -1844,68 +1844,68 @@ axes[1].set_ylabel('Год')
 
  plt.show()
 
-# example использования
+# Example of use
 create_heatmap_Analysis(wf_results, save_path='walk_forward_heatmap.png')
 ```
 
-## Автоматизация Walk-Forward Analysis
+## Walk-Forward Anallysis Automation
 
-### 🤖 Пайплайн автоматизации Walk-Forward Analysis
+### ♪ Walk-Forward Anallysis Automation Pikeline
 
 ```mermaid
 graph TD
-A[Исходные data] --> B[WalkForwardPipeline]
-B --> C[configuration параметров]
+A [Reference data] --> B [WalkForwardPipeline]
+B -> C [configration of parameters]
 
-C --> D[Фиксированное окно<br/>train_window: 252<br/>test_window: 30]
-C --> E[Расширяющееся окно<br/>initial_window: 252<br/>growing data]
-C --> F[Адаптивное окно<br/>min: 100, max: 500<br/>dynamic adjustment]
+C --> D[Fixed window<br/>training_window: 252<br/>test_window: 30]
+C --> E [Expansing window<br/>initial_window: 252<br/>growing data]
+C --> F[Adjustative window<br/>min: 100, max: 500<br/>dinamic extension]
 
-D --> G[Обучение модели]
+D -> G [model training]
  E --> G
  F --> G
 
-G --> H[Предсказания]
-H --> I[Расчет метрик]
+G -> H [Treaties]
+H -> I [Metrics calculation]
 
-I --> J[Коэффициент Шарпа]
-I --> K[Максимальная просадка]
-I --> L[Общая доходность]
+I-> J [Sharp coefficient]
+I -> K [Maximum draught]
+I-> L [Total return]
 
-J --> M[Сбор результатов]
+J-> M[Collection of results]
  K --> M
  L --> M
 
-M --> N[Генерация комплексного Reportа]
-N --> O[Сводка on методам]
-N --> P[Детальные результаты]
-N --> Q[Рекомендации]
+M -> N [Generation of Integrated Reporta]
+N -> O[Report on methods]
+N -> P [Detail results]
+N -> Q [Recommendations]
 
-O --> R[Средний коэффициент Шарпа]
-O --> S[Стандартное отклонение]
-O --> T[Процент успешных стратегий]
-O --> U[Стабильность коэффициента Шарпа]
-O --> V[Тренд performance]
+O-> R [Mean Sharpe coefficient]
+O-> S [standard deviation]
+O -> T[per cent of successful strategies]
+O-> U[Sharp coefficient stability]
+O-> V [Trend performance]
 
-P --> W[Индивидуальные результаты]
-P --> X[comparison методов]
-P --> Y[Временные паттерны]
+P --> W [Individual results]
+P --> X[comparison of methods]
+P -> Y [Temporary Pathers]
 
-Q --> Z[Оценка performance]
-Z --> AA[Отличная: Sharpe > 1.5, Success > 70%]
-Z --> BB[Хорошая: Sharpe > 1.0, Success > 50%]
-Z --> CC[Требует улучшения: иначе]
+Q -> Z [Evaluation of performance]
+Z --> AA [Great: Sharpe > 1.5, Science > 70 per cent]
+Z --> BB [Good: Sharpe > 1.0, Science > 50 per cent]
+Z -> CC [Required for improvement: otherwise]
 
-AA --> DD[✅ Стратегия готова к деплою]
-BB --> EE[⚠️ Стратегия требует Monitoringа]
-CC --> FF[❌ Стратегия требует доработки]
+AA --> DD[~ Strategy is ready to go]
+BB --> EE[~ Strategy requires Monitoring]
+CC-> FF[~ Strategy needs further development]
 
-DD --> GG[Деплой in продакшен]
-EE --> HH[Дополнительное тестирование]
-FF --> II[Оптимизация параметров]
+DD --> GG [Property in Sales]
+EE --> HH [Further testing]
+FF --> II [Optimization of parameters]
 
-II --> JJ[configuration окна обучения]
-JJ --> KK[Повторное тестирование]
+II -> JJ [configuring learning window]
+JJ --> KK[Return testing]
  KK --> B
 
  style A fill:#e3f2fd
@@ -1916,72 +1916,72 @@ JJ --> KK[Повторное тестирование]
  style FF fill:#ffcdd2
 ```
 
-### 1. Пайплайн Walk-Forward Analysis
+♪##1 ♪ Pipline Walk-Forward Analysis
 
 ```python
 class WalkForwardPipeline:
  """
-Пайплайн for автоматизации Walk-Forward Analysis
+Walk-Forward Analisis Automation Pipline
 
-Комплексный класс for проведения различных типов Walk-Forward Analysis
-with автоматической генерацией Reportов and рекомендаций.
+Integrated class for different types of Walk-Forward Analysis
+with automatic generation of Reports and Recommendations.
 
  Parameters:
  -----------
  data : pandas.dataFrame
-Временные ряды данных with колонками:
-- 'returns': доходность актива (float)
-- 'features': признаки for модели (array-like)
-- index: временные метки (datetime)
+Time series with columns:
+- 'returns': asset return (float)
+- 'features': signs for the model (array-lake)
+- Index: Time tags (datetime)
 
  model : sklearn-compatible model
-Объект модели machine learning with методами:
-- fit(X, y): обучение модели
-- predict(X): предсказания
-Должен быть совместим with sklearn API
+The object of the model machine lightning with methods is:
+- Fit(X, y): Model training
+- predict(X): predictions
+Should be compatible with sclearn API
 
  metrics_calculator : object
-Объект for расчета метрик качества with методом:
-- calculate(returns): расчет метрик on basis доходности
-Должен возвращать словарь with метриками (sharpe, max_drawdown, total_return)
+Object for calculation of quality metric with method:
+- calculate(returns): calculation of metric on base return
+Should return the dictionary with metrics (sharpe, max_drawdown, total_return)
 
  Attributes:
  -----------
  data : pandas.dataFrame
-Исходные data for Analysis
+Reference data for Analysis
 
  model : sklearn-compatible model
-Модель machine learning
+Machine lightning model
 
  metrics_calculator : object
-Калькулятор метрик качества
+Quality meter calculator
 
  results : dict
-Словарь with результатами различных типов Analysis:
-- 'fixed_window': результаты фиксированного окна
-- 'expanding_window': результаты расширяющегося окна
-- 'adaptive_window': результаты адаптивного окна
+The dictionary with results of different types of Analysis:
+- 'fixed_window': fixed window results
+- 'expanding_window': Results of an expanding window
+- 'Adaptive_Window': Results of an adaptive window
 
  Methods:
  --------
  run_fixed_window_Analysis(train_window, test_window, step)
-Launch Analysis with фиксированным окном
+Launch Analysis with a fixed window
 
  run_expanding_window_Analysis(initial_train_window, test_window, step)
-Launch Analysis with расширяющимся окном
+Launch Analysis with an expanding window
 
  run_adaptive_window_Analysis(min_window, max_window, test_window, step)
-Launch Analysis with адаптивным окном
+Launch Analysis with adaptive window
 
  generate_comprehensive_Report()
-Генерация комплексного Reportа
+Integrated report generationa
 
  Raises:
  -------
  ValueError
-Если data not содержит необходимые колонки
-Если model not имеет методов fit and predict
-Если metrics_calculator not имеет метода calculate
+If data not contains the necessary columns
+If model not has methods fit and predict
+If metrics_calculator not has a calculate method
 
  Examples:
  ---------
@@ -1992,12 +1992,12 @@ Launch Analysis with адаптивным окном
  >>> metrics_calc = MetricsCalculator()
  >>> pipeline = WalkForwardPipeline(data, model, metrics_calc)
  >>>
->>> # Launch all типов Analysis
+>> #Launch all types of Analysis
  >>> pipeline.run_fixed_window_Analysis()
  >>> pipeline.run_expanding_window_Analysis()
  >>> pipeline.run_adaptive_window_Analysis()
  >>>
->>> # Генерация Reportа
+>>#Report generationa
  >>> Report = pipeline.generate_comprehensive_Report()
  """
 
@@ -2008,13 +2008,13 @@ Launch Analysis with адаптивным окном
  Parameters:
  -----------
  data : pandas.dataFrame
-Временные ряды данных with колонками 'returns' and 'features'
+Time series with columns 'returns' and 'features'
 
  model : sklearn-compatible model
-Модель machine learning with методами fit and predict
+Machine Learning with Fit and Predict
 
  metrics_calculator : object
-Калькулятор метрик with методом calculate
+Calculator metric with calculate method
  """
  self.data = data
  self.model = model
@@ -2023,76 +2023,76 @@ Launch Analysis with адаптивным окном
 
  def run_fixed_window_Analysis(self, train_window=252, test_window=30, step=30):
  """
-Launch Walk-Forward Analysis with фиксированным окном обучения
+Launch Walk-Forward Anallysis with a fixed learning window
 
  Parameters:
  -----------
  train_window : int, default=252
-Размер окна обучения in днях:
-- 252: один торговый год (рекомендуется)
-- 126: полгода (for быстрого тестирования)
-- 504: два года (for долгосрочных стратегий)
-- Минимум: 50 дней for стабильности
-- Максимум: 1000 дней for избежания retraining
+Size of learning window in days:
+- 252: one trade year (recommended)
+126: Six months (for rapid testing)
+- 504: two years (for long-term strategies)
+- Minimum: 50 days for stability
+- Maximum: 1,000 days for avoidance of retraining
 
  test_window : int, default=30
-Размер окна тестирования in днях:
-- 30: один месяц (рекомендуется)
-- 7: одна неделя (for высокочастотных стратегий)
-- 90: квартал (for долгосрочных стратегий)
-- Минимум: 5 дней for статистической значимости
-- Максимум: 180 дней for избежания устаревания
+Size of test window in days:
+- 30: one month (recommended)
+- 7: One week (for high frequency strategies)
+90: quarter (for long-term strategies)
+- Minimum: 5 days for statistical significance
+- Maximum: 180 days for avoidance of obsolescence
 
  step : int, default=30
-Шаг сдвига окна in днях:
-- 30: ежемесячное retraining (рекомендуется)
-- 7: еженедельное retraining (for активных стратегий)
-- 1: ежедневное retraining (for высокочастотных стратегий)
-- 90: квартальное retraining (for консервативных стратегий)
-- step <= test_window for избежания пропусков данных
+Step of window shift in days:
+- 30: monthly retraining (recommended)
+- 7: weekly retraining (for active strategies)
+- 1: Daily retraining (for high frequency strategies)
+90: quarterly retraining (for conservative strategies)
+- step <=test_widow for missing data
 
  Returns:
  --------
  pd.dataFrame
-Результаты Analysis with колонками:
-- 'train_start': начало периода обучения (datetime)
-- 'train_end': конец периода обучения (datetime)
-- 'test_start': начало периода тестирования (datetime)
-- 'test_end': конец периода тестирования (datetime)
-- 'window_size': размер окна обучения (int)
-- 'sharpe': коэффициент Шарпа за период (float)
-- 'max_drawdown': максимальная просадка за период (float)
-- 'total_return': общая доходность за период (float)
+Results of Analysis with columns:
+- 'training_start': Start of study period (datetime)
+- 'training_end': end of period of study (datetime)
+- 'test_start': Start of the test period (datetime)
+- 'test_end': end of test period (datetime)
+- 'Window_size': the size of the learning window (int)
+- 'sharpe': Sharp coefficient over the period float
+- 'max_drawdown': maximum tare period (float)
+- 'Total_return': total return over period (float)
 
  Raises:
  -------
  ValueError
-Если train_window < 50 or test_window < 5
-Если step > test_window
-Если len(data) < train_window + test_window
+If train_window < 50 or test_widow < 5
+If step > test_wind
+If Len(data) < train_widow + test_window
 
  Notes:
  ------
-- Результаты сохраняются in self.results['fixed_window']
-- Модель переобучается on каждом шаге
-- Подходит for стратегий with стабильными рыночными условиями
+- The results are stored in elf.results['fixed_window']
+- The model is retrained on every step.
+- Suitable for strategies with stable market conditions
  """
  results = []
 
  for i in range(train_window, len(self.data) - test_window, step):
-# Обучающие data
+# Training data
  train_data = self.data[i-train_window:i]
 
-# testsые data
+# Testsy data
  test_data = self.data[i:i+test_window]
 
-# Обучение модели
+# Model learning
  self.model.fit(train_data)
 
-# Предсказания
+# Premonition
  predictions = self.model.predict(test_data)
 
-# Расчет метрик
+# The calculation of the metric
  returns = test_data['returns']
  strategy_returns = predictions * returns
 
@@ -2112,77 +2112,77 @@ Launch Walk-Forward Analysis with фиксированным окном обуч
 
  def run_expanding_window_Analysis(self, initial_train_window=252, test_window=30, step=30):
  """
-Launch Walk-Forward Analysis with расширяющимся окном обучения
+Launch Walk-Forward Anallysis with an expanding learning window
 
  Parameters:
  -----------
  initial_train_window : int, default=252
-Начальный размер окна обучения in днях:
-- 252: один торговый год (рекомендуется)
-- 126: полгода (for быстрого тестирования)
-- 504: два года (for долгосрочных стратегий)
-- Минимум: 50 дней for стабильности
-- После этого окно будет расширяться on step дней каждую итерацию
+Initial size of the learning window in days:
+- 252: one trade year (recommended)
+126: Six months (for rapid testing)
+- 504: two years (for long-term strategies)
+- Minimum: 50 days for stability
+After that, the window will expand on step days every iteration.
 
  test_window : int, default=30
-Размер окна тестирования in днях:
-- 30: один месяц (рекомендуется)
-- 7: одна неделя (for высокочастотных стратегий)
-- 90: квартал (for долгосрочных стратегий)
-- Минимум: 5 дней for статистической значимости
-- Максимум: 180 дней for избежания устаревания
+Size of test window in days:
+- 30: one month (recommended)
+- 7: One week (for high frequency strategies)
+90: quarter (for long-term strategies)
+- Minimum: 5 days for statistical significance
+- Maximum: 180 days for avoidance of obsolescence
 
  step : int, default=30
-Шаг сдвига окна in днях:
-- 30: ежемесячное retraining (рекомендуется)
-- 7: еженедельное retraining (for активных стратегий)
-- 1: ежедневное retraining (for высокочастотных стратегий)
-- 90: квартальное retraining (for консервативных стратегий)
-- step <= test_window for избежания пропусков данных
+Step of window shift in days:
+- 30: monthly retraining (recommended)
+- 7: weekly retraining (for active strategies)
+- 1: Daily retraining (for high frequency strategies)
+90: quarterly retraining (for conservative strategies)
+- step <=test_widow for missing data
 
  Returns:
  --------
  pd.dataFrame
-Результаты Analysis with колонками:
-- 'train_start': начало периода обучения (datetime)
-- 'train_end': конец периода обучения (datetime)
-- 'test_start': начало периода тестирования (datetime)
-- 'test_end': конец периода тестирования (datetime)
-- 'window_size': размер окна обучения (int) - увеличивается со временем
-- 'sharpe': коэффициент Шарпа за период (float)
-- 'max_drawdown': максимальная просадка за период (float)
-- 'total_return': общая доходность за период (float)
+Results of Analysis with columns:
+- 'training_start': Start of study period (datetime)
+- 'training_end': end of period of study (datetime)
+- 'test_start': Start of the test period (datetime)
+- 'test_end': end of test period (datetime)
+- 'Window_size': the size of the learning window (int) - increases over time
+- 'sharpe': Sharp coefficient over the period float
+- 'max_drawdown': maximum tare period (float)
+- 'Total_return': total return over period (float)
 
  Raises:
  -------
  ValueError
-Если initial_train_window < 50 or test_window < 5
-Если step > test_window
-Если len(data) < initial_train_window + test_window
+If initial_training_window < 50 or test_window < 5
+If step > test_wind
+If Len(data) < initial_training_window + test_window
 
  Notes:
  ------
-- Результаты сохраняются in self.results['expanding_window']
-- Окно обучения постоянно растет, используя всю доступную историю
-- Может быть медленнее фиксированного окна из-за увеличения размера данных
-- Подходит for стратегий, где исторические data остаются релевантными
+- The results are stored in elf.results['expanding_window']
+- The learning window is constantly growing, using all available history.
+- Could be slower than a fixed window due to the increase in data size.
+- It is appropriate for strategies where historical data remain relevant
  """
  results = []
 
  for i in range(initial_train_window, len(self.data) - test_window, step):
-# Обучающие data (расширяющееся окно)
+# Learning data (expanding window)
  train_data = self.data[:i]
 
-# testsые data
+# Testsy data
  test_data = self.data[i:i+test_window]
 
-# Обучение модели
+# Model learning
  self.model.fit(train_data)
 
-# Предсказания
+# Premonition
  predictions = self.model.predict(test_data)
 
-# Расчет метрик
+# The calculation of the metric
  returns = test_data['returns']
  strategy_returns = predictions * returns
 
@@ -2203,87 +2203,87 @@ Launch Walk-Forward Analysis with расширяющимся окном обуч
  def run_adaptive_window_Analysis(self, min_window=100, max_window=500,
  test_window=30, step=30):
  """
-Launch Walk-Forward Analysis with адаптивным окном обучения
+Launch Walk-Forward Anallysis with an adaptive learning window
 
  Parameters:
  -----------
  min_window : int, default=100
-Минимальный размер окна обучения in днях:
-- 100: минимум for стабильности (рекомендуется)
-- 50: for быстрого тестирования
-- 200: for консервативных стратегий
-- Минимум: 30 дней for статистической значимости
-- Максимум: 300 дней for избежания retraining
+Minimum size of teaching window in days:
+100: minimum for stability (recommended)
+- 50: for rapid testing
+- 200: for conservative strategies
+- Minimum: 30 days for statistical significance
+- Maximum: 300 days for avoidance of retraining
 
  max_window : int, default=500
-Максимальный размер окна обучения in днях:
-- 500: два года торговых дней (рекомендуется)
-- 252: один год (for быстрых стратегий)
-- 1000: четыре года (for долгосрочных стратегий)
-- Минимум: min_window + 100
-- Максимум: 2000 дней for избежания retraining
+Maximum size of learning window in days:
+- 500: two years of trade days (recommended)
+- 252: one year (for rapid strategies)
+- 1000: four years (for long-term strategies)
+- Minimum: min_Window + 100
+- Maximum: 2,000 days for avoidance of retraining
 
  test_window : int, default=30
-Размер окна тестирования in днях:
-- 30: один месяц (рекомендуется)
-- 7: одна неделя (for высокочастотных стратегий)
-- 90: квартал (for долгосрочных стратегий)
-- Минимум: 5 дней for статистической значимости
-- Максимум: 180 дней for избежания устаревания
+Size of test window in days:
+- 30: one month (recommended)
+- 7: One week (for high frequency strategies)
+90: quarter (for long-term strategies)
+- Minimum: 5 days for statistical significance
+- Maximum: 180 days for avoidance of obsolescence
 
  step : int, default=30
-Шаг сдвига окна in днях:
-- 30: ежемесячное retraining (рекомендуется)
-- 7: еженедельное retraining (for активных стратегий)
-- 1: ежедневное retraining (for высокочастотных стратегий)
-- 90: квартальное retraining (for консервативных стратегий)
-- step <= test_window for избежания пропусков данных
+Step of window shift in days:
+- 30: monthly retraining (recommended)
+- 7: weekly retraining (for active strategies)
+- 1: Daily retraining (for high frequency strategies)
+90: quarterly retraining (for conservative strategies)
+- step <=test_widow for missing data
 
  Returns:
  --------
  pd.dataFrame
-Результаты Analysis with колонками:
-- 'train_start': начало периода обучения (datetime)
-- 'train_end': конец периода обучения (datetime)
-- 'test_start': начало периода тестирования (datetime)
-- 'test_end': конец периода тестирования (datetime)
-- 'window_size': текущий размер окна обучения (int)
-- 'sharpe': коэффициент Шарпа за период (float)
-- 'max_drawdown': максимальная просадка за период (float)
-- 'total_return': общая доходность за период (float)
+Results of Analysis with columns:
+- 'training_start': Start of study period (datetime)
+- 'training_end': end of period of study (datetime)
+- 'test_start': Start of the test period (datetime)
+- 'test_end': end of test period (datetime)
+'Window_size': the current size of the learning window (int)
+- 'sharpe': Sharp coefficient over the period float
+- 'max_drawdown': maximum tare period (float)
+- 'Total_return': total return over period (float)
 
  Raises:
  -------
  ValueError
-Если min_window < 30 or max_window < min_window + 100
-Если test_window < 5 or step > test_window
-Если len(data) < min_window + test_window
+If min_window < 30 or max_widow < min_widow + 100
+If test_window < 5 or step > test_window
+If Len(data) < min_window + test_window
 
  Notes:
  ------
-- Результаты сохраняются in self.results['adaptive_window']
-- Размер окна адаптируется on basis performance модели
-- При ухудшении performance окно увеличивается
-- При улучшении performance окно уменьшается
-- Подходит for стратегий with изменяющимися рыночными условиями
+- The results are stored in elf.results['adaptive_window']
+- The size of the window adapts on base performance model
+- The window increases when it deteriorates.
+- With improved performance, the window decreases.
+- Suitable for strategies with changing market conditions
  """
  results = []
  current_window = min_window
 
  for i in range(min_window, len(self.data) - test_window, step):
-# Обучающие data
+# Training data
  train_data = self.data[i-current_window:i]
 
-# testsые data
+# Testsy data
  test_data = self.data[i:i+test_window]
 
-# Обучение модели
+# Model learning
  self.model.fit(train_data)
 
-# Предсказания
+# Premonition
  predictions = self.model.predict(test_data)
 
-# Расчет метрик
+# The calculation of the metric
  returns = test_data['returns']
  strategy_returns = predictions * returns
 
@@ -2296,7 +2296,7 @@ Launch Walk-Forward Analysis with адаптивным окном обучени
  'window_size': current_window
  })
 
-# Адаптация размера окна
+# Adaptation of the size of the window
  if len(results) > 0:
  recent_sharpe = results[-1]['sharpe']
  current_sharpe = metrics['sharpe']
@@ -2313,49 +2313,49 @@ Launch Walk-Forward Analysis with адаптивным окном обучени
 
  def generate_comprehensive_Report(self):
  """
-Генерация комплексного Reportа on результатам Walk-Forward Analysis
+Generation of the Integrated Results Report Walk-Forward Analysis
 
-Создает детальный Report with анализом all типов Walk-Forward Analysis,
-including сводные metrics, детальные результаты and рекомендации.
+Creates a detailed Report with analysis of all types of Walk-Forward Analysis,
+including aggregates, detailed results and recommendations.
 
  Returns:
  --------
  dict
-Комплексный Report со следующими ключами:
-- 'summary': словарь with сводными метриками for каждого метода
-- 'fixed_window': metrics фиксированного окна
-- 'expanding_window': metrics расширяющегося окна
-- 'adaptive_window': metrics адаптивного окна
-- Каждый метод содержит
-- 'mean_sharpe': средний коэффициент Шарпа (float)
-- 'std_sharpe': стандартное отклонение коэффициента Шарпа (float)
-- 'mean_max_drawdown': средняя максимальная просадка (float)
-- 'success_rate': процент успешных periods (float)
-- 'sharpe_stability': стабильность коэффициента Шарпа (float)
-- 'sharpe_trend': тренд коэффициента Шарпа (float)
-- 'Detailed_results': словарь with детальными результатами
-- 'fixed_window': dataFrame with результатами фиксированного окна
-- 'expanding_window': dataFrame with результатами расширяющегося окна
-- 'adaptive_window': dataFrame with результатами адаптивного окна
-- 'recommendations': List рекомендаций (List)
-- Строки with оценкой performance каждого метода
-- "Отличная performance": Sharpe > 1.5, Success > 70%
-- "Хорошая performance": Sharpe > 1.0, Success > 50%
-- "Требует улучшения": иначе
+Integrated Report with the following keys:
+- 'summary': dictionary with composite metrics for each method
+- 'fixed_window': metrics of a fixed window
+- 'Expanding_window': metrics expanding window
+- 'Adaptive_Window': metrics adaptive window
+- Each method contains
+- 'mean_sharpe': average Sharp coefficient (float)
+- 'std_sharpe': standard deviation of Sharp coefficient (float)
+- 'mean_max_drawdown': average maximum draught (float)
+- 'access_rate': % of successful periods (float)
+- 'sharpe_state': stability of Sharp coefficient (float)
+- 'sharpe_trend': trend of Sharp coefficient (float)
+- 'Detained_results': dictionary with detailed results
+- 'fixed_window': DataFrame with fixed window results
+- 'Expanding_window': DataFrame with the results of an expanding window
+- 'adaptive_window': DataFrame with the results of an adaptive window
+- 'recommendations': List of recommendations (List)
+- Line with evaluation of performance of each method
+- "Great performance": Sharpe > 1.5, Science > 70%
+- "Good performance": Sharpe > 1.0, Science > 50%
+- "Requires improvement": otherwise
 
  Raises:
  -------
  ValueError
-Если self.results пустой or not содержит ожидаемые ключи
-Если результаты not содержат необходимые колонки
+If self.results empty or not contains expected keys
+If the results of the note contain the necessary columns
 
  Notes:
  ------
-- Report генерируется on basis all выполненных анализов
-- Рекомендации основаны on пороговых значениях performance
-- Стабильность рассчитывается как обратная величина к коэффициенту вариации
-- Тренд рассчитывается with помощью линейной регрессии
-- Рекомендуется запустить все типы Analysis перед генерацией Reportа
+- The report is generated on base all the tests performed
+- Recommendations are based on threshold values of performance
+- Stability is calculated as the return value to the coefficient of variation
+- Tread is calculated with linear regression
+- It is recommended to start all types of Analysis before producing the Report
 
  Examples:
  ---------
@@ -2365,7 +2365,7 @@ including сводные metrics, детальные результаты and р
  >>> pipeline.run_adaptive_window_Analysis()
  >>>
  >>> Report = pipeline.generate_comprehensive_Report()
->>> print("Рекомендации:", Report['recommendations'])
+>> preint(recommendations:", Report['recommendations'])
  """
  Report = {
  'summary': {},
@@ -2373,19 +2373,19 @@ including сводные metrics, детальные результаты and р
  'recommendations': []
  }
 
-# Анализ каждого метода
+# Analysis of each method
  for method, results in self.results.items():
  if isinstance(results, pd.dataFrame):
-# Базовые metrics
+# Basic metrics
  mean_sharpe = results['sharpe'].mean()
  std_sharpe = results['sharpe'].std()
  mean_max_drawdown = results['max_drawdown'].mean()
  success_rate = (results['sharpe'] > 1.0).mean()
 
-# Стабильность
+# Stability
  sharpe_stability = 1 / (std_sharpe / mean_sharpe) if mean_sharpe != 0 else 0
 
-# Тренд
+# Trent
  sharpe_trend = np.polyfit(range(len(results)), results['sharpe'], 1)[0]
 
  Report['summary'][method] = {
@@ -2397,17 +2397,17 @@ including сводные metrics, детальные результаты and р
  'sharpe_trend': sharpe_trend
  }
 
-# Рекомендации
+# Recommendations
  if mean_sharpe > 1.5 and success_rate > 0.7:
-Report['recommendations'].append(f"{method}: Отличная performance")
+Report(f)(`recommendations'): Excellent performance)
  elif mean_sharpe > 1.0 and success_rate > 0.5:
-Report['recommendations'].append(f"{method}: Хорошая performance")
+Report(f) (good performance)
  else:
-Report['recommendations'].append(f"{method}: Требует улучшения")
+Report ['recommendations'].append(f'{method}: Needs improvement")
 
  return Report
 
-# example использования
+# Example of use
 pipeline = WalkForwardPipeline(data, model, metrics_calculator)
 pipeline.run_fixed_window_Analysis()
 pipeline.run_expanding_window_Analysis()
@@ -2415,26 +2415,26 @@ pipeline.run_adaptive_window_Analysis()
 Report = pipeline.generate_comprehensive_Report()
 ```
 
-## Заключение
+## Conclusion
 
-Walk-Forward анализ - это золотой стандарт validation ML-стратегий. Он позволяет:
+The Walk-Forward analysis is the gold standard of performance ML strategies. It allows:
 
-1. **Имитировать реальную торговлю** - модель постоянно переобучается
-2. **Проверять адаптивность** - модель должна Workingть in изменяющихся условиях
-3. **Оценивать стабильность** - результаты должны быть стабильными во времени
-4. **Выявлять retraining** - модель not должна запоминать исторические data
+1. ** Simulate real trade** - The model is constantly re-trained
+2. ** To test adaptation** - The model should Working in changing circumstances
+3. ** Assess stability** - the results must be stable over time
+4. ** Identify retraining** - No should remember historical data
 
-### Ключевые принципы
+### Key principles
 
-1. **Реалистичность** - Use реалистичные parameters
-2. **Стабильность** - проверяйте стабильность результатов
-3. **Адаптивность** - модель должна адаптироваться к новым условиям
-4. **Статистическая значимость** - проверяйте значимость результатов
-5. **Экономическая значимость** - учитывайте транзакционные издержки
+1. ** Reality** - Use realistic parameters
+2. ** Stability** - check the stability of the results
+3. ** Adaptation** - The model has to adapt to the new environment
+4. ** Statistical significance** - check the relevance of the results
+5. ** Economic significance** - account for transaction costs
 
-### Следующие шаги
+### Next steps
 
-После освоения Walk-Forward Analysis переходите к:
+After learning Walk-Forward Analysis, go to:
 
-- [Monte Carlo симуляциям](./29_monte_carlo_simulations.md)
-- [Управлению Portfolio](./30_Portfolio_Management.md)
+- [Monte Carlo simulation](./29_monte_carlo_simulations.md)
+- [Porthfolio Administration](./30_Porthfolio_Management.md)

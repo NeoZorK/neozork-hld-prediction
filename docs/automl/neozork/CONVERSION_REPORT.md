@@ -1,47 +1,47 @@
-# Report о конвертации Markdown in HTML
+# The Markdown in TML Conversion Report
 
-## Выполненные задачи
+## Tasks accomplished
 
-### ✅ 1. Анализ структуры
-- Изучены все .md файлы in директории `docs/automl/neozork/`
-- Проанализирован стиль форматирования из `Python_Formatting_Example.html`
-- Определены требования к конвертеру
+*# * * * 1. Structure analysis
+- All .md files in the directory `docs/automl/neozork/'
+- Formatting style from `Python_Formatting_Example.html' analysed
+- Quantity requirements defined
 
-### ✅ 2. create конвертера
-- РазWorkingн класс `MarkdownToHTMLConverter` in `src/utils/md_to_html_converter.py`
-- Реализована поддержка all основных Markdown элементов
-- Добавлена подсветка синтаксиса for Python, Bash, JSON, YAML, SQL
-- Сохранен стиль and цветовая схема из примера
+## * * * 2.
+- unWorkingn class `MarkdownToHTMLConverter' in `src/utils/md_to_html_converter.py'
+- Support for all major Markdown elements implemented
+- Added syntax for Python, Bash, JSON, YAML, SQL
+- The style and color pattern of the example is preserved.
 
 ### ✅ 3. create HTML files
-- Конвертированы все 24 .md файла in HTML
-- Создан `index.html` with навигацией on all разделам
-- Применены стили in соответствии with `Python_Formatting_Example.html`
+- All 24 .md files in TML have been converted
+- Created by `index.html' with navigation on all sections
+- Styles in accordance with `Python_Formatting_Example.html'
 
-### ✅ 4. Тестирование
-- Созданы comprehensive unit тесты
-- Все тесты успешно пройдены (9/9)
-- Проверена корректность конвертации
+*# * * * * 4 * Test
+- Comprehensive unit tests created
+All tests successfully completed (9/9)
+- Checked the conversion correct.
 
-## Результаты
+## Results
 
-### 📊 Статистика конвертации
-- **ОбWorkingно files:** 24 .md файла
-- **Создано HTML files:** 25 (including index.html)
-- **Покрытие тестами:** 100%
-- **Время выполнения:** < 5 секунд
+### ♪ Conversion statistics
+- **OWorkingno files:** 24 .md file
+== sync, corrected by elderman == @elder_man
+- ** Test coverage:** 100%
+- ** Implementation time:** < 5 seconds
 
-### 🎨 Особенности форматирования
-- **Современный дизайн** with Apple system Fonts
-- **Адаптивная верстка** for all устройств
-- **Темная тема** for блоков кода with подсветкой синтаксиса
-- **Цветовое выделение** for Python, Bash, JSON, YAML, SQL
-- **Интерактивные элементы** (hover эффекты, Navigation)
+### ♪ Formatting features
+- ** Modern Design** with Apple System Fons
+- ** Adaptive tie** for all devices
+- ** Dark topic** for code blocks with syntax lighting
+- **Target Selection** for Python, Bash, JSON, YAML, SQL
+- ** Interactive elements** (Hover effects, Navigation)
 
 ### 📁 File Structure
 ```
 docs/automl/neozork/html/
-├── index.html # main page with навигацией
+# Main page with navigation
 ├── 01_environment_setup.html # environment installation
 ├── 02_robust_systems_fundamentals.html
 ├── 03_data_preparation.html
@@ -66,54 +66,54 @@ docs/automl/neozork/html/
 ├── 18_README.html
 ├── 18_system_components.html
 ├── README.html
-└── README.md # documentation on использованию
+~ ~ README.md #documentation on use
 ```
 
 ## Technical details
 
-### 🛠️ Useые техноLogsи
-- **Python 3.12** - основной язык
-- **markdown 3.9** - конвертация Markdown
-- **Prism.js 1.29.0** - подсветка синтаксиса
-- **Custom CSS** - стилизация in стиле примера
-- **pytest** - тестирование
+## ♪ Use technoLogs
+- **Python 3.12** - main language
+- **markdown 3.9** - Markdown conversion
+- **Prism.js 1.29.0,** - syntax illumination
+- **Custom CSS** - In-example style
+- **pytest** - testing
 
 ### 📦 dependencies
-Добавлена dependency `markdown>=3.5.0` in `requirements.txt`
+Added dependency `markdown>=3.5.0' in `requirements.txt'
 
-### 🧪 Тестирование
-Созданы тесты for all основных функций:
-- Инициализация конвертера
-- Извлечение заголовков
-- Генерация HTML шаблонов
-- Конвертация отдельных files
-- Конвертация all files
-- create indexного файла
-- check стилей подсветки кода
-- check стилей таблиц
-- check адаптивного дизайна
+♪# ♪ Testing
+Tests have been established for all core functions:
+- Initiating the converter
+- Retrieving the headlines
+HTML Generation of templates
+- Convergence of selected files
+- All Files convergence
+- cross index file
+- code-lighting check
+- check table styles
+- Sheck adaptive design
 
-## Использование
+## Use
 
-### 🚀 Launch конвертера
+### # Launch converter
 ```bash
-# Перейти in корень проекта
+# Go into the root of the project
 cd /path/to/neozork-hld-Prediction
 
-# Запустить конвертер
+# Start the converter
 uv run python scripts/convert_md_to_html.py
 ```
 
-### 🌐 View документации
-Откройте `docs/automl/neozork/html/index.html` in браузере for Viewа полной документации.
+### ♪ View documentation
+Open `docs/automl/neozork/html/index.html' in the browser for the full documentation.
 
 ### 🔄 update
-При изменении .md files просто запустите конвертер заново - он автоматически обновит все HTML файлы.
+If you change .md files, just start the converter again -- it automatically updates all XML files.
 
-## Заключение
+## Conclusion
 
-Конвертер успешно создан and протестирован. Все .md файлы преобразованы in HTML with сохранением стиля and форматирования из `Python_Formatting_Example.html`. Создана полноценная HTML documentation with навигацией, которая может использоваться как интерактивное guide or manual.
+The converter has been successfully created and tested. All .md files have been converted into TML with style preservation and formatting from `Python_Formatting_Example.html'. A full-fledged TML documentation with navigation has been created and can be used as an interactive guide or manual.
 
 ---
-*Report создан: 2024-12-19*
-*Конвертер: Neozork MD to HTML Converter v1.0*
+♪ Report created: 2024-12-19 ♪
+== sync, corrected by elderman == @elder_man
