@@ -19,6 +19,8 @@
   "git.timeline.enabled": true,
   "git.timeline.showAuthor": true,
   "git.timeline.showUncommitted": true,
+  "git.followTagsWhenSync": false,
+  "git.followTagsWhenPull": false,
   "scm.alwaysShowActions": false,
   "scm.alwaysShowProviders": false,
   "scm.autoReveal": false,
