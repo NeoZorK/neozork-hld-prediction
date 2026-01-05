@@ -87,38 +87,38 @@ def calculate_optimal_chunk_size(total_rows: int, target_chunks: int = 10, min_c
     # Calculate base chunk size
     base_chunk_size = max(1, total_rows // target_chunks)
 
- # Ensure chunk size is within bounds
- chunk_size = max(min_chunk_size, min(max_chunk_size, base_chunk_size))
+    # Ensure chunk size is within bounds
+    chunk_size = max(min_chunk_size, min(max_chunk_size, base_chunk_size))
 
- # Round to nearest 10 for cleaner intervals
- chunk_size = round(chunk_size / 10) * 10
+    # Round to nearest 10 for cleaner intervals
+    chunk_size = round(chunk_size / 10) * 10
 
- return max(min_chunk_size, chunk_size)
+    return max(min_chunk_size, chunk_size)
 
 
 def split_dataframe_into_chunks(df: pd.dataFrame, chunk_size: int) -> List[pd.dataFrame]:
- """
- Split dataFrame into chunks of specified size.
+    """
+    Split dataFrame into chunks of specified size.
 
- Args:
- df (pd.dataFrame): dataFrame to split
- chunk_size (int): Size of each chunk
+    Args:
+    df (pd.dataFrame): dataFrame to split
+    chunk_size (int): Size of each chunk
 
- Returns:
- List[pd.dataFrame]: List of dataFrame chunks
- """
- if df is None or df.empty:
- return []
+    Returns:
+    List[pd.dataFrame]: List of dataFrame chunks
+    """
+    if df is None or df.empty:
+        return []
 
- chunks = []
- total_rows = len(df)
+    chunks = []
+    total_rows = len(df)
 
- for start_idx in range(0, total_rows, chunk_size):
- end_idx = min(start_idx + chunk_size, total_rows)
- chunk = df.iloc[start_idx:end_idx].copy()
- chunks.append(chunk)
+    for start_idx in range(0, total_rows, chunk_size):
+        end_idx = min(start_idx + chunk_size, total_rows)
+        chunk = df.iloc[start_idx:end_idx].copy()
+        chunks.append(chunk)
 
- return chunks
+    return chunks
 
 
 def parse_rsi_rule(rule_str: str) -> Tuple[str, Dict[str, Any]]:
@@ -131,17 +131,17 @@ def parse_rsi_rule(rule_str: str) -> Tuple[str, Dict[str, Any]]:
  Returns:
  Tuple[str, Dict]: (rule_type, parameters)
  """
- # Extract RSI variant
- rsi_match = re.match(r'(rsi|rsi_mom|rsi_div)\(([^)]+)\)', rule_str.lower())
- if not rsi_match:
- return rule_str, {}
+    # Extract RSI variant
+    rsi_match = re.match(r'(rsi|rsi_mom|rsi_div)\(([^)]+)\)', rule_str.lower())
+    if not rsi_match:
+        return rule_str, {}
 
- rule_type = rsi_match.group(1)
- params_str = rsi_match.group(2)
+    rule_type = rsi_match.group(1)
+    params_str = rsi_match.group(2)
 
- try:
- params = [p.strip() for p in params_str.split(',')]
- if len(params) != 4:
+    try:
+        params = [p.strip() for p in params_str.split(',')]
+        if len(params) != 4:
  raise ValueError(f"RSI rule must have exactly 4 parameters: {rule_str}")
 
  parameters = {
