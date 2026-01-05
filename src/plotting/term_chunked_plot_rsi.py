@@ -93,114 +93,114 @@ def plot_rsi_chunks(
         chunk_size = calculate_optimal_chunk_size(total_rows)
         chunks = split_dataframe_into_chunks(df, chunk_size)
 
-    logger.print_info(f"Split {total_rows} rows into {len(chunks)} chunks of ~{chunk_size} candles each")
+        logger.print_info(f"Split {total_rows} rows into {len(chunks)} chunks of ~{chunk_size} candles each")
 
-    if Use_Navigation:
-    # Use Navigation system
-    navigator = TerminalNavigator(chunks, title)
+        if Use_Navigation:
+            # Use Navigation system
+            navigator = TerminalNavigator(chunks, title)
 
             def plot_chunk_with_Navigation(chunk: pd.DataFrame, chunk_index: int, chunk_info: dict) -> None:
-    """Plot a single chunk with Navigation info."""
- if len(chunk) == 0:
- logger.print_warning("Empty chunk, skipping...")
- return
+                """Plot a single chunk with Navigation info."""
+                if len(chunk) == 0:
+                    logger.print_warning("Empty chunk, skipping...")
+                    return
 
- # Clear previous plots
- plt.clear_data()
- plt.clear_figure()
+                # Clear previous plots
+                plt.clear_data()
+                plt.clear_figure()
 
- # Get start and end dates for this chunk
- start_date = chunk_info['start_date']
- end_date = chunk_info['end_date']
+                # Get start and end dates for this chunk
+                start_date = chunk_info['start_date']
+                end_date = chunk_info['end_date']
 
- # Set up plot with full screen size
- plt.subplots(1, 1)
- plot_size = get_terminal_plot_size()
- plt.plot_size(*plot_size)
- plt.theme(style)
+                # Set up plot with full screen size
+                plt.subplots(1, 1)
+                plot_size = get_terminal_plot_size()
+                plt.plot_size(*plot_size)
+                plt.theme(style)
 
- # Create time axis with dates for this chunk
- if hasattr(chunk.index, 'strftime'):
- # Use plotext-compatible date format
- x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
+                # Create time axis with dates for this chunk
+                if hasattr(chunk.index, 'strftime'):
+                    # Use plotext-compatible date format
+                    x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
                     x_values = list(range(len(chunk)))
- else:
+                else:
                     x_values = list(range(len(chunk)))
- x_labels = [str(i) for i in x_values]
+                    x_labels = [str(i) for i in x_values]
 
- # OHLC Candlestick Chart (always as first layer, like in other rules)
- draw_ohlc_candles(chunk, x_values)
+                # OHLC Candlestick Chart (always as first layer, like in other rules)
+                draw_ohlc_candles(chunk, x_values)
 
- # Add RSI-specific overlays based on rule type
- _add_rsi_overlays_to_chunk(chunk, x_values, rule_type, params)
+                # Add RSI-specific overlays based on rule type
+                _add_rsi_overlays_to_chunk(chunk, x_values, rule_type, params)
 
- plt.title(f"{title} - {rule_type.upper()} (Chunk {chunk_info['index']}/{chunk_info['total']}) - {start_date} to {end_date}")
- plt.xlabel("Date/Time")
- plt.ylabel("Price/Value")
+                plt.title(f"{title} - {rule_type.upper()} (Chunk {chunk_info['index']}/{chunk_info['total']}) - {start_date} to {end_date}")
+                plt.xlabel("Date/Time")
+                plt.ylabel("Price/Value")
 
- # Set x-axis ticks to show dates
- if len(x_values) > 0:
+                # Set x-axis ticks to show dates
+                if len(x_values) > 0:
                     step = max(1, len(x_values) // 10)  # Show ~10 date labels
- plt.xticks(x_values[::step], x_labels[::step])
+                    plt.xticks(x_values[::step], x_labels[::step])
 
- plt.show()
+                plt.show()
 
- # start Navigation
- navigator.navigate(plot_chunk_with_Navigation)
+            # start Navigation
+            navigator.navigate(plot_chunk_with_Navigation)
 
- else:
- # Original non-Navigation behavior
- for i, chunk in enumerate(chunks):
- chunk_start_idx = i * chunk_size
- chunk_end_idx = min((i + 1) * chunk_size, total_rows)
+        else:
+            # Original non-Navigation behavior
+            for i, chunk in enumerate(chunks):
+                chunk_start_idx = i * chunk_size
+                chunk_end_idx = min((i + 1) * chunk_size, total_rows)
 
- # Get start and end dates for this chunk
- start_date = chunk.index[0] if len(chunk) > 0 else "N/A"
- end_date = chunk.index[-1] if len(chunk) > 0 else "N/A"
+                # Get start and end dates for this chunk
+                start_date = chunk.index[0] if len(chunk) > 0 else "N/A"
+                end_date = chunk.index[-1] if len(chunk) > 0 else "N/A"
 
- # Clear previous plots
- plt.clear_data()
- plt.clear_figure()
+                # Clear previous plots
+                plt.clear_data()
+                plt.clear_figure()
 
- # Set up plot with full screen size
- plt.subplots(1, 1)
- plot_size = get_terminal_plot_size()
- plt.plot_size(*plot_size)
- plt.theme(style)
+                # Set up plot with full screen size
+                plt.subplots(1, 1)
+                plot_size = get_terminal_plot_size()
+                plt.plot_size(*plot_size)
+                plt.theme(style)
 
- # Create time axis with dates for this chunk
- if hasattr(chunk.index, 'strftime'):
- # Use plotext-compatible date format
- x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
+                # Create time axis with dates for this chunk
+                if hasattr(chunk.index, 'strftime'):
+                    # Use plotext-compatible date format
+                    x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
                     x_values = list(range(len(chunk)))
- else:
+                else:
                     x_values = list(range(len(chunk)))
- x_labels = [str(i) for i in x_values]
+                    x_labels = [str(i) for i in x_values]
 
- # OHLC Candlestick Chart (always as first layer, like in other rules)
- draw_ohlc_candles(chunk, x_values)
+                # OHLC Candlestick Chart (always as first layer, like in other rules)
+                draw_ohlc_candles(chunk, x_values)
 
- # Add RSI-specific overlays based on rule type
- _add_rsi_overlays_to_chunk(chunk, x_values, rule_type, params)
+                # Add RSI-specific overlays based on rule type
+                _add_rsi_overlays_to_chunk(chunk, x_values, rule_type, params)
 
- plt.title(f"{title} - {rule_type.upper()} (Chunk {i+1}/{len(chunks)}) - {start_date} to {end_date}")
- plt.xlabel("Date/Time")
- plt.ylabel("Price/Value")
+                plt.title(f"{title} - {rule_type.upper()} (Chunk {i+1}/{len(chunks)}) - {start_date} to {end_date}")
+                plt.xlabel("Date/Time")
+                plt.ylabel("Price/Value")
 
- # Set x-axis ticks to show dates
- if len(x_values) > 0:
+                # Set x-axis ticks to show dates
+                if len(x_values) > 0:
                     step = max(1, len(x_values) // 10)  # Show ~10 date labels
- plt.xticks(x_values[::step], x_labels[::step])
+                    plt.xticks(x_values[::step], x_labels[::step])
 
- plt.show()
+                plt.show()
 
- # Add paUse between chunks (no statistics)
- if i < len(chunks) - 1:
- input(f"\nPress Enter to View next chunk ({i+2}/{len(chunks)})...")
+                # Add pause between chunks (no statistics)
+                if i < len(chunks) - 1:
+                    input(f"\nPress Enter to View next chunk ({i+2}/{len(chunks)})...")
 
- logger.print_success(f"Successfully displayed {len(chunks)} {rule_type.upper()} chunks!")
+        logger.print_success(f"Successfully displayed {len(chunks)} {rule_type.upper()} chunks!")
 
- except Exception as e:
- logger.print_error(f"Error generating {rule_type.upper()} chunked plots: {e}")
+    except Exception as e:
+        logger.print_error(f"Error generating {rule_type.upper()} chunked plots: {e}")
 
 
