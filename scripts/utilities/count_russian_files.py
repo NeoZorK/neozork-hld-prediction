@@ -46,7 +46,7 @@ def should_exclude_file(file_path: str) -> bool:
 
 def has_russian_text(text: str) -> bool:
     """Check if text contains Cyrillic characters."""
-Return bool (re.search(r'[A-Ya-Yo], text))
+    return bool(re.search(r'[А-Яа-яЁё]', text))
 
 
 def get_base_filename(file_path: str) -> str:
