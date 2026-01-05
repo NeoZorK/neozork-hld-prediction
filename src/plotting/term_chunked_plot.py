@@ -44,7 +44,41 @@ from .term_chunked_plot_base import (
 )
 
 # Import indicator functions for testing
-from .term_chunked_plot_indicators import _add_wave_indicator_to_subplot
+from .term_chunked_plot_indicators import (
+    _add_wave_indicator_to_subplot,
+    _add_indicator_chart_to_subplot,
+    _add_macd_chart_to_subplot,
+    _add_rsi_indicator_to_subplot,
+    _add_stochastic_indicator_to_subplot,
+    _add_cci_indicator_to_subplot,
+    _add_bollinger_bands_to_subplot,
+    _add_ema_indicator_to_subplot,
+    _add_adx_indicator_to_subplot,
+    _add_sar_indicator_to_subplot,
+    _add_supertrend_indicator_to_subplot,
+    _add_atr_indicator_to_subplot,
+    _add_std_indicator_to_subplot,
+    _add_obv_indicator_to_subplot,
+    _add_vwap_indicator_to_subplot,
+    _add_hma_indicator_to_subplot,
+    _add_tsf_indicator_to_subplot,
+    _add_monte_carlo_indicator_to_subplot,
+    _add_kelly_indicator_to_subplot,
+    _add_putcall_indicator_to_subplot,
+    _add_cot_indicator_to_subplot,
+    _add_fear_greed_indicator_to_subplot,
+    _add_pivot_points_to_subplot,
+    _add_fibonacci_indicator_to_subplot,
+    _add_donchian_indicator_to_subplot,
+    _add_generic_indicator_to_subplot,
+    _add_sma_indicator_to_subplot,
+)
+
+# Import helper functions for backward compatibility
+from .term_chunked_plot_helpers import _get_field_color, _get_field_color_enhanced, _has_trading_signals, _add_trading_signals_to_chunk
+
+# Import overlay functions for backward compatibility
+from .term_chunked_plot_overlays import _add_macd_overlays_to_chunk
 
 # Re-export all functions for backward compatibility
 __all__ = [
@@ -63,6 +97,37 @@ __all__ = [
     'get_terminal_plot_size',
     'draw_ohlc_candles',
     '_add_wave_indicator_to_subplot',
+    '_add_indicator_chart_to_subplot',
+    '_add_macd_chart_to_subplot',
+    '_add_rsi_indicator_to_subplot',
+    '_add_stochastic_indicator_to_subplot',
+    '_add_cci_indicator_to_subplot',
+    '_add_bollinger_bands_to_subplot',
+    '_add_ema_indicator_to_subplot',
+    '_add_adx_indicator_to_subplot',
+    '_add_sar_indicator_to_subplot',
+    '_add_supertrend_indicator_to_subplot',
+    '_add_atr_indicator_to_subplot',
+    '_add_std_indicator_to_subplot',
+    '_add_obv_indicator_to_subplot',
+    '_add_vwap_indicator_to_subplot',
+    '_add_hma_indicator_to_subplot',
+    '_add_tsf_indicator_to_subplot',
+    '_add_monte_carlo_indicator_to_subplot',
+    '_add_kelly_indicator_to_subplot',
+    '_add_putcall_indicator_to_subplot',
+    '_add_cot_indicator_to_subplot',
+    '_add_fear_greed_indicator_to_subplot',
+    '_add_pivot_points_to_subplot',
+    '_add_fibonacci_indicator_to_subplot',
+    '_add_donchian_indicator_to_subplot',
+    '_add_generic_indicator_to_subplot',
+    '_add_sma_indicator_to_subplot',
+    '_get_field_color',
+    '_get_field_color_enhanced',
+    '_has_trading_signals',
+    '_add_trading_signals_to_chunk',
+    '_add_macd_overlays_to_chunk',
 ]
 
 

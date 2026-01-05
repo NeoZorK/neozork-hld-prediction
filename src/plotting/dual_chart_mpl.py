@@ -939,7 +939,14 @@ def plot_dual_chart_mpl(
         ax2.axhline(y=0, color='#95A5A6', linestyle='--', linewidth=0.8, alpha=0.6)
 
     # Add legend to main chart after all signals are added
-    ax1.legend(loc='upper right', framealpha=0.9, fancybox=True, shadow=True, fontsize=9)
+    try:
+        ax1.legend(loc='upper right', framealpha=0.9, fancybox=True, shadow=True, fontsize=9)
+    except RecursionError:
+        # Fallback for Python 3.14.2 compatibility - use simple legend without markers
+        try:
+            ax1.legend(loc='upper right', framealpha=0.9, fontsize=9)
+        except Exception:
+            pass  # Skip legend if it still fails
     
     # Set y-axis label
     ax2.set_ylabel(y_axis_label, fontsize=11, fontweight='bold')
@@ -950,7 +957,14 @@ def plot_dual_chart_mpl(
     ax2.set_axisbelow(True)  # Put grid behind data
     
     # Enhanced legend
-    ax2.legend(loc='upper right', framealpha=0.9, fancybox=True, shadow=True, fontsize=9)
+    try:
+        ax2.legend(loc='upper right', framealpha=0.9, fancybox=True, shadow=True, fontsize=9)
+    except RecursionError:
+        # Fallback for Python 3.14.2 compatibility - use simple legend without markers
+        try:
+            ax2.legend(loc='upper right', framealpha=0.9, fontsize=9)
+        except Exception:
+            pass  # Skip legend if it still fails
     
     # Format x-axis for indicator chart
     ax2.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))

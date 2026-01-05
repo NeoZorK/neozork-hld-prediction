@@ -51,7 +51,14 @@ def auto_plot_from_parquet(parquet_path: str, plot_title: str = "Auto Plot from 
     for col in ohlc_cols:
         ax_ohlc.plot(x, df[col], label=col)
     ax_ohlc.set_ylabel("OHLC")
-    ax_ohlc.legend()
+    try:
+        ax_ohlc.legend()
+    except RecursionError:
+        # Fallback for Python 3.14.2 compatibility
+        try:
+            ax_ohlc.legend(loc='upper left')
+        except Exception:
+            pass  # Skip legend if it still fails
     ax_ohlc.set_title(plot_title)
 
     # Volume

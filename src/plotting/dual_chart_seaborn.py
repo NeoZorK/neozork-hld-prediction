@@ -135,6 +135,19 @@ def plot_dual_chart_seaborn(
         else:
             display_df.index = pd.to_datetime(display_df.index)
     
+    # Calculate indicator if needed (for rules like 'stoch:14,3,close')
+    try:
+        from src.plotting.dual_chart_plot import calculate_additional_indicator
+        indicator_name = rule.split(':', 1)[0].lower().strip()
+        # Check if indicator columns are missing
+        if indicator_name == 'stoch' and 'stoch_k' not in display_df.columns:
+            display_df = calculate_additional_indicator(display_df, rule)
+        elif indicator_name == 'stochoscillator' and 'stochosc_k' not in display_df.columns:
+            display_df = calculate_additional_indicator(display_df, rule)
+    except Exception as e:
+        logger.print_warning(f"Could not calculate indicator {rule}: {e}")
+        # Continue with existing data
+    
     # Create figure with subplots
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(width/100, height/100), 
                                    height_ratios=[0.6, 0.4], 
@@ -519,34 +532,42 @@ def plot_dual_chart_seaborn(
                         ax=ax2, color='gray', linewidth=3, label='StdDev')
     
     elif indicator_name == 'stoch':
-        if 'stoch_k' in display_df.columns:
-            try:
-                sns.lineplot(data=display_df, x=display_df.index, y='stoch_k', 
-                            ax=ax2, color='blue', linewidth=3, label='%K')
-            except RecursionError:
-                # Fallback to matplotlib plot if seaborn causes RecursionError
-                ax2.plot(display_df.index, display_df['stoch_k'], 
-                        color='blue', linewidth=3, label='%K')
-        
-        if 'stoch_d' in display_df.columns:
-            try:
-                sns.lineplot(data=display_df, x=display_df.index, y='stoch_d', 
-                            ax=ax2, color='orange', linewidth=3, label='%D')
-            except RecursionError:
-                # Fallback to matplotlib plot if seaborn causes RecursionError
-                ax2.plot(display_df.index, display_df['stoch_d'], 
-                        color='orange', linewidth=3, label='%D')
-        
-        # Add overbought/oversold lines
-        if 'stoch_overbought' in display_df.columns:
-            overbought = display_df['stoch_overbought'].iloc[0]
-            ax2.axhline(y=overbought, color='red', linestyle='--', 
-                       linewidth=2, label=f'Overbought ({overbought})')
-        
-        if 'stoch_oversold' in display_df.columns:
-            oversold = display_df['stoch_oversold'].iloc[0]
-            ax2.axhline(y=oversold, color='green', linestyle='--', 
-                       linewidth=2, label=f'Oversold ({oversold})')
+        try:
+            if 'stoch_k' in display_df.columns:
+                try:
+                    sns.lineplot(data=display_df, x=display_df.index, y='stoch_k', 
+                                ax=ax2, color='blue', linewidth=3, label='%K')
+                except RecursionError:
+                    # Fallback to matplotlib plot if seaborn causes RecursionError
+                    ax2.plot(display_df.index, display_df['stoch_k'], 
+                            color='blue', linewidth=3, label='%K')
+            else:
+                logger.print_warning("stoch_k column not found in DataFrame")
+            
+            if 'stoch_d' in display_df.columns:
+                try:
+                    sns.lineplot(data=display_df, x=display_df.index, y='stoch_d', 
+                                ax=ax2, color='orange', linewidth=3, label='%D')
+                except RecursionError:
+                    # Fallback to matplotlib plot if seaborn causes RecursionError
+                    ax2.plot(display_df.index, display_df['stoch_d'], 
+                            color='orange', linewidth=3, label='%D')
+            else:
+                logger.print_warning("stoch_d column not found in DataFrame")
+            
+            # Add overbought/oversold lines
+            if 'stoch_overbought' in display_df.columns:
+                overbought = display_df['stoch_overbought'].iloc[0]
+                ax2.axhline(y=overbought, color='red', linestyle='--', 
+                           linewidth=2, label=f'Overbought ({overbought})')
+            
+            if 'stoch_oversold' in display_df.columns:
+                oversold = display_df['stoch_oversold'].iloc[0]
+                ax2.axhline(y=oversold, color='green', linestyle='--', 
+                           linewidth=2, label=f'Oversold ({oversold})')
+        except Exception as e:
+            logger.print_error(f"Error plotting Stochastic indicator: {e}")
+            # Continue without indicator plot
     
     elif indicator_name == 'stochoscillator':
         if 'stochosc_k' in display_df.columns:
