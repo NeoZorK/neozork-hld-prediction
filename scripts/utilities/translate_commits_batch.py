@@ -139,9 +139,26 @@ def main():
     
     os.chmod(filter_file, 0o755)
     
+    # Check git status first
+    status_result = subprocess.run(
+        ['git', 'status', '--porcelain'],
+        capture_output=True,
+        text=True
+    )
+    
+    if status_result.stdout.strip():
+        print(f"⚠ Warning: Git working tree not clean:")
+        print(status_result.stdout)
+        print("Please commit or stash changes first.")
+        os.unlink(filter_file)
+        return
+    
     # Run filter-branch
     env = os.environ.copy()
     env['FILTER_BRANCH_SQUELCH_WARNING'] = '1'
+    
+    print("Running git filter-branch (this may take a few minutes)...", flush=True)
+    start_filter = time.time()
     
     result = subprocess.run(
         ['git', 'filter-branch', '-f', '--msg-filter', f'bash {filter_file}'],
@@ -150,12 +167,16 @@ def main():
         text=True
     )
     
+    filter_time = time.time() - start_filter
     os.unlink(filter_file)
     
     if result.returncode == 0:
-        print(f"✓ Successfully translated {len(translation_map)} commits!")
+        print(f"✓ Successfully translated {len(translation_map)} commits in {filter_time:.1f}s!")
+        print(f"✓ Git history rewritten")
     else:
         print(f"⚠ Warning: {result.stderr}")
+        if result.stdout:
+            print(f"Output: {result.stdout[:500]}")
 
 if __name__ == '__main__':
     main()
