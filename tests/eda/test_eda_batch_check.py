@@ -30,9 +30,25 @@ class TestEdaBatchCheck(unittest.TestCase):
                 except:
                     pass  # Ignore any remaining errors
 
+    @patch('src.eda.basic_stats.open_last_plot_in_browser')
+    @patch('src.eda.basic_stats.save_plot_with_description')
+    @patch('src.eda.basic_stats.sns')
+    @patch('src.eda.basic_stats.plt')
     @patch('src.eda.eda_batch_check.file_info')
     @patch('src.eda.eda_batch_check.folder_stats')
-    def test_main_basic(self, mock_folder_stats, mock_file_info):
+    def test_main_basic(self, mock_folder_stats, mock_file_info, mock_plt, mock_sns, mock_save_plot, mock_open_browser):
+        # Setup matplotlib and seaborn mocks
+        mock_ax = MagicMock()
+        mock_fig = MagicMock()
+        mock_plt.figure.return_value = mock_fig
+        mock_plt.xticks.return_value = None
+        mock_plt.ylabel.return_value = None
+        mock_plt.title.return_value = None
+        mock_plt.tight_layout.return_value = None
+        mock_plt.savefig.return_value = None
+        mock_plt.close.return_value = None
+        mock_sns.barplot.return_value = mock_ax
+        
         # Mocking the file_info and folder_stats functions
         mock_file_info.get_file_info.return_value = {
             'file_path': '/fake/path/file1.parquet',
@@ -66,9 +82,13 @@ class TestEdaBatchCheck(unittest.TestCase):
                     eda_batch_check.main()
                     self.assertTrue(mock_print.called)
 
+    @patch('src.eda.basic_stats.open_last_plot_in_browser')
+    @patch('src.eda.basic_stats.save_plot_with_description')
+    @patch('src.eda.basic_stats.sns')
+    @patch('src.eda.basic_stats.plt')
     @patch('src.eda.eda_batch_check.file_info')
     @patch('src.eda.eda_batch_check.folder_stats')
-    def test_script_runs(self, mock_folder_stats, mock_file_info):
+    def test_script_runs(self, mock_folder_stats, mock_file_info, mock_plt, mock_sns, mock_save_plot, mock_open_browser):
         # Mock the file_info and folder_stats functions to prevent real file system access
         mock_file_info.get_file_info.return_value = {
             'file_path': '/fake/path/test_file.parquet',
@@ -116,10 +136,26 @@ class TestEdaBatchCheck(unittest.TestCase):
             # The test passes if the script runs without hanging
             self.assertTrue(True)  # Test passes if we reach this point
 
+    @patch('src.eda.basic_stats.open_last_plot_in_browser')
+    @patch('src.eda.basic_stats.save_plot_with_description')
+    @patch('src.eda.basic_stats.sns')
+    @patch('src.eda.basic_stats.plt')
     @patch('src.eda.eda_batch_check.file_info')
     @patch('src.eda.eda_batch_check.folder_stats')
-    def test_single_file_selection(self, mock_folder_stats, mock_file_info):
+    def test_single_file_selection(self, mock_folder_stats, mock_file_info, mock_plt, mock_sns, mock_save_plot, mock_open_browser):
         """Test successful single file selection with --file flag"""
+        # Setup matplotlib and seaborn mocks
+        mock_ax = MagicMock()
+        mock_fig = MagicMock()
+        mock_plt.figure.return_value = mock_fig
+        mock_plt.xticks.return_value = None
+        mock_plt.ylabel.return_value = None
+        mock_plt.title.return_value = None
+        mock_plt.tight_layout.return_value = None
+        mock_plt.savefig.return_value = None
+        mock_plt.close.return_value = None
+        mock_sns.barplot.return_value = mock_ax
+        
         mock_file_info.get_file_info.return_value = {
             'file_path': '/fake/path/test_file.parquet',
             'file_name': 'test_file.parquet',
@@ -176,11 +212,27 @@ class TestEdaBatchCheck(unittest.TestCase):
                 # Verify error message was printed
                 mock_print.assert_any_call(f"\x1b[31mError: File 'nonexistent.parquet' not found in the data directory\x1b[0m")
 
+    @patch('src.eda.basic_stats.open_last_plot_in_browser')
+    @patch('src.eda.basic_stats.save_plot_with_description')
+    @patch('src.eda.basic_stats.sns')
+    @patch('src.eda.basic_stats.plt')
     @patch('src.eda.eda_batch_check.file_info')
     @patch('src.eda.eda_batch_check.folder_stats')
     @patch('src.eda.basic_stats.compute_basic_stats')
-    def test_multiple_file_matches(self, mock_compute_basic_stats, mock_folder_stats, mock_file_info):
+    def test_multiple_file_matches(self, mock_compute_basic_stats, mock_folder_stats, mock_file_info, mock_plt, mock_sns, mock_save_plot, mock_open_browser):
         """Test handling of multiple file matches"""
+        # Setup matplotlib and seaborn mocks
+        mock_ax = MagicMock()
+        mock_fig = MagicMock()
+        mock_plt.figure.return_value = mock_fig
+        mock_plt.xticks.return_value = None
+        mock_plt.ylabel.return_value = None
+        mock_plt.title.return_value = None
+        mock_plt.tight_layout.return_value = None
+        mock_plt.savefig.return_value = None
+        mock_plt.close.return_value = None
+        mock_sns.barplot.return_value = mock_ax
+        
         # Set up file paths that will match the search pattern exactly
         file1_path = '/fake/path/test_file.parquet'  # Changed to match search pattern exactly
         file2_path = '/fake/path/subdir/test_file.parquet'  # Second file with same name in subdir
@@ -380,11 +432,27 @@ class TestEdaBatchCheck(unittest.TestCase):
 
     # Removed test_absolute_path_handling due to mocking conflicts in parallel execution
 
+    @patch('src.eda.basic_stats.open_last_plot_in_browser')
+    @patch('src.eda.basic_stats.save_plot_with_description')
+    @patch('src.eda.basic_stats.sns')
+    @patch('src.eda.basic_stats.plt')
     @patch('src.eda.eda_batch_check.file_info')
     @patch('src.eda.eda_batch_check.folder_stats')
     @patch('src.eda.basic_stats.compute_basic_stats')
-    def test_subdirectory_path_handling(self, mock_compute_basic_stats, mock_folder_stats, mock_file_info):
+    def test_subdirectory_path_handling(self, mock_compute_basic_stats, mock_folder_stats, mock_file_info, mock_plt, mock_sns, mock_save_plot, mock_open_browser):
         """Test handling of files in subdirectories with the --file flag"""
+        # Setup matplotlib and seaborn mocks
+        mock_ax = MagicMock()
+        mock_fig = MagicMock()
+        mock_plt.figure.return_value = mock_fig
+        mock_plt.xticks.return_value = None
+        mock_plt.ylabel.return_value = None
+        mock_plt.title.return_value = None
+        mock_plt.tight_layout.return_value = None
+        mock_plt.savefig.return_value = None
+        mock_plt.close.return_value = None
+        mock_sns.barplot.return_value = mock_ax
+        
         # Setup mock paths - simplified to avoid path joining issues
         data_dir = '/fake/path'
         subdir = 'subdir'
@@ -461,10 +529,26 @@ class TestEdaBatchCheck(unittest.TestCase):
                 
                 self.assertTrue(found, f"Success message not found in output")
 
+    @patch('src.eda.basic_stats.open_last_plot_in_browser')
+    @patch('src.eda.basic_stats.save_plot_with_description')
+    @patch('src.eda.basic_stats.sns')
+    @patch('src.eda.basic_stats.plt')
     @patch('src.eda.eda_batch_check.file_info')
     @patch('src.eda.eda_batch_check.folder_stats')
-    def test_case_sensitive_file_matching(self, mock_folder_stats, mock_file_info):
+    def test_case_sensitive_file_matching(self, mock_folder_stats, mock_file_info, mock_plt, mock_sns, mock_save_plot, mock_open_browser):
         """Test case-sensitive/insensitive file matching with the --file flag"""
+        # Setup matplotlib and seaborn mocks
+        mock_ax = MagicMock()
+        mock_fig = MagicMock()
+        mock_plt.figure.return_value = mock_fig
+        mock_plt.xticks.return_value = None
+        mock_plt.ylabel.return_value = None
+        mock_plt.title.return_value = None
+        mock_plt.tight_layout.return_value = None
+        mock_plt.savefig.return_value = None
+        mock_plt.close.return_value = None
+        mock_sns.barplot.return_value = mock_ax
+        
         # Setup file paths with different cases
         data_dir = '/fake/path'
         file_path_lower = os.path.join(data_dir, 'test_file.parquet')
