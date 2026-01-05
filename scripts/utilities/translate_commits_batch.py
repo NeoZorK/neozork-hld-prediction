@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Translate git commit messages in batches."""
+"""Translate git commit messages in batches with progress tracking."""
 
 import subprocess
 import re
 import sys
 import os
 import tempfile
+import time
 from transformers import MarianMTModel, MarianTokenizer
 import torch
 
@@ -76,21 +77,44 @@ def main():
     
     print(f"Translating commits in batches of {batch_size}...\n")
     
+    start_time = time.time()
+    
     for batch_start in range(0, len(commits), batch_size):
         batch_end = min(batch_start + batch_size, len(commits))
         batch = commits[batch_start:batch_end]
+        batch_num = batch_start // batch_size + 1
+        total_batches = (len(commits) + batch_size - 1) // batch_size
         
-        print(f"Batch {batch_start // batch_size + 1}/{(len(commits) + batch_size - 1) // batch_size}")
+        print(f"Batch {batch_num}/{total_batches}")
         print("-" * 80)
+        
+        batch_start_time = time.time()
         
         for i, (hash_val, msg) in enumerate(batch, 1):
             total_i = batch_start + i
-            print(f"[{total_i}/{len(commits)}] {hash_val[:8]}: {msg[:60]}...", flush=True)
+            elapsed = time.time() - start_time
+            progress = (total_i / len(commits)) * 100
             
+            # Estimate remaining time
+            if total_i > 0:
+                avg_time_per_commit = elapsed / total_i
+                remaining_commits = len(commits) - total_i
+                estimated_remaining = avg_time_per_commit * remaining_commits
+                remaining_str = f" (~{int(estimated_remaining // 60)}m {int(estimated_remaining % 60)}s remaining)"
+            else:
+                remaining_str = ""
+            
+            print(f"[{total_i}/{len(commits)}] ({progress:.1f}%) {hash_val[:8]}: {msg[:60]}...{remaining_str}", flush=True)
+            
+            commit_start = time.time()
             translated = translate_commit_message(msg, model, tokenizer)
+            commit_time = time.time() - commit_start
             translation_map[hash_val] = translated
             
-            print(f"  → {translated[:60]}...\n", flush=True)
+            print(f"  → {translated[:60]}... ({commit_time:.1f}s)\n", flush=True)
+        
+        batch_time = time.time() - batch_start_time
+        print(f"  Batch {batch_num} completed in {batch_time:.1f}s\n", flush=True)
     
     if not translation_map:
         print("No translations to apply.")
