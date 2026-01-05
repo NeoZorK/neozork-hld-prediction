@@ -7,10 +7,23 @@ import numpy as np
 import dask.dataframe as dd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import datashader as ds
-import datashader.transfer_functions as tf
-from datashader.colors import Greys9
-import colorcet as cc
+# datashader is optional (not compatible with Python 3.14)
+try:
+    import datashader as ds
+    import datashader.transfer_functions as tf
+    from datashader.colors import Greys9
+    import colorcet as cc
+    DATASHADER_AVAILABLE = True
+except ImportError:
+    DATASHADER_AVAILABLE = False
+    # Create dummy objects if datashader is not available
+    class ds:
+        Canvas = None
+    class tf:
+        shade = None
+        stack = None
+    Greys9 = None
+    cc = None
 import plotly.io as pio
 import webbrowser
 from functools import partial
@@ -315,6 +328,12 @@ def render_large_dataset(ddf, canvas_width=1000, x_field='index', y_field='Close
     Returns:
         numpy.ndarray: A rendered image array that can be used with Plotly
     """
+    if not DATASHADER_AVAILABLE:
+        logger.print_warning("datashader is not available (not compatible with Python 3.14). Using fallback rendering.")
+        # Fallback: sample the data and return a simple array
+        sampled = ddf.compute().sample(min(1000, len(ddf)))
+        return sampled[y_field].values
+    
     # Define a canvas for rendering
     canvas = ds.Canvas(plot_width=canvas_width)
 

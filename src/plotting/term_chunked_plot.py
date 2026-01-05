@@ -17,75 +17,75 @@ import sys
 
 # Use absolute imports when possible, fallback to relative
 try:
- from common import logger
- from src.common.constants import TradingRule, BUY, SELL, NOTRADE
-except importError:
- try:
- # Fallback to relative imports when run as module
- from src.common import logger
- from src.common.constants import TradingRule, BUY, SELL, NOTRADE
- except importError:
- # Final fallback for pytest with -n auto
- import sys
- import os
- sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
- from src.common import logger
- from src.common.constants import TradingRule, BUY, SELL, NOTRADE
+    from common import logger
+    from src.common.constants import TradingRule, BUY, SELL, NOTRADE
+except ImportError:
+    try:
+        # Fallback to relative imports when run as module
+        from src.common import logger
+        from src.common.constants import TradingRule, BUY, SELL, NOTRADE
+    except ImportError:
+        # Final fallback for pytest with -n auto
+        import sys
+        import os
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+        from src.common import logger
+        from src.common.constants import TradingRule, BUY, SELL, NOTRADE
 
 # import Navigation system
 try:
- from .term_Navigation import TerminalNavigator, create_Navigation_prompt, parse_Navigation_input
-except importError:
- try:
- # Fallback to relative imports when run as module
- from src.plotting.term_Navigation import TerminalNavigator, create_Navigation_prompt, parse_Navigation_input
- except importError:
- # Final fallback for pytest with -n auto
- from src.plotting.term_Navigation import TerminalNavigator, create_Navigation_prompt, parse_Navigation_input
+    from .term_Navigation import TerminalNavigator, create_Navigation_prompt, parse_Navigation_input
+except ImportError:
+    try:
+        # Fallback to relative imports when run as module
+        from src.plotting.term_Navigation import TerminalNavigator, create_Navigation_prompt, parse_Navigation_input
+    except ImportError:
+        # Final fallback for pytest with -n auto
+        from src.plotting.term_Navigation import TerminalNavigator, create_Navigation_prompt, parse_Navigation_input
 
 
 def get_terminal_plot_size() -> Tuple[int, int]:
- """
- Determine the plot size for terminal mode based on whether -d term is Used.
+    """
+    Determine the plot size for terminal mode based on whether -d term is Used.
 
- Returns:
- Tuple[int, int]: (width, height) for the plot
- """
- # check if -d term is explicitly Used in command line arguments
- is_term_mode = False
- if len(sys.argv) > 1:
- for i, arg in enumerate(sys.argv):
- if arg in ['-d', '--draw'] and i + 1 < len(sys.argv):
- if sys.argv[i + 1] == 'term':
- is_term_mode = True
- break
+    Returns:
+    Tuple[int, int]: (width, height) for the plot
+    """
+    # check if -d term is explicitly Used in command line arguments
+    is_term_mode = False
+    if len(sys.argv) > 1:
+        for i, arg in enumerate(sys.argv):
+            if arg in ['-d', '--draw'] and i + 1 < len(sys.argv):
+                if sys.argv[i + 1] == 'term':
+                    is_term_mode = True
+                    break
 
- if is_term_mode:
- # Reduced height for -d term mode
- return (200, 48) # Reduced from 50 to 45 (10% reduction)
- else:
- # Default size for other terminal modes
- return (200, 50)
+    if is_term_mode:
+        # Reduced height for -d term mode
+        return (200, 48)  # Reduced from 50 to 45 (10% reduction)
+    else:
+        # Default size for other terminal modes
+        return (200, 50)
 
 
 def calculate_optimal_chunk_size(total_rows: int, target_chunks: int = 10, min_chunk_size: int = 50, max_chunk_size: int = 200) -> int:
- """
- Calculate optimal chunk size based on total data length.
+    """
+    Calculate optimal chunk size based on total data length.
 
- Args:
- total_rows (int): Total number of rows in the dataset
- target_chunks (int): Target number of chunks (default: 10)
- min_chunk_size (int): Minimum chunk size (default: 50)
- max_chunk_size (int): Maximum chunk size (default: 200)
+    Args:
+    total_rows (int): Total number of rows in the dataset
+    target_chunks (int): Target number of chunks (default: 10)
+    min_chunk_size (int): Minimum chunk size (default: 50)
+    max_chunk_size (int): Maximum chunk size (default: 200)
 
- Returns:
- int: Optimal chunk size
- """
- if total_rows <= 0:
- return min_chunk_size
+    Returns:
+    int: Optimal chunk size
+    """
+    if total_rows <= 0:
+        return min_chunk_size
 
- # Calculate base chunk size
- base_chunk_size = max(1, total_rows // target_chunks)
+    # Calculate base chunk size
+    base_chunk_size = max(1, total_rows // target_chunks)
 
  # Ensure chunk size is within bounds
  chunk_size = max(min_chunk_size, min(max_chunk_size, base_chunk_size))
