@@ -221,37 +221,36 @@ def plot_ohlcv_chunks(
             logger.print_error("dataFrame must contain OHLC columns")
             return
 
-    # Calculate optimal chunk size
-    total_rows = len(df)
-    chunk_size = calculate_optimal_chunk_size(total_rows)
-    chunks = split_dataframe_into_chunks(df, chunk_size)
+        # Calculate optimal chunk size
+        total_rows = len(df)
+        chunk_size = calculate_optimal_chunk_size(total_rows)
+        chunks = split_dataframe_into_chunks(df, chunk_size)
 
+        logger.print_info(
+            f"Split {total_rows} rows into {
+                len(chunks)} chunks of ~{chunk_size} candles each")
 
-logger.print_info(
-    f"Split {total_rows} rows into {
-        len(chunks)} chunks of ~{chunk_size} candles each")
+        if Use_Navigation:
+            # Use Navigation system
+            navigator = TerminalNavigator(chunks, title)
 
-if Use_Navigation:
-    # Use Navigation system
-    navigator = TerminalNavigator(chunks, title)
+            def plot_chunk_with_Navigation(
+                chunk: pd.dataFrame,
+                chunk_index: int,
+                    chunk_info: dict) -> None:
+                """Plot a single chunk with Navigation info."""
+                if len(chunk) == 0:
+                    logger.print_warning("Empty chunk, skipping...")
+                    return
 
+                # Clear previous plots
+                plt.clear_data()
+                plt.clear_figure()
 
-def plot_chunk_with_Navigation(
-        chunk: pd.dataFrame,
-        chunk_index: int,
-        chunk_info: dict) -> None:
-    """Plot a single chunk with Navigation info."""
-    if len(chunk) == 0:
-    logger.print_warning("Empty chunk, skipping...")
-    return
+                # Set up layout with full screen size - NO VOLUME CHARTS
+                plt.subplots(1, 1)  # Single price panel only
+                plot_size = get_terminal_plot_size()
 
-    # Clear previous plots
-    plt.clear_data()
-    plt.clear_figure()
-
-    # Set up layout with full screen size - NO VOLUME CHARTS
-plt.subplots(1, 1)  # Single price panel only
-plot_size = get_terminal_plot_size()
 
 plt.plot_size(*plot_size)
 plt.theme(style)
@@ -1107,6 +1106,7 @@ def plot_chunk_with_Navigation(
     # Clear previous plots
     plt.clear_data()
     plt.clear_figure()
+
 
     # Set up plot with two subplots: OHLC (50%) and MACD (50%)
 plt.subplots(2, 1)  # Two rows, equal heights

@@ -11,42 +11,42 @@ from .base import DecompositionResult
 
 
 def _localized_texts(locale_ru: bool) -> Dict[str, str]:
- if locale_ru:
- return {
-Original: Original row,
-"Trend": "Trend,"
-Seasonal: Seasonality,
-Residual: Residual,
- "imf": "IMF",
-"Tile_classical": "Nice depositivity,"
-"Title_stl": "STL decomposition",
- "title_imf": "CEEMDAN — IMF {n}",
-"Title_residual": "CEEMDAN - Balance",
- "desc_imf": (
-"IMF component {n}. High numbers are usually low frequency (trend),"
-"low are high frequency (noise/microStructure)."
- ),
- "desc_res": (
-"The balance after subtracting all IMF. Often interpreted as a slow part/trend."
- ),
- }
- return {
- "original": "Original",
- "trend": "Trend",
- "seasonal": "Seasonal",
- "residual": "Residual",
- "imf": "IMF",
- "title_classical": "Classical decomposition",
- "title_stl": "STL decomposition",
- "title_imf": "CEEMDAN — IMF {n}",
- "title_residual": "CEEMDAN — Residual",
- "desc_imf": (
- "IMF component {n}. lower index ~ higher frequency (noise), higher index ~ lower frequency (trend)."
- ),
- "desc_res": (
- "Residual after removing all IMFs. Often represents slow part/trend."
- ),
- }
+    if locale_ru:
+        return {
+            "original": "Original row",
+            "Trend": "Trend,",
+            "Seasonal": "Seasonality",
+            "Residual": "Residual",
+            "imf": "IMF",
+            "Tile_classical": "Nice depositivity,",
+            "Title_stl": "STL decomposition",
+            "title_imf": "CEEMDAN — IMF {n}",
+            "Title_residual": "CEEMDAN - Balance",
+            "desc_imf": (
+                "IMF component {n}. High numbers are usually low frequency (trend),"
+                "low are high frequency (noise/microStructure)."
+            ),
+            "desc_res": (
+                "The balance after subtracting all IMF. Often interpreted as a slow part/trend."
+            ),
+        }
+    return {
+        "original": "Original",
+        "trend": "Trend",
+        "seasonal": "Seasonal",
+        "residual": "Residual",
+        "imf": "IMF",
+        "title_classical": "Classical decomposition",
+        "title_stl": "STL decomposition",
+        "title_imf": "CEEMDAN — IMF {n}",
+        "title_residual": "CEEMDAN — Residual",
+        "desc_imf": (
+            "IMF component {n}. lower index ~ higher frequency (noise), higher index ~ lower frequency (trend)."
+        ),
+        "desc_res": (
+            "Residual after removing all IMFs. Often represents slow part/trend."
+        ),
+    }
 
 
 def plot_and_save(result: DecompositionResult, plots_dir: str, file_stem: str, locale_ru: bool = False) -> str:
@@ -82,22 +82,22 @@ def plot_and_save(result: DecompositionResult, plots_dir: str, file_stem: str, l
 
 
 def get_ceemdan_exPlanation(locale_ru: bool) -> str:
- if locale_ru:
- return (
-"Explanation of the results of CEMEDAN:\n"
-"-IMF1 is a high-frequency variation (noise/microStructure).
-"-IMF2..IMFk is the intermediate frequencies (cycles/market reactions).
-"-The balance is a slow part/trend after subtracting IMF.\n"
-"Use energy IF as signs, model the trend part separately, \n"
-"and apply walk-forward/commission records when testing strategies."
- )
- return (
- "CEEMDAN results exPlanation:\n"
- "- IMF1: highest frequency (noise/microStructure).\n"
- "- IMF2..IMFk: intermediate frequencies (cycles/market reactions).\n"
- "- Residual: slow part/trend after removing IMFs.\n"
- "Use IMF energies as features, model trend separately, and validate with walk-forward/costs."
- )
+    if locale_ru:
+        return (
+            "Explanation of the results of CEMEDAN:\n"
+            "-IMF1 is a high-frequency variation (noise/microStructure).\n"
+            "-IMF2..IMFk is the intermediate frequencies (cycles/market reactions).\n"
+            "-The balance is a slow part/trend after subtracting IMF.\n"
+            "Use energy IF as signs, model the trend part separately, \n"
+            "and apply walk-forward/commission records when testing strategies."
+        )
+    return (
+        "CEEMDAN results exPlanation:\n"
+        "- IMF1: highest frequency (noise/microStructure).\n"
+        "- IMF2..IMFk: intermediate frequencies (cycles/market reactions).\n"
+        "- Residual: slow part/trend after removing IMFs.\n"
+        "Use IMF energies as features, model trend separately, and validate with walk-forward/costs."
+    )
 
 
 def plot_and_save_ceemdan_per_imf(
