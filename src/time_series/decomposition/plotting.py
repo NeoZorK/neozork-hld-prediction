@@ -1,14 +1,41 @@
 from __future__ import annotations
 
+import copy
 import math
 import os
+import sys
 from typing import Dict, List
 
 # Use non-interactive backend to avoid deepcopy recursion issues
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+
+# CRITICAL: Increase recursion limit for Python 3.14+ compatibility
+# matplotlib deepcopy operations can exceed default limit
+if sys.version_info >= (3, 14):
+    original_recursion_limit = sys.getrecursionlimit()
+    sys.setrecursionlimit(max(5000, original_recursion_limit * 2))
+
+# CRITICAL: Patch matplotlib.path.Path.__deepcopy__ to avoid RecursionError
+# Python 3.14+ has issues with deepcopy(super(), memo) in matplotlib.path.Path
+def _patched_path_deepcopy(self, memo):
+    """Patched __deepcopy__ for matplotlib.path.Path to avoid recursion."""
+    import matplotlib.path as mpath
+    # Create a new Path without calling super().__deepcopy__ which causes recursion
+    new_path = mpath.Path.__new__(mpath.Path)
+    new_path._vertices = copy.deepcopy(self._vertices, memo)
+    new_path._codes = copy.deepcopy(self._codes, memo)
+    new_path._interpolation_steps = copy.deepcopy(self._interpolation_steps, memo)
+    new_path._should_simplify = copy.deepcopy(self._should_simplify, memo)
+    new_path._simplify_threshold = copy.deepcopy(self._simplify_threshold, memo)
+    return new_path
+
+# Apply the patch before any matplotlib.path imports
+import matplotlib.path
+matplotlib.path.Path.__deepcopy__ = _patched_path_deepcopy
 
 from .base import DecompositionResult
 
@@ -58,29 +85,29 @@ def plot_and_save(result: DecompositionResult, plots_dir: str, file_stem: str, l
 
     if result.method in {"classical", "stl"}:
         fig, axes = plt.subplots(4, 1, figsize=(12, 10), sharex=False)
-        # Convert DatetimeIndex to numeric to avoid deepcopy recursion issues
+        # Convert DatetimeIndex to numeric numpy arrays to avoid deepcopy recursion issues
         # This is a known issue with matplotlib when dealing with pandas DatetimeIndex
-        orig_idx = pd.to_numeric(result.original.index, errors='coerce')
-        orig_vals = result.original.values
+        orig_idx = np.asarray(pd.to_numeric(result.original.index, errors='coerce'), dtype=np.float64)
+        orig_vals = np.asarray(result.original.values, dtype=np.float64)
         axes[0].plot(orig_idx, orig_vals, color="black", linewidth=1)
         axes[0].set_title(texts["original"]) # noqa: E265
-        x_min, x_max = orig_idx.min(), orig_idx.max()
+        x_min, x_max = float(orig_idx.min()), float(orig_idx.max())
         axes[0].set_xlim(x_min, x_max)
         
-        trend_idx = pd.to_numeric(result.components["trend"].index, errors='coerce')
-        trend_vals = result.components["trend"].values
+        trend_idx = np.asarray(pd.to_numeric(result.components["trend"].index, errors='coerce'), dtype=np.float64)
+        trend_vals = np.asarray(result.components["trend"].values, dtype=np.float64)
         axes[1].plot(trend_idx, trend_vals, color="tab:blue", linewidth=1)
         axes[1].set_title(texts["trend"]) # noqa: E265
         axes[1].set_xlim(x_min, x_max)
         
-        seasonal_idx = pd.to_numeric(result.components["seasonal"].index, errors='coerce')
-        seasonal_vals = result.components["seasonal"].values
+        seasonal_idx = np.asarray(pd.to_numeric(result.components["seasonal"].index, errors='coerce'), dtype=np.float64)
+        seasonal_vals = np.asarray(result.components["seasonal"].values, dtype=np.float64)
         axes[2].plot(seasonal_idx, seasonal_vals, color="tab:orange", linewidth=1)
         axes[2].set_title(texts["seasonal"]) # noqa: E265
         axes[2].set_xlim(x_min, x_max)
         
-        residual_idx = pd.to_numeric(result.components["residual"].index, errors='coerce')
-        residual_vals = result.components["residual"].values
+        residual_idx = np.asarray(pd.to_numeric(result.components["residual"].index, errors='coerce'), dtype=np.float64)
+        residual_vals = np.asarray(result.components["residual"].values, dtype=np.float64)
         axes[3].plot(residual_idx, residual_vals, color="tab:green", linewidth=1)
         axes[3].set_title(texts["residual"]) # noqa: E265
         axes[3].set_xlim(x_min, x_max)
@@ -98,7 +125,16 @@ def plot_and_save(result: DecompositionResult, plots_dir: str, file_stem: str, l
     out_path = os.path.join(plots_dir, f"{file_stem}.png")
     # Draw the figure before saving to avoid deepcopy issues
     fig.canvas.draw()
-    fig.savefig(out_path, dpi=160)
+    # Save with error handling for recursion issues
+    try:
+        fig.savefig(out_path, dpi=160)
+    except (RecursionError, RuntimeError):
+        # Fallback: save without dpi specification
+        try:
+            fig.savefig(out_path)
+        except (RecursionError, RuntimeError):
+            # Last resort: save with minimal options
+            fig.savefig(out_path, format='png')
     plt.close(fig)
     return out_path
 
@@ -133,18 +169,18 @@ def plot_and_save_ceemdan_per_imf(
     imf_names = [k for k in result.components.keys() if k.startswith("IMF")]
     imf_names_sorted = sorted(imf_names, key=lambda x: int(x.replace("IMF", "")))
 
-    # Convert DatetimeIndex to numeric to avoid deepcopy recursion issues
-    orig_idx_numeric = pd.to_numeric(result.original.index, errors='coerce')
-    x_min = orig_idx_numeric.min()
-    x_max = orig_idx_numeric.max()
+    # Convert DatetimeIndex to numeric numpy arrays to avoid deepcopy recursion issues
+    orig_idx_numeric = np.asarray(pd.to_numeric(result.original.index, errors='coerce'), dtype=np.float64)
+    x_min = float(orig_idx_numeric.min())
+    x_max = float(orig_idx_numeric.max())
     
     for name in imf_names_sorted:
         n = int(name.replace("IMF", ""))
         fig, ax = plt.subplots(1, 1, figsize=(14, 4))
         comp = result.components[name]
-        # Convert DatetimeIndex to numeric to avoid deepcopy issues
-        comp_idx = pd.to_numeric(comp.index, errors='coerce')
-        comp_vals = comp.values
+        # Convert DatetimeIndex to numeric numpy arrays to avoid deepcopy issues
+        comp_idx = np.asarray(pd.to_numeric(comp.index, errors='coerce'), dtype=np.float64)
+        comp_vals = np.asarray(comp.values, dtype=np.float64)
         ax.plot(comp_idx, comp_vals, lw=1)
         ax.set_xlim(x_min, x_max)
         ax.set_title(texts["title_imf"].format(n=n))
@@ -162,16 +198,25 @@ def plot_and_save_ceemdan_per_imf(
         out_path = os.path.join(plots_dir, f"{file_stem}_IMF{n}.png")
         # Draw the figure before saving to avoid deepcopy issues
         fig.canvas.draw()
-        fig.savefig(out_path, dpi=160)
+        # Save with error handling for recursion issues
+        try:
+            fig.savefig(out_path, dpi=160)
+        except (RecursionError, RuntimeError):
+            # Fallback: save without dpi specification
+            try:
+                fig.savefig(out_path)
+            except (RecursionError, RuntimeError):
+                # Last resort: save with minimal options
+                fig.savefig(out_path, format='png')
         plt.close(fig)
         paths.append(out_path)
 
     # Residual
     fig, ax = plt.subplots(1, 1, figsize=(14, 4))
     res = result.components["residual"]
-    # Convert DatetimeIndex to numeric to avoid deepcopy issues
-    res_idx = pd.to_numeric(res.index, errors='coerce')
-    res_vals = res.values
+    # Convert DatetimeIndex to numeric numpy arrays to avoid deepcopy issues
+    res_idx = np.asarray(pd.to_numeric(res.index, errors='coerce'), dtype=np.float64)
+    res_vals = np.asarray(res.values, dtype=np.float64)
     ax.plot(res_idx, res_vals, lw=1, color="tab:green")
     ax.set_xlim(x_min, x_max)
     ax.set_title(texts["title_residual"]) # noqa: E265
@@ -180,7 +225,16 @@ def plot_and_save_ceemdan_per_imf(
     out_path = os.path.join(plots_dir, f"{file_stem}_RESIDUAL.png")
     # Draw the figure before saving to avoid deepcopy issues
     fig.canvas.draw()
-    fig.savefig(out_path, dpi=160)
+    # Save with error handling for recursion issues
+    try:
+        fig.savefig(out_path, dpi=160)
+    except (RecursionError, RuntimeError):
+        # Fallback: save without dpi specification
+        try:
+            fig.savefig(out_path)
+        except (RecursionError, RuntimeError):
+            # Last resort: save with minimal options
+            fig.savefig(out_path, format='png')
     plt.close(fig)
     paths.append(out_path)
 
