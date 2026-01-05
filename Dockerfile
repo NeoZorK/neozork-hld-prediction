@@ -1,4 +1,4 @@
-FROM python:3.11-slim-bookworm AS builder
+FROM python:3.14-slim-bookworm AS builder
 
 # Force UV usage - no fallback to pip
 ARG USE_UV=true
@@ -42,7 +42,7 @@ RUN uv pip install --no-cache -r requirements.txt \
     && rm -rf /root/.cache /tmp/* /var/tmp/* /root/.cargo /root/.local/share/uv
 
 # Final stage - copy only necessary files
-FROM python:3.11-slim-bookworm
+FROM python:3.14-slim-bookworm
 
 WORKDIR /app
 

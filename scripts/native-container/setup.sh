@@ -80,21 +80,21 @@ check_python() {
         python_version=$(python3 --version 2>&1)
         print_success "Python found: $python_version"
         
-        # Check if it's Python 3.11 or higher
+        # Check if it's Python 3.14 or higher
         major_version=$(python3 -c "import sys; print(sys.version_info.major)")
         minor_version=$(python3 -c "import sys; print(sys.version_info.minor)")
         
-        if [ "$major_version" -eq 3 ] && [ "$minor_version" -ge 11 ]; then
-            print_success "Python version is compatible (3.11+)"
+        if [ "$major_version" -eq 3 ] && [ "$minor_version" -ge 14 ]; then
+            print_success "Python version is compatible (3.14+)"
             return 0
         else
             print_warning "Python version $major_version.$minor_version detected"
-            print_warning "Recommended: Python 3.11 or higher"
+            print_warning "Recommended: Python 3.14 or higher"
             return 1
         fi
     else
         print_error "Python 3 not found"
-        print_error "Please install Python 3.11 or higher"
+        print_error "Please install Python 3.14 or higher"
         return 1
     fi
 }

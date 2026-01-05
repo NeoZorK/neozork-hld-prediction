@@ -8,7 +8,7 @@ metadata:
     platform: apple-silicon
     version: "1.0.0"
 spec:
-  image: python:3.11-slim
+  image: python:3.14-slim
   architecture: arm64
   resources:
     memory: "4Gi"
