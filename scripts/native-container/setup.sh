@@ -310,7 +310,7 @@ create_container() {
         --arch arm64 \
         --os linux \
         --entrypoint /app/container-entrypoint.sh \
-        python:3.11-slim; then
+        python:3.14-slim; then
         print_success "Container created successfully"
         return 0
     else
