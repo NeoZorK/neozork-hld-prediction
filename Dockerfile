@@ -11,6 +11,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gcc \
     curl \
+    libpq-dev \
+    postgresql-client \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -35,7 +37,10 @@ COPY uv.toml /app/uv.toml
 COPY requirements.txt .
 
 # Install dependencies using UV only - no pip fallback
-RUN uv pip install --no-cache -r requirements.txt \
+# Install psycopg2-binary separately if needed
+RUN uv pip install --no-cache -r requirements.txt || \
+    (uv pip install --no-cache $(grep -v psycopg2-binary requirements.txt || cat requirements.txt) && \
+     uv pip install --no-cache psycopg2-binary || echo "psycopg2-binary installation skipped") \
     && find /opt/venv -name '*.pyc' -delete \
     && find /opt/venv -name '__pycache__' -delete \
     && find /opt/venv -name '*.egg-info' -print0 | xargs -0 rm -rf \
