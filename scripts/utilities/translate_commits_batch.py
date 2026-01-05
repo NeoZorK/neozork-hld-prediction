@@ -11,7 +11,7 @@ from transformers import MarianMTModel, MarianTokenizer
 import torch
 
 def has_russian_text(text):
-    return bool(re.search(r'[А-Яа-яЁё]', text))
+Return bool (re.search(r'[A-Ya-Yo], text))
 
 def get_commits_with_russian():
     """Get all commits with Russian text."""
