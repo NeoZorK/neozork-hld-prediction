@@ -43,7 +43,7 @@ def load_model():
 
 def has_russian_text(text: str) -> bool:
     """Check if text contains Cyrillic characters."""
-    return bool(re.search(r'[А-Яа-яЁё]', text))
+Return bool (re.search(r'[A-Ya-Yo], text))
 
 
 def translate_text(text: str, cache: Dict[str, str] = None) -> str:
@@ -200,6 +200,8 @@ def find_files_with_russian(root_dir: str = '.') -> List[Tuple[str, int]]:
         r'^\./venv/.*',
         r'^\./\.uv/.*',
         r'^\./uv_cache/.*',
+        r'.*translation.*cache.*\.json$',
+        r'.*\.translation_cache.*\.json$',
     ]
     
     INCLUDE_EXTENSIONS = {'.py', '.md', '.txt', '.json', '.yaml', '.yml', '.ts', '.tsx', '.js', '.jsx', '.vue', '.sh'}
