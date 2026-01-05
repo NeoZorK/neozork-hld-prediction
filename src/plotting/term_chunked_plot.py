@@ -34,6 +34,18 @@ from .term_chunked_plot_rsi import plot_rsi_chunks
 from .term_chunked_plot_macd import plot_macd_chunks
 from .term_chunked_plot_indicator import plot_indicator_chunks
 
+# Import base functions
+from .term_chunked_plot_base import (
+    get_terminal_plot_size,
+    calculate_optimal_chunk_size,
+    split_dataframe_into_chunks,
+    parse_rsi_rule,
+    draw_ohlc_candles
+)
+
+# Import indicator functions for testing
+from .term_chunked_plot_indicators import _add_wave_indicator_to_subplot
+
 # Re-export all functions for backward compatibility
 __all__ = [
     'plot_ohlcv_chunks',
@@ -45,6 +57,12 @@ __all__ = [
     'plot_macd_chunks',
     'plot_indicator_chunks',
     'plot_chunked_terminal',
+    'calculate_optimal_chunk_size',
+    'split_dataframe_into_chunks',
+    'parse_rsi_rule',
+    'get_terminal_plot_size',
+    'draw_ohlc_candles',
+    '_add_wave_indicator_to_subplot',
 ]
 
 
@@ -65,52 +83,52 @@ def plot_chunked_terminal(
     Use_Navigation (bool): Whether to Use interactive Navigation
     """
     try:
-    rule_upper = rule.upper()
+        rule_upper = rule.upper()
 
-    # Handle RSI variants with dual subplot
-    if rule_upper.startswith('RSI'):
-    plot_indicator_chunks(df, 'RSI', title, style, Use_Navigation, rule)
+        # Handle RSI variants with dual subplot
+        if rule_upper.startswith('RSI'):
+            plot_indicator_chunks(df, 'RSI', title, style, Use_Navigation, rule)
 
-    # Handle MACD (keep existing MACD logic for compatibility)
-    elif rule_upper.startswith('MACD'):
-    plot_macd_chunks(df, title, style, Use_Navigation)
+        # Handle MACD (keep existing MACD logic for compatibility)
+        elif rule_upper.startswith('MACD'):
+            plot_macd_chunks(df, title, style, Use_Navigation)
 
-    # Handle special rules that don't need dual subplot
-    elif rule_upper == 'OHLCV':
-    plot_ohlcv_chunks(df, title, style, Use_Navigation)
-    elif rule_upper == 'AUTO':
-    plot_auto_chunks(df, title, style, Use_Navigation)
-    elif rule_upper in ['PV', 'PRESSURE_VECTOR']:
-    plot_pv_chunks(df, title, style, Use_Navigation)
-    elif rule_upper in ['SR', 'SUPPORT_RESISTANTS']:
-    plot_sr_chunks(df, title, style, Use_Navigation)
-    elif rule_upper in ['PHLD', 'PREDICT_HIGH_LOW_DIRECTION']:
-    plot_phld_chunks(df, title, style, Use_Navigation)
+        # Handle special rules that don't need dual subplot
+        elif rule_upper == 'OHLCV':
+            plot_ohlcv_chunks(df, title, style, Use_Navigation)
+        elif rule_upper == 'AUTO':
+            plot_auto_chunks(df, title, style, Use_Navigation)
+        elif rule_upper in ['PV', 'PRESSURE_VECTOR']:
+            plot_pv_chunks(df, title, style, Use_Navigation)
+        elif rule_upper in ['SR', 'SUPPORT_RESISTANTS']:
+            plot_sr_chunks(df, title, style, Use_Navigation)
+        elif rule_upper in ['PHLD', 'PREDICT_HIGH_LOW_DIRECTION']:
+            plot_phld_chunks(df, title, style, Use_Navigation)
 
-    # Handle all other indicators with dual subplot
-    elif rule_upper in ['STOCHASTIC', 'CCI', 'BOLLINGER_BANDS', 'EMA', 'SMA', 'ADX', 'SAR',
-                        'SUPERTREND', 'ATR', 'STANDARD_DEVIATION', 'OBV', 'VWAP',
-                        'HMA', 'TIME_SERIES_FORECAST', 'MONTE_CARLO', 'KELLY_CRITERION',
-                        'PUT_Call_RATIO', 'COT', 'FEAR_GREED', 'PIVOT_POINTS',
-                        'FIBONACCI_RETRACEMENT', 'DONCHIAN_CHANNEL']:
-    plot_indicator_chunks(df, rule_upper, title, style, Use_Navigation, rule)
+        # Handle all other indicators with dual subplot
+        elif rule_upper in ['STOCHASTIC', 'CCI', 'BOLLINGER_BANDS', 'EMA', 'SMA', 'ADX', 'SAR',
+                            'SUPERTREND', 'ATR', 'STANDARD_DEVIATION', 'OBV', 'VWAP',
+                            'HMA', 'TIME_SERIES_FORECAST', 'MONTE_CARLO', 'KELLY_CRITERION',
+                            'PUT_Call_RATIO', 'COT', 'FEAR_GREED', 'PIVOT_POINTS',
+                            'FIBONACCI_RETRACEMENT', 'DONCHIAN_CHANNEL']:
+            plot_indicator_chunks(df, rule_upper, title, style, Use_Navigation, rule)
 
-    # Handle parameterized indicators
-    elif ':' in rule:
-        # Extract indicator name from parameterized rule (e.g.,
-        # "stochastic:14,3,3" -> "STOCHASTIC")
-    indicator_name = rule.split(':')[0].upper()
-    plot_indicator_chunks(
-        df,
-        indicator_name,
-        title,
-        style,
-        Use_Navigation,
-        rule)
+        # Handle parameterized indicators
+        elif ':' in rule:
+            # Extract indicator name from parameterized rule (e.g.,
+            # "stochastic:14,3,3" -> "STOCHASTIC")
+            indicator_name = rule.split(':')[0].upper()
+            plot_indicator_chunks(
+                df,
+                indicator_name,
+                title,
+                style,
+                Use_Navigation,
+                rule)
 
-    else:
-        # Try to Use as generic indicator
-    plot_indicator_chunks(df, rule_upper, title, style, Use_Navigation, rule)
+        else:
+            # Try to Use as generic indicator
+            plot_indicator_chunks(df, rule_upper, title, style, Use_Navigation, rule)
 
     except Exception as e:
-    logger.print_error(f"Error in chunked terminal plotting: {e}")
+        logger.print_error(f"Error in chunked terminal plotting: {e}")

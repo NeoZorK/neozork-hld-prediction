@@ -27,15 +27,15 @@ except ImportError:
 
 # import Navigation system
 try:
-    from .term_Navigation import TerminalNavigator, create_Navigation_prompt, parse_Navigation_input
-    from .term_Navigation import AutoTerminalNavigator
+    from .term_navigation import TerminalNavigator, create_navigation_prompt, parse_navigation_input
+    from .term_navigation import AutoTerminalNavigator
 except ImportError:
     try:
-        from src.plotting.term_Navigation import TerminalNavigator, create_Navigation_prompt, parse_Navigation_input
-        from src.plotting.term_Navigation import AutoTerminalNavigator
+        from src.plotting.term_navigation import TerminalNavigator, create_navigation_prompt, parse_navigation_input
+        from src.plotting.term_navigation import AutoTerminalNavigator
     except ImportError:
-        from src.plotting.term_Navigation import TerminalNavigator, create_Navigation_prompt, parse_Navigation_input
-        from src.plotting.term_Navigation import AutoTerminalNavigator
+        from src.plotting.term_navigation import TerminalNavigator, create_navigation_prompt, parse_navigation_input
+        from src.plotting.term_navigation import AutoTerminalNavigator
 
 from .term_chunked_plot_base import (
     get_terminal_plot_size,

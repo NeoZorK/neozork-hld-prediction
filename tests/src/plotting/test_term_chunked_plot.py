@@ -3,6 +3,9 @@
 
 """
 Unit tests for src/plotting/term_chunked_plot.py
+
+Note: After refactoring, the module has been split into multiple files, but all functions
+are still imported from the main term_chunked_plot module for backward compatibility.
 """
 
 import pytest
