@@ -1,6 +1,7 @@
-tree ab777b0753ee6ba9f42ee48d9aedbe8d25771770
-parent ceff717906fbc1459a611c12860b774e9808ca85
-author Ростислав Щербина <neozork@protonmail.com> 1750163875 +0300
-committer Ростислав Щербина <neozork@protonmail.com> 1750163875 +0300
+tree 643d95487c4944fa11b758c6c2efcec9d5b39fe6
+parent 17951be73b3d36dd9848887ba170cf8a935285f9
+parent 31615c1203fc3dd81c8ac392f167cb5e2e8d5e18
+author NeoZorK <63606118+NeoZorK@users.noreply.github.com> 1749335891 +0300
+committer GitHub <noreply@github.com> 1749335891 +0300
 
-chore: Bump version to 0.3.9
+Merge pull request #31 from NeoZorK/v0.3.6 v0.3.6
