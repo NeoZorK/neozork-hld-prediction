@@ -55,16 +55,16 @@ def plot_and_save(result: DecompositionResult, plots_dir: str, file_stem: str, l
 
     if result.method in {"classical", "stl"}:
         fig, axes = plt.subplots(4, 1, figsize=(12, 10), sharex=False)
-        result.original.plot(ax=axes[0], color="black", lw=1)
+        axes[0].plot(result.original.index, result.original.values, color="black", linewidth=1)
         axes[0].set_title(texts["original"]) # noqa: E265
         axes[0].set_xlim(result.original.index.min(), result.original.index.max())
-        result.components["trend"].plot(ax=axes[1], color="tab:blue", lw=1)
+        axes[1].plot(result.components["trend"].index, result.components["trend"].values, color="tab:blue", linewidth=1)
         axes[1].set_title(texts["trend"]) # noqa: E265
         axes[1].set_xlim(result.original.index.min(), result.original.index.max())
-        result.components["seasonal"].plot(ax=axes[2], color="tab:orange", lw=1)
+        axes[2].plot(result.components["seasonal"].index, result.components["seasonal"].values, color="tab:orange", linewidth=1)
         axes[2].set_title(texts["seasonal"]) # noqa: E265
         axes[2].set_xlim(result.original.index.min(), result.original.index.max())
-        result.components["residual"].plot(ax=axes[3], color="tab:green", lw=1)
+        axes[3].plot(result.components["residual"].index, result.components["residual"].values, color="tab:green", linewidth=1)
         axes[3].set_title(texts["residual"]) # noqa: E265
         axes[3].set_xlim(result.original.index.min(), result.original.index.max())
         # Heading without descriptive blocks
