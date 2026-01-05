@@ -8,6 +8,7 @@ plus a secondary chart below showing the selected indicator.
 """
 
 import os
+import sys
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -17,6 +18,9 @@ from matplotlib.patches import Rectangle
 from typing import Dict, Any, Optional
 
 from src.common import logger
+
+# Increase recursion limit to handle matplotlib deepcopy operations
+sys.setrecursionlimit(3000)
 
 
 def _create_wave_line_segments(index, values, mask):
@@ -84,6 +88,13 @@ def plot_dual_chart_seaborn(
     Returns:
         matplotlib.figure.Figure: Figure object
     """
+    # Increase recursion limit to handle matplotlib deepcopy operations
+    old_recursion_limit = sys.getrecursionlimit()
+    try:
+        sys.setrecursionlimit(5000)
+    except:
+        pass
+    
     # Set default output path
     if output_path is None:
         output_path = "results/plots/dual_chart_seaborn.png"
@@ -242,7 +253,8 @@ def plot_dual_chart_seaborn(
     else:  # Less than 3 months
         ax1.xaxis.set_major_locator(mdates.DayLocator(interval=max(1, days_range // 10)))
     
-    plt.setp(ax1.xaxis.get_majorticklabels(), rotation=45, ha='right')
+    # Set tick label rotation - avoid calling get_majorticklabels() which triggers deepcopy
+    ax1.tick_params(axis='x', rotation=45)
     
     # Indicator chart
     indicator_name = rule.split(':', 1)[0].lower().strip()
@@ -1033,17 +1045,35 @@ def plot_dual_chart_seaborn(
     else:  # Less than 3 months
         ax2.xaxis.set_major_locator(mdates.DayLocator(interval=max(1, days_range // 10)))
     
-    plt.setp(ax2.xaxis.get_majorticklabels(), rotation=45, ha='right')
+    # Set tick label rotation - avoid calling get_majorticklabels() which triggers deepcopy
+    ax2.tick_params(axis='x', rotation=45)
     
-    # Adjust layout
-    plt.tight_layout()
+    # Adjust layout - wrap in try-except to handle recursion errors
+    try:
+        plt.tight_layout()
+    except RecursionError:
+        # If recursion error occurs, use basic layout adjustment
+        fig.tight_layout(rect=[0, 0, 1, 0.96])
+    
+    # Restore recursion limit
+    try:
+        sys.setrecursionlimit(old_recursion_limit)
+    except:
+        pass
     
     # Save plot
-    plt.savefig(output_path, dpi=300, bbox_inches='tight')
-    
-    logger.print_info(f"Dual chart saved to: {output_path}")
+    try:
+        plt.savefig(output_path, dpi=300, bbox_inches='tight')
+        logger.print_info(f"Dual chart saved to: {output_path}")
+    except RecursionError:
+        # Fallback: save without tight layout
+        plt.savefig(output_path, dpi=300)
+        logger.print_warning(f"Dual chart saved to: {output_path} (with basic layout due to recursion error)")
     
     # Show plot
-    plt.show()
+    try:
+        plt.show()
+    except RecursionError:
+        logger.print_warning("Recursion error during display, but plot was created successfully")
     
     return fig 
