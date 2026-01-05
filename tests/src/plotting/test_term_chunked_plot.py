@@ -72,7 +72,7 @@ class TestTermChunkedPlot:
                 self.test_df,
                 title="Custom OHLCV Title",
                 style="matrix",
-                use_navigation=True
+                Use_Navigation=True
             )
             mock_print.assert_called()
     
@@ -89,7 +89,7 @@ class TestTermChunkedPlot:
                 self.test_df,
                 title="Custom AUTO Title",
                 style="matrix",
-                use_navigation=True
+                Use_Navigation=True
             )
             mock_print.assert_called()
     
@@ -106,7 +106,7 @@ class TestTermChunkedPlot:
                 self.test_df,
                 title="Custom PV Title",
                 style="matrix",
-                use_navigation=True
+                Use_Navigation=True
             )
             mock_print.assert_called()
     
@@ -123,7 +123,7 @@ class TestTermChunkedPlot:
                 self.test_df,
                 title="Custom SR Title",
                 style="matrix",
-                use_navigation=True
+                Use_Navigation=True
             )
             mock_print.assert_called()
     
@@ -140,7 +140,7 @@ class TestTermChunkedPlot:
                 self.test_df,
                 title="Custom PHLD Title",
                 style="matrix",
-                use_navigation=True
+                Use_Navigation=True
             )
             mock_print.assert_called()
     
@@ -158,7 +158,7 @@ class TestTermChunkedPlot:
                 rule="rsi",
                 title="Custom RSI Title",
                 style="matrix",
-                use_navigation=True
+                Use_Navigation=True
             )
             mock_print.assert_called()
     
@@ -175,7 +175,7 @@ class TestTermChunkedPlot:
                 self.test_df,
                 title="Custom MACD Title",
                 style="matrix",
-                use_navigation=True
+                Use_Navigation=True
             )
             mock_print.assert_called()
     
@@ -193,7 +193,7 @@ class TestTermChunkedPlot:
                 indicator_name="RSI",
                 title="Custom Indicator Title",
                 style="matrix",
-                use_navigation=True,
+                Use_Navigation=True,
                 rule="rsi"
             )
             mock_print.assert_called()
@@ -212,7 +212,7 @@ class TestTermChunkedPlot:
                 rule="ohlcv",
                 title="Custom Terminal Title",
                 style="matrix",
-                use_navigation=True
+                Use_Navigation=True
             )
             mock_print.assert_called()
     
@@ -339,19 +339,19 @@ class TestTermChunkedPlot:
         """Test chunked terminal plotting with navigation."""
         with patch('builtins.print') as mock_print:
             # Test without navigation to avoid input issues in parallel mode
-            plot_chunked_terminal(self.test_df, rule="ohlcv", use_navigation=False)
+            plot_chunked_terminal(self.test_df, rule="ohlcv", Use_Navigation=False)
             mock_print.assert_called()
     
     def test_plot_chunked_terminal_with_quit(self):
         """Test chunked terminal plotting with quit command."""
         with patch('builtins.print') as mock_print:
             with patch('builtins.input', return_value='q'):  # Quit
-                plot_chunked_terminal(self.test_df, rule="ohlcv", use_navigation=True)
+                plot_chunked_terminal(self.test_df, rule="ohlcv", Use_Navigation=True)
                 mock_print.assert_called()
     
     def test_plot_chunked_terminal_with_invalid_input(self):
         """Test chunked terminal plotting with invalid input."""
         with patch('builtins.print') as mock_print:
             # Test without navigation to avoid input issues in parallel mode
-            plot_chunked_terminal(self.test_df, rule="ohlcv", use_navigation=False)
+            plot_chunked_terminal(self.test_df, rule="ohlcv", Use_Navigation=False)
             mock_print.assert_called()
