@@ -41,7 +41,7 @@ hypothesis>=6.0.0
 
 # Data fetching libraries
 yfinance==0.2.25
-polygon-api-client
+# polygon-api-client  # Not compatible with Python 3.14 (KeyError: '__annotations__')
 python-binance==1.0.17
 
 # Additional data processing

@@ -124,7 +124,7 @@ dependencies = [
     "pytest-asyncio>=0.24.0",
     "pytest-mock>=3.14.0",
     "pytest-timeout>=2.1.0",
-    "polygon-api-client",
+    "polygon-api-client; python_version<\"3.14\"",
     "python-binance==1.0.17",
     "pyarrow>=21.0.0; python_version>=\"3.14\"",
     "pyarrow>=20.0.0; python_version<\"3.14\"",
