@@ -1,4 +1,6 @@
 import os
+import matplotlib
+matplotlib.use('Agg')  # Use non-interactive backend for tests
 import pandas as pd
 
 from src.time_series.decomposition.base import DecompositionResult
