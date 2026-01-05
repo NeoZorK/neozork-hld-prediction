@@ -12,7 +12,7 @@
 ### 1. Установить все зависимости
 
 ```bash
-source .venv314/bin/activate
+source .venv/bin/activate
 uv pip install -r requirements.txt
 ```
 
@@ -26,7 +26,7 @@ uv pip install psycopg2-binary  # Может требовать системны
 ### 2. Протестировать нативно
 
 ```bash
-source .venv314/bin/activate
+source .venv/bin/activate
 
 # Базовые тесты
 uv run pytest tests/common/ -v

@@ -20,14 +20,14 @@ uv --version
 # Ожидается: uv 0.9.21 или выше
 
 # Проверить установленные зависимости
-source .venv314/bin/activate  # или ваше виртуальное окружение
+source .venv/bin/activate  # или ваше виртуальное окружение
 uv pip list | head -20
 ```
 
 ### 1.2 Проверка ключевых зависимостей
 
 ```bash
-source .venv314/bin/activate
+source .venv/bin/activate
 
 # Проверить основные библиотеки
 python -c "import pydantic; print(f'pydantic {pydantic.__version__}')"
@@ -44,7 +44,7 @@ python -c "import pandas, numpy, sklearn; print('ML libraries OK')"
 ### 1.3 Запуск тестов нативно
 
 ```bash
-source .venv314/bin/activate
+source .venv/bin/activate
 
 # Все тесты
 uv run pytest tests -n auto -v
@@ -62,7 +62,7 @@ uv run pytest tests/integration/ -v
 ### 1.4 Проверка основных программ
 
 ```bash
-source .venv314/bin/activate
+source .venv/bin/activate
 
 # Основной анализ
 python run_analysis.py --help
@@ -220,7 +220,7 @@ python src/interactive/neozork.py --help
 
 ```bash
 # 1. Нативная среда
-source .venv314/bin/activate
+source .venv/bin/activate
 python --version
 python -c "import pydantic, fastapi; print('OK')"
 uv run pytest tests/common/ -v

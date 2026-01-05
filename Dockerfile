@@ -34,15 +34,18 @@ ENV PATH="/root/.local/bin:$PATH"
 
 # Copy configuration and requirements
 COPY uv.toml /app/uv.toml
-COPY requirements.txt .
+COPY pyproject.toml /app/pyproject.toml
+COPY requirements.txt /app/requirements.txt
 
-# Install dependencies using UV only - no pip fallback
-# Create temporary file without psycopg2-binary, install all other dependencies first
-RUN grep -v "^psycopg2-binary" requirements.txt > /tmp/req_no_pg.txt 2>/dev/null || cp requirements.txt /tmp/req_no_pg.txt \
-    && uv pip install --no-cache -r /tmp/req_no_pg.txt \
-    && uv pip install --no-cache psycopg2-binary || echo "Warning: psycopg2-binary installation skipped" \
-    && rm -f /tmp/req_no_pg.txt \
-    && find /opt/venv -name '*.pyc' -delete \
+# Install dependencies using uv pip install
+# Install all dependencies from requirements.txt, skip problematic ones if needed
+RUN cd /app && \
+    uv pip install --no-cache -r requirements.txt || \
+    (grep -v "^psycopg2-binary" requirements.txt > /tmp/req_no_pg.txt && \
+     uv pip install --no-cache -r /tmp/req_no_pg.txt && \
+     uv pip install --no-cache psycopg2-binary || echo "Warning: psycopg2-binary skipped" && \
+     rm -f /tmp/req_no_pg.txt) && \
+    find /opt/venv -name '*.pyc' -delete \
     && find /opt/venv -name '__pycache__' -delete \
     && find /opt/venv -name '*.egg-info' -print0 | xargs -0 rm -rf \
     && rm -rf /root/.cache /tmp/* /var/tmp/* /root/.cargo /root/.local/share/uv

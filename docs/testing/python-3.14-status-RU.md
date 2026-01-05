@@ -60,7 +60,7 @@
 
 ```bash
 # Проверить нативно
-source .venv314/bin/activate
+source .venv/bin/activate
 python --version
 python run_analysis.py --help
 uv run pytest tests/common/ -v

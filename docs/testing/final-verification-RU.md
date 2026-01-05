@@ -27,7 +27,7 @@
 
 ### Нативная среда
 ```bash
-source .venv314/bin/activate
+source .venv/bin/activate
 uv pip install -r requirements.txt
 uv run pytest tests -n auto
 ```
