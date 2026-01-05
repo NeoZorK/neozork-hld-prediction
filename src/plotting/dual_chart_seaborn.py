@@ -231,8 +231,26 @@ def plot_dual_chart_seaborn(
     
     ax1.set_ylabel('Price', fontsize=12)
     # Only show legend if there are labeled artists
-    if ax1.get_legend_handles_labels()[0]:
+    # Use try-except to handle RecursionError in matplotlib legend creation
+    # RecursionError can occur when matplotlib tries to deepcopy marker styles
+    try:
+        # First try simple legend() call - this is usually safe
         ax1.legend()
+    except (RecursionError, RuntimeError) as e:
+        # Fallback: try with explicit handles/labels and handler_map
+        try:
+            handles, labels = ax1.get_legend_handles_labels()
+            if handles:
+                # Use handler_map to avoid deepcopy issues with markers
+                from matplotlib.legend_handler import HandlerLine2D
+                handler_map = {}
+                for handle in handles:
+                    if hasattr(handle, '_marker'):
+                        handler_map[handle] = HandlerLine2D()
+                ax1.legend(handles=handles, labels=labels, handler_map=handler_map)
+        except (RecursionError, RuntimeError):
+            # If still fails, skip legend creation
+            logger.print_warning(f"Skipping legend creation for ax1 due to RecursionError")
     
     # Format x-axis for main chart
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
@@ -502,12 +520,22 @@ def plot_dual_chart_seaborn(
     
     elif indicator_name == 'stoch':
         if 'stoch_k' in display_df.columns:
-            sns.lineplot(data=display_df, x=display_df.index, y='stoch_k', 
-                        ax=ax2, color='blue', linewidth=3, label='%K')
+            try:
+                sns.lineplot(data=display_df, x=display_df.index, y='stoch_k', 
+                            ax=ax2, color='blue', linewidth=3, label='%K')
+            except RecursionError:
+                # Fallback to matplotlib plot if seaborn causes RecursionError
+                ax2.plot(display_df.index, display_df['stoch_k'], 
+                        color='blue', linewidth=3, label='%K')
         
         if 'stoch_d' in display_df.columns:
-            sns.lineplot(data=display_df, x=display_df.index, y='stoch_d', 
-                        ax=ax2, color='orange', linewidth=3, label='%D')
+            try:
+                sns.lineplot(data=display_df, x=display_df.index, y='stoch_d', 
+                            ax=ax2, color='orange', linewidth=3, label='%D')
+            except RecursionError:
+                # Fallback to matplotlib plot if seaborn causes RecursionError
+                ax2.plot(display_df.index, display_df['stoch_d'], 
+                        color='orange', linewidth=3, label='%D')
         
         # Add overbought/oversold lines
         if 'stoch_overbought' in display_df.columns:
@@ -522,12 +550,22 @@ def plot_dual_chart_seaborn(
     
     elif indicator_name == 'stochoscillator':
         if 'stochosc_k' in display_df.columns:
-            sns.lineplot(data=display_df, x=display_df.index, y='stochosc_k', 
-                        ax=ax2, color='blue', linewidth=3, label='%K')
+            try:
+                sns.lineplot(data=display_df, x=display_df.index, y='stochosc_k', 
+                            ax=ax2, color='blue', linewidth=3, label='%K')
+            except RecursionError:
+                # Fallback to matplotlib plot if seaborn causes RecursionError
+                ax2.plot(display_df.index, display_df['stochosc_k'], 
+                        color='blue', linewidth=3, label='%K')
         
         if 'stochosc_d' in display_df.columns:
-            sns.lineplot(data=display_df, x=display_df.index, y='stochosc_d', 
-                        ax=ax2, color='orange', linewidth=3, label='%D')
+            try:
+                sns.lineplot(data=display_df, x=display_df.index, y='stochosc_d', 
+                            ax=ax2, color='orange', linewidth=3, label='%D')
+            except RecursionError:
+                # Fallback to matplotlib plot if seaborn causes RecursionError
+                ax2.plot(display_df.index, display_df['stochosc_d'], 
+                        color='orange', linewidth=3, label='%D')
         
         # Add overbought/oversold lines
         if 'stochosc_overbought' in display_df.columns:
@@ -1028,8 +1066,26 @@ def plot_dual_chart_seaborn(
     ax2.set_ylabel(indicator_title, fontsize=12)
     ax2.set_xlabel('Date', fontsize=12)
     # Only show legend if there are labeled artists
-    if ax2.get_legend_handles_labels()[0]:
+    # Use try-except to handle RecursionError in matplotlib legend creation
+    # RecursionError can occur when matplotlib tries to deepcopy marker styles
+    try:
+        # First try simple legend() call - this is usually safe
         ax2.legend()
+    except (RecursionError, RuntimeError) as e:
+        # Fallback: try with explicit handles/labels and handler_map
+        try:
+            handles, labels = ax2.get_legend_handles_labels()
+            if handles:
+                # Use handler_map to avoid deepcopy issues with markers
+                from matplotlib.legend_handler import HandlerLine2D
+                handler_map = {}
+                for handle in handles:
+                    if hasattr(handle, '_marker'):
+                        handler_map[handle] = HandlerLine2D()
+                ax2.legend(handles=handles, labels=labels, handler_map=handler_map)
+        except (RecursionError, RuntimeError):
+            # If still fails, skip legend creation
+            logger.print_warning(f"Skipping legend creation for ax2 due to RecursionError")
     
     # Format x-axis for indicator chart
     ax2.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
@@ -1049,11 +1105,20 @@ def plot_dual_chart_seaborn(
     ax2.tick_params(axis='x', rotation=45)
     
     # Adjust layout - wrap in try-except to handle recursion errors
+    # RecursionError can occur in tight_layout when matplotlib tries to deepcopy markers
     try:
         plt.tight_layout()
-    except RecursionError:
-        # If recursion error occurs, use basic layout adjustment
-        fig.tight_layout(rect=[0, 0, 1, 0.96])
+    except (RecursionError, RuntimeError):
+        # If recursion error occurs, try alternative layout adjustment
+        try:
+            fig.tight_layout(rect=[0, 0, 1, 0.96])
+        except (RecursionError, RuntimeError):
+            # If still fails, skip tight_layout and use subplots_adjust instead
+            try:
+                fig.subplots_adjust(left=0.1, bottom=0.1, right=0.95, top=0.95, hspace=0.3)
+            except (RecursionError, RuntimeError):
+                # If all fails, just skip layout adjustment
+                logger.print_warning("Skipping layout adjustment due to RecursionError")
     
     # Restore recursion limit
     try:
@@ -1062,18 +1127,28 @@ def plot_dual_chart_seaborn(
         pass
     
     # Save plot
+    # RecursionError can occur in savefig when matplotlib tries to deepcopy markers
     try:
         plt.savefig(output_path, dpi=300, bbox_inches='tight')
         logger.print_info(f"Dual chart saved to: {output_path}")
-    except RecursionError:
+    except (RecursionError, RuntimeError):
         # Fallback: save without tight layout
-        plt.savefig(output_path, dpi=300)
-        logger.print_warning(f"Dual chart saved to: {output_path} (with basic layout due to recursion error)")
+        try:
+            plt.savefig(output_path, dpi=300)
+            logger.print_warning(f"Dual chart saved to: {output_path} (with basic layout due to recursion error)")
+        except (RecursionError, RuntimeError):
+            # If still fails, try saving with minimal options
+            try:
+                plt.savefig(output_path)
+                logger.print_warning(f"Dual chart saved to: {output_path} (with minimal options due to recursion error)")
+            except (RecursionError, RuntimeError) as e:
+                logger.print_warning(f"Failed to save plot due to {type(e).__name__}: {e}")
     
     # Show plot
+    # RecursionError can occur in show when matplotlib tries to deepcopy markers
     try:
         plt.show()
-    except RecursionError:
+    except (RecursionError, RuntimeError):
         logger.print_warning("Recursion error during display, but plot was created successfully")
     
     return fig 

@@ -182,6 +182,8 @@ version = {attr = "__version__"}
 
 [dependency-groups]
 dev = [
+    "autopep8>=2.3.2",
+    "black>=25.12.0",
     "pytest-cov>=6.2.1",
     "pytest-xdist>=3.7.0",
 ]
