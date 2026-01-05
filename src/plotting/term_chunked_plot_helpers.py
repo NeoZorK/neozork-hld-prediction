@@ -162,7 +162,9 @@ def _plot_single_field_chunk(chunk: pd.DataFrame, field: str, title: str, style:
 
 def _has_trading_signals(chunk: pd.DataFrame) -> bool:
     """Check if chunk has trading signals."""
-    return any(col in chunk.columns for col in ['Direction', '_signal'])
+    # Check for both '_signal' and '_Signal' (case-insensitive)
+    signal_cols = [col for col in chunk.columns if col.lower() == '_signal']
+    return any(col in chunk.columns for col in ['Direction']) or len(signal_cols) > 0
 
 
 def _add_trading_signals_to_chunk(chunk: pd.DataFrame, x_values: List) -> None:
@@ -177,9 +179,11 @@ def _add_trading_signals_to_chunk(chunk: pd.DataFrame, x_values: List) -> None:
     """
     try:
         # check for different signal sources (same priority as other modes)
+        # Check for both '_signal' and '_Signal' (case-insensitive)
         signal_source = None
-        if '_signal' in chunk.columns:
-            signal_source = '_signal'
+        signal_cols = [col for col in chunk.columns if col.lower() == '_signal']
+        if signal_cols:
+            signal_source = signal_cols[0]  # Use first matching column
         elif 'Direction' in chunk.columns:
             signal_source = 'Direction'
         else:
@@ -190,7 +194,8 @@ def _add_trading_signals_to_chunk(chunk: pd.DataFrame, x_values: List) -> None:
 
         for i, signal in enumerate(chunk[signal_source]):
             # Handle different signal formats
-            if signal_source == '_signal':
+            # Check if signal_source is a _signal column (case-insensitive)
+            if signal_source.lower() == '_signal':
                 # Wave indicator signal: 1 = BUY, 2 = SELL, 0 = NO TRADE (only direction changes)
                 if signal == 1:  # BUY
                     buy_x.append(x_values[i])

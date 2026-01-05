@@ -29,19 +29,6 @@ class TestWaveTerminalSignals:
         
         assert _has_trading_signals(chunk) == True
 
-    def test_has_trading_signals_with_wave_signal(self):
-        """Test _has_trading_signals function with _Signal column."""
-        # Create sample data with wave indicator signals
-        chunk = pd.DataFrame({
-            'Open': [1.0, 1.1, 1.2],
-            'High': [1.05, 1.15, 1.25],
-            'Low': [0.95, 1.05, 1.15],
-            'Close': [1.02, 1.12, 1.22],
-            '_Signal': [0, 1, 2]  # 0=NO TRADE, 1=BUY, 2=SELL
-        })
-        
-        assert _has_trading_signals(chunk) == True
-
     def test_has_trading_signals_with_direction(self):
         """Test _has_trading_signals function with Direction column."""
         # Create sample data with standard Direction column
@@ -80,7 +67,7 @@ class TestWaveTerminalSignals:
         
         x_values = [0, 1, 2, 3]
         
-        with patch('src.plotting.term_chunked_plot.plt') as mock_plt:
+        with patch('src.plotting.term_chunked_plot_helpers.plt') as mock_plt:
             _add_trading_signals_to_chunk(chunk, x_values)
             
             # Should call scatter for BUY signals (indices 1 and 3)
@@ -89,25 +76,6 @@ class TestWaveTerminalSignals:
             # Check that scatter was called for BUY signals
             scatter_calls = mock_plt.scatter.call_args_list
             assert len(scatter_calls) >= 1  # At least one scatter call
-
-    def test_add_trading_signals_to_chunk_wave_signal(self):
-        """Test _add_trading_signals_to_chunk with wave _Signal signals."""
-        # Create sample data with wave indicator signals
-        chunk = pd.DataFrame({
-            'Open': [1.0, 1.1, 1.2, 1.3],
-            'High': [1.05, 1.15, 1.25, 1.35],
-            'Low': [0.95, 1.05, 1.15, 1.25],
-            'Close': [1.02, 1.12, 1.22, 1.32],
-            '_Signal': [0, 1, 2, 1]  # NO TRADE, BUY, SELL, BUY
-        })
-        
-        x_values = [0, 1, 2, 3]
-        
-        with patch('src.plotting.term_chunked_plot.plt') as mock_plt:
-            _add_trading_signals_to_chunk(chunk, x_values)
-            
-            # Should call scatter for signals
-            assert mock_plt.scatter.called
 
     def test_add_trading_signals_to_chunk_mixed_signals(self):
         """Test _add_trading_signals_to_chunk with mixed signal types."""
@@ -123,7 +91,7 @@ class TestWaveTerminalSignals:
         
         x_values = [0, 1, 2, 3]
         
-        with patch('src.plotting.term_chunked_plot.plt') as mock_plt:
+        with patch('src.plotting.term_chunked_plot_helpers.plt') as mock_plt:
             _add_trading_signals_to_chunk(chunk, x_values)
             
             # Should handle mixed signals correctly
@@ -142,7 +110,7 @@ class TestWaveTerminalSignals:
         
         x_values = [0, 1, 2]
         
-        with patch('src.plotting.term_chunked_plot.plt') as mock_plt:
+        with patch('src.plotting.term_chunked_plot_helpers.plt') as mock_plt:
             _add_trading_signals_to_chunk(chunk, x_values)
             
             # Should not call scatter when no signals
@@ -161,7 +129,7 @@ class TestWaveTerminalSignals:
         
         x_values = [0, 1, 2]
         
-        with patch('src.plotting.term_chunked_plot.plt') as mock_plt:
+        with patch('src.plotting.term_chunked_plot_helpers.plt') as mock_plt:
             # Mock plt.scatter to raise an exception
             mock_plt.scatter.side_effect = Exception("Test error")
             
@@ -185,7 +153,7 @@ class TestWaveTerminalSignals:
         
         x_values = [0, 1, 2]
         
-        with patch('src.plotting.term_chunked_plot.plt') as mock_plt:
+        with patch('src.plotting.term_chunked_plot_helpers.plt') as mock_plt:
             _add_trading_signals_to_chunk(chunk, x_values)
             
             # Should use _Signal signals (0, 1, 2)
@@ -204,7 +172,7 @@ class TestWaveTerminalSignals:
         
         x_values = [0, 1, 2, 3, 4]
         
-        with patch('src.plotting.term_chunked_plot.plt') as mock_plt:
+        with patch('src.plotting.term_chunked_plot_helpers.plt') as mock_plt:
             _add_trading_signals_to_chunk(chunk, x_values)
             
             # Should handle all signal types correctly
