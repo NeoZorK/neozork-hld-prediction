@@ -181,7 +181,7 @@ def extract_russian_words_from_file(file_path: str, root_dir: str = '.') -> List
         
         # Extract Russian words (Cyrillic characters)
         # Match words that contain at least one Cyrillic character
-Russian_words = re.findall(r'[A-Ya-Yo]+,content)
+        russian_words = re.findall(r'[А-Яа-яЁё]+', content)
         
         # Remove duplicates and sort
         unique_words = sorted(set(russian_words), key=str.lower)
