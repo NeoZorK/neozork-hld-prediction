@@ -4,6 +4,9 @@ import math
 import os
 from typing import Dict, List
 
+# Use non-interactive backend to avoid deepcopy recursion issues
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -55,18 +58,32 @@ def plot_and_save(result: DecompositionResult, plots_dir: str, file_stem: str, l
 
     if result.method in {"classical", "stl"}:
         fig, axes = plt.subplots(4, 1, figsize=(12, 10), sharex=False)
-        axes[0].plot(result.original.index, result.original.values, color="black", linewidth=1)
+        # Convert DatetimeIndex to numeric to avoid deepcopy recursion issues
+        # This is a known issue with matplotlib when dealing with pandas DatetimeIndex
+        orig_idx = pd.to_numeric(result.original.index, errors='coerce')
+        orig_vals = result.original.values
+        axes[0].plot(orig_idx, orig_vals, color="black", linewidth=1)
         axes[0].set_title(texts["original"]) # noqa: E265
-        axes[0].set_xlim(result.original.index.min(), result.original.index.max())
-        axes[1].plot(result.components["trend"].index, result.components["trend"].values, color="tab:blue", linewidth=1)
+        x_min, x_max = orig_idx.min(), orig_idx.max()
+        axes[0].set_xlim(x_min, x_max)
+        
+        trend_idx = pd.to_numeric(result.components["trend"].index, errors='coerce')
+        trend_vals = result.components["trend"].values
+        axes[1].plot(trend_idx, trend_vals, color="tab:blue", linewidth=1)
         axes[1].set_title(texts["trend"]) # noqa: E265
-        axes[1].set_xlim(result.original.index.min(), result.original.index.max())
-        axes[2].plot(result.components["seasonal"].index, result.components["seasonal"].values, color="tab:orange", linewidth=1)
+        axes[1].set_xlim(x_min, x_max)
+        
+        seasonal_idx = pd.to_numeric(result.components["seasonal"].index, errors='coerce')
+        seasonal_vals = result.components["seasonal"].values
+        axes[2].plot(seasonal_idx, seasonal_vals, color="tab:orange", linewidth=1)
         axes[2].set_title(texts["seasonal"]) # noqa: E265
-        axes[2].set_xlim(result.original.index.min(), result.original.index.max())
-        axes[3].plot(result.components["residual"].index, result.components["residual"].values, color="tab:green", linewidth=1)
+        axes[2].set_xlim(x_min, x_max)
+        
+        residual_idx = pd.to_numeric(result.components["residual"].index, errors='coerce')
+        residual_vals = result.components["residual"].values
+        axes[3].plot(residual_idx, residual_vals, color="tab:green", linewidth=1)
         axes[3].set_title(texts["residual"]) # noqa: E265
-        axes[3].set_xlim(result.original.index.min(), result.original.index.max())
+        axes[3].set_xlim(x_min, x_max)
         # Heading without descriptive blocks
         title = texts["title_classical"] if result.method == "classical" else texts["title_stl"]
         fig.suptitle(title, fontsize=12)
@@ -74,8 +91,13 @@ def plot_and_save(result: DecompositionResult, plots_dir: str, file_stem: str, l
         # for CEEMDAN Use function below plot_and_save_cemdan_per_imf
         raise RuntimeError("Use plot_and_save_ceemdan_per_imf for CEEMDAN method")
 
-    fig.tight_layout(rect=[0, 0.03, 1, 0.95])
+    # Use subplots_adjust instead of tight_layout to avoid deepcopy recursion issues
+    # This is a known issue with matplotlib when dealing with certain pandas Series
+    # that contain circular references in their index
+    fig.subplots_adjust(left=0.1, bottom=0.05, right=0.95, top=0.95, hspace=0.3)
     out_path = os.path.join(plots_dir, f"{file_stem}.png")
+    # Draw the figure before saving to avoid deepcopy issues
+    fig.canvas.draw()
     fig.savefig(out_path, dpi=160)
     plt.close(fig)
     return out_path
@@ -111,12 +133,20 @@ def plot_and_save_ceemdan_per_imf(
     imf_names = [k for k in result.components.keys() if k.startswith("IMF")]
     imf_names_sorted = sorted(imf_names, key=lambda x: int(x.replace("IMF", "")))
 
+    # Convert DatetimeIndex to numeric to avoid deepcopy recursion issues
+    orig_idx_numeric = pd.to_numeric(result.original.index, errors='coerce')
+    x_min = orig_idx_numeric.min()
+    x_max = orig_idx_numeric.max()
+    
     for name in imf_names_sorted:
         n = int(name.replace("IMF", ""))
         fig, ax = plt.subplots(1, 1, figsize=(14, 4))
         comp = result.components[name]
-        comp.plot(ax=ax, lw=1)
-        ax.set_xlim(result.original.index.min(), result.original.index.max())
+        # Convert DatetimeIndex to numeric to avoid deepcopy issues
+        comp_idx = pd.to_numeric(comp.index, errors='coerce')
+        comp_vals = comp.values
+        ax.plot(comp_idx, comp_vals, lw=1)
+        ax.set_xlim(x_min, x_max)
         ax.set_title(texts["title_imf"].format(n=n))
         # Add detailssed describe on the drawing
         fig.text(
@@ -127,8 +157,11 @@ def plot_and_save_ceemdan_per_imf(
             ha="left",
             va="bottom",
         )
-        fig.tight_layout()
+        # Use subplots_adjust instead of tight_layout to avoid deepcopy recursion issues
+        fig.subplots_adjust(left=0.1, bottom=0.1, right=0.95, top=0.95)
         out_path = os.path.join(plots_dir, f"{file_stem}_IMF{n}.png")
+        # Draw the figure before saving to avoid deepcopy issues
+        fig.canvas.draw()
         fig.savefig(out_path, dpi=160)
         plt.close(fig)
         paths.append(out_path)
@@ -136,12 +169,17 @@ def plot_and_save_ceemdan_per_imf(
     # Residual
     fig, ax = plt.subplots(1, 1, figsize=(14, 4))
     res = result.components["residual"]
-    res.plot(ax=ax, lw=1, color="tab:green")
-    ax.set_xlim(result.original.index.min(), result.original.index.max())
+    # Convert DatetimeIndex to numeric to avoid deepcopy issues
+    res_idx = pd.to_numeric(res.index, errors='coerce')
+    res_vals = res.values
+    ax.plot(res_idx, res_vals, lw=1, color="tab:green")
+    ax.set_xlim(x_min, x_max)
     ax.set_title(texts["title_residual"]) # noqa: E265
     fig.text(0.01, 0.01, texts["desc_res"], fontsize=9, ha="left", va="bottom")
-    fig.tight_layout()
+    fig.subplots_adjust(left=0.1, bottom=0.1, right=0.95, top=0.95)
     out_path = os.path.join(plots_dir, f"{file_stem}_RESIDUAL.png")
+    # Draw the figure before saving to avoid deepcopy issues
+    fig.canvas.draw()
     fig.savefig(out_path, dpi=160)
     plt.close(fig)
     paths.append(out_path)
