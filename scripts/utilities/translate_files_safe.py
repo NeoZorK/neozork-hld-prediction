@@ -43,7 +43,7 @@ def load_model():
 
 def has_russian_text(text: str) -> bool:
     """Check if text contains Cyrillic characters."""
-Return bool (re.search(r'[A-Ya-Yo], text))
+    return bool(re.search(r'[А-Яа-яЁё]', text))
 
 
 def translate_text(text: str, cache: Dict[str, str] = None) -> str:
