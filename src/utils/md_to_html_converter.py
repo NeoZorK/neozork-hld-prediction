@@ -14,37 +14,37 @@ from datetime import datetime
 
 
 class MarkdownToHTMLConverter:
- """Converts markdown files to HTML with custom styling and syntax highlighting"""
+    """Converts markdown files to HTML with custom styling and syntax highlighting"""
 
- def __init__(self, input_dir: str, output_dir: str):
- self.input_dir = Path(input_dir)
- self.output_dir = Path(output_dir)
- self.output_dir.mkdir(exist_ok=True)
+    def __init__(self, input_dir: str, output_dir: str):
+        self.input_dir = Path(input_dir)
+        self.output_dir = Path(output_dir)
+        self.output_dir.mkdir(exist_ok=True)
 
- # Configure markdown with extensions
- self.md = markdown.Markdown(
- extensions=[
- 'codehilite',
- 'fenced_code',
- 'tables',
- 'toc',
- 'attr_List',
- 'def_List',
- 'footnotes',
- 'md_in_html'
- ],
- extension_configs={
- 'codehilite': {
- 'css_class': 'highlight',
- 'Use_pygments': False,
- 'guess_lang': True
- }
- }
- )
+        # Configure markdown with extensions
+        self.md = markdown.Markdown(
+            extensions=[
+                'codehilite',
+                'fenced_code',
+                'tables',
+                'toc',
+                'attr_list',
+                'def_list',
+                'footnotes',
+                'md_in_html'
+            ],
+            extension_configs={
+                'codehilite': {
+                    'css_class': 'highlight',
+                    'Use_pygments': False,
+                    'guess_lang': True
+                }
+            }
+        )
 
- def get_html_template(self, title: str, content: str) -> str:
- """Generate HTML template with styling from Python_Formatting_Example.html"""
- return f"""<!DOCTYPE html>
+    def get_html_template(self, title: str, content: str) -> str:
+        """Generate HTML template with styling from Python_Formatting_Example.html"""
+        return f"""<!DOCTYPE html>
 <html lang="ru">
 <head>
  <meta charset="UTF-8">
@@ -343,70 +343,70 @@ class MarkdownToHTMLConverter:
 </body>
 </html>"""
 
- def process_markdown_file(self, md_file: Path) -> str:
- """Process a single markdown file and return HTML content"""
- with open(md_file, 'r', encoding='utf-8') as f:
- content = f.read()
+    def process_markdown_file(self, md_file: Path) -> str:
+        """Process a single markdown file and return HTML content"""
+        with open(md_file, 'r', encoding='utf-8') as f:
+            content = f.read()
 
- # Convert markdown to HTML
- html_content = self.md.convert(content)
+        # Convert markdown to HTML
+        html_content = self.md.convert(content)
 
- # Reset markdown instance for next file
- self.md.reset()
+        # Reset markdown instance for next file
+        self.md.reset()
 
- return html_content
+        return html_content
 
- def extract_title_from_content(self, content: str) -> str:
- """Extract title from markdown content (first h1)"""
- lines = content.split('\n')
- for line in lines:
- if line.startswith('# '):
- return line[2:].strip()
- return "Documentation"
+    def extract_title_from_content(self, content: str) -> str:
+        """Extract title from markdown content (first h1)"""
+        lines = content.split('\n')
+        for line in lines:
+            if line.startswith('# '):
+                return line[2:].strip()
+        return "Documentation"
 
- def convert_file(self, md_file: Path) -> Path:
- """Convert a single markdown file to HTML"""
- print(f"Converting: {md_file.name}")
+    def convert_file(self, md_file: Path) -> Path:
+        """Convert a single markdown file to HTML"""
+        print(f"Converting: {md_file.name}")
 
- # Read markdown content
- with open(md_file, 'r', encoding='utf-8') as f:
- md_content = f.read()
+        # Read markdown content
+        with open(md_file, 'r', encoding='utf-8') as f:
+            md_content = f.read()
 
- # Extract title
- title = self.extract_title_from_content(md_content)
+        # Extract title
+        title = self.extract_title_from_content(md_content)
 
- # Convert to HTML
- html_content = self.process_markdown_file(md_file)
+        # Convert to HTML
+        html_content = self.process_markdown_file(md_file)
 
- # Generate full HTML
- full_html = self.get_html_template(title, html_content)
+        # Generate full HTML
+        full_html = self.get_html_template(title, html_content)
 
- # Save HTML file
- html_file = self.output_dir / f"{md_file.stem}.html"
- with open(html_file, 'w', encoding='utf-8') as f:
- f.write(full_html)
+        # Save HTML file
+        html_file = self.output_dir / f"{md_file.stem}.html"
+        with open(html_file, 'w', encoding='utf-8') as f:
+            f.write(full_html)
 
- return html_file
+        return html_file
 
- def convert_all_files(self) -> List[Path]:
- """Convert all markdown files in input directory"""
- md_files = List(self.input_dir.glob("*.md"))
- html_files = []
+    def convert_all_files(self) -> List[Path]:
+        """Convert all markdown files in input directory"""
+        md_files = list(self.input_dir.glob("*.md"))
+        html_files = []
 
- print(f"found {len(md_files)} markdown files to convert")
+        print(f"found {len(md_files)} markdown files to convert")
 
- for md_file in md_files:
- try:
- html_file = self.convert_file(md_file)
- html_files.append(html_file)
- except Exception as e:
- print(f"Error converting {md_file.name}: {e}")
+        for md_file in md_files:
+            try:
+                html_file = self.convert_file(md_file)
+                html_files.append(html_file)
+            except Exception as e:
+                print(f"Error converting {md_file.name}: {e}")
 
- return html_files
+        return html_files
 
- def create_index_file(self, html_files: List[Path]) -> Path:
- """Create index.html with links to all converted files"""
- index_content = """
+    def create_index_file(self, html_files: List[Path]) -> Path:
+        """Create index.html with links to all converted files"""
+        index_content = """
  <h1>Neozork AutoML Documentation</h1>
 
  <div class="exPlanation">
@@ -418,52 +418,52 @@ Integrated documentation on the creation of robus ML systems with the use of Aut
  <div class="nav-links">
  """
 
- # Sort files by name to maintain order
- html_files.sort(key=lambda x: x.name)
+        # Sort files by name to maintain order
+        html_files.sort(key=lambda x: x.name)
 
- for html_file in html_files:
- # Extract title from filename or content
- title = html_file.stem.replace('_', ' ').replace('-', ' ').title()
- if title.startswith('01 '):
- title = title[3:] # Remove leading number
- elif title.startswith('02 '):
- title = title[3:]
- elif title.startswith('03 '):
- title = title[3:]
- elif title.startswith('04 '):
- title = title[3:]
- elif title.startswith('05 '):
- title = title[3:]
- elif title.startswith('06 '):
- title = title[3:]
- elif title.startswith('07 '):
- title = title[3:]
- elif title.startswith('08 '):
- title = title[3:]
- elif title.startswith('09 '):
- title = title[3:]
- elif title.startswith('10 '):
- title = title[3:]
- elif title.startswith('11 '):
- title = title[3:]
- elif title.startswith('12 '):
- title = title[3:]
- elif title.startswith('13 '):
- title = title[3:]
- elif title.startswith('14 '):
- title = title[3:]
- elif title.startswith('15 '):
- title = title[3:]
- elif title.startswith('16 '):
- title = title[3:]
- elif title.startswith('17 '):
- title = title[3:]
- elif title.startswith('18 '):
- title = title[3:]
+        for html_file in html_files:
+            # Extract title from filename or content
+            title = html_file.stem.replace('_', ' ').replace('-', ' ').title()
+            if title.startswith('01 '):
+                title = title[3:]  # Remove leading number
+            elif title.startswith('02 '):
+                title = title[3:]
+            elif title.startswith('03 '):
+                title = title[3:]
+            elif title.startswith('04 '):
+                title = title[3:]
+            elif title.startswith('05 '):
+                title = title[3:]
+            elif title.startswith('06 '):
+                title = title[3:]
+            elif title.startswith('07 '):
+                title = title[3:]
+            elif title.startswith('08 '):
+                title = title[3:]
+            elif title.startswith('09 '):
+                title = title[3:]
+            elif title.startswith('10 '):
+                title = title[3:]
+            elif title.startswith('11 '):
+                title = title[3:]
+            elif title.startswith('12 '):
+                title = title[3:]
+            elif title.startswith('13 '):
+                title = title[3:]
+            elif title.startswith('14 '):
+                title = title[3:]
+            elif title.startswith('15 '):
+                title = title[3:]
+            elif title.startswith('16 '):
+                title = title[3:]
+            elif title.startswith('17 '):
+                title = title[3:]
+            elif title.startswith('18 '):
+                title = title[3:]
 
- index_content += f'<a href="{html_file.name}">{title}</a>\n'
+            index_content += f'<a href="{html_file.name}">{title}</a>\n'
 
- index_content += """
+        index_content += """
  </div>
 
 <h2> Project</h2>
@@ -484,46 +484,46 @@ Start with the section "environment installation" and follow the documentation o
  </div>
  """
 
- # Generate full index HTML
- full_index = self.get_html_template("Neozork AutoML Documentation", index_content)
+        # Generate full index HTML
+        full_index = self.get_html_template("Neozork AutoML Documentation", index_content)
 
- # Save index file
- index_file = self.output_dir / "index.html"
- with open(index_file, 'w', encoding='utf-8') as f:
- f.write(full_index)
+        # Save index file
+        index_file = self.output_dir / "index.html"
+        with open(index_file, 'w', encoding='utf-8') as f:
+            f.write(full_index)
 
- return index_file
+        return index_file
 
 
 def main():
- """main function to run the converter"""
- parser = argparse.ArgumentParser(describe='Convert Markdown files to HTML with beautiful formatting')
- parser.add_argument('--input-dir', '-i',
- default='/Users/rostsh/Documents/DIS/REPO/neozork-hld-Prediction/docs/automl/neozork',
- help='Input directory containing .md files')
- parser.add_argument('--output-dir', '-o',
- default='/Users/rostsh/Documents/DIS/REPO/neozork-hld-Prediction/docs/automl/neozork/html',
- help='Output directory for HTML files')
+    """main function to run the converter"""
+    parser = argparse.ArgumentParser(description='Convert Markdown files to HTML with beautiful formatting')
+    parser.add_argument('--input-dir', '-i',
+                        default='/Users/rostsh/Documents/DIS/REPO/neozork-hld-Prediction/docs/automl/neozork',
+                        help='Input directory containing .md files')
+    parser.add_argument('--output-dir', '-o',
+                        default='/Users/rostsh/Documents/DIS/REPO/neozork-hld-Prediction/docs/automl/neozork/html',
+                        help='Output directory for HTML files')
 
- args = parser.parse_args()
+    args = parser.parse_args()
 
- # Create converter
- converter = MarkdownToHTMLConverter(args.input_dir, args.output_dir)
+    # Create converter
+    converter = MarkdownToHTMLConverter(args.input_dir, args.output_dir)
 
- # Convert all files
- print("starting conversion process...")
- html_files = converter.convert_all_files()
+    # Convert all files
+    print("starting conversion process...")
+    html_files = converter.convert_all_files()
 
- # Create index file
- print("Creating index file...")
- index_file = converter.create_index_file(html_files)
+    # Create index file
+    print("Creating index file...")
+    index_file = converter.create_index_file(html_files)
 
- print(f"\n✅ Conversion COMPLETED!")
- print(f"📁 Input directory: {args.input_dir}")
- print(f"📁 Output directory: {args.output_dir}")
- print(f"📄 Converted {len(html_files)} files")
- print(f"📄 index file: {index_file.name}")
- print(f"\n🌐 Open {index_file} in your browser to View the documentation!")
+    print(f"\n✅ Conversion COMPLETED!")
+    print(f"📁 Input directory: {args.input_dir}")
+    print(f"📁 Output directory: {args.output_dir}")
+    print(f"📄 Converted {len(html_files)} files")
+    print(f"📄 index file: {index_file.name}")
+    print(f"\n🌐 Open {index_file} in your browser to View the documentation!")
 
 
 if __name__ == "__main__":
