@@ -43,7 +43,7 @@ def load_model():
 
 def has_russian_text(text: str) -> bool:
     """Check if text contains Cyrillic characters."""
-Return bool (re.search(r'[A-Ya-Yo], text))
+    return bool(re.search(r'[А-Яа-яЁё]', text))
 
 
 def translate_text(text: str, cache: Dict[str, str] = None) -> str:
@@ -122,36 +122,45 @@ def process_file(file_path: str, root_dir: str = '.', cache: Dict[str, str] = No
         with open(full_path, 'r', encoding='utf-8', errors='ignore') as f:
             lines = f.readlines()
         
-        # Skip very large files
-        if len(lines) > 5000:
-            print(f"    ⚠ Skipping large file: {len(lines)} lines", file=sys.stderr, flush=True)
-            return False, 0, file_path
+        # Process large files in chunks
+        is_large_file = len(lines) > 5000
+        if is_large_file:
+            print(f"    ⚠ Large file detected: {len(lines)} lines, processing in chunks...", file=sys.stderr, flush=True)
         
         translated_lines = []
         lines_translated = 0
         total_lines = len(lines)
         
-        for i, line in enumerate(lines, 1):
-            original_line = line.rstrip('\n\r')
+        # Process in chunks for large files
+        chunk_size = 1000 if is_large_file else total_lines
+        chunks = [lines[i:i + chunk_size] for i in range(0, total_lines, chunk_size)]
+        
+        for chunk_num, chunk in enumerate(chunks, 1):
+            if is_large_file:
+                print(f"      Processing chunk {chunk_num}/{len(chunks)} ({len(chunk)} lines)...", flush=True)
             
-            # Skip very long lines
-            if len(original_line) > 2000:
-                translated_lines.append(line)
-                continue
-            
-            if has_russian_text(original_line):
-                translated_line = translate_line(original_line, cache)
-                translated_lines.append(translated_line + '\n')
-                if translated_line != original_line:
-                    lines_translated += 1
-            else:
-                translated_lines.append(line)
-            
-            # Progress indicator for files
-            if total_lines > 50:
-                if i % max(1, total_lines // 20) == 0 or i == total_lines:
-                    progress = (i * 100) // total_lines
-                    print(f"      [{progress}%] {i}/{total_lines} lines processed", flush=True)
+            for i, line in enumerate(chunk):
+                line_index = (chunk_num - 1) * chunk_size + i + 1
+                original_line = line.rstrip('\n\r')
+                
+                # Skip very long lines
+                if len(original_line) > 2000:
+                    translated_lines.append(line)
+                    continue
+                
+                if has_russian_text(original_line):
+                    translated_line = translate_line(original_line, cache)
+                    translated_lines.append(translated_line + '\n')
+                    if translated_line != original_line:
+                        lines_translated += 1
+                else:
+                    translated_lines.append(line)
+                
+                # Progress indicator
+                if total_lines > 50:
+                    if line_index % max(1, total_lines // 20) == 0 or line_index == total_lines:
+                        progress = (line_index * 100) // total_lines
+                        print(f"      [{progress}%] {line_index}/{total_lines} lines processed", flush=True)
         
         if lines_translated > 0 and not dry_run:
             # Create backup

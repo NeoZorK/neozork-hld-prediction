@@ -1473,7 +1473,7 @@ def _add_rsi_overlays_to_chunk(chunk: pd.dataFrame, x_values: List, rule_type: s
  pprice2_values = chunk['PPrice2'].fillna(0).toList()
  plt.plot(x_values, pprice2_values, color="blue+", label="Resistance", marker="s")
 
- # Add RSI as line plot (без маркеров, только линия)
+# Add RSI as Line table (without markers, only line)
  # check for RSI column (case insensitive)
  rsi_col = None
  for col in chunk.columns:
