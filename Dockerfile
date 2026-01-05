@@ -37,10 +37,11 @@ COPY uv.toml /app/uv.toml
 COPY requirements.txt .
 
 # Install dependencies using UV only - no pip fallback
-# Install psycopg2-binary separately if needed
-RUN uv pip install --no-cache -r requirements.txt || \
-    (uv pip install --no-cache $(grep -v psycopg2-binary requirements.txt || cat requirements.txt) && \
-     uv pip install --no-cache psycopg2-binary || echo "psycopg2-binary installation skipped") \
+# Create temporary file without psycopg2-binary, install all other dependencies first
+RUN grep -v "^psycopg2-binary" requirements.txt > /tmp/req_no_pg.txt 2>/dev/null || cp requirements.txt /tmp/req_no_pg.txt \
+    && uv pip install --no-cache -r /tmp/req_no_pg.txt \
+    && uv pip install --no-cache psycopg2-binary || echo "Warning: psycopg2-binary installation skipped" \
+    && rm -f /tmp/req_no_pg.txt \
     && find /opt/venv -name '*.pyc' -delete \
     && find /opt/venv -name '__pycache__' -delete \
     && find /opt/venv -name '*.egg-info' -print0 | xargs -0 rm -rf \
@@ -107,7 +108,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Create a non-root user to run the application
 RUN groupadd -r neozork && useradd -r -g neozork -s /bin/bash -d /home/neozork neozork \
     && mkdir -p /home/neozork \
-    && chown -R neozork:neozork /home/neozork /app
+    && chown -R neozork:neozork /home/neozork /app \
+    && chown -R neozork:neozork /opt/venv
 
 # Switch to non-root user
 USER neozork
