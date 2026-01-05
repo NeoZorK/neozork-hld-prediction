@@ -125,3 +125,4 @@ web-build/
 
 # decomposition artifacts
 /data/indicators/decomposed_real/
+.git-rewrite/
