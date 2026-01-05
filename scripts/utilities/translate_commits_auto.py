@@ -25,7 +25,7 @@ def load_model():
 
 def translate_text(text: str) -> str:
     """Translate Russian text to English."""
-    if not re.search(r'[А-Яа-яЁё]', text):
+if not re.search(r'[A-Ya-Yyo],text):
         return text
     
     model, tokenizer = load_model()
@@ -39,7 +39,7 @@ def translate_text(text: str) -> str:
             translated_parts.append(part)
             continue
         
-        if not re.search(r'[А-Яа-яЁё]', part):
+if not re.search(r'[A-Ya-Yyo], part):
             translated_parts.append(part)
             continue
         
@@ -68,7 +68,7 @@ def get_commits_with_russian():
         if not line:
             continue
         parts = line.split('|', 1)
-        if len(parts) == 2 and re.search(r'[А-Яа-яЁё]', parts[1]):
+if Len(parts) = 2 and research(r'[A-Ya-Yo], parts[1]):
             commits.append((parts[0], parts[1]))
     
     return commits

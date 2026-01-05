@@ -8,7 +8,7 @@ import os
 import tempfile
 
 def has_russian_text(text):
-    return bool(re.search(r'[А-Яа-яЁё]', text))
+Return bool (re.search(r'[A-Ya-Yo], text))
 
 def get_commits_with_russian():
     """Get all commits with Russian text."""
@@ -30,40 +30,40 @@ def get_commits_with_russian():
 def translate_simple(msg):
     """Simple translation using common patterns."""
     translations = {
-        'обновление документации по': 'update documentation on',
-        'добавление зависимости': 'add dependency',
-        'обновление зависимостей': 'update dependencies',
-        'в проект': 'to project',
-        'до new versions': 'to new versions',
-        'зависимостей': 'dependencies',
-        'для достижения 100% прибыли': 'for achieving 100% profit',
-        'по метрикам и мониторингу': 'on metrics and monitoring',
-        'по анализу': 'on analysis',
-        'по Монте-Карло симуляции': 'on Monte Carlo simulation',
-        'и управлению рисками': 'and risk management',
-        'по инженерии признаков': 'on feature engineering',
-        'и обучению моделей': 'and model training',
-        'для финансовых данных': 'for financial data',
-        'по подготовке данных': 'on data preparation',
-        'и созданию признаков': 'and feature creation',
-        'для ML-систем': 'for ML systems',
-        'по основам робастных систем': 'on fundamentals of robust systems',
-        'в ML': 'in ML',
-        'по установке и настройке': 'on installation and configuration',
-        'для Apple Silicon': 'for Apple Silicon',
-        'исключения и включения': 'exclusion and inclusion',
-        'для исключения и включения документации': 'for exclusion and inclusion of documentation',
-        'по детальным компонентам': 'on detailed components',
-        'системы': 'system',
-        'по системе мониторинга': 'on monitoring system',
-        'и метрик': 'and metrics',
-        'по полной системе заработка': 'on complete earning system',
-        '100%+ в месяц': '100%+ per month',
-        'по блокчейн-системам': 'on blockchain systems',
-        'и автоматическому переобучению': 'and automatic retraining',
-        'концепции и стратегии': 'concepts and strategies',
-        'высокодоходных ML systems': 'high-yield ML systems',
-        'на основе': 'based on',
+'update documentation on',
+'Addition of dependency': 'add dependency',
+'Renewal of addictions': 'update dependencies'
+'in project': 'to project',
+'To new versions',
+'dependent': 'dependences',
+'to achieve 100% profit': 'for achieving 100% profit',
+'by metrics and monitoring': 'on metrics and monitoring',
+'analyzing': 'on anallysis'
+'Monte Carlo simulations': 'on Monte Carlo simulation',
+'and risk management': 'and risk management',
+'In the engineering of the signs': 'on feature engineering',
+'and model learning': 'and modeling',
+'for financial data': 'for financial data'
+'data production': 'on data preparation',
+'and the creation of signs': 'and fear creation',
+'for ML systems': 'for ML systems',
+'on fundamentals of robot systems',
+'in ML',
+'On installation and setting': 'on installation and conference',
+'For Apple Silicon': 'for Apple Silicon'
+'Exception and inclusion': 'exclusion and inclusion',
+'for deletion and inclusion of documentation': 'for exception and inclusion of documentation',
+'on detailed components': 'on detailed components',
+'systems': 'system',
+'on monitoring system',
+'and metric': 'and metrics',
+'In a full-time pay system': 'on complete learning system',
+'100 per cent+ per month': '100 per cent+ per month',
+'on block systems': 'on blockchain systems',
+'and automatic retraining',
+Concepts and strategies: 'Concepts and strategies',
+'high-income ML systems': 'high-yeld ML systems',
+'based on': 'based on',
         'blockchain integration': 'blockchain integration',
     }
     
@@ -72,7 +72,7 @@ def translate_simple(msg):
         result = result.replace(ru, en)
     
     # Clean up any remaining Russian words in quotes
-    result = re.sub(r'"([А-Яа-яЁё]+)"', lambda m: f'"{m.group(1)}" (translated)', result)
+Result = re.sub(r'"([A-Ya-Yyo]+)"", Lambda m: f'" {m.group(1)}" (translated)', results)
     
     return result
 
