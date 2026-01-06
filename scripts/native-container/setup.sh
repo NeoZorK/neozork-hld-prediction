@@ -614,25 +614,84 @@ install_container_dependencies() {
     # Helper function to execute command in container, starting it if needed
     exec_in_container() {
         local cmd="$1"
-        # Try exec first if container is running
-        if [ "$use_exec" = true ]; then
-            container exec "$container_name" bash -c "$cmd" 2>&1
-        else
-            # Start container, run command, container will stop after command completes
-            # This is fine for installation commands
-            container start "$container_name" >/dev/null 2>&1 || \
-            container start "$container_id" >/dev/null 2>&1 || true
-            sleep 2
-            container exec "$container_name" bash -c "$cmd" 2>&1 || \
-            container exec "$container_id" bash -c "$cmd" 2>&1
+        local exit_code=0
+        local output=""
+        
+        # Ensure container is started before executing
+        if [ "$use_exec" = false ]; then
+            # Start container before executing command
+            if ! container start "$container_name" >/dev/null 2>&1; then
+                if [ -n "$container_id" ]; then
+                    container start "$container_id" >/dev/null 2>&1 || true
+                fi
+            fi
+            sleep 3  # Give container more time to start
         fi
+        
+        # Try exec with name first
+        output=$(container exec "$container_name" bash -c "$cmd" 2>&1)
+        exit_code=$?
+        if [ $exit_code -eq 0 ]; then
+            echo "$output"
+            return 0
+        fi
+        
+        # Try with ID if name failed
+        if [ -n "$container_id" ] && [ "$container_id" != "$container_name" ]; then
+            output=$(container exec "$container_id" bash -c "$cmd" 2>&1)
+            exit_code=$?
+            if [ $exit_code -eq 0 ]; then
+                echo "$output"
+                return 0
+            fi
+        fi
+        
+        # Return error output for debugging
+        echo "$output" >&2
+        return $exit_code
     }
     
     # Step 1: Install system dependencies (gcc, build-essential, etc.)
     print_status "Installing system dependencies (gcc, build-essential, curl)..."
-    if exec_in_container "
+    
+    # First, ensure container is started and accessible
+    print_status "Ensuring container is running..."
+    local container_started=false
+    
+    # Try to start container if not running
+    if [ "$use_exec" = false ]; then
+        print_status "Starting container for dependency installation..."
+        if container start "$container_name" >/dev/null 2>&1; then
+            container_started=true
+        elif [ -n "$container_id" ] && container start "$container_id" >/dev/null 2>&1; then
+            container_started=true
+        fi
+        
+        if [ "$container_started" = true ]; then
+            sleep 5  # Give container time to fully start
+            # Verify container is accessible
+            if container exec "$container_name" echo "test" >/dev/null 2>&1 || \
+               ([ -n "$container_id" ] && container exec "$container_id" echo "test" >/dev/null 2>&1); then
+                use_exec=true
+                print_success "Container is running and accessible"
+            else
+                print_warning "Container started but not immediately accessible, will retry..."
+            fi
+        else
+            print_warning "Could not start container, will try to install dependencies anyway..."
+        fi
+    else
+        container_started=true
+    fi
+    
+    # Install system dependencies with better error handling
+    local deps_installed=false
+    local install_output=""
+    
+    print_status "Running apt-get update and installing packages..."
+    install_output=$(exec_in_container "
         export DEBIAN_FRONTEND=noninteractive
-        apt-get update -qq -y >/dev/null 2>&1 && \
+        apt-get update -qq -y 2>&1 && \
         apt-get install -y --no-install-recommends \
             build-essential \
             gcc \
@@ -649,37 +708,106 @@ install_container_dependencies() {
             zlib1g-dev \
             libjpeg-dev \
             libpng-dev \
-            libfreetype6-dev \
-            >/dev/null 2>&1 && \
-        apt-get clean >/dev/null 2>&1 && \
-        rm -rf /var/lib/apt/lists/* >/dev/null 2>&1
-    "; then
-        # Verify gcc installation
-        if exec_in_container "command -v gcc >/dev/null 2>&1"; then
-            print_success "System dependencies installed successfully"
+            libfreetype6-dev 2>&1 && \
+        apt-get clean 2>&1 && \
+        rm -rf /var/lib/apt/lists/* 2>&1 && \
+        echo 'INSTALL_SUCCESS'
+    " 2>&1)
+    
+    if echo "$install_output" | grep -q "INSTALL_SUCCESS"; then
+        deps_installed=true
+    else
+        # Show error output for debugging
+        if echo "$install_output" | grep -qi "error\|failed\|cannot"; then
+            print_warning "Installation errors detected:"
+            echo "$install_output" | grep -i "error\|failed\|cannot" | head -5 | while read line; do
+                print_warning "  $line"
+            done
+        fi
+    fi
+    
+    # Verify installation
+    if [ "$deps_installed" = true ]; then
+        print_status "Verifying installed dependencies..."
+        local gcc_ok=false
+        local curl_ok=false
+        
+        if exec_in_container "command -v gcc >/dev/null 2>&1" >/dev/null 2>&1; then
+            gcc_ok=true
+        fi
+        
+        if exec_in_container "command -v curl >/dev/null 2>&1" >/dev/null 2>&1; then
+            curl_ok=true
+        fi
+        
+        if [ "$gcc_ok" = true ] && [ "$curl_ok" = true ]; then
+            print_success "System dependencies installed successfully (gcc and curl verified)"
         else
-            print_warning "System dependencies installation completed but gcc not found"
+            print_warning "System dependencies installation completed but verification failed:"
+            [ "$gcc_ok" = false ] && print_warning "  - gcc not found"
+            [ "$curl_ok" = false ] && print_warning "  - curl not found"
+            deps_installed=false
         fi
     else
         print_warning "Failed to install system dependencies (will be installed on first use)"
     fi
     
-    # Step 2: Install UV package manager
-    print_status "Installing UV package manager..."
-    if exec_in_container "
-        curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1 && \
-        export PATH=\"/root/.local/bin:\$PATH\" && \
-        uv --version >/dev/null 2>&1
-    "; then
-        # Verify UV installation
-        if exec_in_container "export PATH=\"/root/.local/bin:\$PATH\" && uv --version >/dev/null 2>&1"; then
-            uv_version=$(exec_in_container "export PATH=\"/root/.local/bin:\$PATH\" && uv --version 2>/dev/null" | head -1)
-            print_success "UV installed successfully: $uv_version"
+    # Step 2: Install UV package manager (only if curl is available)
+    if [ "$deps_installed" = true ]; then
+        print_status "Installing UV package manager..."
+        
+        # Check if curl is available before trying to install UV
+        print_status "Checking for curl..."
+        local curl_available=false
+        local curl_check_output=""
+        
+        curl_check_output=$(exec_in_container "command -v curl 2>&1" 2>&1)
+        if [ $? -eq 0 ] && [ -n "$curl_check_output" ]; then
+            curl_available=true
+            print_status "curl found at: $curl_check_output"
         else
-            print_warning "UV installation completed but not found in PATH"
+            print_warning "curl not found in container"
+            print_warning "Output: $curl_check_output"
+        fi
+        
+        if [ "$curl_available" = true ]; then
+            print_status "Downloading and installing UV..."
+            local uv_install_output=""
+            uv_install_output=$(exec_in_container "
+                curl -LsSf https://astral.sh/uv/install.sh | sh 2>&1 && \
+                export PATH=\"/root/.local/bin:\$PATH\" && \
+                uv --version 2>&1 && \
+                echo 'UV_INSTALL_SUCCESS'
+            " 2>&1)
+            
+            if echo "$uv_install_output" | grep -q "UV_INSTALL_SUCCESS"; then
+                # Verify UV installation
+                print_status "Verifying UV installation..."
+                local uv_verify_output=""
+                uv_verify_output=$(exec_in_container "export PATH=\"/root/.local/bin:\$PATH\" && uv --version 2>&1" 2>&1)
+                
+                if [ $? -eq 0 ] && [ -n "$uv_verify_output" ]; then
+                    uv_version=$(echo "$uv_verify_output" | head -1)
+                    print_success "UV installed successfully: $uv_version"
+                else
+                    print_warning "UV installation completed but verification failed"
+                    print_warning "Output: $uv_verify_output"
+                fi
+            else
+                print_warning "Failed to install UV"
+                # Show error details if available
+                if echo "$uv_install_output" | grep -qi "error\|failed\|cannot"; then
+                    echo "$uv_install_output" | grep -i "error\|failed\|cannot" | head -3 | while read line; do
+                        print_warning "  $line"
+                    done
+                fi
+                print_warning "UV will be installed on first use"
+            fi
+        else
+            print_warning "curl not available, skipping UV installation (will be installed on first use)"
         fi
     else
-        print_warning "Failed to install UV (will be installed on first use)"
+        print_warning "System dependencies not installed, skipping UV installation (will be installed on first use)"
     fi
     
     # Step 3: Set up PATH in .bashrc for persistence
