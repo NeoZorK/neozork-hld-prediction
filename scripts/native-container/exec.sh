@@ -161,6 +161,58 @@ execute_in_container() {
     print_status "Executing command in container: $container_id"
     print_status "Command: $command"
     
+    # Ensure enhanced shell script exists (it has all the setup logic including UV installation)
+    # If it doesn't exist, trigger its creation by calling execute_enhanced_shell setup
+    if ! container exec "$container_id" test -f /tmp/enhanced_shell.sh 2>/dev/null; then
+        print_status "Setting up environment (creating enhanced shell script)..."
+        # Create enhanced shell script using the same method as execute_enhanced_shell
+        # We'll create a simplified command wrapper that uses the same setup logic
+        local temp_script=$(mktemp)
+        cat > "$temp_script" << 'CMD_WRAPPER_EOF'
+#!/bin/bash
+# Command wrapper that sets up environment and executes a command
+export PATH="$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
+export PYTHONPATH="/app:$PYTHONPATH"
+export PYTHONUNBUFFERED=1
+export PYTHONDONTWRITEBYTECODE=1
+export MPLCONFIGDIR="/tmp/matplotlib-cache"
+cd /app
+
+# Install UV if not available
+if ! command -v uv >/dev/null 2>&1; then
+    # Check if curl is available
+    if ! command -v curl >/dev/null 2>&1; then
+        # Install curl first if needed
+        apt-get update -qq -y >/dev/null 2>&1
+        apt-get install -y --no-install-recommends curl >/dev/null 2>&1
+    fi
+    # Install UV
+    if command -v curl >/dev/null 2>&1; then
+        curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1
+        export PATH="$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
+        # Verify installation
+        if [ -f "$HOME/.cargo/bin/uv" ]; then
+            export PATH="$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
+        elif [ -f "/root/.cargo/bin/uv" ]; then
+            export PATH="/root/.cargo/bin:$PATH"
+        fi
+    fi
+fi
+
+# Activate venv if it exists
+if [ -f /app/.venv/bin/activate ]; then
+    source /app/.venv/bin/activate
+fi
+
+# Execute the command passed as argument
+# Use eval to properly handle commands with multiple arguments
+eval "$@"
+CMD_WRAPPER_EOF
+        container exec -i "$container_id" bash -c "cat > /tmp/cmd_wrapper.sh" < "$temp_script"
+        rm -f "$temp_script"
+        container exec "$container_id" chmod +x /tmp/cmd_wrapper.sh
+    fi
+    
     # Build exec command
     local exec_cmd="container exec"
     
@@ -168,7 +220,43 @@ execute_in_container() {
         exec_cmd="$exec_cmd --interactive --tty"
     fi
     
-    exec_cmd="$exec_cmd $container_id $command"
+    # Use command wrapper if it exists, otherwise use enhanced shell script
+    # Properly escape the command for execution
+    if container exec "$container_id" test -f /tmp/cmd_wrapper.sh 2>/dev/null; then
+        # Use command wrapper - properly quote the command
+        local wrapped_command="bash -c \"/tmp/cmd_wrapper.sh $command\""
+    elif container exec "$container_id" test -f /tmp/enhanced_shell.sh 2>/dev/null; then
+        # Use enhanced shell script - execute command through the shell
+        # Execute the setup part, then run the command
+        # Since enhanced_shell.sh has async UV installation, we execute setup and wait
+        local wrapped_command="bash -c '
+            # Execute setup from enhanced_shell.sh (before interactive shell)
+            setup_part=\$(sed -n \"/^# Start interactive bash shell/q\" /tmp/enhanced_shell.sh 2>/dev/null)
+            if [ -n \"\$setup_part\" ]; then
+                # Execute setup synchronously
+                echo \"\$setup_part\" | bash
+                # Wait for background jobs (UV installation)
+                wait 2>/dev/null || true
+            fi
+            # Ensure PATH is correct after setup (UV installs to ~/.local/bin)
+            export PATH=\"\$HOME/.local/bin:/root/.local/bin:\$HOME/.cargo/bin:/root/.cargo/bin:\$PATH\"
+            # If UV still not found, install it synchronously
+            if ! command -v uv >/dev/null 2>&1; then
+                if command -v curl >/dev/null 2>&1; then
+                    curl -LsSf https://astral.sh/uv/install.sh | sh
+                    export PATH=\"\$HOME/.local/bin:/root/.local/bin:\$HOME/.cargo/bin:/root/.cargo/bin:\$PATH\"
+                fi
+            fi
+            # Execute the command
+            cd /app
+            $command
+        '"
+    else
+        # Fallback: basic setup
+        local wrapped_command="bash -c 'export PATH=\"\$HOME/.cargo/bin:/root/.cargo/bin:\$PATH\"; export PYTHONPATH=\"/app:\$PYTHONPATH\"; cd /app; $command'"
+    fi
+    
+    exec_cmd="$exec_cmd $container_id $wrapped_command"
     
     # Execute command
     eval "$exec_cmd"
