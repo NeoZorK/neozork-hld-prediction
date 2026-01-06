@@ -360,6 +360,9 @@ handle_eof() {
 # Set up EOF handler (using EXIT instead of EOF)
 trap handle_eof EXIT
 
+# IMPORTANT: Set PATH first to include UV installation directory
+# UV installs to ~/.local/bin, so we need to add it to PATH immediately
+export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
 
 # Set non-interactive mode for apt
 export DEBIAN_FRONTEND=noninteractive
@@ -383,6 +386,13 @@ if [ "$pandas_found" = true ]; then
     # Already set up, just activate and continue
     # Ensure PATH includes UV installation directory
     export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
+    # Check and install UV if not available
+    if ! command -v uv >/dev/null 2>&1; then
+        if command -v curl >/dev/null 2>&1; then
+            curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1
+            export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
+        fi
+    fi
     echo -e "\033[1;32m✓\033[0m Environment ready"
     source .venv/bin/activate 2>/dev/null || true
     export VIRTUAL_ENV_SETUP_SKIPPED=1
@@ -560,6 +570,16 @@ echo ""
 fi
 
 # Start interactive bash shell with simple configuration
+# Ensure PATH is set before starting bash (UV installs to ~/.local/bin)
+export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"
+# Also add PATH to .bashrc so it persists in new bash sessions
+if [ -f "$HOME/.bashrc" ]; then
+    if ! grep -q "/root/.local/bin" "$HOME/.bashrc" 2>/dev/null; then
+        echo 'export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"' >> "$HOME/.bashrc"
+    fi
+else
+    echo 'export PATH="$HOME/.local/bin:/root/.local/bin:$HOME/.cargo/bin:/root/.cargo/bin:$PATH"' > "$HOME/.bashrc"
+fi
 # Use exec only if we're in interactive mode, otherwise just start bash
 if [ -t 0 ]; then
     exec bash -i
