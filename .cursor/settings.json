@@ -28,6 +28,18 @@
   "scm.diffDecorations": "all",
   "scm.diffDecorationsGutterVisibility": "always",
   "scm.inputFontFamily": "editor",
-  "scm.inputFontSize": 13
+  "scm.inputFontSize": 13,
+  "mcpServers": {
+    "neozork-mcp": {
+      "command": "python",
+      "args": [
+        "neozork_mcp_server.py"
+      ],
+      "cwd": "/Users/rost/Documents/DIS/REPO/neozork-hld-prediction",
+      "env": {
+        "PYTHONPATH": "/Users/rost/Documents/DIS/REPO/neozork-hld-prediction/src:/Users/rost/Documents/DIS/REPO/neozork-hld-prediction",
+        "LOG_LEVEL": "INFO"
+      }
+    }
+  }
 }
-
