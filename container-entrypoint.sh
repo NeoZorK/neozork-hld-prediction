@@ -403,6 +403,36 @@ python /app/scripts/check_mcp_status.py
 EOF
     chmod +x /tmp/bin/mcp-check
 
+    # Create system dependencies installer wrapper
+    cat > /tmp/bin/install-system-deps << 'EOF'
+#!/bin/bash
+echo "Installing system dependencies for building Python packages..."
+export DEBIAN_FRONTEND=noninteractive
+apt-get update -qq -y
+apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    g++ \
+    libpq-dev \
+    libpq5 \
+    libffi-dev \
+    libxml2-dev \
+    libxslt1-dev \
+    zlib1g-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libfreetype6-dev \
+    liblcms2-dev \
+    libtiff-dev \
+    libwebp-dev \
+    libopenjp2-7-dev \
+    >/dev/null 2>&1
+apt-get clean >/dev/null 2>&1
+rm -rf /var/lib/apt/lists/* >/dev/null 2>&1
+echo "System dependencies installed successfully"
+EOF
+    chmod +x /tmp/bin/install-system-deps
+
     export PATH="/tmp/bin:$PATH"
 }
 
@@ -590,6 +620,7 @@ show_usage_guide() {
 
     # Show UV-specific tips
     echo -e "\n\033[1;36m=== UV Package Manager Commands ===\033[0m"
+    echo -e "\033[1;36m- install-system-deps: Install system dependencies for building Python packages\033[0m"
     echo -e "\033[1;36m- uv-install: Install dependencies using UV\033[0m"
     echo -e "\033[1;36m- uv-update: Update dependencies using UV\033[0m"
     echo -e "\033[1;36m- uv-test: Run UV environment test\033[0m"
@@ -617,6 +648,9 @@ show_usage_guide() {
 # Create a file with common commands for the interactive shell
 create_commands_file() {
     cat > /tmp/neozork_commands.txt << EOL
+# System Dependencies
+install-system-deps
+
 # UV Package Manager Commands
 uv-install
 uv-update

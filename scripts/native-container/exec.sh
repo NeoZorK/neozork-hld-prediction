@@ -67,10 +67,30 @@ echo "Setting up environment..."
 # Set non-interactive mode for apt
 export DEBIAN_FRONTEND=noninteractive
 
-# Update package list and install essential tools
-echo "Installing essential tools..."
+# Update package list and install essential tools and build dependencies
+echo "Installing essential tools and build dependencies..."
 apt-get update -qq -y
-apt-get install -y -qq curl wget git
+apt-get install -y -qq --no-install-recommends \
+    curl wget git \
+    build-essential \
+    gcc \
+    g++ \
+    libpq-dev \
+    libpq5 \
+    libffi-dev \
+    libxml2-dev \
+    libxslt1-dev \
+    zlib1g-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libfreetype6-dev \
+    liblcms2-dev \
+    libtiff-dev \
+    libwebp-dev \
+    libopenjp2-7-dev \
+    >/dev/null 2>&1 || true
+apt-get clean >/dev/null 2>&1 || true
+rm -rf /var/lib/apt/lists/* >/dev/null 2>&1 || true
 
 # Check if we're in the right directory
 if [ ! -f "/app/requirements.txt" ]; then
@@ -98,7 +118,8 @@ echo "Activating virtual environment..."
 source /app/.venv/bin/activate
 
 # Check if dependencies are installed
-if [ ! -f "/app/.venv/pyvenv.cfg" ] || [ ! -d "/app/.venv/lib/python3.11/site-packages" ]; then
+# Note: Python version path may vary (3.11, 3.14, etc.)
+if [ ! -f "/app/.venv/pyvenv.cfg" ] || [ ! -d "/app/.venv/lib" ]; then
     echo "Installing dependencies with UV..."
     uv pip install -r /app/requirements.txt
 else
