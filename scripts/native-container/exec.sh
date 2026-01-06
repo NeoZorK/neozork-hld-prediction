@@ -560,52 +560,13 @@ else
         # Create temp file for error output
         error_log=$(mktemp /tmp/apt-install-errors.XXXXXX)
         
-        # Function to wait for apt-get/dpkg lock to be released
-        wait_for_apt_lock() {
-            local max_wait=60
-            local wait_count=0
-            
-            while [ $wait_count -lt $max_wait ]; do
-                # Check if apt-get or dpkg processes are running
-                if ! pgrep -f 'apt-get|dpkg' >/dev/null 2>&1; then
-                    # Check if lock files exist
-                    if [ ! -f /var/lib/dpkg/lock-frontend ] && [ ! -f /var/lib/dpkg/lock ]; then
-                        return 0  # No locks, safe to proceed
-                    fi
-                fi
-                
-                if [ $wait_count -eq 0 ]; then
-                    echo -n " (waiting for lock) "
-                fi
-                sleep 1
-                wait_count=$((wait_count + 1))
-            done
-            
-            return 1  # Timeout waiting for locks
-        }
-        
-        # Wait for apt lock to be released before proceeding
-        if ! wait_for_apt_lock; then
-            echo -e " \033[1;33m⚠\033[0m (apt lock timeout)"
-            echo "   Another apt-get process is running or lock is held."
-            echo "   Waiting for lock to be released..."
-            # Try one more time with longer wait
-            sleep 10
-            if ! wait_for_apt_lock; then
-                echo "   Lock still held. You may need to wait or restart container."
-                rm -f "$error_log"
-                return 1
-            fi
-        fi
-        
         # Try to update package list directly (this is the best network connectivity test)
         # Update package list with retry (up to 3 attempts)
         update_success=false
         for attempt in 1 2 3; do
             if [ $attempt -gt 1 ]; then
                 echo -n " (retry $attempt) "
-                # Wait for lock again before retry
-                wait_for_apt_lock || sleep 5
+                sleep 2
             fi
             # Use timeout if available, otherwise run directly
             if command -v timeout >/dev/null 2>&1; then
@@ -618,21 +579,15 @@ else
                 update_success=true
                 break
             fi
-            # Check if error is lock-related
+            # Check if error is lock-related - just skip and show message
             if grep -qi "could not get lock\|unable to acquire.*lock\|is another process using it" "$error_log" 2>/dev/null; then
                 if [ $attempt -lt 3 ]; then
-                    echo -n " (waiting for lock) "
-                    wait_for_apt_lock || sleep 5
+                    sleep 3
                     continue
                 else
-                    echo -e " \033[1;33m⚠\033[0m (apt lock issue)"
+                    echo -e " \033[1;33m⚠\033[0m (apt lock issue - skipping)"
                     echo "   Another apt-get process is holding the lock."
-                    echo "   Error details:"
-                    grep -i "could not get lock\|unable to acquire.*lock" "$error_log" | head -n 2 | sed 's/^/   /'
-                    echo "   Possible solutions:"
-                    echo "   - Wait a few minutes and try again"
-                    echo "   - Check if another installation is running: ps aux | grep apt"
-                    echo "   - Try: install-system-deps (may work if lock is released)"
+                    echo "   You can try: install-system-deps (after lock is released)"
                     rm -f "$error_log"
                     break
                 fi
@@ -660,15 +615,12 @@ else
         done
         
         if [ "$update_success" = true ]; then
-            # Wait for lock before installing packages
-            wait_for_apt_lock || sleep 5
             # Install packages with retry (up to 2 attempts)
             install_success=false
             for attempt in 1 2; do
                 if [ $attempt -gt 1 ]; then
                     echo -n " (retry $attempt) "
-                    # Wait for lock again before retry
-                    wait_for_apt_lock || sleep 5
+                    sleep 2
                 fi
                 if apt-get install -y --no-install-recommends \
                     curl wget git \
@@ -691,23 +643,15 @@ else
                     install_success=true
                     break
                 fi
-                # Check if error is lock-related
+                # Check if error is lock-related - just skip and show message
                 if grep -qi "could not get lock\|unable to acquire.*lock\|is another process using it" "$error_log" 2>/dev/null; then
                     if [ $attempt -lt 2 ]; then
-                        echo -n " (waiting for lock) "
-                        wait_for_apt_lock || sleep 5
+                        sleep 3
                         continue
                     else
-                        echo -e " \033[1;33m⚠\033[0m (apt lock issue during installation)"
+                        echo -e " \033[1;33m⚠\033[0m (apt lock issue - skipping)"
                         echo "   Another apt-get process is holding the lock."
-                        if [ -f "$error_log" ]; then
-                            echo "   Error details:"
-                            grep -i "could not get lock\|unable to acquire.*lock" "$error_log" | head -n 2 | sed 's/^/   /'
-                        fi
-                        echo "   Possible solutions:"
-                        echo "   - Wait a few minutes and try again"
-                        echo "   - Check if another installation is running: ps aux | grep apt"
-                        echo "   - Try: install-system-deps (may work if lock is released)"
+                        echo "   You can try: install-system-deps (after lock is released)"
                         break
                     fi
                 fi
