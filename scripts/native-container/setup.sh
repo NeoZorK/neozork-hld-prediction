@@ -531,39 +531,47 @@ ensure_container_running() {
     
     print_status "Container start command executed, waiting for container to be ready..."
     # Wait for container to fully start and be ready
-    local max_wait=15
+    # Give more time for entrypoint to initialize
+    sleep 5
+    
+    # Verify container is accessible
+    local max_wait=20
     local wait_count=0
+    local container_accessible=false
+    local container_to_use=""
+    
     while [ $wait_count -lt $max_wait ]; do
         sleep 1
         # Try to execute a command to verify container is ready
         if container exec "$container_name" echo "test" >/dev/null 2>&1; then
-            print_success "Container is running and ready"
-            return 0
+            container_accessible=true
+            container_to_use="$container_name"
+            break
         fi
         # Also try with ID as fallback
         if [ -n "$container_id" ] && container exec "$container_id" echo "test" >/dev/null 2>&1; then
-            print_success "Container is running and ready (accessed by ID)"
-            return 0
+            container_accessible=true
+            container_to_use="$container_id"
+            break
         fi
         wait_count=$((wait_count + 1))
     done
     
-    print_error "Container started but not ready for commands after ${max_wait}s"
-    print_status "This may be normal - dependencies will be installed on first use"
-    return 1
+    if [ "$container_accessible" = false ] || [ -z "$container_to_use" ]; then
+        print_error "Container started but not accessible for commands after ${max_wait}s"
+        print_status "Container entrypoint may have exited. This is normal - dependencies will be installed on first use"
+        return 1
+    fi
+    
+    print_success "Container is running and ready"
+    return 0
 }
 
 # Function to install system dependencies and UV in container
 install_container_dependencies() {
     print_status "Installing system dependencies and UV in container..."
     
-    # Ensure container is running first
-    if ! ensure_container_running; then
-        print_warning "Container is not running (dependencies will be installed on first use)"
-        return 1
-    fi
-    
-    # Get container name/ID (prefer name)
+    # Get container name/ID
     local container_name="neozork-hld-prediction"
     local container_id=$(container list --all | grep "$container_name" | awk '{print $1}')
     
@@ -574,20 +582,55 @@ install_container_dependencies() {
     
     print_status "Using container: $container_name (ID: $container_id)"
     
-    # Verify container is actually running and accessible
-    if ! container exec "$container_name" echo "test" >/dev/null 2>&1; then
-        # Try with ID if name doesn't work
-        if ! container exec "$container_id" echo "test" >/dev/null 2>&1; then
-            print_error "Container is not accessible for commands"
-            return 1
-        else
+    # Try to ensure container is running, but if it fails, we'll use container run instead
+    local use_exec=false
+    if ensure_container_running >/dev/null 2>&1; then
+        # Verify container is actually running and accessible
+        if container exec "$container_name" echo "test" >/dev/null 2>&1; then
+            use_exec=true
+        elif [ -n "$container_id" ] && container exec "$container_id" echo "test" >/dev/null 2>&1; then
+            use_exec=true
             container_name="$container_id"
         fi
     fi
     
+    # If container is not running, we'll need to start it for each command
+    # For now, we'll try to start it and use exec, but fall back to run if needed
+    if [ "$use_exec" = false ]; then
+        print_status "Container is not running, will start it for installation commands..."
+        # Try to start container one more time
+        if container start "$container_name" >/dev/null 2>&1 || \
+           ([ -n "$container_id" ] && container start "$container_id" >/dev/null 2>&1); then
+            sleep 5
+            if container exec "$container_name" echo "test" >/dev/null 2>&1; then
+                use_exec=true
+            elif [ -n "$container_id" ] && container exec "$container_id" echo "test" >/dev/null 2>&1; then
+                use_exec=true
+                container_name="$container_id"
+            fi
+        fi
+    fi
+    
+    # Helper function to execute command in container, starting it if needed
+    exec_in_container() {
+        local cmd="$1"
+        # Try exec first if container is running
+        if [ "$use_exec" = true ]; then
+            container exec "$container_name" bash -c "$cmd" 2>&1
+        else
+            # Start container, run command, container will stop after command completes
+            # This is fine for installation commands
+            container start "$container_name" >/dev/null 2>&1 || \
+            container start "$container_id" >/dev/null 2>&1 || true
+            sleep 2
+            container exec "$container_name" bash -c "$cmd" 2>&1 || \
+            container exec "$container_id" bash -c "$cmd" 2>&1
+        fi
+    }
+    
     # Step 1: Install system dependencies (gcc, build-essential, etc.)
     print_status "Installing system dependencies (gcc, build-essential, curl)..."
-    if container exec "$container_name" bash -c "
+    if exec_in_container "
         export DEBIAN_FRONTEND=noninteractive
         apt-get update -qq -y >/dev/null 2>&1 && \
         apt-get install -y --no-install-recommends \
@@ -610,9 +653,9 @@ install_container_dependencies() {
             >/dev/null 2>&1 && \
         apt-get clean >/dev/null 2>&1 && \
         rm -rf /var/lib/apt/lists/* >/dev/null 2>&1
-    " 2>&1; then
+    "; then
         # Verify gcc installation
-        if container exec "$container_name" bash -c "command -v gcc >/dev/null 2>&1"; then
+        if exec_in_container "command -v gcc >/dev/null 2>&1"; then
             print_success "System dependencies installed successfully"
         else
             print_warning "System dependencies installation completed but gcc not found"
@@ -623,14 +666,14 @@ install_container_dependencies() {
     
     # Step 2: Install UV package manager
     print_status "Installing UV package manager..."
-    if container exec "$container_name" bash -c "
+    if exec_in_container "
         curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1 && \
         export PATH=\"/root/.local/bin:\$PATH\" && \
         uv --version >/dev/null 2>&1
-    " 2>&1; then
+    "; then
         # Verify UV installation
-        if container exec "$container_name" bash -c "export PATH=\"/root/.local/bin:\$PATH\" && uv --version >/dev/null 2>&1"; then
-            uv_version=$(container exec "$container_name" bash -c "export PATH=\"/root/.local/bin:\$PATH\" && uv --version 2>/dev/null" | head -1)
+        if exec_in_container "export PATH=\"/root/.local/bin:\$PATH\" && uv --version >/dev/null 2>&1"; then
+            uv_version=$(exec_in_container "export PATH=\"/root/.local/bin:\$PATH\" && uv --version 2>/dev/null" | head -1)
             print_success "UV installed successfully: $uv_version"
         else
             print_warning "UV installation completed but not found in PATH"
@@ -641,7 +684,7 @@ install_container_dependencies() {
     
     # Step 3: Set up PATH in .bashrc for persistence
     print_status "Setting up PATH in .bashrc..."
-    container exec "$container_name" bash -c "
+    exec_in_container "
         if [ ! -f /root/.bashrc ]; then
             touch /root/.bashrc
         fi
