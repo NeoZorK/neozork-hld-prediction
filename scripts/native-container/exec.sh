@@ -3,8 +3,8 @@
 # Native Container Exec Script for NeoZork HLD Prediction
 # This script executes commands inside the running native Apple Silicon container
 
-# Don't exit on error - we want to handle errors gracefully
-set +e
+# Exit on error for proper error handling
+set -e
 
 # Colors for output
 RED='\033[0;31m'

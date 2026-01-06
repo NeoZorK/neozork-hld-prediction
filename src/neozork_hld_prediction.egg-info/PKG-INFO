@@ -46,7 +46,7 @@ Requires-Dist: json5==0.10.0
 Requires-Dist: jsonpointer==3.0.0
 Requires-Dist: jsonschema==4.23.0
 Requires-Dist: jsonschema-specifications==2024.10.1
-Requires-Dist: kiwisolver==1.4.8
+Requires-Dist: kiwisolver>=1.4.8
 Requires-Dist: MarkupSafe==3.0.2
 Requires-Dist: matplotlib==3.10.1
 Requires-Dist: matplotlib-inline==0.1.7
@@ -151,7 +151,7 @@ Requires-Dist: pyotp>=2.9.0
 Requires-Dist: bcrypt>=4.3.0
 Requires-Dist: qrcode>=8.2
 Requires-Dist: pyjwt>=2.10.1
-Requires-Dist: arch>=7.2.0
+Requires-Dist: arch<9.0.0,>=7.2.0
 Requires-Dist: autogluon-tabular>=1.4.0; python_version < "3.14"
 Requires-Dist: ray<2.54.0,>=2.52.0; python_version < "3.14"
 Requires-Dist: openpyxl>=3.1.5

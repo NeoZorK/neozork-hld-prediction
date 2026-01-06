@@ -4,13 +4,13 @@
 # This script handles initialization and startup of the NeoZork HLD Prediction container
 # Full feature parity with Docker container
 
-# Don't exit on error - we want container to keep running even if some steps fail
-set +e
+# Exit on error for proper error handling
+set -e
 
 # Function to keep container alive - will be called on exit
 keep_alive() {
     echo "Keeping container alive..." >&2
-    exec tail -f /dev/null
+    exec bash
 }
 
 # Set trap to ensure container stays alive on any exit
@@ -83,7 +83,7 @@ verify_uv() {
         echo -e "\033[1;33m⚠️  UV is not available - installing UV...\033[0m"
         
         # Install UV using pip
-        pip install uv
+        pip install uv || true
         
         if command -v uv &> /dev/null; then
             # Save the real uv path
@@ -103,7 +103,6 @@ verify_uv() {
             fi
         fi
     fi
-}
 
     # Test UV environment
     if [ -f "/app/scripts/utilities/test_uv_docker.py" ]; then
@@ -924,9 +923,9 @@ main() {
             log_message "Container is ready for use. Keeping container alive..."
             
             # CRITICAL: Always keep container running
-            # Use tail -f /dev/null as it's the most reliable method
-            log_message "Keeping container alive with tail -f /dev/null"
-            exec tail -f /dev/null
+            # Start interactive bash shell
+            log_message "Starting interactive bash shell"
+            exec bash
             ;;
     esac
 }
