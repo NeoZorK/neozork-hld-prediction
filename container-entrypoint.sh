@@ -10,7 +10,14 @@ set -e
 # Function to keep container alive - will be called on exit
 keep_alive() {
     echo "Keeping container alive..." >&2
-    exec bash
+    # Check if running in interactive mode
+    if [ -t 0 ]; then
+        # Interactive mode - start bash shell
+        exec bash
+    else
+        # Non-interactive mode - start keep-alive process
+        exec sleep infinity
+    fi
 }
 
 # Set trap to ensure container stays alive on any exit
@@ -923,9 +930,16 @@ main() {
             log_message "Container is ready for use. Keeping container alive..."
             
             # CRITICAL: Always keep container running
-            # Start interactive bash shell
-            log_message "Starting interactive bash shell"
-            exec bash
+            # Check if running in interactive mode
+            if [ -t 0 ]; then
+                # Interactive mode - start bash shell
+                log_message "Starting interactive bash shell"
+                exec bash
+            else
+                # Non-interactive mode - start keep-alive process
+                log_message "Non-interactive mode detected, starting keep-alive process"
+                exec sleep infinity
+            fi
             ;;
     esac
 }

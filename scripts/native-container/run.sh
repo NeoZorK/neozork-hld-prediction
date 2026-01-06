@@ -165,35 +165,40 @@ start_container() {
         if container start neozork-hld-prediction 2>&1; then
             print_success "Container start command completed"
             
-            # Start keep-alive process immediately in background
-            # This must happen before the entrypoint bash exits
-            (
-                # Wait just a moment for container to be ready
+            # Immediately execute a command that starts keep-alive and waits for it
+            # This command runs synchronously and keeps container alive during execution
+            print_status "Starting keep-alive process immediately..."
+            if container exec neozork-hld-prediction bash -c "
+                # Start keep-alive process
+                nohup sleep infinity >/dev/null 2>&1 &
+                local pid=\$!
+                # Wait a moment to ensure process started
                 sleep 1
-                # Try multiple times to start keep-alive process
-                for i in 1 2 3; do
-                    if container exec neozork-hld-prediction bash -c "nohup sleep infinity >/dev/null 2>&1 &" 2>/dev/null; then
-                        break
-                    fi
-                    sleep 1
-                done
-            ) &
-            local keep_alive_pid=$!
-            
-            # Wait a moment for container to fully start
-            sleep 4
-            
-            # Wait for keep-alive process to complete
-            wait $keep_alive_pid 2>/dev/null || true
-            
-            # Verify keep-alive process is running
-            sleep 1
-            if container exec neozork-hld-prediction bash -c "pgrep -f 'sleep infinity' >/dev/null 2>&1" 2>/dev/null; then
-                print_status "Keep-alive process is running"
+                # Verify process is running
+                if ps -p \$pid >/dev/null 2>&1; then
+                    echo 'KEEP_ALIVE_STARTED'
+                else
+                    echo 'KEEP_ALIVE_FAILED'
+                fi
+            " 2>&1 | grep -q "KEEP_ALIVE_STARTED"; then
+                print_status "Keep-alive process started successfully"
             else
-                print_warning "Keep-alive process may not be running, trying again..."
+                print_warning "Keep-alive process may not have started, trying again..."
+                # Try again with simpler command
                 container exec neozork-hld-prediction bash -c "nohup sleep infinity >/dev/null 2>&1 &" 2>/dev/null || true
-                sleep 2
+                sleep 1
+            fi
+            
+            # Wait a moment for container to stabilize
+            sleep 2
+            
+            # Verify keep-alive process is still running
+            if container exec neozork-hld-prediction bash -c "pgrep -f 'sleep infinity' >/dev/null 2>&1" 2>/dev/null; then
+                print_status "Keep-alive process verified and running"
+            else
+                print_warning "Keep-alive process not found, trying one more time..."
+                container exec neozork-hld-prediction bash -c "nohup sleep infinity >/dev/null 2>&1 &" 2>/dev/null || true
+                sleep 1
             fi
             
             # Check if container is now running
