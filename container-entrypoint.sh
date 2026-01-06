@@ -7,6 +7,16 @@
 # Don't exit on error - we want container to keep running even if some steps fail
 set +e
 
+# Function to keep container alive - will be called on exit
+keep_alive() {
+    echo "Keeping container alive..." >&2
+    exec tail -f /dev/null
+}
+
+# Set trap to ensure container stays alive on any exit
+# This must be set early to catch any unexpected exits
+trap keep_alive EXIT INT TERM
+
 # UV-only mode enforcement
 export USE_UV=true
 export UV_ONLY=true
@@ -834,11 +844,11 @@ main() {
     case "${1:-}" in
         "init")
             init_container
-            exit 0
+            # Don't exit - let it fall through to keep container alive
             ;;
         "post-start")
             post_start
-            exit 0
+            # Don't exit - let it fall through to keep container alive
             ;;
         *)
             # Default behavior - full container initialization
@@ -902,48 +912,20 @@ main() {
             
             log_message "=== Container initialization completed ==="
             
-            # Always start interactive bash shell to keep container running
+            # Always keep container running
             # This ensures container stays alive even if initialization had issues
-            log_message "Container is ready for use. Starting interactive shell..."
+            log_message "Container is ready for use. Keeping container alive..."
             
-            # Ensure bash is available - try multiple locations
-            BASH_CMD=""
-            if command -v bash &> /dev/null; then
-                BASH_CMD=$(command -v bash)
-            elif [ -f /bin/bash ]; then
-                BASH_CMD="/bin/bash"
-            elif [ -f /usr/bin/bash ]; then
-                BASH_CMD="/usr/bin/bash"
-            fi
-            
-            # Check if we're running in interactive mode (TTY attached)
-            if [ -t 0 ] && [ -n "$BASH_CMD" ]; then
-                # Interactive mode - start bash with proper configuration
-                log_message "Starting bash in interactive mode at: $BASH_CMD"
-                if [ -f /tmp/bash_config/.bashrc ]; then
-                    log_message "Loading bashrc from /tmp/bash_config/.bashrc"
-                    exec "$BASH_CMD" --rcfile /tmp/bash_config/.bashrc -i
-                else
-                    log_message "Starting bash without custom bashrc"
-                    exec "$BASH_CMD" -i
-                fi
-            else
-                # Non-interactive mode - keep container alive with a long-running process
-                log_message "Running in non-interactive mode. Keeping container alive..."
-                if [ -n "$BASH_CMD" ]; then
-                    # Start bash in non-interactive mode but keep it running
-                    exec "$BASH_CMD" -c "while true; do sleep 3600; done"
-                else
-                    # Fallback: use sleep loop if bash is not available
-                    log_message "Bash not found, using sleep loop to keep container alive"
-                    while true; do
-                        sleep 3600
-                    done
-                fi
-            fi
+            # CRITICAL: Always keep container running
+            # Use tail -f /dev/null as it's the most reliable method
+            log_message "Keeping container alive with tail -f /dev/null"
+            exec tail -f /dev/null
             ;;
     esac
 }
 
 # Run main function
-main "$@" 
+main "$@"
+
+# If we reach here, main completed normally
+# The trap will ensure keep_alive is called on exit 
