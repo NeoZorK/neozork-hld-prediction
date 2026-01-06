@@ -137,12 +137,12 @@ export PYTHONDONTWRITEBYTECODE=1
 export MPLCONFIGDIR="/tmp/matplotlib-cache"
 
 # Create useful aliases
-alias nz="python /app/run_analysis.py"
-alias eda="python /app/scripts/eda_script.py"
-alias uv-install="uv pip install --no-build-isolation --quiet -r /app/requirements.txt"
-alias uv-update="uv pip install --no-build-isolation --quiet --upgrade -r /app/requirements.txt"
-alias uv-test="uv run python -c 'import sys; print(f\"Python {sys.version}\"); import pandas, numpy, matplotlib; print(\"Core packages imported successfully\")'"
-alias uv-pytest="uv run pytest tests/ -n auto"
+alias nz="uv run --no-build-isolation python /app/run_analysis.py"
+alias eda="uv run --no-build-isolation python /app/scripts/eda_script.py"
+alias uv-install="cd /app && uv sync --no-build-isolation || (uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel pyproject-metadata meson packaging git+https://github.com/mesonbuild/meson-python.git cython versioneer pybind11 setuptools-scm numpy scipy>=1.16.0 && uv pip install --no-build-isolation --quiet -e .)"
+alias uv-update="cd /app && uv sync --no-build-isolation --upgrade || uv pip install --no-build-isolation --quiet --upgrade -r /app/requirements.txt"
+alias uv-test="uv run --no-build-isolation python -c 'import sys; print(f\"Python {sys.version}\"); import pandas, numpy, matplotlib; print(\"Core packages imported successfully\")'"
+alias uv-pytest="uv run --no-build-isolation pytest tests/ -n auto"
 
 echo "Environment setup complete!"
 echo "Available commands: nz, eda, uv-install, uv-update, uv-test, uv-pytest"
@@ -234,77 +234,56 @@ if [ -f /app/.venv/bin/activate ]; then
     source /app/.venv/bin/activate
 fi
 
-# Ensure build dependencies are installed before running uv run commands
-# This is required for building packages in editable mode
-# uv run uses build isolation, so we need to use --no-build-isolation and ensure build tools are in venv
+# Ensure all dependencies are installed before running uv run commands
+# uv run creates isolated environment, so we need to sync dependencies first
 if echo "$@" | grep -q "uv run"; then
-    echo "Ensuring build dependencies (setuptools, wheel, mesonpy, ninja) are installed..." >&2
-    # First, ensure venv exists and has build dependencies
-    if [ -f /app/.venv/bin/activate ]; then
-        source /app/.venv/bin/activate
-        # Install setuptools and wheel if not present
-        if ! python -c "import setuptools" 2>/dev/null; then
-            uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
-        fi
-        # Install ninja-build system package if not present (required for mesonpy)
-        if ! command -v ninja >/dev/null 2>&1; then
-            export DEBIAN_FRONTEND=noninteractive
-            apt-get update -qq -y >/dev/null 2>&1 && \
-            apt-get install -y --no-install-recommends ninja-build >/dev/null 2>&1 || true
-        fi
-        # Install mesonpy dependencies and mesonpy if not present (required for pandas, matplotlib, contourpy)
-        if ! python -c "import mesonpy" 2>/dev/null; then
-            # Install dependencies first
-            uv pip install --no-build-isolation --quiet pyproject-metadata meson packaging >/dev/null 2>&1 || true
-            # Install mesonpy from git (not available in PyPI for Python 3.14)
-            uv pip install --no-build-isolation --quiet git+https://github.com/mesonbuild/meson-python.git >/dev/null 2>&1 || true
-        fi
-        # Install other build dependencies (cython, versioneer, pybind11, setuptools-scm)
-        if ! python -c "import cython" 2>/dev/null; then
-            uv pip install --no-build-isolation --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || true
-        fi
-        # Install numpy BEFORE pandas (required for pandas build with mesonpy)
-        if ! python -c "import numpy" 2>/dev/null; then
-            uv pip install --no-build-isolation --quiet numpy >/dev/null 2>&1 || true
-        fi
-        # Install scipy BEFORE scikit-learn (required for scikit-learn build with mesonpy)
-        if ! python -c "import scipy" 2>/dev/null; then
-            uv pip install --no-build-isolation --quiet scipy >/dev/null 2>&1 || true
-        fi
-        # Install cmake system package if not present (required for some packages)
-        if ! command -v cmake >/dev/null 2>&1; then
-            export DEBIAN_FRONTEND=noninteractive
-            apt-get update -qq -y >/dev/null 2>&1 && \
-            apt-get install -y --no-install-recommends cmake >/dev/null 2>&1 || true
-        fi
-    else
-        # Create venv and install build dependencies
+    echo "Ensuring all dependencies are installed (this ensures correct build order)..." >&2
+    # First, ensure venv exists
+    if [ ! -f /app/.venv/bin/activate ]; then
         uv venv /app/.venv >/dev/null 2>&1
-        source /app/.venv/bin/activate 2>/dev/null || true
-        # Install ninja-build and cmake system packages
+    fi
+    source /app/.venv/bin/activate 2>/dev/null || true
+    
+    # Install system build dependencies if needed
+    if ! command -v ninja >/dev/null 2>&1 || ! command -v cmake >/dev/null 2>&1; then
         export DEBIAN_FRONTEND=noninteractive
         apt-get update -qq -y >/dev/null 2>&1 && \
         apt-get install -y --no-install-recommends ninja-build cmake >/dev/null 2>&1 || true
-        # Install build dependencies
+    fi
+    
+    # Use uv sync to install all dependencies in correct order
+    # This ensures scipy is installed before scikit-learn build
+    echo "Syncing dependencies with uv sync (installing in correct order)..." >&2
+    cd /app
+    uv sync --no-build-isolation >/dev/null 2>&1 || {
+        # Fallback: install dependencies step by step in correct order
+        echo "uv sync failed, installing dependencies step by step..." >&2
+        # Install build tools first
         uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
         uv pip install --no-build-isolation --quiet pyproject-metadata meson packaging >/dev/null 2>&1 || true
         uv pip install --no-build-isolation --quiet git+https://github.com/mesonbuild/meson-python.git >/dev/null 2>&1 || true
         uv pip install --no-build-isolation --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || true
         # Install numpy BEFORE pandas (required for pandas build with mesonpy)
         uv pip install --no-build-isolation --quiet numpy >/dev/null 2>&1 || true
-        # Install scipy BEFORE scikit-learn (required for scikit-learn build with mesonpy)
-        uv pip install --no-build-isolation --quiet scipy >/dev/null 2>&1 || true
-    fi
-    # Ensure numpy and scipy are installed before running uv run (required for pandas and scikit-learn build)
-    if ! python -c "import numpy" 2>/dev/null; then
-        echo "Installing numpy (required for pandas build)..." >&2
-        uv pip install --no-build-isolation --quiet numpy >/dev/null 2>&1 || true
-    fi
+        # Install scipy BEFORE scikit-learn (CRITICAL: scikit-learn build requires scipy)
+        echo "Installing scipy (required before scikit-learn build)..." >&2
+        uv pip install --no-build-isolation --quiet scipy>=1.16.0 >/dev/null 2>&1 || true
+        # Verify scipy is installed
+        if ! python -c "import scipy; print(f'scipy {scipy.__version__} installed')" 2>/dev/null; then
+            echo "ERROR: Failed to install scipy, which is required for scikit-learn build" >&2
+            exit 1
+        fi
+        # Now install remaining dependencies (scikit-learn will use installed scipy)
+        uv pip install --no-build-isolation --quiet -e . >/dev/null 2>&1 || true
+    }
+    
+    # Verify critical dependencies are installed
     if ! python -c "import scipy" 2>/dev/null; then
-        echo "Installing scipy (required for scikit-learn build)..." >&2
-        uv pip install --no-build-isolation --quiet scipy >/dev/null 2>&1 || true
+        echo "ERROR: scipy is not installed, cannot proceed" >&2
+        exit 1
     fi
-    # Modify command to add --no-build-isolation if not present
+    
+    # Modify command to add --no-build-isolation to use pre-installed packages
     if ! echo "$@" | grep -q -- "--no-build-isolation"; then
         # Replace "uv run" with "uv run --no-build-isolation"
         set -- $(echo "$@" | sed 's/uv run/uv run --no-build-isolation/')
@@ -389,24 +368,53 @@ CMD_WRAPPER_EOF
                 fi
             fi
             
-            # Step 5: Ensure setuptools is installed before uv run commands
-            # uv run creates its own venv, so we need to sync dependencies first
+            # Step 5: Ensure all dependencies are installed before uv run commands
+            # uv run creates isolated environment, so we need to sync dependencies first
             if echo \"$command\" | grep -q \"uv run\"; then
-                echo \"Ensuring build dependencies (setuptools, wheel) are available...\" >&2
-                # Use uv sync to ensure all dependencies including build dependencies are installed
-                # This will install setuptools in the project's virtual environment
+                echo \"Ensuring all dependencies are installed (this ensures correct build order)...\" >&2
+                # Ensure venv exists
+                if [ ! -f /app/.venv/bin/activate ]; then
+                    uv venv /app/.venv >/dev/null 2>&1
+                fi
+                source /app/.venv/bin/activate 2>/dev/null || true
+                
+                # Install system build dependencies if needed
+                if ! command -v ninja >/dev/null 2>&1 || ! command -v cmake >/dev/null 2>&1; then
+                    export DEBIAN_FRONTEND=noninteractive
+                    apt-get update -qq -y >/dev/null 2>&1 && \
+                    apt-get install -y --no-install-recommends ninja-build cmake >/dev/null 2>&1 || true
+                fi
+                
+                # Use uv sync to install all dependencies in correct order
+                # This ensures scipy is installed before scikit-learn build
+                cd /app
                 uv sync --no-build-isolation >/dev/null 2>&1 || {
-                    # Fallback: try to install setuptools directly in venv
-                    if [ -f /app/.venv/bin/activate ]; then
-                        source /app/.venv/bin/activate
-                        uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
-                    else
-                        # Create venv if it doesn't exist and install setuptools
-                        uv venv /app/.venv >/dev/null 2>&1
-                        source /app/.venv/bin/activate 2>/dev/null || true
-                        uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+                    # Fallback: install dependencies step by step in correct order
+                    echo \"uv sync failed, installing dependencies step by step...\" >&2
+                    # Install build tools first
+                    uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
+                    uv pip install --no-build-isolation --quiet pyproject-metadata meson packaging >/dev/null 2>&1 || true
+                    uv pip install --no-build-isolation --quiet git+https://github.com/mesonbuild/meson-python.git >/dev/null 2>&1 || true
+                    uv pip install --no-build-isolation --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || true
+                    # Install numpy BEFORE pandas (required for pandas build with mesonpy)
+                    uv pip install --no-build-isolation --quiet numpy >/dev/null 2>&1 || true
+                    # Install scipy BEFORE scikit-learn (CRITICAL: scikit-learn build requires scipy)
+                    echo \"Installing scipy (required before scikit-learn build)...\" >&2
+                    uv pip install --no-build-isolation --quiet scipy>=1.16.0 >/dev/null 2>&1 || true
+                    # Verify scipy is installed
+                    if ! python -c \"import scipy; print(f'scipy {scipy.__version__} installed')\" 2>/dev/null; then
+                        echo \"ERROR: Failed to install scipy, which is required for scikit-learn build\" >&2
+                        exit 1
                     fi
+                    # Now install remaining dependencies (scikit-learn will use installed scipy)
+                    uv pip install --no-build-isolation --quiet -e . >/dev/null 2>&1 || true
                 }
+                
+                # Verify critical dependencies are installed
+                if ! python -c \"import scipy\" 2>/dev/null; then
+                    echo \"ERROR: scipy is not installed, cannot proceed\" >&2
+                    exit 1
+                fi
             fi
             
             # Step 6: Execute the command
@@ -430,64 +438,55 @@ CMD_WRAPPER_EOF
                 export PATH=\"\$HOME/.local/bin:/root/.local/bin:\$HOME/.cargo/bin:/root/.cargo/bin:\$PATH\"
             fi
             export PYTHONPATH=\"/app:\$PYTHONPATH\"
-            # Ensure build dependencies are installed before uv run commands
-            # uv run uses build isolation, so we need to use --no-build-isolation and ensure build tools are in venv
+            # Ensure all dependencies are installed before uv run commands
+            # uv run creates isolated environment, so we need to sync dependencies first
             if echo \"$command\" | grep -q \"uv run\"; then
-                echo \"Ensuring build dependencies (setuptools, wheel, mesonpy, ninja) are available...\" >&2
-                # First, ensure venv exists and has build dependencies
-                if [ -f /app/.venv/bin/activate ]; then
-                    source /app/.venv/bin/activate
-                    # Install setuptools and wheel if not present
-                    if ! python -c \"import setuptools\" 2>/dev/null; then
-                        uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
-                    fi
-                    # Install ninja-build system package if not present
-                    if ! command -v ninja >/dev/null 2>&1; then
-                        export DEBIAN_FRONTEND=noninteractive
-                        apt-get update -qq -y >/dev/null 2>&1 && \
-                        apt-get install -y --no-install-recommends ninja-build >/dev/null 2>&1 || true
-                    fi
-                    # Install mesonpy dependencies and mesonpy if not present (required for pandas, matplotlib, contourpy)
-                    if ! python -c \"import mesonpy\" 2>/dev/null; then
-                        uv pip install --no-build-isolation --quiet pyproject-metadata meson packaging >/dev/null 2>&1 || true
-                        uv pip install --no-build-isolation --quiet git+https://github.com/mesonbuild/meson-python.git >/dev/null 2>&1 || true
-                    fi
-                    # Install other build dependencies (cython, versioneer, pybind11, setuptools-scm)
-                    if ! python -c \"import cython\" 2>/dev/null; then
-                        uv pip install --no-build-isolation --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || true
-                    fi
-                    # Install numpy BEFORE pandas (required for pandas build with mesonpy)
-                    if ! python -c \"import numpy\" 2>/dev/null; then
-                        uv pip install --no-build-isolation --quiet numpy >/dev/null 2>&1 || true
-                    fi
-                    # Install scipy BEFORE scikit-learn (required for scikit-learn build with mesonpy)
-                    if ! python -c \"import scipy\" 2>/dev/null; then
-                        uv pip install --no-build-isolation --quiet scipy >/dev/null 2>&1 || true
-                    fi
-                    # Install cmake system package if not present
-                    if ! command -v cmake >/dev/null 2>&1; then
-                        export DEBIAN_FRONTEND=noninteractive
-                        apt-get update -qq -y >/dev/null 2>&1 && \
-                        apt-get install -y --no-install-recommends cmake >/dev/null 2>&1 || true
-                    fi
-                else
+                echo \"Ensuring all dependencies are installed (this ensures correct build order)...\" >&2
+                # Ensure venv exists
+                if [ ! -f /app/.venv/bin/activate ]; then
                     uv venv /app/.venv >/dev/null 2>&1
-                    source /app/.venv/bin/activate 2>/dev/null || true
-                    # Install ninja-build and cmake system packages
+                fi
+                source /app/.venv/bin/activate 2>/dev/null || true
+                
+                # Install system build dependencies if needed
+                if ! command -v ninja >/dev/null 2>&1 || ! command -v cmake >/dev/null 2>&1; then
                     export DEBIAN_FRONTEND=noninteractive
                     apt-get update -qq -y >/dev/null 2>&1 && \
                     apt-get install -y --no-install-recommends ninja-build cmake >/dev/null 2>&1 || true
-                    # Install build dependencies
+                fi
+                
+                # Use uv sync to install all dependencies in correct order
+                # This ensures scipy is installed before scikit-learn build
+                cd /app
+                uv sync --no-build-isolation >/dev/null 2>&1 || {
+                    # Fallback: install dependencies step by step in correct order
+                    echo \"uv sync failed, installing dependencies step by step...\" >&2
+                    # Install build tools first
                     uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel >/dev/null 2>&1 || true
                     uv pip install --no-build-isolation --quiet pyproject-metadata meson packaging >/dev/null 2>&1 || true
                     uv pip install --no-build-isolation --quiet git+https://github.com/mesonbuild/meson-python.git >/dev/null 2>&1 || true
                     uv pip install --no-build-isolation --quiet cython versioneer pybind11 setuptools-scm >/dev/null 2>&1 || true
                     # Install numpy BEFORE pandas (required for pandas build with mesonpy)
                     uv pip install --no-build-isolation --quiet numpy >/dev/null 2>&1 || true
-                    # Install scipy BEFORE scikit-learn (required for scikit-learn build with mesonpy)
-                    uv pip install --no-build-isolation --quiet scipy >/dev/null 2>&1 || true
+                    # Install scipy BEFORE scikit-learn (CRITICAL: scikit-learn build requires scipy)
+                    echo \"Installing scipy (required before scikit-learn build)...\" >&2
+                    uv pip install --no-build-isolation --quiet scipy>=1.16.0 >/dev/null 2>&1 || true
+                    # Verify scipy is installed
+                    if ! python -c \"import scipy; print(f'scipy {scipy.__version__} installed')\" 2>/dev/null; then
+                        echo \"ERROR: Failed to install scipy, which is required for scikit-learn build\" >&2
+                        exit 1
+                    fi
+                    # Now install remaining dependencies (scikit-learn will use installed scipy)
+                    uv pip install --no-build-isolation --quiet -e . >/dev/null 2>&1 || true
+                }
+                
+                # Verify critical dependencies are installed
+                if ! python -c \"import scipy\" 2>/dev/null; then
+                    echo \"ERROR: scipy is not installed, cannot proceed\" >&2
+                    exit 1
                 fi
-                # Modify command to add --no-build-isolation if not present
+                
+                # Modify command to add --no-build-isolation to use pre-installed packages
                 if ! echo \"$command\" | grep -q -- \"--no-build-isolation\"; then
                     command=\"\$(echo \"\$command\" | sed 's/uv run/uv run --no-build-isolation/')\"
                 fi
@@ -1019,12 +1018,12 @@ export PYTHONDONTWRITEBYTECODE=1
 export MPLCONFIGDIR="/tmp/matplotlib-cache"
 
 # Create useful aliases
-alias nz="uv run python /app/run_analysis.py"
-alias eda="uv run python /app/scripts/eda_script.py"
-alias uv-install="uv pip install --no-build-isolation --quiet -r /app/requirements.txt"
-alias uv-update="uv pip install --no-build-isolation --quiet --upgrade -r /app/requirements.txt"
-alias uv-test="uv run python -c \"import sys; print(f\\\"Python {sys.version}\\\"); import pandas, numpy, matplotlib; print(\\\"Core packages imported successfully\\\")\""
-alias uv-pytest="uv run pytest tests/ -n auto"
+alias nz="uv run --no-build-isolation python /app/run_analysis.py"
+alias eda="uv run --no-build-isolation python /app/scripts/eda_script.py"
+alias uv-install="cd /app && uv sync --no-build-isolation || (uv pip install --no-build-isolation --quiet setuptools>=78.1.1 wheel pyproject-metadata meson packaging git+https://github.com/mesonbuild/meson-python.git cython versioneer pybind11 setuptools-scm numpy scipy>=1.16.0 && uv pip install --no-build-isolation --quiet -e .)"
+alias uv-update="cd /app && uv sync --no-build-isolation --upgrade || uv pip install --no-build-isolation --quiet --upgrade -r /app/requirements.txt"
+alias uv-test="uv run --no-build-isolation python -c \"import sys; print(f\\\"Python {sys.version}\\\"); import pandas, numpy, matplotlib; print(\\\"Core packages imported successfully\\\")\""
+alias uv-pytest="uv run --no-build-isolation pytest tests/ -n auto"
 
 # Show brief status
 if [ -z "$VIRTUAL_ENV_SETUP_SKIPPED" ]; then
